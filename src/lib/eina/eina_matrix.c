@@ -752,3 +752,166 @@ eina_matrix4_normalized(Eina_Matrix4 *out, const Eina_Matrix4 *in)
 
    return EINA_TRUE;
 }
+
+EAPI Eina_Bool
+eina_matrix4_inverse(Eina_Matrix4 *out, const Eina_Matrix4 *in)
+{
+   double det;
+
+   MATRIX_XX(out) =
+       MATRIX_YY(in)  * MATRIX_ZZ(in) * MATRIX_WW(in)
+     - MATRIX_YY(in)  * MATRIX_ZW(in) * MATRIX_WZ(in)
+     - MATRIX_ZY(in)  * MATRIX_YZ(in)  * MATRIX_WW(in)
+     + MATRIX_ZY(in)  * MATRIX_YW(in)  * MATRIX_WZ(in)
+     + MATRIX_WY(in) * MATRIX_YZ(in)  * MATRIX_ZW(in)
+     - MATRIX_WY(in) * MATRIX_YW(in)  * MATRIX_ZZ(in);
+
+   MATRIX_YX(out) =
+     - MATRIX_YX(in)  * MATRIX_ZZ(in) * MATRIX_WW(in)
+     + MATRIX_YX(in)  * MATRIX_ZW(in) * MATRIX_WZ(in)
+     + MATRIX_ZX(in)  * MATRIX_YZ(in)  * MATRIX_WW(in)
+     - MATRIX_ZX(in)  * MATRIX_YW(in)  * MATRIX_WZ(in)
+     - MATRIX_WX(in) * MATRIX_YZ(in)  * MATRIX_ZW(in)
+     + MATRIX_WX(in) * MATRIX_YW(in)  * MATRIX_ZZ(in);
+
+   MATRIX_ZX(out) =
+       MATRIX_YX(in)  * MATRIX_ZY(in) * MATRIX_WW(in)
+     - MATRIX_YX(in)  * MATRIX_ZW(in) * MATRIX_WY(in)
+     - MATRIX_ZX(in)  * MATRIX_YY(in) * MATRIX_WW(in)
+     + MATRIX_ZX(in)  * MATRIX_YW(in) * MATRIX_WY(in)
+     + MATRIX_WX(in) * MATRIX_YY(in) * MATRIX_ZW(in)
+     - MATRIX_WX(in) * MATRIX_YW(in) * MATRIX_ZY(in);
+
+   MATRIX_WX(out) =
+     - MATRIX_YX(in)  * MATRIX_ZY(in) * MATRIX_WZ(in)
+     + MATRIX_YX(in)  * MATRIX_ZZ(in) * MATRIX_WY(in)
+     + MATRIX_ZX(in)  * MATRIX_YY(in) * MATRIX_WZ(in)
+     - MATRIX_ZX(in)  * MATRIX_YZ(in) * MATRIX_WY(in)
+     - MATRIX_WX(in) * MATRIX_YY(in) * MATRIX_ZZ(in)
+     + MATRIX_WX(in) * MATRIX_YZ(in) * MATRIX_ZY(in);
+
+   MATRIX_XY(out) =
+     - MATRIX_XY(in)  * MATRIX_ZZ(in) * MATRIX_WW(in)
+     + MATRIX_XY(in)  * MATRIX_ZW(in) * MATRIX_WZ(in)
+     + MATRIX_ZY(in)  * MATRIX_XZ(in) * MATRIX_WW(in)
+     - MATRIX_ZY(in)  * MATRIX_XW(in) * MATRIX_WZ(in)
+     - MATRIX_WY(in) * MATRIX_XZ(in) * MATRIX_ZW(in)
+     + MATRIX_WY(in) * MATRIX_XW(in) * MATRIX_ZZ(in);
+
+   MATRIX_YY(out) =
+       MATRIX_XX(in)  * MATRIX_ZZ(in) * MATRIX_WW(in)
+     - MATRIX_XX(in)  * MATRIX_ZW(in) * MATRIX_WZ(in)
+     - MATRIX_ZX(in)  * MATRIX_XZ(in) * MATRIX_WW(in)
+     + MATRIX_ZX(in)  * MATRIX_XW(in) * MATRIX_WZ(in)
+     + MATRIX_WX(in) * MATRIX_XZ(in) * MATRIX_ZW(in)
+     - MATRIX_WX(in) * MATRIX_XW(in) * MATRIX_ZZ(in);
+
+   MATRIX_ZY(out) =
+     - MATRIX_XX(in)  * MATRIX_ZY(in) * MATRIX_WW(in)
+     + MATRIX_XX(in)  * MATRIX_ZW(in) * MATRIX_WY(in)
+     + MATRIX_ZX(in)  * MATRIX_XY(in) * MATRIX_WW(in)
+     - MATRIX_ZX(in)  * MATRIX_XW(in) * MATRIX_WY(in)
+     - MATRIX_WX(in) * MATRIX_XY(in) * MATRIX_ZW(in)
+     + MATRIX_WX(in) * MATRIX_XW(in) * MATRIX_ZY(in);
+
+   MATRIX_WY(out) =
+       MATRIX_XX(in)  * MATRIX_ZY(in) * MATRIX_WZ(in)
+     - MATRIX_XX(in)  * MATRIX_ZZ(in) * MATRIX_WY(in)
+     - MATRIX_ZX(in)  * MATRIX_XY(in) * MATRIX_WZ(in)
+     + MATRIX_ZX(in)  * MATRIX_XZ(in) * MATRIX_WY(in)
+     + MATRIX_WX(in) * MATRIX_XY(in) * MATRIX_ZZ(in)
+     - MATRIX_WX(in) * MATRIX_XZ(in) * MATRIX_ZY(in);
+
+   MATRIX_XZ(out) =
+       MATRIX_XY(in)  * MATRIX_YZ(in) * MATRIX_WW(in)
+     - MATRIX_XY(in)  * MATRIX_YW(in) * MATRIX_WZ(in)
+     - MATRIX_YY(in)  * MATRIX_XZ(in) * MATRIX_WW(in)
+     + MATRIX_YY(in)  * MATRIX_XW(in) * MATRIX_WZ(in)
+     + MATRIX_WY(in) * MATRIX_XZ(in) * MATRIX_YW(in)
+     - MATRIX_WY(in) * MATRIX_XW(in) * MATRIX_YZ(in);
+
+   MATRIX_YZ(out) =
+     - MATRIX_XX(in)  * MATRIX_YZ(in) * MATRIX_WW(in)
+     + MATRIX_XX(in)  * MATRIX_YW(in) * MATRIX_WZ(in)
+     + MATRIX_YX(in)  * MATRIX_XZ(in) * MATRIX_WW(in)
+     - MATRIX_YX(in)  * MATRIX_XW(in) * MATRIX_WZ(in)
+     - MATRIX_WX(in) * MATRIX_XZ(in) * MATRIX_YW(in)
+     + MATRIX_WX(in) * MATRIX_XW(in) * MATRIX_YZ(in);
+
+   MATRIX_ZZ(out) =
+       MATRIX_XX(in)  * MATRIX_YY(in) * MATRIX_WW(in)
+     - MATRIX_XX(in)  * MATRIX_YW(in) * MATRIX_WY(in)
+     - MATRIX_YX(in)  * MATRIX_XY(in) * MATRIX_WW(in)
+     + MATRIX_YX(in)  * MATRIX_XW(in) * MATRIX_WY(in)
+     + MATRIX_WX(in) * MATRIX_XY(in) * MATRIX_YW(in)
+     - MATRIX_WX(in) * MATRIX_XW(in) * MATRIX_YY(in);
+
+   MATRIX_WZ(out) =
+     - MATRIX_XX(in)  * MATRIX_YY(in) * MATRIX_WZ(in)
+     + MATRIX_XX(in)  * MATRIX_YZ(in) * MATRIX_WY(in)
+     + MATRIX_YX(in)  * MATRIX_XY(in) * MATRIX_WZ(in)
+     - MATRIX_YX(in)  * MATRIX_XZ(in) * MATRIX_WY(in)
+     - MATRIX_WX(in) * MATRIX_XY(in) * MATRIX_YZ(in)
+     + MATRIX_WX(in) * MATRIX_XZ(in) * MATRIX_YY(in);
+
+   MATRIX_XW(out) =
+     - MATRIX_XY(in) * MATRIX_YZ(in) * MATRIX_ZW(in)
+     + MATRIX_XY(in) * MATRIX_YW(in) * MATRIX_ZZ(in)
+     + MATRIX_YY(in) * MATRIX_XZ(in) * MATRIX_ZW(in)
+     - MATRIX_YY(in) * MATRIX_XW(in) * MATRIX_ZZ(in)
+     - MATRIX_ZY(in) * MATRIX_XZ(in) * MATRIX_YW(in)
+     + MATRIX_ZY(in) * MATRIX_XW(in) * MATRIX_YZ(in);
+
+   MATRIX_YW(out) =
+       MATRIX_XX(in) * MATRIX_YZ(in) * MATRIX_ZW(in)
+     - MATRIX_XX(in) * MATRIX_YW(in) * MATRIX_ZZ(in)
+     - MATRIX_YX(in) * MATRIX_XZ(in) * MATRIX_ZW(in)
+     + MATRIX_YX(in) * MATRIX_XW(in) * MATRIX_ZZ(in)
+     + MATRIX_ZX(in) * MATRIX_XZ(in) * MATRIX_YW(in)
+     - MATRIX_ZX(in) * MATRIX_XW(in) * MATRIX_YZ(in);
+
+   MATRIX_ZW(out) =
+     - MATRIX_XX(in) * MATRIX_YY(in) * MATRIX_ZW(in)
+     + MATRIX_XX(in) * MATRIX_YW(in) * MATRIX_ZY(in)
+     + MATRIX_YX(in) * MATRIX_XY(in) * MATRIX_ZW(in)
+     - MATRIX_YX(in) * MATRIX_XW(in) * MATRIX_ZY(in)
+     - MATRIX_ZX(in) * MATRIX_XY(in) * MATRIX_YW(in)
+     + MATRIX_ZX(in) * MATRIX_XW(in) * MATRIX_YY(in);
+
+   MATRIX_WW(out) =
+       MATRIX_XX(in) * MATRIX_YY(in) * MATRIX_ZZ(in)
+     - MATRIX_XX(in) * MATRIX_YZ(in) * MATRIX_ZY(in)
+     - MATRIX_YX(in) * MATRIX_XY(in) * MATRIX_ZZ(in)
+     + MATRIX_YX(in) * MATRIX_XZ(in) * MATRIX_ZY(in)
+     + MATRIX_ZX(in) * MATRIX_XY(in) * MATRIX_YZ(in)
+     - MATRIX_ZX(in) * MATRIX_XZ(in) * MATRIX_YY(in);
+
+   det =
+       MATRIX_XX(in) * MATRIX_XX(out)
+     + MATRIX_XY(in) * MATRIX_YX(out)
+     + MATRIX_XZ(in) * MATRIX_ZX(out)
+     + MATRIX_XW(in) * MATRIX_WX(out);
+
+   if (fabs(det) < DBL_EPSILON) return EINA_FALSE;
+
+   det = 1.0 / det;
+
+   MATRIX_XX(out) = MATRIX_XX(out) * det;
+   MATRIX_XY(out) = MATRIX_XY(out) * det;
+   MATRIX_XZ(out) = MATRIX_XZ(out) * det;
+   MATRIX_XW(out) = MATRIX_XW(out) * det;
+   MATRIX_YX(out) = MATRIX_YX(out) * det;
+   MATRIX_YY(out) = MATRIX_YY(out) * det;
+   MATRIX_YZ(out) = MATRIX_YZ(out) * det;
+   MATRIX_YW(out) = MATRIX_YW(out) * det;
+   MATRIX_ZX(out) = MATRIX_ZX(out) * det;
+   MATRIX_ZY(out) = MATRIX_ZY(out) * det;
+   MATRIX_ZZ(out) = MATRIX_ZZ(out) * det;
+   MATRIX_ZW(out) = MATRIX_ZW(out) * det;
+   MATRIX_WX(out) = MATRIX_WX(out) * det;
+   MATRIX_WY(out) = MATRIX_WY(out) * det;
+   MATRIX_WZ(out) = MATRIX_WZ(out) * det;
+   MATRIX_WW(out) = MATRIX_WW(out) * det;
+
+   return EINA_TRUE;
+}

@@ -538,6 +538,16 @@ EAPI double eina_matrix4_determinant(const Eina_Matrix4 *m);
 EAPI Eina_Bool eina_matrix4_normalized(Eina_Matrix4 *out,
                                        const Eina_Matrix4 *in);
 
+/**
+ * @brief Return the inverse of the given matrix.
+ *
+ * @param out The inverse matrix
+ * @param in The matrix.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.15
+ */
+EAPI Eina_Bool eina_matrix4_inverse(Eina_Matrix4 *out, const Eina_Matrix4 *in);
 
 /**
  * @brief Convert an Eina_Matrix4 into an Eina_Matrix3.
