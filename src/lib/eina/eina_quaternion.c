@@ -23,6 +23,7 @@
 #include "eina_private.h"
 
 #include <math.h>
+#include <float.h>
 
 #include "eina_fp.h"
 #include "eina_matrix.h"
@@ -623,6 +624,213 @@ eina_quaternion_rotation_matrix3_get(Eina_Matrix3 *m,
    m->zz = 1.0 - xx - yy;
 }
 
+static inline double
+_max(double a, double b)
+{
+   return a > b ? a : b;
+}
+
+static inline double
+eina_point_3d_norm(Eina_Point_3D *p)
+{
+   return sqrt(p->x * p->x + p->y * p->y + p->z * p->z);
+}
+
+static inline void
+eina_point_3d_normalize(Eina_Point_3D *p, double norm)
+{
+   double tmp = 1 / norm;
+
+   p->x *= tmp;
+   p->y *= tmp;
+   p->z *= tmp;
+}
+
+static inline double
+eina_point_3d_dot(const Eina_Point_3D *a, const Eina_Point_3D *b)
+{
+   return a->x * b->x + a->y * b->y + a->z * b->z;
+}
+
+static inline void
+eina_point_3d_combine(Eina_Point_3D *out,
+                      const Eina_Point_3D *a, const Eina_Point_3D *b,
+                      double scale1, double scale2)
+{
+   out->x = a->x * scale1 + b->x * scale2;
+   out->y = a->y * scale1 + b->y * scale2;
+   out->z = a->z * scale1 + b->z * scale2;
+}
+
+static inline void
+eina_point3d_cross(Eina_Point_3D *out,
+                   const Eina_Point_3D *a, const Eina_Point_3D *b)
+{
+   out->x = a->y * b->z - a->z * b->y;
+   out->y = a->z * b->x - a->x * b->z;
+   out->z = a->x * b->y - a->y * b->x;
+}
+
+static inline void
+eina_point3d_neg(Eina_Point_3D *out, const Eina_Point_3D *in)
+{
+   out->x = - in->x;
+   out->y = - in->y;
+   out->z = - in->z;
+}
+
+/* http://www.w3.org/TR/css3-transforms/#decomposing-a-3d-matrix */
+EAPI Eina_Bool
+eina_matrix4_quaternion_to(Eina_Quaternion *rotation,
+                           Eina_Quaternion *perspective,
+                           Eina_Point_3D *translation,
+                           Eina_Point_3D *scale,
+                           Eina_Point_3D *skew,
+                           const Eina_Matrix4 *m)
+{
+   Eina_Matrix4 n, pm;
+   double det, factor;
+
+   if (m->ww == 0) return EINA_FALSE;
+
+   // Normalize the matrix.
+   factor = 1 / m->ww;
+
+   n.xx = m->xx * factor;
+   n.xy = m->xy * factor;
+   n.xz = m->xz * factor;
+   n.xw = m->xw * factor;
+   n.yx = m->yx * factor;
+   n.yy = m->yy * factor;
+   n.yz = m->yz * factor;
+   n.yw = m->yw * factor;
+   n.zx = m->zx * factor;
+   n.zy = m->zy * factor;
+   n.zz = m->zz * factor;
+   n.zw = m->zw * factor;
+   n.wx = m->wx * factor;
+   n.wy = m->wy * factor;
+   n.wz = m->wz * factor;
+   n.ww = m->ww * factor;
+
+   pm = n;
+   pm.xw = 0;
+   pm.yw = 0;
+   pm.zw = 0;
+   pm.ww = 1;
+
+   // If the perspective matrix is not invertible, we are also unable to
+   // decompose, so we'll bail early.
+   det = eina_matrix4_determinant(&pm);
+   if (fabs(det) < DBL_EPSILON) return EINA_FALSE;
+
+   // First, isolate perspective.
+   if (perspective)
+     {
+        if (fabs(n.xw) < DBL_EPSILON ||
+            fabs(n.yw) < DBL_EPSILON ||
+            fabs(n.zw) < DBL_EPSILON)
+          {
+             Eina_Quaternion tmp;
+             Eina_Matrix4 ipm, tipm;
+
+             tmp.x = n.wx;
+             tmp.y = n.wy;
+             tmp.z = n.wz;
+             tmp.w = n.ww;
+
+             if (!eina_matrix4_inverse(&ipm, &pm))
+               return EINA_FALSE;
+
+             eina_matrix4_transpose(&tipm, &ipm);
+
+             perspective->x = tipm.xx * tmp.x + tipm.yx * tmp.y + tipm.zx * tmp.z + tipm.wx * tmp.w;
+             perspective->y = tipm.xy * tmp.x + tipm.yy * tmp.y + tipm.zy * tmp.z + tipm.wy * tmp.w;
+             perspective->z = tipm.xz * tmp.x + tipm.yz * tmp.y + tipm.zz * tmp.z + tipm.wz * tmp.w;
+             perspective->w = tipm.xw * tmp.x + tipm.yw * tmp.y + tipm.zw * tmp.z + tipm.ww * tmp.w;
+          }
+        else
+          {
+             perspective->x = perspective->y = perspective->z = 0;
+             perspective->w = 1;
+          }
+     }
+
+   if (translation)
+     {
+        translation->x = n.xw;
+        translation->y = n.yw;
+        translation->z = n.zw;
+     }
+
+   if (skew || scale || rotation)
+     {
+        Eina_Point_3D tsc, tsk, row0, row1, row2, cross;
+        double tmp;
+
+        // Make sure all pointer are defined
+        if (!scale) scale = &tsc;
+        if (!skew) skew = &tsk;
+
+        row0.x = n.xx; row1.x = n.yx; row2.x = n.zx;
+        row0.y = n.xy; row1.y = n.yy; row2.y = n.zy;
+        row0.z = n.xz; row1.z = n.yz; row2.z = n.zz;
+
+        // Compute X scale factor and normalize first row.
+        scale->x = eina_point_3d_norm(&row0);
+        eina_point_3d_normalize(&row0, scale->x);
+
+        skew->x = eina_point_3d_dot(&row0, &row1);
+        eina_point_3d_combine(&row1, &row1, &row0, 1.0, -skew->x);
+
+        // Now, compute Y scale and normalize 2nd row.
+        scale->y = eina_point_3d_norm(&row1);
+        eina_point_3d_normalize(&row1, scale->y);
+        skew->x /= scale->y;
+
+        // Compute XZ and YZ shears, orthogonalize 3rd row
+        skew->y = eina_point_3d_dot(&row0, &row2);
+        eina_point_3d_combine(&row2, &row2, &row0, 1.0, -skew->y);
+        skew->z = eina_point_3d_dot(&row1, &row2);
+        eina_point_3d_combine(&row2, &row2, &row1, 1.0, -skew->z);
+
+        // Next, get Z scale and normalize 3rd row.
+        scale->z = eina_point_3d_norm(&row2);
+        eina_point_3d_normalize(&row2, scale->z);
+
+        tmp = 1 / scale->z;
+        skew->y *= tmp;
+        skew->z *= tmp;
+
+        // At this point, the matrix (in rows) is orthonormal.
+        // Check for a coordinate system flip.  If the determinant
+        // is -1, then negate the matrix and the scaling factors.
+        eina_point3d_cross(&cross, &row1, &row2);
+        if (eina_point_3d_dot(&row0, &cross) < 0)
+          {
+             eina_point_3d_dot(scale, scale);
+             eina_point_3d_dot(&row0, &row0);
+             eina_point_3d_dot(&row1, &row1);
+             eina_point_3d_dot(&row2, &row2);
+          }
+
+        if (rotation)
+          {
+             // Now, get the rotations out
+             rotation->x = 0.5 * sqrt(_max(1 + row0.x - row1.y - row2.z, 0));
+             rotation->y = 0.5 * sqrt(_max(1 - row0.x + row1.y - row2.z, 0));
+             rotation->z = 0.5 * sqrt(_max(1 - row0.x - row1.y + row2.z, 0));
+             rotation->w = 0.5 * sqrt(_max(1 + row0.x + row1.y + row2.z, 0));
+
+             if (row2.y > row1.z) rotation->x = - rotation->x;
+             if (row0.z > row2.x) rotation->y = - rotation->y;
+             if (row1.x > row0.y) rotation->z = - rotation->z;
+          }
+     }
+
+   return EINA_TRUE;
+}
+
 EAPI void
 eina_matrix3_quaternion_get(Eina_Quaternion *q,
                             const Eina_Matrix3 *m)
@@ -673,4 +881,106 @@ eina_matrix3_quaternion_get(Eina_Quaternion *q,
    q->x = x;
    q->y = y;
    q->z = z;
+}
+
+EAPI void
+eina_quaternion_matrix4_to(Eina_Matrix4 *m,
+                           const Eina_Quaternion *rotation,
+                           const Eina_Quaternion *perspective,
+                           const Eina_Point_3D *translation,
+                           const Eina_Point_3D *scale,
+                           const Eina_Point_3D *skew)
+{
+   Eina_Matrix4 rm, tmp;
+   double x, y, z, w;
+
+   eina_matrix4_identity(m);
+
+   // apply perspective
+   m->wx = perspective->x;
+   m->wy = perspective->y;
+   m->wz = perspective->z;
+   m->ww = perspective->w;
+
+   // apply translation
+   m->xw = translation->x * m->xx + translation->y * m->xy + translation->z * m->xz;
+   m->yw = translation->x * m->yx + translation->y * m->yy + translation->z * m->yz;
+   m->zw = translation->x * m->zx + translation->y * m->zy + translation->z * m->zz;
+
+   // apply rotation
+   x = rotation->x;
+   y = rotation->y;
+   z = rotation->z;
+   w = rotation->w;
+
+   // Construct a composite rotation matrix from the quaternion values
+   // rotationMatrix is a identity 4x4 matrix initially
+   eina_matrix4_identity(&rm);
+
+   rm.xx = 1 - 2 * (y * y + z * z);
+   rm.xy = 2 * (x * y - z * w);
+   rm.xz = 2 * (x * z + y * w);
+   rm.yx = 2 * (x * y + z * w);
+   rm.yy = 1 - 2 * (x * x + z * z);
+   rm.yz = 2 * (y * z - x * w);
+   rm.zx = 2 * (x * z - y * w);
+   rm.zy = 2 * (y * z + x * w);
+   rm.zz = 1 - 2 * (x * x + y * y);
+
+   eina_matrix4_multiply(&tmp, m, &rm);
+
+   // apply skew
+   // rm is a identity 4x4 matrix initially
+   if (skew->z)
+     {
+        Eina_Matrix4 cp;
+
+        eina_matrix4_identity(&rm);
+        rm.zx = skew->z;
+
+        eina_matrix4_multiply(&cp, &tmp, &rm);
+        tmp = cp;
+     }
+
+   if (skew->y)
+     {
+        Eina_Matrix4 cp;
+
+        eina_matrix4_identity(&rm);
+        rm.zy = 0;
+        rm.zx = skew->y;
+
+        eina_matrix4_multiply(&cp, &tmp, &rm);
+        tmp = cp;
+     }
+
+   if (skew->x)
+     {
+        Eina_Matrix4 cp;
+
+        eina_matrix4_identity(&rm);
+        rm.zx = 0;
+        rm.yx = skew->x;
+
+        eina_matrix4_multiply(&cp, &tmp, &rm);
+        tmp = cp;
+     }
+
+   // apply scale
+   m->xx = tmp.xx * scale->x;
+   m->xy = tmp.xy * scale->x;
+   m->xz = tmp.xz * scale->x;
+   m->xw = tmp.xw;
+   m->yx = tmp.yx * scale->y;
+   m->yy = tmp.yy * scale->y;
+   m->yz = tmp.yz * scale->y;
+   m->yw = tmp.yw;
+   m->zx = tmp.zx * scale->z;
+   m->zy = tmp.zy * scale->z;
+   m->zz = tmp.zz * scale->z;
+   m->zw = tmp.zw;
+   m->wx = tmp.wx;
+   m->wy = tmp.wy;
+   m->wz = tmp.wz;
+   m->ww = tmp.ww;
 }
