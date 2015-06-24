@@ -1,6 +1,19 @@
 ==========
-EFL 1.14.1
+EFL 1.14.2
 ==========
+
+Changes since 1.14.1:
+---------------------
+
+Fixes:
+
+   * pkg-config: fix portability issue on Windows. (T2458)
+   * edje: set GROUP/SWALLOW/EXTERNAL pass events based on mouse events
+   * eina semaphore lock - don't wake up because of signals
+   * ecore: null cb function is unacceptable.
+   * Evas filters: Fix blend with color with rgba buffers
+   * Evas: Remove shader_3d .x generated file from BUILT_SOURCES
+   * eina/simple_xml_parser: don't parse the <, > in the attribute string.
 
 Changes since 1.14.0:
 ---------------------
