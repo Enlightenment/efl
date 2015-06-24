@@ -78,8 +78,8 @@ bin_PROGRAMS += bin/efreet/efreetd
 bin_efreet_efreetd_SOURCES = \
 bin/efreet/efreetd.c \
 bin/efreet/efreetd.h \
-bin/efreet/efreetd_dbus.h \
-bin/efreet/efreetd_dbus.c \
+bin/efreet/efreetd_ipc.h \
+bin/efreet/efreetd_ipc.c \
 bin/efreet/efreetd_cache.h \
 bin/efreet/efreetd_cache.c
 
@@ -206,8 +206,7 @@ efreettestsub_DATA = \
 tests/efreet/data/sub/test.desktop
 
 check_PROGRAMS += tests/efreet/efreet_suite
-# Need to run with dbus-launch - disable for now
-#TESTS += tests/efreet/efreet_suite
+TESTS += tests/efreet/efreet_suite
 
 tests_efreet_efreet_suite_SOURCES = \
 tests/efreet/efreet_suite.c \

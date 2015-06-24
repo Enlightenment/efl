@@ -7,7 +7,7 @@
 #include <Ecore_File.h>
 #include <Eet.h>
 #include "efreetd.h"
-#include "efreetd_dbus.h"
+#include "efreetd_ipc.h"
 
 #include "Efreet.h"
 #define EFREET_MODULE_LOG_DOM efreetd_log_dom

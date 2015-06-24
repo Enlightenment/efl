@@ -15,7 +15,7 @@
 #include <Eet.h>
 #include <Ecore.h>
 #include <Ecore_File.h>
-#include <Eldbus.h>
+#include <Ecore_Ipc.h>
 
 /* define macros and variable for using the eina logging system  */
 #define EFREET_MODULE_LOG_DOM _efreet_cache_log_dom
@@ -35,13 +35,11 @@ struct _Efreet_Old_Cache
     Eet_File *ef;
 };
 
-/* TODO: Common define location with daemon */
-#define BUS "org.enlightenment.Efreet"
-#define PATH "/org/enlightenment/Efreet"
-#define INTERFACE "org.enlightenment.Efreet"
-
-static Eldbus_Connection *conn = NULL;
-static Eldbus_Proxy *proxy = NULL;
+static Ecore_Ipc_Server    *ipc = NULL;
+static Eina_Prefix         *pfx = NULL;
+static Ecore_Event_Handler *hnd_add = NULL;
+static Ecore_Event_Handler *hnd_del = NULL;
+static Ecore_Event_Handler *hnd_data = NULL;
 
 static Eina_Lock _lock;
 
@@ -97,10 +95,6 @@ static void efreet_cache_icon_theme_free(Efreet_Icon_Theme *theme);
 static Eina_Bool efreet_cache_check(Eet_File **ef, const char *path, int major);
 static void *efreet_cache_close(Eet_File *ef);
 
-static void on_send_register(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending);
-static void desktop_cache_update(void *context, const Eldbus_Message *msg);
-static void icon_cache_update(void *context, const Eldbus_Message *msg);
-
 static void icon_cache_update_free(void *data, void *ev);
 
 static void *hash_array_string_add(void *hash, const char *key, void *data);
@@ -108,6 +102,122 @@ static void *hash_array_string_add(void *hash, const char *key, void *data);
 EAPI int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
 EAPI int EFREET_EVENT_DESKTOP_CACHE_UPDATE = 0;
 EAPI int EFREET_EVENT_DESKTOP_CACHE_BUILD = 0;
+
+#define IPC_HEAD(_type) \
+   Ecore_Ipc_Event_Server_##_type *e = event; \
+   if (e->server != ipc) \
+     return ECORE_CALLBACK_PASS_ON
+
+static void
+_ipc_launch(void)
+{
+   char buf[PATH_MAX];
+   int num = 0;
+
+   if (!pfx) snprintf(buf, sizeof(buf), "efreetd");
+   else snprintf(buf, sizeof(buf), "%s/efreetd", eina_prefix_bin_get(pfx));
+   ecore_exe_run(buf, NULL);
+   while ((!ipc) && (num < 500))
+     {
+        num++;
+        usleep(1000);
+        ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
+     }
+}
+
+static Eina_Bool
+_cb_server_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   IPC_HEAD(Add);
+   return ECORE_CALLBACK_DONE;
+}
+
+static Eina_Bool
+_cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   IPC_HEAD(Del);
+   ipc = NULL;
+   _ipc_launch();
+   return ECORE_CALLBACK_DONE;
+}
+
+static Eina_Bool
+_cb_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   IPC_HEAD(Data);
+   if (e->major == 1) // registration
+     {
+        if (e->minor == 1)
+          ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_BUILD, NULL, NULL, NULL);
+     }
+   else if (e->major == 2) // icon cache update
+     {
+        if (e->minor == 1)
+          {
+             Efreet_Event_Cache_Update *ev;
+
+             efreet_cache_desktop_close();
+
+             ev = NEW(Efreet_Event_Cache_Update, 1);
+             if (ev)
+                ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, NULL, NULL);
+          }
+        else
+          ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_BUILD, NULL, NULL, NULL);
+     }
+   else if (e->major == 3) // desktop cache update
+     {
+        Efreet_Event_Cache_Update *ev = NULL;
+        Efreet_Old_Cache *d = NULL;
+        Eina_List *l = NULL;
+
+        if (e->minor == 1)
+          {
+             ev = NEW(Efreet_Event_Cache_Update, 1);
+             if (!ev) goto error;
+
+             IF_RELEASE(theme_name);
+
+             // Save all old caches
+             d = NEW(Efreet_Old_Cache, 1);
+             if (!d) goto error;
+             d->hash = themes;
+             d->ef = icon_theme_cache;
+             l = eina_list_append(l, d);
+
+             d = NEW(Efreet_Old_Cache, 1);
+             if (!d) goto error;
+             d->hash = icons;
+             d->ef = icon_cache;
+             l = eina_list_append(l, d);
+
+             d = NEW(Efreet_Old_Cache, 1);
+             if (!d) goto error;
+             d->hash = fallbacks;
+             d->ef = fallback_cache;
+             l = eina_list_append(l, d);
+
+             // Create new empty caches
+             themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_theme_free));
+             icons = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_free));
+             fallbacks = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_fallback_free));
+
+             icon_theme_cache = NULL;
+             icon_cache = NULL;
+             fallback_cache = NULL;
+
+             // Send event
+             ecore_event_add(EFREET_EVENT_ICON_CACHE_UPDATE, ev, icon_cache_update_free, l);
+             goto done;
+          }
+error:
+        IF_FREE(ev);
+          EINA_LIST_FREE(l, d)
+        free(d);
+     }
+done:
+   return ECORE_CALLBACK_DONE;
+}
 
 int
 efreet_cache_init(void)
@@ -139,31 +249,43 @@ efreet_cache_init(void)
     fallbacks = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_fallback_free));
     desktops = eina_hash_string_superfast_new(NULL);
 
-    eldbus_init();
+    ecore_ipc_init();
+   // XXX: connect to efreetd
+
     if (efreet_cache_update)
     {
-        conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
-        if (conn)
-        {
-            Eldbus_Object *obj;
+       pfx = eina_prefix_new
+         (NULL, efreet_icon_cache_file, "EFREET", "efreet", "checkme",
+          PACKAGE_BIN_DIR, PACKAGE_LIB_DIR, PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+       ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
+       if (!ipc) _ipc_launch();
+       if (ipc)
+         {
+            const char *s;
+            int len = 0;
 
-            obj = eldbus_object_get(conn, BUS, PATH);
-            proxy = eldbus_proxy_get(obj, INTERFACE);
-            eldbus_proxy_signal_handler_add(proxy, "IconCacheUpdate", icon_cache_update, NULL);
-            eldbus_proxy_signal_handler_add(proxy, "DesktopCacheUpdate", desktop_cache_update, NULL);
+            hnd_add = ecore_event_handler_add(ECORE_IPC_EVENT_SERVER_ADD,
+                                              _cb_server_add, NULL);
+            hnd_del = ecore_event_handler_add(ECORE_IPC_EVENT_SERVER_DEL,
+                                              _cb_server_del, NULL);
+            hnd_data = ecore_event_handler_add(ECORE_IPC_EVENT_SERVER_DATA,
+                                               _cb_server_data, NULL);
+            s = efreet_language_get();
+            if (s) len = strlen(s);
+            ecore_ipc_server_send(ipc, 1, 0, 0, 0, 0, s, len);
+         }
+       else
+         {
+            Efreet_Event_Cache_Update *ev;
 
-            eldbus_proxy_call(proxy, "Register", on_send_register, NULL, -1, "s", efreet_language_get());
-
-            /*
-             * TODO: Needed?
-             eldbus_name_owner_changed_callback_add(conn, BUS, on_name_owner_changed,
-             conn, EINA_TRUE);
-             */
-        }
-        else
-        {
-            /* TODO: Run cache process directly */
-        }
+            WRN("Can't contact efreetd daemon for desktop/icon etc. changes");
+            ev = NEW(Efreet_Event_Cache_Update, 1);
+            if (ev)
+              {
+                 ev->error = 1;
+                 ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_BUILD, ev, NULL, NULL);
+              }
+         }
     }
 
     return 1;
@@ -226,19 +348,16 @@ efreet_cache_shutdown(void)
     util_cache = efreet_cache_close(util_cache);
     IF_RELEASE(util_cache_file);
 
-    /*
-     * TODO: Needed??
-    eldbus_name_owner_changed_callback_del(conn, BUS, on_name_owner_changed, conn);
-    */
-    if (conn)
-      {
-         Eldbus_Object *obj = eldbus_proxy_object_get(proxy);
-         eldbus_proxy_unref(proxy);
-         eldbus_object_unref(obj);
-         eldbus_connection_unref(conn);
-      }
-
-    eldbus_shutdown();
+   if (ipc) ecore_ipc_server_del(ipc);
+   if (pfx) eina_prefix_free(pfx);
+   if (hnd_add) ecore_event_handler_del(hnd_add);
+   if (hnd_del) ecore_event_handler_del(hnd_del);
+   if (hnd_data) ecore_event_handler_del(hnd_data);
+   ipc = NULL;
+   pfx = NULL;
+   hnd_add = NULL;
+   hnd_del = NULL;
+   hnd_data = NULL;
 
     eina_lock_free(&_lock);
 
@@ -924,65 +1043,67 @@ efreet_cache_desktop_free(Efreet_Desktop *desktop)
 void
 efreet_cache_desktop_add(Efreet_Desktop *desktop)
 {
-    Eldbus_Message *msg;
-    Eldbus_Message_Iter *iter, *array_of_string;
-    char *path;
+   char *path;
 
-    if ((!efreet_cache_update) || (!proxy))
-        return;
-    /* TODO: Chunk updates */
-    if (!eina_main_loop_is()) return;
+   if ((!efreet_cache_update) || (!ipc)) return;
+   if (!eina_main_loop_is()) return;
     /*
      * TODO: Call in thread with:
-    ecore_thread_main_loop_begin();
-    ecore_thread_main_loop_end();
+     *   ecore_thread_main_loop_begin();
+     *  ecore_thread_main_loop_end();
     */
-    path = ecore_file_dir_get(desktop->orig_path);
-    msg = eldbus_proxy_method_call_new(proxy, "AddDesktopDirs");
-    iter = eldbus_message_iter_get(msg);
-    array_of_string = eldbus_message_iter_container_new(iter, 'a',"s");
-    eldbus_message_iter_basic_append(array_of_string, 's', path);
-    eldbus_message_iter_container_close(iter, array_of_string);
-    eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
-    free(path);
+   path = ecore_file_dir_get(desktop->orig_path);
+   if (!path) return;
+   ecore_ipc_server_send(ipc, 2, 0, 0, 0, 0, path, strlen(path));
+   free(path);
 }
 
 void
 efreet_cache_icon_exts_add(Eina_List *exts)
 {
-    Eldbus_Message *msg;
-    Eldbus_Message_Iter *iter, *array_of_string;
-    Eina_List *l;
-    const char *ext;
+   Eina_List *l;
+   const char *s;
+   Eina_Binbuf *buf;
+   int num = 0;
+   unsigned char nil[1] = { 0 };
 
-    if ((!efreet_cache_update) || (!proxy))
-        return;
-    msg = eldbus_proxy_method_call_new(proxy, "AddIconExts");
-    iter = eldbus_message_iter_get(msg);
-    array_of_string = eldbus_message_iter_container_new(iter, 'a',"s");
-    EINA_LIST_FOREACH(exts, l, ext)
-        eldbus_message_iter_basic_append(array_of_string, 's', ext);
-    eldbus_message_iter_container_close(iter, array_of_string);
-    eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
+   if ((!efreet_cache_update) || (!ipc)) return;
+   buf = eina_binbuf_new();
+   if (!buf) return;
+   EINA_LIST_FOREACH(exts, l, s)
+     {
+        if (num > 0) eina_binbuf_append_length(buf, nil, 1);
+        eina_binbuf_append_length(buf, (unsigned char *)s, strlen(s));
+        num++;
+     }
+   ecore_ipc_server_send(ipc, 5 /* add icon exts */, 0, 0, 0, 0,
+                         eina_binbuf_string_get(buf),
+                         eina_binbuf_length_get(buf));
+   eina_binbuf_free(buf);
 }
 
 void
 efreet_cache_icon_dirs_add(Eina_List *dirs)
 {
-    Eldbus_Message *msg;
-    Eldbus_Message_Iter *iter, *array_of_string;
-    Eina_List *l;
-    const char *dir;
+   Eina_List *l;
+   const char *s;
+   Eina_Binbuf *buf;
+   int num = 0;
+   unsigned char nil[1] = { 0 };
 
-    if ((!efreet_cache_update) || (!proxy))
-        return;
-    msg = eldbus_proxy_method_call_new(proxy, "AddIconDirs");
-    iter = eldbus_message_iter_get(msg);
-    array_of_string = eldbus_message_iter_container_new(iter, 'a',"s");
-    EINA_LIST_FOREACH(dirs, l, dir)
-        eldbus_message_iter_basic_append(array_of_string, 's', dir);
-    eldbus_message_iter_container_close(iter, array_of_string);
-    eldbus_proxy_send(proxy, msg, NULL, NULL, -1);
+   if ((!efreet_cache_update) || (!ipc)) return;
+   buf = eina_binbuf_new();
+   if (!buf) return;
+   EINA_LIST_FOREACH(dirs, l, s)
+     {
+        if (num > 0) eina_binbuf_append_length(buf, nil, 1);
+        eina_binbuf_append_length(buf, (unsigned char *)s, strlen(s));
+        num++;
+     }
+   ecore_ipc_server_send(ipc, 4 /* add icon dirs */, 0, 0, 0, 0,
+                         eina_binbuf_string_get(buf),
+                         eina_binbuf_length_get(buf));
+   eina_binbuf_free(buf);
 }
 
 void
@@ -1025,9 +1146,12 @@ efreet_cache_desktop_close(void)
 void
 efreet_cache_desktop_build(void)
 {
-    if ((!efreet_cache_update) || (!proxy))
-        return;
-    eldbus_proxy_call(proxy, "BuildDesktopCache", NULL, NULL, -1, "s", efreet_language_get());
+   const char *s;
+   int len = 0;
+   if ((!efreet_cache_update) || (!ipc)) return;
+   s = efreet_language_get();
+   if (s) len = strlen(s);
+   ecore_ipc_server_send(ipc, 3 /* build desktop cache */, 0, 0, 0, 0, s, len);
 }
 
 static Eina_Bool
@@ -1119,103 +1243,6 @@ efreet_cache_util_names(const char *key)
     util_cache_names_key = eina_stringshare_add(key);
     util_cache_names = eet_data_read(util_cache, efreet_array_string_edd(), key);
     return util_cache_names;
-}
-
-static void
-on_send_register(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
-{
-    const char *errname, *errmsg;
-    Eina_Bool exists;
-
-    if (eldbus_message_error_get(msg, &errname, &errmsg))
-    {
-        Efreet_Event_Cache_Update *ev = NULL;
-
-        WRN("%s %s", errname, errmsg);
-
-        ev = NEW(Efreet_Event_Cache_Update, 1);
-        if (ev)
-        {
-            ev->error = 1;
-            ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_BUILD, ev, NULL, NULL);
-        }
-    }
-    else if (eldbus_message_arguments_get(msg, "b", &exists) && exists)
-        ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_BUILD, NULL, NULL, NULL);
-}
-
-static void
-desktop_cache_update(void *context EINA_UNUSED, const Eldbus_Message *msg)
-{
-    Eina_Bool update;
-
-    if (eldbus_message_arguments_get(msg, "b", &update))
-    {
-        if (update)
-        {
-            Efreet_Event_Cache_Update *ev = NULL;
-
-            efreet_cache_desktop_close();
-
-            ev = NEW(Efreet_Event_Cache_Update, 1);
-            if (ev)
-                ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, NULL, NULL);
-        }
-        ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_BUILD, NULL, NULL, NULL);
-    }
-}
-
-static void
-icon_cache_update(void *context EINA_UNUSED, const Eldbus_Message *msg)
-{
-    Efreet_Event_Cache_Update *ev = NULL;
-    Efreet_Old_Cache *d = NULL;
-    Eina_List *l = NULL;
-    Eina_Bool update;
-
-    if (eldbus_message_arguments_get(msg, "b", &update) && update)
-    {
-        ev = NEW(Efreet_Event_Cache_Update, 1);
-        if (!ev) goto error;
-
-        IF_RELEASE(theme_name);
-
-        /* Save all old caches */
-        d = NEW(Efreet_Old_Cache, 1);
-        if (!d) goto error;
-        d->hash = themes;
-        d->ef = icon_theme_cache;
-        l = eina_list_append(l, d);
-
-        d = NEW(Efreet_Old_Cache, 1);
-        if (!d) goto error;
-        d->hash = icons;
-        d->ef = icon_cache;
-        l = eina_list_append(l, d);
-
-        d = NEW(Efreet_Old_Cache, 1);
-        if (!d) goto error;
-        d->hash = fallbacks;
-        d->ef = fallback_cache;
-        l = eina_list_append(l, d);
-
-        /* Create new empty caches */
-        themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_theme_free));
-        icons = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_free));
-        fallbacks = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_fallback_free));
-
-        icon_theme_cache = NULL;
-        icon_cache = NULL;
-        fallback_cache = NULL;
-
-        /* Send event */
-        ecore_event_add(EFREET_EVENT_ICON_CACHE_UPDATE, ev, icon_cache_update_free, l);
-    }
-    return;
-error:
-    IF_FREE(ev);
-    EINA_LIST_FREE(l, d)
-        free(d);
 }
 
 static void

@@ -4121,10 +4121,10 @@ EFL_PLATFORM_DEPEND([EFREET], [evil])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [eet])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [ecore])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [ecore-file])
-EFL_INTERNAL_DEPEND_PKG([EFREET], [eldbus])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [eo])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [eina])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [emile])
+EFL_INTERNAL_DEPEND_PKG([EFREET], [ecore-ipc])
 
 ### Checks for header files
 
@@ -4755,9 +4755,7 @@ pc/ethumb.pc
 pc/ethumb_client.pc
 pc/elocation.pc
 pc/elua.pc
-dbus-services/org.enlightenment.Efreet.service
 dbus-services/org.enlightenment.Ethumb.service
-systemd-services/efreet.service
 systemd-services/ethumb.service
 $po_makefile_in
 cmakeconfig/EflConfig.cmake
@@ -5261,25 +5259,21 @@ if test "x$prefix" != "x/usr"; then
       echo ""
       echo "System-wide installation:"
       echo "  ln -s ${resolved_dbusservicedir}/org.enlightenment.Ethumb.service /usr/share/dbus-1/services/org.enlightenment.Ethumb.service"
-      echo "  ln -s ${resolved_dbusservicedir}/org.enlightenment.Efreet.service /usr/share/dbus-1/services/org.enlightenment.Efreet.service"
       echo ""
       echo "  or add \"${resolved_datadir}\" to \$XDG_DATA_DIRS"
       echo ""
       echo "User installation:"
       echo "  ln -s ${resolved_dbusservicedir}/org.enlightenment.Ethumb.service ~/.local/share/dbus-1/services/org.enlightenment.Ethumb.service"
-      echo "  ln -s ${resolved_dbusservicedir}/org.enlightenment.Efreet.service ~/.local/share/dbus-1/services/org.enlightenment.Efreet.service"
     fi
     if test $needs_alert_systemd -eq 1; then
       echo ""
       echo "System-wide installation:"
       echo "  ln -s ${resolved_USER_SESSION_DIR}/ethumb.service /usr/lib/systemd/user/ethumb.service"
-      echo "  ln -s ${resolved_USER_SESSION_DIR}/efreet.service /usr/lib/systemd/user/efreet.service"
       echo ""
       echo "  or add \"${base_USER_SESSION_DIR}\" to \$XDG_DATA_DIRS or \$XDG_CONFIG_DIRS"
       echo ""
       echo "User installation:"
       echo "  ln -s ${resolved_USER_SESSION_DIR}/ethumb.service ~/.config/systemd/user/ethumb.service"
-      echo "  ln -s ${resolved_USER_SESSION_DIR}/efreet.service ~/.config/systemd/user/efreet.service"
     fi
     echo ""
     echo "#-------------------------------------------------------------------#"

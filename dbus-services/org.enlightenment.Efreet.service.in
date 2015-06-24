@@ -1,4 +1,0 @@
-[D-BUS Service]
-Name=org.enlightenment.Efreet
-Exec=@prefix@/bin/efreetd
-@systemd_dbus_prefix@SystemdService=efreet.service

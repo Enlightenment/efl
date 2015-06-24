@@ -12,8 +12,8 @@
 #include <Ecore_File.h>
 
 #include "efreetd.h"
-#include "efreetd_dbus.h"
 #include "efreetd_cache.h"
+#include "efreetd_ipc.h"
 
 int efreetd_log_dom = -1;
 
@@ -61,13 +61,13 @@ main(int argc, char *argv[])
    if (!ecore_init()) goto ecore_error;
    ecore_app_args_set(argc, (const char **)argv);
    if (!ecore_file_init()) goto ecore_file_error;
-   if (!dbus_init()) goto dbus_error;
+   if (!ipc_init()) goto ipc_error;
    if (!cache_init()) goto cache_error;
 
    ecore_main_loop_begin();
 
    cache_shutdown();
-   dbus_shutdown();
+   ipc_shutdown();
    ecore_file_shutdown();
    ecore_shutdown();
    eina_log_domain_unregister(efreetd_log_dom);
@@ -76,8 +76,8 @@ main(int argc, char *argv[])
    return 0;
 
 cache_error:
-   dbus_shutdown();
-dbus_error:
+   ipc_shutdown();
+ipc_error:
    ecore_file_shutdown();
 ecore_file_error:
    ecore_shutdown();

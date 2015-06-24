@@ -383,13 +383,11 @@ cmakeconfig/EmileConfigVersion.cmake
 
 servicedir = @dbusservicedir@
 service_DATA = \
-dbus-services/org.enlightenment.Efreet.service \
 dbus-services/org.enlightenment.Ethumb.service
 
 if HAVE_SYSTEMD_USER_SESSION
 systemdunitsdir = @USER_SESSION_DIR@
 systemdunits_DATA = \
-systemd-services/efreet.service \
 systemd-services/ethumb.service
 endif
 EXTRA_DIST += $(systemdunits_DATA)
