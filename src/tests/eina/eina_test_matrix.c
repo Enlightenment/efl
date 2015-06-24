@@ -72,21 +72,20 @@ END_TEST
 
 START_TEST(eina_matrix4_2_3)
 {
-   Eina_Matrix4 m4, m4b;
-   Eina_Matrix3 m3;
+   Eina_Matrix4 m4;
+   Eina_Matrix3 m3, m3b;
 
    eina_init();
 
-   eina_matrix4_values_set(&m4,
-                           1, 3, 2, 0,
-                           3, 1, 4, 0,
-                           2, 4, 1, 0,
-                           0, 0, 0, 1);
+   eina_matrix3_values_set(&m3,
+                           1, 3, 2,
+                           3, 1, 4,
+                           2, 4, 1);
 
-   eina_matrix4_matrix3_to(&m3, &m4);
-   eina_matrix3_matrix4_to(&m4b, &m3);
+   eina_matrix3_matrix4_to(&m4, &m3);
+   eina_matrix4_matrix3_to(&m3b, &m4);
 
-   fail_if(memcmp(&m4, &m4b, sizeof (Eina_Matrix4)) != 0);
+   fail_if(memcmp(&m3, &m3b, sizeof (Eina_Matrix3)) != 0);
 
    eina_shutdown();
 }

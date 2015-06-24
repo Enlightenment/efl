@@ -664,13 +664,13 @@ eina_matrix4_matrix3_to(Eina_Matrix3 *m3, const Eina_Matrix4 *m4)
 {
    MATRIX_XX(m3) = MATRIX_XX(m4);
    MATRIX_XY(m3) = MATRIX_XY(m4);
-   MATRIX_XZ(m3) = MATRIX_XZ(m4);
+   MATRIX_XZ(m3) = MATRIX_XW(m4);
    MATRIX_YX(m3) = MATRIX_YX(m4);
    MATRIX_YY(m3) = MATRIX_YY(m4);
-   MATRIX_YZ(m3) = MATRIX_YZ(m4);
-   MATRIX_ZX(m3) = MATRIX_ZX(m4);
-   MATRIX_ZY(m3) = MATRIX_ZY(m4);
-   MATRIX_ZZ(m3) = MATRIX_ZZ(m4);
+   MATRIX_YZ(m3) = MATRIX_YW(m4);
+   MATRIX_ZX(m3) = MATRIX_WX(m4);
+   MATRIX_ZY(m3) = MATRIX_WY(m4);
+   MATRIX_ZZ(m3) = MATRIX_WW(m4);
 }
 
 EAPI void
@@ -678,18 +678,18 @@ eina_matrix3_matrix4_to(Eina_Matrix4 *m4, const Eina_Matrix3 *m3)
 {
    MATRIX_XX(m4) = MATRIX_XX(m3);
    MATRIX_XY(m4) = MATRIX_XY(m3);
-   MATRIX_XZ(m4) = MATRIX_XZ(m3);
-   MATRIX_XW(m4) = 0;
+   MATRIX_XZ(m4) = 0;
+   MATRIX_XW(m4) = MATRIX_XZ(m3);
    MATRIX_YX(m4) = MATRIX_YX(m3);
    MATRIX_YY(m4) = MATRIX_YY(m3);
-   MATRIX_YZ(m4) = MATRIX_YZ(m3);
-   MATRIX_YW(m4) = 0;
-   MATRIX_ZX(m4) = MATRIX_ZX(m3);
-   MATRIX_ZY(m4) = MATRIX_ZY(m3);
-   MATRIX_ZZ(m4) = MATRIX_ZZ(m3);
+   MATRIX_YZ(m4) = 0;
+   MATRIX_YW(m4) = MATRIX_YZ(m3);
+   MATRIX_ZX(m4) = 0;
+   MATRIX_ZY(m4) = 0;
+   MATRIX_ZZ(m4) = 1;
    MATRIX_ZW(m4) = 0;
-   MATRIX_WX(m4) = 0;
-   MATRIX_WY(m4) = 0;
+   MATRIX_WX(m4) = MATRIX_ZX(m3);
+   MATRIX_WY(m4) = MATRIX_ZY(m3);
    MATRIX_WZ(m4) = 0;
-   MATRIX_WW(m4) = 1;
+   MATRIX_WW(m4) = MATRIX_ZZ(m3);
 }
