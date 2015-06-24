@@ -157,6 +157,8 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
         _ecore_evas_idle_timeout_update(ee);
      }
 
+   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+
    return updates ? 1 : rend;
 }
 
