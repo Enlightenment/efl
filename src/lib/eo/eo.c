@@ -974,8 +974,17 @@ _eo_add_internal_end(Eo *eo_id)
 
         if (!eo_id)
           {
-             ERR("Object of class '%s' - Finalizing the object failed.",
-                   klass->desc->name);
+// XXX: Given EFL usage of objects, construction is a perfectly valid thing
+// to do. we shouldn't complain about it as handling a NULL obj creation is
+// the job of the caller. a perfect example here is ecore_con and ecore_ipc
+// where you create a con or ipc obj then set up type/destination/port and
+// the finalize of the constructor does the actual connect and thus this
+// fails or succeeds based on if service is there.
+//
+// until there is a better solution - don't complain here.
+// 
+//             ERR("Object of class '%s' - Finalizing the object failed.",
+//                   klass->desc->name);
              goto cleanup;
           }
      }
