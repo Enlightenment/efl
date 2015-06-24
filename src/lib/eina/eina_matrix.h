@@ -512,6 +512,19 @@ EAPI void eina_matrix4_values_get(const Eina_Matrix4 *m,
                                   double *wx, double *wy, double *wz, double *ww);
 
 /**
+ * @brief Return the determinant of the given matrix.
+ *
+ * @param m The matrix.
+ * @return The determinant.
+ *
+ * This function returns the determinant of the matrix @p m. No check
+ * is done on @p m.
+ *
+ * @since 1.15
+ */
+EAPI double eina_matrix4_determinant(const Eina_Matrix4 *m);
+
+/**
  * @brief Convert an Eina_Matrix4 into an Eina_Matrix3.
  *
  * @param m3 The destination Eina_Matrix3.
