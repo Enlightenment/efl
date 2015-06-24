@@ -184,6 +184,7 @@ _ecore_audio_out_pulse_ecore_audio_out_input_detach(Eo *eo_obj, Ecore_Audio_Out_
 {
   pa_stream *stream = NULL;
   Eina_Bool ret2 = EINA_FALSE;
+  pa_operation *op;
 
   eo_do_super(eo_obj, MY_CLASS, ret2 = ecore_audio_obj_out_input_detach(in));
   if (!ret2)
@@ -192,8 +193,14 @@ _ecore_audio_out_pulse_ecore_audio_out_input_detach(Eo *eo_obj, Ecore_Audio_Out_
   eo_do(in, stream = eo_key_data_get("pulse_data"));
 
   pa_stream_set_write_callback(stream, NULL, NULL);
-  pa_operation_unref(pa_stream_drain(stream, _drain_cb, NULL));
+  op = pa_stream_drain(stream, _drain_cb, NULL);
+  if (!op)
+    {
+       ERR("Failed to drain PulseAudio stream.");
+       return EINA_FALSE;
+    }
 
+  pa_operation_unref(op);
   return EINA_TRUE;
 }
 
