@@ -140,7 +140,6 @@ pc/ecore-imf.pc \
 pc/ecore-imf-evas.pc \
 pc/ecore-evas.pc \
 pc/ecore-avahi.pc \
-pc/ecore-buffer.pc \
 pc/ector.pc \
 pc/embryo.pc \
 pc/eio.pc \
@@ -261,6 +260,10 @@ endif
 
 if HAVE_ECORE_AUDIO
 pkgconfig_DATA += pc/ecore-audio.pc pc/ecore-audio-cxx.pc
+endif
+
+if HAVE_ECORE_BUFFER
+pkgconfig_DATA += pc/ecore-buffer.pc
 endif
 
 # Cmake configs:
