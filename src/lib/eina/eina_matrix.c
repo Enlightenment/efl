@@ -23,6 +23,7 @@
 #include "eina_private.h"
 
 #include <math.h>
+#include <float.h>
 
 #include "eina_fp.h"
 #include "eina_rectangle.h"
@@ -722,4 +723,32 @@ eina_matrix4_determinant(const Eina_Matrix4 *m)
      - MATRIX_XX(m) * MATRIX_YZ(m) * MATRIX_ZY(m) * MATRIX_WW(m)
      - MATRIX_XY(m) * MATRIX_YX(m) * MATRIX_ZZ(m) * MATRIX_WW(m)
      + MATRIX_XX(m) * MATRIX_YY(m) * MATRIX_ZZ(m) * MATRIX_WW(m);
+}
+
+EAPI Eina_Bool
+eina_matrix4_normalized(Eina_Matrix4 *out, const Eina_Matrix4 *in)
+{
+   double det;
+
+   det = eina_matrix4_determinant(in);
+   if (fabs(det) < DBL_EPSILON) return EINA_FALSE;
+
+   MATRIX_XX(out) = MATRIX_XX(in) / det;
+   MATRIX_XY(out) = MATRIX_XY(in) / det;
+   MATRIX_XZ(out) = MATRIX_XZ(in) / det;
+   MATRIX_XW(out) = MATRIX_XW(in) / det;
+   MATRIX_YX(out) = MATRIX_YX(in) / det;
+   MATRIX_YY(out) = MATRIX_YY(in) / det;
+   MATRIX_YZ(out) = MATRIX_YZ(in) / det;
+   MATRIX_YW(out) = MATRIX_YW(in) / det;
+   MATRIX_ZX(out) = MATRIX_ZX(in) / det;
+   MATRIX_ZY(out) = MATRIX_ZY(in) / det;
+   MATRIX_ZZ(out) = MATRIX_ZZ(in) / det;
+   MATRIX_ZW(out) = MATRIX_ZW(in) / det;
+   MATRIX_WX(out) = MATRIX_WX(in) / det;
+   MATRIX_WY(out) = MATRIX_WY(in) / det;
+   MATRIX_WZ(out) = MATRIX_WZ(in) / det;
+   MATRIX_WW(out) = MATRIX_WW(in) / det;
+
+   return EINA_TRUE;
 }
