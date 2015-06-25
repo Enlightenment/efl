@@ -915,3 +915,24 @@ eina_matrix4_inverse(Eina_Matrix4 *out, const Eina_Matrix4 *in)
 
    return EINA_TRUE;
 }
+
+EAPI void
+eina_matrix4_transpose(Eina_Matrix4 *out, const Eina_Matrix4 *in)
+{
+   MATRIX_XX(out) = MATRIX_XX(in);
+   MATRIX_XY(out) = MATRIX_YX(in);
+   MATRIX_XZ(out) = MATRIX_ZX(in);
+   MATRIX_XW(out) = MATRIX_WX(in);
+   MATRIX_YX(out) = MATRIX_XY(in);
+   MATRIX_YY(out) = MATRIX_YY(in);
+   MATRIX_YZ(out) = MATRIX_ZY(in);
+   MATRIX_YW(out) = MATRIX_WY(in);
+   MATRIX_ZX(out) = MATRIX_XZ(in);
+   MATRIX_ZY(out) = MATRIX_YZ(in);
+   MATRIX_ZZ(out) = MATRIX_ZZ(in);
+   MATRIX_ZW(out) = MATRIX_WZ(in);
+   MATRIX_WX(out) = MATRIX_XW(in);
+   MATRIX_WY(out) = MATRIX_YW(in);
+   MATRIX_WZ(out) = MATRIX_ZW(in);
+   MATRIX_WW(out) = MATRIX_WW(in);
+}

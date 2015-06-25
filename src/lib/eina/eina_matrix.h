@@ -550,6 +550,18 @@ EAPI Eina_Bool eina_matrix4_normalized(Eina_Matrix4 *out,
 EAPI Eina_Bool eina_matrix4_inverse(Eina_Matrix4 *out, const Eina_Matrix4 *in);
 
 /**
+ * @brief Return the transpose of the given matrix.
+ *
+ * @param out The transpose matrix
+ * @param in The matrix.
+ *
+ * Just going to swap row and column.
+ *
+ * @since 1.15
+ */
+EAPI void eina_matrix4_transpose(Eina_Matrix4 *out, const Eina_Matrix4 *in);
+
+/**
  * @brief Convert an Eina_Matrix4 into an Eina_Matrix3.
  *
  * @param m3 The destination Eina_Matrix3.
