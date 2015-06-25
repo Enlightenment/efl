@@ -32,8 +32,7 @@ struct _Elm_Spinner_Data
    const char           *label;
    double                val, val_min, val_max, val_base;
    double                step; /**< step for the value change. 1 by default. */
-   double                drag_start_val; /**< spinner value on drag start.
-                                         this is reset to 0 when drag stops. */
+   double                drag_prev_pos, drag_val_step;
    double                spin_speed, interval, first_interval;
    int                   round;
    Ecore_Timer          *delay_change_timer; /**< a timer for a delay,changed smart callback */

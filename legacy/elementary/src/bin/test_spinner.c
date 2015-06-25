@@ -35,7 +35,7 @@ test_spinner(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    elm_spinner_label_format_set(sp, "%1.1f units");
    elm_spinner_step_set(sp, 1.3);
    elm_spinner_wrap_set(sp, EINA_TRUE);
-   elm_spinner_min_max_set(sp, -50.0, 250.0);
+   elm_spinner_min_max_set(sp, -5000.0, 5000.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_smart_callback_add(sp, "spinner,drag,start",

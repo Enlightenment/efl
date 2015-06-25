@@ -217,11 +217,18 @@ _drag_cb(void *data,
    else
      eo_do((Eo *)wd->resize_obj,
            edje_obj_part_drag_value_get("elm.dragable.slider", &pos, NULL));
+   if (sd->drag_prev_pos != 0)
+     sd->drag_val_step = pow((pos - sd->drag_prev_pos), 2);
+   else
+     sd->drag_val_step = 1;
 
-   delta = pos * sd->step * _elm_config->scale;
+
+   delta = sd->drag_val_step * sd->step * _elm_config->scale;
+   if (pos < sd->drag_prev_pos) delta *= -1;
+   sd->drag_prev_pos = pos;
    /* If we are on rtl mode, change the delta to be negative on such changes */
    if (elm_widget_mirrored_get(obj)) delta *= -1;
-   if (_value_set(data, sd->drag_start_val + delta)) _label_write(data);
+   if (_value_set(data, sd->val + delta)) _label_write(data);
    sd->dragging = 1;
 }
 
@@ -233,7 +240,8 @@ _drag_start_cb(void *data,
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
-   sd->drag_start_val = sd->val;
+   sd->drag_prev_pos = 0;
+   sd->drag_val_step = 1;
 
    evas_object_smart_callback_call(obj, SIG_DRAG_START, NULL);
 }
@@ -247,7 +255,8 @@ _drag_stop_cb(void *data,
    ELM_SPINNER_DATA_GET(data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
 
-   sd->drag_start_val = 0;
+   sd->drag_prev_pos = 0;
+   sd->drag_val_step = 1;
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", 0.0, 0.0);
 
