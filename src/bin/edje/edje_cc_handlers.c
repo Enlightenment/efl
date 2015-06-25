@@ -253,6 +253,7 @@ static void st_collections_group_parts_part_mouse_events(void);
 static void st_collections_group_parts_part_anti_alias(void);
 static void st_collections_group_parts_part_repeat_events(void);
 static void st_collections_group_parts_part_ignore_flags(void);
+static void st_collections_group_parts_part_mask_flags(void);
 static void st_collections_group_parts_part_scale(void);
 static void st_collections_group_parts_part_pointer_mode(void);
 static void st_collections_group_parts_part_precise_is_inside(void);
@@ -691,6 +692,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.anti_alias", st_collections_group_parts_part_anti_alias},
      {"collections.group.parts.part.repeat_events", st_collections_group_parts_part_repeat_events},
      {"collections.group.parts.part.ignore_flags", st_collections_group_parts_part_ignore_flags},
+     {"collections.group.parts.part.mask_flags", st_collections_group_parts_part_mask_flags},
      {"collections.group.parts.part.scale", st_collections_group_parts_part_scale},
      {"collections.group.parts.part.pointer_mode", st_collections_group_parts_part_pointer_mode},
      {"collections.group.parts.part.precise_is_inside", st_collections_group_parts_part_precise_is_inside},
@@ -983,6 +985,7 @@ New_Statement_Handler statement_handlers[] =
              before -> insert_before
              after -> insert_after
              ignore -> ignore_flags
+             mask -> mask_flags
              pointer -> pointer_mode
              alt_font -> use_alternate_font_metrics
              clip -> clip_to
@@ -1006,6 +1009,7 @@ New_Statement_Handler statement_handlers_short[] =
      {"collections.group.parts.part.before", st_collections_group_parts_part_insert_before},
      {"collections.group.parts.part.after", st_collections_group_parts_part_insert_after},
      {"collections.group.parts.part.ignore", st_collections_group_parts_part_ignore_flags},
+     {"collections.group.parts.part.mask", st_collections_group_parts_part_mask_flags},
      {"collections.group.parts.part.pointer", st_collections_group_parts_part_pointer_mode},
      {"collections.group.parts.part.alt_font", st_collections_group_parts_part_use_alternate_font_metrics},
      {"collections.group.parts.part.clip", st_collections_group_parts_part_clip_to_id},
@@ -3433,6 +3437,7 @@ _part_copy(Edje_Part *ep, Edje_Part *ep2)
    ep->anti_alias = ep2->anti_alias;
    ep->repeat_events = ep2->repeat_events;
    ep->ignore_flags = ep2->ignore_flags;
+   ep->mask_flags = ep2->mask_flags;
    ep->scale = ep2->scale;
    ep->pointer_mode = ep2->pointer_mode;
    ep->precise_is_inside = ep2->precise_is_inside;
@@ -4422,6 +4427,7 @@ st_collections_group_parts_alias(void)
                     mouse_events:  1;
                     repeat_events: 0;
                     ignore_flags: NONE;
+                    mask_flags: NONE;
                     clip_to: "anotherpart";
                     source:  "groupname";
                     pointer_mode: AUTOGRAB;
@@ -4473,6 +4479,7 @@ edje_cc_handlers_part_make(int id)
    ep->anti_alias = 1;
    ep->repeat_events = 0;
    ep->ignore_flags = EVAS_EVENT_FLAG_NONE;
+   ep->mask_flags = EVAS_EVENT_FLAG_NONE;
    ep->scale = 0;
    ep->pointer_mode = EVAS_OBJECT_POINTER_MODE_AUTOGRAB;
    ep->precise_is_inside = 0;
@@ -5256,6 +5263,31 @@ st_collections_group_parts_part_ignore_flags(void)
    check_min_arg_count(1);
 
    current_part->ignore_flags = parse_flags(0,
+				  "NONE", EVAS_EVENT_FLAG_NONE,
+				  "ON_HOLD", EVAS_EVENT_FLAG_ON_HOLD,
+				  NULL);
+}
+
+/**
+    @page edcref
+    @property
+        mask_flags
+    @parameters
+        [FLAG] ...
+    @effect
+        Masks event flags with the given value, so event propagating from this part
+        will go with masked flags. Other library, like Elementary, can determine
+        whether it handles this event. Possible flags:
+            @li NONE (default value, no event will be masked)
+            @li ON_HOLD
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_mask_flags(void)
+{
+   check_min_arg_count(1);
+
+   current_part->mask_flags = parse_flags(0,
 				  "NONE", EVAS_EVENT_FLAG_NONE,
 				  "ON_HOLD", EVAS_EVENT_FLAG_ON_HOLD,
 				  NULL);

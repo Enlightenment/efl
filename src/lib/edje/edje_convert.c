@@ -392,6 +392,7 @@ case EDJE_PART_TYPE_##Tp: \
         replacement->mouse_events = part->mouse_events;
         replacement->repeat_events = part->repeat_events;
         replacement->ignore_flags = part->ignore_flags;
+        replacement->mask_flags = part->mask_flags;
         replacement->scale = part->scale;
         replacement->precise_is_inside = part->precise_is_inside;
         replacement->use_alternate_font_metrics = part->use_alternate_font_metrics;

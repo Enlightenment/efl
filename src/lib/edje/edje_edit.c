@@ -3094,6 +3094,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    ep->repeat_events = 0;
    ep->anti_alias = 1;
    ep->ignore_flags = EVAS_EVENT_FLAG_NONE;
+   ep->mask_flags = EVAS_EVENT_FLAG_NONE;
    ep->pointer_mode = EVAS_OBJECT_POINTER_MODE_AUTOGRAB;
    ep->precise_is_inside = 0;
    ep->use_alternate_font_metrics = 0;
@@ -3366,6 +3367,7 @@ edje_edit_part_copy(Evas_Object *obj, const char *part, const char *new_copy)
    _PARAM_PART_COPY(mouse_events)
    _PARAM_PART_COPY(repeat_events)
    _PARAM_PART_COPY(ignore_flags)
+   _PARAM_PART_COPY(mask_flags)
    _PARAM_PART_COPY(pointer_mode)
    _PARAM_PART_COPY(precise_is_inside)
    _PARAM_PART_COPY(use_alternate_font_metrics)
@@ -3875,6 +3877,25 @@ edje_edit_part_ignore_flags_set(Evas_Object *obj, const char *part, Evas_Event_F
    if (!rp->object) return EINA_FALSE;
 
    rp->part->ignore_flags = ignore_flags;
+   return EINA_TRUE;
+}
+
+EAPI Evas_Event_Flags
+edje_edit_part_mask_flags_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(0);
+
+   return rp->part->mask_flags;
+}
+
+EAPI Eina_Bool
+edje_edit_part_mask_flags_set(Evas_Object *obj, const char *part, Evas_Event_Flags mask_flags)
+{
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   if (!rp->object) return EINA_FALSE;
+
+   rp->part->mask_flags = mask_flags;
    return EINA_TRUE;
 }
 
@@ -11354,6 +11375,8 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
 
    if (rp->part->ignore_flags)
      BUF_APPENDF(I4 "ignore_flags: \"ON_HOLD\";\n");
+   if (rp->part->mask_flags)
+     BUF_APPENDF(I4 "mask_flags: \"ON_HOLD\";\n");
    if (rp->part->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB)
      BUF_APPEND(I4 "pointer_mode: NOGRAB;\n");
    if (rp->part->precise_is_inside)

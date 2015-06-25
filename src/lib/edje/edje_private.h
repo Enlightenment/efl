@@ -1130,6 +1130,7 @@ struct _Edje_Part
    unsigned char          repeat_events; /* it will repeat events to objects below */
    unsigned char          anti_alias;
    Evas_Event_Flags       ignore_flags;
+   Evas_Event_Flags       mask_flags;
    unsigned char          scale; /* should certain properties scale with edje scale factor? */
    Edje_3D_Vec            scale_3d;
    unsigned char          precise_is_inside;

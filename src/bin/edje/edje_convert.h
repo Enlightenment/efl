@@ -102,6 +102,7 @@ struct _Old_Edje_Part
    unsigned char          mouse_events; /* it will affect/respond to mouse events */
    unsigned char          repeat_events; /* it will repeat events to objects below */
    Evas_Event_Flags       ignore_flags;
+   Evas_Event_Flags       mask_flags;
    unsigned char          scale; /* should certain properties scale with edje scale factor? */
    unsigned char          precise_is_inside;
    unsigned char          use_alternate_font_metrics;

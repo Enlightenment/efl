@@ -1592,6 +1592,25 @@ EAPI Evas_Event_Flags edje_edit_part_ignore_flags_get(Evas_Object *obj, const ch
  */
 EAPI Eina_Bool edje_edit_part_ignore_flags_set(Evas_Object *obj, const char *part, Evas_Event_Flags ignore_flags);
 
+/** Get mask_flags for part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to get which event_flags are being masked.
+ *
+ * @return The Event flags set to the part.
+ */
+EAPI Evas_Event_Flags edje_edit_part_mask_flags_get(Evas_Object *obj, const char *part);
+
+/** Set mask_flags for part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to set which event flags will be masked.
+ * @param mask_flags The Event flags to be masked by the part.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_mask_flags_set(Evas_Object *obj, const char *part, Evas_Event_Flags mask_flags);
+
 /** Get pointer_mode of a part.
  *
  * @param obj Object being edited.

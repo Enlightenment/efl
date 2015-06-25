@@ -746,6 +746,7 @@ _edje_anchor_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
           snprintf(buf, len, "anchor,mouse,down,%i,%s", ev->button, n);
         _edje_emit(ed, buf, rp->part->name);
      }
+   ev->event_flags |= rp->part->mask_flags;
 }
 
 static void
@@ -783,6 +784,7 @@ _edje_anchor_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
         snprintf(buf, len, "anchor,mouse,clicked,%i,%s", ev->button, n);
         _edje_emit(ed, buf, rp->part->name);
      }
+   ev->event_flags |= rp->part->mask_flags;
 }
 
 static void
@@ -814,6 +816,7 @@ _edje_anchor_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
         snprintf(buf, len, "anchor,mouse,move,%s", n);
         _edje_emit(ed, buf, rp->part->name);
      }
+   ev->event_flags |= rp->part->mask_flags;
 }
 
 static void
@@ -841,6 +844,7 @@ _edje_anchor_mouse_in_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
         snprintf(buf, len, "anchor,mouse,in,%s", n);
         _edje_emit(ed, buf, rp->part->name);
      }
+   ev->event_flags |= rp->part->mask_flags;
 }
 
 static void
@@ -868,6 +872,7 @@ _edje_anchor_mouse_out_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
         snprintf(buf, len, "anchor,mouse,out,%s", n);
         _edje_emit(ed, buf, rp->part->name);
      }
+   ev->event_flags |= rp->part->mask_flags;
 }
 
 static void
