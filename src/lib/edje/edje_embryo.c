@@ -94,7 +94,7 @@
  * set_drag_step(part_id, Float:dx, Float:dy)
  * get_drag_page(part_id, &Float:dx, &Float:&dy)
  * set_drag_page(part_id, Float:dx, Float:dy)
- * get_geometry(part_id, &Float:x, &Float:y, &Float:w, &Float:h)
+ * get_geometry(part_id, &x, &y, &w, &h)
  * get_mouse(&x, &y)
  * stop_program(program_id)
  * stop_programs_on(part_id)
@@ -1715,7 +1715,7 @@ _edje_embryo_fn_get_geometry(Embryo_Program *ep, Embryo_Cell *params)
    Edje *ed;
    int part_id = 0;
    Edje_Real_Part *rp;
-   Evas_Coord x = 0.0, y = 0.0, w = 0.0, h = 0.0;
+   Evas_Coord x = 0, y = 0, w = 0, h = 0;
 
    CHKPARAM(5);
    ed = embryo_program_data_get(ep);
