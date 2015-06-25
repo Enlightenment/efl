@@ -5337,35 +5337,6 @@ _elm_win_focus_highlight_in_theme_update(Evas_Object *obj, Eina_Bool in_theme)
 }
 
 void
-_elm_win_focus_highlight_signal_emit(Evas_Object *obj, const char *emission, const char *source)
-{
-   ELM_WIN_DATA_GET(obj, sd);
-   if ((sd->focus_highlight.enabled) || (sd->focus_highlight.auto_enabled))
-     edje_object_signal_emit(sd->focus_highlight.fobj, emission, source);
-}
-
-void
-_elm_win_focus_highlight_signal_callback_add(Evas_Object *obj, const char *emission,
-                                             const char *source, Edje_Signal_Cb _focus_highlight_signal_cb,
-                                             void *data)
-{
-   ELM_WIN_DATA_GET(obj, sd);
-   if (((sd->focus_highlight.enabled) || (sd->focus_highlight.auto_enabled))
-       && (sd->focus_highlight.fobj))
-     edje_object_signal_callback_add(sd->focus_highlight.fobj, emission, source, _focus_highlight_signal_cb, data);
-}
-
-void
-_elm_win_focus_highlight_signal_callback_del(Evas_Object *obj, const char *emission,
-                                             const char *source, Edje_Signal_Cb _focus_highlight_signal_cb)
-{
-   ELM_WIN_DATA_GET(obj, sd);
-   if (((sd->focus_highlight.enabled) || (sd->focus_highlight.auto_enabled))
-       && (sd->focus_highlight.fobj))
-     edje_object_signal_callback_del(sd->focus_highlight.fobj, emission, source, _focus_highlight_signal_cb);
-}
-
-void
 _elm_win_focus_highlight_start(Evas_Object *obj)
 {
    ELM_WIN_DATA_GET(obj, sd);

@@ -529,16 +529,10 @@ void                  _elm_access_widget_item_access_order_unset(Elm_Widget_Item
 // widget focus highlight
 void                  _elm_widget_focus_highlight_start(const Evas_Object *obj);
 void                  _elm_widget_highlight_in_theme_update(Eo *obj);
-void                  _elm_widget_focus_highlight_signal_emit(Evas_Object *obj, const char *emission, const char *source);
-void                  _elm_widget_focus_highlight_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb _focus_highlight_signal_cb, void *data);
-void                  _elm_widget_focus_highlight_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb _focus_highlight_signal_cb);
 
 // win focus highlight
 void                  _elm_win_focus_highlight_start(Evas_Object *obj);
 void                  _elm_win_focus_highlight_in_theme_update(Evas_Object *obj, Eina_Bool in_theme);
-void                  _elm_win_focus_highlight_signal_emit(Evas_Object *obj, const char *emission, const char *source);
-void                  _elm_win_focus_highlight_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb _focus_highlight_signal_cb, void *data);
-void                  _elm_win_focus_highlight_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb _focus_highlight_signal_cb);
 void                  _elm_win_focus_auto_show(Evas_Object *obj);
 void                  _elm_win_focus_auto_hide(Evas_Object *obj);
 
