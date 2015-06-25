@@ -366,6 +366,58 @@ START_TEST(eina_matrix3_f16p16)
 }
 END_TEST
 
+START_TEST(eina_matrix3_map_transform)
+{
+   double x = 2, y = 3, x1, y1;
+   Eina_Matrix3 m;
+   Eina_Rectangle r;
+   Eina_Quad q;
+   Eina_Bool ret;
+
+   eina_init();
+
+   eina_matrix3_values_set(&m,
+                           0, 1, 0,
+                           1, 0, 0,
+                           0, 0, 1);
+
+   eina_matrix3_point_transform(&m,
+                                x, y,
+                                &x1, &y1);
+   fail_if(x1 != 3 || y1 != 2);
+
+   EINA_RECTANGLE_SET(&r, 0, 0, 3, 4);
+   eina_matrix3_rectangle_transform(&m, &r, &q);
+
+   fail_if(q.x0 != 0 || q.y0 != 0 ||
+           q.x1 != 0 || q.y1 != 3 ||
+           q.x2 != 4 || q.y2 != 3 ||
+           q.x3 != 4 || q.y3 != 0);
+
+   eina_quad_coords_set(&q,
+                        0.0, 0.0,
+                        3.0, 0.0,
+                        3.0, 3.0,
+                        0.0, 3.0);
+   ret = eina_matrix3_square_quad_map(&m, &q);
+   fail_if(ret != EINA_TRUE);
+
+   fail_if(m.xx != 3 || m.xy != 0 || m.xz != 0 ||
+           m.yx != 0 || m.yy != 3 || m.yz != 0 ||
+           m.zx != 0 || m.zy != 0 || m.zz != 1);
+
+   ret = eina_matrix3_quad_square_map(&m, &q);
+   fail_if(ret != EINA_TRUE);
+
+   fail_if(q.x0 != 0 || q.y0 != 0 ||
+           q.x1 != 3 || q.y1 != 0 ||
+           q.x2 != 3 || q.y2 != 3 ||
+           q.x3 != 0 || q.y3 != 3);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_matrix(TCase *tc)
 {
@@ -374,4 +426,5 @@ eina_test_matrix(TCase *tc)
    tcase_add_test(tc, eina_matrix3);
    tcase_add_test(tc, eina_matrix3_operations);
    tcase_add_test(tc, eina_matrix3_f16p16);
+   tcase_add_test(tc, eina_matrix3_map_transform);
 }
