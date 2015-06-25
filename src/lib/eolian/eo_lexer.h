@@ -161,9 +161,6 @@ typedef struct _Eo_Lexer
    /* this is jumped to when an error happens */
    jmp_buf      err_jmp;
 
-   /* whether we allow lexing expression related tokens */
-   Eina_Bool expr_mode;
-
    /* saved context info */
    Eina_List *saved_ctxs;
 
@@ -172,6 +169,12 @@ typedef struct _Eo_Lexer
     * case of error - and it's nulled when it's written into a more permanent
     * position (e.g. as part of another struct, or into nodes */
    Eo_Lexer_Temps tmp;
+
+   /* whether we allow lexing expression related tokens */
+   Eina_Bool expr_mode;
+
+   /* decimal point, by default '.' */
+   char decpoint;
 } Eo_Lexer;
 
 int         eo_lexer_init           (void);

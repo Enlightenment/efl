@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <locale.h>
 
 #include <setjmp.h>
 #include <assert.h>
@@ -575,6 +576,38 @@ get_type(Eo_Lexer *ls, Eina_Bool is_float)
 }
 
 static void
+replace_decpoint(Eo_Lexer *ls, char prevdecp)
+{
+   if (ls->decpoint == prevdecp) return;
+   char *bufs = eina_strbuf_string_steal(ls->buff);
+   char *p = bufs;
+   while ((p = strchr(p, prevdecp))) *p = ls->decpoint;
+   eina_strbuf_append(ls->buff, bufs);
+   free(bufs);
+}
+
+static void
+write_val_with_decpoint(Eo_Lexer *ls, Eo_Token *tok, int type)
+{
+   struct lconv *lc = localeconv();
+   char prev = ls->decpoint;
+   ls->decpoint = lc ? lc->decimal_point[0] : '.';
+   if (ls->decpoint == prev)
+     {
+        eo_lexer_lex_error(ls, "malformed number", TOK_NUMBER);
+        return;
+     }
+   replace_decpoint(ls, prev);
+   char *end = NULL;
+   if (type == NUM_FLOAT)
+     tok->value.f = strtof(eina_strbuf_string_get(ls->buff), &end);
+   else if (type == NUM_DOUBLE)
+     tok->value.d = strtod(eina_strbuf_string_get(ls->buff), &end);
+   if (end && end[0])
+     eo_lexer_lex_error(ls, "malformed number", TOK_NUMBER);
+}
+
+static void
 write_val(Eo_Lexer *ls, Eo_Token *tok, Eina_Bool is_float)
 {
    const char *str = eina_strbuf_string_get(ls->buff);
@@ -582,6 +615,7 @@ write_val(Eo_Lexer *ls, Eo_Token *tok, Eina_Bool is_float)
    char *end = NULL;
    if (is_float)
      {
+        replace_decpoint(ls, '.');
         if (type == NUM_FLOAT)
           tok->value.f = strtof(str, &end);
         else if (type == NUM_DOUBLE)
@@ -598,7 +632,14 @@ write_val(Eo_Lexer *ls, Eo_Token *tok, Eina_Bool is_float)
           tok->value.ull = strtoull(str, &end, 0);
      }
    if (end && end[0])
-     eo_lexer_lex_error(ls, "malformed number", TOK_NUMBER);
+     {
+        if (is_float)
+          {
+             write_val_with_decpoint(ls, tok, type);
+             return;
+          }
+        eo_lexer_lex_error(ls, "malformed number", TOK_NUMBER);
+     }
    tok->kw = type;
 }
 
@@ -875,6 +916,7 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
    ls->filename        = get_filename(ls);
    ls->line_number     = 1;
    ls->icolumn         = ls->column = -1;
+   ls->decpoint        = '.';
    next_char(ls);
    if (ls->current != 0xEF)
      return;
