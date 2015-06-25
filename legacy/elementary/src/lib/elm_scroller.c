@@ -1097,7 +1097,7 @@ elm_scroller_page_size_get(const Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_scroller_page_scroll_limit_set(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED, int page_limit_h, int page_limit_v)
+_elm_scroller_page_scroll_limit_set(const Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED, int page_limit_h, int page_limit_v)
 {
    if (page_limit_h < 1)
      page_limit_h = 9999;
@@ -1109,7 +1109,7 @@ _elm_scroller_page_scroll_limit_set(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED,
 }
 
 EOLIAN static void
-_elm_scroller_page_scroll_limit_get(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED, int *page_limit_h, int *page_limit_v)
+_elm_scroller_page_scroll_limit_get(const Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED, int *page_limit_h, int *page_limit_v)
 {
    eo_do(obj, elm_interface_scrollable_page_scroll_limit_get
          (page_limit_h, page_limit_v));

@@ -655,7 +655,7 @@ _elm_slideshow_item_current_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 }
 
 EOLIAN static Evas_Object *
-_elm_slideshow_item_object_get(Eo *eo_item EINA_UNUSED, Elm_Slideshow_Item_Data *it)
+_elm_slideshow_item_object_get(const Eo *eo_item EINA_UNUSED, Elm_Slideshow_Item_Data *it)
 {
    return VIEW(it);
 }
@@ -688,7 +688,7 @@ _elm_slideshow_cache_after_set(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd, int 
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_slideshow_item_nth_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd, unsigned int nth)
+_elm_slideshow_item_nth_get(const Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd, unsigned int nth)
 {
    return eina_list_nth(sd->items, nth);
 }

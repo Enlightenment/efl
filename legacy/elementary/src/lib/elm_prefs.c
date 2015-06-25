@@ -1356,7 +1356,7 @@ err:
 }
 
 EOLIAN static Eina_Bool
-_elm_prefs_item_value_get(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name, Eina_Value *value)
+_elm_prefs_item_value_get(const Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name, Eina_Value *value)
 {
    Elm_Prefs_Item_Node *it;
 
@@ -1481,7 +1481,7 @@ _elm_prefs_item_visible_set(Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd, const char 
 }
 
 EOLIAN static Eina_Bool
-_elm_prefs_item_visible_get(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name)
+_elm_prefs_item_visible_get(const Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name)
 {
    Elm_Prefs_Item_Node *it;
 
@@ -1517,7 +1517,7 @@ _elm_prefs_item_disabled_set(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const cha
 }
 
 EOLIAN static Eina_Bool
-_elm_prefs_item_disabled_get(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name)
+_elm_prefs_item_disabled_get(const Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name)
 {
    Elm_Prefs_Item_Node *it;
 
@@ -1553,7 +1553,7 @@ _elm_prefs_item_editable_set(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const cha
 }
 
 EOLIAN static Eina_Bool
-_elm_prefs_item_editable_get(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name)
+_elm_prefs_item_editable_get(const Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, const char *name)
 {
    Elm_Prefs_Item_Node *it;
 

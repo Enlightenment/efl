@@ -480,7 +480,7 @@ _elm_dayselector_day_selected_set(Eo *obj, Elm_Dayselector_Data *_pd EINA_UNUSED
 }
 
 EOLIAN static Eina_Bool
-_elm_dayselector_day_selected_get(Eo *obj, Elm_Dayselector_Data *_pd EINA_UNUSED, Elm_Dayselector_Day day)
+_elm_dayselector_day_selected_get(const Eo *obj, Elm_Dayselector_Data *_pd EINA_UNUSED, Elm_Dayselector_Day day)
 {
    Elm_Dayselector_Item_Data *it = _item_find(obj, day);
    if (!it)
@@ -582,7 +582,7 @@ _elm_dayselector_weekdays_names_set(Eo *obj, Elm_Dayselector_Data *sd, const cha
 }
 
 EOLIAN static Eina_List *
-_elm_dayselector_weekdays_names_get(Eo *obj, Elm_Dayselector_Data *sd EINA_UNUSED)
+_elm_dayselector_weekdays_names_get(const Eo *obj, Elm_Dayselector_Data *sd EINA_UNUSED)
 {
    int idx;
    const char *weekday;

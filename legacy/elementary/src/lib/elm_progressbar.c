@@ -407,7 +407,7 @@ _elm_progressbar_part_value_set(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd, c
 }
 
 EOLIAN static double
-_elm_progressbar_part_value_get(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd, const char* part)
+_elm_progressbar_part_value_get(const Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd, const char* part)
 {
    Elm_Progress_Status *ps;
    Eina_List *l;

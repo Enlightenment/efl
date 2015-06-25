@@ -4647,7 +4647,7 @@ _elm_gengrid_first_item_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_gengrid_at_xy_item_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Evas_Coord x, Evas_Coord y, int *xposret, int *yposret)
+_elm_gengrid_at_xy_item_get(const Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Evas_Coord x, Evas_Coord y, int *xposret, int *yposret)
 {
    Elm_Gen_Item *it = ELM_GEN_ITEM_FROM_INLIST(sd->items);
 
@@ -4817,7 +4817,7 @@ _elm_gengrid_filled_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 }
 
 EOLIAN static unsigned int
-_elm_gengrid_items_count(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
+_elm_gengrid_items_count(const Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
    return sd->item_count;
 }
@@ -5031,7 +5031,7 @@ elm_gengrid_nth_item_get(const Evas_Object *obj, unsigned int nth)
 }
 
 EOLIAN static void
-_elm_gengrid_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_elm_gengrid_elm_widget_focus_highlight_geometry_get(const Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Coord ox, oy, oh, ow, item_x = 0, item_y = 0, item_w = 0, item_h = 0;
 

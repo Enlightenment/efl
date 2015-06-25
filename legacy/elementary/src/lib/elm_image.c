@@ -1230,7 +1230,7 @@ _elm_image_smooth_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 }
 
 static Eina_Bool
-_elm_image_efl_file_async_wait(Eo *obj EINA_UNUSED, Elm_Image_Data *pd)
+_elm_image_efl_file_async_wait(const Eo *obj EINA_UNUSED, Elm_Image_Data *pd)
 {
    Eina_Bool ok = EINA_TRUE;
    if (!pd->async_enable) return ok;

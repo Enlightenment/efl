@@ -382,7 +382,7 @@ _elm_photo_editable_get(Eo *obj EINA_UNUSED, Elm_Photo_Data *sd)
 }
 
 EOLIAN static void
-_elm_photo_thumb_set(Eo *obj EINA_UNUSED, Elm_Photo_Data *sd, const char *file, const char *group)
+_elm_photo_thumb_set(const Eo *obj EINA_UNUSED, Elm_Photo_Data *sd, const char *file, const char *group)
 {
    eina_stringshare_replace(&sd->thumb.file.path, file);
    eina_stringshare_replace(&sd->thumb.file.key, group);

@@ -4396,7 +4396,7 @@ _elm_map_tile_load_status_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, int *try_nu
 }
 
 EOLIAN static void
-_elm_map_canvas_to_region_convert(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, Evas_Coord x, Evas_Coord y, double *lon, double *lat)
+_elm_map_canvas_to_region_convert(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd, Evas_Coord x, Evas_Coord y, double *lon, double *lat)
 {
    EINA_SAFETY_ON_NULL_RETURN(lon);
    EINA_SAFETY_ON_NULL_RETURN(lat);
@@ -4406,7 +4406,7 @@ _elm_map_canvas_to_region_convert(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, Evas_Co
 }
 
 EOLIAN static void
-_elm_map_region_to_canvas_convert(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double lon, double lat, Evas_Coord *x, Evas_Coord *y)
+_elm_map_region_to_canvas_convert(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double lon, double lat, Evas_Coord *x, Evas_Coord *y)
 {
    EINA_SAFETY_ON_NULL_RETURN(x);
    EINA_SAFETY_ON_NULL_RETURN(y);
@@ -4447,7 +4447,7 @@ _elm_map_source_set(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, Elm_Map_Source_Type t
 }
 
 EOLIAN static const char*
-_elm_map_source_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, Elm_Map_Source_Type type)
+_elm_map_source_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd, Elm_Map_Source_Type type)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->src_tile, NULL);
 
@@ -4461,7 +4461,7 @@ _elm_map_source_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, Elm_Map_Source_Type t
 }
 
 EOLIAN static const char**
-_elm_map_sources_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, Elm_Map_Source_Type type)
+_elm_map_sources_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd, Elm_Map_Source_Type type)
 {
    const char **ret;
    ret = NULL;
@@ -4604,7 +4604,7 @@ elm_map_route_waypoint_get(const Elm_Map_Route *route)
 }
 
 EOLIAN static Elm_Map_Name*
-_elm_map_name_add(Eo *obj, Elm_Map_Data *_pd EINA_UNUSED, const char *address, double lon, double lat, Elm_Map_Name_Cb name_cb, void *data)
+_elm_map_name_add(const Eo *obj, Elm_Map_Data *_pd EINA_UNUSED, const char *address, double lon, double lat, Elm_Map_Name_Cb name_cb, void *data)
 {
    if (address)
      return _name_request(obj, ELM_MAP_NAME_METHOD_SEARCH, address, 0, 0,
@@ -4615,7 +4615,7 @@ _elm_map_name_add(Eo *obj, Elm_Map_Data *_pd EINA_UNUSED, const char *address, d
 }
 
 EOLIAN static void
-_elm_map_name_search(Eo *obj, Elm_Map_Data *_pd EINA_UNUSED, const char *address, Elm_Map_Name_List_Cb name_cb, void *data)
+_elm_map_name_search(const Eo *obj, Elm_Map_Data *_pd EINA_UNUSED, const char *address, Elm_Map_Name_List_Cb name_cb, void *data)
 {
    if (address)
      _name_list_request(obj, ELM_MAP_NAME_METHOD_SEARCH, address, 0, 0,

@@ -3086,7 +3086,7 @@ _elm_list_last_item_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_list_at_xy_item_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd, Evas_Coord x, Evas_Coord y, int *posret)
+_elm_list_at_xy_item_get(const Eo *obj EINA_UNUSED, Elm_List_Data *sd, Evas_Coord x, Evas_Coord y, int *posret)
 {
    Eina_List *l;
    Elm_Object_Item *eo_it;
@@ -3175,7 +3175,7 @@ _elm_list_item_coordinates_adjust(Elm_List_Item_Data *it,
 }
 
 EOLIAN static void
-_elm_list_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_elm_list_elm_widget_focus_highlight_geometry_get(const Eo *obj EINA_UNUSED, Elm_List_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    if (sd->focused_item)
      {

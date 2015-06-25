@@ -1241,7 +1241,7 @@ _elm_index_item_selected_set(Eo *eo_it,
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_index_selected_item_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd, int level)
+_elm_index_selected_item_get(const Eo *obj EINA_UNUSED, Elm_Index_Data *sd, int level)
 {
    Eina_List *l;
    Elm_Object_Item *eo_item;
@@ -1424,7 +1424,7 @@ _elm_index_indicator_disabled_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 }
 
 EOLIAN static const char *
-_elm_index_item_letter_get(Eo *item EINA_UNUSED, Elm_Index_Item_Data *it)
+_elm_index_item_letter_get(const Eo *item EINA_UNUSED, Elm_Index_Item_Data *it)
 {
    return it->letter;
 }

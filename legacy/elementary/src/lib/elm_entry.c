@@ -2924,7 +2924,7 @@ _elm_entry_elm_layout_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, co
 }
 
 EOLIAN static const char *
-_elm_entry_elm_layout_text_get(Eo *obj, Elm_Entry_Data *sd, const char *item)
+_elm_entry_elm_layout_text_get(const Eo *obj, Elm_Entry_Data *sd, const char *item)
 {
    const char *text;
 
@@ -3715,7 +3715,7 @@ _elm_entry_text_style_user_pop(Eo *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static const char*
-_elm_entry_text_style_user_peek(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_text_style_user_peek(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return edje_object_part_text_style_user_peek(sd->entry_edje, "elm.text");
 }
@@ -3842,7 +3842,7 @@ _elm_entry_entry_append(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *ent
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_is_empty(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_is_empty(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    Eina_Bool ret;
    /* FIXME: until there's support for that in textblock, we just
@@ -4898,7 +4898,7 @@ _elm_entry_input_panel_imdata_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const
 }
 
 EOLIAN static void
-_elm_entry_input_panel_imdata_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, void *data, int *len)
+_elm_entry_input_panel_imdata_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, void *data, int *len)
 {
    edje_object_part_text_input_panel_imdata_get
      (sd->entry_edje, "elm.text", data, len);

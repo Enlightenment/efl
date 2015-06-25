@@ -2902,7 +2902,7 @@ _elm_toolbar_coordinates_adjust(Elm_Toolbar_Item_Data *it,
 }
 
 EOLIAN static void
-_elm_toolbar_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_elm_toolbar_elm_widget_focus_highlight_geometry_get(const Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    if (sd->focused_item)
      {
@@ -3099,7 +3099,7 @@ _elm_toolbar_item_priority_get(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *i
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_toolbar_item_find_by_label(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd, const char *label)
+_elm_toolbar_item_find_by_label(const Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd, const char *label)
 {
    Elm_Toolbar_Item_Data *it;
 
@@ -3667,7 +3667,7 @@ _elm_toolbar_horizontal_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 }
 
 EOLIAN static unsigned int
-_elm_toolbar_items_count(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
+_elm_toolbar_items_count(const Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 {
    return sd->item_count;
 }

@@ -1012,7 +1012,7 @@ _elm_naviframe_elm_layout_text_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, 
 }
 
 EOLIAN static const char*
-_elm_naviframe_elm_layout_text_get(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
+_elm_naviframe_elm_layout_text_get(const Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part)
 {
    Elm_Object_Item *it = elm_naviframe_top_item_get(obj);
    if (!it) return NULL;
@@ -1884,7 +1884,7 @@ _elm_naviframe_item_title_enabled_set(Eo *eo_item EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_elm_naviframe_item_title_enabled_get(Eo *eo_item EINA_UNUSED, Elm_Naviframe_Item_Data *nit)
+_elm_naviframe_item_title_enabled_get(const Eo *eo_item EINA_UNUSED, Elm_Naviframe_Item_Data *nit)
 {
    return nit->title_enabled;
 }

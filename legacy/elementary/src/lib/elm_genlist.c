@@ -6024,7 +6024,7 @@ _elm_genlist_eo_item_list_compare(const void *data,
 }
 
 EOLIAN static unsigned int
-_elm_genlist_items_count(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
+_elm_genlist_items_count(const Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
 {
    return sd->item_count;
 }
@@ -6448,7 +6448,7 @@ _elm_genlist_realized_items_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_genlist_at_xy_item_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Evas_Coord x, Evas_Coord y, int *posret)
+_elm_genlist_at_xy_item_get(const Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Evas_Coord x, Evas_Coord y, int *posret)
 {
    Evas_Coord ox, oy, ow, oh;
    Evas_Coord lasty;
@@ -7867,7 +7867,7 @@ elm_genlist_nth_item_get(const Evas_Object *obj, unsigned int nth)
 }
 
 EOLIAN static void
-_elm_genlist_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_elm_genlist_elm_widget_focus_highlight_geometry_get(const Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Coord ox, oy, oh, ow, item_x = 0, item_y = 0, item_w = 0, item_h = 0;
 

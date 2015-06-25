@@ -736,7 +736,7 @@ _elm_flipselector_item_selected_get(Eo *eo_item,
 }
 
 EOLIAN static Elm_Object_Item *
-_elm_flipselector_item_prev_get(Eo *eo_item,
+_elm_flipselector_item_prev_get(const Eo *eo_item,
                                 Elm_Flipselector_Item_Data *item)
 {
    Eina_List *l;
@@ -752,7 +752,7 @@ _elm_flipselector_item_prev_get(Eo *eo_item,
 }
 
 EOLIAN static Elm_Object_Item *
-_elm_flipselector_item_next_get(Eo *eo_item,
+_elm_flipselector_item_next_get(const Eo *eo_item,
                                 Elm_Flipselector_Item_Data *item)
 {
    Eina_List *l;

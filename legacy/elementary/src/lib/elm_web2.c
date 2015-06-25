@@ -995,7 +995,7 @@ _elm_web_popup_destroy(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_web_text_search(Eo *obj, Elm_Web_Data *_pd EINA_UNUSED, const char *string, Eina_Bool case_sensitive, Eina_Bool forward, Eina_Bool wrap)
+_elm_web_text_search(const Eo *obj, Elm_Web_Data *_pd EINA_UNUSED, const char *string, Eina_Bool case_sensitive, Eina_Bool forward, Eina_Bool wrap)
 {
 #ifdef HAVE_ELEMENTARY_WEB
    (void)string;

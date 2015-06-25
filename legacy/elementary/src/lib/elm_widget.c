@@ -768,7 +768,7 @@ _propagate_event(void *data EINA_UNUSED,
  * ignore region show action.
  */
 EOLIAN static void
-_elm_widget_focus_region_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
+_elm_widget_focus_region_show(const Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
    Evas_Coord x, y, w, h, ox, oy;
    Evas_Object *o;
@@ -2266,7 +2266,7 @@ _direction_weight_get(const Evas_Object *obj1,
  */
 
 EOLIAN static Eina_Bool
-_elm_widget_focus_direction_get(Eo *obj, Elm_Widget_Smart_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, double *weight)
+_elm_widget_focus_direction_get(const Eo *obj, Elm_Widget_Smart_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, double *weight)
 {
    double c_weight;
 
@@ -2339,7 +2339,7 @@ _elm_widget_focus_direction_get(Eo *obj, Elm_Widget_Smart_Data *sd, const Evas_O
  * @ingroup Widget
  */
 EOLIAN static Eina_Bool
-_elm_widget_focus_list_direction_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const Evas_Object *base, const Eina_List *items, list_data_get_func_type list_data_get, double degree, Evas_Object **direction, double *weight)
+_elm_widget_focus_list_direction_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const Evas_Object *base, const Eina_List *items, list_data_get_func_type list_data_get, double degree, Evas_Object **direction, double *weight)
 {
    if (!direction || !weight || !base || !items)
      return EINA_FALSE;
@@ -2376,7 +2376,7 @@ _elm_widget_focus_list_direction_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data 
  * @ingroup Widget
  */
 EOLIAN static Eina_Bool
-_elm_widget_focus_next_get(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_widget_focus_next_get(const Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Elm_Access_Info *ac;
 
@@ -2486,7 +2486,7 @@ _elm_widget_focus_next_get(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Focus_Directi
  * @ingroup Widget
  */
 EOLIAN static Eina_Bool
-_elm_widget_focus_list_next_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const Eina_List *items, list_data_get_func_type list_data_get, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_widget_focus_list_next_get(const Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const Eina_List *items, list_data_get_func_type list_data_get, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Eina_List *(*list_next)(const Eina_List *list) = NULL;
    Evas_Object *focused_object = NULL;
@@ -2639,7 +2639,7 @@ _elm_widget_focus_list_next_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED,
  * @ingroup Widget
  */
 EOLIAN static Evas_Object*
-_elm_widget_focus_next_object_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Elm_Focus_Direction dir)
+_elm_widget_focus_next_object_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Elm_Focus_Direction dir)
 {
    Evas_Object *ret = NULL;
 
@@ -3054,7 +3054,7 @@ _elm_widget_show_region_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Coord x, Ev
 }
 
 EOLIAN static void
-_elm_widget_show_region_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_elm_widget_show_region_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    if (x) *x = sd->rx;
    if (y) *y = sd->ry;
@@ -3398,7 +3398,7 @@ _elm_widget_domain_translatable_part_text_set(Eo *obj, Elm_Widget_Smart_Data *sd
 }
 
 EOLIAN static const char*
-_elm_widget_translatable_part_text_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, const char *part)
+_elm_widget_translatable_part_text_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, const char *part)
 {
    Elm_Translate_String_Data *ts;
 
@@ -3774,7 +3774,7 @@ _widget_name_find(const Evas_Object *obj,
 }
 
 EOLIAN static Evas_Object*
-_elm_widget_name_find(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const char *name, int recurse)
+_elm_widget_name_find(const Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const char *name, int recurse)
 {
    if (!name) return NULL;
    return _widget_name_find(obj, name, recurse);
@@ -3880,7 +3880,7 @@ _elm_widget_focus_order_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 }
 
 EOLIAN static Evas_Object*
-_elm_widget_newest_focus_order_get(Eo *obj, Elm_Widget_Smart_Data *sd, unsigned int *newest_focus_order, Eina_Bool can_focus_only)
+_elm_widget_newest_focus_order_get(const Eo *obj, Elm_Widget_Smart_Data *sd, unsigned int *newest_focus_order, Eina_Bool can_focus_only)
 {
    const Eina_List *l;
    Evas_Object *child, *cur, *best;
@@ -3896,7 +3896,7 @@ _elm_widget_newest_focus_order_get(Eo *obj, Elm_Widget_Smart_Data *sd, unsigned 
         if (!can_focus_only || elm_widget_can_focus_get(obj))
           {
              *newest_focus_order = sd->focus_order;
-             best = obj;
+             best = (Evas_Object *)obj;
           }
      }
    EINA_LIST_FOREACH(sd->subobjs, l, child)
@@ -3984,10 +3984,10 @@ elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_elm_widget_focus_highlight_geometry_get(const Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Coord ox = 0, oy = 0, ow = 0, oh = 0;
-   Evas_Object *scroller = obj;
+   Evas_Object *scroller = (Evas_Object *)obj;
 
    evas_object_geometry_get(obj, x, y, w, h);
    elm_widget_focus_highlight_focus_part_geometry_get(sd->resize_obj, x, y, w, h);
@@ -4457,7 +4457,7 @@ _elm_widget_item_del_cb_set(Eo *eo_item EINA_UNUSED,
  * @ingroup Widget
  */
 EOLIAN static Evas_Object *
-_elm_widget_item_widget_get(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
+_elm_widget_item_widget_get(const Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
    ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item, NULL);
@@ -4673,7 +4673,7 @@ _elm_widget_item_domain_translatable_part_text_set(Eo *eo_item EINA_UNUSED,
 }
 
 EOLIAN static const char *
-_elm_widget_item_translatable_part_text_get(Eo *eo_item EINA_UNUSED,
+_elm_widget_item_translatable_part_text_get(const Eo *eo_item EINA_UNUSED,
                                             Elm_Widget_Item_Data *item,
                                             const char *part)
 {
@@ -4783,7 +4783,7 @@ _elm_widget_item_untrack(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
 }
 
 EOLIAN static int
-_elm_widget_item_track_get(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
+_elm_widget_item_track_get(const Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, 0);
    ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item, 0);
@@ -5426,7 +5426,7 @@ _elm_widget_item_access_unregister(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data
 }
 
 EOLIAN static Evas_Object*
-_elm_widget_item_access_object_get(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
+_elm_widget_item_access_object_get(const Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
 {
    return item->access_obj;
 }

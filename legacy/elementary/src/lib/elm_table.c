@@ -394,7 +394,7 @@ _elm_table_clear(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool clear)
 }
 
 EOLIAN static Evas_Object*
-_elm_table_child_get(Eo *obj, void *_pd EINA_UNUSED, int col, int row)
+_elm_table_child_get(const Eo *obj, void *_pd EINA_UNUSED, int col, int row)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 

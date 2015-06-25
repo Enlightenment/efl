@@ -1307,7 +1307,7 @@ _elm_calendar_selected_time_set(Eo *obj, Elm_Calendar_Data *sd, struct tm *selec
 }
 
 EOLIAN static Eina_Bool
-_elm_calendar_selected_time_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd, struct tm *selected_time)
+_elm_calendar_selected_time_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd, struct tm *selected_time)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(selected_time, EINA_FALSE);
 
@@ -1426,7 +1426,7 @@ _elm_calendar_selectable_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_calendar_displayed_time_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd, struct tm *displayed_time)
+_elm_calendar_displayed_time_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd, struct tm *displayed_time)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(displayed_time, EINA_FALSE);
    *displayed_time = sd->shown_time;

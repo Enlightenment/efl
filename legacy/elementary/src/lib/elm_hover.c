@@ -720,7 +720,7 @@ _elm_hover_elm_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
 }
 
 EOLIAN static const char*
-_elm_hover_best_content_location_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *sd, Elm_Hover_Axis pref_axis)
+_elm_hover_best_content_location_get(const Eo *obj EINA_UNUSED, Elm_Hover_Data *sd, Elm_Hover_Axis pref_axis)
 {
    Evas_Coord spc_l, spc_r, spc_t, spc_b;
 

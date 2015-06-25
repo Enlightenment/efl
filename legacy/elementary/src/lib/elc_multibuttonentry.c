@@ -1423,7 +1423,7 @@ _elm_multibuttonentry_elm_layout_text_set(Eo *obj, Elm_Multibuttonentry_Data *sd
 }
 
 EOLIAN static const char*
-_elm_multibuttonentry_elm_layout_text_get(Eo *obj, Elm_Multibuttonentry_Data *sd, const char *part)
+_elm_multibuttonentry_elm_layout_text_get(const Eo *obj, Elm_Multibuttonentry_Data *sd, const char *part)
 {
    const char *text = NULL;
 
@@ -1786,7 +1786,7 @@ _elm_multibuttonentry_clear(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Data *sd)
 }
 
 EOLIAN static Elm_Object_Item *
-_elm_multibuttonentry_item_prev_get(Eo *eo_it,
+_elm_multibuttonentry_item_prev_get(const Eo *eo_it,
                                    Elm_Multibuttonentry_Item_Data *it)
 {
    Eina_List *l;
@@ -1807,7 +1807,7 @@ _elm_multibuttonentry_item_prev_get(Eo *eo_it,
 }
 
 EOLIAN static Elm_Object_Item *
-_elm_multibuttonentry_item_next_get(Eo *eo_it,
+_elm_multibuttonentry_item_next_get(const Eo *eo_it,
                                    Elm_Multibuttonentry_Item_Data *it)
 {
    Eina_List *l;

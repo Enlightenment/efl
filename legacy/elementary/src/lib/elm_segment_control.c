@@ -758,7 +758,7 @@ _elm_segment_control_item_del_at(Eo *obj, Elm_Segment_Control_Data *_pd EINA_UNU
 }
 
 EOLIAN static const char*
-_elm_segment_control_item_label_get(Eo *obj, Elm_Segment_Control_Data *_pd EINA_UNUSED, int idx)
+_elm_segment_control_item_label_get(const Eo *obj, Elm_Segment_Control_Data *_pd EINA_UNUSED, int idx)
 {
    Elm_Segment_Control_Item_Data *it;
 
@@ -769,7 +769,7 @@ _elm_segment_control_item_label_get(Eo *obj, Elm_Segment_Control_Data *_pd EINA_
 }
 
 EOLIAN static Evas_Object*
-_elm_segment_control_item_icon_get(Eo *obj, Elm_Segment_Control_Data *_pd EINA_UNUSED, int idx)
+_elm_segment_control_item_icon_get(const Eo *obj, Elm_Segment_Control_Data *_pd EINA_UNUSED, int idx)
 {
    Elm_Segment_Control_Item_Data *it = _item_find(obj, idx);
    if (it) return it->icon;
@@ -783,7 +783,7 @@ _elm_segment_control_item_count_get(Eo *obj EINA_UNUSED, Elm_Segment_Control_Dat
 }
 
 EOLIAN static Evas_Object *
-_elm_segment_control_item_object_get(Eo *eo_it EINA_UNUSED, Elm_Segment_Control_Item_Data *it)
+_elm_segment_control_item_object_get(const Eo *eo_it EINA_UNUSED, Elm_Segment_Control_Item_Data *it)
 {
    return VIEW(it);
 }
@@ -815,14 +815,14 @@ _elm_segment_control_item_selected_set(Eo *eo_item EINA_UNUSED,
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_segment_control_item_get(Eo *obj, Elm_Segment_Control_Data *_pd EINA_UNUSED, int idx)
+_elm_segment_control_item_get(const Eo *obj, Elm_Segment_Control_Data *_pd EINA_UNUSED, int idx)
 {
    Elm_Segment_Control_Item_Data *it = _item_find(obj, idx);
    return EO_OBJ(it);
 }
 
 EOLIAN static int
-_elm_segment_control_item_index_get(Eo *eo_it EINA_UNUSED, Elm_Segment_Control_Item_Data *it)
+_elm_segment_control_item_index_get(const Eo *eo_it EINA_UNUSED, Elm_Segment_Control_Item_Data *it)
 {
    ELM_SEGMENT_CONTROL_ITEM_CHECK_OR_RETURN(it, -1);
 

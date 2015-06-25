@@ -1189,7 +1189,7 @@ _elm_layout_text_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, const
 }
 
 EOLIAN static const char*
-_elm_layout_text_get(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
+_elm_layout_text_get(const Eo *obj, Elm_Layout_Smart_Data *sd, const char *part)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
@@ -1518,7 +1518,7 @@ _elm_layout_edje_get(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static const char*
-_elm_layout_data_get(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, const char *key)
+_elm_layout_data_get(const Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, const char *key)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
@@ -1630,7 +1630,7 @@ _elm_layout_part_cursor_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part
 }
 
 EOLIAN static const char*
-_elm_layout_part_cursor_get(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *sd, const char *part_name)
+_elm_layout_part_cursor_get(const Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *sd, const char *part_name)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, NULL);
 
@@ -1679,7 +1679,7 @@ _elm_layout_part_cursor_style_set(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *sd
 }
 
 EOLIAN static const char*
-_elm_layout_part_cursor_style_get(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *sd, const char *part_name)
+_elm_layout_part_cursor_style_get(const Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *sd, const char *part_name)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, NULL);
 
@@ -1706,7 +1706,7 @@ _elm_layout_part_cursor_engine_only_set(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Da
 }
 
 EOLIAN static Eina_Bool
-_elm_layout_part_cursor_engine_only_get(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *sd, const char *part_name)
+_elm_layout_part_cursor_engine_only_get(const Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *sd, const char *part_name)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, EINA_FALSE);
 

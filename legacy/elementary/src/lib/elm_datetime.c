@@ -921,7 +921,7 @@ _elm_datetime_format_set(Eo *obj, Elm_Datetime_Data *sd, const char *fmt)
 }
 
 EOLIAN static Eina_Bool
-_elm_datetime_field_visible_get(Eo *obj EINA_UNUSED, Elm_Datetime_Data *sd, Elm_Datetime_Field_Type fieldtype)
+_elm_datetime_field_visible_get(const Eo *obj EINA_UNUSED, Elm_Datetime_Data *sd, Elm_Datetime_Field_Type fieldtype)
 {
    Datetime_Field *field;
 
@@ -991,7 +991,7 @@ _elm_datetime_field_visible_set(Eo *obj, Elm_Datetime_Data *sd, Elm_Datetime_Fie
 }
 
 EOLIAN static void
-_elm_datetime_field_limit_get(Eo *obj EINA_UNUSED, Elm_Datetime_Data *sd, Elm_Datetime_Field_Type fieldtype, int *min, int *max)
+_elm_datetime_field_limit_get(const Eo *obj EINA_UNUSED, Elm_Datetime_Data *sd, Elm_Datetime_Field_Type fieldtype, int *min, int *max)
 {
    Datetime_Field *field;
 
@@ -1030,7 +1030,7 @@ _elm_datetime_field_limit_set(Eo *obj, Elm_Datetime_Data *sd, Elm_Datetime_Field
 }
 
 EOLIAN static Eina_Bool
-_elm_datetime_value_get(Eo *obj EINA_UNUSED, Elm_Datetime_Data *sd, struct tm *currtime)
+_elm_datetime_value_get(const Eo *obj EINA_UNUSED, Elm_Datetime_Data *sd, struct tm *currtime)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(currtime, EINA_FALSE);
 
@@ -1058,7 +1058,7 @@ _elm_datetime_value_set(Eo *obj, Elm_Datetime_Data *sd, const struct tm *newtime
 }
 
 EOLIAN static Eina_Bool
-_elm_datetime_value_min_get(Eo *obj EINA_UNUSED, Elm_Datetime_Data *sd, struct tm *mintime)
+_elm_datetime_value_min_get(const Eo *obj EINA_UNUSED, Elm_Datetime_Data *sd, struct tm *mintime)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(mintime, EINA_FALSE);
 
@@ -1090,7 +1090,7 @@ _elm_datetime_value_min_set(Eo *obj, Elm_Datetime_Data *sd, const struct tm *min
 }
 
 EOLIAN static Eina_Bool
-_elm_datetime_value_max_get(Eo *obj EINA_UNUSED, Elm_Datetime_Data *sd, struct tm *maxtime)
+_elm_datetime_value_max_get(const Eo *obj EINA_UNUSED, Elm_Datetime_Data *sd, struct tm *maxtime)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(maxtime, EINA_FALSE);
 
