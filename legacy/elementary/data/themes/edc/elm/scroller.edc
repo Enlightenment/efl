@@ -58,7 +58,7 @@ group { name: "elm/scroller/base/default";
          get_geometry(PART:"y_vbar_down", x,y,w, h);
          get_geometry(PART:"y_vbar_down_mapper", x1,y1,w1, h1);
 
-         if((y+h) == (y1+h1) )
+         if((y+h) == (y1+h1))
          {
             set_state(PART:"arrow2_vbar", "hidden", 0.0);
             set_state(PART:"sb_vbar_a2", "hidden", 0.0);
@@ -69,7 +69,7 @@ group { name: "elm/scroller/base/default";
             set_state(PART:"sb_vbar_a2", "default", 0.0);
          }
 
-         if( val < 10)
+         if(val < 10)
             timer(0.1,"action_on_pos_vbar", val+1);
       }
 
@@ -104,7 +104,7 @@ group { name: "elm/scroller/base/default";
             set_state(PART:"sb_hbar_a2", "default", 0.0);
          }
 
-         if( val < 10)
+         if(val < 10)
             timer(0.1,"action_on_pos_hbar", val+1);
       }
    }
