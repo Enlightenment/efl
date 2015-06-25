@@ -90,12 +90,14 @@ _elm_calendar_elm_layout_sizing_eval(Eo *obj, Elm_Calendar_Data *_pd EINA_UNUSED
 }
 
 static inline int
-_maxdays_get(struct tm *selected_time)
+_maxdays_get(struct tm *selected_time, int month_offset)
 {
    int month, year;
 
-   month = selected_time->tm_mon;
+   month = (selected_time->tm_mon + month_offset) % 12;
    year = selected_time->tm_year + 1900;
+
+   if (month < 0) month += 12;
 
    return _days_in_month
           [((!(year % 4)) && ((!(year % 400)) || (year % 100)))][month];
@@ -141,6 +143,28 @@ _today(Elm_Calendar_Data *sd,
    char emission[32];
 
    snprintf(emission, sizeof(emission), "cit_%i,today", it);
+   elm_layout_signal_emit(sd->obj, emission, "elm");
+   sd->today_it = it;
+}
+
+static inline void
+_enable(Elm_Calendar_Data *sd,
+        int it)
+{
+   char emission[32];
+
+   snprintf(emission, sizeof(emission), "cit_%i,enable", it);
+   elm_layout_signal_emit(sd->obj, emission, "elm");
+   sd->today_it = it;
+}
+
+static inline void
+_disable(Elm_Calendar_Data *sd,
+         int it)
+{
+   char emission[32];
+
+   snprintf(emission, sizeof(emission), "cit_%i,disable", it);
    elm_layout_signal_emit(sd->obj, emission, "elm");
    sd->today_it = it;
 }
@@ -272,7 +296,7 @@ _access_calendar_item_register(Evas_Object *obj)
    ELM_CALENDAR_DATA_GET(obj, sd);
 
    day = 0;
-   maxdays = _maxdays_get(&sd->shown_time);
+   maxdays = _maxdays_get(&sd->shown_time, 0);
    for (i = 0; i < 42; i++)
      {
         if ((!day) && (i == sd->first_day_it)) day = 1;
@@ -355,7 +379,7 @@ _access_calendar_register(Evas_Object *obj)
 static void
 _populate(Evas_Object *obj)
 {
-   int maxdays, day, mon, yr, i;
+   int maxdays, prev_month_maxdays, day, mon, yr, i;
    Elm_Calendar_Mark *mark;
    char part[12], day_s[3];
    struct tm first_day;
@@ -369,7 +393,8 @@ _populate(Evas_Object *obj)
    sd->filling = EINA_FALSE;
    if (sd->today_it > 0) _not_today(sd);
 
-   maxdays = _maxdays_get(&sd->shown_time);
+   maxdays = _maxdays_get(&sd->shown_time, 0);
+   prev_month_maxdays = _maxdays_get(&sd->shown_time, -1);
    mon = sd->shown_time.tm_mon;
    yr = sd->shown_time.tm_year;
 
@@ -459,9 +484,19 @@ _populate(Evas_Object *obj)
           }
 
         if ((day) && (day <= maxdays))
-          snprintf(day_s, sizeof(day_s), "%i", day++);
+          {
+             _enable(sd, i);
+             snprintf(day_s, sizeof(day_s), "%i", day++);
+          }
         else
-          day_s[0] = 0;
+          {
+             _disable(sd, i);
+
+             if (day <= maxdays)
+               snprintf(day_s, sizeof(day_s), "%i", prev_month_maxdays - sd->first_day_it + i + 1);
+             else
+               snprintf(day_s, sizeof(day_s), "%i", i - sd->first_day_it - maxdays + 1);
+          }
 
         snprintf(part, sizeof(part), "cit_%i.text", i);
         elm_layout_text_set(obj, part, day_s);
@@ -641,7 +676,7 @@ _update_data(Evas_Object *obj, Eina_Bool month,
    if ((sd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
        && (sd->select_mode != ELM_CALENDAR_SELECT_MODE_NONE))
      {
-        maxdays = _maxdays_get(&sd->shown_time);
+        maxdays = _maxdays_get(&sd->shown_time, 0);
         if (sd->selected_time.tm_mday > maxdays)
           sd->selected_time.tm_mday = maxdays;
 
@@ -778,7 +813,7 @@ _get_item_day(Evas_Object *obj,
    ELM_CALENDAR_DATA_GET(obj, sd);
 
    day = selected_it - sd->first_day_it + 1;
-   if ((day < 0) || (day > _maxdays_get(&sd->shown_time)))
+   if ((day < 0) || (day > _maxdays_get(&sd->shown_time, 0)))
      return 0;
 
    return day;
@@ -1100,7 +1135,7 @@ _elm_calendar_elm_widget_focus_next(Eo *obj, Elm_Calendar_Data *sd, Elm_Focus_Di
    items = eina_list_append(items, sd->inc_btn_year_access);
 
    day = 0;
-   maxdays = _maxdays_get(&sd->shown_time);
+   maxdays = _maxdays_get(&sd->shown_time, 0);
    for (i = 0; i < 42; i++)
      {
         if ((!day) && (i == sd->first_day_it)) day = 1;
@@ -1132,7 +1167,7 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
    else
      {
         day = 0;
-        maxdays = _maxdays_get(&sd->shown_time);
+        maxdays = _maxdays_get(&sd->shown_time, 0);
         for (i = 0; i < 42; i++)
           {
              if ((!day) && (i == sd->first_day_it)) day = 1;
