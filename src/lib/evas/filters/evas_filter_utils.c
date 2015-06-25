@@ -58,7 +58,7 @@ evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx,
              dc.sli.h = 1;
              dc.render_op = EVAS_RENDER_COPY;
 
-             ok = evas_common_scale_rgba_in_to_out_clip_sample
+             ok = evas_common_scale_rgba_in_to_out_clip_smooth
                    (s, d, &dc, 0, 0, src->w, src->h, 0, 0, w, h);
              if (!ok)
                {
