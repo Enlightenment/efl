@@ -147,7 +147,7 @@ _evas_canvas3d_light_ambient_set(Eo *obj, Evas_Canvas3D_Light_Data *pd, Evas_Rea
 }
 
 EOLIAN static void
-_evas_canvas3d_light_ambient_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Light_Data *pd, Evas_Real *r, Evas_Real *g, Evas_Real *b, Evas_Real *a)
+_evas_canvas3d_light_ambient_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Light_Data *pd, Evas_Real *r, Evas_Real *g, Evas_Real *b, Evas_Real *a)
 {
    if (r) *r = pd->ambient.r;
    if (g) *g = pd->ambient.g;
@@ -167,7 +167,7 @@ _evas_canvas3d_light_diffuse_set(Eo *obj, Evas_Canvas3D_Light_Data *pd, Evas_Rea
 }
 
 EOLIAN static void
-_evas_canvas3d_light_diffuse_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Light_Data *pd, Evas_Real *r, Evas_Real *g, Evas_Real *b, Evas_Real *a)
+_evas_canvas3d_light_diffuse_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Light_Data *pd, Evas_Real *r, Evas_Real *g, Evas_Real *b, Evas_Real *a)
 {
    if (r) *r = pd->diffuse.r;
    if (g) *g = pd->diffuse.g;
@@ -187,7 +187,7 @@ _evas_canvas3d_light_specular_set(Eo *obj, Evas_Canvas3D_Light_Data *pd, Evas_Re
 }
 
 EOLIAN static void
-_evas_canvas3d_light_specular_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Light_Data *pd, Evas_Real *r, Evas_Real *g, Evas_Real *b, Evas_Real *a)
+_evas_canvas3d_light_specular_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Light_Data *pd, Evas_Real *r, Evas_Real *g, Evas_Real *b, Evas_Real *a)
 {
    if (r) *r = pd->specular.r;
    if (g) *g = pd->specular.g;
@@ -232,7 +232,7 @@ _evas_canvas3d_light_attenuation_set(Eo *obj, Evas_Canvas3D_Light_Data *pd, Evas
 }
 
 EOLIAN static void
-_evas_canvas3d_light_attenuation_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Light_Data *pd, Evas_Real *constant, Evas_Real *linear, Evas_Real *quadratic)
+_evas_canvas3d_light_attenuation_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Light_Data *pd, Evas_Real *constant, Evas_Real *linear, Evas_Real *quadratic)
 {
    if (constant) *constant = pd->atten_const;
    if (linear) *linear = pd->atten_linear;
@@ -264,7 +264,7 @@ _evas_canvas3d_light_projection_matrix_set(Eo *obj, Evas_Canvas3D_Light_Data *pd
 }
 
 EOLIAN static void
-_evas_canvas3d_light_projection_matrix_get(Eo *obj EINA_UNUSED,
+_evas_canvas3d_light_projection_matrix_get(const Eo *obj EINA_UNUSED,
                                          Evas_Canvas3D_Light_Data *pd,
                                          Evas_Real *matrix)
 {

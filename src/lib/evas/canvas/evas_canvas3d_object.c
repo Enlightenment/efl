@@ -29,13 +29,13 @@ _evas_canvas3d_object_type_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Object_Data *p
 }
 
 EOLIAN static Evas_Canvas3D_Object_Type
-_evas_canvas3d_object_type_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Object_Data *pd)
+_evas_canvas3d_object_type_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Object_Data *pd)
 {
    return pd->type;
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_object_dirty_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Object_Data *pd, Evas_Canvas3D_State state)
+_evas_canvas3d_object_dirty_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Object_Data *pd, Evas_Canvas3D_State state)
 {
    return pd->dirty[state];
 }

@@ -310,7 +310,7 @@ _evas_object_smart_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUSED, E
 }
 
 EOLIAN static Eina_Bool
-_evas_object_smart_evas_object_smart_type_check(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, const char *type)
+_evas_object_smart_evas_object_smart_type_check(const Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, const char *type)
 {
    const Evas_Smart_Class *sc;
    Eo_Class *klass;
@@ -340,7 +340,7 @@ _evas_object_smart_evas_object_smart_type_check(Eo *eo_obj, Evas_Smart_Data *o E
 }
 
 EOLIAN static Eina_Bool
-_evas_object_smart_evas_object_smart_type_check_ptr(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, const char* type)
+_evas_object_smart_evas_object_smart_type_check_ptr(const Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED, const char* type)
 {
    Eo_Class *klass;
    const Evas_Smart_Class *sc;
@@ -405,7 +405,7 @@ _evas_object_smart_iterator_free(Evas_Object_Smart_Iterator *it)
 
 // Should we have an eo_children_iterator_new API and just inherit from it ?
 EOLIAN static Eina_Iterator*
-_evas_object_smart_iterator_new(Eo *eo_obj, Evas_Smart_Data *priv)
+_evas_object_smart_iterator_new(const Eo *eo_obj, Evas_Smart_Data *priv)
 {
    Evas_Object_Smart_Iterator *it;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
@@ -813,7 +813,7 @@ _evas_object_smart_callbacks_descriptions_set(Eo *eo_obj EINA_UNUSED, Evas_Smart
 }
 
 EOLIAN static void
-_evas_object_smart_callbacks_descriptions_get(Eo *eo_obj, Evas_Smart_Data *o, const Evas_Smart_Cb_Description ***class_descriptions, unsigned int *class_count, const Evas_Smart_Cb_Description ***instance_descriptions, unsigned int *instance_count)
+_evas_object_smart_callbacks_descriptions_get(const Eo *eo_obj, Evas_Smart_Data *o, const Evas_Smart_Cb_Description ***class_descriptions, unsigned int *class_count, const Evas_Smart_Cb_Description ***instance_descriptions, unsigned int *instance_count)
 {
    if (class_descriptions) *class_descriptions = NULL;
    if (class_count) *class_count = 0;
@@ -831,7 +831,7 @@ _evas_object_smart_callbacks_descriptions_get(Eo *eo_obj, Evas_Smart_Data *o, co
 }
 
 EOLIAN static void
-_evas_object_smart_callback_description_find(Eo *eo_obj, Evas_Smart_Data *o, const char *name, const Evas_Smart_Cb_Description **class_description, const Evas_Smart_Cb_Description **instance_description)
+_evas_object_smart_callback_description_find(const Eo *eo_obj, Evas_Smart_Data *o, const char *name, const Evas_Smart_Cb_Description **class_description, const Evas_Smart_Cb_Description **instance_description)
 {
 
    if (!name)

@@ -512,12 +512,13 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
         /* Generation of the user function prototype declaration - not needed when @auto and @empty are indicated */
         if (!is_empty && !is_auto)
           {
-             eina_strbuf_append_printf(fbody, "%s _%s%s%s_%s%s(Eo *obj, @#Datatype_Data *pd%s);\n\n",
+             eina_strbuf_append_printf(fbody, "%s _%s%s%s_%s%s(%sEo *obj, @#Datatype_Data *pd%s);\n\n",
                    rettype?rettype:"void",
                    class_env.lower_classname,
                    impl_env?"_":"",
                    impl_env?impl_env->lower_classname:"",
                    eolian_function_name_get(funcid), suffix,
+                   eolian_function_object_is_const(funcid)?"const ":"",
                    eina_strbuf_string_get(full_params));
           }
 
@@ -527,12 +528,13 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
              eina_hash_add(_funcs_params_init,
                    eina_stringshare_add(eolian_function_name_get(funcid)), (void *)ftype);
              /* Generation of the intermediate function __eolian_... */
-             eina_strbuf_append_printf(fbody, "static %s __eolian_%s%s%s_%s%s(Eo *obj%s, @#Datatype_Data *pd%s%s)\n{\n",
+             eina_strbuf_append_printf(fbody, "static %s __eolian_%s%s%s_%s%s(%sEo *obj%s, @#Datatype_Data *pd%s%s)\n{\n",
                    rettype?rettype:"void",
                    class_env.lower_classname,
                    impl_env?"_":"",
                    impl_env?impl_env->lower_classname:"",
                    eolian_function_name_get(funcid), suffix,
+                   eolian_function_object_is_const(funcid)?"const ":"",
                    is_empty || is_auto?" EINA_UNUSED":"",
                    is_empty || (is_auto && !eina_strbuf_length_get(params_init))?" EINA_UNUSED":"",
                    eina_strbuf_string_get(full_params));

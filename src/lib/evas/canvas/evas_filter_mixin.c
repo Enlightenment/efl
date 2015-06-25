@@ -400,7 +400,7 @@ update:
 }
 
 EOLIAN void
-_evas_filter_efl_gfx_filter_source_get(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd,
+_evas_filter_efl_gfx_filter_source_get(const Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd,
                                        const char *name, Efl_Gfx_Base **source)
 {
    if (!source) return;

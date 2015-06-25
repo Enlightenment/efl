@@ -480,7 +480,7 @@ _evas_canvas3d_texture_source_visible_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Tex
 }
 
 EOLIAN static Evas_Colorspace
-_evas_canvas3d_texture_color_format_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Texture_Data *pd)
+_evas_canvas3d_texture_color_format_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Texture_Data *pd)
 {
    Evas_Colorspace format = -1;
    Eo *evas = NULL;
@@ -500,7 +500,7 @@ _evas_canvas3d_texture_color_format_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Textu
 }
 
 EOLIAN static void
-_evas_canvas3d_texture_size_get(Eo *obj, Evas_Canvas3D_Texture_Data *pd, int *w, int *h)
+_evas_canvas3d_texture_size_get(const Eo *obj, Evas_Canvas3D_Texture_Data *pd, int *w, int *h)
 {
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());
@@ -554,7 +554,7 @@ _evas_canvas3d_texture_filter_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd, Evas_
 }
 
 EOLIAN static void
-_evas_canvas3d_texture_filter_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Texture_Data *pd, Evas_Canvas3D_Texture_Filter *min, Evas_Canvas3D_Texture_Filter *mag)
+_evas_canvas3d_texture_filter_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Texture_Data *pd, Evas_Canvas3D_Texture_Filter *min, Evas_Canvas3D_Texture_Filter *mag)
 {
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());

@@ -146,7 +146,7 @@ _set_frame_to_eet_file_from_mesh(Evas_Canvas3D_Mesh_Eet *eet_mesh)
 }
 
 void
-evas_model_save_file_eet(Evas_Canvas3D_Mesh *mesh,
+evas_model_save_file_eet(const Evas_Canvas3D_Mesh *mesh,
                          const char *file,
                          Evas_Canvas3D_Mesh_Frame *f)
 {

@@ -157,7 +157,7 @@ _save_material(Evas_Canvas3D_Mesh_Data *pd EINA_UNUSED,
 }
 
 void
-evas_model_save_file_obj(Evas_Canvas3D_Mesh *mesh, const char *_obj_file_name, Evas_Canvas3D_Mesh_Frame *f)
+evas_model_save_file_obj(const Evas_Canvas3D_Mesh *mesh, const char *_obj_file_name, Evas_Canvas3D_Mesh_Frame *f)
 {
    int len;
    char *_mtl_file_name, *_without_extention;

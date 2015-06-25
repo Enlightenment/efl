@@ -1318,7 +1318,7 @@ _evas_image_data_set(Eo *eo_obj, Evas_Image_Data *o, void *data)
 }
 
 EOLIAN static void*
-_evas_image_data_get(Eo *eo_obj, Evas_Image_Data *_pd EINA_UNUSED, Eina_Bool for_writing)
+_evas_image_data_get(const Eo *eo_obj, Evas_Image_Data *_pd EINA_UNUSED, Eina_Bool for_writing)
 {
    Evas_Image_Data *o = (Evas_Image_Data *) _pd;
    DATA32 *data;
@@ -1620,7 +1620,7 @@ _evas_image_reload(Eo *eo_obj, Evas_Image_Data *o)
 }
 
 EOLIAN static Eina_Bool
-_evas_image_efl_file_save(Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *key, const char *flags)
+_evas_image_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *key, const char *flags)
 {
    DATA32 *data = NULL;
    int quality = 80, compress = 9, ok = 0;
@@ -2221,7 +2221,7 @@ _evas_image_animated_loop_count_get(Eo *eo_obj, Evas_Image_Data *o)
 }
 
 EOLIAN static double
-_evas_image_animated_frame_duration_get(Eo *eo_obj, Evas_Image_Data *o, int start_frame, int frame_num)
+_evas_image_animated_frame_duration_get(const Eo *eo_obj, Evas_Image_Data *o, int start_frame, int frame_num)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    int frame_count = 0;

@@ -114,7 +114,7 @@ _evas_canvas3d_camera_projection_matrix_set(Eo *obj, Evas_Canvas3D_Camera_Data *
 }
 
 EOLIAN static void
-_evas_canvas3d_camera_projection_matrix_get(Eo *obj EINA_UNUSED,
+_evas_canvas3d_camera_projection_matrix_get(const Eo *obj EINA_UNUSED,
                                          Evas_Canvas3D_Camera_Data *pd,
                                          Evas_Real *matrix)
 {

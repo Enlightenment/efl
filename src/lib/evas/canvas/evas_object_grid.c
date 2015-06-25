@@ -395,7 +395,7 @@ _evas_grid_clear(Eo *o, Evas_Grid_Data *priv, Eina_Bool clear)
 }
 
 EOLIAN static Eina_Bool
-_evas_grid_pack_get(Eo *o EINA_UNUSED, Evas_Grid_Data *_pd EINA_UNUSED, Evas_Object *child, int *x, int *y, int *w, int *h)
+_evas_grid_pack_get(const Eo *o EINA_UNUSED, Evas_Grid_Data *_pd EINA_UNUSED, Evas_Object *child, int *x, int *y, int *w, int *h)
 {
    Evas_Object_Grid_Option *opt;
 
@@ -414,7 +414,7 @@ _evas_grid_pack_get(Eo *o EINA_UNUSED, Evas_Grid_Data *_pd EINA_UNUSED, Evas_Obj
 }
 
 EOLIAN static Eina_Iterator*
-_evas_grid_iterator_new(Eo *o, Evas_Grid_Data *priv)
+_evas_grid_iterator_new(const Eo *o, Evas_Grid_Data *priv)
 {
    Evas_Object_Grid_Iterator *it;
 
@@ -436,7 +436,7 @@ _evas_grid_iterator_new(Eo *o, Evas_Grid_Data *priv)
 }
 
 EOLIAN static Eina_Accessor*
-_evas_grid_accessor_new(Eo *o, Evas_Grid_Data *priv)
+_evas_grid_accessor_new(const Eo *o, Evas_Grid_Data *priv)
 {
    Evas_Object_Grid_Accessor *it;
 

@@ -8,7 +8,7 @@
 #include "evas_private.h"
 
 void
-evas_common_save_model_to_file(Evas_Canvas3D_Mesh *model,
+evas_common_save_model_to_file(const Evas_Canvas3D_Mesh *model,
                                const char *file,
                                Evas_Canvas3D_Mesh_Frame *f)
 {

@@ -6101,7 +6101,7 @@ _evas_textblock_style_user_push(Eo *eo_obj, Evas_Textblock_Data *o, Evas_Textblo
 }
 
 EOLIAN static const Evas_Textblock_Style*
-_evas_textblock_style_user_peek(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o)
+_evas_textblock_style_user_peek(const Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o)
 {
    return o->style_user;
 }
@@ -7150,7 +7150,7 @@ _evas_textblock_cursor_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o)
 }
 
 EOLIAN static Evas_Textblock_Cursor*
-_evas_textblock_cursor_new(Eo *eo_obj, Evas_Textblock_Data *o)
+_evas_textblock_cursor_new(const Eo *eo_obj, Evas_Textblock_Data *o)
 {
    Evas_Textblock_Cursor *cur;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
@@ -7188,7 +7188,7 @@ evas_textblock_cursor_is_format(const Evas_Textblock_Cursor *cur)
 }
 
 EOLIAN static const Eina_List *
-_evas_textblock_node_format_list_get(Eo *eo_obj, Evas_Textblock_Data *o, const char *anchor)
+_evas_textblock_node_format_list_get(const Eo *eo_obj, Evas_Textblock_Data *o, const char *anchor)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -10793,14 +10793,14 @@ evas_textblock_cursor_eol_get(const Evas_Textblock_Cursor *cur)
 
 /* general controls */
 EOLIAN static Eina_Bool
-_evas_textblock_line_number_geometry_get(Eo *eo_obj, Evas_Textblock_Data *o, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+_evas_textblock_line_number_geometry_get(const Eo *eo_obj, Evas_Textblock_Data *o, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
 
    Evas_Object_Textblock_Line *ln;
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
-   _relayout_if_needed(eo_obj, o);
+   _relayout_if_needed((Evas_Object *)eo_obj, o);
 
    ln = _find_layout_line_num(eo_obj, line);
    if (!ln) return EINA_FALSE;

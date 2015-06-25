@@ -145,7 +145,7 @@ _evas_canvas3d_scene_size_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd,
 }
 
 EOLIAN static void
-_evas_canvas3d_scene_size_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd, int *w, int *h)
+_evas_canvas3d_scene_size_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd, int *w, int *h)
 {
    if (w) *w = pd->w;
    if (h) *h = pd->h;
@@ -160,7 +160,7 @@ _evas_canvas3d_scene_background_color_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Sce
 }
 
 EOLIAN static void
-_evas_canvas3d_scene_background_color_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd,
+_evas_canvas3d_scene_background_color_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd,
                                    Evas_Real *r, Evas_Real *g, Evas_Real *b, Evas_Real *a)
 {
    if (r) *r = pd->bg_color.r;
@@ -588,7 +588,7 @@ static void _node_mesh_colors_free_cb(void *data)
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_scene_pick(Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real x, Evas_Real y,
+_evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real x, Evas_Real y,
                     Evas_Canvas3D_Node **node, Evas_Canvas3D_Mesh **mesh,
                     Evas_Real *s, Evas_Real *t)
 {
@@ -714,7 +714,7 @@ _evas_canvas3d_scene_pick(Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real x, Ev
 }
 
 EOLIAN static Evas_Canvas3D_Node *
-_evas_canvas3d_scene_exist(Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real x, Evas_Real y, Evas_Canvas3D_Node *node)
+_evas_canvas3d_scene_exist(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real x, Evas_Real y, Evas_Canvas3D_Node *node)
 {
    Evas_Canvas3D_Pick_Data data;
    Evas_Canvas3D_Node_Data *pd_camera_node;
@@ -749,7 +749,7 @@ _evas_canvas3d_scene_exist(Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real x, E
 }
 
 EOLIAN static Eina_List *
-_evas_canvas3d_scene_pick_member_list_get(Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real x, Evas_Real y)
+_evas_canvas3d_scene_pick_member_list_get(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real x, Evas_Real y)
 {
    const Eina_List *list = NULL, *l = NULL;
    Eina_List *picked_nodes = NULL;
@@ -776,7 +776,7 @@ _evas_canvas3d_scene_pick_member_list_get(Eo *obj, Evas_Canvas3D_Scene_Data *pd,
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_scene_shadows_enable_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd)
+_evas_canvas3d_scene_shadows_enable_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd)
 {
    return pd->shadows_enabled;
 }
@@ -789,7 +789,7 @@ _evas_canvas3d_scene_shadows_enable_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_scene_color_pick_enable_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd)
+_evas_canvas3d_scene_color_pick_enable_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd)
 {
    return pd->color_pick_enabled;
 }

@@ -1056,7 +1056,7 @@ _evas_table_padding_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv, Evas_Coord *ho
 }
 
 EOLIAN static Eina_Bool
-_evas_table_pack_get(Eo *o EINA_UNUSED, Evas_Table_Data *_pd EINA_UNUSED, Evas_Object *child, unsigned short *col, unsigned short *row, unsigned short *colspan, unsigned short *rowspan)
+_evas_table_pack_get(const Eo *o EINA_UNUSED, Evas_Table_Data *_pd EINA_UNUSED, Evas_Object *child, unsigned short *col, unsigned short *row, unsigned short *colspan, unsigned short *rowspan)
 {
    Evas_Object_Table_Option *opt;
 
@@ -1310,7 +1310,7 @@ _evas_table_col_row_size_get(Eo *o EINA_UNUSED, Evas_Table_Data *priv, int *cols
 }
 
 EOLIAN static Eina_Iterator*
-_evas_table_iterator_new(Eo *o, Evas_Table_Data *priv)
+_evas_table_iterator_new(const Eo *o, Evas_Table_Data *priv)
 {
    Evas_Object_Table_Iterator *it;
 
@@ -1338,7 +1338,7 @@ _evas_table_iterator_new(Eo *o, Evas_Table_Data *priv)
 }
 
 EOLIAN static Eina_Accessor*
-_evas_table_accessor_new(Eo *o, Evas_Table_Data *priv)
+_evas_table_accessor_new(const Eo *o, Evas_Table_Data *priv)
 {
    Evas_Object_Table_Accessor *it;
 

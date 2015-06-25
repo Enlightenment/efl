@@ -1781,14 +1781,14 @@ void evas_filter_shutdown(void);
 /* Temporary save/load functions */
 void evas_common_load_model_from_file(Evas_Canvas3D_Mesh *model, const char *file);
 void evas_common_load_model_from_eina_file(Evas_Canvas3D_Mesh *model, const Eina_File *file);
-void evas_common_save_model_to_file(Evas_Canvas3D_Mesh *model, const char *file, Evas_Canvas3D_Mesh_Frame *f);
+void evas_common_save_model_to_file(const Evas_Canvas3D_Mesh *model, const char *file, Evas_Canvas3D_Mesh_Frame *f);
 void evas_model_load_file_eet(Evas_Canvas3D_Mesh *mesh, Eina_File *file);
 void evas_model_load_file_md2(Evas_Canvas3D_Mesh *mesh, Eina_File *file);
 void evas_model_load_file_obj(Evas_Canvas3D_Mesh *mesh, Eina_File *file);
 void evas_model_load_file_ply(Evas_Canvas3D_Mesh *mesh, Eina_File *file);
-void evas_model_save_file_eet(Evas_Canvas3D_Mesh *mesh, const char *file, Evas_Canvas3D_Mesh_Frame *f);
-void evas_model_save_file_obj(Evas_Canvas3D_Mesh *mesh, const char *file, Evas_Canvas3D_Mesh_Frame *f);
-void evas_model_save_file_ply(Evas_Canvas3D_Mesh *mesh, const char *file, Evas_Canvas3D_Mesh_Frame *f);
+void evas_model_save_file_eet(const Evas_Canvas3D_Mesh *mesh, const char *file, Evas_Canvas3D_Mesh_Frame *f);
+void evas_model_save_file_obj(const Evas_Canvas3D_Mesh *mesh, const char *file, Evas_Canvas3D_Mesh_Frame *f);
+void evas_model_save_file_ply(const Evas_Canvas3D_Mesh *mesh, const char *file, Evas_Canvas3D_Mesh_Frame *f);
 
 /* Primitives functions */
 void evas_common_set_model_from_primitive(Evas_Canvas3D_Mesh *model, int frame, Evas_Canvas3D_Primitive_Data *primitive);

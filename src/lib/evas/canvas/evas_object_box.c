@@ -1841,7 +1841,7 @@ _evas_box_remove_all(Eo *o, Evas_Object_Box_Data *priv, Eina_Bool clear)
 }
 
 EOLIAN static Eina_Iterator*
-_evas_box_iterator_new(Eo *o, Evas_Object_Box_Data *priv)
+_evas_box_iterator_new(const Eo *o, Evas_Object_Box_Data *priv)
 {
    Evas_Object_Box_Iterator *it;
    
@@ -1863,7 +1863,7 @@ _evas_box_iterator_new(Eo *o, Evas_Object_Box_Data *priv)
 }
 
 EOLIAN static Eina_Accessor*
-_evas_box_accessor_new(Eo *o, Evas_Object_Box_Data *priv)
+_evas_box_accessor_new(const Eo *o, Evas_Object_Box_Data *priv)
 {
    Evas_Object_Box_Accessor *it;
 
@@ -1899,13 +1899,13 @@ evas_object_box_children_get(const Evas_Object *o)
 }
 
 EOLIAN static const char*
-_evas_box_option_property_name_get(Eo *o EINA_UNUSED, Evas_Object_Box_Data *_pd EINA_UNUSED, int property EINA_UNUSED)
+_evas_box_option_property_name_get(const Eo *o EINA_UNUSED, Evas_Object_Box_Data *_pd EINA_UNUSED, int property EINA_UNUSED)
 {
    return NULL;
 }
 
 EOLIAN static int
-_evas_box_option_property_id_get(Eo *o EINA_UNUSED, Evas_Object_Box_Data *_pd EINA_UNUSED, const char *name EINA_UNUSED)
+_evas_box_option_property_id_get(const Eo *o EINA_UNUSED, Evas_Object_Box_Data *_pd EINA_UNUSED, const char *name EINA_UNUSED)
 {
    return -1;
 }
@@ -1960,7 +1960,7 @@ evas_object_box_option_property_vget(const Evas_Object *o, Evas_Object_Box_Optio
 }
 
 EOLIAN static Eina_Bool
-_evas_box_option_property_vget(Eo *o EINA_UNUSED, Evas_Object_Box_Data *_pd EINA_UNUSED, Evas_Object_Box_Option *opt EINA_UNUSED, int property EINA_UNUSED, va_list *args EINA_UNUSED)
+_evas_box_option_property_vget(const Eo *o EINA_UNUSED, Evas_Object_Box_Data *_pd EINA_UNUSED, Evas_Object_Box_Option *opt EINA_UNUSED, int property EINA_UNUSED, va_list *args EINA_UNUSED)
 {
    return EINA_FALSE;
 }

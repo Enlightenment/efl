@@ -159,7 +159,7 @@ _evas_canvas3d_material_color_set(Eo *obj, Evas_Canvas3D_Material_Data *pd, Evas
 }
 
 EOLIAN static void
-_evas_canvas3d_material_color_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Material_Data *pd, Evas_Canvas3D_Material_Attrib attrib, Evas_Real *r, Evas_Real *g, Evas_Real *b, Evas_Real *a)
+_evas_canvas3d_material_color_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Material_Data *pd, Evas_Canvas3D_Material_Attrib attrib, Evas_Real *r, Evas_Real *g, Evas_Real *b, Evas_Real *a)
 {
    if (r)  *r = pd->attribs[attrib].color.r;
    if (g)  *g = pd->attribs[attrib].color.g;

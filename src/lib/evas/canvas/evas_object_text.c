@@ -656,7 +656,7 @@ _layout_text_item_trim(Evas_Object_Protected_Data *obj, Evas_Text_Data *o, Evas_
 }
 
 static void
-_evas_object_text_pad_get(Evas_Object *eo_obj, Evas_Text_Data *o, int *l, int *r, int *t, int *b)
+_evas_object_text_pad_get(const Eo *eo_obj, Evas_Text_Data *o, int *l, int *r, int *t, int *b)
 {
    if (l) *l = 0;
    if (r) *r = 0;
@@ -1116,7 +1116,7 @@ _evas_text_vert_advance_get(Eo *eo_obj, Evas_Text_Data *o)
 }
 
 EOLIAN static Eina_Bool
-_evas_text_char_pos_get(Eo *eo_obj, Evas_Text_Data *o, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+_evas_text_char_pos_get(const Eo *eo_obj, Evas_Text_Data *o, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Eina_Bool ret;
    ret = EINA_FALSE;
@@ -1159,7 +1159,7 @@ _evas_text_char_pos_get(Eo *eo_obj, Evas_Text_Data *o, int pos, Evas_Coord *cx, 
 }
 
 EOLIAN static int
-_evas_text_last_up_to_pos(Eo *eo_obj, Evas_Text_Data *o, Evas_Coord x, Evas_Coord y)
+_evas_text_last_up_to_pos(const Eo *eo_obj, Evas_Text_Data *o, Evas_Coord x, Evas_Coord y)
 {
    int ret;
    ret = -1;
@@ -1173,7 +1173,7 @@ _evas_text_last_up_to_pos(Eo *eo_obj, Evas_Text_Data *o, Evas_Coord x, Evas_Coor
 }
 
 EOLIAN static int
-_evas_text_char_coords_get(Eo *eo_obj, Evas_Text_Data *o, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+_evas_text_char_coords_get(const Eo *eo_obj, Evas_Text_Data *o, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    int ret;
    ret = -1;

@@ -634,7 +634,7 @@ _evas_canvas3d_mesh_frame_vertex_data_unmap(Eo *obj EINA_UNUSED, Evas_Canvas3D_M
 }
 
 EOLIAN static int
-_evas_canvas3d_mesh_frame_vertex_stride_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd, int frame, Evas_Canvas3D_Vertex_Attrib attrib)
+_evas_canvas3d_mesh_frame_vertex_stride_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd, int frame, Evas_Canvas3D_Vertex_Attrib attrib)
 {
    Evas_Canvas3D_Mesh_Frame *f = evas_canvas3d_mesh_frame_find(pd, frame);
 
@@ -706,13 +706,13 @@ _evas_canvas3d_mesh_index_data_copy_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_
 }
 
 EOLIAN static Evas_Canvas3D_Index_Format
-_evas_canvas3d_mesh_index_format_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_index_format_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->index_format;
 }
 
 EOLIAN static int
-_evas_canvas3d_mesh_index_count_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_index_count_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->index_count;
 }
@@ -879,7 +879,7 @@ _evas_canvas3d_mesh_efl_file_file_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd,
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_mesh_efl_file_save(Eo *obj, Evas_Canvas3D_Mesh_Data *pd,
+_evas_canvas3d_mesh_efl_file_save(const Eo *obj, Evas_Canvas3D_Mesh_Data *pd,
                    const char *file,
                    const char *key EINA_UNUSED,
                    const char *flags EINA_UNUSED)

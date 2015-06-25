@@ -1158,7 +1158,7 @@ _evas_canvas3d_node_eo_base_destructor(Eo *obj, Evas_Canvas3D_Node_Data *pd EINA
 }
 
 EOLIAN static Evas_Canvas3D_Node_Type
-_evas_canvas3d_node_type_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
+_evas_canvas3d_node_type_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
 {
    return pd->type;
 }
@@ -1226,13 +1226,13 @@ _evas_canvas3d_node_member_del(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas
 }
 
 EOLIAN static Evas_Canvas3D_Node *
-_evas_canvas3d_node_parent_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
+_evas_canvas3d_node_parent_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
 {
    return pd->parent;
 }
 
 EOLIAN static const Eina_List *
-_evas_canvas3d_node_member_list_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
+_evas_canvas3d_node_member_list_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
 {
    return pd->members;
 }
@@ -1288,7 +1288,7 @@ _evas_canvas3d_node_scale_set(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Real x,
 }
 
 EOLIAN static void
-_evas_canvas3d_node_position_get(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D_Space space,
+_evas_canvas3d_node_position_get(const Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D_Space space,
                           Evas_Real *x, Evas_Real *y, Evas_Real *z)
 {
    if (space == EVAS_CANVAS3D_SPACE_LOCAL)
@@ -1314,7 +1314,7 @@ _evas_canvas3d_node_position_get(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canv
 }
 
 EOLIAN static void
-_evas_canvas3d_node_orientation_get(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D_Space space,
+_evas_canvas3d_node_orientation_get(const Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D_Space space,
                              Evas_Real *x, Evas_Real *y, Evas_Real *z, Evas_Real *w)
 {
    if (space == EVAS_CANVAS3D_SPACE_LOCAL)
@@ -1344,7 +1344,7 @@ _evas_canvas3d_node_orientation_get(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_C
 }
 
 EOLIAN static void
-_evas_canvas3d_node_scale_get(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D_Space space,
+_evas_canvas3d_node_scale_get(const Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D_Space space,
                        Evas_Real *x, Evas_Real *y, Evas_Real *z)
 {
    if (space == EVAS_CANVAS3D_SPACE_LOCAL)
@@ -1661,7 +1661,7 @@ _evas_canvas3d_node_mesh_del(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canvas3D
 }
 
 EOLIAN static const Eina_List *
-_evas_canvas3d_node_mesh_list_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
+_evas_canvas3d_node_mesh_list_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
 {
    return pd->data.mesh.meshes;
 }

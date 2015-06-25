@@ -459,28 +459,28 @@ _evas_canvas_output_framespace_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Ev
 }
 
 EOLIAN static Evas_Coord
-_evas_canvas_coord_screen_x_to_world(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int x)
+_evas_canvas_coord_screen_x_to_world(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int x)
 {
    if (e->output.w == e->viewport.w) return e->viewport.x + x;
    else return (long long)e->viewport.x + (((long long)x * (long long)e->viewport.w) / (long long)e->output.w);
 }
 
 EOLIAN static Evas_Coord
-_evas_canvas_coord_screen_y_to_world(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int y)
+_evas_canvas_coord_screen_y_to_world(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int y)
 {
    if (e->output.h == e->viewport.h) return e->viewport.y + y;
    else return (long long)e->viewport.y + (((long long)y * (long long)e->viewport.h) / (long long)e->output.h);
 }
 
 EOLIAN static int
-_evas_canvas_coord_world_x_to_screen(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x)
+_evas_canvas_coord_world_x_to_screen(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord x)
 {
    if (e->output.w == e->viewport.w) return x - e->viewport.x;
    else return (int)((((long long)x - (long long)e->viewport.x) * (long long)e->output.w) /  (long long)e->viewport.w);
 }
 
 EOLIAN static int
-_evas_canvas_coord_world_y_to_screen(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord y)
+_evas_canvas_coord_world_y_to_screen(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Coord y)
 {
    if (e->output.h == e->viewport.h) return y - e->viewport.y;
    else return (int)((((long long)y - (long long)e->viewport.y) * (long long)e->output.h) /  (long long)e->viewport.h);

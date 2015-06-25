@@ -10,7 +10,7 @@
 #include "evas_private.h"
 
 void
-evas_model_save_file_ply(Evas_Canvas3D_Mesh *mesh, const char *file, Evas_Canvas3D_Mesh_Frame *f)
+evas_model_save_file_ply(const Evas_Canvas3D_Mesh *mesh, const char *file, Evas_Canvas3D_Mesh_Frame *f)
 {
    float *src_pos, *src_nor, *src_tex, *src_col;
    int    i;
