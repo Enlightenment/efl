@@ -1587,12 +1587,13 @@ _mouse_in_cb(void *data,
 static void
 _mouse_move_cb(void *data,
                Evas *evas EINA_UNUSED,
-               Evas_Object *o EINA_UNUSED,
+               Evas_Object *o,
                void *event_info)
 {
    Evas_Object *obj;
    Elm_List_Item_Data *it = data;
    Evas_Event_Mouse_Move *ev = event_info;
+   Evas_Coord x = 0, y = 0, w = 0, h = 0;
 
    ELM_LIST_ITEM_CHECK_OR_RETURN(it);
    obj = WIDGET(it);
@@ -1600,6 +1601,8 @@ _mouse_move_cb(void *data,
 
    evas_object_ref(obj);
    _elm_list_walk(sd);
+
+   evas_object_geometry_get(o, &x, &y, &w, &h);
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
@@ -1613,18 +1616,35 @@ _mouse_move_cb(void *data,
                   _item_unselect(it);
                }
           }
-        if (sd->movements == ELM_LIST_SWIPE_MOVES) sd->swipe = EINA_TRUE;
-        else
+     }
+   else if (ELM_RECTS_POINT_OUT(x, y, w, h, ev->cur.canvas.x, ev->cur.canvas.y))
+     {
+        ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
+        if (!sd->was_selected)
           {
-             sd->history[sd->movements].x = ev->cur.canvas.x;
-             sd->history[sd->movements].y = ev->cur.canvas.y;
-             if (abs((sd->history[sd->movements].x - sd->history[0].x)) > 40)
-               sd->swipe = EINA_TRUE;
-             else
-               sd->movements++;
+             _item_unhighlight(it);
+             _item_unselect(it);
           }
+        it->base->still_in = EINA_FALSE;
      }
 
+   if (sd->movements == ELM_LIST_SWIPE_MOVES)
+     {
+        sd->swipe = EINA_TRUE;
+     }
+   else
+     {
+        sd->history[sd->movements].x = ev->cur.canvas.x;
+        sd->history[sd->movements].y = ev->cur.canvas.y;
+        if (abs((sd->history[sd->movements].x - sd->history[0].x)) > 40)
+          {
+             sd->swipe = EINA_TRUE;
+          }
+        else
+          sd->movements++;
+     }
+   if (sd->swipe)
+     ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
    _elm_list_unwalk(obj, sd);
    evas_object_unref(obj);
 }
@@ -1679,6 +1699,7 @@ _mouse_down_cb(void *data,
      }
    sd->swipe = EINA_FALSE;
    sd->movements = 0;
+   it->base->still_in = EINA_TRUE;
 
    _elm_list_unwalk(obj, sd);
    evas_object_unref(obj);
@@ -1716,13 +1737,18 @@ _mouse_up_cb(void *data,
    else sd->on_hold = EINA_FALSE;
 
    sd->mouse_down = EINA_FALSE;
-   sd->longpressed = EINA_FALSE;
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
    ELM_SAFE_FREE(it->swipe_timer, ecore_timer_del);
-   if (sd->on_hold)
+   if (sd->swipe)
      {
-        if (sd->swipe) _swipe_do(data);
-        sd->on_hold = EINA_FALSE;
+        if (!sd->was_selected)
+          {
+             _item_unhighlight(it);
+             _item_unselect(it);
+          }
+        _swipe_do(data);
+        sd->swipe = EINA_FALSE;
+        sd->was_selected = EINA_FALSE;
         return;
      }
    if (sd->longpressed)
@@ -1732,13 +1758,15 @@ _mouse_up_cb(void *data,
              _item_unhighlight(it);
              _item_unselect(it);
           }
-        sd->was_selected = 0;
+        sd->longpressed = EINA_FALSE;
+        sd->was_selected = EINA_FALSE;
         return;
      }
 
    if (it->base->disabled)
      return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD || !it->base->still_in)
+     return;
 
    evas_object_ref(obj);
    _elm_list_walk(sd);

@@ -621,6 +621,7 @@ struct _Elm_Widget_Item_Data
    Eina_Bool                      disabled : 1;
    Eina_Bool                      on_deletion : 1;
    Eina_Bool                      on_translate : 1;
+   Eina_Bool                      still_in : 1;
 };
 
 #define ELM_NEW(t) calloc(1, sizeof(t))

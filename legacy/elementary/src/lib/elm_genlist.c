@@ -3712,6 +3712,7 @@ _item_mouse_move_cb(void *data,
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    Elm_Object_Item *eo_it = EO_OBJ(it);
 
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
         if (!sd->on_hold)
@@ -3721,6 +3722,15 @@ _item_mouse_move_cb(void *data,
                _item_unselect(it);
           }
      }
+   else if (ELM_RECTS_POINT_OUT(x, y, w, h, ev->cur.canvas.x, ev->cur.canvas.y) &&
+            !sd->reorder_it)
+     {
+        ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
+        if ((!sd->wasselected) && (!it->flipped))
+          _item_unselect(it);
+        it->base->still_in = EINA_FALSE;
+     }
+
    if (sd->multi_touched)
      {
         sd->cur_x = ev->cur.canvas.x;
@@ -3815,8 +3825,6 @@ _item_mouse_move_cb(void *data,
      {
         it->dragging = EINA_TRUE;
         ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
-        if (!sd->wasselected)
-          _item_unselect(it);
         if (dy < 0)
           {
              if (ady > adx)
@@ -4135,6 +4143,7 @@ _item_mouse_down_cb(void *data,
      it->long_timer = NULL;
    sd->swipe = EINA_FALSE;
    sd->movements = 0;
+   it->base->still_in = EINA_TRUE;
 
    if (_is_no_select(it) ||
         eo_do_ret((Eo *)eo_it, tmp, elm_wdg_item_disabled_get()))
@@ -4758,11 +4767,13 @@ _item_mouse_up_cb(void *data,
         ELM_SAFE_FREE(sd->multi_timer, ecore_timer_del);
         sd->multi_timeout = EINA_FALSE;
      }
-   if (sd->on_hold)
+   if (sd->swipe)
      {
-        if (sd->swipe) _swipe_do(it);
+        if (!sd->wasselected) _item_unselect(it);
+        _swipe_do(it);
         sd->longpressed = EINA_FALSE;
         sd->on_hold = EINA_FALSE;
+        sd->wasselected = EINA_FALSE;
         return;
      }
    if ((sd->reorder_mode) && (sd->reorder_it))
@@ -4792,6 +4803,7 @@ _item_mouse_up_cb(void *data,
      }
    if (sd->longpressed)
      {
+        if (!sd->wasselected) _item_unselect(it);
         sd->longpressed = EINA_FALSE;
         sd->wasselected = EINA_FALSE;
         return;
@@ -4807,10 +4819,10 @@ _item_mouse_up_cb(void *data,
      }
 
    if (_is_no_select(it) ||
-       (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()) || (dragged)))
+       (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get())))
      return;
 
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD || !it->base->still_in) return;
 
    evas_object_ref(sd->obj);
 

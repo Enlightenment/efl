@@ -558,10 +558,11 @@ _item_mouse_move_cb(void *data,
    Elm_Gen_Item *it = data;
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord ox, oy, ow, oh, it_scrl_x, it_scrl_y;
-   Evas_Coord minw = 0, minh = 0, x, y, dx, dy, adx, ady;
+   Evas_Coord minw = 0, minh = 0, x, y, w, h, dx, dy, adx, ady;
    ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
    Elm_Object_Item *eo_it = EO_OBJ(it);
 
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
         if (!sd->on_hold)
@@ -574,6 +575,14 @@ _item_mouse_move_cb(void *data,
                }
           }
      }
+  else if (ELM_RECTS_POINT_OUT(x, y, w, h, ev->cur.canvas.x, ev->cur.canvas.y) &&
+		  !sd->reorder_it )
+    {
+        ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
+        if (!sd->was_selected)
+          it->unsel_cb(it);
+        it->base->still_in = EINA_FALSE;
+    }
 
    if ((it->dragging) && (it->down))
      {
@@ -612,7 +621,6 @@ _item_mouse_move_cb(void *data,
    if (it->select_mode != ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
      elm_coords_finger_size_adjust(1, &minw, 1, &minh);
 
-   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    x = ev->cur.canvas.x - x;
    y = ev->cur.canvas.y - y;
    dx = x - it->dx;
@@ -1052,12 +1060,7 @@ _item_mouse_up_cb(void *data,
         evas_object_smart_callback_call(WIDGET(it), SIG_DRAG_STOP, eo_it);
         dragged = EINA_TRUE;
      }
-   if (sd->on_hold)
-     {
-        sd->longpressed = EINA_FALSE;
-        sd->on_hold = EINA_FALSE;
-        return;
-     }
+
    if ((sd->reorder_mode) &&
        (sd->reorder_it))
      {
@@ -1092,7 +1095,14 @@ _item_mouse_up_cb(void *data,
           _elm_gengrid_item_unrealize(it, EINA_FALSE);
      }
 
-   if (eo_do_ret(eo_it, tmp, elm_wdg_item_disabled_get()) || (dragged)) return;
+   if (eo_do_ret(eo_it, tmp, elm_wdg_item_disabled_get())) return;
+
+   if (sd->on_hold || it->base->still_in)
+     {
+        sd->longpressed = EINA_FALSE;
+        sd->on_hold = EINA_FALSE;
+        return;
+     }
 
    if (sd->focused_item != eo_it)
      elm_object_item_focus_set(eo_it, EINA_TRUE);
