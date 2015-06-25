@@ -96,7 +96,7 @@ _ecore_con_dns_check(Ecore_Con_DNS *dns)
         return 1;
 
       default:
-        ERR("resolve failed: %s", dns_strerror(error));
+        DBG("resolve failed: %s", dns_strerror(error));
         goto error;
      }
 
