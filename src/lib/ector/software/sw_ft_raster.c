@@ -209,7 +209,7 @@ typedef struct  SW_FT_Outline_Funcs_
 
 
   /* must be at least 6 bits! */
-#define PIXEL_BITS  5
+#define PIXEL_BITS  8
 
 #undef FLOOR
 #undef CEILING
