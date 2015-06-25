@@ -529,12 +529,6 @@ _item_unselect(Elm_Gen_Item *it)
    if ((it->generation < sd->generation) || (!it->selected))
      return;
 
-   edje_object_signal_emit(VIEW(it), "elm,state,unselected", "elm");
-   evas_object_smart_callback_call(WIDGET(it), SIG_UNHIGHLIGHTED, eo_it);
-
-   evas_object_stack_below(VIEW(it), sd->stack);
-
-   it->highlighted = EINA_FALSE;
    if (it->selected)
      {
         it->selected = EINA_FALSE;
@@ -574,7 +568,10 @@ _item_mouse_move_cb(void *data,
           {
              sd->on_hold = EINA_TRUE;
              if (!sd->was_selected)
-               it->unsel_cb(it);
+               {
+                  it->unhighlight_cb(it);
+                  it->unsel_cb(it);
+               }
           }
      }
 
@@ -647,7 +644,10 @@ _item_mouse_move_cb(void *data,
         it->dragging = 1;
         ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
         if (!sd->was_selected)
-          it->unsel_cb(it);
+          {
+             it->unhighlight_cb(it);
+             it->unsel_cb(it);
+          }
 
         if (dy < 0)
           {
@@ -725,6 +725,24 @@ _item_highlight(Elm_Gen_Item *it)
      evas_object_stack_above(VIEW(it), sd->stack);
 
    it->highlighted = EINA_TRUE;
+}
+
+static void
+_item_unhighlight(Elm_Gen_Item *it)
+{
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
+   Elm_Object_Item *eo_it = EO_OBJ(it);
+
+   if (!it->highlighted ||
+       (it->generation < sd->generation))
+     return;
+
+   edje_object_signal_emit(VIEW(it), "elm,state,unselected", "elm");
+   evas_object_smart_callback_call(WIDGET(it), SIG_UNHIGHLIGHTED, eo_it);
+
+   evas_object_stack_below(VIEW(it), sd->stack);
+
+   it->highlighted = EINA_FALSE;
 }
 
 static void
@@ -1060,7 +1078,11 @@ _item_mouse_up_cb(void *data,
    if (sd->longpressed)
      {
         sd->longpressed = EINA_FALSE;
-        if (!sd->was_selected) it->unsel_cb(it);
+        if (!sd->was_selected)
+          {
+             it->unhighlight_cb(it);
+             it->unsel_cb(it);
+          }
         sd->was_selected = EINA_FALSE;
         return;
      }
@@ -1084,7 +1106,11 @@ _item_mouse_up_cb(void *data,
              it->highlight_cb(it);
              it->sel_cb(it);
           }
-        else it->unsel_cb(it);
+        else
+          {
+             it->unhighlight_cb(it);
+             it->unsel_cb(it);
+          }
      }
    else
      {
@@ -1094,6 +1120,7 @@ _item_mouse_up_cb(void *data,
                {
                   Elm_Object_Item *eo_sel = sd->selected->data;
                   Elm_Gen_Item *sel = eo_data_scope_get(eo_sel, ELM_GENGRID_ITEM_CLASS);
+                  it->unhighlight_cb(sel);
                   it->unsel_cb(sel);
                }
           }
@@ -1105,7 +1132,11 @@ _item_mouse_up_cb(void *data,
              EINA_LIST_FOREACH_SAFE(sd->selected, l, l_next, eo_item2)
                {
                   ELM_GENGRID_ITEM_DATA_GET(eo_item2, item2);
-                  if (item2 != it) it->unsel_cb(item2);
+                  if (item2 != it)
+                    {
+                       it->unhighlight_cb(item2);
+                       it->unsel_cb(item2);
+                    }
                }
           }
         it->highlight_cb(it);
@@ -3978,6 +4009,7 @@ _elm_gengrid_item_new(Elm_Gengrid_Data *sd,
 
    it->del_cb = (Ecore_Cb)_item_del;
    it->highlight_cb = (Ecore_Cb)_item_highlight;
+   it->unhighlight_cb = (Ecore_Cb)_item_unhighlight;
    it->sel_cb = (Ecore_Cb)_item_select;
    it->unsel_cb = (Ecore_Cb)_item_unselect;
    it->unrealize_cb = (Ecore_Cb)_item_unrealize_cb;
@@ -4492,7 +4524,7 @@ _elm_gengrid_item_selected_set(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
                {
                   Elm_Object_Item *eo_sel = sd->selected->data;
                   ELM_GENGRID_ITEM_DATA_GET(eo_sel, sel);
-                  if (it->unhighlight_cb) it->unhighlight_cb(sel);
+                  it->unhighlight_cb(sel);
                   it->unsel_cb(sel);
                }
           }
@@ -4500,7 +4532,7 @@ _elm_gengrid_item_selected_set(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
         it->sel_cb(it);
         return;
      }
-   if (it->unhighlight_cb) it->unhighlight_cb(it);
+   it->unhighlight_cb(it);
    it->unsel_cb(it);
 }
 
