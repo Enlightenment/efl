@@ -576,9 +576,9 @@ _mouse_up_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
    ELM_SAFE_FREE(sd->grab.mouse_up, ecore_event_handler_del);
 
    pixels = evas_object_image_data_get(sd->picker_display, EINA_FALSE);
-   r = (pixels[17 * 9 + 9] >> 16) & 0xFF;
-   g = (pixels[17 * 9 + 9] >> 8) & 0xFF;
-   b = pixels[17 * 9 + 9] & 0xFF;
+   r = (pixels[17 * 8 + 8] >> 16) & 0xFF;
+   g = (pixels[17 * 8 + 8] >> 8) & 0xFF;
+   b = pixels[17 * 8 + 8] & 0xFF;
 
    _colors_set(o, r, g, b, 0xFF);
    evas_object_smart_callback_call(o, SIG_CHANGED_USER, NULL);
