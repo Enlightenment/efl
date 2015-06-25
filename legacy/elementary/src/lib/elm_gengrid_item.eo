@@ -209,6 +209,29 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                  @ingroup Gengrid
                  */
            }
+           fields_update {
+                /*@
+                 Update the part of an item
+
+                 This updates an item's part by calling item's fetching functions again
+                 to get the contents, texts and states. Use this when the original
+                 item data has changed and the changes are desired to be reflected.
+                 Second parts argument is used for globbing to match '*', '?', and '.'
+                 It can be used at updating multi fields.
+
+                 Use elm_gengrid_realized_items_update() to update an item's all
+                 property.
+
+                 @see elm_gengrid_iitem_update()
+
+                 @ingroup Gengrid
+                 @since 1.15
+                 */
+                params {
+                     @in parts: const (char) *; /*@ The name of item's part */
+                     @in itf: Elm_Gengrid_Item_Field_Type; /*@ The type of item's part type */
+                }
+           }
            item_class_update {
                 /*@
                  Update the item class of a gengrid item.

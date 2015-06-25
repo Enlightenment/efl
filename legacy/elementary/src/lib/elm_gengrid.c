@@ -34,6 +34,8 @@
 #define PRELOAD             1
 #define REORDER_EFFECT_TIME 0.5
 
+#define CACHE_MAX 40
+
 EAPI const char ELM_GENGRID_SMART_NAME[] = "elm_gengrid";
 EAPI const char ELM_GENGRID_PAN_SMART_NAME[] = "elm_gengrid_pan";
 
@@ -93,6 +95,8 @@ static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
 static void _item_position_update(Eina_Inlist *list, int idx);
+static void _item_mouse_callbacks_add(Elm_Gen_Item *it, Evas_Object *view);
+static void _item_mouse_callbacks_del(Elm_Gen_Item *it, Evas_Object *view);
 
 
 static const Elm_Action key_actions[] = {
@@ -101,6 +105,168 @@ static const Elm_Action key_actions[] = {
    {"escape", _key_action_escape},
    {NULL, NULL}
 };
+
+
+//-- item cache handle routine --//
+// push item cache into caches
+static Eina_Bool
+_item_cache_push(Elm_Gengrid_Data *sd, Item_Cache *itc)
+{
+   if (!itc || (sd->item_cache_max <= 0))
+     return EINA_FALSE;
+
+   sd->item_cache_count++;
+   sd->item_cache =
+     eina_inlist_prepend(sd->item_cache, EINA_INLIST_GET(itc));
+
+   return EINA_TRUE;
+}
+
+// pop item cache from caches
+static Item_Cache *
+_item_cache_pop(Elm_Gengrid_Data *sd, Item_Cache *itc)
+{
+   if ((!itc) || (!sd->item_cache) ||
+       (sd->item_cache_count <= 0))
+     return NULL;
+
+   sd->item_cache =
+     eina_inlist_remove (sd->item_cache, EINA_INLIST_GET(itc));
+   sd->item_cache_count--;
+
+   return itc;
+}
+
+// free one item cache from caches
+static void
+_item_cache_free(Item_Cache *itc)
+{
+   if (!itc) return;
+
+   evas_object_del(itc->spacer);
+   evas_object_del(itc->base_view);
+   eina_stringshare_del(itc->item_style);
+   ELM_SAFE_FREE(itc ,free);
+}
+
+// clean up item cache by removing overflowed caches
+static void
+_item_cache_clean(Elm_Gengrid_Data *sd)
+{
+   evas_event_freeze(evas_object_evas_get(sd->obj));
+
+   while ((sd->item_cache) && (sd->item_cache_count > sd->item_cache_max))
+     {
+        Item_Cache *itc =
+           EINA_INLIST_CONTAINER_GET(sd->item_cache->last, Item_Cache);
+        _item_cache_free(_item_cache_pop(sd, itc));
+     }
+   evas_event_thaw(evas_object_evas_get(sd->obj));
+   evas_event_thaw_eval(evas_object_evas_get(sd->obj));
+}
+
+// empty all item caches
+static void
+_item_cache_zero(Elm_Gengrid_Data *sd)
+{
+   int pmax = sd->item_cache_max;
+
+   sd->item_cache_max = 0;
+   _item_cache_clean(sd);
+   sd->item_cache_max = pmax;
+}
+
+// add an item to item cache
+static Eina_Bool
+_item_cache_add(Elm_Gen_Item *it)
+{
+   if (it->item->nocache_once || it->item->nocache) return EINA_FALSE;
+
+   Item_Cache *itc = NULL;
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
+   Evas_Object *obj = sd->obj;
+
+   evas_event_freeze(evas_object_evas_get(obj));
+   if (sd->item_cache_max > 0)
+     itc = ELM_NEW(Item_Cache);
+   if (!_item_cache_push(sd, itc))
+     {
+        if (itc) ELM_SAFE_FREE(itc, free);
+
+        evas_event_thaw(evas_object_evas_get(obj));
+        evas_event_thaw_eval(evas_object_evas_get(obj));
+        return EINA_FALSE;
+     }
+
+   itc->spacer = it->spacer;
+   itc->base_view = VIEW(it);
+   itc->item_style = eina_stringshare_add(it->itc->item_style);
+
+   if (!it->group)
+     {
+        Eina_Bool tmp;
+        if (it->selected)
+          edje_object_signal_emit(itc->base_view, "elm,state,unselected", "elm");
+        if (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()))
+          edje_object_signal_emit(itc->base_view, "elm,state,enabled", "elm");
+        if (it == (Elm_Gen_Item *)sd->focused_item &&
+            elm_widget_focus_highlight_enabled_get(obj))
+          edje_object_signal_emit(itc->base_view, "elm,state,unfocused", "elm");
+
+        ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
+        // FIXME: other callbacks?
+        _item_mouse_callbacks_del(it, itc->base_view);
+     }
+
+   edje_object_mirrored_set(VIEW(it),
+                            elm_widget_mirrored_get(WIDGET(it)));
+   edje_object_scale_set(VIEW(it),
+                         elm_widget_scale_get(WIDGET(it))
+                         * elm_config_scale_get());
+
+   evas_object_hide(itc->base_view);
+   evas_object_move(itc->base_view, -9999, -9999);
+   it->spacer = NULL;
+   VIEW(it) = NULL;
+
+   _item_cache_clean(sd);
+
+   evas_event_thaw(evas_object_evas_get(obj));
+   evas_event_thaw_eval(evas_object_evas_get(obj));
+
+   return EINA_TRUE;
+}
+
+// find an item from item cache and remove it from the cache
+static Eina_Bool
+_item_cache_find(Elm_Gen_Item *it)
+{
+   if (it->item->nocache_once || it->item->nocache) return EINA_FALSE;
+
+   Item_Cache *itc = NULL;
+   Eina_Inlist *l;
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
+
+   EINA_INLIST_FOREACH_SAFE(sd->item_cache, l, itc)
+     {
+        if (((!it->itc->item_style) && (!itc->item_style)) ||
+            (it->itc->item_style && itc->item_style &&
+             (!strcmp(it->itc->item_style, itc->item_style))))
+          {
+             itc = _item_cache_pop(sd, itc);
+             if (!itc) continue;
+
+             it->spacer = itc->spacer;
+             VIEW(it) = itc->base_view;
+             itc->spacer = NULL;
+             itc->base_view = NULL;
+
+             _item_cache_free(itc);
+             return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
+}
 
 static Eina_Bool
 _is_no_select(Elm_Gen_Item *it)
@@ -614,11 +780,196 @@ _item_mouse_down_cb(void *data,
 }
 
 static void
+_item_text_realize(Elm_Gen_Item *it,
+                   Evas_Object *target,
+                   Eina_List **source,
+                   const char *parts)
+{
+   const Eina_List *l;
+   const char *key;
+   char *s;
+
+   if (!it->itc->func.text_get) return;
+
+   if (!(*source))
+     *source = elm_widget_stringlist_get
+        (edje_object_data_get(target, "texts"));
+   EINA_LIST_FOREACH(*source, l, key)
+     {
+        if (parts && fnmatch(parts, key, FNM_PERIOD)) continue;
+
+        s = it->itc->func.text_get
+           ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
+        if (s)
+          {
+             edje_object_part_text_escaped_set(target, key, s);
+             free(s);
+          }
+        else
+          {
+             edje_object_part_text_set(target, key, "");
+          }
+        if (_elm_config->atspi_mode)
+          elm_interface_atspi_accessible_name_changed_signal_emit(EO_OBJ(it));
+     }
+}
+
+static void
+_item_content_realize(Elm_Gen_Item *it,
+                      Evas_Object *target,
+                      Eina_List **contents,
+                      const char *src,
+                      const char *parts)
+{
+   Eina_Bool tmp;
+   Evas_Object *content;
+
+   if (!parts)
+     {
+        EINA_LIST_FREE(*contents, content)
+          evas_object_del(content);
+     }
+   if (it->itc->func.content_get)
+     {
+        Eina_List *source;
+        const char *key;
+
+        source = elm_widget_stringlist_get(edje_object_data_get(target, src));
+
+        EINA_LIST_FREE(source, key)
+          {
+             if (parts && fnmatch(parts, key, FNM_PERIOD))
+               continue;
+
+             Evas_Object *old = edje_object_part_swallow_get(target, key);
+             if (old)
+               {
+                  *contents = eina_list_remove(*contents, old);
+                  evas_object_del(old);
+               }
+             content = NULL;
+             if (it->itc->func.content_get)
+               content = it->itc->func.content_get
+                  ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
+             if (!content) continue;
+             *contents = eina_list_append(*contents, content);
+             if (!edje_object_part_swallow(target, key, content))
+               {
+                  ERR("%s (%p) can not be swallowed into %s",
+                      evas_object_type_get(content), content, key);
+                  evas_object_hide(content);
+                  continue;
+               }
+             elm_widget_sub_object_add(WIDGET(it), content);
+             if (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()))
+               elm_widget_disabled_set(content, EINA_TRUE);
+          }
+     }
+}
+
+static void
+_item_state_realize(Elm_Gen_Item *it, Evas_Object *target, const char *parts)
+{
+   Eina_List *src;
+   const char *key;
+   char buf[4096];
+
+   if (!it->itc->func.state_get) return;
+
+   src = elm_widget_stringlist_get(edje_object_data_get(target, "states"));
+   EINA_LIST_FREE(src, key)
+     {
+        if (parts && fnmatch(parts, key, FNM_PERIOD)) continue;
+
+        Eina_Bool on = it->itc->func.state_get
+           ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
+
+        if (on)
+          {
+             snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
+             edje_object_signal_emit(target, buf, "elm");
+          }
+        else
+          {
+             snprintf(buf, sizeof(buf), "elm,state,%s,passive", key);
+             edje_object_signal_emit(target, buf, "elm");
+          }
+     }
+   edje_object_message_signal_process(target);
+}
+
+static void
+_view_inflate(Evas_Object *view, Elm_Gen_Item *it, Eina_List **sources,
+              Eina_List **contents)
+{
+   if (!view) return;
+   if (sources) _item_text_realize(it, view, sources, NULL);
+   if (contents) _item_content_realize(it, view, contents, "contents", NULL);
+   _item_state_realize(it, view, NULL);
+}
+
+/**
+ * Apply the right style for the created item view.
+ */
+static void
+_view_style_update(Elm_Gen_Item *it, Evas_Object *view, const char *style)
+{
+   char buf[1024];
+   ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
+   snprintf(buf, sizeof(buf), "item/%s", style ? style : "default");
+
+   if (!elm_widget_theme_object_set(WIDGET(it), view,
+                                    "gengrid", buf,
+                                    elm_widget_style_get(WIDGET(it))))
+     {
+        ERR("%s is not a valid gengrid item style. "
+            "Automatically falls back into default style.",
+            style);
+        elm_widget_theme_object_set
+          (WIDGET(it), view, "gengrid", "item/default", "default");
+     }
+
+   edje_object_mirrored_set(view, elm_widget_mirrored_get(WIDGET(it)));
+   edje_object_scale_set(view, elm_widget_scale_get(WIDGET(it)) *
+                         elm_config_scale_get());
+   evas_object_stack_below(view, sd->stack);
+}
+
+/**
+ * Create a VIEW(it) during _item_realize()
+ */
+static Evas_Object *
+_view_create(Elm_Gen_Item *it, const char *style)
+{
+   Evas_Object *view = edje_object_add(evas_object_evas_get(WIDGET(it)));
+   evas_object_smart_member_add(view, GG_IT(it)->wsd->pan_obj);
+   elm_widget_sub_object_add(WIDGET(it), view);
+   edje_object_scale_set(view, elm_widget_scale_get(WIDGET(it)) *
+                         elm_config_scale_get());
+
+   _view_style_update(it, view, style);
+   return view;
+}
+
+static void
+_view_clear(Evas_Object *view, Eina_List **texts, Eina_List **contents)
+{
+   const char *part;
+   Evas_Object *c;
+   const Eina_List *l;
+
+   EINA_LIST_FOREACH(*texts, l, part)
+     edje_object_part_text_set(view, part, NULL);
+   ELM_SAFE_FREE(*texts, elm_widget_stringlist_free);
+
+   EINA_LIST_FREE(*contents, c)
+     evas_object_del(c);
+}
+
+static void
 _elm_gengrid_item_unrealize(Elm_Gen_Item *it,
                             Eina_Bool calc)
 {
-   Evas_Object *content;
-
    if (!it->realized) return;
    if (GG_IT(it)->wsd->reorder_it == it) return;
 
@@ -626,13 +977,10 @@ _elm_gengrid_item_unrealize(Elm_Gen_Item *it,
    if (!calc)
      evas_object_smart_callback_call(WIDGET(it), SIG_UNREALIZED, EO_OBJ(it));
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
-   ELM_SAFE_FREE(it->texts, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(it->contents, elm_widget_stringlist_free);
+
+   _view_clear(VIEW(it), &(it->texts), &(it->contents));
+
    ELM_SAFE_FREE(it->states, elm_widget_stringlist_free);
-
-   EINA_LIST_FREE(it->content_objs, content)
-     evas_object_del(content);
-
    eo_do(EO_OBJ(it), elm_wdg_item_track_cancel());
 
    it->unrealize_cb(it);
@@ -766,6 +1114,36 @@ _item_mouse_up_cb(void *data,
 }
 
 static void
+_item_mouse_callbacks_add(Elm_Gen_Item *it,
+                          Evas_Object *view)
+{
+   evas_object_event_callback_add
+     (view, EVAS_CALLBACK_MOUSE_IN, _item_mouse_in_cb, it);
+   evas_object_event_callback_add
+     (view, EVAS_CALLBACK_MOUSE_MOVE, _item_mouse_move_cb, it);
+   evas_object_event_callback_add
+     (view, EVAS_CALLBACK_MOUSE_DOWN, _item_mouse_down_cb, it);
+   evas_object_event_callback_add
+     (view, EVAS_CALLBACK_MOUSE_UP, _item_mouse_up_cb, it);
+}
+
+static void
+_item_mouse_callbacks_del(Elm_Gen_Item *it,
+                          Evas_Object *view)
+{
+   evas_object_event_callback_del_full
+     (view, EVAS_CALLBACK_MOUSE_IN, _item_mouse_in_cb, it);
+   evas_object_event_callback_del_full
+     (view, EVAS_CALLBACK_MOUSE_MOVE, _item_mouse_move_cb, it);
+   evas_object_event_callback_del_full
+     (view, EVAS_CALLBACK_MOUSE_DOWN, _item_mouse_down_cb, it);
+   evas_object_event_callback_del_full
+     (view, EVAS_CALLBACK_MOUSE_UP, _item_mouse_up_cb, it);
+}
+
+
+
+static void
 _elm_gengrid_item_index_update(Elm_Gen_Item *it)
 {
    if (it->position_update)
@@ -778,8 +1156,11 @@ _elm_gengrid_item_index_update(Elm_Gen_Item *it)
 static void
 _item_unrealize_cb(Elm_Gen_Item *it)
 {
-   ELM_SAFE_FREE(VIEW(it), evas_object_del);
-   ELM_SAFE_FREE(it->spacer, evas_object_del);
+   if (!_item_cache_add(it))
+     {
+        ELM_SAFE_FREE(VIEW(it), evas_object_del);
+        ELM_SAFE_FREE(it->spacer, evas_object_del);
+     }
 }
 
 static char *
@@ -854,8 +1235,6 @@ static void
 _item_realize(Elm_Gen_Item *it)
 {
    Eina_Bool tmp;
-   char buf[1024];
-   char style[1024];
    ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
    Elm_Object_Item *eo_it = EO_OBJ(it);
 
@@ -863,26 +1242,14 @@ _item_realize(Elm_Gen_Item *it)
        (it->generation < sd->generation))
      return;
 
-   VIEW(it) = edje_object_add(evas_object_evas_get(WIDGET(it)));
-   edje_object_scale_set
-     (VIEW(it), elm_widget_scale_get(WIDGET(it)) * elm_config_scale_get());
-   edje_object_mirrored_set(VIEW(it), elm_widget_mirrored_get(WIDGET(it)));
-   evas_object_smart_member_add(VIEW(it), sd->pan_obj);
-   elm_widget_sub_object_add(WIDGET(it), VIEW(it));
-   snprintf(style, sizeof(style), "item/%s",
-            it->itc->item_style ? it->itc->item_style : "default");
-   if (!elm_widget_theme_object_set(WIDGET(it), VIEW(it), "gengrid", style,
-                                    elm_widget_style_get(WIDGET(it))))
+   if (!_item_cache_find(it))
      {
-        ERR("%s is not a valid gengrid item style. "
-            "Automatically falls back into default style.",
-            it->itc->item_style);
-        elm_widget_theme_object_set
-           (WIDGET(it), VIEW(it), "gengrid", "item/default", "default");
+        VIEW(it) = _view_create(it, it->itc->item_style);
+        if (it->item->nocache_once)
+          it->item->nocache_once = EINA_FALSE;
      }
-   evas_object_stack_below(VIEW(it), sd->stack);
 
-   if (edje_object_part_exists(VIEW(it), "elm.swallow.pad"))
+   if (it->spacer && edje_object_part_exists(VIEW(it), "elm.swallow.pad"))
      {
         it->spacer =
            evas_object_rectangle_add(evas_object_evas_get(WIDGET(it)));
@@ -895,64 +1262,8 @@ _item_realize(Elm_Gen_Item *it)
    /* access */
    if (_elm_config->access_mode) _access_widget_item_register(it);
 
-   if (it->itc->func.text_get)
-     {
-        const Eina_List *l;
-        const char *key;
-
-        it->texts =
-          elm_widget_stringlist_get(edje_object_data_get(VIEW(it), "texts"));
-        EINA_LIST_FOREACH(it->texts, l, key)
-          {
-             char *s = it->itc->func.text_get
-                 ((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), key);
-             if (s)
-               {
-                  edje_object_part_text_escaped_set(VIEW(it), key, s);
-                  free(s);
-               }
-          }
-     }
-
-   if (it->itc->func.content_get)
-     {
-        const Eina_List *l;
-        const char *key;
-        Evas_Object *ic = NULL;
-
-        it->contents = elm_widget_stringlist_get
-            (edje_object_data_get(VIEW(it), "contents"));
-        EINA_LIST_FOREACH(it->contents, l, key)
-          {
-             ic = it->itc->func.content_get((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), key);
-             if (ic)
-               {
-                  it->content_objs = eina_list_append(it->content_objs, ic);
-                  edje_object_part_swallow(VIEW(it), key, ic);
-                  evas_object_show(ic);
-                  elm_widget_sub_object_add(WIDGET(it), ic);
-               }
-          }
-     }
-
-   if (it->itc->func.state_get)
-     {
-        const Eina_List *l;
-        const char *key;
-
-        it->states =
-          elm_widget_stringlist_get(edje_object_data_get(VIEW(it), "states"));
-        EINA_LIST_FOREACH(it->states, l, key)
-          {
-             Eina_Bool on = it->itc->func.state_get
-                 ((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), l->data);
-             if (on)
-               {
-                  snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
-                  edje_object_signal_emit(VIEW(it), buf, "elm");
-               }
-          }
-     }
+   /* infate texts, contents and states of view object */
+   _view_inflate(VIEW(it), it, &it->texts, &it->contents);
 
    if (it->group)
      {
@@ -981,15 +1292,7 @@ _item_realize(Elm_Gen_Item *it)
                &sd->item_height);
           }
 
-        evas_object_event_callback_add
-          (VIEW(it), EVAS_CALLBACK_MOUSE_DOWN, _item_mouse_down_cb, it);
-        evas_object_event_callback_add
-          (VIEW(it), EVAS_CALLBACK_MOUSE_UP, _item_mouse_up_cb, it);
-        evas_object_event_callback_add
-          (VIEW(it), EVAS_CALLBACK_MOUSE_MOVE, _item_mouse_move_cb, it);
-        evas_object_event_callback_add
-          (VIEW(it), EVAS_CALLBACK_MOUSE_IN, _item_mouse_in_cb, it);
-
+        _item_mouse_callbacks_add(it, VIEW(it));
         _elm_gengrid_item_index_update(it);
 
         if (it->selected)
@@ -3236,6 +3539,7 @@ _mirrored_set(Evas_Object *obj,
 
    ELM_GENGRID_DATA_GET(obj, sd);
 
+   _item_cache_zero(sd);
    eo_do_super(obj, MY_CLASS, elm_interface_scrollable_mirrored_set(rtl));
 
    if (!sd->items) return;
@@ -3747,6 +4051,7 @@ _elm_gengrid_evas_object_smart_add(Eo *obj, Elm_Gengrid_Data *priv)
    priv->align_x = 0.5;
    priv->align_y = 0.5;
    priv->highlight = EINA_TRUE;
+   priv->item_cache_max = CACHE_MAX;
 
    priv->pan_obj = eo_add(MY_PAN_CLASS, evas_object_evas_get(obj));
    pan_data = eo_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
@@ -3768,6 +4073,7 @@ _elm_gengrid_evas_object_smart_del(Eo *obj, Elm_Gengrid_Data *sd)
    ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
    ELM_SAFE_FREE(sd->stack, evas_object_del);
 
+   _item_cache_zero(sd);
    ecore_job_del(sd->calc_job);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
@@ -4075,6 +4381,28 @@ _elm_gengrid_item_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it)
    _item_place(it, it->x, it->y);
 }
 
+EOLIAN static void
+_elm_gengrid_item_fields_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
+                                const char *parts,
+                                Elm_Gengrid_Item_Field_Type itf)
+{
+   ELM_GENGRID_ITEM_CHECK_OR_RETURN(it);
+
+   if (!it->realized) return;
+   if (it->want_unrealize) return;
+
+   if ((!itf) || (itf & ELM_GENGRID_ITEM_FIELD_TEXT))
+     _item_text_realize(it, VIEW(it), &it->texts, parts);
+
+   if ((!itf) || (itf & ELM_GENGRID_ITEM_FIELD_CONTENT))
+     _item_content_realize(it, VIEW(it), &it->contents, "contents", parts);
+
+   if ((!itf) || (itf & ELM_GENGRID_ITEM_FIELD_STATE))
+     _item_state_realize(it, VIEW(it), parts);
+
+   _item_place(it, it->x, it->y);
+}
+
 EOLIAN static const Elm_Gengrid_Item_Class *
 _elm_gengrid_item_item_class_get(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *item)
 {
@@ -4090,6 +4418,8 @@ _elm_gengrid_item_item_class_update(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it,
 
    if (it->generation < GG_IT(it)->wsd->generation) return;
    it->itc = itc;
+   it->item->nocache_once = EINA_TRUE;
+
    elm_gengrid_item_update(EO_OBJ(it));
 }
 

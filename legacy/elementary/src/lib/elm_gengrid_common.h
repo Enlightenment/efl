@@ -4,7 +4,7 @@
 /**
  * Defines where to position the item in the genlist.
  *
- * @ingroup Genlist
+ * @ingroup Gengrid
  */
 typedef enum
 {
@@ -14,6 +14,21 @@ typedef enum
    ELM_GENGRID_ITEM_SCROLLTO_MIDDLE = (1 << 2)   /**< to the middle of viewport */
 } Elm_Gengrid_Item_Scrollto_Type;
 
+
+/**
+ * Defines the type of the item part
+ * Used while updating item's parts
+ * It can be used at updating multi fields.
+ *
+ * @ingroup Gengrid
+ */
+typedef enum
+{
+   ELM_GENGRID_ITEM_FIELD_ALL = 0,
+   ELM_GENGRID_ITEM_FIELD_TEXT = (1 << 0),
+   ELM_GENGRID_ITEM_FIELD_CONTENT = (1 << 1),
+   ELM_GENGRID_ITEM_FIELD_STATE = (1 << 2)
+} Elm_Gengrid_Item_Field_Type;
 
 /**
  * @see Elm_Gen_Item_Class

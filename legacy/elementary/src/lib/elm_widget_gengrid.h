@@ -129,6 +129,12 @@ struct _Elm_Gengrid_Data
    Eina_Bool                             wheel_disabled : 1; /**< a flag that shows mouse wheel is disabled or not. */
    /**< value whether item loop feature is enabled or not. */
    Eina_Bool                             item_loop_enable : 1;
+
+   Eina_Inlist                          *item_cache; /* an inlist of
+                                                      * edje object it
+                                                      * cache. */
+   int                                   item_cache_count;
+   int                                   item_cache_max;
 };
 
 struct Elm_Gen_Item_Type
@@ -144,6 +150,17 @@ struct Elm_Gen_Item_Type
 
    Eina_Bool               group_realized : 1;
    Eina_Bool               moving : 1;
+   Eina_Bool               nocache_once : 1; /* do not use cache for
+                                              * this item only once */
+   Eina_Bool               nocache : 1; /* do not use cache for this item */
+};
+
+typedef struct _Item_Cache Item_Cache;
+struct _Item_Cache
+{
+   EINA_INLIST;
+   Evas_Object *base_view, *spacer;
+   const char  *item_style; // it->itc->item_style
 };
 
 typedef struct _Elm_Gengrid_Pan_Data Elm_Gengrid_Pan_Data;
