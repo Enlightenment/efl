@@ -2836,6 +2836,23 @@ _elm_win_frame_add(Elm_Win_Data *sd,
 
    evas_object_is_frame_object_set(sd->frame_obj, EINA_TRUE);
 
+   if (!sd->icon)
+     {
+        Efreet_Desktop *d;
+
+        sd->icon = elm_icon_add(sd->obj);
+
+        d = efreet_util_desktop_exec_find(_elm_appname);
+        if (d)
+          {
+             elm_icon_standard_set(sd->icon, d->icon);
+             efreet_desktop_free(d);
+          }
+     }
+
+   edje_object_part_swallow(sd->frame_obj, "elm.swallow.icon",
+                            sd->icon);
+
    evas_object_event_callback_add
      (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
    evas_object_event_callback_add
