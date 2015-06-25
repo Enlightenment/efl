@@ -129,26 +129,24 @@ operator<<(std::ostream& out, inheritance_wrappers const& x)
             << ")" << endl
             << "{" << endl;
 
-        if (!function_is_void(func))
-          out << tab(1) << reinterpret_type(func.ret) << " _tmp_ret{};" << endl;
-
         out << tab(1)
             << "try" << endl
             << tab(2) << "{" << endl
             << tab(3)
-            << (!function_is_void(func) ? "_tmp_ret = ": "")
+            << (!function_is_void(func) ? "return ": "")
             << "static_cast<T*>(self->this_)->"
             << func.name << "(" << parameters_cxx_list(func.params) << ");" << endl
             << tab(2) << "}" << endl
             << tab(1) << "catch (...)" << endl
             << tab(2) << "{" << endl
-            << tab(3) << "eina_error_set( ::efl::eina::unknown_error() );" << endl
-            << tab(2) << "}" << endl;
+            << tab(3) << "eina_error_set( ::efl::eina::unknown_error() );" << endl;
 
         if (!function_is_void(func))
-          out << tab(1) << "return _tmp_ret;" << endl;
+          out << tab(3) << func.ret.front().native << " _tmp_ret{};" << endl
+              << tab(3) << "return " << to_cxx(func.ret, "_tmp_ret") << ";" << endl;
 
-        out << "}" << endl;
+        out << tab(2) << "}" << endl
+            << "}" << endl;
 
         out << scope_guard_tail(x._cls, func) << endl;
      }
