@@ -1507,7 +1507,7 @@ _item_place(Elm_Gen_Item *it,
           tch = items_row * wsd->item_height;
         alignh = (vh - tch) * wsd->align_y;
         item_pos = items_row * cx + cy + 1;
-        if (item_pos != it->position)
+        if (item_pos != it->position && !it->position_update)
           {
              it->position = item_pos;
              it->position_update = EINA_TRUE;
@@ -1540,7 +1540,7 @@ _item_place(Elm_Gen_Item *it,
           tcw = items_col * wsd->item_width;
         alignw = (vw - tcw) * wsd->align_x;
         item_pos = cx + items_col * cy + 1;
-        if (item_pos != it->position)
+        if (item_pos != it->position && !it->position_update)
           {
              it->position = item_pos;
              it->position_update = EINA_TRUE;
@@ -1604,7 +1604,10 @@ _item_place(Elm_Gen_Item *it,
      {
         _item_realize(it);
         if (!was_realized)
-          evas_object_smart_callback_call(WIDGET(it), SIG_REALIZED, EO_OBJ(it));
+          {
+             _elm_gengrid_item_index_update(it);
+             evas_object_smart_callback_call(WIDGET(it), SIG_REALIZED, EO_OBJ(it));
+          }
         if (it->parent)
           {
              if (wsd->horizontal)
@@ -1798,7 +1801,10 @@ _group_item_place(Elm_Gengrid_Pan_Data *psd)
           {
              _item_realize(it);
              if (!was_realized)
-               evas_object_smart_callback_call(WIDGET(it), SIG_REALIZED, EO_OBJ(it));
+               {
+                  _elm_gengrid_item_index_update(it);
+                  evas_object_smart_callback_call(WIDGET(it), SIG_REALIZED, EO_OBJ(it));
+               }
              evas_object_move
                (VIEW(it), GG_IT(it)->gx,
                GG_IT(it)->gy);
@@ -4285,7 +4291,7 @@ _elm_gengrid_item_prepend(Eo *obj, Elm_Gengrid_Data *sd, const Elm_Gengrid_Item_
    if (!it) return NULL;
 
    sd->items = eina_inlist_prepend(sd->items, EINA_INLIST_GET(it));
-   _item_position_update(sd->items, 0);
+   _item_position_update(sd->items, 1);
 
    if (it->group)
      sd->group_items = eina_list_append(sd->group_items, it);
@@ -4421,6 +4427,8 @@ _elm_gengrid_item_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it)
    _elm_gengrid_item_unrealize(it, EINA_TRUE);
    _item_realize(it);
    _item_place(it, it->x, it->y);
+
+   _elm_gengrid_item_index_update(it);
 }
 
 EOLIAN static void
