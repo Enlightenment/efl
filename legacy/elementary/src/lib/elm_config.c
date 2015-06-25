@@ -116,7 +116,6 @@ static void        _config_free(Elm_Config *cfg);
 static void        _config_apply(void);
 static void        _config_sub_apply(void);
 static void        _config_update(void);
-static void        _config_get(void);
 static void        _env_get(void);
 static void        _color_overlays_cancel(void);
 
@@ -1468,13 +1467,53 @@ _config_load(void)
 }
 
 static void
-_config_get(void)
+_config_flush_load(void)
+{
+   Elm_Config *cfg = NULL;
+   Eet_File *ef;
+   char buf[PATH_MAX];
+
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/flush.cfg");
+
+   ef = eet_open(buf, EET_FILE_MODE_READ);
+   if (ef)
+     {
+        cfg = eet_data_read(ef, _config_edd, "config");
+        eet_close(ef);
+     }
+
+   if (cfg)
+     {
+        size_t len;
+
+        len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "themes/");
+        if (len + 1 < sizeof(buf))
+          ecore_file_mkpath(buf);
+
+        _elm_config = cfg;
+
+        if ((_elm_config->config_version >> ELM_CONFIG_VERSION_EPOCH_OFFSET) < ELM_CONFIG_EPOCH)
+           {
+              WRN("User's elementary config seems outdated and unusable. Fallback to load system config.");
+              _config_free(_elm_config);
+              _elm_config = NULL;
+           }
+        else
+          {
+             if (_elm_config->config_version < ELM_CONFIG_VERSION)
+               _config_update();
+          }
+     }
+}
+
+static void
+_config_flush_get(void)
 {
    _elm_config_font_overlays_cancel();
    _color_overlays_cancel();
    _config_free(_elm_config);
    _elm_config = NULL;
-   _config_load();
+   _config_flush_load();
    _env_get();
    _config_apply();
    _config_sub_apply();
@@ -3062,16 +3101,83 @@ elm_config_window_auto_focus_animate_set(Eina_Bool enable)
 EAPI void
 elm_config_all_flush(void)
 {
-   FILE *f;
-   char buf[PATH_MAX];
+   char buf[4096], buf2[4096];
+   int ok = 0, ret;
+   const char *err;
+   Eet_File *ef;
+   size_t len;
 
-   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/flush");
-   f = fopen(buf, "w+");
-   if (f)
+   len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "themes/");
+   if (len + 1 >= sizeof(buf))
+     return;
+
+   ok = ecore_file_mkpath(buf);
+   if (!ok)
      {
-        fprintf(f, "flush");
-        fclose(f);
+        ERR("Problem accessing Elementary's user configuration directory: %s",
+            buf);
+        return;
      }
+
+   len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config");
+   if (len + 1 >= sizeof(buf))
+     return;
+
+   ok = ecore_file_mkpath(buf);
+   if (!ok)
+     {
+        ERR("Problem accessing Elementary's user configuration directory: %s",
+            buf);
+        return;
+     }
+
+   if (!_elm_config_profile_save())
+     return;
+
+   buf[len] = '/';
+   len++;
+
+   if (len + sizeof("flush.cfg") >= sizeof(buf) - len)
+     return;
+
+   memcpy(buf + len, "flush.cfg", sizeof("flush.cfg"));
+   len += sizeof("flush.cfg") - 1;
+
+   if (len + sizeof(".tmp") >= sizeof(buf))
+     return;
+
+   memcpy(buf2, buf, len);
+   memcpy(buf2 + len, ".tmp", sizeof(".tmp"));
+
+   ef = eet_open(buf2, EET_FILE_MODE_WRITE);
+   if (!ef)
+     return;
+
+   ok = eet_data_write(ef, _config_edd, "config", _elm_config, 1);
+   if (!ok)
+     goto err;
+
+   err = _elm_config_eet_close_error_get(ef, buf2);
+   if (err)
+     {
+        ERR("%s", err);
+        free((void *)err);
+        goto err;
+     }
+
+   ret = ecore_file_mv(buf2, buf);
+   if (!ret)
+     {
+        ERR("Error saving Elementary's configuration file");
+        goto err;
+     }
+
+   ecore_file_unlink(buf2);
+   return;
+
+err:
+   ecore_file_unlink(buf2);
+   return;
 }
 
 static void
@@ -3134,7 +3240,10 @@ _elm_config_sub_shutdown(void)
 static Eina_Bool
 _config_change_delay_cb(void *data EINA_UNUSED)
 {
-   _config_get();
+   char buf[PATH_MAX];
+
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/flush.cfg");
+   if (ecore_file_exists(buf)) _config_flush_get();
    _config_change_delay_timer = NULL;
 
    return ECORE_CALLBACK_CANCEL;
@@ -3229,7 +3338,7 @@ _elm_config_sub_init(void)
    int ok = 0;
 
    len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/");
-   if (len + 6 >= sizeof(buf)) // the space to add "flush"
+   if (len + 10 >= sizeof(buf)) // the space to add "flush.cfg"
      goto end;
 
    ok = ecore_file_mkpath(buf);
@@ -3240,18 +3349,9 @@ _elm_config_sub_init(void)
         goto end;
      }
 
-   strcat(buf, "flush");
-   if (!ecore_file_exists(buf))
-     {
-        FILE *f = fopen(buf, "w+");
+   strcat(buf, "flush.cfg");
+   if (!ecore_file_exists(buf)) elm_config_all_flush();
 
-        if (f)
-          {
-             fprintf(f, "flush");
-             fclose(f);
-             goto end;
-          }
-     }
    _eio_monitor = eio_monitor_add(buf);
    ecore_event_handler_add(EIO_MONITOR_FILE_MODIFIED, _elm_config_file_monitor_cb, NULL);
 
