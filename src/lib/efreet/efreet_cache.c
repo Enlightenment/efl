@@ -138,6 +138,15 @@ _cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    IPC_HEAD(Del);
    ipc = NULL;
    _ipc_launch();
+   if (ipc)
+     {
+        const char *s;
+        int len = 0;
+
+        s = efreet_language_get();
+        if (s) len = strlen(s);
+        ecore_ipc_server_send(ipc, 1, 0, 0, 0, 0, s, len);
+     }
    return ECORE_CALLBACK_DONE;
 }
 
