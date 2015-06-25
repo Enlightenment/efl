@@ -21,6 +21,8 @@
 
 typedef struct _Scene_Data
 {
+   Eo      *cube_primitive;
+   Eo      *sphere_primitive;
    Eo      *cylinder_primitive;
    Eo      *texture_diffuse_eagle;
    Eo      *texture_diffuse_world;

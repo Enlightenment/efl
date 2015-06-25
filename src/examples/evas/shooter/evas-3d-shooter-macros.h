@@ -62,10 +62,50 @@ typedef struct _vec2
     float   y;
 } vec2;
 
-#define KEY_MOTION(lateral, camera)               \
-   {                                              \
-      lateral_motion_indicator = lateral;         \
-      camera_move = camera;                       \
+#define KEY_MOTION(way)                                      \
+   {                                                         \
+      for (i = 0; (motion_vec[i] > 0) && (!pressed); i++)    \
+        pressed = (motion_vec[i] == way);                    \
+                                                             \
+      if (!pressed)                                          \
+        motion_vec[i] = way;                                 \
+                                                             \
+      if ((way == 1) || (way == 3))                          \
+        camera_move = CAMERA_MOVE;                           \
+      else                                                   \
+        camera_move = -CAMERA_MOVE;                          \
+                                                             \
+      if (way < 3)                                           \
+        lateral_motion_indicator = 0;                        \
+      else                                                   \
+        lateral_motion_indicator = 1;                        \
+   }
+
+#define KEY_MOTION_DOWN(way)                                         \
+   {                                                                 \
+      while ((motion_vec[i] != way) && (i < 4))                      \
+        i++;                                                         \
+      for (j = i; j < 3; j++)                                        \
+        motion_vec[j] = motion_vec[j + 1];                           \
+      motion_vec[3] = 0;                                             \
+                                                                     \
+      i = 0;                                                         \
+      while (motion_vec[i] > 0)                                      \
+        i++;                                                         \
+      if (i > 0)                                                     \
+        {                                                            \
+           if ((motion_vec[i - 1] == 1) || (motion_vec[i - 1] == 3)) \
+             camera_move = CAMERA_MOVE;                              \
+           else                                                      \
+             camera_move = -CAMERA_MOVE;                             \
+                                                                     \
+           if (motion_vec[i-1] < 3)                                  \
+             lateral_motion_indicator = 0;                           \
+           else                                                      \
+             lateral_motion_indicator = 1;                           \
+        }                                                            \
+      else                                                           \
+        camera_move = 0;                                             \
    }
 
 
@@ -86,7 +126,7 @@ typedef struct _vec2
    eo_do(mesh, evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_PHONG));
 
 
-#define SETUP_MESH(Object, Name, a, d, s)                                                 \
+#define ADD_MESH(Object, Name, a, d, s)                                                   \
    data->material_##Object = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);                        \
                                                                                           \
    eo_do(data->material_##Object,                                                         \
@@ -99,11 +139,11 @@ typedef struct _vec2
          evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, s, s, s, 1.0),             \
          evas_canvas3d_material_shininess_set(50.0));                                           \
                                                                                           \
-   data->mesh_##Name = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);                                  \
-                                                                                          \
+   data->mesh_##Name = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
+
+#define SETUP_DEFAULT_MESH(Object, Name, Shade_Mode)                                      \
    eo_do(data->mesh_##Name,                                                               \
-         evas_canvas3d_mesh_frame_add(0),                                                       \
-         evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_DIFFUSE),                         \
+         evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_##Shade_Mode),                    \
          evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES),             \
          evas_canvas3d_mesh_frame_material_set(0, data->material_##Object));
 
@@ -118,13 +158,13 @@ typedef struct _vec2
 
 #define MATERIAL_TEXTURE_SET(Object, Name, file, image)                                   \
    eo_do(data->mesh_##Name,                                                               \
-         efl_file_set(file, NULL),                                                        \
-         evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_PHONG),                           \
-         evas_canvas3d_mesh_frame_material_set(0, data->material_##Object));                    \
+         efl_file_set(file, NULL));                                                       \
                                                                                           \
+   SETUP_DEFAULT_MESH(Object, Name, PHONG)                                                \
    data->texture_diffuse_##Object = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                  \
                                                                                           \
    eo_do(data->texture_diffuse_##Object,                                                  \
+         evas_canvas3d_texture_atlas_enable_set(EINA_FALSE),                                    \
          evas_canvas3d_texture_file_set(image, NULL),                                           \
          evas_canvas3d_texture_filter_set(EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST,                       \
                                     EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST),                      \
@@ -137,31 +177,17 @@ typedef struct _vec2
                                       data->texture_diffuse_##Object));
 
 
-#define CUBE_TEXTURE_SET(Object, Name, v_count, vertex1, vertex2, i_count, index, image)        \
-   int textcoords_count = 12;                                                                   \
-   int pos_count = 12;                                                                          \
-   if (&vertex1[10] != vertex2)                                                                 \
-     {                                                                                          \
-        textcoords_count =2;                                                                    \
-        pos_count = 10;                                                                         \
-     }                                                                                          \
+#define CUBE_TEXTURE_SET(Object, Name, vertex, image)                                           \
    eo_do(data->mesh_##Name,                                                                     \
-         evas_canvas3d_mesh_vertex_count_set(v_count),                                                \
-         evas_canvas3d_mesh_frame_vertex_data_set(0, EVAS_CANVAS3D_VERTEX_POSITION,                         \
-                                            pos_count * sizeof(float), &vertex1[ 0]),           \
-         evas_canvas3d_mesh_frame_vertex_data_set(0, EVAS_CANVAS3D_VERTEX_NORMAL,                           \
-                                            pos_count * sizeof(float), &vertex1[ 3]),           \
-         evas_canvas3d_mesh_frame_vertex_data_set(0, EVAS_CANVAS3D_VERTEX_COLOR,                            \
-                                            pos_count * sizeof(float), &vertex1[ 6]),           \
+         evas_canvas3d_mesh_from_primitive_set(0, data->cube_primitive),                              \
          evas_canvas3d_mesh_frame_vertex_data_set(0, EVAS_CANVAS3D_VERTEX_TEXCOORD,                         \
-                                            textcoords_count * sizeof(float), vertex2),         \
-         evas_canvas3d_mesh_index_data_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT,                       \
-                                     i_count, &index[0]),                                       \
-         evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP));                           \
+                                            2 * sizeof(float), vertex));                        \
                                                                                                 \
+   SETUP_DEFAULT_MESH(Object, Name, NORMAL_MAP)                                                 \
    data->texture_diffuse_##Object = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                        \
                                                                                                 \
    eo_do(data->texture_diffuse_##Object,                                                        \
+         evas_canvas3d_texture_atlas_enable_set(EINA_FALSE),                                          \
          evas_canvas3d_texture_file_set(image, NULL),                                                 \
          evas_canvas3d_texture_filter_set(EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST,                             \
                                     EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST),                            \
@@ -178,6 +204,7 @@ typedef struct _vec2
    data->texture_normal_##Object = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                   \
                                                                                           \
    eo_do(data->texture_normal_##Object,                                                   \
+         evas_canvas3d_texture_atlas_enable_set(EINA_FALSE),                                    \
          evas_canvas3d_texture_file_set(normal, NULL),                                          \
          evas_canvas3d_texture_filter_set(EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST,                       \
                                     EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST),                      \
@@ -190,59 +217,43 @@ typedef struct _vec2
    eo_do(data->mesh_##Name,                                                               \
          evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP));
 
-#define SPHERE_SET(Name)                                                                   \
-   eo_do(data->mesh_##Name,                                                                \
-         evas_canvas3d_mesh_vertex_count_set(vertex_count),                                      \
-         evas_canvas3d_mesh_frame_vertex_data_set(0, EVAS_CANVAS3D_VERTEX_POSITION,                    \
-                                            sizeof(vertex), &vertices[0].position),        \
-         evas_canvas3d_mesh_frame_vertex_data_set(0, EVAS_CANVAS3D_VERTEX_NORMAL,                      \
-                                            sizeof(vertex), &vertices[0].normal),          \
-         evas_canvas3d_mesh_frame_vertex_data_set(0, EVAS_CANVAS3D_VERTEX_TANGENT,                     \
-                                            sizeof(vertex), &vertices[0].tangent),         \
-         evas_canvas3d_mesh_frame_vertex_data_set(0, EVAS_CANVAS3D_VERTEX_COLOR,                       \
-                                            sizeof(vertex), &vertices[0].color);           \
-         evas_canvas3d_mesh_frame_vertex_data_set(0, EVAS_CANVAS3D_VERTEX_TEXCOORD,                    \
-                                            sizeof(vertex), &vertices[0].texcoord),        \
-         evas_canvas3d_mesh_index_data_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT,                  \
-                                     index_count, &indices[0]));
-
 #define TEXTCOORDS_SET(Name, fb1, fb2, lr1, lr2, tb1, tb2)                      \
    static float  Name##_textcoords[] =                                          \
    {                                                                            \
    /* Front */                                                                  \
    0.0,  0.0,                                                                   \
    fb1,  0.0,                                                                   \
-   0.0,  fb2,                                                                   \
    fb1,  fb2,                                                                   \
-                                                                                \
-   /* Back */                                                                   \
    0.0,  fb2,                                                                   \
-   fb1,  fb2,                                                                   \
-   0.0,  0.0,                                                                   \
-   fb1,  0.0,                                                                   \
                                                                                 \
    /* Left */                                                                   \
-   0.0,  lr2,                                                                   \
-   lr1,  lr2,                                                                   \
-   0.0,  0.0,                                                                   \
    lr1,  0.0,                                                                   \
+   lr1,  lr2,                                                                   \
+   0.0,  lr2,                                                                   \
+   0.0,  0.0,                                                                   \
+                                                                                \
+   /* Back */                                                                   \
+   0.0,  0.0,                                                                   \
+   fb1,  0.0,                                                                   \
+   fb1,  fb2,                                                                   \
+   0.0,  fb2,                                                                   \
                                                                                 \
    /* Right */                                                                  \
    0.0,  lr2,                                                                   \
-   lr1,  lr2,                                                                   \
    0.0,  0.0,                                                                   \
    lr1,  0.0,                                                                   \
+   lr1,  lr2,                                                                   \
                                                                                 \
    /* Top */                                                                    \
+   0.0,  0.0,                                                                   \
    0.0,  tb2,                                                                   \
    tb1,  tb2,                                                                   \
-   0.0,  0.0,                                                                   \
    tb1,  0.0,                                                                   \
                                                                                 \
    /* Bottom */                                                                 \
-   0.0,  tb2,                                                                   \
-   tb1,  tb2,                                                                   \
-   0.0,  0.0,                                                                   \
    tb1,  0.0,                                                                   \
+   tb1,  tb2,                                                                   \
+   0.0,  tb2,                                                                   \
+   0.0,  0.0,                                                                   \
    };
 
