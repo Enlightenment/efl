@@ -5717,4 +5717,52 @@ edje_object_part_object_name_get(const Evas_Object *obj)
    return rp ? rp->part->name : NULL;
 }
 
+Eina_Bool
+_edje_part_mouse_events_get(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
+{
+   if (!rp) return EINA_FALSE;
+
+   return rp->part->mouse_events;
+}
+
+void
+_edje_part_mouse_events_set(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Eina_Bool mouse_events)
+{
+   if (!rp) return;
+
+   rp->part->mouse_events = !!mouse_events;
+
+   if (mouse_events)
+     {
+        evas_object_pass_events_set(rp->object, 0);
+        _edje_callbacks_add(rp->object, ed, rp);
+     }
+   else
+     {
+        evas_object_pass_events_set(rp->object, 1);
+        _edje_callbacks_del(rp->object, ed);
+     }
+}
+
+Eina_Bool
+_edje_part_repeat_events_get(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
+{
+   if (!rp) return EINA_FALSE;
+
+   return rp->part->repeat_events;
+}
+
+void
+_edje_part_repeat_events_set(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Eina_Bool repeat_events)
+{
+   if (!rp) return;
+
+   rp->part->repeat_events = !!repeat_events;
+
+   if (repeat_events)
+     evas_object_repeat_events_set(rp->object, 1);
+   else
+     evas_object_repeat_events_set(rp->object, 0);
+}
+
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

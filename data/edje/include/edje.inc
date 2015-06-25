@@ -131,6 +131,10 @@ native       stop_program     (program_id);
 native       stop_programs_on (part_id);
 native       set_min_size     (Float:w, Float:h);
 native       set_max_size     (Float:w, Float:h);
+native       set_mouse_events (part_id, ev);
+native       get_mouse_events (part_id);
+native       set_repeat_events(part_id, rep);
+native       get_repeat_events(part_id);
 native       part_swallow     (part_id, GROUP:str[]);
 
 native       external_param_get_int(id, param_name[]);
