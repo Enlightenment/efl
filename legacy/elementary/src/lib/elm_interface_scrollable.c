@@ -1197,18 +1197,19 @@ static Evas_Coord
 _elm_scroll_x_mirrored_get(const Evas_Object *obj,
                            Evas_Coord x)
 {
-   Evas_Coord cw = 0, ch = 0, w = 0, ret;
+   Evas_Coord cw = 0, w = 0, min = 0, ret;
 
    ELM_SCROLL_IFACE_DATA_GET_OR_RETURN_VAL(obj, sid, x);
 
    if (!sid->pan_obj) return 0;
 
+   eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&min, NULL));
    eo_do((Eo *)obj, elm_interface_scrollable_content_viewport_geometry_get
          (NULL, NULL, &w, NULL));
-   eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
-   ret = (cw - (x + w));
+   eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, NULL));
+   ret = cw - w - x + min + min;
 
-   return (ret >= 0) ? ret : 0;
+   return (ret >= min) ? ret : min;
 }
 
 /* Update the wanted coordinates according to the x, y passed
@@ -1808,7 +1809,7 @@ _elm_interface_scrollable_content_region_set(Eo *obj, Elm_Scrollable_Smart_Inter
 EOLIAN static void
 _elm_interface_scrollable_content_region_show(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
-   sid->wx = x;
+   sid->wx = (sid->is_mirrored ? _elm_scroll_x_mirrored_get(sid->obj, x) : x);
    sid->wy = y;
    sid->ww = w;
    sid->wh = h;
@@ -4303,7 +4304,7 @@ _elm_interface_scrollable_page_show(Eo *obj, Elm_Scrollable_Smart_Interface_Data
    if (pagenumber_h >= 0) x = sid->pagesize_h * pagenumber_h;
    if (pagenumber_v >= 0) y = sid->pagesize_v * pagenumber_v;
 
-   sid->wx = x;
+   sid->wx = (sid->is_mirrored ? _elm_scroll_x_mirrored_get(sid->obj, x) : x);
    sid->wy = y;
    sid->ww = w;
    sid->wh = h;
