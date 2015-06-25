@@ -1273,6 +1273,34 @@ _access_widget_item_register(Elm_Gen_Item *it)
 }
 
 static void
+_elm_gengrid_item_focus_raise(Elm_Gen_Item *it)
+{
+   const char *focus_raise;
+   Evas_Object *obj = WIDGET(it);
+   ELM_GENGRID_DATA_GET(obj, sd);
+
+   if (elm_widget_focus_highlight_enabled_get(obj))
+     {
+        edje_object_signal_emit
+           (VIEW(it), "elm,state,focused", "elm");
+     }
+
+   focus_raise = edje_object_data_get(VIEW(it), "focusraise");
+   if ((focus_raise) && (!strcmp(focus_raise, "on")))
+     {
+        Elm_Gen_Item *it1;
+        Eina_List *l;
+
+        evas_object_raise(VIEW(it));
+        EINA_LIST_FOREACH(sd->group_items, l, it1)
+          {
+             if (GG_IT(it1)->group_realized)
+                evas_object_raise(VIEW(it1));
+          }
+     }
+}
+
+static void
 _item_realize(Elm_Gen_Item *it)
 {
    Eina_Bool tmp;
@@ -1361,17 +1389,7 @@ _item_realize(Elm_Gen_Item *it)
 
    if (eo_it == sd->focused_item)
      {
-        const char *focus_raise;
-        if (elm_widget_focus_highlight_enabled_get(WIDGET(it)))
-          {
-             edje_object_signal_emit
-                (VIEW(it), "elm,state,focused", "elm");
-          }
-
-        focus_raise = edje_object_data_get(VIEW(it), "focusraise");
-        if ((focus_raise) && (!strcmp(focus_raise, "on")))
-          evas_object_raise(VIEW(it));
-
+        _elm_gengrid_item_focus_raise(it);
         _elm_widget_item_highlight_in_theme(WIDGET(it), EO_OBJ(it));
         _elm_widget_highlight_in_theme_update(WIDGET(it));
         _elm_widget_focus_highlight_start(WIDGET(it));
@@ -1794,6 +1812,7 @@ _group_item_place(Elm_Gengrid_Pan_Data *psd)
         iw = vw;
         ih = psd->wsd->group_item_height;
      }
+
    EINA_LIST_FOREACH(psd->wsd->group_items, l, it)
      {
         was_realized = it->realized;
@@ -1961,7 +1980,6 @@ _elm_gengrid_item_focused(Elm_Object_Item *eo_it)
    ELM_GENGRID_ITEM_DATA_GET(eo_it, it);
    Evas_Object *obj = WIDGET(it);
    ELM_GENGRID_DATA_GET(obj, sd);
-   const char *focus_raise;
 
    if (it->generation < sd->generation)
      return;
@@ -1987,18 +2005,7 @@ _elm_gengrid_item_focused(Elm_Object_Item *eo_it)
 
    sd->focused_item = eo_it;
 
-   if (it->realized)
-     {
-        if (elm_widget_focus_highlight_enabled_get(obj))
-          {
-             edje_object_signal_emit
-                (VIEW(it), "elm,state,focused", "elm");
-          }
-
-        focus_raise = edje_object_data_get(VIEW(it), "focusraise");
-        if ((focus_raise) && (!strcmp(focus_raise, "on")))
-          evas_object_raise(VIEW(it));
-     }
+   if (it->realized) _elm_gengrid_item_focus_raise(it);
    evas_object_smart_callback_call(obj, SIG_ITEM_FOCUSED, eo_it);
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
@@ -3849,17 +3856,7 @@ _elm_gengrid_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bo
              /* If item is not realized state, widget couldn't get focus_highlight data. */
              if (it->realized)
                {
-                  const char *focus_raise;
-                  if (elm_widget_focus_highlight_enabled_get(obj))
-                    {
-                       edje_object_signal_emit
-                          (VIEW(it), "elm,state,focused", "elm");
-                    }
-
-                  focus_raise = edje_object_data_get(VIEW(it), "focusraise");
-                  if ((focus_raise) && (!strcmp(focus_raise, "on")))
-                    evas_object_raise(VIEW(it));
-
+                  _elm_gengrid_item_focus_raise(it);
                   _elm_widget_item_highlight_in_theme(obj, eo_it);
                   _elm_widget_highlight_in_theme_update(obj);
                   _elm_widget_focus_highlight_start(obj);
