@@ -1814,6 +1814,8 @@ _clip_to_target(int *sx /* OUT */, int *sy /* OUT */, int sw, int sh,
         (*rows) = sh;
         if ((*rows) > dh) (*rows) = dh;
      }
+   if ((*cols) < 0) *cols = 0;
+   if ((*rows) < 0) *rows = 0;
 }
 
 #ifdef FILTERS_DEBUG
