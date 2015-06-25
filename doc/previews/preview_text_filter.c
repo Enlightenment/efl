@@ -1,9 +1,6 @@
 #include "config.h" 
 
-/*
-#define EFL_EO_API_SUPPORT 1
-#define EFL_BETA_API_SUPPORT 1
-*/
+#define EFL_GFX_FILTER_BETA
 
 #include "Eo.h"
 #include "Evas.h"

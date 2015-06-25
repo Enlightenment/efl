@@ -1,3 +1,5 @@
+#define EFL_GFX_FILTER_BETA
+
 #include "edje_private.h"
 
 static void                          _edje_part_make_rtl(Edje_Part_Description_Common *desc);

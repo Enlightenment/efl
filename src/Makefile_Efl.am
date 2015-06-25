@@ -42,7 +42,7 @@ lib_efl_libefl_la_SOURCES = \
 lib/efl/interfaces/efl_interfaces_main.c \
 lib/efl/interfaces/efl_gfx_shape.c
 
-lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_srcdir)/src/lib/efl @EFL_CFLAGS@
+lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_srcdir)/src/lib/efl @EFL_CFLAGS@ -DEFL_GFX_FILTER_BETA
 lib_efl_libefl_la_LIBADD = @EFL_LIBS@
 lib_efl_libefl_la_DEPENDENCIES = @EFL_INTERNAL_LIBS@
 lib_efl_libefl_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

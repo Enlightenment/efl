@@ -354,7 +354,8 @@ lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EVAS_CFLAGS@ \
 @VALGRIND_CFLAGS@ \
 @NEON_CFLAGS@ \
-@ALTIVEC_CFLAGS@
+@ALTIVEC_CFLAGS@ \
+-DEFL_GFX_FILTER_BETA
 
 # SSE3
 noinst_LTLIBRARIES += lib/evas/common/libevas_op_blend_sse3.la

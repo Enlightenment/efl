@@ -3,7 +3,7 @@ interface Efl.Gfx.Filter
    legacy_prefix: null;
    /* @since 1.15 */
    methods {
-      @property program {
+      @property program @beta {
          set {
             [[Set an evas filter program on this object.
 
@@ -27,7 +27,7 @@ interface Efl.Gfx.Filter
             name: const(char)*(0); [[filter name (optional)]]
          }
       }
-      @property state {
+      @property state @beta {
          set {
             [[Set the current state of the filter (for use from Edje).]]
          }
@@ -39,7 +39,7 @@ interface Efl.Gfx.Filter
             pos: double(0.0);
          }
       }
-      @property padding {
+      @property padding @beta {
          get {
             [[Gets the padding required to apply this filter.]]
          }
@@ -50,7 +50,7 @@ interface Efl.Gfx.Filter
             b: int;
          }
       }
-      source_set {
+      source_set @beta {
          [[Bind an object to use as a mask or texture with Evas Filters.
 
            This will create automatically a new RGBA buffer containing
@@ -61,7 +61,7 @@ interface Efl.Gfx.Filter
             @in source: Efl.Gfx.Base*; [[object to use as a proxy source]]
          }
       }
-      source_get @const {
+      source_get @const @beta {
          [[Retrieve which object is attached to this filter given its
            buffer name.
          ]]
@@ -70,7 +70,7 @@ interface Efl.Gfx.Filter
             @out source: Efl.Gfx.Base*; [[object used as a proxy source]]
          }
       }
-      data_set {
+      data_set @beta {
          [[Pass extra data to the filter program.
 
          This sets a global value as a string.]]

@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 
+#define EFL_GFX_FILTER_BETA
 #include "evas_suite.h"
 #include "Evas.h"
 #include "Ecore_Evas.h"
