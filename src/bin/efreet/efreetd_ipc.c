@@ -63,7 +63,7 @@ _parse_strs(void *data, int size)
                   p1 = e;
                }
           }
-        if (!*p)
+        if ((!*p) && (p0))
           {
              p1 = strdup(p0);
              if (p1) list = eina_list_append(list, p1);
