@@ -356,7 +356,7 @@ EAPI void                 elm_object_focus_move_policy_set(Evas_Object *obj, Elm
  * @param obj The Elementary widget to get the information from
  * @return The focus movement policy
  *
- * Get how the focus is moved to the give Elemenray object. It can be
+ * Get how the focus is moved to the give Elementary object. It can be
  * #ELM_FOCUS_MOVE_POLICY_CLICK, #ELM_FOCUS_MOVE_POLICY_IN,
  * or #ELM_FOCUS_MOVE_POLICY_KEY_ONLY.
  * The first means elementary focus is moved on elementary object click.
