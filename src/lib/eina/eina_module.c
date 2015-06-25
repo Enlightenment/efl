@@ -330,7 +330,7 @@ EAPI Eina_Bool eina_module_load(Eina_Module *m)
 
    if (!dl_handle)
      {
-        ERR("could not dlopen(\"%s\", %s): %s", m->file, dlerror(),
+        DBG("could not dlopen(\"%s\", %s): %s", m->file, dlerror(),
             (flag == RTLD_NOW) ? "RTLD_NOW" : "RTLD_LAZY");
         return EINA_FALSE;
      }
