@@ -602,8 +602,12 @@ _buffer_get(Evas_Filter_Program *pgm, const char *name)
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
 
    EINA_INLIST_FOREACH(pgm->buffers, buf)
-     if (!strcmp(buf->name, name))
-       return buf;
+     {
+        if (!strcmp(buf->name, name))
+          return buf;
+        else if (buf->proxy && !strcmp(buf->proxy, name))
+          return buf;
+     }
 
    return NULL;
 }
