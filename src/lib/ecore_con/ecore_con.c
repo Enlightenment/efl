@@ -271,6 +271,7 @@ ecore_con_shutdown(void)
         Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
         Ecore_Con_Event_Server_Add *ev;
 
+        if (!svr) continue;
         svr->delete_me = EINA_TRUE;
         INF("svr %p is dead", svr);
         /* some pointer hacks here to prevent double frees if people are being stupid */
@@ -1373,8 +1374,10 @@ _ecore_con_server_eo_base_destructor(Eo *obj, Ecore_Con_Server_Data *svr)
 
    ecore_con_ssl_server_shutdown(obj);
    free(svr->name);
+   svr->name = NULL;
 
    free(svr->path);
+   svr->path = NULL;
 
    eina_stringshare_del(svr->ip);
    eina_stringshare_del(svr->verify_name);
@@ -1394,8 +1397,9 @@ _ecore_con_server_eo_base_destructor(Eo *obj, Ecore_Con_Server_Data *svr)
    servers = eina_list_remove(servers, obj);
    svr->data = NULL;
 
-end:
    eo_do_super(obj, ECORE_CON_SERVER_CLASS, eo_destructor());
+end:
+   return;
 }
 
 static void
@@ -2675,21 +2679,25 @@ _ecore_con_event_client_add_free(Ecore_Con_Server *obj,
         Ecore_Con_Client_Data *cl = eo_data_scope_get(e->client, ECORE_CON_CLIENT_CLASS);
         Eina_Bool svrfreed = EINA_FALSE;
 
-        cl->event_count = eina_list_remove(cl->event_count, e);
-        if (cl->host_server)
+        if ((svr) && (cl))
           {
-             Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
-             host_server->event_count = eina_list_remove(host_server->event_count, ev);
-             if ((!svr->event_count) && (svr->delete_me))
+             cl->event_count = eina_list_remove(cl->event_count, e);
+             if (cl->host_server)
                {
-                  _ecore_con_server_free(obj);
-                  svrfreed = EINA_TRUE;
+                  Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
+                  if (host_server)
+                    host_server->event_count = eina_list_remove(host_server->event_count, ev);
+                  if ((!svr->event_count) && (svr->delete_me))
+                    {
+                       _ecore_con_server_free(obj);
+                       svrfreed = EINA_TRUE;
+                    }
                }
-          }
-        if (!svrfreed)
-          {
-             if ((!cl->event_count) && (cl->delete_me))
-               ecore_con_client_del(e->client);
+             if (!svrfreed)
+               {
+                  if ((!cl->event_count) && (cl->delete_me))
+                    ecore_con_client_del(e->client);
+               }
           }
      }
 
@@ -2712,21 +2720,25 @@ _ecore_con_event_client_del_free(Ecore_Con_Server *obj,
         Ecore_Con_Client_Data *cl = eo_data_scope_get(e->client, ECORE_CON_CLIENT_CLASS);
         Eina_Bool svrfreed = EINA_FALSE;
 
-        cl->event_count = eina_list_remove(cl->event_count, e);
-        if (cl->host_server)
+        if ((svr) && (cl))
           {
-             Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
-             host_server->event_count = eina_list_remove(host_server->event_count, ev);
-             if ((!svr->event_count) && (svr->delete_me))
+             cl->event_count = eina_list_remove(cl->event_count, e);
+             if (cl->host_server)
                {
-                  _ecore_con_server_free(obj);
-                  svrfreed = EINA_TRUE;
+                  Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
+                  if (host_server)
+                    host_server->event_count = eina_list_remove(host_server->event_count, ev);
+                  if ((!svr->event_count) && (svr->delete_me))
+                    {
+                       _ecore_con_server_free(obj);
+                       svrfreed = EINA_TRUE;
+                    }
                }
-          }
-        if (!svrfreed)
-          {
-             if (!cl->event_count)
-               _ecore_con_client_free(e->client);
+             if (!svrfreed)
+               {
+                  if (!cl->event_count)
+                    _ecore_con_client_free(e->client);
+               }
           }
      }
    ecore_con_event_client_del_free(e);
@@ -2745,25 +2757,29 @@ _ecore_con_event_client_write_free(Ecore_Con_Server *obj,
         Ecore_Con_Client_Data *cl = eo_data_scope_get(e->client, ECORE_CON_CLIENT_CLASS);
         Eina_Bool svrfreed = EINA_FALSE;
 
-        cl->event_count = eina_list_remove(cl->event_count, e);
-        if (cl->host_server)
+        if ((svr) && (cl))
           {
-             Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
-             host_server->event_count = eina_list_remove(host_server->event_count, e);
-             if ((!svr->event_count) && (svr->delete_me))
+             cl->event_count = eina_list_remove(cl->event_count, e);
+             if (cl->host_server)
                {
-                  _ecore_con_server_free(obj);
-                  svrfreed = EINA_TRUE;
+                  Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
+                  if (host_server)
+                    host_server->event_count = eina_list_remove(host_server->event_count, e);
+                  if ((!svr->event_count) && (svr->delete_me))
+                    {
+                       _ecore_con_server_free(obj);
+                       svrfreed = EINA_TRUE;
+                    }
                }
-          }
-        if (!svrfreed)
-          {
-             Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
-             if (((!cl->event_count) && (cl->delete_me)) ||
-                 ((cl->host_server &&
-                   ((host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP ||
-                    (host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_MCAST))))
-               ecore_con_client_del(e->client);
+             if (!svrfreed)
+               {
+                  Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
+                  if (((!cl->event_count) && (cl->delete_me)) ||
+                      ((cl->host_server &&
+                        ((host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP ||
+                            (host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_MCAST))))
+                    ecore_con_client_del(e->client);
+               }
           }
      }
    ecore_con_event_client_write_free(e);
@@ -2785,25 +2801,29 @@ _ecore_con_event_client_data_free(Ecore_Con_Server *obj,
         Ecore_Con_Client_Data *cl = eo_data_scope_get(e->client, ECORE_CON_CLIENT_CLASS);
         Eina_Bool svrfreed = EINA_FALSE;
 
-        cl->event_count = eina_list_remove(cl->event_count, e);
-        if (cl->host_server)
+        if ((svr) && (cl))
           {
-             Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
-             host_server->event_count = eina_list_remove(host_server->event_count, ev);
-          }
-        if ((!svr->event_count) && (svr->delete_me))
-          {
-             _ecore_con_server_free(obj);
-             svrfreed = EINA_TRUE;
-          }
-        if (!svrfreed)
-          {
-             Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
-             if (((!cl->event_count) && (cl->delete_me)) ||
-                 ((cl->host_server &&
-                   ((host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP ||
-                    (host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_MCAST))))
-               ecore_con_client_del(e->client);
+             cl->event_count = eina_list_remove(cl->event_count, e);
+             if (cl->host_server)
+               {
+                  Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
+                  if (host_server)
+                    host_server->event_count = eina_list_remove(host_server->event_count, ev);
+               }
+             if ((!svr->event_count) && (svr->delete_me))
+               {
+                  _ecore_con_server_free(obj);
+                  svrfreed = EINA_TRUE;
+               }
+             if (!svrfreed)
+               {
+                  Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
+                  if (((!cl->event_count) && (cl->delete_me)) ||
+                      ((cl->host_server &&
+                        ((host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP ||
+                            (host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_MCAST))))
+                    ecore_con_client_del(e->client);
+               }
           }
      }
    free(e->data);
@@ -2823,9 +2843,12 @@ _ecore_con_event_server_add_free(void *data EINA_UNUSED,
    if (e->server)
      {
         Ecore_Con_Server_Data *svr = eo_data_scope_get(e->server, ECORE_CON_SERVER_CLASS);
-        svr->event_count = eina_list_remove(svr->event_count, ev);
-        if ((!svr->event_count) && (svr->delete_me))
-          _ecore_con_server_free(e->server);
+        if (svr)
+          {
+             svr->event_count = eina_list_remove(svr->event_count, ev);
+             if ((!svr->event_count) && (svr->delete_me))
+               _ecore_con_server_free(e->server);
+          }
      }
    ecore_con_event_server_add_free(e);
    _ecore_con_event_count--;
@@ -2843,9 +2866,12 @@ _ecore_con_event_server_del_free(void *data EINA_UNUSED,
    if (e->server)
      {
         Ecore_Con_Server_Data *svr = eo_data_scope_get(e->server, ECORE_CON_SERVER_CLASS);
-        svr->event_count = eina_list_remove(svr->event_count, ev);
-        if (!svr->event_count)
-          _ecore_con_server_free(e->server);
+        if (svr)
+          {
+             svr->event_count = eina_list_remove(svr->event_count, ev);
+             if (!svr->event_count)
+               _ecore_con_server_free(e->server);
+          }
      }
    ecore_con_event_server_del_free(e);
    _ecore_con_event_count--;
@@ -2860,11 +2886,13 @@ _ecore_con_event_server_write_free(void *data EINA_UNUSED,
    if (e->server)
      {
         Ecore_Con_Server_Data *svr = eo_data_scope_get(e->server, ECORE_CON_SERVER_CLASS);
-        svr->event_count = eina_list_remove(svr->event_count, e);
-        if ((!svr->event_count) && (svr->delete_me))
-          _ecore_con_server_free(e->server);
+        if (svr)
+          {
+             svr->event_count = eina_list_remove(svr->event_count, e);
+             if ((!svr->event_count) && (svr->delete_me))
+               _ecore_con_server_free(e->server);
+          }
      }
-
    ecore_con_event_server_write_free(e);
    _ecore_con_event_count--;
    if ((!_ecore_con_event_count) && (!_ecore_con_init_count))
@@ -2881,9 +2909,12 @@ _ecore_con_event_server_data_free(void *data EINA_UNUSED,
    if (e->server)
      {
         Ecore_Con_Server_Data *svr = eo_data_scope_get(e->server, ECORE_CON_SERVER_CLASS);
-        svr->event_count = eina_list_remove(svr->event_count, ev);
-        if ((!svr->event_count) && (svr->delete_me))
-          _ecore_con_server_free(e->server);
+        if (svr)
+          {
+             svr->event_count = eina_list_remove(svr->event_count, ev);
+             if ((!svr->event_count) && (svr->delete_me))
+               _ecore_con_server_free(e->server);
+          }
      }
 
    free(e->data);
@@ -2899,9 +2930,12 @@ _ecore_con_event_server_error_free(void *data EINA_UNUSED, Ecore_Con_Event_Serve
    if (e->server)
      {
         Ecore_Con_Server_Data *svr = eo_data_scope_get(e->server, ECORE_CON_SERVER_CLASS);
-        svr->event_count = eina_list_remove(svr->event_count, e);
-        if ((!svr->event_count) && (svr->delete_me))
-          _ecore_con_server_free(e->server);
+        if (svr)
+          {
+             svr->event_count = eina_list_remove(svr->event_count, e);
+             if ((!svr->event_count) && (svr->delete_me))
+               _ecore_con_server_free(e->server);
+          }
      }
    free(e->error);
    ecore_con_event_server_error_free(e);
@@ -2919,20 +2953,23 @@ _ecore_con_event_client_error_free(Ecore_Con_Server *obj, Ecore_Con_Event_Client
         Ecore_Con_Client_Data *cl = eo_data_scope_get(e->client, ECORE_CON_CLIENT_CLASS);
         Eina_Bool svrfreed = EINA_FALSE;
 
-        if (eina_list_data_find(svr->clients, e->client))
+        if ((svr) && (cl))
           {
-             cl->event_count = eina_list_remove(cl->event_count, e);
-             if ((!cl->event_count) && (cl->delete_me))
+             if (eina_list_data_find(svr->clients, e->client))
                {
-                  _ecore_con_client_free(e->client);
-                  svrfreed = EINA_TRUE;
+                  cl->event_count = eina_list_remove(cl->event_count, e);
+                  if ((!cl->event_count) && (cl->delete_me))
+                    {
+                       _ecore_con_client_free(e->client);
+                       svrfreed = EINA_TRUE;
+                    }
                }
-          }
-        svr->event_count = eina_list_remove(svr->event_count, e);
-        if (!svrfreed)
-          {
-             if ((!svr->event_count) && (svr->delete_me))
-               _ecore_con_server_free(obj);
+             svr->event_count = eina_list_remove(svr->event_count, e);
+             if (!svrfreed)
+               {
+                  if ((!svr->event_count) && (svr->delete_me))
+                    _ecore_con_server_free(obj);
+               }
           }
      }
    free(e->error);
@@ -2950,6 +2987,7 @@ _ecore_con_lookup_done(void *data,
    Ecore_Con_Lookup *lk;
 
    Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   if (!svr) return;
    lk = svr->data;
 
    if (infos)
