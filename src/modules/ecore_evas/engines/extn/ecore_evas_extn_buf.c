@@ -17,7 +17,8 @@ _extnbuf_new(const char *base, int id, Eina_Bool sys, int num,
 {
    Extnbuf *b;
    char file[PATH_MAX];
-   mode_t mode = S_IRUSR | S_IWUSR;
+   mode_t mode = S_IRUSR;
+   int prot = PROT_READ;
    int page_size;
    Eina_Tmpstr *tmp = NULL;
 
@@ -36,9 +37,16 @@ _extnbuf_new(const char *base, int id, Eina_Bool sys, int num,
    snprintf(file, sizeof(file), "/%s-%i.%i", base, id, num);
    b->file = eina_stringshare_add(file);
    if (!b->file) goto err;
-   
-   if (sys) mode |= S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
-   
+
+
+   if (sys) mode |= S_IRGRP | S_IROTH;
+
+   if (owner)
+     {
+        mode |= S_IWUSR;
+        prot |= PROT_WRITE;
+     }
+
    if (b->am_owner)
      {
         b->lockfd = eina_file_mkstemp("ee-lock-XXXXXX", &tmp);
@@ -51,11 +59,10 @@ _extnbuf_new(const char *base, int id, Eina_Bool sys, int num,
      }
    else
      {
-        b->fd = shm_open(b->file, O_RDWR, mode);
+        b->fd = shm_open(b->file, O_RDONLY, mode);
         if (b->fd < 0) goto err;
      }
-   b->addr = mmap(NULL, b->size, PROT_READ | PROT_WRITE, MAP_SHARED,
-                  b->fd, 0);
+   b->addr = mmap(NULL, b->size, prot, MAP_SHARED, b->fd, 0);
    if (b->addr == MAP_FAILED) goto err;
    return b;
 err:
