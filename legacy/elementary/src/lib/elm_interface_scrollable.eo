@@ -109,7 +109,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          get {
          }
          values {
-            block: Elm_Scroller_Movement_Block; /*@ Which axis (or axes) to block */
+            block: Elm.Scroller.Movement_Block; /*@ Which axis (or axes) to block */
          }
       }
       @property momentum_animator_disabled {
@@ -162,10 +162,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          get {
          }
          values {
-            x: Evas_Coord; /*@ X coordinate of the region */
-            y: Evas_Coord; /*@ Y coordinate of the region */
-            w: Evas_Coord; /*@ Width of the region */
-            h: Evas_Coord; /*@ Height of the region */
+            x: Evas.Coord; /*@ X coordinate of the region */
+            y: Evas.Coord; /*@ Y coordinate of the region */
+            w: Evas.Coord; /*@ Width of the region */
+            h: Evas.Coord; /*@ Height of the region */
          }
       }
       @property repeat_events {
@@ -201,8 +201,8 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          get {
          }
          values {
-            x: Evas_Coord; /*@ The horizontal page relative size */
-            y: Evas_Coord; /*@ The vertical page relative size */
+            x: Evas.Coord; /*@ The horizontal page relative size */
+            y: Evas.Coord; /*@ The vertical page relative size */
          }
       }
       @property bounce_animator_disabled {
@@ -265,8 +265,8 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          values {
             pagerel_h: double;
             pagerel_v: double;
-            pagesize_h: Evas_Coord;
-            pagesize_v: Evas_Coord;
+            pagesize_h: Evas.Coord;
+            pagesize_v: Evas.Coord;
          }
       }
       @property single_direction {
@@ -291,7 +291,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          get {
          }
          values {
-            single_dir: Elm_Scroller_Single_Direction; /*@ The single direction scroll policy */
+            single_dir: Elm.Scroller.Single_Direction; /*@ The single direction scroll policy */
          }
       }
       @property step_size {
@@ -302,8 +302,8 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            x: Evas_Coord;
-            y: Evas_Coord;
+            x: Evas.Coord;
+            y: Evas.Coord;
          }
       }
       @property loop {
@@ -450,7 +450,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            pan: Evas_Object * @nullable;
+            pan: Evas.Object * @nullable;
          }
       }
       @property page_change_cb {
@@ -563,7 +563,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            content: Evas_Object * @nullable;
+            content: Evas.Object * @nullable;
          }
       }
       @property edge_left_cb {
@@ -643,8 +643,8 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            edje_object: Evas_Object *;
-            hit_rectangle: Evas_Object *;
+            edje_object: Evas.Object *;
+            hit_rectangle: Evas.Object *;
          }
       }
       @property last_page {
@@ -692,10 +692,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            x: Evas_Coord;
-            y: Evas_Coord;
-            w: Evas_Coord;
-            h: Evas_Coord;
+            x: Evas.Coord;
+            y: Evas.Coord;
+            w: Evas.Coord;
+            h: Evas.Coord;
          }
       }
       @property content_size {
@@ -708,24 +708,24 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            w: Evas_Coord; /*@ Width of the content object. */
-            h: Evas_Coord; /*@ Height of the content object. */
+            w: Evas.Coord; /*@ Width of the content object. */
+            h: Evas.Coord; /*@ Height of the content object. */
 
          }
       }
       content_pos_set {
          /*@ No description supplied by the EAPI. */
          params {
-            @in x: Evas_Coord;
-            @in y: Evas_Coord;
+            @in x: Evas.Coord;
+            @in y: Evas.Coord;
             @in sig: bool;
          }
       }
       content_pos_get {
          /*@ No description supplied by the EAPI. */
          params {
-            @out x: Evas_Coord;
-            @out y: Evas_Coord;
+            @out x: Evas.Coord;
+            @out y: Evas.Coord;
          }
       }
       page_show {
@@ -759,10 +759,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
           @ingroup Widget
           */
          params {
-            @in x: Evas_Coord; /*@ X coordinate of the region */
-            @in y: Evas_Coord; /*@ Y coordinate of the region */
-            @in w: Evas_Coord; /*@ Width of the region */
-            @in h: Evas_Coord; /*@ Height of the region */
+            @in x: Evas.Coord; /*@ X coordinate of the region */
+            @in y: Evas.Coord; /*@ Y coordinate of the region */
+            @in w: Evas.Coord; /*@ Width of the region */
+            @in h: Evas.Coord; /*@ Height of the region */
          }
       }
       page_bring_in {
@@ -790,10 +790,10 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
           @ingroup Widget
           */
          params {
-            @in x: Evas_Coord; /*@ X coordinate of the region */
-            @in y: Evas_Coord; /*@ Y coordinate of the region */
-            @in w: Evas_Coord; /*@ Width of the region */
-            @in h: Evas_Coord; /*@ Height of the region */
+            @in x: Evas.Coord; /*@ X coordinate of the region */
+            @in y: Evas.Coord; /*@ Y coordinate of the region */
+            @in w: Evas.Coord; /*@ Width of the region */
+            @in h: Evas.Coord; /*@ Height of the region */
          }
       }
       content_min_limit {

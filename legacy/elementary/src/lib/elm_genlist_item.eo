@@ -386,7 +386,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  @ingroup Genlist
                  */
                 params {
-                     @out l: own(list<own(Evas_Object *)> *); /*@ The contents list to return */
+                     @out l: own(list<own(Evas.Object *)> *); /*@ The contents list to return */
                 }
            }
            update {

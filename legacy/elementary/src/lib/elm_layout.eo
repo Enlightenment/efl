@@ -99,7 +99,7 @@ class Elm.Layout (Elm.Container, Efl.File)
             @see elm_layout_data_get()
 
             @ingroup Layout */
-            return: Evas_Object *;
+            return: Evas.Object *;
          }
       }
       box_remove_all {
@@ -173,10 +173,10 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          @ingroup Layout */
 
-         return: Evas_Object *;
+         return: Evas.Object *;
          params {
             @in part: const(char)*; /*@ The table part name to remove child. */
-            @in child: Evas_Object *; /*@ The object to remove from table. */
+            @in child: Evas.Object *; /*@ The object to remove from table. */
          }
       }
       freeze {
@@ -233,10 +233,10 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          @ingroup Layout */
 
-         return: Evas_Object *;
+         return: Evas.Object *;
          params {
             @in part: const(char)*; /*@ The box part name to remove child. */
-            @in child: Evas_Object *; /*@ The object to remove from box. */
+            @in child: Evas.Object *; /*@ The object to remove from box. */
          }
       }
       sizing_restricted_eval {
@@ -379,8 +379,8 @@ class Elm.Layout (Elm.Container, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ the box part to insert. */
-            @in child: own(Evas_Object *); /*@ the child object to insert into box. */
-            @in reference: const(Evas_Object)*; /*@ another reference object to insert before in box. */
+            @in child: own(Evas.Object *); /*@ the child object to insert into box. */
+            @in reference: const(Evas.Object)*; /*@ another reference object to insert before in box. */
          }
       }
       box_insert_at {
@@ -404,7 +404,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ the box part to insert. */
-            @in child: own(Evas_Object *); /*@ the child object to insert into box. */
+            @in child: own(Evas.Object *); /*@ the child object to insert into box. */
             @in pos: uint; /*@ the numeric position >=0 to insert the child. */
          }
       }
@@ -464,7 +464,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ the box part to which the object will be appended. */
-            @in child: own(Evas_Object *); /*@ the child object to append to box. */
+            @in child: own(Evas.Object *); /*@ the child object to append to box. */
          }
       }
       signal_callback_del {
@@ -526,7 +526,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ the box part to prepend. */
-            @in child: own(Evas_Object *); /*@ the child object to prepend to box. */
+            @in child: own(Evas.Object *); /*@ the child object to prepend to box. */
          }
       }
       signal_emit {
@@ -575,7 +575,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ the box part to pack child. */
-            @in child: own(Evas_Object *); /*@ the child object to pack into table. */
+            @in child: own(Evas.Object *); /*@ the child object to pack into table. */
             @in col: ushort; /*@ the column to which the child should be added. (>= 0) */
             @in row: ushort; /*@ the row to which the child should be added. (>= 0) */
             @in colspan: ushort; /*@ how many columns should be used to store this object. (>=

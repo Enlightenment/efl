@@ -80,7 +80,7 @@ class Elm.Segment_Control (Elm.Layout)
 
          return: Elm_Object_Item *;
          params {
-            @in icon: Evas_Object * @optional; /*@ The icon object to use for the left side of the item. An
+            @in icon: Evas.Object * @optional; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
             with elm_icon_add(). */
             @in label: const(char)* @optional; /*@ The label of the item. */
@@ -156,7 +156,7 @@ class Elm.Segment_Control (Elm.Layout)
 
          return: Elm_Object_Item *;
          params {
-            @in icon: Evas_Object * @optional; /*@ The icon object to use for the left side of the item. An
+            @in icon: Evas.Object * @optional; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
             with elm_icon_add(). */
             @in label: const(char)* @optional; /*@ The label of the item.
@@ -178,7 +178,7 @@ class Elm.Segment_Control (Elm.Layout)
          @see elm_object_item_part_content_set()
 
          @ingroup SegmentControl */
-         return: Evas_Object *;
+         return: Evas.Object *;
          params {
             @in idx: int; /*@ The index of the segment item. */
          }

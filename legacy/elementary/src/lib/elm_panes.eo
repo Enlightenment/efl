@@ -231,7 +231,7 @@ class Elm.Panes (Elm.Layout)
             @ingroup Panes */
          }
          values {
-            size: Evas_Coord; /*@ value representing minimum size of left side
+            size: Evas.Coord; /*@ value representing minimum size of left side
                                in pixels. */
          }
       }
@@ -261,7 +261,7 @@ class Elm.Panes (Elm.Layout)
             @ingroup Panes */
          }
          values {
-            size: Evas_Coord; /*@ value representing minimum size of right side
+            size: Evas.Coord; /*@ value representing minimum size of right side
                                in pixels. */
          }
       }

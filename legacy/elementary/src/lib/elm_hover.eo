@@ -22,7 +22,7 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface)
             @ingroup Hover */
          }
          values {
-            target: Evas_Object *; /*@ The object to center the hover onto. */
+            target: Evas.Object *; /*@ The object to center the hover onto. */
          }
       }
       best_content_location_get @const {

@@ -80,7 +80,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Ctxpopup */
          }
          values {
-            parent: Evas_Object *; /*@ The parent to use */
+            parent: Evas.Object *; /*@ The parent to use */
          }
       }
       @property direction_priority {
@@ -214,7 +214,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          return: Elm_Object_Item *;
          params {
             @in label: const(char)*; /*@ The Label of the new item */
-            @in icon: Evas_Object * @optional; /*@ Icon to be set on new item */
+            @in icon: Evas.Object * @optional; /*@ Icon to be set on new item */
             @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when item selected */
             @in data: const(void)* @optional; /*@ Data passed to @p func */
          }
@@ -236,7 +236,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          return: Elm_Object_Item *;
          params {
             @in label: const(char)*; /*@ The Label of the new item */
-            @in icon: Evas_Object * @optional; /*@ Icon to be set on new item */
+            @in icon: Evas.Object * @optional; /*@ Icon to be set on new item */
             @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when item selected */
             @in data: const(void)* @optional; /*@ Data passed to @p func */
          }

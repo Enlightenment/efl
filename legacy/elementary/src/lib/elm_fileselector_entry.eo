@@ -60,8 +60,8 @@ class Elm.Fileselector_Entry (Elm.Layout, Elm_Interface_Fileselector)
             @ingroup File_Selector_Entry */
          }
          values {
-            width: Evas_Coord; /*@ The window's width */
-            height: Evas_Coord; /*@ The window's height */
+            width: Evas.Coord; /*@ The window's width */
+            height: Evas.Coord; /*@ The window's height */
          }
       }
       @property window_title {

@@ -157,7 +157,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     obj: Evas_Object *; /*@ The base Edje object associated with @p it. */
+                     obj: Evas.Object *; /*@ The base Edje object associated with @p it. */
                 }
            }
            @property icon_object {
@@ -172,7 +172,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     obj: Evas_Object *; /*@ The icon object */
+                     obj: Evas.Object *; /*@ The icon object */
                 }
            }
            @property separator {
@@ -223,7 +223,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     menu: Evas_Object *; /*@ Item's menu object or @c NULL on failure. */
+                     menu: Evas.Object *; /*@ Item's menu object or @c NULL on failure. */
                 }
            }
            @property state {
@@ -372,7 +372,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                  @ingroup Toolbar
                  */
                 params {
-                     @in scrollto: Elm_Toolbar_Item_Scrollto_Type; /*@ the position the item should appear at */
+                     @in scrollto: Elm.Toolbar_Item.Scrollto_Type; /*@ the position the item should appear at */
                 }
            }
            bring_in {
@@ -385,7 +385,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                  @ingroup Toolbar
                  */
                 params {
-                     @in scrollto: Elm_Toolbar_Item_Scrollto_Type; /*@ the position the item should appear at */
+                     @in scrollto: Elm.Toolbar_Item.Scrollto_Type; /*@ the position the item should appear at */
                 }
            }
            menu_set {

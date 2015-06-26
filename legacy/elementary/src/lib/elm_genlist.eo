@@ -571,8 +571,8 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          @ingroup Genlist */
          return: Elm_Object_Item *;
          params {
-            @in x: Evas_Coord; /*@ The input x coordinate */
-            @in y: Evas_Coord; /*@ The input y coordinate */
+            @in x: Evas.Coord; /*@ The input x coordinate */
+            @in y: Evas.Coord; /*@ The input y coordinate */
             @out posret: int; /*@ The position relative to the item returned here */
          }
       }

@@ -147,8 +147,8 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            w: Evas_Coord; /*@ The group items' width. */
-            h: Evas_Coord; /*@ The group items' height. */
+            w: Evas.Coord; /*@ The group items' width. */
+            h: Evas.Coord; /*@ The group items' height. */
          }
       }
       @property select_mode {
@@ -260,8 +260,8 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            w: Evas_Coord; /*@ The items' width. */
-            h: Evas_Coord; /*@ The items' height. */
+            w: Evas.Coord; /*@ The items' width. */
+            h: Evas.Coord; /*@ The items' height. */
          }
       }
       @property multi_select_mode {
@@ -339,8 +339,8 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             /*@ Set a given gengrid widget's scrolling page size */
          }
          values {
-            h_pagesize: Evas_Coord;
-            v_pagesize: Evas_Coord;
+            h_pagesize: Evas.Coord;
+            v_pagesize: Evas.Coord;
          }
       }
       @property selected_item {
@@ -564,8 +564,8 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
          @ingroup Gengrid */
          return: Elm_Object_Item *;
          params {
-            @in x: Evas_Coord; /*@ The input x coordinate */
-            @in y: Evas_Coord; /*@ The input y coordinate */
+            @in x: Evas.Coord; /*@ The input x coordinate */
+            @in y: Evas.Coord; /*@ The input y coordinate */
             @out xposret: int; /*@ The position relative to the item returned here */
             @out yposret: int; /*@ The position relative to the item returned here */
          }

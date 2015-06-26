@@ -162,7 +162,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 
          @since 1.8 */
 
-         return: const(Evas_Object)*;
+         return: const(Evas.Object)*;
          params {
             @in name: const(char)*; /*@ The name of the item (as declared in the prefs
             collection) to get object from */
@@ -215,7 +215,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          params {
             @in name: const(char)*; /*@ the name of the SWALLOW item (as declared in the prefs
             collection) */
-            @in child: Evas_Object *; /*@ The object to occupy the item */
+            @in child: Evas.Object *; /*@ The object to occupy the item */
          }
       }
       item_editable_set {
@@ -265,7 +265,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 
          @since 1.8 */
 
-         return: Evas_Object *;
+         return: Evas.Object *;
          params {
             @in name: const(char)*; /*@ the name of the SWALLOW item (as declared in the prefs
             collection) */

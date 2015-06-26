@@ -34,8 +34,8 @@ interface Elm_Interface_Fileselector ()
             /*@ Get the size for the thumbnail of a given file selector widget */
          }
          values {
-            w: Evas_Coord;
-            h: Evas_Coord;
+            w: Evas.Coord;
+            h: Evas.Coord;
          }
       }
       @property hidden_visible {

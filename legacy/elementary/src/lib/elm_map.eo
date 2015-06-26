@@ -152,8 +152,8 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          }
          values {
             degree: double; /*@ Angle from 0.0 to 360.0 to rotate around Z axis. */
-            cx: Evas_Coord; /*@ Rotation's center horizontal position. */
-            cy: Evas_Coord; /*@ Rotation's center vertical position. */
+            cx: Evas.Coord; /*@ Rotation's center horizontal position. */
+            cy: Evas.Coord; /*@ Rotation's center vertical position. */
          }
       }
       @property user_agent {
@@ -396,7 +396,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
 
          @ingroup Map */
 
-         return: Evas_Object *;
+         return: Evas.Object *;
          params {
             @in emap: void *; /*@ The emap route object. */
          }
@@ -415,8 +415,8 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          params {
             @in lon: double; /*@ The longitude to convert. */
             @in lat: double; /*@ The latitude to convert. */
-            @out x: Evas_Coord; /*@ A pointer to horizontal coordinate. */
-            @out y: Evas_Coord; /*@ A pointer to vertical coordinate. */
+            @out x: Evas.Coord; /*@ A pointer to horizontal coordinate. */
+            @out y: Evas.Coord; /*@ A pointer to vertical coordinate. */
          }
       }
       overlay_circle_add {
@@ -670,7 +670,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          @ingroup Map */
 
          params {
-            @in route: Evas_Object *; /*@ The track to remove. */
+            @in route: Evas.Object *; /*@ The track to remove. */
          }
       }
       overlay_route_add {
@@ -716,8 +716,8 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
 
          return: Elm_Map_Overlay *;
          params {
-            @in x: Evas_Coord; /*@ horizontal pixel coordinate. */
-            @in y: Evas_Coord; /*@ vertical pixel coordinate */
+            @in x: Evas.Coord; /*@ horizontal pixel coordinate. */
+            @in y: Evas.Coord; /*@ vertical pixel coordinate */
          }
       }
       overlay_add {
@@ -765,8 +765,8 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
 
          @ingroup Map */
          params {
-            @in x: Evas_Coord; /*@ horizontal coordinate of the point to convert. */
-            @in y: Evas_Coord; /*@ vertical coordinate of the point to convert. */
+            @in x: Evas.Coord; /*@ horizontal coordinate of the point to convert. */
+            @in y: Evas.Coord; /*@ vertical coordinate of the point to convert. */
             @out lon: double; /*@ A pointer to the longitude. */
             @out lat: double; /*@ A pointer to the latitude. */
          }

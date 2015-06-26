@@ -36,7 +36,7 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            size: Evas_Coord; /*@ The length of the progress bar's bar region */
+            size: Evas.Coord; /*@ The length of the progress bar's bar region */
          }
       }
       @property pulse {

@@ -118,7 +118,7 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
             @return the underlying Emotion object.
 
             @ingroup Video */
-            return: Evas_Object *;
+            return: Evas.Object *;
          }
       }
       @property is_seekable {

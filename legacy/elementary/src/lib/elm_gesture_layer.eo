@@ -49,7 +49,7 @@ class Elm.Gesture_Layer (Elm.Widget)
              */
          }
          values {
-            sz: Evas_Coord; /*@ Finger size */
+            sz: Evas.Coord; /*@ Finger size */
          }
       }
       @property hold_events {
@@ -132,7 +132,7 @@ class Elm.Gesture_Layer (Elm.Widget)
 
          return: bool;
          params {
-            @in target: Evas_Object *; /*@ Object to attach to @a obj (target) */
+            @in target: Evas.Object *; /*@ Object to attach to @a obj (target) */
          }
       }
       cb_del {

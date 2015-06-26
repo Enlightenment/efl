@@ -28,7 +28,7 @@ class Elm.Segment_Control_Item(Elm.Widget_Item)
 
               @ingroup SegmentControl
              */
-             return: Evas_Object*;
+             return: Evas.Object*;
         }
       selected_set {
              /*@

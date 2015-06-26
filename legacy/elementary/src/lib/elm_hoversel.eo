@@ -52,7 +52,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             @ingroup Hoversel */
          }
          values {
-            parent: Evas_Object * @nullable; /*@ The parent to use */
+            parent: Evas.Object * @nullable; /*@ The parent to use */
          }
       }
       @property expanded {

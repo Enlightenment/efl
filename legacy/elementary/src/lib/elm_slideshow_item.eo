@@ -31,7 +31,7 @@ class Elm.Slideshow_Item(Elm.Widget_Item)
 
               @ingroup Slideshow
               */
-             return: Evas_Object*;
+             return: Evas.Object*;
         }
    }
    implements {

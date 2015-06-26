@@ -24,7 +24,7 @@ class Elm.Label (Elm.Layout)
             @ingroup Label */
          }
          values {
-            w: Evas_Coord; /*@ The wrap width in pixels at a minimum where words need to wrap */
+            w: Evas.Coord; /*@ The wrap width in pixels at a minimum where words need to wrap */
          }
       }
       @property slide_speed {

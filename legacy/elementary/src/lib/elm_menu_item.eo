@@ -115,7 +115,7 @@ class Elm.Menu_Item(Elm.Widget_Item)
 
              @ingroup Menu
              */
-             return: Evas_Object*; /*@ The base Edje object containing the swallowed content associated with@p it. */
+             return: Evas.Object*; /*@ The base Edje object containing the swallowed content associated with@p it. */
         }
    }
    implements {

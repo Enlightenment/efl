@@ -384,7 +384,7 @@ class Elm.Web (Elm.Widget)
             @see elm_web_add()
 
             @ingroup Web */
-            return: Evas_Object *;
+            return: Evas.Object *;
          }
       }
       @property back_possible {

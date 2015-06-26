@@ -23,8 +23,8 @@ class Elm_Pan (Evas.Smart_Clipped)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            x: Evas_Coord;
-            y: Evas_Coord;
+            x: Evas.Coord;
+            y: Evas.Coord;
          }
       }
       @property content_size {
@@ -32,8 +32,8 @@ class Elm_Pan (Evas.Smart_Clipped)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            w: Evas_Coord;
-            h: Evas_Coord;
+            w: Evas.Coord;
+            h: Evas.Coord;
          }
       }
       @property pos_min {
@@ -41,8 +41,8 @@ class Elm_Pan (Evas.Smart_Clipped)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            x: Evas_Coord;
-            y: Evas_Coord;
+            x: Evas.Coord;
+            y: Evas.Coord;
          }
       }
       @property pos_max {
@@ -50,8 +50,8 @@ class Elm_Pan (Evas.Smart_Clipped)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            x: Evas_Coord;
-            y: Evas_Coord;
+            x: Evas.Coord;
+            y: Evas.Coord;
          }
       }
    }

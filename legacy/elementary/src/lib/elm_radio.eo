@@ -75,7 +75,7 @@ class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @return The selected radio object
 
             @ingroup Radio */
-            return: Evas_Object *;
+            return: Evas.Object *;
          }
       }
       group_add {
@@ -90,7 +90,7 @@ class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          @ingroup Radio */
 
          params {
-            @in group: Elm_Radio *; /*@ Any radio object whose group the @p obj is to join. */
+            @in group: Elm.Radio *; /*@ Any radio object whose group the @p obj is to join. */
          }
       }
    }

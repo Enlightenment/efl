@@ -690,7 +690,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
 
             @ingroup Win */
             values {
-               icon: Evas_Object* @nullable; /*@ The Evas image object to use for an icon */
+               icon: Evas.Object* @nullable; /*@ The Evas image object to use for an icon */
             }
          }
          get {
@@ -704,7 +704,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
 
             @ingroup Win */
             values {
-               icon: const(Evas_Object)* @nullable; /*@ The Evas image object to use for an icon */
+               icon: const(Evas.Object)* @nullable; /*@ The Evas image object to use for an icon */
             }
          }
       }
@@ -1239,7 +1239,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @return The Main Menu of the window (NULL if error).
 
             @ingroup Win */
-            return: Evas_Object *;
+            return: Evas.Object *;
          }
       }
       @property wl_window {
@@ -1295,7 +1295,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @return The inlined image object, or NULL if none exists
 
             @ingroup Win */
-            return: Evas_Object *;
+            return: Evas.Object *;
          }
       }
       @property name {
@@ -1505,7 +1505,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
          @ingroup Win */
 
          params {
-            @in subobj: Evas_Object *; /*@ The resize object to add */
+            @in subobj: Evas.Object *; /*@ The resize object to add */
          }
       }
       raise {
@@ -1546,7 +1546,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
          @ingroup Win */
 
          params {
-            @in subobj: Evas_Object *; /*@ The resize object to add */
+            @in subobj: Evas.Object *; /*@ The resize object to add */
          }
       }
       center {

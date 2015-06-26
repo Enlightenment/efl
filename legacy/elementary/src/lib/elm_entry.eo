@@ -392,7 +392,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            parent: Evas_Object * @nullable; /*@ The object to use as parent for the hover */
+            parent: Evas.Object * @nullable; /*@ The object to use as parent for the hover */
          }
       }
       @property prediction_allow {
@@ -664,7 +664,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @return The textblock object.
 
             @ingroup Entry */
-            return: Evas_Object *;
+            return: Evas.Object *;
          }
       }
       @property cursor_geometry {
@@ -682,10 +682,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             return: bool;
          }
          values {
-            x: Evas_Coord; /*@ returned geometry */
-            y: Evas_Coord; /*@ returned geometry */
-            w: Evas_Coord; /*@ returned geometry */
-            h: Evas_Coord; /*@ returned geometry */
+            x: Evas.Coord; /*@ returned geometry */
+            y: Evas.Coord; /*@ returned geometry */
+            w: Evas.Coord; /*@ returned geometry */
+            h: Evas.Coord; /*@ returned geometry */
          }
       }
       @property imf_context {

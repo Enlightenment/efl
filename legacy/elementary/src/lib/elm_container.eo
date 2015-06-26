@@ -9,14 +9,14 @@ class Elm.Container (Elm.Widget)
             /*@ Get the list of swallow parts in the object. */
          }
          values {
-            ret: free(own(list<Evas_Object *> *), eina_list_free); /*@ list */
+            ret: free(own(list<Evas.Object *> *), eina_list_free); /*@ list */
          }
       }
       content_set {
          /*@ Swallow the given object into the given part of the container. */
          params {
             @in name: const(char)*; /*@ the part in which to swallow the object */
-            @in content: Evas_Object *; /*@ the object to swallow */
+            @in content: Evas.Object *; /*@ the object to swallow */
          }
          return: bool;
       }
@@ -25,14 +25,14 @@ class Elm.Container (Elm.Widget)
          params {
             @in name: const(char)* @nullable; /*@ the part in which the object is swallowed */
          }
-         return: Evas_Object *;
+         return: Evas.Object *;
       }
       content_unset {
          /*@ Unswallow the object in the given part of the container and return it. */
          params {
             @in name: const(char)* @nullable;
          }
-         return: Evas_Object *;
+         return: Evas.Object *;
       }
    }
    implements {

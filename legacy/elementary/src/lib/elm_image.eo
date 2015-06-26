@@ -407,7 +407,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             elementary.
 
             @ingroup Image */
-            return: Evas_Object *;
+            return: Evas.Object *;
          }
       }
       @property object_size {

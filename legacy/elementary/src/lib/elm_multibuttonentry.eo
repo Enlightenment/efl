@@ -110,7 +110,7 @@ class Elm.Multibuttonentry (Elm.Layout)
             @return The entry object, or NULL if none
 
             @ingroup Multibuttonentry */
-            return: Evas_Object *;
+            return: Evas.Object *;
          }
       }
       @property selected_item {

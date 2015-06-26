@@ -247,7 +247,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Toolbar */
          }
          values {
-            parent: Evas_Object *; /*@ The parent of the menu objects. */
+            parent: Evas.Object *; /*@ The parent of the menu objects. */
          }
       }
       @property standard_priority {

@@ -297,7 +297,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @ingroup Slider */
          }
          values {
-            size: Evas_Coord; /*@ The length of the slider's bar region. */
+            size: Evas.Coord; /*@ The length of the slider's bar region. */
          }
       }
       @property step {

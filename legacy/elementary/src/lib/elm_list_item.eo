@@ -77,7 +77,7 @@ class Elm.List_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     obj: Evas_Object *; /*@ The base Edje object associated with @p it. */
+                     obj: Evas.Object *; /*@ The base Edje object associated with @p it. */
                 }
            }
            @property prev {

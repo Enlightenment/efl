@@ -98,8 +98,8 @@ class Elm.Box (Elm.Widget)
             @ingroup Box */
          }
          values {
-            horizontal: Evas_Coord; /*@ The horizontal space between elements */
-            vertical: Evas_Coord; /*@ The vertical space between elements */
+            horizontal: Evas.Coord; /*@ The horizontal space between elements */
+            vertical: Evas.Coord; /*@ The vertical space between elements */
          }
       }
       @property layout {
@@ -151,7 +151,7 @@ class Elm.Box (Elm.Widget)
             You must free this list with eina_list_free() once you are done with it.
 
             @ingroup Box */
-            return: free(own(list<Evas_Object*>*), eina_list_free) @warn_unused;
+            return: free(own(list<Evas.Object*>*), eina_list_free) @warn_unused;
          }
       }
       pack_end {
@@ -174,7 +174,7 @@ class Elm.Box (Elm.Widget)
          @ingroup Box */
 
          params {
-            @in subobj: Evas_Object *; /*@ The object to add to the box */
+            @in subobj: Evas.Object *; /*@ The object to add to the box */
          }
       }
       unpack_all {
@@ -206,7 +206,7 @@ class Elm.Box (Elm.Widget)
          @ingroup Box */
 
          params {
-            @in subobj: Evas_Object *; /*@ The object to unpack */
+            @in subobj: Evas.Object *; /*@ The object to unpack */
          }
       }
       pack_after {
@@ -228,8 +228,8 @@ class Elm.Box (Elm.Widget)
          @ingroup Box */
 
          params {
-            @in subobj: Evas_Object *; /*@ The object to add to the box */
-            @in after: Evas_Object *; /*@ The object after which to add it */
+            @in subobj: Evas.Object *; /*@ The object to add to the box */
+            @in after: Evas.Object *; /*@ The object after which to add it */
          }
       }
       pack_start {
@@ -252,7 +252,7 @@ class Elm.Box (Elm.Widget)
          @ingroup Box */
 
          params {
-            @in subobj: Evas_Object *; /*@ The object to add to the box */
+            @in subobj: Evas.Object *; /*@ The object to add to the box */
          }
       }
       recalculate {
@@ -287,8 +287,8 @@ class Elm.Box (Elm.Widget)
          @ingroup Box */
 
          params {
-            @in subobj: Evas_Object *; /*@ The object to add to the box */
-            @in before: Evas_Object *; /*@ The object before which to add it */
+            @in subobj: Evas.Object *; /*@ The object to add to the box */
+            @in before: Evas.Object *; /*@ The object before which to add it */
          }
       }
       clear {

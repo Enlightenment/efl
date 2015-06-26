@@ -195,7 +195,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                      part: const (char) * @nullable; /*@ The content part name  (NULL for the default content) */
                 }
                 values {
-                     content: Evas_Object *; /*@ The content of the object item */
+                     content: Evas.Object *; /*@ The content of the object item */
                 }
            }
            @property part_text {
@@ -325,7 +325,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
 
                   @ingroup General
                  */
-                return: const(list<Evas_Object *>) *;
+                return: const(list<Evas.Object *>) *;
            }
            access_order_set {
                 /*@
@@ -335,7 +335,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                   @ingroup General
                  */
                 params {
-                     @in objs: own(list<Evas_Object *> *); /*@ Order of objects to pass highlight */
+                     @in objs: own(list<Evas.Object *> *); /*@ Order of objects to pass highlight */
                 }
            }
            widget_get @const {
@@ -346,7 +346,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                   @note Every elm_object_item supports this API
                   @ingroup General
                  */
-                  return: Evas_Object*; /*@ The widget object */
+                  return: Evas.Object*; /*@ The widget object */
            }
            del {
                 /*@
@@ -422,7 +422,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                 params {
                      part: const (char) *; /*@ The content part name to unset (NULL for the default content) */
                 }
-                return: Evas_Object*;
+                return: Evas.Object*;
            }
            part_text_custom_update @protected {
                 /*@ Update additional text part content */
@@ -502,7 +502,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
 
                   @ingroup General
                  */
-                return: Evas_Object*; /*@ Accessible object of the object item or NULL for any error */
+                return: Evas.Object*; /*@ Accessible object of the object item or NULL for any error */
            }
            domain_translatable_part_text_set {
                 /*@
@@ -602,7 +602,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
 
                   @ingroup General
                  */
-                return: Evas_Object*; /*@ The track object */
+                return: Evas.Object*; /*@ The track object */
            }
            untrack {
                 /*@
@@ -695,7 +695,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
 
                   @ingroup General
                  */
-                return: Evas_Object*; /*@ Accessible object of the object item or NULL for any error */
+                return: Evas.Object*; /*@ Accessible object of the object item or NULL for any error */
            }
            access_unregister {
                 /*@
