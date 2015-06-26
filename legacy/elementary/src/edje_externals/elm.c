@@ -78,12 +78,11 @@ external_signal(void *data EINA_UNUSED, Evas_Object *obj, const char *sig,
      }
 
    content = type->content_get(type->data, obj, _signal);
-   free(_signal);
    if (content)
      edje_object_signal_emit(content, sig + (p - _signal), source);
 
 on_error:
-   if (_signal) free(_signal);
+   free(_signal);
    return;
 }
 
