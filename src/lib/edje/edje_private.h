@@ -360,6 +360,7 @@ typedef struct _Edje_Part_Description_Spec_Mesh_Node Edje_Part_Description_Spec_
 typedef struct _Edje_Part_Description_Spec_Light     Edje_Part_Description_Spec_Light;
 typedef struct _Edje_Part_Description_Spec_Camera    Edje_Part_Description_Spec_Camera;
 typedef struct _Edje_Part_Description_Spec_Filter    Edje_Part_Description_Spec_Filter;
+typedef struct _Edje_Part_Description_Spec_Filter_Data Edje_Part_Description_Spec_Filter_Data;
 typedef struct _Edje_Physics_Face                    Edje_Physics_Face;
 typedef struct _Edje_Patterns                        Edje_Patterns;
 typedef struct _Edje_Part_Box_Animation              Edje_Part_Box_Animation;
@@ -1279,12 +1280,22 @@ struct _Edje_Part_Description_Spec_Border
    FLOAT_T        scale_by; /* when border scale above is enabled, border width OUTPUT is scaled by the object or global scale factor. this value adds another multiplier that the global scale is multiplued by first. if <= 0.0 it is not used, and if 1.0 it i s "ineffective" */
 };
 
+struct _Edje_Part_Description_Spec_Filter_Data
+{
+   Eina_Stringshare *name;
+   Eina_Stringshare *value;
+   // below data not in edj
+   Eina_Bool         invalid_cc : 1;
+};
+
 struct _Edje_Part_Description_Spec_Filter
 {
    const char    *code;
    const char    *name;
    Eina_List     *sources; /* "part" or "buffer:part" */
-   Eina_Hash     *data; /* "name" --> "data" */
+   Edje_Part_Description_Spec_Filter_Data *data; /* array */
+   unsigned int   data_count;
+   // below data not in edj
    Eina_Bool      checked_data : 1; // checked whether this is a data item or embedded string
    Eina_Bool      sources_set : 1;
    Eina_Bool      no_free : 1;

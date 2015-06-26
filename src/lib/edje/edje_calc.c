@@ -2480,27 +2480,27 @@ _edje_part_recalc_single_filter(Edje *ed,
          /* pass extra data items */
          if (filter->data)
            {
-              Eina_Iterator *it = eina_hash_iterator_tuple_new(filter->data);
-              Eina_Hash_Tuple *tup;
-              EINA_ITERATOR_FOREACH(it, tup)
+              unsigned int k;
+              for (k = 0; k < filter->data_count; k++)
                 {
-                   const char *name = tup->key;
-                   char *value = tup->data;
-                   if (!value)
+                   Edje_Part_Description_Spec_Filter_Data *data = &(filter->data[k]);
+                   if (data->invalid_cc)
+                     continue;
+                   if (!data->value)
                      {
-                        efl_gfx_filter_data_set(name, NULL, EINA_FALSE);
+                        efl_gfx_filter_data_set(data->name, NULL, EINA_FALSE);
                      }
-                   else if (!strncmp(value, "color_class('", sizeof("color_class('") - 1))
+                   else if (!strncmp(data->value, "color_class('", sizeof("color_class('") - 1))
                      {
                         /* special handling for color classes even tho they're not that great */
                         char *ccname, *buffer, *r;
                         Edje_Color_Class *cc;
 
-                        ccname = strdup(value + sizeof("color_class('") - 1);
+                        ccname = strdup(data->value + sizeof("color_class('") - 1);
                         if (ccname)
                           {
                              r = strchr(ccname, '\'');
-                             if (r)
+                             if (r && (r[1] == ')') && (r[2] == '\0'))
                                {
                                   *r = '\0';
                                   cc = _edje_color_class_find(ed, ccname);
@@ -2511,33 +2511,32 @@ _edje_part_recalc_single_filter(Edje *ed,
                                              "r2=%d,g2=%d,b2=%d,a2=%d,"
                                              "r3=%d,g3=%d,b3=%d,a3=%d}";
                                        int len = sizeof(fmt) + 20;
-                                       len += strlen(name);
+                                       len += strlen(data->name);
                                        buffer = alloca(len);
-                                       snprintf(buffer, len - 1, fmt, name,
+                                       snprintf(buffer, len - 1, fmt, data->name,
                                                 (int) cc->r, (int) cc->g, (int) cc->b, (int) cc->a,
                                                 (int) cc->r2, (int) cc->g2, (int) cc->b2, (int) cc->a2,
                                                 (int) cc->r3, (int) cc->g3, (int) cc->b3, (int) cc->a3);
                                        buffer[len - 1] = 0;
-                                       efl_gfx_filter_data_set(name, buffer, EINA_TRUE);
+                                       efl_gfx_filter_data_set(data->name, buffer, EINA_TRUE);
                                     }
                                   else
                                     {
                                        ERR("Unknown color class: %s", ccname);
-                                       eina_hash_del(filter->data, tup->key, tup->data);
+                                       data->invalid_cc = EINA_TRUE;
                                     }
                                }
                              else
                                {
-                                  ERR("Failed to parse color class: %s", value);
-                                  eina_hash_del(filter->data, tup->key, tup->data);
+                                  ERR("Failed to parse color class: %s", data->value);
+                                  data->invalid_cc = EINA_TRUE;
                                }
                              free(ccname);
                           }
                      }
                    else
-                     efl_gfx_filter_data_set(name, value, EINA_FALSE);
+                     efl_gfx_filter_data_set(data->name, data->value, EINA_FALSE);
                 }
-              eina_iterator_free(it);
            }
          efl_gfx_filter_program_set(code, filter->name);
          if (prev_sources != filter_sources)

@@ -11703,8 +11703,10 @@ st_collections_group_parts_part_description_filter_source(void)
 static void
 st_collections_group_parts_part_description_filter_data(void)
 {
+   Edje_Part_Description_Spec_Filter_Data *array;
    Edje_Part_Description_Spec_Filter *filter;
    char *name, *value;
+   unsigned k;
 
    if (current_part->type == EDJE_PART_TYPE_TEXT)
      filter = &(((Edje_Part_Description_Text *)current_desc)->text.filter);
@@ -11719,19 +11721,21 @@ st_collections_group_parts_part_description_filter_data(void)
 
    check_arg_count(2);
 
-   if (!filter->data)
-     filter->data = eina_hash_string_small_new(EINA_FREE_CB(free));
-
    name = parse_str(0);
    value = parse_str(1);
-   if (eina_hash_find(filter->data, name))
-     {
-        ERR("parse error %s:%i. filter.data '%s' already exists in this context",
-            file_in, line - 1, name);
-        exit(-1);
-     }
+   for (k = 0; k < filter->data_count; k++)
+     if (!strcmp(filter->data[k].name, name))
+       {
+          ERR("parse error %s:%i. filter.data '%s' already exists in this context",
+              file_in, line - 1, name);
+          exit(-1);
+       }
 
-   eina_hash_add(filter->data, name, value);
+   filter->data_count++;
+   array = realloc(filter->data, sizeof(Edje_Part_Description_Spec_Filter_Data) * filter->data_count);
+   array[filter->data_count - 1].name = name;
+   array[filter->data_count - 1].value = value;
+   filter->data = array;
 }
 
 /** @edcsubsection{collections_group_parts_descriptions_params,

@@ -67,6 +67,7 @@ Eet_Data_Descriptor *_edje_edd_edje_part_description_external_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_mesh_node_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_light_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_camera_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_filter_data = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_image_id = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_image_id_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_external_param = NULL;
@@ -280,6 +281,7 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_part_description_mesh_node_pointer);
    FREED(_edje_edd_edje_part_description_light_pointer);
    FREED(_edje_edd_edje_part_description_camera_pointer);
+   FREED(_edje_edd_edje_part_description_filter_data);
    FREED(_edje_edd_edje_part_image_id);
    FREED(_edje_edd_edje_part_image_id_pointer);
    FREED(_edje_edd_edje_external_param);
@@ -510,6 +512,12 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "b3", b3, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "a3", a3, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "desc", desc, EET_T_STRING);
+
+   /* evas filters */
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Spec_Filter_Data);
+   _edje_edd_edje_part_description_filter_data = eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_filter_data, Edje_Part_Description_Spec_Filter_Data, "name", name, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_filter_data, Edje_Part_Description_Spec_Filter_Data, "value", value, EET_T_STRING);
 
    /* the main file directory */
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_File);
@@ -958,8 +966,8 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.fill.spread", image.fill.spread, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.fill.type", image.fill.type, EET_T_CHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.filter.code", image.filter.code, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_LIST_STRING(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.filter.sources", image.filter.sources);
-   EET_DATA_DESCRIPTOR_ADD_HASH_STRING(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.filter.data", image.filter.data);
+   EET_DATA_DESCRIPTOR_ADD_LIST_STRING(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.filter.sources", image.filter.sources); // @since 1.15
+   EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.filter.data", image.filter.data, _edje_edd_edje_part_description_filter_data); // @since 1.15
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Proxy);
    eddc.func.mem_free = mem_free_proxy;
@@ -1018,7 +1026,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.ellipsis", text.ellipsis, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.filter", text.filter.code, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_LIST_STRING(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.filter_sources", text.filter.sources);
-   EET_DATA_DESCRIPTOR_ADD_HASH_STRING(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.filter.data", text.filter.data); // @since 1.15
+   EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.filter.data", text.filter.data, _edje_edd_edje_part_description_filter_data); // @since 1.15
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Text);
    eddc.func.mem_free = mem_free_textblock;
