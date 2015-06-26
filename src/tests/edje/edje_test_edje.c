@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <stdio.h>
 
+#define EFL_GFX_FILTER_BETA
+
 #include <Eina.h>
 #include <Edje.h>
 
