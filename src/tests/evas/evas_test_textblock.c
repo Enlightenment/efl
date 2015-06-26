@@ -597,6 +597,11 @@ START_TEST(evas_textblock_cursor)
         evas_textblock_cursor_paragraph_first(main_cur);
         evas_textblock_cursor_line_coord_set(main_cur, (2 * nh) - 1);
         fail_if(evas_textblock_cursor_compare(main_cur, cur));
+
+        evas_object_textblock_text_markup_set(tb, "123<br/>456<br/>789");
+        evas_object_textblock_valign_set(tb, 0.0);
+        evas_textblock_cursor_pos_set(cur, 6);
+        fail_if(evas_textblock_cursor_line_coord_set(cur, 0) != 0);
      }
 
      {
