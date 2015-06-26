@@ -10200,6 +10200,13 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
 
    if (found_par)
      {
+        /* If we are before the first paragraph, use the first position in the text */
+        if ((found_par->y >= y) && (!EINA_INLIST_GET(found_par)->prev))
+          {
+             evas_textblock_cursor_paragraph_first(cur);
+             return 0;
+          }
+
         _layout_paragraph_render(o, found_par);
         EINA_INLIST_FOREACH(found_par->lines, ln)
           {
