@@ -2320,7 +2320,7 @@ static Wl_Cnp_Selection wl_cnp_selection =
 
 static void _wl_sel_obj_del2(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
 static Eina_Bool _wl_elm_cnp_selection_set(Evas_Object *obj EINA_UNUSED, Elm_Sel_Type selection, Elm_Sel_Format format EINA_UNUSED, const void *selbuf, size_t buflen);
-static Eina_Bool _wl_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format EINA_UNUSED, Elm_Drop_Cb datacb EINA_UNUSED, void *udata EINA_UNUSED);
+static Eina_Bool _wl_elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format EINA_UNUSED, Elm_Drop_Cb datacb EINA_UNUSED, void *udata EINA_UNUSED);
 static Eina_Bool _wl_elm_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection);
 
 static Eina_Bool _wl_selection_send(void *udata, int type EINA_UNUSED, void *event);
@@ -2350,7 +2350,7 @@ static Dropable *_wl_dropable_find(unsigned int win);
 static void _wl_dropable_handle(Dropable *drop, Evas_Coord x, Evas_Coord y);
 static void _wl_dropable_all_clean(unsigned int win);
 static Eina_Bool _wl_drops_accept(const char *type);
-static unsigned int _wl_elm_widget_window_get(Evas_Object *obj);
+static unsigned int _wl_elm_widget_window_get(const Evas_Object *obj);
 static Evas * _wl_evas_get_from_win(unsigned int win);
 
 static void
@@ -2457,7 +2457,7 @@ _wl_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
 }
 
 static Eina_Bool
-_wl_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata)
+_wl_elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata)
 {
    Ecore_Wl_Window *win;
    Wl_Cnp_Selection *sel = &wl_cnp_selection;
@@ -2473,7 +2473,7 @@ _wl_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
    sel->requestwidget = NULL;
 
    sel->requestformat = format;
-   sel->requestwidget = obj;
+   sel->requestwidget = (Evas_Object *) obj;
    sel->win = win;
    /* sel->request(win, ECORE_X_SELECTION_TARGET_TARGETS); */
    sel->datacb = datacb;
@@ -3391,7 +3391,7 @@ _wl_drops_accept(const char *type)
 }
 
 static unsigned int
-_wl_elm_widget_window_get(Evas_Object *obj)
+_wl_elm_widget_window_get(const Evas_Object *obj)
 {
    Evas_Object *top;
    Ecore_Wl_Window *win = NULL;
