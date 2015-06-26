@@ -437,6 +437,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, atspi_mode, T_UCHAR);
    ELM_CONFIG_VAL(D, T, win_auto_focus_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, win_auto_focus_animate, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, transition_duration_factor, T_DOUBLE);
 #undef T
 #undef D
 #undef T_INT
@@ -1221,6 +1222,7 @@ _config_sub_apply(void)
    edje_scale_set(_elm_config->scale);
    edje_password_show_last_set(_elm_config->password_show_last);
    edje_password_show_last_timeout_set(_elm_config->password_show_last_timeout);
+   edje_transition_duration_factor_set(_elm_config->transition_duration_factor);
    if (_elm_config->modules) _elm_module_parse(_elm_config->modules);
    edje_audio_channel_mute_set(EDJE_CHANNEL_EFFECT, _elm_config->audio_mute_effect);
    edje_audio_channel_mute_set(EDJE_CHANNEL_BACKGROUND, _elm_config->audio_mute_background);
@@ -1464,6 +1466,7 @@ _config_load(void)
    _elm_config->gl_depth = 0;
    _elm_config->gl_msaa = 0;
    _elm_config->gl_stencil = 0;
+   _elm_config->transition_duration_factor = 1.0;
 }
 
 static void
@@ -1748,6 +1751,10 @@ _config_update(void)
    IFCFG(0x0002)
    _elm_config->win_auto_focus_enable = tcfg->win_auto_focus_enable;;
    _elm_config->win_auto_focus_animate = tcfg->win_auto_focus_animate;
+   IFCFGEND
+
+   IFCFG(0x0003)
+   _elm_config->transition_duration_factor = tcfg->transition_duration_factor;
    IFCFGEND
 
    /**
@@ -2099,6 +2106,9 @@ _env_get(void)
    if (s) _elm_config->magnifier_scale = _elm_atof(s);
    s = getenv("ELM_ATSPI_MODE");
    if (s) _elm_config->atspi_mode = ELM_ATSPI_MODE_ON;
+
+   s = getenv("ELM_TRANSITION_DURATION_FACTOR");
+   if (s) _elm_config->transition_duration_factor = atof(s);
 }
 
 static void
@@ -3512,6 +3522,22 @@ elm_config_indicator_service_get(int rotation)
       default:
         return NULL;
      }
+}
+
+EAPI void
+elm_config_transition_duration_factor_set(double factor)
+{
+    if (factor < 0.0) return;
+    if (_elm_config->transition_duration_factor == factor) return;
+    _elm_config->transition_duration_factor = factor;
+    edje_transition_duration_factor_set(_elm_config->transition_duration_factor);
+}
+
+
+EAPI double
+elm_config_transition_duration_factor_get(void)
+{
+    return _elm_config->transition_duration_factor;
 }
 
 void

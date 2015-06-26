@@ -123,7 +123,7 @@ struct _Elm_Theme
  * the users config doesn't need to be wiped - simply new values need
  * to be put in
  */
-#define ELM_CONFIG_FILE_GENERATION 0x0002
+#define ELM_CONFIG_FILE_GENERATION 0x0003
 #define ELM_CONFIG_VERSION_EPOCH_OFFSET 16
 #define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << ELM_CONFIG_VERSION_EPOCH_OFFSET) | \
                                     ELM_CONFIG_FILE_GENERATION)
@@ -292,6 +292,7 @@ struct _Elm_Config
    unsigned char audio_mute_all;
    unsigned char win_auto_focus_enable;
    unsigned char win_auto_focus_animate;
+   double        transition_duration_factor;
    Eina_List    *bindings;
    Eina_Bool     atspi_mode;
    int           gl_depth;

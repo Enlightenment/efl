@@ -825,6 +825,20 @@ atspi_change(void *data       EINA_UNUSED,
 }
 
 static void
+transition_duration_change(void *data EINA_UNUSED,
+                       Evas_Object *obj,
+                       void *event_info EINA_UNUSED)
+{
+   double val = elm_slider_value_get(obj);
+   Eina_Bool scale = elm_config_transition_duration_factor_get();
+
+   if (scale == val) return;
+   elm_config_transition_duration_factor_set(val);
+   elm_config_save();
+   elm_config_all_flush();
+}
+
+static void
 _status_basic(Evas_Object *win,
               Evas_Object *bx0)
 {
@@ -1177,7 +1191,7 @@ _config_display_update(Evas_Object *win)
           ts_min_friction, ts_friction_standard, ts_border_friction,
           ts_sensitivity_friction, ts_acceleration_threshold,
           ts_acceleration_time_limit, ts_acceleration_weight, page_friction,
-          bring_in_friction, zoom_friction;
+          bring_in_friction, zoom_friction, transition_duration;
    const char *curr_theme;
    Eina_Bool s_bounce, ts;
    Elm_Theme *th;
@@ -1188,6 +1202,7 @@ _config_display_update(Evas_Object *win)
    flush_interval = elm_config_cache_flush_interval_get();
    font_c = elm_config_cache_font_cache_size_get();
    image_c = elm_config_cache_image_cache_size_get();
+   transition_duration = elm_config_transition_duration_factor_get();
    edje_file_c = elm_config_cache_edje_file_cache_size_get();
    edje_col_c = elm_config_cache_edje_collection_cache_size_get();
 
@@ -1279,6 +1294,7 @@ _config_display_update(Evas_Object *win)
    elm_theme_set(th, curr_theme);
    elm_object_theme_set(evas_object_data_get(win, "theme_preview"), th);
    elm_theme_free(th);
+   elm_config_transition_duration_factor_set(transition_duration);
    eina_stringshare_del(curr_theme);
 }
 
@@ -1718,7 +1734,7 @@ static void
 _status_config_etc(Evas_Object *win,
                    Evas_Object *naviframe)
 {
-   Evas_Object *bx, *ck;
+   Evas_Object *bx, *ck, *sl, *fr, *bx2;
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
@@ -1740,6 +1756,31 @@ _status_config_etc(Evas_Object *win,
    // atspi
    CHECK_ADD("Enable ATSPI support", "Set atspi mode", atspi_change, NULL);
    elm_check_state_set(ck, elm_config_atspi_mode_get());
+
+   // transition duration in edje
+   fr = elm_frame_add(bx);
+   elm_object_text_set(fr, "Edje Transition Duration Factor");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   bx2 = elm_box_add(fr);
+   elm_object_content_set(fr, bx2);
+   evas_object_show(bx2);
+
+   sl = elm_slider_add(bx2);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.1f");
+   elm_slider_indicator_format_set(sl, "%1.1f");
+   elm_slider_min_max_set(sl, 0, 20.0);
+   elm_slider_value_set(sl, elm_config_transition_duration_factor_get());
+   elm_box_pack_end(bx2, sl);
+   evas_object_show(sl);
+   evas_object_smart_callback_add(sl, "changed", sc_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", transition_duration_change, NULL);
 
    evas_object_data_set(win, "etc", bx);
 

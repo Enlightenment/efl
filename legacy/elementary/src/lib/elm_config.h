@@ -1839,6 +1839,31 @@ EAPI void             elm_config_atspi_mode_set(Eina_Bool is_atspi);
  */
 
 /**
+ * Set the transition duration factor
+ *
+ * This function sets the edje transition duration factor
+ * It will affect the duration of edje transitions
+ *
+ * @param factor The duration factor for transition in edje
+ *
+ * @note This value affect duration of transitions in edje
+ *
+ * @since 1.15
+ *
+ * @see edje_transition_duration_set() for more details
+ */
+EAPI void elm_config_transition_duration_factor_set(double factor);
+
+/**
+ * Get the duration factor of transitions
+ *
+ * @return The duration factor of transition in edje
+ *
+ * @since 1.15
+ */
+EAPI double elm_config_transition_duration_factor_get(void);
+
+/**
  * @}
  */
 
