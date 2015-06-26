@@ -4,13 +4,12 @@ class Evas.Canvas3D.Material (Evas.Canvas3D.Object, Evas.Common_Interface)
    data: Evas_Canvas3D_Material_Data;
    methods {
       color_set {
-         /*@
-           Set the material attribute color of the given material.
+         [[Set the material attribute color of the given material.
 
-           Material color is used also when texture map is enabled. The colors will be
-           modulated (multiplied). To controll the color contribution of a material
-           attribute, use gray color. Setting color value for normal attribute has no
-           effect.
+           Material color is used also when texture map is enabled. The colors
+           will be modulated (multiplied). To controll the color contribution
+           of a material attribute, use gray color. Setting color value for
+           normal attribute has no effect.
 
            Default color is as follows.
 
@@ -19,127 +18,101 @@ class Evas.Canvas3D.Material (Evas.Canvas3D.Object, Evas.Common_Interface)
            Specular : (1.0, 1.0, 1.0, 1.0)
            Emission : (0.0, 0.0, 0.0, 1.0)
            Normal   : Not used
-
-           @ingroup Evas_Canvas3D_Material
-          */
+         ]]
 
          params {
-            @in attrib: Evas.Canvas3D.Material_Attrib; /*@ Material attribute ID. */
-            @in r: Evas_Real; /*@ Red component of the color. */
-            @in g: Evas_Real; /*@ Green component of the color. */
-            @in b: Evas_Real; /*@ Blue component of the color. */
-            @in a: Evas_Real; /*@ Alpha component of the color. */
+            @in attrib: Evas.Canvas3D.Material_Attrib; [[Material attribute ID.]]
+            @in r: Evas_Real; [[Red component of the color.]]
+            @in g: Evas_Real; [[Green component of the color.]]
+            @in b: Evas_Real; [[Blue component of the color.]]
+            @in a: Evas_Real; [[Alpha component of the color.]]
          }
       }
 
       color_get @const {
-         /*@
-           Get the material attribute color of the given material.
+         [[Get the material attribute color of the given material.
 
-           @see evas_canvas3d_material_color_set()
-
-           @ingroup Evas_Canvas3D_Material
-          */
+           See also @evas_canvas3d_material_color_set.
+         ]]
          params {
-            @in attrib: Evas.Canvas3D.Material_Attrib; /*@ Material attribute ID. */
-            @out r: Evas_Real; /*@ Pointer to receive red component of the color. */
-            @out g: Evas_Real; /*@ Pointer to receive green component of the color. */
-            @out b: Evas_Real; /*@ Pointer to receive blue component of the color. */
-            @out a: Evas_Real; /*@ Pointer to receive alpha component of the color. */
+            @in attrib: Evas.Canvas3D.Material_Attrib; [[Material attribute ID.]]
+            @out r: Evas_Real; [[Pointer to receive red component of the color.]]
+            @out g: Evas_Real; [[Pointer to receive green component of the color.]]
+            @out b: Evas_Real; [[Pointer to receive blue component of the color.]]
+            @out a: Evas_Real; [[Pointer to receive alpha component of the color.]]
          }
       }
 
       @property enable {
          set {
-            /*@
-              Set the material attribute enable flag of the given material.
+            [[Set the material attribute enable flag of the given material.
 
-              You might want to disable some material reflection contribution. For
-              example,Emission attribute is rarely used. Disabling unused attributes
-              might help the shading less complex so that can get speed up.
+              You might want to disable some material reflection contribution.
+              For example, Emission attribute is rarely used. Disabling unused
+              attributes might help the shading less complex so that can get
+              speed up.
 
               By default, diffuse and specular is enabled.
-
-              @ingroup Evas_Canvas3D_Material
-             */
+            ]]
          }
          get {
-            /*@
-              Get the material attribute enable flag of the given material.
+            [[Get the material attribute enable flag of the given material.
 
-              @see evas_canvas3d_material_enable_set()
-
-              @return              @c EINA_TRUE if enabled, or @c EINA_FALSE if not.
-              @ingroup Evas_Canvas3D_Material
-            */
+              See also @evas_canvas3d_material_enable_set.
+            ]]
          }
          keys {
-            attrib: Evas.Canvas3D.Material_Attrib;  /*@ Material attribute ID. */
+            attrib: Evas.Canvas3D.Material_Attrib; [[Material attribute ID.]]
          }
          values {
-            enable: bool; /*@ Whether to enable the attribute (@c EINA_TRUE), or not (@c EINA_FALSE). */
+            enable: bool; [[Whether to enable the attribute or not.]]
          }
       }
 
       @property shininess {
          set {
-            /*@
-              Set the shininess of the given material.
+            [[Set the shininess of the given material.
 
               Shininess is only used when specular attribute is enabled. Higher shininess
               value will make the object more shiny.
 
               Default shininess value is 150.0.
 
-              @see evas_canvas3d_material_enable_set()
-
-              @ingroup Evas_Canvas3D_Material
-             */
+              See also @evas_canvas3d_material_enable_set.
+            ]]
          }
          get {
-            /*@
-              Get the shininess of the given material.
+            [[Get the shininess of the given material.
 
-              @see evas_canvas3d_material_shininess_set()
-
-              @return              The shininess value.
-              @ingroup Evas_Canvas3D_Material
-             */
+              See also @evas_canvas3d_material_shininess_set.
+            ]]
          }
          values {
-            shininess: Evas_Real; /*@ Shininess value. */
+            shininess: Evas_Real; [[Shininess value.]]
          }
       }
 
       @property texture {
          set {
-            /*@
-              Set the texture of the given material.
+            [[Set the texture of the given material.
 
               You have to enable the desired attribute first.
 
-              @see evas_canvas3d_material_enable_set()
-
-              @ingroup Evas_Canvas3D_Material
-             */
+              See also @evas_canvas3d_material_enable_set.
+            ]]
          }
          get {
-            /*@
-              Get the texture of the given material.
+            [[Get the texture of the given material.
 
-              @see evas_canvas3d_material_texture_set()
-
-              @return              The texture that is set to the given material attribute.
-
-              @ingroup Evas_Canvas3D_Material
-             */
+              See also @evas_canvas3d_material_texture_set.
+            ]]
          }
 
          keys {
-            attrib: Evas.Canvas3D.Material_Attrib; /*@ Material attribute ID. */
+            attrib: Evas.Canvas3D.Material_Attrib; [[Material attribute ID.]]
          }
          values {
-            texture: Evas.Canvas3D.Texture *;
+            texture: Evas.Canvas3D.Texture *; [[The texture set to the attribute.]]
          }
       }
    }
