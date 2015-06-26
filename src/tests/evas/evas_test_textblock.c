@@ -601,7 +601,7 @@ START_TEST(evas_textblock_cursor)
         evas_object_textblock_text_markup_set(tb, "123<br/>456<br/>789");
         evas_object_textblock_valign_set(tb, 0.0);
         evas_textblock_cursor_pos_set(cur, 6);
-        fail_if(evas_textblock_cursor_line_coord_set(cur, 0) != 0);
+        ck_assert_int_eq(evas_textblock_cursor_line_coord_set(cur, 0), 0);
      }
 
      {
