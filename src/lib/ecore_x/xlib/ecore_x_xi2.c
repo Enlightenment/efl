@@ -657,6 +657,8 @@ _ecore_x_input_handler(XEvent *xevent)
              XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
              XIDeviceInfo *dev = _ecore_x_input_device_lookup(evd->deviceid);
 
+             if (!dev) return;
+
              if ((dev->use == XISlavePointer) &&
                  !(evd->flags & XIPointerEmulated))
                {
