@@ -80,7 +80,7 @@
  *      <ul>
  *        <li>@ref sec_collections_group_script "Script"</li>
  *        <li>@ref sec_collections_group_limits "Limits"</li>
- *        <li>@ref sec_toplevel_data "Data"</li>
+ *        <li>@ref sec_collections_group_data "Data"</li>
  *        <li>@ref sec_collections_group_parts "Parts"</li>
  *        <ul>
  *          <li>@ref sec_collections_group_parts_part "Part"</li>
@@ -4228,6 +4228,35 @@ ob_collections_group_lua_script(void)
 	  }
      }
 }
+
+/** @edcsubsection{collections_group_data,
+ *                 Group.Data} */
+
+/**
+    @page edcref
+    @block
+        data
+    @context
+        data {
+            item: "key" "value";
+            ..
+        }
+    @description
+        The "data" block is used to pass arbitrary parameters from the theme to
+        the application. Unlike the toplevel data block, this block Group.Data
+        can only store inline items (not files).
+        See also the toplevel @ref sec_toplevel_data "Data" section.
+    @endblock
+
+    @property
+        item
+    @parameters
+        [parameter name] [parameter value]
+    @effect
+        Defines a new parameter, the value will be the string specified next to
+        it.
+    @endproperty
+*/
 
 static void
 st_collections_group_data_item(void)
