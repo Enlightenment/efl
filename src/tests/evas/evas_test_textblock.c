@@ -1911,6 +1911,13 @@ START_TEST(evas_textblock_wrapping)
 
    fail_if(w > h); /* FIXME: Not the best test, should be more strict. */
 
+   evas_object_textblock_text_markup_set(tb,
+         "<wrap=none>aaa bbbbbbbbbbb ccccc</wrap><wrap=word>dddddd</wrap>");
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   evas_object_resize(tb, nw / 2, nh * 4);
+   evas_object_textblock_size_formatted_get(tb, &w, NULL);
+   ck_assert_int_le(w, nw);
+
    END_TB_TEST();
 }
 END_TEST

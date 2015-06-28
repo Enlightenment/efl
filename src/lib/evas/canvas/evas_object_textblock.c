@@ -4904,7 +4904,7 @@ _layout_par(Ctxt *c)
                }
              /* If we want to wrap and it's worth checking for wrapping
               * (i.e there's actually text). */
-             else if ((it->format->wrap_word || it->format->wrap_char ||
+             else if (((wrap > 0) || it->format->wrap_word || it->format->wrap_char ||
                 it->format->wrap_mixed) && it->text_node)
                {
                   size_t line_start;
