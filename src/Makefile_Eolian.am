@@ -66,6 +66,16 @@ bin_eolian_eolian_gen_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EOLIAN_CFLAGS@
 bin_eolian_eolian_gen_LDADD = @USE_EOLIAN_LIBS@
 bin_eolian_eolian_gen_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
 
+
+bin_PROGRAMS += \
+                bin/eolian/eolian_info
+
+bin_eolian_eolian_info_SOURCES = \
+                bin/eolian/eolian_info_main.c
+
+bin_eolian_eolian_info_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EOLIAN_CFLAGS@
+bin_eolian_eolian_info_LDADD = @USE_EOLIAN_LIBS@
+
 ### Helper for other modules using Eolian
 include Makefile_Eolian_Helper.am
 
