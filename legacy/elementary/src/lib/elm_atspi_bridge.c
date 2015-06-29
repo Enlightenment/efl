@@ -2997,6 +2997,10 @@ _registered_listeners_get(void *data, const Eldbus_Message *msg, Eldbus_Pending 
         eldbus_message_iter_arguments_get(siter, "ss", &bus, &event);
         _set_broadcast_flag(event, data);
      }
+
+   if (!pd->connected)
+      eo_do(data, eo_event_callback_call(ELM_ATSPI_BRIDGE_EVENT_CONNECTED, NULL));
+   pd->connected = EINA_TRUE;
 }
 
 static void
@@ -3145,46 +3149,24 @@ static Eina_Bool
 _window_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info EINA_UNUSED)
 {
    enum _Atspi_Window_Signals type;
-   const char *name;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(data, pd, EINA_FALSE);
    ELM_ATSPI_OBJECT_INTERFACE_GET_OR_RETURN_VAL(obj, eo_class_name_get(ELM_INTERFACE_ATSPI_WINDOW_INTERFACE), ifc, EINA_FALSE);
 
    if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED)
-     {
-        type = ATSPI_WINDOW_EVENT_CREATE;
-        name = "Create";
-     }
+     type = ATSPI_WINDOW_EVENT_CREATE;
    else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DESTROYED)
-     {
-        type = ATSPI_WINDOW_EVENT_DESTROY;
-        name = "Destroy";
-     }
+     type = ATSPI_WINDOW_EVENT_DESTROY;
    else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED)
-     {
-        type = ATSPI_WINDOW_EVENT_DEACTIVATE;
-        name = "Deactivate";
-     }
+     type = ATSPI_WINDOW_EVENT_DEACTIVATE;
    else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED)
-     {
-        type = ATSPI_WINDOW_EVENT_ACTIVATE;
-        name = "Activate";
-     }
+     type = ATSPI_WINDOW_EVENT_ACTIVATE;
    else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MAXIMIZED)
-     {
-        type = ATSPI_WINDOW_EVENT_MAXIMIZE;
-        name = "Maximize";
-     }
+     type = ATSPI_WINDOW_EVENT_MAXIMIZE;
    else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MINIMIZED)
-     {
-        type = ATSPI_WINDOW_EVENT_MINIMIZE;
-        name = "Minimize";
-     }
+     type = ATSPI_WINDOW_EVENT_MINIMIZE;
    else if (desc == ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_RESTORED)
-     {
-        type = ATSPI_WINDOW_EVENT_RESTORE;
-        name = "Restore";
-     }
+     type = ATSPI_WINDOW_EVENT_RESTORE;
    else
      return EINA_FALSE;
 
@@ -3197,7 +3179,7 @@ _window_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void 
         return EINA_FALSE;
      }
 
-   _bridge_signal_send(data, ifc, type, name, 0, 0, "i", 0);
+   _bridge_signal_send(data, ifc, type, "", 0, 0, "i", 0);
    return EINA_TRUE;
 }
 
@@ -3461,6 +3443,7 @@ _a11y_connection_shutdown(Eo *bridge)
    if (pd->a11y_bus) eldbus_connection_unref(pd->a11y_bus);
    pd->a11y_bus = NULL;
 
+   eo_do(bridge, eo_event_callback_call(ELM_ATSPI_BRIDGE_EVENT_DISCONNECTED, NULL));
    pd->connected = EINA_FALSE;
 }
 
@@ -3492,8 +3475,6 @@ _a11y_bus_initialize(Eo *obj, const char *socket_addr)
    // buid cache
    eo_do(obj, root = elm_obj_atspi_bridge_root_get());
    _bridge_cache_build(obj, root);
-
-   pd->connected = EINA_TRUE;
 }
 
 static void

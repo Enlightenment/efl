@@ -23,4 +23,8 @@ class Elm.Atspi_Bridge (Eo.Base)
       Eo.Base.constructor;
       Eo.Base.destructor;
    }
+   events {
+      connected;
+      disconnected;
+   }
 }
