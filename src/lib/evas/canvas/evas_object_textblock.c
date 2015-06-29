@@ -4854,6 +4854,7 @@ _layout_par(Ctxt *c)
              continue;
           }
 
+        it->x = c->x;
         if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
           {
              _layout_item_ascent_descent_adjust(c->obj, &c->ascent,
