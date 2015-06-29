@@ -218,7 +218,7 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
 
    _eo_condtor_reset(obj);
 
-   eo_do(_eo_id_get(obj), eo_destructor(););
+   eo_do(_eo_id_get(obj), eo_destructor());
 
    if (!obj->condtor_done)
      {
