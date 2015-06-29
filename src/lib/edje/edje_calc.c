@@ -2406,22 +2406,25 @@ _edje_part_recalc_single_map(Edje *ed,
 }
 
 static inline const char *
-_edje_filter_get(Edje *ed, Edje_Real_Part *ep, Edje_Part_Description_Spec_Filter *filter)
+_edje_filter_get(Edje *ed, Edje_Part_Description_Spec_Filter *filter)
 {
+   int k;
    if (!filter->code) return NULL;
    if (EINA_UNLIKELY(!filter->checked_data))
      {
-        Edje_String *st;
-        filter->checked_data = 1;
-        st = eina_hash_find(ed->file->data, filter->code);
-        if (st)
-          {
-             filter->name = filter->code;
-             filter->code = st->str;
-             filter->no_free = 1;
-          }
-        else
-          filter->name = eina_stringshare_add(ep->part->name);
+        // FIXME: bisect search instead of linear search
+        filter->checked_data = EINA_TRUE;
+        if (ed->file->filter_dir)
+          for (k = 0; k <= ed->file->filter_dir->filters_count; k++)
+            {
+               if (!strcmp(filter->code, ed->file->filter_dir->filters[k].name))
+                 {
+                    filter->name = ed->file->filter_dir->filters[k].name;
+                    filter->code = ed->file->filter_dir->filters[k].script;
+                    filter->no_free = EINA_TRUE;
+                    return filter->code;
+                 }
+            }
      }
    return filter->code;
 }
@@ -2463,7 +2466,7 @@ _edje_part_recalc_single_filter(Edje *ed,
      }
 
    /* common code below */
-   code = _edje_filter_get(ed, ep, filter);
+   code = _edje_filter_get(ed, filter);
    if (!code)
      {
         eo_do(obj, efl_gfx_filter_program_set(NULL, NULL));

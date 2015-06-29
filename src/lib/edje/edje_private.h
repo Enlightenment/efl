@@ -326,6 +326,8 @@ typedef struct _Edje_Sound_Tone                      Edje_Sound_Tone;
 typedef struct _Edje_Sound_Directory                 Edje_Sound_Directory;
 typedef struct _Edje_Mo                              Edje_Mo;
 typedef struct _Edje_Mo_Directory                    Edje_Mo_Directory;
+typedef struct _Edje_Gfx_Filter                      Edje_Gfx_Filter;
+typedef struct _Edje_Gfx_Filter_Directory            Edje_Gfx_Filter_Directory;
 
 typedef struct _Edje_Vibration_Sample                Edje_Vibration_Sample;
 typedef struct _Edje_Vibration_Directory             Edje_Vibration_Directory;
@@ -533,6 +535,7 @@ struct _Edje_File
    Edje_Sound_Directory           *sound_dir;
    Edje_Vibration_Directory       *vibration_dir;
    Edje_Mo_Directory              *mo_dir;
+   Edje_Gfx_Filter_Directory      *filter_dir;
 
    Eina_List                      *styles;
 
@@ -719,6 +722,19 @@ struct _Edje_Vibration_Directory
    Edje_Vibration_Sample *samples;  /* an array of Edje_Sound_Sample entries */
    unsigned int samples_count;
 };
+
+struct _Edje_Gfx_Filter
+{
+   Eina_Stringshare *name;
+   Eina_Stringshare *script;
+};
+
+struct _Edje_Gfx_Filter_Directory
+{
+   Edje_Gfx_Filter *filters; /* array */
+   int              filters_count;
+};
+
 /*----------*/
 
 struct _Edje_Program /* a conditional program to be run */

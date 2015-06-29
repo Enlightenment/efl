@@ -65,6 +65,7 @@
  *      <li>@ref sec_toplevel_data "Data"</li>
  *      <li>@ref sec_toplevel_color_classes "Color Classes"</li>
  *      <li>@ref sec_toplevel_styles "Styles"</li>
+ *      <li>@ref sec_collections_group_filter "Filters"</li> <!-- dup -->
  *    </ul>
  *    <li>@ref sec_collections "Collections"</li>
  *    <ul>
@@ -72,6 +73,7 @@
  *      <ul>
  *        <li>@ref sec_collections_sounds_sample "Sample"</li>
  *      </ul>
+ *      <li>@ref sec_collections_group_filter "Filters"</li>
  *      <li>@ref sec_collections_vibrations "Vibrations"</li>
  *      <ul>
  *        <li>@ref sec_collections_vibrations_sample "Sample"</li>
@@ -81,6 +83,7 @@
  *        <li>@ref sec_collections_group_script "Script"</li>
  *        <li>@ref sec_collections_group_limits "Limits"</li>
  *        <li>@ref sec_collections_group_data "Data"</li>
+ *        <li>@ref sec_collections_group_filter "Filters"</li>
  *        <li>@ref sec_collections_group_parts "Parts"</li>
  *        <ul>
  *          <li>@ref sec_collections_group_parts_part "Part"</li>
@@ -208,6 +211,9 @@ static void st_color_class_color(void);
 static void st_color_class_color2(void);
 static void st_color_class_color3(void);
 static void st_color_class_desc(void);
+
+static void st_filters_filter_inline(void);
+static void st_filters_filter_file(void);
 
 static void ob_collections(void);
 static void st_collections_base_scale(void);
@@ -617,6 +623,12 @@ static void st_collections_group_nobroadcast(void);
         ed->type_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_QUATERNION; \
      }
 
+#define FILTERS_STATEMENTS(PREFIX) \
+     {PREFIX"filters", NULL}, \
+     {PREFIX"filters.filter", NULL}, \
+     {PREFIX"filters.filter.inline", st_filters_filter_inline}, \
+     {PREFIX"filters.filter.file", st_filters_filter_file},
+
 New_Statement_Handler statement_handlers[] =
 {
      {"externals.external", st_externals_external},
@@ -624,6 +636,7 @@ New_Statement_Handler statement_handlers[] =
      FONT_STYLE_CC_STATEMENTS("")
      {"data.item", st_data_item},
      {"data.file", st_data_file},
+     FILTERS_STATEMENTS("")
      {"collections.externals.external", st_externals_external}, /* dup */
      IMAGE_STATEMENTS("collections.")
      IMAGE_SET_STATEMENTS("collections")
@@ -643,6 +656,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.sounds.tone", st_collections_group_sound_tone}, /* dup */
      {"collections.vibrations.sample.name", st_collections_group_vibration_sample_name},
      {"collections.vibrations.sample.source", st_collections_group_vibration_sample_source},
+     FILTERS_STATEMENTS("collections.") /* dup */
      {"collections.group.vibrations.sample.name", st_collections_group_vibration_sample_name}, /* dup */
      {"collections.group.vibrations.sample.source", st_collections_group_vibration_sample_source}, /* dup */
      {"collections.group.name", st_collections_group_name},
@@ -903,6 +917,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.physics.world.z", st_collections_group_physics_world_z},
      {"collections.group.physics.world.depth", st_collections_group_physics_world_depth},
 #endif
+     FILTERS_STATEMENTS("collections.group.") /* dup */
      PROGRAM_STATEMENTS("collections.group.parts.part.description")
      PROGRAM_STATEMENTS("collections.group.parts.part")
      PROGRAM_STATEMENTS("collections.group.parts")
@@ -4281,6 +4296,148 @@ st_collections_group_data_item(void)
      eina_hash_modify(pc->data, key, es);
    else
      eina_hash_direct_add(pc->data, key, es);
+}
+
+/** @edcsubsection{collections_group_filter,
+ *                 Group.Filter} */
+
+/**
+    @page edcref
+    @block
+        filters
+    @context
+        filters {
+            filter {
+                inline: "key" "Lua script here";
+                file: "key" "Lua script filename";
+                ..
+            }
+        }
+    @description
+        The "filter" block lets you embed filter scripts into an EDC group,
+        that can then be referred to in a @ref sec_collections_group_parts_description_filter "Text.Filter"
+        or @ref collections_group_parts_description_filter "Image.Filter" statement.
+
+        In a similar way to the @ref sec_collections_group_data "Group.Data" blocks,
+        it is possible to embed filters from a external file inside the final EDJ.
+
+        Please also refer to @ref evasfiltersref "Evas filters reference".
+    @endblock
+
+    @property
+        inline
+    @parameters
+        [name] [Lua script]
+    @effect
+        Defines a new Lua script used for filtering.
+    @endproperty
+
+    @property
+        file
+    @parameters
+        [name] [Lua script filename]
+    @effect
+        Includes an external file to define a new Lua script used for filtering.
+    @endproperty
+*/
+
+// ensure order so we could do binary search later on
+// since this here happens at build time, we don't care about very hi-perf
+static void
+_filters_filter_insert(const char *name, const char *script)
+{
+   Edje_Gfx_Filter *array;
+   int k, i;
+
+   if (!edje_file->filter_dir)
+     edje_file->filter_dir = mem_alloc(sizeof(Edje_Gfx_Filter_Directory));
+
+   for (k = 0; k < edje_file->filter_dir->filters_count; k++)
+     {
+        int cmp = strcmp(name, edje_file->filter_dir->filters[k].name);
+        if (!cmp)
+          {
+             ERR("parse error %s:%i. A filter named '%s' already exists within this block.",
+                 file_in, line - 1, name);
+             exit(-1);
+          }
+        else if (cmp < 0)
+          break;
+     }
+
+   array = realloc(edje_file->filter_dir->filters,
+                   sizeof(Edje_Gfx_Filter) * (edje_file->filter_dir->filters_count + 1));
+   if (!array)
+     {
+        ERR("Memory allocation failed (array grow)");
+        exit(-1);
+     }
+
+   for (i = edje_file->filter_dir->filters_count - 1; i >= k; i--)
+     array[i + 1] = array[i];
+
+   array[k].name = eina_stringshare_add(name);
+   array[k].script = eina_stringshare_add(script);
+   edje_file->filter_dir->filters_count++;
+   edje_file->filter_dir->filters = array;
+}
+
+static void
+st_filters_filter_inline(void)
+{
+   char *name, *script;
+
+   check_arg_count(2);
+
+   name = parse_str(0);
+   script = parse_str(1);
+   _filters_filter_insert(name, script);
+   free(name);
+   free(script);
+}
+
+static void
+st_filters_filter_file(void)
+{
+   char *name, *file, *script;
+   Eina_File *f;
+
+   check_arg_count(2);
+
+   name = parse_str(0);
+   file = parse_str(1);
+   f = eina_file_open(file, EINA_FALSE);
+   if (!f)
+     {
+        char path[PATH_MAX], *dir;
+        Eina_List *l;
+        // TODO: Introduce special filters_dir? needs new edje_cc argument :(
+        EINA_LIST_FOREACH(data_dirs, l, dir)
+          {
+             snprintf(path, sizeof(path), "%s/%s", dir, file);
+             f = eina_file_open(path, EINA_FALSE);
+             if (f) break;
+          }
+        if (!f)
+          {
+             ERR("parse error %s:%i. Could not open filter script file '%s'",
+                 file_in, line - 1, file);
+             exit(-1);
+          }
+     }
+
+   script = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!script)
+     {
+        ERR("parse error %s:%i. Could not read filter script file %s",
+            file_in, line - 1, file);
+        exit(-1);
+     }
+   _filters_filter_insert(name, script);
+   eina_file_map_free(f, script);
+   eina_file_close(f);
+   free(name);
+
 }
 
 /** @edcsubsection{collections_group_limits,

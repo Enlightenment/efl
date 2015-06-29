@@ -75,6 +75,8 @@ Eet_Data_Descriptor *_edje_edd_edje_part_limit = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_physics_face = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_map_colors = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_map_colors_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_filter = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_filter_directory = NULL;
 
 /* allocate a description struct.
  * this initializes clip_to_id as this field will not be present in most
@@ -239,6 +241,8 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_mo_directory);
    FREED(_edje_edd_edje_vibration_sample);
    FREED(_edje_edd_edje_vibration_directory);
+   FREED(_edje_edd_edje_filter);
+   FREED(_edje_edd_edje_filter_directory);
    FREED(_edje_edd_edje_program);
    FREED(_edje_edd_edje_program_pointer);
    FREED(_edje_edd_edje_program_target);
@@ -460,6 +464,16 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_3d_vec, Edje_3D_Vec, "y", y, EDJE_T_FLOAT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_3d_vec, Edje_3D_Vec, "z", z, EDJE_T_FLOAT);
 
+   /* Efl.Gfx.Filter */
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Gfx_Filter);
+   _edje_edd_edje_filter = eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_filter, Edje_Gfx_Filter, "name", name, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_filter, Edje_Gfx_Filter, "script", script, EET_T_STRING);
+
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Gfx_Filter_Directory);
+   _edje_edd_edje_filter_directory = eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_filter_directory, Edje_Gfx_Filter_Directory, "filters", filters, _edje_edd_edje_filter);
+
    /* collection directory */
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Collection_Directory_Entry);
    _edje_edd_edje_part_collection_directory_entry =
@@ -533,6 +547,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "model_dir", model_dir, _edje_edd_edje_model_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "sound_dir", sound_dir, _edje_edd_edje_sound_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "mo_dir", mo_dir, _edje_edd_edje_mo_directory);
+   EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "filter_dir", filter_dir, _edje_edd_edje_filter_directory);
 
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "vibration_dir", vibration_dir, _edje_edd_edje_vibration_directory);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "styles", styles, _edje_edd_edje_style);
