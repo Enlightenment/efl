@@ -4391,13 +4391,13 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              }
            case EDJE_PART_TYPE_LIGHT:
              {
-                Evas_Canvas3D_Light *light = NULL;
+                Evas_Canvas3D_Light *light_node = NULL;
                 Edje_Part_Description_Light *pd_light;
 
                 pd_light = (Edje_Part_Description_Light*) ep->chosen_description;
-                eo_do(ep->node, light = evas_canvas3d_node_light_get());
+                eo_do(ep->node, light_node = evas_canvas3d_node_light_get());
 
-                eo_do(light,
+                eo_do(light_node,
                       evas_canvas3d_light_ambient_set(pd_light->light.properties.ambient.r / 255, pd_light->light.properties.ambient.g / 255,
                                                 pd_light->light.properties.ambient.b / 255, pd_light->light.properties.ambient.a / 255),
                       evas_canvas3d_light_diffuse_set(pd_light->light.properties.diffuse.r / 255, pd_light->light.properties.diffuse.g / 255,
