@@ -150,6 +150,21 @@ _ecore_x_input_shutdown(void)
 
 #ifdef ECORE_XI2
 #ifdef ECORE_XI2_2
+static Eina_Bool
+_ecore_x_input_touch_device_check(int devid)
+{
+   int i;
+   Eina_Inlist *l = _ecore_x_xi2_touch_info_list;
+   Ecore_X_Touch_Device_Info *info = NULL;
+
+   if ((!_ecore_x_xi2_devs) || (!_ecore_x_xi2_touch_info_list))
+     return EINA_FALSE;
+
+   EINA_INLIST_FOREACH(l, info)
+     if (info->devid == devid) return EINA_TRUE;
+  return EINA_FALSE;
+}
+
 static int
 _ecore_x_input_touch_index_get(int devid, int detail, int event_type)
 {
