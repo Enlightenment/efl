@@ -188,8 +188,8 @@ ecore_imf_evas_event_key_down_wrap(Evas_Event_Key_Down *evas_event,
    if (evas_event->dev)
      {
         imf_event->dev_name = evas_device_name_get(evas_event->dev) ? evas_device_name_get(evas_event->dev) : _ecore_imf_evas_event_empty;
-        imf_event->dev_class = evas_device_class_get(evas_event->dev);
-        imf_event->dev_subclass = evas_device_subclass_get(evas_event->dev);
+        imf_event->dev_class = (Ecore_IMF_Device_Class)evas_device_class_get(evas_event->dev);
+        imf_event->dev_subclass = (Ecore_IMF_Device_Subclass)evas_device_subclass_get(evas_event->dev);
      }
    else
      {
@@ -227,8 +227,8 @@ ecore_imf_evas_event_key_up_wrap(Evas_Event_Key_Up *evas_event,
    if (evas_event->dev)
      {
         imf_event->dev_name = evas_device_name_get(evas_event->dev) ? evas_device_name_get(evas_event->dev) : _ecore_imf_evas_event_empty;
-        imf_event->dev_class = evas_device_class_get(evas_event->dev);
-        imf_event->dev_subclass = evas_device_subclass_get(evas_event->dev);
+        imf_event->dev_class = (Ecore_IMF_Device_Class)evas_device_class_get(evas_event->dev);
+        imf_event->dev_subclass = (Ecore_IMF_Device_Subclass)evas_device_subclass_get(evas_event->dev);
      }
    else
      {
