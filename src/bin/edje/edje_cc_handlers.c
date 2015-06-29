@@ -65,7 +65,7 @@
  *      <li>@ref sec_toplevel_data "Data"</li>
  *      <li>@ref sec_toplevel_color_classes "Color Classes"</li>
  *      <li>@ref sec_toplevel_styles "Styles"</li>
- *      <li>@ref sec_collections_group_filter "Filters"</li> <!-- dup -->
+ *      <li>@ref sec_collections_group_filters "Filters"</li>
  *    </ul>
  *    <li>@ref sec_collections "Collections"</li>
  *    <ul>
@@ -73,7 +73,7 @@
  *      <ul>
  *        <li>@ref sec_collections_sounds_sample "Sample"</li>
  *      </ul>
- *      <li>@ref sec_collections_group_filter "Filters"</li>
+ *      <li>@ref sec_collections_group_filters "Filters"</li>
  *      <li>@ref sec_collections_vibrations "Vibrations"</li>
  *      <ul>
  *        <li>@ref sec_collections_vibrations_sample "Sample"</li>
@@ -83,7 +83,7 @@
  *        <li>@ref sec_collections_group_script "Script"</li>
  *        <li>@ref sec_collections_group_limits "Limits"</li>
  *        <li>@ref sec_collections_group_data "Data"</li>
- *        <li>@ref sec_collections_group_filter "Filters"</li>
+ *        <li>@ref sec_collections_group_filters "Filters"</li>
  *        <li>@ref sec_collections_group_parts "Parts"</li>
  *        <ul>
  *          <li>@ref sec_collections_group_parts_part "Part"</li>
@@ -119,6 +119,7 @@
  *              <li>@ref sec_collections_group_parts_description_perspective "Perspective"</li>
  *              <li>@ref sec_collections_group_parts_descriptions_params "Params"</li>
  *              <li>@ref sec_collections_group_parts_description_links "Links"</li>
+ *              <li>@ref sec_collections_group_parts_description_filter "Filter"</li>
  *            </ul>
  *          </ul>
  *        </ul>
@@ -4298,25 +4299,26 @@ st_collections_group_data_item(void)
      eina_hash_direct_add(pc->data, key, es);
 }
 
-/** @edcsubsection{collections_group_filter,
- *                 Group.Filter} */
+/** @edcsubsection{collections_group_filters,
+ *                 Group.Filters} */
 
 /**
     @page edcref
     @block
         filters
     @context
+        // (toplevel)
+        // collections
+        // collections.group
         filters {
-            filter {
-                inline: "key" "Lua script here";
-                file: "key" "Lua script filename";
-                ..
-            }
+            filter.inline: "key" "Lua script here";
+            filter.file: "other" "filename.lua";
+            ..
         }
     @description
         The "filter" block lets you embed filter scripts into an EDC group,
-        that can then be referred to in a @ref sec_collections_group_parts_description_filter "Text.Filter"
-        or @ref collections_group_parts_description_filter "Image.Filter" statement.
+        that can then be referred to in the @ref sec_collections_group_parts_description_filter "Text.Filter"
+        or @ref sec_collections_group_parts_description_filter "Image.Filter" statements.
 
         In a similar way to the toplevel @ref sec_toplevel_data "Data" section,
         it is possible to embed filters from a external file inside the final EDJ.
@@ -11714,43 +11716,52 @@ st_collections_group_parts_part_description_perspective_focal(void)
    current_desc->persp.focal = parse_int_range(0, 1, 0x7fffffff);
 }
 
+
 /** @edcsubsection{collections_group_parts_description_filter,
  *                 Group.Parts.Part.Description.Filter} */
 
 /**
     @page edcref
-
+    @block
+        filter
     @context
         part {
-            type: [TEXT or IMAGE];
+            type: [IMAGE or TEXT];
+            ..
             description {
                 ..
                 filter {
-                    code: "blend {} -- ..."
-                    // or:
-                    code: "data name";
-                    source: "part1" "buf";
-                    source: "part2" "otherbuf";
-                    source: "part3";
+                   code: "blend {}";
+                   // or:
+                   code: "filter_name";
+                   source: "part1" "buf";
+                   source: "part2" "otherbuf";
+                   source: "part3";
+                   ..
+                   data: "the_answer" "42";
+                   data: "something" "anything";
+                   data: "mycc" "color_class('my_color_class')";
+                   ..
                 }
-                // or, for TEXT only (legacy):
-                text.filter: "blend {} -- ..."
+                // or:
+                text.filter: "blend {} -- ...";
                 ..
             }
         }
+    @description
+        Applies a series of image filters to a TEXT or IMAGE part.
+        For more information, please refer to the page
+        @ref evasfiltersref "Evas filters reference".
+    @endblock
+
     @property
         filter.code
     @parameters
-        [filter program] OR [data name]
+        [filter script or filter name]
     @effect
-        Applies a series of image filters to a TEXT or IMAGE part. The argument
-        to this field is the source code of a Lua program invoking various
-        filter operations. For more information, please refer to the page
-        "Evas filters reference".
-        The parameter can also be a parameter name as specified in the
-        data section (item or file property). This means external filter files
-        can be easily embedded in an edje file.
-        @see evasfiltersref
+        The argument to this field is the source code of a Lua script as defined
+        @ref evasfiltersref "here" or a filter name defined in the
+        @ref sec_collections_group_filters "Filters" section.
     @endproperty
 */
 static void
@@ -11786,8 +11797,6 @@ st_collections_group_parts_part_description_filter_code(void)
         Binds another part as an image source (like a proxy source) for a
         text or image filter operation. Optionally, a buffer name may be
         specified, so the same filter code can be used with different sources.
-        For more information, please refer to the page "Evas filters reference".
-        @see evasfiltersref
     @endproperty
 */
 static void
@@ -11876,13 +11885,16 @@ st_collections_group_parts_part_description_filter_source(void)
     @parameters
         [name] [content]
     @effect
-        Pass extra data to the Lua filter program. This can be used to pass
-        extra colors from a color_class using the following syntax:
-          filter.data: "mycc" "color_class('my_color_class')";
-        If not a color class, the data will simply be set as a string attached
-        to the global variable 'name' in the Lua program.
-        For more information, please refer to the page "Evas filters reference".
-        @see evasfiltersref
+        Pass extra data to the Lua filter program. All data passed will
+        be strings, except for the special case of color classes:
+        @code
+        filter.data: "mycc" "color_class('my_color_class')";
+        @endcode
+        Those will appear to Lua as a table of the following structure:
+        @code
+        -- Lua code
+        mycc = { r = 255, g = 0, b, a, r2, g2, b2, a2, r3, g3, b3, a3 }
+        @endcode
     @endproperty
 */
 static void

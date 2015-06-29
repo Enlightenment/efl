@@ -1,1 +1,1 @@
-blend ({ color = 0x3399FF })
+blend ({ color = '#3399FF' })
