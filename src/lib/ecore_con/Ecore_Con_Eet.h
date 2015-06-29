@@ -254,7 +254,7 @@ EAPI void ecore_con_eet_data_set(Ecore_Con_Eet *ece, const void *data);
  * @param ece       An Ecore_Con_Eet object.
  * @return The data attached to the Ecore_Con_Eet object.
  */
-EAPI void *ecore_con_eet_data_get(Ecore_Con_Eet *ece);
+EAPI const void *ecore_con_eet_data_get(Ecore_Con_Eet *ece);
 
 /**
  * Get the Ecore_Con_Eet object corresponding to the Ecore_Con_Reply object.

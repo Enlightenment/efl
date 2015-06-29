@@ -20,6 +20,7 @@
 #include "Ecore_Con_Eet.h"
 
 #define ECORE_CON_EET_RAW_MAGIC 0xDEAD007
+#define ECORE_CON_EET_DATA_KEY "ecore_con_eet_data_key"
 
 typedef struct _Ecore_Con_Eet_Base_Data Ecore_Con_Eet_Base_Data;
 typedef struct _Ecore_Con_Eet_Server_Obj_Data Ecore_Con_Eet_Server_Obj_Data;
@@ -100,8 +101,6 @@ struct _Ecore_Con_Eet_Base_Data
 
    Eina_Hash           *data_callbacks;
    Eina_Hash           *raw_data_callbacks;
-
-   const void *data;
 };
 
 static void
@@ -462,6 +461,118 @@ _ecore_con_eet_client_data(void *data, int type EINA_UNUSED, Ecore_Con_Event_Ser
 /*************
  * Generated API
  */
+
+EOLIAN static void
+_ecore_con_eet_base_data_callback_set(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd, const char *name, Ecore_Con_Eet_Data_Cb func, const void *data)
+{
+   Ecore_Con_Eet_Data *eced;
+
+   eced = calloc(1, sizeof (Ecore_Con_Eet_Data));
+   if (!eced) return;
+
+   eced->func = func;
+   eced->data = data;
+   eced->name = eina_stringshare_add(name);
+
+   eina_hash_direct_add(pd->data_callbacks, eced->name, eced);
+}
+
+EOLIAN static void
+_ecore_con_eet_base_raw_data_callback_set(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd, const char *name, Ecore_Con_Eet_Raw_Data_Cb func, const void *data)
+{
+   Ecore_Con_Eet_Raw_Data *ecerd;
+
+   ecerd = calloc(1, sizeof (Ecore_Con_Eet_Raw_Data));
+   if (!ecerd) return;
+
+   ecerd->func = func;
+   ecerd->data = data;
+   ecerd->name = eina_stringshare_add(name);
+
+   eina_hash_direct_add(pd->raw_data_callbacks, ecerd->name, ecerd);
+}
+
+EOLIAN static void
+_ecore_con_eet_base_data_callback_del(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd, const char *name)
+{
+   eina_hash_del(pd->data_callbacks, name, NULL);
+}
+
+EOLIAN static void
+_ecore_con_eet_base_raw_data_callback_del(Eo *obj, Ecore_Con_Eet_Base_Data *pd, const char *name)
+{
+   Ecore_Con_Eet_Client_Obj_Data *eced = eo_data_scope_get(obj, ECORE_CON_EET_CLIENT_OBJ_CLASS);
+
+   if (eo_isa(obj, ECORE_CON_EET_CLIENT_OBJ_CLASS) &&
+       eced->r->buffer_handler &&
+       !strcmp(eced->r->buffer_handler->name, name))
+     {
+        eced->r->buffer_handler = NULL;
+        free(eced->r->buffer);
+        eced->r->buffer = (void *)1;
+     }
+   eina_hash_del(pd->raw_data_callbacks, name, NULL);
+}
+
+EOLIAN static void
+_ecore_con_eet_base_send(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd, Ecore_Con_Reply *reply, const char *name, void *value)
+{
+   Ecore_Con_Eet_Protocol protocol;
+
+   if (!reply) return;
+
+   protocol.type = name;
+   protocol.data = value;
+
+   eet_connection_send(reply->econn, pd->edd, &protocol, NULL);
+}
+
+EOLIAN static void
+_ecore_con_eet_base_raw_send(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd, Ecore_Con_Reply *reply, const char *protocol_name, const char *section, void *value, unsigned int length)
+{
+   unsigned int protocol[4];
+   unsigned int protocol_length;
+   unsigned int section_length;
+   unsigned int size;
+   char *tmp;
+
+   if (!reply) return;
+   if (!protocol_name) return;
+   if (!section) return;
+
+   protocol_length = strlen(protocol_name) + 1;
+   if (protocol_length == 1) return;
+   section_length = strlen(section) + 1;
+
+   protocol[0] = htonl(ECORE_CON_EET_RAW_MAGIC);
+   protocol[1] = htonl(protocol_length);
+   protocol[2] = htonl(section_length);
+   protocol[3] = htonl(length);
+
+   size = sizeof (protocol) + protocol_length + section_length;
+   tmp = alloca(size);
+   memcpy(tmp, protocol, sizeof (protocol));
+   memcpy(tmp + sizeof (protocol), protocol_name, protocol_length);
+   memcpy(tmp + sizeof (protocol) + protocol_length, section, section_length);
+
+   if (reply->client)
+     {
+        ecore_con_client_send(reply->client, tmp, size);
+        ecore_con_client_send(reply->client, value, length);
+     }
+   else
+     {
+        ecore_con_server_send(pd->server, tmp, size);
+        ecore_con_server_send(pd->server, value, length);
+     }
+}
+
+EOLIAN static void
+_ecore_con_eet_base_register(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd, const char *name, Eet_Data_Descriptor *edd)
+{
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(pd->matching, name, edd);
+}
+
 EOLIAN static Eo_Base *
 _ecore_con_eet_server_obj_eo_base_constructor(Eo *obj, Ecore_Con_Eet_Server_Obj_Data *pd EINA_UNUSED)
 {
@@ -635,69 +746,31 @@ ecore_con_eet_server_free(Ecore_Con_Eet *r)
 EAPI void
 ecore_con_eet_register(Ecore_Con_Eet *ece, const char *name, Eet_Data_Descriptor *edd)
 {
-   Ecore_Con_Eet_Base_Data *eceb = eo_data_scope_get(ece, ECORE_CON_EET_BASE_CLASS);
-
-   EET_DATA_DESCRIPTOR_ADD_MAPPING(eceb->matching, name, edd);
+   eo_do(ece, ecore_con_eet_base_register(name, edd));
 }
 
 EAPI void
 ecore_con_eet_data_callback_add(Ecore_Con_Eet *ece, const char *name, Ecore_Con_Eet_Data_Cb func, const void *data)
 {
-   Ecore_Con_Eet_Base_Data *eceb = eo_data_scope_get(ece, ECORE_CON_EET_BASE_CLASS);
-   Ecore_Con_Eet_Data *eced;
-
-   if (!ece) return;
-
-   eced = calloc(1, sizeof (Ecore_Con_Eet_Data));
-   if (!eced) return;
-
-   eced->func = func;
-   eced->data = data;
-   eced->name = eina_stringshare_add(name);
-
-   eina_hash_direct_add(eceb->data_callbacks, eced->name, eced);
+   eo_do(ece, ecore_con_eet_base_data_callback_set(name, func, data));
 }
 
 EAPI void
 ecore_con_eet_data_callback_del(Ecore_Con_Eet *ece, const char *name)
 {
-   Ecore_Con_Eet_Base_Data *eceb = eo_data_scope_get(ece, ECORE_CON_EET_BASE_CLASS);
-
-   if (!eceb) return;
-   eina_hash_del(eceb->data_callbacks, name, NULL);
+   eo_do(ece, ecore_con_eet_base_data_callback_del(name));
 }
 
 EAPI void
 ecore_con_eet_raw_data_callback_add(Ecore_Con_Eet *ece, const char *name, Ecore_Con_Eet_Raw_Data_Cb func, const void *data)
 {
-   Ecore_Con_Eet_Base_Data *eced = eo_data_scope_get(ece, ECORE_CON_EET_BASE_CLASS);
-   Ecore_Con_Eet_Raw_Data *ecerd;
-
-   ecerd = calloc(1, sizeof (Ecore_Con_Eet_Raw_Data));
-   if (!ecerd) return;
-
-   ecerd->func = func;
-   ecerd->data = data;
-   ecerd->name = eina_stringshare_add(name);
-
-   eina_hash_direct_add(eced->raw_data_callbacks, ecerd->name, ecerd);
+   eo_do(ece, ecore_con_eet_base_raw_data_callback_set(name, func, data));
 }
 
 EAPI void
 ecore_con_eet_raw_data_callback_del(Ecore_Con_Eet *ece, const char *name)
 {
-   Ecore_Con_Eet_Base_Data *base_data = eo_data_scope_get(ece, ECORE_CON_EET_BASE_CLASS);
-   Ecore_Con_Eet_Client_Obj_Data *eced = eo_data_scope_get(ece, ECORE_CON_EET_CLIENT_OBJ_CLASS);
-
-   if (eo_isa(ece, ECORE_CON_EET_CLIENT_OBJ_CLASS) &&
-       eced->r->buffer_handler &&
-       !strcmp(eced->r->buffer_handler->name, name))
-     {
-        eced->r->buffer_handler = NULL;
-        free(eced->r->buffer);
-        eced->r->buffer = (void *)1;
-     }
-   eina_hash_del(base_data->raw_data_callbacks, name, NULL);
+   eo_do(ece, ecore_con_eet_base_raw_data_callback_del(name));
 }
 
 EAPI void
@@ -843,18 +916,15 @@ ecore_con_eet_server_disconnect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_S
 EAPI void
 ecore_con_eet_data_set(Ecore_Con_Eet *ece, const void *data)
 {
-   Ecore_Con_Eet_Base_Data *eced = eo_data_scope_get(ece, ECORE_CON_EET_BASE_CLASS);
-   if (!eced) return;
-
-   eced->data = data;
+   eo_do(ece,eo_key_data_set(ECORE_CON_EET_DATA_KEY, data));
 }
 
-EAPI void *
+EAPI const void *
 ecore_con_eet_data_get(Ecore_Con_Eet *ece)
 {
-   Ecore_Con_Eet_Base_Data *eced = eo_data_scope_get(ece, ECORE_CON_EET_BASE_CLASS);
-   if (!eced) return NULL;
-   return (void *)eced->data;
+   const void *temp;
+
+   return eo_do_ret(ece, temp, eo_key_data_get(ECORE_CON_EET_DATA_KEY));
 }
 
 EAPI Ecore_Con_Eet *
@@ -867,59 +937,15 @@ ecore_con_eet_reply(Ecore_Con_Reply *reply)
 EAPI void
 ecore_con_eet_send(Ecore_Con_Reply *reply, const char *name, void *value)
 {
-   Ecore_Con_Eet_Protocol protocol;
-   Ecore_Con_Eet_Base_Data *eced;
-
-   if (!reply) return;
-
-   eced = eo_data_scope_get(reply->ece, ECORE_CON_EET_BASE_CLASS);
-
-   protocol.type = name;
-   protocol.data = value;
-
-   eet_connection_send(reply->econn, eced->edd, &protocol, NULL);
+   eo_do(reply->ece, ecore_con_eet_base_send(reply, name, value));
 }
 
 EAPI void
 ecore_con_eet_raw_send(Ecore_Con_Reply *reply, const char *protocol_name, const char *section, void *value, unsigned int length)
 {
-   unsigned int protocol[4];
-   unsigned int protocol_length;
-   unsigned int section_length;
-   unsigned int size;
-   Ecore_Con_Eet_Base_Data *ece_obj;
-   char *tmp;
-
-   if (!reply) return;
-   if (!protocol_name) return;
-   if (!section) return;
-
-   ece_obj = eo_data_scope_get(reply->ece, ECORE_CON_EET_BASE_CLASS);
-   protocol_length = strlen(protocol_name) + 1;
-   if (protocol_length == 1) return;
-   section_length = strlen(section) + 1;
-
-   protocol[0] = htonl(ECORE_CON_EET_RAW_MAGIC);
-   protocol[1] = htonl(protocol_length);
-   protocol[2] = htonl(section_length);
-   protocol[3] = htonl(length);
-
-   size = sizeof (protocol) + protocol_length + section_length;
-   tmp = alloca(size);
-   memcpy(tmp, protocol, sizeof (protocol));
-   memcpy(tmp + sizeof (protocol), protocol_name, protocol_length);
-   memcpy(tmp + sizeof (protocol) + protocol_length, section, section_length);
-
-   if (reply->client)
-     {
-        ecore_con_client_send(reply->client, tmp, size);
-        ecore_con_client_send(reply->client, value, length);
-     }
-   else
-     {
-        ecore_con_server_send(ece_obj->server, tmp, size);
-        ecore_con_server_send(ece_obj->server, value, length);
-     }
+   eo_do(reply->ece,
+         ecore_con_eet_base_raw_send(reply, protocol_name, section, value,
+                                     length));
 }
 
 #include "ecore_con_eet_base.eo.c"
