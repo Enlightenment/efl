@@ -453,36 +453,6 @@ _ecore_x_input_multi_handler(XEvent *xevent)
              _ecore_x_input_touch_index_clear(devid,  i);
           }
         break;
-#ifdef XI_TouchCancel
-      case XI_TouchCancel:
-          {
-             XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
-             int devid = evd->deviceid;
-             int i = _ecore_x_input_touch_index_get(devid, evd->detail, XI_TouchEnd);
-
-             /* X maybe send several cancel events, but ecore_x only deals with cancel event of first touch
-              * But ecore keeps all Xevent info for future */
-             if ((i != 0) || !(evd->flags & XITouchEmulatingPointer)) return;
-
-             INF("ButtonEvent: cancel time=%u x=%d y=%d devid=%d", (unsigned int)evd->time, (int)evd->event_x, (int)evd->event_y, devid);
-             _ecore_mouse_button(ECORE_EVENT_MOUSE_BUTTON_CANCEL,
-                                 evd->time,
-                                 0,   // state
-                                 0,   // button
-                                 evd->event_x, evd->event_y,
-                                 evd->root_x, evd->root_y,
-                                 evd->event,
-                                (evd->child ? evd->child : evd->event),
-                                 evd->root,
-                                 1,   // same_screen
-                                 i, 1, 1,
-                                 1.0,   // pressure
-                                 0.0,   // angle
-                                 evd->event_x, evd->event_y,
-                                 evd->root_x, evd->root_y);
-          }
-        break;
-#endif
 #endif /* ifdef ECORE_XI2_2 */
       default:
         break;
@@ -671,6 +641,38 @@ _ecore_x_input_handler(XEvent *xevent)
                _ecore_x_input_axis_handler(xevent, dev);
           }
         break;
+#ifdef XI_TouchCancel
+      case XI_TouchCancel:
+          {
+             XITouchCancelEvent *evd = (XITouchCancelEvent *)(xevent->xcookie.data);
+             int devid = evd->deviceid;
+
+             if(!_ecore_x_input_touch_device_check(devid)) return;
+
+             INF("Handling XI_TouchCancel device(%d)", devid);
+
+             /* Currently X sends only one cancel event according to the touch device.
+                But in the future, it maybe need several cancel events according to the touch.
+                So it is better use button structure instead of creating new cancel structure.
+              */
+             _ecore_mouse_button(ECORE_EVENT_MOUSE_BUTTON_CANCEL,
+                                 evd->time,
+                                 0,   // state
+                                 0,   // button
+                                 0, 0,
+                                 0, 0,
+                                 evd->event,
+                                (evd->child ? evd->child : evd->event),
+                                 evd->root,
+                                 1,   // same_screen
+                                 0, 1, 1,
+                                 0.0,   // pressure
+                                 0.0,   // angle
+                                 0, 0,
+                                 0, 0);
+          }
+        break;
+#endif
       default:
         break;
      }
@@ -715,6 +717,9 @@ ecore_x_input_multi_select(Ecore_X_Window win)
                   XISetMask(mask, XI_TouchUpdate);
                   XISetMask(mask, XI_TouchBegin);
                   XISetMask(mask, XI_TouchEnd);
+#ifdef XI_TouchCancel
+                  XISetMask(mask, XI_TouchCancel);
+#endif
                   update = 1;
 
                   l = eina_inlist_append(l, (Eina_Inlist *)info);
