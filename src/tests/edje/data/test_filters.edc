@@ -1,6 +1,3 @@
-data {
-   file: "filterfile" "filter.lua";
-}
 color_classes {
    color_class {
       name: "cc1";
@@ -9,12 +6,25 @@ color_classes {
       color3: 0 0 255 255;
    }
 }
+filters {
+   // some unused filters
+   filter.file: "filter0" "filter.lua";
+   filter.inline: "filter1" "blend {}";
+}
 collections {
+   filters {
+      // some unused filters
+      filter.file: "filter2" "filter.lua";
+      filter.inline: "filter3" "blend {}";
+   }
    images {
       // found in tests/emotion/data
       image: "pnl.png" COMP;
    }
    group { name: "test_group";
+      filters {
+         filter.file: "filterfile" "filter.lua";
+      }
       parts {
          part { name: "background";
             type: RECT;
@@ -47,6 +57,7 @@ collections {
                   text: "FILTER";
                   font: "Sans";
                   size: 48;
+                  ellipsis: -1;
                }
                filter {
                   code: "filterfile";
