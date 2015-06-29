@@ -540,7 +540,7 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
      {
         eina_stringshare_replace(&ld->group, "horizontal");
         if (sd->popup)
-          _elm_theme_set(elm_object_theme_get(obj), sd->popup,
+          _elm_theme_set(elm_widget_theme_get(obj), sd->popup,
                          "slider", "horizontal/popup",
                          elm_widget_style_get(obj));
      }
@@ -548,7 +548,7 @@ _elm_slider_elm_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
      {
         eina_stringshare_replace(&ld->group, "vertical");
         if (sd->popup)
-          _elm_theme_set(elm_object_theme_get(obj), sd->popup,
+          _elm_theme_set(elm_widget_theme_get(obj), sd->popup,
                          "slider", "vertical/popup",
                          elm_widget_style_get(obj));
      }
