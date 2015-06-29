@@ -4318,7 +4318,7 @@ st_collections_group_data_item(void)
         that can then be referred to in a @ref sec_collections_group_parts_description_filter "Text.Filter"
         or @ref collections_group_parts_description_filter "Image.Filter" statement.
 
-        In a similar way to the @ref sec_collections_group_data "Group.Data" blocks,
+        In a similar way to the toplevel @ref sec_toplevel_data "Data" section,
         it is possible to embed filters from a external file inside the final EDJ.
 
         Please also refer to @ref evasfiltersref "Evas filters reference".
@@ -11796,11 +11796,11 @@ st_collections_group_parts_part_description_filter_source(void)
    Edje_Part_Description_Spec_Filter *filter;
    Edje_Part_Collection *pc;
    char *name, *part, *str;
-   size_t sn = 0, sp;
+   size_t sn = 0, sp, k;
    int *part_key;
    int args;
 
-   static const char *allowed_name_chars =
+   static const char allowed_name_chars[] =
          "abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ0123456789_";
 
    if (current_part->type == EDJE_PART_TYPE_TEXT)
@@ -11826,7 +11826,7 @@ st_collections_group_parts_part_description_filter_source(void)
         if (name) sn = strlen(name);
         if (!name || (strspn(name, allowed_name_chars) != sn))
           {
-             ERR("parse error %s:%i. invalid name for a filter buffer: %s",
+             ERR("parse error %s:%i. invalid name for a filter buffer: '%s'",
                  file_in, line - 1, name);
              exit(-1);
           }
@@ -11841,12 +11841,11 @@ st_collections_group_parts_part_description_filter_source(void)
         if (!name)
           {
              // name = part so we replace all invalid chars by '_'
-             size_t k;
              name = strdup(part);
              sn = strlen(name);
              for (k = 0; k < sn; k++)
                {
-                  if (!index(allowed_name_chars, name[k]))
+                  if (!strchr(allowed_name_chars, name[k]))
                     name[k] = '_';
                }
           }
