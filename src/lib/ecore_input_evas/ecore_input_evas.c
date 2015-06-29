@@ -392,25 +392,23 @@ _ecore_event_evas_key(Ecore_Event_Key *e, Ecore_Event_Press press)
    if (!lookup) return ECORE_CALLBACK_PASS_ON;
    ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
    if (press == ECORE_DOWN)
-     evas_event_feed_key_down_with_keycode_and_keysym(lookup->evas,
+     evas_event_feed_key_down_with_keycode(lookup->evas,
                                            e->keyname,
                                            e->key,
                                            e->string,
                                            e->compose,
                                            e->timestamp,
                                            e->data,
-                                           e->keycode,
-                                           e->keysym);
+                                           e->keycode);
    else
-     evas_event_feed_key_up_with_keycode_and_keysym(lookup->evas,
+     evas_event_feed_key_up_with_keycode(lookup->evas,
                                          e->keyname,
                                          e->key,
                                          e->string,
                                          e->compose,
                                          e->timestamp,
                                          e->data,
-                                         e->keycode,
-                                         e->keysym);
+                                         e->keycode);
    return ECORE_CALLBACK_PASS_ON;
 }
 

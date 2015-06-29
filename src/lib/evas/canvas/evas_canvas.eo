@@ -1797,48 +1797,6 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @in keycode: uint; /*@ Key scan code numeric value for canvas. */
          }
       }
-      event_feed_key_down_with_keycode_and_keysym {
-         /*@
-         Key down event feed with keycode and keysym
-
-         This function will set some evas properties that is necessary when
-         a key is pressed. It prepares information to be treated by the
-         callback function.
-
-         @since 1.15 */
-
-         params {
-            @in keyname: const(char)*; /*@ Name of the key */
-            @in key: const(char)*; /*@ The key pressed. */
-            @in string: const(char)*; /*@ A String */
-            @in compose: const(char)*; /*@ The compose string */
-            @in timestamp: uint; /*@ Timestamp of the mouse up event */
-            @in data: const(void)*; /*@ Data for canvas. */
-            @in keycode: uint; /*@ Key scan code numeric value for canvas. */
-            @in keysym: uint; /*@ Keysym for pressed key. */
-         }
-      }
-      event_feed_key_up_with_keycode_and_keysym {
-         /*@
-         Key up event feed with keycode
-
-         This function will set some evas properties that is necessary when
-         a key is released. It prepares information to be treated by the
-         callback function.
-
-         @since 1.15 */
-
-         params {
-            @in keyname: const(char)*; /*@ Name of the key */
-            @in key: const(char)*; /*@ The key released. */
-            @in string: const(char)*; /*@ string */
-            @in compose: const(char)*; /*@ compose */
-            @in timestamp: uint; /*@ Timestamp of the mouse up event */
-            @in data: const(void)*; /*@ Data for canvas. */
-            @in keycode: uint; /*@ Key scan code numeric value for canvas. */
-            @in keysym: uint; /*@ Keysym for pressed key. */
-         }
-      }
       event_feed_axis_update {
          /*@
          Input device axis update event feed.
