@@ -1269,7 +1269,7 @@ _edje_embryo_fn_set_tween_state_anim(Embryo_Program *ep, Embryo_Cell *params)
    double tween = 0.0, value1 = 0.0, value2 = 0.0, v1 = 0.0, v2 = 0.0, v3 = 0.0, v4 = 0.0;
    Edje_Real_Part *rp;
 
-   if ((HASNPARAMS(6))) return -1;
+   if (HASNPARAMS(6)) return -1;
    ed = embryo_program_data_get(ep);
    GETSTR(state1, params[2]);
    GETSTR(state2, params[4]);
