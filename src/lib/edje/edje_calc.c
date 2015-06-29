@@ -2405,26 +2405,37 @@ _edje_part_recalc_single_map(Edje *ed,
    EINA_COW_CALC_MAP_END(params, params_write);
 }
 
+static int
+_filter_bsearch_cmp(const void *a, const void *b)
+{
+   const Edje_Gfx_Filter *filter = b;
+   const char *key = a;
+
+   return strcmp(key, filter->name);
+}
+
 static inline const char *
 _edje_filter_get(Edje *ed, Edje_Part_Description_Spec_Filter *filter)
 {
-   int k;
    if (!filter->code) return NULL;
    if (EINA_UNLIKELY(!filter->checked_data))
      {
-        // FIXME: bisect search instead of linear search
+        Edje_Gfx_Filter *found;
+
         filter->checked_data = EINA_TRUE;
-        if (ed->file->filter_dir)
-          for (k = 0; k <= ed->file->filter_dir->filters_count; k++)
-            {
-               if (!strcmp(filter->code, ed->file->filter_dir->filters[k].name))
-                 {
-                    filter->name = ed->file->filter_dir->filters[k].name;
-                    filter->code = ed->file->filter_dir->filters[k].script;
-                    filter->no_free = EINA_TRUE;
-                    return filter->code;
-                 }
-            }
+        if (!ed->file->filter_dir)
+          return filter->code;
+
+        found = bsearch(filter->code, &(ed->file->filter_dir->filters[0]),
+                        ed->file->filter_dir->filters_count,
+                        sizeof(Edje_Gfx_Filter), _filter_bsearch_cmp);
+        if (found)
+          {
+             filter->name = found->name;
+             filter->code = found->script;
+             filter->no_free = EINA_TRUE;
+             return filter->code;
+          }
      }
    return filter->code;
 }

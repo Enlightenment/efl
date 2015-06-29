@@ -731,7 +731,7 @@ struct _Edje_Gfx_Filter
 
 struct _Edje_Gfx_Filter_Directory
 {
-   Edje_Gfx_Filter *filters; /* array */
+   Edje_Gfx_Filter *filters; /* sorted array (by strcmp() on name) */
    int              filters_count;
 };
 
