@@ -27,11 +27,11 @@ _cb_quit_timer(void *data EINA_UNUSED)
 static void
 _broadcast(Ecore_Ipc_Server *svr, int major, int minor, void *data, int size)
 {
-   Eina_List *clients = ecore_ipc_server_clients_get(svr);
+   Eina_List *ipc_clients = ecore_ipc_server_clients_get(svr);
    Eina_List *l;
    Ecore_Ipc_Client *cl;
 
-   EINA_LIST_FOREACH(clients, l, cl)
+   EINA_LIST_FOREACH(ipc_clients, l, cl)
      {
         ecore_ipc_client_send(cl, major, minor, 0, 0, 0, data, size);
      }
