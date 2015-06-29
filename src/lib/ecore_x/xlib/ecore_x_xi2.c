@@ -153,7 +153,6 @@ _ecore_x_input_shutdown(void)
 static Eina_Bool
 _ecore_x_input_touch_device_check(int devid)
 {
-   int i;
    Eina_Inlist *l = _ecore_x_xi2_touch_info_list;
    Ecore_X_Touch_Device_Info *info = NULL;
 
@@ -162,7 +161,7 @@ _ecore_x_input_touch_device_check(int devid)
 
    EINA_INLIST_FOREACH(l, info)
      if (info->devid == devid) return EINA_TRUE;
-  return EINA_FALSE;
+   return EINA_FALSE;
 }
 
 static int
