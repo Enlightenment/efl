@@ -62,7 +62,7 @@ START_TEST(eina_test_quaternion_norm)
 
    eina_init();
 
-   fail_if(FLOAT_CMP(eina_quaternion_norm(&q), sqrt(51)));
+   fail_if(!FLOAT_CMP(eina_quaternion_norm(&q), sqrt(51)));
 
    eina_shutdown();
 }
@@ -71,7 +71,7 @@ END_TEST
 START_TEST(eina_test_quaternion_conjugate)
 {
    static const Eina_Quaternion q1 = { 1, -1, -1, 3 }, q2 = { 1, 3, 4, 3 };
-   static const Eina_Quaternion r1 = { 1, 1, 1, -3 }, r2 = { 1, -3, -4, -3 };
+   static const Eina_Quaternion r1 = { -1, 1, 1, 3 }, r2 = { -1, -3, -4, 3 };
    Eina_Quaternion t1, t2;
 
    eina_init();
@@ -90,9 +90,9 @@ START_TEST(eina_test_quaternion_matrix)
 {
    Eina_Quaternion q = { 7, 9, 5, 1 };
    Eina_Matrix3 m = {
-     104, 76, 8,
-     104, -8, -116,
-     -52, 136, -56
+     -211, 136, 52,
+     116, -147, 104,
+     88, 76, -259
    };
    Eina_Quaternion tq;
    Eina_Matrix3 tm;
