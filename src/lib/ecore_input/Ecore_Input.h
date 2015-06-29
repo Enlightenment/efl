@@ -154,7 +154,6 @@ extern "C" {
         unsigned int     keycode; /**< Key scan code numeric value @since 1.10 */
 
         void            *data; /**< User data associated with an Ecore_Event_Key @since 1.10 */
-        unsigned int     keysym; /**< Encoding of keyboard symbold @since 1.15 */
      };
 
    /**

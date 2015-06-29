@@ -361,7 +361,6 @@ _device_handle_key(struct libinput_device *device, struct libinput_event_keyboar
    e->timestamp = timestamp;
    e->same_screen = 1;
    e->keycode = code;
-   e->keysym = sym;
 
    _device_modifiers_update(edev);
 

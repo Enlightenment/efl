@@ -827,7 +827,6 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
    e->timestamp = timestamp;
    e->modifiers = input->modifiers;
    e->keycode = code;
-   e->keysym = sym;
 
    if (state)
      ecore_event_add(ECORE_EVENT_KEY_DOWN, e, NULL, NULL);
