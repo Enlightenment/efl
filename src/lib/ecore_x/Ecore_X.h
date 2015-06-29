@@ -2520,6 +2520,16 @@ EAPI const char    *ecore_x_keysym_string_get(int keysym);
  */
 EAPI int            ecore_x_keysym_keycode_get(const char *keyname);
 
+/**
+ * Return the X-specific keysym for a given key string
+ * @param string The key to get the keysym for
+ * @return the keysym value
+ *
+ * @since 1.15
+ * @note The returned value is not portable.
+ */
+EAPI unsigned int   ecore_x_keysym_get(const char *string);
+
 typedef struct _Ecore_X_Image Ecore_X_Image;
 
 EAPI Ecore_X_Image *ecore_x_image_new(int w, int h, Ecore_X_Visual vis, int depth);

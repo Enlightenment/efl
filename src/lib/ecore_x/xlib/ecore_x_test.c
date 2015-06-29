@@ -165,3 +165,9 @@ ecore_x_keysym_keycode_get(const char *keyname)
 
    return keycode;
 }
+
+EAPI unsigned int
+ecore_x_keysym_get(const char *string)
+{
+   return XStringToKeysym(string);
+}

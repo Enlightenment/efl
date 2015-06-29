@@ -330,6 +330,12 @@ ecore_x_keysym_keycode_get(const char *keyname)
    return _ecore_xcb_keymap_string_to_keycode(keyname);
 }
 
+EAPI unsigned int
+ecore_x_keysym_get(const char *string)
+{
+   return _ecore_xcb_keymap_string_to_keysym(string);
+}
+
 /* local functions */
 static int
 _ecore_xcb_keymap_mask_get(void        *reply,
