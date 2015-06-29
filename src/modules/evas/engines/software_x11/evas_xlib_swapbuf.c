@@ -34,7 +34,7 @@ evas_software_xlib_swapbuf_init(void)
 void
 evas_software_xlib_swapbuf_free(Outbuf *buf)
 {
-   evas_software_xlib_swapbuf_flush(buf, NULL, MODE_FULL);
+   evas_software_xlib_swapbuf_flush(buf, NULL, EVAS_RENDER_MODE_UNDEF);
    evas_software_xlib_swapbuf_idle_flush(buf);
    if (buf->priv.pal)
      evas_software_xlib_x_color_deallocate

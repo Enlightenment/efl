@@ -172,7 +172,7 @@ evas_software_xlib_outbuf_free(Outbuf *buf)
 	free(obr);
      }
    evas_software_xlib_outbuf_idle_flush(buf);
-   evas_software_xlib_outbuf_flush(buf, NULL, MODE_FULL);
+   evas_software_xlib_outbuf_flush(buf, NULL, EVAS_RENDER_MODE_UNDEF);
    if (buf->priv.x11.xlib.gc)
       XFreeGC(buf->priv.x11.xlib.disp, buf->priv.x11.xlib.gc);
    if (buf->priv.x11.xlib.gcm)
