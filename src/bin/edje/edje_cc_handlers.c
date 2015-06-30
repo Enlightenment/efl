@@ -213,8 +213,10 @@ static void st_color_class_color2(void);
 static void st_color_class_color3(void);
 static void st_color_class_desc(void);
 
-static void st_filters_filter_inline(void);
+static void ob_filters_filter(void);
+static void ob_filters_filter_script(void);
 static void st_filters_filter_file(void);
+static void st_filters_filter_name(void);
 
 static void ob_collections(void);
 static void st_collections_base_scale(void);
@@ -625,10 +627,8 @@ static void st_collections_group_nobroadcast(void);
      }
 
 #define FILTERS_STATEMENTS(PREFIX) \
-     {PREFIX"filters", NULL}, \
-     {PREFIX"filters.filter", NULL}, \
-     {PREFIX"filters.filter.inline", st_filters_filter_inline}, \
-     {PREFIX"filters.filter.file", st_filters_filter_file},
+     {PREFIX"filters.filter.file", st_filters_filter_file}, \
+     {PREFIX"filters.filter.name", st_filters_filter_name},
 
 New_Statement_Handler statement_handlers[] =
 {
@@ -1119,6 +1119,9 @@ New_Object_Handler object_handlers[] =
      {"color_classes", NULL},
      {"color_classes.color_class", ob_color_class},
      {"spectra", NULL},
+     {"filters", NULL},
+     {"filters.filter", ob_filters_filter},
+     {"filters.filter.script", ob_filters_filter_script},
      {"collections", ob_collections},
      {"collections.externals", NULL}, /* dup */
      {"collections.set", ob_images_set}, /* dup */
@@ -1142,6 +1145,9 @@ New_Object_Handler object_handlers[] =
      {"collections.vibrations", NULL},
      {"collections.group.vibrations", NULL}, /* dup */
      {"collections.vibrations.sample", NULL},
+     {"collections.filters", NULL},
+     {"collections.filters.filter", ob_filters_filter}, /* dup */
+     {"collections.filters.filter.script", ob_filters_filter_script}, /* dup */
      {"collections.group.vibrations.sample", NULL}, /* dup */
      {"collections.group", ob_collections_group},
      {"collections.group.data", NULL},
@@ -1160,6 +1166,9 @@ New_Object_Handler object_handlers[] =
      {"collections.group.styles.style", ob_styles_style}, /* dup */
      {"collections.group.color_classes", NULL}, /* dup */
      {"collections.group.color_classes.color_class", ob_color_class}, /* dup */
+     {"collections.group.filters", NULL},
+     {"collections.group.filters.filter", ob_filters_filter}, /* dup */
+     {"collections.group.filters.filter.script", ob_filters_filter_script}, /* dup */
      {"collections.group.parts", NULL},
      {"collections.group.parts.set", ob_images_set}, /* dup */
      {"collections.group.parts.set.image", ob_images_set_image}, /* dup */
@@ -4311,7 +4320,7 @@ st_collections_group_data_item(void)
         // collections
         // collections.group
         filters {
-            filter.inline: "key" "Lua script here";
+            filter.script: "key" "Lua script here";
             filter.file: "other" "filename.lua";
             ..
         }
@@ -4343,29 +4352,72 @@ st_collections_group_data_item(void)
     @endproperty
 */
 
-// ensure order so we could do binary search later on
-// since this here happens at build time, we don't care about very hi-perf
+static Edje_Gfx_Filter *current_filter = NULL;
+
 static void
-_filters_filter_insert(const char *name, const char *script)
+_filters_filter_sort(void)
 {
-   Edje_Gfx_Filter *array;
-   int k, i;
+   Edje_Gfx_Filter *array, current;
+   int new_pos, i, cur_pos;
 
-   if (!edje_file->filter_dir)
-     edje_file->filter_dir = mem_alloc(sizeof(Edje_Gfx_Filter_Directory));
+   if (!current_filter)
+     return;
 
-   for (k = 0; k < edje_file->filter_dir->filters_count; k++)
+   if (!current_filter->name)
      {
-        int cmp = strcmp(name, edje_file->filter_dir->filters[k].name);
-        if (!cmp)
+        ERR("parse error %s:%i. Filter has no name.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   array = edje_file->filter_dir->filters;
+   cur_pos = (current_filter - array);
+
+   // find position in sorted array
+   for (new_pos = 0; new_pos < edje_file->filter_dir->filters_count - 1; new_pos++)
+     {
+        int cmp;
+        if (cur_pos == new_pos)
+          continue;
+        cmp = strcmp(current_filter->name, array[new_pos].name);
+        if (cmp == 0)
           {
-             ERR("parse error %s:%i. A filter named '%s' already exists within this block.",
-                 file_in, line - 1, name);
+             ERR("parse error %s:%i. Another filter named '%s' already exists.",
+                 file_in, line - 1, array[new_pos].name);
              exit(-1);
           }
         else if (cmp < 0)
           break;
      }
+
+   if (new_pos > cur_pos)
+     new_pos--;
+
+   if (cur_pos == new_pos)
+     return;
+
+   current = *current_filter;
+
+   // move up
+   for (i = cur_pos - 1; i >= new_pos; i--)
+     array[i + 1] = array[i];
+
+   // move down
+   for (i = cur_pos; i < new_pos; i++)
+     array[i] = array[i + 1];
+
+   array[new_pos] = current;
+   current_filter = &array[new_pos];
+}
+
+static void
+ob_filters_filter(void)
+{
+   Edje_Gfx_Filter *array;
+
+   _filters_filter_sort();
+   if (!edje_file->filter_dir)
+     edje_file->filter_dir = mem_alloc(sizeof(Edje_Gfx_Filter_Directory));
 
    array = realloc(edje_file->filter_dir->filters,
                    sizeof(Edje_Gfx_Filter) * (edje_file->filter_dir->filters_count + 1));
@@ -4375,39 +4427,71 @@ _filters_filter_insert(const char *name, const char *script)
         exit(-1);
      }
 
-   for (i = edje_file->filter_dir->filters_count - 1; i >= k; i--)
-     array[i + 1] = array[i];
-
-   array[k].name = eina_stringshare_add(name);
-   array[k].script = eina_stringshare_add(script);
+   current_filter = &array[edje_file->filter_dir->filters_count];
+   memset(current_filter, 0, sizeof(Edje_Gfx_Filter));
    edje_file->filter_dir->filters_count++;
    edje_file->filter_dir->filters = array;
 }
 
 static void
-st_filters_filter_inline(void)
+ob_filters_filter_script(void)
 {
-   char *name, *script;
+   char *script;
 
-   check_arg_count(2);
+   if (!current_filter)
+     ob_filters_filter();
 
-   name = parse_str(0);
-   script = parse_str(1);
-   _filters_filter_insert(name, script);
-   free(name);
-   free(script);
+   if (!current_filter->name)
+     {
+        ERR("parse error %s:%i. Name for inline filter must be specified first.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   if (current_filter->script)
+     {
+        ERR("parse error %s:%i. Script for filter '%s' is already defined.",
+            file_in, line - 1, current_filter->name);
+        exit(-1);
+     }
+
+   if (!is_verbatim())
+     track_verbatim(1);
+   else
+     {
+        script = get_verbatim();
+        if (script)
+          {
+             //current_filter->verb_l1 = get_verbatim_line1();
+             //current_filter->verb_l2 = get_verbatim_line2();
+             current_filter->script = strdup(script);
+             set_verbatim(NULL, 0, 0);
+             _filters_filter_sort();
+             current_filter = NULL;
+          }
+     }
 }
 
 static void
 st_filters_filter_file(void)
 {
-   char *name, *file, *script;
+   char *file, *script;
    Eina_File *f;
+   size_t sz;
 
-   check_arg_count(2);
+   if (!current_filter)
+     ob_filters_filter();
 
-   name = parse_str(0);
-   file = parse_str(1);
+   if (current_filter->script)
+     {
+        ERR("parse error %s:%i. Script for filter '%s' is already defined.",
+            file_in, line - 1, current_filter->name);
+        exit(-1);
+     }
+
+   check_arg_count(1);
+
+   file = parse_str(0);
    f = eina_file_open(file, EINA_FALSE);
    if (!f)
      {
@@ -4435,11 +4519,44 @@ st_filters_filter_file(void)
             file_in, line - 1, file);
         exit(-1);
      }
-   _filters_filter_insert(name, script);
+
+   sz = eina_file_size_get(f);
+   if (sz > (10 * 1024 * 1024))
+     {
+        ERR("parse error %s:%i. Filter file '%s' is unreasonably large, abort.",
+            file_in, line - 1, file);
+        exit(-1);
+     }
+
+   current_filter->script = mem_alloc(sz);
+   memcpy((char *) current_filter->script, script, sz);
    eina_file_map_free(f, script);
    eina_file_close(f);
-   free(name);
 
+   if (!current_filter->name)
+     {
+        current_filter->name = file;
+        _filters_filter_sort();
+     }
+   else
+     {
+        free(file);
+        _filters_filter_sort();
+        current_filter = NULL;
+     }
+}
+
+static void
+st_filters_filter_name(void)
+{
+   if (!current_filter)
+     ob_filters_filter();
+
+   check_arg_count(1);
+
+   current_filter->name = parse_str(0);
+
+   _filters_filter_sort();
 }
 
 /** @edcsubsection{collections_group_limits,

@@ -8,14 +8,30 @@ color_classes {
 }
 filters {
    // some unused filters
-   filter.file: "filter0" "filter.lua";
-   filter.inline: "filter1" "blend {}";
+   filter {
+      name: "filter0";
+      file: "filter.lua";
+   }
+   filter {
+      name: "filter1";
+      script {
+         blend {}
+      }
+   }
 }
 collections {
    filters {
-      // some unused filters
-      filter.file: "filter2" "filter.lua";
-      filter.inline: "filter3" "blend {}";
+      // some more unused filters
+      filter {
+         name: "filterfile";
+         file: "filter.lua";
+      }
+      filter {
+         name: "filter3";
+         script {
+            blend {}
+         }
+      }
    }
    images {
       // found in tests/emotion/data
@@ -23,7 +39,7 @@ collections {
    }
    group { name: "test_group";
       filters {
-         filter.file: "filterfile" "filter.lua";
+         filter.file: "filter.lua";
       }
       parts {
          part { name: "background";

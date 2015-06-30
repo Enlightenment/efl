@@ -725,8 +725,8 @@ struct _Edje_Vibration_Directory
 
 struct _Edje_Gfx_Filter
 {
-   Eina_Stringshare *name;
-   Eina_Stringshare *script;
+   const char *name;
+   const char *script;
 };
 
 struct _Edje_Gfx_Filter_Directory
