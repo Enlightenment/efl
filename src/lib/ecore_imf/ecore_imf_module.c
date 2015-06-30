@@ -229,7 +229,7 @@ ecore_imf_module_register(const Ecore_IMF_Context_Info *info,
 {
    Ecore_IMF_Module *module;
 
-   if (_ecore_imf_modules_exists(info->id)) return;
+   if (!info || _ecore_imf_modules_exists(info->id)) return;
 
    if (!modules)
      modules = eina_hash_string_superfast_new(EINA_FREE_CB(_ecore_imf_module_free));
