@@ -24,6 +24,7 @@
 
 #include <math.h>
 #include <float.h>
+#include <string.h>
 
 #include "eina_fp.h"
 #include "eina_rectangle.h"
@@ -935,4 +936,116 @@ eina_matrix4_transpose(Eina_Matrix4 *out, const Eina_Matrix4 *in)
    MATRIX_WY(out) = MATRIX_YW(in);
    MATRIX_WZ(out) = MATRIX_ZW(in);
    MATRIX_WW(out) = MATRIX_WW(in);
+}
+
+EAPI void
+eina_matrix4_multiply(Eina_Matrix4 *out,
+                      const Eina_Matrix4 *a, const Eina_Matrix4 *b)
+{
+   // FIXME: start implementing SSE multiplication here
+   MATRIX_XX(out) =
+       MATRIX_XX(a) * MATRIX_XX(b)
+     + MATRIX_XY(a) * MATRIX_YX(b)
+     + MATRIX_XZ(a) * MATRIX_ZX(b)
+     + MATRIX_XW(a) * MATRIX_WX(b);
+
+   MATRIX_XY(out) =
+       MATRIX_XX(a) * MATRIX_XY(b)
+     + MATRIX_XY(a) * MATRIX_YY(b)
+     + MATRIX_XZ(a) * MATRIX_ZY(b)
+     + MATRIX_XW(a) * MATRIX_WY(b);
+
+   MATRIX_XZ(out) =
+       MATRIX_XX(a) * MATRIX_XZ(b)
+     + MATRIX_XY(a) * MATRIX_YZ(b)
+     + MATRIX_XZ(a) * MATRIX_ZZ(b)
+     + MATRIX_XW(a) * MATRIX_WZ(b);
+
+   MATRIX_XW(out) =
+       MATRIX_XX(a) * MATRIX_XW(b)
+     + MATRIX_XY(a) * MATRIX_YW(b)
+     + MATRIX_XZ(a) * MATRIX_ZW(b)
+     + MATRIX_XW(a) * MATRIX_WW(b);
+
+   MATRIX_YX(out) =
+       MATRIX_YX(a) * MATRIX_XX(b)
+     + MATRIX_YY(a) * MATRIX_YX(b)
+     + MATRIX_YZ(a) * MATRIX_ZX(b)
+     + MATRIX_YW(a) * MATRIX_WX(b);
+
+   MATRIX_YY(out) =
+       MATRIX_YX(a) * MATRIX_XY(b)
+     + MATRIX_YY(a) * MATRIX_YY(b)
+     + MATRIX_YZ(a) * MATRIX_ZY(b)
+     + MATRIX_YW(a) * MATRIX_WY(b);
+
+   MATRIX_YZ(out) =
+       MATRIX_YX(a) * MATRIX_XZ(b)
+     + MATRIX_YY(a) * MATRIX_YZ(b)
+     + MATRIX_YZ(a) * MATRIX_ZZ(b)
+     + MATRIX_YW(a) * MATRIX_WZ(b);
+
+   MATRIX_YW(out) =
+       MATRIX_YX(a) * MATRIX_XW(b)
+     + MATRIX_YY(a) * MATRIX_YW(b)
+     + MATRIX_YZ(a) * MATRIX_ZW(b)
+     + MATRIX_YW(a) * MATRIX_WW(b);
+
+   MATRIX_ZX(out) =
+       MATRIX_ZX(a) * MATRIX_XX(b)
+     + MATRIX_ZY(a) * MATRIX_YX(b)
+     + MATRIX_ZZ(a) * MATRIX_ZX(b)
+     + MATRIX_ZW(a) * MATRIX_WX(b);
+
+   MATRIX_ZY(out) =
+       MATRIX_ZX(a) * MATRIX_XY(b)
+     + MATRIX_ZY(a) * MATRIX_YY(b)
+     + MATRIX_ZZ(a) * MATRIX_ZY(b)
+     + MATRIX_ZW(a) * MATRIX_WY(b);
+
+   MATRIX_ZZ(out) =
+       MATRIX_ZX(a) * MATRIX_XZ(b)
+     + MATRIX_ZY(a) * MATRIX_YZ(b)
+     + MATRIX_ZZ(a) * MATRIX_ZZ(b)
+     + MATRIX_ZW(a) * MATRIX_WZ(b);
+
+   MATRIX_ZW(out) =
+       MATRIX_ZX(a) * MATRIX_XW(b)
+     + MATRIX_ZY(a) * MATRIX_YW(b)
+     + MATRIX_ZZ(a) * MATRIX_ZW(b)
+     + MATRIX_ZW(a) * MATRIX_WW(b);
+
+   MATRIX_WX(out) =
+       MATRIX_WX(a) * MATRIX_XX(b)
+     + MATRIX_WY(a) * MATRIX_YX(b)
+     + MATRIX_WZ(a) * MATRIX_ZX(b)
+     + MATRIX_WW(a) * MATRIX_WX(b);
+
+   MATRIX_WY(out) =
+       MATRIX_WX(a) * MATRIX_XY(b)
+     + MATRIX_WY(a) * MATRIX_YY(b)
+     + MATRIX_WZ(a) * MATRIX_ZY(b)
+     + MATRIX_WW(a) * MATRIX_WY(b);
+
+   MATRIX_WZ(out) =
+       MATRIX_WX(a) * MATRIX_XZ(b)
+     + MATRIX_WY(a) * MATRIX_YZ(b)
+     + MATRIX_WZ(a) * MATRIX_ZZ(b)
+     + MATRIX_WW(a) * MATRIX_WZ(b);
+
+   MATRIX_WW(out) =
+       MATRIX_WX(a) * MATRIX_XW(b)
+     + MATRIX_WY(a) * MATRIX_YW(b)
+     + MATRIX_WZ(a) * MATRIX_ZW(b)
+     + MATRIX_WW(a) * MATRIX_WW(b);
+}
+
+EAPI void
+eina_matrix4_identity(Eina_Matrix4 *out)
+{
+   memset(out, 0, sizeof (Eina_Matrix4));
+   MATRIX_XX(out) = 1;
+   MATRIX_YY(out) = 1;
+   MATRIX_ZZ(out) = 1;
+   MATRIX_WW(out) = 1;
 }

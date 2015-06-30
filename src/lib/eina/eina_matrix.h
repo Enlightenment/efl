@@ -582,6 +582,28 @@ EAPI void eina_matrix4_matrix3_to(Eina_Matrix3 *m3, const Eina_Matrix4 *m4);
 EAPI void eina_matrix3_matrix4_to(Eina_Matrix4 *m4, const Eina_Matrix3 *m3);
 
 /**
+ * @brief Set an identity matrix
+ *
+ * @param out The matrix to set
+ *
+ * @since 1.15
+ */
+EAPI void eina_matrix4_identity(Eina_Matrix4 *out);
+
+/**
+ * @brief Multiply two matrix
+ *
+ * @param out The resulting matrix
+ * @param a The first member of the multiplication
+ * @param b The second member of the multiplication
+ *
+ * @since 1.15
+ */
+EAPI void eina_matrix4_multiply(Eina_Matrix4 *out,
+                                const Eina_Matrix4 *a, const Eina_Matrix4 *b);
+
+
+/**
  * @}
  */
 #endif /*EINA_MATRIX3_H_*/
