@@ -1079,7 +1079,7 @@ ecore_imf_context_input_panel_return_key_type_get(Ecore_IMF_Context *ctx)
      {
         ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
                          "ecore_imf_context_input_panel_return_key_type_get");
-        return EINA_FALSE;
+        return ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
      }
 
    return ctx->input_panel_return_key_type;
