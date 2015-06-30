@@ -153,6 +153,12 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                                     fcow->state.pos);
              if (redraw)
                DBG("Filter redraw by state change!");
+             else if (obj->changed)
+               {
+                  // FIXME: Check that something else than X,Y changed!
+                  redraw = EINA_TRUE;
+                  DBG("Filter redraw by object content change!");
+               }
 
              // Scan proxies to find if any changed
              if (!redraw && fcow->sources)
