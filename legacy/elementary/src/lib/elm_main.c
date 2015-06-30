@@ -998,6 +998,8 @@ elm_quicklaunch_fork(int    argc,
    setsid();
    if (chdir(cwd) != 0) perror("could not chdir");
    ecore_app_args_set(argc, (const char **)argv);
+   if (_elm_config->atspi_mode != ELM_ATSPI_MODE_OFF)
+     _elm_atspi_bridge_init();
    ret = qr_main(argc, argv);
    exit(ret);
    return EINA_TRUE;
