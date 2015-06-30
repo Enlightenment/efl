@@ -147,7 +147,7 @@ __color = {
 
          -- input single value 0xAARRGGBB
          if ((B == nil) and (type(A) == 'number')) then
-            A = math.floor(A) -- % 0x100000000
+            A = math.floor(A)
             if ((A < 0) or (A > 0xFFFFFFFF)) then
                error('Invalid color value: ' .. string.format("0x%x", A))
             end
@@ -155,6 +155,7 @@ __color = {
             self.r = math.floor((A / 0x10000) % 0x100)
             self.g = math.floor((A / 0x100) % 0x100)
             self.b = math.floor(A % 0x100)
+            if (self.a == 0) then self.a = 255 end
             return self
          end
 
