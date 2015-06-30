@@ -477,18 +477,18 @@ _view_style_update(Elm_Gen_Item *it, Evas_Object *view, const char *style)
             "Automatically falls back into default style.",
             style);
         elm_widget_theme_object_set
-          (WIDGET(it), VIEW(it), "genlist", "item/default", "default");
+          (WIDGET(it), view, "genlist", "item/default", "default");
      }
 
    edje_object_mirrored_set(view, elm_widget_mirrored_get(WIDGET(it)));
    edje_object_scale_set(view, elm_widget_scale_get(WIDGET(it))
                          * elm_config_scale_get());
 
-   stacking_even = edje_object_data_get(VIEW(it), "stacking_even");
+   stacking_even = edje_object_data_get(view, "stacking_even");
    if (!stacking_even) stacking_even = "above";
    it->item->stacking_even = !!strcmp("above", stacking_even);
 
-   stacking = edje_object_data_get(VIEW(it), "stacking");
+   stacking = edje_object_data_get(view, "stacking");
    if (!stacking) stacking = "yes";
    it->item->nostacking = !!strcmp("yes", stacking);
 }
