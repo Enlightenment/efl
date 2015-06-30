@@ -2623,6 +2623,10 @@ evas_render_updates_internal(Evas *eo_e,
                                                                        make_updates, do_async,
                                                                        &offset);
 
+                       // Force the object has changed for filter to take it into
+                       // account. It won't be in the pending object array.
+                       obj->changed = EINA_TRUE;
+
                        offset = restore_offset;
                     }
                }
