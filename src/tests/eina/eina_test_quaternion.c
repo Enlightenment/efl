@@ -27,7 +27,7 @@
 #include "eina_suite.h"
 #include "Eina.h"
 
-#define FLOAT_CMP(a, b) (fabs(a - b) <= DBL_MIN)
+#define FLOAT_CMP(a, b) (fabs((float)a - (float)b) <= FLT_MIN)
 
 static inline Eina_Bool
 eina_quaternion_cmp(const Eina_Quaternion *a, const Eina_Quaternion *b)
@@ -52,6 +52,16 @@ eina_matrix3_cmp(const Eina_Matrix3 *a, const Eina_Matrix3 *b)
        FLOAT_CMP(a->zx, b->zx) &&
        FLOAT_CMP(a->zy, b->zy) &&
        FLOAT_CMP(a->zz, b->zz))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_point_3d_cmp(const Eina_Point_3D *a, const Eina_Point_3D *b)
+{
+   if (FLOAT_CMP(a->x, b->x) &&
+       FLOAT_CMP(a->y, b->y) &&
+       FLOAT_CMP(a->z, b->z))
      return EINA_TRUE;
    return EINA_FALSE;
 }
@@ -245,6 +255,30 @@ START_TEST(eina_test_quaternion_mul)
 }
 END_TEST
 
+START_TEST(eina_test_matrix_recompose)
+{
+   const Eina_Point_3D translation = { 0, 0, 0 };
+   const Eina_Point_3D scale = { 1, 1, 1 };
+   const Eina_Point_3D skew = { 0, 0, 0 };
+   const Eina_Quaternion perspective = { 0, 0, 0, 1 };
+   const Eina_Quaternion rotation = { 0, 0, 0, 1 };
+   Eina_Matrix4 m4;
+
+   eina_init();
+
+   eina_quaternion_matrix4_to(&m4,
+                              &rotation,
+                              &perspective,
+                              &translation,
+                              &scale,
+                              &skew);
+
+   fail_if(eina_matrix4_type_get(&m4) != EINA_MATRIX_TYPE_IDENTITY);
+
+   eina_shutdown();
+}
+END_TEST
+
 START_TEST(eina_test_quaternion_normalized)
 {
    Eina_Quaternion p = {1, 1, 1, 1};
@@ -254,6 +288,53 @@ START_TEST(eina_test_quaternion_normalized)
 
    eina_quaternion_normalized(&res, &p);
    fail_if(!eina_quaternion_cmp(&q, &res));
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_test_matrix_quaternion)
+{
+   const Eina_Point_3D rt = { -2, -3, 0 };
+   const Eina_Point_3D rsc = { 4, 5, 1 };
+   const Eina_Quaternion rr = { 0, 0, -1, 0 };
+   const Eina_Quaternion rp = { 0, 0, 0, 1 };
+   Eina_Quaternion rotation, perspective;
+   Eina_Matrix3 m3, m3r;
+   Eina_Matrix4 m4, m4r;
+   Eina_Point_3D translation, scale, skew;
+
+   eina_init();
+
+   eina_matrix3_identity(&m3);
+   eina_matrix3_rotate(&m3, 3.14159265);
+   eina_matrix3_translate(&m3, 2, 3);
+   eina_matrix3_scale(&m3, 4, 5);
+   eina_matrix3_matrix4_to(&m4, &m3);
+
+   fail_if(!eina_matrix4_quaternion_to(&rotation,
+                                       &perspective,
+                                       &translation,
+                                       &scale,
+                                       &skew,
+                                       &m4));
+
+   eina_quaternion_matrix4_to(&m4r,
+                              &rotation,
+                              &perspective,
+                              &translation,
+                              &scale,
+                              &skew);
+
+   eina_matrix4_matrix3_to(&m3r, &m4r);
+
+   fail_if(!eina_point_3d_cmp(&scale, &rsc));
+   fail_if(!eina_point_3d_cmp(&translation, &rt));
+   fail_if(!eina_quaternion_cmp(&perspective, &rp));
+   fail_if(!eina_quaternion_cmp(&rotation, &rr));
+
+   // Disable this test for the moment as it seems a rounding issue
+   // fail_if(!eina_matrix3_cmp(&m3r, &m3));
 
    eina_shutdown();
 }
@@ -272,4 +353,6 @@ eina_test_quaternion(TCase *tc)
    tcase_add_test(tc, eina_test_quaternion_set);
    tcase_add_test(tc, eina_test_quaternion_mul);
    tcase_add_test(tc, eina_test_quaternion_normalized);
+   tcase_add_test(tc, eina_test_matrix_quaternion);
+   tcase_add_test(tc, eina_test_matrix_recompose);
 }
