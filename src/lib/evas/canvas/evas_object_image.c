@@ -197,6 +197,7 @@ static void _proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *obj, Ev
 static void _proxy_set(Evas_Object *proxy, Evas_Object *src);
 static void _proxy_error(Evas_Object *proxy, void *context, void *output, void *surface, int x, int y, Eina_Bool do_async);
 
+static void _3d_render(Evas *eo_e, Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o, Evas_Canvas3D_Scene *scene);
 static void _3d_set(Evas_Object *eo_obj, Evas_Canvas3D_Scene *scene);
 static void _3d_unset(Evas_Object *eo_obj, Evas_Object_Protected_Data *image, Evas_Image_Data *o);
 
@@ -1628,10 +1629,64 @@ _evas_image_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file
    int quality = 80, compress = 9, ok = 0;
    char *encoding = NULL;
    RGBA_Image *im;
-   if (!o->engine_data) return 0;
+   Eina_Bool putback = EINA_FALSE;
+   int imagew, imageh;
+   void *pixels;
+
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *source = (o->cur->source ? eo_data_scope_get(o->cur->source, EVAS_OBJECT_CLASS) : NULL);
+
    evas_object_async_block(obj);
-   o->engine_data = ENFN->image_data_get(ENDT, o->engine_data, 0, &data, &o->load_error);
+
+   if (o->cur->scene)
+     {
+        _3d_render(obj->layer->evas->evas, (Eo *) eo_obj, obj, o, o->cur->scene);
+        pixels = obj->data_3d->surface;
+        imagew = obj->data_3d->w;
+        imageh = obj->data_3d->h;
+     }
+   else if (!o->cur->source)
+     {
+        // pixels = evas_process_dirty_pixels(eo_obj, obj, o, output, surface, o->engine_data);
+        pixels = o->engine_data;
+        imagew = o->cur->image.w;
+        imageh = o->cur->image.h;
+        putback = EINA_TRUE;
+     }
+   else if (source->proxy->surface && !source->proxy->redraw)
+     {
+        pixels = source->proxy->surface;
+        imagew = source->proxy->w;
+        imageh = source->proxy->h;
+     }
+   else if (source->type == o_type &&
+            ((Evas_Image_Data *)eo_data_scope_get(o->cur->source, MY_CLASS))->engine_data)
+     {
+        Evas_Image_Data *oi;
+        oi = eo_data_scope_get(o->cur->source, MY_CLASS);
+        pixels = oi->engine_data;
+        imagew = oi->cur->image.w;
+        imageh = oi->cur->image.h;
+     }
+   else
+     {
+        o->proxyrendering = EINA_TRUE;
+        evas_render_proxy_subrender(obj->layer->evas->evas, o->cur->source,
+                                    (Eo *) eo_obj, obj, EINA_FALSE);
+        pixels = source->proxy->surface;
+        imagew = source->proxy->w;
+        imageh = source->proxy->h;
+        o->proxyrendering = EINA_FALSE;
+     }
+
+   pixels = ENFN->image_data_get(ENDT, pixels, 0, &data, &o->load_error);
+
+   if (!pixels)
+     {
+        WRN("Could not get image pixels.");
+        return EINA_FALSE;
+     }
+
    if (flags)
      {
         char *p, *pp;
@@ -1652,19 +1707,14 @@ _evas_image_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file
           }
      }
    im = (RGBA_Image*) evas_cache_image_data(evas_common_image_cache_get(),
-                                            o->cur->image.w,
-                                            o->cur->image.h,
-                                            data,
-                                            o->cur->has_alpha,
+                                            imagew, imageh, data, o->cur->has_alpha,
                                             EVAS_COLORSPACE_ARGB8888);
    if (im)
      {
         if (o->cur->cspace == EVAS_COLORSPACE_ARGB8888)
           im->image.data = data;
         else
-          im->image.data = evas_object_image_data_convert_internal(o,
-                                                                   data,
-                                                                   EVAS_COLORSPACE_ARGB8888);
+          im->image.data = evas_object_image_data_convert_internal(o, data, EVAS_COLORSPACE_ARGB8888);
         if (im->image.data)
           {
              ok = evas_common_save_image_to_file(im, file, key, quality, compress, encoding);
@@ -1675,7 +1725,8 @@ _evas_image_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file
 
         evas_cache_image_drop(&im->cache_entry);
      }
-   o->engine_data = ENFN->image_data_put(ENDT, o->engine_data, data);
+   if (putback)
+     o->engine_data = ENFN->image_data_put(ENDT, pixels, data);
 
    free(encoding);
    return ok;
