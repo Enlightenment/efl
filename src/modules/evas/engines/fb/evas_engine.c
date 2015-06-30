@@ -114,7 +114,8 @@ eng_output_free(void *data)
 {
    Render_Engine *re;
 
-   if (re = (Render_Engine *)data)
+   re = (Render_Engine *)data;
+   if (re)
      {
         evas_render_engine_software_generic_clean(&re->generic);
         free(re);
