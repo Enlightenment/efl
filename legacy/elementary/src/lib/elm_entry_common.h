@@ -5,17 +5,6 @@
  */
 
 /**
- * Text Format types.
- *
- * @see elm_entry_file_set()
- */
-typedef enum
-{
-   ELM_TEXT_FORMAT_PLAIN_UTF8,  /**< Plain UTF8 type */
-   ELM_TEXT_FORMAT_MARKUP_UTF8  /**< Markup UTF8 type */
-} Elm_Text_Format;
-
-/**
  * Line wrapping types.
  *
  * @see elm_entry_line_wrap_set()

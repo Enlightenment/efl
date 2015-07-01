@@ -4507,22 +4507,48 @@ inserting:
      evas_object_smart_callback_call(entry, SIG_REJECTED, NULL);
 }
 
+EOLIAN static void
+_elm_entry_file_text_format_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Text_Format format)
+{
+   sd->format = format;
+}
+
+EAPI Eina_Bool
+elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
+{
+   Eina_Bool ret;
+   eo_do(obj, elm_obj_entry_file_text_format_set(format),
+              ret = efl_file_set(file, NULL));
+   return ret;
+}
+
 EOLIAN static Eina_Bool
-_elm_entry_file_set(Eo *obj, Elm_Entry_Data *sd, const char *file, Elm_Text_Format format)
+_elm_entry_efl_file_file_set(Eo *obj, Elm_Entry_Data *sd, const char *file, const char *group EINA_UNUSED)
 {
    ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
    if (sd->auto_save) _save_do(obj);
    eina_stringshare_replace(&sd->file, file);
-   sd->format = format;
    Eina_Bool int_ret = _load_do(obj);
    return int_ret;
 }
 
+EAPI void
+elm_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *format)
+{
+   eo_do(obj, efl_file_get(file, NULL));
+   if (format)
+     {
+        ELM_ENTRY_DATA_GET(obj, sd);
+        if (!sd) return;
+        *format = sd->format;
+     }
+}
+
 EOLIAN static void
-_elm_entry_file_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char **file, Elm_Text_Format *format)
+_elm_entry_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char **file, const char **group)
 {
    if (file) *file = sd->file;
-   if (format) *format = sd->format;
+   if (group) *group = NULL;
 }
 
 EOLIAN static void
