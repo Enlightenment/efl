@@ -4201,18 +4201,6 @@ evas_object_image_is_inside(Evas_Object *eo_obj,
           }
         else
           {
-             void *im;
-             DATA32 *data = NULL;
-             int err = 0;
-
-             im = ENFN->image_data_get(ENDT, pixels, 0, &data, &err);
-             if ((!im) || (!data) || (err))
-               {
-                  ERR("Couldn't get image pixels %p: im=%p, data=%p, err=%d",
-                      pixels, im, data, err);
-                  goto end;
-               }
-
              idx = evas_object_image_figure_x_fill(eo_obj, obj, o->cur->fill.x, o->cur->fill.w, &idw);
              idy = evas_object_image_figure_y_fill(eo_obj, obj, o->cur->fill.y, o->cur->fill.h, &idh);
              if (idw < 1) idw = 1;
@@ -4468,7 +4456,6 @@ evas_object_image_is_inside(Evas_Object *eo_obj,
           }
      }
 
- end:
    return is_inside;
 }
 
