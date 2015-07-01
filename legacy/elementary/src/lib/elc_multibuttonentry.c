@@ -926,26 +926,22 @@ _box_resize_cb(void *data,
    else if (sd->h_box > h)
      evas_object_smart_callback_call(sd->parent, SIG_CONTRACTED, NULL);
 
-   if (sd->w_box && sd->w_box != w)
+   if (sd->items && sd->w_box != w)
      {
-        if (sd->items)
+        EINA_LIST_FOREACH (sd->items, l, eo_it)
           {
+             ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_it, it);
 
-             EINA_LIST_FOREACH (sd->items, l, eo_it)
+             elm_layout_sizing_eval(VIEW(it));
+             evas_object_smart_calculate(VIEW(it));
+
+             evas_object_size_hint_min_get(VIEW(it), &mnw, &mnh);
+
+             if (mnw > w)
                {
-                  ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_it, it);
-
-                  elm_layout_sizing_eval(VIEW(it));
-                  evas_object_smart_calculate(VIEW(it));
-
-                  evas_object_size_hint_min_get(VIEW(it), &mnw, &mnh);
-
-				  if (mnw > w)
-                    {
-                       mnw = w;
-                       evas_object_size_hint_min_set(VIEW(it), mnw, mnh);
-                       evas_object_resize(VIEW(it), mnw, mnh);
-                    }
+                  mnw = w;
+                  evas_object_size_hint_min_set(VIEW(it), mnw, mnh);
+                  evas_object_resize(VIEW(it), mnw, mnh);
                }
           }
      }
