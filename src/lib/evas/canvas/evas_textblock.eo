@@ -297,6 +297,46 @@ class Evas.Textblock (Evas.Object)
             @in ts: Evas.Textblock.Style *; /*@ the style to set. */
          }
       }
+      obstacle_add {
+         /*@
+         Add obstacle evas object @p eo_obs to be observed during layout of text.
+         The textblock does the layout of the text according to the position
+         of the obstacle.
+
+         @return Returns true on success, false on failure.
+
+         @since 1.15 */
+         params {
+            @in eo_obs: Evas.Object *;
+         }
+         return: bool;
+      }
+      obstacle_del {
+         /*@
+         Removes @p eo_obs from observation during text layout
+
+         @return Returns true on success, false on failure.
+
+         @since 1.15 */
+         params {
+            @in eo_obs: Evas.Object *;
+         }
+         return: bool;
+      }
+      obstacles_update {
+         /*@
+         Triggers for relayout due to obstacles' state change. The obstacles
+         alone don't affect the layout, until this is called. Use this after
+         doing changes (moving, positioning etc.) in the obstacles that you
+         would like to be considered in the layout.
+         For example: if you have just repositioned the obstacles to differrent
+         coordinates relative to the textblock, you need to call this so
+         it will consider this new state and will relayout the text.
+
+         @return Returns no value.
+
+         @since 1.15 */
+      }
    }
    implements {
       Eo.Base.constructor;

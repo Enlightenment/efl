@@ -3304,6 +3304,93 @@ START_TEST(evas_textblock_delete)
 }
 END_TEST;
 
+/* Runs x,y in [from,to] range */
+static void
+_obstacle_run(Evas_Object *tb, Evas_Object *obj,
+      Evas_Coord from_x, Evas_Coord to_x,
+      Evas_Coord from_y, Evas_Coord to_y,
+      Evas_Coord bh)
+{
+   Evas_Coord fw, fh;
+   Evas_Coord x, y;
+   for (y = from_y; y <= to_y; y += 5)
+     {
+        for (x = from_x; x <= to_x; x += 5)
+          {
+             evas_object_move(obj, x, y);
+             evas_object_textblock_obstacles_update(tb);
+             evas_object_textblock_size_formatted_get(tb, &fw, &fh);
+             /* the obstacle size is large enough to assume that adding it
+              * will at least make the formatted height value bigger */
+             ck_assert_int_ge(fh, bh);
+          }
+     }
+}
+
+START_TEST(evas_textblock_obstacle)
+{
+   START_TB_TEST();
+   Evas_Coord fw, fh;
+   Evas_Object *rect, *rect2, *rect3;
+   const char *buf =
+      "This is an example text to demonstrate the textblock object"
+      " with obstacle objects support."
+      " Any evas object <item size=72x16></item>can register itself as an obstacle to the textblock"
+      " object. Upon registring, it affects the layout of the text in"
+      " certain situations. Usually, when the obstacle shows above the text"
+      " area, it will cause the layout of the text to split and move"
+      " parts of it, so that all text area is apparent.";
+
+   rect = evas_object_rectangle_add(evas);
+   rect2 = evas_object_rectangle_add(evas);
+   rect3 = evas_object_rectangle_add(evas);
+   evas_object_resize(rect, 50, 50);
+   evas_object_resize(rect2, 50, 50);
+   evas_object_resize(rect3, 50, 50);
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_textblock_cursor_format_prepend(cur, "<wrap=word>");
+   evas_object_textblock_size_formatted_get(tb, &fw, &fh);
+
+   ck_assert(!evas_object_textblock_obstacle_del(tb, rect));
+
+   ck_assert(evas_object_textblock_obstacle_add(tb, rect));
+   ck_assert(!evas_object_textblock_obstacle_add(tb, rect));
+
+   ck_assert(evas_object_textblock_obstacle_add(tb, rect2));
+   ck_assert(evas_object_textblock_obstacle_add(tb, rect3));
+
+   evas_object_show(rect);
+   evas_object_show(rect2);
+   evas_object_show(rect3);
+
+   /* Compare formatted size with and without obstacle */
+   _obstacle_run(tb, rect, 0, fw, fh / 2, fh / 2, fh);
+   /* Now, with bigger obstacles */
+   evas_object_resize(rect, 150, 150);
+   evas_object_resize(rect3, 300, 300);
+   evas_object_hide(rect);
+   evas_object_textblock_obstacles_update(tb);
+   _obstacle_run(tb, rect, 0, fw, fh / 2, fh / 2, fh);
+
+   evas_object_textblock_obstacle_del(tb, rect);
+   /* running with rect, now that it's not observed */
+   evas_textblock_cursor_format_prepend(cur, "<wrap=mixed>");
+   _obstacle_run(tb, rect, 0, fw, fh / 2, fh / 2, fh);
+
+   evas_object_del(rect2);
+   /* running with rect again, since rect2 is deleted */
+   evas_textblock_cursor_format_prepend(cur, "<wrap=char>");
+   _obstacle_run(tb, rect, 0, fw, fh / 2, fh / 2, fh);
+
+   evas_object_del(rect);
+   _obstacle_run(tb, rect3, 0, fw, 0, 0, fh);
+   END_TB_TEST();
+   /* Deleting rect3 later, so it will be first removed from observation,
+    * during freeing of the textblock */
+   evas_object_del(rect3);
+}
+END_TEST;
+
 void evas_test_textblock(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock_simple);
@@ -3325,5 +3412,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_wrapping);
    tcase_add_test(tc, evas_textblock_items);
    tcase_add_test(tc, evas_textblock_delete);
+   tcase_add_test(tc, evas_textblock_obstacle);
 }
 

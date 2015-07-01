@@ -497,6 +497,7 @@ struct _Evas_Object_Textblock
    Eina_List                          *ellip_prev_it; /* item that is placed before ellipsis item (0.0 <= ellipsis < 1.0), if required */
    Eina_List                          *anchors_a;
    Eina_List                          *anchors_item;
+   Eina_List                          *obstacles;
    int                                 last_w, last_h;
    struct {
       int                              l, r, t, b;
@@ -512,6 +513,7 @@ struct _Evas_Object_Textblock
    } formatted, native;
    Eina_Bool                           redraw : 1;
    Eina_Bool                           changed : 1;
+   Eina_Bool                           obstacle_changed : 1;
    Eina_Bool                           content_changed : 1;
    Eina_Bool                           format_changed : 1;
    Eina_Bool                           have_ellipsis : 1;
@@ -2560,6 +2562,8 @@ struct _Ctxt
    Eina_List *format_stack;
    Evas_Object_Textblock_Format *fmt;
 
+   Eina_List *obs_infos; /**< Extra information for items in current line. */
+
    int x, y;
    int w, h;
    int wmax, hmax;
@@ -3405,6 +3409,12 @@ _layout_last_line_max_descent_adjust_calc(Ctxt *c, const Evas_Object_Textblock_P
 
    return 0;
 }
+typedef struct _Evas_Textblock_Obstacle_Info
+{
+   Evas_Object_Textblock_Item *it; /**< the corresponding item node. */
+   Evas_Coord obs_adv;
+   Evas_Coord obs_preadv;
+} Evas_Textblock_Obstacle_Info;
 
 /**
  * @internal
@@ -3419,6 +3429,9 @@ static void
 _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 {
    Evas_Object_Textblock_Item *it;
+   Evas_Coord obs_preadv = 0, obs_adv = 0;
+   Eina_List *i;
+   Evas_Textblock_Obstacle_Info *obs_info = NULL;
    Evas_Coord x = 0;
 
    /* If there are no text items yet, calc ascent/descent
@@ -3463,12 +3476,28 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
           }
 
 loop_advance:
+        obs_preadv = 0;
+        obs_adv = 0;
+        EINA_LIST_FOREACH(c->obs_infos, i, obs_info)
+          {
+             if (obs_info->it == it)
+               {
+                  obs_preadv += obs_info->obs_preadv;
+                  obs_adv += obs_info->obs_adv;
+               }
+          }
+        x += obs_preadv;
         it->x = x;
-        x += it->adv;
+        x += it->adv + obs_adv;
 
         if ((it->w > 0) && ((it->x + it->w) > c->ln->w)) c->ln->w = it->x + it->w;
      }
 
+   /* clear obstacle info for this line */
+   EINA_LIST_FREE(c->obs_infos, obs_info)
+     {
+        free(obs_info);
+     }
    c->ln->y = c->y - c->par->y;
    c->ln->h = c->ascent + c->descent;
 
@@ -4315,7 +4344,7 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 static int
 _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Item *it, Eina_Bool mixed_wrap,
-      size_t line_start, const char *breaks)
+      size_t line_start, const char *breaks, Eina_Bool scan_fwd)
 {
    Eina_Bool wrap_after = EINA_FALSE;
    size_t wrap;
@@ -4371,7 +4400,7 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
                   return ((orig_wrap >= line_start) && (orig_wrap < len)) ?
                      ((int) orig_wrap) : -1;
                }
-             else
+             else if (scan_fwd)
                {
                   /* Scan forward to find the next wrapping point */
                   wrap = orig_wrap;
@@ -4383,6 +4412,7 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    /* If we need to find the position after the cutting point */
    if ((wrap == line_start) || (wrap_after))
      {
+        if (!scan_fwd) return wrap;
         if (mixed_wrap)
           {
              return _layout_get_charwrap(c, fmt, it,
@@ -4417,20 +4447,20 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 static int
 _layout_get_wordwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Item *it, size_t line_start,
-      const char *breaks)
+      const char *breaks, Eina_Bool allow_scan_fwd)
 {
    return _layout_get_word_mixwrap_common(c, fmt, it, EINA_FALSE, line_start,
-         breaks);
+         breaks, allow_scan_fwd);
 }
 
 /* -1 means no wrap */
 static int
 _layout_get_mixedwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Item *it, size_t line_start,
-      const char *breaks)
+      const char *breaks, Eina_Bool allow_scan_fwd)
 {
    return _layout_get_word_mixwrap_common(c, fmt, it, EINA_TRUE, line_start,
-         breaks);
+         breaks, allow_scan_fwd);
 }
 
 static Evas_Object_Textblock_Text_Item *
@@ -4737,6 +4767,20 @@ _layout_par_append_ellipsis(Ctxt *c)
    ellip_ti->parent.ln = c->ln;
    c->x += ellip_ti->parent.adv;
 }
+/* obstacles */
+static inline void
+_layout_obstacles_update(Ctxt *c);
+
+typedef struct _Evas_Textblock_Obstacle
+{
+   Eo *eo_obs; /**< Pointer to evas object which serves as an obstacle. */
+   Evas_Coord x, y, w, h; /**< Geometry of the obstacle object. x,y are
+   the offset position of the obstacle relative to the textblock object. */
+   Eina_Bool visible : 1;
+} Evas_Textblock_Obstacle;
+
+static Evas_Textblock_Obstacle *
+_layout_item_obstacle_get(Ctxt *c, Evas_Object_Textblock_Item *it);
 
 /* 0 means go ahead, 1 means break without an error, 2 means
  * break with an error, should probably clean this a bit (enum/macro)
@@ -4749,6 +4793,9 @@ _layout_par(Ctxt *c)
    int ret = 0;
    int wrap = -1;
    char *line_breaks = NULL;
+
+   /* Obstacles logic */
+   Eina_Bool handle_obstacles = EINA_FALSE;
 
    if (!c->par->logical_items)
      return 2;
@@ -4766,7 +4813,7 @@ _layout_par(Ctxt *c)
          * and we aren't just calculating. */
         if (!c->par->text_node->is_new && !c->par->text_node->dirty &&
               !c->width_changed && c->par->lines &&
-              !c->o->have_ellipsis)
+              !c->o->have_ellipsis && !c->o->obstacle_changed)
           {
              Evas_Object_Textblock_Line *ln;
              /* Update c->line_no */
@@ -4782,6 +4829,14 @@ _layout_par(Ctxt *c)
 
              return 0;
           }
+
+        /* Update all obstacles */
+        if (c->o->obstacle_changed || c->width_changed)
+          {
+             _layout_obstacles_update(c);
+             handle_obstacles = EINA_TRUE;
+          }
+
         c->par->text_node->dirty = EINA_FALSE;
         c->par->text_node->is_new = EINA_FALSE;
         c->par->rendered = EINA_FALSE;
@@ -4837,11 +4892,15 @@ _layout_par(Ctxt *c)
            _layout_par_ellipsis_items(c, ellip);
      }
 
+   Eina_Bool item_preadv = EINA_FALSE;
+   Evas_Textblock_Obstacle *obs = NULL;
    for (i = c->par->logical_items ; i ; )
      {
         Evas_Coord prevdescent = 0, prevascent = 0;
         int adv_line = 0;
         int redo_item = 0;
+        Evas_Textblock_Obstacle_Info *obs_info = NULL;
+
         it = _ITEM(eina_list_data_get(i));
         /* Skip visually deleted items */
         if (it->visually_deleted)
@@ -4879,13 +4938,17 @@ _layout_par(Ctxt *c)
                }
           }
 
-
+        if (handle_obstacles && !obs)
+          {
+             obs = _layout_item_obstacle_get(c, it);
+          }
         /* Check if we need to wrap, i.e the text is bigger than the width,
            or we already found a wrap point. */
         if ((c->w >= 0) &&
-              (((c->x + it->w) >
-                (c->w - c->o->style_pad.l - c->o->style_pad.r -
-                 c->marginl - c->marginr)) || (wrap > 0)))
+              (obs ||
+                 (((c->x + it->w) >
+                   (c->w - c->o->style_pad.l - c->o->style_pad.r -
+                    c->marginl - c->marginr)) || (wrap > 0))))
           {
              /* Handle ellipsis here. If we don't have more width left
               * and no height left, or no more width left and no wrapping.
@@ -4940,21 +5003,42 @@ _layout_par(Ctxt *c)
                   else
                      line_start = it->text_pos;
 
-                  adv_line = 1;
+                  /* Only when doing non-obstacle handling */
+                  if (!obs)
+                     adv_line = 1;
                   /* If we don't already have a wrap point from before */
                   if (wrap < 0)
                     {
+                       /* Originally with wrapping, we may have ended up
+                        * wrapping on the item next to the current one,
+                        * if the current one was the first item in a line.
+                        * This is different with obstacles: we allow the
+                        * wrapping point algorithm to consider the first
+                        * item in a line as well, and "push" it forward
+                        * after the obstacle.
+                        * There is one specific case with obstacles, where
+                        * we DON'T allow to scan forward on the textblock's
+                        * edges, and that's if the first item in a line
+                        * was pushed forward by an obstacle once, as there
+                        * is a chance it will fit in the next lines. */
+                       Eina_Bool allow_scan_fwd = (!obs && !item_preadv);
+                       Evas_Coord save_cw = c->w;
+                       if (obs)
+                         {
+                            c->w = obs->x;
+                         }
                        if (it->format->wrap_word)
                           wrap = _layout_get_wordwrap(c, it->format, it,
-                                line_start, line_breaks);
+                                line_start, line_breaks, allow_scan_fwd);
                        else if (it->format->wrap_char)
                           wrap = _layout_get_charwrap(c, it->format, it,
                                 line_start, line_breaks);
                        else if (it->format->wrap_mixed)
                           wrap = _layout_get_mixedwrap(c, it->format, it,
-                                line_start, line_breaks);
+                                line_start, line_breaks, allow_scan_fwd);
                        else
                           wrap = -1;
+                       c->w = save_cw;
                     }
 
                   /* If it's before the item, rollback and apply.
@@ -5013,6 +5097,13 @@ _layout_par(Ctxt *c)
                             wrap -= it->text_pos; /* Cut here */
                          }
                     }
+                  /* Specific case for obstacles */
+                  if (obs && (wrap >= 0))
+                    {
+                       obs_info = calloc(1, sizeof(Evas_Textblock_Obstacle_Info));
+                       obs_info->it = it;
+                       c->obs_infos = eina_list_append(c->obs_infos, obs_info);
+                    }
                   if ((wrap >= 0) && ((size_t) wrap == it_len))
                     {
                        /* Can happen if this is the last word in the paragraph */
@@ -5024,6 +5115,11 @@ _layout_par(Ctxt *c)
                          {
                             _layout_item_text_split_strip_white(c,
                                   _ITEM_TEXT(it), i, wrap);
+                         }
+                       if (obs)
+                         {
+                            obs_info->obs_adv = obs->x + obs->w - c->x - it->adv;
+                            c->x = obs->x + obs->w;
                          }
                     }
                   else if (wrap == 0)
@@ -5037,7 +5133,17 @@ _layout_par(Ctxt *c)
 
                        adv_line = 0;
                        redo_item = 1;
-                       _layout_line_advance(c, it->format);
+                       if (obs)
+                         {
+                            obs_info->obs_preadv = obs->x + obs->w - c->x;
+                            c->x = obs->x + obs->w;
+                            item_preadv = EINA_TRUE;
+                         }
+                       else
+                         {
+                            _layout_line_advance(c, it->format);
+                            item_preadv = EINA_FALSE;
+                         }
                     }
                   else // (wrap < 0)
                     {
@@ -5045,6 +5151,7 @@ _layout_par(Ctxt *c)
                        adv_line = 0;
                     }
                   /* Reset wrap */
+                  obs = NULL;
                   wrap = -1;
                }
           }
@@ -5070,10 +5177,11 @@ _layout_par(Ctxt *c)
                        adv_line = 1;
                     }
                }
-             c->x += it->adv;
+             if (!obs_info) c->x += it->adv;
              if (c->o->ellip_prev_it == i)
                 _layout_par_append_ellipsis(c);
              i = eina_list_next(i);
+             item_preadv = EINA_FALSE;
           }
         if (adv_line)
           {
@@ -5509,6 +5617,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
    c->align_auto = EINA_TRUE;
    c->ln = NULL;
    c->width_changed = (obj->cur->geometry.w != o->last_w);
+   c->obs_infos = NULL;
 
    /* Start of logical layout creation */
    /* setup default base style */
@@ -5655,6 +5764,8 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
         LYDBG("ZZ: ... layout #2\n");
         _layout(eo_obj, w, h, w_ret, h_ret);
      }
+
+   c->o->obstacle_changed = EINA_FALSE;
 }
 
 /*
@@ -6877,6 +6988,182 @@ evas_textblock_text_utf8_to_markup(const Evas_Object *eo_obj, const char *text)
    eina_strbuf_free(sbuf);
    return str;
 
+}
+
+static void
+_obstacle_update(Evas_Textblock_Obstacle *obs, Eo *eo_obj)
+{
+   Evas_Coord x, y;
+   Evas_Coord ox, oy, ow, oh;
+   Eo *eo_obs = obs->eo_obs;
+
+   eo_do(eo_obs, efl_gfx_position_get(&ox, &oy), efl_gfx_size_get(&ow, &oh));
+   eo_do(eo_obj, efl_gfx_position_get(&x, &y));
+
+   obs->x = ox - x;
+   obs->y = oy - y;
+   obs->w = ow;
+   obs->h = oh;
+}
+
+static void
+_layout_obstacles_update(Ctxt *c)
+{
+   Eina_List *i;
+   Eina_Bool obstacle_changed = c->o->obstacle_changed;
+   Evas_Textblock_Obstacle *obs;
+
+   EINA_LIST_FOREACH(c->o->obstacles, i, obs)
+     {
+        if (obstacle_changed)
+           _obstacle_update(obs, c->obj);
+     }
+}
+
+static Evas_Textblock_Obstacle *
+_obstacle_find(Evas_Textblock_Data *obj, Eo *eo_obs)
+{
+   Evas_Textblock_Obstacle *obs;
+   Eina_List *i;
+
+   EINA_LIST_FOREACH(obj->obstacles, i, obs)
+     {
+        if (eo_obs == obs->eo_obs)
+           return obs;
+     }
+   return NULL;
+}
+
+Eina_Bool
+_obstacle_del_cb(void *data, Eo *eo_obs,
+      const Eo_Event_Description *desc EINA_UNUSED,
+      void *event_info EINA_UNUSED)
+{
+   Eo *eo_obj = data;
+   Evas_Textblock_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
+   Eina_List *i;
+   Evas_Textblock_Obstacle *obs;
+
+   EINA_LIST_FOREACH(obj->obstacles, i, obs)
+     {
+        if (eo_obs == obs->eo_obs)
+           break;
+     }
+   obj->obstacles = eina_list_remove_list(obj->obstacles, i);
+   free(obs);
+   _evas_textblock_changed(obj, data);
+   obj->obstacle_changed = EINA_TRUE;
+
+   return EINA_TRUE;
+}
+
+static void
+_obstacle_clear(Eo *eo_obj, Evas_Textblock_Obstacle *obs)
+{
+   eo_do(obs->eo_obs, eo_event_callback_del(EVAS_OBJECT_EVENT_DEL,
+            _obstacle_del_cb, eo_obj));
+}
+
+static void
+_obstacle_free(Eo *eo_obj, Evas_Textblock_Obstacle *obs)
+{
+   _obstacle_clear(eo_obj, obs);
+   free(obs);
+}
+
+static void
+_obstacles_free(Eo *eo_obj, Evas_Textblock_Data *obj)
+{
+   Evas_Textblock_Obstacle *obs;
+
+   EINA_LIST_FREE(obj->obstacles, obs)
+     {
+        _obstacle_free(eo_obj, obs);
+     }
+}
+
+EOLIAN static Eina_Bool
+_evas_textblock_obstacle_add(Eo *eo_obj,
+      Evas_Textblock_Data *obj, Eo *eo_obs)
+{
+   Evas_Textblock_Obstacle *obs;
+
+   if (!eo_isa(eo_obs, EVAS_OBJECT_CLASS))
+      return EINA_FALSE;
+   obs = _obstacle_find(obj, eo_obs);
+   if (obs) return EINA_FALSE;
+
+   obs = calloc(1, sizeof(Evas_Textblock_Obstacle));
+   if (!obs) return EINA_FALSE;
+
+   obs->eo_obs = eo_obs;
+   eo_do(eo_obs, eo_event_callback_add(EVAS_OBJECT_EVENT_DEL,_obstacle_del_cb,
+            eo_obj));
+
+   obj->obstacles = eina_list_append(obj->obstacles, obs);
+   _obstacle_update(obs, eo_obj);
+   _evas_textblock_changed(obj, eo_obj);
+   obj->obstacle_changed = EINA_TRUE;
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_evas_textblock_obstacle_del(Eo *eo_obj, Evas_Textblock_Data *obj,
+      Eo *eo_obs EINA_UNUSED)
+{
+   Evas_Textblock_Obstacle *obs;
+   Eina_List *i;
+
+   if (!eo_isa(eo_obs, EVAS_OBJECT_CLASS))
+      return EINA_FALSE;
+
+   EINA_LIST_FOREACH(obj->obstacles, i, obs)
+     {
+        if (eo_obs == obs->eo_obs)
+          {
+             break;
+          }
+     }
+   if (!i) return EINA_FALSE;
+   obj->obstacles = eina_list_remove_list(obj->obstacles, i);
+   _obstacle_free(eo_obj, obs);
+   _evas_textblock_changed(obj, eo_obj);
+   obj->obstacle_changed = EINA_TRUE;
+   return EINA_TRUE;
+}
+
+EOLIAN static void
+_evas_textblock_obstacles_update(Eo *eo_obj, Evas_Textblock_Data *obj)
+{
+   _evas_textblock_changed(obj, eo_obj);
+   obj->obstacle_changed = EINA_TRUE;
+}
+
+static Evas_Textblock_Obstacle *
+_layout_item_obstacle_get(Ctxt *c, Evas_Object_Textblock_Item *it)
+{
+   Evas_Textblock_Obstacle *obs, *min_obs = NULL;
+   Eina_List *i;
+
+   EINA_LIST_FOREACH(c->o->obstacles, i, obs)
+     {
+        Eina_Bool is_visible;
+        eo_do(obs->eo_obs, is_visible = efl_gfx_visible_get());
+        if (!is_visible)
+           continue;
+        if ((obs->y < c->y + it->h) &&
+            (obs->x < c->x + it->w) &&
+            (obs->x + obs->w > c->x) &&
+            (obs->y + obs->h > c->y))
+          {
+             if ((obs->x < c->w) &&
+                   (!min_obs || (obs->x < min_obs->x)))
+               {
+                  min_obs = obs;
+               }
+          }
+     }
+   return min_obs;
 }
 
 /* cursors */
@@ -11242,8 +11529,10 @@ evas_object_textblock_free(Evas_Object *eo_obj)
    if (o->repch) eina_stringshare_del(o->repch);
    if (o->ellip_ti) _item_free(eo_obj, NULL, _ITEM(o->ellip_ti));
   _format_command_shutdown();
-}
 
+  /* remove obstacles */
+  _obstacles_free(eo_obj, o);
+}
 
 static void
 evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
@@ -11764,7 +12053,8 @@ evas_object_textblock_coords_recalc(Evas_Object *eo_obj EINA_UNUSED,
        // obviously if content text changed we need to reformat it
        (o->content_changed) ||
        // if format changed (eg styles) we need to re-format/match tags etc.
-       (o->format_changed)
+       (o->format_changed) ||
+       (o->obstacle_changed)
       )
      {
         LYDBG("ZZ: invalidate 2 %p ## %i != %i || %3.3f || %i && %i != %i | %i %i\n", eo_obj, obj->cur->geometry.w, o->last_w, o->valign, o->have_ellipsis, obj->cur->geometry.h, o->last_h, o->content_changed, o->format_changed);

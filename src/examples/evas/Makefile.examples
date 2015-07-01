@@ -23,7 +23,8 @@ EXAMPLES= evas-aspect-hints \
           evas-smart-object \
           evas-stacking \
           evas-table \
-          evas-text
+          evas-text \
+          evas-textblock-obstacles
 
 all: edje examples
 edje: $(EDJE_OBJS)

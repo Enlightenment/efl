@@ -159,6 +159,11 @@ evas_text_SOURCES = evas-text.c
 evas_text_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 evas_text_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_textblock_obstacles
+evas_textblock_obstacles_SOURCES = evas-textblock-obstacles.c
+evas_textblock_obstacles_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_textblock_obstacles_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 EXTRA_PROGRAMS += evas_smart_object
 evas_smart_object_SOURCES = evas-smart-object.c
 evas_smart_object_LDADD = $(ECORE_EVAS_COMMON_LDADD)
