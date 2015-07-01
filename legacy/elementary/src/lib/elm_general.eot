@@ -26,7 +26,8 @@ enum Elm.Policy.Quit
 {
    [[Possible values for the #ELM_POLICY_QUIT policy]]
    none = 0, [[never quit the application automatically]]
-   last_window_closed [[quit when the application's last window is closed]]
+   last_window_closed, [[quit when the application's last window is closed]]
+   last_window_hidden [[quit when the application's last window is hidden @since 1.14]]
 }
 
 enum Elm.Policy.Exit

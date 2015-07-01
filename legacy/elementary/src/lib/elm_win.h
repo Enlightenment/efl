@@ -69,7 +69,7 @@
  * Signals that you can add callbacks for are:
  *
  * @li "delete,request": the user requested to close the window. See
- * elm_win_autodel_set().
+ * elm_win_autodel_set() and elm_win_autohide_set().
  * @li "focus,in": window got focus (deprecated. use "focused" instead.)
  * @li "focus,out": window lost focus (deprecated. use "unfocused" instead.)
  * @li "moved": window that holds the canvas was moved

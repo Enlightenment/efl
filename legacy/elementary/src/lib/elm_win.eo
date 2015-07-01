@@ -211,6 +211,34 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             closed */
          }
       }
+      @property autohide {
+         [[Window's autohide state.
+
+           This property works similarly to @c autodel, automatically handling
+           "delete,request" signals when set to @c EINA_TRUE, with the difference
+           that it will hide the window, instead of destroying it.
+
+           It is specially designed to work together with @c ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN
+           which allows exiting Elementary's main loop when all the windows
+           are hidden.
+
+           @see elm_win_autodel_set()
+
+           @note @c autodel and @c autohide are not mutually exclusive. The window
+                 will be deleted if both are set to @c EINA_TRUE.
+
+           @ingroup Win
+         ]]
+
+         set {
+         }
+         get {
+         }
+         values {
+            autohide: bool; /*@ If true, the window will automatically hide itself when
+            closed */
+         }
+      }
       @property override {
          set {
             /*@

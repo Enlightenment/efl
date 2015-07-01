@@ -212,6 +212,7 @@ struct _Elm_Win_Data
    Eina_Bool    modal : 1;
    Eina_Bool    demand_attention : 1;
    Eina_Bool    autodel : 1;
+   Eina_Bool    autohide : 1;
    Eina_Bool    constrain : 1;
    Eina_Bool    resizing : 1;
    Eina_Bool    iconified : 1;
@@ -501,6 +502,41 @@ _elm_win_state_eval(void *data EINA_UNUSED)
      }
    _win_noblank_eval();
    return EINA_FALSE;
+}
+
+static Eina_Bool
+_elm_win_policy_quit_triggered(Eo* triggering_obj)
+{
+   if ((!_elm_win_list) &&
+       (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_CLOSED))
+     {
+        return EINA_TRUE;
+     }
+
+   if (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN)
+     {
+        Eina_List *l;
+        Evas_Object *win;
+
+        EINA_LIST_FOREACH(_elm_win_list, l, win)
+          if (win != triggering_obj && evas_object_visible_get(win) == EINA_TRUE)
+            {
+               return EINA_FALSE;
+            }
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+static void
+_elm_win_flush_cache_and_exit(Eo *obj)
+{
+   edje_file_cache_flush();
+   edje_collection_cache_flush();
+   evas_image_cache_flush(evas_object_evas_get(obj));
+   evas_font_cache_flush(evas_object_evas_get(obj));
+   elm_exit();
 }
 
 static void
@@ -1544,6 +1580,9 @@ _elm_win_evas_object_smart_hide(Eo *obj, Elm_Win_Data *sd)
      }
    if (_elm_config->atspi_mode)
      eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DESTROYED, NULL));
+
+   if (_elm_win_policy_quit_triggered(obj))
+     _elm_win_flush_cache_and_exit(obj);
 }
 
 static void
@@ -1866,14 +1905,9 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 
-   if ((!_elm_win_list) &&
-       (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_CLOSED))
+   if (_elm_win_policy_quit_triggered(obj))
      {
-        edje_file_cache_flush();
-        edje_collection_cache_flush();
-        evas_image_cache_flush(evas_object_evas_get(obj));
-        evas_font_cache_flush(evas_object_evas_get(obj));
-        elm_exit();
+        _elm_win_flush_cache_and_exit(obj);
      }
 
    if (_elm_config->atspi_mode)
@@ -1992,6 +2026,8 @@ _elm_win_delete_request(Ecore_Evas *ee)
    sd->autodel_clear = &autodel;
    evas_object_ref(obj);
    evas_object_smart_callback_call(obj, SIG_DELETE_REQUEST, NULL);
+   if (sd->autohide)
+     evas_object_hide(obj);
    // FIXME: if above callback deletes - then the below will be invalid
    if (_elm_config->atspi_mode)
      eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DESTROYED, NULL));
@@ -2795,6 +2831,8 @@ _elm_win_frame_cb_close(void *data,
    sd->autodel_clear = &autodel;
    evas_object_ref(win);
    evas_object_smart_callback_call(win, SIG_DELETE_REQUEST, NULL);
+   if (sd->autohide)
+     evas_object_hide(win);
    // FIXME: if above callback deletes - then the below will be invalid
    if (autodel) evas_object_del(win);
    else sd->autodel_clear = NULL;
@@ -3995,6 +4033,18 @@ EOLIAN static Eina_Bool
 _elm_win_autodel_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 {
    return sd->autodel;
+}
+
+EOLIAN static void
+_elm_win_autohide_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool autohide)
+{
+   sd->autohide = autohide;
+}
+
+EOLIAN static Eina_Bool
+_elm_win_autohide_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
+{
+   return sd->autohide;
 }
 
 EOLIAN static void
