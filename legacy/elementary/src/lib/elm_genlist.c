@@ -6711,6 +6711,8 @@ _elm_genlist_item_expanded_set(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it, Eina_B
           edje_object_signal_emit(VIEW(it), SIGNAL_EXPANDED, "elm");
         evas_object_smart_callback_call(WIDGET(it), SIG_EXPANDED, EO_OBJ(it));
         sd->auto_scroll_enabled = EINA_TRUE;
+        if (_elm_config->atspi_mode)
+          elm_interface_atspi_accessible_state_changed_signal_emit(eo_item, ELM_ATSPI_STATE_EXPANDED, EINA_TRUE);
      }
    else
      {
@@ -6719,6 +6721,8 @@ _elm_genlist_item_expanded_set(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it, Eina_B
           edje_object_signal_emit(VIEW(it), SIGNAL_CONTRACTED, "elm");
         evas_object_smart_callback_call(WIDGET(it), SIG_CONTRACTED, EO_OBJ(it));
         sd->auto_scroll_enabled = EINA_FALSE;
+        if (_elm_config->atspi_mode)
+          elm_interface_atspi_accessible_state_changed_signal_emit(eo_item, ELM_ATSPI_STATE_EXPANDED, EINA_FALSE);
      }
 }
 
@@ -7741,6 +7745,13 @@ _elm_genlist_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_Ge
 
    if (sel)
       STATE_TYPE_SET(ret, ELM_ATSPI_STATE_SELECTED);
+
+   if (elm_genlist_item_type_get(eo_it) == ELM_GENLIST_ITEM_TREE)
+     {
+        STATE_TYPE_SET(ret, ELM_ATSPI_STATE_EXPANDABLE);
+        if (elm_genlist_item_expanded_get(eo_it))
+           STATE_TYPE_SET(ret, ELM_ATSPI_STATE_EXPANDED);
+     }
 
    return ret;
 }

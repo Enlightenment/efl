@@ -2900,11 +2900,13 @@ _set_broadcast_flag(const char *event, Eo *bridge)
              if (!tokens[2] || *tokens[2] == '\0')
                pd->object_state_broadcast_mask = -1; // broadcast all
              else if (!strcmp(tokens[2], "Focused"))
-               STATE_TYPE_SET(pd->object_state_broadcast_mask, ATSPI_STATE_FOCUSED);
+               STATE_TYPE_SET(pd->object_state_broadcast_mask, ELM_ATSPI_STATE_FOCUSED);
              else if (!strcmp(tokens[2], "Showing"))
-               STATE_TYPE_SET(pd->object_state_broadcast_mask, ATSPI_STATE_SHOWING);
+               STATE_TYPE_SET(pd->object_state_broadcast_mask, ELM_ATSPI_STATE_SHOWING);
              else if (!strcmp(tokens[2], "Checked"))
-               STATE_TYPE_SET(pd->object_state_broadcast_mask, ATSPI_STATE_CHECKED);
+               STATE_TYPE_SET(pd->object_state_broadcast_mask, ELM_ATSPI_STATE_CHECKED);
+             else if (!strcmp(tokens[2], "Expanded"))
+               STATE_TYPE_SET(pd->object_state_broadcast_mask, ELM_ATSPI_STATE_EXPANDED);
           }
         else if (!strcmp(tokens[1], "PropertyChange"))
           {
@@ -3047,6 +3049,9 @@ _state_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Descr
          break;
         case ELM_ATSPI_STATE_CHECKED:
          type_desc = "checked";
+         break;
+        case ELM_ATSPI_STATE_EXPANDED:
+         type_desc = "expanded";
          break;
         default:
          return EINA_FALSE;
