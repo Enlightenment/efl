@@ -57,8 +57,7 @@ include Makefile_Elua_Helper.am
 eluaappsdir = $(datadir)/elua/apps
 
 eluaapps_DATA = \
-	scripts/elua/apps/lualian.lua \
-	scripts/elua/apps/xgettext.lua
+	scripts/elua/apps/lualian.lua
 
 EXTRA_DIST += $(eluaapps_DATA)
 
@@ -72,15 +71,6 @@ eluamodules_DATA = \
 	bindings/luajit/eolian.lua
 
 EXTRA_DIST += $(eluamodules_DATA)
-
-eluaxgettextdir = $(eluamodulesdir)/xgettext
-
-eluaxgettext_DATA = \
-	scripts/elua/modules/xgettext/lexer.lua \
-	scripts/elua/modules/xgettext/parser.lua \
-	scripts/elua/modules/xgettext/generator.lua
-
-EXTRA_DIST += $(eluaxgettext_DATA)
 
 eluaeinadir = $(eluamodulesdir)/eina
 
