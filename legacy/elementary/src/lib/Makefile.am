@@ -376,6 +376,7 @@ elm_transit.h \
 elm_video.h \
 elm_video_eo.h \
 elm_video_legacy.h \
+elm_view_list.h \
 elm_web.h \
 elm_web_common.h \
 elm_web_eo.h \
@@ -500,6 +501,7 @@ elm_transit.c \
 elm_util.c \
 elm_url.c \
 elm_video.c \
+elm_view_list.c \
 elm_web2.c \
 elm_widget.c \
 elm_win.c \
@@ -619,6 +621,7 @@ elm_table.eo \
 elm_thumb.eo \
 elm_toolbar.eo \
 elm_video.eo \
+elm_view_list.eo \
 elm_web.eo \
 elm_widget.eo \
 elm_win.eo \

@@ -270,6 +270,7 @@ if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
         eo-cxx >= efl_version
         eina-cxx >= efl_version
         evas-cxx >= efl_version
+        eio-cxx >= efl_version
       ],
       [
         requirement_elm_pc="${requirement_elm_pc} \
@@ -277,6 +278,7 @@ if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
           eo-cxx >= efl_version \
           eina-cxx >= efl_version \
           evas-cxx >= efl_version \
+          eio-cxx >= efl_version \
         "
         have_cxx11="yes"
         LDFLAGS="${LDFLAGS} -fPIC -DPIC"
