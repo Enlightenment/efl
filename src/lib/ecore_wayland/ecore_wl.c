@@ -203,8 +203,8 @@ ecore_wl_init(const char *name)
    wl_registry_add_listener(_ecore_wl_disp->wl.registry,
                             &_ecore_wl_registry_listener, _ecore_wl_disp);
 
-   session_recovery_add_listener(_ecore_wl_disp->wl.session_recovery,
-                            &_ecore_wl_session_recovery_listener, _ecore_wl_disp);
+   //session_recovery_add_listener(_ecore_wl_disp->wl.session_recovery,
+                            //&_ecore_wl_session_recovery_listener, _ecore_wl_disp);
 
    if (!_ecore_wl_xkb_init(_ecore_wl_disp))
      {
