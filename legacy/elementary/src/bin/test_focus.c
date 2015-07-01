@@ -593,7 +593,7 @@ test_focus2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    bt2 = elm_button_add(PARENT);
    elm_object_text_set(bt2, "Give focus to layout 'Entry'");
-   evas_object_smart_callback_add(bt2, "clicked", _focus_obj, en);
+   evas_object_smart_callback_add(bt2, "clicked", _focus_obj, en1);
    evas_object_size_hint_weight_set(bt2, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, bt2);
