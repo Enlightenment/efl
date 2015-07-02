@@ -156,7 +156,7 @@ _item_unselect(Elm_Toolbar_Item_Data *item)
 
    item->selected = EINA_FALSE;
    sd->selected_item = NULL;
-   edje_object_signal_emit(VIEW(item), "elm,state,unselected", "elm");
+   elm_layout_signal_emit(VIEW(item), "elm,state,unselected", "elm");
    if (item->icon)
      elm_widget_signal_emit(item->icon, "elm,state,unselected", "elm");
    eo_do(WIDGET(item), eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_UNSELECTED, EO_OBJ(item)));
@@ -231,7 +231,7 @@ _item_mirrored_set(Evas_Object *obj EINA_UNUSED,
                    Elm_Toolbar_Item_Data *it,
                    Eina_Bool mirrored)
 {
-   edje_object_mirrored_set(VIEW(it), mirrored);
+   elm_widget_mirrored_set(VIEW(it), mirrored);
    if (it->o_menu) elm_widget_mirrored_set(it->o_menu, mirrored);
 }
 
@@ -266,13 +266,13 @@ _items_size_fit(Evas_Object *obj, Evas_Coord *bl, Evas_Coord view)
           {
              if (!it->separator && !it->object)
                elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-             edje_object_size_min_restricted_calc(VIEW(it), &mw, &mh, mw, mh);
+             edje_object_size_min_restricted_calc(elm_layout_edje_get(VIEW(it)), &mw, &mh, mw, mh);
           }
         else if (!more)
           {
              more = EINA_TRUE;
              elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-             edje_object_size_min_restricted_calc(sd->VIEW(more_item), &mw, &mh, mw, mh);
+             edje_object_size_min_restricted_calc(elm_layout_edje_get(sd->VIEW(more_item)), &mw, &mh, mw, mh);
           }
 
         if (mw != -1 || mh != -1)
@@ -624,12 +624,12 @@ _elm_toolbar_item_focused(Elm_Object_Item *eo_it)
 
    if (elm_widget_focus_highlight_enabled_get(obj))
      {
-        edje_object_signal_emit
+        elm_layout_signal_emit
            (VIEW(it), "elm,state,focused", "elm");
      }
-   edje_object_signal_emit
+   elm_layout_signal_emit
       (VIEW(it), "elm,highlight,on", "elm");
-   focus_raise = edje_object_data_get(VIEW(it), "focusraise");
+   focus_raise = elm_layout_data_get(VIEW(it), "focusraise");
    if ((focus_raise) && (!strcmp(focus_raise, "on")))
      evas_object_raise(VIEW(it));
    eo_do(obj, eo_event_callback_call
@@ -653,10 +653,10 @@ _elm_toolbar_item_unfocused(Elm_Object_Item *eo_it)
    if (elm_widget_focus_highlight_enabled_get(obj))
      {
         ELM_TOOLBAR_ITEM_DATA_GET(sd->focused_item, focus_it);
-        edje_object_signal_emit
+        elm_layout_signal_emit
            (VIEW(focus_it), "elm,state,unfocused", "elm");
      }
-   edje_object_signal_emit
+   elm_layout_signal_emit
       (VIEW(it), "elm,highlight,off", "elm");
    sd->focused_item = NULL;
    eo_do(obj, eo_event_callback_call
@@ -978,7 +978,7 @@ _resizing_eval_item(Elm_Toolbar_Item_Data *it)
    evas_object_geometry_get(obj, &x, &y, NULL, &h);
    evas_object_move(sd->more, x, y + h);
    //calculate the size of item
-   edje_object_size_min_restricted_calc(VIEW(it), &mw, &mh, mw, mh);
+   edje_object_size_min_restricted_calc(elm_layout_edje_get(VIEW(it)), &mw, &mh, mw, mh);
    if (!it->separator && !it->object)
      elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    evas_object_size_hint_min_set(VIEW(it), mw, mh);
@@ -1005,7 +1005,7 @@ _elm_toolbar_item_elm_widget_item_disable(Eo *eo_toolbar, Elm_Toolbar_Item_Data 
    else
      emission = "elm,state,enabled";
 
-   edje_object_signal_emit(VIEW(toolbar_it), emission, "elm");
+   elm_layout_signal_emit(VIEW(toolbar_it), emission, "elm");
    if (toolbar_it->icon)
      elm_widget_signal_emit(toolbar_it->icon, emission, "elm");
 
@@ -1116,7 +1116,7 @@ _item_select(Elm_Toolbar_Item_Data *it)
                     {
                        if (it->in_box != sd->bx)
                          {
-                            edje_object_signal_emit
+                            elm_layout_signal_emit
                               (sd->VIEW(more_item), "elm,state,selected",
                               "elm");
                             elm_widget_signal_emit
@@ -1125,7 +1125,7 @@ _item_select(Elm_Toolbar_Item_Data *it)
                          }
                        else
                          {
-                            edje_object_signal_emit
+                            elm_layout_signal_emit
                               (sd->VIEW(more_item), "elm,state,unselected",
                               "elm");
                             elm_widget_signal_emit
@@ -1136,7 +1136,7 @@ _item_select(Elm_Toolbar_Item_Data *it)
                          (sd->more, "elm,state,close", "elm");
                     }
                }
-             edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
+             elm_layout_signal_emit(VIEW(it), "elm,state,selected", "elm");
              if (it->icon)
                elm_widget_signal_emit(it->icon, "elm,state,selected", "elm");
              _item_show(it);
@@ -1183,12 +1183,12 @@ _item_del(Elm_Toolbar_Item_Data *it)
 
    eina_stringshare_del(it->label);
    if (it->label)
-     edje_object_signal_emit(VIEW(it), "elm,state,text,hidden", "elm");
+     elm_layout_signal_emit(VIEW(it), "elm,state,text,hidden", "elm");
    eina_stringshare_del(it->icon_str);
 
    if (it->icon)
      {
-        edje_object_signal_emit(VIEW(it), "elm,state,icon,hidden", "elm");
+        elm_layout_signal_emit(VIEW(it), "elm,state,icon,hidden", "elm");
         evas_object_del(it->icon);
      }
 
@@ -1219,20 +1219,20 @@ _item_theme_hook(Evas_Object *obj,
    style = elm_widget_style_get(obj);
 
    _item_mirrored_set(obj, it, elm_widget_mirrored_get(obj));
-   edje_object_scale_set(view, scale);
+   edje_object_scale_set(elm_layout_edje_get(view), scale);
 
    if (!it->separator && !it->object)
      {
-        elm_widget_theme_object_set(obj, view, "toolbar", "item", style);
+        elm_layout_theme_set(view, "toolbar", "item", style);
         if (it->selected)
           {
-             edje_object_signal_emit(view, "elm,state,selected", "elm");
+             elm_layout_signal_emit(view, "elm,state,selected", "elm");
              if (it->icon)
                elm_widget_signal_emit(it->icon, "elm,state,selected", "elm");
           }
         if (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()))
           {
-             edje_object_signal_emit(view, "elm,state,disabled", "elm");
+             elm_layout_signal_emit(view, "elm,state,disabled", "elm");
              if (it->icon)
                elm_widget_signal_emit(it->icon, "elm,state,disabled", "elm");
           }
@@ -1243,37 +1243,37 @@ _item_theme_hook(Evas_Object *obj,
              ms = ((double)icon_size * scale);
              evas_object_size_hint_min_set(it->icon, ms, ms);
              evas_object_size_hint_max_set(it->icon, ms, ms);
-             edje_object_part_swallow(view, "elm.swallow.icon", it->icon);
-             edje_object_signal_emit
+             elm_layout_content_set(view, "elm.swallow.icon", it->icon);
+             elm_layout_signal_emit
                (view, "elm,state,icon,visible", "elm");
           }
         if (it->label)
           {
-             edje_object_part_text_escaped_set(view, "elm.text", it->label);
-             edje_object_signal_emit(view, "elm,state,text,visible", "elm");
+             elm_layout_text_set(view, "elm.text", it->label);
+             elm_layout_signal_emit(view, "elm,state,text,visible", "elm");
           }
      }
    else
      {
         if (!it->object)
           {
-             elm_widget_theme_object_set
-               (obj, view, "toolbar", "separator", style);
+             elm_layout_theme_set
+               (view, "toolbar", "separator", style);
           }
         else
           {
-             elm_widget_theme_object_set
-               (obj, view, "toolbar", "object", style);
-             edje_object_part_swallow(view, "elm.swallow.object", it->object);
+             elm_layout_theme_set
+               (view, "toolbar", "object", style);
+             elm_layout_content_set(view, "elm.swallow.object", it->object);
           }
      }
 
    if (sd->vertical)
-     edje_object_signal_emit(view, "elm,orient,vertical", "elm");
+     elm_layout_signal_emit(view, "elm,orient,vertical", "elm");
    else
-     edje_object_signal_emit(view, "elm,orient,horizontal", "elm");
+     elm_layout_signal_emit(view, "elm,orient,horizontal", "elm");
 
-    edje_object_message_signal_process(view);
+    edje_object_message_signal_process(elm_layout_edje_get(view));
     if (!it->separator && !it->object)
       elm_coords_finger_size_adjust(1, &mw, 1, &mh);
     if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
@@ -1326,13 +1326,13 @@ _inform_item_number(Evas_Object *obj)
           {
              if (!it->separator && !it->object)
                {
-                  edje_object_signal_emit(VIEW(it), buf, "elm");
-                  edje_object_message_signal_process(VIEW(it));
+                  elm_layout_signal_emit(VIEW(it), buf, "elm");
+                  edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
 
                   mw = mh = -1;
                   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
 
-                  edje_object_size_min_restricted_calc(VIEW(it), &mw, &mh, mw, mh);
+                  edje_object_size_min_restricted_calc(elm_layout_edje_get(VIEW(it)), &mw, &mh, mw, mh);
                   evas_object_size_hint_min_set(VIEW(it), mw, mh);
                }
           }
@@ -1478,11 +1478,11 @@ _elm_toolbar_elm_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
 static void
 _elm_toolbar_item_label_update(Elm_Toolbar_Item_Data *item)
 {
-   edje_object_part_text_escaped_set(VIEW(item), "elm.text", item->label);
+   elm_layout_text_set(VIEW(item), "elm.text", item->label);
    if (item->label)
-     edje_object_signal_emit(VIEW(item), "elm,state,text,visible", "elm");
+     elm_layout_signal_emit(VIEW(item), "elm,state,text,visible", "elm");
    else
-     edje_object_signal_emit(VIEW(item), "elm,state,text,hidden", "elm");
+     elm_layout_signal_emit(VIEW(item), "elm,state,text,hidden", "elm");
 }
 
 static void
@@ -1494,9 +1494,9 @@ _elm_toolbar_item_label_set_cb(void *data,
    Elm_Toolbar_Item_Data *item = data;
 
    _elm_toolbar_item_label_update(item);
-   edje_object_signal_callback_del
+   elm_layout_signal_callback_del
      (obj, emission, source, _elm_toolbar_item_label_set_cb);
-   edje_object_signal_emit(VIEW(item), "elm,state,label,reset", "elm");
+   elm_layout_signal_emit(VIEW(item), "elm,state,label,reset", "elm");
 }
 
 static void
@@ -1509,13 +1509,13 @@ _item_label_set(Elm_Toolbar_Item_Data *item,
    if ((label) && (item->label) && (!strcmp(label, item->label))) return;
 
    eina_stringshare_replace(&item->label, label);
-   s = edje_object_data_get(VIEW(item), "transition_animation_on");
+   s = elm_layout_data_get(VIEW(item), "transition_animation_on");
    if ((s) && (atoi(s)))
      {
-        edje_object_part_text_escaped_set
+        elm_layout_text_set
           (VIEW(item), "elm.text_new", item->label);
-        edje_object_signal_emit(VIEW(item), sig, "elm");
-        edje_object_signal_callback_add
+        elm_layout_signal_emit(VIEW(item), sig, "elm");
+        elm_layout_signal_callback_add
           (VIEW(item), "elm,state,label_set,done", "elm",
           _elm_toolbar_item_label_set_cb, item);
      }
@@ -1542,14 +1542,14 @@ _elm_toolbar_item_elm_widget_item_part_text_set(Eo *eo_item EINA_UNUSED, Elm_Too
         if (label)
           {
              snprintf(buf, sizeof(buf), "elm,state,%s,visible", part);
-             edje_object_signal_emit(VIEW(item), buf, "elm");
+             elm_layout_signal_emit(VIEW(item), buf, "elm");
           }
         else
           {
              snprintf(buf, sizeof(buf), "elm,state,%s,hidden", part);
-             edje_object_signal_emit(VIEW(item), buf, "elm");
+             elm_layout_signal_emit(VIEW(item), buf, "elm");
           }
-        edje_object_part_text_escaped_set(VIEW(item), part, label);
+        elm_layout_text_set(VIEW(item), part, label);
      }
 }
 
@@ -1564,7 +1564,7 @@ _elm_toolbar_item_elm_widget_item_part_text_get(Eo *eo_it EINA_UNUSED, Elm_Toolb
    else
      snprintf(buf, sizeof(buf), "%s", part);
 
-   return edje_object_part_text_get(VIEW(it), buf);
+   return elm_layout_text_get(VIEW(it), buf);
 }
 
 EOLIAN static void
@@ -1610,7 +1610,7 @@ _elm_toolbar_item_elm_widget_item_part_content_unset(Eo *eo_item EINA_UNUSED, El
 
    if (part && strcmp(part, "object")) return NULL;
 
-   edje_object_part_unswallow(VIEW(item), item->object);
+   elm_layout_content_unset(VIEW(item), "elm.swallow.object");
    elm_widget_sub_object_del(obj, item->object);
    o = item->object;
    item->object = NULL;
@@ -1669,7 +1669,7 @@ _select_filter_cb(Elm_Toolbar_Item_Data *it,
    button = atoi(emission + sizeof("mouse,clicked,") - 1);
    if (button == 1) return;  /* regular left click event */
    snprintf(buf, sizeof(buf), "elm,action,click,%d", button);
-   edje_object_signal_emit(VIEW(it), buf, "elm");
+   elm_layout_signal_emit(VIEW(it), buf, "elm");
 }
 
 static void
@@ -2015,7 +2015,7 @@ _item_reorder_start(Elm_Toolbar_Item_Data *item)
    evas_object_image_source_clip_set(img, EINA_FALSE);
 
    evas_object_layer_set(item->proxy, 100);
-   edje_object_signal_emit(VIEW(item), "elm,state,moving", "elm");
+   elm_layout_signal_emit(VIEW(item), "elm,state,moving", "elm");
 
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_MOUSE_MOVE,
@@ -2131,7 +2131,7 @@ _mouse_in_cb(void *data,
 {
    Elm_Toolbar_Item_Data *it = data;
 
-   edje_object_signal_emit(VIEW(it), "elm,state,highlighted", "elm");
+   elm_layout_signal_emit(VIEW(it), "elm,state,highlighted", "elm");
    if (it->icon)
      elm_widget_signal_emit(it->icon, "elm,state,highlighted", "elm");
 
@@ -2148,7 +2148,7 @@ _mouse_out_cb(void *data,
 {
    Elm_Toolbar_Item_Data *it = data;
 
-   edje_object_signal_emit(VIEW(it), "elm,state,unhighlighted", "elm");
+   elm_layout_signal_emit(VIEW(it), "elm,state,unhighlighted", "elm");
    if (it->icon)
      elm_widget_signal_emit(it->icon, "elm,state,unhighlighted", "elm");
 }
@@ -2342,7 +2342,7 @@ _item_new(Evas_Object *obj,
    it->object = NULL;
    WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
 
-   VIEW(it) = edje_object_add(evas_object_evas_get(obj));
+   VIEW(it) = elm_layout_add(obj);
    evas_object_data_set(VIEW(it), "item", it);
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
@@ -2360,15 +2360,15 @@ _item_new(Evas_Object *obj,
         evas_object_del(icon_obj);
      }
 
-   elm_widget_theme_object_set
-     (obj, VIEW(it), "toolbar", "item", elm_widget_style_get(obj));
-   edje_object_signal_callback_add
+   elm_layout_theme_set
+     (VIEW(it), "toolbar", "item", elm_widget_style_get(obj));
+   elm_layout_signal_callback_add
      (VIEW(it), "elm,action,click", "elm", _select_cb, it);
-   edje_object_signal_callback_add
+   elm_layout_signal_callback_add
      (VIEW(it), "mouse,clicked,*", "*", (Edje_Signal_Cb)_select_filter_cb, it);
-   edje_object_signal_callback_add
+   elm_layout_signal_callback_add
      (VIEW(it), "elm,mouse,in", "elm", _mouse_in_cb, it);
-   edje_object_signal_callback_add
+   elm_layout_signal_callback_add
      (VIEW(it), "elm,mouse,out", "elm", _mouse_out_cb, it);
    evas_object_event_callback_add
      (VIEW(it), EVAS_CALLBACK_MOUSE_DOWN, (Evas_Object_Event_Cb)_mouse_down_cb,
@@ -2384,15 +2384,15 @@ _item_new(Evas_Object *obj,
         ms = ((double)sd->icon_size * elm_config_scale_get());
         evas_object_size_hint_min_set(it->icon, ms, ms);
         evas_object_size_hint_max_set(it->icon, ms, ms);
-        edje_object_part_swallow(VIEW(it), "elm.swallow.icon", it->icon);
-        edje_object_signal_emit(VIEW(it), "elm,state,icon,visible", "elm");
+        elm_layout_content_set(VIEW(it), "elm.swallow.icon", it->icon);
+        elm_layout_signal_emit(VIEW(it), "elm,state,icon,visible", "elm");
         evas_object_show(it->icon);
         elm_widget_sub_object_add(obj, it->icon);
      }
    if (it->label)
      {
-        edje_object_part_text_escaped_set(VIEW(it), "elm.text", it->label);
-        edje_object_signal_emit(VIEW(it), "elm,state,text,visible", "elm");
+        elm_layout_text_set(VIEW(it), "elm.text", it->label);
+        elm_layout_signal_emit(VIEW(it), "elm,state,text,visible", "elm");
      }
 
    evas_object_event_callback_add
@@ -2408,15 +2408,15 @@ _elm_toolbar_item_icon_update(Elm_Toolbar_Item_Data *item)
 {
    Elm_Toolbar_Item_State *it_state;
    Evas_Object *old_icon =
-     edje_object_part_swallow_get(VIEW(item), "elm.swallow.icon");
+     elm_layout_content_get(VIEW(item), "elm.swallow.icon");
    Eina_List *l;
 
    elm_widget_sub_object_del(WIDGET(item), old_icon);
-   edje_object_part_swallow(VIEW(item), "elm.swallow.icon", item->icon);
+   elm_layout_content_set(VIEW(item), "elm.swallow.icon", item->icon);
    if (item->icon)
-       edje_object_signal_emit(VIEW(item), "elm,state,icon,visible", "elm");
+       elm_layout_signal_emit(VIEW(item), "elm,state,icon,visible", "elm");
    else
-       edje_object_signal_emit(VIEW(item), "elm,state,icon,hidden", "elm");
+       elm_layout_signal_emit(VIEW(item), "elm,state,icon,hidden", "elm");
    evas_object_hide(old_icon);
 
    EINA_LIST_FOREACH(item->states, l, it_state)
@@ -2434,11 +2434,11 @@ _elm_toolbar_item_icon_set_cb(void *data,
 {
    Elm_Toolbar_Item_Data *item = data;
 
-   edje_object_part_unswallow(VIEW(item), item->icon);
+   elm_layout_content_unset(VIEW(item), "elm.swallow.icon");
    _elm_toolbar_item_icon_update(item);
-   edje_object_signal_callback_del
+   elm_layout_signal_callback_del
      (obj, emission, source, _elm_toolbar_item_icon_set_cb);
-   edje_object_signal_emit(VIEW(item), "elm,state,icon,reset", "elm");
+   elm_layout_signal_emit(VIEW(item), "elm,state,icon,reset", "elm");
 }
 
 static void
@@ -2469,20 +2469,20 @@ _elm_toolbar_item_icon_obj_set(Evas_Object *obj,
         evas_object_show(item->icon);
         elm_widget_sub_object_add(obj, item->icon);
      }
-   s = edje_object_data_get(VIEW(item), "transition_animation_on");
+   s = elm_layout_data_get(VIEW(item), "transition_animation_on");
    if ((s) && (atoi(s)))
      {
-        old_icon = edje_object_part_swallow_get
+        old_icon = elm_layout_content_get
             (VIEW(item), "elm.swallow.icon_new");
         if (old_icon)
           {
              elm_widget_sub_object_del(WIDGET(item), old_icon);
              evas_object_hide(old_icon);
           }
-        edje_object_part_swallow
+        elm_layout_content_set
           (VIEW(item), "elm.swallow.icon_new", item->icon);
-        edje_object_signal_emit(VIEW(item), sig, "elm");
-        edje_object_signal_callback_add
+        elm_layout_signal_emit(VIEW(item), sig, "elm");
+        elm_layout_signal_callback_add
           (VIEW(item), "elm,state,icon_set,done", "elm",
           _elm_toolbar_item_icon_set_cb, item);
      }
