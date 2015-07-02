@@ -691,6 +691,150 @@ eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
    return image;
 }
 
+static void *
+eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, int *err)
+{
+   Render_Engine *re;
+   Evas_GL_Image *im;
+   int error;
+
+   re = (Render_Engine *)data;
+   if (!image)
+     {
+	*image_data = NULL;
+        if (err) *err = EVAS_LOAD_ERROR_GENERIC;
+	return NULL;
+     }
+   im = image;
+   if (im->native.data)
+     {
+        *image_data = NULL;
+        if (err) *err = EVAS_LOAD_ERROR_NONE;
+        return im;
+     }
+   if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.data))
+     {
+        *image_data = im->tex->pt->dyn.data;
+        if (err) *err = EVAS_LOAD_ERROR_NONE;
+        return im;
+     }
+   eng_window_use(re->win);
+   error = evas_cache_image_load_data(&im->im->cache_entry);
+   evas_gl_common_image_alloc_ensure(im);
+   switch (im->cs.space)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+	if (to_write)
+	  {
+	     if (im->references > 1)
+	       {
+		  Evas_GL_Image *im_new;
+
+   		  im_new = evas_gl_common_image_new_from_copied_data
+                     (im->gc, im->im->cache_entry.w, im->im->cache_entry.h,
+                         im->im->image.data,
+                         eng_image_alpha_get(data, image),
+                         eng_image_colorspace_get(data, image));
+   		  if (!im_new)
+   		    {
+   		       *image_data = NULL;
+                       if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+   		       return im;
+   		    }
+   		  evas_gl_common_image_free(im);
+   		  im = im_new;
+	       }
+   	     else
+   	       evas_gl_common_image_dirty(im, 0, 0, 0, 0);
+	  }
+	*image_data = im->im->image.data;
+	break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+      case EVAS_COLORSPACE_YCBCR422601_PL:
+      case EVAS_COLORSPACE_YCBCR420NV12601_PL:
+      case EVAS_COLORSPACE_YCBCR420TM12601_PL:
+	*image_data = im->cs.data;
+	break;
+      default:
+	abort();
+	break;
+     }
+   if (err) *err = error;
+   return im;
+}
+
+static void *
+eng_image_data_put(void *data, void *image, DATA32 *image_data)
+{
+   Render_Engine *re;
+   Evas_GL_Image *im, *im2;
+
+   re = (Render_Engine *)data;
+   if (!image) return NULL;
+   im = image;
+   if (im->native.data) return image;
+   eng_window_use(re->win);
+   evas_gl_common_image_alloc_ensure(im);
+   if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.data))
+     {
+        if (im->tex->pt->dyn.data == image_data)
+          {
+             return image;
+          }
+        else
+          {
+	     int w, h;
+
+	     w = im->im->cache_entry.w;
+	     h = im->im->cache_entry.h;
+	     im2 = eng_image_new_from_data(data, w, h, image_data,
+					   eng_image_alpha_get(data, image),
+					   eng_image_colorspace_get(data, image));
+   	     if (!im2) return im;
+   	     evas_gl_common_image_free(im);
+   	     im = im2;
+             evas_gl_common_image_dirty(im, 0, 0, 0, 0);
+             return im;
+          }
+     }
+   switch (im->cs.space)
+     {
+      case EVAS_COLORSPACE_ARGB8888:
+	if (image_data != im->im->image.data)
+	  {
+	     int w, h;
+
+	     w = im->im->cache_entry.w;
+	     h = im->im->cache_entry.h;
+	     im2 = eng_image_new_from_data(data, w, h, image_data,
+					   eng_image_alpha_get(data, image),
+					   eng_image_colorspace_get(data, image));
+   	     if (!im2) return im;
+   	     evas_gl_common_image_free(im);
+   	     im = im2;
+	  }
+        break;
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+        if (image_data != im->cs.data)
+	  {
+	     if (im->cs.data)
+	       {
+		  if (!im->cs.no_free) free(im->cs.data);
+	       }
+	     im->cs.data = image_data;
+	  }
+	break;
+      default:
+	abort();
+	break;
+     }
+   /* hmmm - but if we wrote... why bother? */
+   evas_gl_common_image_dirty(im, 0, 0, 0, 0);
+   return im;
+}
+
 static void
 eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const Eo *target)
 {
@@ -1235,6 +1379,8 @@ module_open(Evas_Module *em)
    ORD(image_size_get);
    ORD(image_size_set);
    ORD(image_dirty_region);
+   ORD(image_data_get);
+   ORD(image_data_put);
    ORD(image_data_preload_request);
    ORD(image_data_preload_cancel);
    ORD(image_alpha_set);
