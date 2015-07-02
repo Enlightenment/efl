@@ -1535,15 +1535,15 @@ _evas_image_alpha_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool has_alpha)
         o->preloading = EINA_FALSE;
         ENFN->image_data_preload_cancel(ENDT, o->engine_data, eo_obj);
      }
-   if (((has_alpha) && (o->cur->has_alpha)) ||
-       ((!has_alpha) && (!o->cur->has_alpha)))
+
+   has_alpha = !!has_alpha;
+   if (has_alpha == o->cur->has_alpha)
      return;
-   if (o->cur->has_alpha != has_alpha)
-     {
-        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
-          state_write->has_alpha = has_alpha;
-        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
-     }
+
+   EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+     state_write->has_alpha = has_alpha;
+   EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+
    if (o->engine_data)
      {
         int stride = 0;
