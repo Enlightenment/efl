@@ -1640,6 +1640,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
       Elm.Widget.event;
       Elm_Interface_Atspi_Accessible.parent.get;
       Elm_Interface_Atspi_Accessible.state_set.get;
+      Elm_Interface_Atspi_Accessible.name.get;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    constructors {

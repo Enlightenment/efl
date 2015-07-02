@@ -5533,4 +5533,11 @@ _elm_win_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Win_Data *sd 
    return ret;
 }
 
+EOLIAN static char*
+_elm_win_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Win_Data *sd EINA_UNUSED)
+{
+   const char *ret = elm_win_title_get(obj);
+   return ret ? strdup(ret) : strdup("");
+}
+
 #include "elm_win.eo.c"
