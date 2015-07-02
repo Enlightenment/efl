@@ -4,175 +4,106 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
    methods {
       @property audio_level {
          set {
-            /*@
-            @brief Set the audio level of an Elm_Video object.
-
-            @ingroup Video */
+            [[Set the audio level of an Elm_Video object.]]
          }
          get {
-            /*@
-            @brief Get the audio level of the current video.
-
-            @return the current audio level.
-
-            @ingroup Video */
+            [[Get the audio level of the current video.]]
          }
          values {
-            volume: double; /*@ The new audio volume. */
+            volume: double; [[The audio level.]]
          }
       }
       @property remember_position {
          set {
-            /*@
-            @brief Set whether the object can remember the last played position.
+            [[Set whether the object can remember the last played position.
 
-            @note This API only serves as indication. System support is required.
-
-            @ingroup Video */
+              Note: This API only serves as indication. System support is
+              required.
+            ]]
          }
          get {
-            /*@
-            @brief Set whether the object can remember the last played position.
+            [[Set whether the object can remember the last played position.
 
-            @return whether the object remembers the last played position (@c EINA_TRUE)
-            or not.
-
-            @note This API only serves as indication. System support is required.
-
-            @ingroup Video */
+              Note: This API only serves as indication. System support is
+              required.
+            ]]
          }
          values {
-            remember: bool; /*@ the last played position of the Elm_Video object. */
+            remember: bool; [[The value.]]
          }
       }
       @property play_position {
          set {
-            /*@
-            @brief Set the current position (in seconds) to be played in the
-            Elm_Video object.
-
-            @ingroup Video */
+            [[Set the current position (in seconds) to be played in the
+              Elm_Video object.]]
          }
          get {
-            /*@
-            @brief Get the current position (in seconds) being played in the
-            Elm_Video object.
-
-            @return The time (in seconds) since the beginning of the media file.
-
-            @ingroup Video */
+            [[Get the current position (in seconds) being played in the
+              Elm_Video object.]]
          }
          values {
-            position: double; /*@ The time (in seconds) since the beginning of the media file. */
+            position: double; [[The time (in seconds) since the beginning of
+                                the media file.]]
          }
       }
       @property audio_mute {
          set {
-            /*@
-            @brief Change the mute state of the Elm_Video object.
-
-            @ingroup Video */
+            [[Change the mute state of the Elm_Video object.]]
          }
          get {
-            /*@
-            @brief Is the audio muted.
-
-            @return @c EINA_TRUE if the audio is muted.
-
-            @ingroup Video */
+            [[Get whether audio is muted.]]
          }
          values {
-            mute: bool; /*@ The new mute state. */
+            mute: bool; [[The mute state.]]
          }
       }
       @property is_playing {
          get {
-            /*@
-            @brief Is the video actually playing.
+            [[Is the video actually playing.
 
-            @return @c EINA_TRUE if the video is actually playing.
-
-            You should consider watching event on the object instead of polling
-            the object state.
-
-            @ingroup Video */
+              You should consider watching event on the object instead of
+              polling the object state.
+            ]]
             return: bool;
          }
       }
       @property play_length {
          get {
-            /*@
-            @brief Get the total playing time (in seconds) of the Elm_Video object.
-
-            @return The total duration (in seconds) of the media file.
-
-            @ingroup Video */
-            return: double;
+            [[Get the total playing time (in seconds) of the Elm_Video object.]]
+            return: double; [[The total duration (in seconds) of the media file.]]
          }
       }
       @property emotion {
          get {
-            /*@
-            @brief Get the underlying Emotion object.
-
-            @return the underlying Emotion object.
-
-            @ingroup Video */
-            return: Evas.Object *;
+            [[Get the underlying Emotion object.]]
+            return: Evas.Object *; [[the underlying Emotion object.]]
          }
       }
       @property is_seekable {
          get {
-            /*@
-            @brief Is it possible to seek inside the video.
-
-            @return @c EINA_TRUE if is possible to seek inside the video.
-
-            @ingroup Video */
-            return: bool;
+            [[Is it possible to seek inside the video.]]
+            return: bool; [[true if is possible to seek inside the video.]]
          }
       }
       @property title {
          get {
-            /*@
-            @brief Get the title (for instance DVD title) from this emotion object.
+            [[Get the title (for instance DVD title) from this emotion object.
 
-            @return A string containing the title.
+              This function is only useful when playing a DVD.
 
-            This function is only useful when playing a DVD.
-
-            @note Don't change or free the string returned by this function.
-
-            @ingroup Video */
-            return: const(char)*;
+              Note: Don't change or free the string returned by this function.
+            ]]
+            return: const(char)*; [[A string containing the title.]]
          }
       }
       play {
-         /*@
-         @brief Start to play the video
-
-         Start to play the video and cancel all suspend state.
-
-         @ingroup Video */
-
+         [[Start playing a video.]]
       }
       pause {
-         /*@
-         @brief Pause the video
-
-         Pause the video and start a timer to trigger suspend mode.
-
-         @ingroup Video */
-
+         [[Pause a video.]]
       }
       stop {
-         /*@
-         @brief Stop the video
-
-         Stop the video and put the emotion in deep sleep mode.
-
-         @ingroup Video */
-
+         [[Stop a video.]]
       }
    }
    implements {
