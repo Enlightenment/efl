@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <unistd.h>
 
 #include <Eo.h>
 
@@ -37,8 +38,8 @@ struct _Ecore_Animator_Data
 
 typedef struct _Ecore_Animator_Data Ecore_Animator_Data;
 
+static Eina_Bool _do_tick(void);
 static Eina_Bool _ecore_animator_run(void *data);
-static Eina_Bool _ecore_animator(void *data);
 
 static int animators_delete_me = 0;
 static Ecore_Animator_Data *animators = NULL;
@@ -46,13 +47,145 @@ static double animators_frametime = 1.0 / 30.0;
 static unsigned int animators_suspended = 0;
 
 static Ecore_Animator_Source src = ECORE_ANIMATOR_SOURCE_TIMER;
-static Ecore_Timer *timer = NULL;
 static int ticking = 0;
 static Ecore_Cb begin_tick_cb = NULL;
 static const void *begin_tick_data = NULL;
 static Ecore_Cb end_tick_cb = NULL;
 static const void *end_tick_data = NULL;
 static Eina_Bool animator_ran = EINA_FALSE;
+
+
+static Eina_Thread_Queue *timer_thq = NULL;
+static Ecore_Thread *timer_thread = NULL;
+static volatile int timer_event_is_busy = 0;
+
+typedef struct
+{
+   Eina_Thread_Queue_Msg head;
+   char val;
+} Msg;
+
+static void
+_tick_send(char val)
+{
+   Msg *msg;
+   void *ref;
+   DBG("_tick_send(%i)", val);
+   msg = eina_thread_queue_send(timer_thq, sizeof(Msg), &ref);
+   msg->val = val;
+   eina_thread_queue_send_done(timer_thq, ref);
+}
+
+static void
+_timer_send_time(double t)
+{
+   double *tim = malloc(sizeof(*tim));
+   if (tim)
+     {
+        *tim = t;
+        DBG("   ... send %1.8f", t);
+        ecore_thread_feedback(timer_thread, tim);
+     }
+}
+
+static void
+_timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
+{
+   Msg *msg;
+   void *ref;
+   int tick = 0;
+
+   while (!ecore_thread_check(thread))
+     {
+        DBG("------- timer_event_is_busy=%i", timer_event_is_busy);
+        if (!timer_event_is_busy)
+          {
+             DBG("wait...");
+             msg = eina_thread_queue_wait(timer_thq, &ref);
+             if (msg)
+               {
+                  tick = msg->val;
+                  eina_thread_queue_wait_done(timer_thq, ref);
+               }
+          }
+        else
+          {
+             do
+               {
+                  DBG("poll...");
+                  msg = eina_thread_queue_poll(timer_thq, &ref);
+                  if (msg)
+                    {
+                       tick = msg->val;
+                       eina_thread_queue_wait_done(timer_thq, ref);
+                    }
+               }
+             while (msg);
+          }
+        DBG("tick = %i", tick);
+        if (tick == -1)
+          {
+             timer_thread = NULL;
+             eina_thread_queue_free(timer_thq);
+             timer_thq = NULL;
+             return;
+          }
+        else if (tick)
+          {
+             double t0 = ecore_time_get();
+             double d = fmod(t0, animators_frametime);
+
+             usleep((animators_frametime - d) * 1000000);
+             _timer_send_time(t0 - d + animators_frametime);
+          }
+     }
+}
+
+static void
+_timer_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void *msg)
+{
+   DBG("notify.... %3.3f %i", *((double *)msg), timer_event_is_busy);
+   if (timer_event_is_busy)
+     {
+        double *t = msg;
+        static double pt = 0.0;
+
+        DBG("VSYNC %1.8f = delt %1.8f", *t, *t - pt);
+        ecore_loop_time_set(*t);
+        _do_tick();
+        pt = *t;
+     }
+   free(msg);
+}
+
+static void
+_timer_tick_begin(void)
+{
+   if (!timer_thq)
+     {
+        timer_thq = eina_thread_queue_new();
+        timer_thread = ecore_thread_feedback_run(_timer_tick_core,
+                                                 _timer_tick_notify,
+                                                 NULL, NULL, NULL, EINA_TRUE);
+     }
+   timer_event_is_busy = 1;
+   _tick_send(1);
+}
+
+static void
+_timer_tick_end(void)
+{
+   if (!timer_thq) return;
+   timer_event_is_busy = 0;
+   _tick_send(0);
+}
+
+static void
+_timer_tick_quit(void)
+{
+   if (!timer_thq) return;
+   _tick_send(-1);
+}
 
 static Eina_Bool
 _have_animators(void)
@@ -72,16 +205,7 @@ _begin_tick(void)
    switch (src)
      {
       case ECORE_ANIMATOR_SOURCE_TIMER:
-        if (!timer)
-          {
-             double t_loop = ecore_loop_time_get();
-             double sync_0 = 0.0;
-             double d = -fmod(t_loop - sync_0, animators_frametime);
-
-             timer = _ecore_timer_loop_add(animators_frametime,
-                                           _ecore_animator, NULL);
-             _ecore_timer_util_delay(timer, d);
-          }
+        _timer_tick_begin();
         break;
 
       case ECORE_ANIMATOR_SOURCE_CUSTOM:
@@ -99,11 +223,7 @@ _end_tick(void)
    if (!ticking) return;
    ticking = 0;
 
-   if (timer)
-     {
-        _ecore_timer_del(timer);
-        timer = NULL;
-     }
+   _timer_tick_end();
 
    if ((src == ECORE_ANIMATOR_SOURCE_CUSTOM) && end_tick_cb)
      end_tick_cb((void *)end_tick_data);
@@ -659,6 +779,7 @@ ecore_animator_custom_tick(void)
 void
 _ecore_animator_shutdown(void)
 {
+   _timer_tick_quit();
    _end_tick();
    while (animators)
      {
@@ -708,24 +829,6 @@ _ecore_animator_run(void *data)
    run_ret = animator->run_func(animator->run_data, pos);
    if (t >= (animator->start + animator->run)) run_ret = EINA_FALSE;
    return run_ret;
-}
-
-static Eina_Bool
-_ecore_animator(void *data EINA_UNUSED)
-{
-   double t;
-
-   Eina_Bool r;
-   _ecore_lock();
-   // set _ecore_time_loop_time to the EXACT time that the timer
-   // should have ticked off (even if it didn't)
-   // if you have a custom animator tick, you may need to adjust inside
-   // it before calling ecore_animator_custom_tick()
-   t = fmod(_ecore_time_loop_time, animators_frametime);
-   _ecore_time_loop_time -= t;
-   r = _do_tick();
-   _ecore_unlock();
-   return r;
 }
 
 #include "ecore_animator.eo.c"
