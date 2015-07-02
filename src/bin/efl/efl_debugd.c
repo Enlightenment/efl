@@ -127,8 +127,8 @@ _do(Client *c, char *op, unsigned char *d, int size)
 
                   send_cli(c2->client, "EVON", NULL, 0);
                   c2->evlog_fetch_timer = ecore_timer_add(0.2, _cb_evlog, c2);
-                  snprintf(buf, sizeof(buf), "%s/efl_debug_evlog-%i.log",
-                           getenv("HOME"), c2->pid);
+                  snprintf(buf, sizeof(buf), "%s/efl_debug_evlog-%ld.log",
+                           getenv("HOME"), (long)c2->pid);
                   c2->evlog_file = fopen(buf, "w");
                }
           }
