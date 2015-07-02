@@ -501,6 +501,7 @@ struct slave_cmd
    {NULL, NULL}
 };
 
+#ifndef _WIN32
 static Eina_Bool
 _slave_mode(void *data, Ecore_Fd_Handler *fd_handler)
 {
@@ -570,6 +571,7 @@ _slave_mode(void *data, Ecore_Fd_Handler *fd_handler)
 
    return ECORE_CALLBACK_RENEW;
 }
+#endif
 
 static void
 _print_signal(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, const char *emission, const char *source)
