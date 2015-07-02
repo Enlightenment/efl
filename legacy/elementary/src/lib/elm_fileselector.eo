@@ -5,32 +5,25 @@ class Elm.Fileselector (Elm.Layout, Elm_Interface_Fileselector,
    methods {
       @property buttons_ok_cancel {
          set {
-            /*@
-            Enable/disable the "ok" and "cancel" buttons on a given file
-            selector widget
+            [[Enable/disable the "ok" and "cancel" buttons on a given file
+              selector widget
 
-            @note A file selector without those buttons will never emit the
-            @c "done" smart event, and is only usable if one is just hooking
-            to the other two events.
+              Note: A file selector without those buttons will never emit the
+              "done" smart event, and is only usable if one is just hooking
+              to the other two events.
 
-            @see elm_fileselector_buttons_ok_cancel_get()
-
-            @ingroup Fileselector */
+              See also @elm_fileselector_buttons_ok_cancel_get.
+            ]]
          }
          get {
-            /*@
-            Get whether the "ok" and "cancel" buttons on a given file
-            selector widget are being shown.
+            [[Get whether the "ok" and "cancel" buttons on a given file
+              selector widget are being shown.
 
-            @return @c EINA_TRUE if they are being shown, @c EINA_FALSE
-            otherwise (and on errors)
-
-            @see elm_fileselector_buttons_ok_cancel_set() for more details
-
-            @ingroup Fileselector */
+              See also @elm_fileselector_buttons_ok_cancel_set for more details.
+            ]]
          }
          values {
-            visible: bool; /*@ @c EINA_TRUE to show buttons, @c EINA_FALSE to hide. */
+            visible: bool; [[true to show buttons, false to hide.]]
          }
       }
    }
