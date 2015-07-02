@@ -4,84 +4,70 @@ class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_
    methods {
       @property editable {
          set {
-            /*@
-            Set editability of the photo.
+            [[Set editability of the photo.
 
-            An editable photo can be dragged to or from, and can be cut or
-            pasted too. Note that pasting an image or dropping an item on
-            the image will delete the existing content. */
+              An editable photo can be dragged to or from, and can be cut or
+              pasted too. Note that pasting an image or dropping an item on
+              the image will delete the existing content.
+            ]]
          }
          get {
-            /*@ Get editability of the photo. */
+            [[Get editability of the photo.]]
          }
          values {
-            set: bool; /*@ To set of clear editability. */
+            set: bool; [[To set of clear editability.]]
          }
       }
       @property fill_inside {
          set {
-            /*@
-            Set if the photo should be completely visible or not.
-
-            @ingroup Photo */
+            [[Set if the photo should be completely visible or not.]]
          }
          get {
-            /*@ Get if the photo should be completely visible or not. */
+            [[Get if the photo should be completely visible or not.]]
          }
          values {
-            fill: bool; /*@ if true the photo will be completely visible */
+            fill: bool; [[Photo visibility.]]
          }
       }
       @property aspect_fixed {
          set {
-            /*@
-            Set whether the original aspect ratio of the photo should be kept on resize.
+            [[Set whether the original aspect ratio of the photo should be kept
+              on resize.
 
-            The original aspect ratio (width / height) of the photo is usually
-            distorted to match the object's size. Enabling this option will fix
-            this original aspect, and the way that the photo is fit into
-            the object's area
+              The original aspect ratio (width / height) of the photo is
+              usually distorted to match the object's size. Enabling this
+              option will fix this original aspect, and the way that the
+              photo is fit into the object's area.
 
-            @see elm_photo_aspect_fixed_get()
-
-            @ingroup Photo */
+              See also @elm_photo_aspect_fixed_get.
+            ]]
          }
          get {
-            /*@
-            Get if the object keeps the original aspect ratio.
-
-            @return @c EINA_TRUE if the object keeps the original aspect, @c EINA_FALSE
-            otherwise.
-
-            @ingroup Photo */
+            [[Get if the object keeps the original aspect ratio.]]
          }
          values {
-            fixed: bool; /*@ @c EINA_TRUE if the photo should fix the aspect,
-            @c EINA_FALSE otherwise. */
+            fixed: bool; [[true if the photo should fix the aspect,
+                           false otherwise.]]
          }
       }
       @property size {
          set {
-            /*@
-            Set the size that will be used on the photo
-
-            @ingroup Photo */
+            [[Set the size that will be used on the photo]]
          }
          get {
-            /*@ Get the size that will be used on the photo */
+            [[Get the size that will be used on the photo]]
          }
          values {
-            size: int; /*@ The size of the photo */
+            size: int; [[The size of the photo]]
          }
       }
       thumb_set @const {
-         /*@
-           Set the file that will be used as thumbnail in the photo.
-
-           @ingroup Photo */
+         [[Set the file that will be used as thumbnail in the photo.]]
          params {
-            @in file: const(char)* @nullable; /*@ The path to file that will be used as thumbnail. */
-            @in group: const(char)* @optional; /*@ The key used in case of an EET file. */
+            @in file: const(char)* @nullable; [[The path to file that will be
+                                                used as thumbnail.]]
+            @in group: const(char)* @optional; [[The key used in case of an EET
+                                                 file.]]
          }
       }
    }
