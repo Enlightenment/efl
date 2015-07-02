@@ -1140,8 +1140,7 @@ EAPI Eina_Tiler *eina_tiler_new(int w, int h)
 {
    Eina_Tiler *t;
 
-   if ((w <= 0) || (h <= 0))
-     return NULL;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((w <= 0) || (h <= 0), NULL);
 
    t = calloc(1, sizeof(Eina_Tiler));
    t->last.add.w = -1;
