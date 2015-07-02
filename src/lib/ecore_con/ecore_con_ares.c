@@ -434,7 +434,10 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
                              struct hostent *hostent)
 {
    struct sockaddr *addr;
+   Ecore_Con_Server_Data *svr;
    int addrlen;
+
+   svr = eo_data_scope_get(arg->svr, ECORE_CON_SERVER_CLASS);
 
    /* Found something ? */
    switch (status)
@@ -445,8 +448,6 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
              ERR("No IP found");
              goto on_error;
           }
-
-        Ecore_Con_Server_Data *svr = eo_data_scope_get(arg->svr, ECORE_CON_SERVER_CLASS);
 
         switch (hostent->h_addrtype)
           {
