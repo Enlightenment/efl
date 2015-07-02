@@ -53,8 +53,11 @@ static int _evas_engine_GL_log_dom = -1;
 # endif
 #endif
 
-static int eng_gl_image_direct_get(void *data EINA_UNUSED, void *image);
+static int eng_gl_image_direct_get(void *data, void *image);
 static int eng_gl_surface_destroy(void *data, void *surface);
+static Eina_Bool eng_gl_surface_lock(void *data, void *surface);
+static Eina_Bool eng_gl_surface_unlock(void *data, void *surface);
+static Eina_Bool eng_gl_surface_read_pixels(void *data, void *surface, int x, int y, int w, int h, Evas_Colorspace cspace, void *pixels);
 
 static void
 eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h, Eina_Bool do_async EINA_UNUSED)
@@ -573,23 +576,20 @@ eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 }
 
 static Evas_GL_Image *
-_rotate_image_data(void *data, void *img)
+_rotate_image_data(Render_Engine_GL_Generic *re, Evas_GL_Image *im1)
 {
    int alpha;
-   Evas_GL_Image *im1, *im2;
+   Evas_GL_Image *im2;
    Evas_Engine_GL_Context *gl_context;
-   Render_Engine_GL_Generic *re = data;
    RGBA_Draw_Context *dc;
-   DATA32 *pixels;
    int w, h;
 
    re->window_use(re->software.ob);
    gl_context = re->window_gl_context_get(re->software.ob);
-   im1 = img;
 
    w = im1->w;
    h = im1->h;
-   alpha = eng_image_alpha_get(data, img);
+   alpha = eng_image_alpha_get(re, im1);
 
    if (im1->orient == EVAS_IMAGE_ORIENT_90 ||
        im1->orient == EVAS_IMAGE_ORIENT_270 ||
@@ -614,71 +614,51 @@ _rotate_image_data(void *data, void *img)
                              0, 0, w, h,
                              0, 0, im2->w, im2->h,
                              0);
-   // Do not forget to flush everything or you will have nothing in your buffer
-   evas_gl_common_context_flush(gl_context);
 
    gl_context->dc = NULL;
    evas_common_draw_context_free(dc);
 
-   glsym_glBindFramebuffer(GL_FRAMEBUFFER, im2->tex->pt->fb);
+   // flush everything
+   eng_gl_surface_lock(re, im2);
 
    // Rely on Evas_GL_Image infrastructure to allocate pixels
    im2->im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
    if (!im2->im) return NULL;
    im2->im->cache_entry.flags.alpha = !!alpha;
    evas_gl_common_image_alloc_ensure(im2);
-   pixels = im2->im->image.data;
 
-   if (im2->tex->pt->format == GL_BGRA)
-     {
-        glReadPixels(0, 0, im2->w, im2->h, GL_BGRA,
-                     GL_UNSIGNED_BYTE, pixels);
-     }
-   else
-     {
-        DATA32 *ptr = pixels;
-        unsigned int k;
+   eng_gl_surface_read_pixels(re, im2, 0, 0, im2->w, im2->h,
+                              EVAS_COLORSPACE_ARGB8888, im2->im->image.data);
 
-        glReadPixels(0, 0, im2->w, im2->h, GL_RGBA,
-                     GL_UNSIGNED_BYTE, pixels);
-        for (k = im2->w * im2->h; k; --k)
-          {
-             const DATA32 v = *ptr;
-             *ptr++ = (v & 0xFF00FF00)
-               | ((v & 0x00FF0000) >> 16)
-               | ((v & 0x000000FF) << 16);
-          }
-     }
-
-   glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+   eng_gl_surface_unlock(re, im2);
    return im2;
 }
 
 static void *
-eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, int *err)
+eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, int *err, Eina_Bool *tofree)
 {
    Render_Engine_GL_Generic *re = data;
-   Evas_GL_Image *im;
+   Evas_GL_Image *im_new = NULL;
+   Evas_GL_Image *im = image;
    int error;
 
    *image_data = NULL;
+   if (tofree) tofree = EINA_FALSE;
+   if (err) *err = EVAS_LOAD_ERROR_NONE;
 
-   if (!image)
+   if (!im)
      {
         if (err) *err = EVAS_LOAD_ERROR_GENERIC;
         return NULL;
      }
-   im = image;
-   if (im->native.data)
-     {
-        if (err) *err = EVAS_LOAD_ERROR_NONE;
-        return im;
-     }
 
-   if (im->orient != EVAS_IMAGE_ORIENT_NONE)
+   if (im->native.data)
+     return im;
+
+   if (im->im &&
+       im->orient != EVAS_IMAGE_ORIENT_NONE)
      {
-        Evas_GL_Image *im_new = _rotate_image_data(data, image);
+        im_new = _rotate_image_data(data, image);
         if (!im_new)
           {
              if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
@@ -694,13 +674,14 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
    re->window_use(re->software.ob);
 
    if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.img) && 
-       (im->cs.space == EVAS_COLORSPACE_ARGB8888))
+       (im->cs.space == EVAS_COLORSPACE_ARGB8888) &&
+       secsym_tbm_surface_map &&
+       secsym_eglMapImageSEC)
      {
         if (im->tex->pt->dyn.checked_out > 0)
           {
              im->tex->pt->dyn.checked_out++;
              *image_data = im->tex->pt->dyn.data;
-             if (err) *err = EVAS_LOAD_ERROR_NONE;
              return im;
           }
         if (im->gc->shared->info.sec_tbm_surface)
@@ -734,22 +715,73 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
    if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.data))
      {
         *image_data = im->tex->pt->dyn.data;
-        if (err) *err = EVAS_LOAD_ERROR_NONE;
         return im;
      }
 
    re->window_use(re->software.ob);
 #endif
 
+   /* use glReadPixels for FBOs (assume fbo > 0) */
+   if (!im->im && im->tex && im->tex->pt && im->tex->pt->fb)
+     {
+        Eina_Bool ok;
+
+        if (to_write)
+          {
+             // This could be implemented, but can't be efficient at all.
+             // Apps should avoid this situation.
+             ERR("Can not retrieve image data from FBO to write it back.");
+             if (err) *err = EVAS_LOAD_ERROR_GENERIC;
+             return NULL;
+          }
+
+        if (!tofree)
+          {
+             ERR("FBO image must be freed after image_data_get.");
+             if (err) *err = EVAS_LOAD_ERROR_GENERIC;
+             return NULL;
+          }
+
+        ok = eng_gl_surface_lock(data, im);
+        if (!ok)
+          {
+             if (err) *err = EVAS_LOAD_ERROR_GENERIC;
+             return NULL;
+          }
+
+        im_new = evas_gl_common_image_new_from_copied_data
+              (im->gc, im->tex->w, im->tex->h, NULL,
+               eng_image_alpha_get(data, image), EVAS_COLORSPACE_ARGB8888);
+        if (!im_new)
+          {
+             if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+             return NULL;
+          }
+
+        ok = eng_gl_surface_read_pixels
+              (data, im, 0, 0, im_new->w, im_new->h,
+               EVAS_COLORSPACE_ARGB8888, im_new->im->image.data);
+        eng_gl_surface_unlock(data, im);
+        if (!ok)
+          {
+             if (err) *err = EVAS_LOAD_ERROR_GENERIC;
+             return NULL;
+          }
+        *image_data = im_new->im->image.data;
+        if (tofree) *tofree = EINA_TRUE;
+        return im_new;
+     }
+
    /* Engine can be fail to create texture after cache drop like eng_image_content_hint_set function,
         so it is need to add code which check im->im's NULL value*/
 
    if (!im->im)
-    {
-       *image_data = NULL;
-       if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-       return NULL;
-    }
+     {
+        // FIXME: Should we create an FBO and draw the texture there, to then read it back?
+        ERR("GL image has no source data, failed to get pixel data");
+        if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return NULL;
+     }
 
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->im->cache_entry))
@@ -767,8 +799,6 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
            {
               if (im->references > 1)
                 {
-                   Evas_GL_Image *im_new;
-
                    im_new = evas_gl_common_image_new_from_copied_data
                       (im->gc, im->im->cache_entry.w, im->im->cache_entry.h,
                        im->im->image.data,
@@ -776,7 +806,6 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
                        eng_image_colorspace_get(data, image));
                    if (!im_new)
                      {
-                        *image_data = NULL;
                         if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
                         return NULL;
                      }
@@ -801,7 +830,6 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
       case EVAS_COLORSPACE_ETC1_ALPHA:
          ERR("This image is encoded in ETC1 or ETC2, not returning any data");
          error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-         *image_data = NULL;
          break;
       default:
          abort();
@@ -1599,7 +1627,7 @@ eng_gl_surface_lock(void *data EINA_UNUSED, void *surface)
 {
    Evas_GL_Image *im = surface;
 
-   if (!im->tex || !im->tex->pt)
+   if (!im || !im->tex || !im->tex->pt)
      {
         ERR("Can not lock image that is not a surface!");
         return EINA_FALSE;
@@ -1625,7 +1653,7 @@ eng_gl_surface_read_pixels(void *data EINA_UNUSED, void *surface,
                            Evas_Colorspace cspace, void *pixels)
 {
    Evas_GL_Image *im = surface;
-   GLint fmt = GL_BGRA;
+   GLint fmt = GL_BGRA, fbo = 0;
    int done = 0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pixels, EINA_FALSE);
@@ -1647,7 +1675,9 @@ eng_gl_surface_read_pixels(void *data EINA_UNUSED, void *surface,
     * But some devices don't support GL_BGRA, so we still need to convert.
     */
 
-   glsym_glBindFramebuffer(GL_FRAMEBUFFER, im->tex->pt->fb);
+   glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fbo);
+   if (fbo != (GLint) im->tex->pt->fb)
+     glsym_glBindFramebuffer(GL_FRAMEBUFFER, im->tex->pt->fb);
    glPixelStorei(GL_PACK_ALIGNMENT, 4);
 
    // With GLX we will try to read BGRA even if the driver reports RGBA
@@ -1676,7 +1706,8 @@ eng_gl_surface_read_pixels(void *data EINA_UNUSED, void *surface,
           }
      }
 
-   glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
+   if (fbo != (GLint) im->tex->pt->fb)
+     glsym_glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
    return EINA_TRUE;
 }

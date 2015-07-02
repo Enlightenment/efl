@@ -1212,17 +1212,20 @@ eng_image_dirty_region(void *data EINA_UNUSED, void *image, int x, int y, int w,
 }
 
 static void *
-eng_image_data_get(void *data EINA_UNUSED, void *image, int to_write, DATA32 **image_data, int *err)
+eng_image_data_get(void *data EINA_UNUSED, void *image, int to_write, DATA32 **image_data, int *err, Eina_Bool *tofree)
 {
-   RGBA_Image *im;
+   RGBA_Image *im = image;
    int error = EVAS_LOAD_ERROR_NONE;
 
-   if (!image)
+   *image_data = NULL;
+   if (err) *err = EVAS_LOAD_ERROR_NONE;
+   if (tofree) *tofree = EINA_FALSE;
+
+   if (!im)
      {
-	*image_data = NULL;
-	return NULL;
+        if (err) *err = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+        return NULL;
      }
-   im = image;
 
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
@@ -1235,7 +1238,7 @@ eng_image_data_get(void *data EINA_UNUSED, void *image, int to_write, DATA32 **i
              im = (RGBA_Image *)evas_cache2_image_writable(&im->cache_entry);
              if (!im)
                {
-                  *image_data = NULL;
+                  if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
                   return NULL;
                }
           }

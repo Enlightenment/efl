@@ -1216,6 +1216,8 @@ _evas_image_data_convert(Eo *eo_obj, Evas_Image_Data *o, Evas_Colorspace to_cspa
    DATA32 *data;
    void* result = NULL;
 
+   // FIXME: This function is not really useful, and can't work with GL.
+
    evas_object_async_block(obj);
    if ((o->preloading) && (o->engine_data))
      {
@@ -1227,7 +1229,7 @@ _evas_image_data_convert(Eo *eo_obj, Evas_Image_Data *o, Evas_Colorspace to_cspa
      o->pixels->video.update_pixels(o->pixels->video.data, eo_obj, &o->pixels->video);
    if (o->cur->cspace == to_cspace) return NULL;
    data = NULL;
-   o->engine_data = ENFN->image_data_get(ENDT, o->engine_data, 0, &data, &o->load_error);
+   o->engine_data = ENFN->image_data_get(ENDT, o->engine_data, 0, &data, &o->load_error, NULL);
    result = evas_object_image_data_convert_internal(o, data, to_cspace);
    if (o->engine_data)
      {
@@ -1324,6 +1326,8 @@ EOLIAN static void*
 _evas_image_data_get(const Eo *eo_obj, Evas_Image_Data *_pd EINA_UNUSED, Eina_Bool for_writing)
 {
    Evas_Image_Data *o = (Evas_Image_Data *) _pd;
+   int stride = 0;
+   void *pixels;
    DATA32 *data;
 
    if (!o->engine_data) return NULL;
@@ -1338,27 +1342,24 @@ _evas_image_data_get(const Eo *eo_obj, Evas_Image_Data *_pd EINA_UNUSED, Eina_Bo
      ENFN->image_scale_hint_set(ENDT, o->engine_data, o->scale_hint);
    if (ENFN->image_content_hint_set)
      ENFN->image_content_hint_set(ENDT, o->engine_data, o->content_hint);
-   o->engine_data = ENFN->image_data_get(ENDT, o->engine_data, for_writing, &data, &o->load_error);
+   pixels = ENFN->image_data_get(ENDT, o->engine_data, for_writing, &data, &o->load_error, NULL);
 
    /* if we fail to get engine_data, we have to return NULL */
-   if (!o->engine_data) return NULL;
+   if (!pixels) return NULL;
 
-   if (o->engine_data)
+   o->engine_data = pixels;
+   if (ENFN->image_stride_get)
+     ENFN->image_stride_get(ENDT, o->engine_data, &stride);
+   else
+     stride = o->cur->image.w * 4;
+
+   if (o->cur->image.stride != stride)
      {
-        int stride = 0;
-
-        if (ENFN->image_stride_get)
-          ENFN->image_stride_get(ENDT, o->engine_data, &stride);
-        else
-          stride = o->cur->image.w * 4;
-
-        if (o->cur->image.stride != stride)
-          {
-             EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
-               state_write->image.stride = stride;
-             EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
-          }
+        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+          state_write->image.stride = stride;
+        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
      }
+
    o->pixels_checked_out++;
    if (for_writing)
      {
@@ -1628,8 +1629,8 @@ _evas_image_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file
    DATA32 *data = NULL;
    int quality = 80, compress = 9, ok = 0;
    char *encoding = NULL;
-   RGBA_Image *im;
-   Eina_Bool putback = EINA_FALSE;
+   Image_Entry *ie;
+   Eina_Bool putback = EINA_FALSE, tofree = EINA_FALSE;
    int imagew, imageh;
    void *pixels;
 
@@ -1679,7 +1680,7 @@ _evas_image_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file
         o->proxyrendering = EINA_FALSE;
      }
 
-   pixels = ENFN->image_data_get(ENDT, pixels, 0, &data, &o->load_error);
+   pixels = ENFN->image_data_get(ENDT, pixels, 0, &data, &o->load_error, &tofree);
 
    if (!pixels)
      {
@@ -1706,11 +1707,12 @@ _evas_image_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file
              else break;
           }
      }
-   im = (RGBA_Image*) evas_cache_image_data(evas_common_image_cache_get(),
-                                            imagew, imageh, data, o->cur->has_alpha,
-                                            EVAS_COLORSPACE_ARGB8888);
-   if (im)
+   ie = evas_cache_image_data(evas_common_image_cache_get(),
+                              imagew, imageh, data, o->cur->has_alpha,
+                              EVAS_COLORSPACE_ARGB8888);
+   if (ie)
      {
+        RGBA_Image *im = (RGBA_Image *) ie;
         if (o->cur->cspace == EVAS_COLORSPACE_ARGB8888)
           im->image.data = data;
         else
@@ -1722,10 +1724,12 @@ _evas_image_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file
              if (o->cur->cspace != EVAS_COLORSPACE_ARGB8888)
                free(im->image.data);
           }
-
-        evas_cache_image_drop(&im->cache_entry);
+        evas_cache_image_drop(ie);
      }
-   if (putback)
+
+   if (tofree)
+     ENFN->image_free(ENDT, pixels);
+   else if (putback)
      o->engine_data = ENFN->image_data_put(ENDT, pixels, data);
 
    free(encoding);
@@ -1736,6 +1740,8 @@ EOLIAN static Eina_Bool
 _evas_image_pixels_import(Eo *eo_obj, Evas_Image_Data *o, Evas_Pixel_Import_Source *pixels)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+
+   // FIXME: This function is not really useful, and can't work with GL.
 
    evas_object_async_block(obj);
    _evas_object_image_cleanup(eo_obj, obj, o);
@@ -1776,7 +1782,7 @@ _evas_image_pixels_import(Eo *eo_obj, Evas_Image_Data *o, Evas_Pixel_Import_Sour
                {
                   DATA32 *image_pixels = NULL;
 
-                  o->engine_data = ENFN->image_data_get(ENDT, o->engine_data, 1, &image_pixels,&o->load_error);
+                  o->engine_data = ENFN->image_data_get(ENDT, o->engine_data, 1, &image_pixels,&o->load_error, NULL);
                   if (image_pixels)
                     evas_common_convert_yuv_422p_601_rgba((DATA8 **) pixels->rows, (DATA8 *) image_pixels, o->cur->image.w, o->cur->image.h);
                   if (o->engine_data)

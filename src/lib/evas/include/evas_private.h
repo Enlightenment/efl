@@ -1301,7 +1301,7 @@ struct _Evas_Func
    void *(*image_size_set)                 (void *data, void *image, int w, int h);
    void (*image_stride_get)                (void *data, void *image, int *stride);
    void *(*image_dirty_region)             (void *data, void *image, int x, int y, int w, int h);
-   void *(*image_data_get)                 (void *data, void *image, int to_write, DATA32 **image_data, int *err);
+   void *(*image_data_get)                 (void *data, void *image, int to_write, DATA32 **image_data, int *err, Eina_Bool *tofree);
    void *(*image_data_put)                 (void *data, void *image, DATA32 *image_data);
    void  (*image_data_preload_request)     (void *data, void *image, const Eo *target);
    void  (*image_data_preload_cancel)      (void *data, void *image, const Eo *target);
