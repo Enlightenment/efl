@@ -786,7 +786,7 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
 #endif
            case GL_RGBA: attr[5] = EGL_MAP_GL_TEXTURE_RGBA_SEC; break;
            case GL_BGRA: attr[5] = EGL_MAP_GL_TEXTURE_BGRA_SEC; break;
-           default: ERR("SEC map: unknown format"); return NULL;
+           default: ERR("SEC map: unknown format"); goto error;
           }
 
         attr[1] = pt->w;
