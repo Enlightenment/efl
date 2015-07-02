@@ -2917,6 +2917,43 @@ EAPI void evas_object_image_size_set(Evas_Object *obj, int w, int h);
  */
 EAPI void evas_object_image_size_get(const Evas_Object *obj, int *w, int *h);
 
+/*
+ * Converts the raw image data of the given image object to the
+ * specified colorspace.
+ *
+ * Note that this function does not modify the raw image data.  If the
+ * requested colorspace is the same as the image colorspace nothing is
+ * done and @c NULL is returned. You should use
+ * evas_object_image_colorspace_get() to check the current image
+ * colorspace.
+ *
+ * See @ref evas_object_image_colorspace_get.
+ *
+ * @return data A newly allocated data in the format specified by to_cspace.
+ *
+ * @param[in] to_cspace The colorspace to which the image raw data will be converted.
+ */
+/** @deprecated evas_object_image_data_convert */
+EAPI void *evas_object_image_data_convert(Evas_Object *obj, Evas_Colorspace to_cspace) EINA_WARN_UNUSED_RESULT EINA_DEPRECATED;
+
+/*
+ * Import pixels from given source to a given canvas image object.
+ *
+ * This function imports pixels from a given source to a given canvas image.
+ *
+ * @param[in] pixels The pixel's source to be imported.
+ */
+/** @deprecated evas_object_image_pixels_import */
+EAPI Eina_Bool evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixels) EINA_ARG_NONNULL(2) EINA_DEPRECATED;
+
+/*
+ * Reload an image object's image data.
+ *
+ * This function reloads the image data bound to image object @p obj.
+ */
+/** @deprecated evas_object_image_reload */
+EAPI void evas_object_image_reload(Evas_Object *obj) EINA_DEPRECATED;
+
 #include "canvas/evas_image.eo.legacy.h"
 
 /**

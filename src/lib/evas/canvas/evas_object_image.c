@@ -1209,16 +1209,23 @@ _evas_image_load_error_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
    return o->load_error;
 }
 
-EOLIAN static void*
-_evas_image_data_convert(Eo *eo_obj, Evas_Image_Data *o, Evas_Colorspace to_cspace)
+/* deprecated */
+EAPI void*
+evas_object_image_data_convert(Evas_Object *eo_obj, Evas_Colorspace to_cspace)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Image_Data *o;
    DATA32 *data;
    void* result = NULL;
 
-   // FIXME: This function is not really useful, and can't work with GL.
+   if (!eo_isa(eo_obj, MY_CLASS))
+     {
+        CRI("Object is not an %s!", eo_class_name_get(MY_CLASS));
+        return EINA_FALSE;
+     }
 
    evas_object_async_block(obj);
+   o = eo_data_scope_get(eo_obj, MY_CLASS);
    if ((o->preloading) && (o->engine_data))
      {
         o->preloading = EINA_FALSE;
@@ -1592,12 +1599,21 @@ _evas_image_efl_image_smooth_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *
    return o->cur->smooth_scale;
 }
 
-EOLIAN static void
-_evas_image_reload(Eo *eo_obj, Evas_Image_Data *o)
+/* deprecated */
+EAPI void
+_evas_image_reload(Eo *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Image_Data *o;
+
+   if (!eo_isa(eo_obj, MY_CLASS))
+     {
+        CRI("Object is not an %s!", eo_class_name_get(MY_CLASS));
+        return;
+     }
 
    evas_object_async_block(obj);
+   o = eo_data_scope_get(eo_obj, MY_CLASS);
    if ((o->preloading) && (o->engine_data))
      {
         o->preloading = EINA_FALSE;
@@ -1736,14 +1752,21 @@ _evas_image_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file
    return ok;
 }
 
-EOLIAN static Eina_Bool
-_evas_image_pixels_import(Eo *eo_obj, Evas_Image_Data *o, Evas_Pixel_Import_Source *pixels)
+/* deprecated */
+EAPI Eina_Bool
+evas_object_image_pixels_import(Evas_Object *eo_obj, Evas_Pixel_Import_Source *pixels)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Image_Data *o;
 
-   // FIXME: This function is not really useful, and can't work with GL.
+   if (!eo_isa(eo_obj, MY_CLASS))
+     {
+        CRI("Object is not an %s!", eo_class_name_get(MY_CLASS));
+        return EINA_FALSE;
+     }
 
    evas_object_async_block(obj);
+   o = eo_data_scope_get(eo_obj, MY_CLASS);
    _evas_object_image_cleanup(eo_obj, obj, o);
    if ((pixels->w != o->cur->image.w) || (pixels->h != o->cur->image.h)) return EINA_FALSE;
 

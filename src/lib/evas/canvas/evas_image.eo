@@ -879,43 +879,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
          /*@ Cancel preloading an image object's image data in the background */
          legacy: null;
       }
-      data_convert {
-         /*@
-         Converts the raw image data of the given image object to the
-         specified colorspace.
-
-         Note that this function does not modify the raw image data.  If the
-         requested colorspace is the same as the image colorspace nothing is
-         done and @c NULL is returned. You should use
-         evas_object_image_colorspace_get() to check the current image
-         colorspace.
-
-         See @ref evas_object_image_colorspace_get.
-
-         @return data A newly allocated data in the format specified by to_cspace. */
-
-         return: void * @warn_unused;
-         params {
-            @in to_cspace: Evas_Colorspace; /*@ The colorspace to which the image raw data will be converted. */
-         }
-      }
-      pixels_import {
-         /*@
-         Import pixels from given source to a given canvas image object.
-
-         This function imports pixels from a given source to a given canvas image. */
-
-         return: bool;
-         params {
-            @in pixels: Evas_Pixel_Import_Source * @nonull; /*@ The pixel's source to be imported. */
-         }
-      }
-      reload {
-         /*@
-         Reload an image object's image data.
-
-         This function reloads the image data bound to image object @p obj. */
-      }
    }
    implements {
       Eo.Base.constructor;
