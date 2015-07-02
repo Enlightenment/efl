@@ -3794,14 +3794,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 
    eo_do(obj, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_WINDOW));
    if (_elm_config->atspi_mode == ELM_ATSPI_MODE_ON)
-     {
-        Eo *bridge = _elm_atspi_bridge_get();
-        if (bridge)
-          {
-             elm_interface_atspi_accessible_children_changed_added_signal_emit(elm_atspi_bridge_root_get(bridge), obj);
-          }
-        eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED, NULL));
-     }
+     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED, NULL));
 
    evas_object_show(sd->edje);
 
