@@ -1,0 +1,32 @@
+struct ProgressEvent;
+
+class Ecordova.DirectoryReader (Eo.Base) {
+    [[An interface that lists the files and directories in a directory.]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_DirectoryReader constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+            params {
+                native: const(char)*;
+            }
+        }
+        entries_read {
+            [[Returns a list of entries from a directory.]]
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+    events {
+        success: const(list<Ecordova.Entry*>*); [[called with a list of entries]]
+        error: const(Ecordova_FileError)*; [[called with a FileError]]
+    }
+}

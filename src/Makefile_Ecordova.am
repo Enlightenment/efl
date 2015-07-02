@@ -1,0 +1,189 @@
+if HAVE_ECORDOVA
+### Library
+
+ecordova_eolian_files = \
+lib/ecordova/ecordova_systeminfo.eo \
+lib/ecordova/ecordova_batterystatus.eo \
+lib/ecordova/ecordova_console.eo \
+lib/ecordova/ecordova_contacts.eo \
+lib/ecordova/ecordova_contact.eo \
+lib/ecordova/ecordova_contactaddress.eo \
+lib/ecordova/ecordova_contactfield.eo \
+lib/ecordova/ecordova_contactname.eo \
+lib/ecordova/ecordova_contactorganization.eo \
+lib/ecordova/ecordova_device.eo \
+lib/ecordova/ecordova_devicemotion.eo \
+lib/ecordova/ecordova_deviceorientation.eo \
+lib/ecordova/ecordova_dialogs.eo \
+lib/ecordova/ecordova_geolocation.eo \
+lib/ecordova/ecordova_globalization.eo \
+lib/ecordova/ecordova_inappbrowser.eo \
+lib/ecordova/ecordova_media.eo \
+lib/ecordova/ecordova_networkinformation.eo \
+lib/ecordova/ecordova_splashscreen.eo \
+lib/ecordova/ecordova_vibration.eo \
+lib/ecordova/ecordova_file.eo \
+lib/ecordova/ecordova_filewriter.eo \
+lib/ecordova/ecordova_filereader.eo \
+lib/ecordova/ecordova_filesystem.eo \
+lib/ecordova/ecordova_entry.eo \
+lib/ecordova/ecordova_directoryentry.eo \
+lib/ecordova/ecordova_directoryreader.eo \
+lib/ecordova/ecordova_fileentry.eo \
+lib/ecordova/ecordova_mediafile.eo \
+lib/ecordova/ecordova_filetransfer.eo \
+lib/ecordova/ecordova_capture.eo
+
+ecordova_eolian_c = $(ecordova_eolian_files:%.eo=%.eo.c)
+ecordova_eolian_h = $(ecordova_eolian_files:%.eo=%.eo.h)
+
+BUILT_SOURCES += \
+                 $(ecordova_eolian_c) \
+                 $(ecordova_eolian_h)
+
+CLEANFILES += \
+              $(ecordova_eolian_c) \
+              $(ecordova_eolian_h)
+
+ecordovaeolianfilesdir = $(datadir)/eolian/include/ecordova-@VMAJ@
+ecordovaeolianfiles_DATA = \
+                           $(ecordova_eolian_files)
+
+EXTRA_DIST += \
+              ${ecordovaeolianfiles_DATA}
+
+lib_LTLIBRARIES += lib/ecordova/libecordova.la
+
+installed_ecordovamainheadersdir = $(includedir)/ecordova-@VMAJ@
+dist_installed_ecordovamainheaders_DATA = \
+lib/ecordova/Ecordova.h \
+lib/ecordova/Ecordova_Common.h \
+lib/ecordova/Ecordova_Eo.h
+
+nodist_installed_ecordovamainheaders_DATA = \
+                                            $(ecordova_eolian_h)
+
+lib_ecordova_libecordova_la_SOURCES = \
+lib/ecordova/ecordova_main.c \
+lib/ecordova/ecordova_private.h \
+lib/ecordova/ecordova_systeminfo.c \
+lib/ecordova/ecordova_batterystatus.c \
+lib/ecordova/ecordova_console.c \
+lib/ecordova/ecordova_contacts.c \
+lib/ecordova/ecordova_contact.c \
+lib/ecordova/ecordova_contactaddress.c \
+lib/ecordova/ecordova_contactfield.c \
+lib/ecordova/ecordova_contactname.c \
+lib/ecordova/ecordova_contactorganization.c \
+lib/ecordova/ecordova_contacts_record_utils.c \
+lib/ecordova/ecordova_device.c \
+lib/ecordova/ecordova_devicemotion.c \
+lib/ecordova/ecordova_deviceorientation.c \
+lib/ecordova/ecordova_dialogs.c \
+lib/ecordova/ecordova_geolocation.c \
+lib/ecordova/ecordova_globalization.c \
+lib/ecordova/ecordova_inappbrowser.c \
+lib/ecordova/ecordova_media.c \
+lib/ecordova/ecordova_networkinformation.c \
+lib/ecordova/ecordova_splashscreen.c \
+lib/ecordova/ecordova_vibration.c \
+lib/ecordova/ecordova_file.c \
+lib/ecordova/ecordova_filewriter.c \
+lib/ecordova/ecordova_filereader.c \
+lib/ecordova/ecordova_filesystem.c \
+lib/ecordova/ecordova_entry.c \
+lib/ecordova/ecordova_directoryentry.c \
+lib/ecordova/ecordova_directoryreader.c \
+lib/ecordova/ecordova_fileentry.c \
+lib/ecordova/ecordova_mediafile.c \
+lib/ecordova/ecordova_filetransfer.c \
+lib/ecordova/ecordova_capture.c
+
+lib_ecordova_libecordova_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORDOVA_CFLAGS@ @EFL_CFLAGS@
+lib_ecordova_libecordova_la_LIBADD = @ECORDOVA_LIBS@ @EFL_LIBS@
+lib_ecordova_libecordova_la_DEPENDENCIES = @ECORDOVA_INTERNAL_LIBS@ @EFL_INTERNAL_LIBS@
+lib_ecordova_libecordova_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/ecordova/ecordova_suite
+TESTS += tests/ecordova/ecordova_suite
+
+tests_ecordova_ecordova_suite_SOURCES = \
+tests/ecordova/ecordova_suite.c \
+tests/ecordova/ecordova_suite.h \
+tests/ecordova/ecordova_contacts_test.c \
+tests/ecordova/ecordova_contacts_test.h \
+tests/ecordova/ecordova_device_test.c \
+tests/ecordova/ecordova_device_test.h \
+tests/ecordova/ecordova_devicemotion_test.c \
+tests/ecordova/ecordova_devicemotion_test.h \
+tests/ecordova/ecordova_deviceorientation_test.c \
+tests/ecordova/ecordova_deviceorientation_test.h \
+tests/ecordova/ecordova_geolocation_test.c \
+tests/ecordova/ecordova_geolocation_test.h \
+tests/ecordova/ecordova_batterystatus_test.c \
+tests/ecordova/ecordova_batterystatus_test.h \
+tests/ecordova/ecordova_console_test.c \
+tests/ecordova/ecordova_console_test.h \
+tests/ecordova/ecordova_filetransfer_test.c \
+tests/ecordova/ecordova_filetransfer_test.h \
+tests/ecordova/ecordova_media_test.c \
+tests/ecordova/ecordova_media_test.h \
+tests/ecordova/ecordova_networkinformation_test.c \
+tests/ecordova/ecordova_networkinformation_test.h \
+tests/ecordova/ecordova_vibration_test.c \
+tests/ecordova/ecordova_vibration_test.h \
+tests/ecordova/ecordova_directoryreader_test.c \
+tests/ecordova/ecordova_directoryreader_test.h \
+tests/ecordova/ecordova_directoryentry_test.c \
+tests/ecordova/ecordova_directoryentry_test.h \
+tests/ecordova/ecordova_entry_test.c \
+tests/ecordova/ecordova_entry_test.h \
+tests/ecordova/ecordova_file_test.c \
+tests/ecordova/ecordova_file_test.h \
+tests/ecordova/ecordova_fileentry_test.c \
+tests/ecordova/ecordova_fileentry_test.h \
+tests/ecordova/ecordova_filereader_test.c \
+tests/ecordova/ecordova_filereader_test.h \
+tests/ecordova/ecordova_filewriter_test.c \
+tests/ecordova/ecordova_filewriter_test.h \
+tests/ecordova/ecordova_mediafile_test.c \
+tests/ecordova/ecordova_mediafile_test.h \
+tests/ecordova/ecordova_globalization_test.c \
+tests/ecordova/ecordova_globalization_test.h
+
+tests_ecordova_ecordova_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_SRC_DIR=\"$(abs_top_srcdir)/src/tests/ecordova\" \
+-DTESTS_BUILD_DIR=\"$(abs_top_builddir)/src/tests/ecordova\" \
+@CHECK_CFLAGS@ \
+@ECORDOVA_CFLAGS@ @EFL_CFLAGS@
+
+tests_ecordova_ecordova_suite_LDADD = \
+@CHECK_LIBS@ \
+@USE_ECORDOVA_LIBS@ \
+@USE_EFL_LIBS@
+
+tests_ecordova_ecordova_suite_DEPENDENCIES = \
+@USE_ECORDOVA_INTERNAL_LIBS@
+
+endif
+
+EXTRA_DIST += $(ECORDOVA_DATA_FILES)
+
+if HAVE_ELUA
+
+ecordova_eolian_lua = $(ecordova_eolian_files:%.eo=%.eo.lua)
+
+generated_ecordova_lua_all = $(ecordova_eolian_lua)
+
+CLEANFILES += $(generated_ecordova_lua_all)
+
+installed_ecordovaluadir = $(datadir)/elua/modules/ecordova
+nodist_installed_ecordovalua_DATA = $(generated_ecordova_lua_all)
+
+endif
+
+endif

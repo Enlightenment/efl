@@ -1,0 +1,112 @@
+enum Ecordova_FileWriter_State {
+    INIT = 0,
+    WRITING = 1,
+    DONE = 2
+}
+
+enum Ecordova_FileError {
+    NOT_FOUND_ERR = 1,
+    SECURITY_ERR = 2,
+    ABORT_ERR = 3,
+    NOT_READABLE_ERR = 4,
+    ENCODING_ERR = 5,
+    NO_MODIFICATION_ALLOWED_ERR = 6,
+    INVALID_STATE_ERR = 7,
+    SYNTAX_ERR = 8,
+    INVALID_MODIFICATION_ERR = 9,
+    QUOTA_EXCEEDED_ERR = 10,
+    TYPE_MISMATCH_ERR = 11,
+    PATH_EXISTS_ERR = 12
+}
+
+class Ecordova.FileWriter (Eo.Base) {
+    [[This class writes to the device file system.]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_FileWriter constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+            params {
+                file: Ecordova.File*; [[File object containing file properties]]
+            }
+        }
+        abort {
+            [[Abort writing file.]]
+            return: Ecordova_FileError;
+        }
+        write {
+            [[Writes data to the file]]
+            params {
+                data: const(char)*; [[text or blob to be written]]
+                size: long; [[the blob's size]]
+            }
+            return: Ecordova_FileError;
+        }
+        seek {
+            [[Moves the file pointer to the location specified.
+
+              If the offset is a negative number the position of the file
+              pointer is rewound.  If the offset is greater than the file
+              size the position is set to the end of the file.]]
+            params {
+                offset: long; [[location to move the file pointer to.]]
+            }
+            return: Ecordova_FileError;
+        }
+        truncate {
+            [[Truncates the file to the size specified.]]
+            params {
+                size: long; [[size to chop the file at.]]
+            }
+            return: Ecordova_FileError;
+        }
+        @property error {
+            get {}
+            values {
+                value: Ecordova_FileError;
+            }
+        }
+        @property position {
+            get {}
+            values {
+                state: long;
+            }
+        }
+        @property state {
+            get {}
+            values {
+                state: Ecordova_FileWriter_State;
+            }
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+    events {
+        on,write,start: const(ProgressEvent)*;
+        [[When writing starts]]
+
+        on,progress: const(ProgressEvent)*;
+        [[While writing the file, and reporting partial file data]]
+
+        on,write: const(ProgressEvent)*;
+        [[When the write has successfully completed.]]
+
+        on,write,end: const(ProgressEvent)*;
+        [[When the request has completed (either in success or failure).]]
+
+        on,abort: const(ProgressEvent)*;
+        [[When the write has been aborted. For instance, by invoking the abort()
+          method.]]
+
+        on,error: const(ProgressEvent)*;
+        [[When the write has failed (see errors).]]
+    }
+}

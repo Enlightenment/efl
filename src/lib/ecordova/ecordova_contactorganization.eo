@@ -1,0 +1,72 @@
+class Ecordova.ContactOrganization (Eo.Base) {
+    [[Contact name.]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_ContactOrganization constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+            params {
+                pref: bool;
+                [[Set to true if this ContactOrganization contains the user's
+                  preferred value.
+                ]]
+
+                type: const(char)*;
+                [[A string that indicates what type of field this is, home for
+                  example.
+                ]]
+
+                name: const(char)*;
+                [[The name of the organization.]]
+
+                dept: const(char)*;
+                [[The department the contract works for.]]
+
+                title: const(char)*;
+                [[The contact's title at the organization.]]
+
+            }
+        }
+        @property id {
+            get {}
+            values {
+                id: int;
+            }
+        }
+        @property pref {
+            values {
+                pref: bool;
+            }
+        }
+        @property type {
+            values {
+                type: const(char)*;
+            }
+        }
+        @property name {
+            values {
+                name: const(char)*;
+            }
+        }
+        @property dept {
+            values {
+                dept: const(char)*;
+            }
+        }
+        @property title {
+            values {
+                title: const(char)*;
+            }
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+}

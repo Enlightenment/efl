@@ -1,0 +1,106 @@
+enum Ecordova.Console.LoggerLevel {
+    [[Logging levels]]
+    LOG,
+    ERROR,
+    WARN,
+    INFO,
+    DEBUG,
+    LAST
+}
+
+class Ecordova.Console (Eo.Base) {
+    [[Ecordova Console Plugin
+      Plugin ID: org.apache.cordova.console
+      http://plugins.cordova.io/#/package/org.apache.cordova.console
+    ]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_Console constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+        }
+        log {
+            [[Logs a message at the LOG level.]]
+            params {
+                message: const(char)*; [[The log message]]
+            }
+        }
+        error {
+            [[Logs a message at the ERROR level.]]
+            params {
+                message: const(char)*; [[The log message]]
+            }
+        }
+        warn {
+            [[Logs a message at the WARN level.]]
+            params {
+                message: const(char)*; [[The log message]]
+            }
+        }
+        info {
+            [[Logs a message at the INFO level.]]
+            params {
+                message: const(char)*; [[The log message]]
+            }
+        }
+        debug {
+            [[Logs a message at the DEBUG level.]]
+            params {
+                message: const(char)*; [[The log message]]
+            }
+        }
+        @property level {
+            [[Getter/Setter for the logging level
+
+              Returns the current logging level.
+
+              When a value is passed, sets the logging level to that value.
+              The values should be one of the following constants:
+                 CONSOLE_LOGGER_LEVEL_LOG
+                 CONSOLE_LOGGER_LEVEL_ERROR
+                 CONSOLE_LOGGER_LEVEL_WARN
+                 CONSOLE_LOGGER_LEVEL_INFO
+                 CONSOLE_LOGGER_LEVEL_DEBUG
+
+              The value used determines which messages get printed. The logging
+              values above are in order, and only messages logged at the logging
+              level or above will actually be displayed to the user. E.g., the
+              default level is WARN, so only messages logged with LOG, ERROR, or
+              WARN will be displayed; INFO and DEBUG messages will be ignored.
+            ]]
+            values {
+                value: Ecordova.Console.LoggerLevel; [[A valid logger level]]
+            }
+        }
+        @property console_use {
+            [[Getter/Setter for the console_use functionality
+
+              When console_use is true, the logger will log via the
+              browser 'console' object.
+            ]]
+            values {
+                value: bool; [[$EINA_TRUE to enable console output]]
+            }
+        }
+        @property logger_use {
+            [[Getter/Setter for the logger_use functionality
+
+              When logger_use is true, the logger will log via the
+              native Logger plugin.
+            ]]
+            values {
+                value: bool; [[$EINA_TRUE to enable logger output]]
+            }
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+}

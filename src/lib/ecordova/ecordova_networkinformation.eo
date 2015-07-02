@@ -1,0 +1,61 @@
+enum Ecordova_NetworkInformation_ConnectionType {
+    UNKNOWN,
+    ETHERNET,
+    WIFI,
+    CELL_2G,
+    CELL_3G,
+    CELL_4G,
+    CELL,
+    NONE
+}
+
+class Ecordova.NetworkInformation (Eo.Base) {
+    [[Ecordova Network-Information Plugin
+      Plugin ID: org.apache.cordova.network-information
+      http://plugins.cordova.io/#/package/org.apache.cordova.network-information
+    ]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_NetworkInformation constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+        }
+        @property type {
+            [[This property offers a fast way to determine the device's
+              network connection state, and type of connection.]]
+            get{}
+            values {
+                value: Ecordova_NetworkInformation_ConnectionType;
+            }
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+    events {
+        offline;
+        [[The event fires when an application goes offline, and the device is
+          not connected to the Internet.
+
+          The offline event fires when a previously connected device loses a
+          network connection so that an application can no longer access the
+          Internet. It relies on the same information as the Connection API,
+          and fires when the value of connection.type becomes NONE.]]
+
+        online;
+        [[This event fires when an application goes online, and the device
+          becomes connected to the Internet.
+
+          The online event fires when a previously unconnected device receives
+          a network connection to allow an application access to the Internet.
+          It relies on the same information as the Connection API, and fires
+          when the connection.type changes from NONE to any other value.]]
+    }
+}

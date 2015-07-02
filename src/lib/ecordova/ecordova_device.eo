@@ -1,0 +1,60 @@
+class Ecordova.Device (Eo.Base) {
+    [[Ecordova Device Plugin
+      Plugin ID: org.apache.cordova.device
+      http://plugins.cordova.io/#/package/org.apache.cordova.device
+    ]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_Device constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+        }
+        @property ecordova {
+            [[Get the version of Ecordova running on the device.]]
+            get {}
+            values {
+                value: const(char)*;
+            }
+        }
+        @property model {
+            [[Returns the name of the device's model or product. The value is
+              set by the device manufacturer and may be different across
+              versions of the same product.]]
+            get {}
+            values {
+                value: const(char)*;
+            }
+        }
+        @property platform {
+            [[Get the device's operating system name.]]
+            get {}
+            values {
+                value: const(char)*;
+            }
+        }
+        @property uuid {
+            [[Get the device's Universally Unique Identifier (UUID).]]
+            get {}
+            values {
+                value: const(char)*;
+            }
+        }
+        @property version {
+            [[Get the operating system version.]]
+            get {}
+            values {
+                value: const(char)*;
+            }
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+}

@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: Ecordova
+Description: Cordova API eolification
+Requires.private: @requirements_pc_ecordova@
+Version: @VERSION@
+Libs: -L${libdir} -lecordova @requirements_public_libs_ecordova@
+Libs.private: @requirements_libs_ecordova@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ecordova-@VMAJ@

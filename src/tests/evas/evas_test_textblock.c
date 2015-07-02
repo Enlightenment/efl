@@ -16,6 +16,14 @@
 
 #include "evas_tests_helpers.h"
 
+#if !defined(ck_assert_int_le)
+# define ck_assert_int_le(X, Y) _ck_assert_int(X, <=, Y)
+#endif
+
+#if !defined(ck_assert_int_gt)
+# define ck_assert_int_gt(X, Y) _ck_assert_int(X, >, Y)
+#endif
+
 /* Functions defined in evas_object_textblock.c */
 EAPI Eina_Bool
 _evas_textblock_check_item_node_link(Evas_Object *obj);

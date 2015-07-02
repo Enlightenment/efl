@@ -1,0 +1,87 @@
+struct Ecordova_Dialogs_PromptCallback {
+    button_index: int;
+    [[The index of the pressed button. (Number) Note that the index uses
+      one-based indexing, so the value is 1, 2, 3, etc.]]
+
+    input1: const(char)*;
+    [[The text entered in the prompt dialog box.]]
+}
+
+class Ecordova.Dialogs (Eo.Base) {
+    [[Ecordova Dialogs Plugin
+      Plugin ID: org.apache.cordova.dialogs
+      http://plugins.cordova.io/#/package/org.apache.cordova.dialogs
+    ]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_Dialogs constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+        }
+        alert {
+            params {
+                message: const(char)*;
+                [[Dialog message.]]
+
+                title: const(char)*;
+                [[Dialog title (Optional, defaults to 'Alert').]]
+
+                buttons: list<const(char)*>*;
+                [[Button names (Optional, defaults to OK)]]
+            }
+        }
+        confirm {
+            params {
+                message: const(char)*;
+                [[Dialog message.]]
+
+                title: const(char)*;
+                [[Dialog title (Optional, defaults to 'Confirm').]]
+
+                buttons: list<const(char)*>*;
+                [[Button names (Optional, defaults to [OK,Cancel])]]
+            }
+        }
+        prompt {
+            params {
+                message: const(char)*;
+                [[Dialog message.]]
+
+                title: const(char)*;
+                [[Dialog title (Optional, defaults to 'Prompt').]]
+
+                buttons: list<const(char)*>*;
+                [[Button names (Optional, defaults to [OK,Cancel])]]
+
+                default_text: const(char)*;
+                [[Default textbox input value (Optional, Default: empty string)]]
+            }
+        }
+        beep {
+            [[The device plays a beep sound.]]
+            params {
+                times: int; [[The number of times to repeat the beep.]]
+            }
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+    events {
+        alert;
+        [[Callback to invoke when alert dialog is dismissed.]]
+
+        confirm: int;
+        [[Callback to invoke with index of button pressed (1, 2, or 3) or when
+          the dialog is dismissed without a button press (0).]]
+
+        prompt: Ecordova_Dialogs_PromptCallback;
+    }
+}

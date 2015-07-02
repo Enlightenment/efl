@@ -1,0 +1,70 @@
+type Ecordova.DeviceMotion.WatchID: int;
+
+struct Ecordova.DeviceMotion.Acceleration {
+    x: double; [[Amount of acceleration on the x-axis. (in m/s^2)]]
+    y: double; [[Amount of acceleration on the y-axis. (in m/s^2)]]
+    z: double; [[Amount of acceleration on the z-axis. (in m/s^2)]]
+    timestamp: time; [[Creation timestamp in milliseconds.]]
+}
+
+struct Ecordova.DeviceMotion.AccelerometerOptions {
+    frequency: int;
+    [[requested period of calls to accelerometerSuccess with acceleration data
+      in Milliseconds. (Default: 10000)]]
+}
+
+class Ecordova.DeviceMotion (Eo.Base) {
+    [[Ecordova Device-Motion Plugin
+      Plugin ID: org.apache.cordova.device-motion
+      http://plugins.cordova.io/#/package/org.apache.cordova.device-motion
+    ]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_DeviceMotion constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+            params {
+            }
+        }
+        current_acceleration_get {
+            [[Get the current acceleration]]
+        }
+        acceleration_watch {
+            [[Retrieves the device's current Acceleration at a regular
+              interval, executing the accelerometerSuccess callback function
+              each time. Specify the interval in milliseconds via the
+              acceleratorOptions object's frequency parameter.
+            ]]
+            params {
+                options: const(Ecordova.DeviceMotion.AccelerometerOptions)*;
+            }
+            return: Ecordova.DeviceMotion.WatchID;
+            [[references the accelerometer's watch interval, and can be used
+              with navigator.accelerometer.watch_clear to stop watching the
+              accelerometer.
+            ]]
+        }
+        watch_clear {
+            [[Stop watching the Acceleration referenced by the watchID parameter.]]
+            params {
+                watch_id: Ecordova.DeviceMotion.WatchID;
+                [[The ID returned by navigator.accelerometer.acceleration_watch.]]
+            }
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+    events {
+        current,success: Ecordova.DeviceMotion.Acceleration*;
+        watch,success: Ecordova.DeviceMotion.Acceleration*;
+        error;
+    }
+}

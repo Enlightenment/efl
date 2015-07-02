@@ -1,0 +1,61 @@
+class Ecordova.File (Eo.Base) {
+    [[Ecordova File Plugin
+      Plugin ID: org.apache.cordova.file
+      http://plugins.cordova.io/#/package/org.apache.cordova.file
+    ]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_File constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+            params {
+                name: const(char)*; [[name of the file, without path information]]
+                url: const(char)*; [[the full path of the file, including the name]]
+                type: const(char)*; [[mime type]]
+                last_modified_date: time; [[last modified date]]
+                size: long; [[size of the file in bytes]]
+            }
+        }
+        slice {
+            params {
+                start: long;
+                end: long;
+            }
+            return: own(Ecordova.File*);
+        }
+        @property name {
+            get {}
+            values {
+                value: const(char)*;
+            }
+        }
+        @property url {
+            get {}
+            values {
+                value: const(char)*;
+            }
+        }
+        @property start {
+            get {}
+            values {
+                value: long;
+            }
+        }
+        @property end {
+            get {}
+            values {
+                value: long;
+            }
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+}

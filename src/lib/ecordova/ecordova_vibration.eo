@@ -1,0 +1,30 @@
+class Ecordova.Vibration (Eo.Base) {
+    [[Ecordova Vibration Plugin
+      Plugin ID: org.apache.cordova.vibration
+      http://plugins.cordova.io/#/package/org.apache.cordova.vibration
+    ]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_Vibration constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+        }
+        vibrate {
+            [[This function has three different functionalities based on
+              parameters passed to it.]]
+            params {
+                time: int; [[Milliseconds to vibrate the device.]]
+            }
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+}

@@ -1,0 +1,155 @@
+struct Ecordova_FileTransfer_UploadOptions {
+    file_key: const(char)*;
+    [[The name of the form element. Defaults to file.]]
+
+    file_name: const(char)*;
+    [[The file name to use when saving the file on the server. Defaults to image.jpg.]]
+
+    http_method: const(char)*;
+    [[The HTTP method to use - either PUT or POST. Defaults to POST.]]
+
+    mime_type: const(char)*;
+    [[The mime type of the data to upload. Defaults to image/jpeg.]]
+
+    params: hash<const(char)*, const(char)*>*;
+    [[A set of optional key/value pairs to pass in the HTTP request.]]
+
+    chunked_mode: bool;
+    [[Whether to upload the data in chunked streaming mode. Defaults to true.]]
+
+    headers: hash<const(char)*, const(char)*>*;
+    [[A map of header name/header values. Use an array to specify more than one value.]]
+}
+
+struct Ecordova_FileTransfer_UploadResult {
+    bytes_sent: long;
+    [[The number of bytes sent to the server as part of the upload.]]
+
+    response_code: long;
+    [[The HTTP response code returned by the server.]]
+
+    response: const(char)*;
+    [[The HTTP response returned by the server.]]
+
+    headers: hash<const(char)*, const(char)*>*;
+    [[The HTTP response headers by the server.]]
+}
+
+enum Ecordova_FileTransfer_ErrorCode {
+    FILE_NOT_FOUND_ERR = 1,
+    INVALID_URL_ERR = 2,
+    CONNECTION_ERR = 3,
+    ABORT_ERR = 4,
+    NOT_MODIFIED_ERR = 5
+}
+
+struct Ecordova_FileTransfer_Error {
+    [[A FileTransferError object is passed to an error callback when an error occurs.]]
+
+    code: int;
+    [[One of the predefined error codes listed above.]]
+
+    source: const(char)*;
+    [[URL to the source.]]
+
+    target: const(char)*;
+    [[URL to the target.]]
+
+    http_status: int;
+    [[HTTP status code. This attribute is only available when a response code is received from the HTTP connection.]]
+
+    body: const(char)*;
+    [[Response body. This attribute is only available when a response is received from the HTTP connection.]]
+
+    exception: const(char)*;
+    [[Either e.getMessage or e.toString]]
+}
+
+struct Ecordova.ProgressEvent;
+
+class Ecordova.FileTransfer (Eo.Base) {
+    [[Ecordova File-Transfer Plugin
+      Plugin ID: org.apache.cordova.file-transfer
+      http://plugins.cordova.io/#/package/org.apache.cordova.file-transfer
+    ]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_FileTransfer constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+        }
+        upload {
+            [[sends a file to a server.]]
+            params {
+                file_url: const(char)*;
+                [[Filesystem URL representing the file on the device. For
+                  backwards compatibility, this can also be the full path of
+                  the file on the device.]]
+
+                server: const(char)*;
+                [[URL of the server to receive the file, as encoded by
+                  encodeURI().]]
+
+                options: Ecordova_FileTransfer_UploadOptions*;
+                [[Optional parameters]]
+
+                trust_all_hosts: bool;
+                [[Optional parameter, defaults to false. If set to true, it
+                  accepts all security certificates. This is useful since
+                  Android rejects self-signed security certificates. Not
+                  recommended for production use.]]
+            }
+        }
+        download {
+            [[downloads a file from server.]]
+            params {
+                source: const(char)*;
+                [[URL of the server to download the file, as encoded by
+                  encodeURI().]]
+
+                target: const(char)*;
+                [[Filesystem url representing the file on the device. For
+                  backwards compatibility, this can also be the full path of
+                  the file on the device]]
+
+                trust_all_hosts: bool;
+                [[Optional parameter, defaults to false. If set to true, it
+                  accepts all security certificates. This is useful since
+                  Android rejects self-signed security certificates. Not
+                  recommended for production use.]]
+
+                options: hash<const(char)*, const(char)*>*;
+                [[Optional parameters, currently only supports headers (such
+                  as Authorization (Basic Authentication), etc).]]
+            }
+        }
+        abort {
+            [[Aborts an in-progress transfer.]]
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+    events {
+        upload,success: const(Ecordova_FileTransfer_UploadResult)*;
+        [[A callback that is passed a FileUploadResult object.]]
+
+        download,success: Ecordova.FileEntry*;
+        [[callback that is passed a FileEntry object.]]
+
+        error: Ecordova_FileTransfer_Error*;
+        [[A callback that executes if an error occurs. Invoked with a
+          FileTransferError object.]]
+
+        on,progress: const(Ecordova.ProgressEvent)*;
+        [[Called with a ProgressEvent whenever a new chunk of data is
+          transferred.]]
+    }
+}

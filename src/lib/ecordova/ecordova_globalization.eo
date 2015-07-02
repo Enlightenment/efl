@@ -1,0 +1,390 @@
+struct Ecordova_Globalization_Language {
+    value: const(char)*;
+}
+
+struct Ecordova_Globalization_Locale {
+    value: const(char)*;
+}
+
+struct Ecordova_Globalization_String {
+    value: const(char)*;
+}
+
+enum Ecordova_Globalization_DateFormatLength {
+    SHORT,
+    MEDIUM,
+    LONG,
+    FULL
+}
+
+enum Ecordova_Globalization_DateSelector {
+    DATE,
+    TIME,
+    DATE_AND_TIME
+}
+
+struct Ecordova_Globalization_DateTimeOptions {
+    format_length: int;
+    selector: int;
+}
+
+enum Ecordova_Globalization_ErrorCode {
+    [[Represents a error from the Globalization API.]]
+    UNKNOWN_ERROR = 0,
+    FORMATTING_ERROR = 1,
+    PARSING_ERROR = 2,
+    PATTERN_ERROR = 3
+}
+
+struct Ecordova_Globalization_Error {
+    [[An object representing a error from the Globalization API.]]
+
+    code: int;
+    [[One of the codes representing the error type]]
+
+    message: const(char)*;
+    [[A text message that includes the error's explanation and/or details]]
+}
+
+struct Ecordova_Globalization_CurrencyPattern {
+    pattern: const(char)*;
+    [[The currency pattern to format and parse currency values. The patterns
+      follow Unicode Technical Standard #35.]]
+
+    code: const(char)*;
+    [[The ISO 4217 currency code for the pattern.]]
+
+    fraction: int;
+    [[The number of fractional digits to use when parsing and formatting
+      currency.]]
+
+    rounding: double;
+    [[The rounding increment to use when parsing and formatting.]]
+
+    decimal: const(char)*;
+    [[The decimal symbol to use for parsing and formatting.]]
+
+    grouping: const(char)*;
+    [[The grouping symbol to use for parsing and formatting.]]
+}
+
+enum Ecordova_Globalization_DateNamesType {
+    NARROW,
+    WIDE
+}
+
+enum Ecordova_Globalization_DateNamesItem {
+    MONTHS,
+    DAYS
+}
+
+struct Ecordova_Globalization_DateNamesOptions {
+    type: int;
+    item: int;
+}
+
+struct Ecordova_Globalization_DateNames {
+    value: array<char*>*;
+}
+
+struct Ecordova_Globalization_DatePattern {
+    pattern: const(char)*;
+    [[The date and time pattern to format and parse dates. The patterns follow
+      Unicode Technical Standard #35.]]
+
+    timezone: const(char)*;
+    [[The abbreviated name of the time zone on the client.]]
+
+    utc_offset: int;
+    [[The current difference in seconds between the client's time zone and
+      coordinated universal time.]]
+
+    dst_offset: int;
+    [[The current daylight saving time offset in seconds between the client's
+      non-daylight saving's time zone and the client's daylight saving's
+      time zone.]]
+}
+
+struct Ecordova_Globalization_FirstDayOfWeek {
+    value: int;
+    [[The days of the week are numbered starting from 1, where 1 is assumed to
+      be Sunday.]]
+}
+
+struct Ecordova_Globalization_NumberPattern {
+    pattern: const(char)*;
+    [[The number pattern to format and parse numbers. The patterns follow
+      Unicode Technical Standard #35.]]
+
+    symbol: const(char)*;
+    [[The symbol to use when formatting and parsing, such as a percent or
+      currency symbol.]]
+
+    fraction: int;
+    [[The number of fractional digits to use when parsing and formatting
+      numbers.]]
+
+    rounding: double;
+    [[The rounding increment to use when parsing and formatting.]]
+
+    positive: const(char)*;
+    [[The symbol to use for positive numbers when parsing and formatting.]]
+
+    negative: const(char)*;
+    [[The symbol to use for negative numbers when parsing and formatting.]]
+
+    decimal: const(char)*;
+    [[The decimal symbol to use for parsing and formatting.]]
+
+    grouping: const(char)*;
+    [[The grouping symbol to use for parsing and formatting.]]
+}
+
+enum Ecordova_Globalization_NumberPatternType {
+    DECIMAL,
+    PERCENT,
+    CURRENCY
+}
+
+struct Ecordova_Globalization_NumberPatternOptions {
+    type: int;
+}
+
+struct Ecordova_Globalization_DayLightSavingsTime {
+    dst: bool;
+    [[A true value indicates that daylight savings time is in effect for the
+      given date, and false indicates that it is not.]]
+}
+
+struct Ecordova_Globalization_DateTime {
+    year: int;
+    [[The four digit year.]]
+
+    month: int;
+    [[The month from (0-11).]]
+
+    day: int;
+    [[The day from (1-31).]]
+
+    hour: int;
+    [[The hour from (0-23).]]
+
+    minute: int;
+    [[The minute from (0-59).]]
+
+    second: int;
+    [[The second from (0-59).]]
+
+    millisecond: int;
+    [[The milliseconds (from 0-999), not available on all platforms.]]
+}
+
+struct Ecordova_Globalization_Number {
+    value: double;
+}
+
+class Ecordova.Globalization (Eo.Base) {
+    [[Ecordova Globalization Plugin
+      Plugin ID: org.apache.cordova.globalization
+      http://plugins.cordova.io/#/package/org.apache.cordova.globalization
+    ]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_Globalization constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+        }
+        preferred_language_get {
+            [[Get the BCP 47 language tag for the client's current language.
+
+              Returns the BCP-47 compliant language identifier tag to the
+              successCallback with a properties object as a parameter. That
+              object should have a value property with a String value.
+
+              If there is an error getting the language, then the
+              errorCallback executes with a GlobalizationError object as a
+              parameter. The error's expected code is
+              GlobalizationError.UNKNOWN_ERROR.]]
+        }
+        locale_name_get {
+            [[Returns the BCP 47 compliant tag for the client's current locale
+              setting.
+
+              Returns the BCP 47 compliant locale identifier string to the
+              successCallback with a properties object as a parameter. That
+              object should have a value property with a String value. The
+              locale tag will consist of a two-letter lower case language
+              code, two-letter upper case country code, and (unspecified)
+              variant code, separated by a hyphen.
+
+              If there is an error getting the locale, then the errorCallback
+              executes with a GlobalizationError object as a parameter. The
+              error's expected code is GlobalizationError.UNKNOWN_ERROR.]]
+        }
+        date_to_string {
+            [[Returns a date formatted as a string according to the client's
+              locale and timezone.
+
+              Returns the formatted date String via a value property
+              accessible from the object passed as a parameter to the
+              successCallback.
+
+              If there is an error formatting the date, then the errorCallback
+              executes with a GlobalizationError object as a parameter.
+              The error's expected code is
+              GlobalizationError.FORMATTING_ERROR.]]
+            params {
+                date: time;
+                [[The date to convert to string]]
+
+                options: const(Ecordova_Globalization_DateTimeOptions)*;
+                [[The options parameter is optional, and its default values
+                  are: {format_length:'short', selector:'date and time'}]]
+            }
+        }
+        currency_pattern_get {
+            [[Returns a pattern string to format and parse currency values
+              according to the client's user preferences and ISO 4217 currency
+              code.]]
+            params {
+                currency_code: const(char)*;
+                [[The inbound currency_code parameter should be a String of one
+                  of the ISO 4217 currency codes, for example 'USD'.]]
+            }
+        }
+        date_names_get {
+            [[Returns the array of names to the successCallback with a
+              properties object as a parameter. That object contains a value
+              property with an Array of String values. The array features
+              names starting from either the first month in the year or the
+              first day of the week, depending on the option selected.
+
+              If there is an error obtaining the names, then the errorCallback
+              executes with a GlobalizationError object as a parameter. The
+              error's expected code is GlobalizationError.UNKNOWN_ERROR.]]
+            params {
+                options: const(Ecordova_Globalization_DateNamesOptions)*;
+                [[The options parameter is optional, and its default values
+                  are: {type:'wide', item:'months'}]]
+            }
+        }
+        date_pattern_get {
+            [[Returns a pattern string to format and parse dates according to
+              the client's user preferences.
+
+              If there is an error obtaining the pattern, the errorCallback
+              executes with a GlobalizationError object as a parameter. The
+              error's expected code is GlobalizationError.PATTERN_ERROR.]]
+            params {
+                options: const(Ecordova_Globalization_DateTimeOptions)*;
+                [[The options parameter is optional, and defaults
+                  to: {format_length:'short', selector:'date and time'}]]
+            }
+        }
+        first_day_of_week_get {
+            [[Returns the first day of the week according to the client's user
+              preferences and calendar.
+
+              The days of the week are numbered starting from 1, where 1 is
+              assumed to be Sunday. Returns the day to the successCallback
+              with a properties object as a parameter. That object should have
+              a value property with a Number value.
+
+              If there is an error obtaining the pattern, then the
+              errorCallback executes with a GlobalizationError object as a
+              parameter. The error's expected code is
+              GlobalizationError.UNKNOWN_ERROR.]]
+        }
+        number_pattern_get {
+            [[Returns a pattern string to format and parse numbers according
+              to the client's user preferences.]]
+            params {
+                options: const(Ecordova_Globalization_NumberPatternOptions)*;
+                [[The options parameter is optional, and default values
+                  are: {type:'decimal'}]]
+            }
+        }
+        day_light_savings_time_is {
+            [[Indicates whether daylight savings time is in effect for a given
+              date using the client's time zone and calendar.
+
+              Indicates whether or not daylight savings time is in effect to
+              the successCallback with a properties object as a parameter.
+              That object should have a dst property with a Boolean value. A
+              true value indicates that daylight savings time is in effect for
+              the given date, and false indicates that it is not.
+
+              If there is an error reading the date, then the errorCallback
+              executes. The error's expected code is
+              GlobalizationError.UNKNOWN_ERROR.]]
+            params {
+                date: time;
+            }
+        }
+        number_to_string {
+            [[Returns a number formatted as a string according to the client's
+              user preferences.]]
+            params {
+                number: double;
+
+                options: const(Ecordova_Globalization_NumberPatternOptions)*;
+                [[The options parameter is optional, and its default values
+                  are: {type:'decimal'}]]
+            }
+        }
+        string_to_date {
+            [[Parses a date formatted as a string, according to the client's
+              user preferences and calendar using the time zone of the client,
+              and returns the corresponding date object.]]
+            params {
+                dateString: const(char)*;
+                options: const(Ecordova_Globalization_DateTimeOptions)*;
+            }
+        }
+        string_to_number {
+            [[Parses a number formatted as a string according to the client's
+              user preferences and returns the corresponding number.
+
+              Returns the number to the successCallback with a properties
+              object as a parameter. That object should have a value property
+              with a Number value.
+
+              If there is an error parsing the number string, then the
+              errorCallback executes with a GlobalizationError object as a
+              parameter. The error's expected code is
+              GlobalizationError.PARSING_ERROR.]]
+            params {
+                string: const(char)*;
+
+                options: const(Ecordova_Globalization_NumberPatternOptions)*;
+                [[The options parameter is optional, and defaults to the
+                  following values: {type:'decimal'}]]
+            }
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+    events {
+        preferred,language,success: const(Ecordova_Globalization_Language)*;
+        locale,name,success: const(Ecordova_Globalization_Locale)*;
+        date,to,string,success: const(Ecordova_Globalization_String)*;
+        currency,pattern,success: const(Ecordova_Globalization_CurrencyPattern)*;
+        date,names,success: const(Ecordova_Globalization_DateNames)*;
+        date,pattern,success: const(Ecordova_Globalization_DatePattern)*;
+        first,day,of,week,success: const(Ecordova_Globalization_FirstDayOfWeek)*;
+        number,pattern,success: const(Ecordova_Globalization_NumberPattern)*;
+        day,light,savings,time,success: const(Ecordova_Globalization_DayLightSavingsTime)*;
+        number,to,string,success: const(Ecordova_Globalization_String)*;
+        string,to,date,success: const(Ecordova_Globalization_DateTime)*;
+        string,to,number,success: const(Ecordova_Globalization_Number)*;
+        error: Ecordova_Globalization_ErrorCode;
+    }
+}

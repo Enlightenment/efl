@@ -1,0 +1,51 @@
+struct Ecordova.BatteryStatus.EventInfo {
+    [[The battery status event info is passed an object that contains two
+      properties.
+    ]]
+
+    level: int;
+    [[The percentage of battery charge (0-100).]]
+
+    plugged_is: bool;
+    [[A boolean that indicates whether the device is plugged in.]]
+}
+
+class Ecordova.BatteryStatus (Eo.Base) {
+    [[Ecordova Battery Plugin
+      Plugin ID: org.apache.cordova.battery-status
+      http://plugins.cordova.io/#/package/org.apache.cordova.battery-status
+    ]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_BatteryStatus constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+    events {
+        battery,status: const(Ecordova.BatteryStatus.EventInfo)*;
+        [[This event fires when the percentage of battery charge changes by at
+          least 1 percent, or if the device is plugged in or unplugged.
+        ]]
+
+        battery,critical: const(Ecordova.BatteryStatus.EventInfo)*;
+        [[This event fires when the percentage of battery charge has reached
+          the critical battery threshold. The value is device-specific.
+        ]]
+
+        battery,low: const(Ecordova.BatteryStatus.EventInfo)*;
+        [[This event fires when the percentage of battery charge has reached
+          the low battery threshold, device-specific value.
+        ]]
+    }
+}

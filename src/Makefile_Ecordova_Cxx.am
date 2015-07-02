@@ -1,0 +1,22 @@
+if HAVE_CXX11
+
+### Generated headers
+
+generated_ecordova_cxx_bindings = $(ecordova_eolian_files:%.eo=%.eo.hh)
+
+lib/ecordova/Ecordova.hh: $(generated_ecordova_cxx_bindings)
+	@echo @ECHO_E@ "#ifndef EFL_CXX_ECORDOVA_HH\n#define EFL_CXX_ECORDOVA_HH\n" > $(top_builddir)/src/lib/ecordova/Ecordova.hh
+	@echo @ECHO_E@ "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/ecordova/Ecordova.hh
+	@for i in $(generated_ecordova_cxx_bindings); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/ecordova/Ecordova.hh; done
+	@echo @ECHO_E@ "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/ecordova/Ecordova.hh
+
+generated_ecordova_cxx_all = \
+	$(generated_ecordova_cxx_bindings) \
+	lib/ecordova/Ecordova.hh
+
+CLEANFILES += $(generated_ecordova_cxx_all)
+
+installed_ecordovacxxmainheadersdir = $(includedir)/ecordova-cxx-@VMAJ@/
+nodist_installed_ecordovacxxmainheaders_DATA = $(generated_ecordova_cxx_all)
+
+endif

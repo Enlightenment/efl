@@ -1,0 +1,92 @@
+enum Ecordova_FileReader_State {
+    EMPTY = 0,
+    LOADING = 1,
+    DONE = 2
+}
+
+struct Ecordova_ProgressEvent {
+    type: const(char)*;
+    bubbles: bool;
+    cancel_bubble: bool;
+    cancelable: bool;
+    length_computable: bool;
+    loaded: int;
+    total: int;
+    target: Eo*;
+}
+
+class Ecordova.FileReader (Eo.Base) {
+    [[This class reads the device file system.]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_FileReader constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+        }
+        abort {
+            [[Abort reading file.]]
+        }
+        read {
+            [[Read file and return data as a binary data.]]
+            params {
+                file: Ecordova.File*; [[File object containing file properties]]
+            }
+            return: Ecordova_FileError;
+        }
+        @property error {
+            get {}
+            values {
+                value: Ecordova_FileError;
+            }
+        }
+        @property result {
+            get {}
+            values {
+                value: const(char)*;
+            }
+        }
+        @property length {
+            get {}
+            values {
+                value: size;
+            }
+        }
+        @property state {
+            get {}
+            values {
+                state: Ecordova_FileReader_State;
+            }
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+    events {
+        on,load,start: const(Ecordova_ProgressEvent)*;
+        [[When read starts]]
+
+        on,progress: const(Ecordova_ProgressEvent)*;
+        [[While reading (and decoding) file or fileBlob data, and reporting
+          partial file data (progress.loaded/progress.total)]]
+
+        on,load: const(Ecordova_ProgressEvent)*;
+        [[When the read has successfully completed.]]
+
+        on,error: const(Ecordova_ProgressEvent)*;
+        [[When the read has failed (see errors).]]
+
+        on,load,end: const(Ecordova_ProgressEvent)*;
+        [[When the request has completed (either in success or failure).]]
+
+        on,abort: const(Ecordova_ProgressEvent)*;
+        [[When the read has been aborted. For instance, by invoking the
+          abort() method.]]
+    }
+}

@@ -74,6 +74,8 @@ include Makefile_Eio_Cxx.am
 
 include Makefile_Elua.am
 include Makefile_Elocation.am
+include Makefile_Ecordova.am
+include Makefile_Ecordova_Cxx.am
 
 .PHONY: benchmark examples
 

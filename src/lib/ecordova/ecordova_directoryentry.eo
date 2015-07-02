@@ -1,0 +1,75 @@
+enum Ecordova_FileFlags {
+    CREATE = 1,
+    EXCLUSIVE = 2
+}
+
+class Ecordova.DirectoryEntry (Ecordova.Entry) {
+    [[An interface representing a directory on the file system.]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_DirectoryEntry constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+            params {
+                name: const(char)*;
+                [[name of the directory, excluding the path leading to it]]
+
+                path: const(char)*;
+                [[the absolute full path to the directory]]
+
+                file_system: Ecordova.FileSystem*;
+                [[filesystem on which the directory resides]]
+
+                url: const(char)*;
+                [[an alternate URL which can be used by native webview
+                  controls, for example media players.]]
+            }
+        }
+        reader_create {
+            [[Creates a new DirectoryReader to read entries from this directory]]
+            return: own(Ecordova.DirectoryReader*);
+        }
+        directory_get {
+            [[Creates or looks up a directory]]
+            params {
+                path: const(char)*;
+                [[either a relative or absolute path from this directory in
+                  which to look up or create a directory]]
+
+                flags: Ecordova_FileFlags;
+                [[options to create or exclusively create the directory]]
+            }
+        }
+        recursively_remove {
+            [[Deletes a directory and all of it's contents]]
+        }
+        file_get {
+            [[Creates or looks up a file]]
+            params {
+                path: const(char)*;
+                [[either a relative or absolute path from this directory in
+                  which to look up or create a file]]
+
+                flags: Ecordova_FileFlags;
+                [[options to create or exclusively create the file]]
+
+            }
+        }
+
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+    events {
+        directory,get: Ecordova.DirectoryEntry*;
+        remove,success; [[called with no parameters]]
+        file,get: Ecordova.FileEntry*;
+    }
+}

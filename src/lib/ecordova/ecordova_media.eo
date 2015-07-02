@@ -1,0 +1,108 @@
+enum Ecordova_Media_Status {
+    MEDIA_NONE = 0,
+    MEDIA_STARTING = 1,
+    MEDIA_RUNNING = 2,
+    MEDIA_PAUSED = 3,
+    MEDIA_STOPPED = 4
+}
+
+enum Ecordova_Media_ErrorCode {
+    MEDIA_ERR_ABORTED = 1,
+    MEDIA_ERR_NETWORK = 2,
+    MEDIA_ERR_DECODE = 3,
+    MEDIA_ERR_NONE_SUPPORTED = 4
+}
+
+struct Ecordova_Media_Error {
+    [[A MediaError object is returned to the mediaError callback function when an error occurs.]]
+    code: int; [[One of the predefined error codes]]
+    message: const(char)*; [[An error message describing the details of the error.]]
+}
+
+class Ecordova.Media (Eo.Base) {
+    [[Ecordova Media Plugin
+      Plugin ID: org.apache.cordova.media
+      http://plugins.cordova.io/#/package/org.apache.cordova.media
+    ]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_Media constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+            params {
+                src: const(char)*; [[A URI containing the audio content.]]
+            }
+        }
+        current_position_get {
+            [[Returns the current position within an audio file. Also updates
+              the Media object's position parameter.]]
+        }
+        duration_get {
+            [[Returns the duration of an audio file in seconds. If the
+              duration is unknown, it returns a value of -1.]]
+            return: int;
+        }
+        pause {
+            [[Pauses playing an audio file.]]
+        }
+        play {
+            [[Starts or resumes playing an audio file.]]
+        }
+        release {
+            [[Releases the underlying operating system's audio resources. This
+              is particularly important for Android, since there are a finite
+              amount of OpenCore instances for media playback. Applications
+              should call the release function for any Media resource that is
+              no longer needed.]]
+        }
+        seek {
+            [[Sets the current position within an audio file.]]
+            params {
+                milliseconds: int;
+                [[The position to set the playback position within the audio,
+                  in milliseconds.]]
+            }
+        }
+        volume_set {
+            [[Set the volume for an audio file.]]
+            params {
+                volume: double;
+                [[The volume to set for playback. The value must be within the
+                  range of 0.0 to 1.0.]]
+            }
+        }
+        record_start {
+            [[Starts recording an audio file.]]
+        }
+        stop {
+            [[Stops playing an audio file.]]
+        }
+        record_stop {
+            [[Stops recording an audio file.]]
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+    events {
+        media,position: int;
+        [[The callback that is passed the current position in seconds.]]
+
+        media,success;
+        [[The callback that executes after a Media object has completed the
+          current play, record, or stop action.]]
+
+        media,error;
+        [[The callback that executes if an error occurs.]]
+
+        media,status: Ecordova_Media_Status;
+        [[The callback that executes to indicate status changes.]]
+    }
+}

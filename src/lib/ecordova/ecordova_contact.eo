@@ -1,0 +1,98 @@
+class Ecordova.Contact (Eo.Base) {
+    [[Contains information about a single contact.]]
+    legacy_prefix: null;
+    methods {
+        remove {
+            [[Removes contact from device storage.]]
+        }
+        clone {
+            [[Creates a deep copy of this Contact. With the contact ID set to
+              null.
+            ]]
+            return: Ecordova.Contact*; [[copy of this Contact]]
+        }
+        save {
+            [[Persists contact to device storage.]]
+        }
+        @property id {
+            get {}
+            values {
+                id: int ;
+            }
+        }
+        @property display_name {
+            values {
+                display_name: const(char)*;
+            }
+        }
+        @property name {
+            values {
+                name: Ecordova.ContactName*;
+            }
+        }
+        @property nickname {
+            values {
+                nickname: const(char)*;
+            }
+        }
+        @property phone_numbers {
+            values {
+                phone_numbers: array<Ecordova.ContactField*>*;
+            }
+        }
+        @property emails {
+            values {
+                emails: array<Ecordova.ContactField*>*;
+            }
+        }
+        @property addresses {
+            values {
+                addresses: array<Ecordova.ContactAddress*>*;
+            }
+        }
+        @property ims {
+            values {
+                ims: array<Ecordova.ContactField*>*;
+            }
+        }
+        @property organizations {
+            values {
+                organizations: array<Ecordova.ContactOrganization*>*;
+            }
+        }
+        @property birthday {
+            values {
+                birthday: time ;
+            }
+        }
+        @property note {
+            values {
+                note: const(char)*;
+            }
+        }
+        @property photos {
+            values {
+                photos: array<Ecordova.ContactField*>*;
+            }
+        }
+        @property categories {
+            values {
+                categories: array<Ecordova.ContactField*>*;
+            }
+        }
+        @property urls {
+            values {
+                urls: array<Ecordova.ContactField*>*;
+            }
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    events {
+        save,success;
+        remove,success;
+        error;
+    }
+}

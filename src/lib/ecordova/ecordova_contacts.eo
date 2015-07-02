@@ -1,0 +1,76 @@
+struct Ecordova.Contacts.FindOptions {
+    [[Contact find options]]
+    filter: const(char)*;
+    [[The search string used to find contacts.]]
+
+    multiple: bool;
+    [[used to determine if more than one contact should be returned]]
+
+    desiredFields: list<char*>*;
+    [[Contact fields to be returned back. If specified, the resulting Contact
+      object only features values for these fields. (optional)]]
+}
+
+enum Ecordova.Contacts.Error {
+    UNKNOWN_ERROR = 0,
+    INVALID_ARGUMENT_ERROR = 1,
+    TIMEOUT_ERROR = 2,
+    PENDING_OPERATION_ERROR = 3,
+    IO_ERROR = 4,
+    NOT_SUPPORTED_ERROR = 5,
+    PERMISSION_DENIED_ERROR = 20
+}
+
+class Ecordova.Contacts (Eo.Base) {
+    [[Ecordova Contacts Plugin
+      Plugin ID: org.apache.cordova.contacts
+      http://plugins.cordova.io/#/package/org.apache.cordova.contacts
+    ]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_Contacts constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+        }
+        find {
+            [[Returns an array of Contacts matching the search criteria.]]
+            params {
+                fields: const(list<char*>)*;
+                [[fields that should be searched]]
+
+                options: const(Ecordova.Contacts.FindOptions)*;
+                [[options that can be applied to contact searching]]
+            }
+        }
+        contact_pick {
+            [[This function picks contact from phone using contact picker UI]]
+        }
+        create {
+            [[This function creates a new contact, but it does not persist the contact
+              to device storage. To persist the contact to device storage, invoke
+              contact.save().
+            ]]
+            params {
+                other: Ecordova.Contact*;
+                [[an object whose properties will be examined to create a new Contact]]
+            }
+            return: Ecordova.Contact*;
+            [[new Contact object]]
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+    events {
+        find,success: const(array<Ecordova.Contact*>)*;
+        pick,success: const(array<Ecordova.Contact*>)*;
+        error: Ecordova.Contacts.Error*;
+    }
+}

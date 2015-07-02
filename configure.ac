@@ -3911,7 +3911,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [emile])
 ECORE_EVAS_MODULE([extn], [${want_ecore_evas_extn}])
 ECORE_EVAS_MODULE([ews], [yes])
 ECORE_EVAS_MODULE([fb], [${want_fb}])
-ECORE_EVAS_MODULE([drm], [${want_drm}], 
+ECORE_EVAS_MODULE([drm], [${want_drm}],
   [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_drm}], [ecore-drm])])
 ECORE_EVAS_MODULE([gl-drm], [${want_gl_drm}],
   [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_gl_drm}], [ecore-drm])])
@@ -4581,6 +4581,93 @@ EFL_ADD_LIBS([ELOCATION], [-lm])
 EFL_LIB_END([Elocation])
 #### End of Elocation
 
+
+
+#### Ecordova
+AC_ARG_WITH([ecordova],
+   [AS_HELP_STRING([--with-ecordova=tizen|none],[ecordova implementation: tizen or none. @<:@default=none@:>@])],
+   [build_ecordova=${withval}],
+   [build_ecordova="none"])
+
+want_ecordova_tizen="no"
+want_ecordova_none="no"
+want_ecordova="no"
+case "${build_ecordova}" in
+   tizen)
+     want_ecordova_tizen="yes"
+     want_ecordova="yes"
+     ;;
+   none)
+     want_ecordova_none="yes"
+     ;;
+   *)
+     AC_MSG_ERROR([Unknown build ecordova --with-ecordova=${build_ecordova}])
+     ;;
+esac
+
+AM_CONDITIONAL([HAVE_ECORDOVA], [test "x${want_ecordova}" = "xyes"])
+
+EFL_LIB_START_OPTIONAL([Ecordova], [test "x${want_ecordova}" = "xyes"])
+
+### Additional options to configure
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+
+EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [eina])
+EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [eo])
+EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [efl])
+EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [ecore-evas])
+EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [ecore-file])
+
+EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_VCONF], [vconf])
+EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_CONTACTS_SERVICE], [contacts-service2])
+EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_INFO], [capi-system-info])
+EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_SENSOR], [capi-system-sensor])
+EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_LOCATION_MANAGER], [capi-location-manager])
+EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_HAPTIC], [capi-system-haptic])
+EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_NETWORK_CONNECTION], [capi-network-connection])
+EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_MEDIA_METADATA_EXTRACTOR], [capi-media-metadata-extractor])
+EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_MEDIA_PLAYER], [capi-media-player])
+EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_MEDIA_RECORDER], [capi-media-recorder])
+EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_BASE_UTILS_I18N], [capi-base-utils-i18n])
+
+EFL_ADD_LIBS([ECORDOVA], [-lm])
+
+EFL_EVAL_PKGS([ECORDOVA])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END_OPTIONAL([Ecordova])
+
+#### End of Ecordova
+
+
+#### Ecordova CXX
+EFL_LIB_START_OPTIONAL([Ecordova_Cxx], [test "x${want_ecordova}" = "xyes"])
+
+EFL_EVAL_PKGS([ECORDOVA_CXX])
+
+EFL_LIB_END_OPTIONAL([Ecordova_Cxx])
+#### End of Ecordova CXX
+
+
+
+
 ### Add Wayland server library if test is enabled
 if test "x${want_tests}" = "xyes" -a "x${want_wayland}" = "xyes"; then
    EFL_DEPEND_PKG([ECORE_WAYLAND_SRV], [WAYLAND], [wayland-server >= 1.8.0])
@@ -4769,6 +4856,8 @@ pc/ethumb.pc
 pc/ethumb_client.pc
 pc/elocation.pc
 pc/elua.pc
+pc/ecordova.pc
+pc/ecordova-cxx.pc
 dbus-services/org.enlightenment.Ethumb.service
 systemd-services/ethumb.service
 $po_makefile_in
@@ -4818,6 +4907,10 @@ cmakeconfig/EluaConfig.cmake
 cmakeconfig/EluaConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EmileConfig.cmake
 cmakeconfig/EmileConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EcordovaConfig.cmake
+cmakeconfig/EcordovaConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EcordovaCxxConfig.cmake
+cmakeconfig/EcordovaCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 ])
 
 AC_OUTPUT
@@ -4932,6 +5025,7 @@ echo "Emotion.........: yes (${features_emotion})"
 echo "Ethumb..........: yes"
 echo "Ethumb_Client...: yes"
 echo "Elua............: $have_elua"
+echo "Ecordova........: ${efl_lib_optional_ecordova} (${COLOR_OTHER}${build_ecordova}${COLOR_RESET})"
 if test "${build_tests}" = "none"; then
 echo "Tests...........: no"
 elif test "${build_tests}" = "auto"; then

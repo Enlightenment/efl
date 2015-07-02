@@ -1,0 +1,29 @@
+class Ecordova.Splashscreen (Eo.Base) {
+    [[Ecordova Splashscreen Plugin
+      Plugin ID: org.apache.cordova.splashscreen
+      http://plugins.cordova.io/#/package/org.apache.cordova.splashscreen
+    ]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_Splashscreen constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+        }
+        show {
+            [[Displays the splash screen.]]
+        }
+        hide {
+            [[Dismiss the splash screen.]]
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+}

@@ -1,0 +1,58 @@
+class Ecordova.ContactName (Eo.Base) {
+    [[Contact name.]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_ContactName constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+            params {
+                formatted: const(char)*; [[The complete name of the contact.]]
+                family_name: const(char)*; [[The contact's family name.]]
+                given_name: const(char)*; [[The contact's given name.]]
+                middle: const(char)*; [[The contact's middle name.]]
+                prefix: const(char)*; [[The contact's prefix (example Mr. or Dr.)]]
+                suffix: const(char)*; [[The contact's suffix (example Esq.).]]
+            }
+        }
+        @property formatted {
+            values {
+                formatted: const(char)*;
+            }
+        }
+        @property family_name {
+            values {
+                family_name: const(char)*;
+            }
+        }
+        @property given_name {
+            values {
+                given_name: const(char)*;
+            }
+        }
+        @property middle {
+            values {
+                middle: const(char)*;
+            }
+        }
+        @property prefix {
+            values {
+                prefix: const(char)*;
+            }
+        }
+        @property suffix {
+            values {
+                suffix: const(char)*;
+            }
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+}

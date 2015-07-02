@@ -1,0 +1,87 @@
+type Ecordova.DeviceOrientation.WatchID: int;
+
+struct Ecordova.DeviceOrientation.Heading {
+    magnetic_heading: double;
+    [[The heading in degrees from 0-359.99 at a single moment in time.]]
+
+    true_heading: double;
+    [[The heading relative to the geographic North Pole in degrees 0-359.99 at a
+      single moment in time. A negative value indicates that the true heading
+      can't be determined.]]
+
+    heading_accuracy: double;
+    [[The deviation in degrees between the reported heading and the true heading.]]
+
+    timestamp: time;
+    [[The time at which this heading was determined. (milliseconds)]]
+}
+
+struct Ecordova.DeviceOrientation.OrientationOptions {
+    frequency: int;
+    [[How often to retrieve the compass heading in milliseconds. (Default: 100)]]
+
+    filter: double;
+    [[The change in degrees required to initiate a heading_watch success
+      callback. When this value is set, frequency is ignored.]]
+}
+
+enum Ecordova.DeviceOrientation.Error {
+    COMPASS_INTERNAL_ERR = 0,
+    COMPASS_NOT_SUPPORTED = 20
+}
+
+class Ecordova.DeviceOrientation (Eo.Base) {
+    [[Ecordova Device-Orientation Plugin
+      Plugin ID: org.apache.cordova.device-orientation
+      http://plugins.cordova.io/#/package/org.apache.cordova.device-orientation
+    ]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_DeviceOrientation constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+        }
+        current_heading_get {
+            [[Get the current compass heading. The compass heading is returned
+              via a CompassHeading object using the compassSuccess callback
+              function.
+            ]]
+        }
+        heading_watch {
+            [[Gets the device's current heading at a regular interval. Each
+              time the heading is retrieved, the headingSuccess callback
+              function is executed.
+            ]]
+            params {
+                options: const(Ecordova.DeviceOrientation.OrientationOptions)*;
+            }
+            return: Ecordova.DeviceOrientation.WatchID;
+            [[references the compass watch interval. The watch ID can be used
+              with navigator.compass.watch_clear to stop watching the
+              navigator.compass.
+            ]]
+        }
+        watch_clear {
+            [[Stop watching the compass referenced by the watch ID parameter.]]
+            params {
+                watch_id: Ecordova.DeviceOrientation.WatchID;
+                [[The ID returned by navigator.compass.heading_watch.]]
+            }
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+    events {
+        current,success: Ecordova.DeviceOrientation.Heading*;
+        watch,success: Ecordova.DeviceOrientation.Heading*;
+        error: Ecordova.DeviceOrientation.Error;
+    }
+}

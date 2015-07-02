@@ -1,0 +1,25 @@
+class Ecordova.FileSystem (Eo.Base) {
+    [[An interface representing a file system]]
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Ecordova_FileSystem constructor.
+              @.constructor
+
+              @since 2.3
+            ]]
+            params {
+                name: const(char)*; [[name the unique name of the file system]]
+                root: Eo*/*Ecordova.DirectoryEntry*/; [[root directory of the file system]]
+            }
+        }
+
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+    }
+    constructors {
+        .constructor;
+    }
+}
