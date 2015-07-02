@@ -179,7 +179,7 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
      {
         if (obj->layer)
           {
-             obj->layer->evas->engine.func->image_map_surface_free
+             obj->layer->evas->engine.func->image_free
                (obj->layer->evas->engine.data.output,
                    obj->map->surface);
           }
@@ -196,7 +196,7 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
           mask->w = mask->h = 0;
           if (mask->surface)
             {
-               obj->layer->evas->engine.func->image_map_surface_free
+               obj->layer->evas->engine.func->image_free
                      (obj->layer->evas->engine.data.output, mask->surface);
                mask->surface = NULL;
             }
@@ -308,7 +308,7 @@ evas_object_content_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
         EINA_COW_WRITE_BEGIN(evas_object_map_cow,
                              obj->map, Evas_Object_Map_Data, map_write)
           {
-             obj->layer->evas->engine.func->image_map_surface_free
+             obj->layer->evas->engine.func->image_free
                (obj->layer->evas->engine.data.output, map_write->surface);
              map_write->surface = NULL;
           }
@@ -1323,7 +1323,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
                mask->w = mask->h = 0;
                if (mask->surface)
                  {
-                    obj->layer->evas->engine.func->image_map_surface_free
+                    obj->layer->evas->engine.func->image_free
                           (obj->layer->evas->engine.data.output, mask->surface);
                     mask->surface = NULL;
                  }

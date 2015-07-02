@@ -2427,8 +2427,8 @@ _proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *cur_proxy, Evas_Ima
        if (eina_list_count(proxy_source_write->proxies) == 0)
           {
              if (proxy_source_write->surface)
-               cur_proxy->layer->evas->engine.func->image_map_surface_free(cur_proxy->layer->evas->engine.data.output,
-                                                                           proxy_source_write->surface);
+               cur_proxy->layer->evas->engine.func->image_free(cur_proxy->layer->evas->engine.data.output,
+                                                               proxy_source_write->surface);
              proxy_source_write->surface = NULL;
              proxy_source_write->redraw = EINA_FALSE;
           }
@@ -3172,7 +3172,7 @@ _evas_image_evas_filter_input_render(Eo *eo_obj, Evas_Image_Data *o,
    if (!input_stolen)
      {
         evas_filter_image_draw(filter, context, EVAS_FILTER_BUFFER_INPUT_ID, surface, do_async);
-        ENFN->image_map_surface_free(output, surface);
+        ENFN->image_free(output, surface);
      }
    else
      evas_filter_buffer_backing_release(filter, surface);

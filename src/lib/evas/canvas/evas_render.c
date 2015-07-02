@@ -1317,7 +1317,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                   RD(level, "  new surf: %ix%i\n", sw, sh);
 		  EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
 		    {
-		      obj->layer->evas->engine.func->image_map_surface_free
+                      obj->layer->evas->engine.func->image_free
 			(e->engine.data.output, map_write->surface);
 		      map_write->surface = NULL;
 		    }
@@ -1518,7 +1518,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
         // FIXME: needs to cache these maps and
         // keep them only rendering updates
-        //        obj->layer->evas->engine.func->image_map_surface_free
+        //        obj->layer->evas->engine.func->image_free
         //          (e->engine.data.output, obj->map->surface);
         //        obj->map->surface = NULL;
      }
@@ -1721,7 +1721,7 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
         if ((proxy_write->surface) &&
             ((proxy_write->w != w) || (proxy_write->h != h)))
           {
-             ENFN->image_map_surface_free(ENDT, proxy_write->surface);
+             ENFN->image_free(ENDT, proxy_write->surface);
              proxy_write->surface = NULL;
           }
 
@@ -1879,7 +1879,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
            * (we don't know how to render objects to alpha) */
           if (mdata->surface && ((w != mdata->w) || (h != mdata->h) || mdata->is_alpha || mdata->is_scaled))
             {
-               ENFN->image_map_surface_free(ENDT, mdata->surface);
+               ENFN->image_free(ENDT, mdata->surface);
                mdata->surface = NULL;
             }
 
@@ -1942,7 +1942,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
                    *alpha = (DATA8) A_VAL(rgba);
 
                /* Now we can drop the original surface */
-               ENFN->image_map_surface_free(ENDT, mdata->surface);
+               ENFN->image_free(ENDT, mdata->surface);
                mdata->surface = alpha_surface;
                mdata->is_alpha = EINA_TRUE;
             }
@@ -2953,7 +2953,7 @@ _evas_render_dump_map_surfaces(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if ((obj->map->cur.map) && obj->map->surface)
      {
-        obj->layer->evas->engine.func->image_map_surface_free
+        obj->layer->evas->engine.func->image_free
            (obj->layer->evas->engine.data.output, obj->map->surface);
         EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
           map_write->surface = NULL;
@@ -2992,7 +2992,7 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *e)
                     {
                        EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy, Evas_Object_Proxy_Data, proxy_write)
                          {
-                            e->engine.func->image_map_surface_free(e->engine.data.output, proxy_write->surface);
+                            e->engine.func->image_free(e->engine.data.output, proxy_write->surface);
                             proxy_write->surface = NULL;
                          }
                        EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write);
@@ -3001,7 +3001,7 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *e)
                     {
                        EINA_COW_WRITE_BEGIN(evas_object_mask_cow, obj->mask, Evas_Object_Mask_Data, mdata)
                          {
-                            e->engine.func->image_map_surface_free(e->engine.data.output, mdata->surface);
+                            e->engine.func->image_free(e->engine.data.output, mdata->surface);
                             mdata->surface = NULL;
                          }
                        EINA_COW_WRITE_END(evas_object_mask_cow, obj->mask, mdata);

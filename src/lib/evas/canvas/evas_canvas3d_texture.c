@@ -31,8 +31,7 @@ _texture_proxy_unset(Evas_Canvas3D_Texture_Data *texture)
             proxy_src->surface != NULL)
           {
              Evas_Public_Data *e = src->layer->evas;
-             e->engine.func->image_map_surface_free(e->engine.data.output,
-                                                    proxy_src->surface);
+             e->engine.func->image_free(e->engine.data.output, proxy_src->surface);
              proxy_src->surface = NULL;
           }
 
@@ -91,8 +90,7 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
         if ((proxy_write->surface) &&
             ((proxy_write->w != w) || (proxy_write->h != h)))
           {
-             e->engine.func->image_map_surface_free(e->engine.data.output,
-                                                    proxy_write->surface);
+             e->engine.func->image_free(e->engine.data.output, proxy_write->surface);
              proxy_write->surface = NULL;
           }
 

@@ -2257,19 +2257,6 @@ eng_image_map_surface_new(void *data EINA_UNUSED, int w, int h, int alpha)
 }
 
 static void
-eng_image_map_surface_free(void *data EINA_UNUSED, void *surface)
-{
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     {
-        evas_cache2_image_unload_data(surface);
-        return;
-     }
-#endif
-   evas_cache_image_drop(surface);
-}
-
-static void
 eng_image_scale_hint_set(void *data EINA_UNUSED, void *image, int hint)
 {
    Image_Entry *im;
@@ -3872,7 +3859,6 @@ static Evas_Func func =
      eng_font_last_up_to_pos,
      eng_image_map_draw,
      eng_image_map_surface_new,
-     eng_image_map_surface_free,
      eng_image_map_clean,
      NULL, // eng_image_scaled_get - used for live scaling in GL only (fastpath)
      NULL, // eng_image_content_hint_set - software doesn't use it

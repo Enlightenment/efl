@@ -1173,15 +1173,6 @@ eng_image_map_surface_new(void *data, int w, int h, int alpha)
    return evas_gl_common_image_surface_new(gl_context, w, h, alpha);
 }
 
-static void
-eng_image_map_surface_free(void *data, void *surface)
-{
-   Render_Engine_GL_Generic *re = data;
-
-   re->window_use(re->software.ob);
-   evas_gl_common_image_free(surface);
-}
-
 static void *
 eng_image_scaled_update(void *data EINA_UNUSED, void *scaled, void *image,
                         int dst_w, int dst_h,
@@ -2550,7 +2541,6 @@ module_open(Evas_Module *em)
 
    ORD(image_map_draw);
    ORD(image_map_surface_new);
-   ORD(image_map_surface_free);
    ORD(image_map_clean);
    ORD(image_scaled_update);
 

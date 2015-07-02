@@ -1357,7 +1357,6 @@ struct _Evas_Func
 
    Eina_Bool (*image_map_draw)                  (void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level, Eina_Bool do_async);
    void *(*image_map_surface_new)          (void *data, int w, int h, int alpha);
-   void (*image_map_surface_free)          (void *data, void *surface);
    void (*image_map_clean)                 (void *data, RGBA_Map *m);
    void *(*image_scaled_update)            (void *data, void *scaled, void *image, int dst_w, int dst_h, Eina_Bool smooth, Eina_Bool alpha, Evas_Colorspace cspace);
 

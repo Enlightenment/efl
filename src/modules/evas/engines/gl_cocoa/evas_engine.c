@@ -811,12 +811,6 @@ eng_image_map_surface_new(void *data EINA_UNUSED, int w, int h, int alpha)
 }
 
 static void
-eng_image_map_surface_free(void *data EINA_UNUSED, void *surface)
-{
-   evas_gl_common_image_free(surface);
-}
-
-static void
 eng_image_content_hint_set(void *data, void *image, int hint)
 {
    Render_Engine *re;
@@ -1263,7 +1257,6 @@ module_open(Evas_Module *em)
    
    ORD(image_map_draw);
    ORD(image_map_surface_new);
-   ORD(image_map_surface_free);
    
    ORD(image_content_hint_set);
    ORD(image_content_hint_get);
