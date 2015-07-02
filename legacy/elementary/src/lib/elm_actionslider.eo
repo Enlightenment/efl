@@ -4,73 +4,49 @@ class Elm.Actionslider (Elm.Layout, Evas.Selectable_Interface)
    methods {
       @property indicator_pos {
          set {
-            /*@
-            Set actionslider indicator position.
-
-            @ingroup Actionslider */
+            [[Set actionslider indicator position.]]
          }
          get {
-            /*@
-            Get actionslider indicator position.
-
-            @return The position of the indicator.
-
-            @ingroup Actionslider */
+            [[Get actionslider indicator position.]]
          }
          values {
-            pos: Elm_Actionslider_Pos; /*@ The position of the indicator. */
+            pos: Elm_Actionslider_Pos; [[The position of the indicator.]]
          }
       }
       @property magnet_pos {
          set {
-            /*@
-            Set actionslider magnet position. To make multiple positions magnets @c or
-            them together (e.g. #ELM_ACTIONSLIDER_LEFT | #ELM_ACTIONSLIDER_RIGHT)
+            [[Set actionslider magnet position.
 
-            @ingroup Actionslider */
+              To make multiple positions magnets OR them together (e.g.
+              ELM_ACTIONSLIDER_LEFT | #ELM_ACTIONSLIDER_RIGHT)
+            ]]
          }
          get {
-            /*@
-            Get actionslider magnet position.
-
-            @return The positions with magnet property.
-
-            @ingroup Actionslider */
+            [[Get actionslider magnet position.]]
          }
          values {
-            pos: Elm_Actionslider_Pos; /*@ Bit mask indicating the magnet positions. */
+            pos: Elm_Actionslider_Pos; [[Bit mask indicating the magnet positions.]]
          }
       }
       @property enabled_pos {
          set {
-            /*@
-            Set actionslider enabled position. To set multiple positions as enabled @c or
-            them together(e.g.: #ELM_ACTIONSLIDER_LEFT | #ELM_ACTIONSLIDER_RIGHT).
+            [[Set actionslider enabled position. To set multiple positions as
+              enabled OR them together(e.g.
+              #ELM_ACTIONSLIDER_LEFT | #ELM_ACTIONSLIDER_RIGHT).
 
-            @note All the positions are enabled by default.
-
-            @ingroup Actionslider */
+              Note: All the positions are enabled by default.
+            ]]
          }
          get {
-            /*@
-            Get actionslider enabled position.
-
-            @return The enabled positions.
-
-            @ingroup Actionslider */
+            [[Get actionslider enabled position.]]
          }
          values {
-            pos: Elm_Actionslider_Pos; /*@ Bit mask indicating the enabled positions. */
+            pos: Elm_Actionslider_Pos; [[Bit mask indicating the enabled positions.]]
          }
       }
       @property selected_label {
          get {
-            /*@
-            Get actionslider selected label.
-
-            @return The selected label
-
-            @ingroup Actionslider */
+            [[Get actionslider selected label.]]
             return: const(char)*;
          }
       }
