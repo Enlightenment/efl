@@ -1862,8 +1862,6 @@ _x11_elm_cnp_selection_set(Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type s
    if (sel->widget)
      evas_object_event_callback_del_full(sel->widget, EVAS_CALLBACK_DEL,
                                          _x11_sel_obj_del, sel);
-   sel->widget = NULL;
-
    sel->active = EINA_TRUE;
    sel->widget = obj;
    sel->xwin = xwin;
@@ -1952,8 +1950,6 @@ _x11_elm_cnp_selection_get(Ecore_X_Window xwin, const Evas_Object *obj, Elm_Sel_
    if (sel->requestwidget)
      evas_object_event_callback_del_full(sel->requestwidget, EVAS_CALLBACK_DEL,
                                          _x11_sel_obj_del2, sel);
-   sel->requestwidget = NULL;
-
    sel->requestformat = format;
    sel->requestwidget = (Evas_Object *)obj;
    sel->xwin = xwin;
@@ -2390,8 +2386,6 @@ _wl_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
      evas_object_event_callback_del_full(sel->widget,
                                          EVAS_CALLBACK_DEL,
                                          _wl_sel_obj_del, &wl_cnp_selection);
-   sel->widget = NULL;
-
    sel->active = EINA_TRUE;
    sel->seltype = selection;
    sel->widget = obj;
@@ -2470,8 +2464,6 @@ _wl_elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection, Elm_Se
      evas_object_event_callback_del_full(sel->requestwidget,
                                          EVAS_CALLBACK_DEL,
                                          _wl_sel_obj_del2, &wl_cnp_selection);
-   sel->requestwidget = NULL;
-
    sel->requestformat = format;
    sel->requestwidget = (Evas_Object *) obj;
    sel->win = win;
