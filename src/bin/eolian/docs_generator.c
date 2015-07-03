@@ -52,7 +52,7 @@ _append_section(const char *desc, int ind, int curl, Eina_Strbuf *buf,
              if (isalpha(*desc))
                eina_strbuf_append(wbuf, "@c ");
              else
-               eina_strbuf_append_char(wbuf, '@');
+               eina_strbuf_append_char(wbuf, '$');
           }
         while (*desc && !isspace(*desc))
           eina_strbuf_append_char(wbuf, *desc++);

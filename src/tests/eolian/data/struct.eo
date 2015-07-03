@@ -17,7 +17,7 @@ struct @extern Not.Generated {
 class Struct {
    methods {
       foo {
-         [[Foo docs. This is $monospace.]]
+         [[Foo docs. This is $monospace. This is alone-standing $.]]
          params {
             idx: int;
          }

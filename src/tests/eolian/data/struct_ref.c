@@ -31,7 +31,7 @@ typedef struct _Opaque Opaque;
 EAPI const Eo_Class *struct_class_get(void) EINA_CONST;
 
 /**
- * @brief Foo docs. This is @c monospace.
+ * @brief Foo docs. This is @c monospace. This is alone-standing $.
  *
  * @param[in] idx
  */
