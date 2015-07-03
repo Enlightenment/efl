@@ -5,10 +5,10 @@ class Elm.Systray (Eo.Base)
    methods {
       @property id {
          set {
-            /*@ Set the id of the Status Notifier Item. */
+            [[Set the id of the Status Notifier Item.]]
          }
          get {
-            /*@ Get the id of the Status Notifier Item. */
+            [[Get the id of the Status Notifier Item.]]
          }
          values {
             id: const(char)* @nullable;
@@ -16,21 +16,21 @@ class Elm.Systray (Eo.Base)
       }
       @property category {
          set {
-            /*@ Set the category of the Status Notifier Item. */
+            [[Set the category of the Status Notifier Item.]]
          }
          get {
-            /*@ Get the category of the Status Notifier Item. */
+            [[Get the category of the Status Notifier Item.]]
          }
          values {
-            cat: Elm_Systray_Category; /*@ Category */
+            cat: Elm_Systray_Category; [[Category]]
          }
       }
       @property icon_theme_path {
          set {
-            /*@ Set the path to the theme where the icons can be found. Set this value to "" to use the default path. */
+            [[Set the path to the theme where the icons can be found. Set this value to "" to use the default path.]]
          }
          get {
-            /*@ Get the path to the icon's theme currently in use. */
+            [[Get the path to the icon's theme currently in use.]]
          }
          values {
             icon_theme_path: const(char)* @nullable;
@@ -38,10 +38,10 @@ class Elm.Systray (Eo.Base)
       }
       @property menu {
          set {
-            /*@ Set the object path of the D-Bus Menu that is to be show when the Status Notifier Item is activated by the user. */
+            [[Set the object path of the D-Bus Menu that is to be show when the Status Notifier Item is activated by the user.]]
          }
          get {
-            /*@ Get the object path of the D-Bus Menu currently in use. */
+            [[Get the object path of the D-Bus Menu currently in use.]]
          }
          values {
             menu: const(Eo)* @nullable;
@@ -49,10 +49,10 @@ class Elm.Systray (Eo.Base)
       }
       @property att_icon_name {
          set {
-            /*@ Set the name of the attention icon to be used by the Status Notifier Item. */
+            [[Set the name of the attention icon to be used by the Status Notifier Item.]]
          }
          get {
-            /*@ Get the name of the attention icon used by the Status Notifier Item. */
+            [[Get the name of the attention icon used by the Status Notifier Item.]]
          }
          values {
             att_icon_name: const(char)* @nullable;
@@ -60,21 +60,21 @@ class Elm.Systray (Eo.Base)
       }
       @property status {
          set {
-            /*@ Set the status of the Status Notifier Item. */
+            [[Set the status of the Status Notifier Item.]]
          }
          get {
-            /*@ Get the status of the Status Notifier Item. */
+            [[Get the status of the Status Notifier Item.]]
          }
          values {
-            st: Elm_Systray_Status; /*@ Status */
+            st: Elm_Systray_Status; [[Status]]
          }
       }
       @property icon_name {
          set {
-            /*@ Set the name of the icon to be used by the Status Notifier Item. */
+            [[Set the name of the icon to be used by the Status Notifier Item.]]
          }
          get {
-            /*@ Get the name of the icon used by the Status Notifier Item. */
+            [[Get the name of the icon used by the Status Notifier Item.]]
          }
          values {
             icon_name: const(char)* @nullable;
@@ -82,17 +82,17 @@ class Elm.Systray (Eo.Base)
       }
       @property title {
          set {
-            /*@ Set the title of the Status Notifier Item. */
+            [[Set the title of the Status Notifier Item.]]
          }
          get {
-            /*@ Get the title of the Status Notifier Item. */
+            [[Get the title of the Status Notifier Item.]]
          }
          values {
             title: const(char)* @nullable;
          }
       }
       register {
-         /*@ Register this Status Notifier Item in the System Tray Watcher. This function should only be called after the event #ELM_EVENT_SYSTRAY_READY is emitted. */
+         [[Register this Status Notifier Item in the System Tray Watcher. This function should only be called after the event #ELM_EVENT_SYSTRAY_READY is emitted.]]
          return: bool;
       }
    }
