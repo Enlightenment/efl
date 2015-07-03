@@ -319,7 +319,7 @@ ecore_file_mksubdirs(const char *base, const char **subdirs)
              if (errno == ENOENT)
                {
 #ifndef HAVE_ATFILE_SOURCE
-                  if (mkdir(buf, default_mode) == 0)
+                  if (ecore_file_mkdir(buf))
 #else
                   if (mkdirat(fd, *subdirs, default_mode) == 0)
 #endif
