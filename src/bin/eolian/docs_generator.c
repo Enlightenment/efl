@@ -34,7 +34,7 @@ _append_section(const char *desc, int ind, int curl, Eina_Strbuf *buf,
         if (*desc == '\\')
           {
              desc++;
-             if (*desc != '@')
+             if ((*desc != '@') && (*desc != '$'))
                eina_strbuf_append_char(wbuf, '\\');
              eina_strbuf_append_char(wbuf, *desc++);
           }
@@ -43,6 +43,14 @@ _append_section(const char *desc, int ind, int curl, Eina_Strbuf *buf,
              desc++;
              if (isalpha(*desc))
                eina_strbuf_append(wbuf, "@ref ");
+             else
+               eina_strbuf_append_char(wbuf, '@');
+          }
+        else if (*desc == '$')
+          {
+             desc++;
+             if (isalpha(*desc))
+               eina_strbuf_append(wbuf, "@c ");
              else
                eina_strbuf_append_char(wbuf, '@');
           }
