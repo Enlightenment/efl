@@ -2857,6 +2857,53 @@ _elm_entry_elm_container_content_unset(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED,
    return ret;
 }
 
+static void
+_entry_text_append(Evas_Object* obj, const char* entry)
+{
+   int len = 0;
+   if (!entry) return;
+
+   ELM_ENTRY_DATA_GET(obj, sd);
+   len = strlen(entry);
+
+   if (sd->append_text_left)
+     {
+        char *tmpbuf;
+
+        tmpbuf = realloc(sd->append_text_left, sd->append_text_len + len + 1);
+        if (!tmpbuf)
+          {
+             /* Do something */
+             return;
+          }
+        sd->append_text_left = tmpbuf;
+        memcpy(sd->append_text_left + sd->append_text_len, entry, len + 1);
+        sd->append_text_len += len;
+     }
+   else
+     {
+        if (len > ELM_ENTRY_CHUNK_SIZE)
+          {
+             sd->append_text_left = (char *)malloc(len + 1);
+          }
+
+        if (sd->append_text_left)
+          {
+             memcpy(sd->append_text_left, entry, len + 1);
+             sd->append_text_position = 0;
+             sd->append_text_len = len;
+             sd->append_text_idler = ecore_idler_add(_text_append_idler, obj);
+          }
+        else
+          {
+             /* For the case of text set, append will have similar behaviour
+              * as entry text is cleared first */
+             edje_object_part_text_append(sd->entry_edje, "elm.text", entry);
+             evas_object_smart_callback_call(obj, SIG_TEXT_SET_DONE, NULL);
+          }
+     }
+}
+
 EOLIAN static Eina_Bool
 _elm_entry_elm_layout_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, const char *entry)
 {
@@ -2891,27 +2938,10 @@ _elm_entry_elm_layout_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, co
         free(sd->append_text_left);
         sd->append_text_left = NULL;
      }
-   /* Split to ~ ELM_ENTRY_CHUNK_SIZE chunks */
-   if (len > ELM_ENTRY_CHUNK_SIZE)
-     {
-        sd->append_text_left = (char *)malloc(len + 1);
-     }
 
-   /* If we decided to use the idler */
-   if (sd->append_text_left)
-     {
-        /* Need to clear the entry first */
-        edje_object_part_text_set(sd->entry_edje, "elm.text", "");
-        memcpy(sd->append_text_left, entry, len + 1);
-        sd->append_text_position = 0;
-        sd->append_text_len = len;
-        sd->append_text_idler = ecore_idler_add(_text_append_idler, obj);
-     }
-   else
-     {
-        edje_object_part_text_set(sd->entry_edje, "elm.text", entry);
-        evas_object_smart_callback_call(obj, SIG_TEXT_SET_DONE, NULL);
-     }
+   /* Need to clear the entry first */
+   edje_object_part_text_set(sd->entry_edje, "elm.text", "");
+   _entry_text_append(obj, entry);
 
    if (len > 0)
      _elm_entry_guide_update(obj, EINA_TRUE);
@@ -3818,27 +3848,7 @@ _elm_entry_entry_append(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *ent
    if (!entry) entry = "";
 
    sd->changed = EINA_TRUE;
-
-   len = strlen(entry);
-   if (sd->append_text_left)
-     {
-        char *tmpbuf;
-
-        tmpbuf = realloc(sd->append_text_left, sd->append_text_len + len + 1);
-        if (!tmpbuf)
-          {
-             /* Do something */
-             return;
-          }
-        sd->append_text_left = tmpbuf;
-        memcpy(sd->append_text_left + sd->append_text_len, entry, len + 1);
-        sd->append_text_len += len;
-     }
-   else
-     {
-        /* FIXME: Add chunked appending here (like in entry_set) */
-        edje_object_part_text_append(sd->entry_edje, "elm.text", entry);
-     }
+   _entry_text_append(obj, entry);
 }
 
 EOLIAN static Eina_Bool
