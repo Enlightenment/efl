@@ -3843,8 +3843,6 @@ elm_entry_entry_get(const Evas_Object *obj)
 EOLIAN static void
 _elm_entry_entry_append(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *entry)
 {
-   int len = 0;
-
    if (!entry) entry = "";
 
    sd->changed = EINA_TRUE;
