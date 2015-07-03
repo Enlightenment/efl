@@ -4,43 +4,35 @@ class Elm.Check (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
    methods {
       @property state {
          set {
-            /*@
-            @brief Set the on/off state of the check object
+            [[Set the on/off state of the check object
 
-            This sets the state of the check. If set with elm_check_state_pointer_set()
-            the state of that variable is also changed. Calling this @b doesn't cause
-            the "changed" signal to be emitted.
-
-            @ingroup Check */
+              This sets the state of the check. If set with
+              @elm_check_state_pointer_set, the state of that variable is also
+              changed. Calling this doesn't cause the "changed" signal to
+              be emitted.
+            ]]
          }
          get {
-            /*@
-            @brief Get the state of the check object
-
-            @return The boolean state
-
-            @ingroup Check */
+            [[Get the state of the check object]]
          }
          values {
-            state: bool; /*@ The state to use (1 == on, 0 == off) */
+            state: bool; [[The state to use (1 == on, 0 == off)]]
          }
       }
       @property state_pointer {
          set {
-            /*@
-            @brief Set a convenience pointer to a boolean to change
+            [[Set a convenience pointer to a boolean to change
 
-            This sets a pointer to a boolean, that, in addition to the check objects
-            state will also be modified directly. To stop setting the object pointed
-            to simply use NULL as the @p statep parameter. If @p statep is not NULL,
-            then when this is called, the check objects state will also be modified to
-            reflect the value of the boolean @p statep points to, just like calling
-            elm_check_state_set().
-
-            @ingroup Check */
+              This sets a pointer to a boolean, that, in addition to the check
+              objects state will also be modified directly. To stop setting the
+              object pointed to simply use null as the "statep" parameter.
+              If "statep" is not null, then when this is called, the check
+              objects state will also be modified to reflect the value of the
+              boolean "statep" points to, just like calling @elm_check_state_set.
+            ]]
          }
          values {
-            statep: bool * @nullable; /*@ Pointer to the boolean to modify */
+            statep: bool * @nullable; [[Pointer to the boolean to modify]]
          }
       }
    }
