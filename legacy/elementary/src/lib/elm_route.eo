@@ -4,7 +4,7 @@ class Elm.Route (Elm.Widget)
    methods {
       @property emap {
          set {
-            /*@ No description supplied by the EAPI. */
+            [[No description supplied by the EAPI.]]
          }
          values {
             emap: void *;
@@ -12,32 +12,28 @@ class Elm.Route (Elm.Widget)
       }
       @property longitude_min_max {
          get {
-            /*@
-            Get the minimum and maximum values along the longitude.
+            [[Get the minimum and maximum values along the longitude.
 
-            @note If only one value is needed, the other pointer can be passed
-            as @c NULL.
-
-            @ingroup Route */
+              Note: If only one value is needed, the other pointer can be
+              passed as null.
+            ]]
          }
          values {
-            min: double; /*@ Pointer to store the minimum value. */
-            max: double; /*@ Pointer to store the maximum value. */
+            min: double; [[Pointer to store the minimum value.]]
+            max: double; [[Pointer to store the maximum value.]]
          }
       }
       @property latitude_min_max {
          get {
-            /*@
-            Get the minimum and maximum values along the latitude.
+            [[Get the minimum and maximum values along the latitude.
 
-            @note If only one value is needed, the other pointer can be passed
-            as @c NULL.
-
-            @ingroup Route */
+              Note: If only one value is needed, the other pointer can be
+              passed as null.
+            ]]
          }
          values {
-            min: double; /*@ Pointer to store the minimum value. */
-            max: double; /*@ Pointer to store the maximum value. */
+            min: double; [[Pointer to store the minimum value.]]
+            max: double; [[Pointer to store the maximum value.]]
          }
       }
    }
