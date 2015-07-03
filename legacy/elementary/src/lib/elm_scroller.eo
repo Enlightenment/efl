@@ -43,34 +43,26 @@ class Elm.Scroller (Elm.Layout, Elm_Interface_Scrollable,
    methods {
       @property propagate_events {
          set {
-            /*@
-            @brief Set event propagation on a scroller
+            [[Set event propagation on a scroller
 
-            This enables or disables event propagation from the scroller
-            content to the scroller and its parent. By default event
-            propagation is @b enabled.
-
-            @ingroup Scroller */
+              This enables or disables event propagation from the scroller
+              content to the scroller and its parent. By default event
+              propagation is enabled.
+            ]]
          }
          get {
-            /*@
-            @brief Get event propagation for a scroller
+            [[Get event propagation for a scroller
 
-            @return The propagation state
-
-            This gets the event propagation for a scroller.
-
-            @see elm_scroller_propagate_events_set()
-
-            @ingroup Scroller */
+              This gets the event propagation for a scroller.
+            ]]
          }
          values {
-            propagation: bool; /*@ If propagation is enabled or not */
+            propagation: bool; [[The propagation state]]
          }
       }
       @property custom_widget_base_theme {
          set {
-            /*@ Set custom theme elements for the scroller */
+            [[Set custom theme elements for the scroller]]
          }
          values {
             klass: const(char)*;
@@ -78,33 +70,25 @@ class Elm.Scroller (Elm.Layout, Elm_Interface_Scrollable,
          }
       }
       page_scroll_limit_set @const {
-         /*@
-         @brief Set the maximum of the movable page at a flicking.
+         [[Set the maximum of the movable page at a flicking.
 
-         The value of maximum movable page should be more than 1.
+           The value of maximum movable page should be more than 1.
 
-         @see elm_scroller_page_scroll_limit_get()
-
-         @since 1.8
-
-         @ingroup Scroller */
+           @since 1.8
+         ]]
          params {
-            @in page_limit_h: int; /*@ The maximum of the movable horizontal page */
-            @in page_limit_v: int; /*@ The maximum of the movable vertical page */
+            @in page_limit_h: int; [[The maximum of the movable horizontal page]]
+            @in page_limit_v: int; [[The maximum of the movable vertical page]]
          }
       }
       page_scroll_limit_get @const {
-         /*@
-         @brief Get the maximum of the movable page at a flicking.
+         [[Get the maximum of the movable page at a flicking.
 
-         @see elm_scroller_page_scroll_limit_set()
-
-         @since 1.8
-
-         @ingroup Scroller */
+           @since 1.8
+         ]]
          params {
-            @in page_limit_h: int *; /*@ The maximum of the movable horizontal page */
-            @in page_limit_v: int *; /*@ The maximum of the movable vertical page */
+            @in page_limit_h: int *; [[The maximum of the movable horizontal page]]
+            @in page_limit_v: int *; [[The maximum of the movable vertical page]]
          }
       }
    }
