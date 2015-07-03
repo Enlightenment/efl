@@ -214,8 +214,7 @@ static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S
 EAPI Eina_Bool
 ecore_file_mkdir(const char *dir)
 {
-   if (mkdir(dir, default_mode) < 0) return EINA_FALSE;
-   return EINA_TRUE;
+   return (mkdir(dir, default_mode) == 0);
 }
 
 /**
