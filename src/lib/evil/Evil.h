@@ -105,7 +105,6 @@ extern "C" {
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <math.h>
-#include <direct.h>
 
 
 #ifdef _MSC_VER
@@ -187,7 +186,6 @@ typedef unsigned long  gid_t;
 #define S_IRWXO _S_IRWXU
 #define S_IRWXG _S_IRWXU
 
-#  define mkdir(p,m) _mkdir(p)
   /*
 #  define close(fd) _close(fd)
 #  define read(fd,buffer,count) _read((fd),(buffer),(count))

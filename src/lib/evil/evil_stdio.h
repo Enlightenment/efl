@@ -51,5 +51,25 @@ EAPI int evil_rename(const char *src, const char *dst);
  */
 #define rename(src, dst) evil_rename(src, dst)
 
+/**
+ * @brief Wrap the _mkdir() function on Windows.
+ *
+ * @param[in] dirname The new dir name.
+ * @param[in] mode Unused.
+ * @return 0 on success, -1 otherwise.
+ *
+ * This function wraps the _mkdir() function.
+ *
+ * @since 1.15
+ */
+EAPI int evil_mkdir(const char *dirname, mode_t mode);
+
+/**
+ * @def mkdir(dirname, mode)
+ *
+ * Wrapper around evil_mkdir().
+ */
+#define mkdir(dirname, mode) evil_mkdir(dirname, mode)
+
 
 #endif /* __EVIL_STDIO_H__ */

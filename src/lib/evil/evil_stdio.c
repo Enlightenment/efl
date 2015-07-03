@@ -2,6 +2,8 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
+#include <direct.h>
+
 #include "Evil.h"
 #include "evil_private.h"
 
@@ -31,5 +33,11 @@ evil_rename(const char *src, const char* dst)
      }
 
    return -1;
+}
+
+int
+evil_mkdir(const char *dirname, mode_t mode EVIL_UNUSED)
+{
+   return _mkdir(dirname);
 }
 
