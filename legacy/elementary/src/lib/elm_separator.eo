@@ -4,23 +4,13 @@ class Elm.Separator (Elm.Layout)
    methods {
       @property horizontal {
          set {
-            /*@
-            @brief Set the horizontal mode of a separator object
-
-            @ingroup Separator */
+            [[Set the horizontal mode of a separator object]]
          }
          get {
-            /*@
-            @brief Get the horizontal mode of a separator object
-
-            @return If true, the separator is horizontal
-
-            @see elm_separator_horizontal_set()
-
-            @ingroup Separator */
+            [[Get the horizontal mode of a separator object]]
          }
          values {
-            horizontal: bool; /*@ If true, the separator is horizontal */
+            horizontal: bool; [[If true, the separator is horizontal]]
          }
       }
    }
