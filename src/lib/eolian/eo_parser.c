@@ -616,7 +616,7 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         if (want_next)
           eo_lexer_get(ls);
         FILL_DOC(ls, fdef, doc);
-        if (!want_next)
+        if (!want_next || ls->t.token == '}')
           break;
      }
    check_match(ls, '}', '{', bline, bcolumn);
