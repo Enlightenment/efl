@@ -4,93 +4,72 @@ class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
    methods {
       @property state_value {
          set {
-            /*@
-            @brief Set the integer value that this radio object represents
+            [[Set the integer value that this radio object represents
 
-            This sets the value of the radio.
-
-            @ingroup Radio */
+              This sets the value of the radio.
+            ]]
          }
          get {
-            /*@
-            @brief Get the integer value that this radio object represents
+            [[Get the integer value that this radio object represents
 
-            @return The value used if this radio object is selected
-
-            This gets the value of the radio.
-            @see elm_radio_value_set()
-
-            @ingroup Radio */
+              This gets the value of the radio.
+            ]]
          }
          values {
-            value: int; /*@ The value to use if this radio object is selected */
+            value: int; [[The value to use if this radio object is selected]]
          }
       }
       @property value {
          set {
-            /*@
-            @brief Set the value of the radio group.
+            [[Set the value of the radio group.
 
-            This sets the value of the radio group and will also set the value if
-            pointed to, to the value supplied, but will not call any callbacks.
-
-            @ingroup Radio */
+              This sets the value of the radio group and will also set the
+              value if pointed to, to the value supplied, but will not call
+              any callbacks.
+            ]]
          }
          get {
-            /*@
-            @brief Get the value of the radio group
-
-            @return The integer state
-
-            @ingroup Radio */
+            [[Get the value of the radio group]]
          }
          values {
-            value: int; /*@ The value to use for the group */
+            value: int; [[The value to use for the group]]
          }
       }
       @property value_pointer {
          set {
-            /*@
-            @brief Set a convenience pointer to a integer to change when radio group
-            value changes.
+            [[Set a convenience pointer to a integer to change when radio group
+              value changes.
 
-            This sets a pointer to a integer, that, in addition to the radio objects
-            state will also be modified directly. To stop setting the object pointed
-            to simply use NULL as the @p valuep argument. If valuep is not NULL, then
-            when this is called, the radio objects state will also be modified to
-            reflect the value of the integer valuep points to, just like calling
-            elm_radio_value_set().
-
-            @ingroup Radio */
+              This sets a pointer to a integer, that, in addition to the radio
+              objects state will also be modified directly. To stop setting the
+              object pointed to simply use NULL as the valuep argument. If
+              valuep is not NULL, then when this is called, the radio objects
+              state will also be modified to reflect the value of the integer
+              valuep points to, just like calling elm_radio_value_set().
+            ]]
          }
          values {
-            valuep: int * @nullable; /*@ Pointer to the integer to modify */
+            valuep: int * @nullable; [[Pointer to the integer to modify]]
          }
       }
       @property selected_object {
          get {
-            /*@
-            @brief Get the selected radio object.
-
-            @return The selected radio object
-
-            @ingroup Radio */
-            return: Evas.Object *;
+            [[Get the selected radio object.]]
+            return: Evas.Object *; [[The selected radio object]]
          }
       }
       group_add {
-         /*@
-         @brief Add this radio to a group of other radio objects
+         [[Add this radio to a group of other radio objects
 
-         Radio objects work in groups. Each member should have a different integer
-         value assigned. In order to have them work as a group, they need to know
-         about each other. This adds the given radio object to the group of which
-         the group object indicated is a member.
-
-         @ingroup Radio */
+           Radio objects work in groups. Each member should have a different
+           integer value assigned. In order to have them work as a group, they
+           need to know about each other. This adds the given radio object to
+           the group of which the group object indicated is a member.
+         ]]
 
          params {
-            @in group: Elm.Radio *; /*@ Any radio object whose group the @p obj is to join. */
+            @in group: Elm.Radio *; [[Any radio object whose group the obj is
+                                      to join.]]
          }
       }
    }
