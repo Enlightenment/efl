@@ -206,9 +206,10 @@ static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S
  * @param  dir The name of the directory to create
  * @return @c EINA_TRUE on successful creation, @c EINA_FALSE otherwise.
  *
- * This function creates the directory @p dir with the mode S_IRUSR |
- * S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH. On
- * success, it returns @c EINA_TRUE, @c EINA_FALSE otherwise.
+ * This function creates the directory @p dir, with the mode S_IRUSR |
+ * S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH on UNIX
+ * (mode is unsued on Windows). On success, it returns @c EINA_TRUE,
+ * @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_file_mkdir(const char *dir)
