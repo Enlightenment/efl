@@ -21,6 +21,9 @@
 #endif
 
 #include <stdlib.h>
+#ifdef _WIN32
+# include <string.h>
+#endif
 
 #include "eina_config.h"
 #include "eina_private.h"
