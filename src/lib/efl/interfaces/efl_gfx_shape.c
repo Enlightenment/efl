@@ -255,6 +255,7 @@ _efl_gfx_shape_equal_commands_internal(Efl_Gfx_Shape_Data *a,
    unsigned int i;
 
    if (a->commands_count != b->commands_count) return EINA_FALSE;
+   if (a->commands_count <= 0) return EINA_TRUE;
 
    for (i = 0; a->commands[i] == b->commands[i] &&
           a->commands[i] != EFL_GFX_PATH_COMMAND_TYPE_END; i++)
@@ -337,21 +338,24 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
    if (!pts && from_pd->points_count) return EINA_FALSE;
    pd->points = pts;
 
-   memcpy(cmds, from_pd->commands,
-          sizeof (Efl_Gfx_Path_Command) * from_pd->commands_count);
+   if (cmds)
+     {
+        memcpy(cmds, from_pd->commands,
+               sizeof (Efl_Gfx_Path_Command) * from_pd->commands_count);
 
-   to_pts = to_pd->points;
-   from_pts = from_pd->points;
+        to_pts = to_pd->points;
+        from_pts = from_pd->points;
 
-   for (i = 0; cmds[i] != EFL_GFX_PATH_COMMAND_TYPE_END; i++)
-     for (j = 0; j < _efl_gfx_path_command_length(cmds[i]); j++)
-       {
-          *pts = interpolate(*from_pts, *to_pts, pos_map);
+        for (i = 0; cmds[i] != EFL_GFX_PATH_COMMAND_TYPE_END; i++)
+          for (j = 0; j < _efl_gfx_path_command_length(cmds[i]); j++)
+            {
+               *pts = interpolate(*from_pts, *to_pts, pos_map);
 
-          pts++;
-          from_pts++;
-          to_pts++;
-       }
+               pts++;
+               from_pts++;
+               to_pts++;
+            }
+     }
 
    pd->points_count = from_pd->points_count;
    pd->commands_count = from_pd->commands_count;
