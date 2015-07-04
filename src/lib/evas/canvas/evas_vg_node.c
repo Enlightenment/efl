@@ -238,9 +238,13 @@ _efl_vg_base_parent_checked_get(Eo *obj,
              goto on_error;
           }
      }
+   else if (eo_isa(*parent, EVAS_VG_CLASS))
+     {
+        goto on_error;
+     }
    else if (*parent != NULL)
      {
-        ERR("Parent of unauthorized class.");
+        ERR("Parent of unauthorized class '%s'.", eo_class_name_get(eo_class_get(*parent)));
         goto on_error;
      }
 
