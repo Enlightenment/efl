@@ -59,10 +59,11 @@ eina_matrix3_cmp(const Eina_Matrix3 *a, const Eina_Matrix3 *b)
 START_TEST(eina_test_quaternion_norm)
 {
    static const Eina_Quaternion q = { 1, 3, 4, 5 };
+   double result = eina_quaternion_norm(&q);
 
    eina_init();
 
-   fail_if(!FLOAT_CMP(eina_quaternion_norm(&q), sqrt(51)));
+   fail_if(!FLOAT_CMP(result, sqrt(51)));
 
    eina_shutdown();
 }
