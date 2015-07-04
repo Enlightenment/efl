@@ -7,6 +7,10 @@
 
 #define  DEGREE_TO_RADIAN(x)     (((x) * M_PI) / 180.0)
 #define  EVAS_MATRIX_IS_IDENTITY 0x00000001
+#define  MIN_DIFF 0.00000000001
+
+#define  FLT_COMPARISON(a, b)    \
+   (fabs(a - b) > FLT_EPSILON)
 
 typedef struct _Evas_Color Evas_Color;
 typedef struct _Evas_Vec2 Evas_Vec2;
@@ -345,6 +349,15 @@ evas_vec3_distance_square_get(const Evas_Vec3 *a, const Evas_Vec3 *b)
    return evas_vec3_length_square_get(&v);
 }
 
+static inline Evas_Real
+evas_vec3_angle_get(const Evas_Vec3 *a, const Evas_Vec3 *b)
+{
+   Evas_Real angle;
+
+   angle = evas_vec3_dot_product(a, b) / (evas_vec3_length_get(a) * evas_vec3_length_get(b));
+   return angle;
+}
+
 static inline void
 evas_vec3_normalize(Evas_Vec3 *out, const Evas_Vec3 *v)
 {
@@ -571,6 +584,25 @@ evas_vec4_transform(Evas_Vec4 *out, const Evas_Vec4 *v, const Evas_Mat4 *m)
 }
 
 static inline void
+evas_vec4_plain_by_points(Evas_Vec4 *out, const Evas_Vec3 *a, const Evas_Vec3 *b, const Evas_Vec3 *c)
+{
+   out->x = (b->y - a->y) * (c->z - a->z) - (b->z - a->z) * (c->y - a->y);
+   out->y = -(b->x - a->x) * (c->z - a->z) + (b->z - a->z) * (c->x - a->x);
+   out->z = (b->x - a->x) * (c->y - a->y) - (b->y - a->y) * (c->x - a->x);
+   out->w = (-a->x) * ((b->y - a->y)*(c->z - a->z) - (b->z - a->z) * (c->y - a->y)) -
+            (-a->y) * ((b->x - a->x) * (c->z - a->z) - (b->z - a->z) * (c->x - a->x)) +
+            (-a->z) * ((b->x - a->x) * (c->y - a->y) - (b->y - a->y) * (c->x - a->x));
+}
+
+static inline Evas_Real
+evas_vec4_angle_plains(Evas_Vec4 *a, Evas_Vec4 *b)
+{
+   return (Evas_Real) ((a->x * b->x) + (a->y * b->y) + (a->z * b->z)) / ((sqrt((a->x * a->x) +
+                       (a->y * a->y) + (a->z * a->z))) * (sqrt((b->x * b->x) + (b->y * b->y) +
+                       (b->z * b->z))));
+}
+
+static inline void
 evas_vec3_homogeneous_position_set(Evas_Vec3 *out, const Evas_Vec4 *v)
 {
    /* Assume "v" is a positional vector. (v->w != 0.0) */
@@ -588,6 +620,95 @@ evas_vec3_homogeneous_direction_set(Evas_Vec3 *out, const Evas_Vec4 *v)
    out->x = v->x;
    out->y = v->y;
    out->z = v->z;
+}
+
+static inline Eina_Bool
+evas_vec3_if_equivalent(Evas_Vec3 *a, const Evas_Vec3 *b)
+{
+   /* Assume "v" is a directional vector. (v->w == 0.0) */
+   return ((a->x == b->x) &&  (a->y == b->y) && (a->z == b->z));
+}
+
+static inline void
+evas_triangle3_set(Evas_Triangle3 *v, Evas_Vec3 *a, Evas_Vec3 *b, Evas_Vec3 *c)
+{
+   evas_vec3_copy(&v->p0, a);
+   evas_vec3_copy(&v->p1, b);
+   evas_vec3_copy(&v->p2, c);
+}
+
+static inline Eina_Bool
+evas_triangle3_is_line(Evas_Triangle3 *v)
+{
+   if (evas_vec3_if_equivalent(&v->p0, &v->p1) ||
+       evas_vec3_if_equivalent(&v->p0, &v->p2) ||
+       evas_vec3_if_equivalent(&v->p1, &v->p2))
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+convex_hull_triangle3_if_not_first_edje(Evas_Triangle3 *v, Evas_Vec3 *a, Evas_Vec3 *b)
+{
+   if (((v->p1.x == a->x) && (v->p1.y == a->y) && (v->p1.z == a->z)) &&
+       ((v->p2.x == b->x) && (v->p2.y == b->y) && (v->p2.z == b->z)))
+     return EINA_TRUE;
+   else if (((v->p2.x == a->x) && (v->p2.y == a->y) && (v->p2.z == a->z)) &&
+            ((v->p1.x == b->x) && (v->p1.y == b->y) && (v->p1.z == b->z)))
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+convex_hull_triangle3_if_first_edje(Evas_Triangle3 *v, Evas_Vec3 *a, Evas_Vec3 *b)
+{
+   if ((!FLT_COMPARISON(v->p0.x, a->x) && !FLT_COMPARISON(v->p0.y, a->y) &&
+        !FLT_COMPARISON(v->p0.z, a->z)) && (!FLT_COMPARISON(v->p1.x, b->x) &&
+        !FLT_COMPARISON(v->p1.y, b->y) && !FLT_COMPARISON(v->p1.z, b->z)))
+     return EINA_TRUE;
+   else if ((!FLT_COMPARISON(v->p1.x, a->x) && !FLT_COMPARISON(v->p1.y, a->y) &&
+             !FLT_COMPARISON(v->p1.z, a->z)) && (!FLT_COMPARISON(v->p0.x, b->x) &&
+             !FLT_COMPARISON(v->p0.y, b->y) && !FLT_COMPARISON(v->p0.z, b->z)))
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+convex_hull_triangle3_if_first_point(Evas_Triangle3 *v, Evas_Vec3 *a)
+{
+   return ((v->p0.x == a->x) && (v->p0.y == a->y) && (v->p0.z == a->z));
+}
+
+static inline Eina_Bool
+evas_vec3_if_equivalent_as_triangle(Evas_Vec3 *v0, Evas_Vec3 *v1, Evas_Vec3 *v2,
+                                    Evas_Vec3 *w0, Evas_Vec3 *w1, Evas_Vec3 *w2)
+{
+   if (((v0->x == w0->x) && (v0->y == w0->y) && (v0->z == w0->z)) &&
+       ((v1->x == w1->x) && (v1->y == w1->y) && (v1->z == w1->z)) &&
+       ((v2->x == w2->x) && (v2->y == w2->y) && (v2->z == w2->z)))
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+
+static inline Eina_Bool
+evas_triangle3_if_equivalent(Evas_Triangle3 *a, Evas_Triangle3 *b)
+{
+   /* to compare two triangles there are six permutations
+      to test because vertices are unordered */
+   if (evas_vec3_if_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p0, &b->p1, &b->p2) ||
+       evas_vec3_if_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p0, &b->p2, &b->p1) ||
+       evas_vec3_if_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p1, &b->p0, &b->p2) ||
+       evas_vec3_if_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p1, &b->p2, &b->p0) ||
+       evas_vec3_if_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p2, &b->p0, &b->p1) ||
+       evas_vec3_if_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p2, &b->p1, &b->p0))
+     return EINA_TRUE;
+
+   return EINA_FALSE;
 }
 
 static inline void
@@ -2035,3 +2156,563 @@ box_intersection_box(Evas_Box3 *v1, Evas_Box3 *v2)
      return EINA_TRUE;
 }
 
+static inline void
+convex_hull_vertex_set(Evas_Triangle3 *el, int *vertex_count, float **vertex,
+                    unsigned short int **index, unsigned int k, int *leader, int coord)
+{
+   int color_coords, normal_coords;
+   Evas_Vec3 vect;
+   switch (coord)
+     {
+      case 0:
+        vect = el->p0;
+        break;
+      case 1:
+        vect = el->p1;
+        break;
+      case 2:
+        vect = el->p2;
+        break;
+     }
+   (*vertex_count)++;
+   *vertex = (float*) realloc(*vertex, (10 * (*vertex_count)) * sizeof(float));
+
+   (*vertex)[10 * (*vertex_count) - 10] = vect.x;
+   (*vertex)[10 * (*vertex_count) - 9] = vect.y;
+   (*vertex)[10 * (*vertex_count) - 8] = vect.z;
+   /* set alpha canal */
+   (*vertex)[10 * (*vertex_count) - 1] = 1.0;
+   /* set color */
+   for (color_coords = 2; color_coords < 5; color_coords++)
+      (*vertex)[10 * (*vertex_count) - color_coords] = (float) rand() / RAND_MAX;
+   /* set normal coords */
+   for (normal_coords = 5; normal_coords < 8; normal_coords++)
+      (*vertex)[10 * (*vertex_count) - normal_coords] = 1.0;
+   (*index)[3 * k + coord] = *leader;
+   (*leader)++;
+}
+
+static inline Evas_Triangle3
+convex_hull_first_tr_get(float *data, int count, int stride)
+{
+   Evas_Triangle3  out;
+
+   Evas_Vec3   triangle1;
+   Evas_Vec3   triangle2, triangle2_candidate;
+   Evas_Vec3   triangle3, triangle3_candidate;
+   Evas_Vec3   first, second, complanar1, complanar2, candidate;
+   Evas_Vec4   normal_a, normal_b;
+
+   Evas_Real cos = 0.0, new_cos = 0.0, tan = 0.0, new_tan = 0.0, cos_2d = 0.0, new_cos_2d = 0.0;
+   int first_num = 0, second_num = 0;
+   int i = 0, j = 0;
+
+   evas_vec3_set(&triangle1, data[0], data[1], data[2]);
+
+   for (i = 1, j = stride; i < count; i++, j += stride)
+      {
+         if ((triangle1.z > data[j + 2]) ||
+             ((triangle1.z == data[j + 2]) && (triangle1.y > data[j + 1])) ||
+             ((triangle1.z == data[j + 2]) && (triangle1.y == data[j + 1]) && (triangle1.x > data[j])))
+           {
+              evas_vec3_set(&triangle1, data[j], data[j + 1], data[j + 2]);
+              first_num = i;
+           }
+      }
+
+   if (first_num)
+     evas_vec3_set(&triangle2, data[0], data[1], data[2]);
+   else
+     {
+        evas_vec3_set(&triangle2, data[3], data[4], data[5]);
+        second_num = 1;
+     }
+
+   tan = fabs(triangle2.z - triangle1.z) / fabs(triangle2.y - triangle1.y);
+
+#define COMPARE_ANGLES(trigonom, triangle, previous, big, little)     \
+   if (little > big + FLT_EPSILON)                                    \
+     {                                                                \
+        trigonom = new_##trigonom;                                    \
+        cos_2d = new_cos_2d;                                          \
+        evas_vec3_set(&triangle, data[j], data[j + 1], data[j + 2]);   \
+     }                                                                \
+   else if(!FLT_COMPARISON(little, big) &&                            \
+           (evas_vec3_distance_get(&triangle##_candidate, &previous) >  \
+            evas_vec3_distance_get(&triangle, &previous)))              \
+     {                                                                \
+        evas_vec3_set(&triangle, data[j], data[j + 1], data[j + 2]);   \
+     }
+   evas_vec3_set(&complanar1, 1, 0, 0);
+   for (i = 0, j = 0; i < count; i++, j += stride)
+      {
+         if (FLT_COMPARISON(data[j], triangle1.x) ||
+             FLT_COMPARISON(data[j + 1], triangle1.y) ||
+             FLT_COMPARISON(data[j + 2], triangle1.z))
+           {
+              new_tan = fabs(data[j + 2] - triangle1.z) / fabs(data[j + 1] - triangle1.y);
+
+              if (FLT_COMPARISON(data[j + 1], triangle1.y) &&
+                  FLT_COMPARISON(triangle2.y, triangle1.y))
+                {
+                   if (tan > new_tan + FLT_EPSILON)
+                     {
+                        tan = new_tan;
+                        evas_vec3_set(&triangle2, data[j], data[j + 1], data[j + 2]);
+                        second_num = i;
+                        evas_vec3_subtract(&first, &complanar1, &triangle1);
+                        evas_vec3_subtract(&second, &triangle2, &triangle1);
+                        cos_2d = evas_vec3_angle_get(&complanar1, &second);
+                     }
+                   else if (!FLT_COMPARISON(tan, new_tan))
+                     {
+                        evas_vec3_subtract(&first, &complanar1, &triangle2);
+                        evas_vec3_set(&triangle2_candidate, data[j], data[j + 1], data[j + 2]);
+                        evas_vec3_subtract(&first, &complanar1, &triangle1);
+                        evas_vec3_subtract(&second, &triangle2_candidate, &triangle1);
+                        new_cos_2d = evas_vec3_angle_get(&complanar1, &second);
+                        if (new_cos_2d > cos_2d + FLT_EPSILON)
+                          second_num = i;
+
+                        COMPARE_ANGLES(cos, triangle2, triangle1, cos_2d, new_cos_2d)
+                     }
+                }
+
+              else if (!FLT_COMPARISON(data[j + 1], triangle1.y) &&
+                       !FLT_COMPARISON(data[j + 2], triangle1.z) &&
+                       FLT_COMPARISON(triangle2.y, triangle1.y))
+                evas_vec3_set(&triangle2, data[j], data[j + 1], data[j + 2]);
+
+              else if (!FLT_COMPARISON(data[j + 1], triangle1.y) &&
+                       !FLT_COMPARISON(data[j + 2], triangle1.z) &&
+                       !FLT_COMPARISON(triangle2.z, triangle1.z) &&
+                       !FLT_COMPARISON(triangle2.y, triangle1.y))
+                {
+                   evas_vec3_set(&triangle2_candidate, data[j], data[j + 1], data[j + 2]);
+                   if (evas_vec3_distance_get(&triangle2_candidate, &triangle1) >
+                       evas_vec3_distance_get(&triangle2, &triangle1))
+                     evas_vec3_set(&triangle2, data[j], data[j + 1], data[j + 2]);
+                }
+           }
+      }
+
+   evas_vec3_set(&complanar1, triangle1.x + 1, triangle1.y, triangle1.z);
+   evas_vec3_set(&complanar2, triangle1.x, triangle1.y + 1, triangle1.z);
+   evas_vec4_plain_by_points(&normal_a, &triangle1, &complanar1, &complanar2);
+
+   if (normal_a.z < 0)
+     evas_vec4_scale(&normal_a, &normal_a, -1);
+
+   evas_vec3_set(&triangle3, data[0], data[1], data[2]);
+
+   cos = -1.0;
+   cos_2d = 1.0;
+
+   for (i = 0, j = 0; i < count; i++, j += stride)
+      {
+         if ((i != first_num) && (i != second_num))
+           {
+              evas_vec3_set(&candidate, data[j], data[j + 1], data[j + 2]);
+              evas_vec4_plain_by_points(&normal_b, &triangle1, &candidate, &triangle2);
+
+              if (normal_b.z < 0)
+                evas_vec4_scale(&normal_b, &normal_b, -1);
+
+              new_cos = evas_vec4_angle_plains(&normal_a, &normal_b);
+
+              if (new_cos > cos + FLT_EPSILON)
+                {
+                   evas_vec3_set(&triangle3_candidate, data[j], data[j + 1], data[j + 2]);
+                   evas_vec3_subtract(&first, &triangle2, &triangle1);
+                   evas_vec3_subtract(&second, &triangle3, &triangle1);
+                   cos = new_cos;
+                   evas_vec3_set(&triangle3, data[j], data[j + 1], data[j + 2]);
+                   cos_2d = evas_vec3_angle_get(&second, &first);
+                }
+              else if (!FLT_COMPARISON(new_cos, cos))
+                {
+                   evas_vec3_set(&triangle3_candidate, data[j], data[j + 1], data[j + 2]);
+                   evas_vec3_subtract(&first, &triangle1, &triangle2);
+                   evas_vec3_subtract(&second, &triangle3_candidate, &triangle2);
+                   new_cos_2d = evas_vec3_angle_get(&first, &second);
+
+                   COMPARE_ANGLES(tan, triangle3, triangle2, new_cos_2d, cos_2d)
+                }
+           }
+      }
+
+   evas_triangle3_set(&out, &triangle1, &triangle2, &triangle3);
+
+#undef COMPARE_ANGLES
+   return out;
+}
+
+static inline void
+evas_convex_hull_get(float *data, int count, int stride, float **vertex,
+                     unsigned short int **index, int *vertex_count, int *index_count)
+{
+   Evas_Triangle3  first_elem, second_elem, *third_elem = NULL, *el = NULL;
+
+   Evas_Vec3   *next = NULL, *best = NULL, *next_2d = NULL, *el_vec3 = NULL;
+   Evas_Vec3   tmp1, tmp2;
+   Evas_Vec4   normal_a, normal_b;
+
+   Eina_Array arr_elems;
+   Eina_Array arr_triangles;
+   Eina_Array arr_candidates;
+   Eina_Array arr_ch;
+   Eina_Array_Iterator iterator;
+
+   Evas_Real cos = 0.0, new_cos = 0.0, cos_2d = 0.0;
+   float *found_vertex = NULL;
+   int i = 0, j = 0, new_stride = 0, leader = 0;
+   int if_two = 0, first_exist_twice = 0, second_exist_twice = 0;
+   unsigned int k = 0;
+   unsigned short int *found_index = NULL;
+
+   Eina_Bool exist1 = EINA_FALSE, pushed;
+   Eina_Bool equivalent_triangle = EINA_FALSE, triangle_chain = EINA_FALSE;
+   Eina_Bool on_plain = EINA_FALSE, right = EINA_FALSE;
+
+   eina_array_step_set(&arr_elems, sizeof(Eina_Array), 1);
+   eina_array_step_set(&arr_triangles, sizeof(Eina_Array), 1);
+   eina_array_step_set(&arr_candidates, sizeof(Eina_Array), 1);
+   eina_array_step_set(&arr_ch, sizeof(Eina_Array), 1);
+
+   /* Finding of first triangle in convex hull */
+   first_elem = convex_hull_first_tr_get(data, count, stride);
+
+   eina_array_push(&arr_triangles,  &first_elem);
+   eina_array_push(&arr_elems,  &first_elem);
+
+   evas_triangle3_set(&second_elem, &first_elem.p1, &first_elem.p2, &first_elem.p0);
+   eina_array_push(&arr_elems,  &second_elem);
+   eina_array_push(&arr_triangles,  &second_elem);
+
+   third_elem = malloc(sizeof(Evas_Triangle3));
+   evas_triangle3_set(third_elem, &first_elem.p2, &first_elem.p0, &first_elem.p1);
+   eina_array_push(&arr_elems, third_elem);
+   eina_array_push(&arr_triangles, third_elem);
+   eina_array_push(&arr_ch, third_elem);
+
+   el = eina_array_data_get(&arr_elems, 0);
+
+   /* arr_ellems is an array of triangles, in fact it is a queue of edjes
+      because vertices in triangles are ordered, every edje in this queue
+      should have a conjugate edje in some other triangle */
+   while (eina_array_count(&arr_elems) > 0)
+     {
+        Evas_Triangle3 *new_elem1 = NULL, *new_elem2 = NULL;
+
+        Evas_Triangle3 *elem = eina_array_pop(&arr_elems);
+
+        cos = -1.0;
+
+        /* searching of next triangle in convex hull as given conjugate edje
+           and one new vertex, all vertices should be checked */
+        for (i = 0, j = 0; i < count; i++, j += stride)
+           {
+              if ((FLT_COMPARISON(elem->p0.x, data[j]) || FLT_COMPARISON(elem->p0.y, data[j + 1]) ||
+                   FLT_COMPARISON(elem->p0.z, data[j + 2])) && (FLT_COMPARISON(elem->p1.x, data[j]) ||
+                   FLT_COMPARISON(elem->p1.y, data[j + 1]) || FLT_COMPARISON(elem->p1.z, data[j + 2])) &&
+                  (FLT_COMPARISON(elem->p2.x, data[j]) || FLT_COMPARISON(elem->p2.y, data[j + 1]) ||
+                   FLT_COMPARISON(elem->p2.z, data[j + 2])))
+                {
+                   next = malloc(sizeof(Evas_Vec3));
+                   evas_vec3_set(next, data[j], data[j + 1], data[j + 2]);
+                   pushed = EINA_FALSE;
+
+                   /* something like the dihedral angle between the triangles
+                      is a determining factor in searching the necessary points */
+
+                   evas_vec4_plain_by_points(&normal_a, &elem->p0, &elem->p1, &elem->p2);
+                   evas_vec4_plain_by_points(&normal_b, &elem->p0, &elem->p1, next);
+
+                   /* MIN_DIFF because vertices that belong to plain shouldn't be included */
+                   if (fabs(normal_a.x * data[j] + normal_a.y * data[j + 1] + normal_a.z * data[j + 2] + normal_a.w) < MIN_DIFF)
+                     {
+                        /* based on the construction of triangles, parallel but not collinear normal
+                           means that the triangles overlap, which is the worst case */
+                        if ((normal_a.x * normal_b.x <= 0) && (normal_a.y * normal_b.y <= 0) && (normal_a.z * normal_b.z <= 0) &&
+                            ((fabs(normal_a.x) > DBL_EPSILON) || (fabs(normal_a.y) > DBL_EPSILON) || (fabs(normal_a.z) > DBL_EPSILON)) &&
+                            ((fabs(normal_b.x) > DBL_EPSILON) || (fabs(normal_b.y) > DBL_EPSILON) || (fabs(normal_b.z) > DBL_EPSILON)))
+                          new_cos = 1.0;
+                        else  new_cos = -1.0;
+                     }
+
+                   else
+                     {
+                        if (normal_a.x * data[j] + normal_a.y * data[j+1] + normal_a.z * data[j+2] + normal_a.w < 0)
+                          evas_vec4_scale(&normal_a, &normal_a, -1);
+                        if (normal_b.x * elem->p2.x + normal_b.y * elem->p2.y + normal_b.z * elem->p2.z + normal_b.w < 0)
+                          evas_vec4_scale(&normal_b, &normal_b, -1);
+
+                        new_cos = evas_vec4_angle_plains(&normal_a, &normal_b);
+                     }
+
+                   /* MIN_DIFF is more useful for dihedral angles apparently */
+                   if (new_cos > cos + MIN_DIFF)
+                     {
+                        cos = new_cos;
+                        EINA_ARRAY_ITER_NEXT(&arr_candidates, k, el_vec3, iterator)
+                          free(el_vec3);
+
+                        /* Vertex gets into arr_candidates if the corresponding cosine is the maximum */
+                        eina_array_flush(&arr_candidates);
+                        eina_array_step_set(&arr_candidates, sizeof(Eina_Array), 1);
+                        eina_array_push(&arr_candidates, next);
+                        pushed = EINA_TRUE;
+                     }
+                   else if (fabs(new_cos - cos) < MIN_DIFF)
+                     {
+                        exist1 = EINA_FALSE;
+
+                        for (k = 0; (k < eina_array_count(&arr_candidates)) && !exist1; k++)
+                           {
+                              next_2d = eina_array_data_get(&arr_candidates, k);
+                              exist1 = evas_vec3_if_equivalent(next, next_2d);
+                           }
+                        if (!exist1)
+                          {
+                             eina_array_push(&arr_candidates, next);
+                             pushed = EINA_TRUE;
+                          }
+                     }
+
+                   if (!pushed)
+                     free(next);
+                }
+           }
+
+        on_plain = EINA_FALSE;
+        right = EINA_FALSE;
+
+        /* The case when several points are found, is discussed below. 
+           This case is interesting because the convex hull in the
+           two-dimensional subspace should be filled further */
+        if ((cos != 1.0) && (1 < eina_array_count(&arr_candidates)))
+          {
+             Evas_Vec3 angle_from, angle_to;
+             next_2d = eina_array_data_get(&arr_candidates, 0);
+             evas_vec4_plain_by_points(&normal_b, &elem->p1, &elem->p0, next_2d);
+
+             if (normal_b.x * elem->p2.x + normal_b.y * elem->p2.y + normal_b.z * elem->p2.z + normal_b.w > 0)
+               {
+                  evas_vec3_subtract(&angle_from, &elem->p0, &elem->p1);
+                  right = EINA_TRUE;
+               }
+             else
+               evas_vec3_subtract(&angle_from, &elem->p1, &elem->p0);
+
+             cos_2d = -1.0;
+
+             EINA_ARRAY_ITER_NEXT(&arr_candidates, k, next_2d, iterator)
+                {
+                   /* Selection of the required vertex occurs on the basis of a specific angle */
+                   if (right)
+                     evas_vec3_subtract(&angle_to, next_2d, &elem->p0);
+                   else
+                     evas_vec3_subtract(&angle_to, next_2d, &elem->p1);
+
+                   new_cos = evas_vec3_dot_product(&angle_from, &angle_to) /
+                             (evas_vec3_length_get(&angle_from) * evas_vec3_length_get(&angle_to));
+                   if (new_cos > cos_2d + FLT_EPSILON)
+                     {
+                        cos_2d = new_cos;
+                        best = eina_array_data_get(&arr_candidates, k);
+                     }
+                   else if (!FLT_COMPARISON(new_cos, cos_2d))
+                     {
+                        if ((right && (evas_vec3_distance_get(best, &elem->p0) < evas_vec3_length_get(&angle_from))) ||
+                            (!right && (evas_vec3_distance_get(best, &elem->p1) < evas_vec3_length_get(&angle_from))))
+                          best = eina_array_data_get(&arr_candidates, k);
+                     }
+                }
+          }
+
+        /* This event will take place after the previous,
+           in fact, choice of first triangle in a new two-dimensional
+           convex hull allows to fill it fan counterclockwise when viewed from the inside */
+        else if ((cos == 1.0) && (1 < eina_array_count(&arr_candidates)))
+          {
+             Evas_Vec3 angle_from, angle_to;
+             evas_vec3_subtract(&angle_from, &elem->p0, &elem->p1);
+             cos_2d = -1.0;
+             EINA_ARRAY_ITER_NEXT(&arr_candidates, k, next_2d, iterator)
+                {
+                   evas_vec3_subtract(&angle_to, next_2d, &elem->p0);
+
+                   evas_vec4_plain_by_points(&normal_a, &elem->p0, &elem->p1, &elem->p2);
+                   evas_vec4_plain_by_points(&normal_b, &elem->p0, &elem->p1, next_2d);
+                   if ((normal_a.x * normal_b.x <= 0) && (normal_a.y * normal_b.y <= 0) && (normal_a.z * normal_b.z <= 0))
+                     {
+                        new_cos = evas_vec3_dot_product(&angle_from, &angle_to) /
+                                  (evas_vec3_length_get(&angle_from) * evas_vec3_length_get(&angle_to));
+                        if (new_cos > cos_2d + FLT_EPSILON)
+                          {
+                             cos_2d = new_cos;
+                             best = eina_array_data_get(&arr_candidates, k);
+                          }
+                        else if (!FLT_COMPARISON(new_cos, cos_2d))
+                          {
+                             if (evas_vec3_distance_get(best, &elem->p0) < evas_vec3_length_get(&angle_to))
+                               best = eina_array_data_get(&arr_candidates, k);
+                          }
+                        on_plain = EINA_TRUE;
+                     }
+                }
+          }
+
+        else
+          best = eina_array_data_get(&arr_candidates, 0);
+
+        evas_vec4_plain_by_points(&normal_b, &elem->p0, &elem->p1, best);
+
+        if_two = 0;
+        first_exist_twice = 0;
+        second_exist_twice = 0;
+        equivalent_triangle = EINA_FALSE;
+        triangle_chain = EINA_FALSE;
+        evas_vec3_copy(&tmp1, &elem->p0);
+        evas_vec3_copy(&tmp2, &elem->p1);
+        new_elem1 = malloc(sizeof(Evas_Triangle3));
+        evas_triangle3_set(new_elem1, best, &tmp1, &tmp2);
+        pushed = EINA_FALSE;
+
+        /* verification that the edje has not been found previously */
+        EINA_ARRAY_ITER_NEXT(&arr_triangles, k, el, iterator)
+          {
+             if (convex_hull_triangle3_if_first_edje(el, &elem->p0, &elem->p1))
+               if_two++;
+             if (evas_triangle3_if_equivalent(el, new_elem1))
+               equivalent_triangle++;
+           }
+
+
+        EINA_ARRAY_ITER_NEXT(&arr_triangles, k, el, iterator)
+          {
+             if ((k > 2) && (convex_hull_triangle3_if_not_first_edje(el, &elem->p0, best) ||
+                 convex_hull_triangle3_if_not_first_edje(el, &elem->p1, best)))
+               triangle_chain = EINA_TRUE;
+          }
+
+        /* There is a specific order according to which the edjes are entered in arr_elems */
+        if (!on_plain && !right)
+          {
+             if ((!equivalent_triangle) && (!second_exist_twice) && (!triangle_chain) && (if_two < 2))
+               {
+                  if (new_elem2)
+                    free (new_elem2);
+                  new_elem2 = malloc(sizeof(Evas_Triangle3));
+                  evas_triangle3_set(new_elem2, best, &tmp2, &tmp1);
+                  eina_array_push(&arr_elems,  new_elem2);
+
+                  /* triangles whose edges have been found should be entered into the arr_triangles
+                     to optimize the algorithm */
+                  if ((first_exist_twice < 2) && (second_exist_twice < 2))
+                    eina_array_push(&arr_triangles, eina_array_data_get(&arr_elems, eina_array_count(&arr_elems) - 1));
+               }
+             if ((!equivalent_triangle) && (!first_exist_twice) && (!triangle_chain) && (if_two < 2))
+               {
+                  eina_array_push(&arr_elems,  new_elem1);
+                  if ((first_exist_twice < 2) && (second_exist_twice < 2))
+                    {
+                       pushed = EINA_TRUE;
+
+                       /* eina_ch is the resultant vector of all triangles in convex hull */
+                       eina_array_push(&arr_ch, eina_array_data_get(&arr_elems, eina_array_count(&arr_elems) - 1));
+                       eina_array_push(&arr_triangles, eina_array_data_get(&arr_elems, eina_array_count(&arr_elems) - 1));
+                    }
+               }
+          }
+
+        else
+          {
+             if ((!equivalent_triangle) && (!first_exist_twice) && (!triangle_chain) && (if_two < 2))
+               {
+                  eina_array_push(&arr_elems,  new_elem1);
+                  if ((first_exist_twice < 2) && (second_exist_twice < 2))
+                    {
+                       pushed = EINA_TRUE;
+                       eina_array_push(&arr_ch, eina_array_data_get(&arr_elems, eina_array_count(&arr_elems) - 1));
+                       eina_array_push(&arr_triangles, eina_array_data_get(&arr_elems, eina_array_count(&arr_elems) - 1));
+                    }
+               }
+
+             if ((!equivalent_triangle) && (!second_exist_twice) && (!triangle_chain) && (if_two < 2))
+               {
+                  if (new_elem2)
+                    free (new_elem2);
+                  new_elem2 = malloc(sizeof(Evas_Triangle3));
+                  evas_triangle3_set(new_elem2, best, &tmp2, &tmp1);
+                  eina_array_push(&arr_elems,  new_elem2);
+
+                  if ((first_exist_twice < 2) && (second_exist_twice < 2))
+                    eina_array_push(&arr_triangles, eina_array_data_get(&arr_elems, eina_array_count(&arr_elems)-1));
+               }
+          }
+        if (!pushed)
+          free (new_elem1);
+     }
+
+
+   *vertex_count = 0;
+   *index_count = 3 * eina_array_count(&arr_ch);
+
+   found_vertex = (float*) malloc(10 * sizeof(float));
+   found_index = (unsigned short int*) malloc((*index_count) * sizeof(unsigned short int));
+   j = 0;
+
+#define CHECK_AND_SET_VERTEX(coord)                                                   \
+  exist1 = EINA_FALSE;                                                                \
+  for (i = 0, new_stride = 0; i < (*vertex_count) && !exist1; i++, new_stride += 10)  \
+     {                                                                                \
+        if ((k > 0) && (el->p##coord.x == found_vertex[new_stride]) &&                \
+            (el->p##coord.y == found_vertex[new_stride + 1]) &&                       \
+            (el->p##coord.z == found_vertex[new_stride + 2]))                         \
+          {                                                                           \
+             exist1 = EINA_TRUE;                                                      \
+             found_index[3 * k + coord] = i;                                          \
+          }                                                                           \
+     }                                                                                \
+     if (!exist1)                                                                     \
+       convex_hull_vertex_set(el, vertex_count, &found_vertex,                        \
+                       &found_index, k, &leader, coord);
+
+   EINA_ARRAY_ITER_NEXT(&arr_ch, k, el, iterator)
+     {
+        CHECK_AND_SET_VERTEX(0)
+        CHECK_AND_SET_VERTEX(1)
+        CHECK_AND_SET_VERTEX(2)
+
+        j += 30;
+     }
+
+   *vertex = (float*) malloc((10 * (*vertex_count)) * sizeof(float));
+   memcpy(*vertex, found_vertex, (10 * (*vertex_count)) * sizeof(float));
+   free(found_vertex);
+
+   *index = (unsigned short int*) malloc((*index_count) * sizeof(unsigned short int));
+   memcpy(*index, found_index, (*index_count) * sizeof(unsigned short int));
+   free(found_index);
+
+   EINA_ARRAY_ITER_NEXT(&arr_triangles, k, el, iterator)
+     {
+        if (k > 2)
+          free(el);
+     }
+
+   free(third_elem);
+
+   EINA_ARRAY_ITER_NEXT(&arr_candidates, k, el_vec3, iterator)
+     free(el_vec3);
+
+   eina_array_flush(&arr_candidates);
+   eina_array_flush(&arr_ch);
+   eina_array_flush(&arr_elems);
+   eina_array_flush(&arr_triangles);
+
+#undef CHECK_AND_SET_VERTEX
+
+   return;
+}
