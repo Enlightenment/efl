@@ -113,6 +113,7 @@ _item_title_prev_btn_del_cb(void *data,
    Elm_Naviframe_Item_Data *it = data;
 
    it->title_prev_btn = NULL;
+   if (it->auto_pushed_btn) it->auto_pushed_btn = NULL;
    elm_object_signal_emit(VIEW(it), "elm,state,prev_btn,hide", "elm");
 }
 
@@ -606,6 +607,8 @@ _item_title_prev_btn_set(Elm_Naviframe_Item_Data *it,
    if (it->title_prev_btn == btn) return;
    evas_object_del(it->title_prev_btn);
    it->title_prev_btn = btn;
+   if (it->auto_pushed_btn && (it->auto_pushed_btn != btn))
+     it->auto_pushed_btn = NULL;
    if (!btn) return;
 
    elm_object_part_content_set(VIEW(it), PREV_BTN_PART, btn);
@@ -682,6 +685,7 @@ _item_title_prev_btn_unset(Elm_Naviframe_Item_Data *it)
             EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_item_back_btn_clicked,
             parent));
    it->title_prev_btn = NULL;
+   if (it->auto_pushed_btn) it->auto_pushed_btn = NULL;
    return content;
 }
 
@@ -1236,6 +1240,7 @@ _item_new(Evas_Object *obj,
         ELM_NAVIFRAME_ITEM_DATA_GET(eo_prev_it, prev_it);
         const char *prev_title = prev_it->title_label;
         prev_btn = _back_btn_new(obj, prev_title);
+        it->auto_pushed_btn = prev_btn;
      }
 
    if (prev_btn)
@@ -1691,7 +1696,17 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
              if (it->delete_me)
                eo_do(eo_item, elm_wdg_item_del());
              else
-               it->popping = EINA_FALSE;
+               {
+                  /* To avoid multiple item pops, the auto pushed button deletes
+                     its clicked callback once it is called.
+                     Since the item is not popped or deleted here, the deleted
+                     callback of the auto pushed button should be restored. */
+                  if (it->auto_pushed_btn)
+                    eo_do(it->auto_pushed_btn, eo_event_callback_add
+                          (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED,
+                           _on_item_back_btn_clicked, obj));
+                  it->popping = EINA_FALSE;
+               }
              evas_object_unref(obj);
              return NULL;
           }

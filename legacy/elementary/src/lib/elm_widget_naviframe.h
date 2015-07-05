@@ -51,6 +51,7 @@ struct _Elm_Naviframe_Item_Data
    Evas_Object *title_prev_btn;
    Evas_Object *title_next_btn;
    Evas_Object *title_icon;
+   Evas_Object *auto_pushed_btn;
    Evas_Display_Mode dispmode;
    Elm_Naviframe_Item_Pop_Cb pop_cb;
    void        *pop_data;
