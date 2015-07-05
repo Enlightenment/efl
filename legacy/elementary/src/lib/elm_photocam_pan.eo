@@ -13,22 +13,10 @@ class Elm.Photocam_Pan (Elm_Pan)
       Elm_Pan.pos_max.get;
    }
    events {
-      clicked;
-      press;
-      longpressed;
-      clicked,double;
       load;
       loaded;
       load,detail;
       loaded,detail;
-      zoom,start;
-      zoom,stop;
-      zoom,change;
-      scroll;
-      scroll,anim,start;
-      scroll,anim,stop;
-      scroll,drag,start;
-      scroll,drag,stop;
       download,start;
       download,progress;
       download,done;

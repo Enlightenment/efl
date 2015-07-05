@@ -1,4 +1,4 @@
-class Elm.Bubble (Elm.Layout)
+class Elm.Bubble (Elm.Layout, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_bubble;
    methods {
@@ -44,7 +44,6 @@ class Elm.Bubble (Elm.Layout)
       Elm.Layout.sizing_eval;
    }
    events {
-      clicked;
       focused;
       unfocused;
    }

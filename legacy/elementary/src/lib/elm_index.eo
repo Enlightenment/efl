@@ -357,7 +357,6 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
    events {
       changed;
       delay,changed;
-      selected;
       level,up;
       level,down;
       language,changed;

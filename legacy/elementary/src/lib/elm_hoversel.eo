@@ -1,4 +1,5 @@
 class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
+                    Evas.Clickable_Interface,
                     Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_hoversel;
@@ -152,12 +153,10 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      selected;
       dismissed;
       expanded;
       item,focused;
       item,unfocused;
-      clicked;
       language,changed;
       access,changed;
    }

@@ -13,18 +13,6 @@ class Elm.Map_Pan (Elm_Pan)
       Elm_Pan.pos_max.get;
    }
    events {
-      clicked;
-      clicked,double;
-      press;
-      longpressed;
-      scroll;
-      scroll,drag,start;
-      scroll,drag,stop;
-      scroll,anim,start;
-      scroll,anim,stop;
-      zoom,start;
-      zoom,stop;
-      zoom,change;
       loaded;
       tile,load;
       tile,loaded;

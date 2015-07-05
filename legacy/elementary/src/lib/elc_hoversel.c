@@ -109,7 +109,7 @@ _on_item_clicked(void *data EINA_UNUSED,
    Elm_Object_Item *eo_it = EO_OBJ(item);
 
    if (item->func) item->func((void *)WIDGET_ITEM_DATA_GET(eo_it), obj2, eo_it);
-   eo_do(obj2, eo_event_callback_call(ELM_HOVERSEL_EVENT_SELECTED, eo_it));
+   eo_do(obj2, eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_it));
    elm_hoversel_hover_end(obj2);
 
    return EINA_TRUE;

@@ -535,7 +535,7 @@ _item_unselect(Elm_Gen_Item *it)
         it->selected = EINA_FALSE;
         sd->selected = eina_list_remove(sd->selected, eo_it);
         eo_do(WIDGET(it), eo_event_callback_call
-          (ELM_GENGRID_EVENT_UNSELECTED, eo_it));
+          (EVAS_SELECTABLE_INTERFACE_EVENT_UNSELECTED, eo_it));
      }
 }
 
@@ -3978,7 +3978,7 @@ _item_select(Elm_Gen_Item *it)
    if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), eo_it);
    if (it->generation == sd->generation)
      {
-        eo_do(WIDGET(it), eo_event_callback_call(ELM_GENGRID_EVENT_SELECTED, eo_it));
+        eo_do(WIDGET(it), eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_it));
         elm_object_item_focus_set(eo_it, EINA_TRUE);
      }
 

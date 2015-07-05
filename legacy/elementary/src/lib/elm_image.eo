@@ -471,7 +471,6 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
    }
    events {
       drop;
-      clicked;
       download,start;
       download,progress;
       download,done;

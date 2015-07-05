@@ -1,4 +1,5 @@
-class Elm.Flipselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
+class Elm.Flipselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action,
+                        Evas.Selectable_Interface)
 {
    eo_prefix: elm_obj_flipselector;
    methods {
@@ -203,7 +204,6 @@ class Elm.Flipselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      selected;
       underflowed;
       overflowed;
       language,changed;
