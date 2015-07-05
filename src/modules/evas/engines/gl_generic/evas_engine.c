@@ -1967,6 +1967,8 @@ eng_pixel_alpha_get(void *image, int x, int y, DATA8 *alpha, int src_region_x, i
      }
 
    evas_gl_common_image_alloc_ensure(im);
+   if (!im->im) return EINA_FALSE;
+
    src_w = im->im->cache_entry.w;
    src_h = im->im->cache_entry.h;
    if ((src_w == 0) || (src_h == 0))
