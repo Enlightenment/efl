@@ -5,6 +5,7 @@
 /* TODO: add no_display check, as we might want only displayable items */
 
 #include <fnmatch.h>
+#include <ctype.h>
 
 #include <Ecore_File.h>
 
@@ -170,11 +171,80 @@ efreet_util_desktop_file_id_find(const char *file_id)
     return ret;
 }
 
+static char *
+efreet_util_cmd_args_get(const char *cmd)
+{
+   Eina_Strbuf *buf;
+   char *args;
+   const char *p;
+   Eina_Bool in_qout_double = EINA_FALSE;
+   Eina_Bool in_qout_single = EINA_FALSE;
+   Eina_Bool atargs = EINA_FALSE;
+   Eina_Bool ingap = EINA_FALSE;
+
+   buf = eina_strbuf_new();
+   if (!buf) return NULL;
+
+   // get the arguments to the command as a string on its own
+   for (p = cmd; *p; p++)
+     {
+        if (!atargs)
+          {
+             if (in_qout_double)
+               {
+                  if (*p == '\\')
+                    {
+                       if (p[1]) p++;
+                    }
+                  else if (*p == '"') in_qout_double = EINA_FALSE;
+               }
+             else if (in_qout_single)
+               {
+                  if (*p == '\\')
+                    {
+                       if (p[1]) p++;
+                    }
+                  else if (*p == '\'') in_qout_single = EINA_FALSE;
+               }
+             else
+               {
+                  if (*p == '\\')
+                    {
+                       if (p[1]) p++;
+                    }
+                  else if (*p == '"') in_qout_double = EINA_TRUE;
+                  else if (*p == '\'') in_qout_single = EINA_TRUE;
+                  else
+                    {
+                       if (isspace((unsigned char)(*p)))
+                         {
+                            atargs = EINA_TRUE;
+                            ingap = EINA_TRUE;
+                         }
+                    }
+               }
+          }
+        else
+          {
+             if (ingap)
+               {
+                  if (!isspace((unsigned char)(*p))) ingap = EINA_FALSE;
+               }
+             if (!ingap) eina_strbuf_append_char(buf, *p);
+          }
+     }
+
+   args = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+   if (!args) return strdup("");
+   return args;
+}
+
 EAPI Efreet_Desktop *
 efreet_util_desktop_exec_find(const char *exec)
 {
     Efreet_Cache_Hash *hash = NULL;
-    Efreet_Desktop *ret = NULL;
+    Efreet_Desktop *ret = NULL, *bestret = NULL;
     Efreet_Cache_Array_String *names = NULL;
     unsigned int i;
 
@@ -207,11 +277,44 @@ efreet_util_desktop_exec_find(const char *exec)
         for (j = 0; j < array->array_count; j++)
         {
             ret = efreet_desktop_get(array->array[j]);
-            if (ret) break;
+            if (ret)
+            {
+               if (!bestret) bestret = ret;
+               else
+               {
+                  if (ret->exec)
+                  {
+                     // perfect match - best
+                     if (!strcmp(ret->exec, exec))
+                     {
+                        bestret = ret;
+                        goto done;
+                     }
+                     else if (bestret->exec)
+                     {
+                        char *f1, *f2;
+
+                        f1 = efreet_util_cmd_args_get(ret->exec);
+                        f2 = efreet_util_cmd_args_get(bestret->exec);
+                        if ((f1) && (f2))
+                          {
+                             // if this is shorter (less arguments) than best
+                             // match so far, thewn this is the best match
+                             if (strlen(f1) < strlen(f2))
+                               {
+                                  bestret = ret;
+                               }
+                          }
+                        free(f1);
+                        free(f2);
+                     }
+                  }
+               }
+            }
         }
-        if (ret) break;
     }
-    return ret;
+done:
+    return bestret;
 }
 
 EAPI Efreet_Desktop *
