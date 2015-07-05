@@ -141,7 +141,6 @@ elm_access.h \
 elm_actionslider.h \
 elm_actionslider_eo.h \
 elm_actionslider_legacy.h \
-elm_actionslider_common.h \
 elm_app_common.h \
 elm_app_server_eo.h \
 elm_app_server_view_eo.h \

@@ -50,7 +50,6 @@
  * @{
  */
 
-#include "elm_actionslider_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "elm_actionslider_eo.h"
 #endif
