@@ -742,7 +742,7 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
            case GL_RGBA: buffer_format = TBM_FORMAT_RGBA8888; break;
            case GL_BGRA: buffer_format = TBM_FORMAT_BGRA8888; break;
            case GL_RGB: buffer_format = TBM_FORMAT_RGB888; break;
-           default: ERR("TBM: unknown format"); return NULL;
+           default: ERR("TBM: unknown format"); goto error;
           }
 
         pt->dyn.buffer = (void *)secsym_tbm_surface_create(pt->w, pt->h,
