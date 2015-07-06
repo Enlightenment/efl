@@ -283,7 +283,6 @@ elm_mapbuf.h \
 elm_mapbuf_eo.h \
 elm_mapbuf_legacy.h \
 elm_menu.h \
-elm_menu_common.h \
 elm_menu_eo.h \
 elm_menu_legacy.h \
 elm_mirroring.h \

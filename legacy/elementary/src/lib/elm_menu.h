@@ -38,7 +38,6 @@
  * @{
  */
 
-#include "elm_menu_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "elm_menu_eo.h"
 #endif
