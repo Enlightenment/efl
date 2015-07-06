@@ -1,3 +1,16 @@
+enum Elm.Ctxpopup.Direction
+{
+   [[
+     @ingroup Ctxpopup
+     Direction in which to show the popup.
+   ]]
+   down, [[Ctxpopup show appear below clicked area.]]
+   right, [[Ctxpopup show appear to the right of the clicked area.]]
+   left, [[Ctxpopup show appear to the left of the clicked area.]]
+   up, [[Ctxpopup show appear above the clicked area.]]
+   unknown [[Ctxpopup does not determine it's direction yet.]]
+}
+
 class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_ctxpopup;
@@ -92,7 +105,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             showing direction. This doesn't guarantee the ctxpopup will appear in the
             requested direction.
 
-            @see Elm_Ctxpopup_Direction
+            @see Elm.Ctxpopup.Direction
 
             @ingroup Ctxpopup */
          }
@@ -105,10 +118,10 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Ctxpopup */
          }
          values {
-            first: Elm_Ctxpopup_Direction; /*@ 1st priority of direction */
-            second: Elm_Ctxpopup_Direction; /*@ 2nd priority of direction */
-            third: Elm_Ctxpopup_Direction; /*@ 3th priority of direction */
-            fourth: Elm_Ctxpopup_Direction; /*@ 4th priority of direction */
+            first: Elm.Ctxpopup.Direction; /*@ 1st priority of direction */
+            second: Elm.Ctxpopup.Direction; /*@ 2nd priority of direction */
+            third: Elm.Ctxpopup.Direction; /*@ 3th priority of direction */
+            fourth: Elm.Ctxpopup.Direction; /*@ 4th priority of direction */
          }
       }
       @property direction {
@@ -122,7 +135,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @warning Once the ctxpopup showed up, the direction would be determined
 
             @ingroup Ctxpopup */
-            return: Elm_Ctxpopup_Direction(4);
+            return: Elm.Ctxpopup.Direction(Elm.Ctxpopup.Direction.unknown);
          }
       }
       @property items {

@@ -60,7 +60,6 @@
  * @{
  */
 
-#include "elc_ctxpopup_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "elc_ctxpopup_eo.h"
 #endif
