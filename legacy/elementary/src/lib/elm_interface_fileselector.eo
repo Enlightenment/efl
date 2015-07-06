@@ -1,3 +1,29 @@
+enum Elm.Fileselector.Mode
+{
+   [[
+      @addtogroup Fileselector
+      Defines how a file selector widget is to layout its contents
+      (file system entries).
+   ]]
+   legacy: elm_fileselector;
+   list = 0, [[Layout as a list.]]
+   grid, [[Layout as a grid.]]
+   last [[Sentinel (helper) value, not used.]]
+}
+
+enum Elm.Fileselector.Sort
+{
+   by_filename_asc = 0,
+   by_filename_desc,
+   by_type_asc,
+   by_type_desc,
+   by_size_asc,
+   by_size_desc,
+   by_modified_asc,
+   by_modified_desc,
+   last [[Sentinel (helper) value, not used.]]
+}
+
 interface Elm_Interface_Fileselector ()
 {
    legacy_prefix: null;
@@ -57,7 +83,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get the sort method of the file selector widget. */
          }
          values {
-            sort: Elm_Fileselector_Sort;
+            sort: Elm.Fileselector.Sort;
          }
       }
       @property multi_select {
@@ -101,7 +127,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get the mode in which a given file selector widget is displaying */
          }
          values {
-            mode: Elm_Fileselector_Mode;
+            mode: Elm.Fileselector.Mode;
          }
       }
       @property is_save {
