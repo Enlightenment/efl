@@ -1,3 +1,27 @@
+enum Elm.Popup.Orient
+{
+   [[
+     @brief Possible orient values for popup.
+     These values should be used in conjunction to elm_popup_orient_set() to
+     set the position in which the popup should appear(relative to its parent)
+     and in conjunction with elm_popup_orient_get() to know where the popup
+     is appearing.
+     @ingroup Popup
+   ]]
+
+   top = 0, [[Popup should appear in the top of parent, default.]]
+   center, [[Popup should appear in the center of parent.]]
+   bottom, [[Popup should appear in the bottom of parent.]]
+   left, [[Popup should appear in the left of parent.]]
+   right, [[Popup should appear in the right of parent.]]
+   top_left, [[Popup should appear in the top left of parent.]]
+   top_right, [[Popup should appear in the top right of parent.]]
+   bottom_left, [[Popup should appear in the bottom left of parent.]]
+   bottom_right, [[Notify should appear in the bottom right of parent.]]
+   last [[Sentinel value, @b don't use.]]
+}
+
+
 class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_popup;
@@ -97,7 +121,7 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @see Elm_Popup_Orient */
          }
          values {
-            orient: Elm_Popup_Orient; /*@ the orientation of the popup */
+            orient: Elm.Popup.Orient; /*@ the orientation of the popup */
          }
       }
       @property timeout {

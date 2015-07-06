@@ -135,7 +135,6 @@ elc_naviframe_common.h \
 elc_popup.h \
 elc_popup_eo.h \
 elc_popup_legacy.h \
-elc_popup_common.h \
 elm_access.h \
 elm_actionslider.h \
 elm_actionslider_eo.h \

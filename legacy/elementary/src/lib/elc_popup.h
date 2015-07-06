@@ -117,7 +117,6 @@
  * @li @ref popup_example_03_c
  */
 
-#include "elc_popup_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "elc_popup_eo.h"
 #endif
