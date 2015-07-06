@@ -250,7 +250,6 @@ elm_hover_common.h \
 elm_hover_eo.h \
 elm_hover_legacy.h \
 elm_icon.h \
-elm_icon_common.h \
 elm_icon_eo.h \
 elm_icon_legacy.h \
 elm_image.h \

@@ -1,3 +1,29 @@
+enum Elm.Icon.Type
+{
+   legacy: elm_icon;
+   none,
+   file,
+   standard
+}
+
+enum Elm.Icon.Lookup_Order
+{
+   [[
+      @addtogroup Icon
+      @enum Elm_Icon_Lookup_Order
+      @typedef Elm_Icon_Lookup_Order
+
+      Lookup order used by elm_icon_standard_set(). Should look for icons in the
+      theme, FDO paths, or both?
+   ]]
+   legacy: elm_icon_lookup;
+   fdo_theme, [[Icon look up order: freedesktop, theme.]]
+   theme_fdo, [[Icon look up order: theme, freedesktop.]]
+   fdo, [[Icon look up order: freedesktop.]]
+   theme [[Icon look up order: theme.]]
+}
+
+
 class Elm.Icon (Elm.Image)
 {
    eo_prefix: elm_obj_icon;
@@ -16,7 +42,7 @@ class Elm.Icon (Elm.Image)
             ]]
          }
          values {
-            order: Elm_Icon_Lookup_Order(1); [[The icon lookup order (can be
+            order: Elm.Icon.Lookup_Order(Elm.Icon.Lookup_Order.theme_fdo); [[The icon lookup order (can be
                                                one of ELM_ICON_LOOKUP_FDO_THEME,
                                                ELM_ICON_LOOKUP_THEME_FDO,
                                                ELM_ICON_LOOKUP_FDO or

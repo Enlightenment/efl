@@ -143,7 +143,6 @@
  * @li @ref tutorial_icon
  */
 
-#include "elm_icon_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "elm_icon_eo.h"
 #endif
