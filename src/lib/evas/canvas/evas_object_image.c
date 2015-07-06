@@ -1601,7 +1601,7 @@ _evas_image_efl_image_smooth_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *
 
 /* deprecated */
 EAPI void
-_evas_image_reload(Eo *eo_obj)
+evas_object_image_reload(Eo *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Image_Data *o;
