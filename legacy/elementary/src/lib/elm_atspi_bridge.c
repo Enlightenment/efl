@@ -43,7 +43,6 @@
 #define ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(obj, sd, val) \
    Elm_Atspi_Bridge_Data *sd = eo_data_scope_get(obj, ELM_ATSPI_BRIDGE_CLASS); \
    if (!sd) return val;
-
 #define ELM_ATSPI_OBJECT_INTERFACE_GET_OR_RETURN_VAL(obj, key, ifc, val) \
    Eldbus_Service_Interface *ifc; \
    eo_do(obj, ifc = eo_key_data_get(key)); \
@@ -75,6 +74,7 @@ typedef struct _Elm_Atspi_Bridge_Data
    Eldbus_Object *bus_obj;
    Eina_List *pending_requests;
    int id;
+   Eina_Hash *state_hash;
 
    Eina_Bool connected : 1;
 } Elm_Atspi_Bridge_Data;
@@ -360,50 +360,56 @@ const int elm_roles_to_atspi_roles[][2] = {
    { ELM_ATSPI_ROLE_LAST_DEFINED, ATSPI_ROLE_LAST_DEFINED },
 };
 
+struct atspi_state_desc
+{
+   Elm_Atspi_State_Type elm_state;
+   AtspiStateType atspi_state;
+   const char *name;
+};
 
-const int elm_states_to_atspi_state[][2] = {
-   { ELM_ATSPI_STATE_INVALID, ATSPI_STATE_INVALID },
-   { ELM_ATSPI_STATE_ACTIVE, ATSPI_STATE_ACTIVE },
-   { ELM_ATSPI_STATE_ARMED, ATSPI_STATE_ARMED },
-   { ELM_ATSPI_STATE_BUSY, ATSPI_STATE_BUSY },
-   { ELM_ATSPI_STATE_CHECKED, ATSPI_STATE_CHECKED },
-   { ELM_ATSPI_STATE_COLLAPSED, ATSPI_STATE_COLLAPSED },
-   { ELM_ATSPI_STATE_DEFUNCT, ATSPI_STATE_DEFUNCT },
-   { ELM_ATSPI_STATE_EDITABLE, ATSPI_STATE_EDITABLE },
-   { ELM_ATSPI_STATE_ENABLED, ATSPI_STATE_ENABLED },
-   { ELM_ATSPI_STATE_EXPANDABLE, ATSPI_STATE_EXPANDABLE },
-   { ELM_ATSPI_STATE_EXPANDED, ATSPI_STATE_EXPANDED },
-   { ELM_ATSPI_STATE_FOCUSABLE, ATSPI_STATE_FOCUSABLE },
-   { ELM_ATSPI_STATE_FOCUSED, ATSPI_STATE_FOCUSED },
-   { ELM_ATSPI_STATE_HAS_TOOLTIP, ATSPI_STATE_HAS_TOOLTIP },
-   { ELM_ATSPI_STATE_HORIZONTAL, ATSPI_STATE_HORIZONTAL },
-   { ELM_ATSPI_STATE_ICONIFIED, ATSPI_STATE_ICONIFIED },
-   { ELM_ATSPI_STATE_MODAL, ATSPI_STATE_MODAL },
-   { ELM_ATSPI_STATE_MULTI_LINE, ATSPI_STATE_MULTI_LINE },
-   { ELM_ATSPI_STATE_MULTISELECTABLE, ATSPI_STATE_MULTISELECTABLE },
-   { ELM_ATSPI_STATE_OPAQUE, ATSPI_STATE_OPAQUE },
-   { ELM_ATSPI_STATE_PRESSED, ATSPI_STATE_PRESSED },
-   { ELM_ATSPI_STATE_RESIZABLE, ATSPI_STATE_RESIZABLE },
-   { ELM_ATSPI_STATE_SELECTABLE, ATSPI_STATE_SELECTABLE },
-   { ELM_ATSPI_STATE_SELECTED, ATSPI_STATE_SELECTED },
-   { ELM_ATSPI_STATE_SENSITIVE, ATSPI_STATE_SENSITIVE },
-   { ELM_ATSPI_STATE_SHOWING, ATSPI_STATE_SHOWING },
-   { ELM_ATSPI_STATE_SINGLE_LINE, ATSPI_STATE_SINGLE_LINE },
-   { ELM_ATSPI_STATE_STALE, ATSPI_STATE_STALE },
-   { ELM_ATSPI_STATE_TRANSIENT, ATSPI_STATE_TRANSIENT },
-   { ELM_ATSPI_STATE_VERTICAL, ATSPI_STATE_VERTICAL },
-   { ELM_ATSPI_STATE_VISIBLE, ATSPI_STATE_VISIBLE },
-   { ELM_ATSPI_STATE_MANAGES_DESCENDANTS, ATSPI_STATE_MANAGES_DESCENDANTS },
-   { ELM_ATSPI_STATE_INDETERMINATE, ATSPI_STATE_INDETERMINATE },
-   { ELM_ATSPI_STATE_REQUIRED, ATSPI_STATE_REQUIRED },
-   { ELM_ATSPI_STATE_TRUNCATED, ATSPI_STATE_TRUNCATED },
-   { ELM_ATSPI_STATE_ANIMATED, ATSPI_STATE_ANIMATED },
-   { ELM_ATSPI_STATE_INVALID_ENTRY, ATSPI_STATE_INVALID_ENTRY },
-   { ELM_ATSPI_STATE_SUPPORTS_AUTOCOMPLETION, ATSPI_STATE_SUPPORTS_AUTOCOMPLETION },
-   { ELM_ATSPI_STATE_SELECTABLE_TEXT, ATSPI_STATE_SELECTABLE_TEXT },
-   { ELM_ATSPI_STATE_IS_DEFAULT, ATSPI_STATE_IS_DEFAULT },
-   { ELM_ATSPI_STATE_VISITED, ATSPI_STATE_VISITED },
-   { ELM_ATSPI_STATE_LAST_DEFINED, ATSPI_STATE_LAST_DEFINED },
+const struct atspi_state_desc elm_states_to_atspi_state[] = {
+   { ELM_ATSPI_STATE_INVALID, ATSPI_STATE_INVALID, "invalid" },
+   { ELM_ATSPI_STATE_ACTIVE, ATSPI_STATE_ACTIVE, "active" },
+   { ELM_ATSPI_STATE_ARMED, ATSPI_STATE_ARMED, "armed" },
+   { ELM_ATSPI_STATE_BUSY, ATSPI_STATE_BUSY, "busy" },
+   { ELM_ATSPI_STATE_CHECKED, ATSPI_STATE_CHECKED, "checked" },
+   { ELM_ATSPI_STATE_COLLAPSED, ATSPI_STATE_COLLAPSED, "collapsed" },
+   { ELM_ATSPI_STATE_DEFUNCT, ATSPI_STATE_DEFUNCT, "defunct" },
+   { ELM_ATSPI_STATE_EDITABLE, ATSPI_STATE_EDITABLE, "editable" },
+   { ELM_ATSPI_STATE_ENABLED, ATSPI_STATE_ENABLED, "enabled" },
+   { ELM_ATSPI_STATE_EXPANDABLE, ATSPI_STATE_EXPANDABLE, "expandable" },
+   { ELM_ATSPI_STATE_EXPANDED, ATSPI_STATE_EXPANDED, "expanded" },
+   { ELM_ATSPI_STATE_FOCUSABLE, ATSPI_STATE_FOCUSABLE, "focusable" },
+   { ELM_ATSPI_STATE_FOCUSED, ATSPI_STATE_FOCUSED, "focused" },
+   { ELM_ATSPI_STATE_HAS_TOOLTIP, ATSPI_STATE_HAS_TOOLTIP, "has-tooltip" },
+   { ELM_ATSPI_STATE_HORIZONTAL, ATSPI_STATE_HORIZONTAL, "horizontal" },
+   { ELM_ATSPI_STATE_ICONIFIED, ATSPI_STATE_ICONIFIED, "iconified" },
+   { ELM_ATSPI_STATE_MODAL, ATSPI_STATE_MODAL, "modal" },
+   { ELM_ATSPI_STATE_MULTI_LINE, ATSPI_STATE_MULTI_LINE, "multi-line" },
+   { ELM_ATSPI_STATE_MULTISELECTABLE, ATSPI_STATE_MULTISELECTABLE, "multiselectable" },
+   { ELM_ATSPI_STATE_OPAQUE, ATSPI_STATE_OPAQUE, "opaque" },
+   { ELM_ATSPI_STATE_PRESSED, ATSPI_STATE_PRESSED, "pressed" },
+   { ELM_ATSPI_STATE_RESIZABLE, ATSPI_STATE_RESIZABLE, "resizable" },
+   { ELM_ATSPI_STATE_SELECTABLE, ATSPI_STATE_SELECTABLE, "selectable" },
+   { ELM_ATSPI_STATE_SELECTED, ATSPI_STATE_SELECTED, "selected" },
+   { ELM_ATSPI_STATE_SENSITIVE, ATSPI_STATE_SENSITIVE, "sensitive" },
+   { ELM_ATSPI_STATE_SHOWING, ATSPI_STATE_SHOWING, "showing" },
+   { ELM_ATSPI_STATE_SINGLE_LINE, ATSPI_STATE_SINGLE_LINE, "single-line" },
+   { ELM_ATSPI_STATE_STALE, ATSPI_STATE_STALE, "stale" },
+   { ELM_ATSPI_STATE_TRANSIENT, ATSPI_STATE_TRANSIENT, "transient" },
+   { ELM_ATSPI_STATE_VERTICAL, ATSPI_STATE_VERTICAL, "vertical" },
+   { ELM_ATSPI_STATE_VISIBLE, ATSPI_STATE_VISIBLE, "visible" },
+   { ELM_ATSPI_STATE_MANAGES_DESCENDANTS, ATSPI_STATE_MANAGES_DESCENDANTS, "manages-descendants" },
+   { ELM_ATSPI_STATE_INDETERMINATE, ATSPI_STATE_INDETERMINATE, "indeterminate" },
+   { ELM_ATSPI_STATE_REQUIRED, ATSPI_STATE_REQUIRED, "required" },
+   { ELM_ATSPI_STATE_TRUNCATED, ATSPI_STATE_TRUNCATED, "truncated" },
+   { ELM_ATSPI_STATE_ANIMATED, ATSPI_STATE_ANIMATED, "animated" },
+   { ELM_ATSPI_STATE_INVALID_ENTRY, ATSPI_STATE_INVALID_ENTRY, "invalid-entry" },
+   { ELM_ATSPI_STATE_SUPPORTS_AUTOCOMPLETION, ATSPI_STATE_SUPPORTS_AUTOCOMPLETION, "supports-autocompletion" },
+   { ELM_ATSPI_STATE_SELECTABLE_TEXT, ATSPI_STATE_SELECTABLE_TEXT, "selectable-text" },
+   { ELM_ATSPI_STATE_IS_DEFAULT, ATSPI_STATE_IS_DEFAULT, "is-default" },
+   { ELM_ATSPI_STATE_VISITED, ATSPI_STATE_VISITED, "visited" },
+   { ELM_ATSPI_STATE_LAST_DEFINED, ATSPI_STATE_LAST_DEFINED, "last-defined" },
 };
 
 const int elm_relation_to_atspi_relation_mapping[] = {
@@ -619,9 +625,21 @@ _elm_atspi_state_set_to_atspi_state_set(Elm_Atspi_State_Set states)
 
    for (i = 0; i < SIZE(elm_states_to_atspi_state); i++)
      {
-        if (STATE_TYPE_GET(states, elm_states_to_atspi_state[i][0]))
-          STATE_TYPE_SET(ret, elm_states_to_atspi_state[i][1]);
+        if (STATE_TYPE_GET(states, elm_states_to_atspi_state[i].elm_state))
+          STATE_TYPE_SET(ret, elm_states_to_atspi_state[i].atspi_state);
      }
+   return ret;
+}
+
+static Eina_Hash*
+_elm_atspi_state_hash_build(void)
+{
+   Eina_Hash *ret = eina_hash_string_superfast_new(NULL);
+   unsigned int i = 0;
+
+   for (i = 0; i < SIZE(elm_states_to_atspi_state); i++)
+     eina_hash_add(ret, elm_states_to_atspi_state[i].name, &elm_states_to_atspi_state[i]);
+
    return ret;
 }
 
@@ -2899,14 +2917,10 @@ _set_broadcast_flag(const char *event, Eo *bridge)
           {
              if (!tokens[2] || *tokens[2] == '\0')
                pd->object_state_broadcast_mask = -1; // broadcast all
-             else if (!strcmp(tokens[2], "Focused"))
-               STATE_TYPE_SET(pd->object_state_broadcast_mask, ELM_ATSPI_STATE_FOCUSED);
-             else if (!strcmp(tokens[2], "Showing"))
-               STATE_TYPE_SET(pd->object_state_broadcast_mask, ELM_ATSPI_STATE_SHOWING);
-             else if (!strcmp(tokens[2], "Checked"))
-               STATE_TYPE_SET(pd->object_state_broadcast_mask, ELM_ATSPI_STATE_CHECKED);
-             else if (!strcmp(tokens[2], "Expanded"))
-               STATE_TYPE_SET(pd->object_state_broadcast_mask, ELM_ATSPI_STATE_EXPANDED);
+             eina_str_tolower(&tokens[2]);
+             struct atspi_state_desc *sd = eina_hash_find(pd->state_hash, tokens[2]);
+             if (sd)
+               STATE_TYPE_SET(pd->object_state_broadcast_mask, sd->elm_state);
           }
         else if (!strcmp(tokens[1], "PropertyChange"))
           {
@@ -3027,35 +3041,18 @@ static Eina_Bool
 _state_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Elm_Atspi_Event_State_Changed_Data *state_data = event_info;
-   char *type_desc;
+   const char *type_desc;
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(data, pd, EINA_FALSE);
    ELM_ATSPI_OBJECT_INTERFACE_GET_OR_RETURN_VAL(obj, ATSPI_DBUS_INTERFACE_EVENT_OBJECT, ifc, EINA_FALSE);
 
    if (!STATE_TYPE_GET(pd->object_state_broadcast_mask, state_data->type))
      return EINA_FALSE;
 
-   switch (state_data->type) {
-        case ELM_ATSPI_STATE_FOCUSED:
-         type_desc = "focused";
-         break;
-        case ELM_ATSPI_STATE_SHOWING:
-         type_desc = "showing";
-         break;
-        case ELM_ATSPI_STATE_VISIBLE:
-         type_desc = "visible";
-         break;
-        case ELM_ATSPI_STATE_ACTIVE:
-         type_desc = "active";
-         break;
-        case ELM_ATSPI_STATE_CHECKED:
-         type_desc = "checked";
-         break;
-        case ELM_ATSPI_STATE_EXPANDED:
-         type_desc = "expanded";
-         break;
-        default:
-         return EINA_FALSE;
-   }
+   if ((state_data->type > ELM_ATSPI_STATE_LAST_DEFINED) ||
+        state_data->type < 0)
+     return EINA_FALSE;
+
+   type_desc = elm_states_to_atspi_state[state_data->type].name;
 
    _bridge_signal_send(data, ifc, ATSPI_OBJECT_EVENT_STATE_CHANGED, type_desc, state_data->new_value, 0, NULL);
    return EINA_TRUE;
@@ -3448,6 +3445,9 @@ _a11y_connection_shutdown(Eo *bridge)
    if (pd->a11y_bus) eldbus_connection_unref(pd->a11y_bus);
    pd->a11y_bus = NULL;
 
+   if (pd->state_hash) eina_hash_free(pd->state_hash);
+   pd->state_hash = NULL;
+
    eo_do(bridge, eo_event_callback_call(ELM_ATSPI_BRIDGE_EVENT_DISCONNECTED, NULL));
    pd->connected = EINA_FALSE;
 }
@@ -3471,6 +3471,7 @@ _a11y_bus_initialize(Eo *obj, const char *socket_addr)
 
    // init data structures
    pd->cache = eina_hash_string_superfast_new(NULL);
+   pd->state_hash = _elm_atspi_state_hash_build();
 
    // register interfaces
    _cache_register(obj);
