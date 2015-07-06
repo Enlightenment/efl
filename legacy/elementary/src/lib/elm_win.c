@@ -4451,6 +4451,8 @@ _elm_win_profile_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 EOLIAN static void
 _elm_win_urgent_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool urgent)
 {
+   if (sd->urgent == urgent)
+     return;
    sd->urgent = urgent;
    TRAP(sd, urgent_set, urgent);
 #ifdef HAVE_ELEMENTARY_X
