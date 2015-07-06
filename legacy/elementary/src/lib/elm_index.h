@@ -62,7 +62,6 @@
  * @{
  */
 
-#include <elm_index_common.h>
 #ifdef EFL_EO_API_SUPPORT
 #include <elm_index_eo.h>
 #endif

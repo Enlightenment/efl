@@ -256,7 +256,6 @@ elm_image_common.h \
 elm_image_eo.h \
 elm_image_legacy.h \
 elm_index.h \
-elm_index_common.h \
 elm_index_eo.h \
 elm_index_legacy.h \
 elm_intro.h \
