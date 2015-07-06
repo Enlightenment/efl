@@ -1080,6 +1080,9 @@ _elm_win_focus_in(Ecore_Evas *ee)
         else
           elm_widget_focus_restore(obj);
      }
+   // FIXME: the event is deprecated but still in use.
+   // Has to be removed in EFL2.0
+   evas_object_smart_callback_call(obj, SIG_FOCUS_IN, NULL);
    eo_do(obj, eo_event_callback_call(ELM_WIDGET_EVENT_FOCUSED, NULL));
    sd->focus_highlight.cur.visible = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
@@ -1112,6 +1115,9 @@ _elm_win_focus_out(Ecore_Evas *ee)
 
    elm_object_focus_set(obj, EINA_FALSE);
    _elm_widget_top_win_focused_set(obj, EINA_FALSE);
+   // FIXME: the event is deprecated but still in use.
+   // Has to be removed in EFL2.0
+   evas_object_smart_callback_call(obj, SIG_FOCUS_OUT, NULL);
    eo_do(obj, eo_event_callback_call(ELM_WIDGET_EVENT_UNFOCUSED, NULL));
    sd->focus_highlight.cur.visible = EINA_FALSE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
