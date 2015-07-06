@@ -330,7 +330,6 @@ elm_scroller.h \
 elm_scroller_eo.h \
 elm_scroller_legacy.h \
 elm_segment_control.h \
-elm_segment_control_common.h \
 elm_segment_control_eo.h \
 elm_segment_control_legacy.h \
 elm_separator.h \

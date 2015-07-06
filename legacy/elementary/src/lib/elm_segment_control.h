@@ -61,7 +61,6 @@
  * @{
  */
 
-#include "elm_segment_control_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "elm_segment_control_eo.h"
 #endif
