@@ -21,8 +21,6 @@ class Elm.Photocam_Pan (Elm_Pan)
       download,progress;
       download,done;
       download,error;
-      focused;
-      unfocused;
    }
 
 }

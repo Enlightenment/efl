@@ -255,8 +255,6 @@ class Elm.Clock (Elm.Layout)
       changed;
       language,changed;
       access,changed;
-      focused;
-      unfocused;
    }
 
 }

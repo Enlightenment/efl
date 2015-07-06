@@ -407,8 +407,6 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       display,changed;
       language,changed;
       access,changed;
-      focused;
-      unfocused;
    }
 
 }

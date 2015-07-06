@@ -212,8 +212,8 @@ _activate(Evas_Object *obj)
           (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_item_clicked, item));
         evas_object_show(bt);
         eo_do(bt,
-              eo_event_callback_add(ELM_LAYOUT_EVENT_FOCUSED, _item_focused_cb, item),
-              eo_event_callback_add(ELM_LAYOUT_EVENT_UNFOCUSED, _item_unfocused_cb, item));
+              eo_event_callback_add(ELM_WIDGET_EVENT_FOCUSED, _item_focused_cb, item),
+              eo_event_callback_add(ELM_WIDGET_EVENT_UNFOCUSED, _item_unfocused_cb, item));
      }
 
    if (sd->horizontal)

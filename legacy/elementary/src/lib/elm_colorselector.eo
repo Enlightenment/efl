@@ -143,8 +143,6 @@ class Elm.Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action,
       changed,user;
       language,changed;
       access,changed;
-      focused;
-      unfocused;
    }
 
 }

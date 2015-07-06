@@ -646,8 +646,6 @@ class Elm.Layout (Elm.Container, Efl.File)
    }
    events {
       theme,changed;
-      focused;
-      unfocused;
       language,changed;
       access,changed;
    }

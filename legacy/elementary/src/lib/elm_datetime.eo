@@ -322,8 +322,6 @@ class Elm.Datetime (Elm.Layout)
       changed;
       language,changed;
       access,changed;
-      focused;
-      unfocused;
    }
 
 }

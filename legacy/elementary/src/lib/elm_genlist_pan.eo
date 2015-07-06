@@ -16,8 +16,6 @@ class Elm.Genlist_Pan (Elm_Pan)
    events {
       language,changed;
       access,changed;
-      focused;
-      unfocused;
       item,focused;
       item,unfocused;
    }

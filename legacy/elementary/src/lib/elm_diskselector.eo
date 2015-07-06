@@ -255,8 +255,6 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
    events {
       language,changed;
       access,changed;
-      focused;
-      unfocused;
    }
 
 }

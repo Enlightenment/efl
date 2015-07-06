@@ -119,9 +119,4 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
       Elm.Layout.sizing_eval;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
-   events {
-      focused;
-      unfocused;
-   }
-
 }

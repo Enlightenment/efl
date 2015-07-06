@@ -1080,7 +1080,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
         else
           elm_widget_focus_restore(obj);
      }
-   eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_FOCUSED, NULL));
+   eo_do(obj, eo_event_callback_call(ELM_WIDGET_EVENT_FOCUSED, NULL));
    sd->focus_highlight.cur.visible = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
    if (sd->frame_obj)
@@ -1112,7 +1112,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
 
    elm_object_focus_set(obj, EINA_FALSE);
    _elm_widget_top_win_focused_set(obj, EINA_FALSE);
-   eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_UNFOCUSED, NULL));
+   eo_do(obj, eo_event_callback_call(ELM_WIDGET_EVENT_UNFOCUSED, NULL));
    sd->focus_highlight.cur.visible = EINA_FALSE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
    if (sd->frame_obj)

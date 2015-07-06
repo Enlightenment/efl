@@ -15,8 +15,6 @@ class Elm.Gengrid_Pan (Elm_Pan)
    events {
       language,changed;
       access,changed;
-      focused;
-      unfocused;
    }
 
 }

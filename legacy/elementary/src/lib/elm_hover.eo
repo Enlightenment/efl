@@ -86,8 +86,6 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface)
       Elm.Layout.content_aliases.get;
    }
    events {
-      focused;
-      unfocused;
       smart,changed;
       dismissed;
    }

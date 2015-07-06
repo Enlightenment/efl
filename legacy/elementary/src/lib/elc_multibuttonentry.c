@@ -331,7 +331,7 @@ _elm_multibuttonentry_elm_widget_on_focus(Eo *obj, Elm_Multibuttonentry_Data *sd
                }
           }
         eo_do(obj, eo_event_callback_call
-          (ELM_MULTIBUTTONENTRY_EVENT_FOCUSED, NULL));
+          (ELM_WIDGET_EVENT_FOCUSED, NULL));
      }
    else
      {
@@ -339,7 +339,7 @@ _elm_multibuttonentry_elm_widget_on_focus(Eo *obj, Elm_Multibuttonentry_Data *sd
 
         elm_entry_input_panel_hide(sd->entry);
         eo_do(obj, eo_event_callback_call
-          (ELM_MULTIBUTTONENTRY_EVENT_UNFOCUSED, NULL));
+          (ELM_WIDGET_EVENT_UNFOCUSED, NULL));
      }
 
 end:
@@ -1136,9 +1136,9 @@ _callbacks_register(Evas_Object *obj)
    eo_do(sd->entry, eo_event_callback_add
      (ELM_MULTIBUTTONENTRY_EVENT_CHANGED, _entry_changed_cb, obj));
    eo_do(sd->entry, eo_event_callback_add
-     (ELM_MULTIBUTTONENTRY_EVENT_FOCUSED, _entry_focus_in_cb, obj));
+     (ELM_WIDGET_EVENT_FOCUSED, _entry_focus_in_cb, obj));
    eo_do(sd->entry, eo_event_callback_add
-     (ELM_MULTIBUTTONENTRY_EVENT_UNFOCUSED, _entry_focus_out_cb, obj));
+     (ELM_WIDGET_EVENT_UNFOCUSED, _entry_focus_out_cb, obj));
    eo_do(sd->entry, eo_event_callback_add
      (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _entry_clicked_cb, obj));
 }

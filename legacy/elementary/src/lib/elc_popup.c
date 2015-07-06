@@ -816,9 +816,9 @@ _item_new(Elm_Popup_Item_Data *it)
                                        _item_select_cb, it);
         evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
         eo_do(VIEW(it), eo_event_callback_add
-              (ELM_LAYOUT_EVENT_FOCUSED, _item_focused_cb, it));
+              (ELM_WIDGET_EVENT_FOCUSED, _item_focused_cb, it));
         eo_do(VIEW(it), eo_event_callback_add
-              (ELM_LAYOUT_EVENT_UNFOCUSED, _item_unfocused_cb, it));
+              (ELM_WIDGET_EVENT_UNFOCUSED, _item_unfocused_cb, it));
         evas_object_show(VIEW(it));
      }
 }

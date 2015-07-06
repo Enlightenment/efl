@@ -116,9 +116,4 @@ class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
       Elm.Layout.sizing_eval;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
-   events {
-      focused;
-      unfocused;
-   }
-
 }

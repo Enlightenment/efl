@@ -216,8 +216,6 @@ class Elm.Glview (Elm.Widget)
       Elm.Widget.on_focus;
    }
    events {
-      focused;
-      unfocused;
       language,changed;
       access,changed;
    }

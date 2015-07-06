@@ -43,9 +43,4 @@ class Elm.Bubble (Elm.Layout, Evas.Clickable_Interface)
       Elm.Layout.content_aliases.get;
       Elm.Layout.sizing_eval;
    }
-   events {
-      focused;
-      unfocused;
-   }
-
 }

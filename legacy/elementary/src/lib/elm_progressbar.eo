@@ -289,8 +289,6 @@ class Elm.Progressbar (Elm.Layout)
       changed;
       language,changed;
       access,changed;
-      focused;
-      unfocused;
    }
 
 }

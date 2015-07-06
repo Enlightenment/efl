@@ -1663,8 +1663,6 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
       indicator,prop,changed;
       rotation,changed;
       profile,changed;
-      focused;
-      unfocused;
       wm,rotation,changed;
       animator,tick;
       theme,changed;

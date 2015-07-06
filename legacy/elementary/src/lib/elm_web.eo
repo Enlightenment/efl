@@ -673,8 +673,6 @@ class Elm.Web (Elm.Widget)
    events {
       uri,changed; [[s]]
       url,changed; [[s]]
-      focused;
-      unfocused;
       windows,close,request;
    }
 

@@ -803,8 +803,6 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
       overlay,del;
       language,changed;
       access,changed;
-      focused;
-      unfocused;
    }
 
 }

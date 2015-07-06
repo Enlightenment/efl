@@ -1564,9 +1564,9 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
    eo_do(en, eo_event_callback_add
      (ELM_ENTRY_EVENT_ANCHOR_CLICKED, _anchor_clicked, obj));
    eo_do(en, eo_event_callback_add
-     (ELM_LAYOUT_EVENT_FOCUSED, _on_text_focused, obj));
+     (ELM_WIDGET_EVENT_FOCUSED, _on_text_focused, obj));
    eo_do(en, eo_event_callback_add
-     (ELM_LAYOUT_EVENT_UNFOCUSED, _on_text_unfocused, obj));
+     (ELM_WIDGET_EVENT_UNFOCUSED, _on_text_unfocused, obj));
    eo_do(en, eo_event_callback_add
      (ELM_ENTRY_EVENT_ACTIVATED, _on_text_activated, obj));
 

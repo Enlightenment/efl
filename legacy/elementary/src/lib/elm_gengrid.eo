@@ -720,8 +720,6 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
    events {
       language,changed;
       access,changed;
-      focused;
-      unfocused;
       realized;
       unrealized;
       index,update;
