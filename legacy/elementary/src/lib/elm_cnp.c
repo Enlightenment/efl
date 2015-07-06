@@ -2175,7 +2175,7 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
                                         (void *)(long)xwin);
    handler_status = ecore_event_handler_add(ECORE_X_EVENT_XDND_STATUS,
                                             _x11_dnd_status, NULL);
-   dragwin = elm_win_add(NULL, "Elm-Drag", ELM_WIN_UTILITY);
+   dragwin = elm_win_add(NULL, "Elm-Drag", ELM_WIN_DND);
    elm_win_alpha_set(dragwin, EINA_TRUE);
    elm_win_override_set(dragwin, EINA_TRUE);
    xdragwin = _x11_elm_widget_xwin_get(dragwin);
@@ -4244,7 +4244,7 @@ _drag_anim_start(void *data)
    st->icons = _anim_icons_make(st->user_info.icons);
    if (st->user_info.createicon)
      {
-        Evas_Object *temp_win = elm_win_add(NULL, "Temp", ELM_WIN_UTILITY);
+        Evas_Object *temp_win = elm_win_add(NULL, "Temp", ELM_WIN_DND);
         Evas_Object *final_icon = st->user_info.createicon(st->user_info.createdata, temp_win, NULL, NULL);
         evas_object_geometry_get(final_icon, NULL, NULL, &st->final_icon_w, &st->final_icon_h);
         evas_object_del(final_icon);
