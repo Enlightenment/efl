@@ -110,25 +110,18 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
           }
         else
           {
-             do
+             DBG("poll...");
+             msg = eina_thread_queue_poll(timer_thq, &ref);
+             if (msg)
                {
-                  DBG("poll...");
-                  msg = eina_thread_queue_poll(timer_thq, &ref);
-                  if (msg)
-                    {
-                       tick = msg->val;
-                       eina_thread_queue_wait_done(timer_thq, ref);
-                    }
+                  tick = msg->val;
+                  eina_thread_queue_wait_done(timer_thq, ref);
                }
-             while (msg);
           }
         DBG("tick = %i", tick);
         if (tick == -1)
           {
-             timer_thread = NULL;
-             eina_thread_queue_free(timer_thq);
-             timer_thq = NULL;
-             return;
+             goto done;
           }
         else if (tick)
           {
@@ -139,6 +132,10 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
              _timer_send_time(t0 - d + animators_frametime);
           }
      }
+done:
+   if (timer_thq) eina_thread_queue_free(timer_thq);
+   timer_thq = NULL;
+   timer_thread = NULL;
 }
 
 static void
@@ -159,6 +156,14 @@ _timer_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, voi
 }
 
 static void
+_timer_tick_finished(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
+{
+   timer_thread = NULL;
+   if (timer_thq) eina_thread_queue_free(timer_thq);
+   timer_thq = NULL;
+}
+
+static void
 _timer_tick_begin(void)
 {
    if (!timer_thq)
@@ -166,7 +171,9 @@ _timer_tick_begin(void)
         timer_thq = eina_thread_queue_new();
         timer_thread = ecore_thread_feedback_run(_timer_tick_core,
                                                  _timer_tick_notify,
-                                                 NULL, NULL, NULL, EINA_TRUE);
+                                                 _timer_tick_finished,
+                                                 _timer_tick_finished,
+                                                 NULL, EINA_TRUE);
      }
    timer_event_is_busy = 1;
    _tick_send(1);
@@ -183,8 +190,14 @@ _timer_tick_end(void)
 static void
 _timer_tick_quit(void)
 {
+   int i;
+
    if (!timer_thq) return;
    _tick_send(-1);
+   for (i = 0; (i < 500) && (timer_thread); i++)
+     {
+        usleep(1000);
+     }
 }
 
 static Eina_Bool
