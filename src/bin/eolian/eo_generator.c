@@ -834,8 +834,32 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
              _class_env_create(impl_class, NULL, &impl_env);
              funcname = eolian_function_name_get(fnid);
 
+             Eina_Bool dflt_values = EINA_FALSE;
+             Eina_Iterator *pitr = NULL;
+             if (!eolian_implement_is_auto(impl_desc) && fnid && (ftype != EOLIAN_PROP_SET))
+               {
+                  Eolian_Function_Parameter *param;
+                  pitr = (ftype == EOLIAN_METHOD) ? eolian_function_parameters_get(fnid)
+                                                  : eolian_property_values_get(fnid, ftype);
+                  EINA_ITERATOR_FOREACH(pitr, param)
+                    {
+                       const Eolian_Expression *dflt_value = eolian_parameter_default_value_get(param);
+                       if (dflt_value)
+                         {
+                            Eolian_Value val = eolian_expression_eval
+                               (dflt_value, EOLIAN_MASK_ALL);
+                            if (val.type)
+                              {
+                                 dflt_values = EINA_TRUE;
+                                 break;
+                              }
+                         }
+                    }
+                  eina_iterator_free(pitr);
+               }
+
              sprintf(implname, "%s_%s_%s",
-                   eolian_implement_is_auto(impl_desc) || eolian_implement_is_empty(impl_desc)?
+                   (eolian_implement_is_auto(impl_desc) || eolian_implement_is_empty(impl_desc) || dflt_values)?
                    "__eolian":"",
                    class_env.full_classname, impl_env.full_classname);
              eina_str_tolower(&tp);
