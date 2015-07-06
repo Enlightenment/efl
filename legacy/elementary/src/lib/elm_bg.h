@@ -29,7 +29,6 @@
  * @li @ref bg_03_example_page
  */
 
-#include "elm_bg_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "elm_bg_eo.h"
 #endif

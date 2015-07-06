@@ -1,3 +1,20 @@
+enum Elm.Bg.Option
+{
+   [[
+     @addtogroup Bg
+     Identifiers on how a background widget is to display its image --
+     if it was set to use an image file.
+
+     @see elm_bg_option_set()
+     @see elm_bg_option_get()
+   ]]
+  center, [[Center the background image.]]
+  scale, [[Scale the background image, retaining aspect ratio (default).]]
+  stretch, [[Stretch the background image to fill the widget's area.]]
+  tile, [[Tile background image at its original size.]]
+  last [[Sentinel value, also used to indicate errors.]]
+}
+
 class Elm.Bg (Elm.Layout, Efl.File)
 {
    eo_prefix: elm_obj_bg;
@@ -28,7 +45,7 @@ class Elm.Bg (Elm.Layout, Efl.File)
             @ingroup Bg */
          }
          values {
-            option: Elm_Bg_Option; /*@ The desired background option (see #Elm_Bg_Option) */
+            option: Elm.Bg.Option; /*@ The desired background option (see #Elm_Bg_Option) */
          }
       }
       @property color {

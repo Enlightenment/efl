@@ -155,7 +155,6 @@ elm_authors.h \
 elm_bg.h \
 elm_bg_eo.h \
 elm_bg_legacy.h \
-elm_bg_common.h \
 elm_box.h \
 elm_box_eo.h \
 elm_box_legacy.h \
