@@ -162,7 +162,6 @@ elm_box_common.h \
 elm_bubble.h \
 elm_bubble_eo.h \
 elm_bubble_legacy.h \
-elm_bubble_common.h \
 elm_button.h \
 elm_button_eo.h \
 elm_button_legacy.h \

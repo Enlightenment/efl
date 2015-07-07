@@ -1,3 +1,19 @@
+enum Elm.Bubble.Pos
+{
+  [[
+     @addtogroup Bubble
+     Defines the corner values for a bubble.
+
+     The corner will be used to determine where the arrow of the
+     bubble points to.
+  ]]
+  invalid = -1, [[Invalid corner.]]
+  top_left, [[The arrow of the bubble points to the top left corner.]]
+  top_right, [[The arrow of the bubble points to the top right corner.]]
+  bottom_left, [[The arrow of the bubble points to the bottom left corner.]]
+  bottom_right [[The arrow of the bubble points to the bottom right corner.]]
+}
+
 class Elm.Bubble (Elm.Layout, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_bubble;
@@ -25,7 +41,7 @@ class Elm.Bubble (Elm.Layout, Evas.Clickable_Interface)
             @ingroup Bubble */
          }
          values {
-            pos: Elm_Bubble_Pos; /*@ The given corner for the bubble. */
+            pos: Elm.Bubble.Pos; /*@ The given corner for the bubble. */
          }
       }
    }

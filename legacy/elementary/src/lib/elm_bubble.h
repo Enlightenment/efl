@@ -61,7 +61,6 @@
  * @{
  */
 
-#include "elm_bubble_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "elm_bubble_eo.h"
 #endif
