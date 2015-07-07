@@ -5,6 +5,11 @@
 #include <stdlib.h>
 #include <math.h>
 #include <unistd.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/select.h>
+#include <fcntl.h>
 
 #include <Eo.h>
 
@@ -54,26 +59,16 @@ static Ecore_Cb end_tick_cb = NULL;
 static const void *end_tick_data = NULL;
 static Eina_Bool animator_ran = EINA_FALSE;
 
-
-static Eina_Thread_Queue *timer_thq = NULL;
+static int timer_fd_read = -1;
+static int timer_fd_write = -1;
 static Ecore_Thread *timer_thread = NULL;
 static volatile int timer_event_is_busy = 0;
-
-typedef struct
-{
-   Eina_Thread_Queue_Msg head;
-   char val;
-} Msg;
 
 static void
 _tick_send(char val)
 {
-   Msg *msg;
-   void *ref;
    DBG("_tick_send(%i)", val);
-   msg = eina_thread_queue_send(timer_thq, sizeof(Msg), &ref);
-   msg->val = val;
-   eina_thread_queue_send_done(timer_thq, ref);
+   write(timer_fd_write, &val, 1);
 }
 
 static void
@@ -91,51 +86,52 @@ _timer_send_time(double t)
 static void
 _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
 {
-   Msg *msg;
-   void *ref;
-   int tick = 0;
+   fd_set rfds, wfds, exfds;
+   struct timeval tv;
+   unsigned int t;
+   char tick = 0;
+   double t0, d;
+   int ret;
 
    while (!ecore_thread_check(thread))
      {
         DBG("------- timer_event_is_busy=%i", timer_event_is_busy);
-        if (!timer_event_is_busy)
+        FD_ZERO(&rfds);
+        FD_ZERO(&wfds);
+        FD_ZERO(&exfds);
+        FD_SET(timer_fd_read, &rfds);
+
+        t0 = ecore_time_get();
+        d = fmod(t0, animators_frametime);
+        if (tick)
           {
-             DBG("wait...");
-             msg = eina_thread_queue_wait(timer_thq, &ref);
-             if (msg)
-               {
-                  tick = msg->val;
-                  eina_thread_queue_wait_done(timer_thq, ref);
-               }
+             DBG("sleep...");
+             t = (animators_frametime - d) * 1000000.0;
+             tv.tv_sec = t / 1000000;
+             tv.tv_usec = t % 1000000;
+             ret = select(timer_fd_read + 1, &rfds, &wfds, &exfds, &tv);
           }
         else
           {
-             DBG("poll...");
-             msg = eina_thread_queue_poll(timer_thq, &ref);
-             if (msg)
-               {
-                  tick = msg->val;
-                  eina_thread_queue_wait_done(timer_thq, ref);
-               }
+             DBG("wait...");
+             ret = select(timer_fd_read + 1, &rfds, &wfds, &exfds, NULL);
           }
-        DBG("tick = %i", tick);
-        if (tick == -1)
+        if ((ret == 1) && (FD_ISSET(timer_fd_read, &rfds)))
           {
-             goto done;
+             read(timer_fd_read, &tick, sizeof(tick));
+             DBG("tick = %i", tick);
+             if (tick == -1) goto done;
           }
-        else if (tick)
+        else
           {
-             double t0 = ecore_time_get();
-             double d = fmod(t0, animators_frametime);
-
-             usleep((animators_frametime - d) * 1000000);
-             _timer_send_time(t0 - d + animators_frametime);
+             if (tick) _timer_send_time(t0 - d + animators_frametime);
           }
      }
 done:
-   if (timer_thq) eina_thread_queue_free(timer_thq);
-   timer_thq = NULL;
-   timer_thread = NULL;
+   close(timer_fd_read);
+   timer_fd_read = -1;
+   close(timer_fd_write);
+   timer_fd_write = -1;
 }
 
 static void
@@ -159,16 +155,28 @@ static void
 _timer_tick_finished(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
 {
    timer_thread = NULL;
-   if (timer_thq) eina_thread_queue_free(timer_thq);
-   timer_thq = NULL;
+   if (timer_fd_read >= 0)
+     {
+        close(timer_fd_read);
+        timer_fd_read = -1;
+     }
+   if (timer_fd_write >= 0)
+     {
+        close(timer_fd_write);
+        timer_fd_write = -1;
+     }
 }
 
 static void
 _timer_tick_begin(void)
 {
-   if (!timer_thq)
+   if (timer_fd_read < 0)
      {
-        timer_thq = eina_thread_queue_new();
+        int fds[2];
+
+        if (pipe(fds) != 0) return;
+        timer_fd_read = fds[0];
+        timer_fd_write = fds[1];
         timer_thread = ecore_thread_feedback_run(_timer_tick_core,
                                                  _timer_tick_notify,
                                                  _timer_tick_finished,
@@ -182,7 +190,7 @@ _timer_tick_begin(void)
 static void
 _timer_tick_end(void)
 {
-   if (!timer_thq) return;
+   if (timer_fd_read < 0) return;
    timer_event_is_busy = 0;
    _tick_send(0);
 }
@@ -192,7 +200,7 @@ _timer_tick_quit(void)
 {
    int i;
 
-   if (!timer_thq) return;
+   if (timer_fd_read < 0) return;
    _tick_send(-1);
    for (i = 0; (i < 500) && (timer_thread); i++)
      {
