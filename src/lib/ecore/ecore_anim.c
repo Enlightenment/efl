@@ -11,6 +11,27 @@
 #include <sys/select.h>
 #include <fcntl.h>
 
+#ifdef _WIN32
+
+# include <winsock2.h>
+
+# define pipe_write(fd, buffer, size) send((fd), (char *)(buffer), size, 0)
+# define pipe_read(fd, buffer, size)  recv((fd), (char *)(buffer), size, 0)
+# define pipe_close(fd)               closesocket(fd)
+# define PIPE_FD_ERROR   SOCKET_ERROR
+
+#else
+
+# include <unistd.h>
+# include <fcntl.h>
+
+# define pipe_write(fd, buffer, size) write((fd), buffer, size)
+# define pipe_read(fd, buffer, size)  read((fd), buffer, size)
+# define pipe_close(fd)               close(fd)
+# define PIPE_FD_ERROR   -1
+
+#endif /* ! _WIN32 */
+
 #include <Eo.h>
 
 #include "Ecore.h"
@@ -68,7 +89,7 @@ static void
 _tick_send(char val)
 {
    DBG("_tick_send(%i)", val);
-   write(timer_fd_write, &val, 1);
+   pipe_write(timer_fd_write, &val, 1);
 }
 
 static void
@@ -118,7 +139,7 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
           }
         if ((ret == 1) && (FD_ISSET(timer_fd_read, &rfds)))
           {
-             read(timer_fd_read, &tick, sizeof(tick));
+             pipe_read(timer_fd_read, &tick, sizeof(tick));
              DBG("tick = %i", tick);
              if (tick == -1) goto done;
           }
@@ -128,9 +149,9 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
           }
      }
 done:
-   close(timer_fd_read);
+   pipe_close(timer_fd_read);
    timer_fd_read = -1;
-   close(timer_fd_write);
+   pipe_close(timer_fd_write);
    timer_fd_write = -1;
 }
 
@@ -157,12 +178,12 @@ _timer_tick_finished(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
    timer_thread = NULL;
    if (timer_fd_read >= 0)
      {
-        close(timer_fd_read);
+        pipe_close(timer_fd_read);
         timer_fd_read = -1;
      }
    if (timer_fd_write >= 0)
      {
-        close(timer_fd_write);
+        pipe_close(timer_fd_write);
         timer_fd_write = -1;
      }
 }
