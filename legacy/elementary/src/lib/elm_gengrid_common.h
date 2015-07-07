@@ -1,35 +1,5 @@
 #define ELM_GENGRID_ITEM_CLASS_VERSION ELM_GEN_ITEM_CLASS_VERSION
 #define ELM_GENGRID_ITEM_CLASS_HEADER ELM_GEN_ITEM_CLASS_HEADER
-
-/**
- * Defines where to position the item in the genlist.
- *
- * @ingroup Gengrid
- */
-typedef enum
-{
-   ELM_GENGRID_ITEM_SCROLLTO_NONE = 0,   /**< no scrollto */
-   ELM_GENGRID_ITEM_SCROLLTO_IN = (1 << 0),   /**< to the nearest viewport */
-   ELM_GENGRID_ITEM_SCROLLTO_TOP = (1 << 1),   /**< to the top of viewport */
-   ELM_GENGRID_ITEM_SCROLLTO_MIDDLE = (1 << 2)   /**< to the middle of viewport */
-} Elm_Gengrid_Item_Scrollto_Type;
-
-
-/**
- * Defines the type of the item part
- * Used while updating item's parts
- * It can be used at updating multi fields.
- *
- * @ingroup Gengrid
- */
-typedef enum
-{
-   ELM_GENGRID_ITEM_FIELD_ALL = 0,
-   ELM_GENGRID_ITEM_FIELD_TEXT = (1 << 0),
-   ELM_GENGRID_ITEM_FIELD_CONTENT = (1 << 1),
-   ELM_GENGRID_ITEM_FIELD_STATE = (1 << 2)
-} Elm_Gengrid_Item_Field_Type;
-
 /**
  * @see Elm_Gen_Item_Class
  */

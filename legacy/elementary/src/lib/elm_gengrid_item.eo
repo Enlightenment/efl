@@ -1,5 +1,36 @@
 import elm_general;
 
+enum Elm.Gengrid.Item.Scrollto_Type
+{
+   [[
+      Defines where to position the item in the genlist.
+
+      @ingroup Gengrid
+   ]]
+   legacy: elm_gengrid_item_scrollto;
+   none = 0,   [[No scrollto.]]
+   in = (1 << 0),   [[To the nearest viewport.]]
+   top = (1 << 1),   [[To the top of viewport.]]
+   middle = (1 << 2)   [[To the middle of viewport.]]
+}
+
+enum Elm.Gengrid.Item.Field_Type
+{
+   [[
+      Defines the type of the item part
+      Used while updating item's parts
+      It can be used at updating multi fields.
+
+      @ingroup Gengrid
+   ]]
+   legacy: elm_gengrid_item_field;
+   all = 0,
+   text = (1 << 0),
+   content = (1 << 1),
+   state = (1 << 2)
+}
+
+
 class Elm.Gengrid_Item(Elm.Widget_Item)
 {
       eo_prefix: elm_obj_gengrid_item;
@@ -229,7 +260,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                  */
                 params {
                      @in parts: const (char) *; /*@ The name of item's part */
-                     @in itf: Elm_Gengrid_Item_Field_Type; /*@ The type of item's part type */
+                     @in itf: Elm.Gengrid.Item.Field_Type; /*@ The type of item's part type */
                 }
            }
            item_class_update {
