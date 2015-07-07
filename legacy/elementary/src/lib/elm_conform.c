@@ -893,8 +893,6 @@ _elm_conformant_evas_object_smart_add(Eo *obj, Elm_Conformant_Data *_pd EINA_UNU
 EOLIAN static void
 _elm_conformant_evas_object_smart_del(Eo *obj, Elm_Conformant_Data *sd)
 {
-   Evas_Object *top;
-
 #ifdef HAVE_ELEMENTARY_X
    ecore_event_handler_del(sd->prop_hdl);
 #endif
@@ -905,8 +903,7 @@ _elm_conformant_evas_object_smart_del(Eo *obj, Elm_Conformant_Data *sd)
    evas_object_del(sd->portrait_indicator);
    evas_object_del(sd->landscape_indicator);
 
-   top = elm_widget_top_get(obj);
-   evas_object_data_set(top, "\377 elm,conformant", NULL);
+   evas_object_data_set(sd->win, "\377 elm,conformant", NULL);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -947,27 +944,25 @@ elm_conformant_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_conformant_eo_base_constructor(Eo *obj, Elm_Conformant_Data *sd)
 {
-   Evas_Object *top;
-
    obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_FILLER));
 
-   top = elm_widget_top_get(obj);
-   _on_indicator_mode_changed(obj, top, NULL);
-   _on_rotation_changed(obj, top, NULL);
+   sd->win = elm_widget_top_get(obj);
+   _on_indicator_mode_changed(obj, sd->win, NULL);
+   _on_rotation_changed(obj, sd->win, NULL);
 
-   sd->indmode = elm_win_indicator_mode_get(top);
-   sd->ind_o_mode = elm_win_indicator_opacity_get(top);
-   sd->rot = elm_win_rotation_get(top);
-   evas_object_data_set(top, "\377 elm,conformant", obj);
+   sd->indmode = elm_win_indicator_mode_get(sd->win);
+   sd->ind_o_mode = elm_win_indicator_opacity_get(sd->win);
+   sd->rot = elm_win_rotation_get(sd->win);
+   evas_object_data_set(sd->win, "\377 elm,conformant", obj);
 
    evas_object_smart_callback_add
-     (top, "indicator,prop,changed", _on_indicator_mode_changed, obj);
+     (sd->win, "indicator,prop,changed", _on_indicator_mode_changed, obj);
    evas_object_smart_callback_add
-     (top, "rotation,changed", _on_rotation_changed, obj);
+     (sd->win, "rotation,changed", _on_rotation_changed, obj);
 
    return obj;
 }

@@ -26,6 +26,7 @@
 typedef struct _Elm_Conformant_Data Elm_Conformant_Data;
 struct _Elm_Conformant_Data
 {
+   Evas_Object                   *win;
    Evas_Object                   *portrait_indicator;
    Evas_Object                   *landscape_indicator;
    Evas_Object                   *softkey;
