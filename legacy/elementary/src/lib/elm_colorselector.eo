@@ -1,3 +1,22 @@
+enum Elm.Colorselector.Mode
+{
+   [[
+      @addtogroup Datetime
+      @enum Elm_Colorselector_Mode
+
+      Different modes supported by Colorselector
+
+      @see elm_colorselector_mode_set()
+      @see elm_colorselector_mode_get()
+   ]]
+   legacy: elm_colorselector;
+   palette = 0, [[Only color palette is displayed.]]
+   components, [[Only color selector is displayed.]]
+   both, [[Both Palette and selector is displayed, default.]]
+   picker, [[Only color picker is displayed.]]
+   all [[All possible color selector is displayed.]]
+}
+
 class Elm.Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action,
                          Evas.Clickable_Interface)
 {
@@ -67,7 +86,7 @@ class Elm.Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action,
             @ingroup Colorselector */
          }
          values {
-            mode: Elm_Colorselector_Mode; /*@ Elm_Colorselector_Mode */
+            mode: Elm.Colorselector.Mode; /*@ Elm_Colorselector_Mode */
          }
       }
       @property palette_items {
