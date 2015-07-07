@@ -193,7 +193,6 @@ elm_datetime_common.h \
 elm_datetime_eo.h \
 elm_datetime_legacy.h \
 elm_dayselector.h \
-elm_dayselector_common.h \
 elm_dayselector_eo.h \
 elm_dayselector_legacy.h \
 elm_debug.h \

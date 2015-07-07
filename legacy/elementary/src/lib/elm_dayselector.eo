@@ -1,3 +1,25 @@
+enum Elm.Dayselector.Day
+{
+   [[
+     @addtogroup Dayselector
+     Identifies the day of the week.
+     API can call the selection/unselection of day with this as a parameter.
+
+     @see elm_dayselector_day_selected_set()
+     @see elm_dayselector_day_selected_get()
+   ]]
+
+   legacy: elm_dayselector;
+   sun = 0,[[Indicates Sunday.]]
+   mon,    [[Indicates Monday.]]
+   tue,    [[Indicates Tuesday.]]
+   wed,    [[Indicates Wednesday.]]
+   thu,    [[Indicates Thursday.]]
+   fri,    [[Indicates Friday.]]
+   sat,    [[Indicates Saturday.]]
+   max     [[Sentinel value, @b don't use.]]
+}
+
 class Elm.Dayselector (Elm.Layout)
 {
    eo_prefix: elm_obj_dayselector;
@@ -24,7 +46,7 @@ class Elm.Dayselector (Elm.Layout)
             @ingroup Dayselector */
          }
          values {
-            day: Elm_Dayselector_Day; /*@ Dayselector_Day the first day that the user wants to display. */
+            day: Elm.Dayselector.Day; /*@ Dayselector_Day the first day that the user wants to display. */
          }
       }
       @property weekend_length {
@@ -65,7 +87,7 @@ class Elm.Dayselector (Elm.Layout)
             /*@
             Get the weekend starting day of Dayselector.
 
-            @return Elm_Dayselector_Day Day from where weekend starts.
+            @return Elm.Dayselector.Day Day from where weekend starts.
 
             @see Elm_Dayselector_Day
             @see elm_dayselector_weekend_start_set()
@@ -73,7 +95,7 @@ class Elm.Dayselector (Elm.Layout)
             @ingroup Dayselector */
          }
          values {
-            day: Elm_Dayselector_Day; /*@ Dayselector_Day the first day from where weekend starts. */
+            day: Elm.Dayselector.Day; /*@ Dayselector_Day the first day from where weekend starts. */
          }
       }
       weekdays_names_set {
@@ -135,7 +157,7 @@ class Elm.Dayselector (Elm.Layout)
          @ingroup Dayselector */
 
          params {
-            @in day: Elm_Dayselector_Day; /*@ Dayselector_Day that the user want to set state. */
+            @in day: Elm.Dayselector.Day; /*@ Dayselector_Day that the user want to set state. */
             @in selected: bool; /*@ state of the day. @c EINA_TRUE is selected. */
          }
       }
@@ -151,7 +173,7 @@ class Elm.Dayselector (Elm.Layout)
          @ingroup Dayselector */
          return: bool;
          params {
-            @in day: Elm_Dayselector_Day; /*@ Dayselector_Day that the user want to know state. */
+            @in day: Elm.Dayselector.Day; /*@ Dayselector_Day that the user want to know state. */
          }
       }
    }

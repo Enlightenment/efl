@@ -75,7 +75,6 @@
  * @{
  */
 
-#include "elm_dayselector_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "elm_dayselector_eo.h"
 #endif
