@@ -8,8 +8,6 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/select.h>
-#include <fcntl.h>
 
 #ifdef _WIN32
 
@@ -22,7 +20,7 @@
 
 #else
 
-# include <unistd.h>
+# include <sys/select.h>
 # include <fcntl.h>
 
 # define pipe_write(fd, buffer, size) write((fd), buffer, size)
