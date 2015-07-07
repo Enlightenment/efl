@@ -412,7 +412,7 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
      }
 
    if (!exe->cmd)
-     goto free_exe;
+     goto error;
 
    /* stdout, stderr and stdin pipes */
 
@@ -424,37 +424,37 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
    if (exe->flags & ECORE_EXE_PIPE_READ)
      {
         if (!CreatePipe(&exe->pipe_read.child_pipe, &exe->pipe_read.child_pipe_x, &sa, 0))
-          goto free_exe_cmd;
+          goto error;
         if (!SetHandleInformation(exe->pipe_read.child_pipe, HANDLE_FLAG_INHERIT, 0))
-          goto close_pipe_read;
+          goto error;
         exe->pipe_read.thread = (HANDLE)_beginthreadex(NULL, 0,
                                                        _ecore_exe_pipe_read_thread_cb,
                                                        obj, 0, NULL);
         if (!exe->pipe_read.thread)
-          goto close_pipe_read;
+          goto error;
      }
 
    /* stderr pipe */
    if (exe->flags & ECORE_EXE_PIPE_ERROR)
      {
         if (!CreatePipe(&exe->pipe_error.child_pipe, &exe->pipe_error.child_pipe_x, &sa, 0))
-          goto close_pipe_read;
+          goto error;
         if (!SetHandleInformation(exe->pipe_error.child_pipe, HANDLE_FLAG_INHERIT, 0))
-          goto close_pipe_error;
+          goto error;
         exe->pipe_error.thread = (HANDLE)_beginthreadex(NULL, 0,
                                                         _ecore_exe_pipe_error_thread_cb,
                                                         obj, 0, NULL);
         if (!exe->pipe_error.thread)
-          goto close_pipe_error;
+          goto error;
      }
 
    /* stdin pipe */
    if (exe->flags & ECORE_EXE_PIPE_WRITE)
      {
         if (!CreatePipe(&exe->pipe_write.child_pipe, &exe->pipe_write.child_pipe_x, &sa, 0))
-          goto close_pipe_read;
+          goto error;
         if (!SetHandleInformation(exe->pipe_write.child_pipe_x, HANDLE_FLAG_INHERIT, 0))
-          goto close_pipe_write;
+          goto error;
      }
 
    /* create child process */
@@ -473,13 +473,13 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
                       run_pri | CREATE_SUSPENDED, NULL, NULL, &si, &pi))
      {
         ERR("Failed to create process %s", exe->cmd);
-        goto close_pipe_write;
+        goto error;
      }
 
    /* be sure that the child process is running */
    /* FIXME: This does not work if the child is an EFL-based app */
    /* if (WaitForInputIdle(pi.hProcess, INFINITE) == WAIT_FAILED) */
-   /*   goto close_pipe_write; */
+   /*   goto error; */
 
    exe->process = pi.hProcess;
    exe->process_thread = pi.hThread;
@@ -489,18 +489,18 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
    exe->h_close = ecore_main_win32_handler_add(exe->process,
                                                _ecore_exe_close_cb, obj);
    if (!exe->h_close)
-     goto close_process;
+     goto error;
 
    if (ResumeThread(exe->process_thread) == ((DWORD)-1))
      {
         ERR("Could not resume process");
-        goto delete_h_close;
+        goto error;
      }
 
    _ecore_exe_exes = eina_list_append(_ecore_exe_exes, obj);
 
    e = (Ecore_Exe_Event_Add *)calloc(1, sizeof(Ecore_Exe_Event_Add));
-   if (!e) goto delete_h_close;
+   if (!e) goto error;
 
    e->exe = obj;
 
@@ -509,33 +509,7 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
 
    return obj;
 
-delete_h_close:
-   ecore_main_win32_handler_del(exe->h_close);
- close_process:
-   CloseHandle(exe->process_thread);
-   CloseHandle(exe->process);
- close_pipe_write:
-   if (exe->pipe_write.child_pipe)
-     CloseHandle(exe->pipe_write.child_pipe);
-   if (exe->pipe_write.child_pipe_x)
-     CloseHandle(exe->pipe_write.child_pipe_x);
- close_pipe_error:
-   _ecore_exe_threads_terminate(obj);
-   if (exe->pipe_error.child_pipe)
-     CloseHandle(exe->pipe_error.child_pipe);
-   if (exe->pipe_error.child_pipe_x)
-     CloseHandle(exe->pipe_error.child_pipe_x);
- close_pipe_read:
-   _ecore_exe_threads_terminate(obj);
-   if (exe->pipe_read.child_pipe)
-     CloseHandle(exe->pipe_read.child_pipe);
-   if (exe->pipe_read.child_pipe_x)
-     CloseHandle(exe->pipe_read.child_pipe_x);
- free_exe_cmd:
-   free(exe->cmd);
- free_exe:
-   eo_del(obj);
-
+error:
    return NULL;
 }
 
@@ -689,24 +663,30 @@ _impl_ecore_exe_eo_base_destructor(Eo *obj, Ecore_Exe_Data *exe)
    if (exe->pre_free_cb)
      exe->pre_free_cb(data, obj);
 
-   /* if (exe->h_close) */
-   /*   ecore_main_win32_handler_del(exe->h_close); */
+   if (exe->h_close)
+      ecore_main_win32_handler_del(exe->h_close);
+
    CloseHandle(exe->process_thread);
    CloseHandle(exe->process);
+
    if (exe->pipe_write.child_pipe)
      CloseHandle(exe->pipe_write.child_pipe);
    if (exe->pipe_write.child_pipe_x)
      CloseHandle(exe->pipe_write.child_pipe_x);
+
    _ecore_exe_threads_terminate(obj);
    if (exe->pipe_error.child_pipe)
      CloseHandle(exe->pipe_error.child_pipe);
    if (exe->pipe_error.child_pipe_x)
      CloseHandle(exe->pipe_error.child_pipe_x);
+
    if (exe->pipe_read.child_pipe)
      CloseHandle(exe->pipe_read.child_pipe);
    if (exe->pipe_read.child_pipe_x)
      CloseHandle(exe->pipe_read.child_pipe_x);
-   free(exe->cmd);
+
+   if (exe->cmd)
+      free(exe->cmd);
 
    _ecore_exe_exes = eina_list_remove(_ecore_exe_exes, obj);
    IF_FREE(exe->tag);
