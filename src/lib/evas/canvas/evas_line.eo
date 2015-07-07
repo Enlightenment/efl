@@ -17,8 +17,8 @@ class Evas.Line (Evas.Object)
             ]]
          }
          values {
-            x1: Evas_Coord(0); [[The X coordinate of the first point.]]
-            y1: Evas_Coord(3); [[The Y coordinate of the first point.]]
+            x1: Evas_Coord; [[The X coordinate of the first point.]]
+            y1: Evas_Coord; [[The Y coordinate of the first point.]]
             x2: Evas_Coord; [[The X coordinate of the second point.]]
             y2: Evas_Coord; [[The Y coordinate of the second point.]]
          }
