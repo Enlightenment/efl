@@ -1,3 +1,20 @@
+enum Elm.Datetime.Field_Type
+{
+   [[
+      @addtogroup Datetime
+      Identifies a Datetime field, The widget supports 6 fields : Year, month,
+      Date, Hour, Minute, AM/PM
+   ]]
+
+   legacy: elm_datetime;
+   year    = 0, [[Indicates Year field.]]
+   month   = 1, [[Indicates Month field.]]
+   date    = 2, [[Indicates Date field.]]
+   hour    = 3, [[Indicates Hour field.]]
+   minute  = 4, [[Indicates Minute field.]]
+   ampm    = 5, [[Indicates AM/PM field .]]
+}
+
 class Elm.Datetime (Elm.Layout)
 {
    eo_prefix: elm_obj_datetime;
@@ -100,7 +117,7 @@ class Elm.Datetime (Elm.Layout)
          @ingroup Datetime */
 
          params {
-            @in fieldtype: Elm_Datetime_Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc. */
+            @in fieldtype: Elm.Datetime.Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc. */
             @in min: int; /*@ Reference to field's minimum value */
             @in max: int; /*@ Reference to field's maximum value */
          }
@@ -119,7 +136,7 @@ class Elm.Datetime (Elm.Layout)
          @see elm_datetime_field_limit_set()
          @ingroup Datetime */
          params {
-            @in fieldtype: Elm_Datetime_Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc. */
+            @in fieldtype: Elm.Datetime.Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc. */
             @out min: int; /*@ Reference to field's minimum value */
             @out max: int; /*@ Reference to field's maximum value */
          }
@@ -238,7 +255,7 @@ class Elm.Datetime (Elm.Layout)
          @ingroup Datetime */
 
          params {
-            @in fieldtype: Elm_Datetime_Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc. */
+            @in fieldtype: Elm.Datetime.Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc. */
             @in visible: bool; /*@ @c EINA_TRUE field can be visible, @c EINA_FALSE otherwise. */
          }
       }
@@ -252,7 +269,7 @@ class Elm.Datetime (Elm.Layout)
          @ingroup Datetime */
          return: bool;
          params {
-            @in fieldtype: Elm_Datetime_Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc */
+            @in fieldtype: Elm.Datetime.Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc */
          }
       }
       value_max_set {
