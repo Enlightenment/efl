@@ -1950,6 +1950,16 @@ EAPI Eina_Iterator *eolian_variable_namespaces_get(const Eolian_Variable *var);
 EAPI Eina_Bool eolian_variable_is_extern(const Eolian_Variable *var);
 
 /*
+ * @brief Get a declaration by name.
+ *
+ * @param[in] name the declaration name.
+ * @return the declaration.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Declaration *eolian_declaration_get_by_name(const char *name);
+
+/*
  * @brief Get a list of declarations in a file.
  *
  * This function gets an iterator to a list of declarations in a particular

@@ -313,6 +313,7 @@ ffi.cdef [[
     const char *eolian_variable_full_name_get(const Eolian_Variable *var);
     Eina_Iterator *eolian_variable_namespaces_get(const Eolian_Variable *var);
     Eina_Bool eolian_variable_is_extern(const Eolian_Variable *var);
+    const Eolian_Declaration *eolian_declaration_get_by_name(const char *name);
     Eina_Iterator *eolian_declarations_get_by_file(const char *fname);
     Eolian_Declaration_Type eolian_declaration_type_get(const Eolian_Declaration *decl);
     const char *eolian_declaration_name_get(const Eolian_Declaration *decl);
@@ -1265,6 +1266,14 @@ M.Variable = ffi.metatype("Eolian_Variable", {
         end
     }
 })
+
+M.declaration_get_by_name = function(name)
+    local v = eolian.eolian_declaration_get_by_name(name)
+    if v == nil then
+        return nil
+    end
+    return v
+end
 
 M.declarations_get_by_file = function(fname)
     return Ptr_ITerator("const Eolian_Declaration*",

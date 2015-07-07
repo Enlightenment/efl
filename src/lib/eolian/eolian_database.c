@@ -109,6 +109,16 @@ database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type,
                  ((Eina_List*)eina_hash_find(_declsf, file), decl));
 }
 
+EAPI const Eolian_Declaration *
+eolian_declaration_get_by_name(const char *name)
+{
+   if (!_decls) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(name);
+   const Eolian_Declaration *decl = eina_hash_find(_decls, shr);
+   eina_stringshare_del(shr);
+   return decl;
+}
+
 EAPI Eina_Iterator *
 eolian_declarations_get_by_file(const char *fname)
 {
