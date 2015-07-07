@@ -860,10 +860,6 @@ _surface_cap_init(void *eng_data)
 static int
 _context_ext_check(EVGL_Context *ctx)
 {
-   int fbo_supported = 0;
-   int egl_image_supported = 0;
-   int texture_image_supported = 0;
-
    if (!ctx)
       return 0;
 
@@ -871,6 +867,10 @@ _context_ext_check(EVGL_Context *ctx)
       return 1;
 
 #ifdef GL_GLES
+   int fbo_supported = 0;
+   int egl_image_supported = 0;
+   int texture_image_supported = 0;
+
    switch (ctx->version)
      {
       case EVAS_GL_GLES_1_X:
@@ -895,10 +895,6 @@ _context_ext_check(EVGL_Context *ctx)
         else
           ctx->pixmap_image_supported = 1;
      }
-#else
-   fbo_supported = 1;
-   egl_image_supported = 0;
-   texture_image_supported = 0;
 #endif
 
    ctx->extension_checked = 1;
