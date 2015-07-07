@@ -167,6 +167,28 @@ _accumulate_time(double before, Eina_Bool async)
 }
 #endif
 
+static int _render_busy = 0;
+
+static void
+_evas_render_cleanup(void)
+{
+   if (_render_busy != 0) return;
+   evas_common_rgba_pending_unloads_cleanup();
+}
+
+static void
+_evas_render_busy_begin(void)
+{
+   _render_busy++;
+}
+
+static void
+_evas_render_busy_end(void)
+{
+   _render_busy--;
+   _evas_render_cleanup();
+}
+
 EOLIAN void
 _evas_canvas_damage_rectangle_add(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int x, int y, int w, int h)
 {
@@ -2335,6 +2357,7 @@ evas_render_updates_internal(Evas *eo_e,
         int fx = e->framespace.x;
         int fy = e->framespace.y;
 
+        if (do_async) _evas_render_busy_begin();
         eina_evlog("+render_surface", eo_e, 0.0, NULL);
         while ((surface =
                 e->engine.func->output_redraws_next_update_get
@@ -2699,6 +2722,7 @@ evas_render_updates_internal(Evas *eo_e,
    _accumulate_time(start_time, do_async);
 #endif
 
+   if (!do_async) _evas_render_cleanup();
    return EINA_TRUE;
 }
 
@@ -2793,6 +2817,7 @@ evas_render_async_wakeup(void *target, Evas_Callback_Type type EINA_UNUSED, void
 {
    Evas_Public_Data *e = target;
    evas_render_wakeup(e->evas);
+   _evas_render_busy_end();
 }
 
 static void

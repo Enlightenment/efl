@@ -1142,6 +1142,7 @@ evas_cache_image_load_data(Image_Entry *im)
    int error = EVAS_LOAD_ERROR_NONE;
 
    if ((im->flags.loaded) && (!im->animated.animated)) return error;
+   evas_common_rgba_pending_unloads_remove(im);
    if (im->preload)
      {
         preload = EINA_TRUE;

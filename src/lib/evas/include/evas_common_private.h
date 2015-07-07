@@ -638,6 +638,8 @@ struct _Image_Entry
 
    unsigned char          scale;
 
+   unsigned char          need_unload : 1;
+
    struct
      {
         unsigned int w;

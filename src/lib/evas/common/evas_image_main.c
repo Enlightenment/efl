@@ -332,49 +332,10 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
    free(im);
 }
 
-EAPI void
-evas_common_rgba_image_free(Image_Entry *ie)
-{
-   if (ie->references > 0) return;
-
-   _evas_common_rgba_image_surface_delete(ie);
-   _evas_common_rgba_image_delete(ie);
-}
-
-#ifdef SURFDBG
-static Eina_List *surfs = NULL;
-
 static void
-surf_debug(void)
-{
-   Eina_List *l;
-   Image_Entry *ie;
-   RGBA_Image *im;
-   int i = 0;
-   
-   printf("----SURFS----\n");
-   EINA_LIST_FOREACH(surfs, l, ie)
-     {
-        im = ie;
-        printf("%i - %p - %ix%i  [%s][%s]\n", 
-               i, im->image.data, ie->allocated.w, ie->allocated.h,
-               ie->file, ie->key
-              );
-        i++;
-     }
-}
-#endif
-
-EAPI void
-evas_common_rgba_image_unload(Image_Entry *ie)
+evas_common_rgba_image_unload_real(Image_Entry *ie)
 {
    RGBA_Image   *im = (RGBA_Image *) ie;
-
-   if (!ie->flags.loaded) return;
-   if ((!ie->info.module) && (!ie->data1)) return;
-   if (!ie->file && !ie->f) return;
-   if ((evas_cache_async_frozen_get() == 0) &&
-       (ie->references > 0)) return;
 
    ie->flags.loaded = 0;
 
@@ -422,6 +383,82 @@ evas_common_rgba_image_unload(Image_Entry *ie)
 #ifdef SURFDBG
    surf_debug();
 #endif   
+}
+
+static Eina_List *pending_unloads = NULL;
+
+EAPI void
+evas_common_rgba_pending_unloads_cleanup(void)
+{
+   Image_Entry *ie;
+
+   EINA_LIST_FREE(pending_unloads, ie)
+     {
+        if ((ie->need_unload) && (!ie->preload))
+          evas_common_rgba_image_unload_real(ie);
+     }
+}
+
+EAPI void
+evas_common_rgba_pending_unloads_remove(Image_Entry *ie)
+{
+   if (!ie->preload) return;
+   ie->preload = 0;
+   pending_unloads = eina_list_remove(pending_unloads, ie);
+}
+
+EAPI void
+evas_common_rgba_image_free(Image_Entry *ie)
+{
+   if (ie->references > 0) return;
+   evas_common_rgba_pending_unloads_remove(ie);
+   _evas_common_rgba_image_surface_delete(ie);
+   _evas_common_rgba_image_delete(ie);
+}
+
+#ifdef SURFDBG
+static Eina_List *surfs = NULL;
+
+static void
+surf_debug(void)
+{
+   Eina_List *l;
+   Image_Entry *ie;
+   RGBA_Image *im;
+   int i = 0;
+   
+   printf("----SURFS----\n");
+   EINA_LIST_FOREACH(surfs, l, ie)
+     {
+        im = ie;
+        printf("%i - %p - %ix%i  [%s][%s]\n", 
+               i, im->image.data, ie->allocated.w, ie->allocated.h,
+               ie->file, ie->key
+              );
+        i++;
+     }
+}
+#endif
+
+EAPI void
+evas_common_rgba_image_unload(Image_Entry *ie)
+{
+   RGBA_Image   *im = (RGBA_Image *) ie;
+
+   if (!ie->flags.loaded) return;
+   if ((!ie->info.module) && (!ie->data1)) return;
+   if (!ie->file && !ie->f) return;
+   if ((evas_cache_async_frozen_get() == 0) &&
+       (ie->references > 0))
+     {
+        if (!ie->need_unload)
+          {
+             pending_unloads = eina_list_append(pending_unloads, ie);
+             ie->need_unload = 1;
+          }
+        return;
+     }
+   evas_common_rgba_image_unload_real(ie);
 }
 
 void
