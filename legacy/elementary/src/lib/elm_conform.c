@@ -905,6 +905,11 @@ _elm_conformant_evas_object_smart_del(Eo *obj, Elm_Conformant_Data *sd)
 
    evas_object_data_set(sd->win, "\377 elm,conformant", NULL);
 
+   evas_object_smart_callback_del_full
+     (sd->win, "indicator,prop,changed", _on_indicator_mode_changed, obj);
+   evas_object_smart_callback_del_full
+     (sd->win, "rotation,changed", _on_rotation_changed, obj);
+
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
