@@ -488,8 +488,10 @@ ecore_con_local_win32_server_del(Ecore_Con_Server *obj)
      return;
 
    svr->read_stop = 1;
-   while (!svr->read_stopped)
-     Sleep(100);
+   /* FIXME: we should try to stop these thread in one way or another */
+   /* should we use ecore_thread ? */
+   /* while (!svr->read_stopped) */
+   /*   Sleep(100); */
 
    if (svr->event_peek)
      CloseHandle(svr->event_peek);
