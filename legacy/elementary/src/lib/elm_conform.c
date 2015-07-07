@@ -506,9 +506,9 @@ _indicator_opacity_set(Evas_Object *conformant, Elm_Win_Indicator_Opacity_Mode i
    //TODO: opacity change
 }
 
-static void
+static Eina_Bool
 _on_indicator_mode_changed(void *data,
-                           Evas_Object *obj,
+                           Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
                            void *event_info EINA_UNUSED)
 {
    Evas_Object *conformant = data;
@@ -525,11 +525,12 @@ _on_indicator_mode_changed(void *data,
      _indicator_mode_set(conformant, indmode);
    if (ind_o_mode != sd->ind_o_mode)
      _indicator_opacity_set(conformant, ind_o_mode);
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _on_rotation_changed(void *data,
-                     Evas_Object *obj,
+                     Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
                      void *event_info EINA_UNUSED)
 {
    int rot = 0;
@@ -541,12 +542,12 @@ _on_rotation_changed(void *data,
 
    rot = elm_win_rotation_get(win);
 
-   if (rot == sd->rot) return;
+   if (rot == sd->rot) return EINA_TRUE;
 
    sd->rot = rot;
    old_indi = elm_layout_content_unset(conformant, INDICATOR_PART);
    /* this means ELM_WIN_INDICATOR_SHOW never be set.we don't need to change indicator type*/
-   if (!old_indi) return;
+   if (!old_indi) return EINA_TRUE;
    evas_object_hide(old_indi);
 
    if ((rot == 90) || (rot == 270))
@@ -554,7 +555,7 @@ _on_rotation_changed(void *data,
         if (!sd->landscape_indicator)
           sd->landscape_indicator = _create_landscape_indicator(conformant);
 
-        if (!sd->landscape_indicator) return;
+        if (!sd->landscape_indicator) return EINA_TRUE;
 
         evas_object_show(sd->landscape_indicator);
         evas_object_data_set(sd->landscape_indicator, CONFORMANT_KEY, (void *) (intptr_t) rot);
@@ -565,12 +566,13 @@ _on_rotation_changed(void *data,
         if (!sd->portrait_indicator)
           sd->portrait_indicator = _create_portrait_indicator(conformant);
 
-        if (!sd->portrait_indicator) return;
+        if (!sd->portrait_indicator) return EINA_TRUE;
 
         evas_object_show(sd->portrait_indicator);
         evas_object_data_set(sd->portrait_indicator, CONFORMANT_KEY, (void *) (intptr_t) rot);
         elm_layout_content_set(conformant, INDICATOR_PART, sd->portrait_indicator);
      }
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
@@ -761,7 +763,8 @@ _virtualkeypad_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
         evas_object_size_hint_max_set(sd->virtualkeypad, -1, 0);
         _conformant_part_sizing_eval(obj, ELM_CONFORMANT_VIRTUAL_KEYPAD_PART);
         elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_NONE);
-        evas_object_smart_callback_call(obj, SIG_VIRTUALKEYPAD_STATE_OFF, NULL);
+        eo_do(obj, eo_event_callback_call(
+                 ELM_CONFORMANT_EVENT_VIRTUALKEYPAD_STATE_OFF, NULL));
      }
    else if (state == ECORE_X_VIRTUAL_KEYBOARD_STATE_ON)
      {
@@ -769,7 +772,8 @@ _virtualkeypad_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
         _conformant_part_sizing_eval(obj, ELM_CONFORMANT_VIRTUAL_KEYPAD_PART);
         elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_COMPRESS);
         _autoscroll_objects_update(obj);
-        evas_object_smart_callback_call(obj, SIG_VIRTUALKEYPAD_STATE_ON, NULL);
+        eo_do(obj, eo_event_callback_call(
+                 ELM_CONFORMANT_EVENT_VIRTUALKEYPAD_STATE_ON, NULL));
      }
 }
 
@@ -798,13 +802,15 @@ _clipboard_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
         evas_object_size_hint_min_set(sd->clipboard, -1, 0);
         evas_object_size_hint_max_set(sd->clipboard, -1, 0);
         elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_NONE);
-        evas_object_smart_callback_call(obj, SIG_CLIPBOARD_STATE_OFF, NULL);
+        eo_do(obj, eo_event_callback_call(
+                 ELM_CONFORMANT_EVENT_CLIPBOARD_STATE_OFF, NULL));
      }
    else if (state == ECORE_X_ILLUME_CLIPBOARD_STATE_ON)
      {
         elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_COMPRESS);
         _autoscroll_objects_update(obj);
-        evas_object_smart_callback_call(obj, SIG_CLIPBOARD_STATE_ON, NULL);
+        eo_do(obj, eo_event_callback_call(
+                 ELM_CONFORMANT_EVENT_CLIPBOARD_STATE_ON, NULL));
      }
 }
 
@@ -905,10 +911,11 @@ _elm_conformant_evas_object_smart_del(Eo *obj, Elm_Conformant_Data *sd)
 
    evas_object_data_set(sd->win, "\377 elm,conformant", NULL);
 
-   evas_object_smart_callback_del_full
-     (sd->win, "indicator,prop,changed", _on_indicator_mode_changed, obj);
-   evas_object_smart_callback_del_full
-     (sd->win, "rotation,changed", _on_rotation_changed, obj);
+   eo_do(sd->win,
+         eo_event_callback_del(ELM_WIN_EVENT_INDICATOR_PROP_CHANGED,
+            _on_indicator_mode_changed, obj),
+         eo_event_callback_del(ELM_WIN_EVENT_ROTATION_CHANGED,
+            _on_rotation_changed, obj));
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -956,18 +963,19 @@ _elm_conformant_eo_base_constructor(Eo *obj, Elm_Conformant_Data *sd)
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_FILLER));
 
    sd->win = elm_widget_top_get(obj);
-   _on_indicator_mode_changed(obj, sd->win, NULL);
-   _on_rotation_changed(obj, sd->win, NULL);
+   _on_indicator_mode_changed(obj, sd->win, NULL, NULL);
+   _on_rotation_changed(obj, sd->win, NULL, NULL);
 
    sd->indmode = elm_win_indicator_mode_get(sd->win);
    sd->ind_o_mode = elm_win_indicator_opacity_get(sd->win);
    sd->rot = elm_win_rotation_get(sd->win);
    evas_object_data_set(sd->win, "\377 elm,conformant", obj);
 
-   evas_object_smart_callback_add
-     (sd->win, "indicator,prop,changed", _on_indicator_mode_changed, obj);
-   evas_object_smart_callback_add
-     (sd->win, "rotation,changed", _on_rotation_changed, obj);
+   eo_do(sd->win,
+         eo_event_callback_add(ELM_WIN_EVENT_INDICATOR_PROP_CHANGED,
+            _on_indicator_mode_changed, obj),
+         eo_event_callback_add(ELM_WIN_EVENT_ROTATION_CHANGED,
+            _on_rotation_changed, obj));
 
    return obj;
 }

@@ -223,30 +223,32 @@ _store_item_eval(void *data)
      }
 }
 
-static void
-_store_genlist_item_realized(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+static Eina_Bool
+_store_genlist_item_realized(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Elm_Store *st = data;
    Elm_Object_Item *gli = event_info;
    Elm_Store_Item *sti = elm_object_item_data_get(gli);
-   if (!sti) return;
+   if (!sti) return EINA_TRUE;
    st->realized_count++;
    sti->live = EINA_TRUE;
    ecore_job_del(sti->eval_job);
    sti->eval_job = ecore_job_add(_store_item_eval, sti);
+   return EINA_TRUE;
 }
 
-static void
-_store_genlist_item_unrealized(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+static Eina_Bool
+_store_genlist_item_unrealized(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Elm_Store *st = data;
    Elm_Object_Item *gli = event_info;
    Elm_Store_Item *sti = elm_object_item_data_get(gli);
-   if (!sti) return;
+   if (!sti) return EINA_TRUE;
    st->realized_count--;
    sti->live = EINA_FALSE;
    ecore_job_del(sti->eval_job);
    sti->eval_job = ecore_job_add(_store_item_eval, sti);
+   return EINA_TRUE;
 }
 
 static const Elm_Store_Item_Mapping *
@@ -555,8 +557,9 @@ elm_store_free(Elm_Store *st)
    if (st->genlist)
      {
         evas_object_event_callback_del_full(st->genlist, EVAS_CALLBACK_DEL, _store_genlist_del, st);
-        evas_object_smart_callback_del(st->genlist, "realized", _store_genlist_item_realized);
-        evas_object_smart_callback_del(st->genlist, "unrealized", _store_genlist_item_unrealized);
+        eo_do(st->genlist,
+              eo_event_callback_del(ELM_GENLIST_EVENT_REALIZED, _store_genlist_item_realized, st),
+              eo_event_callback_del(ELM_GENLIST_EVENT_UNREALIZED, _store_genlist_item_unrealized, st));
         elm_genlist_clear(st->genlist);
         st->genlist = NULL;
      }
@@ -572,14 +575,16 @@ elm_store_target_genlist_set(Elm_Store *st, Evas_Object *obj)
    if (st->genlist)
      {
         evas_object_event_callback_del_full(st->genlist, EVAS_CALLBACK_DEL, _store_genlist_del, st);
-        evas_object_smart_callback_del(st->genlist, "realized", _store_genlist_item_realized);
-        evas_object_smart_callback_del(st->genlist, "unrealized", _store_genlist_item_unrealized);
+        eo_do(st->genlist,
+              eo_event_callback_del(ELM_GENLIST_EVENT_REALIZED, _store_genlist_item_realized, st),
+              eo_event_callback_del(ELM_GENLIST_EVENT_UNREALIZED, _store_genlist_item_unrealized, st));
         elm_genlist_clear(st->genlist);
      }
    st->genlist = obj;
    if (!st->genlist) return;
-   evas_object_smart_callback_add(st->genlist, "realized", _store_genlist_item_realized, st);
-   evas_object_smart_callback_add(st->genlist, "unrealized", _store_genlist_item_unrealized, st);
+   eo_do(st->genlist,
+         eo_event_callback_add(ELM_GENLIST_EVENT_REALIZED, _store_genlist_item_realized, st),
+         eo_event_callback_add(ELM_GENLIST_EVENT_UNREALIZED, _store_genlist_item_unrealized, st));
    evas_object_event_callback_add(st->genlist, EVAS_CALLBACK_DEL, _store_genlist_del, st);
    elm_genlist_clear(st->genlist);
 }

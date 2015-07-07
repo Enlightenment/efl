@@ -1685,12 +1685,15 @@ _x11_dnd_status(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
    return EINA_TRUE;
 }
 
-static void
-_x11_win_rotation_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+static Eina_Bool
+_x11_win_rotation_changed_cb(void *data,
+      Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
+      void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
    int rot = elm_win_rotation_get(obj);
    elm_win_rotation_set(win, rot);
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -1731,8 +1734,9 @@ _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
                     {
                        Evas_Object *win = elm_widget_top_get(dragwidget);
                        if (win && eo_isa(win, ELM_WIN_CLASS))
-                         evas_object_smart_callback_del_full(win, "rotation,changed",
-                                                  _x11_win_rotation_changed_cb, dragwin);
+                         eo_do(win, eo_event_callback_del(
+                                  ELM_WIN_EVENT_ROTATION_CHANGED,
+                                  _x11_win_rotation_changed_cb, dragwin));
                     }
                }
 
@@ -2188,9 +2192,9 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
         if (win && eo_isa(win, ELM_WIN_CLASS))
           {
              elm_win_rotation_set(dragwin, elm_win_rotation_get(win));
-             evas_object_smart_callback_add(win, "rotation,changed",
-                                            _x11_win_rotation_changed_cb,
-                                            dragwin);
+             eo_do(win, eo_event_callback_add(
+                      ELM_WIN_EVENT_ROTATION_CHANGED,
+                      _x11_win_rotation_changed_cb, dragwin));
           }
      }
 
@@ -4453,8 +4457,9 @@ elm_drag_cancel(Evas_Object *obj)
                {
                   Evas_Object *win = elm_widget_top_get(dragwidget);
                   if (win && eo_isa(win, ELM_WIN_CLASS))
-                     evas_object_smart_callback_del_full(win, "rotation,changed",
-                           _x11_win_rotation_changed_cb, dragwin);
+                     eo_do(win, eo_event_callback_del(
+                              ELM_WIN_EVENT_ROTATION_CHANGED,
+                              _x11_win_rotation_changed_cb, dragwin));
                }
           }
         goto end;

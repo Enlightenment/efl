@@ -149,14 +149,14 @@ _item_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
    return text;
 }
 
-static void
-_expand_request_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+static Eina_Bool
+_expand_request_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *item = event_info;
    View_List_ItemData *idata = elm_object_item_data_get(item);
    Efl_Model_Load_Status st = EFL_MODEL_LOAD_STATUS_ERROR;
 
-   EINA_SAFETY_ON_NULL_RETURN(idata);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(idata, EINA_TRUE);
 
    eo_do(idata->model, st = efl_model_load_status_get());
    eo_do(idata->model, eo_event_callback_add(EFL_MODEL_BASE_EVENT_LOAD_STATUS,
@@ -172,10 +172,11 @@ _expand_request_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
      {
         eo_do(idata->model, efl_model_children_load());
      }
+   return EINA_TRUE;
 }
 
-static void
-_contract_request_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+static Eina_Bool
+_contract_request_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *item = event_info;
    View_List_ItemData *idata = elm_object_item_data_get(item);
@@ -185,13 +186,15 @@ _contract_request_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    eo_do(idata->model, eo_event_callback_del(EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED,
                            _efl_model_children_count_change_cb, idata));
    elm_genlist_item_expanded_set(item, EINA_FALSE);
+   return EINA_TRUE;
 }
 
-static void
-_contracted_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info)
+static Eina_Bool
+_contracted_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    elm_genlist_item_subitems_clear(glit);
+   return EINA_TRUE;
 }
 
 static void
@@ -201,9 +204,10 @@ _genlist_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_
 
    if (priv && priv->genlist && priv->genlist == obj)
      {
-        evas_object_smart_callback_del(priv->genlist, "expand,request", _expand_request_cb);
-        evas_object_smart_callback_del(priv->genlist, "contract,request", _contract_request_cb);
-        evas_object_smart_callback_del(priv->genlist, "contracted", _contracted_cb);
+        eo_do(priv->genlist,
+              eo_event_callback_del(ELM_GENLIST_EVENT_EXPAND_REQUEST, _expand_request_cb, priv),
+              eo_event_callback_del(ELM_GENLIST_EVENT_CONTRACT_REQUEST, _contract_request_cb, priv),
+              eo_event_callback_del(ELM_GENLIST_EVENT_CONTRACTED, _contracted_cb, priv));
         eo_unref(priv->genlist);
         priv->genlist = NULL;
      }
@@ -357,9 +361,10 @@ _elm_view_list_genlist_set(Eo *obj, Elm_View_List_Data *priv, Evas_Object *genli
    priv->itc->func.del = _item_del;
    priv->prop_con = eina_hash_string_superfast_new(free);
 
-   evas_object_smart_callback_add(priv->genlist, "expand,request", _expand_request_cb, priv);
-   evas_object_smart_callback_add(priv->genlist, "contract,request", _contract_request_cb, priv);
-   evas_object_smart_callback_add(priv->genlist, "contracted", _contracted_cb, priv);
+   eo_do(priv->genlist,
+         eo_event_callback_add(ELM_GENLIST_EVENT_EXPAND_REQUEST, _expand_request_cb, priv),
+         eo_event_callback_add(ELM_GENLIST_EVENT_CONTRACT_REQUEST, _contract_request_cb, priv),
+         eo_event_callback_add(ELM_GENLIST_EVENT_CONTRACTED, _contracted_cb, priv));
    evas_object_event_callback_add(priv->genlist, EVAS_CALLBACK_DEL, _genlist_deleted, priv);
 }
 
@@ -383,9 +388,10 @@ _elm_view_list_eo_base_destructor(Eo *obj, Elm_View_List_Data *priv)
    priv->rootdata = NULL;
    if (priv->genlist) {
      evas_object_event_callback_del(priv->genlist, EVAS_CALLBACK_DEL, _genlist_deleted);
-     evas_object_smart_callback_del(priv->genlist, "expand,request", _expand_request_cb);
-     evas_object_smart_callback_del(priv->genlist, "contract,request", _contract_request_cb);
-     evas_object_smart_callback_del(priv->genlist, "contracted", _contracted_cb);
+     eo_do(priv->genlist,
+           eo_event_callback_del(ELM_GENLIST_EVENT_EXPAND_REQUEST, _expand_request_cb, priv),
+           eo_event_callback_del(ELM_GENLIST_EVENT_CONTRACT_REQUEST, _contract_request_cb, priv),
+           eo_event_callback_del(ELM_GENLIST_EVENT_CONTRACTED, _contracted_cb, priv));
      eo_unref(priv->genlist);
    }
 

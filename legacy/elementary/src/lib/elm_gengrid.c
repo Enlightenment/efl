@@ -749,7 +749,8 @@ _item_unhighlight(Elm_Gen_Item *it)
      return;
 
    edje_object_signal_emit(VIEW(it), "elm,state,unselected", "elm");
-   evas_object_smart_callback_call(WIDGET(it), SIG_UNHIGHLIGHTED, eo_it);
+   eo_do(WIDGET(it), eo_event_callback_call(
+            ELM_GENGRID_EVENT_UNHIGHLIGHTED, eo_it));
 
    evas_object_stack_below(VIEW(it), sd->stack);
 
