@@ -1199,7 +1199,7 @@ START_TEST(eolian_docs)
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Docs for class."));
    fail_if(strcmp(eolian_documentation_description_get(doc),
-                  "More docs for class. @Foo @Bar @Alias @pants"));
+                  "More docs for class. @Docs.prop. @Foo @Bar @Alias @pants"));
 
    fail_if(!(fid = eolian_class_function_get_by_name(class, "meth", EOLIAN_METHOD)));
    fail_if(!(doc = eolian_function_documentation_get(fid, EOLIAN_METHOD)));

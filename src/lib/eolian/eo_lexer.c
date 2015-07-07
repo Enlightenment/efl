@@ -320,7 +320,18 @@ doc_lex(Eo_Lexer *ls, Eina_Bool *term)
         eina_strbuf_append_char(ls->buff, '@');
         next_char(ls);
         if (contdoc)
-          continue;
+          {
+             /* in-class references */
+             if (ls->tmp.kls && ls->current == '.')
+               {
+                  next_char(ls);
+                  if (isalpha(ls->current) || ls->current == '_')
+                    eina_strbuf_append(ls->buff, ls->tmp.kls->full_name);
+                  eina_strbuf_append_char(ls->buff, '.');
+                  continue;
+               }
+             continue;
+          }
         while (ls->current && isalpha(ls->current))
           {
              eina_strbuf_append_char(ls->buff, ls->current);

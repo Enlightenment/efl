@@ -35,7 +35,7 @@ struct Opaque; [[Opaque struct docs. See @Foo for another struct.]]
 class Docs {
     [[Docs for class.
 
-      More docs for class.
+      More docs for class. @.prop.
       @Foo
       @Bar
       @Alias

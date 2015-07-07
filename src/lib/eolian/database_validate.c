@@ -1,8 +1,58 @@
+#include <ctype.h>
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
 
 #include "eo_lexer.h"
+
+static Eina_Bool
+_validate_docstr(Eina_Stringshare *str)
+{
+   if (!str) return EINA_TRUE;
+
+#if 0
+   const char *p;
+   for (p = strchr(str, '@'); p; p = strchr(p, '@'))
+     {
+        ++p;
+        /* escaped refs */
+        if ((p > (str + 1)) && (*(p - 2) == '\\'))
+          continue;
+        /* are we starting a reference? */
+        const char *ref = p;
+        if (!isalpha(*p) && (*p != '_'))
+          continue;
+        ++p;
+        /* check the rest of the reference */
+        while (isalnum(*p) || (*p == '.') || (*p == '_'))
+          ++p;
+        if (*(p - 1) == '.') --p;
+        Eina_Stringshare *refs = eina_stringshare_add_length(ref, (p - ref));
+        if (!eolian_declaration_get_by_name(refs))
+          {
+             printf("unknown doc reference: '%s'\n", refs);
+             return EINA_FALSE;
+          }
+        eina_stringshare_del(refs);
+     }
+#endif
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_validate_doc(const Eolian_Documentation *doc)
+{
+   if (!doc) return EINA_TRUE;
+
+   if (!_validate_docstr(doc->summary))
+     return EINA_FALSE;
+   if (!_validate_docstr(doc->description))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
 
 static Eina_Bool _validate_type(const Eolian_Type *tp);
 static Eina_Bool _validate_expr(const Eolian_Expression *expr,
@@ -14,6 +64,12 @@ _sf_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
            const Eolian_Struct_Type_Field *sf, Eina_Bool *success)
 {
    *success = _validate_type(sf->type);
+
+   if (!*success)
+     return EINA_FALSE;
+
+   *success = _validate_doc(sf->doc);
+
    return *success;
 }
 
@@ -25,6 +81,12 @@ _ef_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
      *success = _validate_expr(ef->value, NULL, EOLIAN_MASK_INT);
    else
      *success = EINA_TRUE;
+
+   if (!*success)
+     return EINA_FALSE;
+
+   *success = _validate_doc(ef->doc);
+
    return *success;
 }
 
@@ -39,6 +101,9 @@ _type_error(const Eolian_Type *tp, const char *msg)
 static Eina_Bool
 _validate_type(const Eolian_Type *tp)
 {
+   if (!_validate_doc(tp->doc))
+     return EINA_FALSE;
+
    switch (tp->type)
      {
       case EOLIAN_TYPE_VOID:
@@ -124,6 +189,9 @@ _validate_param(const Eolian_Function_Parameter *param)
    if (!_validate_type(param->type))
      return EINA_FALSE;
 
+   if (!_validate_doc(param->doc))
+     return EINA_FALSE;
+
    return EINA_TRUE;
 }
 
@@ -161,6 +229,17 @@ _validate_function(const Eolian_Function *func)
 
 #undef EOLIAN_PARAMS_VALIDATE
 
+   if (!_validate_doc(func->common_doc))
+     return EINA_FALSE;
+   if (!_validate_doc(func->get_doc))
+     return EINA_FALSE;
+   if (!_validate_doc(func->set_doc))
+     return EINA_FALSE;
+   if (!_validate_doc(func->get_return_doc))
+     return EINA_FALSE;
+   if (!_validate_doc(func->set_return_doc))
+     return EINA_FALSE;
+
    return EINA_TRUE;
 }
 
@@ -169,6 +248,10 @@ _validate_event(const Eolian_Event *event)
 {
    if (event->type && !_validate_type(event->type))
      return EINA_FALSE;
+
+   if (!_validate_doc(event->doc))
+     return EINA_FALSE;
+
    return EINA_TRUE;
 }
 
@@ -191,6 +274,9 @@ _validate_class(const Eolian_Class *cl)
      if (!_validate_event(event))
        return EINA_FALSE;
 
+   if (!_validate_doc(cl->doc))
+     return EINA_FALSE;
+
    return EINA_TRUE;
 }
 
@@ -201,6 +287,9 @@ _validate_variable(const Eolian_Variable *var)
      return EINA_FALSE;
 
    if (var->value && !_validate_expr(var->value, var->base_type, 0))
+     return EINA_FALSE;
+
+   if (!_validate_doc(var->doc))
      return EINA_FALSE;
 
    return EINA_TRUE;
