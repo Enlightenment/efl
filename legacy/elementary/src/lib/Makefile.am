@@ -176,7 +176,6 @@ elm_check_legacy.h \
 elm_clock.h \
 elm_clock_eo.h \
 elm_clock_legacy.h \
-elm_clock_common.h \
 elm_cnp.h \
 elm_colorselector.h \
 elm_colorselector_eo.h \
