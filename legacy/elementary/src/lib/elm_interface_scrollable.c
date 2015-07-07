@@ -1870,13 +1870,24 @@ _elm_scroll_wheel_event_cb(void *data,
    int direction = 0;
    int pagenumber_h = 0, pagenumber_v = 0;
    int mx = 0, my = 0, minx = 0, miny = 0;
+   Evas_Coord pwx, pwy;
+   double t;
 
    sid = data;
    ev = event_info;
    direction = ev->direction;
 
-   if (sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL)
-     return;
+   if (direction)
+     {
+        if (sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL) return;
+     }
+   else
+     {
+        if (sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL) return;
+     }
+
+   pwx = sid->wx;
+   pwy = sid->wy;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if ((evas_key_modifier_is_set(ev->modifiers, "Control")) ||
@@ -1896,6 +1907,8 @@ _elm_scroll_wheel_event_cb(void *data,
    if (x > mx) x = mx;
    if (y < miny) y = miny;
    if (y > my) y = my;
+
+   t = ecore_loop_time_get();
 
    if ((sid->down.bounce_x_animator) || (sid->down.bounce_y_animator) ||
        (sid->scrollto.x.animator) || (sid->scrollto.y.animator))
@@ -1973,6 +1986,31 @@ _elm_scroll_wheel_event_cb(void *data,
              _elm_scroll_scroll_to_x(sid, _elm_config->bring_in_scroll_friction, x);
              _elm_scroll_scroll_to_y(sid, _elm_config->bring_in_scroll_friction, y);
           }
+     }
+
+   if (direction)
+     {
+        if ((pwx != sid->wx) ||
+            (((t - sid->down.last_time_x_wheel) < 0.5) &&
+             (sid->down.last_hold_x_wheel)))
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             sid->down.last_hold_x_wheel = EINA_TRUE;
+          }
+        else sid->down.last_hold_x_wheel = EINA_FALSE;
+        sid->down.last_time_x_wheel = t;
+     }
+   else
+     {
+        if ((pwy != sid->wy) ||
+            (((t - sid->down.last_time_y_wheel) < 0.5) &&
+             (sid->down.last_hold_y_wheel)))
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             sid->down.last_hold_y_wheel = EINA_TRUE;
+          }
+        else sid->down.last_hold_y_wheel = EINA_FALSE;
+        sid->down.last_time_y_wheel = t;
      }
 }
 
