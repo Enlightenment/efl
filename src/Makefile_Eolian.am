@@ -138,4 +138,6 @@ tests/eolian/data/override_ref.c \
 tests/eolian/data/class_simple_ref_eo.h \
 tests/eolian/data/class_simple_ref_legacy.h \
 tests/eolian/data/import_types_ref.h \
+tests/eolian/data/docs_ref.h \
+tests/eolian/data/docs_ref_legacy.h \
 $(EOLIAN_TESTS_EOS)

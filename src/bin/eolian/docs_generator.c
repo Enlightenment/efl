@@ -22,6 +22,98 @@ _indent_line(Eina_Strbuf *buf, int ind)
 #define DOC_LIMIT(ind) ((ind > DOC_LINE_TEST) ? (ind + DOC_LINE_OVER) \
                                               : DOC_LINE_LIMIT)
 
+static void
+_generate_ref(const char *refn, Eina_Strbuf *wbuf)
+{
+   const Eolian_Declaration *decl = eolian_declaration_get_by_name(refn);
+   if (decl)
+     {
+        char *n = strdup(eolian_declaration_name_get(decl));
+        char *p = n;
+        while ((p = strchr(p, '.'))) *p = '_';
+        eina_strbuf_append(wbuf, n);
+        free(n);
+        return;
+     }
+
+   /* not a plain declaration, so it must be struct/enum field or func */
+   const char *sfx = strrchr(refn, '.');
+   if (!sfx) goto noref;
+
+   Eina_Stringshare *bname = eina_stringshare_add_length(refn, sfx - refn);
+
+   const Eolian_Type *tp = eolian_type_struct_get_by_name(bname);
+   if (tp)
+     {
+        if (!eolian_type_struct_field_get(tp, sfx + 1)) goto noref;
+        _generate_ref(bname, wbuf);
+        eina_strbuf_append(wbuf, sfx);
+        eina_stringshare_del(bname);
+        return;
+     }
+
+   tp = eolian_type_enum_get_by_name(bname);
+   if (tp)
+     {
+        const Eolian_Enum_Type_Field *efl = eolian_type_enum_field_get(tp, sfx + 1);
+        if (!efl) goto noref;
+        _generate_ref(bname, wbuf);
+        Eina_Stringshare *str = eolian_type_enum_field_c_name_get(efl);
+        eina_strbuf_append_char(wbuf, '.');
+        eina_strbuf_append(wbuf, str);
+        eina_stringshare_del(str);
+        eina_stringshare_del(bname);
+        return;
+     }
+
+   const Eolian_Class *cl = eolian_class_get_by_name(bname);
+   const Eolian_Function *fn = NULL;
+   Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
+   if (!cl)
+     {
+        const char *mname;
+        if (!strcmp(sfx, ".get")) ftype = EOLIAN_PROP_GET;
+        else if (!strcmp(sfx, ".set")) ftype = EOLIAN_PROP_SET;
+        if (ftype != EOLIAN_UNRESOLVED)
+          {
+             eina_stringshare_del(bname);
+             mname = sfx - 1;
+             while ((mname != refn) && (*mname != '.')) --mname;
+             if (mname == refn) goto noref;
+             bname = eina_stringshare_add_length(refn, mname - refn);
+             cl = eolian_class_get_by_name(bname);
+             eina_stringshare_del(bname);
+          }
+        if (cl)
+          {
+             char *meth = strndup(mname + 1, sfx - mname - 1);
+             fn = eolian_class_function_get_by_name(cl, meth, ftype);
+             if (ftype == EOLIAN_UNRESOLVED)
+               ftype = eolian_function_type_get(fn);
+             free(meth);
+          }
+     }
+   else
+     {
+        fn = eolian_class_function_get_by_name(cl, sfx + 1, ftype);
+        ftype = eolian_function_type_get(fn);
+     }
+
+   if (!fn) goto noref;
+
+   Eina_Stringshare *fcn = eolian_function_full_c_name_get(fn);
+   eina_strbuf_append(wbuf, fcn);
+   eina_stringshare_del(fcn);
+   if ((ftype == EOLIAN_PROP_GET) || (ftype == EOLIAN_PROPERTY))
+     eina_strbuf_append(wbuf, "_get");
+   else if (ftype == EOLIAN_PROP_SET)
+     eina_strbuf_append(wbuf, "_set");
+
+   return;
+noref:
+   eina_strbuf_append(wbuf, refn);
+}
+
 int
 _append_section(const char *desc, int ind, int curl, Eina_Strbuf *buf,
                 Eina_Strbuf *wbuf)
@@ -40,9 +132,17 @@ _append_section(const char *desc, int ind, int curl, Eina_Strbuf *buf,
           }
         else if (*desc == '@')
           {
-             desc++;
-             if (isalpha(*desc))
-               eina_strbuf_append(wbuf, "@ref ");
+             const char *ref = ++desc;
+             if (isalpha(*desc) || (*desc == '_'))
+               {
+                  eina_strbuf_append(wbuf, "@ref ");
+                  while (isalnum(*desc) || (*desc == '.') || (*desc == '_'))
+                    ++desc;
+                  if (*(desc - 1) == '.') --desc;
+                  Eina_Stringshare *refn = eina_stringshare_add_length(ref, desc - ref);
+                  _generate_ref(refn, wbuf);
+                  eina_stringshare_del(refn);
+               }
              else
                eina_strbuf_append_char(wbuf, '@');
           }

@@ -35,11 +35,18 @@ struct Opaque; [[Opaque struct docs. See @Foo for another struct.]]
 class Docs {
     [[Docs for class.
 
-      More docs for class. @.prop.
+      More docs for class. Testing references now.
       @Foo
       @Bar
       @Alias
       @pants
+      @.meth
+      @.prop
+      @.prop.get
+      @.prop.set
+      @Foo.field1
+      @Bar.foo
+      @Docs
     ]]
     methods {
         meth {
