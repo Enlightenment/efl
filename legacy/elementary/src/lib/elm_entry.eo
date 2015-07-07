@@ -7,6 +7,106 @@ enum Elm.Text_Format
    markup_utf8 [[ Markup UTF8 type ]]
 }
 
+enum Elm.Wrap.Type
+{
+   [[
+     @addtogroup Entry
+     Line wrapping types.
+     Type of word or character wrapping to use.
+     @see elm_entry_line_wrap_set()
+   ]]
+
+   legacy: elm_wrap;
+   none = 0, [[No wrap - value is zero.]]
+   char,     [[Char wrap - wrap between characters.]]
+   word,     [[Word wrap - wrap in allowed wrapping points (as defined in the unicode standard).]]
+   mixed,    [[Mixed wrap - Word wrap, and if that fails, char wrap.]]
+   last
+}
+
+enum Elm.Input.Panel.Layout
+{
+   [[
+     @addtogroup Entry
+     Input panel (virtual keyboard) layout types.
+     Type of input panel (virtual keyboard) to use - this is a hint and may not provide exactly what is desired.
+     @see elm_entry_input_panel_layout_set()
+   ]]
+   normal,      [[Default layout.]]
+   number,      [[Number layout.]]
+   email,       [[Email layout.]]
+   url,         [[URL layout.]]
+   phonenumber, [[Phone Number layout.]]
+   ip,          [[IP layout.]]
+   month,       [[Month layout.]]
+   numberonly,  [[Number Only layout.]]
+   invalid,     [[Never use this.]]
+   hex,         [[Hexadecimal layout.]]
+   terminal,    [[Command-line terminal layout including esc, alt, ctrl key, so on (no auto-correct, no auto-capitalization).]]
+   password,    [[Like normal, but no auto-correct, no auto-capitalization etc.]]
+   datetime,    [[Date and time layout @since 1.8]]
+   emoticon     [[Emoticon layout @since 1.10]]
+}
+
+enum Elm.Input.Panel.Lang
+{
+   [[
+      @addtogroup Entry
+      Input panel (virtual keyboard) language modes.
+
+      @see elm_entry_input_panel_language_set()
+   ]]
+   automatic,    [[Automatic]]
+   alphabet      [[Alphabet]]
+}
+
+enum Elm.Autocapital.Type
+{
+   [[
+     @addtogroup Entry
+     Autocapitalization Types.
+     Choose method of auto-capitalization.
+
+     @see elm_entry_autocapital_type_set()
+   ]]
+   none,         [[No auto-capitalization when typing.]]
+   word,         [[Autocapitalize each word typed.]]
+   sentence,     [[Autocapitalize the start of each sentence.]]
+   allcharacter  [[Autocapitalize all letters.]]
+}
+
+enum Elm.Input.Panel.Return_Key.Type
+{
+   [[
+     @addtogroup Entry
+     "Return" Key types on the input panel (virtual keyboard).
+     @see elm_entry_input_panel_return_key_type_set()
+
+   ]]
+   default, [[Default.]]
+   done,    [[Done.]]
+   go,      [[Go.]]
+   join,    [[Join.]]
+   login,   [[Login.]]
+   next,    [[Next.]]
+   search,  [[Search string or magnifier icon.]]
+   send,    [[Send.]]
+   signin   [[Sign-in @since 1.8]]
+}
+
+enum Elm.Input.Hints
+{
+   [[
+      @addtogroup Entry
+      @brief Enumeration that defines the types of Input Hints.
+      @since 1.12
+   ]]
+   legacy: elm_input_hint;
+   none                = 0,        [[No active hints @since 1.12.]]
+   auto_complete       = 1 << 0,   [[Suggest word auto completion @since 1.12.]]
+   sensitive_data      = 1 << 1,   [[Typed text should not be stored. @since 1.12.]]
+}
+
 class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
                  Elm_Interface_Atspi_Text, Elm_Interface_Atspi_Editable_Text, Efl.File,
                  Evas.Selectable_Interface, Evas.Scrollable_Interface)
@@ -150,7 +250,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            lang: Elm_Input_Panel_Lang; /*@ language to be set to the input panel. */
+            lang: Elm.Input.Panel.Lang; /*@ language to be set to the input panel. */
          }
       }
       @property selection_handler_disabled {
@@ -207,7 +307,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            autocapital_type: Elm_Autocapital_Type; /*@ The type of autocapitalization */
+            autocapital_type: Elm.Autocapital.Type; /*@ The type of autocapitalization */
          }
       }
       @property editable {
@@ -434,7 +534,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            hints: Elm_Input_Hints; /*@ input hint. */
+            hints: Elm.Input.Hints; /*@ input hint. */
          }
       }
       @property input_panel_layout {
@@ -455,7 +555,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            layout: Elm_Input_Panel_Layout(8); /*@ layout type */
+            layout: Elm.Input.Panel.Layout(Elm.Input.Panel.Layout.invalid); /*@ layout type */
          }
       }
       @property input_panel_return_key_type {
@@ -478,7 +578,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            return_key_type: Elm_Input_Panel_Return_Key_Type; /*@ The type of "return" key on the input panel */
+            return_key_type: Elm.Input.Panel.Return_Key.Type; /*@ The type of "return" key on the input panel */
          }
       }
       @property input_panel_enabled {
@@ -526,7 +626,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            wrap: Elm_Wrap_Type; /*@ The wrap mode to use. See Elm_Wrap_Type for details on them */
+            wrap: Elm.Wrap.Type; /*@ The wrap mode to use. See Elm_Wrap_Type for details on them */
          }
       }
       @property cursor_pos {
