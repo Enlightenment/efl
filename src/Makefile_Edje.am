@@ -253,7 +253,10 @@ lib/edje/edje_convert.c \
 tests/edje/edje_tests_helpers.h \
 tests/edje/data/complex_layout.edc \
 tests/edje/data/test_layout.edc \
-tests/edje/data/test_parens.edc
+tests/edje/data/test_parens.edc \
+tests/edje/data/test_masking.edc \
+tests/edje/data/test_filters.edc \
+tests/edje/data/filter.lua
 
 
 bin_SCRIPTS += bin/edje/edje_recc
