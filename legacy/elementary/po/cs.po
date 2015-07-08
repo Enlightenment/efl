@@ -2,12 +2,12 @@
 #
 # Vít Pelčák <vit@pelcak.org>, 2011.
 # Tomáš Čech <sleep_walker@suse.cz>, 2012.
-#: src/lib/elm_config.c:3083
+#: src/lib/elm_config.c:3198
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-06-22 11:28+0900\n"
+"POT-Creation-Date: 2015-07-08 22:45+0900\n"
 "PO-Revision-Date: 2014-05-22 22:44+0200\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -18,56 +18,56 @@ msgstr ""
 "X-Generator: Lokalize 1.4\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: src/lib/elc_fileselector.c:1461
+#: src/lib/elc_fileselector.c:1517
 msgid "Up"
 msgstr "Nahoru"
 
-#: src/lib/elc_fileselector.c:1476
+#: src/lib/elc_fileselector.c:1533
 msgid "Home"
 msgstr "Domů"
 
-#: src/lib/elc_fileselector.c:1539
+#: src/lib/elc_fileselector.c:1600
 msgid "Search"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1707 src/lib/elm_entry.c:1568
-#: src/lib/elm_entry.c:1593
+#: src/lib/elc_fileselector.c:1769 src/lib/elm_entry.c:1586
+#: src/lib/elm_entry.c:1611
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/lib/elc_fileselector.c:1716
+#: src/lib/elc_fileselector.c:1779
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elc_multibuttonentry.c:629
+#: src/lib/elc_multibuttonentry.c:636
 msgid "multi button entry label"
 msgstr "popisek vícetlačítkového vstupu"
 
-#: src/lib/elc_multibuttonentry.c:651
+#: src/lib/elc_multibuttonentry.c:658
 msgid "multi button entry item"
 msgstr "položka vícetlačítkového vstupu"
 
-#: src/lib/elc_multibuttonentry.c:1508
+#: src/lib/elc_multibuttonentry.c:1518
 msgid "multi button entry"
 msgstr "vícetlačítkový vstup"
 
-#: src/lib/elc_naviframe.c:431
+#: src/lib/elc_naviframe.c:434
 msgid "Title"
 msgstr "Název"
 
-#: src/lib/elc_naviframe.c:965 src/lib/elc_naviframe.c:1164
+#: src/lib/elc_naviframe.c:976 src/lib/elc_naviframe.c:1175
 msgid "Back"
 msgstr "Zpět"
 
-#: src/lib/elc_naviframe.c:1259
+#: src/lib/elc_naviframe.c:1271
 msgid "Next"
 msgstr "Další"
 
-#: src/lib/elc_popup.c:262 src/lib/elc_popup.c:844
+#: src/lib/elc_popup.c:265 src/lib/elc_popup.c:851
 msgid "Popup Title"
 msgstr "Titulek vyskakujícího okna"
 
-#: src/lib/elc_popup.c:272 src/lib/elc_popup.c:917
+#: src/lib/elc_popup.c:275 src/lib/elc_popup.c:924
 msgid "Popup Body Text"
 msgstr "Text vyskakovacího okna"
 
@@ -79,63 +79,63 @@ msgstr "Bublina"
 msgid "Clicked"
 msgstr "Kliknuto"
 
-#: src/lib/elm_button.c:270 src/lib/elm_check.c:234 src/lib/elm_gengrid.c:817
-#: src/lib/elm_genlist.c:1622 src/lib/elm_list.c:2227 src/lib/elm_radio.c:264
-#: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:785
-#: src/lib/elm_toolbar.c:2227
+#: src/lib/elm_button.c:275 src/lib/elm_check.c:234 src/lib/elm_gengrid.c:1248
+#: src/lib/elm_genlist.c:1642 src/lib/elm_list.c:2187 src/lib/elm_radio.c:266
+#: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:812
+#: src/lib/elm_toolbar.c:2238
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
 
-#: src/lib/elm_button.c:295
+#: src/lib/elm_button.c:300
 msgid "Button"
 msgstr "Tlačítko"
 
-#: src/lib/elm_calendar.c:153
+#: src/lib/elm_calendar.c:177
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_calendar.c:162
+#: src/lib/elm_calendar.c:186
 msgid "%B"
 msgstr "%B"
 
-#: src/lib/elm_calendar.c:171
+#: src/lib/elm_calendar.c:195
 msgid "%Y"
 msgstr "%Y"
 
-#: src/lib/elm_calendar.c:286
+#: src/lib/elm_calendar.c:310
 msgid "calendar item"
 msgstr "položka kalendáře"
 
-#: src/lib/elm_calendar.c:312
+#: src/lib/elm_calendar.c:336
 msgid "calendar decrement month button"
 msgstr "odečítací tlačítko pro měsíc"
 
-#: src/lib/elm_calendar.c:317
+#: src/lib/elm_calendar.c:341
 msgid "calendar decrement year button"
 msgstr "odečítací tlačítko pro rok"
 
-#: src/lib/elm_calendar.c:322
+#: src/lib/elm_calendar.c:346
 msgid "calendar increment month button"
 msgstr "přičítací tlačítko pro měsíc"
 
-#: src/lib/elm_calendar.c:327
+#: src/lib/elm_calendar.c:351
 msgid "calendar increment year button"
 msgstr "přičítací tlačítko pro rok"
 
-#: src/lib/elm_calendar.c:332
+#: src/lib/elm_calendar.c:356
 msgid "calendar month"
 msgstr "kalendářní měsíc"
 
-#: src/lib/elm_calendar.c:337
+#: src/lib/elm_calendar.c:361
 msgid "calendar year"
 msgstr "kalendářní rok"
 
 #: src/lib/elm_check.c:62 src/lib/elm_check.c:247 src/lib/elm_radio.c:111
-#: src/lib/elm_radio.c:265
+#: src/lib/elm_radio.c:267
 msgid "State: On"
 msgstr "Stav: Zapnuto"
 
-#: src/lib/elm_check.c:68 src/lib/elm_check.c:259 src/lib/elm_radio.c:267
+#: src/lib/elm_check.c:68 src/lib/elm_check.c:259 src/lib/elm_radio.c:269
 msgid "State: Off"
 msgstr "Stav: Vypnuto"
 
@@ -163,63 +163,63 @@ msgstr "Stav: Upravitelný"
 msgid "Clock"
 msgstr "Hodiny"
 
-#: src/lib/elm_colorselector.c:725
+#: src/lib/elm_colorselector.c:729
 msgid "Pick a color"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:761
+#: src/lib/elm_colorselector.c:767
 msgid "R:"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:763
+#: src/lib/elm_colorselector.c:769
 msgid "G:"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:765
+#: src/lib/elm_colorselector.c:771
 msgid "B:"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:767
+#: src/lib/elm_colorselector.c:773
 msgid "A:"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:1440
+#: src/lib/elm_colorselector.c:1444
 msgid "color selector palette item"
 msgstr "položka výběru barvy z palety"
 
-#: src/lib/elm_config.c:3099
+#: src/lib/elm_config.c:3214
 msgid "default:LTR"
 msgstr "výchozí:LTR"
 
-#: src/lib/elm_dayselector.c:406
+#: src/lib/elm_dayselector.c:409
 msgid "day selector item"
 msgstr "položka výběru dne"
 
-#: src/lib/elm_diskselector.c:698
+#: src/lib/elm_diskselector.c:700
 msgid "diskselector item"
 msgstr "položka výběru disků"
 
-#: src/lib/elm_entry.c:1555
+#: src/lib/elm_entry.c:1573
 msgid "Copy"
 msgstr "Kopírovat"
 
-#: src/lib/elm_entry.c:1560
+#: src/lib/elm_entry.c:1578
 msgid "Cut"
 msgstr "Vyjmout"
 
-#: src/lib/elm_entry.c:1564 src/lib/elm_entry.c:1587
+#: src/lib/elm_entry.c:1582 src/lib/elm_entry.c:1605
 msgid "Paste"
 msgstr "Vložit"
 
-#: src/lib/elm_entry.c:1580
+#: src/lib/elm_entry.c:1598
 msgid "Select"
 msgstr "Vybrat"
 
-#: src/lib/elm_entry.c:3571
+#: src/lib/elm_entry.c:3524
 msgid "Entry"
 msgstr "Vstup"
 
-#: src/lib/elm_gengrid.c:847
+#: src/lib/elm_gengrid.c:1278
 msgid "Gengrid Item"
 msgstr "Položka mřížky"
 
@@ -259,11 +259,11 @@ msgstr "tlačítko panelu"
 msgid "progressbar"
 msgstr "ukazatel průběhu"
 
-#: src/lib/elm_radio.c:293
+#: src/lib/elm_radio.c:295
 msgid "Radio"
 msgstr "Přepínač"
 
-#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2229
+#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2240
 msgid "State: Selected"
 msgstr "Stav: Vybráno"
 
@@ -275,51 +275,51 @@ msgstr "Stav: Nevybráno"
 msgid "Segment Control Item"
 msgstr "položka ovládání segmentu"
 
-#: src/lib/elm_slider.c:888
+#: src/lib/elm_slider.c:889
 msgid "slider"
 msgstr "šoupátko"
 
-#: src/lib/elm_spinner.c:816
+#: src/lib/elm_spinner.c:843
 msgid "incremented"
 msgstr ""
 
-#: src/lib/elm_spinner.c:822
+#: src/lib/elm_spinner.c:849
 msgid "decremented"
 msgstr ""
 
-#: src/lib/elm_spinner.c:856 src/lib/elm_spinner.c:923
+#: src/lib/elm_spinner.c:883 src/lib/elm_spinner.c:950
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_spinner.c:865 src/lib/elm_spinner.c:906
+#: src/lib/elm_spinner.c:892 src/lib/elm_spinner.c:933
 msgid "spinner increment button"
 msgstr "přičítací tlačítko spinneru"
 
-#: src/lib/elm_spinner.c:868 src/lib/elm_spinner.c:915
+#: src/lib/elm_spinner.c:895 src/lib/elm_spinner.c:942
 msgid "spinner decrement button"
 msgstr "odečítací tlačítko spinneru"
 
-#: src/lib/elm_spinner.c:870
+#: src/lib/elm_spinner.c:897
 #, fuzzy
 msgid "spinner text"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1687 src/lib/elm_toolbar.c:2286
+#: src/lib/elm_toolbar.c:1698 src/lib/elm_toolbar.c:2297
 msgid "Selected"
 msgstr "Vybrané"
 
-#: src/lib/elm_toolbar.c:2225
+#: src/lib/elm_toolbar.c:2236
 msgid "Separator"
 msgstr "Oddělovač"
 
-#: src/lib/elm_toolbar.c:2231
+#: src/lib/elm_toolbar.c:2242
 msgid "Has menu"
 msgstr "Má nabídku"
 
-#: src/lib/elm_toolbar.c:2281
+#: src/lib/elm_toolbar.c:2292
 msgid "Unselected"
 msgstr "Nevybrané"
 
-#: src/lib/elm_toolbar.c:2298
+#: src/lib/elm_toolbar.c:2309
 msgid "Toolbar Item"
 msgstr "Položka panelu nástrojů"
