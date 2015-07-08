@@ -8,13 +8,8 @@ enum Elm.Icon.Type
 
 enum Elm.Icon.Lookup_Order
 {
-   [[
-      @addtogroup Icon
-      @enum Elm_Icon_Lookup_Order
-      @typedef Elm_Icon_Lookup_Order
-
-      Lookup order used by elm_icon_standard_set(). Should look for icons in the
-      theme, FDO paths, or both?
+   [[Lookup order used by elm_icon_standard_set(). Should look for icons in
+     the theme, FDO paths, or both?
    ]]
    legacy: elm_icon_lookup;
    fdo_theme, [[Icon look up order: freedesktop, theme.]]
@@ -32,13 +27,13 @@ class Elm.Icon (Elm.Image)
          set {
             [[Sets the icon lookup order used by elm_icon_standard_set().
 
-              See also @elm_icon_order_lookup_get, @Elm_Icon_Lookup_Order.
+              See also @.order_lookup.get, @Elm.Icon.Lookup_Order.
             ]]
          }
          get {
             [[Get the icon lookup order.
 
-              See also @elm_icon_order_lookup_set, @Elm_Icon_Lookup_Order.
+              See also @.order_lookup.set, @Elm.Icon.Lookup_Order.
             ]]
          }
          values {
@@ -59,17 +54,17 @@ class Elm.Icon (Elm.Image)
               match those icon keys. The "name" given as parameter is one of
               these "keys", and will be used to look in the freedesktop.org
               paths and elementary theme. One can change the lookup order
-              with @elm_icon_order_lookup_set.
+              with @.order_lookup.set.
 
               If name is not found in any of the expected locations and it is
               the absolute path of an image file, this image will be used.
 
               Note: The icon image set by this function can be changed by
-              @elm_image_file_set.
+              @Efl.File.file.set.
 
               Note: This function does not accept relative icon path.
 
-              See also @elm_icon_standard_get.
+              See also @.standard.get.
             ]]
             return: bool; [[true on success, false on error]]
          }
@@ -77,7 +72,7 @@ class Elm.Icon (Elm.Image)
             [[Get the icon name set by icon standard names.
 
               If the icon image was set using elm_image_file_set() instead of
-              @elm_icon_standard_set, then this function will return null.
+              @.standard.set, then this function will return null.
             ]]
          }
          values {
@@ -89,12 +84,10 @@ class Elm.Icon (Elm.Image)
             [[Set the file that will be used, but use a generated thumbnail.
 
               This functions like elm_image_file_set() but requires the Ethumb
-              library support to be enabled successfully with @elm_need_ethumb.
+              library support to be enabled successfully with $elm_need_ethumb.
               When set the file indicated has a thumbnail generated and cached
               on disk for future use or will directly use an existing cached
               thumbnail if it is valid.
-
-              See also @elm_image_file_set.
             ]]
          }
          values {

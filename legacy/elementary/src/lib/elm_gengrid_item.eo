@@ -2,11 +2,7 @@ import elm_general;
 
 enum Elm.Gengrid.Item.Scrollto_Type
 {
-   [[
-      Defines where to position the item in the genlist.
-
-      @ingroup Gengrid
-   ]]
+   [[Defines where to position the item in the genlist.]]
    legacy: elm_gengrid_item_scrollto;
    none = 0,   [[No scrollto.]]
    in = (1 << 0),   [[To the nearest viewport.]]
@@ -16,13 +12,8 @@ enum Elm.Gengrid.Item.Scrollto_Type
 
 enum Elm.Gengrid.Item.Field_Type
 {
-   [[
-      Defines the type of the item part
-      Used while updating item's parts
-      It can be used at updating multi fields.
-
-      @ingroup Gengrid
-   ]]
+   [[Defines the type of the item part Used while updating item's parts.
+     It can be used at updating multi fields.]]
    legacy: elm_gengrid_item_field;
    all = 0,
    text = (1 << 0),

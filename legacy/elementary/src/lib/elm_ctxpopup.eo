@@ -1,9 +1,6 @@
 enum Elm.Ctxpopup.Direction
 {
-   [[
-     @ingroup Ctxpopup
-     Direction in which to show the popup.
-   ]]
+   [[Direction in which to show the popup.]]
    down, [[Ctxpopup show appear below clicked area.]]
    right, [[Ctxpopup show appear to the right of the clicked area.]]
    left, [[Ctxpopup show appear to the left of the clicked area.]]

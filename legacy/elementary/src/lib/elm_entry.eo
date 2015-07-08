@@ -3,7 +3,8 @@ import elm_general;
 enum Elm.Text_Format
 {
    [[Text Format types.
-     @see elm_entry_file_text_format()
+
+     See also @Elm.Entry.file_text_format.
    ]]
    plain_utf8, [[ Plain UTF8 type ]]
    markup_utf8 [[ Markup UTF8 type ]]
@@ -11,11 +12,9 @@ enum Elm.Text_Format
 
 enum Elm.Input.Panel.Layout
 {
-   [[
-     @addtogroup Entry
-     Input panel (virtual keyboard) layout types.
+   [[Input panel (virtual keyboard) layout types.
      Type of input panel (virtual keyboard) to use - this is a hint and may not provide exactly what is desired.
-     @see elm_entry_input_panel_layout_set()
+     See also @Elm.Entry.input_panel_layout.set.
    ]]
    normal,      [[Default layout.]]
    number,      [[Number layout.]]
@@ -29,17 +28,19 @@ enum Elm.Input.Panel.Layout
    hex,         [[Hexadecimal layout.]]
    terminal,    [[Command-line terminal layout including esc, alt, ctrl key, so on (no auto-correct, no auto-capitalization).]]
    password,    [[Like normal, but no auto-correct, no auto-capitalization etc.]]
-   datetime,    [[Date and time layout @since 1.8]]
-   emoticon     [[Emoticon layout @since 1.10]]
+   datetime,    [[Date and time layout
+
+                  @since 1.8]]
+   emoticon     [[Emoticon layout
+
+                  @since 1.10]]
 }
 
 enum Elm.Input.Panel.Lang
 {
-   [[
-      @addtogroup Entry
-      Input panel (virtual keyboard) language modes.
+   [[Input panel (virtual keyboard) language modes.
 
-      @see elm_entry_input_panel_language_set()
+      See also @Elm.Entry.input_panel_language.set.
    ]]
    automatic,    [[Automatic]]
    alphabet      [[Alphabet]]
@@ -47,12 +48,10 @@ enum Elm.Input.Panel.Lang
 
 enum Elm.Autocapital.Type
 {
-   [[
-     @addtogroup Entry
-     Autocapitalization Types.
+   [[Autocapitalization Types.
      Choose method of auto-capitalization.
 
-     @see elm_entry_autocapital_type_set()
+     See also @Elm.Entry.autocapital_type.set.
    ]]
    none,         [[No auto-capitalization when typing.]]
    word,         [[Autocapitalize each word typed.]]
@@ -62,10 +61,8 @@ enum Elm.Autocapital.Type
 
 enum Elm.Input.Panel.Return_Key.Type
 {
-   [[
-     @addtogroup Entry
-     "Return" Key types on the input panel (virtual keyboard).
-     @see elm_entry_input_panel_return_key_type_set()
+   [["Return" Key types on the input panel (virtual keyboard).
+     See also @Elm.Entry.input_panel_return_key_type.set.
 
    ]]
    default, [[Default.]]
@@ -76,20 +73,27 @@ enum Elm.Input.Panel.Return_Key.Type
    next,    [[Next.]]
    search,  [[Search string or magnifier icon.]]
    send,    [[Send.]]
-   signin   [[Sign-in @since 1.8]]
+   signin   [[Sign-in
+
+              @since 1.8]]
 }
 
 enum Elm.Input.Hints
 {
-   [[
-      @addtogroup Entry
-      @brief Enumeration that defines the types of Input Hints.
-      @since 1.12
+   [[Enumeration that defines the types of Input Hints.
+
+     @since 1.12
    ]]
    legacy: elm_input_hint;
-   none                = 0,        [[No active hints @since 1.12.]]
-   auto_complete       = 1 << 0,   [[Suggest word auto completion @since 1.12.]]
-   sensitive_data      = 1 << 1,   [[Typed text should not be stored. @since 1.12.]]
+   none                = 0,        [[No active hints
+
+                                     @since 1.12]]
+   auto_complete       = 1 << 0,   [[Suggest word auto completion
+
+                                     @since 1.12]]
+   sensitive_data      = 1 << 1,   [[Typed text should not be stored.
+
+                                     @since 1.12]]
 }
 
 class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
@@ -196,20 +200,16 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
       @property file_text_format {
          [[Text format used to load and save the file, which could be plain text or markup text.
 
-           Default is @c ELM_TEXT_FORMAT_PLAIN_UTF8, if you want to use
-           @c ELM_TEXT_FORMAT_MARKUP_UTF8 then you need to set the text format
-           before calling @ref efl_file_set.
+           Default is $ELM_TEXT_FORMAT_PLAIN_UTF8, if you want to use
+           $ELM_TEXT_FORMAT_MARKUP_UTF8 then you need to set the text format
+           before calling @Efl.File.file.set.
 
-           You could also set it before a call to @ref elm_obj_entry_file_save
+           You could also set it before a call to @.file_save
            in order to save with the given format.
-
-           @ingroup Entry
          ]]
 
          set {
-            [[Use it before calling @ref efl_file_set or @ref elm_obj_entry_file_save.
-              @ingroup Entry
-            ]]
+            [[Use it before calling @Efl.File.file.set or @.file_save.]]
          }
          values {
             format: Elm.Text_Format(Elm.Text_Format.plain_utf8); [[ The file format ]]

@@ -1,9 +1,7 @@
 enum Elm.Datetime.Field_Type
 {
-   [[
-      @addtogroup Datetime
-      Identifies a Datetime field, The widget supports 6 fields : Year, month,
-      Date, Hour, Minute, AM/PM
+   [[Identifies a Datetime field, The widget supports 6 fields : Year, month,
+     Date, Hour, Minute, AM/PM
    ]]
 
    legacy: elm_datetime;

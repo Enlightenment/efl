@@ -1,15 +1,10 @@
 enum Elm.Clock.Edit_Mode
 {
-   [[
-     @addtogroup Clock
-     @enum Elm_Clock_Edit_Mode
-
-     Identifiers for which clock digits should be editable, when a
+   [[Identifiers for which clock digits should be editable, when a
      clock widget is in edition mode. Values may be OR-ed together to
      make a mask, naturally.
 
-     @see elm_clock_edit_set()
-     @see elm_clock_edit_mode_set()
+     See also @Elm.Clock.edit.set, @Elm.Clock.edit_mode.set.
    ]]
 
    legacy: elm_clock_edit;

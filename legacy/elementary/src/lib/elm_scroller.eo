@@ -2,7 +2,7 @@ enum Elm.Scroller.Policy
 {
    [[Type that controls when scrollbars should appear.
 
-     See also @elm_scroller_policy_set.
+     See also @Elm_Interface_Scrollable.policy.set.
    ]]
    auto = 0, [[Show scrollbars as needed]]
    on, [[Always show scrollbars]]
@@ -14,7 +14,7 @@ enum Elm.Scroller.Single_Direction
 {
    [[Type that controls how the content is scrolled.
 
-     See also @elm_scroller_single_direction_set.
+     See also @Elm_Interface_Scrollable.single_direction.set.
    ]]
    none = 0, [[Scroll every direction]]
    soft, [[Scroll single direction if the direction is certain]]
@@ -25,8 +25,6 @@ enum Elm.Scroller.Single_Direction
 enum Elm.Scroller.Movement_Block
 {
    [[Type that blocks the scroll movement in one or more direction.
-
-     See also @elm_scroller_movement_block.
 
      @since 1.8
    ]]

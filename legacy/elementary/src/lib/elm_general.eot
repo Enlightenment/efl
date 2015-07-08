@@ -10,12 +10,12 @@ enum Elm.Policy
 {
    [[Policy identifiers.]]
    quit, [[under which circumstances the application should quit automatically.
-           See also @Elm_Policy_Quit.]]
-   exit, [[defines elm_exit() behaviour. See also @Elm_Policy_Exit.
+           See also @Elm.Policy.quit.]]
+   exit, [[defines elm_exit() behaviour. See also @Elm.Policy.exit.
 
            @since 1.8
          ]]
-   throttle, [[defines how throttling should work. See also @Elm_Policy_Throttle
+   throttle, [[defines how throttling should work. See also @Elm.Policy.throttle
 
                @since 1.8
              ]]
@@ -27,7 +27,9 @@ enum Elm.Policy.Quit
    [[Possible values for the #ELM_POLICY_QUIT policy]]
    none = 0, [[never quit the application automatically]]
    last_window_closed, [[quit when the application's last window is closed]]
-   last_window_hidden [[quit when the application's last window is hidden @since 1.14]]
+   last_window_hidden [[quit when the application's last window is hidden
+
+                        @since 1.14]]
 }
 
 enum Elm.Policy.Exit
@@ -90,13 +92,11 @@ enum Elm.Object.Multi_Select_Mode
 
 enum Elm.Wrap.Type
 {
-   [[
-     @addtogroup Entry
-     Line wrapping types.
+   [[Line wrapping types.
      Type of word or character wrapping to use.
-     @see elm_entry_line_wrap_set()
-     @see elm_popup_content_text_wrap_type_set
-     @see elm_label_line_wrap_set()
+
+     See also \@ref elm_entry_line_wrap_set, \@ref
+     elm_popup_content_text_wrap_type_set, \@ref elm_label_line_wrap_set.
    ]]
 
    legacy: elm_wrap;

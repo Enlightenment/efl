@@ -39,15 +39,15 @@ class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_
               option will fix this original aspect, and the way that the
               photo is fit into the object's area.
 
-              See also @elm_photo_aspect_fixed_get.
+              See also @.aspect_fixed.get.
             ]]
          }
          get {
             [[Get if the object keeps the original aspect ratio.]]
          }
          values {
-            fixed: bool; [[true if the photo should fix the aspect,
-                           false otherwise.]]
+            fixed: bool; [[$true if the photo should fix the aspect,
+                           $false otherwise.]]
          }
       }
       @property size {

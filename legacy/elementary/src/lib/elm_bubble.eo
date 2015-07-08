@@ -1,11 +1,9 @@
 enum Elm.Bubble.Pos
 {
-  [[
-     @addtogroup Bubble
-     Defines the corner values for a bubble.
+  [[Defines the corner values for a bubble.
 
-     The corner will be used to determine where the arrow of the
-     bubble points to.
+    The corner will be used to determine where the arrow of the
+    bubble points to.
   ]]
   invalid = -1, [[Invalid corner.]]
   top_left, [[The arrow of the bubble points to the top left corner.]]

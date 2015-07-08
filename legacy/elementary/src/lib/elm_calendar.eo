@@ -1,11 +1,8 @@
 enum Elm.Calendar.Mark.Repeat.Type
 {
    [[
-     @addtogroup Calendar
-
-     @enum Elm_Calendar_Mark_Repeat_Type
      Event periodicity, used to define if a mark should be repeated
-     @b beyond event's day. It's set when a mark is added.
+     beyond event's day. It's set when a mark is added.
 
      So, for a mark added to 13th May with periodicity set to WEEKLY,
      there will be marks every week after this date. Marks will be displayed
@@ -13,7 +10,7 @@ enum Elm.Calendar.Mark.Repeat.Type
 
      Values don't work as bitmask, only one can be chosen.
 
-     @see elm_calendar_mark_add()
+     See also @Elm.Calendar.mark_add.
    ]]
    legacy: elm_calendar;
    unique, [[Default value. Marks will be displayed only on event day.]]
@@ -21,17 +18,17 @@ enum Elm.Calendar.Mark.Repeat.Type
    weekly, [[Marks will be displayed every week after event day (inclusive) - i.e. each seven days.]]
    monthly, [[Marks will be displayed every month day that coincides to event day. E.g.: if an event is set to 30th Jan, no marks will be displayed on Feb, but will be displayed on 30th Mar.]]
    annually, [[Marks will be displayed every year that coincides to event day (and month). E.g. an event added to 30th Jan 2012 will be repeated on 30th Jan 2013.]]
-   last_day_of_month [[Marks will be displayed every last day of month after event day (inclusive).  @since 1.7]]
+   last_day_of_month [[Marks will be displayed every last day of month after event day (inclusive). 
+
+                       @since 1.7]]
 }
 
 enum Elm.Calendar.Weekday
 {
    [[
-     @addtogroup Calendar
-     @enum Elm_Calendar_Weekday
      A weekday
 
-     @see elm_calendar_first_day_of_week_set()
+     See also @Elm.Calendar.first_day_of_week.set.
    ]]
    legacy: elm_day;
    sunday,
@@ -47,12 +44,9 @@ enum Elm.Calendar.Weekday
 enum Elm.Calendar.Select.Mode
 {
    [[
-     @addtogroup Calendar
-     @enum Elm_Calendar_Select_Mode
-
      The mode, who determine how user could select a day
 
-     @see elm_calendar_select_mode_set()
+     See also @Elm.Calendar.select_mode.set()
    ]]
    default = 0, [[Default value. a day is always selected.]]
    always, [[A day is always selected.]]
@@ -63,14 +57,11 @@ enum Elm.Calendar.Select.Mode
 enum Elm.Calendar.Selectable
 {
    [[
-     @addtogroup Calendar
-     @Elm_Calendar_Selectable
-
-     A bitmask used to define which fields of a @b tm struct will be taken into
+     A bitmask used to define which fields of a $tm struct will be taken into
      account, when elm_calendar_selected_time_set() is invoked.
 
-     @see elm_calendar_selectable_set()
-     @see elm_calendar_selected_time_set()
+     See also @Elm.Calendar.selectable.set, @Elm.Calendar.selected_time_set.
+
      @since 1.8
    ]]
    none = 0,

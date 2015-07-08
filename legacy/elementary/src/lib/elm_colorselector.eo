@@ -1,13 +1,8 @@
 enum Elm.Colorselector.Mode
 {
-   [[
-      @addtogroup Datetime
-      @enum Elm_Colorselector_Mode
+   [[Different modes supported by Colorselector
 
-      Different modes supported by Colorselector
-
-      @see elm_colorselector_mode_set()
-      @see elm_colorselector_mode_get()
+      See also @Elm.Colorselector.mode.set, @Elm.Colorselector.mode.get.
    ]]
    legacy: elm_colorselector;
    palette = 0, [[Only color palette is displayed.]]

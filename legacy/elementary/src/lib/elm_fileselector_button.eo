@@ -9,8 +9,8 @@ class Elm.Fileselector_Button (Elm.Button, Elm_Interface_Fileselector)
               dedicated Elementary window. By default, it depends on the
               current profile.
 
-              See @elm_win_inwin_add for more information on inner windows.
-              See also @elm_fileselector_button_inwin_mode_get.
+              See \@ref elm_win_inwin_add for more information on inner windows.
+              See also @.inwin_mode.get.
             ]]
          }
          get {
@@ -18,7 +18,7 @@ class Elm.Fileselector_Button (Elm.Button, Elm_Interface_Fileselector)
               selector will raise an Elementary "inner window", instead of a
               dedicated Elementary window.
 
-              See also @elm_fileselector_button_inwin_mode_set for more details.
+              See also @.inwin_mode.set for more details.
             ]]
          }
          values {
@@ -35,7 +35,7 @@ class Elm.Fileselector_Button (Elm.Button, Elm_Interface_Fileselector)
               widget is not under "inwin mode". The default size for the
               window (when applicable) is 400x400 pixels.
 
-              See also @elm_fileselector_button_window_size_get.
+              See also @.window_size.get.
             ]]
          }
          get {
@@ -45,7 +45,7 @@ class Elm.Fileselector_Button (Elm.Button, Elm_Interface_Fileselector)
               Note: Use null pointers on the size values you're not
               interested in: they'll be ignored by the function.
 
-              See also @elm_fileselector_button_window_size_set for more
+              See also @.window_size.set for more
               details.
             ]]
          }
@@ -65,14 +65,14 @@ class Elm.Fileselector_Button (Elm.Button, Elm_Interface_Fileselector)
               Note: It will only take effect if the file selector
               button widget is not under "inwin mode".
 
-              See also @elm_fileselector_button_window_title_get.
+              See also @.window_title.get.
             ]]
          }
          get {
             [[Get the title for a given file selector button widget's
             window
 
-              See also @elm_fileselector_button_window_title_set for more
+              See also @.window_title.set for more
               details.
             ]]
          }

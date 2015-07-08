@@ -2,10 +2,7 @@ import elm_general;
 
 enum Elm.Label.Slide_Mode
 {
-   [[
-     @addtogroup Label
-     Slide mode of a label widget
-   ]]
+   [[Slide mode of a label widget]]
    none = 0, [[No slide effect.]]
    auto, [[Slide only if the label area is bigger than the text width length.]]
    always [[Slide always.]]

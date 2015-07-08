@@ -1,12 +1,9 @@
 enum Elm.Dayselector.Day
 {
-   [[
-     @addtogroup Dayselector
-     Identifies the day of the week.
-     API can call the selection/unselection of day with this as a parameter.
+   [[Identifies the day of the week. API can call the selection/unselection
+     of day with this as a parameter.
 
-     @see elm_dayselector_day_selected_set()
-     @see elm_dayselector_day_selected_get()
+     See also @Elm.Dayselector.day_selected_set, @Elm.Dayselector.day_selected_get.
    ]]
 
    legacy: elm_dayselector;
@@ -17,7 +14,7 @@ enum Elm.Dayselector.Day
    thu,    [[Indicates Thursday.]]
    fri,    [[Indicates Friday.]]
    sat,    [[Indicates Saturday.]]
-   max     [[Sentinel value, @b don't use.]]
+   max     [[Sentinel value, don't use.]]
 }
 
 class Elm.Dayselector (Elm.Layout)

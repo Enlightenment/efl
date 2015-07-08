@@ -1,9 +1,6 @@
 enum Elm.Actionslider.Pos
 {
-  [[
-    @ingroup Actionslider
-    A position for indicators, magnets, and enabled items.
-   ]]
+  [[A position for indicators, magnets, and enabled items.]]
    legacy: elm_actionslider;
 
    none = 0, [[No position is set.]]

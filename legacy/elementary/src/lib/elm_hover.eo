@@ -1,9 +1,6 @@
 enum Elm.Hover.Axis
 {
-   [[
-     @addtogroup Hover
-     The orientation axis for the hover object
-   ]]
+   [[The orientation axis for the hover object]]
    none, [[ELM_HOVER_AXIS_NONE -- no preferred orientation.]]
    horizontal, [[ELM_HOVER_AXIS_HORIZONTAL -- horizontal.]]
    vertical, [[ELM_HOVER_AXIS_VERTICAL -- vertical.]]

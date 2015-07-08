@@ -1,9 +1,7 @@
 enum Elm.Fileselector.Mode
 {
-   [[
-      @addtogroup Fileselector
-      Defines how a file selector widget is to layout its contents
-      (file system entries).
+   [[Defines how a file selector widget is to layout its contents
+     (file system entries).
    ]]
    legacy: elm_fileselector;
    list = 0, [[Layout as a list.]]

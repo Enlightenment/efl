@@ -10,7 +10,7 @@ enum Elm.Toolbar.Shrink_Mode
 
      Values don't work as bitmask, only one can be chosen.
 
-     See also @elm_toobar_shrink_mode_set, @elm_toolbar_shrink_mode_get.
+     See also @Elm.Toolbar.shrink_mode.set, @Elm.Toolbar.shrink_mode.get.
    ]]
 
    legacy: elm_toolbar_shrink;

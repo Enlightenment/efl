@@ -2,10 +2,8 @@ import elm_general;
 
 enum Elm.Genlist.Item.Type
 {
-   [[
-      Defines if the item is of any special type (has subitems or it's the
-      index of a group), or is just a simple item.
-      @ingroup Genlist
+   [[Defines if the item is of any special type (has subitems or it's the
+     index of a group), or is just a simple item.
    ]]
    legacy: elm_genlist_item;
    none = 0, [[Simple item.]]
@@ -16,11 +14,9 @@ enum Elm.Genlist.Item.Type
 
 enum Elm.Genlist.Item.Field_Type
 {
-   [[
-      Defines the type of the item part
-      Used while updating item's parts
-      It can be used at updating multi fields.
-      @ingroup Genlist
+   [[Defines the type of the item part
+     Used while updating item's parts
+     It can be used at updating multi fields.
    ]]
    legacy: elm_genlist_item_field;
    all = 0,
@@ -31,10 +27,7 @@ enum Elm.Genlist.Item.Field_Type
 
 enum Elm.Genlist.Item.Scrollto_Type
 {
-   [[
-      Defines where to position the item in the genlist.
-      @ingroup Genlist
-   ]]
+   [[Defines where to position the item in the genlist.]]
    legacy: elm_genlist_item_scrollto;
    none = 0,   [[No scrollto.]]
    in = (1 << 0),   [[To the nearest viewport.]]
