@@ -1189,6 +1189,7 @@ EAPI void eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h)
    EINA_MAGIC_CHECK_TILER(t);
    if ((w <= 0) || (h <= 0))
       return;
+   if ((t->tile.w == w) && (t->tile.h == h)) return;
 
    if (w == 1 || h == 1) t->rounding = EINA_FALSE;
    t->tile.w = w;
