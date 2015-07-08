@@ -1,3 +1,14 @@
+enum Elm.Label.Slide_Mode
+{
+   [[
+     @addtogroup Label
+     Slide mode of a label widget
+   ]]
+   none = 0, [[No slide effect.]]
+   auto, [[Slide only if the label area is bigger than the text width length.]]
+   always [[Slide always.]]
+}
+
 class Elm.Label (Elm.Layout)
 {
    eo_prefix: elm_obj_label;
@@ -89,7 +100,7 @@ class Elm.Label (Elm.Layout)
             @ingroup Label */
          }
          values {
-            mode: Elm_Label_Slide_Mode; /*@ The slide mode */
+            mode: Elm.Label.Slide_Mode; /*@ The slide mode */
          }
       }
       @property slide_duration {

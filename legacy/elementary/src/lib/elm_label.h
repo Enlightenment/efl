@@ -39,7 +39,6 @@
  * See @ref tutorial_label for a demonstration of how to use a label widget.
  * @{
  */
-#include "elm_label_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "elm_label_eo.h"
 #endif

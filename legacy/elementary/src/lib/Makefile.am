@@ -259,7 +259,6 @@ elm_inwin.h \
 elm_inwin_eo.h \
 elm_inwin_legacy.h \
 elm_label.h \
-elm_label_common.h \
 elm_label_eo.h \
 elm_label_legacy.h \
 elm_layout.h \
