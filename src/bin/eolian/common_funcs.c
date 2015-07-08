@@ -76,21 +76,7 @@ void
 _class_func_env_create(const Eolian_Class *class, const char *funcname, Eolian_Function_Type ftype, _eolian_class_func_vars *env)
 {
    char *p;
-   const char *ret;
-   const char *suffix = "";
-   const char *legacy = NULL;
    const Eolian_Function *funcid = eolian_class_function_get_by_name(class, funcname, ftype);
-   if (ftype == EOLIAN_PROP_GET)
-     {
-        suffix = "_get";
-        legacy = eolian_function_legacy_get(funcid, ftype);
-     }
-   else if (ftype == EOLIAN_PROP_SET)
-     {
-        suffix = "_set";
-        legacy = eolian_function_legacy_get(funcid, ftype);
-     }
-   else legacy = eolian_function_legacy_get(funcid, EOLIAN_METHOD);
 
    _eolian_class_vars tmp_env;
    _class_env_create(class, NULL, &tmp_env);
@@ -98,28 +84,21 @@ _class_func_env_create(const Eolian_Class *class, const char *funcname, Eolian_F
    p = strncpy(env->upper_func, funcname, PATH_MAX - 1);
    eina_str_toupper(&p);
 
-   ret = eolian_function_full_c_name_get(funcid);
-   sprintf(p = env->upper_eo_func, "%s%s", ret, suffix);
+   Eolian_Function_Type aftype = ftype;
+   if (aftype == EOLIAN_PROPERTY) aftype = EOLIAN_METHOD;
+
+   Eina_Stringshare *fname = eolian_function_full_c_name_get(funcid, aftype, EINA_FALSE);
+   strcpy(p = env->upper_eo_func, fname);
    eina_str_toupper(&p);
-   sprintf(p = env->lower_eo_func, "%s%s", ret, suffix);
+   strcpy(p = env->lower_eo_func, fname);
    eina_str_tolower(&p);
-   eina_stringshare_del(ret);
+   eina_stringshare_del(fname);
 
+   Eina_Stringshare *lname = eolian_function_full_c_name_get(funcid, aftype, EINA_TRUE);
    env->legacy_func[0] = '\0';
-   if (legacy && !strcmp(legacy, "null")) goto end;
-   if (legacy)
-     {
-        sprintf(p = env->legacy_func, "%s", legacy);
-        goto end;
-     }
-
-   legacy = eolian_class_legacy_prefix_get(class);
-   if (legacy && !strcmp(legacy, "null")) goto end;
-
-   sprintf(env->legacy_func, "%s_%s%s", legacy?legacy:tmp_env.lower_classname, funcname, suffix);
-
-end:
-   return;
+   if (!lname) return;
+   strcpy(p = env->legacy_func, lname);
+   eina_stringshare_del(lname);
 }
 
 void

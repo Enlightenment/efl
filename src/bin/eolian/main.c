@@ -120,7 +120,7 @@ _generate_eo_header_file(char *filename, const char *eo_filename)
 
    Eina_Strbuf *buffer = eina_strbuf_new();
 
-   if (!types_header_generate(eo_filename, buffer, EINA_TRUE))
+   if (!types_header_generate(eo_filename, buffer, EINA_TRUE, EINA_FALSE))
      {
         fprintf(stderr, "eolian: could not generate types of '%s'\n", eo_filename);
         goto end;
@@ -166,7 +166,7 @@ _generate_stub_header_file(char *filename, const char *eo_filename)
 
    Eina_Strbuf *buffer = eina_strbuf_new();
 
-   if (!types_header_generate(eo_filename, buffer, EINA_FALSE))
+   if (!types_header_generate(eo_filename, buffer, EINA_FALSE, EINA_FALSE))
      {
         fprintf(stderr, "eolian: could not generate types of '%s'\n", eo_filename);
         goto end;
@@ -259,7 +259,7 @@ _generate_legacy_header_file(char *filename, const char *eo_filename)
 
    Eina_Strbuf *buffer = eina_strbuf_new();
 
-   if (!types_header_generate(eo_filename, buffer, EINA_TRUE))
+   if (!types_header_generate(eo_filename, buffer, EINA_TRUE, EINA_TRUE))
      {
         fprintf(stderr, "eolian: could not generate types of '%s'\n", eo_filename);
         goto end;

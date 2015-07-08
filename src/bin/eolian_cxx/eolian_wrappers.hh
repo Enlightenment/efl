@@ -164,7 +164,7 @@ function_name(Eolian_Function const& func)
 inline std::string
 function_impl(Eolian_Function const& func)
 {
-   const char *s = ::eolian_function_full_c_name_get(&func);
+   const char *s = ::eolian_function_full_c_name_get(&func, EOLIAN_METHOD, EINA_FALSE);
    std::string ret(s);
    ::eina_stringshare_del(s);
    return ret;

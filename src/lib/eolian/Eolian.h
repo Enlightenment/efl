@@ -648,16 +648,23 @@ EAPI Eina_Stringshare *eolian_function_name_get(const Eolian_Function *function_
  * @brief Returns the full C name of a function.
  *
  * @param[in] function_id Id of the function
+ * @param[in] ftype The type of function to get the name for
+ * @param[in] use_legacy If true, legacy prefix or name will be used when available
  * @return the function name
  *
  * It's here because the C API names are deduplicated (prefix of function and
  * suffix of prefix merge if applicable) and this helps generators not write
  * the same code over and over.
+ *
+ * If legacy name is supplied for the given type and use_legacy is set, it
+ * will be used. Also, if the given type is PROP_GET or PROPERTY, a "_get"
+ * suffix will be applied when not using legacy name, and "_set" for PROP_SET.
+ *
  * Also, you're responsible for deleting the stringshare.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *function_id);
+EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *function_id, Eolian_Function_Type ftype, Eina_Bool use_legacy);
 
 /*
  * @brief Get a function in a class by its name and type

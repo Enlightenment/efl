@@ -27,10 +27,16 @@ eolian_function_name_get(const Eolian_Function *fid)
 }
 
 static const char *
-get_eo_prefix(const Eolian_Function *foo_id, char *buf)
+_get_eo_prefix(const Eolian_Function *foo_id, char *buf, Eina_Bool use_legacy)
 {
     char *tmp = buf;
-    if (foo_id->klass->eo_prefix)
+    if (use_legacy && foo_id->klass->legacy_prefix)
+      {
+         if (!strcmp(foo_id->klass->legacy_prefix, "null"))
+           return NULL;
+         return foo_id->klass->legacy_prefix;
+      }
+    else if (!use_legacy && foo_id->klass->eo_prefix)
       return foo_id->klass->eo_prefix;
     strcpy(buf, foo_id->klass->full_name);
     eina_str_tolower(&buf);
@@ -39,10 +45,39 @@ get_eo_prefix(const Eolian_Function *foo_id, char *buf)
 }
 
 EAPI Eina_Stringshare *
-eolian_function_full_c_name_get(const Eolian_Function *foo_id)
+eolian_function_full_c_name_get(const Eolian_Function *foo_id,
+                                Eolian_Function_Type ftype,
+                                Eina_Bool use_legacy)
 {
+   switch (ftype)
+     {
+      case EOLIAN_UNRESOLVED:
+      case EOLIAN_METHOD:
+      case EOLIAN_PROPERTY:
+      case EOLIAN_PROP_GET:
+        if (foo_id->get_legacy && use_legacy)
+          {
+             if (!strcmp(foo_id->get_legacy, "null"))
+               return NULL;
+             return eina_stringshare_ref(foo_id->get_legacy);
+          }
+        break;
+      case EOLIAN_PROP_SET:
+        if (foo_id->set_legacy && use_legacy)
+          {
+             if (!strcmp(foo_id->set_legacy, "null"))
+               return NULL;
+             return eina_stringshare_ref(foo_id->set_legacy);
+          }
+        break;
+     }
+
    char tbuf[512];
-   const char  *prefix = get_eo_prefix(foo_id, tbuf);
+   const char *prefix = _get_eo_prefix(foo_id, tbuf, use_legacy);
+
+   if (!prefix)
+     return NULL;
+
    const char  *funcn = eolian_function_name_get(foo_id);
    const char  *last_p = strrchr(prefix, '_');
    const char  *func_p = strchr(funcn, '_');
@@ -55,11 +90,17 @@ eolian_function_full_c_name_get(const Eolian_Function *foo_id)
    if (!func_p) len = strlen(funcn);
    else len = func_p - funcn;
 
-   if ((int)strlen(last_p) != len || strncmp(last_p, funcn, len))
+   if (use_legacy || (int)strlen(last_p) != len || strncmp(last_p, funcn, len))
      {
         eina_strbuf_append(buf, prefix);
         eina_strbuf_append_char(buf, '_');
         eina_strbuf_append(buf, funcn);
+
+        if ((ftype == EOLIAN_PROP_GET) || (ftype == EOLIAN_PROPERTY))
+          eina_strbuf_append(buf, "_get");
+        else if (ftype == EOLIAN_PROP_SET)
+          eina_strbuf_append(buf, "_set");
+
         ret = eina_stringshare_add(eina_strbuf_string_get(buf));
         eina_strbuf_free(buf);
         return ret;
@@ -69,6 +110,12 @@ eolian_function_full_c_name_get(const Eolian_Function *foo_id)
       eina_strbuf_append_n(buf, prefix, last_p - prefix); /* includes _ */
 
    eina_strbuf_append(buf, funcn);
+
+   if ((ftype == EOLIAN_PROP_GET) || (ftype == EOLIAN_PROPERTY))
+     eina_strbuf_append(buf, "_get");
+   else if (ftype == EOLIAN_PROP_SET)
+     eina_strbuf_append(buf, "_set");
+
    ret = eina_stringshare_add(eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    return ret;

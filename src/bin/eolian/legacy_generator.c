@@ -97,7 +97,7 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
      }
    else
      {
-        Eina_Strbuf *dbuf = docs_generate_function(funcid, ftype, 0);
+        Eina_Strbuf *dbuf = docs_generate_function(funcid, ftype, 0, EINA_TRUE);
         eina_strbuf_append_char(fbody, '\n');
         eina_strbuf_append(fbody, eina_strbuf_string_get(dbuf));
         eina_strbuf_append_char(fbody, '\n');
@@ -387,7 +387,7 @@ legacy_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    const Eolian_Documentation *doc = eolian_class_documentation_get(class);
    if (doc)
      {
-        Eina_Strbuf *cdoc = docs_generate_full(doc, 0);
+        Eina_Strbuf *cdoc = docs_generate_full(doc, 0, EINA_TRUE);
         if (cdoc)
           {
              eina_strbuf_append(buf, eina_strbuf_string_get(cdoc));

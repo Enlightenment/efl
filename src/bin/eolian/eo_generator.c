@@ -120,7 +120,7 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
      }
    else
      {
-        Eina_Strbuf *dbuf = docs_generate_function(func, ftype, 0);
+        Eina_Strbuf *dbuf = docs_generate_function(func, ftype, 0, EINA_FALSE);
         eina_strbuf_append(str_func, eina_strbuf_string_get(dbuf));
         eina_strbuf_append_char(str_func, '\n');
         eina_strbuf_free(dbuf);
@@ -251,7 +251,7 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 
    if (doc)
      {
-        Eina_Strbuf *cdoc = docs_generate_full(doc, 0);
+        Eina_Strbuf *cdoc = docs_generate_full(doc, 0, EINA_FALSE);
         if (cdoc)
           {
              eina_strbuf_append(buf, eina_strbuf_string_get(cdoc));
@@ -309,7 +309,7 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 
         if (evdoc)
           {
-             Eina_Strbuf *evdbuf = docs_generate_full(evdoc, 0);
+             Eina_Strbuf *evdbuf = docs_generate_full(evdoc, 0, EINA_FALSE);
              eina_strbuf_append(str_ev, eina_strbuf_string_get(evdbuf));
              eina_strbuf_append_char(str_ev, '\n');
              eina_strbuf_free(evdbuf);
@@ -819,7 +819,6 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
         Eolian_Function_Type ftype;
         const Eolian_Function *fnid = NULL;
         const char *funcname = NULL;
-        const char *rets;
 
         const char *names[] = { "", "getter ", "setter " };
 
@@ -874,8 +873,6 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
              goto end;
           }
 
-        rets = eolian_function_full_c_name_get(fnid);
-
         const char *class_str = "";
         if (eolian_function_is_class(fnid)) class_str = "CLASS_";
 
@@ -884,25 +881,32 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
            case EOLIAN_PROP_SET: case EOLIAN_PROP_GET: case EOLIAN_PROPERTY:
               if (ftype != EOLIAN_PROP_GET)
                 {
-                   eina_strbuf_append_printf(str_op, "\n     EO_OP_%sFUNC_OVERRIDE(%s_set, %s_%s_set),",
+                   Eina_Stringshare *rets = eolian_function_full_c_name_get(fnid, EOLIAN_PROP_SET, EINA_FALSE);
+                   eina_strbuf_append_printf(str_op, "\n     EO_OP_%sFUNC_OVERRIDE(%s, %s_%s_set),",
                          class_str, rets, implname, funcname);
                    eo_bind_func_generate(class, fnid, EOLIAN_PROP_SET, str_bodyf, impl_desc, &impl_env);
+                   eina_stringshare_del(rets);
                 }
 
               if (ftype != EOLIAN_PROP_SET)
                 {
-                   eina_strbuf_append_printf(str_op, "\n     EO_OP_%sFUNC_OVERRIDE(%s_get, %s_%s_get),",
+                   Eina_Stringshare *rets = eolian_function_full_c_name_get(fnid, EOLIAN_PROP_GET, EINA_FALSE);
+                   eina_strbuf_append_printf(str_op, "\n     EO_OP_%sFUNC_OVERRIDE(%s, %s_%s_get),",
                          class_str, rets, implname, funcname);
                    eo_bind_func_generate(class, fnid, EOLIAN_PROP_GET, str_bodyf, impl_desc, &impl_env);
+                   eina_stringshare_del(rets);
                 }
               break;
            default:
-              eina_strbuf_append_printf(str_op, "\n     EO_OP_%sFUNC_OVERRIDE(%s, %s_%s),",
-                    class_str, rets, implname, funcname);
-              eo_bind_func_generate(class, fnid, ftype, str_bodyf, impl_desc, &impl_env);
-              break;
+             {
+                Eina_Stringshare *rets = eolian_function_full_c_name_get(fnid, ftype, EINA_FALSE);
+                eina_strbuf_append_printf(str_op, "\n     EO_OP_%sFUNC_OVERRIDE(%s, %s_%s),",
+                      class_str, rets, implname, funcname);
+                eo_bind_func_generate(class, fnid, ftype, str_bodyf, impl_desc, &impl_env);
+                eina_stringshare_del(rets);
+                break;
+             }
           }
-        eina_stringshare_del(rets);
      }
    eina_iterator_free(itr);
 

@@ -183,7 +183,7 @@ local Method = Node:clone {
         local allocs = {}
         proto.allocs = allocs
 
-        proto.full_name = meth:full_c_name_get()
+        proto.full_name = meth:full_c_name_get(func_type.METHOD)
 
         local fulln = proto.full_name
 
@@ -278,7 +278,7 @@ local Property = Method:clone {
         local allocs = {}
         proto.allocs = allocs
 
-        proto.full_name = prop:full_c_name_get() .. proto.suffix
+        proto.full_name = prop:full_c_name_get(self.ftype)
 
         local fulln = proto.full_name
         if #keys > 0 then
