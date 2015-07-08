@@ -87,7 +87,10 @@ static void
 _tick_send(char val)
 {
    DBG("_tick_send(%i)", val);
-   pipe_write(timer_fd_write, &val, 1);
+   if (pipe_write(timer_fd_write, &val, 1) != 0)
+     {
+        ERR("Cannot write to animator control fd");
+     }
 }
 
 static void
@@ -137,7 +140,10 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
           }
         if ((ret == 1) && (FD_ISSET(timer_fd_read, &rfds)))
           {
-             pipe_read(timer_fd_read, &tick, sizeof(tick));
+             if (pipe_read(timer_fd_read, &tick, sizeof(tick)) != 0)
+               {
+                  ERR("Cannot read from animator control fd");
+               }
              DBG("tick = %i", tick);
              if (tick == -1) goto done;
           }
