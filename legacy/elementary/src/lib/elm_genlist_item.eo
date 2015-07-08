@@ -1,5 +1,47 @@
 import elm_general;
 
+enum Elm.Genlist.Item.Type
+{
+   [[
+      Defines if the item is of any special type (has subitems or it's the
+      index of a group), or is just a simple item.
+      @ingroup Genlist
+   ]]
+   legacy: elm_genlist_item;
+   none = 0, [[Simple item.]]
+   tree = (1 << 0), [[This may be expanded and have child items.]]
+   group = (1 << 1), [[An index item of a group of items. this item can have child items.]]
+   max = (1 << 2)
+}
+
+enum Elm.Genlist.Item.Field_Type
+{
+   [[
+      Defines the type of the item part
+      Used while updating item's parts
+      It can be used at updating multi fields.
+      @ingroup Genlist
+   ]]
+   legacy: elm_genlist_item_field;
+   all = 0,
+   text = (1 << 0),
+   content = (1 << 1),
+   state = (1 << 2)
+}
+
+enum Elm.Genlist.Item.Scrollto_Type
+{
+   [[
+      Defines where to position the item in the genlist.
+      @ingroup Genlist
+   ]]
+   legacy: elm_genlist_item_scrollto;
+   none = 0,   [[No scrollto.]]
+   in = (1 << 0),   [[To the nearest viewport.]]
+   top = (1 << 1),   [[To the top of viewport.]]
+   middle = (1 << 2)   [[To the middle of viewport.]]
+}
+
 class Elm.Genlist_Item(Elm.Widget_Item)
 {
       eo_prefix: elm_obj_genlist_item;
@@ -286,7 +328,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     type: Elm_Genlist_Item_Type(4); /*@ Item tupe */
+                     type: Elm.Genlist.Item.Type(Elm.Genlist.Item.Type.max); /*@ Item type */
                 }
            }
            /*      init { FIXME
@@ -352,7 +394,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  @ingroup Genlist
                  */
                 params {
-                     @in type: Elm_Genlist_Item_Scrollto_Type; /*@ The position to bring in, the given item to.
+                     @in type: Elm.Genlist.Item.Scrollto_Type; /*@ The position to bring in, the given item to.
                                                                 @ref Elm_Genlist_Item_Scrollto_Type */
                 }
            }
@@ -370,7 +412,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  @ingroup Genlist
                  */
                 params {
-                     @in type: Elm_Genlist_Item_Scrollto_Type; /*@ The position to bring in, the given item to.
+                     @in type: Elm.Genlist.Item.Scrollto_Type; /*@ The position to bring in, the given item to.
                                                                 @ref Elm_Genlist_Item_Scrollto_Type */
                 }
            }
@@ -429,7 +471,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  */
                 params {
                      @in parts: const (char) *; /*@ The name of item's part */
-                     @in itf: Elm_Genlist_Item_Field_Type; /*@ The type of item's part type */
+                     @in itf: Elm.Genlist.Item.Field_Type; /*@ The type of item's part type */
                 }
            }
            item_class_update {

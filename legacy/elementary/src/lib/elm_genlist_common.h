@@ -2,49 +2,6 @@
 #define ELM_GENLIST_ITEM_CLASS_HEADER ELM_GEN_ITEM_CLASS_HEADER
 
 /**
- * Defines if the item is of any special type (has subitems or it's the
- * index of a group), or is just a simple item.
- *
- * @ingroup Genlist
- */
-typedef enum
-{
-   ELM_GENLIST_ITEM_NONE = 0, /**< simple item */
-   ELM_GENLIST_ITEM_TREE = (1 << 0), /**< this may be expanded and have child items. */
-   ELM_GENLIST_ITEM_GROUP = (1 << 1), /**< an index item of a group of items. this item can have child items. */
-
-   ELM_GENLIST_ITEM_MAX = (1 << 2)
-} Elm_Genlist_Item_Type;
-
-/**
- * Defines the type of the item part
- * Used while updating item's parts
- * It can be used at updating multi fields.
- *
- * @ingroup Genlist
- */
-typedef enum
-{
-   ELM_GENLIST_ITEM_FIELD_ALL = 0,
-   ELM_GENLIST_ITEM_FIELD_TEXT = (1 << 0),
-   ELM_GENLIST_ITEM_FIELD_CONTENT = (1 << 1),
-   ELM_GENLIST_ITEM_FIELD_STATE = (1 << 2)
-} Elm_Genlist_Item_Field_Type;
-
-/**
- * Defines where to position the item in the genlist.
- *
- * @ingroup Genlist
- */
-typedef enum
-{
-   ELM_GENLIST_ITEM_SCROLLTO_NONE = 0,   /**< no scrollto */
-   ELM_GENLIST_ITEM_SCROLLTO_IN = (1 << 0),   /**< to the nearest viewport */
-   ELM_GENLIST_ITEM_SCROLLTO_TOP = (1 << 1),   /**< to the top of viewport */
-   ELM_GENLIST_ITEM_SCROLLTO_MIDDLE = (1 << 2)   /**< to the middle of viewport */
-} Elm_Genlist_Item_Scrollto_Type;
-
-/**
  * @see Elm_Gen_Item_Class
  */
 typedef Elm_Gen_Item_Class Elm_Genlist_Item_Class;
