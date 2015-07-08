@@ -9,7 +9,6 @@
 static Eina_Bool
 _validate_ref(const char *ref, const Eolian_Object *info)
 {
-#if 0
    if (eolian_declaration_get_by_name(ref))
      return EINA_TRUE;
 
@@ -75,11 +74,7 @@ _validate_ref(const char *ref, const Eolian_Object *info)
 failed:
    fprintf(stderr, "eolian:%s:%d:%d: failed validating reference '%s'\n",
        info->file, info->line, info->column, ref);
-#else
-   (void)ref;
-   (void)info;
-#endif
-   return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 static Eina_Bool
