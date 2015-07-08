@@ -1,6 +1,88 @@
 =================
-Elementary 1.14.0
+Elementary 1.15.0
 =================
+
+Changes since 1.14.0:
+---------------------
+
+Features:
+
+   * elementary: Create new widget for image masking
+   * ctxpopup: Added item_focus_set/item_focus_get.
+   * hoversel: Added item_focus_set/item_focus_get.
+   * elm_focus: added new focus move policy and elm_object_focus_move_policy_set/get
+   * Elm: Add context,open signal in elm_entry.
+   * theme: migrate all e users of darken_rounded_square to new darken_square image
+   * elm_scroller: add wheel_disable_set API
+   * calendar: show days of prev/next month.
+   * gengrid: add item cache in gengrid for efficient realize/unrealize operation.
+   * elm_config: Add feature to control transition scale for edje
+   * win: Add autohide and ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN
+   * EFL Model List View for MVC design
+   * EFL Model Form View for MVC design
+
+Fixes:
+
+   * elementary: Remove unused variable
+   * genlist: fix to return item style correctly.
+   * theme: return false if elm_object_style_set() failed to set requested style.
+   * label: Fix memory leak.
+   * SlideShow: Fix double invocation of ItemClass delete function (T2394)
+   * elm_object_item: fix the issue that del_cb doens't get item data as its parameter
+   * widget: more fix wrt item data.
+   * tooltip: set the correct style of label.
+   * slider: use theme of object for popup.
+   * entry: update selection handlers when entry is resized
+   * elm_win: Set initial withdrawn state from win's ecore_evas property.
+   * Immediatly change the cursor if changed from inside the widget
+   * elm_genlist: fix implementation of genlist tooltip functions
+   * fileselector button: correct window parent finding
+   * elm config - init wl if env vars indicate we should
+   * Genlist: support of ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY mode of genlist item for ELM_ITEM_SELECT_ON_FOCUS_DISABLE config variable.
+   * elm - fix profile handling if ELM_PROFILE is set - dont listen to x msg
+   * Gengrid: fix mirroring bug in gengrid widget.
+   * gengrid/genlist: decrement item counter before triggering item del callback
+   * glview: preserved changed state when altering render mode
+   * tooltip: fix positioning when tooltip is affixed to a window object
+   * interface scrollerable: modify the loop_v condition in _elm_scroll_momentum_animator() function
+   * tooltip: fix tooltip multi line text issue (T2034)
+   * fix list item mode change on elm list
+   * cnp: Add safety check for NULL pointer from _elm_util_text_to_mkup().
+   * cnp: Add safety check for NULL pointer from calloc() for anim_icon.
+   * cnp: Add safety check for NULL pointer from strdup().
+   * Dnd/X11: add dnd support for image, uri types
+   * Cnp/X11: move entry-only code in elm_cnp to entry
+   * Cnp/X11: correct object parameter in datacb
+   * entry: add dnd image handling
+   * cnp: Add safety check for NULL pointer from malloc().
+   * clock: Add safety check for NULL pointer from localtime() func.
+   * entry: emit changed,user signal when text is pasted or dropped
+   * win: only trigger del trap if win type is not FAKE
+   * win: do not use deferred ecore evas deletion for FAKE wins
+   * dayselector : add safety check for NULL pointer from _item_find()
+   * colorselector: add safety check for NULL pointer from ecore_x_image_new().
+   * genlist: fix resize of items when added after elm_genlist_clear(). (T2367)
+   * elm_colorselector: fix horiz/vertical padding to be affected by base_scale in edc
+   * elm_genlist: reset timer to NULL on cancel only.
+   * DnD: remove text/uri handling
+   * config: fix the flush file path.
+   * X11/CnP: remove X11 invocations from elm_entry (T2183)
+   * config: read flush.cfg when elm_config_all_flush is called.
+   * elm_colorselector: pixel-picker accuracy fix
+   * elm_gengrid: fix the bug that gengrid item index(position) is updated wrong value in item_update
+   * elm_interface_scrollable: fix wrong mirrored calculation
+   * elementary: Add rudimentary support for Elm Wayland apps to set border icon (T2453)
+   * Revert "theme: return false if elm_object_style_set() failed to set requested style."
+   * Genlist: use correct variable during realize
+   * elm_datetime: Fix datetime ctxpopup resize issue
+   * Elm_Interface_Scrollable: Improvement in looping behavior
+   * layout: Fix eo API error while running "Genlist 7" in elementary_test. (T2534)
+   * Entry: Add chunked append in case of _elm_entry_entry_append
+   * naviframe: Fix to work clicked callback of auto pushed button.
+   * cnp: change drag win type to ELM_WIN_DND
+   * elm_conform: remember window pointer.
+   * elm_conform: remove smart_callback when it is removed.
+   * elm - scroller - set hold flag on wheel events if used for that dir
 
 Changes since 1.13.0:
 ---------------------
@@ -1025,3 +1107,84 @@ Improvements:
    * Defer Elm_Slider update until really needed.
 
 Removal:
+Changes since 1.14.0:
+---------------------
+
+Features:
+
+   * elementary: Create new widget for image masking
+   * ctxpopup: Added item_focus_set/item_focus_get.
+   * hoversel: Added item_focus_set/item_focus_get.
+   * elm_focus: added new focus move policy and elm_object_focus_move_policy_set/get
+   * Elm: Add context,open signal in elm_entry.
+   * theme: migrate all e users of darken_rounded_square to new darken_square image
+   * elm_scroller: add wheel_disable_set API
+   * calendar: show days of prev/next month.
+   * gengrid: add item cache in gengrid for efficient realize/unrealize operation.
+   * elm_config: Add feature to control transition scale for edje
+   * win: Add autohide and ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN
+   * EFL Model List View for MVC design
+   * EFL Model Form View for MVC design
+
+Fixes:
+
+   * elementary: Remove unused variable
+   * genlist: fix to return item style correctly.
+   * theme: return false if elm_object_style_set() failed to set requested style.
+   * label: Fix memory leak.
+   * SlideShow: Fix double invocation of ItemClass delete function (T2394)
+   * elm_object_item: fix the issue that del_cb doens't get item data as its parameter
+   * widget: more fix wrt item data.
+   * tooltip: set the correct style of label.
+   * slider: use theme of object for popup.
+   * entry: update selection handlers when entry is resized
+   * elm_win: Set initial withdrawn state from win's ecore_evas property.
+   * Immediatly change the cursor if changed from inside the widget
+   * elm_genlist: fix implementation of genlist tooltip functions
+   * fileselector button: correct window parent finding
+   * elm config - init wl if env vars indicate we should
+   * Genlist: support of ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY mode of genlist item for ELM_ITEM_SELECT_ON_FOCUS_DISABLE config variable.
+   * elm - fix profile handling if ELM_PROFILE is set - dont listen to x msg
+   * Gengrid: fix mirroring bug in gengrid widget.
+   * gengrid/genlist: decrement item counter before triggering item del callback
+   * glview: preserved changed state when altering render mode
+   * tooltip: fix positioning when tooltip is affixed to a window object
+   * interface scrollerable: modify the loop_v condition in _elm_scroll_momentum_animator() function
+   * tooltip: fix tooltip multi line text issue (T2034)
+   * fix list item mode change on elm list
+   * cnp: Add safety check for NULL pointer from _elm_util_text_to_mkup().
+   * cnp: Add safety check for NULL pointer from calloc() for anim_icon.
+   * cnp: Add safety check for NULL pointer from strdup().
+   * Dnd/X11: add dnd support for image, uri types
+   * Cnp/X11: move entry-only code in elm_cnp to entry
+   * Cnp/X11: correct object parameter in datacb
+   * entry: add dnd image handling
+   * cnp: Add safety check for NULL pointer from malloc().
+   * clock: Add safety check for NULL pointer from localtime() func.
+   * entry: emit changed,user signal when text is pasted or dropped
+   * win: only trigger del trap if win type is not FAKE
+   * win: do not use deferred ecore evas deletion for FAKE wins
+   * dayselector : add safety check for NULL pointer from _item_find()
+   * colorselector: add safety check for NULL pointer from ecore_x_image_new().
+   * genlist: fix resize of items when added after elm_genlist_clear(). (T2367)
+   * elm_colorselector: fix horiz/vertical padding to be affected by base_scale in edc
+   * elm_genlist: reset timer to NULL on cancel only.
+   * DnD: remove text/uri handling
+   * config: fix the flush file path.
+   * X11/CnP: remove X11 invocations from elm_entry (T2183)
+   * config: read flush.cfg when elm_config_all_flush is called.
+   * elm_colorselector: pixel-picker accuracy fix
+   * elm_gengrid: fix the bug that gengrid item index(position) is updated wrong value in item_update
+   * elm_interface_scrollable: fix wrong mirrored calculation
+   * elementary: Add rudimentary support for Elm Wayland apps to set border icon (T2453)
+   * Revert "theme: return false if elm_object_style_set() failed to set requested style."
+   * Genlist: use correct variable during realize
+   * elm_datetime: Fix datetime ctxpopup resize issue
+   * Elm_Interface_Scrollable: Improvement in looping behavior
+   * layout: Fix eo API error while running "Genlist 7" in elementary_test. (T2534)
+   * Entry: Add chunked append in case of _elm_entry_entry_append
+   * naviframe: Fix to work clicked callback of auto pushed button.
+   * cnp: change drag win type to ELM_WIN_DND
+   * elm_conform: remember window pointer.
+   * elm_conform: remove smart_callback when it is removed.
+   * elm - scroller - set hold flag on wheel events if used for that dir
