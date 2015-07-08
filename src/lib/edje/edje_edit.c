@@ -6174,7 +6174,7 @@ edje_edit_state_color_class_set(Evas_Object *obj, const char *part, const char *
    if (!color_class)
      {
         pd->color_class = NULL;
-        return EINA_FALSE;
+        return EINA_TRUE;
      }
 
    if (!ed->file->color_classes) return EINA_FALSE;
