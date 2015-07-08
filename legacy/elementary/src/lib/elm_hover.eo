@@ -1,3 +1,15 @@
+enum Elm.Hover.Axis
+{
+   [[
+     @addtogroup Hover
+     The orientation axis for the hover object
+   ]]
+   none, [[ELM_HOVER_AXIS_NONE -- no preferred orientation.]]
+   horizontal, [[ELM_HOVER_AXIS_HORIZONTAL -- horizontal.]]
+   vertical, [[ELM_HOVER_AXIS_VERTICAL -- vertical.]]
+   both [[ELM_HOVER_AXIS_BOTH -- both.]]
+}
+
 class Elm.Hover (Elm.Layout, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_hover;
@@ -53,7 +65,7 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface)
          @ingroup Hover */
          return: const(char)*;
          params {
-            @in pref_axis: Elm_Hover_Axis; /*@ The preferred orientation axis for the hover object to use */
+            @in pref_axis: Elm.Hover.Axis; /*@ The preferred orientation axis for the hover object to use */
          }
       }
       dismiss {

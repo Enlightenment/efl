@@ -80,7 +80,6 @@
  * @{
  */
 
-#include "elm_hover_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "elm_hover_eo.h"
 #endif

@@ -241,7 +241,6 @@ elm_grid.h \
 elm_grid_eo.h \
 elm_grid_legacy.h \
 elm_hover.h \
-elm_hover_common.h \
 elm_hover_eo.h \
 elm_hover_legacy.h \
 elm_icon.h \
