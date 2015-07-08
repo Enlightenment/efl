@@ -1,6 +1,209 @@
 ==========
-EFL 1.14.0
+EFL 1.15.0
 ==========
+
+Changes since 1.14.0:
+---------------------
+
+Features:
+
+   * Eo: Take eo out of beta.
+   * Eo: Add eo_do_part.
+   * Eolian: Add API to retrieve an event of a class by its name
+   * evas: enable NEON-optimized code for aarch64.
+   * evas: implement _op_blend_c_dp_neon in NEON intrinsics.
+   * Static deps: Move unibreak to be an external dep.
+   * Static deps unibreak: update to what will soon be version 3.
+   * ecore-drm: Add API function to return screen size range
+   * ecore-drm: Add API function to return the name of an output
+   * ecore-drm: Add API function to return output connected state
+   * ecore-drm: Add API function to return the connector type of a given output
+   * ecore-drm: Add API function to return if a given output has a backlight
+   * ecore-drm: Add API function to return the edid of a given output
+   * ecore-drm: Add API function to return output modes
+   * ecore-drm: Add support for a Primary Output
+   * ecore-drm: Add API function to return primary output
+   * ecore-drm: Add API function to get an output's crtc size
+   * ecore-drm: Add API function to find an output given a name
+   * ecore-drm: Add new API function to mark an output as primary
+   * Merge branch 'devs/devilhorns/ecore_drm'
+   * ecore-drm: Add API function to test if an output can go on a given crtc
+   * ecore-drm: Add a 'name' field to Ecore_Drm_Event_Output
+   * ecore-drm: Add API function to set a new mode on an output
+   * efl - add more evlog points
+   * eina: add crosss platforme API to retrieve tmp and home directories from environment.
+   * edje entry: Improves anchors handling
+   * eina_cpu - up max number of threads to 32
+   * eolian: much better and stricter redefinition checking
+   * evas: New Evas Callback added when viewport is resized.
+   * eolian: new syntax for params/values/keys
+   * ecore-x: add function to init ecore-x from external Display* object
+   * Eo: Add a return value to eo_constructor().
+   * Eo: Remove eo_error_set() and clean up finalizer()
+   * ecore-input: add keysym to Ecore_Event_Key struct
+   * evas: add keysym member to key event structs
+   * eolian: disallow cyclic dependencies between .eo files
+   * ecore_imf/wayland: support autocapital mode in wayland text input
+   * Evas textblock: Add underline height support
+   * ecore_imf/wayland: support password mode in wayland text input
+   * ecore_imf/wayland: support input hint in wayland text input
+   * ecore_imf/wayland: support input language mode in wayland text input
+   * eolian: initial exposed declaration API - not yet very useful
+   * Evas GL: 1.x support for GLX
+   * Evas GL: support surfaceless make current
+   * eolian: add documentation handling API
+   * ecore-x: add new grab touch devices functionality.
+   * eolian/generator: generation for new documentation system
+   * eolian: support for @since tag in new doc comments
+   * Edje: Add clip as a property of a part description
+   * Evas: Add "no-render" flag for proxy sources & clippers
+   *  Ecore_input: Add "ECORE_EVENT_MOUSE_BUTTON_CANCEL" event
+   * ecore-buffer: Add ecore_buffer library to EFL.
+   * edje: add support to control the transition time of edje animation globally.
+   * edje: add possibility to speed up animation per object.
+   * eolian_cxx: Use C++ wrappers instead of native types as parameters
+   * Edje/evas filters: Add filter.source support
+   * Edje/evas filters: Use EDJ data sections to store filters code
+   * Edje & evas filters: Add extra data from EDC to Lua program
+   * ecore-x: add ecore_x_keysym_get()
+   * Evas Textblock: Add obstacle objects feature
+   * Evil: add a wrapper around _mkdir
+   * eolian: add API: eolian_declaration_get_by_name
+   * eolian/generator: add proper generation of references
+   * eolian: improve function_full_c_name_get API
+
+Fixes:
+
+   * Evas gl: Fix shader generation with out of source builds.
+   * Eolian/Generator: fix enums generation (T2400)
+   * evil: fix mem leak in dlsym() when using UNICODE
+   * evil: fix dladdr() implementation, add 2 unit tests for evil.
+   * elua: use a minimal app to avoid loading eolian at runtime
+   * ecore-drm: Set output connected property in the creation function
+   * ecore-drm: Set drm client capabilities to support universal planes
+   * ecore - ecore_pipe_wait timeout broken as it never adjusts while waiting
+   * rg_etc: Correct ifdef to keep function available for debug build
+   * Evas GL common: Skip shaders generation if there is no change
+   * ecore-wayland: Input grab_count is unsigned int, no need for comparison < 0
+   * ecore-drm: Fix issue of edid parsing not ignoring string
+   * ecore-drm: Fix ecore_drm_output_edid_get to return a hex string
+   * ecore-drm: Fix finding possible crtcs
+   * ecore-drm: Skip not connected outputs when calculating geometry
+   * Evas filters: Fix glReadPixels usage for EGL
+   * evas grid smart - fix coord overflows when grid size and vsize are large
+   * ecore-drm: Fix purpose of ecore_drm_output_enable/disable functions
+   * ecore-drm: Greatly improve drm rendering speed
+   * ecore-drm: Only send output events when we enable/disable an output
+   * ecore-drm: Fix issue with output_current_resolution_get function
+   * evas canvas: add exceptional handling in invalid input case.
+   * ecore_evas_wayland: prevent duplicated shutdown of ecore_wl
+   * ecore-drm: Fix segfault if sending output event and output has no current mode
+   * ecore-drm: Ignore output enabled flag when setting output mode
+   * evas-drm: Mark framebuffer as dirty before sending
+   * edje: fix back edje_watch.
+   * eina - cpu count - fic cpu count to count # of cores correctly
+   * evas canvas: fix insane mouse move events on proxy source.
+   * ecore-drm: Only try to set the crtc mode if an output is connected
+   * eina-bt: Fix Coverity CID1297405 (dereference before null check)
+   * eolian: use data_type consistently in the C generator
+   * Ecore con url: Fix wrong object destruction.
+   * eolian: allow keys/values in property get/set
+   * eolian: properly handle errors in database_fill (CID1299294)
+   * ecore-wl: Set keycode in event structure for key down/up
+   * evas_object_textblock: fix dereference before null check (CID1270031)
+   * ecore-wl: Remove +x from ecore_wl_input.c
+   * ecore-drm: Remove call to set drm mode when creating an output
+   * eina_cxx, eldbus_cxx: Fix perfect forwarding of arguments
+   * embryo_cc: prevent memory curruption
+   * edje: fix memory leak detected by prevent static analyser.
+   * evas: make image_size_get() return the actual image size
+   * Fix issue wrong surrounding text returns when there is selection area
+   * edje: edje_cc_parse should check pair of parens.
+   * pkg-config: fix portability issue on Windows. (T2458)
+   * ecore-evas: Fix issue of gl_drm engine not being able to load
+   * Evas masking: Fix rare issue of invalid rendering (GL)
+   * Evas GL: destroy egl image when surface is destroyed
+   * Evas GL: Fix direct_mem_opt and direct_override
+   * Evas GL: Make current to an Evas GL context before destroying surface buffers
+   * Evas GL: return correct context for context_get with indirect context
+   * Evas GL: Pass correct attachment enum for glDiscardFramebufferEXT (T0)
+   * Evas GL: Match FBO config with window surface config
+   * emile: fix region load for jpeg image with orientation different set.
+   * ecore_con: fix error handling case.
+   * eolian: double newline ends summary, not single
+   * evas-gl-drm: Rework gl_drm engine to function again
+   * ecore-evas-drm: Update ecore_evas_drm for recent evas gl_drm changes
+   * ecore-drm: Remove erroneous error messages from EINA_SAFETY checks
+   * ecore-evas: Change gl_drm to be the proper engine name
+   * ecore-drm: Don't crash when trying to disable an output
+   * evas-gl-drm: Readd support for pre_swap/post_swap callbacks
+   * ecore-evas-drm: Use XRGB format for gl_drm canvas
+   * evas-gl-drm: Create eglContext before eglWindowSurface
+   * ecore-drm: Don't free an output on unplug
+   * ecore-evas-drm: We don't need to feed mouse events here
+   * evas-gl-drm: Refactor gl_drm engine to not use dumb buffers
+   * evas-gl-drm: Fix issue with swap mode returning wrong value
+   * eina: Fix warning about unused paramaters
+   * evas-gl-drm: Trap for invalid gbm bo
+   * eolian_cxx: initialize all members in a struct correctly (CID1298133)
+   * eolian: we need import_types_ref.h included in tarball
+   * ecore-wayland: Fix T2466: Update xdg shell protocol code
+   * edje: set GROUP/SWALLOW/EXTERNAL pass events based on mouse events
+   * eina semaphore lock - don't wake up because of signals
+   * eolian: pass rbuf to doc_error (CID1304728)
+   * elua lib: sanitize all file paths before writing them (CID1267463)
+   * ecore-x: Fix warning of unused variable
+   * ecore-x: Fix warning of defined but unused function
+   * ecore-x: Fix compiler warning of unused variable
+   * evas: Remove unused variables
+   * ector: always initialize the array contents even without fetchfunc (CID1294210)
+   * ecore: null cb function is unacceptable.
+   * Edje_entry: Fix control + (x,a,y,z,m,c) not working issue.
+   * Evas GL: Fix coverity CID 1304559, 1304560 (CID1304560, CID1304559)
+   * eolian/generator: fix enum field doc generator bug
+   * Evas filters: Fix blend with color with rgba buffers
+   * edje entry - also filter 0x7f (DEL) char on input as it's invalid entry
+   * evas_smart: Add a check for zero size before malloc
+   * evas_event: evas_event_feed_mouse_cancel set EVAS_EVENT_FLAG_ON_HOLD
+   * Evas: Remove shader_3d .x generated file from BUILT_SOURCES
+   * eolian: check for C type keyword before trying to append as C type keyword
+   * ecore-evas-drm: Default to GBM_FORMAT_ARGB8888
+   * eina/simple_xml_parser: don't parse the <, > in the attribute string.
+   * evas-gl-drm: Cleanup compiler warnings when building gl_drm engine
+   * ecore-input-evas: Fix Coverity CID1306803 (logically dead code)
+   * evas-render2: Fix Coverity CID1306141: Dereference null return value
+   * edje: Fix Coverity CID1299026 and CID1299027: Explicit null dereference
+   * evas: fix Evas.Canvas3D color pick
+   * ecore-wayland: Fix issue of events not getting dispatched properly
+   * ecore-drm: Fix issue of outputs not getting registered with the wayland registry (T5, T2465)
+   * ecore-drm: Fix setting proper output subpixel value
+   * ecore-drm: Quiet down output from libinput
+   * eo - silence ERR logs on constructor fail - this is valid behavior
+   * efl - efreetd service move from dbus session bus to ecore ipc
+   * eina module - it is not an error to ERR log to not load a .so
+   * ecore con dns - a failed dns lookup is not an err log event
+   * ecore con - fix object data referencing for deleted objects
+   * edje_embryo: correct type mismatching in get_geometry() method
+   * eolian: try replacing '.' with locale specific decimal point
+   * eolian/generator: constify all prototypes for @const functions
+   * edje_cc: Fix dereference null return value (CID1308232)
+   * edje_cc: Fix dereference before null check (CID1302700)
+   * ecore-wayland: Update xdg shell protocol file
+   * ecore_x_xi2: fix crash if device info is NULL.
+   * ecore-evas-extn : map shm for sharing render pixels conservatively
+   * Evas textblock: Fix issue with line_coord_set and y before the first line.
+   * evas: opaque value does not change even if image data be changed
+   * Evas textblock: Fix infinite loop case
+   * ecore_imf: fix wrong return type of ecore_imf_context_input_panel_return_key_type_get
+   * evas-fb: Fix compiler warnings about suggested parentheses
+   * Interfaces: fix event name
+   * Ecore exe (windows): Fix object destruction/failed creation.
+   * Ecore Con: Fix ecore_con_local hangs on Windows.
+   * evas - image core - fix unloading of images to work again
+   * edje edit: don't set the color_class color as main
+   * edje_edit: return EINA_TRUE for unset color_class
+   * Efreet: Fix config and data dir paths on windows.
+   * ecore-wayland: Remove improper use of EINA_UNUSED
 
 Changes since 1.13.0:
 ---------------------
