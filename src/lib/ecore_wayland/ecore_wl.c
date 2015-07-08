@@ -624,7 +624,7 @@ _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
 }
 
 static void
-_ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned int id, const char *interface, unsigned int version EINA_UNUSED)
+_ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned int id, const char *interface, unsigned int version)
 {
    Ecore_Wl_Display *ewd;
    Ecore_Wl_Global *global;
