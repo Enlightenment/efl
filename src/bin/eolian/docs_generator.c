@@ -109,7 +109,7 @@ noref:
    eina_strbuf_append(wbuf, refn);
 }
 
-int
+static int
 _append_section(const char *desc, int ind, int curl, Eina_Strbuf *buf,
                 Eina_Strbuf *wbuf, Eina_Bool use_legacy)
 {
@@ -181,7 +181,7 @@ _append_section(const char *desc, int ind, int curl, Eina_Strbuf *buf,
    return curl;
 }
 
-int
+static int
 _append_since(const char *since, int indent, int curl, Eina_Strbuf *buf)
 {
    if (since)
@@ -197,7 +197,7 @@ _append_since(const char *since, int indent, int curl, Eina_Strbuf *buf)
    return curl;
 }
 
-void
+static void
 _gen_doc_brief(const char *summary, const char *since, int indent,
                Eina_Strbuf *buf, Eina_Bool use_legacy)
 {
@@ -217,7 +217,7 @@ _gen_doc_brief(const char *summary, const char *since, int indent,
      eina_strbuf_append(buf, " */");
 }
 
-void
+static void
 _gen_doc_full(const char *summary, const char *description, const char *since,
               int indent, Eina_Strbuf *buf, Eina_Bool use_legacy)
 {
