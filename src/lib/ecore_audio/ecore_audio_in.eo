@@ -77,8 +77,8 @@ class Ecore_Audio_In (Ecore_Audio)
             [[Set the looped state of the input
 
               If the input is looped and reaches the end it will start from the
-              beginning again. At the same time the event @ECORE_AUDIO_EV_IN_LOOPED
-              will be emitted
+              beginning again. At the same time the event
+              \@ref ECORE_AUDIO_EV_IN_LOOPED will be emitted
 
               @since 1.8
             ]]

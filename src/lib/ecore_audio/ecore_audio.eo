@@ -109,12 +109,12 @@ class Ecore_Audio (Eo.Base)
            @since 1.8
          ]]
          params {
-              vio: Ecore_Audio_Vio *; [[the @Ecore_Audio_Vio struct with the
-                                        function callbacks
+              vio: Ecore_Audio_Vio *; [[the \@ref Ecore_Audio_Vio struct with
+                                        the function callbacks
                                       ]]
               data: void *; [[user data to pass to the VIO functions]]
               free_func: eo_key_data_free_func; [[this function takes care to
-                                                  clean up @data when he VIO is
+                                                  clean up $data when he VIO is
                                                   destroyed. NULL means do
                                                   nothing.
                                                 ]]

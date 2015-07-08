@@ -32,7 +32,7 @@ class Evas.Canvas3D.Material (Evas.Canvas3D.Object, Evas.Common_Interface)
       color_get @const {
          [[Get the material attribute color of the given material.
 
-           See also @evas_canvas3d_material_color_set.
+           See also @.color_set.
          ]]
          params {
             @in attrib: Evas.Canvas3D.Material_Attrib; [[Material attribute ID.]]
@@ -58,7 +58,7 @@ class Evas.Canvas3D.Material (Evas.Canvas3D.Object, Evas.Common_Interface)
          get {
             [[Get the material attribute enable flag of the given material.
 
-              See also @evas_canvas3d_material_enable_set.
+              See also @.enable.set.
             ]]
          }
          keys {
@@ -78,13 +78,13 @@ class Evas.Canvas3D.Material (Evas.Canvas3D.Object, Evas.Common_Interface)
 
               Default shininess value is 150.0.
 
-              See also @evas_canvas3d_material_enable_set.
+              See also @.enable.set.
             ]]
          }
          get {
             [[Get the shininess of the given material.
 
-              See also @evas_canvas3d_material_shininess_set.
+              See also @.shininess.set.
             ]]
          }
          values {
@@ -98,13 +98,13 @@ class Evas.Canvas3D.Material (Evas.Canvas3D.Object, Evas.Common_Interface)
 
               You have to enable the desired attribute first.
 
-              See also @evas_canvas3d_material_enable_set.
+              See also @.enable.set.
             ]]
          }
          get {
             [[Get the texture of the given material.
 
-              See also @evas_canvas3d_material_texture_set.
+              See also @.texture.set.
             ]]
          }
 

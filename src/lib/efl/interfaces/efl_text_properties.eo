@@ -14,8 +14,7 @@ interface Efl.Text_Properties {
               to get an idea). Alternatively, one can use a full path to a font
               file.
 
-              See also @evas_object_text_font_get,
-              @evas_object_text_font_source_set.
+              See also @.font.get, @.font_source.get.
             ]]
          }
          get {
@@ -26,7 +25,7 @@ interface Efl.Text_Properties {
               Evas and should not have free() called on it by the caller of the
               function.
 
-              See also @evas_object_text_font_set.
+              See also @.font.set.
             ]]
          }
          values {
@@ -42,14 +41,14 @@ interface Efl.Text_Properties {
               given text object, overriding system lookup, which will first
               occur in the given file's contents.
 
-              See also @evas_object_text_font_get.
+              See also @.font.set.
             ]]
          }
          get {
             [[Get the font file's path which is being used on a given text
               object.
 
-              See @evas_object_text_font_get for more details.
+              See @.font.get for more details.
             ]]
          }
          values {

@@ -37,19 +37,19 @@ class Ecore.Con.Eet.Base (Eo.Base) {
          }
       }
       data_callback_del {
-         [[Function to delete the @data_callback.]]
+         [[Function to delete the @.data_callback.]]
          params {
             name: const (char) *; [[The name of the eet stream.]]
          }
       }
       raw_data_callback_del {
-         [[Function to delete the @raw_data_callback.]]
+         [[Function to delete the @.raw_data_callback.]]
          params {
             name: const (char) *; [[The name of the eet stream.]]
          }
       }
       register {
-         [[Function to register a @Eet_Data_Descriptor to the
+         [[Function to register a \@ref Eet_Data_Descriptor to the
            ecore_con_eet object.]]
          legacy: ecore_con_eet;
          params {

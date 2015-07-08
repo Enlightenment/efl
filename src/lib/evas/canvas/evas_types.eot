@@ -9,7 +9,7 @@ enum Evas.Aspect_Control {
                      using the given aspect]]
    vertical = 3, [[Use all vertical container space to place an object, using
                    the given aspect]]
-   both = 4 [[Use all horizontal @b and vertical container spaces to place an
+   both = 4 [[Use all horizontal and vertical container spaces to place an
               object (never growing it out of those bounds), using the given
               aspect]]
 }
@@ -117,7 +117,8 @@ enum Evas.Font.Hinting_Flags {
 
 struct Evas.Map; [[An opaque handle to map points
 
-                   See @evas_map_new, @evas_map_free, @evas_map_dup.
+                   See \@ref evas_map_new, \@ref evas_map_free,
+                   \@ref evas_map_dup.
                  ]]
 
 enum Evas.Button_Flags {
@@ -198,19 +199,33 @@ enum Evas.Callback_Type
 
    image_unloaded, [[Image data has been unloaded (by some mechanism in Evas that throw out original image data)]]
 
-   render_pre, [[Called just before rendering starts on the canvas target @since 1.2]]
-   render_post, [[Called just after rendering stops on the canvas target @since 1.2]]
+   render_pre, [[Called just before rendering starts on the canvas target
 
-   image_resize, [[Image size is changed @since 1.8]]
-   device_changed, [[Devices added, removed or changed on canvas @since 1.8]]
+                 @since 1.2]]
+   render_post, [[Called just after rendering stops on the canvas target
 
-   axis_update, [[Input device changed value on some axis @since 1.13]]
+                  @since 1.2]]
 
-   canvas_viewport_resize, [[Canvas viewport resized @since 1.15]]
+   image_resize, [[Image size is changed
+
+                   @since 1.8]]
+   device_changed, [[Devices added, removed or changed on canvas
+
+                     @since 1.8]]
+
+   axis_update, [[Input device changed value on some axis
+
+                  @since 1.13]]
+
+   canvas_viewport_resize, [[Canvas viewport resized
+
+                             @since 1.15]]
    last [[kept as last element/sentinel -- not really an event]]
 }
 
 struct Evas.Modifier; [[An opaque type containing information on which modifier keys are registered in an Evas canvas]]
 struct Evas.Lock; [[An opaque type containing information on which lock keys are registered in an Evas canvas]]
 struct Evas.Engine_Info; [[A generic Evas Engine information structure]]
-struct Evas.Axis; [[Details for a single device axis state @since 1.13]]
+struct Evas.Axis; [[Details for a single device axis state
+
+                    @since 1.13]]

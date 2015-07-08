@@ -33,7 +33,7 @@ interface Efl.Gfx.Base {
             [[Sets the general/main color of the given Evas object to the given
               one.
 
-              See also @evas_object_color_get (for an example)
+              See also @.color.get (for an example)
 
               These color values are expected to be premultiplied by alpha.
             ]]
@@ -58,7 +58,7 @@ interface Efl.Gfx.Base {
               Use null pointers on the components you're not interested
               in: they'll be ignored by the function.
 
-              See the full @Example_Evas_Object_Manipulation "example".
+              See the full \@ref Example_Evas_Object_Manipulation "example".
             ]]
          }
          values {
@@ -73,7 +73,7 @@ interface Efl.Gfx.Base {
             [[Sets a specifc color of the given Efl.Gfx.Base object to the
               given one.
 
-              See also @evas_object_color_get (for an example)
+              See also @.color.get (for an example)
 
               These color values are expected to be premultiplied by alpha.
             ]]

@@ -13,7 +13,7 @@ struct Eo.Event_Description {
 struct Eo.Callback_Array_Item {
     [[An item in an array of callback desc/func.
 
-      See also @eo_event_callback_array_add.
+      See also \@ref eo_event_callback_array_add.
     ]]
     desc: const(Eo.Event_Description) *; [[The event description.]]
     func: Eo.Event_Cb; [[The callback function.]]
@@ -29,9 +29,9 @@ struct Eo.Dbg_Info {
 type Eo.Callback_Priority: short; [[Callback priority value. Range is -32k - 32k.
                                     The lower the number, the higher the priority.
 
-                                    See @EO_CALLBACK_PRIORITY_AFTER,
-                                    @EO_CALLBACK_PRIORITY_BEFORE
-                                    @EO_CALLBACK_PRIORITY_DEFAULT
+                                    See \@ref EO_CALLBACK_PRIORITY_AFTER,
+                                    \@ref EO_CALLBACK_PRIORITY_BEFORE
+                                    \@ref EO_CALLBACK_PRIORITY_DEFAULT
                                   ]]
 
 abstract Eo.Base ()
@@ -218,8 +218,8 @@ abstract Eo.Base ()
             @in desc: const(Eo.Event_Description)*; [[The description of the event to call]]
             @in event_info: void *; [[Extra event info to pass to the callbacks]]
          }
-         return: bool; [[@c EINA_TRUE if one of the callbacks aborted the call,
-                         @c EINA_FALSE otherwise
+         return: bool; [[$true if one of the callbacks aborted the call,
+                         $false otherwise
                        ]]
       }
       event_callback_forwarder_add {
@@ -253,31 +253,31 @@ abstract Eo.Base ()
              It is not possible to attach more then 1 composite of the same class.
              This functions also sets the parent of comp_obj to parent.
 
-             See @eo_composite_detach, @eo_composite_part_is.
+             See @.composite_detach, @.composite_part_is.
            ]]
            params {
                 @in comp_obj: Eo.Base *; [[the object that will be used to composite the parent.]]
            }
-           return: bool; [[EINA_TRUE if successfull. EINA_FALSE otherwise.]]
+           return: bool; [[$true if successfull. $false otherwise.]]
       }
       composite_detach @beta {
            [[Detach a composite object from another object.
 
-             This functions also sets the parent of comp_obj to @c NULL.
+             This functions also sets the parent of comp_obj to $null.
 
-             See @eo_composite_attach, @eo_composite_part_is.
+             See @.composite_attach, @.composite_part_is.
            ]]
            params {
                 @in comp_obj: Eo.Base *; [[the object that will be removed from the parent.]]
            }
-           return: bool; [[EINA_TRUE if successfull. EINA_FALSE otherwise.]]
+           return: bool; [[$true if successfull. $false otherwise.]]
       }
       composite_part_is @beta {
            [[Check if an object is part of a composite object.
 
-             See @eo_composite_attach, @eo_composite_part_is.
+             See @.composite_attach, @.composite_part_is.
            ]]
-           return: bool; [[EINA_TRUE if it is. EINA_FALSE otherwise.]]
+           return: bool; [[$true if it is. $false otherwise.]]
       }
    }
    implements {

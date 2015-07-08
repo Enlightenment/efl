@@ -48,10 +48,10 @@ class Ecore.Con.Server (Ecore.Con.Base) {
       @property clients {
          [[Retrieves the current list of clients.
 
-           Each node in the returned list points to an @Ecore_Con_Client. This
-           list cannot be modified or freed. It can also change if new clients
-           are connected or disconnected, and will become invalid when the
-           server is deleted/freed.
+           Each node in the returned list points to an \@ref Ecore_Con_Client.
+           This list cannot be modified or freed. It can also change if new
+           clients are connected or disconnected, and will become invalid
+           when the server is deleted/freed.
          ]]
          get {
          }

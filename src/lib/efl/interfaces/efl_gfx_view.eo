@@ -15,7 +15,7 @@ interface Efl.Gfx.View {
          get {
             [[Retrieves the size of the given image object.
 
-              See @evas_object_image_size_set for more details.
+              See @.size.set for more details.
             ]]
          }
          values {

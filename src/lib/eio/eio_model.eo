@@ -11,7 +11,7 @@ class Eio.Model (Eo.Base, Efl.Model.Base)
             by returning either EINA_FALSE, to abort the notification or
             EINA_TRUE to keep it.
 
-            See also @emodel_children_slice_fetch, @emodel_children_filter_set.
+            See also @Efl.Model.Base.children_slice.get.
 
             @since 1.11
           ]]

@@ -88,7 +88,7 @@ mixin Efl.Gfx.Shape
               The cap will be used for capping the end point of a 
               open subpath.
 
-              See also @Efl_Gfx_Cap.
+              See also \@ref Efl_Gfx_Cap.
 
               @since 1.14
             ]]
@@ -109,7 +109,7 @@ mixin Efl.Gfx.Shape
               The join style will be used for joining the two line segment
               while stroking teh path.
 
-              See also @Efl_Gfx_Join.
+              See also \@ref Efl_Gfx_Join.
 
               @since 1.14
             ]]
@@ -130,7 +130,7 @@ mixin Efl.Gfx.Shape
             [[Set the list of commands and points to be used to create the
               content of shape.
 
-              See @efl_gfx_path interface for how to create a command list.
+              See \@ref efl_gfx_path interface for how to create a command list.
 
               @since 1.14
             ]]
@@ -198,7 +198,7 @@ mixin Efl.Gfx.Shape
         [[Moves the current point to the given point, 
           implicitly starting a new subpath and closing the previous one.
 
-          See also @efl_gfx_path_append_close.
+          See also @.append_close.
 
           @since 1.14
         ]]
@@ -215,7 +215,7 @@ mixin Efl.Gfx.Shape
           If no current position present, it draws a line to itself, basically
           a point.
 
-          See also @efl_gfx_path_append_move_to.
+          See also @.append_move_to.
 
           @since 1.14
         ]]
@@ -243,7 +243,7 @@ mixin Efl.Gfx.Shape
         [[Same as efl_gfx_path_append_quadratic_to() api only difference is
           that it uses the current control point to draw the bezier.
 
-          See also @efl_gfx_path_append_quadratic_to.
+          See also @.append_quadratic_to.
 
           @since 1.14
         ]]
@@ -273,7 +273,7 @@ mixin Efl.Gfx.Shape
         [[Same as efl_gfx_path_append_cubic_to() api only difference is that it
           uses the current control point to draw the bezier.
 
-         See also @efl_gfx_path_append_cubic_to.
+         See also @.append_cubic_to.
 
           @since 1.14
         ]]
@@ -290,7 +290,7 @@ mixin Efl.Gfx.Shape
           x-direction (rx) and radius in y direction (ry).
 
           Use this api if you know the end point's of the arc otherwise use
-          more convenient function @efl_gfx_path_append_arc_to.
+          more convenient function @.append_arc_to.
 
           @since 1.14
         ]]

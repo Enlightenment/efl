@@ -9,8 +9,8 @@ class Emotion.Object (Evas.Object_Smart, Efl.File, Efl.Player, Efl.Image) {
                     emotion object.
 
                     Please don't use this function, consider using
-                    @emotion_object_audio_mute_set() and
-                    @emotion_object_video_mute_set instead.
+                    \@ref emotion_object_audio_mute_set and
+                    \@ref emotion_object_video_mute_set instead.
                   ]]
                   legacy: emotion_object_module_option_set;
              }
@@ -37,7 +37,8 @@ class Emotion.Object (Evas.Object_Smart, Efl.File, Efl.Player, Efl.Image) {
                     It's possible to disable the build of a module with
                     --disable-module_name.
 
-                    See also @emotion_object_add and @emotion_object_file_set.
+                    See also \@ref emotion_object_add and
+                    \@ref emotion_object_file_set.
                   ]]
                   legacy: emotion_object_init;
                   return: bool; [[true if the specified module was successfully

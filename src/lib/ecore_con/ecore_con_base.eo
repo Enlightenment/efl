@@ -52,7 +52,7 @@ abstract Ecore.Con.Base (Eo.Base) {
            what you are doing.
 
            Note: This function is only valid for servers created with
-           @ecore_con_server_connect.
+           \@ref ecore_con_server_connect.
 
            Warning: Seriously. Don't use this unless you know what you are doing.
 
@@ -83,11 +83,10 @@ abstract Ecore.Con.Base (Eo.Base) {
            than this value, it will be disconnected. A value of < 1 disables
            the idle timeout.
 
-           This timeout is not affected by the one set by
-           @ecore_con_client_timeout_set. A client will be disconnected
-           whenever the client or the server timeout is reached. That means,
-           the lower timeout value  will be used for that client if
-           @ecore_con_client_timeout_set is used on it.
+           This timeout is not affected by the one set by @.timeout.set. A
+           client will be disconnected whenever the client or the server
+           timeout is reached. That means, the lower timeout value  will be
+           used for that client if @.timeout.set is used on it.
          ]]
          set {
              legacy: null;
@@ -112,9 +111,7 @@ abstract Ecore.Con.Base (Eo.Base) {
            This function will send the given data to the server as soon as the
            program is back to the main loop. Thus, this function returns
            immediately (non-blocking). If the data needs to be sent now, call
-           @ecore_con_server_flush after this one.
-
-           See also @ecore_con_client_send and @ecore_con_server_flush.
+           \@ref ecore_con_server_flush after this one.
          ]]
          legacy: null;
 
@@ -134,8 +131,8 @@ abstract Ecore.Con.Base (Eo.Base) {
 
            canonname - the canonical name of the address, ip - the resolved ip
            address, addr - a pointer to the socket address, addrlen - the length
-           of the socket address, in bytes, data - the data pointer given as 
-           arameter to @ecore_con_lookup.
+           of the socket address, in bytes, data - the data pointer given as
+           parameter.
          ]]
          params {
             name: const(char)* @nonull; [[IP address or server name to translate.]]

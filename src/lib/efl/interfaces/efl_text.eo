@@ -5,7 +5,7 @@ interface Efl.Text {
          set {
             [[Sets the text string to be displayed by the given text object.
 
-              See also @evas_object_text_text_get.
+              See also @.text.get.
             ]]
          }
          get {
@@ -14,7 +14,7 @@ interface Efl.Text {
 
               Do not free() the return value.
 
-              See also @evas_object_text_text_set.
+              See also @.text.set.
             ]]
          }
          values {

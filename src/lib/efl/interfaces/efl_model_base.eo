@@ -35,7 +35,7 @@ interface Efl.Model.Base ()
                  By convention this means get the current model status.
                  Possible values are defined Efl_Model_Load_Status enumerator.
 
-                 See also @Efl_Model_Load_Status, @efl_model_load
+                 See also \@ref Efl_Model_Load_Status, @.load
 
                  @since 1.14
                ]]
@@ -51,7 +51,7 @@ interface Efl.Model.Base ()
                  EFL_MODEL_EVENT_PROPERTIES_CHANGE will be raised to notify
                  listeners of any modifications in the properties.
 
-                 See also @EFL_MODEL_EVENT_PROPERTIES_CHANGE.
+                 See also \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGE.
 
                  @since 1.14
                ]]
@@ -76,7 +76,7 @@ interface Efl.Model.Base ()
                  possibilities, either raise an error or create the new
                  property in model
 
-                 See @efl_model_property_get, @EFL_MODEL_EVENT_PROPERTIES_CHANGE
+                 See @.property.get, \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGE
 
                  @since 1.14
                ]]
@@ -92,7 +92,7 @@ interface Efl.Model.Base ()
                  The event EFL_MODEL_EVENT_PROPERTIES_CHANGE may be raised to
                  notify listeners of the property/value.
 
-                 See @efl_model_properties_get, @EFL_MODEL_EVENT_PROPERTIES_CHANGE
+                 See @.properties.get, \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGE
 
                  @since 1.14
                ]]
@@ -129,11 +129,11 @@ interface Efl.Model.Base ()
                  than EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN.
 
                  When children accessor is returned as NULL one should then
-                 test the current load status return:ed by @children_slice_get
+                 test the current load status return:ed by @.children_slice.get
                  in order to check against an empty list or real error.
 
                  children_slice_get behaves in two different ways, it may
-                 provide the slice if both @c start AND @c count are non-zero
+                 provide the slice if both $start AND $count are non-zero
                  OR full range otherwise.
 
                  The return:ed Eina_Accessor must be freed when it is no longer
@@ -155,8 +155,7 @@ interface Efl.Model.Base ()
                  Optionally the user can call children_count_get to know the
                  number of children so a valid range can be known in advance.
 
-                 See @efl_model_children_get, @efl_model_children_count_get,
-                 @efl_model_load, @efl_model_load_status_get
+                 See @.children_count.get, @.load, @.load_status.get.
 
                  @since 1.14
                ]]
@@ -182,8 +181,7 @@ interface Efl.Model.Base ()
                   range is known. Event EFL_MODEL_CHILDREN_COUNT_CHANGED is
                   emitted when count is finished.
 
-                  See also @efl_model_children_get, @efl_model_children_slice_get,
-                  @efl_model_load, @efl_model_load_status_get.
+                  See also @.children_slice.get, @.load, @.load_status.get.
 
                   @since 1.14
                 ]]
@@ -211,9 +209,8 @@ interface Efl.Model.Base ()
               efl_model_load is called then calling properties_load
               and/or children_load is not necessary.
 
-              See also @Efl_Model_Load_Status, @efl_model_properties_load,
-              @efl_model_children_load, @efl_model_unload,
-              @efl_model_load_status_get
+              See also \@ref Efl_Model_Load_Status, @.properties_load,
+              @.children_load, @.unload, @.load_status.get
 
               @since 1.14
             ]]
@@ -230,8 +227,7 @@ interface Efl.Model.Base ()
               This convention should be followed, but no guarantees of behaviour
               by user defined types can be given.
 
-              See also @Efl_Model_Load_Status, @efl_model_load,
-              @efl_model_load_status_get
+              See also \@ref Efl_Model_Load_Status, @.load,  @.load_status.get
 
               @since 1.14
             ]]
@@ -241,8 +237,8 @@ interface Efl.Model.Base ()
 
               By convention this means loading data from an external source and
               populating the models properties only. This method is a subset
-              of @efl_model_load, meaning that it won't load children, it is
-              a hint. For loadind both properties and children use
+              of @.load, meaning that it won't load children, it is a hint.
+              For loadind both properties and children use
               efl_model_load instead.
 
               @since 1.14
@@ -253,8 +249,8 @@ interface Efl.Model.Base ()
 
               By convention this means loading data from an external source and
               populating the models children only. This method is a subset of
-              @efl_model_load, meaning that it won't load properties. For
-              loadind both properties and children use efl_model_load instead.
+              @.load, meaning that it won't load properties. For loadind both
+              properties and children use efl_model_load instead.
 
               @since 1.14
             ]]
@@ -264,10 +260,10 @@ interface Efl.Model.Base ()
 
               Add a new child, possibly dummy, depending on the implementation,
               of a internal keeping. When the child is effectively
-              added the event @EFL_MODEL_EVENT_CHILD_ADD is then raised and the
-              new child is kept along with other children.
+              added the event \@ref EFL_MODEL_EVENT_CHILD_ADD is then raised
+              and the new child is kept along with other children.
 
-              See also @load_status_get.
+              See also @.load_status.get.
 
               @since 1.14
             ]]
@@ -277,9 +273,9 @@ interface Efl.Model.Base ()
             [[Remove a child.
 
               Remove a child of a internal keeping. When the child is effectively
-              removed the event @EFL_MODEL_EVENT_CHILD_REMOVED is then raised to
-              give a chance for listeners to perform any cleanup and/or update
-              references.
+              removed the event \@ref EFL_MODEL_EVENT_CHILD_REMOVED is then
+              raised to give a chance for listeners to perform any cleanup
+              and/or update references.
 
               @since 1.14
             ]]
