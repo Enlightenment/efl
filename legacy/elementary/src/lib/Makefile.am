@@ -749,6 +749,8 @@ elementaryeolianfiles_DATA = \
 	     elm_thumb.eo \
 	     elm_toolbar.eo \
 	     elm_video.eo \
+	     elm_view_list.eo \
+	     elm_view_form.eo \
 	     elm_web.eo \
 	     elm_win.eo \
 	     elm_win_standard.eo \
