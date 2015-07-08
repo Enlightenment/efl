@@ -7,11 +7,84 @@
 #include "eo_lexer.h"
 
 static Eina_Bool
+_validate_ref(const char *ref)
+{
+#if 0
+   if (eolian_declaration_get_by_name(ref))
+     return EINA_TRUE;
+
+   const char *suffix = strrchr(ref, '.');
+   if (!suffix) goto failed;
+
+   Eina_Stringshare *base = eina_stringshare_add_length(ref, suffix - ref);
+
+   const Eolian_Type *tp = eolian_type_struct_get_by_name(base);
+   if (tp)
+     {
+        eina_stringshare_del(base);
+        if (!eolian_type_struct_field_get(tp, suffix + 1))
+          goto failed;
+        return EINA_TRUE;
+     }
+
+   tp = eolian_type_enum_get_by_name(base);
+   if (tp)
+     {
+        eina_stringshare_del(base);
+        if (!eolian_type_enum_field_get(tp, suffix + 1))
+          goto failed;
+        return EINA_TRUE;
+     }
+
+   const Eolian_Class *cl = eolian_class_get_by_name(base);
+   if (cl)
+     {
+        eina_stringshare_del(base);
+        if (!eolian_class_function_get_by_name(cl, suffix + 1, EOLIAN_UNRESOLVED))
+          goto failed;
+        return EINA_TRUE;
+     }
+
+   Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
+   if (!strcmp(suffix, ".get"))
+     ftype = EOLIAN_PROP_GET;
+   else if (!strcmp(suffix, ".set"))
+     ftype = EOLIAN_PROP_SET;
+
+   const char *meth;
+   if (ftype != EOLIAN_UNRESOLVED)
+     {
+        eina_stringshare_del(base);
+        meth = suffix - 1;
+        while ((meth != ref) && (*meth != '.')) --meth;
+        if (meth == ref) goto failed;
+        base = eina_stringshare_add_length(ref, meth - ref);
+        cl = eolian_class_get_by_name(base);
+        eina_stringshare_del(base);
+     }
+
+   if (!cl) goto failed;
+
+   char *ameth = strndup(meth + 1, suffix - meth - 1);
+   const Eolian_Function *fn = eolian_class_function_get_by_name(cl, ameth, ftype);
+   free(ameth);
+
+   if (!fn) goto failed;
+   return EINA_TRUE;
+
+failed:
+   fprintf(stderr, "eolian: failed validating reference '%s'\n", ref);
+#else
+   (void)ref;
+#endif
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _validate_docstr(Eina_Stringshare *str)
 {
    if (!str) return EINA_TRUE;
 
-#if 0
    const char *p;
    for (p = strchr(str, '@'); p; p = strchr(p, '@'))
      {
@@ -29,14 +102,13 @@ _validate_docstr(Eina_Stringshare *str)
           ++p;
         if (*(p - 1) == '.') --p;
         Eina_Stringshare *refs = eina_stringshare_add_length(ref, (p - ref));
-        if (!eolian_declaration_get_by_name(refs))
+        if (!_validate_ref(refs))
           {
-             printf("unknown doc reference: '%s'\n", refs);
+             eina_stringshare_del(refs);
              return EINA_FALSE;
           }
         eina_stringshare_del(refs);
      }
-#endif
 
    return EINA_TRUE;
 }
