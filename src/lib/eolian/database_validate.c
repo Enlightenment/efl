@@ -7,7 +7,7 @@
 #include "eo_lexer.h"
 
 static Eina_Bool
-_validate_ref(const char *ref)
+_validate_ref(const char *ref, const Eolian_Object *info)
 {
 #if 0
    if (eolian_declaration_get_by_name(ref))
@@ -73,15 +73,17 @@ _validate_ref(const char *ref)
    return EINA_TRUE;
 
 failed:
-   fprintf(stderr, "eolian: failed validating reference '%s'\n", ref);
+   fprintf(stderr, "eolian:%s:%d:%d: failed validating reference '%s'\n",
+       info->file, info->line, info->column, ref);
 #else
    (void)ref;
+   (void)info;
 #endif
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_validate_docstr(Eina_Stringshare *str)
+_validate_docstr(Eina_Stringshare *str, const Eolian_Object *info)
 {
    if (!str) return EINA_TRUE;
 
@@ -102,7 +104,7 @@ _validate_docstr(Eina_Stringshare *str)
           ++p;
         if (*(p - 1) == '.') --p;
         Eina_Stringshare *refs = eina_stringshare_add_length(ref, (p - ref));
-        if (!_validate_ref(refs))
+        if (!_validate_ref(refs, info))
           {
              eina_stringshare_del(refs);
              return EINA_FALSE;
@@ -118,9 +120,9 @@ _validate_doc(const Eolian_Documentation *doc)
 {
    if (!doc) return EINA_TRUE;
 
-   if (!_validate_docstr(doc->summary))
+   if (!_validate_docstr(doc->summary, &doc->base))
      return EINA_FALSE;
-   if (!_validate_docstr(doc->description))
+   if (!_validate_docstr(doc->description, &doc->base))
      return EINA_FALSE;
 
    return EINA_TRUE;
