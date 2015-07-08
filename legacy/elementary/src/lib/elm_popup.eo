@@ -1,3 +1,5 @@
+import elm_general;
+
 enum Elm.Popup.Orient
 {
    [[
@@ -96,7 +98,7 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_popup_content_text_wrap_type_set */
          }
          values {
-            wrap: Elm_Wrap_Type; /*@ wrapping type of type Elm_Wrap_Type */
+            wrap: Elm.Wrap.Type; /*@ wrapping type of type Elm_Wrap_Type */
          }
       }
       @property orient {

@@ -1,3 +1,5 @@
+import elm_general;
+
 enum Elm.Label.Slide_Mode
 {
    [[
@@ -155,7 +157,7 @@ class Elm.Label (Elm.Layout)
             @ingroup Label */
          }
          values {
-            wrap: Elm_Wrap_Type; /*@ To wrap text or not */
+            wrap: Elm.Wrap.Type; /*@ To wrap text or not */
          }
       }
       @property ellipsis {

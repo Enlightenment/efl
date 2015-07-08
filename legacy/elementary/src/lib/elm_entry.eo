@@ -1,3 +1,5 @@
+import elm_general;
+
 enum Elm.Text_Format
 {
    [[Text Format types.
@@ -5,23 +7,6 @@ enum Elm.Text_Format
    ]]
    plain_utf8, [[ Plain UTF8 type ]]
    markup_utf8 [[ Markup UTF8 type ]]
-}
-
-enum Elm.Wrap.Type
-{
-   [[
-     @addtogroup Entry
-     Line wrapping types.
-     Type of word or character wrapping to use.
-     @see elm_entry_line_wrap_set()
-   ]]
-
-   legacy: elm_wrap;
-   none = 0, [[No wrap - value is zero.]]
-   char,     [[Char wrap - wrap between characters.]]
-   word,     [[Word wrap - wrap in allowed wrapping points (as defined in the unicode standard).]]
-   mixed,    [[Mixed wrap - Word wrap, and if that fails, char wrap.]]
-   last
 }
 
 enum Elm.Input.Panel.Layout
