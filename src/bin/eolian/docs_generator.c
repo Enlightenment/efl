@@ -110,6 +110,7 @@ _generate_ref(const char *refn, Eina_Strbuf *wbuf, Eina_Bool use_legacy)
    if (!fn) goto noref;
 
    Eina_Stringshare *fcn = eolian_function_full_c_name_get(fn, ftype, use_legacy);
+   if (!fcn) goto noref;
    eina_strbuf_append(wbuf, fcn);
    eina_stringshare_del(fcn);
    return;
