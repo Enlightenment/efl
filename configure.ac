@@ -849,8 +849,16 @@ case "${build_profile}" in
      ;;
 esac
 
-PKG_CHECK_MODULES(UNWIND, [libunwind libunwind-generic],
-                  [have_unwind=yes], [have_unwind=no])
+want_unwind="yes"
+have_unwind="no"
+AC_ARG_ENABLE([unwind],
+   [AS_HELP_STRING([--disable-unwind],[Disable unwind library. @<:@default=enabled@:>@])],
+   [want_unwind="no"], [])
+
+if test x"${want_unwind}" = "xyes"; then
+   PKG_CHECK_MODULES(UNWIND, [libunwind libunwind-generic],
+                     [have_unwind=${want_unwind}], [have_unwind=no])
+fi
 AS_IF([test "x$have_unwind" = "xyes"],
       [AC_DEFINE([HAVE_UNWIND], [1], [Have libunwind])])
 AM_CONDITIONAL(HAVE_UNWIND, test "x$have_unwind" = "xyes")
