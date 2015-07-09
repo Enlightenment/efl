@@ -4349,6 +4349,229 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_STRUCT = {
   _eina_value_type_struct_pget
 };
 
+static Eina_Bool
+_eina_value_type_optional_setup(const Eina_Value_Type *type EINA_UNUSED, void *mem)
+{
+   memset(mem, 0, type->value_size);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_optional_flush(const Eina_Value_Type *type EINA_UNUSED, void *mem EINA_UNUSED)
+{
+   if(sizeof(Eina_Value_Optional_Outer) <= sizeof(Eina_Value_Union))
+     {
+        Eina_Value_Optional_Outer* opt = mem;
+        if(opt->subtype)
+          {
+             if(!eina_value_type_flush(opt->subtype, opt->value))
+               return EINA_FALSE;
+             free(opt->value);
+             memset(mem, 0, sizeof(Eina_Value_Optional_Outer));
+          }
+     }
+   else
+     {
+        Eina_Value_Optional_Inner* opt = *(void**)mem;
+        if(opt)
+          {
+             if(!eina_value_type_flush(opt->subtype, opt->value))
+               return EINA_FALSE;
+             free(*(void**)mem);
+             *(void**)mem = NULL;
+          }
+     }
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+eina_value_optional_reset(Eina_Value *value)
+{
+   void *mem = eina_value_memory_get(value);
+   if (!mem)
+     return EINA_FALSE;
+   return _eina_value_type_optional_flush(EINA_VALUE_TYPE_OPTIONAL, mem);
+}
+
+EAPI Eina_Value*
+eina_value_optional_new(Eina_Value_Type const *subtype,
+                        const void* initial_value) EINA_ARG_NONNULL(1, 2)
+{
+   Eina_Value *value;
+
+   value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));
+   if (!value)
+     return NULL;
+
+   if (!eina_value_setup(value, EINA_VALUE_TYPE_OPTIONAL))
+     {
+        eina_mempool_free(_eina_value_mp, value);
+        return EINA_FALSE;
+     }
+   if (!eina_value_optional_pset(value, subtype, initial_value))
+     {
+        eina_mempool_free(_eina_value_mp, value);
+        return EINA_FALSE;
+     }
+   return value;
+}
+
+EAPI Eina_Bool
+eina_value_optional_pset(Eina_Value *value,
+                         Eina_Value_Type const* subtype,
+                         const void *subvalue) EINA_ARG_NONNULL(1, 2, 3)
+{
+   eina_value_optional_reset(value);
+  
+   if(sizeof(Eina_Value_Optional_Outer) <= sizeof(Eina_Value_Union))
+     {
+       Eina_Value_Optional_Outer outer;
+       outer.subtype = subtype;
+       outer.value = malloc(subtype->value_size);
+       eina_value_type_setup(subtype, outer.value);
+       eina_value_type_pset(subtype, outer.value, subvalue);
+       if (!eina_value_pset(value, &outer))
+         {
+           return EINA_FALSE;
+         }
+     }
+   else
+     {
+        Eina_Value_Optional_Inner *inner =
+          malloc(sizeof(Eina_Value_Optional_Inner) + subtype->value_size);
+        inner->subtype = subtype;
+        eina_value_type_setup(subtype, inner->value);
+        eina_value_type_pset(subtype, inner->value, subvalue);
+        if (!eina_value_pset(value, &inner))
+             return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+eina_value_optional_pget(Eina_Value *value, void *subvalue) EINA_ARG_NONNULL(1, 2, 3)
+{
+   if(sizeof(Eina_Value_Optional_Outer) <= sizeof(Eina_Value_Union))
+     {
+       Eina_Value_Optional_Outer outer;
+
+       if (!eina_value_pget(value, &outer))
+           return EINA_FALSE;
+
+       if(outer.subtype)
+         eina_value_type_copy(outer.subtype, outer.value, subvalue);
+       else
+         return EINA_FALSE;
+     }
+   else
+     {
+       Eina_Value_Optional_Inner *inner;
+
+       if (!eina_value_pget(value, &inner))
+           return EINA_FALSE;
+
+       if(inner)
+           eina_value_type_copy(inner->subtype, inner->value, subvalue);
+       else
+         return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_optional_copy(const Eina_Value_Type *type EINA_UNUSED, const void *src_raw, void *dst_raw)
+{
+   if(sizeof(Eina_Value_Optional_Outer) <= sizeof(Eina_Value_Union))
+     {
+        Eina_Value_Optional_Outer const* src = src_raw;
+        Eina_Value_Optional_Outer* dst = dst_raw;
+        if(src->subtype)
+          {
+             dst->subtype = src->subtype;
+             dst->value = malloc(src->subtype->value_size);
+             eina_value_type_copy(src->subtype, src->value, dst->value);
+          }
+        else
+          memset(dst_raw, 0, sizeof(Eina_Value_Optional_Outer));
+     }
+   else if(src_raw)
+     {
+        Eina_Value_Optional_Inner* src = *(void**)src_raw;
+        Eina_Value_Optional_Inner* dst = *(void**)dst_raw
+          = malloc(sizeof(Eina_Value_Optional_Inner) + src->subtype->value_size);
+        dst->subtype = src->subtype;
+
+        eina_value_type_copy(src->subtype, src->value, dst->value);
+     }
+   else
+     *(void**)dst_raw = NULL;
+   return EINA_TRUE;
+}
+
+static int
+_eina_value_type_optional_compare(const Eina_Value_Type *type EINA_UNUSED, const void *lhs_raw, const void *rhs_raw)
+{
+   if(sizeof(Eina_Value_Optional_Outer) <= sizeof(Eina_Value_Union))
+     {
+       Eina_Value_Optional_Outer const *lhs = lhs_raw
+         , *rhs = rhs_raw;
+       if(!lhs->subtype)
+         return !rhs->subtype ? 0 : -1;
+       else if(!rhs->subtype)
+         return 1;
+       else if(lhs->subtype != rhs->subtype)
+         return lhs->subtype < rhs->subtype ? -1 : 1;
+       else
+         return eina_value_type_compare(lhs->subtype, lhs->value, rhs->value);
+     }
+   else
+     {
+       Eina_Value_Optional_Inner const * const* lhs_p = lhs_raw;
+       Eina_Value_Optional_Inner const * const* rhs_p = rhs_raw;
+   
+       if(!*lhs_p)
+         return *rhs_p ? -1 : 0;
+       else if(!*rhs_p)
+         return 1;
+       else if((*lhs_p)->subtype != (*rhs_p)->subtype)
+         return (*lhs_p)->subtype < (*rhs_p)->subtype ? -1 : 1;
+       else
+         return eina_value_type_compare((*lhs_p)->subtype, (*lhs_p)->value, (*rhs_p)->value);
+     }
+}
+
+static Eina_Bool
+_eina_value_type_optional_pset(const Eina_Value_Type *type EINA_UNUSED, void *mem, const void *ptr)
+{
+   _eina_value_type_optional_flush(type, mem);
+   _eina_value_type_optional_copy(type, ptr, mem);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_optional_pget(const Eina_Value_Type *type EINA_UNUSED, const void *mem, void *ptr)
+{
+   memcpy(ptr, mem, sizeof(Eina_Value_Union));
+   return EINA_TRUE;
+}
+
+EAPI const Eina_Value_Type _EINA_VALUE_TYPE_OPTIONAL = {
+  EINA_VALUE_TYPE_VERSION,
+  sizeof(Eina_Value_Union),
+  "optional",
+  _eina_value_type_optional_setup,
+  _eina_value_type_optional_flush,
+  _eina_value_type_optional_copy,
+  _eina_value_type_optional_compare,
+  NULL,
+  NULL,
+  NULL,
+  _eina_value_type_optional_pset,
+  _eina_value_type_optional_pget
+};
+
 /* no model for now
 static Eina_Bool
 _eina_value_type_model_setup(const Eina_Value_Type *type EINA_UNUSED, void *mem)
@@ -4911,6 +5134,8 @@ eina_value_init(void)
    EINA_VALUE_TYPE_MODEL = &_EINA_VALUE_TYPE_MODEL;
  */
    
+   EINA_VALUE_TYPE_OPTIONAL       = &_EINA_VALUE_TYPE_OPTIONAL;
+
    EINA_VALUE_BLOB_OPERATIONS_MALLOC = &_EINA_VALUE_BLOB_OPERATIONS_MALLOC;
 
    EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH = &_EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH;
@@ -4995,6 +5220,8 @@ EAPI const Eina_Value_Type *EINA_VALUE_TYPE_STRUCT = NULL;
 /* no model for now
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_MODEL = NULL;
  */
+EAPI const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL = NULL;
+
 
 EAPI const Eina_Value_Blob_Operations *EINA_VALUE_BLOB_OPERATIONS_MALLOC = NULL;
 
