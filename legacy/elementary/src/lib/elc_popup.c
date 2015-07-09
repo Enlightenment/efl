@@ -199,7 +199,7 @@ _elm_popup_evas_object_smart_del(Eo *obj, Elm_Popup_Data *sd)
    evas_object_event_callback_del_full(sd->parent, EVAS_CALLBACK_MOVE, _parent_geom_cb, obj);
 
    eo_do(sd->notify, eo_event_callback_del(
-     ELM_POPUP_EVENT_BLOCK_CLICKED, _block_clicked_cb, obj));
+     ELM_NOTIFY_EVENT_BLOCK_CLICKED, _block_clicked_cb, obj));
    eo_do(sd->notify, eo_event_callback_del(
      ELM_POPUP_EVENT_TIMEOUT, _timeout_cb, obj));
    evas_object_event_callback_del
@@ -1447,7 +1447,7 @@ _elm_popup_evas_object_smart_add(Eo *obj, Elm_Popup_Data *priv)
 
    priv->content_text_wrap_type = ELM_WRAP_MIXED;
    eo_do(priv->notify, eo_event_callback_add
-         (ELM_POPUP_EVENT_BLOCK_CLICKED,_block_clicked_cb, obj));
+         (ELM_NOTIFY_EVENT_BLOCK_CLICKED,_block_clicked_cb, obj));
 
    eo_do(priv->notify, eo_event_callback_add
          (ELM_POPUP_EVENT_TIMEOUT, _timeout_cb, obj));
