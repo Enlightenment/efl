@@ -89,7 +89,7 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
      pos = 1.0 - pos;
 
    val = (pos * (sd->val_max - sd->val_min)) + sd->val_min;
-   if (val != sd->val)
+   if (fabs(val - sd->val) > DBL_EPSILON)
      {
         sd->val = val;
         if (user_event)
