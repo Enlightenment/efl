@@ -201,6 +201,7 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       Elm.Layout.text_get;
       Elm.Layout.sizing_eval;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm_Interface_Atspi_Accessible.state_set.get;
    }
    events {
       block,clicked;

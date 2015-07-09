@@ -1735,5 +1735,16 @@ _elm_popup_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED
    return &atspi_actions[0];
 }
 
+EOLIAN static Elm_Atspi_State_Set
+_elm_popup_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Popup_Data *sd EINA_UNUSED)
+{
+   Elm_Atspi_State_Set ret;
+   eo_do_super(obj, MY_CLASS, ret = elm_interface_atspi_accessible_state_set_get());
+
+   STATE_TYPE_SET(ret, ELM_ATSPI_STATE_MODAL);
+
+   return ret;
+}
+
 #include "elm_popup.eo.c"
 #include "elm_popup_item.eo.c"
