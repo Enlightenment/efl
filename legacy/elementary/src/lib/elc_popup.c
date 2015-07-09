@@ -201,7 +201,7 @@ _elm_popup_evas_object_smart_del(Eo *obj, Elm_Popup_Data *sd)
    eo_do(sd->notify, eo_event_callback_del(
      ELM_NOTIFY_EVENT_BLOCK_CLICKED, _block_clicked_cb, obj));
    eo_do(sd->notify, eo_event_callback_del(
-     ELM_POPUP_EVENT_TIMEOUT, _timeout_cb, obj));
+     ELM_NOTIFY_EVENT_TIMEOUT, _timeout_cb, obj));
    evas_object_event_callback_del
      (sd->content, EVAS_CALLBACK_DEL, _on_content_del);
    evas_object_event_callback_del(obj, EVAS_CALLBACK_SHOW, _on_show);
@@ -1450,7 +1450,7 @@ _elm_popup_evas_object_smart_add(Eo *obj, Elm_Popup_Data *priv)
          (ELM_NOTIFY_EVENT_BLOCK_CLICKED,_block_clicked_cb, obj));
 
    eo_do(priv->notify, eo_event_callback_add
-         (ELM_POPUP_EVENT_TIMEOUT, _timeout_cb, obj));
+         (ELM_NOTIFY_EVENT_TIMEOUT, _timeout_cb, obj));
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_can_focus_set(priv->main_layout, EINA_TRUE);
