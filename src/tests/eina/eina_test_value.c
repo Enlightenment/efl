@@ -2731,6 +2731,147 @@ START_TEST(eina_value_test_array_of_struct)
 }
 END_TEST
 
+START_TEST(eina_value_test_optional_int)
+{
+   eina_init();
+
+   /* Eina_Value *value = eina_value_new(EINA_VALUE_TYPE_OPTIONAL); */
+   /* Eina_Bool is_empty; */
+   /* ck_assert(eina_value_optional_empty_is(value, &is_empty)); */
+   /* ck_assert(is_empty); */
+
+   /* // sets expectation */
+   /* int expected_value = -12345; */
+   /* ck_assert(eina_value_optional_pset(value, EINA_VALUE_TYPE_INT, &expected_value)); */
+   /* ck_assert(eina_value_optional_empty_is(value, &is_empty)); */
+   /* ck_assert(!is_empty); */
+
+   /* // gets the actual value */
+   /* int actual_value; */
+   /* ck_assert(eina_value_optional_pget(value, &actual_value)); */
+   /* ck_assert_int_eq(expected_value, actual_value); */
+
+   /* // resets the optional */
+   /* ck_assert(eina_value_optional_reset(value)); */
+   /* ck_assert(eina_value_optional_empty_is(value, &is_empty)); */
+   /* ck_assert(is_empty); */
+
+   /* // Sets expectation again after reset */
+   /* expected_value = -54321; */
+   /* ck_assert(eina_value_optional_pset(value, EINA_VALUE_TYPE_INT, &expected_value)); */
+   /* ck_assert(eina_value_optional_empty_is(value, &is_empty)); */
+   /* ck_assert(!is_empty); */
+   
+   /* // gets the actual value */
+   /* ck_assert(eina_value_optional_pget(value, &actual_value)); */
+   /* ck_assert_int_eq(expected_value, actual_value); */
+
+   /* eina_value_free(value); */
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_value_test_optional_string)
+{
+   eina_init();
+
+   Eina_Value *value = eina_value_new(EINA_VALUE_TYPE_OPTIONAL);
+   Eina_Bool is_empty;
+   ck_assert(eina_value_optional_empty_is(value, &is_empty));
+   ck_assert(is_empty);
+   ck_assert(EINA_VALUE_TYPE_OPTIONAL);
+
+   // sets expectation
+   const char *expected_value = "Hello world!";
+   ck_assert(eina_value_optional_pset(value, EINA_VALUE_TYPE_STRING, &expected_value));
+   ck_assert(eina_value_optional_empty_is(value, &is_empty));
+   ck_assert(!is_empty);
+
+   // gets the actual value
+   const char *actual_value;
+   ck_assert(eina_value_optional_pget(value, &actual_value));
+   ck_assert_str_eq(expected_value, actual_value);
+
+   // resets the optional
+   ck_assert(eina_value_optional_reset(value));
+   ck_assert(eina_value_optional_empty_is(value, &is_empty));
+   ck_assert(is_empty);
+
+   // Sets expectation again after reset
+   expected_value = "!dlrow olleH";
+   ck_assert(eina_value_optional_pset(value, EINA_VALUE_TYPE_STRING, &expected_value));
+   ck_assert(eina_value_optional_empty_is(value, &is_empty));
+   ck_assert(!is_empty);
+
+   // gets the actual value
+   ck_assert(eina_value_optional_pget(value, &actual_value));
+   ck_assert_str_eq(expected_value, actual_value);
+
+   eina_value_free(value);
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_value_test_optional_struct_members)
+{
+   eina_init();
+
+   struct s {
+     int64_t a;
+     Eina_Value_Optional text;
+     int64_t b;
+   };
+   const Eina_Value_Struct_Member members[] = {
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT64, struct s, a),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_OPTIONAL, struct s, text),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT64, struct s, b),
+     EINA_VALUE_STRUCT_MEMBER_SENTINEL
+   };
+   const Eina_Value_Struct_Desc desc = {
+     EINA_VALUE_STRUCT_DESC_VERSION,
+     NULL, members, 3, sizeof(struct s)
+   };
+
+   Eina_Value *value = eina_value_struct_new(&desc);
+   ck_assert_ptr_ne(NULL, value);
+
+   int64_t expected_a = 0x1234567887654321ll;
+   fail_unless(eina_value_struct_set(value, "a", expected_a));
+   int64_t actual_a;
+   fail_unless(eina_value_struct_get(value, "a", &actual_a));
+   ck_assert_int_eq(expected_a, actual_a);
+
+   int64_t expected_b = 0xEEDCBA9889ABCDEFll;
+   fail_unless(eina_value_struct_set(value, "b", expected_b));
+   int64_t actual_b;
+   fail_unless(eina_value_struct_get(value, "b", &actual_b));
+   ck_assert_int_eq(expected_b, actual_b);
+
+   Eina_Value expected_value;
+   fail_unless(eina_value_setup(&expected_value, EINA_VALUE_TYPE_OPTIONAL));
+   const char* str = "Hello world!";
+   fail_unless(eina_value_optional_pset(&expected_value, EINA_VALUE_TYPE_STRING, &str));
+   fail_unless(eina_value_struct_value_set(value, "text", &expected_value));
+
+   Eina_Value actual_value;
+   fail_unless(eina_value_struct_value_get(value, "text", &actual_value));
+   fail_unless(eina_value_compare(&expected_value, &actual_value) == 0);
+
+   // tests if the value have been overriden
+   fail_unless(eina_value_struct_get(value, "a", &actual_a));
+   ck_assert_int_eq(expected_a, actual_a);
+   fail_unless(eina_value_struct_get(value, "b", &actual_b));
+   ck_assert_int_eq(expected_b, actual_b);
+
+   eina_value_flush(&actual_value);
+   eina_value_flush(&expected_value);
+   
+   eina_value_free(value);
+
+   eina_shutdown();
+}
+END_TEST
+
 #if 0
 START_TEST(eina_value_test_model)
 {
@@ -2801,6 +2942,9 @@ eina_test_value(TCase *tc)
    tcase_add_test(tc, eina_value_test_blob);
    tcase_add_test(tc, eina_value_test_struct);
    tcase_add_test(tc, eina_value_test_array_of_struct);
+   tcase_add_test(tc, eina_value_test_optional_int);
+   tcase_add_test(tc, eina_value_test_optional_string);
+   tcase_add_test(tc, eina_value_test_optional_struct_members);
 #if 0
    tcase_add_test(tc, eina_value_test_model);
 #endif
