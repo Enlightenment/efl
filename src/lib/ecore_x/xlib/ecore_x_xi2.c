@@ -150,6 +150,8 @@ _ecore_x_input_shutdown(void)
 
 #ifdef ECORE_XI2
 #ifdef ECORE_XI2_2
+
+# ifdef XI_TouchCancel
 static Eina_Bool
 _ecore_x_input_touch_device_check(int devid)
 {
@@ -163,6 +165,7 @@ _ecore_x_input_touch_device_check(int devid)
      if (info->devid == devid) return EINA_TRUE;
    return EINA_FALSE;
 }
+#endif
 
 static int
 _ecore_x_input_touch_index_get(int devid, int detail, int event_type)
