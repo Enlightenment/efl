@@ -1564,7 +1564,7 @@ _menu_call(Evas_Object *obj)
         if (top) elm_hoversel_hover_parent_set(sd->hoversel, top);
 
         eo_do(sd->hoversel, eo_event_callback_add
-          (ELM_HOVER_EVENT_DISMISSED, _hover_dismissed_cb, obj));
+          (ELM_HOVERSEL_EVENT_DISMISSED, _hover_dismissed_cb, obj));
         if (sd->have_selection)
           {
              if (!sd->password)
