@@ -83,7 +83,7 @@ _elm_image_animate_cb(void *data)
    if (!sd->anim) return ECORE_CALLBACK_CANCEL;
 
    sd->cur_frame++;
-   if (sd->cur_frame > sd->frame_count)
+   if ((sd->frame_count > 0) && (sd->cur_frame > sd->frame_count))
      sd->cur_frame = sd->cur_frame % sd->frame_count;
 
    evas_object_image_animated_frame_set(sd->img, sd->cur_frame);
