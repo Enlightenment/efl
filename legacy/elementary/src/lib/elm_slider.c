@@ -1039,10 +1039,6 @@ _elm_slider_min_max_set(Eo *obj, Elm_Slider_Data *sd, double min, double max)
 EOLIAN static void
 _elm_slider_min_max_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd, double *min, double *max)
 {
-   if (min) *min = 0.0;
-   if (max) *max = 0.0;
-
-
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
 }
