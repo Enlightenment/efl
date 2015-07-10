@@ -794,32 +794,53 @@ _arrow_cb(void *data,
 }
 
 static void
-_colorbar_cb(void *data,
-             Evas *e,
-             Evas_Object *obj EINA_UNUSED,
-             void *event_info)
+_colorbar_arrow_set(Color_Bar_Data *cb_data, int mouse_x)
 {
-   Evas_Event_Mouse_Down *ev = event_info;
-   Color_Bar_Data *cb_data = data;
-   double arrow_x = 0, arrow_y;
    Evas_Coord x, y, w, h;
+   double arrow_x = 0, arrow_y;
    ELM_COLORSELECTOR_DATA_GET(cb_data->parent, sd);
 
    evas_object_geometry_get(cb_data->bar, &x, &y, &w, &h);
    edje_object_part_drag_value_get
      (cb_data->colorbar, "elm.arrow", &arrow_x, &arrow_y);
 
-   if (w > 0) arrow_x = (double)(ev->canvas.x - x) / (double)w;
+   if (w > 0) arrow_x = (double)(mouse_x - x) / (double)w;
    if (arrow_x > 1) arrow_x = 1;
    if (arrow_x < 0) arrow_x = 0;
    edje_object_part_drag_value_set
      (cb_data->colorbar, "elm.arrow", arrow_x, arrow_y);
 
    _update_hsla_from_colorbar(cb_data->parent, cb_data->color_type, arrow_x);
-   evas_event_feed_mouse_cancel(e, 0, NULL);
-   evas_event_feed_mouse_down(e, 1, EVAS_BUTTON_NONE, 0, NULL);
    sd->sel_color_type = cb_data->color_type;
    sd->focused = ELM_COLORSELECTOR_COMPONENTS;
+}
+
+static void
+_colorbar_down_cb(void *data,
+                  Evas *e,
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info)
+{
+   Evas_Event_Mouse_Down *ev = event_info;
+   Color_Bar_Data *cb_data = data;
+
+   _colorbar_arrow_set(cb_data, ev->canvas.x);
+}
+
+static void
+_colorbar_move_cb(void *data,
+                  Evas *e,
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info)
+{
+   Evas_Event_Mouse_Move *ev = event_info;
+   Color_Bar_Data *cb_data = data;
+   ELM_COLORSELECTOR_DATA_GET(cb_data->parent, sd);
+
+   if (!ev->buttons)
+     return;
+
+   _colorbar_arrow_set(cb_data, ev->cur.canvas.x);
 }
 
 static Eina_Bool
@@ -997,8 +1018,9 @@ _color_bars_add(Evas_Object *obj)
           (sd->cb_data[i]->colorbar, "elm.arrow_bg",
           sd->cb_data[i]->touch_area);
         evas_object_event_callback_add
-          (sd->cb_data[i]->touch_area, EVAS_CALLBACK_MOUSE_DOWN, _colorbar_cb,
-          sd->cb_data[i]);
+          (sd->cb_data[i]->touch_area, EVAS_CALLBACK_MOUSE_DOWN, _colorbar_down_cb, sd->cb_data[i]);
+        evas_object_event_callback_add
+          (sd->cb_data[i]->touch_area, EVAS_CALLBACK_MOUSE_MOVE, _colorbar_move_cb, sd->cb_data[i]);
         elm_widget_sub_object_add(obj, sd->cb_data[i]->touch_area);
 
         // ACCESS
