@@ -817,7 +817,7 @@ _colorbar_arrow_set(Color_Bar_Data *cb_data, int mouse_x)
 
 static void
 _colorbar_down_cb(void *data,
-                  Evas *e,
+                  Evas *e EINA_UNUSED,
                   Evas_Object *obj EINA_UNUSED,
                   void *event_info)
 {
@@ -829,13 +829,12 @@ _colorbar_down_cb(void *data,
 
 static void
 _colorbar_move_cb(void *data,
-                  Evas *e,
+                  Evas *e EINA_UNUSED,
                   Evas_Object *obj EINA_UNUSED,
                   void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
    Color_Bar_Data *cb_data = data;
-   ELM_COLORSELECTOR_DATA_GET(cb_data->parent, sd);
 
    if (!ev->buttons)
      return;
