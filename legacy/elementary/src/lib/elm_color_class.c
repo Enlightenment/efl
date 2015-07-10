@@ -715,7 +715,8 @@ elm_color_class_editor_add(Evas_Object *obj, uint64_t winid)
      }
    cc->winid = winid;
    cc->ly = ly = elm_layout_add(obj);
-   elm_layout_theme_set(ly, "layout", "colorclass", "base");
+   if (!elm_layout_theme_set(ly, "layout", "colorclass", "base"))
+     CRI("Failed to set layout!");
    elm_layout_signal_callback_add(ly, "elm,colorclass,select,*", "elm", _colorclass_select, cc);
    elm_layout_signal_callback_add(ly, "elm,colorclass,deactivate", "elm", _colorclass_deactivate, cc);
    elm_layout_signal_callback_add(ly, "elm,colorclass,dismiss", "elm", _colorclass_dismiss, cc);
