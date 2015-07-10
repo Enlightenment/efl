@@ -1223,7 +1223,8 @@ _item_theme_hook(Evas_Object *obj,
 
    if (!it->separator && !it->object)
      {
-        elm_layout_theme_set(view, "toolbar", "item", style);
+        if (!elm_layout_theme_set(view, "toolbar", "item", style))
+          CRI("Failed to set layout!");
         if (it->selected)
           {
              elm_layout_signal_emit(view, "elm,state,selected", "elm");
@@ -1257,13 +1258,13 @@ _item_theme_hook(Evas_Object *obj,
      {
         if (!it->object)
           {
-             elm_layout_theme_set
-               (view, "toolbar", "separator", style);
+             if (!elm_layout_theme_set(view, "toolbar", "separator", style))
+               CRI("Failed to set layout!");
           }
         else
           {
-             elm_layout_theme_set
-               (view, "toolbar", "object", style);
+             if (!elm_layout_theme_set(view, "toolbar", "object", style))
+               CRI("Failed to set layout!");
              elm_layout_content_set(view, "elm.swallow.object", it->object);
           }
      }
@@ -2371,8 +2372,9 @@ _item_new(Evas_Object *obj,
         evas_object_del(icon_obj);
      }
 
-   elm_layout_theme_set
-     (VIEW(it), "toolbar", "item", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set
+       (VIEW(it), "toolbar", "item", elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
    elm_layout_signal_callback_add
      (VIEW(it), "elm,action,click", "elm", _select_cb, it);
    elm_layout_signal_callback_add
