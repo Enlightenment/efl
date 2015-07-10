@@ -2744,7 +2744,7 @@ void
 evgl_direct_info_set(int win_w, int win_h, int rot,
                      int img_x, int img_y, int img_w, int img_h,
                      int clip_x, int clip_y, int clip_w, int clip_h,
-                     void *surface)
+                     int render_op, void *surface)
 {
    EVGL_Resource *rsc;
    EVGL_Surface *sfc = surface;
@@ -2783,6 +2783,8 @@ evgl_direct_info_set(int win_w, int win_h, int rot,
         rsc->direct.clip.y  = clip_y;
         rsc->direct.clip.w  = clip_w;
         rsc->direct.clip.h  = clip_h;
+
+        rsc->direct.render_op_copy = (render_op == EVAS_RENDER_COPY);
      }
    else
      {

@@ -366,8 +366,10 @@ _evgl_glClear(GLbitfield mask)
              /* Skip glClear() if clearing with transparent color
               * Note: There will be side effects if the object itself is not
               * marked as having an alpha channel!
+              * COPY mode forces the normal behaviour of glClear().
               */
-             if (ctx->current_sfc->alpha && (mask & GL_COLOR_BUFFER_BIT))
+             if (ctx->current_sfc->alpha && !rsc->direct.render_op_copy &&
+                 (mask & GL_COLOR_BUFFER_BIT))
                {
                   if ((rsc->clear_color.a == 0) &&
                       (rsc->clear_color.r == 0) &&

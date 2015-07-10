@@ -1060,6 +1060,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
                              gl_context->dc->clip.y,
                              gl_context->dc->clip.w,
                              gl_context->dc->clip.h,
+                             gl_context->dc->render_op,
                              direct_surface);
 
         // Call pixel get function

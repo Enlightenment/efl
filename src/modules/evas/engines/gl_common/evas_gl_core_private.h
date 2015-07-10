@@ -289,6 +289,7 @@ struct _EVGL_Resource
 
         Eina_Bool            enabled : 1;
         Eina_Bool            in_get_pixels : 1;
+        Eina_Bool            render_op_copy : 1;
    } direct;
    struct {
         GLclampf r, g, b, a;
