@@ -8,2403 +8,2130 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
    methods {
       @property update_hints {
          set {
-            /*@
-            @brief Edje will automatically update the size hints on itself.
+            [[Edje will automatically update the size hints on itself.
 
-            By default edje doesn't set size hints on itself. With this function
-            call, it will do so if update is true. Be carefully, it cost a lot to
-            trigger this feature as it will recalc the object every time it make
-            sense to be sure that's its minimal size hint is always accurate. */
+              By default edje doesn't set size hints on itself. With this function
+              call, it will do so if update is true. Be carefully, it cost a lot to
+              trigger this feature as it will recalc the object every time it make
+              sense to be sure that's its minimal size hint is always accurate.]]
          }
          get {
-            /*@
-            @brief Whether or not Edje will update size hints on itself.
-
-            @return @c true if does, @c false if it doesn't. */
+            [[Whether or not Edje will update size hints on itself.]]
          }
          values {
-            update: bool; /*@ Whether or not update the size hints. */
+            update: bool; [[Whether or not update the size hints.]]
          }
       }
       @property mirrored {
          set {
-            /*@
-            @brief Set the RTL orientation for this object.
+            [[Set the RTL orientation for this object.
 
-            @since 1.1.0 */
+              @since 1.1.0]]
          }
          get {
-            /*@
-            @brief Get the RTL orientation for this object.
+            [[Get the RTL orientation for this object.
 
-            You can RTL orientation explicitly with edje_object_mirrored_set.
+              You can RTL orientation explicitly with edje_object_mirrored_set.
 
-            @return @c EINA_TRUE if the flag is set or @c EINA_FALSE if not.
-            @since 1.1.0 */
+              @since 1.1.0]]
          }
          values {
-            rtl: bool; /*@ new value of flag EINA_TRUE/EINA_FALSE */
+            rtl: bool; [[new value of flag true/false]]
          }
       }
       @property language {
          set {
-            /*@
-            @brief Set the language for this object.
+            [[Set the language for this object.
 
-            @since 1.1.0 */
+              @since 1.1.0]]
          }
          get {
-            /*@
-            @brief Get the language for this object.
+            [[Get the language for this object.
 
-            @return @c language.
-            @since 1.1.0 */
+              @since 1.1.0]]
          }
          values {
-            language: const(char)*; /*@ The language value */
+            language: const(char)*; [[The language value]]
           }
       }
       @property animation {
          set {
-            /*@
-            @brief Set the object's animation state.
+            [[Set the object's animation state.
 
-            This function starts or stops an Edje object's animation. The
-            information if it's stopped can be retrieved by
-            edje_object_animation_get().
+              This function starts or stops an Edje object's animation. The
+              information if it's stopped can be retrieved by
+              edje_object_animation_get().
 
-            @see edje_object_animation_get() */
+              See also @.animation.get()]]
          }
          get {
-            /*@
-            @brief Get the Edje object's animation state.
+            [[Get the Edje object's animation state.
 
-            @return @c EINA_FALSE on error or if object is not animated;
-            @c EINA_TRUE if animated.
+              This function returns if the animation is stopped or not. The
+              animation state is set by edje_object_animation_set().
 
-            This function returns if the animation is stopped or not. The
-            animation state is set by edje_object_animation_set().
-
-            @see edje_object_animation_set(). */
+              See also @.animation.set().]]
          }
          values {
-            on: bool; /*@ The animation state. @c EINA_TRUE to starts or
-            @c EINA_FALSE to stops. */
+            on: bool; [[The animation state. $true to starts or
+                        $false to stops.]]
          }
       }
       @property play {
          set {
-            /*@
-            @brief Set the Edje object to playing or paused states.
+            [[Set the Edje object to playing or paused states.
 
-            This function sets the Edje object @a obj to playing or paused
-            states, depending on the parameter @a play. This has no effect if
-            the object was already at that state.
+              This function sets the Edje object  obj to playing or paused
+              states, depending on the parameter  play. This has no effect if
+              the object was already at that state.
 
-            @see edje_object_play_get(). */
+              See also @.play.get().]]
          }
          get {
-            /*@
-            @brief Get the Edje object's state.
+            [[Get the Edje object's state.
 
-            @return @c EINA_FALSE if the object is not connected, its @c delete_me flag
-            is set, or it is at paused state; @c EINA_TRUE if the object is at playing
-            state.
+              This function tells if an Edje object is playing or not. This state
+              is set by edje_object_play_set().
 
-            This function tells if an Edje object is playing or not. This state
-            is set by edje_object_play_set().
-
-            @see edje_object_play_set(). */
+              See also @.play.set().]]
          }
          values {
-            play: bool; /*@ Object state (@c EINA_TRUE to playing,
-            @c EINA_FALSE to paused). */
+            play: bool; [[Object state ($true to playing,
+                          $false to paused).]]
          }
       }
       @property perspective {
          set {
-            /*@
-            Set the given perspective object on this Edje object.
+            [[Set the given perspective object on this Edje object.
 
-            Make the given perspective object be the default perspective for this Edje
-            object.
+              Make the given perspective object be the default perspective for this Edje
+              object.
 
-            There can be only one perspective object per Edje object, and if a
-            previous one was set, it will be removed and the new perspective object
-            will be used.
+              There can be only one perspective object per Edje object, and if a
+              previous one was set, it will be removed and the new perspective object
+              will be used.
 
-            An Edje perspective will only affect a part if it doesn't point to another
-            part to be used as perspective.
+              An Edje perspective will only affect a part if it doesn't point to another
+              part to be used as perspective.
 
-            @see edje_object_perspective_new()
-            @see edje_object_perspective_get()
-            @see edje_perspective_set() */
+              \@ref edje_object_perspective_new()
+              See also @.perspective.get()
+              \@ref edje_perspective_set()]]
             values {
-                ps: Edje.Perspective*; /*@ The perspective object that will be used. */
+                ps: Edje.Perspective*; [[The perspective object that will be used.]]
             }
          }
          get {
-            /*@
-            Get the current perspective used on this Edje object.
+            [[Get the current perspective used on this Edje object.
 
-            @return The perspective object being used on this Edje object. Or @c NULL
-            if there was none, and on errors.
-
-            @see edje_object_perspective_set() */
+              See also @.perspective.set()]]
             values {
-                ps: const(Edje.Perspective)*; /*@ The perspective object that will be used. */
+                ps: const(Edje.Perspective)*; [[The perspective object that will be used.]]
             }
          }
       }
       @property scale {
          set {
-            /*@
-            @brief Set the scaling factor for a given Edje object.
+            [[Set the scaling factor for a given Edje object.
 
-            This function sets an @b individual scaling factor on the @a obj
-            Edje object. This property (or Edje's global scaling factor, when
-            applicable), will affect this object's part sizes. If @p scale is
-            not zero, than the individual scaling will @b override any global
-            scaling set, for the object @p obj's parts. Put it back to zero to
-            get the effects of the global scaling again.
+              This function sets an  individual scaling factor on the  obj
+              Edje object. This property (or Edje's global scaling factor, when
+              applicable), will affect this object's part sizes. If scale is
+              not zero, than the individual scaling will  override any global
+              scaling set, for the object obj's parts. Put it back to zero to
+              get the effects of the global scaling again.
 
-            @warning Only parts which, at EDC level, had the @c "scale"
-            property set to @c 1, will be affected by this function. Check the
-            complete @ref edcref "syntax reference" for EDC files.
+              Warning: Only parts which, at EDC level, had the @"scale"
+              property set to @1, will be affected by this function. Check the
+              complete \@ref edcref "syntax reference" for EDC files.
 
-            @see edje_object_scale_get()
-            @see edje_scale_get() for more details */
+              See also @.scale.get()
+              \@ref edje_scale_get() for more details]]
             return: bool;
          }
          get {
-            /*@
-            @brief Get a given Edje object's scaling factor.
+            [[Get a given Edje object's scaling factor.
 
-            This function returns the @c individual scaling factor set on the
-            @a obj Edje object.
+              This function returns the individual scaling factor set on the
+               obj Edje object.
 
-            @see edje_object_scale_set() for more details */
+              See also @.scale.set() for more details]]
          }
          values {
-            scale: double; /*@ The scaling factor (the default value is @c 0.0,
-            meaning individual scaling @b not set) */
+            scale: double; [[The scaling factor (the default value is @0.0,
+                             meaning individual scaling  not set)]]
          }
       }
       @property base_scale {
          get {
-            /*@
-            @brief Get a given Edje object's base_scale factor.
+            [[Get a given Edje object's base_scale factor.
 
-            This function returns the base_scale factor set on the
-            @a obj Edje object.
-            The base_scale can be set in the collection of edc.
-            If it isn't set, the default value is 1.0 */
+              This function returns the base_scale factor set on the
+               obj Edje object.
+              The base_scale can be set in the collection of edc.
+              If it isn't set, the default value is 1.0]]
          }
          values {
-            base_scale: double; /* The base_scale factor (the default value is @ 1.0,
-            that means the edc file is made based on scale 1.0. */
+            base_scale: double; [[The base_scale factor (the default value is @ 1.0,
+                                  that means the edc file is made based on scale 1.0.]]
          }
       }
       @property text_change_cb {
          set {
-            /*@
-            @brief Set the object text callback.
+            [[Set the object text callback.
 
-            This function sets the callback to be called when the text changes. */
+              This function sets the callback to be called when the text changes.]]
          }
          values {
-            func: Edje.Text.Change_Cb; /*@ The callback function to handle the text change */
-            data: void *; /*@ The data associated to the callback function. */
+            func: Edje.Text.Change_Cb; [[The callback function to handle the text change]]
+            data: void *; [[The data associated to the callback function.]]
          }
       }
       @property part_text_cursor_begin {
          set {
-            /*@
-            @brief Moves the cursor to the beginning of the text part
-            @see evas_textblock_cursor_paragraph_first */
+            [[Moves the cursor to the beginning of the text part
+              \@ref evas_textblock_cursor_paragraph_first]]
          }
          values {
-            part: const(char)*; /*@ The part name */
-            cur: Edje.Cursor; /*@ the edje cursor to work on */
+            part: const(char)*; [[The part name]]
+            cur: Edje.Cursor; [[the edje cursor to work on]]
          }
       }
       @property part_text_cursor_line_end {
          set {
-            /*@
-            @brief Move the cursor to the end of the line.
-            @see evas_textblock_cursor_line_char_last */
+            [[Move the cursor to the end of the line.
+              \@ref evas_textblock_cursor_line_char_last]]
          }
          values {
-            part: const(char)*; /*@ The part name */
-            cur: Edje.Cursor; /*@ the edje cursor to work on */
+            part: const(char)*; [[The part name]]
+            cur: Edje.Cursor; [[the edje cursor to work on]]
          }
       }
       @property text_class {
          set {
-            /*@
-            @brief Sets Edje text class.
+            [[Sets Edje text class.
 
-            @return @c EINA_TRUE, on success or @c EINA_FALSE, on error
-
-            This function sets the text class for the Edje. */
-            return: bool;
+              This function sets the text class for the Edje.]]
+            return: bool; [[$true, on success or $false, on error]]
          }
          values {
-            text_class: const(char)*; /*@ The text class name */
-            font: const(char)*; /*@ Font name */
-            size: Evas.Font.Size; /*@ Font Size */
+            text_class: const(char)*; [[The text class name]]
+            font: const(char)*; [[Font name]]
+            size: Evas.Font.Size; [[Font Size]]
          }
       }
       @property part_text_cursor_coord {
          set {
-            /*@
-            Position the given cursor to a X,Y position.
+            [[Position the given cursor to a X,Y position.
 
-            This is frequently used with the user cursor.
+              This is frequently used with the user cursor.]]
 
-            @return True on success, false on error. */
-            return: bool;
+            return: bool; [[True on success, false on error.]]
          }
          values {
-            part: const(char)*; /*@ The part containing the object. */
-            cur: Edje.Cursor; /*@ The cursor to adjust. */
-            x: Evas.Coord; /*@ X Coordinate. */
-            y: Evas.Coord; /*@ Y Coordinate. */
+            part: const(char)*; [[The part containing the object.]]
+            cur: Edje.Cursor; [[The cursor to adjust.]]
+            x: Evas.Coord; [[X Coordinate.]]
+            y: Evas.Coord; [[Y Coordinate.]]
          }
       }
       @property part_text_cursor_end {
          set {
-            /*@
-            @brief Moves the cursor to the end of the text part.
-            @see evas_textblock_cursor_paragraph_last */
+            [[Moves the cursor to the end of the text part.
+              \@ref evas_textblock_cursor_paragraph_last]]
          }
          values {
-            part: const(char)*; /*@ The part name */
-            cur: Edje.Cursor; /*@ the edje cursor to work on */
+            part: const(char)*; [[The part name]]
+            cur: Edje.Cursor; [[the edje cursor to work on]]
          }
       }
       @property part_text_escaped {
          set {
-            /*@
-            @brief Sets the text for an object part, but converts HTML escapes to UTF8
+            [[Sets the text for an object part, but converts HTML escapes to UTF8
 
-            This converts the given string @p text to UTF8 assuming it contains HTML
-            style escapes like "&amp;" and "&copy;" etc. IF the part is of type TEXT,
-            as opposed to TEXTBLOCK.
+              This converts the given string text to UTF8 assuming it contains HTML
+              style escapes like "&amp;" and "&copy;" etc. IF the part is of type TEXT,
+              as opposed to TEXTBLOCK.
 
-            @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
-
-            @since 1.2 */
-            return: bool;
+              @since 1.2]]
+            return: bool; [[$true on success, $false otherwise]]
          }
          values {
-            part: const(char)*; /*@ The part name */
-            text: const(char)*; /*@ The text string */
+            part: const(char)*; [[The part name]]
+            text: const(char)*; [[The text string]]
          }
       }
       @property item_provider {
          set {
-            /*@
-            @brief Set the function that provides item objects for named items in an edje entry text
+            [[Set the function that provides item objects for named items in an edje entry text
 
-            Item objects may be deleted any time by Edje, and will be deleted when the
-            Edje object is deleted (or file is set to a new file). */
+              Item objects may be deleted any time by Edje, and will be deleted when the
+              Edje object is deleted (or file is set to a new file).]]
          }
          values {
-            func: Edje.Item_Provider_Cb; /*@ The function to call (or NULL to disable) to get item objects */
-            data: void *; /*@ The data pointer to pass to the @p func callback */
+            func: Edje.Item_Provider_Cb; [[The function to call (or NULL to disable) to get item objects]]
+            data: void *; [[The data pointer to pass to the func callback]]
          }
       }
       @property part_text_cursor_line_begin {
          set {
-            /*@
-            @brief Move the cursor to the beginning of the line.
-            @see evas_textblock_cursor_line_char_first */
+            [[Move the cursor to the beginning of the line.
+              \@ref evas_textblock_cursor_line_char_first]]
          }
          values {
-            part: const(char)*; /*@ The part name */
-            cur: Edje.Cursor; /*@ the edje cursor to work on */
+            part: const(char)*; [[The part name]]
+            cur: Edje.Cursor; [[the edje cursor to work on]]
          }
       }
       @property message_handler {
          set {
-            /*@
-            @brief Set an Edje message handler function for a given Edje object.
+            [[Set an Edje message handler function for a given Edje object.
 
-            For scriptable programs on an Edje object's defining EDC file which
-            send messages with the @c send_message() primitive, one can attach
-            <b>handler functions</b>, to be called in the code which creates
-            that object (see @ref edcref "the syntax" for EDC files).
+              For scriptable programs on an Edje object's defining EDC file which
+              send messages with the send_message() primitive, one can attach
+              <b>handler functions</b>, to be called in the code which creates
+              that object (see \@ref edcref "the syntax" for EDC files).
 
-            This function associates a message handler function and the
-            attached data pointer to the object @p obj.
+              This function associates a message handler function and the
+              attached data pointer to the object obj.
 
-            @see edje_object_message_send() */
+              See also @.message_send()]]
          }
          values {
-            func: Edje.Message_Handler_Cb; /*@ The function to handle messages @b coming from @p obj */
-            data: void *; /*@ Auxiliary data to be passed to @p func */
+            func: Edje.Message_Handler_Cb; [[The function to handle messages  coming from obj]]
+            data: void *; [[Auxiliary data to be passed to func]]
          }
       }
       @property size_min {
          get {
-            /*@
-            @brief Get the minimum size specified -- as an EDC property -- for a
-            given Edje object
+            [[Get the minimum size specified -- as an EDC property -- for a
+              given Edje object
 
-            This function retrieves the @p obj object's minimum size values,
-            <b>as declared in its EDC group definition</b>. Minimum size of
-            groups have the following syntax
-            @code
-            collections {
-            group {
-            name: "a_group";
-            min: 100 100;
-            }
-            }
-            @endcode
+              This function retrieves the obj object's minimum size values,
+              <b>as declared in its EDC group definition</b>.
 
-            where one declares a minimum size of 100 pixels both for width and
-            height. Those are (hint) values which should be respected when the
-            given object/group is to be controlled by a given container object
-            (e.g. an Edje object being "swallowed" into a given @c SWALLOW
-            typed part, as in edje_object_part_swallow()). Check the complete
-            @ref edcref "syntax reference" for EDC files.
+              Note: If the \@ref min EDC property was not declared for obj, this
+              call will return the value 0, for each axis.
 
-            @note If the @c min EDC property was not declared for @p obj, this
-            call will return the value 0, for each axis.
+              Note: On failure, this function will make all non-$NULL size
+              pointers' pointed variables be set to zero.
 
-            @note On failure, this function will make all non-@c NULL size
-            pointers' pointed variables be set to zero.
-
-            @see edje_object_size_max_get() */
+              See also @.size_max.get()]]
+              /* FIXME-doc
+               * Minimum size of groups have the following syntax
+               * @code
+               * collections
+               *   {
+               *      group
+               *        {
+               *           name: "a_group";
+               *           min: 100 100;
+               *        }
+               *   }
+               * @endcode
+               * where one declares a minimum size of 100 pixels both for width and
+               * height. Those are (hint) values which should be respected when the
+               * given object/group is to be controlled by a given container object
+               * (e.g. an Edje object being "swallowed" into a given \@ref SWALLOW
+               * typed part, as in edje_object_part_swallow()). Check the complete
+               * \@ref edcref "syntax reference" for EDC files.
+               */
          }
          values {
-            minw: Evas.Coord; /*@ Pointer to a variable where to store the minimum width */
-            minh: Evas.Coord; /*@ Pointer to a variable where to store the minimum height */
+            minw: Evas.Coord; [[Pointer to a variable where to store the minimum width]]
+            minh: Evas.Coord; [[Pointer to a variable where to store the minimum height]]
          }
       }
       @property access_part_list {
          get {
-            /*@
-            @brief Retrieve a list all accessibility part names
+            [[Retrieve a list all accessibility part names
 
-            @return A list all accessibility part names on @p obj
-            @since 1.7.0 */
-            return: list<const(char)*> *;
+              @since 1.7.0]]
+            return: list<const(char)*> *; [[A list all accessibility part names on obj]]
          }
       }
       @property load_error {
          get {
-            /*@
-            @brief Gets the (last) file loading error for a given Edje object
+            [[Gets the (last) file loading error for a given Edje object
 
-            @return The Edje loading error, one of:
-            - #EDJE_LOAD_ERROR_NONE
-            - #EDJE_LOAD_ERROR_GENERIC
-            - #EDJE_LOAD_ERROR_DOES_NOT_EXIST
-            - #EDJE_LOAD_ERROR_PERMISSION_DENIED
-            - #EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED
-            - #EDJE_LOAD_ERROR_CORRUPT_FILE
-            - #EDJE_LOAD_ERROR_UNKNOWN_FORMAT
-            - #EDJE_LOAD_ERROR_INCOMPATIBLE_FILE
-            - #EDJE_LOAD_ERROR_UNKNOWN_COLLECTION
-            - #EDJE_LOAD_ERROR_RECURSIVE_REFERENCE
+              This function is meant to be used after an Edje EDJ <b>file
+              loading</b>, what takes place with the edje_object_file_set()
+              function. If that function does not return $true, one should
+              check for the reason of failure with this one.
 
-            This function is meant to be used after an Edje EDJ <b>file
-            loading</b>, what takes place with the edje_object_file_set()
-            function. If that function does not return @c EINA_TRUE, one should
-            check for the reason of failure with this one.
+              \@ref edje_load_error_str()]]
+            return: Edje.Load_Error; [[The Edje loading error, one of:
+                                       - #EDJE_LOAD_ERROR_NONE
+                                       - #EDJE_LOAD_ERROR_GENERIC
+                                       - #EDJE_LOAD_ERROR_DOES_NOT_EXIST
+                                       - #EDJE_LOAD_ERROR_PERMISSION_DENIED
+                                       - #EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED
+                                       - #EDJE_LOAD_ERROR_CORRUPT_FILE
+                                       - #EDJE_LOAD_ERROR_UNKNOWN_FORMAT
+                                       - #EDJE_LOAD_ERROR_INCOMPATIBLE_FILE
+                                       - #EDJE_LOAD_ERROR_UNKNOWN_COLLECTION
+                                       - #EDJE_LOAD_ERROR_RECURSIVE_REFERENCE]]
 
-            @see edje_load_error_str() */
-            return: Edje.Load_Error;
          }
       }
       @property size_max {
          get {
-            /*@
-            @brief Get the maximum size specified -- as an EDC property -- for a
-            given Edje object
+            [[Get the maximum size specified -- as an EDC property -- for a
+              given Edje object
 
-            This function retrieves the @p obj object's maximum size values,
-            <b>as declared in its EDC group definition</b>. Maximum size of
-            groups have the following syntax
-            @code
-            collections {
-            group {
-            name: "a_group";
-            max: 100 100;
-            }
-            }
-            @endcode
+              This function retrieves the obj object's maximum size values,
+              <b>as declared in its EDC group definition</b>.
 
-            where one declares a maximum size of 100 pixels both for width and
-            height. Those are (hint) values which should be respected when the
-            given object/group is to be controlled by a given container object
-            (e.g. an Edje object being "swallowed" into a given @c SWALLOW
-            typed part, as in edje_object_part_swallow()). Check the complete
-            @ref edcref "syntax reference" for EDC files.
+              Note: If the \@ref max EDC property was not declared for obj, this
+              call will return the maximum size a given Edje object may have, for
+              each axis.
 
-            @note If the @c max EDC property was not declared for @p obj, this
-            call will return the maximum size a given Edje object may have, for
-            each axis.
+              Note: On failure, this function will make all non-$NULL size
+              pointers' pointed variables be set to zero.
 
-            @note On failure, this function will make all non-@c NULL size
-            pointers' pointed variables be set to zero.
-
-            @see edje_object_size_min_get() */
+              See also @.size_min.get()]]
+              /* FIXME-doc
+               * Maximum size of groups have the following syntax
+               * @code
+               * collections
+               *   {
+               *      group
+               *        {
+               *           name: "a_group";
+               *           max: 100 100;
+               *        }
+               *   }
+               * @endcode
+               * where one declares a maximum size of 100 pixels both for width and
+               * height. Those are (hint) values which should be respected when the
+               * given object/group is to be controlled by a given container object
+               * (e.g. an Edje object being "swallowed" into a given \@ref SWALLOW
+               * typed part, as in edje_object_part_swallow()). Check the complete
+               * \@ref edcref "syntax reference" for EDC files.
+               */
          }
          values {
-            maxw: Evas.Coord; /*@ Pointer to a variable where to store the maximum width */
-            maxh: Evas.Coord; /*@ Pointer to a variable where to store the maximum height */
+            maxw: Evas.Coord; [[Pointer to a variable where to store the maximum width]]
+            maxh: Evas.Coord; [[Pointer to a variable where to store the maximum height]]
          }
       }
       part_table_clear {
-         /*@
-         @brief Removes all object from the table.
+         [[Removes all object from the table.
 
-         @return @c EINA_TRUE clear the table, @c EINA_FALSE on failure
+           Removes all object from the table indicated by part, except the
+           internal ones set from the theme.]]
 
-         Removes all object from the table indicated by part, except the
-         internal ones set from the theme. */
-
-         return: bool;
+         return: bool; [[$true clear the table, $false on failure]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in clear: bool; /*@ If set, will delete subobjs on remove */
+            @in part: const(char)*; [[The part name]]
+            @in clear: bool; [[If set, will delete subobjs on remove]]
          }
       }
       part_external_param_type_get @const {
-         /*@
-         Facility to query the type of the given parameter of the given part.
+         [[Facility to query the type of the given parameter of the given part.]]
 
-         @return @c EDJE_EXTERNAL_PARAM_TYPE_MAX on errors, or another value
-         from #Edje_External_Param_Type on success. */
-         return: Edje.External.Param_Type;
+         return: Edje.External.Param_Type; [[#EDJE_EXTERNAL_PARAM_TYPE_MAX on errors, or another value
+                                             from #Edje_External_Param_Type on success.]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @out param: const(char); /*@ the parameter name to use. */
+            @in part: const(char)*; [[The part name]]
+            @out param: const(char); [[the parameter name to use.]]
          }
       }
       part_text_select_allow_set @const {
-         /*@
-         @brief Enables selection if the entry is an EXPLICIT selection mode
-         type.
+         [[Enables selection if the entry is an EXPLICIT selection mode
+           type.
 
-         The default is to @b not allow selection. This function only affects user
-         selection, functions such as edje_object_part_text_select_all() and
-         edje_object_part_text_select_none() are not affected. */
+           The default is to  not allow selection. This function only affects user
+           selection, functions such as edje_object_part_text_select_all() and
+           edje_object_part_text_select_none() are not affected.]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in allow: bool; /*@ EINA_TRUE to enable, EINA_FALSE otherwise */
+            @in part: const(char)*; [[The part name]]
+            @in allow: bool; [[true to enable, false otherwise]]
          }
       }
       part_state_get @const {
-         /*@
-         @brief Returns the state of the Edje part.
+         [[Returns the state of the Edje part.]]
 
-         @return The part state:\n
-         "default" for the default state\n
-         "" for other states */
-         return: const(char)*;
+         return: const(char)*; [[The part state:
+                                 "default" for the default state
+                                 "" for other states]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
             @out val_ret: double;
          }
       }
       text_markup_filter_callback_del_full {
-         /*@
-         Delete a function and matching user data from the markup filter list.
+         [[Delete a function and matching user data from the markup filter list.
 
-         Delete the given @p func filter and @p data user data from the list
-         in @p part.
-         Returns the user data pointer given when added.
+           Delete the given func filter and data user data from the list
+           in part.
+           Returns the user data pointer given when added.
 
-         @see edje_object_text_markup_filter_callback_add
-         @see edje_object_text_markup_filter_callback_del
+           See also @.text_markup_filter_callback_add and @.text_markup_filter_callback_del
 
-         @return The same data pointer if successful, or NULL otherwise
-         @since 1.2.0 */
+           @since 1.2.0]]
 
-         return: void *;
+         return: void *; [[The same data pointer if successful, or NULL otherwise]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in func: Edje.Markup_Filter_Cb; /*@ The function callback to remove */
-            @in data: void *; /*@ The data passed to the callback function */
+            @in part: const(char)*; [[The part name]]
+            @in func: Edje.Markup_Filter_Cb; [[The function callback to remove]]
+            @in data: void *; [[The data passed to the callback function]]
          }
       }
       part_drag_step_set {
-         /*@
-         @brief Sets the drag step increment.
+         [[Sets the drag step increment.
 
-         Sets the x,y step increments for a dragable object.
+           Sets the x,y step increments for a dragable object.
 
-         Values for @p dx and @p dy are real numbers that range from 0 to 1,
-         representing the relative size of the dragable area on that axis by which the
-         part will be moved.
+           Values for dx and dy are real numbers that range from 0 to 1,
+           representing the relative size of the dragable area on that axis by which the
+           part will be moved.
 
-         @see edje_object_part_drag_step_get() */
+           See also @.part_drag_step_get()]]
 
          return: bool;
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in dx: double; /*@ The x step amount */
-            @in dy: double; /*@ The y step amount */
+            @in part: const(char)*; [[The part name]]
+            @in dx: double; [[The x step amount]]
+            @in dy: double; [[The y step amount]]
          }
       }
       part_drag_step_get @const {
-         /*@
-         @brief Gets the drag step increment values.
+         [[Gets the drag step increment values.
 
-         Gets the x and y step increments for the dragable object.
+           Gets the x and y step increments for the dragable object.
 
-
-         @see edje_object_part_drag_step_set() */
-         return: bool;
+           See also @.part_drag_step_set()]]
+           return: bool;
          params {
-            @in part: const(char)*; /*@ The part */
-            @out dx: double; /*@ The x step increment pointer */
-            @out dy: double; /*@ The y step increment pointer */
+            @in part: const(char)*; [[The part]]
+            @out dx: double; [[The x step increment pointer]]
+            @out dy: double; [[The y step increment pointer]]
          }
       }
       part_text_imf_context_get @const {
-         /*@
-         @brief Get the input method context in entry.
+         [[Get the input method context in entry.
 
-         If ecore_imf was not available when edje was compiled, this function returns NULL
-         otherwise, the returned pointer is an Ecore_IMF
+           If ecore_imf was not available when edje was compiled, this function returns NULL
+           otherwise, the returned pointer is an Ecore_IMF
 
-         @return The input method context (Ecore_IMF_Context *) in entry
-         @since 1.2.0 */
-         return: void *;
+           @since 1.2.0]]
+         return: void *; [[The input method context (Ecore_IMF_Context *) in entry]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_text_select_begin @const {
-         /*@
-         @brief Starts selecting at current cursor position */
+         [[Starts selecting at current cursor position]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_text_style_user_peek @const {
-         /*@
-         @brief Return the text of the object part.
+         [[Return the text of the object part.
 
-         @return The text string
+           This function returns the style associated with the textblock part.
 
-         This function returns the style associated with the textblock part.
-
-         @since 1.2.0 */
-         return: const(char)*;
+           @since 1.2.0]]
+         return: const(char)*; [[The text string]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       signal_callback_del {
-         /*@
-         @brief Remove a signal-triggered callback from an object.
+         [[Remove a signal-triggered callback from an object.
 
-         @return The data pointer
+           This function removes a callback, previously attached to the
+           emittion of a signal, from the object  obj. The parameters  
+           emission,  source and  func must match exactly those passed to
+           a previous call to edje_object_signal_callback_add(). The data
+           pointer that was passed to this call will be returned.
 
-         This function removes a callback, previously attached to the
-         emittion of a signal, from the object @a obj. The parameters @a
-         emission, @a source and @a func must match exactly those passed to
-         a previous call to edje_object_signal_callback_add(). The data
-         pointer that was passed to this call will be returned.
-
-         @see edje_object_signal_callback_add().
-         @see edje_object_signal_callback_del_full(). */
+           See also @.signal_callback_add().
+           \@ref edje_object_signal_callback_del_full().]]
 
          legacy: null;
-         return: void *;
+         return: void *; [[The data pointer]]
          params {
-            @in emission: const(char)*; /*@ The emission string. */
-            @in source: const(char)*; /*@ The source string. */
-            @in func: Edje.Signal_Cb; /*@ The callback function. */
-            @in data: void *; /*@ The callback function. */
+            @in emission: const(char)*; [[The emission string.]]
+            @in source: const(char)*; [[The source string.]]
+            @in func: Edje.Signal_Cb; [[The callback function.]]
+            @in data: void *; [[The callback function.]]
          }
       }
       part_text_cursor_next {
-         /*@
-         @brief Advances the cursor to the next cursor position.
-         @see evas_textblock_cursor_char_next */
+         [[Advances the cursor to the next cursor position.
+           \@ref evas_textblock_cursor_char_next]]
 
          return: bool;
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in cur: Edje.Cursor; /*@ The edje cursor to advance */
+            @in part: const(char)*; [[The part name]]
+            @in cur: Edje.Cursor; [[The edje cursor to advance]]
          }
       }
       part_text_style_user_push {
-         /*@
-         @brief Set the style of the
+         [[Set the style of the
 
-         This function sets the style associated with the textblock part.
+           This function sets the style associated with the textblock part.
 
-         @since 1.2.0 */
+           @since 1.2.0]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in style: const(char)*; /*@ The style to set (textblock conventions). */
+            @in part: const(char)*; [[The part name]]
+            @in style: const(char)*; [[The style to set (textblock conventions).]]
          }
       }
       part_text_append {
-         /*@
-         @brief Insert text for an object part.
+         [[Insert text for an object part.
 
-         This function inserts the text for an object part at the end; It does not
-         move the cursor.
+           This function inserts the text for an object part at the end; It does not
+           move the cursor.
 
-         @since 1.1 */
+           @since 1.1]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in text: const(char)*; /*@ The text string */
+            @in part: const(char)*; [[The part name]]
+            @in text: const(char)*; [[The text string]]
          }
       }
       part_geometry_get @const {
-         /*@
-         @brief Retrieve the geometry of a given Edje part, in a given Edje
-         object's group definition, <b>relative to the object's area</b>
+         [[Retrieve the geometry of a given Edje part, in a given Edje
+           object's group definition, <b>relative to the object's area</b>
 
-         This function gets the geometry of an Edje part within its
-         group. The @p x and @p y coordinates are relative to the top left
-         corner of the whole @p obj object's area.
+           This function gets the geometry of an Edje part within its
+           group. The x and y coordinates are relative to the top left
+           corner of the whole obj object's area.
 
-         @note Use @c NULL pointers on the geometry components you're not
-         interested in: they'll be ignored by the function.
+           Note: Use $NULL pointers on the geometry components you're not
+           interested in: they'll be ignored by the function.
 
-         @note On failure, this function will make all non-@c NULL geometry
-         pointers' pointed variables be set to zero. */
+           Note: On failure, this function will make all non-$NULL geometry
+           pointers' pointed variables be set to zero.]]
          return: bool;
          params {
-            @in part: const(char)*; /*@ The Edje part's name */
-            @out x: Evas.Coord; /*@ A pointer to a variable where to store the part's x
-            coordinate */
-            @out y: Evas.Coord; /*@ A pointer to a variable where to store the part's y
-            coordinate */
-            @out w: Evas.Coord; /*@ A pointer to a variable where to store the part's width */
-            @out h: Evas.Coord; /*@ A pointer to a variable where to store the part's height */
+            @in part: const(char)*; [[The Edje part's name]]
+            @out x: Evas.Coord; [[A pointer to a variable where to store the part's x
+                                  coordinate]]
+            @out y: Evas.Coord; [[A pointer to a variable where to store the part's y
+                                  coordinate]]
+            @out w: Evas.Coord; [[A pointer to a variable where to store the part's width]]
+            @out h: Evas.Coord; [[A pointer to a variable where to store the part's height]]
          }
       }
       part_text_input_panel_hide @const {
-         /*@
-         @brief Hide the input panel (virtual keyboard).
-         @see edje_object_part_text_input_panel_show
+         [[Hide the input panel (virtual keyboard).
+           See also @.part_text_input_panel_show
 
-         Note that input panel is shown or hidden automatically according to the focus state.
-         This API can be used in the case of manually controlling by using edje_object_part_text_input_panel_enabled_set.
+           Note that input panel is shown or hidden automatically according to the focus state.
+           This API can be used in the case of manually controlling by using edje_object_part_text_input_panel_enabled_set.
 
-         @since 1.2.0 */
+           @since 1.2.0]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_text_item_geometry_get @const {
-         /*@
-         @brief Return item geometry.
+         [[Return item geometry.
 
-         @return 1 if item exists, 0 if not
-
-         This function return a list of Evas_Textblock_Rectangle item
-         rectangles. */
-         return: bool;
+           This function return a list of Evas_Textblock_Rectangle item
+           rectangles.]]
+         return: bool; [[1 if item exists, 0 if not]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in item: const(char)*; /*@ The item name */
-            @out cx: Evas.Coord; /*@ Item x return (relative to entry part) */
-            @out cy: Evas.Coord; /*@ Item y return (relative to entry part) */
-            @out cw: Evas.Coord; /*@ Item width return */
-            @out ch: Evas.Coord; /*@ Item height return */
+            @in part: const(char)*; [[The part name]]
+            @in item: const(char)*; [[The item name]]
+            @out cx: Evas.Coord; [[Item x return (relative to entry part)]]
+            @out cy: Evas.Coord; [[Item y return (relative to entry part)]]
+            @out cw: Evas.Coord; [[Item width return]]
+            @out ch: Evas.Coord; [[Item height return]]
          }
       }
       part_table_unpack {
-         /*@
-         @brief Removes an object from the table.
+         [[Removes an object from the table.
 
-         @return @c EINA_TRUE object removed, @c EINA_FALSE on failure
+           Removes an object from the table indicated by part.]]
 
-         Removes an object from the table indicated by part. */
-
-         return: bool;
+         return: bool; [[$true object removed, $false on failure]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in child_obj: Evas.Object *; /*@ The object to pack in */
+            @in part: const(char)*; [[The part name]]
+            @in child_obj: Evas.Object *; [[The object to pack in]]
          }
       }
       part_text_select_abort @const {
-         /*@
-         @brief Aborts any selection action on a part. */
+         [[Aborts any selection action on a part.]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       text_insert_filter_callback_del_full {
-         /*@
-         Delete a function and matching user data from the filter list.
+         [[Delete a function and matching user data from the filter list.
 
-         Delete the given @p func filter and @p data user data from the list
-         in @p part.
-         Returns the user data pointer given when added.
+           Delete the given func filter and data user data from the list
+           in part.
+           Returns the user data pointer given when added.
 
-         @see edje_object_text_insert_filter_callback_add
-         @see edje_object_text_insert_filter_callback_del
+           See also @.text_insert_filter_callback_add and @.text_insert_filter_callback_del]]
 
-         @return The same data pointer if successful, or NULL otherwise */
-
-         return: void *;
+         return: void *; [[The same data pointer if successful, or NULL otherwise]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in func: Edje.Text.Filter_Cb; /*@ The function callback to remove */
-            @in data: void *; /*@ The data passed to the callback function */
+            @in part: const(char)*; [[The part name]]
+            @in func: Edje.Text.Filter_Cb; [[The function callback to remove]]
+            @in data: void *; [[The data passed to the callback function]]
          }
       }
       part_text_style_user_pop {
-         /*@
-         @brief Delete the top style form the user style stack.
+         [[Delete the top style form the user style stack.
 
-         @since 1.2.0 */
+           @since 1.2.0]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_text_input_panel_imdata_set {
-         /*@
-         Set the input panel-specific data to deliver to the input panel.
+         [[Set the input panel-specific data to deliver to the input panel.
 
-         This API is used by applications to deliver specific data to the input panel.
-         The data format MUST be negotiated by both application and the input panel.
-         The size and format of data are defined by the input panel.
+           This API is used by applications to deliver specific data to the input panel.
+           The data format MUST be negotiated by both application and the input panel.
+           The size and format of data are defined by the input panel.
 
-         @since 1.2.0 */
+           @since 1.2.0]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in data: const(void)*; /*@ The specific data to be set to the input panel. */
-            @in len: int; /*@ the length of data, in bytes, to send to the input panel */
+            @in part: const(char)*; [[The part name]]
+            @in data: const(void)*; [[The specific data to be set to the input panel.]]
+            @in len: int; [[the length of data, in bytes, to send to the input panel]]
          }
       }
       part_text_input_panel_imdata_get @const {
-         /*@
-         Get the specific data of the current active input panel.
+         [[Get the specific data of the current active input panel.
 
-         @since 1.2.0 */
+           @since 1.2.0]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in data: void *; /*@ The specific data to be got from the input panel */
-            @in len: int *; /*@ The length of data */
+            @in part: const(char)*; [[The part name]]
+            @in data: void *; [[The specific data to be got from the input panel]]
+            @in len: int *; [[The length of data]]
          }
       }
       part_text_insert {
-         /*@
-         @brief Insert text for an object part.
+         [[Insert text for an object part.
 
-         This function inserts the text for an object part just before the
-         cursor position. */
+           This function inserts the text for an object part just before the
+           cursor position.]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in text: const(char)*; /*@ The text string */
+            @in part: const(char)*; [[The part name]]
+            @in text: const(char)*; [[The text string]]
          }
       }
       part_box_remove_at {
-         /*@
-         @brief Removes an object from the box.
+         [[Removes an object from the box.
 
-         @return Pointer to the object removed, or @c NULL.
+           Removes from the box indicated by part, the object in the position
+           pos.
 
-         Removes from the box indicated by part, the object in the position
-         pos.
+           See also @.part_box_remove() and @.part_box_remove_all()]]
 
-         @see edje_object_part_box_remove()
-         @see edje_object_part_box_remove_all() */
-
-         return: Evas.Object *;
+         return: Evas.Object *; [[Pointer to the object removed, or $NULL.]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in pos: uint; /*@ The position index of the object (starts counting from 0) */
+            @in part: const(char)*; [[The part name]]
+            @in pos: uint; [[The position index of the object (starts counting from 0)]]
          }
       }
       part_text_cursor_copy {
-         /*@
-         @brief Copy the cursor to another cursor. */
+         [[Copy the cursor to another cursor.]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in src: Edje.Cursor; /*@ the cursor to copy from */
-            @in dst: Edje.Cursor; /*@ the cursor to copy to */
+            @in part: const(char)*; [[The part name]]
+            @in src: Edje.Cursor; [[the cursor to copy from]]
+            @in dst: Edje.Cursor; [[the cursor to copy to]]
          }
       }
       parts_extends_calc {
-         /*@
-         Calculate the geometry of the region, relative to a given Edje
-         object's area, <b>occupied by all parts in the object</b>
+         [[Calculate the geometry of the region, relative to a given Edje
+           object's area, <b>occupied by all parts in the object</b>
 
-         This function gets the geometry of the rectangle equal to the area
-         required to group all parts in @p obj's group/collection. The @p x
-         and @p y coordinates are relative to the top left corner of the
-         whole @p obj object's area. Parts placed out of the group's
-         boundaries will also be taken in account, so that @p x and @p y
-         <b>may be negative</b>.
+           This function gets the geometry of the rectangle equal to the area
+           required to group all parts in obj's group/collection. The x
+           and y coordinates are relative to the top left corner of the
+           whole obj object's area. Parts placed out of the group's
+           boundaries will also be taken in account, so that x and y
+           <b>may be negative</b>.
 
-         @note Use @c NULL pointers on the geometry components you're not
-         interested in: they'll be ignored by the function.
+           Note: Use $NULL pointers on the geometry components you're not
+           interested in: they'll be ignored by the function.
 
-         @note On failure, this function will make all non-@c NULL geometry
-         pointers' pointed variables be set to zero. */
+           Note: On failure, this function will make all non-$NULL geometry
+           pointers' pointed variables be set to zero.]]
 
          return: bool;
          params {
-            @out x: Evas.Coord; /*@ A pointer to a variable where to store the parts region's
-            x coordinate */
-            @out y: Evas.Coord; /*@ A pointer to a variable where to store the parts region's
-            y coordinate */
-            @out w: Evas.Coord; /*@ A pointer to a variable where to store the parts region's
-            width */
-            @out h: Evas.Coord; /*@ A pointer to a variable where to store the parts region's
-            height */
+            @out x: Evas.Coord; [[A pointer to a variable where to store the parts region's
+                                  x coordinate]]
+            @out y: Evas.Coord; [[A pointer to a variable where to store the parts region's
+                                  y coordinate]]
+            @out w: Evas.Coord; [[A pointer to a variable where to store the parts region's
+                                  width]]
+            @out h: Evas.Coord; [[A pointer to a variable where to store the parts region's
+                                  height]]
          }
       }
       part_drag_value_set {
-         /*@
-         @brief Set the dragable object location.
+         [[Set the dragable object location.
 
-         Places the dragable object at the given location.
+           Places the dragable object at the given location.
 
-         Values for @p dx and @p dy are real numbers that range from 0 to 1,
-         representing the relative position to the dragable area on that axis.
+           Values for dx and dy are real numbers that range from 0 to 1,
+           representing the relative position to the dragable area on that axis.
 
-         This value means, for the vertical axis, that 0.0 will be at the top if the
-         first parameter of @c y in the dragable part theme is 1, and at bottom if it
-         is -1.
+           This value means, for the vertical axis, that 0.0 will be at the top if the
+           first parameter of \@ref y in the dragable part theme is 1, and at bottom if it
+           is -1.
 
-         For the horizontal axis, 0.0 means left if the first parameter of @c x in the
-         dragable part theme is 1, and right if it is -1.
+           For the horizontal axis, 0.0 means left if the first parameter of \@ref x in the
+           dragable part theme is 1, and right if it is -1.
 
-         @see edje_object_part_drag_value_get() */
+           See also @.part_drag_value_get()]]
 
          return: bool;
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in dx: double; /*@ The x value */
-            @in dy: double; /*@ The y value */
+            @in part: const(char)*; [[The part name]]
+            @in dx: double; [[The x value]]
+            @in dy: double; [[The y value]]
          }
       }
       part_drag_value_get @const {
-         /*@
-         @brief Get the dragable object location.
+         [[Get the dragable object location.
 
-         Values for @p dx and @p dy are real numbers that range from 0 to 1,
-         representing the relative position to the dragable area on that axis.
+           Values for dx and dy are real numbers that range from 0 to 1,
+           representing the relative position to the dragable area on that axis.
 
-         @see edje_object_part_drag_value_set()
+           See also @.part_drag_value_set()
 
-         Gets the drag location values. */
+           Gets the drag location values.]]
          return: bool;
          params {
-            @in part: const(char)*; /*@ The part name */
-            @out dx: double; /*@ The X value pointer */
-            @out dy: double; /*@ The Y value pointer */
+            @in part: const(char)*; [[The part name]]
+            @out dx: double; [[The X value pointer]]
+            @out dy: double; [[The Y value pointer]]
          }
       }
       calc_force {
-         /*@
-         @brief Force a Size/Geometry calculation.
+         [[Force a Size/Geometry calculation.
 
-         Forces the object @p obj to recalculation layout regardless of
-         freeze/thaw. */
+           Forces the object obj to recalculation layout regardless of
+           freeze/thaw.]]
 
       }
       part_text_cursor_pos_set {
-         /*@
-         @brief Sets the cursor position to the given value
+         [[Sets the cursor position to the given value
 
-         @since 1.1.0 */
+           @since 1.1.0]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in cur: Edje.Cursor; /*@ The cursor to move */
-            @in pos: int; /*@ the position of the cursor */
+            @in part: const(char)*; [[The part name]]
+            @in cur: Edje.Cursor; [[The cursor to move]]
+            @in pos: int; [[the position of the cursor]]
          }
       }
       part_text_cursor_pos_get @const {
-         /*@
-         @brief Retrieves the current position of the cursor
+         [[Retrieves the current position of the cursor
 
-         @return The cursor position
-         @since 1.1.0 */
-         return: int;
+           @since 1.1.0]]
+         return: int; [[The cursor position]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in cur: Edje.Cursor; /*@ The cursor to get the position */
+            @in part: const(char)*; [[The part name]]
+            @in cur: Edje.Cursor; [[The cursor to get the position]]
          }
       }
       freeze {
-         /*@
-         @brief Freezes the Edje object.
+         [[Freezes the Edje object.
 
-         @return The frozen state or 0 on Error
+           This function puts all changes on hold. Successive freezes will
+           nest, requiring an equal number of thaws.
 
-         This function puts all changes on hold. Successive freezes will
-         nest, requiring an equal number of thaws.
+           See also @.thaw()]]
 
-         @see edje_object_thaw() */
-
-         return: int;
+         return: int; [[The frozen state or 0 on Error]]
       }
       part_text_cursor_content_get @const {
-         /*@
-         @brief Returns the content (char) at the cursor position.
-         @see evas_textblock_cursor_content_get
+         [[Returns the content (char) at the cursor position.
+           \@ref evas_textblock_cursor_content_get
 
-         You must free the return (if not NULL) after you are done with it.
+           You must free the return (if not NULL) after you are done with it.]]
 
-         @return The character string pointed to (may be a multi-byte utf8 sequence) terminated by a nul byte. */
-         return: char *;
+         return: char *; [[The character string pointed to (may be a multi-byte utf8 sequence) terminated by a nul byte.]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in cur: Edje.Cursor; /*@ The cursor to use */
+            @in part: const(char)*; [[The part name]]
+            @in cur: Edje.Cursor; [[The cursor to use]]
          }
       }
       part_text_input_panel_layout_set {
-         /*@
-         @brief Set the layout of the input panel.
+         [[Set the layout of the input panel.
 
-         The layout of the input panel or virtual keyboard can make it easier or
-         harder to enter content. This allows you to hint what kind of input you
-         are expecting to enter and thus have the input panel automatically
-         come up with the right mode.
+           The layout of the input panel or virtual keyboard can make it easier or
+           harder to enter content. This allows you to hint what kind of input you
+           are expecting to enter and thus have the input panel automatically
+           come up with the right mode.
 
-         @since 1.1 */
+           @since 1.1]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in layout: Edje.Input_Panel.Layout; /*@ layout type */
+            @in part: const(char)*; [[The part name]]
+            @in layout: Edje.Input_Panel.Layout; [[layout type]]
          }
       }
       part_text_input_panel_layout_get @const {
-         /*@
-         @brief Get the layout of the input panel.
+         [[Get the layout of the input panel.
 
-         @return Layout type of the input panel
+           See also @.part_text_input_panel_layout_set
 
-         @see edje_object_part_text_input_panel_layout_set
-         @since 1.1 */
-         return: Edje.Input_Panel.Layout;
+           @since 1.1]]
+         return: Edje.Input_Panel.Layout; [[Layout type of the input panel]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_table_pack {
-         /*@
-         @brief Packs an object into the table.
+         [[Packs an object into the table.
 
-         @return @c EINA_TRUE object was added, @c EINA_FALSE on failure
+           Packs an object into the table indicated by part.]]
 
-         Packs an object into the table indicated by part. */
-
-         return: bool;
+         return: bool; [[$true object was added, $false on failure]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in child_obj: Evas.Object *; /*@ The object to pack in */
-            @in col: ushort; /*@ The column to place it in */
-            @in row: ushort; /*@ The row to place it in */
-            @in colspan: ushort; /*@ Columns the child will take */
-            @in rowspan: ushort; /*@ Rows the child will take */
+            @in part: const(char)*; [[The part name]]
+            @in child_obj: Evas.Object *; [[The object to pack in]]
+            @in col: ushort; [[The column to place it in]]
+            @in row: ushort; [[The row to place it in]]
+            @in colspan: ushort; [[Columns the child will take]]
+            @in rowspan: ushort; [[Rows the child will take]]
          }
       }
       part_text_input_panel_language_set {
-         /*@
-         Set the language mode of the input panel.
+         [[Set the language mode of the input panel.
 
-         This API can be used if you want to show the Alphabet keyboard.
+           This API can be used if you want to show the Alphabet keyboard.
 
-         @since 1.2.0 */
+           @since 1.2.0]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in lang: Edje.Input_Panel.Lang; /*@ the language to be set to the input panel. */
+            @in part: const(char)*; [[The part name]]
+            @in lang: Edje.Input_Panel.Lang; [[the language to be set to the input panel.]]
          }
       }
       part_text_input_panel_language_get @const {
-         /*@
-         Get the language mode of the input panel.
+         [[Get the language mode of the input panel.
 
-         See @ref edje_object_part_text_input_panel_language_set for more details.
+           See also @.part_text_input_panel_language_set for more details.
 
-         @return input panel language type
-         @since 1.2.0 */
-         return: Edje.Input_Panel.Lang;
+           @since 1.2.0]]
+         return: Edje.Input_Panel.Lang; [[input panel language type]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_table_col_row_size_get @const {
-         /*@
-         @brief Gets the number of columns and rows the table has.
+         [[Gets the number of columns and rows the table has.
 
-         @return @c EINA_TRUE get some data, @c EINA_FALSE on failure
-
-         Retrieves the size of the table in number of columns and rows. */
-         return: bool;
+           Retrieves the size of the table in number of columns and rows.]]
+         return: bool; [[$true get some data, $false on failure]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @out cols: int; /*@ Pointer where to store number of columns (can be NULL) */
-            @out rows: int; /*@ Pointer where to store number of rows (can be NULL) */
+            @in part: const(char)*; [[The part name]]
+            @out cols: int; [[Pointer where to store number of columns (can be NULL)]]
+            @out rows: int; [[Pointer where to store number of rows (can be NULL)]]
          }
       }
       part_external_object_get @const {
-         /*@
-         @brief Get the object created by this external part.
+         [[Get the object created by this external part.
 
-         Parts of type external creates the part object using information
-         provided by external plugins. It's somehow like "swallow"
-         (edje_object_part_swallow()), but it's all set automatically.
+           Parts of type external creates the part object using information
+           provided by external plugins. It's somehow like "swallow"
+           (edje_object_part_swallow()), but it's all set automatically.
 
-         This function returns the part created by such external plugins and
-         being currently managed by this Edje.
+           This function returns the part created by such external plugins and
+           being currently managed by this Edje.
 
-         @note Almost all swallow rules apply: you should not move, resize,
-         hide, show, set the color or clipper of such part. It's a bit
-         more restrictive as one must @b never delete this object!
-
-         @return The externally created object, or NULL if there is none or
-         part is not an external. */
-         return: Evas.Object *;
+           Note: Almost all swallow rules apply: you should not move, resize,
+           hide, show, set the color or clipper of such part. It's a bit
+           more restrictive as one must  never delete this object!]]
+         return: Evas.Object *; [[The externally created object, or NULL if there is none or
+                                  part is not an external.]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_external_content_get @const {
-         /*@
-         @brief Get an object contained in an part of type EXTERNAL
+         [[Get an object contained in an part of type EXTERNAL
 
-         The @p content string must not be NULL. Its actual value depends on the
-         code providing the EXTERNAL. */
+           The content string must not be NULL. Its actual value depends on the
+           code providing the EXTERNAL.]]
          return: Evas.Object *;
          params {
-            @in part: const(char)*; /*@ The name of the part holding the EXTERNAL */
-            @out content: const(char); /*@ A string identifying which content from the EXTERNAL to get */
+            @in part: const(char)*; [[The name of the part holding the EXTERNAL]]
+            @out content: const(char); [[A string identifying which content from the EXTERNAL to get]]
          }
       }
       preload {
-         /*@
-         @brief Preload the images on the Edje Object in the background.
+         [[Preload the images on the Edje Object in the background.
 
-         @return @c EINA_FASLE if obj was not a valid Edje object
-         otherwise @c EINA_TRUE
+           This function requests the preload of all data images (on the given
+           object) in the background. The work is queued before being processed
+           (because there might be other pending requests of this type).
+           It emits a signal "preload,done" when finished.
 
-         This function requests the preload of all data images (on the given
-         object) in the background. The work is queued before being processed
-         (because there might be other pending requests of this type).
-         It emits a signal "preload,done" when finished.
+           Note: Use $true on scenarios where you don't need
+           the image data preloaded anymore.]]
 
-         @note Use @c EINA_TRUE on scenarios where you don't need
-         the image data preloaded anymore. */
-
-         return: bool;
+         return: bool; [[$false if obj was not a valid Edje object
+                         otherwise $true]]
          params {
-            @in cancel: bool; /*@ @c EINA_FALSE will add it the preloading work queue,
-            @c EINA_TRUE will remove it (if it was issued before). */
+            @in cancel: bool; [[$false will add it the preloading work queue,
+                                $true will remove it (if it was issued before).]]
          }
       }
       part_text_input_panel_enabled_set {
-         /*@
-         @brief Sets the attribute to show the input panel automatically.
+         [[Sets the attribute to show the input panel automatically.
 
-         @since 1.1.0 */
+           @since 1.1.0]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in enabled: bool; /*@ If true, the input panel is appeared when entry is clicked or has a focus */
+            @in part: const(char)*; [[The part name]]
+            @in enabled: bool; [[If true, the input panel is appeared when entry is clicked or has a focus]]
          }
       }
       part_text_input_panel_enabled_get @const {
-         /*@
-         @brief Retrieve the attribute to show the input panel automatically.
-         @see edje_object_part_text_input_panel_enabled_set
+         [[Retrieve the attribute to show the input panel automatically.
+           See also @.part_text_input_panel_enabled_set
 
-         @return EINA_TRUE if it supports or EINA_FALSE otherwise
-         @since 1.1.0 */
-         return: bool;
+           @since 1.1.0]]
+         return: bool; [[true if it supports or false otherwise]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_text_select_extend @const {
-         /*@
-         @brief Extends the current selection to the current cursor position */
+         [[Extends the current selection to the current cursor position]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_box_insert_at {
-         /*@
-         @brief Inserts an object to the box.
+         [[Inserts an object to the box.
 
-         @return @c EINA_TRUE: Successfully added.\n
-         @c EINA_FALSE: An error occurred.
+           Adds child to the box indicated by part, in the position given by
+           pos.
 
-         Adds child to the box indicated by part, in the position given by
-         pos.
+           See also @.part_box_append(), @.part_box_prepend() and @.part_box_insert_before()]]
 
-         @see edje_object_part_box_append()
-         @see edje_object_part_box_prepend()
-         @see edje_object_part_box_insert_before() */
-
-         return: bool;
+         return: bool; [[$true: Successfully added.
+                         $false: An error occurred.]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in child: Evas.Object *; /*@ The object to insert */
-            @in pos: uint; /*@ The position where to insert child */
+            @in part: const(char)*; [[The part name]]
+            @in child: Evas.Object *; [[The object to insert]]
+            @in pos: uint; [[The position where to insert child]]
          }
       }
       part_text_anchor_geometry_get @const {
-         /*@
-         @brief Return a list of Evas_Textblock_Rectangle anchor rectangles.
+         [[Return a list of Evas_Textblock_Rectangle anchor rectangles.
 
-         @return The list of anchor rects (const Evas_Textblock_Rectangle
-         *), do not modify! Geometry is relative to entry part.
-
-         This function return a list of Evas_Textblock_Rectangle anchor
-         rectangles. */
-         return: const(list<const(Evas.Textblock_Rectangle)*>)*;
+           This function return a list of Evas_Textblock_Rectangle anchor
+           rectangles.]]
+         return: const(list<const(Evas.Textblock_Rectangle)*>)*; [[The list of anchor rects (const Evas_Textblock_Rectangle
+                                                                   *), do not modify! Geometry is relative to entry part.]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in anchor: const(char)*; /*@ The anchor name */
+            @in part: const(char)*; [[The part name]]
+            @in anchor: const(char)*; [[The anchor name]]
          }
       }
       part_text_cursor_down {
-         /*@
-         @brief Moves the cursor to the char below the current cursor position. */
+         [[Moves the cursor to the char below the current cursor position.]]
 
          return: bool;
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in cur: Edje.Cursor; /*@ the edje cursor to work on */
+            @in part: const(char)*; [[The part name]]
+            @in cur: Edje.Cursor; [[the edje cursor to work on]]
          }
       }
       part_drag_page_set {
-         /*@
-         @brief Sets the page step increments.
+         [[Sets the page step increments.
 
-         Sets the x,y page step increment values.
+           Sets the x,y page step increment values.
 
-         Values for @p dx and @p dy are real numbers that range from 0 to 1,
-         representing the relative size of the dragable area on that axis by which the
-         part will be moved.
+           Values for dx and dy are real numbers that range from 0 to 1,
+           representing the relative size of the dragable area on that axis by which the
+           part will be moved.
 
-         @see edje_object_part_drag_page_get() */
+           See also @.part_drag_page_get()]]
 
          return: bool;
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in dx: double; /*@ The x page step increment */
-            @in dy: double; /*@ The y page step increment */
+            @in part: const(char)*; [[The part name]]
+            @in dx: double; [[The x page step increment]]
+            @in dy: double; [[The y page step increment]]
          }
       }
       part_drag_page_get @const {
-         /*@
-         @brief Gets the page step increments.
+         [[Gets the page step increments.
 
-         Gets the x,y page step increments for the dragable object.
+           Gets the x,y page step increments for the dragable object.
 
-         @see edje_object_part_drag_page_set() */
+           See also @.part_drag_page_set()]]
          return: bool;
          params {
-            @in part: const(char)*; /*@ The part name */
-            @out dx: double; /*@ The dx page increment pointer */
-            @out dy: double; /*@ The dy page increment pointer */
+            @in part: const(char)*; [[The part name]]
+            @out dx: double; [[The dx page increment pointer]]
+            @out dy: double; [[The dy page increment pointer]]
          }
       }
       part_box_prepend {
-         /*@
-         @brief Prepends an object to the box.
+         [[Prepends an object to the box.
 
-         @return @c EINA_TRUE: Successfully added.\n
-         @c EINA_FALSE: An error occurred.
+           Prepends child to the box indicated by part.
 
-         Prepends child to the box indicated by part.
+           See also @.part_box_append(), @.part_box_insert_before() and @.part_box_insert_at()]]
 
-         @see edje_object_part_box_append()
-         @see edje_object_part_box_insert_before()
-         @see edje_object_part_box_insert_at() */
-
-         return: bool;
+         return: bool; [[$true: Successfully added.
+                         $false: An error occurred.]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in child: Evas.Object *; /*@ The object to prepend */
+            @in part: const(char)*; [[The part name]]
+            @in child: Evas.Object *; [[The object to prepend]]
          }
       }
       signal_emit {
-         /*@
-         @brief Send/emit an Edje signal to a given Edje object
+         [[Send/emit an Edje signal to a given Edje object
 
-         This function sends a signal to the object @a obj. An Edje program,
-         at @p obj's EDC specification level, can respond to a signal by
-         having declared matching @c 'signal' and @c 'source' fields on its
-         block (see @ref edcref "the syntax" for EDC files).
+           This function sends a signal to the object  obj. An Edje program,
+           at obj's EDC specification level, can respond to a signal by
+           having declared matching @'signal' and @'source' fields on its
+           block (see \@ref edcref "the syntax" for EDC files).
 
-         As an example,
-         @code
-         edje_object_signal_emit(obj, "a_signal", "");
-         @endcode
-         would trigger a program which had an EDC declaration block like
-         @code
-         program {
-         name: "a_program";
-         signal: "a_signal";
-         source: "";
-         action: ...
-         }
-         @endcode
-
-         @see edje_object_signal_callback_add() for more on Edje signals. */
-
+           See also @.signal_callback_add() for more on Edje signals.]]
+           /* FIXME-doc
+            * @code
+            * program
+            *   {
+            *      name: "a_program";
+            *      signal: "a_signal";
+            *      source: "";
+            *      action: ...
+            *   }
+            * @endcode
+            */
          params {
-            @in emission: const(char)*; /*@ The signal's "emission" string */
-            @in source: const(char)*; /*@ The signal's "source" string */
+            @in emission: const(char)*; [[The signal's "emission" string]]
+            @in source: const(char)*; [[The signal's "source" string]]
          }
       }
       part_text_input_panel_layout_variation_set {
-         /*@
-         @brief Set the layout variation of the input panel.
+         [[Set the layout variation of the input panel.
 
-         The layout variation of the input panel or virtual keyboard can make it easier or
-         harder to enter content. This allows you to hint what kind of input you
-         are expecting to enter and thus have the input panel automatically
-         come up with the right mode.
+           The layout variation of the input panel or virtual keyboard can make it easier or
+           harder to enter content. This allows you to hint what kind of input you
+           are expecting to enter and thus have the input panel automatically
+           come up with the right mode.
 
-         @since 1.8 */
+           @since 1.8]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in variation: int; /*@ layout variation type */
+            @in part: const(char)*; [[The part name]]
+            @in variation: int; [[layout variation type]]
          }
       }
       part_text_input_panel_layout_variation_get @const {
-         /*@
-         @brief Get the layout variation of the input panel.
+         [[Get the layout variation of the input panel.
 
-         @return Layout variation type of the input panel
+           See also @.part_text_input_panel_layout_variation_set
 
-         @see edje_object_part_text_input_panel_layout_variation_set
-         @since 1.8 */
-         return: int;
+           @since 1.8]]
+         return: int; [[Layout variation type of the input panel]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       message_send {
-         /*@
-         @brief Send an (Edje) message to a given Edje object
+         [[Send an (Edje) message to a given Edje object
 
-         This function sends an Edje message to @p obj and to all of its
-         child objects, if it has any (swallowed objects are one kind of
-         child object). @p type and @p msg @b must be matched accordingly,
-         as documented in #Edje_Message_Type.
+           This function sends an Edje message to obj and to all of its
+           child objects, if it has any (swallowed objects are one kind of
+           child object). type and msg  must be matched accordingly,
+           as documented in #Edje_Message_Type.
 
-         The @p id argument as a form of code and theme defining a common
-         interface on message communication. One should define the same IDs
-         on both code and EDC declaration (see @ref edcref "the syntax" for
-         EDC files), to individualize messages (binding them to a given
-         context).
+           The id argument as a form of code and theme defining a common
+           interface on message communication. One should define the same IDs
+           on both code and EDC declaration (see \@ref edcref "the syntax" for
+           EDC files), to individualize messages (binding them to a given
+           context).
 
-         The function to handle messages arriving @b from @b obj is set with
-         edje_object_message_handler_set(). */
+           The function to handle messages arriving  from obj is set with
+           edje_object_message_handler_set().]]
 
          params {
-            @in type: Edje.Message_Type; /*@ The type of message to send to @p obj */
-            @in id: int; /*@ A identification number for the message to be sent */
-            @in msg: void *; /*@ The message's body, a struct depending on @p type */
+            @in type: Edje.Message_Type; [[The type of message to send to obj]]
+            @in id: int; [[A identification number for the message to be sent]]
+            @in msg: void *; [[The message's body, a struct depending on type]]
          }
       }
       part_text_select_none @const {
-         /*@
-         @brief Set the selection to be none.
+         [[Set the selection to be none.
 
-         This function sets the selection text to be none. */
+           This function sets the selection text to be none.]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_object_get @const {
-         /*@
-         @brief Get a handle to the Evas object implementing a given Edje
-         part, in an Edje object.
+         [[Get a handle to the Evas object implementing a given Edje
+           part, in an Edje object.
 
-         @return A pointer to the Evas object implementing the given part,
-         or @c NULL on failure (e.g. the given part doesn't exist)
+           This function gets a pointer of the Evas object corresponding to a
+           given part in the obj object's group.
 
-         This function gets a pointer of the Evas object corresponding to a
-         given part in the @p obj object's group.
-
-         You should @b never modify the state of the returned object (with
-         @c evas_object_move() or @c evas_object_hide() for example),
-         because it's meant to be managed by Edje, solely. You are safe to
-         query information about its current state (with @c
-         evas_object_visible_get() or @c evas_object_color_get() for
-         example), though. */
-         return: const(Evas.Object)*;
+           You should  never modify the state of the returned object (with
+           \@ref evas_object_move() or \@ref evas_object_hide() for example),
+           because it's meant to be managed by Edje, solely. You are safe to
+           query information about its current state (with
+           evas_object_visible_get() or \@ref evas_object_color_get() for
+           example), though.]]
+         return: const(Evas.Object)*; [[A pointer to the Evas object implementing the given part,
+                                        or $NULL on failure (e.g. the given part doesn't exist)]]
          params {
-            @in part: const(char)*; /*@ The Edje part's name */
+            @in part: const(char)*; [[The Edje part's name]]
          }
       }
       part_drag_size_set {
-         /*@
-         @brief Set the dragable object size.
+         [[Set the dragable object size.
 
-         Values for @p dw and @p dh are real numbers that range from 0 to 1,
-         representing the relative size of the dragable area on that axis.
+           Values for dw and dh are real numbers that range from 0 to 1,
+           representing the relative size of the dragable area on that axis.
 
-         Sets the size of the dragable object.
+           Sets the size of the dragable object.
 
-         @see edje_object_part_drag_size_get() */
+           See also @.part_drag_size_get()]]
 
          return: bool;
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in dw: double; /*@ The drag width */
-            @in dh: double; /*@ The drag height */
+            @in part: const(char)*; [[The part name]]
+            @in dw: double; [[The drag width]]
+            @in dh: double; [[The drag height]]
          }
       }
       part_drag_size_get @const {
-         /*@
-         @brief Get the dragable object size.
+         [[Get the dragable object size.
 
-         Gets the dragable object size.
+           Gets the dragable object size.
 
-         @see edje_object_part_drag_size_set() */
+           See also @.part_drag_size_set()]]
          return: bool;
          params {
-            @in part: const(char)*; /*@ The part name */
-            @out dw: double; /*@ The drag width pointer */
-            @out dh: double; /*@ The drag height pointer */
+            @in part: const(char)*; [[The part name]]
+            @out dw: double; [[The drag width pointer]]
+            @out dh: double; [[The drag height pointer]]
          }
       }
       text_insert_filter_callback_del {
-         /*@
-         Delete a function from the filter list.
+         [[Delete a function from the filter list.
 
-         Delete the given @p func filter from the list in @p part. Returns
-         the user data pointer given when added.
+           Delete the given func filter from the list in part. Returns
+           the user data pointer given when added.
 
-         @see edje_object_text_insert_filter_callback_add
-         @see edje_object_text_insert_filter_callback_del_full
+           See also @.text_insert_filter_callback_add and @.text_insert_filter_callback_del_full]]
 
-         @return The user data pointer if successful, or NULL otherwise */
-
-         return: void *;
+         return: void *; [[The user data pointer if successful, or NULL otherwise]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in func: Edje.Text.Filter_Cb; /*@ The function callback to remove */
+            @in part: const(char)*; [[The part name]]
+            @in func: Edje.Text.Filter_Cb; [[The function callback to remove]]
          }
       }
       part_drag_dir_get @const {
-         /*@
-         @brief Determine dragable directions.
+         [[Determine dragable directions.
 
-         The dragable directions are defined in the EDC file, inside the @c dragable
-         section, by the attributes @c x and @c y. See the @ref edcref for more
-         information.
+           The dragable directions are defined in the EDC file, inside the \@ref dragable
+           section, by the attributes \@ref x and \@ref y. See the \@ref edcref for more
+           information.]]
 
-         @return #EDJE_DRAG_DIR_NONE: Not dragable\n
-         #EDJE_DRAG_DIR_X: Dragable in X direction\n
-         #EDJE_DRAG_DIR_Y: Dragable in Y direction\n
-         #EDJE_DRAG_DIR_XY: Dragable in X & Y directions */
-         return: Edje.Drag_Dir;
+         return: Edje.Drag_Dir; [[#EDJE_DRAG_DIR_NONE: Not dragable
+                                  #EDJE_DRAG_DIR_X: Dragable in X direction
+                                  #EDJE_DRAG_DIR_Y: Dragable in Y direction
+                                  #EDJE_DRAG_DIR_XY: Dragable in X & Y directions]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_text_unescaped_set {
-         /*@
-         @brief Sets the raw (non escaped) text for an object part.
+         [[Sets the raw (non escaped) text for an object part.
 
-         This funciton will not do escape for you if it is a TEXTBLOCK part, that is,
-         if text contain tags, these tags will not be interpreted/parsed by TEXTBLOCK.
+           This funciton will not do escape for you if it is a TEXTBLOCK part, that is,
+           if text contain tags, these tags will not be interpreted/parsed by TEXTBLOCK.
 
-         @see edje_object_part_text_unescaped_get(). */
+           See also @.part_text_unescaped_get().]]
 
          return: bool;
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in text_to_escape: const(char)*; /*@ The text string */
+            @in part: const(char)*; [[The part name]]
+            @in text_to_escape: const(char)*; [[The text string]]
          }
       }
       part_text_unescaped_get @const {
-         /*@
-         @brief Returns the text of the object part, without escaping.
+         [[Returns the text of the object part, without escaping.
 
-         @return The @b allocated text string without escaping, or NULL on
-         problems.
+           This function is the counterpart of
+           edje_object_part_text_unescaped_set(). Please notice that the
+           result is newly allocated memory and should be released with free()
+           when done.
 
-         This function is the counterpart of
-         edje_object_part_text_unescaped_set(). Please notice that the
-         result is newly allocated memory and should be released with free()
-         when done.
-
-         @see edje_object_part_text_unescaped_set(). */
-         return: char *;
+           See also @.part_text_unescaped_set().]]
+         return: char *; [[The  allocated text string without escaping, or NULL on
+                           problems.]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       signal_callback_add {
-         /*@
-         @brief Add a callback for an arriving Edje signal, emitted by
-         a given Edje object.
+         [[Add a callback for an arriving Edje signal, emitted by
+           a given Edje object.
 
-         Edje signals are one of the communication interfaces between
-         @b code and a given Edje object's @b theme. With signals, one can
-         communicate two string values at a time, which are:
-         - "emission" value: the name of the signal, in general
-         - "source" value: a name for the signal's context, in general
+           Edje signals are one of the communication interfaces between
+            code and a given Edje object's theme. With signals, one can
+           communicate two string values at a time, which are:
+           - "emission" value: the name of the signal, in general
+           - "source" value: a name for the signal's context, in general
 
-         Though there are those common uses for the two strings, one is free
-         to use them however they like.
+           Though there are those common uses for the two strings, one is free
+           to use them however they like.
 
-         This function adds a callback function to a signal emitted by @a obj, to
-         be issued every time an EDC program like the following
-         @code
-         program {
-         name: "emit_example";
-         action: SIGNAL_EMIT "a_signal" "a_source";
-         }
-         @endcode
-         is run, if @p emission and @p source are given those same values,
-         here.
+           Signal callback registration is powerful, in the way that  blobs
+           may be used to match <b>multiple signals at once</b>. All the
+           "*?[\" set of \@ref fnmatch() operators can be used, both for
+           emission and source.
 
-         Signal callback registration is powerful, in the way that @b blobs
-         may be used to match <b>multiple signals at once</b>. All the @c
-         "*?[\" set of @c fnmatch() operators can be used, both for @p
-         emission and @p source.
+           Edje has  internal signals it will emit, automatically, on
+           various actions taking place on group parts. For example, the mouse
+           cursor being moved, pressed, released, etc., over a given part's
+           area, all generate individual signals.
 
-         Edje has @b internal signals it will emit, automatically, on
-         various actions taking place on group parts. For example, the mouse
-         cursor being moved, pressed, released, etc., over a given part's
-         area, all generate individual signals.
+           By using something like
+           edje_object_signal_callback_add(obj, "mouse,down,*", "button.*",
+           signal_cb, NULL);
+           being \@ref "button.*" the pattern for the names of parts implementing
+           buttons on an interface, you'd be registering for notifications on
+           events of mouse buttons being pressed down on either of those parts
+           (those events all have the @"mouse,down," common prefix on their
+           names, with a suffix giving the button number). The actual emission
+           and source strings of an event will be passed in as the  emission
+           and  source parameters of the callback function (e.g.
+           "mouse,down,2" and @"button.close"), for each of those events.
 
-         By using something like
-         @code
-         edje_object_signal_callback_add(obj, "mouse,down,*", "button.*",
-         signal_cb, NULL);
-         @endcode
-         being @c "button.*" the pattern for the names of parts implementing
-         buttons on an interface, you'd be registering for notifications on
-         events of mouse buttons being pressed down on either of those parts
-         (those events all have the @c "mouse,down," common prefix on their
-         names, with a suffix giving the button number). The actual emission
-         and source strings of an event will be passed in as the @a emission
-         and @a source parameters of the callback function (e.g. @c
-         "mouse,down,2" and @c "button.close"), for each of those events.
-
-         @note See @ref edcref "the syntax" for EDC files
-         @see edje_object_signal_emit() on how to emits Edje signals from
-         code to a an object
-         @see edje_object_signal_callback_del_full() */
+           Note: See \@ref edcref "the syntax" for EDC files
+           See also @.signal_emit() on how to emits Edje signals from
+           code to a an object
+           \@ref edje_object_signal_callback_del_full()]]
+           /* FIXME-doc
+            * This function adds a callback function to a signal emitted by  obj, to
+            * be issued every time an EDC program like the following
+            * @code
+            * program
+            *   {
+            *      name: "emit_example";
+            *      action: SIGNAL_EMIT "a_signal" "a_source";
+            *   }
+            * @endcode
+            * is run, if emission and source are given those same values,
+            * here.
+            */
 
          params {
-            @in emission: const(char)*; /*@ The signal's "emission" string */
-            @in source: const(char)*; /*@ The signal's "source" string */
-            @in func: Edje.Signal_Cb; /*@ The callback function to be executed when the signal is
-            emitted. */
-            @in data: void *; /*@ A pointer to data to pass in to @p func. */
+            @in emission: const(char)*; [[The signal's "emission" string]]
+            @in source: const(char)*; [[The signal's "source" string]]
+            @in func: Edje.Signal_Cb; [[The callback function to be executed when the signal is
+                                        emitted.]]
+            @in data: void *; [[A pointer to data to pass in to func.]]
          }
       }
       part_text_select_all @const {
-         /*@
-         @brief Set the selection to be everything.
+         [[Set the selection to be everything.
 
-         This function selects all text of the object of the part. */
+           This function selects all text of the object of the part.]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_text_input_panel_return_key_disabled_set {
-         /*@
-         Set the return key on the input panel to be disabled.
+         [[Set the return key on the input panel to be disabled.
 
-         @since 1.2.0 */
+           @since 1.2.0]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in disabled: bool; /*@ The state */
+            @in part: const(char)*; [[The part name]]
+            @in disabled: bool; [[The state]]
          }
       }
       part_text_input_panel_return_key_disabled_get @const {
-         /*@
-         Get whether the return key on the input panel should be disabled or not.
+         [[Get whether the return key on the input panel should be disabled or not.
 
-         @return EINA_TRUE if it should be disabled
-         @since 1.2.0 */
-         return: bool;
+           @since 1.2.0]]
+         return: bool; [[true if it should be disabled]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_text_autocapital_type_set {
-         /*@
-         @brief Set the autocapitalization type on the immodule.
+         [[Set the autocapitalization type on the immodule.
 
-         @since 1.1.0 */
+           @since 1.1.0]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in autocapital_type: Edje.Text.Autocapital_Type; /*@ The type of autocapitalization */
+            @in part: const(char)*; [[The part name]]
+            @in autocapital_type: Edje.Text.Autocapital_Type; [[The type of autocapitalization]]
          }
       }
       part_text_autocapital_type_get @const {
-         /*@
-         @brief Retrieves the autocapitalization type
+         [[Retrieves the autocapitalization type
 
-         @return The autocapitalization type
-         @since 1.1.0 */
-         return: Edje.Text.Autocapital_Type;
+           @since 1.1.0]]
+         return: Edje.Text.Autocapital_Type; [[The autocapitalization type]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_unswallow {
-         /*@
-         @brief Unswallow an object.
+         [[Unswallow an object.
 
-         Causes the edje to regurgitate a previously swallowed object. :)
+           Causes the edje to regurgitate a previously swallowed object. :)
 
-         @note @p obj_swallow will @b not be deleted or hidden.
-         @note @p obj_swallow may appear shown on the evas depending on its state when
-         it got unswallowed. Make sure you delete it or hide it if you do not want it to. */
+           Note: obj_swallow will  not be deleted or hidden.
+           Note: obj_swallow may appear shown on the evas depending on its state when
+           it got unswallowed. Make sure you delete it or hide it if you do not want it to.]]
 
          params {
-            @in obj_swallow: Evas.Object *; /*@ The swallowed object */
+            @in obj_swallow: Evas.Object *; [[The swallowed object]]
          }
       }
       part_text_prediction_allow_set {
-         /*@
-         @brief Set whether the prediction is allowed or not.
+         [[Set whether the prediction is allowed or not.
 
-         @since 1.2.0 */
+           @since 1.2.0]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in prediction: bool; /*@ If true, the prediction feature is allowed. */
+            @in part: const(char)*; [[The part name]]
+            @in prediction: bool; [[If true, the prediction feature is allowed.]]
          }
       }
       part_text_prediction_allow_get @const {
-         /*@
-         @brief Get whether the prediction is allowed or not.
+         [[Get whether the prediction is allowed or not.
 
-         @return EINA_TRUE if prediction feature is allowed.
-         @since 1.2.0 */
-         return: bool;
+           @since 1.2.0]]
+         return: bool; [[true if prediction feature is allowed.]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       data_get @const {
-         /*@
-         @brief Retrive an <b>EDC data field's value</b> from a given Edje
-         object's group.
+         [[Retrive an <b>EDC data field's value</b> from a given Edje
+           object's group.
 
-         @return The data's value string. Must not be freed.
+           This function fetches an EDC data field's value, which is declared
+           on the objects building EDC file, <b>under its group</b>. EDC data
+           blocks are most commonly used to pass arbitrary parameters from an
+           application's theme to its code.
 
-         This function fetches an EDC data field's value, which is declared
-         on the objects building EDC file, <b>under its group</b>. EDC data
-         blocks are most commonly used to pass arbitrary parameters from an
-         application's theme to its code.
+           EDC data fields always hold  strings as values, hence the return
+           type of this function. Check the complete \@ref edcref "syntax reference"
+           for EDC files.
 
-         They look like the following:
+           Warning: Do not confuse this call with edje_file_data_get(), which
+           queries for a  global EDC data field on an EDC declaration file.
 
-         @code
-         collections {
-         group {
-         name: "a_group";
-         data {
-         item: "key1" "value1";
-         item: "key2" "value2";
-         }
-         }
-         }
-         @endcode
-
-         EDC data fields always hold @b strings as values, hence the return
-         type of this function. Check the complete @ref edcref "syntax reference"
-         for EDC files.
-
-         @warning Do not confuse this call with edje_file_data_get(), which
-         queries for a @b global EDC data field on an EDC declaration file.
-
-         @see edje_object_file_set() */
-         return: const(char)*;
+           \@ref edje_object_file_set()]]
+           /* FIXME-doc
+            * They look like the following:
+            * @code
+            * collections
+            *   {
+            *      group
+            *        {
+            *           name: "a_group";
+            *           data
+            *             {
+            *                item: "key1" "value1";
+            *                item: "key2" "value2";
+            *             }
+            *        }
+            *  }
+            * @endcode
+            */
+         return: const(char)*; [[The data's value string. Must not be freed.]]
          params {
-            @in key: const(char)*; /*@ The data field's key string */
+            @in key: const(char)*; [[The data field's key string]]
          }
       }
       text_markup_filter_callback_add {
-         /*@
-         Add a markup filter function for newly inserted text.
+         [[Add a markup filter function for newly inserted text.
 
-         Whenever text is inserted (not the same as set) into the given @p part,
-         the list of markup filter functions will be called to decide if and how
-         the new text will be accepted.
-         The text parameter in the @p func filter is always markup. It can be
-         modified by the user and it's up to him to free the one passed if he's to
-         change the pointer. If doing so, the newly set text should be malloc'ed,
-         as once all the filters are called Edje will free it.
-         If the text is to be rejected, freeing it and setting the pointer to NULL
-         will make Edje break out of the filter cycle and reject the inserted
-         text.
-         This function is different from edje_object_text_insert_filter_callback_add()
-         in that the text parameter in the @p fucn filter is always markup.
+           Whenever text is inserted (not the same as set) into the given part,
+           the list of markup filter functions will be called to decide if and how
+           the new text will be accepted.
+           The text parameter in the func filter is always markup. It can be
+           modified by the user and it's up to him to free the one passed if he's to
+           change the pointer. If doing so, the newly set text should be malloc'ed,
+           as once all the filters are called Edje will free it.
+           If the text is to be rejected, freeing it and setting the pointer to NULL
+           will make Edje break out of the filter cycle and reject the inserted
+           text.
+           This function is different from edje_object_text_insert_filter_callback_add()
+           in that the text parameter in the fucn filter is always markup.
 
-         @warning If you use this function with
-         edje_object_text_insert_filter_callback_add() togehter, all
-         Edje_Text_Filter_Cb functions and Edje_Markup_Filter_Cb functions
-         will be executed, and then filtered text will be inserted.
+           Warning: If you use this function with
+           edje_object_text_insert_filter_callback_add() togehter, all
+           Edje_Text_Filter_Cb functions and Edje_Markup_Filter_Cb functions
+           will be executed, and then filtered text will be inserted.
 
-         @see edje_object_text_markup_filter_callback_del
-         @see edje_object_text_markup_filter_callback_del_full
-         @see edje_object_text_insert_filter_callback_add
+           See also @.text_markup_filter_callback_del, @.text_markup_filter_callback_del_full
+           and @.text_insert_filter_callback_add
 
-         @since 1.2.0 */
+           @since 1.2.0]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in func: Edje.Markup_Filter_Cb; /*@ The callback function that will act as markup filter */
-            @in data: void *; /*@ User provided data to pass to the filter function */
+            @in part: const(char)*; [[The part name]]
+            @in func: Edje.Markup_Filter_Cb; [[The callback function that will act as markup filter]]
+            @in data: void *; [[User provided data to pass to the filter function]]
          }
       }
       message_signal_process {
-         /*@
-         @brief Process an object's message queue.
+         [[Process an object's message queue.
 
-         This function goes through the object message queue processing the
-         pending messages for @b this specific Edje object. Normally they'd
-         be processed only at idle time. */
+           This function goes through the object message queue processing the
+           pending messages for  this specific Edje object. Normally they'd
+           be processed only at idle time.]]
 
       }
       part_box_remove {
-         /*@
-         @brief Removes an object from the box.
+         [[Removes an object from the box.
 
-         @return Pointer to the object removed, or @c NULL.
+           Removes child from the box indicated by part.
 
-         Removes child from the box indicated by part.
+           See also @.part_box_remove_at() and @.part_box_remove_all()]]
 
-         @see edje_object_part_box_remove_at()
-         @see edje_object_part_box_remove_all() */
-
-         return: Evas.Object *;
+         return: Evas.Object *; [[Pointer to the object removed, or $NULL.]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in child: Evas.Object *; /*@ The object to remove */
+            @in part: const(char)*; [[The part name]]
+            @in child: Evas.Object *; [[The object to remove]]
          }
       }
       thaw {
-         /*@
-         @brief Thaws the Edje object.
+         [[Thaws the Edje object.
 
-         @return The frozen state or 0 if the object is not frozen or on error.
+           This function thaws the given Edje object.
 
-         This function thaws the given Edje object.
+           Note:: If sucessives freezes were done, an equal number of
+           thaws will be required.
 
-         @note: If sucessives freezes were done, an equal number of
-         thaws will be required.
+           See also @.freeze()]]
 
-         @see edje_object_freeze() */
-
-         return: int;
+         return: int; [[The frozen state or 0 if the object is not frozen or on error.]]
       }
       part_swallow_get @const {
-         /*@
-         @brief Get the object currently swallowed by a part.
+         [[Get the object currently swallowed by a part.]]
 
-         @return The swallowed object, or NULL if there is none. */
-         return: Evas.Object *;
+         return: Evas.Object *; [[The swallowed object, or NULL if there is none.]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_text_imf_context_reset @const {
-         /*@
-         @brief Reset the input method context if needed.
+         [[Reset the input method context if needed.
 
-         This can be necessary in the case where modifying the buffer would confuse on-going input method behavior
+           This can be necessary in the case where modifying the buffer would confuse on-going input method behavior
 
-         @since 1.2.0 */
+           @since 1.2.0]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_text_input_panel_return_key_type_set {
-         /*@
-         Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
+         [[Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
 
-         An input panel displays the string or icon associated with this type
+           An input panel displays the string or icon associated with this type
 
-         @since 1.2.0 */
+           @since 1.2.0]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in return_key_type: Edje.Input_Panel.Return_Key_Type; /*@ The type of "return" key on the input panel */
+            @in part: const(char)*; [[The part name]]
+            @in return_key_type: Edje.Input_Panel.Return_Key_Type; [[The type of "return" key on the input panel]]
          }
       }
       part_text_input_panel_return_key_type_get @const {
-         /*@
-         Get the "return" key type.
+         [[Get the "return" key type.
 
-         @see edje_object_part_text_input_panel_return_key_type_set() for more details
+           See also @.part_text_input_panel_return_key_type_set() for more details
 
-         @return The type of "return" key on the input panel
-         @since 1.2.0 */
-         return: Edje.Input_Panel.Return_Key_Type;
+           @since 1.2.0]]
+         return: Edje.Input_Panel.Return_Key_Type; [[The type of "return" key on the input panel]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_table_child_get @const {
-         /*@
-         @brief Retrieve a child from a table
+         [[Retrieve a child from a table]]
 
-         @return The child Evas.Object */
-         return: Evas.Object *;
+         return: Evas.Object *; [[The child Evas.Object]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in col: uint; /*@ The column of the child to get */
-            @in row: uint; /*@ The row of the child to get */
+            @in part: const(char)*; [[The part name]]
+            @in col: uint; [[The column of the child to get]]
+            @in row: uint; [[The row of the child to get]]
          }
       }
       part_box_insert_before {
-         /*@
-         @brief Adds an object to the box.
+         [[Adds an object to the box.
 
-         @return @c EINA_TRUE: Successfully added.\n
-         @c EINA_FALSE: An error occurred.
+           Inserts child in the box given by part, in the position marked by
+           reference.
 
-         Inserts child in the box given by part, in the position marked by
-         reference.
+           See also @.part_box_append(), @.part_box_prepend() and @.part_box_insert_at()]]
 
-         @see edje_object_part_box_append()
-         @see edje_object_part_box_prepend()
-         @see edje_object_part_box_insert_at() */
-
-         return: bool;
+         return: bool; [[$true: Successfully added.
+                         $false: An error occurred.]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in child: Evas.Object *; /*@ The object to insert */
-            @in reference: const(Evas.Object)*; /*@ The object to be used as reference */
+            @in part: const(char)*; [[The part name]]
+            @in child: Evas.Object *; [[The object to insert]]
+            @in reference: const(Evas.Object)*; [[The object to be used as reference]]
          }
       }
       part_external_param_set {
-         /*@
-         @brief Set the parameter for the external part.
+         [[Set the parameter for the external part.
 
-         Parts of type external may carry extra properties that have
-         meanings defined by the external plugin. For instance, it may be a
-         string that defines a button label and setting this property will
-         change that label on the fly.
+           Parts of type external may carry extra properties that have
+           meanings defined by the external plugin. For instance, it may be a
+           string that defines a button label and setting this property will
+           change that label on the fly.
 
-         @note external parts have parameters set when they change
-         states. Those parameters will never be changed by this
-         function. The interpretation of how state_set parameters and
-         param_set will interact is up to the external plugin.
+           Note: external parts have parameters set when they change
+           states. Those parameters will never be changed by this
+           function. The interpretation of how state_set parameters and
+           param_set will interact is up to the external plugin.
 
-         @note this function will not check if parameter value is valid
-         using #Edje_External_Param_Info minimum, maximum, valid
-         choices and others. However these should be checked by the
-         underlying implementation provided by the external
-         plugin. This is done for performance reasons.
+           Note: this function will not check if parameter value is valid
+           using #Edje_External_Param_Info minimum, maximum, valid
+           choices and others. However these should be checked by the
+           underlying implementation provided by the external
+           plugin. This is done for performance reasons.]]
 
-         @return @c EINA_TRUE if everything went fine, @c EINA_FALSE on errors. */
-
-         return: bool;
+         return: bool; [[$true if everything went fine, $false on errors.]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in param: const(Edje.External.Param)*; /*@ the parameter details, including its name, type and
-            actual value. This pointer should be valid, and the
-            parameter must exist in
-            #Edje_External_Type.parameters_info, with the exact type,
-            otherwise the operation will fail and @c EINA_FALSE will be
-            returned. */
+            @in part: const(char)*; [[The part name]]
+            @in param: const(Edje.External.Param)*; [[the parameter details, including its name, type and
+                                                      actual value. This pointer should be valid, and the
+                                                      parameter must exist in
+                                                      #Edje_External_Type.parameters_info, with the exact type,
+                                                      otherwise the operation will fail and $false will be
+                                                      returned.]]
          }
       }
       part_external_param_get @const {
-         /*@
-         @brief Get the parameter for the external part.
+         [[Get the parameter for the external part.
 
-         Parts of type external may carry extra properties that have
-         meanings defined by the external plugin. For instance, it may be a
-         string that defines a button label. This property can be modified by
-         state parameters, by explicit calls to
-         edje_object_part_external_param_set() or getting the actual object
-         with edje_object_part_external_object_get() and calling native
-         functions.
+           Parts of type external may carry extra properties that have
+           meanings defined by the external plugin. For instance, it may be a
+           string that defines a button label. This property can be modified by
+           state parameters, by explicit calls to
+           edje_object_part_external_param_set() or getting the actual object
+           with edje_object_part_external_object_get() and calling native
+           functions.
 
-         This function asks the external plugin what is the current value,
-         independent on how it was set.
+           This function asks the external plugin what is the current value,
+           independent on how it was set.]]
 
-         @return @c EINA_TRUE if everything went fine and @p param members
-         are filled with information, @c EINA_FALSE on errors and @p
-         param member values are not set or valid. */
-         return: bool;
+         return: bool; [[$true if everything went fine and param members
+                         are filled with information, $false on errors and
+                         param member values are not set or valid.]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @out param: Edje.External.Param; /*@ the parameter details. It is used as both input and
-            output variable. This pointer should be valid, and the
-            parameter must exist in
-            #Edje_External_Type.parameters_info, with the exact type,
-            otherwise the operation will fail and @c EINA_FALSE will be
-            returned. */
+            @in part: const(char)*; [[The part name]]
+            @out param: Edje.External.Param; [[the parameter details. It is used as both input and
+                                               output variable. This pointer should be valid, and the
+                                               parameter must exist in
+                                               #Edje_External_Type.parameters_info, with the exact type,
+                                               otherwise the operation will fail and $false will be
+                                               returned.]]
          }
       }
       size_min_calc {
-         /*@
-         @brief Calculate the minimum required size for a given Edje object.
+         [[Calculate the minimum required size for a given Edje object.
 
-         This call works exactly as edje_object_size_min_restricted_calc(),
-         with the last two arguments set to 0. Please refer to its
-         documentation, then. */
+           This call works exactly as edje_object_size_min_restricted_calc(),
+           with the last two arguments set to 0. Please refer to its
+           documentation, then.]]
 
          params {
-            @out minw: Evas.Coord; /*@ Pointer to a variable where to store the minimum
-            required width */
-            @out minh: Evas.Coord; /*@ Pointer to a variable where to store the minimum
-            required height */
+            @out minw: Evas.Coord; [[Pointer to a variable where to store the minimum
+                                     required width]]
+            @out minh: Evas.Coord; [[Pointer to a variable where to store the minimum
+                                     required height]]
          }
       }
       part_box_append {
-         /*@
-         @brief Appends an object to the box.
+         [[Appends an object to the box.
 
-         @return @c EINA_TRUE: Successfully added.\n
-         @c EINA_FALSE: An error occurred.
+           Appends child to the box indicated by part.
 
-         Appends child to the box indicated by part.
+           See also @.part_box_prepend(), @.part_box_insert_before()
+           and @.part_box_insert_at()]]
 
-         @see edje_object_part_box_prepend()
-         @see edje_object_part_box_insert_before()
-         @see edje_object_part_box_insert_at() */
-
-         return: bool;
+         return: bool; [[$true: Successfully added.
+                         $false: An error occurred.]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in child: Evas.Object *; /*@ The object to append */
+            @in part: const(char)*; [[The part name]]
+            @in child: Evas.Object *; [[The object to append]]
          }
       }
       size_min_restricted_calc {
-         /*@
-         @brief Calculate the minimum required size for a given Edje object.
+         [[Calculate the minimum required size for a given Edje object.
 
-         This call will trigger an internal recalculation of all parts of
-         the @p obj object, in order to return its minimum required
-         dimensions for width and height. The user might choose to @b impose
-         those minimum sizes, making the resulting calculation to get to values
-         equal or bigger than @p restrictedw and @p restrictedh, for width and
-         height, respectively.
+           This call will trigger an internal recalculation of all parts of
+           the obj object, in order to return its minimum required
+           dimensions for width and height. The user might choose to  impose
+           those minimum sizes, making the resulting calculation to get to values
+           equal or bigger than restrictedw and restrictedh, for width and
+           height, respectively.
 
-         @note At the end of this call, @p obj @b won't be automatically
-         resized to new dimensions, but just return the calculated
-         sizes. The caller is the one up to change its geometry or not.
+           Note: At the end of this call, obj  won't be automatically
+           resized to new dimensions, but just return the calculated
+           sizes. The caller is the one up to change its geometry or not.
 
-         @warning Be advised that invisible parts in @p obj @b will be taken
-         into account in this calculation. */
+           Warning: Be advised that invisible parts in obj  will be taken
+           into account in this calculation.]]
 
          params {
-            @out minw: Evas.Coord; /*@ Pointer to a variable where to store the minimum
-            required width */
-            @out minh: Evas.Coord; /*@ Pointer to a variable where to store the minimum
-            required height */
-            @in restrictedw: Evas.Coord; /*@ Do not allow object's calculated (minimum) width
-            to be less than this value */
-            @in restrictedh: Evas.Coord; /*@ Do not allow object's calculated (minimum)
-            height to be less than this value */
+            @out minw: Evas.Coord; [[Pointer to a variable where to store the minimum
+                                     required width]]
+            @out minh: Evas.Coord; [[Pointer to a variable where to store the minimum
+                                     required height]]
+            @in restrictedw: Evas.Coord; [[Do not allow object's calculated (minimum) width
+                                           to be less than this value]]
+            @in restrictedh: Evas.Coord; [[Do not allow object's calculated (minimum)
+                                           height to be less than this value]]
          }
       }
       part_box_remove_all {
-         /*@
-         @brief Removes all elements from the box.
+         [[Removes all elements from the box.
 
-         @return 1: Successfully cleared.\n
-         0: An error occurred.
+           Removes all the external objects from the box indicated by part.
+           Elements created from the theme will not be removed.
 
-         Removes all the external objects from the box indicated by part.
-         Elements created from the theme will not be removed.
+           See also @.part_box_remove() and @.part_box_remove_at()]]
 
-         @see edje_object_part_box_remove()
-         @see edje_object_part_box_remove_at() */
-
-         return: bool;
+         return: bool; [[1: Successfully cleared.
+                         0: An error occurred.]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in clear: bool; /*@ Delete objects on removal */
+            @in part: const(char)*; [[The part name]]
+            @in clear: bool; [[Delete objects on removal]]
          }
       }
       part_drag_page {
-         /*@
-         @brief Pages x,y steps.
+         [[Pages x,y steps.
 
-         Pages x,y where the increment is defined by
-         edje_object_part_drag_page_set.
+           Pages x,y where the increment is defined by
+           edje_object_part_drag_page_set.
 
-         Values for @p dx and @p dy are real numbers that range from 0 to 1.
+           Values for dx and dy are real numbers that range from 0 to 1.
 
-         @warning Paging is bugged!
+           Warning: Paging is bugged!
 
-         @see edje_object_part_drag_step() */
+           See also @.part_drag_step()]]
 
          return: bool;
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in dx: double; /*@ The x step */
-            @in dy: double; /*@ The y step */
+            @in part: const(char)*; [[The part name]]
+            @in dx: double; [[The x step]]
+            @in dy: double; [[The y step]]
          }
       }
       part_text_set {
-         /*@
-         @brief Sets the text for an object part
+         [[Sets the text for an object part]]
 
-         @return @c EINA_TRUE on success, @c EINA_FALSE otherwise */
-
-         return: bool;
+         return: bool; [[$true on success, $false otherwise]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in text: const(char)*; /*@ The text string */
+            @in part: const(char)*; [[The part name]]
+            @in text: const(char)*; [[The text string]]
          }
       }
       part_text_get @const {
-         /*@
-         @brief Return the text of the object part.
+         [[Return the text of the object part.
 
-         @return The text string
+           This function returns the text associated to the object part.
 
-         This function returns the text associated to the object part.
-
-         @see edje_object_part_text_set(). */
-         return: const(char)*;
+           See also @.part_text_set().]]
+         return: const(char)*; [[The text string]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_text_input_panel_show_on_demand_set {
-         /*@
-         Set the attribute to show the input panel in case of only an user's explicit Mouse Up event.
-         It doesn't request to show the input panel even though it has focus.
+         [[Set the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+           It doesn't request to show the input panel even though it has focus.
 
-         @since 1.9.0 */
+           @since 1.9.0]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in ondemand: bool; /*@ If true, the input panel will be shown in case of only Mouse up event. (Focus event will be ignored.) */
+            @in part: const(char)*; [[The part name]]
+            @in ondemand: bool; [[If true, the input panel will be shown in case of only Mouse up event. (Focus event will be ignored.)]]
          }
       }
       part_text_input_panel_show_on_demand_get @const {
-         /*@
-         Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+         [[Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
 
-         @return @c EINA_TRUE if the input panel will be shown in case of only Mouse up event.
-         @since 1.9.0 */
-         return: bool;
+           @since 1.9.0]]
+         return: bool; [[$true if the input panel will be shown in case of only Mouse up event.]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_text_input_hint_set {
-         /*@
-         Sets the input hint which allows input methods to fine-tune their behavior.
+         [[Sets the input hint which allows input methods to fine-tune their behavior.
 
-         @since 1.12.0 */
+           @since 1.12.0]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in input_hints: Edje.Input_Hints; /*@ input hints */
+            @in part: const(char)*; [[The part name]]
+            @in input_hints: Edje.Input_Hints; [[input hints]]
          }
       }
       part_text_input_hint_get @const {
-         /*@
-         Gets the value of input hint
+         [[Gets the value of input hint
 
-         @return The value of input hint
-         @since 1.12.0 */
-         return: Edje.Input_Hints;
+           @since 1.12.0]]
+         return: Edje.Input_Hints; [[The value of input hint]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_text_selection_get @const {
-         /*@
-         @brief Return the selection text of the object part.
+         [[Return the selection text of the object part.
 
-         @return The text string
+           This function returns selection text of the object part.
 
-         This function returns selection text of the object part.
-
-         @see edje_object_part_text_select_all()
-         @see edje_object_part_text_select_none() */
-         return: const(char)*;
+           See also @.part_text_select_all() and @.part_text_select_none()]]
+         return: const(char)*; [[The text string]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_text_cursor_is_format_get @const {
-         /*@
-         @brief Returns whether the cursor points to a format.
-         @see evas_textblock_cursor_is_format
+         [[Returns whether the cursor points to a format.
+         \@ref evas_textblock_cursor_is_format]]
 
-         @return EINA_TRUE if it's true, EINA_FALSE otherwise. */
-         return: bool;
+         return: bool; [[true if it's true, false otherwise.]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in cur: Edje.Cursor; /*@ The cursor to adjust. */
+            @in part: const(char)*; [[The part name]]
+            @in cur: Edje.Cursor; [[The cursor to adjust.]]
          }
       }
       text_class_get @const {
-         /*@
-         @brief Gets font and font size from edje text class.
+         [[Gets font and font size from edje text class.
 
-         @return @c EINA_TRUE, on success or @c EINA_FALSE, on error
-
-         This function gets the font and the font size from the object
-         text class. The font string will only be valid until the text
-         class is changed or the edje object is deleted. */
-         return: bool;
+           This function gets the font and the font size from the object
+           text class. The font string will only be valid until the text
+           class is changed or the edje object is deleted.]]
+         return: bool; [[$true, on success or $false, on error]]
          params {
-            @in text_class: const(char)*; /*@ The text class name */
-            @out font: const(char)*; /*@ Font name */
-            @out size: Evas.Font.Size; /*@ Font Size */
+            @in text_class: const(char)*; [[The text class name]]
+            @out font: const(char)*; [[Font name]]
+            @out size: Evas.Font.Size; [[Font Size]]
          }
       }
       color_class_set {
-         /*@
-         @brief Sets the object color class.
+         [[Sets the object color class.
 
-         This function sets the color values for an object level color
-         class. This will cause all edje parts in the specified object that
-         have the specified color class to have their colors multiplied by
-         these values.
+           This function sets the color values for an object level color
+           class. This will cause all edje parts in the specified object that
+           have the specified color class to have their colors multiplied by
+           these values.
 
-         The first color is the object, the second is the text outline, and
-         the third is the text shadow. (Note that the second two only apply
-         to text parts).
+           The first color is the object, the second is the text outline, and
+           the third is the text shadow. (Note that the second two only apply
+           to text parts).
 
-         Setting color emits a signal "color_class,set" with source being
-         the given color.
+           Setting color emits a signal "color_class,set" with source being
+           the given color.
 
-         @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
-         half-transparent white is 255 255 255 128. */
+           Note: unlike Evas, Edje colors are  not pre-multiplied. That is,
+           half-transparent white is 255 255 255 128.]]
 
          return: bool;
          params {
             @in color_class: const(char)*;
-            @in r: int; /*@ Object Red value */
-            @in g: int; /*@ Object Green value */
-            @in b: int; /*@ Object Blue value */
-            @in a: int; /*@ Object Alpha value */
-            @in r2: int; /*@ Outline Red value */
-            @in g2: int; /*@ Outline Green value */
-            @in b2: int; /*@ Outline Blue value */
-            @in a2: int; /*@ Outline Alpha value */
-            @in r3: int; /*@ Shadow Red value */
-            @in g3: int; /*@ Shadow Green value */
-            @in b3: int; /*@ Shadow Blue value */
-            @in a3: int; /*@ Shadow Alpha value */
+            @in r: int; [[Object Red value]]
+            @in g: int; [[Object Green value]]
+            @in b: int; [[Object Blue value]]
+            @in a: int; [[Object Alpha value]]
+            @in r2: int; [[Outline Red value]]
+            @in g2: int; [[Outline Green value]]
+            @in b2: int; [[Outline Blue value]]
+            @in a2: int; [[Outline Alpha value]]
+            @in r3: int; [[Shadow Red value]]
+            @in g3: int; [[Shadow Green value]]
+            @in b3: int; [[Shadow Blue value]]
+            @in a3: int; [[Shadow Alpha value]]
          }
       }
       color_class_get @const {
-         /*@
-         @brief Gets the object color class.
+         [[Gets the object color class.
 
-         @return EINA_TRUE if found or EINA_FALSE if not found and all
-         values are zeroed.
+           This function gets the color values for an object level color
+           class. If no explicit object color is set, then global values will
+           be used.
 
-         This function gets the color values for an object level color
-         class. If no explicit object color is set, then global values will
-         be used.
+           The first color is the object, the second is the text outline, and
+           the third is the text shadow. (Note that the second two only apply
+           to text parts).
 
-         The first color is the object, the second is the text outline, and
-         the third is the text shadow. (Note that the second two only apply
-         to text parts).
-
-         @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
-         half-transparent white is 255 255 255 128. */
-         return: bool;
+           Note: unlike Evas, Edje colors are  not pre-multiplied. That is,
+           half-transparent white is 255 255 255 128.]]
+         return: bool; [[true if found or false if not found and all
+                         values are zeroed.]]
          params {
             @in color_class: const(char)*;
-            @out r: int; /*@ Object Red value */
-            @out g: int; /*@ Object Green value */
-            @out b: int; /*@ Object Blue value */
-            @out a: int; /*@ Object Alpha value */
-            @out r2: int; /*@ Outline Red value */
-            @out g2: int; /*@ Outline Green value */
-            @out b2: int; /*@ Outline Blue value */
-            @out a2: int; /*@ Outline Alpha value */
-            @out r3: int; /*@ Shadow Red value */
-            @out g3: int; /*@ Shadow Green value */
-            @out b3: int; /*@ Shadow Blue value */
-            @out a3: int; /*@ Shadow Alpha value */
+            @out r: int; [[Object Red value]]
+            @out g: int; [[Object Green value]]
+            @out b: int; [[Object Blue value]]
+            @out a: int; [[Object Alpha value]]
+            @out r2: int; [[Outline Red value]]
+            @out g2: int; [[Outline Green value]]
+            @out b2: int; [[Outline Blue value]]
+            @out a2: int; [[Outline Alpha value]]
+            @out r3: int; [[Shadow Red value]]
+            @out g3: int; [[Shadow Green value]]
+            @out b3: int; [[Shadow Blue value]]
+            @out a3: int; [[Shadow Alpha value]]
          }
       }
       color_class_description_get @const {
-         /*@
-         @brief Gets the description of an object color class.
+         [[Gets the description of an object color class.
 
-         @return The description of the target color class or @c NULL if not found
-
-         This function gets the description of a color class in use by an object. */
-         return: const(char)*;
+           This function gets the description of a color class in use by an object.]]
+         return: const(char)*; [[The description of the target color class or $NULL if not found]]
          params {
             @in color_class: const(char)*;
          }
       }
       part_drag_step {
-         /*@
-         @brief Steps the dragable x,y steps.
+         [[Steps the dragable x,y steps.
 
-         Steps x,y where the step increment is the amount set by
-         edje_object_part_drag_step_set.
+           Steps x,y where the step increment is the amount set by
+           edje_object_part_drag_step_set.
 
-         Values for @p dx and @p dy are real numbers that range from 0 to 1.
+           Values for dx and dy are real numbers that range from 0 to 1.
 
-         @see edje_object_part_drag_page() */
+           See also @.part_drag_page()]]
 
          return: bool;
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in dx: double; /*@ The x step */
-            @in dy: double; /*@ The y step */
+            @in part: const(char)*; [[The part name]]
+            @in dx: double; [[The x step]]
+            @in dy: double; [[The y step]]
          }
       }
       part_text_cursor_up {
-         /*@
-         @brief Move the cursor to the char above the current cursor position. */
+         [[Move the cursor to the char above the current cursor position.]]
 
          return: bool;
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in cur: Edje.Cursor; /*@ the edje cursor to work on */
+            @in part: const(char)*; [[The part name]]
+            @in cur: Edje.Cursor; [[the edje cursor to work on]]
          }
       }
       part_text_cursor_geometry_get @const {
-         /*@
-         @brief Returns the cursor geometry of the part relative to the edje
-         object. */
+         [[Returns the cursor geometry of the part relative to the edje
+           object.]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @out x: Evas.Coord; /*@ Cursor X position */
-            @out y: Evas.Coord; /*@ Cursor Y position */
-            @out w: Evas.Coord; /*@ Cursor width */
-            @out h: Evas.Coord; /*@ Cursor height */
+            @in part: const(char)*; [[The part name]]
+            @out x: Evas.Coord; [[Cursor X position]]
+            @out y: Evas.Coord; [[Cursor Y position]]
+            @out w: Evas.Coord; [[Cursor width]]
+            @out h: Evas.Coord; [[Cursor height]]
          }
       }
       part_text_anchor_list_get @const {
-         /*@
-         @brief Return a list of char anchor names.
+         [[Return a list of char anchor names.
 
-         @return The list of anchors (const char *), do not modify!
-
-         This function returns a list of char anchor names. */
-         return: const(list<const(char)*>)*;
+           This function returns a list of char anchor names.]]
+         return: const(list<const(char)*>)*; [[The list of anchors (const char *), do not modify!]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       text_insert_filter_callback_add {
-         /*@
-         Add a filter function for newly inserted text.
+         [[Add a filter function for newly inserted text.
 
-         Whenever text is inserted (not the same as set) into the given @p part,
-         the list of filter functions will be called to decide if and how the new
-         text will be accepted.
-         There are three types of filters, EDJE_TEXT_FILTER_TEXT,
-         EDJE_TEXT_FILTER_FORMAT and EDJE_TEXT_FILTER_MARKUP.
-         The text parameter in the @p func filter can be modified by the user and
-         it's up to him to free the one passed if he's to change the pointer. If
-         doing so, the newly set text should be malloc'ed, as once all the filters
-         are called Edje will free it.
-         If the text is to be rejected, freeing it and setting the pointer to NULL
-         will make Edje break out of the filter cycle and reject the inserted
-         text.
+           Whenever text is inserted (not the same as set) into the given part,
+           the list of filter functions will be called to decide if and how the new
+           text will be accepted.
+           There are three types of filters, EDJE_TEXT_FILTER_TEXT,
+           EDJE_TEXT_FILTER_FORMAT and EDJE_TEXT_FILTER_MARKUP.
+           The text parameter in the func filter can be modified by the user and
+           it's up to him to free the one passed if he's to change the pointer. If
+           doing so, the newly set text should be malloc'ed, as once all the filters
+           are called Edje will free it.
+           If the text is to be rejected, freeing it and setting the pointer to NULL
+           will make Edje break out of the filter cycle and reject the inserted
+           text.
 
-         @warning This function will be deprecated because of difficulty in use.
-         The type(format, text, or markup) of text should be always
-         checked in the filter function for correct filtering.
-         Please use edje_object_text_markup_filter_callback_add() instead. There
-         is no need to check the type of text in the filter function
-         because the text is always markup.
-         @warning If you use this function with
-         edje_object_text_markup_filter_callback_add() together, all
-         Edje_Text_Filter_Cb functions and Edje_Markup_Filter_Cb functions
-         will be executed, and then filtered text will be inserted.
+           Warning: This function will be deprecated because of difficulty in use.
+           The type(format, text, or markup) of text should be always
+           checked in the filter function for correct filtering.
+           Please use edje_object_text_markup_filter_callback_add() instead. There
+           is no need to check the type of text in the filter function
+           because the text is always markup.
+           Warning: If you use this function with
+           edje_object_text_markup_filter_callback_add() together, all
+           Edje_Text_Filter_Cb functions and Edje_Markup_Filter_Cb functions
+           will be executed, and then filtered text will be inserted.
 
-         @see edje_object_text_insert_filter_callback_del
-         @see edje_object_text_insert_filter_callback_del_full
-         @see edje_object_text_markup_filter_callback_add */
+           See also @.text_insert_filter_callback_del, @.text_insert_filter_callback_del_full
+           and @.text_markup_filter_callback_add]]
 
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in func: Edje.Text.Filter_Cb; /*@ The callback function that will act as filter */
-            @in data: void *; /*@ User provided data to pass to the filter function */
+            @in part: const(char)*; [[The part name]]
+            @in func: Edje.Text.Filter_Cb; [[The callback function that will act as filter]]
+            @in data: void *; [[User provided data to pass to the filter function]]
          }
       }
       part_text_input_panel_show @const {
-         /*@
-         @brief Show the input panel (virtual keyboard) based on the input panel property such as layout, autocapital types, and so on.
+         [[Show the input panel (virtual keyboard) based on the input panel property such as layout, autocapital types, and so on.
 
-         Note that input panel is shown or hidden automatically according to the focus state.
-         This API can be used in the case of manually controlling by using edje_object_part_text_input_panel_enabled_set.
+           Note that input panel is shown or hidden automatically according to the focus state.
+           This API can be used in the case of manually controlling by using edje_object_part_text_input_panel_enabled_set.
 
-         @since 1.2.0 */
+           @since 1.2.0]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_exists @const {
-         /*@
-         @brief Check if an Edje part exists in a given Edje object's group
-         definition.
+         [[Check if an Edje part exists in a given Edje object's group
+           definition.
 
-         @return @c EINA_TRUE, if the Edje part exists in @p obj's group or
-         @c EINA_FALSE, otherwise (and on errors)
+           This function returns if a given part exists in the Edje group
+           bound to object obj (with edje_object_file_set()).
 
-         This function returns if a given part exists in the Edje group
-         bound to object @p obj (with edje_object_file_set()).
-
-         This call is useful, for example, when one could expect or not a
-         given GUI element, depending on the @b theme applied to @p obj. */
-         return: bool;
+           This call is useful, for example, when one could expect or not a
+           given GUI element, depending on the  theme applied to obj.]]
+         return: bool; [[$true, if the Edje part exists in obj's group or
+                         $false, otherwise (and on errors)]]
          params {
-            @in part: const(char)*; /*@ The part's name to check for existence in @p obj's
-            group */
+            @in part: const(char)*; [[The part's name to check for existence in obj's
+                                      group]]
          }
       }
       text_markup_filter_callback_del {
-         /*@
-         Delete a function from the markup filter list.
+         [[Delete a function from the markup filter list.
 
-         Delete the given @p func filter from the list in @p part. Returns
-         the user data pointer given when added.
+           Delete the given func filter from the list in part. Returns
+           the user data pointer given when added.
 
-         @see edje_object_text_markup_filter_callback_add
-         @see edje_object_text_markup_filter_callback_del_full
+           See also @.text_markup_filter_callback_add and @.text_markup_filter_callback_del_full
 
-         @return The user data pointer if successful, or NULL otherwise
-         @since 1.2.0 */
+           @since 1.2.0]]
 
-         return: void *;
+         return: void *; [[The user data pointer if successful, or NULL otherwise]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in func: Edje.Markup_Filter_Cb; /*@ The function callback to remove */
+            @in part: const(char)*; [[The part name]]
+            @in func: Edje.Markup_Filter_Cb; [[The function callback to remove]]
          }
       }
       part_text_cursor_is_visible_format_get @const {
-         /*@
-         @brief Return true if the cursor points to a visible format
-         For example \\t, \\n, item and etc.
-         @see  evas_textblock_cursor_format_is_visible_get */
+         [[Return true if the cursor points to a visible format
+           For example \\t, \\n, item and etc.
+           @ evas_textblock_cursor_format_is_visible_get]]
          return: bool;
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in cur: Edje.Cursor; /*@ The cursor to adjust. */
+            @in part: const(char)*; [[The part name]]
+            @in cur: Edje.Cursor; [[The cursor to adjust.]]
          }
       }
       part_text_user_insert @const {
-         /*@
-         @brief This function inserts text as if the user has inserted it.
+         [[This function inserts text as if the user has inserted it.
 
-         This means it actually registers as a change and emits signals, triggers
-         callbacks as appropriate.
+           This means it actually registers as a change and emits signals, triggers
+           callbacks as appropriate.
 
-         @since 1.2.0 */
+           @since 1.2.0]]
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in text: const(char)*; /*@ The text string */
+            @in part: const(char)*; [[The part name]]
+            @in text: const(char)*; [[The text string]]
          }
       }
       part_text_cursor_prev {
-         /*@
-         @brief Moves the cursor to the previous char
-         @see evas_textblock_cursor_char_prev */
+         [[Moves the cursor to the previous char
+           \@ref evas_textblock_cursor_char_prev]]
 
          return: bool;
          params {
-            @in part: const(char)*; /*@ The part name */
-            @in cur: Edje.Cursor; /*@ the edje cursor to work on */
+            @in part: const(char)*; [[The part name]]
+            @in cur: Edje.Cursor; [[the edje cursor to work on]]
          }
       }
       part_text_item_list_get @const {
-         /*@
-         @brief Return a list of char item names.
+         [[Return a list of char item names.
 
-         @return The list of items (const char *), do not modify!
-
-         This function returns a list of char item names. */
-         return: const(list<const(char)*>)*;
+           This function returns a list of char item names.]]
+         return: const(list<const(char)*>)*; [[The list of items (const char *), do not modify!]]
          params {
-            @in part: const(char)*; /*@ The part name */
+            @in part: const(char)*; [[The part name]]
          }
       }
       part_swallow {
-         /*@
-         @brief "Swallows" an object into one of the Edje object @c SWALLOW
-         parts.
+         [["Swallows" an object into one of the Edje object \@ref SWALLOW
+            parts.
 
-         Swallowing an object into an Edje object is, for a given part of
-         type @c SWALLOW in the EDC group which gave life to @a obj, to set
-         an external object to be controlled by @a obj, being displayed
-         exactly over that part's region inside the whole Edje object's
-         viewport.
+            Swallowing an object into an Edje object is, for a given part of
+            type \@ref SWALLOW in the EDC group which gave life to  obj, to set
+            an external object to be controlled by  obj, being displayed
+            exactly over that part's region inside the whole Edje object's
+            viewport.
 
-         From this point on, @a obj will have total control over @a
-         obj_swallow's geometry and visibility. For instance, if @a obj is
-         visible, as in @c evas_object_show(), the swallowed object will be
-         visible too -- if the given @c SWALLOW part it's in is also
-         visible. Other actions on @a obj will also reflect on the swallowed
-         object as well (e.g. resizing, moving, raising/lowering, etc.).
+            From this point on,  obj will have total control over
+            obj_swallow's geometry and visibility. For instance, if  obj is
+            visible, as in \@ref evas_object_show(), the swallowed object will be
+            visible too -- if the given \@ref SWALLOW part it's in is also
+            visible. Other actions on  obj will also reflect on the swallowed
+            object as well (e.g. resizing, moving, raising/lowering, etc.).
 
-         Finally, all internal changes to @a part, specifically, will
-         reflect on the displaying of @a obj_swallow, for example state
-         changes leading to different visibility states, geometries,
-         positions, etc.
+            Finally, all internal changes to  part, specifically, will
+            reflect on the displaying of  obj_swallow, for example state
+            changes leading to different visibility states, geometries,
+            positions, etc.
 
-         If an object has already been swallowed into this part, then it
-         will first be unswallowed (as in edje_object_part_unswallow())
-         before the new object is swallowed.
+            If an object has already been swallowed into this part, then it
+            will first be unswallowed (as in edje_object_part_unswallow())
+            before the new object is swallowed.
 
-         @note @a obj @b won't delete the swallowed object once it is
-         deleted -- @a obj_swallow will get to an unparented state again.
+            Note:  obj  won't delete the swallowed object once it is
+            deleted --  obj_swallow will get to an unparented state again.
 
-         For more details on EDC @c SWALLOW parts, see @ref edcref "syntax
-         reference". */
+            For more details on EDC \@ref SWALLOW parts, see \@ref edcref "syntax
+            reference".]]
 
          return: bool;
          params {
-            @in part: const(char)*; /*@ The swallow part's name */
-            @in obj_swallow: Evas.Object *; /*@ The object to occupy that part */
+            @in part: const(char)*; [[The swallow part's name]]
+            @in obj_swallow: Evas.Object *; [[The object to occupy that part]]
          }
       }
       @property transition_duration_factor {
          set {
-            /*@
-              @brief Set transition duration factor.
+              [[Set transition duration factor.
 
-              This define the transition duration factor on this
-              specific object. By default all animation are run at a speed
-              factor of 1.0.
-             */
+                This define the transition duration factor on this
+                specific object. By default all animation are run at a speed
+                factor of 1.0.]]
          }
          get {
-            /*@
-              @brief Get transition duration factor.
+              [[Get transition duration factor.
 
-              This define the transition duration factor on this
-              specific object. By default all animation are run at a speed
-              factor of 1.0.
-             */
+                This define the transition duration factor on this
+                specific object. By default all animation are run at a speed
+                factor of 1.0.]]
          }
          values {
-            scale: double; /*@ The transition duration factor */
+            scale: double; [[The transition duration factor]]
          }
       }
    }
