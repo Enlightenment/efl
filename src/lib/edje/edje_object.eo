@@ -269,7 +269,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
               Edje object is deleted (or file is set to a new file).]]
          }
          values {
-            func: Edje.Item_Provider_Cb; [[The function to call (or NULL to disable) to get item objects]]
+            func: Edje.Item_Provider_Cb; [[The function to call (or $null to disable) to get item objects]]
             data: void *; [[The data pointer to pass to the func callback]]
          }
       }
@@ -289,7 +289,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
               For scriptable programs on an Edje object's defining EDC file which
               send messages with the send_message() primitive, one can attach
-              <b>handler functions</b>, to be called in the code which creates
+              handler functions, to be called in the code which creates
               that object (see \@ref edcref "the syntax" for EDC files).
 
               This function associates a message handler function and the
@@ -308,12 +308,12 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
               given Edje object
 
               This function retrieves the obj object's minimum size values,
-              <b>as declared in its EDC group definition</b>.
+              as declared in its EDC group definition.
 
-              Note: If the \@ref min EDC property was not declared for obj, this
+              Note: If the $min EDC property was not declared for obj, this
               call will return the value 0, for each axis.
 
-              Note: On failure, this function will make all non-$NULL size
+              Note: On failure, this function will make all non-$null size
               pointers' pointed variables be set to zero.
 
               See also @.size_max.get()]]
@@ -332,7 +332,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
                * where one declares a minimum size of 100 pixels both for width and
                * height. Those are (hint) values which should be respected when the
                * given object/group is to be controlled by a given container object
-               * (e.g. an Edje object being "swallowed" into a given \@ref SWALLOW
+               * (e.g. an Edje object being "swallowed" into a given $SWALLOW
                * typed part, as in edje_object_part_swallow()). Check the complete
                * \@ref edcref "syntax reference" for EDC files.
                */
@@ -354,8 +354,8 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          get {
             [[Gets the (last) file loading error for a given Edje object
 
-              This function is meant to be used after an Edje EDJ <b>file
-              loading</b>, what takes place with the edje_object_file_set()
+              This function is meant to be used after an Edje EDJ file
+              loading, what takes place with the edje_object_file_set()
               function. If that function does not return $true, one should
               check for the reason of failure with this one.
 
@@ -380,13 +380,13 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
               given Edje object
 
               This function retrieves the obj object's maximum size values,
-              <b>as declared in its EDC group definition</b>.
+              as declared in its EDC group definition.
 
-              Note: If the \@ref max EDC property was not declared for obj, this
+              Note: If the $max EDC property was not declared for obj, this
               call will return the maximum size a given Edje object may have, for
               each axis.
 
-              Note: On failure, this function will make all non-$NULL size
+              Note: On failure, this function will make all non-$null size
               pointers' pointed variables be set to zero.
 
               See also @.size_min.get()]]
@@ -405,7 +405,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
                * where one declares a maximum size of 100 pixels both for width and
                * height. Those are (hint) values which should be respected when the
                * given object/group is to be controlled by a given container object
-               * (e.g. an Edje object being "swallowed" into a given \@ref SWALLOW
+               * (e.g. an Edje object being "swallowed" into a given $SWALLOW
                * typed part, as in edje_object_part_swallow()). Check the complete
                * \@ref edcref "syntax reference" for EDC files.
                */
@@ -471,7 +471,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
            @since 1.2.0]]
 
-         return: void *; [[The same data pointer if successful, or NULL otherwise]]
+         return: void *; [[The same data pointer if successful, or $null otherwise]]
          params {
             @in part: const(char)*; [[The part name]]
             @in func: Edje.Markup_Filter_Cb; [[The function callback to remove]]
@@ -512,7 +512,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
       part_text_imf_context_get @const {
          [[Get the input method context in entry.
 
-           If ecore_imf was not available when edje was compiled, this function returns NULL
+           If ecore_imf was not available when edje was compiled, this function returns $null
            otherwise, the returned pointer is an Ecore_IMF
 
            @since 1.2.0]]
@@ -542,7 +542,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          [[Remove a signal-triggered callback from an object.
 
            This function removes a callback, previously attached to the
-           emittion of a signal, from the object  obj. The parameters  
+           emittion of a signal, from the object  obj. The parameters
            emission,  source and  func must match exactly those passed to
            a previous call to edje_object_signal_callback_add(). The data
            pointer that was passed to this call will be returned.
@@ -596,16 +596,16 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
       }
       part_geometry_get @const {
          [[Retrieve the geometry of a given Edje part, in a given Edje
-           object's group definition, <b>relative to the object's area</b>
+           object's group definition, relative to the object's area.
 
            This function gets the geometry of an Edje part within its
            group. The x and y coordinates are relative to the top left
            corner of the whole obj object's area.
 
-           Note: Use $NULL pointers on the geometry components you're not
+           Note: Use $null pointers on the geometry components you're not
            interested in: they'll be ignored by the function.
 
-           Note: On failure, this function will make all non-$NULL geometry
+           Note: On failure, this function will make all non-$null geometry
            pointers' pointed variables be set to zero.]]
          return: bool;
          params {
@@ -671,7 +671,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
            See also @.text_insert_filter_callback_add and @.text_insert_filter_callback_del]]
 
-         return: void *; [[The same data pointer if successful, or NULL otherwise]]
+         return: void *; [[The same data pointer if successful, or $null otherwise]]
          params {
             @in part: const(char)*; [[The part name]]
             @in func: Edje.Text.Filter_Cb; [[The function callback to remove]]
@@ -731,7 +731,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
            See also @.part_box_remove() and @.part_box_remove_all()]]
 
-         return: Evas.Object *; [[Pointer to the object removed, or $NULL.]]
+         return: Evas.Object *; [[Pointer to the object removed, or $null.]]
          params {
             @in part: const(char)*; [[The part name]]
             @in pos: uint; [[The position index of the object (starts counting from 0)]]
@@ -748,19 +748,19 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
       }
       parts_extends_calc {
          [[Calculate the geometry of the region, relative to a given Edje
-           object's area, <b>occupied by all parts in the object</b>
+           object's area, occupied by all parts in the object.
 
            This function gets the geometry of the rectangle equal to the area
            required to group all parts in obj's group/collection. The x
            and y coordinates are relative to the top left corner of the
            whole obj object's area. Parts placed out of the group's
            boundaries will also be taken in account, so that x and y
-           <b>may be negative</b>.
+           may be negative.
 
-           Note: Use $NULL pointers on the geometry components you're not
+           Note: Use $null pointers on the geometry components you're not
            interested in: they'll be ignored by the function.
 
-           Note: On failure, this function will make all non-$NULL geometry
+           Note: On failure, this function will make all non-$null geometry
            pointers' pointed variables be set to zero.]]
 
          return: bool;
@@ -784,10 +784,10 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
            representing the relative position to the dragable area on that axis.
 
            This value means, for the vertical axis, that 0.0 will be at the top if the
-           first parameter of \@ref y in the dragable part theme is 1, and at bottom if it
+           first parameter of $y in the dragable part theme is 1, and at bottom if it
            is -1.
 
-           For the horizontal axis, 0.0 means left if the first parameter of \@ref x in the
+           For the horizontal axis, 0.0 means left if the first parameter of $x in the
            dragable part theme is 1, and right if it is -1.
 
            See also @.part_drag_value_get()]]
@@ -857,7 +857,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          [[Returns the content (char) at the cursor position.
            \@ref evas_textblock_cursor_content_get
 
-           You must free the return (if not NULL) after you are done with it.]]
+           You must free the return (if not $null) after you are done with it.]]
 
          return: char *; [[The character string pointed to (may be a multi-byte utf8 sequence) terminated by a nul byte.]]
          params {
@@ -936,8 +936,8 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool; [[$true get some data, $false on failure]]
          params {
             @in part: const(char)*; [[The part name]]
-            @out cols: int; [[Pointer where to store number of columns (can be NULL)]]
-            @out rows: int; [[Pointer where to store number of rows (can be NULL)]]
+            @out cols: int; [[Pointer where to store number of columns (can be $null)]]
+            @out rows: int; [[Pointer where to store number of rows (can be $null)]]
          }
       }
       part_external_object_get @const {
@@ -953,7 +953,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
            Note: Almost all swallow rules apply: you should not move, resize,
            hide, show, set the color or clipper of such part. It's a bit
            more restrictive as one must  never delete this object!]]
-         return: Evas.Object *; [[The externally created object, or NULL if there is none or
+         return: Evas.Object *; [[The externally created object, or $null if there is none or
                                   part is not an external.]]
          params {
             @in part: const(char)*; [[The part name]]
@@ -962,7 +962,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
       part_external_content_get @const {
          [[Get an object contained in an part of type EXTERNAL
 
-           The content string must not be NULL. Its actual value depends on the
+           The content string must not be $null. Its actual value depends on the
            code providing the EXTERNAL.]]
          return: Evas.Object *;
          params {
@@ -1192,7 +1192,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
            evas_object_visible_get() or \@ref evas_object_color_get() for
            example), though.]]
          return: const(Evas.Object)*; [[A pointer to the Evas object implementing the given part,
-                                        or $NULL on failure (e.g. the given part doesn't exist)]]
+                                        or $null on failure (e.g. the given part doesn't exist)]]
          params {
             @in part: const(char)*; [[The Edje part's name]]
          }
@@ -1235,7 +1235,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
            See also @.text_insert_filter_callback_add and @.text_insert_filter_callback_del_full]]
 
-         return: void *; [[The user data pointer if successful, or NULL otherwise]]
+         return: void *; [[The user data pointer if successful, or $null otherwise]]
          params {
             @in part: const(char)*; [[The part name]]
             @in func: Edje.Text.Filter_Cb; [[The function callback to remove]]
@@ -1245,7 +1245,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          [[Determine dragable directions.
 
            The dragable directions are defined in the EDC file, inside the \@ref dragable
-           section, by the attributes \@ref x and \@ref y. See the \@ref edcref for more
+           section, by the attributes $x and $y. See the \@ref edcref for more
            information.]]
 
          return: Edje.Drag_Dir; [[#EDJE_DRAG_DIR_NONE: Not dragable
@@ -1279,7 +1279,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
            when done.
 
            See also @.part_text_unescaped_set().]]
-         return: char *; [[The  allocated text string without escaping, or NULL on
+         return: char *; [[The  allocated text string without escaping, or $null on
                            problems.]]
          params {
             @in part: const(char)*; [[The part name]]
@@ -1299,8 +1299,8 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
            to use them however they like.
 
            Signal callback registration is powerful, in the way that  blobs
-           may be used to match <b>multiple signals at once</b>. All the
-           "*?[\" set of \@ref fnmatch() operators can be used, both for
+           may be used to match multiple signals at once. All the
+           "*?[\" set of $fnmatch() operators can be used, both for
            emission and source.
 
            Edje has  internal signals it will emit, automatically, on
@@ -1425,12 +1425,11 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          }
       }
       data_get @const {
-         [[Retrive an <b>EDC data field's value</b> from a given Edje
-           object's group.
+         [[Retrive an EDC data field's value from a given Edje object's group.
 
            This function fetches an EDC data field's value, which is declared
-           on the objects building EDC file, <b>under its group</b>. EDC data
-           blocks are most commonly used to pass arbitrary parameters from an
+           on the objects building EDC file, under its group. EDC data blocks
+           are most commonly used to pass arbitrary parameters from an
            application's theme to its code.
 
            EDC data fields always hold  strings as values, hence the return
@@ -1473,7 +1472,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
            modified by the user and it's up to him to free the one passed if he's to
            change the pointer. If doing so, the newly set text should be malloc'ed,
            as once all the filters are called Edje will free it.
-           If the text is to be rejected, freeing it and setting the pointer to NULL
+           If the text is to be rejected, freeing it and setting the pointer to $null
            will make Edje break out of the filter cycle and reject the inserted
            text.
            This function is different from edje_object_text_insert_filter_callback_add()
@@ -1510,7 +1509,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
            See also @.part_box_remove_at() and @.part_box_remove_all()]]
 
-         return: Evas.Object *; [[Pointer to the object removed, or $NULL.]]
+         return: Evas.Object *; [[Pointer to the object removed, or $null.]]
          params {
             @in part: const(char)*; [[The part name]]
             @in child: Evas.Object *; [[The object to remove]]
@@ -1531,7 +1530,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
       part_swallow_get @const {
          [[Get the object currently swallowed by a part.]]
 
-         return: Evas.Object *; [[The swallowed object, or NULL if there is none.]]
+         return: Evas.Object *; [[The swallowed object, or $null if there is none.]]
          params {
             @in part: const(char)*; [[The part name]]
          }
@@ -1906,7 +1905,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          [[Gets the description of an object color class.
 
            This function gets the description of a color class in use by an object.]]
-         return: const(char)*; [[The description of the target color class or $NULL if not found]]
+         return: const(char)*; [[The description of the target color class or $null if not found]]
          params {
             @in color_class: const(char)*;
          }
@@ -1969,7 +1968,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
            it's up to him to free the one passed if he's to change the pointer. If
            doing so, the newly set text should be malloc'ed, as once all the filters
            are called Edje will free it.
-           If the text is to be rejected, freeing it and setting the pointer to NULL
+           If the text is to be rejected, freeing it and setting the pointer to $null
            will make Edje break out of the filter cycle and reject the inserted
            text.
 
@@ -2030,7 +2029,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
            @since 1.2.0]]
 
-         return: void *; [[The user data pointer if successful, or NULL otherwise]]
+         return: void *; [[The user data pointer if successful, or $null otherwise]]
          params {
             @in part: const(char)*; [[The part name]]
             @in func: Edje.Markup_Filter_Cb; [[The function callback to remove]]
@@ -2078,11 +2077,11 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          }
       }
       part_swallow {
-         [["Swallows" an object into one of the Edje object \@ref SWALLOW
+         [["Swallows" an object into one of the Edje object $SWALLOW
             parts.
 
             Swallowing an object into an Edje object is, for a given part of
-            type \@ref SWALLOW in the EDC group which gave life to  obj, to set
+            type $SWALLOW in the EDC group which gave life to  obj, to set
             an external object to be controlled by  obj, being displayed
             exactly over that part's region inside the whole Edje object's
             viewport.
@@ -2090,9 +2089,9 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             From this point on,  obj will have total control over
             obj_swallow's geometry and visibility. For instance, if  obj is
             visible, as in \@ref evas_object_show(), the swallowed object will be
-            visible too -- if the given \@ref SWALLOW part it's in is also
-            visible. Other actions on  obj will also reflect on the swallowed
-            object as well (e.g. resizing, moving, raising/lowering, etc.).
+            visible too -- if the given $SWALLOW part it's in is also visible.
+            Other actions on  obj will also reflect on the swallowed object as
+            well (e.g. resizing, moving, raising/lowering, etc.).
 
             Finally, all internal changes to  part, specifically, will
             reflect on the displaying of  obj_swallow, for example state
@@ -2106,7 +2105,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             Note:  obj  won't delete the swallowed object once it is
             deleted --  obj_swallow will get to an unparented state again.
 
-            For more details on EDC \@ref SWALLOW parts, see \@ref edcref "syntax
+            For more details on EDC $SWALLOW parts, see \@ref edcref "syntax
             reference".]]
 
          return: bool;
