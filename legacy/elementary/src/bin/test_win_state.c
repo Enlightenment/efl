@@ -46,7 +46,6 @@ _deiconify_timer_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-
 static Eina_Bool
 _unwith(void *data)
 {
@@ -75,7 +74,6 @@ my_bt_38_massive(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA
 static void
 my_ck_38_resize(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-//   Evas_Object *win = data;
    rotate_with_resize = elm_check_state_get(obj);
 }
 
