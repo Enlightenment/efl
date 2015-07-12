@@ -68,5 +68,6 @@ void eina_test_crc(TCase *tc);
 void eina_test_quad(TCase *tc);
 void eina_test_matrix(TCase *tc);
 void eina_test_quaternion(TCase *tc);
+void eina_test_bezier(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */
