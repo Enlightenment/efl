@@ -497,7 +497,7 @@ evas_common_rgba_image_scalecache_flush(void)
 #endif   
 }
 
-EAPI void
+EAPI Eina_Bool
 evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst EINA_UNUSED,
                                           RGBA_Draw_Context *dc, int smooth,
                                           int src_region_x, int src_region_y,
@@ -510,9 +510,9 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst EINA_
    Eina_Lock_Result ret;
    RGBA_Image *im = (RGBA_Image *)ie;
    Scaleitem *sci;
-   if (!im->image.data) return;
+
    if ((dst_region_w == 0) || (dst_region_h == 0) ||
-       (src_region_w == 0) || (src_region_h == 0)) return;
+       (src_region_w == 0) || (src_region_h == 0)) return EINA_TRUE;
    // was having major lock issues here - SLKL was deadlocking. what was
    // going on? it may have been an eina treads badness but this will stay here
    // for now for debug
@@ -563,7 +563,7 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst EINA_
         im->cache.orig_usage++;
         im->cache.usage_count = use_counter;
         if (locked) SLKU(im->cache.lock);
-        return;
+        return EINA_FALSE;
      }
    if ((!im->cache_entry.flags.alpha) && (!smooth))
      {
@@ -572,7 +572,7 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst EINA_
         im->cache.orig_usage++;
         im->cache.usage_count = use_counter;
         if (locked) SLKU(im->cache.lock);
-        return;
+        return EINA_FALSE;
      }
    SLKL(cache_lock);
    sci = _sci_find(im, dc, smooth, 
@@ -582,7 +582,7 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst EINA_
      {
         SLKU(cache_lock);
         if (locked) SLKU(im->cache.lock);
-        return;
+        return EINA_FALSE;
      }
 //   INF("%10i | %4i %4i %4ix%4i -> %4i %4i %4ix%4i | %i",
 //          (int)use_counter,
@@ -620,6 +620,8 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst EINA_
 //   INF("  -------------- used %8i#, %8i@", (int)sci->usage, (int)sci->usage_count);
    if (locked) SLKU(im->cache.lock);
 #endif
+   if ((!im->image.data) && (sci->populate_me)) return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 #ifdef SCALECACHE

@@ -46,7 +46,7 @@ EAPI unsigned int evas_common_rgba_image_scalecache_size_get(void);
 EAPI void evas_common_rgba_image_scalecache_flush(void);
 EAPI void evas_common_rgba_image_scalecache_dump(void);
 EAPI void evas_common_rgba_image_scalecache_prune(void);
-EAPI void
+EAPI Eina_Bool
   evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst,
                                             RGBA_Draw_Context *dc, int smooth,
                                             int src_region_x, int src_region_y,

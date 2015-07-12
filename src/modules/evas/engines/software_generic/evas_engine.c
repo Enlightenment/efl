@@ -1857,22 +1857,21 @@ eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image
 
    if (do_async)
      {
-        if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
+        if (!evas_common_rgba_image_scalecache_prepare(image, surface, context, smooth,
+                                                       src_x, src_y, src_w, src_h,
+                                                       dst_x, dst_y, dst_w, dst_h))
           {
+             if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
+               {
 #if EVAS_CSERVE2
-             if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
-               evas_cache2_image_load_data(&im->cache_entry);
-             else
+                  if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
+                    evas_cache2_image_load_data(&im->cache_entry);
+                  else
 #endif
-               evas_cache_image_load_data(&im->cache_entry);
-
-             if (!im->cache_entry.flags.loaded) return EINA_FALSE;
+                    evas_cache_image_load_data(&im->cache_entry);
+                  if (!im->cache_entry.flags.loaded) return EINA_FALSE;
+               }
           }
-
-        evas_common_rgba_image_scalecache_prepare(image, surface, context, smooth,
-                                                  src_x, src_y, src_w, src_h,
-                                                  dst_x, dst_y, dst_w, dst_h);
-
         return evas_common_rgba_image_scalecache_do_cbs(image, surface,
                                                         context, smooth,
                                                         src_x, src_y, src_w, src_h,
