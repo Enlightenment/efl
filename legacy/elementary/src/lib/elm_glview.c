@@ -114,6 +114,9 @@ static Eina_Bool
 _render_cb(void *obj)
 {
    ELM_GLVIEW_DATA_GET(obj, sd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   evas_object_render_op_set(wd->resize_obj, evas_object_render_op_get(obj));
 
    // Do a make current
    if (!evas_gl_make_current(sd->evasgl, sd->surface, sd->context))
