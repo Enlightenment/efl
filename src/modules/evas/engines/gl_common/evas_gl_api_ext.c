@@ -116,6 +116,13 @@ struct wl_resource;
 // Evas extensions from EGL extensions
 #ifdef GL_GLES
 #define EGLDISPLAY_GET() _evgl_egl_display_get(__FUNCTION__)
+
+// this struct defines an EvasGLImage when using EGL
+typedef struct _EvasGLImage {
+   EGLDisplay  dpy;
+   EGLImageKHR img;
+} EvasGLImage_EGL;
+
 static EGLDisplay
 _evgl_egl_display_get(const char *function)
 {
@@ -153,7 +160,9 @@ static void *
 _evgl_eglCreateImageKHR(EGLDisplay dpy, EGLContext ctx,
                         int target, void* buffer, const int *attrib_list)
 {
+   EvasGLImage_EGL *img;
    int *attribs = NULL;
+   void *eglimg;
 
    /* Convert 0 terminator into a EGL_NONE terminator */
    if (attrib_list)
@@ -177,7 +186,13 @@ _evgl_eglCreateImageKHR(EGLDisplay dpy, EGLContext ctx,
         *a = EGL_NONE;
      }
 
-   return EXT_FUNC_EGL(eglCreateImage)(dpy, ctx, target, buffer, attribs);
+   eglimg = EXT_FUNC_EGL(eglCreateImage)(dpy, ctx, target, buffer, attribs);
+   if (!eglimg) return NULL;
+
+   img = calloc(1, sizeof(EvasGLImage_EGL));
+   img->dpy = dpy;
+   img->img = eglimg;
+   return img;
 }
 
 static void *
@@ -215,20 +230,29 @@ static void
 evgl_evasglDestroyImage(EvasGLImage image)
 {
    EGLDisplay dpy = EGLDISPLAY_GET();
-   if (!dpy) return;
-   EXT_FUNC_EGL(eglDestroyImage)(dpy, image);
+   EvasGLImage_EGL *img = image;
+
+   if (dpy)
+     EXT_FUNC_EGL(eglDestroyImage)(dpy, img->img);
+   else
+     EXT_FUNC_EGL(eglDestroyImage)(img->dpy, img->img);
+   free(img);
 }
 
 static void
 evgl_glEvasGLImageTargetTexture2D(GLenum target, EvasGLImage image)
 {
-   EXT_FUNC(glEGLImageTargetTexture2DOES)(target, image);
+   EvasGLImage_EGL *img = image;
+
+   EXT_FUNC(glEGLImageTargetTexture2DOES)(target, img->img);
 }
 
 static void
 evgl_glEvasGLImageTargetRenderbufferStorage(GLenum target, EvasGLImage image)
 {
-   EXT_FUNC(glEGLImageTargetRenderbufferStorageOES)(target, image);
+   EvasGLImage_EGL *img = image;
+
+   EXT_FUNC(glEGLImageTargetRenderbufferStorageOES)(target, img->img);
 }
 
 static EvasGLSync

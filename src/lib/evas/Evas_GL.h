@@ -4143,6 +4143,9 @@ struct _Evas_GL_API
     * Destroy an image created by either @ref evasglCreateImage or @ref evasglCreateImageForContext.
     *
     * Requires the @c EVAS_GL_image extension.
+    *
+    * @note Unlike in pure EGL, the display pointer needs not be passed in, as
+    * Evas GL will use the same EGLDisplay as used in the create function.
     */
    void         (*evasglDestroyImage) (EvasGLImage image);
 
