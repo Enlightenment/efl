@@ -2875,7 +2875,7 @@ _elm_entry_elm_container_content_unset(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED,
 }
 
 static void
-_entry_text_append(Evas_Object* obj, const char* entry)
+_entry_text_append(Evas_Object* obj, const char* entry, Eina_Bool set)
 {
    int len = 0;
    if (!entry) return;
@@ -2913,9 +2913,14 @@ _entry_text_append(Evas_Object* obj, const char* entry)
           }
         else
           {
-             /* For the case of text set, append will have similar behaviour
-              * as entry text is cleared first */
-             edje_object_part_text_append(sd->entry_edje, "elm.text", entry);
+             if (set)
+               {
+                  edje_object_part_text_set(sd->entry_edje, "elm.text", entry);
+               }
+             else
+               {
+                  edje_object_part_text_append(sd->entry_edje, "elm.text", entry);
+               }
              eo_do(obj, eo_event_callback_call(ELM_ENTRY_EVENT_TEXT_SET_DONE, NULL));
           }
      }
@@ -2958,7 +2963,7 @@ _elm_entry_elm_layout_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, co
 
    /* Need to clear the entry first */
    edje_object_part_text_set(sd->entry_edje, "elm.text", "");
-   _entry_text_append(obj, entry);
+   _entry_text_append(obj, entry, EINA_TRUE);
 
    if (len > 0)
      _elm_entry_guide_update(obj, EINA_TRUE);
@@ -3863,7 +3868,7 @@ _elm_entry_entry_append(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *ent
    if (!entry) entry = "";
 
    sd->changed = EINA_TRUE;
-   _entry_text_append(obj, entry);
+   _entry_text_append(obj, entry, EINA_FALSE);
 }
 
 EOLIAN static Eina_Bool
