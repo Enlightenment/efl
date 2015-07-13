@@ -1681,9 +1681,6 @@ evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
      }
    DBG("TLS KEY created: %d", evgl_engine->resource_key);
 
-   // Link to evas_gl.c (this doesn't look great)
-   glsym_evas_gl_native_context_get = dlsym(RTLD_DEFAULT, "_evas_gl_native_context_get");
-
    evgl_engine->safe_extensions = eina_hash_string_small_new(NULL);
 
    // Surface Caps
@@ -2073,10 +2070,14 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
 
 void *
 evgl_context_create(void *eng_data, EVGL_Context *share_ctx,
-                    Evas_GL_Context_Version version)
+                    Evas_GL_Context_Version version,
+                    void *(*native_context_get)(void *))
 {
    EVGL_Context *ctx   = NULL;
    EVGL_Resource *rsc  = NULL;
+
+   // A little bit ugly. But it works even when dlsym(DEFAULT) doesn't work.
+   glsym_evas_gl_native_context_get = native_context_get;
 
    // Check the input
    if (!evgl_engine)

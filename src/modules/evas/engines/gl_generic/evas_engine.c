@@ -1423,12 +1423,13 @@ eng_gl_surface_destroy(void *data, void *surface)
 }
 
 static void *
-eng_gl_context_create(void *data, void *share_context, int version)
+eng_gl_context_create(void *data, void *share_context, int version,
+                      void *(*native_context_get)(void *))
 {
    EVGL_Context  *sctx = (EVGL_Context *)share_context;
 
    EVGLINIT(data, NULL);
-   return evgl_context_create(data, sctx, version);
+   return evgl_context_create(data, sctx, version, native_context_get);
 }
 
 static int
