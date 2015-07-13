@@ -81,6 +81,8 @@ Fixes:
    * elm_conform: remember window pointer.
    * elm_conform: remove smart_callback when it is removed.
    * elm - scroller - set hold flag on wheel events if used for that dir
+   * image: fix a crash, 0 divide problem.
+   * slider: compare slider values elaborately.
 
 Changes since 1.13.0:
 ---------------------
