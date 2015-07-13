@@ -204,6 +204,7 @@ Fixes:
    * edje_edit: return EINA_TRUE for unset color_class
    * Efreet: Fix config and data dir paths on windows.
    * ecore-wayland: Remove improper use of EINA_UNUSED
+   * evas: Init need_unload value after unload.
 
 Changes since 1.13.0:
 ---------------------
