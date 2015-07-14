@@ -1918,6 +1918,25 @@ START_TEST(evas_textblock_wrapping)
    evas_object_textblock_size_formatted_get(tb, &w, NULL);
    ck_assert_int_le(w, nw);
 
+     {
+        int bret, ret;
+        evas_object_textblock_text_markup_set(tb,
+              "<ellipsis=1.0>aaa<ps>bbb</ellipsis>");
+        evas_object_resize(tb, 1, 1);
+        evas_object_textblock_size_formatted_get(tb, NULL, NULL);
+        evas_textblock_cursor_line_set(cur, 1);
+        bret = evas_textblock_cursor_pos_get(cur);
+
+        evas_object_resize(tb, 500, 500);
+        evas_object_textblock_size_formatted_get(tb, NULL, NULL);
+        evas_object_resize(tb, 1, 1);
+        evas_object_textblock_size_formatted_get(tb, NULL, NULL);
+        evas_textblock_cursor_line_set(cur, 1);
+        ret = evas_textblock_cursor_pos_get(cur);
+
+        ck_assert_int_eq(bret, ret);
+     }
+
    END_TB_TEST();
 }
 END_TEST

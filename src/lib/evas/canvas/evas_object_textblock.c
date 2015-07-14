@@ -5706,7 +5706,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
              }
         }
 
-      /* Mark all the rest of the paragraphs as invisible */
+      /* Clear the rest of the paragraphs and mark as invisible */
       if (c->par)
         {
            c->par = (Evas_Object_Textblock_Paragraph *)
@@ -5714,6 +5714,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
            while (c->par)
              {
                 c->par->visible = 0;
+                _paragraph_clear(c->obj, c->par);
                 c->par = (Evas_Object_Textblock_Paragraph *)
                    EINA_INLIST_GET(c->par)->next;
              }
