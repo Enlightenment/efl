@@ -5,37 +5,39 @@ class Elm_App_Client_View (Eo.Base)
    methods {
       @property state {
          get {
-            /*@ Get state of view */
+            [[Get state of view]]
          }
          values {
-            state: Elm_App_View_State; /*@ state of view */
+            state: Elm_App_View_State; [[state of view]]
          }
       }
       @property new_events {
          get {
-            /*@ Get new events of view */
+            [[Get new events of view]]
          }
          values {
-            events: int; /*@ number of events of view */
+            events: int; [[number of events of view]]
          }
       }
       @property window {
          get {
-            /*@ Get window of view */
+            [[Get window of view]]
          }
          values {
-            window: int; /*@ window of view */
+            window: int; [[window of view]]
          }
       }
       @property icon_pixels {
          get {
-            /*@ Get icon pixels of view, view could have a icon in raw format not saved in disk. */
+            [[Get icon pixels of view, view could have a icon 
+              in raw format not saved in disk.
+            ]]
          }
          values {
-            w: uint; /*@ icon width */
-            h: uint; /*@ icon height */
-            has_alpha: bool; /*@ if icon have alpha channel */
-            pixels: const(ubyte)*; /*@ uchar array, with all bytes of icon */
+            w: uint; [[icon width]]
+            h: uint; [[icon height]]
+            has_alpha: bool; [[if icon have alpha channel]]
+            pixels: const(ubyte)*; [[uchar array, with all bytes of icon]]
          }
       }
       path_set {
@@ -45,63 +47,65 @@ class Elm_App_Client_View (Eo.Base)
       }
       @property path {
          get {
-            /*@ Get DBus path of view */
+            [[Get DBus path of view]]
          }
          values {
-            ret: Eina_Stringshare *; /*@ DBus path of view */
+            ret: Eina_Stringshare *; [[DBus path of view]]
          }
       }
       @property package {
          get {
-            /*@ Get application package */
+            [[Get application package]]
          }
          values {
-            ret: const(char)*; /*@ Package of application */
+            ret: const(char)*; [[Package of application]]
          }
       }
       @property icon {
          get {
-            /*@ Get icon path of view */
+            [[Get icon path of view]]
          }
          values {
-            ret: const(char)*; /*@ icon path of view */
+            ret: const(char)*; [[icon path of view]]
          }
       }
       @property progress {
          get {
-            /*@ Get progress of view, should be -1 if there nothing in progress or something between 0-100 */
+            [[Get progress of view, should be -1 if there nothing in progress 
+              or something between 0-100
+            ]]
          }
          values {
-            progress: ushort; /*@ progress of view */
+            progress: ushort; [[progress of view]]
          }
       }
       @property title {
          get {
-            /*@ Get title of view */
+            [[Get title of view]]
          }
          values {
-            ret: const(char)*; /*@ title of view */
+            ret: const(char)*; [[title of view]]
          }
       }
       pause {
-         /*@ Pause view */
+         [[Pause view]]
          params {
-            @in cb: Elm_App_Client_View_Cb @optional; /*@ callback to be called when view was paused */
-            @in data: const(void)* @optional; /*@ callback user data */
+            @in cb: Elm_App_Client_View_Cb @optional; [[callback to be called when view was paused ]]
+            @in data: const(void)* @optional; [[callback user data]]
          }
       }
       resume {
-         /*@ Resume view */
+         [[Resume view]]
          params {
-            @in cb: Elm_App_Client_View_Cb @optional; /*@ callback to be called when view was resumed */
-            @in data: const(void)* @optional; /*@ callback user data */
+            @in cb: Elm_App_Client_View_Cb @optional; [[callback to be called when view was resumed]]
+            @in data: const(void)* @optional; [[callback user data]]
          }
       }
       close {
-         /*@ Close view */
+         [[Close view]]
          params {
-            @in cb: Elm_App_Client_View_Cb @optional; /*@ callback to be called when view was closed */
-            @in data: const(void)* @optional; /*@ callback user data */
+            @in cb: Elm_App_Client_View_Cb @optional; [[callback to be called when view was closed]]
+            @in data: const(void)* @optional; [[callback user data]]
          }
       }
    }
