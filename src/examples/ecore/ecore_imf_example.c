@@ -78,13 +78,16 @@ _mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *
           return;
      }
 
-   if (evas_object_focus_get(en->rect))
+   if (en->rect)
      {
-        // notify cursor information
-        _imf_cursor_info_set(en);
+        if (evas_object_focus_get(en->rect))
+          {
+             // notify cursor information
+             _imf_cursor_info_set(en);
+          }
+        else
+          evas_object_focus_set(en->rect, EINA_TRUE);
      }
-   else
-     evas_object_focus_set(en->rect, EINA_TRUE);
 }
 
 static void
@@ -149,15 +152,20 @@ _imf_cursor_info_set(Entry *en)
    if (!en) return;
 
    // get cursor geometry
-   evas_object_geometry_get(en->txt_obj, &x, &y, &w, &h);
-   evas_textblock_cursor_geometry_get(en->cursor, &cx, &cy, &cw, &ch, &dir, EVAS_TEXTBLOCK_CURSOR_BEFORE);
+   if (en->txt_obj)
+     evas_object_geometry_get(en->txt_obj, &x, &y, &w, &h);
 
-   // get cursor position
-   cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
+   if (en->cursor && en->imf_context)
+     {
+        evas_textblock_cursor_geometry_get(en->cursor, &cx, &cy, &cw, &ch, &dir, EVAS_TEXTBLOCK_CURSOR_BEFORE);
 
-   ecore_imf_context_cursor_position_set(en->imf_context, cursor_pos);
-   ecore_imf_context_cursor_location_set(en->imf_context, x + cx, y + cy, cw, ch);
-   ecore_imf_context_bidi_direction_set(en->imf_context, (Ecore_IMF_BiDi_Direction)dir);
+        // get cursor position
+        cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
+
+        ecore_imf_context_cursor_position_set(en->imf_context, cursor_pos);
+        ecore_imf_context_cursor_location_set(en->imf_context, x + cx, y + cy, cw, ch);
+        ecore_imf_context_bidi_direction_set(en->imf_context, (Ecore_IMF_BiDi_Direction)dir);
+     }
 }
 
 static void
@@ -204,7 +212,7 @@ _ecore_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSE
      *text = str ? strdup(str) : strdup("");
 
    // get the current position of cursor
-   if (cursor_pos)
+   if (cursor_pos && en->cursor)
      *cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
 
    return EINA_TRUE;
@@ -219,7 +227,7 @@ _ecore_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_U
    Evas_Textblock_Cursor *del_start, *del_end;
    int cursor_pos;
 
-   if ((!en) || (!ev)) return;
+   if ((!en) || (!ev) || (!en->cursor)) return;
 
    // get the current cursor position
    cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
@@ -253,7 +261,8 @@ _ecore_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void 
    printf("commit string : %s\n", commit_str);
 
    // insert the commit string in the editor
-   evas_object_textblock_text_markup_prepend(en->cursor, commit_str);
+   if (en->cursor && commit_str)
+     evas_object_textblock_text_markup_prepend(en->cursor, commit_str);
 
    // notify the cursor information
    _imf_cursor_info_set(en);
@@ -276,7 +285,7 @@ _ecore_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx, void *ev
    int i;
    Eina_Bool preedit_end_state = EINA_FALSE;
 
-   if (!en) return;
+   if (!en || !en->cursor) return;
 
    // get preedit string and attributes
    ecore_imf_context_preedit_string_with_attributes_get(imf_context, &preedit_string, &attrs, &cursor_pos);
@@ -352,7 +361,7 @@ _key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *
    Entry *en = data;
    Evas_Event_Key_Down *ev = event_info;
    Eina_Bool control, alt, shift;
-   if ((!en) || (!ev->key)) return;
+   if ((!en) || (!ev->key) || (!en->cursor)) return;
 
    if (en->imf_context)
      {
@@ -497,7 +506,10 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
    // create input context
    const char *default_id = ecore_imf_context_default_id_get();
    if (!default_id)
-     return;
+     {
+        fprintf(stderr, "Can't create ecore_imf_context\n");
+        return;
+     }
 
    en->imf_context = ecore_imf_context_add(default_id);
    ecore_imf_context_client_window_set(en->imf_context, (void *)ecore_evas_window_get(ecore_evas_ecore_evas_get(evas)));
@@ -620,6 +632,9 @@ main(void)
    // register canvas focus in/out event handler
    evas_event_callback_add(evas, EVAS_CALLBACK_CANVAS_FOCUS_IN, _canvas_focus_in_cb, NULL);
    evas_event_callback_add(evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT, _canvas_focus_out_cb, NULL);
+
+   memset(&en1, 0, sizeof(en1));
+   memset(&en2, 0, sizeof(en2));
 
    // create input field 1
    create_input_field(evas, &en1, 40, 60, 400, 80);
