@@ -1037,6 +1037,9 @@ _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *keyboard EINA_
    if (!surface) return;
    if (!(input = data)) return;
 
+   input->repeat.sym = 0;
+   input->repeat.key = 0;
+   input->repeat.time = 0;
    if (input->repeat.tmr) ecore_timer_del(input->repeat.tmr);
    input->repeat.tmr = NULL;
 
