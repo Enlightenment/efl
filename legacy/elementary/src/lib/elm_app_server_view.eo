@@ -71,10 +71,10 @@ class Elm_App_Server_View (Eo.Base)
       }
       @property pixels {
          get {
-            /*@ Get application raw icon. */
+            [[Get application raw icon.]]
          }
          set {
-            /*@ Set icon to application, using the raw pixels of image. */
+            [[Set icon to application, using the raw pixels of image.]]
          }
          values {
             w: uint;
