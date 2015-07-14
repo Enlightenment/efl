@@ -907,11 +907,14 @@ _ecore_wl_input_cb_keyboard_repeat(void *data)
    if (!(input = data)) return ECORE_CALLBACK_RENEW;
 
    if ((win = input->keyboard_focus))
-     _ecore_wl_input_cb_keyboard_key(input, NULL, input->display->serial,
-                                     input->repeat.time,
-                                     input->repeat.key, EINA_TRUE);
+     {
+        _ecore_wl_input_cb_keyboard_key(input, NULL, input->display->serial,
+                                        input->repeat.time,
+                                        input->repeat.key, EINA_TRUE);
+        return ECORE_CALLBACK_RENEW;
+     }
 
-   return ECORE_CALLBACK_RENEW;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
