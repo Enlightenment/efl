@@ -8,13 +8,14 @@
  * @brief Generate standard documentation
  *
  * @param[in] doc the documentation
+ * @param[in] group the group to use (can be NULL)
  * @param[in] indent by how many spaces to indent the comment from second line
  * @param[in] use_legacy whether to use legacy names
  *
  * @return A documentation comment
  *
  */
-Eina_Strbuf *docs_generate_full(const Eolian_Documentation *doc, int indent, Eina_Bool use_legacy);
+Eina_Strbuf *docs_generate_full(const Eolian_Documentation *doc, const char *group, int indent, Eina_Bool use_legacy);
 
 /*
  * @brief Generate function documentation

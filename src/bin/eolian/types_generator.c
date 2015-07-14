@@ -36,7 +36,12 @@ _concat_name(const Eolian_Type *tp)
 static Eina_Strbuf *
 _type_generate(const Eolian_Type *tp, Eina_Bool full, Eina_Bool use_legacy)
 {
-   Eina_Strbuf *buf = docs_generate_full(eolian_type_documentation_get(tp), 0, use_legacy);
+   char *grp = strdup(eolian_type_full_name_get(tp));
+   char *p = strrchr(grp, '.');
+   if (p) *p = '\0';
+   Eina_Strbuf *buf = docs_generate_full(eolian_type_documentation_get(tp),
+                                         grp, 0, use_legacy);
+   free(grp);
    if (!buf) buf = eina_strbuf_new();
    else eina_strbuf_append_char(buf, '\n');
    Eolian_Type_Type tp_type = eolian_type_type_get(tp);
@@ -79,7 +84,7 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full, Eina_Bool use_legacy)
                         const char *nl = strrchr(eina_strbuf_string_get(buf), '\n');
                         if (nl)
                           {
-                             Eina_Strbuf *fbuf = docs_generate_full(fdoc, strlen(nl), use_legacy);
+                             Eina_Strbuf *fbuf = docs_generate_full(fdoc, NULL, strlen(nl), use_legacy);
                              if (fbuf)
                                eina_strbuf_append_printf(buf, " %s",
                                                          eina_strbuf_string_get(fbuf));
@@ -145,7 +150,7 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full, Eina_Bool use_legacy)
                         const char *nl = strrchr(eina_strbuf_string_get(buf), '\n');
                         if (nl)
                           {
-                             Eina_Strbuf *fbuf = docs_generate_full(fdoc, strlen(nl), use_legacy);
+                             Eina_Strbuf *fbuf = docs_generate_full(fdoc, NULL, strlen(nl), use_legacy);
                              if (fbuf)
                                eina_strbuf_append_printf(buf, " %s",
                                                          eina_strbuf_string_get(fbuf));

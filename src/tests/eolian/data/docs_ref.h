@@ -19,6 +19,8 @@ typedef Eo Docs;
  * This is another paragraph.
  *
  * @since 1.66
+ *
+ * @ingroup Foo
  */
 typedef struct _Foo
 {
@@ -27,7 +29,10 @@ typedef struct _Foo
   short field3; /** Another field documentation. */
 } Foo;
 
-/** Docs for enum Bar. */
+/** Docs for enum Bar.
+ *
+ * @ingroup Bar
+ */
 typedef enum
 {
   BAR_BLAH = 0,
@@ -41,10 +46,15 @@ typedef enum
  * More docs for typedef. See @ref Bar.
  *
  * @since 2.0
+ *
+ * @ingroup Alias
  */
 typedef Bar Alias;
 
-/** Opaque struct docs. See @ref Foo for another struct. */
+/** Opaque struct docs. See @ref Foo for another struct.
+ *
+ * @ingroup Opaque
+ */
 typedef struct _Opaque Opaque;
 
 
@@ -55,6 +65,8 @@ typedef struct _Opaque Opaque;
  * More docs for class. Testing references now. @ref Foo @ref Bar @ref Alias
  * @ref pants @ref docs_meth @ref docs_prop_get @ref docs_prop_get
  * @ref docs_prop_set @ref Foo.field1 @ref Bar.BAR_FOO @ref Docs
+ *
+ * @ingroup Docs
  */
 #define DOCS_CLASS docs_class_get()
 
@@ -68,6 +80,8 @@ EAPI const Eo_Class *docs_class_get(void) EINA_CONST;
  * @param[in] val Value documentation.
  *
  * @since 1.18
+ *
+ * @ingroup Docs
  */
 EOAPI void  docs_prop_set(int val);
 
@@ -79,6 +93,8 @@ EOAPI void  docs_prop_set(int val);
  * @return Value documentation.
  *
  * @since 1.18
+ *
+ * @ingroup Docs
  */
 EOAPI int  docs_prop_get(void);
 
@@ -89,12 +105,17 @@ EOAPI int  docs_prop_get(void);
  * @param[out] c Another param documentation.
  *
  * @return Return documentation.
+ *
+ * @ingroup Docs
  */
 EOAPI int  docs_meth(int a, float *b, long *c);
 
 EOAPI extern const Eo_Event_Description _DOCS_EVENT_CLICKED;
 
-/** Event docs. */
+/** Event docs.
+ *
+ * @ingroup Docs
+ */
 #define DOCS_EVENT_CLICKED (&(_DOCS_EVENT_CLICKED))
 
 #endif

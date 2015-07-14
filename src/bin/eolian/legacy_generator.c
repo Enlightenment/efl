@@ -387,7 +387,7 @@ legacy_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    const Eolian_Documentation *doc = eolian_class_documentation_get(class);
    if (doc)
      {
-        Eina_Strbuf *cdoc = docs_generate_full(doc, 0, EINA_TRUE);
+        Eina_Strbuf *cdoc = docs_generate_full(doc, eolian_class_full_name_get(class), 0, EINA_TRUE);
         if (cdoc)
           {
              eina_strbuf_append(buf, eina_strbuf_string_get(cdoc));

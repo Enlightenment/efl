@@ -34,6 +34,8 @@ EAPI const Eo_Class *struct_class_get(void) EINA_CONST;
  * @brief Foo docs. This is @c monospace. This is alone-standing $.
  *
  * @param[in] idx
+ *
+ * @ingroup Struct
  */
 EOAPI char * struct_foo(int idx);
 

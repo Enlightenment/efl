@@ -19,6 +19,8 @@ typedef Eo Docs;
  * This is another paragraph.
  *
  * @since 1.66
+ *
+ * @ingroup Foo
  */
 typedef struct _Foo
 {
@@ -27,7 +29,10 @@ typedef struct _Foo
   short field3; /** Another field documentation. */
 } Foo;
 
-/** Docs for enum Bar. */
+/** Docs for enum Bar.
+ *
+ * @ingroup Bar
+ */
 typedef enum
 {
   BAR_BLAH = 0,
@@ -41,10 +46,15 @@ typedef enum
  * More docs for typedef. See @ref Bar.
  *
  * @since 2.0
+ *
+ * @ingroup Alias
  */
 typedef Bar Alias;
 
-/** Opaque struct docs. See @ref Foo for another struct. */
+/** Opaque struct docs. See @ref Foo for another struct.
+ *
+ * @ingroup Opaque
+ */
 typedef struct _Opaque Opaque;
 
 
@@ -55,6 +65,8 @@ typedef struct _Opaque Opaque;
  * More docs for class. Testing references now. @ref Foo @ref Bar @ref Alias
  * @ref pants @ref docs_meth @ref docs_prop_get @ref docs_prop_get
  * @ref docs_prop_set @ref Foo.field1 @ref Bar.BAR_FOO @ref Docs
+ *
+ * @ingroup Docs
  */
 
 /**
@@ -65,6 +77,8 @@ typedef struct _Opaque Opaque;
  * @param[in] val Value documentation.
  *
  * @since 1.18
+ *
+ * @ingroup Docs
  */
 EAPI void docs_prop_set(Docs *obj, int val);
 
@@ -76,6 +90,8 @@ EAPI void docs_prop_set(Docs *obj, int val);
  * @return Value documentation.
  *
  * @since 1.18
+ *
+ * @ingroup Docs
  */
 EAPI int docs_prop_get(const Docs *obj);
 
@@ -86,6 +102,8 @@ EAPI int docs_prop_get(const Docs *obj);
  * @param[out] c Another param documentation.
  *
  * @return Return documentation.
+ *
+ * @ingroup Docs
  */
 EAPI int docs_meth(Docs *obj, int a, float *b, long *c);
 
