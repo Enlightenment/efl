@@ -5,139 +5,129 @@ interface Efl.File {
    methods {
       @property mmap {
          set {
-            /*@
-            Set the source mmaped file from where an image object must fetch the real
-            image data (it must be an Eina_File).
+            [[Set the source mmaped file from where an image object must fetch the real
+              image data (it must be an Eina_File).
 
-            If the file supports multiple data stored in it (as Eet files do),
-            you can specify the key to be used as the index of the image in
-            this file.
+              If the file supports multiple data stored in it (as Eet files do),
+              you can specify the key to be used as the index of the image in
+              this file.
 
-            @since 1.8 */
+              @since 1.8]]
 
             return: bool;
          }
          get {
-            /*@
-            Get the source mmaped file from where an image object must fetch the real
-            image data (it must be an Eina_File).
+            [[Get the source mmaped file from where an image object must fetch the real
+              image data (it must be an Eina_File).
 
-            If the file supports multiple data stored in it (as Eet files do),
-            you can get the key to be used as the index of the image in
-            this file.
+              If the file supports multiple data stored in it (as Eet files do),
+              you can get the key to be used as the index of the image in
+              this file.
 
-            @since 1.10 */
+              @since 1.10]]
          }
          values {
-            f: const(Eina.File)*; /*@ The mmaped file */
-            key: const(char)*; /*@ The image key in @p file (if its an Eet one), or @c
-            NULL, otherwise. */
+            f: const(Eina.File)*; [[The mmaped file]]
+            key: const(char)*; [[The image key in $file (if its an Eet one), or
+                                 $null, otherwise.]]
          }
       }
       @property file {
          set {
-            /*@
-            Set the source file from where an image object must fetch the real
-            image data (it may be an Eet file, besides pure image ones).
+            [[Set the source file from where an image object must fetch the real
+              image data (it may be an Eet file, besides pure image ones).
 
-            If the file supports multiple data stored in it (as Eet files do),
-            you can specify the key to be used as the index of the image in
-            this file.
+              If the file supports multiple data stored in it (as Eet files do),
+              you can specify the key to be used as the index of the image in
+              this file.]]
 
-            Example:
-            @code
-            img = evas_object_image_add(canvas);
-            evas_object_image_file_set(img, "/path/to/img", NULL);
-            err = evas_object_image_load_error_get(img);
-            if (err != EVAS_LOAD_ERROR_NONE)
-            {
-            fprintf(stderr, "could not load image '%s'. error string is \"%s\"\n",
-            valid_path, evas_load_error_str(err));
-            }
-            else
-            {
-            evas_object_image_fill_set(img, 0, 0, w, h);
-            evas_object_resize(img, w, h);
-            evas_object_show(img);
-            }
-            @endcode */
+            /* FIXME-doc
+             * Example:
+             * @code
+             * img = evas_object_image_add(canvas);
+             * evas_object_image_file_set(img, "/path/to/img", NULL);
+             * err = evas_object_image_load_error_get(img);
+             * if (err != EVAS_LOAD_ERROR_NONE)
+             * {
+             * fprintf(stderr, "could not load image '%s'. error string is \"%s\"\n",
+             * valid_path, evas_load_error_str(err));
+             * }
+             * else
+             * {
+             * evas_object_image_fill_set(img, 0, 0, w, h);
+             * evas_object_resize(img, w, h);
+             * evas_object_show(img);
+             * }
+             * @endcode
+             */
 
             return: bool;
          }
          get {
-            /*@
-            Retrieve the source file from where an image object is to fetch the
-            real image data (it may be an Eet file, besides pure image ones).
+            [[Retrieve the source file from where an image object is to fetch the
+              real image data (it may be an Eet file, besides pure image ones).
 
-            You must @b not modify the strings on the returned pointers.
+              You must not modify the strings on the returned pointers.
 
-            @note Use @c NULL pointers on the file components you're not
-            interested in: they'll be ignored by the function. */
+              Note: Use $null pointers on the file components you're not
+              interested in: they'll be ignored by the function.]]
          }
          values {
-            file: const(char)*; /*@ The image file path. */
-            key: const(char)*; /*@ The image key in @p file (if its an Eet one), or @c
-            NULL, otherwise. */
+            file: const(char)*; [[The image file path.]]
+            key: const(char)*; [[The image key in $file (if its an Eet one), or
+                                 $null, otherwise.]]
          }
       }
       @property async {
          set {
-            /*@
-            If true, file open will happen asynchronously allowing for better
-            performance in some situations. The file will be opened from a
-            different thread. Classes implementing async open might then block
-            and wait when querying information from the file (eg. image size).
+            [[If true, file open will happen asynchronously allowing for better
+              performance in some situations. The file will be opened from a
+              different thread. Classes implementing async open might then block
+              and wait when querying information from the file (eg. image size).
 
-            Only a few objects implement this feature, and this flag may
-            be ignored by EFL. In that case, get() will always return false. */
+              Only a few objects implement this feature, and this flag may
+              be ignored by EFL. In that case, get() will always return false.]]
          }
          get {
-            /*@
-            Retrieves the asynchronous open flag, which will be true only if
-            enabled and supported by the object. */
+            [[Retrieves the asynchronous open flag, which will be true only if
+              enabled and supported by the object.]]
          }
          values {
-            async: bool; /*@ Flag for asynchronous open. */
+            async: bool; [[Flag for asynchronous open.]]
          }
       }
       save @const {
-         /*@
-         Save the given image object's contents to an (image) file.
+         [[Save the given image object's contents to an (image) file.
 
-         The extension suffix on @p file will determine which <b>saver
-         module</b> Evas is to use when saving, thus the final file's
-         format. If the file supports multiple data stored in it (Eet ones),
-         you can specify the key to be used as the index of the image in it.
+           The extension suffix on $file will determine which saver
+           module Evas is to use when saving, thus the final file's
+           format. If the file supports multiple data stored in it (Eet ones),
+           you can specify the key to be used as the index of the image in it.
 
-         You can specify some flags when saving the image.  Currently
-         acceptable flags are @c quality and @c compress. Eg.: @c
-         "quality=100 compress=9" */
+           You can specify some flags when saving the image.  Currently
+           acceptable flags are $quality and $compress. Eg.:
+           "quality=100 compress=9"]]
 
          return: bool;
          params {
-            @in file: const(char)* @nonull; /*@ The filename to be used to save the image (extension
-            obligatory). */
-            @in key: const(char)*; /*@ The image key in the file (if an Eet one), or @c NULL,
-            otherwise. */
-            @in flags: const(char)*; /*@ String containing the flags to be used (@c NULL for
-            none). */
+            @in file: const(char)* @nonull; [[The filename to be used to save the image (extension
+                                              obligatory).]]
+            @in key: const(char)*; [[The image key in the file (if an Eet one), or $null,
+                                     otherwise.]]
+            @in flags: const(char)*; [[String containing the flags to be used ($null for
+                                       none).]]
          }
       }
       eject @const {
-           /*@
-             Eject the represented object.
+           [[Eject the represented object.
 
-             Get rid of and clean the pointed resource.
-             */
+             Get rid of and clean the pointed resource.]]
       }
       async_wait @const {
-         /*@
-         Block and wait until all asynchronous operations are completed. Unless
-         the async flag was set on this object, this method has no effect.
+         [[Block and wait until all asynchronous operations are completed. Unless
+           the async flag was set on this object, this method has no effect.]]
 
-         Returns false if an error occured. */
-
-         return: bool;
+         return: bool;[[$false if an error occured, else $true]]
       }
    }
    events {
