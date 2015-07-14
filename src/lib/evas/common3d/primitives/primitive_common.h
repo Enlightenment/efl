@@ -22,10 +22,10 @@
          evas_canvas3d_mesh_frame_add(frame),                                            \
          evas_canvas3d_mesh_index_data_copy_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT,     \
                                           icount, &indices[0]));                   \
-   _set_vec3_vertex_data(mesh, frame, vcount, vertices, EVAS_CANVAS3D_VERTEX_POSITION);  \
-   _set_vec3_vertex_data(mesh, frame, vcount, normals, EVAS_CANVAS3D_VERTEX_NORMAL);     \
-   _set_vec2_vertex_data(mesh, frame, vcount, tex_coord, EVAS_CANVAS3D_VERTEX_TEXCOORD); \
-   _set_vec3_vertex_data(mesh, frame, vcount, tangents, EVAS_CANVAS3D_VERTEX_TANGENT);   \
+   _set_vec3_vertex_data(mesh, frame, vcount, vertices, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION);  \
+   _set_vec3_vertex_data(mesh, frame, vcount, normals, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL);     \
+   _set_vec2_vertex_data(mesh, frame, vcount, tex_coord, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD); \
+   _set_vec3_vertex_data(mesh, frame, vcount, tangents, EVAS_CANVAS3D_VERTEX_ATTRIB_TANGENT);   \
    free(indices);
 
 #define SET_VERTEX_DATA_FROM_ARRAY(mesh, frame, varray, vcount, indices, icount) \
@@ -34,15 +34,15 @@
          evas_canvas3d_mesh_frame_add(frame), \
          evas_canvas3d_mesh_index_data_copy_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, \
                                           icount, &indices[0])); \
-   _set_vertex_data_from_array(mesh, frame, varray, EVAS_CANVAS3D_VERTEX_POSITION, \
+   _set_vertex_data_from_array(mesh, frame, varray, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, \
                                0, 3, 15, vcount); \
-   _set_vertex_data_from_array(mesh, frame, varray, EVAS_CANVAS3D_VERTEX_NORMAL, \
+   _set_vertex_data_from_array(mesh, frame, varray, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL, \
                                3, 3, 15, vcount); \
-   _set_vertex_data_from_array(mesh, frame, varray, EVAS_CANVAS3D_VERTEX_COLOR, \
+   _set_vertex_data_from_array(mesh, frame, varray, EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR, \
                                6, 4, 15, vcount); \
-   _set_vertex_data_from_array(mesh, frame, varray, EVAS_CANVAS3D_VERTEX_TEXCOORD, \
+   _set_vertex_data_from_array(mesh, frame, varray, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, \
                                10, 2, 15, vcount); \
-   _set_vertex_data_from_array(mesh, frame, varray, EVAS_CANVAS3D_VERTEX_TANGENT, \
+   _set_vertex_data_from_array(mesh, frame, varray, EVAS_CANVAS3D_VERTEX_ATTRIB_TANGENT, \
                                12, 3, 15, vcount);
 
 void _generate_indices(unsigned short *indices, int count, int width);

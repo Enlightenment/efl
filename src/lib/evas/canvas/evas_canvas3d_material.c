@@ -94,10 +94,10 @@ _evas_canvas3d_material_eo_base_constructor(Eo *obj EINA_UNUSED, Evas_Canvas3D_M
    obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj, evas_canvas3d_object_type_set(EVAS_CANVAS3D_OBJECT_TYPE_MATERIAL));
 
-   evas_color_set(&pd->attribs[EVAS_CANVAS3D_MATERIAL_AMBIENT].color, 0.2, 0.2, 0.2, 1.0);
-   evas_color_set(&pd->attribs[EVAS_CANVAS3D_MATERIAL_DIFFUSE].color, 0.8, 0.8, 0.8, 1.0);
-   evas_color_set(&pd->attribs[EVAS_CANVAS3D_MATERIAL_SPECULAR].color, 1.0, 1.0, 1.0, 1.0);
-   evas_color_set(&pd->attribs[EVAS_CANVAS3D_MATERIAL_EMISSION].color, 0.0, 0.0, 0.0, 1.0);
+   evas_color_set(&pd->attribs[EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT].color, 0.2, 0.2, 0.2, 1.0);
+   evas_color_set(&pd->attribs[EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE].color, 0.8, 0.8, 0.8, 1.0);
+   evas_color_set(&pd->attribs[EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR].color, 1.0, 1.0, 1.0, 1.0);
+   evas_color_set(&pd->attribs[EVAS_CANVAS3D_MATERIAL_ATTRIB_EMISSION].color, 0.0, 0.0, 0.0, 1.0);
    pd->shininess = 150.0;
 
    return obj;

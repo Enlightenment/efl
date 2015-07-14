@@ -4459,26 +4459,26 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                 EINA_LIST_FOREACH(meshes, list, mesh)
                   {
                      eo_do(mesh,  material = evas_canvas3d_mesh_frame_material_get(0));
-                     eo_do(material,  texture = evas_canvas3d_material_texture_get(EVAS_CANVAS3D_MATERIAL_DIFFUSE));
+                     eo_do(material,  texture = evas_canvas3d_material_texture_get(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE));
 
                      pd_mesh_node = (Edje_Part_Description_Mesh_Node*) ep->chosen_description;
 
                      eo_do(material,
-                           evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, EINA_TRUE),
-                           evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, EINA_TRUE),
-                           evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, EINA_TRUE),
-                           evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_NORMAL, pd_mesh_node->mesh_node.properties.normal),
-                           evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_AMBIENT,
+                           evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),
+                           evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE),
+                           evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE),
+                           evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, pd_mesh_node->mesh_node.properties.normal),
+                           evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT,
                                                       pd_mesh_node->mesh_node.properties.ambient.r / 255,
                                                       pd_mesh_node->mesh_node.properties.ambient.g / 255,
                                                       pd_mesh_node->mesh_node.properties.ambient.b / 255,
                                                       pd_mesh_node->mesh_node.properties.ambient.a / 255),
-                           evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE,
+                           evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE,
                                                       pd_mesh_node->mesh_node.properties.diffuse.r / 255,
                                                       pd_mesh_node->mesh_node.properties.diffuse.g / 255,
                                                       pd_mesh_node->mesh_node.properties.diffuse.b / 255,
                                                       pd_mesh_node->mesh_node.properties.diffuse.a / 255),
-                           evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR,
+                           evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR,
                                                       pd_mesh_node->mesh_node.properties.specular.r / 255,
                                                       pd_mesh_node->mesh_node.properties.specular.g / 255,
                                                       pd_mesh_node->mesh_node.properties.specular.b / 255,
@@ -4519,7 +4519,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                           proxy = NULL;
 
                           eo_do(material,
-                                texture = evas_canvas3d_material_texture_get(EVAS_CANVAS3D_MATERIAL_DIFFUSE));
+                                texture = evas_canvas3d_material_texture_get(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE));
 
                           //proxy = _edje_image_name_find(ed, pd_mesh_node->mesh_node.texture.id);
                           /*FIXME Conflict with function _edje_image_name_find (two places in edje_utils and edje_edit.c,

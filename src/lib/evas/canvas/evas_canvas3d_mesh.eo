@@ -1,3 +1,5 @@
+import evas_types;
+
 class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
 {
    legacy_prefix: null;
@@ -174,19 +176,19 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
       fog_color_set {
          [[Set the fog color and density for the given mesh.]]
          params {
-            @in r: Evas_Real; [[The red component of the fog color.]]
-            @in g: Evas_Real; [[The green component of the fog color.]]
-            @in b: Evas_Real; [[The blue component of the fog color.]]
-            @in a: Evas_Real; [[The transparency of fog.]]
+            @in r: Evas.Real; [[The red component of the fog color.]]
+            @in g: Evas.Real; [[The green component of the fog color.]]
+            @in b: Evas.Real; [[The blue component of the fog color.]]
+            @in a: Evas.Real; [[The transparency of fog.]]
          }
       }
       fog_color_get {
          [[Set the fog color and density for the given mesh.]]
          params {
-            @out r: Evas_Real; [[Pointer to receive red component of the fog color.]]
-            @out g: Evas_Real; [[Pointer to receive green component of the fog color.]]
-            @out b: Evas_Real; [[Pointer to receive blue component of the fog color.]]
-            @out a: Evas_Real; [[Pointer to receive transparency of fog.]]
+            @out r: Evas.Real; [[Pointer to receive red component of the fog color.]]
+            @out g: Evas.Real; [[Pointer to receive green component of the fog color.]]
+            @out b: Evas.Real; [[Pointer to receive blue component of the fog color.]]
+            @out a: Evas.Real; [[Pointer to receive transparency of fog.]]
          }
       }
       blending_func_set {
@@ -306,7 +308,7 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
         }
         values {
            comparison_func: Evas.Canvas3D.Comparison; [[The alpha comparison function.]]
-           ref_value: Evas_Real; [[The reference value that incoming alpha values are compared to.]]
+           ref_value: Evas.Real; [[The reference value that incoming alpha values are compared to.]]
         }
       }
 

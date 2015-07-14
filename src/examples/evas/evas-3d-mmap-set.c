@@ -231,15 +231,15 @@ main(void)
    material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
 
    eo_do(material,
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_NORMAL, EINA_TRUE),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_AMBIENT,
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, EINA_TRUE),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT,
                                     0.01, 0.01, 0.01, 1.0),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE,
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE,
                                     1.0, 1.0, 0.0, 1.0),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR,
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR,
                                     0.5, 0.0, 1.0, 1.0),
          evas_canvas3d_material_shininess_set(50.0));
 

@@ -155,18 +155,18 @@ _mesh_setup(Scene_Data *data)
                                   EVAS_CANVAS3D_WRAP_MODE_REPEAT));
 
    eo_do(data->material_rocks,
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_NORMAL, data->texture_rocks_n),
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, data->texture_rocks),
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, data->texture_rocks),
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, data->texture_rocks),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_NORMAL, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, EINA_TRUE),
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, data->texture_rocks_n),
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, data->texture_rocks),
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, data->texture_rocks),
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, data->texture_rocks),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE),
 
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, 0.1, 0.1, 0.1, 1.0),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, 1.0, 1.0, 1.0, 1.0),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, 0.1, 0.1, 0.1, 1.0),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, 1.0, 1.0, 1.0, 1.0),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0),
          evas_canvas3d_material_shininess_set(100.0));
 
    data->material_wood = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
@@ -181,18 +181,18 @@ _mesh_setup(Scene_Data *data)
                                   EVAS_CANVAS3D_WRAP_MODE_REPEAT));
 
    eo_do(data->material_wood,
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_NORMAL, data->texture_four_n),
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, data->texture_wood),
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, data->texture_wood),
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, data->texture_wood),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_NORMAL, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, EINA_TRUE),
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, data->texture_four_n),
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, data->texture_wood),
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, data->texture_wood),
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, data->texture_wood),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE),
 
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, 0.1, 0.1, 0.1, 1.0),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, 1.0, 1.0, 1.0, 1.0),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, 0.1, 0.1, 0.1, 1.0),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, 1.0, 1.0, 1.0, 1.0),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0),
          evas_canvas3d_material_shininess_set(100.0));
 
    /* Set data of primitive */

@@ -27,7 +27,7 @@
      {                                                      \
         if ((src1[0] != src2[0]) || (src1[1] != src2[1]))   \
            return 1;                                        \
-        if (a != EVAS_CANVAS3D_VERTEX_TEXCOORD)             \
+        if (a != EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD)             \
            if (src1[2] != src2[2])                          \
               return 1;                                     \
         src1 += f1->vertices[a].element_count;              \
@@ -94,9 +94,9 @@ static int _compare_meshes(Evas_Canvas3D_Mesh *mesh1, Evas_Canvas3D_Mesh *mesh2)
    if ((pd1->vertex_count) != (pd2->vertex_count))
       return 1;
 
-   COMPARE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_POSITION)
-   COMPARE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_NORMAL)
-   COMPARE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_TEXCOORD)
+   COMPARE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION)
+   COMPARE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL)
+   COMPARE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD)
 
    return 0;
 }

@@ -278,20 +278,20 @@ evas_model_load_file_ply(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
          evas_canvas3d_mesh_vertex_count_set(header.triangles_count * 3),
          evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES),
          evas_canvas3d_mesh_frame_add(0),
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_POSITION, 0, NULL),
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_NORMAL,   0, NULL),
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_TEXCOORD, 0, NULL),
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_COLOR,    0, NULL),
+         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, 0, NULL),
+         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL,   0, NULL),
+         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, 0, NULL),
+         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR,    0, NULL),
 
-         pos = (float *)evas_canvas3d_mesh_frame_vertex_data_map(0, EVAS_CANVAS3D_VERTEX_POSITION),
-         nor = (float *)evas_canvas3d_mesh_frame_vertex_data_map(0, EVAS_CANVAS3D_VERTEX_NORMAL),
-         tex = (float *)evas_canvas3d_mesh_frame_vertex_data_map(0, EVAS_CANVAS3D_VERTEX_TEXCOORD),
-         col = (float *)evas_canvas3d_mesh_frame_vertex_data_map(0, EVAS_CANVAS3D_VERTEX_COLOR),
+         pos = (float *)evas_canvas3d_mesh_frame_vertex_data_map(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION),
+         nor = (float *)evas_canvas3d_mesh_frame_vertex_data_map(0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL),
+         tex = (float *)evas_canvas3d_mesh_frame_vertex_data_map(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD),
+         col = (float *)evas_canvas3d_mesh_frame_vertex_data_map(0, EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR),
 
-         stride_pos = evas_canvas3d_mesh_frame_vertex_stride_get(0, EVAS_CANVAS3D_VERTEX_POSITION),
-         stride_nor = evas_canvas3d_mesh_frame_vertex_stride_get(0, EVAS_CANVAS3D_VERTEX_NORMAL),
-         stride_tex = evas_canvas3d_mesh_frame_vertex_stride_get(0, EVAS_CANVAS3D_VERTEX_TEXCOORD),
-         stride_col = evas_canvas3d_mesh_frame_vertex_stride_get(0, EVAS_CANVAS3D_VERTEX_COLOR));
+         stride_pos = evas_canvas3d_mesh_frame_vertex_stride_get(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION),
+         stride_nor = evas_canvas3d_mesh_frame_vertex_stride_get(0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL),
+         stride_tex = evas_canvas3d_mesh_frame_vertex_stride_get(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD),
+         stride_col = evas_canvas3d_mesh_frame_vertex_stride_get(0, EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR));
 
    if (stride_pos == 0) stride_pos = sizeof(float) * 3;
    if (stride_nor == 0) stride_nor = sizeof(float) * 3;
@@ -366,10 +366,10 @@ evas_model_load_file_ply(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
 
         /* Unmap vertex buffer. */
    eo_do(mesh,
-         evas_canvas3d_mesh_frame_vertex_data_unmap(0, EVAS_CANVAS3D_VERTEX_POSITION),
-         evas_canvas3d_mesh_frame_vertex_data_unmap(0, EVAS_CANVAS3D_VERTEX_NORMAL),
-         evas_canvas3d_mesh_frame_vertex_data_unmap(0, EVAS_CANVAS3D_VERTEX_TEXCOORD),
-         evas_canvas3d_mesh_frame_vertex_data_unmap(0, EVAS_CANVAS3D_VERTEX_COLOR));
+         evas_canvas3d_mesh_frame_vertex_data_unmap(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION),
+         evas_canvas3d_mesh_frame_vertex_data_unmap(0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL),
+         evas_canvas3d_mesh_frame_vertex_data_unmap(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD),
+         evas_canvas3d_mesh_frame_vertex_data_unmap(0, EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR));
 
    pd = eo_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
 

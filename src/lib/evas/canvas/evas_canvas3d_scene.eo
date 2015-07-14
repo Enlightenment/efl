@@ -1,3 +1,5 @@
+import evas_types;
+
 class Evas.Canvas3D.Scene (Evas.Canvas3D.Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
@@ -35,20 +37,20 @@ class Evas.Canvas3D.Scene (Evas.Canvas3D.Object, Evas.Common_Interface)
            Default background color is (0.0, 0.0, 0.0, 0.0).
          ]]
          params {
-            @in r: Evas_Real; [[Red component of the background color.]]
-            @in g: Evas_Real; [[Green component of the background color.]]
-            @in b: Evas_Real; [[Blue component of the background color.]]
-            @in a: Evas_Real; [[Alpha component of the background color.]]
+            @in r: Evas.Real; [[Red component of the background color.]]
+            @in g: Evas.Real; [[Green component of the background color.]]
+            @in b: Evas.Real; [[Blue component of the background color.]]
+            @in a: Evas.Real; [[Alpha component of the background color.]]
          }
       }
 
       background_color_get @const {
          [[Get the background color of a scene.]]
          params {
-            @out r: Evas_Real; [[Pointer to receive red component of the background color.]]
-            @out g: Evas_Real; [[Pointer to receive green component of the background color.]]
-            @out b: Evas_Real; [[Pointer to receive blue component of the background color.]]
-            @out a: Evas_Real; [[Pointer to receive alpha component of the background color.]]
+            @out r: Evas.Real; [[Pointer to receive red component of the background color.]]
+            @out g: Evas.Real; [[Pointer to receive green component of the background color.]]
+            @out b: Evas.Real; [[Pointer to receive blue component of the background color.]]
+            @out a: Evas.Real; [[Pointer to receive alpha component of the background color.]]
          }
       }
 
@@ -63,12 +65,12 @@ class Evas.Canvas3D.Scene (Evas.Canvas3D.Object, Evas.Common_Interface)
          ]]
          return: bool;
          params {
-            @in x: Evas_Real;                [[X coordinate of the picking position.]]
-            @in y: Evas_Real;                [[Y coordinate of the picking position.]]
+            @in x: Evas.Real;                [[X coordinate of the picking position.]]
+            @in y: Evas.Real;                [[Y coordinate of the picking position.]]
             @out node: Evas.Canvas3D.Node *; [[Pointer to receive the node contains the picked mesh.]]
             @out mesh: Evas.Canvas3D.Mesh *; [[Pointer to receive the picked mesh.]]
-            @out s: Evas_Real;               [[Pointer to receive the texture "s" coordinate.]]
-            @out t: Evas_Real;               [[Pointer to receive the texture "t" coordinate.]]
+            @out s: Evas.Real;               [[Pointer to receive the texture "s" coordinate.]]
+            @out t: Evas.Real;               [[Pointer to receive the texture "t" coordinate.]]
          }
       }
 
@@ -76,8 +78,8 @@ class Evas.Canvas3D.Scene (Evas.Canvas3D.Object, Evas.Common_Interface)
          [[Search given node in the given position.]]
          return: Evas.Canvas3D.Node *;
          params {
-            @in x: Evas_Real; [[X coordinate of the picking position.]]
-            @in y: Evas_Real; [[Y coordinate of the picking position.]]
+            @in x: Evas.Real; [[X coordinate of the picking position.]]
+            @in y: Evas.Real; [[Y coordinate of the picking position.]]
             @in node: Evas.Canvas3D.Node *; [[Node for search.]]
          }
       }
@@ -86,8 +88,8 @@ class Evas.Canvas3D.Scene (Evas.Canvas3D.Object, Evas.Common_Interface)
          [[Get list of the all root members from scene in the given position.]]
          return: list<Evas.Canvas3D.Node *> *;
          params {
-            @in x: Evas_Real; [[X coordinate of the picking position.]]
-            @in y: Evas_Real; [[Y coordinate of the picking position.]]
+            @in x: Evas.Real; [[X coordinate of the picking position.]]
+            @in y: Evas.Real; [[Y coordinate of the picking position.]]
          }
       }
       shadows_enable_set {

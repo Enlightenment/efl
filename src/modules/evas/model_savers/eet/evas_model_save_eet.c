@@ -59,9 +59,9 @@ _set_geometry_to_eet_file_from_mesh(Evas_Canvas3D_Mesh_Data *mesh,
         src += f->vertices[a].element_count;\
      }
    geometry->vertices = vertices;
-   SAVE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_POSITION, position, vertices[i].position.z = src[2];)
-   SAVE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_NORMAL, normal, vertices[i].normal.z = src[2];)
-   SAVE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_TEXCOORD, texcoord,)
+   SAVE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, position, vertices[i].position.z = src[2];)
+   SAVE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL, normal, vertices[i].normal.z = src[2];)
+   SAVE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, texcoord,)
 #undef SAVE_GEOMETRICS
 
    eet_mesh->geometries = geometry;

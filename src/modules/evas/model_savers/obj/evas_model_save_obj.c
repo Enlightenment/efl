@@ -20,7 +20,7 @@
         for (i = 0; i < pd->vertex_count; i++)                     \
           {                                                        \
              fprintf(_obj_file, format, src[0], src[1]);           \
-             if (a != EVAS_CANVAS3D_VERTEX_TEXCOORD)                     \
+             if (a != EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD)                     \
                fprintf(_obj_file, " %.4f", src[2]);                \
              fprintf(_obj_file, "\n");                             \
              src += f->vertices[a].element_count;                  \
@@ -103,12 +103,12 @@ _save_mesh(Evas_Canvas3D_Mesh_Data *pd, const char *_obj_file_name, Evas_Canvas3
         return;
      }
 
-   SAVE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_POSITION, "v %.4f %.4f")
-   SAVE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_NORMAL, "vn %.4f %.4f")
-   SAVE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_TEXCOORD, "vt %.4f %.4f")
+   SAVE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, "v %.4f %.4f")
+   SAVE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL, "vn %.4f %.4f")
+   SAVE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, "vt %.4f %.4f")
 
-   existence_of_normal = (f->vertices[EVAS_CANVAS3D_VERTEX_NORMAL].data != NULL);
-   existence_of_tex_point = (f->vertices[EVAS_CANVAS3D_VERTEX_TEXCOORD].data != NULL);
+   existence_of_normal = (f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL].data != NULL);
+   existence_of_tex_point = (f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD].data != NULL);
 
    fprintf(_obj_file,"usemtl Material\n s off\n");
    for (i = 1; i <= pd->vertex_count; i++)//numeration of faces in .obj started from 1
@@ -138,17 +138,17 @@ _save_material(Evas_Canvas3D_Mesh_Data *pd EINA_UNUSED,
    fprintf(_mtl_file, "newmtl Material \n");
    fprintf(_mtl_file, "Ns 1.000000 \n");//exp factor for specular highlight
    fprintf(_mtl_file, "Ka %.6f %.6f %.6f \n",
-           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_AMBIENT].color.r,
-           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_AMBIENT].color.g,
-           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_AMBIENT].color.b);
+           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT].color.r,
+           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT].color.g,
+           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT].color.b);
    fprintf(_mtl_file, "Kd %.6f %.6f %.6f \n",
-           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_DIFFUSE].color.r,
-           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_DIFFUSE].color.g,
-           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_DIFFUSE].color.b);
+           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE].color.r,
+           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE].color.g,
+           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE].color.b);
    fprintf(_mtl_file, "Ks %.6f %.6f %.6f \n",
-           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_SPECULAR].color.r,
-           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_SPECULAR].color.g,
-           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_SPECULAR].color.b);
+           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR].color.r,
+           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR].color.g,
+           (float)mat->attribs[EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR].color.b);
    fprintf(_mtl_file, "Ni 1.000000 \n");//optical density
    fprintf(_mtl_file, "d 1.000000 \n");//a factor d of 1.0 is fully opaque material
    fprintf(_mtl_file, "illum 2 \n");//illumination properties

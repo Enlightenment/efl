@@ -522,7 +522,7 @@ _pack_meshes_vertex_data(Evas_Canvas3D_Node *node, Evas_Vec3 **vertices, int *co
     EINA_LIST_FOREACH(m, l, mesh)
       {
          eo_do(node, frame = evas_canvas3d_node_mesh_frame_get(mesh));
-         evas_canvas3d_mesh_interpolate_vertex_buffer_get(mesh, frame, EVAS_CANVAS3D_VERTEX_POSITION,
+         evas_canvas3d_mesh_interpolate_vertex_buffer_get(mesh, frame, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION,
                                                     &pos0, &pos1, &pos_weight);
          if(!pos0.data) continue;
          if(!pos0.stride)
@@ -545,7 +545,7 @@ _pack_meshes_vertex_data(Evas_Canvas3D_Node *node, Evas_Vec3 **vertices, int *co
     EINA_LIST_FOREACH(m, l, mesh)
       {
          eo_do(node, frame = evas_canvas3d_node_mesh_frame_get(mesh));
-         evas_canvas3d_mesh_interpolate_vertex_buffer_get(mesh, frame, EVAS_CANVAS3D_VERTEX_POSITION,
+         evas_canvas3d_mesh_interpolate_vertex_buffer_get(mesh, frame, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION,
                                                     &pos0, &pos1, &pos_weight);
          if(!pos0.data) continue;
          int stride = 0;

@@ -70,9 +70,9 @@ evas_canvas3d_mesh_aabb_add_to_frame(Evas_Canvas3D_Mesh_Data *pd, int frame, int
         return EINA_FALSE;
      }
 
-   step = curframe->vertices[EVAS_CANVAS3D_VERTEX_POSITION].element_count;
-   size = curframe->vertices[EVAS_CANVAS3D_VERTEX_POSITION].size;
-   minmaxdata = (float *)curframe->vertices[EVAS_CANVAS3D_VERTEX_POSITION].data;
+   step = curframe->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION].element_count;
+   size = curframe->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION].size;
+   minmaxdata = (float *)curframe->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION].data;
 
    if (!minmaxdata)
      {
@@ -117,8 +117,8 @@ _mesh_init(Evas_Canvas3D_Mesh_Data *pd)
    pd->assembly = EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES;
 
    pd->nodes = NULL;
-   pd->blend_sfactor = EVAS_CANVAS3D_BLEND_ONE;
-   pd->blend_dfactor = EVAS_CANVAS3D_BLEND_ZERO;
+   pd->blend_sfactor = EVAS_CANVAS3D_BLEND_FUNC_ONE;
+   pd->blend_dfactor = EVAS_CANVAS3D_BLEND_FUNC_ZERO;
    pd->blending = EINA_FALSE;
 
    pd->alpha_comparison = EVAS_CANVAS3D_COMPARISON_ALWAYS;
@@ -398,7 +398,7 @@ _evas_canvas3d_mesh_frame_vertex_data_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, 
         return;
      }
 
-   if (attrib == EVAS_CANVAS3D_VERTEX_POSITION)
+   if (attrib == EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION)
      {
         int i = 0, j = 0, size = stride/sizeof(float);
         float vxmin, vymin, vzmin, vxmax, vymax, vzmax;
@@ -434,19 +434,19 @@ _evas_canvas3d_mesh_frame_vertex_data_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, 
              ERR("Axis-Aligned Bounding Box wasn't added in frame %d ", frame);
           }
      }
-   else if (attrib == EVAS_CANVAS3D_VERTEX_NORMAL)
+   else if (attrib == EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL)
      {
         element_count = 3;
      }
-   else if (attrib == EVAS_CANVAS3D_VERTEX_TANGENT)
+   else if (attrib == EVAS_CANVAS3D_VERTEX_ATTRIB_TANGENT)
      {
         element_count = 3;
      }
-   else if (attrib == EVAS_CANVAS3D_VERTEX_COLOR)
+   else if (attrib == EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR)
      {
         element_count = 4;
      }
-   else if (attrib == EVAS_CANVAS3D_VERTEX_TEXCOORD)
+   else if (attrib == EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD)
      {
         element_count = 2;
      }
@@ -481,23 +481,23 @@ _evas_canvas3d_mesh_frame_vertex_data_copy_set(Eo *obj, Evas_Canvas3D_Mesh_Data 
         return;
      }
 
-   if (attrib == EVAS_CANVAS3D_VERTEX_POSITION)
+   if (attrib == EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION)
      {
         element_count = 3;
      }
-   else if (attrib == EVAS_CANVAS3D_VERTEX_NORMAL)
+   else if (attrib == EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL)
      {
         element_count = 3;
      }
-   else if (attrib == EVAS_CANVAS3D_VERTEX_TANGENT)
+   else if (attrib == EVAS_CANVAS3D_VERTEX_ATTRIB_TANGENT)
      {
         element_count = 3;
      }
-   else if (attrib == EVAS_CANVAS3D_VERTEX_COLOR)
+   else if (attrib == EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR)
      {
         element_count = 4;
      }
-   else if (attrib == EVAS_CANVAS3D_VERTEX_TEXCOORD)
+   else if (attrib == EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD)
      {
         element_count = 2;
      }
@@ -583,7 +583,7 @@ _evas_canvas3d_mesh_frame_vertex_data_copy_set(Eo *obj, Evas_Canvas3D_Mesh_Data 
           }
      }
 
-   if (attrib == EVAS_CANVAS3D_VERTEX_POSITION &&
+   if (attrib == EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION &&
        !evas_canvas3d_mesh_aabb_add_to_frame(pd, frame, stride))
      {
         ERR("Axis-Aligned Bounding Box wasn't added in frame %d ", frame);

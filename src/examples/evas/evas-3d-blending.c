@@ -22,35 +22,35 @@
 static const char *blend_func_names[] =
 {
    /**< The scale factors for color components is (0, 0, 0, 0)*/
-   "EVAS_CANVAS3D_BLEND_ZERO",
+   "EVAS_CANVAS3D_BLEND_FUNC_ZERO",
    /**< The scale factors for color components is (1, 1, 1, 1)*/
-   "EVAS_CANVAS3D_BLEND_ONE",
+   "EVAS_CANVAS3D_BLEND_FUNC_ONE",
    /**< The scale factors for color components is (Rs/kR, Gs/kG, Bs/kB, As/kA)*/
-   "EVAS_CANVAS3D_BLEND_SRC_COLOR",
+   "EVAS_CANVAS3D_BLEND_FUNC_SRC_COLOR",
    /**< The scale factors for color components is (1, 1, 1, 1) - (Rs/kR, Gs/kG, Bs/kB, As/kA)*/
-   "EVAS_CANVAS3D_BLEND_ONE_MINUS_SRC_COLOR",
+   "EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_SRC_COLOR",
    /**< The scale factors for color components is (Rd/kR, Gd/kG, Bd/kB, Ad/kA)*/
-   "EVAS_CANVAS3D_BLEND_DST_COLOR",
+   "EVAS_CANVAS3D_BLEND_FUNC_DST_COLOR",
    /**< The scale factors for color components is (1, 1, 1, 1) - (Rd/kR, Gd/kG, Bd/kB, Ad/kA)*/
-   "EVAS_CANVAS3D_BLEND_ONE_MINUS_DST_COLOR",
+   "EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_DST_COLOR",
    /**< The scale factors for color components is (As/kA, As/kA, As/kA, As/kA)*/
-   "EVAS_CANVAS3D_BLEND_SRC_ALPHA",
+   "EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA",
    /**< The scale factors for color components is (1, 1, 1, 1) - (As/kA, As/kA, As/kA, As/kA)*/
-   "EVAS_CANVAS3D_BLEND_ONE_MINUS_SRC_ALPHA",
+   "EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_SRC_ALPHA",
    /**< The scale factors for color components is (Ad/kA, Ad/kA, Ad/kA, Ad/kA)*/
-   "EVAS_CANVAS3D_BLEND_DST_ALPHA",
+   "EVAS_CANVAS3D_BLEND_FUNC_DST_ALPHA",
    /**< The scale factors for color components is (1, 1, 1, 1) - (Ad/kA, Ad/kA, Ad/kA, Ad/kA)*/
-   "EVAS_CANVAS3D_BLEND_ONE_MINUS_DST_ALPHA",
+   "EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_DST_ALPHA",
    /**< The scale factors for color components is (Rc, Gc, Bc, Ac)*/
-   "EVAS_CANVAS3D_BLEND_CONSTANT_COLOR",
+   "EVAS_CANVAS3D_BLEND_FUNC_CONSTANT_COLOR",
    /**< The scale factors for color components is (1, 1, 1, 1) - (Rc, Gc, Bc, Ac)*/
-   "EVAS_CANVAS3D_BLEND_ONE_MINUS_CONSTANT_COLOR",
+   "EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_CONSTANT_COLOR",
    /**< The scale factors for color components is (Ac, Ac, Ac, Ac)*/
-   "EVAS_CANVAS3D_BLEND_CONSTANT_ALPHA",
+   "EVAS_CANVAS3D_BLEND_FUNC_CONSTANT_ALPHA",
    /**< The scale factors for color components is (1, 1, 1, 1) - (Ac, Ac, Ac, Ac)*/
-   "EVAS_CANVAS3D_BLEND_ONE_MINUS_CONSTANT_ALPHA",
+   "EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_CONSTANT_ALPHA",
    /**< The scale factors for color components is (i, i, i, 1) where i = min(As, kA, Ad)/kA*/
-   "EVAS_CANVAS3D_BLEND_SRC_ALPHA_SATURATE",
+   "EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA_SATURATE",
 };
 
 typedef struct _Scene_Data
@@ -75,8 +75,8 @@ Evas             *evas        = NULL;
 Eo               *background  = NULL;
 Eo               *image       = NULL;
 
-int func1 = EVAS_CANVAS3D_BLEND_SRC_ALPHA;
-int func2 = EVAS_CANVAS3D_BLEND_ONE_MINUS_SRC_ALPHA;
+int func1 = EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA;
+int func2 = EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_SRC_ALPHA;
 
 static void
 _on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void *event_info)
@@ -93,15 +93,15 @@ _on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void 
    if (!strcmp("Right", ev->key))
      func2--;
 
-   if(func1 < EVAS_CANVAS3D_BLEND_ZERO)
-     func1 = EVAS_CANVAS3D_BLEND_SRC_ALPHA_SATURATE;
-   if(func1 > EVAS_CANVAS3D_BLEND_SRC_ALPHA_SATURATE)
-     func1 = EVAS_CANVAS3D_BLEND_ZERO;
+   if(func1 < EVAS_CANVAS3D_BLEND_FUNC_ZERO)
+     func1 = EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA_SATURATE;
+   if(func1 > EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA_SATURATE)
+     func1 = EVAS_CANVAS3D_BLEND_FUNC_ZERO;
 
-   if(func2 < EVAS_CANVAS3D_BLEND_ZERO)
-     func2 = EVAS_CANVAS3D_BLEND_SRC_ALPHA_SATURATE;
-   if(func2 > EVAS_CANVAS3D_BLEND_SRC_ALPHA_SATURATE)
-     func2 = EVAS_CANVAS3D_BLEND_ZERO;
+   if(func2 < EVAS_CANVAS3D_BLEND_FUNC_ZERO)
+     func2 = EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA_SATURATE;
+   if(func2 > EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA_SATURATE)
+     func2 = EVAS_CANVAS3D_BLEND_FUNC_ZERO;
    eo_do(scene->mesh1, evas_canvas3d_mesh_blending_func_set(func1, func2));
    printf("sfactor = %s, dfactor = %s\n", blend_func_names[func1], blend_func_names[func2]);
 }
@@ -197,25 +197,25 @@ _mesh_setup(Scene_Data *data)
    data->material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
 
    eo_do(data->material,
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE),
 
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, 1.0, 0.2, 0.2, 0.2),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, 1.0, 0.0, 0.0, 0.2),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 0.2),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, 1.0, 0.2, 0.2, 0.2),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, 1.0, 0.0, 0.0, 0.2),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 0.2),
          evas_canvas3d_material_shininess_set(100.0));
 
    data->material1 = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
 
    eo_do(data->material1,
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE),
 
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, 0.0, 0.2, 0.2, 0.2),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, 0.0, 0.0, 1.0, 0.2),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 0.2),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, 0.0, 0.2, 0.2, 0.2),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, 0.0, 0.0, 1.0, 0.2),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 0.2),
          evas_canvas3d_material_shininess_set(100.0));
 
    data->sphere = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);

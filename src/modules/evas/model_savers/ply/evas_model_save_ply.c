@@ -33,10 +33,10 @@ evas_model_save_file_ply(const Evas_Canvas3D_Mesh *mesh, const char *file, Evas_
    fprintf(_ply_file,"element face %d\nproperty list uchar uint vertex_indices\nend_header\n",
            pd->vertex_count / 3);
 
-   src_pos = (float*)(&f->vertices[EVAS_CANVAS3D_VERTEX_POSITION])->data;
-   src_nor = (float*)(&f->vertices[EVAS_CANVAS3D_VERTEX_NORMAL])->data;
-   src_tex = (float*)(&f->vertices[EVAS_CANVAS3D_VERTEX_TEXCOORD])->data;
-   src_col = (float*)(&f->vertices[EVAS_CANVAS3D_VERTEX_COLOR])->data;
+   src_pos = (float*)(&f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION])->data;
+   src_nor = (float*)(&f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL])->data;
+   src_tex = (float*)(&f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD])->data;
+   src_col = (float*)(&f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR])->data;
 
    for (i = 0; i < pd->vertex_count; i++)
      {

@@ -1,3 +1,5 @@
+import evas_types;
+
 class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
@@ -60,9 +62,9 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
 
            See also @Evas.Canvas3D.Node.position_inherit.set.]]
          params {
-            @in x: Evas_Real;  [[X coordinate of the position.]]
-            @in y: Evas_Real;  [[Y coordinate of the position.]]
-            @in z: Evas_Real;  [[Z coordinate of the position.]]
+            @in x: Evas.Real;  [[X coordinate of the position.]]
+            @in y: Evas.Real;  [[Y coordinate of the position.]]
+            @in z: Evas.Real;  [[Z coordinate of the position.]]
          }
       }
       orientation_set {
@@ -75,10 +77,10 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
 
            See also @Evas.Canvas3D.Node.orientation_inherit.set.]]
          params {
-            @in x: Evas_Real;  [[X term of the orientation quaternion (w, x, y, z.]]
-            @in y: Evas_Real;  [[Y term of the orientation quaternion (w, x, y, z.]]
-            @in z: Evas_Real;  [[Z term of the orientation quaternion (w, x, y, z.]]
-            @in w: Evas_Real;  [[W term of the orientation quaternion (w, x, y, z.]]
+            @in x: Evas.Real;  [[X term of the orientation quaternion (w, x, y, z.]]
+            @in y: Evas.Real;  [[Y term of the orientation quaternion (w, x, y, z.]]
+            @in z: Evas.Real;  [[Z term of the orientation quaternion (w, x, y, z.]]
+            @in w: Evas.Real;  [[W term of the orientation quaternion (w, x, y, z.]]
          }
       }
 
@@ -87,10 +89,10 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
 
            See also @Evas.Canvas3D.Node.orientation_set.]]
          params {
-            @in angle: Evas_Real;  [[Rotation angle.]]
-            @in x: Evas_Real;      [[X term of the rotation axis.]]
-            @in y: Evas_Real;      [[Y term of the rotation axis.]]
-            @in z: Evas_Real;      [[Z term of the rotation axis.]]
+            @in angle: Evas.Real;  [[Rotation angle.]]
+            @in x: Evas.Real;      [[X term of the rotation axis.]]
+            @in y: Evas.Real;      [[Y term of the rotation axis.]]
+            @in z: Evas.Real;      [[Z term of the rotation axis.]]
          }
       }
 
@@ -105,9 +107,9 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
 
            See also @Evas.Canvas3D.Node.scale_inherit.set.]]
          params {
-            @in x: Evas_Real;      [[Scale factor along X-axis.]]
-            @in y: Evas_Real;      [[Scale factor along Y-axis.]]
-            @in z: Evas_Real;      [[Scale factor along Z-axis.]]
+            @in x: Evas.Real;      [[Scale factor along X-axis.]]
+            @in y: Evas.Real;      [[Scale factor along Y-axis.]]
+            @in z: Evas.Real;      [[Scale factor along Z-axis.]]
          }
       }
 
@@ -117,9 +119,9 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
            See also @Evas.Canvas3D.Node.position_set.]]
          params {
             @in space: Evas.Canvas3D.Space; [[The given node.]]
-            @out x: Evas_Real;              [[Pointer to receive X coordinate of the position.]]
-            @out y: Evas_Real;              [[Pointer to receive Y coordinate of the position.]]
-            @out z: Evas_Real;              [[Pointer to receive Z coordinate of the position.]]
+            @out x: Evas.Real;              [[Pointer to receive X coordinate of the position.]]
+            @out y: Evas.Real;              [[Pointer to receive Y coordinate of the position.]]
+            @out z: Evas.Real;              [[Pointer to receive Z coordinate of the position.]]
          }
       }
 
@@ -129,10 +131,10 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
            See also @Evas.Canvas3D.Node.orientation_set.]]
          params {
             @in space: Evas.Canvas3D.Space; [[The given node.]]
-            @out x: Evas_Real;              [[Pointer to receive X term of the orientation quaternion.]]
-            @out y: Evas_Real;              [[Pointer to receive Y term of the orientation quaternion.]]
-            @out z: Evas_Real;              [[Pointer to receive Z term of the orientation quaternion.]]
-            @out w: Evas_Real;              [[Pointer to receive W term of the orientation quaternion.]]
+            @out x: Evas.Real;              [[Pointer to receive X term of the orientation quaternion.]]
+            @out y: Evas.Real;              [[Pointer to receive Y term of the orientation quaternion.]]
+            @out z: Evas.Real;              [[Pointer to receive Z term of the orientation quaternion.]]
+            @out w: Evas.Real;              [[Pointer to receive W term of the orientation quaternion.]]
          }
       }
 
@@ -142,9 +144,9 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
            See also @Evas.Canvas3D.Node.scale_get.]]
          params {
             @in space: Evas.Canvas3D.Space; [[The given node.]]
-            @out x: Evas_Real;              [[Pointer to receive Scale factor along X-axis.]]
-            @out y: Evas_Real;              [[Pointer to receive Scale factor along X-axis.]]
-            @out z: Evas_Real;              [[Pointer to receive Scale factor along X-axis.]]
+            @out x: Evas.Real;              [[Pointer to receive Scale factor along X-axis.]]
+            @out y: Evas.Real;              [[Pointer to receive Scale factor along X-axis.]]
+            @out z: Evas.Real;              [[Pointer to receive Scale factor along X-axis.]]
          }
       }
 
@@ -158,13 +160,13 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
            See also @Evas.Canvas3D.Node.orientation_set.]]
          params {
             @in target_space: Evas.Canvas3D.Space;  [[Space where the target position belongs to.]]
-            @in x: Evas_Real;                       [[X coordinate of the target position.]]
-            @in y: Evas_Real;                       [[Y coordinate of the target position.]]
-            @in z: Evas_Real;                       [[Z coordinate of the target position.]]
+            @in x: Evas.Real;                       [[X coordinate of the target position.]]
+            @in y: Evas.Real;                       [[Y coordinate of the target position.]]
+            @in z: Evas.Real;                       [[Z coordinate of the target position.]]
             @in up_space: Evas.Canvas3D.Space;      [[Space where the up vector belongs to.]]
-            @in ux: Evas_Real;                      [[X term of the up vector.]]
-            @in uy: Evas_Real;                      [[Y term of the up vector.]]
-            @in uz: Evas_Real;                      [[Z term of the up vector.]]
+            @in ux: Evas.Real;                      [[X term of the up vector.]]
+            @in uy: Evas.Real;                      [[Y term of the up vector.]]
+            @in uz: Evas.Real;                      [[Z term of the up vector.]]
          }
       }
 
@@ -206,12 +208,12 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
       bounding_box_get{
          [[Get axis-aligned bounding box (AABB) of the given node.]]
          params {
-            @in x: Evas_Real *; [[Pointer to receive X coordinate of the first point of AABB.]]
-            @in y: Evas_Real *; [[Pointer to receive Y coordinate of the first point of AABB.]]
-            @in z: Evas_Real *; [[Pointer to receive Z coordinate of the first point of AABB.]]
-            @in x2: Evas_Real *; [[Pointer to receive X coordinate of the second point of AABB.]]
-            @in y2: Evas_Real *; [[Pointer to receive Y coordinate of the second point of AABB.]]
-            @in z2: Evas_Real *; [[Pointer to receive Z coordinate of the second point of AABB.]]
+            @in x: Evas.Real *; [[Pointer to receive X coordinate of the first point of AABB.]]
+            @in y: Evas.Real *; [[Pointer to receive Y coordinate of the first point of AABB.]]
+            @in z: Evas.Real *; [[Pointer to receive Z coordinate of the first point of AABB.]]
+            @in x2: Evas.Real *; [[Pointer to receive X coordinate of the second point of AABB.]]
+            @in y2: Evas.Real *; [[Pointer to receive Y coordinate of the second point of AABB.]]
+            @in z2: Evas.Real *; [[Pointer to receive Z coordinate of the second point of AABB.]]
          }
       }
 
@@ -219,10 +221,10 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
          [[Get bounding sphere of the given node.]]
          params {
 
-            @in x: Evas_Real *; [[Pointer to receive X coordinate of the center of sphere.]]
-            @in y: Evas_Real *; [[Pointer to receive Y coordinate of the center of sphere.]]
-            @in z: Evas_Real *; [[Pointer to receive Z coordinate of center of sphere.]]
-            @in r: Evas_Real *; [[Pointer to receive radius of center of sphere.]]
+            @in x: Evas.Real *; [[Pointer to receive X coordinate of the center of sphere.]]
+            @in y: Evas.Real *; [[Pointer to receive Y coordinate of the center of sphere.]]
+            @in z: Evas.Real *; [[Pointer to receive Z coordinate of center of sphere.]]
+            @in r: Evas.Real *; [[Pointer to receive radius of center of sphere.]]
          }
       }
 

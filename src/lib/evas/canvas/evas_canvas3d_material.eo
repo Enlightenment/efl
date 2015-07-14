@@ -22,10 +22,10 @@ class Evas.Canvas3D.Material (Evas.Canvas3D.Object, Evas.Common_Interface)
 
          params {
             @in attrib: Evas.Canvas3D.Material_Attrib; [[Material attribute ID.]]
-            @in r: Evas_Real; [[Red component of the color.]]
-            @in g: Evas_Real; [[Green component of the color.]]
-            @in b: Evas_Real; [[Blue component of the color.]]
-            @in a: Evas_Real; [[Alpha component of the color.]]
+            @in r: Evas.Real; [[Red component of the color.]]
+            @in g: Evas.Real; [[Green component of the color.]]
+            @in b: Evas.Real; [[Blue component of the color.]]
+            @in a: Evas.Real; [[Alpha component of the color.]]
          }
       }
 
@@ -36,10 +36,10 @@ class Evas.Canvas3D.Material (Evas.Canvas3D.Object, Evas.Common_Interface)
          ]]
          params {
             @in attrib: Evas.Canvas3D.Material_Attrib; [[Material attribute ID.]]
-            @out r: Evas_Real; [[Pointer to receive red component of the color.]]
-            @out g: Evas_Real; [[Pointer to receive green component of the color.]]
-            @out b: Evas_Real; [[Pointer to receive blue component of the color.]]
-            @out a: Evas_Real; [[Pointer to receive alpha component of the color.]]
+            @out r: Evas.Real; [[Pointer to receive red component of the color.]]
+            @out g: Evas.Real; [[Pointer to receive green component of the color.]]
+            @out b: Evas.Real; [[Pointer to receive blue component of the color.]]
+            @out a: Evas.Real; [[Pointer to receive alpha component of the color.]]
          }
       }
 
@@ -88,7 +88,7 @@ class Evas.Canvas3D.Material (Evas.Canvas3D.Object, Evas.Common_Interface)
             ]]
          }
          values {
-            shininess: Evas_Real; [[Shininess value.]]
+            shininess: Evas.Real; [[Shininess value.]]
          }
       }
 

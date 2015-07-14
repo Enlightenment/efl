@@ -1,3 +1,5 @@
+import evas_types;
+
 class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
@@ -67,7 +69,7 @@ class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object, Evas.Common_Interface)
                See also @.ratio.set.]]
          }
          values {
-            ratio: Evas_Real; [[Ratio of primitive.]]
+            ratio: Evas.Real; [[Ratio of primitive.]]
          }
       }
       @property precision {
@@ -127,8 +129,8 @@ class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object, Evas.Common_Interface)
                See also @.tex_scale.set.]]
          }
          values {
-            tex_scale_x: Evas_Real;
-            tex_scale_y: Evas_Real;
+            tex_scale_x: Evas.Real;
+            tex_scale_y: Evas.Real;
          }
       }
    }

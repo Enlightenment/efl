@@ -78,15 +78,15 @@
 #define ADD_MATERIAL(name)                                                 \
    name = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);                            \
    eo_do(name,                                                             \
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, EINA_TRUE), \
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, EINA_TRUE), \
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, EINA_TRUE),\
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_NORMAL, EINA_TRUE),  \
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_AMBIENT,              \
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE), \
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE), \
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE),\
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, EINA_TRUE),  \
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT,              \
                                     COL_RED, 0.5),                         \
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE,              \
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE,              \
                                     COL_GREEN, 0.5),                       \
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR,             \
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR,             \
                                     COL_BLUE, 0.5),                        \
          evas_canvas3d_material_shininess_set(100.0));
 
@@ -211,7 +211,7 @@ main(void)
 
    ADD_MATERIAL(material_with_tex)
    eo_do(material_with_tex,
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, texture));
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, texture));
 
    if (!ecore_file_mkpath(PACKAGE_EXAMPLES_DIR EVAS_SAVED_FILES))
      fprintf(stderr, "Failed to create folder %s\n\n",

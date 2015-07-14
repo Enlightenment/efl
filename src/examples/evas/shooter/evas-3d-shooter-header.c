@@ -153,7 +153,7 @@ Eina_Bool _mesh_aabb(Evas_Canvas3D_Mesh **mesh, Scene_Data *scene, int index)
      {
         eo_do(*mesh,
          evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINES),
-              evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_POSITION, 6 * sizeof(float), &vertixes[ 0]),
+              evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, 6 * sizeof(float), &vertixes[ 0]),
               evas_canvas3d_mesh_index_data_copy_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, 48, &indixes[0]));
 
         return EINA_TRUE;
@@ -366,9 +366,9 @@ _set_ball(Eo *mesh, int p)
 
    eo_do(mesh, evas_canvas3d_mesh_vertex_count_set(vcount),
          evas_canvas3d_mesh_frame_add(0);
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_POSITION,
+         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION,
                                        sizeof(vec3), &vertices[0]);
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_NORMAL,
+         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL,
                                        sizeof(vec3), &normals[0]);
          evas_canvas3d_mesh_index_data_copy_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT,
                                 icount , &indices[0]));

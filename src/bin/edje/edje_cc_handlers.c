@@ -10018,11 +10018,11 @@ st_collections_group_parts_part_description_properties_material(void)
    check_arg_count(1);
 
    material_attrib = parse_enum(0,
-                     "AMBIENT", EVAS_CANVAS3D_MATERIAL_AMBIENT,
-                     "DIFFUSE", EVAS_CANVAS3D_MATERIAL_DIFFUSE,
-                     "SPECULAR", EVAS_CANVAS3D_MATERIAL_SPECULAR,
-                     "EMISSION", EVAS_CANVAS3D_MATERIAL_EMISSION,
-                     "NORMAL", EVAS_CANVAS3D_MATERIAL_NORMAL,
+                     "AMBIENT", EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT,
+                     "DIFFUSE", EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE,
+                     "SPECULAR", EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR,
+                     "EMISSION", EVAS_CANVAS3D_MATERIAL_ATTRIB_EMISSION,
+                     "NORMAL", EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL,
                      NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)

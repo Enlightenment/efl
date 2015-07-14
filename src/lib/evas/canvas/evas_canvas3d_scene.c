@@ -293,10 +293,10 @@ _pick_data_mesh_add(Evas_Canvas3D_Pick_Data *data, const Evas_Ray3 *ray,
    memset(&tex0, 0x00, sizeof(Evas_Canvas3D_Vertex_Buffer));
    memset(&tex1, 0x00, sizeof(Evas_Canvas3D_Vertex_Buffer));
 
-   evas_canvas3d_mesh_interpolate_vertex_buffer_get(mesh, frame, EVAS_CANVAS3D_VERTEX_POSITION,
+   evas_canvas3d_mesh_interpolate_vertex_buffer_get(mesh, frame, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION,
                                               &pos0, &pos1, &pos_weight);
 
-   evas_canvas3d_mesh_interpolate_vertex_buffer_get(mesh, frame, EVAS_CANVAS3D_VERTEX_TEXCOORD,
+   evas_canvas3d_mesh_interpolate_vertex_buffer_get(mesh, frame, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD,
                                               &tex0, &tex1, &tex_weight);
    Evas_Canvas3D_Mesh_Data *pdmesh = eo_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
    if (pdmesh->indices)

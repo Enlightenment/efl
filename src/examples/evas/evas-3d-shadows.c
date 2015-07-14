@@ -182,13 +182,13 @@ _body_material_set(Body_3D *body, float r, float g, float b)
    body->material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
 
    eo_do(body->material,
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE),
 
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, r, g, b, 1.0),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, r, g, b, 1.0),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, r, g, b, 1.0),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, r, g, b, 1.0),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0),
          evas_canvas3d_material_shininess_set(100.0));
 
    eo_do(body->mesh,
@@ -283,16 +283,16 @@ _fence_setup(Body_3D *fence)
    fence->material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
 
    eo_do(fence->material,
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, texture),
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, texture),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_NORMAL, EINA_TRUE),
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_NORMAL, texture1),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, 1.0, 1.0, 1.0, 1.0),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, 1.0, 1.0, 1.0, 1.0),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, texture),
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, texture),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, EINA_TRUE),
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, texture1),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, 1.0, 1.0, 1.0, 1.0),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, 1.0, 1.0, 1.0, 1.0),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0),
          evas_canvas3d_material_shininess_set(100.0));
 
    fence->primitive = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
@@ -374,11 +374,11 @@ _model_setup(Body_3D *model)
    model->material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
 
    eo_do(model->material,
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, model->texture),
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, model->texture),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, EINA_TRUE),
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, model->texture),
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, model->texture),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE),
          evas_canvas3d_material_shininess_set(100.0));
 
 
@@ -418,7 +418,7 @@ _billboard_setup(Scene_Data *data)
    _body_material_set(&(data->billboard), 1.0, 1.0, 1.0);
 
    eo_do(data->billboard.material,
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, data->billboard.texture));
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, data->billboard.texture));
 
    eo_do(data->billboard.mesh,
          evas_canvas3d_mesh_frame_material_set(0, data->billboard.material),
@@ -426,8 +426,8 @@ _billboard_setup(Scene_Data *data)
          evas_canvas3d_mesh_alpha_test_enable_set(EINA_TRUE),
          evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_DIFFUSE),
          evas_canvas3d_mesh_blending_enable_set(EINA_TRUE),
-         evas_canvas3d_mesh_blending_func_set(EVAS_CANVAS3D_BLEND_SRC_ALPHA,
-                                        EVAS_CANVAS3D_BLEND_ONE_MINUS_SRC_ALPHA));
+         evas_canvas3d_mesh_blending_func_set(EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA,
+                                        EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_SRC_ALPHA));
 
    data->billboard.node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
                                  evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_MESH));

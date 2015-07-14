@@ -1,3 +1,5 @@
+import evas_types;
+
 class Evas.Canvas3D.Camera (Evas.Canvas3D.Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
@@ -10,7 +12,7 @@ class Evas.Canvas3D.Camera (Evas.Canvas3D.Object, Evas.Common_Interface)
 
            See also @.projection_perspective_set, @.projection_ortho_set and @.projection_frustum_set.]]
          params {
-           @in matrix: const(Evas_Real)*; [[Projection Matrix]]
+           @in matrix: const(Evas.Real)*; [[Projection Matrix]]
          }
       }
 
@@ -19,7 +21,7 @@ class Evas.Canvas3D.Camera (Evas.Canvas3D.Object, Evas.Common_Interface)
 
            See also @.projection_matrix_set.]]
          params {
-           @out matrix: Evas_Real; [[Projection Matrix]]
+           @out matrix: Evas.Real; [[Projection Matrix]]
          }
       }
 
@@ -29,10 +31,10 @@ class Evas.Canvas3D.Camera (Evas.Canvas3D.Object, Evas.Common_Interface)
            See also @.projection_matrix_set.]]
 
          params {
-            fovy: Evas_Real; [[Field of view angle in Y direction.]]
-            aspect: Evas_Real; [[Aspect ratio.]]
-            dnear: Evas_Real; [[Distance to near clipping plane.]]
-            dfar: Evas_Real; [[Distance to far clipping plane.]]
+            fovy: Evas.Real; [[Field of view angle in Y direction.]]
+            aspect: Evas.Real; [[Aspect ratio.]]
+            dnear: Evas.Real; [[Distance to near clipping plane.]]
+            dfar: Evas.Real; [[Distance to far clipping plane.]]
          }
       }
 
@@ -41,12 +43,12 @@ class Evas.Canvas3D.Camera (Evas.Canvas3D.Object, Evas.Common_Interface)
 
            See also @.projection_matrix_set.]]
          params {
-            left: Evas_Real; [[Left X coordinate of the near clipping plane.]]
-            right: Evas_Real; [[Right X coordinate of the near clipping plane..]]
-            bottom: Evas_Real; [[Bottom Y coordinate of the near clipping plane.]]
-            top: Evas_Real; [[Top Y coordinate of the near clipping plane]]
-            dnear: Evas_Real; [[Distance to near clipping plane.]]
-            dfar: Evas_Real; [[Distance to far clipping plane.]]
+            left: Evas.Real; [[Left X coordinate of the near clipping plane.]]
+            right: Evas.Real; [[Right X coordinate of the near clipping plane..]]
+            bottom: Evas.Real; [[Bottom Y coordinate of the near clipping plane.]]
+            top: Evas.Real; [[Top Y coordinate of the near clipping plane]]
+            dnear: Evas.Real; [[Distance to near clipping plane.]]
+            dfar: Evas.Real; [[Distance to far clipping plane.]]
          }
       }
       projection_ortho_set {
@@ -54,12 +56,12 @@ class Evas.Canvas3D.Camera (Evas.Canvas3D.Object, Evas.Common_Interface)
 
            See also @.projection_matrix_set.]]
          params {
-            left: Evas_Real; [[Left X coordinate of the near clipping plane.]]
-            right: Evas_Real; [[Right X coordinate of the near clipping plane..]]
-            bottom: Evas_Real; [[Bottom Y coordinate of the near clipping plane.]]
-            top: Evas_Real; [[Top Y coordinate of the near clipping plane]]
-            dnear: Evas_Real; [[Distance to near clipping plane.]]
-            dfar: Evas_Real; [[Distance to far clipping plane.]]
+            left: Evas.Real; [[Left X coordinate of the near clipping plane.]]
+            right: Evas.Real; [[Right X coordinate of the near clipping plane..]]
+            bottom: Evas.Real; [[Bottom Y coordinate of the near clipping plane.]]
+            top: Evas.Real; [[Top Y coordinate of the near clipping plane]]
+            dnear: Evas.Real; [[Distance to near clipping plane.]]
+            dfar: Evas.Real; [[Distance to far clipping plane.]]
          }
       }
       node_visible_get {
