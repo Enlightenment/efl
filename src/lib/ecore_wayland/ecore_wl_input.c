@@ -914,6 +914,10 @@ _ecore_wl_input_cb_keyboard_repeat(void *data)
         return ECORE_CALLBACK_RENEW;
      }
 
+   input->repeat.sym = 0;
+   input->repeat.key = 0;
+   input->repeat.time = 0;
+
    return ECORE_CALLBACK_CANCEL;
 }
 
