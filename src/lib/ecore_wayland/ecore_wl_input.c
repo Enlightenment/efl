@@ -975,6 +975,7 @@ _ecore_wl_input_cb_pointer_leave(void *data, struct wl_pointer *pointer EINA_UNU
    if (!(input = data)) return;
 
    input->display->serial = serial;
+   input->pointer_focus = NULL;
 
    /* NB: Commented out for now. Not needed in most circumstances, but left
     * here for any corner-cases */
@@ -984,7 +985,6 @@ _ecore_wl_input_cb_pointer_leave(void *data, struct wl_pointer *pointer EINA_UNU
    if (!(win = ecore_wl_window_surface_find(surface))) return;
 
    win->pointer_device = NULL;
-   input->pointer_focus = NULL;
 
    /* _ecore_wl_input_mouse_move_send(input, win, input->timestamp); */
    _ecore_wl_input_mouse_out_send(input, win, input->timestamp);
@@ -1040,6 +1040,8 @@ _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *keyboard EINA_
    if (input->repeat.tmr) ecore_timer_del(input->repeat.tmr);
    input->repeat.tmr = NULL;
 
+   input->keyboard_focus = NULL;
+
    if (!input->timestamp)
      {
         struct timeval tv;
@@ -1055,8 +1057,6 @@ _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *keyboard EINA_
 
    win->keyboard_device = NULL;
    _ecore_wl_input_focus_out_send(input, win, input->timestamp);
-
-   input->keyboard_focus = NULL;
 }
 
 static void
