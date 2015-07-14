@@ -91,8 +91,8 @@ __color = {
       grey = 0xFF808080,
       silver = 0xFFC0C0C0,
       olive = 0xFF808000,
-      invisible = 0x00000000,
-      transparent = 0x00000000
+      invisible = '#0000',
+      transparent = '#0000'
    },
 
    __methods = {
