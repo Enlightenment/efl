@@ -172,7 +172,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
               If it isn't set, the default value is 1.0]]
          }
          values {
-            base_scale: double; [[The base_scale factor (the default value is @ 1.0,
+            base_scale: double(1.0); [[The base_scale factor (the default value is @ 1.0,
                                   that means the edc file is made based on scale 1.0.]]
          }
       }
