@@ -14,8 +14,8 @@ static Evas_Image_Save_Func evas_image_save_jpeg_func =
 
 struct _JPEG_error_mgr
 {
-   struct     jpeg_error_mgr pub;
-   sigjmp_buf setjmp_buffer;
+   struct jpeg_error_mgr pub;
+   jmp_buf setjmp_buffer;
 };
 typedef struct _JPEG_error_mgr *emptr;
 
@@ -26,7 +26,7 @@ _JPEGFatalErrorHandler(j_common_ptr cinfo)
    emptr errmgr;
 
    errmgr = (emptr) cinfo->err;
-   siglongjmp(errmgr->setjmp_buffer, 1);
+   longjmp(errmgr->setjmp_buffer, 1);
    return;
 }
 
@@ -73,7 +73,7 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
    jerr.pub.emit_message = _JPEGErrorHandler2;
    jerr.pub.output_message = _JPEGErrorHandler;
-   if (sigsetjmp(jerr.setjmp_buffer, 1))
+   if (sigjmp(jerr.setjmp_buffer))
      {
 	jpeg_destroy_compress(&cinfo);
 	fclose(f);
