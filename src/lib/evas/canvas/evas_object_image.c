@@ -1221,7 +1221,7 @@ evas_object_image_data_convert(Evas_Object *eo_obj, Evas_Colorspace to_cspace)
    if (!eo_isa(eo_obj, MY_CLASS))
      {
         CRI("Object is not an %s!", eo_class_name_get(MY_CLASS));
-        return EINA_FALSE;
+        return NULL;
      }
 
    evas_object_async_block(obj);
