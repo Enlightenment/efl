@@ -643,7 +643,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
    int error;
 
    *image_data = NULL;
-   if (tofree) tofree = EINA_FALSE;
+   if (tofree) *tofree = EINA_FALSE;
    if (err) *err = EVAS_LOAD_ERROR_NONE;
 
    if (!im)
