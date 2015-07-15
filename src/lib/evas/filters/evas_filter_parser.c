@@ -705,7 +705,7 @@ _lua_implicit_metatable_drop(lua_State *L, const char *name)
    if (lua_istable(L, 1) && lua_getmetatable(L, 1))
      {
         luaL_getmetatable(L, name);
-        if (lua_equal(L, -1, -2))
+        if (lua_compare(L, -1, -2, LUA_OPEQ))
           {
              lua_remove(L, 1);
              ret = 1;
@@ -1931,7 +1931,7 @@ _lua_parameter_parse(Evas_Filter_Program *pgm, lua_State *L,
              {
                 luaL_getmetatable(L, _lua_color_meta);
                 lua_getmetatable(L, i);
-                if (!lua_isnil(L, -1) && lua_equal(L, -2, -1))
+                if (!lua_isnil(L, -1) && lua_compare(L, -2, -1, LUA_OPEQ))
                   {
                      // this is a color already
                      cid = i;
@@ -2321,7 +2321,8 @@ _lua_class_create(lua_State *L, const char *name,
                   const luaL_Reg *meta, const luaL_Reg *methods)
 {
    luaL_newmetatable(L, name);
-   luaL_register(L, NULL, meta);
+   lua_pushvalue(L, -1);
+   lua_setglobal(L, meta);
    lua_pushliteral(L, "__metatable");
    lua_pushvalue(L, -2);
    lua_rawset(L, -3);
@@ -2329,7 +2330,8 @@ _lua_class_create(lua_State *L, const char *name,
      {
         lua_pushliteral(L, _lua_methods_table);
         lua_newtable(L);
-        luaL_register(L, NULL, methods);
+        lua_pushvalue(L, -1);
+        lua_setglobal(L, methods);
         lua_rawset(L, -3);
      }
    lua_pushvalue(L, -1);
@@ -2358,7 +2360,8 @@ _lua_state_create(Evas_Filter_Program *pgm)
 
    // Implement print
    lua_getglobal(L, "_G");
-   luaL_register(L, NULL, printlib);
+   lua_pushvalue(L, -1);
+   lua_setglobal(L, printlib);
    lua_pop(L, 1);
 
    // Add backtrace error function
@@ -2431,7 +2434,7 @@ _lua_backtrace(lua_State *L)
    if (!lua_isstring(L, 1))  /* 'message' not a string? */
      return 1;  /* keep it intact */
    ERR("Lua error: %s", lua_tolstring(L, 1, NULL));
-   lua_getfield(L, LUA_GLOBALSINDEX, "debug");
+   lua_getglobal(L, "debug");
    if (!lua_istable(L, -1))
      {
         lua_pop(L, 1);
