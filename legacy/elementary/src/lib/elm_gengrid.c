@@ -2817,6 +2817,7 @@ _store_nearby_items(Elm_Gengrid_Data *sd)
 
    rnd->no = abs(sd->reorder.it2->position - sd->reorder.it1->position);
    rnd->items = malloc(sizeof(Item_Info) * (rnd->no + 1));
+   rnd->corner_item = NULL;
 
   if (sd->horizontal && sd->item_height > 0)
     {
@@ -2915,7 +2916,6 @@ _swap_items(Elm_Object_Item *eo_it1, Elm_Object_Item *eo_it2, Elm_Focus_Directio
    if (sd->reorder.type == ELM_GENGRID_REORDER_TYPE_NORMAL)
      {
         Reorder_Normal_Data *rnd = malloc(sizeof(Reorder_Normal_Data));
-        memset(rnd, 0, sizeof(Reorder_Normal_Data));
         sd->reorder.data = rnd;
         _store_nearby_items(sd);
         if (rnd->corner_item)
