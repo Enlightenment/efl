@@ -621,19 +621,19 @@ write_val_with_decpoint(Eo_Lexer *ls, Eo_Token *tok, int type)
 static void
 write_val(Eo_Lexer *ls, Eo_Token *tok, Eina_Bool is_float)
 {
-   const char *str = eina_strbuf_string_get(ls->buff);
    int type = get_type(ls, is_float);
    char *end = NULL;
    if (is_float)
      {
         replace_decpoint(ls, '.');
         if (type == NUM_FLOAT)
-          tok->value.f = strtof(str, &end);
+          tok->value.f = strtof(eina_strbuf_string_get(ls->buff), &end);
         else if (type == NUM_DOUBLE)
-          tok->value.d = strtod(str, &end);
+          tok->value.d = strtod(eina_strbuf_string_get(ls->buff), &end);
      }
    else
      {
+        const char *str = eina_strbuf_string_get(ls->buff);
         /* signed is always in the same memory location */
         if (type == NUM_INT || type == NUM_UINT)
           tok->value.u = strtoul(str, &end, 0);
