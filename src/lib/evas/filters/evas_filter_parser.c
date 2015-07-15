@@ -1277,7 +1277,7 @@ _lua_curve_points_func(lua_State *L, int i, Evas_Filter_Program *pgm EINA_UNUSED
                        if (n < -1) n = 0;
                        if (n > 255) n = 255;
                     }
-                  lua_pop(L, 1);
+                  lua_pop(L, 2);
                   values[k] = (int) n;
                }
              else
