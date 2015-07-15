@@ -1,3 +1,5 @@
+import evas_types;
+
 class Evas.Out (Eo.Base)
 {
    eo_prefix: evas_out;
@@ -15,10 +17,10 @@ class Evas.Out (Eo.Base)
             [[Gets the viewport region of the canvas that the output displays.]]
          }
          values {
-            x: Evas_Coord;
-            y: Evas_Coord;
-            w: Evas_Coord;
-            h: Evas_Coord;
+            x: Evas.Coord;
+            y: Evas.Coord;
+            w: Evas.Coord;
+            h: Evas.Coord;
          }
       }
       @property engine_info {
