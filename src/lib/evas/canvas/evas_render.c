@@ -1280,7 +1280,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
         else if (proxy_src_clip)
           {
              if ((!evas_object_is_visible(eo_obj, obj)) || (obj->clip.clipees)
-                 || (obj->cur->have_clipees))
+                 || (obj->cur->have_clipees) || (obj->no_render))
                {
                   RD(level, "}\n");
                   return clean_them;
