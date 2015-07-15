@@ -15,7 +15,7 @@ static Evas_Image_Save_Func evas_image_save_jpeg_func =
 struct _JPEG_error_mgr
 {
    struct     jpeg_error_mgr pub;
-   jmp_buf    setjmp_buffer;
+   sigjmp_buf setjmp_buffer;
 };
 typedef struct _JPEG_error_mgr *emptr;
 
@@ -26,7 +26,7 @@ _JPEGFatalErrorHandler(j_common_ptr cinfo)
    emptr errmgr;
 
    errmgr = (emptr) cinfo->err;
-   longjmp(errmgr->setjmp_buffer, 1);
+   siglongjmp(errmgr->setjmp_buffer, 1);
    return;
 }
 
