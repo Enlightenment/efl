@@ -237,6 +237,8 @@ struct _Ecore_Wl_Input
      {
         Ecore_Timer *tmr;
         unsigned int sym, key, time;
+        double rate, delay;
+        Eina_Bool enabled : 1;
      } repeat;
 };
 

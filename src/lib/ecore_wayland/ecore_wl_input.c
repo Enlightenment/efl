@@ -68,6 +68,7 @@ static void _ecore_wl_input_cb_keyboard_enter(void *data, struct wl_keyboard *ke
 static void _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, struct wl_surface *surface);
 static void _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int key, unsigned int state);
 static void _ecore_wl_input_cb_keyboard_modifiers(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial EINA_UNUSED, unsigned int depressed, unsigned int latched, unsigned int locked, unsigned int group);
+static void _ecore_wl_input_cb_keyboard_repeat_setup(void *data, struct wl_keyboard *keyboard EINA_UNUSED, int32_t rate, int32_t delay);
 static Eina_Bool _ecore_wl_input_cb_keyboard_repeat(void *data);
 static void _ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch, unsigned int serial, unsigned int timestamp, struct wl_surface *surface EINA_UNUSED, int id EINA_UNUSED, wl_fixed_t x, wl_fixed_t y);
 static void _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch, unsigned int serial, unsigned int timestamp, int id EINA_UNUSED);
@@ -110,6 +111,7 @@ static const struct wl_keyboard_listener keyboard_listener =
    _ecore_wl_input_cb_keyboard_leave,
    _ecore_wl_input_cb_keyboard_key,
    _ecore_wl_input_cb_keyboard_modifiers,
+   _ecore_wl_input_cb_keyboard_repeat_setup,
 };
 
 static const struct wl_touch_listener touch_listener =
@@ -389,6 +391,10 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
    input->pointer_focus = NULL;
    input->keyboard_focus = NULL;
    input->touch_focus = NULL;
+
+   input->repeat.enabled = EINA_TRUE;
+   input->repeat.rate = 0.025;
+   input->repeat.delay = 0.4;
 
    if (ewd->wl.shm)
      _ecore_wl_input_setup(input);
@@ -846,6 +852,8 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
      }
    else if ((state) && (keycode != input->repeat.key))
      {
+        if (!input->repeat.enabled) return;
+
         input->repeat.sym = sym;
         input->repeat.key = keycode;
         input->repeat.time = timestamp;
@@ -853,9 +861,10 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
         if (!input->repeat.tmr)
           {
              input->repeat.tmr =
-               ecore_timer_add(0.025, _ecore_wl_input_cb_keyboard_repeat, input);
+               ecore_timer_add(input->repeat.rate,
+                               _ecore_wl_input_cb_keyboard_repeat, input);
           }
-        ecore_timer_delay(input->repeat.tmr, 0.4);
+        ecore_timer_delay(input->repeat.tmr, input->repeat.delay);
      }
 }
 
@@ -894,6 +903,27 @@ _ecore_wl_input_cb_keyboard_modifiers(void *data, struct wl_keyboard *keyboard E
      input->modifiers |= ECORE_EVENT_LOCK_CAPS;
    if (mask & input->xkb.altgr_mask)
      input->modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
+}
+
+static void
+_ecore_wl_input_cb_keyboard_repeat_setup(void *data, struct wl_keyboard *keyboard EINA_UNUSED, int32_t rate, int32_t delay)
+{
+   Ecore_Wl_Input *input;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(input = data)) return;
+
+   if (rate == 0)
+     {
+        input->repeat.enabled = EINA_FALSE;
+        return;
+     }
+   else
+     input->repeat.enabled = EINA_TRUE;
+
+   input->repeat.rate = (rate / 1000);
+   input->repeat.delay = (delay / 100);
 }
 
 static Eina_Bool
