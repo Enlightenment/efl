@@ -1,3 +1,5 @@
+import eina_types;
+
 abstract Ector.Renderer.Generic.Base (Eo.Base)
 {
    eo_prefix: ector_renderer;
@@ -81,14 +83,14 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
       }
       bounds_get {
 	 params {
-	    @out r: Eina_Rectangle;
+	    @out r: Eina.Rectangle;
 	 }
       }
       draw {
          return: bool @warn_unused;
 	 params {
 	    @in op: Ector_Rop;
-	    @in clips: array<Eina_Rectangle *> *; [[array of Eina_Rectangle clip]]
+	    @in clips: array<Eina.Rectangle *> *; [[array of @Eina.Rectangle clip]]
 	    @in mul_col: uint;
 	 }
       }
