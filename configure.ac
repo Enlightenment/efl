@@ -651,7 +651,6 @@ if test "x${want_libeeze}" = "xyes" ; then
     else
         build_libeeze="no"
         want_libeeze="no"
-        CFOPT_WARNING="yes"
     fi
 else
     build_libeeze="no"
