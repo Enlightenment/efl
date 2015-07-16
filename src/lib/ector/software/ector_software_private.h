@@ -100,7 +100,7 @@ typedef struct _Span_Data
    };
 } Span_Data;
 
-typedef struct _Software_Rasterizer
+struct _Software_Rasterizer
 {
    SW_FT_Raster     raster;
    SW_FT_Stroker    stroker;
@@ -109,7 +109,7 @@ typedef struct _Software_Rasterizer
    Eina_Matrix3    *transform;
    Eina_Rectangle   system_clip;
 
-} Software_Rasterizer;
+};
 
 struct _Ector_Software_Surface_Data
 {
