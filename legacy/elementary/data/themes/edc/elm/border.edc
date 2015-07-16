@@ -774,9 +774,6 @@ group { name: "elm/ews/decoration/borderless";
 ////////////////////////////////////////////////////////////////////////////
 
 group { name: "elm/border/base/default";
-   images.image: "win_shadow.png" COMP;
-   images.image: "win_glow.png" COMP;
-   
    images.image: "vgrad_med_lighter.png" COMP;
    images.image: "vgrad_med_dark.png" COMP;
    images.image: "bevel_out.png" COMP;
@@ -796,113 +793,77 @@ group { name: "elm/border/base/default";
    images.image: "sym_up_light_selected.png" COMP;
    images.image: "glow_round_corners_small.png" COMP;
    images.image: "knob_round_small_busy.png" COMP;
-
-   // XXX: trhis is UNTESTED!!! need wl to test!
+   images.image: "screen_circular_shadow.png" COMP;
+   images.image: "win_shadow.png" COMP;
+   data.item: "shadow" "1";
    parts {
-      part { name: "focus_clip"; type: RECT;
-         description { state: "default" 0.0;
+      part { name: "shadow_clip"; type: RECT; mouse_events: 0;
+         description { state: "default";
+            rel1.to: "shadow";
+            rel2.to: "shadow";
          }
-         description { state: "max" 0.0;
-            inherit: "default" 0.0;
+         description { state: "hidden";
             visible: 0;
          }
       }
-      part { name: "elm.swallow.frame_spacer"; type: SWALLOW;
-         clip_to: "focus_clip";
-         description { state: "default" 0.0;
-            rel1.to: "frame";
-            rel2.to: "frame";
-         }
-      }
-      part { name: "frame"; type: SPACER;
-         description { state: "default" 0.0;
-            rel1.offset: 5 5;
-            rel2.offset: -6 -12;
-         }
-         description { state: "max" 0.0;
-            inherit: "default" 0.0;
-            rel1.offset: 0 0;
-            rel2.offset: -1 -1;
-         }
-      }
-      part { name: "shadow"; mouse_events: 0;
-         clip_to: "focus_clip";
+      part { name: "shadow"; mouse_events: 0; clip_to: "shadow_clip";
          description { state: "default" 0.0;
             image.normal: "win_shadow.png";
             image.border: 14 14 14 14;
             image.middle: 0;
-            rel1.offset: -7  -3;
-            rel1.to: "frame";
+            rel1.to: "top";
+            rel1.offset: -7 -3;
+            rel2.to: "bottom";
             rel2.offset: 6 11;
-            rel2.to: "frame";
             fill.smooth: 0;
          }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
+         description { state: "shaded";
+            inherit: "default";
+            rel2.to: "elm.swallow.client";
          }
       }
-      part { name: "glow"; mouse_events: 0;
-         clip_to: "focus_clip";
-         description { state: "default" 0.0;
-            image.normal: "win_glow.png";
-            image.border: 9 9 9 9;
-            image.middle: 0;
-            rel1.offset: -5  -5;
-            rel1.to: "frame";
-            rel2.offset: 4 4;
-            rel2.to: "frame";
-            fill.smooth: 0;
-            color: 255 255 255 0;
-            visible: 0;
-         }
-         description { state: "focused" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-            visible: 1;
-         }
-      }
-      part { name: "client_clip"; type: RECT;
+      part { name: "client_clip"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.to_y: "elm.swallow.client";
             rel2.to_y: "elm.swallow.client";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default";
+            visible: 0;
          }
       }
       part { name: "elm.swallow.client"; type: SWALLOW;
          clip_to: "client_clip";
          description { state: "default" 0.0;
             rel1.relative: 0.0 1.0;
-            rel1.to: "top";
+            rel1.to_y: "top";
             rel2.relative: 1.0 0.0;
-            rel2.to: "bottom";
+            rel2.to_y: "bottom";
          }
          description { state: "shaded" 0.0;
             inherit: "default" 0.0;
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -1;
-            rel2.to: "bottom";
          }
          description { state: "max" 0.0;
             inherit: "default" 0.0;
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -1;
-            rel2.to: "bottom";
          }
       }
-      part { name: "top";
+      part { name: "top"; mouse_events: 0;
          description { state: "default" 0.0;
-            color_class: "border_top";
             image.normal: "vgrad_med_lighter.png";
-            rel1.to: "frame";
             rel2.to_y: "title2";
-            rel2.to_x: "frame";
             rel2.offset: -1 0;
             fill.smooth: 0;
             TILED_HORIZ(120)
+            color_class: "border_frame";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             image.normal: "vgrad_med_dark.png";
+            color_class: "border_frame_active";
          }
       }
       part { name: "bevel"; mouse_events: 0;
@@ -915,19 +876,16 @@ group { name: "elm/border/base/default";
             fill.smooth: 0;
          }
       }
-      part { name: "elm.text.title"; type: TEXT;
-         scale: 1; nomouse;
+      part { name: "elm.text.title"; type: TEXT; mouse_events: 0;
+         scale: 1;
          effect: SHADOW BOTTOM;
          description { state: "default" 0.0;
-            color_class: "border_title";
             rel1.relative: 1.0 0.0;
             rel1.offset: 1 3;
             rel1.to_x: "elm.event.icon";
-            rel1.to_y: "frame";
             rel2.relative: 0.0 0.0;
             rel2.offset: -2 3;
-            rel2.to_x: "e.event.minimize";
-            rel2.to_y: "frame";
+            rel2.to_x: "elm.event.minimize";
             align: 0.5 0.0;
             color_class: "border_title";
             color3: 255 255 255 255;
@@ -943,19 +901,16 @@ group { name: "elm/border/base/default";
             visible: 0;
          }
       }
-      part { name: "title2"; type: TEXT;
-         scale: 1; nomouse;
+      part { name: "title2"; type: TEXT; mouse_events: 0;
+         scale: 1;
          effect: SOFT_SHADOW BOTTOM;
          description { state: "default" 0.0;
-            color_class: "border_title_active";
             rel1.relative: 1.0 0.0;
             rel1.offset: 1 2;
             rel1.to_x: "elm.event.icon";
-            rel1.to_y: "frame";
             rel2.relative: 0.0 0.0;
             rel2.offset: -1 2;
-            rel2.to_x: "e.event.minimize";
-            rel2.to_y: "frame";
+            rel2.to_x: "elm.event.minimize";
             align: 0.5 0.0;
             color_class: "border_title_active";
             color3: 255 255 255 255;
@@ -980,16 +935,16 @@ group { name: "elm/border/base/default";
          }
          description { state: "bounce1" 0.0;
             inherit: "default" 0.0;
-            rel1.relative: 0.0 0.15;
-            rel2.relative: 1.0 1.15;
+            rel1.relative: 0.5 0.5;
+            rel2.relative: 0.5 0.5;
          }
          description { state: "bounce2" 0.0;
             inherit: "default" 0.0;
-            rel1.relative: 0.0 -0.15;
-            rel2.relative: 1.0 0.85;
+            rel1.relative: -0.5 -0.5;
+            rel2.relative: 1.2 1.2;
          }
       }
-      part { name: "elm.swallow.icon"; type: SWALLOW; nomouse;
+      part { name: "elm.swallow.icon"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.to: "icon";
             rel1.relative: 0.15 0.15;
@@ -998,7 +953,7 @@ group { name: "elm/border/base/default";
             rel2.offset: 0 0;
          }
       }
-      part { name: "busy_clip"; type: RECT;
+      part { name: "busy_clip"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             color: 255 255 255 0;
             visible: 0;
@@ -1032,7 +987,7 @@ group { name: "elm/border/base/default";
             fixed: 1 1;
             rel1.to: "knob";
             rel2.to: "knob";
-            image.normal: "glow_round_corners.png";
+            image.normal: "glow_round_corners_small.png";
             map.on: 1;
             map.smooth: 1;
             map.rotation.center: "knob";
@@ -1042,7 +997,7 @@ group { name: "elm/border/base/default";
             map.rotation.z: 360;
          }
       }
-      part { name: "clip1"; type: RECT;
+      part { name: "clip1"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.to: "top";
             rel2.to: "top";
@@ -1052,7 +1007,7 @@ group { name: "elm/border/base/default";
             visible: 0;
          }
       }
-      part { name: "clip2"; type: RECT;
+      part { name: "clip2"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.to: "top";
             rel2.to: "top";
@@ -1063,12 +1018,12 @@ group { name: "elm/border/base/default";
             visible: 1;
          }
       }
-      part { name: "close1"; nomouse;
+      part { name: "close1";  mouse_events: 0;
          clip_to: "clip1";
          description { state: "default" 0.0;
             image.normal: "sym_close_dark_normal.png";
-            rel1.to: "e.event.close";
-            rel2.to: "e.event.close";
+            rel1.to: "elm.event.close";
+            rel2.to: "elm.event.close";
             min: 15 15;
             max: 15 15;
             fixed: 1 1;
@@ -1078,12 +1033,12 @@ group { name: "elm/border/base/default";
             image.normal: "sym_close_dark_selected.png";
          }
       }
-      part { name: "max1"; nomouse;
+      part { name: "max1"; mouse_events: 0;
          clip_to: "clip1";
          description { state: "default" 0.0;
             image.normal: "sym_up_dark_normal.png";
-            rel1.to: "e.event.maximize";
-            rel2.to: "e.event.maximize";
+            rel1.to: "elm.event.maximize";
+            rel2.to: "elm.event.maximize";
             min: 15 15;
             max: 15 15;
             fixed: 1 1;
@@ -1093,12 +1048,12 @@ group { name: "elm/border/base/default";
             image.normal: "sym_up_dark_selected.png";
          }
       }
-      part { name: "min1"; nomouse;
+      part { name: "min1"; mouse_events: 0;
          clip_to: "clip1";
          description { state: "default" 0.0;
             image.normal: "sym_down_dark_normal.png";
-            rel1.to: "e.event.minimize";
-            rel2.to: "e.event.minimize";
+            rel1.to: "elm.event.minimize";
+            rel2.to: "elm.event.minimize";
             min: 15 15;
             max: 15 15;
             fixed: 1 1;
@@ -1108,12 +1063,12 @@ group { name: "elm/border/base/default";
             image.normal: "sym_down_dark_selected.png";
          }
       }
-      part { name: "close2"; nomouse;
+      part { name: "close2"; mouse_events: 0;
          clip_to: "clip2";
          description { state: "default" 0.0;
             image.normal: "sym_close_light_normal.png";
-            rel1.to: "e.event.close";
-            rel2.to: "e.event.close";
+            rel1.to: "elm.event.close";
+            rel2.to: "elm.event.close";
             min: 15 15;
             max: 15 15;
             fixed: 1 1;
@@ -1123,12 +1078,12 @@ group { name: "elm/border/base/default";
             image.normal: "sym_close_light_selected.png";
          }
       }
-      part { name: "max2"; nomouse;
+      part { name: "max2"; mouse_events: 0;
          clip_to: "clip2";
          description { state: "default" 0.0;
             image.normal: "sym_up_light_normal.png";
-            rel1.to: "e.event.maximize";
-            rel2.to: "e.event.maximize";
+            rel1.to: "elm.event.maximize";
+            rel2.to: "elm.event.maximize";
             min: 15 15;
             max: 15 15;
             fixed: 1 1;
@@ -1138,12 +1093,12 @@ group { name: "elm/border/base/default";
             image.normal: "sym_up_light_selected.png";
          }
       }
-      part { name: "min2"; nomouse;
+      part { name: "min2"; mouse_events: 0;
          clip_to: "clip2";
          description { state: "default" 0.0;
             image.normal: "sym_down_light_normal.png";
-            rel1.to: "e.event.minimize";
-            rel2.to: "e.event.minimize";
+            rel1.to: "elm.event.minimize";
+            rel2.to: "elm.event.minimize";
             min: 15 15;
             max: 15 15;
             fixed: 1 1;
@@ -1153,115 +1108,96 @@ group { name: "elm/border/base/default";
             image.normal: "sym_down_light_selected.png";
          }
       }
+      part { name: "elm.event.titlebar"; type: RECT;
+         description { state: "default" 0.0;
+            rel2.to_y: "elm.swallow.client";
+            rel2.relative: 1 0;
+            rel2.offset: 0 1;
+            color: 0 0 0 0;
+         }
+      }
       part { name: "elm.event.icon"; type: RECT;
          description { state: "default" 0.0;
             rel1.relative: 0.0 0.0;
-            rel1.to: "top";
             rel2.relative: 0.0 1.0;
-            rel2.to: "top";
+            rel2.to_y: "top";
             align: 0.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             color: 0 0 0 0;
          }
       }
-      part { name: "e.event.titlebar"; type: RECT;
+      part { name: "elm.event.close"; type: RECT;
          description { state: "default" 0.0;
             rel1.relative: 1.0 0.0;
-            rel1.to_x: "elm.event.icon";
-            rel1.to_y: "top";
-            rel2.relative: 0.0 1.0;
-            rel2.to_x: "e.event.minimize";
-            rel2.to_y: "top";
-            color: 0 0 0 0;
-         }
-      }
-      part { name: "e.event.close"; type: RECT;
-         description { state: "default" 0.0;
-            rel1.relative: 1.0 0.0;
-            rel1.to: "top";
             rel2.relative: 1.0 1.0;
-            rel2.to: "top";
+            rel2.to_y: "top";
             align: 1.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             color: 0 0 0 0;
          }
       }
-      part { name: "e.event.maximize"; type: RECT;
+      part { name: "elm.event.maximize"; type: RECT;
          description { state: "default" 0.0;
             rel1.relative: -0.25 0.0;
-            rel1.to_y: "top";
             rel1.offset: -1 0;
-            rel1.to_x: "e.event.close";
+            rel1.to_x: "elm.event.close";
             rel2.relative: -0.25 1.0;
             rel2.to_y: "top";
-            rel2.to_x: "e.event.close";
-            align: 1.0 0.5;
-            aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            color: 0 0 0 0 ;
-         }
-      }
-      part { name: "e.event.minimize"; type: RECT;
-         description { state: "default" 0.0;
-            rel1.relative: 0.0 0.0;
-            rel1.to_y: "top";
-            rel1.offset: -1 0;
-            rel1.to_x: "e.event.maximize";
-            rel2.relative: 0.0 1.0;
-            rel2.to_y: "top";
-            rel2.to_x: "e.event.maximize";
+            rel2.to_x: "elm.event.close";
             align: 1.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             color: 0 0 0 0;
          }
       }
-      part { name: "e.event.resize.tl"; type: RECT;
+      part { name: "elm.event.minimize"; type: RECT;
          description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "top";
+            rel1.relative: 0.0 0.0;
+            rel1.offset: -1 0;
+            rel1.to_x: "elm.event.maximize";
+            rel2.relative: 0.0 1.0;
+            rel2.to_y: "top";
+            rel2.to_x: "elm.event.maximize";
+            align: 1.0 0.5;
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "elm.event.resize.tl"; type: RECT;
+         description { state: "default" 0.0;
             rel2.relative: 0.0 0.0;
-            rel2.to: "top";
             min: 32 4;
             align: 0.0 0.0;
             color: 0 0 0 0;
          }
       }
-      part { name: "e.event.resize.t"; type: RECT;
+      part { name: "elm.event.resize.t"; type: RECT;
          description { state: "default" 0.0;
-            fixed: 1 1;
             rel1.relative: 1.0 0.0;
-            rel1.to_y: "top";
-            rel1.to_x: "e.event.resize.tl";
+            rel1.to_x: "elm.event.resize.tl";
             rel2.relative: 0.0 0.0;
-            rel1.to_y: "top";
-            rel2.to_x: "e.event.resize.tr";
+            rel2.to_x: "elm.event.resize.tr";
             min: 0 4;
             align: 0.5 0.0;
             color: 0 0 0 0;
          }
       }
-      part { name: "e.event.resize.tr"; type: RECT;
+      part { name: "elm.event.resize.tr"; type: RECT;
          description { state: "default" 0.0;
-            fixed: 1 1;
             rel1.relative: 1.0 0.0;
-            rel1.to: "top";
             rel2.relative: 1.0 0.0;
-            rel2.to: "top";
             min: 32 4;
             align: 1.0 0.0;
             color: 0 0 0 0;
          }
       }
-      part { name: "bottom"; type: RECT;
+      part { name: "bottom"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             color_class: "border_bottom";
+            color: 64 64 64 255;
             rel1.relative: 0.0 1.0;
             rel1.offset: 0 -5;
-            rel1.to: "frame";
             rel2.relative: 1.0 1.0;
-            rel2.offset: -1 -1;
-            rel2.to: "frame";
             min: 0 5;
-            color: 64 64 64 255;
             fixed: 0 1;
          }
          description { state: "shaded" 0.0;
@@ -1275,7 +1211,7 @@ group { name: "elm/border/base/default";
             visible: 0;
          }
       }
-      part { name: "bevel2"; nomouse;
+      part { name: "bevel2"; mouse_events: 0;
          description { state: "default" 0.0;
             image.normal: "bevel_dark_out.png";
             image.border: 1 1 1 1;
@@ -1293,13 +1229,12 @@ group { name: "elm/border/base/default";
             visible: 0;
          }
       }
-      part { name: "e.event.resize.bl"; type: RECT;
+      part { name: "elm.event.resize.bl"; type: RECT;
          description { state: "default" 0.0;
-            fixed: 1 1;
             rel1.relative: 0.0 1.0;
-            rel1.to: "bottom";
+            rel1.to_y: "elm.swallow.client";
+            rel1.offset: 0 -1;
             rel2.relative: 0.0 1.0;
-            rel2.to: "bottom";
             min: 32 5;
             align: 0.0 1.0;
             color: 0 0 0 0;
@@ -1316,15 +1251,14 @@ group { name: "elm/border/base/default";
             visible: 0;
          }
       }
-      part { name: "e.event.resize.b"; type: RECT;
+      part { name: "elm.event.resize.b"; type: RECT;
          description { state: "default" 0.0;
-            fixed: 1 1;
             rel1.relative: 1.0 1.0;
-            rel1.to_x: "e.event.resize.tl";
-            rel1.to_y: "bottom";
+            rel1.to_x: "elm.event.resize.tl";
+            rel1.to_y: "elm.swallow.client";
+            rel1.offset: 0 -1;
             rel2.relative: 0.0 1.0;
-            rel2.to_x: "e.event.resize.tr";
-            rel1.to_y: "bottom";
+            rel2.to_x: "elm.event.resize.tr";
             min: 0 5;
             align: 0.5 1.0;
             color: 0 0 0 0;
@@ -1341,13 +1275,12 @@ group { name: "elm/border/base/default";
             visible: 0;
          }
       }
-      part { name: "e.event.resize.br"; type: RECT;
+      part { name: "elm.event.resize.br"; type: RECT;
          description { state: "default" 0.0;
-            fixed: 1 1;
             rel1.relative: 1.0 1.0;
-            rel1.to: "bottom";
+            rel1.to_y: "elm.swallow.client";
+            rel1.offset: 0 -1;
             rel2.relative: 1.0 1.0;
-            rel2.to: "bottom";
             min: 32 5;
             align: 1.0 1.0;
             color: 0 0 0 0;
@@ -1378,22 +1311,14 @@ group { name: "elm/border/base/default";
    }
    programs {
       program {
-         signal: "elm,action,focus"; source: "elm";
-         action: STATE_SET "focused" 0.0;
-         transition: SINUSOIDAL 0.1;
-         target: "glow";
-         after: "focus2";
-      }
-      program { name: "focus2";
+         signal: "elm,state,shadow,on"; source: "elm";
          action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.4;
-         target: "glow";
+         target: "shadow_clip";
       }
       program {
-         signal: "elm,action,unfocus"; source: "elm";
-         action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.1;
-         target: "glow";
+         signal: "elm,state,shadow,off"; source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         target: "shadow_clip";
       }
       program {
          signal: "elm,action,focus"; source: "elm";
@@ -1421,13 +1346,13 @@ group { name: "elm/border/base/default";
       }
       program { name: "urg1";
          action: STATE_SET "bounce2" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.4;
          target: "icon";
          after: "urg2";
       }
       program { name: "urg2";
          action: STATE_SET "bounce1" 0.0;
-         transition: ACCELERATE 0.2;
+         transition: ACCELERATE 0.3;
          target: "icon";
          after: "urg1";
       }
@@ -1474,192 +1399,195 @@ group { name: "elm/border/base/default";
       program {
          signal: "elm,state,shaded"; source: "elm";
          action: STATE_SET "shaded" 0.0;
+         target: "shadow";
+         after: "shading";
+      }
+      program { name: "shading";
+//         signal: "elm,state,shading"; source: "elm";
+         action: STATE_SET "shaded" 0.0;
          target: "elm.swallow.client";
          target: "bottom";
          target: "bevel2";
-         target: "e.event.resize.bl";
-         target: "e.event.resize.b";
-         target: "e.event.resize.br";
+         target: "elm.event.resize.bl";
+         target: "elm.event.resize.b";
+         target: "elm.event.resize.br";
       }
-//      program {
-//         signal: "e,state,shading"; source: "e";
-//      }
-//      program {
-//         signal: "e,state,unshaded"; source: "e";
-//      }
       program {
          signal: "elm,state,unshading"; source: "elm";
          action: STATE_SET "default" 0.0;
-         target: "elm.swallow.client";
          target: "bottom";
          target: "bevel2";
-         target: "e.event.resize.bl";
-         target: "e.event.resize.b";
-         target: "e.event.resize.br";
+         target: "elm.event.resize.bl";
+         target: "elm.event.resize.b";
+         target: "elm.event.resize.br";
+         target: "client_clip";
+         after: "unshading";
+      }
+      program { name: "unshading";
+//         signal: "elm,state,unshading"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.client";
+         target: "shadow";
+         target: "client_clip";
       }
 //      program {
-//         signal: "e,action,maximize"; source: "e";
+//         signal: "e,action,maximize"; source: "elm";
 //      }
 //      program {
-//         signal: "e,action,unmaximize"; source: "e";
+//         signal: "e,action,unmaximize"; source: "elm";
 //      }
 //      program {
-//         signal: "e,action,maximize,fullscreen"; source: "e";
+//         signal: "e,action,maximize,fullscreen"; source: "elm";
 //      }
 //      program {
-//         signal: "e,action,unmaximize,fullscreen"; source: "e";
+//         signal: "e,action,unmaximize,fullscreen"; source: "elm";
 //      }
       program {
-         signal: "elm,state,maximized"; source: "elm";
+         signal: "elm,state,maximize*"; source: "elm";
          action: STATE_SET "max" 0.0;
          target: "elm.swallow.client";
-         target: "frame";
-         target: "focus_clip";
          target: "bottom";
          target: "bevel2";
-         target: "e.event.resize.bl";
-         target: "e.event.resize.b";
-         target: "e.event.resize.br";
+         target: "elm.event.resize.bl";
+         target: "elm.event.resize.b";
+         target: "elm.event.resize.br";
       }
       program {
-         signal: "elm,state,unmaximized"; source: "elm";
+         signal: "elm,state,unmaximize*"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.client";
-         target: "frame";
-         target: "focus_clip";
          target: "bottom";
          target: "bevel2";
-         target: "e.event.resize.bl";
-         target: "e.event.resize.b";
-         target: "e.event.resize.br";
+         target: "elm.event.resize.bl";
+         target: "elm.event.resize.b";
+         target: "elm.event.resize.br";
       }
       program {
-         signal: "mouse,down,*"; source: "e.event.close";
+         signal: "mouse,down,*"; source: "elm.event.close";
          action: STATE_SET "selected" 0.0;
          target: "close1";
          target: "close2";
       }
       program {
-         signal: "mouse,up,*"; source: "e.event.close";
+         signal: "mouse,up,*"; source: "elm.event.close";
          action: STATE_SET "default" 0.0;
          target: "close1";
          target: "close2";
       }
       program {
-         signal: "mouse,down,*"; source: "e.event.maximize";
+         signal: "mouse,down,*"; source: "elm.event.maximize";
          action: STATE_SET "selected" 0.0;
          target: "max1";
          target: "max2";
       }
       program {
-         signal: "mouse,up,*"; source: "e.event.maximize";
+         signal: "mouse,up,*"; source: "elm.event.maximize";
          action: STATE_SET "default" 0.0;
          target: "max1";
          target: "max2";
       }
       program {
-         signal: "mouse,down,*"; source: "e.event.minimize";
+         signal: "mouse,down,*"; source: "elm.event.minimize";
          action: STATE_SET "selected" 0.0;
          target: "min1";
          target: "min2";
       }
       program {
-         signal: "mouse,up,*"; source: "e.event.minimize";
+         signal: "mouse,up,*"; source: "elm.event.minimize";
          action: STATE_SET "default" 0.0;
          target: "min1";
          target: "min2";
       }
-
       program {
-         signal: "mouse,down,1"; source: "e.event.titlebar";
+         signal: "mouse,down,1"; source: "elm.event.titlebar";
          action: SIGNAL_EMIT "elm,action,move,start" "elm";
       }
       program {
-         signal: "mouse,up,1"; source: "e.event.titlebar";
+         signal: "mouse,up,1"; source: "elm.event.titlebar";
          action: SIGNAL_EMIT "elm,action,move,stop" "elm";
       }
       program {
-         signal: "mouse,clicked,1"; source: "e.event.minimize";
+         signal: "mouse,clicked,1"; source: "elm.event.minimize";
          action: SIGNAL_EMIT "elm,action,minimize" "elm";
       }
       program {
-         signal: "mouse,clicked,1"; source: "e.event.maximize";
+         signal: "mouse,clicked,1"; source: "elm.event.maximize";
          action: SIGNAL_EMIT "elm,action,maximize" "elm";
       }
       program {
-         signal: "mouse,clicked,1"; source: "e.event.close";
+         signal: "mouse,clicked,1"; source: "elm.event.close";
          action: SIGNAL_EMIT "elm,action,close" "elm";
       }
       program {
-         signal: "mouse,in"; source: "e.event.resize.t";
+         signal: "mouse,in"; source: "elm.event.resize.t";
          action: SIGNAL_EMIT "elm,action,resize,show" "elm.event.resize.t";
       }
       program {
-         signal: "mouse,out"; source: "e.event.resize.t";
+         signal: "mouse,out"; source: "elm.event.resize.t";
          action: SIGNAL_EMIT "elm,action,resize,hide" "elm.event.resize.t";
       }
       program { name: "resize_t_down";
-         signal: "mouse,down,1"; source: "e.event.resize.t";
+         signal: "mouse,down,1"; source: "elm.event.resize.t";
          action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.t";
       }
       program {
-         signal: "mouse,in"; source: "e.event.resize.b";
+         signal: "mouse,in"; source: "elm.event.resize.b";
          action: SIGNAL_EMIT "elm,action,resize,show" "elm.event.resize.b";
       }
       program {
-         signal: "mouse,out"; source: "e.event.resize.b";
+         signal: "mouse,out"; source: "elm.event.resize.b";
          action: SIGNAL_EMIT "elm,action,resize,hide" "elm.event.resize.b";
       }
       program {
-         signal: "mouse,down,1"; source: "e.event.resize.b";
+         signal: "mouse,down,1"; source: "elm.event.resize.b";
          action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.b";
       }
       program {
-         signal: "mouse,in"; source: "e.event.resize.tl";
+         signal: "mouse,in"; source: "elm.event.resize.tl";
          action: SIGNAL_EMIT "elm,action,resize,show" "elm.event.resize.tl";
       }
       program {
-         signal: "mouse,out"; source: "e.event.resize.tl";
+         signal: "mouse,out"; source: "elm.event.resize.tl";
          action: SIGNAL_EMIT "elm,action,resize,hide" "elm.event.resize.tl";
       }
       program {
-         signal: "mouse,down,1"; source: "e.event.resize.tl";
+         signal: "mouse,down,1"; source: "elm.event.resize.tl";
          action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.tl";
       }
       program {
-         signal: "mouse,in"; source: "e.event.resize.tr";
+         signal: "mouse,in"; source: "elm.event.resize.tr";
          action: SIGNAL_EMIT "elm,action,resize,show" "elm.event.resize.tr";
       }
       program {
-         signal: "mouse,out"; source: "e.event.resize.tr";
+         signal: "mouse,out"; source: "elm.event.resize.tr";
          action: SIGNAL_EMIT "elm,action,resize,hide" "elm.event.resize.tr";
       }
       program {
-         signal: "mouse,down,1"; source: "e.event.resize.tr";
+         signal: "mouse,down,1"; source: "elm.event.resize.tr";
          action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.tr";
       }
       program {
-         signal: "mouse,in"; source: "e.event.resize.bl";
+         signal: "mouse,in"; source: "elm.event.resize.bl";
          action: SIGNAL_EMIT "elm,action,resize,show" "elm.event.resize.bl";
       }
       program {
-         signal: "mouse,out"; source: "e.event.resize.bl";
+         signal: "mouse,out"; source: "elm.event.resize.bl";
          action: SIGNAL_EMIT "elm,action,resize,hide" "elm.event.resize.bl";
       }
       program {
-         signal: "mouse,down,1"; source: "e.event.resize.bl";
+         signal: "mouse,down,1"; source: "elm.event.resize.bl";
          action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.bl";
       }
       program {
-         signal: "mouse,in"; source: "e.event.resize.br";
+         signal: "mouse,in"; source: "elm.event.resize.br";
          action: SIGNAL_EMIT "elm,action,resize,show" "elm.event.resize.br";
       }
       program {
-         signal: "mouse,out"; source: "e.event.resize.br";
+         signal: "mouse,out"; source: "elm.event.resize.br";
          action: SIGNAL_EMIT "elm,action,resize,hide" "elm.event.resize.br";
       }
       program {
-         signal: "mouse,down,1"; source: "e.event.resize.br";
+         signal: "mouse,down,1"; source: "elm.event.resize.br";
          action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.br";
       }
    }
