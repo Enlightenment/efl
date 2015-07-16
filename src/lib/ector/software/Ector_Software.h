@@ -3,7 +3,13 @@
 
 #include <Ector.h>
 
+#ifndef _ECTOR_SOFTWARE_SURFACE_EO_CLASS_TYPE
+#define _ECTOR_SOFTWARE_SURFACE_EO_CLASS_TYPE
+
 typedef Eo Ector_Software_Surface;
+
+#endif
+
 typedef struct _Software_Rasterizer Software_Rasterizer;
 
 #include "software/ector_software_surface.eo.h"
