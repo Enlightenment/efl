@@ -6,8 +6,7 @@ class Evas.Canvas3D.Light (Evas.Canvas3D.Object, Evas.Common_Interface)
    methods {
       @property directional {
          set {
-            /*@
-              Set the directional flag of the given light.
+            [[Set the directional flag of the given light.
 
               Directional light is a type of light which is infinitely far away with no
               attenuation. The light direction is determined by the containing node's
@@ -15,29 +14,21 @@ class Evas.Canvas3D.Light (Evas.Canvas3D.Object, Evas.Common_Interface)
 
               By default, directional is not enabled.
 
-              @see evas_canvas3d_node_look_at_set()
-
-              @ingroup Evas_Canvas3D_Light
-             */
+              \@ref evas_canvas3d_node_look_at_set]]
          }
          get {
-            /*@
-              Get the directional flag of the given light.
+            [[Get the directional flag of the given light.
 
-              @see evas_canvas3d_light_directional_set()
-
-              @ingroup Evas_Canvas3D_Light
-             */
+              See also @.directional.set]]
          }
          values {
-            directional: bool; /*@ Whether the light is directional (@c EINA_TRUE), or not (@c EINA_FALSE).*/
+            directional: bool; [[Whether the light is directional ($true), or not ($false).]]
          }
       }
 
       @property spot_exponent {
          set {
-            /*@
-              Set the spot exponent of the given light.
+            [[Set the spot exponent of the given light.
 
               Higher spot exponent means intensity at the center of the cone is relatively
               stronger. Zero exponent means the light intensity is evenly distibuted. The
@@ -46,174 +37,126 @@ class Evas.Canvas3D.Light (Evas.Canvas3D.Object, Evas.Common_Interface)
 
               Default spot exponent is 0.
 
-              @see evas_canvas3d_light_spot_cutoff_set()
-
-              @ingroup Evas_Canvas3D_Light
-             */
+              See also @.spot_cutoff.set]]
          }
          get {
-            /*@
-              Get the spot exponent of the given light.
+            [[Get the spot exponent of the given light.
 
-              @see evas_canvas3d_light_spot_exponent_set()
-
-              @ingroup Evas_Canvas3D_Light
-             */
+              See also @.spot_exponent.set]]
          }
          values {
-            exponent: Evas_Real; /*@ Spot exponent value..*/
+            exponent: Evas_Real; [[Spot exponent value.]]
          }
       }
 
       @property spot_cutoff {
          set {
-            /*@
-              Set the spot cutoff angle of the given light.
+            [[Set the spot cutoff angle of the given light.
 
               Only angle less than 180 degree will make it spot light, so that other spot
               light attribute will take effect.
 
-              Default spot cutoff angle is 180.
-
-              @ingroup Evas_Canvas3D_Light
-             */
+              Default spot cutoff angle is 180.]]
          }
          get {
-            /*@
-              Get the spot cutoff angle of the given light.
+            [[Get the spot cutoff angle of the given light.
 
-              @see evas_canvas3d_light_spot_cutoff_set()
-
-              @ingroup Evas_Canvas3D_Light
-             */
+              See also @.spot_cutoff.set]]
          }
          values {
-            cutoff: Evas_Real; /*@ Cutoff angle in degree..*/
+            cutoff: Evas_Real; [[Cutoff angle in degree..]]
          }
       }
 
       @property attenuation_enable {
          set {
-            /*@
-              Set the attenuation enable flag of the given light.
+            [[Set the attenuation enable flag of the given light.
 
               By default, light attenuation is not enabled.
 
-              @see evas_canvas3d_light_attenuation_set()
-
-              @ingroup Evas_Canvas3D_Light
-             */
+              See also @.attenuation_set]]
          }
          get {
-            /*@
-              Get the attenuation enable flag of the given light.
+            [[Get the attenuation enable flag of the given light.
 
-              @see evas_canvas3d_light_attenuation_enable_set()
-
-              @ingroup Evas_Canvas3D_Light
-             */
+              See also @.attenuation_enable.set]]
          }
          values {
-            enable: bool; /*@ Whether to enable attenuation (@c EINA_TRUE), or not (@c EINA_FALSE)..*/
+            enable: bool; [[Whether to enable attenuation ($true), or not ($false)..]]
          }
       }
 
       ambient_set {
-         /*@
-           Set the ambient color of the given light.
+         [[Set the ambient color of the given light.
 
-           Default ambient color is (0.0, 0.0, 0.0, 1.0).
-
-           @ingroup Evas_Canvas3D_Light
-          */
+           Default ambient color is (0.0, 0.0, 0.0, 1.0).]]
          params {
-           @in r: Evas_Real; /*@ Red component of the ambient color between [0.0, 1.0]. */
-           @in g: Evas_Real; /*@ Green component of the ambient color between [0.0, 1.0]. */
-           @in b: Evas_Real; /*@ Blue component of the ambient color between [0.0, 1.0]. */
-           @in a: Evas_Real; /*@ Alpha component of the ambient color between [0.0, 1.0]. */
+           @in r: Evas_Real; [[Red component of the ambient color between [0.0, 1.0].]]
+           @in g: Evas_Real; [[Green component of the ambient color between [0.0, 1.0].]]
+           @in b: Evas_Real; [[Blue component of the ambient color between [0.0, 1.0].]]
+           @in a: Evas_Real; [[Alpha component of the ambient color between [0.0, 1.0].]]
          }
       }
       ambient_get @const {
-         /*@
-           Get the ambient color of the given light.
+         [[Get the ambient color of the given light.
 
-           @see evas_canvas3d_light_ambient_set()
-
-           @ingroup Evas_Canvas3D_Light
-          */
+           See also @.ambient_set]]
          params {
-           @out r: Evas_Real; /*@ Red component of the ambient color between [0.0, 1.0]. */
-           @out g: Evas_Real; /*@ Green component of the ambient color between [0.0, 1.0]. */
-           @out b: Evas_Real; /*@ Blue component of the ambient color between [0.0, 1.0]. */
-           @out a: Evas_Real; /*@ Alpha component of the ambient color between [0.0, 1.0]. */
+           @out r: Evas_Real; [[Red component of the ambient color between [0.0, 1.0].]]
+           @out g: Evas_Real; [[Green component of the ambient color between [0.0, 1.0].]]
+           @out b: Evas_Real; [[Blue component of the ambient color between [0.0, 1.0].]]
+           @out a: Evas_Real; [[Alpha component of the ambient color between [0.0, 1.0].]]
          }
       }
 
       diffuse_set {
-         /*@
-           Set the diffuse color of the given light.
+         [[Set the diffuse color of the given light.
 
-           Default diffuse color is (1.0, 1.0, 1.0, 1.0).
-
-           @ingroup Evas_Canvas3D_Light
-          */
+           Default diffuse color is (1.0, 1.0, 1.0, 1.0).]]
          params {
-           @in r: Evas_Real; /*@ Red component of the diffuse color between [0.0, 1.0]. */
-           @in g: Evas_Real; /*@ Green component of the diffuse color between [0.0, 1.0]. */
-           @in b: Evas_Real; /*@ Blue component of the diffuse color between [0.0, 1.0]. */
-           @in a: Evas_Real; /*@ Alpha component of the diffuse color between [0.0, 1.0]. */
+           @in r: Evas_Real; [[Red component of the diffuse color between [0.0, 1.0].]]
+           @in g: Evas_Real; [[Green component of the diffuse color between [0.0, 1.0].]]
+           @in b: Evas_Real; [[Blue component of the diffuse color between [0.0, 1.0].]]
+           @in a: Evas_Real; [[Alpha component of the diffuse color between [0.0, 1.0].]]
          }
       }
       diffuse_get @const {
-         /*@
-           Get the diffuse color of the given light.
+         [[Get the diffuse color of the given light.
 
-           @see evas_canvas3d_light_diffuse_set()
-
-           @ingroup Evas_Canvas3D_Light
-          */
+           See also @.diffuse_set]]
          params {
-           @out r: Evas_Real; /*@ Red component of the diffuse color between [0.0, 1.0]. */
-           @out g: Evas_Real; /*@ Green component of the diffuse color between [0.0, 1.0]. */
-           @out b: Evas_Real; /*@ Blue component of the diffuse color between [0.0, 1.0]. */
-           @out a: Evas_Real; /*@ Alpha component of the diffuse color between [0.0, 1.0]. */
+           @out r: Evas_Real; [[Red component of the diffuse color between [0.0, 1.0].]]
+           @out g: Evas_Real; [[Green component of the diffuse color between [0.0, 1.0].]]
+           @out b: Evas_Real; [[Blue component of the diffuse color between [0.0, 1.0].]]
+           @out a: Evas_Real; [[Alpha component of the diffuse color between [0.0, 1.0].]]
          }
       }
 
       specular_set {
-         /*@
-           Set the specular color of the given light.
+         [[Set the specular color of the given light.
 
-           Default specular color is (1.0, 1.0, 1.0, 1.0).
-
-           @ingroup Evas_Canvas3D_Light
-          */
+           Default specular color is (1.0, 1.0, 1.0, 1.0).]]
          params {
-           @in r: Evas_Real; /*@ Red component of the specular color between [0.0, 1.0]. */
-           @in g: Evas_Real; /*@ Green component of the specular color between [0.0, 1.0]. */
-           @in b: Evas_Real; /*@ Blue component of the specular color between [0.0, 1.0]. */
-           @in a: Evas_Real; /*@ Alpha component of the specular color between [0.0, 1.0]. */
+           @in r: Evas_Real; [[Red component of the specular color between [0.0, 1.0].]]
+           @in g: Evas_Real; [[Green component of the specular color between [0.0, 1.0].]]
+           @in b: Evas_Real; [[Blue component of the specular color between [0.0, 1.0].]]
+           @in a: Evas_Real; [[Alpha component of the specular color between [0.0, 1.0].]]
          }
       }
       specular_get @const {
-         /*@
-           Get the specular color of the given light.
+         [[Get the specular color of the given light.
 
-           @see evas_canvas3d_light_specular_set()
-
-           @ingroup Evas_Canvas3D_Light
-          */
+           See also @.specular_set]]
          params {
-           @out r: Evas_Real; /*@ Red component of the specular color between [0.0, 1.0]. */
-           @out g: Evas_Real; /*@ Green component of the specular color between [0.0, 1.0]. */
-           @out b: Evas_Real; /*@ Blue component of the specular color between [0.0, 1.0]. */
-           @out a: Evas_Real; /*@ Alpha component of the specular color between [0.0, 1.0]. */
+           @out r: Evas_Real; [[Red component of the specular color between [0.0, 1.0].]]
+           @out g: Evas_Real; [[Green component of the specular color between [0.0, 1.0].]]
+           @out b: Evas_Real; [[Blue component of the specular color between [0.0, 1.0].]]
+           @out a: Evas_Real; [[Alpha component of the specular color between [0.0, 1.0].]]
          }
       }
 
       attenuation_set {
-         /*@
-           Set the attenuation of the given light.
+         [[Set the attenuation of the given light.
 
            Light attenuation has no effect with directional light. And the attenuation
            should be enabled first to take effect. The attenuation factor is calculated
@@ -223,123 +166,82 @@ class Evas.Canvas3D.Light (Evas.Canvas3D.Object, Evas.Common_Interface)
 
            Default attenuation is constant = 1.0, linear = 0.0, quadratic = 0.0.
 
-           @see evas_canvas3d_light_attenuation_enable_set()
-
-           @ingroup Evas_Canvas3D_Light
-          */
+           See also @.attenuation_enable.set]]
          params {
-            @in constant: Evas_Real; /*@ Constant attenuation term..*/
-            @in linear: Evas_Real; /*@ Linear attenuation term..*/
-            @in quadratic: Evas_Real; /*@ Quadratic attenuation term..*/
+            @in constant: Evas_Real; [[Constant attenuation term..]]
+            @in linear: Evas_Real; [[Linear attenuation term..]]
+            @in quadratic: Evas_Real; [[Quadratic attenuation term..]]
          }
       }
 
       attenuation_get @const {
-         /*@
-           Get the attenuation of the given light.
+         [[Get the attenuation of the given light.
 
-           @see evas_canvas3d_light_attenuation_set()
-
-           @ingroup Evas_Canvas3D_Light
-          */
+           See also @.attenuation_set]]
          params {
-            @out constant: Evas_Real; /*@ Constant attenuation term..*/
-            @out linear: Evas_Real; /*@ Linear attenuation term..*/
-            @out quadratic: Evas_Real; /*@ Quadratic attenuation term..*/
+            @out constant: Evas_Real; [[Constant attenuation term..]]
+            @out linear: Evas_Real; [[Linear attenuation term..]]
+            @out quadratic: Evas_Real; [[Quadratic attenuation term..]]
          }
       }
 
       projection_matrix_set {
-         /*@
-           Set the projection matrix of the given light source.
-
-           @param light The given light source.
-           @param matrix Pointer to the array of 16 Evas_Real values in column major order.
+         [[Set the projection matrix of the given light source.
 
            Default projection matrix is identity matrix.
 
-           @see evas_canvas3d_light_projection_perspective_set()
-           @see evas_canvas3d_light_projection_ortho_set()
-           @see evas_canvas3d_light_projection_frustum_set()
-
-           @ingroup Evas_Canvas3D_Light
-          */
+           See also @.projection_perspective_set, @.projection_ortho_set and @.projection_frustum_set]]
          params {
-           @in matrix: const(Evas_Real) *; /*@ Projection Matrix */
+           @in matrix: const(Evas_Real) *; [[Projection Matrix. Pointer to the array of 16 Evas_Real values in column major order.]]
          }
       }
 
       projection_matrix_get  @const {
-         /*@
-          Get the projection matrix of the given light source.
+         [[Get the projection matrix of the given light source.
 
-          @param light The given light source.
-          @param matrix Pointer to receive the 16 Evas_Real values in column major order.
-
-          @see evas_canvas3d_light_projection_matrix_set()
-
-          @ingroup Evas_Canvas3D_Light
-         */
+           See also @.projection_matrix_set]]
          params {
-           @out matrix: Evas_Real; /*@ Projection Matrix */
+           @out matrix: Evas_Real; [[Projection Matrix]]
          }
       }
 
       projection_perspective_set {
-         /*@
-           Set the projection matrix of the given light source with perspective projection.
+         [[Set the projection matrix of the given light source with perspective projection.
 
-           @param light The given light source.
-           @param fovy Field of view angle in Y direction.
-           @param aspect Aspect ratio.
-           @param dnear Distance to near clipping plane.
-           @param dfar Distance to far clipping plane.
-
-           @see evas_canvas3d_light_projection_matrix_set()
-
-           @ingroup Evas_Canvas3D_Light
-          */
+           See also @.projection_matrix_set]]
 
          params {
-            fovy: Evas_Real; /*@ Field of view angle in Y direction. */
-            aspect: Evas_Real; /*@ Aspect ratio.*/
-            dnear: Evas_Real; /*@ Distance to near clipping plane. */
-            dfar: Evas_Real; /*@ Distance to far clipping plane. */
+            fovy: Evas_Real; [[Field of view angle in Y direction.]]
+            aspect: Evas_Real; [[Aspect ratio.]]
+            dnear: Evas_Real; [[Distance to near clipping plane.]]
+            dfar: Evas_Real; [[Distance to far clipping plane.]]
          }
       }
 
       projection_frustum_set {
-         /*@
-           Set the projection matrix of the given light source with frustum projection.
+         [[Set the projection matrix of the given light source with frustum projection.
 
-           @see evas_canvas3d_Light_projection_matrix_set()
-
-           @ingroup Evas_Canvas3D_Light
-          */
+           @Evas.Canvas3D.Light.projection_matrix_set]]
          params {
-            left: Evas_Real; /*@ Left X coordinate of the near clipping plane. */
-            right: Evas_Real; /*@ Right X coordinate of the near clipping plane..*/
-            bottom: Evas_Real; /*@ Bottom Y coordinate of the near clipping plane. */
-            top: Evas_Real; /*@ Top Y coordinate of the near clipping plane */
-            dnear: Evas_Real; /*@ Distance to near clipping plane. */
-            dfar: Evas_Real; /*@ Distance to far clipping plane. */
+            left: Evas_Real; [[Left X coordinate of the near clipping plane.]]
+            right: Evas_Real; [[Right X coordinate of the near clipping plane.]]
+            bottom: Evas_Real; [[Bottom Y coordinate of the near clipping plane.]]
+            top: Evas_Real; [[Top Y coordinate of the near clipping plane]]
+            dnear: Evas_Real; [[Distance to near clipping plane.]]
+            dfar: Evas_Real; [[Distance to far clipping plane.]]
          }
       }
       projection_ortho_set {
-         /*@
-           Set the projection matrix of the given light source with orthogonal projection.
+         [[Set the projection matrix of the given light source with orthogonal projection.
 
-           @see evas_canvas3d_light_projection_matrix_set()
-
-           @ingroup Evas_Canvas3D_Light
-          */
+           See also @.projection_matrix_set]]
          params {
-            left: Evas_Real; /*@ Left X coordinate of the near clipping plane. */
-            right: Evas_Real; /*@ Right X coordinate of the near clipping plane..*/
-            bottom: Evas_Real; /*@ Bottom Y coordinate of the near clipping plane. */
-            top: Evas_Real; /*@ Top Y coordinate of the near clipping plane */
-            dnear: Evas_Real; /*@ Distance to near clipping plane. */
-            dfar: Evas_Real; /*@ Distance to far clipping plane. */
+            left: Evas_Real; [[Left X coordinate of the near clipping plane.]]
+            right: Evas_Real; [[Right X coordinate of the near clipping plane.]]
+            bottom: Evas_Real; [[Bottom Y coordinate of the near clipping plane.]]
+            top: Evas_Real; [[Top Y coordinate of the near clipping plane]]
+            dnear: Evas_Real; [[Distance to near clipping plane.]]
+            dfar: Evas_Real; [[Distance to far clipping plane.]]
          }
       }
    }
