@@ -19,95 +19,88 @@ class Elm.Bg (Elm.Layout, Efl.File)
    methods {
       @property option {
          set {
-            /*@
-            Set the mode of display for a given background widget's image
+            [[Set the mode of display for a given background widget's image
 
-            This sets how the background widget will display its image. This
-            will only work if the elm_bg_file_set() was previously called with
-            an image file on @a obj. The image can be display tiled, scaled,
-            centered or stretched. #ELM_BG_OPTION_SCALE by default.
+              This sets how the background widget will display its image. This
+              will only work if the @Efl.File.file.set was previously called with
+              an image file on $obj. The image can be display tiled, scaled,
+              centered or stretched. @Elm.Bg.Option.scale by default.
 
-            @see elm_bg_option_get()
+              See also @.option.get.
+            ]]
 
-            @ingroup Bg */
          }
          get {
-            /*@
-            Get the mode of display for a given background widget's image
+            [[Get the mode of display for a given background widget's image.
 
-            @return The image displaying mode in use for @a obj or #ELM_BG_OPTION_LAST,
-            on errors.
+              See also @.option.set for more details
 
-            @see elm_bg_option_set() for more details
-
-            @ingroup Bg */
+            ]]
          }
          values {
-            option: Elm.Bg.Option; /*@ The desired background option (see #Elm_Bg_Option) */
+            option: Elm.Bg.Option; [[The desired background option(See @Elm.Bg.Option)]]
          }
       }
       @property color {
          set {
-            /*@
-            Set the color on a given background widget
+            [[Set the color on a given background widget
 
-            This sets the color used for the background rectangle, in RGB
-            format. Each color component's range is from 0 to 255.
+              This sets the color used for the background rectangle, in RGB
+              format. Each color component's range is from 0 to 255.
 
-            @note You probably only want to use this function if you haven't
-            previously called elm_bg_file_set(), so that you just want a solid
-            color background.
+              Note: You probably only want to use this function if you haven't
+              previously called @Efl.File.file.set, so that you just want a solid
+              color background.
 
-            @note You can reset the color by setting @p r, @p g, @p b as -1, -1, -1.
+              Note: You can reset the color by setting $r, $g, $b as -1, -1, -1.
 
-            @see elm_bg_color_get()
+              See also @.color.get
 
-            @ingroup Bg */
+            ]]
             legacy: null; /* legacy doesn't have 'a' param */
          }
          get {
-            /*@
-            Get the color set on a given background widget
+            [[Get the color set on a given background widget
 
-            @note Use @c NULL pointers on the file components you're not
-            interested in: they'll be ignored by the function.
+              Note: Use $null pointers on the file components you're not
+              interested in: they'll be ignored by the function.
 
-            @see elm_bg_color_get() for more details
+              See also @.color.get for more details
 
-            @ingroup Bg */
+            ]]
             legacy: null; /* legacy doesn't have 'a' param */
+
          }
          values {
-            r: int; /*@ The red color component's value */
-            g: int; /*@ The green color component's value */
-            b: int; /*@ The blue color component's value */
-            a: int; /*@ The blue color component's value */
+            r: int; [[The red color component's value]]
+            g: int; [[The green color component's value]]
+            b: int; [[The blue color component's value]]
+            a: int; [[The blue color component's value]]
          }
       }
       @property load_size {
          set {
-            /*@
-            Set the size of the pixmap representation of the image set on a
-            given background widget.
+            [[Set the size of the pixmap representation of the image set on a
+              given background widget.
 
-            @warning This function just makes sense if an image file was set on
-            @p obj, with elm_bg_file_set().
+              Warning: This function just makes sense if an image file was set on
+              $obj, with @Efl.File.file.set
 
-            This function sets a new size for pixmap representation of the
-            given bg image. It allows for the image to be loaded already in the
-            specified size, reducing the memory usage and load time (for
-            example, when loading a big image file with its load size set to a
-            smaller size)
+              This function sets a new size for pixmap representation of the
+              given bg image. It allows for the image to be loaded already in the
+              specified size, reducing the memory usage and load time (for
+              example, when loading a big image file with its load size set to a
+              smaller size)
 
-            @note This is just a hint for the underlying system. The real size
-            of the pixmap may differ depending on the type of image being
-            loaded, being bigger than requested.
+              Note: This is just a hint for the underlying system. The real size
+              of the pixmap may differ depending on the type of image being
+              loaded, being bigger than requested.
 
-            @ingroup Bg */
+            ]]
          }
          values {
-            w: Evas.Coord; /*@ The new width of the image pixmap representation. */
-            h: Evas.Coord; /*@ The new height of the image pixmap representation. */
+            w: Evas.Coord; [[The new width of the image pixmap representation.]]
+            h: Evas.Coord; [[The new height of the image pixmap representation.]]
          }
       }
    }
