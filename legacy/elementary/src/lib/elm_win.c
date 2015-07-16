@@ -100,7 +100,6 @@ struct _Elm_Win_Data
    Evas_Object          *parent; /* parent *window* object*/
    Evas_Object          *img_obj, *frame_obj;
    Evas_Object          *client_obj; /* rect representing the client */
-   Evas_Object          *spacer_obj;
    Eo                   *edje; /**< edje object for a window layout */
    Eo                   *box;
    Evas_Object          *obj; /* The object itself */
@@ -1232,7 +1231,6 @@ _elm_win_frame_obj_update(Elm_Win_Data *sd)
 {
    int fx, fy, fw, fh;
    int ox, oy, ow, oh;
-   int sx, sy, sw, sh;
    int x, y, w, h;
 
    if (sd->fullscreen)
@@ -1244,10 +1242,9 @@ _elm_win_frame_obj_update(Elm_Win_Data *sd)
         return;
 #endif
      }
+
    evas_object_geometry_get(sd->frame_obj, &fx, &fy, &fw, &fh);
    evas_object_geometry_get(sd->client_obj, &ox, &oy, &ow, &oh);
-   evas_object_geometry_get(sd->spacer_obj, &sx, &sy, &sw, &sh);
-
    evas_output_framespace_get(sd->evas, &x, &y, &w, &h);
 
    if ((x != (ox - fx)) || (y != (oy - fy)) ||
@@ -1258,7 +1255,7 @@ _elm_win_frame_obj_update(Elm_Win_Data *sd)
      }
 
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   ecore_wl_window_opaque_region_set(sd->wl.win, -fx, -(fy - sy), sw, sh);
+   ecore_wl_window_opaque_region_set(sd->wl.win, ox, oy, ow + w, oh + h);
 #endif
 }
 
@@ -2871,12 +2868,6 @@ _elm_win_frame_add(Elm_Win_Data *sd,
         ELM_SAFE_FREE(sd->frame_obj, evas_object_del);
         return;
      }
-
-   sd->spacer_obj = evas_object_rectangle_add(sd->evas);
-   evas_object_color_set(sd->spacer_obj, 0, 0, 0, 0);
-   evas_object_repeat_events_set(sd->spacer_obj, EINA_TRUE);
-   edje_object_part_swallow(sd->frame_obj, "elm.swallow.frame_spacer",
-                            sd->spacer_obj);
 
    sd->client_obj = evas_object_rectangle_add(sd->evas);
    evas_object_color_set(sd->client_obj, 0, 0, 0, 0);
