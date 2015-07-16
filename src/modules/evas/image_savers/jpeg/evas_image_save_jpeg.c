@@ -73,7 +73,7 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
    jerr.pub.emit_message = _JPEGErrorHandler2;
    jerr.pub.output_message = _JPEGErrorHandler;
-   if (sigsetjmp(jerr.setjmp_buffer, 1))
+   if (setjmp(jerr.setjmp_buffer))
      {
 	jpeg_destroy_compress(&cinfo);
 	fclose(f);
