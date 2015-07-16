@@ -58,7 +58,7 @@ EVGL_Engine *evgl_engine_init(void *eng_data, const EVGL_Interface *efunc);
 void        *evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h);
 void        *evgl_pbuffer_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h, const int *attrib_list);
 int          evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc);
-void        *evgl_context_create(void *eng_data, EVGL_Context *share_ctx, Evas_GL_Context_Version version, void *(*native_context_get)(void *));
+void        *evgl_context_create(void *eng_data, EVGL_Context *share_ctx, Evas_GL_Context_Version version, void *(*native_context_get)(void *), void *(*engine_data_get)(void *));
 int          evgl_context_destroy(void *eng_data, EVGL_Context *ctx);
 int          evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx);
 

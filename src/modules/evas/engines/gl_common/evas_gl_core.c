@@ -20,6 +20,7 @@ int _evas_gl_log_level = -1;
 
 typedef void           *(*glsym_func_void_ptr) ();
 glsym_func_void_ptr glsym_evas_gl_native_context_get = NULL;
+glsym_func_void_ptr glsym_evas_gl_engine_data_get = NULL;
 
 static void _surface_cap_print(int error);
 static void _surface_context_list_print();
@@ -1616,7 +1617,19 @@ _evgl_native_context_get(Evas_GL_Context *ctx)
 
    evglctx = glsym_evas_gl_native_context_get(ctx);
    if (!evglctx) return NULL;
-   return evgl_current_native_context_get(evglctx);;
+   return evgl_current_native_context_get(evglctx);
+}
+
+void *
+_evgl_engine_data_get(Evas_GL *evasgl)
+{
+   if (!glsym_evas_gl_engine_data_get)
+     {
+        ERR("Engine can't get a pointer to the native display");
+        return NULL;
+     }
+
+   return glsym_evas_gl_engine_data_get(evasgl);
 }
 
 //---------------------------------------------------------------//
@@ -2071,13 +2084,15 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
 void *
 evgl_context_create(void *eng_data, EVGL_Context *share_ctx,
                     Evas_GL_Context_Version version,
-                    void *(*native_context_get)(void *))
+                    void *(*native_context_get)(void *),
+                    void *(*engine_data_get)(void *))
 {
    EVGL_Context *ctx   = NULL;
    EVGL_Resource *rsc  = NULL;
 
    // A little bit ugly. But it works even when dlsym(DEFAULT) doesn't work.
    glsym_evas_gl_native_context_get = native_context_get;
+   glsym_evas_gl_engine_data_get = engine_data_get;
 
    // Check the input
    if (!evgl_engine)

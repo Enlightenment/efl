@@ -326,13 +326,24 @@ evas_gl_surface_destroy(Evas_GL *evas_gl, Evas_GL_Surface *surf)
    surf = NULL;
 }
 
-// Internal function - called from evas_gl_core.c
+// Internal functions - called from evas_gl_core.c
 static void *
 evas_gl_native_context_get(void *context)
 {
    Evas_GL_Context *ctx = context;
    if (!ctx) return NULL;
    return ctx->data;
+}
+
+static void *
+evas_gl_engine_data_get(void *evgl)
+{
+   Evas_GL *evasgl = evgl;
+
+   if (!evasgl) return NULL;
+   if (!evasgl->evas) return NULL;
+
+   return evasgl->evas->engine.data.output;
 }
 
 EAPI Evas_GL_Context *
@@ -367,7 +378,7 @@ evas_gl_context_version_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx,
    ctx->version = version;
    ctx->data = evas_gl->evas->engine.func->gl_context_create
          (evas_gl->evas->engine.data.output, share_ctx ? share_ctx->data : NULL,
-          version, &evas_gl_native_context_get);
+          version, &evas_gl_native_context_get, &evas_gl_engine_data_get);
 
    // Set a few variables
    if (!ctx->data)

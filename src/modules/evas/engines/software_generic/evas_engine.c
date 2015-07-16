@@ -2938,7 +2938,8 @@ eng_gl_surface_destroy(void *data EINA_UNUSED, void *surface)
 
 static void *
 eng_gl_context_create(void *data EINA_UNUSED, void *share_context, int version,
-                      void *(*native_context_get)(void *) EINA_UNUSED)
+                      void *(*native_context_get)(void *) EINA_UNUSED,
+                      void *(*engine_data_get)(void *) EINA_UNUSED)
 {
 #ifdef EVAS_GL
    Render_Engine_GL_Context *ctx;

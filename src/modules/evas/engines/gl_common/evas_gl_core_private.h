@@ -351,6 +351,7 @@ extern EVGL_Context  *_evgl_current_context_get(void);
 extern int            _evgl_not_in_pixel_get(void);
 extern int            _evgl_direct_enabled(void);
 extern EVGLNative_Context _evgl_native_context_get(Evas_GL_Context *ctx);
+extern void          *_evgl_engine_data_get(Evas_GL *evasgl);
 Eina_Bool             _evgl_api_gles2_ext_init(void *getproc, const char *glueexts);
 Eina_Bool             _evgl_api_gles1_ext_init(void *getproc, const char *glueexts);
 Eina_Bool             _evgl_api_gles3_ext_init(void *getproc, const char *glueexts);
