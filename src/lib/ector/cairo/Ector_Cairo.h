@@ -3,7 +3,13 @@
 
 #include <Ector.h>
 
+#ifndef _ECTOR_CAIRO_SURFACE_EO_CLASS_TYPE
+#define _ECTOR_CAIRO_SURFACE_EO_CLASS_TYPE
+
 typedef Eo Ector_Cairo_Surface;
+
+#endif
+
 typedef struct _cairo_t cairo_t;
 
 #include "cairo/ector_cairo_surface.eo.h"
