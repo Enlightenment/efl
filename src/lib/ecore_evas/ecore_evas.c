@@ -1188,7 +1188,7 @@ ecore_evas_managed_move(Ecore_Evas *ee, int x, int y)
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
         ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
-                         "ecore_evas_move");
+                         "ecore_evas_managed_move");
         return;
      }
    IFC(ee, fn_managed_move) (ee, x, y);
