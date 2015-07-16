@@ -1620,7 +1620,11 @@ _elm_toolbar_item_elm_widget_item_part_content_unset(Eo *eo_item EINA_UNUSED, El
 
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
-   if (part && strcmp(part, "object")) return NULL;
+   if (part && strcmp(part, "object") && strcmp(part, "elm.swallow.object"))
+     {
+        eo_do(VIEW(item), o = elm_obj_container_content_unset(part));
+        return o;
+     }
 
    elm_layout_content_unset(VIEW(item), "elm.swallow.object");
    elm_widget_sub_object_del(obj, item->object);
