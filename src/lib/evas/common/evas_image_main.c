@@ -392,11 +392,16 @@ EAPI void
 evas_common_rgba_pending_unloads_cleanup(void)
 {
    Image_Entry *ie;
+   Eina_List *l;
+   Eina_List *l_next;
 
-   EINA_LIST_FREE(pending_unloads, ie)
+   EINA_LIST_FOREACH_SAFE(pending_unloads, l, l_next, ie)
      {
-        if ((ie->need_unload) && (!ie->preload))
-          evas_common_rgba_image_unload_real(ie);
+        if ((ie->need_unload) && (!ie->preload) && (!ie->flags.preload_done))
+          {
+             evas_common_rgba_image_unload_real(ie);
+             pending_unloads = eina_list_remove_list(pending_unloads, l);
+          }
      }
 }
 
