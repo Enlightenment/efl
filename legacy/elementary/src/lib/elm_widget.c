@@ -4502,6 +4502,9 @@ _elm_widget_item_onscreen_is(Elm_Object_Item *item)
    Elm_Widget_Item_Data *id = eo_data_scope_get(item, ELM_WIDGET_ITEM_CLASS);
    if (!id || !id->view) return EINA_FALSE;
 
+   if (!evas_object_visible_get(id->view))
+     return EINA_FALSE;
+
    if (!_elm_widget_onscreen_is(id->widget))
      return EINA_FALSE;
 
