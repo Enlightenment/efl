@@ -366,6 +366,7 @@ group { name: "elm/popup/base/default";
 
 group { name: "elm/popup/content/popup/default";
    alias: "elm/popup/content/popup/transparent";
+   alias: "elm/popup/content/popup/subpopup";
    parts {
       part { name:"elm.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
@@ -377,6 +378,7 @@ group { name: "elm/popup/content/popup/default";
 
 group { name: "elm/popup/buttons1/popup/default";
    alias: "elm/popup/buttons1/popup/transparent";
+   alias: "elm/popup/buttons1/popup/subpopup";
    data.item: "action_area_height" "80";
    parts {
       part { name:"elm.swallow.content.button1"; type: SWALLOW;
@@ -388,6 +390,7 @@ group { name: "elm/popup/buttons1/popup/default";
 
 group { name: "elm/popup/buttons2/popup/default";
    alias: "elm/popup/buttons2/popup/transparent";
+   alias: "elm/popup/buttons2/popup/subpopup";
    data.item: "action_area_height" "80";
    parts{
       part{ name:"elm.swallow.content.button1"; type: SWALLOW;
@@ -404,7 +407,8 @@ group { name: "elm/popup/buttons2/popup/default";
 }
 
 group { name: "elm/popup/buttons3/popup/default";
-   alias: "elm/popup/buttons3/popup/transparent"; 
+   alias: "elm/popup/buttons3/popup/transparent";
+   alias: "elm/popup/buttons3/popup/subpopup";
    data.item: "action_area_height" "80";
    parts{
       part{ name:"elm.swallow.content.button1"; type: SWALLOW;
@@ -483,18 +487,4 @@ group { name: "elm/popup/base/subpopup";
          }
       }
    }
-}
-
-group { name: "elm/popup/content/popup/subpopup";
-   inherit: "elm/popup/content/popup/default";
-}
-
-group { name: "elm/popup/buttons1/popup/subpopup";
-   inherit: "elm/popup/buttons1/popup/default";
-}
-group { name: "elm/popup/buttons2/popup/subpopup";
-   inherit: "elm/popup/buttons2/popup/default";
-}
-group { name: "elm/popup/buttons3/popup/subpopup";
-   inherit: "elm/popup/buttons3/popup/default";
 }
