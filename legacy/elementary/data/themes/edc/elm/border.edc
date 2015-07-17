@@ -797,6 +797,13 @@ group { name: "elm/border/base/default";
    images.image: "win_shadow.png" COMP;
    data.item: "shadow" "1";
    parts {
+      part { name: "opaque_region"; type: RECT; mouse_events: 0;
+         description { state: "default";
+            rel1.to: "top";
+            rel2.to: "bottom";
+            color: 0 0 0 0;
+         }
+      }
       part { name: "shadow_clip"; type: RECT; mouse_events: 0;
          description { state: "default";
             rel1.to: "shadow";
@@ -806,14 +813,20 @@ group { name: "elm/border/base/default";
             visible: 0;
          }
       }
+      part { name: "shadow_spacer"; type: SPACER;
+         description { state: "default";
+            rel1.offset: 7 5;
+            rel2.offset: -8 -12;
+         }
+      }
       part { name: "shadow"; mouse_events: 0; clip_to: "shadow_clip";
          description { state: "default" 0.0;
             image.normal: "win_shadow.png";
             image.border: 14 14 14 14;
             image.middle: 0;
-            rel1.to: "top";
+            rel1.to: "shadow_spacer";
             rel1.offset: -7 -3;
-            rel2.to: "bottom";
+            rel2.to: "shadow_spacer";
             rel2.offset: 6 11;
             fill.smooth: 0;
          }
@@ -827,18 +840,18 @@ group { name: "elm/border/base/default";
             rel1.to_y: "elm.swallow.client";
             rel2.to_y: "elm.swallow.client";
          }
-         description { state: "hidden" 0.0;
-            inherit: "default";
-            visible: 0;
-         }
+         /* description { state: "hidden" 0.0; */
+         /*    inherit: "default"; */
+         /*    visible: 0; */
+         /* } */
       }
       part { name: "elm.swallow.client"; type: SWALLOW;
          clip_to: "client_clip";
          description { state: "default" 0.0;
             rel1.relative: 0.0 1.0;
-            rel1.to_y: "top";
+            rel1.to: "top";
             rel2.relative: 1.0 0.0;
-            rel2.to_y: "bottom";
+            rel2.to: "bottom";
          }
          description { state: "shaded" 0.0;
             inherit: "default" 0.0;
@@ -854,7 +867,9 @@ group { name: "elm/border/base/default";
       part { name: "top"; mouse_events: 0;
          description { state: "default" 0.0;
             image.normal: "vgrad_med_lighter.png";
+            rel1.to: "shadow_spacer";
             rel2.to_y: "title2";
+            rel2.to_x: "shadow_spacer";
             rel2.offset: -1 0;
             fill.smooth: 0;
             TILED_HORIZ(120)
@@ -883,9 +898,11 @@ group { name: "elm/border/base/default";
             rel1.relative: 1.0 0.0;
             rel1.offset: 1 3;
             rel1.to_x: "elm.event.icon";
+            rel1.to_y: "shadow_spacer";
             rel2.relative: 0.0 0.0;
             rel2.offset: -2 3;
             rel2.to_x: "elm.event.minimize";
+            rel2.to_y: "shadow_spacer";
             align: 0.5 0.0;
             color_class: "border_title";
             color3: 255 255 255 255;
@@ -908,9 +925,11 @@ group { name: "elm/border/base/default";
             rel1.relative: 1.0 0.0;
             rel1.offset: 1 2;
             rel1.to_x: "elm.event.icon";
+            rel1.to_y: "shadow_spacer";
             rel2.relative: 0.0 0.0;
             rel2.offset: -1 2;
             rel2.to_x: "elm.event.minimize";
+            rel2.to_y: "shadow_spacer";
             align: 0.5 0.0;
             color_class: "border_title_active";
             color3: 255 255 255 255;
@@ -1108,29 +1127,35 @@ group { name: "elm/border/base/default";
             image.normal: "sym_down_light_selected.png";
          }
       }
-      part { name: "elm.event.titlebar"; type: RECT;
-         description { state: "default" 0.0;
-            rel2.to_y: "elm.swallow.client";
-            rel2.relative: 1 0;
-            rel2.offset: 0 1;
-            color: 0 0 0 0;
-         }
-      }
       part { name: "elm.event.icon"; type: RECT;
          description { state: "default" 0.0;
             rel1.relative: 0.0 0.0;
+            rel1.to: "top";
             rel2.relative: 0.0 1.0;
-            rel2.to_y: "top";
+            rel2.to: "top";
             align: 0.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "elm.event.titlebar"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.event.icon";
+            rel1.to_y: "top";
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 0 -1;
+            rel2.to_x: "elm.event.minimize";
+            rel2.to_y: "top";
             color: 0 0 0 0;
          }
       }
       part { name: "elm.event.close"; type: RECT;
          description { state: "default" 0.0;
             rel1.relative: 1.0 0.0;
+            rel1.to: "top";
             rel2.relative: 1.0 1.0;
-            rel2.to_y: "top";
+            rel2.to: "top";
             align: 1.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             color: 0 0 0 0;
@@ -1141,9 +1166,10 @@ group { name: "elm/border/base/default";
             rel1.relative: -0.25 0.0;
             rel1.offset: -1 0;
             rel1.to_x: "elm.event.close";
+            rel1.to_y: "top";
             rel2.relative: -0.25 1.0;
-            rel2.to_y: "top";
             rel2.to_x: "elm.event.close";
+            rel2.to_y: "top";
             align: 1.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             color: 0 0 0 0;
@@ -1154,6 +1180,7 @@ group { name: "elm/border/base/default";
             rel1.relative: 0.0 0.0;
             rel1.offset: -1 0;
             rel1.to_x: "elm.event.maximize";
+            rel1.to_y: "top";
             rel2.relative: 0.0 1.0;
             rel2.to_y: "top";
             rel2.to_x: "elm.event.maximize";
@@ -1164,30 +1191,39 @@ group { name: "elm/border/base/default";
       }
       part { name: "elm.event.resize.tl"; type: RECT;
          description { state: "default" 0.0;
+            rel1.to: "top";
             rel2.relative: 0.0 0.0;
+            rel2.to: "top";
             min: 32 4;
             align: 0.0 0.0;
             color: 0 0 0 0;
+            fixed: 1 1;
          }
       }
       part { name: "elm.event.resize.t"; type: RECT;
          description { state: "default" 0.0;
             rel1.relative: 1.0 0.0;
+            rel1.to_y: "top";
             rel1.to_x: "elm.event.resize.tl";
             rel2.relative: 0.0 0.0;
             rel2.to_x: "elm.event.resize.tr";
+            rel2.to_y: "top";
             min: 0 4;
             align: 0.5 0.0;
             color: 0 0 0 0;
+            fixed: 1 1;
          }
       }
       part { name: "elm.event.resize.tr"; type: RECT;
          description { state: "default" 0.0;
             rel1.relative: 1.0 0.0;
+            rel1.to: "top";
             rel2.relative: 1.0 0.0;
+            rel2.to: "top";
             min: 32 4;
             align: 1.0 0.0;
             color: 0 0 0 0;
+            fixed: 1 1;
          }
       }
       part { name: "bottom"; type: RECT; mouse_events: 0;
@@ -1196,7 +1232,8 @@ group { name: "elm/border/base/default";
             color: 64 64 64 255;
             rel1.relative: 0.0 1.0;
             rel1.offset: 0 -5;
-            rel2.relative: 1.0 1.0;
+            rel1.to: "shadow_spacer";
+            rel2.to: "shadow_spacer";
             min: 0 5;
             fixed: 0 1;
          }
@@ -1232,9 +1269,9 @@ group { name: "elm/border/base/default";
       part { name: "elm.event.resize.bl"; type: RECT;
          description { state: "default" 0.0;
             rel1.relative: 0.0 1.0;
-            rel1.to_y: "elm.swallow.client";
-            rel1.offset: 0 -1;
+            rel1.to: "bottom";
             rel2.relative: 0.0 1.0;
+            rel2.to: "bottom";
             min: 32 5;
             align: 0.0 1.0;
             color: 0 0 0 0;
@@ -1255,10 +1292,11 @@ group { name: "elm/border/base/default";
          description { state: "default" 0.0;
             rel1.relative: 1.0 1.0;
             rel1.to_x: "elm.event.resize.tl";
-            rel1.to_y: "elm.swallow.client";
+            rel1.to_y: "bottom";
             rel1.offset: 0 -1;
             rel2.relative: 0.0 1.0;
             rel2.to_x: "elm.event.resize.tr";
+            rel2.to_y: "bottom";
             min: 0 5;
             align: 0.5 1.0;
             color: 0 0 0 0;
@@ -1278,9 +1316,9 @@ group { name: "elm/border/base/default";
       part { name: "elm.event.resize.br"; type: RECT;
          description { state: "default" 0.0;
             rel1.relative: 1.0 1.0;
-            rel1.to_y: "elm.swallow.client";
-            rel1.offset: 0 -1;
+            rel1.to: "bottom";
             rel2.relative: 1.0 1.0;
+            rel2.to: "bottom";
             min: 32 5;
             align: 1.0 1.0;
             color: 0 0 0 0;

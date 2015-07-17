@@ -1255,7 +1255,10 @@ _elm_win_frame_obj_update(Elm_Win_Data *sd)
      }
 
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   ecore_wl_window_opaque_region_set(sd->wl.win, ox, oy, ow + w, oh + h);
+   edje_object_part_geometry_get(sd->frame_obj, "opaque_region",
+                                 &ox, &oy, &ow, &oh);
+   DBG("Opaque: %d %d %d %d", ox, oy, ow, oh);
+   ecore_wl_window_opaque_region_set(sd->wl.win, ox, oy, ow, oh);//ow - ox, oh - oy);
 #endif
 }
 
