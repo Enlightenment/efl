@@ -4,114 +4,72 @@ class Evas.Canvas3D.Camera (Evas.Canvas3D.Object, Evas.Common_Interface)
    data: Evas_Canvas3D_Camera_Data;
    methods {
       projection_matrix_set {
-         /*@
-          Set the projection matrix of the given camera.
-
-           @param camera     The given camera.
-           @param matrix     Pointer to the array of 16 Evas_Real values in column major order.
+         [[Set the projection matrix of the given camera.
 
            Default projection matrix is identity matrix.
 
-           @see evas_canvas3d_camera_projection_perspective_set()
-           @see evas_canvas3d_camera_projection_ortho_set()
-           @see evas_canvas3d_camera_projection_frustum_set()
-
-           @ingroup Evas_Canvas3D_Camera
-          */
+           See also @.projection_perspective_set, @.projection_ortho_set and @.projection_frustum_set.]]
          params {
-           @in matrix: const(Evas_Real)*; /*@ Projection Matrix */
+           @in matrix: const(Evas_Real)*; [[Projection Matrix]]
          }
       }
 
       projection_matrix_get @const {
-         /*@
-          Get the projection matrix of the given camera.
+         [[Get the projection matrix of the given camera.
 
-          @param camera     The given camera.
-          @param matrix     Pointer to receive the 16 Evas_Real values in column major order.
-
-          @see evas_canvas3d_camera_projection_matrix_set()
-
-          @ingroup Evas_Canvas3D_Camera
-         */
+           See also @.projection_matrix_set.]]
          params {
-           @out matrix: Evas_Real; /*@ Projection Matrix */
+           @out matrix: Evas_Real; [[Projection Matrix]]
          }
       }
 
       projection_perspective_set {
-         /*@
-           Set the projection matrix of the given camera with perspective projection.
+         [[Set the projection matrix of the given camera with perspective projection.
 
-           @param camera     The given camera.
-           @param fovy       Field of view angle in Y direction.
-           @param aspect     Aspect ratio.
-           @param dnear      Distance to near clipping plane.
-           @param dfar       Distance to far clipping plane.
-
-           @see evas_canvas3d_camera_projection_matrix_set()
-
-           @ingroup Evas_Canvas3D_Camera
-          */
+           See also @.projection_matrix_set.]]
 
          params {
-            fovy: Evas_Real; /*@ Field of view angle in Y direction. */
-            aspect: Evas_Real; /*@ Aspect ratio.*/
-            dnear: Evas_Real; /*@ Distance to near clipping plane. */
-            dfar: Evas_Real; /*@ Distance to far clipping plane. */
+            fovy: Evas_Real; [[Field of view angle in Y direction.]]
+            aspect: Evas_Real; [[Aspect ratio.]]
+            dnear: Evas_Real; [[Distance to near clipping plane.]]
+            dfar: Evas_Real; [[Distance to far clipping plane.]]
          }
       }
 
       projection_frustum_set {
-         /*@
-           Set the projection matrix of the given camera with frustum projection.
+         [[Set the projection matrix of the given camera with frustum projection.
 
-           @see evas_canvas3d_camera_projection_matrix_set()
-
-           @ingroup Evas_Canvas3D_Camera
-          */
+           See also @.projection_matrix_set.]]
          params {
-            left: Evas_Real; /*@ Left X coordinate of the near clipping plane. */
-            right: Evas_Real; /*@ Right X coordinate of the near clipping plane..*/
-            bottom: Evas_Real; /*@ Bottom Y coordinate of the near clipping plane. */
-            top: Evas_Real; /*@ Top Y coordinate of the near clipping plane */
-            dnear: Evas_Real; /*@ Distance to near clipping plane. */
-            dfar: Evas_Real; /*@ Distance to far clipping plane. */
+            left: Evas_Real; [[Left X coordinate of the near clipping plane.]]
+            right: Evas_Real; [[Right X coordinate of the near clipping plane..]]
+            bottom: Evas_Real; [[Bottom Y coordinate of the near clipping plane.]]
+            top: Evas_Real; [[Top Y coordinate of the near clipping plane]]
+            dnear: Evas_Real; [[Distance to near clipping plane.]]
+            dfar: Evas_Real; [[Distance to far clipping plane.]]
          }
       }
       projection_ortho_set {
-         /*@
-           Set the projection matrix of the given camera with orthogonal projection.
+         [[Set the projection matrix of the given camera with orthogonal projection.
 
-           @see evas_canvas3d_camera_projection_matrix_set()
-
-           @ingroup Evas_Canvas3D_Camera
-          */
+           See also @.projection_matrix_set.]]
          params {
-            left: Evas_Real; /*@ Left X coordinate of the near clipping plane. */
-            right: Evas_Real; /*@ Right X coordinate of the near clipping plane..*/
-            bottom: Evas_Real; /*@ Bottom Y coordinate of the near clipping plane. */
-            top: Evas_Real; /*@ Top Y coordinate of the near clipping plane */
-            dnear: Evas_Real; /*@ Distance to near clipping plane. */
-            dfar: Evas_Real; /*@ Distance to far clipping plane. */
+            left: Evas_Real; [[Left X coordinate of the near clipping plane.]]
+            right: Evas_Real; [[Right X coordinate of the near clipping plane..]]
+            bottom: Evas_Real; [[Bottom Y coordinate of the near clipping plane.]]
+            top: Evas_Real; [[Top Y coordinate of the near clipping plane]]
+            dnear: Evas_Real; [[Distance to near clipping plane.]]
+            dfar: Evas_Real; [[Distance to far clipping plane.]]
          }
       }
       node_visible_get {
-         /*@
-            Check is bounding sphere of given node inside frustum of camera node.
-          *
-          * @param camera          The given camera node.
-          * @param node            The given node.
-          * @return                @c EINA_TRUE in frustum, @c EINA_FALSE otherwise
+         [[Check is bounding sphere of given node inside frustum of camera node.
 
-          * If the nodes are @ NULL or nodes type mismatch error wrong type of nodes will be generated and returned @ EINA_FALSE.
-
-          * @ingroup Evas_Canvas3D_Camera
-          */
-         return: bool;
+           If the nodes are $null or nodes type mismatch error wrong type of nodes will be generated and returned $false.]]
+         return: bool; [[$true in frustum, $false otherwise]]
          params {
-            @in camera_node: Evas.Canvas3D.Node *;
-            @in node: Evas.Canvas3D.Node *;
+            @in camera_node: Evas.Canvas3D.Node *; [[The given camera node.]]
+            @in node: Evas.Canvas3D.Node *; [[The given node.]]
             @in key: Evas.Canvas3D.Frustum_Mode;
          }
       }
