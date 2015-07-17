@@ -1465,6 +1465,12 @@ _EVASGL_EXT_END()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #ifdef GL_GLES
 #if _EVASGL_EXT_ENABLE_EGL
+
+// Disable warnings about deprecated functions here
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 _EVASGL_EXT_BEGIN(EGL_KHR_image_base)
 
 	_EVASGL_EXT_DRVNAME(EGL_KHR_image_base)
@@ -1496,6 +1502,9 @@ _EVASGL_EXT_BEGIN(EGL_KHR_image_base)
 
 _EVASGL_EXT_END()
 
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+#pragma GCC diagnostic pop
+#endif
 
 
 _EVASGL_EXT_BEGIN(EGL_KHR_image_pixmap)

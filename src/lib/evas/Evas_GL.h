@@ -4133,9 +4133,10 @@ struct _Evas_GL_API
     * @li @c EVAS_GL_NATIVE_SURFACE_TIZEN (Tizen platform only):<br/>
     * Requires the @c EVAS_GL_TIZEN_image_native_surface extension.
     *
+    * @deprecated
     * @note Please consider using @ref evasglCreateImageForContext instead.
     */
-   EvasGLImage  (*evasglCreateImage) (int target, void* buffer, const int* attrib_list) EINA_WARN_UNUSED_RESULT;
+   EvasGLImage  (*evasglCreateImage) (int target, void* buffer, const int* attrib_list) EINA_WARN_UNUSED_RESULT EINA_DEPRECATED;
 
    /**
     * @anchor evasglDestroyImage
