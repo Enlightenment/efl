@@ -3815,6 +3815,7 @@ typedef unsigned long long EvasGLTime;
 #define EVAS_GL_KHR_wait_sync 1
 
 /**
+ * @anchor evasgl_sync_values
  * @name Constants used to define and wait for Sync objects.
  * @{
  */
@@ -4461,30 +4462,102 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
    /**
     * @name Evas GL Sync object functions
     * @since_tizen 2.3
+    * @since 1.12
     * @{ */
+
    /**
     * @anchor evasglCreateSync
-    * @brief Requires the extension @c EGL_KHR_fence_sync, similar to eglCreateSyncKHR.
+    * @brief Create a synchronization primitive which can be tested or waited upon.
+    *
+    * @note Requires the extension @c EGL_KHR_fence_sync, similar to eglCreateSyncKHR.
+    *
+    * @param evas_gl      The current Evas_GL connection
+    * @param type         One of: @c EVAS_GL_SYNC_FENCE or @c EVAS_GL_SYNC_REUSABLE
+    * @param attrib_list  Optional attributes list, terminated by @c EVAS_GL_NONE
+    *                     The supported attributes depend on the driver extensions,
+    *                     please refer to the EGL specifications for more information.
+    *
+    * @return A new sync object (EvasGLSync)
+    * @since 1.12
     */
    EvasGLSync   (*evasglCreateSync) (Evas_GL *evas_gl, unsigned int type, const int *attrib_list);
-   /** @anchor evasglDestroySync
-    * @brief Requires the extension @c EGL_KHR_fence_sync, similar to eglDestroySyncKHR.
+   /**
+    * @anchor evasglDestroySync
+    * @brief Destroys a sync object created by @c evasglCreateSync.
+    *
+    * @note Requires the extension @c EGL_KHR_fence_sync, similar to eglDestroySyncKHR.
+    *
+    * @param evas_gl     The current Evas_GL connection
+    * @param sync        A valid sync object created by @c evasglCreateSync
+    *
+    * @return @c EINA_TRUE in case of success, @c EINA_FALSE in case of failure
+    *         (in which case evas_gl_error_get() should return an error code)
+    * @since 1.12
     */
    Eina_Bool    (*evasglDestroySync) (Evas_GL *evas_gl, EvasGLSync sync);
-   /** @anchor evasglClientWaitSync
-    * @brief Requires the extension @c EGL_KHR_fence_sync, similar to eglClientWaitSyncKHR.
+
+   /**
+    * @anchor evasglClientWaitSync
+    * @brief Block and wait until for sync object is signaled or timeout is reached
+    *
+    * @param evas_gl     The current Evas_GL connection
+    * @param sync        A valid sync object created by evasglCreateSync
+    * @param timeout     A relative timeout in nanoseconds
+    *
+    * @note Requires the extension @c EGL_KHR_reusable_sync, similarly to eglClientWaitSyncKHR.
+    *
+    * @return @c EVAS_GL_TIMEOUT_EXPIRED if the sync failed and timeout was reached,
+    *         @c EVAS_GL_CONDITION_SATISFIED if the sync was signaled,
+    *         or 0 in case of failure (in which case evas_gl_error_get() should return an error code)
+    * @since 1.12
     */
    int          (*evasglClientWaitSync) (Evas_GL *evas_gl, EvasGLSync sync, int flags, EvasGLTime timeout);
-   /** @anchor evasglSignalSync
-    * @brief Requires the extension @c EGL_KHR_reusable_sync, similar to eglSignalSyncKHR.
+
+   /**
+    * @anchor evasglSignalSync
+    * @brief Signal a sync object, unlocking all threads waiting on it
+    *
+    * @param evas_gl     The current Evas_GL connection
+    * @param sync        A valid sync object created by evasglCreateSync
+    *
+    * @note Requires the extension @c EGL_KHR_reusable_sync or @c EGL_KHR_wait_sync, similarly to eglSignalSyncKHR.
+    *
+    * @return @c EINA_TRUE in case of success, or
+    *         @c EINA_FALSE in case of failure (in which case evas_gl_error_get() should return an error code)
+    * @since 1.12
     */
    Eina_Bool    (*evasglSignalSync) (Evas_GL *evas_gl, EvasGLSync sync, unsigned mode);
-   /** @anchor evasglGetSyncAttrib
-    * @brief Requires the extension @c EGL_KHR_fence_sync, similar to eglGetSyncAttribKHR.
+
+   /**
+    * @anchor evasglGetSyncAttrib
+    * @brief Query a sync object for its properties
+    *
+    * @param evas_gl     The current Evas_GL connection
+    * @param sync        A valid sync object created by evasglCreateSync
+    * @param attribute   Which attribute to query, can be one of: @c EVAS_GL_SYNC_STATUS, @c EVAS_GL_SYNC_TYPE or @c EVAS_GL_SYNC_CONDITION
+    * @param value       Return value or the query, see @ref evasgl_sync_values "sync object".
+    *
+    * @note Requires the extension @c EGL_KHR_fence_sync, similar to eglGetSyncAttribKHR.
+    *
+    * @return @c EINA_TRUE in case of success, or
+    *         @c EINA_FALSE in case of failure (in which case evas_gl_error_get() should return an error code)
+    * @since 1.12
     */
    Eina_Bool    (*evasglGetSyncAttrib) (Evas_GL *evas_gl, EvasGLSync sync, int attribute, int *value);
-   /** @anchor evasglWaitSync
-    * @brief Requires the extension @c EGL_KHR_wait_sync, similar to eglWaitSyncKHR.
+
+   /**
+    * @anchor evasglWaitSync
+    * @brief Wait on an EvasGLSync without blocking, see @c EGL_KHR_wait_sync for more information
+    *
+    * @param evas_gl     The current Evas_GL connection
+    * @param sync        A valid sync object created by evasglCreateSync
+    * @param flags       Must be 0
+    *
+    * @note Requires the extension @c EGL_KHR_wait_sync, similar to eglWaitSyncKHR.
+    *
+    * @return @c EINA_TRUE in case of success, or
+    *         @c EINA_FALSE in case of failure (in which case evas_gl_error_get() should return an error code)
+    * @since 1.12
     */
    int          (*evasglWaitSync) (Evas_GL *evas_gl, EvasGLSync sync, int flags);
    /** @} */
