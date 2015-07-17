@@ -4,77 +4,61 @@ class Evas.Canvas3D.Object (Eo.Base, Evas.Common_Interface)
    data: Evas_Canvas3D_Object_Data;
    methods {
       change {
-         /*@
-           Notify the object regarding its  state change.
-          */
+         [[Notify the object regarding its  state change.]]
          params {
-           @in state: Evas.Canvas3D.State;  /*@ State that is changed */
-           @in ref: Evas.Canvas3D.Object *; /*@ The Object that caused the change */
+           @in state: Evas.Canvas3D.State;  [[State that is changed.]]
+           @in ref: Evas.Canvas3D.Object *; [[The Object that caused the change.]]
          }
       }
       type_get @const {
-         /*@
-           Returns the type of the object.
-          */
+         [[Returns the type of the object.]]
           return: Evas.Canvas3D.Object_Type;
       }
 
       type_set {
-         /*@
-           Returns the type of the object.
-          */
+         [[Returns the type of the object.]]
           params{
             @in type: Evas.Canvas3D.Object_Type;
           }
       }
 
       dirty_get @const {
-         /*@
-           Returns the status of a particular state of the object.
-          */
+         [[Returns the status of a particular state of the object.]]
           return: bool;
          params {
-           @in state: Evas.Canvas3D.State; /*@ State whose status is being asked */
+           @in state: Evas.Canvas3D.State; [[State whose status is being asked.]]
          }
       }
 
       update {
-         /*@
-           Update request for the object.
-          */
+         [[Update request for the object.]]
       }
       update_notify {
-         /*@
-           Pure virtual update_notify function..
-           Update request for the object.
-          */
+         [[Pure virtual update_notify function.
+
+           Update request for the object.]]
       }
 
       change_notify {
-         /*@
-           Pure virtual change_notify function..
-           Update request for the object.
-          */
+         [[Pure virtual change_notify function.
+
+           Update request for the object.]]
          params {
-           @in state: Evas.Canvas3D.State;  /*@ State that is changed */
-           @in ref: Evas.Canvas3D.Object *; /*@ The Object that caused the change */
+           @in state: Evas.Canvas3D.State;  [[State that is changed.]]
+           @in ref: Evas.Canvas3D.Object *; [[The Object that caused the change.]]
          }
       }
       callback_register {
-         /*@
-           Pure virtual register samrt callback function.
-          */
+         [[Pure virtual register samrt callback function.]]
          params {
-           @in event: const(char)*; /*@ Event type */
-           @in data: const(void)*;  /*@ User data*/
+           @in event: const(char)*; [[Event type.]]
+           @in data: const(void)*;  [[User data.]]
          }
       }
       callback_unregister {
-         /*@
-           Pure virtual unregister smart callback function.
-          */
+         [[Pure virtual unregister smart callback function.]]
          params {
-           @in event: const(char)*; /*@ Event type */
+           @in event: const(char)*; [[Event type.]]
          }
       }
    }
@@ -90,7 +74,7 @@ class Evas.Canvas3D.Object (Eo.Base, Evas.Common_Interface)
       @virtual .callback_unregister;
    }
    events {
-      clicked; [[Clicked Event]]
-      collision; [[Collision Event]]
+      clicked; [[Clicked Event.]]
+      collision; [[Collision Event.]]
    }
 }
