@@ -5,39 +5,37 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
    methods {
       @property transformation {
          set {
-            /*@
-             Sets the transformation matrix to be used for this node object.
-             @note Pass @c NULL to cancel the applied transformation.
-             @since 1.14
-            */
+            [[Sets the transformation matrix to be used for this node object.
+
+              Note: Pass $null to cancel the applied transformation.
+
+              @since 1.14]]
          }
          get {
-            /*@
-             Gets the transformation matrix used for this node object.
-             @since 1.14
-            */
+            [[Gets the transformation matrix used for this node object.
+
+              @since 1.14]]
          }
          values {
-            m: const(Eina_Matrix3) *; /*@ transformation matrix */
+            m: const(Eina_Matrix3) *; [[transformation matrix.]]
          }
       }
       @property origin {
          set {
-            /*@
-             Sets the origin position of this node object. This origin position
-             affects to node transformation
-             @since 1.14
-            */
+            [[Sets the origin position of this node object.
+
+              This origin position affects to node transformation.
+
+              @since 1.14]]
          }
          get {
-            /*@
-             Gets the origin position of this node object.
-             @since 1.14
-            */
+            [[Gets the origin position of this node object.
+
+              @since 1.14]]
          }
          values {
-            x: double; /*@ @origin x position */
-            y: double; /*@ @origin y position */
+            x: double; [[$origin x position.]]
+            y: double; [[$origin y position.]]
          }
       }
       @property mask {
@@ -59,14 +57,14 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
 	 }
       } */
       bounds_get {
-         /*@
-          Give the bounding box in screen coordinate as being drawn.
-          It will start as the control box until it is refined once the shape
-          is computed.
-          @since 1.14
-         */
+         [[Give the bounding box in screen coordinate as being drawn.
+
+           It will start as the control box until it is refined once the shape
+           is computed.
+
+           @since 1.14]]
          params {
-            @out r: Eina.Rectangle; /*@ bounding box to be returned */
+            @out r: Eina.Rectangle; [[bounding box to be returned.]]
          }
       }
    }
