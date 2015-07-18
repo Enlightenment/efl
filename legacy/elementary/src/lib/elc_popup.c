@@ -439,7 +439,6 @@ _elm_popup_elm_widget_sub_object_del(Eo *obj, Elm_Popup_Data *sd, Evas_Object *s
    if (sobj == sd->title_icon)
      {
         elm_layout_signal_emit(sd->main_layout, "elm,state,title,icon,hidden", "elm");
-        sd->title_icon = NULL;
      }
    else if ((it =
                evas_object_data_get(sobj, "_popup_icon_parent_item")) != NULL)
