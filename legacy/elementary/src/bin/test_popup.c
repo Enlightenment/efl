@@ -757,7 +757,7 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                         "popup-center-title + text (block,clicked handling with parent)",
                         NULL, NULL,
                         _popup_center_title_text_block_clicked_event_with_parent_cb, win);
-   elm_list_item_append(list, "popup-bottom-title + text + 3 buttons", NULL,
+   elm_list_item_append(list, "popup-bottom-title-icon + text + 3 buttons", NULL,
                         NULL, _popup_bottom_title_text_3button_cb, win);
    elm_list_item_append(list, "popup-center-title + content + 3 buttons", NULL,
                         NULL, _popup_center_title_content_3button_cb, win);
