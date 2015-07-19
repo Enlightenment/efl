@@ -189,22 +189,22 @@ _key_action_move(Evas_Object *obj, const char *params)
      }
    if (!strcmp(dir, "left"))
      {
-        if (x <= 0) return EINA_FALSE;
+        if ((x <= 0) && (!sd->loop_h)) return EINA_FALSE;
         x -= step_x;
      }
    else if (!strcmp(dir, "right"))
      {
-        if (x >= (max_x - v_w)) return EINA_FALSE;
+        if ((x >= (max_x - v_w)) && (!sd->loop_h)) return EINA_FALSE;
         x += step_x;
      }
    else if (!strcmp(dir, "up"))
      {
-        if (y == 0) return EINA_FALSE;
+        if ((y <= 0) && (!sd->loop_v)) return EINA_FALSE;
         y -= step_y;
      }
    else if (!strcmp(dir, "down"))
      {
-        if (y >= (max_y - v_h)) return EINA_FALSE;
+        if ((y >= (max_y - v_h)) && (!sd->loop_v)) return EINA_FALSE;
         y += step_y;
      }
    else if (!strcmp(dir, "first"))
