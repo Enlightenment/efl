@@ -5738,12 +5738,13 @@ _item_select(Elm_Gen_Item *it)
 
    evas_object_ref(obj);
 
+   it->walking++;
    elm_object_item_focus_set(eo_it, EINA_TRUE);
+   if ((it->base)->on_deletion) goto item_deleted;
    _elm_genlist_item_content_focus_set(it, ELM_FOCUS_PREVIOUS);
    sd->last_selected_item = eo_it;
    _item_highlight(it);
 
-   it->walking++;
    if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), eo_it);
    // delete item if it's requested deletion in the above callbacks.
    if ((it->base)->on_deletion) goto item_deleted;
