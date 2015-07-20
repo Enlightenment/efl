@@ -3116,7 +3116,10 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
              if (direct_override && !direct_force_off)
                {
                   // always use direct rendering
-                  ENFN->gl_get_pixels_set(output, o->pixels->func.get_pixels, o->pixels->func.get_pixels_data, eo_obj);
+                  if (ENFN->gl_get_pixels_set)
+                    ENFN->gl_get_pixels_set(output, o->pixels->func.get_pixels, o->pixels->func.get_pixels_data, eo_obj);
+                  if (ENFN->gl_image_direct_set)
+                    ENFN->gl_image_direct_set(output, o->engine_data, EINA_TRUE);
                }
              else
                {
