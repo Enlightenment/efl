@@ -115,6 +115,7 @@ struct _Elm_Win_Data
    struct
    {
       Ecore_Wl_Window *win;
+      Eina_Bool opaque_dirty : 1;
    } wl;
 #endif
 
@@ -1226,40 +1227,45 @@ _elm_win_profile_update(Elm_Win_Data *sd)
    eo_do(sd->obj, eo_event_callback_call(ELM_WIN_EVENT_PROFILE_CHANGED, NULL));
 }
 
+#ifdef HAVE_ELEMENTARY_WAYLAND
+static void
+_elm_win_opaque_update(Elm_Win_Data *sd)
+{
+   int ox, oy, ow, oh;
+
+   if (sd->fullscreen)
+     {
+        ecore_evas_geometry_get(sd->ee, NULL, NULL, &ow, &oh);
+        ecore_wl_window_opaque_region_set(sd->wl.win, 0, 0, ow, oh);
+        return;
+     }
+
+   edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
+                                 &ox, &oy, &ow, &oh);
+   DBG("Opaque: %d %d %d %d", ox, oy, ow, oh);
+   ecore_wl_window_opaque_region_set(sd->wl.win, ox, oy, ow - 50, oh);//ow - ox, oh - oy);
+}
+#endif
+
 static void
 _elm_win_frame_obj_update(Elm_Win_Data *sd)
 {
    int fx, fy, fw, fh;
    int ox, oy, ow, oh;
-   int x, y, w, h;
 
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   sd->wl.opaque_dirty = 1;
+#endif
    if (sd->fullscreen)
      {
         evas_output_framespace_set(sd->evas, 0, 0, 0, 0);
-#ifdef HAVE_ELEMENTARY_WAYLAND
-        ecore_evas_geometry_get(sd->ee, NULL, NULL, &ow, &oh);
-        ecore_wl_window_opaque_region_set(sd->wl.win, 0, 0, ow, oh);
         return;
-#endif
      }
 
    evas_object_geometry_get(sd->frame_obj, &fx, &fy, &fw, &fh);
    evas_object_geometry_get(sd->client_obj, &ox, &oy, &ow, &oh);
-   evas_output_framespace_get(sd->evas, &x, &y, &w, &h);
 
-   if ((x != (ox - fx)) || (y != (oy - fy)) ||
-       (w != (fw - ow)) || (h != (fh - oh)))
-     {
-        evas_output_framespace_set(sd->evas, (ox - fx), (oy - fy),
-                                   (fw - ow), (fh - oh));
-     }
-
-#ifdef HAVE_ELEMENTARY_WAYLAND
-   edje_object_part_geometry_get(sd->frame_obj, "opaque_region",
-                                 &ox, &oy, &ow, &oh);
-   DBG("Opaque: %d %d %d %d", ox, oy, ow, oh);
-   ecore_wl_window_opaque_region_set(sd->wl.win, ox, oy, ow, oh);//ow - ox, oh - oy);
-#endif
+   evas_output_framespace_set(sd->evas, (ox - fx), (oy - fy), (fw - ow), (fh - oh));
 }
 
 static void
@@ -2854,6 +2860,18 @@ _elm_win_frame_cb_close(void *data,
    evas_object_unref(win);
 }
 
+#ifdef HAVE_ELEMENTARY_WAYLAND
+static void
+_elm_win_frame_pre_render(void *data, Evas *e EINA_UNUSED, void *ev EINA_UNUSED)
+{
+   Elm_Win_Data *sd = data;
+
+   if (sd->wl.opaque_dirty)
+     _elm_win_opaque_update(sd);
+   sd->wl.opaque_dirty = 0;
+}
+#endif
+
 static void
 _elm_win_frame_add(Elm_Win_Data *sd,
                    const char *style)
@@ -2902,6 +2920,9 @@ _elm_win_frame_add(Elm_Win_Data *sd,
      (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
    evas_object_event_callback_add
      (sd->frame_obj, EVAS_CALLBACK_RESIZE, _elm_win_frame_obj_resize, sd);
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   evas_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_PRE, _elm_win_frame_pre_render, sd);
+#endif
 
    /* NB: Do NOT remove these calls !! Needed to calculate proper
     * framespace on inital show of the window */
@@ -2957,6 +2978,9 @@ _elm_win_frame_del(Elm_Win_Data *sd)
           (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
         evas_object_event_callback_del_full
           (sd->frame_obj, EVAS_CALLBACK_RESIZE, _elm_win_frame_obj_resize, sd);
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_RENDER_PRE, _elm_win_frame_pre_render, sd);
+#endif
 
         edje_object_signal_callback_del
           (sd->frame_obj, "elm,action,move,start", "elm",
