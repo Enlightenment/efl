@@ -113,17 +113,6 @@ psd_get_header(PSD_Header *header, const unsigned char *map, size_t length, size
 
 #undef CHECK_RET
 
-   /* fprintf(stderr, "<<<<<<<<<<<\nsignature : %c%c%c%c\n", */
-   /*         header->signature[0], */
-   /*         header->signature[1], */
-   /*         header->signature[2], */
-   /*         header->signature[3]); */
-   /* fprintf(stderr, "version : %i\n", header->version); */
-   /* fprintf(stderr, "channels : %i\n", header->channels); */
-   /* fprintf(stderr, "width x height : %dx%d\n", header->width, header->height); */
-   /* fprintf(stderr, "depth : %i\n", header->depth); */
-   /* fprintf(stderr, "mode : %i\n>>>>>>>>>>>>\n", header->mode); */
-
    return EINA_TRUE;
 }
 
