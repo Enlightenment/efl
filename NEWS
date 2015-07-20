@@ -205,6 +205,19 @@ Fixes:
    * Efreet: Fix config and data dir paths on windows.
    * ecore-wayland: Remove improper use of EINA_UNUSED
    * evas: Init need_unload value after unload.
+   * Evas textblock: Clear unused paragraphs
+   * ecore-wl: Reset input's pointer & keyboard focus on events
+   * ecore-wl: Reset ecore_wl_input repeat values on keyboard leave
+   * ecore-wl: Don't renew keyboard-repeat timer if we have no focused surface
+   * ecore-wl: Reset input keyboard repeat values when we cancel the timer
+   * The default return value of edje_object_base_scale_get API is 1.0. The return value is used for divisor in many case. If it return 0.0 when it fail, it can break app with div by zero.
+   * Evas masking: Fix rendering of masks that belong to a proxied smart object
+   * eolian: do not use an invalid pointer after updating buffer
+   * image_savers/jpeg: fix undefined behavior of using sigsetjmp on jmp_buf
+   * Eolian: fix eolian helper for windows.
+   * Ecore evas: Correct function name in magic failure.
+   * Evas GL: Fix glClear(0,0,0,0) with DR and COPY
+   * Evas GL: Fix sync, wlbuffer and image egl ext functions
 
 Changes since 1.13.0:
 ---------------------
