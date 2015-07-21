@@ -76,386 +76,336 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
    methods {
       @property first_day_of_week {
          set {
-            /*@
-            Set the first day of week to use on calendar widgets'.
-
-            @ingroup Calendar */
+            [[Set the first day of week to use on calendar widgets'.]]
          }
          get {
-            /*@
-            Get the first day of week, who are used on calendar widgets'.
+            [[Get the first day of week, who are used on calendar widgets'.
 
-            @return An int which correspond to the first day of the week (Sunday = 0, Monday = 1,
-            ..., Saturday = 6)
+              See also  @.first_day_of_week.set for more details.
 
-            @see elm_calendar_first_day_of_week_set() for more details
-
-            @ingroup Calendar */
+            ]]
          }
          values {
-            day: Elm.Calendar.Weekday; /*@ An int which correspond to the first day of the week (Sunday = 0, Monday = 1,
-            ..., Saturday = 6) */
+            day: Elm.Calendar.Weekday; [[An int which correspond to the first day of the week (Sunday = 0, Monday = 1,
+            ..., Saturday = 6).]]
          }
       }
       @property selectable {
          set {
-            /*@
-            Define which fields of a @b tm struct will be taken into account, when
-            elm_calendar_selected_time_set() is invoked.
+            [[Define which fields of a tm struct will be taken into account, when
+              Elm.Calendar.selected_time.set is invoked.
 
-            By Default the bitmask is set to use all fields of a @b tm struct (year,
-            month and day of the month).
+              By Default the bitmask is set to use all fields of a tm struct (year,
+              month and day of the month).
 
-            @ingroup Calendar
-            @see elm_calendar_selected_time_set
-            @since 1.8 */
+
+              See also @.selected_time_set.
+
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get how elm_calendar_selected_time_set manage a date
+            [[Get how elm_calendar_selected_time_set manage a date
 
-            @return The flag used to manage a date with a elm_calendar_selected_time_set
+              See also @.selectable.set,
+              @.selected_time_set.
 
-            @ingroup Calendar
-            @see elm_calendar_selectable_set
-            @see elm_calendar_selected_time_set
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          values {
-            selectable: Elm.Calendar.Selectable; /*@ A bitmask of Elm_Calendar_Selectable */
+            selectable: Elm.Calendar.Selectable; [[A bitmask of Elm_Calendar_Selectable]]
          }
       }
       @property interval {
          set {
-            /*@
-            Set the interval on time updates for an user mouse button hold
-            on calendar widgets' month/year selection.
+            [[Set the interval on time updates for an user mouse button hold
+              on calendar widgets' month/year selection.
 
-            This interval value is @b decreased while the user holds the
-            mouse pointer either selecting next or previous month/year.
+              This interval value is decreased while the user holds the
+              mouse pointer either selecting next or previous month/year.
 
-            This helps the user to get to a given month distant from the
-            current one easier/faster, as it will start to change quicker and
-            quicker on mouse button holds.
+              This helps the user to get to a given month distant from the
+              current one easier/faster, as it will start to change quicker and
+              quicker on mouse button holds.
 
-            The calculation for the next change interval value, starting from
-            the one set with this call, is the previous interval divided by
-            1.05, so it decreases a little bit.
+              The calculation for the next change interval value, starting from
+              the one set with this call, is the previous interval divided by
+              1.05, so it decreases a little bit.
 
-            The default starting interval value for automatic changes is
-            @b 0.85 seconds.
+              The default starting interval value for automatic changes is
+              0.85 seconds.
 
-            @see elm_calendar_interval_get()
-
-            @ingroup Calendar */
+              See also @.interval.get.
+            ]]
          }
          get {
-            /*@
-            Get the interval on time updates for an user mouse button hold
-            on calendar widgets' month/year selection.
+            [[Get the interval on time updates for an user mouse button hold
+              on calendar widgets' month/year selection.
 
-            @return The (first) interval value, in seconds, set on it
-
-            @see elm_calendar_interval_set() for more details
-
-            @ingroup Calendar */
+              See also @.interval.set for more details.
+            ]]
          }
          values {
-            interval: double; /*@ The (first) interval value in seconds */
+            interval: double; [[The (first) interval value in seconds]]
          }
       }
       @property weekdays_names {
          set {
-            /*@
-            Set weekdays names to be displayed by the calendar.
+            [[Set weekdays names to be displayed by the calendar.
 
-            By default, weekdays abbreviations get from system are displayed:
-            E.g. for an en_US locale: "Sun, Mon, Tue, Wed, Thu, Fri, Sat"
+              By default, weekdays abbreviations get from system are displayed:
+              E.g. for an en_US locale: "Sun, Mon, Tue, Wed, Thu, Fri, Sat"
 
-            The first string should be related to Sunday, the second to Monday...
+              The first string should be related to Sunday, the second to Monday...
 
-            The usage should be like this:
-            @code
-            const char *weekdays[] =
-            {
-            "Sunday", "Monday", "Tuesday", "Wednesday",
-            "Thursday", "Friday", "Saturday"
-            };
-            elm_calendar_weekdays_names_set(calendar, weekdays);
-            @endcode
+              See also @.weekdays_names.get.
 
-            @see elm_calendar_weekdays_name_get()
-
-            @ref calendar_example_02
-
-            @ingroup Calendar */
+              \@ref calendar_example_02.
+            ]]
+              /* FIXME-doc
+               *
+               * The usage should be like this:
+               * @code
+               * const char *weekdays[] =
+               * {
+               * "Sunday", "Monday", "Tuesday", "Wednesday",
+               * "Thursday", "Friday", "Saturday"
+               * };
+               * elm_calendar_weekdays_names_set(calendar, weekdays);
+               * @endcode
+               */
          }
          get {
-            /*@
-            Get weekdays names displayed by the calendar.
+            [[Get weekdays names displayed by the calendar.
 
-            @return Array of seven strings to be used as weekday names.
+              By default, weekdays abbreviations get from system are displayed:
+              E.g. for an en_US locale: "Sun, Mon, Tue, Wed, Thu, Fri, Sat"
+              The first string is related to Sunday, the second to Monday...
 
-            By default, weekdays abbreviations get from system are displayed:
-            E.g. for an en_US locale: "Sun, Mon, Tue, Wed, Thu, Fri, Sat"
-            The first string is related to Sunday, the second to Monday...
+              See also @.weekdays_names.set.
 
-            @see elm_calendar_weekdays_name_set()
-
-            @ref calendar_example_05
-
-            @ingroup Calendar */
+              \@ref calendar_example_05.
+            ]]
          }
          values {
-            weekdays: const(char)**; /*@ Array of seven strings to be used as weekday names.
-            @warning It must have 7 elements, or it will access invalid memory.
-            @warning The strings must be NULL terminated ('@\0'). */
+            weekdays: const(char)**; [[Array of seven strings to be used as weekday names.
+            Warning: It must have 7 elements, or it will access invalid memory.
+            Warning: The strings must be $null terminated ('@\0').]]
          }
       }
       @property select_mode {
          set {
-            /*@
-            Set select day mode to use.
+            [[Set select day mode to use.
 
-            Set the day selection mode used.
-
-            @ingroup Calendar */
+              Set the day selection mode used.
+            ]]
          }
          get {
-            /*@
-            Get the select day mode used.
+            [[Get the select day mode used.
 
-            @return the selected mode
+              Get the day selection mode used.
 
-            Get the day selection mode used.
+              See also @.select_mode.set for more details.
 
-            @see elm_calendar_select_mode_set() for more details
-
-            @ingroup Calendar */
+            ]]
          }
          values {
-            mode: Elm.Calendar.Select.Mode; /*@ The select mode to use. */
+            mode: Elm.Calendar.Select.Mode; [[The select mode to use.]]
          }
       }
       @property min_max_year {
          set {
-            /*@
-            Set the minimum and maximum values for the year
+            [[Set the minimum and maximum values for the year
 
-            Maximum must be greater than minimum, except if you don't want to set
-            maximum year.
-            Default values are 1902 and -1.
+              Maximum must be greater than minimum, except if you don't want to set
+              maximum year.
+              Default values are 1902 and -1.
 
-            If the maximum year is a negative value, it will be limited depending
-            on the platform architecture (year 2037 for 32 bits);
+              If the maximum year is a negative value, it will be limited depending
+              on the platform architecture (year 2037 for 32 bits);
 
-            @see elm_calendar_min_max_year_get()
+              See also @.min_max_year.get.
 
-            @ref calendar_example_03
-
-            @ingroup Calendar */
+              \@ref calendar_example_03.
+            ]]
          }
          get {
-            /*@
-            Get the minimum and maximum values for the year
+            [[Get the minimum and maximum values for the year
 
-            Default values are 1902 and -1.
+              Default values are 1902 and -1.
 
-            @see elm_calendar_min_max_year_set() for more details.
+              See also @.min_max_year.set for more details.
 
-            @ref calendar_example_05
-
-            @ingroup Calendar */
+              \@ref calendar_example_05.
+             ]]
          }
          values {
-            min: int; /*@ The minimum year, greater than 1901; */
-            max: int; /*@ The maximum year; */
+            min: int; [[The minimum year, greater than 1901;]]
+            max: int; [[The maximum year;]]
          }
       }
       @property format_function {
          set {
-            /*@
-            Set a function to format the string that will be used to display
-            month and year;
+            [[Set a function to format the string that will be used to display
+              month and year;
 
-            By default it uses strftime with "%B %Y" format string.
-            It should allocate the memory that will be used by the string,
-            that will be freed by the widget after usage.
-            A pointer to the string and a pointer to the time struct will be provided.
+              By default it uses strftime with "%B %Y" format string.
+              It should allocate the memory that will be used by the string,
+              that will be freed by the widget after usage.
+              A pointer to the string and a pointer to the time struct will be provided.
 
-            Example:
-            @code
-            static char
-            _format_month_year(struct tm *selected_time)
-            {
-            char buf[32];
-            if (!strftime(buf, sizeof(buf), "%B %Y", selected_time)) return NULL;
-            return strdup(buf);
-            }
-
-            elm_calendar_format_function_set(calendar, _format_month_year);
-            @endcode
-
-            @ref calendar_example_02
-
-            @ingroup Calendar */
+              \@ref calendar_example_02.
+            ]]
+              /* FIXME-doc
+               * Example:
+               * @code
+               * static char
+               * _format_month_year(struct tm *selected_time)
+               * {
+               * char buf[32];
+               * if (!strftime(buf, sizeof(buf), "%B %Y", selected_time)) return NULL;
+               *   return strdup(buf);
+               * }
+               *
+               * elm_calendar_format_function_set(calendar, _format_month_year);
+               * @endcode
+               */
          }
          values {
-            format_function: Elm_Calendar_Format_Cb; /*@ Function to set the month-year string given
-            the selected date */
+            format_function: Elm_Calendar_Format_Cb; [[Function to set the month-year string given
+            the selected date.]]
          }
       }
       @property marks {
          get {
-            /*@
-            Get a list of all the calendar marks.
+            [[Get a list of all the calendar marks.
 
-            @return A @c list of calendar marks objects, or @c NULL on failure.
+              See also @.mark_add,
+              \@ref elm_calendar_mark_del(),
+              @.marks_clear.
 
-            @see elm_calendar_mark_add()
-            @see elm_calendar_mark_del()
-            @see elm_calendar_marks_clear()
-
-            @ingroup Calendar */
+            ]]
             return: const(list<Elm.Calendar.Mark*>)*;
          }
       }
       selected_time_set {
-         /*@
-         Set selected date to be highlighted on calendar.
+         [[Set selected date to be highlighted on calendar.
 
-         Set the selected date, changing the displayed month if needed.
-         Selected date changes when the user goes to next/previous month or
-         select a day pressing over it on calendar.
+           Set the selected date, changing the displayed month if needed.
+           Selected date changes when the user goes to next/previous month or
+           select a day pressing over it on calendar.
 
-         @see elm_calendar_selected_time_get()
+           See also @.selected_time_get.
 
-         @ref calendar_example_04
-
-         @ingroup Calendar */
-
+           \@ref calendar_example_04
+         ]]
          params {
-            @in selected_time: Elm_Calendar_Time *; /*@ A @b tm struct to represent the selected date. */
+            @in selected_time: Elm_Calendar_Time *; [[A tm struct to represent the selected date.]]
          }
       }
       selected_time_get @const {
-         /*@
-         Get selected date.
+         [[Get selected date.
 
-         @return EINA_FALSE means an error occurred and returned time shouldn't
-         be considered.
+           Get date selected by the user or set by function
+           @.selected_time_set().
+           Selected date changes when the user goes to next/previous month or
+           select a day pressing over it on calendar.
 
-         Get date selected by the user or set by function
-         elm_calendar_selected_time_set().
-         Selected date changes when the user goes to next/previous month or
-         select a day pressing over it on calendar.
+           See also @.selected_time_get.
 
-         @see elm_calendar_selected_time_get()
-
-         @ref calendar_example_05
-
-         @ingroup Calendar */
+         \@ref calendar_example_05.
+         ]]
          return: bool;
          params {
-            @inout selected_time: Elm_Calendar_Time; /*@ A @b tm struct to point to selected date */
+            @inout selected_time: Elm_Calendar_Time; [[A tm struct to point to selected date.]]
          }
       }
       mark_add {
-         /*@
-         Add a new mark to the calendar
+         [[Add a new mark to the calendar
 
-         @return The created mark or @p NULL upon failure.
+           Add a mark that will be drawn in the calendar respecting the insertion
+           time and periodicity. It will emit the type as signal to the widget theme.
+           Default theme supports "holiday" and "checked", but it can be extended.
 
-         Add a mark that will be drawn in the calendar respecting the insertion
-         time and periodicity. It will emit the type as signal to the widget theme.
-         Default theme supports "holiday" and "checked", but it can be extended.
+           It won't immediately update the calendar, drawing the marks.
+           For this, @.marks_draw(). However, when user selects
+           next or previous month calendar forces marks drawn.
 
-         It won't immediately update the calendar, drawing the marks.
-         For this, call elm_calendar_marks_draw(). However, when user selects
-         next or previous month calendar forces marks drawn.
+           Marks created with this method can be deleted with
+           \@ref elm_calendar_mark_del().
 
-         Marks created with this method can be deleted with
-         elm_calendar_mark_del().
+           See also @.marks_draw,
+           \@ref elm_calendar_mark_del().
 
-         Example
-         @code
-         struct tm selected_time;
-         time_t current_time;
+           \@ref calendar_example_06
+         ]]
+           /* FIXME-doc
+            * Example
+            * @code
+            * struct tm selected_time;
+            * time_t current_time;
+            *
+            * current_time = time(NULL) + 5 * (24 * 60 * 60);
+            * localtime_r(&current_time, &selected_time);
+            * elm_calendar_mark_add(cal, "holiday", selected_time,
+            * ELM_CALENDAR_ANNUALLY);
 
-         current_time = time(NULL) + 5 * (24 * 60 * 60);
-         localtime_r(&current_time, &selected_time);
-         elm_calendar_mark_add(cal, "holiday", selected_time,
-         ELM_CALENDAR_ANNUALLY);
+            * current_time = time(NULL) + 1 * (24 * 60 * 60);
+            * localtime_r(&current_time, &selected_time);
+            * elm_calendar_mark_add(cal, "checked", selected_time, ELM_CALENDAR_UNIQUE);
 
-         current_time = time(NULL) + 1 * (24 * 60 * 60);
-         localtime_r(&current_time, &selected_time);
-         elm_calendar_mark_add(cal, "checked", selected_time, ELM_CALENDAR_UNIQUE);
-
-         elm_calendar_marks_draw(cal);
-         @endcode
-
-         @see elm_calendar_marks_draw()
-         @see elm_calendar_mark_del()
-
-         @ref calendar_example_06
-
-         @ingroup Calendar */
-
+            * elm_calendar_marks_draw(cal);
+            * @endcode
+            */
          return: Elm_Calendar_Mark *;
          params {
-            @in mark_type: const(char)*; /*@ A string used to define the type of mark. It will be
+            @in mark_type: const(char)*; [[A string used to define the type of mark. It will be
             emitted to the theme, that should display a related modification on these
-            days representation. */
-            @in mark_time: Elm_Calendar_Time *; /*@ A time struct to represent the date of inclusion of the
+            days representation.]]
+            @in mark_time: Elm_Calendar_Time *; [[A time struct to represent the date of inclusion of the
             mark. For marks that repeats it will just be displayed after the inclusion
-            date in the calendar. */
-            @in repeat: Elm.Calendar.Mark.Repeat.Type; /*@ Repeat the event following this periodicity. Can be a unique
-            mark (that don't repeat), daily, weekly, monthly or annually. */
+            date in the calendar.]]
+            @in repeat: Elm.Calendar.Mark.Repeat.Type; [[Repeat the event following this periodicity. Can be a unique
+            mark (that don't repeat), daily, weekly, monthly or annually.]]
          }
       }
       marks_clear {
-         /*@
-         Remove all calendar's marks
+         [[Remove all calendar's marks
 
-         @see elm_calendar_mark_add()
-         @see elm_calendar_mark_del()
+           See also  @.mark_add,
+           \@ref elm_calendar_mark_del().
 
-         @ingroup Calendar */
+         ]]
 
       }
       marks_draw {
-         /*@
-         Draw calendar marks.
+         [[Draw calendar marks.
 
-         Should be used after adding, removing or clearing marks.
-         It will go through the entire marks list updating the calendar.
-         If lots of marks will be added, add all the marks and then call
-         this function.
+           Should be used after adding, removing or clearing marks.
+           It will go through the entire marks list updating the calendar.
+           If lots of marks will be added, add all the marks and then call
+           this function.
 
-         When the month is changed, i.e. user selects next or previous month,
-         marks will be drawn.
+           When the month is changed, i.e. user selects next or previous month,
+           marks will be drawn.
 
-         @see elm_calendar_mark_add()
-         @see elm_calendar_mark_del()
-         @see elm_calendar_marks_clear()
+           See also  @.mark_add,
+           \@ref elm_calendar_mark_del(),
+           @.marks_clear.
 
-         @ref calendar_example_06
-
-         @ingroup Calendar */
+           \@ref calendar_example_06
+         ]]
 
       }
       displayed_time_get @const {
-         /*@
-         Get the current time displayed in the widget
+         [[Get the current time displayed in the widget
 
-         @return EINA_FALSE means an error occurred. If it's an error the returned
-         time is zero filled.
-
-         @ingroup Calendar
-         @since 1.8 */
+           @since 1.8
+         ]]
          return: bool;
          params {
-            @inout displayed_time: Elm_Calendar_Time; /*@ A @b tm struct to point to displayed date */
+            @inout displayed_time: Elm_Calendar_Time; [[A tm struct to point to displayed date.]]
          }
       }
    }
