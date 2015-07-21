@@ -1,8 +1,7 @@
 enum Evas.Textgrid.Palette {
    [[The palette to use for the foreground and background colors.
 
-     @since 1.7
-   ]]
+     @since 1.7]]
    none,     [[No palette is used]]
    standard, [[standard palette (around 16 colors)]]
    extended, [[extended palette (at max 256 colors)]]
@@ -12,8 +11,7 @@ enum Evas.Textgrid.Palette {
 enum Evas.Textgrid.Font_Style {
    [[The style to give to each character of the grid.
 
-     @since 1.7
-   ]]
+     @since 1.7]]
    normal = (1 << 0), [[Normal style]]
    bold   = (1 << 1), [[Bold style]]
    italic = (1 << 2)  [[Oblique style]]
@@ -29,190 +27,171 @@ class Evas.Textgrid (Evas.Object, Efl.Text_Properties)
    methods {
       @property supported_font_styles {
          set {
-            /*@
-            This function is not implemented yet, do not use. */
+            [[This function is not implemented yet, do not use.]]
          }
          get {
-            /*@
-            This function is not implemented yet, do not use.
-            @return EVAS_TEXTGRID_FONT_STYLE_NORMAL */
+            [[This function is not implemented yet, do not use.]]
          }
          values {
-            styles: Evas.Textgrid.Font_Style;
+            styles: Evas.Textgrid.Font_Style; [[EVAS_TEXTGRID_FONT_STYLE_NORMAL]]
          }
       }
       @property size {
          set {
-            /*@
-            @brief Set the size of the textgrid object.
+            [[Set the size of the textgrid object.
 
-            This function sets the number of lines @p h and the number
-            of columns @p w to the textgrid object @p obj. If
-            @p w or @p h are less or equal than 0, this
-            functiond does nothing.
+              This function sets the number of lines $h and the number
+              of columns $w to the textgrid object $obj. If
+              $w or $h are less or equal than 0, this
+              functiond does nothing.
 
-            @since 1.7 */
+              @since 1.7]]
          }
          get {
-            /*@
-            @brief Get the size of the textgrid object.
+            [[Get the size of the textgrid object.
 
-            This function retrieves the number of lines in the buffer @p
-            h and the number of columns in the buffer @p w of
-            the textgrid object @p obj. @p w or @p h can be
-            @c NULL. On error, their value is 0.
+              This function retrieves the number of lines in the buffer
+              $h and the number of columns in the buffer $w of
+              the textgrid object $obj. $w or $h can be
+              $null. On error, their value is 0.
 
-            @since 1.7 */
+              @since 1.7]]
          }
          values {
-            w: int; /*@ The number of columns (width in cells) of the grid. */
-            h: int; /*@ The number of rows (height in cells) of the grid. */
+            w: int; [[The number of columns (width in cells) of the grid.]]
+            h: int; [[The number of rows (height in cells) of the grid.]]
          }
       }
       @property cell_size {
          get {
-            /*@
-            @brief Retrieve the size of a cell of the given textgrid object in pixels.
+            [[Retrieve the size of a cell of the given textgrid object in pixels.
 
-            This functions retrieves the width and height, in pixels, of a cell
-            of the textgrid object @p obj and store them respectively in the
-            buffers @p width and @p height. Their value depends on the
-            monospace font used for the textgrid object, as well as the
-            style. @p width and @p height can be @c NULL. On error, they are
-            set to 0.
+              This functions retrieves the width and height, in pixels, of a cell
+              of the textgrid object $obj and store them respectively in the
+              buffers $width and $height. Their value depends on the
+              monospace font used for the textgrid object, as well as the
+              style. $width and $height can be $null. On error, they are
+              set to 0.
 
-            @see evas_object_textgrid_font_set()
-            @see evas_object_textgrid_supported_font_styles_set()
+              See also @Efl.Text_Properties.font.set and @.supported_font_styles.set
 
-            @since 1.7 */
+              @since 1.7]]
          }
          values {
-            width: int; /*@ A pointer to the location to store the width in pixels of a cell. */
-            height: int; /*@ A pointer to the location to store the height in
-            pixels of a cell. */
+            width: int; [[A pointer to the location to store the width in pixels of a cell.]]
+            height: int; [[A pointer to the location to store the height in
+                           pixels of a cell.]]
          }
       }
       update_add {
-         /*@
-         @brief Indicate for evas that part of a textgrid region (cells) has been updated.
+         [[Indicate for evas that part of a textgrid region (cells) has been updated.
 
-         This function declares to evas that a region of cells was updated by
-         code and needs refreshing. An application should modify cells like this
-         as an example:
+           This function declares to evas that a region of cells was updated by
+           code and needs refreshing.
 
-         @code
-         Evas_Textgrid_Cell *cells;
-         int i;
+           See also @.cellrow_set,  @.cellrow_get and @.size.set.
 
-         cells = evas_object_textgrid_cellrow_get(obj, row);
-         for (i = 0; i < width; i++) cells[i].codepoint = 'E';
-         evas_object_textgrid_cellrow_set(obj, row, cells);
-         evas_object_textgrid_update_add(obj, 0, row, width, 1);
-         @endcode
-
-         @see evas_object_textgrid_cellrow_set()
-         @see evas_object_textgrid_cellrow_get()
-         @see evas_object_textgrid_size_set()
-
-         @since 1.7 */
+         @since 1.7]]
+         /* FIXME-doc
+          * An application should modify cells like this
+          * as an example:
+          * @code
+          *   Evas_Textgrid_Cell *cells;
+          *   int i;
+          *   cells = evas_object_textgrid_cellrow_get(obj, row);
+          *   for (i = 0; i < width; i++) cells[i].codepoint = 'E';
+          *   evas_object_textgrid_cellrow_set(obj, row, cells);
+          *   evas_object_textgrid_update_add(obj, 0, row, width, 1);
+          * @endcode
+          */
    
          params {
-            @in x: int; /*@ The rect region of cells top-left x (column) */
-            @in y: int; /*@ The rect region of cells top-left y (row) */
-            @in w: int; /*@ The rect region size in number of cells (columns) */
-            @in h: int; /*@ The rect region size in number of cells (rows) */
+            @in x: int; [[The rect region of cells top-left x (column).]]
+            @in y: int; [[The rect region of cells top-left y (row).]]
+            @in w: int; [[The rect region size in number of cells (columns).]]
+            @in h: int; [[The rect region size in number of cells (rows).]]
          }
       }
       cellrow_set {
-         /*@
-         @brief Set the string at the given row of the given textgrid object.
+         [[Set the string at the given row of the given textgrid object.
 
-         This function returns cells to the textgrid taken by
-         evas_object_textgrid_cellrow_get(). The row pointer @p row should be the
-         same row pointer returned by evas_object_textgrid_cellrow_get() for the
-         same row @p y.
+           This function returns cells to the textgrid taken by
+           evas_object_textgrid_cellrow_get. The row pointer $row should be the
+           same row pointer returned by evas_object_textgrid_cellrow_get for the
+           same row $y.
 
-         @see evas_object_textgrid_cellrow_get()
-         @see evas_object_textgrid_size_set()
-         @see evas_object_textgrid_update_add()
+           See also @.cellrow_get, @.size.set and @.update_add.
 
-         @since 1.7 */
+           @since 1.7]]
 
          params {
-            @in y: int; /*@ The row index of the grid. */
-            @in row: const(Evas.Textgrid.Cell)*; /*@ The string as a sequence of #Evas_Textgrid_Cell. */
+            @in y: int; [[The row index of the grid.]]
+            @in row: const(Evas.Textgrid.Cell)*; [[The string as a sequence of #Evas_Textgrid_Cell.]]
          }
       }
       cellrow_get @const {
-         /*@
-         @brief Get the string at the given row of the given textgrid object.
+         [[Get the string at the given row of the given textgrid object.
 
-         @return A pointer to the first cell of the given row.
+           This function returns a pointer to the first cell of the line $y
+           of the textgrid object $obj. If $y is not between 0 and the
+           number of lines of the grid - 1, or on error, this function return $null.
 
-         This function returns a pointer to the first cell of the line @p y
-         of the textgrid object @p obj. If @p y is not between 0 and the
-         number of lines of the grid - 1, or on error, this function return @c NULL.
+           See also @.cellrow_set, @.size.set and @.update_add.
 
-         @see evas_object_textgrid_cellrow_set()
-         @see evas_object_textgrid_size_set()
-         @see evas_object_textgrid_update_add()
-
-         @since 1.7 */
-         return: Evas.Textgrid.Cell*;
+           @since 1.7]]
+         return: Evas.Textgrid.Cell*; [[A pointer to the first cell of the given row.]]
          params {
-            @in y: int; /*@ The row index of the grid. */
+            @in y: int; [[The row index of the grid.]]
          }
       }
       palette_set {
-         /*@
-         @brief The set color to the given palette at the given index of the given textgrid object.
+         [[The set color to the given palette at the given index of the given textgrid object.
 
-         This function sets the color for the palette of type @p pal at the
-         index @p idx of the textgrid object @p obj. The ARGB components are
-         given by @p r, @p g, @p b and @p a. This color can be used when
-         setting the #Evas_Textgrid_Cell structure. The components must set
-         a pre-multiplied color. If pal is #EVAS_TEXTGRID_PALETTE_NONE or
-         #EVAS_TEXTGRID_PALETTE_LAST, or if @p idx is not between 0 and 255,
-         or on error, this function does nothing. The color components are
-         clamped between 0 and 255. If @p idx is greater than the latest set
-         color, the colors between this last index and @p idx - 1 are set to
-         black (0, 0, 0, 0).
+           This function sets the color for the palette of type $pal at the
+           index $idx of the textgrid object $obj. The ARGB components are
+           given by $r, $g, $b and $a. This color can be used when
+           setting the #Evas_Textgrid_Cell structure. The components must set
+           a pre-multiplied color. If pal is #EVAS_TEXTGRID_PALETTE_NONE or
+           #EVAS_TEXTGRID_PALETTE_LAST, or if $idx is not between 0 and 255,
+           or on error, this function does nothing. The color components are
+           clamped between 0 and 255. If $idx is greater than the latest set
+           color, the colors between this last index and $idx - 1 are set to
+           black (0, 0, 0, 0).
 
-         @see evas_object_textgrid_palette_get()
+           See also @.palette_get.
 
-         @since 1.7 */
+           @since 1.7]]
 
          params {
-            @in pal: Evas.Textgrid.Palette; /*@ The type of the palette to set the color. */
-            @in idx: int; /*@ The index of the paletter to which the color is stored. */
-            @in r: int; /*@ The red component of the color. */
-            @in g: int; /*@ The green component of the color. */
-            @in b: int; /*@ The blue component of the color. */
-            @in a: int; /*@ The alpha component of the color. */
+            @in pal: Evas.Textgrid.Palette; [[The type of the palette to set the color.]]
+            @in idx: int; [[The index of the paletter to which the color is stored.]]
+            @in r: int; [[The red component of the color.]]
+            @in g: int; [[The green component of the color.]]
+            @in b: int; [[The blue component of the color.]]
+            @in a: int; [[The alpha component of the color.]]
          }
       }
       palette_get @const {
-         /*@
-         @brief The retrieve color to the given palette at the given index of the given textgrid object.
+         [[The retrieve color to the given palette at the given index of the given textgrid object.
 
-         This function retrieves the color for the palette of type @p pal at the
-         index @p idx of the textgrid object @p obj. The ARGB components are
-         stored in the buffers @p r, @p g, @p b and @p a. If @p idx is not
-         between 0 and the index of the latest set color, or if @p pal is
-         #EVAS_TEXTGRID_PALETTE_NONE or #EVAS_TEXTGRID_PALETTE_LAST, the
-         values of the components are 0. @p r, @p g, @p b and @p a can be
-         @c NULL.
+           This function retrieves the color for the palette of type $pal at the
+           index $idx of the textgrid object $obj. The ARGB components are
+           stored in the buffers $r, $g, $b and $a. If $idx is not
+           between 0 and the index of the latest set color, or if $pal is
+           #EVAS_TEXTGRID_PALETTE_NONE or #EVAS_TEXTGRID_PALETTE_LAST, the
+           values of the components are 0. $r, $g, $b and $a can be
+           $null.
 
-         @see evas_object_textgrid_palette_set()
+           See also @.palette_set.
 
-         @since 1.7 */
+           @since 1.7]]
          params {
-            @in pal: Evas.Textgrid.Palette; /*@ The type of the palette to set the color. */
-            @in idx: int; /*@ The index of the palette to which the color is stored. */
-            @out r: int; /*@ A pointer to the red component of the color. */
-            @out g: int; /*@ A pointer to the green component of the color. */
-            @out b: int; /*@ A pointer to the blue component of the color. */
-            @out a: int; /*@ A pointer to the alpha component of the color. */
+            @in pal: Evas.Textgrid.Palette; [[The type of the palette to set the color.]]
+            @in idx: int; [[The index of the palette to which the color is stored.]]
+            @out r: int; [[A pointer to the red component of the color.]]
+            @out g: int; [[A pointer to the green component of the color.]]
+            @out b: int; [[A pointer to the blue component of the color.]]
+            @out a: int; [[A pointer to the alpha component of the color.]]
          }
       }
    }
