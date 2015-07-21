@@ -1772,6 +1772,7 @@ _ecore_xcb_event_handle_client_message(xcb_generic_event_t *event)
         e->win = ev->window;
         e->message_type = ev->type;
         e->format = ev->format;
+        e->time = _ecore_xcb_event_last_time;
         for (i = 0; i < 5; i++)
           e->data.l[i] = ev->data.data32[i];
         ecore_event_add(ECORE_X_EVENT_CLIENT_MESSAGE, e, NULL, NULL);

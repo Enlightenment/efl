@@ -2011,6 +2011,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         e->win = xevent->xclient.window;
         e->message_type = xevent->xclient.message_type;
         e->format = xevent->xclient.format;
+        e->time = _ecore_x_event_last_time;
         for (i = 0; i < 5; i++)
           e->data.l[i] = xevent->xclient.data.l[i];
 
