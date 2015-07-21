@@ -583,6 +583,7 @@ static const Evas_Object_Func object_func =
      evas_object_textblock_scale_update,
      NULL,
      NULL,
+     NULL,
      NULL
 };
 

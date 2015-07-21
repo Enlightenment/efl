@@ -224,7 +224,8 @@ static const Evas_Object_Func object_func =
      NULL,
      evas_object_image_has_opaque_rect,
      evas_object_image_get_opaque_rect,
-     evas_object_image_can_map
+     evas_object_image_can_map,
+     NULL
 };
 
 static const Evas_Object_Image_Load_Opts default_load_opts = {
