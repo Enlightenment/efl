@@ -2,54 +2,42 @@ class Elm.Color_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_color_item;
    methods {
-        @property color {
-             get {
-                 /*@
-                 Get Palette item's color.
+      @property color {
+         get {
+            [[Get Palette item's color.]]
+         }
+         set {
+            [[Set Palette item's color.]]
+         }
+         values {
+            r: int; [[red-value of color]]
+            g: int; [[green-value of color]]
+            b: int; [[blue-value of color]]
+            a: int; [[alpha-value of color]]
+         }
+      }
+      @property selected {
+         get {
+            [[Get the selected state of color palette item
 
-                 @ingroup Colorselector
-                 */
-             }
-             set {
-                 /*@
-                 Set Palette item's color.
+              @since 1.9
+            ]]
+         }
+         set {
+            [[Set the selected state of color palette item
 
-                 @ingroup Colorselector
-                 */
-             }
-             values {
-                 r: int; /*@ red-value of color   */
-                 g: int; /*@ green-value of color */
-                 b: int; /*@ blue-value of color  */
-                 a: int; /*@ alpha-value of color */
-             }
-        }
-        @property selected {
-             get {
-                 /*@
-                 Get the selected state of color palette item
-
-                 @since 1.9
-                 @ingroup Colorselector
-                 */
-             }
-             set {
-                 /*@
-                 Set the selected state of color palette item
-
-                 @since 1.9
-                 @ingroup Colorselector
-                 */
-             }
-             values {
-                 selected: bool; /*@ @c EINA_TRUE if selected @c EINA_FALSE otherwise */
-             }
-        }
+              @since 1.9
+            ]]
+         }
+         values {
+                 selected: bool; [[$true if selected $false otherwise]]
+         }
+      }
    }
    implements {
-        Eo.Base.constructor;
-        Eo.Base.destructor;
-        Elm.Widget_Item.access_register;
-        Elm.Widget_Item.signal_emit;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Elm.Widget_Item.access_register;
+      Elm.Widget_Item.signal_emit;
    }
 }

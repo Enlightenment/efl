@@ -19,121 +19,88 @@ class Elm.Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action,
    methods {
       @property color {
          set {
-            /*@
-            Set color to colorselector
+            [[Set color to colorselector.]]
 
-            @ingroup Colorselector */
          }
          get {
-            /*@
-            Get current color from colorselector
-
-            @ingroup Colorselector */
+            [[Get current color from colorselector.]]
          }
          values {
-            r: int; /*@ r-value of color */
-            g: int; /*@ g-value of color */
-            b: int; /*@ b-value of color */
-            a: int; /*@ a-value of color */
+            r: int; [[r-value of color]]
+            g: int; [[g-value of color]]
+            b: int; [[b-value of color]]
+            a: int; [[a-value of color]]
          }
       }
       @property palette_name {
          set {
-            /*@
-            Set current palette's name
+            [[Set current palette's name
 
-            When colorpalette name is set, colors will be loaded from and saved to config
-            using the set name. If no name is set then colors will be loaded from or
-            saved to "default" config.
-
-            @ingroup Colorselector */
+              When colorpalette name is set, colors will be loaded from and saved to config
+              using the set name. If no name is set then colors will be loaded from or
+              saved to "default" config.
+            ]]
          }
          get {
-            /*@
-            Get current palette's name
+            [[Get current palette's name
 
-            @return Name of palette
-
-            Returns the currently set palette name using which colors will be
-            saved/loaded in to config.
-
-            @ingroup Colorselector */
+              Returns the currently set palette name using which colors will be
+              saved/loaded in to config.
+            ]]
          }
          values {
-            palette_name: const(char)*; /*@ Name of palette */
+            palette_name: const(char)*; [[Name of palette]]
          }
       }
       @property mode {
          set {
-            /*@
-            Set Colorselector's mode.
+            [[Set Colorselector's mode.
 
-            Colorselector supports three modes palette only, selector only and both.
-
-            @ingroup Colorselector */
+              Colorselector supports three modes palette only, selector only and both.
+            ]]
          }
          get {
-            /*@
-            Get Colorselector's mode.
-
-            @return mode The current mode of colorselector
-
-            @ingroup Colorselector */
+            [[Get Colorselector's mode.]]
          }
          values {
-            mode: Elm.Colorselector.Mode; /*@ Elm_Colorselector_Mode */
+            mode: Elm.Colorselector.Mode; [[Elm_Colorselector_Mode]]
          }
       }
       @property palette_items {
          get {
-            /*@
-            Get list of palette items.
+            [[Get list of palette items.
 
-            @return The list of color palette items.
+              Note That palette item list is internally managed by colorselector widget and
+              it should not be freed/modified by application.
 
-            Note That palette item list is internally managed by colorselector widget and
-            it should not be freed/modified by application.
-
-            @since 1.9
-
-            @ingroup Colorselector */
-            return: const(list<Elm.Object.Item*>)*;
+              @since 1.9
+            ]]
+            return: const(list<Elm.Object.Item*>)*;[[The list of color palette items.]]
          }
       }
       @property palette_selected_item {
          get {
-            /*@
-            Get the selected item in colorselector palette.
+            [[Get the selected item in colorselector palette.
 
-            @return The selected item, or NULL if none is selected.
+              @since 1.9]]
 
-            @since 1.9
-            @ingroup Colorselector */
-            return: Elm_Object_Item *;
+            return: Elm_Object_Item *;[[The selected item, or $null if none
+selected.]]
          }
       }
       palette_color_add {
-         /*@
-         Add a new color item to palette.
+         [[Add a new color item to palette.]]
 
-         @return A new color palette Item.
-
-         @ingroup Colorselector */
-
-         return: Elm_Object_Item *;
+         return: Elm_Object_Item *;[[A new color palette Item.]]
          params {
-            @in r: int; /*@ r-value of color */
-            @in g: int; /*@ g-value of color */
-            @in b: int; /*@ b-value of color */
-            @in a: int; /*@ a-value of color */
+            @in r: int; [[r-value of color]]
+            @in g: int; [[g-value of color]]
+            @in b: int; [[b-value of color]]
+            @in a: int; [[a-value of color]]
          }
       }
       palette_clear {
-         /*@
-         Clear the palette items.
-
-         @ingroup Colorselector */
-
+         [[Clear the palette items.]]
       }
    }
    implements {
