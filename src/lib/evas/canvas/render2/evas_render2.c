@@ -2,6 +2,8 @@
 
 #include <sys/time.h>
 
+#include "region.c"
+
 #ifndef _WIN32
 static inline double
 get_time(void)

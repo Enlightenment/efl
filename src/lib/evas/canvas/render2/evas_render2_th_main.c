@@ -173,16 +173,15 @@ _evas_render2_th_main_do(Eo *eo_e, Evas_Public_Data *e)
    Render2_Finish_Data *render_finish_data;
    Evas_Layer *lay;
    Evas_Object_Protected_Data *obj;
-   double t;
-   Tilebuf *updates = NULL;
-   Tilebuf_Rect *rects, *r;
    Eina_List *updates_list = NULL, *l;
+   double t;
    Eina_Rectangle *rect;
-
-   updates = evas_common_tilebuf_new(e->output.w, e->output.h);
-   evas_common_tilebuf_set_tile_size(updates, TILESIZE, TILESIZE);
-//   evas_common_tilebuf_tile_strict_set(updates, EINA_TRUE);
+   Region *updates;
+   Box *rects;
+   int rects_num, i;
    static int num = 0;
+
+   updates = region_new();
    printf("........... updates # %i\n", num++);
    t = get_time();
    EINA_INLIST_FOREACH(e->layers, lay)
@@ -197,34 +196,34 @@ _evas_render2_th_main_do(Eo *eo_e, Evas_Public_Data *e)
    // add explicitly exposed/damaged regions of the canvas
    EINA_LIST_FREE(e->damages, rect)
      {
-        evas_common_tilebuf_add_redraw(updates, rect->x, rect->y,
-                                       rect->w, rect->h);
+        region_rect_add(updates, rect->x, rect->y, rect->w, rect->h);
         eina_rectangle_free(rect);
      }
    // build obscure objects list of active objects that obscure
    EINA_LIST_FOREACH(e->obscures, l, rect)
      {
-        evas_common_tilebuf_del_redraw(updates, rect->x, rect->y,
-                                       rect->w, rect->h);
+        region_rect_del(updates, rect->x, rect->y, rect->w, rect->h);
      }
    t = get_time() - t;
    printf("T: update generation: "); out_time(t);
 
-   rects = evas_common_tilebuf_get_render_rects(updates);
-   EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
+   rects = region_rects(updates);
+   rects_num = region_rects_num(updates);
+   for (i = 0; i < rects_num; i++)
      {
         rect = malloc(sizeof(Eina_Rectangle));
         if (rect)
           {
-             printf(" Render Region [ %4i %4i %4ix%4i ]\n", r->x, r->y, r->w, r->h);
-             rect->x = r->x; rect->y = r->y;
-             rect->w = r->w; rect->h = r->h;
+             rect->x = rects[i].x1;
+             rect->y = rects[i].y1;
+             rect->w = rects[i].x2 - rects[i].x1;
+             rect->h = rects[i].y2 - rects[i].y1;
+             printf(" Render Region [ %4i %4i %4ix%4i ]\n",
+                    rect->x, rect->y, rect->w, rect->h);
              updates_list = eina_list_append(updates_list, rect);
           }
      }
-   evas_common_tilebuf_free_render_rects(rects);
-
-   evas_common_tilebuf_free(updates);
+   region_free(updates);
 
    e->changed = EINA_FALSE;
    // remove from the "i'm rendering" pool - do back in mainloop

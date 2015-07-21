@@ -8,6 +8,8 @@
 #include "evas_cs2_private.h"
 #endif
 
+#include "region.h"
+
 Eina_Bool  _evas_render2(Eo *eo_e, Evas_Public_Data *e);
 Eina_List *_evas_render2_updates(Eo *eo_e, Evas_Public_Data *e);
 Eina_List *_evas_render2_updates_wait(Eo *eo_e, Evas_Public_Data *e);

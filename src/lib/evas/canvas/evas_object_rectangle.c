@@ -1,6 +1,8 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
+#include "evas_render2.h"
+
 #define MY_CLASS EVAS_RECTANGLE_CLASS
 
 /* private magic number for rectangle objects */
@@ -140,7 +142,7 @@ evas_object_rectangle_render2_walk(Evas_Object *eo_obj,
         printf("       UP1 %p - %4i %4i %4ix%4i\n", eo_obj,
                obj->cur->cache.clip.x, obj->cur->cache.clip.y,
                obj->cur->cache.clip.w, obj->cur->cache.clip.h);
-        evas_common_tilebuf_add_redraw
+        region_rect_add
           (updates,
            obj->cur->cache.clip.x - offx, obj->cur->cache.clip.y - offy,
            obj->cur->cache.clip.w,        obj->cur->cache.clip.h);
@@ -163,11 +165,11 @@ evas_object_rectangle_render2_walk(Evas_Object *eo_obj,
         printf("       UP2 %p - %4i %4i %4ix%4i\n", eo_obj,
                obj->prev->cache.clip.x, obj->prev->cache.clip.y,
                obj->prev->cache.clip.w, obj->prev->cache.clip.h);
-        evas_common_tilebuf_add_redraw
+        region_rect_add
           (updates,
            obj->prev->cache.clip.x - offx, obj->prev->cache.clip.y - offy,
            obj->prev->cache.clip.w,        obj->prev->cache.clip.h);
-        evas_common_tilebuf_add_redraw
+        region_rect_add
           (updates,
            obj->cur->cache.clip.x - offx, obj->cur->cache.clip.y - offy,
            obj->cur->cache.clip.w,        obj->cur->cache.clip.h);
@@ -180,7 +182,7 @@ nochange:
         printf("       NO- %p - %4i %4i %4ix%4i\n", eo_obj,
                obj->cur->cache.clip.x, obj->cur->cache.clip.y,
                obj->cur->cache.clip.w, obj->cur->cache.clip.h);
-        evas_common_tilebuf_del_redraw
+        region_rect_del
           (updates,
            obj->cur->cache.clip.x - offx, obj->cur->cache.clip.y - offy,
            obj->cur->cache.clip.w,        obj->cur->cache.clip.h);
