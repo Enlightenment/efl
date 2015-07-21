@@ -598,7 +598,7 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
    Evas_Canvas3D_Object_Data *pd_parent;
    Evas_Public_Data *e;
    int tex = 0, px, py;;
-   Evas_Color color = {0.0, 0.0, 0.0};
+   Evas_Color color = {0.0, 0.0, 0.0, 0.0};
    Eina_Stringshare *tmp;
    Eina_Array *arr = NULL;
    Eina_Bool update_scene = EINA_FALSE;
