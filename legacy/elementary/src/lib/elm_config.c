@@ -34,6 +34,7 @@ Eina_Hash *_elm_key_bindings = NULL;
 const char *_elm_engines[] = {
    "software_x11",
    "fb",
+   "eglfs",
    "opengl_x11",
    "software_gdi",
    "sdl",
@@ -1826,6 +1827,8 @@ _env_get(void)
           eina_stringshare_replace(&_elm_config->engine, ELM_WAYLAND_EGL);
         else if ((!strcasecmp(s, "drm")))
           eina_stringshare_replace(&_elm_config->engine, ELM_DRM);
+        else if ((!strcasecmp(s, "eglfs")))
+          eina_stringshare_replace(&_elm_config->engine, ELM_EGLFS);
         else if ((!strcasecmp(s, "ddraw")))
           eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_DDRAW);
         else
