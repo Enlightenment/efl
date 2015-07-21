@@ -84,7 +84,6 @@ _drag_data_build(Eina_List **items)
                {
                   strcat((char *) drag_data, FILESEP);
                   strcat((char *) drag_data, t);
-                  strcat((char *) drag_data, "\n");
                }
           }
      }
