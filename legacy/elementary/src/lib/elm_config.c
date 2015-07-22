@@ -574,19 +574,21 @@ _elm_config_user_dir_snprintf(char       *dst,
 #if !defined(HAVE_GETUID) || !defined(HAVE_GETEUID)
    else
      {
+# if HAVE_GETPWENT
         struct passwd *pw = getpwent();
 
         if ((!pw) || (!pw->pw_dir)) goto end;
-#ifdef DOXDG
+#  ifdef DOXDG
         user_dir_len = eina_str_join_len
           (dst, size, '/', pw->pw_dir, strlen(pw->pw_dir),
            ".config", sizeof(".config") - 1,
            "elementary", sizeof("elementary") - 1);
-#else
+#  else
         user_dir_len = eina_str_join_len
           (dst, size, '/', pw->pw_dir, strlen(pw->pw_dir),
            ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
-#endif
+#  endif
+# endif /* HAVE_GETPWENT */
      }
 #endif
 

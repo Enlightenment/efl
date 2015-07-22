@@ -447,7 +447,7 @@ ELM_QUICKLAUNCH
 
 AC_FUNC_ALLOCA
 
-AC_CHECK_FUNCS([geteuid getuid])
+AC_CHECK_FUNCS([geteuid getuid getpwent])
 
 if test "x${want_quicklaunch}" != "xno"; then
    AC_CHECK_FUNCS([fork clearenv])
