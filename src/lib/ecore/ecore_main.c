@@ -2209,7 +2209,7 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
         char *m;
 
         m = evil_last_error_get();
-        ERR("%s", m);
+        CRI("%s", m);
         free(m);
         res = -1;
      }
