@@ -571,8 +571,9 @@ _elm_config_user_dir_snprintf(char       *dst,
 #endif
           }
      }
-#if !defined(HAVE_GETUID) || !defined(HAVE_GETEUID)
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    else
+#else
      {
 # if HAVE_GETPWENT
         struct passwd *pw = getpwent();
