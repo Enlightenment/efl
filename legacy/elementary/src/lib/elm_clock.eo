@@ -24,239 +24,196 @@ class Elm.Clock (Elm.Layout)
    methods {
       @property show_am_pm {
          set {
-            /*@
-            Set if the given clock widget must show hours in military or
-            am/pm mode
+            [[Set if the given clock widget must show hours in military or
+              am/pm mode
 
-            This function sets if the clock must show hours in military or
-            am/pm mode. In some countries like Brazil the military mode
-            (00-24h-format) is used, in opposition to the USA, where the
-            am/pm mode is more commonly used.
+              This function sets if the clock must show hours in military or
+              am/pm mode. In some countries like Brazil the military mode
+              (00-24h-format) is used, in opposition to the USA, where the
+              am/pm mode is more commonly used.
 
-            @see elm_clock_show_am_pm_get()
-
-            @ingroup Clock */
+              See also @.show_am_pm.get.
+            ]]
          }
          get {
-            /*@
-            Get if the given clock widget shows hours in military or am/pm
-            mode
+            [[Get if the given clock widget shows hours in military or am/pm
+              mode
 
-            @return @c EINA_TRUE, if in am/pm mode, @c EINA_FALSE if in
-            military
+              This function gets if the clock shows hours in military or am/pm
+              mode.
 
-            This function gets if the clock shows hours in military or am/pm
-            mode.
-
-            @see elm_clock_show_am_pm_set() for more details
-
-            @ingroup Clock */
+              See also @.show_am_pm.set for more details.
+            ]]
          }
          values {
-            am_pm: bool; /*@ @c EINA_TRUE to put it in am/pm mode, @c EINA_FALSE
-            to military mode */
+            am_pm: bool; [[$true to put it in am/pm mode,
+                           $false to military mode]]
          }
       }
       @property first_interval {
          set {
-            /*@
-            Set the first interval on time updates for a user mouse button hold
-            on clock widgets' time edition.
+            [[Set the first interval on time updates for a user mouse button hold
+              on clock widgets' time edition.
 
-            This interval value is @b decreased while the user holds the
-            mouse pointer either incrementing or decrementing a given the
-            clock digit's value.
+              This interval value is decreased while the user holds the
+              mouse pointer either incrementing or decrementing a given the
+              clock digit's value.
 
-            This helps the user to get to a given time distant from the
-            current one easier/faster, as it will start to flip quicker and
-            quicker on mouse button holds.
+              This helps the user to get to a given time distant from the
+              current one easier/faster, as it will start to flip quicker and
+              quicker on mouse button holds.
 
-            The calculation for the next flip interval value, starting from
-            the one set with this call, is the previous interval divided by
-            1.05, so it decreases a little bit.
+              The calculation for the next flip interval value, starting from
+              the one set with this call, is the previous interval divided by
+              1.05, so it decreases a little bit.
 
-            The default starting interval value for automatic flips is
-            @b 0.85 seconds.
+              The default starting interval value for automatic flips is
+              0.85 seconds.
 
-            @see elm_clock_first_interval_get()
-
-            @ingroup Clock */
+              See also @.first_interval.get.
+            ]]
          }
          get {
-            /*@
-            Get the first interval on time updates for a user mouse button hold
-            on clock widgets' time edition.
+            [[Get the first interval on time updates for a user mouse button hold
+              on clock widgets' time edition.
 
-            @return The first interval value, in seconds, set on it
+              See also @.first_interval.set for more details.
+            ]]
 
-            @see elm_clock_first_interval_set() for more details
-
-            @ingroup Clock */
          }
          values {
-            interval: double; /*@ The first interval value in seconds */
+            interval: double; [[The first interval value in seconds]]
          }
       }
       @property show_seconds {
          set {
-            /*@
-            Set if the given clock widget must show time with seconds or not
+            [[Set if the given clock widget must show time with seconds or not
 
-            This function sets if the given clock must show or not elapsed
-            seconds. By default, they are @b not shown.
+              This function sets if the given clock must show or not elapsed
+              seconds. By default, they are not shown.
 
-            @see elm_clock_show_seconds_get()
-
-            @ingroup Clock */
+              See also @.show_seconds.get.
+            ]]
          }
          get {
-            /*@
-            Get whether the given clock widget is showing time with seconds
-            or not
+            [[Get whether the given clock widget is showing time with seconds
+              or not
 
-            @return @c EINA_TRUE if it's showing seconds, @c EINA_FALSE otherwise
+              This function gets whether $obj is showing or not the elapsed
+              seconds.
 
-            This function gets whether @p obj is showing or not the elapsed
-            seconds.
-
-            @see elm_clock_show_seconds_set()
-
-            @ingroup Clock */
+              See also @.show_seconds.set.
+            ]]
          }
          values {
-            seconds: bool; /*@ @c EINA_TRUE to show seconds, @c EINA_FALSE otherwise */
+            seconds: bool; [[$true to show seconds, $false otherwise.]]
          }
       }
       @property edit {
          set {
-            /*@
-            Set whether a given clock widget is under <b>edition mode</b> or
-            under (default) displaying-only mode.
+            [[Set whether a given clock widget is under edition mode or
+              under (default) displaying-only mode.
 
-            This function makes a clock's time to be editable or not <b>by
-            user interaction</b>. When in edition mode, clocks @b stop
-            ticking, until one brings them back to canonical mode. The
-            elm_clock_edit_mode_set() function will influence which digits
-            of the clock will be editable.
+              This function makes a clock's time to be editable or not by
+              user interaction. When in edition mode, clocks stop
+              ticking, until one brings them back to canonical mode. The
+              @.edit_mode.set function will influence which digits
+              of the clock will be editable.
 
-            @note am/pm sheets, if being shown, will @b always be editable
-            under edition mode.
+              Note: am/pm sheets, if being shown, will always be editable
+              under edition mode.
 
-            @see elm_clock_edit_get()
-
-            @ingroup Clock */
+              See also @.edit.get.
+            ]]
          }
          get {
-            /*@
-            Get whether a given clock widget is under editing mode
-            or under (default) displaying-only mode.
+            [[Get whether a given clock widget is under editing mode
+              or under (default) displaying-only mode.
 
-            @return @c EINA_TRUE, if it's in edition mode, @c EINA_FALSE otherwise
+              This function retrieves whether the clock's time can be edited
+              or not by user interaction.
 
-            This function retrieves whether the clock's time can be edited
-            or not by user interaction.
-
-            @see elm_clock_edit_set() for more details
-
-            @ingroup Clock */
+              See also @.edit.set for more details
+            ]]
          }
          values {
-            edit: bool; /*@ @c EINA_TRUE to put it in edition, @c EINA_FALSE to
-            put it back to "displaying only" mode */
+            edit: bool; [[$true to put it in edition, $false to
+            put it back to "displaying only" mode]]
          }
       }
       @property pause {
          set {
-            /*@
-            Set whether the given clock widget should be paused or not.
+            [[Set whether the given clock widget should be paused or not.
 
-            This function pauses or starts the clock widget.
+              This function pauses or starts the clock widget.
 
-            @see elm_clock_pause_get()
+              See also @.pause.get.
 
-            @ingroup Clock
-            @since 1.9 */
+              @since 1.9
+            ]]
          }
          get {
-            /*@
-            Get whether the given clock widget is paused.
+            [[Get whether the given clock widget is paused.
 
-            @return @c EINA_TRUE if it's paused @c EINA_FALSE otherwise
+              This function gets whether the clock is paused or not.
 
-            This function gets whether the clock is paused or not.
+              See also @.pause.set.
 
-            @see elm_clock_pause_set()
-
-            @ingroup Clock
-            @since 1.9 */
+              @since 1.9]]
          }
          values {
-            paused: bool; /*@ @c EINA_TRUE to pause clock, @c EINA_FALSE otherwise */
+            paused: bool; [[$true to pause clock, $false otherwise]]
          }
       }
       @property time {
          set {
-            /*@
-            Set a clock widget's time, programmatically
+            [[Set a clock widget's time, programmatically
 
-            This function updates the time that is showed by the clock
-            widget.
+              This function updates the time that is showed by the clock
+              widget.
 
-            Values @b must be set within the following ranges:
-            - 0 - 23, for hours
-            - 0 - 59, for minutes
-            - 0 - 59, for seconds,
+              Values must be set within 0-23 for hours and
+              0-59 for minutes and seconds, even if the clock
+              is not in "military" mode.
 
-            even if the clock is not in "military" mode.
-
-            @warning The behavior for values set out of those ranges is @b
-            undefined.
-
-            @ingroup Clock */
+              Warning: The behavior for values set out of those ranges is
+              undefined.
+            ]]
          }
          get {
-            /*@
-            Get a clock widget's time values
+            [[Get a clock widget's time values
 
-            This function gets the time set for @p obj, returning
-            it on the variables passed as the arguments to function
+              This function gets the time set for $obj, returning
+              it on the variables passed as the arguments to function
 
-            @note Use @c NULL pointers on the time values you're not
-            interested in: they'll be ignored by the function.
-
-            @ingroup Clock */
+              Note: Use $null pointers on the time values you're not
+              interested in: they'll be ignored by the function.
+            ]]
          }
          values {
-            hrs: int; /*@ The hours to set */
-            min: int; /*@ The minutes to set */
-            sec: int; /*@ The seconds to set */
+            hrs: int; [[The hours to set]]
+            min: int; [[The minutes to set]]
+            sec: int; [[The seconds to set]]
          }
       }
       @property edit_mode {
          set {
-            /*@
-            Set what digits of the given clock widget should be editable
-            when in edition mode.
+            [[Set what digits of the given clock widget should be editable
+              when in edition mode.
 
-            @see elm_clock_edit_mode_get()
-
-            @ingroup Clock */
+              See also @.edit_mode.get.
+            ]]
          }
          get {
-            /*@
-            Get what digits of the given clock widget should be
-            editable when in edition mode.
+            [[Get what digits of the given clock widget should be
+              editable when in edition mode.
 
-            @return Bit mask indicating the digits to be editable
-            (values in #Elm_Clock_Edit_Mode).
-
-            @see elm_clock_edit_mode_set() for more details
-
-            @ingroup Clock */
+              See also @.edit_mode.set for more details.
+            ]]
          }
          values {
-            digedit: Elm.Clock.Edit_Mode; /*@ Bit mask indicating the digits to be editable
-            (values in #Elm_Clock_Edit_Mode). */
+            digedit: Elm.Clock.Edit_Mode; [[Bit mask indicating the digits to be editable
+            (values in #Elm_Clock_Edit_Mode).]]
          }
       }
    }
