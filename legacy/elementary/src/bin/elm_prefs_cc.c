@@ -102,7 +102,7 @@ main(int argc, char **argv)
    progname = ecore_file_file_get(argv[0]);
    eina_log_print_cb_set(_elm_prefs_cc_log_cb, NULL);
 
-   tmp_dir = getenv("TMPDIR");
+   tmp_dir = eina_environment_tmp_get();
 
    for (i = 1; i < argc; i++)
      {
