@@ -262,9 +262,9 @@ _ecore_evas_fb_init(Ecore_Evas *ee, int w, int h)
 
    if ((!mouse_handled) || (always_ts))
      {
-        if (ecore_fb_ts_init())
+        if (1) //ecore_fb_ts_init())
           {
-             ecore_fb_ts_event_window_set(ee);
+             // ecore_fb_ts_event_window_set(ee);
              ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, _ecore_evas_event_mouse_button_down, NULL);
              ecore_evas_event_handlers[1]  = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, _ecore_evas_event_mouse_button_up, NULL);
              ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, _ecore_evas_event_mouse_move, NULL);
@@ -287,7 +287,7 @@ _ecore_evas_fb_shutdown(void)
              if (ecore_evas_event_handlers[i])
                ecore_event_handler_del(ecore_evas_event_handlers[i]);
           }
-        ecore_fb_ts_shutdown();
+        // ecore_fb_ts_shutdown();
         ecore_event_evas_shutdown();
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
