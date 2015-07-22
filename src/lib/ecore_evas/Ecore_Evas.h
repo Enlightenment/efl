@@ -91,6 +91,7 @@ extern "C" {
  */
 #define HAVE_ECORE_EVAS_X 1
 #define HAVE_ECORE_EVAS_FB 1
+#define HAVE_ECORE_EVAS_EGLFS 1
 #define HAVE_ECORE_EVAS_X11_GL 1
 //#define HAVE_ECORE_EVAS_X11_16 1
 //#define HAVE_ECORE_EVAS_DIRECTFB 1
@@ -121,6 +122,7 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_SOFTWARE_SDL,
    ECORE_EVAS_ENGINE_DIRECTFB,
    ECORE_EVAS_ENGINE_SOFTWARE_FB,
+   ECORE_EVAS_ENGINE_EGLFS,
    ECORE_EVAS_ENGINE_SOFTWARE_8_X11,
    ECORE_EVAS_ENGINE_SOFTWARE_16_X11,
    ECORE_EVAS_ENGINE_SOFTWARE_16_DDRAW,
@@ -1303,6 +1305,7 @@ EAPI void            ecore_evas_software_x11_16_extra_event_window_add(Ecore_Eva
  * @return The new Ecore_Evas.
  */
 EAPI Ecore_Evas     *ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h);
+EAPI Ecore_Evas     *ecore_evas_eglfs_new(const char *disp_name, int rotation, int w, int h);
 
 EAPI Ecore_Evas     *ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w, int h) EINA_DEPRECATED;
 EAPI Ecore_DirectFB_Window *ecore_evas_directfb_window_get(const Ecore_Evas *ee) EINA_DEPRECATED;
