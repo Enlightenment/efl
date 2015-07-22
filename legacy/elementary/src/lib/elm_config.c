@@ -2,10 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-#ifdef HAVE_EVIL
-# include <Evil.h>
-#endif
-
 #include <Elementary.h>
 #include "elm_priv.h"
 #include <pwd.h>
@@ -546,12 +542,6 @@ _elm_config_user_dir_snprintf(char       *dst,
    size_t user_dir_len = 0, off = 0;
    va_list ap;
 
-#ifdef _WIN32
-   home = evil_homedir_get();
-   user_dir_len = eina_str_join_len
-     (dst, size, '/', home, strlen(home),
-         ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
-#else
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())
 #endif
@@ -598,7 +588,6 @@ _elm_config_user_dir_snprintf(char       *dst,
            ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
 #endif
      }
-#endif
 #endif
 
    off = user_dir_len + 1;
