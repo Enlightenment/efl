@@ -4,17 +4,14 @@ class Evas.Polygon (Evas.Object)
    eo_prefix: evas_obj_polygon;
    methods {
       point_add {
-         /*@
-         Adds the given point to the given evas polygon object.
-         @ingroup Evas_Polygon_Group */
+         [[Adds the given point to the given evas polygon object.]]
          params {
-            @in x: Evas.Coord; /*@ The X coordinate of the given point. */
-            @in y: Evas.Coord; /*@ The Y coordinate of the given point. */
+            @in x: Evas.Coord; [[The X coordinate of the given point.]]
+            @in y: Evas.Coord; [[The Y coordinate of the given point.]]
          }
       }
       points_clear {
-         /*@
-         Removes all of the points from the given evas polygon object. */
+         [[Removes all of the points from the given evas polygon object.]]
       }
    }
    implements {
