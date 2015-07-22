@@ -69,7 +69,7 @@
  *
  * @code
  * Eina_Tmpstr *my_homedir(void) {
- *   return eina_tmpstr_add(getenv("HOME"));
+ *   return eina_tmpstr_add(eina_environment_home_get());
  * }
  *
  * Eina_Tmpstr *my_tmpdir(void) {
@@ -144,7 +144,7 @@ typedef const char Eina_Tmpstr;
  *
  * @code
  * Eina_Tmpstr *my_homedir(void) {
- *   return eina_tmpstr_add(getenv("HOME"));
+ *   return eina_tmpstr_add(eina_environment_home_get());
  * }
  *
  * void my_rmfile(Eina_Tmpstr *str) {
