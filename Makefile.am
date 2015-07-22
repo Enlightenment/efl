@@ -179,6 +179,10 @@ if BUILD_ENGINE_FB
 pkgconfig_DATA += pc/evas-fb.pc
 endif
 
+if BUILD_ENGINE_EGLFS
+pkgconfig_DATA += pc/evas-eglfs.pc
+endif
+
 if BUILD_ENGINE_BUFFER
 pkgconfig_DATA += pc/evas-software-buffer.pc
 endif

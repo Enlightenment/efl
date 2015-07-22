@@ -41,6 +41,7 @@
 /ethumb_client.pc
 /evas-drm.pc
 /evas-fb.pc
+/evas-eglfs.pc
 /evas-opengl-cocoa.pc
 /evas-opengl-sdl.pc
 /evas-opengl-x11.pc
