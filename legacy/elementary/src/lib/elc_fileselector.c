@@ -17,10 +17,6 @@
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector.h"
 
-#ifdef HAVE_EVIL
-# include <Evil.h>
-#endif
-
 #define MY_CLASS ELM_FILESELECTOR_CLASS
 
 #define MY_CLASS_NAME "Elm_Fileselector"
@@ -1012,16 +1008,8 @@ _home(void *data,
       void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
-   const char * path = NULL;
 
-#ifdef HAVE_EVIL
-   path = (char*)evil_homedir_get();
-#else
-   path = getenv("HOME");
-#endif
-
-
-   _populate(fs, path, NULL, NULL);
+   _populate(fs, eina_environment_home_get(), NULL, NULL);
 
    return EINA_TRUE;
 }

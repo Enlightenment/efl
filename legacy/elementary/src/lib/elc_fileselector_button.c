@@ -174,11 +174,14 @@ _button_clicked(void *data,
 EOLIAN static void
 _elm_fileselector_button_evas_object_smart_add(Eo *obj, Elm_Fileselector_Button_Data *priv)
 {
+   const char *path;
+
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
 
    priv->window_title = eina_stringshare_add(DEFAULT_WINDOW_TITLE);
-   if (getenv("HOME")) priv->fsd.path = eina_stringshare_add(getenv("HOME"));
+   path = eina_environment_home_get();
+   if (path) priv->fsd.path = eina_stringshare_add(path);
    else priv->fsd.path = eina_stringshare_add("/");
 
    priv->fsd.expandable = _elm_config->fileselector_expand_enable;
