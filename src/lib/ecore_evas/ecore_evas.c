@@ -2966,17 +2966,12 @@ EAPI void
 _ecore_evas_fps_debug_init(void)
 {
    char buf[4096];
-   const char *tmp;
 
    _ecore_evas_fps_debug_init_count++;
    if (_ecore_evas_fps_debug_init_count > 1) return;
 
-#ifndef HAVE_EVIL
-   tmp = "/tmp";
-#else
-   tmp = evil_tmpdir_get ();
-#endif /* HAVE_EVIL */
-   snprintf(buf, sizeof(buf), "%s/.ecore_evas_fps_debug-%i", tmp, (int)getpid());
+   snprintf(buf, sizeof(buf), "%s/.ecore_evas_fps_debug-%i",
+            eina_environment_tmp_get(), (int)getpid());
    _ecore_evas_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR, 0644);
    if (_ecore_evas_fps_debug_fd < 0)
      {
@@ -3026,7 +3021,8 @@ _ecore_evas_fps_debug_shutdown(void)
      {
         char buf[4096];
 
-        snprintf(buf, sizeof(buf), "/tmp/.ecore_evas_fps_debug-%i", (int)getpid());
+        snprintf(buf, sizeof(buf), "%s/.ecore_evas_fps_debug-%i",
+                 eina_environment_tmp_get(), (int)getpid());
         unlink(buf);
         if (_ecore_evas_fps_rendertime_mmap)
           {

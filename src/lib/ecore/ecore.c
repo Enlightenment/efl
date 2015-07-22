@@ -774,11 +774,7 @@ _ecore_fps_debug_init(void)
    _ecore_fps_debug_init_count++;
    if (_ecore_fps_debug_init_count > 1) return;
 
-#ifndef HAVE_EVIL
-   tmp = "/tmp";
-#else
-   tmp = evil_tmpdir_get ();
-#endif /* HAVE_EVIL */
+   tmp = eina_environment_tmp_get();
    pid = (int)getpid();
    snprintf(buf, sizeof(buf), "%s/.ecore_fps_debug-%i", tmp, pid);
    _ecore_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR, 0644);
@@ -829,16 +825,11 @@ _ecore_fps_debug_shutdown(void)
    if (_ecore_fps_debug_fd >= 0)
      {
         char buf[4096];
-        const char *tmp;
         int pid;
 
-#ifndef HAVE_EVIL
-        tmp = "/tmp";
-#else
-        tmp = (char *)evil_tmpdir_get ();
-#endif /* HAVE_EVIL */
         pid = (int)getpid();
-        snprintf(buf, sizeof(buf), "%s/.ecore_fps_debug-%i", tmp, pid);
+        snprintf(buf, sizeof(buf), "%s/.ecore_fps_debug-%i",
+                 eina_environment_tmp_get(), pid);
         unlink(buf);
         if (_ecore_fps_runtime_mmap)
           {
