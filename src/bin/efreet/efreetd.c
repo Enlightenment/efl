@@ -29,7 +29,6 @@ main(int argc, char *argv[])
    char path[PATH_MAX];
    FILE *log;
    int fd;
-   mode_t um;
 
 #ifdef HAVE_SYS_RESOURCE_H
    setpriority(PRIO_PROCESS, 0, 19);
@@ -37,19 +36,19 @@ main(int argc, char *argv[])
    SetPriorityClass(GetCurrentProcess(), IDLE_PRIORITY_CLASS);
 #endif
 
-   strcpy(path, "/tmp/efreetd_XXXXXX");
-   um = umask(S_IRWXG | S_IRWXO);
-   fd = mkstemp(path);
-   umask(um);
+   if (!eina_init()) return 1;
+
+   snprintf(path, sizeof(path), "efreetd_XXXXXX");
+   fd = eina_file_mkstemp(path, NULL);
    if (fd < 0)
      {
         perror("mkstemp");
-        return 1;
+        goto ecore_error;
      }
    log = fdopen(fd, "wb");
-   if (!log) return 1;
+   if (!log)
+     goto ecore_error;
 
-   if (!eina_init()) return 1;
    eina_log_print_cb_set(eina_log_print_cb_file, log);
    efreetd_log_dom = eina_log_domain_register("efreetd", EFREETD_DEFAULT_LOG_COLOR);
    if (efreetd_log_dom < 0)
