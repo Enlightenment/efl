@@ -1117,21 +1117,3 @@ Improvements:
    * Defer Elm_Slider update until really needed.
 
 Removal:
-Changes since 1.15.0-beta1:
----------------------
-
-Features:
-
-
-Fixes:
-
-   * Entry: Fix behaviour of markup filters when setting entry text. (T2561)
-   * elementary: Tweak elm wayland border focus to Fix T2575 (T2575)
-   * elementary: Update elementary wayland border theme to match E's
-   * elementary: Fix elementary wayland border opaque region calculations (T2575)
-   * elementary: Fix program signal for enable/disable of shadows
-   * elementary: Properly fix wayland opaque region setting (T2575)
-   * popup: fix title icon to show up. (T2581)
-   * Scroller: Improvement in _key_action_move() calculations.
-   * genlist : fix genlist dangling pointer crash in item select (T2553)
-   * elementary: Adjust shadow spacer on maximize (T2578)
