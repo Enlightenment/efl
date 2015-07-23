@@ -142,7 +142,6 @@ static const char *eagle_path = LOCAL_MODEL_FOLDER "/eagle.md2";
 static const char *snake_path = LOCAL_MODEL_FOLDER "/snake.md2";
 static const char *soldier_jump_path = LOCAL_MODEL_FOLDER "/soldier_jump.md2";
 static const char *soldier_path = LOCAL_MODEL_FOLDER "/soldier.md2";
-static const char *column_path = LOCAL_MODEL_FOLDER "/column.ply";
 static const char *gun_path = LOCAL_MODEL_FOLDER "/tommy.ply";
 
 static const Ecore_Getopt optdesc = {
