@@ -2734,8 +2734,8 @@ typedef enum
 
 //add mod, anymod, priority for the future.
 //we will support modifier and priority feature later.
-EAPI Eina_Bool                             ecore_x_window_keygrab_set(Ecore_X_Window win, const char *key, int mod, int any_mod, int priority, Ecore_X_Win_Keygrab_Mode grab_mode);
-EAPI Eina_Bool                             ecore_x_window_keygrab_unset(Ecore_X_Window win, const char *key, int mod, int any_mod);
+EAPI Eina_Bool                             ecore_x_window_keygrab_set(Ecore_X_Window win, const char *key, int mod, int any_mod, int priority, Ecore_X_Win_Keygrab_Mode grab_mode); /**< @since 1.15 */
+EAPI Eina_Bool                             ecore_x_window_keygrab_unset(Ecore_X_Window win, const char *key, int mod, int any_mod); /**< @since 1.15 */
 
 //this API for keyrouter protocol
 EAPI void                                  ecore_x_e_keyrouter_set(Ecore_X_Window root, Eina_Bool on); /**< @since 1.15 */ //Key router set keyrouter flag using this
