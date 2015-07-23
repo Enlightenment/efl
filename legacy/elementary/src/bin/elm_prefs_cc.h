@@ -92,7 +92,7 @@ char   *mem_strdup(const char *s);
 
 /* global vars */
 extern char                  *file_in;
-extern char                  *tmp_dir;
+extern const char            *tmp_dir;
 extern char                  *file_out;
 extern int                    line;
 extern Eina_List             *stack;
