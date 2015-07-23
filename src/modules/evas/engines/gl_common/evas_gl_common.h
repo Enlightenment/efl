@@ -15,6 +15,10 @@
 
 #define GL_GLEXT_PROTOTYPES
 
+#if !defined(HAVE_ECORE_X_XLIB) && !defined(MESA_EGL_NO_X11_HEADERS)
+# define MESA_EGL_NO_X11_HEADERS
+#endif
+
 #ifdef BUILD_ENGINE_GL_COCOA
 # include <OpenGL/gl.h>
 # include <OpenGL/glext.h>

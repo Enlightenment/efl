@@ -10,6 +10,10 @@
 # define EGL_EGLEXT_PROTOTYPES
 # define GL_GLEXT_PROTOTYPES
 
+# if !defined(HAVE_ECORE_X_XLIB) && !defined(MESA_EGL_NO_X11_HEADERS)
+#  define MESA_EGL_NO_X11_HEADERS
+# endif
+
 # include <EGL/egl.h>
 # include <EGL/eglext.h>
 # include <EGL/eglmesaext.h>
