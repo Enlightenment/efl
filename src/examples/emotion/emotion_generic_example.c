@@ -170,17 +170,6 @@ _progress_change_cb(void *data EINA_UNUSED,
    return EINA_TRUE;
 }
 
-static Eina_Bool
-_frame_resize_cb(void *data EINA_UNUSED,
-            Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   int w, h;
-   emotion_object_size_get(o, &w, &h);
-   fprintf(stderr, "smartcb: frame_resize: %dx%d\n", w, h);
-
-   return EINA_TRUE;
-}
-
 static const Eo_Callback_Array_Item emotion_object_example_callbacks[] = {
        { EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb },
        { EMOTION_OBJECT_EVENT_LENGTH_CHANGE, _length_change_cb },
