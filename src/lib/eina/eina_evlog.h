@@ -57,14 +57,14 @@ struct _Eina_Evlog_Buf
 
 /**
  * @brief Log an event in our event log for profiling data
- * 
+ *
  * Log some interesting event inside of EFL, eg a wakeup (and why etc.).
  * The @p event string must alwasy be provided and be of the form:
- * 
+ *
  * "+eventname"
  * "-eventname"
  * "!eventname"
- * 
+ *
  * etc. The "+" char means an event is beginning (and any subsequent
  * events logged are really children of this event). The "-" char means an
  * event is ending and so all child events SHOULD have ended by now. A "!"
@@ -76,13 +76,13 @@ struct _Eina_Evlog_Buf
  * unless you want to impact such visibility of these events). The event
  * string after the first character as above can be anything, including white
  * space. It is suggested to keep it human readable and as short as feasible.
- * 
+ *
  * The @p object is optional, and if not used, pass in NULL. If it is used,
  * it can be a pointer to anything. It is intended simply to be of use to
  * indicate an event happens on object A vs object B. What this points to
  * is irrelevant as the pointer is never de-references or used other than
  * as a label to differentiate an event on 2 different objects.
- * 
+ *
  * The @p srctime parameter is 0.0 if not used, or if used, contains a
  * timepoint for an event that triggered this one. For example, if a device
  * or hardware interrupt causes this event, that device may provide a
@@ -91,17 +91,17 @@ struct _Eina_Evlog_Buf
  * more information as to the latency of an actual source of an event such
  * as the hardware interrupt time, and when the code actually begins seeing
  * or processing it.
- * 
+ *
  * The @p detail string is optional (and if unused should be NULL). This is
  * for providing more detailed information to log such as perhaps a the
  * state at the time of the log events or a series of parameters and input
  * that caused this event.
- * 
+ *
  * @param event The event string - see above for format
  * @param obj An optional object "pointer" to associate
  * @param srctime An optional source event timestamp that caused this event
  * @param detail An optional event detail string with more info
- * 
+ *
  * @since 1.15
  */
 EAPI void
@@ -109,12 +109,12 @@ eina_evlog(const char *event, void *obj, double srctime, const char *detail);
 
 /**
  * @brief Steal an event log buffer from the evlog core
- * 
+ *
  * Only one buffer can be stolen at any time. If you steal a new buffer, the
  * old stolen buffer is "released" back to the evlog core.
- * 
+ *
  * @return The stolen evlog buffer
- * 
+ *
  * @since 1.15
  */
 EAPI Eina_Evlog_Buf *
@@ -130,7 +130,7 @@ eina_evlog_start(void);
 
 /**
  * @brief Stop logging
- * 
+ *
  * You must not be using any evlog buffers stolen by eina_evlog_steal() by
  * the time you call this function.
  *
