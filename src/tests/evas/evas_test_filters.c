@@ -290,7 +290,7 @@ static struct Filter_Test_Case _test_cases[] = {
    { 0, 0, 0, 0, "m = buffer ({ src = 'rect' }) b = buffer ({ 'rgba' }) blend ({ m,dst = b, fillmode = 'repeat_x_stretch_y' }) blend ()", "rect" },
 
    // Padding_set
-   { 11, 22, 33, 44, "padding_set ({ 11,22,33,44 }) blend ()"}
+   { 11, 22, 33, 44, "padding_set ({ 11,22,33,44 }) blend ()", NULL }
 };
 
 static const int _test_cases_count = sizeof(_test_cases) / sizeof(_test_cases[0]);
