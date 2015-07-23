@@ -16,6 +16,33 @@
 
 #include "evas-3d-shooter-header.h"
 
+#define LOCAL_IMAGE_FOLDER PACKAGE_EXAMPLES_DIR "" EVAS_PROJECT_IMAGE_FOLDER
+#define LOCAL_MODEL_FOLDER PACKAGE_EXAMPLES_DIR "" EVAS_PROJECT_MODEL_FOLDER
+
+static const char *gray_brick_n_path = LOCAL_IMAGE_FOLDER "/brick-stone_n.jpg";
+static const char *gray_brick_path = LOCAL_IMAGE_FOLDER "/brick-stone.jpg";
+static const char *red_brick_n_path = LOCAL_IMAGE_FOLDER "/bricks_n.jpg";
+static const char *red_brick_path = LOCAL_IMAGE_FOLDER "/bricks.jpg";
+static const char *eagle_tex_path = LOCAL_IMAGE_FOLDER "/eagle.png";
+static const char *snake_tex_path = LOCAL_IMAGE_FOLDER "/snake.png";
+static const char *snake_tex_n_path = LOCAL_IMAGE_FOLDER "/snake_n.png";
+static const char *soldier_tex_path = LOCAL_IMAGE_FOLDER "/soldier.png";
+static const char *gazebo_b_path = LOCAL_IMAGE_FOLDER "/gazebo.png";
+static const char *gazebo_t_path = LOCAL_IMAGE_FOLDER "/gazebo_t.png";
+static const char *gazebo_t_trans_path = LOCAL_IMAGE_FOLDER "/gazebo_t_t.png";
+static const char *gazebo_t_n_path = LOCAL_IMAGE_FOLDER "/gazebo_t_n.png";
+static const char *gazebo_b_n_path = LOCAL_IMAGE_FOLDER "/gazebo_b_n.png";
+static const char *warrior_tex_path = LOCAL_IMAGE_FOLDER "/warrior.png";
+
+static const char *warrior_path = LOCAL_MODEL_FOLDER "/warrior.md2";
+static const char *gazebo_bot_path = LOCAL_MODEL_FOLDER "/gazebo_b.md2";
+static const char *gazebo_top_path = LOCAL_MODEL_FOLDER "/gazebo_t.md2";
+static const char *eagle_path = LOCAL_MODEL_FOLDER "/eagle.md2";
+static const char *snake_path = LOCAL_MODEL_FOLDER "/snake.md2";
+static const char *soldier_jump_path = LOCAL_MODEL_FOLDER "/soldier_jump.md2";
+static const char *soldier_path = LOCAL_MODEL_FOLDER "/soldier.md2";
+static const char *gun_path = LOCAL_MODEL_FOLDER "/tommy.ply";
+
 Evas_Canvas3D_Scene    *global_scene      = NULL;
 Ecore_Evas       *ecore_evas        = NULL;
 static float     angle_camera       = 0.0f;
