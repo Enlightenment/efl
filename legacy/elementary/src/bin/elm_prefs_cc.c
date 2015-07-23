@@ -14,7 +14,7 @@ static void main_help(void);
 
 Eina_Prefix *pfx = NULL;
 char *file_in = NULL;
-char *tmp_dir = NULL;
+const char *tmp_dir = NULL;
 char *file_out = NULL;
 
 static const char *progname = NULL;
