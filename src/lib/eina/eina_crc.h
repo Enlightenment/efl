@@ -37,6 +37,8 @@
  * char *tmp2 = "world"
  * unsigned int crc = eina_crc(tmp1, strlen(tmp1), 0xffffffff, EINA_TRUE);
  * crc = eina_crc(tmp2, strlen(tmp2), crc, EINA_FALSE);
+ *
+ * @since 1.15
  */
 EAPI unsigned int eina_crc(const char *key, int len, unsigned int seed, Eina_Bool start_stream) EINA_ARG_NONNULL(2, 3);
 
