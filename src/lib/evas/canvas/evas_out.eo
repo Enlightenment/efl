@@ -5,10 +5,14 @@ class Evas.Out (Eo.Base)
    methods {
       @property view {
          set {
-            /*@ Sets the viewport region of the canvas that the output displays This sets both the viewport region in the canvas that displays on the given output, but also the viewport size will match the output resolution 1:1. */
+            [[Sets the viewport region of the canvas that the output displays.
+
+              This sets both the viewport region in the canvas that displays
+              on the given output, but also the viewport size will match the 
+              output resolution 1:1.]]
          }
          get {
-            /*@ Gets the viewport region of the canvas that the output displays */
+            [[Gets the viewport region of the canvas that the output displays.]]
          }
          values {
             x: Evas_Coord;
@@ -19,14 +23,14 @@ class Evas.Out (Eo.Base)
       }
       @property engine_info {
          set {
-            /*@ Sets the engine specific output parameters for a given output. */
+            [[Sets the engine specific output parameters for a given output.]]
             return: bool;
          }
          get {
-            /*@ Gets the engine specific output parameters for a given output. */
+            [[Gets the engine specific output parameters for a given output.]]
          }
          values {
-            info: Evas_Engine_Info *; /*@ The engine parameters */
+            info: Evas_Engine_Info *; [[The engine parameters.]]
          }
       }
    }
