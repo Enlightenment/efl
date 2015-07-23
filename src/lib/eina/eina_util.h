@@ -31,6 +31,8 @@
  *
  * @note The result of this call is highly system dependent and you better use
  * it instead of the naive getenv("HOME").
+ *
+ * @since 1.15
  */
 EAPI const char *eina_environment_home_get(void);
 
@@ -40,6 +42,8 @@ EAPI const char *eina_environment_home_get(void);
  *
  * @note The result of this call is highly system dependent and you better use
  * it instead of the naive getenv("TMPDIR").
+ *
+ * @since 1.15
  */
 EAPI const char *eina_environment_tmp_get(void);
 
