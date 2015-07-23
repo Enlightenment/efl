@@ -44,11 +44,11 @@ _ecore_win32_window_procedure(HWND   window,
                               WPARAM window_param,
                               LPARAM data_param)
 {
+   Ecore_Win32_Callback_Data  _data;
    Ecore_Win32_Callback_Data *data;
    DWORD                      coord;
 
-   data = (Ecore_Win32_Callback_Data *)malloc(sizeof(Ecore_Win32_Callback_Data));
-   if (!data) return DefWindowProc(window, message, window_param, data_param);
+   data = &_data;
 
    data->window = window;
    data->message = message;
