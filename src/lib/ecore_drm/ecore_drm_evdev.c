@@ -286,6 +286,7 @@ _device_handle_key(struct libinput_device *device, struct libinput_event_keyboar
    uint32_t code, nsyms;
    const xkb_keysym_t *syms;
    enum libinput_key_state state;
+   int key_count;
    xkb_keysym_t sym = XKB_KEY_NoSymbol;
    char key[256], keyname[256], compose_buffer[256];
    Ecore_Event_Key *e;
@@ -298,6 +299,12 @@ _device_handle_key(struct libinput_device *device, struct libinput_event_keyboar
    timestamp = libinput_event_keyboard_get_time(event);
    code = libinput_event_keyboard_get_key(event) + 8;
    state = libinput_event_keyboard_get_key_state(event);
+   key_count = libinput_event_keyboard_get_seat_key_count(event);
+
+   /* ignore key events that are not seat wide state changes */
+   if (((state == LIBINPUT_KEY_STATE_PRESSED) && (key_count != 1)) ||
+       ((state == LIBINPUT_KEY_STATE_RELEASED) && (key_count != 0)))
+     return;
 
    xkb_state_update_key(edev->xkb.state, code, 
                         (state ? XKB_KEY_DOWN : XKB_KEY_UP));
