@@ -1829,7 +1829,7 @@ EAPI void         edje_thaw                       (void);
  *
  * @note: emits signal edje,language,"locale".
  *
- *
+ * @since 1.15
  */
 EAPI void         edje_language_set               (const char *locale);
 
