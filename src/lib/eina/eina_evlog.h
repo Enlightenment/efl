@@ -122,6 +122,8 @@ eina_evlog_steal(void);
 
 /**
  * @brief Begin logging - until now eina_evlog is a NOOP
+ *
+ * @since 1.15
  */
 EAPI void
 eina_evlog_start(void);
@@ -131,6 +133,8 @@ eina_evlog_start(void);
  * 
  * You must not be using any evlog buffers stolen by eina_evlog_steal() by
  * the time you call this function.
+ *
+ * @since 1.15
  */
 EAPI void
 eina_evlog_stop(void);
