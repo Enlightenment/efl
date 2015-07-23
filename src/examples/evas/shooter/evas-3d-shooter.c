@@ -73,12 +73,6 @@ static const unsigned short cube_indices[] =
    20, 21, 22, 22, 21, 23
 };
 
-static int              vertex_count = 0;
-static vertex           *vertices = NULL;
-
-static int              index_count = 0;
-static unsigned short   *indices = NULL;
-
 static void
 _key_down(void *data,
           Evas *e EINA_UNUSED,
