@@ -2738,8 +2738,8 @@ EAPI Eina_Bool                             ecore_x_window_keygrab_set(Ecore_X_Wi
 EAPI Eina_Bool                             ecore_x_window_keygrab_unset(Ecore_X_Window win, const char *key, int mod, int any_mod);
 
 //this API for keyrouter protocol
-EAPI void                                  ecore_x_e_keyrouter_set(Ecore_X_Window root, Eina_Bool on); //Key router set keyrouter flag using this
-EAPI Eina_Bool                             ecore_x_e_keyrouter_get(Ecore_X_Window root); //Client check the existance of keyrouter using this
+EAPI void                                  ecore_x_e_keyrouter_set(Ecore_X_Window root, Eina_Bool on); /**< @since 1.15 */ //Key router set keyrouter flag using this
+EAPI Eina_Bool                             ecore_x_e_keyrouter_get(Ecore_X_Window root); /**< @since 1.15 */ //Client check the existance of keyrouter using this
 
 #include <Ecore_X_Atoms.h>
 #include <Ecore_X_Cursor.h>
