@@ -55,79 +55,79 @@ struct _Eina_Point_3D_F16p16
 
 EAPI void eina_quaternion_f16p16_set(Eina_Quaternion *out,
                                      Eina_F16p16 x, Eina_F16p16 y,
-                                     Eina_F16p16 z, Eina_F16p16 w);
-EAPI Eina_F16p16 eina_quaternion_f16p16_norm(const Eina_Quaternion_F16p16 *q);
+                                     Eina_F16p16 z, Eina_F16p16 w); /**< @since 1.15 */
+EAPI Eina_F16p16 eina_quaternion_f16p16_norm(const Eina_Quaternion_F16p16 *q); /**< @since 1.15 */
 EAPI void eina_quaternion_f16p16_negative(Eina_Quaternion_F16p16 *out,
-                                          const Eina_Quaternion_F16p16 *in);
+                                          const Eina_Quaternion_F16p16 *in); /**< @since 1.15 */
 EAPI void eina_quaternion_f16p16_add(Eina_Quaternion_F16p16 *out,
                                      const Eina_Quaternion_F16p16 *a,
-                                     const Eina_Quaternion_F16p16 *b);
+                                     const Eina_Quaternion_F16p16 *b); /**< @since 1.15 */
 EAPI void eina_quaternion_f16p16_mul(Eina_Quaternion_F16p16 *out,
                                      const Eina_Quaternion_F16p16 *a,
-                                     const Eina_Quaternion_F16p16 *b);
+                                     const Eina_Quaternion_F16p16 *b); /**< @since 1.15 */
 EAPI void eina_quaternion_f16p16_scale(Eina_Quaternion_F16p16 *out,
                                        const Eina_Quaternion_F16p16 *a,
-                                       Eina_F16p16 b);
+                                       Eina_F16p16 b); /**< @since 1.15 */
 EAPI void eina_quaternion_f16p16_conjugate(Eina_Quaternion_F16p16 *out,
-                                           const Eina_Quaternion_F16p16 *in);
+                                           const Eina_Quaternion_F16p16 *in); /**< @since 1.15 */
 EAPI Eina_F16p16 eina_quaternion_f16p16_dot(const Eina_Quaternion_F16p16 *a,
-                                            const Eina_Quaternion_F16p16 *b);
+                                            const Eina_Quaternion_F16p16 *b); /**< @since 1.15 */
 EAPI void eina_quaternion_f16p16_lerp(Eina_Quaternion_F16p16 *out,
                                       const Eina_Quaternion_F16p16 *a,
                                       const Eina_Quaternion_F16p16 *b,
-                                      Eina_F16p16 pos);
+                                      Eina_F16p16 pos); /**< @since 1.15 */
 EAPI void eina_quaternion_f16p16_slerp(Eina_Quaternion_F16p16 *out,
                                        const Eina_Quaternion_F16p16 *a,
                                        const Eina_Quaternion_F16p16 *b,
-                                       Eina_F16p16 pos);
+                                       Eina_F16p16 pos); /**< @since 1.15 */
 EAPI void eina_quaternion_f16p16_nlerp(Eina_Quaternion_F16p16 *out,
                                        const Eina_Quaternion_F16p16 *a,
                                        const Eina_Quaternion_F16p16 *b,
-                                       Eina_F16p16 pos);
+                                       Eina_F16p16 pos); /**< @since 1.15 */
 EAPI void eina_quaternion_f16p16_rotate(Eina_Point_3D_F16p16 *p,
                                         const Eina_Point_3D_F16p16 *center,
-                                        const Eina_Quaternion_F16p16 *q);
+                                        const Eina_Quaternion_F16p16 *q); /**< @since 1.15 */
 EAPI void eina_quaternion_f16p16_rotation_matri3_get(Eina_Matrix3_F16p16 *m,
-                                                     const Eina_Quaternion_F16p16 *q);
+                                                     const Eina_Quaternion_F16p16 *q); /**< @since 1.15 */
 
 EAPI void eina_quaternion_set(Eina_Quaternion *q, double x,
                               double y, double z, double w);
-EAPI double eina_quaternion_norm(const Eina_Quaternion *q);
+EAPI double eina_quaternion_norm(const Eina_Quaternion *q); /**< @since 1.15 */
 EAPI void eina_quaternion_negative(Eina_Quaternion *out,
-                                   const Eina_Quaternion *in);
+                                   const Eina_Quaternion *in); /**< @since 1.15 */
 EAPI void eina_quaternion_add(Eina_Quaternion *out,
                               const Eina_Quaternion *a,
-                              const Eina_Quaternion *b);
+                              const Eina_Quaternion *b); /**< @since 1.15 */
 EAPI void eina_quaternion_mul(Eina_Quaternion *out,
                               const Eina_Quaternion *a,
-                              const Eina_Quaternion *b);
+                              const Eina_Quaternion *b); /**< @since 1.15 */
 EAPI void eina_quaternion_scale(Eina_Quaternion *out,
                                 const Eina_Quaternion *a,
-                                double b);
+                                double b); /**< @since 1.15 */
 EAPI void eina_quaternion_conjugate(Eina_Quaternion *out,
-                                    const Eina_Quaternion *in);
+                                    const Eina_Quaternion *in); /**< @since 1.15 */
 EAPI double eina_quaternion_dot(const Eina_Quaternion *a,
-                                const Eina_Quaternion *b);
+                                const Eina_Quaternion *b); /**< @since 1.15 */
 EAPI void eina_quaternion_normalized(Eina_Quaternion *out,
-                                     const Eina_Quaternion *in);
+                                     const Eina_Quaternion *in); /**< @since 1.15 */
 EAPI void eina_quaternion_lerp(Eina_Quaternion *out,
                                const Eina_Quaternion *a,
                                const Eina_Quaternion *b,
-                               double pos);
+                               double pos); /**< @since 1.15 */
 EAPI void eina_quaternion_slerp(Eina_Quaternion *out,
                                 const Eina_Quaternion *a,
                                 const Eina_Quaternion *b,
-                                double pos);
+                                double pos); /**< @since 1.15 */
 EAPI void eina_quaternion_nlerp(Eina_Quaternion *out,
                                 const Eina_Quaternion *a,
                                 const Eina_Quaternion *b,
-                                double pos);
+                                double pos); /**< @since 1.15 */
 EAPI void eina_quaternion_rotate(Eina_Point_3D *p,
                                  const Eina_Point_3D *center,
-                                 const Eina_Quaternion *q);
+                                 const Eina_Quaternion *q); /**< @since 1.15 */
 EAPI void eina_quaternion_rotation_matrix3_get(Eina_Matrix3 *m,
-                                               const Eina_Quaternion *q);
+                                               const Eina_Quaternion *q); /**< @since 1.15 */
 EAPI void eina_matrix3_quaternion_get(Eina_Quaternion *q,
-                                      const Eina_Matrix3 *m);
+                                      const Eina_Matrix3 *m); /**< @since 1.15 */
 
 #endif
