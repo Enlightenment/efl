@@ -5,17 +5,16 @@ class Evas.VG (Evas.Object, Efl.Gfx.Fill, Efl.Gfx.View)
    methods {
       @property root_node {
          get {
-            /*@
-              Get the root node of the evas_object_vg.
+            [[Get the root node of the evas_object_vg.
 
-              @note To manually create the shape object and show in the Vg
+              Note: To manually create the shape object and show in the Vg
                     object canvas you must create the hirarchy and set the
                     parent as root node.
-              @since 1.14
-            */
+
+              @since 1.14]]
          }
          values {
-            container: Efl_VG *; /*@ Root node of the VG canvas */
+            container: Efl_VG *; [[Root node of the VG canvas.]]
          }
       }
    }
