@@ -95,7 +95,6 @@ START_TEST(eina_test_quaternion_matrix)
      116, -147, 104,
      88, 76, -259
    };
-   Eina_Quaternion tq;
    Eina_Matrix3 tm;
 
    eina_init();

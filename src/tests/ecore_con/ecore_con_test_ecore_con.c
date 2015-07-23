@@ -102,7 +102,7 @@ _del(void *data , int type EINA_UNUSED, void *ev)
 
         printf("Lost server with ip %s!\n",
                 ecore_con_server_ip_get(event->server));
-        fail_unless(ecore_con_server_ip_get(event->server));
+        fail_if(!ecore_con_server_ip_get(event->server));
 
         ecore_con_server_del(event->server);
      }

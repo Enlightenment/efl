@@ -56,7 +56,7 @@ _eet_client_cnct_cb(void *data EINA_UNUSED, Ecore_Con_Reply *reply, Ecore_Con_Cl
 {
    const char *ec_eet_data;
    Ecore_Con_Eet *ec_eet = ecore_con_eet_reply(reply);
-   fail_unless(ec_eet);
+   fail_if(!ec_eet);
 
    ec_eet_data = ecore_con_eet_data_get(ec_eet);
    fail_if(strcmp(ec_eet_data, eet_data));
@@ -126,10 +126,10 @@ START_TEST(ecore_con_test_ecore_con_eet_svr_cl)
 
    svr = ecore_con_server_add(ECORE_CON_REMOTE_TCP, "127.0.0.1",
                               8080, NULL);
-   fail_unless(svr);
+   fail_if(!svr);
 
    ece_svr = ecore_con_eet_server_new(svr);
-   fail_unless(ece_svr);
+   fail_if(!ece_svr);
 
    ecore_con_eet_data_set(ece_svr, eet_data);
 
@@ -143,10 +143,10 @@ START_TEST(ecore_con_test_ecore_con_eet_svr_cl)
 
    cl = ecore_con_server_connect(ECORE_CON_REMOTE_TCP, "127.0.0.1",
                                  8080, NULL);
-   fail_unless (cl);
+   fail_if(!cl);
 
    ece_cl = ecore_con_eet_client_new(cl);
-   fail_unless (ece_cl);
+   fail_if(!ece_cl);
 
    ecore_con_eet_register(ece_cl, TEST_STREAM, _ece_test_descriptor);
    ecore_con_eet_raw_data_callback_add(ece_cl, TEST_STREAM,
@@ -210,10 +210,10 @@ START_TEST(ecore_con_test_ecore_con_eet_svr_del)
 
    svr = ecore_con_server_add(ECORE_CON_REMOTE_TCP, "127.0.0.1",
                               8080, NULL);
-   fail_unless(svr);
+   fail_if(!svr);
 
    ece_svr = ecore_con_eet_server_new(svr);
-   fail_unless(ece_svr);
+   fail_if(!ece_svr);
 
    ecore_con_eet_data_set(ece_svr, eet_data);
 
@@ -223,10 +223,10 @@ START_TEST(ecore_con_test_ecore_con_eet_svr_del)
 
    cl = ecore_con_server_connect(ECORE_CON_REMOTE_TCP, "127.0.0.1",
                                  8080, NULL);
-   fail_unless (cl);
+   fail_if(!cl);
 
    ece_cl = ecore_con_eet_client_new(cl);
-   fail_unless (ece_cl);
+   fail_if(!ece_cl);
 
    ecore_con_eet_register(ece_cl, TEST_STREAM, _ece_test_descriptor);
    ecore_con_eet_server_connect_callback_add(ece_cl, _eet_svr_cnct_cb,

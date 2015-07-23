@@ -180,7 +180,7 @@ START_TEST(ecore_con_test_ecore_con_url_ftp_upload)
       fprintf(stderr, "directory = %s\n", dir);
 
    ec_url = ecore_con_url_new(link);
-   fail_unless (ec_url);
+   fail_if(!ec_url);
 
    ecore_con_url_verbose_set(ec_url, EINA_TRUE);
    ecore_con_url_ftp_use_epsv_set(ec_url, EINA_TRUE);
@@ -259,7 +259,7 @@ START_TEST(ecore_con_test_ecore_con_url_download)
    fail_if(ret != 1);
 
    url = ecore_con_url_new(link);
-   fail_unless (url);
+   fail_if(!url);
 
    ecore_con_url_verbose_set(url, EINA_TRUE);
 
@@ -332,7 +332,7 @@ _url_cookies_compl_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_
 
    headers = ecore_con_url_response_headers_get(url_complete->url_con);
 
-   fail_unless(headers);
+   fail_if(!headers);
 
    printf("response headers:\n");
    EINA_LIST_FOREACH(headers, l, str)
@@ -360,7 +360,7 @@ _ecore_con_url_cookies_test_init()
    ecore_con_url_init();
 
    ec_url = ecore_con_url_new(link);
-   fail_unless(ec_url);
+   fail_if(!ec_url);
 
    ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE,
                            _url_cookies_compl_cb, NULL);
