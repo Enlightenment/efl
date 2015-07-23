@@ -54,6 +54,8 @@ static Ecore_IMF_Context_Class ibus_imf_class = {
     NULL,
     NULL,
     NULL,
+    NULL,
+    NULL,
     NULL
 };
 

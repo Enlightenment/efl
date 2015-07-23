@@ -140,7 +140,7 @@ _eina_debug_monitor(void *_data EINA_UNUSED)
    int bts = 0, ret, max_fd;
    double t0, t;
    fd_set rfds, wfds, exfds;
-   struct timeval tv = { 0 };
+   struct timeval tv = { 0, 0 };
    // some state for debugging
    unsigned int poll_time = 1000;
    Eina_Bool poll_on = EINA_FALSE;
