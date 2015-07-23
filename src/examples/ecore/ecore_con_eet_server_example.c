@@ -31,7 +31,7 @@ _eet_client_discnct_cb(void *data EINA_UNUSED, Ecore_Con_Reply *reply EINA_UNUSE
 }
 
 Eina_Bool
-_eet_client_cnct_cb(void *data EINA_UNUSED, Ecore_Con_Reply *reply, Ecore_Con_Client *conn EINA_UNUSED)
+_eet_client_cnct_cb(void *data EINA_UNUSED, Ecore_Con_Reply *reply EINA_UNUSED, Ecore_Con_Client *conn EINA_UNUSED)
 {
    _client_count++;
    return EINA_TRUE;

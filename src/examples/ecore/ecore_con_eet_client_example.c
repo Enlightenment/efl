@@ -14,7 +14,7 @@
 #include "ecore_con_eet_descriptor_example.h"
 
 Eina_Bool
-_eet_svr_discnct_cb(void *data EINA_UNUSED, Ecore_Con_Reply *reply, Ecore_Con_Client *conn EINA_UNUSED)
+_eet_svr_discnct_cb(void *data EINA_UNUSED, Ecore_Con_Reply *reply EINA_UNUSED, Ecore_Con_Client *conn EINA_UNUSED)
 {
    ecore_main_loop_quit();
    return EINA_FALSE;
