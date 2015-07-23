@@ -1,3 +1,5 @@
+#ifndef EVAS_3D_SHOOTER_H_
+#define EVAS_3D_SHOOTER_H_
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
@@ -218,3 +220,4 @@ Eina_Bool _horizontal_frame_resolution(Evas_Canvas3D_Node *node, Evas_Real x1, E
                                         Evas_Real z2, Evas_Real *x_move, Evas_Real *z_move);
 
 void _set_ball(Eo *mesh, int p);
+#endif
