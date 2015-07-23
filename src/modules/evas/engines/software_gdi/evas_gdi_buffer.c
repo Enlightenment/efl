@@ -59,18 +59,21 @@ evas_software_gdi_output_buffer_paste(Gdi_Output_Buffer *gdiob,
                                       int                y)
 {
    HDC     dc;
+   HGDIOBJ obj;
 
    dc = CreateCompatibleDC(gdiob->dc);
-   if (!dc)
-     return;
-   SelectObject(dc, gdiob->bitmap);
-   BitBlt(gdiob->dc,
-          x, y,
-          gdiob->width, gdiob->height,
-          dc,
-          0, 0,
-          SRCCOPY);
-   DeleteDC(dc);
+   if (dc)
+     {
+        obj = SelectObject(dc, gdiob->bitmap);
+        BitBlt(gdiob->dc,
+               x, y,
+               gdiob->width, gdiob->height,
+               dc,
+               0, 0,
+               SRCCOPY);
+        SelectObject(dc, obj);
+        DeleteDC(dc);
+     }
 }
 
 DATA8 *
