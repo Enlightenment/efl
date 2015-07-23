@@ -467,6 +467,7 @@ _ecore_evas_win32_free(Ecore_Evas *ee)
 
    ecore_win32_window_free((struct _Ecore_Win32_Window *)ee->prop.window);
    ecore_event_window_unregister(ee->prop.window);
+   free(ee->engine.data);
    _ecore_evas_win32_shutdown();
    ecore_win32_shutdown();
 }
