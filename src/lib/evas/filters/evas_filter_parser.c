@@ -2616,16 +2616,16 @@ _filter_program_state_set(Evas_Filter_Program *pgm)
          lua_setfield(L, -2, "name");
          lua_setfield(L, -2, "cur");
       }
-      lua_newtable(L); // "next"
-      {
-         if (pgm->state.next.name)
+      if (pgm->state.next.name)
+        {
+           lua_newtable(L); // "next"
            {
               SETFIELD("value", pgm->state.next.value);
               lua_pushstring(L, pgm->state.next.name);
               lua_setfield(L, -2, "name");
            }
-         lua_setfield(L, -2, "next");
-      }
+           lua_setfield(L, -2, "next");
+        }
       lua_newtable(L); // "text"
       {
          SETCOLOR("outline", JOINC(text.outline));
