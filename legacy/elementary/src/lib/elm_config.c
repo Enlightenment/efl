@@ -570,6 +570,13 @@ _elm_config_user_dir_snprintf(char       *dst,
                  ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
 #endif
           }
+        off = user_dir_len + 1;
+        if (off >= size) return off;
+        dst[user_dir_len] = '/';
+        va_start(ap, fmt);
+        off = off + vsnprintf(dst + off, size - off, fmt, ap);
+        va_end(ap);
+        return off;
      }
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    else
@@ -590,20 +597,16 @@ _elm_config_user_dir_snprintf(char       *dst,
            ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
 #  endif
 # endif /* HAVE_GETPWENT */
+        off = user_dir_len + 1;
+        if (off >= size) return off;
+        dst[user_dir_len] = '/';
+        va_start(ap, fmt);
+        off = off + vsnprintf(dst + off, size - off, fmt, ap);
+        va_end(ap);
+        return off;
      }
 #endif
-
-   off = user_dir_len + 1;
-   if (off >= size) goto end;
-
-   va_start(ap, fmt);
-   dst[user_dir_len] = '/';
-
-   off = off + vsnprintf(dst + off, size - off, fmt, ap);
-   va_end(ap);
-
-end:
-   return off;
+   return 0;
 }
 
 const char *
