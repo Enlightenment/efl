@@ -401,6 +401,7 @@ _instruction_param_addv(Evas_Filter_Instruction *instr, const char *name,
         break;
       case VT_NONE:
       default:
+        free(param);
         return EINA_FALSE;
      }
    param->allow_seq = sequential;
