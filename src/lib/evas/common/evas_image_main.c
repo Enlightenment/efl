@@ -408,8 +408,8 @@ evas_common_rgba_pending_unloads_cleanup(void)
 EAPI void
 evas_common_rgba_pending_unloads_remove(Image_Entry *ie)
 {
-   if (!ie->preload) return;
-   ie->preload = 0;
+   if (!ie->need_unload) return;
+   ie->need_unload = 0;
    pending_unloads = eina_list_remove(pending_unloads, ie);
 }
 
