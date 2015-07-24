@@ -2184,7 +2184,11 @@ _elm_fileselector_elm_interface_fileselector_custom_filter_append(Eo *obj, Elm_F
    if (!custom_filter) return EINA_FALSE;
 
    ff = _filter_add(sd, filter_name ? filter_name : "custom");
-   if (!ff) return EINA_FALSE;
+   if (!ff)
+     {
+        free(custom_filter);
+        return EINA_FALSE;
+     }
 
    ff->filter_type = ELM_FILESELECTOR_CUSTOM_FILTER;
    ff->filter.custom = custom_filter;
