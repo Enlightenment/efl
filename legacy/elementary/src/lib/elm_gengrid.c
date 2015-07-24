@@ -578,11 +578,14 @@ _item_mouse_move_cb(void *data,
           }
      }
   else if (ELM_RECTS_POINT_OUT(x, y, w, h, ev->cur.canvas.x, ev->cur.canvas.y) &&
-		  !sd->reorder_it )
+           !sd->reorder_it )
     {
-        ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
-        if (!sd->was_selected)
-          it->unsel_cb(it);
+       ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
+       if (!sd->was_selected)
+         {
+            it->unhighlight_cb(it);
+            it->unsel_cb(it);
+         }
         it->base->still_in = EINA_FALSE;
     }
 
@@ -1105,7 +1108,7 @@ _item_mouse_up_cb(void *data,
 
    if (eo_do_ret(eo_it, tmp, elm_wdg_item_disabled_get())) return;
 
-   if (sd->on_hold || it->base->still_in)
+   if (sd->on_hold || !it->base->still_in)
      {
         sd->longpressed = EINA_FALSE;
         sd->on_hold = EINA_FALSE;
