@@ -462,7 +462,7 @@ evas_common_rgba_image_unload(Image_Entry *ie)
           }
         return;
      }
-   evas_common_rgba_image_unload_real(ie);
+   if (!ie->need_unload) evas_common_rgba_image_unload_real(ie);
 }
 
 void
