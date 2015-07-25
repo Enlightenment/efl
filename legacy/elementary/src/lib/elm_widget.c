@@ -824,7 +824,6 @@ _parent_focus(Evas_Object *obj)
      {
         sd->focused = EINA_TRUE;
         eo_do(obj, elm_obj_widget_on_focus());
-        elm_widget_focus_region_show(obj);
      }
    sd->focus_order_on_calc = EINA_FALSE;
 
@@ -2857,6 +2856,7 @@ _elm_widget_focus_steal(Eo *obj, Elm_Widget_Smart_Data *sd)
           }
      }
    _parent_focus(obj);
+   elm_widget_focus_region_show(obj);
    return;
 }
 
