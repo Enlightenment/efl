@@ -788,6 +788,7 @@ _item_mouse_down_cb(void *data,
    it->dx = ev->canvas.x - x;
    it->dy = ev->canvas.y - y;
    sd->longpressed = EINA_FALSE;
+   it->base->still_in = EINA_TRUE;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      sd->on_hold = EINA_TRUE;
