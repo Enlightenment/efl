@@ -218,6 +218,11 @@ Fixes:
    * Ecore evas: Correct function name in magic failure.
    * Evas GL: Fix glClear(0,0,0,0) with DR and COPY
    * Evas GL: Fix sync, wlbuffer and image egl ext functions
+   * evas: fix missing render2_walk initializers
+   * Evas GDI engine: save the original bitmap into the memory DC
+   * Ecore_Win32: do not allocate data as it is useless. Fix memory leak.
+   * ecore-drm: Ignore key events that are not seat wide state changes
+   * Evas masking: Fix crash in async rendering
 
 Changes since 1.13.0:
 ---------------------
