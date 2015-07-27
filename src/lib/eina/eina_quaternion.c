@@ -624,7 +624,53 @@ eina_quaternion_rotation_matrix3_get(Eina_Matrix3 *m,
 }
 
 EAPI void
-eina_matrix3_quaternion_get(Eina_Quaternion *q EINA_UNUSED,
-                            const Eina_Matrix3 *m EINA_UNUSED)
+eina_matrix3_quaternion_get(Eina_Quaternion *q,
+                            const Eina_Matrix3 *m)
 {
+   double tval;
+   double w, x, y, z;
+
+   tval = m->xx + m->yy + m->zz;
+
+   if (tval > 0)
+     {
+
+        double s = 0.5 / sqrtf(tval + 1.0);
+
+        w = (0.25 / s);
+        x = ((m->zy - m->yz) * s);
+        y = ((m->xz - m->zx) * s);
+        z = ((m->yx - m->xy) * s);
+     }
+   else if ((m->xx > m->yy) && (m->xx > m->zz))
+     {
+        double s = 2.0 * sqrtf(1.0 + m->xx - m->yy - m->zz);
+
+        w = ((m->zy - m->yz) / s);
+        x = (0.25 * s);
+        y = ((m->xy + m->yx) / s);
+        z = ((m->xz + m->zx) / s);
+     }
+   else if (m->yy > m->zz)
+     {
+        double s = 2.0 * sqrtf(1.0 + m->yy - m->xx - m->zz);
+
+        w = ((m->xz - m->zx) / s);
+        x = ((m->xy + m->yx) / s);
+        y = (0.25 * s);
+        z = ((m->yz + m->zy) / s);
+     }
+   else
+     {
+        double s = 2.0 * sqrtf(1.0 + m->zz - m->xx - m->yy);
+
+        w = ((m->yx - m->xy) / s);
+        x = ((m->xz + m->zx) / s);
+        y = ((m->yz + m->zy) / s);
+        z = (0.25 * s);
+     }
+   q->w = w;
+   q->x = x;
+   q->y = y;
+   q->z = z;
 }

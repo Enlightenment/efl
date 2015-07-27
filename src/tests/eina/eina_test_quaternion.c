@@ -90,6 +90,8 @@ END_TEST
 START_TEST(eina_test_quaternion_matrix)
 {
    Eina_Quaternion q = { 7, 9, 5, 1 };
+   Eina_Quaternion q1 = {7, 9, 5, -1 };
+   Eina_Quaternion tq;
    Eina_Matrix3 m = {
      -211, 136, 52,
      116, -147, 104,
@@ -101,6 +103,9 @@ START_TEST(eina_test_quaternion_matrix)
 
    eina_quaternion_rotation_matrix3_get(&tm, &q);
    fail_if(!eina_matrix3_cmp(&tm, &m));
+
+   eina_matrix3_quaternion_get(&tq, &m);
+   fail_if(!eina_quaternion_cmp(&tq, &q) && !eina_quaternion_cmp(&tq, &q1));
 
    eina_shutdown();
 }
