@@ -4,36 +4,30 @@ class Elm.Ctxpopup_Item(Elm.Widget_Item)
    methods {
       @property prev {
          get {
-            /*@
-             Get the item before @p it in a ctxpopup widget's internal list of
-             items.
+            [[Get the item before $ it in a ctxpopup widget's internal list of
+              items.
 
-             @see elm_ctxpopup_item_next_get()
+              See also \@ref elm_ctxpopup_item_next_get.
 
-             @since 1.11
-             @ingroup Ctxpopup
-             */
+              @since 1.11
+            ]]
          }
          values {
-              item: Elm_Object_Item *; /*@ The item before the object in its parent's list. If there is no
-                                       previous item for @p it or there's an error, @c NULL is returned. */
+              item: Elm_Object_Item *; [[The item before the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
          }
       }
       @property next {
          get {
-            /*@
-             Get the item after @p it in a ctxpopup widget's
-             internal list of items.
+            [[Get the item after $ it in a ctxpopup widget's
+              internal list of items.
 
-             @see elm_ctxpopup_item_prev_get()
+              See also \@ref elm_ctxpopup_item_prev_get.
 
-             @since 1.11
-             @ingroup Ctxpopup
-             */
+              @since 1.11
+            ]]
          }
          values {
-              item: Elm_Object_Item *; /*@ The item after the object in its parent's list. If there is no
-                                       previous item for @p it or there's an error, @c NULL is returned. */
+              item: Elm_Object_Item *; [[The item after the object in its parent's list. If there is no previous item for $ it or there's an error, $null is returned.]]
          }
       }
       init {
