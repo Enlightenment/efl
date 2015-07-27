@@ -18,7 +18,7 @@ m4_define([lt_age], v_min)
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
-AC_INIT([emotion_generic_players], [v_ver-beta2], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([emotion_generic_players], [v_ver-beta3], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.59])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
