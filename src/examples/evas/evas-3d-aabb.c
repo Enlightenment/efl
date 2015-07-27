@@ -257,7 +257,7 @@ main(void)
    evas_object_focus_set(image, EINA_TRUE);
    eo_do(image, evas_obj_image_scene_set(scene));
 
-   evas_object_event_callback_add(image, EVAS_CALLBACK_KEY_DOWN, _on_key_down, root_node);
+   evas_object_event_callback_add(image, EVAS_CALLBACK_KEY_DOWN, _on_key_down, mesh_node);
 
    ecore_timer_add(0.01, _animate_scene, mesh_node);
 
