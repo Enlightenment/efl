@@ -62,6 +62,9 @@ _shm_pool_make(struct wl_shm *shm, int size, void **data)
         goto fd_err;
      }
 
+   /* NB: Commented out. Used for debugging rendering issues */
+   /* memset(*data, 127, size); */
+
    /* create wl_shm_pool using fd */
    pool = wl_shm_create_pool(shm, fd, size);
 
@@ -438,9 +441,6 @@ _evas_shm_surface_swap(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int
    else
      wl_surface_damage(surface->surface, 0, 0, leaf->w, leaf->h);
 
-   wl_surface_commit(surface->surface);
-
-   leaf->busy = 1;
    surface->dx = 0;
    surface->dy = 0;
    surface->redraw = EINA_TRUE;
@@ -487,6 +487,8 @@ _evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h)
 void 
 _evas_shm_surface_redraw(Shm_Surface *surface)
 {
+   Shm_Leaf *leaf = NULL;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (surface->frame_cb)
@@ -499,4 +501,9 @@ _evas_shm_surface_redraw(Shm_Surface *surface)
 
    surface->frame_cb = wl_surface_frame(surface->surface);
    wl_callback_add_listener(surface->frame_cb, &_shm_frame_listener, surface);
+
+   wl_surface_commit(surface->surface);
+
+   leaf = &surface->leaf[surface->curr_buff];
+   leaf->busy = 1;
 }
