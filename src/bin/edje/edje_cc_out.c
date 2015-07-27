@@ -1152,7 +1152,7 @@ data_thread_sounds(void *data, Ecore_Thread *thread EINA_UNUSED)
 #ifdef HAVE_LIBSNDFILE
    if ((enc_info->file) && (!enc_info->encoded))
      eina_stringshare_del(enc_info->file);
-   if (enc_info) free(enc_info);
+   free(enc_info);
    enc_info = NULL;
 #endif
 }
