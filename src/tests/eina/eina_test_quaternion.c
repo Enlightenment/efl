@@ -180,6 +180,80 @@ START_TEST(eina_test_quaternion_f16p16)
 }
 END_TEST
 
+START_TEST(eina_test_quaternion_dot)
+{
+   Eina_Quaternion q = {1, 3, 4, 5};
+   Eina_Quaternion r = {7, 9, 5, 1};
+   double res;
+
+   eina_init();
+
+   res = eina_quaternion_dot(&q, &r);
+   fail_if(res != 59);
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_test_quaternion_scale)
+{
+   Eina_Quaternion q = {1, 3, 4, 5};
+   double scale = 2;
+   Eina_Quaternion r, res = {2, 6, 8, 10};
+
+   eina_init();
+
+   eina_quaternion_scale(&r, &q, scale);
+   fail_if(!eina_quaternion_cmp(&r, &res));
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_test_quaternion_set)
+{
+   Eina_Quaternion q, r = {1, 3, 4, 5};
+
+   eina_init();
+
+   eina_quaternion_set(&q, 1, 3, 4, 5);
+
+   fail_if(!eina_quaternion_cmp(&q, &r));
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_test_quaternion_mul)
+{
+   Eina_Quaternion p = {1, 3, 4, 5};
+   Eina_Quaternion q = {7, 9, 5, 1};
+   Eina_Quaternion r, res = {15, 71, 17, -49};
+
+   eina_init();
+
+   eina_quaternion_mul(&r, &p, &q);
+   fprintf(stderr, "%f %f %f %f\n", res.w, res.x, res.y, res.z);
+   fail_if(!eina_quaternion_cmp(&r, &res));
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_test_quaternion_normalized)
+{
+   Eina_Quaternion p = {1, 1, 1, 1};
+   Eina_Quaternion res, q = {0.5, 0.5, 0.5, 0.5};
+
+   eina_init();
+
+   eina_quaternion_normalized(&res, &p);
+   fail_if(!eina_quaternion_cmp(&q, &res));
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_quaternion(TCase *tc)
 {
@@ -188,4 +262,9 @@ eina_test_quaternion(TCase *tc)
    tcase_add_test(tc, eina_test_quaternion_matrix);
    tcase_add_test(tc, eina_test_quaternion_op);
    tcase_add_test(tc, eina_test_quaternion_f16p16);
+   tcase_add_test(tc, eina_test_quaternion_dot);
+   tcase_add_test(tc, eina_test_quaternion_scale);
+   tcase_add_test(tc, eina_test_quaternion_set);
+   tcase_add_test(tc, eina_test_quaternion_mul);
+   tcase_add_test(tc, eina_test_quaternion_normalized);
 }
