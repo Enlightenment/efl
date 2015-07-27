@@ -93,6 +93,14 @@ Fixes:
    * Scroller: Improvement in _key_action_move() calculations.
    * genlist : fix genlist dangling pointer crash in item select (T2553)
    * elementary: Adjust shadow spacer on maximize (T2578)
+   * elementary: Fix T2573: Extra blank line in Genlist Dnd Test (T2573)
+   * Elm_Config: add getpwent support, fix compilation on Windows
+   * Elm_Config: fix compilation when getuid() or geteuid() are not available
+   * elementary: Fix compiler warning disgarding const qualifier
+   * elementary: Fix external variable declaration to match const char
+   * elm_gengrid: Fix condition error.
+   * Elm_Prefs: use Evil API
+   * elm_gengrid: fix missing variable initialization.
 
 Changes since 1.13.0:
 ---------------------
