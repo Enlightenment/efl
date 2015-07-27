@@ -1506,12 +1506,11 @@ _ecore_ipc_event_server_data(void *data EINA_UNUSED, int ev_type EINA_UNUSED, vo
                     }
                   svr->prev.i = msg;
                   offset += (s + msg.size);
-                  if ((svr->buf_size == offset) && ((svr->buf) || (buf)))
+                  if ((svr->buf_size == offset) && (svr->buf))
                     {
                        if (svr->buf) free(svr->buf);
                        svr->buf = NULL;
                        svr->buf_size = 0;
-                       if (buf) free(buf);
                        return ECORE_CALLBACK_CANCEL;
                     }
                   goto redo;
