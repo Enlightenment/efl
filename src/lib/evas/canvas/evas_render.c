@@ -1482,7 +1482,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                   (e->engine.data.output, context,
                                    mask->mask->surface,
                                    mask->cur->geometry.x + off_x,
-                                   mask->cur->geometry.y + off_y);
+                                   mask->cur->geometry.y + off_y,
+                                   e, do_async);
                          }
                     }
                }
@@ -1510,7 +1511,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
              else
                e->engine.func->context_clip_unset(e->engine.data.output, context);
              e->engine.func->context_clip_image_set
-               (e->engine.data.output, context, oldm_sfc, oldm_x, oldm_y);
+               (e->engine.data.output, context, oldm_sfc, oldm_x, oldm_y, e, do_async);
           }
 
         // FIXME: needs to cache these maps and
@@ -1569,7 +1570,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                   (e->engine.data.output, ctx,
                                    mask->mask->surface,
                                    mask->cur->geometry.x + off_x,
-                                   mask->cur->geometry.y + off_y);
+                                   mask->cur->geometry.y + off_y,
+                                   e, do_async);
                          }
                     }
 
@@ -1628,7 +1630,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                        (e->engine.data.output, ctx,
                                         mask->mask->surface,
                                         mask->cur->geometry.x + off_x,
-                                        mask->cur->geometry.y + off_y);
+                                        mask->cur->geometry.y + off_y,
+                                        e, do_async);
                               }
                          }
                     }
@@ -1643,7 +1646,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                   else
                     e->engine.func->context_clip_unset(e->engine.data.output, ctx);
                   e->engine.func->context_clip_image_set
-                    (e->engine.data.output, ctx, oldm_sfc, oldm_x, oldm_y);
+                    (e->engine.data.output, ctx, oldm_sfc, oldm_x, oldm_y, e, do_async);
                }
              if (!use_mapped_ctx)
                e->engine.func->context_free(e->engine.data.output, ctx);
@@ -1905,7 +1908,8 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
                ENFN->context_clip_image_set(ENDT, ctx,
                                             prev_mask->mask->surface,
                                             prev_mask->cur->geometry.x - x,
-                                            prev_mask->cur->geometry.y - y);
+                                            prev_mask->cur->geometry.y - y,
+                                            evas, EINA_FALSE);
             }
           evas_render_mapped(evas, mask->object, mask, ctx, mdata->surface,
                              -x, -y, 2, 0, 0, evas->output.w, evas->output.h,
@@ -2442,7 +2446,8 @@ evas_render_updates_internal(Evas *eo_e,
                                              e->engine.data.context,
                                              mask->mask->surface,
                                              mask->cur->geometry.x + off_x,
-                                             mask->cur->geometry.y + off_y);
+                                             mask->cur->geometry.y + off_y,
+                                             e, do_async);
                                    }
                               }
 
@@ -2468,7 +2473,7 @@ evas_render_updates_internal(Evas *eo_e,
 
                             if (mask)
                               {
-                                  e->engine.func->context_clip_image_unset
+                                 e->engine.func->context_clip_image_unset
                                     (e->engine.data.output, e->engine.data.context);
                               }
                          }

@@ -2048,7 +2048,8 @@ eng_context_clip_image_unset(void *data EINA_UNUSED, void *context)
 }
 
 static void
-eng_context_clip_image_set(void *data, void *context, void *surface, int x, int y)
+eng_context_clip_image_set(void *data, void *context, void *surface, int x, int y,
+                           Evas_Public_Data *evas, Eina_Bool do_async)
 {
    RGBA_Draw_Context *ctx = context;
    Evas_GL_Image *im = surface;
@@ -2065,6 +2066,10 @@ eng_context_clip_image_set(void *data, void *context, void *surface, int x, int 
    ctx->clip.mask = surface;
    ctx->clip.mask_x = x;
    ctx->clip.mask_y = y;
+
+   // useless in gl since the engines are sync only
+   ctx->clip.evas = evas;
+   ctx->clip.async = do_async;
 
    if (im)
      {

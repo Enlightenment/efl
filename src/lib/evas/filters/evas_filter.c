@@ -1643,7 +1643,8 @@ _filter_target_render(Evas_Filter_Context *ctx)
 
    if (ctx->target.mask)
      ENFN->context_clip_image_set(ENDT, drawctx,
-                                  ctx->target.mask, ctx->target.mask_x, ctx->target.mask_y);
+                                  ctx->target.mask, ctx->target.mask_x, ctx->target.mask_y,
+                                  ctx->evas, EINA_FALSE);
    else
      ENFN->context_clip_image_unset(ENDT, drawctx);
 
