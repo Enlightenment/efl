@@ -367,7 +367,7 @@ _ecore_evas_x_wm_rot_manual_rotation_done_job(void *data)
 }
 
 static void
-_ecore_evas_x_aux_hints_supprted_update(Ecore_Evas *ee)
+_ecore_evas_x_aux_hints_supported_update(Ecore_Evas *ee)
 {
    Ecore_X_Window root = ecore_x_window_root_first_get();
    unsigned char *data = NULL;
@@ -2616,7 +2616,7 @@ _alpha_do(Ecore_Evas *ee, int alpha)
    _ecore_evas_x_protocols_set(ee);
    _ecore_evas_x_window_profile_protocol_set(ee);
    _ecore_evas_x_wm_rotation_protocol_set(ee);
-   _ecore_evas_x_aux_hints_supprted_update(ee);
+   _ecore_evas_x_aux_hints_supported_update(ee);
    _ecore_evas_x_aux_hints_update(ee);
    _ecore_evas_x_sync_set(ee);
    _ecore_evas_x_size_pos_hints_update(ee);
@@ -2770,7 +2770,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
         _ecore_evas_x_protocols_set(ee);
         _ecore_evas_x_window_profile_protocol_set(ee);
         _ecore_evas_x_wm_rotation_protocol_set(ee);
-        _ecore_evas_x_aux_hints_supprted_update(ee);
+        _ecore_evas_x_aux_hints_supported_update(ee);
         _ecore_evas_x_aux_hints_update(ee);
         _ecore_evas_x_sync_set(ee);
         _ecore_evas_x_size_pos_hints_update(ee);
@@ -4058,7 +4058,7 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
    _ecore_evas_x_protocols_set(ee);
    _ecore_evas_x_window_profile_protocol_set(ee);
    _ecore_evas_x_wm_rotation_protocol_set(ee);
-   _ecore_evas_x_aux_hints_supprted_update(ee);
+   _ecore_evas_x_aux_hints_supported_update(ee);
    _ecore_evas_x_aux_hints_update(ee);
    _ecore_evas_x_sync_set(ee);
 
@@ -4509,7 +4509,7 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
    _ecore_evas_x_protocols_set(ee);
    _ecore_evas_x_window_profile_protocol_set(ee);
    _ecore_evas_x_wm_rotation_protocol_set(ee);
-   _ecore_evas_x_aux_hints_supprted_update(ee);
+   _ecore_evas_x_aux_hints_supported_update(ee);
    _ecore_evas_x_aux_hints_update(ee);
    _ecore_evas_x_sync_set(ee);
 
