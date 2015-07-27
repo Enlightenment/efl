@@ -123,6 +123,63 @@ START_TEST(eina_test_quaternion_op)
 }
 END_TEST
 
+START_TEST(eina_test_quaternion_f16p16)
+{
+   Eina_F16p16 x = 65536, y = 65536;
+   Eina_F16p16 z = 65536, w = 65536;
+   Eina_F16p16 res;
+   Eina_Quaternion p, q = {65536, 65536, 65536, 65536};
+   Eina_Quaternion_F16p16 t, s, r = {65536, 65536, 65536, 65536};
+
+
+   eina_init();
+
+   eina_quaternion_f16p16_set(&p, x, y, z, w);
+   fail_if(!eina_quaternion_cmp(&p, &q));
+
+   res = eina_quaternion_f16p16_norm(&r);
+   fail_if(res != 131072);
+
+   eina_quaternion_f16p16_negative(&s, &r);
+   fail_if(s.x != s.y ||
+           s.y != s.z ||
+           s.z != s.w ||
+           s.w != -65536);
+
+   eina_quaternion_f16p16_add(&t, &s, &r);
+   fail_if(t.x != t.y ||
+           t.y != t.z ||
+           t.z != t.w ||
+           t.w != 0);
+
+   res = 1;
+   eina_quaternion_f16p16_scale(&t, &r, res);
+   fail_if(t.x != t.y ||
+           t.y != t.z ||
+           t.z != t.w ||
+           t.w != 65536);
+
+   eina_quaternion_f16p16_conjugate(&t, &r);
+   fail_if(t.x != -65536 ||
+           t.y != -65536 ||
+           t.z != -65536 ||
+           t.w != 65536);
+
+   s.x = 65536;
+   s.y = 65536;
+   s.z = 65536;
+   s.w = 65536;
+   res = eina_quaternion_f16p16_dot(&s, &r);
+   fail_if(res != 262144);
+
+   eina_quaternion_f16p16_mul(&t, &s, &r);
+   fail_if(t.x != 131072 ||
+           t.y != 131072 ||
+           t.z != 131072 ||
+           t.w != 0);
+}
+END_TEST
+
 void
 eina_test_quaternion(TCase *tc)
 {
@@ -130,4 +187,5 @@ eina_test_quaternion(TCase *tc)
    tcase_add_test(tc, eina_test_quaternion_conjugate);
    tcase_add_test(tc, eina_test_quaternion_matrix);
    tcase_add_test(tc, eina_test_quaternion_op);
+   tcase_add_test(tc, eina_test_quaternion_f16p16);
 }
