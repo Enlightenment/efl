@@ -452,20 +452,25 @@ eng_context_clip_image_unset(void *data EINA_UNUSED, void *context)
    if (ctx->clip.mask)
      {
         Image_Entry *ie = ctx->clip.mask;
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_close(ie);
+
+        if (ctx->clip.async)
+          evas_unref_queue_image_put(ctx->clip.evas, ie);
         else
+          {
+#ifdef EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               evas_cache2_image_close(ie);
+             else
 #endif
-          evas_cache_image_drop(ie);
-        // Is the above code safe? Hmmm...
-        //evas_unref_queue_image_put(EVAS???, &ctx->clip.ie->cache_entry);
+               evas_cache_image_drop(ie);
+          }
         ctx->clip.mask = NULL;
      }
 }
 
 static void
-eng_context_clip_image_set(void *data EINA_UNUSED, void *context, void *surface, int x, int y)
+eng_context_clip_image_set(void *data EINA_UNUSED, void *context, void *surface, int x, int y,
+                           Evas_Public_Data *evas, Eina_Bool do_async)
 {
    RGBA_Draw_Context *ctx = context;
    Eina_Bool noinc = EINA_FALSE;
@@ -481,6 +486,8 @@ eng_context_clip_image_set(void *data EINA_UNUSED, void *context, void *surface,
    ctx->clip.mask = surface;
    ctx->clip.mask_x = x;
    ctx->clip.mask_y = y;
+   ctx->clip.evas = evas;
+   ctx->clip.async = do_async;
 
    if (surface)
      {
