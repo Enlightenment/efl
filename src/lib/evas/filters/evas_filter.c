@@ -106,6 +106,8 @@ _backing_free(Evas_Filter_Context *ctx, RGBA_Image *im)
      {
         if (!ctx->async)
           ENFN->image_free(ENDT, im);
+        else
+          evas_unref_queue_image_put(ctx->evas, &im->cache_entry);
      }
    else
      {
@@ -439,20 +441,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
      {
         RGBA_Image *im;
         im = fb->backing;
-        if (im)
-          {
-             if (ctx->async)
-               {
-                  im->cache_entry.references++;
-                  evas_unref_queue_image_put(ctx->evas, &im->cache_entry);
-               }
-             continue;
-          }
-
-        if (fb->source)
-          continue;
-
-        if (fb->glimage)
+        if (im || fb->source || fb->glimage)
           continue;
 
         if (!fb->w && !fb->h)
@@ -467,8 +456,6 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
 
         fb->backing = im;
         fb->allocated = (im != NULL);
-        if (ctx->async && fb->allocated)
-          evas_unref_queue_image_put(ctx->evas, &im->cache_entry);
      }
 
    return EINA_TRUE;
@@ -517,8 +504,6 @@ _filter_buffer_data_set(Evas_Filter_Context *ctx, int bufid, void *data,
 
    fb->backing = _rgba_image_alloc(fb, data);
    fb->allocated = (!data && (fb->backing != NULL));
-   if (ctx->async && fb->allocated)
-     evas_unref_queue_image_put(ctx->evas, fb->backing);
    return fb->allocated;
 }
 
@@ -644,31 +629,14 @@ evas_filter_buffer_backing_release(Evas_Filter_Context *ctx,
 
    EINA_LIST_FOREACH(ctx->buffers, li, fb)
      {
-        if (fb->backing == stolen_buffer)
-          {
-             fb->stolen = EINA_FALSE;
-             if (fb->delete_me)
-               {
-                  ctx->buffers = eina_list_remove_list(ctx->buffers, li);
-                  if (ctx->async)
-                    {
-                       if (fb->allocated)
-                         evas_unref_queue_image_put(ctx->evas, stolen_buffer);
-                       free(fb);
-                    }
-                  else
-                    _buffer_free(fb);
-                  return EINA_TRUE;
-               }
-             return EINA_TRUE;
-          }
-        else if (fb->glimage == stolen_buffer)
+        if ((fb->backing == stolen_buffer) || (fb->glimage == stolen_buffer))
           {
              fb->stolen = EINA_FALSE;
              if (fb->delete_me)
                {
                   ctx->buffers = eina_list_remove_list(ctx->buffers, li);
                   _buffer_free(fb);
+                  return EINA_TRUE;
                }
              return EINA_TRUE;
           }
