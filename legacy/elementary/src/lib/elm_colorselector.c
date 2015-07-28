@@ -1139,8 +1139,8 @@ _elm_colorselector_elm_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd)
 
         elm_box_padding_set
           (sd->palette_box,
-          (h_pad / edje_object_base_scale_get(wd->resize_obj) * elm_widget_scale_get(obj) * elm_config_scale_get()),
-          (v_pad / edje_object_base_scale_get(wd->resize_obj) * elm_widget_scale_get(obj) * elm_config_scale_get()));
+          (h_pad * elm_widget_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj)),
+          (v_pad * elm_widget_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj)));
 
         EINA_LIST_FOREACH(sd->items, elist, eo_item)
           {
@@ -1630,8 +1630,8 @@ _create_colorpalette(Evas_Object *obj)
 
    elm_box_padding_set
      (sd->palette_box,
-     (h_pad / edje_object_base_scale_get(wd->resize_obj) * elm_widget_scale_get(obj) * elm_config_scale_get()),
-     (v_pad / edje_object_base_scale_get(wd->resize_obj) * elm_widget_scale_get(obj) * elm_config_scale_get()));
+     (h_pad * elm_widget_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj)),
+     (v_pad * elm_widget_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj)));
 
    elm_box_align_set(sd->palette_box, 0.0, 0.0);
    if (!elm_layout_content_set(obj, "elm.palette", sd->palette_box))
