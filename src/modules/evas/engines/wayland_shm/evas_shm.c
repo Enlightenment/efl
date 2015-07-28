@@ -405,9 +405,9 @@ _evas_shm_surface_reconfigure(Shm_Surface *surface, int dx, int dy, int w, int h
 }
 
 void 
-_evas_shm_surface_swap(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int count)
+_evas_shm_surface_swap(Shm_Surface *surface)
 {
-   Shm_Leaf *leaf = NULL;
+   Shm_Leaf *leaf;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -423,20 +423,6 @@ _evas_shm_surface_swap(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int
    /* DBG("Current Leaf %d", (int)(leaf - &surface->leaf[0])); */
 
    surface->last_buff = surface->curr_buff;
-
-   wl_surface_attach(surface->surface, leaf->data->buffer, 0, 0);
-
-   if ((rects) && (count > 0))
-     {
-        unsigned int k = 0;
-
-        for (; k < count; k++)
-          wl_surface_damage(surface->surface, 
-                            rects[k].x, rects[k].y,
-                            rects[k].w, rects[k].h);
-     }
-   else
-     wl_surface_damage(surface->surface, 0, 0, leaf->w, leaf->h);
 
    surface->dx = 0;
    surface->dy = 0;
@@ -480,15 +466,32 @@ _evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h)
    return leaf->data->map;
 }
 
-void 
-_evas_shm_surface_redraw(Shm_Surface *surface)
+void
+_evas_shm_surface_redraw(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int count)
 {
-   Shm_Leaf *leaf = NULL;
+   struct wl_callback *frame_cb;
+   Shm_Leaf *leaf;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   leaf = &surface->leaf[surface->curr_buff];
+   if (!leaf) return;
 
    if (!surface->surface) return;
+
+   wl_surface_attach(surface->surface, leaf->data->buffer, 0, 0);
+
+   if ((rects) && (count > 0))
+     {
+        unsigned int k = 0;
+
+        for (; k < count; k++)
+          wl_surface_damage(surface->surface,
+                            rects[k].x, rects[k].y,
+                            rects[k].w, rects[k].h);
+     }
+   else
+     wl_surface_damage(surface->surface, 0, 0, leaf->w, leaf->h);
 
    frame_cb = wl_surface_frame(surface->surface);
    wl_callback_add_listener(frame_cb, &_shm_frame_listener, surface);

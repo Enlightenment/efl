@@ -162,10 +162,10 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode
         EINA_ARRAY_ITER_NEXT(&ob->priv.onebuf_regions, i, rect, it)
           result[i] = *rect;
 
-        /* force a buffer swap */
-        _evas_shm_surface_swap(ob->surface, result, n);
+        _evas_shm_surface_redraw(ob->surface, result, n);
 
-        _evas_shm_surface_redraw(ob->surface);
+        /* force a buffer swap */
+        _evas_shm_surface_swap(ob->surface);
 
         /* clean array */
         eina_array_clean(&ob->priv.onebuf_regions);
@@ -247,10 +247,10 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode
              i++;
           }
 
-        /* force a buffer swap */
-        _evas_shm_surface_swap(ob->surface, result, n);
+        _evas_shm_surface_redraw(ob->surface, result, n);
 
-        _evas_shm_surface_redraw(ob->surface);
+        /* force a buffer swap */
+        _evas_shm_surface_swap(ob->surface);
      }
 }
 
