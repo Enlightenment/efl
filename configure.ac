@@ -1388,7 +1388,7 @@ AC_ARG_ENABLE([wayland],
    [want_wayland="no"])
 
 if test "${want_wayland}" = "yes"; then
-   EFL_PKG_CHECK_STRICT([wayland-client >= 1.3.0])
+   EFL_PKG_CHECK_STRICT([wayland-client >= 1.8.0])
 fi
 
 # Wayland IVI-Shell
@@ -2960,7 +2960,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_WAYLAND], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_WAYLAND], [eina])
 
 EFL_DEPEND_PKG([ECORE_WAYLAND], [WAYLAND],
-   [wayland-client >= 1.3.0 wayland-cursor >= 1.3.0 xkbcommon >= 0.3.0])
+   [wayland-client >= 1.8.0 wayland-cursor >= 1.8.0 xkbcommon >= 0.5.0])
 
 EFL_EVAL_PKGS([ECORE_WAYLAND])
 
@@ -3812,7 +3812,7 @@ EFL_ADD_FEATURE([ECORE_IMF], [xim])
 # wayland
 if test "x${want_ecore_imf_wayland}" = "xyes" ; then
    PKG_CHECK_MODULES([WAYLAND],
-      [wayland-client >= 1.2.0],
+      [wayland-client >= 1.8.0],
       [
        have_ecore_imf_wayland="yes"
        AC_DEFINE([BUILD_ECORE_IMF_WAYLAND], [1], [Ecore Imf Wayland Support])
@@ -4568,7 +4568,7 @@ EFL_LIB_END([Elocation])
 
 ### Add Wayland server library if test is enabled
 if test "x${want_tests}" = "xyes" -a "x${want_wayland}" = "xyes"; then
-   EFL_DEPEND_PKG([ECORE_WAYLAND_SRV], [WAYLAND], [wayland-server >= 1.3.0])
+   EFL_DEPEND_PKG([ECORE_WAYLAND_SRV], [WAYLAND], [wayland-server >= 1.8.0])
    EFL_EVAL_PKGS([ECORE_WAYLAND_SRV])
 fi
 
