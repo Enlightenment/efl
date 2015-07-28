@@ -1242,7 +1242,7 @@ _elm_win_opaque_update(Elm_Win_Data *sd)
 
    edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
                                  &ox, &oy, &ow, &oh);
-   ecore_wl_window_opaque_region_set(sd->wl.win, ox, oy, ow - 50, oh);//ow - ox, oh - oy);
+   ecore_wl_window_opaque_region_set(sd->wl.win, ox, oy, ow, oh);
 }
 #endif
 
