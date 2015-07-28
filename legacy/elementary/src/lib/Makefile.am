@@ -210,7 +210,6 @@ elm_flip.h \
 elm_flip_eo.h \
 elm_flip_legacy.h \
 elm_flipselector.h \
-elm_flipselector_common.h \
 elm_flipselector_eo.h \
 elm_flipselector_legacy.h \
 elm_focus.h \
