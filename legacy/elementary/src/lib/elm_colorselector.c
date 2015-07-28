@@ -493,7 +493,7 @@ _spinner_changed_cb(void *data,
          break;
      }
    evas_object_data_del(obj, "_changed");
-   eo_do(obj, eo_event_callback_call(ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL));
+   eo_do(parent, eo_event_callback_call(ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL));
 
    return EINA_TRUE;
 }
