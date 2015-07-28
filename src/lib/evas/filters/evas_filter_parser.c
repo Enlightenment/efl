@@ -1,14 +1,10 @@
+#include "evas_filter_private.h"
+
 #include <stdarg.h>
 
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
-
-#include "evas_filter_private.h"
-
-#if LUA_VERSION_NUM == 502
-# define LUA52 1
-#endif
 
 #define FILTERS_LEGACY_COMPAT
 
