@@ -491,9 +491,6 @@ _on_item_clicked(void *data,
    ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_it, it);
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(WIDGET(it), sd);
 
-   if (sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK)
-     return;
-
    _item_select(WIDGET(it), it);
 
    if (sd->selected_it)
