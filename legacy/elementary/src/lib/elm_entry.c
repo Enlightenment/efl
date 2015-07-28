@@ -839,6 +839,9 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    edje_object_message_signal_process(sd->entry_edje);
 
+   Evas_Object* clip = evas_object_clip_get(sd->entry_edje);
+   evas_object_clip_set(sd->hit_rect, clip);
+
    if (sd->scroll)
      {
         Eina_Bool ok = EINA_FALSE;
@@ -3407,6 +3410,10 @@ _elm_entry_evas_object_smart_add(Eo *obj, Elm_Entry_Data *priv)
 
    priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_data_set(priv->hit_rect, "_elm_leaveme", obj);
+
+   Evas_Object* clip = evas_object_clip_get(priv->entry_edje);
+   evas_object_clip_set(priv->hit_rect, clip);
+
    evas_object_smart_member_add(priv->hit_rect, obj);
    elm_widget_sub_object_add(obj, priv->hit_rect);
 
