@@ -464,8 +464,9 @@ _colors_set(Evas_Object *obj,
 }
 
 static Eina_Bool
-_spinner_changed_cb(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_spinner_changed_cb(void *data, Eo *obj,
+                    const Eo_Event_Description *desc EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    Elm_Colorselector_Data *sd = data;
    Evas_Object *parent;
@@ -525,8 +526,9 @@ _x11_elm_widget_xwin_get(const Evas_Object *obj)
 }
 
 static Eina_Bool
-_start_grab_pick_cb(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_start_grab_pick_cb(void *data, Eo *obj,
+                    const Eo_Event_Description *desc EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    Evas_Object *o = data;
 
@@ -843,8 +845,9 @@ _colorbar_move_cb(void *data,
 }
 
 static Eina_Bool
-_button_clicked_cb(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_button_clicked_cb(void *data, Eo *obj,
+                   const Eo_Event_Description *desc EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    Color_Bar_Data *cb_data = data;
    double x, y, step;
@@ -889,8 +892,9 @@ _button_clicked_cb(void *data,
 }
 
 static Eina_Bool
-_button_repeat_cb(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_button_repeat_cb(void *data, Eo *obj,
+                  const Eo_Event_Description *desc EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    Color_Bar_Data *cb_data = data;
    double x, y, step;
@@ -1332,7 +1336,7 @@ _elm_colorselector_elm_layout_sizing_eval(Eo *obj, Elm_Colorselector_Data *sd)
 
 static void
 _on_resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
-           Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+           Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    ELM_COLORSELECTOR_DATA_GET(obj, sd);
 
@@ -1369,7 +1373,7 @@ static void
 _on_color_pressed(void *data,
                   Evas *e EINA_UNUSED,
                   Evas_Object *obj EINA_UNUSED,
-                  void *event_info EINA_UNUSED)
+                  void *event_info)
 {
    Elm_Color_Item_Data *item = (Elm_Color_Item_Data *)data;
    Evas_Event_Mouse_Down *ev = event_info;
@@ -1389,12 +1393,13 @@ static void
 _on_color_released(void *data,
                    Evas *e EINA_UNUSED,
                    Evas_Object *obj EINA_UNUSED,
-                   void *event_info EINA_UNUSED)
+                   void *event_info)
 {
    Elm_Color_Item_Data *item = (Elm_Color_Item_Data *)data;
    Eina_List *l;
    Elm_Object_Item *eo_temp_item;
    Evas_Event_Mouse_Down *ev = event_info;
+
    if (!item) return;
 
    ELM_COLORSELECTOR_DATA_GET(WIDGET(item), sd);
@@ -1479,9 +1484,10 @@ _item_resize(void *data EINA_UNUSED,
 }
 
 EOLIAN static void
-_elm_color_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED, Elm_Color_Item_Data *it,
-                       const char *emission,
-                       const char *source)
+_elm_color_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED,
+                                            Elm_Color_Item_Data *it,
+                                            const char *emission,
+                                            const char *source)
 {
    elm_object_signal_emit(VIEW(it), emission, source);
 }
@@ -2130,11 +2136,11 @@ elm_colorselector_palette_item_color_get(const Elm_Object_Item *it,
 
 EOLIAN static void
 _elm_color_item_color_get(Eo *eo_item EINA_UNUSED,
-                                         Elm_Color_Item_Data *item,
-                                         int *r,
-                                         int *g,
-                                         int *b,
-                                         int *a)
+                          Elm_Color_Item_Data *item,
+                          int *r,
+                          int *g,
+                          int *b,
+                          int *a)
 {
     if (r) *r = item->color->r;
     if (g) *g = item->color->g;
@@ -2154,11 +2160,11 @@ elm_colorselector_palette_item_color_set(Elm_Object_Item *it,
 
 EOLIAN static void
 _elm_color_item_color_set(Eo *eo_item EINA_UNUSED,
-                                         Elm_Color_Item_Data *item,
-                                         int r,
-                                         int g,
-                                         int b,
-                                         int a)
+                          Elm_Color_Item_Data *item,
+                          int r,
+                          int g,
+                          int b,
+                          int a)
 {
    item->color->r = r;
    item->color->g = g;
