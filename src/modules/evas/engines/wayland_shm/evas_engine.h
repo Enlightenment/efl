@@ -75,7 +75,6 @@ struct _Shm_Surface
 {
    struct wl_shm *shm;
    struct wl_surface *surface;
-   struct wl_callback *frame_cb;
    uint32_t flags;
    int w, h;
    int dx, dy;
@@ -86,7 +85,6 @@ struct _Shm_Surface
    Shm_Leaf leaf[MAX_BUFFERS];
    Shm_Leaf *current;
 
-   Eina_Bool redraw : 1;
    Eina_Bool alpha : 1;
    Eina_Bool mapped : 1;
 };

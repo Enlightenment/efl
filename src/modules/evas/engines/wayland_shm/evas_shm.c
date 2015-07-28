@@ -142,11 +142,8 @@ _shm_frame_release(void *data, struct wl_callback *callback, uint32_t timestamp 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(surf = data)) return;
-   if (callback != surf->frame_cb) return;
 
-   wl_callback_destroy(surf->frame_cb);
-   surf->frame_cb = NULL;
-   surf->redraw = EINA_FALSE;
+   wl_callback_destroy(callback);
 }
 
 static const struct wl_callback_listener _shm_frame_listener = 
@@ -443,7 +440,6 @@ _evas_shm_surface_swap(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int
 
    surface->dx = 0;
    surface->dy = 0;
-   surface->redraw = EINA_TRUE;
    surface->mapped = EINA_TRUE;
 }
 
@@ -491,16 +487,11 @@ _evas_shm_surface_redraw(Shm_Surface *surface)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (surface->frame_cb)
-     {
-        if (!surface->redraw) return;
-        wl_callback_destroy(surface->frame_cb);
-     }
 
    if (!surface->surface) return;
 
-   surface->frame_cb = wl_surface_frame(surface->surface);
-   wl_callback_add_listener(surface->frame_cb, &_shm_frame_listener, surface);
+   frame_cb = wl_surface_frame(surface->surface);
+   wl_callback_add_listener(frame_cb, &_shm_frame_listener, surface);
 
    wl_surface_commit(surface->surface);
 
