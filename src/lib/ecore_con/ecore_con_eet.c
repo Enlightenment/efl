@@ -375,7 +375,9 @@ _ecore_con_eet_server_data(void *data, int type EINA_UNUSED, Ecore_Con_Event_Cli
 
    n = ecore_con_client_data_get(ev->client);
 
+   eo_ref(ece_obj);
    _ecore_con_eet_data(n, ev->data, ev->size);
+   eo_unref(ece_obj);
 
    return EINA_TRUE;
 }
@@ -453,7 +455,9 @@ _ecore_con_eet_client_data(void *data, int type EINA_UNUSED, Ecore_Con_Event_Ser
    if (!r->r) return EINA_TRUE;
 
    /* Got some data */
+   eo_ref(ece_obj);
    _ecore_con_eet_data(r->r, ev->data, ev->size);
+   eo_unref(ece_obj);
 
    return EINA_TRUE;
 }
