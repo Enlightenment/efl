@@ -312,6 +312,10 @@ _ecore_lock(void)
 static inline void
 _ecore_unlock(void)
 {
+#ifndef HAVE_THREAD_SAFETY
+   /* see _ecore_lock(); no-op unless EINA_HAVE_DEBUG_THREADS is defined */
+   EINA_MAIN_LOOP_CHECK_RETURN;
+#endif
    _ecore_main_lock_count--;
    /* assert(_ecore_main_lock_count == 0); */
 #ifdef HAVE_THREAD_SAFETY
