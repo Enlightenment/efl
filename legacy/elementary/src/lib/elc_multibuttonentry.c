@@ -768,6 +768,9 @@ _item_new(Elm_Multibuttonentry_Data *sd,
         item->func = func;
      }
 
+   if (!elm_object_focus_get(obj) && sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK && sd->w_box)
+     _shrink_mode_set(obj, EINA_TRUE);
+
    switch (pos)
      {
       case MULTIBUTTONENTRY_POS_START:
