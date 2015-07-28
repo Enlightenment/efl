@@ -407,20 +407,7 @@ _evas_shm_surface_reconfigure(Shm_Surface *surface, int dx, int dy, int w, int h
 void 
 _evas_shm_surface_swap(Shm_Surface *surface)
 {
-   Shm_Leaf *leaf;
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   leaf = &surface->leaf[surface->curr_buff];
-   if (!leaf) return;
-
-   if (leaf->busy)
-     {
-        WRN("Trying to use a busy buffer");
-        return;
-     }
-
-   /* DBG("Current Leaf %d", (int)(leaf - &surface->leaf[0])); */
 
    surface->last_buff = surface->curr_buff;
 
@@ -497,6 +484,5 @@ _evas_shm_surface_redraw(Shm_Surface *surface, Eina_Rectangle *rects, unsigned i
 
    wl_surface_commit(surface->surface);
 
-   leaf = &surface->leaf[surface->curr_buff];
    leaf->busy = 1;
 }
