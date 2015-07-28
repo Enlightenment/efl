@@ -176,7 +176,7 @@ _shrink_mode_set(Evas_Object *obj,
         // pack buttons only 1line
         w = sd->w_box;
 
-        if (sd->label)
+        if (sd->label && sd->label_packed)
           {
              elm_box_pack_end(sd->box, sd->label);
              evas_object_size_hint_min_get(sd->label, &w_tmp, NULL);
@@ -260,7 +260,7 @@ _shrink_mode_set(Evas_Object *obj,
 
         // pack buttons only 1line
 
-        if (sd->label) elm_box_pack_end(sd->box, sd->label);
+        if (sd->label && sd->label_packed) elm_box_pack_end(sd->box, sd->label);
 
         // pack remain btns
         eo_item = NULL;
@@ -782,7 +782,7 @@ _item_new(Elm_Multibuttonentry_Data *sd,
           }
         else
           {
-             if (sd->label)
+             if (sd->label && sd->label_packed)
                elm_box_pack_after(sd->box, VIEW(item), sd->label);
              else
                elm_box_pack_start(sd->box, VIEW(item));
@@ -1156,26 +1156,23 @@ _label_set(Evas_Object *obj,
 
    eina_stringshare_replace(&sd->label_str, str);
 
-   evas_object_size_hint_min_set(sd->label, 0, 0);
-   evas_object_resize(sd->label, 0, 0);
    edje_object_part_text_escaped_set(sd->label, "elm.text", str);
 
    if (!strlen(str))
      {
-        edje_object_signal_emit(sd->label, "elm,mbe,clear_text", "elm");
-        edje_object_size_min_calc(sd->label, &width, &height);
+        sd->label_packed = EINA_FALSE;
         elm_box_unpack(sd->box, sd->label);
+        evas_object_hide(sd->label);
      }
    else
      {
-        edje_object_signal_emit(sd->label, "elm,mbe,set_text", "elm");
+        sd->label_packed = EINA_TRUE;
         edje_object_size_min_calc(sd->label, &width, &height);
+        evas_object_size_hint_min_set(sd->label, width, height);
         elm_box_pack_start(sd->box, sd->label);
+        evas_object_show(sd->label);
      }
 
-   elm_coords_finger_size_adjust(1, &width, 1, &height);
-   evas_object_size_hint_min_set(sd->label, width, height);
-   evas_object_show(sd->label);
    _view_update(sd);
 }
 
@@ -1375,8 +1372,6 @@ _view_init(Evas_Object *obj, Elm_Multibuttonentry_Data *sd)
    elm_widget_theme_object_set
      (obj, sd->label, "multibuttonentry", "label",
      elm_widget_style_get(obj));
-   _label_set(obj, "");
-   elm_widget_sub_object_add(obj, sd->label);
 
    // ACCESS
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)

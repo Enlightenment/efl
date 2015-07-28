@@ -25,25 +25,6 @@ group { name: "elm/multibuttonentry/label/default";
             rel1.offset: 2 2;
             rel2.offset: -5 -5;
          }
-         description { state: "no_text" 0.0;
-            inherit: "default" 0.0;
-            text.min: 0 1;
-            rel1.offset: 0 0;
-            rel2.offset: -1 -1;
-            visible: 0;
-         }
-      }
-   }
-   programs {
-      program {
-         signal: "elm,mbe,set_text"; source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.text";
-      }
-      program {
-         signal: "elm,mbe,clear_text"; source: "elm";
-         action: STATE_SET "no_text" 0.0;
-         target: "elm.text";
       }
    }
 }
