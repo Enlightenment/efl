@@ -426,7 +426,6 @@ _evas_shm_surface_swap(Shm_Surface *surface)
 
    surface->dx = 0;
    surface->dy = 0;
-   surface->mapped = EINA_TRUE;
 }
 
 void *

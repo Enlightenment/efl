@@ -261,8 +261,6 @@ _evas_outbuf_swapmode_get(Outbuf *ob)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!ob->surface->mapped) return MODE_FULL;
-
    for (; i < ob->surface->num_buff; i++)
      {
         n = (ob->surface->num_buff + ob->surface->curr_buff - (i)) % ob->surface->num_buff;
