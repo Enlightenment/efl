@@ -526,9 +526,20 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im, Eina_Bool
       case EVAS_COLORSPACE_ETC1_ALPHA:
         return evas_gl_common_texture_rgb_a_pair_new(gc, im);
      default:
-        // One pixel gap and two pixels for duplicated borders
-        w = im->cache_entry.w + 3;
-        h = im->cache_entry.h + 3;
+        if (disable_atlas)
+          {
+             /*Just one pixel gap. Generate texture unit without pixels for
+             borders in case using this for evas_canvas3d in repeat mode of the
+             texture unit*/
+             w = im->cache_entry.w + 1;
+             h = im->cache_entry.h + 1;
+          }
+        else
+          {
+             /*One pixel gap and two pixels for duplicated borders*/
+             w = im->cache_entry.w + 3;
+             h = im->cache_entry.h + 3;
+          }
         break;
      }
 
