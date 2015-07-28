@@ -952,7 +952,8 @@ _box_resize_cb(void *data,
                }
           }
      }
-   if (!elm_object_focus_get(data) && !evas_object_visible_get(sd->entry))
+   if (sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK &&
+       !elm_object_focus_get(data) && !evas_object_visible_get(sd->entry))
      {
         _shrink_mode_set(data, EINA_TRUE);
      }
@@ -1695,6 +1696,7 @@ _elm_multibuttonentry_editable_set(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Dat
      evas_object_show(sd->entry);
    else
      {
+        elm_box_unpack(sd->box, sd->entry);
         elm_entry_input_panel_hide(sd->entry);
         evas_object_hide(sd->entry);
      }
