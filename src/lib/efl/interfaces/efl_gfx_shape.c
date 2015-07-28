@@ -424,7 +424,7 @@ _efl_gfx_shape_equal_commands(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_gfx_shape_dup(Eo *obj, Efl_Gfx_Shape_Data *pd, Eo *dup_from)
+_efl_gfx_shape_dup(Eo *obj, Efl_Gfx_Shape_Data *pd, const Eo *dup_from)
 {
    const Efl_Gfx_Dash *dash = NULL;
    Efl_Gfx_Shape_Data *from;
