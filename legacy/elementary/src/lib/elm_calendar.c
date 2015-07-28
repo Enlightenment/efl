@@ -27,6 +27,50 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+/* This two functions should be moved in Eina for next release. */
+static Eina_Tmpstr *
+_eina_tmpstr_strftime(const char *format, const struct tm *tm)
+{
+   const size_t flen = strlen(format);
+   size_t buflen = 16; // An arbitrary starting size
+   char *buf = NULL;
+
+   do {
+      char *tmp;
+      size_t len;
+
+      tmp = realloc(buf, buflen * sizeof(char));
+      if (!tmp) goto on_error;
+      buf = tmp;
+
+      len = strftime(buf, buflen, format, tm);
+      // Check if we have the expected result and return it.
+      if ((len > 0 && len < buflen) || (len == 0 && flen == 0))
+        {
+           Eina_Tmpstr *r;
+
+           r = eina_tmpstr_add_length(buf, len + 1);
+           free(buf);
+           return r;
+        }
+
+      /* Possibly buf overflowed - try again with a bigger buffer */
+      buflen <<= 1; // multiply buffer size by 2
+   } while (buflen < 128 * flen);
+
+ on_error:
+   free(buf);
+   return NULL;
+}
+
+static char *
+_eina_tmpstr_steal(Eina_Tmpstr *s)
+{
+   char *r = s ? strdup(s) : NULL;
+   eina_tmpstr_del(s);
+   return r;
+}
+
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 
 static const Elm_Action key_actions[] = {
@@ -172,28 +216,19 @@ _disable(Elm_Calendar_Data *sd,
 static char *
 _format_month_year(struct tm *selected_time)
 {
-   char buf[32];
-
-   if (!strftime(buf, sizeof(buf), E_("%B %Y"), selected_time)) return NULL;
-   return strdup(buf);
+   return _eina_tmpstr_steal(_eina_tmpstr_strftime(E_("%B %Y"), selected_time));
 }
 
 static char *
 _format_month(struct tm *selected_time)
 {
-   char buf[32];
-
-   if (!strftime(buf, sizeof(buf), E_("%B"), selected_time)) return NULL;
-   return strdup(buf);
+   return _eina_tmpstr_steal(_eina_tmpstr_strftime(E_("%B"), selected_time));
 }
 
 static char *
 _format_year(struct tm *selected_time)
 {
-   char buf[32];
-
-   if (!strftime(buf, sizeof(buf), E_("%Y"), selected_time)) return NULL;
-   return strdup(buf);
+   return _eina_tmpstr_steal(_eina_tmpstr_strftime(E_("%Y"), selected_time));
 }
 
 static inline void
@@ -1036,18 +1071,19 @@ _elm_calendar_evas_object_smart_add(Eo *obj, Elm_Calendar_Data *priv)
 
    for (i = 0; i < ELM_DAY_LAST; i++)
      {
-        /* FIXME: I'm not aware of a known max, so if it fails,
-         * just make it larger. :| */
-        char buf[20];
         struct tm *info;
 
         /* I don't know of a better way of doing it */
         info = gmtime(&weekday);
         if (info)
           {
-             if (strftime(buf, sizeof(buf), "%a", info))
+             Eina_Tmpstr *buf;
+
+             buf = _eina_tmpstr_strftime("%a", info);
+             if (buf)
                {
                   priv->weekdays[i] = eina_stringshare_add(buf);
+                  eina_tmpstr_del(buf);
                }
              else
                {
