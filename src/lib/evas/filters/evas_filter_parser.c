@@ -2208,10 +2208,10 @@ static inline void
 _lua_import_path_get(char *path, size_t len, const char *name)
 {
    const char *pfx = _evas_module_datadir_get();
-   struct stat st;
    size_t r;
 
-//#ifdef FILTERS_DEBUG
+#ifdef FILTERS_DEBUG
+   struct stat st;
    // This is a hack to fetch the most recent file from source
    if (stat(path, &st) == -1)
      {
@@ -2231,7 +2231,7 @@ _lua_import_path_get(char *path, size_t len, const char *name)
         free(src);
         if (!stat(path, &st)) return;
      }
-//#endif
+#endif
 
    r = snprintf(path, len - 1, "%s/filters/lua/%s.lua", pfx ? pfx : ".", name);
    if (r >= len) path[len - 1] = '\0';
