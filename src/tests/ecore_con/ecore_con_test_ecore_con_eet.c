@@ -90,7 +90,7 @@ _eet_svr_cnct_cb(void *data, Ecore_Con_Reply *reply, Ecore_Con_Client *conn EINA
      ecore_con_eet_send(reply, TEST_STREAM, &toSend);
    else
      ecore_con_eet_raw_send(reply, TEST_STREAM, "message", rawMsg,
-                            strlen(rawMsg));
+                            strlen(rawMsg) + 1);
 
    return EINA_TRUE;
 }
