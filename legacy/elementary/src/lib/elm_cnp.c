@@ -927,7 +927,7 @@ _x11_notify_handler_targets(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Noti
           {
              if ((_atoms[j].x_atom == atomlist[i]) && (_atoms[j].x_data_preparer))
                {
-                  if ((j == CNP_ATOM_text_urilist))
+                  if (j == CNP_ATOM_text_urilist)
                     {
                        if (!_x11_is_uri_type_data(sel, notify)) continue;
                     }

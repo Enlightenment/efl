@@ -813,7 +813,7 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    edje_object_part_text_prediction_allow_set
      (sd->entry_edje, "elm.text", sd->prediction_allow);
    edje_object_part_text_input_hint_set
-     (sd->entry_edje, "elm.text", sd->input_hints);
+     (sd->entry_edje, "elm.text", (Edje_Input_Hints)sd->input_hints);
    edje_object_part_text_input_panel_enabled_set
      (sd->entry_edje, "elm.text", sd->input_panel_enable);
    edje_object_part_text_input_panel_imdata_set
@@ -2026,7 +2026,7 @@ _entry_changed_user_signal_cb(void *data,
           {
              atspi_info.content = edje_info->change.del.content;
              atspi_info.pos = MIN(edje_info->change.del.start, edje_info->change.del.end);
-             atspi_info.len = abs(edje_info->change.del.end - edje_info->change.del.start);
+             atspi_info.len = MAX(edje_info->change.del.start, edje_info->change.del.end) - atspi_info.pos;
              eo_do(data, eo_event_callback_call(ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_REMOVED, &atspi_info));
           }
      }
@@ -4894,7 +4894,7 @@ _elm_entry_input_hint_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Input_Hin
    sd->input_hints = hints;
 
    edje_object_part_text_input_hint_set
-     (sd->entry_edje, "elm.text", hints);
+     (sd->entry_edje, "elm.text", (Edje_Input_Hints)hints);
 }
 
 EOLIAN static Elm_Input_Hints
