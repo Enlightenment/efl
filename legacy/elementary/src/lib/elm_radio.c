@@ -50,7 +50,7 @@ _state_set(Evas_Object *obj, Eina_Bool state)
 {
    ELM_RADIO_DATA_GET(obj, sd);
 
-   if ((state != sd->state) && (!elm_widget_disabled_get(obj)))
+   if (state != sd->state)
      {
         sd->state = state;
         if (sd->state)
@@ -199,7 +199,7 @@ _elm_radio_elm_widget_theme_apply(Eo *obj, Elm_Radio_Data *sd)
    if (sd->state) elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
    else elm_layout_signal_emit(obj, "elm,state,radio,off", "elm");
 
-   if (elm_widget_disabled_get(obj) && sd->state) _state_set(obj, EINA_FALSE);
+   if (sd->state) _state_set(obj, EINA_FALSE);
 
    edje_object_message_signal_process(wd->resize_obj);
 
@@ -219,8 +219,6 @@ _elm_radio_elm_widget_disable(Eo *obj, Elm_Radio_Data *sd)
    Eina_Bool int_ret = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_disable());
    if (!int_ret) return EINA_FALSE;
-
-   if (elm_widget_disabled_get(obj) && sd->state) _state_set(obj, EINA_FALSE);
 
    return EINA_TRUE;
 }
