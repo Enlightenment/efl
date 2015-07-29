@@ -4,59 +4,45 @@ class Elm.Frame (Elm.Layout, Evas.Clickable_Interface)
    methods {
       @property collapse {
          set {
-            /*@
-            @brief Manually collapse a frame without animations
-            Use this to toggle the collapsed state of a frame, bypassing animations.
-
-            @ingroup Frame */
+            [[Manually collapse a frame without animations
+              Use this to toggle the collapsed state of a frame, bypassing animations.
+            ]]
          }
          get {
-            /*@
-            @brief Determine the collapse state of a frame
-            @return true if collapsed, false otherwise
-
-            Use this to determine the collapse state of a frame.
-
-            @ingroup Frame */
+            [[Determine the collapse state of a frame
+              Use this to determine the collapse state of a frame.
+            ]]
          }
          values {
-            collapse: bool; /*@ true to collapse, false to expand */
+            collapse: bool; [[$true to collapse, $false to expand.]]
          }
       }
       @property autocollapse {
          set {
-            /*@
-            @brief Toggle autocollapsing of a frame
-            When @p enable is EINA_TRUE, clicking a frame's label will collapse the frame
-            vertically, shrinking it to the height of the label.
-            By default, this is DISABLED.
-
-            @ingroup Frame */
+            [[Toggle autocollapsing of a frame
+              When $enable is $true, clicking a frame's label will collapse the frame
+              vertically, shrinking it to the height of the label.
+              By default, this is DISABLED.
+            ]]
          }
          get {
-            /*@
-            @brief Determine autocollapsing of a frame
-            @return Whether autocollapse is enabled
+            [[Determine autocollapsing of a frame
 
-            When this returns EINA_TRUE, clicking a frame's label will collapse the frame
-            vertically, shrinking it to the height of the label.
-            By default, this is DISABLED.
-
-            @ingroup Frame */
+              When this returns $true, clicking a frame's label will collapse the frame
+              vertically, shrinking it to the height of the label.
+              By default, this is DISABLED.
+            ]]
          }
          values {
-            autocollapse: bool; /*@ Whether to enable autocollapse */
+            autocollapse: bool; [[Whether to enable autocollapse.]]
          }
       }
       collapse_go {
-         /*@
-         @brief Manually collapse a frame with animations
-         Use this to toggle the collapsed state of a frame, triggering animations.
-
-         @ingroup Frame */
-
+         [[Manually collapse a frame with animations
+           Use this to toggle the collapsed state of a frame, triggering animations.
+         ]]
          params {
-            @in collapse: bool; /*@ true to collapse, false to expand */
+            @in collapse: bool; [[$true to collapse, $false to expand.]]
          }
       }
    }
