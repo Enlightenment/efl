@@ -70,12 +70,23 @@ _format_count(int count, void *data EINA_UNUSED)
 EOLIAN static Eina_Bool
 _elm_multibuttonentry_elm_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Data *sd)
 {
+   const char *str;
+   int hpad = 0, vpad = 0;
    Eina_List *l;
    Elm_Object_Item *eo_item;
 
    Eina_Bool int_ret = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
+
+   str = elm_layout_data_get(obj, "horizontal_pad");
+   if (str) hpad = atoi(str);
+   str = elm_layout_data_get(obj, "vertical_pad");
+   if (str) vpad = atoi(str);
+   elm_box_padding_set
+     (sd->box,
+      hpad * elm_widget_scale_get(obj) * elm_config_scale_get(),
+      vpad * elm_widget_scale_get(obj) * elm_config_scale_get());
 
    EINA_LIST_FOREACH(sd->items, l, eo_item)
      {
@@ -924,10 +935,12 @@ _box_resize_cb(void *data,
    Evas_Coord w, h, mnw, mnh;
    Eina_List *l;
    Elm_Object_Item *eo_it;
+   int hpad;
 
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
 
    evas_object_geometry_get(sd->box, NULL, NULL, &w, &h);
+   elm_box_padding_get(obj, &hpad, NULL);
 
    if (sd->h_box < h)
      eo_do(sd->parent, eo_event_callback_call
@@ -947,9 +960,9 @@ _box_resize_cb(void *data,
 
              evas_object_size_hint_min_get(VIEW(it), &mnw, &mnh);
 
-             if (mnw > w)
+             if (mnw > w - hpad)
                {
-                  mnw = w;
+                  mnw = w - hpad;
                   evas_object_size_hint_min_set(VIEW(it), mnw, mnh);
                   evas_object_resize(VIEW(it), mnw, mnh);
                }
@@ -1259,8 +1272,11 @@ _box_min_size_calculate(Evas_Object *box,
                   line_num++;
                }
           }
+
+        if ((linew != 0) && (l != eina_list_last(priv->children)))
+          linew += priv->pad.h;
      }
-   minh = lineh * line_num;
+   minh = lineh * line_num + (line_num - 1) * priv->pad.v;
 
    evas_object_size_hint_min_set(box, minw, minh);
    *line_height = lineh;
@@ -1334,6 +1350,7 @@ _box_layout_cb(Evas_Object *o,
           {
              xx = x;
              yy += hh;
+             yy += priv->pad.v;
              linew = ww;
           }
 
@@ -1343,6 +1360,7 @@ _box_layout_cb(Evas_Object *o,
         evas_object_resize(obj, ow, oh);
 
         xx += ww;
+        xx += priv->pad.h;
 
         if (linew > w)
           {
@@ -1351,18 +1369,34 @@ _box_layout_cb(Evas_Object *o,
                {
                   xx = x;
                   yy += hh;
+                  yy += priv->pad.v;
                   linew = 0;
                }
           }
+        if ((linew != 0) && (l != eina_list_last(priv->children)))
+          linew += priv->pad.h;
      }
 }
 
 static void
 _view_init(Evas_Object *obj, Elm_Multibuttonentry_Data *sd)
 {
+   const char *str;
+   int hpad = 0, vpad = 0;
+
    sd->box = elm_box_add(obj);
 
    if (!sd->box) return;
+
+   str = elm_layout_data_get(obj, "horizontal_pad");
+   if (str) hpad = atoi(str);
+   str = elm_layout_data_get(obj, "vertical_pad");
+   if (str) vpad = atoi(str);
+   elm_box_padding_set
+     (sd->box,
+      hpad * elm_widget_scale_get(obj) * elm_config_scale_get(),
+      vpad * elm_widget_scale_get(obj) * elm_config_scale_get());
+
    elm_box_layout_set(sd->box, _box_layout_cb, obj, NULL);
    elm_box_homogeneous_set(sd->box, EINA_FALSE);
    elm_layout_content_set(obj, "box.swallow", sd->box);

@@ -1,4 +1,7 @@
 group { name: "elm/multibuttonentry/base/default";
+   data.item: "horizontal_pad" 0;
+   data.item: "vertical_pad" 0;
+   data.item: "closed_height" 0;
    parts {
       part { name: "box.swallow"; type: SWALLOW;
          description { state: "default" 0.0;
