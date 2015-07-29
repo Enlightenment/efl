@@ -92,7 +92,8 @@
     cmd(SIG_ITEM_FOCUSED, "item,focused", "") \
     cmd(SIG_ITEM_UNFOCUSED, "item,unfocused", "") \
     cmd(SIG_PRESSED, "pressed", "") \
-    cmd(SIG_RELEASED, "released", "")
+    cmd(SIG_RELEASED, "released", "") \
+    cmd(SIG_CHANGED, "changed", "")
 
 ELM_PRIV_GENLIST_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
@@ -2441,6 +2442,8 @@ _elm_genlist_pan_evas_object_smart_calculate(Eo *obj, Elm_Genlist_Pan_Data *psd)
 
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
+
+   evas_object_smart_callback_call(sd->obj, SIG_CHANGED, NULL);
 }
 
 EOLIAN static void
