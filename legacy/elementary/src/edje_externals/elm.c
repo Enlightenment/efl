@@ -31,15 +31,6 @@ external_elm_shutdown(void)
    elm_shutdown();
 }
 
-static void
-_external_obj_del(void *data EINA_UNUSED, Evas *evas EINA_UNUSED,
-                  Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-   evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
-                                  _external_obj_del);
-   external_elm_shutdown();
-}
-
 void
 external_signal(void *data EINA_UNUSED, Evas_Object *obj, const char *sig,
                 const char *source)
@@ -106,6 +97,7 @@ _external_signal_proxy_free_cb(void *data, Evas *e EINA_UNUSED,
                                void *event_info EINA_UNUSED)
 {
    Elm_External_Signals_Proxy_Context *ctxt = data;
+   external_elm_shutdown();
    free(ctxt);
 }
 
@@ -201,8 +193,6 @@ external_signals_proxy(Evas_Object *obj, Evas_Object *edje, const char *part_nam
         evas_object_smart_callback_add
            (obj, d->name, _external_signal_proxy_cb, ctxt);
      }
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
-                                  _external_obj_del, NULL);
 }
 
 void
