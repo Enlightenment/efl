@@ -4,61 +4,44 @@ class Elm.Flipselector_Item(Elm.Widget_Item)
    methods {
         @property selected {
              get {
-                 /*@
-                  Get whether a given flip selector widget's item is the currently
+                [[Get whether a given flip selector widget's item is the currently
                   selected one.
 
-                  @see elm_flipselector_item_selected_set()
-                  @ingroup Flipselector
-                 */
+                  See also @.selected.set.
+                ]]
              }
              set {
-                 /*@
-                  Set whether a given flip selector widget's item should be the
+                [[Set whether a given flip selector widget's item should be the
                   currently selected one.
 
-                  This sets whether @p item is or not the selected (thus, under
-                  display) one. If @p item is different than the one under display,
-                  the latter will be unselected. If the @p item is set to be
-                  unselected, on the other hand, the @b first item in the widget's
+                  This sets whether $item is or not the selected (thus, under
+                  display) one. If $item is different than the one under display,
+                  the latter will be unselected. If the $item is set to be
+                  unselected, on the other hand, the first item in the widget's
                   internal members list will be the new selected one.
 
-                  @see elm_flipselector_item_selected_get()
-
-                  @ingroup Flipselector
-                 */
+                  See also @.selected.get.
+                ]]
              }
              values {
-                 selected: bool; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
+                 selected: bool; [[$true if selected, $false otherwise.]]
              }
         }
       prev_get @const {
-            /*@
-             Get the item before @p item in a flip selector widget's internal list of
-             items.
+            [[Get the item before $item in a flip selector widget's internal list of
+              items.
 
-             @return The item before the @p item, in its parent's list. If there is no
-                     previous item for @p item or there's an error, @c NULL is returned.
-
-             @see elm_flipselector_item_next_get()
-
-             @ingroup Flipselector
-            */
-            return: Elm_Object_Item *;
+              See also @.next_get.
+            ]]
+            return: Elm_Object_Item *; [[The item before the $item, in its parent's list. If there is no previous item for $item or there's an error, $null is returned.]]
         }
       next_get @const {
-            /*@
-             Get the item after @p item in a flip selector widget's
-             internal list of items.
+            [[Get the item after $item in a flip selector widget's
+              internal list of items.
 
-             @return The item after the @p item, in its parent's list. If there is no next
-                     item for @p item or there's an error, @c NULL is returned.
-
-             @see elm_flipselector_item_prev_get()
-
-             @ingroup Flipselector
-              */
-             return: Elm_Object_Item *;
+              See also @.prev_get.
+            ]]
+             return: Elm_Object_Item *; [[The item after the $item, in its parent's list. If there is no next item for $item or there's an error, $null is returned.]]
         }
    }
    implements {

@@ -5,190 +5,153 @@ class Elm.Flipselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action,
    methods {
       @property first_interval {
          set {
-            /*@
-            Set the interval on time updates for a user mouse button hold
-            on a flip selector widget.
+            [[Set the interval on time updates for a user mouse button hold
+              on a flip selector widget.
 
-            This interval value is @b decreased while the user holds the
-            mouse pointer either flipping up or flipping down a given flip
-            selector.
+              This interval value is decreased while the user holds the
+              mouse pointer either flipping up or flipping down a given flip
+              selector.
 
-            This helps the user to get to a given item distant from the
-            current one easier/faster, as it will start to flip quicker and
-            quicker on mouse button holds.
+              This helps the user to get to a given item distant from the
+              current one easier/faster, as it will start to flip quicker and
+              quicker on mouse button holds.
 
-            The calculation for the next flip interval value, starting from
-            the one set with this call, is the previous interval divided by
-            1.05, so it decreases a little bit.
+              The calculation for the next flip interval value, starting from
+              the one set with this call, is the previous interval divided by
+              1.05, so it decreases a little bit.
 
-            The default starting interval value for automatic flips is
-            @b 0.85 seconds.
+              The default starting interval value for automatic flips is
+              0.85 seconds.
 
-            @see elm_flipselector_first_interval_get()
-
-            @ingroup Flipselector */
+              See also @.first_interval.get.
+            ]]
          }
          get {
-            /*@
-            Get the interval on time updates for an user mouse button hold
-            on a flip selector widget.
+            [[Get the interval on time updates for an user mouse button hold
+              on a flip selector widget.
 
-            @return The (first) interval value, in seconds, set on it
-
-            @see elm_flipselector_first_interval_set() for more details
-
-            @ingroup Flipselector */
+              See also @.first_interval.set for more details.
+            ]]
          }
          values {
-            interval: double; /*@ The (first) interval value in seconds */
+            interval: double; [[The (first) interval value in seconds.]]
          }
       }
       @property items {
          get {
-            /*@
-            Get the internal list of items in a given flip selector widget.
+            [[Get the internal list of items in a given flip selector widget.
 
-            @return The list of items (#Elm_Object_Item as data) or
-            @c NULL on errors.
+              This list is not to be modified in any way and must not be
+              freed. Use the list members with functions like
+              \@ref elm_object_item_text_set,
+              \@ref elm_object_item_text_get,
+              \@ref elm_object_item_del,
+              \@ref elm_flipselector_item_selected_get,
+              \@ref elm_flipselector_item_selected_set.
 
-            This list is @b not to be modified in any way and must not be
-            freed. Use the list members with functions like
-            elm_object_item_text_set(),
-            elm_object_item_text_get(),
-            elm_object_item_del(),
-            elm_flipselector_item_selected_get(),
-            elm_flipselector_item_selected_set().
-
-            @warning This list is only valid until @p obj object's internal
-            items list is changed. It should be fetched again with another
-            call to this function when changes happen.
-
-            @ingroup Flipselector */
+              Warning: This list is only valid until $obj object's internal
+              items list is changed. It should be fetched again with another
+              call to this function when changes happen.
+            ]]
             return: const(list<Elm.Object.Item*>)*;
          }
       }
       @property first_item {
          get {
-            /*@
-            Get the first item in the given flip selector widget's list of
-            items.
+            [[Get the first item in the given flip selector widget's list of
+              items.
 
-            @return The first item or @c NULL, if it has no items (and on
-            errors)
+              See also @.item_append,
+              @.last_item.get.
+            ]]
+            return: Elm_Object_Item *; [[The first item or $null, if it has no items (and on
+            errors).]]
 
-            @see elm_flipselector_item_append()
-            @see elm_flipselector_last_item_get()
-
-            @ingroup Flipselector */
-            return: Elm_Object_Item *;
          }
       }
       @property last_item {
          get {
-            /*@
-            Get the last item in the given flip selector widget's list of
-            items.
+            [[Get the last item in the given flip selector widget's list of
+              items.
 
-            @return The last item or @c NULL, if it has no items (and on
-            errors)
+              See also @.item_prepend,
+              @.first_item.get.
+            ]]
+            return: Elm_Object_Item *; [[The last item or $null, if it has no items (and on
+            errors).]]
 
-            @see elm_flipselector_item_prepend()
-            @see elm_flipselector_first_item_get()
-
-            @ingroup Flipselector */
-            return: Elm_Object_Item *;
          }
       }
       @property selected_item {
          get {
-            /*@
-            Get the currently selected item in a flip selector widget.
+            [[Get the currently selected item in a flip selector widget.]]
+            return: Elm_Object_Item *; [[The selected item or $null, if the widget has no items
+              (and on errors).]]
 
-            @return The selected item or @c NULL, if the widget has no items
-            (and on errors)
-
-            @ingroup Flipselector */
-            return: Elm_Object_Item *;
          }
       }
       item_prepend {
-         /*@
-         Prepend a (text) item to a flip selector widget
+         [[Prepend a (text) item to a flip selector widget
 
-         @return A handle to the item added or @c NULL, on errors
+           The widget's list of labels to show will be prepended with the
+           given value. If the user wishes so, a callback function pointer
+           can be passed, which will get called when this same item is
+           selected.
 
-         The widget's list of labels to show will be prepended with the
-         given value. If the user wishes so, a callback function pointer
-         can be passed, which will get called when this same item is
-         selected.
+           Note: The current selection won't be modified by prepending
+           an element to the list.
 
-         @note The current selection @b won't be modified by prepending
-         an element to the list.
-
-         @note The maximum length of the text label is going to be
-         determined <b>by the widget's theme</b>. Strings larger than
-         that value are going to be @b truncated.
-
-         @ingroup Flipselector */
-
+           Note: The maximum length of the text label is going to be
+           determined by the widget's theme. Strings larger than
+           that value are going to be truncated.
+         ]]
          return: Elm_Object_Item *;
          params {
-            @in label: const(char)*; /*@ The (text) label of the new item */
-            @in func: Evas_Smart_Cb @optional; /*@ Convenience callback function to take place when
-            item is selected */
-            @in data: void * @optional; /*@ Data passed to @p func, above */
+            @in label: const(char)*; [[The (text) label of the new item.]]
+            @in func: Evas_Smart_Cb @optional; [[Convenience callback function to take place when
+            item is selected.]]
+            @in data: void * @optional; [[Data passed to $func, above.]]
          }
       }
       flip_next {
-         /*@
-         Programmatically select the next item of a flip selector widget
+         [[Programmatically select the next item of a flip selector widget
 
-         @note The selection will be animated. Also, if it reaches the
-         end of its list of member items, it will continue with the first
-         one onwards.
-
-         @ingroup Flipselector */
-
+           Note: The selection will be animated. Also, if it reaches the
+           end of its list of member items, it will continue with the first
+           one onwards.
+         ]]
       }
       item_append {
-         /*@
-         Append a (text) item to a flip selector widget
+         [[Append a (text) item to a flip selector widget
 
-         @return A handle to the item added or @c NULL, on errors
+           The widget's list of labels to show will be appended with the
+           given value. If the user wishes so, a callback function pointer
+           can be passed, which will get called when this same item is
+           selected.
 
-         The widget's list of labels to show will be appended with the
-         given value. If the user wishes so, a callback function pointer
-         can be passed, which will get called when this same item is
-         selected.
+           Note: The current selection won't be modified by appending an
+           element to the list.
 
-         @note The current selection @b won't be modified by appending an
-         element to the list.
-
-         @note The maximum length of the text label is going to be
-         determined <b>by the widget's theme</b>. Strings larger than
-         that value are going to be @b truncated.
-
-         @ingroup Flipselector */
-
+           Note: The maximum length of the text label is going to be
+           determined by the widget's theme. Strings larger than
+           that value are going to be truncated.
+         ]]
          return: Elm_Object_Item *;
          params {
-            @in label: const(char)*; /*@ The (text) label of the new item */
-            @in func: Evas_Smart_Cb @optional; /*@ Convenience callback function to take place when
-            item is selected */
-            @in data: const(void)* @optional; /*@ Data passed to @p func, above */
+            @in label: const(char)*; [[The (text) label of the new item.]]
+            @in func: Evas_Smart_Cb @optional; [[Convenience callback function to take place when
+            item is selected.]]
+            @in data: const(void)* @optional; [[Data passed to $func, above.]]
          }
       }
       flip_prev {
-         /*@
-         Programmatically select the previous item of a flip selector
-         widget
+         [[Programmatically select the previous item of a flip selector
+           widget
 
-         @note The selection will be animated. Also, if it reaches the
-         beginning of its list of member items, it will continue with the
-         last one backwards.
-
-         @ingroup Flipselector */
-
+           Note: The selection will be animated. Also, if it reaches the
+           beginning of its list of member items, it will continue with the
+           last one backwards.
+         ]]
       }
    }
    implements {
