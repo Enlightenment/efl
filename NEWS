@@ -7,7 +7,6 @@ Changes since 1.14.0:
 
 Features:
 
-   * Eo: Take eo out of beta.
    * Eo: Add eo_do_part.
    * Eolian: Add API to retrieve an event of a class by its name
    * evas: enable NEON-optimized code for aarch64.
@@ -26,7 +25,6 @@ Features:
    * ecore-drm: Add API function to get an output's crtc size
    * ecore-drm: Add API function to find an output given a name
    * ecore-drm: Add new API function to mark an output as primary
-   * Merge branch 'devs/devilhorns/ecore_drm'
    * ecore-drm: Add API function to test if an output can go on a given crtc
    * ecore-drm: Add a 'name' field to Ecore_Drm_Event_Output
    * ecore-drm: Add API function to set a new mode on an output
@@ -57,7 +55,7 @@ Features:
    * eolian: support for @since tag in new doc comments
    * Edje: Add clip as a property of a part description
    * Evas: Add "no-render" flag for proxy sources & clippers
-   *  Ecore_input: Add "ECORE_EVENT_MOUSE_BUTTON_CANCEL" event
+   * Ecore_input: Add "ECORE_EVENT_MOUSE_BUTTON_CANCEL" event
    * ecore-buffer: Add ecore_buffer library to EFL.
    * edje: add support to control the transition time of edje animation globally.
    * edje: add possibility to speed up animation per object.
