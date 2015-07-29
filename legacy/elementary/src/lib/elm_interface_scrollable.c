@@ -1305,9 +1305,9 @@ _elm_scroll_bounce_x_animator(void *data)
         r = 1.0;
         if (sid->down.momentum_animator)
           {
-             ed = abs(sid->down.dx * (_elm_config->thumbscroll_friction +
+             ed = fabs(sid->down.dx * (_elm_config->thumbscroll_friction +
                                       sid->down.extra_time) - sid->down.b0x);
-             md = abs(_elm_config->thumbscroll_friction * 5 * w);
+             md = fabs(_elm_config->thumbscroll_friction * 5 * w);
              if (ed > md) r = (double)(md) / (double)ed;
           }
         x = sid->down.b2x + (int)((double)(dx - odx) * r);
@@ -1361,9 +1361,9 @@ _elm_scroll_bounce_y_animator(void *data)
         r = 1.0;
         if (sid->down.momentum_animator)
           {
-             ed = abs(sid->down.dy * (_elm_config->thumbscroll_friction +
+             ed = fabs(sid->down.dy * (_elm_config->thumbscroll_friction +
                                       sid->down.extra_time) - sid->down.b0y);
-             md = abs(_elm_config->thumbscroll_friction * 5 * h);
+             md = fabs(_elm_config->thumbscroll_friction * 5 * h);
              if (ed > md) r = (double)(md) / (double)ed;
           }
         y = sid->down.b2y + (int)((double)(dy - ody) * r);
