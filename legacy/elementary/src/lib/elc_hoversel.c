@@ -34,9 +34,11 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
+   {"activate", _key_action_activate},
    {NULL, NULL}
 };
 
@@ -602,6 +604,13 @@ _key_action_move(Evas_Object *obj, const char *params)
    else return EINA_FALSE;
 }
 
+static Eina_Bool
+_key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   _activate(obj);
+   return EINA_TRUE;
+}
+
 EOLIAN static Eina_Bool
 _elm_hoversel_elm_widget_event(Eo *obj, Elm_Hoversel_Data *sd, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
@@ -633,6 +642,7 @@ EOLIAN const Elm_Atspi_Action *
 _elm_hoversel_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *pd EINA_UNUSED)
 {
    static Elm_Atspi_Action atspi_actions[] = {
+          { "activate", "activate", NULL, _key_action_activate},
           { "move,up", "move", "up", _key_action_move},
           { "move,down", "move", "down", _key_action_move},
           { "move,left", "move", "left", _key_action_move},
