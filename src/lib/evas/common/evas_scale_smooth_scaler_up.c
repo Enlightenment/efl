@@ -216,35 +216,57 @@
 	    pxor_r2r(mm0, mm0);
 	    MOV_A2R(ALPHA_255, mm5)
 #elif defined SCALE_USING_NEON
-	    uint16x4_t ay_16x4;
-	    uint16x4_t p0_16x4;
-	    uint16x4_t p2_16x4;
-	    uint16x8_t ax_16x8;
-	    uint16x8_t p0_p2_16x8;
-	    uint16x8_t p1_p3_16x8;
-	    uint16x8_t x255_16x8;
-	    uint32x2_t p0_p2_32x2;
-	    uint32x2_t p1_p3_32x2;
-	    uint32x2_t res_32x2;
-	    uint8x8_t p0_p2_8x8;
-	    uint8x8_t p1_p3_8x8;
-	    uint8x8_t p2_8x8;
-	    uint16x4_t temp_16x4;
-
-	    ay_16x4 = vdup_n_u16(ay);
-	    x255_16x8 = vdupq_n_u16(0xff);
+            uint16x8_t vay = vdupq_n_u16(ay);
 #endif
 	    pbuf = buf;  pbuf_end = buf + dst_clip_w;
 	    sxx = sxx0;
+#ifdef SCALE_USING_NEON
+	    while (pbuf+1 < pbuf_end) // 2 iterations only for NEON
+#else
 	    while (pbuf < pbuf_end)
+#endif
 	      {
 		int     ax;
 		DATA32  *p, *q;
+#ifdef SCALE_USING_NEON
+                int     ax1;
+                DATA32  *p1, *q1;
+                uint32x2x2_t vp0, vp1;
+                uint16x8_t vax;
+                uint16x8_t vax1;
+#else
 		DATA32  p0, p1, p2, p3;
+#endif
 
 		sx = sxx >> 16;
 		ax = 1 + ((sxx - (sx << 16)) >> 8);
 		p = psrc + sx;  q = p + src_w;
+#ifdef SCALE_USING_NEON
+                vax = vdupq_n_u16(ax);
+                vp0.val[0] = vld1_u32(p);
+                vp0.val[1] = vld1_u32(q);
+                if ((sx + 1) >= srw)
+                  {
+                    vp0.val[0] = vdup_lane_u32(vp0.val[0], 0); // p0, p1
+                    vp0.val[1] = vdup_lane_u32(vp0.val[1], 0); // p2, p3
+                  }
+                if ((sy + 1) >= srh)
+                  vp0.val[1] = vdup_lane_u32(vp0.val[0], 0);
+                sxx += dsxx;
+                sx = sxx >> 16;
+                ax1 = 1 + ((sxx - (sx << 16)) >> 8);
+                vax1 = vdupq_n_u16(ax1);
+                p1 = psrc + sx; q1 = p1 + src_w;
+                vp1.val[0] = vld1_u32(p1);
+                vp1.val[1] = vld1_u32(q1);
+                if ((sx + 1) >= srw)
+                  {
+                    vp1.val[0] = vdup_lane_u32(vp1.val[0], 0); // p4, p5
+                    vp1.val[1] = vdup_lane_u32(vp1.val[1], 0); // p6, p7
+                  }
+                if ((sy + 1) >= srh)
+                  vp1.val[1] = vdup_lane_u32(vp1.val[0], 0);
+#else
 		p0 = p1 = p2 = p3 = *p;
 		if ((sx + 1) < srw)
 		  p1 = *(p + 1);
@@ -254,6 +276,7 @@
 		    if ((sx + 1) < srw)
 		      p3 = *(q + 1);
 		  }
+#endif
 #ifdef SCALE_USING_MMX
 		MOV_A2R(ax, mm6)
 		MOV_P2R(p0, mm1, mm0)
@@ -272,41 +295,23 @@
 		MOV_R2P(mm1, *pbuf, mm0)
 		pbuf++;
 #elif defined SCALE_USING_NEON
-		if (p0 | p1 | p2 | p3)
-		  {
-		    ax_16x8 = vdupq_n_u16(ax);
-
-		    p0_p2_32x2 = vset_lane_u32(p0, p0_p2_32x2, 0);
-		    p0_p2_32x2 = vset_lane_u32(p2, p0_p2_32x2, 1);
-		    p1_p3_32x2 = vset_lane_u32(p1, p1_p3_32x2, 0);
-		    p1_p3_32x2 = vset_lane_u32(p3, p1_p3_32x2, 1);
-
-		    p0_p2_8x8 = vreinterpret_u8_u32(p0_p2_32x2);
-		    p1_p3_8x8 = vreinterpret_u8_u32(p1_p3_32x2);
-		    p1_p3_16x8 = vmovl_u8(p1_p3_8x8);
-		    p0_p2_16x8 = vmovl_u8(p0_p2_8x8);
-
-		    p1_p3_16x8 = vsubq_u16(p1_p3_16x8, p0_p2_16x8);
-		    p1_p3_16x8 = vmulq_u16(p1_p3_16x8, ax_16x8);
-		    p1_p3_16x8 = vshrq_n_u16(p1_p3_16x8, 8);
-		    p1_p3_16x8 = vaddq_u16(p1_p3_16x8, p0_p2_16x8);
-		    p1_p3_16x8 = vandq_u16(p1_p3_16x8, x255_16x8);
-
-		    p0_16x4 = vget_low_u16(p1_p3_16x8);
-		    p2_16x4 = vget_high_u16(p1_p3_16x8);
-
-		    p2_16x4 = vsub_u16(p2_16x4, p0_16x4);
-		    p2_16x4 = vmul_u16(p2_16x4, ay_16x4);
-		    p2_16x4 = vshr_n_u16(p2_16x4, 8);
-		    p2_16x4 = vadd_u16(p2_16x4, p0_16x4);
-
-		    p1_p3_16x8 = vcombine_u16(temp_16x4, p2_16x4);
-		    p2_8x8 = vmovn_u16(p1_p3_16x8);
-		    res_32x2 = vreinterpret_u32_u8(p2_8x8);
-		    vst1_lane_u32(pbuf++, res_32x2, 1);
-		  }
-		else
-		  *pbuf++ = p0;
+                    // (p0, p1), (p2, p3) ==> (p0, p2), (p1, p3)
+                vp0 = vzip_u32(vp0.val[0], vp0.val[1]);
+                    // (p1 - p0, p3 - p2)
+                uint16x8_t vtmpq = vsubl_u8(vreinterpret_u8_u32(vp0.val[1]), vreinterpret_u8_u32(vp0.val[0]));
+                    // p0 + (p1 - p0)*ax, p2 + (p3 - p2)*ax
+                vp0.val[0] = vreinterpret_u32_u8(vadd_u8(vreinterpret_u8_u32(vp0.val[0]), vshrn_n_u16(vmulq_u16(vtmpq, vax), 8)));
+                vp1 = vzip_u32(vp1.val[0], vp1.val[1]);
+                vtmpq = vsubl_u8(vreinterpret_u8_u32(vp1.val[1]), vreinterpret_u8_u32(vp1.val[0]));
+                vp1.val[0] = vreinterpret_u32_u8(vadd_u8(vreinterpret_u8_u32(vp1.val[0]), vshrn_n_u16(vmulq_u16(vtmpq, vax1), 8)));
+                    // (p0, p2), (p4, p6) ==> (p0, p4), (p2, p6)
+                vp0 = vzip_u32(vp0.val[0], vp1.val[0]);
+                    // (p2 - p0), (p6 - p4)
+                vtmpq = vsubl_u8(vreinterpret_u8_u32(vp0.val[1]), vreinterpret_u8_u32(vp0.val[0]));
+                    // p0 + (p2 - p0)*ay, p4 + (p6 - p4)*ay
+                vp0.val[0] = vreinterpret_u32_u8(vadd_u8(vreinterpret_u8_u32(vp0.val[0]), vshrn_n_u16(vmulq_u16(vtmpq, vay), 8)));
+                vst1_u32(pbuf, vp0.val[0]);
+                pbuf += 2;
 #else
 		if (p0 | p1)
 		  p0 = INTERP_256(ax, p1, p0);
@@ -318,6 +323,35 @@
 #endif
 		sxx += dsxx;
 	      }
+#if defined SCALE_USING_NEON
+              if (pbuf < pbuf_end) // For non-even length case
+                {
+                  int     ax;
+                  DATA32  *p, *q;
+                  DATA32  p0, p1, p2, p3;
+
+                  sx = sxx >> 16;
+                  ax = 1 + ((sxx - (sx << 16)) >> 8);
+                  p = psrc + sx;  q = p + src_w;
+                  p0 = p1 = p2 = p3 = *p;
+                  if ((sx + 1) < srw)
+                    p1 = *(p + 1);
+                    if ((sy + 1) < srh)
+                      {
+                        p2 = *q;  p3 = p2;
+                        if ((sx + 1) < srw)
+                          p3 = *(q + 1);
+                      }
+                  if (p0 | p1)
+                    p0 = INTERP_256(ax, p1, p0);
+                  if (p2 | p3)
+                    p2 = INTERP_256(ax, p3, p2);
+                  if (p0 | p2)
+                    p0 = INTERP_256(ay, p2, p0);
+                  *pbuf++ = p0;
+                  sxx += dsxx;
+                }
+#endif
 	    /* * blend here [clip_w *] buf -> dptr * */
 	    if (!direct_scale)
               {
