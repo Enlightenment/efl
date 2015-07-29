@@ -491,11 +491,7 @@ eina_str_convert(const char *enc_from, const char *enc_to, const char *text)
         size_t count;
 
         tob = outb;
-#ifdef __FreeBSD__
-        count = iconv(ic, &inp, &inb, &outp, &outb);
-#else
         count = iconv(ic, (char **)&inp, &inb, &outp, &outb);
-#endif
         outlen += tob - outb;
         if (count == (size_t)(-1))
           {
@@ -567,11 +563,7 @@ eina_str_convert_len(const char *enc_from, const char *enc_to, const char *text,
         size_t count;
 
         tob = outb;
-#ifdef __FreeBSD__
-        count = iconv(ic, &inp, &inb, &outp, &outb);
-#else
         count = iconv(ic, (char **)&inp, &inb, &outp, &outb);
-#endif
         outlen += tob - outb;
         if (count == (size_t)(-1))
           {
