@@ -631,6 +631,7 @@ _dbus_timeout(Colorclass_UI *cc)
 /* internal */ void
 elm_color_class_init(void)
 {
+   eldbus_init();
    cc_proxy = elementary_colorclass_proxy_get(eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION), ELM_COLOR_CLASS_METHOD_BASE, NULL);
    h1 = ecore_event_handler_add(ELEMENTARY_COLORCLASS_EDIT_EVENT, (Ecore_Event_Handler_Cb)_dbus_edit, NULL);
    h2 = ecore_event_handler_add(ELEMENTARY_COLORCLASS_CHANGED_EVENT, (Ecore_Event_Handler_Cb)_dbus_changed, NULL);
@@ -646,6 +647,7 @@ elm_color_class_shutdown(void)
    ecore_event_handler_del(h1);
    ecore_event_handler_del(h2);
    h1 = h2 = NULL;
+   eldbus_shutdown();
 }
 
 static const Eldbus_Method colorclass_editor_methods[] =
