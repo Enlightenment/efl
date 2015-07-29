@@ -439,6 +439,22 @@ evas_vec3_quaternion_rotate(Evas_Vec3 *out, const Evas_Vec3 *v, const Evas_Vec4 
    out->z = v->z + uv.z + uuv.z;
 }
 
+static inline void
+evas_vec3_orthogonal_projection_on_plain(Evas_Vec3 *out, const Evas_Vec3 *v, const Evas_Vec3 *normal)
+{
+   Evas_Real a;
+   Evas_Vec3 projection;
+
+   /* Orthoprojection of vector on the plane is the difference
+      between a vector and its orthogonal projection onto the orthogonal
+      complement to the plane */
+   a = evas_vec3_dot_product(v, normal) / evas_vec3_length_square_get(normal);
+   evas_vec3_scale(&projection, normal, a);
+   evas_vec3_subtract(out, v, &projection);
+
+   return;
+}
+
 /* 4D vector */
 static inline void
 evas_vec4_set(Evas_Vec4 *dst, Evas_Real x, Evas_Real y, Evas_Real z, Evas_Real w)
@@ -2157,6 +2173,46 @@ box_intersection_box(Evas_Box3 *v1, Evas_Box3 *v2)
 }
 
 static inline void
+tangent_new_basis(Evas_Vec3 *out, Evas_Triangle3 *triangle,
+                  Evas_Vec2 *a, Evas_Vec2 *b, Evas_Vec2 *c)
+{
+   Evas_Vec2   new1, new2;
+   Evas_Vec3   old1, old2;
+   evas_vec3_set(out, 0, 0, 0);
+
+   evas_vec2_subtract(&new1, b, a);
+   evas_vec2_subtract(&new2, c, a);
+   evas_vec3_subtract(&old1, &(triangle->p1), &(triangle->p0));
+   evas_vec3_subtract(&old2, &(triangle->p2), &(triangle->p0));
+
+
+   /* calculation of new basis(in system coordinates of texturing) by solution of system of equations */
+   if (new2.y != 0)
+     {
+        evas_vec3_scale(&old2, &old2, (new1.y / new2.y));
+        evas_vec2_scale(&new2, &new2, (new1.y / new2.y));
+
+        evas_vec2_subtract(&new1, &new1, &new2);
+        evas_vec3_subtract(&old1, &old1, &old2);
+
+        evas_vec3_scale(out, &old1, 1 / new1.x);
+     }
+
+   else if (new1.y != 0)
+     {
+        evas_vec3_scale(&old1, &old1, (new2.y / new1.y));
+        evas_vec2_scale(&new1, &new1, (new2.y / new1.y));
+
+        evas_vec2_subtract(&new2, &new2, &new1);
+        evas_vec3_subtract(&old2, &old2, &old1);
+
+        evas_vec3_scale(out, &old2, 1 / new2.x);
+     }
+
+   return;
+}
+
+static inline void
 convex_hull_vertex_set(Evas_Triangle3 *el, int *vertex_count, float **vertex,
                     unsigned short int **index, unsigned int k, int *leader, int coord)
 {
@@ -2713,6 +2769,173 @@ evas_convex_hull_get(float *data, int count, int stride, float **vertex,
    eina_array_flush(&arr_triangles);
 
 #undef CHECK_AND_SET_VERTEX
+
+   return;
+}
+
+static inline void
+tangent_space_weighted_sum(Evas_Vec3 *big_t, Evas_Vec3 *little_t,
+                            Evas_Real *big_angle, Evas_Real little_angle)
+{
+   /* one way to calculate tangent in vertex that is found in many triangles */
+   evas_vec3_scale(big_t, big_t, *big_angle / (*big_angle + little_angle));
+   evas_vec3_scale(little_t, little_t, little_angle / (*big_angle + little_angle));
+   evas_vec3_add(big_t, big_t, little_t);
+   *big_angle += little_angle;
+   return;
+}
+
+
+static inline Evas_Real
+tangent_space_triangle_angle_get(Evas_Vec3 *first, Evas_Vec3 *second, Evas_Vec3 *third)
+{
+   Evas_Vec3 a, b, c;
+   Evas_Real cos, arccos;
+
+   evas_vec3_subtract(&a, second, third);
+   evas_vec3_subtract(&b, third, first);
+   evas_vec3_subtract(&c, first, second);
+
+   cos = -(evas_vec3_length_square_get(&a) - evas_vec3_length_square_get(&b) -
+           evas_vec3_length_square_get(&c)) / (2 * evas_vec3_length_get(&b) *
+           evas_vec3_length_get(&c));
+   arccos = acos(cos);
+
+   return arccos;
+}
+
+static inline void
+evas_tangent_space_get(float *data, float *tex_data, float *normal_data, unsigned short int *index, int vertex_count,
+                       int index_count, int stride, int tex_stride, int normal_stride, float **tangent)
+{
+   Eina_Bool if_not_primitive = EINA_FALSE;
+   Evas_Real big_angle, little_angle;
+   Evas_Triangle3  triangle;
+   Evas_Vec2 tex1, tex2, tex3;
+   Evas_Vec3 big_tangent, little_tangent, normal;
+   Evas_Vec4 *plain = NULL;
+   int i, j, k, l, m, found_index = NULL;
+   int indexes[3];
+
+   if (!tex_data)
+     {
+        ERR("Impossible to calculate tangent space, texture coordinates not found %d %s", __LINE__, __FILE__);
+        return;
+     }
+
+   if (!(*tangent))
+     {
+        ERR("Failed to allocate memory %d %s", __LINE__, __FILE__);
+        return;
+     }
+
+   unsigned short int *tmp_index = (unsigned short int*) malloc((vertex_count) * sizeof(unsigned short int));
+
+   if (tmp_index == NULL)
+     {
+        ERR("Failed to allocate memory %d %s", __LINE__, __FILE__);
+        return;
+     }
+
+   float *tmp_tangent = (float*) malloc((3 * vertex_count) * sizeof(float));
+   if (tmp_tangent == NULL)
+     {
+        ERR("Failed to allocate memory %d %s", __LINE__, __FILE__);
+        return;
+     }
+
+   if (index_count == 0)
+     {
+        if_not_primitive = EINA_TRUE;
+        index_count = vertex_count;
+     }
+
+   for (i = 0, j = 0, k = 0; i < vertex_count; i++, j += stride, k += normal_stride)
+     {
+        evas_vec3_set(&big_tangent, 0.0, 0.0, 0.0);
+        big_angle = 0.0;
+        for (l = 0, m = 0; l < vertex_count; l++, m += stride)
+          {
+             /* tangent for vertex is calculating in each triangle in which the vertex is found */
+             if ((fabs(data[j] - data[m]) < FLT_EPSILON) &&
+                 (fabs(data[j + 1] - data[m + 1]) < FLT_EPSILON) &&
+                 (fabs(data[j + 2] - data[m + 2]) < FLT_EPSILON) &&
+                  ((m == j) || ((tex_data[i * tex_stride] != 0.0) && (tex_data[i * tex_stride + 1] != 0.0) &&
+                   (tex_data[i * tex_stride] != 1.0) && (tex_data[i * tex_stride + 1] != 1.0))))
+               {
+                  found_index = l;
+                  for (k = 0; k < index_count; k += 3)
+                     {
+                        /* there is no index count and indexes , for models that are not a primitive,
+                           so we use the vertex count and an ordered array instead of them */
+                        if (if_not_primitive)
+                          {
+                             indexes[0] = k;
+                             indexes[1] = k + 1;
+                             indexes[2] = k + 2;
+                          }
+                        else
+                          {
+                             indexes[0] = index[k];
+                             indexes[1] = index[k + 1];
+                             indexes[2] = index[k + 2];
+                          }
+
+                        if ((found_index == indexes[0]) ||
+                            (found_index == indexes[1]) ||
+                            (found_index == indexes[2]))
+                          {
+                             evas_vec3_set(&triangle.p0, data[indexes[0] * stride], data[indexes[0] * stride + 1], data[indexes[0] * stride + 2]);
+                             evas_vec3_set(&triangle.p1, data[indexes[1] * stride], data[indexes[1] * stride + 1], data[indexes[1] * stride + 2]);
+                             evas_vec3_set(&triangle.p2, data[indexes[2] * stride], data[indexes[2] * stride + 1], data[indexes[2] * stride + 2]);
+                             if (plain)
+                               free(plain);
+                             plain = malloc(sizeof(Evas_Vec4));
+
+                             evas_vec4_plain_by_points(plain, &triangle.p0, &triangle.p1, &triangle.p2);
+                             tex1.x = tex_data[indexes[0] * tex_stride];
+                             tex1.y = tex_data[indexes[0] * tex_stride + 1];
+                             tex2.x = tex_data[indexes[1] * tex_stride];
+                             tex2.y = tex_data[indexes[1] * tex_stride + 1];
+                             tex3.x = tex_data[indexes[2] * tex_stride];
+                             tex3.y = tex_data[indexes[2] * tex_stride + 1];
+
+                             /* calculate the tangent */
+                             tangent_new_basis(&little_tangent, &triangle,
+                                               &tex1, &tex2, &tex3);
+                             evas_vec3_normalize(&little_tangent, &little_tangent);
+
+                             /* founding the angle in triangle in founded vertex */
+                             if (found_index == indexes[0])
+                               little_angle = tangent_space_triangle_angle_get(&triangle.p0, &triangle.p1, &triangle.p2);
+
+                             else if (found_index == indexes[1])
+                               little_angle = tangent_space_triangle_angle_get(&triangle.p1, &triangle.p0, &triangle.p2);
+
+                             else
+                               little_angle = tangent_space_triangle_angle_get(&triangle.p2, &triangle.p0, &triangle.p1);
+
+                             if (evas_triangle3_is_line(&triangle))
+                               evas_vec3_set(&big_tangent, 1.0, 0.0, 0.0);
+
+                             else
+                               tangent_space_weighted_sum(&big_tangent, &little_tangent, &big_angle, little_angle);
+                          }
+                     }
+                }
+          }
+        evas_vec3_set(&normal, normal_data[j], normal_data[j + 1], normal_data[j + 2]);
+        evas_vec3_orthogonal_projection_on_plain(&big_tangent, &big_tangent, &normal);
+        evas_vec3_normalize(&big_tangent, &big_tangent);
+        tmp_tangent[i * 3] = big_tangent.x;
+        tmp_tangent[i * 3 + 1] = big_tangent.y;
+        tmp_tangent[i * 3 + 2] = big_tangent.z;
+     }
+
+
+   memcpy(*tangent, tmp_tangent, (3 * vertex_count) * sizeof(float));
+   free(tmp_index);
+   free(tmp_tangent);
 
    return;
 }
