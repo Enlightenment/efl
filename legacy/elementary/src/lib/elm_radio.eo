@@ -82,7 +82,6 @@ class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       Elm.Widget.activate;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.disable;
       Elm.Widget.sub_object_del;
       Elm.Widget.event;
       Elm.Container.content_set;

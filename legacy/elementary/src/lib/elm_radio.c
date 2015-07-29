@@ -213,16 +213,6 @@ _elm_radio_elm_widget_theme_apply(Eo *obj, Elm_Radio_Data *sd)
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_elm_radio_elm_widget_disable(Eo *obj, Elm_Radio_Data *sd)
-{
-   Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_disable());
-   if (!int_ret) return EINA_FALSE;
-
-   return EINA_TRUE;
-}
-
 EOLIAN static void
 _elm_radio_elm_layout_sizing_eval(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED)
 {
