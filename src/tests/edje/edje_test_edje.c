@@ -13,6 +13,8 @@
 #include "edje_suite.h"
 #include "edje_tests_helpers.h"
 
+#define EVAS_DATA_DIR TESTS_SRC_DIR "/../../lib/evas"
+
 START_TEST(edje_test_edje_init)
 {
    int ret;
@@ -212,6 +214,8 @@ START_TEST(edje_test_filters)
    Evas_Object *obj, *src = NULL;
    const char *prg, *name;
    Eina_Bool b;
+
+   setenv("EVAS_DATA_DIR", EVAS_DATA_DIR, 1);
 
    obj = edje_object_add(evas);
    fail_unless(edje_object_file_set(obj, test_layout_get("test_filters.edj"), "test_group"));

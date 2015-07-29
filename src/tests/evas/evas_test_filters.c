@@ -17,10 +17,12 @@
 
 #define TEST_FONT_NAME "DejaVuSans,UnDotum"
 #define TEST_FONT_SOURCE TESTS_SRC_DIR "/TestFont.eet"
+#define EVAS_DATA_DIR TESTS_SRC_DIR "/../../lib/evas"
 
 #define START_FILTER_TEST() \
    Ecore_Evas *ee; Evas *evas; \
    Evas_Object *to; \
+   setenv("EVAS_DATA_DIR", EVAS_DATA_DIR, 1); \
    evas_init(); \
    ecore_evas_init(); \
    ee = ecore_evas_buffer_new(1, 1); \
@@ -66,6 +68,8 @@ START_TEST(evas_filter_parser)
    // It's practically impossible to test all combinations since the language
    // itself is full featured. Let's just ensure that our main functions exist
    // and that calling them (kinda) works.
+
+   setenv("EVAS_DATA_DIR", EVAS_DATA_DIR, 1);
 
 #define CHECK_FILTER(_a, _v) do { \
    pgm = evas_filter_program_new("evas_suite", EINA_TRUE); \

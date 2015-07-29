@@ -55,7 +55,7 @@ previews-data: preview_text_filter
 		if [ -e ${top_srcdir}/doc/previews/filter_$${a}.sh ] ; then \
 			source ${top_srcdir}/doc/previews/filter_$${a}.sh ; \
 		fi ; \
-		$(top_builddir)/doc/previews/preview_text_filter "$${TEXT}" "$${FILTER}" "$(DATADIR)/filter_$${a}.png" "$${FONT}" "$${SIZE}" ; \
+		EVAS_DATA_DIR="$(top_srcdir)/src/lib/evas" $(top_builddir)/doc/previews/preview_text_filter "$${TEXT}" "$${FILTER}" "$(DATADIR)/filter_$${a}.png" "$${FONT}" "$${SIZE}" ; \
 		cp "$(DATADIR)/filter_$${a}.png" "$(HTMLDIR)/" ; \
 	done
 
