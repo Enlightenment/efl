@@ -444,7 +444,7 @@ static AtspiRelationType _elm_relation_to_atspi_relation(Elm_Atspi_Relation_Type
 {
    if ((type < ELM_ATSPI_RELATION_LAST_DEFINED) && (type > ELM_ATSPI_RELATION_NULL))
      return elm_relation_to_atspi_relation_mapping[type];
-   return ELM_ATSPI_RELATION_NULL;
+   return ATSPI_RELATION_NULL;
 }
 
 static Eldbus_Message *
@@ -1233,7 +1233,7 @@ _text_string_at_offset_get(const Eldbus_Service_Interface *iface, const Eldbus_M
 {
    const char *obj_path = eldbus_service_object_path_get(iface);
    char *str;
-   AtspiTextGranularity gran;
+   Elm_Atspi_Text_Granularity gran;
    int start, end;
    Eldbus_Message *ret;
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
@@ -1677,7 +1677,6 @@ _text_bounded_ranges_get(const Eldbus_Service_Interface *iface, const Eldbus_Mes
    Eina_Rectangle rect;
    Eina_Bool screen_coords;
    AtspiCoordType type;
-   AtspiTextClipType xc, yc;
    Elm_Atspi_Text_Clip_Type xclip, yclip;
    Eina_List *ranges;
    Eldbus_Message *ret;
@@ -1686,7 +1685,7 @@ _text_bounded_ranges_get(const Eldbus_Service_Interface *iface, const Eldbus_Mes
 
    if (!obj)
      return _dbus_invalid_ref_error_new(msg);
-   if (!eldbus_message_arguments_get(msg, "iiiiuuu", &rect.x, &rect.y, &rect.w, &rect.h, &type, &xc, &yc))
+   if (!eldbus_message_arguments_get(msg, "iiiiuuu", &rect.x, &rect.y, &rect.w, &rect.h, &type, &xclip, &yclip))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Expected (x,y,w,h) of bounding box, screen coord type and x, y text clip types.");
 
    ret = eldbus_message_method_return_new(msg);
@@ -1695,9 +1694,6 @@ _text_bounded_ranges_get(const Eldbus_Service_Interface *iface, const Eldbus_Mes
    iter = eldbus_message_iter_get(ret);
    iter_array = eldbus_message_iter_container_new(iter, 'a', "(iisv)");
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
-
-   xclip = xc;
-   yclip = yc;
 
    screen_coords = type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
    eo_do(obj, ranges = elm_interface_atspi_text_bounded_ranges_get(screen_coords, rect, xclip, yclip));
@@ -3049,7 +3045,7 @@ _state_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Descr
      return EINA_FALSE;
 
    if ((state_data->type > ELM_ATSPI_STATE_LAST_DEFINED) ||
-        state_data->type < 0)
+        (int)state_data->type < 0)
      return EINA_FALSE;
 
    type_desc = elm_states_to_atspi_state[state_data->type].name;
