@@ -1188,7 +1188,9 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
                   ee->prop.wm_rot.win_resize = (int)e->data.l[2];
                   ee->prop.wm_rot.w = (int)e->data.l[3];
                   ee->prop.wm_rot.h = (int)e->data.l[4];
-                  if (ee->prop.wm_rot.win_resize)
+                  if ((ee->prop.wm_rot.win_resize) &&
+                      ((ee->w != ee->prop.wm_rot.w) ||
+                       (ee->h != ee->prop.wm_rot.h)))
                     edata->wm_rot.configure_coming = 1;
                   edata->wm_rot.prepare = 1;
                   edata->wm_rot.request = 0;
@@ -1207,10 +1209,13 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
           {
              if (ee->prop.wm_rot.app_set)
                {
+                  int angle = ee->prop.wm_rot.angle;
+                  Eina_Bool resize = ee->prop.wm_rot.win_resize;
+
                   edata->wm_rot.prepare = 0;
                   edata->wm_rot.request = 1;
                   edata->wm_rot.done = 0;
-                  if (ee->prop.wm_rot.win_resize)
+                  if (resize)
                     {
                        if ((ee->w == ee->prop.wm_rot.w) &&
                            (ee->h == ee->prop.wm_rot.h))
@@ -1225,7 +1230,7 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
                             ee->prop.wm_rot.manual_mode.wait_for_done = EINA_TRUE;
                             _ecore_evas_x_wm_rot_manual_rotation_done_timeout_update(ee);
                          }
-                       _ecore_evas_x_rotation_set(ee, ee->prop.wm_rot.angle, 1);
+                       _ecore_evas_x_rotation_set(ee, angle, (!resize));
                     }
                }
           }
@@ -1629,6 +1634,7 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
                   if ((ee->prop.wm_rot.w == e->w) &&
                       (ee->prop.wm_rot.h == e->h))
                     {
+                       ee->prop.wm_rot.win_resize = 0;
                        edata->wm_rot.configure_coming = 0;
                     }
                }
@@ -2355,10 +2361,7 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
 {
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
    if (ee->prop.wm_rot.supported)
-     {
-        if (!_ecore_evas_x_wm_rotation_check(ee)) return;
-        if (!resize) resize = 1;
-     }
+     if (!_ecore_evas_x_wm_rotation_check(ee)) return;
    Evas_Engine_Info_Software_X11 *einfo;
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
 
@@ -2418,10 +2421,7 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize)
      }
 
    if (ee->prop.wm_rot.supported)
-     {
-        if (!_ecore_evas_x_wm_rotation_check(ee)) return;
-        if (!resize) resize = 1;
-     }
+     if (!_ecore_evas_x_wm_rotation_check(ee)) return;
 
    if (!strcmp(ee->driver, "opengl_x11"))
      {
