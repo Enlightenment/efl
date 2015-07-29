@@ -67,10 +67,13 @@ _on_mouse_up(void *data,
              Evas_Object *obj EINA_UNUSED,
              void *event_info)
 {
+   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
+
    Evas_Event_Mouse_Up *ev = event_info;
 
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (!wd->still_in) return;
 
    eo_do(data, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
 }
