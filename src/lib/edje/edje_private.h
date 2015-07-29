@@ -2881,6 +2881,10 @@ Eina_Bool _edje_part_mouse_events_get(Edje *ed, Edje_Real_Part *rp);
 void _edje_part_mouse_events_set(Edje *ed, Edje_Real_Part *rp, Eina_Bool mouse_events);
 Eina_Bool _edje_part_repeat_events_get(Edje *ed, Edje_Real_Part *rp);
 void _edje_part_repeat_events_set(Edje *ed, Edje_Real_Part *rp, Eina_Bool repeat_events);
+Evas_Event_Flags _edje_part_ignore_flags_get(Edje *ed, Edje_Real_Part *rp);
+void _edje_part_ignore_flags_set(Edje *ed, Edje_Real_Part *rp, Evas_Event_Flags ignore_flags);
+Evas_Event_Flags _edje_part_mask_flags_get(Edje *ed, Edje_Real_Part *rp);
+void _edje_part_mask_flags_set(Edje *ed, Edje_Real_Part *rp, Evas_Event_Flags mask_flags);
 
 #ifdef HAVE_LIBREMIX
 #include <remix/remix.h>

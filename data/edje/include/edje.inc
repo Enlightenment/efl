@@ -135,6 +135,10 @@ native       set_mouse_events (part_id, ev);
 native       get_mouse_events (part_id);
 native       set_repeat_events(part_id, rep);
 native       get_repeat_events(part_id);
+native       set_ignore_flags (part_id, flags);
+native       get_ignore_flags (part_id);
+native       set_mask_flags   (part_id, flags);
+native       get_mask_flags   (part_id);
 native       part_swallow     (part_id, GROUP:str[]);
 
 native       external_param_get_int(id, param_name[]);
