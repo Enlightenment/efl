@@ -53,8 +53,18 @@ static void _access_increment_decrement_info_say(Evas_Object *obj,
 static void
 _entry_show(Elm_Spinner_Data *sd)
 {
+   Eina_List *l;
+   Elm_Spinner_Special_Value *sv;
    char buf[32], fmt[32] = "%0.f";
 
+   EINA_LIST_FOREACH(sd->special_values, l, sv)
+     {
+        if (sv->value == sd->val)
+          {
+             snprintf(buf, sizeof(buf), "%s", sv->label);
+             goto apply;
+          }
+     }
    /* try to construct just the format from given label
     * completely ignoring pre/post words
     */
@@ -91,6 +101,8 @@ _entry_show(Elm_Spinner_Data *sd)
           }
      }
    snprintf(buf, sizeof(buf), fmt, sd->val);
+
+apply:
    elm_object_text_set(sd->ent, buf);
 }
 
