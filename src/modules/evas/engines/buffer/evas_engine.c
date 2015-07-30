@@ -169,9 +169,11 @@ eng_output_free(void *data)
 {
    Render_Engine *re;
 
-   re = (Render_Engine *)data;
-   evas_render_engine_software_generic_clean(&re->generic);
-   free(re);
+   if ((re = (Render_Engine *)data))
+     {
+        evas_render_engine_software_generic_clean(&re->generic);
+        free(re);
+     }
 
    evas_common_shutdown();
 }
@@ -181,9 +183,9 @@ eng_canvas_alpha_get(void *data, void *context EINA_UNUSED)
 {
    Render_Engine *re;
 
-   re = (Render_Engine *)data;
-   if (re->generic.ob->priv.back_buf)
-     return re->generic.ob->priv.back_buf->cache_entry.flags.alpha;
+   if ((re = (Render_Engine *)data))
+     if (re->generic.ob->priv.back_buf)
+       return re->generic.ob->priv.back_buf->cache_entry.flags.alpha;
    return EINA_TRUE;
 }
 
