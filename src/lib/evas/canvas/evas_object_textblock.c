@@ -12321,6 +12321,57 @@ _evas_textblock_format_offset_get(const Evas_Object_Textblock_Node_Format *n)
 }
 #endif
 
+#if 1 // TODO: Should replace with #if EDBG if something
+
+EAPI Eina_List *
+_evas_textblock_par_rects_get(const Evas_Object *obj)
+{
+   Eina_List *rects = NULL;
+   Eina_Rectangle *rect;
+   Evas_Object_Textblock_Paragraph *par;
+   Evas_Textblock_Data *o = eo_data_scope_get(obj, MY_CLASS);
+
+   EINA_INLIST_FOREACH(o->paragraphs, par)
+     {
+        if (!par->visible) break;
+
+        rect = eina_rectangle_new(0, par->y, par->w, par->h);
+        rects = eina_list_append(rects, rect);
+     }
+
+   return rects;
+}
+
+EAPI Eina_List *
+_evas_textblock_items_get(const Evas_Object *obj)
+{
+   Eina_List *rects = NULL;
+   Eina_Rectangle *rect;
+   Evas_Object_Textblock_Paragraph *par;
+   Evas_Textblock_Data *o = eo_data_scope_get(obj, MY_CLASS);
+
+   EINA_INLIST_FOREACH(o->paragraphs, par)
+     {
+        Evas_Object_Textblock_Line *ln;
+
+        if (!par->visible) break;
+
+        EINA_INLIST_FOREACH(par->lines, ln)
+          {
+             Evas_Object_Textblock_Item *it;
+             EINA_INLIST_FOREACH(ln->items, it)
+               {
+                  rect = eina_rectangle_new(it->x, par->y + ln->y, it->w, it->h);
+                  rects = eina_list_append(rects, rect);
+               }
+          }
+
+     }
+   return rects;
+}
+
+#endif
+
 #if 0
 /* Good for debugging */
 EAPI void
