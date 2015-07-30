@@ -255,6 +255,8 @@ _evas_outbuf_swap_mode_get(Outbuf *ob)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!_evas_shm_surface_assign(ob->surface)) return MODE_FULL;
+
    /* This was broken, for now we just do full redraws */
    return MODE_FULL;
 

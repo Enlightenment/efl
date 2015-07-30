@@ -426,8 +426,6 @@ _evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   _evas_shm_surface_assign(surface);
-
    if (w) *w = 0;
    if (h) *h = 0;
 
