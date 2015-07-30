@@ -718,13 +718,10 @@ _ecore_evas_wl_common_callback_mouse_out_set(Ecore_Evas *ee, void (*func)(Ecore_
 void
 _ecore_evas_wl_common_move(Ecore_Evas *ee, int x, int y)
 {
-   Ecore_Evas_Engine_Wl_Data *wdata;
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
 
-   wdata = ee->engine.data;
    ee->req.x = x;
    ee->req.y = y;
 
