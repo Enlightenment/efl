@@ -5,6 +5,11 @@ static Outbuf *_evas_gl_drm_window = NULL;
 static EGLContext context = EGL_NO_CONTEXT;
 static int win_count = 0;
 
+#ifdef EGL_MESA_platform_gbm
+static PFNEGLGETPLATFORMDISPLAYEXTPROC dlsym_eglGetPlatformDisplayEXT = NULL;
+static PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC dlsym_eglCreatePlatformWindowSurfaceEXT = NULL;
+#endif
+
 static void
 _evas_outbuf_gbm_surface_destroy(Outbuf *ob)
 {
@@ -148,6 +153,23 @@ _evas_outbuf_make_current(void *data, void *doit)
 }
 
 static Eina_Bool
+_evas_outbuf_init(void)
+{
+   static int _init = 0;
+   if (_init) return EINA_TRUE;
+#ifdef EGL_MESA_platform_gbm
+   dlsym_eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC)
+         eglGetProcAddress("eglGetPlatformDisplayEXT");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dlsym_eglGetPlatformDisplayEXT, EINA_FALSE);
+   dlsym_eglCreatePlatformWindowSurfaceEXT = (PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC)
+         eglGetProcAddress("eglCreatePlatformWindowSurfaceEXT");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dlsym_eglCreatePlatformWindowSurfaceEXT, EINA_FALSE);
+#endif
+   _init = 1;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _evas_outbuf_egl_setup(Outbuf *ob)
 {
    int ctx_attr[3];
@@ -157,6 +179,12 @@ _evas_outbuf_egl_setup(Outbuf *ob)
    EGLConfig *cfgs;
    const GLubyte *vendor, *renderer, *version, *glslversion;
    Eina_Bool blacklist = EINA_FALSE;
+
+   if (!_evas_outbuf_init())
+     {
+        ERR("Could not initialize engine!");
+        return EINA_FALSE;
+     }
 
    /* setup gbm egl surface */
    ctx_attr[0] = EGL_CONTEXT_CLIENT_VERSION;
@@ -189,7 +217,7 @@ _evas_outbuf_egl_setup(Outbuf *ob)
 
 #ifdef EGL_MESA_platform_gbm
    ob->egl.disp =
-     eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_MESA, ob->info->info.gbm, NULL);
+     dlsym_eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_MESA, ob->info->info.gbm, NULL);
 #else
    ob->egl.disp = eglGetDisplay((EGLNativeDisplayType)ob->info->info.gbm);
 #endif
@@ -255,8 +283,8 @@ _evas_outbuf_egl_setup(Outbuf *ob)
 
 #ifdef EGL_MESA_platform_gbm
    ob->egl.surface[0] =
-     eglCreatePlatformWindowSurfaceEXT(ob->egl.disp, ob->egl.config,
-                                       ob->surface, NULL);
+     dlsym_eglCreatePlatformWindowSurfaceEXT(ob->egl.disp, ob->egl.config,
+                                             ob->surface, NULL);
 #else
    ob->egl.surface[0] =
      eglCreateWindowSurface(ob->egl.disp, ob->egl.config,
