@@ -88,16 +88,16 @@ _class_func_env_create(const Eolian_Class *class, const char *funcname, Eolian_F
    if (aftype == EOLIAN_PROPERTY) aftype = EOLIAN_METHOD;
 
    Eina_Stringshare *fname = eolian_function_full_c_name_get(funcid, aftype, EINA_FALSE);
-   strcpy(p = env->upper_eo_func, fname);
+   strncpy(p = env->upper_eo_func, fname, PATH_MAX - 1);
    eina_str_toupper(&p);
-   strcpy(p = env->lower_eo_func, fname);
+   strncpy(p = env->lower_eo_func, fname, PATH_MAX - 1);
    eina_str_tolower(&p);
    eina_stringshare_del(fname);
 
    Eina_Stringshare *lname = eolian_function_full_c_name_get(funcid, aftype, EINA_TRUE);
    env->legacy_func[0] = '\0';
    if (!lname) return;
-   strcpy(p = env->legacy_func, lname);
+   strncpy(p = env->legacy_func, lname, PATH_MAX - 1);
    eina_stringshare_del(lname);
 }
 
