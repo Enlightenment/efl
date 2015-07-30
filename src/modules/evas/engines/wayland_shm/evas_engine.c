@@ -37,7 +37,7 @@ _render_engine_swapbuf_setup(int w, int h, unsigned int rotation, unsigned int d
    if (!ob) goto err;
 
    if (!evas_render_engine_software_generic_init(&re->generic, ob, 
-                                                 _evas_outbuf_swapmode_get,
+                                                 _evas_outbuf_swap_mode_get,
                                                  _evas_outbuf_rotation_get,
                                                  NULL,
                                                  NULL, 

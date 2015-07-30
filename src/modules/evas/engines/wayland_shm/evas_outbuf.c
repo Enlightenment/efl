@@ -249,7 +249,7 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode
 }
 
 Render_Engine_Swap_Mode 
-_evas_outbuf_swapmode_get(Outbuf *ob)
+_evas_outbuf_swap_mode_get(Outbuf *ob)
 {
    int count = 0, ret = 0;
 
