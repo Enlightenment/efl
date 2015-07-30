@@ -280,7 +280,9 @@ _evas_outbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, int rot, Outbuf
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (depth == OUTBUF_DEPTH_INHERIT) depth = ob->depth;
+   if ((depth == OUTBUF_DEPTH_NONE) || 
+       (depth == OUTBUF_DEPTH_INHERIT))
+     depth = ob->depth;
 
    if ((ob->w == w) && (ob->h == h) && 
        (ob->rotation == rot) && (ob->depth == depth) && 
