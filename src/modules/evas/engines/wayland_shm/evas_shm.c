@@ -442,7 +442,7 @@ _evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h)
 }
 
 void
-_evas_shm_surface_redraw(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int count)
+_evas_shm_surface_post(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int count)
 {
    struct wl_callback *frame_cb;
    Shm_Leaf *leaf;
