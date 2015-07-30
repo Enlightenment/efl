@@ -324,7 +324,7 @@ struct _Ecore_Evas
       0 : sync_draw_done is sent by ecore_evas
       1 : sync_draw_done is sent by gl
     */
-   char          gl_sync_draw_done;
+   signed char   gl_sync_draw_done;
 
    unsigned char ignore_events : 1;
    unsigned char manual_render : 1;
