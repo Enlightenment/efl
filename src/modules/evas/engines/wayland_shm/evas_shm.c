@@ -453,7 +453,7 @@ _evas_shm_surface_post(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   leaf = &surface->leaf[surface->curr_buff];
+   leaf = surface->current;
    if (!leaf) return;
 
    if (!surface->surface) return;
@@ -478,4 +478,5 @@ _evas_shm_surface_post(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int
    wl_surface_commit(surface->surface);
 
    leaf->busy = 1;
+   surface->current = NULL;
 }

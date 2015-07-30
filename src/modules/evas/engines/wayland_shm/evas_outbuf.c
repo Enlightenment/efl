@@ -251,15 +251,12 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode
 Render_Engine_Swap_Mode 
 _evas_outbuf_swapmode_get(Outbuf *ob)
 {
-   int i = 0, n = 0, count = 0, ret = 0;
+   int count = 0, ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   for (; i < ob->surface->num_buff; i++)
-     {
-        n = (ob->surface->num_buff + ob->surface->curr_buff - (i)) % ob->surface->num_buff;
-        if (ob->surface->leaf[n].busy) count++;
-     }
+   /* This was broken, for now we just do full redraws */
+   return MODE_FULL;
 
    if (count == ob->surface->num_buff) ret = MODE_FULL;
    else if (count == 0) ret = MODE_COPY;

@@ -79,7 +79,6 @@ struct _Shm_Surface
    int w, h;
    int dx, dy;
    int num_buff;
-   int curr_buff;
 
    Shm_Leaf leaf[MAX_BUFFERS];
    Shm_Leaf *current;
