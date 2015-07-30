@@ -254,7 +254,7 @@ struct _EVGL_Cap
 
 struct _EVGL_Resource
 {
-   int id;
+   Eina_Thread id;
 
    EVGLNative_Display   display;
    EVGLNative_Context   context;
@@ -317,8 +317,7 @@ struct _EVGL_Engine
    LK(resource_lock);
    Eina_TLS           resource_key;
    Eina_List         *resource_list;
-   int                resource_count;
-   int                main_tid;
+   Eina_Thread        main_tid;
 
    // Add more debug logs (DBG levels 4 and 6)
    int                api_debug_mode;
