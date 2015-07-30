@@ -63,11 +63,12 @@ struct _Shm_Data
 typedef struct _Shm_Leaf Shm_Leaf;
 struct _Shm_Leaf
 {
-   int w, h, busy;
+   int w, h, busy, age;
    Shm_Data *data;
    Shm_Pool *resize_pool;
    Eina_Bool valid : 1;
    Eina_Bool reconfigure : 1;
+   Eina_Bool drawn : 1;
 };
 
 typedef struct _Shm_Surface Shm_Surface;

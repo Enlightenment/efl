@@ -290,7 +290,8 @@ _shm_leaf_create(Shm_Surface *surface, Shm_Leaf *leaf, int w, int h)
    leaf->w = w;
    leaf->h = h;
    leaf->valid = EINA_TRUE;
-
+   leaf->drawn = EINA_FALSE;
+   leaf->age = 0;
    wl_buffer_add_listener(leaf->data->buffer, &_shm_buffer_listener, surface);
 
    return EINA_TRUE;
@@ -408,6 +409,7 @@ Eina_Bool
 _evas_shm_surface_assign(Shm_Surface *surface)
 {
    int i;
+   surface->current = NULL;
 
    for (i = 0; i < surface->num_buff; i++)
      {
@@ -415,10 +417,39 @@ _evas_shm_surface_assign(Shm_Surface *surface)
         if (surface->leaf[i].valid)
           {
              surface->current = &surface->leaf[i];
-             return EINA_TRUE;
+             break;
           }
      }
-   return EINA_FALSE;
+
+   /* If we ran out of buffers we're in trouble, reset all ages */
+   if (!surface->current)
+     {
+        for (i = 0; i < surface->num_buff; i++)
+          {
+             if (surface->leaf[i].valid)
+               {
+                  surface->leaf[i].drawn = EINA_FALSE;
+                  surface->leaf[i].age = 0;
+               }
+          }
+        return EINA_FALSE;
+     }
+
+   /* Increment ages of all valid buffers */
+   for (i = 0; i < surface->num_buff; i++)
+     {
+        if (surface->leaf[i].valid && surface->leaf[i].drawn)
+          {
+             surface->leaf[i].age++;
+             if (surface->leaf[i].age > surface->num_buff)
+               {
+                  surface->leaf[i].age = 0;
+                  surface->leaf[i].drawn = EINA_FALSE;
+               }
+          }
+     }
+
+   return EINA_TRUE;
 }
 
 void *
@@ -475,6 +506,8 @@ _evas_shm_surface_post(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int
 
    wl_surface_commit(surface->surface);
 
-   leaf->busy = 1;
+   leaf->busy = EINA_TRUE;
+   leaf->drawn = EINA_TRUE;
+   leaf->age = 0;
    surface->current = NULL;
 }

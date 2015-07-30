@@ -251,26 +251,20 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode
 Render_Engine_Swap_Mode 
 _evas_outbuf_swap_mode_get(Outbuf *ob)
 {
-   int count = 0, ret = 0;
+   int age;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!_evas_shm_surface_assign(ob->surface)) return MODE_FULL;
 
-   /* This was broken, for now we just do full redraws */
+   age = ob->surface->current->age;
+   if (age > ob->surface->num_buff) return MODE_FULL;
+   else if (age == 1) return MODE_COPY;
+   else if (age == 2) return MODE_DOUBLE;
+   else if (age == 3) return MODE_TRIPLE;
+   else if (age == 4) return MODE_QUADRUPLE;
+
    return MODE_FULL;
-
-   if (count == ob->surface->num_buff) ret = MODE_FULL;
-   else if (count == 0) ret = MODE_COPY;
-   else if (count == 1) ret = MODE_DOUBLE;
-   else if (count == 2) ret = MODE_TRIPLE;
-   else if (count == 3) ret = MODE_QUADRUPLE;
-   else ret = MODE_FULL;
-
-   /* DBG("SWAPMODE: %d (0=FULL, 1=COPY, 2=DOUBLE, 3=TRIPLE, 4=QUAD", ret); */
-   /* DBG("\tBusy: %d", count); */
-
-   return ret;
 }
 
 int 
