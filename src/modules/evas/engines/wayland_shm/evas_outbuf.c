@@ -37,7 +37,7 @@ _evas_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, s
 
         n = atoi(num);
         if (n <= 0) n = 1;
-        if (n > 4) n = 4;
+        if (n > MAX_BUFFERS) n = MAX_BUFFERS;
 
         ob->num_buff = n;
      }
