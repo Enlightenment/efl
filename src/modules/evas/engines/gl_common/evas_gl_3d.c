@@ -959,8 +959,8 @@ _light_build(E3D_Draw_Data *data,
              data->flags |= E3D_SHADER_FLAG_LIGHT_ATTENUATION;
 
              data->light.atten.x = pdl->atten_const;
-             data->light.atten.x = pdl->atten_linear;
-             data->light.atten.x = pdl->atten_quad;
+             data->light.atten.y = pdl->atten_linear;
+             data->light.atten.z = pdl->atten_quad;
           }
 
         if (pdl->spot_cutoff < 180.0)
