@@ -284,7 +284,7 @@ _elm_hoversel_item_elm_widget_item_focus_set(Eo *eo_it EINA_UNUSED,
                                              Elm_Hoversel_Item_Data *it,
                                              Eina_Bool focused)
 {
-   elm_widget_focus_set(VIEW(it), focused);
+   elm_object_focus_set(VIEW(it), focused);
 }
 
 EOLIAN static Eina_Bool
