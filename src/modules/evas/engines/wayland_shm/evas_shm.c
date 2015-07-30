@@ -404,28 +404,34 @@ _evas_shm_surface_reconfigure(Shm_Surface *surface, int dx, int dy, int w, int h
      }
 }
 
+Eina_Bool
+_evas_shm_surface_assign(Shm_Surface *surface)
+{
+   int i;
+
+   for (i = 0; i < surface->num_buff; i++)
+     {
+        if (surface->leaf[i].busy) continue;
+        if (surface->leaf[i].valid)
+          {
+             surface->current = &surface->leaf[i];
+             return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
+}
+
 void *
 _evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h)
 {
-   Shm_Leaf *leaf = NULL;
-   int i = 0;
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   _evas_shm_surface_assign(surface);
 
    if (w) *w = 0;
    if (h) *h = 0;
 
-   for (; i < surface->num_buff; i++)
-     {
-        if (surface->leaf[i].busy) continue;
-        if ((!leaf) || (leaf->valid))
-          {
-             leaf = &surface->leaf[i];
-             break;
-          }
-     }
-
-   if (!leaf)
+   if (!surface->current)
      {
         /* WRN("All buffers held by server"); */
         return NULL;
@@ -433,12 +439,10 @@ _evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h)
 
    /* DBG("Leaf Data Get %d", (int)(leaf - &surface->leaf[0])); */
 
-   if (w) *w = leaf->w;
-   if (h) *h = leaf->h;
+   if (w) *w = surface->current->w;
+   if (h) *h = surface->current->h;
 
-   surface->curr_buff = (int)(leaf - &surface->leaf[0]);
-
-   return leaf->data->map;
+   return surface->current->data->map;
 }
 
 void
