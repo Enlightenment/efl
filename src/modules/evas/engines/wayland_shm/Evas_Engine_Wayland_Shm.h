@@ -19,6 +19,8 @@ struct _Evas_Engine_Info_Wayland_Shm
         unsigned int rotation, depth;
         Eina_Bool destination_alpha : 1;
         int edges;
+
+        struct wl_display *wl_disp;
      } info;
 
    /* non-blocking or blocking mode */
