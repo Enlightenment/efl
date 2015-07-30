@@ -24,6 +24,13 @@ _class_name_concatenate(const Eolian_Class *class, char *buffer)
    eina_iterator_free(itr);
 }
 
+static char *
+_fill_envs(char *dest, const char *src, size_t bufs) {
+    strncpy(dest, src, bufs - 1);
+    dest[bufs - 1] = '\0';
+    return dest;
+}
+
 void
 _class_env_create(const Eolian_Class *class, const char *over_classname, _eolian_class_vars *env)
 {
@@ -33,22 +40,22 @@ _class_env_create(const Eolian_Class *class, const char *over_classname, _eolian
    char *p;
 
    if (!class)
-      strncpy(env->full_classname, over_classname, PATH_MAX - 1);
+      _fill_envs(env->full_classname, over_classname, sizeof(env->full_classname));
    else
       _class_name_concatenate(class, env->full_classname);
 
    /* class/CLASS*/
-   p = strncpy(env->upper_classname, env->full_classname, PATH_MAX - 1);
+   p = _fill_envs(env->upper_classname, env->full_classname, sizeof(env->upper_classname));
    eina_str_toupper(&p);
-   p = strncpy(env->lower_classname, env->full_classname, PATH_MAX - 1);
+   p = _fill_envs(env->lower_classname, env->full_classname, sizeof(env->lower_classname));
    eina_str_tolower(&p);
 
    /* eo_prefix */
    if (class) eo_prefix = eolian_class_eo_prefix_get(class);
    if (!eo_prefix) eo_prefix = env->full_classname;
-   p = strncpy(env->upper_eo_prefix, eo_prefix, PATH_MAX - 1);
+   p = _fill_envs(env->upper_eo_prefix, eo_prefix, sizeof(env->upper_eo_prefix));
    eina_str_toupper(&p);
-   p = strncpy(env->lower_eo_prefix, eo_prefix, PATH_MAX - 1);
+   p = _fill_envs(env->lower_eo_prefix, eo_prefix, sizeof(env->lower_eo_prefix));
    eina_str_tolower(&p);
 
    /* classtype */
@@ -78,23 +85,23 @@ _class_func_env_create(const Eolian_Class *class, const char *funcname, Eolian_F
    char *p;
    const Eolian_Function *funcid = eolian_class_function_get_by_name(class, funcname, ftype);
 
-   p = strncpy(env->upper_func, funcname, PATH_MAX - 1);
+   p = _fill_envs(env->upper_func, funcname, sizeof(env->upper_func));
    eina_str_toupper(&p);
 
    Eolian_Function_Type aftype = ftype;
    if (aftype == EOLIAN_PROPERTY) aftype = EOLIAN_METHOD;
 
    Eina_Stringshare *fname = eolian_function_full_c_name_get(funcid, aftype, EINA_FALSE);
-   strncpy(p = env->upper_eo_func, fname, PATH_MAX - 1);
+   p = _fill_envs(env->upper_eo_func, fname, sizeof(env->upper_eo_func));
    eina_str_toupper(&p);
-   strncpy(p = env->lower_eo_func, fname, PATH_MAX - 1);
+   p = _fill_envs(env->lower_eo_func, fname, sizeof(env->lower_eo_func));
    eina_str_tolower(&p);
    eina_stringshare_del(fname);
 
    Eina_Stringshare *lname = eolian_function_full_c_name_get(funcid, aftype, EINA_TRUE);
    env->legacy_func[0] = '\0';
    if (!lname) return;
-   strncpy(p = env->legacy_func, lname, PATH_MAX - 1);
+   p = _fill_envs(env->legacy_func, lname, sizeof(env->legacy_func));
    eina_stringshare_del(lname);
 }
 
