@@ -40,6 +40,7 @@ lib_LTLIBRARIES += lib/efl/libefl.la
 
 lib_efl_libefl_la_SOURCES = \
 lib/efl/interfaces/efl_interfaces_main.c \
+lib/efl/interfaces/efl_model_common.c \
 lib/efl/interfaces/efl_gfx_shape.c
 
 lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_srcdir)/src/lib/efl @EFL_CFLAGS@ -DEFL_GFX_FILTER_BETA
