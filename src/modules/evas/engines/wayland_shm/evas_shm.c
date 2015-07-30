@@ -309,7 +309,7 @@ _shm_leaf_release(Shm_Leaf *leaf)
 }
 
 Shm_Surface *
-_evas_shm_surface_create(struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha)
+_evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha)
 {
    Shm_Surface *surf;
    int i = 0;
@@ -322,6 +322,7 @@ _evas_shm_surface_create(struct wl_shm *shm, struct wl_surface *surface, int w, 
    surf->dy = 0;
    surf->w = w;
    surf->h = h;
+   surf->disp = disp;
    surf->shm = shm;
    surf->surface = surface;
    surf->num_buff = num_buff;
