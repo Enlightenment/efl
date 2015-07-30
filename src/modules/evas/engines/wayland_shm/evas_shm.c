@@ -406,25 +406,35 @@ _evas_shm_surface_reconfigure(Shm_Surface *surface, int dx, int dy, int w, int h
      }
 }
 
+static Shm_Leaf *
+_evas_shm_surface_wait(Shm_Surface *surface)
+{
+   int iterations = 0, i;
+
+   while (iterations++ < 10)
+     {
+        for (i = 0; i < surface->num_buff; i++)
+          {
+             if (surface->leaf[i].busy) continue;
+             if (surface->leaf[i].valid) return &surface->leaf[i];
+          }
+
+        wl_display_dispatch(surface->disp);
+     }
+   return NULL;
+}
+
 Eina_Bool
 _evas_shm_surface_assign(Shm_Surface *surface)
 {
    int i;
-   surface->current = NULL;
 
-   for (i = 0; i < surface->num_buff; i++)
-     {
-        if (surface->leaf[i].busy) continue;
-        if (surface->leaf[i].valid)
-          {
-             surface->current = &surface->leaf[i];
-             break;
-          }
-     }
+   surface->current = _evas_shm_surface_wait(surface);
 
    /* If we ran out of buffers we're in trouble, reset all ages */
    if (!surface->current)
      {
+        WRN("No free SHM buffers, dropping a frame");
         for (i = 0; i < surface->num_buff; i++)
           {
              if (surface->leaf[i].valid)
