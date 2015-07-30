@@ -78,9 +78,6 @@ _class_func_env_create(const Eolian_Class *class, const char *funcname, Eolian_F
    char *p;
    const Eolian_Function *funcid = eolian_class_function_get_by_name(class, funcname, ftype);
 
-   _eolian_class_vars tmp_env;
-   _class_env_create(class, NULL, &tmp_env);
-
    p = strncpy(env->upper_func, funcname, PATH_MAX - 1);
    eina_str_toupper(&p);
 
