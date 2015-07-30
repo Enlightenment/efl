@@ -1,0 +1,32 @@
+# - Try to find ejson
+# Once done this will define
+#  EJSON_FOUND - System has ejson
+#  EJSON_INCLUDE_DIRS - The ejson include directories
+#  EJSON_LIBRARIES - The libraries needed to use ejson
+#  EJSON_DEFINITIONS - Compiler switches required for using ejson
+
+set(MY_PKG ejson)
+
+find_package(PkgConfig)
+if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER "2.8.1")
+   # "QUIET" was introduced in 2.8.2
+   set(_QUIET QUIET)
+endif ()
+pkg_check_modules(PC_LIBEJSON ${_QUIET} ${MY_PKG})
+
+find_library(EJSON_LIBRARY
+             NAMES ${PC_LIBEJSON_LIBRARIES}
+             HINTS ${PC_LIBEJSON_LIBDIR} ${PC_LIBEJSON_LIBRARY_DIRS} )
+
+set(EJSON_DEFINITIONS ${PC_LIBEJSON_CFLAGS_OTHER})
+set(EJSON_LIBRARIES ${EJSON_LIBRARY})
+set(EJSON_INCLUDE_DIRS ${PC_LIBEJSON_INCLUDE_DIRS})
+
+include(FindPackageHandleStandardArgs)
+# handle the QUIETLY and REQUIRED arguments and set EJSON_FOUND to TRUE
+# if all listed variables are TRUE
+find_package_handle_standard_args(${MY_PKG} DEFAULT_MSG
+   EJSON_LIBRARIES EJSON_INCLUDE_DIRS)
+
+mark_as_advanced(EJSON_INCLUDE_DIRS EJSON_LIBRARY EJSON_LIBRARIES EJSON_DEFINITIONS)
+

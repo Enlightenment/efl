@@ -1,0 +1,86 @@
+### Library
+
+ejson_eolian_files = \
+lib/ejson/ejson_model.eo
+
+ejson_eolian_c = $(ejson_eolian_files:%.eo=%.eo.c)
+ejson_eolian_h = $(ejson_eolian_files:%.eo=%.eo.h)
+
+BUILT_SOURCES += \
+                 $(ejson_eolian_c) \
+                 $(ejson_eolian_h)
+
+CLEANFILES += \
+              $(ejson_eolian_c) \
+              $(ejson_eolian_h)
+
+ejsoneolianfilesdir = $(datadir)/eolian/include/ejson-@VMAJ@
+ejsoneolianfiles_DATA = \
+                        $(ejson_eolian_files)
+
+EXTRA_DIST += \
+              ${ejsoneolianfiles_DATA}
+
+lib_LTLIBRARIES += lib/ejson/libejson.la
+
+installed_ejsonmainheadersdir = $(includedir)/ejson-@VMAJ@
+dist_installed_ejsonmainheaders_DATA = \
+lib/ejson/Ejson.h
+
+nodist_installed_ejsonmainheaders_DATA = \
+                                         $(ejson_eolian_h)
+
+lib_ejson_libejson_la_SOURCES = \
+lib/ejson/ejson_main.c \
+lib/ejson/ejson_private.h \
+lib/ejson/ejson_model.c \
+lib/ejson/ejson_model_private.h
+
+lib_ejson_libejson_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EJSON_CFLAGS@ @EFL_CFLAGS@
+lib_ejson_libejson_la_LIBADD = @EJSON_LIBS@ @EFL_LIBS@
+lib_ejson_libejson_la_DEPENDENCIES = @EJSON_INTERNAL_LIBS@ @EFL_INTERNAL_LIBS@
+lib_ejson_libejson_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/ejson/ejson_suite
+TESTS += tests/ejson/ejson_suite
+
+tests_ejson_ejson_suite_SOURCES = \
+tests/ejson/ejson_suite.c \
+tests/ejson/ejson_suite.h \
+tests/ejson/ejson_test_ejson_model.c \
+tests/ejson/ejson_test_ejson_model.h
+
+tests_ejson_ejson_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_SRC_DIR=\"$(abs_top_srcdir)/src/tests/ejson\" \
+-DTESTS_BUILD_DIR=\"$(abs_top_builddir)/src/tests/ejson\" \
+@CHECK_CFLAGS@ \
+@EJSON_CFLAGS@ @EFL_CFLAGS@
+
+tests_ejson_ejson_suite_LDADD = \
+@CHECK_LIBS@ \
+@USE_EJSON_LIBS@ \
+@USE_EFL_LIBS@
+
+tests_ejson_ejson_suite_DEPENDENCIES = \
+@USE_EJSON_INTERNAL_LIBS@
+
+endif
+
+EXTRA_DIST += $(EJSON_DATA_FILES)
+
+if HAVE_ELUA
+
+ejson_eolian_lua = $(ejson_eolian_files:%.eo=%.eo.lua)
+
+generated_ejson_lua_all = $(ejson_eolian_lua)
+
+CLEANFILES += $(generated_ejson_lua_all)
+
+installed_ejsonluadir = $(datadir)/elua/modules/ejson
+nodist_installed_ejsonlua_DATA = $(generated_ejson_lua_all)
+
+endif

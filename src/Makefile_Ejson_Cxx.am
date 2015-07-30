@@ -1,0 +1,22 @@
+if HAVE_CXX11
+
+### Generated headers
+
+generated_ejson_cxx_bindings = $(ejson_eolian_files:%.eo=%.eo.hh)
+
+lib/ejson/Ejson.hh: $(generated_ejson_cxx_bindings)
+	@echo @ECHO_E@ "#ifndef EFL_CXX_EJSON_HH\n#define EFL_CXX_EJSON_HH\n" > $(top_builddir)/src/lib/ejson/Ejson.hh
+	@echo @ECHO_E@ "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/ejson/Ejson.hh
+	@for i in $(generated_ejson_cxx_bindings); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/ejson/Ejson.hh; done
+	@echo @ECHO_E@ "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/ejson/Ejson.hh
+
+generated_ejson_cxx_all = \
+	$(generated_ejson_cxx_bindings) \
+	lib/ejson/Ejson.hh
+
+CLEANFILES += $(generated_ejson_cxx_all)
+
+installed_ejsoncxxmainheadersdir = $(includedir)/ejson-cxx-@VMAJ@/
+nodist_installed_ejsoncxxmainheaders_DATA = $(generated_ejson_cxx_all)
+
+endif

@@ -3911,7 +3911,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [emile])
 ECORE_EVAS_MODULE([extn], [${want_ecore_evas_extn}])
 ECORE_EVAS_MODULE([ews], [yes])
 ECORE_EVAS_MODULE([fb], [${want_fb}])
-ECORE_EVAS_MODULE([drm], [${want_drm}], 
+ECORE_EVAS_MODULE([drm], [${want_drm}],
   [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_drm}], [ecore-drm])])
 ECORE_EVAS_MODULE([gl-drm], [${want_gl_drm}],
   [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_gl_drm}], [ecore-drm])])
@@ -4560,6 +4560,51 @@ EFL_ADD_LIBS([ELOCATION], [-lm])
 EFL_LIB_END([Elocation])
 #### End of Elocation
 
+
+
+
+#### Ejson
+EFL_LIB_START([Ejson])
+
+### Additional options to configure
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([EJSON], [eo])
+EFL_INTERNAL_DEPEND_PKG([EJSON], [efl])
+EFL_INTERNAL_DEPEND_PKG([EJSON], [ecore])
+
+EFL_DEPEND_PKG([EJSON], [JSONC], [json-c >= 0.11])
+
+EFL_EVAL_PKGS([EJSON])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END([Ejson])
+#### End of Ejson
+
+#### Ejson CXX
+EFL_LIB_START([Ejson_Cxx])
+
+EFL_EVAL_PKGS([EJSON_CXX])
+
+EFL_LIB_END([Ejson_Cxx])
+#### End of Ejson CXX
+
+
 ### Add Wayland server library if test is enabled
 if test "x${want_tests}" = "xyes" -a "x${want_wayland}" = "xyes"; then
    EFL_DEPEND_PKG([ECORE_WAYLAND_SRV], [WAYLAND], [wayland-server >= 1.8.0])
@@ -4748,6 +4793,8 @@ pc/ethumb.pc
 pc/ethumb_client.pc
 pc/elocation.pc
 pc/elua.pc
+pc/ejson.pc
+pc/ejson-cxx.pc
 dbus-services/org.enlightenment.Ethumb.service
 systemd-services/ethumb.service
 $po_makefile_in
@@ -4797,6 +4844,10 @@ cmakeconfig/EluaConfig.cmake
 cmakeconfig/EluaConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EmileConfig.cmake
 cmakeconfig/EmileConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EjsonConfig.cmake
+cmakeconfig/EjsonConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EjsonCxxConfig.cmake
+cmakeconfig/EjsonCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 ])
 
 AC_OUTPUT
@@ -4910,6 +4961,7 @@ echo "Emotion.........: yes (${features_emotion})"
 echo "Ethumb..........: yes"
 echo "Ethumb_Client...: yes"
 echo "Elua............: $have_elua"
+echo "Ejson...........: yes"
 if test "${build_tests}" = "none"; then
 echo "Tests...........: no"
 elif test "${build_tests}" = "auto"; then

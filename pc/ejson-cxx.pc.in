@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: Ejson C++
+Description: Json convenience library for EFL
+Requires.private: @requirements_pc_ejson@ @requirements_pc_eo@
+Version: @VERSION@
+Libs: -L${libdir} -lejson @requirements_public_libs_ejson@ @requirements_public_libs_eo@
+Libs.private: @requirements_libs_ejson@ @requirements_libs_eo@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eo-@VMAJ@ -I${includedir}/ejson-@VMAJ@ -I${includedir}/ejson-cxx-@VMAJ@
