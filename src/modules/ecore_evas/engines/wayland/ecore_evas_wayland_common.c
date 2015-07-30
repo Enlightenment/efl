@@ -732,8 +732,6 @@ _ecore_evas_wl_common_move(Ecore_Evas *ee, int x, int y)
      {
         ee->x = x;
         ee->y = y;
-        if (wdata->win)
-          ecore_wl_window_update_location(wdata->win, x, y);
         if (ee->func.fn_move) ee->func.fn_move(ee);
      }
 }
