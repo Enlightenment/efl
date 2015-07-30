@@ -404,17 +404,6 @@ _evas_shm_surface_reconfigure(Shm_Surface *surface, int dx, int dy, int w, int h
      }
 }
 
-void 
-_evas_shm_surface_swap(Shm_Surface *surface)
-{
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   surface->last_buff = surface->curr_buff;
-
-   surface->dx = 0;
-   surface->dy = 0;
-}
-
 void *
 _evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h)
 {
