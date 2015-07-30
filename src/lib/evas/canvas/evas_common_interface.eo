@@ -4,7 +4,6 @@ interface Evas.Common_Interface ()
    methods {
       @property evas {
          get {
-            /*@ No description supplied by the EAPI. */
             legacy: evas_object_evas_get;
          }
          values {
