@@ -567,7 +567,7 @@ evgl_api_egl_ext_init(void *getproc, const char *glueexts)
    Eina_Strbuf *sb = NULL;
 
    if (_evgl_api_ext_status & EVASGL_API_EGL_EXT_INITIALIZED)
-      return EINA_TRUE;
+     return EINA_TRUE;
 
    sb = eina_strbuf_new();
 

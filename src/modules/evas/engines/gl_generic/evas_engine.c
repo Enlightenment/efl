@@ -63,7 +63,8 @@ _context_restore(void)
      {
         if (rsc->id == evgl_engine->main_tid)
           {
-             evgl_make_current(rsc->stored.data, rsc->stored.surface, rsc->stored.context);
+             if (rsc->stored.data)
+               evgl_make_current(rsc->stored.data, rsc->stored.surface, rsc->stored.context);
              _need_context_restore = EINA_FALSE;
           }
      }
@@ -1538,14 +1539,13 @@ eng_gl_make_current(void *data, void *surface, void *context)
    Render_Engine_GL_Generic *re  = data;
    EVGL_Surface  *sfc = (EVGL_Surface *)surface;
    EVGL_Context  *ctx = (EVGL_Context *)context;
+   int ret = 0;
 
    // TODO: Add check for main thread before flush
 
-   EVGLINIT(data, 0);
-   if (ctx)
+   if ((sfc) && (ctx))
      {
         Evas_Engine_GL_Context *gl_context;
-        CONTEXT_STORE(data, surface, context);
 
         gl_context = re->window_gl_context_get(re->software.ob);
         if ((gl_context->havestuff) ||
@@ -1558,7 +1558,10 @@ eng_gl_make_current(void *data, void *surface, void *context)
           }
      }
 
-   return evgl_make_current(data, sfc, ctx);
+   ret = evgl_make_current(data, sfc, ctx);
+   CONTEXT_STORE(data, surface, context);
+
+   return ret;
 }
 
 static void *
@@ -1641,7 +1644,7 @@ eng_gl_api_get(void *data, int version)
         ERR("Version not supported!");
         return NULL;
      }
-   ret = evgl_api_get(data, version);
+   ret = evgl_api_get(data, version, EINA_TRUE);
 
    //Disable GLES3 support if symbols not present
    if ((!ret) && (version == EVAS_GL_GLES_3_X))
