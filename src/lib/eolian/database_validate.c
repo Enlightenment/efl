@@ -72,8 +72,12 @@ _validate_ref(const char *ref, const Eolian_Object *info)
    return EINA_TRUE;
 
 failed:
-   fprintf(stderr, "eolian:%s:%d:%d: failed validating reference '%s'\n",
-       info->file, info->line, info->column, ref);
+   if (!strcmp(ref, "since"))
+     fprintf(stderr, "eolian:%s:%d:%d: '@since' treated as a reference (missing blank line?)\n",
+             info->file, info->line, info->column);
+   else
+     fprintf(stderr, "eolian:%s:%d:%d: failed validating reference '%s'\n",
+             info->file, info->line, info->column, ref);
    return EINA_FALSE;
 }
 
