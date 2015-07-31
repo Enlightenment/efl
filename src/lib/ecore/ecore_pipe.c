@@ -487,8 +487,11 @@ _ecore_pipe_wait(Ecore_Pipe *p,
           }
         else if (errno != EINTR)
           {
-             close(p->fd_read);
-             p->fd_read = PIPE_FD_INVALID;
+             if (p->fd_read != PIPE_FD_INVALID)
+               {
+                  close(p->fd_read);
+                  p->fd_read = PIPE_FD_INVALID;
+               }
              break;
           }
 
