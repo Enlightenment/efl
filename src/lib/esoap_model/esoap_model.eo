@@ -1,0 +1,48 @@
+class Esoap.Model (Eo.Base, Efl.Model.Base) {
+    legacy_prefix: null;
+    methods {
+        @property url {
+            [[
+              Custom Soap_Model constructor.
+
+              @since 1.16
+            ]]
+            set {}
+            get {}
+            values {
+                url: const(char)*; [[The webservice URL]]
+            }
+        }
+        @property action {
+            [[
+              Custom Soap_Model constructor.
+
+              @since 1.16
+            ]]
+            set {}
+            get {}
+            values {
+                action: const(char)*; [[The soap action]]
+            }
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+        Eo.Base.destructor;
+        Efl.Model.Base.properties.get;
+        Efl.Model.Base.properties_load;
+        Efl.Model.Base.property.set;
+        Efl.Model.Base.property.get;
+        Efl.Model.Base.load;
+        Efl.Model.Base.load_status.get;
+        Efl.Model.Base.unload;
+        Efl.Model.Base.child_add;
+        Efl.Model.Base.child_del;
+        Efl.Model.Base.children_slice.get;
+        Efl.Model.Base.children_count.get;
+        Efl.Model.Base.children_load;
+    }
+    constructors {
+        .url;
+    }
+}

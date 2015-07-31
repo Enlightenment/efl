@@ -1,0 +1,84 @@
+### Library
+
+esoap_model_eolian_files = \
+lib/esoap_model/esoap_model.eo
+
+esoap_model_eolian_c = $(esoap_model_eolian_files:%.eo=%.eo.c)
+esoap_model_eolian_h = $(esoap_model_eolian_files:%.eo=%.eo.h)
+
+BUILT_SOURCES += \
+                 $(esoap_model_eolian_c) \
+                 $(esoap_model_eolian_h)
+
+CLEANFILES += \
+              $(esoap_model_eolian_c) \
+              $(esoap_model_eolian_h)
+
+esoap_modeleolianfilesdir = $(datadir)/eolian/include/esoap_model-@VMAJ@
+esoap_modeleolianfiles_DATA = \
+                              $(esoap_model_eolian_files)
+
+EXTRA_DIST += \
+              ${esoap_modeleolianfiles_DATA}
+
+lib_LTLIBRARIES += lib/esoap_model/libesoap_model.la
+
+installed_esoap_modelmainheadersdir = $(includedir)/esoap_model-@VMAJ@
+dist_installed_esoap_modelmainheaders_DATA = \
+lib/esoap_model/Esoap_Model.h
+
+nodist_installed_esoap_modelmainheaders_DATA = \
+                                               $(esoap_model_eolian_h)
+
+lib_esoap_model_libesoap_model_la_SOURCES = \
+lib/esoap_model/esoap_model_private.h \
+lib/esoap_model/esoap_model.c
+
+lib_esoap_model_libesoap_model_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ESOAP_MODEL_CFLAGS@ @EFL_CFLAGS@
+lib_esoap_model_libesoap_model_la_LIBADD = @ESOAP_MODEL_LIBS@ @EFL_LIBS@
+lib_esoap_model_libesoap_model_la_DEPENDENCIES = @ESOAP_MODEL_INTERNAL_LIBS@ @EFL_INTERNAL_LIBS@
+lib_esoap_model_libesoap_model_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/esoap_model/esoap_model_suite
+TESTS += tests/esoap_model/esoap_model_suite
+
+tests_esoap_model_esoap_model_suite_SOURCES = \
+tests/esoap_model/esoap_model_suite.c \
+tests/esoap_model/esoap_model_suite.h \
+tests/esoap_model/esoap_model_test_esoap_model.c \
+tests/esoap_model/esoap_model_test_esoap_model.h
+
+tests_esoap_model_esoap_model_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_SRC_DIR=\"$(abs_top_srcdir)/src/tests/esoap_model\" \
+-DTESTS_BUILD_DIR=\"$(abs_top_builddir)/src/tests/esoap_model\" \
+@CHECK_CFLAGS@ \
+@ESOAP_MODEL_CFLAGS@ @EFL_CFLAGS@ @ECORE_CON_CFLAGS@
+
+tests_esoap_model_esoap_model_suite_LDADD = \
+@CHECK_LIBS@ \
+@USE_ESOAP_MODEL_LIBS@ \
+@USE_EFL_LIBS@  @USE_ECORE_CON_LIBS@
+
+tests_esoap_model_esoap_model_suite_DEPENDENCIES = \
+@USE_ESOAP_MODEL_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
+
+endif
+
+EXTRA_DIST += $(ESOAP_MODEL_DATA_FILES)
+
+if HAVE_ELUA
+
+esoap_model_eolian_lua = $(esoap_model_eolian_files:%.eo=%.eo.lua)
+
+generated_esoap_model_lua_all = $(esoap_model_eolian_lua)
+
+CLEANFILES += $(generated_esoap_model_lua_all)
+
+installed_esoap_modelluadir = $(datadir)/elua/modules/esoap_model
+nodist_installed_esoap_modellua_DATA = $(generated_esoap_model_lua_all)
+
+endif
