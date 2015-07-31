@@ -4,297 +4,207 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
    methods {
       @property compress {
          set {
-            /*@
-            Set the compression for the thumb object.
-            @since 1.8
+            [[Set the compression for the thumb object.
 
-            @see elm_thumb_file_set()
-
-            @ingroup Thumb */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the compression of the thumb object.
-            @since 1.8
+            [[Get the compression of the thumb object.
 
-            @return getting The compress setting.
-
-            @see elm_thumb_compress_set()
-
-            @ingroup Thumb */
-            return: void; /*@ Force the return type to be sure the argument doesn't become the return */
+              @since 1.8
+            ]]
+            return: void; [[Force the return type to be sure the argument
+                            doesn't become the return]]
          }
          values {
-            compress: int; /*@ The compression of the thumb. */
+            compress: int; [[The compression of the thumb.]]
          }
       }
       @property format {
          set {
-            /*@
-            Set the format for the thumb object.
-            @since 1.8
+            [[Set the format for the thumb object.
 
-            @see elm_thumb_file_set()
-
-            @ingroup Thumb */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the format of the thumb object.
-            @since 1.8
+            [[Get the format of the thumb object.
 
-            @return getting The Format setting.
-
-            @see elm_thumb_format_set()
-
-            @ingroup Thumb */
+              @since 1.8
+            ]]
          }
          values {
-            format: Ethumb_Thumb_Format; /*@ The format setting. */
+            format: Ethumb_Thumb_Format; [[The format setting.]]
          }
       }
       @property animate {
          set {
-            /*@
-            Set the animation state for the thumb object. If its content is an animated
-            video, you may start/stop the animation or tell it to play continuously and
-            looping.
+            [[Set the animation state for the thumb object.
 
-            @see elm_thumb_file_set()
-
-            @ingroup Thumb */
+              If its content is an animated video, you may start/stop the
+              animation or tell it o play continuously and looping.
+            ]]
          }
          get {
-            /*@
-            Get the animation state for the thumb object.
-
-            @return getting The animation setting or #ELM_THUMB_ANIMATION_LAST,
-            on errors.
-
-            @see elm_thumb_animate_set()
-
-            @ingroup Thumb */
+            [[Get the animation state for the thumb object.]]
          }
          values {
-            setting: Elm_Thumb_Animation_Setting; /*@ The animation setting. */
+            setting: Elm_Thumb_Animation_Setting; [[The animation setting or
+                                                    #ELM_THUMB_ANIMATION_LAST]]
          }
       }
       @property fdo_size {
          set {
-            /*@
-            Set the FDO size for the thumb object.
-            @since 1.8
+            [[Set the FDO size for the thumb object.
 
-            @see elm_thumb_file_set()
-
-            @ingroup Thumb */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the fdo size of the thumb object.
-            @since 1.8
+            [[Get the fdo size of the thumb object.
 
-            @return getting The FDO size setting.
-
-            @see elm_thumb_fdo_size_set()
-
-            @ingroup Thumb */
+              @since 1.8
+            ]]
          }
          values {
-            size: Ethumb_Thumb_FDO_Size; /*@ The FDO size setting. */
+            size: Ethumb_Thumb_FDO_Size; [[The FDO size setting.]]
          }
       }
       @property orientation {
          set {
-            /*@
-            Set the orientation for the thumb object.
-            @since 1.8
+            [[Set the orientation for the thumb object.
 
-            @see elm_thumb_file_set()
-
-            @ingroup Thumb */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the orientation of the thumb object.
-            @since 1.8
+            [[Get the orientation of the thumb object.
 
-            @return getting The orientation setting.
-
-            @see elm_thumb_orientation_set()
-
-            @ingroup Thumb */
+              @since 1.8
+            ]]
          }
          values {
-            orient: Ethumb_Thumb_Orientation; /*@ The orientation setting. */
+            orient: Ethumb_Thumb_Orientation; [[The orientation setting.]]
          }
       }
       @property editable {
          set {
-            /*@
-            Make the thumbnail 'editable'.
+            [[Make the thumbnail 'editable'.
 
-            This means the thumbnail is a valid drag target for drag and drop, and can be
-            cut or pasted too.
-
-            @see elm_thumb_editable_get()
-
-            @ingroup Thumb */
+              This means the thumbnail is a valid drag target for drag and
+              drop, and can be cut or pasted too.
+            ]]
             return: bool;
          }
          get {
-            /*@
-            Make the thumbnail 'editable'.
+            [[Get whether the thumbnail is editable.
 
-            @return Editability.
-
-            This means the thumbnail is a valid drag target for drag and drop, and can be
-            cut or pasted too.
-
-            @see elm_thumb_editable_set()
-
-            @ingroup Thumb */
+              This means the thumbnail is a valid drag target for drag and
+              drop, and can be cut or pasted too.
+            ]]
          }
          values {
-            edit: bool; /*@ Turn on or off editability. Default is @c EINA_FALSE. */
+            edit: bool; [[The editable state, default is $false.]]
          }
       }
       @property aspect {
          set {
-            /*@
-            Set the aspect for the thumb object.
-            @since 1.8
+            [[Set the aspect for the thumb object.
 
-            @see elm_thumb_file_set()
-
-            @ingroup Thumb */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the aspect of the thumb object.
-            @since 1.8
+            [[Get the aspect of the thumb object.
 
-            @return getting The aspect setting.
-
-            @see elm_thumb_aspect_set()
-
-            @ingroup Thumb */
+              @since 1.8
+            ]]
          }
          values {
-            aspect: Ethumb_Thumb_Aspect; /*@ The aspect setting. */
+            aspect: Ethumb_Thumb_Aspect; [[The aspect setting.]]
          }
       }
       @property quality {
          set {
-            /*@
-            Set the quality for the thumb object.
-            @since 1.8
+            [[Set the quality for the thumb object.
 
-            @see elm_thumb_file_set()
-
-            @ingroup Thumb */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the quality of the thumb object.
-            @since 1.8
+            [[Get the quality of the thumb object.
 
-            @return getting The quality setting.
-
-            @see elm_thumb_quality_set()
-
-            @ingroup Thumb */
-            return: void; /*@ Force the return type to be sure the argument doesn't become the return */
+              @since 1.8
+            ]]
+            return: void;
          }
          values {
-            quality: int; /*@ The quality of the thumb. */
+            quality: int; [[The quality of the thumb.]]
          }
       }
       @property size {
          set {
-            /*@
-            Set the size for the thumb object.
-            @since 1.8
+            [[Set the size for the thumb object.
 
-            @see elm_thumb_file_set()
-
-            @ingroup Thumb */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the size of the thumb object.
-            @since 1.8
+            [[Get the size of the thumb object.
 
-            @return getting The size setting.
-
-            @see elm_thumb_size_set()
-
-            @ingroup Thumb */
+              @since 1.8
+            ]]
          }
          values {
-            tw: int; /*@ The width of the thumb. */
-            th: int; /*@ The height of the thumb. */
+            tw: int; [[The width of the thumb.]]
+            th: int; [[The height of the thumb.]]
          }
       }
       @property crop_align {
          set {
-            /*@
-            Set the crop alignment for the thumb object.
-            @since 1.8
+            [[Set the crop alignment for the thumb object.
 
-            @see elm_thumb_file_set()
-
-            @ingroup Thumb */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the crop alignment of the thumb object.
-            @since 1.8
+            [[Get the crop alignment of the thumb object.
 
-            @return getting The crop align setting.
-
-            @see elm_thumb_crop_align_set()
-
-            @ingroup Thumb */
+              @since 1.8
+            ]]
          }
          values {
-            cropx: double; /*@ The x coordinate of the crop. */
-            cropy: double; /*@ The y coordinate of the crop. */
+            cropx: double; [[The x coordinate of the crop.]]
+            cropy: double; [[The y coordinate of the crop.]]
          }
       }
       @property path {
          get {
-            /*@
-            Get the path and key to the image or video thumbnail generated by ethumb.
+            [[Get the path and key to the image or video thumbnail generated
+              by ethumb.
 
-            One just needs to make sure that the thumbnail was generated before getting
-            its path; otherwise, the path will be NULL. One way to do that is by asking
-            for the path when/after the "generate,stop" smart callback is called.
-
-            @see elm_thumb_file_get()
-
-            @ingroup Thumb */
+              One just needs to make sure that the thumbnail was generated
+              before getting its path; otherwise, the path will be $null.
+              One way to do that is by asking for the path when/after the
+              "generate,stop" smart callback is called.
+            ]]
          }
          values {
-            file: const(char)* @optional; /*@ Pointer to thumb path. */
-            key: const(char)* @optional; /*@ Pointer to thumb key. */
+            file: const(char)* @optional; [[Pointer to thumb path.]]
+            key: const(char)* @optional; [[Pointer to thumb key.]]
          }
       }
       reload {
-         /*@
-         Reload thumbnail if it was generated before.
+         [[Reload thumbnail if it was generated before.
 
-         This is useful if the ethumb client configuration changed, like its
-         size, aspect or any other property one set in the handle returned
-         by elm_thumb_ethumb_client_get().
+           This is useful if the ethumb client configuration changed, like its
+           size, aspect or any other property one set in the handle returned
+           by elm_thumb_ethumb_client_get().
 
-         If the options didn't change, the thumbnail won't be generated again, but
-         the old one will still be used.
-
-         @see elm_thumb_file_set()
-
-         @ingroup Thumb */
-
+           If the options didn't change, the thumbnail won't be generated
+           again, but the old one will still be used.
+         ]]
       }
    }
    implements {
