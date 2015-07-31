@@ -1198,6 +1198,7 @@ _round_items_add(Elm_Diskselector_Data *sd)
         sd->first = _item_new
             (WIDGET(it), _icon_duplicate(it->icon), it->label, it->func,
             WIDGET_ITEM_DATA_GET(EO_OBJ(it)));
+        if (!sd->first) return;
         sd->first->node = it->node;
         sd->r_items = eina_list_append(sd->r_items, sd->first);
      }
@@ -1211,6 +1212,7 @@ _round_items_add(Elm_Diskselector_Data *sd)
         sd->second = _item_new
             (WIDGET(it), _icon_duplicate(it->icon), it->label, it->func,
             WIDGET_ITEM_DATA_GET(EO_OBJ(it)));
+        if (!sd->second) return;
         sd->second->node = it->node;
         sd->r_items = eina_list_append(sd->r_items, sd->second);
      }
@@ -1224,6 +1226,7 @@ _round_items_add(Elm_Diskselector_Data *sd)
         temp_it = _item_new
             (WIDGET(it), _icon_duplicate
               (it->icon), it->label, it->func, WIDGET_ITEM_DATA_GET(EO_OBJ(it)));
+        if (!temp_it) return;
         sd->over_items = eina_list_append(sd->over_items, temp_it);
         sd->r_items = eina_list_append(sd->r_items, temp_it);
      }
@@ -1236,6 +1239,7 @@ _round_items_add(Elm_Diskselector_Data *sd)
         sd->last = _item_new
             (WIDGET(it), _icon_duplicate(it->icon), it->label, it->func,
             WIDGET_ITEM_DATA_GET(EO_OBJ(it)));
+        if (!sd->last) return;
         sd->last->node = it->node;
         sd->r_items = eina_list_prepend(sd->r_items, sd->last);
      }
@@ -1248,6 +1252,7 @@ _round_items_add(Elm_Diskselector_Data *sd)
         sd->s_last = _item_new
             (WIDGET(it), _icon_duplicate(it->icon), it->label, it->func,
             WIDGET_ITEM_DATA_GET(EO_OBJ(it)));
+        if (!sd->s_last) return;
         sd->s_last->node = it->node;
         sd->r_items = eina_list_prepend(sd->r_items, sd->s_last);
      }
@@ -1260,6 +1265,7 @@ _round_items_add(Elm_Diskselector_Data *sd)
         temp_it = _item_new
             (WIDGET(it), _icon_duplicate
               (it->icon), it->label, it->func, WIDGET_ITEM_DATA_GET(EO_OBJ(it)));
+        if (!temp_it) return;
         sd->under_items = eina_list_append(sd->under_items, temp_it);
         sd->r_items = eina_list_prepend(sd->r_items, temp_it);
      }
@@ -1661,6 +1667,7 @@ _elm_diskselector_item_append(Eo *obj, Elm_Diskselector_Data *sd, const char *la
    evas_event_freeze(evas);
 
    it = _item_new(obj, icon, label, func, data);
+   if (!it) return NULL;
    sd->items = eina_list_append(sd->items, it);
    it->node = eina_list_last(sd->items);
    sd->item_count++;
