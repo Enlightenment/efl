@@ -5,68 +5,48 @@ class Elm.Grid (Elm.Widget)
    methods {
       @property size {
          set {
-            /*@
-            Set the virtual size of the grid
-
-            @ingroup Grid */
+            [[Set the virtual size of the grid]]
          }
          get {
-            /*@
-            Get the virtual size of the grid
-
-            @ingroup Grid */
+            [[Get the virtual size of the grid]]
          }
          values {
-            w: Evas.Coord; /*@ The virtual width of the grid */
-            h: Evas.Coord; /*@ The virtual height of the grid */
+            w: Evas.Coord; [[The virtual width of the grid]]
+            h: Evas.Coord; [[The virtual height of the grid]]
          }
       }
       @property children {
          get {
-            /*@
-            Get the list of the children for the grid.
+            [[Get the list of the children for the grid.
 
-            @note This is a duplicate of the list kept by the grid internally.
-            It's up to the user to destroy it when it no longer needs it.
-            It's possible to remove objects from the grid when walking this
-            list, but these removals won't be reflected on it.
-
-            @ingroup Grid */
+              Note: This is a duplicate of the list kept by the grid internally.
+              It's up to the user to destroy it when it no longer needs it.
+              It's possible to remove objects from the grid when walking this
+              list, but these removals won't be reflected on it.
+            ]]
             return: free(own(list<Evas.Object *> *), eina_list_free) @warn_unused;
          }
       }
       clear {
-         /*@
-         Faster way to remove all child objects from a grid object.
-
-         @ingroup Grid */
-
+         [[Faster way to remove all child objects from a grid object.]]
          params {
-            @in clear: bool; /*@ If true, it will delete just removed children */
+            @in clear: bool; [[If true, it will delete just removed children]]
          }
       }
       unpack {
-         /*@
-         Unpack a child from a grid object
-
-         @ingroup Grid */
-
+         [[Unpack a child from a grid object]]
          params {
-            @in subobj: Evas.Object *; /*@ The child to unpack */
+            @in subobj: Evas.Object *; [[The child to unpack]]
          }
       }
       pack {
-         /*@
-         Pack child at given position and size
-
-         @ingroup Grid */
-
+         [[Pack child at given position and size]]
          params {
-            @in subobj: Evas.Object *; /*@ The child to pack */
-            @in x: Evas.Coord; /*@ The virtual x coord at which to pack it */
-            @in y: Evas.Coord; /*@ The virtual y coord at which to pack it */
-            @in w: Evas.Coord; /*@ The virtual width at which to pack it */
-            @in h: Evas.Coord; /*@ The virtual height at which to pack it */
+            @in subobj: Evas.Object *; [[The child to pack.]]
+            @in x: Evas.Coord; [[The virtual x coord at which to pack it.]]
+            @in y: Evas.Coord; [[The virtual y coord at which to pack it.]]
+            @in w: Evas.Coord; [[The virtual width at which to pack it.]]
+            @in h: Evas.Coord; [[The virtual height at which to pack it.]]
          }
       }
    }
