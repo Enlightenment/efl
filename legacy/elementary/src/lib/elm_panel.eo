@@ -15,84 +15,53 @@ class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
    methods {
       @property orient {
          set {
-            /*@
-            @brief Sets the orientation of the panel
+            [[Set the orientation of the panel
 
-            Sets from where the panel will (dis)appear.
-
-            @ingroup Panel */
+              Set from where the panel will (dis)appear.
+            ]]
          }
          get {
-            /*@
-            @brief Get the orientation of the panel.
-
-            @return The Elm_Panel_Orient, or #ELM_PANEL_ORIENT_LEFT on failure.
-
-            @ingroup Panel */
+            [[Get the orientation of the panel.]]
          }
          values {
-            orient: Elm.Panel.Orient(Elm.Panel.Orient.left); /*@ The panel orientation. Can be one of the following:
-            @li #ELM_PANEL_ORIENT_TOP
-            @li #ELM_PANEL_ORIENT_LEFT
-            @li #ELM_PANEL_ORIENT_RIGHT */
+            orient: Elm.Panel.Orient(Elm.Panel.Orient.left); [[The panel orientation.]]
          }
       }
       @property hidden {
          set {
-            /*@
-            @brief Set the state of the panel.
-
-            @ingroup Panel */
+            [[Set the state of the panel.]]
          }
          get {
-            /*@
-            @brief Get the state of the panel.
-
-            @return EINA_TRUE if it is hidden state
-
-            @ingroup Panel */
+            [[Get the state of the panel.]]
          }
          values {
-            hidden: bool; /*@ If true, the panel will run the animation to disappear. */
+            hidden: bool; [[If true, the panel will run the animation to disappear.]]
          }
       }
       @property scrollable {
          set {
-            /*@
-            @brief Set the scrollability of the panel.
-
-            @ingroup Panel */
+            [[Set the scrollability of the panel.]]
          }
          get {
-            /*@
-            @brief Get the state of the scrollability.
+            [[Get the state of the scrollability.
 
-            @return EINA_TRUE if it is scrollable
-
-            @ingroup Panel
-            @since 1.12 */
+              @since 1.12
+            ]]
          }
          values {
-            scrollable: bool;
+            scrollable: bool; [[The scrollable state.]]
          }
       }
       @property scrollable_content_size {
          set {
-            /*@
-            @brief Set the size of the scrollable panel.
-
-            @ingroup Panel */
+            [[Set the size of the scrollable panel.]]
          }
          values {
             ratio: double;
          }
       }
       toggle {
-         /*@
-         @brief Toggle the hidden state of the panel from code
-
-         @ingroup Panel */
-
+         [[Toggle the hidden state of the panel from code]]
       }
    }
    implements {
