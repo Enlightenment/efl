@@ -92,7 +92,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 
 %files -f %{name}.lang
 %defattr(-, root, root)
-%doc AUTHORS README NEWS COPYING licenses/COPYING.BSD licenses/COPYING.LGPL licenses/COPYING.GPL
+%doc AUTHORS README NEWS COPYING licenses/COPYING.BSD licenses/COPYING.LGPL licenses/COPYING.GPL licenses/COPYING.FTL
 %{_bindir}/*
 %{_libdir}/*.so.*
 %{_libdir}/evas/cserve2/loaders/*/linux-gnu-*/*.so

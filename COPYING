@@ -17,6 +17,7 @@ eina:            licenses/COPYING.LGPL
 emile:           licenses/COPYING.LGPL
 eet:             licenses/COPYING.BSD
 eo:              licenses/COPYING.BSD
+ector:           licenses/COPYING.FTL, licenses/COPYING.GPL (dual licenses)
 evas:            licenses/COPYING.BSD
 embryo:          licenses/COPYING.SMALL
 ecore:           licenses/COPYING.BSD

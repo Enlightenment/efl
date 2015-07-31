@@ -60,6 +60,7 @@ licenses/COPYING.LGPL \
 licenses/COPYING.GPL \
 licenses/COPYING.BSD \
 licenses/COPYING.SMALL \
+licenses/COPYING.FTL \
 old/ChangeLog.ecore \
 old/ChangeLog.edje \
 old/ChangeLog.eet \
