@@ -2016,7 +2016,7 @@ end:
 }
 
 static void
-_evas_render_cutout_add(Evas_Public_Data *e, Evas_Object_Protected_Data *obj, int off_x, int off_y)
+_evas_render_cutout_add(Evas_Public_Data *e, void *context, Evas_Object_Protected_Data *obj, int off_x, int off_y)
 {
    if (evas_object_is_source_invisible(obj->object, obj)) return;
    if (evas_object_is_opaque(obj->object, obj))
@@ -2050,7 +2050,7 @@ _evas_render_cutout_add(Evas_Public_Data *e, Evas_Object_Protected_Data *obj, in
                }
           }
         e->engine.func->context_cutout_add
-          (e->engine.data.output, e->engine.data.context,
+          (e->engine.data.output, context,
               cox + off_x, coy + off_y, cow, coh);
      }
    else
@@ -2070,7 +2070,7 @@ _evas_render_cutout_add(Evas_Public_Data *e, Evas_Object_Protected_Data *obj, in
                                      obj->cur->cache.clip.w,
                                      obj->cur->cache.clip.h);
                   e->engine.func->context_cutout_add
-                    (e->engine.data.output, e->engine.data.context,
+                    (e->engine.data.output, context,
                         obx, oby, obw, obh);
                }
           }
@@ -2132,7 +2132,7 @@ _cb_always_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
 
 static Eina_Bool
 evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
-                                  void *surface,
+                                  void *surface, void *context,
                                   Evas_Object_Protected_Data *top,
                                   int ux, int uy, int uw, int uh,
                                   int cx, int cy, int cw, int ch,
@@ -2175,7 +2175,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
    if (alpha)
      {
         e->engine.func->context_clip_set(e->engine.data.output,
-                                         e->engine.data.context,
+                                         context,
                                          ux + off_x, uy + off_y, uw, uh);
      }
    for (i = 0; i < e->obscuring_objects.count; ++i)
@@ -2186,29 +2186,28 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
           {
              OBJ_ARRAY_PUSH(&e->temporary_objects, obj);
 
+             if (obj == top) break;
+
              /* reset the background of the area if needed (using cutout and engine alpha flag to help) */
              if (alpha)
-               _evas_render_cutout_add(e, obj, off_x + fx, off_y + fy);
+               _evas_render_cutout_add(e, context, obj, off_x + fx, off_y + fy);
           }
      }
    if (alpha)
      {
         e->engine.func->context_color_set(e->engine.data.output,
-                                          e->engine.data.context,
+                                          context,
                                           0, 0, 0, 0);
         e->engine.func->context_multiplier_unset
           (e->engine.data.output, e->engine.data.context);
         e->engine.func->context_render_op_set(e->engine.data.output,
-                                              e->engine.data.context,
+                                              context,
                                               EVAS_RENDER_COPY);
         e->engine.func->rectangle_draw(e->engine.data.output,
-                                       e->engine.data.context,
-                                       surface,
+                                       context, surface,
                                        cx, cy, cw, ch, do_async);
-        e->engine.func->context_cutout_clear(e->engine.data.output,
-                                             e->engine.data.context);
-        e->engine.func->context_clip_unset(e->engine.data.output,
-                                           e->engine.data.context);
+        e->engine.func->context_cutout_clear(e->engine.data.output, context);
+        e->engine.func->context_clip_unset(e->engine.data.output, context);
      }
    eina_evlog("-render_setup", eo_e, 0.0, NULL);
 
@@ -2256,7 +2255,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
                     }
 
                   e->engine.func->context_clip_set(e->engine.data.output,
-                                                   e->engine.data.context,
+                                                   context,
                                                    x, y, w, h);
 
                   /* Clipper masks */
@@ -2275,7 +2274,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
                          {
                             e->engine.func->context_clip_image_set
                               (e->engine.data.output,
-                               e->engine.data.context,
+                               context,
                                mask->mask->surface,
                                mask->cur->geometry.x + off_x,
                                mask->cur->geometry.y + off_y,
@@ -2293,10 +2292,10 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
 
                        if (obj2 == top) break;
 
-                       _evas_render_cutout_add(e, obj2, off_x + fx, off_y + fy);
+                       _evas_render_cutout_add(e, context, obj2, off_x + fx, off_y + fy);
                     }
 #endif
-                  clean_them |= evas_render_mapped(e, eo_obj, obj, e->engine.data.context,
+                  clean_them |= evas_render_mapped(e, eo_obj, obj, context,
                                                    surface, off_x + fx,
                                                    off_y + fy, 0,
                                                    cx, cy, cw, ch,
@@ -2304,12 +2303,12 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
                                                    EINA_FALSE,
                                                    do_async);
                   e->engine.func->context_cutout_clear(e->engine.data.output,
-                                                       e->engine.data.context);
+                                                       context);
 
                   if (mask)
                     {
                        e->engine.func->context_clip_image_unset
-                         (e->engine.data.output, e->engine.data.context);
+                         (e->engine.data.output, context);
                     }
                }
           }
@@ -2606,6 +2605,7 @@ evas_render_updates_internal(Evas *eo_e,
 
                   if (eina_rectangle_intersection(&ur, &output))
                     {
+                       void *ctx;
                        void *pseudo_canvas;
                        unsigned int restore_offset = offset;
 
@@ -2615,13 +2615,15 @@ evas_render_updates_internal(Evas *eo_e,
 
                        pseudo_canvas = _evas_object_image_surface_get(obj->object, obj);
 
-                       clean_them |= evas_render_updates_internal_loop(eo_e, e, pseudo_canvas,
+                       ctx = e->engine.func->context_new(e->engine.data.output);
+                       clean_them |= evas_render_updates_internal_loop(eo_e, e, pseudo_canvas, ctx,
                                                                        obj,
                                                                        ur.x, ur.y, ur.w, ur.h,
                                                                        cr.x, cr.y, cr.w, cr.h,
                                                                        fx, fy, alpha,
                                                                        make_updates, do_async,
                                                                        &offset);
+                       e->engine.func->context_free(e->engine.data.output, ctx);
 
                        // Force the object has changed for filter to take it into
                        // account. It won't be in the pending object array.
@@ -2632,7 +2634,7 @@ evas_render_updates_internal(Evas *eo_e,
                }
 
              /* phase 6.2 render all the object on the target surface */
-             clean_them |= evas_render_updates_internal_loop(eo_e, e, surface,
+             clean_them |= evas_render_updates_internal_loop(eo_e, e, surface, e->engine.data.context,
                                                              NULL,
                                                              ux, uy, uw, uh,
                                                              cx, cy, cw, ch,
