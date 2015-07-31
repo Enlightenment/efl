@@ -2138,36 +2138,17 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
                                   int cx, int cy, int cw, int ch,
                                   int fx, int fy,
                                   Eina_Bool alpha,
-                                  Eina_Bool make_updates,
                                   Eina_Bool do_async,
                                   unsigned int *offset)
 {
    Evas_Object *eo_obj;
    Evas_Object_Protected_Data *obj;
-   Render_Updates *ru;
    int off_x, off_y;
    unsigned int i, j;
    Eina_Bool clean_them = EINA_FALSE;
 
    eina_evlog("+render_setup", eo_e, 0.0, NULL);
    RD(0, "  [--- UPDATE %i %i %ix%i\n", ux, uy, uw, uh);
-   if (do_async)
-     {
-        ru = malloc(sizeof(*ru));
-        ru->surface = surface;
-        NEW_RECT(ru->area, ux, uy, uw, uh);
-        e->render.updates = eina_list_append(e->render.updates, ru);
-        evas_cache_image_ref(surface);
-     }
-   else if (make_updates)
-     {
-        Eina_Rectangle *rect;
-
-        NEW_RECT(rect, ux, uy, uw, uh);
-        if (rect)
-          e->render.updates = eina_list_append(e->render.updates,
-                                               rect);
-     }
 
    off_x = cx - ux;
    off_y = cy - uy;
@@ -2569,6 +2550,7 @@ evas_render_updates_internal(Evas *eo_e,
    eina_evlog("+render_phase6", eo_e, 0.0, NULL);
    if (do_draw)
      {
+        Render_Updates *ru;
         void *surface;
         int ux, uy, uw, uh;
         int cx, cy, cw, ch;
@@ -2621,7 +2603,7 @@ evas_render_updates_internal(Evas *eo_e,
                                                                        ur.x, ur.y, ur.w, ur.h,
                                                                        cr.x, cr.y, cr.w, cr.h,
                                                                        fx, fy, alpha,
-                                                                       make_updates, do_async,
+                                                                       do_async,
                                                                        &offset);
                        e->engine.func->context_free(e->engine.data.output, ctx);
 
@@ -2634,12 +2616,30 @@ evas_render_updates_internal(Evas *eo_e,
                }
 
              /* phase 6.2 render all the object on the target surface */
+             if (do_async)
+               {
+                  ru = malloc(sizeof(*ru));
+                  ru->surface = surface;
+                  NEW_RECT(ru->area, ux, uy, uw, uh);
+                  e->render.updates = eina_list_append(e->render.updates, ru);
+                  evas_cache_image_ref(surface);
+               }
+             else if (make_updates)
+               {
+                  Eina_Rectangle *rect;
+
+                  NEW_RECT(rect, ux, uy, uw, uh);
+                  if (rect)
+                    e->render.updates = eina_list_append(e->render.updates,
+                                                         rect);
+               }
+
              clean_them |= evas_render_updates_internal_loop(eo_e, e, surface, e->engine.data.context,
                                                              NULL,
                                                              ux, uy, uw, uh,
                                                              cx, cy, cw, ch,
                                                              fx, fy, alpha,
-                                                             make_updates, do_async,
+                                                             do_async,
                                                              &offset);
 
              eina_evlog("+render_push", eo_e, 0.0, NULL);
