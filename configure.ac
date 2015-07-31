@@ -4624,6 +4624,48 @@ EFL_EVAL_PKGS([EFLAT_XML_MODEL_CXX])
 EFL_LIB_END([Eflat_Xml_Model_Cxx])
 #### End of Eflat_Xml_Model CXX
 
+#### Esoap_Model
+EFL_LIB_START([Esoap_Model])
+
+### Additional options to configure
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ESOAP_MODEL], [eo])
+EFL_INTERNAL_DEPEND_PKG([ESOAP_MODEL], [efl])
+EFL_INTERNAL_DEPEND_PKG([ESOAP_MODEL], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ESOAP_MODEL], [eflat_xml_model])
+
+EFL_DEPEND_PKG([ESOAP_MODEL], [CURL], [libcurl >= 7.40])
+
+EFL_EVAL_PKGS([ESOAP_MODEL])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END([Esoap_Model])
+#### End of Esoap_Model
+
+#### Esoap_Model CXX
+EFL_LIB_START([Esoap_Model_Cxx])
+
+EFL_EVAL_PKGS([ESOAP_MODEL_CXX])
+
+EFL_LIB_END([Esoap_Model_Cxx])
+#### End of Esoap_Model CXX
+
 ### Add Wayland server library if test is enabled
 if test "x${want_tests}" = "xyes" -a "x${want_wayland}" = "xyes"; then
    EFL_DEPEND_PKG([ECORE_WAYLAND_SRV], [WAYLAND], [wayland-server >= 1.8.0])
@@ -4816,6 +4858,8 @@ pc/ejson.pc
 pc/ejson-cxx.pc
 pc/eflat_xml_model.pc
 pc/eflat_xml_model-cxx.pc
+pc/esoap_model.pc
+pc/esoap_model-cxx.pc
 dbus-services/org.enlightenment.Ethumb.service
 systemd-services/ethumb.service
 $po_makefile_in
@@ -4873,6 +4917,10 @@ cmakeconfig/EflatXmlModelConfig.cmake
 cmakeconfig/EflatXmlModelConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EflatXmlModelCxxConfig.cmake
 cmakeconfig/EflatXmlModelCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EsoapModelConfig.cmake
+cmakeconfig/EsoapModelConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EsoapModelCxxConfig.cmake
+cmakeconfig/EsoapModelCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 ])
 
 AC_OUTPUT
@@ -4988,6 +5036,7 @@ echo "Ethumb_Client...: yes"
 echo "Elua............: $have_elua"
 echo "Ejson...........: yes"
 echo "Eflat_Xml_Model.: yes"
+echo "Esoap_Model.....: yes"
 if test "${build_tests}" = "none"; then
 echo "Tests...........: no"
 elif test "${build_tests}" = "auto"; then

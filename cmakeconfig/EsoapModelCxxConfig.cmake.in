@@ -1,0 +1,30 @@
+# - Try to find esoap_model
+# Once done this will define
+#  ESOAP_MODEL_CXX_FOUND - System has esoap_model
+#  ESOAP_MODEL_CXX_INCLUDE_DIRS - The esoap_model include directories
+#  ESOAP_MODEL_CXX_LIBRARIES - The libraries needed to use esoap_model
+#  ESOAP_MODEL_CXX_DEFINITIONS - Compiler switches required for using esoap_model
+
+set(MY_PKG esoap_model_cxx)
+
+find_package(PkgConfig)
+if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER "2.8.1")
+   # "QUIET" was introduced in 2.8.2
+   set(_QUIET QUIET)
+endif ()
+pkg_check_modules(PC_ESOAP_MODEL_CXX ${_QUIET} ${MY_PKG})
+find_library(ESOAP_MODEL_CXX_LIBRARY
+             NAMES ${PC_ESOAP_MODEL_CXX_LIBRARIES}
+             HINTS ${PC_ESOAP_MODEL_CXX_LIBDIR} ${PC_ESOAP_MODEL_CXX_LIBRARY_DIRS} )
+
+set(ESOAP_MODEL_CXX_DEFINITIONS ${PC_ESOAP_MODEL_CXX_CFLAGS_OTHER})
+set(ESOAP_MODEL_CXX_LIBRARIES ${ESOAP_MODEL_CXX_LIBRARY})
+set(ESOAP_MODEL_CXX_INCLUDE_DIRS ${PC_ESOAP_MODEL_CXX_INCLUDE_DIRS})
+
+include(FindPackageHandleStandardArgs)
+# handle the QUIETLY and REQUIRED arguments and set ESOAP_MODEL_CXX_FOUND to TRUE
+# if all listed variables are TRUE
+find_package_handle_standard_args(${MY_PKG} DEFAULT_MSG
+   ESOAP_MODEL_CXX_LIBRARIES ESOAP_MODEL_CXX_INCLUDE_DIRS)
+
+mark_as_advanced(ESOAP_MODEL_CXX_INCLUDE_DIRS ESOAP_MODEL_CXX_LIBRARY ESOAP_MODEL_CXX_LIBRARIES ESOAP_MODEL_CXX_DEFINITIONS)
