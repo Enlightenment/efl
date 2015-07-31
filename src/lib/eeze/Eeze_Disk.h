@@ -1,6 +1,9 @@
 #ifndef EEZE_DISK_H
 #define EEZE_DISK_H
 
+#include <Eina.h>
+#include <Ecore.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -14,9 +17,6 @@
 #else
 # define EAPI
 #endif
-
-#include <Eina.h>
-#include <Ecore.h>
 
 /**
  * @file Eeze_Disk.h
