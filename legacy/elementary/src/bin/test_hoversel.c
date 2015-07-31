@@ -292,11 +292,21 @@ _item_unfocused_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
    printf("item,unfocused: %p\n", it);
 }
+static void
+_hoversel_expanded_cb2(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Elm_Object_Item *it = data;
+
+   printf("expanded\n");
+   elm_object_item_focus_set(it, EINA_TRUE);
+   printf("focus set to item: %p\n", it);
+}
 
 void
 test_hoversel_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *hoversel;
+   Elm_Object_Item *it;
 
    win = elm_win_util_standard_add("hoversel focus", "Hoversel Focus");
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
@@ -347,8 +357,8 @@ test_hoversel_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    elm_object_text_set(hoversel, "Icons");
    elm_hoversel_item_add(hoversel, "Item 1", "apps", ELM_ICON_STANDARD, NULL,
                          NULL);
-   elm_hoversel_item_add(hoversel, "Item 2", "arrow_down", ELM_ICON_STANDARD,
-                         NULL, NULL);
+   it = elm_hoversel_item_add(hoversel, "Item 2", "arrow_down", ELM_ICON_STANDARD,
+                              NULL, NULL);
    elm_hoversel_item_add(hoversel, "Item 3", "home", ELM_ICON_STANDARD, NULL,
                          NULL);
    elm_hoversel_item_add(hoversel, "Item 4", "close", ELM_ICON_STANDARD, NULL,
@@ -357,6 +367,8 @@ test_hoversel_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_show(hoversel);
    evas_object_smart_callback_add(hoversel, "item,focused", _item_focused_cb, NULL);
    evas_object_smart_callback_add(hoversel, "item,unfocused", _item_unfocused_cb, NULL);
+   evas_object_smart_callback_add(hoversel, "expanded",
+                                  _hoversel_expanded_cb2, it);
 
    evas_object_resize(win, 320, 500);
    evas_object_show(win);
