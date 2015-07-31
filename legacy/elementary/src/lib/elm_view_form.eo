@@ -3,20 +3,22 @@ class Elm_View_Form (Eo.Base)
     legacy_prefix: null;
     methods {
         model_set {
-            /*@ Set model
-              @def elm_view_form_model_set
-              @since 1.11 */
+             [[Set model
+
+               @since 1.11
+             ]]
              params {
-                 @in model: Efl.Model.Base*; /*@ Emodel object */
+                 @in model: Efl.Model.Base*; [[Emodel object]]
              }
         }
         widget_add {
-            /*@ Add new widget
-               @def elm_view_form_widget_add
-               @since 1.11 */
+             [[Add new widget
+
+               @since 1.11
+             ]]
              params {
-                 @in propname: const(char)*; /*@ Property name */
-                 @in evas: Evas_Object*; /*@ Evas widget */
+                 @in propname: const(char)*; [[Property name]]
+                 @in evas: Evas_Object*; [[Evas widget]]
              }
         }
     }
