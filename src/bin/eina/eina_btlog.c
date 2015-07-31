@@ -66,7 +66,7 @@ path_split(const char *path, char **dir, char **file)
         return;
      }
    *dir = malloc(p - path + 1);
-   if (!dir)
+   if (!*dir)
      {
         *dir = NULL;
         *file = NULL;
@@ -90,8 +90,8 @@ _addr2line(const char *bin_dir, const char *bin_name, unsigned long long addr,
             bin_dir, bin_name, addr);
    p = popen(buf, "r");
    if (!p) return EINA_FALSE;
-   fscanf(p, "%s\n", buf);
-   if (fscanf(p, "%s\n", func) == 1)
+   if ((fscanf(p, "%4095s\n", buf) == 1) &&
+       (fscanf(p, "%4095s\n", func) == 1))
      {
         if (fscanf(p, "%[^:]:%i\n", buf, &line) == 2)
           {
