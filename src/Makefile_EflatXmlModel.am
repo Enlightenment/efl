@@ -1,0 +1,84 @@
+### Library
+
+eflat_xml_model_eolian_files = \
+lib/eflat_xml_model/eflat_xml_model.eo
+
+eflat_xml_model_eolian_c = $(eflat_xml_model_eolian_files:%.eo=%.eo.c)
+eflat_xml_model_eolian_h = $(eflat_xml_model_eolian_files:%.eo=%.eo.h)
+
+BUILT_SOURCES += \
+                 $(eflat_xml_model_eolian_c) \
+                 $(eflat_xml_model_eolian_h)
+
+CLEANFILES += \
+              $(eflat_xml_model_eolian_c) \
+              $(eflat_xml_model_eolian_h)
+
+eflat_xml_modeleolianfilesdir = $(datadir)/eolian/include/eflat_xml_model-@VMAJ@
+eflat_xml_modeleolianfiles_DATA = \
+                                  $(eflat_xml_model_eolian_files)
+
+EXTRA_DIST += \
+              ${eflat_xml_modeleolianfiles_DATA}
+
+lib_LTLIBRARIES += lib/eflat_xml_model/libeflat_xml_model.la
+
+installed_eflat_xml_modelmainheadersdir = $(includedir)/eflat_xml_model-@VMAJ@
+dist_installed_eflat_xml_modelmainheaders_DATA = \
+lib/eflat_xml_model/Eflat_Xml_Model.h
+
+nodist_installed_eflat_xml_modelmainheaders_DATA = \
+                                                   $(eflat_xml_model_eolian_h)
+
+lib_eflat_xml_model_libeflat_xml_model_la_SOURCES = \
+lib/eflat_xml_model/eflat_xml_model_private.h \
+lib/eflat_xml_model/eflat_xml_model.c
+
+lib_eflat_xml_model_libeflat_xml_model_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EFLAT_XML_MODEL_CFLAGS@ @EFL_CFLAGS@
+lib_eflat_xml_model_libeflat_xml_model_la_LIBADD = @EFLAT_XML_MODEL_LIBS@ @EFL_LIBS@
+lib_eflat_xml_model_libeflat_xml_model_la_DEPENDENCIES = @EFLAT_XML_MODEL_INTERNAL_LIBS@ @EFL_INTERNAL_LIBS@
+lib_eflat_xml_model_libeflat_xml_model_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/eflat_xml_model/eflat_xml_model_suite
+TESTS += tests/eflat_xml_model/eflat_xml_model_suite
+
+tests_eflat_xml_model_eflat_xml_model_suite_SOURCES = \
+tests/eflat_xml_model/eflat_xml_model_suite.c \
+tests/eflat_xml_model/eflat_xml_model_suite.h \
+tests/eflat_xml_model/eflat_xml_model_test_eflat_xml_model.c \
+tests/eflat_xml_model/eflat_xml_model_test_eflat_xml_model.h
+
+tests_eflat_xml_model_eflat_xml_model_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_SRC_DIR=\"$(abs_top_srcdir)/src/tests/eflat_xml_model\" \
+-DTESTS_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eflat_xml_model\" \
+@CHECK_CFLAGS@ \
+@EFLAT_XML_MODEL_CFLAGS@ @EFL_CFLAGS@
+
+tests_eflat_xml_model_eflat_xml_model_suite_LDADD = \
+@CHECK_LIBS@ \
+@USE_EFLAT_XML_MODEL_LIBS@ \
+@USE_EFL_LIBS@
+
+tests_eflat_xml_model_eflat_xml_model_suite_DEPENDENCIES = \
+@USE_EFLAT_XML_MODEL_INTERNAL_LIBS@
+
+endif
+
+EXTRA_DIST += $(EFLAT_XML_MODEL_DATA_FILES)
+
+if HAVE_ELUA
+
+eflat_xml_model_eolian_lua = $(eflat_xml_model_eolian_files:%.eo=%.eo.lua)
+
+generated_eflat_xml_model_lua_all = $(eflat_xml_model_eolian_lua)
+
+CLEANFILES += $(generated_eflat_xml_model_lua_all)
+
+installed_eflat_xml_modelluadir = $(datadir)/elua/modules/eflat_xml_model
+nodist_installed_eflat_xml_modellua_DATA = $(generated_eflat_xml_model_lua_all)
+
+endif

@@ -1,0 +1,22 @@
+if HAVE_CXX11
+
+### Generated headers
+
+generated_eflat_xml_model_cxx_bindings = $(eflat_xml_model_eolian_files:%.eo=%.eo.hh)
+
+lib/eflat_xml_model/Eflat_xml_model.hh: $(generated_eflat_xml_model_cxx_bindings)
+	@echo @ECHO_E@ "#ifndef EFL_CXX_EFLAT_XML_MODEL_HH\n#define EFL_CXX_EFLAT_XML_MODEL_HH\n" > $(top_builddir)/src/lib/eflat_xml_model/Eflat_xml_model.hh
+	@echo @ECHO_E@ "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/eflat_xml_model/Eflat_xml_model.hh
+	@for i in $(generated_eflat_xml_model_cxx_bindings); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/eflat_xml_model/Eflat_xml_model.hh; done
+	@echo @ECHO_E@ "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/eflat_xml_model/Eflat_xml_model.hh
+
+generated_eflat_xml_model_cxx_all = \
+	$(generated_eflat_xml_model_cxx_bindings) \
+	lib/eflat_xml_model/Eflat_xml_model.hh
+
+CLEANFILES += $(generated_eflat_xml_model_cxx_all)
+
+installed_eflat_xml_modelcxxmainheadersdir = $(includedir)/eflat_xml_model-cxx-@VMAJ@/
+nodist_installed_eflat_xml_modelcxxmainheaders_DATA = $(generated_eflat_xml_model_cxx_all)
+
+endif
