@@ -615,7 +615,7 @@ _lua_buffer_push(lua_State *L, Buffer *buf)
    Buffer **ptr;
 
    lua_getglobal(L, buf->name);//+1
-   ptr = lua_newuserdata(L, sizeof(Buffer **));//+1
+   ptr = lua_newuserdata(L, sizeof(Buffer *));//+1
    *ptr = buf;
    luaL_getmetatable(L, _lua_buffer_meta);//+1
    lua_setmetatable(L, -2);//-1
