@@ -3693,8 +3693,7 @@ _elm_cnp_shutdown(void)
    if (--_elm_cnp_init_count > 0) return EINA_TRUE;
    eina_stringshare_del(text_uri);
    text_uri = NULL;
-   eina_hash_free(_types_hash);
-   _types_hash = NULL;
+   ELM_SAFE_FREE(_types_hash, eina_hash_free);
    return EINA_TRUE;
 }
 
