@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: Esoap-model
+Description: SOAP model for EFL
+Requires.private: @requirements_pc_esoap_model@
+Version: @VERSION@
+Libs: -L${libdir} -lesoap_model @requirements_public_libs_esoap_model@
+Libs.private: @requirements_libs_esoap_model@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/esoap_model-@VMAJ@

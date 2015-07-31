@@ -152,7 +152,8 @@ pc/emotion.pc \
 pc/ethumb.pc \
 pc/ethumb_client.pc \
 pc/elocation.pc \
-pc/eflat_xml_model.pc
+pc/eflat_xml_model.pc \
+pc/esoap_model.pc
 
 if HAVE_CXX11
 pkgconfig_DATA += \
@@ -165,7 +166,8 @@ pc/edje-cxx.pc \
 pc/eet-cxx.pc \
 pc/eo-cxx.pc \
 pc/eio-cxx.pc \
-pc/eflat_xml_model-cxx.pc
+pc/eflat_xml_model-cxx.pc \
+pc/esoap_model-cxx.pc
 endif
 
 if HAVE_ELUA
@@ -393,6 +395,16 @@ eflat_xml_model_cmakeconfigdir = $(libdir)/cmake/EflatXmlModel/
 eflat_xml_model_cmakeconfig_DATA = \
 cmakeconfig/EflatXmlModelConfig.cmake \
 cmakeconfig/EflatXmlModelConfigVersion.cmake
+
+esoap_model_cxx_cmakeconfigdir = $(libdir)/cmake/EsoapModelCxx/
+esoap_model_cxx_cmakeconfig_DATA = \
+cmakeconfig/EsoapModelCxxConfig.cmake \
+cmakeconfig/EsoapModelCxxConfigVersion.cmake
+
+esoap_model_cmakeconfigdir = $(libdir)/cmake/EsoapModel/
+esoap_model_cmakeconfig_DATA = \
+cmakeconfig/EsoapModelConfig.cmake \
+cmakeconfig/EsoapModelConfigVersion.cmake
 
 # D-Bus services:
 
