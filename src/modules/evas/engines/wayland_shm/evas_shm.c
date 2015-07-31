@@ -419,7 +419,7 @@ _evas_shm_surface_wait(Shm_Surface *surface)
              if (surface->leaf[i].valid) return &surface->leaf[i];
           }
 
-        wl_display_dispatch(surface->disp);
+        wl_display_dispatch_pending(surface->disp);
      }
    return NULL;
 }
