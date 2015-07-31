@@ -1,0 +1,32 @@
+# - Try to find eflat_xml_model
+# Once done this will define
+#  EFLAT_XML_MODEL_FOUND - System has eflat_xml_model
+#  EFLAT_XML_MODEL_INCLUDE_DIRS - The eflat_xml_model include directories
+#  EFLAT_XML_MODEL_LIBRARIES - The libraries needed to use eflat_xml_model
+#  EFLAT_XML_MODEL_DEFINITIONS - Compiler switches required for using eflat_xml_model
+
+set(MY_PKG eflat_xml_model)
+
+find_package(PkgConfig)
+if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER "2.8.1")
+   # "QUIET" was introduced in 2.8.2
+   set(_QUIET QUIET)
+endif ()
+pkg_check_modules(PC_LIBEFLAT_XML_MODEL ${_QUIET} ${MY_PKG})
+
+find_library(EFLAT_XML_MODEL_LIBRARY
+             NAMES ${PC_LIBEFLAT_XML_MODEL_LIBRARIES}
+             HINTS ${PC_LIBEFLAT_XML_MODEL_LIBDIR} ${PC_LIBEFLAT_XML_MODEL_LIBRARY_DIRS} )
+
+set(EFLAT_XML_MODEL_DEFINITIONS ${PC_LIBEFLAT_XML_MODEL_CFLAGS_OTHER})
+set(EFLAT_XML_MODEL_LIBRARIES ${EFLAT_XML_MODEL_LIBRARY})
+set(EFLAT_XML_MODEL_INCLUDE_DIRS ${PC_LIBEFLAT_XML_MODEL_INCLUDE_DIRS})
+
+include(FindPackageHandleStandardArgs)
+# handle the QUIETLY and REQUIRED arguments and set EFLAT_XML_MODEL_FOUND to TRUE
+# if all listed variables are TRUE
+find_package_handle_standard_args(${MY_PKG} DEFAULT_MSG
+   EFLAT_XML_MODEL_LIBRARIES EFLAT_XML_MODEL_INCLUDE_DIRS)
+
+mark_as_advanced(EFLAT_XML_MODEL_INCLUDE_DIRS EFLAT_XML_MODEL_LIBRARY EFLAT_XML_MODEL_LIBRARIES EFLAT_XML_MODEL_DEFINITIONS)
+

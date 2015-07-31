@@ -4604,6 +4604,25 @@ EFL_EVAL_PKGS([EJSON_CXX])
 EFL_LIB_END([Ejson_Cxx])
 #### End of Ejson CXX
 
+#### Eflat_Xml_Model
+EFL_LIB_START([Eflat_Xml_Model])
+
+EFL_INTERNAL_DEPEND_PKG([EFLAT_XML_MODEL], [eo])
+EFL_INTERNAL_DEPEND_PKG([EFLAT_XML_MODEL], [efl])
+EFL_INTERNAL_DEPEND_PKG([EFLAT_XML_MODEL], [ecore])
+
+EFL_EVAL_PKGS([EFLAT_XML_MODEL])
+
+EFL_LIB_END([Eflat_Xml_Model])
+#### End of Eflat_Xml_Model
+
+#### Eflat_Xml_Model CXX
+EFL_LIB_START([Eflat_Xml_Model_Cxx])
+
+EFL_EVAL_PKGS([EFLAT_XML_MODEL_CXX])
+
+EFL_LIB_END([Eflat_Xml_Model_Cxx])
+#### End of Eflat_Xml_Model CXX
 
 ### Add Wayland server library if test is enabled
 if test "x${want_tests}" = "xyes" -a "x${want_wayland}" = "xyes"; then
@@ -4795,6 +4814,8 @@ pc/elocation.pc
 pc/elua.pc
 pc/ejson.pc
 pc/ejson-cxx.pc
+pc/eflat_xml_model.pc
+pc/eflat_xml_model-cxx.pc
 dbus-services/org.enlightenment.Ethumb.service
 systemd-services/ethumb.service
 $po_makefile_in
@@ -4848,6 +4869,10 @@ cmakeconfig/EjsonConfig.cmake
 cmakeconfig/EjsonConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EjsonCxxConfig.cmake
 cmakeconfig/EjsonCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EflatXmlModelConfig.cmake
+cmakeconfig/EflatXmlModelConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EflatXmlModelCxxConfig.cmake
+cmakeconfig/EflatXmlModelCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 ])
 
 AC_OUTPUT
@@ -4962,6 +4987,7 @@ echo "Ethumb..........: yes"
 echo "Ethumb_Client...: yes"
 echo "Elua............: $have_elua"
 echo "Ejson...........: yes"
+echo "Eflat_Xml_Model.: yes"
 if test "${build_tests}" = "none"; then
 echo "Tests...........: no"
 elif test "${build_tests}" = "auto"; then

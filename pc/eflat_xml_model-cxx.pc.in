@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: Eflat_xml_model C++
+Description: "Flat" XML model for EFL
+Requires.private: @requirements_pc_eflat_xml_model@ @requirements_pc_eo@
+Version: @VERSION@
+Libs: -L${libdir} -leflat_xml_model @requirements_public_libs_eflat_xml_model@ @requirements_public_libs_eo@
+Libs.private: @requirements_libs_eflat_xml_model@ @requirements_libs_eo@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eo-@VMAJ@ -I${includedir}/eflat_xml_model-@VMAJ@ -I${includedir}/eflat_xml_model-cxx-@VMAJ@

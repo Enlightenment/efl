@@ -61,6 +61,7 @@ include Makefile_Emotion.am
 include Makefile_Ethumb.am
 include Makefile_Ethumb_Client.am
 include Makefile_Ejson.am
+include Makefile_EflatXmlModel.am
 
 include Makefile_Eina_Cxx.am
 include Makefile_Ecore_Cxx.am
@@ -73,6 +74,7 @@ include Makefile_Edje_Cxx.am
 include Makefile_Evas_Cxx.am
 include Makefile_Eio_Cxx.am
 include Makefile_Ejson_Cxx.am
+include Makefile_EflatXmlModel_Cxx.am
 
 include Makefile_Elua.am
 include Makefile_Elocation.am
