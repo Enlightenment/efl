@@ -2514,6 +2514,25 @@ evas_render_updates_internal(Evas *eo_e,
         e->engine.func->output_redraws_rect_add(e->engine.data.output, 0, 0,
                                                 e->output.w, e->output.h);
      }
+
+   // Add redraw for all snapshot object due to potential use of pixels outside
+   // of the update area by filters.
+   // The side effect is that it also fix rendering of partial update of filter...
+   // As they are never partially updated anymore !
+
+   // FIXME: don't add redraw rect for snapshot with no filter applied on
+   // Also damage the filter object that use a snapshot.
+   for (i = 0; i < e->snapshot_objects.count; i++)
+     {
+        obj = (Evas_Object_Protected_Data *)eina_array_data_get(&e->snapshot_objects, i);
+
+        if (evas_object_is_visible(obj->object, obj))
+          e->engine.func->output_redraws_rect_add(e->engine.data.output,
+                                                  obj->cur->geometry.x,
+                                                  obj->cur->geometry.y,
+                                                  obj->cur->geometry.w,
+                                                  obj->cur->geometry.h);
+     }
    eina_evlog("-render_phase4", eo_e, 0.0, NULL);
 
    /* phase 5. add obscures */
