@@ -1387,6 +1387,31 @@ _on_color_pressed(void *data,
    ecore_timer_del(sd->longpress_timer);
    sd->longpress_timer = ecore_timer_add
        (_elm_config->longpress_timeout, _on_color_long_press, data);
+
+   item->still_in = EINA_TRUE;
+}
+
+static void
+_on_color_moved(void *data,
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info)
+{
+   Elm_Color_Item_Data *item = (Elm_Color_Item_Data *)data;
+   Evas_Event_Mouse_Move *ev = event_info;
+   Evas_Coord x = 0, y = 0, w = 0, h = 0;
+
+   if (!item) return;
+
+   ELM_COLORSELECTOR_DATA_GET(WIDGET(item), sd);
+
+   evas_object_geometry_get(item->color_obj, &x, &y, &w, &h);
+
+   if (ELM_RECTS_POINT_OUT(x, y, w, h, ev->cur.canvas.x, ev->cur.canvas.y))
+     {
+        ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
+        item->still_in = EINA_FALSE;
+     }
 }
 
 static void
@@ -1406,6 +1431,9 @@ _on_color_released(void *data,
 
    if (ev->button != 1) return;
    ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
+
+   if ((ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) || !item->still_in)
+     return;
 
    elm_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
    elm_colorselector_color_set(WIDGET(item), item->color->r, item->color->g,
@@ -1521,6 +1549,8 @@ _elm_color_item_eo_base_constructor(Eo *eo_item, Elm_Color_Item_Data *item)
      (item->color_obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_event_callback_add
      (item->color_obj, EVAS_CALLBACK_MOUSE_DOWN, _on_color_pressed, item);
+   evas_object_event_callback_add
+     (item->color_obj, EVAS_CALLBACK_MOUSE_MOVE, _on_color_moved, item);
    evas_object_event_callback_add
      (item->color_obj, EVAS_CALLBACK_MOUSE_UP, _on_color_released, item);
    elm_object_part_content_set(VIEW(item), "color_obj", item->color_obj);

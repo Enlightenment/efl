@@ -96,6 +96,8 @@ struct _Elm_Color_Item_Data
 
    Evas_Object    *color_obj;
    Elm_Color_RGBA *color;
+
+   Eina_Bool       still_in : 1;
 };
 
 /**
