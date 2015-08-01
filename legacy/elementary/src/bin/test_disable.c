@@ -17,7 +17,7 @@ test_box_disable(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    Evas_Object *win, *bx, *bt, *bx_out, *fr, *lb;
    Evas_Object *btn[4];
 
-   win = elm_win_util_standard_add("box-transition", "Box Transition");
+   win = elm_win_util_standard_add("box-enable/disable", "Box Enable/Disable");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx_out = elm_box_add(win);
