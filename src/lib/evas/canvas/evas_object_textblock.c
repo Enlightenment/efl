@@ -12342,17 +12342,24 @@ _evas_textblock_par_rects_get(const Evas_Object *obj)
    return rects;
 }
 
+typedef struct
+{
+   int idx;
+   Evas_Coord x, y, w, h;
+   Eina_Rectangle *rect;
+} Textblock_Item_Debug_Data;
+
 EAPI Eina_List *
 _evas_textblock_items_get(const Evas_Object *obj)
 {
    Eina_List *rects = NULL;
-   Eina_Rectangle *rect;
    Evas_Object_Textblock_Paragraph *par;
    Evas_Textblock_Data *o = eo_data_scope_get(obj, MY_CLASS);
 
    EINA_INLIST_FOREACH(o->paragraphs, par)
      {
         Evas_Object_Textblock_Line *ln;
+        int idx = 0;
 
         if (!par->visible) break;
 
@@ -12361,8 +12368,14 @@ _evas_textblock_items_get(const Evas_Object *obj)
              Evas_Object_Textblock_Item *it;
              EINA_INLIST_FOREACH(ln->items, it)
                {
-                  rect = eina_rectangle_new(it->x, par->y + ln->y, it->w, it->h);
-                  rects = eina_list_append(rects, rect);
+                  Textblock_Item_Debug_Data *d = calloc(1, sizeof(Textblock_Item_Debug_Data));
+                  d->idx = idx++;
+                  d->w = it->w;
+                  d->h = it->h;
+                  d->x = it->x;
+                  d->y = ln->y;
+                  d->rect = eina_rectangle_new(it->x, par->y + ln->y, it->w, it->h);
+                  rects = eina_list_append(rects, d);
                }
           }
 
