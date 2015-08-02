@@ -89,6 +89,7 @@ lib/eina/eina_thread_queue.h \
 lib/eina/eina_matrix.h \
 lib/eina/eina_quad.h \
 lib/eina/eina_crc.h \
+lib/eina/eina_inline_crc.x \
 lib/eina/eina_evlog.h \
 lib/eina/eina_util.h \
 lib/eina/eina_quaternion.h
