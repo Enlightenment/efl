@@ -249,7 +249,6 @@ ELM_CHECK_BACKEND([Cocoa])
 ELM_CHECK_BACKEND([Win32])
 ELM_CHECK_BACKEND([Wayland])
 ELM_CHECK_BACKEND([DRM])
-ELM_CHECK_BACKEND([EGLFS])
 
 ELM_CHECK_OPTION([elocation], [0.1.0])
 ELM_CHECK_OPTION([eweather], [0.2.0])
@@ -544,7 +543,6 @@ echo
 echo "  Engines:"
 echo "    X11....................: ${have_elementary_x}"
 echo "    Framebuffer............: ${have_elementary_fb}"
-echo "    Eglfs..................: ${have_elementary_eglfs}"
 echo "    DRM....................: ${have_elementary_drm}"
 echo "    PSL1GHT................: ${have_elementary_psl1ght}"
 echo "    SDL....................: ${have_elementary_sdl}"
