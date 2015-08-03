@@ -10951,6 +10951,7 @@ evas_textblock_cursor_range_simple_geometry_get(const Evas_Textblock_Cursor *cur
         /* Add middle rect */
         if ((ln1->par->y + ln1->y + ln1->h) != (ln2->par->y + ln2->y))
           {
+             printf("Middle rect\n");
              tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
              tr->x = lm;
              tr->y = ln1->par->y + ln1->y + ln1->h;
@@ -12346,7 +12347,10 @@ typedef struct
 {
    int idx;
    Evas_Coord x, y, w, h;
+   Evas_Textblock_Item_Type type;
+   Evas_Script_Type script;
    Eina_Rectangle *rect;
+   Eina_Bool is_rtl : 1;
 } Textblock_Item_Debug_Data;
 
 EAPI Eina_List *
@@ -12366,19 +12370,30 @@ _evas_textblock_items_get(const Evas_Object *obj)
         EINA_INLIST_FOREACH(par->lines, ln)
           {
              Evas_Object_Textblock_Item *it;
+             Evas_Coord marginl = 0;
+             if (ln->items)
+               {
+                  marginl = ln->items->format->margin.l;
+               }
              EINA_INLIST_FOREACH(ln->items, it)
                {
                   Textblock_Item_Debug_Data *d = calloc(1, sizeof(Textblock_Item_Debug_Data));
                   d->idx = idx++;
                   d->w = it->w;
                   d->h = it->h;
-                  d->x = it->x;
+                  d->x = it->x + marginl;
                   d->y = ln->y;
-                  d->rect = eina_rectangle_new(it->x, par->y + ln->y, it->w, it->h);
+                  d->type = it->type;
+                  if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+                    {
+                       Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
+                       d->script = ti->text_props.script;
+                       d->is_rtl = (ti->text_props.bidi_dir == EVAS_BIDI_DIRECTION_RTL);
+                    }
+                  d->rect = eina_rectangle_new(ln->x + it->x + marginl, par->y + ln->y, it->w, it->h);
                   rects = eina_list_append(rects, d);
                }
           }
-
      }
    return rects;
 }
