@@ -661,49 +661,6 @@ AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_EGLFS(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-
-AC_DEFUN([EVAS_CHECK_ENGINE_DEP_EGLFS],
-[
-
-requirement=""
-have_dep="no"
-have_hw_dep="no"
-evas_engine_[]$1[]_cflags=""
-evas_engine_[]$1[]_libs=""
-
-if test "x${with_opengl}" = "xes" ; then
-   gl_library="glesv2"
-else
-   AC_MSG_ERROR([We do not support Eglfs without OpenGL ES. Please consider OpenGL ES if you want to use it.])
-fi
-
-PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library}],
-   [
-    have_dep="yes"
-    requirement="egl >= 7.10 ${gl_library}"
-   ],
-   [have_dep="no"])
-
-if test "x${have_dep}" = "xyes" ; then
-   if test "x$3" = "xstatic" ; then
-      requirements_pc_evas="${requirement} ${requirements_pc_evas}"
-      requirements_pc_deps_evas="${requirement} ${requirements_pc_deps_evas}"
-   else
-      PKG_CHECK_MODULES([EGLFS], [${requirement}])
-      evas_engine_[]$1[]_cflags="${EGLFS_CFLAGS}"
-      evas_engine_[]$1[]_libs="${EGLFS_LIBS}"
-      evas_engine_gl_common_libs="$evas_engine_[]$1[]_libdirs -lGLESv2 -lm -lEGL"
-   fi
-fi
-
-AC_SUBST([evas_engine_$1_cflags])
-AC_SUBST([evas_engine_$1_libs])
-
-AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
-
-])
-
 
 dnl use: EVAS_ENGINE(name, want_engine, [DEPENDENCY-CHECK-CODE])
 dnl

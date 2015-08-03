@@ -787,9 +787,6 @@ endif
 if BUILD_ENGINE_GL_DRM
 modules_evas_engines_gl_common_libevas_engine_gl_common_la_CPPFLAGS += @evas_engine_gl_drm_cflags@
 endif
-if BUILD_ENGINE_EGLFS
-modules_evas_engines_gl_common_libevas_engine_gl_common_la_CPPFLAGS += @evas_engine_eglfs_cflags@
-endif
 modules_evas_engines_gl_common_libevas_engine_gl_common_la_LIBADD = @USE_EVAS_LIBS@
 modules_evas_engines_gl_common_libevas_engine_gl_common_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 modules_evas_engines_gl_common_libevas_engine_gl_common_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
@@ -1242,45 +1239,6 @@ modules_evas_engines_gl_drm_module_la_LIBADD = \
 modules_evas_engines_gl_drm_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@ @USE_EEZE_INTERNAL_LIBS@ @USE_ECORE_DRM_INTERNAL_LIBS@
 modules_evas_engines_gl_drm_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_evas_engines_gl_drm_module_la_LIBTOOLFLAGS = --tag=disable-static
-endif
-endif
-
-if BUILD_ENGINE_EGLFS
-dist_installed_evasmainheaders_DATA += modules/evas/engines/eglfs/Evas_Engine_Eglfs.h
-EGLFS_SOURCES = \
-modules/evas/engines/eglfs/evas_outbuf.c \
-modules/evas/engines/eglfs/evas_engine.c \
-modules/evas/engines/eglfs/evas_engine.h \
-modules/evas/engines/eglfs/Evas_Engine_Eglfs.h
-if EVAS_STATIC_BUILD_EGLFS
-lib_evas_libevas_la_SOURCES += $(EGLFS_SOURCES)
-lib_evas_libevas_la_CPPFLAGS += @evas_engine_eglfs_cflags@
-lib_evas_libevas_la_LIBADD += @evas_engine_eglfs_libs@
-else
-engineeglfspkgdir = $(libdir)/evas/modules/engines/eglfs/$(MODULE_ARCH)
-engineeglfspkg_LTLIBRARIES = modules/evas/engines/eglfs/module.la
-
-# Workaround for broken parallel install support in automake (relink issue)
-# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
-install_engineeglfspkgLTLIBRARIES = install-engineeglfspkgLTLIBRARIES
-$(install_engineeglfspkgLTLIBRARIES): install-libLTLIBRARIES
-
-modules_evas_engines_eglfs_module_la_SOURCES = $(EGLFS_SOURCES)
-modules_evas_engines_eglfs_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/lib/evas/include \
--I$(top_srcdir)/src/lib/evas/cserve2 \
--I$(top_srcdir)/src/modules/evas/engines/eglfs \
-@EVAS_CFLAGS@ \
-@ECORE_DRM_CFLAGS@ \
-@evas_engine_eglfs_cflags@
-modules_evas_engines_eglfs_module_la_LIBADD = \
-@USE_EVAS_LIBS@ \
-@USE_ECORE_DRM_LIBS@ \
-@evas_engine_eglfs_libs@ \
-@USE_EEZE_INTERNAL_LIBS@
-modules_evas_engines_eglfs_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@ @USE_EEZE_INTERNAL_LIBS@ @USE_ECORE_DRM_INTERNAL_LIBS@
-modules_evas_engines_eglfs_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
-modules_evas_engines_eglfs_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 
