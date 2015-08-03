@@ -237,9 +237,9 @@ START_TEST(ecore_con_test_ecore_con_eet_svr_del)
    ecore_main_loop_begin();
 
 
-   ecore_con_eet_server_connect_callback_del(ece_svr, _eet_client_cnct_cb,
+   ecore_con_eet_server_connect_callback_del(ece_cl, _eet_client_cnct_cb,
                                              NULL);
-   ecore_con_eet_server_disconnect_callback_del(ece_svr,
+   ecore_con_eet_server_disconnect_callback_del(ece_cl,
                                                 _eet_client_discnct_cb, NULL);
 
    free(cb_data);
