@@ -8,7 +8,7 @@ static Evas_Object *glb;
 static void
 _bt_copy_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *en = (Evas_Object*)(data);
+   Evas_Object *en = data;
    const char *txt = elm_object_text_get(en);
 
    elm_object_text_set(glb, txt);
@@ -19,7 +19,7 @@ _bt_copy_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA
 static void
 _bt_paste_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *en = (Evas_Object*)(data);
+   Evas_Object *en = data;
 
    elm_cnp_selection_get(en, ELM_SEL_TYPE_CLIPBOARD, ELM_SEL_FORMAT_TEXT,
                          NULL, NULL);
@@ -28,7 +28,7 @@ _bt_paste_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
 static void
 _bt_clear_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *en = (Evas_Object*)(data);
+   Evas_Object *en = data;
 
    elm_object_text_set(glb, "");
    elm_object_cnp_selection_clear(elm_object_parent_widget_get(en), ELM_SEL_TYPE_CLIPBOARD);
