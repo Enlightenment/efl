@@ -43,7 +43,7 @@ _done_cb(void *data, Eio_File *handler EINA_UNUSED)
 static void
 _error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error)
 {
-   fprintf(stderr, "Something wrong has happend:%s\n", strerror(error));
+   fprintf(stderr, "Something has gone wrong:%s\n", strerror(error));
    ecore_main_loop_quit();
 }
 

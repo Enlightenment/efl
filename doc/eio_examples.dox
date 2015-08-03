@@ -181,17 +181,17 @@
  *
  * To use eio_file_ls(), you just need to define four callbacks:
  *
- * @li The filter callback, which allow or not a file to be seen
- * by the main loop handler. This callback run in a separated thread.
+ * @li The filter callback, which allows a file to be seen (or not)
+ * by the main loop handler. This callback runs in a separate thread.
  * @li The main callback, which receive in the main loop all the file
  * that are allowed by the filter. If you are updating a user interface
- * it make sense to delay the insertion a little, so you get a chance
- * to update the canvas for a bunch of file instead of one by one.
+ * it makes sense to delay the insertion a little, so you get a chance
+ * to update the canvas for a bunch of files instead of one by one.
  * @li The end callback, which is called in the main loop when the
  * content of the directory has been correctly scanned and all the
  * file notified to the main loop.
  * @li The error callback, which is called if an error occurred or
- * if the listing was cancelled during it's run. You can then retrieve
+ * if the listing was cancelled during its run. You can then retrieve
  * the error type as an errno error.
  *
  * Here is a simple example:
@@ -288,7 +288,7 @@
  *    if( type == EIO_MONITOR_FILE_MODIFIED )
  *       printf("is being modified");
  *    else if( type == EIO_MONITOR_FILE_CLOSED )
- *       printf("is not more being modified");
+ *       printf("is no longer being modified");
  *    else printf("got unexpected changes");
  *    printf("\n");
  * }
