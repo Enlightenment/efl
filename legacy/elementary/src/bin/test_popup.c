@@ -678,10 +678,9 @@ _popup_center_title_genlist_content_1button_cb(void *data, Evas_Object *obj EINA
    evas_object_show(popup);
 }
 
-
 static void
 _subpopup_cb(void *data, Evas_Object *obj EINA_UNUSED,
-                                            void *event_info EINA_UNUSED)
+             void *event_info EINA_UNUSED)
 {
    Evas_Object *popup;
    Evas_Object *btn, *btnclose;
@@ -711,6 +710,60 @@ _subpopup_cb(void *data, Evas_Object *obj EINA_UNUSED,
    // popup show should be called after adding all the contents and the buttons
    // of popup to set the focus into popup's contents correctly.
    evas_object_show(popup);
+}
+
+static void
+_popup_content_only_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
+{
+   Evas_Object *popup, *bx, *hbx, *lbl, *btn;
+   Evas_Object *win = data;
+
+   popup = elm_popup_add(win);
+
+   bx = elm_box_add(popup);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.0);
+   elm_object_content_set(popup, bx);
+
+   lbl = elm_label_add(popup);
+   elm_object_text_set(lbl,
+                       "<align=center>This popup contains content area only.<br>"
+                       "The buttons below are the part of content area, not action area");
+   evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(bx, lbl);
+   evas_object_show(lbl);
+
+   hbx = elm_box_add(bx);
+   elm_box_horizontal_set(hbx, EINA_TRUE);
+   evas_object_size_hint_weight_set(hbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(hbx, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(bx, hbx);
+   evas_object_show(hbx);
+
+   btn = elm_button_add(hbx);
+   elm_object_text_set(btn, "Save");
+   evas_object_smart_callback_add(btn, "clicked", _popup_close_cb, popup);
+   elm_box_pack_end(hbx, btn);
+   evas_object_show(btn);
+
+   btn = elm_button_add(hbx);
+   elm_object_text_set(btn, "Discard");
+   evas_object_smart_callback_add(btn, "clicked", _popup_close_cb, popup);
+   elm_box_pack_end(hbx, btn);
+   evas_object_show(btn);
+
+   btn = elm_button_add(hbx);
+   elm_object_text_set(btn, "Cancel");
+   evas_object_smart_callback_add(btn, "clicked", _popup_close_cb, popup);
+   elm_box_pack_end(hbx, btn);
+   evas_object_show(btn);
+
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
+   evas_object_show(popup);
+   elm_object_focus_set(btn, EINA_TRUE);
 }
 
 static void
@@ -781,6 +834,9 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                         win);
    elm_list_item_append(list, "subpopup + X button",
                         NULL, NULL, _subpopup_cb,
+                        win);
+   elm_list_item_append(list, "popup with content only",
+                        NULL, NULL, _popup_content_only_cb,
                         win);
    elm_list_go(list);
    evas_object_show(list);
