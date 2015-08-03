@@ -3,7 +3,6 @@
 #endif
 
 #include <Eo.h>
-#include <Eet.h>
 #include <stdio.h>
 #include "evas_common_private.h"
 #include "evas_private.h"
