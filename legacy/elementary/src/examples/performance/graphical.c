@@ -251,13 +251,13 @@ void _init_bounding()
    globalGraphical.material_box = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, globalGraphical.evas);
 
    eo_do(globalGraphical.material_box,
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE),
 
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, 0.2, 0.2, 0.2, 1.0),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, 0.8, 0.8, 0.8, 1.0),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, 0.2, 0.2, 0.2, 1.0),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, 0.8, 0.8, 0.8, 1.0),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0),
          evas_canvas3d_material_shininess_set(100.0));
 
    /* Setup mesh. */
@@ -266,13 +266,13 @@ void _init_bounding()
          evas_canvas3d_mesh_vertex_count_set(24),
          evas_canvas3d_mesh_frame_add(0),
 
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_POSITION,
+         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION,
                                             12 * sizeof(float), &cube_vertices[ 0]),
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_NORMAL,
+         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL,
                                             12 * sizeof(float), &cube_vertices[ 3]),
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_COLOR,
+         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR,
                                             12 * sizeof(float), &cube_vertices[ 6]),
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_TEXCOORD,
+         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD,
                                             12 * sizeof(float), &cube_vertices[10]),
 
          evas_canvas3d_mesh_index_data_copy_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT,
@@ -328,18 +328,18 @@ _change_scene_setup()
               eo_do(globalGraphical.mesh,
                    evas_canvas3d_mesh_vertex_count_set(globalGraphical.vertex_count),
                    evas_canvas3d_mesh_frame_add(0),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_POSITION,
+                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION,
                                                       sizeof(vertex),
                                                       &globalGraphical.vertices[0].position),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_NORMAL,
+                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL,
                                                       sizeof(vertex),
                                                       &globalGraphical.vertices[0].normal),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_TANGENT,
+                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TANGENT,
                                                       sizeof(vertex),
                                                       &globalGraphical.vertices[0].tangent),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_COLOR,
+                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR,
                                                       sizeof(vertex), &globalGraphical.vertices[0].color),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_TEXCOORD,
+                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD,
                                                       sizeof(vertex),
                                                       &globalGraphical.vertices[0].texcoord),
 
@@ -372,7 +372,7 @@ _change_scene_setup()
          if (globalGraphical.flags.blend_enable)
            {
               eo_do(globalGraphical.mesh, evas_canvas3d_mesh_blending_enable_set(EINA_TRUE),
-                    evas_canvas3d_mesh_blending_func_set(EVAS_CANVAS3D_BLEND_SRC_ALPHA, EVAS_CANVAS3D_BLEND_ONE_MINUS_SRC_ALPHA));
+                    evas_canvas3d_mesh_blending_func_set(EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA, EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_SRC_ALPHA));
            }
          else
            eo_do(globalGraphical.mesh, evas_canvas3d_mesh_blending_enable_set(EINA_FALSE));
@@ -476,15 +476,15 @@ _init_scene(Evas_Object *img)
          evas_canvas3d_texture_wrap_set(EVAS_CANVAS3D_WRAP_MODE_REPEAT,
                                   EVAS_CANVAS3D_WRAP_MODE_REPEAT));
    eo_do(globalGraphical.material,
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, globalGraphical.texture),
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, globalGraphical.texture),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_NORMAL, EINA_TRUE),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, 1.0, 0.2, 0.2, 0.2),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, 1.0, 0.0, 0.0, 0.2),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 0.2));
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, globalGraphical.texture),
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, globalGraphical.texture),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, EINA_TRUE),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, 1.0, 0.2, 0.2, 0.2),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, 1.0, 0.0, 0.0, 0.2),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 0.2));
    /* Add the mesh with target precision */
    _sphere_init(globalGraphical.precision);
 
@@ -496,18 +496,18 @@ _init_scene(Evas_Object *img)
               eo_do(globalGraphical.mesh,
                    evas_canvas3d_mesh_vertex_count_set(globalGraphical.vertex_count),
                    evas_canvas3d_mesh_frame_add(0),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_POSITION,
+                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION,
                                                       sizeof(vertex),
                                                       &globalGraphical.vertices[0].position),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_NORMAL,
+                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL,
                                                       sizeof(vertex),
                                                       &globalGraphical.vertices[0].normal),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_TANGENT,
+                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TANGENT,
                                                       sizeof(vertex),
                                                       &globalGraphical.vertices[0].tangent),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_COLOR,
+                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR,
                                                       sizeof(vertex), &globalGraphical.vertices[0].color),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_TEXCOORD,
+                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD,
                                                       sizeof(vertex),
                                                       &globalGraphical.vertices[0].texcoord),
 
