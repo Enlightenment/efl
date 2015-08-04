@@ -560,10 +560,10 @@ else
     gl_library="gl"
 fi
 
-PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library} wayland-client >= 1.3.0 wayland-egl >= 9.2.0],
+PKG_CHECK_EXISTS([egl ${gl_library} wayland-client >= 1.3.0 wayland-egl >= 9.2.0],
    [
     have_dep="yes"
-    requirement="egl >= 7.10 ${gl_library} wayland-client wayland-egl"
+    requirement="egl ${gl_library} wayland-client wayland-egl"
    ],
    [have_dep="no"])
 
@@ -635,10 +635,10 @@ else
    AC_MSG_ERROR([We currently do not support GL DRM without OpenGL ES. Please consider OpenGL ES if you want to use it.])
 fi
 
-PKG_CHECK_EXISTS([egl >= 7.10 ${gl_library} gbm wayland-client >= 1.3.0],
+PKG_CHECK_EXISTS([egl ${gl_library} gbm wayland-client >= 1.3.0],
    [
     have_dep="yes"
-    requirement="egl >= 7.10 ${gl_library} gbm wayland-client >= 1.3.0"
+    requirement="egl ${gl_library} gbm wayland-client >= 1.3.0"
    ],
    [have_dep="no"])
 
