@@ -32,11 +32,16 @@ struct _Elm_Hoversel_Data
    /* aggregates a hover */
    Evas_Object          *hover;
    Evas_Object          *hover_parent;
+   Evas_Object          *spacer;
+   Evas_Object          *tbl;
+   Evas_Object          *scr;
+   const char           *last_location;
 
    Eina_List            *items;
 
-   Eina_Bool             horizontal : 1;
-   Eina_Bool             expanded   : 1;
+   Eina_Bool             horizontal    : 1;
+   Eina_Bool             expanded      : 1;
+   Eina_Bool             scroll_enabled: 1;
 };
 
 typedef struct _Elm_Hoversel_Item_Data Elm_Hoversel_Item_Data;

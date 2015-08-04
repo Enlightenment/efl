@@ -81,6 +81,25 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             return: const(list<Elm_Object_Item *>)*;
          }
       }
+      @property scroll_enabled {
+         get {
+            /*@
+            @brief Limit the size of contents and make them scrollable.
+
+            @ingroup Hoversel */
+         }
+         set {
+            /*@
+            @brief Returns whether the contents of hoversel are scrollable or not.
+
+            @return @c EINA_TRUE scrollable. @c EINA_FALSE otherwise.
+
+            @ingroup Hoversel */
+         }
+         values {
+            scroll_enabled: bool;
+         }
+      }
       hover_begin {
          /*@
          @brief This triggers the hoversel popup from code, the same as if the user
