@@ -506,9 +506,9 @@ EOLIAN static void
 _elm_index_elm_layout_sizing_eval(Eo *obj, Elm_Index_Data *_pd EINA_UNUSED)
 {
    Evas_Coord minw = -1, minh = -1;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_INDEX_DATA_GET(obj, sd);
 
-   edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
+   evas_object_size_hint_min_get(sd->bx[sd->level], &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
 }
