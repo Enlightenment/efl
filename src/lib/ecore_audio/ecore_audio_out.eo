@@ -11,7 +11,7 @@ class Ecore_Audio_Out (Ecore_Audio)
          ]]
          return: bool; [[true if the input was attached, false otherwise]]
          params {
-            @in input: Ecore_Audion_In *; [[The input to attach to the output]]
+            @in input: Ecore_Audio_In *; [[The input to attach to the output]]
          }
       }
       input_detach {
