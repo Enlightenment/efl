@@ -1728,7 +1728,6 @@ _elm_multibuttonentry_editable_set(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Dat
    else
      {
         elm_box_unpack(sd->box, sd->entry);
-        elm_entry_input_panel_hide(sd->entry);
         evas_object_hide(sd->entry);
      }
 }
