@@ -801,14 +801,8 @@ eina_strbuf_common_length_get(const Eina_Strbuf *buf)
 # undef _STRBUF_MAGIC
 #endif
 
-#ifdef _STRBUF_MAGIC_STR
-# undef _STRBUF_MAGIC_STR
-#endif
-
 #define _STRBUF_CSIZE 1
 #define _STRBUF_MAGIC             EINA_MAGIC_STRBUF
-#define _STRBUF_MAGIC_STR         __STRBUF_STR_MAGIC_STR
-static const char __STRBUF_STR_MAGIC_STR[] = "Eina Strbuf";
 
 
 /**
