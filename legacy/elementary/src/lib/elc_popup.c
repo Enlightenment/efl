@@ -862,9 +862,6 @@ _title_text_set(Evas_Object *obj,
    if (title_visibility_old != title_visibility_current)
      _visuals_set(obj);
 
-   _scroller_size_calc(obj);
-   elm_layout_sizing_eval(obj);
-
    return EINA_TRUE;
 }
 
@@ -926,9 +923,6 @@ _content_text_set(Evas_Object *obj,
      }
 
 end:
-   _scroller_size_calc(obj);
-   elm_layout_sizing_eval(obj);
-
    return EINA_TRUE;
 }
 
@@ -943,6 +937,9 @@ _elm_popup_elm_layout_text_set(Eo *obj, Elm_Popup_Data *_pd, const char *part, c
      int_ret = _title_text_set(obj, label);
    else
      int_ret = elm_layout_text_set(_pd->main_layout, part, label);
+
+   _scroller_size_calc(obj);
+   elm_layout_sizing_eval(obj);
 
    return int_ret;
 }
