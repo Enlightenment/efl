@@ -207,6 +207,13 @@ _text_filter_markup_prepend_internal(Edje *ed, Entry *en, Evas_Textblock_Cursor 
 {
    Edje_Markup_Filter_Callback *cb;
    Eina_List *l;
+   Eina_Bool have_sel = EINA_FALSE;
+
+   if ((clearsel) && (en->have_selection))
+     {
+        _range_del_emit(ed, en->cursor, en->rp->object, en);
+        have_sel = EINA_TRUE;
+     }
 
    EINA_LIST_FOREACH(ed->markup_filter_callbacks, l, cb)
      {
@@ -238,10 +245,12 @@ _text_filter_markup_prepend_internal(Edje *ed, Entry *en, Evas_Textblock_Cursor 
                     eina_unicode_utf8_get_len(info->change.insert.content);
                }
           }
-        if ((clearsel) && (en->have_selection))
+        if (have_sel)
           {
-             _range_del_emit(ed, en->cursor, en->rp->object, en);
-             if (info) info->merge = EINA_TRUE;
+            if (info)
+              {
+                 info->merge = EINA_TRUE;
+              }
           }
         if (info)
           info->change.insert.pos =
@@ -266,6 +275,12 @@ _text_filter_text_prepend(Edje *ed, Entry *en, Evas_Textblock_Cursor *c,
    Eina_List *l;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(text, NULL);
+
+   if ((clearsel) && (en->have_selection))
+     {
+        _range_del_emit(ed, en->cursor, en->rp->object, en);
+     }
+
    text2 = strdup(text);
    EINA_LIST_FOREACH(ed->text_insert_filter_callbacks, l, cb)
      {
@@ -383,6 +398,12 @@ _text_filter_markup_prepend(Edje *ed, Entry *en, Evas_Textblock_Cursor *c,
    Eina_List *l;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(text, NULL);
+
+   if ((clearsel) && (en->have_selection))
+     {
+        _range_del_emit(ed, en->cursor, en->rp->object, en);
+     }
+
    text2 = strdup(text);
    EINA_LIST_FOREACH(ed->text_insert_filter_callbacks, l, cb)
      {
