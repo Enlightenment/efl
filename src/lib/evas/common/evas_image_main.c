@@ -296,6 +296,7 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
 {
    RGBA_Image *im = (RGBA_Image *)ie;
 
+   evas_common_rgba_pending_unloads_remove(ie);
 #ifdef BUILD_PIPE_RENDER
    evas_common_pipe_free(im);
 #endif
