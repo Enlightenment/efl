@@ -101,6 +101,18 @@ Fixes:
    * elm_gengrid: Fix condition error.
    * Elm_Prefs: use Evil API
    * elm_gengrid: fix missing variable initialization.
+   * multibuttonentry: delete clicked signal preventing code when mbe shrinked.
+   * entry: few times the hit_rect is not clipped properly during genlist scrolling, with entry as content.
+   * multibuttonentry: fix bug with uneditable MBE use case.
+   * multibuttonentry: update end text(item count) even mbe shrinked.
+   * Colorselector: fix wrong object for callback call function
+   * multibuttonentry: internal label object status, box pack, unpack logic clean up.
+   * interface_scrollable: don't use integer abs on floating point
+   * interface_scrollable: convert to int before using abs first
+   * elm: simulate the clicked event over the object only.
+   * hoversel: use elm_object_focus_set to set focus on subobjects.
+   * colorselector: fixed up the selected process
+   * popup: fix resize issue when action area and title area is absent. (T2623)
 
 Changes since 1.13.0:
 ---------------------
