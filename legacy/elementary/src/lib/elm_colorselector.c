@@ -1714,7 +1714,7 @@ _elm_colorselector_evas_object_smart_add(Eo *obj, Elm_Colorselector_Data *priv)
    priv->mode = ELM_COLORSELECTOR_BOTH;
    priv->focused = ELM_COLORSELECTOR_PALETTE;
    priv->sel_color_type = HUE;
-   priv->selected = priv->items;
+   priv->selected = NULL;
    priv->er = 255;
    priv->eg = 0;
    priv->eb = 0;
