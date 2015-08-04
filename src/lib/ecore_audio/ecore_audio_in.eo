@@ -121,7 +121,7 @@ class Ecore_Audio_In (Ecore_Audio)
             ]]
          }
          values {
-            output: Eo *; [[The output]]
+            output: Ecore_Audio *; [[The output]] /* FIXME-cyclic Should be Ecore_Audio_Out */
          }
       }
       @property remaining {
