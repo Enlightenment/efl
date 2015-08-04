@@ -245,16 +245,15 @@ _text_filter_markup_prepend_internal(Edje *ed, Entry *en, Evas_Textblock_Cursor 
                     eina_unicode_utf8_get_len(info->change.insert.content);
                }
           }
-        if (have_sel)
-          {
-            if (info)
-              {
-                 info->merge = EINA_TRUE;
-              }
-          }
         if (info)
-          info->change.insert.pos =
-            evas_textblock_cursor_pos_get(en->cursor);
+          {
+             if (have_sel)
+               {
+                  info->merge = EINA_TRUE;
+               }
+             info->change.insert.pos =
+                evas_textblock_cursor_pos_get(en->cursor);
+          }
         if (fmtpre) _text_filter_format_prepend(ed, en, en->cursor, fmtpre);
         evas_object_textblock_text_markup_prepend(c, text);
         free(text);
