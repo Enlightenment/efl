@@ -178,7 +178,12 @@ _ecore_evas_extn_free(Ecore_Evas *ee)
         Ecore_Event_Handler *hdl;
         Ipc_Data_Update *ipc;
         int i;
-
+        if (bdata->image)
+          {
+             evas_object_image_data_set(bdata->image, NULL);
+             evas_object_image_pixels_dirty_set(bdata->image, EINA_TRUE);
+          }
+        bdata->pixels = NULL;
         for (i = 0; i < NBUF; i++)
           {
              if (extn->b[i].buf) _extnbuf_free(extn->b[i].buf);
@@ -229,7 +234,7 @@ _ecore_evas_extn_free(Ecore_Evas *ee)
              ee2->sub_ecore_evas = eina_list_remove(ee2->sub_ecore_evas, ee);
           }
         evas_object_del(bdata->image);
-		bdata->image = NULL;
+        bdata->image = NULL;
      }
    free(bdata);
    ee->engine.data = NULL;
