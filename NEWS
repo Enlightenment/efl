@@ -221,6 +221,21 @@ Fixes:
    * Ecore_Win32: do not allocate data as it is useless. Fix memory leak.
    * ecore-drm: Ignore key events that are not seat wide state changes
    * Evas masking: Fix crash in async rendering
+   * evas-wayland-shm: Don't call surface commit until we've setup the frame listener
+   * evas canvas3d: bounding box does not change the position according object
+   * Evas filters: Fix invalid rendering in case of async render
+   * Evas filters: Fix order of header file includes
+   * wayland_shm: Don't store frame_cb
+   * wayland-shm: re-organize some of the swap/redraw logic
+   * wayland-shm: Remove "mapped"
+   * evas-wayland-shm: Fix issue of surface_swap spamming invalid warning
+   * efl: Bump required wayland library versions
+   * ecore-evas-wayland-shm: Remove duplicated code on configure event
+   * ecore_evas_x: make gl_sync_draw_done an explicit signed char type
+   * evas engine: add null point exception.
+   * evas-wayland-shm: If no depth is specified during reconfigure, use existing depth
+   * wayland-shm: When we run out of shm buffers kick the server to get some back (T2612)
+   * ecore_evas: Fix crash in async render
 
 Changes since 1.13.0:
 ---------------------
