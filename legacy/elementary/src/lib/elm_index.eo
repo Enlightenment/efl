@@ -52,6 +52,35 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
             enabled: bool; /*@ @c EINA_TRUE to enable omit feature, @c EINA_FALSE to disable */
          }
       }
+      @property priority {
+         set {
+            /*@
+            Set priority group of index. Priority group will be shown as many items as it can,
+            and other group will be shown one character only.
+
+            @see elm_index_priority_get()
+
+            @since 1.16
+
+            @ingroup Index */
+         }
+         get {
+            /*@
+            Get current priority group of index.
+
+            @return priority value in index
+
+            @see elm_index_priority_set()
+
+            @since 1.16
+
+            @ingroup Index */
+         }
+         values {
+            priority: int; /*@ @c priority target priority value in index */
+         }
+      }
+
       @property horizontal {
          set {
             /*@

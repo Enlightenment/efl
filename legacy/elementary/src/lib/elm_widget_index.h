@@ -40,6 +40,8 @@ struct _Elm_Index_Data
    Eina_Bool             level_active[2]; /**< a flag for the activeness of a
                                             level. activeness means the box is
                                             filled with contents. */
+   int                   group_num, default_num;
+   int                   show_group, next_group;
 
    Eina_Bool             mouse_down : 1;
    Eina_Bool             horizontal : 1;
@@ -60,6 +62,7 @@ struct _Elm_Index_Item_Data
    Eina_List       *omitted;
    Elm_Index_Item_Data  *head;
 
+   int              priority;
    Eina_Bool        selected : 1; /**< a flag that remembers an item is selected. this is set true when mouse down/move occur above an item and when elm_index_item_selected_set() API is called. */
 };
 

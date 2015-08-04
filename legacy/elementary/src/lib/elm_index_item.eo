@@ -25,6 +25,26 @@ class Elm.Index_Item(Elm.Widget_Item)
                  selected: bool; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
              }
         }
+        @property priority {
+             set {
+                 /*@
+                  Sets the priority of an item.
+
+                  The priority is @c -1 by default, which means that the item doesn't belong to a group.
+                  The value of the priority starts from @c 0.
+
+                  In elm_index_level_go, the items are sorted in ascending order according to priority.
+                  Items of the same priority make a group and the primary group is shown by default.
+
+                  @see elm_index_item_priority_get()
+
+                  @ingroup Index
+                  */
+             }
+             values {
+                 priority: int; /*@ The priority */
+             }
+        }
       letter_get @const {
             /*@
              Get the letter (string) set on a given index widget item.

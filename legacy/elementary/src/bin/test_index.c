@@ -434,6 +434,99 @@ test_index2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_show(win);
 }
 
+/***** Index 3 Mode ******/
+
+static void
+_index_priority_change_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
+{
+   Evas_Object *index = data;
+   int priority;
+
+   priority = elm_index_priority_get(index);
+
+   if (priority == 0)
+     elm_index_priority_set(index, 1);
+   else
+     elm_index_priority_set(index, 0);
+
+   printf("Priority changed to : %d\n", elm_index_priority_get(index));
+}
+
+void
+test_index3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *index, *bt;
+   Elm_Object_Item *it;
+   int i, j, len;
+   char *str;
+   char buf[PATH_MAX] = {0, };
+
+   win = elm_win_util_standard_add("Index-priority", "Index priority for multilingual");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   index = elm_index_add(win);
+   evas_object_size_hint_weight_set(index, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(index, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_index_autohide_disabled_set(index, EINA_TRUE);
+   elm_index_omit_enabled_set(index, EINA_TRUE);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Priority Change");
+   evas_object_smart_callback_add(bt, "clicked", _index_priority_change_cb, index);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bx, index);
+
+   evas_object_show(index);
+
+   //1. Special character & Numbers
+   elm_index_item_append(index, "#", NULL, NULL);
+
+   //2. Local language
+   str = "ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅍㅎ";
+   len = strlen(str);
+
+   i = 0;
+   while (i < len)
+     {
+        j = i;
+        eina_unicode_utf8_next_get(str, &i);
+        snprintf(buf, i - j + 1, "%s", str + j);
+        buf[i - j + 1] = 0;
+
+        it = elm_index_item_append(index, buf, NULL, NULL);
+        elm_index_item_priority_set(it, 0);
+     }
+
+   //3. English
+   str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+   len = strlen(str);
+
+   i = 0;
+   while (i < len)
+     {
+        j = i;
+        eina_unicode_utf8_next_get(str, &i);
+        snprintf(buf, i - j + 1, "%s", str + j);
+        buf[i - j + 1] = 0;
+
+        it = elm_index_item_append(index, buf, NULL, NULL);
+        elm_index_item_priority_set(it, 1);
+     }
+
+   elm_index_level_go(index, 0);
+
+   evas_object_resize(win, 300, 300);
+   evas_object_show(win);
+}
+
 /***** Index Horizontal Mode ******/
 
 static void
