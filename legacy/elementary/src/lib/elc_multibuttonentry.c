@@ -94,7 +94,6 @@ _elm_multibuttonentry_elm_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Data 
         if (VIEW(item))
           elm_layout_theme_set
             (VIEW(item), "multibuttonentry", "btn", elm_widget_style_get(obj));
-        elm_object_scale_set(VIEW(item), elm_widget_scale_get(obj) * elm_config_scale_get());
      }
 
    elm_widget_theme_object_set
