@@ -40,6 +40,7 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+#if 0
 /** @cond internal */
 /* FIXME make this function on API */
 static inline void _quad_dump(Eina_Quad *q)
@@ -47,6 +48,7 @@ static inline void _quad_dump(Eina_Quad *q)
    printf("Q = %f %f, %f %f, %f %f, %f %f\n", QUAD_X0(q), QUAD_Y0(q), QUAD_X1(q), QUAD_Y1(q), QUAD_X2(q), QUAD_Y2(q), QUAD_X3(q), QUAD_Y3(q));
 }
 /** @endcond */
+#endif
 
 /*============================================================================*
  *                                   API                                      *
