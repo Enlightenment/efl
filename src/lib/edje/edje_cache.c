@@ -33,6 +33,7 @@ edje_cache_emp_alloc(Edje_Part_Collection_Directory_Entry *ce)
   INIT_EMP_BOTH(TABLE, Edje_Part_Description_Table, ce);
   INIT_EMP_BOTH(EXTERNAL, Edje_Part_Description_External, ce);
   INIT_EMP_BOTH(SPACER, Edje_Part_Description_Common, ce);
+  INIT_EMP_BOTH(SNAPSHOT, Edje_Part_Description_Common, ce);
   INIT_EMP(part, Edje_Part, ce);
 }
 
@@ -51,6 +52,7 @@ edje_cache_emp_free(Edje_Part_Collection_Directory_Entry *ce)
   eina_mempool_del(ce->mp.TABLE);
   eina_mempool_del(ce->mp.EXTERNAL);
   eina_mempool_del(ce->mp.SPACER);
+  eina_mempool_del(ce->mp.SNAPSHOT);
   eina_mempool_del(ce->mp.part);
   memset(&ce->mp, 0, sizeof (ce->mp));
 
@@ -65,6 +67,7 @@ edje_cache_emp_free(Edje_Part_Collection_Directory_Entry *ce)
   eina_mempool_del(ce->mp_rtl.TABLE);
   eina_mempool_del(ce->mp_rtl.EXTERNAL);
   eina_mempool_del(ce->mp_rtl.SPACER);
+  eina_mempool_del(ce->mp_rtl.SNAPSHOT);
   memset(&ce->mp_rtl, 0, sizeof (ce->mp_rtl));
   ce->ref = NULL;
 }

@@ -1270,6 +1270,7 @@ New_Object_Handler object_handlers[] =
        external{}
        proxy{}
        spacer{}
+       snapshot{}
        part {
           desc {
           }
@@ -1422,6 +1423,7 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
       case EDJE_PART_TYPE_RECTANGLE:
       case EDJE_PART_TYPE_SWALLOW:
       case EDJE_PART_TYPE_GROUP:
+      case EDJE_PART_TYPE_SNAPSHOT:
 	 result = mem_alloc(SZ(Edje_Part_Description_Common));
 	 break;
       case EDJE_PART_TYPE_TEXT:
@@ -4882,6 +4884,7 @@ ob_collections_group_parts_part_short(void)
                   "external", EDJE_PART_TYPE_EXTERNAL,
                   "proxy", EDJE_PART_TYPE_PROXY,
                   "spacer", EDJE_PART_TYPE_SPACER,
+                  "snapshot", EDJE_PART_TYPE_SNAPSHOT,
                   NULL);
 
    stack_pop_quick(EINA_TRUE, EINA_TRUE);
@@ -4918,6 +4921,7 @@ _part_desc_free(Edje_Part_Collection *pc,
       case EDJE_PART_TYPE_RECTANGLE:
       case EDJE_PART_TYPE_SWALLOW:
       case EDJE_PART_TYPE_GROUP:
+      case EDJE_PART_TYPE_SNAPSHOT:
          /* Nothing todo, this part only have a common description. */
          break;
       case EDJE_PART_TYPE_BOX:
@@ -5289,6 +5293,7 @@ st_collections_group_parts_part_name(void)
             @li EXTERNAL
             @li PROXY
             @li SPACER
+            @li SNAPSHOT
     @endproperty
 */
 static void
@@ -5310,7 +5315,8 @@ st_collections_group_parts_part_type(void)
                      "TABLE", EDJE_PART_TYPE_TABLE,
                      "EXTERNAL", EDJE_PART_TYPE_EXTERNAL,
                      "PROXY", EDJE_PART_TYPE_PROXY,
-		     "SPACER", EDJE_PART_TYPE_SPACER,
+                     "SPACER", EDJE_PART_TYPE_SPACER,
+                     "SNAPSHOT", EDJE_PART_TYPE_SNAPSHOT,
                      NULL);
 
    _part_type_set(type);
@@ -7025,6 +7031,7 @@ st_collections_group_parts_part_description_inherit(void)
       case EDJE_PART_TYPE_RECTANGLE:
       case EDJE_PART_TYPE_SWALLOW:
       case EDJE_PART_TYPE_GROUP:
+      case EDJE_PART_TYPE_SNAPSHOT:
          /* Nothing todo, this part only have a common description. */
          break;
       case EDJE_PART_TYPE_TEXT:

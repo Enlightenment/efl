@@ -36,6 +36,7 @@ Eet_Data_Descriptor *_edje_edd_edje_part = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_variant = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_rectangle = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_snapshot = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_spacer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_swallow = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_group = NULL;
@@ -54,6 +55,7 @@ Eet_Data_Descriptor *_edje_edd_edje_part_description_light = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_camera = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_variant_list = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_rectangle_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_snapshot_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_spacer_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_swallow_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_group_pointer = NULL;
@@ -116,6 +118,7 @@ EMP(SPACER, spacer)
 EMP(MESH_NODE, mesh_node)
 EMP(LIGHT, light)
 EMP(CAMERA, camera)
+EMP(SNAPSHOT, snapshot)
 #undef EMP
 
 EAPI Eina_Mempool *_emp_part = NULL;
@@ -164,7 +167,8 @@ struct
    { EDJE_PART_TYPE_SPACER, "spacer" },
    { EDJE_PART_TYPE_MESH_NODE, "mesh_node" },
    { EDJE_PART_TYPE_LIGHT, "light" },
-   { EDJE_PART_TYPE_CAMERA, "camera" }
+   { EDJE_PART_TYPE_CAMERA, "camera" },
+   { EDJE_PART_TYPE_SNAPSHOT, "snapshot" }
 };
 
 static const char *
@@ -254,6 +258,7 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_part_pointer);
    FREED(_edje_edd_edje_part_description_variant);
    FREED(_edje_edd_edje_part_description_rectangle);
+   FREED(_edje_edd_edje_part_description_snapshot);
    FREED(_edje_edd_edje_part_description_spacer);
    FREED(_edje_edd_edje_part_description_swallow);
    FREED(_edje_edd_edje_part_description_group);
@@ -272,6 +277,7 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_part_description_3d_vec);
    FREED(_edje_edd_edje_part_description_variant_list);
    FREED(_edje_edd_edje_part_description_rectangle_pointer);
+   FREED(_edje_edd_edje_part_description_snapshot_pointer);
    FREED(_edje_edd_edje_part_description_spacer_pointer);
    FREED(_edje_edd_edje_part_description_swallow_pointer);
    FREED(_edje_edd_edje_part_description_group_pointer);
@@ -491,6 +497,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.TABLE", count.TABLE, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.EXTERNAL", count.EXTERNAL, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.SPACER", count.SPACER, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.SNAPSHOT", count.SNAPSHOT, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.MESH_NODE", count.MESH_NODE, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.LIGHT", count.LIGHT, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.CAMERA", count.CAMERA, EET_T_INT);
@@ -865,6 +872,14 @@ _edje_edd_init(void)
    EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON(_edje_edd_edje_part_description_spacer, Edje_Part_Description_Common);
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Common);
+   eddc.func.mem_free = mem_free_snapshot;
+   eddc.func.mem_alloc = mem_alloc_snapshot;
+   _edje_edd_edje_part_description_snapshot =
+     eet_data_descriptor_file_new(&eddc);
+   EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON(_edje_edd_edje_part_description_snapshot, Edje_Part_Description_Common);
+
+
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Common);
    eddc.func.mem_free = mem_free_swallow;
    eddc.func.mem_alloc = mem_alloc_swallow;
    _edje_edd_edje_part_description_swallow =
@@ -1117,6 +1132,7 @@ _edje_edd_init(void)
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Common, part_description_rectangle);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Common, part_description_swallow);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Common, part_description_group);
+   EDJE_DEFINE_POINTER_TYPE(Part_Description_Common, part_description_snapshot);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Image, part_description_image);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Proxy, part_description_proxy);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Text, part_description_text);
@@ -1135,6 +1151,7 @@ _edje_edd_init(void)
 
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "spacer", _edje_edd_edje_part_description_spacer);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "rectangle", _edje_edd_edje_part_description_rectangle);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "snapshot", _edje_edd_edje_part_description_snapshot);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "swallow", _edje_edd_edje_part_description_swallow);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "group", _edje_edd_edje_part_description_group);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "image", _edje_edd_edje_part_description_image);
@@ -1162,6 +1179,7 @@ _edje_edd_init(void)
    _edje_edd_edje_part_description_variant_list = eet_data_descriptor_file_new(&eddc);
 
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "rectangle", rectangle);
+   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "snapshot", snapshot);
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "spacer", spacer);
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "swallow", swallow);
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "group", group);
