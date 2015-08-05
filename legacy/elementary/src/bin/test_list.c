@@ -1292,6 +1292,22 @@ test_list_focus_focus_check_changed(void *data, Evas_Object *obj,
 }
 
 static void
+test_list_focus_win_auto_focus_enable_check_changed(void *data EINA_UNUSED,
+                                                    Evas_Object *obj,
+                                                    void *event_info EINA_UNUSED)
+{
+   elm_config_window_auto_focus_enable_set(elm_check_state_get(obj));
+}
+
+static void
+test_list_focus_win_auto_focus_animate_check_changed(void *data EINA_UNUSED,
+                                                     Evas_Object *obj,
+                                                     void *event_info EINA_UNUSED)
+{
+   elm_config_window_auto_focus_animate_set(elm_check_state_get(obj));
+}
+
+static void
 test_list_focus_focus_highlight_check_changed(void *data, Evas_Object *obj,
                                               void *event_info EINA_UNUSED)
 {
@@ -1428,8 +1444,10 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL,
                                   _test_list_focus_win_del_cb, NULL);
 
-   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
-   elm_win_focus_highlight_animate_set(win, EINA_TRUE);
+   elm_config_window_auto_focus_enable_set(EINA_TRUE);
+   elm_config_window_auto_focus_animate_set(EINA_TRUE);
+   elm_win_focus_highlight_enabled_set(win, EINA_FALSE);
+   elm_win_focus_highlight_animate_set(win, EINA_FALSE);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -1501,8 +1519,28 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    evas_object_show(bx_opt);
 
    chk = elm_check_add(bx_opt);
-   elm_object_text_set(chk, "Focus Highlight");
+   elm_object_text_set(chk, "Window Auto Focus Enable");
    elm_check_state_set(chk, EINA_TRUE);
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(chk, "changed",
+                                  test_list_focus_win_auto_focus_enable_check_changed,
+                                  NULL);
+   elm_box_pack_end(bx_opt, chk);
+   evas_object_show(chk);
+
+   chk = elm_check_add(bx_opt);
+   elm_object_text_set(chk, "Window Auto Focus Animate");
+   elm_check_state_set(chk, EINA_TRUE);
+   evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(chk, "changed",
+                                  test_list_focus_win_auto_focus_animate_check_changed,
+                                  NULL);
+   elm_box_pack_end(bx_opt, chk);
+   evas_object_show(chk);
+
+   chk = elm_check_add(bx_opt);
+   elm_object_text_set(chk, "Focus Highlight");
+   elm_check_state_set(chk, EINA_FALSE);
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(chk, "changed",
                                   test_list_focus_focus_highlight_check_changed,
@@ -1512,7 +1550,7 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
 
    chk = elm_check_add(bx_opt);
    elm_object_text_set(chk, "Focus Animation");
-   elm_check_state_set(chk, EINA_TRUE);
+   elm_check_state_set(chk, EINA_FALSE);
    evas_object_size_hint_weight_set(chk, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(chk, "changed",
                                   test_list_focus_focus_animate_check_changed,

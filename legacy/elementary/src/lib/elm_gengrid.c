@@ -210,7 +210,7 @@ _item_cache_add(Elm_Gen_Item *it)
         if (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()))
           edje_object_signal_emit(itc->base_view, "elm,state,enabled", "elm");
         if (it == (Elm_Gen_Item *)sd->focused_item &&
-            elm_widget_focus_highlight_enabled_get(obj))
+            (elm_widget_focus_highlight_enabled_get(obj) || _elm_config->win_auto_focus_enable))
           edje_object_signal_emit(itc->base_view, "elm,state,unfocused", "elm");
 
         ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
@@ -1292,7 +1292,7 @@ _elm_gengrid_item_focus_raise(Elm_Gen_Item *it)
    Evas_Object *obj = WIDGET(it);
    ELM_GENGRID_DATA_GET(obj, sd);
 
-   if (elm_widget_focus_highlight_enabled_get(obj))
+   if (elm_widget_focus_highlight_enabled_get(obj) || _elm_config->win_auto_focus_enable)
      {
         edje_object_signal_emit
            (VIEW(it), "elm,state,focused", "elm");
@@ -2043,7 +2043,7 @@ _elm_gengrid_item_unfocused(Elm_Object_Item *eo_it)
        (eo_it != sd->focused_item))
      return;
 
-   if (elm_widget_focus_highlight_enabled_get(obj))
+   if (elm_widget_focus_highlight_enabled_get(obj) || _elm_config->win_auto_focus_enable)
      {
         ELM_GENGRID_ITEM_DATA_GET(sd->focused_item, focus_it);
         edje_object_signal_emit

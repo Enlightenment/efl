@@ -383,7 +383,7 @@ _elm_list_elm_widget_event_direction(Evas_Object *obj, Elm_Focus_Direction dir, 
      }
 
    // move focus or selection according to the configuration
-   focus_only = _elm_config->item_select_on_focus_disable && elm_widget_focus_highlight_enabled_get(obj);
+   focus_only = _elm_config->item_select_on_focus_disable;
    if (focus_only)
      ret = _item_focused_next(obj, dir);
    else
@@ -1148,7 +1148,7 @@ _elm_list_item_focused(Elm_Object_Item *eo_it)
           }
      }
    sd->focused_item = eo_it;
-   if (elm_widget_focus_highlight_enabled_get(WIDGET(it)))
+   if (elm_widget_focus_highlight_enabled_get(WIDGET(it)) || _elm_config->win_auto_focus_enable)
      {
         edje_object_signal_emit
            (VIEW(it), "elm,state,focused", "elm");
@@ -1176,7 +1176,7 @@ _elm_list_item_unfocused(Elm_Object_Item *eo_it)
    if (_is_no_select(it))
      return;
 
-   if (elm_widget_focus_highlight_enabled_get(obj))
+   if (elm_widget_focus_highlight_enabled_get(obj) || _elm_config->win_auto_focus_enable)
      {
         ELM_LIST_ITEM_DATA_GET(sd->focused_item, focus_it);
         edje_object_signal_emit

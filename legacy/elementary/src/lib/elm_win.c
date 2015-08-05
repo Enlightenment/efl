@@ -5453,7 +5453,7 @@ _elm_win_focus_highlight_start(Evas_Object *obj)
 {
    ELM_WIN_DATA_GET(obj, sd);
 
-   if (!elm_win_focus_highlight_enabled_get(obj)) return;
+   if (!(sd->focus_highlight.enabled) && !(sd->focus_highlight.auto_enabled)) return;
    sd->focus_highlight.cur.visible = EINA_TRUE;
    sd->focus_highlight.geometry_changed = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job(obj);

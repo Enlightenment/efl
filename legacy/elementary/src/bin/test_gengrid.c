@@ -1610,6 +1610,22 @@ _gg_focus_focus_move_policy_changed_cb(void *data EINA_UNUSED,
 }
 
 static void
+_gg_focus_win_auto_focus_enable_changed(void *data EINA_UNUSED,
+                                        Evas_Object *obj,
+                                        void *event_info EINA_UNUSED)
+{
+   elm_config_window_auto_focus_enable_set(elm_check_state_get(obj));
+}
+
+static void
+_gg_focus_win_auto_focus_animate_changed(void *data EINA_UNUSED,
+                                         Evas_Object *obj,
+                                         void *event_info EINA_UNUSED)
+{
+   elm_config_window_auto_focus_animate_set(elm_check_state_get(obj));
+}
+
+static void
 _gg_focus_focus_highlight_changed_cb(void *data,
                                      Evas_Object *obj,
                                      void *event_info EINA_UNUSED)
@@ -1666,8 +1682,10 @@ test_gengrid_focus(void *data EINA_UNUSED,
    int i, n;
 
    win = elm_win_util_standard_add("gengrid-focus", "Gengrid Focus");
-   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
-   elm_win_focus_highlight_animate_set(win, EINA_TRUE);
+   elm_config_window_auto_focus_enable_set(EINA_TRUE);
+   elm_config_window_auto_focus_animate_set(EINA_TRUE);
+   elm_win_focus_highlight_enabled_set(win, EINA_FALSE);
+   elm_win_focus_highlight_animate_set(win, EINA_FALSE);
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx_horiz = elm_box_add(win);
@@ -1734,8 +1752,28 @@ test_gengrid_focus(void *data EINA_UNUSED,
    evas_object_show(bx_opt);
 
    ck = elm_check_add(bx_opt);
-   elm_object_text_set(ck, "Focus Highlight");
+   elm_object_text_set(ck, "Window Auto Focus Enable");
    elm_check_state_set(ck, EINA_TRUE);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(ck, "changed",
+                                  _gg_focus_win_auto_focus_enable_changed,
+                                  NULL);
+   elm_box_pack_end(bx_opt, ck);
+   evas_object_show(ck);
+
+   ck = elm_check_add(bx_opt);
+   elm_object_text_set(ck, "Window Auto Focus Animate");
+   elm_check_state_set(ck, EINA_TRUE);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(ck, "changed",
+                                  _gg_focus_win_auto_focus_animate_changed,
+                                  NULL);
+   elm_box_pack_end(bx_opt, ck);
+   evas_object_show(ck);
+
+   ck = elm_check_add(bx_opt);
+   elm_object_text_set(ck, "Focus Highlight");
+   elm_check_state_set(ck, EINA_FALSE);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(ck, "changed",
                                   _gg_focus_focus_highlight_changed_cb,
@@ -1745,7 +1783,7 @@ test_gengrid_focus(void *data EINA_UNUSED,
 
    ck = elm_check_add(bx_opt);
    elm_object_text_set(ck, "Focus Animation");
-   elm_check_state_set(ck, EINA_TRUE);
+   elm_check_state_set(ck, EINA_FALSE);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    evas_object_smart_callback_add(ck, "changed",
                                   _gg_focus_focus_animate_changed_cb,
