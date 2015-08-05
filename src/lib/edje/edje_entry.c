@@ -4226,6 +4226,9 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
    if (!strcmp(preedit_string, ""))
      preedit_end_state = EINA_TRUE;
 
+   if (en->have_selection && !preedit_end_state)
+     _range_del_emit(ed, en->cursor, rp->object, en);
+
    /* delete preedit characters */
    _preedit_del(en);
 
