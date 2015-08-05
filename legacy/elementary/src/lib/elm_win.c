@@ -1691,8 +1691,6 @@ _elm_win_focus_target_callbacks_add(Elm_Win_Data *sd)
      (obj, EVAS_CALLBACK_MOVE, _elm_win_focus_target_move, sd->obj);
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_RESIZE, _elm_win_focus_target_resize, sd->obj);
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_DEL, _elm_win_focus_target_del, sd->obj);
 }
 
 static void
@@ -1704,8 +1702,6 @@ _elm_win_focus_target_callbacks_del(Elm_Win_Data *sd)
      (obj, EVAS_CALLBACK_MOVE, _elm_win_focus_target_move, sd->obj);
    evas_object_event_callback_del_full
      (obj, EVAS_CALLBACK_RESIZE, _elm_win_focus_target_resize, sd->obj);
-   evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_DEL, _elm_win_focus_target_del, sd->obj);
 }
 
 static void
@@ -1726,6 +1722,9 @@ _elm_win_object_focus_in(void *data,
    else
      _elm_win_focus_target_callbacks_add(sd);
 
+   evas_object_event_callback_add
+     (target, EVAS_CALLBACK_DEL, _elm_win_focus_target_del, sd->obj);
+
    _elm_win_focus_highlight_reconfigure_job_start(sd);
 }
 
@@ -1742,6 +1741,10 @@ _elm_win_object_focus_out(void *data,
    if (!sd->focus_highlight.cur.in_theme)
      _elm_win_focus_target_callbacks_del(sd);
 
+   evas_object_event_callback_del_full
+      (sd->focus_highlight.cur.target,
+       EVAS_CALLBACK_DEL, _elm_win_focus_target_del, sd->obj);
+
    sd->focus_highlight.cur.target = NULL;
    sd->focus_highlight.cur.in_theme = EINA_FALSE;
 
@@ -1757,6 +1760,9 @@ _elm_win_focus_highlight_shutdown(Elm_Win_Data *sd)
         elm_widget_signal_emit(sd->focus_highlight.cur.target,
                                "elm,action,focus_highlight,hide", "elm");
         _elm_win_focus_target_callbacks_del(sd);
+        evas_object_event_callback_del_full
+           (sd->focus_highlight.cur.target,
+            EVAS_CALLBACK_DEL, _elm_win_focus_target_del, sd->obj);
         sd->focus_highlight.cur.target = NULL;
      }
    ELM_SAFE_FREE(sd->focus_highlight.fobj, evas_object_del);
@@ -2562,6 +2568,10 @@ _elm_win_focus_highlight_init(Elm_Win_Data *sd)
           sd->focus_highlight.cur.in_theme = EINA_TRUE;
         else
           _elm_win_focus_target_callbacks_add(sd);
+
+        evas_object_event_callback_add
+           (sd->focus_highlight.cur.target,
+            EVAS_CALLBACK_DEL, _elm_win_focus_target_del, sd->obj);
      }
 
    sd->focus_highlight.prev.target = NULL;
