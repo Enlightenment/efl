@@ -13,64 +13,46 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface)
    methods {
       @property target {
          set {
-            /*@
-            @brief Sets the target object for the hover.
+            [[Sets the target object for the hover.
 
-            This function will cause the hover to be centered on the target object.
-
-            @ingroup Hover */
+              This function will cause the hover to be centered on the
+              target object.
+            ]]
          }
          get {
-            /*@
-            @brief Get the target object for the hover.
-
-            @return The target object for the hover.
-
-            @see elm_hover_target_set()
-
-            @ingroup Hover */
+            [[Get the target object for the hover.]]
          }
          values {
-            target: Evas.Object *; /*@ The object to center the hover onto. */
+            target: Evas.Object *; [[The target object.]]
          }
       }
       best_content_location_get @const {
-         /*@
-         @brief Returns the best swallow location for content in the hover.
+         [[Returns the best swallow location for content in the hover.
 
-         @return The edje location to place content into the hover or @c
-         NULL, on errors.
+           Best is defined here as the location at which there is the most
+           available space.
 
-         Best is defined here as the location at which there is the most available
-         space.
+           $pref_axis may be either #ELM_HOVER_AXIS_NONE (for no preferred
+           orientation), #ELM_HOVER_AXIS_HORIZONTAL, #ELM_HOVER_AXIS_VERTICAL
+           or #ELM_HOVER_AXIS_BOTH.
 
-         @p pref_axis may be one of
-         - #ELM_HOVER_AXIS_NONE -- no preferred orientation
-         - #ELM_HOVER_AXIS_HORIZONTAL -- horizontal
-         - #ELM_HOVER_AXIS_VERTICAL -- vertical
-         - #ELM_HOVER_AXIS_BOTH -- both
+           If #ELM_HOVER_AXIS_HORIZONTAL is chosen the returned position
+           will necessarily be along the horizontal axis("left" or "right").
+           If #ELM_HOVER_AXIS_VERTICAL is chosen the returned position will
+           necessarily be along the vertical axis("top" or "bottom").
+           Choosing #ELM_HOVER_AXIS_BOTH or #ELM_HOVER_AXIS_NONE has the
+           same effect and the returned position may be in either axis.
 
-         If #ELM_HOVER_AXIS_HORIZONTAL is chosen the returned position will
-         necessarily be along the horizontal axis("left" or "right"). If
-         #ELM_HOVER_AXIS_VERTICAL is chosen the returned position will necessarily
-         be along the vertical axis("top" or "bottom"). Choosing
-         #ELM_HOVER_AXIS_BOTH or #ELM_HOVER_AXIS_NONE has the same effect and the
-         returned position may be in either axis.
-
-         @see elm_object_part_content_set()
-
-         @ingroup Hover */
+           See also \@ref elm_object_part_content_set.
+         ]]
          return: const(char)*;
          params {
-            @in pref_axis: Elm.Hover.Axis; /*@ The preferred orientation axis for the hover object to use */
+            @in pref_axis: Elm.Hover.Axis; [[The preferred orientation axis
+                                             for the hover object to use]]
          }
       }
       dismiss {
-         /*@
-         @brief Dismiss a hover object
-
-         @ingroup Hover */
-
+         [[Dismiss a hover object]]
       }
    }
    implements {
