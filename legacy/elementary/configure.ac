@@ -343,6 +343,9 @@ dnl managed by evil
    darwin*)
       have_dlopen="yes"
       ;;
+   freebsd*|openbsd*|netbsd*|dragonfly*)
+      have_dlopen="yes"
+      ;;
    *)
       AC_CHECK_LIB([dl], [dlopen], [res=yes], [res=no])
       if test "x$res" = "xyes"; then
