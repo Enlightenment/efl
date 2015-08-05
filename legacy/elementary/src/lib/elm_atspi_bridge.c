@@ -87,6 +87,7 @@ typedef struct _Elm_Atspi_Bridge_Data
         Eldbus_Service_Interface *application;
         Eldbus_Service_Interface *action;
         Eldbus_Service_Interface *component;
+        Eldbus_Service_Interface *collection;
         Eldbus_Service_Interface *editable_text;
         Eldbus_Service_Interface *image;
         Eldbus_Service_Interface *selection;
@@ -97,6 +98,19 @@ typedef struct _Elm_Atspi_Bridge_Data
    Eina_Hash *event_hash;
    Eina_Bool connected : 1;
 } Elm_Atspi_Bridge_Data;
+
+
+struct collection_match_rule {
+     Elm_Atspi_State_Set states;
+     AtspiCollectionMatchType statematchtype;
+     Eina_List *attributes;
+     AtspiCollectionMatchType attributematchtype;
+     uint64_t roles[2];
+     AtspiCollectionMatchType rolematchtype;
+     Eina_List *ifaces;
+     AtspiCollectionMatchType interfacematchtype;
+     Eina_Bool reverse : 1;
+};
 
 static Eo *_instance;
 static int _init_count = 0;
@@ -641,6 +655,15 @@ _elm_atspi_state_set_to_atspi_state_set(Elm_Atspi_State_Set states)
         if (STATE_TYPE_GET(states, elm_states_to_atspi_state[i].elm_state))
           STATE_TYPE_SET(ret, elm_states_to_atspi_state[i].atspi_state);
      }
+   return ret;
+}
+
+static Elm_Atspi_State_Set
+_atspi_state_set_to_elm_atspi_state_set(uint64_t states)
+{
+   //Currently Elm_Atspi_State and Atspi_State_Set are binary compatible,
+   //implement proper coversion when it will be needed.
+   Elm_Atspi_State_Set ret = states;
    return ret;
 }
 
@@ -2365,6 +2388,675 @@ static const Eldbus_Service_Interface_Desc application_iface_desc = {
    ATSPI_DBUS_INTERFACE_APPLICATION, NULL, NULL, application_properties, _application_properties_get, _application_properties_set
 };
 
+void
+_collection_match_rule_free(struct collection_match_rule *rule)
+{
+   Elm_Atspi_Attribute *attr;
+   eina_list_free(rule->ifaces);
+   EINA_LIST_FREE(rule->attributes, attr)
+     {
+        eina_stringshare_del(attr->key);
+        eina_stringshare_del(attr->value);
+     }
+}
+
+static void
+_collection_roles_convert(uint64_t roles[2])
+{
+   // Currently elm roles and atspi roles are binary compatible.
+   // Implement this function when it will be needed.
+   (void)roles;
+}
+
+static Eina_Bool
+_collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_match_rule *rule)
+{
+   Eldbus_Message_Iter *states_iter, *attrib_iter, *iter_arg, *role_iter, *ifc_iter;
+   unsigned int *array;
+   int array_count, state_match, attrib_match, role_match, ifc_match, reverse;
+   const char *ifc_name;
+
+   if (!eldbus_message_iter_arguments_get(iter, "aiia{ss}iaiiasib", &states_iter, &state_match, &attrib_iter, &attrib_match, &role_iter, &role_match, &ifc_iter, &ifc_match, &reverse))
+     {
+        ERR("Unable to get message arguments");
+        return EINA_FALSE;
+     }
+
+   memset(rule, 0x0, sizeof(struct collection_match_rule));
+   rule->statematchtype = state_match;
+   rule->attributematchtype = attrib_match;
+   rule->rolematchtype = role_match;
+   rule->interfacematchtype = ifc_match;
+   rule->reverse = reverse;
+
+   if (!eldbus_message_iter_fixed_array_get(states_iter, 'i', &array, &array_count))
+     return EINA_FALSE;
+
+   //Roles according to libatspi impementation are transfered in 2-int element fixed bit array
+   if (array_count != 2)
+     {
+        ERR("Unexpected states array size");
+        return EINA_FALSE;
+     }
+   uint64_t states = ((uint64_t)array[0] | ((uint64_t)array[1] << 32));
+   rule->states = _atspi_state_set_to_elm_atspi_state_set(states);
+
+   //Roles according to libatspi impementation are transfered in 4-int element fixed bit array
+   if (!eldbus_message_iter_fixed_array_get(role_iter, 'i', &array, &array_count))
+     return EINA_FALSE;
+
+   if (array_count != 4)
+     {
+        ERR("Unexpected roles array size");
+        return EINA_FALSE;
+     }
+
+   //convert atspi roles to elm_roles
+   rule->roles[0] = ((uint64_t)array[0] | ((uint64_t)array[1] << 32));
+   rule->roles[1] = ((uint64_t)array[2] | ((uint64_t)array[3] << 32));
+
+   _collection_roles_convert(rule->roles);
+
+   //Get matching properties
+   while (eldbus_message_iter_get_and_next(attrib_iter, '{', &iter_arg))
+     {
+        const char *key, *value;
+        if (eldbus_message_iter_arguments_get(iter_arg, "ss", &key, &value))
+          {
+             Elm_Atspi_Attribute *attrib = calloc(sizeof(Elm_Atspi_Attribute), 1);
+             attrib->key = eina_stringshare_add(key);
+             attrib->value = eina_stringshare_add(value);
+             rule->attributes = eina_list_append(rule->attributes, attrib);
+          }
+     }
+
+   //Get interfaces to match
+   while (eldbus_message_iter_get_and_next(ifc_iter, 's', &ifc_name))
+     {
+        const Eo_Class *class = NULL;
+        if (!strcmp(ifc_name, "action"))
+          class = ELM_INTERFACE_ATSPI_ACTION_MIXIN;
+        else if (!strcmp(ifc_name, "component"))
+          class = ELM_INTERFACE_ATSPI_COMPONENT_MIXIN;
+        else if (!strcmp(ifc_name, "editabletext"))
+          class = ELM_INTERFACE_ATSPI_EDITABLE_TEXT_INTERFACE;
+        else if (!strcmp(ifc_name, "text"))
+          class = ELM_INTERFACE_ATSPI_TEXT_INTERFACE;
+        else if (!strcmp(ifc_name, "image"))
+          class = ELM_INTERFACE_ATSPI_SELECTION_INTERFACE;
+        else if (!strcmp(ifc_name, "value"))
+          class = ELM_INTERFACE_ATSPI_VALUE_INTERFACE;
+
+        if (class)
+          rule->ifaces = eina_list_append(rule->ifaces, class);
+        else
+          {
+             _collection_match_rule_free(rule);
+             return EINA_FALSE;
+          }
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_collection_match_interfaces_helper(Eo *obj, Eina_List *ifcs, Eina_Bool condition, Eina_Bool ret_if_true, Eina_Bool ret_if_false)
+{
+   Eo_Class *class;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(ifcs, l, class)
+     {
+        if (eo_isa(obj, class) == condition)
+          return ret_if_true;
+     }
+   return ret_if_false;
+}
+
+static Eina_Bool
+_collection_match_interfaces_lookup(Eo *obj, struct collection_match_rule *rule)
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   switch (rule->interfacematchtype)
+     {
+        case ATSPI_Collection_MATCH_INVALID:
+           ret = EINA_TRUE;
+           break;
+        case ATSPI_Collection_MATCH_ALL:
+           ret = _collection_match_interfaces_helper(
+              obj, rule->ifaces, EINA_FALSE, EINA_FALSE, EINA_TRUE);
+           break;
+        case ATSPI_Collection_MATCH_ANY:
+           ret = _collection_match_interfaces_helper(
+              obj, rule->ifaces, EINA_TRUE, EINA_TRUE, EINA_FALSE);
+           break;
+        case ATSPI_Collection_MATCH_NONE:
+           ret = _collection_match_interfaces_helper(
+              obj, rule->ifaces, EINA_TRUE, EINA_FALSE, EINA_TRUE);
+           break;
+        default:
+           break;
+     }
+   return ret;
+}
+
+static Eina_Bool
+_collection_match_states_lookup(Eo *obj, struct collection_match_rule *rule)
+{
+   Eina_Bool ret = EINA_FALSE;
+   Elm_Atspi_State_Set ss;
+
+   eo_do(obj, ss = elm_interface_atspi_accessible_state_set_get());
+
+   switch (rule->statematchtype)
+     {
+        case ATSPI_Collection_MATCH_INVALID:
+           ret = EINA_TRUE;
+           break;
+        case ATSPI_Collection_MATCH_ALL:
+           ret = (ss & rule->states) == rule->states;
+           break;
+        case ATSPI_Collection_MATCH_ANY:
+           ret = (ss & rule->states) > 0;
+           break;
+        case ATSPI_Collection_MATCH_NONE:
+           ret = (ss & rule->states) == 0;
+           break;
+        default:
+           break;
+     }
+
+   return ret;
+}
+
+static Eina_Bool
+_collection_match_roles_lookup(Eo *obj, struct collection_match_rule *rule)
+{
+   Eina_Bool ret = EINA_FALSE;
+   Elm_Atspi_Role role;
+   int64_t role_set;
+
+   eo_do(obj, role = elm_interface_atspi_accessible_role_get());
+
+   if (role > 64)
+     {
+        role -= 64;
+        role_set = rule->roles[1];
+     }
+   else
+     role_set = rule->roles[0];
+
+   switch (rule->rolematchtype)
+     {
+        case ATSPI_Collection_MATCH_INVALID:
+           ret = EINA_TRUE;
+           break;
+        case ATSPI_Collection_MATCH_ALL:
+        case ATSPI_Collection_MATCH_ANY:
+           ret = (role_set & (1ULL << role)) > 0;
+           break;
+        case ATSPI_Collection_MATCH_NONE:
+           ret = (role_set & (1ULL << role)) == 0;
+           break;
+        default:
+           break;
+     }
+
+   return ret;
+}
+
+static Eina_Bool
+_collection_match_attributes_helper(Eina_List *obj_attribs, Eina_List *attribs, Eina_Bool compare, Eina_Bool ret_if_compare, Eina_Bool ret_default)
+{
+   Eina_List *l, *l2;
+   Elm_Atspi_Attribute *attr, *attr2;
+
+   EINA_LIST_FOREACH(attribs, l, attr)
+     {
+        EINA_LIST_FOREACH(obj_attribs, l2, attr2)
+          {
+             if ((attr->key && attr2->key &&
+                  attr->value && attr2->value &&
+                  !strcmp(attr->key, attr2->key) &&
+                  !strcmp(attr->value, attr2->value)) == compare)
+               {
+                  return ret_if_compare;
+               }
+          }
+     }
+
+   return ret_default;
+}
+
+static Eina_Bool
+_collection_match_attributes_lookup(Eo *obj, struct collection_match_rule *rule)
+{
+   Eina_Bool ret = EINA_FALSE;
+   Eina_List *obj_attribs;
+
+   eo_do(obj, obj_attribs = elm_interface_atspi_accessible_attributes_get());
+
+   switch (rule->attributematchtype)
+     {
+        case ATSPI_Collection_MATCH_INVALID:
+           ret = EINA_TRUE;
+           break;
+        case ATSPI_Collection_MATCH_ALL:
+           ret = _collection_match_attributes_helper(
+              obj_attribs, rule->attributes, EINA_FALSE, EINA_FALSE, EINA_TRUE);
+           break;
+        case ATSPI_Collection_MATCH_ANY:
+           ret = _collection_match_attributes_helper(
+              obj_attribs, rule->attributes, EINA_TRUE, EINA_TRUE, EINA_FALSE);
+           break;
+        case ATSPI_Collection_MATCH_NONE:
+           ret = _collection_match_attributes_helper(
+              obj_attribs, rule->attributes, EINA_TRUE, EINA_FALSE, EINA_TRUE);
+           break;
+        default:
+           break;
+     }
+
+   elm_atspi_attributes_list_free(obj_attribs);
+
+   return ret;
+}
+
+static int
+_collection_sort_order_canonical(struct collection_match_rule *rule, Eina_List **ls,
+                      int count, int max,
+                      Eo *obj, long index, Eina_Bool flag,
+                      Eo *pobj, Eina_Bool recurse, Eina_Bool traverse)
+{
+   int i = index;
+   Eina_List *children;
+   eo_do(obj, children = elm_interface_atspi_accessible_children_get());
+   long acount = eina_list_count(children);
+   Eina_Bool prev = pobj ? EINA_TRUE : EINA_FALSE;
+
+   for (; i < acount && (max == 0 || count < max); i++)
+     {
+        Eo *child = eina_list_nth(children, i);
+
+        if (prev && child == pobj)
+          {
+             eina_list_free(children);
+             return count;
+          }
+
+        if (flag && _collection_match_interfaces_lookup(child, rule)
+            && _collection_match_states_lookup(child, rule)
+            && _collection_match_roles_lookup(child, rule)
+            && _collection_match_attributes_lookup(child, rule))
+          {
+             *ls = eina_list_append(*ls, child);
+             count++;
+          }
+
+       if (!flag)
+         flag = EINA_TRUE;
+
+       if (recurse && traverse)
+         count = _collection_sort_order_canonical(rule, ls, count,
+                                                  max, child, 0, EINA_TRUE,
+                                                  pobj, recurse, traverse);
+     }
+   eina_list_free(children);
+   return count;
+}
+
+static int
+_collection_sort_order_reverse_canonical(struct collection_match_rule *rule, Eina_List **ls,
+                      int count, int max, Eo *obj, Eina_Bool flag, Eo *pobj)
+{
+  Eo *nextobj, *parent;
+  long indexinparent;
+  Eina_List *children;
+
+  /* This breaks us out of the recursion. */
+  if (!obj || obj == pobj)
+    {
+      return count;
+    }
+
+  /* Add to the list if it matches */
+  if (flag && _collection_match_interfaces_lookup(obj, rule)
+      && _collection_match_states_lookup(obj, rule)
+      && _collection_match_roles_lookup(obj, rule)
+      && _collection_match_attributes_lookup(obj, rule)
+      && (max == 0 || count < max))
+    {
+       *ls = eina_list_append(*ls, obj);
+       count++;
+    }
+
+  if (!flag)
+    flag = EINA_TRUE;
+
+  /* Get the current nodes index in it's parent and the parent object. */
+  eo_do(obj,
+        indexinparent = elm_interface_atspi_accessible_index_in_parent_get(),
+        parent = elm_interface_atspi_accessible_parent_get());
+
+  if ((indexinparent > 0) && ((max == 0) || (count < max)))
+    {
+       /* there are still some siblings to visit so get the previous sibling
+          and get it's last descendant.
+          First, get the previous sibling */
+       eo_do(parent, children = elm_interface_atspi_accessible_children_get());
+       nextobj = eina_list_nth(children, indexinparent - 1);
+       eina_list_free(children);
+
+       /* Now, drill down the right side to the last descendant */
+       do {
+            eo_do(nextobj, children = elm_interface_atspi_accessible_children_get());
+            if (children) nextobj = eina_list_last_data_get(children);
+            eina_list_free(children);
+       } while (children);
+
+       /* recurse with the last descendant */
+       count = _collection_sort_order_reverse_canonical(rule, ls, count, max,
+                                       nextobj, EINA_TRUE, pobj);
+    }
+  else if (max == 0 || count < max)
+    {
+      /* no more siblings so next node must be the parent */
+      count = _collection_sort_order_reverse_canonical(rule, ls, count, max,
+                                        parent, EINA_TRUE, pobj);
+
+    }
+  return count;
+}
+
+static int
+_collection_inbackorder(Eo *collection, struct collection_match_rule *rule, Eina_List **list,
+                        int max, Eo *obj)
+{
+   *list = eina_list_append(*list, obj);
+
+   _collection_sort_order_reverse_canonical(rule, list, 0, max, obj, EINA_TRUE, collection);
+
+   *list = eina_list_remove_list(*list, *list);
+
+   return 0;
+}
+
+static int
+_collection_inorder(Eo *collection, struct collection_match_rule *rule, Eina_List **list,
+                    int count, int max, Eo *obj, Eina_Bool traverse)
+{
+   int idx = 0;
+
+   count = _collection_sort_order_canonical(rule, list, count, max, obj, 0, EINA_TRUE, NULL, EINA_TRUE, traverse);
+
+  while ((max == 0 || count < max) && obj && obj != collection)
+    {
+       Eo *parent;
+       eo_do(obj,
+             parent = elm_interface_atspi_accessible_parent_get(),
+             idx = elm_interface_atspi_accessible_index_in_parent_get());
+       count = _collection_sort_order_canonical(rule, list, count, max, parent,
+                                     idx + 1, EINA_TRUE, EINA_FALSE, EINA_TRUE, traverse);
+       obj = parent;
+    }
+
+  if (max == 0 || count < max)
+    count = _collection_sort_order_canonical(rule, list, count, max,
+                                    obj, idx + 1, EINA_TRUE, EINA_FALSE, EINA_TRUE, traverse);
+
+  return count;
+}
+
+static int
+_collection_query(struct collection_match_rule *rule, AtspiCollectionSortOrder sortby,
+                         Eina_List **list, int count, int max, Eo *obj, long index,
+                         Eina_Bool flag, Eo *pobj, Eina_Bool recurse, Eina_Bool traverse)
+{
+   switch (sortby)
+     {
+        case ATSPI_Collection_SORT_ORDER_CANONICAL:
+           count = _collection_sort_order_canonical(rule, list, 0, max, obj, index, flag,
+                                                    pobj, recurse, traverse);
+           break;
+        case ATSPI_Collection_SORT_ORDER_REVERSE_CANONICAL:
+           count = _collection_sort_order_canonical(rule, list, 0, max, obj, index, flag,
+                                                    pobj, recurse, traverse);
+           *list = eina_list_reverse(*list);
+           break;
+        default:
+          count = 0;
+          WRN("Unhandled sort method");
+          break;
+     }
+   return count;
+}
+
+static Eldbus_Message*
+_collection_return_msg_from_list(Elm_Atspi_Bridge *bridge, const Eldbus_Message *msg, const Eina_List *objs)
+{
+   Eldbus_Message *ret;
+   const Eina_List *l;
+   Eldbus_Message_Iter *iter, *array_iter;
+   Eo *obj;
+
+   ret = eldbus_message_method_return_new(msg);
+   if (!ret) return NULL;
+
+   iter = eldbus_message_iter_get(ret);
+   array_iter = eldbus_message_iter_container_new(iter, 'a', "(so)");
+
+   EINA_LIST_FOREACH(objs, l, obj)
+     {
+        _bridge_object_register(bridge, obj);
+        _bridge_iter_object_reference_append(bridge, array_iter, obj);
+     }
+
+   eldbus_message_iter_container_close(iter, array_iter);
+   return ret;
+}
+
+static Eina_List*
+_collection_get_matches_from_handle(Eo *collection, Eo *current, struct collection_match_rule *rule, AtspiCollectionSortOrder sortby, AtspiCollectionTreeTraversalType tree, int max, Eina_Bool traverse)
+{
+   Eina_List *result = NULL;
+   Eo *parent;
+   int idx;
+
+   switch (tree)
+     {
+      case ATSPI_Collection_TREE_INORDER:
+           _collection_inorder(collection, rule, &result, 0, max, current, traverse);
+         if (sortby == ATSPI_Collection_SORT_ORDER_REVERSE_CANONICAL)
+           result = eina_list_reverse(result);
+         break;
+      case ATSPI_Collection_TREE_RESTRICT_CHILDREN:
+         eo_do(current,
+               idx = elm_interface_atspi_accessible_index_in_parent_get(),
+               parent = elm_interface_atspi_accessible_parent_get());
+         _collection_query(rule, sortby, &result, 0, max, parent, idx, EINA_FALSE, NULL, EINA_TRUE, traverse);
+         break;
+      case ATSPI_Collection_TREE_RESTRICT_SIBLING:
+         _collection_query(rule, sortby, &result, 0, max, current, 0, EINA_FALSE, NULL, EINA_TRUE, traverse);
+         break;
+      default:
+         ERR("Tree parameter value not handled");
+         break;
+     }
+   return result;
+}
+
+static Eldbus_Message*
+_collection_get_matches_from(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSED)
+{
+   const char *obj_path = eldbus_message_path_get(msg);
+   Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
+   Eo *current, *obj = _bridge_object_from_path(bridge, obj_path);
+   Eldbus_Message *ret;
+   Eldbus_Message_Iter *iter, *rule_iter;
+   struct collection_match_rule rule;
+   int count;
+   AtspiCollectionTreeTraversalType tree;
+   Eina_Bool traverse;
+   AtspiCollectionSortOrder sortby;
+   Eina_List *result = NULL;
+
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+
+   iter = eldbus_message_iter_get(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iter, NULL);
+
+   if (!eldbus_message_iter_arguments_get(iter, "o(aiia{ss}iaiiasib)uuib", &obj_path, &rule_iter, &sortby, &tree, &count, &traverse))
+     {
+        return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Unable to get matchule, sortby, count or traverse values.");
+     }
+
+   current = _bridge_object_from_path(bridge, obj_path);
+
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(current, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+
+   if (!_collection_iter_match_rule_get(rule_iter, &rule))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Invalid match rule parameters.");
+
+   result = _collection_get_matches_from_handle(obj, current, &rule, sortby, tree, count, traverse);
+   ret = _collection_return_msg_from_list(bridge, msg, result);
+
+   eina_list_free(result);
+   _collection_match_rule_free(&rule);
+
+   return ret;
+}
+
+static Eina_List*
+_collection_get_matches_to_handle(Eo *obj, Eo *current, struct collection_match_rule *rule, AtspiCollectionSortOrder sortby, AtspiCollectionTreeTraversalType tree, Eina_Bool limit, int max, Eina_Bool traverse)
+{
+   Eina_List *result = NULL;
+   Eo *collection = obj;
+
+   if (limit)
+     eo_do(obj, collection = elm_interface_atspi_accessible_parent_get());
+
+   switch (tree)
+     {
+      case ATSPI_Collection_TREE_INORDER:
+         _collection_inbackorder(obj, rule, &result, max, current);
+         if (sortby == ATSPI_Collection_SORT_ORDER_REVERSE_CANONICAL)
+           result = eina_list_reverse(result);
+         break;
+      case ATSPI_Collection_TREE_RESTRICT_CHILDREN:
+         _collection_query(rule, sortby, &result, 0, max, collection, 0, EINA_FALSE, current, EINA_TRUE, traverse);
+         break;
+      case ATSPI_Collection_TREE_RESTRICT_SIBLING:
+         _collection_query(rule, sortby, &result, 0, max, collection, 0, EINA_FALSE, current, EINA_TRUE, traverse);
+         break;
+      default:
+         ERR("Tree parameter value not handled");
+         break;
+     }
+
+   return result;
+}
+
+static Eldbus_Message*
+_collection_get_matches_to(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSED)
+{
+   const char *obj_path = eldbus_message_path_get(msg);
+   Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
+   Eo *current, *obj = _bridge_object_from_path(bridge, obj_path);
+   Eldbus_Message *ret;
+   Eldbus_Message_Iter *iter, *rule_iter;
+   struct collection_match_rule rule;
+   int count;
+   AtspiCollectionTreeTraversalType tree;
+   Eina_Bool traverse;
+   AtspiCollectionSortOrder sortby;
+   Eina_List *result = NULL;
+   Eina_Bool limit;
+
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+
+   iter = eldbus_message_iter_get(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iter, NULL);
+
+   if (!eldbus_message_iter_arguments_get(iter, "o(aiia{ss}iaiiasib)uubib", &obj_path, &rule_iter, &sortby, &tree, &limit, &count, &traverse))
+     {
+        return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Unable to get matchule, sortby, tree, limit count or traverse values.");
+     }
+
+   current = _bridge_object_from_path(bridge, obj_path);
+
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(current, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+
+   if (!_collection_iter_match_rule_get(rule_iter, &rule))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Invalid match rule parameters.");
+
+   result = _collection_get_matches_to_handle(obj, current, &rule, sortby, tree, limit, count, traverse);
+   ret = _collection_return_msg_from_list(bridge, msg, result);
+
+   eina_list_free(result);
+   _collection_match_rule_free(&rule);
+
+   return ret;
+}
+
+static Eldbus_Message*
+_collection_get_matches(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
+{
+   const char *obj_path = eldbus_message_path_get(msg);
+   Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
+   Eo *obj = _bridge_object_from_path(bridge, obj_path);
+   Eldbus_Message *ret;
+   Eldbus_Message_Iter *iter, *rule_iter;
+   struct collection_match_rule rule;
+   int count;
+   Eina_Bool traverse;
+   AtspiCollectionSortOrder sortby;
+   Eina_List *result = NULL;
+
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+
+   iter = eldbus_message_iter_get(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iter, NULL);
+
+   if (!eldbus_message_iter_arguments_get(iter, "(aiia{ss}iaiiasib)uib", &rule_iter, &sortby, &count, &traverse))
+     {
+        return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Unable to get matchule, sortby, count or traverse values.");
+     }
+
+   if (!_collection_iter_match_rule_get(rule_iter, &rule))
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Invalid match rule parameters.");
+
+   _collection_query(&rule, sortby, &result, 0, count, obj, 0, EINA_TRUE, NULL, EINA_TRUE, traverse);
+
+   ret = _collection_return_msg_from_list(bridge, msg, result);
+
+   eina_list_free(result);
+   _collection_match_rule_free(&rule);
+
+   return ret;
+}
+
+static const Eldbus_Method collection_methods[] = {
+   { "GetMatchesFrom",
+      ELDBUS_ARGS({"o", "current_object"}, {"(aiia{ss}iaiiasib)", "match_rule"},
+                  {"u", "sortby"}, {"u", "tree"}, {"i", "count"}, {"b", "traverse"}),
+      ELDBUS_ARGS({"a(so)", "objects"}), _collection_get_matches_from, 0 },
+   { "GetMatchesTo",
+      ELDBUS_ARGS({"o", "current_object"}, {"(aiia{ss}iaiiasib)", "match_rule"},
+                  {"u", "sortby"}, {"u", "tree"}, {"b", "limit_scope"},
+                  {"i", "count"}, {"b", "traverse"}),
+      ELDBUS_ARGS({"a(so)", "objects"}), _collection_get_matches_to, 0 },
+   { "GetMatches",
+      ELDBUS_ARGS({"(aiia{ss}iaiiasib)", "match_rule"},
+                  {"u", "sortby"}, {"i", "count"}, {"b", "traverse"}),
+      ELDBUS_ARGS({"a(so)", "objects"}), _collection_get_matches, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
+};
+
+static const Eldbus_Service_Interface_Desc collection_iface_desc = {
+   ATSPI_DBUS_INTERFACE_COLLECTION, collection_methods, NULL, NULL, NULL, NULL
+};
+
 static void
 _bridge_iter_object_reference_append(Eo *bridge, Eldbus_Message_Iter *iter, const Eo *obj)
 {
@@ -2396,21 +3088,26 @@ _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj)
   if (!iter_array) return;
 
   if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
-    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_ACCESSIBLE);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN))
-    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_COMPONENT);
+    {
+       eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_ACCESSIBLE);
+       eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_COLLECTION);
+    }
   if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACTION_MIXIN))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_ACTION);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_VALUE_INTERFACE))
-    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_VALUE);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_IMAGE_MIXIN))
-    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_IMAGE);
-  if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_INTERFACE))
-    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_TEXT);
+  if (eo_isa(obj, ELM_ATSPI_APP_OBJECT_CLASS))
+    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_APPLICATION);
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN))
+    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_COMPONENT);
   if (eo_isa(obj, ELM_INTERFACE_ATSPI_EDITABLE_TEXT_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_EDITABLE_TEXT);
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_IMAGE_MIXIN))
+    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_IMAGE);
   if (eo_isa(obj, ELM_INTERFACE_ATSPI_SELECTION_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_SELECTION);
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_TEXT_INTERFACE))
+    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_TEXT);
+  if (eo_isa(obj, ELM_INTERFACE_ATSPI_VALUE_INTERFACE))
+    eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_VALUE);
 
   eldbus_message_iter_container_close(iter, iter_array);
 }
@@ -3478,6 +4175,7 @@ _interfaces_unregister(Eo *bridge)
    INTERFACE_SAFE_FREE(pd->interfaces.application);
    INTERFACE_SAFE_FREE(pd->interfaces.action);
    INTERFACE_SAFE_FREE(pd->interfaces.component);
+   INTERFACE_SAFE_FREE(pd->interfaces.collection);
    INTERFACE_SAFE_FREE(pd->interfaces.editable_text);
    INTERFACE_SAFE_FREE(pd->interfaces.image);
    INTERFACE_SAFE_FREE(pd->interfaces.selection);
@@ -3558,6 +4256,10 @@ _interfaces_register(Eo *bridge)
    pd->interfaces.component =
       eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &component_iface_desc);
    eldbus_service_object_data_set(pd->interfaces.component, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
+
+   pd->interfaces.collection =
+      eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &collection_iface_desc);
+   eldbus_service_object_data_set(pd->interfaces.collection, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
 
    pd->interfaces.editable_text =
       eldbus_service_interface_fallback_register(pd->a11y_bus, ELM_ACCESS_OBJECT_PATH_PREFIX2, &editable_text_iface_desc);
