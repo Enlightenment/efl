@@ -2814,7 +2814,7 @@ evas_tangent_space_get(float *data, float *tex_data, float *normal_data, unsigne
    Evas_Vec2 tex1, tex2, tex3;
    Evas_Vec3 big_tangent, little_tangent, normal;
    Evas_Vec4 *plain = NULL;
-   int i, j, k, l, m, found_index = NULL;
+   int i, j, k, l, m, found_index = 0;
    int indexes[3];
 
    if (!tex_data)
