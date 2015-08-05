@@ -692,7 +692,7 @@ _subpopup_cb(void *data, Evas_Object *obj EINA_UNUSED,
    // button as a popup content
    btn = elm_button_add(popup);
    elm_object_text_set(btn, "content");
-   elm_object_part_content_set(popup, "elm.swallow.content", btn);
+   elm_object_content_set(popup, btn);
 
    // popup buttons
    btn = elm_button_add(popup);
