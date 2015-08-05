@@ -60,13 +60,21 @@ dnl _EFL_CHECK_FUNC_DLADDR is for internal use
 dnl _EFL_CHECK_FUNC_DLADDR(EFL, VARIABLE)
 AC_DEFUN([_EFL_CHECK_FUNC_DLADDR],
 [
+dllibs=""
+case "$host_os" in
+   linux*)
+      dllibs="-ldl"
+   ;;
+   *)
+   ;;
+esac
 case "$host_os" in
    mingw*)
       $2="yes"
       EFL_ADD_LIBS([$1], [lib/evil/libdl.la])
    ;;
    *)
-      EFL_FIND_LIB_FOR_CODE([$1], [-ldl], [$2], [[
+      EFL_FIND_LIB_FOR_CODE([$1], [$dllibs], [$2], [[
 #ifndef _GNU_SOURCE
 # define _GNU_SOURCE
 #endif
@@ -81,13 +89,21 @@ dnl _EFL_CHECK_FUNC_DLOPEN is for internal use
 dnl _EFL_CHECK_FUNC_DLOPEN(EFL, VARIABLE)
 AC_DEFUN([_EFL_CHECK_FUNC_DLOPEN],
 [
+dllibs=""
+case "$host_os" in
+   linux*)
+      dllibs="-ldl"
+   ;;
+   *)
+   ;;
+esac
 case "$host_os" in
    mingw*)
       $2="yes"
       EFL_ADD_LIBS([$1], [lib/evil/libdl.la])
    ;;
    *)
-      EFL_FIND_LIB_FOR_CODE([$1], [-ldl], [$2], [[
+      EFL_FIND_LIB_FOR_CODE([$1], [$dllibs], [$2], [[
 #include <dlfcn.h>
 ]], [[void *h = dlopen(0, 0);]])
    ;;
@@ -98,13 +114,21 @@ dnl _EFL_CHECK_FUNC_DLSYM is for internal use
 dnl _EFL_CHECK_FUNC_DLSYM(EFL, VARIABLE)
 AC_DEFUN([_EFL_CHECK_FUNC_DLSYM],
 [
+dllibs=""
+case "$host_os" in
+   linux*)
+      dllibs="-ldl"
+   ;;
+   *)
+   ;;
+esac
 case "$host_os" in
    mingw*)
       $2="yes"
       EFL_ADD_LIBS([$1], [lib/evil/libdl.la])
    ;;
    *)
-      EFL_FIND_LIB_FOR_CODE([$1], [-ldl], [$2], [[
+      EFL_FIND_LIB_FOR_CODE([$1], [$dllibs], [$2], [[
 #ifndef _GNU_SOURCE
 # define _GNU_SOURCE
 #endif
@@ -215,7 +239,16 @@ fi
 dnl _EFL_CHECK_FUNC_SHM_OPEN is for internal use
 dnl _EFL_CHECK_FUNC_SHM_OPEN(EFL, VARIABLE)
 AC_DEFUN([_EFL_CHECK_FUNC_SHM_OPEN],
-[EFL_FIND_LIB_FOR_CODE([$1], [-lrt], [$2], [[
+[
+shmlibs=""
+case "$host_os" in
+   linux*)
+      shmlibs="-lrt"
+   ;;
+   *)
+   ;;
+esac
+EFL_FIND_LIB_FOR_CODE([$1], [$shmlibs], [$2], [[
 #include <sys/mman.h>
 #include <sys/stat.h>        /* For mode constants */
 #include <fcntl.h>           /* For O_* constants */
