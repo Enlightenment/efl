@@ -337,22 +337,16 @@ dnl managed by evil
       have_dlopen="yes"
       requirement_elm_libs="-ldl ${requirement_elm_libs}"
       ;;
-   *solaris*)
-      have_dlopen="yes"
-      ;;
-   darwin*)
-      have_dlopen="yes"
-      ;;
-   freebsd*|openbsd*|netbsd*|dragonfly*)
-      have_dlopen="yes"
-      ;;
-   *)
+   linux*)
       AC_CHECK_LIB([dl], [dlopen], [res=yes], [res=no])
       if test "x$res" = "xyes"; then
          AC_CHECK_LIB([dl], [dladdr], AC_DEFINE([HAVE_DLADDR], [1], [Define to 1 if you have the `dladdr' function.]))
          requirement_elm_libs="-ldl ${requirement_elm_libs}"
          have_dlopen="yes"
       fi
+      ;;
+   *)
+      have_dlopen="yes"
       ;;
 esac
 
