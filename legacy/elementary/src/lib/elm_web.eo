@@ -10,7 +10,7 @@ class Elm.Web (Elm.Widget)
             If enabled, marks set with elm_web_text_matches_mark() will be
             highlighted.
 
-            @return @c true on success, @c false otherwise
+            @return $true on success, $false otherwise
 
             @ingroup Web */
             return: bool;
@@ -19,7 +19,7 @@ class Elm.Web (Elm.Widget)
             /*@
             Get whether highlighting marks is enabled
 
-            @return @c true is marks are set to be highlighted, @c false
+            @return $true is marks are set to be highlighted, $false
             otherwise
 
             @ingroup Web */
@@ -55,7 +55,7 @@ class Elm.Web (Elm.Widget)
             It must be a full URL, with resource included, in the form
             http://www.enlightenment.org or file:///tmp/something.html
 
-            @return @c true if the URL could be set, @c false if an error occurred.
+            @return $true if the URL could be set, $false if an error occurred.
 
             @ingroup Web */
             return: bool;
@@ -67,7 +67,7 @@ class Elm.Web (Elm.Widget)
             The returned string must not be freed and is guaranteed to be
             stringshared.
 
-            @return A stringshared internal string with the current URL, or @c NULL on
+            @return A stringshared internal string with the current URL, or $NULL on
             failure
 
             @ingroup Web */
@@ -117,12 +117,12 @@ class Elm.Web (Elm.Widget)
             /*@
             Get whether Inwin mode is set for the current object
 
-            @return @c true if Inwin mode is set, @c false otherwise
+            @return $true if Inwin mode is set, $false otherwise
 
             @ingroup Web */
          }
          values {
-            value: bool; /*@ @c true to use Inwin, @c false to use a normal window */
+            value: bool; /*@ $true to use Inwin, $false to use a normal window */
          }
       }
       @property tab_propagate {
@@ -142,7 +142,7 @@ class Elm.Web (Elm.Widget)
             /*@
             Get the status of the tab propagation
 
-            @return @c true if tab propagation is enabled, @c false otherwise
+            @return $true if tab propagation is enabled, $false otherwise
 
             @see elm_web_tab_propagate_set()
 
@@ -163,7 +163,7 @@ class Elm.Web (Elm.Widget)
             /*@
             Get whether browsing history is enabled for the given object
 
-            @return @c true if history is enabled, @c false otherwise
+            @return $true if history is enabled, $false otherwise
 
             @ingroup Web */
          }
@@ -255,7 +255,7 @@ class Elm.Web (Elm.Widget)
             This hook will be called when a request to create a new window is
             issued from the web page loaded.
             There is no default implementation for this feature, so leaving this
-            unset or passing @c NULL in @p func will prevent new windows from
+            unset or passing $NULL in $func will prevent new windows from
             opening.
 
             @ingroup Web */
@@ -272,7 +272,7 @@ class Elm.Web (Elm.Widget)
 
             This hook will be called when a JavaScript file selector dialog is
             requested.
-            If no function is set or @c NULL is passed in @p func, the default
+            If no function is set or $NULL is passed in $func, the default
             implementation will take place.
 
             @see elm_web_inwin_mode_set()
@@ -290,7 +290,7 @@ class Elm.Web (Elm.Widget)
             Sets the function to call when an confirm dialog
 
             This hook will be called when a JavaScript confirm dialog is requested.
-            If no function is set or @c NULL is passed in @p func, the default
+            If no function is set or $NULL is passed in $func, the default
             implementation will take place.
 
             @see elm_web_inwin_mode_set()
@@ -325,7 +325,7 @@ class Elm.Web (Elm.Widget)
             Sets the function to call when an prompt dialog
 
             This hook will be called when a JavaScript prompt dialog is requested.
-            If no function is set or @c NULL is passed in @p func, the default
+            If no function is set or $NULL is passed in $func, the default
             implementation will take place.
 
             @see elm_web_inwin_mode_set()
@@ -343,7 +343,7 @@ class Elm.Web (Elm.Widget)
             Sets the function to call when an alert dialog
 
             This hook will be called when a JavaScript alert dialog is requested.
-            If no function is set or @c NULL is passed in @p func, the default
+            If no function is set or $NULL is passed in $func, the default
             implementation will take place.
 
             @see elm_web_inwin_mode_set()
@@ -360,7 +360,7 @@ class Elm.Web (Elm.Widget)
             /*@
             Queries whether it's possible to go forward in history
 
-            @return @c true if it's possible to forward in history, @c false
+            @return $true if it's possible to forward in history, $false
             otherwise
 
             @ingroup Web */
@@ -377,7 +377,7 @@ class Elm.Web (Elm.Widget)
             return the internal reference. Be careful using it as it may
             interfere with elm_web behavior.
 
-            @return The internal ewk_view object or @c NULL if it does not
+            @return The internal ewk_view object or $NULL if it does not
             exist. (Failure to create or Elementary compiled without
             ewebkit)
 
@@ -392,7 +392,7 @@ class Elm.Web (Elm.Widget)
             /*@
             Queries whether it's possible to go back in history
 
-            @return @c true if it's possible to back in history, @c false
+            @return $true if it's possible to back in history, $false
             otherwise
 
             @ingroup Web */
@@ -422,7 +422,7 @@ class Elm.Web (Elm.Widget)
 
             The string returned must be freed by the user when it's done with it.
 
-            @return A newly allocated string, or @c NULL if nothing is selected or an
+            @return A newly allocated string, or $NULL if nothing is selected or an
             error occurred
 
             @ingroup Web */
@@ -437,7 +437,7 @@ class Elm.Web (Elm.Widget)
             The returned string must not be freed and is guaranteed to be
             stringshared.
 
-            @return A stringshared internal string with the current title, or @c NULL on
+            @return A stringshared internal string with the current title, or $NULL on
             failure
 
             @ingroup Web */
@@ -448,10 +448,10 @@ class Elm.Web (Elm.Widget)
          /*@
          Jumps the given number of steps in the browsing history
 
-         The @p steps value can be a negative integer to back in history, or a
+         The $steps value can be a negative integer to back in history, or a
          positive to move forward.
 
-         @return @c true on success, @c false on error or if not enough
+         @return $true on success, $false on error or if not enough
          history exists to jump the given number of steps
 
          @see elm_web_history_enabled_set()
@@ -471,7 +471,7 @@ class Elm.Web (Elm.Widget)
 
          This is equivalent to calling elm_web_object_navigate(obj, -1);
 
-         @return @c true on success, @c false otherwise
+         @return $true on success, $false otherwise
 
          @see elm_web_history_enabled_set()
          @see elm_web_back_possible()
@@ -486,7 +486,7 @@ class Elm.Web (Elm.Widget)
          /*@
          Loads the specified @a html string as the content of the web object
 
-         @return @c true if it the HTML was successfully loaded, @c false otherwise
+         @return $true if it the HTML was successfully loaded, $false otherwise
 
          External objects such as stylesheets or images referenced in the HTML
          document are located relative to @a base_url.
@@ -509,7 +509,7 @@ class Elm.Web (Elm.Widget)
          /*@
          Searches the given string in a document.
 
-         @return @c true if the given string was found, @c false if not
+         @return $true if the given string was found, $false if not
          or failure
 
          @ingroup Web */
@@ -530,7 +530,7 @@ class Elm.Web (Elm.Widget)
          will later emit an "popup,willdelete" signal to notify the user that
          any memory and objects related to this popup can be freed.
 
-         @return @c true if the menu was successfully destroyed, or @c false
+         @return $true if the menu was successfully destroyed, or $false
          if there was no menu to destroy
 
          @ingroup Web */
@@ -556,7 +556,7 @@ class Elm.Web (Elm.Widget)
 
          This is equivalent to calling elm_web_object_navigate(obj, 1);
 
-         @return @c true on success, @c false otherwise
+         @return $true on success, $false otherwise
 
          @see elm_web_history_enabled_set()
          @see elm_web_forward_possible_get()
@@ -605,9 +605,9 @@ class Elm.Web (Elm.Widget)
 
          Cancels the loading of the current page in the web object. This will
          cause a "load,error" signal to be emitted, with the is_cancellation
-         flag set to @c true.
+         flag set to $true.
 
-         @return @c true if the cancel was successful, @c false otherwise
+         @return $true if the cancel was successful, $false otherwise
 
          @ingroup Web */
 
@@ -617,11 +617,11 @@ class Elm.Web (Elm.Widget)
          /*@
          Queries whether it's possible to jump the given number of steps
 
-         The @p steps value can be a negative integer to back in history, or a
+         The $steps value can be a negative integer to back in history, or a
          positive to move forward.
 
-         @return @c true if enough history exists to perform the given jump,
-         @c false otherwise
+         @return $true if enough history exists to perform the given jump,
+         $false otherwise
 
          @ingroup Web */
 
@@ -634,7 +634,7 @@ class Elm.Web (Elm.Widget)
          /*@
          Requests a reload of the current document, avoiding any existing caches
 
-         @return @c true on success, @c false otherwise
+         @return $true on success, $false otherwise
 
          @ingroup Web */
 
@@ -644,7 +644,7 @@ class Elm.Web (Elm.Widget)
          /*@
          Clears all marked matches in the document
 
-         @return @c true on success, @c false otherwise
+         @return $true on success, $false otherwise
 
          @ingroup Web */
 
@@ -654,7 +654,7 @@ class Elm.Web (Elm.Widget)
          /*@
          Requests a reload of the current document in the object
 
-         @return @c true on success, @c false otherwise
+         @return $true on success, $false otherwise
 
          @ingroup Web */
 

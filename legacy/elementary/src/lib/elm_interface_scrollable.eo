@@ -148,8 +148,8 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
           * @brief Currently visible content region
           *
           * This gets the current region in the content object that is visible through
-          * the scroller. The region co-ordinates are returned in the @p x, @p y, @p
-          * w, @p h values pointed to.
+          * the scroller. The region co-ordinates are returned in the $x, $y, @p
+          * w, $h values pointed to.
           *
           * @note All coordinates are relative to the content.
           *

@@ -75,7 +75,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
 
            /* FIXME: Make the hoversel_item reference in the doc a real ref. */
            /* FIXME-doc
-           For more information on what @p icon_file and @p icon_type are, see the
+           For more information on what $icon_file and $icon_type are, see the
            @ref Icon "icon documentation". */
          return: Elm.Widget_Item *; [[A handle to the added item.]]
          params {

@@ -21,16 +21,16 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             /*@
             Get the orientation of a given slider widget
 
-            @return @c true, if @p obj is set to be @b horizontal,
-            @c false if it's @b vertical (and on errors).
+            @return $true, if $obj is set to be @b horizontal,
+            $false if it's @b vertical (and on errors).
 
             @see elm_slider_horizontal_set() for more details.
 
             @ingroup Slider */
          }
          values {
-            horizontal: bool; /*@ Use @c true to make @p obj to be
-            @b horizontal, @c false to make it @b vertical. */
+            horizontal: bool; /*@ Use $true to make $obj to be
+            @b horizontal, $false to make it @b vertical. */
          }
       }
       @property value {
@@ -75,7 +75,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             for example, above the slider knob that is dragged around. This function
             sets the format string used for this.
 
-            If @c NULL, indicator label won't be visible. If not it sets the format
+            If $NULL, indicator label won't be visible. If not it sets the format
             string for the label text. To the label text is provided a floating point
             value, so the label text can display up to 1 floating point value.
             Note that this is optional.
@@ -128,16 +128,16 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             Get whether a given slider widget's displaying values are
             inverted or not.
 
-            @return @c true, if @p obj has inverted values,
-            @c false otherwise (and on errors).
+            @return $true, if $obj has inverted values,
+            $false otherwise (and on errors).
 
             @see elm_slider_inverted_set() for more details.
 
             @ingroup Slider */
          }
          values {
-            inverted: bool; /*@ Use @c true to make @p obj inverted,
-            @c false to bring it back to default, non-inverted values. */
+            inverted: bool; /*@ Use $true to make $obj inverted,
+            $false to bring it back to default, non-inverted values. */
          }
       }
       @property indicator_show {
@@ -156,15 +156,15 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             /*@
             Get whether a given slider widget's enlarging indicator or not.
 
-            @return @c true, if @p obj is enlarging indicator, or
-            @c false otherwise (and on errors).
+            @return $true, if $obj is enlarging indicator, or
+            $false otherwise (and on errors).
 
             @see elm_slider_indicator_show_set() for details.
 
             @ingroup Slider */
          }
          values {
-            show: bool; /*@ @c true will make it enlarge, @c false will
+            show: bool; /*@ $true will make it enlarge, $false will
             let the knob always at default size. */
          }
       }
@@ -175,8 +175,8 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
 
             Define the allowed range of values to be selected by the user.
 
-            If actual value is less than @p min, it will be updated to @p min. If it
-            is bigger then @p max, will be updated to @p max. Actual value can be
+            If actual value is less than $min, it will be updated to $min. If it
+            is bigger then $max, will be updated to $max. Actual value can be
             get with elm_slider_value_get().
 
             By default, min is equal to 0.0, and max is equal to 1.0.
@@ -193,7 +193,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             Get the minimum and maximum values of the slider.
 
             @note If only one value is needed, the other pointer can be passed
-            as @c NULL.
+            as $NULL.
 
             @see elm_slider_min_max_set() for details.
 
@@ -212,7 +212,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             Unit label is displayed all the time, if set, after slider's bar.
             In horizontal mode, at right and in vertical mode, at bottom.
 
-            If @c NULL, unit label won't be visible. If not it sets the format
+            If $NULL, unit label won't be visible. If not it sets the format
             string for the label text. To the label text is provided a floating point
             value, so the label text can display up to 1 floating point value.
             Note that this is optional.
@@ -255,8 +255,8 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             /*@
             Get whether the indicator of the slider is set or not
 
-            @return @c true, if indicator is set
-            @c false otherwise.
+            @return $true, if indicator is set
+            $false otherwise.
 
             @ingroup Slider */
          }
@@ -271,14 +271,14 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
 
             This sets the minimum width (when in horizontal mode) or height
             (when in vertical mode) of the actual bar area of the slider
-            @p obj. This in turn affects the object's minimum size. Use
+            $obj. This in turn affects the object's minimum size. Use
             this when you're not setting other size hints expanding on the
             given direction (like weight and alignment hints) and you would
             like it to have a specific size.
 
-            @note Icon, end, label, indicator and unit text around @p obj
+            @note Icon, end, label, indicator and unit text around $obj
             will require their
-            own space, which will make @p obj to require more the @p size,
+            own space, which will make $obj to require more the $size,
             actually.
 
             @see elm_slider_span_size_get()
@@ -292,7 +292,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @return The length of the slider's bar region.
 
             If that size was not set previously, with
-            elm_slider_span_size_set(), this call will return @c 0.
+            elm_slider_span_size_set(), this call will return $0.
 
             @ingroup Slider */
          }

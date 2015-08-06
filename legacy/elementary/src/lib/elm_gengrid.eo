@@ -29,7 +29,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             Get the items grid's alignment values within a given gengrid
             widget
 
-            @note Use @c NULL pointers on the alignment values you're not
+            @note Use $NULL pointers on the alignment values you're not
             interested in: they'll be ignored by the function.
 
             @see elm_gengrid_align_set() for more details
@@ -59,10 +59,10 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             /*@
             Get how the items grid's filled within a given gengrid widget
 
-            @return @c true, if filled is on, @c false if it's
+            @return $true, if filled is on, $false if it's
             off
 
-            @note Use @c NULL pointers on the alignment values you're not
+            @note Use $NULL pointers on the alignment values you're not
             interested in: they'll be ignored by the function.
 
             @see elm_gengrid_align_set() for more details
@@ -108,7 +108,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             Get whether multi-selection is enabled or disabled for a given
             gengrid widget
 
-            @return @c true, if multi-selection is enabled, @c
+            @return $true, if multi-selection is enabled, @c
             false otherwise
 
             @see elm_gengrid_multi_select_set() for more details
@@ -116,8 +116,8 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            multi: bool; /*@ @c true, to enable multi-selection,
-            @c false to disable it. */
+            multi: bool; /*@ $true, to enable multi-selection,
+            $false to disable it. */
          }
       }
       @property group_item_size {
@@ -139,7 +139,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             /*@
             Get the size set for the group items of a given gengrid widget
 
-            @note Use @c NULL pointers on the size values you're not
+            @note Use $NULL pointers on the size values you're not
             interested in: they'll be ignored by the function.
 
             @see elm_gengrid_group_item_size_get() for more details
@@ -210,7 +210,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             Get whether a given gengrid widget is or not able have items
             @b reordered
 
-            @return @c true, if reordering is on, @c false if it's
+            @return $true, if reordering is on, $false if it's
             off
 
             @see elm_gengrid_reorder_mode_set() for more details
@@ -218,8 +218,8 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            reorder_mode: bool; /*@ Use @c true to turn reordering on,
-            @c false to turn it off */
+            reorder_mode: bool; /*@ Use $true to turn reordering on,
+            $false to turn it off */
          }
       }
       @property highlight_mode {
@@ -252,7 +252,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             /*@
             Get the size set for the items of a given gengrid widget
 
-            @note Use @c NULL pointers on the size values you're not
+            @note Use $NULL pointers on the size values you're not
             interested in: they'll be ignored by the function.
 
             @see elm_gengrid_item_size_get() for more details
@@ -304,14 +304,14 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             Set the direction in which a given gengrid widget will expand while
             placing its items.
 
-            When in "horizontal mode" (@c true), items will be placed in @b columns,
+            When in "horizontal mode" ($true), items will be placed in @b columns,
             from top to bottom and, when the space for a column is filled, another one is
             started on the right, thus expanding the grid horizontally. When in
-            "vertical mode" (@c false), though, items will be placed in @b rows,
+            "vertical mode" ($false), though, items will be placed in @b rows,
             from left to right and, when the space for a row is filled, another one is
             started below, thus expanding the grid vertically.
 
-            @note By default, gengrid is in vertical mode, @c false.
+            @note By default, gengrid is in vertical mode, $false.
 
             @see elm_gengrid_horizontal_get()
 
@@ -322,16 +322,16 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             Get for what direction a given gengrid widget will expand while
             placing its items.
 
-            @return @c true, if @p obj is set to expand horizontally,
-            @c false if it's set to expand vertically.
+            @return $true, if $obj is set to expand horizontally,
+            $false if it's set to expand vertically.
 
             @see elm_gengrid_horizontal_set() for more details
 
             @ingroup Gengrid */
          }
          values {
-            horizontal: bool; /*@ @c true to make the gengrid expand horizontally,
-            @c false to expand vertically. */
+            horizontal: bool; /*@ $true to make the gengrid expand horizontally,
+            $false to expand vertically. */
          }
       }
       @property page_size {
@@ -348,11 +348,11 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             /*@
             Get the selected item in a given gengrid widget
 
-            @return The selected item's handle or @c NULL, if none is
+            @return The selected item's handle or $NULL, if none is
             selected at the moment (and on errors)
 
-            This returns the selected item in @p obj. If multi selection is
-            enabled on @p obj (@see elm_gengrid_multi_select_set()), only
+            This returns the selected item in $obj. If multi selection is
+            enabled on $obj (@see elm_gengrid_multi_select_set()), only
             the first item in the list is selected, which might not be very
             useful. For that case, see elm_gengrid_selected_items_get().
 
@@ -384,10 +384,10 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             /*@
             Get the first item in a given gengrid widget
 
-            @return The first item's handle or @c NULL, if there are no
-            items in @p obj (and on errors)
+            @return The first item's handle or $NULL, if there are no
+            items in $obj (and on errors)
 
-            This returns the first item in the @p obj's internal list of
+            This returns the first item in the $obj's internal list of
             items.
 
             @see elm_gengrid_last_item_get()
@@ -401,7 +401,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             /*@
             Get <b>a list</b> of selected items in a given gengrid
 
-            @return The list of selected items or @c NULL, if none is
+            @return The list of selected items or $NULL, if none is
             selected at the moment (and on errors)
 
             This returns a list of the selected items, in the order that
@@ -421,10 +421,10 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             /*@
             Get the last item in a given gengrid widget
 
-            @return The last item's handle or @c NULL, if there are no
-            items in @p obj (and on errors)
+            @return The last item's handle or $NULL, if there are no
+            items in $obj (and on errors)
 
-            This returns the last item in the @p obj's internal list of
+            This returns the last item in the $obj's internal list of
             items.
 
             @see elm_gengrid_first_item_get()
@@ -450,7 +450,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             /*@
             Get a value whether mouse wheel is enabled or not.
 
-            @return @c true means gengrid wheel is disabled. @c false indicates
+            @return $true means gengrid wheel is disabled. $false indicates
             it is enabled.
 
             Mouse wheel can be used for the user to scroll up and down the gengrid.
@@ -460,7 +460,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            disabled: bool; /*@ Use @c true to disable mouse wheel or @c false
+            disabled: bool; /*@ Use $true to disable mouse wheel or $false
             to enable it. */
          }
       }
@@ -468,7 +468,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
          /*@
          Insert an item before another in a gengrid widget
 
-         @return A handle to the item added or @c NULL, on errors.
+         @return A handle to the item added or $NULL, on errors.
 
          This inserts an item before another in the gengrid.
 
@@ -486,7 +486,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @in relative: Elm.Widget_Item *; /*@ The item to place this new one before. */
             @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when the item is
             selected. */
-            @in func_data: const(void)* @optional; /*@ Data to be passed to @p func. */
+            @in func_data: const(void)* @optional; /*@ Data to be passed to $func. */
          }
       }
       realized_items_update {
@@ -509,7 +509,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
          /*@
          Insert an item after another in a gengrid widget
 
-         @return A handle to the item added or @c NULL, on errors.
+         @return A handle to the item added or $NULL, on errors.
 
          This inserts an item after another in the gengrid.
 
@@ -527,7 +527,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @in relative: Elm.Widget_Item *; /*@ The item to place this new one after. */
             @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when the item is
             selected. */
-            @in func_data: const(void)* @optional; /*@ Data to be passed to @p func. */
+            @in func_data: const(void)* @optional; /*@ Data to be passed to $func. */
          }
       }
       items_count @const {
@@ -549,11 +549,11 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
 
          This returns the item at the given coordinates (which are canvas
          relative, not object-relative). If an item is at that coordinate,
-         that item handle is returned, and if @p xposret is not NULL, the
+         that item handle is returned, and if $xposret is not NULL, the
          integer pointed to is set to a value of -1, 0 or 1, depending if
          the coordinate is on the left portion of that item (-1), on the
          middle section (0) or on the right part (1).
-         if @p yposret is not NULL, the
+         if $yposret is not NULL, the
          integer pointed to is set to a value of -1, 0 or 1, depending if
          the coordinate is on the upper portion of that item (-1), on the
          middle section (0) or on the lower part (1). If NULL is returned as
@@ -574,7 +574,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
          /*@
          Append a new item in a given gengrid widget.
 
-         @return A handle to the item added or @c NULL, on errors.
+         @return A handle to the item added or $NULL, on errors.
 
          This adds an item to the beginning of the gengrid.
 
@@ -591,14 +591,14 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @in data: const(void)*; /*@ The item data. */
             @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when the item is
             selected. */
-            @in func_data: const(void)* @optional; /*@ Data to be passed to @p func. */
+            @in func_data: const(void)* @optional; /*@ Data to be passed to $func. */
          }
       }
       item_prepend {
          /*@
          Prepend a new item in a given gengrid widget.
 
-         @return A handle to the item added or @c NULL, on errors.
+         @return A handle to the item added or $NULL, on errors.
 
          This adds an item to the end of the gengrid.
 
@@ -615,14 +615,14 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @in data: const(void)*; /*@ The item data. */
             @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when the item is
             selected. */
-            @in func_data: const(void)* @optional; /*@ Data to be passed to @p func. */
+            @in func_data: const(void)* @optional; /*@ Data to be passed to $func. */
          }
       }
       clear {
          /*@
          Remove all items from a given gengrid widget
 
-         This removes (and deletes) all items in @p obj, leaving it
+         This removes (and deletes) all items in $obj, leaving it
          empty.
 
          @see elm_object_item_del(), to remove just one item.
@@ -634,10 +634,10 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
          /*@
          Insert an item in a gengrid widget using a user-defined sort function.
 
-         @return A handle to the item added or @c NULL, on errors.
+         @return A handle to the item added or $NULL, on errors.
 
          This inserts an item in the gengrid based on user defined comparison
-         function. The two arguments passed to the function @p func are gengrid
+         function. The two arguments passed to the function $func are gengrid
          item handles to compare.
 
          @see elm_gengrid_item_append()
@@ -655,7 +655,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @in comp: Eina_Compare_Cb; /*@ User defined comparison function that defines the sort order
             based on gengrid item and its data. */
             @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when the item is selected. */
-            @in func_data: const(void)* @optional; /*@ Data to be passed to @p func. */
+            @in func_data: const(void)* @optional; /*@ Data to be passed to $func. */
          }
       }
       search_by_text_item_get {

@@ -15,14 +15,14 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
             /*@
             Get whether auto hiding feature is enabled or not for a given index widget.
 
-            @return @c true, if auto hiding is disabled, @c false otherwise
+            @return $true, if auto hiding is disabled, $false otherwise
 
             @see elm_index_autohide_disabled_set() for more details
 
             @ingroup Index */
          }
          values {
-            disabled: bool; /*@ @c true to disable auto hiding, @c false to enable */
+            disabled: bool; /*@ $true to disable auto hiding, $false to enable */
          }
       }
       @property omit_enabled {
@@ -40,7 +40,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
             /*@
             Get whether omit feature is enabled or not for a given index widget.
 
-            @return @c true, if omit feature is enabled, @c false otherwise
+            @return $true, if omit feature is enabled, $false otherwise
 
             @see elm_index_omit_enabled_set()
 
@@ -49,7 +49,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
             @ingroup Index */
          }
          values {
-            enabled: bool; /*@ @c true to enable omit feature, @c false to disable */
+            enabled: bool; /*@ $true to enable omit feature, $false to disable */
          }
       }
       @property priority {
@@ -77,7 +77,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
             @ingroup Index */
          }
          values {
-            priority: int; /*@ @c priority target priority value in index */
+            priority: int; /*@ $priority target priority value in index */
          }
       }
 
@@ -99,16 +99,16 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
             /*@
             Get a value whether horizontal mode is enabled or not.
 
-            @return @c true means horizontal mode selection is enabled.
-            @c false indicates it's disabled. If @p obj is @c NULL,
-            @c false is returned.
+            @return $true means horizontal mode selection is enabled.
+            $false indicates it's disabled. If $obj is $NULL,
+            $false is returned.
 
             @see elm_index_horizontal_set() for details.
 
             @ingroup Index */
          }
          values {
-            horizontal: bool; /*@ @c true to enable horizontal or @c false to
+            horizontal: bool; /*@ $true to enable horizontal or $false to
             disable it, i.e., to enable vertical mode. it's an area one @ref Fingers
             "finger" wide on the bottom side of the index widget's container. */
          }
@@ -160,7 +160,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
             @ingroup Index */
          }
          values {
-            disabled: bool; /*@ @c true to disable it, @c false to enable it */
+            disabled: bool; /*@ $true to disable it, $false to enable it */
          }
       }
       @property item_level {
@@ -176,14 +176,14 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
             /*@
             Get the items level set for a given index widget.
 
-            @return @c 0 or @c 1, which are the levels @p obj might be at.
+            @return $0 or $1, which are the levels $obj might be at.
 
             @see elm_index_item_level_set() for more information
 
             @ingroup Index */
          }
          values {
-            level: int; /*@ @c 0 or @c 1, the currently implemented levels. */
+            level: int; /*@ $0 or $1, the currently implemented levels. */
          }
       }
       level_go {
@@ -199,21 +199,21 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
          @ingroup Index */
 
          params {
-            @in level: int; /*@ The index level (one of @c 0 or @c 1) where changes were made */
+            @in level: int; /*@ The index level (one of $0 or $1) where changes were made */
          }
       }
       item_prepend {
          /*@
          Prepend a new item on a given index widget.
 
-         @return A handle to the item added or @c NULL, on errors
+         @return A handle to the item added or $NULL, on errors
 
-         Despite the most common usage of the @p letter argument is for
+         Despite the most common usage of the $letter argument is for
          single char strings, one could use arbitrary strings as index
          entries.
 
-         @c item will be the pointer returned back on @c "changed", @c
-         "delay,changed" and @c "selected" smart events.
+         $item will be the pointer returned back on $"changed", @c
+         "delay,changed" and $"selected" smart events.
 
          @ingroup Index */
 
@@ -229,25 +229,25 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
          Removes @b all items from a given index widget.
 
          If deletion callbacks are set, via elm_object_item_del_cb_set(),
-         that callback function will be called for each item in @p obj.
+         that callback function will be called for each item in $obj.
 
          @ingroup Index */
 
       }
       item_insert_after {
          /*@
-         Insert a new item into the index object after item @p after.
+         Insert a new item into the index object after item $after.
 
-         @return A handle to the item added or @c NULL, on errors
+         @return A handle to the item added or $NULL, on errors
 
-         Despite the most common usage of the @p letter argument is for
+         Despite the most common usage of the $letter argument is for
          single char strings, one could use arbitrary strings as index
          entries.
 
-         @c item will be the pointer returned back on @c "changed", @c
-         "delay,changed" and @c "selected" smart events.
+         $item will be the pointer returned back on $"changed", @c
+         "delay,changed" and $"selected" smart events.
 
-         @note If @p relative is @c NULL this function will behave as
+         @note If $relative is $NULL this function will behave as
          elm_index_item_append().
 
          @ingroup Index */
@@ -264,7 +264,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
          /*@
          Find a given index widget's item, <b>using item data</b>.
 
-         @return The index item handle, if found, or @c NULL otherwise
+         @return The index item handle, if found, or $NULL otherwise
 
          @ingroup Index */
 
@@ -275,18 +275,18 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
       }
       item_insert_before {
          /*@
-         Insert a new item into the index object before item @p before.
+         Insert a new item into the index object before item $before.
 
-         @return A handle to the item added or @c NULL, on errors
+         @return A handle to the item added or $NULL, on errors
 
-         Despite the most common usage of the @p letter argument is for
+         Despite the most common usage of the $letter argument is for
          single char strings, one could use arbitrary strings as index
          entries.
 
-         @c item will be the pointer returned back on @c "changed", @c
-         "delay,changed" and @c "selected" smart events.
+         $item will be the pointer returned back on $"changed", @c
+         "delay,changed" and $"selected" smart events.
 
-         @note If @p relative is @c NULL this function will behave as
+         @note If $relative is $NULL this function will behave as
          elm_index_item_prepend().
 
          @ingroup Index */
@@ -303,14 +303,14 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
          /*@
          Append a new item on a given index widget.
 
-         @return A handle to the item added or @c NULL, on errors
+         @return A handle to the item added or $NULL, on errors
 
-         Despite the most common usage of the @p letter argument is for
+         Despite the most common usage of the $letter argument is for
          single char strings, one could use arbitrary strings as index
          entries.
 
-         @c item will be the pointer returned back on @c "changed", @c
-         "delay,changed" and @c "selected" smart events.
+         $item will be the pointer returned back on $"changed", @c
+         "delay,changed" and $"selected" smart events.
 
          @ingroup Index */
 
@@ -325,27 +325,27 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
          /*@
          Returns the last selected item, for a given index widget.
 
-         @return The last item @b selected on @p obj (or @c NULL, on errors).
+         @return The last item @b selected on $obj (or $NULL, on errors).
 
          @ingroup Index */
          return: Elm.Widget_Item *;
          params {
-            @in level: int; /*@ @c 0 or @c 1, the currently implemented levels. */
+            @in level: int; /*@ $0 or $1, the currently implemented levels. */
          }
       }
       item_sorted_insert {
          /*@
-         Insert a new item into the given index widget, using @p cmp_func
+         Insert a new item into the given index widget, using $cmp_func
          function to sort items (by item handles).
 
-         @return A handle to the item added or @c NULL, on errors
+         @return A handle to the item added or $NULL, on errors
 
-         Despite the most common usage of the @p letter argument is for
+         Despite the most common usage of the $letter argument is for
          single char strings, one could use arbitrary strings as index
          entries.
 
-         @c item will be the pointer returned back on @c "changed", @c
-         "delay,changed" and @c "selected" smart events.
+         $item will be the pointer returned back on $"changed", @c
+         "delay,changed" and $"selected" smart events.
 
          @ingroup Index */
 
@@ -358,16 +358,16 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
             items <b>by index item handles</b> */
             @in cmp_data_func: Eina_Compare_Cb @optional; /*@ A @b fallback function to be called for the
             sorting of index items <b>by item data</b>). It will be used
-            when @p cmp_func returns @c 0 (equality), which means an index
+            when $cmp_func returns $0 (equality), which means an index
             item with provided item data already exists. To decide which
             data item should be pointed to by the index item in question, @p
-            cmp_data_func will be used. If @p cmp_data_func returns a
+            cmp_data_func will be used. If $cmp_data_func returns a
             non-negative value, the previous index item data will be
-            replaced by the given @p item pointer. If the previous data need
-            to be freed, it should be done by the @p cmp_data_func function,
+            replaced by the given $item pointer. If the previous data need
+            to be freed, it should be done by the $cmp_data_func function,
             because all references to it will be lost. If this function is
-            not provided (@c NULL is given), index items will be @b
-            duplicated, if @p cmp_func returns @c 0. */
+            not provided ($NULL is given), index items will be @b
+            duplicated, if $cmp_func returns $0. */
          }
       }
    }

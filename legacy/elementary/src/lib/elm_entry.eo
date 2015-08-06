@@ -138,7 +138,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             /*@
             Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
 
-            @return @c true if the input panel will be shown in case of only Mouse up event.
+            @return $true if the input panel will be shown in case of only Mouse up event.
             @since 1.9
 
             @ingroup Entry */
@@ -302,7 +302,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
             By default, entries are editable and when focused, any text input by the
             user will be inserted at the current cursor position. But calling this
-            function with @p editable as false will prevent the user from
+            function with $editable as false will prevent the user from
             inputting text into the entry.
 
             The only way to change the text of a non-editable entry is to use
@@ -333,9 +333,9 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             Set the style that the hover should use
 
             When creating the popup hover, entry will request that it's
-            themed according to @p style.
+            themed according to $style.
 
-            Setting style no @c NULL means disabling automatic hover.
+            Setting style no $NULL means disabling automatic hover.
 
             @see elm_object_style_set()
 
@@ -347,7 +347,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
             Get the style, the hover created by entry will use.
 
-            @return The style to use by the hover. @c NULL means the default is used.
+            @return The style to use by the hover. $NULL means the default is used.
 
             @see elm_object_style_set()
 
@@ -363,10 +363,10 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             Sets the entry to single line mode.
 
             In single line mode, entries don't ever wrap when the text reaches the
-            edge, and instead they keep growing horizontally. Pressing the @c Enter
-            key will generate an @c "activate" event instead of adding a new line.
+            edge, and instead they keep growing horizontally. Pressing the $Enter
+            key will generate an $"activate" event instead of adding a new line.
 
-            When @p single_line is @c false, line wrapping takes effect again
+            When $single_line is $false, line wrapping takes effect again
             and pressing enter will break the text into a different line
             without generating any events.
 
@@ -429,8 +429,8 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            disabled: bool; /*@ The state to put in in: @c true for
-            disabled, @c false for enabled */
+            disabled: bool; /*@ The state to put in in: $true for
+            disabled, $false for enabled */
          }
       }
       @property autosave {
@@ -619,7 +619,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             /*@
             Sets the cursor position in the entry to the given value
 
-            The value in @p pos is the index of the character position within the
+            The value in $pos is the index of the character position within the
             contents of the string as returned by elm_entry_cursor_pos_get().
 
             @ingroup Entry */
@@ -675,14 +675,14 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             /*@
             Set whether the return key on the input panel is disabled automatically when entry has no text.
 
-            If @p enabled is true, The return key on input panel is disabled when the entry has no text.
+            If $enabled is true, The return key on input panel is disabled when the entry has no text.
             The return key on the input panel is automatically enabled when the entry has text.
             The default value is false.
 
             @ingroup Entry */
          }
          values {
-            enabled: bool; /*@ If @p enabled is true, the return key is automatically disabled when the entry has no text. */
+            enabled: bool; /*@ If $enabled is true, the return key is automatically disabled when the entry has no text. */
          }
       }
       @property end_visible {
@@ -837,7 +837,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             if an error occurred.
 
             The returned value points to an internal string and should not be freed
-            or modified in any way. If the @p entry object is deleted or its
+            or modified in any way. If the $entry object is deleted or its
             contents are changed, the returned pointer should be considered invalid.
 
             @return The selected text within the entry or NULL on failure
@@ -891,7 +891,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          params {
             @in func: Elm_Entry_Item_Provider_Cb; /*@ The function called to provide the item object */
-            @in data: void * @optional; /*@ The data passed to @p func */
+            @in data: void * @optional; /*@ The data passed to $func */
          }
       }
       input_panel_show {
@@ -994,7 +994,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          params {
             @in func: Elm_Entry_Item_Provider_Cb; /*@ The function called to provide the item object */
-            @in data: void * @optional; /*@ The data passed to @p func */
+            @in data: void * @optional; /*@ The data passed to $func */
          }
       }
       text_style_user_peek @const {
@@ -1142,7 +1142,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          tag for which no provider finds anything, and no text is displayed, this
          function still returns false.
 
-         @return @c true if the entry text is empty or @p entry is NULL, @c false otherwise.
+         @return $true if the entry text is empty or $entry is NULL, $false otherwise.
 
          @ingroup Entry */
          return: bool(true);
@@ -1178,7 +1178,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          params {
             @in func: Elm_Entry_Item_Provider_Cb; /*@ The function called to provide the item object */
-            @in data: void * @optional; /*@ The data passed to @p func */
+            @in data: void * @optional; /*@ The data passed to $func */
          }
       }
       markup_filter_append {
@@ -1198,14 +1198,14 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          params {
             @in func: Elm_Entry_Filter_Cb; /*@ The function to use as text filter */
-            @in data: void * @optional; /*@ User data to pass to @p func */
+            @in data: void * @optional; /*@ User data to pass to $func */
          }
       }
       entry_append {
          /*@
-         Appends @p str to the text of the entry.
+         Appends $str to the text of the entry.
 
-         Adds the text in @p str to the end of any text already present in the
+         Adds the text in $str to the end of any text already present in the
          widget.
 
          The appended text is subject to any filters set for the widget.
@@ -1252,7 +1252,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          params {
             @in func: Elm_Entry_Filter_Cb; /*@ The function to use as text filter */
-            @in data: void * @optional; /*@ User data to pass to @p func */
+            @in data: void * @optional; /*@ User data to pass to $func */
          }
       }
    }

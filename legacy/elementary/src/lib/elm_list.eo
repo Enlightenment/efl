@@ -62,16 +62,16 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             /*@
             Get a value whether horizontal mode is enabled or not.
 
-            @return @c true means horizontal mode selection is enabled.
-            @c false indicates it's disabled. If @p obj is @c NULL,
-            @c false is returned.
+            @return $true means horizontal mode selection is enabled.
+            $false indicates it's disabled. If $obj is $NULL,
+            $false is returned.
 
             @see elm_list_horizontal_set() for details.
 
             @ingroup List */
          }
          values {
-            horizontal: bool; /*@ @c true to enable horizontal or @c false to
+            horizontal: bool; /*@ $true to enable horizontal or $false to
             disable it, i.e., to enable vertical mode. */
          }
       }
@@ -156,14 +156,14 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
 
             @see elm_list_multi_select_set() for details.
 
-            @return @c true means multiple items selection is enabled.
-            @c false indicates it's disabled. If @p obj is @c NULL,
-            @c false is returned.
+            @return $true means multiple items selection is enabled.
+            $false indicates it's disabled. If $obj is $NULL,
+            $false is returned.
 
             @ingroup List */
          }
          values {
-            multi: bool; /*@ @c true to enable multi selection or @c false to
+            multi: bool; /*@ $true to enable multi selection or $false to
             disable it. */
          }
       }
@@ -261,8 +261,8 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             /*@
             Get a list of all the list items.
 
-            @return A @c list of list items, #Elm.Widget_Item,
-            or @c NULL on failure.
+            @return A $list of list items, #Elm.Widget_Item,
+            or $NULL on failure.
 
             @see elm_list_item_append()
             @see elm_object_item_del()
@@ -290,8 +290,8 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             /*@
             Return a list of the currently selected list items.
 
-            @return An @c list of list items, #Elm.Widget_Item,
-            or @c NULL on failure.
+            @return An $list of list items, #Elm.Widget_Item,
+            or $NULL on failure.
 
             Multiple items can be selected if multi select is enabled. It can be
             done with elm_list_multi_select_set().
@@ -318,16 +318,16 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
       }
       item_insert_before {
          /*@
-         Insert a new item into the list object before item @p before.
+         Insert a new item into the list object before item $before.
 
-         @return The created item or @c NULL upon failure.
+         @return The created item or $NULL upon failure.
 
          A new item will be created and added to the list. Its position in
-         this list will be just before item @p before.
+         this list will be just before item $before.
 
          Items created with this method can be deleted with elm_object_item_del().
 
-         Associated @p data can be properly freed when item is deleted if a
+         Associated $data can be properly freed when item is deleted if a
          callback function is set with elm_object_item_del_cb_set().
 
          If a function is passed as argument, it will be called every time this item
@@ -335,7 +335,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
          If always select is enabled it will call this function every time
          user clicks over an item (already selected or not).
          If such function isn't needed, just passing
-         @c NULL as @p func is enough. The same should be done for @p data.
+         $NULL as $func is enough. The same should be done for $data.
 
          @note Remember that the label parameter is copied inside the list. So if an
          application dynamically allocated the label, the application should free the
@@ -383,16 +383,16 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
       }
       item_insert_after {
          /*@
-         Insert a new item into the list object after item @p after.
+         Insert a new item into the list object after item $after.
 
-         @return The created item or @c NULL upon failure.
+         @return The created item or $NULL upon failure.
 
          A new item will be created and added to the list. Its position in
-         this list will be just after item @p after.
+         this list will be just after item $after.
 
          Items created with this method can be deleted with elm_object_item_del().
 
-         Associated @p data can be properly freed when item is deleted if a
+         Associated $data can be properly freed when item is deleted if a
          callback function is set with elm_object_item_del_cb_set().
 
          If a function is passed as argument, it will be called every time this item
@@ -400,7 +400,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
          If always select is enabled it will call this function every time
          user clicks over an item (already selected or not).
          If such function isn't needed, just passing
-         @c NULL as @p func is enough. The same should be done for @p data.
+         $NULL as $func is enough. The same should be done for $data.
 
          @note Remember that the label parameter is copied inside the list. So if an
          application dynamically allocated the label, the application should free the
@@ -436,7 +436,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
 
          This returns the item at the given coordinates (which are canvas
          relative, not object-relative). If an item is at that coordinate,
-         that item handle is returned, and if @p posret is not NULL, the
+         that item handle is returned, and if $posret is not NULL, the
          integer pointed to is set to a value of -1, 0 or 1, depending if
          the coordinate is on the upper portion of that item (-1), on the
          middle section (0) or on the lower part (1). If NULL is returned as
@@ -457,14 +457,14 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
          /*@
          Append a new item to the list object.
 
-         @return The created item or @c NULL upon failure.
+         @return The created item or $NULL upon failure.
 
          A new item will be created and appended to the list, i.e., will
          be set as @b last item.
 
          Items created with this method can be deleted with elm_object_item_del().
 
-         Associated @p data can be properly freed when item is deleted if a
+         Associated $data can be properly freed when item is deleted if a
          callback function is set with elm_object_item_del_cb_set().
 
          If a function is passed as argument, it will be called every time this item
@@ -472,7 +472,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
          If always select is enabled it will call this function every time
          user clicks over an item (already selected or not).
          If such function isn't needed, just passing
-         @c NULL as @p func is enough. The same should be done for @p data.
+         $NULL as $func is enough. The same should be done for $data.
 
          @note Remember that the label parameter is copied inside the list. So if an
          application dynamically allocated the label, the application should free the
@@ -513,14 +513,14 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
          /*@
          Prepend a new item to the list object.
 
-         @return The created item or @c NULL upon failure.
+         @return The created item or $NULL upon failure.
 
          A new item will be created and prepended to the list, i.e., will
          be set as @b first item.
 
          Items created with this method can be deleted with elm_object_item_del().
 
-         Associated @p data can be properly freed when item is deleted if a
+         Associated $data can be properly freed when item is deleted if a
          callback function is set with elm_object_item_del_cb_set().
 
          If a function is passed as argument, it will be called every time this item
@@ -528,7 +528,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
          If always select is enabled it will call this function every time
          user clicks over an item (already selected or not).
          If such function isn't needed, just passing
-         @c NULL as @p func is enough. The same should be done for @p data.
+         $NULL as $func is enough. The same should be done for $data.
 
          @note Remember that the label parameter is copied inside the list. So if an
          application dynamically allocated the label, the application should free the
@@ -569,18 +569,18 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
          /*@
          Insert a new item into the sorted list object.
 
-         @return The created item or @c NULL upon failure.
+         @return The created item or $NULL upon failure.
 
          @note This function inserts values into a list object assuming it was
          sorted and the result will be sorted.
 
          A new item will be created and added to the list. Its position in
          this list will be found comparing the new item with previously inserted
-         items using function @p cmp_func.
+         items using function $cmp_func.
 
          Items created with this method can be deleted with elm_object_item_del().
 
-         Associated @p data can be properly freed when item is deleted if a
+         Associated $data can be properly freed when item is deleted if a
          callback function is set with elm_object_item_del_cb_set().
 
          If a function is passed as argument, it will be called every time this item
@@ -588,7 +588,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
          If always select is enabled it will call this function every time
          user clicks over an item (already selected or not).
          If such function isn't needed, just passing
-         @c NULL as @p func is enough. The same should be done for @p data.
+         $NULL as $func is enough. The same should be done for $data.
 
          @note Remember that the label parameter is copied inside the list. So if an
          application dynamically allocated the label, the application should free the

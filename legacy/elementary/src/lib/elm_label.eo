@@ -70,7 +70,7 @@ class Elm.Label (Elm.Layout)
             @brief Set the slide mode of the label widget.
 
             elm_label_slide_mode_set() changes label slide mode.
-            By default, slide mode is none. Possible values for @p mode are:
+            By default, slide mode is none. Possible values for $mode are:
             @li #ELM_LABEL_SLIDE_MODE_NONE - no slide effect
             @li #ELM_LABEL_SLIDE_MODE_AUTO - slide only if the label area is bigger than
             the text width length
@@ -135,7 +135,7 @@ class Elm.Label (Elm.Layout)
             /*@
             @brief Set the wrapping behavior of the label
 
-            By default no wrapping is done. Possible values for @p wrap are:
+            By default no wrapping is done. Possible values for $wrap are:
             @li #ELM_WRAP_NONE - No wrapping
             @li #ELM_WRAP_CHAR - wrap between characters
             @li #ELM_WRAP_WORD - wrap between words

@@ -52,7 +52,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
          }
          values {
             homogeneous: bool; /*@ Assume the items within the toolbar are of the
-            same size (true = on, false = off). Default is @c false. */
+            same size (true = on, false = off). Default is $false. */
          }
       }
       @property align {
@@ -125,7 +125,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
             /*@
             Set the icon size, in pixels, to be used by toolbar items.
 
-            @note Default value is @c 32. It reads value from elm config.
+            @note Default value is $32. It reads value from elm config.
 
             @see elm_toolbar_icon_size_get()
 
@@ -155,12 +155,12 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
          get {
             /*@
             Get a toolbar's orientation
-            @return If @c true, the toolbar is horizontal
+            @return If $true, the toolbar is horizontal
             By default, a toolbar will be horizontal. Use this function to determine whether a toolbar is vertical.
             @ingroup Toolbar */
          }
          values {
-            horizontal: bool; /*@ If @c true, the toolbar is horizontal */
+            horizontal: bool; /*@ If $true, the toolbar is horizontal */
          }
       }
       @property icon_order_lookup {
@@ -193,7 +193,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
       @property shrink_mode {
          set {
             /*@
-            Set the item displaying mode of a given toolbar widget @p obj.
+            Set the item displaying mode of a given toolbar widget $obj.
 
             The toolbar won't scroll under #ELM_TOOLBAR_SHRINK_NONE mode, but
             it will enforce a minimum size, so that all the items will fit
@@ -210,7 +210,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
          }
          get {
             /*@
-            Get the shrink mode of toolbar @p obj.
+            Get the shrink mode of toolbar $obj.
 
             @return Toolbar's items display behavior.
 
@@ -266,7 +266,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
          get {
             /*@
             Get the standard_priority of visible items in a toolbar
-            @return The standard priority of items in @p obj toolbar
+            @return The standard priority of items in $obj toolbar
 
             @see elm_toolbar_standard_priority_set()
 
@@ -299,7 +299,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
             Get the first item in the given toolbar widget's list of
             items.
 
-            @return The first item or @c NULL, if it has no items (and on
+            @return The first item or $NULL, if it has no items (and on
             errors)
 
             @see elm_toolbar_item_append()
@@ -331,7 +331,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
             Get the last item in the given toolbar widget's list of
             items.
 
-            @return The last item or @c NULL, if it has no items (and on
+            @return The last item or $NULL, if it has no items (and on
             errors)
 
             @see elm_toolbar_item_prepend()
@@ -343,23 +343,23 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
       }
       item_insert_before {
          /*@
-         Insert a new item into the toolbar object before item @p before.
+         Insert a new item into the toolbar object before item $before.
 
-         @return The created item or @c NULL upon failure.
+         @return The created item or $NULL upon failure.
 
          A new item will be created and added to the toolbar. Its position in
-         this toolbar will be just before item @p before.
+         this toolbar will be just before item $before.
 
          Items created with this method can be deleted with
          elm_object_item_del().
 
-         Associated @p data can be properly freed when item is deleted if a
+         Associated $data can be properly freed when item is deleted if a
          callback function is set with elm_object_item_del_cb_set().
 
          If a function is passed as argument, it will be called every time this item
          is selected, i.e., the user clicks over an unselected item.
          If such function isn't needed, just passing
-         @c NULL as @p func is enough. The same should be done for @p data.
+         $NULL as $func is enough. The same should be done for $data.
 
          Toolbar will load icon image from fdo or current theme.
          This behavior can be set by elm_toolbar_icon_order_lookup_set() function.
@@ -383,23 +383,23 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
       }
       item_insert_after {
          /*@
-         Insert a new item into the toolbar object after item @p after.
+         Insert a new item into the toolbar object after item $after.
 
-         @return The created item or @c NULL upon failure.
+         @return The created item or $NULL upon failure.
 
          A new item will be created and added to the toolbar. Its position in
-         this toolbar will be just after item @p after.
+         this toolbar will be just after item $after.
 
          Items created with this method can be deleted with
          elm_object_item_del().
 
-         Associated @p data can be properly freed when item is deleted if a
+         Associated $data can be properly freed when item is deleted if a
          callback function is set with elm_object_item_del_cb_set().
 
          If a function is passed as argument, it will be called every time this item
          is selected, i.e., the user clicks over an unselected item.
          If such function isn't needed, just passing
-         @c NULL as @p func is enough. The same should be done for @p data.
+         $NULL as $func is enough. The same should be done for $data.
 
          Toolbar will load icon image from fdo or current theme.
          This behavior can be set by elm_toolbar_icon_order_lookup_set() function.
@@ -425,7 +425,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
          /*@
          Append item to the toolbar.
 
-         @return The created item or @c NULL upon failure.
+         @return The created item or $NULL upon failure.
 
          A new item will be created and appended to the toolbar, i.e., will
          be set as @b last item.
@@ -433,13 +433,13 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
          Items created with this method can be deleted with
          elm_object_item_del().
 
-         Associated @p data can be properly freed when item is deleted if a
+         Associated $data can be properly freed when item is deleted if a
          callback function is set with elm_object_item_del_cb_set().
 
          If a function is passed as argument, it will be called every time this item
          is selected, i.e., the user clicks over an unselected item.
          If such function isn't needed, just passing
-         @c NULL as @p func is enough. The same should be done for @p data.
+         $NULL as $func is enough. The same should be done for $data.
 
          Toolbar will load icon image from fdo or current theme.
          This behavior can be set by elm_toolbar_icon_order_lookup_set() function.
@@ -463,7 +463,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
       items_count @const {
          /*@
          Get the number of items in a toolbar
-         @return The number of items in @p obj toolbar
+         @return The number of items in $obj toolbar
          @ingroup Toolbar */
          return: uint;
       }
@@ -471,7 +471,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
          /*@
          Prepend item to the toolbar.
 
-         @return The created item or @c NULL upon failure.
+         @return The created item or $NULL upon failure.
 
          A new item will be created and prepended to the toolbar, i.e., will
          be set as @b first item.
@@ -479,13 +479,13 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
          Items created with this method can be deleted with
          elm_object_item_del().
 
-         Associated @p data can be properly freed when item is deleted if a
+         Associated $data can be properly freed when item is deleted if a
          callback function is set with elm_object_item_del_cb_set().
 
          If a function is passed as argument, it will be called every time this item
          is selected, i.e., the user clicks over an unselected item.
          If such function isn't needed, just passing
-         @c NULL as @p func is enough. The same should be done for @p data.
+         $NULL as $func is enough. The same should be done for $data.
 
          Toolbar will load icon image from fdo or current theme.
          This behavior can be set by elm_toolbar_icon_order_lookup_set() function.
@@ -510,7 +510,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
          /*@
          Returns a pointer to a toolbar item by its label.
 
-         @return The pointer to the toolbar item matching @p label or @c NULL
+         @return The pointer to the toolbar item matching $label or $NULL
          on failure.
 
          @ingroup Toolbar */

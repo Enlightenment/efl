@@ -7,7 +7,7 @@ class Elm.Inwin (Elm.Layout)
          /*@
          Activates an inwin object, ensuring its visibility
 
-         This function will make sure that the inwin @p obj is completely visible
+         This function will make sure that the inwin $obj is completely visible
          by calling evas_object_show() and evas_object_raise() on it, to bring it
          to the front. It also sets the keyboard focus to it, which will be passed
          onto its content.

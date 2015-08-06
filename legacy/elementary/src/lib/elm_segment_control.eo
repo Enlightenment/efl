@@ -9,7 +9,7 @@ class Elm.Segment_Control (Elm.Layout)
 
             @return Segment items count.
 
-            It will just return the number of items added to segment control @p obj.
+            It will just return the number of items added to segment control $obj.
 
             @ingroup SegmentControl */
             return: int;
@@ -20,7 +20,7 @@ class Elm.Segment_Control (Elm.Layout)
             /*@
             Get the selected item.
 
-            @return The selected item or @c NULL if none of segment items is
+            @return The selected item or $NULL if none of segment items is
             selected.
 
             The selected item can be unselected with function
@@ -36,12 +36,12 @@ class Elm.Segment_Control (Elm.Layout)
          /*@
          Get the label of item.
 
-         @return The label of the item at @p index.
+         @return The label of the item at $index.
 
          The return value is a pointer to the label associated to the item when
          it was created, with function elm_segment_control_item_add(), or later
          with function elm_object_item_text_set. If no label
-         was passed as argument, it will return @c NULL.
+         was passed as argument, it will return $NULL.
 
          @see elm_object_item_text_set() for more details.
          @see elm_segment_control_item_add()
@@ -56,9 +56,9 @@ class Elm.Segment_Control (Elm.Layout)
          /*@
          Insert a new item to the segment control object at specified position.
 
-         @return The created item or @c NULL upon failure.
+         @return The created item or $NULL upon failure.
 
-         Index values must be between @c 0, when item will be prepended to
+         Index values must be between $0, when item will be prepended to
          segment control, and items count, that can be get with
          elm_segment_control_item_count_get(), case when item will be appended
          to segment control, just like elm_segment_control_item_add().
@@ -66,7 +66,7 @@ class Elm.Segment_Control (Elm.Layout)
          Items created with this function can be deleted with function
          elm_object_item_del() or elm_segment_control_item_del_at().
 
-         @note @p label set to @c NULL is different from empty string "".
+         @note $label set to $NULL is different from empty string "".
          If an item
          only has icon, it will be displayed bigger and centered. If it has
          icon and label, even that an empty string, icon will be smaller and
@@ -91,10 +91,10 @@ class Elm.Segment_Control (Elm.Layout)
          /*@
          Get the item placed at specified index.
 
-         @return The segment control item or @c NULL on failure.
+         @return The segment control item or $NULL on failure.
 
          Index is the position of an item in segment control widget. Its
-         range is from @c 0 to <tt> count - 1 </tt>.
+         range is from $0 to <tt> count - 1 </tt>.
          Count is the number of items, that can be get with
          elm_segment_control_item_count_get().
 
@@ -122,7 +122,7 @@ class Elm.Segment_Control (Elm.Layout)
          /*@
          Append a new item to the segment control object.
 
-         @return The created item or @c NULL upon failure.
+         @return The created item or $NULL upon failure.
 
          A new item will be created and appended to the segment control, i.e., will
          be set as @b last item.
@@ -133,7 +133,7 @@ class Elm.Segment_Control (Elm.Layout)
          Items created with this function can be deleted with function
          elm_object_item_del() or elm_object_item_del_at().
 
-         @note @p label set to @c NULL is different from empty string "".
+         @note $label set to $NULL is different from empty string "".
          If an item
          only has icon, it will be displayed bigger and centered. If it has
          icon and label, even that an empty string, icon will be smaller and
@@ -167,12 +167,12 @@ class Elm.Segment_Control (Elm.Layout)
          /*@
          Get the icon associated to the item.
 
-         @return The left side icon associated to the item at @p index.
+         @return The left side icon associated to the item at $index.
 
          The return value is a pointer to the icon associated to the item when
          it was created, with function elm_segment_control_item_add(), or later
          with function elm_object_item_part_content_set(). If no icon
-         was passed as argument, it will return @c NULL.
+         was passed as argument, it will return $NULL.
 
          @see elm_segment_control_item_add()
          @see elm_object_item_part_content_set()

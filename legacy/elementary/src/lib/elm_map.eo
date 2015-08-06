@@ -49,7 +49,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             /*@
             Pause or unpause the map.
 
-            This sets the paused state to on (@c true) or off (@c false)
+            This sets the paused state to on ($true) or off ($false)
             for map.
 
             The default is off.
@@ -65,7 +65,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             /*@
             Get a value whether map is paused or not.
 
-            @return @c true means map is pause. @c false indicates
+            @return $true means map is pause. $false indicates
             it is not.
 
             This gets the current paused state for the map object.
@@ -75,7 +75,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Map */
          }
          values {
-            paused: bool; /*@ Use @c true to pause the map @p obj or @c false
+            paused: bool; /*@ Use $true to pause the map $obj or $false
             to unpause it. */
          }
       }
@@ -96,7 +96,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             /*@
             Get a value whether mouse wheel is enabled or not.
 
-            @return @c true means map is disabled. @c false indicates
+            @return $true means map is disabled. $false indicates
             it is enabled.
 
             Mouse wheel can be used for the user to zoom in or zoom out the map.
@@ -106,7 +106,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Map */
          }
          values {
-            disabled: bool; /*@ Use @c true to disable mouse wheel or @c false
+            disabled: bool; /*@ Use $true to disable mouse wheel or $false
             to enable it. */
          }
       }
@@ -165,8 +165,8 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             User agent is a client application implementing a network protocol used
             in communications within a clientserver distributed computing system
 
-            The @p user_agent identification string will transmitted in a header
-            field @c User-Agent.
+            The $user_agent identification string will transmitted in a header
+            field $User-Agent.
 
             @see elm_map_user_agent_get()
 
@@ -273,7 +273,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             /*@
             Return all overlays in the map object.
 
-            @return The list of all overlays or @c NULL upon failure.
+            @return The list of all overlays or $NULL upon failure.
 
             This list includes group overlays also.
             So this can be changed dynamically while zooming and panning.
@@ -316,7 +316,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          This web service can be set with this method
          for #ELM_MAP_SOURCE_TYPE_NAME type.
 
-         The @p source_name need to match one of the names provided by
+         The $source_name need to match one of the names provided by
          elm_map_sources_get().
 
          The current source can be get using elm_map_source_get().
@@ -350,19 +350,19 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          /*@
          Add a new route to the map object.
 
-         @return The created route or @c NULL upon failure.
+         @return The created route or $NULL upon failure.
 
-         A route will be traced by point on coordinates (@p flat, @p flon)
-         to point on coordinates (@p tlat, @p tlon), using the route service
+         A route will be traced by point on coordinates ($flat, $flon)
+         to point on coordinates ($tlat, $tlon), using the route service
          set with elm_map_source_set().
 
-         It will take @p type on consideration to define the route,
+         It will take $type on consideration to define the route,
          depending if the user will be walking or driving, the route may vary.
          One of #ELM_MAP_ROUTE_TYPE_MOTOCAR, #ELM_MAP_ROUTE_TYPE_BICYCLE,
          or #ELM_MAP_ROUTE_TYPE_FOOT need to be used.
 
          Another parameter is what the route should prioritize, the minor distance
-         or the less time to be spend on the route. So @p method should be one
+         or the less time to be spend on the route. So $method should be one
          of #ELM_MAP_ROUTE_METHOD_SHORTEST or #ELM_MAP_ROUTE_METHOD_FASTEST.
 
          Routes created with this method can be deleted with
@@ -425,7 +425,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          Add a new circle overlay to the map object.
          This overlay has a circle type.
 
-         @return The created overlay or @c NULL upon failure.
+         @return The created overlay or $NULL upon failure.
 
          Overlay created with this method can be deleted with elm_map_overlay_del().
 
@@ -445,7 +445,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          Add a new class overlay to the map object.
          This overlay has a class type.
 
-         @return The created overlay or @c NULL upon failure.
+         @return The created overlay or $NULL upon failure.
 
          This overlay is not shown before overlay members are appended.
          if overlay members in the same class are close, group overlays
@@ -472,7 +472,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          Add a new bubble overlay to the map object.
          This overlay has a bubble type.
 
-         @return The created overlay or @c NULL upon failure.
+         @return The created overlay or $NULL upon failure.
 
          A bubble will not be displayed before geographic coordinates are set or
          any other overlays are followed.
@@ -528,7 +528,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          Add a new polygon overlay to the map object.
          This overlay has a polygon type.
 
-         @return The created overlay or @c NULL upon failure.
+         @return The created overlay or $NULL upon failure.
 
          At least 3 regions should be added to show the polygon overlay.
 
@@ -546,7 +546,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          Add a new line overlay to the map object.
          This overlay has a line type.
 
-         @return The created overlay or @c NULL upon failure.
+         @return The created overlay or $NULL upon failure.
 
          Overlay created with this method can be deleted with elm_map_overlay_del().
 
@@ -567,7 +567,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          Show the given coordinates at the center of the map, @b immediately.
 
          This causes map to @b redraw its viewport's contents to the
-         region containing the given @p lat and @p lon, that will be moved to the
+         region containing the given $lat and $lon, that will be moved to the
          center of the map.
 
          @see elm_map_region_bring_in() for a function to move with animation.
@@ -587,9 +587,9 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
 
          @return name A #Elm_Map_Name handle for this coordinate.
 
-         If you want to get address from geographic coordinates, set input @p address
-         as @c NULL and set @p lon, @p lat as you want to convert.
-         If address is set except NULL, @p lon and @p lat are checked.
+         If you want to get address from geographic coordinates, set input $address
+         as $NULL and set $lon, $lat as you want to convert.
+         If address is set except NULL, $lon and $lat are checked.
 
          To get the string for this address, elm_map_name_address_get()
          should be used after callback or "name,loaded" signal is called.
@@ -627,7 +627,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          /*@
          Animatedly bring in given coordinates to the center of the map.
 
-         This causes map to jump to the given @p lat and @p lon coordinates
+         This causes map to jump to the given $lat and $lon coordinates
          and show it (by scrolling) in the center of the viewport, if it is not
          already centered. This will use animation to do so and take a period
          of time to complete.
@@ -648,7 +648,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          to the center of the map.
 
          This causes map to zoom into specific zoom level and also move to the
-         given @p lat and @p lon coordinates and show it (by scrolling) in the
+         given $lat and $lon coordinates and show it (by scrolling) in the
          center of the viewport concurrently.
 
          @since 1.11
@@ -679,7 +679,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          Add a new route overlay to the map object.
          This overlay has a route type.
 
-         @return The created overlay or @c NULL upon failure.
+         @return The created overlay or $NULL upon failure.
 
          This overlay has a route style layout and icon or content can not
          be set.
@@ -705,7 +705,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          Add a new scale overlay to the map object.
          This overlay has a scale type.
 
-         @return The created overlay or @c NULL upon failure.
+         @return The created overlay or $NULL upon failure.
 
          The scale overlay shows the ratio of a distance on the map to the corresponding distance.
 
@@ -725,10 +725,10 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          /*@
          Add a new overlay to the map object. This overlay has a default type.
 
-         @return The created overlay or @c NULL upon failure.
+         @return The created overlay or $NULL upon failure.
 
          A overlay will be created and shown in a specific point of the map, defined
-         by @p lon and @p lat.
+         by $lon and $lat.
 
          The created overlay has a default style layout before content or
          icon is set.

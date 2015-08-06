@@ -7,7 +7,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             /*@
             @brief Set the event enabled when pushing/popping items
 
-            If @p enabled is @c true, the contents of the naviframe item will
+            If $enabled is $true, the contents of the naviframe item will
             receives events from mouse and keyboard during view changing such as
             item push/pop.
 
@@ -23,14 +23,14 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             /*@
             @brief Get the value of event enabled status.
 
-            @return @c true, when event is enabled
+            @return $true, when event is enabled
 
             @see elm_naviframe_event_enabled_set()
 
             @ingroup Naviframe */
          }
          values {
-            enabled: bool; /*@ Events are received when enabled is @c true, and
+            enabled: bool; /*@ Events are received when enabled is $true, and
             ignored otherwise. */
          }
       }
@@ -47,14 +47,14 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             /*@
             @brief Get a value whether preserve mode is enabled or not.
 
-            @return If @c true, preserve mode is enabled
+            @return If $true, preserve mode is enabled
 
             @see also elm_naviframe_content_preserve_on_pop_set()
 
             @ingroup Naviframe */
          }
          values {
-            preserve: bool; /*@ Enable the preserve mode if @c true, disable otherwise */
+            preserve: bool; /*@ Enable the preserve mode if $true, disable otherwise */
          }
       }
       @property prev_btn_auto_pushed {
@@ -71,7 +71,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @brief Get a value whether prev button(back button) will be auto pushed or
             not.
 
-            @return If @c true, prev button will be auto pushed.
+            @return If $true, prev button will be auto pushed.
 
             @see also elm_naviframe_item_push()
             elm_naviframe_prev_btn_auto_pushed_set()
@@ -79,8 +79,8 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Naviframe */
          }
          values {
-            auto_pushed: bool; /*@ If @c true, the previous button(back button) will
-            be created internally when you pass the @c NULL to the prev_btn
+            auto_pushed: bool; /*@ If $true, the previous button(back button) will
+            be created internally when you pass the $NULL to the prev_btn
             parameter in elm_naviframe_item_push */
          }
       }
@@ -90,7 +90,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @brief Get a list of all the naviframe items.
 
             @return A list of naviframe items, #Elm.Widget_Item,
-            or @c NULL on failure.
+            or $NULL on failure.
             @note The returned list MUST be freed.
 
             @ingroup Naviframe */
@@ -102,7 +102,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             /*@
             @brief Get a top item on the naviframe stack
 
-            @return The top item on the naviframe stack or @c NULL, if the stack is
+            @return The top item on the naviframe stack or $NULL, if the stack is
             empty
 
             @ingroup Naviframe */
@@ -114,7 +114,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             /*@
             @brief Get a bottom item on the naviframe stack
 
-            @return The bottom item on the naviframe stack or @c NULL, if the stack is
+            @return The bottom item on the naviframe stack or $NULL, if the stack is
             empty
 
             @ingroup Naviframe */
@@ -125,7 +125,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          /*@
          @brief Pop an item that is on top of the stack
 
-         @return @c NULL or the content object(if the
+         @return $NULL or the content object(if the
          elm_naviframe_content_preserve_on_pop_get is true).
 
          This pops an item that is on the top(visible) of the naviframe, makes it
@@ -141,9 +141,9 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       }
       item_insert_before {
          /*@
-         @brief Insert a new item into the naviframe before item @p before.
+         @brief Insert a new item into the naviframe before item $before.
 
-         @return The created item or @c NULL upon failure.
+         @return The created item or $NULL upon failure.
 
          The item is inserted into the naviframe straight away without any
          transition operations. This item will be deleted when it is popped.
@@ -153,7 +153,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          @see also elm_naviframe_item_insert_after()
 
          The following styles are available for this item:
-         @li @c "default"
+         @li $"default"
 
          @ingroup Naviframe */
 
@@ -170,14 +170,14 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             "elm.swallow.next_btn" */
             @in content: Evas.Object *; /*@ The main content object. The name of content part is
             "elm.swallow.content" */
-            @in item_style: const(char)* @nullable; /*@ The current item style name. @c NULL would be default. */
+            @in item_style: const(char)* @nullable; /*@ The current item style name. $NULL would be default. */
          }
       }
       item_push {
          /*@
          @brief Push a new item to the top of the naviframe stack (and show it).
 
-         @return The created item or @c NULL upon failure.
+         @return The created item or $NULL upon failure.
 
          The item pushed becomes one page of the naviframe, this item will be
          deleted when it is popped.
@@ -187,7 +187,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          @see also elm_naviframe_item_insert_after()
 
          The following styles are available for this item:
-         @li @c "default"
+         @li $"default"
 
          @ingroup Naviframe */
 
@@ -203,7 +203,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             "elm.swallow.next_btn" */
             @in content: Evas.Object *; /*@ The main content object. The name of content part is
             "elm.swallow.content" */
-            @in item_style: const(char)* @nullable; /*@ The current item style name. @c NULL would be default. */
+            @in item_style: const(char)* @nullable; /*@ The current item style name. $NULL would be default. */
          }
       }
       item_simple_promote {
@@ -218,9 +218,9 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       }
       item_insert_after {
          /*@
-         @brief Insert a new item into the naviframe after item @p after.
+         @brief Insert a new item into the naviframe after item $after.
 
-         @return The created item or @c NULL upon failure.
+         @return The created item or $NULL upon failure.
 
          The item is inserted into the naviframe straight away without any
          transition operations. This item will be deleted when it is popped.
@@ -230,7 +230,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          @see also elm_naviframe_item_insert_before()
 
          The following styles are available for this item:
-         @li @c "default"
+         @li $"default"
 
          @ingroup Naviframe */
 
@@ -247,7 +247,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             "elm.swallow.next_btn" */
             @in content: Evas.Object *; /*@ The main content object. The name of content part is
             "elm.swallow.content" */
-            @in item_style: const(char)* @nullable; /*@ The current item style name. @c NULL would be default. */
+            @in item_style: const(char)* @nullable; /*@ The current item style name. $NULL would be default. */
          }
       }
    }

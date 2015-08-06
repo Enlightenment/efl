@@ -189,9 +189,9 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             this event occurred and the developer can take any action, which may
             include, or not, destroying the window object.
 
-            When the @p autodel parameter is set, the window will be automatically
+            When the $autodel parameter is set, the window will be automatically
             destroyed when this event occurs, after the signal is emitted.
-            If @p autodel is @c false, then the window will not be destroyed
+            If $autodel is $false, then the window will not be destroyed
             and is up to the program to do so when it's required.
 
             @ingroup Win */
@@ -240,7 +240,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             /*@
             Set the override state of a window.
 
-            A window with @p override set to true will not be managed by the
+            A window with $override set to true will not be managed by the
             Window Manager. This means that no decorations of any kind will be shown
             for it, moving and resizing must be handled by the application, as well
             as the window visibility.
@@ -475,7 +475,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             Set the style for the focus highlight on this window
 
             Sets the style to use for theming the highlight of focused objects on
-            the given window. If @p style is NULL, the default will be used.
+            the given window. If $style is NULL, the default will be used.
 
             @ingroup Win */
          }
@@ -521,14 +521,14 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             /*@
             Constrain the maximum width and height of a window to the width and height of its screen
 
-            When @p constrain is true, @p obj will never resize larger than the screen.
+            When $constrain is true, $obj will never resize larger than the screen.
             @ingroup Win */
          }
          get {
             /*@
             Get the constraints on the maximum width and height of a window relative to the width and height of its screen
 
-            When this function returns true, @p obj will never resize larger than the screen.
+            When this function returns true, $obj will never resize larger than the screen.
             @return true to restrict the window's maximum size, false to disable restriction
 
             @ingroup Win */
@@ -614,7 +614,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             /*@
             Set the alpha channel state of a window.
 
-            If @p alpha is true, the alpha channel of the canvas will be enabled
+            If $alpha is true, the alpha channel of the canvas will be enabled
             possibly making parts of the window completely or partially transparent.
             This is also subject to the underlying system supporting it, like for
             example, running under a compositing manager. If no compositing is
@@ -668,7 +668,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
 
             Most engines only work with multiples of 90.
 
-            This function is used to set the orientation of the window @p obj to
+            This function is used to set the orientation of the window $obj to
             match that of the screen. The window itself will be resized to adjust
             to the new geometry of its contents. If you want to keep the window size,
             see elm_win_rotation_with_resize_set().
@@ -756,7 +756,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             /*@
             Set the sticky state of the window.
 
-            Hints the Window Manager that the window in @p obj should be left fixed
+            Hints the Window Manager that the window in $obj should be left fixed
             at its position even when the virtual desktop it's on moves or changes.
 
             @ingroup Win */
@@ -898,7 +898,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             /*@
             Set the preferred rotation value.
 
-            This function is used to set the orientation of window @p obj to spicific angle fixed.
+            This function is used to set the orientation of window $obj to spicific angle fixed.
 
             @see elm_win_wm_rotation_preferred_rotation_get()
 
@@ -933,7 +933,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
 
             What this means exactly will depend on the underlying engine used.
 
-            In the case of X11 backed engines, the value in @p layer has the
+            In the case of X11 backed engines, the value in $layer has the
             following meanings:
             @li < 3: The window will be placed below all others.
             @li > 5: The window will be placed above all others.
@@ -984,7 +984,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             Shaped windows, when supported, will render the parts of the window that
             has no content, transparent.
 
-            If @p shaped is false, then it is strongly advised to have some
+            If $shaped is false, then it is strongly advised to have some
             background object or cover the entire window in any other way, or the
             parts of the canvas that have no data will show framebuffer artifacts.
 
@@ -1048,7 +1048,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
 
             This function is used to get the state of manual rotation done mode.
 
-            @return @c true manual rotationn done mode, @c false otherwise.
+            @return $true manual rotationn done mode, $false otherwise.
 
             @see elm_win_wm_rotation_manual_rotation_done_set()
             @see elm_win_wm_rotation_manual_rotation_done()
@@ -1205,7 +1205,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             The window manager rotation allows the WM to controls the rotation of application windows.
             It is designed to support synchronized rotation for the multiple application windows at same time.
 
-            @return @c true if the window manager rotation is supported, @c false otherwise.
+            @return $true if the window manager rotation is supported, $false otherwise.
 
             @see elm_win_wm_rotation_supported_get()
             @see elm_win_wm_rotation_preferred_rotation_set()
@@ -1226,7 +1226,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             /*@
             Get the Ecore_X_Window of an Evas_Object
 
-            @return The Ecore_X_Window of @p obj
+            @return The Ecore_X_Window of $obj
 
             @ingroup Win */
             return: Ecore_X_Window;
@@ -1271,7 +1271,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             /*@
             Get the Ecore_Wl_Window of an Evas_Object
 
-            @return The Ecore_Wl_Window of @p obj
+            @return The Ecore_Wl_Window of $obj
 
             @ingroup Win */
             return: Ecore_Wl_Window *;
@@ -1463,7 +1463,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
 
          return: bool;
          params {
-            @in svcname: const(char)*; /*@ The name of the service to be advertised. ensure that it is unique (when combined with @p svcnum) otherwise creation may fail. */
+            @in svcname: const(char)*; /*@ The name of the service to be advertised. ensure that it is unique (when combined with $svcnum) otherwise creation may fail. */
             @in svcnum: int; /*@ A number (any value, 0 being the common default) to differentiate multiple instances of services with the same name. */
             @in svcsys: bool; /*@ A boolean that if true, specifies to create a system-wide service all users can connect to, otherwise the service is private to the user id that created the service. */
          }
@@ -1491,7 +1491,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
          Activate a window object.
 
          This function sends a request to the Window Manager to activate the
-         window pointed by @p obj. If honored by the WM, the window will receive
+         window pointed by $obj. If honored by the WM, the window will receive
          the keyboard focus.
 
          @note This is just a request that a Window Manager may ignore, so calling
@@ -1503,11 +1503,11 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
       }
       resize_object_add {
          /*@
-         Add @p subobj as a resize object of window @p obj.
+         Add $subobj as a resize object of window $obj.
 
 
          Setting an object as a resize object of the window means that the
-         @p subobj child's size and position will be controlled by the window
+         $subobj child's size and position will be controlled by the window
          directly. That is, the object will be resized to match the window size
          and should never be moved or resized manually by the developer.
 
@@ -1536,7 +1536,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
          /*@
          Raise a window object.
 
-         Places the window pointed by @p obj at the top of the stack, so that it's
+         Places the window pointed by $obj at the top of the stack, so that it's
          not covered by any other window.
 
          If elm_win_override_set() is not set, the Window Manager may ignore this
@@ -1549,7 +1549,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
          /*@
          Lower a window object.
 
-         Places the window pointed by @p obj at the bottom of the stack, so that
+         Places the window pointed by $obj at the bottom of the stack, so that
          no other window is covered by it.
 
          If elm_win_override_set() is not set, the Window Manager may ignore this
@@ -1560,10 +1560,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
       }
       resize_object_del {
          /*@
-         Delete @p subobj as a resize object of window @p obj.
+         Delete $subobj as a resize object of window $obj.
 
-         This function removes the object @p subobj from the resize objects of
-         the window @p obj. It will not delete the object itself, which will be
+         This function removes the object $subobj from the resize objects of
+         the window $obj. It will not delete the object itself, which will be
          left unmanaged and should be deleted by the developer, manually handled
          or set as child of some other container.
 
@@ -1577,8 +1577,8 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
          /*@
          Center a window on its screen
 
-         This function centers window @p obj horizontally and/or vertically based on the values
-         of @p h and @p v.
+         This function centers window $obj horizontally and/or vertically based on the values
+         of $h and $v.
          @ingroup Win */
 
          params {
@@ -1590,7 +1590,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
          /*@
          Set keygrab value of the window
 
-         This function grabs the @p key of window using @p grab_mode.
+         This function grabs the $key of window using $grab_mode.
          @ingroup Win */
 
          return: bool;
@@ -1606,7 +1606,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
          /*@
          Unset keygrab value of the window
 
-         This function unset keygrab value. Ungrab @p key of window.
+         This function unset keygrab value. Ungrab $key of window.
          @ingroup Win */
 
          return: bool;

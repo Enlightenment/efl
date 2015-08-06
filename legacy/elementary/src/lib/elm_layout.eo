@@ -8,8 +8,8 @@ class Elm.Layout (Elm.Container, Efl.File)
             /*@
             Set accessibility to all texblock(text) parts in the layout object
 
-            @return @c true on success or @c false on failure. If @p obj is not
-            a proper layout object, @c false is returned.
+            @return $true on success or $false on failure. If $obj is not
+            a proper layout object, $false is returned.
 
             @since 1.7
 
@@ -20,9 +20,9 @@ class Elm.Layout (Elm.Container, Efl.File)
             /*@
             Get accessibility state of texblock(text) parts in the layout object
 
-            @return @c true, if all textblock(text) parts in the layout can be accessible
-            @c EINA_FALSET if those cannot be accessible. If @p obj is not a proper layout
-            object, @c false is returned.
+            @return $true, if all textblock(text) parts in the layout can be accessible
+            $EINA_FALSET if those cannot be accessible. If $obj is not a proper layout
+            object, $false is returned.
 
             @see elm_layout_edje_object_access_set()
 
@@ -31,8 +31,8 @@ class Elm.Layout (Elm.Container, Efl.File)
             @ingroup Layout */
          }
          values {
-            can_access: bool; /*@ makes all textblock(text) parts in the layout @p obj possible
-            to have accessibility. @c true means textblock(text) parts can be accessible */
+            can_access: bool; /*@ makes all textblock(text) parts in the layout $obj possible
+            to have accessibility. $true means textblock(text) parts can be accessible */
          }
       }
       @property theme {
@@ -106,7 +106,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Remove all children of the given part box.
 
-         @return @c true on success, @c false otherwise
+         @return $true on success, $false otherwise
 
          The objects will be removed from the box part and their lifetime will
          not be handled by the layout anymore. This is equivalent to
@@ -289,7 +289,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Set the text of the given part
 
-         @return @c true on success, @c false otherwise
+         @return $true on success, $false otherwise
 
          @ingroup Layout */
 
@@ -303,7 +303,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Get the text set in the given part
 
-         @return The text set in @p part
+         @return The text set in $part
 
          @ingroup Layout */
          return: const(char)*;
@@ -362,7 +362,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Insert child to layout box part before a reference object.
 
-         @return @c true on success, @c false otherwise
+         @return $true on success, $false otherwise
 
          Once the object is inserted, it will become child of the layout. Its
          lifetime will be bound to the layout, whenever the layout dies the child
@@ -387,7 +387,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Insert child to layout box part at a given position.
 
-         @return @c true on success, @c false otherwise
+         @return $true on success, $false otherwise
 
          Once the object is inserted, it will become child of the layout. Its
          lifetime will be bound to the layout, whenever the layout dies the child
@@ -447,7 +447,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Append child to layout box part.
 
-         @return @c true on success, @c false otherwise
+         @return $true on success, $false otherwise
 
          Once the object is appended, it will become child of the layout. Its
          lifetime will be bound to the layout, whenever the layout dies the child
@@ -472,11 +472,11 @@ class Elm.Layout (Elm.Container, Efl.File)
          Remove a signal-triggered callback from a given layout widget.
 
          @return The data pointer of the signal callback (passed on
-         elm_layout_signal_callback_add()) or @c NULL, on errors.
+         elm_layout_signal_callback_add()) or $NULL, on errors.
 
          This function removes the @b last callback attached to a signal
          emitted by the undelying Edje object of @a obj, with parameters @a
-         emission, @a source and @c func matching exactly those passed to a
+         emission, @a source and $func matching exactly those passed to a
          previous call to elm_layout_signal_callback_add(). The data pointer
          that was passed to this call will be returned.
 
@@ -509,7 +509,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Prepend child to layout box part.
 
-         @return @c true on success, @c false otherwise
+         @return $true on success, $false otherwise
 
          Once the object is prepended, it will become child of the layout. Its
          lifetime will be bound to the layout, whenever the layout dies the child
@@ -549,14 +549,14 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Insert child to layout table part.
 
-         @return @c true on success, @c false otherwise
+         @return $true on success, $false otherwise
 
          Once the object is inserted, it will become child of the table. Its
          lifetime will be bound to the layout, and whenever the layout dies the
          child will be deleted automatically. One should use
          elm_layout_table_unpack() to make this layout forget about the object.
 
-         If @p colspan or @p rowspan are bigger than 1, that object will occupy
+         If $colspan or $rowspan are bigger than 1, that object will occupy
          more space than a single cell. For instance, the following code:
          @code
          elm_layout_table_pack(layout, "table_part", child, 0, 1, 3, 1);
@@ -587,7 +587,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Unsets a cursor previously set with elm_layout_part_cursor_set().
 
-         @return @c true on success, @c false otherwise
+         @return $true on success, $false otherwise
 
          @ingroup Layout */
 
@@ -601,7 +601,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Remove all the child objects of the given part table.
 
-         @return @c true on success, @c false otherwise
+         @return $true on success, $false otherwise
 
          The objects will be removed from the table part and their lifetime will
          not be handled by the layout anymore. This is equivalent to

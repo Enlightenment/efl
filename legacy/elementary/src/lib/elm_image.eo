@@ -27,7 +27,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             @ingroup Image */
          }
          values {
-            set: bool; /*@ Turn on or off editability. Default is @c false. */
+            set: bool; /*@ Turn on or off editability. Default is $false. */
          }
       }
       @property resize_down {
@@ -97,15 +97,15 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             /*@
             Get the smooth effect for an image.
 
-            @return @c true if smooth scaling is enabled, @c false otherwise.
+            @return $true if smooth scaling is enabled, $false otherwise.
 
             @see elm_image_smooth_set()
 
             @ingroup Image */
          }
          values {
-            smooth: bool; /*@ @c true if smooth scaling should be used, @c false
-            otherwise. Default is @c true. */
+            smooth: bool; /*@ $true if smooth scaling should be used, $false
+            otherwise. Default is $true. */
          }
       }
       @property no_scale {
@@ -128,15 +128,15 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             /*@
             Get whether scaling is disabled on the object.
 
-            @return @c true if scaling is disabled, @c false otherwise
+            @return $true if scaling is disabled, $false otherwise
 
             @see elm_image_no_scale_set()
 
             @ingroup Image */
          }
          values {
-            no_scale: bool; /*@ @c true if the object is not scalable, @c false
-            otherwise. Default is @c false. */
+            no_scale: bool; /*@ $true if the object is not scalable, $false
+            otherwise. Default is $false. */
          }
       }
       @property scale {
@@ -167,7 +167,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             /*@
               Set the resize method for the object's internal image when maintaining a given aspect ratio.
 
-              If @p fill_inside is true, image does not overflow the widget and
+              If $fill_inside is true, image does not overflow the widget and
               blank spaces are added to fill the space that is still free. If it
               is false, the image overflows the image will fill all space and
               overflow in its larger dimension.
@@ -218,14 +218,14 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             /*@
             Get if the object retains the original aspect ratio.
 
-            @return @c true if the object keeps the original aspect, @c false
+            @return $true if the object keeps the original aspect, $false
             otherwise.
 
             @ingroup Image */
          }
          values {
-            fixed: bool; /*@ @c true if the image should retain the aspect,
-            @c false otherwise. */
+            fixed: bool; /*@ $true if the image should retain the aspect,
+            $false otherwise. */
          }
       }
       @property orient {
@@ -263,12 +263,12 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
 
             When the image should keep its aspect ratio even if resized to another
             aspect ratio, there are two possibilities to resize it: keep the entire
-            image inside the limits of height and width of the object (@p fill_outside
-            is @c false) or let the extra width or height go outside of the object,
-            and the image will fill the entire object (@p fill_outside is @c true).
+            image inside the limits of height and width of the object ($fill_outside
+            is $false) or let the extra width or height go outside of the object,
+            and the image will fill the entire object ($fill_outside is $true).
 
             @note This option will have no effect if
-            elm_image_aspect_fixed_set() is set to @c false.
+            elm_image_aspect_fixed_set() is set to $false.
 
             @see elm_image_fill_inside_get()
             @see elm_image_fill_inside_set()
@@ -281,7 +281,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             /*@
             Get if the object is filled outside
 
-            @return @c true if the object is filled outside, @c false otherwise.
+            @return $true if the object is filled outside, $false otherwise.
 
             @see elm_image_fill_inside_get()
             @see elm_image_fill_inside_set()
@@ -290,8 +290,8 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             @ingroup Image */
          }
          values {
-            fill_outside: bool; /*@ @c true if the object is filled outside,
-            @c false otherwise. Default is @c false. */
+            fill_outside: bool; /*@ $true if the object is filled outside,
+            $false otherwise. Default is $false. */
          }
       }
       @property resizable {
@@ -299,9 +299,9 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             /*@
             Set if the object is (up/down) resizable.
 
-            This function limits the image resize ability. If @p size_up is set to
-            @c false, the object can't have its height or width resized to a value
-            higher than the original image size. Same is valid for @p size_down.
+            This function limits the image resize ability. If $size_up is set to
+            $false, the object can't have its height or width resized to a value
+            higher than the original image size. Same is valid for $size_down.
 
             @see elm_image_resizable_get()
 
@@ -317,9 +317,9 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
          }
          values {
             up: bool; /*@ A bool to set if the object is resizable up. Default is
-            @c true. */
+            $true. */
             down: bool; /*@ A bool to set if the object is resizable down. Default
-            is @c true. */
+            is $true. */
          }
       }
       @property preload_disabled {
@@ -338,16 +338,16 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             /*@
             Set the file that will be used as the image's source.
 
-            @return (@c true = success, @c false = error)
+            @return ($true = success, $false = error)
 
             @see elm_image_file_set()
 
             @note This function will trigger the Edje file case based on the
             extension of the @a file string use to create the Eina_File (expects
-            @c ".edj", for this case).
+            $".edj", for this case).
 
             @note If you use animated gif image and create multiple image objects with
-            one gif image file, you should set the @p group differently for each object.
+            one gif image file, you should set the $group differently for each object.
             Or image objects will share one evas image cache entry and you will get
             unwanted frames.
 
@@ -371,13 +371,13 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             This function is handy when the contents of an image file are
             mapped in memory, for example.
 
-            The @p format string should be something like @c "png", @c "jpg",
-            @c "tga", @c "tiff", @c "bmp" etc, when provided (@c NULL, on the
+            The $format string should be something like $"png", $"jpg",
+            $"tga", $"tiff", $"bmp" etc, when provided ($NULL, on the
             contrary). This improves the loader performance as it tries the
             "correct" loader first, before trying a range of other possible
             loaders until one succeeds.
 
-            @return (@c true = success, @c false = error)
+            @return ($true = success, $false = error)
 
             @since 1.7
 
@@ -386,10 +386,10 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
          }
          values {
             img: const(void)*; /*@ The binary data that will be used as image source */
-            size: size; /*@ The size of binary data blob @p img */
-            format: const(char)* @optional; /*@ (Optional) expected format of @p img bytes */
-            key: const(char)* @optional; /*@ Optional indexing key of @p img to be passed to the
-            image loader (eg. if @p img is a memory-mapped EET file) */
+            size: size; /*@ The size of binary data blob $img */
+            format: const(char)* @optional; /*@ (Optional) expected format of $img bytes */
+            key: const(char)* @optional; /*@ Optional indexing key of $img to be passed to the
+            image loader (eg. if $img is a memory-mapped EET file) */
          }
       }
       @property object {
@@ -399,7 +399,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
 
             @return The inlined image object, or NULL if none exists
 
-            This function allows one to get the underlying @c Evas_Object of type
+            This function allows one to get the underlying $Evas_Object of type
             Image from this elementary widget. It can be useful to do things like get
             the pixel data, save the image to a file, etc.
 

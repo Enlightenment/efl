@@ -33,7 +33,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       Get the @b previous item in a gengrid widget's internal list of items,
                       given a handle to one of those items.
 
-                      This returns the item placed before the @p item, on the container
+                      This returns the item placed before the $item, on the container
                       gengrid.
 
                       @see elm_gengrid_item_next_get()
@@ -42,7 +42,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm.Widget_Item *; /*@ @return The item before @p item, or @c NULL if there's none (and on errors) */
+                     item: Elm.Widget_Item *; /*@ @return The item before $item, or $NULL if there's none (and on errors) */
                 }
            }
            @property next {
@@ -51,7 +51,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       Get the @b next item in a gengrid widget's internal list of items,
                       given a handle to one of those items.
 
-                      This returns the item placed after the @p item, on the container
+                      This returns the item placed after the $item, on the container
                       gengrid.
 
                       @see elm_gengrid_item_prev_get()
@@ -60,7 +60,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm.Widget_Item *; /*@ @return The item after @p item, or @c NULL if there's none (and on errors) */
+                     item: Elm.Widget_Item *; /*@ @return The item after $item, or $NULL if there's none (and on errors) */
                 }
            }
            @property selected {
@@ -80,7 +80,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       Set whether a given gengrid item is selected or not
 
                       This sets the selected state of an item. If multi-selection is
-                      not enabled on the containing gengrid and @p selected is @c
+                      not enabled on the containing gengrid and $selected is @c
                       true, any other previously selected items will get
                       unselected in favor of this new one.
 
@@ -90,7 +90,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     selected: bool; /*@ the selected state (@c true selected, @c false not selected) */
+                     selected: bool; /*@ the selected state ($true selected, $false not selected) */
                 }
            }
            @property item_class {
@@ -127,7 +127,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       gengrid's grid area.
 
                       This returns the "logical" position of the item within the
-                      gengrid. For example, @c (0, 1) would stand for first row,
+                      gengrid. For example, $(0, 1) would stand for first row,
                       second column.
 
                       @ingroup Gengrid
@@ -191,7 +191,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                  item, @b immediately.
 
                  This causes gengrid to @b redraw its viewport's contents to the
-                 region containing the given @p item item, if it is not fully
+                 region containing the given $item item, if it is not fully
                  visible.
 
                  @see elm_gengrid_item_bring_in()
@@ -207,7 +207,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                  Animatedly bring in, to the visible area of a gengrid, a given
                  item on it.
                  
-                 This causes gengrid to jump to the given @p item and show
+                 This causes gengrid to jump to the given $item and show
                  it (by scrolling), if it is not fully visible. This will use
                  animation to do so and take a period of time to complete.
 
@@ -260,7 +260,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
 
                  This sets another class of the item, changing the way that it is
                  displayed. After changing the item class, elm_gengrid_item_update() is
-                 called on the item @p it.
+                 called on the item $it.
 
                  @ingroup Gengrid
                  */

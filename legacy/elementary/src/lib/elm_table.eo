@@ -95,7 +95,7 @@ class Elm.Table (Elm.Widget)
 
          @note All positioning inside the table is relative to rows and columns, so
          a value of 0 for col and row, means the top left cell of the table, and a
-         value of 1 for colspan and rowspan means @p subobj only takes that 1 cell.
+         value of 1 for colspan and rowspan means $subobj only takes that 1 cell.
 
          @ingroup Table */
 
@@ -141,7 +141,7 @@ class Elm.Table (Elm.Widget)
 
          @note All positioning inside the table is relative to rows and columns, so
          a value of 0 for x and y, means the top left cell of the table, and a
-         value of 1 for w and h means @p subobj only takes that 1 cell.
+         value of 1 for w and h means $subobj only takes that 1 cell.
 
          Note that columns and rows only guarantee 16bit unsigned values at best.
          That means that col + colspan AND row + rowspan must fit inside 16bit

@@ -9,8 +9,8 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
 
             Define the allowed range of values to be selected by the user.
 
-            If actual value is less than @p min, it will be updated to @p min. If it
-            is bigger then @p max, will be updated to @p max. Actual value can be
+            If actual value is less than $min, it will be updated to $min. If it
+            is bigger then $max, will be updated to $max. Actual value can be
             get with elm_spinner_value_get().
 
             By default, min is equal to 0, and max is equal to 100.
@@ -26,7 +26,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             Get the minimum and maximum values of the spinner.
 
             @note If only one value is needed, the other pointer can be passed
-            as @c NULL.
+            as $NULL.
 
             @see elm_spinner_min_max_set() for details.
 
@@ -96,7 +96,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @li displayed value = 20
 
             When the user decrement value (using left or bottom arrow), it will
-            displays @c 50.
+            displays $50.
 
             @see elm_spinner_wrap_get().
 
@@ -107,15 +107,15 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             Get whether the spinner should wrap when it reaches its
             minimum or maximum value.
 
-            @return @c true means wrap is enabled. @c false indicates
-            it's disabled. If @p obj is @c NULL, @c false is returned.
+            @return $true means wrap is enabled. $false indicates
+            it's disabled. If $obj is $NULL, $false is returned.
 
             @see elm_spinner_wrap_set() for details.
 
             @ingroup Spinner */
          }
          values {
-            wrap: bool; /*@ @c true to enable wrap or @c false to
+            wrap: bool; /*@ $true to enable wrap or $false to
             disable it. */
          }
       }
@@ -134,10 +134,10 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
 
             The calculation for the next change interval value, starting from
             the one set with this call, is the previous interval divided by
-            @c 1.05, so it decreases a little bit.
+            $1.05, so it decreases a little bit.
 
             The default starting interval value for automatic changes is
-            @c 0.85 seconds.
+            $0.85 seconds.
 
             @see elm_spinner_interval_get()
 
@@ -210,15 +210,15 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             /*@
             Get whether the spinner can be directly edited by the user or not.
 
-            @return @c true means edition is enabled. @c false indicates
-            it's disabled. If @p obj is @c NULL, @c false is returned.
+            @return $true means edition is enabled. $false indicates
+            it's disabled. If $obj is $NULL, $false is returned.
 
             @see elm_spinner_editable_set() for details.
 
             @ingroup Spinner */
          }
          values {
-            editable: bool; /*@ @c true to allow users to edit it or @c false to
+            editable: bool; /*@ $true to allow users to edit it or $false to
             don't allow users to edit it directly. */
          }
       }
@@ -234,7 +234,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             Where rounded_val, value and base are doubles, and round is an integer.
 
             This means that things will be rounded to increments (or decrements) of
-            "round" starting from value @p base. The default base for rounding is 0.
+            "round" starting from value $base. The default base for rounding is 0.
 
             Example: round = 3, base = 2
             Values: ..., -2, 0, 2, 5, 8, 11, 14, ...
@@ -300,7 +300,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             /*@
             Set the format string of the displayed label.
 
-            If @c NULL, this sets the format to "%.0f". If not it sets the format
+            If $NULL, this sets the format to "%.0f". If not it sets the format
             string for the label text. The label text is provided a floating point
             value, so the label text can display up to 1 floating point value.
             Note that this is optional.
@@ -345,7 +345,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
          evas_object_show(sp);
          @endcode
 
-         @note If another label was previously set to @p value, it will be replaced
+         @note If another label was previously set to $value, it will be replaced
          by the new label.
 
          @see elm_spinner_special_value_get().

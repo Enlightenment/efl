@@ -98,11 +98,11 @@ class Elm.Flip (Elm.Container)
          and dragging must always start from the opposite half of the flip (eg. right
          half of the flip when dragging to the left).
 
-         Note that the @c dir parameter is not actually related to the direction of
+         Note that the $dir parameter is not actually related to the direction of
          the drag, it only refers to the area in the flip where interaction can
          occur (top, bottom, left, right).
 
-         Negative values of @c hitsize will disable this hit area.
+         Negative values of $hitsize will disable this hit area.
 
          @see elm_flip_interaction_set()
 
@@ -138,7 +138,7 @@ class Elm.Flip (Elm.Container)
          call this function once for each direction that should be enabled.
 
          You can also set the appropriate hit area size by calling
-         @c elm_flip_interaction_direction_hitsize_set(). By default, a minimum
+         $elm_flip_interaction_direction_hitsize_set(). By default, a minimum
          hit area will be created on the opposite edge of the flip.
 
          @see elm_flip_interaction_set()
@@ -171,7 +171,7 @@ class Elm.Flip (Elm.Container)
          /*@
          @brief Runs the flip animation
 
-         Flips the front and back contents using the @p mode animation. This
+         Flips the front and back contents using the $mode animation. This
          effectively hides the currently visible content and shows the hidden one.
 
          There a number of possible animations to use for the flipping:
@@ -223,7 +223,7 @@ class Elm.Flip (Elm.Container)
          /*@
          @brief Runs the flip animation to front or back.
 
-         Flips the front and back contents using the @p mode animation. This
+         Flips the front and back contents using the $mode animation. This
          effectively hides the currently visible content and shows the hidden one.
 
          There a number of possible animations to use for the flipping:
@@ -268,7 +268,7 @@ class Elm.Flip (Elm.Container)
          @ingroup Flip */
 
          params {
-            @in front: bool; /*@ if @c true, makes front visible, otherwise makes back. */
+            @in front: bool; /*@ if $true, makes front visible, otherwise makes back. */
             @in mode: Elm.Flip.Mode; /*@ The mode type */
          }
       }
