@@ -434,6 +434,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, win_auto_focus_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, win_auto_focus_animate, T_UCHAR);
    ELM_CONFIG_VAL(D, T, transition_duration_factor, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, naviframe_prev_btn_auto_pushed, T_UCHAR);
 #undef T
 #undef D
 #undef T_INT
@@ -1462,6 +1463,7 @@ _config_load(void)
    _elm_config->gl_msaa = 0;
    _elm_config->gl_stencil = 0;
    _elm_config->transition_duration_factor = 1.0;
+   _elm_config->naviframe_prev_btn_auto_pushed = EINA_TRUE;
 }
 
 static void
@@ -1779,6 +1781,11 @@ _config_update(void)
            }
      }
    IFCFGEND
+
+   IFCFG(0x0005)
+   _elm_config->naviframe_prev_btn_auto_pushed = tcfg->naviframe_prev_btn_auto_pushed;
+   IFCFGEND
+
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
     **/

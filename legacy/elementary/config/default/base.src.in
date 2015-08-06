@@ -1,5 +1,5 @@
 group "Elm_Config" struct {
-  value "config_version" int: 131076;
+  value "config_version" int: 131077;
   value "engine" string: "";
   value "vsync" uchar: 0;
   value "thumbscroll_enable" uchar: 1;
@@ -97,6 +97,7 @@ group "Elm_Config" struct {
   value "win_auto_focus_enable" uchar: 1;
   value "win_auto_focus_animate" uchar: 1;
   value "transition_duration_factor" double: 1.0;
+  value "naviframe_prev_btn_auto_pushed" uchar: 1;
   group "color_palette" list {
      group "Elm_Custom_Palette" struct {
         value "palette_name" string: "default";

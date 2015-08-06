@@ -1380,7 +1380,7 @@ _elm_naviframe_evas_object_smart_add(Eo *obj, Elm_Naviframe_Data *priv)
    priv->dummy_edje = wd->resize_obj;
    evas_object_smart_member_add(priv->dummy_edje, obj);
 
-   priv->auto_pushed = EINA_TRUE;
+   priv->auto_pushed = _elm_config->naviframe_prev_btn_auto_pushed;
    priv->freeze_events = EINA_TRUE;
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
