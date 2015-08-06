@@ -64,7 +64,7 @@ class Elm.List_Item(Elm.Widget_Item)
                      legacy: elm_list_item_prev;
                 }
                 values {
-                     item: Elm_Object_Item *; [[The item before or $null.]]
+                     item: Elm.Widget_Item *; [[The item before or $null.]]
                 }
            }
            @property next {
@@ -76,7 +76,7 @@ class Elm.List_Item(Elm.Widget_Item)
                      legacy: elm_list_item_next;
                 }
                 values {
-                     item: Elm_Object_Item *; [[The item after or $null.]]
+                     item: Elm.Widget_Item *; [[The item after or $null.]]
                 }
            }
            /*      init { FIXME

@@ -42,7 +42,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm_Object_Item *; /*@ @return The item before @p item, or @c NULL if there's none (and on errors) */
+                     item: Elm.Widget_Item *; /*@ @return The item before @p item, or @c NULL if there's none (and on errors) */
                 }
            }
            @property next {
@@ -60,7 +60,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm_Object_Item *; /*@ @return The item after @p item, or @c NULL if there's none (and on errors) */
+                     item: Elm.Widget_Item *; /*@ @return The item after @p item, or @c NULL if there's none (and on errors) */
                 }
            }
            @property selected {

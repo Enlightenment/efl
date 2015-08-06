@@ -381,7 +381,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       @property focused_item {
          get {
             /*@ Get the focused widget item. */
-            return: Elm_Object_Item *;
+            return: Elm.Widget_Item *;
          }
       }
       @property parents_bounce {

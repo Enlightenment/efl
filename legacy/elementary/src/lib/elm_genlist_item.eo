@@ -55,7 +55,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm_Object_Item *; /*@ @return The item before @p item, or @c NULL if there's none (and on errors) */
+                     item: Elm.Widget_Item *; /*@ @return The item before @p item, or @c NULL if there's none (and on errors) */
                 }
            }
            @property next {
@@ -73,7 +73,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm_Object_Item *; /*@ @return The item after @p item, or @c NULL if there's none (and on errors) */
+                     item: Elm.Widget_Item *; /*@ @return The item after @p item, or @c NULL if there's none (and on errors) */
                 }
            }
            @property parent {
@@ -88,7 +88,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm_Object_Item *; /*@ @return The parent of the item or @c NULL if it has no parent. */
+                     item: Elm.Widget_Item *; /*@ @return The parent of the item or @c NULL if it has no parent. */
                 }
            }
            @property subitems {
@@ -103,7 +103,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     subitems: const (list<Elm_Object_Item *>) *; /*@ @return The list of subitems, @c NULL on error */
+                     subitems: const (list<Elm.Widget_Item *>) *; /*@ @return The list of subitems, @c NULL on error */
                 }
            }
            @property selected {

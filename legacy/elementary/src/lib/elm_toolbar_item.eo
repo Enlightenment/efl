@@ -27,7 +27,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm_Object_Item *; /*@ The item before @p item, or @c NULL if none or on failure. */
+                     item: Elm.Widget_Item *; /*@ The item before @p item, or @c NULL if none or on failure. */
                 }
            }
            @property next {
@@ -43,7 +43,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     item: Elm_Object_Item *; /*@ The item after @p item, or @c NULL if none or on failure. */
+                     item: Elm.Widget_Item *; /*@ The item after @p item, or @c NULL if none or on failure. */
                 }
            }
            @property priority {

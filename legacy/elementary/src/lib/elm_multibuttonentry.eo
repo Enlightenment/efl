@@ -77,7 +77,7 @@ class Elm.Multibuttonentry (Elm.Layout)
             @return The list of items, or NULL if none
 
             @ingroup Multibuttonentry */
-            return: const(list<Elm_Object_Item *>)*;
+            return: const(list<Elm.Widget_Item *>)*;
          }
       }
       @property first_item {
@@ -88,7 +88,7 @@ class Elm.Multibuttonentry (Elm.Layout)
             @return The first item, or NULL if none
 
             @ingroup Multibuttonentry */
-            return: Elm_Object_Item *;
+            return: Elm.Widget_Item *;
          }
       }
       @property last_item {
@@ -99,7 +99,7 @@ class Elm.Multibuttonentry (Elm.Layout)
             @return The last item, or NULL if none
 
             @ingroup Multibuttonentry */
-            return: Elm_Object_Item *;
+            return: Elm.Widget_Item *;
          }
       }
       @property entry {
@@ -121,7 +121,7 @@ class Elm.Multibuttonentry (Elm.Layout)
             @return The selected item, or NULL if none
 
             @ingroup Multibuttonentry */
-            return: Elm_Object_Item *;
+            return: Elm.Widget_Item *;
          }
       }
       item_prepend {
@@ -134,7 +134,7 @@ class Elm.Multibuttonentry (Elm.Layout)
 
          @ingroup Multibuttonentry */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
             @in label: const(char)*; /*@ The label of new item */
             @in func: Evas_Smart_Cb @optional; /*@ The callback function to be invoked when this item is pressed. */
@@ -173,9 +173,9 @@ class Elm.Multibuttonentry (Elm.Layout)
 
          @ingroup Multibuttonentry */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
-            @in before: Elm_Object_Item *; /*@ The item before which to add it */
+            @in before: Elm.Widget_Item *; /*@ The item before which to add it */
             @in label: const(char)*; /*@ The label of new item */
             @in func: Evas_Smart_Cb @optional; /*@ The callback function to be invoked when this item is pressed. */
             @in data: void * @optional; /*@ The pointer to the data to be attached */
@@ -191,7 +191,7 @@ class Elm.Multibuttonentry (Elm.Layout)
 
          @ingroup Multibuttonentry */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
             @in label: const(char)*; /*@ The label of new item */
             @in func: Evas_Smart_Cb @optional; /*@ The callback function to be invoked when this item is pressed. */
@@ -241,9 +241,9 @@ class Elm.Multibuttonentry (Elm.Layout)
 
          @ingroup Multibuttonentry */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
-            @in after: Elm_Object_Item *; /*@ The item after which to add it */
+            @in after: Elm.Widget_Item *; /*@ The item after which to add it */
             @in label: const(char)*; /*@ The label of new item */
             @in func: Evas_Smart_Cb @optional; /*@ The callback function to be invoked when this item is pressed. */
             @in data: void * @optional; /*@ The pointer to the data to be attached */

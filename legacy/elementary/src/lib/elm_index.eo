@@ -217,7 +217,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
 
          @ingroup Index */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
             @in letter: const(char)*; /*@ Letter under which the item should be indexed */
             @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is selected. */
@@ -252,9 +252,9 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
 
          @ingroup Index */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
-            @in after: Elm_Object_Item *; /*@ The index item to insert after. */
+            @in after: Elm.Widget_Item *; /*@ The index item to insert after. */
             @in letter: const(char)*; /*@ Letter under which the item should be indexed */
             @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
             @in data: const(void)* @optional; /*@ The item data to set for the index's item */
@@ -268,7 +268,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
 
          @ingroup Index */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
             @in data: const(void)*; /*@ The item data pointed to by the desired index item */
          }
@@ -291,9 +291,9 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
 
          @ingroup Index */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
-            @in before: Elm_Object_Item *; /*@ The index item to insert after. */
+            @in before: Elm.Widget_Item *; /*@ The index item to insert after. */
             @in letter: const(char)*; /*@ Letter under which the item should be indexed */
             @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
             @in data: const(void)* @optional; /*@ The item data to set for the index's item */
@@ -314,7 +314,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
 
          @ingroup Index */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
             @in letter: const(char)*; /*@ Letter under which the item should be indexed */
             @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is selected. */
@@ -328,7 +328,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
          @return The last item @b selected on @p obj (or @c NULL, on errors).
 
          @ingroup Index */
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
             @in level: int; /*@ @c 0 or @c 1, the currently implemented levels. */
          }
@@ -349,7 +349,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
 
          @ingroup Index */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
             @in letter: const(char)*; /*@ Letter under which the item should be indexed */
             @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */

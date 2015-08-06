@@ -35,11 +35,11 @@ class Elm.Menu_Item(Elm.Widget_Item)
         }
       prev_get @const {
             [[Get the previous item in the menu.]]
-            return: Elm_Object_Item*;
+            return: Elm.Widget_Item*;
         }
       next_get @const {
              [[Get the next item in the menu.]]
-             return: Elm_Object_Item*;
+             return: Elm.Widget_Item*;
         }
       index_get @const {
              [[Get the next item in the menu.]]
@@ -56,7 +56,7 @@ class Elm.Menu_Item(Elm.Widget_Item)
         }
      subitems_get @const {
              [[Returns a list of $item's subitems.]]
-             return: const (list<Elm_Object_Item *>) *; [[a list of $item's subitems]]
+             return: const (list<Elm.Widget_Item *>) *; [[a list of $item's subitems]]
         }
      is_separator @const {
              [[Returns whether $item is a separator.]]

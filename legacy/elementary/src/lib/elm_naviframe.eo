@@ -89,12 +89,12 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             /*@
             @brief Get a list of all the naviframe items.
 
-            @return A list of naviframe items, #Elm_Object_Item,
+            @return A list of naviframe items, #Elm.Widget_Item,
             or @c NULL on failure.
             @note The returned list MUST be freed.
 
             @ingroup Naviframe */
-            return: free(own(list<Elm_Object_Item *> *), eina_list_free) @warn_unused;
+            return: free(own(list<Elm.Widget_Item *> *), eina_list_free) @warn_unused;
          }
       }
       @property top_item {
@@ -106,7 +106,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             empty
 
             @ingroup Naviframe */
-            return: Elm_Object_Item *;
+            return: Elm.Widget_Item *;
          }
       }
       @property bottom_item {
@@ -118,7 +118,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             empty
 
             @ingroup Naviframe */
-            return: Elm_Object_Item *;
+            return: Elm.Widget_Item *;
          }
       }
       item_pop {
@@ -157,9 +157,9 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          @ingroup Naviframe */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
-            @in before: Elm_Object_Item *; /*@ The naviframe item to insert before. */
+            @in before: Elm.Widget_Item *; /*@ The naviframe item to insert before. */
             @in title_label: const(char)* @optional; /*@ The label in the title area. The name of the title
             label part is "elm.text.title" */
             @in prev_btn: Evas.Object * @nullable; /*@ The button to go to the previous item. If it is NULL,
@@ -191,7 +191,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          @ingroup Naviframe */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
             @in title_label: const(char)* @optional; /*@ The label in the title area. The name of the title
             label part is "elm.text.title" */
@@ -234,9 +234,9 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          @ingroup Naviframe */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
-            @in after: Elm_Object_Item *; /*@ The naviframe item to insert after. */
+            @in after: Elm.Widget_Item *; /*@ The naviframe item to insert after. */
             @in title_label: const(char)* @optional; /*@ The label in the title area. The name of the title
             label part is "elm.text.title" */
             @in prev_btn: Evas.Object * @nullable; /*@ The button to go to the previous item. If it is NULL,

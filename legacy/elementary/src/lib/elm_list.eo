@@ -253,7 +253,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             @see elm_list_selected_items_get()
 
             @ingroup List */
-            return: Elm_Object_Item *;
+            return: Elm.Widget_Item *;
          }
       }
       @property items {
@@ -261,7 +261,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             /*@
             Get a list of all the list items.
 
-            @return A @c list of list items, #Elm_Object_Item,
+            @return A @c list of list items, #Elm.Widget_Item,
             or @c NULL on failure.
 
             @see elm_list_item_append()
@@ -269,7 +269,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             @see elm_list_clear()
 
             @ingroup List */
-            return: const(list<Elm_Object_Item *>)*;
+            return: const(list<Elm.Widget_Item *>)*;
          }
       }
       @property first_item {
@@ -282,7 +282,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             @return The first item, or NULL if none
 
             @ingroup List */
-            return: Elm_Object_Item *;
+            return: Elm.Widget_Item *;
          }
       }
       @property selected_items {
@@ -290,7 +290,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             /*@
             Return a list of the currently selected list items.
 
-            @return An @c list of list items, #Elm_Object_Item,
+            @return An @c list of list items, #Elm.Widget_Item,
             or @c NULL on failure.
 
             Multiple items can be selected if multi select is enabled. It can be
@@ -300,7 +300,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             @see elm_list_multi_select_set()
 
             @ingroup List */
-            return: const(list<Elm_Object_Item *>)*;
+            return: const(list<Elm.Widget_Item *>)*;
          }
       }
       @property last_item {
@@ -313,7 +313,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             @return The last item, or NULL if none
 
             @ingroup List */
-            return: Elm_Object_Item *;
+            return: Elm.Widget_Item *;
          }
       }
       item_insert_before {
@@ -350,9 +350,9 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
 
          @ingroup List */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
-            @in before: Elm_Object_Item *; /*@ The list item to insert before. */
+            @in before: Elm.Widget_Item *; /*@ The list item to insert before. */
             @in label: const(char)*; /*@ The label of the list item. */
             @in icon: Evas.Object * @optional; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
@@ -415,9 +415,9 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
 
          @ingroup List */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
-            @in after: Elm_Object_Item *; /*@ The list item to insert after. */
+            @in after: Elm.Widget_Item *; /*@ The list item to insert after. */
             @in label: const(char)*; /*@ The label of the list item. */
             @in icon: Evas.Object * @optional; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
@@ -446,7 +446,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
 
 
          @ingroup List */
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
             @in x: Evas.Coord; /*@ The input x coordinate */
             @in y: Evas.Coord; /*@ The input y coordinate */
@@ -497,7 +497,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
 
          @ingroup List */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
             @in label: const(char)*; /*@ The label of the list item. */
             @in icon: Evas.Object * @optional; /*@ The icon object to use for the left side of the item. An
@@ -543,7 +543,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
 
          @ingroup List */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
             @in label: const(char)*; /*@ The label of the list item. */
             @in icon: Evas.Object * @optional; /*@ The icon object to use for the left side of the item. An
@@ -603,7 +603,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
 
          @ingroup List */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
             @in label: const(char)*; /*@ The label of the list item. */
             @in icon: Evas.Object * @optional; /*@ The icon object to use for the left side of the item. An
@@ -614,7 +614,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
             @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
             @in cmp_func: Eina_Compare_Cb; /*@ The comparing function to be used to sort list
-            items <b>by #Elm_Object_Item item handles</b>. This function will
+            items <b>by #Elm.Widget_Item item handles</b>. This function will
             receive two items and compare them, returning a non-negative integer
             if the second item should be place after the first, or negative value
             if should be placed before. */

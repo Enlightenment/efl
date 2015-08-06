@@ -17,7 +17,7 @@ class Elm.Diskselector_Item(Elm.Widget_Item)
                     ]]
                 }
                 values {
-                     item: Elm_Object_Item *; [[The item before $item, or $null if none or on failure.]]
+                     item: Elm.Widget_Item *; [[The item before $item, or $null if none or on failure.]]
                 }
            }
            @property next {
@@ -35,7 +35,7 @@ class Elm.Diskselector_Item(Elm.Widget_Item)
                      ]]
                 }
                 values {
-                     item: Elm_Object_Item *; [[The item after $item, or $null if none or on failure.]]
+                     item: Elm.Widget_Item *; [[The item after $item, or $null if none or on failure.]]
                 }
            }
            @property selected {

@@ -652,7 +652,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                   That function will receive these parameters:
                   @li void * item data
                   @li Evas_Object * widget object
-                  @li Elm_Object_Item * widget item
+                  @li Elm.Widget_Item * widget item
 
                   @note Every elm_object_item supports this API
 

@@ -29,7 +29,7 @@ class Elm.Segment_Control (Elm.Layout)
             The selected item always will be highlighted on segment control.
 
             @ingroup SegmentControl */
-            return: Elm_Object_Item *;
+            return: Elm.Widget_Item *;
          }
       }
       item_label_get @const {
@@ -78,7 +78,7 @@ class Elm.Segment_Control (Elm.Layout)
 
          @ingroup SegmentControl */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
             @in icon: Evas.Object * @optional; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
@@ -99,7 +99,7 @@ class Elm.Segment_Control (Elm.Layout)
          elm_segment_control_item_count_get().
 
          @ingroup SegmentControl */
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
             @in idx: int; /*@ The index of the segment item. */
          }
@@ -154,7 +154,7 @@ class Elm.Segment_Control (Elm.Layout)
 
          @ingroup SegmentControl */
 
-         return: Elm_Object_Item *;
+         return: Elm.Widget_Item *;
          params {
             @in icon: Evas.Object * @optional; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
