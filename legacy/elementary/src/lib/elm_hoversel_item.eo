@@ -3,31 +3,17 @@ class Elm.Hoversel_Item(Elm.Widget_Item)
    eo_prefix: elm_obj_hoversel_item;
    methods {
         @property icon {
+             [[This controls the icon for the given hoversel item.
+
+               The icon can be loaded from the standard set, from an image file, or from an edje file.]]
              get {
-                 /*@
-                  @brief This sets the icon for the given hoversel item.
-
-                  The icon can be loaded from the standard set, from an image file, or from
-                  an edje file.
-
-                  @see elm_hoversel_item_add()
-
-                  @ingroup Hoversel
-                 */
              }
              set {
-                 /*@
-                  @brief Get the icon object of the hoversel item.
-
-                  @see elm_hoversel_item_add()
-
-                  @ingroup Hoversel
-                 */
              }
              values {
-                icon_file: const (char) * @nullable; /*@ An image file path on disk to use for the icon or standard icon name */
-                icon_group: const (char) * @nullable; /*@ The edje group to use if @p icon_file is an edje file. Set this to NULL if the icon is not an edje file */
-                icon_type: Elm_Icon_Type; /*@ The icon type */
+                icon_file: const (char) * @nullable; [[An image file path on disk to use for the icon or standard icon name]]
+                icon_group: const (char) * @nullable; [[The edje group to use if $icon_file is an edje file. Set this to NULL if the icon is not an edje file]]
+                icon_type: Elm_Icon_Type; [[The icon type]]
              }
         }
    }
