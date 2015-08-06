@@ -71,12 +71,8 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
    _running = 1;
    _expiration = [NSDate distantPast];
 
-   _poller = ecore_poller_add(ECORE_POLLER_CORE,
-                              ecore_poller_poll_interval_get(ECORE_POLLER_CORE),
-                              _ecore_cocoa_run_loop_cb, NULL);
-   if (_poller == NULL) {
-        // XXX ERROR
-   }
+   _timer = ecore_timer_add(ECORE_COCOA_MAINLOOP_PERIOD,
+                             _ecore_cocoa_run_loop_cb, NULL);
 }
 
 

@@ -2,9 +2,11 @@
 #include "Ecore_Cocoa.h"
 #include <Ecore.h>
 
+#define ECORE_COCOA_MAINLOOP_PERIOD ( 0.0166)
+
 @interface Ecore_Cocoa_Application : NSApplication
 {
-   Ecore_Poller *_poller;
+   Ecore_Timer  *_timer;
    NSDate       *_expiration;
 }
 
