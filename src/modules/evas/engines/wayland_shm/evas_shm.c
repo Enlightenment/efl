@@ -134,22 +134,22 @@ _shm_pool_reset(Shm_Pool *pool)
    pool->used = 0;
 }
 
-static void 
-_shm_frame_release(void *data, struct wl_callback *callback, uint32_t timestamp EINA_UNUSED)
-{
-   Shm_Surface *surf;
+/* static void  */
+/* _shm_frame_release(void *data, struct wl_callback *callback, uint32_t timestamp EINA_UNUSED) */
+/* { */
+/*    Shm_Surface *surf; */
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+/*    LOGFN(__FILE__, __LINE__, __FUNCTION__); */
 
-   if (!(surf = data)) return;
+/*    if (!(surf = data)) return; */
 
-   wl_callback_destroy(callback);
-}
+/*    wl_callback_destroy(callback); */
+/* } */
 
-static const struct wl_callback_listener _shm_frame_listener = 
-{
-   _shm_frame_release
-};
+/* static const struct wl_callback_listener _shm_frame_listener =  */
+/* { */
+/*    _shm_frame_release */
+/* }; */
 
 static Shm_Data *
 _shm_data_create_from_pool(Shm_Pool *pool, int w, int h, Eina_Bool alpha)
@@ -488,7 +488,7 @@ _evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h)
 void
 _evas_shm_surface_post(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int count)
 {
-   struct wl_callback *frame_cb;
+   /* struct wl_callback *frame_cb; */
    Shm_Leaf *leaf;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -512,8 +512,8 @@ _evas_shm_surface_post(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int
    else
      wl_surface_damage(surface->surface, 0, 0, leaf->w, leaf->h);
 
-   frame_cb = wl_surface_frame(surface->surface);
-   wl_callback_add_listener(frame_cb, &_shm_frame_listener, surface);
+   /* frame_cb = wl_surface_frame(surface->surface); */
+   /* wl_callback_add_listener(frame_cb, &_shm_frame_listener, surface); */
 
    wl_surface_commit(surface->surface);
 
