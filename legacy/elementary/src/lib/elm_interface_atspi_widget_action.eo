@@ -8,8 +8,7 @@ mixin Elm_Interface_Atspi_Widget_Action (Elm_Interface_Atspi_Action)
          get {
          }
          values {
-            actions: const(Elm_Atspi_Action)*; /*@ NULL-terminated array of Elm_Actions
-                                         */
+            actions: const(Elm_Atspi_Action)*; [[NULL-terminated array of Elm_Atspi_Action]]
          }
       }
    }
