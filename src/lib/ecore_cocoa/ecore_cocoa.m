@@ -33,6 +33,8 @@ ecore_cocoa_init(void)
    if (++_ecore_cocoa_init_count != 1)
      return _ecore_cocoa_init_count;
 
+   DBG("Ecore Cocoa Init");
+
    if (!ecore_init())
      return --_ecore_cocoa_init_count;
 
@@ -74,6 +76,8 @@ ecore_cocoa_shutdown(void)
    if (--_ecore_cocoa_init_count != 0)
      return _ecore_cocoa_init_count;
 
+   DBG("Ecore Cocoa shutdown");
+
    eina_log_domain_unregister(_ecore_cocoa_log_domain);
    ecore_event_shutdown();
 
@@ -91,7 +95,7 @@ _ecore_cocoa_event_modifiers(unsigned int mod)
    if(mod & NSCommandKeyMask) modifiers |= ECORE_EVENT_MODIFIER_WIN;
    if(mod & NSNumericPadKeyMask) modifiers |= ECORE_EVENT_LOCK_NUM;
 
-   DBG("key modifiers: %d, %d\n", mod, modifiers);
+   DBG("key modifiers: %d, %d", mod, modifiers);
    return modifiers;
 }
 
@@ -108,6 +112,8 @@ _ecore_cocoa_event_key(NSEvent *event, int keyType)
    EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
    NSString *keychar = [event charactersIgnoringModifiers];
    NSString *keycharRaw = [event characters];
+
+   DBG("Event Key, keyTpe : %d", keyType);
 
    ev = calloc(1, sizeof (Ecore_Event_Key));
    if (!ev) return NULL;
@@ -180,8 +186,10 @@ ecore_cocoa_feed_events(void *anEvent)
    unsigned int time = (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff);
    Eina_Bool pass = EINA_FALSE;
 
+   DBG("Feed events, event type ; %d", [event type]);
+
    switch ([event type])
-   {
+     {
       case NSMouseMoved:
       case NSLeftMouseDragged:
       case NSRightMouseDragged:
@@ -192,182 +200,182 @@ ecore_cocoa_feed_events(void *anEvent)
       case NSLeftMouseUp:
       case NSRightMouseUp:
       case NSOtherMouseUp:
-      {
-        //mouse events are managed in EcoreCocoaWindow
-         return EINA_TRUE;
-      }
+        {
+           //mouse events are managed in EcoreCocoaWindow
+           return EINA_TRUE;
+        }
       case NSKeyDown:
-      {
-         Ecore_Event_Key *ev;
+        {
+           Ecore_Event_Key *ev;
 
-         ev = _ecore_cocoa_event_key(event, NSKeyDown);
-         if (ev == NULL) return EINA_TRUE;
+           ev = _ecore_cocoa_event_key(event, NSKeyDown);
+           if (ev == NULL) return EINA_TRUE;
 
-         ev->timestamp = time;
-         ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
+           ev->timestamp = time;
+           ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
 
-         break;
-      }
+           break;
+        }
       case NSKeyUp:
-      {
-         Ecore_Event_Key *ev;
+        {
+           Ecore_Event_Key *ev;
 
-         ev = _ecore_cocoa_event_key(event, NSKeyUp);
-         if (ev == NULL) return EINA_TRUE;
+           ev = _ecore_cocoa_event_key(event, NSKeyUp);
+           if (ev == NULL) return EINA_TRUE;
 
-         ev->timestamp = time;
-         ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
+           ev->timestamp = time;
+           ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
 
-         break;
-      }
+           break;
+        }
       case NSFlagsChanged:
-      {
-         int flags = [event modifierFlags];
+        {
+           int flags = [event modifierFlags];
 
-         Ecore_Event_Key *evDown = NULL;
-         Ecore_Event_Key *evUp = NULL;
+           Ecore_Event_Key *evDown = NULL;
+           Ecore_Event_Key *evUp = NULL;
 
-         evDown = calloc(1, sizeof (Ecore_Event_Key));
-         if (!evDown) return pass;
+           evDown = calloc(1, sizeof (Ecore_Event_Key));
+           if (!evDown) return pass;
 
-         // Turn special key flags on
-         if (flags & NSShiftKeyMask)
-            evDown->key = "Shift_L";
-         else if (flags & NSControlKeyMask)
-            evDown->key = "Control_L";
-         else if (flags & NSAlternateKeyMask)
-            evDown->key = "Alt_L";
-         else if (flags & NSCommandKeyMask)
-            evDown->key = "Super_L";
-         else if (flags & NSAlphaShiftKeyMask)
-            evDown->key = "Caps_Lock";
+           // Turn special key flags on
+           if (flags & NSShiftKeyMask)
+             evDown->key = "Shift_L";
+           else if (flags & NSControlKeyMask)
+             evDown->key = "Control_L";
+           else if (flags & NSAlternateKeyMask)
+             evDown->key = "Alt_L";
+           else if (flags & NSCommandKeyMask)
+             evDown->key = "Super_L";
+           else if (flags & NSAlphaShiftKeyMask)
+             evDown->key = "Caps_Lock";
 
-         if (evDown->key)
-         {
-            evDown->keyname = evDown->key;
-            evDown->timestamp = time;
-            evDown->string = NULL;
-            ecore_event_add(ECORE_EVENT_KEY_DOWN, evDown, NULL, NULL);
-            old_flags = flags;
-            break;
-         }
+           if (evDown->key)
+             {
+                evDown->keyname = evDown->key;
+                evDown->timestamp = time;
+                evDown->string = NULL;
+                ecore_event_add(ECORE_EVENT_KEY_DOWN, evDown, NULL, NULL);
+                old_flags = flags;
+                break;
+             }
 
-         free(evDown);
+           free(evDown);
 
-         evUp = calloc(1, sizeof (Ecore_Event_Key));
-         if (!evUp)
-           {
-              return pass;
-           }
+           evUp = calloc(1, sizeof (Ecore_Event_Key));
+           if (!evUp)
+             {
+                return pass;
+             }
 
-         int changed_flags = flags ^ old_flags;
+           int changed_flags = flags ^ old_flags;
 
-         // Turn special key flags off
-         if (changed_flags & NSShiftKeyMask)
-            evUp->key = "Shift_L";
-         else if (changed_flags & NSControlKeyMask)
-            evUp->key = "Control_L";
-         else if (changed_flags & NSAlternateKeyMask)
-            evUp->key = "Alt_L";
-         else if (changed_flags & NSCommandKeyMask)
-            evUp->key = "Super_L";
-         else if (changed_flags & NSAlphaShiftKeyMask)
-            evUp->key = "Caps_Lock";
+           // Turn special key flags off
+           if (changed_flags & NSShiftKeyMask)
+             evUp->key = "Shift_L";
+           else if (changed_flags & NSControlKeyMask)
+             evUp->key = "Control_L";
+           else if (changed_flags & NSAlternateKeyMask)
+             evUp->key = "Alt_L";
+           else if (changed_flags & NSCommandKeyMask)
+             evUp->key = "Super_L";
+           else if (changed_flags & NSAlphaShiftKeyMask)
+             evUp->key = "Caps_Lock";
 
-         if (evUp->key)
-         {
-            evUp->keyname = evDown->key;
-            evUp->timestamp = time;
-            evUp->string = NULL;
-            ecore_event_add(ECORE_EVENT_KEY_UP, evUp, NULL, NULL);
-            old_flags = flags;
-            break;
-         }
+           if (evUp->key)
+             {
+                evUp->keyname = evDown->key;
+                evUp->timestamp = time;
+                evUp->string = NULL;
+                ecore_event_add(ECORE_EVENT_KEY_UP, evUp, NULL, NULL);
+                old_flags = flags;
+                break;
+             }
 
-         break;
-      }
+           break;
+        }
       case NSAppKitDefined:
-      {
-         if ([event subtype] == NSApplicationActivatedEventType)
-     {
-        Ecore_Cocoa_Event_Window *ev;
+        {
+           if ([event subtype] == NSApplicationActivatedEventType)
+             {
+                Ecore_Cocoa_Event_Window *ev;
 
-            ev = malloc(sizeof(Ecore_Cocoa_Event_Window));
-            if (!ev)
-            {
-              pass = EINA_FALSE;
-              break;
-            }
-            ev->wid = [event window];
-            ecore_event_add(ECORE_COCOA_EVENT_GOT_FOCUS, ev, NULL, NULL);
-         }
-         else if ([event subtype] == NSApplicationDeactivatedEventType)
-     {
-            Ecore_Cocoa_Event_Window *ev;
+                ev = malloc(sizeof(Ecore_Cocoa_Event_Window));
+                if (!ev)
+                  {
+                     pass = EINA_FALSE;
+                     break;
+                  }
+                ev->wid = [event window];
+                ecore_event_add(ECORE_COCOA_EVENT_GOT_FOCUS, ev, NULL, NULL);
+             }
+           else if ([event subtype] == NSApplicationDeactivatedEventType)
+             {
+                Ecore_Cocoa_Event_Window *ev;
 
-            ev = malloc(sizeof(Ecore_Cocoa_Event_Window));
-            if (!ev)
-            {
-              pass = EINA_FALSE;
-              break;
-            }
-            ev->wid = [event window];
-            ecore_event_add(ECORE_COCOA_EVENT_LOST_FOCUS, ev, NULL, NULL);
-         }
-         pass = EINA_TRUE; // pass along AppKit events, for window manager
-         break;
-      }
+                ev = malloc(sizeof(Ecore_Cocoa_Event_Window));
+                if (!ev)
+                  {
+                     pass = EINA_FALSE;
+                     break;
+                  }
+                ev->wid = [event window];
+                ecore_event_add(ECORE_COCOA_EVENT_LOST_FOCUS, ev, NULL, NULL);
+             }
+           pass = EINA_TRUE; // pass along AppKit events, for window manager
+           break;
+        }
       case NSScrollWheel:
-      {
-         DBG("Scroll Wheel\n");
+        {
+           DBG("Scroll Wheel");
 
-         EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
-         Ecore_Event_Mouse_Wheel *ev;
-         float dx, dy = 0;
+           EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
+           Ecore_Event_Mouse_Wheel *ev;
+           float dx, dy = 0;
 
-         ev = malloc(sizeof(Ecore_Event_Mouse_Wheel));
-         if (!ev) return pass;
+           ev = malloc(sizeof(Ecore_Event_Mouse_Wheel));
+           if (!ev) return pass;
 
-         if ([event hasPreciseScrollingDeltas])
-           {
-              dx = -[event scrollingDeltaX];
-              dy = -[event scrollingDeltaY];
-           }
-         else
-           {
-              dx = -[event deltaX];
-              dy = -[event deltaY];
-           }
+           if ([event hasPreciseScrollingDeltas])
+             {
+                dx = -[event scrollingDeltaX];
+                dy = -[event scrollingDeltaY];
+             }
+           else
+             {
+                dx = -[event deltaX];
+                dy = -[event deltaY];
+             }
 
-         if (dx == 0 && dy == 0)
-           {
-              break;
-           }
+           if (dx == 0 && dy == 0)
+             {
+                break;
+             }
 
-         ev->window = (Ecore_Window)window.ecore_window_data;
-         ev->event_window = ev->window;
-         ev->modifiers = 0; /* FIXME: keep modifier around. */
-         ev->timestamp = time;
-         if (dy != 0)
-           {
-              ev->z = (dy >  0) ? 1 : -1;
-           }
-         else
-           {
-              ev->z = (dx >  0) ? 1 : -1;
-           }
-         ev->direction = (dy != 0) ? 0 : 1;
+           ev->window = (Ecore_Window)window.ecore_window_data;
+           ev->event_window = ev->window;
+           ev->modifiers = 0; /* FIXME: keep modifier around. */
+           ev->timestamp = time;
+           if (dy != 0)
+             {
+                ev->z = (dy >  0) ? 1 : -1;
+             }
+           else
+             {
+                ev->z = (dx >  0) ? 1 : -1;
+             }
+           ev->direction = (dy != 0) ? 0 : 1;
 
-         ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
+           ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
 
-         break;
-      }
+           break;
+        }
       default:
-      {
-         pass = EINA_TRUE;
-         break;
-      }
-   }
+        {
+           pass = EINA_TRUE;
+           break;
+        }
+     }
 
    return pass;
 }
@@ -376,6 +384,8 @@ EAPI void
 ecore_cocoa_screen_size_get(Ecore_Cocoa_Screen *screen, int *w, int *h)
 {
    NSSize pt =  [[[NSScreen screens] objectAtIndex:0] frame].size;
+
+   DBG("Screen size get : %dx%d", w, h);
 
    if (w) *w = (int)pt.width;
    if (h) *h = (int)pt.height;
@@ -393,6 +403,7 @@ ecore_cocoa_titlebar_height_get(void)
         contentRect = [NSWindow contentRectForFrameRect:frame
                                               styleMask:NSTitledWindowMask];
         height = (frame.size.height - contentRect.size.height);
+        DBG("Titlebar Heigt : %d", height);
      }
    return height;
 }
