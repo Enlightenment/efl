@@ -784,6 +784,28 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
             Default is #EVAS_IMAGE_ORIENT_NONE. */
          }
       }
+      @property snapshot {
+         set {
+            /*@
+            The content below the Evas_Object_Image will be rendered inside it and
+            you can reuse it as a source for any kind of effect.
+
+            @since 1.15
+            */
+	 }
+	 get {
+            /*@
+	    Determine wether the Evas_Object_Image replicate the content of the
+	    canvas below.
+
+	    @return @c EINA_TRUE if it does, @c EINA_FALSE if it doesn't.
+	    @since 1.15
+            */
+	 }
+	 values {
+	    s: bool; /*@ Wether to put the content of the canvas below inside the Evas_Object_Image. */
+	 }
+      }
       preload_begin {
          /*@ Begin preloading an image object's image data in the background */
          legacy: null;

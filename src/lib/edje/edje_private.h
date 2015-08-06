@@ -837,7 +837,8 @@ struct _Edje_Limit
       TYPE      EXTERNAL;         \
       TYPE      MESH_NODE;        \
       TYPE      LIGHT;            \
-      TYPE      CAMERA;
+      TYPE      CAMERA;           \
+      TYPE      SNAPSHOT;
 
 struct _Edje_Part_Collection_Directory_Entry
 {
@@ -2239,6 +2240,7 @@ EAPI extern Eina_Mempool *_emp_SPACER;
 EAPI extern Eina_Mempool *_emp_MESH_NODE;
 EAPI extern Eina_Mempool *_emp_LIGHT;
 EAPI extern Eina_Mempool *_emp_CAMERA;
+EAPI extern Eina_Mempool *_emp_SNAPSHOT;
 EAPI extern Eina_Mempool *_emp_part;
 
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2, FLOAT_T v3, FLOAT_T v4);

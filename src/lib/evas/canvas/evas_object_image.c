@@ -69,6 +69,8 @@ struct _Evas_Object_Image_Pixels
 
    Evas_Video_Surface video;
    unsigned int video_caps;
+
+   int surface_w, surface_h; /* used by snapshot feature */
 };
 
 struct _Evas_Object_Image_State
@@ -233,7 +235,7 @@ static const Evas_Object_Image_Load_Opts default_load_opts = {
 };
 
 static const Evas_Object_Image_Pixels default_pixels = {
-  NULL, { NULL, NULL }, { 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL }, ~0x0
+  NULL, { NULL, NULL }, { 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL }, ~0x0, 0, 0
 };
 
 static const Evas_Object_Image_State default_state = {
@@ -3301,6 +3303,14 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         uvw = imagew;
         uvh = imageh;
      }
+   else if (obj->cur->snapshot)
+     {
+        pixels = o->engine_data;
+        imagew = o->pixels->surface_w;
+        imageh = o->pixels->surface_h;
+        uvw = imagew;
+        uvh = imageh;
+     }
    else if (!o->cur->source)
      {
         pixels = evas_process_dirty_pixels(eo_obj, obj, o, output, surface, o->engine_data);
@@ -3322,6 +3332,7 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
             ((Evas_Image_Data *)eo_data_scope_get(o->cur->source, MY_CLASS))->engine_data)
      {
         Evas_Image_Data *oi;
+
         oi = eo_data_scope_get(o->cur->source, MY_CLASS);
         pixels = oi->engine_data;
         imagew = oi->cur->image.w;
@@ -4738,7 +4749,53 @@ _evas_object_image_video_overlay_do(Evas_Object *eo_obj)
    o->delayed.video_hide = EINA_FALSE;
 }
 
-/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
+static void
+_evas_image_snapshot_set(Eo *eo, Evas_Image_Data *pd EINA_UNUSED, Eina_Bool s)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo, EVAS_OBJECT_CLASS);
+
+   if (obj->cur->snapshot == s) return ;
+
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+     state_write->snapshot = !!s;
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+}
+
+static Eina_Bool
+_evas_image_snapshot_get(Eo *eo, Evas_Image_Data *pd EINA_UNUSED)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo, EVAS_OBJECT_CLASS);
+
+   return obj->cur->snapshot;
+}
+
+void *
+_evas_object_image_surface_get(Evas_Object *eo, Evas_Object_Protected_Data *obj)
+{
+   Evas_Image_Data *pd = eo_data_scope_get(eo, EVAS_IMAGE_CLASS);
+
+   if (pd->engine_data &&
+       pd->pixels->surface_w == obj->cur->geometry.w &&
+       pd->pixels->surface_h == obj->cur->geometry.h)
+     return pd->engine_data;
+
+   if (pd->engine_data)
+     ENFN->image_free(ENDT, pd->engine_data);
+
+   // FIXME: alpha forced to 1 for now, need to figure out Evas alpha here
+   EINA_COW_PIXEL_WRITE_BEGIN(pd, pixi_write)
+     {
+        pd->engine_data = ENFN->image_map_surface_new(ENDT,
+                                                      obj->cur->geometry.w,
+                                                      obj->cur->geometry.h,
+                                                      1);
+        pixi_write->surface_w = obj->cur->geometry.w;
+        pixi_write->surface_h = obj->cur->geometry.h;
+     }
+   EINA_COW_PIXEL_WRITE_END(pd, pixi_write);
+
+   return pd->engine_data;
+}
 
 EAPI void
 evas_object_image_file_set(Eo *obj, const char *file, const char *key)
@@ -4811,3 +4868,5 @@ _evas_image_efl_gfx_filter_program_set(Eo *obj, Evas_Image_Data *pd EINA_UNUSED,
 }
 
 #include "canvas/evas_image.eo.c"
+
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

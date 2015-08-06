@@ -710,7 +710,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 
                      case EDJE_PART_TYPE_PROXY:
                      case EDJE_PART_TYPE_IMAGE:
+                     case EDJE_PART_TYPE_SNAPSHOT:
                        rp->object = evas_object_image_add(ed->base->evas);
+                       if (ep->type == EDJE_PART_TYPE_SNAPSHOT)
+                         evas_object_image_snapshot_set(rp->object, EINA_TRUE);
                        break;
 
                      case EDJE_PART_TYPE_TEXT:
@@ -1958,6 +1961,8 @@ case EDJE_PART_TYPE_##Type: eina_mempool_free(Ce->mp.Type, Desc); \
         FREE_POOL(BOX, ce, desc);
         FREE_POOL(TABLE, ce, desc);
         FREE_POOL(EXTERNAL, ce, desc);
+        FREE_POOL(SNAPSHOT, ce, desc);
+        FREE_POOL(SPACER, ce, desc);
      }
 }
 

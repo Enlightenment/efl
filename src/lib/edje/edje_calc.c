@@ -326,6 +326,13 @@ case EDJE_PART_TYPE_##Short:                                          \
         memsize = sizeof(Edje_Part_Description_Common);
         break;
 
+      case EDJE_PART_TYPE_SNAPSHOT:
+        desc_rtl = eina_mempool_malloc(ce->mp_rtl.SNAPSHOT,
+                                       sizeof (Edje_Part_Description_Common));
+        ce->count.SNAPSHOT++;
+        memsize = sizeof(Edje_Part_Description_Common);
+        break;
+
       case EDJE_PART_TYPE_SWALLOW:
         desc_rtl = eina_mempool_malloc(ce->mp_rtl.SWALLOW,
                                        sizeof (Edje_Part_Description_Common));

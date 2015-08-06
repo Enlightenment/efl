@@ -808,6 +808,7 @@ struct _Evas_Public_Data
    Eina_Array     pending_objects;
    Eina_Array     obscuring_objects;
    Eina_Array     temporary_objects;
+   Eina_Array     snapshot_objects;
    Eina_Array     clip_changes;
    Eina_Array     scie_unref_queue;
    Eina_Array     image_unref_queue;
@@ -1004,6 +1005,7 @@ struct _Evas_Object_Protected_State
 
    Eina_Bool             cached_surface : 1;
    Eina_Bool             parent_cached_surface : 1;
+   Eina_Bool             snapshot : 1;
 };
 
 struct _Evas_Object_Protected_Data
@@ -1877,6 +1879,8 @@ void _evas_device_ref(Evas_Device *dev);
 void _evas_device_unref(Evas_Device *dev);
 
 Eina_Bool evas_vg_loader_svg(Evas_Object *vg, const Eina_File *f, const char *key EINA_UNUSED);
+
+void *_evas_object_image_surface_get(Evas_Object *eo, Evas_Object_Protected_Data *obj);
 
 extern Eina_Cow *evas_object_proxy_cow;
 extern Eina_Cow *evas_object_map_cow;
