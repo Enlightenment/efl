@@ -42,11 +42,69 @@ static int                      _ecore_evas_init_count = 0;
 // like a rbtree or a dictionnary-based container
 static Eina_List                *ecore_evases = NULL;
 static Ecore_Event_Handler      *ecore_evas_event_handlers[5] = {
-  NULL, NULL, NULL, NULL
+  0
 };
 static Ecore_Idle_Enterer       *ecore_evas_idle_enterer = NULL;
 
 //static const char               *ecore_evas_cocoa_default = "EFL Cocoa";
+
+static int
+_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
+{
+   int rend = 0;
+
+   if (ee->prop.avoid_damage)
+     {
+       if (updates)
+       {
+           _ecore_evas_idle_timeout_update(ee);
+           rend = 1;
+       }
+
+     }
+   else if (((ee->visible) && (ee->draw_ok)) ||
+            ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
+            ((ee->should_be_visible) && (ee->prop.override)))
+     {
+        if (updates)
+          {
+             if (ee->shaped)
+               {
+                 //TODO
+               }
+             if (ee->alpha)
+               {
+                 //TODO
+               }
+             _ecore_evas_idle_timeout_update(ee);
+             rend = 1;
+          }
+     }
+   else
+     evas_norender(ee->evas);
+
+   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+
+
+   if (rend)
+     {
+        static int frames = 0;
+        static double t0 = 0.0;
+        double t, td;
+
+        t = ecore_time_get();
+        frames++;
+        if ((t - t0) > 1.0)
+          {
+             td = t - t0;
+             printf("FPS: %3.3f\n", (double)frames / td);
+             frames = 0;
+             t0 = t;
+          }
+     }
+
+   return rend;
+}
 
 static int
 _ecore_evas_render(Ecore_Evas *ee)
@@ -69,8 +127,16 @@ _ecore_evas_cocoa_render(Ecore_Evas *ee)
    Eina_List *updates = NULL;
    Eina_List *ll;
    Ecore_Evas *ee2;
+   static int render2 = -1;
 
-   DBG("Render");
+   if ((!ee->no_comp_sync) && (_ecore_evas_app_comp_sync))
+     return 0;
+
+   if (ee->in_async_render)
+     {
+        //EDBG("ee=%p is rendering asynchronously, skip.", ee);
+        return 0;
+     }
 
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
@@ -81,40 +147,42 @@ _ecore_evas_cocoa_render(Ecore_Evas *ee)
      }
 
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
-
-   if (ee->prop.avoid_damage)
+   if (render2 == -1)
      {
-        rend = _ecore_evas_render(ee);
+        if (getenv("RENDER2")) render2 = 1;
+        else render2 = 0;
      }
-   else if ((ee->visible) ||
-            ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
-            ((ee->should_be_visible) && (ee->prop.override)))
+   if (render2)
      {
-        rend |= _ecore_evas_render(ee);
-     }
-   else
-     evas_norender(ee->evas);
-
-   if (updates) rend = 1;
-   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-
-   if (rend)
-     {
-        static int frames = 0;
-        static double t0 = 0.0;
-        double t, td;
-
-        t = ecore_time_get();
-        frames++;
-        if ((t - t0) > 1.0)
+        if (!ee->can_async_render)
           {
-             td = t - t0;
-             DBG("FPS: %3.3f\n", (double)frames / td);
-             frames = 0;
-             t0 = t;
+             Eina_List *updates = evas_render2_updates(ee->evas);
+             rend = _render_updates_process(ee, updates);
+             evas_render_updates_free(updates);
+          }
+        else
+          {
+             ee->in_async_render = EINA_TRUE;
+             if (evas_render2(ee->evas)) rend = 1;
+             else ee->in_async_render = EINA_FALSE;
           }
      }
-
+   else
+     {
+        if (!ee->can_async_render)
+          {
+             Eina_List *updates = evas_render_updates(ee->evas);
+             rend = _render_updates_process(ee, updates);
+             evas_render_updates_free(updates);
+          }
+        else if (evas_render_async(ee->evas))
+          {
+             //EDBG("ee=%p started asynchronous render.", ee);
+             ee->in_async_render = EINA_TRUE;
+             rend = 1;
+          }
+        else if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+     }
    return rend;
 }
 
