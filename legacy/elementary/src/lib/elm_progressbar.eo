@@ -65,14 +65,14 @@ class Elm.Progressbar (Elm.Layout)
             Get whether a given progress bar widget is at "pulsing mode" or
             not.
 
-            @return @c EINA_TRUE, if @p obj is in pulsing mode, @c EINA_FALSE
+            @return @c true, if @p obj is in pulsing mode, @c false
             if it's in the default one (and on errors)
 
             @ingroup Progressbar */
          }
          values {
-            pulse: bool; /*@ @c EINA_TRUE to put @p obj in pulsing mode,
-            @c EINA_FALSE to put it back to its default one */
+            pulse: bool; /*@ @c true to put @p obj in pulsing mode,
+            @c false to put it back to its default one */
          }
       }
       @property value {
@@ -125,16 +125,16 @@ class Elm.Progressbar (Elm.Layout)
             Get whether a given progress bar widget's displaying values are
             inverted or not
 
-            @return @c EINA_TRUE, if @p obj has inverted values,
-            @c EINA_FALSE otherwise (and on errors)
+            @return @c true, if @p obj has inverted values,
+            @c false otherwise (and on errors)
 
             @see elm_progressbar_inverted_set() for more details
 
             @ingroup Progressbar */
          }
          values {
-            inverted: bool; /*@ Use @c EINA_TRUE to make @p obj inverted,
-            @c EINA_FALSE to bring it back to default, non-inverted values. */
+            inverted: bool; /*@ Use @c true to make @p obj inverted,
+            @c false to bring it back to default, non-inverted values. */
          }
       }
       @property horizontal {
@@ -153,16 +153,16 @@ class Elm.Progressbar (Elm.Layout)
             /*@
             Get the orientation of a given progress bar widget
 
-            @return @c EINA_TRUE, if @p obj is set to be @b horizontal,
-            @c EINA_FALSE if it's @b vertical (and on errors)
+            @return @c true, if @p obj is set to be @b horizontal,
+            @c false if it's @b vertical (and on errors)
 
             @see elm_progressbar_horizontal_set() for more details
 
             @ingroup Progressbar */
          }
          values {
-            horizontal: bool; /*@ Use @c EINA_TRUE to make @p obj to be
-            @b horizontal, @c EINA_FALSE to make it @b vertical */
+            horizontal: bool; /*@ Use @c true to make @p obj to be
+            @b horizontal, @c false to make it @b vertical */
          }
       }
       @property unit_format {
@@ -266,8 +266,8 @@ class Elm.Progressbar (Elm.Layout)
          @ingroup Progressbar */
 
          params {
-            @in state: bool; /*@ @c EINA_TRUE, to @b start the pulsing animation,
-            @c EINA_FALSE to @b stop it */
+            @in state: bool; /*@ @c true, to @b start the pulsing animation,
+            @c false to @b stop it */
          }
       }
    }

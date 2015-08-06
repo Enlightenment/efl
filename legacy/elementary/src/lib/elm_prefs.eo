@@ -7,7 +7,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
             /*@
             Set user data for a given prefs widget
 
-            @return @c EINA_TRUE, on success, @c EINA_FALSE otherwise
+            @return @c true, on success, @c false otherwise
 
             Once a prefs widget is created, after elm_prefs_file_set() is
             issued on it, all of its UI elements will get default values, when
@@ -58,7 +58,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
             the user data file, if set) automatically on every UI element
             changes.
 
-            If @a autosave is @c EINA_TRUE, every call to
+            If @a autosave is @c true, every call to
             elm_prefs_item_value_set(), every
             Elm_Prefs_Data_Event_Type.ELM_PREFS_DATA_EVENT_ITEM_CHANGED event
             coming for its prefs data and every UI element direct value
@@ -76,15 +76,15 @@ class Elm.Prefs (Elm.Widget, Efl.File)
             Get whether a given prefs widget is saving its values back
             automatically on changes.
 
-            @return @c EINA_TRUE if @a prefs is saving automatically,
-            @c EINA_FALSE otherwise.
+            @return @c true if @a prefs is saving automatically,
+            @c false otherwise.
 
             @see elm_prefs_autosave_set(), for more details
 
             @since 1.8 */
          }
          values {
-            autosave: bool; /*@ @c EINA_TRUE to save automatically, @c EINA_FALSE
+            autosave: bool; /*@ @c true to save automatically, @c false
             otherwise. */
          }
       }
@@ -108,7 +108,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          /*@
          Set the value on a given prefs widget's item.
 
-         @return @c EINA_TRUE, on success, @c EINA_FALSE otherwise
+         @return @c true, on success, @c false otherwise
 
          This will change the value of item named @a name programatically.
 
@@ -129,7 +129,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          /*@
          Get the value of a given prefs widget's item.
 
-         @return @c EINA_TRUE, on success, @c EINA_FALSE otherwise
+         @return @c true, on success, @c false otherwise
 
          This will retrieve the value of item named @a name.
 
@@ -180,7 +180,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          params {
             @in name: const(char)*; /*@ The name of the item (as declared in the prefs
             collection) to act on */
-            @in disabled: bool; /*@ @c EINA_TRUE, to make it disabled, @c EINA_FALSE
+            @in disabled: bool; /*@ @c true, to make it disabled, @c false
             otherwise */
          }
       }
@@ -189,7 +189,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          Get whether the widget bound to a given prefs widget's item is
          disabled or not.
 
-         @return @c EINA_TRUE, if it is disabled, @c EINA_FALSE
+         @return @c true, if it is disabled, @c false
          otherwise
 
          @see elm_prefs_item_disabled_set()
@@ -205,7 +205,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          /*@
          "Swallows" an object into a SWALLOW item of a prefs widget.
 
-         @return @c EINA_TRUE, on success, @c EINA_FALSE otherwise
+         @return @c true, on success, @c false otherwise
 
          @see elm_prefs_item_swallow() for more details
 
@@ -234,7 +234,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          params {
             @in name: const(char)*; /*@ The name of the item (as declared in the prefs
             collection) to act on */
-            @in editable: bool; /*@ @c EINA_TRUE, to make it editable, @c EINA_FALSE
+            @in editable: bool; /*@ @c true, to make it editable, @c false
             otherwise */
          }
       }
@@ -243,7 +243,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          Get whether the widget bound to a given prefs widget's item is
          editable or not.
 
-         @return @c EINA_TRUE, if it is editable, @c EINA_FALSE
+         @return @c true, if it is editable, @c false
          otherwise
 
          @see elm_prefs_item_editable_set() for more details
@@ -287,7 +287,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          params {
             @in name: const(char)*; /*@ The name of the item (as declared in the prefs
             collection) to change visibility of */
-            @in visible: bool; /*@ @c EINA_TRUE, to make it visible, @c EINA_FALSE
+            @in visible: bool; /*@ @c true, to make it visible, @c false
             otherwise */
          }
       }
@@ -296,7 +296,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          Get whether the widget bound to a given prefs widget's item is
          visible or not.
 
-         @return @c EINA_TRUE, if it is visible, @c EINA_FALSE
+         @return @c true, if it is visible, @c false
          otherwise
 
          @see elm_prefs_item_visible_set() for more details

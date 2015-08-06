@@ -7,7 +7,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             /*@
             @brief Set the event enabled when pushing/popping items
 
-            If @p enabled is @c EINA_TRUE, the contents of the naviframe item will
+            If @p enabled is @c true, the contents of the naviframe item will
             receives events from mouse and keyboard during view changing such as
             item push/pop.
 
@@ -23,14 +23,14 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             /*@
             @brief Get the value of event enabled status.
 
-            @return @c EINA_TRUE, when event is enabled
+            @return @c true, when event is enabled
 
             @see elm_naviframe_event_enabled_set()
 
             @ingroup Naviframe */
          }
          values {
-            enabled: bool; /*@ Events are received when enabled is @c EINA_TRUE, and
+            enabled: bool; /*@ Events are received when enabled is @c true, and
             ignored otherwise. */
          }
       }
@@ -47,14 +47,14 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             /*@
             @brief Get a value whether preserve mode is enabled or not.
 
-            @return If @c EINA_TRUE, preserve mode is enabled
+            @return If @c true, preserve mode is enabled
 
             @see also elm_naviframe_content_preserve_on_pop_set()
 
             @ingroup Naviframe */
          }
          values {
-            preserve: bool; /*@ Enable the preserve mode if @c EINA_TRUE, disable otherwise */
+            preserve: bool; /*@ Enable the preserve mode if @c true, disable otherwise */
          }
       }
       @property prev_btn_auto_pushed {
@@ -71,7 +71,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @brief Get a value whether prev button(back button) will be auto pushed or
             not.
 
-            @return If @c EINA_TRUE, prev button will be auto pushed.
+            @return If @c true, prev button will be auto pushed.
 
             @see also elm_naviframe_item_push()
             elm_naviframe_prev_btn_auto_pushed_set()
@@ -79,7 +79,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Naviframe */
          }
          values {
-            auto_pushed: bool; /*@ If @c EINA_TRUE, the previous button(back button) will
+            auto_pushed: bool; /*@ If @c true, the previous button(back button) will
             be created internally when you pass the @c NULL to the prev_btn
             parameter in elm_naviframe_item_push */
          }

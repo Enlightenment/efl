@@ -15,14 +15,14 @@ class Elm.Multibuttonentry (Elm.Layout)
             /*@
             Get whether the multibuttonentry is editable or not.
 
-            @return @c EINA_TRUE if the multibuttonentry is editable by the user. @c EINA_FALSE if not.
+            @return @c true if the multibuttonentry is editable by the user. @c false if not.
 
             @ingroup Multibuttonentry
 
             @since 1.7 */
          }
          values {
-            editable: bool; /*@ If @c EINA_TRUE, user can add/delete item in multibuttonentry, if not, the multibuttonentry is non-editable. */
+            editable: bool; /*@ If @c true, user can add/delete item in multibuttonentry, if not, the multibuttonentry is non-editable. */
          }
       }
       @property expanded {
@@ -40,14 +40,14 @@ class Elm.Multibuttonentry (Elm.Layout)
             In expanded state, the complete entry will be displayed.
             Otherwise, only single line of the entry will be displayed.
 
-            @return @c EINA_TRUE if the widget is in expanded state. @c EINA_FALSE if not.
+            @return @c true if the widget is in expanded state. @c false if not.
 
             @ingroup Multibuttonentry */
          }
          values {
             expanded: bool; /*@ the value of expanded state.
-            Set this to @c EINA_TRUE for expanded state.
-            Set this to EINA_FALSE for single line state. */
+            Set this to @c true for expanded state.
+            Set this to false for single line state. */
          }
       }
       @property format_function {

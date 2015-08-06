@@ -111,7 +111,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      /*@
                       Get whether a given genlist item is selected or not
 
-                      @return @c EINA_TRUE, if it's selected, @c EINA_FALSE otherwise
+                      @return @c true, if it's selected, @c false otherwise
 
                       @see elm_genlist_item_selected_set() for more details
 
@@ -122,11 +122,11 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      /*@
                       Set whether a given genlist item is selected or not
 
-                      Use @c EINA_TRUE, to make it selected, @c EINA_FALSE to make it unselected
+                      Use @c true, to make it selected, @c false to make it unselected
 
                       This sets the selected state of an item. If multi selection is
                       not enabled on the containing genlist and @p selected is @c
-                      EINA_TRUE, any other previously selected items will get
+                      true, any other previously selected items will get
                       unselected in favor of this new one.
 
                       @see elm_genlist_item_selected_get()
@@ -135,7 +135,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     selected: bool; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
+                     selected: bool; /*@ the selected state (@c true selected, @c false not selected) */
                 }
            }
            @property expanded {
@@ -171,7 +171,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     expanded: bool; /*@ The expanded state (@c EINA_TRUE expanded, @c EINA_FALSE not expanded). */
+                     expanded: bool; /*@ The expanded state (@c true expanded, @c false not expanded). */
                 }
            }
            @property expanded_depth {
@@ -238,7 +238,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       Get the flip state of a given genlist item.
 
                       This function returns the flip state of a given genlist item.
-                      If the parameter is invalid, it returns @c EINA_FALSE.
+                      If the parameter is invalid, it returns @c false.
 
                       @see elm_genlist_item_flip_set()
 
@@ -249,7 +249,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      /*@
                       Set the flip state of a given genlist item.
 
-                      (@c EINA_TRUE = on, @c EINA_FALSE = off)
+                      (@c true = on, @c false = off)
 
                       This function sets the flip state of a given genlist item.
                       Flip mode overrides current item object.

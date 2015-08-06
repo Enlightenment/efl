@@ -554,7 +554,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       on_focus {
          /*@ 'Virtual' function handling focus in/out events on the widget.
-         return EINA_TRUE if this widget can handle focus, EINA_FALSE otherwise */
+         return true if this widget can handle focus, false otherwise */
          return: bool;
       }
       on_focus_region {

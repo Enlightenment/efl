@@ -15,14 +15,14 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
             /*@
             Get whether auto hiding feature is enabled or not for a given index widget.
 
-            @return @c EINA_TRUE, if auto hiding is disabled, @c EINA_FALSE otherwise
+            @return @c true, if auto hiding is disabled, @c false otherwise
 
             @see elm_index_autohide_disabled_set() for more details
 
             @ingroup Index */
          }
          values {
-            disabled: bool; /*@ @c EINA_TRUE to disable auto hiding, @c EINA_FALSE to enable */
+            disabled: bool; /*@ @c true to disable auto hiding, @c false to enable */
          }
       }
       @property omit_enabled {
@@ -40,7 +40,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
             /*@
             Get whether omit feature is enabled or not for a given index widget.
 
-            @return @c EINA_TRUE, if omit feature is enabled, @c EINA_FALSE otherwise
+            @return @c true, if omit feature is enabled, @c false otherwise
 
             @see elm_index_omit_enabled_set()
 
@@ -49,7 +49,7 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
             @ingroup Index */
          }
          values {
-            enabled: bool; /*@ @c EINA_TRUE to enable omit feature, @c EINA_FALSE to disable */
+            enabled: bool; /*@ @c true to enable omit feature, @c false to disable */
          }
       }
       @property priority {
@@ -99,16 +99,16 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
             /*@
             Get a value whether horizontal mode is enabled or not.
 
-            @return @c EINA_TRUE means horizontal mode selection is enabled.
-            @c EINA_FALSE indicates it's disabled. If @p obj is @c NULL,
-            @c EINA_FALSE is returned.
+            @return @c true means horizontal mode selection is enabled.
+            @c false indicates it's disabled. If @p obj is @c NULL,
+            @c false is returned.
 
             @see elm_index_horizontal_set() for details.
 
             @ingroup Index */
          }
          values {
-            horizontal: bool; /*@ @c EINA_TRUE to enable horizontal or @c EINA_FALSE to
+            horizontal: bool; /*@ @c true to enable horizontal or @c false to
             disable it, i.e., to enable vertical mode. it's an area one @ref Fingers
             "finger" wide on the bottom side of the index widget's container. */
          }
@@ -153,14 +153,14 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
             /*@
             Get the value of indicator's disabled status.
 
-            @return EINA_TRUE if the indicator is disabled.
+            @return true if the indicator is disabled.
 
             @see elm_index_indicator_disabled_set()
 
             @ingroup Index */
          }
          values {
-            disabled: bool; /*@ @c EINA_TRUE to disable it, @c EINA_FALSE to enable it */
+            disabled: bool; /*@ @c true to disable it, @c false to enable it */
          }
       }
       @property item_level {

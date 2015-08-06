@@ -135,16 +135,16 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             Get if, after a slideshow is started, for a given slideshow
             widget, its items are to be displayed cyclically or not.
 
-            @return @c EINA_TRUE, if the items in @p obj will be cycled
-            through or @c EINA_FALSE, otherwise
+            @return @c true, if the items in @p obj will be cycled
+            through or @c false, otherwise
 
             @see elm_slideshow_loop_set() for more details
 
             @ingroup Slideshow */
          }
          values {
-            loop: bool; /*@ Use @c EINA_TRUE to make it cycle through items or
-            @c EINA_FALSE for it to stop at the end of @p obj's internal
+            loop: bool; /*@ Use @c true to make it cycle through items or
+            @c false for it to stop at the end of @p obj's internal
             list of items */
          }
       }

@@ -61,20 +61,20 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
             @ingroup Popup
             @see elm_popup_allow_events_get()
-            @note The default value is EINA_FALSE. */
+            @note The default value is false. */
          }
          get {
             /*@
             @brief Returns value indicating whether allow event is enabled or not
 
-            @return @c EINA_FALSE if Blocked event area is present else @c EINA_TRUE
+            @return @c false if Blocked event area is present else @c true
 
             @ingroup Popup
             @see elm_popup_allow_events_set()
             @note By default the Blocked event area is present */
          }
          values {
-            allow: bool; /*@ @c EINA_TRUE Events are passed to lower objects, else not */
+            allow: bool; /*@ @c true Events are passed to lower objects, else not */
          }
       }
       @property content_text_wrap_type {

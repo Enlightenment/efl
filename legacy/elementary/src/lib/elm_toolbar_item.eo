@@ -81,8 +81,8 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      /*@
                       Get whether the @p item is selected or not.
 
-                      @return @c EINA_TRUE means item is selected. @c EINA_FALSE indicates
-                      it's not. If @p obj is @c NULL, @c EINA_FALSE is returned.
+                      @return @c true means item is selected. @c false indicates
+                      it's not. If @p obj is @c NULL, @c false is returned.
 
                       @see elm_toolbar_selected_item_set() for details.
                       @see elm_toolbar_item_selected_get()
@@ -95,7 +95,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       Set the selected state of an item.
 
                       This sets the selected state of the given item @p it.
-                      @c EINA_TRUE for selected, @c EINA_FALSE for not selected.
+                      @c true for selected, @c false for not selected.
 
                       If a new item is selected the previously selected will be unselected.
                       Previously selected item can be get with function
@@ -180,8 +180,8 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      /*@
                       Get a value whether item is a separator or not.
 
-                      @return @c EINA_TRUE means item @p it is a separator. @c EINA_FALSE
-                      indicates it's not. If @p it is @c NULL, @c EINA_FALSE is returned.
+                      @return @c true means item @p it is a separator. @c false
+                      indicates it's not. If @p it is @c NULL, @c false is returned.
 
                       @see elm_toolbar_item_separator_set() for details.
 
@@ -192,8 +192,8 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      /*@
                       Set or unset item as a separator.
 
-                      @param separator @c EINA_TRUE to set item @p item as separator or
-                      @c EINA_FALSE to unset, i.e., item will be used as a regular item.
+                      @param separator @c true to set item @p item as separator or
+                      @c false to unset, i.e., item will be used as a regular item.
 
                       Items aren't set as separator by default.
 
@@ -245,7 +245,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       Set @p state as the current state of @p it.
 
                       @param state The state to use.
-                      @return @c EINA_TRUE on success or @c EINA_FALSE on failure.
+                      @return @c true on success or @c false on failure.
 
                       If @p state is @c NULL, it won't select any state and the default item's
                       icon and label will be used. It's the same behaviour than
@@ -282,7 +282,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      @in format: const (char) *; /*@ Optional format of @p img to pass to the image loader */
                      @in key: const (char) *; /*@ Optional key of @p img to pass to the image loader (eg. if @p img is an edje file) */
                 }
-                return: bool; /*@ (@c EINA_TRUE = success, @c EINA_FALSE = error) */
+                return: bool; /*@ (@c true = success, @c false = error) */
            }
            icon_file_set {
                 /*@
@@ -297,7 +297,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      @in file: const (char) *; /*@ The file that contains the image */
                      @in key: const (char) *; /*@ Optional key of @p img to pass to the image loader (eg. if @p img is an edje file) */
                 }
-                return: bool; /*@ (@c EINA_TRUE = success, @c EINA_FALSE = error) */
+                return: bool; /*@ (@c true = success, @c false = error) */
            }
            state_add {
                 /*@
@@ -333,7 +333,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                 params {
                      @in state: Elm_Toolbar_Item_State *; /*@ The state to be deleted. */
                 }
-                return: bool; /*@ @c EINA_TRUE on success or @c EINA_FALSE on failure. */
+                return: bool; /*@ @c true on success or @c false on failure. */
            }
            state_next {
                 /*@
@@ -406,7 +406,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                  @code
                  tb = elm_toolbar_add(win)
                  item = elm_toolbar_item_append(tb, "refresh", "Menu", NULL, NULL);
-                 elm_toolbar_item_menu_set(item, EINA_TRUE);
+                 elm_toolbar_item_menu_set(item, true);
                  elm_toolbar_menu_parent_set(tb, win);
                  menu = elm_toolbar_item_menu_get(item);
                  elm_menu_item_add(menu, NULL, "edit-cut", "Cut", NULL, NULL);
@@ -419,7 +419,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                  @ingroup Toolbar
                  */
                 params {
-                     @in menu: bool; /*@ If @c EINA_TRUE, @p item will opens a menu when selected. */
+                     @in menu: bool; /*@ If @c true, @p item will opens a menu when selected. */
                 }
            }
       }

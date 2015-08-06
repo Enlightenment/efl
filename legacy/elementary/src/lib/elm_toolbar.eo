@@ -44,7 +44,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
             Get whether the homogeneous mode is enabled.
 
             @return Assume the items within the toolbar are of the same height
-            and width (EINA_TRUE = on, EINA_FALSE = off).
+            and width (true = on, false = off).
 
             @see elm_toolbar_homogeneous_set()
 
@@ -52,7 +52,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
          }
          values {
             homogeneous: bool; /*@ Assume the items within the toolbar are of the
-            same size (EINA_TRUE = on, EINA_FALSE = off). Default is @c EINA_FALSE. */
+            same size (true = on, false = off). Default is @c false. */
          }
       }
       @property align {
@@ -155,12 +155,12 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
          get {
             /*@
             Get a toolbar's orientation
-            @return If @c EINA_TRUE, the toolbar is horizontal
+            @return If @c true, the toolbar is horizontal
             By default, a toolbar will be horizontal. Use this function to determine whether a toolbar is vertical.
             @ingroup Toolbar */
          }
          values {
-            horizontal: bool; /*@ If @c EINA_TRUE, the toolbar is horizontal */
+            horizontal: bool; /*@ If @c true, the toolbar is horizontal */
          }
       }
       @property icon_order_lookup {

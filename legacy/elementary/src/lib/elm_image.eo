@@ -21,13 +21,13 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
 
             @return Editability.
 
-            A return value of EINA_TRUE means the image is a valid drag target
+            A return value of true means the image is a valid drag target
             for drag and drop, and can be cut or pasted too.
 
             @ingroup Image */
          }
          values {
-            set: bool; /*@ Turn on or off editability. Default is @c EINA_FALSE. */
+            set: bool; /*@ Turn on or off editability. Default is @c false. */
          }
       }
       @property resize_down {
@@ -97,15 +97,15 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             /*@
             Get the smooth effect for an image.
 
-            @return @c EINA_TRUE if smooth scaling is enabled, @c EINA_FALSE otherwise.
+            @return @c true if smooth scaling is enabled, @c false otherwise.
 
             @see elm_image_smooth_set()
 
             @ingroup Image */
          }
          values {
-            smooth: bool; /*@ @c EINA_TRUE if smooth scaling should be used, @c EINA_FALSE
-            otherwise. Default is @c EINA_TRUE. */
+            smooth: bool; /*@ @c true if smooth scaling should be used, @c false
+            otherwise. Default is @c true. */
          }
       }
       @property no_scale {
@@ -128,15 +128,15 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             /*@
             Get whether scaling is disabled on the object.
 
-            @return @c EINA_TRUE if scaling is disabled, @c EINA_FALSE otherwise
+            @return @c true if scaling is disabled, @c false otherwise
 
             @see elm_image_no_scale_set()
 
             @ingroup Image */
          }
          values {
-            no_scale: bool; /*@ @c EINA_TRUE if the object is not scalable, @c EINA_FALSE
-            otherwise. Default is @c EINA_FALSE. */
+            no_scale: bool; /*@ @c true if the object is not scalable, @c false
+            otherwise. Default is @c false. */
          }
       }
       @property scale {
@@ -218,14 +218,14 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             /*@
             Get if the object retains the original aspect ratio.
 
-            @return @c EINA_TRUE if the object keeps the original aspect, @c EINA_FALSE
+            @return @c true if the object keeps the original aspect, @c false
             otherwise.
 
             @ingroup Image */
          }
          values {
-            fixed: bool; /*@ @c EINA_TRUE if the image should retain the aspect,
-            @c EINA_FALSE otherwise. */
+            fixed: bool; /*@ @c true if the image should retain the aspect,
+            @c false otherwise. */
          }
       }
       @property orient {
@@ -264,11 +264,11 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             When the image should keep its aspect ratio even if resized to another
             aspect ratio, there are two possibilities to resize it: keep the entire
             image inside the limits of height and width of the object (@p fill_outside
-            is @c EINA_FALSE) or let the extra width or height go outside of the object,
-            and the image will fill the entire object (@p fill_outside is @c EINA_TRUE).
+            is @c false) or let the extra width or height go outside of the object,
+            and the image will fill the entire object (@p fill_outside is @c true).
 
             @note This option will have no effect if
-            elm_image_aspect_fixed_set() is set to @c EINA_FALSE.
+            elm_image_aspect_fixed_set() is set to @c false.
 
             @see elm_image_fill_inside_get()
             @see elm_image_fill_inside_set()
@@ -281,7 +281,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             /*@
             Get if the object is filled outside
 
-            @return @c EINA_TRUE if the object is filled outside, @c EINA_FALSE otherwise.
+            @return @c true if the object is filled outside, @c false otherwise.
 
             @see elm_image_fill_inside_get()
             @see elm_image_fill_inside_set()
@@ -290,8 +290,8 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             @ingroup Image */
          }
          values {
-            fill_outside: bool; /*@ @c EINA_TRUE if the object is filled outside,
-            @c EINA_FALSE otherwise. Default is @c EINA_FALSE. */
+            fill_outside: bool; /*@ @c true if the object is filled outside,
+            @c false otherwise. Default is @c false. */
          }
       }
       @property resizable {
@@ -300,7 +300,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             Set if the object is (up/down) resizable.
 
             This function limits the image resize ability. If @p size_up is set to
-            @c EINA_FALSE, the object can't have its height or width resized to a value
+            @c false, the object can't have its height or width resized to a value
             higher than the original image size. Same is valid for @p size_down.
 
             @see elm_image_resizable_get()
@@ -317,9 +317,9 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
          }
          values {
             up: bool; /*@ A bool to set if the object is resizable up. Default is
-            @c EINA_TRUE. */
+            @c true. */
             down: bool; /*@ A bool to set if the object is resizable down. Default
-            is @c EINA_TRUE. */
+            is @c true. */
          }
       }
       @property preload_disabled {
@@ -330,7 +330,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             @ingroup Image */
          }
          values {
-            disabled: bool; /*@ If EINA_TRUE, preloading will be disabled */
+            disabled: bool; /*@ If true, preloading will be disabled */
          }
       }
       @property mmap {
@@ -338,7 +338,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             /*@
             Set the file that will be used as the image's source.
 
-            @return (@c EINA_TRUE = success, @c EINA_FALSE = error)
+            @return (@c true = success, @c false = error)
 
             @see elm_image_file_set()
 
@@ -377,7 +377,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             "correct" loader first, before trying a range of other possible
             loaders until one succeeds.
 
-            @return (@c EINA_TRUE = success, @c EINA_FALSE = error)
+            @return (@c true = success, @c false = error)
 
             @since 1.7
 

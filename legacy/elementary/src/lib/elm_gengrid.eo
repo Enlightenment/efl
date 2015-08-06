@@ -59,7 +59,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             /*@
             Get how the items grid's filled within a given gengrid widget
 
-            @return @c EINA_TRUE, if filled is on, @c EINA_FALSE if it's
+            @return @c true, if filled is on, @c false if it's
             off
 
             @note Use @c NULL pointers on the alignment values you're not
@@ -108,16 +108,16 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             Get whether multi-selection is enabled or disabled for a given
             gengrid widget
 
-            @return @c EINA_TRUE, if multi-selection is enabled, @c
-            EINA_FALSE otherwise
+            @return @c true, if multi-selection is enabled, @c
+            false otherwise
 
             @see elm_gengrid_multi_select_set() for more details
 
             @ingroup Gengrid */
          }
          values {
-            multi: bool; /*@ @c EINA_TRUE, to enable multi-selection,
-            @c EINA_FALSE to disable it. */
+            multi: bool; /*@ @c true, to enable multi-selection,
+            @c false to disable it. */
          }
       }
       @property group_item_size {
@@ -210,7 +210,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             Get whether a given gengrid widget is or not able have items
             @b reordered
 
-            @return @c EINA_TRUE, if reordering is on, @c EINA_FALSE if it's
+            @return @c true, if reordering is on, @c false if it's
             off
 
             @see elm_gengrid_reorder_mode_set() for more details
@@ -218,8 +218,8 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            reorder_mode: bool; /*@ Use @c EINA_TRUE to turn reordering on,
-            @c EINA_FALSE to turn it off */
+            reorder_mode: bool; /*@ Use @c true to turn reordering on,
+            @c false to turn it off */
          }
       }
       @property highlight_mode {
@@ -304,14 +304,14 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             Set the direction in which a given gengrid widget will expand while
             placing its items.
 
-            When in "horizontal mode" (@c EINA_TRUE), items will be placed in @b columns,
+            When in "horizontal mode" (@c true), items will be placed in @b columns,
             from top to bottom and, when the space for a column is filled, another one is
             started on the right, thus expanding the grid horizontally. When in
-            "vertical mode" (@c EINA_FALSE), though, items will be placed in @b rows,
+            "vertical mode" (@c false), though, items will be placed in @b rows,
             from left to right and, when the space for a row is filled, another one is
             started below, thus expanding the grid vertically.
 
-            @note By default, gengrid is in vertical mode, @c EINA_FALSE.
+            @note By default, gengrid is in vertical mode, @c false.
 
             @see elm_gengrid_horizontal_get()
 
@@ -322,16 +322,16 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             Get for what direction a given gengrid widget will expand while
             placing its items.
 
-            @return @c EINA_TRUE, if @p obj is set to expand horizontally,
-            @c EINA_FALSE if it's set to expand vertically.
+            @return @c true, if @p obj is set to expand horizontally,
+            @c false if it's set to expand vertically.
 
             @see elm_gengrid_horizontal_set() for more details
 
             @ingroup Gengrid */
          }
          values {
-            horizontal: bool; /*@ @c EINA_TRUE to make the gengrid expand horizontally,
-            @c EINA_FALSE to expand vertically. */
+            horizontal: bool; /*@ @c true to make the gengrid expand horizontally,
+            @c false to expand vertically. */
          }
       }
       @property page_size {
@@ -450,7 +450,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             /*@
             Get a value whether mouse wheel is enabled or not.
 
-            @return @c EINA_TRUE means gengrid wheel is disabled. @c EINA_FALSE indicates
+            @return @c true means gengrid wheel is disabled. @c false indicates
             it is enabled.
 
             Mouse wheel can be used for the user to scroll up and down the gengrid.
@@ -460,7 +460,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            disabled: bool; /*@ Use @c EINA_TRUE to disable mouse wheel or @c EINA_FALSE
+            disabled: bool; /*@ Use @c true to disable mouse wheel or @c false
             to enable it. */
          }
       }

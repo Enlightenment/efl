@@ -80,7 +80,7 @@ class Elm.Flip (Elm.Container)
             /*@
             @brief Get flip front visibility state
 
-            @return EINA_TRUE if front front is showing, EINA_FALSE if the back is
+            @return true if front front is showing, false if the back is
             showing.
 
             @ingroup Flip */
@@ -268,7 +268,7 @@ class Elm.Flip (Elm.Container)
          @ingroup Flip */
 
          params {
-            @in front: bool; /*@ if @c EINA_TRUE, makes front visible, otherwise makes back. */
+            @in front: bool; /*@ if @c true, makes front visible, otherwise makes back. */
             @in mode: Elm.Flip.Mode; /*@ The mode type */
          }
       }

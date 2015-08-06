@@ -123,7 +123,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            scroll: bool; /*@ EINA_TRUE if it is to be scrollable, EINA_FALSE otherwise */
+            scroll: bool; /*@ true if it is to be scrollable, false otherwise */
          }
       }
       @property input_panel_show_on_demand {
@@ -138,7 +138,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             /*@
             Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
 
-            @return @c EINA_TRUE if the input panel will be shown in case of only Mouse up event.
+            @return @c true if the input panel will be shown in case of only Mouse up event.
             @since 1.9
 
             @ingroup Entry */
@@ -302,7 +302,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
             By default, entries are editable and when focused, any text input by the
             user will be inserted at the current cursor position. But calling this
-            function with @p editable as EINA_FALSE will prevent the user from
+            function with @p editable as false will prevent the user from
             inputting text into the entry.
 
             The only way to change the text of a non-editable entry is to use
@@ -323,7 +323,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            editable: bool; /*@ If EINA_TRUE, user input will be inserted in the entry,
+            editable: bool; /*@ If true, user input will be inserted in the entry,
             if not, the entry is read-only and no user input is allowed. */
          }
       }
@@ -366,7 +366,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             edge, and instead they keep growing horizontally. Pressing the @c Enter
             key will generate an @c "activate" event instead of adding a new line.
 
-            When @p single_line is @c EINA_FALSE, line wrapping takes effect again
+            When @p single_line is @c false, line wrapping takes effect again
             and pressing enter will break the text into a different line
             without generating any events.
 
@@ -424,13 +424,13 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             /*@
             Get whether the return key on the input panel should be disabled or not.
 
-            @return EINA_TRUE if it should be disabled
+            @return true if it should be disabled
 
             @ingroup Entry */
          }
          values {
-            disabled: bool; /*@ The state to put in in: @c EINA_TRUE for
-            disabled, @c EINA_FALSE for enabled */
+            disabled: bool; /*@ The state to put in in: @c true for
+            disabled, @c false for enabled */
          }
       }
       @property autosave {
@@ -493,7 +493,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             /*@
             Get whether the entry should allow to use the text prediction.
 
-            @return EINA_TRUE if it allows to use the text prediction, otherwise EINA_FALSE.
+            @return true if it allows to use the text prediction, otherwise false.
 
             @ingroup Entry */
          }
@@ -577,7 +577,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             /*@
             Get the attribute to show the input panel automatically.
 
-            @return EINA_TRUE if input panel will be appeared when the entry is clicked or has a focus, EINA_FALSE otherwise
+            @return true if input panel will be appeared when the entry is clicked or has a focus, false otherwise
 
             @ingroup Entry */
          }
@@ -645,8 +645,8 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            setting: bool; /*@ EINA_TRUE if the object should be displayed,
-            EINA_FALSE if not. */
+            setting: bool; /*@ true if the object should be displayed,
+            false if not. */
          }
       }
       @property cursor_line_end {
@@ -675,14 +675,14 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             /*@
             Set whether the return key on the input panel is disabled automatically when entry has no text.
 
-            If @p enabled is EINA_TRUE, The return key on input panel is disabled when the entry has no text.
+            If @p enabled is true, The return key on input panel is disabled when the entry has no text.
             The return key on the input panel is automatically enabled when the entry has text.
-            The default value is EINA_FALSE.
+            The default value is false.
 
             @ingroup Entry */
          }
          values {
-            enabled: bool; /*@ If @p enabled is EINA_TRUE, the return key is automatically disabled when the entry has no text. */
+            enabled: bool; /*@ If @p enabled is true, the return key is automatically disabled when the entry has no text. */
          }
       }
       @property end_visible {
@@ -694,8 +694,8 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            setting: bool; /*@ EINA_TRUE if the object should be displayed,
-            EINA_FALSE if not. */
+            setting: bool; /*@ true if the object should be displayed,
+            false if not. */
          }
       }
       @property cursor_begin {
@@ -763,7 +763,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             or for example in the case of scrolled entry where you want to show the
             cursor.
 
-            @return EINA_TRUE upon success, EINA_FALSE upon failure
+            @return true upon success, false upon failure
 
             @ingroup Entry */
             return: bool;
@@ -802,8 +802,8 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             This function returns whether any format node exists at the current
             cursor position.
 
-            @return EINA_TRUE if the current cursor position contains a format node,
-            EINA_FALSE otherwise.
+            @return true if the current cursor position contains a format node,
+            false otherwise.
 
             @see elm_entry_cursor_is_visible_format_get()
 
@@ -851,7 +851,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             /*@
             Get if the current cursor position holds a visible format node.
 
-            @return EINA_TRUE if the current cursor is a visible format, EINA_FALSE
+            @return true if the current cursor is a visible format, false
             if it's an invisible one or no format exists.
 
             @see elm_entry_cursor_is_format_get()
@@ -864,7 +864,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          /*@
          This moves the cursor one place to the left within the entry.
 
-         @return EINA_TRUE upon success, EINA_FALSE upon failure
+         @return true upon success, false upon failure
 
          @ingroup Entry */
 
@@ -899,7 +899,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          Show the input panel (virtual keyboard) based on the input panel property of entry such as layout, autocapital types, and so on.
 
          Note that input panel is shown or hidden automatically according to the focus state of entry widget.
-         This API can be used in the case of manually controlling by using elm_entry_input_panel_enabled_set(en, EINA_FALSE).
+         This API can be used in the case of manually controlling by using elm_entry_input_panel_enabled_set(en, false).
 
          @ingroup Entry */
 
@@ -948,7 +948,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          /*@
          This moves the cursor one line down within the entry.
 
-         @return EINA_TRUE upon success, EINA_FALSE upon failure
+         @return true upon success, false upon failure
 
          @ingroup Entry */
 
@@ -1023,7 +1023,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          /*@
          This moves the cursor one line up within the entry.
 
-         @return EINA_TRUE upon success, EINA_FALSE upon failure
+         @return true upon success, false upon failure
 
          @ingroup Entry */
 
@@ -1089,7 +1089,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          /*@
          This moves the cursor one place to the right within the entry.
 
-         @return EINA_TRUE upon success, EINA_FALSE upon failure
+         @return true upon success, false upon failure
 
          @ingroup Entry */
 
@@ -1107,7 +1107,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          Hide the input panel (virtual keyboard).
 
          Note that input panel is shown or hidden automatically according to the focus state of entry widget.
-         This API can be used in the case of manually controlling by using elm_entry_input_panel_enabled_set(en, EINA_FALSE)
+         This API can be used in the case of manually controlling by using elm_entry_input_panel_enabled_set(en, false)
 
          @ingroup Entry */
 
@@ -1140,9 +1140,9 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          Empty means no text at all. If there are any markup tags, like an item
          tag for which no provider finds anything, and no text is displayed, this
-         function still returns EINA_FALSE.
+         function still returns false.
 
-         @return @c EINA_TRUE if the entry text is empty or @p entry is NULL, @c EINA_FALSE otherwise.
+         @return @c true if the entry text is empty or @p entry is NULL, @c false otherwise.
 
          @ingroup Entry */
          return: bool(true);

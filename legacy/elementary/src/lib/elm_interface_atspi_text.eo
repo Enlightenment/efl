@@ -53,7 +53,7 @@ interface Elm_Interface_Atspi_Text ()
             /*@ Gets offset position of caret (cursor) */
          }
          set {
-            return: bool; /*@ EINA_TRUE if caret was successfully moved,
+            return: bool; /*@ true if caret was successfully moved,
                                EINA_FASLE otherwise. */
          }
          values {

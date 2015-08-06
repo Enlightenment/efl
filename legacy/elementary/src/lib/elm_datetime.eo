@@ -154,7 +154,7 @@ class Elm.Datetime (Elm.Layout)
 
          Minute: default value range is from 0 to 59.
 
-         @return @c EINA_TRUE if minimum value is accepted.
+         @return @c true if minimum value is accepted.
 
          @see elm_datetime_value_min_get()
          @ingroup Datetime */
@@ -179,7 +179,7 @@ class Elm.Datetime (Elm.Layout)
 
          Minute: default value range is from 0 to 59.
 
-         @return @c EINA_TRUE if minimum value is successfully returned.
+         @return @c true if minimum value is successfully returned.
 
          @see elm_datetime_value_min_set()
          @ingroup Datepicker */
@@ -203,7 +203,7 @@ class Elm.Datetime (Elm.Layout)
 
          Minute: default value range is from 0 to 59.
 
-         @return @c EINA_TRUE if current time is set successfully.
+         @return @c true if current time is set successfully.
 
          @see elm_datetime_value_set()
          @ingroup Datetime */
@@ -228,7 +228,7 @@ class Elm.Datetime (Elm.Layout)
 
          Minute: default value range is from 0 to 59.
 
-         @return @c EINA_TRUE if current time is returned successfully.
+         @return @c true if current time is returned successfully.
 
          @see elm_datetime_value_set()
          @ingroup Datetime */
@@ -254,14 +254,14 @@ class Elm.Datetime (Elm.Layout)
 
          params {
             @in fieldtype: Elm.Datetime.Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc. */
-            @in visible: bool; /*@ @c EINA_TRUE field can be visible, @c EINA_FALSE otherwise. */
+            @in visible: bool; /*@ @c true field can be visible, @c false otherwise. */
          }
       }
       field_visible_get @const {
          /*@
          @brief Get whether a field can be visible/not
 
-         @return bool @c EINA_TRUE, if field can be visible. @c EINA_FALSE otherwise.
+         @return bool @c true, if field can be visible. @c false otherwise.
 
          @see elm_datetime_field_visible_set()
          @ingroup Datetime */
@@ -285,7 +285,7 @@ class Elm.Datetime (Elm.Layout)
 
          Minute: default value range is from 0 to 59.
 
-         @return @c EINA_TRUE if maximum value is accepted.
+         @return @c true if maximum value is accepted.
 
          @see elm_datetime_value_max_get()
          @ingroup Datetime */
@@ -310,7 +310,7 @@ class Elm.Datetime (Elm.Layout)
 
          Minute: default value range is from 0 to 59.
 
-         @return @c EINA_TRUE if maximum value is returned successfully.
+         @return @c true if maximum value is returned successfully.
 
          @see elm_datetime_value_max_set()
          @ingroup Datetime */

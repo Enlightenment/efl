@@ -31,7 +31,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             Get whether the homogeneous mode is enabled.
 
             @return Assume the items within the genlist are of the same height
-            and width (EINA_TRUE = on, EINA_FALSE = off)
+            and width (true = on, false = off)
 
             @see elm_genlist_homogeneous_set()
 
@@ -39,8 +39,8 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          }
          values {
             homogeneous: bool; /*@ Assume the items within the genlist are of the
-            same height and width (EINA_TRUE = on, EINA_FALSE = off). Default is @c
-            EINA_FALSE. */
+            same height and width (true = on, false = off). Default is @c
+            false. */
          }
       }
       @property select_mode {
@@ -94,13 +94,13 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             Get whether focus upon item's selection mode is enabled.
 
             @return The tree effect status
-            (EINA_TRUE = enabled, EINA_FALSE = disabled)
+            (true = enabled, false = disabled)
 
             @ingroup Genlist */
          }
          values {
             enabled: bool; /*@ The tree effect status
-            (EINA_TRUE = enabled, EINA_FALSE = disabled) */
+            (true = enabled, false = disabled) */
          }
       }
       @property longpress_timeout {
@@ -139,7 +139,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             /*@
             Enable or disable multi-selection in the genlist
 
-            This enables (@c EINA_TRUE) or disables (@c EINA_FALSE) multi-selection in
+            This enables (@c true) or disables (@c false) multi-selection in
             the list. This allows more than 1 item to be selected. To retrieve the list
             of selected items, use elm_genlist_selected_items_get().
 
@@ -153,7 +153,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             Get if multi-selection in genlist is enabled or disabled.
 
             @return Multi-select enabled/disabled
-            (@c EINA_TRUE = enabled/@c EINA_FALSE = disabled). Default is @c EINA_FALSE.
+            (@c true = enabled/@c false = disabled). Default is @c false.
 
             @see elm_genlist_multi_select_set()
 
@@ -179,13 +179,13 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             Get the reorder mode
 
             @return The reorder mode
-            (EINA_TRUE = on, EINA_FALSE = off)
+            (true = on, false = off)
 
             @ingroup Genlist */
          }
          values {
             reorder_mode: bool; /*@ The reorder mode
-            (EINA_TRUE = on, EINA_FALSE = off) */
+            (true = on, false = off) */
          }
       }
       @property decorate_mode {
@@ -202,13 +202,13 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             Get Genlist decorate mode
 
             @return The decorate mode status
-            (EINA_TRUE = decorate mode, EINA_FALSE = normal mode
+            (true = decorate mode, false = normal mode
 
             @ingroup Genlist */
          }
          values {
             decorated: bool; /*@ The decorate mode status
-            (EINA_TRUE = decorate mode, EINA_FALSE = normal mode */
+            (true = decorate mode, false = normal mode */
          }
       }
       @property multi_select_mode {
@@ -293,13 +293,13 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             Get Genlist tree effect
 
             @return The tree effect status
-            (EINA_TRUE = enabled, EINA_FALSE = disabled
+            (true = enabled, false = disabled
 
             @ingroup Genlist */
          }
          values {
             enabled: bool; /*@ The tree effect status
-            (EINA_TRUE = enabled, EINA_FALSE = disabled */
+            (true = enabled, false = disabled */
          }
       }
       @property highlight_mode {
@@ -320,15 +320,15 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             /*@
             Get whether the genlist items' should be highlighted when item selected.
 
-            @return @c EINA_TRUE means items can be highlighted. @c EINA_FALSE indicates
-            they can't. If @p obj is @c NULL, @c EINA_FALSE is returned.
+            @return @c true means items can be highlighted. @c false indicates
+            they can't. If @p obj is @c NULL, @c false is returned.
 
             @see elm_genlist_highlight_mode_set() for details.
 
             @ingroup Genlist */
          }
          values {
-            highlight: bool; /*@ @c EINA_TRUE to enable highlighting or @c EINA_FALSE to
+            highlight: bool; /*@ @c true to enable highlighting or @c false to
             disable it. */
          }
       }

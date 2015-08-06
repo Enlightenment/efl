@@ -62,16 +62,16 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             /*@
             Get a value whether horizontal mode is enabled or not.
 
-            @return @c EINA_TRUE means horizontal mode selection is enabled.
-            @c EINA_FALSE indicates it's disabled. If @p obj is @c NULL,
-            @c EINA_FALSE is returned.
+            @return @c true means horizontal mode selection is enabled.
+            @c false indicates it's disabled. If @p obj is @c NULL,
+            @c false is returned.
 
             @see elm_list_horizontal_set() for details.
 
             @ingroup List */
          }
          values {
-            horizontal: bool; /*@ @c EINA_TRUE to enable horizontal or @c EINA_FALSE to
+            horizontal: bool; /*@ @c true to enable horizontal or @c false to
             disable it, i.e., to enable vertical mode. */
          }
       }
@@ -126,13 +126,13 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             Get whether focus upon item's selection mode is enabled.
 
             @return The tree effect status
-            (EINA_TRUE = enabled, EINA_FALSE = disabled)
+            (true = enabled, false = disabled)
 
             @ingroup List */
          }
          values {
             enabled: bool; /*@ The tree effect status
-            (EINA_TRUE = enabled, EINA_FALSE = disabled) */
+            (true = enabled, false = disabled) */
          }
       }
       @property multi_select {
@@ -156,14 +156,14 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
 
             @see elm_list_multi_select_set() for details.
 
-            @return @c EINA_TRUE means multiple items selection is enabled.
-            @c EINA_FALSE indicates it's disabled. If @p obj is @c NULL,
-            @c EINA_FALSE is returned.
+            @return @c true means multiple items selection is enabled.
+            @c false indicates it's disabled. If @p obj is @c NULL,
+            @c false is returned.
 
             @ingroup List */
          }
          values {
-            multi: bool; /*@ @c EINA_TRUE to enable multi selection or @c EINA_FALSE to
+            multi: bool; /*@ @c true to enable multi selection or @c false to
             disable it. */
          }
       }
@@ -483,7 +483,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
          li = elm_list_add(win);
          ic = elm_icon_add(win);
          elm_image_file_set(ic, "path/to/image", NULL);
-         elm_icon_resizable_set(ic, EINA_TRUE, EINA_TRUE);
+         elm_icon_resizable_set(ic, true, true);
          elm_list_item_append(li, "label", ic, NULL, NULL, NULL);
          elm_list_go(li);
          evas_object_show(li);

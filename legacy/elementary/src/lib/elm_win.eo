@@ -191,7 +191,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
 
             When the @p autodel parameter is set, the window will be automatically
             destroyed when this event occurs, after the signal is emitted.
-            If @p autodel is @c EINA_FALSE, then the window will not be destroyed
+            If @p autodel is @c false, then the window will not be destroyed
             and is up to the program to do so when it's required.
 
             @ingroup Win */
@@ -240,7 +240,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             /*@
             Set the override state of a window.
 
-            A window with @p override set to EINA_TRUE will not be managed by the
+            A window with @p override set to true will not be managed by the
             Window Manager. This means that no decorations of any kind will be shown
             for it, moving and resizing must be handled by the application, as well
             as the window visibility.
@@ -529,12 +529,12 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             Get the constraints on the maximum width and height of a window relative to the width and height of its screen
 
             When this function returns true, @p obj will never resize larger than the screen.
-            @return EINA_TRUE to restrict the window's maximum size, EINA_FALSE to disable restriction
+            @return true to restrict the window's maximum size, false to disable restriction
 
             @ingroup Win */
          }
          values {
-            constrain: bool; /*@ EINA_TRUE to restrict the window's maximum size, EINA_FALSE to disable restriction */
+            constrain: bool; /*@ true to restrict the window's maximum size, false to disable restriction */
          }
       }
       @property available_profiles {
@@ -553,7 +553,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             /*@
             Get the array of available profiles of a window.
 
-            @return EINA_TRUE if available profiles exist, EINA_FALSE otherwise
+            @return true if available profiles exist, false otherwise
 
             @ingroup Win
             @since 1.8 */
@@ -578,7 +578,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             /*@
             Get the enabled value of the focus highlight for this window
 
-            @return EINA_TRUE if enabled, EINA_FALSE otherwise
+            @return true if enabled, false otherwise
 
             @ingroup Win */
          }
@@ -614,7 +614,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             /*@
             Set the alpha channel state of a window.
 
-            If @p alpha is EINA_TRUE, the alpha channel of the canvas will be enabled
+            If @p alpha is true, the alpha channel of the canvas will be enabled
             possibly making parts of the window completely or partially transparent.
             This is also subject to the underlying system supporting it, like for
             example, running under a compositing manager. If no compositing is
@@ -633,13 +633,13 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             /*@
             Get the alpha channel state of a window.
 
-            @return EINA_TRUE if the window alpha channel is enabled, EINA_FALSE
+            @return true if the window alpha channel is enabled, false
             otherwise
 
             @ingroup Win */
          }
          values {
-            alpha: bool; /*@ EINA_TRUE if the window alpha channel is enabled, EINA_FALSE otherwise */
+            alpha: bool; /*@ true if the window alpha channel is enabled, false otherwise */
          }
       }
       @property urgent {
@@ -808,7 +808,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             /*@
             Get the animate value of the focus highlight for this window
 
-            @return EINA_TRUE if animation is enabled, EINA_FALSE otherwise
+            @return true if animation is enabled, false otherwise
 
             @ingroup Win */
          }
@@ -984,7 +984,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             Shaped windows, when supported, will render the parts of the window that
             has no content, transparent.
 
-            If @p shaped is EINA_FALSE, then it is strongly advised to have some
+            If @p shaped is false, then it is strongly advised to have some
             background object or cover the entire window in any other way, or the
             parts of the canvas that have no data will show framebuffer artifacts.
 
@@ -1048,7 +1048,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
 
             This function is used to get the state of manual rotation done mode.
 
-            @return @c EINA_TRUE manual rotationn done mode, @c EINA_FALSE otherwise.
+            @return @c true manual rotationn done mode, @c false otherwise.
 
             @see elm_win_wm_rotation_manual_rotation_done_set()
             @see elm_win_wm_rotation_manual_rotation_done()
@@ -1058,7 +1058,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             legacy: elm_win_wm_rotation_manual_rotation_done_get;
          }
          values {
-            set: bool; /*@ EINA_TRUE means to set manual rotation done mode EINA_FALSE otherwise. */
+            set: bool; /*@ true means to set manual rotation done mode false otherwise. */
          }
       }
       @property indicator_mode {
@@ -1182,7 +1182,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            skip: bool; /*@ The skip flag state (EINA_TRUE if it is to be skipped) */
+            skip: bool; /*@ The skip flag state (true if it is to be skipped) */
          }
       }
       @property screen_position {
@@ -1205,7 +1205,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             The window manager rotation allows the WM to controls the rotation of application windows.
             It is designed to support synchronized rotation for the multiple application windows at same time.
 
-            @return @c EINA_TRUE if the window manager rotation is supported, @c EINA_FALSE otherwise.
+            @return @c true if the window manager rotation is supported, @c false otherwise.
 
             @see elm_win_wm_rotation_supported_get()
             @see elm_win_wm_rotation_preferred_rotation_set()
@@ -1236,7 +1236,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
          get {
             /*@
             Determine whether a window has focus
-            @return EINA_TRUE if the window exists and has focus, else EINA_FALSE
+            @return true if the window exists and has focus, else false
 
             @ingroup Win */
             return: bool;

@@ -8,8 +8,8 @@ class Elm.Layout (Elm.Container, Efl.File)
             /*@
             Set accessibility to all texblock(text) parts in the layout object
 
-            @return @c EINA_TRUE on success or @c EINA_FALSE on failure. If @p obj is not
-            a proper layout object, @c EINA_FALSE is returned.
+            @return @c true on success or @c false on failure. If @p obj is not
+            a proper layout object, @c false is returned.
 
             @since 1.7
 
@@ -20,9 +20,9 @@ class Elm.Layout (Elm.Container, Efl.File)
             /*@
             Get accessibility state of texblock(text) parts in the layout object
 
-            @return @c EINA_TRUE, if all textblock(text) parts in the layout can be accessible
+            @return @c true, if all textblock(text) parts in the layout can be accessible
             @c EINA_FALSET if those cannot be accessible. If @p obj is not a proper layout
-            object, @c EINA_FALSE is returned.
+            object, @c false is returned.
 
             @see elm_layout_edje_object_access_set()
 
@@ -32,7 +32,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          }
          values {
             can_access: bool; /*@ makes all textblock(text) parts in the layout @p obj possible
-            to have accessibility. @c EINA_TRUE means textblock(text) parts can be accessible */
+            to have accessibility. @c true means textblock(text) parts can be accessible */
          }
       }
       @property theme {
@@ -106,7 +106,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Remove all children of the given part box.
 
-         @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+         @return @c true on success, @c false otherwise
 
          The objects will be removed from the box part and their lifetime will
          not be handled by the layout anymore. This is equivalent to
@@ -120,7 +120,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The box part name to remove child. */
-            @in clear: bool; /*@ If EINA_TRUE, then all objects will be deleted as
+            @in clear: bool; /*@ If true, then all objects will be deleted as
             well, otherwise they will just be removed and will be
             dangling on the canvas. */
          }
@@ -134,7 +134,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          cursor with elm_layout_part_cursor_set(). By default it will only
          look for cursors provided by the engine.
 
-         @return EINA_TRUE on success or EINA_FALSE on failure, that may be
+         @return true on success or false on failure, that may be
          part not exists or it did not had a cursor set.
 
          @ingroup Layout */
@@ -142,8 +142,8 @@ class Elm.Layout (Elm.Container, Efl.File)
          return: bool;
          params {
             @in part_name: const(char)*; /*@ a part from loaded edje group. */
-            @in engine_only: bool; /*@ if cursors should be just provided by the engine (EINA_TRUE)
-            or should also search on widget's theme as well (EINA_FALSE) */
+            @in engine_only: bool; /*@ if cursors should be just provided by the engine (true)
+            or should also search on widget's theme as well (false) */
          }
       }
       part_cursor_engine_only_get @const {
@@ -261,7 +261,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Sets a specific cursor style for an edje part.
 
-         @return EINA_TRUE on success or EINA_FALSE on failure, that may be
+         @return true on success or false on failure, that may be
          part not exists or it did not had a cursor set.
 
          @ingroup Layout */
@@ -289,7 +289,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Set the text of the given part
 
-         @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+         @return @c true on success, @c false otherwise
 
          @ingroup Layout */
 
@@ -335,7 +335,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Sets a specific cursor for an edje part.
 
-         @return EINA_TRUE on success or EINA_FALSE on failure, that may be
+         @return true on success or false on failure, that may be
          part not exists or it has "mouse_events: 0".
 
          @ingroup Layout */
@@ -362,7 +362,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Insert child to layout box part before a reference object.
 
-         @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+         @return @c true on success, @c false otherwise
 
          Once the object is inserted, it will become child of the layout. Its
          lifetime will be bound to the layout, whenever the layout dies the child
@@ -387,7 +387,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Insert child to layout box part at a given position.
 
-         @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+         @return @c true on success, @c false otherwise
 
          Once the object is inserted, it will become child of the layout. Its
          lifetime will be bound to the layout, whenever the layout dies the child
@@ -447,7 +447,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Append child to layout box part.
 
-         @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+         @return @c true on success, @c false otherwise
 
          Once the object is appended, it will become child of the layout. Its
          lifetime will be bound to the layout, whenever the layout dies the child
@@ -509,7 +509,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Prepend child to layout box part.
 
-         @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+         @return @c true on success, @c false otherwise
 
          Once the object is prepended, it will become child of the layout. Its
          lifetime will be bound to the layout, whenever the layout dies the child
@@ -549,7 +549,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Insert child to layout table part.
 
-         @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+         @return @c true on success, @c false otherwise
 
          Once the object is inserted, it will become child of the table. Its
          lifetime will be bound to the layout, and whenever the layout dies the
@@ -587,7 +587,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Unsets a cursor previously set with elm_layout_part_cursor_set().
 
-         @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+         @return @c true on success, @c false otherwise
 
          @ingroup Layout */
 
@@ -601,7 +601,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          /*@
          Remove all the child objects of the given part table.
 
-         @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+         @return @c true on success, @c false otherwise
 
          The objects will be removed from the table part and their lifetime will
          not be handled by the layout anymore. This is equivalent to
@@ -615,7 +615,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The table part name to remove child. */
-            @in clear: bool; /*@ If EINA_TRUE, then all objects will be deleted as
+            @in clear: bool; /*@ If true, then all objects will be deleted as
             well, otherwise they will just be removed and will be
             dangling on the canvas. */
          }

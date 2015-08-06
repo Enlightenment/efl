@@ -10,7 +10,7 @@ class Elm.Web (Elm.Widget)
             If enabled, marks set with elm_web_text_matches_mark() will be
             highlighted.
 
-            @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+            @return @c true on success, @c false otherwise
 
             @ingroup Web */
             return: bool;
@@ -19,7 +19,7 @@ class Elm.Web (Elm.Widget)
             /*@
             Get whether highlighting marks is enabled
 
-            @return @c EINA_TRUE is marks are set to be highlighted, @c EINA_FALSE
+            @return @c true is marks are set to be highlighted, @c false
             otherwise
 
             @ingroup Web */
@@ -55,7 +55,7 @@ class Elm.Web (Elm.Widget)
             It must be a full URL, with resource included, in the form
             http://www.enlightenment.org or file:///tmp/something.html
 
-            @return @c EINA_TRUE if the URL could be set, @c EINA_FALSE if an error occurred.
+            @return @c true if the URL could be set, @c false if an error occurred.
 
             @ingroup Web */
             return: bool;
@@ -117,12 +117,12 @@ class Elm.Web (Elm.Widget)
             /*@
             Get whether Inwin mode is set for the current object
 
-            @return @c EINA_TRUE if Inwin mode is set, @c EINA_FALSE otherwise
+            @return @c true if Inwin mode is set, @c false otherwise
 
             @ingroup Web */
          }
          values {
-            value: bool; /*@ @c EINA_TRUE to use Inwin, @c EINA_FALSE to use a normal window */
+            value: bool; /*@ @c true to use Inwin, @c false to use a normal window */
          }
       }
       @property tab_propagate {
@@ -142,7 +142,7 @@ class Elm.Web (Elm.Widget)
             /*@
             Get the status of the tab propagation
 
-            @return @c EINA_TRUE if tab propagation is enabled, @c EINA_FALSE otherwise
+            @return @c true if tab propagation is enabled, @c false otherwise
 
             @see elm_web_tab_propagate_set()
 
@@ -163,7 +163,7 @@ class Elm.Web (Elm.Widget)
             /*@
             Get whether browsing history is enabled for the given object
 
-            @return @c EINA_TRUE if history is enabled, @c EINA_FALSE otherwise
+            @return @c true if history is enabled, @c false otherwise
 
             @ingroup Web */
          }
@@ -360,7 +360,7 @@ class Elm.Web (Elm.Widget)
             /*@
             Queries whether it's possible to go forward in history
 
-            @return @c EINA_TRUE if it's possible to forward in history, @c EINA_FALSE
+            @return @c true if it's possible to forward in history, @c false
             otherwise
 
             @ingroup Web */
@@ -392,7 +392,7 @@ class Elm.Web (Elm.Widget)
             /*@
             Queries whether it's possible to go back in history
 
-            @return @c EINA_TRUE if it's possible to back in history, @c EINA_FALSE
+            @return @c true if it's possible to back in history, @c false
             otherwise
 
             @ingroup Web */
@@ -451,7 +451,7 @@ class Elm.Web (Elm.Widget)
          The @p steps value can be a negative integer to back in history, or a
          positive to move forward.
 
-         @return @c EINA_TRUE on success, @c EINA_FALSE on error or if not enough
+         @return @c true on success, @c false on error or if not enough
          history exists to jump the given number of steps
 
          @see elm_web_history_enabled_set()
@@ -471,7 +471,7 @@ class Elm.Web (Elm.Widget)
 
          This is equivalent to calling elm_web_object_navigate(obj, -1);
 
-         @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+         @return @c true on success, @c false otherwise
 
          @see elm_web_history_enabled_set()
          @see elm_web_back_possible()
@@ -486,7 +486,7 @@ class Elm.Web (Elm.Widget)
          /*@
          Loads the specified @a html string as the content of the web object
 
-         @return @c EINA_TRUE if it the HTML was successfully loaded, @c EINA_FALSE otherwise
+         @return @c true if it the HTML was successfully loaded, @c false otherwise
 
          External objects such as stylesheets or images referenced in the HTML
          document are located relative to @a base_url.
@@ -509,7 +509,7 @@ class Elm.Web (Elm.Widget)
          /*@
          Searches the given string in a document.
 
-         @return @c EINA_TRUE if the given string was found, @c EINA_FALSE if not
+         @return @c true if the given string was found, @c false if not
          or failure
 
          @ingroup Web */
@@ -530,7 +530,7 @@ class Elm.Web (Elm.Widget)
          will later emit an "popup,willdelete" signal to notify the user that
          any memory and objects related to this popup can be freed.
 
-         @return @c EINA_TRUE if the menu was successfully destroyed, or @c EINA_FALSE
+         @return @c true if the menu was successfully destroyed, or @c false
          if there was no menu to destroy
 
          @ingroup Web */
@@ -556,7 +556,7 @@ class Elm.Web (Elm.Widget)
 
          This is equivalent to calling elm_web_object_navigate(obj, 1);
 
-         @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+         @return @c true on success, @c false otherwise
 
          @see elm_web_history_enabled_set()
          @see elm_web_forward_possible_get()
@@ -605,9 +605,9 @@ class Elm.Web (Elm.Widget)
 
          Cancels the loading of the current page in the web object. This will
          cause a "load,error" signal to be emitted, with the is_cancellation
-         flag set to @c EINA_TRUE.
+         flag set to @c true.
 
-         @return @c EINA_TRUE if the cancel was successful, @c EINA_FALSE otherwise
+         @return @c true if the cancel was successful, @c false otherwise
 
          @ingroup Web */
 
@@ -620,8 +620,8 @@ class Elm.Web (Elm.Widget)
          The @p steps value can be a negative integer to back in history, or a
          positive to move forward.
 
-         @return @c EINA_TRUE if enough history exists to perform the given jump,
-         @c EINA_FALSE otherwise
+         @return @c true if enough history exists to perform the given jump,
+         @c false otherwise
 
          @ingroup Web */
 
@@ -634,7 +634,7 @@ class Elm.Web (Elm.Widget)
          /*@
          Requests a reload of the current document, avoiding any existing caches
 
-         @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+         @return @c true on success, @c false otherwise
 
          @ingroup Web */
 
@@ -644,7 +644,7 @@ class Elm.Web (Elm.Widget)
          /*@
          Clears all marked matches in the document
 
-         @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+         @return @c true on success, @c false otherwise
 
          @ingroup Web */
 
@@ -654,7 +654,7 @@ class Elm.Web (Elm.Widget)
          /*@
          Requests a reload of the current document in the object
 
-         @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+         @return @c true on success, @c false otherwise
 
          @ingroup Web */
 

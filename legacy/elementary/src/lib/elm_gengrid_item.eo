@@ -68,7 +68,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                      /*@
                       Get whether a given gengrid item is selected or not
 
-                      This API returns EINA_TRUE for all the items selected in multi-select mode as well.
+                      This API returns true for all the items selected in multi-select mode as well.
 
                       @see elm_gengrid_item_selected_set() for more details
 
@@ -81,7 +81,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
 
                       This sets the selected state of an item. If multi-selection is
                       not enabled on the containing gengrid and @p selected is @c
-                      EINA_TRUE, any other previously selected items will get
+                      true, any other previously selected items will get
                       unselected in favor of this new one.
 
                       @see elm_gengrid_item_selected_get()
@@ -90,7 +90,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     selected: bool; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
+                     selected: bool; /*@ the selected state (@c true selected, @c false not selected) */
                 }
            }
            @property item_class {

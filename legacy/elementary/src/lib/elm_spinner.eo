@@ -107,15 +107,15 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             Get whether the spinner should wrap when it reaches its
             minimum or maximum value.
 
-            @return @c EINA_TRUE means wrap is enabled. @c EINA_FALSE indicates
-            it's disabled. If @p obj is @c NULL, @c EINA_FALSE is returned.
+            @return @c true means wrap is enabled. @c false indicates
+            it's disabled. If @p obj is @c NULL, @c false is returned.
 
             @see elm_spinner_wrap_set() for details.
 
             @ingroup Spinner */
          }
          values {
-            wrap: bool; /*@ @c EINA_TRUE to enable wrap or @c EINA_FALSE to
+            wrap: bool; /*@ @c true to enable wrap or @c false to
             disable it. */
          }
       }
@@ -210,15 +210,15 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             /*@
             Get whether the spinner can be directly edited by the user or not.
 
-            @return @c EINA_TRUE means edition is enabled. @c EINA_FALSE indicates
-            it's disabled. If @p obj is @c NULL, @c EINA_FALSE is returned.
+            @return @c true means edition is enabled. @c false indicates
+            it's disabled. If @p obj is @c NULL, @c false is returned.
 
             @see elm_spinner_editable_set() for details.
 
             @ingroup Spinner */
          }
          values {
-            editable: bool; /*@ @c EINA_TRUE to allow users to edit it or @c EINA_FALSE to
+            editable: bool; /*@ @c true to allow users to edit it or @c false to
             don't allow users to edit it directly. */
          }
       }

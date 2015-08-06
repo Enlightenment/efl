@@ -49,7 +49,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             /*@
             Pause or unpause the map.
 
-            This sets the paused state to on (@c EINA_TRUE) or off (@c EINA_FALSE)
+            This sets the paused state to on (@c true) or off (@c false)
             for map.
 
             The default is off.
@@ -65,7 +65,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             /*@
             Get a value whether map is paused or not.
 
-            @return @c EINA_TRUE means map is pause. @c EINA_FALSE indicates
+            @return @c true means map is pause. @c false indicates
             it is not.
 
             This gets the current paused state for the map object.
@@ -75,7 +75,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Map */
          }
          values {
-            paused: bool; /*@ Use @c EINA_TRUE to pause the map @p obj or @c EINA_FALSE
+            paused: bool; /*@ Use @c true to pause the map @p obj or @c false
             to unpause it. */
          }
       }
@@ -96,7 +96,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             /*@
             Get a value whether mouse wheel is enabled or not.
 
-            @return @c EINA_TRUE means map is disabled. @c EINA_FALSE indicates
+            @return @c true means map is disabled. @c false indicates
             it is enabled.
 
             Mouse wheel can be used for the user to zoom in or zoom out the map.
@@ -106,7 +106,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Map */
          }
          values {
-            disabled: bool; /*@ Use @c EINA_TRUE to disable mouse wheel or @c EINA_FALSE
+            disabled: bool; /*@ Use @c true to disable mouse wheel or @c false
             to enable it. */
          }
       }

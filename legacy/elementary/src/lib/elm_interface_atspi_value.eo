@@ -8,8 +8,8 @@ interface Elm_Interface_Atspi_Value ()
             /*@ Gets value displayed by a accessible widget. */
          }
          set {
-            return: bool; /*@ EINA_TRUE if setting widgets value has
-                                successed, EINA_FALSE otherwise. */
+            return: bool; /*@ true if setting widgets value has
+                                successed, false otherwise. */
          }
          values {
             value: double; /*@ Value of widget casted to floating point number. */

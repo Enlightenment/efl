@@ -21,16 +21,16 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             /*@
             Get the orientation of a given slider widget
 
-            @return @c EINA_TRUE, if @p obj is set to be @b horizontal,
-            @c EINA_FALSE if it's @b vertical (and on errors).
+            @return @c true, if @p obj is set to be @b horizontal,
+            @c false if it's @b vertical (and on errors).
 
             @see elm_slider_horizontal_set() for more details.
 
             @ingroup Slider */
          }
          values {
-            horizontal: bool; /*@ Use @c EINA_TRUE to make @p obj to be
-            @b horizontal, @c EINA_FALSE to make it @b vertical. */
+            horizontal: bool; /*@ Use @c true to make @p obj to be
+            @b horizontal, @c false to make it @b vertical. */
          }
       }
       @property value {
@@ -128,16 +128,16 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             Get whether a given slider widget's displaying values are
             inverted or not.
 
-            @return @c EINA_TRUE, if @p obj has inverted values,
-            @c EINA_FALSE otherwise (and on errors).
+            @return @c true, if @p obj has inverted values,
+            @c false otherwise (and on errors).
 
             @see elm_slider_inverted_set() for more details.
 
             @ingroup Slider */
          }
          values {
-            inverted: bool; /*@ Use @c EINA_TRUE to make @p obj inverted,
-            @c EINA_FALSE to bring it back to default, non-inverted values. */
+            inverted: bool; /*@ Use @c true to make @p obj inverted,
+            @c false to bring it back to default, non-inverted values. */
          }
       }
       @property indicator_show {
@@ -156,15 +156,15 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             /*@
             Get whether a given slider widget's enlarging indicator or not.
 
-            @return @c EINA_TRUE, if @p obj is enlarging indicator, or
-            @c EINA_FALSE otherwise (and on errors).
+            @return @c true, if @p obj is enlarging indicator, or
+            @c false otherwise (and on errors).
 
             @see elm_slider_indicator_show_set() for details.
 
             @ingroup Slider */
          }
          values {
-            show: bool; /*@ @c EINA_TRUE will make it enlarge, @c EINA_FALSE will
+            show: bool; /*@ @c true will make it enlarge, @c false will
             let the knob always at default size. */
          }
       }
@@ -255,13 +255,13 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             /*@
             Get whether the indicator of the slider is set or not
 
-            @return @c EINA_TRUE, if indicator is set
-            @c EINA_FALSE otherwise.
+            @return @c true, if indicator is set
+            @c false otherwise.
 
             @ingroup Slider */
          }
          values {
-            flag: bool; /*@ @ EINA_TRUE sets the indicator visible */
+            flag: bool; /*@ @ true sets the indicator visible */
          }
       }
       @property span_size {
