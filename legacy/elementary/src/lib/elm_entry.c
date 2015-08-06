@@ -1376,6 +1376,8 @@ _elm_entry_entry_paste(Evas_Object *obj,
 {
    char *str = NULL;
 
+   if (!entry) return;
+
    ELM_ENTRY_CHECK(obj);
    ELM_ENTRY_DATA_GET(obj, sd);
 
