@@ -258,12 +258,12 @@ enum Doc_Tokens {
 };
 
 static int
-doc_lex(Eo_Lexer *ls, Eina_Bool *term)
+doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool *since)
 {
    int tokret = -1;
-   Eina_Bool contdoc = EINA_FALSE;
    eina_strbuf_reset(ls->buff);
-   for (;; contdoc = EINA_TRUE) switch (ls->current)
+   *since = EINA_FALSE;
+   for (;;) switch (ls->current)
      {
       /* error case */
       case '\0':
@@ -315,66 +315,67 @@ doc_lex(Eo_Lexer *ls, Eina_Bool *term)
           }
         eina_strbuf_append_char(ls->buff, ']');
         continue;
-      /* @since case - only when starting a new paragraph */
+      /* references and @since */
       case '@':
+        if ((size_t)(ls->stream_end - ls->stream) >= (sizeof("since")) &&
+            !memcmp(ls->stream, "since ", sizeof("since")))
+          {
+             next_char(ls);
+             *since = EINA_TRUE;
+             for (size_t i = 0; i < sizeof("since"); ++i)
+               next_char(ls);
+             skip_ws(ls);
+             tokret = DOC_TEXT;
+             goto exit_with_token;
+          }
         eina_strbuf_append_char(ls->buff, '@');
         next_char(ls);
-        if (contdoc)
+        /* in-class references */
+        if (ls->tmp.kls && ls->current == '.')
           {
-             /* in-class references */
-             if (ls->tmp.kls && ls->current == '.')
-               {
-                  next_char(ls);
-                  if (isalpha(ls->current) || ls->current == '_')
-                    eina_strbuf_append(ls->buff, ls->tmp.kls->full_name);
-                  eina_strbuf_append_char(ls->buff, '.');
-                  continue;
-               }
-             continue;
-          }
-        while (ls->current && isalpha(ls->current))
-          {
-             eina_strbuf_append_char(ls->buff, ls->current);
              next_char(ls);
+             if (isalpha(ls->current) || ls->current == '_')
+               eina_strbuf_append(ls->buff, ls->tmp.kls->full_name);
+             eina_strbuf_append_char(ls->buff, '.');
           }
-        if (!strcmp(eina_strbuf_string_get(ls->buff), "@since"))
-          {
-             /* since-token */
-             eina_strbuf_reset(ls->buff);
-             skip_ws(ls);
-             while (ls->current && (ls->current == '.' ||
-                                    ls->current == '_' ||
-                                    isalnum(ls->current)))
-               {
-                  eina_strbuf_append_char(ls->buff, ls->current);
-                  next_char(ls);
-               }
-             if (!eina_strbuf_length_get(ls->buff))
-               return DOC_UNFINISHED;
-             tokret = DOC_SINCE;
-             goto force_terminate;
-          }
+        continue;
       /* default case - append character */
       default:
         eina_strbuf_append_char(ls->buff, ls->current);
         next_char(ls);
         continue;
      }
-
-force_terminate:
-   skip_ws(ls);
-   while (is_newline(ls->current))
-     next_line_ws(ls);
-   if (ls->current == ']')
-     next_char(ls);
-   if (ls->current != ']')
-     return DOC_MANGLED;
 terminated:
    next_char(ls);
    *term = EINA_TRUE;
 exit_with_token:
    eina_strbuf_trim(ls->buff);
    return tokret;
+}
+
+static int
+read_since(Eo_Lexer *ls)
+{
+   eina_strbuf_reset(ls->buff);
+   while (ls->current && (ls->current == '.' ||
+                          ls->current == '_' ||
+                          isalnum(ls->current)))
+     {
+        eina_strbuf_append_char(ls->buff, ls->current);
+        next_char(ls);
+     }
+   if (!eina_strbuf_length_get(ls->buff))
+     return DOC_UNFINISHED;
+   skip_ws(ls);
+   while (is_newline(ls->current))
+     next_line_ws(ls);
+   if (ls->current != ']')
+     return DOC_MANGLED;
+   next_char(ls);
+   if (ls->current != ']')
+     return DOC_MANGLED;
+   next_char(ls);
+   return DOC_SINCE;
 }
 
 void doc_error(Eo_Lexer *ls, const char *msg, Eolian_Documentation *doc, Eina_Strbuf *buf)
@@ -396,10 +397,17 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
 
    Eina_Strbuf *rbuf = eina_strbuf_new();
 
-   Eina_Bool term = EINA_FALSE;
+   Eina_Bool term = EINA_FALSE, since = EINA_FALSE;
    while (!term)
      {
-        int read = doc_lex(ls, &term);
+        int read;
+        if (since)
+          {
+             read = read_since(ls);
+             term = EINA_TRUE;
+          }
+        else
+          read = doc_lex(ls, &term, &since);
         switch (read)
           {
            case DOC_MANGLED:
@@ -409,6 +417,8 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
              doc_error(ls, "unfinished documentation", doc, rbuf);
              return;
            case DOC_TEXT:
+             if (!eina_strbuf_length_get(ls->buff))
+               continue;
              if (!doc->summary)
                doc->summary = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
              else

@@ -23,9 +23,7 @@ enum Bar {
 type Alias: Bar; [[Docs for typedef.
 
                    More docs for typedef.
-                   See @Bar.
-
-                   @since 2.0
+                   See @Bar. @since 2.0
                  ]]
 
 var pants: int = 150; [[Docs for var.]]
