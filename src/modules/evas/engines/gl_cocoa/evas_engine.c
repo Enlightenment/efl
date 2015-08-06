@@ -45,7 +45,7 @@ struct _Render_Engine_GL_Surface
 struct _Render_Engine_GL_Context
 {
    int         initialized;
-  //   EGLContext  context;
+   //   EGLContext  context;
 
    GLuint      fbo;     
    
@@ -104,8 +104,8 @@ eng_setup(Evas *eo_e, void *in)
 
 	e->engine.data.output = re;
 	re->win = eng_window_new(info->window,
-			            e->output.w,
-                                    e->output.h);
+                                 e->output.w,
+                                 e->output.h);
 	info->view = re->win->view;
 	if (!re->win)
 	  {
@@ -121,8 +121,8 @@ eng_setup(Evas *eo_e, void *in)
 	re = e->engine.data.output;
 	eng_window_free(re->win);
 	re->win = eng_window_new(info->window,
-				    e->output.w,
-                                    e->output.h);
+                                 e->output.w,
+                                 e->output.h);
 	info->view = re->win->view;
      }
    if (!e->engine.data.output) return 0;
@@ -166,7 +166,7 @@ eng_output_resize(void *data, int w, int h)
 static void
 eng_output_tile_size_set(void *data EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
-  DBG("tile size set");
+   DBG("tile size set");
 }
 
 static void
@@ -235,10 +235,10 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    /* get the upate rect surface - return engine data as dummy */
    if (!re->win->draw.redraw)
      {
-//	printf("GL: NO updates!\n");
+        //	printf("GL: NO updates!\n");
 	return NULL;
      }
-//   printf("GL: update....!\n");
+   //   printf("GL: update....!\n");
 #ifdef SLOW_GL_COPY_RECT
    /* if any update - just return the whole canvas - works with swap
     * buffers then */
@@ -266,10 +266,10 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    if (cw) *cw = re->win->draw.x2 - re->win->draw.x1 + 1;
    if (ch) *ch = re->win->draw.y2 - re->win->draw.y1 + 1;
 #endif
-// clear buffer. only needed for dest alpha
-//   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-//   glClear(GL_COLOR_BUFFER_BIT);
-//x//   printf("frame -> new\n");
+   // clear buffer. only needed for dest alpha
+   //   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+   //   glClear(GL_COLOR_BUFFER_BIT);
+   //x//   printf("frame -> new\n");
    return re->win->gl_context->def_surface;
 }
 
@@ -382,10 +382,10 @@ eng_polygon_draw(void *data, void *context, void *surface EINA_UNUSED, void *pol
 static int
 eng_image_alpha_get(void *data EINA_UNUSED, void *image)
 {
-//   Render_Engine *re;
+   //   Render_Engine *re;
    Evas_GL_Image *im;
 
-//   re = (Render_Engine *)data;
+   //   re = (Render_Engine *)data;
    if (!image) return 1;
    im = image;
    return im->alpha;
@@ -394,10 +394,10 @@ eng_image_alpha_get(void *data EINA_UNUSED, void *image)
 static Evas_Colorspace
 eng_image_colorspace_get(void *data EINA_UNUSED, void *image)
 {
-//   Render_Engine *re;
+   //   Render_Engine *re;
    Evas_GL_Image *im;
 
-//   re = (Render_Engine *)data;
+   //   re = (Render_Engine *)data;
    if (!image) return EVAS_COLORSPACE_ARGB8888;
    im = image;
    return im->cs.space;
@@ -437,10 +437,10 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
           evas_cache_image_load_data(&im->im->cache_entry);
         evas_gl_common_image_alloc_ensure(im);
         im_new = evas_gl_common_image_new_from_copied_data
-           (im->gc, im->im->cache_entry.w, im->im->cache_entry.h, 
-               im->im->image.data,
-               eng_image_alpha_get(data, image),
-               eng_image_colorspace_get(data, image));
+          (im->gc, im->im->cache_entry.w, im->im->cache_entry.h, 
+           im->im->image.data,
+           eng_image_alpha_get(data, image),
+           eng_image_colorspace_get(data, image));
         if (!im_new) return im;
         evas_gl_common_image_free(im);
         im = im_new;
@@ -448,34 +448,34 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
    else
      evas_gl_common_image_dirty(im, 0, 0, 0, 0);
    return evas_gl_common_image_alpha_set(im, has_alpha ? 1 : 0);
-//   im->im->cache_entry.flags.alpha = has_alpha ? 1 : 0;
-//   return image;
+   //   im->im->cache_entry.flags.alpha = has_alpha ? 1 : 0;
+   //   return image;
 }
 
 static void *
 eng_image_border_set(void *data EINA_UNUSED, void *image, int l EINA_UNUSED, int r EINA_UNUSED, int t EINA_UNUSED, int b EINA_UNUSED)
 {
-//   Render_Engine *re;
-//
-//   re = (Render_Engine *)data;
+   //   Render_Engine *re;
+   //
+   //   re = (Render_Engine *)data;
    return image;
 }
 
 static void
 eng_image_border_get(void *data EINA_UNUSED, void *image EINA_UNUSED, int *l EINA_UNUSED, int *r EINA_UNUSED, int *t EINA_UNUSED, int *b EINA_UNUSED)
 {
-//   Render_Engine *re;
-//
-//   re = (Render_Engine *)data;
+   //   Render_Engine *re;
+   //
+   //   re = (Render_Engine *)data;
 }
 
 static char *
 eng_image_comment_get(void *data EINA_UNUSED, void *image, char *key EINA_UNUSED)
 {
-//   Render_Engine *re;
+   //   Render_Engine *re;
    Evas_GL_Image *im;
 
-//   re = (Render_Engine *)data;
+   //   re = (Render_Engine *)data;
    if (!image) return NULL;
    im = image;
    if (!im->im) return NULL;
@@ -485,10 +485,10 @@ eng_image_comment_get(void *data EINA_UNUSED, void *image, char *key EINA_UNUSED
 static char *
 eng_image_format_get(void *data EINA_UNUSED, void *image)
 {
-//   Render_Engine *re;
+   //   Render_Engine *re;
    Evas_GL_Image *im;
 
-//   re = (Render_Engine *)data;
+   //   re = (Render_Engine *)data;
    im = image;
    return NULL;
 }
@@ -511,34 +511,34 @@ eng_image_colorspace_set(void *data, void *image, Evas_Colorspace cspace)
    switch (cspace)
      {
       case EVAS_COLORSPACE_ARGB8888:
-	if (im->cs.data)
-	  {
-	     if (!im->cs.no_free) free(im->cs.data);
-	     im->cs.data = NULL;
-	     im->cs.no_free = 0;
-	  }
-	break;
+         if (im->cs.data)
+           {
+              if (!im->cs.no_free) free(im->cs.data);
+              im->cs.data = NULL;
+              im->cs.no_free = 0;
+           }
+         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
       case EVAS_COLORSPACE_YCBCR422601_PL:
       case EVAS_COLORSPACE_YCBCR420NV12601_PL:
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
-        if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
-        im->tex = NULL;
-	if (im->cs.data)
-	  {
-	     if (!im->cs.no_free) free(im->cs.data);
-	  }
-        if (im->im->cache_entry.h > 0)
-          im->cs.data = 
-          calloc(1, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
-        else
-          im->cs.data = NULL;
-	im->cs.no_free = 0;
-	break;
+         if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
+         im->tex = NULL;
+         if (im->cs.data)
+           {
+              if (!im->cs.no_free) free(im->cs.data);
+           }
+         if (im->im->cache_entry.h > 0)
+           im->cs.data = 
+             calloc(1, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
+         else
+           im->cs.data = NULL;
+         im->cs.no_free = 0;
+         break;
       default:
-	abort();
-	break;
+         abort();
+         break;
      }
    im->cs.space = cspace;
 }
@@ -660,9 +660,9 @@ eng_image_size_set(void *data, void *image, int w, int h)
       case EVAS_COLORSPACE_YCBCR422601_PL:
       case EVAS_COLORSPACE_YCBCR420NV12601_PL:
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
-        w &= ~0x1;
+         w &= ~0x1;
       default:
-        break;
+         break;
      }
 
    evas_gl_common_image_alloc_ensure(im_old);
@@ -726,41 +726,41 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
-	if (to_write)
-	  {
-	     if (im->references > 1)
-	       {
-		  Evas_GL_Image *im_new;
+         if (to_write)
+           {
+              if (im->references > 1)
+                {
+                   Evas_GL_Image *im_new;
 
-   		  im_new = evas_gl_common_image_new_from_copied_data
+                   im_new = evas_gl_common_image_new_from_copied_data
                      (im->gc, im->im->cache_entry.w, im->im->cache_entry.h,
-                         im->im->image.data,
-                         eng_image_alpha_get(data, image),
-                         eng_image_colorspace_get(data, image));
-   		  if (!im_new)
-   		    {
-   		       *image_data = NULL;
-                       if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-   		       return im;
-   		    }
-   		  evas_gl_common_image_free(im);
-   		  im = im_new;
-	       }
-   	     else
-   	       evas_gl_common_image_dirty(im, 0, 0, 0, 0);
-	  }
-	*image_data = im->im->image.data;
-	break;
+                      im->im->image.data,
+                      eng_image_alpha_get(data, image),
+                      eng_image_colorspace_get(data, image));
+                   if (!im_new)
+                     {
+                        *image_data = NULL;
+                        if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+                        return im;
+                     }
+                   evas_gl_common_image_free(im);
+                   im = im_new;
+                }
+              else
+                evas_gl_common_image_dirty(im, 0, 0, 0, 0);
+           }
+         *image_data = im->im->image.data;
+         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
       case EVAS_COLORSPACE_YCBCR422601_PL:
       case EVAS_COLORSPACE_YCBCR420NV12601_PL:
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
-	*image_data = im->cs.data;
-	break;
+         *image_data = im->cs.data;
+         break;
       default:
-	abort();
-	break;
+         abort();
+         break;
      }
    if (err) *err = error;
    return im;
@@ -803,34 +803,34 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
-	if (image_data != im->im->image.data)
-	  {
-	     int w, h;
+         if (image_data != im->im->image.data)
+           {
+              int w, h;
 
-	     w = im->im->cache_entry.w;
-	     h = im->im->cache_entry.h;
-	     im2 = eng_image_new_from_data(data, w, h, image_data,
-					   eng_image_alpha_get(data, image),
-					   eng_image_colorspace_get(data, image));
-   	     if (!im2) return im;
-   	     evas_gl_common_image_free(im);
-   	     im = im2;
-	  }
-        break;
+              w = im->im->cache_entry.w;
+              h = im->im->cache_entry.h;
+              im2 = eng_image_new_from_data(data, w, h, image_data,
+                                            eng_image_alpha_get(data, image),
+                                            eng_image_colorspace_get(data, image));
+              if (!im2) return im;
+              evas_gl_common_image_free(im);
+              im = im2;
+           }
+         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
-        if (image_data != im->cs.data)
-	  {
-	     if (im->cs.data)
-	       {
-		  if (!im->cs.no_free) free(im->cs.data);
-	       }
-	     im->cs.data = image_data;
-	  }
-	break;
+         if (image_data != im->cs.data)
+           {
+              if (im->cs.data)
+                {
+                   if (!im->cs.no_free) free(im->cs.data);
+                }
+              im->cs.data = image_data;
+           }
+         break;
       default:
-	abort();
-	break;
+         abort();
+         break;
      }
    /* hmmm - but if we wrote... why bother? */
    evas_gl_common_image_dirty(im, 0, 0, 0, 0);
@@ -1030,31 +1030,31 @@ eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font EINA
 
    evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
-     {
-        if (!re->win->gl_context->font_surface)
-          re->win->gl_context->font_surface = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
-        re->win->gl_context->font_surface->cache_entry.w = re->win->gl_context->shared->w;
-        re->win->gl_context->font_surface->cache_entry.h = re->win->gl_context->shared->h;
+   {
+      if (!re->win->gl_context->font_surface)
+        re->win->gl_context->font_surface = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
+      re->win->gl_context->font_surface->cache_entry.w = re->win->gl_context->shared->w;
+      re->win->gl_context->font_surface->cache_entry.h = re->win->gl_context->shared->h;
 
-        evas_common_draw_context_font_ext_set(context,
-                                              re->win->gl_context,
-                                              evas_gl_font_texture_new,
-                                              evas_gl_font_texture_free,
-                                              evas_gl_font_texture_draw,
-                                              NULL,
-                                              NULL,
-                                              NULL);
-	     evas_common_font_draw_prepare(intl_props);
-	     evas_common_font_draw(re->win->gl_context->font_surface, context, x, y, intl_props->glyphs);
-	     evas_common_draw_context_font_ext_set(context,
-                                              NULL,
-                                              NULL,
-                                              NULL,
-                                              NULL,
-                                              NULL,
-                                              NULL,
-                                              NULL);
-     }
+      evas_common_draw_context_font_ext_set(context,
+                                            re->win->gl_context,
+                                            evas_gl_font_texture_new,
+                                            evas_gl_font_texture_free,
+                                            evas_gl_font_texture_draw,
+                                            NULL,
+                                            NULL,
+                                            NULL);
+      evas_common_font_draw_prepare(intl_props);
+      evas_common_font_draw(re->win->gl_context->font_surface, context, x, y, intl_props->glyphs);
+      evas_common_draw_context_font_ext_set(context,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            NULL);
+   }
 
    return EINA_FALSE;
 }
@@ -1138,7 +1138,7 @@ evgl_glShaderBinary(GLsizei n, const GLuint* shaders, GLenum binaryformat, const
 #ifdef GL_GLES
    glShaderBinary(n, shaders, binaryformat, binary, length);
 #else
-// FIXME: need to dlsym/getprocaddress for this
+   // FIXME: need to dlsym/getprocaddress for this
    return;
    n = binaryformat = length = 0;
    shaders = binary = 0;
@@ -1172,7 +1172,7 @@ eng_gl_api_get(void *data, int version EINA_UNUSED)
    ORD(glCheckFramebufferStatus);
    ORD(glClear);
    ORD(glClearColor);
-//   ORD(glClearDepthf);
+   //   ORD(glClearDepthf);
    ORD(glClearStencil);
    ORD(glColorMask);
    ORD(glCompileShader);
@@ -1191,7 +1191,7 @@ eng_gl_api_get(void *data, int version EINA_UNUSED)
    ORD(glDeleteTextures);
    ORD(glDepthFunc);
    ORD(glDepthMask);
-//   ORD(glDepthRangef);
+   //   ORD(glDepthRangef);
    ORD(glDetachShader);
    ORD(glDisable);
    ORD(glDisableVertexAttribArray);
@@ -1224,7 +1224,7 @@ eng_gl_api_get(void *data, int version EINA_UNUSED)
    ORD(glGetRenderbufferParameteriv);
    ORD(glGetShaderiv);
    ORD(glGetShaderInfoLog);
-//   ORD(glGetShaderPrecisionFormat);
+   //   ORD(glGetShaderPrecisionFormat);
    ORD(glGetShaderSource);
    ORD(glGetString);
    ORD(glGetTexParameterfv);
@@ -1248,11 +1248,11 @@ eng_gl_api_get(void *data, int version EINA_UNUSED)
    ORD(glPixelStorei);
    ORD(glPolygonOffset);
    ORD(glReadPixels);
-//   ORD(glReleaseShaderCompiler);
+   //   ORD(glReleaseShaderCompiler);
    ORD(glRenderbufferStorage);
    ORD(glSampleCoverage);
    ORD(glScissor);
-//   ORD(glShaderBinary);
+   //   ORD(glShaderBinary);
    ORD(glShaderSource);
    ORD(glStencilFunc);
    ORD(glStencilFuncSeparate);
@@ -1299,12 +1299,12 @@ eng_gl_api_get(void *data, int version EINA_UNUSED)
    ORD(glViewport);
 #undef ORD
 
-// Override functions wrapped by Evas_GL
+   // Override functions wrapped by Evas_GL
 #define ORD(f) EVAS_API_OVERRIDE(f, &gl_funcs, evgl_)
    ORD(glBindFramebuffer);         
    ORD(glBindRenderbuffer);        
    
-// GLES2.0 API compat on top of desktop gl
+   // GLES2.0 API compat on top of desktop gl
    ORD(glClearDepthf);
    ORD(glDepthRangef);
    ORD(glGetShaderPrecisionFormat);
@@ -1340,16 +1340,16 @@ module_open(Evas_Module *em)
    if (!evas_gl_common_module_open()) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
-   _evas_engine_gl_cocoa_log_dom = eina_log_domain_register("EvasGLCocoa", EVAS_DEFAULT_LOG_COLOR);
+   _evas_engine_gl_cocoa_log_dom = eina_log_domain_register("evas-gl_cocoa", EVAS_DEFAULT_LOG_COLOR);
    if(_evas_engine_gl_cocoa_log_dom < 0)
      {
-       EINA_LOG_ERR("Impossible to create a log domain for GL (Cocoa) engine.");
-       return 0;
+        EINA_LOG_ERR("Impossible to create a log domain for GL (Cocoa) engine.");
+        return 0;
      }
    /* store it for later use */
    func = pfunc;
    /* now to override methods */
-   #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
+#define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
    ORD(info);
    ORD(info_free);
    ORD(setup);
@@ -1417,7 +1417,7 @@ module_open(Evas_Module *em)
 
    ORD(image_load_error_get);    
 
-#define LINK2GENERIC(sym) \
+#define LINK2GENERIC(sym)                       \
    glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
 
    LINK2GENERIC(evas_gl_symbols);
@@ -1431,20 +1431,20 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
-  eina_log_domain_unregister(_evas_engine_gl_cocoa_log_dom);
-  evas_gl_common_module_close();
+   eina_log_domain_unregister(_evas_engine_gl_cocoa_log_dom);
+   evas_gl_common_module_close();
 }
 
 static Evas_Module_Api evas_modapi =
-{
-   EVAS_MODULE_API_VERSION,
-   "gl_cocoa",
-   "none",
-   {
-     module_open,
-     module_close
-   }
-};
+  {
+    EVAS_MODULE_API_VERSION,
+    "gl_cocoa",
+    "none",
+    {
+      module_open,
+      module_close
+    }
+  };
 
 EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, gl_cocoa);
 

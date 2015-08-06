@@ -33,8 +33,6 @@ ecore_cocoa_init(void)
    if (++_ecore_cocoa_init_count != 1)
      return _ecore_cocoa_init_count;
 
-   DBG("Ecore Cocoa Init");
-
    if (!ecore_init())
      return --_ecore_cocoa_init_count;
 
@@ -48,6 +46,8 @@ ecore_cocoa_init(void)
         return 0;
      }
 
+   DBG("");
+   
    ECORE_COCOA_EVENT_GOT_FOCUS  = ecore_event_type_new();
    ECORE_COCOA_EVENT_LOST_FOCUS = ecore_event_type_new();
    ECORE_COCOA_EVENT_RESIZE     = ecore_event_type_new();
@@ -163,20 +163,6 @@ _ecore_cocoa_event_key(NSEvent *event, int keyType)
    return ev;
 }
 
-static inline Eina_Bool
-_nsevent_window_is_type_of(NSEvent *event, Class class)
-{
-   /* An NSPeriodic event has no window (undefined behaviour) */
-   if ([event type] == NSPeriodic) return EINA_FALSE;
-   return [[event window] isKindOfClass:class];
-}
-
-static inline Eina_Bool
-_has_ecore_cocoa_window(NSEvent *event)
-{
-   return _nsevent_window_is_type_of(event, [EcoreCocoaWindow class]);
-}
-
 EAPI Eina_Bool
 ecore_cocoa_feed_events(void *anEvent)
 {
@@ -186,7 +172,7 @@ ecore_cocoa_feed_events(void *anEvent)
    unsigned int time = (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff);
    Eina_Bool pass = EINA_FALSE;
 
-   DBG("Feed events, event type ; %d", [event type]);
+   DBG("Feed events, event type ; %lu", [event type]);
 
    switch ([event type])
      {
@@ -381,14 +367,14 @@ ecore_cocoa_feed_events(void *anEvent)
 }
 
 EAPI void
-ecore_cocoa_screen_size_get(Ecore_Cocoa_Screen *screen, int *w, int *h)
+ecore_cocoa_screen_size_get(Ecore_Cocoa_Screen *screen EINA_UNUSED, int *w, int *h)
 {
    NSSize pt =  [[[NSScreen screens] objectAtIndex:0] frame].size;
 
-   DBG("Screen size get : %dx%d", w, h);
-
    if (w) *w = (int)pt.width;
    if (h) *h = (int)pt.height;
+   
+   DBG("Screen size get : %dx%d", (int)pt.width, (int)pt.height);
 }
 
 EAPI int
