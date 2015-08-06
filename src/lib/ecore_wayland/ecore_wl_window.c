@@ -231,7 +231,7 @@ ecore_wl_window_commit(Ecore_Wl_Window *win)
 
    if (!win) return;
 
-   if ((win->surface) && (win->has_buffer))
+   if ((win->surface))// && (win->has_buffer))
      wl_surface_commit(win->surface);
 }
 

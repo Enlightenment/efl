@@ -779,6 +779,8 @@ _ecore_wl_animator_tick_cb_begin(void *data EINA_UNUSED)
 {
    Eina_Hash *windows;
 
+   fprintf(stderr, "ECORE_WL ANIMATOR TICK BEGIN\n");
+
    _ecore_wl_animator_busy = EINA_TRUE;
 
    windows = _ecore_wl_window_hash_get();
@@ -788,6 +790,7 @@ _ecore_wl_animator_tick_cb_begin(void *data EINA_UNUSED)
 static void
 _ecore_wl_animator_tick_cb_end(void *data EINA_UNUSED)
 {
+   fprintf(stderr, "ECORE_WL ANIMATOR TICK END\n");
    _ecore_wl_animator_busy = EINA_FALSE;
 }
 
@@ -797,6 +800,8 @@ _ecore_wl_animator_callback(void *data, struct wl_callback *callback, uint32_t s
    Ecore_Wl_Window *win;
 
    if (!(win = data)) return;
+
+   fprintf(stderr, "ECORE_WL ANIMATOR CALLBACK\n");
 
    ecore_animator_custom_tick();
 
