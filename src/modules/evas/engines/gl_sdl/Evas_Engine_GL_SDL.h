@@ -1,7 +1,7 @@
 #ifndef _EVAS_ENGINE_GL_SDL_H
 #define _EVAS_ENGINE_GL_SDL_H
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 typedef struct _Evas_Engine_Info_GL_SDL              Evas_Engine_Info_GL_SDL;
 

@@ -1958,13 +1958,13 @@ AC_SUBST([have_evas_engine_gl_xcb])
 if test "x$have_evas_engine_gl_sdl" = "xyes" || test "x$have_evas_engine_gl_sdl" = "xstatic" ; then
    AC_CHECK_DECL([SDL_GL_CONTEXT_MAJOR_VERSION],
       [AC_DEFINE([HAVE_SDL_GL_CONTEXT_VERSION], [1], [SDL_GL version attributes present])],,
-      [#include <SDL/SDL_video.h>])
+      [#include <SDL2/SDL_video.h>])
 fi
 
 if test "${with_opengl}" = "es"; then
    AC_CHECK_DECL([SDL_OPENGLES],
       [AC_DEFINE([HAVE_SDL_FLAG_OPENGLES], [1], [SDL_OPENGLES flag is present])],,
-      [#include <SDL/SDL_video.h>])
+      [#include <SDL2/SDL_video.h>])
 fi
 
 # OpenGL common

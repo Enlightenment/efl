@@ -478,11 +478,11 @@ if test "x${have_dep}" = "xyes" ; then
    evas_engine_[]$1[]_libs="${evas_engine_[]$1[]_libs} -lGL -lm $gl_pt_lib"
    evas_engine_gl_common_libs="-lGL -lm $gl_pt_lib"
 else
-   AC_CHECK_HEADER([SDL/SDL_opengles.h],
+   AC_CHECK_HEADER([SDL2/SDL_opengles.h],
       [have_egl="yes"],
       [have_egl="no"],
       [
-#include <SDL/SDL_opengles.h>
+#include <SDL2/SDL_opengles.h>
 #include <EGL/egl.h>
       ])
    if test "x${have_egl}" = "xyes" ; then
