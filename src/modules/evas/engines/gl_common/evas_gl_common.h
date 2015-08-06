@@ -25,9 +25,9 @@
 #else
 # ifdef _EVAS_ENGINE_SDL_H
 #  ifdef GL_GLES
-#   include <SDL/SDL_opengles.h>
+#   include <SDL2/SDL_opengles.h>
 #  else
-#   include <SDL/SDL_opengl.h>
+#   include <SDL2/SDL_opengl.h>
 #  endif
 # else
 #  ifdef GL_GLES
