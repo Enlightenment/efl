@@ -3,43 +3,22 @@ class Elm.Multibuttonentry_Item(Elm.Widget_Item)
    eo_prefix: elm_obj_multibuttonentry_item;
    methods {
         @property selected {
+             [[Control the selected state of an item]]
              get {
-                 /*@
-                  Get the selected state of an item
-
-                  @ingroup Multibuttonentry
-                 */
              }
              set {
-                 /*@
-                  Set the selected state of an item
-
-                  @ingroup Multibuttonentry
-                 */
              }
              values {
-                 selected: bool; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
+                 selected: bool; [[$true if selected $false otherwise]]
              }
         }
-      prev_get @const {
-            /*@
-             Get the previous item in the multibuttonentry
-
-             @return The item before the item @p it
-
-             @ingroup Multibuttonentry
-            */
-            return: Elm_Object_Item *;
+        prev_get @const {
+             [[Get the previous item in the multibuttonentry]]
+             return: Elm_Object_Item *; [[The item before the item]]
         }
-      next_get @const {
-            /*@
-             Get the next item in the multibuttonentry
-
-             @return The item after the item @p it
-
-             @ingroup Multibuttonentry
-              */
-             return: Elm_Object_Item *;
+        next_get @const {
+             [[Get the next item in the multibuttonentry]]
+             return: Elm_Object_Item *; [[The item after the item]]
         }
    }
    implements {
