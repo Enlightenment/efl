@@ -3070,6 +3070,10 @@ _ecore_evas_register(Ecore_Evas *ee)
    ee->registered = 1;
    ecore_evases = (Ecore_Evas *)eina_inlist_prepend
      (EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+
+#ifdef RENDER_SYNC
+   ecore_evas_first = EINA_TRUE;
+#endif
 }
 
 EAPI void
