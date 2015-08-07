@@ -692,7 +692,7 @@ edje_container_max_size_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh
 }
 
 void
-edje_containter_align_set(Evas_Object *obj, double halign, double valign)
+edje_container_align_set(Evas_Object *obj, double halign, double valign)
 {
    Smart_Data *sd;
 
