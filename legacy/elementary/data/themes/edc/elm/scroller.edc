@@ -44,7 +44,7 @@ group { name: "elm/scroller/base/default";
          get_geometry(PART:"y_vbar_up", x,y,w, h);
          get_geometry(PART:"y_vbar_up_mapper", x1,y1,w1, h1);
 
-         if(y == y1)
+         if((y1 <= y) && (y <= (y1 + h1)))
          {
             set_state(PART:"arrow1_vbar", "hidden", 0.0);
             set_state(PART:"sb_vbar_a1", "hidden", 0.0);
@@ -58,7 +58,7 @@ group { name: "elm/scroller/base/default";
          get_geometry(PART:"y_vbar_down", x,y,w, h);
          get_geometry(PART:"y_vbar_down_mapper", x1,y1,w1, h1);
 
-         if((y+h) == (y1+h1))
+         if((y1 <= (y + h)) && ((y+ h) <= (y1 + h1)))
          {
             set_state(PART:"arrow2_vbar", "hidden", 0.0);
             set_state(PART:"sb_vbar_a2", "hidden", 0.0);
@@ -79,7 +79,7 @@ group { name: "elm/scroller/base/default";
          get_geometry(PART:"x_hbar_left", x,y,w, h);
          get_geometry(PART:"x_hbar_left_mapper", x1,y1,w1, h1);
 
-         if(x == x1)
+         if((x1 <= x) && (x <= (x1 + w1)))
          {
             set_state(PART:"arrow1_hbar", "hidden", 0.0);
             set_state(PART:"sb_hbar_a1", "hidden", 0.0);
@@ -93,7 +93,7 @@ group { name: "elm/scroller/base/default";
          get_geometry(PART:"x_hbar_right", x,y,w, h);
          get_geometry(PART:"x_hbar_right_mapper", x1,y1,w1, h1);
 
-         if((x+w) == (x1+w1))
+         if((x1 <= (x + w)) && ((x + w) <= (x1 + w1)))
          {
             set_state(PART:"arrow2_hbar", "hidden", 0.0);
             set_state(PART:"sb_hbar_a2", "hidden", 0.0);
