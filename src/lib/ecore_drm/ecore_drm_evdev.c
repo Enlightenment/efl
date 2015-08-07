@@ -80,19 +80,19 @@ _device_output_set(Ecore_Drm_Evdev *edev)
    if (libinput_device_has_capability(edev->device, 
                                       LIBINPUT_DEVICE_CAP_POINTER))
      {
-        Ecore_Drm_Input *input;
+        Ecore_Drm_Input *pointer_input;
         Ecore_Event_Mouse_Move *ev;
 
         edev->mouse.dx = edev->output->current_mode->width / 2;
         edev->mouse.dy = edev->output->current_mode->height / 2;
 
         /* send a fake motion event to let other know the initial pos of mouse */
-        if (!(input = edev->seat->input)) return;
+        if (!(pointer_input = edev->seat->input)) return;
         if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Move)))) return;
 
-        ev->window = (Ecore_Window)input->dev->window;
-        ev->event_window = (Ecore_Window)input->dev->window;
-        ev->root_window = (Ecore_Window)input->dev->window;
+        ev->window = (Ecore_Window)pointer_input->dev->window;
+        ev->event_window = (Ecore_Window)pointer_input->dev->window;
+        ev->root_window = (Ecore_Window)pointer_input->dev->window;
 
         _device_modifiers_update(edev);
         ev->modifiers = edev->xkb.modifiers;
