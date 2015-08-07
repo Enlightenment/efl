@@ -50,6 +50,24 @@ static const Elm_Action key_actions[] = {
 static void _access_increment_decrement_info_say(Evas_Object *obj,
                                                  Eina_Bool is_incremented);
 
+static Eina_Bool
+_is_label_format_integer(const char *fmt)
+{
+   const char *start = strchr(fmt, '%');
+   const char *itr;
+
+   for (itr = start + 1; *itr != '\0'; itr++)
+     {
+        if ((*itr == 'd') || (*itr == 'u') || (*itr == 'i') ||
+            (*itr == 'o') || (*itr == 'x') || (*itr == 'X'))
+          return EINA_TRUE;
+        else if ((*itr == 'f'))
+          return EINA_FALSE;
+     }
+
+   return EINA_FALSE;
+}
+
 static void
 _entry_show(Elm_Spinner_Data *sd)
 {
@@ -100,9 +118,13 @@ _entry_show(Elm_Spinner_Data *sd)
                }
           }
      }
-   snprintf(buf, sizeof(buf), fmt, sd->val);
 
 apply:
+   if (_is_label_format_integer(fmt))
+     snprintf(buf, sizeof(buf), fmt, (int)sd->val);
+   else
+     snprintf(buf, sizeof(buf), fmt, sd->val);
+
    elm_object_text_set(sd->ent, buf);
 }
 
@@ -125,7 +147,12 @@ _label_write(Evas_Object *obj)
      }
 
    if (sd->label)
-     snprintf(buf, sizeof(buf), sd->label, sd->val);
+     {
+        if (_is_label_format_integer(sd->label))
+          snprintf(buf, sizeof(buf), sd->label, (int)sd->val);
+        else
+          snprintf(buf, sizeof(buf), sd->label, sd->val);
+     }
    else
      snprintf(buf, sizeof(buf), "%.0f", sd->val);
 
