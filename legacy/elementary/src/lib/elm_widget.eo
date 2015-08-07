@@ -5,10 +5,8 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
    methods {
       @property focus {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             focus: bool;
@@ -16,22 +14,19 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property drag_lock_y {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             lock: bool;
          }
       }
       @property focus_highlight_style {
+         [[Control the widget focus highlight style.]]
          set {
-            /*@ This function set the widget focus highlight style. */
             return: bool;
          }
          get {
-            /*@ This function returns the widget focus highlight style. */
          }
          values {
             style: const(char)*;
@@ -39,21 +34,18 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property tree_unfocusable {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             tree_unfocusable: bool;
          }
       }
       @property mirrored {
+         [[Control the widget's mirrored mode.]]
          set {
-            /*@ Sets the widget's mirrored mode. */
          }
          get {
-            /*@ Returns the widget's mirrored mode. */
          }
          values {
             mirrored: bool;
@@ -61,10 +53,8 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property theme {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             th: Elm_Theme * @nullable;
@@ -72,10 +62,8 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property disabled {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             disabled: bool;
@@ -83,21 +71,18 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property highlight_ignore {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             ignore: bool;
          }
       }
       @property mirrored_automatic {
+         [[Control the widget's mirrored mode setting.]]
          set {
-            /*@ Sets the widget's mirrored mode setting. */
          }
          get {
-            /*@ Returns the widget's mirrored mode setting. */
          }
          values {
             automatic: bool;
@@ -105,10 +90,8 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property orientation_mode_disabled {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             disabled: bool;
@@ -116,11 +99,9 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property style {
          set {
-            /*@ No description supplied by the EAPI. */
             return: bool;
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             style: const(char)*;
@@ -128,10 +109,8 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property scale {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             scale: double;
@@ -139,13 +118,11 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property focus_custom_chain {
          set {
-            /*@ No description supplied by the EAPI. */
             values {
                objs: list<Evas.Object*>*;
             }
          }
          get {
-            /*@ No description supplied by the EAPI. */
             values {
                objs: const(list<Evas.Object*>)*;
             }
@@ -153,10 +130,8 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property can_focus {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             can_focus: bool;
@@ -164,10 +139,8 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property highlight_in_theme {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             highlight: bool;
@@ -175,10 +148,8 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property parent {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             parent: Evas.Object * @nullable;
@@ -186,10 +157,8 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property access_info {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             txt: const(char)* @nullable;
@@ -197,10 +166,8 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property drag_lock_x {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             lock: bool;
@@ -208,18 +175,15 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property access_highlight_in_theme {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
-            highlight: bool; /*@ highlight */
+            highlight: bool; [[highlight]]
          }
       }
       @property parent_highlight {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             highlighted: bool;
@@ -227,7 +191,6 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property theme_object {
          set {
-            /*@ No description supplied by the EAPI. */
             return: bool;
          }
          values {
@@ -239,7 +202,6 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property hover_object {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             sobj: Evas.Object * @nullable;
@@ -247,7 +209,6 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property display_mode {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             dispmode: Evas_Display_Mode;
@@ -255,7 +216,6 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property on_show_region_hook {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             func: region_hook_func_type @nullable;
@@ -264,7 +224,6 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property domain_part_text_translatable {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             part: const(char)*;
@@ -274,7 +233,6 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property orientation {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             rotation: int;
@@ -282,7 +240,6 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property resize_object {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             sobj: Evas.Object * @nullable;
@@ -291,7 +248,6 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property domain_translatable_part_text {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             part: const(char)*;
@@ -301,30 +257,27 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property scrollable_children {
          get {
-            /*@
-            Function to operate on a given widget's scrollabe children when necessary.
-            @warning free the returned list with eina_list_free(). */
+            [[Function to operate on a given widget's scrollabe children when necessary.
+
+              Warning: free the returned list with eina_list_free().]]
             return: free(own(list<Evas.Object *> *), eina_list_free) @warn_unused;
          }
       }
       @property scroll_hold {
          get {
-            /*@ No description supplied by the EAPI. */
             return: int;
          }
       }
       @property drag_child_locked_y {
          get {
-            /*@ No description supplied by the EAPI. */
             return: int;
          }
       }
       @property item_loop_enabled {
+         [[Control item loop feature.]]
          set {
-            /*@ Set enable or disable item loop feature. */
          }
          get {
-            /*@ Get the value whether item loop feature is enabled or not. */
          }
          values {
             enable: bool;
@@ -332,19 +285,16 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property child_can_focus {
          get {
-            /*@ No description supplied by the EAPI. */
             return: bool;
          }
       }
       @property scroll_freeze {
          get {
-            /*@ No description supplied by the EAPI. */
             return: int;
          }
       }
       @property focus_region {
          get {
-            /*@ No description supplied by the EAPI. */
             return: bool;
          }
          values {
@@ -356,37 +306,32 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property top {
          get {
-            /*@ No description supplied by the EAPI. */
             return: Evas.Object *;
          }
       }
       @property focus_order {
          get {
-            /*@ No description supplied by the EAPI. */
             return: uint;
          }
       }
       @property drag_child_locked_x {
          get {
-            /*@ No description supplied by the EAPI. */
             return: int;
          }
       }
       @property can_focus_child_list {
          get {
-            /*@ No description supplied by the EAPI. */
             return: free(own(list<Evas.Object *> *), eina_list_free) @warn_unused;
          }
       }
       @property focused_item {
          get {
-            /*@ Get the focused widget item. */
+            [[Get the focused widget item.]]
             return: Elm.Widget_Item *;
          }
       }
       @property parents_bounce {
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             horiz: bool;
@@ -395,29 +340,24 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property parent_widget {
          get {
-            /*@ No description supplied by the EAPI. */
             return: Evas.Object *;
             legacy: null;
          }
       }
       @property highlight {
          get {
-            /*@ No description supplied by the EAPI. */
             return: bool;
          }
       }
       @property focused_object {
          get {
-            /*@ No description supplied by the EAPI. */
             return: Evas.Object *;
          }
       }
       @property parent2 {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             parent: Evas.Object * @nullable;
@@ -425,10 +365,8 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property part_text {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          keys {
             part: const(char)*;
@@ -438,7 +376,6 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          }
       }
       newest_focus_order_get @const {
-         /*@ No description supplied by the EAPI. */
          return: Evas.Object *;
          params {
             @out newest_focus_order: uint;
@@ -446,40 +383,33 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          }
       }
       scroll_hold_push {
-         /*@ No description supplied by the EAPI. */
       }
       cursor_add {
-         /*@ No description supplied by the EAPI. */
          params {
             @in cur: Elm_Cursor *;
          }
       }
       focus_next_object_set {
-         /*@ No description supplied by the EAPI. */
          params {
             @in next: Evas.Object * @nullable;
             @in dir: Elm_Focus_Direction;
          }
       }
       focus_next_object_get @const {
-         /*@ No description supplied by the EAPI. */
          return: Evas.Object *;
          params {
             @in dir: Elm_Focus_Direction;
          }
       }
       focus_tree_unfocusable_handle {
-         /*@ No description supplied by the EAPI. */
       }
       focus_custom_chain_prepend {
-         /*@ No description supplied by the EAPI. */
          params {
             @in child: Evas.Object *;
             @in relative_child: Evas.Object * @optional;
          }
       }
       part_text_translate {
-         /*@ No description supplied by the EAPI. */
          return: const(char)*;
          params {
             @in part: const(char)*;
@@ -487,7 +417,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          }
       }
       focus_highlight_geometry_get @const {
-         /*@ Get the focus highlight geometry of widget. */
+         [[Get the focus highlight geometry of widget.]]
          params {
             @in x: Evas.Coord *;
             @in y: Evas.Coord *;
@@ -496,7 +426,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          }
       }
       activate {
-         /*@ 'Virtual' function to activate widget. */
+         [['Virtual' function to activate widget.]]
          params {
             @in act: Elm_Activate;
          }
@@ -504,19 +434,19 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          legacy: null; /* the legacy API has not the same number of parameter to we don't generate it. */
       }
       sub_object_add {
-         /*@ 'Virtual' function handling sub objects being added. */
+         [['Virtual' function handling sub objects being added.]]
          return: bool;
          params {
             @in sobj: Evas.Object *;
          }
       }
       focus_direction_manager_is {
-         /*@ 'Virtual' function which checks if handling of passing focus to sub-objects in given direction is supported by widget. */
+         [['Virtual' function which checks if handling of passing focus to sub-objects in given direction is supported by widget.]]
          return: bool;
          legacy: null;
       }
       event {
-         /*@ 'Virtual' function handling input events on the widget. */
+         [['Virtual' function handling input events on the widget.]]
          params {
             @in source: Evas.Object *;
             @in type: Evas_Callback_Type;
@@ -525,27 +455,24 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          return: bool;
       }
       event_callback_add {
-         /*@ No description supplied by the EAPI. */
          params {
             @in func: Elm_Event_Cb;
             @in data: const(void)* @optional;
          }
       }
       access {
-         /*@ 'Virtual' function on the widget being set access. */
+         [['Virtual' function on the widget being set access.]]
          params {
             @in acs: bool;
          }
          legacy: null;
       }
       cursor_del {
-         /*@ No description supplied by the EAPI. */
          params {
             @in cur: Elm_Cursor *;
          }
       }
       event_callback_del {
-         /*@ No description supplied by the EAPI. */
          return: void *;
          params {
             @in func: Elm_Event_Cb;
@@ -553,12 +480,11 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          }
       }
       on_focus {
-         /*@ 'Virtual' function handling focus in/out events on the widget.
-         return true if this widget can handle focus, false otherwise */
+         [['Virtual' function handling focus in/out events on the widget.  return true if this widget can handle focus, false otherwise]]
          return: bool;
       }
       on_focus_region {
-         /*@ 'Virtual' function returning an inner area of a widget that should be brought into the visible area of a broader viewport, may this context arise. */
+         [['Virtual' function returning an inner area of a widget that should be brought into the visible area of a broader viewport, may this context arise.]]
          params {
             @out x: Evas.Coord;
             @out y: Evas.Coord;
@@ -568,13 +494,12 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          return: bool;
       }
       focus_cycle {
-         /*@ No description supplied by the EAPI. */
          params {
             @in dir: Elm_Focus_Direction;
          }
       }
       focus_direction {
-         /*@ 'Virtual' function handling passing focus to sub-objects given a direction, in degrees. */
+         [['Virtual' function handling passing focus to sub-objects given a direction, in degrees.]]
          params {
             @in base: const(Evas.Object)*;
             @in degree: double;
@@ -584,7 +509,6 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          return: bool;
       }
       event_propagate {
-         /*@ No description supplied by the EAPI. */
          return: bool;
          params {
             @in type: Evas_Callback_Type;
@@ -593,7 +517,6 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          }
       }
       signal_callback_add {
-         /*@ No description supplied by the EAPI. */
          params {
             @in emission: const(char)*;
             @in source: const(char)*;
@@ -602,11 +525,10 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          }
       }
       focus_next_manager_is {
-         /*@ 'Virtual' function which checks if handling of passing focus to sub-objects is supported by widget. */
+         [['Virtual' function which checks if handling of passing focus to sub-objects is supported by widget.]]
          return: bool;
       }
       name_find @const {
-         /*@ No description supplied by the EAPI. */
          return: Evas.Object *;
          params {
             @in name: const(char)*;
@@ -614,7 +536,6 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          }
       }
       focus_list_direction_get @const {
-         /*@ No description supplied by the EAPI. */
          return: bool;
          params {
             @in base: const(Evas.Object)*;
@@ -626,17 +547,14 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          }
       }
       focused_object_clear {
-         /*@ No description supplied by the EAPI. */
       }
       focus_direction_go {
-         /*@ No description supplied by the EAPI. */
          return: bool;
          params {
             @in degree: double;
          }
       }
       show_region_set {
-         /*@ No description supplied by the EAPI. */
          params {
             @in x: Evas.Coord;
             @in y: Evas.Coord;
@@ -646,7 +564,6 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          }
       }
       show_region_get @const {
-         /*@ No description supplied by the EAPI. */
          params {
             @out x: Evas.Coord @optional;
             @out y: Evas.Coord @optional;
@@ -655,16 +572,13 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          }
       }
       scroll_freeze_pop {
-         /*@ No description supplied by the EAPI. */
       }
       tooltip_del {
-         /*@ No description supplied by the EAPI. */
          params {
             @in tt: Elm_Tooltip *;
          }
       }
       focus_next_get @const {
-         /*@ No description supplied by the EAPI. */
          return: bool;
          params {
             @in dir: Elm_Focus_Direction;
@@ -672,47 +586,35 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          }
       }
       translatable_part_text_get @const {
-         /*@ No description supplied by the EAPI. */
          return: const(char)*;
          params {
             @in part: const(char)*;
          }
       }
       focus_restore {
-         /*@
-         @internal
-
-         Restore the focus state of the sub-tree.
+         [[Restore the focus state of the sub-tree.
 
          This API will restore the focus state of the sub-tree to the latest
          state. If a sub-tree is unfocused and wants to get back to the latest
-         focus state, this API will be helpful.
-
-         @ingroup Widget */
-
+         focus state, this API will be helpful.]]
       }
       scroll_hold_pop {
-         /*@ No description supplied by the EAPI. */
       }
       translate {
-         /*@ 'Virtual' function handling language changes on Elementary. */
+         [['Virtual' function handling language changes on Elementary.]]
          return: bool;
          legacy: null;
       }
       scroll_freeze_push {
-         /*@ No description supplied by the EAPI. */
       }
       focus_custom_chain_unset {
-         /*@ No description supplied by the EAPI. */
       }
       focus_steal {
-         /*@ No description supplied by the EAPI. */
       }
       focus_hide_handle {
-         /*@ No description supplied by the EAPI. */
       }
       focus_next {
-         /*@ 'Virtual' function handling passing focus to sub-objects. */
+         [['Virtual' function handling passing focus to sub-objects.]]
          params {
             @in dir: Elm_Focus_Direction;
             @out next: Evas.Object *;
@@ -720,7 +622,6 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          return: bool;
       }
       focus_list_next_get @const {
-         /*@ No description supplied by the EAPI. */
          return: bool;
          params {
             @in items: const(list<Eo.Base*>)*;
@@ -730,15 +631,13 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          }
       }
       focus_mouse_up_handle {
-         /*@ No description supplied by the EAPI. */
          legacy: null;
       }
       theme_apply {
-         /*@ 'Virtual' function on the widget being re-themed. */
+         [['Virtual' function on the widget being re-themed.]]
          return: bool;
       }
       focus_direction_get @const {
-         /*@ No description supplied by the EAPI. */
          return: bool;
          params {
             @in base: const(Evas.Object)*;
@@ -748,7 +647,6 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          }
       }
       signal_callback_del {
-         /*@ No description supplied by the EAPI. */
          return: void *;
          params {
             @in emission: const(char)*;
@@ -757,37 +655,32 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          }
       }
       signal_emit {
-         /*@ No description supplied by the EAPI. */
          params {
             @in emission: const(char)*;
             @in source: const(char)*;
          }
       }
       disable {
-         /*@ 'Virtual' function on the widget being disabled. */
+         [['Virtual' function on the widget being disabled.]]
          return: bool;
       }
       sub_object_del {
-         /*@ 'Virtual' function handling sub objects being removed. */
+         [['Virtual' function handling sub objects being removed.]]
          return: bool;
          params {
             @in sobj: Evas.Object *;
          }
       }
       tooltip_add {
-         /*@ No description supplied by the EAPI. */
          params {
             @in tt: Elm_Tooltip *;
          }
       }
       focus_region_show @const {
-         /*@ No description supplied by the EAPI. */
       }
       focus_disabled_handle {
-         /*@ No description supplied by the EAPI. */
       }
       focus_custom_chain_append {
-         /*@ No description supplied by the EAPI. */
          params {
             @in child: Evas.Object *;
             @in relative_child: Evas.Object * @optional;
@@ -795,13 +688,13 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property focus_move_policy {
          set {
-            /*@ Sets the widget's focus move policy. */
+            [[Sets the widget's focus move policy.]]
          }
          get {
-            /*@ Returns the widget's focus move policy. */
+            [[Returns the widget's focus move policy.]]
          }
          values {
-            policy: Elm_Focus_Move_Policy; /*@ Object's focus move policy. */
+            policy: Elm_Focus_Move_Policy; [[Object's focus move policy.]]
          }
       }
    }
