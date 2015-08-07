@@ -104,97 +104,74 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
    methods {
       @property scrollable {
          set {
-            /*@
-            Enable or disable scrolling in entry
+            [[Enable or disable scrolling in entry
 
-            Normally the entry is not scrollable unless you enable it with this call.
-
-            @ingroup Entry */
+              Normally the entry is not scrollable unless you enable it with this call.
+            ]]
          }
          get {
-            /*@
-            Get the scrollable state of the entry
+            [[Get the scrollable state of the entry
 
-            Normally the entry is not scrollable. This gets the scrollable state
-            of the entry. See elm_entry_scrollable_set() for more information.
-
-            @return The scrollable state
-
-            @ingroup Entry */
+              Normally the entry is not scrollable. This gets the scrollable state
+              of the entry.
+            ]]
          }
          values {
-            scroll: bool; /*@ true if it is to be scrollable, false otherwise */
+            scroll: bool; [[$true if it is to be scrollable, $false otherwise.]]
          }
       }
       @property input_panel_show_on_demand {
          set {
-            /*@
-            Set the attribute to show the input panel in case of only an user's explicit Mouse Up event.
-            It doesn't request to show the input panel even though it has focus.
-
-            @ingroup Entry */
+            [[Set the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+              It doesn't request to show the input panel even though it has focus.
+            ]]
          }
          get {
-            /*@
-            Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+            [[Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
 
-            @return $true if the input panel will be shown in case of only Mouse up event.
-            @since 1.9
-
-            @ingroup Entry */
+              @since 1.9
+            ]]
          }
          values {
-            ondemand: bool; /*@ If true, the input panel will be shown in case of only Mouse up event.
+            ondemand: bool; [[If true, the input panel will be shown in case of only Mouse up event.
             (Focus event will be ignored.)
-            @since 1.9 */
+
+            @since 1.9.]]
          }
       }
       @property context_menu_disabled {
          set {
-            /*@
-            This disables the entry's contextual (longpress) menu.
-
-            @ingroup Entry */
+            [[This disables the entry's contextual (longpress) menu.]]
          }
          get {
-            /*@
-            This returns whether the entry's contextual (longpress) menu is
-            disabled.
-
-            @return If true, the menu is disabled
-
-            @ingroup Entry */
+            [[This returns whether the entry's contextual (longpress) menu is
+              disabled.
+            ]]
          }
          values {
-            disabled: bool; /*@ If true, the menu is disabled */
+            disabled: bool; [[If $true, the menu is disabled.]]
          }
       }
       @property cnp_mode {
          set {
-            /*@
-            Control pasting of text and images for the widget.
+            [[Control pasting of text and images for the widget.
 
-            Normally the entry allows both text and images to be pasted.
-            By setting cnp_mode to be #ELM_CNP_MODE_NO_IMAGE, this prevents images from being copy or past.
-            By setting cnp_mode to be #ELM_CNP_MODE_PLAINTEXT, this remove all tags in text .
+              Normally the entry allows both text and images to be pasted.
+              By setting cnp_mode to be #ELM_CNP_MODE_NO_IMAGE, this prevents images from being copy or past.
+              By setting cnp_mode to be #ELM_CNP_MODE_PLAINTEXT, this remove all tags in text .
 
-            @note this only changes the behaviour of text.
-
-            @ingroup Entry */
+              Note: This only changes the behaviour of text.
+            ]]
          }
          get {
-            /*@
-            Getting elm_entry text paste/drop mode.
+            [[Getting elm_entry text paste/drop mode.
 
-            Normally the entry allows both text and images to be pasted.
-            This gets the copy & paste mode of the entry.
-
-            @return mode One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP, #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.
-
-            @ingroup Entry */
+              Normally the entry allows both text and images to be pasted.
+              This gets the copy & paste mode of the entry.
+            ]]
          }
          values {
-            cnp_mode: Elm_Cnp_Mode; /*@ One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP, #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT. */
+            cnp_mode: Elm_Cnp_Mode; [[One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP, #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.]]
          }
       }
       @property file_text_format {
@@ -217,1042 +194,703 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
       }
       @property input_panel_language {
          set {
-            /*@
-            Set the language mode of the input panel.
+            [[Set the language mode of the input panel.
 
-            This API can be used if you want to show the alphabet keyboard mode.
-
-            @ingroup Entry */
+              This API can be used if you want to show the alphabet keyboard mode.
+            ]]
          }
          get {
-            /*@
-            Get the language mode of the input panel.
-
-            See @ref elm_entry_input_panel_language_set for more details.
-
-            @return input panel language type
-
-            @ingroup Entry */
+            [[Get the language mode of the input panel.]]
          }
          values {
-            lang: Elm.Input.Panel.Lang; /*@ language to be set to the input panel. */
+            lang: Elm.Input.Panel.Lang; [[language to be set to the input panel.]]
          }
       }
       @property selection_handler_disabled {
          set {
-            /*@
-            This disabled the entry's selection handlers.
-
-            @ingroup Entry */
+            [[This disabled the entry's selection handlers.]]
          }
          get {
-            /*@ This returns whether the entry's selection handlers are disabled. */
+            [[This returns whether the entry's selection handlers are disabled.]]
             legacy: null;
          }
          values {
-            disabled: bool; /*@ If true, the selection handlers are disabled. */
+            disabled: bool; [[If $true, the selection handlers are disabled.]]
          }
       }
       @property input_panel_layout_variation {
          set {
-            /*@
-            Set the input panel layout variation of the entry
+            [[Set the input panel layout variation of the entry
 
-            @ingroup Entry
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the input panel layout variation of the entry
+            [[Get the input panel layout variation of the entry
 
-            @return layout variation type
-
-            @see elm_entry_input_panel_layout_variation_set
-
-            @ingroup Entry
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          values {
-            variation: int; /*@ layout variation type */
+            variation: int; [[layout variation type.]]
          }
       }
       @property autocapital_type {
          set {
-            /*@
-            Set the autocapitalization type on the immodule.
-
-            @ingroup Entry */
+            [[Set the autocapitalization type on the immodule.]]
          }
          get {
-            /*@
-            Get the autocapitalization type on the immodule.
-
-            @return autocapitalization type
-
-            @ingroup Entry */
+            [[Get the autocapitalization type on the immodule.]]
          }
          values {
-            autocapital_type: Elm.Autocapital.Type; /*@ The type of autocapitalization */
+            autocapital_type: Elm.Autocapital.Type; [[The type of autocapitalization.]]
          }
       }
       @property editable {
          set {
-            /*@
-            Sets if the entry is to be editable or not.
+            [[Sets if the entry is to be editable or not.
 
-            By default, entries are editable and when focused, any text input by the
-            user will be inserted at the current cursor position. But calling this
-            function with $editable as false will prevent the user from
-            inputting text into the entry.
+              By default, entries are editable and when focused, any text input by the
+              user will be inserted at the current cursor position. But calling this
+              function with $editable as $false will prevent the user from
+              inputting text into the entry.
 
-            The only way to change the text of a non-editable entry is to use
-            elm_object_text_set(), elm_entry_entry_insert() and other related
-            functions.
-
-            @ingroup Entry */
+              The only way to change the text of a non-editable entry is to use
+              \@ref elm_object_text_set, \@ref elm_entry_entry_insert and other related
+              functions.
+            ]]
          }
          get {
-            /*@
-            Get whether the entry is editable or not.
-
-            @return If true, the entry is editable by the user.
-            If false, it is not editable by the user
-
-            @see elm_entry_editable_set()
-
-            @ingroup Entry */
+            [[Get whether the entry is editable or not.]]
          }
          values {
-            editable: bool; /*@ If true, user input will be inserted in the entry,
-            if not, the entry is read-only and no user input is allowed. */
+            editable: bool; [[If $true, user input will be inserted in the entry,
+            if not, the entry is read-only and no user input is allowed.]]
          }
       }
       @property anchor_hover_style {
          set {
-            /*@
-            Set the style that the hover should use
+            [[Set the style that the hover should use
 
-            When creating the popup hover, entry will request that it's
-            themed according to $style.
+              When creating the popup hover, entry will request that it's
+              themed according to $style.
 
-            Setting style no $NULL means disabling automatic hover.
-
-            @see elm_object_style_set()
-
-            @ingroup Entry */
+              Setting style no $null means disabling automatic hover.
+            ]]
          }
          get {
-            /*@
-            Get the style that the hover should use
-
-            Get the style, the hover created by entry will use.
-
-            @return The style to use by the hover. $NULL means the default is used.
-
-            @see elm_object_style_set()
-
-            @ingroup Entry */
+            [[Get the style that the hover should use.]]
          }
          values {
-            style: const(char)* @nullable; /*@ The style to use for the underlying hover */
+            style: const(char)* @nullable; [[The style to use for the underlying hover.]]
          }
       }
       @property single_line {
          set {
-            /*@
-            Sets the entry to single line mode.
+            [[Sets the entry to single line mode.
 
-            In single line mode, entries don't ever wrap when the text reaches the
-            edge, and instead they keep growing horizontally. Pressing the $Enter
-            key will generate an $"activate" event instead of adding a new line.
+              In single line mode, entries don't ever wrap when the text reaches the
+              edge, and instead they keep growing horizontally. Pressing the $Enter
+              key will generate an $"activate" event instead of adding a new line.
 
-            When $single_line is $false, line wrapping takes effect again
-            and pressing enter will break the text into a different line
-            without generating any events.
-
-            @ingroup Entry */
+              When $single_line is $false, line wrapping takes effect again
+              and pressing enter will break the text into a different line
+              without generating any events.
+            ]]
          }
          get {
-            /*@
-            Get whether the entry is set to be single line.
-
-            @return single_line If true, the text in the entry is set to display
-            on a single line.
-
-            @see elm_entry_single_line_set()
-
-            @ingroup Entry */
+            [[Get whether the entry is set to be single line.]]
          }
          values {
-            single_line: bool; /*@ If true, the text in the entry
-            will be on a single line. */
+            single_line: bool; [[If true, the text in the entry
+            will be on a single line.]]
          }
       }
       @property password {
          set {
-            /*@
-            Sets the entry to password mode.
+            [[Sets the entry to password mode.
 
-            In password mode, entries are implicitly single line and the display of
-            any text in them is replaced with asterisks (*).
-
-            @ingroup Entry */
+              In password mode, entries are implicitly single line and the display of
+              any text in them is replaced with asterisks (*).
+            ]]
          }
          get {
-            /*@
-            Get whether the entry is set to password mode.
-
-            @return If true, the entry is set to display all characters
-            as asterisks (*).
-
-            @see elm_entry_password_set()
-
-            @ingroup Entry */
+            [[Get whether the entry is set to password mode.]]
          }
          values {
-            password: bool; /*@ If true, password mode is enabled. */
+            password: bool; [[If true, password mode is enabled.]]
          }
       }
       @property input_panel_return_key_disabled {
          set {
-            /*@
-            Set the return key on the input panel to be disabled.
-
-            @ingroup Entry */
+            [[Set the return key on the input panel to be disabled.]]
          }
          get {
-            /*@
-            Get whether the return key on the input panel should be disabled or not.
-
-            @return true if it should be disabled
-
-            @ingroup Entry */
+            [[Get whether the return key on the input panel should be disabled or not.]]
          }
          values {
-            disabled: bool; /*@ The state to put in in: $true for
-            disabled, $false for enabled */
+            disabled: bool; [[The state to put in in: $true for
+            disabled, $false for enabled.]]
          }
       }
       @property autosave {
          set {
-            /*@
-            This sets the entry object to 'autosave' the loaded text file or not.
-
-            @see elm_entry_file_set()
-
-            @ingroup Entry */
+            [[This sets the entry object to 'autosave' the loaded text file or not.]]
          }
          get {
-            /*@
-            This gets the entry object's 'autosave' status.
-
-            @return Autosave the loaded file or not
-
-            @see elm_entry_file_set()
-
-            @ingroup Entry */
+            [[This gets the entry object's 'autosave' status.]]
          }
          values {
-            auto_save: bool; /*@ Autosave the loaded file or not */
+            auto_save: bool; [[Autosave the loaded file or not.]]
          }
       }
       @property anchor_hover_parent {
          set {
-            /*@
-            Set the parent of the hover popup
+            [[Set the parent of the hover popup
 
-            Sets the parent object to use by the hover created by the entry
-            when an anchor is clicked. See @ref Hover for more details on this.
-
-            @ingroup Entry */
+              Sets the parent object to use by the hover created by the entry
+              when an anchor is clicked.
+            ]]
          }
          get {
-            /*@
-            Get the parent of the hover popup
+            [[Get the parent of the hover popup
 
-            Get the object used as parent for the hover created by the entry
-            widget. See @ref Hover for more details on this.
-            If no parent is set, the same entry object will be used.
-
-            @return The object used as parent for the hover, NULL if none is set.
-
-            @ingroup Entry */
+              Get the object used as parent for the hover created by the entry
+              widget. If no parent is set, the same entry object will be used.
+            ]]
          }
          values {
-            parent: Evas.Object * @nullable; /*@ The object to use as parent for the hover */
+            parent: Evas.Object * @nullable; [[The object to use as parent for the hover.]]
          }
       }
       @property prediction_allow {
          set {
-            /*@
-            Set whether the entry should allow to use the text prediction.
-
-            @ingroup Entry */
+            [[Set whether the entry should allow to use the text prediction.]]
          }
          get {
-            /*@
-            Get whether the entry should allow to use the text prediction.
-
-            @return true if it allows to use the text prediction, otherwise false.
-
-            @ingroup Entry */
+            [[Get whether the entry should allow to use the text prediction.]]
          }
          values {
-            prediction: bool; /*@ Whether the entry should allow to use the text prediction. */
+            prediction: bool; [[Whether the entry should allow to use the text prediction.]]
          }
       }
       @property input_hint {
          set {
-            /*@
-            Sets the input hint which allows input methods to fine-tune their behavior.
-
-            @ingroup Entry */
+            [[Sets the input hint which allows input methods to fine-tune their behavior.]]
          }
          get {
-            /*@
-            Gets the value of input hint.
-
-            @return the value of input hint.
-
-            @see elm_entry_input_hint_set
-
-            @ingroup Entry */
+            [[Gets the value of input hint.]]
          }
          values {
-            hints: Elm.Input.Hints; /*@ input hint. */
+            hints: Elm.Input.Hints; [[Input hint.]]
          }
       }
       @property input_panel_layout {
          set {
-            /*@
-            Set the input panel layout of the entry
-
-            @ingroup Entry */
+            [[Set the input panel layout of the entry.]]
          }
          get {
-            /*@
-            Get the input panel layout of the entry
-
-            @return layout type. It returns ELM_INPUT_PANEL_LAYOUT_INVALID(8) when it fails.
-
-            @see elm_entry_input_panel_layout_set
-
-            @ingroup Entry */
+            [[Get the input panel layout of the entry.]]
          }
          values {
-            layout: Elm.Input.Panel.Layout(Elm.Input.Panel.Layout.invalid); /*@ layout type */
+            layout: Elm.Input.Panel.Layout(Elm.Input.Panel.Layout.invalid); [[layout type.]]
          }
       }
       @property input_panel_return_key_type {
          set {
-            /*@
-            Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
+            [[Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
 
-            An input panel displays the string or icon associated with this type
-
-            @ingroup Entry */
+              An input panel displays the string or icon associated with this type.
+            ]]
          }
          get {
-            /*@
-            Get the "return" key type.
-
-            @see elm_entry_input_panel_return_key_type_set() for more details
-
-            @return The type of "return" key on the input panel
-
-            @ingroup Entry */
+            [[Get the "return" key type.]]
          }
          values {
-            return_key_type: Elm.Input.Panel.Return_Key.Type; /*@ The type of "return" key on the input panel */
+            return_key_type: Elm.Input.Panel.Return_Key.Type; [[The type of "return" key on the input panel.]]
          }
       }
       @property input_panel_enabled {
          set {
-            /*@
-            Sets the attribute to show the input panel automatically.
-
-            @ingroup Entry */
+            [[Sets the attribute to show the input panel automatically.]]
          }
          get {
-            /*@
-            Get the attribute to show the input panel automatically.
-
-            @return true if input panel will be appeared when the entry is clicked or has a focus, false otherwise
-
-            @ingroup Entry */
+            [[Get the attribute to show the input panel automatically.]]
          }
          values {
-            enabled: bool; /*@ If true, the input panel is appeared when entry is clicked or has a focus */
+            enabled: bool; [[If true, the input panel is appeared when entry is clicked or has a focus.]]
          }
       }
       @property line_wrap {
          set {
-            /*@
-            Set the line wrap type to use on multi-line entries.
+            [[Set the line wrap type to use on multi-line entries.
 
-            Sets the wrap type used by the entry to any of the specified in
-            Elm_Wrap_Type. This tells how the text will be implicitly cut into a new
-            line (without inserting a line break or paragraph separator) when it
-            reaches the far edge of the widget.
+              Sets the wrap type used by the entry to any of the specified in
+              Elm_Wrap_Type. This tells how the text will be implicitly cut into a new
+              line (without inserting a line break or paragraph separator) when it
+              reaches the far edge of the widget.
 
-            Note that this only makes sense for multi-line entries. A widget set
-            to be single line will never wrap.
-
-            @ingroup Entry */
+              Note that this only makes sense for multi-line entries. A widget set
+              to be single line will never wrap.
+            ]]
          }
          get {
-            /*@
-            Get the wrap mode the entry was set to use.
-
-            @return Wrap type
-
-            @see also elm_entry_line_wrap_set()
-
-            @ingroup Entry */
+            [[Get the wrap mode the entry was set to use.]]
          }
          values {
-            wrap: Elm.Wrap.Type; /*@ The wrap mode to use. See Elm_Wrap_Type for details on them */
+            wrap: Elm.Wrap.Type; [[The wrap mode to use. See Elm_Wrap_Type for details on them.]]
          }
       }
       @property cursor_pos {
          set {
-            /*@
-            Sets the cursor position in the entry to the given value
+            [[Sets the cursor position in the entry to the given value
 
-            The value in $pos is the index of the character position within the
-            contents of the string as returned by elm_entry_cursor_pos_get().
-
-            @ingroup Entry */
+              The value in $pos is the index of the character position within the
+              contents of the string as returned by @.cursor_pos.get.
+            ]]
          }
          get {
-            /*@
-            Get the current position of the cursor in the entry
-
-            @return The cursor position
-
-            @ingroup Entry */
+            [[Get the current position of the cursor in the entry.]]
          }
          values {
-            pos: int; /*@ The position of the cursor */
+            pos: int; [[The position of the cursor.]]
          }
       }
       @property icon_visible {
          set {
-            /*@
-            Sets the visibility of the left-side widget of the entry,
-            set by elm_object_part_content_set().
-
-            @ingroup Entry */
+            [[Sets the visibility of the left-side widget of the entry,
+              set by \@ref elm_object_part_content_set.]]
          }
          values {
-            setting: bool; /*@ true if the object should be displayed,
-            false if not. */
+            setting: bool; [[$true if the object should be displayed,
+            $false if not.]]
          }
       }
       @property cursor_line_end {
          set {
-            /*@
-            This moves the cursor to the end of the current line.
-
-            @ingroup Entry */
+            [[This moves the cursor to the end of the current line.]]
          }
       }
       @property select_region {
          set {
-            /*@
-            This selects a region of text within the entry.
+            [[This selects a region of text within the entry.
 
-            @ingroup Entry
-            @since 1.9 */
+              @since 1.9
+            ]]
          }
          values {
-            start: int; /*@ The starting position */
-            end: int; /*@ The end position */
+            start: int; [[The starting position.]]
+            end: int; [[The end position.]]
          }
       }
       @property input_panel_return_key_autoenabled {
          set {
-            /*@
-            Set whether the return key on the input panel is disabled automatically when entry has no text.
+            [[Set whether the return key on the input panel is disabled automatically when entry has no text.
 
-            If $enabled is true, The return key on input panel is disabled when the entry has no text.
-            The return key on the input panel is automatically enabled when the entry has text.
-            The default value is false.
-
-            @ingroup Entry */
+              If $enabled is $true, The return key on input panel is disabled when the entry has no text.
+              The return key on the input panel is automatically enabled when the entry has text.
+              The default value is $false.
+            ]]
          }
          values {
-            enabled: bool; /*@ If $enabled is true, the return key is automatically disabled when the entry has no text. */
+            enabled: bool; [[If $enabled is true, the return key is automatically disabled when the entry has no text.]]
          }
       }
       @property end_visible {
          set {
-            /*@
-            Sets the visibility of the end widget of the entry, set by
-            elm_object_part_content_set(ent, "end", content).
-
-            @ingroup Entry */
+            [[Sets the visibility of the end widget of the entry, set by
+              \@ref elm_object_part_content_set(ent, "end", content).]]
          }
          values {
-            setting: bool; /*@ true if the object should be displayed,
-            false if not. */
+            setting: bool; [[true if the object should be displayed,
+            false if not.]]
          }
       }
       @property cursor_begin {
          set {
-            /*@
-            This moves the cursor to the beginning of the entry.
-
-            @ingroup Entry */
+            [[This moves the cursor to the beginning of the entry.]]
          }
       }
       @property cursor_line_begin {
          set {
-            /*@
-            This moves the cursor to the beginning of the current line.
-
-            @ingroup Entry */
+            [[This moves the cursor to the beginning of the current line.]]
          }
       }
       @property cursor_end {
          set {
-            /*@
-            This moves the cursor to the end of the entry.
-
-            @ingroup Entry */
+            [[This moves the cursor to the end of the entry.]]
          }
       }
       @property textblock {
          get {
-            /*@
-            Returns the actual textblock object of the entry.
+            [[
+              Returns the actual textblock object of the entry.
 
-            This function exposes the internal textblock object that actually
-            contains and draws the text. This should be used for low-level
-            manipulations that are otherwise not possible.
+              This function exposes the internal textblock object that actually
+              contains and draws the text. This should be used for low-level
+              manipulations that are otherwise not possible.
 
-            Changing the textblock directly from here will not notify edje/elm to
-            recalculate the textblock size automatically, so any modifications
-            done to the textblock returned by this function should be followed by
-            a call to elm_entry_calc_force().
+              Changing the textblock directly from here will not notify edje/elm to
+              recalculate the textblock size automatically, so any modifications
+              done to the textblock returned by this function should be followed by
+              a call to \@ref elm_entry_calc_force.
 
-            The return value is marked as const as an additional warning.
-            One should not use the returned object with any of the generic evas
-            functions (geometry_get/resize/move and etc), but only with the textblock
-            functions; The former will either not work at all, or break the correct
-            functionality.
+              The return value is marked as const as an additional warning.
+              One should not use the returned object with any of the generic evas
+              functions (geometry_get/resize/move and etc), but only with the textblock
+              functions; The former will either not work at all, or break the correct
+              functionality.
 
-            IMPORTANT: Many functions may change (i.e delete and create a new one)
-            the internal textblock object. Do NOT cache the returned object, and try
-            not to mix calls on this object with regular elm_entry calls (which may
-            change the internal textblock object). This applies to all cursors
-            returned from textblock calls, and all the other derivative values.
-
-            @return The textblock object.
-
-            @ingroup Entry */
+              IMPORTANT: Many functions may change (i.e delete and create a new one)
+              the internal textblock object. Do NOT cache the returned object, and try
+              not to mix calls on this object with regular elm_entry calls (which may
+              change the internal textblock object). This applies to all cursors
+              returned from textblock calls, and all the other derivative values.
+            ]]
             return: Evas.Object *;
          }
       }
       @property cursor_geometry {
          get {
-            /*@
-            This function returns the geometry of the cursor.
+            [[This function returns the geometry of the cursor.
 
-            It's useful if you want to draw something on the cursor (or where it is),
-            or for example in the case of scrolled entry where you want to show the
-            cursor.
-
-            @return true upon success, false upon failure
-
-            @ingroup Entry */
+              It's useful if you want to draw something on the cursor (or where it is),
+              or for example in the case of scrolled entry where you want to show the
+              cursor.
+            ]]
             return: bool;
          }
          values {
-            x: Evas.Coord; /*@ returned geometry */
-            y: Evas.Coord; /*@ returned geometry */
-            w: Evas.Coord; /*@ returned geometry */
-            h: Evas.Coord; /*@ returned geometry */
+            x: Evas.Coord; [[returned geometry.]]
+            y: Evas.Coord; [[returned geometry.]]
+            w: Evas.Coord; [[returned geometry.]]
+            h: Evas.Coord; [[returned geometry.]]
          }
       }
       @property imf_context {
          get {
-            /*@
-            Returns the input method context of the entry.
+            [[Returns the input method context of the entry.
 
-            This function exposes the internal input method context.
+              This function exposes the internal input method context.
 
-            IMPORTANT: Many functions may change (i.e delete and create a new one)
-            the internal input method context. Do NOT cache the returned object.
-
-            @return The input method context (Ecore_IMF_Context *) in entry.
-
-            @ingroup Entry */
+              IMPORTANT: Many functions may change (i.e delete and create a new one)
+              the internal input method context. Do NOT cache the returned object.
+            ]]
             return: void *;
          }
       }
       @property cursor_is_format {
          get {
-            /*@
-            Get whether a format node exists at the current cursor position.
+            [[Get whether a format node exists at the current cursor position.
 
-            A format node is anything that defines how the text is rendered. It can
-            be a visible format node, such as a line break or a paragraph separator,
-            or an invisible one, such as bold begin or end tag.
-            This function returns whether any format node exists at the current
-            cursor position.
-
-            @return true if the current cursor position contains a format node,
-            false otherwise.
-
-            @see elm_entry_cursor_is_visible_format_get()
-
-            @ingroup Entry */
+              A format node is anything that defines how the text is rendered. It can
+              be a visible format node, such as a line break or a paragraph separator,
+              or an invisible one, such as bold begin or end tag.
+              This function returns whether any format node exists at the current
+              cursor position.
+            ]]
             return: bool;
          }
       }
       @property cursor_content {
          get {
-            /*@
-            Get the character pointed by the cursor at its current position.
+            [[Get the character pointed by the cursor at its current position.
 
-            This function returns a string with the utf8 character stored at the
-            current cursor position.
-            Only the text is returned, any format that may exist will not be part
-            of the return value. You must free the string when done with free().
-
-            @return The text pointed by the cursors.
-
-            @ingroup Entry */
+              This function returns a string with the utf8 character stored at the
+              current cursor position.
+              Only the text is returned, any format that may exist will not be part
+              of the return value. You must free the string when done with \@ref free.
+            ]]
             return: own(char *) @warn_unused;
          }
       }
       @property selection {
          get {
-            /*@
-            Get any selected text within the entry.
+            [[Get any selected text within the entry.
 
-            If there's any selected text in the entry, this function returns it as
-            a string in markup format. NULL is returned if no selection exists or
-            if an error occurred.
+              If there's any selected text in the entry, this function returns it as
+              a string in markup format. $null is returned if no selection exists or
+              if an error occurred.
 
-            The returned value points to an internal string and should not be freed
-            or modified in any way. If the $entry object is deleted or its
-            contents are changed, the returned pointer should be considered invalid.
-
-            @return The selected text within the entry or NULL on failure
-
-            @ingroup Entry */
+              The returned value points to an internal string and should not be freed
+              or modified in any way. If the $entry object is deleted or its
+              contents are changed, the returned pointer should be considered invalid.
+            ]]
             return: const(char)*;
          }
       }
       @property cursor_is_visible_format {
          get {
-            /*@
-            Get if the current cursor position holds a visible format node.
-
-            @return true if the current cursor is a visible format, false
-            if it's an invisible one or no format exists.
-
-            @see elm_entry_cursor_is_format_get()
-
-            @ingroup Entry */
+            [[Get if the current cursor position holds a visible format node.]]
             return: bool;
          }
       }
       cursor_prev {
-         /*@
-         This moves the cursor one place to the left within the entry.
-
-         @return true upon success, false upon failure
-
-         @ingroup Entry */
-
+         [[This moves the cursor one place to the left within the entry.]]
          return: bool;
       }
       text_style_user_pop {
-         /*@
-         Remove the style in the top of user style stack.
+         [[Remove the style in the top of user style stack.
 
-         @see elm_entry_text_style_user_push()
-
-         @ingroup Entry
-         @since 1.7 */
-
+           @since 1.7
+         ]]
       }
       item_provider_prepend {
-         /*@
-         This prepends a custom item provider to the list for that entry
+         [[This prepends a custom item provider to the list for that entry
 
-         This prepends the given callback. See elm_entry_item_provider_append() for
-         more information
-
-         @ingroup Entry */
-
+           This prepends the given callback.]]
          params {
-            @in func: Elm_Entry_Item_Provider_Cb; /*@ The function called to provide the item object */
-            @in data: void * @optional; /*@ The data passed to $func */
+            @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
+            @in data: void * @optional; [[The data passed to $func.]]
          }
       }
       input_panel_show {
-         /*@
-         Show the input panel (virtual keyboard) based on the input panel property of entry such as layout, autocapital types, and so on.
+         [[Show the input panel (virtual keyboard) based on the input panel property of entry such as layout, autocapital types, and so on.
 
-         Note that input panel is shown or hidden automatically according to the focus state of entry widget.
-         This API can be used in the case of manually controlling by using elm_entry_input_panel_enabled_set(en, false).
-
-         @ingroup Entry */
-
+           Note that input panel is shown or hidden automatically according to the focus state of entry widget.
+           This API can be used in the case of manually controlling by using @.input_panel_enabled.set(en, $false).
+         ]]
       }
       imf_context_reset {
-         /*@
-         Reset the input method context of the entry if needed.
+         [[Reset the input method context of the entry if needed.
 
-         This can be necessary in the case where modifying the buffer would confuse on-going input method behavior.
-         This will typically cause the Input Method Context to clear the preedit state.
-         @ingroup Entry */
-
+           This can be necessary in the case where modifying the buffer would confuse on-going input method behavior.
+           This will typically cause the Input Method Context to clear the preedit state.
+         ]]
       }
       calc_force {
-         /*@
-         Forces calculation of the entry size and text layouting.
+         [[Forces calculation of the entry size and text layouting.
 
-         This should be used after modifying the textblock object directly. See
-         elm_entry_textblock_get() for more information.
-
-         @see elm_entry_textblock_get()
-
-         @ingroup Entry */
-
+           This should be used after modifying the textblock object directly. See
+           @.textblock.get for more information.
+         ]]
       }
       anchor_hover_end {
-         /*@
-         Ends the hover popup in the entry
+         [[Ends the hover popup in the entry
 
-         When an anchor is clicked, the entry widget will create a hover
-         object to use as a popup with user provided content. This function
-         terminates this popup, returning the entry to its normal state.
-
-         @ingroup Entry */
-
+           When an anchor is clicked, the entry widget will create a hover
+           object to use as a popup with user provided content. This function
+           terminates this popup, returning the entry to its normal state.
+         ]]
       }
       cursor_selection_begin {
-         /*@
-         This begins a selection within the entry as though
-         the user were holding down the mouse button to make a selection.
-
-         @ingroup Entry */
-
+         [[This begins a selection within the entry as though
+           the user were holding down the mouse button to make a selection.]]
       }
       cursor_down {
-         /*@
-         This moves the cursor one line down within the entry.
-
-         @return true upon success, false upon failure
-
-         @ingroup Entry */
-
+         [[This moves the cursor one line down within the entry.]]
          return: bool;
       }
       file_save {
-         /*@
-         This function writes any changes made to the file set with
-         elm_entry_file_set()
-
-         @ingroup Entry */
-
+         [[This function writes any changes made to the file set with
+           \@ref elm_entry_file_set.]]
       }
       selection_copy {
-         /*@
-         This executes a "copy" action on the selected text in the entry.
-
-         @ingroup Entry */
-
+         [[This executes a "copy" action on the selected text in the entry.]]
       }
       text_style_user_push {
-         /*@
-         Push the style to the top of user style stack.
-         If there is styles in the user style stack, the properties in the top style
-         of user style stack will replace the properties in current theme.
-         The input style is specified in format tag='property=value' (i.e. DEFAULT='font=Sans font_size=60'hilight=' + font_weight=Bold').
+         [[Push the style to the top of user style stack.
+           If there is styles in the user style stack, the properties in the top style
+           of user style stack will replace the properties in current theme.
+           The input style is specified in format tag='property=value' (i.e. DEFAULT='font=Sans font_size=60'hilight=' + font_weight=Bold').
 
-         @ingroup Entry
-         @since 1.7 */
-
+           @since 1.7
+         ]]
          params {
-            @in style: const(char)*; /*@ The style user to push */
+            @in style: const(char)*; [[The style user to push.]]
          }
       }
       item_provider_remove {
-         /*@
-         This removes a custom item provider to the list for that entry
+         [[This removes a custom item provider to the list for that entry
 
-         This removes the given callback. See elm_entry_item_provider_append() for
-         more information
-
-         @ingroup Entry */
-
+           This removes the given callback. See @.item_provider_append for
+           more information
+         ]]
          params {
-            @in func: Elm_Entry_Item_Provider_Cb; /*@ The function called to provide the item object */
-            @in data: void * @optional; /*@ The data passed to $func */
+            @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
+            @in data: void * @optional; [[The data passed to $func.]]
          }
       }
       text_style_user_peek @const {
-         /*@
-         Get the style on the top of user style stack.
+         [[Get the style on the top of user style stack.
 
-         @return style on the top of user style stack if exist, otherwise NULL.
+           See also @.text_style_user_push.
 
-         @see elm_entry_text_style_user_push()
-
-         @ingroup Entry
-         @since 1.7 */
+           @since 1.7
+         ]]
          return: const(char)*;
       }
       context_menu_clear {
-         /*@
-         This clears and frees the items in a entry's contextual (longpress)
-         menu.
+         [[This clears and frees the items in a entry's contextual (longpress)
+           menu.
 
-         @see elm_entry_context_menu_item_add()
-
-         @ingroup Entry */
-
+           See also @.context_menu_item_add.
+         ]]
       }
       cursor_up {
-         /*@
-         This moves the cursor one line up within the entry.
-
-         @return true upon success, false upon failure
-
-         @ingroup Entry */
-
+         [[This moves the cursor one line up within the entry.]]
          return: bool;
       }
       entry_insert {
-         /*@
-         Inserts the given text into the entry at the current cursor position.
+         [[Inserts the given text into the entry at the current cursor position.
 
-         This inserts text at the cursor position as if it was typed
-         by the user (note that this also allows markup which a user
-         can't just "type" as it would be converted to escaped text, so this
-         call can be used to insert things like emoticon items or bold push/pop
-         tags, other font and color change tags etc.)
+           This inserts text at the cursor position as if it was typed
+           by the user (note that this also allows markup which a user
+           can't just "type" as it would be converted to escaped text, so this
+           call can be used to insert things like emoticon items or bold push/pop
+           tags, other font and color change tags etc.)
 
-         If any selection exists, it will be replaced by the inserted text.
+           If any selection exists, it will be replaced by the inserted text.
 
-         The inserted text is subject to any filters set for the widget.
+           The inserted text is subject to any filters set for the widget.
 
-         @see elm_entry_markup_filter_append()
-
-         @ingroup Entry */
-
+           See also @.markup_filter_append.
+         ]]
          params {
-            @in entry: const(char)*; /*@ The text to insert */
+            @in entry: const(char)*; [[The text to insert.]]
          }
       }
       input_panel_imdata_set {
-         /*@
-         Set the input panel-specific data to deliver to the input panel.
+         [[Set the input panel-specific data to deliver to the input panel.
 
-         This API is used by applications to deliver specific data to the input panel.
-         The data format MUST be negotiated by both application and the input panel.
-         The size and format of data are defined by the input panel.
-
-         @ingroup Entry */
-
+           This API is used by applications to deliver specific data to the input panel.
+           The data format MUST be negotiated by both application and the input panel.
+           The size and format of data are defined by the input panel.
+         ]]
          params {
-            @in data: const(void)*; /*@ The specific data to be set to the input panel. */
-            @in len: int; /*@ the length of data, in bytes, to send to the input panel */
+            @in data: const(void)*; [[The specific data to be set to the input panel.]]
+            @in len: int; [[The length of data, in bytes, to send to the input panel.]]
          }
       }
       input_panel_imdata_get @const {
-         /*@
-         Get the specific data of the current input panel.
-
-         See @ref elm_entry_input_panel_imdata_set for more details.
-
-         @ingroup Entry */
+         [[Get the specific data of the current input panel.]]
          params {
-            @out data: void; /*@ The specific data to be got from the input panel */
-            @out len: int; /*@ The length of data */
+            @out data: void; [[The specific data to be got from the input panel.]]
+            @out len: int; [[The length of data.]]
          }
       }
       selection_paste {
-         /*@
-         This executes a "paste" action in the entry.
-
-         @ingroup Entry */
-
+         [[This executes a "paste" action in the entry.]]
       }
       cursor_next {
-         /*@
-         This moves the cursor one place to the right within the entry.
-
-         @return true upon success, false upon failure
-
-         @ingroup Entry */
-
+         [[This moves the cursor one place to the right within the entry.]]
          return: bool;
       }
       select_none {
-         /*@
-         This drops any existing text selection within the entry.
-
-         @ingroup Entry */
-
+         [[This drops any existing text selection within the entry.]]
       }
       input_panel_hide {
-         /*@
-         Hide the input panel (virtual keyboard).
+         [[Hide the input panel (virtual keyboard).
 
-         Note that input panel is shown or hidden automatically according to the focus state of entry widget.
-         This API can be used in the case of manually controlling by using elm_entry_input_panel_enabled_set(en, false)
-
-         @ingroup Entry */
-
+           Note that input panel is shown or hidden automatically according to the focus state of entry widget.
+           This API can be used in the case of manually controlling by using @.input_panel_enabled.set(en, $false)
+         ]]
       }
       select_all {
-         /*@
-         This selects all text within the entry.
-
-         @ingroup Entry */
-
+         [[This selects all text within the entry.]]
       }
       cursor_selection_end {
-         /*@
-         This ends a selection within the entry as though
-         the user had just released the mouse button while making a selection.
-
-         @ingroup Entry */
-
+         [[This ends a selection within the entry as though
+           the user had just released the mouse button while making a selection.]]
       }
       selection_cut {
-         /*@
-         This executes a "cut" action on the selected text in the entry.
-
-         @ingroup Entry */
-
+         [[This executes a "cut" action on the selected text in the entry.]]
       }
       is_empty @const {
-         /*@
-         Get whether the entry is empty.
+         [[Get whether the entry is empty.
 
-         Empty means no text at all. If there are any markup tags, like an item
-         tag for which no provider finds anything, and no text is displayed, this
-         function still returns false.
-
-         @return $true if the entry text is empty or $entry is NULL, $false otherwise.
-
-         @ingroup Entry */
+           Empty means no text at all. If there are any markup tags, like an item
+           tag for which no provider finds anything, and no text is displayed, this
+           function still returns $false.
+         ]]
          return: bool(true);
       }
       markup_filter_remove {
-         /*@
-         Remove a markup filter from the list
+         [[Remove a markup filter from the list
 
-         Removes the given callback from the filter list. See
-         elm_entry_markup_filter_append() for more information.
-
-         @ingroup Entry */
-
+           Removes the given callback from the filter list. See
+           @.markup_filter_append for more information.
+         ]]
          params {
-            @in func: Elm_Entry_Filter_Cb; /*@ The filter function to remove */
-            @in data: void * @optional; /*@ The user data passed when adding the function */
+            @in func: Elm_Entry_Filter_Cb; [[The filter function to remove.]]
+            @in data: void * @optional; [[The user data passed when adding the function.]]
          }
       }
       item_provider_append {
-         /*@
-         This appends a custom item provider to the list for that entry
+         [[This appends a custom item provider to the list for that entry
 
-         This appends the given callback. The list is walked from beginning to end
-         with each function called given the item href string in the text. If the
-         function returns an object handle other than NULL (it should create an
-         object to do this), then this object is used to replace that item. If
-         not the next provider is called until one provides an item object, or the
-         default provider in entry does.
+           This appends the given callback. The list is walked from beginning to end
+           with each function called given the item href string in the text. If the
+           function returns an object handle other than $null (it should create an
+           object to do this), then this object is used to replace that item. If
+           not the next provider is called until one provides an item object, or the
+           default provider in entry does.
 
-         @see @ref entry-items
-
-         @ingroup Entry */
-
+           See also \@ref entry-items.
+         ]]
          params {
-            @in func: Elm_Entry_Item_Provider_Cb; /*@ The function called to provide the item object */
-            @in data: void * @optional; /*@ The data passed to $func */
+            @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
+            @in data: void * @optional; [[The data passed to $func.]]
          }
       }
       markup_filter_append {
-         /*@
-         Append a markup filter function for text inserted in the entry
+         [[Append a markup filter function for text inserted in the entry
 
-         Append the given callback to the list. This functions will be called
-         whenever any text is inserted into the entry, with the text to be inserted
-         as a parameter. The type of given text is always markup.
-         The callback function is free to alter the text in any way it wants, but
-         it must remember to free the given pointer and update it.
-         If the new text is to be discarded, the function can free it and set its
-         text parameter to NULL. This will also prevent any following filters from
-         being called.
-
-         @ingroup Entry */
-
+           Append the given callback to the list. This functions will be called
+           whenever any text is inserted into the entry, with the text to be inserted
+           as a parameter. The type of given text is always markup.
+           The callback function is free to alter the text in any way it wants, but
+           it must remember to free the given pointer and update it.
+           If the new text is to be discarded, the function can free it and set its
+           text parameter to $null. This will also prevent any following filters from
+           being called.
+         ]]
          params {
-            @in func: Elm_Entry_Filter_Cb; /*@ The function to use as text filter */
-            @in data: void * @optional; /*@ User data to pass to $func */
+            @in func: Elm_Entry_Filter_Cb; [[The function to use as text filter.]]
+            @in data: void * @optional; [[User data to pass to $func.]]
          }
       }
       entry_append {
-         /*@
-         Appends $str to the text of the entry.
+         [[Appends $str to the text of the entry.
 
-         Adds the text in $str to the end of any text already present in the
-         widget.
+           Adds the text in $str to the end of any text already present in the
+           widget.
 
-         The appended text is subject to any filters set for the widget.
+           The appended text is subject to any filters set for the widget.
 
-         @see elm_entry_markup_filter_append()
-
-         @ingroup Entry */
-
+           See also @.markup_filter_append.
+         ]]
          params {
-            @in str: const(char)*; /*@ The text to be appended */
+            @in str: const(char)*; [[The text to be appended.]]
          }
       }
       context_menu_item_add {
-         /*@
-         This adds an item to the entry's contextual menu.
+         [[This adds an item to the entry's contextual menu.
 
-         A longpress on an entry will make the contextual menu show up, if this
-         hasn't been disabled with elm_entry_context_menu_disabled_set().
-         By default, this menu provides a few options like enabling selection mode,
-         which is useful on embedded devices that need to be explicit about it,
-         and when a selection exists it also shows the copy and cut actions.
+           A longpress on an entry will make the contextual menu show up, if this
+           hasn't been disabled with @.context_menu_disabled.set.
+           By default, this menu provides a few options like enabling selection mode,
+           which is useful on embedded devices that need to be explicit about it,
+           and when a selection exists it also shows the copy and cut actions.
 
-         With this function, developers can add other options to this menu to
-         perform any action they deem necessary.
-
-         @ingroup Entry */
-
+           With this function, developers can add other options to this menu to
+           perform any action they deem necessary.
+         ]]
          params {
-            @in label: const(char)* @optional; /*@ The item's text label */
-            @in icon_file: const(char)* @optional; /*@ The item's icon file */
-            @in icon_type: Elm_Icon_Type; /*@ The item's icon type */
-            @in func: Evas_Smart_Cb @optional; /*@ The callback to execute when the item is clicked */
-            @in data: const(void)* @optional; /*@ The data to associate with the item for related functions */
+            @in label: const(char)* @optional; [[The item's text label.]]
+            @in icon_file: const(char)* @optional; [[The item's icon file.]]
+            @in icon_type: Elm_Icon_Type; [[The item's icon type.]]
+            @in func: Evas_Smart_Cb @optional; [[The callback to execute when the item is clicked.]]
+            @in data: const(void)* @optional; [[The data to associate with the item for related functions.]]
          }
       }
       markup_filter_prepend {
-         /*@
-         Prepend a markup filter function for text inserted in the entry
+         [[Prepend a markup filter function for text inserted in the entry
 
-         Prepend the given callback to the list. See elm_entry_markup_filter_append()
-         for more information
-
-         @ingroup Entry */
-
+           Prepend the given callback to the list.]]
          params {
-            @in func: Elm_Entry_Filter_Cb; /*@ The function to use as text filter */
-            @in data: void * @optional; /*@ User data to pass to $func */
+            @in func: Elm_Entry_Filter_Cb; [[The function to use as text filter.]]
+            @in data: void * @optional; [[User data to pass to $func.]]
          }
       }
    }
