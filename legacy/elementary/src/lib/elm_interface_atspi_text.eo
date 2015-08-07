@@ -5,56 +5,46 @@ interface Elm_Interface_Atspi_Text ()
    methods {
       @property character @protected {
          get {
-            /*@ Gets single character present in accessible widget's text
-                at given offset. */
+            [[Gets single character present in accessible widget's text at given offset.]]
          }
          keys {
-            offset: int; /*@ Position in text. */
+            offset: int; [[Position in text.]]
          }
          values {
-            character: Eina_Unicode; /*@ Character at offset. 0 when out-of
-                                      bounds offset has been given.
-                                      Codepoints between DC80 and DCFF indicates
-                                      that string includes invalid UTF8 chars. */
+            character: Eina_Unicode; [[Character at offset. 0 when out-of bounds offset has been given.  Codepoints between DC80 and DCFF indicates that string includes invalid UTF8 chars.]]
          }
       }
       @property string @protected {
          get {
-            /*@ Gets string, start and end offset in text according to
-              given initial offset and granulatity. */
+            [[Gets string, start and end offset in text according to given initial offset and granulatity.]]
          }
          keys {
             granularity: Elm_Atspi_Text_Granularity;
-            start_offset: int * @nonull; /*@ Offset indicating start of string
-                                                according to given granularity.
-                                                -1 in case of error. */
-            end_offset: int *; /*@ Offset indicating end of string according
-                                   to given granularity. -1 in case of error. */
+            start_offset: int * @nonull; [[Offset indicating start of string according to given granularity.  -1 in case of error.]]
+            end_offset: int *; [[Offset indicating end of string according to given granularity. -1 in case of error.]]
          }
          values {
-            string: own(char *); /*@ Newly allocated UTF-8 encoded string.
-                                  Must be free by a user. */
+            string: own(char *); [[Newly allocated UTF-8 encoded string.  Must be free by a user.]]
          }
       }
       @property text @protected {
          get {
-            /*@ Gets text of accessible widget. */
+            [[Gets text of accessible widget.]]
          }
          keys {
-            start_offset: int; /*@ Position in text. */
-            end_offset: int; /*@ End offset of text. */
+            start_offset: int; [[Position in text.]]
+            end_offset: int; [[End offset of text.]]
          }
          values {
-            text: own(char *); /*@ UTF-8 encoded text. */
+            text: own(char *); [[UTF-8 encoded text.]]
          }
       }
       @property caret_offset @protected {
          get {
-            /*@ Gets offset position of caret (cursor) */
+            [[Gets offset position of caret (cursor)]]
          }
          set {
-            return: bool; /*@ true if caret was successfully moved,
-                               EINA_FASLE otherwise. */
+            return: bool; [[$true if caret was successfully moved, $falseotherwise.]]
          }
          values {
             offset: int;
@@ -62,23 +52,21 @@ interface Elm_Interface_Atspi_Text ()
       }
       @property attribute @protected {
          get {
-            /*@ Indicate if a text attribute with a given name is set */
+            [[Indicate if a text attribute with a given name is set]]
             return: bool;
          }
          keys {
-            name: const(char)* @nonull; /*@ text attribute name */
-            start_offset: int * @nonull; /*@ Position in text from which
-                                                given attribute is set. */
-            end_offset: int *; /*@ Position in text to which given attribute
-                                    is set. */
+            name: const(char)* @nonull; [[text attribute name]]
+            start_offset: int * @nonull; [[Position in text from which given attribute is set.]]
+            end_offset: int *; [[Position in text to which given attribute is set.]]
          }
          values {
-            value: own(char *); /*@ Value of text attribute. Should be free() */
+            value: own(char *); [[Value of text attribute. Should be free()]]
          }
       }
       @property attributes @protected {
          get {
-            /*@ Gets list of all text attributes. */
+            [[Gets list of all text attributes.]]
          }
          keys {
             start_offset: int * @nonull;
@@ -144,9 +132,7 @@ interface Elm_Interface_Atspi_Text ()
             return: bool;
          }
          keys {
-            screen_coords: bool; /*@ If true x and y values will be relative
-                                       to screen origin, otherwise relative to
-                                       canvas */
+            screen_coords: bool; [[If true x and y values will be relative to screen origin, otherwise relative to canvas]]
             start_offset: int;
             end_offset: int;
          }
