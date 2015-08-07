@@ -102,7 +102,7 @@ static Eina_Bool _text_selection_changed_send(void *data, Eo *obj, const Eo_Even
 static void _bridge_cache_build(Eo *bridge, void *obj);
 static void _bridge_object_register(Eo *bridge, Eo *obj);
 static void _bridge_object_unregister(Eo *bridge, Eo *obj);
-static char * _bridge_path_from_object(Eo *bridge, const Eo *eo);
+static const char * _bridge_path_from_object(Eo *bridge, const Eo *eo);
 static void _bridge_signal_send(Eo *bridge, Eldbus_Service_Interface *infc, int signal, const char *minor, unsigned int det1, unsigned int det2, const char *variant_sig, ...);
 static Eo * _bridge_object_from_path(Eo *bridge, const char *path);
 static void _bridge_iter_object_reference_append(Eo *bridge, Eldbus_Message_Iter *iter, const Eo *obj);
@@ -1964,12 +1964,6 @@ _bridge_object_from_path(Eo *bridge, const char *path)
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(bridge, pd, NULL);
 
-   if (!eina_hash_find(pd->cache, path))
-     {
-        WRN("Request for nonexisting object: %s", path);
-       return NULL;
-     }
-
    int len = strlen(ELM_ACCESS_OBJECT_PATH_PREFIX);
 
    if (strncmp(path, ELM_ACCESS_OBJECT_PATH_PREFIX, len))
@@ -1982,21 +1976,28 @@ _bridge_object_from_path(Eo *bridge, const char *path)
    sscanf(tmp, "%llu", &eo_ptr);
    eo = (Eo *) (uintptr_t) eo_ptr;
    ret = eo_isa(eo, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? eo : NULL;
+
+   if (!eina_hash_find(pd->cache, &ret))
+     {
+        WRN("Request for nonexisting object: %s", path);
+        return NULL;
+     }
+
    return ret;
 }
 
-static char *
+static const char *
 _bridge_path_from_object(Eo *bridge, const Eo *eo)
 {
-   char path[256];
+   static char path[64];
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(eo, strdup(ATSPI_DBUS_PATH_NULL));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo, ATSPI_DBUS_PATH_NULL);
 
    if (eo == elm_atspi_bridge_root_get(bridge))
      snprintf(path, sizeof(path), "%s%s", ELM_ACCESS_OBJECT_PATH_PREFIX, ELM_ACCESS_OBJECT_PATH_ROOT);
    else
      snprintf(path, sizeof(path), ELM_ACCESS_OBJECT_REFERENCE_TEMPLATE, (unsigned long long)(uintptr_t)eo);
-   return strdup(path);
+   return path;
 }
 
 static Eina_Bool
@@ -2364,11 +2365,10 @@ _bridge_iter_object_reference_append(Eo *bridge, Eldbus_Message_Iter *iter, cons
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
    Eldbus_Message_Iter *iter_struct = eldbus_message_iter_container_new(iter, 'r', NULL);
    EINA_SAFETY_ON_NULL_RETURN(iter);
-   char *path = _bridge_path_from_object(bridge, obj);
+   const char *path = _bridge_path_from_object(bridge, obj);
    eldbus_message_iter_basic_append(iter_struct, 's', eldbus_connection_unique_name_get(pd->a11y_bus));
    eldbus_message_iter_basic_append(iter_struct, 'o', path);
    eldbus_message_iter_container_close(iter, iter_struct);
-   free(path);
 }
 
 static void
@@ -3200,7 +3200,7 @@ static void _bridge_signal_send(Eo *bridge, Eldbus_Service_Interface *infc, int 
    Eldbus_Message_Iter *iter , *iter_stack[64], *iter_struct;
    va_list va;
    Eo *atspi_obj;
-   char *path;
+   const char *path;
    int top = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(infc);
@@ -3238,7 +3238,6 @@ static void _bridge_signal_send(Eo *bridge, Eldbus_Service_Interface *infc, int 
                    atspi_obj = va_arg(va, Eo*);
                    path = _bridge_path_from_object(bridge, atspi_obj);
                    eldbus_message_iter_basic_append(iter_stack[top], 'o', path);
-                   free(path);
                    break;
                 case ')':
                    eldbus_message_iter_container_close(iter_stack[top - 1], iter_stack[top]);
@@ -3268,7 +3267,6 @@ static void _bridge_signal_send(Eo *bridge, Eldbus_Service_Interface *infc, int 
    eldbus_message_iter_basic_append(iter_struct, 's', eldbus_connection_unique_name_get(pd->a11y_bus));
    eldbus_message_iter_basic_append(iter_struct, 'o', path);
    eldbus_message_iter_container_close(iter, iter_struct);
-   free(path);
 
    if (eldbus_service_signal_send(infc, msg))
       DBG("Signal send::[%s,%d,%d]", minor, det1, det2);
@@ -3355,7 +3353,6 @@ _event_handlers_register(Eo *bridge)
 static void
 _bridge_object_unregister(Eo *bridge, Eo *obj)
 {
-   char *path;
    Eldbus_Message *sig;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
@@ -3367,9 +3364,7 @@ _bridge_object_unregister(Eo *bridge, Eo *obj)
    _bridge_iter_object_reference_append(bridge, iter, obj);
    eldbus_service_signal_send(pd->cache_interface, sig);
 
-   path = _bridge_path_from_object(bridge, obj);
-   eina_hash_del(pd->cache, path, obj);
-   free(path);
+   eina_hash_del(pd->cache, &obj, obj);
 }
 
 static Eina_Bool
@@ -3466,7 +3461,7 @@ _a11y_bus_initialize(Eo *obj, const char *socket_addr)
    eldbus_connection_event_callback_add(pd->a11y_bus, ELDBUS_CONNECTION_EVENT_DISCONNECTED, _disconnect_cb, obj);
 
    // init data structures
-   pd->cache = eina_hash_string_superfast_new(NULL);
+   pd->cache = eina_hash_pointer_new(NULL);
    pd->state_hash = _elm_atspi_state_hash_build();
 
    // register interfaces
@@ -3552,7 +3547,7 @@ _screen_reader_enabled_get(void *data, const Eldbus_Message *msg, Eldbus_Pending
 
 static void _bridge_object_register(Eo *bridge, Eo *obj)
 {
-   char *path;
+   const char *path;
    struct cache_closure cc;
    Eldbus_Message *sig;
    Eldbus_Service_Interface *ifc;
@@ -3567,14 +3562,13 @@ static void _bridge_object_register(Eo *bridge, Eo *obj)
 
    path = _bridge_path_from_object(bridge, obj);
 
-   if (eina_hash_find(pd->cache, path))
+   if (eina_hash_find(pd->cache, &obj))
      {
-        WRN("Object at path: %s already registered", path);
-        free(path);
+        WRN("Object at %s already registered", path);
         return;
      }
 
-   eina_hash_add(pd->cache, path, obj);
+   eina_hash_add(pd->cache, &obj, obj);
 
    ifc = eldbus_service_interface_register(pd->a11y_bus, path, &accessible_iface_desc);
    eldbus_service_object_data_set(ifc, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
@@ -3652,8 +3646,6 @@ static void _bridge_object_register(Eo *bridge, Eo *obj)
    _cache_item_reference_append_cb(NULL, NULL, obj, &cc);
 
    eldbus_service_signal_send(pd->cache_interface, sig);
-
-   free(path);
 }
 
 static void _object_unregister(Eo *obj, void *data)
