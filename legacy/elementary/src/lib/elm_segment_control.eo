@@ -4,141 +4,103 @@ class Elm.Segment_Control (Elm.Layout)
    methods {
       @property item_count {
          get {
-            /*@
-            Get the Segment items count from segment control.
+            [[Get the Segment items count from segment control.
 
-            @return Segment items count.
-
-            It will just return the number of items added to segment control $obj.
-
-            @ingroup SegmentControl */
-            return: int;
+              It will just return the number of items added to segment control $obj.]]
+            return: int; [[Segment items count.]]
          }
       }
       @property item_selected {
          get {
-            /*@
-            Get the selected item.
+            [[Get the selected item.
 
-            @return The selected item or $NULL if none of segment items is
-            selected.
+              The selected item can be unselected with function
+              elm_segment_control_item_selected_set().
 
-            The selected item can be unselected with function
-            elm_segment_control_item_selected_set().
+              The selected item always will be highlighted on segment control.]]
 
-            The selected item always will be highlighted on segment control.
+            return: Elm.Widget_Item *; [[The selected item or $NULL if none of segment items is selected.]]
 
-            @ingroup SegmentControl */
-            return: Elm.Widget_Item *;
          }
       }
       item_label_get @const {
-         /*@
-         Get the label of item.
+         [[Get the label of item.
 
-         @return The label of the item at $index.
+           The return value is a pointer to the label associated to the item when
+           it was created, with function elm_segment_control_item_add(), or later
+           with function elm_object_item_text_set. If no label
+           was passed as argument, it will return $NULL.]]
 
-         The return value is a pointer to the label associated to the item when
-         it was created, with function elm_segment_control_item_add(), or later
-         with function elm_object_item_text_set. If no label
-         was passed as argument, it will return $NULL.
-
-         @see elm_object_item_text_set() for more details.
-         @see elm_segment_control_item_add()
-
-         @ingroup SegmentControl */
-         return: const(char)*;
+         return: const(char)*; [[The label of the item at $index.]]
          params {
-            @in idx: int; /*@ The index of the segment item. */
+            @in idx: int; [[The index of the segment item.]]
          }
       }
       item_insert_at {
-         /*@
-         Insert a new item to the segment control object at specified position.
+         [[Insert a new item to the segment control object at specified position.
 
-         @return The created item or $NULL upon failure.
+           Index values must be between $0, when item will be prepended to
+           segment control, and items count, that can be get with
+           elm_segment_control_item_count_get(), case when item will be appended
+           to segment control, just like elm_segment_control_item_add().
 
-         Index values must be between $0, when item will be prepended to
-         segment control, and items count, that can be get with
-         elm_segment_control_item_count_get(), case when item will be appended
-         to segment control, just like elm_segment_control_item_add().
+           Items created with this function can be deleted with function
+           elm_object_item_del() or elm_segment_control_item_del_at().
 
-         Items created with this function can be deleted with function
-         elm_object_item_del() or elm_segment_control_item_del_at().
+           Note: $label set to $NULL is different from empty string "".
+           If an item
+           only has icon, it will be displayed bigger and centered. If it has
+           icon and label, even that an empty string, icon will be smaller and
+           positioned at left.]]
 
-         @note $label set to $NULL is different from empty string "".
-         If an item
-         only has icon, it will be displayed bigger and centered. If it has
-         icon and label, even that an empty string, icon will be smaller and
-         positioned at left.
-
-         @see elm_segment_control_item_add()
-         @see elm_segment_control_item_count_get()
-         @see elm_object_item_del()
-
-         @ingroup SegmentControl */
-
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[The created item or $NULL upon failure.]]
          params {
-            @in icon: Evas.Object * @optional; /*@ The icon object to use for the left side of the item. An
-            icon can be any Evas object, but usually it is an icon created
-            with elm_icon_add(). */
-            @in label: const(char)* @optional; /*@ The label of the item. */
-            @in idx: int; /*@ Item position. Value should be between 0 and items count. */
+            @in icon: Evas.Object * @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
+            @in label: const(char)* @optional; [[The label of the item.]]
+            @in idx: int; [[Item position. Value should be between 0 and items count.]]
          }
       }
       item_get @const {
-         /*@
-         Get the item placed at specified index.
+         [[Get the item placed at specified index.
 
-         @return The segment control item or $NULL on failure.
+           Index is the position of an item in segment control widget. Its
+           range is from $0 to <tt> count - 1 </tt>.
+           Count is the number of items, that can be get with
+           elm_segment_control_item_count_get().]]
 
-         Index is the position of an item in segment control widget. Its
-         range is from $0 to <tt> count - 1 </tt>.
-         Count is the number of items, that can be get with
-         elm_segment_control_item_count_get().
-
-         @ingroup SegmentControl */
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[The segment control item or $NULL on failure.]]
          params {
-            @in idx: int; /*@ The index of the segment item. */
+            @in idx: int; [[The index of the segment item.]]
          }
       }
       item_del_at {
-         /*@
-         Remove a segment control item at given index from its parent,
-         deleting it.
+         [[Remove a segment control item at given index from its parent, deleting it.
 
-         Items can be added with elm_segment_control_item_add() or
-         elm_segment_control_item_insert_at().
-
-         @ingroup SegmentControl */
+           Items can be added with elm_segment_control_item_add() or elm_segment_control_item_insert_at().]]
 
          params {
-            @in idx: int; /*@ The position of the segment control item to be deleted. */
+            @in idx: int; [[The position of the segment control item to be deleted.]]
          }
       }
       item_add {
-         /*@
-         Append a new item to the segment control object.
+         [[Append a new item to the segment control object.
 
-         @return The created item or $NULL upon failure.
+           A new item will be created and appended to the segment control, i.e., will
+           be set as last item.
 
-         A new item will be created and appended to the segment control, i.e., will
-         be set as @b last item.
+           If it should be inserted at another position,
+           elm_segment_control_item_insert_at() should be used instead.
 
-         If it should be inserted at another position,
-         elm_segment_control_item_insert_at() should be used instead.
+           Items created with this function can be deleted with function
+           elm_object_item_del() or elm_object_item_del_at().
 
-         Items created with this function can be deleted with function
-         elm_object_item_del() or elm_object_item_del_at().
+           Note: $label set to $NULL is different from empty string "".
+           If an item
+           only has icon, it will be displayed bigger and centered. If it has
+           icon and label, even that an empty string, icon will be smaller and
+           positioned at left.]]
 
-         @note $label set to $NULL is different from empty string "".
-         If an item
-         only has icon, it will be displayed bigger and centered. If it has
-         icon and label, even that an empty string, icon will be smaller and
-         positioned at left.
-
+         /* FIXME-doc
          Simple example:
          @code
          sc = elm_segment_control_add(win);
@@ -147,40 +109,24 @@ class Elm.Segment_Control (Elm.Layout)
          elm_icon_resizable_set(ic, true, true);
          elm_segment_control_item_add(sc, ic, "label");
          evas_object_show(sc);
-         @endcode
+         @endcode */
 
-         @see elm_segment_control_item_insert_at()
-         @see elm_object_item_del()
-
-         @ingroup SegmentControl */
-
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[The created item or $NULL upon failure.]]
          params {
-            @in icon: Evas.Object * @optional; /*@ The icon object to use for the left side of the item. An
-            icon can be any Evas object, but usually it is an icon created
-            with elm_icon_add(). */
-            @in label: const(char)* @optional; /*@ The label of the item.
-            Note that, NULL is different from empty string "". */
+            @in icon: Evas.Object * @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
+            @in label: const(char)* @optional; [[The label of the item.  Note that, NULL is different from empty string "".]]
          }
       }
       item_icon_get @const {
-         /*@
-         Get the icon associated to the item.
+         [[Get the icon associated to the item.
 
-         @return The left side icon associated to the item at $index.
-
-         The return value is a pointer to the icon associated to the item when
-         it was created, with function elm_segment_control_item_add(), or later
-         with function elm_object_item_part_content_set(). If no icon
-         was passed as argument, it will return $NULL.
-
-         @see elm_segment_control_item_add()
-         @see elm_object_item_part_content_set()
-
-         @ingroup SegmentControl */
-         return: Evas.Object *;
+           The return value is a pointer to the icon associated to the item when
+           it was created, with function elm_segment_control_item_add(), or later
+           with function elm_object_item_part_content_set(). If no icon
+           was passed as argument, it will return $NULL.]]
+         return: Evas.Object *; [[The left side icon associated to the item at $index.]]
          params {
-            @in idx: int; /*@ The index of the segment item. */
+            @in idx: int; [[The index of the segment item.]]
          }
       }
    }
