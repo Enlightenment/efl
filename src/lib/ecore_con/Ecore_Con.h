@@ -1229,6 +1229,9 @@ EAPI Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type,
  * @ref ECORE_CON_EVENT_SERVER_ADD is received. If it fails to complete, an
  * @ref ECORE_CON_EVENT_SERVER_DEL will be received.
  *
+ * The created object gets deleted automatically if the connection to the
+ * server is lost.
+ *
  * The @p data parameter can be fetched later using ecore_con_server_data_get()
  * or changed with ecore_con_server_data_set().
  */
