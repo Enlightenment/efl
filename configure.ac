@@ -4014,7 +4014,7 @@ if test "x${have_ecore_evas_opengl_x11}" = "xyes" || test "x${have_ecore_evas_op
          [have_ecore_x_opengl_xcb="no"])
     else
       have_ecore_x_opengl_xcb="no"
-      AC_MSG_NOTICE(["XCB-based OpenGL explicitly disabled"])
+      AC_MSG_NOTICE([XCB-based OpenGL explicitly disabled])
     fi
 fi
 
