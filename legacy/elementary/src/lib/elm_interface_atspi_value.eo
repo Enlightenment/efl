@@ -5,21 +5,19 @@ interface Elm_Interface_Atspi_Value ()
    methods {
       @property value_and_text @protected {
          get {
-            /*@ Gets value displayed by a accessible widget. */
+            [[Gets value displayed by a accessible widget.]]
          }
          set {
-            return: bool; /*@ true if setting widgets value has
-                                successed, false otherwise. */
+            return: bool; [[true if setting widgets value has successed, false otherwise.]]
          }
          values {
-            value: double; /*@ Value of widget casted to floating point number. */
-            text: const(char)*; /*@ string describing value in given context
-                               eg. small, enough */
+            value: double; [[Value of widget casted to floating point number.]]
+            text: const(char)*; [[string describing value in given context eg. small, enough]]
          }
       }
       @property range @protected {
          get {
-            /*@ Gets a range of all possible values and its description */
+            [[Gets a range of all possible values and its description]]
          }
          values {
             lower_limit: double;
@@ -29,7 +27,7 @@ interface Elm_Interface_Atspi_Value ()
       }
       @property increment @protected {
          get {
-            /*@ Gets an minimal incrementation value */
+            [[Gets an minimal incrementation value]]
          }
          values {
             increment: double;
