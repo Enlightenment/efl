@@ -3,251 +3,131 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
    eo_prefix: elm_obj_naviframe;
    methods {
       @property event_enabled {
+         [[Control the event enabled when pushing/popping items
+
+           If $enabled is $true, the contents of the naviframe item will
+           receives events from mouse and keyboard during view changing such as
+           item push/pop.
+
+           Warning: Events will be blocked by calling evas_object_freeze_events_set()
+           internally. So don't call the API whiling pushing/popping items.]]
          set {
-            /*@
-            @brief Set the event enabled when pushing/popping items
-
-            If $enabled is $true, the contents of the naviframe item will
-            receives events from mouse and keyboard during view changing such as
-            item push/pop.
-
-            @warning Events will be blocked by calling evas_object_freeze_events_set()
-            internally. So don't call the API whiling pushing/popping items.
-
-            @see elm_naviframe_event_enabled_get()
-            @see evas_object_freeze_events_set()
-
-            @ingroup Naviframe */
          }
          get {
-            /*@
-            @brief Get the value of event enabled status.
-
-            @return $true, when event is enabled
-
-            @see elm_naviframe_event_enabled_set()
-
-            @ingroup Naviframe */
          }
          values {
-            enabled: bool; /*@ Events are received when enabled is $true, and
-            ignored otherwise. */
+            enabled: bool; [[Events are received when enabled is $true, and ignored otherwise.]]
          }
       }
       @property content_preserve_on_pop {
+         [[Preserve the content objects when items are popped.]]
          set {
-            /*@
-            @brief preserve the content objects when items are popped.
-
-            @see also elm_naviframe_content_preserve_on_pop_get()
-
-            @ingroup Naviframe */
          }
          get {
-            /*@
-            @brief Get a value whether preserve mode is enabled or not.
-
-            @return If $true, preserve mode is enabled
-
-            @see also elm_naviframe_content_preserve_on_pop_set()
-
-            @ingroup Naviframe */
          }
          values {
-            preserve: bool; /*@ Enable the preserve mode if $true, disable otherwise */
+            preserve: bool; [[Enable the preserve mode if $true, disable otherwise]]
          }
       }
       @property prev_btn_auto_pushed {
+         [[Control if creating prev button automatically or not]]
          set {
-            /*@
-            @brief Set creating prev button automatically or not
-
-            @see also elm_naviframe_item_push()
-
-            @ingroup Naviframe */
          }
          get {
-            /*@
-            @brief Get a value whether prev button(back button) will be auto pushed or
-            not.
-
-            @return If $true, prev button will be auto pushed.
-
-            @see also elm_naviframe_item_push()
-            elm_naviframe_prev_btn_auto_pushed_set()
-
-            @ingroup Naviframe */
          }
          values {
-            auto_pushed: bool; /*@ If $true, the previous button(back button) will
-            be created internally when you pass the $NULL to the prev_btn
-            parameter in elm_naviframe_item_push */
+            auto_pushed: bool; [[If $true, the previous button(back button) will be created internally when you pass the $NULL to the prev_btn parameter in elm_naviframe_item_push]]
          }
       }
       @property items {
          get {
-            /*@
-            @brief Get a list of all the naviframe items.
+            [[Get a list of all the naviframe items.]]
 
-            @return A list of naviframe items, #Elm.Widget_Item,
-            or $NULL on failure.
-            @note The returned list MUST be freed.
-
-            @ingroup Naviframe */
-            return: free(own(list<Elm.Widget_Item *> *), eina_list_free) @warn_unused;
+            return: free(own(list<Elm.Widget_Item *> *), eina_list_free) @warn_unused; [[A list of naviframe items, @Elm.Widget_Item, or $NULL on failure. Note: The returned list MUST be freed.]]
          }
       }
       @property top_item {
          get {
-            /*@
-            @brief Get a top item on the naviframe stack
+            [[Get a top item on the naviframe stack]]
 
-            @return The top item on the naviframe stack or $NULL, if the stack is
-            empty
-
-            @ingroup Naviframe */
-            return: Elm.Widget_Item *;
+            return: Elm.Widget_Item *; [[The top item on the naviframe stack or $NULL, if the stack is empty]]
          }
       }
       @property bottom_item {
          get {
-            /*@
-            @brief Get a bottom item on the naviframe stack
+            [[Get a bottom item on the naviframe stack]]
 
-            @return The bottom item on the naviframe stack or $NULL, if the stack is
-            empty
-
-            @ingroup Naviframe */
-            return: Elm.Widget_Item *;
+            return: Elm.Widget_Item *; [[The bottom item on the naviframe stack or $NULL, if the stack is empty]]
          }
       }
       item_pop {
-         /*@
-         @brief Pop an item that is on top of the stack
+         [[Pop an item that is on top of the stack
 
-         @return $NULL or the content object(if the
-         elm_naviframe_content_preserve_on_pop_get is true).
+           This pops an item that is on the top(visible) of the naviframe, makes it
+           disappear, then deletes the item. The item that was underneath it on the
+           stack will become visible.]]
 
-         This pops an item that is on the top(visible) of the naviframe, makes it
-         disappear, then deletes the item. The item that was underneath it on the
-         stack will become visible.
-
-         @see also elm_naviframe_content_preserve_on_pop_get()
-         @see also elm_naviframe_item_pop_cb_set()
-
-         @ingroup Naviframe */
-
-         return: Evas.Object *;
+         return: Evas.Object *; [[$NULL or the content object(if the elm_naviframe_content_preserve_on_pop_get is true).]]
       }
       item_insert_before {
-         /*@
-         @brief Insert a new item into the naviframe before item $before.
+         [[Insert a new item into the naviframe before item $before.
 
-         @return The created item or $NULL upon failure.
+           The item is inserted into the naviframe straight away without any
+           transition operations. This item will be deleted when it is popped.]]
 
-         The item is inserted into the naviframe straight away without any
-         transition operations. This item will be deleted when it is popped.
-
-         @see also elm_naviframe_item_style_set()
-         @see also elm_naviframe_item_push()
-         @see also elm_naviframe_item_insert_after()
-
-         The following styles are available for this item:
-         @li $"default"
-
-         @ingroup Naviframe */
-
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[The created item or $NULL upon failure.]]
          params {
-            @in before: Elm.Widget_Item *; /*@ The naviframe item to insert before. */
-            @in title_label: const(char)* @optional; /*@ The label in the title area. The name of the title
-            label part is "elm.text.title" */
-            @in prev_btn: Evas.Object * @nullable; /*@ The button to go to the previous item. If it is NULL,
-            then naviframe will create a back button automatically. The name of
-            the prev_btn part is "elm.swallow.prev_btn" */
-            @in next_btn: Evas.Object * @nullable; /*@ The button to go to the next item. Or It could be just an
-            extra function button. The name of the next_btn part is
-            "elm.swallow.next_btn" */
-            @in content: Evas.Object *; /*@ The main content object. The name of content part is
-            "elm.swallow.content" */
-            @in item_style: const(char)* @nullable; /*@ The current item style name. $NULL would be default. */
+            @in before: Elm.Widget_Item *; [[The naviframe item to insert before.]]
+            @in title_label: const(char)* @optional; [[The label in the title area. The name of the title label part is "elm.text.title"]]
+            @in prev_btn: Evas.Object * @nullable; [[The button to go to the previous item. If it is NULL, then naviframe will create a back button automatically. The name of the prev_btn part is "elm.swallow.prev_btn"]]
+            @in next_btn: Evas.Object * @nullable; [[The button to go to the next item. Or It could be just an extra function button. The name of the next_btn part is "elm.swallow.next_btn"]]
+            @in content: Evas.Object *; [[The main content object. The name of content part is "elm.swallow.content"]]
+            @in item_style: const(char)* @nullable; [[The current item style name. $NULL would be default.]]
          }
       }
       item_push {
-         /*@
-         @brief Push a new item to the top of the naviframe stack (and show it).
+         [[Push a new item to the top of the naviframe stack (and show it).
 
-         @return The created item or $NULL upon failure.
 
-         The item pushed becomes one page of the naviframe, this item will be
-         deleted when it is popped.
+           The item pushed becomes one page of the naviframe, this item will be
+           deleted when it is popped.
 
-         @see also elm_naviframe_item_style_set()
-         @see also elm_naviframe_item_insert_before()
-         @see also elm_naviframe_item_insert_after()
+           The following styles are available for this item:
+           "default"]]
 
-         The following styles are available for this item:
-         @li $"default"
-
-         @ingroup Naviframe */
-
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[The created item or $NULL upon failure.]]
          params {
-            @in title_label: const(char)* @optional; /*@ The label in the title area. The name of the title
-            label part is "elm.text.title" */
-            @in prev_btn: Evas.Object * @nullable; /*@ The button to go to the previous item. If it is NULL,
-            then naviframe will create a back button automatically. The name of
-            the prev_btn part is "elm.swallow.prev_btn" */
-            @in next_btn: Evas.Object * @nullable; /*@ The button to go to the next item. Or It could be just an
-            extra function button. The name of the next_btn part is
-            "elm.swallow.next_btn" */
-            @in content: Evas.Object *; /*@ The main content object. The name of content part is
-            "elm.swallow.content" */
-            @in item_style: const(char)* @nullable; /*@ The current item style name. $NULL would be default. */
+            @in title_label: const(char)* @optional; [[The label in the title area. The name of the title label part is "elm.text.title"]]
+            @in prev_btn: Evas.Object * @nullable; [[The button to go to the previous item. If it is NULL, then naviframe will create a back button automatically. The name of the prev_btn part is "elm.swallow.prev_btn"]]
+            @in next_btn: Evas.Object * @nullable; [[The button to go to the next item. Or It could be just an extra function button. The name of the next_btn part is "elm.swallow.next_btn"]]
+            @in content: Evas.Object *; [[The main content object. The name of content part is "elm.swallow.content"]]
+            @in item_style: const(char)* @nullable; [[The current item style name. $NULL would be default.]]
          }
       }
       item_simple_promote {
-         /*@
-         @brief Simple version of item_promote.
-
-         @see elm_naviframe_item_promote */
+         [[Simple version of item_promote.]]
 
          params {
             @in content: Evas.Object *;
          }
       }
       item_insert_after {
-         /*@
-         @brief Insert a new item into the naviframe after item $after.
+         [[Insert a new item into the naviframe after item $after.
 
-         @return The created item or $NULL upon failure.
+           The item is inserted into the naviframe straight away without any
+           transition operations. This item will be deleted when it is popped.
 
-         The item is inserted into the naviframe straight away without any
-         transition operations. This item will be deleted when it is popped.
+           The following styles are available for this item:
+           "default"]]
 
-         @see also elm_naviframe_item_style_set()
-         @see also elm_naviframe_item_push()
-         @see also elm_naviframe_item_insert_before()
-
-         The following styles are available for this item:
-         @li $"default"
-
-         @ingroup Naviframe */
-
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[The created item or $NULL upon failure.]]
          params {
-            @in after: Elm.Widget_Item *; /*@ The naviframe item to insert after. */
-            @in title_label: const(char)* @optional; /*@ The label in the title area. The name of the title
-            label part is "elm.text.title" */
-            @in prev_btn: Evas.Object * @nullable; /*@ The button to go to the previous item. If it is NULL,
-            then naviframe will create a back button automatically. The name of
-            the prev_btn part is "elm.swallow.prev_btn" */
-            @in next_btn: Evas.Object * @nullable; /*@ The button to go to the next item. Or It could be just an
-            extra function button. The name of the next_btn part is
-            "elm.swallow.next_btn" */
-            @in content: Evas.Object *; /*@ The main content object. The name of content part is
-            "elm.swallow.content" */
-            @in item_style: const(char)* @nullable; /*@ The current item style name. $NULL would be default. */
+            @in after: Elm.Widget_Item *; [[The naviframe item to insert after.]]
+            @in title_label: const(char)* @optional; [[The label in the title area. The name of the title label part is "elm.text.title"]]
+            @in prev_btn: Evas.Object * @nullable; [[The button to go to the previous item. If it is NULL, then naviframe will create a back button automatically. The name of the prev_btn part is "elm.swallow.prev_btn"]]
+            @in next_btn: Evas.Object * @nullable; [[The button to go to the next item. Or It could be just an extra function button. The name of the next_btn part is "elm.swallow.next_btn"]]
+            @in content: Evas.Object *; [[The main content object. The name of content part is "elm.swallow.content"]]
+            @in item_style: const(char)* @nullable; [[The current item style name. $NULL would be default.]]
          }
       }
    }
