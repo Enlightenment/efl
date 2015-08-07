@@ -919,6 +919,7 @@ EAPI const char *elm_config_accel_preference_get(void);
  * "gl", "opengl" - try use OpenGL.
  * "3d" - try and use a 3d acceleration unit.
  * "hw", "hardware", "accel" - try any acceleration unit (best possible)
+ * "none" - use no acceleration. try use software
  *
  * Since 1.14, it is also possible to specify some GL properties for the GL
  * window surface. This allows applications to use GLView with depth, stencil
