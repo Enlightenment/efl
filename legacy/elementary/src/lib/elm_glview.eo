@@ -3,7 +3,7 @@ class Elm.Glview (Elm.Widget)
    eo_prefix: elm_obj_glview;
    methods {
       version_constructor {
-         /*@ Constructor with context version number. */
+         [[Constructor with context version number.]]
          legacy: null;
          params {
             @in version: Evas_GL_Context_Version;
@@ -11,199 +11,164 @@ class Elm.Glview (Elm.Widget)
       }
       @property size {
          set {
-            /*@
-            Sets the size of the glview
-
-            @ingroup GLView */
+            [[Sets the size of the glview.]]
          }
          get {
-            /*@
-            Get the size of the glview.
+            [[Get the size of the glview.
 
-            Note that this function returns the actual image size of the
-            glview. This means that when the scale policy is set to
-            #ELM_GLVIEW_RESIZE_POLICY_SCALE, it'll return the non-scaled
-            size.
-
-            @ingroup GLView */
+              Note: This function returns the actual image size of the
+              glview. This means that when the scale policy is set to
+              #ELM_GLVIEW_RESIZE_POLICY_SCALE, it'll return the non-scaled
+              size.
+            ]]
          }
          values {
-            w: int; /*@ width of the glview object */
-            h: int; /*@ height of the glview object */
+            w: int; [[Width of the glview object.]]
+            h: int; [[Height of the glview object.]]
          }
       }
       @property resize_policy {
          set {
-            /*@
-            Set the resize policy for the glview object.
+            [[Set the resize policy for the glview object.
 
-            By default, the resize policy is set to #ELM_GLVIEW_RESIZE_POLICY_RECREATE.
-            When resize is called it destroys the previous surface and recreates the
-            newly specified size. If the policy is set to
-            #ELM_GLVIEW_RESIZE_POLICY_SCALE, however, glview only scales the image
-            object and not the underlying GL Surface.
-
-            @ingroup GLView */
+              By default, the resize policy is set to
+              #ELM_GLVIEW_RESIZE_POLICY_RECREATE. When resize is called
+              it destroys the previous surface and recreates the newly
+              specified size. If the policy is set to
+              #ELM_GLVIEW_RESIZE_POLICY_SCALE, however, glview only
+              scales the image object and not the underlying GL Surface.
+            ]]
             return: bool;
          }
          values {
-            policy: Elm_GLView_Resize_Policy; /*@ The scaling policy. */
+            policy: Elm_GLView_Resize_Policy; [[The scaling policy.]]
          }
       }
       @property changed {
          set {
-            /*@
-            Notifies that there has been changes in the GLView.
-
-            @ingroup GLView */
+            [[Notifies that there has been changes in the GLView.]]
          }
       }
       @property resize_func {
          set {
-            /*@
-            Set the resize function that gets called when resize happens.
+            [[Set the resize function that gets called when resize happens.
 
-            The resize function gets called during the render loop.
-            This function allows glview to hide all the rendering context/surface
-            details and have the user just call GL calls that they desire
-            when resize happens.
-
-            @ingroup GLView */
+              The resize function gets called during the render loop.
+              This function allows glview to hide all the rendering
+              context/surface details and have the user just call GL 
+              alls that they desire when resize happens.
+            ]]
          }
          values {
-            func: Elm_GLView_Func_Cb; /*@ The resize function to be registered. */
+            func: Elm_GLView_Func_Cb; [[The resize function to be registered.]]
          }
       }
       @property del_func {
          set {
-            /*@
-            Set the render function that runs in the main loop.
+            [[Set the render function that runs in the main loop.
 
-            The registered del function gets called when GLView object is deleted.
-            This function allows glview to hide all the rendering context/surface
-            details and have the user just call GL calls that they desire
-            when delete happens.
-
-            @ingroup GLView */
+              The registered del function gets called when GLView object
+              is deleted. This function allows glview to hide all the
+              rendering context/surface  details and have the user just
+              call GL calls that they desire  when delete happens.
+            ]]
          }
          values {
-            func: Elm_GLView_Func_Cb @nullable; /*@ The delete function to be registered. */
+            func: Elm_GLView_Func_Cb @nullable; [[The delete function to be registered.]]
          }
       }
       @property init_func {
          set {
-            /*@
-            Set the init function that runs once in the main loop.
+            [[Set the init function that runs once in the main loop.
 
-            The registered init function gets called once during the render loop.
-            This function allows glview to hide all the rendering context/surface
-            details and have the user just call GL calls that they desire
-            for initialization GL calls.
-
-            @ingroup GLView */
+              The registered init function gets called once during the
+              render loop. This function allows glview to hide all the
+              rendering context/surface details and have the user just
+              call GL calls that they desire for initialization GL calls.
+            ]]
          }
          values {
-            func: Elm_GLView_Func_Cb @nullable; /*@ The init function to be registered. */
+            func: Elm_GLView_Func_Cb @nullable; [[The init function to be registered.]]
          }
       }
       @property render_policy {
          set {
-            /*@
-            Set the render policy for the glview object.
+            [[Set the render policy for the glview object.
 
-            By default, the render policy is set to #ELM_GLVIEW_RENDER_POLICY_ON_DEMAND.
-            This policy is set such that during the render loop, glview is only
-            redrawn if it needs to be redrawn. (i.e. when it is visible) If the policy
-            is set to #ELM_GLVIEWW_RENDER_POLICY_ALWAYS, it redraws regardless of
-            whether it is visible or needs redrawing.
-
-            @ingroup GLView */
+              By default, the render policy is set to
+              #ELM_GLVIEW_RENDER_POLICY_ON_DEMAND. This policy is set
+              such that during the render loop, glview is only redrawn
+              if it needs to be redrawn. (i.e. when it is visible) If the
+              policy is set to #ELM_GLVIEWW_RENDER_POLICY_ALWAYS, it
+              redraws regardless of whether it is visible or needs
+              redrawing.
+            ]]
             return: bool;
          }
          values {
-            policy: Elm_GLView_Render_Policy; /*@ The render policy. */
+            policy: Elm_GLView_Render_Policy; [[The render policy.]]
          }
       }
       @property mode {
          set {
-            /*@
-            Set the mode of the GLView. Supports alpha, depth, stencil.
+            [[Set the mode of the GLView. Supports alpha, depth, stencil.
 
-            @return True if set properly.
-
-            Direct is a hint for the elm_glview to render directly to the window
-            given that the right conditions are met. Otherwise it falls back
-            to rendering to an offscreen buffer before it gets composited to the
-            window.
-
-            @ingroup GLView */
+              Direct is a hint for the elm_glview to render directly to
+              the window given that the right conditions are met. Otherwise
+              it falls back to rendering to an offscreen buffer before it
+              gets composited to the window.
+            ]]
             return: bool;
          }
          values {
-            mode: Elm_GLView_Mode; /*@ The mode Options OR'ed enabling Alpha, Depth, Stencil, Direct. */
+            mode: Elm_GLView_Mode; [[The mode Options OR'ed enabling Alpha, Depth, Stencil, Direct.]]
          }
       }
       @property render_func {
          set {
-            /*@
-            Set the render function that runs in the main loop.
+            [[Set the render function that runs in the main loop.
 
-            The render function gets called in the main loop but whether it runs
-            depends on the rendering policy and whether elm_glview_changed_set()
-            gets called.
-
-            @ingroup GLView */
+              The render function gets called in the main loop but whether
+              it runs depends on the rendering policy and whether
+              @.changed.set gets called.
+            ]]
          }
          values {
-            func: Elm_GLView_Func_Cb @nullable; /*@ The render function to be registered. */
+            func: Elm_GLView_Func_Cb @nullable; [[The render function to be registered.]]
          }
       }
       @property gl_api {
          get {
-            /*@
-            Get the gl api struct for gl rendering
-
-            @return The api object or NULL if it cannot be created
-
-            @ingroup GLView */
+            [[Get the gl api struct for gl rendering.]]
             return: Evas_GL_API *;
          }
       }
       @property evas_gl {
          get {
-            /*@
-            Get the internal Evas GL attached to this view.
+            [[Get the internal Evas GL attached to this view.
 
-            @note The returned Evas_GL must not be destroyed as it is still owned
-            by the view. But this pointer can be used then to call all the evas_gl_
-            functions.
+              Note: The returned Evas_GL must not be destroyed as it is
+              still owned by the view. But this pointer can be used then
+              to call all the evas_gl_ functions.
 
-            @since 1.12
-
-            @return The Evas_GL used by this GLView.
-
-            @ingroup GLView */
+              @since 1.12
+            ]]
             return: Evas_GL *;
          }
       }
       @property rotation {
          get {
-            /*@
-            Get the current GL view's rotation when using direct rendering
+            [[Get the current GL view's rotation when using direct rendering
 
-            @return A window rotation in degrees (0, 90, 180 or 270)
+              Note: This rotation can be different from the device
+              orientation. This rotation value must be used in case of
+              direct rendering and should be taken into account by the
+              application when setting the internal rotation matrix for
+              the view.
 
-            @note This rotation can be different from the device orientation. This
-                  rotation value must be used in case of direct rendering and should be
-                  taken into account by the application when setting the internal rotation
-                  matrix for the view.
-
-            @see ELM_GLVIEW_CLIENT_SIDE_ROTATION
-
-            @since 1.12
-
-            @ingroup GLView */
-            return: int;
+              @since 1.12
+            ]]
+            return: int; [[A window rotation in degrees (0, 90, 180 or 270).]]
          }
       }
    }
