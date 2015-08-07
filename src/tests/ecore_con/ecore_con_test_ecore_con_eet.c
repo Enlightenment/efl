@@ -108,7 +108,6 @@ _eet_raw_data_cb(void *data, Ecore_Con_Reply *reply, const char *protocol_name E
    ecore_con_eet_raw_data_callback_del(ece_cl, TEST_STREAM);
    ecore_con_eet_server_connect_callback_del(ece_cl, _eet_svr_cnct_cb, NULL);
 
-   ecore_con_eet_server_free(ece_cl);
    ecore_con_server_del(cl);
 }
 
@@ -164,7 +163,6 @@ START_TEST(ecore_con_test_ecore_con_eet_svr_cl)
                                                 _eet_client_discnct_cb, NULL);
 
    free(cb_data);
-   ecore_con_eet_server_free(ece_svr);
    _ece_test_descriptor_shutdown();
    ecore_con_server_del(svr);
    ecore_con_shutdown();
@@ -192,7 +190,6 @@ _eet_svr_raw_data_cb(void *data, Ecore_Con_Reply *reply, const char *protocol_na
 
    ecore_con_eet_raw_data_callback_del(ece_svr, TEST_STREAM);
 
-   ecore_con_eet_server_free(ece_svr);
    ecore_con_server_del(svr);
 }
 
@@ -236,16 +233,8 @@ START_TEST(ecore_con_test_ecore_con_eet_svr_del)
 
    ecore_main_loop_begin();
 
-
-   ecore_con_eet_server_connect_callback_del(ece_cl, _eet_client_cnct_cb,
-                                             NULL);
-   ecore_con_eet_server_disconnect_callback_del(ece_cl,
-                                                _eet_client_discnct_cb, NULL);
-
    free(cb_data);
-   ecore_con_eet_server_free(ece_cl);
    _ece_test_descriptor_shutdown();
-   ecore_con_server_del(cl);
    ecore_con_shutdown();
    eet_shutdown();
    eina_shutdown();
