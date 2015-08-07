@@ -3,271 +3,153 @@ class Elm.Progressbar (Elm.Layout)
    eo_prefix: elm_obj_progressbar;
    methods {
       @property span_size {
+         [[Control the (exact) length of the bar region of a given progress bar widget
+
+           This sets the minimum width (when in horizontal mode) or height
+           (when in vertical mode) of the actual bar area of the progress
+           bar $obj. This in turn affects the object's minimum size. Use
+           this when you're not setting other size hints expanding on the
+           given direction (like weight and alignment hints) and you would
+           like it to have a specific size.
+
+           Note: Icon, label and unit text around $obj will require their
+           own space, which will make $obj to require more the $size,
+           actually.]]
          set {
-            /*@
-            Set the (exact) length of the bar region of a given progress bar
-            widget
-
-            This sets the minimum width (when in horizontal mode) or height
-            (when in vertical mode) of the actual bar area of the progress
-            bar $obj. This in turn affects the object's minimum size. Use
-            this when you're not setting other size hints expanding on the
-            given direction (like weight and alignment hints) and you would
-            like it to have a specific size.
-
-            @note Icon, label and unit text around $obj will require their
-            own space, which will make $obj to require more the $size,
-            actually.
-
-            @see elm_progressbar_span_size_get()
-
-            @ingroup Progressbar */
          }
          get {
-            /*@
-            Get the length set for the bar region of a given progress bar
-            widget
-
-            @return The length of the progress bar's bar region
-
-            If that size was not set previously, with
-            elm_progressbar_span_size_set(), this call will return $0.
-
-            @ingroup Progressbar */
          }
          values {
-            size: Evas.Coord; /*@ The length of the progress bar's bar region */
+            size: Evas.Coord; [[The length of the progress bar's bar region]]
          }
       }
       @property pulse {
+         [[Control whether a given progress bar widget is at "pulsing mode" or not.
+
+           By default, progress bars will display values from the low to
+           high value boundaries. There are, though, contexts in which the
+           progress of a given task is unknown. For such cases,
+           one can set a progress bar widget to a "pulsing state", to give
+           the user an idea that some computation is being held, but
+           without exact progress values. In the default theme, it will
+           animate its bar with the contents filling in constantly and back
+           to non-filled, in a loop. To start and stop this pulsing
+           animation, one has to explicitly call elm_progressbar_pulse().]]
          set {
-            /*@
-            Set whether a given progress bar widget is at "pulsing mode" or
-            not.
-
-            By default, progress bars will display values from the low to
-            high value boundaries. There are, though, contexts in which the
-            progress of a given task is @b unknown. For such cases,
-            one can set a progress bar widget to a "pulsing state", to give
-            the user an idea that some computation is being held, but
-            without exact progress values. In the default theme, it will
-            animate its bar with the contents filling in constantly and back
-            to non-filled, in a loop. To start and stop this pulsing
-            animation, one has to explicitly call elm_progressbar_pulse().
-
-            @see elm_progressbar_pulse_get()
-            @see elm_progressbar_pulse()
-
-            @ingroup Progressbar */
          }
          get {
-            /*@
-            Get whether a given progress bar widget is at "pulsing mode" or
-            not.
-
-            @return $true, if $obj is in pulsing mode, $false
-            if it's in the default one (and on errors)
-
-            @ingroup Progressbar */
          }
          values {
-            pulse: bool; /*@ $true to put $obj in pulsing mode,
-            $false to put it back to its default one */
+            pulse: bool; [[$true to put $obj in pulsing mode, $false to put it back to its default one]]
          }
       }
       @property value {
+         [[Control the progress value (in percentage) on a given progress bar widget
+
+           Use this call to set progress bar levels.
+
+           Note: If you passes a value out of the specified range for
+           $val, it will be interpreted as the closest of the boundary
+           values in the range.]]
          set {
-            /*@
-            Set the progress value (in percentage) on a given progress bar
-            widget
-
-            Use this call to set progress bar levels.
-
-            @note If you passes a value out of the specified range for @p
-            val, it will be interpreted as the @b closest of the @b boundary
-            values in the range.
-
-            @ingroup Progressbar */
          }
          get {
-            /*@
-            Get the progress value (in percentage) on a given progress bar
-            widget
-
-            @return The value of the progressbar
-
-            @see elm_progressbar_value_set() for more details
-
-            @ingroup Progressbar */
          }
          values {
-            val: double; /*@ The progress value (@b must be between $0.0 and @c
-            1.0) */
+            val: double; [[The progress value (must be between $0.0 and 1.0)]]
          }
       }
       @property inverted {
+         [[Invert a given progress bar widget's displaying values order
+
+           A progress bar may be inverted, in which state it gets its
+           values inverted, with high values being on the left or top and
+           low values on the right or bottom, as opposed to normally have
+           the low values on the former and high values on the latter,
+           respectively, for horizontal and vertical modes.]]
          set {
-            /*@
-            Invert a given progress bar widget's displaying values order
-
-            A progress bar may be @b inverted, in which state it gets its
-            values inverted, with high values being on the left or top and
-            low values on the right or bottom, as opposed to normally have
-            the low values on the former and high values on the latter,
-            respectively, for horizontal and vertical modes.
-
-            @see elm_progressbar_inverted_get()
-
-            @ingroup Progressbar */
          }
          get {
-            /*@
-            Get whether a given progress bar widget's displaying values are
-            inverted or not
-
-            @return $true, if $obj has inverted values,
-            $false otherwise (and on errors)
-
-            @see elm_progressbar_inverted_set() for more details
-
-            @ingroup Progressbar */
          }
          values {
-            inverted: bool; /*@ Use $true to make $obj inverted,
-            $false to bring it back to default, non-inverted values. */
+            inverted: bool; [[Use $true to make $obj inverted, $false to bring it back to default, non-inverted values.]]
          }
       }
       @property horizontal {
+         [[Control the orientation of a given progress bar widget
+
+           Use this function to change how your progress bar is to be
+           disposed: vertically or horizontally.]]
          set {
-            /*@
-            Set the orientation of a given progress bar widget
-
-            Use this function to change how your progress bar is to be
-            disposed: vertically or horizontally.
-
-            @see elm_progressbar_horizontal_get()
-
-            @ingroup Progressbar */
          }
          get {
-            /*@
-            Get the orientation of a given progress bar widget
-
-            @return $true, if $obj is set to be @b horizontal,
-            $false if it's @b vertical (and on errors)
-
-            @see elm_progressbar_horizontal_set() for more details
-
-            @ingroup Progressbar */
          }
          values {
-            horizontal: bool; /*@ Use $true to make $obj to be
-            @b horizontal, $false to make it @b vertical */
+            horizontal: bool; [[Use $true to make $obj to be horizontal, $false to make it vertical]]
          }
       }
       @property unit_format {
+         [[Control the format string for a given progress bar widget's units label
+
+           If $NULL is passed on $format, it will make $obj's units
+           area to be hidden completely. If not, it'll set the <b>format
+           string</b> for the units label's text. The units label is
+           provided a floating point value, so the units text is up display
+           at most one floating point value. Note that the units label is
+           optional. Use a format string such as "%1.2f meters" for
+           example.
+
+           Note: The default format string for a progress bar is an integer
+           percentage, as in $"%.0f %%".]]
          set {
-            /*@
-            Set the format string for a given progress bar widget's units
-            label
-
-            If $NULL is passed on $format, it will make $obj's units
-            area to be hidden completely. If not, it'll set the <b>format
-            string</b> for the units label's @b text. The units label is
-            provided a floating point value, so the units text is up display
-            at most one floating point value. Note that the units label is
-            optional. Use a format string such as "%1.2f meters" for
-            example.
-
-            @note The default format string for a progress bar is an integer
-            percentage, as in $"%.0f %%".
-
-            @see elm_progressbar_unit_format_get()
-
-            @ingroup Progressbar */
          }
          get {
-            /*@
-            Get the format string set for a given progress bar widget's
-            units label
-
-            @return The format set string for $obj's units label or
-            $NULL, if none was set (and on errors)
-
-            @see elm_progressbar_unit_format_set() for more details
-
-            @ingroup Progressbar */
          }
          values {
-            units: const(char)* @nullable; /*@ The format string for $obj's units label */
+            units: const(char)* @nullable; [[The format string for $obj's units label]]
          }
       }
       @property unit_format_function {
          set {
-            /*@
-            Set the format function pointer for the units label
+            [[Set the format function pointer for the units label
 
-            Set the callback function to format the unit string.
+              Set the callback function to format the unit string.
 
-            @see elm_progressbar_unit_format_set() for more info on how this works.
+              See: @.unit_format.set for more info on how this works.
 
-            @since 1.7
-
-            @ingroup Progressbar */
+              @since 1.7]]
          }
          values {
-            func: progressbar_func_type @nullable; /*@ The unit format function */
-            free_func: progressbar_freefunc_type @optional; /*@ The freeing function for the format string. */
+            func: progressbar_func_type @nullable; [[The unit format function]]
+            free_func: progressbar_freefunc_type @optional; [[The freeing function for the format string.]]
          }
       }
       part_value_set {
-         /*@
-         Set the progress value (in percentage) on a given progress bar
-         widget for the given part name
+         [[Set the progress value (in percentage) on a given progress bar widget for the given part name
 
-         @since 1.8
+           Use this call to set progress bar status for more than one progress status .
 
-         Use this call to set progress bar status for more than one progress status .
-
-         @ingroup Progressbar */
-
+           @since 1.8]]
          params {
-            @in part: const(char)*; /*@ The partname to which val have to set */
-            @in val: double; /*@ The progress value (@b must be between $0.0 and @c
-            1.0) */
+            @in part: const(char)*; [[The partname to which val have to set]]
+            @in val: double; [[The progress value (must be between $0.0 and 1.0)]]
          }
       }
       part_value_get @const {
-         /*@
-         Get the progress value (in percentage) on a given progress bar
-         widget for a particular part
+         [[Get the progress value (in percentage) on a given progress bar widget for a particular part
 
-         @since 1.8
-
-         @return The value of the progressbar
-
-         @see elm_progressbar_value_set() for more details
-
-         @ingroup Progressbar */
-         return: double;
+           @since 1.8]]
+         return: double; [[The value of the progressbar]]
          params {
-            @in part: const(char)*; /*@ The part name of the progress bar */
+            @in part: const(char)*; [[The part name of the progress bar]]
          }
       }
       pulse {
-         /*@
-         Start/stop a given progress bar "pulsing" animation, if its
-         under that mode
+         [[Start/stop a given progress bar "pulsing" animation, if its under that mode
 
-         @note This call won't do anything if $obj is not under "pulsing mode".
-
-         @see elm_progressbar_pulse_set() for more details.
-
-         @ingroup Progressbar */
-
+           Note: This call won't do anything if $obj is not under "pulsing mode".]]
          params {
-            @in state: bool; /*@ $true, to @b start the pulsing animation,
-            $false to @b stop it */
+            @in state: bool; [[$true, to start the pulsing animation, $false to stop it]]
          }
       }
    }
