@@ -6,7 +6,7 @@ mixin Elm_Interface_Atspi_Image ()
    methods {
       @property extents @protected {
          get {
-            /*@ Gets an image extents. */
+            [[Gets an image extents.]]
          }
          keys {
             screen_coords: bool;
@@ -20,7 +20,7 @@ mixin Elm_Interface_Atspi_Image ()
       }
       @property description @protected {
          get {
-            /*@ Gets textual description of image */
+            [[Gets textual description of image]]
          }
          set {
          }
@@ -30,7 +30,7 @@ mixin Elm_Interface_Atspi_Image ()
       }
       @property locale @protected {
          get {
-            /*@ Gets locale of the image description. */
+            [[Gets locale of the image description.]]
          }
          values {
             locale: const(char)*;
