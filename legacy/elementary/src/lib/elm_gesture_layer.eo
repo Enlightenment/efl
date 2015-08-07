@@ -3,175 +3,118 @@ class Elm.Gesture_Layer (Elm.Widget)
    eo_prefix: elm_obj_gesture_layer;
    methods {
       @property zoom_step {
-         set {
-            /*@
-            This function sets step-value for zoom action.
-            Set step to any positive value.
-            Cancel step setting by setting to 0
-
-            @see elm_gesture_layer_zoom_step_get()
-            @ingroup Elm_Gesture_Layer
-             */
-         }
-         get {
-            /*@
-            This function returns step-value for zoom action.
-
-            @return zoom step value.
-
-            @see elm_gesture_layer_zoom_step_set()
-            @ingroup Elm_Gesture_Layer
-             */
-         }
+         [[Control step value for zoom action.]]
+         set {}
+         get {}
          values {
-            step: double; /*@ new zoom step value. */
+            step: double; [[The zoom step value.]]
          }
       }
       @property tap_finger_size {
          set {
-            /*@
-            This function sets the gesture layer finger-size for taps
-            If not set, this size taken from elm_config.
-            Set to ZERO if you want GLayer to use system finger size value (default)
+            [[This function sets the gesture layer finger-size for taps.
 
-            @since 1.8
-            @ingroup Elm_Gesture_Layer
-             */
+              If not set, it's taken from elm_config.
+              Set to 0 if you want GLayer to use the system finger size
+              value (default).
+
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            This function returns the gesture layer finger-size for taps
+            [[This function returns the gesture layer finger-size for taps
 
-            @return Finger size that is currently used by Gesture Layer for taps.
-
-            @since 1.8
-            @ingroup Elm_Gesture_Layer
-             */
+              @since 1.8
+            ]]
          }
          values {
-            sz: Evas.Coord; /*@ Finger size */
+            sz: Evas.Coord; [[The finger size.]]
          }
       }
       @property hold_events {
          set {
-            /*@
-            This function is to make gesture-layer repeat events.
-            Set this if you like to get the raw events only if gestures were not
-            detected.
-            Clear this if you like gesture layer to forward events as testing gestures.
-            @ingroup Elm_Gesture_Layer
-             */
+            [[This function makes gesture-layer repeat events.
+
+              Set this if you like to get the raw events only if gestures
+              were not detected.
+
+              Clear this if you like gesture layer to forward events as
+              testing gestures.
+            ]]
          }
          get {
-            /*@
-            Call this function to get repeat-events settings.
-
-            @return repeat events settings.
-            @see elm_gesture_layer_hold_events_set()
-            @ingroup Elm_Gesture_Layer
-             */
+            [[Get the repeat-events setting.]]
          }
          values {
-            hold_events: bool; /*@ hold events or not. */
+            hold_events: bool;
          }
       }
       @property rotate_step {
          set {
-            /*@
-            This function sets step-value for rotate action.
-            Set step to any positive value.
-            Cancel step setting by setting to 0
-            @ingroup Elm_Gesture_Layer
-             */
+            [[This function sets the step value for rotate action.
+
+              Set to 0 to cancel step setting.
+            ]]
          }
          get {
-            /*@
-            This function returns step-value for rotate action.
-
-            @return rotate step value.
-            @ingroup Elm_Gesture_Layer
-             */
+            [[This function returns step-value for rotate action.]]
          }
          values {
-            step: double; /*@ new rotate step value. */
+            step: double; [[New rotate step value.]]
          }
       }
       @property cb {
          set {
-            /*@
-            Use function to set callbacks to be notified about
-            change of state of gesture.
-            When a user registers a callback with this function
-            this means this gesture has to be tested.
+            [[Set the gesture state change callback.
 
-            When ALL callbacks for a gesture are set to NULL
-            it means user isn't interested in gesture-state
-            and it will not be tested.
-            @ingroup Elm_Gesture_Layer
-             */
+              When all callbacks for the gesture are set to $null,
+              it means this gesture is disabled.
+            ]]
          }
          values {
-            idx: Elm_Gesture_Type; /*@ The gesture you would like to track its state. */
-            cb_type: Elm_Gesture_State; /*@ what event this callback tracks: START, MOVE, END, ABORT. */
-            cb: Elm_Gesture_Event_Cb; /*@ callback function pointer. */
-            data: void * @optional; /*@ user info to be sent to callback (usually, Smart Data) */
+            idx: Elm_Gesture_Type; [[The gesture you want to track state of.]]
+            cb_type: Elm_Gesture_State; [[The event the callback tracks (START, MOVE, END, ABORT).]]
+            cb: Elm_Gesture_Event_Cb; [[The callback itself.]]
+            data: void * @optional; [[Custom data to be passed.]]
          }
       }
       attach {
-         /*@
-         Attach a given gesture layer widget to an Evas object, thus setting
-         the widget's @b target.
+         [[Attach a gesture layer widget to an Evas object (setting the
+           widget's target).
 
-         A gesture layer target may be whichever Evas object one
-         chooses. This will be object @a obj will listen all mouse and key
-         events from, to report the gestures made upon it back.
-
-         @return $true, on success, $false otherwise.
-         @ingroup Elm_Gesture_Layer
-          */
-
-         return: bool;
+           A gesture layer's target may be any Evas object. This object
+           will be used to listen to mouse and key events.
+         ]]
+         return: bool; [[$true on success, $false otherwise.]]
          params {
-            @in target: Evas.Object *; /*@ Object to attach to @a obj (target) */
+            @in target: Evas.Object *; [[The object to attach.]]
          }
       }
       cb_del {
-         /*@
-         Use this function to remove a callback that has been added
-         to be notified about change of state of gesture.
-         @ingroup Elm_Gesture_Layer
-          */
-
+         [[Remove a gesture callback.]]
          params {
-            @in idx: Elm_Gesture_Type; /*@ The gesture you would like to track its state. */
-            @in cb_type: Elm_Gesture_State; /*@ what event this callback tracks: START, MOVE, END, ABORT. */
-            @in cb: Elm_Gesture_Event_Cb; /*@ callback function pointer. */
-            @in data: void * @nullable; /*@ user info for the callback (usually, Smart Data) */
+            @in idx: Elm_Gesture_Type; [[The gesture you want to track state of.]]
+            @in cb_type: Elm_Gesture_State; [[The event the callback tracks (START, MOVE, END, ABORT).]]
+            @in cb: Elm_Gesture_Event_Cb; [[The callback itself.]]
+            @in data: void * @nullable; [[Custom callback data.]]
          }
       }
       cb_add {
-         /*@
-         Use function to add callbacks to be notified about
-         change of state of gesture.
-         When a user registers a callback with this function
-         this means this gesture has to be tested.
+         [[Add a gesture state change callback.
 
-         When ALL callbacks for a gesture are set to NULL
-         it means user isn't interested in gesture-state
-         and it will not be tested.
+           When all callbacks for the gesture are set to $null,
+           it means this gesture is disabled.
 
-         If a function was already set for this gesture/type/state, it will be
-         replaced by the new one. For ABI compat, callbacks added by
-         elm_gesture_layer_cb_add will be removed. It is recommended to
-         use only one of these functions for a gesture object.
-         @ingroup Elm_Gesture_Layer
-          */
-
+           If a function was already set for this gesture/type/state, it
+           will be replaced by the new one. For ABI compat, callbacks
+           added by @.cb_add will be removed. It is recommended to
+           use only one of these functions for a gesture object.
+         ]]
          params {
-            @in idx: Elm_Gesture_Type; /*@ The gesture you would like to track its state. */
-            @in cb_type: Elm_Gesture_State; /*@ what event this callback tracks: START, MOVE, END, ABORT. */
-            @in cb: Elm_Gesture_Event_Cb; /*@ callback function pointer. */
-            @in data: void * @optional; /*@ user info to be sent to callback (usually, Smart Data) */
+            @in idx: Elm_Gesture_Type; [[The gesture you want to track state of.]]
+            @in cb_type: Elm_Gesture_State; [[The event the callback tracks (START, MOVE, END, ABORT).]]
+            @in cb: Elm_Gesture_Event_Cb; [[The callback itself.]]
+            @in data: void * @optional; [[Custom data to be passed.]]
          }
       }
    }
