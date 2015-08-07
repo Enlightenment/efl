@@ -1039,7 +1039,9 @@ _internal_elm_toolbar_icon_size_get(Evas_Object *obj)
    const char *icon_size = edje_object_data_get
        (wd->resize_obj, "icon_size");
 
-   if (icon_size) return atoi(icon_size);
+   if (icon_size)
+     return (int)(atoi(icon_size) * elm_widget_scale_get(obj) * elm_config_scale_get()
+            / edje_object_base_scale_get(wd->resize_obj));
 
    return _elm_config->icon_size;
 }
@@ -1239,11 +1241,8 @@ _item_theme_hook(Evas_Object *obj,
           }
         if (it->icon)
           {
-             int ms = 0;
-
-             ms = ((double)icon_size * scale);
-             evas_object_size_hint_min_set(it->icon, ms, ms);
-             evas_object_size_hint_max_set(it->icon, ms, ms);
+             evas_object_size_hint_min_set(it->icon, icon_size, icon_size);
+             evas_object_size_hint_max_set(it->icon, icon_size, icon_size);
              elm_layout_content_set(view, "elm.swallow.icon", it->icon);
              elm_layout_signal_emit
                (view, "elm,state,icon,visible", "elm");
@@ -2396,11 +2395,8 @@ _item_new(Evas_Object *obj,
 
    if (it->icon)
      {
-        int ms = 0;
-
-        ms = ((double)sd->icon_size * elm_config_scale_get());
-        evas_object_size_hint_min_set(it->icon, ms, ms);
-        evas_object_size_hint_max_set(it->icon, ms, ms);
+        evas_object_size_hint_min_set(it->icon, sd->icon_size, sd->icon_size);
+        evas_object_size_hint_max_set(it->icon, sd->icon_size, sd->icon_size);
         elm_layout_content_set(VIEW(it), "elm.swallow.icon", it->icon);
         elm_layout_signal_emit(VIEW(it), "elm,state,icon,visible", "elm");
         evas_object_show(it->icon);
