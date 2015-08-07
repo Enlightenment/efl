@@ -435,23 +435,13 @@ _elm_win_state_eval(void *data EINA_UNUSED)
                             evas_render_dump(evas);
                          }
                     }
-               }
-             else
-               {
-                  if (evas_object_data_get(obj, "__win_auto_norender"))
-                    {
-                       elm_win_norender_pop(obj);
-                       evas_object_data_del(obj, "__win_auto_norender");
-                    }
+                  continue;
                }
           }
-        else
+        if (evas_object_data_get(obj, "__win_auto_norender"))
           {
-             if (evas_object_data_get(obj, "__win_auto_norender"))
-               {
-                  elm_win_norender_pop(obj);
-                  evas_object_data_del(obj, "__win_auto_norender");
-               }
+             elm_win_norender_pop(obj);
+             evas_object_data_del(obj, "__win_auto_norender");
           }
      }
    if (((_elm_config->auto_throttle) &&
