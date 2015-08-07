@@ -6,7 +6,7 @@ mixin Elm_Interface_Atspi_Action ()
    methods {
       @property name @protected {
          get {
-            /*@ Gets action name for given id */
+            [[Gets action name for given id]]
          }
          values {
             name: const(char)*;
@@ -17,7 +17,7 @@ mixin Elm_Interface_Atspi_Action ()
       }
       @property localized_name @protected {
          get {
-            /*@ Gets localized action name for given id */
+            [[Gets localized action name for given id]]
          }
          values {
             name: const(char)*;
@@ -28,10 +28,10 @@ mixin Elm_Interface_Atspi_Action ()
       }
       @property description @protected {
          get {
-            /*@ Gets action description for given id */
+            [[Gets action description for given id]]
          }
          set {
-            /*@ Sets action description for given id */
+            [[Sets action description for given id]]
             return: bool;
          }
          values {
@@ -43,26 +43,25 @@ mixin Elm_Interface_Atspi_Action ()
       }
       @property actions @protected {
          get {
-            /*@ Get list of available widget actions */
+            [[Get list of available widget actions]]
          }
          values {
-            actions: list<Elm_Atspi_Action> *; /*@ contains statically allocated strings */
+            actions: list<Elm_Atspi_Action> *; [[contains statically allocated strings]]
          }
       }
       action_do @protected {
-         /*@ Performs action on given widget. */
+         [[Performs action on given widget.]]
          params {
             @in id: int;
          }
          return: bool;
       }
       keybinding_get @protected {
-         /*@ Gets configured keybinding for specific action and widget.
-             returned pointer should be free by a user.*/
+         [[Gets configured keybinding for specific action and widget.]]
          params {
             @in id: int;
          }
-         return: own(char *) @warn_unused;
+         return: own(char *) @warn_unused; [[Should be freed by the user.]]
       }
    }
    implements {
