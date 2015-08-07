@@ -788,10 +788,8 @@ _access_activate_cb(void *data,
    eina_strbuf_append_printf(buf, "%s, %s", text,
                              elm_layout_text_get(data, "elm.text"));
 
-   text = eina_strbuf_string_steal(buf);
+   _elm_access_say(eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
-
-   _elm_access_say(text);
 }
 
 static char *
@@ -842,7 +840,6 @@ static void
 _access_increment_decrement_info_say(Evas_Object *obj,
                                      Eina_Bool is_incremented)
 {
-   char *text;
    Eina_Strbuf *buf;
 
    ELM_SPINNER_DATA_GET(obj, sd);
@@ -864,9 +861,8 @@ _access_increment_decrement_info_say(Evas_Object *obj,
    eina_strbuf_append_printf
       (buf, "%s", elm_object_text_get(sd->text_button));
 
-   text = eina_strbuf_string_steal(buf);
+   _elm_access_say(eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
-   _elm_access_say(text);
 }
 
 static void
