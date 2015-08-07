@@ -6,11 +6,11 @@ mixin Elm_Interface_Atspi_Component ()
    methods {
       @property size @protected {
          set {
-            /*@ Sets size of accessible widget. */
+            [[Sets size of accessible widget.]]
             return: bool;
          }
          get {
-            /*@ Gets size of accessible widget. */
+            [[Gets size of accessible widget.]]
          }
          values {
             w: int;
@@ -19,7 +19,7 @@ mixin Elm_Interface_Atspi_Component ()
       }
       @property layer @protected {
          get {
-            /*@ Sets evas layer of accessible widget. */
+            [[Sets evas layer of accessible widget.]]
          }
          values {
             layer: int;
@@ -27,16 +27,15 @@ mixin Elm_Interface_Atspi_Component ()
       }
       @property alpha @protected {
          get {
-            /*@ Gets alpha of accessible widget. */
+            [[Gets alpha of accessible widget.]]
          }
          values {
-            alpha: double; /*@ alpha value in [0, 1] range. */
+            alpha: double; [[alpha value in [0, 1] range.]]
          }
       }
       @property z_order @protected {
          get {
-            /*@ Gets the depth at which the component is shown in relation to
-            other components in the same container. */
+            [[Gets the depth at which the component is shown in relation to other components in the same container.]]
          }
          values {
             z_order: int;
@@ -44,16 +43,14 @@ mixin Elm_Interface_Atspi_Component ()
       }
       @property extents @protected {
          get {
-            /*@ Gets geometry of accessible widget. */
+            [[Gets geometry of accessible widget.]]
          }
          set {
-            /*@ Sets geometry of accessible widget. */
+            [[Sets geometry of accessible widget.]]
             return: bool;
          }
          keys {
-            screen_coords: bool; /*@ If true x and y values will be relative
-                                       to screen origin, otherwise relative to
-                                       canvas */
+            screen_coords: bool; [[If true x and y values will be relative to screen origin, otherwise relative to canvas]]
          }
          values {
             x: int;
@@ -64,16 +61,14 @@ mixin Elm_Interface_Atspi_Component ()
       }
       @property position @protected {
          set {
-            /*@ Sets position of accessible widget. */
+            [[Sets position of accessible widget.]]
             return: bool;
          }
          get {
-            /*@ Gets position of accessible widget. */
+            [[Gets position of accessible widget.]]
          }
          keys {
-            screen_coords: bool; /*@ If true x and y values will be relative
-                                       to screen origin, otherwise relative to
-                                       canvas */
+            screen_coords: bool; [[If true x and y values will be relative to screen origin, otherwise relative to canvas]]
          }
          values {
             x: int;
@@ -82,27 +77,22 @@ mixin Elm_Interface_Atspi_Component ()
       }
       contains @protected {
          params {
-            screen_coords: bool; /*@ If true x and y values will be relative
-                                       to screen origin, otherwise relative to
-                                       canvas */
+            screen_coords: bool; [[If true x and y values will be relative to screen origin, otherwise relative to canvas]]
             @in x: int;
             @in y: int;
          }
          return: bool;
       }
       focus_grab @protected {
-         /*@ Focuses accessible widget.
+         [[Focuses accessible widget.]]
 
-         @return true if focus grab focus has successed, false otherwise. */
+         return: bool; [[true if focus grab focus has successed, false otherwise.]]
 
-         return: bool;
       }
       accessible_at_point_get @protected {
-         /*@ Gets top component object occupying space at given coordinates. */
+         [[Gets top component object occupying space at given coordinates.]]
          params {
-            screen_coords: bool; /*@ If true x and y values will be relative
-                                       to screen origin, otherwise relative to
-                                       canvas */
+            screen_coords: bool; [[If true x and y values will be relative to screen origin, otherwise relative to canvas]]
             @in x: int;
             @in y: int;
          }
