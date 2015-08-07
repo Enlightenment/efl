@@ -3,371 +3,232 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
    eo_prefix: elm_obj_index;
    methods {
       @property autohide_disabled {
+         [[Enable or disable auto hiding feature for a given index widget.]]
          set {
-            /*@
-            Enable or disable auto hiding feature for a given index widget.
-
-            @see elm_index_autohide_disabled_get()
-
-            @ingroup Index */
          }
          get {
-            /*@
-            Get whether auto hiding feature is enabled or not for a given index widget.
-
-            @return $true, if auto hiding is disabled, $false otherwise
-
-            @see elm_index_autohide_disabled_set() for more details
-
-            @ingroup Index */
          }
          values {
-            disabled: bool; /*@ $true to disable auto hiding, $false to enable */
+            disabled: bool; [[$true to disable auto hiding, $false to enable]]
          }
       }
       @property omit_enabled {
+         [[Enable or disable omit feature for a given index widget.
+
+           @since 1.8]]
          set {
-            /*@
-            Enable or disable omit feature for a given index widget.
-
-            @see elm_index_omit_enabled_get()
-
-            @since 1.8
-
-            @ingroup Index */
          }
          get {
-            /*@
-            Get whether omit feature is enabled or not for a given index widget.
-
-            @return $true, if omit feature is enabled, $false otherwise
-
-            @see elm_index_omit_enabled_set()
-
-            @since 1.8
-
-            @ingroup Index */
          }
          values {
-            enabled: bool; /*@ $true to enable omit feature, $false to disable */
+            enabled: bool; [[$true to enable omit feature, $false to disable]]
          }
       }
       @property priority {
+         [[Control priority group of index. Priority group will be shown as many items as it can, and other group will be shown one character only.
+
+           @since 1.16]]
          set {
-            /*@
-            Set priority group of index. Priority group will be shown as many items as it can,
-            and other group will be shown one character only.
-
-            @see elm_index_priority_get()
-
-            @since 1.16
-
-            @ingroup Index */
          }
          get {
-            /*@
-            Get current priority group of index.
-
-            @return priority value in index
-
-            @see elm_index_priority_set()
-
-            @since 1.16
-
-            @ingroup Index */
          }
          values {
-            priority: int; /*@ $priority target priority value in index */
+            priority: int; [[$priority target priority value in index]]
          }
       }
 
       @property horizontal {
-         set {
-            /*@
-            Enable or disable horizontal mode on the index object
+          [[Enable or disable horizontal mode on the index object
 
-            @note Vertical mode is set by default.
+            Note: Vertical mode is set by default.
 
             On horizontal mode items are displayed on index from left to right,
-            instead of from top to bottom. Also, the index will scroll horizontally.
-
-            @see elm_index_horizontal_get()
-
-            @ingroup Index */
+            instead of from top to bottom. Also, the index will scroll horizontally.]]
+         set {
          }
          get {
-            /*@
-            Get a value whether horizontal mode is enabled or not.
-
-            @return $true means horizontal mode selection is enabled.
-            $false indicates it's disabled. If $obj is $NULL,
-            $false is returned.
-
-            @see elm_index_horizontal_set() for details.
-
-            @ingroup Index */
          }
          values {
-            horizontal: bool; /*@ $true to enable horizontal or $false to
-            disable it, i.e., to enable vertical mode. it's an area one @ref Fingers
-            "finger" wide on the bottom side of the index widget's container. */
+            horizontal: bool; [[$true to enable horizontal or $false to
+            disable it, i.e., to enable vertical mode. it's an area one Fingers
+            "finger" wide on the bottom side of the index widget's container.]]
          }
       }
       @property delay_change_time {
+         [[Set a delay change time for index object.
+
+           Note: delay time is 0.2 sec by default.]]
          set {
-            /*@
-            Set a delay change time for index object.
-
-            @note delay time is 0.2 sec by default.
-
-            @see elm_index_delay_change_time_get
-
-            @ingroup Index */
          }
          get {
-            /*@
-            Get a delay change time for index object.
-
-            @return delay change time in seconds
-
-            @see elm_index_delay_change_time_set
-
-            @ingroup Index */
          }
          values {
-            dtime: double; /*@ The delay change time to set. */
+            dtime: double; [[The delay change time to set.]]
          }
       }
       @property indicator_disabled {
+         [[Control the indicator as to be disabled.
+
+           In Index widget, Indicator notes popup text, which shows a letter has been selecting.]]
          set {
-            /*@
-            Set the indicator as to be disabled.
-
-            In Index widget, Indicator notes popup text, which shows a letter has been selecting.
-
-            @see elm_index_indicator_disabled_get()
-
-            @ingroup Index */
          }
          get {
-            /*@
-            Get the value of indicator's disabled status.
-
-            @return true if the indicator is disabled.
-
-            @see elm_index_indicator_disabled_set()
-
-            @ingroup Index */
          }
          values {
-            disabled: bool; /*@ $true to disable it, $false to enable it */
+            disabled: bool; [[$true to disable it, $false to enable it]]
          }
       }
       @property item_level {
+         [[Set the items level for a given index widget.
+
+           See: elm_index_item_level_get()]]
          set {
-            /*@
-            Set the items level for a given index widget.
-
-            @see elm_index_item_level_get()
-
-            @ingroup Index */
          }
          get {
-            /*@
-            Get the items level set for a given index widget.
-
-            @return $0 or $1, which are the levels $obj might be at.
-
-            @see elm_index_item_level_set() for more information
-
-            @ingroup Index */
          }
          values {
-            level: int; /*@ $0 or $1, the currently implemented levels. */
+            level: int; [[$0 or $1, the currently implemented levels.]]
          }
       }
       level_go {
-         /*@
-         Flush the changes made to the index items so they work correctly
+         [[Flush the changes made to the index items so they work correctly
 
-         This flushes any changes made to items indicating the object is ready to
-         go. You should call this before any changes you expect to work. This
-         is similar to elm_list_go().
+           This flushes any changes made to items indicating the object is ready to
+           go. You should call this before any changes you expect to work. This
+           is similar to elm_list_go().
 
-         @warning If not called, it won't display the index properly.
-
-         @ingroup Index */
-
+           Warning: If not called, it won't display the index properly.]]
          params {
-            @in level: int; /*@ The index level (one of $0 or $1) where changes were made */
+            @in level: int; [[The index level (one of $0 or $1) where changes were made]]
          }
       }
       item_prepend {
-         /*@
-         Prepend a new item on a given index widget.
+         [[Prepend a new item on a given index widget.
 
-         @return A handle to the item added or $NULL, on errors
 
-         Despite the most common usage of the $letter argument is for
-         single char strings, one could use arbitrary strings as index
-         entries.
+           Despite the most common usage of the $letter argument is for
+           single char strings, one could use arbitrary strings as index
+           entries.
 
-         $item will be the pointer returned back on $"changed", @c
-         "delay,changed" and $"selected" smart events.
+           $item will be the pointer returned back on $"changed",
+           "delay,changed" and $"selected" smart events.]]
 
-         @ingroup Index */
-
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[A handle to the item added or $NULL, on errors]]
          params {
-            @in letter: const(char)*; /*@ Letter under which the item should be indexed */
-            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is selected. */
-            @in data: const(void)* @optional; /*@ The item data to set for the index's item */
+            @in letter: const(char)*; [[Letter under which the item should be indexed]]
+            @in func: Evas_Smart_Cb @optional; [[The function to call when the item is selected.]]
+            @in data: const(void)* @optional; [[The item data to set for the index's item]]
          }
       }
       item_clear {
-         /*@
-         Removes @b all items from a given index widget.
+         [[Removes all items from a given index widget.
 
-         If deletion callbacks are set, via elm_object_item_del_cb_set(),
-         that callback function will be called for each item in $obj.
-
-         @ingroup Index */
-
+           If deletion callbacks are set, via elm_object_item_del_cb_set(),
+           that callback function will be called for each item in $obj.]]
       }
       item_insert_after {
-         /*@
-         Insert a new item into the index object after item $after.
+         [[Insert a new item into the index object after item $after.
 
-         @return A handle to the item added or $NULL, on errors
+           Despite the most common usage of the $letter argument is for
+           single char strings, one could use arbitrary strings as index
+           entries.
 
-         Despite the most common usage of the $letter argument is for
-         single char strings, one could use arbitrary strings as index
-         entries.
+           $item will be the pointer returned back on $"changed",
+           "delay,changed" and $"selected" smart events.
 
-         $item will be the pointer returned back on $"changed", @c
-         "delay,changed" and $"selected" smart events.
+           Note: If $relative is $NULL this function will behave as
+           elm_index_item_append().]]
 
-         @note If $relative is $NULL this function will behave as
-         elm_index_item_append().
-
-         @ingroup Index */
-
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[A handle to the item added or $NULL, on errors]]
          params {
-            @in after: Elm.Widget_Item *; /*@ The index item to insert after. */
-            @in letter: const(char)*; /*@ Letter under which the item should be indexed */
-            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
-            @in data: const(void)* @optional; /*@ The item data to set for the index's item */
+            @in after: Elm.Widget_Item *; [[The index item to insert after.]]
+            @in letter: const(char)*; [[Letter under which the item should be indexed]]
+            @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
+            @in data: const(void)* @optional; [[The item data to set for the index's item]]
          }
       }
       item_find {
-         /*@
-         Find a given index widget's item, <b>using item data</b>.
+         [[Find a given index widget's item, using item data.]]
 
-         @return The index item handle, if found, or $NULL otherwise
-
-         @ingroup Index */
-
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[The index item handle, if found, or $NULL otherwise]]
          params {
-            @in data: const(void)*; /*@ The item data pointed to by the desired index item */
+            @in data: const(void)*; [[The item data pointed to by the desired index item]]
          }
       }
       item_insert_before {
-         /*@
-         Insert a new item into the index object before item $before.
+         [[Insert a new item into the index object before item $before.
 
-         @return A handle to the item added or $NULL, on errors
+           Despite the most common usage of the $letter argument is for
+           single char strings, one could use arbitrary strings as index
+           entries.
 
-         Despite the most common usage of the $letter argument is for
-         single char strings, one could use arbitrary strings as index
-         entries.
+           $item will be the pointer returned back on $"changed",
+           "delay,changed" and $"selected" smart events.
 
-         $item will be the pointer returned back on $"changed", @c
-         "delay,changed" and $"selected" smart events.
+           Note: If $relative is $NULL this function will behave as
+           elm_index_item_prepend().]]
 
-         @note If $relative is $NULL this function will behave as
-         elm_index_item_prepend().
-
-         @ingroup Index */
-
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[A handle to the item added or $NULL, on errors]]
          params {
-            @in before: Elm.Widget_Item *; /*@ The index item to insert after. */
-            @in letter: const(char)*; /*@ Letter under which the item should be indexed */
-            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
-            @in data: const(void)* @optional; /*@ The item data to set for the index's item */
+            @in before: Elm.Widget_Item *; [[The index item to insert after.]]
+            @in letter: const(char)*; [[Letter under which the item should be indexed]]
+            @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
+            @in data: const(void)* @optional; [[The item data to set for the index's item]]
          }
       }
       item_append {
-         /*@
-         Append a new item on a given index widget.
+         [[Append a new item on a given index widget.
 
-         @return A handle to the item added or $NULL, on errors
+           Despite the most common usage of the $letter argument is for
+           single char strings, one could use arbitrary strings as index
+           entries.
 
-         Despite the most common usage of the $letter argument is for
-         single char strings, one could use arbitrary strings as index
-         entries.
+           $item will be the pointer returned back on $"changed",
+           "delay,changed" and $"selected" smart events.]]
 
-         $item will be the pointer returned back on $"changed", @c
-         "delay,changed" and $"selected" smart events.
-
-         @ingroup Index */
-
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[A handle to the item added or $NULL, on errors]]
          params {
-            @in letter: const(char)*; /*@ Letter under which the item should be indexed */
-            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is selected. */
-            @in data: const(void)* @optional; /*@ The item data to set for the index's item */
+            @in letter: const(char)*; [[Letter under which the item should be indexed]]
+            @in func: Evas_Smart_Cb @optional; [[The function to call when the item is selected.]]
+            @in data: const(void)* @optional; [[The item data to set for the index's item]]
          }
       }
       selected_item_get @const {
-         /*@
-         Returns the last selected item, for a given index widget.
+         [[Returns the last selected item, for a given index widget.]]
 
-         @return The last item @b selected on $obj (or $NULL, on errors).
-
-         @ingroup Index */
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[The last item selected on $obj (or $NULL, on errors).]]
          params {
-            @in level: int; /*@ $0 or $1, the currently implemented levels. */
+            @in level: int; [[$0 or $1, the currently implemented levels.]]
          }
       }
       item_sorted_insert {
-         /*@
-         Insert a new item into the given index widget, using $cmp_func
-         function to sort items (by item handles).
+         [[Insert a new item into the given index widget, using $cmp_func function to sort items (by item handles).
 
-         @return A handle to the item added or $NULL, on errors
+           Despite the most common usage of the $letter argument is for
+           single char strings, one could use arbitrary strings as index
+           entries.
 
-         Despite the most common usage of the $letter argument is for
-         single char strings, one could use arbitrary strings as index
-         entries.
+           $item will be the pointer returned back on $"changed",
+           "delay,changed" and $"selected" smart events.]]
 
-         $item will be the pointer returned back on $"changed", @c
-         "delay,changed" and $"selected" smart events.
-
-         @ingroup Index */
-
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[A handle to the item added or $NULL, on errors]]
          params {
-            @in letter: const(char)*; /*@ Letter under which the item should be indexed */
-            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
-            @in data: const(void)* @optional; /*@ The item data to set for the index's item */
-            @in cmp_func: Eina_Compare_Cb; /*@ The comparing function to be used to sort index
-            items <b>by index item handles</b> */
-            @in cmp_data_func: Eina_Compare_Cb @optional; /*@ A @b fallback function to be called for the
-            sorting of index items <b>by item data</b>). It will be used
-            when $cmp_func returns $0 (equality), which means an index
-            item with provided item data already exists. To decide which
-            data item should be pointed to by the index item in question, @p
-            cmp_data_func will be used. If $cmp_data_func returns a
-            non-negative value, the previous index item data will be
-            replaced by the given $item pointer. If the previous data need
-            to be freed, it should be done by the $cmp_data_func function,
-            because all references to it will be lost. If this function is
-            not provided ($NULL is given), index items will be @b
-            duplicated, if $cmp_func returns $0. */
+            @in letter: const(char)*; [[Letter under which the item should be indexed]]
+            @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
+            @in data: const(void)* @optional; [[The item data to set for the index's item]]
+            @in cmp_func: Eina_Compare_Cb; [[The comparing function to be used to sort index items by index item handles]]
+            @in cmp_data_func: Eina_Compare_Cb @optional; [[A fallback function to be called for the
+                                                            sorting of index items by item data). It will be used
+                                                            when $cmp_func returns $0 (equality), which means an index
+                                                            item with provided item data already exists. To decide which
+                                                            data item should be pointed to by the index item in question,
+                                                            $cmp_data_func will be used. If $cmp_data_func returns a
+                                                            non-negative value, the previous index item data will be
+                                                            replaced by the given $item pointer. If the previous data need
+                                                            to be freed, it should be done by the $cmp_data_func function,
+                                                            because all references to it will be lost. If this function is
+                                                            not provided ($NULL is given), index items will be
+                                                            duplicated, if $cmp_func returns $0.]]
          }
       }
    }
