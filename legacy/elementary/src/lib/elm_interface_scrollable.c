@@ -1858,46 +1858,29 @@ _elm_scroll_wanted_region_set(Evas_Object *obj)
    eo_do(obj, elm_interface_scrollable_content_region_set(wx, sid->wy, ww, wh));
 }
 
-static void
-_elm_scroll_wheel_event_cb(void *data,
-                           Evas *e EINA_UNUSED,
-                           Evas_Object *obj EINA_UNUSED,
-                           void *event_info)
+
+static Eina_Bool
+_scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
 {
-   Elm_Scrollable_Smart_Interface_Data *sid;
-   Evas_Event_Mouse_Wheel *ev;
+   Elm_Scrollable_Smart_Interface_Data *sid = data;
+   Evas_Event_Mouse_Wheel *ev = sid->event_info;
+
    Evas_Coord x = 0, y = 0, vw = 0, vh = 0, cw = 0, ch = 0;
-   int direction = 0;
    int pagenumber_h = 0, pagenumber_v = 0;
    int mx = 0, my = 0, minx = 0, miny = 0;
    Evas_Coord pwx, pwy;
    double t;
+   int direction;
 
-   sid = data;
-   ev = event_info;
    direction = ev->direction;
-
-   if (direction)
-     {
-        if (sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL) return;
-     }
-   else
-     {
-        if (sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL) return;
-     }
 
    pwx = sid->wx;
    pwy = sid->wy;
 
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if ((evas_key_modifier_is_set(ev->modifiers, "Control")) ||
-       (evas_key_modifier_is_set(ev->modifiers, "Alt")) ||
-       (evas_key_modifier_is_set(ev->modifiers, "Meta")) ||
-       (evas_key_modifier_is_set(ev->modifiers, "Hyper")) ||
-       (evas_key_modifier_is_set(ev->modifiers, "Super")))
-     return;
-   else if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
      direction = !direction;
+
    eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&x, &y));
    if (sid->scrollto.x.animator) x = sid->scrollto.x.end;
    if (sid->scrollto.y.animator) y = sid->scrollto.y.end;
@@ -2012,6 +1995,42 @@ _elm_scroll_wheel_event_cb(void *data,
         else sid->down.last_hold_y_wheel = EINA_FALSE;
         sid->down.last_time_y_wheel = t;
      }
+
+   return EINA_TRUE;
+}
+
+static void
+_elm_scroll_wheel_event_cb(void *data,
+                           Evas *e,
+                           Evas_Object *obj EINA_UNUSED,
+                           void *event_info)
+{
+   Elm_Scrollable_Smart_Interface_Data *sid;
+   Evas_Event_Mouse_Wheel *ev;
+   int direction;
+
+   sid = data;
+   ev = event_info;
+   sid->event_info = event_info;
+   direction = ev->direction;
+
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if ((evas_key_modifier_is_set(ev->modifiers, "Control")) ||
+       (evas_key_modifier_is_set(ev->modifiers, "Alt")) ||
+       (evas_key_modifier_is_set(ev->modifiers, "Meta")) ||
+       (evas_key_modifier_is_set(ev->modifiers, "Hyper")) ||
+       (evas_key_modifier_is_set(ev->modifiers, "Super")))
+     return;
+   if (direction)
+     {
+        if (sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL) return;
+     }
+   else
+     {
+        if (sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL) return;
+     }
+
+   evas_post_event_callback_push(e, _scroll_wheel_post_event_cb, sid);
 }
 
 static Eina_Bool

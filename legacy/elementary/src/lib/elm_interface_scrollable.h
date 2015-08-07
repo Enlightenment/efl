@@ -193,6 +193,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
 
    unsigned char size_adjust_recurse;
    unsigned char size_count;
+   void         *event_info;
    Eina_Bool  size_adjust_recurse_abort : 1;
 
    Eina_Bool  momentum_animator_disabled : 1;
