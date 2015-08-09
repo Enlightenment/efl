@@ -1442,47 +1442,47 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
    ed->walking_callbacks++;
 
    ssp = _edje_signal_callback_patterns_ref(ed->callbacks);
-
-   m = (Edje_Signal_Callback_Matches *)ed->callbacks->matches;
-   EINA_REFCOUNT_REF(m);
-
-   callback_extra_data = (data) ? data->data : NULL;
-
-   if (eina_inarray_count(&ssp->u.callbacks.globing))
-     r = edje_match_callback_exec(ssp,
-                                  m->matches,
-                                  sig,
-                                  src,
-                                  ed,
-                                  prop);
-
-   if (!r)
-     goto break_prog;
-
-   match = edje_match_signal_source_hash_get(sig, src,
-                                             ssp->exact_match);
-   if (match)
+   if (ssp)
      {
-        const Edje_Signal_Callback_Match *cb;
-        unsigned int *i;
+        m = (Edje_Signal_Callback_Matches *)ed->callbacks->matches;
+        EINA_REFCOUNT_REF(m);
 
-        EINA_INARRAY_FOREACH(match, i)
-        {
-           if (ed->callbacks->flags[*i].delete_me) continue;
-           if ((prop) && (ed->callbacks->flags[*i].propagate)) continue;
+        callback_extra_data = (data) ? data->data : NULL;
 
-           cb = &m->matches[*i];
+        if (eina_inarray_count(&ssp->u.callbacks.globing))
+          r = edje_match_callback_exec(ssp,
+                                       m->matches,
+                                       sig,
+                                       src,
+                                       ed,
+                                       prop);
 
-           cb->func((void *)ed->callbacks->custom_data[*i], ed->obj, sig, src);
-           if (_edje_block_break(ed))
-             break;
-        }
-     }
+        if (!r) goto break_prog;
+
+        match = edje_match_signal_source_hash_get(sig, src,
+                                                  ssp->exact_match);
+        if (match)
+          {
+             const Edje_Signal_Callback_Match *cb;
+             unsigned int *i;
+
+             EINA_INARRAY_FOREACH(match, i)
+               {
+                  if (ed->callbacks->flags[*i].delete_me) continue;
+                  if ((prop) && (ed->callbacks->flags[*i].propagate)) continue;
+
+                  cb = &m->matches[*i];
+
+                  cb->func((void *)ed->callbacks->custom_data[*i], ed->obj, sig, src);
+                  if (_edje_block_break(ed)) break;
+               }
+          }
 
 break_prog:
-   _edje_signal_callback_matches_unref(m);
+        _edje_signal_callback_matches_unref(m);
 
-   _edje_signal_callback_patterns_unref(ssp);
+        _edje_signal_callback_patterns_unref(ssp);
+     }
 
    ed->walking_callbacks--;
 

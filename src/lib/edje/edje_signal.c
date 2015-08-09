@@ -406,8 +406,7 @@ _edje_signal_callback_patterns_ref(const Edje_Signal_Callback_Group *gp)
 
 got_it:
    tmp = (Edje_Signal_Callback_Matches *)gp->matches;
-
-   EINA_REFCOUNT_REF(tmp->patterns);
+   if (tmp->patterns) EINA_REFCOUNT_REF(tmp->patterns);
    return gp->matches->patterns;
 }
 
