@@ -132,6 +132,7 @@ void test_table4(void *data, Evas_Object *obj, void *event_info);
 void test_table5(void *data, Evas_Object *obj, void *event_info);
 void test_table6(void *data, Evas_Object *obj, void *event_info);
 void test_table7(void *data, Evas_Object *obj, void *event_info);
+void test_table8(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid2(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid3(void *data, Evas_Object *obj, void *event_info);
@@ -575,6 +576,7 @@ add_tests:
    ADD_TEST(NULL, "Containers", "Table 5", test_table5);
    ADD_TEST(NULL, "Containers", "Table 6", test_table6);
    ADD_TEST(NULL, "Containers", "Table 7", test_table7);
+   ADD_TEST(NULL, "Containers", "Table Padding", test_table8);
    ADD_TEST(NULL, "Containers", "Layout", test_layout);
    ADD_TEST(NULL, "Containers", "Layout 2", test_layout2);
    ADD_TEST(NULL, "Containers", "Grid", test_grid);
