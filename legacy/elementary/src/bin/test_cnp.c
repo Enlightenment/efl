@@ -16,13 +16,31 @@ _bt_copy_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA
                          ELM_SEL_FORMAT_TEXT, txt, strlen(txt));
 }
 
+static Eina_Bool
+_selection(void *d EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data *ev)
+{
+   const char *fmt = NULL;
+   switch (ev->format)
+     {
+        case ELM_SEL_FORMAT_TARGETS: fmt = "TARGETS"; break;
+        case ELM_SEL_FORMAT_NONE: fmt = "NONE"; break;
+        case ELM_SEL_FORMAT_TEXT: fmt = "TEXT"; break;
+        case ELM_SEL_FORMAT_MARKUP: fmt = "MARKUP"; break;
+        case ELM_SEL_FORMAT_IMAGE: fmt = "IMAGE"; break;
+        case ELM_SEL_FORMAT_VCARD: fmt = "VCARD"; break;
+        case ELM_SEL_FORMAT_HTML: fmt = "HTML"; break;
+     }
+   fprintf(stderr, "got selection type '%s': length %zu\n", fmt, ev->len);
+   return EINA_TRUE;
+}
+
 static void
 _bt_paste_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *en = data;
 
    elm_cnp_selection_get(en, ELM_SEL_TYPE_CLIPBOARD, ELM_SEL_FORMAT_TEXT,
-                         NULL, NULL);
+                         _selection, NULL);
 }
 
 static void
