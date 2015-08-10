@@ -261,6 +261,9 @@ void
 _ector_renderer_cairo_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
 {
    Eo *parent;
+   //FIXME, As base class  destructor can't call destructor of mixin class.
+   // call explicit API to free shape data.
+   eo_do(obj, efl_gfx_shape_reset());
 
    eo_do(obj, parent = eo_parent_get());
    eo_data_xunref(parent, pd->parent, obj);
