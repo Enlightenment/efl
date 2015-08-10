@@ -157,7 +157,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             ]]
          }
          values {
-            mode: Elm.Object.Multi_Select_Mode(Elm.Object.Multi_Select_Mode.max); /*@ The multi select mode */
+            mode: Elm.Object.Multi_Select_Mode(Elm.Object.Multi_Select_Mode.max); [[The multi select mode]]
          }
       }
       @property block_count {
