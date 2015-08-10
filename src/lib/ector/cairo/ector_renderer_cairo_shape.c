@@ -55,6 +55,8 @@ static void (*cairo_set_line_join)(cairo_t *cr, cairo_line_join_t line_join) = N
 static void (*cairo_save)(cairo_t *cr) = NULL;
 static void (*cairo_restore)(cairo_t *cr) = NULL;
 
+static void (*cairo_set_dash) (cairo_t *cr, const double *dashes, int num_dashes, double offset) = NULL;
+
 typedef struct _Ector_Renderer_Cairo_Shape_Data Ector_Renderer_Cairo_Shape_Data;
 struct _Ector_Renderer_Cairo_Shape_Data
 {
@@ -163,6 +165,8 @@ static Eina_Bool
 _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd, Ector_Rop op, Eina_Array *clips, unsigned int mul_col)
 {
    int r, g, b, a;
+   unsigned i;
+   double *dashinfo;
    if (pd->path == NULL) return EINA_FALSE;
 
    USE(obj, cairo_save, EINA_FALSE);
@@ -200,6 +204,17 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
             a = (((pd->shape->stroke.color.a * A_VAL(&mul_col)) + 0xff) >> 8);
             ector_color_argb_unpremul(a, &r, &g, &b);
             cairo_set_source_rgba(pd->parent->cairo, r/255.0, g/255.0, b/255.0, a/255.0);
+            if (pd->shape->stroke.dash)
+              {
+                 dashinfo = (double *) malloc(2 * pd->shape->stroke.dash_length * sizeof(double));
+                 for (i = 0; i < pd->shape->stroke.dash_length; i++)
+                   {
+                      dashinfo[i*2] = pd->shape->stroke.dash[i].length;
+                      dashinfo[i*2 + 1] = pd->shape->stroke.dash[i].gap;
+                   }
+                 USE(obj, cairo_set_dash, EINA_FALSE);
+                 cairo_set_dash(pd->parent->cairo, dashinfo, pd->shape->stroke.dash_length * 2, 0);
+              }
          }
 
        // Set dash, cap and join
