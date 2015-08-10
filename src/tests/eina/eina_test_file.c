@@ -32,6 +32,12 @@
 #include "eina_safety_checks.h"
 #include "eina_file_common.h"
 
+#ifdef _WIN32
+# define PATH_SEP_C '\\'
+#else
+# define PATH_SEP_C '/'
+#endif
+
 static int default_dir_rights = 0777;
 const int file_min_offset = 1;
 
@@ -144,7 +150,7 @@ Eina_Tmpstr*
 get_full_path(const char* tmpdirname, const char* filename)
 {
     char full_path[PATH_MAX] = "";
-    eina_str_join(full_path, sizeof(full_path), '/', tmpdirname, filename);
+    eina_str_join(full_path, sizeof(full_path), PATH_SEP_C, tmpdirname, filename);
     return eina_tmpstr_add(full_path);
 }
 
@@ -167,12 +173,26 @@ START_TEST(eina_file_direct_ls_simple)
 {
    eina_init();
 
+   /*
+    * Windows: naming conventions
+    * https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
+    * 1) Do not end a directory with a period
+    * 2) '*' (asterisk) is a reserved character
+    * 3) ':' (colon) is a reserved character
+    */
+
    const char *good_dirs[] =
      {
         "eina_file_direct_ls_simple_dir",
+#ifndef _WIN32
         "a.",
+#endif
         "$a$b",
+#ifndef _WIN32
         "~$a@:-*$b!{}"
+#else
+        "~$a@µ-#$b!{}"
+#endif
      };
    const int good_dirs_count = sizeof(good_dirs) / sizeof(const char *);
    Eina_Tmpstr *test_dirname = get_eina_test_file_tmp_dir();
@@ -215,12 +235,26 @@ START_TEST(eina_file_ls_simple)
 {
    eina_init();
 
+   /*
+    * Windows: naming conventions
+    * https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247%28v=vs.85%29.aspx
+    * 1) Do not end a directory with a period
+    * 2) '*' (asterisk) is a reserved character
+    * 3) ':' (colon) is a reserved character
+    */
+
    const char *good_dirs[] =
      {
         "eina_file_ls_simple_dir",
+#ifndef _WIN32
         "b.",
+#endif
         "$b$a",
+#ifndef _WIN32
         "~$b@:-*$a!{}"
+#else
+        "~$b@µ-#$a!{}"
+#endif
      };
    const int good_dirs_count = sizeof(good_dirs) / sizeof(const char *);
    Eina_Tmpstr *test_dirname = get_eina_test_file_tmp_dir();
