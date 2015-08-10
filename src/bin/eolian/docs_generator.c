@@ -371,7 +371,7 @@ docs_generate_function(const Eolian_Function *fid, Eolian_Function_Type ftype,
          }
      }
 
-   if (!itr || !eina_iterator_next(itr, (void**)&par))
+   if (itr && !eina_iterator_next(itr, (void**)&par))
      {
         eina_iterator_free(itr);
         itr = NULL;
@@ -380,11 +380,12 @@ docs_generate_function(const Eolian_Function *fid, Eolian_Function_Type ftype,
    /* when return is not set on getter, value becomes return instead of param */
    if (ftype == EOLIAN_PROP_GET && !eolian_function_return_type_get(fid, ftype))
      {
+        const Eolian_Function_Parameter *rvpar = vpar;
         if (!eina_iterator_next(vitr, (void**)&vpar))
           {
              /* one value - not out param */
              eina_iterator_free(vitr);
-             rdoc = eolian_parameter_documentation_get(vpar);
+             rdoc = rvpar ? eolian_parameter_documentation_get(rvpar) : NULL;
              vitr = NULL;
              vpar = NULL;
           }
