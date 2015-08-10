@@ -680,6 +680,7 @@ struct _Ecore_X_Event_Window_Property
    Ecore_X_Window win;
    Ecore_X_Atom   atom;
    Ecore_X_Time   time;
+   Eina_Bool      state; /**< @since 1.16 If @c EINA_TRUE, property was deleted */
 };
 
 struct _Ecore_X_Event_Window_Colormap

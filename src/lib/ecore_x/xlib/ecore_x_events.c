@@ -1351,6 +1351,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
       e->win = xevent->xproperty.window;
       e->atom = xevent->xproperty.atom;
       e->time = xevent->xproperty.time;
+      e->state = !!xevent->xproperty.state;
       _ecore_x_event_last_time = e->time;
       ecore_event_add(ECORE_X_EVENT_WINDOW_PROPERTY, e, NULL, NULL);
    }
