@@ -6,430 +6,262 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
    eo_prefix: elm_obj_image;
    methods {
       @property editable {
+         [[Contrtol if thhe image is 'editable'.
+
+           This means the image is a valid drag target for drag and drop, and can be
+           cut or pasted too.]]
          set {
-            /*@
-            Make the image 'editable'.
-
-            This means the image is a valid drag target for drag and drop, and can be
-            cut or pasted too.
-
-            @ingroup Image */
          }
          get {
-            /*@
-            Check if the image is 'editable'.
-
-            @return Editability.
-
-            A return value of true means the image is a valid drag target
-            for drag and drop, and can be cut or pasted too.
-
-            @ingroup Image */
          }
          values {
-            set: bool; /*@ Turn on or off editability. Default is $false. */
+            set: bool; [[Turn on or off editability. Default is $false.]]
          }
       }
       @property resize_down {
-         set {
-            /*@
-              Set whether the object's image can be resized to a size smaller than the original one.
+         [[Control whether the object's image can be resized to a size smaller than the original one.
 
-              @ingroup Image
-              @since 1.7
-             */
+           @since 1.7]]
+         set {
             legacy: null;
          }
          get {
-            /*@
-              Get whether the object's image can be resized to a size smaller than the original one.
-
-              @ingroup Image
-              @since 1.7
-             */
             legacy: null;
          }
          values {
-            resize_down: bool; /*@ whether resizing down is allowed */
+            resize_down: bool; [[whether resizing down is allowed]]
          }
       }
       @property resize_up {
-         set {
-            /*@
-              Set whether the object's image can be resized to a size larget than the original one.
+         [[Control whether the object's image can be resized to a size larget than the original one.
 
-              @ingroup Image
-              @since 1.7
-             */
+           @since 1.7]]
+         set {
             legacy: null;
          }
          get {
-            /*@
-              Get whether the object's image can be resized to a size larget than the original one.
-
-              @ingroup Image
-              @since 1.7
-             */
             legacy: null;
          }
          values {
-            resize_up: bool; /*@ whether resizing up is allowed */
+            resize_up: bool; [[whether resizing up is allowed]]
          }
       }
       @property smooth {
+         [[Control the smooth effect for an image.
+
+           Set the scaling algorithm to be used when scaling the image. Smooth
+           scaling provides a better resulting image, but is slower.
+
+           The smooth scaling should be disabled when making animations that change
+           the image size, since it will be faster. Animations that don't require
+           resizing of the image can keep the smooth scaling enabled (even if the
+           image is already scaled, since the scaled image will be cached).]]
          set {
-            /*@
-            Set the smooth effect for an image.
-
-            Set the scaling algorithm to be used when scaling the image. Smooth
-            scaling provides a better resulting image, but is slower.
-
-            The smooth scaling should be disabled when making animations that change
-            the image size, since it will be faster. Animations that don't require
-            resizing of the image can keep the smooth scaling enabled (even if the
-            image is already scaled, since the scaled image will be cached).
-
-            @see elm_image_smooth_get()
-
-            @ingroup Image */
          }
          get {
-            /*@
-            Get the smooth effect for an image.
-
-            @return $true if smooth scaling is enabled, $false otherwise.
-
-            @see elm_image_smooth_set()
-
-            @ingroup Image */
          }
          values {
-            smooth: bool; /*@ $true if smooth scaling should be used, $false
-            otherwise. Default is $true. */
+            smooth: bool; [[$true if smooth scaling should be used, $false otherwise. Default is $true.]]
          }
       }
       @property no_scale {
+         [[Control scaling behaviour of this object.
+
+           This function disables scaling of the elm_image widget through the
+           function elm_object_scale_set(). However, this does not affect the widget
+           size/resize in any way. For that effect, take a look at
+           @.resizable and @Elm.Widget.scale]]
          set {
-            /*@
-            Disable scaling of this object.
-
-            This function disables scaling of the elm_image widget through the
-            function elm_object_scale_set(). However, this does not affect the widget
-            size/resize in any way. For that effect, take a look at
-            elm_image_resizable_set().
-
-            @see elm_image_no_scale_get()
-            @see elm_image_resizable_set()
-            @see elm_object_scale_set()
-
-            @ingroup Image */
          }
          get {
-            /*@
-            Get whether scaling is disabled on the object.
-
-            @return $true if scaling is disabled, $false otherwise
-
-            @see elm_image_no_scale_set()
-
-            @ingroup Image */
          }
          values {
-            no_scale: bool; /*@ $true if the object is not scalable, $false
-            otherwise. Default is $false. */
+            no_scale: bool; [[$true if the object is not scalable, $false otherwise. Default is $false.]]
          }
       }
       @property scale {
-         set {
-            /*@
-              Set the scale of the object's image.
+         [[Control the scale of the object's image.
 
-              @ingroup Image
-              @since 1.7
-             */
+           @since 1.7]]
+         set {
             legacy: null;
          }
          get {
-            /*@
-              Get the scale of the object's image.
-
-              @ingroup Image
-              @since 1.7
-             */
             legacy: null;
          }
          values {
-            scale: double; /*@ Object's image scale. */
+            scale: double; [[Object's image scale.]]
          }
       }
       @property fill_inside {
+         [[Control the resize method for the object's internal image when maintaining a given aspect ratio.
+
+           If $fill_inside is true, image does not overflow the widget and
+           blank spaces are added to fill the space that is still free. If it
+           is false, the image overflows the image will fill all space and
+           overflow in its larger dimension.
+
+           You can think of it as "fill: inside" or "fill: outside" and not as
+           "fill the inside".
+
+           @since 1.7]]
          set {
-            /*@
-              Set the resize method for the object's internal image when maintaining a given aspect ratio.
-
-              If $fill_inside is true, image does not overflow the widget and
-              blank spaces are added to fill the space that is still free. If it
-              is false, the image overflows the image will fill all space and
-              overflow in its larger dimension.
-
-              You can think of it as "fill: inside" or "fill: outside" and not as
-              "fill the inside".
-
-              @see elm_image_fill_inside_get()
-              @see elm_image_fill_outside_get()
-              @see elm_image_fill_outside_set()
-              @ingroup Image
-              @since 1.7
-             */
             legacy: null;
          }
          get {
-            /*@
-              Set the resize method for the object's internal image when maintaining a given aspect ratio.
-
-              @see elm_image_fill_inside_set()
-              @see elm_image_fill_outside_get()
-              @see elm_image_fill_outside_set()
-              @ingroup Image
-              @since 1.7
-             */
             legacy: null;
          }
          values {
-            fill_inside: bool; /*@ Resize method for the object's internal image. */
+            fill_inside: bool; [[Resize method for the object's internal image.]]
          }
       }
       @property aspect_fixed {
          set {
-            /*@
-            Set whether the original aspect ratio of the image should be kept on resize.
+            [[Control whether the original aspect ratio of the image should be kept on resize.
 
-            The original aspect ratio (width / height) of the image is usually
-            distorted to match the object's size. Enabling this option will retain
-            this original aspect, and the way that the image is fit into the object's
-            area depends on the option set by elm_image_fill_outside_set().
-
-            @see elm_image_aspect_fixed_get()
-            @see elm_image_fill_outside_set()
-
-            @ingroup Image */
+              The original aspect ratio (width / height) of the image is usually
+              distorted to match the object's size. Enabling this option will retain
+              this original aspect, and the way that the image is fit into the object's
+              area depends on the option set by @.fill_outside.]]
          }
          get {
-            /*@
-            Get if the object retains the original aspect ratio.
-
-            @return $true if the object keeps the original aspect, $false
-            otherwise.
-
-            @ingroup Image */
          }
          values {
-            fixed: bool; /*@ $true if the image should retain the aspect,
-            $false otherwise. */
+            fixed: bool; [[$true if the image should retain the aspect, $false otherwise.]]
          }
       }
       @property orient {
+         [[Contrtol the image orientation.
+
+           This function allows to rotate or flip the given image.]]
          set {
-            /*@
-            Set the image orientation.
-
-            This function allows to rotate or flip the given image.
-
-            @see elm_image_orient_get()
-            @see @ref Elm_Image_Orient
-
-            @ingroup Image */
          }
          get {
-            /*@
-            Get the image orientation.
-
-            @return The image orientation @ref Elm_Image_Orient
-
-            @see elm_image_orient_set()
-            @see @ref Elm_Image_Orient
-
-            @ingroup Image */
          }
          values {
-            orient: Elm_Image_Orient; /*@ The image orientation @ref Elm_Image_Orient
-            Default is #ELM_IMAGE_ORIENT_NONE. */
+            orient: Elm_Image_Orient; [[The image orientation Elm_Image_Orient Default is #ELM_IMAGE_ORIENT_NONE.]]
          }
       }
       @property fill_outside {
+         [[Control if the image fills the entire object area, when keeping the aspect ratio.
+
+           When the image should keep its aspect ratio even if resized to another
+           aspect ratio, there are two possibilities to resize it: keep the entire
+           image inside the limits of height and width of the object ($fill_outside
+           is $false) or let the extra width or height go outside of the object,
+           and the image will fill the entire object ($fill_outside is $true).
+
+           Note: This option will have no effect if @.aspect_fixed
+           is set to $false.
+
+           See also @.fill_inside.]]
          set {
-            /*@
-            Set if the image fills the entire object area, when keeping the aspect ratio.
-
-            When the image should keep its aspect ratio even if resized to another
-            aspect ratio, there are two possibilities to resize it: keep the entire
-            image inside the limits of height and width of the object ($fill_outside
-            is $false) or let the extra width or height go outside of the object,
-            and the image will fill the entire object ($fill_outside is $true).
-
-            @note This option will have no effect if
-            elm_image_aspect_fixed_set() is set to $false.
-
-            @see elm_image_fill_inside_get()
-            @see elm_image_fill_inside_set()
-            @see elm_image_fill_outside_get()
-            @see elm_image_aspect_fixed_set()
-
-            @ingroup Image */
          }
          get {
-            /*@
-            Get if the object is filled outside
-
-            @return $true if the object is filled outside, $false otherwise.
-
-            @see elm_image_fill_inside_get()
-            @see elm_image_fill_inside_set()
-            @see elm_image_fill_outside_set()
-
-            @ingroup Image */
          }
          values {
-            fill_outside: bool; /*@ $true if the object is filled outside,
-            $false otherwise. Default is $false. */
+            fill_outside: bool; [[$true if the object is filled outside, $false otherwise. Default is $false.]]
          }
       }
       @property resizable {
+         [[Control if the object is (up/down) resizable.
+
+           This function limits the image resize ability. If $size_up is set to
+           $false, the object can't have its height or width resized to a value
+           higher than the original image size. Same is valid for $size_down.]]
          set {
-            /*@
-            Set if the object is (up/down) resizable.
-
-            This function limits the image resize ability. If $size_up is set to
-            $false, the object can't have its height or width resized to a value
-            higher than the original image size. Same is valid for $size_down.
-
-            @see elm_image_resizable_get()
-
-            @ingroup Image */
          }
          get {
-            /*@
-            Get if the object is (up/down) resizable.
-
-            @see elm_image_resizable_set()
-
-            @ingroup Image */
          }
          values {
-            up: bool; /*@ A bool to set if the object is resizable up. Default is
-            $true. */
-            down: bool; /*@ A bool to set if the object is resizable down. Default
-            is $true. */
+            up: bool; [[A bool to set if the object is resizable up. Default is $true.]]
+            down: bool; [[A bool to set if the object is resizable down. Default is $true.]]
          }
       }
       @property preload_disabled {
          set {
-            /*@
-            Enable or disable preloading of the image
-
-            @ingroup Image */
+            [[Enable or disable preloading of the image]]
          }
          values {
-            disabled: bool; /*@ If true, preloading will be disabled */
+            disabled: bool; [[If true, preloading will be disabled]]
          }
       }
       @property mmap {
          set {
-            /*@
-            Set the file that will be used as the image's source.
+            [[Set the file that will be used as the image's source.
 
-            @return ($true = success, $false = error)
+              See: elm_image_file_set()
 
-            @see elm_image_file_set()
+              Note: This function will trigger the Edje file case based on the
+              extension of the $file string use to create the Eina_File (expects
+              $".edj", for this case).
 
-            @note This function will trigger the Edje file case based on the
-            extension of the @a file string use to create the Eina_File (expects
-            $".edj", for this case).
+              Note: If you use animated gif image and create multiple image objects with
+              one gif image file, you should set the $group differently for each object.
+              Or image objects will share one evas image cache entry and you will get
+              unwanted frames.]]
 
-            @note If you use animated gif image and create multiple image objects with
-            one gif image file, you should set the $group differently for each object.
-            Or image objects will share one evas image cache entry and you will get
-            unwanted frames.
-
-            @ingroup Image */
-            return: bool;
+            return: bool; [[$true = success, $false = error]]
             legacy: null;
          }
          values {
-            file: const(Eina_File)*; /*@ The handler to an Eina_File that will be used as image source */
-            group: const(char)* @optional; /*@ The group that the image belongs to, in case it's an
-            EET (including Edje case) file. This can be used as a key inside
-            evas image cache if this is a normal image file not eet file. */
+            file: const(Eina_File)*; [[The handler to an Eina_File that will be used as image source]]
+            group: const(char)* @optional; [[The group that the image belongs to, in case it's an EET (including Edje case) file. This can be used as a key inside evas image cache if this is a normal image file not eet file.]]
          }
       }
       @property memfile {
          set {
-            /*@
-            Set a location in memory to be used as an image object's source
-            bitmap.
+            [[Set a location in memory to be used as an image object's source bitmap.
 
-            This function is handy when the contents of an image file are
-            mapped in memory, for example.
+              This function is handy when the contents of an image file are
+              mapped in memory, for example.
 
-            The $format string should be something like $"png", $"jpg",
-            $"tga", $"tiff", $"bmp" etc, when provided ($NULL, on the
-            contrary). This improves the loader performance as it tries the
-            "correct" loader first, before trying a range of other possible
-            loaders until one succeeds.
+              The $format string should be something like $"png", $"jpg",
+              $"tga", $"tiff", $"bmp" etc, when provided ($NULL, on the
+              contrary). This improves the loader performance as it tries the
+              "correct" loader first, before trying a range of other possible
+              loaders until one succeeds.
 
-            @return ($true = success, $false = error)
+              @since 1.7]]
 
-            @since 1.7
-
-            @ingroup Image */
-            return: bool;
+            return: bool; [[$true = success, $false = error]]
          }
          values {
-            img: const(void)*; /*@ The binary data that will be used as image source */
-            size: size; /*@ The size of binary data blob $img */
-            format: const(char)* @optional; /*@ (Optional) expected format of $img bytes */
-            key: const(char)* @optional; /*@ Optional indexing key of $img to be passed to the
-            image loader (eg. if $img is a memory-mapped EET file) */
+            img: const(void)*; [[The binary data that will be used as image source]]
+            size: size; [[The size of binary data blob $img]]
+            format: const(char)* @optional; [[(Optional) expected format of $img bytes]]
+            key: const(char)* @optional; [[Optional indexing key of $img to be passed to the image loader (eg. if $img is a memory-mapped EET file)]]
          }
       }
       @property object {
          get {
-            /*@
-            Get the inlined image object of the image widget.
+            [[Get the inlined image object of the image widget.
 
-            @return The inlined image object, or NULL if none exists
+              This function allows one to get the underlying $Evas_Object of type
+              Image from this elementary widget. It can be useful to do things like get
+              the pixel data, save the image to a file, etc.
 
-            This function allows one to get the underlying $Evas_Object of type
-            Image from this elementary widget. It can be useful to do things like get
-            the pixel data, save the image to a file, etc.
+              Note: Be careful to not manipulate it, as it is under control of
+              elementary.]]
 
-            @note Be careful to not manipulate it, as it is under control of
-            elementary.
-
-            @ingroup Image */
-            return: Evas.Object *;
+            return: Evas.Object *; [[The inlined image object, or NULL if none exists]]
          }
       }
       @property object_size {
          get {
-            /*@
-            Get the current size of the image.
+            [[Get the current size of the image.
 
-            This is the real size of the image, not the size of the object.
-
-            @ingroup Image */
+              This is the real size of the image, not the size of the object.]]
          }
          values {
-            w: int; /*@ Pointer to store width, or NULL. */
-            h: int; /*@ Pointer to store height, or NULL. */
+            w: int; [[Pointer to store width, or NULL.]]
+            h: int; [[Pointer to store height, or NULL.]]
          }
       }
       sizing_eval {
-         /*@
-           Re-evaluate the object's final geometry.
+         [[Re-evaluate the object's final geometry.
 
-           @ingroup Image
-           @since 1.7 */
+           @since 1.7]]
          legacy: null;
       }
    }
