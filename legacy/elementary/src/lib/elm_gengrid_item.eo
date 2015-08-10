@@ -29,154 +29,102 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
       methods {
            @property prev {
                 get {
-                     /*@
-                      Get the @b previous item in a gengrid widget's internal list of items,
-                      given a handle to one of those items.
+                     [[Get the previous item in a gengrid widget's internal list of items, given a handle to one of those items.
 
-                      This returns the item placed before the $item, on the container
-                      gengrid.
-
-                      @see elm_gengrid_item_next_get()
-
-                      @ingroup Gengrid
-                      */
+                       This returns the item placed before the $item, on the container
+                       gengrid.]]
                 }
                 values {
-                     item: Elm.Widget_Item *; /*@ @return The item before $item, or $NULL if there's none (and on errors) */
+                     item: Elm.Widget_Item *; [[The item before $item, or $NULL if there's none (and on errors)]]
                 }
            }
            @property next {
                 get {
-                     /*@
-                      Get the @b next item in a gengrid widget's internal list of items,
-                      given a handle to one of those items.
+                     [[Get the next item in a gengrid widget's internal list of items,
+                       given a handle to one of those items.
 
-                      This returns the item placed after the $item, on the container
-                      gengrid.
-
-                      @see elm_gengrid_item_prev_get()
-
-                      @ingroup Gengrid
-                      */
+                       This returns the item placed after the $item, on the container
+                       gengrid.]]
                 }
                 values {
-                     item: Elm.Widget_Item *; /*@ @return The item after $item, or $NULL if there's none (and on errors) */
+                     item: Elm.Widget_Item *; [[The item after $item, or $NULL if there's none (and on errors)]]
                 }
            }
            @property selected {
+                [[Control whether a given gengrid item is selected or not
+
+                  This API returns true for all the items selected in multi-select mode as well.
+
+                  This sets the selected state of an item. If multi-selection is
+                  not enabled on the containing gengrid and $selected is
+                  true, any other previously selected items will get
+                  unselected in favor of this new one.]]
                 get {
-                     /*@
-                      Get whether a given gengrid item is selected or not
-
-                      This API returns true for all the items selected in multi-select mode as well.
-
-                      @see elm_gengrid_item_selected_set() for more details
-
-                      @ingroup Gengrid
-                      */
                 }
                 set {
-                     /*@
-                      Set whether a given gengrid item is selected or not
-
-                      This sets the selected state of an item. If multi-selection is
-                      not enabled on the containing gengrid and $selected is @c
-                      true, any other previously selected items will get
-                      unselected in favor of this new one.
-
-                      @see elm_gengrid_item_selected_get()
-
-                      @ingroup Gengrid
-                      */
                 }
                 values {
-                     selected: bool; /*@ the selected state ($true selected, $false not selected) */
+                     selected: bool; [[the selected state ($true selected, $false not selected)]]
                 }
            }
            @property item_class {
                 get {
-                     /*@
-                      Get the Gengrid Item class for the given Gengrid Item.
+                     [[Get the Gengrid Item class for the given Gengrid Item.
 
-                      This returns the Gengrid_Item_Class for the given item. It can be used to examine
-                      the function pointers and item_style.
-
-                      @ingroup Gengrid
-                      */
+                       This returns the Gengrid_Item_Class for the given item. It can be used to examine
+                       the function pointers and item_style.]]
                 }
                 values {
-                     itc: const (Elm_Gengrid_Item_Class) *; /*@ Gengrid Item class for the given item */
+                     itc: const (Elm_Gengrid_Item_Class) *; [[Gengrid Item class for the given item]]
                 }
            }
            @property index {
                 get {
-                     /*@
-                      Get the index of the item. It is only valid once displayed.
-
-                      @ingroup Gengrid
-                      */
+                     [[Get the index of the item. It is only valid once displayed.]]
                 }
                 values {
-                     index: int(-1); /*@ @return the position inside the list of item. */
+                     index: int(-1); [[the position inside the list of item.]]
                 }
            }
            @property pos {
                 get {
-                     /*@
-                      Get a given gengrid item's position, relative to the whole
-                      gengrid's grid area.
+                     [[Get a given gengrid item's position, relative to the whole gengrid's grid area.
 
-                      This returns the "logical" position of the item within the
-                      gengrid. For example, $(0, 1) would stand for first row,
-                      second column.
-
-                      @ingroup Gengrid
-                      */
+                       This returns the "logical" position of the item within the
+                       gengrid. For example, $(0, 1) would stand for first row,
+                       second column.]]
                 }
                 values {
-                     x: uint; /*@ Pointer to variable to store the item's <b>row number</b>. */
-                     y: uint; /*@ Pointer to variable to store the item's <b>column number</b>. */
+                     x: uint; [[Pointer to variable to store the item's <b>row number</b>.]]
+                     y: uint; [[Pointer to variable to store the item's <b>column number</b>.]]
                 }
            }
            @property select_mode {
+                [[Control the gengrid item's select mode.
+
+                  (If getting mode fails, it returns ELM_OBJECT_SELECT_MODE_MAX)
+
+                  elm_gengrid_select_mode_set() changes item's select mode.
+                  - ELM_OBJECT_SELECT_MODE_DEFAULT : The item will only call their selection func and
+                       callback when first becoming selected. Any further clicks will
+                       do nothing, unless you set always select mode.
+                  - ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
+                       every click will make the selected callbacks be called.
+                  - ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select the item
+                       entirely and they will neither appear selected nor call selected
+                       callback functions.
+                  - ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY : This will apply no-finger-size rule
+                       with ELM_OBJECT_SELECT_MODE_NONE. No-finger-size rule makes an item can be
+                       smaller than lower limit. Clickable objects should be bigger than
+                       human touch point device (your finger) for some touch or
+                       small screen devices. So it is enabled, the item can be shrink than
+                       predefined finger-size value. And the item will be updated.]]
                 get {
-                     /*@
-                      Get the gengrid item's select mode.
-
-                      (If getting mode fails, it returns ELM_OBJECT_SELECT_MODE_MAX)
-
-                      @see elm_gengrid_item_select_mode_set()
-
-                      @ingroup Gengrid
-                      */
                 }
                 set {
-                     /*@
-                      Set the gengrid item's select mode.
-
-                      elm_gengrid_select_mode_set() changes item's select mode.
-                      - ELM_OBJECT_SELECT_MODE_DEFAULT : The item will only call their selection func and
-                           callback when first becoming selected. Any further clicks will
-                           do nothing, unless you set always select mode.
-                      - ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
-                           every click will make the selected callbacks be called.
-                      - ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select the item
-                           entirely and they will neither appear selected nor call selected
-                           callback functions.
-                      - ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY : This will apply no-finger-size rule
-                           with ELM_OBJECT_SELECT_MODE_NONE. No-finger-size rule makes an item can be
-                           smaller than lower limit. Clickable objects should be bigger than
-                           human touch point device (your finger) for some touch or
-                           small screen devices. So it is enabled, the item can be shrink than
-                           predefined finger-size value. And the item will be updated.
-
-                      @see elm_gengrid_item_select_mode_get()
-
-                      @ingroup Gengrid
-                      */
                 }
                 values {
-                     mode: Elm.Object.Select_Mode(Elm.Object.Select_Mode.max); /*@ The selected mode */
+                     mode: Elm.Object.Select_Mode(Elm.Object.Select_Mode.max); [[The selected mode]]
                 }
            }
            /*      init { FIXME
@@ -186,86 +134,60 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                    }
                    }*/
            show {
-                /*@
-                 Show the portion of a gengrid's internal grid containing a given
-                 item, @b immediately.
+                [[Show the portion of a gengrid's internal grid containing a given
+                  item, immediately.
 
-                 This causes gengrid to @b redraw its viewport's contents to the
-                 region containing the given $item item, if it is not fully
-                 visible.
-
-                 @see elm_gengrid_item_bring_in()
-
-                 @ingroup Gengrid
-                 */
+                  This causes gengrid to redraw its viewport's contents to the
+                  region containing the given $item item, if it is not fully
+                  visible.]]
                 params {
-                     @in type: Elm_Gengrid_Item_Scrollto_Type; /*@ Where to position the item in the viewport. */
+                     @in type: Elm_Gengrid_Item_Scrollto_Type; [[Where to position the item in the viewport.]]
                 }
            }
            bring_in {
-                /*@
-                 Animatedly bring in, to the visible area of a gengrid, a given
-                 item on it.
-                 
-                 This causes gengrid to jump to the given $item and show
-                 it (by scrolling), if it is not fully visible. This will use
-                 animation to do so and take a period of time to complete.
+                [[Animatedly bring in, to the visible area of a gengrid, a given item on it.
 
-                 @see elm_gengrid_item_show()
-
-                 @ingroup Gengrid
-                 */
+                  This causes gengrid to jump to the given $item and show
+                  it (by scrolling), if it is not fully visible. This will use
+                  animation to do so and take a period of time to complete.]]
                 params {
-                     @in type: Elm_Gengrid_Item_Scrollto_Type; /*@ Where to position the item in the viewport. */
+                     @in type: Elm_Gengrid_Item_Scrollto_Type; [[Where to position the item in the viewport.]]
                 }
            }
            update {
-                /*@
-                 Update the contents of a given gengrid item
+                [[Update the contents of a given gengrid item
 
-                 This updates an item by calling all the item class functions
-                 again to get the contents, texts and states. Use this when the
-                 original item data has changed and you want the changes to be
-                 reflected.
-
-                 @ingroup Gengrid
-                 */
+                  This updates an item by calling all the item class functions
+                  again to get the contents, texts and states. Use this when the
+                  original item data has changed and you want the changes to be
+                  reflected.]]
            }
            fields_update {
-                /*@
-                 Update the part of an item
+                [[Update the part of an item
 
-                 This updates an item's part by calling item's fetching functions again
-                 to get the contents, texts and states. Use this when the original
-                 item data has changed and the changes are desired to be reflected.
-                 Second parts argument is used for globbing to match '*', '?', and '.'
-                 It can be used at updating multi fields.
+                  This updates an item's part by calling item's fetching functions again
+                  to get the contents, texts and states. Use this when the original
+                  item data has changed and the changes are desired to be reflected.
+                  Second parts argument is used for globbing to match '*', '?', and '.'
+                  It can be used at updating multi fields.
 
-                 Use elm_gengrid_realized_items_update() to update an item's all
-                 property.
+                  Use elm_gengrid_realized_items_update() to update an item's all
+                  property.
 
-                 @see elm_gengrid_iitem_update()
-
-                 @ingroup Gengrid
-                 @since 1.15
-                 */
+                  @since 1.15]]
                 params {
-                     @in parts: const (char) *; /*@ The name of item's part */
-                     @in itf: Elm.Gengrid.Item.Field_Type; /*@ The type of item's part type */
+                     @in parts: const (char) *; [[The name of item's part]]
+                     @in itf: Elm.Gengrid.Item.Field_Type; [[The type of item's part type]]
                 }
            }
            item_class_update {
-                /*@
-                 Update the item class of a gengrid item.
+                [[Update the item class of a gengrid item.
 
-                 This sets another class of the item, changing the way that it is
-                 displayed. After changing the item class, elm_gengrid_item_update() is
-                 called on the item $it.
-
-                 @ingroup Gengrid
-                 */
+                  This sets another class of the item, changing the way that it is
+                  displayed. After changing the item class, elm_gengrid_item_update() is
+                  called on the item $it.]]
                 params {
-                     @in itc: const (Elm_Gengrid_Item_Class) *; /*@ The gengrid item class describing the function pointers and the item style. */
+                     @in itc: const (Elm_Gengrid_Item_Class) *; [[The gengrid item class describing the function pointers and the item style.]]
                 }
            }
       }
