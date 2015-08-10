@@ -98,10 +98,10 @@ typedef enum
  */
 struct _Elm_Selection_Data
 {
-   Evas_Coord       x, y;
-   Elm_Sel_Format   format;
-   void            *data;
-   size_t           len;
+   Evas_Coord       x, y; /**< The coordinates of the drop (DND operations only) */
+   Elm_Sel_Format   format; /**< The format of the selection */
+   void            *data; /**< The selection data, type determined by format member */
+   size_t           len; /**< The length of the selection data */
    Elm_Xdnd_Action  action; /**< The action to perform with the data @since 1.8 */
 };
 typedef struct _Elm_Selection_Data Elm_Selection_Data;
