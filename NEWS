@@ -1,6 +1,13 @@
 ==========
-EFL 1.14.2
+EFL 1.14.3
 ==========
+
+Changes since 1.14.2:
+---------------------
+
+Fixes:
+
+   * Evas masking: Fix crash in async rendering
 
 Changes since 1.14.1:
 ---------------------
