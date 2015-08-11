@@ -16,194 +16,124 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
       methods {
            @property prev {
                 get {
-                     /*@
-                      Get the item before $item in toolbar.
+                     [[Get the item before $item in toolbar.
 
-                      @note If it is the first item, $NULL will be returned.
-
-                      @see elm_toolbar_item_prepend()
-
-                      @ingroup Toolbar
-                      */
+                       Note: If it is the first item, $null will be returned.
+                     ]]
                 }
                 values {
-                     item: Elm.Widget_Item *; /*@ The item before $item, or $NULL if none or on failure. */
+                     item: Elm.Widget_Item *; [[The item before $item, or $null
+                                                if none or on failure.]]
                 }
            }
            @property next {
                 get {
-                     /*@
-                      Get the item after $item in toolbar.
+                     [[Get the item after $item in toolbar.
 
-                      @note If it is the last item, $NULL will be returned.
-
-                      @see elm_toolbar_item_append()
-
-                      @ingroup Toolbar
-                      */
+                       Note: If it is the last item, $null will be returned.
+                     ]]
                 }
                 values {
-                     item: Elm.Widget_Item *; /*@ The item after $item, or $NULL if none or on failure. */
+                     item: Elm.Widget_Item *; [[The item after $item, or $null
+                                                if none or on failure.]]
                 }
            }
            @property priority {
                 get {
-                     /*@
-                      Get the priority of a toolbar item.
-
-                      @see elm_toolbar_item_priority_set() for details.
-
-                      @ingroup Toolbar
-                      */
+                     [[Get the priority of a toolbar item.]]
                 }
                 set {
-                     /*@
-                      Set the priority of a toolbar item.
+                     [[Set the priority of a toolbar item.
 
-                      This is used only when the toolbar shrink mode is set
-                      to #ELM_TOOLBAR_SHRINK_MENU or #ELM_TOOLBAR_SHRINK_HIDE.
-                      When space is less than required, items with low priority
-                      will be removed from the toolbar and added to a dynamically-created menu,
-                      while items with higher priority will remain on the toolbar,
-                      with the same order they were added.
-
-                      @see elm_toolbar_item_priority_get()
-
-                      @ingroup Toolbar
-                      */
+                       This is used only when the toolbar shrink mode is set
+                       to #ELM_TOOLBAR_SHRINK_MENU or #ELM_TOOLBAR_SHRINK_HIDE.
+                       When space is less than required, items with low priority
+                       will be removed from the toolbar and added to a
+                       dynamically-created menu, while items with higher
+                       priority will remain on the toolbar, with the same
+                       order they were added.
+                     ]]
                 }
                 values {
-                     priority: int; /*@ The $item priority. The default is zero for set and 0 is returned on failure. */
+                     priority: int; [[The $item priority. The default is zero
+                                      for set and 0 is returned on failure.]]
                 }
            }
            @property selected {
                 get {
-                     /*@
-                      Get whether the $item is selected or not.
-
-                      @return $true means item is selected. $false indicates
-                      it's not. If $obj is $NULL, $false is returned.
-
-                      @see elm_toolbar_selected_item_set() for details.
-                      @see elm_toolbar_item_selected_get()
-
-                      @ingroup Toolbar
-                      */
+                     [[Get whether the $item is selected or not.]]
                 }
                 set {
-                     /*@
-                      Set the selected state of an item.
+                     [[Set the selected state of an item.
 
-                      This sets the selected state of the given item $it.
-                      $true for selected, $false for not selected.
+                       This sets the selected state of the given item $it.
+                       $true for selected, $false for not selected.
 
-                      If a new item is selected the previously selected will be unselected.
-                      Previously selected item can be get with function
-                      elm_toolbar_selected_item_get().
+                       If a new item is selected the previously selected will
+                       be unselected. Previously selected item can be get with
+                       function \@ref elm_toolbar_selected_item_get.
 
-                      Selected items will be highlighted.
-
-                      @see elm_toolbar_item_selected_get()
-                      @see elm_toolbar_selected_item_get()
-
-                      @ingroup Toolbar
-                      */
+                       Selected items will be highlighted.
+                     ]]
                 }
                 values {
-                     selected: bool; /*@ The selected state */
+                     selected: bool; [[The selected state.]]
                 }
            }
            @property icon {
                 get {
-                     /*@
-                      Get the string used to set the icon of $item.
-
-                      @return The string associated with the icon object.
-
-                      @see elm_toolbar_item_icon_set() for details.
-
-                      @ingroup Toolbar
-                      */
+                     [[Get the string used to set the icon of $item.]]
                 }
                 set {
-                     /*@
-                      Set the icon associated with $item.
+                     [[Set the icon associated with $item.
 
-                      @param icon A string with icon name or the absolute path of an image file.
+                       Toolbar will load icon image from fdo or current theme.
+                       This behavior can be set by
+                       \@ref elm_toolbar_icon_order_lookup_set function.
+                       If an absolute path is provided it will load it direct
+                       from a file.
 
-                      Toolbar will load icon image from fdo or current theme.
-                      This behavior can be set by elm_toolbar_icon_order_lookup_set() function.
-                      If an absolute path is provided it will load it direct from a file.
-
-                      @note This function does not accept relative icon path.
-
-                      @see elm_toolbar_icon_order_lookup_set()
-                      @see elm_toolbar_icon_order_lookup_get()
-
-                      @ingroup Toolbar
-                      */
+                       Note: This function does not accept relative icon path.
+                     ]]
                 }
                 values {
-                     icon: const (char) *;
+                     icon: const(char)*; [[A string with icon name or the
+                                           absolute path of an image file.]]
                 }
            }
            @property object {
                 get {
-                     /*@
-                      Get the real Evas(Edje) object created to implement the view of a given
-                      toolbar $item.
-
-                      @ingroup Toolbar
-                      */
+                     [[Get the real Evas(Edje) object created to implement the
+                       view of a given toolbar $item.
+                     ]]
                 }
                 values {
-                     obj: Evas.Object *; /*@ The base Edje object associated with $it. */
+                     obj: Evas.Object *; [[The base Edje object associated with $it.]]
                 }
            }
            @property icon_object {
                 get {
-                     /*@
-                      Get the icon object of $item.
+                     [[Get the icon object of $item.
 
-                      @see elm_toolbar_item_icon_set(), elm_toolbar_item_icon_file_set(),
-                      or elm_toolbar_item_icon_memfile_set() for details.
-
-                      @ingroup Toolbar
-                      */
+                       See also @.icon.set, @.icon_file_set, @.icon_memfile_set.
+                     ]]
                 }
                 values {
-                     obj: Evas.Object *; /*@ The icon object */
+                     obj: Evas.Object *; [[The icon object.]]
                 }
            }
            @property separator {
                 get {
-                     /*@
-                      Get a value whether item is a separator or not.
-
-                      @return $true means item $it is a separator. $false
-                      indicates it's not. If $it is $NULL, $false is returned.
-
-                      @see elm_toolbar_item_separator_set() for details.
-
-                      @ingroup Toolbar
-                      */
+                     [[Get a value whether item is a separator or not.]]
                 }
                 set {
-                     /*@
-                      Set or unset item as a separator.
+                     [[Set or unset item as a separator.
 
-                      @param separator $true to set item $item as separator or
-                      $false to unset, i.e., item will be used as a regular item.
+                       Items aren't set as separator by default.
 
-                      Items aren't set as separator by default.
-
-                      If set as separator it will display separator theme, so won't display
-                      icons or label.
-
-                      @see elm_toolbar_item_separator_get()
-
-                      @ingroup Toolbar
-                      */
+                       If set as separator it will display separator theme, so
+                       won't display icons or label.
+                     ]]
                 }
                 values {
                      separator: bool;
@@ -211,50 +141,27 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
            }
            @property menu {
                 get {
-                     /*@
-                      Get toolbar item's menu.
+                     [[Get toolbar item's menu.
 
-                      If $item wasn't set as menu item with elm_toolbar_item_menu_set(),
-                      this function will set it.
-
-                      @see elm_toolbar_item_menu_set() for details.
-
-                      @ingroup Toolbar
-                      */
+                       If $item wasn't set as menu item with @.menu_set,
+                       this function will set it.
+                     ]]
                 }
                 values {
-                     menu: Evas.Object *; /*@ Item's menu object or $NULL on failure. */
+                     menu: Evas.Object *; [[Item's menu object or $null on failure.]]
                 }
            }
            @property state {
                 get {
-                     /*@
-                      Get the current state of $it.
-
-                      @return The selected state or $NULL if none is selected or on failure.
-
-                      @see elm_toolbar_item_state_set() for details.
-                      @see elm_toolbar_item_state_unset()
-                      @see elm_toolbar_item_state_add()
-
-                      @ingroup Toolbar
-                      */
+                     [[Get the current state of $it.]]
                 }
                 set {
-                     /*@
-                      Set $state as the current state of $it.
+                     [[Set $state as the current state of $it.
 
-                      @param state The state to use.
-                      @return $true on success or $false on failure.
-
-                      If $state is $NULL, it won't select any state and the default item's
-                      icon and label will be used. It's the same behaviour than
-                      elm_toolbar_item_state_unset().
-
-                      @see elm_toolbar_item_state_unset()
-
-                      @ingroup Toolbar
-                      */
+                       If $state is $NULL, it won't select any state and the
+                       default item's icon and label will be used. It's the
+                       behavior as \@ref elm_toolbar_item_state_unset.
+                     ]]
                      return: bool;
                 }
                 values {
@@ -268,140 +175,106 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                    }
                    }*/
            icon_memfile_set {
-                /*@
-                 Set the icon associated with $item to an image in a binary buffer.
+                [[Set the icon associated with $item to an image in a binary buffer.
 
-                 @note The icon image set by this function can be changed by
-                 elm_toolbar_item_icon_set().
-
-                 @ingroup Toolbar
-                 */
+                  Note: The icon image set by this function can be changed by
+                  @.icon.set.
+                ]]
                 params {
-                     @in img: const (void) *; /*@ The binary data that will be used as an image */
-                     @in size: size_t; /*@ The size of binary data $img */
-                     @in format: const (char) *; /*@ Optional format of $img to pass to the image loader */
-                     @in key: const (char) *; /*@ Optional key of $img to pass to the image loader (eg. if $img is an edje file) */
+                     @in img: const (void) *; [[The binary data that will be used as an image.]]
+                     @in size: size_t; [[The size of binary data $img.]]
+                     @in format: const (char) *; [[Optional format of $img to pass to the image loader.]]
+                     @in key: const (char) *; [[Optional key of $img to pass to the image loader (eg. if $img is an edje file).]]
                 }
-                return: bool; /*@ ($true = success, $false = error) */
+                return: bool;
            }
            icon_file_set {
-                /*@
-                 Set the icon associated with $item to an image in a binary buffer.
+                [[Set the icon associated with $item to an image in a binary buffer.
 
-                 @note The icon image set by this function can be changed by
-                 elm_toolbar_item_icon_set().
-
-                 @ingroup Toolbar
-                 */
+                  Note: The icon image set by this function can be changed by
+                  elm_toolbar_item_icon_set().
+                ]]
                 params {
-                     @in file: const (char) *; /*@ The file that contains the image */
-                     @in key: const (char) *; /*@ Optional key of $img to pass to the image loader (eg. if $img is an edje file) */
+                     @in file: const (char) *; [[The file that contains the image.]]
+                     @in key: const (char) *; [[Optional key of $img to pass to the image loader (eg. if $img is an edje file).]]
                 }
-                return: bool; /*@ ($true = success, $false = error) */
+                return: bool;
            }
            state_add {
-                /*@
-                 Add a new state to $item.
+                [[Add a new state to $item.
 
-                 Toolbar will load icon image from fdo or current theme.
-                 This behavior can be set by elm_toolbar_icon_order_lookup_set() function.
-                 If an absolute path is provided it will load it direct from a file.
+                  Toolbar will load icon image from fdo or current theme.
+                  This behavior can be set by \@ref elm_toolbar_icon_order_lookup_set
+                  function. If an absolute path is provided it will load it
+                  direct from a file.
 
-                 States created with this function can be removed with
-                 elm_toolbar_item_state_del().
-
-                 @see elm_toolbar_item_state_del()
-                 @see elm_toolbar_item_state_sel()
-                 @see elm_toolbar_item_state_get()
-
-                 @ingroup Toolbar
-                 */
+                  States created with this function can be removed with
+                  @.state_del.
+                ]]
                 params {
-                     @in icon: const (char) *; /*@ A string with icon name or the absolute path of an image file. */
-                     @in label: const (char) *; /*@ The label of the new state. */
-                     @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked when this * state is selected. */
-                     @in data: const (void) * @optional; /*@ The data to associate with the state. */
+                     @in icon: const (char) *; [[A string with icon name or the absolute path of an image file.]]
+                     @in label: const (char) *; [[The label of the new state.]]
+                     @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked when this state is selected.]]
+                     @in data: const (void) * @optional; [[The data to associate with the state.]]
                 }
-                return: Elm_Toolbar_Item_State *; /*@ The toolbar item state, or $NULL upon failure. */
+                return: Elm_Toolbar_Item_State *; [[The toolbar item state, or $null upon failure.]]
            }
            state_del {
-                /*@
-                 Delete a previously added state to $item.
-
-                 @see elm_toolbar_item_state_add()
-                 */
+                [[Delete a previously added state to $item.]]
                 params {
-                     @in state: Elm_Toolbar_Item_State *; /*@ The state to be deleted. */
+                     @in state: Elm_Toolbar_Item_State *; [[The state to be deleted.]]
                 }
-                return: bool; /*@ $true on success or $false on failure. */
+                return: bool; [[$true on success or $false on failure.]]
            }
            state_next {
-                /*@
-                 Get the state after selected state in toolbar's $item.
+                [[Get the state after selected state in toolbar's $item.
 
-                 If last state is selected, this function will return first state.
-
-                 @see elm_toolbar_item_state_set()
-                 @see elm_toolbar_item_state_add()
-
-                 @ingroup Toolbar
-                 */
-                return: Elm_Toolbar_Item_State *; /*@ The state after current state, or $NULL on failure. */
+                  If last state is selected, this function will return first
+                  state.
+                ]]
+                return: Elm_Toolbar_Item_State *; [[The state after current state, or $null on failure.]]
            }
            state_prev {
-                /*@
-                 Get the state before selected state in toolbar's $item.
+                [[Get the state before selected state in toolbar's $item.
 
-
-                 If first state is selected, this function will return last state.
-
-                 @see elm_toolbar_item_state_set()
-                 @see elm_toolbar_item_state_add()
-
-                 @ingroup Toolbar
-                 */
-                return: Elm_Toolbar_Item_State *; /*@ The state before current state, or $NULL on failure. */
+                  If first state is selected, this function will return last
+                  state.
+                ]]
+                return: Elm_Toolbar_Item_State *; [[The state before current state, or $null on failure.]]
            }
            show {
-                /*@
-                 Show a specific item, when the toolbar can be scrolled.
+                [[Show a specific item, when the toolbar can be scrolled.
 
-                 see elm_toolbar_item_bring_in()
-
-                 @since 1.8
-                 @ingroup Toolbar
-                 */
+                  @since 1.8
+                ]]
                 params {
-                     @in scrollto: Elm.Toolbar_Item.Scrollto_Type; /*@ the position the item should appear at */
+                     @in scrollto: Elm.Toolbar_Item.Scrollto_Type; [[The position the item should appear at.]]
                 }
            }
            bring_in {
-                /*@
-                 Show a specific item with scroll animation, when the toolbar can be scrolled.
+                [[Show a specific item with scroll animation, when the toolbar
+                  can be scrolled.
 
-                 see elm_toolbar_item_show()
-
-                 @since 1.8
-                 @ingroup Toolbar
-                 */
+                  @since 1.8
+                ]]
                 params {
-                     @in scrollto: Elm.Toolbar_Item.Scrollto_Type; /*@ the position the item should appear at */
+                     @in scrollto: Elm.Toolbar_Item.Scrollto_Type; [[The position the item should appear at.]]
                 }
            }
            menu_set {
-                /*@
-                 Set whether the toolbar item opens a menu.
+                [[Set whether the toolbar item opens a menu.
 
-                 A toolbar item can be set to be a menu, using this function.
+                  A toolbar item can be set to be a menu, using this function.
 
-                 Once it is set to be a menu, it can be manipulated through the
-                 menu-like function elm_toolbar_menu_parent_set() and the other
-                 elm_menu functions, using the Evas_Object $menu returned by
-                 elm_toolbar_item_menu_get().
+                  Once it is set to be a menu, it can be manipulated through the
+                  menu-like function \@ref elm_toolbar_menu_parent_set and the
+                  other elm_menu functions, using the Evas_Object $menu returned
+                  by @.menu.get.
 
-                 So, items to be displayed in this item's menu should be added with
-                 elm_menu_item_add().
-
+                  So, items to be displayed in this item's menu should be added
+                  with \@ref elm_menu_item_add.
+                ]]
+                /* FIXME-doc
                  The following code exemplifies the most basic usage:
                  @code
                  tb = elm_toolbar_add(win)
@@ -413,13 +286,9 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                  menu_item = elm_menu_item_add(menu, NULL, "edit-copy", "Copy", NULL,
                  NULL);
                  @endcode
-
-                 @see elm_toolbar_item_menu_get()
-
-                 @ingroup Toolbar
-                 */
+                */
                 params {
-                     @in menu: bool; /*@ If $true, $item will opens a menu when selected. */
+                     @in menu: bool; [[If $true, $item will opens a menu when selected.]]
                 }
            }
       }
