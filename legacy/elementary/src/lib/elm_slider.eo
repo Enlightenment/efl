@@ -5,386 +5,262 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
    methods {
       @property horizontal {
          set {
-            /*@
-            Set the orientation of a given slider widget.
+            [[Set the orientation of a given slider widget.
 
-            Use this function to change how your slider is to be
-            disposed: vertically or horizontally.
+              Use this function to change how your slider is to be
+              disposed: vertically or horizontally.
 
-            By default it's displayed horizontally.
-
-            @see elm_slider_horizontal_get()
-
-            @ingroup Slider */
+              By default it's displayed horizontally.
+            ]]
          }
          get {
-            /*@
-            Get the orientation of a given slider widget
-
-            @return $true, if $obj is set to be @b horizontal,
-            $false if it's @b vertical (and on errors).
-
-            @see elm_slider_horizontal_set() for more details.
-
-            @ingroup Slider */
+            [[Get the orientation of a given slider widget.]]
          }
          values {
-            horizontal: bool; /*@ Use $true to make $obj to be
-            @b horizontal, $false to make it @b vertical. */
+            horizontal: bool;
          }
       }
       @property value {
          set {
-            /*@
-            Set the value the slider displays.
+            [[Set the value the slider displays.
 
-            Value will be presented on the unit label following format specified with
-            elm_slider_unit_format_set() and on indicator with
-            elm_slider_indicator_format_set().
+              Value will be presented on the unit label following format
+              specified with @.unit_format.set and on indicator with
+              @.indicator_format.set.
 
-            @warning The value must to be between min and max values. This values
-            are set by elm_slider_min_max_set().
-
-            @see elm_slider_value_get()
-            @see elm_slider_unit_format_set()
-            @see elm_slider_indicator_format_set()
-            @see elm_slider_min_max_set()
-
-            @ingroup Slider */
+              Note: The value must to be between min and max values. This values
+              are set by @.min_max.set.
+            ]]
          }
          get {
-            /*@
-            Get the value displayed by the slider.
-
-            @return The value displayed.
-
-            @see elm_slider_value_set() for details.
-
-            @ingroup Slider */
+            [[Get the value displayed by the slider.]]
          }
          values {
-            val: double; /*@ The value to be displayed. */
+            val: double; [[The value to be displayed.]]
          }
       }
       @property indicator_format {
          set {
-            /*@
-            Set the format string for the indicator label.
+            [[Set the format string for the indicator label.
 
-            The slider may display its value somewhere else then unit label,
-            for example, above the slider knob that is dragged around. This function
-            sets the format string used for this.
+              The slider may display its value somewhere else then unit label,
+              for example, above the slider knob that is dragged around. This
+              function sets the format string used for this.
 
-            If $NULL, indicator label won't be visible. If not it sets the format
-            string for the label text. To the label text is provided a floating point
-            value, so the label text can display up to 1 floating point value.
-            Note that this is optional.
+              If $null, indicator label won't be visible. If not it sets the
+              format string for the label text. To the label text is provided
+              a floating point value, so the label text can display up to 1
+              floating point value. Note that this is optional.
 
-            Use a format string such as "%1.2f meters" for example, and it will
-            display values like: "3.14 meters" for a value equal to 3.14159.
+              Use a format string such as "%1.2f meters" for example, and it
+              will display values like: "3.14 meters" for a value equal to
+              3.14159.
 
-            Default is indicator label disabled.
-
-            @see elm_slider_indicator_format_get()
-
-            @ingroup Slider */
+              Default is indicator label disabled.
+            ]]
          }
          get {
-            /*@
-            Get the indicator label format of the slider.
+            [[Get the indicator label format of the slider.
 
-            @return The indicator label format string in UTF-8.
-
-            The slider may display its value somewhere else then unit label,
-            for example, above the slider knob that is dragged around. This function
-            gets the format string used for this.
-
-            @see elm_slider_indicator_format_set() for more
-            information on how this works.
-
-            @ingroup Slider */
+              The slider may display its value somewhere else then unit label,
+              for example, above the slider knob that is dragged around. This
+              function gets the format string used for this.
+            ]]
          }
          values {
-            indicator: const(char)* @nullable; /*@ The format string for the indicator display. */
+            indicator: const(char)* @nullable; [[The format string for the indicator display.]]
          }
       }
       @property inverted {
          set {
-            /*@
-            Invert a given slider widget's displaying values order
+            [[Invert a given slider widget's displaying values order
 
-            A slider may be @b inverted, in which state it gets its
-            values inverted, with high vales being on the left or top and
-            low values on the right or bottom, as opposed to normally have
-            the low values on the former and high values on the latter,
-            respectively, for horizontal and vertical modes.
-
-            @see elm_slider_inverted_get()
-
-            @ingroup Slider */
+              A slider may be inverted, in which state it gets its values
+              inverted, with high vales being on the left or top and low
+              values on the right or bottom, as opposed to normally have
+              the low values on the former and high values on the latter,
+              respectively, for horizontal and vertical modes.
+            ]]
          }
          get {
-            /*@
-            Get whether a given slider widget's displaying values are
-            inverted or not.
-
-            @return $true, if $obj has inverted values,
-            $false otherwise (and on errors).
-
-            @see elm_slider_inverted_set() for more details.
-
-            @ingroup Slider */
+            [[Get whether a given slider widget's displaying values are
+              inverted or not.
+            ]]
          }
          values {
-            inverted: bool; /*@ Use $true to make $obj inverted,
-            $false to bring it back to default, non-inverted values. */
+            inverted: bool; [[Use $true to make $obj inverted, $false to bring
+                              it back to default, non-inverted values.]]
          }
       }
       @property indicator_show {
          set {
-            /*@
-            Set whether to enlarge slider indicator (augmented knob) or not.
+            [[Set whether to enlarge slider indicator (augmented knob) or not.
 
-            By default, indicator will be bigger while dragged by the user.
+              By default, indicator will be bigger while dragged by the user.
 
-            @warning It won't display values set with
-            elm_slider_indicator_format_set() if you disable indicator.
-
-            @ingroup Slider */
+              Warning: It won't display values set with @.indicator_format.set
+              if you disable indicator.
+            ]]
          }
          get {
-            /*@
-            Get whether a given slider widget's enlarging indicator or not.
-
-            @return $true, if $obj is enlarging indicator, or
-            $false otherwise (and on errors).
-
-            @see elm_slider_indicator_show_set() for details.
-
-            @ingroup Slider */
+            [[Get whether a given slider widget's enlarging indicator or not.]]
          }
          values {
-            show: bool; /*@ $true will make it enlarge, $false will
-            let the knob always at default size. */
+            show: bool; [[$true will make it enlarge, $false will
+                          let the knob always at default size.]]
          }
       }
       @property min_max {
          set {
-            /*@
-            Set the minimum and maximum values for the slider.
+            [[Set the minimum and maximum values for the slider.
 
-            Define the allowed range of values to be selected by the user.
+              Define the allowed range of values to be selected by the user.
 
-            If actual value is less than $min, it will be updated to $min. If it
-            is bigger then $max, will be updated to $max. Actual value can be
-            get with elm_slider_value_get().
+              If actual value is less than $min, it will be updated to $min.
+              If it is bigger then $max, will be updated to $max. Actual value
+              can be get with @.value,get.
 
-            By default, min is equal to 0.0, and max is equal to 1.0.
+              By default, min is equal to 0.0, and max is equal to 1.0.
 
-            @warning Maximum must be greater than minimum, otherwise behavior
-            is undefined.
-
-            @see elm_slider_min_max_get()
-
-            @ingroup Slider */
+              Warning: maximum must be greater than minimum, otherwise behavior
+              is undefined.
+            ]]
          }
          get {
-            /*@
-            Get the minimum and maximum values of the slider.
+            [[Get the minimum and maximum values of the slider.
 
-            @note If only one value is needed, the other pointer can be passed
-            as $NULL.
-
-            @see elm_slider_min_max_set() for details.
-
-            @ingroup Slider */
+              Note: If only one value is needed, the other pointer can be passed
+              as $null.
+            ]]
          }
          values {
-            min: double; /*@ The minimum value. */
-            max: double; /*@ The maximum value. */
+            min: double; [[The minimum value.]]
+            max: double; [[The maximum value.]]
          }
       }
       @property unit_format {
          set {
-            /*@
-            Set the format string for the unit label.
+            [[Set the format string for the unit label.
 
-            Unit label is displayed all the time, if set, after slider's bar.
-            In horizontal mode, at right and in vertical mode, at bottom.
+              Unit label is displayed all the time, if set, after slider's bar.
+              In horizontal mode, at right and in vertical mode, at bottom.
 
-            If $NULL, unit label won't be visible. If not it sets the format
-            string for the label text. To the label text is provided a floating point
-            value, so the label text can display up to 1 floating point value.
-            Note that this is optional.
+              If $null, unit label won't be visible. If not it sets the format
+              string for the label text. To the label text is provided a
+              floating point value, so the label text can display up to 1
+              floating point value. Note that this is optional.
 
-            Use a format string such as "%1.2f meters" for example, and it will
-            display values like: "3.14 meters" for a value equal to 3.14159.
+              Use a format string such as "%1.2f meters" for example, and it
+              will display values like: "3.14 meters" for a value equal to
+              3.14159.
 
-            Default is unit label disabled.
-
-            @see elm_slider_indicator_format_get()
-
-            @ingroup Slider */
+              Default is unit label disabled.
+            ]]
          }
          get {
-            /*@
-            Get the unit label format of the slider.
+            [[Get the unit label format of the slider.
 
-            @return The unit label format string in UTF-8.
-
-            Unit label is displayed all the time, if set, after slider's bar.
-            In horizontal mode, at right and in vertical mode, at bottom.
-
-            @see elm_slider_unit_format_set() for more
-            information on how this works.
-
-            @ingroup Slider */
+              Unit label is displayed all the time, if set, after slider's bar.
+              In horizontal mode, at right and in vertical mode, at bottom.
+            ]]
          }
          values {
-            units: const(char)* @nullable; /*@ The format string for the unit display. */
+            units: const(char)* @nullable; [[The format string for the unit display.]]
          }
       }
       @property indicator_show_on_focus {
          set {
-            /*@
-            Show the indicator of slider on focus
-
-            @ingroup Slider */
+            [[Show the indicator of slider on focus.]]
          }
          get {
-            /*@
-            Get whether the indicator of the slider is set or not
-
-            @return $true, if indicator is set
-            $false otherwise.
-
-            @ingroup Slider */
+            [[Get whether the indicator of the slider is set or not.]]
          }
          values {
-            flag: bool; /*@ @ true sets the indicator visible */
+            flag: bool;
          }
       }
       @property span_size {
          set {
-            /*@
-            Set the (exact) length of the bar region of a given slider widget.
+            [[Set the (exact) length of the bar region of a given slider widget.
 
-            This sets the minimum width (when in horizontal mode) or height
-            (when in vertical mode) of the actual bar area of the slider
-            $obj. This in turn affects the object's minimum size. Use
-            this when you're not setting other size hints expanding on the
-            given direction (like weight and alignment hints) and you would
-            like it to have a specific size.
+              This sets the minimum width (when in horizontal mode) or height
+              (when in vertical mode) of the actual bar area of the slider
+              $obj. This in turn affects the object's minimum size. Use
+              this when you're not setting other size hints expanding on the
+              given direction (like weight and alignment hints) and you would
+              like it to have a specific size.
 
-            @note Icon, end, label, indicator and unit text around $obj
-            will require their
-            own space, which will make $obj to require more the $size,
-            actually.
-
-            @see elm_slider_span_size_get()
-
-            @ingroup Slider */
+              Note: Icon, end, label, indicator and unit text around $obj
+              will require their own space, which will make $obj to require
+              more the $size, actually.
+            ]]
          }
          get {
-            /*@
-            Get the length set for the bar region of a given slider widget
+            [[Get the length set for the bar region of a given slider widget
 
-            @return The length of the slider's bar region.
-
-            If that size was not set previously, with
-            elm_slider_span_size_set(), this call will return $0.
-
-            @ingroup Slider */
+              If that size was not set previously, with @.span_size.set, this
+              call will return $0.
+            ]]
          }
          values {
-            size: Evas.Coord; /*@ The length of the slider's bar region. */
+            size: Evas.Coord; [[The length of the slider's bar region.]]
          }
       }
       @property step {
          set {
-            /*@
-            Set the step by which slider indicator will move.
+            [[Set the step by which slider indicator will move.
 
-            This value is used when draggable object is moved automatically i.e., in case
-            of key event when up/down/left/right key is pressed or in case when
-            accessibility is set and flick event is used to inc/dec slider values.
-            By default step value is equal to 0.05.
+              This value is used when draggable object is moved automatically
+              i.e., in case of key event when up/down/left/right key is pressed
+              or in case when accessibility is set and flick event is used to
+              inc/dec slider values. By default step value is equal to 0.05.
 
-            @see elm_slider_step_get() for more details.
-
-            @ingroup Slider
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the step by which slider indicator moves.
+            [[Get the step by which slider indicator moves.
 
-            @return The step value.
-
-            @see elm_slider_step_set() for more details.
-
-            @ingroup Slider
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          values {
-            step: double; /*@ The step value. */
+            step: double; [[The step value.]]
          }
       }
       @property indicator_visible_mode {
          set {
-            /*@
-            Set the visible mode of indicator.
-
-            @see elm_slider_indicator_visible_mode_get() for more details.
-
-            @ingroup Slider
-            */
+            [[Set the visible mode of indicator.]]
          }
          get {
-            /*@
-            Get the visible mode of indicator.
-
-            @return The indicator visible mode.
-
-            @see elm_slider_indicator_visible_mode_set() for more details.
-
-            @ingroup Slider
-            */
+            [[Get the visible mode of indicator.]]
          }
          values {
-            indicator_visible_mode: Elm_Slider_Indicator_Visible_Mode; /*@ The indicator visible mode. */
+            indicator_visible_mode: Elm_Slider_Indicator_Visible_Mode; [[The indicator visible mode.]]
          }
       }
       @property indicator_format_function {
          set {
-            /*@
-            Set the format function pointer for the indicator label
+            [[Set the format function pointer for the indicator label
 
-            Set the callback function to format the indicator string.
-
-            @see elm_slider_indicator_format_set() for more info on how this works.
-
-            @ingroup Slider */
+              Set the callback function to format the indicator string.
+            ]]
          }
          values {
-            func: slider_func_type @nullable; /*@ The indicator format function. */
-            free_func: slider_freefunc_type @nullable; /*@ The freeing function for the format string. */
+            func: slider_func_type @nullable; [[The indicator format function.]]
+            free_func: slider_freefunc_type @nullable; [[The freeing function for the format string.]]
          }
       }
       @property units_format_function {
          set {
-            /*@
-            Set the format function pointer for the units label
+            [[Set the format function pointer for the units label
 
-            Set the callback function to format the units string.
-
-            @see elm_slider_unit_format_set() for more info on how this works.
-
-            @ingroup Slider */
+              Set the callback function to format the units string.
+            ]]
          }
          values {
-            func: slider_func_type @nullable; /*@ The units format function. */
-            free_func: slider_freefunc_type @nullable; /*@ The freeing function for the format string. */
+            func: slider_func_type @nullable; [[The units format function.]]
+            free_func: slider_freefunc_type @nullable; [[The freeing function for the format string.]]
          }
       }
    }
