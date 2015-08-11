@@ -46,7 +46,6 @@ double dpi = -1.0;
 Eina_Bool poppler_init(const char *file, int page_nbr, int size_w, int size_h)
 {
    Object obj;
-   SplashColor white;
    double w, h, cw, ch;
    int rot;
 
