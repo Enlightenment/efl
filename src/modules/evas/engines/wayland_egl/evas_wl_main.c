@@ -400,6 +400,59 @@ eng_outbuf_region_first_rect(Outbuf *ob)
    return EINA_FALSE;
 }
 
+static void
+_convert_glcoords(int *result, Outbuf *ob, int x, int y, int w, int h)
+{
+
+   switch (ob->rot)
+     {
+      case 0:
+        result[0] = x;
+        result[1] = ob->gl_context->h - (y + h);
+        result[2] = w;
+        result[3] = h;
+        break;
+      case 90:
+        result[0] = y;
+        result[1] = x;
+        result[2] = h;
+        result[3] = w;
+        break;
+      case 180:
+        result[0] = ob->gl_context->w - (x + w);
+        result[1] = y;
+        result[2] = w;
+        result[3] = h;
+        break;
+      case 270:
+        result[0] = ob->gl_context->h - (y + h);
+        result[1] = ob->gl_context->w - (x + w);
+        result[2] = h;
+        result[3] = w;
+        break;
+      default:
+        result[0] = x;
+        result[1] = ob->gl_context->h - (y + h);
+        result[2] = w;
+        result[3] = h;
+        break;
+     }
+}
+
+static void
+_damage_rect_set(Outbuf *ob, int x, int y, int w, int h)
+{
+   int rects[4];
+
+   if ((x == 0) && (y == 0) &&
+       (((w == ob->gl_context->w) && (h == ob->gl_context->h)) ||
+           ((h == ob->gl_context->w) && (w == ob->gl_context->h))))
+     return;
+
+   _convert_glcoords(rects, ob, x, y, w, h);
+   glsym_eglSetDamageRegionKHR(ob->egl_disp, ob->egl_surface[0], rects, 1);
+}
+
 void *
 eng_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx EINA_UNUSED, int *cy EINA_UNUSED, int *cw EINA_UNUSED, int *ch EINA_UNUSED)
 {
@@ -412,6 +465,9 @@ eng_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx EIN
         ob->gl_context->master_clip.y = y;
         ob->gl_context->master_clip.w = w;
         ob->gl_context->master_clip.h = h;
+
+        if (glsym_eglSetDamageRegionKHR)
+          _damage_rect_set(ob, x, y, w, h);
      }
 
    return ob->gl_context->def_surface;
@@ -465,43 +521,7 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
              result = alloca(sizeof(EGLint) * 4 * num);
              EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
                {
-                  int gw, gh;
-
-                  gw = ob->gl_context->w;
-                  gh = ob->gl_context->h;
-                  switch (ob->rot)
-                    {
-                     case 0:
-                       result[i + 0] = r->x;
-                       result[i + 1] = gh - (r->y + r->h);
-                       result[i + 2] = r->w;
-                       result[i + 3] = r->h;
-                       break;
-                     case 90:
-                       result[i + 0] = r->y;
-                       result[i + 1] = r->x;
-                       result[i + 2] = r->h;
-                       result[i + 3] = r->w;
-                       break;
-                     case 180:
-                       result[i + 0] = gw - (r->x + r->w);
-                       result[i + 1] = r->y;
-                       result[i + 2] = r->w;
-                       result[i + 3] = r->h;
-                       break;
-                     case 270:
-                       result[i + 0] = gh - (r->y + r->h);
-                       result[i + 1] = gw - (r->x + r->w);
-                       result[i + 2] = r->h;
-                       result[i + 3] = r->w;
-                       break;
-                     default:
-                       result[i + 0] = r->x;
-                       result[i + 1] = gh - (r->y + r->h);
-                       result[i + 2] = r->w;
-                       result[i + 3] = r->h;
-                       break;
-                    }
+                  _convert_glcoords(&result[i], ob, r->x, r->y, r->w, r->h);
                   i += 4;
                }
              glsym_eglSwapBuffersWithDamage(ob->egl_disp, ob->egl_surface[0],
