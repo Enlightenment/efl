@@ -79,8 +79,7 @@ extern "C" {
  *
  * Recommended reading:
  *
-
- *
+ * @li @ref Eolian
  *
  * @addtogroup Eolian
  * @{
