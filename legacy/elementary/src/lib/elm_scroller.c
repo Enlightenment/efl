@@ -87,6 +87,8 @@ _key_action_move(Evas_Object *obj, const char *params)
    Evas_Coord y = 0;
    Evas_Coord c_x = 0;
    Evas_Coord c_y = 0;
+   Evas_Coord v_x = 0;
+   Evas_Coord v_y = 0;
    Evas_Coord v_w = 0;
    Evas_Coord v_h = 0;
    Evas_Coord max_x = 0;
@@ -108,7 +110,7 @@ _key_action_move(Evas_Object *obj, const char *params)
          elm_interface_scrollable_step_size_get(&step_x, &step_y),
          elm_interface_scrollable_page_size_get(&page_x, &page_y),
          elm_interface_scrollable_content_viewport_geometry_get
-         (NULL, NULL, &v_w, &v_h));
+         (&v_x, &v_y, &v_w, &v_h));
    evas_object_geometry_get(sd->content, &c_x, &c_y, &max_x, &max_y);
 
    current_focus = elm_widget_focused_object_get(obj);
@@ -116,8 +118,12 @@ _key_action_move(Evas_Object *obj, const char *params)
    can_focus_list = elm_widget_can_focus_child_list_get(obj);
 
    if ((current_focus == obj) ||
-       (!ELM_RECTS_INTERSECT
-        (x, y, v_w, v_h, (f_x - c_x), (f_y - c_y), f_w, f_h)))
+       ((!ELM_RECTS_INTERSECT
+         (x, y, v_w, v_h, (f_x - c_x), (f_y - c_y), f_w, f_h)) &&
+        (!strcmp(dir, "left") && (f_x > v_x)) &&
+        (!strcmp(dir, "right") && (f_x + f_w < v_x + v_w)) &&
+        (!strcmp(dir, "up") && (f_y > v_y)) &&
+        (!strcmp(dir, "down") && (f_y + f_h < v_y + v_h))))
      {
         Eina_List *l;
         Evas_Object *cur;
