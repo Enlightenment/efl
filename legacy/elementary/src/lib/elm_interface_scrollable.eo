@@ -5,212 +5,163 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
    data: Elm_Scrollable_Smart_Interface_Data;
    methods {
       @property gravity {
+         [[Control scrolling gravity on the scrollable
+
+           The gravity defines how the scroller will adjust its view
+           when the size of the scroller contents increases.
+
+           The scroller will adjust the view to glue itself as follows.
+
+            x=0.0, for staying where it is relative to the left edge of the content
+            x=1.0, for staying where it is relative to the rigth edge of the content
+            y=0.0, for staying where it is relative to the top edge of the content
+            y=1.0, for staying where it is relative to the bottom edge of the content
+
+           Default values for x and y are 0.0]]
          set {
-            /*@ Set scrolling gravity on the scrollable
-
-             The gravity defines how the scroller will adjust its view
-             when the size of the scroller contents increases.
-
-             The scroller will adjust the view to glue itself as follows.
-
-              x=0.0, for staying where it is relative to the left edge of the content
-              x=1.0, for staying where it is relative to the rigth edge of the content
-              y=0.0, for staying where it is relative to the top edge of the content
-              y=1.0, for staying where it is relative to the bottom edge of the content
-
-             Default values for x and y are 0.0
-
-             @ingroup Widget
-             */
          }
          get {
-            /*@ Get scrolling gravity on the scrollable
-
-             The gravity defines how the scroller will adjust its view
-             when the size of the scroller contents increases.
-
-             The scroller will adjust the view to glue itself as follows.
-
-              x=0.0, for staying where it is relative to the left edge of the content
-              x=1.0, for staying where it is relative to the rigth edge of the content
-              y=0.0, for staying where it is relative to the top edge of the content
-              y=1.0, for staying where it is relative to the bottom edge of the content
-
-             Default values for x and y are 0.0
-
-             @ingroup Widget
-             */
          }
          values {
-            x: double; /*@ Horizontal scrolling gravity */
-            y: double; /*@ Vertical scrolling gravity */
+            x: double; [[Horizontal scrolling gravity]]
+            y: double; [[Vertical scrolling gravity]]
          }
       }
       @property bounce_allow {
-         /*@ @brief Bouncing behavior
-          *
-          * When scrolling, the scroller may "bounce" when reaching an edge of the
-          * content object. This is a visual way to indicate the end has been reached.
-          * This is enabled by default for both axis. This API will set if it is enabled
-          * for the given axis with the boolean parameters for each axis.
-          *
-          * @ingroup Widget
-          */
+         [[Bouncing behavior
+
+           When scrolling, the scroller may "bounce" when reaching an edge of the
+           content object. This is a visual way to indicate the end has been reached.
+           This is enabled by default for both axis. This API will set if it is enabled
+           for the given axis with the boolean parameters for each axis.]]
          set {
          }
          get {
          }
          values {
-            horiz: bool; /*@ Horizontal bounce policy. */
-            vert: bool; /*@ Vertical bounce policy. */
+            horiz: bool; [[Horizontal bounce policy.]]
+            vert: bool; [[Vertical bounce policy.]]
          }
       }
       @property wheel_disabled {
+         [[Control Wheel disable
+           Enable or disable mouse wheel to be used to scroll the scroller content.
+           heel is enabled by default.]]
          set {
-              /*@ @brief Set Wheel disable
-               * Enable or disable mouse wheel to be used to scroll the scroller content.
-               * Wheel is enabled by default.
-               *
-               * @ingroup Widget
-               */
          }
          get {
-              /*@ @brief Get Wheel disable
-               * Get a value whether wheel to be used to scroll the scroller content.
-               *
-               * @ingroup Widget
-               */
          }
          values {
             disabled: bool;
          }
       }
       @property movement_block {
-         /*@
-          * @brief Blocking of scrolling (per axis)
-          *
-          * This function will block scrolling movement (by input of a user) in
-          * a given direction. One can disable movements in the X axis, the Y
-          * axis or both. The default value is #ELM_SCROLLER_MOVEMENT_NO_BLOCK,
-          * where movements are allowed in both directions.
-          *
-          * What makes this function different from
-          * freeze_push(), hold_push() and lock_x_set() (or lock_y_set())
-          * is that it @b doesn't propagate its effects to any parent or child
-          * widget of @a obj. Only the target scrollable widget will be locked
-          * with regard to scrolling.
-          *
-          * @since 1.8
-          *
-          * @ingroup Widget
-          */
+         [[Blocking of scrolling (per axis)
+
+           This function will block scrolling movement (by input of a user) in
+           a given direction. One can disable movements in the X axis, the Y
+           axis or both. The default value is #ELM_SCROLLER_MOVEMENT_NO_BLOCK,
+           where movements are allowed in both directions.
+
+           What makes this function different from
+           freeze_push(), hold_push() and lock_x_set() (or lock_y_set())
+           is that it doesn't propagate its effects to any parent or child
+           widget of $obj. Only the target scrollable widget will be locked
+           with regard to scrolling.
+
+           @since 1.8]]
          set {
          }
          get {
          }
          values {
-            block: Elm.Scroller.Movement_Block; /*@ Which axis (or axes) to block */
+            block: Elm.Scroller.Movement_Block; [[Which axis (or axes) to block]]
          }
       }
       @property momentum_animator_disabled {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             disabled: bool;
          }
       }
       @property policy {
-         /*@
-          * @brief Scrollbar visibility policy
-          *
-          * #ELM_SCROLLER_POLICY_AUTO means the scrollbar is made visible if it is
-          * needed, and otherwise kept hidden. #ELM_SCROLLER_POLICY_ON turns it on all
-          * the time, and #ELM_SCROLLER_POLICY_OFF always keeps it off. This applies
-          * respectively for the horizontal and vertical scrollbars.
-          *
-          * @ingroup Widget
-          */
+          [[Scrollbar visibility policy
+
+            #ELM_SCROLLER_POLICY_AUTO means the scrollbar is made visible if it is
+            needed, and otherwise kept hidden. #ELM_SCROLLER_POLICY_ON turns it on all
+            the time, and #ELM_SCROLLER_POLICY_OFF always keeps it off. This applies
+            respectively for the horizontal and vertical scrollbars.]]
          set {
          }
          get {
          }
          values {
-            hbar: Elm.Scroller.Policy; /*@ Horizontal scrollbar policy */
-            vbar: Elm.Scroller.Policy; /*@ Vertical scrollbar policy */
+            hbar: Elm.Scroller.Policy; [[Horizontal scrollbar policy]]
+            vbar: Elm.Scroller.Policy; [[Vertical scrollbar policy]]
          }
       }
       @property content_region {
-         /*@
-          * @brief Currently visible content region
-          *
-          * This gets the current region in the content object that is visible through
-          * the scroller. The region co-ordinates are returned in the $x, $y, @p
-          * w, $h values pointed to.
-          *
-          * @note All coordinates are relative to the content.
-          *
-          * @see elm_scroller_region_show()
-          *
-          * @ingroup Widget
-          */
+         [[Currently visible content region
+
+           This gets the current region in the content object that is visible through
+           the scroller. The region co-ordinates are returned in the $x, $y,
+           $w, $h values pointed to.
+
+           Note: All coordinates are relative to the content.
+
+           See: @.content_region_show.]]
+
+
          set {
          }
          get {
          }
          values {
-            x: Evas.Coord; /*@ X coordinate of the region */
-            y: Evas.Coord; /*@ Y coordinate of the region */
-            w: Evas.Coord; /*@ Width of the region */
-            h: Evas.Coord; /*@ Height of the region */
+            x: Evas.Coord; [[X coordinate of the region]]
+            y: Evas.Coord; [[Y coordinate of the region]]
+            w: Evas.Coord; [[Width of the region]]
+            h: Evas.Coord; [[Height of the region]]
          }
       }
       @property repeat_events {
+         [[It decides whether the scrollable object propagates the events to content object or not.]]
          set {
-            /*@ It decides whether the scrollable object propagates the events to content object or not. */
          }
          get {
-            /*@ It gets whether the scrollable object propagates the events to content object or not. */
          }
          values {
             repeat_events: bool;
          }
       }
       @property page_size {
-         /*@
-          * @brief Scroll page size relative to viewport size.
-          *
-          * The scroller is capable of limiting scrolling by the user to "pages". That
-          * is to jump by and only show a "whole page" at a time as if the continuous
-          * area of the scroller content is split into page sized pieces. This sets
-          * the size of a page relative to the viewport of the scroller. 1.0 is "1
-          * viewport" is size (horizontally or vertically). 0.0 turns it off in that
-          * axis. This is mutually exclusive with page size
-          * (see elm_scroller_page_size_set()  for more information). Likewise 0.5
-          * is "half a viewport". Sane usable values are normally between 0.0 and 1.0
-          * including 1.0. If you only want 1 axis to be page "limited", use 0.0 for
-          * the other axis.
-          *
-          * @ingroup Widget
-          */
+         [[Scroll page size relative to viewport size.
+
+           The scroller is capable of limiting scrolling by the user to "pages". That
+           is to jump by and only show a "whole page" at a time as if the continuous
+           area of the scroller content is split into page sized pieces. This sets
+           the size of a page relative to the viewport of the scroller. 1.0 is "1
+           viewport" is size (horizontally or vertically). 0.0 turns it off in that
+           axis. This is mutually exclusive with page size
+           (see @.page_size for more information). Likewise 0.5
+           is "half a viewport". Sane usable values are normally between 0.0 and 1.0
+           including 1.0. If you only want 1 axis to be page "limited", use 0.0 for
+           the other axis.]]
          set {
          }
          get {
          }
          values {
-            x: Evas.Coord; /*@ The horizontal page relative size */
-            y: Evas.Coord; /*@ The vertical page relative size */
+            x: Evas.Coord; [[The horizontal page relative size]]
+            y: Evas.Coord; [[The vertical page relative size]]
          }
       }
       @property bounce_animator_disabled {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             disabled: bool;
@@ -218,10 +169,8 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
       }
       @property page_scroll_limit {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             page_limit_h: int;
@@ -229,38 +178,32 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          }
       }
       @property page_snap_allow {
-         /*@
-          * @brief Page snapping behavior
-          *
-          * When scrolling, if a scroller is paged (see
-          * elm_scroller_page_size_set() and elm_scroller_page_relative_set()),
-          * the scroller may snap to pages when being scrolled, i.e., even if
-          * it had momentum to scroll further, it will stop at the next page
-          * boundaries. This is @b disabled, by default, for both axis. This
-          * function will set if it that is enabled or not, for each axis.
-          *
-          * @note If @a obj is not set to have pages, nothing will happen after
-          * this call.
-          *
-          * @since 1.8
-          *
-          * @ingroup Widget
-          */
+         [[Page snapping behavior
+
+           When scrolling, if a scroller is paged (see
+           elm_scroller_page_size_set() and elm_scroller_page_relative_set()),
+           the scroller may snap to pages when being scrolled, i.e., even if
+           it had momentum to scroll further, it will stop at the next page
+           boundaries. This is disabled, by default, for both axis. This
+           function will set if it that is enabled or not, for each axis.
+
+           Note: If $obj is not set to have pages, nothing will happen after
+           this call.
+
+           @since 1.8]]
          set {
          }
          get {
          }
          values {
-            horiz: bool; /*@ Allow snap horizontally */
-            vert: bool;  /*@ Allow snap vertically */
+            horiz: bool; [[Allow snap horizontally]]
+            vert: bool;  [[Allow snap vertically]]
          }
       }
       @property paging {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             pagerel_h: double;
@@ -270,36 +213,30 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          }
       }
       @property single_direction {
-         /*@
-          * @brief Single direction scroll configuration
-          *
-          * This makes it possible to restrict scrolling to a single direction,
-          * with a "soft" or "hard" behavior.
-          *
-          * The hard behavior restricts the scrolling to a single direction all
-          * of the time while the soft one will restrict depending on factors
-          * such as the movement angle. If the user scrolls roughly in one
-          * direction only, it will only move according to it while if the move
-          * was clearly wanted on both axes, it will happen on both of them.
-          *
-          * @since 1.8
-          *
-          * @ingroup Widget
-          */
+         [[Single direction scroll configuration
+
+           This makes it possible to restrict scrolling to a single direction,
+           with a "soft" or "hard" behavior.
+
+           The hard behavior restricts the scrolling to a single direction all
+           of the time while the soft one will restrict depending on factors
+           such as the movement angle. If the user scrolls roughly in one
+           direction only, it will only move according to it while if the move
+           was clearly wanted on both axes, it will happen on both of them.
+
+           @since 1.8]]
          set {
          }
          get {
          }
          values {
-            single_dir: Elm.Scroller.Single_Direction; /*@ The single direction scroll policy */
+            single_dir: Elm.Scroller.Single_Direction; [[The single direction scroll policy]]
          }
       }
       @property step_size {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             x: Evas.Coord;
@@ -307,70 +244,44 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          }
       }
       @property loop {
+         [[Controls an infinite loop for a scroller.
+
+           @since 1.14]]
          set {
-            /*@ Sets an infinite loop for a scroller.
-
-             This sets an infinite loop for a scroller.
-
-             @since 1.14
-
-             @ingroup Widget
-             */
          }
          get {
-            /*@ Gets an infinite loop for a scroller.
-
-             This gets an infinite loop for a scroller.
-
-             @since 1.14
-
-             @ingroup Widget
-             */
          }
          values {
-            loop_h: bool; /*@ The scrolling horizontal loop */
-            loop_v: bool; /*@ The scrolling vertical loop */
+            loop_h: bool; [[The scrolling horizontal loop]]
+            loop_v: bool; [[The scrolling vertical loop]]
          }
       }
       @property scroll_up_cb {
          set {
-            /*@ Set the callback to run when the content has been moved up.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the content has been moved up.]]
          }
          values {
-            scroll_up_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            scroll_up_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property hbar_drag_cb {
          set {
-            /*@ Set the callback to run when the horizontal scrollbar is dragged.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the horizontal scrollbar is dragged.]]
          }
          values {
-            hbar_drag_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            hbar_drag_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property drag_start_cb {
          set {
-            /*@ Set the callback to run when dragging of the contents has started.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when dragging of the contents has started.]]
          }
          values {
-            drag_start_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            drag_start_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property freeze {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             freeze: bool;
@@ -378,7 +289,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
       }
       @property content_viewport_resize_cb {
          set {
-            /*@ When the viewport is resized, the callback is called. */
+            [[When the viewport is resized, the callback is called.]]
          }
          values {
             viewport_resize_cb: Elm_Interface_Scrollable_Resize_Cb @nullable;
@@ -386,68 +297,46 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
       }
       @property scroll_left_cb {
          set {
-            /*@ Set the callback to run when the content has been moved to the left
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the content has been moved to the left]]
          }
          values {
-            scroll_left_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            scroll_left_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property vbar_press_cb {
          set {
-            /*@ Set the callback to run when the vertical scrollbar is pressed.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the vertical scrollbar is pressed.]]
          }
          values {
-            vbar_press_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            vbar_press_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property hbar_press_cb {
          set {
-            /*@ Set the callback to run when the horizontal scrollbar is pressed.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the horizontal scrollbar is pressed.]]
          }
          values {
-            hbar_press_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            hbar_press_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property hbar_unpress_cb {
          set {
-            /*@ Set the callback to run when the horizontal scrollbar is unpressed.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the horizontal scrollbar is unpressed.]]
          }
          values {
-            hbar_unpress_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            hbar_unpress_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property drag_stop_cb {
          set {
-            /*@ Set the callback to run when dragging of the contents has stopped.
-             *
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when dragging of the contents has stopped.]]
          }
          values {
-            drag_stop_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            drag_stop_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property extern_pan {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             pan: Evas.Object * @nullable;
@@ -455,19 +344,14 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
       }
       @property page_change_cb {
          set {
-            /*@ Set the callback to run when the visible page changes.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the visible page changes.]]
          }
          values {
-            page_change_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            page_change_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property hold {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             hold: bool;
@@ -475,31 +359,23 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
       }
       @property animate_start_cb {
          set {
-            /*@ Set the callback to run when the scrolling animation has started.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the scrolling animation has started.]]
          }
          values {
-            animate_start_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            animate_start_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property scroll_down_cb {
          set {
-            /*@ Set the callback to run when the content has been moved down.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the content has been moved down.]]
          }
          values {
-            scroll_down_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            scroll_down_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property page_relative {
          set {
-            /*@ Set scroll page size relative to viewport size. */
+            [[Set scroll page size relative to viewport size.]]
          }
          values {
             h_pagerel: double;
@@ -508,31 +384,22 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
       }
       @property scroll_cb {
          set {
-            /*@ Set the callback to run when the content has been moved.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the content has been moved.]]
          }
          values {
-            scroll_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            scroll_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property animate_stop_cb {
          set {
-            /*@ Set the callback to run when the scrolling animation has stopped.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the scrolling animation has stopped.]]
          }
          values {
-            animate_stop_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            animate_stop_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property mirrored {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             mirrored: bool;
@@ -540,7 +407,6 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
       }
       @property content_min_limit_cb {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             min_limit_cb: Elm_Interface_Scrollable_Min_Limit_Cb @nullable;
@@ -548,19 +414,14 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
       }
       @property scroll_right_cb {
          set {
-            /*@ Set the callback to run when the content has been moved to the right.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the content has been moved to the right.]]
          }
          values {
-            scroll_right_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            scroll_right_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property content {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             content: Evas.Object * @nullable;
@@ -568,79 +429,54 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
       }
       @property edge_left_cb {
          set {
-            /*@ Set the callback to run when the left edge of the content has been reached.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the left edge of the content has been reached.]]
          }
          values {
-            edge_left_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            edge_left_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property vbar_drag_cb {
          set {
-            /*@ Set the callback to run when the horizontal scrollbar is dragged.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the horizontal scrollbar is dragged.]]
          }
          values {
-            vbar_drag_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            vbar_drag_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property vbar_unpress_cb {
          set {
-            /*@ Set the callback to run when the horizontal scrollbar is unpressed.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the horizontal scrollbar is unpressed.]]
          }
          values {
-            vbar_unpress_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            vbar_unpress_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property edge_bottom_cb {
          set {
-            /*@ Set the callback to run when the bottom edge of the content has been reached.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the bottom edge of the content has been reached.]]
          }
          values {
-            edge_bottom_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            edge_bottom_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property edge_right_cb {
          set {
-            /*@ Set the callback to run when the right edge of the content has been reached.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the right edge of the content has been reached.]]
          }
          values {
-            edge_right_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            edge_right_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property edge_top_cb {
          set {
-            /*@ Set the callback to run when the top edge of the content has been reached.
-
-             @ingroup Widget
-
-             */
+            [[Set the callback to run when the top edge of the content has been reached.]]
          }
          values {
-            edge_top_cb: Elm_Interface_Scrollable_Cb @nullable; /*@ The callback */
+            edge_top_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
       @property objects {
          set {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             edje_object: Evas.Object *;
@@ -649,47 +485,36 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
       }
       @property last_page {
          get {
-            /*@ Get scroll last page number.
+            [[Get scroll last page number.
 
-             The page number starts from 0. 0 is the first page.
-             This returns the last page number among the pages.
+              The page number starts from 0. 0 is the first page.
+              This returns the last page number among the pages.
 
-             @see elm_scroller_current_page_get()
-             @see elm_scroller_page_show()
-             @see elm_scroller_page_bring_in()
-
-             @ingroup Widget
-             */
+              See: @.current_page, @.page_show and @.page_bring_in.]]
          }
          values {
-            pagenumber_h: int; /*@ The horizontal page number */
-            pagenumber_v: int; /*@ The vertical page number */
+            pagenumber_h: int; [[The horizontal page number]]
+            pagenumber_v: int; [[The vertical page number]]
          }
       }
       @property current_page {
          get {
-            /*@ Get scroll current page number.
+            [[Get scroll current page number.
 
-             The page number starts from 0. 0 is the first page.
-             Current page means the page which meets the top-left of the viewport.
-             If there are two or more pages in the viewport, it returns the number of the page
-             which meets the top-left of the viewport.
+              The page number starts from 0. 0 is the first page.
+              Current page means the page which meets the top-left of the viewport.
+              If there are two or more pages in the viewport, it returns the number of the page
+              which meets the top-left of the viewport.
 
-             @see elm_scroller_last_page_get()
-             @see elm_scroller_page_show()
-             @see elm_scroller_page_bring_in()
-
-             @ingroup Widget
-             */
+              See: @.last_page, @.page_show and @.page_bring_in.]]
          }
          values {
-            pagenumber_h: int; /*@ The horizontal page number */
-            pagenumber_v: int; /*@ The vertical page number */
+            pagenumber_h: int; [[The horizontal page number]]
+            pagenumber_v: int; [[The vertical page number]]
          }
       }
       @property content_viewport_geometry {
          get {
-            /*@ No description supplied by the EAPI. */
          }
          values {
             x: Evas.Coord;
@@ -700,21 +525,17 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
       }
       @property content_size {
          get {
-            /*@ Get the size of the content object
+            [[Get the size of the content object
 
-             This gets the size of the content object of the scroller.
-
-             @ingroup Scroller
-             */
+              This gets the size of the content object of the scroller.]]
          }
          values {
-            w: Evas.Coord; /*@ Width of the content object. */
-            h: Evas.Coord; /*@ Height of the content object. */
+            w: Evas.Coord; [[Width of the content object.]]
+            h: Evas.Coord; [[Height of the content object.]]
 
          }
       }
       content_pos_set {
-         /*@ No description supplied by the EAPI. */
          params {
             @in x: Evas.Coord;
             @in y: Evas.Coord;
@@ -722,93 +543,77 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          }
       }
       content_pos_get {
-         /*@ No description supplied by the EAPI. */
          params {
             @out x: Evas.Coord;
             @out y: Evas.Coord;
          }
       }
       page_show {
-         /*@ Show a specific virtual region within the scroller content object by page number.
+         [[Show a specific virtual region within the scroller content object by page number.
 
-          0, 0 of the indicated page is located at the top-left of the viewport.
-          This will jump to the page directly without animation.
+           0, 0 of the indicated page is located at the top-left of the viewport.
+           This will jump to the page directly without animation.
 
-          @see elm_scroller_page_bring_in()
-
-          @ingroup Widget
-          */
+           See @.page_bring_in.]]
          params {
-            @in pagenumber_h: int; /*@ The horizontal page number */
-            @in pagenumber_v: int; /*@ The vertical page number */
+            @in pagenumber_h: int; [[The horizontal page number]]
+            @in pagenumber_v: int; [[The vertical page number]]
          }
       }
       region_bring_in {
-         /*@ Show a specific virtual region within the scroller content object.
+         [[Show a specific virtual region within the scroller content object.
 
-          This will ensure all (or part if it does not fit) of the designated
-          region in the virtual content object (0, 0 starting at the top-left of the
-          virtual content object) is shown within the scroller. Unlike
-          elm_scroller_region_show(), this allows the scroller to "smoothly slide"
-          to this location (if configuration in general calls for transitions). It
-          may not jump immediately to the new location and make take a while and
-          show other content along the way.
+           This will ensure all (or part if it does not fit) of the designated
+           region in the virtual content object (0, 0 starting at the top-left of the
+           virtual content object) is shown within the scroller. Unlike
+           elm_scroller_region_show(), this allows the scroller to "smoothly slide"
+           to this location (if configuration in general calls for transitions). It
+           may not jump immediately to the new location and make take a while and
+           show other content along the way.
 
-          @see elm_scroller_region_show()
-
-          @ingroup Widget
-          */
+           See @.content_region_show]]
          params {
-            @in x: Evas.Coord; /*@ X coordinate of the region */
-            @in y: Evas.Coord; /*@ Y coordinate of the region */
-            @in w: Evas.Coord; /*@ Width of the region */
-            @in h: Evas.Coord; /*@ Height of the region */
+            @in x: Evas.Coord; [[X coordinate of the region]]
+            @in y: Evas.Coord; [[Y coordinate of the region]]
+            @in w: Evas.Coord; [[Width of the region]]
+            @in h: Evas.Coord; [[Height of the region]]
          }
       }
       page_bring_in {
-         /*@ Show a specific virtual region within the scroller content object by page number.
+         [[Show a specific virtual region within the scroller content object by page number.
 
-          0, 0 of the indicated page is located at the top-left of the viewport.
-          This will slide to the page with animation.
+           0, 0 of the indicated page is located at the top-left of the viewport.
+           This will slide to the page with animation.
 
-          @see elm_scroller_page_show()
-
-          @ingroup Scroller
-          */
+           @.page_show]]
          params {
-            @in pagenumber_h: int; /*@ The horizontal page number */
-            @in pagenumber_v: int; /*@ The vertical page number */
+            @in pagenumber_h: int; [[The horizontal page number]]
+            @in pagenumber_v: int; [[The vertical page number]]
          }
       }
       content_region_show {
-         /*@ Show a specific virtual region within the scroller content object
+         [[Show a specific virtual region within the scroller content object
 
-          This will ensure all (or part if it does not fit) of the designated
-          region in the virtual content object (0, 0 starting at the top-left of the
-          virtual content object) is shown within the scroller.
-
-          @ingroup Widget
-          */
+           This will ensure all (or part if it does not fit) of the designated
+           region in the virtual content object (0, 0 starting at the top-left of the
+           virtual content object) is shown within the scroller.]]
          params {
-            @in x: Evas.Coord; /*@ X coordinate of the region */
-            @in y: Evas.Coord; /*@ Y coordinate of the region */
-            @in w: Evas.Coord; /*@ Width of the region */
-            @in h: Evas.Coord; /*@ Height of the region */
+            @in x: Evas.Coord; [[X coordinate of the region]]
+            @in y: Evas.Coord; [[Y coordinate of the region]]
+            @in w: Evas.Coord; [[Width of the region]]
+            @in h: Evas.Coord; [[Height of the region]]
          }
       }
       content_min_limit {
-         /*@ Prevent the scrollable from being smaller than the minimum size of the content.
+         [[Prevent the scrollable from being smaller than the minimum size of the content.
 
-          By default the scroller will be as small as its design allows,
-          irrespective of its content. This will make the scroller minimum size the
-          right size horizontally and/or vertically to perfectly fit its content in
-          that direction.
-
-          @ingroup Widget
-          */
+           By default the scroller will be as small as its design allows,
+           irrespective of its content. This will make the scroller minimum size the
+           right size horizontally and/or vertically to perfectly fit its content in
+           that direction.]]
          params {
-            @in w: bool; /*@ whether to limit the minimum horizontal size */
-            @in h: bool; /*@ whether to limit the minimum vertical size */
+            @in w: bool; [[whether to limit the minimum horizontal size]]
+            @in h: bool; [[whether to limit the minimum vertical size]]
          }
       }
    }
@@ -820,5 +625,4 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
    events {
       changed;
    }
-
 }
