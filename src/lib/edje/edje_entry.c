@@ -2875,9 +2875,6 @@ _edje_entry_text_markup_insert(Edje_Real_Part *rp, const char *text)
    if (!en) return;
    _edje_entry_imf_context_reset(rp);
 
-   // prepend markup @ cursor pos .. XXX: do we need to do this? maybe not?
-//   if (en->have_selection)
-//     _range_del(en->cursor, rp->object, en);
    _text_filter_markup_prepend(en->ed, en, en->cursor, text, NULL, NULL,
                                EINA_TRUE, EINA_FALSE);
    _anchors_get(en->cursor, rp->object, en);
