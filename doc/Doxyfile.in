@@ -1443,6 +1443,7 @@ PREDEFINED             = EINA_MAGIC_DEBUG \
                          EINA_CONST= \
                          EINA_UNUSED= \
                          EFL_DOXYGEN=1 \
+                         EFL_BETA_API_SUPPORT=1 \
                          "EO_CXX_INHERIT(name)=::name"
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
