@@ -58,6 +58,7 @@ struct _Eldbus_Connection
    Eldbus_Connection_Context_Event event_handlers[ELDBUS_CONNECTION_EVENT_LAST];
    Eina_Inlist                   *root_objs;//service_object
    Eldbus_Proxy                   *fdo_proxy;
+   Eina_Bool                     shared : 1; /* Indicate if connection can be shared */
 };
 
 struct _Eldbus_Object
