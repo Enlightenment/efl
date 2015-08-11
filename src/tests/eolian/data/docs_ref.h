@@ -66,6 +66,8 @@ typedef struct _Opaque Opaque;
  * @ref pants @ref docs_meth @ref docs_prop_get @ref docs_prop_get
  * @ref docs_prop_set @ref Foo.field1 @ref Bar.BAR_FOO @ref Docs
  *
+ * @since 1.18
+ *
  * @ingroup Docs
  */
 #define DOCS_CLASS docs_class_get()
@@ -106,6 +108,8 @@ EOAPI int  docs_prop_get(void);
  *
  * @return Return documentation.
  *
+ * @since 1.18
+ *
  * @ingroup Docs
  */
 EOAPI int  docs_meth(int a, float *b, long *c);
@@ -113,6 +117,8 @@ EOAPI int  docs_meth(int a, float *b, long *c);
 EOAPI extern const Eo_Event_Description _DOCS_EVENT_CLICKED;
 
 /** Event docs.
+ *
+ * @since 1.18
  *
  * @ingroup Docs
  */

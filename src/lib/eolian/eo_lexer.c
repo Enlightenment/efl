@@ -438,6 +438,8 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
      doc->description = eina_stringshare_add(eina_strbuf_string_get(rbuf));
    if (!doc->summary)
      doc->summary = eina_stringshare_add("No description supplied.");
+   if (!doc->since && ls->tmp.kls && ls->tmp.kls->doc)
+     doc->since = eina_stringshare_ref(ls->tmp.kls->doc->since);
    eina_strbuf_free(rbuf);
    tok->value.doc = doc;
 }

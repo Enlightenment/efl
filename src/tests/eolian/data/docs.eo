@@ -45,6 +45,8 @@ class Docs {
       @Foo.field1
       @Bar.foo
       @Docs
+
+      @since 1.18
     ]]
     methods {
         meth {
