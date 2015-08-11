@@ -145,7 +145,7 @@ void poppler_shutdown()
    delete globalParams;
 }
 
-void poppler_load_image(int size_w, int size_h)
+void poppler_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED)
 {
    SplashOutputDev *output_dev;
    SplashColor      white;
