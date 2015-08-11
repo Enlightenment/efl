@@ -3157,7 +3157,6 @@ _key_action_move(Evas_Object *obj, const char *params)
                        if (_item_horizontal_loop(obj, ELM_FOCUS_UP))
                          return EINA_TRUE;
                     } 
-                  return EINA_FALSE;
                }
              if (!_elm_config->item_select_on_focus_disable)
                {
