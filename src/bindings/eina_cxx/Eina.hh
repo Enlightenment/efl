@@ -66,8 +66,7 @@
  *
  * Recommended reading:
  *
-
- *
+ * @li @ref Eina_Cxx
  *
  * @addtogroup Eina_Cxx
  * @{
