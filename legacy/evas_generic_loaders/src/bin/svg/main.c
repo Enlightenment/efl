@@ -223,6 +223,7 @@ int main(int argc, char **argv)
           }
      }
    _svg_shutdown();
+   fflush(stdout);
    return 0;
 
 }

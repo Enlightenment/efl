@@ -350,6 +350,6 @@ main(int argc, char **argv)
         eina_tmpstr_del(tmpdir);
         eina_tmpstr_del(generated);
      }
-
+   fflush(stdout);
    return 0;
 }

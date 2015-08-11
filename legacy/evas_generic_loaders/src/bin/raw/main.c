@@ -235,6 +235,7 @@ int main(int argc, char **argv)
           }
      }
    _raw_shutdown();
+   fflush(stdout);
    return 0;
 
 }

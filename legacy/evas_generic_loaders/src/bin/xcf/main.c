@@ -1726,5 +1726,6 @@ main(int argc, char **argv)
    else
       printf("done\n");
    xcf_cleanup();
+   fflush(stdout);
    return 0;
 }

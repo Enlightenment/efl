@@ -287,6 +287,6 @@ main(int argc, char **argv)
      printf("done\n");
 
    _gst_shutdown();
-
+   fflush(stdout);
    return 0;
 }
