@@ -62,7 +62,7 @@ efreet_icon_init(void)
         efreet_icon_extensions = eina_list_append(efreet_icon_extensions, eina_stringshare_add(default_exts[i]));
 
     efreet_extra_icon_dirs = NULL;
-    efreet_cache_icon_exts_add(efreet_icon_extensions);
+    efreet_icon_extensions_refresh();
 
     return 1;
 }
@@ -83,6 +83,12 @@ efreet_icon_shutdown(void)
 
     eina_log_domain_unregister(_efreet_icon_log_dom);
     _efreet_icon_log_dom = -1;
+}
+
+void
+efreet_icon_extensions_refresh(void)
+{
+   efreet_cache_icon_exts_add(efreet_icon_extensions);
 }
 
 EAPI const char *
@@ -143,7 +149,7 @@ efreet_icon_extension_add(const char *ext)
     }
     else
         efreet_icon_extensions = eina_list_prepend(efreet_icon_extensions, ext);
-    efreet_cache_icon_exts_add(efreet_icon_extensions);
+    efreet_icon_extensions_refresh();
 }
 
 EAPI Eina_List **

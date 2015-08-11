@@ -146,8 +146,61 @@ _cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         s = efreet_language_get();
         if (s) len = strlen(s);
         ecore_ipc_server_send(ipc, 1, 0, 0, 0, 0, s, len);
+        efreet_icon_extensions_refresh();
      }
    return ECORE_CALLBACK_DONE;
+}
+
+static void
+_icon_desktop_cache_update_event_add(int event_type)
+{
+   Efreet_Event_Cache_Update *ev;
+   Efreet_Old_Cache *d = NULL;
+   Eina_List *l = NULL;
+
+   efreet_cache_desktop_close();
+
+   ev = NEW(Efreet_Event_Cache_Update, 1);
+   if (!ev) return;
+
+   IF_RELEASE(theme_name);
+
+   // Save all old caches
+   d = NEW(Efreet_Old_Cache, 1);
+   if (d)
+     {
+        d->hash = themes;
+        d->ef = icon_theme_cache;
+        l = eina_list_append(l, d);
+     }
+
+   d = NEW(Efreet_Old_Cache, 1);
+   if (d)
+     {
+        d->hash = icons;
+        d->ef = icon_cache;
+        l = eina_list_append(l, d);
+     }
+
+   d = NEW(Efreet_Old_Cache, 1);
+   if (d)
+     {
+        d->hash = fallbacks;
+        d->ef = fallback_cache;
+        l = eina_list_append(l, d);
+     }
+
+   // Create new empty caches
+   themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_theme_free));
+   icons = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_free));
+   fallbacks = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_fallback_free));
+
+   icon_theme_cache = NULL;
+   icon_cache = NULL;
+   fallback_cache = NULL;
+
+   // Send event
+   ecore_event_add(event_type, ev, icon_cache_update_free, l);
 }
 
 static Eina_Bool
@@ -162,69 +215,14 @@ _cb_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    else if (e->major == 2) // icon cache update
      {
         if (e->minor == 1)
-          {
-             Efreet_Event_Cache_Update *ev;
-
-             efreet_cache_desktop_close();
-
-             ev = NEW(Efreet_Event_Cache_Update, 1);
-             if (ev)
-                ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, NULL, NULL);
-          }
+          _icon_desktop_cache_update_event_add(EFREET_EVENT_ICON_CACHE_UPDATE);
         else
-          ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_BUILD, NULL, NULL, NULL);
+          ecore_event_add(EFREET_EVENT_ICON_CACHE_UPDATE, NULL, NULL, NULL);
      }
    else if (e->major == 3) // desktop cache update
      {
-        Efreet_Event_Cache_Update *ev = NULL;
-        Efreet_Old_Cache *d = NULL;
-        Eina_List *l = NULL;
-
-        if (e->minor == 1)
-          {
-             ev = NEW(Efreet_Event_Cache_Update, 1);
-             if (!ev) goto error;
-
-             IF_RELEASE(theme_name);
-
-             // Save all old caches
-             d = NEW(Efreet_Old_Cache, 1);
-             if (!d) goto error;
-             d->hash = themes;
-             d->ef = icon_theme_cache;
-             l = eina_list_append(l, d);
-
-             d = NEW(Efreet_Old_Cache, 1);
-             if (!d) goto error;
-             d->hash = icons;
-             d->ef = icon_cache;
-             l = eina_list_append(l, d);
-
-             d = NEW(Efreet_Old_Cache, 1);
-             if (!d) goto error;
-             d->hash = fallbacks;
-             d->ef = fallback_cache;
-             l = eina_list_append(l, d);
-
-             // Create new empty caches
-             themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_theme_free));
-             icons = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_free));
-             fallbacks = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_fallback_free));
-
-             icon_theme_cache = NULL;
-             icon_cache = NULL;
-             fallback_cache = NULL;
-
-             // Send event
-             ecore_event_add(EFREET_EVENT_ICON_CACHE_UPDATE, ev, icon_cache_update_free, l);
-             goto done;
-          }
-error:
-        IF_FREE(ev);
-          EINA_LIST_FREE(l, d)
-        free(d);
+        _icon_desktop_cache_update_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE);
      }
-done:
    return ECORE_CALLBACK_DONE;
 }
 

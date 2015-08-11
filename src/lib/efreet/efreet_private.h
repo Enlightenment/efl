@@ -197,6 +197,7 @@ void efreet_cache_shutdown(void);
 
 int efreet_icon_init(void);
 void efreet_icon_shutdown(void);
+void efreet_icon_extensions_refresh(void);
 
 int efreet_menu_init(void);
 void efreet_menu_shutdown(void);
