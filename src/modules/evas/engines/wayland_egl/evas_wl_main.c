@@ -403,7 +403,6 @@ eng_outbuf_region_first_rect(Outbuf *ob)
 static void
 _convert_glcoords(int *result, Outbuf *ob, int x, int y, int w, int h)
 {
-
    switch (ob->rot)
      {
       case 0:
