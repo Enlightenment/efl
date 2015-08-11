@@ -43,441 +43,285 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
    eo_prefix: elm_obj_list;
    methods {
       @property horizontal {
+         [[Control horizontal mode on the list object.
+
+           Note: Vertical mode is set by default.
+
+           On horizontal mode items are displayed on list from left to right,
+           instead of from top to bottom. Also, the list will scroll horizontally.
+           Each item will presents left icon on top and right icon, or end, at
+           the bottom.]]
          set {
-            /*@
-            Enable or disable horizontal mode on the list object.
-
-            @note Vertical mode is set by default.
-
-            On horizontal mode items are displayed on list from left to right,
-            instead of from top to bottom. Also, the list will scroll horizontally.
-            Each item will presents left icon on top and right icon, or end, at
-            the bottom.
-
-            @see elm_list_horizontal_get()
-
-            @ingroup List */
          }
          get {
-            /*@
-            Get a value whether horizontal mode is enabled or not.
-
-            @return $true means horizontal mode selection is enabled.
-            $false indicates it's disabled. If $obj is $NULL,
-            $false is returned.
-
-            @see elm_list_horizontal_set() for details.
-
-            @ingroup List */
          }
          values {
-            horizontal: bool; /*@ $true to enable horizontal or $false to
-            disable it, i.e., to enable vertical mode. */
+            horizontal: bool; [[$true to enable horizontal or $false to disable it, i.e., to enable vertical mode.]]
          }
       }
       @property select_mode {
+         [[Control the list select mode.
+
+           elm_list_select_mode_set() changes item select mode in the list widget.
+           - #ELM_OBJECT_SELECT_MODE_DEFAULT : Items will only call their selection func and
+           callback when first becoming selected. Any further clicks will
+           do nothing, unless you set always select mode.
+           - #ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
+           every click will make the selected callbacks be called.
+           - #ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select items
+           entirely and they will neither appear selected nor call selected
+           callback functions.]]
          set {
-            /*@
-            Set the list select mode.
-
-            elm_list_select_mode_set() changes item select mode in the list widget.
-            - #ELM_OBJECT_SELECT_MODE_DEFAULT : Items will only call their selection func and
-            callback when first becoming selected. Any further clicks will
-            do nothing, unless you set always select mode.
-            - #ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
-            every click will make the selected callbacks be called.
-            - #ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select items
-            entirely and they will neither appear selected nor call selected
-            callback functions.
-
-            @see elm_list_select_mode_get()
-
-            @ingroup List */
          }
          get {
-            /*@
-            Get the list select mode.
-
-            @return The select mode
-            (If getting mode fails, it returns #ELM_OBJECT_SELECT_MODE_MAX)
-
-            @see elm_list_select_mode_set()
-
-            @ingroup List */
          }
          values {
-            mode: Elm.Object.Select_Mode(Elm.Object.Select_Mode.max); /*@ The select mode */
+            mode: Elm.Object.Select_Mode(Elm.Object.Select_Mode.max); [[The select mode]]
          }
       }
       @property focus_on_selection {
+         [[Control focus upon items selection mode
+
+           When enabled, every selection of an item inside the genlist will automatically set focus to
+           its first focusable widget from the left. This is true of course if the selection was made by
+           clicking an unfocusable area in an item or selecting it with a key movement. Clicking on a
+           focusable widget inside an item will couse this particular item to get focus as usual.]]
          set {
-            /*@
-            Set focus upon items selection mode
-
-            When enabled, every selection of an item inside the genlist will automatically set focus to
-            its first focusable widget from the left. This is true of course if the selection was made by
-            clicking an unfocusable area in an item or selecting it with a key movement. Clicking on a
-            focusable widget inside an item will couse this particular item to get focus as usual.
-
-            @ingroup List */
          }
          get {
-            /*@
-            Get whether focus upon item's selection mode is enabled.
-
-            @return The tree effect status
-            (true = enabled, false = disabled)
-
-            @ingroup List */
          }
          values {
-            enabled: bool; /*@ The tree effect status
-            (true = enabled, false = disabled) */
+            enabled: bool; [[The tree effect status (true = enabled, false = disabled)]]
          }
       }
       @property multi_select {
+         [[Control multiple items selection on the list object.
+
+           Disabled by default. If disabled, the user can select a single item of
+           the list each time. Selected items are highlighted on list.
+           If enabled, many items can be selected.
+
+           If a selected item is selected again, it will be unselected.]]
          set {
-            /*@
-            Enable or disable multiple items selection on the list object.
-
-            Disabled by default. If disabled, the user can select a single item of
-            the list each time. Selected items are highlighted on list.
-            If enabled, many items can be selected.
-
-            If a selected item is selected again, it will be unselected.
-
-            @see elm_list_multi_select_get()
-
-            @ingroup List */
          }
          get {
-            /*@
-            Get a value whether multiple items selection is enabled or not.
-
-            @see elm_list_multi_select_set() for details.
-
-            @return $true means multiple items selection is enabled.
-            $false indicates it's disabled. If $obj is $NULL,
-            $false is returned.
-
-            @ingroup List */
          }
          values {
-            multi: bool; /*@ $true to enable multi selection or $false to
-            disable it. */
+            multi: bool; [[$true to enable multi selection or $false to disable it.]]
          }
       }
       @property multi_select_mode {
+         [[Control the list multi select mode.
+
+           - #ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT : select/unselect items whenever each
+           item is clicked.
+           - #ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL : Only one item will be selected
+           although multi-selection is enabled, if clicked without pressing control
+           key. This mode is only available with multi-selection.
+
+           See: @.multi_select
+
+           @since 1.8]]
          set {
-            /*@
-            Set the list multi select mode.
-
-            - #ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT : select/unselect items whenever each
-            item is clicked.
-            - #ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL : Only one item will be selected
-            although multi-selection is enabled, if clicked without pressing control
-            key. This mode is only available with multi-selection.
-
-            @see elm_list_multi_select_set()
-            @see elm_list_multi_select_mode_get()
-
-            @ingroup List
-            @since 1.8 */
          }
          get {
-            /*@
-            Get the list multi select mode.
-
-            @return The multi select mode
-            (If getting mode fails, it returns #ELM_OBJECT_MULTI_SELECT_MODE_MAX)
-
-            @see elm_list_multi_select_set()
-            @see elm_list_multi_select_mode_set()
-
-            @ingroup List
-            @since 1.8 */
          }
          values {
-            mode: Elm.Object.Multi_Select_Mode(Elm.Object.Multi_Select_Mode.max); /*@ The multi select mode */
+            mode: Elm.Object.Multi_Select_Mode(Elm.Object.Multi_Select_Mode.max); [[The multi select mode]]
          }
       }
       @property mode {
+         [[Control which mode to use for the list object.
+
+           Set list's resize behavior, transverse axis scroll and
+           items cropping. See each mode's description for more details.
+
+           Note: Default value is #ELM_LIST_SCROLL.
+
+           Only one mode at a time can be set. If a previous one was set, it
+           will be changed by the new mode after this call. Bitmasks won't
+           work here as well.
+
+           Warning: This function's behavior will clash with those of
+           elm_scroller_content_min_limit(), so use either one of them, but
+           not both.]]
          set {
-            /*@
-            Set which mode to use for the list object.
-
-            Set list's resize behavior, transverse axis scroll and
-            items cropping. See each mode's description for more details.
-
-            @note Default value is #ELM_LIST_SCROLL.
-
-            Only one mode at a time can be set. If a previous one was set, it
-            will be changed by the new mode after this call. Bitmasks won't
-            work here as well.
-
-            @warning This function's behavior will clash with those of
-            elm_scroller_content_min_limit(), so use either one of them, but
-            not both.
-
-            @see elm_list_mode_get()
-
-            @ingroup List */
          }
          get {
-            /*@
-            Get the mode the list is at.
-
-            @return One of #Elm_List_Mode: #ELM_LIST_COMPRESS, #ELM_LIST_SCROLL, #ELM_LIST_LIMIT, #ELM_LIST_EXPAND or #ELM_LIST_LAST on errors.
-
-            @note see elm_list_mode_set() for more information.
-
-            @ingroup List */
          }
          values {
-            mode: Elm.List.Mode(Elm.List.Mode.last); /*@ One of #Elm_List_Mode: #ELM_LIST_COMPRESS,
-            #ELM_LIST_SCROLL, #ELM_LIST_LIMIT or #ELM_LIST_EXPAND. */
+            mode: Elm.List.Mode(Elm.List.Mode.last); [[One of #Elm_List_Mode: #ELM_LIST_COMPRESS, #ELM_LIST_SCROLL, #ELM_LIST_LIMIT or #ELM_LIST_EXPAND.]]
          }
       }
       @property selected_item {
          get {
-            /*@
-            Get the selected item.
+            [[Get the selected item.
 
-            @return The selected list item.
+             The selected item can be unselected with function
+             elm_list_item_selected_set().
 
-            The selected item can be unselected with function
-            elm_list_item_selected_set().
+             The selected item always will be highlighted on list.]]
 
-            The selected item always will be highlighted on list.
-
-            @see elm_list_selected_items_get()
-
-            @ingroup List */
-            return: Elm.Widget_Item *;
+            return: Elm.Widget_Item *; [[The selected list item.]]
          }
       }
       @property items {
          get {
-            /*@
-            Get a list of all the list items.
+            [[Get a list of all the list items.]]
 
-            @return A $list of list items, #Elm.Widget_Item,
-            or $NULL on failure.
-
-            @see elm_list_item_append()
-            @see elm_object_item_del()
-            @see elm_list_clear()
-
-            @ingroup List */
-            return: const(list<Elm.Widget_Item *>)*;
+            return: const(list<Elm.Widget_Item *>)*; [[A $list of list items, #Elm.Widget_Item, or $NULL on failure.]]
          }
       }
       @property first_item {
          get {
-            /*@
-            Get the first item in the list
+            [[Get the first item in the list
 
-            This returns the first item in the list.
+              This returns the first item in the list.]]
 
-            @return The first item, or NULL if none
-
-            @ingroup List */
-            return: Elm.Widget_Item *;
+            return: Elm.Widget_Item *; [[The first item, or NULL if none]]
          }
       }
       @property selected_items {
          get {
-            /*@
-            Return a list of the currently selected list items.
+            [[Return a list of the currently selected list items.
 
-            @return An $list of list items, #Elm.Widget_Item,
-            or $NULL on failure.
+              Multiple items can be selected if multi select is enabled. It can be
+              done with elm_list_multi_select_set().]]
 
-            Multiple items can be selected if multi select is enabled. It can be
-            done with elm_list_multi_select_set().
-
-            @see elm_list_selected_item_get()
-            @see elm_list_multi_select_set()
-
-            @ingroup List */
-            return: const(list<Elm.Widget_Item *>)*;
+            return: const(list<Elm.Widget_Item *>)*; [[An $list of list items, #Elm.Widget_Item, or $NULL on failure.]]
          }
       }
       @property last_item {
          get {
-            /*@
-            Get the last item in the list
+            [[Get the last item in the list
 
-            This returns the last item in the list.
+              This returns the last item in the list.]]
 
-            @return The last item, or NULL if none
-
-            @ingroup List */
-            return: Elm.Widget_Item *;
+            return: Elm.Widget_Item *; [[The last item, or NULL if none]]
          }
       }
       item_insert_before {
-         /*@
-         Insert a new item into the list object before item $before.
+         [[Insert a new item into the list object before item $before.
 
-         @return The created item or $NULL upon failure.
+           A new item will be created and added to the list. Its position in
+           this list will be just before item $before.
 
-         A new item will be created and added to the list. Its position in
-         this list will be just before item $before.
+           Items created with this method can be deleted with elm_object_item_del().
 
-         Items created with this method can be deleted with elm_object_item_del().
+           Associated $data can be properly freed when item is deleted if a
+           callback function is set with elm_object_item_del_cb_set().
 
-         Associated $data can be properly freed when item is deleted if a
-         callback function is set with elm_object_item_del_cb_set().
+           If a function is passed as argument, it will be called every time this item
+           is selected, i.e., the user clicks over an unselected item.
+           If always select is enabled it will call this function every time
+           user clicks over an item (already selected or not).
+           If such function isn't needed, just passing
+           $NULL as $func is enough. The same should be done for $data.
 
-         If a function is passed as argument, it will be called every time this item
-         is selected, i.e., the user clicks over an unselected item.
-         If always select is enabled it will call this function every time
-         user clicks over an item (already selected or not).
-         If such function isn't needed, just passing
-         $NULL as $func is enough. The same should be done for $data.
+           Note: Remember that the label parameter is copied inside the list. So if an
+           application dynamically allocated the label, the application should free the
+           label after this call.]]
 
-         @note Remember that the label parameter is copied inside the list. So if an
-         application dynamically allocated the label, the application should free the
-         label after this call.
-
-         @see elm_list_item_append() for a simple code example.
-         @see elm_list_select_mode_set()
-         @see elm_object_item_del()
-         @see elm_object_item_del_cb_set()
-         @see elm_list_clear()
-         @see elm_icon_add()
-
-         @ingroup List */
-
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[The created item or $NULL upon failure.]]
          params {
-            @in before: Elm.Widget_Item *; /*@ The list item to insert before. */
-            @in label: const(char)*; /*@ The label of the list item. */
-            @in icon: Evas.Object * @optional; /*@ The icon object to use for the left side of the item. An
-            icon can be any Evas object, but usually it is an icon created
-            with elm_icon_add(). */
-            @in end: Evas.Object * @optional; /*@ The icon object to use for the right side of the item. An
-            icon can be any Evas object. */
-            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
-            @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
+            @in before: Elm.Widget_Item *; [[The list item to insert before.]]
+            @in label: const(char)*; [[The label of the list item.]]
+            @in icon: Evas.Object * @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
+            @in end: Evas.Object * @optional; [[The icon object to use for the right side of the item. An icon can be any Evas object.]]
+            @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
+            @in data: const(void)* @optional; [[The data to associate with the item for related callbacks.]]
          }
       }
       go {
-         /*@
-         Starts the list.
+         [[Starts the list.
 
-         @note Call before running show() on the list object.
-         @warning If not called, it won't display the list properly.
+         Note: Call before running show() on the list object.
+         Warning: If not called, it won't display the list properly.]]
 
+         /* FIXME-doc
          @code
          li = elm_list_add(win);
          elm_list_item_append(li, "First", NULL, NULL, NULL, NULL);
          elm_list_item_append(li, "Second", NULL, NULL, NULL, NULL);
          elm_list_go(li);
          evas_object_show(li);
-         @endcode
-
-         @ingroup List */
-
+         @endcode */
       }
       item_insert_after {
-         /*@
-         Insert a new item into the list object after item $after.
+         [[Insert a new item into the list object after item $after.
 
-         @return The created item or $NULL upon failure.
+           A new item will be created and added to the list. Its position in
+           this list will be just after item $after.
 
-         A new item will be created and added to the list. Its position in
-         this list will be just after item $after.
+           Items created with this method can be deleted with elm_object_item_del().
 
-         Items created with this method can be deleted with elm_object_item_del().
+           Associated $data can be properly freed when item is deleted if a
+           callback function is set with elm_object_item_del_cb_set().
 
-         Associated $data can be properly freed when item is deleted if a
-         callback function is set with elm_object_item_del_cb_set().
+           If a function is passed as argument, it will be called every time this item
+           is selected, i.e., the user clicks over an unselected item.
+           If always select is enabled it will call this function every time
+           user clicks over an item (already selected or not).
+           If such function isn't needed, just passing
+           $NULL as $func is enough. The same should be done for $data.
 
-         If a function is passed as argument, it will be called every time this item
-         is selected, i.e., the user clicks over an unselected item.
-         If always select is enabled it will call this function every time
-         user clicks over an item (already selected or not).
-         If such function isn't needed, just passing
-         $NULL as $func is enough. The same should be done for $data.
+           Note: Remember that the label parameter is copied inside the list. So if an
+           application dynamically allocated the label, the application should free the
+           label after this call.]]
 
-         @note Remember that the label parameter is copied inside the list. So if an
-         application dynamically allocated the label, the application should free the
-         label after this call.
-
-         @see elm_list_item_append() for a simple code example.
-         @see elm_list_select_mode_set()
-         @see elm_object_item_del()
-         @see elm_object_item_del_cb_set()
-         @see elm_list_clear()
-         @see elm_icon_add()
-
-         @ingroup List */
-
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[The created item or $NULL upon failure.]]
          params {
-            @in after: Elm.Widget_Item *; /*@ The list item to insert after. */
-            @in label: const(char)*; /*@ The label of the list item. */
-            @in icon: Evas.Object * @optional; /*@ The icon object to use for the left side of the item. An
-            icon can be any Evas object, but usually it is an icon created
-            with elm_icon_add(). */
-            @in end: Evas.Object * @optional; /*@ The icon object to use for the right side of the item. An
-            icon can be any Evas object. */
-            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
-            @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
+            @in after: Elm.Widget_Item *; [[The list item to insert after.]]
+            @in label: const(char)*; [[The label of the list item.]]
+            @in icon: Evas.Object * @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
+            @in end: Evas.Object * @optional; [[The icon object to use for the right side of the item. An icon can be any Evas object.]]
+            @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
+            @in data: const(void)* @optional; [[The data to associate with the item for related callbacks.]]
          }
       }
       at_xy_item_get @const {
-         /*@
-         Get the item that is at the x, y canvas coords.
+         [[Get the item that is at the x, y canvas coords.
 
-         @return The item at the coordinates or NULL if none
+           This returns the item at the given coordinates (which are canvas
+           relative, not object-relative). If an item is at that coordinate,
+           that item handle is returned, and if $posret is not NULL, the
+           integer pointed to is set to a value of -1, 0 or 1, depending if
+           the coordinate is on the upper portion of that item (-1), on the
+           middle section (0) or on the lower part (1). If NULL is returned as
+           an item (no item found there), then posret may indicate -1 or 1
+           based if the coordinate is above or below all items respectively in
+           the list.]]
 
-         This returns the item at the given coordinates (which are canvas
-         relative, not object-relative). If an item is at that coordinate,
-         that item handle is returned, and if $posret is not NULL, the
-         integer pointed to is set to a value of -1, 0 or 1, depending if
-         the coordinate is on the upper portion of that item (-1), on the
-         middle section (0) or on the lower part (1). If NULL is returned as
-         an item (no item found there), then posret may indicate -1 or 1
-         based if the coordinate is above or below all items respectively in
-         the list.
-
-
-         @ingroup List */
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[The item at the coordinates or NULL if none]]
          params {
-            @in x: Evas.Coord; /*@ The input x coordinate */
-            @in y: Evas.Coord; /*@ The input y coordinate */
-            @out posret: int; /*@ The position relative to the item returned here */
+            @in x: Evas.Coord; [[The input x coordinate]]
+            @in y: Evas.Coord; [[The input y coordinate]]
+            @out posret: int; [[The position relative to the item returned here]]
          }
       }
       item_append {
-         /*@
-         Append a new item to the list object.
+         [[Append a new item to the list object.
 
-         @return The created item or $NULL upon failure.
+           A new item will be created and appended to the list, i.e., will
+           be set as last item.
 
-         A new item will be created and appended to the list, i.e., will
-         be set as @b last item.
+           Items created with this method can be deleted with elm_object_item_del().
 
-         Items created with this method can be deleted with elm_object_item_del().
+           Associated $data can be properly freed when item is deleted if a
+           callback function is set with elm_object_item_del_cb_set().
 
-         Associated $data can be properly freed when item is deleted if a
-         callback function is set with elm_object_item_del_cb_set().
+           If a function is passed as argument, it will be called every time this item
+           is selected, i.e., the user clicks over an unselected item.
+           If always select is enabled it will call this function every time
+           user clicks over an item (already selected or not).
+           If such function isn't needed, just passing
+           $NULL as $func is enough. The same should be done for $data.
 
-         If a function is passed as argument, it will be called every time this item
-         is selected, i.e., the user clicks over an unselected item.
-         If always select is enabled it will call this function every time
-         user clicks over an item (already selected or not).
-         If such function isn't needed, just passing
-         $NULL as $func is enough. The same should be done for $data.
+           Note: Remember that the label parameter is copied inside the list. So if an
+           application dynamically allocated the label, the application should free the
+           label after this call.]]
 
-         @note Remember that the label parameter is copied inside the list. So if an
-         application dynamically allocated the label, the application should free the
-         label after this call.
-
+         /* FIXME-doc
          Simple example (with no function callback or data associated):
          @code
          li = elm_list_add(win);
@@ -494,130 +338,89 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
          @see elm_object_item_del_cb_set()
          @see elm_list_clear()
          @see elm_icon_add()
+         */
 
-         @ingroup List */
-
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[The created item or $NULL upon failure.]]
          params {
-            @in label: const(char)*; /*@ The label of the list item. */
-            @in icon: Evas.Object * @optional; /*@ The icon object to use for the left side of the item. An
-            icon can be any Evas object, but usually it is an icon created
-            with elm_icon_add(). */
-            @in end: Evas.Object * @optional; /*@ The icon object to use for the right side of the item. An
-            icon can be any Evas object. */
-            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
-            @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
+            @in label: const(char)*; [[The label of the list item.]]
+            @in icon: Evas.Object * @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
+            @in end: Evas.Object * @optional; [[The icon object to use for the right side of the item. An icon can be any Evas object.]]
+            @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
+            @in data: const(void)* @optional; [[The data to associate with the item for related callbacks.]]
          }
       }
       item_prepend {
-         /*@
-         Prepend a new item to the list object.
+         [[Prepend a new item to the list object.
 
-         @return The created item or $NULL upon failure.
+           A new item will be created and prepended to the list, i.e., will
+           be set as first item.
 
-         A new item will be created and prepended to the list, i.e., will
-         be set as @b first item.
+           Items created with this method can be deleted with elm_object_item_del().
 
-         Items created with this method can be deleted with elm_object_item_del().
+           Associated $data can be properly freed when item is deleted if a
+           callback function is set with elm_object_item_del_cb_set().
 
-         Associated $data can be properly freed when item is deleted if a
-         callback function is set with elm_object_item_del_cb_set().
+           If a function is passed as argument, it will be called every time this item
+           is selected, i.e., the user clicks over an unselected item.
+           If always select is enabled it will call this function every time
+           user clicks over an item (already selected or not).
+           If such function isn't needed, just passing
+           $NULL as $func is enough. The same should be done for $data.
 
-         If a function is passed as argument, it will be called every time this item
-         is selected, i.e., the user clicks over an unselected item.
-         If always select is enabled it will call this function every time
-         user clicks over an item (already selected or not).
-         If such function isn't needed, just passing
-         $NULL as $func is enough. The same should be done for $data.
+           Note: Remember that the label parameter is copied inside the list. So if an
+           application dynamically allocated the label, the application should free the
+           label after this call.]]
 
-         @note Remember that the label parameter is copied inside the list. So if an
-         application dynamically allocated the label, the application should free the
-         label after this call.
-
-         @see elm_list_item_append() for a simple code example.
-         @see elm_list_select_mode_set()
-         @see elm_object_item_del()
-         @see elm_object_item_del_cb_set()
-         @see elm_list_clear()
-         @see elm_icon_add()
-
-         @ingroup List */
-
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[The created item or $NULL upon failure.]]
          params {
-            @in label: const(char)*; /*@ The label of the list item. */
-            @in icon: Evas.Object * @optional; /*@ The icon object to use for the left side of the item. An
-            icon can be any Evas object, but usually it is an icon created
-            with elm_icon_add(). */
-            @in end: Evas.Object * @optional; /*@ The icon object to use for the right side of the item. An
-            icon can be any Evas object. */
-            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
-            @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
+            @in label: const(char)*; [[The label of the list item.]]
+            @in icon: Evas.Object * @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
+            @in end: Evas.Object * @optional; [[The icon object to use for the right side of the item. An icon can be any Evas object.]]
+            @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
+            @in data: const(void)* @optional; [[The data to associate with the item for related callbacks.]]
          }
       }
       clear {
-         /*@
-         Remove all list's items.
-
-         @see elm_object_item_del()
-         @see elm_list_item_append()
-
-         @ingroup List */
-
+         [[Remove all list's items.]]
       }
       item_sorted_insert {
-         /*@
-         Insert a new item into the sorted list object.
+         [[Insert a new item into the sorted list object.
 
-         @return The created item or $NULL upon failure.
+           Note: This function inserts values into a list object assuming it was
+           sorted and the result will be sorted.
 
-         @note This function inserts values into a list object assuming it was
-         sorted and the result will be sorted.
+           A new item will be created and added to the list. Its position in
+           this list will be found comparing the new item with previously inserted
+           items using function $cmp_func.
 
-         A new item will be created and added to the list. Its position in
-         this list will be found comparing the new item with previously inserted
-         items using function $cmp_func.
+           Items created with this method can be deleted with elm_object_item_del().
 
-         Items created with this method can be deleted with elm_object_item_del().
+           Associated $data can be properly freed when item is deleted if a
+           callback function is set with elm_object_item_del_cb_set().
 
-         Associated $data can be properly freed when item is deleted if a
-         callback function is set with elm_object_item_del_cb_set().
+           If a function is passed as argument, it will be called every time this item
+           is selected, i.e., the user clicks over an unselected item.
+           If always select is enabled it will call this function every time
+           user clicks over an item (already selected or not).
+           If such function isn't needed, just passing
+           $NULL as $func is enough. The same should be done for $data.
 
-         If a function is passed as argument, it will be called every time this item
-         is selected, i.e., the user clicks over an unselected item.
-         If always select is enabled it will call this function every time
-         user clicks over an item (already selected or not).
-         If such function isn't needed, just passing
-         $NULL as $func is enough. The same should be done for $data.
+           Note: Remember that the label parameter is copied inside the list. So if an
+           application dynamically allocated the label, the application should free the
+           label after this call.]]
 
-         @note Remember that the label parameter is copied inside the list. So if an
-         application dynamically allocated the label, the application should free the
-         label after this call.
-
-         @see elm_list_item_append() for a simple code example.
-         @see elm_list_select_mode_set()
-         @see elm_object_item_del()
-         @see elm_object_item_del_cb_set()
-         @see elm_list_clear()
-         @see elm_icon_add()
-
-         @ingroup List */
-
-         return: Elm.Widget_Item *;
+         return: Elm.Widget_Item *; [[The created item or $NULL upon failure.]]
          params {
-            @in label: const(char)*; /*@ The label of the list item. */
-            @in icon: Evas.Object * @optional; /*@ The icon object to use for the left side of the item. An
-            icon can be any Evas object, but usually it is an icon created
-            with elm_icon_add(). */
-            @in end: Evas.Object * @optional; /*@ The icon object to use for the right side of the item. An
-            icon can be any Evas object. */
-            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
-            @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
-            @in cmp_func: Eina_Compare_Cb; /*@ The comparing function to be used to sort list
-            items <b>by #Elm.Widget_Item item handles</b>. This function will
-            receive two items and compare them, returning a non-negative integer
-            if the second item should be place after the first, or negative value
-            if should be placed before. */
+            @in label: const(char)*; [[The label of the list item.]]
+            @in icon: Evas.Object * @optional; [[The icon object to use for the left side of the item. An icon can be any Evas object, but usually it is an icon created with elm_icon_add().]]
+            @in end: Evas.Object * @optional; [[The icon object to use for the right side of the item. An icon can be any Evas object.]]
+            @in func: Evas_Smart_Cb @optional; [[The function to call when the item is clicked.]]
+            @in data: const(void)* @optional; [[The data to associate with the item for related callbacks.]]
+            @in cmp_func: Eina_Compare_Cb; [[The comparing function to be used to sort list
+                                             items by #Elm.Widget_Item item handles. This function will
+                                             receive two items and compare them, returning a non-negative integer
+                                             if the second item should be place after the first, or negative value
+                                             if should be placed before.]]
          }
       }
    }
