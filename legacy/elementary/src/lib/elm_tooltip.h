@@ -71,19 +71,17 @@ EAPI void elm_object_tooltip_move_freeze_pop(Evas_Object *obj);
 EAPI int elm_object_tooltip_move_freeze_get(const Evas_Object *obj);
 
 /**
- * @def elm_object_tooltip_orient_set
- * @since 1.9
- *
  * @brief Sets the orientation of the tooltip around the owner region
  *
  * Sets the position in which tooltip will appear around its owner. By default,
  * #ELM_TOOLTIP_ORIENT_NONE is set.
  *
- * @param[in] obj owner widget.
- * @param[in] orient orientation.
+ * @param obj The owner widget.
+ * @param orient The orientation of the tooltip.
  *
  * @ingroup Tooltips
- * @see @ref Elm_Tooltip_Orient for possible values.
+ * @see Elm_Tooltip_Orient for possible values.
+ * @since 1.9
  */
 EAPI void elm_object_tooltip_orient_set(Evas_Object *obj, Elm_Tooltip_Orient orient);
 
