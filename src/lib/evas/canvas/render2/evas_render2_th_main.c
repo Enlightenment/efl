@@ -167,6 +167,30 @@ _evas_render2_th_main_obj_process(Evas_Public_Data *e,
                                                 offx, offy, l);
 }
 
+static Region *
+_evas_render2_regions_merge(Region *region)
+{
+   Region *region2;
+   Box *rects;
+   int num, i;
+   int tsize = 16;
+
+   region2 = region_new();
+   rects = region_rects(region);
+   num = region_rects_num(region);
+   for (i = 0; i < num; i++)
+     {
+        region_rect_add
+        (region2,
+         (rects[i].x1 / tsize) * tsize,
+         (rects[i].y1 / tsize) * tsize,
+         (((rects[i].x2 - rects[i].x1) + tsize - 1) / tsize) * tsize,
+         (((rects[i].y2 - rects[i].y1) + tsize - 1) / tsize) * tsize);
+     }
+   region_free(region);
+   return region2;
+}
+
 static void
 _evas_render2_th_main_do(Eo *eo_e, Evas_Public_Data *e)
 {
@@ -207,6 +231,8 @@ _evas_render2_th_main_do(Eo *eo_e, Evas_Public_Data *e)
    t = get_time() - t;
    printf("T: update generation: "); out_time(t);
 
+   updates = _evas_render2_regions_merge(updates);
+
    rects = region_rects(updates);
    rects_num = region_rects_num(updates);
    for (i = 0; i < rects_num; i++)
@@ -214,6 +240,8 @@ _evas_render2_th_main_do(Eo *eo_e, Evas_Public_Data *e)
         rect = malloc(sizeof(Eina_Rectangle));
         if (rect)
           {
+             if (rects[i].x2 > e->output.w) rects[i].x2 = e->output.w;
+             if (rects[i].y2 > e->output.h) rects[i].y2 = e->output.h;
              rect->x = rects[i].x1;
              rect->y = rects[i].y1;
              rect->w = rects[i].x2 - rects[i].x1;
@@ -223,6 +251,10 @@ _evas_render2_th_main_do(Eo *eo_e, Evas_Public_Data *e)
              updates_list = eina_list_append(updates_list, rect);
           }
      }
+   t = get_time() - t;
+   printf("T: merge updates: "); out_time(t);
+
+   // ... now render every update region
    region_free(updates);
 
    e->changed = EINA_FALSE;
