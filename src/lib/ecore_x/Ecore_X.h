@@ -742,6 +742,7 @@ struct _Ecore_X_Event_Selection_Notify
    Ecore_X_Atom      atom;
    char             *target;
    void             *data;
+   Ecore_X_Atom      property; /**< @since 1.16 */
 };
 
 struct _Ecore_X_Selection_Data

@@ -1510,6 +1510,7 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
    e->win = xevent->xselection.requestor;
    e->time = xevent->xselection.time;
    e->atom = selection;
+   e->property = xevent->xselection.property;
    e->target = _ecore_x_selection_target_get(xevent->xselection.target);
 
    if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)

@@ -1367,6 +1367,7 @@ _ecore_xcb_event_handle_selection_notify(xcb_generic_event_t *event)
    e->win = ev->requestor;
    e->time = ev->time;
    e->atom = selection;
+   e->property = ev->property;
    e->target = _ecore_xcb_selection_target_get(ev->target);
 
    if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
