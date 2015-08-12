@@ -420,6 +420,7 @@ typedef struct _Elm_Widget_Smart_Data
 
    int                           orient_mode; /* -1 is disabled */
    Elm_Focus_Move_Policy         focus_move_policy;
+   Elm_Focus_Region_Show_Mode    focus_region_show_mode;
 
    Eina_Bool                     drag_x_locked : 1;
    Eina_Bool                     drag_y_locked : 1;
@@ -773,6 +774,8 @@ EAPI void             elm_widget_focus_highlight_geometry_get(const Evas_Object 
 void                  _elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_Object_Item *it);
 EAPI void             elm_widget_focus_move_policy_set(Evas_Object *obj, Elm_Focus_Move_Policy policy);
 EAPI Elm_Focus_Move_Policy elm_widget_focus_move_policy_get(const Evas_Object *obj);
+EAPI void             elm_widget_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mode mode);
+EAPI Elm_Focus_Region_Show_Mode elm_widget_focus_region_show_mode_get(const Evas_Object *obj);
 
 /**
  * Function to operate on a given widget's scrollabe children when necessary.

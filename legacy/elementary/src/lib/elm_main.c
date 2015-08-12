@@ -1748,3 +1748,15 @@ elm_object_focused_item_get(const Evas_Object *obj)
    return elm_widget_focused_item_get(obj);
 }
 
+EAPI void
+elm_object_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mode mode)
+{
+   elm_widget_focus_region_show_mode_set(obj, mode);
+}
+
+EAPI Elm_Focus_Region_Show_Mode
+elm_object_focus_region_show_mode_get(const Evas_Object *obj)
+{
+   return elm_widget_focus_region_show_mode_get(obj);
+}
+
