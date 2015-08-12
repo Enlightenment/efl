@@ -374,7 +374,7 @@ evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
 static inline void
 evas_object_async_block(Evas_Object_Protected_Data *obj)
 {
-   if ((obj) && (obj->layer))
+   if ((obj) && (obj->layer) && (obj->layer->evas))
      {
         eina_lock_take(&(obj->layer->evas->lock_objects));
         eina_lock_release(&(obj->layer->evas->lock_objects));
