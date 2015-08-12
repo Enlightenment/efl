@@ -42,286 +42,216 @@ class Elm.Genlist_Item(Elm.Widget_Item)
       methods {
            @property prev {
                 get {
-                     /*@
-                      Get the @b previous item in a genlist widget's internal list of items,
-                      given a handle to one of those items.
+                     [[Get the previous item in a genlist widget's internal
+                       list of items, given a handle to one of those items.
 
-                      This returns the item placed before the $item, on the container
-                      genlist.
-
-                      @see elm_genlist_item_next_get()
-
-                      @ingroup Genlist
-                      */
+                       This returns the item placed before the $item, on
+                       the container genlist.
+                     ]]
                 }
                 values {
-                     item: Elm.Widget_Item *; /*@ @return The item before $item, or $NULL if there's none (and on errors) */
+                     item: Elm.Widget_Item *; [[The item before $item, or $null if there's none (and on errors).]]
                 }
            }
            @property next {
                 get {
-                     /*@
-                      Get the @b next item in a genlist widget's internal list of items,
-                      given a handle to one of those items.
+                     [[Get the next item in a genlist widget's internal lis
+                       of items, given a handle to one of those items.
 
-                      This returns the item placed after the $item, on the container
-                      genlist.
-
-                      @see elm_genlist_item_prev_get()
-
-                      @ingroup Genlist
-                      */
+                       This returns the item placed after the $item, on
+                       the container genlist.
+                     ]]
                 }
                 values {
-                     item: Elm.Widget_Item *; /*@ @return The item after $item, or $NULL if there's none (and on errors) */
+                     item: Elm.Widget_Item *; [[The item after $item, or $null if there's none (and on errors).]]
                 }
            }
            @property parent {
                 get {
-                     /*@
-                      Get the parent item of the given item
+                     [[Get the parent item of the given item
 
-                      This returns the item that was specified as parent of the item $it on
-                      elm_genlist_item_append() and insertion related functions.
-
-                      @ingroup Genlist
-                      */
+                       This returns the item that was specified as parent
+                       of the item $it on \@ref elm_genlist_item_append
+                       and insertion related functions.
+                     ]]
                 }
                 values {
-                     item: Elm.Widget_Item *; /*@ @return The parent of the item or $NULL if it has no parent. */
+                     item: Elm.Widget_Item *; [[The parent of the item or $null if it has no parent.]]
                 }
            }
            @property subitems {
                 get {
-                     /*@
-                      Get the list of subitems of a given item
+                     [[et the list of subitems of a given item
 
-                      This returns the list of subitems that an item possesses. It cannot be changed.
+                       This returns the list of subitems that an item
+                       possesses. It cannot be changed.
 
-                      @since 1.9
-                      @ingroup Genlist
-                      */
+                       @since 1.9
+                     ]]
                 }
                 values {
-                     subitems: const (list<Elm.Widget_Item *>) *; /*@ @return The list of subitems, $NULL on error */
+                     subitems: const (list<Elm.Widget_Item *>) *; [[The list of subitems, $null on error.]]
                 }
            }
            @property selected {
                 get {
-                     /*@
-                      Get whether a given genlist item is selected or not
-
-                      @return $true, if it's selected, $false otherwise
-
-                      @see elm_genlist_item_selected_set() for more details
-
-                      @ingroup Genlist
-                      */
+                     [[Get whether a given genlist item is selected or not.]]
                 }
                 set {
-                     /*@
-                      Set whether a given genlist item is selected or not
+                     [[Set whether a given genlist item is selected or not
 
-                      Use $true, to make it selected, $false to make it unselected
-
-                      This sets the selected state of an item. If multi selection is
-                      not enabled on the containing genlist and $selected is @c
-                      true, any other previously selected items will get
-                      unselected in favor of this new one.
-
-                      @see elm_genlist_item_selected_get()
-
-                      @ingroup Genlist
-                      */
+                      This sets the selected state of an item. If multi
+                      selection is not enabled on the containing genlist
+                      and $selected is $true, any other previously selected
+                      items will get unselected in favor of this new one.
+                     ]]
                 }
                 values {
-                     selected: bool; /*@ the selected state ($true selected, $false not selected) */
+                     selected: bool; [[The selected state ($true selected, $false not selected).]]
                 }
            }
            @property expanded {
                 get {
-                     /*@
-                      Get the expanded state of an item
+                     [[Get the expanded state of an item
 
-                      This gets the expanded state of an item.
-
-                      @see elm_genlist_item_expanded_set()
-
-                      @ingroup Genlist
-                      */
+                       This gets the expanded state of an item.
+                     ]]
                 }
                 set {
-                     /*@
-                      Sets the expanded state of an item.
+                     [[Sets the expanded state of an item.
 
-                      This function flags the item of type #ELM_GENLIST_ITEM_TREE as
-                      expanded or not.
+                       This function flags the item of type
+                       #ELM_GENLIST_ITEM_TREE as expanded or not.
 
-                      The theme will respond to this change visually, and a signal "expanded" or
-                      "contracted" will be sent from the genlist with a pointer to the item that
-                      has been expanded/contracted.
+                       The theme will respond to this change visually, and
+                       a signal "expanded" or "contracted" will be sent
+                       from the genlist with a pointer to the item that
+                       has been expanded/contracted.
 
-                      Calling this function won't show or hide any child of this item (if it is
-                      a parent). You must manually delete and create them on the callbacks of
-                      the "expanded" or "contracted" signals.
-
-                      @see elm_genlist_item_expanded_get()
-
-                      @ingroup Genlist
-                      */
+                       Calling this function won't show or hide any child
+                       of this item (if it is a parent). You must manually
+                       delete and create them on the callbacks of
+                       the "expanded" or "contracted" signals.
+                     ]]
                 }
                 values {
-                     expanded: bool; /*@ The expanded state ($true expanded, $false not expanded). */
+                     expanded: bool; [[The expanded state ($true expanded, $false not expanded).]]
                 }
            }
            @property expanded_depth {
                 get {
-                     /*@
-                      Get the depth of expanded item
-
-                      @ingroup Genlist
-                      */
+                     [[Get the depth of expanded item.]]
                 }
                 values {
-                     depth: int; /*@ @return The depth of expanded item */
+                     depth: int; [[The depth of expanded item.]]
                 }
            }
            @property item_class {
                 get {
-                     /*@
-                      Get the Genlist Item class for the given Genlist Item.
+                     [[Get the Genlist Item class for the given Genlist Item.
 
-                      This returns the Genlist_Item_Class for the given item. It can be used to
-                      examine the function pointers and item_style.
-
-                      @ingroup Genlist
-                      */
+                       This returns the Genlist_Item_Class for the given item.
+                       It can be used to examine the function pointers and
+                       item_style.
+                     ]]
                 }
                 values {
-                     itc: const (Elm_Genlist_Item_Class) *; /*@ Genlist Item class for the given item */
+                     itc: const (Elm_Genlist_Item_Class) *; [[Genlist Item class for the given item.]]
                 }
            }
            @property index {
                 get {
-                     /*@
-                      Get the index of the item. It is only valid once displayed.
+                     [[Get the index of the item. It is only valid once displayed.
 
-                      The index start from 1.
-
-                      @ingroup Genlist
-                      */
+                       The index start from 1.
+                     ]]
                 }
                 values {
-                     index: int(-1); /*@ @return the position inside the list of item. */
+                     index: int(-1); [[The position inside the list of item.]]
                 }
            }
            @property decorate_mode {
                 get {
-                     /*@
-                      Get the item's decorate mode.
+                     [[Get the item's decorate mode.
 
-                      This function just returns the name of the item's decorate mode.
-
-                      @see elm_genlist_item_decorate_mode_set()
-                      @see elm_genlist_decorated_item_get()
-
-                      @ingroup Genlist
-                      */
+                       This function just returns the name of the item's
+                       decorate mode.
+                     ]]
                 }
                 values {
-                     decorate_it_type: const(char)*; /*@ name of the item's decorate mode. */
+                     decorate_it_type: const(char)*; [[Name of the item's decorate mode.]]
                 }
            }
            @property flip {
                 get {
-                     /*@
-                      Get the flip state of a given genlist item.
+                     [[Get the flip state of a given genlist item.
 
-                      This function returns the flip state of a given genlist item.
-                      If the parameter is invalid, it returns $false.
-
-                      @see elm_genlist_item_flip_set()
-
-                      @ingroup Genlist
-                      */
+                       This function returns the flip state of a given
+                       genlist item. If the parameter is invalid, it
+                       returns $false.
+                     ]]
                 }
                 set {
-                     /*@
-                      Set the flip state of a given genlist item.
+                     [[Set the flip state of a given genlist item.
 
-                      ($true = on, $false = off)
-
-                      This function sets the flip state of a given genlist item.
-                      Flip mode overrides current item object.
-                      It can be used for on-the-fly item replace.
-                      Flip mode can be used with/without decorate mode.
-
-                      @see elm_genlist_item_flip_get()
-
-                      @ingroup Genlist
-                      */
+                       This function sets the flip state of a given genlist
+                       item. Flip mode overrides current item object.
+                       It can be used for on-the-fly item replace.
+                       Flip mode can be used with/without decorate mode.
+                     ]]
                 }
                 values {
-                     flip: bool; /*@ The flip mode */
+                     flip: bool; [[The flip mode.]]
                 }
            }
            @property select_mode {
                 get {
-                     /*@
-                      Get the genlist item's select mode.
-
-                      @return The select mode
-                      (If getting mode fails, it returns ELM_OBJECT_SELECT_MODE_MAX)
-
-                      @see elm_genlist_item_select_mode_set()
-
-                      @ingroup Genlist
-                      */
+                     [[Get the genlist item's select mode.
+ 
+                       It's ELM_OBJECT_SELECT_MODE_MAX on failure.
+                     ]]
                 }
                 set {
-                     /*@
-                      Set the genlist item's select mode.
+                     [[Set the genlist item's select mode.
 
-                      elm_genlist_select_mode_set() changes item's select mode.
-                      - ELM_OBJECT_SELECT_MODE_DEFAULT : The item will only call their selection func and
-                           callback when first becoming selected. Any further clicks will
-                           do nothing, unless you set always select mode.
-                      - ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
-                           every click will make the selected callbacks be called.
-                      - ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select the item
-                           entirely and they will neither appear selected nor call selected
-                           callback functions.
-                      - ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY : This will apply no-finger-size rule
-                           with ELM_OBJECT_SELECT_MODE_NONE. No-finger-size rule makes an item can be
-                           smaller than lower limit. Clickable objects should be bigger than
-                           human touch point device (your finger) for some touch or
-                           small screen devices. So it is enabled, the item can be shrink than
-                           predefined finger-size value. And the item will be updated.
+                       ELM_OBJECT_SELECT_MODE_DEFAULT means that the item
+                       will only call their selection func and callback
+                       when first becoming selected. Any further clicks will
+                       do nothing, unless you set always select mode.
 
-                      @see elm_genlist_item_select_mode_get()
+                       ELM_OBJECT_SELECT_MODE_ALWAYS means that even if
+                       selected, every click will make the selected
+                       callbacks be called.
 
-                      @ingroup Genlist
-                      */
+                       ELM_OBJECT_SELECT_MODE_NONE will turn off the ability
+                       to select the item entirely and they will neither
+                       appear selected nor call selected callback functions.
+
+                       ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY will apply
+                       no-finger-size rule with ELM_OBJECT_SELECT_MODE_NONE.
+                       No-finger-size rule makes an item can be smaller
+                       than lower limit. Clickable objects should be bigger
+                       than human touch point device (your finger) for
+                       some touch or small screen devices. So it is
+                       enabled, the item can be shrink than predefined
+                       finger-size value. And the item will be updated.
+                     ]]
                 }
                 values {
-                     mode: Elm.Object.Select_Mode(Elm.Object.Select_Mode.max); /*@ The selected mode */
+                     mode: Elm.Object.Select_Mode(Elm.Object.Select_Mode.max); [[The selected mode.]]
                 }
            }
            @property type {
                 get {
-                     /*@
-                      Get the Item's Type
+                     [[Get the Item's type.
 
-                      @return The item type.
-
-                      This function returns the item's type. Normally the item's type.
-                      If it failed, return value is ELM_GENLIST_ITEM_MAX
-
-                      @ingroup Genlist
-                      */
+                       This function returns the item's type. Normally the
+                       item's type. If it failed, return value is
+                       ELM_GENLIST_ITEM_MAX.
+                     ]]
                 }
                 values {
-                     type: Elm.Genlist.Item.Type(Elm.Genlist.Item.Type.max); /*@ Item type */
+                     type: Elm.Genlist.Item.Type(Elm.Genlist.Item.Type.max); [[Item type.]]
                 }
            }
            /*      init { FIXME
@@ -331,196 +261,152 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                    }
                    }*/
            subitems_count {
-                /*@
-                 Get the number of subitems of a given item
+                [[Get the number of subitems of a given item.
 
-                 This returns the number of subitems that an item possesses.
+                  This returns the number of subitems that an item possesses.
 
-                 @since 1.9
-                 @ingroup Genlist
-                 */
-                return: uint; /*@ The number of subitems, 0 on error */
+                  @since 1.9
+                ]]
+                return: uint; [[The number of subitems, 0 on error.]]
            }
            subitems_clear{
-                /*@
-                 Remove all sub-items (children) of the given item
+                [[Remove all sub-items (children) of the given item.
 
-                 @param it The item
-
-                 This removes all items that are children (and their descendants) of the
-                 given item $it.
-
-                 @see elm_genlist_clear()
-                 @see elm_object_item_del()
-
-                 @ingroup Genlist
-                 */
+                  This removes all items that are children (and their
+                  descendants) of the given item $it.
+                ]]
            }
            promote {
-                /*@
-                 Promote an item to the top of the list
-
-                 @param it The item
-
-                 @ingroup Genlist
-                 */
+                [[Promote an item to the top of the list.]]
            }
            demote {
-                /*@
-                 Demote an item to the end of the list
-
-                 @param it The item
-
-                 @ingroup Genlist
-                 */
+                [[Demote an item to the end of the list.]]
            }
            show {
-                /*@
-                 Show the portion of a genlist's internal list containing a given
-                 item, immediately.
+                [[Show the portion of a genlist's internal list containing
+                  a given item, immediately.
 
-                 This causes genlist to jump to the given item $it and show it (by
-                 jumping to that position), if it is not fully visible.
-
-                 @see elm_genlist_item_bring_in()
-
-                 @ingroup Genlist
-                 */
+                  This causes genlist to jump to the given item $it and
+                  show it (by jumping to that position), if it is not
+                  fully visible.
+                ]]
                 params {
-                     @in type: Elm.Genlist.Item.Scrollto_Type; /*@ The position to bring in, the given item to.
-                                                                @ref Elm_Genlist_Item_Scrollto_Type */
+                     @in type: Elm.Genlist.Item.Scrollto_Type; [[The position to bring in, the given item to.
+                                                                 \@ref Elm_Genlist_Item_Scrollto_Type.]]
                 }
            }
            bring_in {
-                /*@
-                 Animatedly bring in, to the visible area of a genlist, a given
-                 item on it.
+                [[Animatedly bring in, to the visible area of a genlist, a
+                  given item on it.
 
-                 This causes genlist to jump to the given item $it and show it (by
-                 animatedly scrolling), if it is not fully visible.
-                 This may use animation and take a some time to do so.
-
-                 @see elm_genlist_item_show()
-
-                 @ingroup Genlist
-                 */
+                  This causes genlist to jump to the given item $it and
+                  show it (by animatedly scrolling), if it is not fully
+                  visible. This may use animation and take a some time
+                  to do so.
+                ]]
                 params {
-                     @in type: Elm.Genlist.Item.Scrollto_Type; /*@ The position to bring in, the given item to.
-                                                                @ref Elm_Genlist_Item_Scrollto_Type */
+                     @in type: Elm.Genlist.Item.Scrollto_Type; [[The position to bring in, the given item to.
+                                                                 \@ref Elm_Genlist_Item_Scrollto_Type.]]
                 }
            }
-           all_contents_unset{
-                /*@
-                 Unset all contents fetched by the item class
+           all_contents_unset {
+                [[Unset all contents fetched by the item class.
 
-                 This instructs genlist to release references to contents in the item,
-                 meaning that they will no longer be managed by genlist and are
-                 floating "orphans" that can be re-used elsewhere if the user wants
-                 to.
-
-                 @ingroup Genlist
-                 */
+                  This instructs genlist to release references to contents
+                  in the item, meaning that they will no longer be managed
+                  by genlist and are floating "orphans" that can be re-used
+                  elsewhere if the user wants to.
+                ]]
                 params {
-                     @out l: own(list<own(Evas.Object *)> *); /*@ The contents list to return */
+                     @out l: own(list<own(Evas.Object *)> *); [[The contents list to return.]]
                 }
            }
            update {
-                /*@
-                 Update all the contents of an item
+                [[Update all the contents of an item.
 
-                 This updates an item by calling all the item class functions again
-                 to get the contents, texts and states. Use this when the original
-                 item data has changed and the changes are desired to be reflected.
+                  This updates an item by calling all the item class
+                  functions again to get the contents, texts and states.
+                  Use this when the original item data has changed and the
+                  changes are desired to be reflected.
 
-                 Use elm_genlist_realized_items_update() to update all already realized
-                 items.
+                  Use elm_genlist_realized_items_update() to update all
+                  already realized items.
 
-                 @note This also updates internal genlist item object(edje_object as of now).
-                 So when this is called between mouse down and mouse up, mouse up event will
-                 be ignored because edje_object is deleted and created again by this API. If
-                 you want to avoid this, please use @ref elm_genlist_item_fields_update.
-
-                 @see elm_genlist_realized_items_update()
-
-                 @ingroup Genlist
-                 */
+                  Note: This also updates internal genlist item object
+                  (edje_object as of now). So when this is called between
+                  mouse down and mouse up, mouse up event will be ignored
+                  because edje_object is deleted and created again by this
+                  API. If you want to avoid this, please use
+                  \@ref elm_genlist_item_fields_update.
+                ]]
            }
            fields_update {
-                /*@
-                 Update the part of an item
+                [[Update the part of an item.
 
-                 This updates an item's part by calling item's fetching functions again
-                 to get the contents, texts and states. Use this when the original
-                 item data has changed and the changes are desired to be reflected.
-                 Second parts argument is used for globbing to match '*', '?', and '.'
-                 It can be used at updating multi fields.
+                  This updates an item's part by calling item's fetching
+                  functions again to get the contents, texts and states.
+                  Use this when the original item data has changed and the
+                  changes are desired to be reflected. Second part
+                  argument is used for globbing to match '*', '?', and '.'
+                  It can be used at updating multi fields.
 
-                 Use elm_genlist_realized_items_update() to update an item's all
-                 property.
-
-                 @see elm_genlist_item_update()
-
-                 @ingroup Genlist
-                 */
+                  Use \@ref elm_genlist_realized_items_update to update an
+                  item's all property.
+                ]]
                 params {
-                     @in parts: const (char) *; /*@ The name of item's part */
-                     @in itf: Elm.Genlist.Item.Field_Type; /*@ The type of item's part type */
+                     @in parts: const (char) *; [[The name of item's part.]]
+                     @in itf: Elm.Genlist.Item.Field_Type; [[The type of item's part type.]]
                 }
            }
            item_class_update {
-                /*@
-                 Update the item class of an item
+                [[Update the item class of an item.
 
-                 This sets another class of the item, changing the way that it is
-                 displayed. After changing the item class, elm_genlist_item_update() is
-                 called on the item $it.
-
-                 @ingroup Genlist
-                 */
+                  This sets another class of the item, changing the way
+                  that it is displayed. After changing the item class
+                  @.update is called on the item $it.
+                ]]
                 params {
-                     @in itc: const (Elm_Genlist_Item_Class) *; /*@ The item class for the item */
+                     @in itc: const (Elm_Genlist_Item_Class) *; [[The item class for the item.]]
                 }
            }
            decorate_mode_set {
-                /*@
-                 Activate a genlist mode on an item
+                [[Activate a genlist mode on an item.
 
-                 A genlist mode is a different way of selecting an item. Once a mode is
-                 activated on an item, any other selected item is immediately unselected.
-                 This feature provides an easy way of implementing a new kind of animation
-                 for selecting an item, without having to entirely rewrite the item style
-                 theme. However, the elm_genlist_selected_* API can't be used to get what
-                 item is activate for a mode.
+                  A genlist mode is a different way of selecting an item.
+                  Once a mode is activated on an item, any other selected
+                  item is immediately unselected. This feature provides an
+                  easy way of implementing a new kind of animation for
+                  selecting an item, without having to entirely rewrite
+                  the item style theme. However, the elm_genlist_selected_*
+                  API can't be used to get what item is activate for a mode.
 
-                 The current item style will still be used, but applying a genlist mode to
-                 an item will select it using a different kind of animation.
+                  The current item style will still be used, but applying
+                  a genlist mode to an item will select it using a
+                  different kind of animation.
 
-                 The current active item for a mode can be found by
-                 elm_genlist_decorated_item_get().
+                  The current active item for a mode can be found by
+                  \@ref elm_genlist_decorated_item_get.
 
-                 The characteristics of genlist mode are:
-                 - Only one mode can be active at any time, and for only one item.
-                 - Genlist handles deactivating other items when one item is activated.
-                 - A mode is defined in the genlist theme (edc), and more modes can easily
-                   be added.
-                 - A mode style and the genlist item style are different things. They
-                   can be combined to provide a default style to the item, with some kind
-                   of animation for that item when the mode is activated.
+                  Only one mode can be active at any time, and for only one
+                  item. Genlist handles deactivating other items when one
+                  item is activated. A mode is defined in the genlist theme
+                  (edc), and more modes can easily be added. A mode style
+                  and the genlist item style are different things. They
+                  can be combined to provide a default style to the item,
+                  with some kind of animation for that item when the mode
+                  is activated.
 
-                 When a mode is activated on an item, a new view for that item is created.
-                 The theme of this mode defines the animation that will be used to transit
-                 the item from the old view to the new view. This second (new) view will be
-                 active for that item while the mode is active on the item, and will be
-                 destroyed after the mode is totally deactivated from that item.
-
-                 @see elm_genlist_mode_get()
-                 @see elm_genlist_decorated_item_get()
-
-                 @ingroup Genlist
-                 */
+                  When a mode is activated on an item, a new view for that
+                  item is created. The theme of this mode defines the
+                  animation that will be used to transit the item from
+                  the old view to the new view. This second (new) view will
+                  be active for that item while the mode is active on the
+                  item, and will be destroyed after the mode is totally
+                  deactivated from that item.
+                ]]
                 params {
-                     @in decorate_it_type: const(char)*; /*@ Mode name */
-                     @in decorate_it_set: bool; /*@ Boolean to define set or unset mode. */
+                     @in decorate_it_type: const(char)*; [[Mode name.]]
+                     @in decorate_it_set: bool; [[Boolean to define set or unset mode.]]
                 }
            }
       }
