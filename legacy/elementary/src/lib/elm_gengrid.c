@@ -2094,32 +2094,40 @@ _item_focus_up(Elm_Gengrid_Data *sd)
 static Eina_Bool
 _item_focus_down(Elm_Gengrid_Data *sd)
 {
-   unsigned int i;
+   unsigned int i, idx;
    Elm_Gen_Item *next = NULL;
+   Elm_Object_Item *eo_tmp = NULL;
 
    if (!sd->focused_item)
      {
         next = ELM_GEN_ITEM_FROM_INLIST(sd->items);
         while ((next) && (next->generation < sd->generation))
           next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
-
-        elm_object_item_focus_set(EO_OBJ(next), EINA_TRUE);
-        return EINA_TRUE;
      }
    else
      {
-        Elm_Object_Item *eo_next = elm_gengrid_item_next_get(sd->focused_item);
-        if (!eo_next) return EINA_FALSE;
-        next = eo_data_scope_get(eo_next, ELM_GENGRID_ITEM_CLASS);
-        if (eo_next == sd->focused_item) return EINA_FALSE;
-     }
 
-   for (i = 1; i < sd->nmax; i++)
-     {
-        Elm_Object_Item *eo_tmp =
-          elm_gengrid_item_next_get(EO_OBJ(next));
-        if (!eo_tmp) return EINA_FALSE;
-        next = eo_data_scope_get(eo_tmp, ELM_GENGRID_ITEM_CLASS);
+        idx = elm_gengrid_item_index_get(sd->focused_item);
+
+        if (idx > sd->item_count -
+            ((sd->item_count % sd->nmax) == 0 ?
+             sd->nmax : (sd->item_count % sd->nmax)))
+          return EINA_FALSE;
+        if (idx > sd->item_count - sd->nmax)
+          {
+             eo_tmp = elm_gengrid_last_item_get(sd->obj);
+             next = eo_data_scope_get(eo_tmp, ELM_GENGRID_ITEM_CLASS);
+          }
+        else
+          {
+             next = eo_data_scope_get(sd->focused_item, ELM_GENGRID_ITEM_CLASS);
+             for (i = 0; i < sd->nmax; i++)
+               {
+                  eo_tmp = elm_gengrid_item_next_get(EO_OBJ(next));
+                  if (!eo_tmp) return EINA_FALSE;
+                  next = eo_data_scope_get(eo_tmp, ELM_GENGRID_ITEM_CLASS);
+               }
+          }
      }
 
    elm_object_item_focus_set(EO_OBJ(next), EINA_TRUE);
