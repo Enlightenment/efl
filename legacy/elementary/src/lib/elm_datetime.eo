@@ -19,18 +19,23 @@ class Elm.Datetime (Elm.Layout)
    methods {
       @property format {
          set {
-            /*@
-            Set the datetime format. Format is a combination of allowed Libc date format
-            specifiers like: "%b %d, %Y %I : %M %p".
+            [[Set the datetime format. Format is a combination of allowed
+              Libc date format specifiers like: "%b %d, %Y %I : %M %p".
 
-            Maximum allowed format length is 64 chars.
+              Maximum allowed format length is 64 chars.
 
-            Format can include separators for each individual datetime field except
-            for AM/PM field.
+              Format can include separators for each individual datetime
+              field except for AM/PM field.
 
-            Each separator can be a maximum of 6 UTF-8 bytes.
-            Space is also taken as a separator.
+              Each separator can be a maximum of 6 UTF-8 bytes.
+              Space is also taken as a separator.
 
+              These specifiers can be arranged in any order and the widget
+              will display the fields accordingly.
+
+              Default format is taken as per the system locale settings.
+            ]]
+            /* FIXME-doc
             Following are the allowed set of format specifiers for each datetime field.
 
             @b %%Y : The year as a decimal number including the century.
@@ -84,239 +89,199 @@ class Elm.Datetime (Elm.Layout)
             @b %%D : The date using the format %%m/%%d/%%y.
 
             @b %%F : The date using the format %%Y-%%m-%%d.
-
-            These specifiers can be arranged in any order and the widget will display the
-            fields accordingly.
-
-            Default format is taken as per the system locale settings.
-
-            @see elm_datetime_format_get()
-            @ingroup Datetime */
+            */
          }
          get {
-            /*@ Get the datetime format. */
+            [[Get the datetime format.]]
          }
          values {
-            fmt: const(char)* @nullable; /*@ The datetime format */
+            fmt: const(char)* @nullable; [[The datetime format.]]
          }
       }
       field_limit_set {
-         /*@
-         @brief Set the field limits of a field.
+         [[Set the field limits of a field.
 
-         Limits can be set to individual fields, independently, except for AM/PM field.
-         Any field can display the values only in between these Minimum and Maximum limits unless
-         the corresponding time value is restricted from MinTime to MaxTime.
-         That is, Min/ Max field limits always works under the limitations of MinTime/ MaxTime.
+           Limits can be set to individual fields, independently, except
+           for AM/PM field. Any field can display the values only in between
+           these minimum and maximum limits unless the corresponding time
+           value is restricted from MinTime to MaxTime. That is, min/max
+           field limits always works under the limitations of mintime/maxtime.
 
-         There is no provision to set the limits of AM/PM field.
-
-         @see elm_datetime_field_limit_set()
-         @ingroup Datetime */
-
+           There is no provision to set the limits of AM/PM field.
+         ]]
          params {
-            @in fieldtype: Elm.Datetime.Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc. */
-            @in min: int; /*@ Reference to field's minimum value */
-            @in max: int; /*@ Reference to field's maximum value */
+            @in fieldtype: Elm.Datetime.Field_Type; [[Type of the field. #ELM_DATETIME_YEAR etc.]]
+            @in min: int; [[Reference to field's minimum value.]]
+            @in max: int; [[Reference to field's maximum value.]]
          }
       }
       field_limit_get @const {
-         /*@
-         @brief Get the field limits of a field.
+         [[ Get the field limits of a field.
 
-         Limits can be set to individual fields, independently, except for AM/PM field.
-         Any field can display the values only in between these Minimum and Maximum limits unless
-         the corresponding time value is restricted from MinTime to MaxTime.
-         That is, Min/ Max field limits always works under the limitations of MinTime/ MaxTime.
+           Limits can be set to individual fields, independently, except
+           for AM/PM field. Any field can display the values only in between
+           these minimum and maximum limits unless the corresponding time
+           value is restricted from MinTime to MaxTime. That is, min/max
+           field limits always works under the limitations of mintime/maxtime.
 
-         There is no provision to set the limits of AM/PM field.
-
-         @see elm_datetime_field_limit_set()
-         @ingroup Datetime */
+           There is no provision to set the limits of AM/PM field.
+         ]]
          params {
-            @in fieldtype: Elm.Datetime.Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc. */
-            @out min: int; /*@ Reference to field's minimum value */
-            @out max: int; /*@ Reference to field's maximum value */
+            @in fieldtype: Elm.Datetime.Field_Type; [[Type of the field. #ELM_DATETIME_YEAR etc.]]
+            @out min: int; [[Reference to field's minimum value.]]
+            @out max: int; [[Reference to field's maximum value.]]
          }
       }
       value_min_set {
-         /*@
-         @brief Set the lower boundary of a field.
+         [[Set the lower boundary of a field.
 
-         Year: years since 1900. Negative value represents year below 1900 (year
-         value -30 represents 1870). Year default range is from 70 to 137.
+           Year: years since 1900. Negative value represents year below 1900
+           (year value -30 represents 1870). Year default range is from 70
+           to 137.
 
-         Month: default value range is from 0 to 11.
+           Month: default value range is from 0 to 11.
 
-         Date: default value range is from 1 to 31 according to the month value.
+           Date: default value range is from 1 to 31 according to the month
+           value.
 
-         Hour: default value will be in terms of 24 hr format (0~23)
+           Hour: default value will be in terms of 24 hr format (0~23)
 
-         Minute: default value range is from 0 to 59.
+           Minute: default value range is from 0 to 59.
+         ]]
 
-         @return $true if minimum value is accepted.
-
-         @see elm_datetime_value_min_get()
-         @ingroup Datetime */
-
-         return: bool;
+         return: bool; [[$true if minimum value is accepted.]]
          params {
-            @in mintime: const(Elm_Datetime_Time)*; /*@ Time structure containing the minimum time value. */
+            @in mintime: const(Elm_Datetime_Time)*; [[Time structure containing the minimum time value.]]
          }
       }
       value_min_get @const {
-         /*@
-         @brief Get the lower boundary of a field.
+         [[Get the lower boundary of a field.
 
-         Year: years since 1900. Negative value represents year below 1900 (year
-         value -30 represents 1870). Year default range is from 70 to 137.
+           Year: years since 1900. Negative value represents year below 1900
+           (year value -30 represents 1870). Year default range is from 70
+           to 137.
 
-         Month: default value range is from 0 to 11.
+           Month: default value range is from 0 to 11.
 
-         Date: default value range is from 1 to 31 according to the month value.
+           Date: default value range is from 1 to 31 according to the month
+           value.
 
-         Hour: default value will be in terms of 24 hr format (0~23)
+           Hour: default value will be in terms of 24 hr format (0~23)
 
-         Minute: default value range is from 0 to 59.
-
-         @return $true if minimum value is successfully returned.
-
-         @see elm_datetime_value_min_set()
-         @ingroup Datepicker */
-         return: bool;
+           Minute: default value range is from 0 to 59.
+         ]]
+         return: bool; [[$true if minimum value is successfully returned.]]
          params {
-            @inout mintime: Elm_Datetime_Time; /*@ Time structure. */
+            @inout mintime: Elm_Datetime_Time; [[Time structure.]]
          }
       }
       value_set {
-         /*@
-         @brief Set the current value of a Datetime object.
+         [[Set the current value of a Datetime object.
 
-         Year: years since 1900. Negative value represents year below 1900 (year
-         value -30 represents 1870). Year default range is from 70 to 137.
+           Year: years since 1900. Negative value represents year below 1900
+           (year value -30 represents 1870). Year default range is from 70
+           to 137.
 
-         Month: default value range is from 0 to 11.
+           Month: default value range is from 0 to 11.
 
-         Date: default value range is from 1 to 31 according to the month value.
+           Date: default value range is from 1 to 31 according to the month
+           value.
 
-         Hour: default value will be in terms of 24 hr format (0~23)
+           Hour: default value will be in terms of 24 hr format (0~23)
 
-         Minute: default value range is from 0 to 59.
-
-         @return $true if current time is set successfully.
-
-         @see elm_datetime_value_set()
-         @ingroup Datetime */
-
-         return: bool;
+           Minute: default value range is from 0 to 59.
+         ]]
+         return: bool; [[$true if current time is set successfully.]]
          params {
-            @in newtime: const(Elm_Datetime_Time)*; /*@ Time structure filled with values to be set. */
+            @in newtime: const(Elm_Datetime_Time)*; [[Time structure filled with values to be set.]]
          }
       }
       value_get @const {
-         /*@
-         @brief Get the current value of a Datetime object.
+         [[Get the current value of a Datetime object.
 
-         Year: years since 1900. Negative value represents year below 1900 (year
-         value -30 represents 1870). Year default range is from 70 to 137.
+           Year: years since 1900. Negative value represents year below 1900
+           (year value -30 represents 1870). Year default range is from 70
+           to 137.
 
-         Month: default value range is from 0 to 11.
+           Month: default value range is from 0 to 11.
 
-         Date: default value range is from 1 to 31 according to the month value.
+           Date: default value range is from 1 to 31 according to the month
+           value.
 
-         Hour: default value will be in terms of 24 hr format (0~23)
+           Hour: default value will be in terms of 24 hr format (0~23)
 
-         Minute: default value range is from 0 to 59.
-
-         @return $true if current time is returned successfully.
-
-         @see elm_datetime_value_set()
-         @ingroup Datetime */
-         return: bool;
+           Minute: default value range is from 0 to 59.
+         ]]
+         return: bool; [[$true if current time is returned successfully.]]
          params {
-            @inout currtime: Elm_Datetime_Time; /*@ Time structure. */
+            @inout currtime: Elm_Datetime_Time; [[Time structure.]]
          }
       }
       field_visible_set {
-         /*@
-         @brief Set a field to be visible or not.
-         Setting this API True does not ensure that the field is visible, apart from
-         this, the field's format must be present in Datetime overall format.
-         If a field's visibility is set to False then it won't appear even though
-         its format is present in overall format.
-         So if and only if this API is set true and the corresponding field's format
-         is present in Datetime format, the field is visible.
+         [[Set a field to be visible or not.
 
-         By default the field visibility is set to True.
+           Setting this API to $true does not ensure that the field is
+           visible, apart from this, the field's format must be present
+           in Datetime overall format.  If a field's visibility is set
+           to $false then it won't appear even though its format is
+           present in overall format. So if and only if this API is
+           set true and the corresponding field's format is present
+           in Datetime format, the field is visible.
 
-         @see elm_datetime_field_visible_get()
-         @ingroup Datetime */
-
+           By default the field visibility is set to $true.
+         ]]
          params {
-            @in fieldtype: Elm.Datetime.Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc. */
-            @in visible: bool; /*@ $true field can be visible, $false otherwise. */
+            @in fieldtype: Elm.Datetime.Field_Type; [[Type of the field. #ELM_DATETIME_YEAR etc.]]
+            @in visible: bool; [[$true field can be visible, $false otherwise.]]
          }
       }
       field_visible_get @const {
-         /*@
-         @brief Get whether a field can be visible/not
-
-         @return bool $true, if field can be visible. $false otherwise.
-
-         @see elm_datetime_field_visible_set()
-         @ingroup Datetime */
-         return: bool;
+         [[ Get whether a field can be visible/not.]]
+         return: bool; [[$true, if field can be visible. $false otherwise.]]
          params {
-            @in fieldtype: Elm.Datetime.Field_Type; /*@ Type of the field. #ELM_DATETIME_YEAR etc */
+            @in fieldtype: Elm.Datetime.Field_Type; [[Type of the field. #ELM_DATETIME_YEAR etc.]]
          }
       }
       value_max_set {
-         /*@
-         @brief Set the upper boundary of a field.
+         [[Set the upper boundary of a field.
 
-         Year: years since 1900. Negative value represents year below 1900 (year
-         value -30 represents 1870). Year default range is from 70 to 137.
+           Year: years since 1900. Negative value represents year below 1900
+           (year value -30 represents 1870). Year default range is from 70
+           to 137.
 
-         Month: default value range is from 0 to 11.
+           Month: default value range is from 0 to 11.
 
-         Date: default value range is from 1 to 31 according to the month value.
+           Date: default value range is from 1 to 31 according to the month
+           value.
 
-         Hour: default value will be in terms of 24 hr format (0~23)
+           Hour: default value will be in terms of 24 hr format (0~23)
 
-         Minute: default value range is from 0 to 59.
-
-         @return $true if maximum value is accepted.
-
-         @see elm_datetime_value_max_get()
-         @ingroup Datetime */
-
-         return: bool;
+           Minute: default value range is from 0 to 59.
+         ]]
+         return: bool; [[$true if maximum value is accepted.]]
          params {
-            @in maxtime: const(Elm_Datetime_Time)*; /*@ Time structure containing the maximum time value. */
+            @in maxtime: const(Elm_Datetime_Time)*; [[Time structure containing the maximum time value.]]
          }
       }
       value_max_get @const {
-         /*@
-         @brief Get the upper boundary of a field.
+         [[Get the upper boundary of a field.
 
-         Year: years since 1900. Negative value represents year below 1900 (year
-         value -30 represents 1870). Year default range is from 70 to 137.
+           Year: years since 1900. Negative value represents year below 1900
+           (year value -30 represents 1870). Year default range is from 70
+           to 137.
 
-         Month: default value range is from 0 to 11.
+           Month: default value range is from 0 to 11.
 
-         Date: default value range is from 1 to 31 according to the month value.
+           Date: default value range is from 1 to 31 according to the month
+           value.
 
-         Hour: default value will be in terms of 24 hr format (0~23)
+           Hour: default value will be in terms of 24 hr format (0~23)
 
-         Minute: default value range is from 0 to 59.
-
-         @return $true if maximum value is returned successfully.
-
-         @see elm_datetime_value_max_set()
-         @ingroup Datetime */
-         return: bool;
+           Minute: default value range is from 0 to 59.
+         ]]
+         return: bool; [[$true if maximum value is returned successfully.]]
          params {
-            @inout maxtime: Elm_Datetime_Time; /*@ Time structure containing the maximum time value. */
+            @inout maxtime: Elm_Datetime_Time; [[Time structure containing the maximum time value.]]
          }
       }
    }
