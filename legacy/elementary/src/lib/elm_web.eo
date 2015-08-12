@@ -4,661 +4,478 @@ class Elm.Web (Elm.Widget)
    methods {
       @property text_matches_highlight {
          set {
-            /*@
-            Sets whether to highlight the matched marks
+            [[Sets whether to highlight the matched marks.
 
-            If enabled, marks set with elm_web_text_matches_mark() will be
-            highlighted.
-
-            @return $true on success, $false otherwise
-
-            @ingroup Web */
+              If enabled, marks set with @.text_matches_mark will be
+              highlighted.
+            ]]
             return: bool;
          }
          get {
-            /*@
-            Get whether highlighting marks is enabled
-
-            @return $true is marks are set to be highlighted, $false
-            otherwise
-
-            @ingroup Web */
+            [[Get whether highlighting marks is enabled.]]
          }
          values {
-            highlight: bool; /*@ Whether to highlight the marks or not */
+            highlight: bool; [[Whether to highlight the marks or not.]]
          }
       }
       @property useragent {
          set {
-            /*@
-            Change useragent of a elm_web object
-
-            @ingroup Web */
+            [[Change useragent of a elm_web object.]]
          }
          get {
-            /*@
-            Return current useragent of elm_web object
-
-            @return Useragent string
-
-            @ingroup Web */
+            [[Return current useragent of elm_web object.]]
          }
          values {
-            user_agent: const(char)*; /*@ String for useragent */
+            user_agent: const(char)*; [[String for useragent.]]
          }
       }
       @property url {
          set {
-            /*@
-            Sets the URL for the web object
+            [[Sets the URL for the web object.
 
-            It must be a full URL, with resource included, in the form
-            http://www.enlightenment.org or file:///tmp/something.html
-
-            @return $true if the URL could be set, $false if an error occurred.
-
-            @ingroup Web */
+              It must be a full URL, with resource included, in the form
+              http://www.enlightenment.org or file:///tmp/something.html
+            ]]
             return: bool;
          }
          get {
-            /*@
-            Get the current URL for the object
+            [[Get the current URL for the object.
 
-            The returned string must not be freed and is guaranteed to be
-            stringshared.
-
-            @return A stringshared internal string with the current URL, or $NULL on
-            failure
-
-            @ingroup Web */
+              The returned string must not be freed and is guaranteed to be
+              stringshared.
+            ]]
          }
          values {
-            url: const(char)*; /*@ The URL to set */
+            url: const(char)*; [[The URL to set.]]
          }
       }
       @property bg_color {
          set {
-            /*@
-            Sets the background color to be used by the web object
+            [[Sets the background color to be used by the web object.
 
-            This is the color that will be used by default when the loaded page
-            does not set it's own. Color values are pre-multiplied.
-
-            @ingroup Web */
+              This is the color that will be used by default when the
+              loaded page does not set it's own. Color values are
+              pre-multiplied.
+            ]]
          }
          get {
-            /*@
-            Get the background color to be used by the web object
+            [[Get the background color to be used by the web object.
 
-            This is the color that will be used by default when the loaded page
-            does not set it's own. Color values are pre-multiplied.
-
-            @ingroup Web */
+              This is the color that will be used by default when the
+              loaded page does not set it's own. Color values are
+              pre-multiplied.
+            ]]
          }
          values {
-            r: int; /*@ Red component */
-            g: int; /*@ Green component */
-            b: int; /*@ Blue component */
-            a: int; /*@ Alpha component */
+            r: int; [[Red component.]]
+            g: int; [[Green component.]]
+            b: int; [[Blue component.]]
+            a: int; [[Alpha component.]]
          }
       }
       @property inwin_mode {
          set {
-            /*@
-            Sets the default dialogs to use an Inwin instead of a normal window
+            [[Sets the default dialogs to use an Inwin instead of a
+              normal window.
 
-            If set, then the default implementation for the JavaScript dialogs and
-            file selector will be opened in an Inwin. Otherwise they will use a
-            normal separated window.
-
-            @ingroup Web */
+              If set, then the default implementation for the JavaScript
+              dialogs and file selector will be opened in an Inwin.
+              Otherwise they will use a normal separated window.
+            ]]
          }
          get {
-            /*@
-            Get whether Inwin mode is set for the current object
-
-            @return $true if Inwin mode is set, $false otherwise
-
-            @ingroup Web */
+            [[Get whether Inwin mode is set for the current object.]]
          }
          values {
-            value: bool; /*@ $true to use Inwin, $false to use a normal window */
+            value: bool;
          }
       }
       @property tab_propagate {
          set {
-            /*@
-            Sets whether to use tab propagation
+            [[Sets whether to use tab propagation.
 
-            If tab propagation is enabled, whenever the user presses the Tab key,
-            Elementary will handle it and switch focus to the next widget.
-            The default value is disabled, where WebKit will handle the Tab key to
-            cycle focus though its internal objects, jumping to the next widget
-            only when that cycle ends.
-
-            @ingroup Web */
+              If tab propagation is enabled, whenever the user presses the
+              Tab key, Elementary will handle it and switch focus to the
+              next widget. The default value is disabled, where WebKit
+              will handle the Tab key to cycle focus though its internal
+              objects, jumping to the next widget only when that cycle ends.
+            ]]
          }
          get {
-            /*@
-            Get the status of the tab propagation
-
-            @return $true if tab propagation is enabled, $false otherwise
-
-            @see elm_web_tab_propagate_set()
-
-            @ingroup Web */
+            [[Get the status of the tab propagation.]]
          }
          values {
-            propagate: bool; /*@ Whether to propagate Tab keys to Elementary or not */
+            propagate: bool; [[Whether to propagate Tab keys to Elementary or not.]]
          }
       }
       @property history_enabled {
          set {
-            /*@
-            Enables or disables the browsing history
-
-            @ingroup Web */
+            [[Enables or disables the browsing history.]]
          }
          get {
-            /*@
-            Get whether browsing history is enabled for the given object
-
-            @return $true if history is enabled, $false otherwise
-
-            @ingroup Web */
+            [[Get whether browsing history is enabled for the given object.]]
          }
          values {
-            enable: bool; /*@ Whether to enable or disable the browsing history */
+            enable: bool; [[Whether to enable or disable the browsing history.]]
          }
       }
       @property zoom_mode {
          set {
-            /*@
-            Sets the zoom mode to use
+            [[Sets the zoom mode to use.
 
-            The modes can be any of those defined in .Elm_Web_Zoom_Mode, except
-            .ELM_WEB_ZOOM_MODE_LAST. The default is .ELM_WEB_ZOOM_MODE_MANUAL.
+              The modes can be any of those defined in .Elm_Web_Zoom_Mode,
+              except .ELM_WEB_ZOOM_MODE_LAST. The default is
+              .ELM_WEB_ZOOM_MODE_MANUAL.
 
-            .ELM_WEB_ZOOM_MODE_MANUAL means the zoom level will be controlled
-            with the elm_web_zoom_set() function.
-            .ELM_WEB_ZOOM_MODE_AUTO_FIT will calculate the needed zoom level to
-            make sure the entirety of the web object's contents are shown.
-            .ELM_WEB_ZOOM_MODE_AUTO_FILL will calculate the needed zoom level to
-            fit the contents in the web object's size, without leaving any space
-            unused.
+              .ELM_WEB_ZOOM_MODE_MANUAL means the zoom level will be
+              controlled with the @.zoom.set function.
 
-            @ingroup Web */
+              .ELM_WEB_ZOOM_MODE_AUTO_FIT will calculate the needed zoom
+              level to make sure the entirety of the web object's contents
+              are shown.
+
+              .ELM_WEB_ZOOM_MODE_AUTO_FILL will calculate the needed zoom
+              level to fit the contents in the web object's size, without
+              leaving any space unused.
+            ]]
          }
          get {
-            /*@
-            Get the currently set zoom mode
-
-            @return The current zoom mode set for the object,
-            or .ELM_WEB_ZOOM_MODE_LAST on error
-
-            @ingroup Web */
+            [[Get the currently set zoom mode.]]
          }
          values {
-            mode: Elm_Web_Zoom_Mode; /*@ The mode to set */
+            mode: Elm_Web_Zoom_Mode; [[The mode to set.]]
          }
       }
       @property zoom {
          set {
-            /*@
-            Sets the zoom level of the web object
+            [[Sets the zoom level of the web object.
 
-            Zoom level matches the Webkit API, so 1.0 means normal zoom, with higher
-            values meaning zoom in and lower meaning zoom out. This function will
-            only affect the zoom level if the mode set with elm_web_zoom_mode_set()
-            is .ELM_WEB_ZOOM_MODE_MANUAL.
-
-            @ingroup Web */
+              Zoom level matches the Webkit API, so 1.0 means normal zoom,
+              with higher values meaning zoom in and lower meaning zoom out.
+              This function will only affect the zoom level if the mode set
+              with @.zoom_mode.set is .ELM_WEB_ZOOM_MODE_MANUAL.
+            ]]
          }
          get {
-            /*@
-            Get the current zoom level set on the web object
+            [[Get the current zoom level set on the web object
 
-            Note that this is the zoom level set on the web object and not that
-            of the underlying Webkit one. In the .ELM_WEB_ZOOM_MODE_MANUAL mode,
-            the two zoom levels should match, but for the other two modes the
-            Webkit zoom is calculated internally to match the chosen mode without
-            changing the zoom level set for the web object.
-
-            @return The zoom level set on the object
-
-            @ingroup Web */
+              Note that this is the zoom level set on the web object and
+              not that of the underlying Webkit one. In the
+              .ELM_WEB_ZOOM_MODE_MANUAL mode, the two zoom levels should
+              match, but for the other two modes the Webkit zoom is
+              calculated internally to match the chosen mode without
+              changing the zoom level set for the web object.
+            ]]
          }
          values {
-            zoom: double; /*@ The zoom level to set */
+            zoom: double; [[The zoom level to set.]]
          }
       }
       @property console_message_hook {
          set {
-            /*@
-            Sets the function to call when a console message is emitted from JS
+            [[Sets the function to call when a console message is emitted
+              from JS.
 
-            This hook will be called when a console message is emitted from
-            JavaScript. There is no default implementation for this feature.
-
-            @ingroup Web */
+              This hook will be called when a console message is emitted
+              from JavaScript. There is no default implementation for
+              this feature.
+            ]]
          }
          values {
-            func: Elm_Web_Console_Message; /*@ The callback function to be used */
-            data: void *; /*@ User data */
+            func: Elm_Web_Console_Message; [[The callback function to be used.]]
+            data: void *; [[User data.]]
          }
       }
       @property window_create_hook {
          set {
-            /*@
-            Sets the function to call when a new window is requested
+            [[Sets the function to call when a new window is requested.
 
-            This hook will be called when a request to create a new window is
-            issued from the web page loaded.
-            There is no default implementation for this feature, so leaving this
-            unset or passing $NULL in $func will prevent new windows from
-            opening.
-
-            @ingroup Web */
+              This hook will be called when a request to create a new
+              window is issued from the web page loaded.
+              There is no default implementation for this feature, so
+              leaving this unset or passing $null in $func will prevent
+              new windows from opening.
+            ]]
          }
          values {
-            func: Elm_Web_Window_Open @nullable; /*@ The hook function to be called when a window is requested */
-            data: void * @optional; /*@ User data */
+            func: Elm_Web_Window_Open @nullable; [[The hook function to be called when a window is requested.]]
+            data: void * @optional; [[User data.]]
          }
       }
       @property dialog_file_selector_hook {
          set {
-            /*@
-            Sets the function to call when an file selector dialog
+            [[Sets the function to call when an file selector dialog.
 
-            This hook will be called when a JavaScript file selector dialog is
-            requested.
-            If no function is set or $NULL is passed in $func, the default
-            implementation will take place.
-
-            @see elm_web_inwin_mode_set()
-
-            @ingroup Web */
+              This hook will be called when a JavaScript file selector
+              dialog is requested.
+              If no function is set or $null is passed in $func, the default
+              implementation will take place.
+            ]]
          }
          values {
-            func: Elm_Web_Dialog_File_Selector @nullable; /*@ The callback function to be used */
-            data: void * @optional; /*@ User data */
+            func: Elm_Web_Dialog_File_Selector @nullable; [[The callback function to be used.]]
+            data: void * @optional; [[User data.]]
          }
       }
       @property dialog_confirm_hook {
          set {
-            /*@
-            Sets the function to call when an confirm dialog
+            [[Sets the function to call when an confirm dialog.
 
-            This hook will be called when a JavaScript confirm dialog is requested.
-            If no function is set or $NULL is passed in $func, the default
-            implementation will take place.
-
-            @see elm_web_inwin_mode_set()
-
-            @ingroup Web */
+              This hook will be called when a JavaScript confirm dialog is
+              requested. If no function is set or $null is passed in $func,
+              the default implementation will take place.
+            ]]
          }
          values {
-            func: Elm_Web_Dialog_Confirm @nullable; /*@ The callback function to be used */
-            data: void * @optional; /*@ User data */
+            func: Elm_Web_Dialog_Confirm @nullable; [[The callback function to be used.]]
+            data: void * @optional; [[User data.]]
          }
       }
       @property popup_selected {
          set {
-            /*@
-            Tells the web object which index in the currently open popup was selected
+            [[Tells the web object which index in the currently open popup
+              was selected.
 
-            When the user handles the popup creation from the "popup,created" signal,
-            it needs to tell the web object which item was selected by calling this
-            function with the index corresponding to the item.
-
-            @see elm_web_popup_destroy()
-
-            @ingroup Web */
+              When the user handles the popup creation from the
+              "popup,created" signal, it needs to tell the web object
+              which item was selected by calling this function with
+              the index corresponding to the item.
+            ]]
          }
          values {
-            idx: int; /*@ The index selected */
+            idx: int; [[The index selected.]]
          }
       }
       @property dialog_prompt_hook {
          set {
-            /*@
-            Sets the function to call when an prompt dialog
+            [[Sets the function to call when an prompt dialog.
 
-            This hook will be called when a JavaScript prompt dialog is requested.
-            If no function is set or $NULL is passed in $func, the default
-            implementation will take place.
-
-            @see elm_web_inwin_mode_set()
-
-            @ingroup Web */
+              This hook will be called when a JavaScript prompt dialog is
+              requested. If no function is set or $null is passed in $func,
+              the default implementation will take place.
+            ]]
          }
          values {
-            func: Elm_Web_Dialog_Prompt @nullable; /*@ The callback function to be used */
-            data: void * @optional; /*@ User data */
+            func: Elm_Web_Dialog_Prompt @nullable; [[The callback function to be used.]]
+            data: void * @optional; [[User data.]]
          }
       }
       @property dialog_alert_hook {
          set {
-            /*@
-            Sets the function to call when an alert dialog
+            [[Sets the function to call when an alert dialog.
 
-            This hook will be called when a JavaScript alert dialog is requested.
-            If no function is set or $NULL is passed in $func, the default
-            implementation will take place.
-
-            @see elm_web_inwin_mode_set()
-
-            @ingroup Web */
+              This hook will be called when a JavaScript alert dialog is
+              requested. If no function is set or $null is passed in $func,
+              the default implementation will take place.
+            ]]
          }
          values {
-            func: Elm_Web_Dialog_Alert @nullable; /*@ The callback function to be used */
-            data: void * @optional; /*@ User data */
+            func: Elm_Web_Dialog_Alert @nullable; [[callback function to be used.]]
+            data: void * @optional; [[User data.]]
          }
       }
       @property forward_possible {
          get {
-            /*@
-            Queries whether it's possible to go forward in history
-
-            @return $true if it's possible to forward in history, $false
-            otherwise
-
-            @ingroup Web */
+            [[Queries whether it's possible to go forward in history.]]
             return: bool;
          }
       }
       @property webkit_view {
          get {
-            /*@
-            Get internal ewk_view object from web object.
+            [[Get internal ewk_view object from web object.
 
-            Elementary may not provide some low level features of EWebKit,
-            instead of cluttering the API with proxy methods we opted to
-            return the internal reference. Be careful using it as it may
-            interfere with elm_web behavior.
-
-            @return The internal ewk_view object or $NULL if it does not
-            exist. (Failure to create or Elementary compiled without
-            ewebkit)
-
-            @see elm_web_add()
-
-            @ingroup Web */
-            return: Evas.Object *;
+              Elementary may not provide some low level features of EWebKit,
+              instead of cluttering the API with proxy methods we opted to
+              return the internal reference. Be careful using it as it may
+              interfere with elm_web behavior.
+            ]]
+            return: Evas.Object *; [[The internal ewk_view object or $null
+                                     if it does not exist. (Failure to
+                                     create or Elementary compiled
+                                     without ewebkit)]]
          }
       }
       @property back_possible {
          get {
-            /*@
-            Queries whether it's possible to go back in history
-
-            @return $true if it's possible to back in history, $false
-            otherwise
-
-            @ingroup Web */
+            [[Queries whether it's possible to go back in history.]]
             return: bool;
          }
       }
       @property load_progress {
          get {
-            /*@
-            Get the overall loading progress of the page
+            [[Get the overall loading progress of the page.
 
-            Returns the estimated loading progress of the page, with a value between
-            0.0 and 1.0. This is an estimated progress accounting for all the frames
-            included in the page.
-
-            @return A value between 0.0 and 1.0 indicating the progress, or -1.0 on
-            failure
-
-            @ingroup Web */
-            return: double;
+              Returns the estimated loading progress of the page, with a
+              value between 0.0 and 1.0. This is an estimated progress
+              accounting for all the frames included in the page.
+            ]]
+            return: double; [[A value between 0.0 and 1.0 indicating the
+                              progress, or -1.0 on failure.]]
          }
       }
       @property selection {
          get {
-            /*@
-            Get a copy of the currently selected text
+            [[Get a copy of the currently selected text.
 
-            The string returned must be freed by the user when it's done with it.
-
-            @return A newly allocated string, or $NULL if nothing is selected or an
-            error occurred
-
-            @ingroup Web */
-            return: own(const(char)*) @warn_unused;
+              The string returned must be freed by the user when it's done
+              with it.
+            ]]
+            return: own(const(char)*) @warn_unused; [[A newly allocated string, or
+                                                      $null if nothing is selected
+                                                      or an error occurred.]]
          }
       }
       @property title {
          get {
-            /*@
-            Get the current title
+            [[Get the current title.
 
-            The returned string must not be freed and is guaranteed to be
-            stringshared.
-
-            @return A stringshared internal string with the current title, or $NULL on
-            failure
-
-            @ingroup Web */
-            return: free(own(const(char)*), eina_stringshare_del) @warn_unused;
+              The returned string must not be freed and is guaranteed to be
+              stringshared.
+            ]]
+            return: free(own(const(char)*), eina_stringshare_del) @warn_unused; [[
+               A stringshared internal string with the current title, or $null on
+               failure.
+            ]]
          }
       }
       navigate {
-         /*@
-         Jumps the given number of steps in the browsing history
+         [[Jumps the given number of steps in the browsing history.
 
-         The $steps value can be a negative integer to back in history, or a
-         positive to move forward.
-
-         @return $true on success, $false on error or if not enough
-         history exists to jump the given number of steps
-
-         @see elm_web_history_enabled_set()
-         @see elm_web_back()
-         @see elm_web_forward()
-
-         @ingroup Web */
-
-         return: bool;
+           The $steps value can be a negative integer to back in history,
+           or a positive to move forward.
+         ]]
+         return: bool; [[$true on success, $false on error or if not enough
+                         history exists to jump the given number of steps]]
          params {
-            @in steps: int; /*@ The number of steps to jump */
+            @in steps: int; [[The number of steps to jump.]]
          }
       }
       back {
-         /*@
-         Goes back one step in the browsing history
+         [[Goes back one step in the browsing history.
 
-         This is equivalent to calling elm_web_object_navigate(obj, -1);
-
-         @return $true on success, $false otherwise
-
-         @see elm_web_history_enabled_set()
-         @see elm_web_back_possible()
-         @see elm_web_forward()
-         @see elm_web_navigate()
-
-         @ingroup Web */
-
+           This is equivalent to calling elm_web_object_navigate(obj, -1);
+         ]]
          return: bool;
       }
       html_string_load {
-         /*@
-         Loads the specified @a html string as the content of the web object
+         [[Loads the specified $html string as the content of the web
+           object.
 
-         @return $true if it the HTML was successfully loaded, $false otherwise
+           External objects such as stylesheets or images referenced in
+           the HTML document are located relative to $base_url.
 
-         External objects such as stylesheets or images referenced in the HTML
-         document are located relative to @a base_url.
+           If an $unreachable_url is passed it is used as the url for the
+           loaded content. This is typically used to display error pages
+           for a failed load.
 
-         If an @a unreachable_url is passed it is used as the url for the loaded
-         content. This is typically used to display error pages for a failed
-         load.
-
-         @since 1.9
-         @ingroup Web */
-
+           @since 1.9
+         ]]
          return: bool;
          params {
-            @in html: const(char)*; /*@ HTML data to load */
-            @in base_url: const(char)* @optional; /*@ Base URL used for relative paths to external objects (optional) */
-            @in unreachable_url: const(char)* @optional; /*@ URL that could not be reached (optional) */
+            @in html: const(char)*; [[HTML data to load.]]
+            @in base_url: const(char)* @optional; [[Base URL used for relative paths to external objects (optional).]]
+            @in unreachable_url: const(char)* @optional; [[URL that could not be reached (optional).]]
          }
       }
       text_search @const {
-         /*@
-         Searches the given string in a document.
-
-         @return $true if the given string was found, $false if not
-         or failure
-
-         @ingroup Web */
-         return: bool;
+         [[Searches the given string in a document.]]
+         return: bool; [[$true if the given string was found, $false if not
+                         or failure.]]
          params {
-            @in string: const(char)*; /*@ String to search */
-            @in case_sensitive: bool; /*@ If search should be case sensitive or not */
-            @in forward: bool; /*@ If search is from cursor and on or backwards */
-            @in wrap: bool; /*@ If search should wrap at the end */
+            @in string: const(char)*; [[String to search.]]
+            @in case_sensitive: bool; [[If search should be case sensitive or not.]]
+            @in forward: bool; [[If search is from cursor and on or backwards.]]
+            @in wrap: bool; [[If search should wrap at the end.]]
          }
       }
       popup_destroy {
-         /*@
-         Dismisses an open dropdown popup
+         [[Dismisses an open dropdown popup
 
-         When the popup from a dropdown widget is to be dismissed, either after
-         selecting an option or to cancel it, this function must be called, which
-         will later emit an "popup,willdelete" signal to notify the user that
-         any memory and objects related to this popup can be freed.
-
-         @return $true if the menu was successfully destroyed, or $false
-         if there was no menu to destroy
-
-         @ingroup Web */
-
-         return: bool;
+           When the popup from a dropdown widget is to be dismissed, either
+           after selecting an option or to cancel it, this function must be
+           called, which will later emit an "popup,willdelete" signal to
+           notify the user that any memory and objects related to this
+           popup can be freed.
+         ]]
+         return: bool; [[$true if the menu was successfully destroyed, or
+                         $false if there was no menu to destroy.]]
       }
       region_show {
-         /*@
-         Shows the given region in the web object
-
-         @ingroup Web */
-
+         [[Shows the given region in the web object.]]
          params {
-            @in x: int; /*@ The x coordinate of the region to show */
-            @in y: int; /*@ The y coordinate of the region to show */
-            @in w: int; /*@ The width of the region to show */
-            @in h: int; /*@ The height of the region to show */
+            @in x: int; [[The x coordinate of the region to show.]]
+            @in y: int; [[The y coordinate of the region to show.]]
+            @in w: int; [[The width of the region to show.]]
+            @in h: int; [[The height of the region to show.]]
          }
       }
       forward {
-         /*@
-         Goes forward one step in the browsing history
+         [[Goes forward one step in the browsing history.
 
-         This is equivalent to calling elm_web_object_navigate(obj, 1);
+           This is equivalent to calling elm_web_object_navigate(obj, 1);
 
-         @return $true on success, $false otherwise
-
-         @see elm_web_history_enabled_set()
-         @see elm_web_forward_possible_get()
-         @see elm_web_back()
-         @see elm_web_navigate()
-
-         @ingroup Web */
-
-         return: bool;
+           See also @.history_enabled.set, @.forward_possible.get,
+           @.back, @.navigate.
+         ]]
+         return: bool; [[$true on success, $false otherwise.]]
       }
       text_matches_mark {
-         /*@
-         Marks matches of the given string in a document.
-
-         @return number of matched @a string
-
-         @ingroup Web */
-
-         return: uint;
+         [[Marks matches of the given string in a document.]]
+         return: uint; [[Number of matched $string.]]
          params {
-            @in string: const(char)*; /*@ String to match */
-            @in case_sensitive: bool; /*@ If match should be case sensitive or not */
-            @in highlight: bool; /*@ If matches should be highlighted */
-            @in limit: uint; /*@ Maximum amount of matches, or zero to unlimited */
+            @in string: const(char)*; [[String to match.]]
+            @in case_sensitive: bool; [[If match should be case sensitive or not.]]
+            @in highlight: bool; [[If matches should be highlighted.]]
+            @in limit: uint; [[Maximum amount of matches, or zero to unlimited.]]
          }
       }
       region_bring_in {
-         /*@
-         Brings in the region to the visible area
+         [[Brings in the region to the visible area.
 
-         Like elm_web_region_show(), but it animates the scrolling of the object
-         to show the area
-
-         @ingroup Web */
-
+           Like @.region_show, but it animates the scrolling of the object
+           to show the area.
+         ]]
          params {
-            @in x: int; /*@ The x coordinate of the region to show */
-            @in y: int; /*@ The y coordinate of the region to show */
-            @in w: int; /*@ The width of the region to show */
-            @in h: int; /*@ The height of the region to show */
+            @in x: int; [[The x coordinate of the region to show.]]
+            @in y: int; [[The y coordinate of the region to show.]]
+            @in w: int; [[The width of the region to show.]]
+            @in h: int; [[The height of the region to show.]]
          }
       }
       stop {
-         /*@
-         Stops loading the current page
+         [[Stops loading the current page.
 
-         Cancels the loading of the current page in the web object. This will
-         cause a "load,error" signal to be emitted, with the is_cancellation
-         flag set to $true.
-
-         @return $true if the cancel was successful, $false otherwise
-
-         @ingroup Web */
-
-         return: bool;
+           Cancels the loading of the current page in the web object. This
+           will cause a "load,error" signal to be emitted, with the
+           is_cancellation flag set to $true.
+         ]]
+         return: bool; [[$true if the cancel was successful, $false otherwise.]]
       }
       navigate_possible_get {
-         /*@
-         Queries whether it's possible to jump the given number of steps
+         [[Queries whether it's possible to jump the given number of steps.
 
-         The $steps value can be a negative integer to back in history, or a
-         positive to move forward.
-
-         @return $true if enough history exists to perform the given jump,
-         $false otherwise
-
-         @ingroup Web */
-
-         return: bool;
+           The $steps value can be a negative integer to back in history,
+           or positive to move forward.
+         ]]
+         return: bool; [[$true if enough history exists to perform the
+                         given jump, $false otherwise.]]
          params {
-            @in steps: int; /*@ The number of steps to check for */
+            @in steps: int; [[The number of steps to check for.]]
          }
       }
       reload_full {
-         /*@
-         Requests a reload of the current document, avoiding any existing caches
-
-         @return $true on success, $false otherwise
-
-         @ingroup Web */
-
-         return: bool;
+         [[Requests a reload of the current document, avoiding any
+           existing caches.
+         ]]
+         return: bool; [[$true on success, $false otherwise.]]
       }
       text_matches_unmark_all {
-         /*@
-         Clears all marked matches in the document
-
-         @return $true on success, $false otherwise
-
-         @ingroup Web */
-
-         return: bool;
+         [[Clears all marked matches in the document.]]
+         return: bool; [[$true on success, $false otherwise.]]
       }
       reload {
-         /*@
-         Requests a reload of the current document in the object
-
-         @return $true on success, $false otherwise
-
-         @ingroup Web */
-
-         return: bool;
+         [[Requests a reload of the current document in the object.]]
+         return: bool; [[$true on success, $false otherwise.]]
       }
    }
    implements {
@@ -671,8 +488,8 @@ class Elm.Web (Elm.Widget)
       Elm.Widget.event;
    }
    events {
-      uri,changed; [[s]]
-      url,changed; [[s]]
+      uri,changed;
+      url,changed;
       windows,close,request;
    }
 
