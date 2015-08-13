@@ -3217,7 +3217,11 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data, size_t size)
    char *s = NULL;
 
    s = (char*)eina_memdup((unsigned char*)data, size, 0);
-   if (!s) return;
+   if (!s)
+     {
+        ecore_wl_dnd_drag_end(ecore_wl_input_get());
+        return;
+     }
    sdata.action = ELM_XDND_ACTION_COPY;
 
    if (savedtypes.textreq)
