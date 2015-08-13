@@ -2344,7 +2344,7 @@ static Eina_Bool _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void
 static Eina_Bool _wl_dnd_send(void *data, int type EINA_UNUSED, void *event);
 static Eina_Bool _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event);
 static Eina_Bool _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED);
-static void _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data);
+static void _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data, size_t size);
 
 static Dropable *_wl_dropable_find(unsigned int win);
 static void _wl_dropable_handle(Dropable *drop, Evas_Coord x, Evas_Coord y);
@@ -3157,7 +3157,7 @@ _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event)
    if (sel->requestwidget)
      {
         if (!ev->done)
-          _wl_dropable_data_handle(sel, ev->data);
+          _wl_dropable_data_handle(sel, ev->data, ev->len);
         else
           {
              evas_object_event_callback_del_full(sel->requestwidget,
@@ -3209,18 +3209,15 @@ _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSE
 }
 
 static void
-_wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
+_wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data, size_t size)
 {
    cnp_debug("In\n");
    Dropable *drop;
    Elm_Selection_Data sdata;
-   int len = 0;
    char *s = NULL;
 
-   len = strlen(data);
-   if (!(s = malloc(len + 1))) return;
-   memcpy(s, data, len);
-   s[len] = 0;
+   s = (char*)eina_memdup((unsigned char*)data, size, 0);
+   if (!s) return;
    sdata.action = ELM_XDND_ACTION_COPY;
 
    if (savedtypes.textreq)
@@ -3229,7 +3226,7 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
         savedtypes.imgfile = s;
      }
 
-   sdata.len = len;
+   sdata.len = size;
    sdata.x = savedtypes.x;
    sdata.y = savedtypes.y;
 
