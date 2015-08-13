@@ -3221,6 +3221,7 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
    if (!(s = malloc(len + 1))) return;
    memcpy(s, data, len);
    s[len] = 0;
+   sdata.action = ELM_XDND_ACTION_COPY;
 
    if (savedtypes.textreq)
      {
