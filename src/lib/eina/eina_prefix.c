@@ -54,6 +54,7 @@
 #include "eina_alloca.h"
 #include "eina_log.h"
 #include "eina_str.h"
+#include "eina_file.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
@@ -61,12 +62,8 @@
 
 #ifdef _WIN32
 # define PSEP_C ';'
-# define DSEP_C '\\'
-# define DSEP_S "\\"
 #else
 # define PSEP_C ':'
-# define DSEP_C '/'
-# define DSEP_S "/"
 #endif /* _WIN32 */
 
 /*============================================================================*
@@ -122,12 +119,6 @@ struct _Eina_Prefix
 static int _eina_prefix_log_dom = -1;
 
 static int
-_path_join(char *buf, int bufsize, const char *base, const char *extra)
-{
-   return eina_str_join(buf, bufsize, DSEP_C, base, extra);
-}
-
-static int
 _path_join_multiple(char *buf, int bufsize, ...)
 {
    va_list ap;
@@ -154,7 +145,7 @@ _path_join_multiple(char *buf, int bufsize, ...)
           }
 
         if (used > 0)
-          buf[used] = DSEP_C;
+          buf[used] = EINA_PATH_SEP_C;
 
         memcpy(buf + used + seplen, comp, complen);
         used += complen + seplen;
@@ -171,7 +162,7 @@ _path_sep_fix(char *buf)
    for (; *buf != '\0'; buf++)
      {
         if (*buf == '/')
-          *buf = DSEP_C;
+          *buf = EINA_PATH_SEP_C;
      }
 #else
    (void)buf;
@@ -184,7 +175,7 @@ _path_absolute_check(const char *path)
 #ifdef _WIN32
    return evil_path_is_absolute(path);
 #else
-   return (path[0] == DSEP_C);
+   return (path[0] == EINA_PATH_SEP_C);
 #endif
 }
 
@@ -196,7 +187,7 @@ _fallback(Eina_Prefix *pfx, const char *pkg_bin, const char *pkg_lib,
 
    STRDUP_REP(pfx->prefix_path, pkg_bin);
    if (!pfx->prefix_path) return 0;
-   p = strrchr(pfx->prefix_path, DSEP_C);
+   p = strrchr(pfx->prefix_path, EINA_PATH_SEP_C);
    if (p) *p = 0;
    STRDUP_REP(pfx->prefix_path_bin, pkg_bin);
    STRDUP_REP(pfx->prefix_path_lib, pkg_lib);
@@ -309,12 +300,12 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
      }
 
    /* 2. relative path */
-   if (strchr(argv0, DSEP_C))
+   if (strchr(argv0, EINA_PATH_SEP_C))
      {
         if (getcwd(buf2, sizeof(buf2)))
           {
              char joined[PATH_MAX];
-             _path_join(joined, sizeof(joined), buf2, argv0);
+             eina_file_path_join(joined, sizeof(joined), buf2, argv0);
              if (realpath(joined, buf))
                {
                   if (access(buf, X_OK) == 0)
@@ -357,7 +348,7 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
           }
 
         strncpy(buf2, cp, len);
-        buf2[len] = DSEP_C;
+        buf2[len] = EINA_PATH_SEP_C;
         strcpy(buf2 + len + 1, argv0);
         if (realpath(buf2, buf))
           {
@@ -400,7 +391,7 @@ _get_env_var(char **var, const char *envprefix, const char *envsuffix, const cha
    else if (prefix)
      {
         char buf[PATH_MAX];
-        _path_join(buf, sizeof(buf), prefix, dir);
+        eina_file_path_join(buf, sizeof(buf), prefix, dir);
         INF("Have %s_PREFIX = %s, use %s = %s", envprefix, prefix, env, buf);
         STRDUP_REP(*var, buf);
         return 1;
@@ -505,10 +496,10 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
      {
         int len;
 
-        len = _path_join(buf, sizeof(buf), datadir, sharedir);
+        len = eina_file_path_join(buf, sizeof(buf), datadir, sharedir);
         if (len > 0)
           {
-             _path_sep_fix(buf + strlen(datadir) + strlen(DSEP_S));
+             _path_sep_fix(buf + strlen(datadir) + strlen(EINA_PATH_SEP_S));
              tmp = alloca(len + 1);
              strcpy(tmp, buf);
              datadir = tmp;
@@ -642,13 +633,13 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
     * exe        = /blah/whatever/lib/arch/libexe.so
     */
    DBG("From exe %s figure out the rest", pfx->exe_path);
-   p = strrchr(pfx->exe_path, DSEP_C);
+   p = strrchr(pfx->exe_path, EINA_PATH_SEP_C);
    if (p)
      {
         p--;
         while (p >= pfx->exe_path)
           {
-             if (*p == DSEP_C)
+             if (*p == EINA_PATH_SEP_C)
                {
                   if (pfx->prefix_path) free(pfx->prefix_path);
                   pfx->prefix_path = malloc(p - pfx->exe_path + 1);
@@ -663,21 +654,21 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
                        DBG("Have prefix = %s", pfx->prefix_path);
 
                        /* bin */
-                       _path_join(buf, sizeof(buf), pfx->prefix_path, bindir);
+                       eina_file_path_join(buf, sizeof(buf), pfx->prefix_path, bindir);
                        STRDUP_REP(pfx->prefix_path_bin, buf);
                        DBG("Have bin = %s", pfx->prefix_path_bin);
                        if ((!from_bin) && (stat(buf, &st) == 0))
                          checks_passed++;
 
                        /* lib */
-                       _path_join(buf, sizeof(buf), pfx->prefix_path, libdir);
+                       eina_file_path_join(buf, sizeof(buf), pfx->prefix_path, libdir);
                        STRDUP_REP(pfx->prefix_path_lib, buf);
                        DBG("Have lib = %s", pfx->prefix_path_lib);
                        if ((!from_lib) && (stat(buf, &st) == 0))
                          checks_passed++;
 
                        /* locale */
-                       _path_join(buf, sizeof(buf), pfx->prefix_path, localedir);
+                       eina_file_path_join(buf, sizeof(buf), pfx->prefix_path, localedir);
                        STRDUP_REP(pfx->prefix_path_locale, buf);
                        DBG("Have locale = %s", pfx->prefix_path_locale);
                        if (stat(buf, &st) == 0)
@@ -708,14 +699,14 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
                        if (((!magic) && (checks_passed > 0)) ||
                            ((magic) && (magic_found)))
                          {
-                            _path_join(buf, sizeof(buf), pfx->prefix_path, datadir);
+                            eina_file_path_join(buf, sizeof(buf), pfx->prefix_path, datadir);
                             STRDUP_REP(pfx->prefix_path_data, buf);
                          }
                        else
                          {
                             for (;p > pfx->exe_path; p--)
                               {
-                                 if (*p == DSEP_C)
+                                 if (*p == EINA_PATH_SEP_C)
                                    {
                                       p--;
                                       break;
