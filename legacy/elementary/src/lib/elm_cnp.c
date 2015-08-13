@@ -2754,6 +2754,7 @@ _wl_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format, Elm_Drag_State 
         handler_drop =
           ecore_event_handler_add(ECORE_WL_EVENT_DND_DROP,
                                   _wl_dnd_drop, NULL);
+        _wl_elm_dnd_init();
      }
 
    return EINA_TRUE;
