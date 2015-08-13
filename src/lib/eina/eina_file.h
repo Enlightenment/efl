@@ -28,6 +28,7 @@
 #include "eina_array.h"
 #include "eina_iterator.h"
 #include "eina_tmpstr.h"
+#include "eina_str.h"
 
 /**
  * @page eina_file_example_01_page
@@ -161,6 +162,29 @@ typedef enum {
  * @brief The constant defined as the highest value for PATH_MAX.
  */
 #define EINA_PATH_MAX 8192
+
+/**
+ * @def EINA_PATH_SEP_C
+ * @brief The constant defined the path separator as the character '\'
+ * on Windows and '/' otherwise.
+ *
+ * @since 1.16
+ */
+/**
+ * @def EINA_PATH_SEP_S
+ * @brief The constant defined the path separator as the string "\" on Windows
+ * and "/" otherwise.
+ *
+ * @since 1.16
+ */
+#ifdef _WIN32
+# define EINA_PATH_SEP_C '\\'
+# define EINA_PATH_SEP_S "\\"
+#else
+# define EINA_PATH_SEP_C '/'
+# define EINA_PATH_SEP_S "/"
+#endif
+
 /**
  * @struct _Eina_File_Direct_Info
  * @brief The structure to store information of a path.
@@ -669,6 +693,20 @@ EAPI Eina_Iterator *eina_file_map_lines(Eina_File *file);
  * @since 1.2
  */
 EAPI Eina_Bool eina_file_map_faulted(Eina_File *file, void *map);
+
+static inline size_t eina_file_path_join_len(char *dst,
+                                             size_t size,
+                                             const char *a,
+                                             size_t a_len,
+                                             const char *b,
+                                             size_t b_len);
+
+static inline size_t eina_file_path_join(char *dst,
+                                         size_t size,
+                                         const char *a,
+                                         const char *b);
+
+#include "eina_inline_file.x"
 
 /**
  * @}
