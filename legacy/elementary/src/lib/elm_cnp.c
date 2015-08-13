@@ -3240,17 +3240,15 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
         Dropable_Cbs *cbs;
         EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
           {
-             if (cbs->types && drop->last.format)
+             if (cbs->types & drop->last.format)
                {
-                  /* If it's markup that also supports images */
-                  if (cbs->types & (ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE))
+                  if ((cbs->types & ELM_SEL_FORMAT_IMAGE) && (drop->last.format & ELM_SEL_FORMAT_IMAGE))
                     {
-                       sdata.format = ELM_SEL_FORMAT_MARKUP;
-                       sdata.data = (char *)savedtypes.imgfile;
-                    }
-                  else if (cbs->types & ELM_SEL_FORMAT_IMAGE)
-                    {
-                       sdata.format = ELM_SEL_FORMAT_IMAGE;
+                       /* If it's markup that also supports images */
+                       if ((cbs->types & ELM_SEL_FORMAT_MARKUP) && (drop->last.format & ELM_SEL_FORMAT_MARKUP))
+                         sdata.format = ELM_SEL_FORMAT_MARKUP;
+                       else
+                         sdata.format = ELM_SEL_FORMAT_IMAGE;
                        sdata.data = (char *)savedtypes.imgfile;
                     }
                   else
