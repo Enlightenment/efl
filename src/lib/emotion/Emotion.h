@@ -1165,15 +1165,15 @@ EAPI Emotion_Vis  emotion_object_vis_get               (const Evas_Object *obj);
 EAPI Eina_Bool    emotion_object_vis_supported         (const Evas_Object *obj, Emotion_Vis visualization);
 
 /**
- * @brief Raise priority of an object so it will have a priviledged access to hardware ressource.
+ * @brief Raise priority of an object so it will have a priviledged access to hardware resources.
  *
  * @param obj The object which the query is being ran on.
- * @param priority EINA_TRUE means give me a priority access to the hardware ressource.
+ * @param priority EINA_TRUE means give me a priority access to the hardware resources.
  *
  * Hardware have a few dedicated hardware pipeline that process the video at no cost for the CPU.
  * Especially on SoC, you mostly have one (on mobile phone SoC) or two (on Set Top Box SoC) when
  * Picture in Picture is needed. And most application just have a few video stream that really
- * deserve high frame rate, hiogh quality output. That's why this call is for.
+ * deserve high frame rate, high quality output. That's why this call is for.
  *
  * Please note that if Emotion can't acquire a priviledged hardware ressource, it will fallback
  * to the no-priority path. This work on the first asking first get basis system.
