@@ -3238,18 +3238,14 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data, size_t size)
              if (cbs->types & drop->last.format)
                {
                   s = (char*)eina_memdup((unsigned char*)data, size,
-                                         _wl_dropable_match(cbs, drop, ELM_SEL_FORMAT_TEXT));
+                      savedtypes.textreq || _wl_dropable_match(cbs, drop, ELM_SEL_FORMAT_TEXT));
                   if (!s)
                     {
                        ecore_wl_dnd_drag_end(ecore_wl_input_get());
                        return;
                     }
 
-                  if (savedtypes.textreq)
-                    {
-                       savedtypes.textreq = 0;
-                       savedtypes.imgfile = s;
-                    }
+                  sdata.data = s;
                   if (_wl_dropable_match(cbs, drop, ELM_SEL_FORMAT_IMAGE))
                     {
                        /* If it's markup that also supports images */
@@ -3257,19 +3253,16 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data, size_t size)
                          sdata.format = ELM_SEL_FORMAT_MARKUP;
                        else
                          sdata.format = ELM_SEL_FORMAT_IMAGE;
-                       sdata.data = (char *)savedtypes.imgfile;
                     }
                   else
-                    {
-                       sdata.format = drop->last.format;
-                       sdata.data = s;
-                    }
+                    sdata.format = drop->last.format;
                   if (cbs->dropcb) cbs->dropcb(cbs->dropdata, drop->obj, &sdata);
+                  free(s);
                }
           }
      }
    ecore_wl_dnd_drag_end(ecore_wl_input_get());
-   ELM_SAFE_FREE(savedtypes.imgfile, free);
+   savedtypes.textreq = 0;
 }
 
 static Dropable *
