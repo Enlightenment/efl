@@ -1743,7 +1743,7 @@ test_gengrid_focus(void *data EINA_UNUSED,
                              ELM_SCALE_SIZE(150));
    evas_object_size_hint_weight_set(gengrid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gengrid, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_min_set(gengrid, 0, ELM_SCALE_SIZE(600));
+   evas_object_size_hint_min_set(gengrid, 0, ELM_SCALE_SIZE(620));
    elm_box_pack_end(in_bx, gengrid);
    evas_object_show(gengrid);
    evas_object_smart_callback_add(gengrid, "item,focused", _gengrid_focus_item_cb, "item,focused");
@@ -1761,7 +1761,7 @@ test_gengrid_focus(void *data EINA_UNUSED,
                              ELM_SCALE_SIZE(150));
    evas_object_size_hint_weight_set(gengrid2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gengrid2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_min_set(gengrid2, 0, ELM_SCALE_SIZE(600));
+   evas_object_size_hint_min_set(gengrid2, 0, ELM_SCALE_SIZE(620));
    elm_box_pack_end(in_bx, gengrid2);
    evas_object_show(gengrid2);
    evas_object_smart_callback_add(gengrid2, "item,focused", _gengrid_focus_item_cb, "item,focused");
