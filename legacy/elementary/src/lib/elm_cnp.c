@@ -3208,27 +3208,21 @@ _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSE
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Eina_Bool
+_wl_dropable_match(Dropable_Cbs *cbs, Dropable *drop, Elm_Sel_Format fmt)
+{
+   return (cbs->types & fmt) && (drop->last.format & fmt);
+}
+
 static void
 _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data, size_t size)
 {
    cnp_debug("In\n");
    Dropable *drop;
    Elm_Selection_Data sdata;
-   char *s = NULL;
+   char *s;
 
-   s = (char*)eina_memdup((unsigned char*)data, size, 0);
-   if (!s)
-     {
-        ecore_wl_dnd_drag_end(ecore_wl_input_get());
-        return;
-     }
    sdata.action = ELM_XDND_ACTION_COPY;
-
-   if (savedtypes.textreq)
-     {
-        savedtypes.textreq = 0;
-        savedtypes.imgfile = s;
-     }
 
    sdata.len = size;
    sdata.x = savedtypes.x;
@@ -3243,10 +3237,23 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data, size_t size)
           {
              if (cbs->types & drop->last.format)
                {
-                  if ((cbs->types & ELM_SEL_FORMAT_IMAGE) && (drop->last.format & ELM_SEL_FORMAT_IMAGE))
+                  s = (char*)eina_memdup((unsigned char*)data, size,
+                                         _wl_dropable_match(cbs, drop, ELM_SEL_FORMAT_TEXT));
+                  if (!s)
+                    {
+                       ecore_wl_dnd_drag_end(ecore_wl_input_get());
+                       return;
+                    }
+
+                  if (savedtypes.textreq)
+                    {
+                       savedtypes.textreq = 0;
+                       savedtypes.imgfile = s;
+                    }
+                  if (_wl_dropable_match(cbs, drop, ELM_SEL_FORMAT_IMAGE))
                     {
                        /* If it's markup that also supports images */
-                       if ((cbs->types & ELM_SEL_FORMAT_MARKUP) && (drop->last.format & ELM_SEL_FORMAT_MARKUP))
+                       if (_wl_dropable_match(cbs, drop, ELM_SEL_FORMAT_MARKUP))
                          sdata.format = ELM_SEL_FORMAT_MARKUP;
                        else
                          sdata.format = ELM_SEL_FORMAT_IMAGE;
