@@ -264,6 +264,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
 
               @since 1.9
             ]]
+            legacy: elm_win_wm_rotation_available_rotations_set;
             values {
                rotations: const(int)*; [[The array of rotation value.]]
                count: uint; [[The size of the rotations array.]]
