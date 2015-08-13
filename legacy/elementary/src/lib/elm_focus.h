@@ -45,7 +45,9 @@ typedef enum
    ELM_FOCUS_UP,       /**< up direction */
    ELM_FOCUS_DOWN,     /**< down direction */
    ELM_FOCUS_RIGHT,    /**< right direction */
-   ELM_FOCUS_LEFT      /**< left direction */
+   ELM_FOCUS_LEFT,      /**< left direction */
+   ELM_FOCUS_MOUSE,      /**< direction is from mouse */
+   ELM_FOCUS_REVERT      /**< direction is from focus revert */
 } Elm_Focus_Direction;
 
 /**

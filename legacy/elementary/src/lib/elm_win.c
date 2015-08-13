@@ -880,6 +880,14 @@ _elm_win_focus_highlight_visible_set(Elm_Win_Data *sd,
      }
 }
 
+Evas_Object *
+_elm_win_focus_highlight_object_get(Evas_Object *obj)
+{
+   ELM_WIN_DATA_GET(obj, sd);
+
+   return sd->focus_highlight.fobj;
+}
+
 static void
 _elm_win_focus_highlight_anim_setup(Elm_Win_Data *sd,
                                     Evas_Object *obj)
@@ -992,7 +1000,15 @@ _elm_win_focus_highlight_reconfigure_job(void *data)
      elm_widget_signal_emit(target, sig, "elm");
 
    if ((!target) || (!common_visible) || (sd->focus_highlight.cur.in_theme))
-     goto the_end;
+     {
+        if (target)
+          {
+             Elm_Focus_Direction focus_origin = elm_widget_focus_origin_get(target);
+             if (focus_origin >= ELM_FOCUS_UP && focus_origin <= ELM_FOCUS_LEFT)
+               _elm_win_focus_highlight_simple_setup(sd, fobj);
+          }
+        goto the_end;
+     }
 
    if (previous)
      focus_style_previous = elm_widget_focus_highlight_style_get(previous);

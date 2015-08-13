@@ -534,6 +534,7 @@ void                  _elm_widget_highlight_in_theme_update(Eo *obj);
 // win focus highlight
 void                  _elm_win_focus_highlight_start(Evas_Object *obj);
 void                  _elm_win_focus_highlight_in_theme_update(Evas_Object *obj, Eina_Bool in_theme);
+Evas_Object          *_elm_win_focus_highlight_object_get(Evas_Object *obj);
 void                  _elm_win_focus_auto_show(Evas_Object *obj);
 void                  _elm_win_focus_auto_hide(Evas_Object *obj);
 
@@ -690,6 +691,8 @@ EAPI Evas_Object     *elm_widget_newest_focus_order_get(const Evas_Object *obj, 
 EAPI void             elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode);
 EAPI Eina_Bool        elm_widget_focus_highlight_enabled_get(const Evas_Object *obj);
 EAPI void             elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+Evas_Object          *_elm_widget_focus_highlight_object_get(const Evas_Object *obj);
+double                _elm_widget_focus_direction_weight_get(const Evas_Object *obj1, const Evas_Object *obj2, double degree);
 EAPI const Elm_Widget_Smart_Class *elm_widget_smart_class_get(void);
 
 /**
@@ -776,6 +779,7 @@ EAPI void             elm_widget_focus_move_policy_set(Evas_Object *obj, Elm_Foc
 EAPI Elm_Focus_Move_Policy elm_widget_focus_move_policy_get(const Evas_Object *obj);
 EAPI void             elm_widget_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mode mode);
 EAPI Elm_Focus_Region_Show_Mode elm_widget_focus_region_show_mode_get(const Evas_Object *obj);
+EAPI Elm_Focus_Direction elm_widget_focus_origin_get(const Evas_Object *obj);
 
 /**
  * Function to operate on a given widget's scrollabe children when necessary.

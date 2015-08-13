@@ -364,6 +364,11 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
             return: Evas.Object *;
          }
       }
+      @property focus_origin {
+         get {
+            return: Elm_Focus_Direction;
+         }
+      }
       @property parent2 {
          set {
          }

@@ -3524,12 +3524,47 @@ _elm_gengrid_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
    return eo_it;
 }
 
+static Elm_Object_Item *
+_elm_gengrid_direction_item_get(Evas_Object *obj, Elm_Focus_Direction dir)
+{
+   double max_weight = 0.0, weight = 0.0;
+   Eina_List *item_list = NULL, *l = NULL;
+   Elm_Object_Item *eo_item = NULL, *best_item = NULL;
+   Evas_Object *fobj = _elm_widget_focus_highlight_object_get(obj);
+
+   double degree = 0.0;
+   if (dir == ELM_FOCUS_UP) degree = 0.0;
+   else if (dir == ELM_FOCUS_DOWN) degree = 180.0;
+   else if (dir == ELM_FOCUS_RIGHT) degree = 90.0;
+   else if (dir == ELM_FOCUS_LEFT) degree = 270.0;
+
+   item_list = elm_gengrid_realized_items_get(obj);
+   best_item = elm_gengrid_first_item_get(obj);
+
+   EINA_LIST_FOREACH(item_list, l, eo_item)
+     {
+        ELM_GENGRID_ITEM_DATA_GET(eo_item, item);
+        weight = _elm_widget_focus_direction_weight_get(fobj, VIEW(item), degree);
+        if ((weight == -1.0) ||
+            ((weight != 0.0) && (max_weight != -1.0) &&
+             ((int)(max_weight * 100000000) < (int)(weight * 100000000))))
+          {
+             best_item = eo_item;
+             max_weight = weight;
+          }
+     }
+   eina_list_free(item_list);
+
+   return best_item;
+}
+
 EOLIAN static Eina_Bool
 _elm_gengrid_elm_widget_on_focus(Eo *obj, Elm_Gengrid_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
    Eina_Bool is_sel = EINA_FALSE;
+   Elm_Focus_Direction focus_origin;
 
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
    if (!int_ret) return EINA_FALSE;
@@ -3543,7 +3578,10 @@ _elm_gengrid_elm_widget_on_focus(Eo *obj, Elm_Gengrid_Data *sd)
 
    if (elm_widget_focus_get(obj) && !sd->mouse_down)
      {
-        if (sd->last_focused_item)
+        focus_origin = elm_widget_focus_origin_get(obj);
+        if (focus_origin >= ELM_FOCUS_UP && focus_origin <= ELM_FOCUS_LEFT)
+          eo_it = _elm_gengrid_direction_item_get(obj, focus_origin);
+        else if (sd->last_focused_item)
           eo_it = sd->last_focused_item;
         else if (sd->last_selected_item)
           eo_it = sd->last_selected_item;
