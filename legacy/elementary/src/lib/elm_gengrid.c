@@ -3011,7 +3011,10 @@ _item_horizontal_loop(Evas_Object *obj, Elm_Focus_Direction dir)
      }
    else
      {
-        elm_gengrid_item_selected_set(eo_item, EINA_TRUE);
+        if (_elm_config->item_select_on_focus_disable)
+          elm_object_item_focus_set(eo_item, EINA_TRUE);
+        else
+          elm_gengrid_item_selected_set(eo_item, EINA_TRUE);
         return EINA_TRUE;
      }
    return EINA_FALSE;
