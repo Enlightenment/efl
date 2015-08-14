@@ -310,302 +310,253 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
       }
       @property border_center_fill {
          set {
-            /*@
-            Sets @b how the center part of the given image object (not the
-            borders) should be drawn when Evas is rendering it.
+            [[Sets how the center part of the given image object (not the
+              borders) should be drawn when Evas is rendering it.
 
-            This function sets how the center part of the image object's source
-            image is to be drawn, which must be one of the values in
-            #Evas_Border_Fill_Mode. By center we mean the complementary part of
-            that defined by evas_object_image_border_set(). This one is very
-            useful for making frames and decorations. You would most probably
-            also be using a filled image (as in evas_object_image_filled_set())
-            to use as a frame.
-
-            @see evas_object_image_border_center_fill_get() */
+              This function sets how the center part of the image object's
+              source image is to be drawn, which must be one of the values
+              in #Evas_Border_Fill_Mode. By center we mean the complementary
+              part of that defined by @.border.set. This one is very useful
+              for making frames and decorations. You would most probably
+              also be using a filled image (as in @.filled.set) to use as
+              a frame.
+            ]]
          }
          get {
-            /*@
-            Retrieves @b how the center part of the given image object (not the
-            borders) is to be drawn when Evas is rendering it.
-
-            @return fill Fill mode of the center region of @p obj (a value in
-            #Evas_Border_Fill_Mode).
-
-            See @ref evas_object_image_fill_set() for more details. */
+            [[Retrieves how the center part of the given image object (not
+              the borders) is to be drawn when Evas is rendering it.
+            ]]
          }
          values {
-            fill: Evas_Border_Fill_Mode; /*@ Fill mode of the center region of @p obj (a value in
-            #Evas_Border_Fill_Mode). */
+            fill: Evas_Border_Fill_Mode; [[Fill mode of the center region
+                                           of $obj (a value in  #Evas_Border_Fill_Mode).]]
          }
       }
       @property source_visible {
          set {
-            /*@
-            Set the source object to be visible or not.
+            [[Set the source object to be visible or not.
 
-            If the @p visible set to $false, the source object of the proxy(@p obj
-            ) will be invisible.
+              If $visible is set to $false, the source object of the
+              proxy ($obj) will be invisible.
 
-            This API works differently to evas_object_show() and evas_object_hide().
-            Once source object is hidden by evas_object_hide() then the proxy object will
-            be hidden as well. Actually in this case both objects are excluded from the
-            Evas internal update circle.
+              This API works differently to \@ref evas_object_show and
+              \@ref evas_object_hide. Once source object is hidden, the
+              proxy object will be hidden as well. Actually in this case
+              both objects are excluded from the Evas internal update circle.
 
-            By this API, instead, one can toggle the visibility of a proxy's source
-            object remaining the proxy visibility untouched.
+              By this API, instead, one can toggle the visibility of a
+              proxy's source  object remaining the proxy visibility untouched.
 
-            @warning If the all of proxies are deleted, then the source visibility of the
-            source object will be cancelled.
+              Warning: If the all of proxies are deleted, then the source
+              visibility of the source object will be cancelled.
 
-            @see evas_object_image_source_visible_get()
-            @see evas_object_image_source_set()
-            @see evas_object_show()
-            @see evas_object_hide()
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the state of the source object visibility.
+            [[Get the state of the source object visibility.
 
-            @return $true if source object is visible, $false otherwise.
-
-            @see evas_object_image_source_visible_set()
-            @see evas_object_image_source_set()
-            @see evas_object_show()
-            @see evas_object_hide()
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          values {
-            visible: bool; /*@ $true is source object to be shown, $false
-            otherwise. */
+            visible: bool; [[$true is source object to be shown, $false
+                             otherwise.]]
          }
       }
       @property native_surface {
          set {
-            /*@
-            Set the native surface of a given image of the canvas
+            [[Set the native surface of a given image of the canvas
 
-            This function sets a native surface of a given canvas image. */
-            
+              This function sets a native surface of a given canvas image.
+            ]]
             legacy: null;
          }
          get {
-            /*@
-            Get the native surface of a given image of the canvas
+            [[Get the native surface of a given image of the canvas
 
-            @return The native surface of the given canvas image.
-
-            This function returns the native surface of a given canvas image. */
+              This function returns the native surface of a given canvas
+              image.
+            ]]
          }
          values {
-            surf: Evas_Native_Surface* @nonull; /*@ The new native surface. */
+            surf: Evas_Native_Surface* @nonull; [[The native surface.]]
          }
       }
       @property load_scale_down {
          set {
-            /*@
-            Set the scale down factor of a given image object's source image,
-            when loading it.
+            [[Set the scale down factor of a given image object's source
+              image, when loading it.
 
-            This function sets the scale down factor of a given canvas
-            image. Most useful for the SVG image loader.
-
-            @see evas_object_image_load_scale_down_get() */
+              This function sets the scale down factor of a given canvas
+              image. Most useful for the SVG image loader.
+            ]]
          }
          get {
-            /*@
-            get the scale down factor of a given image object's source image,
-            when loading it.
-
-            @see evas_object_image_load_scale_down_set() for more details */
+            [[Get the scale down factor of a given image object's source
+              image, when loading it.
+            ]]
          }
          values {
-            scale_down: int; /*@ The scale down factor. */
+            scale_down: int; [[The scale down factor.]]
          }
       }
       @property scale_hint {
          set {
-            /*@
-            Set the scale hint of a given image of the canvas.
+            [[Set the scale hint of a given image of the canvas.
 
-            This function sets the scale hint value of the given image object
-            in the canvas, which will affect how Evas is to cache scaled
-            versions of its original source image.
-
-            @see evas_object_image_scale_hint_get() */
+              This function sets the scale hint value of the given image
+              object in the canvas, which will affect how Evas is to cache
+              scaled versions of its original source image.
+            ]]
          }
          get {
-            /*@
-            Get the scale hint of a given image of the canvas.
+            [[Get the scale hint of a given image of the canvas.
 
-            @return The scale hint value set on @p obj, a value in
-            #Evas_Image_Scale_Hint.
-
-            This function returns the scale hint value of the given image
-            object of the canvas.
-
-            @see evas_object_image_scale_hint_set() for more details. */
+              This function returns the scale hint value of the given image
+              object of the canvas.
+            ]]
          }
          values {
-            hint: Evas_Image_Scale_Hint; /*@ The scale hint, a value in
-            #Evas_Image_Scale_Hint. */
+            hint: Evas_Image_Scale_Hint; [[The scale hint, a value in
+                                           #Evas_Image_Scale_Hint.]]
          }
       }
       @property source_events {
          set {
-            /*@
-            Set whether an Evas object is to source events.
+            [[Set whether an Evas object is to source events.
 
-            Set whether an Evas object is to repeat events to source.
+              Set whether an Evas object is to repeat events to source.
 
-            If @p source is $true, it will make events on @p obj to also be
-            repeated for the source object (see evas_object_image_source_set()). Even the
-            @p obj and source geometries are different, the event position will be
-            transformed to the source object's space.
+              If $source is $true, it will make events on $obj to also be
+              repeated for the source object (see @.source.set). Even the
+              $obj and source geometries are different, the event position
+              will be transformed to the source object's space.
 
-            If @p source is $false, events occurring on @p obj will be
-            processed only on it.
+              If $source is $false, events occurring on $obj will be
+              processed only on it.
 
-            @see evas_object_image_source_get()
-            @see evas_object_image_source_visible_set()
-            @see evas_object_image_source_events_get()
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Determine whether an object is set to source events.
+            [[Determine whether an object is set to source events.
 
-            @return $true if source object has events, $false otherwise.
-
-            @see evas_object_image_source_set()
-            @see evas_object_image_source_visible_set()
-            @see evas_object_image_source_events_set()
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          values {
-            source: bool; /*@ whether @p obj is to pass events ($true) or not
-            ($false) */
+            source: bool; [[Whether $obj is to pass events ($true) or not
+                            ($false).]]
          }
       }
       @property colorspace {
          set {
-            /*@
-            Set the colorspace of a given image of the canvas.
+            [[Set the colorspace of a given image of the canvas.
 
-            This function sets the colorspace of given canvas image. */
+              This function sets the colorspace of given canvas image.
+            ]]
          }
          get {
-            /*@
-            Get the colorspace of a given image of the canvas.
+            [[Get the colorspace of a given image of the canvas.
 
-            @return The colorspace of the image.
-
-            This function returns the colorspace of given canvas image. */
+              This function returns the colorspace of given canvas image.
+            ]]
          }
          values {
-            cspace: Evas_Colorspace; /*@ The new color space. */
+            cspace: Evas_Colorspace; [[The new color space.]]
          }
       }
       @property pixels_get_callback {
          set {
-            /*@
-            Set the callback function to get pixels from a canvas' image.
+            [[Set the callback function to get pixels from a canvas' image.
 
-            This functions sets a function to be the callback function that get
-            pixels from a image of the canvas. */
+              This functions sets a function to be the callback function
+              that get pixels from a image of the canvas.
+            ]]
          }
          values {
-            func: Evas_Object_Image_Pixels_Get_Cb @nonull; /*@ The callback function. */
-            data: void *; /*@ The data pointer to be passed to @a func. */
+            func: Evas_Object_Image_Pixels_Get_Cb @nonull; [[The callback function.]]
+            data: void *; [[The data pointer to be passed to $func.]]
          }
       }
       @property data_copy {
          set {
-            /*@
-            Replaces the raw image data of the given image object.
+            [[Replaces the raw image data of the given image object.
 
-            This function lets the application replace an image object's
-            internal pixel buffer with an user-allocated one. For best results,
-            you should generally first call evas_object_image_size_set() with
-            the width and height for the new buffer.
+              This function lets the application replace an image object's
+              internal pixel buffer with an user-allocated one. For best
+              results, you should generally first call
+              \@ref evas_object_image_size_set with the width and height
+              for the new buffer.
 
-            This call is best suited for when you will be using image data with
-            different dimensions than the existing image data, if any. If you
-            only need to modify the existing image in some fashion, then using
-            evas_object_image_data_get() is probably what you are after.
+              This call is best suited for when you will be using image
+              data with different dimensions than the existing image data,
+              if any. If you only need to modify the existing image in some
+              fashion, then using @.data_get is probably what you are after.
 
-            Note that the caller is responsible for freeing the buffer when
-            finished with it, as user-set image data will not be automatically
-            freed when the image object is deleted.
-
-            See @ref evas_object_image_data_get() for more details. */
+              Note that the caller is responsible for freeing the buffer
+              when finished with it, as user-set image data will not be
+              automatically freed when the image object is deleted.
+            ]]
          }
          values {
-            data: void *; /*@ The raw data to replace. */
+            data: void *; [[The raw data to replace.]]
          }
       }
       @property animated_frame {
          set {
-            /*@
-            Set the frame to current frame of an image object
+            [[Set the frame to current frame of an image object.
 
-            This set image object's current frame to frame_num with 1 being the first
-            frame.
+              This set image object's current frame to frame_num with 1
+              being the first frame.
 
-            @see evas_object_image_animated_get()
-            @see evas_object_image_animated_frame_count_get()
-            @see evas_object_image_animated_loop_type_get()
-            @see evas_object_image_animated_loop_count_get()
-            @see evas_object_image_animated_frame_duration_get()
-            @see evas_object_image_animated_frame_set()
-            @since 1.1 */
+              See also \@ref evas_object_image_animated_get,
+              @.animated_frame_count.get, @.animated_loop_type.get,
+              @.animated_loop_count.get, @.animated_frame_duration_get.
+
+              @since 1.1
+            ]]
          }
          values {
-            frame_index: int; /*@ The index of current frame */
+            frame_index: int; [[The index of current frame.]]
          }
       }
       @property region_support {
          get {
-            /*@
-            Get the support state of a given image
+            [[Get the support state of a given image.
 
-            @return The region support state
-            @since 1.2
-
-            This function returns the state of the region support of given image */
-            return: bool @warn_unused;
+              @since 1.2
+            ]]
+            return: bool @warn_unused; [[The region support state.]]
          }
       }
       @property load_error {
          get {
-            /*@
-            Retrieves a number representing any error that occurred during the
-            last loading of the given image object's source image.
-
-            @return A value giving the last error that occurred. It should be
-            one of the #Evas_Load_Error values. #EVAS_LOAD_ERROR_NONE
-            is returned if there was no error. */
-            return: Evas_Load_Error @warn_unused;
+            [[Retrieves a number representing any error that occurred during
+              the last loading of the given image object's source image.
+            ]]
+            return: Evas_Load_Error @warn_unused; [[
+               A value giving the last error that occurred. It should be
+               one of the #Evas_Load_Error values. #EVAS_LOAD_ERROR_NONE
+               is returned if there was no error.
+            ]]
          }
       }
       @property animated_frame_count {
          get {
-            /*@
-            Get the total number of frames of the image object.
+            [[Get the total number of frames of the image object.
 
-            @return The number of frames
+              This returns total number of frames the image object
+              supports (if animated).
 
-            This returns total number of frames the image object supports (if animated)
+              See also \@ref evas_object_image_animated_get,
+              @.animated_frame_count.get, @.animated_loop_type.get,
+              @.animated_loop_count.get, @.animated_frame_duration_get.
 
-            @see evas_object_image_animated_get()
-            @see evas_object_image_animated_frame_count_get()
-            @see evas_object_image_animated_loop_type_get()
-            @see evas_object_image_animated_loop_count_get()
-            @see evas_object_image_animated_frame_duration_get()
-            @see evas_object_image_animated_frame_set()
-            @since 1.1 */
-            return: int;
+              @since 1.1
+            ]]
+            return: int; [[The number of frames.]]
          }
       }
       @property stride {
