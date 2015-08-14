@@ -561,237 +561,204 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
       }
       @property stride {
          get {
-            /*@
-            Retrieves the row stride of the given image object.
+            [[Retrieves the row stride of the given image object.
 
-            @return The stride of the image (<b>in bytes</b>).
-
-            The row stride is the number of bytes between the start of a row
-            and the start of the next row for image data. */
-            return: int @warn_unused;
+              The row stride is the number of bytes between the start of a
+              row and the start of the next row for image data.
+            ]]
+            return: int @warn_unused; [[The stride of the image (in bytes).]]
          }
       }
       @property animated_loop_type {
          get {
-            /*@
-            Get the kind of looping the image object does.
+            [[Get the kind of looping the image object does.
 
-            @return Loop type of the image object
+              This returns the kind of looping the image object wants to do.
 
-            This returns the kind of looping the image object wants to do.
+              If it returns EVAS_IMAGE_ANIMATED_HINT_LOOP, you should display
+              frames in a sequence like: 1->2->3->1->2->3->1...
 
-            If it returns EVAS_IMAGE_ANIMATED_HINT_LOOP, you should display frames in a sequence like:
-            1->2->3->1->2->3->1...
-            If it returns EVAS_IMAGE_ANIMATED_HINT_PINGPONG, it is better to
-            display frames in a sequence like: 1->2->3->2->1->2->3->1...
+              If it returns EVAS_IMAGE_ANIMATED_HINT_PINGPONG, it is better
+              to display frames in a sequence like: 1->2->3->2->1->2->3->1...
 
-            The default type is EVAS_IMAGE_ANIMATED_HINT_LOOP.
+              The default type is EVAS_IMAGE_ANIMATED_HINT_LOOP.
 
-            @see evas_object_image_animated_get()
-            @see evas_object_image_animated_frame_count_get()
-            @see evas_object_image_animated_loop_type_get()
-            @see evas_object_image_animated_loop_count_get()
-            @see evas_object_image_animated_frame_duration_get()
-            @see evas_object_image_animated_frame_set()
-            @since 1.1 */
-            return: Evas_Image_Animated_Loop_Hint;
+              See also \@ref evas_object_image_animated_get,
+              @.animated_frame_count.get, @.animated_loop_type.get,
+              @.animated_loop_count.get, @.animated_frame_duration_get.
+
+              @since 1.1
+            ]]
+            return: Evas_Image_Animated_Loop_Hint; [[Loop type of the image object.]]
          }
       }
       @property animated_loop_count {
          get {
-            /*@
-            Get the number times the animation of the object loops.
+            [[Get the number times the animation of the object loops.
 
-            @return The number of loop of an animated image object
+              This returns loop count of image. The loop count is the number
+              of times the animation will play fully from first to last frame
+              until the animation should stop (at the final frame).
 
-            This returns loop count of image. The loop count is the number of times
-            the animation will play fully from first to last frame until the animation
-            should stop (at the final frame).
+              If 0 is returned, then looping should happen indefinitely
+              (no limit to the number of times it loops).
 
-            If 0 is returned, then looping should happen indefinitely (no limit to
-            the number of times it loops).
+              See also \@ref evas_object_image_animated_get,
+              @.animated_frame_count.get, @.animated_loop_type.get,
+              @.animated_loop_count.get, @.animated_frame_duration_get.
 
-            @see evas_object_image_animated_get()
-            @see evas_object_image_animated_frame_count_get()
-            @see evas_object_image_animated_loop_type_get()
-            @see evas_object_image_animated_loop_count_get()
-            @see evas_object_image_animated_frame_duration_get()
-            @see evas_object_image_animated_frame_set()
-            @since 1.1 */
-            return: int;
+              @since 1.1
+            ]]
+            return: int; [[The number of loop of an animated image object.]]
          }
       }
 
       @property scene {
          set {
-            /*@
-            Set the 3D scene of a given image of the canvas.
+            [[Set the 3D scene of a given image of the canvas.
 
-            This function sets a 3d scene of a given canvas image.
+              This function sets a 3d scene of a given canvas image.
 
-            @see evas_object_image_scene_set
-            @since 1.10 */
+              @since 1.10
+            ]]
 	    legacy: null;
          }
          get {
-            /*@
-            Get the 3D scene of a given image of the canvas.
+            [[Get the 3D scene of a given image of the canvas.
 
-            @return The 3d scene of the given canvas image.
+              This function returns the 3d scene of a given canvas image.
 
-            This function returns the 3d scene of a given canvas image.
-
-            @see evas_object_image_scene_get
-            @since 1.10 */
-	    legacy: null;
+              @since 1.10
+            ]]
+            legacy: null;
          }
          values {
-            scene: Evas.Canvas3D.Scene *; /*@ 3D scene on an image object. */
+            scene: Evas.Canvas3D.Scene *; [[3D scene on an image object.]]
          }
       }
       @property orient {
          set {
-            /*@
-            Set the image orientation.
+            [[Set the image orientation.
 
-            This function allows to rotate or flip the image.
+              This function allows to rotate or flip the image.
 
-            @see evas_object_image_orient_get()
-            @see @ref Evas_Image_Orient
-
-            @since 1.14*/
+              @since 1.14
+            ]]
          }
          get {
-            /*@
-            Get the image orientation.
+            [[Get the image orientation.
 
-            @return The image orientation @ref Evas_Image_Orient
-
-            @see evas_object_image_orient_set()
-            @see @ref Evas_Image_Orient
-
-            @since 1.14*/
+              @since 1.14
+            ]]
          }
          values {
-            orient: Evas_Image_Orient; /*@ The image orientation @ref Evas_Image_Orient
-            Default is #EVAS_IMAGE_ORIENT_NONE. */
+            orient: Evas_Image_Orient; [[The image orientation \@ref Evas_Image_Orient.
+                                         Default is #EVAS_IMAGE_ORIENT_NONE.]]
          }
       }
       @property snapshot {
          set {
-            /*@
-            The content below the Evas_Object_Image will be rendered inside it and
-            you can reuse it as a source for any kind of effect.
+            [[The content below the Evas_Object_Image will be rendered
+              inside it and you can reuse it as a source for any kind
+              of effect.
 
-            @since 1.15
-            */
-	 }
-	 get {
-            /*@
-	    Determine wether the Evas_Object_Image replicate the content of the
-	    canvas below.
+              @since 1.15
+            ]]
+         }
+         get {
+            [[Determine wether the Evas_Object_Image replicate the content
+              of the canvas below.
 
-	    @return $true if it does, $false if it doesn't.
-	    @since 1.15
-            */
-	 }
-	 values {
-	    s: bool; /*@ Wether to put the content of the canvas below inside the Evas_Object_Image. */
-	 }
+              @since 1.15
+            ]]
+         }
+         values {
+            s: bool; [[Wether to put the content of the canvas below inside
+                       the Evas_Object_Image.]]
+         }
       }
       preload_begin {
-         /*@ Begin preloading an image object's image data in the background */
+         [[Begin preloading an image object's image data in the background.]]
          legacy: null;
       }
       data_update_add {
-         /*@
-         Mark a sub-region of the given image object to be redrawn.
+         [[Mark a sub-region of the given image object to be redrawn.
 
-         This function schedules a particular rectangular region of an image
-         object to be updated (redrawn) at the next rendering cycle. */
-
+           This function schedules a particular rectangular region of an
+           image object to be updated (redrawn) at the next rendering cycle.
+         ]]
          params {
-            @in x: int; /*@ X-offset of the region to be updated. */
-            @in y: int; /*@ Y-offset of the region to be updated. */
-            @in w: int; /*@ Width of the region to be updated. */
-            @in h: int; /*@ Height of the region to be updated. */
+            @in x: int; [[X-offset of the region to be updated.]]
+            @in y: int; [[Y-offset of the region to be updated.]]
+            @in w: int; [[Width of the region to be updated.]]
+            @in h: int; [[Height of the region to be updated.]]
          }
       }
       animated_frame_duration_get @const {
-         /*@
-         Get the duration of a sequence of frames.
+         [[Get the duration of a sequence of frames.
 
-         This returns total duration that the specified sequence of frames should
-         take in seconds.
+           This returns total duration that the specified sequence of
+           frames should take in seconds.
 
-         If you set start_frame to 1 and frame_num 0, you get frame 1's duration
-         If you set start_frame to 1 and frame_num 1, you get frame 1's duration +
-         frame2's duration
+           If you set start_frame to 1 and frame_num 0, you get frame 1's
+           duration. If you set start_frame to 1 and frame_num 1, you get
+           frame 1's duration + frame2's duration.
 
-         @see evas_object_image_animated_get()
-         @see evas_object_image_animated_frame_count_get()
-         @see evas_object_image_animated_loop_type_get()
-         @see evas_object_image_animated_loop_count_get()
-         @see evas_object_image_animated_frame_duration_get()
-         @see evas_object_image_animated_frame_set()
-         @since 1.1 */
+           See also \@ref evas_object_image_animated_get,
+           @.animated_frame_count.get, @.animated_loop_type.get,
+           @.animated_loop_count.get, @.animated_frame_duration_get.
+
+           @since 1.1
+         ]]
          return: double;
          params {
-            @in start_frame: int; /*@ The first frame */
-            @in frame_num: int; /*@ Number of frames in the sequence */
+            @in start_frame: int; [[The first frame.]]
+            @in frame_num: int; [[Number of frames in the sequence.]]
          }
       }
       data_set {
-         /*@
-         Sets the raw image data of the given image object.
+         [[Sets the raw image data of the given image object.
 
-         Note that the raw data must be of the same size (see
-         evas_object_image_size_set(), which has to be called @b before this
-         one) and colorspace (see evas_object_image_colorspace_set()) of the
-         image. If data is $null, the current image data will be
-         freed. Naturally, if one does not set an image object's data
-         manually, it will still have one, allocated by Evas.
-
-         @see evas_object_image_data_get() */
-
+           Note that the raw data must be of the same size (see
+           \@ref evas_object_image_size_set, which has to be called before
+           this one) and colorspace (see @.colorspace.set) of the image.
+           If data is $null, the current image data will be freed.
+           Naturally, if one does not set an image object's data
+           manually, it will still have one, allocated by Evas.
+         ]]
          params {
-            @in data: void *; /*@ The raw data, or $null. */
+            @in data: void *; [[The raw data, or $null.]]
          }
       }
       data_get @const {
-         /*@
-         Get a pointer to the raw image data of the given image object.
+         [[Get a pointer to the raw image data of the given image object.
 
-         @return The raw image data.
+           This function returns a pointer to an image object's internal
+           pixel buffer, for reading only or read/write. If you request
+           it for writing, the image will be marked dirty so that it gets
+           redrawn at the next update.
 
-         This function returns a pointer to an image object's internal pixel
-         buffer, for reading only or read/write. If you request it for
-         writing, the image will be marked dirty so that it gets redrawn at
-         the next update.
+           Each time you call this function on an image object, its data
+           buffer will have an internal reference counter incremented.
+           Decrement it back by using @.data_set.
 
-         Each time you call this function on an image object, its data
-         buffer will have an internal reference counter
-         incremented. Decrement it back by using
-         evas_object_image_data_set().
+           This is best suited for when you want to modify an existing
+           image, without changing its dimensions.
 
-         This is best suited for when you want to modify an existing image,
-         without changing its dimensions.
+           Note: The contents' format returned by it depend on the color
+           space of the given image object.
 
-         @note The contents' format returned by it depend on the color
-         space of the given image object.
-
-         @note You may want to use evas_object_image_data_update_add() to
-         inform data changes, if you did any.
-
-         @see evas_object_image_data_set() */
-         return: void * @warn_unused;
+           Note: You may want to use @.data_update_add to inform data
+           changes, if you did any.
+         ]]
+         return: void * @warn_unused; [[ The raw image data.]]
          params {
-            @in for_writing: bool; /*@ Whether the data being retrieved will be
-            modified ($true) or not ($false). */
+            @in for_writing: bool; [[Whether the data being retrieved will
+                                     be modified ($true) or not ($false).]]
          }
       }
       preload_cancel {
-         /*@ Cancel preloading an image object's image data in the background */
+         [[Cancel preloading an image object's image data in the background.]]
          legacy: null;
       }
    }
