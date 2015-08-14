@@ -366,6 +366,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property focus_origin {
          get {
+            [[Get the origination of the focus. Arrow key, tab key, mouse or deletion of an object.]]
             return: Elm_Focus_Direction;
          }
       }
