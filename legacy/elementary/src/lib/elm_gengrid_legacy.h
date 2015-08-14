@@ -211,50 +211,5 @@ EINA_DEPRECATED EAPI void          elm_gengrid_last_page_get(const Evas_Object *
  */
 EINA_DEPRECATED EAPI void          elm_gengrid_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
 
-typedef enum _Elm_Gengrid_Reorder_Type
-{
-   ELM_GENGRID_REORDER_TYPE_NORMAL,
-   ELM_GENGRID_REORDER_TYPE_SWAP
-} Elm_Gengrid_Reorder_Type;
-
-/**
- * Enable the gengrid widget mode reordered with keys
- *
- * @param obj The gengrid object
- * @param tween_mode Position mappings for animation
- * @see _Ecore_Map_Pos
- *
- * @see elm_gengrid_reorder_mode_stop()
- * @since 1.10
- *
- * @ingroup Gengrid
- */
-EAPI void                        elm_gengrid_reorder_mode_start(Evas_Object *obj, Ecore_Pos_Map tween_mode);
-
-/**
- * Stop the gengrid widget mode reorder.
- *
- * @param obj The gengrid object
- *
- * @see elm_gengrid_reorder_mode_start()
- * @since 1.10
- *
- * @ingroup Gengrid
- */
-EAPI void                        elm_gengrid_reorder_mode_stop(Evas_Object *obj);
-
-/**
- * Set the reorder type
- *
- * @param obj The gengrid object
- * @param type Elm_Gengrid_Reorder_Type value
- *
- * @see Elm_Gengrid_Reorder_Type
- * @since 1.11
- *
- * @ingroup Gengrid
- */
-EAPI void                        elm_gengrid_reorder_type_set(Evas_Object *obj, Elm_Gengrid_Reorder_Type type);
-
 #include "elm_gengrid_item.eo.legacy.h"
 #include "elm_gengrid.eo.legacy.h"

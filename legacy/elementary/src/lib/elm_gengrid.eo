@@ -1,5 +1,11 @@
 import elm_general;
 
+enum Elm.Gengrid.Reorder_Type
+{
+   normal, [[ normal reorder type ]]
+   swap    [[ swap reorder type ]]
+}
+
 class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
                    Evas.Clickable_Interface, Elm_Interface_Atspi_Widget_Action,
                    Elm_Interface_Atspi_Selection)
@@ -168,6 +174,16 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
          get {}
          values {
             highlight: bool;
+         }
+      }
+      @property reorder_type {
+         set {
+            [[ Set the Gengrid reorder type
+               @since 1.11
+            ]]
+         }
+         values {
+            type: Elm.Gengrid.Reorder_Type; [[ Reorder type value ]]
          }
       }
       @property item_size {
@@ -501,6 +517,21 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @in pattern: const(char) *; [[The search pattern.]]
             @in flags: Elm_Glob_Match_Flags; [[Search flags.]]
          }
+      }
+      reorder_mode_start {
+         [[
+            Starts the reorder mode of Gengrid
+            @since 1.10
+         ]]
+         params {
+            @in tween_mode: Ecore_Pos_Map; [[ Position mappings for animation ]]
+         }
+      }
+      reorder_mode_stop {
+         [[
+            Stops the reorder mode of Gengrid
+            @since 1.10
+         ]]
       }
    }
    implements {

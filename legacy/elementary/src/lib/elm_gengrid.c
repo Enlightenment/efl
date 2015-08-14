@@ -4926,33 +4926,24 @@ elm_gengrid_item_cursor_engine_only_get(const Elm_Object_Item *eo_it)
    else return it->cursor_engine_only;
 }
 
-EAPI void
-elm_gengrid_reorder_mode_start(Evas_Object *obj, Ecore_Pos_Map tween_mode)
+EOLIAN static void
+_elm_gengrid_reorder_mode_start(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Ecore_Pos_Map tween_mode)
 {
-   ELM_GENGRID_CHECK(obj);
-   ELM_GENGRID_DATA_GET(obj, sd);
-
    sd->reorder_mode = EINA_TRUE;
    sd->reorder.tween_mode = tween_mode;
    sd->reorder.type = ELM_GENGRID_REORDER_TYPE_NORMAL;
 }
 
-EAPI void
-elm_gengrid_reorder_mode_stop(Evas_Object *obj)
+EOLIAN static void
+_elm_gengrid_reorder_mode_stop(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
-   ELM_GENGRID_CHECK(obj);
-   ELM_GENGRID_DATA_GET(obj, sd);
-
    sd->reorder_mode = EINA_FALSE;
    sd->reorder.tween_mode = -1;
 }
 
-EAPI void
-elm_gengrid_reorder_type_set(Evas_Object *obj, Elm_Gengrid_Reorder_Type type)
+EOLIAN static void
+_elm_gengrid_reorder_type_set(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd, Elm_Gengrid_Reorder_Type type)
 {
-   ELM_GENGRID_CHECK(obj);
-   ELM_GENGRID_DATA_GET(obj, sd);
-
    sd->reorder.type = type;
 }
 
