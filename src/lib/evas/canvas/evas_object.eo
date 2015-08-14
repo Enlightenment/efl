@@ -7,18 +7,19 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
    methods {
       @property size_hint_max {
          set {
-            /*@
-            Sets the hints for an object's maximum size.
+            [[Sets the hints for an object's maximum size.
 
-            This is not a size enforcement in any way, it's just a hint that
-            should be used whenever appropriate.
+              This is not a size enforcement in any way, it's just a hint
+              that should be used whenever appropriate.
 
-            Values @c -1 will be treated as unset hint components, when queried
-            by managers.
+              Values -1 will be treated as unset hint components, when
+              queried by managers.
 
-            @note Smart objects(such as elementary) can have their own size hint
-            policy. So calling this API may or may not affect the size of smart objects.
-
+              Note: Smart objects (such as elementary) can have their own
+              size hint policy. So calling this API may or may not affect
+              the size of smart objects.
+            ]]
+            /* FIXME-doc
             Example:
             @dontinclude evas-hints.c
             @skip evas_object_size_hint_max_set
@@ -27,96 +28,83 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             In this example the maximum size hints change the behavior of an
             Evas box when layouting its children. See the full @ref
             Example_Evas_Size_Hints "example".
-
-            @see evas_object_size_hint_max_get() */
+            */
          }
          get {
-            /*@
-            Retrieves the hints for an object's maximum size.
+            [[Retrieves the hints for an object's maximum size.
 
-            These are hints on the maximum sizes @p obj should have. This is
-            not a size enforcement in any way, it's just a hint that should be
-            used whenever appropriate.
+              These are hints on the maximum sizes $obj should have. This is
+              not a size enforcement in any way, it's just a hint that
+              should be used whenever appropriate.
 
-            @note Use @c NULL pointers on the hint components you're not
-            interested in: they'll be ignored by the function.
-
-            @see evas_object_size_hint_max_set() */
+              Note: Use $null pointers on the hint components you're not
+              interested in: they'll be ignored by the function.
+            ]]
          }
          values {
-            w: Evas.Coord; /*@ Integer to use as the maximum width hint. */
-            h: Evas.Coord; /*@ Integer to use as the maximum height hint. */
+            w: Evas.Coord; [[Integer to use as the maximum width hint.]]
+            h: Evas.Coord; [[Integer to use as the maximum height hint.]]
          }
       }
       @property size_hint_request {
          set {
-            /*@
-            Sets the hints for an object's optimum size.
+            [[Sets the hints for an object's optimum size.
 
-            This is not a size enforcement in any way, it's just a hint that
-            should be used whenever appropriate.
+              This is not a size enforcement in any way, it's just a hint
+              that hould be used whenever appropriate.
 
-            Values @c 0 will be treated as unset hint components, when queried
-            by managers.
+              Values 0 will be treated as unset hint components, when
+              queried by managers.
 
-            @note Smart objects(such as elementary) can have their own size hint
-            policy. So calling this API may or may not affect the size of smart objects.
-
-            @see evas_object_size_hint_request_get() */
+              Note: Smart objects(such as elementary) can have their own
+              size hint policy. So calling this API may or may not affect
+              the size of smart objects.
+            ]]
          }
          get {
-            /*@
-            Retrieves the hints for an object's optimum size.
+            [[Retrieves the hints for an object's optimum size.
 
-            These are hints on the optimum sizes @p obj should have. This is
-            not a size enforcement in any way, it's just a hint that should be
-            used whenever appropriate.
+              These are hints on the optimum sizes $obj should have.
+              This is not a size enforcement in any way, it's just a hint
+              that should be used whenever appropriate.
 
-            @note Use @c NULL pointers on the hint components you're not
-            interested in: they'll be ignored by the function.
-
-            @see evas_object_size_hint_request_set() */
+              Note: Use $null pointers on the hint components you're not
+              interested in: they'll be ignored by the function.
+            ]]
          }
          values {
-            w: Evas.Coord; /*@ Integer to use as the preferred width hint. */
-            h: Evas.Coord; /*@ Integer to use as the preferred height hint. */
+            w: Evas.Coord; [[Integer to use as the preferred width hint.]]
+            h: Evas.Coord; [[Integer to use as the preferred height hint.]]
          }
       }
       @property type {
          set {
-            /*@ Sets the type of the given Evas object. */
+            [[Sets the type of the given Evas object.]]
             legacy: null;
          }
          get {
-            /*@
-            Retrieves the type of the given Evas object.
+            [[Retrieves the type of the given Evas object.
 
-            @return The type of the object.
+              For Evas' builtin types, the return strings will be one of
+              "rectangle", "line", "polygon", "text", "textblock" or "image".
 
-            For Evas' builtin types, the return strings will be one of:
-            - <c>"rectangle"</c>,
-            - <c>"line"</c>,
-            - <c>"polygon"</c>,
-            - <c>"text"</c>,
-            - <c>"textblock"</c> and
-            - <c>"image"</c>.
-
-            For Evas smart objects (see @ref Evas_Smart_Group), the name of the
-            smart class itself is returned on this call. For the built-in smart
-            objects, these names are:
-            - <c>"EvasObjectSmartClipped"</c>, for the clipped smart object
-            - <c>"Evas_Object_Box"</c>, for the box object and
-            - <c>"Evas_Object_Table"</c>, for the table object.
-
+              For Evas smart objects (see \@ref Evas_Smart_Group), the name
+              of the smart class itself is returned on this call. For the
+              built-in smart objects, these names are "EvasObjectSmartClipped"
+              for the clipped smart object, "Evas_Object_Box" for the box
+              object and "Evas_Object_Table for the table object.
+            ]]
+            /* FIXME-doc
             Example:
             @dontinclude evas-object-manipulation.c
             @skip d.img = evas_object_image_filled_add(d.canvas);
             @until border on the
 
-            See the full @ref Example_Evas_Object_Manipulation "example". */
+            See the full @ref Example_Evas_Object_Manipulation "example".
+            */
          }
          values {
-            type: const(char)*; /*@ in */
+            type: const(char)*; [[The type of the object.]]
          }
       }
       @property size_hint_min {
@@ -152,7 +140,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             not a size enforcement in any way, it's just a hint that should be
             used whenever appropriate.
 
-            @note Use @c NULL pointers on the hint components you're not
+            @note Use $null pointers on the hint components you're not
             interested in: they'll be ignored by the function.
 
             @see evas_object_size_hint_min_set() for an example */
@@ -213,12 +201,12 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             /*@
             Set whether an Evas object is to freeze (discard) events.
 
-            If @p freeze is @c EINA_TRUE, it will make events on @p obj to be @b
+            If @p freeze is $true, it will make events on @p obj to be @b
             discarded. Unlike evas_object_pass_events_set(), events will not be
             passed to @b next lower object. This API can be used for blocking
             events while @p obj is on transiting.
 
-            If @p freeze is @c EINA_FALSE, events will be processed on that
+            If @p freeze is $false, events will be processed on that
             object as normal.
             
             @warning If you block only key/mouse up events with this API, we won't
@@ -235,8 +223,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             /*@
             Determine whether an object is set to freeze (discard) events.
 
-            @return freeze whether @p obj is set to freeze events (@c EINA_TRUE) or
-            not (@c EINA_FALSE)
+            @return freeze whether @p obj is set to freeze events ($true) or
+            not ($false)
 
             @see evas_object_freeze_events_set()
             @see evas_object_pass_events_get()
@@ -245,8 +233,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @since 1.1 */
          }
          values {
-            freeze: bool; /*@ pass whether @p obj is to freeze events (@c EINA_TRUE) or not
-            (@c EINA_FALSE) */
+            freeze: bool; /*@ pass whether @p obj is to freeze events ($true) or not
+            ($false) */
          }
       }
       @property map {
@@ -365,7 +353,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             This is not a size enforcement in any way, it's just a hint that
             should be used whenever appropriate.
 
-            @note Use @c NULL pointers on the hint components you're not
+            @note Use $null pointers on the hint components you're not
             interested in: they'll be ignored by the function.
 
             Example:
@@ -442,7 +430,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             Get the object clipping @p obj (if any).
 
             This function returns the object clipping @p obj. If @p obj is
-            not being clipped at all, @c NULL is returned. The object @p obj
+            not being clipped at all, $null is returned. The object @p obj
             must be a valid .Evas_Object.
 
             See also evas_object_clip_set(), evas_object_clip_unset() and
@@ -487,7 +475,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             This is not a size enforcement in any way, it's just a hint that
             should be used whenever appropriate.
 
-            @note Use @c NULL pointers on the hint components you're not
+            @note Use $null pointers on the hint components you're not
             interested in: they'll be ignored by the function.
 
             Example:
@@ -513,11 +501,11 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             /*@
             Set whether an Evas object is to repeat events.
 
-            If @p repeat is @c EINA_TRUE, it will make events on @p obj to also
+            If @p repeat is $true, it will make events on @p obj to also
             be repeated for the @b next lower object in the objects' stack (see
             see evas_object_below_get()).
 
-            If @p repeat is @c EINA_FALSE, events occurring on @p obj will be
+            If @p repeat is $false, events occurring on @p obj will be
             processed only on it.
 
             Example:
@@ -536,8 +524,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             /*@
             Determine whether an object is set to repeat events.
 
-            @return whether @p obj is set to repeat events (@c EINA_TRUE)
-            or not (@c EINA_FALSE)
+            @return whether @p obj is set to repeat events ($true)
+            or not ($false)
 
             @see evas_object_repeat_events_set() for an example
             @see evas_object_pass_events_get()
@@ -545,8 +533,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_freeze_events_get() */
          }
          values {
-            repeat: bool; /*@ whether @p obj is to repeat events (@c EINA_TRUE) or not
-            (@c EINA_FALSE) */
+            repeat: bool; /*@ whether @p obj is to repeat events ($true) or not
+            ($false) */
          }
       }
       @property size_hint_weight {
@@ -594,7 +582,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             This is not a size enforcement in any way, it's just a hint that
             should be used whenever appropriate.
 
-            @note Use @c NULL pointers on the hint components you're not
+            @note Use $null pointers on the hint components you're not
             interested in: they'll be ignored by the function.
             @note If @c obj is invalid, then the hint components will be set with 0.0
 
@@ -624,7 +612,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             /*@
             Retrieves the name of the given Evas object.
 
-            @return  The name of the object or @c NULL, if no name has been given
+            @return  The name of the object or $null, if no name has been given
             to it.
 
             Example:
@@ -679,7 +667,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             This is a hint to Evas that this object is used as a big static
             clipper and shouldn't be moved with children and otherwise
             considered specially. The default value for new objects is
-            @c EINA_FALSE.
+            $false.
 
             @see evas_object_static_clip_get()
 
@@ -689,16 +677,16 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             /*@
             Get the "static clipper" hint flag for a given Evas object.
 
-            @return @c EINA_TRUE if it's set as a static clipper,
-            @c EINA_FALSE otherwise.
+            @return $true if it's set as a static clipper,
+            $false otherwise.
 
             @see evas_object_static_clip_set() for more details
 
             @ingroup Evas_Object_Group_Extras */
          }
          values {
-            is_static_clip: bool; /*@ @c EINA_TRUE if it's to be used as a static
-            clipper, @c EINA_FALSE otherwise. */
+            is_static_clip: bool; /*@ $true if it's to be used as a static
+            clipper, $false otherwise. */
          }
       }
       @property focus {
@@ -708,7 +696,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             canvas.
 
             Changing focus only affects where (key) input events go. There can
-            be only one object focused at any time. If @p focus is @c EINA_TRUE,
+            be only one object focused at any time. If @p focus is $true,
             @p obj will be set as the currently focused object and it will
             receive all keyboard events that are not exclusive key grabs on
             other objects.
@@ -729,10 +717,10 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             /*@
             Retrieve whether an object has the focus.
 
-            @return @c EINA_TRUE if the object has the focus, @c EINA_FALSE otherwise.
+            @return $true if the object has the focus, $false otherwise.
 
-            If the passed object is the currently focused one, @c EINA_TRUE is
-            returned. @c EINA_FALSE is returned, otherwise.
+            If the passed object is the currently focused one, $true is
+            returned. $false is returned, otherwise.
 
             Example:
             @dontinclude evas-events.c
@@ -747,7 +735,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_key_ungrab */
          }
          values {
-            focus: bool; /*@ @c EINA_TRUE, to set it as focused or @c EINA_FALSE,
+            focus: bool; /*@ $true, to set it as focused or $false,
             to take away the focus from it. */
          }
       }
@@ -882,7 +870,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             This is not a size enforcement in any way, it's just a hint that
             should be used whenever appropriate.
 
-            @note Use @c NULL pointers on the hint components you're not
+            @note Use $null pointers on the hint components you're not
             interested in: they'll be ignored by the function.
             @note If @c obj is invalid, then the hint components will be set with 0.5
 
@@ -904,11 +892,11 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             This function has @b no effect if @p obj is not a member of a smart
             object.
 
-            If @p prop is @c EINA_TRUE, events occurring on this object will be
+            If @p prop is $true, events occurring on this object will be
             propagated on to the smart object of which @p obj is a member.  If
-            @p prop is @c EINA_FALSE, events occurring on this object will @b
+            @p prop is $false, events occurring on this object will @b
             not be propagated on to the smart object of which @p obj is a
-            member.  The default value is @c EINA_TRUE.
+            member.  The default value is $true.
 
             @see evas_object_propagate_events_get()
             @see evas_object_repeat_events_set()
@@ -919,8 +907,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             /*@
             Retrieve whether an Evas object is set to propagate events.
 
-            @return whether @p obj is set to propagate events (@c EINA_TRUE)
-            or not (@c EINA_FALSE)
+            @return whether @p obj is set to propagate events ($true)
+            or not ($false)
 
             @see evas_object_propagate_events_set()
             @see evas_object_repeat_events_get()
@@ -928,8 +916,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_freeze_events_get() */
          }
          values {
-            propagate: bool; /*@ whether to propagate events (@c EINA_TRUE) or not
-            (@c EINA_FALSE) */
+            propagate: bool; /*@ whether to propagate events ($true) or not
+            ($false) */
          }
       }
       @property pass_events {
@@ -937,11 +925,11 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             /*@
             Set whether an Evas object is to pass (ignore) events.
 
-            If @p pass is @c EINA_TRUE, it will make events on @p obj to be @b
+            If @p pass is $true, it will make events on @p obj to be @b
             ignored. They will be triggered on the @b next lower object (that
             is not set to pass events), instead (see evas_object_below_get()).
 
-            If @p pass is @c EINA_FALSE, events will be processed on that
+            If @p pass is $false, events will be processed on that
             object as normal.
 
             @see evas_object_pass_events_get() for an example
@@ -953,8 +941,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             /*@
             Determine whether an object is set to pass (ignore) events.
 
-            @return pass whether @p obj is set to pass events (@c EINA_TRUE) or not
-            (@c EINA_FALSE)
+            @return pass whether @p obj is set to pass events ($true) or not
+            ($false)
 
             Example:
             @dontinclude evas-stacking.c
@@ -969,8 +957,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_freeze_events_get() */
          }
          values {
-            pass: bool; /*@ whether @p obj is to pass events (@c EINA_TRUE) or not
-            (@c EINA_FALSE) */
+            pass: bool; /*@ whether @p obj is to pass events ($true) or not
+            ($false) */
          }
       }
       @property anti_alias {
@@ -983,11 +971,11 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
          get {
             /*@
             Retrieves whether or not the given Evas object is to be drawn anti_aliased.
-            @return  (@c EINA_TRUE) if the object is to be anti_aliased.  (@c EINA_FALSE) otherwise.
+            @return  ($true) if the object is to be anti_aliased.  ($false) otherwise.
             @ingroup Evas_Object_Group_Extras */
          }
          values {
-            anti_alias: bool; /*@ (@c EINA_TRUE) if the object is to be anti_aliased, (@c EINA_FALSE) otherwise. */
+            anti_alias: bool; /*@ ($true) if the object is to be anti_aliased, ($false) otherwise. */
          }
       }
       @property smart_data {
@@ -996,7 +984,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             Retrieve user data stored on a given smart object.
 
             @return A pointer to data stored using
-            evas_object_smart_data_set(), or @c NULL, if none has been
+            evas_object_smart_data_set(), or $null, if none has been
             set.
 
             @see evas_object_smart_data_set()
@@ -1028,7 +1016,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
 
             This returns the internal list handle that contains all objects
             clipped by the object @p obj. If none are clipped by it, the call
-            returns @c NULL. This list is only valid until the clip list is
+            returns $null. This list is only valid until the clip list is
             changed and should be fetched again with another call to
             evas_object_clipees_get() if any objects being clipped by this
             object are unclipped, clipped by a new object, deleted or get the
@@ -1066,7 +1054,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             /*@
             Gets the parent smart object of a given Evas object, if it has one.
 
-            @return Returns the parent smart object of @a obj or @c NULL, if @a
+            @return Returns the parent smart object of @a obj or $null, if @a
             obj is not a smart member of any
 
             @ingroup Evas_Smart_Object_Group */
@@ -1106,7 +1094,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
          /*@
          Requests @p keyname key events be directed to @p obj.
 
-         @return @c EINA_TRUE, if the call succeeded, @c EINA_FALSE otherwise.
+         @return $true, if the call succeeded, $false otherwise.
 
          Key grabs allow one or more objects to receive key events for
          specific key strokes even if other objects have focus. Whenever a
@@ -1124,7 +1112,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
          evas_key_modifier_mask_get() or use @c 0 for empty masks.
 
          @p exclusive will make the given object the only one permitted to
-         grab the given key. If given @c EINA_TRUE, subsequent calls on this
+         grab the given key. If given $true, subsequent calls on this
          function with different @p obj arguments will fail, unless the key
          is ungrabbed again.
 
@@ -1159,8 +1147,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
          Checks whether a given smart object or any of its smart object
          parents is of a given smart class.
 
-         @return @c EINA_TRUE, if @a obj or any of its parents is of type @a
-         type, @c EINA_FALSE otherwise
+         @return $true, if @a obj or any of its parents is of type @a
+         type, $false otherwise
 
          If @p obj is not a smart object, this call will fail
          immediately.
@@ -1187,7 +1175,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
          /*@
          Retrieves the object from children of the given object with the given name.
          @return  If successful, the Evas object with the given name.  Otherwise,
-         @c NULL.
+         $null.
 
          This looks for the evas object given a name by evas_object_name_set(), but
          it ONLY looks at the children of the object *p obj, and will only recurse
@@ -1268,8 +1256,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
          Checks whether a given smart object or any of its smart object
          parents is of a given smart class, <b>using pointer comparison</b>.
 
-         @return @c EINA_TRUE, if @a obj or any of its parents is of type @a
-         type, @c EINA_FALSE otherwise
+         @return $true, if @a obj or any of its parents is of type @a
+         type, $false otherwise
 
          @see evas_object_smart_type_check() for more details
          @see eo_isa

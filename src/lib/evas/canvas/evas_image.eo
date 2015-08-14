@@ -5,236 +5,192 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
    methods {
       @property load_dpi {
          set {
-            /*@
-            Set the DPI resolution of an image object's source image.
+            [[Set the DPI resolution of an image object's source image.
 
-            This function sets the DPI resolution of a given loaded canvas
-            image. Most useful for the SVG image loader.
-
-            @see evas_object_image_load_dpi_get() */
+              This function sets the DPI resolution of a given loaded canvas
+              image. Most useful for the SVG image loader.
+            ]]
          }
          get {
-            /*@
-            Get the DPI resolution of a loaded image object in the canvas.
+            [[Get the DPI resolution of a loaded image object in the canvas.
 
-            @return The DPI resolution of the given canvas image.
-
-            This function returns the DPI resolution of the given canvas image.
-
-            @see evas_object_image_load_dpi_set() for more details */
+              This function returns the DPI resolution of the given canvas
+              image.
+            ]]
          }
          values {
-            dpi: double; /*@ The new DPI resolution. */
+            dpi: double; [[The DPI resolution.]]
          }
       }
 
       @property source_clip {
          set {
-            /*@
-            Clip the proxy object with the source object's clipper.
+            [[Clip the proxy object with the source object's clipper.
 
-            @see evas_object_clip_set()
-            @see evas_object_image_source_set()
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Determine whether an object is clipped by source object's clipper.
+            [[Determine whether an object is clipped by source object's
+              clipper.
 
-            @return @c EINA_TRUE if source clip is enabled, @c EINA_FALSE otherwise.
-
-            @see evas_object_clip_set()
-            @see evas_object_image_source_set()
-            @see evas_object_image_source_clip_set()
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          values {
-            source_clip: bool; /*@ whether @p obj is clipped by the source clipper.
-            (@c EINA_TRUE) or not (@c EINA_FALSE) */
+            source_clip: bool; [[Whether $obj is clipped by the source
+                                clipper ($true) or not ($false).]]
          }
       }
       @property source {
          set {
-            /*@
-            Set the source object on an image object to used as a @b proxy.
+            [[Set the source object on an image object to used as a proxy.
 
-            @return @c EINA_TRUE on success, @c EINA_FALSE on error.
+              If an image object is set to behave as a proxy, it will mirror
+              the rendering contents of a given source object in its drawing
+              region, without affecting that source in any way. The source
+              must be another valid Evas object. Other effects may be
+              applied to the proxy, such as a map (see
+              \@ref evas_object_map_set) to create a reflection of the
+              original object (for example).
 
-            If an image object is set to behave as a @b proxy, it will mirror
-            the rendering contents of a given @b source object in its drawing
-            region, without affecting that source in any way. The source must
-            be another valid Evas object. Other effects may be applied to the
-            proxy, such as a map (see evas_object_map_set()) to create a
-            reflection of the original object (for example).
+              Any existing source object on $obj will be removed after this
+              call. Setting $src to $null clears the proxy object (not in
+              "proxy state" anymore).
 
-            Any existing source object on @p obj will be removed after this
-            call. Setting @p src to @c NULL clears the proxy object (not in
-            "proxy state" anymore).
-
-            @warning You cannot set a proxy as another proxy's source.
-
-            @see evas_object_image_source_get()
-            @see evas_object_image_source_unset()
-            @see evas_object_image_source_visible_set() */
+              Warning: You cannot set a proxy as another proxy's source.
+            ]]
             return: bool;
          }
          get {
-            /*@
-            Get the current source object of an image object.
-
-            @return Source object (if any), or @c NULL, if not in "proxy mode"
-            (or on errors).
-
-            @see evas_object_image_source_set() for more details */
+            [[Get the current source object of an image object.]]
          }
          values {
-            src: Evas.Object *; /*@ Source object to use for the proxy. */
+            src: Evas.Object *; [[Source object to use for the proxy.]]
          }
       }
       @property filled {
          set {
-            /*@
-            Set whether the image object's fill property should track the
-            object's size.
+            [[Set whether the image object's fill property should track the
+              object's size.
 
-            If @p setting is @c EINA_TRUE, then every evas_object_resize() will
-            @b automatically trigger a call to evas_object_image_fill_set()
-            with the that new size (and @c 0, @c 0 as source image's origin),
-            so the bound image will fill the whole object's area.
-
-            @see evas_object_image_filled_add()
-            @see evas_object_image_fill_get() */
+              If $setting is $true, then every \@ref evas_object_resize will
+              automatically trigger a call to \@ref evas_object_image_fill_set
+              with the that new size (and 0, 0 as source image's origin),
+              so the bound image will fill the whole object's area.
+            ]]
          }
          get {
-            /*@
-            Retrieve whether the image object's fill property should track the
-            object's size.
+            [[Retrieve whether the image object's fill property should track
+              the object's size.
 
-            @return @c EINA_TRUE if it is tracking, @c EINA_FALSE, if not (and
-            evas_object_fill_set() must be called manually).
-
-            @see evas_object_image_filled_set() for more information */
+              Returns $true if it is tracking, $false if not (and
+              \@ref evas_object_fill_set must be called manually).
+            ]]
          }
          values {
-            filled: bool; /*@ @c EINA_TRUE, to make the fill property follow
-            object size or @c EINA_FALSE, otherwise. */
+            filled: bool; [[$true to make the fill property follow
+                            object size or $false otherwise.]]
          }
       }
       @property content_hint {
          set {
-            /*@
-            Set the content hint setting of a given image object of the canvas.
+            [[Set the content hint setting of a given image object of the
+              canvas.
 
-            This function sets the content hint value of the given image of the
-            canvas. For example, if you're on the GL engine and your driver
-            implementation supports it, setting this hint to
-            #EVAS_IMAGE_CONTENT_HINT_DYNAMIC will make it need @b zero copies
-            at texture upload time, which is an "expensive" operation.
-
-            @see evas_object_image_content_hint_get() */
+              This function sets the content hint value of the given image
+              of the canvas. For example, if you're on the GL engine and
+              your driver implementation supports it, setting this hint to
+              #EVAS_IMAGE_CONTENT_HINT_DYNAMIC will make it need zero copies
+              at texture upload time, which is an "expensive" operation.
+            ]]
          }
          get {
-            /*@
-            Get the content hint setting of a given image object of the canvas.
+            [[Get the content hint setting of a given image object of the
+              canvas.
 
-            @return hint The content hint value set on it, one of the
-            #Evas_Image_Content_Hint ones (#EVAS_IMAGE_CONTENT_HINT_NONE means
-            an error).
-
-            This function returns the content hint value of the given image of
-            the canvas.
-
-            @see evas_object_image_content_hint_set() */
+              This returns #EVAS_IMAGE_CONTENT_HINT_NONE on error.
+            ]]
          }
          values {
-            hint: Evas_Image_Content_Hint; /*@ The content hint value, one of the
-            #Evas_Image_Content_Hint ones. */
+            hint: Evas_Image_Content_Hint; [[The content hint value, one of
+                                             the #Evas_Image_Content_Hint ones.]]
          }
       }
       @property load_region {
          set {
-            /*@
-            Inform a given image object to load a selective region of its
-            source image.
+            [[Inform a given image object to load a selective region of its
+              source image.
 
-            This function is useful when one is not showing all of an image's
-            area on its image object.
+              This function is useful when one is not showing all of an
+              image's area on its image object.
 
-            @note The image loader for the image format in question has to
-            support selective region loading in order to this function to take
-            effect.
-
-            @see evas_object_image_load_region_get() */
+              Note: The image loader for the image format in question has
+              to support selective region loading in order to this function
+              to take effect.
+            ]]
          }
          get {
-            /*@
-            Retrieve the coordinates of a given image object's selective
-            (source image) load region.
+            [[Retrieve the coordinates of a given image object's selective
+              (source image) load region.
 
-            @note Use @c NULL pointers on the coordinates you're not interested
-            in: they'll be ignored by the function.
-
-            @see evas_object_image_load_region_get() */
+              Note: Use $null pointers on the coordinates you're not
+              interested in: they'll be ignored by the function.
+            ]]
          }
          values {
-            x: int; /*@ X-offset of the region to be loaded. */
-            y: int; /*@ Y-offset of the region to be loaded. */
-            w: int; /*@ Width of the region to be loaded. */
-            h: int; /*@ Height of the region to be loaded. */
+            x: int; [[X-offset of the region to be loaded.]]
+            y: int; [[Y-offset of the region to be loaded.]]
+            w: int; [[Width of the region to be loaded.]]
+            h: int; [[Height of the region to be loaded.]]
          }
       }
       @property alpha {
          set {
-            /*@
-            Enable or disable alpha channel usage on the given image object.
+            [[Enable or disable alpha channel usage on the given image
+              object.
 
-            This function sets a flag on an image object indicating whether or
-            not to use alpha channel data. A value of @c EINA_TRUE makes it use
-            alpha channel data, and @c EINA_FALSE makes it ignore that
-            data. Note that this has nothing to do with an object's color as
-            manipulated by evas_object_color_set().
-
-            @see evas_object_image_alpha_get() */
+              This function sets a flag on an image object indicating
+              whether or not to use alpha channel data. A value of $true
+              makes it use alpha channel data, and $false makes it ignore
+              that data. Note that this has nothing to do with an object's
+              color as  manipulated by \@ref evas_object_color_set.
+            ]]
          }
          get {
-            /*@
-            Retrieve whether alpha channel data is being used on the given
-            image object.
+            [[Retrieve whether alpha channel data is being used on the
+              given image object.
 
-            @return Whether the alpha channel data is being used (@c EINA_TRUE)
-            or not (@c EINA_FALSE).
-
-            This function returns @c EINA_TRUE if the image object's alpha
-            channel is being used, or @c EINA_FALSE otherwise.
-
-            See @ref evas_object_image_alpha_set() for more details. */
+              This function returns $true if the image object's alpha
+              channel is being used, or $false otherwise.
+            ]]
          }
          values {
-            alpha: bool; /*@ Whether to use alpha channel (@c EINA_TRUE) data
-            or not (@c EINA_FALSE). */
+            alpha: bool; [[Whether to use alpha channel ($true) data
+                           or not ($false).]]
          }
       }
       @property border {
          set {
-            /*@
-            Set the dimensions for an image object's border, a region which @b
-            won't ever be scaled together with its center.
+            [[Set the dimensions for an image object's border, a region
+              which won't ever be scaled together with its center.
 
-            When Evas is rendering, an image source may be scaled to fit the
-            size of its image object. This function sets an area from the
-            borders of the image inwards which is @b not to be scaled. This
-            function is useful for making frames and for widget theming, where,
-            for example, buttons may be of varying sizes, but their border size
-            must remain constant.
+              When Evas is rendering, an image source may be scaled to fit
+              the size of its image object. This function sets an area from
+              the borders of the image inwards which is not to be scaled.
+              This function is useful for making frames and for widget
+              theming, where, for example, buttons may be of varying
+              sizes, but their border size must remain constant.
 
-            The units used for @p l, @p r, @p t and @p b are canvas units.
+              The units used for $l, $r, $t and $b are canvas units.
 
-            @note The border region itself @b may be scaled by the
-            evas_object_image_border_scale_set() function.
+              Note: The border region itself may be scaled by the
+              @.border_scale.set function.
 
-            @note By default, image objects have no borders set, i. e. @c l, @c
-            r, @c t and @c b start as @c 0.
-
+              Note: By default, image objects have no borders set, i. e.
+              $l, $r, $t and $b start as 0.
+            ]]
+            /* FIXME-doc
             See the following figures for visual explanation:\n
             @htmlonly
             <img src="image-borders.png" style="max-width: 100%;" />
@@ -248,122 +204,108 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
             @endhtmlonly
             @image rtf border-effect.png
             @image latex border-effect.eps width=\textwidth
-
-            @see evas_object_image_border_get()
-            @see evas_object_image_border_center_fill_set() */
+            */
          }
          get {
-            /*@
-            Retrieve the dimensions for an image object's border, a region
-            which @b won't ever be scaled together with its center.
+            [[Retrieve the dimensions for an image object's border, a
+              region which won't ever be scaled together with its center.
 
-            @note Use @c NULL pointers on the border components you're not
-            interested in: they'll be ignored by the function.
-
-            See @ref evas_object_image_border_set() for more details. */
+              Note: Use $null pointers on the border components you're not
+              interested in: they'll be ignored by the function.
+            ]]
          }
          values {
-            l: int; /*@ The border's left width. */
-            r: int; /*@ The border's right width. */
-            t: int; /*@ The border's top width. */
-            b: int; /*@ The border's bottom width. */
+            l: int; [[The border's left width.]]
+            r: int; [[The border's right width.]]
+            t: int; [[The border's top width.]]
+            b: int; [[The border's bottom width.]]
          }
       }
       @property border_scale {
          set {
-            /*@
-            Sets the scaling factor (multiplier) for the borders of an image
-            object.
-
-            @see evas_object_image_border_set()
-            @see evas_object_image_border_scale_get() */
+            [[Sets the scaling factor (multiplier) for the borders of an
+              image object.
+            ]]
          }
          get {
-            /*@
-            Retrieves the scaling factor (multiplier) for the borders of an
-            image object.
-
-            @return The scale factor set for its borders
-
-            @see evas_object_image_border_set()
-            @see evas_object_image_border_scale_set() */
+            [[Retrieves the scaling factor (multiplier) for the borders
+              of an image object.
+            ]]
          }
          values {
-            scale: double; /*@ The scale factor (default is @c 1.0 - i.e. no scaling) */
+            scale: double; [[The scale factor (default is 1.0 - i.e. no scaling).]]
          }
       }
       @property pixels_dirty {
          set {
-            /*@
-            Mark whether the given image object is dirty and needs to request its pixels.
+            [[Mark whether the given image object is dirty and needs to
+              request its pixels.
 
-            This function will only properly work if a pixels get callback has been set.
+              This function will only properly work if a pixels get
+              callback has been set.
 
-            @warning use this function if you really know what you are doing.
-
-            @see evas_object_image_pixels_get_callback_set() */
+              Warning: Use this function if you really know what you are
+              doing.
+            ]]
          }
          get {
-            /*@
-            Retrieves whether the given image object is dirty (needs to be redrawn).
-
-            @return Whether the image is dirty. */
+            [[Retrieves whether the given image object is dirty (needs to
+              be redrawn).
+            ]]
          }
          values {
-            dirty: bool; /*@ Whether the image is dirty. */
+            dirty: bool; [[Whether the image is dirty.]]
          }
       }
       @property video_surface {
          set {
-            /*@
-            Set the video surface linked to a given image of the canvas
+            [[Set the video surface linked to a given image of the canvas.
 
-            This function links a video surface to a given canvas image. */
+              @since 1.1
+            ]]
             values {
-               surf: Evas_Video_Surface*; /*@ The new video surface.
-               @since 1.1 */
+               surf: Evas_Video_Surface*; [[The new video surface.]]
             }
          }
          get {
-            /*@
-            Get the video surface linekd to a given image of the canvas
+            [[Get the video surface linekd to a given image of the canvas.
 
-            @return The video surface of the given canvas image.
-            @since 1.1
-
-            This function returns the video surface linked to a given canvas image. */
+              @since 1.1
+            ]]
             values {
-               surf: const(Evas_Video_Surface)*; /*@ The new video surface.
-               @since 1.1 */
+               surf: const(Evas_Video_Surface)*; [[The new video surface.]]
             }
          }
       }
       @property video_surface_caps {
          set {
-            /*@ Set the video surface capabilities to a given image of the canvas */
+            [[Set the video surface capabilities to a given image of the canvas.]]
          }
          get {
-            /*@ Get the video surface capabilities to a given image of the canvas */
+            [[Get the video surface capabilities to a given image of the canvas.]]
          }
          values {
-            caps: uint; /*@ in */
+            caps: uint;
          }
       }
       @property load_orientation {
          set {
-            /*@
-            Define if the orientation information in the image file should be honored.
+            [[Define if the orientation information in the image file
+              should be honored.
 
-            @since 1.1 */
+              @since 1.1
+            ]]
          }
          get {
-            /*@
-            Get if the orientation information in the image file should be honored.
+            [[Get if the orientation information in the image file should
+              be honored.
 
-            @since 1.1 */
+              @since 1.1
+            ]]
          }
          values {
-            enable: bool; /*@ @c EINA_TRUE means that it should honor the orientation information */
+            enable: bool; [[$true means that it should honor the orientation
+                            information.]]
          }
       }
       @property border_center_fill {
@@ -402,7 +344,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
             /*@
             Set the source object to be visible or not.
 
-            If the @p visible set to @c EINA_FALSE, the source object of the proxy(@p obj
+            If the @p visible set to $false, the source object of the proxy(@p obj
             ) will be invisible.
 
             This API works differently to evas_object_show() and evas_object_hide().
@@ -426,7 +368,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
             /*@
             Get the state of the source object visibility.
 
-            @return @c EINA_TRUE if source object is visible, @c EINA_FALSE otherwise.
+            @return $true if source object is visible, $false otherwise.
 
             @see evas_object_image_source_visible_set()
             @see evas_object_image_source_set()
@@ -435,7 +377,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
             @since 1.8 */
          }
          values {
-            visible: bool; /*@ @c EINA_TRUE is source object to be shown, @c EINA_FALSE
+            visible: bool; /*@ $true is source object to be shown, $false
             otherwise. */
          }
       }
@@ -517,12 +459,12 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
 
             Set whether an Evas object is to repeat events to source.
 
-            If @p source is @c EINA_TRUE, it will make events on @p obj to also be
+            If @p source is $true, it will make events on @p obj to also be
             repeated for the source object (see evas_object_image_source_set()). Even the
             @p obj and source geometries are different, the event position will be
             transformed to the source object's space.
 
-            If @p source is @c EINA_FALSE, events occurring on @p obj will be
+            If @p source is $false, events occurring on @p obj will be
             processed only on it.
 
             @see evas_object_image_source_get()
@@ -534,7 +476,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
             /*@
             Determine whether an object is set to source events.
 
-            @return @c EINA_TRUE if source object has events, @c EINA_FALSE otherwise.
+            @return $true if source object has events, $false otherwise.
 
             @see evas_object_image_source_set()
             @see evas_object_image_source_visible_set()
@@ -542,8 +484,8 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
             @since 1.8 */
          }
          values {
-            source: bool; /*@ whether @p obj is to pass events (@c EINA_TRUE) or not
-            (@c EINA_FALSE) */
+            source: bool; /*@ whether @p obj is to pass events ($true) or not
+            ($false) */
          }
       }
       @property colorspace {
@@ -798,7 +740,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
 	    Determine wether the Evas_Object_Image replicate the content of the
 	    canvas below.
 
-	    @return @c EINA_TRUE if it does, @c EINA_FALSE if it doesn't.
+	    @return $true if it does, $false if it doesn't.
 	    @since 1.15
             */
 	 }
@@ -855,14 +797,14 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
          Note that the raw data must be of the same size (see
          evas_object_image_size_set(), which has to be called @b before this
          one) and colorspace (see evas_object_image_colorspace_set()) of the
-         image. If data is @c NULL, the current image data will be
+         image. If data is $null, the current image data will be
          freed. Naturally, if one does not set an image object's data
          manually, it will still have one, allocated by Evas.
 
          @see evas_object_image_data_get() */
 
          params {
-            @in data: void *; /*@ The raw data, or @c NULL. */
+            @in data: void *; /*@ The raw data, or $null. */
          }
       }
       data_get @const {
@@ -894,7 +836,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
          return: void * @warn_unused;
          params {
             @in for_writing: bool; /*@ Whether the data being retrieved will be
-            modified (@c EINA_TRUE) or not (@c EINA_FALSE). */
+            modified ($true) or not ($false). */
          }
       }
       preload_cancel {
