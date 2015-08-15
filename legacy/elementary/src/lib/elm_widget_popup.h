@@ -53,6 +53,8 @@ struct _Elm_Popup_Data
 
    Eina_Bool             visible : 1;
    Eina_Bool             scr_size_recalc : 1;
+   Eina_Bool             scroll : 1;
+   Eina_Bool             theme_scroll : 1;
 };
 
 typedef struct _Elm_Popup_Item_Data Elm_Popup_Item_Data;

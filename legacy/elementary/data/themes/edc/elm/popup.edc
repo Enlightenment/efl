@@ -367,11 +367,26 @@ group { name: "elm/popup/base/default";
 group { name: "elm/popup/content/popup/default";
    alias: "elm/popup/content/popup/transparent";
    alias: "elm/popup/content/popup/subpopup";
+   data.item: "scroller_enable" "on";
    parts {
       part { name:"elm.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
-           min: 240 0;
          }
+         description { state: "scroll" 0.0;
+            min: 240 0;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "elm,scroll,enable"; source: "elm";
+         action: STATE_SET "scroll" 0.0;
+         target: "elm.swallow.content";
+      }
+      program {
+         signal: "elm,scroll,disable"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.content";
       }
    }
 }

@@ -116,6 +116,27 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             timeout: double; [[The timeout in seconds.]]
          }
       }
+      @property scrollable {
+         set {
+            [[Enable or disable scroller in popup content area
+
+              Normally content area does not contain scroller.
+
+              @since 1.15
+            ]]
+         }
+         get {
+            [[Get the scrollable state of popup content area
+
+              Normally content area does not contain scroller.
+
+              @since 1.15
+            ]]
+         }
+         values {
+            scroll: bool; [[$true if it is to be scrollable, $false otherwise.]]
+         }
+      }
       item_append {
          [[Add a new item to a Popup object
 
