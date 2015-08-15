@@ -42,7 +42,19 @@ static Eina_Bool _efl_model_load_status_change_cb(void *, Eo *, const Eo_Event_D
 static Eina_Bool _efl_model_children_count_change_cb(void *, Eo *, const Eo_Event_Description *, void *);
 static Eina_Bool _efl_model_properties_change_cb(void *, Eo *, const Eo_Event_Description *, void *);
 
+static Eina_Bool _expand_request_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info);
+static Eina_Bool _contract_request_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info);
+static Eina_Bool _contracted_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info);
+
 /* --- Genlist Callbacks --- */
+EO_CALLBACKS_ARRAY_DEFINE(model_callbacks,
+                          { EFL_MODEL_BASE_EVENT_LOAD_STATUS, _efl_model_load_status_change_cb },
+                          { EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED, _efl_model_children_count_change_cb });
+EO_CALLBACKS_ARRAY_DEFINE(genlist_callbacks,
+                          { ELM_GENLIST_EVENT_EXPAND_REQUEST, _expand_request_cb },
+                          { ELM_GENLIST_EVENT_CONTRACT_REQUEST, _contract_request_cb },
+                          { ELM_GENLIST_EVENT_CONTRACTED, _contracted_cb });
+
 static void
 _item_sel_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -60,12 +72,9 @@ _item_del(void *data, Evas_Object *obj EINA_UNUSED)
    if (!idata)
       return;
 
-   eo_do(idata->model, eo_event_callback_del(EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED,
-                           _efl_model_properties_change_cb, idata));
-   eo_do(idata->model, eo_event_callback_del(EFL_MODEL_BASE_EVENT_LOAD_STATUS,
-                           _efl_model_load_status_change_cb, idata));
-   eo_do(idata->model, eo_event_callback_del(EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED,
-                           _efl_model_children_count_change_cb, idata));
+   eo_do(idata->model,
+         eo_event_callback_array_del(model_callbacks(), idata),
+         eo_event_callback_del(EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, _efl_model_properties_change_cb, idata));
 
    eo_unref(idata->model);
    idata->model = NULL;
@@ -159,10 +168,7 @@ _expand_request_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_D
    EINA_SAFETY_ON_NULL_RETURN_VAL(idata, EINA_TRUE);
 
    eo_do(idata->model, st = efl_model_load_status_get());
-   eo_do(idata->model, eo_event_callback_add(EFL_MODEL_BASE_EVENT_LOAD_STATUS,
-                           _efl_model_load_status_change_cb, idata));
-   eo_do(idata->model, eo_event_callback_add(EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED,
-                           _efl_model_children_count_change_cb, idata));
+   eo_do(idata->model, eo_event_callback_array_add(model_callbacks(), idata));
 
    if (st & EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN)
      {
@@ -181,10 +187,7 @@ _contract_request_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event
    Elm_Object_Item *item = event_info;
    View_List_ItemData *idata = elm_object_item_data_get(item);
 
-   eo_do(idata->model, eo_event_callback_del(EFL_MODEL_BASE_EVENT_LOAD_STATUS,
-                           _efl_model_load_status_change_cb, idata));
-   eo_do(idata->model, eo_event_callback_del(EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED,
-                           _efl_model_children_count_change_cb, idata));
+   eo_do(idata->model, eo_event_callback_array_del(model_callbacks(), idata));
    elm_genlist_item_expanded_set(item, EINA_FALSE);
    return EINA_TRUE;
 }
@@ -205,9 +208,7 @@ _genlist_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_
    if (priv && priv->genlist && priv->genlist == obj)
      {
         eo_do(priv->genlist,
-              eo_event_callback_del(ELM_GENLIST_EVENT_EXPAND_REQUEST, _expand_request_cb, priv),
-              eo_event_callback_del(ELM_GENLIST_EVENT_CONTRACT_REQUEST, _contract_request_cb, priv),
-              eo_event_callback_del(ELM_GENLIST_EVENT_CONTRACTED, _contracted_cb, priv));
+              eo_event_callback_array_del(genlist_callbacks(), priv));
         eo_unref(priv->genlist);
         priv->genlist = NULL;
      }
@@ -258,8 +259,9 @@ _efl_model_load_children(View_List_ItemData *pdata)
         idata->parent = pdata;
         idata->model = child;
         eo_ref(child);
-        eo_do(child, eo_event_callback_add(EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED,
-                                _efl_model_properties_change_cb, idata));
+        eo_do(child,
+              eo_event_callback_add(EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED,
+                                    _efl_model_properties_change_cb, idata));
         eo_do(child, efl_model_properties_load());
         idata->item = elm_genlist_item_append(priv->genlist, priv->itc, idata, pdata->item,
                                                        priv->itype, _item_sel_cb, idata);
@@ -309,10 +311,8 @@ _priv_model_set(Elm_View_List_Data *priv, Eo *model)
 
    if (priv->model != NULL)
      {
-         eo_do(priv->model, eo_event_callback_del(EFL_MODEL_BASE_EVENT_LOAD_STATUS,
-                                                 _efl_model_load_status_change_cb, priv->rootdata));
-         eo_do(priv->model, eo_event_callback_del(EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED,
-                                                 _efl_model_children_count_change_cb, priv->rootdata));
+         eo_do(priv->model,
+               eo_event_callback_array_del(model_callbacks(), priv->rootdata));
          eo_do(priv->genlist, elm_obj_genlist_clear());
          eo_unref(priv->model);
          priv->model = NULL;
@@ -325,11 +325,9 @@ _priv_model_set(Elm_View_List_Data *priv, Eo *model)
    priv->rootdata->model = priv->model;
    eo_ref(priv->model);
 
-   eo_do(priv->model, eo_event_callback_add(EFL_MODEL_BASE_EVENT_LOAD_STATUS,
-                                                _efl_model_load_status_change_cb, priv->rootdata));
-   eo_do(priv->model, eo_event_callback_add(EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED,
-                                                _efl_model_children_count_change_cb, priv->rootdata));
-   eo_do(priv->model, load_st = efl_model_load_status_get());
+   eo_do(priv->model,
+         eo_event_callback_array_add(model_callbacks(), priv->rootdata),
+         load_st = efl_model_load_status_get());
    if (load_st & EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN)
      {
          _efl_model_load_children(priv->rootdata);
@@ -362,9 +360,7 @@ _elm_view_list_genlist_set(Eo *obj, Elm_View_List_Data *priv, Evas_Object *genli
    priv->prop_con = eina_hash_string_superfast_new(free);
 
    eo_do(priv->genlist,
-         eo_event_callback_add(ELM_GENLIST_EVENT_EXPAND_REQUEST, _expand_request_cb, priv),
-         eo_event_callback_add(ELM_GENLIST_EVENT_CONTRACT_REQUEST, _contract_request_cb, priv),
-         eo_event_callback_add(ELM_GENLIST_EVENT_CONTRACTED, _contracted_cb, priv));
+         eo_event_callback_array_add(genlist_callbacks(), priv));
    evas_object_event_callback_add(priv->genlist, EVAS_CALLBACK_DEL, _genlist_deleted, priv);
 }
 
@@ -375,10 +371,8 @@ _elm_view_list_eo_base_destructor(Eo *obj, Elm_View_List_Data *priv)
    EINA_SAFETY_ON_NULL_RETURN(priv);
    EINA_SAFETY_ON_NULL_RETURN(obj);
 
-   eo_do(priv->model, eo_event_callback_del(EFL_MODEL_BASE_EVENT_LOAD_STATUS,
-                                        _efl_model_load_status_change_cb, priv->rootdata));
-   eo_do(priv->model, eo_event_callback_del(EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED,
-                                        _efl_model_children_count_change_cb, priv->rootdata));
+   eo_do(priv->model,
+         eo_event_callback_array_del(model_callbacks(), priv->rootdata));
 
    eo_do(priv->genlist, elm_obj_genlist_clear());
    elm_genlist_item_class_free(priv->itc);
@@ -389,9 +383,7 @@ _elm_view_list_eo_base_destructor(Eo *obj, Elm_View_List_Data *priv)
    if (priv->genlist) {
      evas_object_event_callback_del(priv->genlist, EVAS_CALLBACK_DEL, _genlist_deleted);
      eo_do(priv->genlist,
-           eo_event_callback_del(ELM_GENLIST_EVENT_EXPAND_REQUEST, _expand_request_cb, priv),
-           eo_event_callback_del(ELM_GENLIST_EVENT_CONTRACT_REQUEST, _contract_request_cb, priv),
-           eo_event_callback_del(ELM_GENLIST_EVENT_CONTRACTED, _contracted_cb, priv));
+           eo_event_callback_array_del(genlist_callbacks(), priv));
      eo_unref(priv->genlist);
    }
 
