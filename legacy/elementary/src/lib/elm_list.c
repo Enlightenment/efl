@@ -1233,7 +1233,6 @@ _elm_list_nearest_visible_item_get(Evas_Object *obj, Elm_List_Item_Data *it)
              if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch) &&
                  !elm_object_item_disabled_get(EO_OBJ(item)))
                {
-                  eina_list_free(item_list);
                   return item;
                }
           }
@@ -1248,12 +1247,10 @@ _elm_list_nearest_visible_item_get(Evas_Object *obj, Elm_List_Item_Data *it)
              if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch) &&
                  !elm_object_item_disabled_get(EO_OBJ(item)))
                {
-                  eina_list_free(item_list);
                   return item;
                }
           }
      }
-   eina_list_free(item_list);
 
    return it;
 }
