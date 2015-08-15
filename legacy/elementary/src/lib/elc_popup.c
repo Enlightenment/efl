@@ -377,10 +377,14 @@ _elm_popup_elm_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
      elm_layout_signal_emit(sd->main_layout, "elm,state,title,icon,visible", "elm");
 
    _populate_theme_scroll(sd);
-   if (!sd->theme_scroll && sd->scroll)
+   if (sd->scroll && !sd->theme_scroll)
      sd->max_sc_w = 240 * elm_config_scale_get() * elm_object_scale_get(obj);
    else
      sd->max_sc_w = 0;
+   if (!sd->scroll && sd->theme_scroll)
+     elm_layout_signal_emit(sd->content_area, "elm,scroll,disable", "elm");
+   else if (sd->scroll && sd->theme_scroll)
+     elm_layout_signal_emit(sd->content_area, "elm,scroll,enable", "elm");
 
    _visuals_set(obj);
    _scroller_size_calc(obj);
