@@ -56,6 +56,7 @@ typedef struct _Raster_Buffer
 
 typedef struct _Shape_Rle_Data
 {
+   Eina_Rectangle   bbox;
    unsigned short   alloc;
    unsigned short   size;
    SW_FT_Span      *spans;// array of Scanlines.
