@@ -104,7 +104,9 @@ typedef ptrdiff_t  SW_FT_PtrDist;
 #define SW_FT_ERROR( x )   do { } while ( 0 )     /* nothing */
 #define SW_FT_THROW( e )   SW_FT_ERR_CAT( ErrRaster_, e )
 
-
+  /* The size in bytes of the render pool used by the scan-line converter  */
+  /* to do all of its work.                                                */
+#define SW_FT_RENDER_POOL_SIZE  16384L
 
 typedef int
 (*SW_FT_Outline_MoveToFunc)( const SW_FT_Vector*  to,
@@ -383,11 +385,7 @@ typedef struct  SW_FT_Outline_Funcs_
 
   typedef struct gray_TRaster_
   {
-    void*         buffer;
-    long          buffer_size;
-    int           band_size;
     void*         memory;
-    gray_PWorker  worker;
 
   } gray_TRaster, *gray_PRaster;
 
@@ -1719,16 +1717,20 @@ typedef struct  SW_FT_Outline_Funcs_
     return 0;
   }
 
-
   static int
   gray_raster_render( gray_PRaster             raster,
                       const SW_FT_Raster_Params*  params )
   {
-    const SW_FT_Outline*  outline    = (const SW_FT_Outline*)params->source;
-    gray_PWorker       worker;
+    const SW_FT_Outline*  outline     = (const SW_FT_Outline*)params->source;
 
+    gray_TWorker  worker[1];
 
-    if ( !raster || !raster->buffer || !raster->buffer_size )
+    TCell  buffer[SW_FT_RENDER_POOL_SIZE / sizeof ( TCell )];
+    long   buffer_size = sizeof ( buffer );
+    int    band_size   = (int)( buffer_size /
+                                (long)( sizeof ( TCell ) * 8 ) );
+
+    if ( !raster)
       return SW_FT_THROW( Invalid_Argument );
 
     if ( !outline )
@@ -1745,8 +1747,6 @@ typedef struct  SW_FT_Outline_Funcs_
            outline->contours[outline->n_contours - 1] + 1 )
       return SW_FT_THROW( Invalid_Outline );
 
-    worker = raster->worker;
-
     /* this version does not support monochrome rendering */
     if ( !( params->flags & SW_FT_RASTER_FLAG_AA ) )
       return SW_FT_THROW( Invalid_Mode );
@@ -1761,20 +1761,20 @@ typedef struct  SW_FT_Outline_Funcs_
       ras.clip_box.yMax =  32767L;
     }
 
-    gray_init_cells( RAS_VAR_ raster->buffer, raster->buffer_size );
+    gray_init_cells( RAS_VAR_ buffer, buffer_size );
 
     ras.outline        = *outline;
     ras.num_cells      = 0;
     ras.invalid        = 1;
-    ras.band_size      = raster->band_size;
+    ras.band_size      = band_size;
     ras.num_gray_spans = 0;
+    ras.span_y         = 0;
 
     ras.render_span      = (SW_FT_Raster_Span_Func)params->gray_spans;
     ras.render_span_data = params->user;
 
     return gray_convert_glyph( RAS_VAR );
   }
-
 
   /**** RASTER OBJECT CREATION: In stand-alone mode, we simply use *****/
   /****                         a static object.                   *****/
@@ -1803,34 +1803,9 @@ typedef struct  SW_FT_Outline_Funcs_
                      char*      pool_base,
                      long       pool_size )
   {
-    gray_PRaster  rast = (gray_PRaster)raster;
-
-
-    if ( raster )
-    {
-      if ( pool_base && pool_size >= (long)sizeof ( gray_TWorker ) + 2048 )
-      {
-        gray_PWorker  worker = (gray_PWorker)pool_base;
-
-
-        rast->worker      = worker;
-        rast->buffer      = pool_base +
-                              ( ( sizeof ( gray_TWorker ) +
-                                  sizeof ( TCell ) - 1 )  &
-                                ~( sizeof ( TCell ) - 1 ) );
-        rast->buffer_size = (long)( ( pool_base + pool_size ) -
-                                    (char*)rast->buffer ) &
-                                      ~( sizeof ( TCell ) - 1 );
-        rast->band_size   = (int)( rast->buffer_size /
-                                     ( sizeof ( TCell ) * 8 ) );
-      }
-      else
-      {
-        rast->buffer      = NULL;
-        rast->buffer_size = 0;
-        rast->worker      = NULL;
-      }
-    }
+    SW_FT_UNUSED( raster );
+    SW_FT_UNUSED( pool_base );
+    SW_FT_UNUSED( pool_size );
   }
 
 

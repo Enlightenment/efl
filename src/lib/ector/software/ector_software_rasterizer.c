@@ -304,14 +304,10 @@ _adjust_span_fill_methods(Span_Data *spdata)
      }
 }
 
-
-
 void ector_software_rasterizer_init(Software_Rasterizer *rasterizer)
 {
    // initialize the rasterizer and stroker
-   unsigned char* renderPool = (unsigned char*) malloc(1024 * 100);
    sw_ft_grays_raster.raster_new(&rasterizer->raster);
-   sw_ft_grays_raster.raster_reset(rasterizer->raster, renderPool, 1024*100);
 
    SW_FT_Stroker_New(&rasterizer->stroker);
    SW_FT_Stroker_Set(rasterizer->stroker, 1<<6,SW_FT_STROKER_LINECAP_BUTT,SW_FT_STROKER_LINEJOIN_MITER,0);
@@ -327,7 +323,6 @@ void ector_software_rasterizer_done(Software_Rasterizer *rasterizer)
 {
    sw_ft_grays_raster.raster_done(rasterizer->raster);
    SW_FT_Stroker_Done(rasterizer->stroker);
-   //TODO free the pool memory
 }
 
 
