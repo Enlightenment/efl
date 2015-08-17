@@ -245,6 +245,250 @@ _generate_outline(const Efl_Gfx_Path_Command *cmds, const double *pts, Outline *
    return close_path;
 }
 
+typedef struct _Line
+{
+   double x1;
+   double y1;
+   double x2;
+   double y2;
+}Line;
+
+static void 
+_line_value_set(Line *l, double x1, double y1, double x2, double y2)
+{
+   l->x1 = x1;
+   l->y1 = y1;
+   l->x2 = x2;
+   l->y2 = y2;
+}
+
+// approximate sqrt(x*x + y*y) using alpha max plus beta min algorithm.
+// With alpha = 1, beta = 3/8, giving results with a largest error less 
+// than 7% compared to the exact value.
+static double
+_line_length(Line *l)
+{
+   double x = l->x2 - l->x1;
+   double y = l->y2 - l->y1;
+   x = x < 0 ? -x : x;
+   y = y < 0 ? -y : y;
+   return (x > y ? x + 0.375 * y : y + 0.375 * x);
+}
+
+static void
+_line_split_at_length(Line *l, double length, Line *left, Line *right)
+{
+   double len = _line_length(l);
+   double dx = ((l->x2 - l->x1)/len) *length;
+   double dy = ((l->y2 - l->y1)/len) *length;
+
+   left->x1 = l->x1;
+   left->y1 = l->y1;
+   left->x2 = left->x1 + dx;
+   left->y2 = left->y1 + dy;
+
+   right->x1 = left->x2;
+   right->y1 = left->y2;
+   right->x2 = l->x2;
+   right->y2 = l->y2;
+}
+
+typedef struct _Dash_Stroker
+{
+   Efl_Gfx_Dash *dash;
+   int           dash_len;
+   Outline      *outline;
+   int cur_dash_index;
+   double cur_dash_length;
+   Eina_Bool cur_op_gap;
+   double start_x, start_y;
+   double cur_x, cur_y;
+}Dash_Stroker;
+
+static void
+_dasher_line_to(Dash_Stroker *dasher, double x, double y)
+{
+   Line l, left, right;
+   double line_len = 0.0;
+   _line_value_set(&l, dasher->cur_x, dasher->cur_y, x, y);
+   line_len = _line_length(&l);
+   if (line_len < dasher->cur_dash_length)
+     {
+        dasher->cur_dash_length -= line_len;
+        if (!dasher->cur_op_gap)
+          {
+             _outline_move_to(dasher->outline, dasher->cur_x, dasher->cur_y);
+             _outline_line_to(dasher->outline, x, y);
+          }
+     }
+   else 
+     {
+        while (line_len > dasher->cur_dash_length)
+          {
+             line_len -= dasher->cur_dash_length;
+             _line_split_at_length(&l, dasher->cur_dash_length, &left, &right);
+             if (!dasher->cur_op_gap)
+               {
+                  _outline_move_to(dasher->outline, left.x1, left.y1);
+                  _outline_line_to(dasher->outline, left.x2, left.y2);
+                  dasher->cur_dash_length = dasher->dash[dasher->cur_dash_index].gap;
+               }
+             else
+               {
+                  dasher->cur_dash_index = (dasher->cur_dash_index +1) % dasher->dash_len ;
+                  dasher->cur_dash_length = dasher->dash[dasher->cur_dash_index].length;
+               }
+             dasher->cur_op_gap = !dasher->cur_op_gap;
+             l = right;
+             dasher->cur_x = l.x1;
+             dasher->cur_y = l.y1;
+          }
+        // remainder
+        dasher->cur_dash_length -= line_len;
+        if (!dasher->cur_op_gap)
+          {
+             _outline_move_to(dasher->outline, l.x1, l.y1);
+             _outline_line_to(dasher->outline, l.x2, l.y2);
+          }
+        if (dasher->cur_dash_length < 1.0)
+          {
+             // move to next dash
+             if (!dasher->cur_op_gap)
+               {
+                  dasher->cur_op_gap = EINA_TRUE;
+                  dasher->cur_dash_length = dasher->dash[dasher->cur_dash_index].gap;
+               }
+             else
+               {
+                  dasher->cur_op_gap = EINA_FALSE;
+                  dasher->cur_dash_index = (dasher->cur_dash_index +1) % dasher->dash_len ;
+                  dasher->cur_dash_length = dasher->dash[dasher->cur_dash_index].length;
+               }
+          }
+     }
+   dasher->cur_x = x;
+   dasher->cur_y = y;
+}
+
+static void
+_dasher_cubic_to(Dash_Stroker *dasher, double cx1 , double cy1, double cx2, double cy2, double x, double y)
+{
+   Eina_Bezier b, left, right;
+   double bez_len = 0.0;
+   eina_bezier_values_set(&b, dasher->cur_x, dasher->cur_y, cx1, cy1, cx2, cy2, x, y);
+   bez_len = eina_bezier_length_get(&b);
+   if (bez_len < dasher->cur_dash_length)
+     {
+        dasher->cur_dash_length -= bez_len;
+        if (!dasher->cur_op_gap)
+          {
+             _outline_move_to(dasher->outline, dasher->cur_x, dasher->cur_y);
+             _outline_cubic_to(dasher->outline, cx1, cy1, cx2, cy2, x, y);
+          }
+     }
+   else 
+     {
+        while (bez_len > dasher->cur_dash_length)
+          {
+             bez_len -= dasher->cur_dash_length;
+             eina_bezier_split_at_length(&b, dasher->cur_dash_length, &left, &right);
+             if (!dasher->cur_op_gap)
+               {
+                  _outline_move_to(dasher->outline, left.start.x, left.start.y);
+                  _outline_cubic_to(dasher->outline, left.ctrl_start.x, left.ctrl_start.y, left.ctrl_end.x, left.ctrl_end.y, left.end.x, left.end.y);
+                  dasher->cur_dash_length = dasher->dash[dasher->cur_dash_index].gap;
+               }
+             else
+               {
+                  dasher->cur_dash_index = (dasher->cur_dash_index +1) % dasher->dash_len ;
+                  dasher->cur_dash_length = dasher->dash[dasher->cur_dash_index].length;
+               }
+             dasher->cur_op_gap = !dasher->cur_op_gap;
+             b = right;
+             dasher->cur_x = b.start.x;
+             dasher->cur_y = b.start.y;
+          }
+         // remainder
+        dasher->cur_dash_length -= bez_len;
+        if (!dasher->cur_op_gap)
+          {
+             _outline_move_to(dasher->outline, b.start.x, b.start.y);
+             _outline_cubic_to(dasher->outline, b.ctrl_start.x, b.ctrl_start.y, b.ctrl_end.x, b.ctrl_end.y, b.end.x, b.end.y);
+          }
+        if (dasher->cur_dash_length < 1.0)
+          {
+             // move to next dash
+             if (!dasher->cur_op_gap)
+               {
+                  dasher->cur_op_gap = EINA_TRUE;
+                  dasher->cur_dash_length = dasher->dash[dasher->cur_dash_index].gap;
+               }
+             else
+               {
+                  dasher->cur_op_gap = EINA_FALSE;
+                  dasher->cur_dash_index = (dasher->cur_dash_index +1) % dasher->dash_len ;
+                  dasher->cur_dash_length = dasher->dash[dasher->cur_dash_index].length;
+               }
+          }
+      }
+   dasher->cur_x = x;
+   dasher->cur_y = y;
+}
+
+static Eina_Bool
+_generate_dashed_outline(const Efl_Gfx_Path_Command *cmds, const double *pts, Outline * outline, Efl_Gfx_Dash *dash, int dash_len)
+{
+   Dash_Stroker dasher;
+   dasher.dash = dash;
+   dasher.dash_len = dash_len;
+   dasher.outline = outline;
+   dasher.cur_dash_length = 0.0;
+   dasher.cur_dash_index = 0;
+   dasher.cur_op_gap = EINA_FALSE;
+   dasher.start_x = 0.0;
+   dasher.start_y = 0.0;
+   dasher.cur_x = 0.0;
+   dasher.cur_y = 0.0;
+
+   for (; *cmds != EFL_GFX_PATH_COMMAND_TYPE_END; cmds++)
+     {
+        switch (*cmds)
+          {
+            case EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO:
+              {
+                 // reset the dash
+                 dasher.cur_dash_index = 0;
+                 dasher.cur_dash_length = dasher.dash[0].length;
+                 dasher.cur_op_gap = EINA_FALSE;
+                 dasher.start_x = pts[0];
+                 dasher.start_y = pts[1];
+                 dasher.cur_x = pts[0];
+                 dasher.cur_y = pts[1];
+                 pts += 2;
+              }
+               break;
+            case EFL_GFX_PATH_COMMAND_TYPE_LINE_TO:
+               _dasher_line_to(&dasher, pts[0], pts[1]);
+               pts += 2;
+               break;
+            case EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO:
+               _dasher_cubic_to(&dasher, pts[2], pts[3], pts[4], pts[5], pts[0], pts[1]);
+               pts += 6;
+               break;
+
+            case EFL_GFX_PATH_COMMAND_TYPE_CLOSE:
+               _dasher_line_to(&dasher, dasher.start_x, dasher.start_y);
+               break;
+
+            case EFL_GFX_PATH_COMMAND_TYPE_LAST:
+            case EFL_GFX_PATH_COMMAND_TYPE_END:
+               break;
+          }
+     }
+   _outline_end(outline);
+   return EINA_FALSE;
+}
+
 static Eina_Bool
 _generate_stroke_data(Ector_Renderer_Software_Shape_Data *pd)
 {
@@ -296,9 +540,25 @@ _update_rle(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
                                                    pd->shape->stroke.scale),
                                                   pd->shape->stroke.cap,
                                                   pd->shape->stroke.join);
-              pd->outline_data = ector_software_rasterizer_generate_stroke_rle_data(pd->surface->software,
-                                                                                    &outline->ft_outline,
-                                                                                    close_path);
+
+             if (pd->shape->stroke.dash)
+               {
+                  dash_outline = _outline_create();
+                  close_path = _generate_dashed_outline(cmds, pts, dash_outline,
+                                                        pd->shape->stroke.dash,
+                                                        pd->shape->stroke.dash_length);
+                  _outline_transform(dash_outline, pd->base->m);
+                  pd->outline_data = ector_software_rasterizer_generate_stroke_rle_data(pd->surface->software,
+                                                                                        &dash_outline->ft_outline,
+                                                                                        close_path);
+                  _outline_destroy(dash_outline);
+               }
+             else
+               {
+                  pd->outline_data = ector_software_rasterizer_generate_stroke_rle_data(pd->surface->software,
+                                                                                        &outline->ft_outline,
+                                                                                        close_path);
+               }
           }
         _outline_destroy(outline);
      }
