@@ -1107,10 +1107,9 @@ EOLIAN static Eina_Bool
 _elm_spinner_elm_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   Eina_Bool int_ret = elm_layout_theme_set(obj, "spinner", "base",
-                              elm_widget_style_get(obj));
 
-   if (!int_ret) CRI("Failed to set layout!");
+   if (!elm_layout_theme_set(obj, "spinner", "base", elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
 
    if (edje_object_part_exists(wd->resize_obj, "elm.swallow.dec_button"))
      sd->button_layout = EINA_TRUE;
@@ -1153,7 +1152,7 @@ _elm_spinner_elm_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd)
      _access_spinner_register(obj, EINA_TRUE);
 
    elm_layout_sizing_eval(obj);
-   return int_ret;
+   return EINA_TRUE;
 }
 
 static Eina_Bool _elm_spinner_smart_focus_next_enable = EINA_FALSE;
