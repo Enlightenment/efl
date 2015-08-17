@@ -243,9 +243,9 @@ __color = {
    end,
 
    -- Register all global values into global env (_G)
-   __register = function (tbl)
+   __register = function ()
       for k, v in pairs(__color.__names) do
-         rawset(tbl, k, __color(v))
+         rawset(_G, k, __color(v))
       end
    end,
 
@@ -290,7 +290,7 @@ __color = {
       assert(tostring(__color('#123456')) == '#123456ff')
       assert(tostring(__color('#12345678')) == '#12345678')
 
-      __color.__register(_G)
+      __color.__register()
       assert(tostring(white) == '#ffffffff')
       assert(tostring(red) == '#ff0000ff')
 

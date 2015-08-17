@@ -2,6 +2,14 @@
 
 #include <stdarg.h>
 
+// Lua breaks API all the time
+#ifdef ENABLE_LUA_OLD
+// For 5.2 --> 5.1 compatibility
+# define LUA_COMPAT_ALL
+// For 5.3 --> 5.1 compatibility
+# define LUA_COMPAT_5_1
+#endif
+
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
@@ -705,7 +713,7 @@ _lua_implicit_metatable_drop(lua_State *L, const char *name)
    if (lua_istable(L, 1) && lua_getmetatable(L, 1))
      {
         luaL_getmetatable(L, name);
-        if (lua_equal(L, -1, -2))
+        if (lua_rawequal(L, -1, -2))
           {
              lua_remove(L, 1);
              ret = 1;
@@ -1869,7 +1877,11 @@ _lua_convert_color(lua_State *L)
    lua_pushvalue(L, -2); //+1 (mt)
    lua_pushvalue(L, top); //+1 (argument)
    if (lua_pcall(L, 2, 1, top + 1) != 0)
-     return EINA_FALSE;
+     {
+        ERR("Failed to call metamethod __call: %s", lua_tostring(L, -1));
+        lua_settop(L, top);
+        return EINA_FALSE;
+     }
    lua_insert(L, top);
    lua_settop(L, top);
    return EINA_TRUE;
@@ -1931,7 +1943,7 @@ _lua_parameter_parse(Evas_Filter_Program *pgm, lua_State *L,
              {
                 luaL_getmetatable(L, _lua_color_meta);
                 lua_getmetatable(L, i);
-                if (!lua_isnil(L, -1) && lua_equal(L, -2, -1))
+                if (!lua_isnil(L, -1) && lua_rawequal(L, -2, -1))
                   {
                      // this is a color already
                      cid = i;
@@ -2265,8 +2277,7 @@ _lua_import_class(lua_State *L, const char *name, char **code)
         lua_rawget(L, -3); //-1/+1
         if (lua_isfunction(L, -1))
           {
-             lua_getglobal(L, "_G"); //+1
-             if (lua_pcall(L, 1, 0, -3) != 0) //-2
+             if (lua_pcall(L, 0, 0, -2) != 0) //-1
                {
                   ERR("Failed to register globals for '%s': %s", name, lua_tostring(L, -1));
                   lua_pop(L, 1);
@@ -2337,6 +2348,37 @@ _lua_class_create(lua_State *L, const char *name,
    lua_setglobal(L, name);
 }
 
+#if LUA_VERSION_NUM < 502
+// From LuaJIT/src/lib_init.c
+// Prevent loading package, IO and OS libs (mini-sandbox)
+static const luaL_Reg lj_lib_load[] = {
+  { "",                 luaopen_base },
+  //{ LUA_LOADLIBNAME,    luaopen_package },
+  { LUA_TABLIBNAME,     luaopen_table },
+  //{ LUA_IOLIBNAME,      luaopen_io },
+  //{ LUA_OSLIBNAME,      luaopen_os },
+  { LUA_STRLIBNAME,     luaopen_string },
+  { LUA_MATHLIBNAME,    luaopen_math },
+  { LUA_DBLIBNAME,      luaopen_debug },
+  { LUA_BITLIBNAME,     luaopen_bit },
+#ifdef LUA_JITLIBNAME
+  { LUA_JITLIBNAME,     luaopen_jit },
+#endif
+  { NULL,               NULL }
+};
+
+static void
+_luaL_openlibs(lua_State *L)
+{
+  const luaL_Reg *lib;
+  for (lib = lj_lib_load; lib->func; lib++) {
+    lua_pushcfunction(L, lib->func);
+    lua_pushstring(L, lib->name);
+    lua_call(L, 1, 0);
+  }
+}
+#endif
+
 static lua_State *
 _lua_state_create(Evas_Filter_Program *pgm)
 {
@@ -2349,17 +2391,20 @@ _lua_state_create(Evas_Filter_Program *pgm)
         return NULL;
      }
 
-   luaopen_base(L);
-   luaopen_table(L);
-   luaopen_string(L);
-   luaopen_math(L);
-   luaopen_debug(L);
+#if LUA_VERSION_NUM >= 502
+   luaL_requiref(L, "",       luaopen_base, 1);
+   luaL_requiref(L, "table",  luaopen_table, 1);
+   luaL_requiref(L, "string", luaopen_string, 1);
+   luaL_requiref(L, "math",   luaopen_math, 1);
+   luaL_requiref(L, "debug",  luaopen_debug, 1);
+#else
+   _luaL_openlibs(L);
+#endif
    lua_settop(L, 0);
 
    // Implement print
-   lua_getglobal(L, "_G");
-   luaL_register(L, NULL, printlib);
-   lua_pop(L, 1);
+   lua_pushcfunction(L, _lua_print);
+   lua_setglobal(L, "print");
 
    // Add backtrace error function
    lua_pushcfunction(L, _lua_backtrace);
@@ -2431,7 +2476,7 @@ _lua_backtrace(lua_State *L)
    if (!lua_isstring(L, 1))  /* 'message' not a string? */
      return 1;  /* keep it intact */
    ERR("Lua error: %s", lua_tolstring(L, 1, NULL));
-   lua_getfield(L, LUA_GLOBALSINDEX, "debug");
+   lua_getglobal(L, "debug");
    if (!lua_istable(L, -1))
      {
         lua_pop(L, 1);
