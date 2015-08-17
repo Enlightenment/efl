@@ -144,6 +144,8 @@ _eina_debug_monitor(void *_data EINA_UNUSED)
    // some state for debugging
    unsigned int poll_time = 1000;
    Eina_Bool poll_on = EINA_FALSE;
+   Eina_Bool poll_trace = EINA_FALSE;
+   Eina_Bool poll_cpu = EINA_FALSE;
 
    t0 = get_time();
    // sit forever processing commands or timeouts in the debug monitor
@@ -191,12 +193,14 @@ _eina_debug_monitor(void *_data EINA_UNUSED)
                     {
                        if (size >= 4) memcpy(&poll_time, data, 4);
                        poll_on = EINA_TRUE;
+                       poll_trace = EINA_TRUE;
                     }
                   // profiling off with no payload
                   else if (!strcmp(op, "PLOF"))
                     {
                        poll_time = 1000;
                        poll_on = EINA_FALSE;
+                       poll_trace = EINA_FALSE;
                     }
                   // enable evlog
                   else if (!strcmp(op, "EVON"))
@@ -207,6 +211,19 @@ _eina_debug_monitor(void *_data EINA_UNUSED)
                   else if (!strcmp(op, "EVOF"))
                     {
                        eina_evlog_stop();
+                    }
+                  // enable evlog
+                  else if (!strcmp(op, "CPON"))
+                    {
+                       if (size >= 4) memcpy(&poll_time, data, 4);
+                       poll_on = EINA_TRUE;
+                       poll_cpu = EINA_TRUE;
+                    }
+                  // stop evlog
+                  else if (!strcmp(op, "CPOF"))
+                    {
+                       poll_on = EINA_FALSE;
+                       poll_cpu = EINA_FALSE;
                     }
                   // fetch the evlog
                   else if (!strcmp(op, "EVLG"))
@@ -240,60 +257,68 @@ _eina_debug_monitor(void *_data EINA_UNUSED)
 
         if (poll_on)
           {
-             // take a lock on grabbing thread debug info like backtraces
-             eina_spinlock_take(&_eina_debug_thread_lock);
-             // reset our "stack" of memory se use to dump thread info into
-             _eina_debug_chunk_tmp_reset();
-             // get an array of pointers for the backtrace array for main + th
-             _bt_buf = _eina_debug_chunk_tmp_push
-               ((1 + _eina_debug_thread_active_num) * sizeof(void *));
-             if (!_bt_buf) goto err;
-             // get an array of pointers for the timespec array for mainloop + th
-             _bt_ts = _eina_debug_chunk_tmp_push
-               ((1 + _eina_debug_thread_active_num) * sizeof(struct timespec));
-             if (!_bt_ts) goto err;
-             // get an array of pointers for the cpuid array for mainloop + th
-             _bt_cpu = _eina_debug_chunk_tmp_push
-               ((1 + _eina_debug_thread_active_num) * sizeof(int));
-             if (!_bt_cpu) goto err;
-             // now get an array of void pts for mainloop bt
-             _bt_buf[0] = _eina_debug_chunk_tmp_push(EINA_MAX_BT * sizeof(void *));
-             if (!_bt_buf[0]) goto err;
-             // get an array of void ptrs for each thread we know about for bt
-             for (i = 0; i < _eina_debug_thread_active_num; i++)
+             if (poll_trace)
                {
-                  _bt_buf[i + 1] = _eina_debug_chunk_tmp_push(EINA_MAX_BT * sizeof(void *));
-                  if (!_bt_buf[i + 1]) goto err;
-               }
-             // get an array of ints to stor the bt len for mainloop + threads
-             _bt_buf_len = _eina_debug_chunk_tmp_push
-               ((1 + _eina_debug_thread_active_num) * sizeof(int));
-             // collect bt from the mainloop - always there
-             _eina_debug_collect_bt(_eina_debug_thread_mainloop);
-             // now collect per thread
-             for (i = 0; i < _eina_debug_thread_active_num; i++)
-               _eina_debug_collect_bt(_eina_debug_thread_active[i]);
-             // we're done probing. now collec all the "i'm done" msgs on the
-             // semaphore for every thread + mainloop
-             for (i = 0; i < (_eina_debug_thread_active_num + 1); i++)
-               eina_semaphore_lock(&_eina_debug_monitor_return_sem);
-             // we now have gotten all the data from all threadd + mainloop.
-             // we can process it now as we see fit, so release thread lock
+                  // take a lock on grabbing thread debug info like backtraces
+                  eina_spinlock_take(&_eina_debug_thread_lock);
+                  // reset our "stack" of memory se use to dump thread info into
+                  _eina_debug_chunk_tmp_reset();
+                  // get an array of pointers for the backtrace array for main + th
+                  _bt_buf = _eina_debug_chunk_tmp_push
+                    ((1 + _eina_debug_thread_active_num) * sizeof(void *));
+                  if (!_bt_buf) goto err;
+                  // get an array of pointers for the timespec array for mainloop + th
+                  _bt_ts = _eina_debug_chunk_tmp_push
+                    ((1 + _eina_debug_thread_active_num) * sizeof(struct timespec));
+                  if (!_bt_ts) goto err;
+                  // get an array of pointers for the cpuid array for mainloop + th
+                  _bt_cpu = _eina_debug_chunk_tmp_push
+                    ((1 + _eina_debug_thread_active_num) * sizeof(int));
+                  if (!_bt_cpu) goto err;
+                  // now get an array of void pts for mainloop bt
+                  _bt_buf[0] = _eina_debug_chunk_tmp_push(EINA_MAX_BT * sizeof(void *));
+                  if (!_bt_buf[0]) goto err;
+                  // get an array of void ptrs for each thread we know about for bt
+                  for (i = 0; i < _eina_debug_thread_active_num; i++)
+                    {
+                       _bt_buf[i + 1] = _eina_debug_chunk_tmp_push(EINA_MAX_BT * sizeof(void *));
+                       if (!_bt_buf[i + 1]) goto err;
+                    }
+                  // get an array of ints to stor the bt len for mainloop + threads
+                  _bt_buf_len = _eina_debug_chunk_tmp_push
+                    ((1 + _eina_debug_thread_active_num) * sizeof(int));
+                  // collect bt from the mainloop - always there
+                  _eina_debug_collect_bt(_eina_debug_thread_mainloop);
+                  // now collect per thread
+                  for (i = 0; i < _eina_debug_thread_active_num; i++)
+                    _eina_debug_collect_bt(_eina_debug_thread_active[i]);
+                  // we're done probing. now collec all the "i'm done" msgs on the
+                  // semaphore for every thread + mainloop
+                  for (i = 0; i < (_eina_debug_thread_active_num + 1); i++)
+                    eina_semaphore_lock(&_eina_debug_monitor_return_sem);
+                  // we now have gotten all the data from all threadd + mainloop.
+                  // we can process it now as we see fit, so release thread lock
 //// XXX: some debug so we can see the bt's we collect - will go
-//             for (i = 0; i < (_eina_debug_thread_active_num + 1); i++)
-//               {
-//                  _eina_debug_dump_fhandle_bt(stderr, _bt_buf[i], _bt_buf_len[i]);
-//               }
+//                  for (i = 0; i < (_eina_debug_thread_active_num + 1); i++)
+//                    {
+//                       _eina_debug_dump_fhandle_bt(stderr, _bt_buf[i], _bt_buf_len[i]);
+//                    }
 err:
-             eina_spinlock_release(&_eina_debug_thread_lock);
+                  eina_spinlock_release(&_eina_debug_thread_lock);
 //// XXX: some debug just to see how well we perform - will go
-             bts++;
-             if (bts >= 10000)
+                  bts++;
+                  if (bts >= 10000)
+                    {
+                       t = get_time();
+                       fprintf(stderr, "%1.5f bt's per sec\n", (double)bts / (t - t0));
+                       t0 = t;
+                       bts = 0;
+                    }
+               }
+             if (poll_cpu)
                {
-                  t = get_time();
-                  fprintf(stderr, "%1.5f bt's per sec\n", (double)bts / (t - t0));
-                  t0 = t;
-                  bts = 0;
+                  // XXX: opendir /proc/sefl/task
+//                  eina_evlog("*cpustat", NULL, 0.0, cpustat);
                }
           }
      }

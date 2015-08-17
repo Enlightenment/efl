@@ -63,14 +63,17 @@ struct _Eina_Evlog_Buf
  *
  * "+eventname"
  * "-eventname"
- * "!eventname"
  * ">eventname"
  * "<eventname"
+ * "!eventname"
+ * "*eventname"
  *
  * etc. The "+" char means an event is beginning (and any subsequent
  * events logged are really children of this event). The "-" char means an
  * event is ending and so all child events SHOULD have ended by now. A "!"
- * character means the event is a one-off with no beginning or end. A ">"
+ * character means the event is a one-off with no beginning or end. A"*"
+ * Means this is special metadata and the defail field may need special
+ * parsing based on the eventname, so ignroe unless known.  A ">"
  * character means we begin this "state" of the process (these are separate
  * to "+" and "-" events and don't nest - arenot related to a thread or
  * any other event, but just a state). "<" Ends the given state given by
