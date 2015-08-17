@@ -831,9 +831,6 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    // and one of them can delete elm_entry.
    evas_object_ref(obj);
 
-   if (sd->cursor_pos != 0)
-     elm_entry_cursor_pos_set(obj, sd->cursor_pos);
-
    if (elm_widget_focus_get(obj))
      edje_object_signal_emit(sd->entry_edje, "elm,action,focus", "elm");
 
@@ -2689,6 +2686,8 @@ _text_append_idler(void *data)
      }
    else
      {
+        edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
+              EDJE_CURSOR_MAIN, sd->cursor_pos);
         free(sd->append_text_left);
         sd->append_text_left = NULL;
         sd->append_text_idler = NULL;
@@ -2926,6 +2925,8 @@ _entry_text_append(Evas_Object* obj, const char* entry, Eina_Bool set)
                {
                   edje_object_part_text_append(sd->entry_edje, "elm.text", entry);
                }
+             edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
+                   EDJE_CURSOR_MAIN, sd->cursor_pos);
              eo_do(obj, eo_event_callback_call(ELM_ENTRY_EVENT_TEXT_SET_DONE, NULL));
           }
      }
