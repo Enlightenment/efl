@@ -97,7 +97,8 @@ lib/ector/software/sw_ft_math.c \
 lib/ector/software/sw_ft_raster.c \
 lib/ector/software/sw_ft_stroker.c \
 lib/ector/software/ector_drawhelper.c \
-lib/ector/software/ector_drawhelper_sse2.c
+lib/ector/software/ector_drawhelper_sse2.c \
+lib/ector/software/ector_drawhelper_neon.c
 
 installed_ectorsoftwareheadersdir = $(includedir)/ector-@VMAJ@/software
 nodist_installed_ectorsoftwareheaders_DATA = $(ector_eolian_software_h)
