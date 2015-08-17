@@ -155,3 +155,8 @@ group { name: "elm/focus_highlight/top/default";
       }
    }
 }
+
+group { name: "elm/focus_highlight/top/blank";
+   parts {
+   }
+}
