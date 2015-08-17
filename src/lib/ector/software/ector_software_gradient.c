@@ -71,61 +71,67 @@ _ease_linear(double t)
     return t;
 }
 
-static void
+static Eina_Bool
 _generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_count, uint *color_table, int size)
 {
-    int pos = 0;
-    Efl_Gfx_Gradient_Stop *curr, *next;
-    assert(stop_count > 0);
+   int dist, idist, pos = 0, i;
+   Eina_Bool alpha = EINA_FALSE;
+   Efl_Gfx_Gradient_Stop *curr, *next;
+   uint current_color, next_color;
+   double delta, t, incr, fpos;
+   assert(stop_count > 0);
 
-    curr = gradient_stops;
-    uint current_color = ECTOR_ARGB_JOIN(curr->a, curr->r, curr->g, curr->b);
-    double incr = 1.0 / (double)size;
-    double fpos = 1.5 * incr;
+   curr = gradient_stops;
+   if (curr->a != 255) alpha = EINA_TRUE;
+   current_color = ECTOR_ARGB_JOIN(curr->a, curr->r, curr->g, curr->b);
+   incr = 1.0 / (double)size;
+   fpos = 1.5 * incr;
 
-    color_table[pos++] = current_color;
+   color_table[pos++] = current_color;
 
-    while (fpos <= curr->offset)
-      {
-         color_table[pos] = color_table[pos - 1];
-         pos++;
-         fpos += incr;
-      }
+   while (fpos <= curr->offset)
+     {
+        color_table[pos] = color_table[pos - 1];
+        pos++;
+        fpos += incr;
+     }
 
-    for (int i = 0; i < stop_count - 1; ++i)
-      {
-         curr = (gradient_stops + i);
-         next = (gradient_stops + i + 1);
-         double delta = 1/(next->offset - curr->offset);
-         uint next_color = ECTOR_ARGB_JOIN(next->a, next->r, next->g, next->b);
-         BLEND_FUNC func = &_ease_linear;
-         while (fpos < next->offset && pos < size)
-           {
-              double t = func((fpos - curr->offset) * delta);
-              int dist = (int)(256 * t);
-              int idist = 256 - dist;
-              color_table[pos] = INTERPOLATE_PIXEL_256(current_color, idist, next_color, dist);
-              ++pos;
-              fpos += incr;
-           }
-         current_color = next_color;
-      }
+   for (i = 0; i < stop_count - 1; ++i)
+     {
+        curr = (gradient_stops + i);
+        next = (gradient_stops + i + 1);
+        delta = 1/(next->offset - curr->offset);
+        if (next->a != 255) alpha = EINA_TRUE;
+        next_color = ECTOR_ARGB_JOIN(next->a, next->r, next->g, next->b);
+        BLEND_FUNC func = &_ease_linear;
+        while (fpos < next->offset && pos < size)
+          {
+             t = func((fpos - curr->offset) * delta);
+             dist = (int)(256 * t);
+             idist = 256 - dist;
+             color_table[pos] = INTERPOLATE_PIXEL_256(current_color, idist, next_color, dist);
+             ++pos;
+             fpos += incr;
+          }
+        current_color = next_color;
+     }
 
-    for (;pos < size; ++pos)
-      color_table[pos] = current_color;
+   for (;pos < size; ++pos)
+     color_table[pos] = current_color;
 
-    // Make sure the last color stop is represented at the end of the table
-    color_table[size-1] = current_color;
+   // Make sure the last color stop is represented at the end of the table
+   color_table[size-1] = current_color;
+   return alpha;
 }
 
 
 void
 update_color_table(Ector_Renderer_Software_Gradient_Data *gdata)
 {
-   if(gdata->color_table) return;
+   if (gdata->color_table) return;
 
    gdata->color_table = malloc(GRADIENT_STOPTABLE_SIZE * 4);
-   _generate_gradient_color_table(gdata->gd->colors, gdata->gd->colors_count, gdata->color_table, GRADIENT_STOPTABLE_SIZE);
+   gdata->alpha = _generate_gradient_color_table(gdata->gd->colors, gdata->gd->colors_count, gdata->color_table, GRADIENT_STOPTABLE_SIZE);
 }
 
 void
