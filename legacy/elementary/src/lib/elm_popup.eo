@@ -122,7 +122,7 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
               Normally content area does not contain scroller.
 
-              @since 1.16
+              @since 1.15.1
             ]]
          }
          get {
@@ -130,7 +130,7 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
               Normally content area does not contain scroller.
 
-              @since 1.16
+              @since 1.15.1
             ]]
          }
          values {
