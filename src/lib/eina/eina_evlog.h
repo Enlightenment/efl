@@ -64,13 +64,19 @@ struct _Eina_Evlog_Buf
  * "+eventname"
  * "-eventname"
  * "!eventname"
+ * ">eventname"
+ * "<eventname"
  *
  * etc. The "+" char means an event is beginning (and any subsequent
  * events logged are really children of this event). The "-" char means an
  * event is ending and so all child events SHOULD have ended by now. A "!"
- * character means the event is a one-off with no beginning or end. Any string
- * following this initial character is the eventy name (and must be provided
- * in the exact same string at both + and - events). This is what will be
+ * character means the event is a one-off with no beginning or end. A ">"
+ * character means we begin this "state" of the process (these are separate
+ * to "+" and "-" events and don't nest - arenot related to a thread or
+ * any other event, but just a state). "<" Ends the given state given by
+ * the "eventname" spart of the string.  Any string following this initial
+ * character is the event or state name (and must be provided in the exact
+ * same string at both "+", "<" and "-", ">" events). This is what will be
  * displayed in a debugger (and may be a well known string thus given a nice
  * UI flourish with icons, labels and colors, so don't change this string
  * unless you want to impact such visibility of these events). The event

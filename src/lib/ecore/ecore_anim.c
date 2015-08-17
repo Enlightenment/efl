@@ -247,6 +247,7 @@ static void
 _begin_tick(void)
 {
    if (ticking) return;
+   eina_evlog(">animator", NULL, ecore_time_get(), NULL);
    ticking = 1;
    switch (src)
      {
@@ -267,6 +268,7 @@ static void
 _end_tick(void)
 {
    if (!ticking) return;
+   eina_evlog("<animator", NULL, ecore_time_get(), NULL);
    ticking = 0;
 
    _timer_tick_end();
