@@ -95,7 +95,8 @@ lib/ector/software/ector_software_rasterizer.c \
 lib/ector/software/ector_software_surface.c \
 lib/ector/software/sw_ft_math.c \
 lib/ector/software/sw_ft_raster.c \
-lib/ector/software/sw_ft_stroker.c
+lib/ector/software/sw_ft_stroker.c \
+lib/ector/software/ector_drawhelper.c
 
 installed_ectorsoftwareheadersdir = $(includedir)/ector-@VMAJ@/software
 nodist_installed_ectorsoftwareheaders_DATA = $(ector_eolian_software_h)
@@ -147,7 +148,7 @@ endif
 EXTRA_DIST += \
 lib/ector/ector_private.h \
 lib/ector/cairo/ector_cairo_private.h \
-lib/ector/software/ector_blend_private.h \
+lib/ector/software/ector_drawhelper_private.h \
 lib/ector/software/ector_software_private.h \
 lib/ector/software/sw_ft_math.h \
 lib/ector/software/sw_ft_raster.h \
