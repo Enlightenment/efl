@@ -378,6 +378,9 @@ void
 _ector_renderer_software_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
 {
    Eo *parent;
+   //FIXME, As base class  destructor can't call destructor of mixin class.
+   // call explicit API to free shape data.
+   eo_do(obj, efl_gfx_shape_reset());
 
    if (pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
    if (pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
