@@ -8,8 +8,6 @@
 #include "ector_private.h"
 #include "ector_software_private.h"
 
-static unsigned int _software_count = 0;
-
 typedef struct _Ector_Renderer_Software_Base_Data Ector_Renderer_Software_Base_Data;
 struct _Ector_Renderer_Software_Base_Data
 {
@@ -69,14 +67,9 @@ static Eo *
 _ector_software_surface_eo_base_constructor(Eo *obj,
                                             Ector_Software_Surface_Data *pd EINA_UNUSED)
 {
-  obj = eo_do_super_ret(obj, ECTOR_SOFTWARE_SURFACE_CLASS, obj, eo_constructor());
-  if(_software_count == 0)
-    {
-       pd->software = (Software_Rasterizer *) calloc(1, sizeof(Software_Rasterizer));
-       ector_software_rasterizer_init(pd->software);
-    }
-  _software_count++;
-
+   obj = eo_do_super_ret(obj, ECTOR_SOFTWARE_SURFACE_CLASS, obj, eo_constructor());
+   pd->software = (Software_Rasterizer *) calloc(1, sizeof(Software_Rasterizer));
+   ector_software_rasterizer_init(pd->software);
   return obj;
 }
 
@@ -84,8 +77,6 @@ static void
 _ector_software_surface_eo_base_destructor(Eo *obj EINA_UNUSED,
                                            Ector_Software_Surface_Data *pd EINA_UNUSED)
 {
-   --_software_count;
-   if (_software_count > 0) return;
    ector_software_rasterizer_done(pd->software);
    free(pd->software);
    pd->software = NULL;
