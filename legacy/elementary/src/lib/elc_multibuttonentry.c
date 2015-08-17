@@ -92,8 +92,9 @@ _elm_multibuttonentry_elm_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Data 
      {
         ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_item, item);
         if (VIEW(item))
-          elm_layout_theme_set
-            (VIEW(item), "multibuttonentry", "btn", elm_widget_style_get(obj));
+          if (!elm_layout_theme_set
+              (VIEW(item), "multibuttonentry", "btn", elm_widget_style_get(obj)))
+            CRI("Failed to set layout!");
      }
 
    elm_widget_theme_object_set
