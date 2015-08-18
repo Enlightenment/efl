@@ -36,7 +36,7 @@ typedef struct _Ecore_Wl2_Display Ecore_Wl2_Display;
 
 typedef struct _Ecore_Wl2_Global
 {
-   const char *name;
+   Eina_Stringshare *interface;
    unsigned int id, version;
 } Ecore_Wl2_Global;
 
