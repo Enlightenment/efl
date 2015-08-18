@@ -10,6 +10,10 @@ static int _ecore_wl2_init_count = 0;
 /* external variables */
 int _ecore_wl2_log_dom = -1;
 
+/* public API variables */
+EAPI int ECORE_WL2_EVENT_GLOBAL_ADDED = 0;
+EAPI int ECORE_WL2_EVENT_GLOBAL_REMOVED = 0;
+
 /* public API functions */
 EAPI int
 ecore_wl2_init(void)
@@ -40,6 +44,13 @@ ecore_wl2_init(void)
      {
         ERR("Could not initialize Ecore_Event");
         goto ecore_event_err;
+     }
+
+   /* handle creating new Ecore_Wl2 event types */
+   if (!ECORE_WL2_EVENT_GLOBAL_ADDED)
+     {
+        ECORE_WL2_EVENT_GLOBAL_ADDED = ecore_event_type_new();
+        ECORE_WL2_EVENT_GLOBAL_REMOVED = ecore_event_type_new();
      }
 
    return _ecore_wl2_init_count;
