@@ -32,7 +32,46 @@ typedef struct _Ecore_Wl_Window Ecore_Wl_Window;
 EAPI extern int ECORE_WL2_EVENT_GLOBAL_ADDED;
 EAPI extern int ECORE_WL2_EVENT_GLOBAL_REMOVED;
 
+/**
+ * @file
+ * @brief Ecore functions for dealing with the Wayland display protocol
+ *
+ * @defgroup Ecore_Wl2_Group Ecore_Wl2 - Wayland integration
+ * @ingroup Ecore
+ *
+ * Ecore_Wl2 provides a wrapper and convenience functions for using the
+ * Wayland protocol in implementing a window system. Function groups for
+ * this part of the library include the following:
+ *
+ * @li @ref Ecore_Wl2_Init_Group
+ * @li @ref Ecore_Wl2_Display_Group
+ */
+
+/**
+ * @defgroup Ecore_Wl2_Init_Group Wayland Library Init and Shutdown Functions
+ * @ingroup Ecore_Wl2_Group
+ *
+ * Functions that start and shutdown the Ecore Wl2 Library.
+ */
+
+/**
+ * Initialize the Ecore_Wl2 library
+ *
+ * @return  The number of times the library has been initialized without being
+ *          shutdown. 0 is returned if an error occurs.
+ *
+ * @ingroup Ecore_Wl2_Init_Group
+ */
 EAPI int ecore_wl2_init(void);
+
+/**
+ * Shutdown the Ecore_Wl2 Library
+ *
+ * @return  The number of times the library has been initialized without
+ *          being shutdown.
+ *
+ * @ingroup Ecore_Wl2_Init_Group
+ */
 EAPI int ecore_wl2_shutdown(void);
 
 /* # ifdef __cplusplus */
