@@ -297,21 +297,18 @@ _access_obj_process(Eo *obj, Eina_Bool is_access)
 static void
 _populate_theme_scroll(Elm_Popup_Data *sd)
 {
-   const char *content_area_width;
-
    if (sd->content_area)
      {
-        content_area_width = edje_object_data_get(
-           elm_layout_edje_get(sd->content_area), "scroller_enable");
-        if (!content_area_width)
-          sd->theme_scroll = EINA_FALSE;
-        else if (!strcmp(content_area_width, "on"))
-          sd->theme_scroll = EINA_TRUE;
-        else
-          sd->theme_scroll = EINA_FALSE;
+        const char *content_area_width =
+          edje_object_data_get(elm_layout_edje_get(sd->content_area),
+                               "scroller_enable");
+        if ((content_area_width) && (!strcmp(content_area_width, "on")))
+          {
+             sd->theme_scroll = EINA_TRUE;
+             return;
+          }
      }
-   else
-     sd->theme_scroll = EINA_FALSE;
+   sd->theme_scroll = EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
@@ -450,8 +447,7 @@ _elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
 
         if (!sd->theme_scroll && sd->scroll)
           {
-             if (minw < sd->max_sc_w)
-               minw = sd->max_sc_w;
+             if (minw < sd->max_sc_w) minw = sd->max_sc_w;
           }
         evas_object_size_hint_min_set(sd->content_area, minw, minh);
 
