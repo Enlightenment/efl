@@ -151,7 +151,7 @@ _cb_globals_hash_del(void *data)
 }
 
 EAPI Ecore_Wl2_Display *
-ecore_wl2_display_create(void)
+ecore_wl2_display_create(const char *name)
 {
    Ecore_Wl2_Display *ewd;
    struct wl_event_loop *loop;
@@ -168,11 +168,23 @@ ecore_wl2_display_create(void)
         goto create_err;
      }
 
-   ewd->name = wl_display_add_socket_auto(ewd->wl.display);
-   if (!ewd->name)
+   if (!name)
      {
-        ERR("Failed to add display socket: %m");
-        goto socket_err;
+        ewd->name = wl_display_add_socket_auto(ewd->wl.display);
+        if (!ewd->name)
+          {
+             ERR("Failed to add display socket: %m");
+             goto socket_err;
+          }
+     }
+   else
+     {
+        ewd->name = strdup(name);
+        if (wl_display_add_socket(ewd->wl.display, name))
+          {
+             ERR("Failed to add display socket: %m");
+             goto socket_err;
+          }
      }
 
    loop = wl_display_get_event_loop(ewd->wl.display);

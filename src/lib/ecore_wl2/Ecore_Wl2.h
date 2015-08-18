@@ -106,11 +106,13 @@ EAPI int ecore_wl2_shutdown(void);
  * use with compositors, or to create a new display for use in nested
  * compositors.
  *
+ * @param name The display target name to create. If @c NULL, a default
+ *             display name will be assigned.
  * @return The newly created Ecore_Wl2_Display
  *
  * @ingroup Ecore_Wl2_Display_Group
  */
-EAPI Ecore_Wl2_Display *ecore_wl2_display_create(void);
+EAPI Ecore_Wl2_Display *ecore_wl2_display_create(const char *name);
 
 /**
  * Connect to an existing Wayland display
