@@ -8,6 +8,7 @@ installed_ecorewl2mainheadersdir = $(includedir)/ecore-wl2-@VMAJ@
 dist_installed_ecorewl2mainheaders_DATA = lib/ecore_wl2/Ecore_Wl2.h
 
 lib_ecore_wl2_libecore_wl2_la_SOURCES = \
+lib/ecore_wl2/ecore_wl2_display.c \
 lib/ecore_wl2/ecore_wl2.c \
 lib/ecore_wl2/ecore_wl2_private.h
 
