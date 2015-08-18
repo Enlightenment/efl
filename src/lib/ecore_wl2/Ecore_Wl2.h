@@ -7,6 +7,9 @@
 # include <wayland-cursor.h>
 # include <xkbcommon/xkbcommon.h>
 
+# define WL_HIDE_DEPRECATED
+# include <wayland-server.h>
+
 # ifdef EAPI
 #  undef EAPI
 # endif
@@ -73,6 +76,42 @@ EAPI int ecore_wl2_init(void);
  * @ingroup Ecore_Wl2_Init_Group
  */
 EAPI int ecore_wl2_shutdown(void);
+
+/**
+ * @defgroup Ecore_Wl2_Display_Group Wayland Library Display Functions
+ * @ingroup Ecore_Wl2_Group
+ *
+ * Functions that deal with creating, connecting, or interacting with
+ * Wayland displays
+ */
+
+/**
+ * Create a new Wayland display
+ *
+ * @brief This function is typically used to create a new display for
+ * use with compositors, or to create a new display for use in nested
+ * compositors.
+ *
+ * @return The newly created wl_display
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ */
+EAPI struct wl_display *ecore_wl2_display_create(void);
+
+/**
+ * Connect to an existing Wayland display
+ *
+ * @brief This function is typically used by clients to connect to an
+ * existing wl_display.
+ *
+ * @param name The display target name to connect to. If @c NULL, the default
+ *             display is assumed.
+ *
+ * @return The wl_display which was connected to
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ */
+EAPI struct wl_display *ecore_wl2_display_connect(const char *name);
 
 /* # ifdef __cplusplus */
 /* } */
