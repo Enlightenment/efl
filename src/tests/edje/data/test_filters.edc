@@ -29,7 +29,9 @@ collections {
       filter {
          name: "filter3";
          script {
-            blend {}
+            if not a then a = 255 end
+            fill { color = (color('lime') * a) }
+            blend { color = (color('red') * a) }
          }
       }
    }
@@ -53,7 +55,7 @@ collections {
          }
          part { name: "mask";
             type: IMAGE;
-            no_render: 1; 
+            no_render: 1;
             description { state: "default" 0.0;
                rel1.relative: 0 0;
                rel2.relative: 1 1;
@@ -62,9 +64,43 @@ collections {
                image.normal: "pnl.png";
             }
          }
-         part { name: "text";
+         proxy { "prxy";
+            desc { "default";
+               filter {
+                  code: "filter3";
+                  data: "a" "96";
+               }
+               max: 64 -1;
+               align: 1 0.5;
+               source: "mask";
+               fill {
+                  type: TILE;
+                  origin {
+                     relative: 0 0;
+                     offset: 0 0;
+                  }
+                  size {
+                     relative: 1 1;
+                     offset: -1 -1;
+                  }
+               }
+            }
+         }
+         image {
+            "img";
+            desc {
+               "default";
+               image.normal: "pnl.png";
+               max: 64 -1;
+               align: 0 0.5;
+               filter.code: "filter3";
+            }
+         }
+         part {
+            name: "text";
             type: TEXT;
-            description { state: "default" 0.0;
+            description {
+               state: "default" 0.0;
                rel1.relative: 0 0;
                rel2.relative: 1 1;
                rel1.to: "background";
@@ -78,7 +114,7 @@ collections {
                filter {
                   code: "filterfile";
                   source: "mask";
-                  data: "mycolor" "#f0f8"; 
+                  data: "mycolor" "#f0f8";
                   data: "cc" "color_class('cc1')";
                }
                color: 255 80 0 200;
