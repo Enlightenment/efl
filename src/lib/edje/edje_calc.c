@@ -2834,29 +2834,30 @@ _edje_part_recalc_single(Edje *ed,
              if (lminh > minh) minh = lminh;
           }
      }
-   else if ((ep->part->type == EDJE_PART_TYPE_IMAGE) &&
-            (chosen_desc->min.limit || chosen_desc->max.limit))
+   else if (ep->part->type == EDJE_PART_TYPE_IMAGE)
      {
-        Evas_Coord w, h;
+        if (chosen_desc->min.limit || chosen_desc->max.limit)
+          {
+             Evas_Coord w, h;
 
-        /* We only need pos to find the right image that would be displayed */
-        /* Yes, if someone set aspect preference to SOURCE and also max,min
+             /* We only need pos to find the right image that would be displayed */
+             /* Yes, if someone set aspect preference to SOURCE and also max,min
            to SOURCE, it will be under efficient, but who cares at the
            moment. */
-        _edje_real_part_image_set(ed, ep, NULL, pos);
-        evas_object_image_size_get(ep->object, &w, &h);
+             _edje_real_part_image_set(ed, ep, NULL, pos);
+             evas_object_image_size_get(ep->object, &w, &h);
 
-        if (chosen_desc->min.limit)
-          {
-             if (w > minw) minw = w;
-             if (h > minh) minh = h;
+             if (chosen_desc->min.limit)
+               {
+                  if (w > minw) minw = w;
+                  if (h > minh) minh = h;
+               }
+             if (chosen_desc->max.limit)
+               {
+                  if ((maxw <= 0) || (w < maxw)) maxw = w;
+                  if ((maxh <= 0) || (h < maxh)) maxh = h;
+               }
           }
-        if (chosen_desc->max.limit)
-          {
-             if ((maxw <= 0) || (w < maxw)) maxw = w;
-             if ((maxh <= 0) || (h < maxh)) maxh = h;
-          }
-
         _edje_part_recalc_single_filter(ed, ep, desc, chosen_desc, pos);
      }
    else if (ep->part->type == EDJE_PART_TYPE_PROXY)
