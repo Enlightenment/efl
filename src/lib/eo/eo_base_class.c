@@ -977,11 +977,21 @@ EOLIAN static void
 _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
 {
    Eo *child;
+   Eo_Base_Data *child_pd;
 
    DBG("%p - %s.", obj, eo_class_name_get(MY_CLASS));
 
-   EINA_LIST_FREE(pd->children, child)
-      eo_do(child, eo_parent_set(NULL));
+   // special removal - remove from children list by hand after getting
+   // child handle in case unparent method is overridden and does
+   // extra things like removes other children too later on in the list
+   while (pd->children)
+     {
+        child = eina_list_data_get(pd->children);
+        child_pd = eo_data_scope_get(child, EO_BASE_CLASS);
+        pd->children = eina_list_remove_list(pd->children, pd->children);
+        child_pd->parent_list = NULL;
+        eo_do(child, eo_parent_set(NULL));
+     }
 
    _eo_generic_data_del_all(pd);
    _wref_destruct(pd);
