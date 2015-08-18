@@ -294,6 +294,11 @@ struct _EVGL_Resource
    struct {
         GLclampf r, g, b, a;
    } clear_color;
+   struct {
+        void *data;
+        void *surface;
+        void *context;
+   } stored;
 
 };
 

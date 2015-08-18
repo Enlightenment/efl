@@ -59,6 +59,55 @@ static Eina_Bool eng_gl_surface_lock(void *data, void *surface);
 static Eina_Bool eng_gl_surface_unlock(void *data, void *surface);
 static Eina_Bool eng_gl_surface_read_pixels(void *data, void *surface, int x, int y, int w, int h, Evas_Colorspace cspace, void *pixels);
 
+Eina_Bool _need_context_restore = EINA_FALSE;
+
+void
+_context_restore(void)
+{
+   EVGL_Resource *rsc = _evgl_tls_resource_get();
+   if (rsc)
+     {
+        if (rsc->id == evgl_engine->main_tid)
+          {
+             evgl_make_current(rsc->stored.data, rsc->stored.surface, rsc->stored.context);
+             _need_context_restore = EINA_FALSE;
+          }
+     }
+}
+
+static inline void
+_context_store(void *data, void *surface, void *context)
+{
+   EVGL_Resource *rsc = _evgl_tls_resource_get();
+   if (rsc)
+     {
+        if (rsc->id == evgl_engine->main_tid)
+          {
+             _need_context_restore = EINA_FALSE;
+    
+             rsc->stored.data = data;
+             rsc->stored.surface = surface;
+             rsc->stored.context = context;
+          }
+     }
+}
+
+static inline void
+_context_stored_reset(void *data EINA_UNUSED, void *surface)
+{
+   EVGL_Resource *rsc = _evgl_tls_resource_get();
+   if (rsc && rsc->stored.surface == surface)
+     {
+        _need_context_restore = EINA_FALSE;
+        rsc->stored.data = NULL;
+        rsc->stored.surface = NULL;
+        rsc->stored.context = NULL;
+     }
+}
+
+#define CONTEXT_STORE(data, surface, context) _context_store(data, surface, context)
+#define CONTEXT_STORED_RESET(data, surface) _context_stored_reset(data, surface)
+
 static void
 eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h, Eina_Bool do_async EINA_UNUSED)
 {
@@ -1420,6 +1469,7 @@ eng_gl_surface_destroy(void *data, void *surface)
    EVGL_Surface  *sfc = (EVGL_Surface *)surface;
 
    EVGLINIT(data, 0);
+   CONTEXT_STORED_RESET(data, surface);
    return evgl_surface_destroy(data, sfc);
 }
 
@@ -1456,6 +1506,7 @@ eng_gl_make_current(void *data, void *surface, void *context)
    if (ctx)
      {
         Evas_Engine_GL_Context *gl_context;
+        CONTEXT_STORE(data, surface, context);
 
         gl_context = re->window_gl_context_get(re->software.ob);
         if ((gl_context->havestuff) ||

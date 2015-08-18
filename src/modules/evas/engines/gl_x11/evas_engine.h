@@ -218,4 +218,7 @@ _re_wincheck(Outbuf *ob)
 Eina_Bool __glXMakeContextCurrent(Display *disp, GLXDrawable glxwin,
                                   GLXContext context);
 #endif
+
+extern void (*glsym_evas_gl_context_restore_set) (Eina_Bool enable);
+
 #endif

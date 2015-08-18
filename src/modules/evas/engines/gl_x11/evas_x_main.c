@@ -1,5 +1,7 @@
 #include "evas_engine.h"
 
+# define SET_RESTORE_CONTEXT() do { if (glsym_evas_gl_context_restore_set) glsym_evas_gl_context_restore_set(EINA_TRUE); } while(0)
+
 static Eina_TLS _outbuf_key = 0;
 static Eina_TLS _context_key = 0;
 
@@ -262,6 +264,7 @@ try_gles2:
    if (context == EGL_NO_CONTEXT)
      _tls_context_set(gw->egl_context[0]);
    
+   SET_RESTORE_CONTEXT();
    if (eglMakeCurrent(gw->egl_disp,
                       gw->egl_surface[0],
                       gw->egl_surface[0],
@@ -576,6 +579,7 @@ eng_window_free(Outbuf *gw)
         glsym_evas_gl_common_context_free(gw->gl_context);
      }
 #ifdef GL_GLES
+   SET_RESTORE_CONTEXT();
    eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
    if (gw->egl_surface[0] != EGL_NO_SURFACE)
       eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
@@ -614,6 +618,7 @@ eng_window_make_current(void *data, void *doit)
    Outbuf *gw = data;
 
 #ifdef GL_GLES
+   SET_RESTORE_CONTEXT();
    if (doit)
      {
         if (!eglMakeCurrent(gw->egl_disp, gw->egl_surface[0], gw->egl_surface[0], gw->egl_context[0]))
@@ -689,6 +694,7 @@ eng_window_use(Outbuf *gw)
 #ifdef GL_GLES
              if (gw->egl_surface[0] != EGL_NO_SURFACE)
                {
+                  SET_RESTORE_CONTEXT();
                   if (eglMakeCurrent(gw->egl_disp,
                                      gw->egl_surface[0],
                                      gw->egl_surface[0],
@@ -724,6 +730,7 @@ eng_window_unsurf(Outbuf *gw)
       glsym_evas_gl_common_context_flush(xwin->gl_context);
    if (xwin == gw)
      {
+        SET_RESTORE_CONTEXT();
         eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         if (gw->egl_surface[0] != EGL_NO_SURFACE)
            eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
@@ -758,6 +765,7 @@ eng_window_resurf(Outbuf *gw)
             (unsigned int)gw->win, eglGetError());
         return;
      }
+   SET_RESTORE_CONTEXT();
    if (eglMakeCurrent(gw->egl_disp,
                       gw->egl_surface[0],
                       gw->egl_surface[0],
@@ -1312,6 +1320,7 @@ void
 eng_gl_context_use(Context_3D *ctx)
 {
 #if GL_GLES
+    SET_RESTORE_CONTEXT();
    if (eglMakeCurrent(ctx->display, ctx->surface,
                       ctx->surface, ctx->context) == EGL_FALSE)
      {

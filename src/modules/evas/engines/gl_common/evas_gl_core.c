@@ -32,7 +32,11 @@ static void _internal_resources_destroy(void *eng_data, EVGL_Resource *rsc);
 #define EVAS_GL_OPTIONS_DIRECT_MEMORY_OPTIMIZE 0x1000
 #define EVAS_GL_OPTIONS_DIRECT_OVERRIDE        0x2000
 
-
+extern void (*EXT_FUNC_GLES1(glGenFramebuffersOES)) (GLsizei n, GLuint* framebuffers);
+extern void (*EXT_FUNC_GLES1(glBindFramebufferOES)) (GLenum target, GLuint framebuffer);
+extern void (*EXT_FUNC_GLES1(glFramebufferTexture2DOES)) (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
+extern void (*EXT_FUNC_GLES1(glFramebufferRenderbufferOES)) (GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
+extern GLenum (*EXT_FUNC_GLES1(glCheckFramebufferStatusOES)) (GLenum target);
 //---------------------------------------------------------------//
 // Internal Resources:
 //  - Surface and Context used for internal buffer creation
@@ -222,12 +226,12 @@ _texture_attach_2d(GLuint tex, GLenum attach, GLenum attach2, int samples, Eina_
      }
    else if (use_extension)
      {
-        if (gles1_funcs->glFramebufferTexture2DOES)
-          gles1_funcs->glFramebufferTexture2DOES(GL_FRAMEBUFFER, attach, GL_TEXTURE_2D, tex, 0);
+        if (EXT_FUNC_GLES1(glFramebufferTexture2DOES))
+          EXT_FUNC_GLES1(glFramebufferTexture2DOES)(GL_FRAMEBUFFER, attach, GL_TEXTURE_2D, tex, 0);
 
         if (attach2)
-          if (gles1_funcs->glFramebufferTexture2DOES)
-            gles1_funcs->glFramebufferTexture2DOES(GL_FRAMEBUFFER, attach2, GL_TEXTURE_2D, tex, 0);
+          if (EXT_FUNC_GLES1(glFramebufferTexture2DOES))
+            EXT_FUNC_GLES1(glFramebufferTexture2DOES)(GL_FRAMEBUFFER, attach2, GL_TEXTURE_2D, tex, 0);
      }
    else
      {
@@ -302,8 +306,8 @@ _framebuffer_create(GLuint *buf, Eina_Bool use_extension)
 {
    if (use_extension)
      {
-        if (gles1_funcs && gles1_funcs->glGenFramebuffersOES)
-          gles1_funcs->glGenFramebuffersOES(1, buf);
+        if (EXT_FUNC_GLES1(glGenFramebuffersOES))
+            EXT_FUNC_GLES1(glGenFramebuffersOES)(1, buf);
      }
    else
      {
@@ -316,8 +320,8 @@ _framebuffer_bind(GLuint buf, Eina_Bool use_extension)
 {
    if (use_extension)
      {
-        if (gles1_funcs && gles1_funcs->glBindFramebufferOES)
-          gles1_funcs->glBindFramebufferOES(GL_FRAMEBUFFER, buf);
+        if (EXT_FUNC_GLES1(glBindFramebufferOES))
+          EXT_FUNC_GLES1(glBindFramebufferOES)(GL_FRAMEBUFFER, buf);
      }
    else
      {
@@ -331,8 +335,8 @@ _framebuffer_check(Eina_Bool use_extension)
    GLenum ret = 0;
    if (use_extension)
      {
-        if (gles1_funcs && gles1_funcs->glCheckFramebufferStatusOES)
-          ret = gles1_funcs->glCheckFramebufferStatusOES(GL_FRAMEBUFFER);
+        if (EXT_FUNC_GLES1(glCheckFramebufferStatusOES))
+          ret = EXT_FUNC_GLES1(glCheckFramebufferStatusOES)(GL_FRAMEBUFFER);
      }
    else
      {
@@ -384,8 +388,8 @@ _renderbuffer_attach(GLuint buf, GLenum attach, Eina_Bool use_extension)
 {
    if (use_extension)
      {
-        if (gles1_funcs->glFramebufferRenderbufferOES)
-          gles1_funcs->glFramebufferRenderbufferOES(GL_FRAMEBUFFER, attach, GL_RENDERBUFFER, buf);
+        if (EXT_FUNC_GLES1(glFramebufferRenderbufferOES))
+          EXT_FUNC_GLES1(glFramebufferRenderbufferOES)(GL_FRAMEBUFFER, attach, GL_RENDERBUFFER, buf);
      }
    else
      {
@@ -2944,6 +2948,13 @@ evgl_direct_partial_render_end()
         ctx->partial_render = 0;
      }
 }
+
+void
+evas_gl_context_restore_set(Eina_Bool enable)
+{
+   _need_context_restore = enable;
+}
+
 //-----------------------------------------------------//
 
 

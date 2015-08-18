@@ -1112,4 +1112,8 @@ _comp_tex_sub_2d(Evas_Engine_GL_Context *gc, int x, int y, int w, int h, int fmt
 #undef EAPI
 #define EAPI
 
+extern Eina_Bool _need_context_restore;
+extern void _context_restore(void);
+EAPI void evas_gl_context_restore_set(Eina_Bool enable);
+
 #endif
