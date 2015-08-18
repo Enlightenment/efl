@@ -29,6 +29,12 @@
 typedef struct _Ecore_Wl_Window Ecore_Wl_Window;
 # endif
 
+EAPI extern int ECORE_WL2_EVENT_GLOBAL_ADDED;
+EAPI extern int ECORE_WL2_EVENT_GLOBAL_REMOVED;
+
+EAPI int ecore_wl2_init(void);
+EAPI int ecore_wl2_shutdown(void);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
