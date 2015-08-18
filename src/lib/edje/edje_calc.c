@@ -2460,7 +2460,7 @@ _edje_part_recalc_single_filter(Edje *ed,
    Evas_Object *obj = ep->object;
    Eina_List *li1, *li2;
 
-   /* handle TEXT and IMAGE part types here */
+   /* handle TEXT, IMAGE, PROXY part types here */
    if (ep->part->type == EDJE_PART_TYPE_TEXT)
      {
         Edje_Part_Description_Text *chosen_edt = (Edje_Part_Description_Text *) chosen_desc;
@@ -2476,6 +2476,14 @@ _edje_part_recalc_single_filter(Edje *ed,
         filter = &chosen_edi->filter;
         prev_sources = edi->filter.sources;
         filter_sources = chosen_edi->filter.sources;
+     }
+   else if (ep->part->type == EDJE_PART_TYPE_PROXY)
+     {
+        Edje_Part_Description_Proxy *chosen_edp = (Edje_Part_Description_Proxy *) chosen_desc;
+        Edje_Part_Description_Proxy *edp = (Edje_Part_Description_Proxy *) desc;
+        filter = &chosen_edp->filter;
+        prev_sources = edp->filter.sources;
+        filter_sources = chosen_edp->filter.sources;
      }
    else
      {
@@ -2849,6 +2857,10 @@ _edje_part_recalc_single(Edje *ed,
              if ((maxh <= 0) || (h < maxh)) maxh = h;
           }
 
+        _edje_part_recalc_single_filter(ed, ep, desc, chosen_desc, pos);
+     }
+   else if (ep->part->type == EDJE_PART_TYPE_PROXY)
+     {
         _edje_part_recalc_single_filter(ed, ep, desc, chosen_desc, pos);
      }
 

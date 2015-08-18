@@ -11911,9 +11911,11 @@ st_collections_group_parts_part_description_filter_code(void)
      filter = &(((Edje_Part_Description_Text *)current_desc)->filter);
    else if (current_part->type == EDJE_PART_TYPE_IMAGE)
      filter = &(((Edje_Part_Description_Image *)current_desc)->filter);
+   else if (current_part->type == EDJE_PART_TYPE_PROXY)
+     filter = &(((Edje_Part_Description_Proxy *)current_desc)->filter);
    else
      {
-        ERR("parse error %s:%i. filter set for non-TEXT and non-IMAGE part.",
+        ERR("parse error %s:%i. filter only supported for: TEXT, IMAGE, PROXY.",
             file_in, line - 1);
         exit(-1);
      }
@@ -11952,6 +11954,8 @@ st_collections_group_parts_part_description_filter_source(void)
      filter = &(((Edje_Part_Description_Text *)current_desc)->filter);
    else if (current_part->type == EDJE_PART_TYPE_IMAGE)
      filter = &(((Edje_Part_Description_Image *)current_desc)->filter);
+   else if (current_part->type == EDJE_PART_TYPE_PROXY)
+     filter = &(((Edje_Part_Description_Proxy *)current_desc)->filter);
    else
      {
         ERR("parse error %s:%i. filter set for non-TEXT and non-IMAGE part.",
@@ -12045,6 +12049,8 @@ st_collections_group_parts_part_description_filter_data(void)
      filter = &(((Edje_Part_Description_Text *)current_desc)->filter);
    else if (current_part->type == EDJE_PART_TYPE_IMAGE)
      filter = &(((Edje_Part_Description_Image *)current_desc)->filter);
+   else if (current_part->type == EDJE_PART_TYPE_PROXY)
+     filter = &(((Edje_Part_Description_Proxy *)current_desc)->filter);
    else
      {
         ERR("parse error %s:%i. filter set for non-TEXT and non-IMAGE part.",

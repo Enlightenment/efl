@@ -1502,7 +1502,7 @@ struct _Edje_Part_Description_Proxy
 {
    Edje_Part_Description_Common common;
    Edje_Part_Description_Spec_Proxy proxy;
-   //Edje_Part_Description_Spec_Filter filter;
+   Edje_Part_Description_Spec_Filter filter;
 };
 
 struct _Edje_Part_Description_Text
