@@ -14,6 +14,12 @@ int _ecore_wl2_log_dom = -1;
 EAPI int ECORE_WL2_EVENT_GLOBAL_ADDED = 0;
 EAPI int ECORE_WL2_EVENT_GLOBAL_REMOVED = 0;
 
+static void
+_cb_wl_log_print(const char *format, va_list args)
+{
+   EINA_LOG_DOM_INFO(_ecore_wl2_log_dom, format, args);
+}
+
 /* public API functions */
 EAPI int
 ecore_wl2_init(void)
@@ -52,6 +58,8 @@ ecore_wl2_init(void)
         ECORE_WL2_EVENT_GLOBAL_ADDED = ecore_event_type_new();
         ECORE_WL2_EVENT_GLOBAL_REMOVED = ecore_event_type_new();
      }
+
+   wl_log_set_handler_server(_cb_wl_log_print);
 
    return _ecore_wl2_init_count;
 
