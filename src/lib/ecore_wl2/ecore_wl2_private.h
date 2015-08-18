@@ -47,6 +47,8 @@ struct _Ecore_Wl2_Display
      } wl;
 
    Ecore_Fd_Handler *fd_hdl;
+
+   Eina_Hash *globals;
 };
 
 #endif

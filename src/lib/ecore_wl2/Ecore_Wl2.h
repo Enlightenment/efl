@@ -34,6 +34,18 @@ typedef struct _Ecore_Wl_Window Ecore_Wl_Window;
 
 typedef struct _Ecore_Wl2_Display Ecore_Wl2_Display;
 
+typedef struct _Ecore_Wl2_Global
+{
+   const char *name;
+   unsigned int id, version;
+} Ecore_Wl2_Global;
+
+typedef struct _Ecore_Wl2_Event_Global
+{
+   Eina_Stringshare *interface;
+   unsigned int id, version;
+} Ecore_Wl2_Event_Global;
+
 EAPI extern int ECORE_WL2_EVENT_GLOBAL_ADDED;
 EAPI extern int ECORE_WL2_EVENT_GLOBAL_REMOVED;
 
