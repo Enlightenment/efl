@@ -503,7 +503,7 @@ _filter_buffer_data_set(Evas_Filter_Context *ctx, int bufid, void *data,
    fb->h = h;
 
    fb->backing = _rgba_image_alloc(fb, data);
-   fb->allocated = (!data && (fb->backing != NULL));
+   fb->allocated = (fb->backing != NULL);
    return fb->allocated;
 }
 
@@ -606,13 +606,11 @@ evas_filter_buffer_backing_steal(Evas_Filter_Context *ctx, int bufid)
    buffer = _filter_buffer_get(ctx, bufid);
    if (!buffer) return NULL;
 
+   // we don't hold any reference on this buffer anymore
    buffer->stolen = EINA_TRUE;
 
    if (ctx->gl_engine)
      return buffer->glimage;
-
-   if (ctx->async && buffer->backing)
-     buffer->backing->cache_entry.references++;
 
    return buffer->backing;
 }
