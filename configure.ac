@@ -4834,6 +4834,7 @@ pc/ecore-fb.pc
 pc/ecore-psl1ght.pc
 pc/ecore-sdl.pc
 pc/ecore-wayland.pc
+pc/ecore-wl2.pc
 pc/ecore-win32.pc
 pc/ecore-x.pc
 pc/ecore-evas.pc
