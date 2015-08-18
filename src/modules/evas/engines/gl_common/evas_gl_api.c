@@ -1020,12 +1020,14 @@ static ret evgl_##name param1 { \
 // Open GLES 3.0 APIs
 #define _EVASGL_FUNCTION_BEGIN(ret, name, param1, param2) \
 static ret evgl_gles3_##name param1 { \
+   EVGL_FUNC_BEGIN(); \
    if (!_gles3_api.name) return (ret)0; \
    return _gles3_api.name param2; \
 }
 
 #define _EVASGL_FUNCTION_BEGIN_VOID(name, param1, param2) \
 static void evgl_gles3_##name param1 { \
+   EVGL_FUNC_BEGIN(); \
    if (!_gles3_api.name) return; \
    _gles3_api.name param2; \
 }
