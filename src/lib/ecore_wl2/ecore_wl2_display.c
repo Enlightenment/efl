@@ -4,12 +4,98 @@
 
 #include "ecore_wl2_private.h"
 
+static void
+_cb_global_event_free(void *data EINA_UNUSED, void *event)
+{
+   Ecore_Wl2_Event_Global *ev;
+
+   ev = event;
+   eina_stringshare_del(ev->interface);
+   free(ev);
+}
+
+static void
+_cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const char *interface, unsigned int version)
+{
+   Ecore_Wl2_Display *ewd;
+   Ecore_Wl2_Event_Global *ev;
+
+   ewd = data;
+
+   /* test to see if we have already added this global to our hash */
+   if (!eina_hash_find(ewd->globals, &id))
+     {
+        Ecore_Wl2_Global *global;
+
+        /* allocate space for new global */
+        global = calloc(1, sizeof(Ecore_Wl2_Global));
+        if (!global) return;
+
+        global->id = id;
+        global->interface = eina_stringshare_add(interface);
+        global->version = version;
+
+        /* add this global to our hash */
+        if (!eina_hash_add(ewd->globals, &global->id, global))
+          {
+             eina_stringshare_del(global->interface);
+             free(global);
+          }
+     }
+
+   /* allocate space for event structure */
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Global));
+   if (!ev) return;
+
+   ev->id = id;
+   ev->version = version;
+   ev->interface = eina_stringshare_add(interface);
+
+   /* raise an event saying a new global has been added */
+   ecore_event_add(ECORE_WL2_EVENT_GLOBAL_ADDED, ev,
+                   _cb_global_event_free, NULL);
+}
+
+static void
+_cb_global_remove(void *data, struct wl_registry *registry EINA_UNUSED, unsigned int id)
+{
+   Ecore_Wl2_Display *ewd;
+   Ecore_Wl2_Global *global;
+   Ecore_Wl2_Event_Global *ev;
+
+   ewd = data;
+
+   /* try to find this global in our hash */
+   global = eina_hash_find(ewd->globals, &id);
+   if (!global) return;
+
+   /* allocate space for event structure */
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Global));
+   if (!ev) return;
+
+   ev->id = id;
+   ev->version = global->version;
+   ev->interface = eina_stringshare_add(global->interface);
+
+   /* raise an event saying a global has been removed */
+   ecore_event_add(ECORE_WL2_EVENT_GLOBAL_REMOVED, ev,
+                   _cb_global_event_free, NULL);
+
+   /* delete this global from our hash */
+   eina_hash_del_by_key(ewd->globals, &id);
+}
+
+static const struct wl_registry_listener _registry_listener =
+{
+   _cb_global_add,
+   _cb_global_remove
+};
+
 static Eina_Bool
 _cb_create_data(void *data, Ecore_Fd_Handler *hdl)
 {
    Ecore_Wl2_Display *ewd;
    struct wl_event_loop *loop;
-   /* int ret = 0; */
 
    ewd = data;
 
@@ -50,6 +136,18 @@ _cb_connect_data(void *data, Ecore_Fd_Handler *hdl)
      }
 
    return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_cb_globals_hash_del(void *data)
+{
+   Ecore_Wl2_Global *global;
+
+   global = data;
+
+   eina_stringshare_del(global->interface);
+
+   free(global);
 }
 
 EAPI Ecore_Wl2_Display *
@@ -103,13 +201,14 @@ ecore_wl2_display_connect(const char *name)
    ewd = calloc(1, sizeof(Ecore_Wl2_Display));
    if (!ewd) return NULL;
 
+   ewd->globals = eina_hash_int32_new(_cb_globals_hash_del);
+
    /* try to connect to wayland display with this name */
    ewd->wl.display = wl_display_connect(name);
    if (!ewd->wl.display)
      {
         ERR("Could not connect to display %s: %m", name);
-        free(ewd);
-        return NULL;
+        goto err;
      }
 
    ewd->fd_hdl =
@@ -117,5 +216,13 @@ ecore_wl2_display_connect(const char *name)
                                ECORE_FD_READ | ECORE_FD_ERROR,
                                _cb_connect_data, ewd, NULL, NULL);
 
+   wl_registry_add_listener(wl_display_get_registry(ewd->wl.display),
+                            &_registry_listener, ewd);
+
    return ewd;
+
+err:
+   eina_hash_free(ewd->globals);
+   free(ewd);
+   return NULL;
 }
