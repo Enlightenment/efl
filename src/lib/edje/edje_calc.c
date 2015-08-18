@@ -2465,17 +2465,17 @@ _edje_part_recalc_single_filter(Edje *ed,
      {
         Edje_Part_Description_Text *chosen_edt = (Edje_Part_Description_Text *) chosen_desc;
         Edje_Part_Description_Text *edt = (Edje_Part_Description_Text *) desc;
-        filter = &chosen_edt->text.filter;
-        prev_sources = edt->text.filter.sources;
-        filter_sources = chosen_edt->text.filter.sources;
+        filter = &chosen_edt->filter;
+        prev_sources = edt->filter.sources;
+        filter_sources = chosen_edt->filter.sources;
      }
    else if (ep->part->type == EDJE_PART_TYPE_IMAGE)
      {
         Edje_Part_Description_Image *chosen_edi = (Edje_Part_Description_Image *) chosen_desc;
         Edje_Part_Description_Image *edi = (Edje_Part_Description_Image *) desc;
-        filter = &chosen_edi->image.filter;
-        prev_sources = edi->image.filter.sources;
-        filter_sources = chosen_edi->image.filter.sources;
+        filter = &chosen_edi->filter;
+        prev_sources = edi->filter.sources;
+        filter_sources = chosen_edi->filter.sources;
      }
    else
      {

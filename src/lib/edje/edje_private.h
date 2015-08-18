@@ -1330,7 +1330,6 @@ struct _Edje_Part_Description_Spec_Image
    Eina_Bool      set; /* if image condition it's content */
 
    Edje_Part_Description_Spec_Border border;
-   Edje_Part_Description_Spec_Filter filter;
 };
 
 struct _Edje_Part_Description_Spec_Proxy
@@ -1350,7 +1349,6 @@ struct _Edje_Part_Description_Spec_Text
    Edje_String    style; /* the text style if a textblock */
    Edje_String    font; /* if a specific font is asked for */
    Edje_String    repch; /* replacement char for password mode entry */
-   Edje_Part_Description_Spec_Filter filter;
 
    Edje_Alignment align; /* text alignment within bounds */
    Edje_Color     color3;
@@ -1497,18 +1495,21 @@ struct _Edje_Part_Description_Image
 {
    Edje_Part_Description_Common common;
    Edje_Part_Description_Spec_Image image;
+   Edje_Part_Description_Spec_Filter filter;
 };
 
 struct _Edje_Part_Description_Proxy
 {
    Edje_Part_Description_Common common;
    Edje_Part_Description_Spec_Proxy proxy;
+   //Edje_Part_Description_Spec_Filter filter;
 };
 
 struct _Edje_Part_Description_Text
 {
    Edje_Part_Description_Common common;
    Edje_Part_Description_Spec_Text text;
+   Edje_Part_Description_Spec_Filter filter;
 };
 
 struct _Edje_Part_Description_Box

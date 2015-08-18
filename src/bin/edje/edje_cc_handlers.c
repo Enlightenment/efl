@@ -7048,15 +7048,15 @@ st_collections_group_parts_part_description_inherit(void)
               ted->text.font.str = STRDUP(ted->text.font.str);
 
               /* Filters stuff */
-              ted->text.filter.code = STRDUP(ted->text.filter.code);
-              if (ted->text.filter.code)
+              ted->filter.code = STRDUP(ted->filter.code);
+              if (ted->filter.code)
                 {
                    Eina_List *list, *l;
                    const char *name;
-                   list = ted->text.filter.sources;
-                   ted->text.filter.sources = NULL;
+                   list = ted->filter.sources;
+                   ted->filter.sources = NULL;
                    EINA_LIST_FOREACH(list, l, name)
-                     ted->text.filter.sources = eina_list_append(ted->text.filter.sources, STRDUP(name));
+                     ted->filter.sources = eina_list_append(ted->filter.sources, STRDUP(name));
                 }
 
               data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_source), &(ted->text.id_source), &ted->text.id_source_part);
@@ -11896,9 +11896,9 @@ st_collections_group_parts_part_description_filter_code(void)
    check_arg_count(1);
 
    if (current_part->type == EDJE_PART_TYPE_TEXT)
-     filter = &(((Edje_Part_Description_Text *)current_desc)->text.filter);
+     filter = &(((Edje_Part_Description_Text *)current_desc)->filter);
    else if (current_part->type == EDJE_PART_TYPE_IMAGE)
-     filter = &(((Edje_Part_Description_Image *)current_desc)->image.filter);
+     filter = &(((Edje_Part_Description_Image *)current_desc)->filter);
    else
      {
         ERR("parse error %s:%i. filter set for non-TEXT and non-IMAGE part.",
@@ -11937,9 +11937,9 @@ st_collections_group_parts_part_description_filter_source(void)
          "abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ0123456789_";
 
    if (current_part->type == EDJE_PART_TYPE_TEXT)
-     filter = &(((Edje_Part_Description_Text *)current_desc)->text.filter);
+     filter = &(((Edje_Part_Description_Text *)current_desc)->filter);
    else if (current_part->type == EDJE_PART_TYPE_IMAGE)
-     filter = &(((Edje_Part_Description_Image *)current_desc)->image.filter);
+     filter = &(((Edje_Part_Description_Image *)current_desc)->filter);
    else
      {
         ERR("parse error %s:%i. filter set for non-TEXT and non-IMAGE part.",
@@ -12030,9 +12030,9 @@ st_collections_group_parts_part_description_filter_data(void)
    unsigned k;
 
    if (current_part->type == EDJE_PART_TYPE_TEXT)
-     filter = &(((Edje_Part_Description_Text *)current_desc)->text.filter);
+     filter = &(((Edje_Part_Description_Text *)current_desc)->filter);
    else if (current_part->type == EDJE_PART_TYPE_IMAGE)
-     filter = &(((Edje_Part_Description_Image *)current_desc)->image.filter);
+     filter = &(((Edje_Part_Description_Image *)current_desc)->filter);
    else
      {
         ERR("parse error %s:%i. filter set for non-TEXT and non-IMAGE part.",
