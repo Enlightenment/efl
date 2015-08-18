@@ -7089,6 +7089,18 @@ st_collections_group_parts_part_description_inherit(void)
                    ied->image.tweens[i] = iid_new;
                 }
 
+              /* Filters stuff */
+              ied->filter.code = STRDUP(ied->filter.code);
+              if (ied->filter.code)
+                {
+                   Eina_List *list, *l;
+                   const char *name;
+                   list = ied->filter.sources;
+                   ied->filter.sources = NULL;
+                   EINA_LIST_FOREACH(list, l, name)
+                     ied->filter.sources = eina_list_append(ied->filter.sources, STRDUP(name));
+                }
+
               break;
            }
       case EDJE_PART_TYPE_PROXY:
