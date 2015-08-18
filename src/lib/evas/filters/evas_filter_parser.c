@@ -725,16 +725,43 @@ _lua_implicit_metatable_drop(lua_State *L, const char *name)
 
 // End of all lua metamethods and stuff
 
+static inline void
+_buffer_name_format(char *name /*[64]*/, Evas_Filter_Program *pgm, const char *src)
+{
+   unsigned i;
+
+   if (src)
+     {
+        // Cleanup name and avoid overriding existing globals
+        snprintf(name, 64, "__source_%s", src);
+        name[63] = '\0';
+        for (i = 0; name[i]; i++)
+          {
+             if (!isdigit(name[i]) && !isalpha(name[i]))
+               name[i] = '_';
+          }
+     }
+   else
+     {
+        sprintf(name, "__buffer_%02d", ++pgm->last_bufid);
+     }
+}
+
 static Buffer *
 _buffer_add(Evas_Filter_Program *pgm, const char *name, Eina_Bool alpha,
             const char *src, Eina_Bool manual)
 {
    Buffer *buf;
 
-   if (_buffer_get(pgm, name))
+   buf = _buffer_get(pgm, name);
+   if (buf)
      {
-        ERR("Buffer '%s' already exists", name);
-        return NULL;
+        if (!src)
+          {
+             ERR("Buffer '%s' already exists", name);
+             return NULL;
+          }
+        else return buf;
      }
 
    if (alpha && src)
@@ -750,7 +777,7 @@ _buffer_add(Evas_Filter_Program *pgm, const char *name, Eina_Bool alpha,
    if (!name)
      {
         char bufname[32];
-        snprintf(bufname, sizeof(bufname), "__buffer%02d", ++pgm->last_bufid);
+        _buffer_name_format(bufname, pgm, src);
         buf->name = eina_stringshare_add(bufname);
      }
    else
@@ -829,9 +856,10 @@ _buffer_instruction_parse_run(lua_State *L,
                               Evas_Filter_Program *pgm,
                               Evas_Filter_Instruction *instr)
 {
-   char bufname[32] = {0};
-   const char *src, *rgba;
+   char bufname[64] = {0};
+   const char *src, *type;
    Eina_Bool ok, alpha = EINA_FALSE;
+   Buffer *buf;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
@@ -839,20 +867,25 @@ _buffer_instruction_parse_run(lua_State *L,
    // FIXME: Buffers are still referred to internally by name.
    // This is pretty bad with the switch to Lua.
 
-   rgba = _instruction_param_gets(instr, "type", NULL);
+   type = _instruction_param_gets(instr, "type", NULL);
    src = _instruction_param_gets(instr, "src", NULL);
 
-   alpha = (rgba && !strcasecmp(rgba, "alpha"));
+   alpha = (type && !strcasecmp(type, "alpha"));
 
-   snprintf(bufname, sizeof(bufname), "__buffer%02d", ++pgm->last_bufid);
-   ok = (_buffer_add(pgm, bufname, alpha, src, EINA_TRUE) != NULL);
+   if (src)
+     {
+        if (alpha) WRN("Proxy buffers can't be alpha. Disarding alpha flag.");
+        alpha = EINA_FALSE;
+     }
 
-   if (!ok) return EINA_FALSE;
+   _buffer_name_format(bufname, pgm, src);
+   buf = _buffer_add(pgm, bufname, alpha, src, EINA_TRUE);
+   if (!buf) return EINA_FALSE;
 
    lua_getglobal(L, bufname);
    instr->return_count = 1;
 
-   return ok;
+   return EINA_TRUE;
 }
 
 static int
@@ -2305,22 +2338,26 @@ _filter_program_buffers_set(Evas_Filter_Program *pgm)
    // Register proxies
    if (pgm->proxies)
      {
-        Eina_Iterator *it = eina_hash_iterator_key_new(pgm->proxies);
-        const char *source;
+        Eina_Iterator *it = eina_hash_iterator_tuple_new(pgm->proxies);
+        Eina_Hash_Tuple *tup;
 
-        EINA_ITERATOR_FOREACH(it, source)
+        EINA_ITERATOR_FOREACH(it, tup)
           {
-             // Cleanup name and avoid overriding existing globals
+             const char *source = tup->key;
              char name[64];
-             unsigned i;
-             snprintf(name, 64, "__source_%s", source);
-             name[63] = '\0';
-             for (i = 0; name[i]; i++)
+             Buffer *buf;
+
+             _buffer_name_format(name, pgm, source);
+             buf = _buffer_add(pgm, name, EINA_FALSE, source, EINA_FALSE);
+             if (buf)
                {
-                  if (!isdigit(name[i]) && !isalpha(name[i]))
-                    name[i] = '_';
+                  Evas_Filter_Proxy_Binding *bind = tup->data;
+                  Evas_Object_Protected_Data *obj;
+
+                  obj = eo_data_scope_get(bind->eo_source, EVAS_OBJECT_CLASS);
+                  buf->w = obj->cur->geometry.w;
+                  buf->h = obj->cur->geometry.h;
                }
-             _buffer_add(pgm, name, EINA_FALSE, source, EINA_FALSE);
           }
 
         eina_iterator_free(it);
