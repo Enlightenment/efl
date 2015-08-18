@@ -32,6 +32,8 @@
 typedef struct _Ecore_Wl_Window Ecore_Wl_Window;
 # endif
 
+typedef struct _Ecore_Wl2_Display Ecore_Wl2_Display;
+
 EAPI extern int ECORE_WL2_EVENT_GLOBAL_ADDED;
 EAPI extern int ECORE_WL2_EVENT_GLOBAL_REMOVED;
 
@@ -92,26 +94,26 @@ EAPI int ecore_wl2_shutdown(void);
  * use with compositors, or to create a new display for use in nested
  * compositors.
  *
- * @return The newly created wl_display
+ * @return The newly created Ecore_Wl2_Display
  *
  * @ingroup Ecore_Wl2_Display_Group
  */
-EAPI struct wl_display *ecore_wl2_display_create(void);
+EAPI Ecore_Wl2_Display *ecore_wl2_display_create(void);
 
 /**
  * Connect to an existing Wayland display
  *
  * @brief This function is typically used by clients to connect to an
- * existing wl_display.
+ * existing Wayland display.
  *
  * @param name The display target name to connect to. If @c NULL, the default
  *             display is assumed.
  *
- * @return The wl_display which was connected to
+ * @return The Ecore_Wl2_Display which was connected to
  *
  * @ingroup Ecore_Wl2_Display_Group
  */
-EAPI struct wl_display *ecore_wl2_display_connect(const char *name);
+EAPI Ecore_Wl2_Display *ecore_wl2_display_connect(const char *name);
 
 /* # ifdef __cplusplus */
 /* } */

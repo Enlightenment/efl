@@ -36,4 +36,17 @@ extern int _ecore_wl2_log_dom;
 # endif
 # define CRI(...) EINA_LOG_DOM_CRIT(_ecore_wl2_log_dom, __VA_ARGS__)
 
+struct _Ecore_Wl2_Display
+{
+   const char *name;
+
+   struct
+     {
+        struct wl_display *display;
+        struct wl_registry *registry;
+     } wl;
+
+   Ecore_Fd_Handler *fd_hdl;
+};
+
 #endif
