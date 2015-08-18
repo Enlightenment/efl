@@ -66,3 +66,34 @@ eina_err:
    eina_shutdown();
    return --_ecore_wl2_init_count;
 }
+
+EAPI int
+ecore_wl2_shutdown(void)
+{
+   if (_ecore_wl2_init_count < 1)
+     {
+        ERR("Ecore_Wl2 shutdown called without Ecore_Wl2 Init");
+        return 0;
+     }
+
+   if (--_ecore_wl2_init_count != 0) return _ecore_wl2_init_count;
+
+   /* reset events */
+   ECORE_WL2_EVENT_GLOBAL_ADDED = 0;
+   ECORE_WL2_EVENT_GLOBAL_REMOVED = 0;
+
+   /* shutdown Ecore_Event */
+   ecore_event_shutdown();
+
+   /* shutdown Ecore */
+   ecore_shutdown();
+
+   /* unregister logging domain */
+   eina_log_domain_unregister(_ecore_wl2_log_dom);
+   _ecore_wl2_log_dom = -1;
+
+   /* shutdown eina */
+   eina_shutdown();
+
+   return _ecore_wl2_init_count;
+}
