@@ -28,6 +28,7 @@ static Evas_Cache_Image * eci = NULL;
 static Evas_Cache2      * eci2 = NULL;
 #endif
 static int                reference = 0;
+static int                evas_image_no_mmap = -1;
 
 /* static RGBA_Image *evas_rgba_line_buffer = NULL; */
 
@@ -125,6 +126,14 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
    int siz, block_size = 8;
    Eina_Bool reset_borders = EINA_TRUE;
 
+   if (EINA_UNLIKELY(evas_image_no_mmap == -1))
+     {
+        const char *s = getenv("EVAS_IMAGE_NO_MMAP");
+        evas_image_no_mmap = s && (atoi(s));
+        if (evas_image_no_mmap)
+          WRN("EVAS_IMAGE_NO_MMAP is set, use this only for debugging purposes!");
+     }
+
    switch (cspace)
      {
       case EVAS_COLORSPACE_GRY8: siz = w * h * sizeof(DATA8); break;
@@ -162,7 +171,8 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
         if (b) *b = 0;
      }
 
-   if (siz < PAGE_SIZE) return siz;
+   if ((siz < PAGE_SIZE) || evas_image_no_mmap)
+     return siz;
 
    return ALIGN_TO_PAGE(siz);
 
@@ -187,7 +197,7 @@ _evas_common_rgba_image_surface_mmap(Image_Entry *ie, unsigned int w, unsigned i
    if (siz < 0)
      return NULL;
 
-   if (siz < PAGE_SIZE)
+   if ((siz < PAGE_SIZE) || evas_image_no_mmap)
      return malloc(siz);
 
    if (siz > ((HUGE_PAGE_SIZE * 75) / 100))
@@ -211,7 +221,7 @@ _evas_common_rgba_image_surface_munmap(void *data, unsigned int w, unsigned int 
    size_t siz;
 
    siz = _evas_common_rgba_image_surface_size(w, h, cspace, NULL, NULL, NULL, NULL);
-   if (siz < PAGE_SIZE)
+   if ((siz < PAGE_SIZE) || evas_image_no_mmap)
      free(data);
    else
      munmap(data, siz);
