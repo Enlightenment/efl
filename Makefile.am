@@ -244,6 +244,10 @@ if HAVE_ECORE_WAYLAND
 pkgconfig_DATA += pc/ecore-wayland.pc
 endif
 
+if HAVE_ECORE_WL2
+pkgconfig_DATA += pc/ecore-wl2.pc
+endif
+
 if HAVE_WIN32
 pkgconfig_DATA += pc/ecore-win32.pc
 endif

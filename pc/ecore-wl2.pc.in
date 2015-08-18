@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: ecore-wl2
+Description: E core library, Wayland module
+Requires.private: @requirements_pc_ecore_wl2@
+Version: @VERSION@
+Libs: -L${libdir} -lecore_wl2
+Libs.private: @requirements_libs_ecore_wl2@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ecore-wl2-@VMAJ@
