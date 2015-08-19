@@ -266,6 +266,13 @@ _efl_vg_base_eo_base_destructor(Eo *obj, Efl_VG_Base_Data *pd)
         free(pd->m);
         pd->m = NULL;
      }
+
+   if (pd->renderer)
+     {
+        eo_del(pd->renderer);
+        pd->renderer = NULL;
+     }
+
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
