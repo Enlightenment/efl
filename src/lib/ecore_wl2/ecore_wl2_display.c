@@ -238,3 +238,10 @@ err:
    free(ewd);
    return NULL;
 }
+
+EAPI struct wl_display *
+ecore_wl2_display_get(Ecore_Wl2_Display *display)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
+   return display->wl.display;
+}
