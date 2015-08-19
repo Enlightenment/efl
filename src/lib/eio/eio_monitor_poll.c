@@ -329,17 +329,20 @@ eio_monitor_fallback_del(Eio_Monitor *monitor)
 
    if (!backend) return;
 
-   backend->parent = NULL;
+   if (backend->work) ecore_thread_cancel(backend->work);
+
    if (backend->timer) ecore_timer_del(backend->timer);
    backend->timer = NULL;
    if (backend->idler) ecore_idler_del(backend->idler);
    backend->idler = NULL;
-   if (backend->work)
+
+   if (backend->work && !ecore_thread_wait(backend->work, 0.3))
      {
         backend->delete_me = EINA_TRUE;
-        ecore_thread_cancel(backend->work);
         return;
      }
+
+   backend->parent = NULL;
    eina_hash_free(backend->children);
    free(backend);
 }
