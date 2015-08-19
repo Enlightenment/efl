@@ -7,6 +7,7 @@
 
 #define EVGLD_FUNC_BEGIN() \
 { \
+   EVGL_FUNC_BEGIN(); \
    _func_begin_debug(__FUNCTION__); \
 }
 
