@@ -572,6 +572,7 @@ void
 test_scroller3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bt2, *bt3, *bx, *bx2, *bx3, *bx4, *sc;
+   _count = 0;
 
    win = elm_win_util_standard_add("scroller3", "Scroller 3");
    elm_win_autodel_set(win, EINA_TRUE);
