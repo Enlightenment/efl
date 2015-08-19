@@ -22,6 +22,8 @@ struct _Evas_VG_Data
    Eina_Rectangle fill;
 
    unsigned int width, height;
+
+   Eina_Array cleanup;
 };
 
 static void evas_object_vg_render(Evas_Object *eo_obj,
@@ -116,23 +118,25 @@ _evas_vg_eo_base_constructor(Eo *eo_obj, Evas_VG_Data *pd)
    pd->root = eo_add(EFL_VG_ROOT_NODE_CLASS, eo_obj);
    eo_ref(pd->root);
 
+   eina_array_step_set(&pd->cleanup, sizeof(pd->cleanup), 8);
+
    return eo_obj;
 }
 
 static void
-_evas_vg_render(Evas_Object_Protected_Data *obj,
+_evas_vg_render(Evas_Object_Protected_Data *obj, Evas_VG_Data *vd,
                 void *output, void *context, void *surface, Efl_VG *n,
                 Eina_Array *clips, Eina_Bool do_async)
 {
-   Efl_VG_Container_Data *vd = eo_data_scope_get(n, EFL_VG_CONTAINER_CLASS);
+   Efl_VG_Container_Data *vc = eo_data_scope_get(n, EFL_VG_CONTAINER_CLASS);
 
    if (eo_isa(n, EFL_VG_CONTAINER_CLASS))
      {
         Efl_VG *child;
         Eina_List *l;
 
-        EINA_LIST_FOREACH(vd->children, l, child)
-          _evas_vg_render(obj,
+        EINA_LIST_FOREACH(vc->children, l, child)
+          _evas_vg_render(obj, vd,
                           output, context, surface, child,
                           clips, do_async);
      }
@@ -143,6 +147,9 @@ _evas_vg_render(Evas_Object_Protected_Data *obj,
         nd = eo_data_scope_get(n, EFL_VG_BASE_CLASS);
 
         obj->layer->evas->engine.func->ector_renderer_draw(output, context, surface, nd->renderer, clips, do_async);
+
+        if (do_async)
+          eina_array_push(&vd->cleanup, eo_ref(nd->renderer));
      }
 }
 
@@ -182,7 +189,9 @@ evas_object_vg_render(Evas_Object *eo_obj EINA_UNUSED,
    obj->layer->evas->engine.func->ector_begin(output, context, surface,
                                               obj->cur->geometry.x + x, obj->cur->geometry.y + y,
                                               do_async);
-   _evas_vg_render(obj, output, context, surface, vd->root, NULL,
+   _evas_vg_render(obj, vd,
+                   output, context, surface,
+                   vd->root, NULL,
                    do_async);
    obj->layer->evas->engine.func->ector_end(output, context, surface, do_async);
 }
@@ -325,8 +334,13 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
 static void
 evas_object_vg_render_post(Evas_Object *eo_obj,
                            Evas_Object_Protected_Data *obj EINA_UNUSED,
-                           void *type_private_data EINA_UNUSED)
+                           void *type_private_data)
 {
+   Evas_VG_Data *vd = type_private_data;
+   Eo *renderer;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+
    /* this moves the current data to the previous state parts of the object */
    /* in whatever way is safest for the object. also if we don't need object */
    /* data anymore we can free it if the object deems this is a good idea */
@@ -334,6 +348,9 @@ evas_object_vg_render_post(Evas_Object *eo_obj,
    evas_object_clip_changes_clean(eo_obj);
    /* move cur to prev safely for object data */
    evas_object_cur_prev(eo_obj);
+   /* unref all renderer and may also destroy them async */
+   EINA_ARRAY_ITER_NEXT((&vd->cleanup), i, renderer, iterator)
+     eo_unref(renderer);
 }
 
 static unsigned int

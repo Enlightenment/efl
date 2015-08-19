@@ -3532,7 +3532,6 @@ _draw_thread_ector_cleanup(Evas_Thread_Command_Ector *ector)
    while ((r = eina_array_pop(ector->clips)))
      eina_rectangle_free(r);
    eina_array_free(ector->clips);
-   eo_unref(ector->r);
 
    if (ector->free_it)
      eina_mempool_free(_mp_command_ector, ector);
@@ -3605,7 +3604,7 @@ eng_ector_renderer_draw(void *data EINA_UNUSED, void *context, void *surface, Ec
    if (eina_array_count(c) == 0)
      eina_array_push(c, eina_rectangle_new(clip.x, clip.y, clip.w, clip.h));
 
-   ector.r = eo_ref(renderer);
+   ector.r = renderer; // This has already been refcounted by Evas_Object_VG
    ector.clips = c;
    ector.render_op = _evas_render_op_to_ector_rop(dc->render_op);
    ector.mul_col = ector_color_multiply(dc->mul.use ? dc->mul.col : 0xffffffff,
