@@ -2579,7 +2579,7 @@ _item_single_select_down(Elm_Genlist_Data *sd)
         next = eo_data_scope_get(eo_next, ELM_GENLIST_ITEM_CLASS);
      }
 
-   while ((next))
+   while (next)
      {
         if ((!_is_no_select(next)) &&
             (!elm_object_item_disabled_get(EO_OBJ(next))))
