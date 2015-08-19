@@ -129,6 +129,18 @@ EAPI Ecore_Wl2_Display *ecore_wl2_display_create(const char *name);
  */
 EAPI Ecore_Wl2_Display *ecore_wl2_display_connect(const char *name);
 
+/**
+ * Retrieve the existing Wayland display
+ *
+ * @param display The Ecore_Wl2_Display for which to retrieve the existing
+ *                Wayland display from
+ *
+ * @return The wl_display which this Ecore_Wl2_Display is using
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ */
+EAPI struct wl_display *ecore_wl2_display_get(Ecore_Wl2_Display *display);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
