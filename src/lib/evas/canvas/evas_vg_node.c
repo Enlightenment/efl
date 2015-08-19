@@ -301,7 +301,10 @@ _efl_vg_base_eo_base_parent_set(Eo *obj,
      }
 
    if (!_efl_vg_base_parent_checked_get(obj, &old_parent, &old_cd))
-     goto on_error;
+     {
+        ERR("Can't check the old parent of %p.", obj);
+        goto on_error;
+     }
 
    // FIXME: this may become slow with to much object
    if (old_cd)
