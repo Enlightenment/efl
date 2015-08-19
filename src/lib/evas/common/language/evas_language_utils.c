@@ -34,6 +34,12 @@
 
 #include "evas_script_table.h"
 
+/* The given 'script' of a character is an EXPLICIT_SCRIPT if it is not one of
+ * the three special values: INHERITED, COMMON and UNKNOWN.
+ * See http://www.unicode.org/reports/tr24 */
+#define EXPLICIT_SCRIPT(script) \
+   (((script) != EVAS_SCRIPT_UNKNOWN) && ((script) > EVAS_SCRIPT_INHERITED))
+
 static Evas_Script_Type
 _evas_common_language_char_script_search(Eina_Unicode unicode)
 {
@@ -75,18 +81,20 @@ evas_common_language_script_end_of_run_get(const Eina_Unicode *str,
    /* FIXME: Use the standard segmentation instead */
    Evas_Script_Type first = EVAS_SCRIPT_UNKNOWN;
    int i;
-   for (i = 0 ; i < len ; i++, str++)
+
+   /* Find the first EXPLICIT_SCRIPT (see documented macro above), and
+    * use it to determine the script run */
+   for (i = 0 ; (i < len) && !EXPLICIT_SCRIPT(first) ; i++, str++)
      {
-        Evas_Script_Type tmp;
-        tmp = evas_common_language_char_script_get(*str);
-        /* Arabic is the first script in the array that's not
-         * common/inherited. */
-        if ((first == EVAS_SCRIPT_UNKNOWN) && (tmp >= EVAS_SCRIPT_ARABIC))
-          {
-             first = tmp;
-             continue;
-          }
-        if ((first != tmp) && (tmp >= EVAS_SCRIPT_ARABIC))
+        first = evas_common_language_char_script_get(*str);
+     }
+
+   /* At this point either (i == len) or 'first' is an EXPLICIT_SCRIPT. */
+   /* NOTE: ++i, ++str is to start at the character after 'first', if exists. */
+   for ( ; i < len ; ++i, ++str)
+     {
+        Evas_Script_Type tmp = evas_common_language_char_script_get(*str);
+        if (EXPLICIT_SCRIPT(tmp) && (tmp != first))
           {
              break;
           }
@@ -112,9 +120,10 @@ evas_common_language_script_type_get(const Eina_Unicode *str, size_t len)
 {
    Evas_Script_Type script = EVAS_SCRIPT_COMMON;
    const Eina_Unicode *end = str + len;
-   /* Arabic is the first script in the array that's not a common/inherited */
-   for ( ; str < end && ((script = evas_common_language_char_script_get(*str)) < EVAS_SCRIPT_ARABIC) ; str++)
-     ;
+   for ( ; (str < end) && !EXPLICIT_SCRIPT(script) ; str++)
+     {
+        script = evas_common_language_char_script_get(*str);
+     }
    return script;
 }
 
