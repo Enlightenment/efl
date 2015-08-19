@@ -157,7 +157,7 @@ comp_func_solid_source_over_sse2(uint *dest, int length, uint color, uint const_
    int ialpha;
    if (const_alpha != 255)
      color = BYTE_MUL(color, const_alpha);
-   ialpha = Alpha(~color);
+   ialpha = _alpha(~color);
    comp_func_helper_sse2(dest, length, color, ialpha);
 }
 
@@ -272,7 +272,7 @@ comp_func_source_over_sse2(uint *dest, const uint *src, int length, uint color, 
         LOOP_ALIGNED_U1_A4(dest, length,
          { /* UOP */
             s = *src;
-            sia = Alpha(~s);
+            sia = _alpha(~s);
             *dest = s + BYTE_MUL(*dest, sia);
             dest++; src++; length--;
          },
@@ -289,7 +289,7 @@ comp_func_source_over_sse2(uint *dest, const uint *src, int length, uint color, 
         LOOP_ALIGNED_U1_A4(dest, length,
          { /* UOP */
             s = ECTOR_MUL4_SYM(*src, color);
-            sia = Alpha(~s);
+            sia = _alpha(~s);
             *dest = s + BYTE_MUL(*dest, sia);
             dest++; src++; length--;
          },

@@ -26,7 +26,7 @@ comp_func_solid_source_over(uint *dest, int length, uint color, uint const_alpha
    int ialpha, i;
    if (const_alpha != 255)
      color = BYTE_MUL(color, const_alpha);
-   ialpha = Alpha(~color);
+   ialpha = _alpha(~color);
    for (i = 0; i < length; ++i)
      dest[i] = color + BYTE_MUL(dest[i], ialpha);
 }
@@ -49,7 +49,7 @@ comp_func_source_over(uint *dest, const uint *src, int length, uint color, uint 
                dest[i] = s;
              else if (s != 0)
                {
-                  sia = Alpha(~s);
+                  sia = _alpha(~s);
                   dest[i] = s + BYTE_MUL(dest[i], sia);
                }
           }
@@ -60,7 +60,7 @@ comp_func_source_over(uint *dest, const uint *src, int length, uint color, uint 
           {
              s = src[i];
              sc = ECTOR_MUL4_SYM(color, s);
-             sia = Alpha(~sc);
+             sia = _alpha(~sc);
              dest[i] = sc + BYTE_MUL(dest[i], sia);
           }
      }

@@ -17,12 +17,10 @@
 typedef unsigned int uint;
 #endif
 
-inline int Alpha(uint c)
+static inline int _alpha(uint c)
 {
    return c>>24;
 }
-
-
 
 #define ECTOR_ARGB_JOIN(a,r,g,b) \
         (((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
