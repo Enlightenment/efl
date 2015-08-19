@@ -128,12 +128,13 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Evas_VG_Data *vd,
                 void *output, void *context, void *surface, Efl_VG *n,
                 Eina_Array *clips, Eina_Bool do_async)
 {
-   Efl_VG_Container_Data *vc = eo_data_scope_get(n, EFL_VG_CONTAINER_CLASS);
-
    if (eo_isa(n, EFL_VG_CONTAINER_CLASS))
      {
+        Efl_VG_Container_Data *vc;
         Efl_VG *child;
         Eina_List *l;
+
+        vc = eo_data_scope_get(n, EFL_VG_CONTAINER_CLASS);
 
         EINA_LIST_FOREACH(vc->children, l, child)
           _evas_vg_render(obj, vd,
