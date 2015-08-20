@@ -154,6 +154,19 @@ EAPI Ecore_Wl2_Display *ecore_wl2_display_connect(const char *name);
 EAPI void ecore_wl2_display_disconnect(Ecore_Wl2_Display *display);
 
 /**
+ * Terminate a Wayland display's main loop
+ *
+ * @brief This function is typically used by servers to terminate the
+ * Wayland display main loop. This is usually only called when a server
+ * encounters an error.
+ *
+ * @param display The Ecore_Wl2_Display to terminate
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ */
+EAPI void ecore_wl2_display_terminate(Ecore_Wl2_Display *display);
+
+/**
  * Retrieve the existing Wayland display
  *
  * @param display The Ecore_Wl2_Display for which to retrieve the existing
@@ -176,19 +189,6 @@ EAPI struct wl_display *ecore_wl2_display_get(Ecore_Wl2_Display *display);
  * @ingroup Ecore_Wl2_Display_Group
  */
 EAPI struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
-
-/**
- * Terminate a Wayland display's main loop
- *
- * @brief This function is typically used by servers to terminate the
- * Wayland display main loop. This is usually only called when a server
- * encounters an error.
- *
- * @param display The Ecore_Wl2_Display to terminate
- *
- * @ingroup Ecore_Wl2_Display_Group
- */
-EAPI void ecore_wl2_display_terminate(Ecore_Wl2_Display *display);
 
 /* # ifdef __cplusplus */
 /* } */
