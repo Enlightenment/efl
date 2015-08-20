@@ -286,3 +286,10 @@ ecore_wl2_display_shm_get(Ecore_Wl2_Display *display)
    EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
    return display->wl.shm;
 }
+
+EAPI void
+ecore_wl2_display_disconnect(Ecore_Wl2_Display *display)
+{
+   EINA_SAFETY_ON_NULL_RETURN(display);
+   wl_display_disconnect(display->wl.display);
+}

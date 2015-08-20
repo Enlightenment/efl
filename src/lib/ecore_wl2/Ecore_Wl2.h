@@ -130,6 +130,18 @@ EAPI Ecore_Wl2_Display *ecore_wl2_display_create(const char *name);
 EAPI Ecore_Wl2_Display *ecore_wl2_display_connect(const char *name);
 
 /**
+ * Disconnect an existing Wayland display
+ *
+ * @brief This function is typically used by clients to disconnect from an
+ * existing Wayland display.
+ *
+ * @param display The display to disconnect from
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ */
+EAPI void ecore_wl2_display_disconnect(Ecore_Wl2_Display *display);
+
+/**
  * Retrieve the existing Wayland display
  *
  * @param display The Ecore_Wl2_Display for which to retrieve the existing
