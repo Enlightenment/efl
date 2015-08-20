@@ -293,20 +293,6 @@ connect_err:
    return NULL;
 }
 
-EAPI struct wl_display *
-ecore_wl2_display_get(Ecore_Wl2_Display *display)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
-   return display->wl.display;
-}
-
-EAPI struct wl_shm *
-ecore_wl2_display_shm_get(Ecore_Wl2_Display *display)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
-   return display->wl.shm;
-}
-
 EAPI void
 ecore_wl2_display_disconnect(Ecore_Wl2_Display *display)
 {
@@ -328,4 +314,18 @@ ecore_wl2_display_terminate(Ecore_Wl2_Display *display)
 {
    EINA_SAFETY_ON_NULL_RETURN(display);
    wl_display_terminate(display->wl.display);
+}
+
+EAPI struct wl_display *
+ecore_wl2_display_get(Ecore_Wl2_Display *display)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
+   return display->wl.display;
+}
+
+EAPI struct wl_shm *
+ecore_wl2_display_shm_get(Ecore_Wl2_Display *display)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
+   return display->wl.shm;
 }
