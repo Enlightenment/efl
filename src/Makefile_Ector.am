@@ -18,7 +18,7 @@ ector_eolian_files_cairo = \
 	lib/ector/cairo/ector_renderer_cairo_gradient_radial.eo
 ector_eolian_cairo_h = $(ector_eolian_files_cairo:%.eo=%.eo.h)
 
-# Handle FreeType rasterizer
+# Handle default software backend
 ector_eolian_files_software = \
 	lib/ector/software/ector_software_surface.eo \
 	lib/ector/software/ector_renderer_software_base.eo \
@@ -84,8 +84,7 @@ lib/ector/cairo/ector_cairo_surface.c
 installed_ectorcairoheadersdir = $(includedir)/ector-@VMAJ@/cairo
 nodist_installed_ectorcairoheaders_DATA = $(ector_eolian_cairo_h)
 
-# And the Freetype rasterizer
-
+# And the default software backend
 lib_ector_libector_la_SOURCES += \
 lib/ector/software/ector_renderer_software_gradient_linear.c \
 lib/ector/software/ector_renderer_software_gradient_radial.c \
