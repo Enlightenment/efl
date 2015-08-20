@@ -54,6 +54,8 @@ struct _Ecore_Wl2_Display
         struct xdg_shell *xdg_shell;
      } wl;
 
+   struct xkb_context *xkb_context;
+
    Ecore_Fd_Handler *fd_hdl;
 
    Eina_Hash *globals;
