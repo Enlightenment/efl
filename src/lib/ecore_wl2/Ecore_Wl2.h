@@ -240,8 +240,21 @@ EAPI Ecore_Wl2_Window *ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl
  * @param window The Ecore_Wl2_Window of which to retrieve the window id
  *
  * @return The id associated with this window
+ *
+ * @ingroup Ecore_Wl2_Window_Group
  */
 EAPI int ecore_wl2_window_id_get(Ecore_Wl2_Window *window);
+
+/**
+ * Get the wl_surface which belongs to this window
+ *
+ * @param window The Ecore_Wl2_Window to get the surface of
+ *
+ * @return The wl_surface associated with this window.
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
+EAPI struct wl_surface *ecore_wl2_window_surface_get(Ecore_Wl2_Window *window);
 
 /* # ifdef __cplusplus */
 /* } */
