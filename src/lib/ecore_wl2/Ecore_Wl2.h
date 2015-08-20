@@ -222,6 +222,15 @@ EAPI Eina_Iterator *ecore_wl2_display_globals_get(Ecore_Wl2_Display *display);
  */
 EAPI Ecore_Wl2_Window *ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x, int y, int w, int h);
 
+/**
+ * Get the window id associated with an Ecore_Wl2_Window
+ *
+ * @param window The Ecore_Wl2_Window of which to retrieve the window id
+ *
+ * @return The id associated with this window
+ */
+EAPI int ecore_wl2_window_id_get(Ecore_Wl2_Window *window);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
