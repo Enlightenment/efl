@@ -7,8 +7,9 @@
 #include <cairo/Ector_Cairo.h>
 #include <software/Ector_Software.h>
 
-#include "ector_cairo_software_surface.eo.h"
 #include "evas_common_private.h"
+#include "evas_private.h"
+#include "ector_cairo_software_surface.eo.h"
 
 #define USE(Obj, Sym, Error)                            \
   if (!Sym) Sym = _ector_cairo_symbol_get(Obj, #Sym);   \
