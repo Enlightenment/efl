@@ -2278,6 +2278,14 @@ _elm_win_xwin_update(Elm_Win_Data *sd)
    else if (sd->indmode == ELM_WIN_INDICATOR_HIDE)
      ecore_x_e_illume_indicator_state_set
        (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
+
+   if ((sd->wm_rot.count) && (sd->wm_rot.rots))
+     ecore_evas_wm_rotation_available_rotations_set(sd->ee,
+                                                    sd->wm_rot.rots,
+                                                    sd->wm_rot.count);
+   if (sd->wm_rot.preferred_rot != -1)
+     ecore_evas_wm_rotation_preferred_rotation_set(sd->ee,
+                                                   sd->wm_rot.preferred_rot);
 }
 
 #endif
