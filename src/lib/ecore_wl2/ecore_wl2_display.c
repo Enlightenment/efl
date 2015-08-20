@@ -254,7 +254,7 @@ ecore_wl2_display_connect(const char *name)
    if (!ewd->wl.display)
      {
         ERR("Could not connect to display %s: %m", name);
-        goto err;
+        goto connect_err;
      }
 
    ewd->fd_hdl =
@@ -265,9 +265,17 @@ ecore_wl2_display_connect(const char *name)
    wl_registry_add_listener(wl_display_get_registry(ewd->wl.display),
                             &_registry_listener, ewd);
 
+   ewd->xkb_context = xkb_context_new(0);
+   if (!ewd->xkb_context) goto context_err;
+
    return ewd;
 
-err:
+context_err:
+   ecore_main_fd_handler_del(ewd->fd_hdl);
+   wl_registry_destroy(wl_display_get_registry(ewd->wl.display));
+   wl_display_disconnect(ewd->wl.display);
+
+connect_err:
    eina_hash_free(ewd->globals);
    free(ewd);
    return NULL;
