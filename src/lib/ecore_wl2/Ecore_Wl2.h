@@ -190,6 +190,15 @@ EAPI struct wl_display *ecore_wl2_display_get(Ecore_Wl2_Display *display);
  */
 EAPI struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
 
+/**
+ * Return an Eina_Iterator that can be used to iterate through globals
+ *
+ * @param display The Ecore_Wl2_Display for which to return a global iterator
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ */
+EAPI Eina_Iterator *ecore_wl2_display_globals_get(Ecore_Wl2_Display *display);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
