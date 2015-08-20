@@ -61,4 +61,22 @@ struct _Ecore_Wl2_Display
    Eina_Hash *globals;
 };
 
+struct _Ecore_Wl2_Window
+{
+   Ecore_Wl2_Display *display;
+
+   Ecore_Wl2_Window *parent;
+
+   int id;
+   const char *title;
+   const char *class;
+
+   struct wl_surface *surface;
+   struct wl_shell_surface *shell_surface;
+   struct xdg_surface *xdg_surface;
+   struct xdg_popup *xdg_popup;
+
+   Eina_Rectangle geometry;
+};
+
 #endif

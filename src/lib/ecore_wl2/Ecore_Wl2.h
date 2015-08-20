@@ -28,8 +28,8 @@
 /* extern "C" { */
 /* # endif */
 
-# ifndef _ECORE_WAYLAND_WINDOW_PREDEF
-typedef struct _Ecore_Wl_Window Ecore_Wl_Window;
+# ifndef _ECORE_WL2_WINDOW_PREDEF
+typedef struct _Ecore_Wl2_Window Ecore_Wl2_Window;
 # endif
 
 typedef struct _Ecore_Wl2_Display Ecore_Wl2_Display;
@@ -62,6 +62,7 @@ EAPI extern int ECORE_WL2_EVENT_GLOBAL_REMOVED;
  *
  * @li @ref Ecore_Wl2_Init_Group
  * @li @ref Ecore_Wl2_Display_Group
+ * @li @ref Ecore_Wl2_Window_Group
  */
 
 /**
@@ -198,6 +199,28 @@ EAPI struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
  * @ingroup Ecore_Wl2_Display_Group
  */
 EAPI Eina_Iterator *ecore_wl2_display_globals_get(Ecore_Wl2_Display *display);
+
+/**
+ * @defgroup Ecore_Wl2_Window_Group Wayland Library Window Functions
+ * @ingroup Ecore_Wl2_Group
+ *
+ * Functions that deal with creating, connecting, or interacting with
+ * Wayland windows
+ */
+
+/**
+ * Create a new Ecore_Wl2_Window
+ *
+ * @param display The Ecore_Wl2_Display on which to create this new window
+ * @param parent The Ecore_Wl2_Window which is the parent of this window
+ * @param x Initial x position of window
+ * @param y Initial y position of window
+ * @param w Initial width of window
+ * @param h Initial height of window
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
+EAPI Ecore_Wl2_Window *ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x, int y, int w, int h);
 
 /* # ifdef __cplusplus */
 /* } */
