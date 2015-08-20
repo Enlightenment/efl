@@ -776,7 +776,7 @@ _buffer_add(Evas_Filter_Program *pgm, const char *name, Eina_Bool alpha,
    buf->manual = manual;
    if (!name)
      {
-        char bufname[32];
+        char bufname[64];
         _buffer_name_format(bufname, pgm, src);
         buf->name = eina_stringshare_add(bufname);
      }
