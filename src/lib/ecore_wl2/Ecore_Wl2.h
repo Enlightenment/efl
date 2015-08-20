@@ -141,6 +141,18 @@ EAPI Ecore_Wl2_Display *ecore_wl2_display_connect(const char *name);
  */
 EAPI struct wl_display *ecore_wl2_display_get(Ecore_Wl2_Display *display);
 
+/**
+ * Retrieve the wl_shm from a given Ecore_Wl2_Display
+ *
+ * @param display The Ecore_Wl2_Display for which to retrieve the existing
+ *                Wayland shm interface from
+ *
+ * @return The wl_shm which this Ecore_Wl2_Display is using
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ */
+EAPI struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
