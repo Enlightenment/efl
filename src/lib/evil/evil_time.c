@@ -13,7 +13,7 @@
 struct tm *
 evil_localtime_r(const time_t *timep, struct tm *result)
 {
-   _localtime64_s(result, timep);
+   localtime_s(result, timep);
 
    return result;
 }
