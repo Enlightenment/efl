@@ -115,6 +115,18 @@ EAPI int ecore_wl2_shutdown(void);
 EAPI Ecore_Wl2_Display *ecore_wl2_display_create(const char *name);
 
 /**
+ * Destroy an existing Wayland display
+ *
+ * @brief This function is typically used by servers to terminate an
+ * existing Wayland display.
+ *
+ * @param display The display to terminate
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ */
+EAPI void ecore_wl2_display_destroy(Ecore_Wl2_Display *display);
+
+/**
  * Connect to an existing Wayland display
  *
  * @brief This function is typically used by clients to connect to an
