@@ -124,8 +124,7 @@ _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
              ERR("CONTACT DEVS!!! SHOULD NEVER HAPPEN!!! Old parent %p for object %p is not a valid Eo object.",
                  pd->parent, obj);
           }
-
-        eo_xunref(obj, pd->parent);
+        eo_unref(obj);
      }
 
    /* Set new parent */
@@ -137,10 +136,9 @@ _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
         if (EINA_LIKELY(parent_pd != NULL))
           {
              pd->parent = parent_id;
-             parent_pd->children = eina_list_append(parent_pd->children,
-                   obj);
+             parent_pd->children = eina_list_append(parent_pd->children, obj);
              pd->parent_list = eina_list_last(parent_pd->children);
-             eo_xref(obj, pd->parent);
+             eo_ref(obj);
           }
         else
           {
