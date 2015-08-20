@@ -512,7 +512,6 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
      }
 
    en->imf_context = ecore_imf_context_add(default_id);
-   ecore_imf_context_client_window_set(en->imf_context, (void *)ecore_evas_window_get(ecore_evas_ecore_evas_get(evas)));
    ecore_imf_context_client_canvas_set(en->imf_context, evas);
 
    // register key event handler
