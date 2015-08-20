@@ -184,6 +184,18 @@ _cb_globals_hash_del(void *data)
    free(global);
 }
 
+static void
+_ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
+{
+   if (ewd->xkb_context) xkb_context_unref(ewd->xkb_context);
+
+   wl_registry_destroy(wl_display_get_registry(ewd->wl.display));
+
+   if (ewd->fd_hdl) ecore_main_fd_handler_del(ewd->fd_hdl);
+
+   eina_hash_free(ewd->globals);
+}
+
 EAPI Ecore_Wl2_Display *
 ecore_wl2_display_create(const char *name)
 {
@@ -299,6 +311,7 @@ EAPI void
 ecore_wl2_display_disconnect(Ecore_Wl2_Display *display)
 {
    EINA_SAFETY_ON_NULL_RETURN(display);
+   _ecore_wl2_display_cleanup(display);
    wl_display_disconnect(display->wl.display);
 }
 
@@ -306,6 +319,7 @@ EAPI void
 ecore_wl2_display_destroy(Ecore_Wl2_Display *display)
 {
    EINA_SAFETY_ON_NULL_RETURN(display);
+   _ecore_wl2_display_cleanup(display);
    wl_display_destroy(display->wl.display);
 }
 
