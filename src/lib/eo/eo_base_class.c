@@ -977,7 +977,6 @@ EOLIAN static void
 _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
 {
    Eo *child;
-   Eo_Base_Data *child_pd;
 
    DBG("%p - %s.", obj, eo_class_name_get(MY_CLASS));
 
@@ -987,10 +986,17 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
    while (pd->children)
      {
         child = eina_list_data_get(pd->children);
-        child_pd = eo_data_scope_get(child, EO_BASE_CLASS);
-        pd->children = eina_list_remove_list(pd->children, pd->children);
-        child_pd->parent_list = NULL;
         eo_do(child, eo_parent_set(NULL));
+     }
+   // remove child from its parent on destruction - ha to be done
+   if (pd->parent)
+     {
+        Eo_Base_Data *parent_pd;
+
+        parent_pd = eo_data_scope_get(pd->parent, EO_BASE_CLASS);
+        parent_pd->children = eina_list_remove_list(parent_pd->children,
+                                                    pd->parent_list);
+        pd->parent_list = NULL;
      }
 
    _eo_generic_data_del_all(pd);
