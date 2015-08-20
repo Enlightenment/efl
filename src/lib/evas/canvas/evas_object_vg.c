@@ -94,9 +94,29 @@ _evas_vg_root_node_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd)
    return pd->root;
 }
 
+static Eina_Bool
+_cleanup_reference(void *data,
+                   Eo *obj EINA_UNUSED,
+                   const Eo_Event_Description *desc EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
+{
+   Evas_VG_Data *pd = data;
+   Eo *renderer;
+
+   /* unref all renderer and may also destroy them async */
+   while ((renderer = eina_array_pop(&pd->cleanup)))
+     eo_unref(renderer);
+
+   return EO_CALLBACK_CONTINUE;
+}
+
 void
 _evas_vg_eo_base_destructor(Eo *eo_obj, Evas_VG_Data *pd)
 {
+   Evas *e = evas_object_evas_get(eo_obj);
+
+   eo_do(e, eo_event_callback_del(EVAS_CANVAS_EVENT_RENDER_POST, _cleanup_reference, pd));
+
    eo_unref(pd->root);
    pd->root = NULL;
    eo_do_super(eo_obj, MY_CLASS, eo_destructor());
@@ -121,6 +141,18 @@ _evas_vg_eo_base_constructor(Eo *eo_obj, Evas_VG_Data *pd)
    eina_array_step_set(&pd->cleanup, sizeof(pd->cleanup), 8);
 
    return eo_obj;
+}
+
+static Eo_Base *
+_evas_vg_eo_base_finalize(Eo *obj, Evas_VG_Data *pd)
+{
+   Evas *e = evas_object_evas_get(obj);
+
+   // TODO: If we start to have to many Evas_Object_VG per canvas, it may be nice
+   // to actually have one event per canvas and one array per canvas to.
+   eo_do(e, eo_event_callback_add(EVAS_CANVAS_EVENT_RENDER_POST, _cleanup_reference, pd));
+
+   return obj;
 }
 
 static void
@@ -335,13 +367,8 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
 static void
 evas_object_vg_render_post(Evas_Object *eo_obj,
                            Evas_Object_Protected_Data *obj EINA_UNUSED,
-                           void *type_private_data)
+                           void *type_private_data EINA_UNUSED)
 {
-   Evas_VG_Data *vd = type_private_data;
-   Eo *renderer;
-   Eina_Array_Iterator iterator;
-   unsigned int i;
-
    /* this moves the current data to the previous state parts of the object */
    /* in whatever way is safest for the object. also if we don't need object */
    /* data anymore we can free it if the object deems this is a good idea */
@@ -349,9 +376,6 @@ evas_object_vg_render_post(Evas_Object *eo_obj,
    evas_object_clip_changes_clean(eo_obj);
    /* move cur to prev safely for object data */
    evas_object_cur_prev(eo_obj);
-   /* unref all renderer and may also destroy them async */
-   EINA_ARRAY_ITER_NEXT((&vd->cleanup), i, renderer, iterator)
-     eo_unref(renderer);
 }
 
 static unsigned int

@@ -20,6 +20,7 @@ class Evas.VG (Evas.Object, Efl.Gfx.Fill, Efl.Gfx.View)
    }
    implements {
       Eo.Base.constructor;
+      Eo.Base.finalize;
       Eo.Base.destructor;
       Efl.Gfx.Fill.fill.set;
       Efl.Gfx.Fill.fill.get;
