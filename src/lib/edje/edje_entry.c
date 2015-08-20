@@ -1461,7 +1461,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                        _sel_start(en->cursor, rp->object, en);
                        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                     }
-                  else
+                  else if (en->have_selection)
                     {
                        if (evas_textblock_cursor_compare(en->sel_start, en->sel_end) < 0)
                          evas_textblock_cursor_copy(en->sel_start, en->cursor);
@@ -1497,7 +1497,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                        _sel_start(en->cursor, rp->object, en);
                        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                     }
-                  else
+                  else if (en->have_selection)
                     {
                        if (evas_textblock_cursor_compare(en->sel_start, en->sel_end) < 0)
                          evas_textblock_cursor_copy(en->sel_end, en->cursor);
