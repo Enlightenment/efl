@@ -140,7 +140,7 @@ _cb_create_data(void *data, Ecore_Fd_Handler *hdl)
      }
 
    loop = wl_display_get_event_loop(ewd->wl.display);
-   wl_event_loop_dispatch(loop, -1);
+   wl_event_loop_dispatch(loop, 0);
    wl_display_flush_clients(ewd->wl.display);
 
    return ECORE_CALLBACK_RENEW;
