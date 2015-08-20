@@ -27,3 +27,10 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
 
    return win;
 }
+
+EAPI int
+ecore_wl2_window_id_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, -1);
+   return win->id;
+}
