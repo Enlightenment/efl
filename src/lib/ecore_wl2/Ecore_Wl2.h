@@ -177,6 +177,19 @@ EAPI struct wl_display *ecore_wl2_display_get(Ecore_Wl2_Display *display);
  */
 EAPI struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
 
+/**
+ * Terminate a Wayland display's main loop
+ *
+ * @brief This function is typically used by servers to terminate the
+ * Wayland display main loop. This is usually only called when a server
+ * encounters an error.
+ *
+ * @param display The Ecore_Wl2_Display to terminate
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ */
+EAPI void ecore_wl2_display_terminate(Ecore_Wl2_Display *display);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
