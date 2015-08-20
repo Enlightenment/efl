@@ -77,6 +77,8 @@ struct _Ecore_Wl2_Window
    struct xdg_popup *xdg_popup;
 
    Eina_Rectangle geometry;
+
+   Ecore_Wl2_Window_Type type;
 };
 
 #endif
