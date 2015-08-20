@@ -308,3 +308,10 @@ ecore_wl2_display_destroy(Ecore_Wl2_Display *display)
    EINA_SAFETY_ON_NULL_RETURN(display);
    wl_display_destroy(display->wl.display);
 }
+
+EAPI void
+ecore_wl2_display_terminate(Ecore_Wl2_Display *display)
+{
+   EINA_SAFETY_ON_NULL_RETURN(display);
+   wl_display_terminate(display->wl.display);
+}
