@@ -76,7 +76,7 @@ _eet_data_cb(void *data EINA_UNUSED, Ecore_Con_Reply *reply, const char *protoco
    fail_if(received->id != 1);
 
    ecore_con_eet_raw_send(reply, protocol_name, "message", toSend,
-                          strlen(toSend));
+                          strlen(toSend) + 1);
 }
 
 static Eina_Bool
