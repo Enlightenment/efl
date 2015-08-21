@@ -127,7 +127,7 @@ gl_text_get1(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNU
    int num = (int)(uintptr_t)data;
 
    if (num == 5)
-     snprintf(buf, sizeof(buf), "Item # %i (Genlist Cleear on Select)", num);
+     snprintf(buf, sizeof(buf), "Item # %i (Genlist Clear on Select)", num);
    else
      snprintf(buf, sizeof(buf), "Item # %i", num);
 
