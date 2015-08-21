@@ -986,15 +986,14 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
         child = eina_list_data_get(pd->children);
         eo_do(child, eo_parent_set(NULL));
      }
-   // remove child from its parent on destruction - ha to be done
+
    if (pd->parent)
      {
-        Eo_Base_Data *parent_pd;
-
-        parent_pd = eo_data_scope_get(pd->parent, EO_BASE_CLASS);
-        parent_pd->children = eina_list_remove_list(parent_pd->children,
-                                                    pd->parent_list);
-        pd->parent_list = NULL;
+        /* If we have a parent still at the time of destruction, it means that
+         * ref was already (arguably erroneously unrefed) so we need to ref
+         * before it gets unrefed again. */
+        eo_ref(obj);
+        eo_do(obj, eo_parent_set(NULL));
      }
 
    _eo_generic_data_del_all(pd);
