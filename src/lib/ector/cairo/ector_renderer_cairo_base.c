@@ -184,6 +184,7 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
    cairo_translate(pd->parent->cairo, cx, cy);
 
    if (pd->m) cairo_transform(pd->parent->cairo, pd->m);
+   else cairo_transform(pd->parent->cairo, &identity);
 
    cairo_set_source_rgba(pd->parent->cairo, r/255.0, g/255.0, b/255.0, a/255.0);
 
