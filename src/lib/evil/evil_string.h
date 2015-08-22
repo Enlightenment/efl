@@ -32,6 +32,8 @@
  * Conformity: BSD
  *
  * Supported OS: Windows XP.
+ *
+ * @since 1.13
  */
 EAPI char *strndup(const char *str, size_t n);
 
