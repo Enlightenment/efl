@@ -808,10 +808,10 @@ eina_matrix4_quaternion_to(Eina_Quaternion *rotation,
         eina_point3d_cross(&cross, &row1, &row2);
         if (eina_point_3d_dot(&row0, &cross) < 0)
           {
-             eina_point_3d_dot(scale, scale);
-             eina_point_3d_dot(&row0, &row0);
-             eina_point_3d_dot(&row1, &row1);
-             eina_point_3d_dot(&row2, &row2);
+             eina_point3d_neg(scale, scale);
+             eina_point3d_neg(&row0, &row0);
+             eina_point3d_neg(&row1, &row1);
+             eina_point3d_neg(&row2, &row2);
           }
 
         if (rotation)
