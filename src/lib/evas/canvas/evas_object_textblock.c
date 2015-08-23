@@ -12360,6 +12360,8 @@ _evas_textblock_items_get(const Evas_Object *obj)
    Evas_Object_Textblock_Paragraph *par;
    Evas_Textblock_Data *o = eo_data_scope_get(obj, MY_CLASS);
 
+
+   printf("Populating Items:\n");
    EINA_INLIST_FOREACH(o->paragraphs, par)
      {
         Evas_Object_Textblock_Line *ln;
@@ -12378,6 +12380,8 @@ _evas_textblock_items_get(const Evas_Object *obj)
              EINA_INLIST_FOREACH(ln->items, it)
                {
                   Textblock_Item_Debug_Data *d = calloc(1, sizeof(Textblock_Item_Debug_Data));
+                  Evas_Coord y = par->y + ln->y + it->yoff;
+
                   d->idx = idx++;
                   d->w = it->w;
                   d->h = it->h;
@@ -12390,8 +12394,9 @@ _evas_textblock_items_get(const Evas_Object *obj)
                        d->script = ti->text_props.script;
                        d->is_rtl = (ti->text_props.bidi_dir == EVAS_BIDI_DIRECTION_RTL);
                     }
-                  d->rect = eina_rectangle_new(ln->x + it->x + marginl, par->y + ln->y, it->w, it->h);
+                  d->rect = eina_rectangle_new(ln->x + it->x + marginl, y, it->w, it->h);
                   rects = eina_list_append(rects, d);
+                  printf(" -- it->valign=%f\n", it->format->valign);
                }
           }
      }
