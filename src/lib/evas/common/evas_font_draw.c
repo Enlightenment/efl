@@ -142,7 +142,7 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
           }
 
         chr_x = x + glyph->x;
-        chr_y = y + glyph->y;
+        chr_y = glyph->y;
         if (chr_x < (ext_x + ext_w))
           {
              if ((w > 0) && ((chr_x + w) > ext_x))
@@ -152,10 +152,10 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
                        if ((fg->ext_dat) && (dc->font_ext.func.gl_draw))
                          dc->font_ext.func.gl_draw(dc->font_ext.data, dst,
                                                    dc, fg,
-                                                   chr_x, y - (chr_y - y));
+                                                   chr_x, y - chr_y);
                        else
                          evas_common_font_glyph_draw(fg, dc, dst, im_w,
-                                                     chr_x, y - (chr_y - y),
+                                                     chr_x, y - chr_y,
                                                      ext_x, ext_y,
                                                      ext_w, ext_h);
                     }
@@ -164,11 +164,11 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
                        if (dc->font_ext.func.gl_image_draw)
                          dc->font_ext.func.gl_image_draw
                            (dc->font_ext.data, fg->ext_dat, 0, 0, w, h,
-                            chr_x, y - (chr_y - y), w, h, EINA_TRUE);
+                            chr_x, y - chr_y, w, h, EINA_TRUE);
                        else
                          _evas_font_image_draw
                            (dc, dst, fg->ext_dat, 0, 0, w, h,
-                            chr_x, y - (chr_y - y), w, h, EINA_TRUE);
+                            chr_x, y - chr_y, w, h, EINA_TRUE);
                     }
                }
           }
