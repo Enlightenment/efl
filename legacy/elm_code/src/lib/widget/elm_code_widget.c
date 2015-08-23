@@ -207,7 +207,7 @@ _elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *c
 
 static void
 _elm_code_widget_fill_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
-                             Elm_Code_Status_Type status, int line)
+                             int width, Elm_Code_Status_Type status, int line)
 {
    char *number = NULL;
    int w, gutter, g;
@@ -216,6 +216,8 @@ _elm_code_widget_fill_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    gutter = elm_code_widget_text_left_gutter_width_get(widget);
 
+   if (width < gutter)
+     return;
    evas_object_textgrid_size_get(pd->grid, &w, NULL);
 
    cells[gutter-1].codepoint = status_icons[status];
@@ -334,7 +336,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    evas_object_textgrid_size_get(pd->grid, &w, NULL);
    cells = evas_object_textgrid_cellrow_get(pd->grid, line->number - 1);
 
-   _elm_code_widget_fill_gutter(widget, cells, line->status, line->number);
+   _elm_code_widget_fill_gutter(widget, cells, w, line->status, line->number);
    _elm_code_widget_fill_line_tokens(widget, cells, w, line);
 
    length = elm_code_widget_line_text_column_width_get(widget, line);
@@ -386,7 +388,7 @@ _elm_code_widget_empty_line(Elm_Code_Widget *widget, unsigned int number)
 
    evas_object_textgrid_size_get(pd->grid, &w, NULL);
    cells = evas_object_textgrid_cellrow_get(pd->grid, number - 1);
-   _elm_code_widget_fill_gutter(widget, cells, ELM_CODE_STATUS_TYPE_DEFAULT, 0);
+   _elm_code_widget_fill_gutter(widget, cells, w, ELM_CODE_STATUS_TYPE_DEFAULT, 0);
 
    for (x = gutter; x < (unsigned int) w; x++)
      {
