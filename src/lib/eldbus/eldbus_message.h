@@ -94,6 +94,8 @@ EAPI Eldbus_Message        *eldbus_message_method_call_new(const char *dest, con
  * @param name name of the signal to be broadcasted
  *
  * @return a new Eldbus_Message, free with eldbus_message_unref()
+ *
+ * @since 1.16
  */
 EAPI Eldbus_Message *eldbus_message_signal_new(const char *path, const char *interface, const char *name) EINA_ARG_NONNULL(1, 2, 3) EINA_WARN_UNUSED_RESULT;
 
