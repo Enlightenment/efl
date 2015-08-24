@@ -12351,6 +12351,7 @@ typedef struct
    Evas_Script_Type script;
    Eina_Rectangle *rect;
    int bidi_level;
+   const char *font_src;
    Eina_Bool is_rtl : 1;
 } Textblock_Item_Debug_Data;
 
@@ -12400,6 +12401,9 @@ _evas_textblock_items_get(const Evas_Object *obj)
                          {
                             d->bidi_level = par->bidi_props->embedding_levels[it->text_pos];
                          }
+                       RGBA_Font_Int *rfi = ti->text_props.font_instance;
+                       if (rfi)
+                          d->font_src = rfi->src->name;
                     }
                   d->rect = eina_rectangle_new(ln->x + it->x + marginl, y, it->w, it->h);
                   rects = eina_list_append(rects, d);
