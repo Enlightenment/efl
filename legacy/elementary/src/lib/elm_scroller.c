@@ -120,10 +120,10 @@ _key_action_move(Evas_Object *obj, const char *params)
    if ((current_focus == obj) ||
        ((!ELM_RECTS_INTERSECT
          (x, y, v_w, v_h, (f_x - c_x), (f_y - c_y), f_w, f_h)) &&
-        (!strcmp(dir, "left") && (f_x > v_x)) &&
-        (!strcmp(dir, "right") && (f_x + f_w < v_x + v_w)) &&
-        (!strcmp(dir, "up") && (f_y > v_y)) &&
-        (!strcmp(dir, "down") && (f_y + f_h < v_y + v_h))))
+        ((!strcmp(dir, "left") && (f_x > v_x)) ||
+        (!strcmp(dir, "right") && (f_x + f_w < v_x + v_w)) ||
+        (!strcmp(dir, "up") && (f_y > v_y)) ||
+        (!strcmp(dir, "down") && (f_y + f_h < v_y + v_h)))))
      {
         Eina_List *l;
         Evas_Object *cur;
