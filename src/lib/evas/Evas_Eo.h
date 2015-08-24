@@ -333,129 +333,6 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
  */
 
 /**
- * @typedef Evas_Real
- *
- * Floating-point data type
- *
- * Evas 3D use its own floating-point type. Even though it's a standard IEEE
- * 754 floating-point type always use Evas_Real for the type safety. Double
- * precision and fixed-point types will be useful but it's not supported yet.
- *
- * @since 1.10
- * @ingroup Evas_Canvas3D_Types
- */
-typedef double   Evas_Real;
-
-
-/**
- * @typedef Evas_Canvas3D_Object
- *
- * 3D Object object handle
- *
- * @since 1.10
- * @ingroup Evas_Canvas3D_Object
- */
-typedef Eo    Evas_Canvas3D_Object;
-
-#define _EVAS_CANVAS3D_OBJECT_EO_CLASS_TYPE
-
-/**
- * @typedef Evas_Canvas3D_Scene
- *
- * Scene object handle
- *
- * @since 1.10
- * @ingroup Evas_Canvas3D_Scene
- */
-typedef Eo    Evas_Canvas3D_Scene;
-
-#define _EVAS_CANVAS3D_SCENE_EO_CLASS_TYPE
-
-/**
- * @typedef Evas_Canvas3D_Node
- *
- * Node object handle
- *
- * @since 1.10
- * @ingroup Evas_Canvas3D_Node
- */
-typedef Eo     Evas_Canvas3D_Node;
-
-#define _EVAS_CANVAS3D_NODE_EO_CLASS_TYPE
-
-/**
- * @typedef Evas_Canvas3D_Camera
- *
- * Camera object handle
- *
- * @since 1.10
- * @ingroup Evas_Canvas3D_Camera
- */
-typedef Eo   Evas_Canvas3D_Camera;
-
-#define _EVAS_CANVAS3D_CAMERA_EO_CLASS_TYPE
-
-/**
- * @typedef Evas_Canvas3D_Light
- *
- * Light object handle
- *
- * @since 1.10
- * @ingroup Evas_Canvas3D_Light
- */
-typedef Eo    Evas_Canvas3D_Light;
-
-#define _EVAS_CANVAS3D_LIGHT_EO_CLASS_TYPE
-
-/**
- * @typedef Evas_Canvas3D_Mesh
- *
- * Mesh object handle
- *
- * @since 1.10
- * @ingroup Evas_Canvas3D_Mesh
- */
-typedef Eo     Evas_Canvas3D_Mesh;
-
-#define _EVAS_CANVAS3D_MESH_EO_CLASS_TYPE
-
-/**
- * @typedef Evas_Canvas3D_Texture
- *
- * Texture object handle
- *
- * @since 1.10
- * @ingroup Evas_Canvas3D_Texture
- */
-typedef Eo    Evas_Canvas3D_Texture;
-
-#define _EVAS_CANVAS3D_TEXTURE_EO_CLASS_TYPE
-
-/**
- * @typedef Evas_Canvas3D_Material
- *
- * Material object handle
- *
- * @since 1.10
- * @ingroup Evas_Canvas3D_Material
- */
-typedef Eo     Evas_Canvas3D_Material;
-
-#define _EVAS_CANVAS3D_MATERIAL_EO_CLASS_TYPE
-
-/**
- * @typedef Evas_Canvas3D_Primitive
- *
- * Primitive object handle
- *
- * @since 1.15
- * @ingroup Evas_Canvas3D_Primitive
- */
-typedef Eo     Evas_Canvas3D_Primitive;
-
-#define _EVAS_CANVAS3D_PRIMITIVE_EO_CLASS_TYPE
-
-/**
  * @typedef Evas_Canvas3D_Surface_Func
  *
  * User-defined parametric surface function.
@@ -470,9 +347,7 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
                                     Evas_Real a,
                                     Evas_Real b);
 
-#include "canvas/evas_image.eo.h"
-
-#include "canvas/evas_canvas3d_camera.eo.h"
+#include "canvas/evas_canvas3d_object.eo.h"
 
 #include "canvas/evas_canvas3d_texture.eo.h"
 
@@ -480,15 +355,17 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 
 #include "canvas/evas_canvas3d_light.eo.h"
 
-#include "canvas/evas_canvas3d_mesh.eo.h"
-
 #include "canvas/evas_canvas3d_primitive.eo.h"
+
+#include "canvas/evas_canvas3d_mesh.eo.h"
 
 #include "canvas/evas_canvas3d_node.eo.h"
 
+#include "canvas/evas_canvas3d_camera.eo.h"
+
 #include "canvas/evas_canvas3d_scene.eo.h"
 
-#include "canvas/evas_canvas3d_object.eo.h"
+#include "canvas/evas_image.eo.h"
 
 /**
  * @ingroup Evas_Object_VG
