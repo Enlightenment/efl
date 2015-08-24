@@ -82,7 +82,4 @@ Eina_Bool             _message_iter_from_eina_value_struct(const char *signature
 void                   eldbus_connection_name_ref(Eldbus_Connection_Name *cn);
 void                   eldbus_connection_name_unref(Eldbus_Connection *conn, Eldbus_Connection_Name *cn);
 Eldbus_Signal_Handler  *_eldbus_signal_handler_add(Eldbus_Connection *conn, const char *sender, const char *path, const char *interface, const char *member, Eldbus_Signal_Cb cb, const void *cb_data);
-
-Eldbus_Message         *eldbus_message_signal_new(const char *path, const char *interface, const char *name) EINA_ARG_NONNULL(1, 2, 3) EINA_WARN_UNUSED_RESULT;
-
 #endif
