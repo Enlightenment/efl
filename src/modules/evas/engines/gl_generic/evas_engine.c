@@ -2410,7 +2410,7 @@ _evas_render_op_to_ector_rop(Evas_Render_Op op)
 }
 
 static void
-eng_ector_renderer_draw(void *data, void *context EINA_UNUSED, void *surface, Ector_Renderer *renderer, Eina_Array *clips, Eina_Bool do_async EINA_UNUSED)
+eng_ector_renderer_draw(void *data, void *context, void *surface, Ector_Renderer *renderer, Eina_Array *clips, Eina_Bool do_async EINA_UNUSED)
 {
    Evas_GL_Image *dst = surface;
    Evas_Engine_GL_Context *gc;
@@ -2422,6 +2422,7 @@ eng_ector_renderer_draw(void *data, void *context EINA_UNUSED, void *surface, Ec
    unsigned int i;
 
    gc = re->window_gl_context_get(re->software.ob);
+   gc->dc = context;
    if (gc->dc->clip.use)
      {
         clip.x = gc->dc->clip.x;
