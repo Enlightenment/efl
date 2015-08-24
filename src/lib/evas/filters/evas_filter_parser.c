@@ -858,7 +858,7 @@ _buffer_instruction_parse_run(lua_State *L,
 {
    char bufname[64] = {0};
    const char *src, *type;
-   Eina_Bool ok, alpha = EINA_FALSE;
+   Eina_Bool alpha = EINA_FALSE;
    Buffer *buf;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, EINA_FALSE);
