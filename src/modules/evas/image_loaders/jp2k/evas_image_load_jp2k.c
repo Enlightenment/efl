@@ -68,6 +68,10 @@ evas_image_load_file_head_jp2k_internal(unsigned int *w, unsigned int *h,
    opj_image_t *image;
    int format;
    int k;
+   const unsigned char sig_j2k[2] =
+     { 0xff, 0x4f };
+   const unsigned char sig_jp2[10] =
+     { 0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50, 0x20, 0x20, 0x0d, 0x0a };
 
    if (length < 2)
      {
@@ -75,10 +79,9 @@ evas_image_load_file_head_jp2k_internal(unsigned int *w, unsigned int *h,
         return EINA_FALSE;
      }
 
-   if (((unsigned char *)map)[0] == 0xFF && ((unsigned char *)map)[1] == 0x4F)
-     format = CODEC_J2K;
-   else
-     format = CODEC_JP2;
+   if ((length >= 2) && (!memcmp(map, sig_j2k, 2))) format = CODEC_J2K;
+   else if ((length >= 10) && (!memcmp(map, sig_jp2, 10))) format = CODEC_JP2;
+   else return EINA_FALSE;
 
    memset(&event_mgr, 0, sizeof(event_mgr));
    event_mgr.error_handler = _jp2k_error_cb;
@@ -153,11 +156,14 @@ evas_image_load_file_data_jp2k_internal(Evas_Image_Load_Opts *opts EINA_UNUSED,
    unsigned int *iter;
    int format;
    int idx;
+   const unsigned char sig_j2k[2] =
+     { 0xff, 0x4f };
+   const unsigned char sig_jp2[10] =
+     { 0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50, 0x20, 0x20, 0x0d, 0x0a };
 
-   if (((unsigned char *)map)[0] == 0xFF && ((unsigned char *)map)[1] == 0x4F)
-     format = CODEC_J2K;
-   else
-     format = CODEC_JP2;
+   if ((length >= 2) && (!memcmp(map, sig_j2k, 2))) format = CODEC_J2K;
+   else if ((length >= 10) && (!memcmp(map, sig_jp2, 10))) format = CODEC_JP2;
+   else return EINA_FALSE;
 
    opj_set_default_decoder_parameters(&params);
    info = opj_create_decompress(format);
