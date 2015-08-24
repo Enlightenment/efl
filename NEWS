@@ -1,6 +1,15 @@
 ==========
-EFL 1.15.0
+EFL 1.15.1
 ==========
+
+Changes since 1.15.0:
+---------------------
+
+Fixes:
+
+   * ecore_evas: fix first render skip in several windows
+   * ecore-wl: do not nul terminate drops
+   * Evas language: fix script run code (T2670)
 
 Changes since 1.14.0:
 ---------------------
