@@ -12350,6 +12350,7 @@ typedef struct
    Evas_Textblock_Item_Type type;
    Evas_Script_Type script;
    Eina_Rectangle *rect;
+   int bidi_level;
    Eina_Bool is_rtl : 1;
 } Textblock_Item_Debug_Data;
 
@@ -12369,6 +12370,8 @@ _evas_textblock_items_get(const Evas_Object *obj)
 
         if (!par->visible) break;
 
+        _layout_update_bidi_props(o, par);
+
         EINA_INLIST_FOREACH(par->lines, ln)
           {
              Evas_Object_Textblock_Item *it;
@@ -12380,7 +12383,7 @@ _evas_textblock_items_get(const Evas_Object *obj)
              EINA_INLIST_FOREACH(ln->items, it)
                {
                   Textblock_Item_Debug_Data *d = calloc(1, sizeof(Textblock_Item_Debug_Data));
-                  Evas_Coord y = par->y + ln->y + it->yoff;
+                  Evas_Coord y = par->y + ln->y;
 
                   d->idx = idx++;
                   d->w = it->w;
@@ -12393,12 +12396,55 @@ _evas_textblock_items_get(const Evas_Object *obj)
                        Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
                        d->script = ti->text_props.script;
                        d->is_rtl = (ti->text_props.bidi_dir == EVAS_BIDI_DIRECTION_RTL);
+                       if (par->bidi_props)
+                         {
+                            d->bidi_level = par->bidi_props->embedding_levels[it->text_pos];
+                         }
                     }
                   d->rect = eina_rectangle_new(ln->x + it->x + marginl, y, it->w, it->h);
                   rects = eina_list_append(rects, d);
                   printf(" -- it->valign=%f\n", it->format->valign);
                }
           }
+        evas_bidi_paragraph_props_unref(par->bidi_props);
+     }
+   return rects;
+}
+
+typedef struct
+{
+   int idx;
+   int lines;
+   Evas_Coord x, y, w, h;
+   Eina_Rectangle *rect;
+   Eina_Bool is_rtl : 1;
+} Textblock_Paragraph_Debug_Data;
+
+EAPI Eina_List *
+_evas_textblock_paragraphs_get(const Evas_Object *obj)
+{
+   Eina_List *rects = NULL;
+   Evas_Object_Textblock_Paragraph *par;
+   Evas_Textblock_Data *o = eo_data_scope_get(obj, MY_CLASS);
+
+
+   printf("Populating Items:\n");
+   int idx = 0;
+   EINA_INLIST_FOREACH(o->paragraphs, par)
+     {
+        if (!par->visible) break;
+
+        Textblock_Paragraph_Debug_Data *d = calloc(1, sizeof(Textblock_Paragraph_Debug_Data));
+
+        d->idx = idx++;
+        d->w = par->w;
+        d->h = par->h;
+        d->x = 0;
+        d->y = par->y;
+        d->lines = eina_inlist_count(EINA_INLIST_GET(par->lines));
+        d->is_rtl = (par->direction == EVAS_BIDI_DIRECTION_RTL);
+        d->rect = eina_rectangle_new(0, par->y, par->w, par->h);
+        rects = eina_list_append(rects, d);
      }
    return rects;
 }
