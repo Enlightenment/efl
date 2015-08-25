@@ -424,20 +424,9 @@ _elm_progressbar_part_value_get(const Eo *obj EINA_UNUSED, Elm_Progressbar_Data 
 EOLIAN static void
 _elm_progressbar_value_set(Eo *obj, Elm_Progressbar_Data *sd, double val)
 {
-   Elm_Progress_Status *ps;
-
    if (sd->val == val) return;
 
-   sd->val = val;
-   if (sd->val < MIN_RATIO_LVL) sd->val = MIN_RATIO_LVL;
-   if (sd->val > MAX_RATIO_LVL) sd->val = MAX_RATIO_LVL;
-
-   ps = _progress_status_new("elm.cur.progressbar", sd->val);
-   sd->progress_status = eina_list_append(sd->progress_status, ps);
-   _val_set(obj);
-   _units_set(obj);
-   eo_do(obj, eo_event_callback_call
-     (ELM_PROGRESSBAR_EVENT_CHANGED, NULL));
+   elm_progressbar_part_value_set(obj, "elm.cur.progressbar", val);
 }
 
 EOLIAN static double
