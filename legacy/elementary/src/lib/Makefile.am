@@ -651,7 +651,7 @@ BUILT_SOURCES = \
 	$(elm_eolian_legacy_h)
 
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
-elementaryeolianfiles_DATA = $(elm_eolian_files)
+elementaryeolianfiles_DATA = $(elm_eolian_files) $(elm_eolian_type_files)
 EXTRA_DIST += ${elementaryeolianfiles_DATA}
 
 nodist_includesunstable_HEADERS = $(elm_eolian_h) $(elm_eolian_legacy_h) $(elm_eolian_eot_h)
