@@ -2370,29 +2370,31 @@ eng_texture_image_get(void *data EINA_UNUSED, void *texture)
    return e3d_texture_get((E3D_Texture *)texture);
 }
 
-static Ector_Surface *_software_ector = NULL;
 static Eina_Bool use_cairo;
 
 static Ector_Surface *
-eng_ector_get(void *data EINA_UNUSED)
+eng_ector_create(void *data EINA_UNUSED)
 {
-   if (!_software_ector)
+   Ector_Surface *ector;
+   const char *ector_backend;
+   ector_backend = getenv("ECTOR_BACKEND");
+   if (ector_backend && !strcasecmp(ector_backend, "default"))
      {
-        const char *ector_backend;
-
-        ector_backend = getenv("ECTOR_BACKEND");
-        if (ector_backend && !strcasecmp(ector_backend, "default"))
-          {
-             _software_ector = eo_add(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
-             use_cairo = EINA_FALSE;
-          }
-        else
-          {
-             _software_ector = eo_add(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
-             use_cairo = EINA_TRUE;
-          }
+        ector = eo_add(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
+        use_cairo = EINA_FALSE;
      }
-   return _software_ector;
+   else
+     {
+        ector = eo_add(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
+        use_cairo = EINA_TRUE;
+     }
+   return ector;
+}
+
+static void
+eng_ector_destroy(void *data EINA_UNUSED, Ector_Surface *ector)
+{
+   if (ector) eo_del(ector);
 }
 
 static Ector_Rop
@@ -2479,7 +2481,8 @@ eng_ector_renderer_draw(void *data, void *context, void *surface, Ector_Renderer
 static void *software_buffer = NULL;
 
 static void
-eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, void *surface, int x, int y, Eina_Bool do_async EINA_UNUSED)
+eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface *ector,
+                void *surface, int x, int y, Eina_Bool do_async EINA_UNUSED)
 {
    Evas_Engine_GL_Context *gl_context;
    Render_Engine_GL_Generic *re = data;
@@ -2496,20 +2499,21 @@ eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, void *surface
    memset(software_buffer, 0, sizeof (unsigned int) * w * h);
    if (use_cairo)
      {
-        eo_do(_software_ector,
+        eo_do(ector,
               ector_cairo_software_surface_set(software_buffer, w, h),
               ector_surface_reference_point_set(x, y));
      }
    else
      {
-        eo_do(_software_ector,
+        eo_do(ector,
               ector_software_surface_set(software_buffer, w, h),
               ector_surface_reference_point_set(x, y));
      }
 }
 
 static void
-eng_ector_end(void *data, void *context EINA_UNUSED, void *surface EINA_UNUSED, Eina_Bool do_async EINA_UNUSED)
+eng_ector_end(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
+              void *surface EINA_UNUSED, Eina_Bool do_async EINA_UNUSED)
 {
    Evas_Engine_GL_Context *gl_context;
    Render_Engine_GL_Generic *re = data;
@@ -2523,12 +2527,12 @@ eng_ector_end(void *data, void *context EINA_UNUSED, void *surface EINA_UNUSED, 
 
    if (use_cairo)
      {
-        eo_do(_software_ector,
+        eo_do(ector,
               ector_cairo_software_surface_set(NULL, 0, 0));
      }
    else
      {
-        eo_do(_software_ector,
+        eo_do(ector,
               ector_software_surface_set(NULL, 0, 0));
      }
 
@@ -2697,7 +2701,8 @@ module_open(Evas_Module *em)
    ORD(texture_image_set);
    ORD(texture_image_get);
 
-   ORD(ector_get);
+   ORD(ector_create);
+   ORD(ector_destroy);
    ORD(ector_begin);
    ORD(ector_renderer_draw);
    ORD(ector_end);

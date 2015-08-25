@@ -194,7 +194,7 @@ evas_object_vg_render(Evas_Object *eo_obj EINA_UNUSED,
                       int x, int y, Eina_Bool do_async)
 {
    Evas_VG_Data *vd = type_private_data;
-
+   Ector_Surface *ector = evas_ector_get(obj->layer->evas);
    // FIXME: Set context (that should affect Ector_Surface) and
    // then call Ector_Renderer render from bottom to top. Get the
    // Ector_Surface that match the output from Evas engine API.
@@ -219,14 +219,15 @@ evas_object_vg_render(Evas_Object *eo_obj EINA_UNUSED,
                                                          obj->cur->anti_alias);
    obj->layer->evas->engine.func->context_render_op_set(output, context,
                                                         obj->cur->render_op);
-   obj->layer->evas->engine.func->ector_begin(output, context, surface,
+   obj->layer->evas->engine.func->ector_begin(output, context,
+                                              ector, surface,
                                               obj->cur->geometry.x + x, obj->cur->geometry.y + y,
                                               do_async);
    _evas_vg_render(obj, vd,
                    output, context, surface,
                    vd->root, NULL,
                    do_async);
-   obj->layer->evas->engine.func->ector_end(output, context, surface, do_async);
+   obj->layer->evas->engine.func->ector_end(output, context, ector, surface, do_async);
 }
 
 static void
@@ -236,7 +237,6 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
 {
    Evas_VG_Data *vd = type_private_data;
    Efl_VG_Base_Data *rnd;
-   Evas_Public_Data *e = obj->layer->evas;
    int is_v, was_v;
    Ector_Surface *s;
 
@@ -258,16 +258,17 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
                                             obj->cur->clipper,
                                             obj->cur->clipper->private_data);
      }
+
+   // FIXME: handle damage only on changed renderer.
+   s = evas_ector_get(obj->layer->evas);
+   if (vd->root && s)
+     _evas_vg_render_pre(vd->root, s, NULL);
+
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
    is_v = evas_object_is_visible(eo_obj, obj);
    was_v = evas_object_was_visible(eo_obj,obj);
    if (!(is_v | was_v)) goto done;
-
-   // FIXME: handle damage only on changed renderer.
-   s = e->engine.func->ector_get(e->engine.data.output);
-   if (vd->root && s)
-     _evas_vg_render_pre(vd->root, s, NULL);
 
    // FIXME: for now the walking Evas_VG_Node tree doesn't trigger any damage
    // So just forcing it here if necessary

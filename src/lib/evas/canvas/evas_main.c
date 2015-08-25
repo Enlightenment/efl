@@ -278,6 +278,8 @@ _evas_canvas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
 
    if (e->engine.func)
      {
+        e->engine.func->ector_destroy(e->engine.data.output,
+                                      e->engine.ector);
         e->engine.func->context_free(e->engine.data.output,
                                      e->engine.data.context);
         e->engine.func->output_free(e->engine.data.output);
@@ -691,6 +693,14 @@ EOLIAN static Evas *
 _evas_canvas_evas_common_interface_evas_get(Eo *eo_e, Evas_Public_Data *e EINA_UNUSED)
 {
    return (Evas *)eo_e;
+}
+
+Ector_Surface *
+evas_ector_get(Evas_Public_Data *e)
+{
+   if (!e->engine.ector)
+     e->engine.ector = e->engine.func->ector_create(e->engine.data.output);
+   return e->engine.ector;
 }
 
 #include "canvas/evas_canvas.eo.c"
