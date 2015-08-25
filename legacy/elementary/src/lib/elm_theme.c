@@ -387,7 +387,7 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
                   eina_strbuf_append_char(buf, ':');
                   pe += 2;
                }
-             else if ((pe[0] == ':') && (pe[1] == '/'))
+             else if ((pe[0] == ':') && (pe[1] == '\\'))
                {
                   eina_strbuf_append_char(buf, *pe);
                   pe++;
