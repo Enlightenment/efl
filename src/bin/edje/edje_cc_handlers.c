@@ -12537,8 +12537,8 @@ st_collections_group_programs_program_name(void)
         A list of global signal, that edje provide:
           - hold,on;
           - hold,off;
-          - mounse,in;
-          - mounse,out;
+          - mouse,in;
+          - mouse,out;
           - mouse,down,N: where N - mouse button number;
           - mouse,down,N,double: where N - mouse button number;
           - mouse,down,N,triple: where N - mouse button number;
