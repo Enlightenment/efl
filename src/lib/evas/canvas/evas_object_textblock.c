@@ -12345,7 +12345,8 @@ _evas_textblock_par_rects_get(const Evas_Object *obj)
 
 typedef struct
 {
-   int idx;
+   int idx; /* Visual index */
+   int log_idx; /* Logical index */
    Evas_Coord x, y, w, h;
    Evas_Textblock_Item_Type type;
    Evas_Script_Type script;
@@ -12354,6 +12355,23 @@ typedef struct
    const char *font_src;
    Eina_Bool is_rtl : 1;
 } Textblock_Item_Debug_Data;
+
+static int
+_evas_textblock_get_logical_index(
+      Evas_Object_Textblock_Paragraph *par,
+      Evas_Object_Textblock_Item *it)
+{
+   int idx = 0;
+   Evas_Object_Textblock_Item *itr;
+   Eina_List *i;
+   EINA_LIST_FOREACH(par->logical_items, i, itr)
+     {
+        if (it == itr) return idx;
+        idx++;
+     }
+   return -1;
+}
+
 
 EAPI Eina_List *
 _evas_textblock_items_get(const Evas_Object *obj)
@@ -12387,6 +12405,7 @@ _evas_textblock_items_get(const Evas_Object *obj)
                   Evas_Coord y = par->y + ln->y;
 
                   d->idx = idx++;
+                  d->log_idx = _evas_textblock_get_logical_index(par, it);
                   d->w = it->w;
                   d->h = it->h;
                   d->x = it->x + marginl;
