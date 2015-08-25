@@ -696,16 +696,10 @@ AM_CONDITIONAL([HAVE_SYSTEMD_USER_SESSION], [test "x${have_systemd_user_session}
 AC_SUBST([USER_SESSION_DIR])
 
 if test "x${have_systemd_pkg}" = "xauto" -o "x${have_systemd_pkg}" = "xyes"; then
-   PKG_CHECK_MODULES([SYSTEMD], [libsystemd-daemon >= 192 libsystemd-journal >= 192],
+   PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 209],
    [have_systemd_pkg="yes"],
    [have_systemd_pkg="no"])
 fi
-
-PKG_CHECK_MODULES(SYSTEMD_LOGIN, [libsystemd-login >= 198],
-                  [have_systemd_login=yes], [have_systemd_login=no])
-AS_IF([test "x$have_systemd_login" = "xyes"],
-      [AC_DEFINE([HAVE_SYSTEMD_LOGIN], [1], [Have systemd-login])])
-AM_CONDITIONAL(HAVE_SYSTEMD_LOGIN, test "x$have_systemd_login" = "xyes")
 
 # check for systemd library if requested
 if test "x${want_systemd}" = "xyes" -a "x${have_systemd_pkg}" = "xno"; then
@@ -713,7 +707,7 @@ if test "x${want_systemd}" = "xyes" -a "x${have_systemd_pkg}" = "xno"; then
 fi
 
 AM_CONDITIONAL([WANT_SYSTEMD], [test "${want_systemd}" = "yes"])
-
+AM_CONDITIONAL([HAVE_SYSTEMD], [test "${want_systemd}" = "yes" -a "${have_systemd_pkg}" = "yes"])
 #### Platform-dependent
 DL_LIBS=""
 DL_INTERNAL_LIBS=""
@@ -925,7 +919,7 @@ AC_DEFINE_IF([EINA_COW_MAGIC_ON],
    [test "x${want_cow_magic}" = "xyes" ],
    [1], [Turn on Eina_Magic in Eina_Cow])
 
-EFL_OPTIONAL_DEPEND_PKG([EINA], [${want_systemd}], [SYSTEMD], [libsystemd-journal])
+EFL_OPTIONAL_DEPEND_PKG([EINA], [${want_systemd}], [SYSTEMD], [libsystemd])
 
 EFL_EVAL_PKGS([EINA])
 
@@ -2357,7 +2351,7 @@ if test "x${have_glib}" = "xno"; then
    want_g_main_loop="no"
 fi
 
-EFL_OPTIONAL_DEPEND_PKG([ECORE], [${want_systemd}], [SYSTEMD], [libsystemd-daemon])
+EFL_OPTIONAL_DEPEND_PKG([ECORE], [${want_systemd}], [SYSTEMD], [libsystemd])
 
 EFL_ADD_FEATURE([ECORE], [systemd-daemon], [${want_systemd}])
 EFL_ADD_FEATURE([ECORE], [glib])
@@ -2591,7 +2585,7 @@ else
    ecore_con_resolver="fork"
 fi
 
-EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_systemd}], [SYSTEMD], [libsystemd-daemon])
+EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_systemd}], [SYSTEMD], [libsystemd])
 
 EFL_ADD_FEATURE([ECORE_CON], [cares])
 EFL_ADD_FEATURE([ECORE_CON], [local-sockets], [${want_ecore_con_local_sockets}])

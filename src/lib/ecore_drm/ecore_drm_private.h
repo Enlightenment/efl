@@ -26,7 +26,7 @@
 # include <libinput.h>
 # include <xkbcommon/xkbcommon.h>
 
-# ifdef HAVE_SYSTEMD_LOGIN
+# ifdef HAVE_SYSTEMD
 #  include <systemd/sd-login.h>
 # endif
 
