@@ -144,6 +144,7 @@ _key_action_move(Evas_Object *obj, const char *params)
                   if (cur_weight == 0.0)
                     {
                        elm_widget_focus_steal(cur);
+                       eina_list_free(can_focus_list);
                        return EINA_TRUE;
                     }
                   cur_weight = 1.0 / cur_weight;
@@ -157,6 +158,7 @@ _key_action_move(Evas_Object *obj, const char *params)
         if (new_focus)
           {
              elm_widget_focus_steal(new_focus);
+             eina_list_free(can_focus_list);
              return EINA_TRUE;
           }
      }
@@ -189,10 +191,14 @@ _key_action_move(Evas_Object *obj, const char *params)
              if (ELM_RECTS_INTERSECT(x, y, v_w, v_h, l_x, l_y, l_w, l_h))
                {
                   elm_widget_focus_steal(new_focus);
+                  eina_list_free(can_focus_list);
                   return EINA_TRUE;
                }
           }
      }
+
+   eina_list_free(can_focus_list);
+
    if (!strcmp(dir, "left"))
      {
         if ((x <= 0) && (!sd->loop_h)) return EINA_FALSE;
