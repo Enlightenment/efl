@@ -1421,10 +1421,13 @@ _ecore_win32_event_handle_button_press(Ecore_Win32_Callback_Data *msg,
                                        int                        button)
 {
    Ecore_Win32_Window *window;
+   RECT rect = { 0, 0, 0, 0 };
 
    INF("mouse button pressed");
 
    window = (Ecore_Win32_Window *)GetWindowLongPtr(msg->window, GWLP_USERDATA);
+   if (!GetWindowRect(window->window, &rect))
+     ERR("GetWindowRect() failed!");
 
    if (button > 3)
      {
@@ -1438,8 +1441,10 @@ _ecore_win32_event_handle_button_press(Ecore_Win32_Callback_Data *msg,
         e->direction = 0;
         /* wheel delta is positive or negative, never 0 */
         e->z = GET_WHEEL_DELTA_WPARAM(msg->window_param) > 0 ? -1 : 1;
-        e->x = GET_X_LPARAM(msg->data_param);
-        e->y = GET_Y_LPARAM(msg->data_param);
+        e->x = GET_X_LPARAM(msg->data_param) - rect.left;
+        e->y = GET_Y_LPARAM(msg->data_param) - rect.top;
+        e->root.x = rect.left;
+        e->root.y = rect.top;
         e->timestamp = msg->timestamp;
         e->modifiers = _ecore_win32_modifiers_get();
 
@@ -1460,6 +1465,8 @@ _ecore_win32_event_handle_button_press(Ecore_Win32_Callback_Data *msg,
            e->event_window = e->window;
            e->x = GET_X_LPARAM(msg->data_param);
            e->y = GET_Y_LPARAM(msg->data_param);
+           e->root.x = rect.left;
+           e->root.y = rect.top;
            e->timestamp = msg->timestamp;
            e->modifiers = _ecore_win32_modifiers_get();
 
@@ -1488,6 +1495,8 @@ _ecore_win32_event_handle_button_press(Ecore_Win32_Callback_Data *msg,
            e->buttons = button;
            e->x = GET_X_LPARAM(msg->data_param);
            e->y = GET_Y_LPARAM(msg->data_param);
+           e->root.x = rect.left;
+           e->root.y = rect.top;
            e->timestamp = msg->timestamp;
            e->modifiers = _ecore_win32_modifiers_get();
 
