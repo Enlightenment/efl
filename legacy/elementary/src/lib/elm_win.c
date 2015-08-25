@@ -3780,6 +3780,9 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
    else if (_elm_config->font_hinting == 2)
      evas_font_hinting_set(sd->evas, EVAS_FONT_HINTING_BYTECODE);
 
+   sd->wm_rot.wm_supported = ecore_evas_wm_rotation_supported_get(sd->ee);
+   sd->wm_rot.preferred_rot = -1; // it means that elm_win doesn't use preferred rotation.
+
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
 #endif
@@ -3838,9 +3841,6 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
      {
         // do nothing
      }
-
-   sd->wm_rot.wm_supported = ecore_evas_wm_rotation_supported_get(sd->ee);
-   sd->wm_rot.preferred_rot = -1; // it means that elm_win doesn't use preferred rotation.
 
    sd->edje = edje_object_add(sd->evas);
    _elm_win_theme_internal(obj, sd);
