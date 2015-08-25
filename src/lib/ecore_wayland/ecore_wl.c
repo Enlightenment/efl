@@ -506,6 +506,8 @@ _ecore_wl_shutdown(Eina_Bool close)
 
         _ecore_wl_xkb_shutdown(_ecore_wl_disp);
 
+        if (_ecore_wl_disp->wl.session_recovery)
+          session_recovery_destroy(_ecore_wl_disp->wl.session_recovery);
 #ifdef USE_IVI_SHELL
         if (_ecore_wl_disp->wl.ivi_application)
           ivi_application_destroy(_ecore_wl_disp->wl.ivi_application);
@@ -654,6 +656,11 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
      _ecore_wl_output_add(ewd, id);
    else if (!strcmp(interface, "wl_seat"))
      _ecore_wl_input_add(ewd, id);
+   else if (!strcmp(interface, "session_recovery"))
+     {
+        ewd->wl.session_recovery =
+          wl_registry_bind(registry, id, &session_recovery_interface, 1);
+     }
 #ifdef USE_IVI_SHELL
    else if (!strcmp(interface, "ivi_application"))
      {
