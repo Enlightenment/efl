@@ -752,8 +752,11 @@ _elm_toolbar_elm_widget_on_focus(Eo *obj, Elm_Toolbar_Data *sd)
    if (!int_ret) return EINA_FALSE;
    if (!sd->items) return EINA_FALSE;
 
-   if (elm_widget_focus_get(obj) && !sd->mouse_down)
+   if (elm_widget_focus_get(obj))
      {
+        evas_object_focus_set(wd->resize_obj, EINA_TRUE);
+        if (sd->mouse_down) return EINA_TRUE;
+
         if (sd->last_focused_item)
           eo_it = sd->last_focused_item;
         else if (_elm_config->first_item_focus_on_first_focus_in &&
@@ -767,7 +770,6 @@ _elm_toolbar_elm_widget_on_focus(Eo *obj, Elm_Toolbar_Data *sd)
              eo_it = _elm_toolbar_nearest_visible_item_get(obj, eo_it);
              if (eo_it) _elm_toolbar_item_focused(eo_it);
           }
-        evas_object_focus_set(wd->resize_obj, EINA_TRUE);
      }
    else
      {
