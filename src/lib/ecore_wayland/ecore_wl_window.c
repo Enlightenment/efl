@@ -4,6 +4,7 @@
 
 #include "ecore_wl_private.h"
 #include "xdg-shell-client-protocol.h"
+#include "session-recovery-client-protocol.h"
 
 /* local function prototypes */
 static void _ecore_wl_window_cb_ping(void *data EINA_UNUSED, struct wl_shell_surface *shell_surface, unsigned int serial);
@@ -16,6 +17,7 @@ static char *_ecore_wl_window_id_str_get(unsigned int win_id);
 static void _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface, int32_t width, int32_t height,struct wl_array *states, uint32_t serial);
 static void _ecore_xdg_handle_surface_delete(void *data, struct xdg_surface *xdg_surface);
 static void _ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup);
+static void _ecore_session_recovery_uuid(void *data, struct session_recovery *session_recovery, const char *uuid);
 
 /* local variables */
 static Eina_Hash *_windows = NULL;
@@ -43,6 +45,11 @@ static const struct xdg_surface_listener _ecore_xdg_surface_listener =
 static const struct xdg_popup_listener _ecore_xdg_popup_listener =
 {
    _ecore_xdg_handle_popup_done,
+};
+
+static const struct session_recovery_listener _ecore_session_recovery_listener =
+{
+   _ecore_session_recovery_uuid,
 };
 
 /* internal functions */
@@ -271,6 +278,7 @@ ecore_wl_window_surface_create(Ecore_Wl_Window *win)
 
    if (!win) return NULL;
    if (win->surface) return win->surface;
+   session_recovery_add_listener(_ecore_wl_disp->wl.session_recovery, &_ecore_session_recovery_listener, win);
    win->surface = wl_compositor_create_surface(_ecore_wl_compositor_get());
    if (!win->surface) return NULL;
    win->surface_id = wl_proxy_get_id((struct wl_proxy *)win->surface);
@@ -1060,6 +1068,15 @@ _ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup)
    if (!xdg_popup) return;
    if (!(win = data)) return;
    ecore_wl_input_ungrab(win->pointer_device);
+}
+
+static void
+_ecore_session_recovery_uuid(void *data EINA_UNUSED, struct session_recovery *session_recovery, const char *uuid)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!session_recovery) return;
+   DBG("UUID event received from compositor with UUID: %s", uuid);
 }
 
 static void
