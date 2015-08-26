@@ -535,7 +535,7 @@ data_thread_head(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Head_Write *hw = data;
    int bytes = 0;
-   char buf[PATH_MAX];
+   char buf[EINA_PATH_MAX];
 
    if (edje_file)
      {
@@ -628,8 +628,8 @@ data_thread_fonts(void *data, Ecore_Thread *thread EINA_UNUSED)
    Eina_File *f = NULL;
    void *m = NULL;
    int bytes = 0;
-   char buf[PATH_MAX];
-   char buf2[PATH_MAX];
+   char buf[EINA_PATH_MAX];
+   char buf2[EINA_PATH_MAX];
 
    f = eina_file_open(fc->fn->file, 0);
    if (f)
@@ -821,7 +821,7 @@ static void
 data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Image_Write *iw = data;
-   char buf[PATH_MAX], buf2[PATH_MAX];
+   char buf[PATH_MAX], buf2[EINA_PATH_MAX];
    unsigned int *start, *end;
    Eina_Bool opaque = EINA_TRUE;
    int bytes = 0;
@@ -1199,7 +1199,7 @@ static void
 data_thread_mo(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Mo_Write *mw = data;
-   char buf[PATH_MAX];
+   char buf[EINA_PATH_MAX];
    Eina_List *ll;
 
    char *dir_path = NULL;
@@ -1309,7 +1309,7 @@ data_write_mo(Eet_File *ef, int *mo_num)
         int i;
         char *po_entry;
         char *sub_str;
-        char buf[PATH_MAX];
+        char buf[EINA_PATH_MAX];
         Eina_List *ll;
         char *dir_path = NULL;
         char mo_path[PATH_MAX];
@@ -1776,7 +1776,7 @@ data_write_scripts(Eet_File *ef)
      {
 	Code *cd = eina_list_data_get(l);
         Script_Write *sc;
-        char buf[PATH_MAX];
+        char buf[EINA_PATH_MAX];
 
 	if (cd->is_lua)
 	  continue;
