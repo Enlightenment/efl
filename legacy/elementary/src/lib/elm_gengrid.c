@@ -2495,14 +2495,16 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *eo_it,
           {
              row = cvh / sd->item_height;
              if (row <= 0) row = 1;
-             if (tmp->position <= row)
+             col = tmp->position / row;
+             if (col == 0)
                return EINA_TRUE;
           }
         else if (sd->item_width > 0)
           {
              col = cvw / sd->item_width;
              if (col <= 0) col = 1;
-             if (tmp->position <= col)
+             row = tmp->position / col;
+             if (row == 0)
                return EINA_TRUE;
           }
      }
