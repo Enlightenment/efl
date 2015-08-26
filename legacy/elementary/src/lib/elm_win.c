@@ -3632,15 +3632,6 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 
    eo_do(obj, eo_parent_set(ecore_evas_get(tmp_sd.ee)));
 
-   /* XXX: This hack is needed because we parent ourselves to an inside object.
-    * That should be fixed, and then this can be fixed.
-    * Only needed if there wasn't a parent, because if there was, we are just
-    * replacing it. */
-   if (!parent)
-     {
-        eo_unref(obj);
-     }
-
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
