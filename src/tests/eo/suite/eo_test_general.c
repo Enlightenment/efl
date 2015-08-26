@@ -464,29 +464,6 @@ START_TEST(eo_refs)
    ck_assert_int_eq(eo_ref_get(obj2), 1);
    ck_assert_int_eq(eo_ref_get(obj3), 2);
 
-   /* Setting and removing parents. */
-   obj = eo_add(SIMPLE_CLASS, NULL);
-   obj2 = eo_ref(eo_add(SIMPLE_CLASS, obj));
-   obj3 = eo_ref(eo_add(SIMPLE_CLASS, NULL));
-
-   eo_do(obj2, eo_parent_set(obj3));
-   eo_do(obj3, eo_parent_set(obj));
-   ck_assert_int_eq(eo_ref_get(obj2), 2);
-   ck_assert_int_eq(eo_ref_get(obj3), 2);
-
-   eo_do(obj2, eo_parent_set(NULL));
-   eo_do(obj3, eo_parent_set(NULL));
-   ck_assert_int_eq(eo_ref_get(obj2), 1);
-   ck_assert_int_eq(eo_ref_get(obj3), 1);
-
-   eo_do(obj2, eo_parent_set(obj));
-   eo_do(obj3, eo_parent_set(obj));
-   ck_assert_int_eq(eo_ref_get(obj2), 1);
-   ck_assert_int_eq(eo_ref_get(obj3), 1);
-
-   eo_del(obj);
-   eo_del(obj2);
-   eo_del(obj3);
 
    /* Just check it doesn't seg atm. */
    obj = eo_add(SIMPLE_CLASS, NULL);
