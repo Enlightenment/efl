@@ -2445,10 +2445,12 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *eo_it,
              if ((sd->horizontal) && (ix == cx) && (iy > cy))
                return EINA_FALSE;
              else if ((!sd->horizontal) && (iy == cy))
-               if ((!mirrored && (ix >cx)) || (mirrored && (ix < cx)))
-                 return EINA_FALSE;
-               else
-                 return EINA_TRUE;
+               {
+                  if ((!mirrored && (ix > cx)) || (mirrored && (ix < cx)))
+                    return EINA_FALSE;
+                  else
+                    return EINA_TRUE;
+               }
              else
                return EINA_TRUE;
           }
@@ -2471,10 +2473,12 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *eo_it,
              if ((sd->horizontal) && (ix == cx) && (iy < cy))
                return EINA_FALSE;
              else if ((!sd->horizontal) && (iy == cy))
-               if ((!mirrored && (ix < cx)) || (mirrored && (ix > cx)))
-                 return EINA_FALSE;
-               else
-                 return EINA_TRUE;
+               {
+                  if ((!mirrored && (ix < cx)) || (mirrored && (ix > cx)))
+                    return EINA_FALSE;
+                  else
+                    return EINA_TRUE;
+               }
              else
                return EINA_TRUE;
           }
