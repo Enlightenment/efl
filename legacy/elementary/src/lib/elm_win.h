@@ -37,6 +37,8 @@
  * rendering using SDL as the buffer)
  * @li "gdi", "software-gdi", "software_gdi" (Windows WIN32 rendering via
  * GDI with software)
+ * @li "ddraw", "software-ddraw", "software_ddraw" (Windows WIN32 rendering via
+ * DirectDraw with software)
  * @li "ews" (rendering to EWS - Ecore + Evas Single Process Windowing System)
  * @li "gl-cocoa", "gl_cocoa", "opengl-cocoa", "opengl_cocoa" (OpenGL rendering in Cocoa)
  * @li "wayland_shm" (Wayland client SHM rendering)
