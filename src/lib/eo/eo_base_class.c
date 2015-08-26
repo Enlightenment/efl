@@ -993,9 +993,7 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
 
    if (pd->parent)
      {
-        /* If we have a parent still at the time of destruction, it means that
-         * ref was already (arguably erroneously unrefed) so we need to ref
-         * before it gets unrefed again. */
+        ERR("Object '%p' still has a parent at the time of destruction.", obj);
         eo_ref(obj);
         eo_do(obj, eo_parent_set(NULL));
      }
