@@ -917,13 +917,13 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 
    eo_do(eo_id, eo_parent_set(parent_id));
 
-   /* If there's a parent. Unref. Eo_add should return an object with either a
+   /* If there's a parent. Ref. Eo_add should return an object with either a
     * parent ref, or with the lack of, just a ref. */
      {
         Eo *parent_tmp;
-        if (!ref && eo_do_ret(eo_id, parent_tmp, eo_parent_get()))
+        if (ref && eo_do_ret(eo_id, parent_tmp, eo_parent_get()))
           {
-             _eo_unref(obj);
+             _eo_ref(obj);
           }
      }
 
