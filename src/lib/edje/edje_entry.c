@@ -3854,18 +3854,11 @@ _edje_entry_cursor_is_visible_format_get(Edje_Real_Part *rp, Edje_Cursor cur)
 char *
 _edje_entry_cursor_content_get(Edje_Real_Part *rp, Edje_Cursor cur)
 {
-   static char *s = NULL;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
 
    if (!c) return NULL;
-   if (s)
-     {
-        free(s);
-        s = NULL;
-     }
 
-   s = evas_textblock_cursor_content_get(c);
-   return s;
+   return evas_textblock_cursor_content_get(c);
 }
 
 void
