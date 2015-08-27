@@ -3,7 +3,6 @@
 
 #include "evas_common_private.h"
 #include "evas_private.h"
-#include "config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
