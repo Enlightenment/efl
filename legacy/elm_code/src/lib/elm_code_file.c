@@ -179,6 +179,11 @@ EAPI void elm_code_file_save(Elm_Code_File *file)
    EINA_LIST_FOREACH(file->lines, item, line_item)
      {
         content = elm_code_line_text_get(line_item, &length);
+        if (elm_code_text_is_whitespace(content, length))
+          {
+             length = 0;
+             elm_code_line_text_set(line_item, "", 0);
+          }
         fwrite(content, sizeof(char), length, out);
         fwrite(crchars, sizeof(char), crlength, out);
      }

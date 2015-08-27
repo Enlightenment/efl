@@ -256,3 +256,13 @@ elm_code_text_leading_whitespace_length(const char *text, unsigned int length)
    return count;
 }
 
+EAPI unsigned int
+elm_code_text_is_whitespace(const char *text, unsigned int length)
+{
+   unsigned int leading;
+
+   leading = elm_code_text_leading_whitespace_length(text, length);
+
+   return leading == length;
+}
+
