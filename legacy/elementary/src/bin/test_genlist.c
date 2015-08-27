@@ -5,6 +5,8 @@
 #endif
 #include <Elementary.h>
 
+#include "test_explode.h"
+
 Evas_Object * _elm_min_set(Evas_Object *obj, Evas_Object *parent,
                            Evas_Coord w, Evas_Coord h);
 
@@ -385,6 +387,7 @@ test_genlist(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    elm_genlist_item_class_free(api->itc1);
 
    evas_object_resize(win, 480, 800);
+   explode_win_enable(win);
    evas_object_show(win);
 }
 

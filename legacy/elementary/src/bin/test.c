@@ -5,6 +5,7 @@
 #include <string.h>
 #include <Elementary.h>
 #include "test.h"
+#include "test_explode.h"
 
 int _log_domain = -1;
 
@@ -426,6 +427,8 @@ my_win_main(const char *autorun, Eina_Bool test_win_only)
     *   ex) win = elm_win_util_standard_add("main", "Elementary Tests"); */
    win = elm_win_add(NULL, "main", ELM_WIN_BASIC);
    if (!win) exit(1);
+
+   explode_win_enable(win);
    /* Set the title of the window - This is in the titlebar. */
    elm_win_title_set(win, "Elementary Tests");
 
