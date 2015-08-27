@@ -424,7 +424,7 @@ _ecore_pipe_wait(Ecore_Pipe *p,
                  double      wait)
 {
    struct timeval tv, *t;
-   fd_set rset;
+   fd_set rset, wset, exset;
    double end = 0.0;
    double timeout;
    int ret;
@@ -435,6 +435,8 @@ _ecore_pipe_wait(Ecore_Pipe *p,
      return -1;
 
    FD_ZERO(&rset);
+   FD_ZERO(&wset);
+   FD_ZERO(&exset);
    FD_SET(p->fd_read, &rset);
 
    if (wait >= 0.0)
@@ -472,7 +474,7 @@ _ecore_pipe_wait(Ecore_Pipe *p,
              t = NULL;
           }
 
-        ret = main_loop_select(p->fd_read + 1, &rset, NULL, NULL, t);
+        ret = main_loop_select(p->fd_read + 1, &rset, &wset, &exset, t);
 
         if (ret > 0)
           {
