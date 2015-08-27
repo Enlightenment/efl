@@ -6168,8 +6168,11 @@ _textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts,
         size_t format_len = eina_stringshare_strlen(fnode->orig_format);
         /* Is this safe to use alloca here? Strings might possibly get large */
 
-        if (fnode->own_closer)
-          format_len--;
+        if (fnode->own_closer &&
+           (format_len > 0) && (fnode->orig_format[format_len - 1] == '/'))
+          {
+             format_len--;
+          }
 
         match = _textblock_format_node_from_style_tag(o, fnode, fnode->orig_format,
               format_len);
