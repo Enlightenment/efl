@@ -675,7 +675,9 @@ modules/evas/engines/gl_common/evas_gl_api_ext_def.h \
 modules/evas/engines/gl_common/evas_gl_core.h \
 modules/evas/engines/gl_common/evas_gl_core_private.h \
 modules/evas/engines/gl_common/evas_gl_api.c \
+modules/evas/engines/gl_common/evas_gl_api_def.h \
 modules/evas/engines/gl_common/evas_gl_api_gles1.c \
+modules/evas/engines/gl_common/evas_gl_api_gles3_def.h \
 modules/evas/engines/gl_common/evas_gl_api_ext.c \
 modules/evas/engines/gl_common/shader/evas_gl_shaders.x \
 modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x \
