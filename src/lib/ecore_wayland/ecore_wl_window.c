@@ -278,7 +278,8 @@ ecore_wl_window_surface_create(Ecore_Wl_Window *win)
 
    if (!win) return NULL;
    if (win->surface) return win->surface;
-   session_recovery_add_listener(_ecore_wl_disp->wl.session_recovery, &_ecore_session_recovery_listener, win);
+   if (_ecore_wl_disp->wl.session_recovery)
+     session_recovery_add_listener(_ecore_wl_disp->wl.session_recovery, &_ecore_session_recovery_listener, win);
    win->surface = wl_compositor_create_surface(_ecore_wl_compositor_get());
    if (!win->surface) return NULL;
    win->surface_id = wl_proxy_get_id((struct wl_proxy *)win->surface);
