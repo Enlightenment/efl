@@ -1522,7 +1522,12 @@ _item_cache_add(Elm_Gen_Item *it)
    itc->spacer = it->spacer;
    itc->base_view = VIEW(it);
    itc->item_style = eina_stringshare_add(it->itc->item_style);
-   if (it->item->type & ELM_GENLIST_ITEM_TREE) itc->tree = 1;
+   if (it->item->type & ELM_GENLIST_ITEM_TREE)
+     {
+        itc->tree = 1;
+        if (it->item->expanded)
+          edje_object_signal_emit(itc->base_view, SIGNAL_CONTRACTED, "elm");
+     }
 
    if (it->selected)
      edje_object_signal_emit(itc->base_view, SIGNAL_UNSELECTED, "elm");
