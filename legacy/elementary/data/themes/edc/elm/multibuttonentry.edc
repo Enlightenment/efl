@@ -3,9 +3,17 @@ group { name: "elm/multibuttonentry/base/default";
    data.item: "vertical_pad" 0;
    data.item: "closed_height" 0;
    parts {
+      part { name: "bg";
+         type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
       part { name: "box.swallow"; type: SWALLOW;
          description { state: "default" 0.0;
-            align: 0.0 0.0;
+            rel1.to: "bg";
+            rel2.to: "bg";
          }
       }
    }
