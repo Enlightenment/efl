@@ -1515,13 +1515,13 @@ _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interfac
 
    if (sid->loop_h && cw > 0)
      {
-        if (x < minx) x = mx + (x % mx);
-        else if (x > mx) x = (x % mx);
+        if (x < 0) x = cw + (x % cw);
+        else if (x >= cw) x = (x % cw);
      }
    if (sid->loop_v && ch > 0)
      {
-        if (y < miny) y = my + (y % my);
-        else if (y > my) y = (y % my);
+        if (y < 0) y = ch + (y % ch);
+        else if (y >= ch) y = (y % ch);
      }
 
    if (!_elm_config->thumbscroll_bounce_enable)
