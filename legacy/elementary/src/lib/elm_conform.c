@@ -348,9 +348,10 @@ _land_indicator_connect_cb(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-static void
+static Eina_Bool
 _land_indicator_disconnected(void *data,
-                             Evas_Object *obj EINA_UNUSED,
+                             Eo *obj EINA_UNUSED,
+                             const Eo_Event_Description *desc EINA_UNUSED,
                              void *event_info EINA_UNUSED)
 {
    Evas_Object *conform = data;
@@ -359,11 +360,13 @@ _land_indicator_disconnected(void *data,
 
    sd->land_indi_timer = ecore_timer_add(ELM_CONFORM_INDICATOR_TIME,
                                          _land_indicator_connect_cb, conform);
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _port_indicator_disconnected(void *data,
-                             Evas_Object *obj EINA_UNUSED,
+                             Eo *obj EINA_UNUSED,
+                             const Eo_Event_Description *desc EINA_UNUSED,
                              void *event_info EINA_UNUSED)
 {
    Evas_Object *conform = data;
@@ -372,6 +375,7 @@ _port_indicator_disconnected(void *data,
 
    sd->port_indi_timer = ecore_timer_add(ELM_CONFORM_INDICATOR_TIME,
                                          _port_indicator_connect_cb, conform);
+   return EINA_TRUE;
 }
 
 static Evas_Object *
@@ -407,8 +411,8 @@ _create_portrait_indicator(Evas_Object *obj)
      }
 
    elm_widget_sub_object_add(obj, port_indicator);
-   evas_object_smart_callback_add(port_indicator, "image.deleted", _port_indicator_disconnected, obj);
-
+   eo_do(port_indicator, eo_event_callback_add
+     (ELM_PLUG_EVENT_IMAGE_DELETED, _port_indicator_disconnected, NULL));
    evas_object_size_hint_min_set(port_indicator, -1, 0);
    evas_object_size_hint_max_set(port_indicator, -1, 0);
 
@@ -448,8 +452,8 @@ _create_landscape_indicator(Evas_Object *obj)
      }
 
    elm_widget_sub_object_add(obj, land_indicator);
-   evas_object_smart_callback_add(land_indicator, "image.deleted",_land_indicator_disconnected, obj);
-
+   eo_do(land_indicator, eo_event_callback_add
+     (ELM_PLUG_EVENT_IMAGE_DELETED, _land_indicator_disconnected, NULL));
    evas_object_size_hint_min_set(land_indicator, -1, 0);
    evas_object_size_hint_max_set(land_indicator, -1, 0);
    return land_indicator;
