@@ -2334,7 +2334,9 @@ _item_single_select_down(Elm_Gengrid_Data *sd)
    if (!eo_next)
      {
         idx = elm_gengrid_item_index_get(eo_orig);
-        if ((idx == sd->item_count) || ((sd->item_count) % (sd->nmax) == 0))
+        if (idx > sd->item_count -
+            ((sd->item_count % sd->nmax) == 0 ?
+             sd->nmax : (sd->item_count % sd->nmax)))
            return EINA_FALSE;
         else
            eo_next = elm_gengrid_last_item_get(sd->obj);
