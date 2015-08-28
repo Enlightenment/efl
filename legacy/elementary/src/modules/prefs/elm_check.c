@@ -6,14 +6,15 @@ static Elm_Prefs_Item_Type supported_types[] =
    ELM_PREFS_TYPE_UNKNOWN
 };
 
-static void
+static Eina_Bool
 _item_changed_cb(void *data,
-                 Evas_Object *obj,
+                 Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
                  void *event_info EINA_UNUSED)
 {
     Elm_Prefs_Item_Changed_Cb prefs_it_changed_cb = data;
 
     prefs_it_changed_cb(obj);
+    return EINA_TRUE;
 }
 
 static Evas_Object *
@@ -25,8 +26,8 @@ elm_prefs_check_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
 {
    Evas_Object *obj = elm_check_add(prefs);
 
-   evas_object_smart_callback_add(obj, "changed", _item_changed_cb, cb);
-
+   eo_do(obj, eo_event_callback_add
+     (ELM_CHECK_EVENT_CHANGED, _item_changed_cb, cb));
    elm_check_state_set(obj, spec.b.def);
 
    return obj;

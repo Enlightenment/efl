@@ -7,14 +7,15 @@ static Elm_Prefs_Item_Type supported_types[] =
    ELM_PREFS_TYPE_UNKNOWN
 };
 
-static void
+static Eina_Bool
 _item_changed_cb(void *data,
-                 Evas_Object *obj,
+                 Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
                  void *event_info EINA_UNUSED)
 {
    Elm_Prefs_Item_Changed_Cb prefs_it_changed_cb = data;
 
    prefs_it_changed_cb(obj);
+   return EINA_TRUE;
 }
 
 static Evas_Object *
@@ -28,8 +29,8 @@ elm_prefs_slider_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
 
    evas_object_data_set(obj, "prefs_type", (void *)type);
 
-   evas_object_smart_callback_add(obj, "changed", _item_changed_cb, cb);
-
+   eo_do(obj, eo_event_callback_add
+     (ELM_SLIDER_EVENT_CHANGED, _item_changed_cb, cb));
    if (type == ELM_PREFS_TYPE_INT)
      {
         elm_slider_unit_format_set(obj, "%1.0f");

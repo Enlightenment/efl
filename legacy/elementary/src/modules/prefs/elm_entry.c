@@ -1,4 +1,5 @@
 #include "private.h"
+#include "elm_widget.h"
 #include <sys/types.h>
 #include <regex.h>
 
@@ -93,14 +94,15 @@ mismatch:
    return EINA_FALSE;
 }
 
-static void
+static Eina_Bool
 _item_changed_cb(void *data,
-                 Evas_Object *obj,
+                 Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
                  void *event_info EINA_UNUSED)
 {
    Elm_Prefs_Item_Changed_Cb prefs_it_changed_cb = data;
 
    prefs_it_changed_cb(obj);
+   return EINA_TRUE;
 }
 
 static void
@@ -148,9 +150,10 @@ elm_prefs_entry_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
 
    /* FIXME: is it worth to ERR with the item's name, too, here? */
 
-   evas_object_smart_callback_add(obj, "activated", _item_changed_cb, cb);
-   evas_object_smart_callback_add(obj, "unfocused", _item_changed_cb, cb);
-
+   eo_do(obj, eo_event_callback_add
+     (ELM_ENTRY_EVENT_ACTIVATED, _item_changed_cb, cb));
+   eo_do(obj, eo_event_callback_add
+     (ELM_WIDGET_EVENT_UNFOCUSED, _item_changed_cb, cb));
    if (spec.s.accept)
      {
         int ret;

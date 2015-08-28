@@ -14,6 +14,7 @@ elm_prefs_swallow.edj: Makefile elm_prefs_swallow.edc
 	$(top_builddir)/src/modules/prefs/elm_prefs_swallow.edj
 
 AM_CPPFLAGS = \
+-DELM_INTERNAL_API_ARGESFSDFEFC=1 \
 -I. \
 -I$(top_builddir) \
 -I$(top_srcdir) \
