@@ -872,10 +872,10 @@ _get_orientation_app1(const unsigned char *map,
                       Eina_Bool *flipped)
 {
    const unsigned char *app1_head, *buf;
-   unsigned char orientation[2];
+   unsigned char orientation[2];  //orientation tag
    ExifByteAlign byte_align;
    unsigned int num_directory = 0;
-   unsigned int ifd_offset = 10; //IFD offset start at 10th byte
+   unsigned int ifd_offset = 10; //IFD offset start at 10th byte (mark:2 + data_size:2 + exif:6)
    unsigned int i, j;
    int direction;
    unsigned int data_size = 0;
@@ -924,7 +924,7 @@ _get_orientation_app1(const unsigned char *map,
    if ((*position + (12 * num_directory + 20)) > fsize)
      return EINA_FALSE;
 
-   buf = app1_head + ifd_offset + 2;
+   buf = app1_head + ifd_offset + 2;  //next to 0th ifd (1st tag)
 
    j = 0;
 
