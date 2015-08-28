@@ -3080,7 +3080,10 @@ _key_action_move(Evas_Object *obj, const char *params)
              if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_LEFT))
                {
                   if (sd->item_loop_enable)
-                    return EINA_TRUE;
+                    {
+                       if (_item_horizontal_loop(obj, ELM_FOCUS_RIGHT))
+                         return EINA_TRUE;
+                    }
                   return EINA_FALSE;
                }
              if (!_elm_config->item_select_on_focus_disable)
