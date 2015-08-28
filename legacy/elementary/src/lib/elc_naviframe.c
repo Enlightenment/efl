@@ -1141,6 +1141,8 @@ _on_item_show_finished(void *data,
    if (sd->freeze_events)
      evas_object_freeze_events_set(VIEW(it), EINA_FALSE);
 
+   it->pushing = EINA_FALSE;
+
    eo_do(WIDGET(it), eo_event_callback_call(ELM_NAVIFRAME_EVENT_TRANSITION_FINISHED, EO_OBJ(it)));
 }
 
@@ -1539,6 +1541,7 @@ _item_push_helper(Elm_Naviframe_Item_Data *item)
 
         sd->ops = eina_list_append(sd->ops, nfo);
         if (!sd->animator) sd->animator = ecore_animator_add(_deferred, sd);
+        item->pushing = EINA_TRUE;
      }
    else
      {
@@ -1683,7 +1686,7 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
 
    ELM_NAVIFRAME_ITEM_DATA_GET(eo_item, it);
 
-   if (it->popping) return NULL;
+   if (it->pushing || it->popping) return NULL;
    it->popping = EINA_TRUE;
 
    evas_object_ref(obj);

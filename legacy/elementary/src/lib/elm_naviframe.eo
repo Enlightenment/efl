@@ -65,7 +65,11 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
            This pops an item that is on the top(visible) of the naviframe, makes it
            disappear, then deletes the item. The item that was underneath it on the
-           stack will become visible.]]
+           stack will become visible.
+           
+           When pop transition animation is in progress, new pop operation is blocked until current pop operation
+           is complete.
+          ]]
 
          return: Evas.Object *; [[$NULL or the content object(if the elm_naviframe_content_preserve_on_pop_get is true).]]
       }
@@ -91,6 +95,8 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
            The item pushed becomes one page of the naviframe, this item will be
            deleted when it is popped.
+           
+           When push transition animation is in progress, pop operation is blocked until push is complete.
 
            The following styles are available for this item:
            "default"]]
