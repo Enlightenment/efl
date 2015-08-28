@@ -38,13 +38,14 @@ group { name: "elm/scroller/base/default";
    data.item: "focus_highlight" "on";
 
    script {
+      public loop_x, loop_y;
       public action_on_pos_vbar(val) {
          new x, y , w, h, x1, y1 , w1, h1;
 
          get_geometry(PART:"y_vbar_up", x,y,w, h);
          get_geometry(PART:"y_vbar_up_mapper", x1,y1,w1, h1);
 
-         if((y1 <= y) && (y <= (y1 + h1)))
+         if(((y1 <= y) && (y <= (y1 + h1))) && (0 == get_int(loop_y)))
          {
             set_state(PART:"arrow1_vbar", "hidden", 0.0);
             set_state(PART:"sb_vbar_a1", "hidden", 0.0);
@@ -58,7 +59,7 @@ group { name: "elm/scroller/base/default";
          get_geometry(PART:"y_vbar_down", x,y,w, h);
          get_geometry(PART:"y_vbar_down_mapper", x1,y1,w1, h1);
 
-         if((y1 <= (y + h)) && ((y+ h) <= (y1 + h1)))
+         if(((y1 <= (y + h)) && ((y+ h) <= (y1 + h1))) && (0 == get_int(loop_y)))
          {
             set_state(PART:"arrow2_vbar", "hidden", 0.0);
             set_state(PART:"sb_vbar_a2", "hidden", 0.0);
@@ -79,7 +80,7 @@ group { name: "elm/scroller/base/default";
          get_geometry(PART:"x_hbar_left", x,y,w, h);
          get_geometry(PART:"x_hbar_left_mapper", x1,y1,w1, h1);
 
-         if((x1 <= x) && (x <= (x1 + w1)))
+         if(((x1 <= x) && (x <= (x1 + w1))) && (0 == get_int(loop_x)))
          {
             set_state(PART:"arrow1_hbar", "hidden", 0.0);
             set_state(PART:"sb_hbar_a1", "hidden", 0.0);
@@ -93,7 +94,7 @@ group { name: "elm/scroller/base/default";
          get_geometry(PART:"x_hbar_right", x,y,w, h);
          get_geometry(PART:"x_hbar_right_mapper", x1,y1,w1, h1);
 
-         if((x1 <= (x + w)) && ((x + w) <= (x1 + w1)))
+         if(((x1 <= (x + w)) && ((x + w) <= (x1 + w1))) && (0 == get_int(loop_x)))
          {
             set_state(PART:"arrow2_hbar", "hidden", 0.0);
             set_state(PART:"sb_hbar_a2", "hidden", 0.0);
@@ -387,6 +388,20 @@ group { name: "elm/scroller/base/default";
             action_on_pos_vbar(10);
          }
       }
+      program { name: "loop_set_vbar";
+         signal: "elm,loop_y,set"; source: "elm";
+         script {
+            set_int(loop_y, 1);
+            action_on_pos_vbar(10);
+         }
+      }
+      program { name: "loop_unset_vbar";
+         signal: "elm,loop_y,unset"; source: "elm";
+         script {
+            set_int(loop_y, 0);
+            action_on_pos_vbar(10);
+         }
+      }
 
 // horiz bar /////////////////////////////////////////////////////////////
       part { name: "sb_hbar_show"; type: RECT;
@@ -656,6 +671,20 @@ group { name: "elm/scroller/base/default";
       }
       program { name: "check_pos_hbar";
          script {
+            action_on_pos_hbar(10);
+         }
+      }
+      program { name: "loop_set_hbar";
+         signal: "elm,loop_x,set"; source: "elm";
+         script {
+            set_int(loop_x, 1);
+            action_on_pos_hbar(10);
+         }
+      }
+      program { name: "loop_unset_hbar";
+         signal: "elm,loop_x,unset"; source: "elm";
+         script {
+            set_int(loop_x, 0);
             action_on_pos_hbar(10);
          }
       }

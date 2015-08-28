@@ -4450,6 +4450,16 @@ _elm_interface_scrollable_loop_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Int
 
    sid->loop_h = loop_h;
    sid->loop_v = loop_v;
+
+   if(sid->loop_h)
+     edje_object_signal_emit(sid->edje_obj, "elm,loop_x,set", "elm");
+   else
+     edje_object_signal_emit(sid->edje_obj, "elm,loop_x,unset", "elm");
+
+   if(sid->loop_v)
+     edje_object_signal_emit(sid->edje_obj, "elm,loop_y,set", "elm");
+   else
+     edje_object_signal_emit(sid->edje_obj, "elm,loop_y,unset", "elm");
 }
 
 EOLIAN static void
