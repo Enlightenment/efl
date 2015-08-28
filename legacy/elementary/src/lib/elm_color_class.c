@@ -127,8 +127,10 @@ _colorclass_select(void *data, Evas_Object *obj EINA_UNUSED, const char *sig, co
                                cc->current->color[cc->num].b, cc->current->color[cc->num].a);
 }
 
-static void
-_colorclass_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static Eina_Bool
+_colorclass_changed(void *data, Evas_Object *obj EINA_UNUSED,
+                    const Eo_Event_Description *desc EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    Colorclass_UI *cc = data;
 
@@ -148,15 +150,18 @@ _colorclass_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
    _colorclass_cc_update(cc, cc->num);
    cc->change_reset = 0;
    cc->changed = 1;
+   return EINA_TRUE;
 }
 
-static void
-_colorclass_reset(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static Eina_Bool
+_colorclass_reset(void *data, Evas_Object *obj EINA_UNUSED,
+                  const Eo_Event_Description *desc EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    Colorclass_UI *cc = data;
    Colorclass color;
 
-   if (!cc->current) return;
+   if (!cc->current) return EINA_FALSE;
    if (cc->winid && remote_iface)
      {
         Eldbus_Message *msg;
@@ -166,7 +171,7 @@ _colorclass_reset(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
         eldbus_message_arguments_append(msg, "s", cc->current->name);
         eldbus_service_signal_send(remote_iface, msg);
         cc->change_reset = 1;
-        return;
+        return EINA_FALSE;
      }
    edje_color_class_del(cc->current->name);
    edje_color_class_get(cc->current->name,
@@ -185,10 +190,13 @@ _colorclass_reset(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
    _colorclass_cc_update(cc, 0);
    _colorclass_cc_update(cc, 1);
    _colorclass_cc_update(cc, 2);
+   return EINA_TRUE;
 }
 
-static void
-_colorclass_activate(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+static Eina_Bool
+_colorclass_activate(void *data, Eo *obj EINA_UNUSED,
+                     const Eo_Event_Description *desc EINA_UNUSED,
+                     void *event_info)
 {
    Colorclass_UI *cc = data;
    Elm_Object_Item *it = event_info;
@@ -224,6 +232,7 @@ _colorclass_activate(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    elm_colorselector_color_set(cc->cs, cc->current->color[0].r, cc->current->color[0].g,
                                cc->current->color[0].b, cc->current->color[0].a);
    elm_layout_signal_emit(cc->ly, "elm,colors,show", "elm");
+   return EINA_TRUE;
 }
 
 static void
@@ -730,19 +739,22 @@ elm_color_class_editor_add(Evas_Object *obj, uint64_t winid)
    elm_scroller_policy_set(gl, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_AUTO);
    elm_genlist_mode_set(gl, ELM_LIST_COMPRESS);
    elm_object_part_content_set(ly, "elm.swallow.list", gl);
-   evas_object_smart_callback_add(gl, "selected", _colorclass_activate, cc);
+   eo_do(gl, eo_event_callback_add
+     (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, _colorclass_activate, cc));
 
    cc->reset = bt = elm_button_add(ly);
    elm_object_style_set(bt, "colorclass");
    /* FIXME: translate */
    elm_object_text_set(bt, "Reset");
    elm_object_part_content_set(ly, "elm.swallow.reset", bt);
-   evas_object_smart_callback_add(bt, "clicked", _colorclass_reset, cc);
+   eo_do(bt, eo_event_callback_add
+     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _colorclass_reset, cc));
 
    cc->cs = cs = elm_colorselector_add(ly);
    elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_COMPONENTS);
    elm_object_part_content_set(ly, "elm.swallow.colors", cs);
-   evas_object_smart_callback_add(cs, "changed,user", _colorclass_changed, cc);
+   eo_do(cs, eo_event_callback_add
+     (ELM_COLORSELECTOR_EVENT_CHANGED_USER, _colorclass_changed, cc));
 
    EINA_LIST_FREE(ccs, ecc)
      elm_genlist_item_append(gl, &itc, ecc, NULL, 0, NULL, NULL);
