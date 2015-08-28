@@ -873,11 +873,11 @@ _efl_gfx_path_append_vertical_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
 }
 
 static char *
-_strcomma(const char *content)
+_skipcomma(const char *content)
 {
    while (*content && isspace(*content)) content++;
-   if (*content != ',') return NULL;
-   return (char*) content + 1;
+   if (*content == ',') return (char*) content + 1;
+   return (char*) content;
 }
 
 static inline Eina_Bool
@@ -889,21 +889,30 @@ _next_isnumber(const char *content)
    return content != tmp;
 }
 
+static inline Eina_Bool
+_parse_number(char **content, double *number)
+{
+   char *end = NULL;
+   *number = strtod(*content, &end);
+   // if the start of string is not number 
+   if ((*content) == end) return EINA_FALSE;
+   //skip comma if any
+   *content = _skipcomma(end);
+   return EINA_TRUE;
+}
+
 static Eina_Bool
 _efl_gfx_path_parse_pair(const char *content, char **end, double *x, double *y)
 {
-   /* "x,y" */
-   char *end1 = NULL;
-   char *end2 = NULL;
+   char *str = (char *) content;
 
-   *x = strtod(content, &end1);
-   end1 = _strcomma(end1);
-   if (!end1) return EINA_FALSE;
-   *y = strtod(end1, &end2);
-   if (end1 == end2) return EINA_FALSE;
-
-   *end = end2;
-   return EINA_TRUE;
+   if (_parse_number(&str, x))
+     if (_parse_number(&str, y))
+       {
+          *end = str;
+          return EINA_TRUE;
+       }
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -979,31 +988,18 @@ _efl_gfx_path_parse_six(const char *content, char **end,
                         double *ctrl_x0, double *ctrl_y0,
                         double *ctrl_x1, double *ctrl_y1)
 {
-   /* "x,y ctrl_x0,ctrl_y0 ctrl_x1,ctrl_y1" */
-   char *end1 = NULL;
-   char *end2 = NULL;
-
-   *ctrl_x0 = strtod(content, &end1);
-   end1 = _strcomma(end1);
-   if (!end1) return EINA_FALSE;
-   *ctrl_y0 = strtod(end1, &end2);
-   if (end1 == end2) return EINA_FALSE;
-
-   *ctrl_x1 = strtod(end2, &end2);
-   end2 = _strcomma(end2);
-   if (!end2) return EINA_FALSE;
-   *ctrl_y1 = strtod(end2, &end1);
-   if (end1 == end2) return EINA_FALSE;
-
-   *x = strtod(end1, &end2);
-   end2 = _strcomma(end2);
-   if (!end2) return EINA_FALSE;
-   *y = strtod(end2, &end1);
-   if (end1 == end2) return EINA_FALSE;
-
-   *end = end1;
-
-   return EINA_TRUE;
+   char *str = (char *) content;
+   if (_parse_number(&str, ctrl_x0))
+     if (_parse_number(&str, ctrl_y0))
+       if (_parse_number(&str, ctrl_x1))
+         if (_parse_number(&str, ctrl_y1))
+           if (_parse_number(&str, x))
+             if (_parse_number(&str, y))
+               {
+                  *end = str;
+                  return EINA_TRUE;
+               }
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -1030,8 +1026,11 @@ _efl_gfx_path_parse_six_to(const char *content, char **end,
           {
              x += *current_x;
              y += *current_y;
+             ctrl_x0 += *current_x;
+             ctrl_y0 += *current_y;
+             ctrl_x1 += *current_x;
+             ctrl_y1 += *current_y;
           }
-
         func(obj, pd, x, y, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1);
         content = *end;
 
@@ -1048,25 +1047,17 @@ _efl_gfx_path_parse_quad(const char *content, char **end,
                          double *x, double *y,
                          double *ctrl_x0, double *ctrl_y0)
 {
-   /* "x,y ctrl_x0,ctrl_y0" */
-   char *end1 = NULL;
-   char *end2 = NULL;
+   char *str = (char *) content;
 
-   *ctrl_x0 = strtod(content, &end1);
-   end1 = _strcomma(end1);
-   if (!end1) return EINA_FALSE;
-   *ctrl_y0 = strtod(end1, &end2);
-   if (end1 == end2) return EINA_FALSE;
-
-   *x = strtod(end2, &end1);
-   end1 = _strcomma(end2);
-   if (!end1) return EINA_FALSE;
-   *y = strtod(end1, &end2);
-   if (end1 == end2) return EINA_FALSE;
-
-   *end = end2;
-
-   return EINA_TRUE;
+   if (_parse_number(&str, ctrl_x0))
+     if (_parse_number(&str, ctrl_y0))
+       if (_parse_number(&str, x))
+         if (_parse_number(&str, y))
+           {
+              *end = str;
+              return EINA_TRUE;
+           }
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -1113,34 +1104,32 @@ _efl_gfx_path_parse_arc(const char *content, char **end,
                         double *radius,
                         Eina_Bool *large_arc, Eina_Bool *sweep)
 {
-   /* "rx,ry r large-arc-flag,sweep-flag x,y" */
+   char *str = (char *) content;
    char *end1 = NULL;
    char *end2 = NULL;
 
-   *rx = strtod(content, &end1);
-   end1 = _strcomma(end1);
-   if (!end1) return EINA_FALSE;
-   *ry = strtod(end1, &end2);
-   if (end1 == end2) return EINA_FALSE;
+   if (_parse_number(&str, rx))
+     if (_parse_number(&str, ry))
+       if (_parse_number(&str, radius))
+         {
+            // large_arc
+            *large_arc = strtol(str, &end1, 10) ? EINA_TRUE : EINA_FALSE;
+            if (!end1 || (str == end1)) return EINA_FALSE;
+            end1 = _skipcomma(end1);
 
-   *radius = strtod(end2, &end1);
-   if (end1 == end2) return EINA_FALSE;
+            // sweeo
+            *sweep = strtol(end2, &end1, 10) ? EINA_TRUE : EINA_FALSE;
+            if (!end1 || (end1 == end2)) return EINA_FALSE;
+            str = _skipcomma(end1);
 
-   *large_arc = strtol(end1, &end2, 10) ? EINA_TRUE : EINA_FALSE;
-   end1 = _strcomma(end2);
-   if (!end1) return EINA_FALSE;
-   *sweep = strtol(end1, &end2, 10) ? EINA_TRUE : EINA_FALSE;
-   if (end1 == end2) return EINA_FALSE;
-
-   *x = strtod(end2, &end1);
-   end1 = _strcomma(end2);
-   if (!end1) return EINA_FALSE;
-   *y = strtod(end1, &end2);
-   if (end1 == end2) return EINA_FALSE;
-
-   *end = end2;
-
-   return EINA_TRUE;
+            if (_parse_number(&str, x))
+              if (_parse_number(&str, y))
+                {
+                   *end = str;
+                   return EINA_TRUE;
+                }
+         }
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -1367,7 +1356,7 @@ _efl_gfx_shape_append_svg_path(Eo *obj, Efl_Gfx_Shape_Data *pd,
                 return ;
               break;
            default:
-              return ;
+              return;
           }
      }
 }
