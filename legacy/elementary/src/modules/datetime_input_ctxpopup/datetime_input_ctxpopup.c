@@ -33,13 +33,16 @@ _diskselector_item_free_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event
    free(data);
 }
 
-static void
-_ctxpopup_dismissed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+static Eina_Bool
+_ctxpopup_dismissed_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    Ctxpopup_Module_Data *ctx_mod;
    ctx_mod = (Ctxpopup_Module_Data *)data;
    evas_object_del(obj);
    ctx_mod->ctxpopup = NULL;
+
+   return EINA_TRUE;
 }
 
 static void
@@ -84,15 +87,16 @@ _field_value_get(struct tm *tim, Elm_Datetime_Field_Type  field_type)
    return (*timearr[field_type]);
 }
 
-static void
-_diskselector_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+static Eina_Bool
+_diskselector_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED,
+                 const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    DiskItem_Data *disk_data;
    struct tm curr_time;
    const char *fmt;
 
    disk_data = (DiskItem_Data *)elm_object_item_data_get(event_info);
-   if (!disk_data || !(disk_data->ctx_mod)) return;
+   if (!disk_data || !(disk_data->ctx_mod)) return EINA_FALSE;
 
    elm_datetime_value_get(disk_data->ctx_mod->mod_data.base, &curr_time);
    fmt = disk_data->ctx_mod->mod_data.field_format_get(disk_data->ctx_mod->mod_data.base, disk_data->sel_field_type);
@@ -102,25 +106,32 @@ _diskselector_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    _field_value_set(&curr_time, disk_data->sel_field_type, disk_data->sel_field_value);
    elm_datetime_value_set(disk_data->ctx_mod->mod_data.base, &curr_time);
    evas_object_hide(disk_data->ctx_mod->ctxpopup);
+
+   return EINA_TRUE;
 }
 
-static void
-_ampm_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static Eina_Bool
+_ampm_clicked_cb(void *data, Eo *obj EINA_UNUSED,
+                 const Eo_Event_Description *desc EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    Ctxpopup_Module_Data *ctx_mod;
    struct tm curr_time;
 
    ctx_mod = (Ctxpopup_Module_Data *)data;
-   if (!ctx_mod) return;
+   if (!ctx_mod) return EINA_FALSE;
 
    elm_datetime_value_get(ctx_mod->mod_data.base, &curr_time);
    if (curr_time.tm_hour >= 12) curr_time.tm_hour -= 12;
    else curr_time.tm_hour += 12;
    elm_datetime_value_set(ctx_mod->mod_data.base, &curr_time);
+   return EINA_TRUE;
 }
 
-static void
-_field_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+static Eina_Bool
+_field_clicked_cb(void *data, Eo *obj,
+                  const Eo_Event_Description *desc EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    Ctxpopup_Module_Data *ctx_mod;
    Evas_Object *diskselector;
@@ -136,7 +147,7 @@ _field_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    Evas_Coord x = 0, y = 0, w = 0, h = 0, width;
 
    ctx_mod = (Ctxpopup_Module_Data *)data;
-   if (!ctx_mod) return;
+   if (!ctx_mod) return EINA_FALSE;
 
    snprintf(buf, sizeof(buf), "datetime/%s", elm_object_style_get(obj));
 
@@ -146,12 +157,13 @@ _field_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    evas_object_size_hint_weight_set(ctx_mod->ctxpopup, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ctx_mod->ctxpopup, EVAS_HINT_FILL, 0.5);
-   evas_object_smart_callback_add(ctx_mod->ctxpopup, "dismissed",
-                                  _ctxpopup_dismissed_cb, ctx_mod);
+   eo_do(ctx_mod->ctxpopup, eo_event_callback_add
+     (ELM_CTXPOPUP_EVENT_DISMISSED, _ctxpopup_dismissed_cb, ctx_mod));
    elm_ctxpopup_hover_parent_set(ctx_mod->ctxpopup, elm_widget_top_get(obj));
 
    diskselector = elm_diskselector_add(elm_widget_top_get(ctx_mod->mod_data.base));
-   evas_object_smart_callback_add(diskselector, "clicked", _diskselector_cb, NULL);
+   eo_do(diskselector, eo_event_callback_add
+     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _diskselector_cb, NULL));
    elm_object_style_set(diskselector, buf);
    elm_object_content_set(ctx_mod->ctxpopup, diskselector);
 
@@ -218,6 +230,7 @@ _field_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
         evas_object_move(ctx_mod->ctxpopup, (x + w / 2), y);
      }
    evas_object_show(ctx_mod->ctxpopup);
+   return EINA_TRUE;
 }
 
 static void
@@ -300,7 +313,8 @@ field_create(Elm_Datetime_Module_Data *module_data, Elm_Datetime_Field_Type  fie
    if (field_type == ELM_DATETIME_AMPM)
      {
         field_obj = elm_button_add(ctx_mod->mod_data.base);
-        evas_object_smart_callback_add(field_obj, "clicked", _ampm_clicked_cb, ctx_mod);
+        eo_do(field_obj, eo_event_callback_add
+          (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _ampm_clicked_cb, ctx_mod));
      }
    else
      {
@@ -309,7 +323,8 @@ field_create(Elm_Datetime_Module_Data *module_data, Elm_Datetime_Field_Type  fie
         elm_entry_editable_set(field_obj, EINA_FALSE);
         elm_entry_input_panel_enabled_set(field_obj, EINA_FALSE);
         elm_entry_context_menu_disabled_set(field_obj, EINA_TRUE);
-        evas_object_smart_callback_add(field_obj, "clicked", _field_clicked_cb, ctx_mod);
+        eo_do(field_obj, eo_event_callback_add
+          (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _field_clicked_cb, ctx_mod));
      }
    evas_object_data_set(field_obj, "_field_type", (void *)field_type);
 
