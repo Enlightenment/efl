@@ -457,7 +457,7 @@ _item_select(Evas_Object *obj,
         if (elm_widget_focus_get(obj))
           {
              elm_object_focus_set(sd->entry, EINA_FALSE);
-             evas_object_focus_set(VIEW(it), EINA_TRUE);
+             elm_object_focus_set(VIEW(it), EINA_TRUE);
 
              // ACCESS
              if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
@@ -1014,7 +1014,7 @@ _entry_focus_in_cb(void *data,
      {
         item = sd->selected_it;
         elm_object_focus_set(sd->entry, EINA_FALSE);
-        evas_object_focus_set(VIEW(item), EINA_TRUE);
+        elm_object_focus_set(VIEW(item), EINA_TRUE);
      }
 
    return EINA_TRUE;
