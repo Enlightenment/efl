@@ -31,6 +31,8 @@ typedef struct _Outline
 }Outline;
 
 
+#define TO_FT_COORD(x) ((x) * 64); // to freetype 26.6 coordinate.
+
 static inline void
 _grow_outline_contour(Outline *outline, int num)
 {
@@ -84,8 +86,8 @@ _outline_move_to(Outline *outline, double x, double y)
    SW_FT_Outline *ft_outline = &outline->ft_outline;
 
    _grow_outline_points(outline, 1);
-   ft_outline->points[ft_outline->n_points].x = x;
-   ft_outline->points[ft_outline->n_points].y = y;
+   ft_outline->points[ft_outline->n_points].x = TO_FT_COORD(x);
+   ft_outline->points[ft_outline->n_points].y = TO_FT_COORD(y);
    ft_outline->tags[ft_outline->n_points] = SW_FT_CURVE_TAG_ON;
 
    if (ft_outline->n_points)
@@ -118,8 +120,8 @@ static void  _outline_line_to(Outline *outline, double x, double y)
    SW_FT_Outline *ft_outline = &outline->ft_outline;
 
    _grow_outline_points(outline, 1);
-   ft_outline->points[ft_outline->n_points].x = x;
-   ft_outline->points[ft_outline->n_points].y = y;
+   ft_outline->points[ft_outline->n_points].x = TO_FT_COORD(x);
+   ft_outline->points[ft_outline->n_points].y = TO_FT_COORD(y);
    ft_outline->tags[ft_outline->n_points] = SW_FT_CURVE_TAG_ON;
    ft_outline->n_points++;
 }
@@ -144,7 +146,13 @@ _outline_close_path(Outline *outline)
    // make sure there is atleast one point in the current path
    if (ft_outline->n_points == index) return EINA_FALSE;
 
-   _outline_line_to(outline, ft_outline->points[index].x, ft_outline->points[index].y);
+   // close the path
+   _grow_outline_points(outline, 1);
+   ft_outline->points[ft_outline->n_points].x = ft_outline->points[index].x;
+   ft_outline->points[ft_outline->n_points].y = ft_outline->points[index].y;
+   ft_outline->tags[ft_outline->n_points] = SW_FT_CURVE_TAG_ON;
+   ft_outline->n_points++;
+
    return EINA_TRUE;
 }
 
@@ -156,18 +164,18 @@ static void _outline_cubic_to(Outline *outline, double cx1, double cy1,
 
    _grow_outline_points(outline, 3);
 
-   ft_outline->points[ft_outline->n_points].x = cx1;
-   ft_outline->points[ft_outline->n_points].y = cy1;
+   ft_outline->points[ft_outline->n_points].x = TO_FT_COORD(cx1);
+   ft_outline->points[ft_outline->n_points].y = TO_FT_COORD(cy1);
    ft_outline->tags[ft_outline->n_points] = SW_FT_CURVE_TAG_CUBIC;
    ft_outline->n_points++;
 
-   ft_outline->points[ft_outline->n_points].x = cx2;
-   ft_outline->points[ft_outline->n_points].y = cy2;
+   ft_outline->points[ft_outline->n_points].x = TO_FT_COORD(cx2);
+   ft_outline->points[ft_outline->n_points].y = TO_FT_COORD(cy2);
    ft_outline->tags[ft_outline->n_points] = SW_FT_CURVE_TAG_CUBIC;
    ft_outline->n_points++;
 
-   ft_outline->points[ft_outline->n_points].x = x;
-   ft_outline->points[ft_outline->n_points].y = y;
+   ft_outline->points[ft_outline->n_points].x = TO_FT_COORD(x);
+   ft_outline->points[ft_outline->n_points].y = TO_FT_COORD(y);
    ft_outline->tags[ft_outline->n_points] = SW_FT_CURVE_TAG_ON;
    ft_outline->n_points++;
 }
@@ -183,19 +191,11 @@ static void _outline_transform(Outline *outline, Eina_Matrix3 *m)
         for (i = 0; i < ft_outline->n_points; i++)
           {
              eina_matrix3_point_transform(m,
-                                          ft_outline->points[i].x,
-                                          ft_outline->points[i].y,
+                                          ft_outline->points[i].x/64,/* convert back to normal coord.*/
+                                          ft_outline->points[i].y/64,/* convert back to normal coord.*/
                                           &x, &y);
-             ft_outline->points[i].x = (int)(x * 64);// to freetype 26.6 coordinate.
-             ft_outline->points[i].y = (int)(y * 64);
-          }
-     }
-   else
-     {
-        for (i = 0; i < ft_outline->n_points; i++)
-          {
-             ft_outline->points[i].x = ft_outline->points[i].x <<6;// to freetype 26.6 coordinate.
-             ft_outline->points[i].y = ft_outline->points[i].y <<6;
+             ft_outline->points[i].x = TO_FT_COORD(x);
+             ft_outline->points[i].y = TO_FT_COORD(y);
           }
      }
 }
@@ -223,7 +223,7 @@ _generate_outline(const Efl_Gfx_Path_Command *cmds, const double *pts, Outline *
             case EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO:
 
                // Be careful, we do have a different order than
-               // cairo, first is destination point, followed by
+               // freetype first is destination point, followed by
                // the control point. The opposite of cairo.
                _outline_cubic_to(outline,
                                  pts[2], pts[3], pts[4], pts[5], // control points
