@@ -6112,6 +6112,9 @@ _elm_genlist_item_prepend(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_G
         ELM_GENLIST_ITEM_DATA_GET(eo_parent, parent);
         ELM_GENLIST_ITEM_CHECK_OR_RETURN(parent, NULL);
         EINA_SAFETY_ON_FALSE_RETURN_VAL((obj == WIDGET(parent)), NULL);
+        /* first sub-item should allways be appended */
+        if (!parent->item->items)
+          return _elm_genlist_item_append(obj, sd, itc, data, eo_parent, type, func, func_data);
      }
 
    it = _elm_genlist_item_new
