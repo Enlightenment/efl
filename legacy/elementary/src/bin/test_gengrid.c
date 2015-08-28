@@ -775,6 +775,15 @@ _size_changed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    elm_gengrid_item_size_set(grid, ELM_SCALE_SIZE(size), ELM_SCALE_SIZE(size));
 }
 
+static void
+_gg_focus_item_select_on_focus_disable_changed_cb(void *data EINA_UNUSED,
+                                                  Evas_Object *obj,
+                                                  void *event_info
+                                                  EINA_UNUSED)
+{
+   elm_config_item_select_on_focus_disabled_set(elm_check_state_get(obj));
+}
+
 void
 test_gengrid2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -871,6 +880,17 @@ test_gengrid2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_smart_callback_add(ck, "changed", _focus_highlight_changed_cb, win);
    elm_box_pack_end(hbx, ck);
    evas_object_show(ck);
+
+   ck = elm_check_add(hbx);
+   elm_object_text_set(ck, "Item Select on Focus disable");
+   elm_check_state_set(ck, elm_config_item_select_on_focus_disabled_get());
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
+   evas_object_smart_callback_add(ck, "changed",
+                                  _gg_focus_item_select_on_focus_disable_changed_cb,
+                                  NULL);
+   elm_box_pack_end(hbx, ck);
+   evas_object_show(ck);
+
 
    gic = elm_gengrid_item_class_new();
    gic->item_style = "default";
@@ -1666,15 +1686,6 @@ _grid_reorder_mode(void *data, Evas_Object *obj,
                                     ECORE_POS_MAP_LINEAR);
    else
      elm_gengrid_reorder_mode_stop((Evas_Object *)data);
-}
-
-static void
-_gg_focus_item_select_on_focus_disable_changed_cb(void *data EINA_UNUSED,
-                                                  Evas_Object *obj,
-                                                  void *event_info
-                                                  EINA_UNUSED)
-{
-   elm_config_item_select_on_focus_disabled_set(elm_check_state_get(obj));
 }
 
 static void
