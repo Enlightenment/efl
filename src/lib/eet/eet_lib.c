@@ -57,6 +57,10 @@ EAPI Eet_Version *eet_version = &_version;
 #define EET_FILE2_DICTIONARY_ENTRY_SIZE  (sizeof(int) * \
                                           EET_FILE2_DICTIONARY_ENTRY_COUNT)
 
+// force data alignmenmt in the eet file so direct mmap can work without
+// copies and we can work with alignment
+#define ALIGN 8
+
 /* prototypes of internal calls */
 static Eet_File *
 eet_cache_find(const char *path,
@@ -311,9 +315,13 @@ eet_flush2(Eet_File *ef)
    int bytes_strings = 0;
    int data_offset = 0;
    int strings_offset = 0;
+   int data_pad = 0;
+   int pad = 0;
+   int orig_data_offset = 0;
    int num;
    int i;
    int j;
+   unsigned char zeros[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
    if (eet_check_pointer(ef))
      return EET_ERROR_BAD_OBJECT;
@@ -382,6 +390,10 @@ eet_flush2(Eet_File *ef)
    data_offset = bytes_directory_entries + bytes_dictionary_entries +
      bytes_strings;
 
+   data_pad = (((data_offset + (ALIGN - 1)) / ALIGN) * ALIGN) - data_offset;
+   data_offset += data_pad;
+   orig_data_offset = data_offset;
+
    /* write directories entry */
    for (i = 0; i < num; i++)
      {
@@ -404,6 +416,9 @@ eet_flush2(Eet_File *ef)
 
              strings_offset += efn->name_size;
              data_offset += efn->size;
+
+             pad = (((data_offset + (ALIGN - 1)) / ALIGN) * ALIGN) - data_offset;
+             data_offset += pad;
 
              if (fwrite(ibuf, sizeof(ibuf), 1, fp) != 1)
                goto write_error;
@@ -458,13 +473,30 @@ eet_flush2(Eet_File *ef)
             goto write_error;
        }
 
+   if (data_pad > 0)
+     {
+        if (fwrite(zeros, data_pad, 1, fp) != 1)
+          goto write_error;
+     }
+
    /* write data */
+   data_offset = orig_data_offset;
    for (i = 0; i < num; i++)
      {
         for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
           {
              if (fwrite(efn->data, efn->size, 1, fp) != 1)
                goto write_error;
+
+             data_offset += efn->size;
+
+             pad = (((data_offset + (ALIGN - 1)) / ALIGN) * ALIGN) - data_offset;
+             if (pad > 0)
+               {
+                  data_offset += pad;
+                  if (fwrite(zeros, pad, 1, fp) != 1)
+                    goto write_error;
+               }
           }
      }
 
@@ -849,8 +881,11 @@ eet_internal_read2(Eet_File *ef)
           }
 
         /* compute the possible position of a signature */
-        if (signature_base_offset < efn->offset + efn->size)
-          signature_base_offset = efn->offset + efn->size;
+        if (signature_base_offset < (efn->offset + efn->size))
+          {
+             signature_base_offset = efn->offset +
+               (((efn->size + (ALIGN - 1)) / ALIGN) * ALIGN);
+          }
      }
 
    ef->ed = NULL;
@@ -1968,7 +2003,7 @@ eet_read_direct(Eet_File   *ef,
    if (!efn) goto on_error;
 
    /* trick to detect data in memory instead of mmaped from disk */
-   if (efn->offset > ef->data_size && !efn->data)
+   if (((efn->offset + efn->size) > ef->data_size) && !efn->data)
      goto on_error;
 
    /* get size (uncompressed, if compressed at all) */
