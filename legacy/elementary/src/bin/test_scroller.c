@@ -28,6 +28,24 @@ _my_bt_go_900_900(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
 }
 
 static void
+_my_bt_prev_page(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+	Evas_Object *sc = (Evas_Object *)data;
+	int page_x = 0, page_y = 0;
+	elm_scroller_current_page_get(sc, &page_x, &page_y);
+	elm_scroller_page_bring_in(sc, --page_x, page_y);
+}
+
+static void
+_my_bt_next_page(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+	Evas_Object *sc = (Evas_Object *)data;
+	int page_x = 0, page_y = 0;
+	elm_scroller_current_page_get(sc, &page_x, &page_y);
+	elm_scroller_page_bring_in(sc, ++page_x, page_y);
+}
+
+static void
 _my_bt_freeze_toggle(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    if (elm_check_state_get(obj))
@@ -348,6 +366,22 @@ test_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.9, 0.9);
    elm_table_pack(tb2, bt, 2, 2, 1, 1);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "prev page");
+   evas_object_smart_callback_add(bt, "clicked", _my_bt_prev_page, sc);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, 0.1, 0.5);
+   elm_table_pack(tb2, bt, 0, 1, 1, 1);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "next page");
+   evas_object_smart_callback_add(bt, "clicked", _my_bt_next_page, sc);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, 0.9, 0.5);
+   elm_table_pack(tb2, bt, 2, 1, 1, 1);
    evas_object_show(bt);
 
    evas_object_event_callback_add(sc, EVAS_CALLBACK_MOVE, _sc_move_cb, tb2);
