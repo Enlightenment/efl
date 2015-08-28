@@ -74,7 +74,7 @@ END_TEST
 
 START_TEST(eina_rectangle_union_intersect)
 {
-   Eina_Rectangle r1, r2, r3, r4, r5, r6, rd;
+   Eina_Rectangle r1, r2, r3, r4, r5, r6, r7, r8, rd;
 
    fail_if(!eina_init());
 
@@ -84,6 +84,9 @@ START_TEST(eina_rectangle_union_intersect)
    EINA_RECTANGLE_SET(&r4, 30, 30, 50, 50);
    EINA_RECTANGLE_SET(&r5, 10, 10, 0, 0);
    EINA_RECTANGLE_SET(&r6, 30, 30, 0, 0);
+   EINA_RECTANGLE_SET(&r7, 10, 10, 5, 0);
+   EINA_RECTANGLE_SET(&r8, 10, 10, 0, 5);
+
 
    rd = r1;
 
@@ -110,6 +113,15 @@ START_TEST(eina_rectangle_union_intersect)
            || rd.y != r1.y
            || rd.w != r1.w
            || rd.h != r1.h);
+
+   rd = r6;
+   fail_if(eina_rectangle_intersection(&rd, &r5));
+
+   rd = r7;
+   fail_if(eina_rectangle_intersection(&rd, &r3));
+
+   rd = r8;
+   fail_if(eina_rectangle_intersection(&rd, &r3));
 
    rd = r1;
    eina_rectangle_union(&rd, &r3);

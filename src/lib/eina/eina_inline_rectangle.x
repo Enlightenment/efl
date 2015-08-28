@@ -19,6 +19,14 @@
 #ifndef EINA_INLINE_RECTANGLE_H__
 #define EINA_INLINE_RECTANGLE_H__
 
+static inline Eina_Bool
+eina_rectangle_is_valid(const Eina_Rectangle *r)
+{
+	if (r->w <= 0 || r->h <= 0)
+		return EINA_FALSE;
+	return EINA_TRUE;
+}
+
 static inline int
 eina_spans_intersect(int c1, int l1, int c2, int l2)
 {
@@ -90,6 +98,9 @@ eina_rectangle_union(Eina_Rectangle *dst, const Eina_Rectangle *src)
 static inline Eina_Bool
 eina_rectangle_intersection(Eina_Rectangle *dst, const Eina_Rectangle *src)
 {
+	if (!(eina_rectangle_is_valid(dst)) || !(eina_rectangle_is_valid(src)))
+		return EINA_FALSE;
+
 	if (!(eina_rectangles_intersect(dst, src)))
 		return EINA_FALSE;
 
@@ -116,6 +127,9 @@ eina_rectangle_intersection(Eina_Rectangle *dst, const Eina_Rectangle *src)
 	if ((dst->y + dst->h) > (src->y + src->h))
 		dst->h = src->y + src->h - dst->y;
 
+	if (dst->w == 0 || dst->h == 0)
+		return EINA_FALSE;
+
 	return EINA_TRUE;
 }
 
@@ -135,14 +149,6 @@ eina_rectangle_rescale_out(const Eina_Rectangle *out, const Eina_Rectangle *in, 
 	res->y = out->y + in->y;
 	res->w = out->w;
 	res->h = out->h;
-}
-
-static inline Eina_Bool
-eina_rectangle_is_valid(const Eina_Rectangle *r)
-{
-	if (r->w <= 0 || r->h <= 0)
-		return EINA_FALSE;
-	return EINA_TRUE;
 }
 
 static inline int
