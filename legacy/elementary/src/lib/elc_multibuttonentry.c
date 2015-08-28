@@ -594,6 +594,8 @@ _elm_multibuttonentry_item_elm_widget_item_part_text_set(Eo *eo_item EINA_UNUSED
                                                     const char *label)
 {
    const char *dest_part = NULL;
+   Evas_Coord minw = -1, minh = -1, boxw;
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(WIDGET(item), sd);
 
    if (!part || !strcmp(part, "elm.text"))
      dest_part = "elm.btn.text";
@@ -601,6 +603,18 @@ _elm_multibuttonentry_item_elm_widget_item_part_text_set(Eo *eo_item EINA_UNUSED
      dest_part = part;
 
    edje_object_part_text_escaped_set(elm_layout_edje_get(VIEW(item)), dest_part, label);
+
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   edje_object_size_min_restricted_calc
+     (elm_layout_edje_get(VIEW(item)), &minw, &minh, minw, minh);
+   evas_object_size_hint_min_set(VIEW(item), minw, minh);
+   evas_object_geometry_get(sd->box, NULL, NULL, &boxw, NULL);
+
+   if (minw > boxw)
+     {
+         evas_object_size_hint_min_set(VIEW(item), boxw, minh);
+         evas_object_resize(VIEW(item), boxw, minh);
+     }
 }
 
 EOLIAN static const char *
