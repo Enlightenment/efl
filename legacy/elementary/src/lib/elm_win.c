@@ -1567,6 +1567,8 @@ _elm_win_evas_object_smart_show(Eo *obj, Elm_Win_Data *sd)
         INCREMENT_MODALITY()
      }
 
+   evas_smart_objects_calculate(evas_object_evas_get(obj));
+
    TRAP(sd, show);
 
    if (sd->shot.info) _shot_handle(sd);
