@@ -608,8 +608,8 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
    pd_parent = eo_data_scope_get(obj, EVAS_CANVAS3D_OBJECT_CLASS);
    e = eo_data_scope_get(pd_parent->evas, EVAS_CANVAS_CLASS);
 
-   data.x      = ((x * 2.0) / (Evas_Real)pd->w) - 1.0;
-   data.y      = (((pd->h - y - 1) * 2.0) / ((Evas_Real)pd->h)) - 1.0;
+   data.x      = ((x * 2.0) / ((Evas_Real)e->viewport.w)) - 1.0;
+   data.y      = ((((Evas_Real)e->viewport.h - y - 1) * 2.0) / ((Evas_Real)e->viewport.h)) - 1.0;
    data.picked = EINA_FALSE;
    data.z      = 1.0;
    data.node   = NULL;
