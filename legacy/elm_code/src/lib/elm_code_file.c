@@ -158,6 +158,7 @@ EAPI Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path)
 EAPI void elm_code_file_save(Elm_Code_File *file)
 {
    Eina_List *item;
+   Elm_Code *code;
    Elm_Code_Line *line_item;
    const char *path, *content, *crchars;
    char *tmp;
@@ -165,6 +166,7 @@ EAPI void elm_code_file_save(Elm_Code_File *file)
    short crlength;
    FILE *out;
 
+   code = file->parent;
    path = elm_code_file_path_get(file);
    tmp = _elm_code_file_tmp_path_get(file);
    crchars = elm_code_file_line_ending_chars_get(file, &crlength);
@@ -178,7 +180,8 @@ EAPI void elm_code_file_save(Elm_Code_File *file)
 
    EINA_LIST_FOREACH(file->lines, item, line_item)
      {
-        if (!elm_code_line_contains_widget_cursor(line_item))
+        if (code && code->config.trim_whitespace &&
+            !elm_code_line_contains_widget_cursor(line_item))
           elm_code_line_text_trailing_whitespace_strip(line_item);
         content = elm_code_line_text_get(line_item, &length);
 

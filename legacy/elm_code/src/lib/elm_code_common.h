@@ -61,11 +61,18 @@ extern "C" {
  * @brief Common data structures and constants.
  */
 
+struct _Elm_Code_Config
+{
+   Eina_Bool trim_whitespace;
+};
+
 struct _Elm_Code
 {
    Elm_Code_File *file;
    Eina_List *widgets;
    Eina_List *parsers;
+
+   struct _Elm_Code_Config config;
 };
 
 /**
