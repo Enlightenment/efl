@@ -1,5 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
+SUBDIRS = widget
+
 CLEANFILES=
 
 EOLIAN_FLAGS = @DEPS_EOLIAN_FLAGS@ \
@@ -9,6 +11,9 @@ include $(top_srcdir)/Makefile_Eolian_Helper.am
 
 AM_CPPFLAGS = \
 -I$(top_srcdir)/elm_code/src/lib \
+-I$(top_builddir)/elm_code/src/lib \
+-I$(top_srcdir)/elm_code/src/lib/widget \
+-I$(top_builddir)/elm_code/src/lib/widget \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 -DEFL_BETA_API_SUPPORT \
 -DEFL_EO_API_SUPPORT \
@@ -25,6 +30,7 @@ elm_code_file.h \
 elm_code_parse.h \
 widget/elm_code_widget.eo.h \
 widget/elm_code_widget.eo.legacy.h \
+widget/elm_code_widget_legacy.h \
 widget/elm_code_widget_selection.h \
 elm_code_diff_widget.h \
 Elm_Code.h
@@ -62,3 +68,6 @@ BUILT_SOURCES = \
 elmcodeeolianfilesdir = $(datadir)/eolian/include/elm_code-@VMAJ@
 elmcodeeolianfiles_DATA = $(elm_code_eolian_files)
 EXTRA_DIST = ${elmcodeeolianfiles_DATA}
+
+CLEANFILES += $(elm_code_eolian_h) $(elm_code_eolian_legacy_h)
+

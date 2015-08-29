@@ -17,10 +17,13 @@ widget/elm_code_test_widget_text.c \
 widget/elm_code_test_widget_selection.c \
 elm_code_suite.c
 
-elm_code_suite_CPPFLAGS = -I$(top_builddir)/elm_code/src/lib/ \
+elm_code_suite_CPPFLAGS = \
 -DEFL_BETA_API_SUPPORT \
 -DEFL_EO_API_SUPPORT \
 -I$(top_srcdir)/elm_code/src/lib \
+-I$(top_builddir)/elm_code/src/lib \
+-I$(top_srcdir)/elm_code/src/lib/widget \
+-I$(top_builddir)/elm_code/src/lib/widget \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 -DPACKAGE_TESTS_DIR=\"$(top_srcdir)/elm_code/src/tests/\" \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/elm_code/src/tests/\" \
