@@ -73,7 +73,7 @@ EAPI extern Eina_Cpu_Features eina_cpu_features;
 EAPI Eina_Cpu_Features eina_cpu_features_get(void);
 
 /**
- * @brief Get the current number of precessors
+ * @brief Get the current number of processors
  *
  * @return the number of processors that are online, that
  * is available when the function is called.
