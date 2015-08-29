@@ -3,6 +3,16 @@
 
 #include <check.h>
 
+#define ck_assert_strn_eq(str1, str2, len) \
+  { \
+     unsigned int i = 0; \
+     while (i < len) \
+       { \
+          ck_assert_int_eq(*(str1 + i), *(str2 + i)); \
+          i++; \
+       } \
+  }
+
 #include <Elm_Code.h>
 
 void elm_code_file_test_load(TCase *tc);

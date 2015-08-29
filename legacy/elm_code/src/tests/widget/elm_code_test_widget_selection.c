@@ -130,6 +130,7 @@ START_TEST (elm_code_test_widget_selection_delete)
    Elm_Code_Widget *widget;
    Evas_Object *win;
    const char *text;
+   unsigned int length;
 
    elm_init(1, NULL);
    code = elm_code_create();
@@ -139,16 +140,18 @@ START_TEST (elm_code_test_widget_selection_delete)
    win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    line = elm_code_file_line_get(file, 1);
-   text = elm_code_line_text_get(line, NULL);
-   ck_assert_str_eq("text", text);
+   text = elm_code_line_text_get(line, &length);
+   ck_assert_int_eq(4, length);
+   ck_assert_strn_eq("text", text, length);
 
    elm_code_widget_selection_start(widget, 1, 2);
    elm_code_widget_selection_end(widget, 1, 3);
    elm_code_widget_selection_delete(widget);
 
    line = elm_code_file_line_get(file, 1);
-   text = elm_code_line_text_get(line, NULL);
-   ck_assert_str_eq("tt", text);
+   text = elm_code_line_text_get(line, &length);
+   ck_assert_int_eq(2, length);
+   ck_assert_strn_eq("tt", text, length);
 
    elm_code_free(code);
    elm_shutdown();
