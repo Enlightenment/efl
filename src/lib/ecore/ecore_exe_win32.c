@@ -376,6 +376,8 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
    DBG("Creating process %s", exe_cmd);
    Ecore_Exe_Flags flags = exe->flags;
 
+   if (!exe_cmd) goto error;
+
    if ((flags & ECORE_EXE_PIPE_AUTO) && (!(flags & ECORE_EXE_PIPE_ERROR))
        && (!(flags & ECORE_EXE_PIPE_READ)))
      /* We need something to auto pipe. */
@@ -410,9 +412,6 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
         if (len >= (int)sizeof(exe_cmd_buf))
           exe_cmd_buf[sizeof(exe_cmd_buf) - 1] = '\0';
      }
-
-   if (!exe->cmd)
-     goto error;
 
    /* stdout, stderr and stdin pipes */
 
