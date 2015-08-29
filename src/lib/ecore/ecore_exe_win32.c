@@ -362,7 +362,7 @@ _impl_ecore_exe_run_priority_get(void)
 Eo *
 _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
 {
-   char exe_cmd_buf[PATH_MAX];
+   char exe_cmd_buf[1024];
    SECURITY_ATTRIBUTES sa;
    STARTUPINFO si;
    PROCESS_INFORMATION pi;
