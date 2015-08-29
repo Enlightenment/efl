@@ -36,6 +36,8 @@ EAPI void elm_code_line_text_insert(Elm_Code_Line *line, unsigned int position, 
 
 EAPI void elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length);
 
+EAPI void elm_code_line_text_trailing_whitespace_strip(Elm_Code_Line *line);
+
 /**
  * @}
  *
@@ -53,6 +55,8 @@ EAPI int elm_code_text_strnpos(const char *text, unsigned int length, const char
 EAPI int elm_code_text_newlinenpos(const char *text, unsigned int length, short *nllen);
 
 EAPI unsigned int elm_code_text_leading_whitespace_length(const char *text, unsigned int length);
+
+EAPI unsigned int elm_code_text_trailing_whitespace_length(const char *text, unsigned int length);
 
 EAPI unsigned int elm_code_text_is_whitespace(const char *text, unsigned int length);
 
