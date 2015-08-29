@@ -178,7 +178,8 @@ EAPI void elm_code_file_save(Elm_Code_File *file)
 
    EINA_LIST_FOREACH(file->lines, item, line_item)
      {
-        elm_code_line_text_trailing_whitespace_strip(line_item);
+        if (!elm_code_line_contains_widget_cursor(line_item))
+          elm_code_line_text_trailing_whitespace_strip(line_item);
         content = elm_code_line_text_get(line_item, &length);
 
         fwrite(content, sizeof(char), length, out);

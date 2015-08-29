@@ -106,3 +106,24 @@ EAPI void elm_code_line_status_clear(Elm_Code_Line *line)
      }
 }
 
+EAPI Eina_Bool
+elm_code_line_contains_widget_cursor(Elm_Code_Line *line)
+{
+   Elm_Code *code = line->file->parent;
+   Eina_List *item;
+   Eo *widget;
+   unsigned int col, number;
+
+   if (!code)
+     return EINA_FALSE;
+
+   EINA_LIST_FOREACH(code->widgets, item, widget)
+     {
+        elm_code_widget_cursor_position_get(widget, &col, &number);
+
+        if (number == line->number)
+          return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}

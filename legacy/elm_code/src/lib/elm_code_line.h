@@ -69,6 +69,8 @@ EAPI void elm_code_line_token_add(Elm_Code_Line *line, int start, int end, int l
 
 EAPI void elm_code_line_tokens_clear(Elm_Code_Line *line);
 
+EAPI Eina_Bool elm_code_line_contains_widget_cursor(Elm_Code_Line *line);
+
 /**
  * @}
  */
