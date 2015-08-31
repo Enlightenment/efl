@@ -3387,6 +3387,7 @@ _key_action_select(Evas_Object *obj, const char *params)
 {
    ELM_GENGRID_DATA_GET(obj, sd);
    Elm_Object_Item *eo_it = elm_object_focused_item_get(obj);
+   if (!eo_it) return EINA_TRUE;
    ELM_GENGRID_ITEM_DATA_GET(eo_it, it);
 
    if (sd->multi &&
