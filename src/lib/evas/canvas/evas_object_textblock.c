@@ -12442,11 +12442,12 @@ typedef struct
 } Textblock_Paragraph_Debug_Data;
 
 EAPI Eina_List *
-_evas_textblock_paragraphs_get(const Evas_Object *obj)
+_evas_textblock_paragraphs_get(const Evas_Object *eo_obj)
 {
    Eina_List *rects = NULL;
    Evas_Object_Textblock_Paragraph *par;
-   Evas_Textblock_Data *o = eo_data_scope_get(obj, MY_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Textblock_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
 
 
    printf("Populating Items:\n");
@@ -12464,7 +12465,7 @@ _evas_textblock_paragraphs_get(const Evas_Object *obj)
         d->y = par->y;
         d->lines = eina_inlist_count(EINA_INLIST_GET(par->lines));
         d->is_rtl = (par->direction == EVAS_BIDI_DIRECTION_RTL);
-        d->rect = eina_rectangle_new(0, par->y, par->w, par->h);
+        d->rect = eina_rectangle_new(0, par->y, obj->cur->geometry.w, par->h);
         rects = eina_list_append(rects, d);
      }
    return rects;
