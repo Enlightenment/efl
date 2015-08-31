@@ -390,6 +390,7 @@ struct _Evas_Object_Textblock_Item
    size_t                               text_pos;  /**< Position of this item in textblock line. */
 #ifdef BIDI_SUPPORT
    size_t                               visual_pos;  /**< Visual position of this item. */
+   size_t                               bidi_level;
 #endif
    Evas_Textblock_Item_Type             type;  /**< EVAS_TEXTBLOCK_ITEM_TEXT or EVAS_TEXTBLOCK_ITEM_FORMAT */
 
@@ -3492,6 +3493,10 @@ loop_advance:
         x += it->adv + obs_adv;
 
         if ((it->w > 0) && ((it->x + it->w) > c->ln->w)) c->ln->w = it->x + it->w;
+        if (c->ln->par->bidi_props)
+          {
+              it->bidi_level = c->ln->par->bidi_props->embedding_levels[it->text_pos];
+          }
      }
 
    /* clear obstacle info for this line */
@@ -12380,7 +12385,6 @@ _evas_textblock_items_get(const Evas_Object *obj)
    Evas_Object_Textblock_Paragraph *par;
    Evas_Textblock_Data *o = eo_data_scope_get(obj, MY_CLASS);
 
-
    printf("Populating Items:\n");
    EINA_INLIST_FOREACH(o->paragraphs, par)
      {
@@ -12388,8 +12392,6 @@ _evas_textblock_items_get(const Evas_Object *obj)
         int idx = 0;
 
         if (!par->visible) break;
-
-        _layout_update_bidi_props(o, par);
 
         EINA_INLIST_FOREACH(par->lines, ln)
           {
@@ -12416,17 +12418,13 @@ _evas_textblock_items_get(const Evas_Object *obj)
                        Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
                        d->script = ti->text_props.script;
                        d->is_rtl = (ti->text_props.bidi_dir == EVAS_BIDI_DIRECTION_RTL);
-                       if (par->bidi_props)
-                         {
-                            d->bidi_level = par->bidi_props->embedding_levels[it->text_pos];
-                         }
+                       d->bidi_level = it->bidi_level;
                        RGBA_Font_Int *rfi = ti->text_props.font_instance;
                        if (rfi)
                           d->font_src = rfi->src->name;
                     }
                   d->rect = eina_rectangle_new(ln->x + it->x + marginl, y, it->w, it->h);
                   rects = eina_list_append(rects, d);
-                  printf(" -- it->valign=%f\n", it->format->valign);
                }
           }
         evas_bidi_paragraph_props_unref(par->bidi_props);
