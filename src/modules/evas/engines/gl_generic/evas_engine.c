@@ -1229,7 +1229,7 @@ eng_image_scaled_update(void *data EINA_UNUSED, void *scaled, void *image,
                         Eina_Bool smooth, Eina_Bool alpha,
                         Evas_Colorspace cspace EINA_UNUSED)
 {
-   Evas_GL_Image *dst = scaled;
+   Evas_GL_Image *dst = scaled, *newdst;
    Evas_GL_Image *src = image;
    Evas_Engine_GL_Context *gc;
    Eina_Bool reffed = EINA_FALSE;
@@ -1266,6 +1266,9 @@ eng_image_scaled_update(void *data EINA_UNUSED, void *scaled, void *image,
         return NULL;
      }
 
+   newdst = calloc(1, sizeof(Evas_GL_Image));
+   if (!newdst) return NULL;
+
    if (dst)
      {
         if (dst->scaled.origin == src)
@@ -1283,24 +1286,21 @@ eng_image_scaled_update(void *data EINA_UNUSED, void *scaled, void *image,
         evas_gl_common_image_free(dst);
      }
 
-   dst = calloc(1, sizeof(Evas_GL_Image));
-   if (!dst) return NULL;
-
-   dst->references = 1;
-   dst->gc = gc;
-   dst->cs.space = src->cs.space;
-   dst->alpha = alpha;
-   dst->w = dst_w;
-   dst->h = dst_h;
-   dst->tex = src->tex;
-   dst->tex->references++;
-   dst->tex_only = 1;
+   newdst->references = 1;
+   newdst->gc = gc;
+   newdst->cs.space = src->cs.space;
+   newdst->alpha = alpha;
+   newdst->w = dst_w;
+   newdst->h = dst_h;
+   newdst->tex = src->tex;
+   newdst->tex->references++;
+   newdst->tex_only = 1;
 
    if (!reffed) src->references++;
-   dst->scaled.origin = src;
-   dst->scaled.smooth = smooth;
+   newdst->scaled.origin = src;
+   newdst->scaled.smooth = smooth;
 
-   return dst;
+   return newdst;
 }
 
 static void
