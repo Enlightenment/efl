@@ -1029,8 +1029,61 @@ _node_is_visible(Evas_Canvas3D_Node *node EINA_UNUSED, Evas_Canvas3D_Node *camer
 Eina_Bool
 evas_canvas3d_node_mesh_collect(Evas_Canvas3D_Node *node, void *data)
 {
+   Eina_List *list_meshes, *l;
+   Evas_Canvas3D_Mesh *mesh = NULL;
+   Evas_Canvas3D_Mesh_Data *mesh_pd;
+   Evas_Canvas3D_Mesh_Frame *f;
    Evas_Canvas3D_Scene_Public_Data *scene_data = (Evas_Canvas3D_Scene_Public_Data *)data;
    Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, MY_CLASS);
+   unsigned short int *index;
+   int stride, tex_stride, normal_stride;
+
+   if (pd->type == EVAS_CANVAS3D_NODE_TYPE_MESH)
+     {
+        scene_data->mesh_nodes = eina_list_append(scene_data->mesh_nodes, node);
+
+        /* calculation of tangent space for all meshes */
+        eo_do (node, list_meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get());
+        EINA_LIST_FOREACH(list_meshes, l, mesh)
+          {
+             mesh_pd = eo_data_scope_get(mesh, MY_CLASS);
+             f = evas_canvas3d_mesh_frame_find(mesh_pd, 0);
+             if (f == NULL)
+               ERR("Not existing mesh frame.");
+
+             float *tangent_data = (float *)f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_TANGENT].data;
+             if (!tangent_data && ((mesh_pd->shade_mode == EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP) ||
+                 (mesh_pd->shade_mode == EVAS_CANVAS3D_SHADE_MODE_PARALLAX_OCCLUSION)))
+               {
+                  index = (unsigned short int *)mesh_pd->indices;
+                  tangent_data = (float*) malloc((3 * mesh_pd->vertex_count) * sizeof(float));
+
+                  float *vertex_data = (float *)f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION].data;
+                  if (f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION].stride != 0)
+                    stride = f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION].stride / sizeof(float);
+                  else
+                    stride = 3;
+
+                  float *tex_data = (float *)f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD].data;
+                  if (f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD].stride != 0)
+                    tex_stride = f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD].stride / sizeof(float);
+                  else
+                    tex_stride = 2;
+
+                  float *normal_data = (float *)f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL].data;
+                  if (f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL].stride != 0)
+                    normal_stride = f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL].stride / sizeof(float);
+                  else
+                    normal_stride = 2;
+
+                  evas_tangent_space_get(vertex_data, tex_data, normal_data, index, mesh_pd->vertex_count,
+                                         mesh_pd->index_count, stride, tex_stride, normal_stride, &tangent_data);
+
+                  eo_do(mesh, evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TANGENT, 3 * sizeof(float), tangent_data));
+                  free(tangent_data);
+               }
+          }
+     }
    if (!_node_is_visible(node, scene_data->camera_node))
      {
         /* Skip entire sub-tree of this node. */
