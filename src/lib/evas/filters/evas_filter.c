@@ -263,6 +263,9 @@ evas_filter_context_destroy(Evas_Filter_Context *ctx)
    EINA_INLIST_FREE(ctx->commands, cmd)
      _command_del(ctx, cmd);
 
+   if (ctx->target.mask)
+     ctx->evas->engine.func->image_free(ctx->evas->engine.data.output, ctx->target.mask);
+
    free(ctx);
 }
 
@@ -1497,6 +1500,8 @@ Eina_Bool
 evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
                        void *surface, int x, int y)
 {
+   void *mask = NULL;
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
 
    ctx->target.bufid = evas_filter_buffer_image_new(ctx, surface);
@@ -1513,7 +1518,10 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
      ctx->target.color_use = EINA_FALSE;
 
    ENFN->context_clip_image_get
-      (ENDT, draw_context, &ctx->target.mask, &ctx->target.mask_x, &ctx->target.mask_y);
+      (ENDT, draw_context, &mask, &ctx->target.mask_x, &ctx->target.mask_y);
+   if (ctx->target.mask)
+     ctx->evas->engine.func->image_free(ctx->evas->engine.data.output, ctx->target.mask);
+   ctx->target.mask = mask;
 
    if (ctx->gl_engine)
      {

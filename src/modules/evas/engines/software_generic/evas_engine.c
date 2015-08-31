@@ -511,7 +511,21 @@ eng_context_clip_image_get(void *data EINA_UNUSED, void *context, void **ie, int
 {
    RGBA_Draw_Context *ctx = context;
 
-   if (ie) *ie = ctx->clip.mask;
+   if (ie)
+     {
+        Image_Entry *im = ctx->clip.mask;
+
+        *ie = im;
+        if (im)
+          {
+#ifdef EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               evas_cache2_image_ref(im);
+             else
+#endif
+               evas_cache_image_ref(im);
+          }
+     }
    if (x) *x = ctx->clip.mask_x;
    if (y) *y = ctx->clip.mask_y;
 }

@@ -2160,7 +2160,13 @@ eng_context_clip_image_get(void *data EINA_UNUSED, void *context, void **ie, int
 {
    RGBA_Draw_Context *ctx = context;
 
-   if (ie) *ie = ctx->clip.mask;
+   if (ie)
+     {
+        Evas_GL_Image *im = ctx->clip.mask;
+
+        *ie = im;
+        if (im) evas_gl_common_image_ref(im);
+     }
    if (x) *x = ctx->clip.mask_x;
    if (y) *y = ctx->clip.mask_y;
 }

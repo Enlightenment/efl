@@ -1559,6 +1559,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                e->engine.func->context_clip_unset(e->engine.data.output, context);
              e->engine.func->context_clip_image_set
                (e->engine.data.output, context, oldm_sfc, oldm_x, oldm_y, e, do_async);
+             /* unref image since clip_image_get refs it */
+             if (oldm_sfc) e->engine.func->image_free(e->engine.data.output, oldm_sfc);
           }
 
         // FIXME: needs to cache these maps and
@@ -1694,6 +1696,8 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                     e->engine.func->context_clip_unset(e->engine.data.output, ctx);
                   e->engine.func->context_clip_image_set
                     (e->engine.data.output, ctx, oldm_sfc, oldm_x, oldm_y, e, do_async);
+                  /* unref image since clip_image_get refs it */
+                  if (oldm_sfc) e->engine.func->image_free(e->engine.data.output, oldm_sfc);
                }
              if (!use_mapped_ctx)
                e->engine.func->context_free(e->engine.data.output, ctx);
