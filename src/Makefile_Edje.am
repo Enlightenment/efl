@@ -55,13 +55,11 @@ nodist_installed_edjemainheaders_DATA = \
 
 lib_edje_libedje_la_SOURCES = \
 lib/edje/edje_private.h \
-lib/edje/edje_container.h \
 lib/edje/edje_convert.h \
 lib/edje/edje_box_layout.c \
 lib/edje/edje_cache.c \
 lib/edje/edje_calc.c \
 lib/edje/edje_callbacks.c \
-lib/edje/edje_container.c \
 lib/edje/edje_data.c \
 lib/edje/edje_edit.c \
 lib/edje/edje_embryo.c \
