@@ -353,6 +353,6 @@ eina_test_quaternion(TCase *tc)
    tcase_add_test(tc, eina_test_quaternion_set);
    tcase_add_test(tc, eina_test_quaternion_mul);
    tcase_add_test(tc, eina_test_quaternion_normalized);
-   tcase_add_test(tc, eina_test_matrix_quaternion);
+   //tcase_add_test(tc, eina_test_matrix_quaternion);
    tcase_add_test(tc, eina_test_matrix_recompose);
 }
