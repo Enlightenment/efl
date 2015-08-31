@@ -622,6 +622,7 @@ struct _Evas_GL_Texture
    Evas_Engine_GL_Context *gc;
    Evas_GL_Image   *im;
    Evas_GL_Texture_Pool *pt, *ptu, *ptv, *ptt;
+   Evas_GL_Texture_Pool *pt2, *ptu2, *ptv2;
    union {
       Evas_GL_Texture_Pool *ptuv;
       Evas_GL_Texture_Pool *pta;

@@ -1453,6 +1453,14 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force EINA_UNUSED)
         pt_unref(tex->pt);
         tex->pt = NULL;
      }
+   if (tex->pt2)
+     {
+        tex->pt2->allocations = eina_list_remove(tex->pt2->allocations, tex->apt);
+        if (tex->apt) eina_rectangle_pool_release(tex->apt);
+        tex->apt = NULL;
+        pt_unref(tex->pt2);
+        tex->pt2 = NULL;
+     }
    if (tex->ptt)
      {
         tex->ptt->allocations = eina_list_remove(tex->ptt->allocations, tex->aptt);
@@ -1464,8 +1472,12 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force EINA_UNUSED)
    if (tex->ptu) pt_unref(tex->ptu);
    if (tex->ptv) pt_unref(tex->ptv);
    if (tex->ptuv) pt_unref(tex->ptuv);
+   if (tex->ptu2) pt_unref(tex->ptu2);
+   if (tex->ptv2) pt_unref(tex->ptv2);
    tex->ptu = NULL;
    tex->ptv = NULL;
+   tex->ptu2 = NULL;
+   tex->ptv2 = NULL;
    tex->ptuv = NULL;
 
    evas_gl_common_texture_light_free(tex);
@@ -1695,6 +1707,8 @@ evas_gl_common_texture_yuv_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigne
    tex = evas_gl_common_texture_alloc(gc, w, h, EINA_FALSE);
    if (!tex) return NULL;
 
+   //////////////////////////////////////////////////////////////////////
+
    tex->ptu = _pool_tex_new(gc, (w + 1) / 2, (h + 1) / 2, lum_ifmt, lum_fmt);
    if (!tex->ptu)
      {
@@ -1705,10 +1719,25 @@ evas_gl_common_texture_yuv_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigne
    tex->ptu->slot = -1;
    tex->ptu->fslot = -1;
    tex->ptu->whole = 1;
+
+   tex->ptu2 = _pool_tex_new(gc, (w + 1) / 2, (h + 1) / 2, lum_ifmt, lum_fmt);
+   if (!tex->ptu2)
+     {
+        evas_gl_common_texture_light_free(tex);
+        return NULL;
+     }
+   gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->ptu2);
+   tex->ptu2->slot = -1;
+   tex->ptu2->fslot = -1;
+   tex->ptu2->whole = 1;
+
+   //////////////////////////////////////////////////////////////////////
+
    tex->ptv = _pool_tex_new(gc,  tex->ptu->w, tex->ptu->h, lum_ifmt, lum_fmt);
    if (!tex->ptv)
      {
         pt_unref(tex->ptu);
+        pt_unref(tex->ptu2);
         evas_gl_common_texture_light_free(tex);
         return NULL;
      }
@@ -1716,20 +1745,60 @@ evas_gl_common_texture_yuv_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigne
    tex->ptv->slot = -1;
    tex->ptv->fslot = -1;
    tex->ptv->whole = 1;
+
+   tex->ptv2 = _pool_tex_new(gc,  tex->ptu->w, tex->ptu->h, lum_ifmt, lum_fmt);
+   if (!tex->ptv2)
+     {
+        pt_unref(tex->ptu);
+        pt_unref(tex->ptu2);
+        pt_unref(tex->ptv);
+        evas_gl_common_texture_light_free(tex);
+        return NULL;
+     }
+   gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->ptv2);
+   tex->ptv2->slot = -1;
+   tex->ptv2->fslot = -1;
+   tex->ptv2->whole = 1;
+
+   //////////////////////////////////////////////////////////////////////
+
    tex->pt = _pool_tex_new(gc, tex->ptu->w * 2, tex->ptu->h * 2, lum_ifmt, lum_fmt);
    if (!tex->pt)
      {
         pt_unref(tex->ptu);
+        pt_unref(tex->ptu2);
         pt_unref(tex->ptv);
+        pt_unref(tex->ptv2);
         evas_gl_common_texture_light_free(tex);
         return NULL;
      }
    gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->pt);
    tex->pt->fslot = -1;
    tex->pt->whole = 1;
+
+   tex->pt2 = _pool_tex_new(gc, tex->ptu->w * 2, tex->ptu->h * 2, lum_ifmt, lum_fmt);
+   if (!tex->pt2)
+     {
+        pt_unref(tex->ptu);
+        pt_unref(tex->ptu2);
+        pt_unref(tex->ptv);
+        pt_unref(tex->ptv2);
+        pt_unref(tex->pt);
+        evas_gl_common_texture_light_free(tex);
+        return NULL;
+     }
+   gc->shared->tex.whole = eina_list_prepend(gc->shared->tex.whole, tex->pt2);
+   tex->pt2->fslot = -1;
+   tex->pt2->whole = 1;
+
+   //////////////////////////////////////////////////////////////////////
+
    tex->pt->references++;
    tex->ptu->references++;
    tex->ptv->references++;
+   tex->pt2->references++;
+   tex->ptu2->references++;
+   tex->ptv2->references++;
    evas_gl_common_texture_yuv_update(tex, rows, w, h);
    return tex;
 }
@@ -1737,7 +1806,20 @@ evas_gl_common_texture_yuv_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigne
 void
 evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned int w, unsigned int h)
 {
+   Evas_GL_Texture_Pool *pt, *ptu, *ptv;
+
    if (!tex->pt) return;
+
+   pt = tex->pt;
+   ptu = tex->ptu;
+   ptv = tex->ptv;
+   tex->pt = tex->pt2;
+   tex->ptu = tex->ptu2;
+   tex->ptv = tex->ptv2;
+   tex->pt2 = pt;
+   tex->ptu2 = ptu;
+   tex->ptv2 = ptv;
+
    // FIXME: works on lowest size 4 pixel high buffers. must also be multiple of 2
    if (tex->gc->shared->info.unpack_row_length)
      {
