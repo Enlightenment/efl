@@ -553,7 +553,11 @@ _elm_naviframe_item_eo_base_destructor(Eo *eo_item, Elm_Naviframe_Item_Data *it)
         if (sd->stack && sd->stack->last)
           prev_it = EINA_INLIST_CONTAINER_GET(sd->stack->last,
                                               Elm_Naviframe_Item_Data);
-        if (!prev_it) goto end;
+        if (!prev_it)
+          {
+             elm_widget_tree_unfocusable_set(VIEW(nit), EINA_TRUE);
+             goto end;
+          }
 
         elm_widget_tree_unfocusable_set(VIEW(prev_it), EINA_FALSE);
         elm_widget_tree_unfocusable_set(VIEW(nit), EINA_TRUE);
