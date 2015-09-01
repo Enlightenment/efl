@@ -289,6 +289,8 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
              EINA_COW_STATE_WRITE_BEGIN(obj->cur->clipper, state_write, cur)
                {
                   state_write->have_clipees = 0;
+                  if (obj->cur->clipper->is_static_clip)
+                    WRN("You override static clipper, it may be dangled! obj(%p) type(%s) new clip(%p)", eo_obj, obj->type, eo_clip);
                }
              EINA_COW_STATE_WRITE_END(obj->cur->clipper, state_write, cur);
 /* i know this was to handle a case where a clip stops having children and
