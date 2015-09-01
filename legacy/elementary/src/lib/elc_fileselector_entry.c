@@ -297,7 +297,7 @@ _elm_fileselector_entry_evas_object_smart_add(Eo *obj, Elm_Fileselector_Entry_Da
   eo_do(priv->button, eo_event_callback_add(event, _##name##_fwd, obj))
    SIG_FWD(CLICKED, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED);
    SIG_FWD(UNPRESSED, EVAS_CLICKABLE_INTERFACE_EVENT_UNPRESSED);
-   SIG_FWD(FILE_CHOSEN, ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN);
+   SIG_FWD(FILE_CHOSEN, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN);
 #undef SIG_FWD
 
    priv->entry = elm_entry_add(obj);
