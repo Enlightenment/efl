@@ -1343,7 +1343,7 @@ gl4_exp(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    int i = 0;
 
    val *= 10;
-   for (i = 0; i < 10; i++)
+   for (i = 0; i < 30; i++)
      {
         elm_genlist_item_append(gl, api->itc2,
                                 (void *)(uintptr_t) (val + i)/* item data */,
@@ -1430,21 +1430,21 @@ gl4_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 }
 
 static void
-_tree_effect_enable_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_tree_effect_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   elm_genlist_tree_effect_enabled_set(data, EINA_TRUE);
+   elm_genlist_tree_effect_enabled_set(data, elm_check_state_get(obj));
 }
 
 static void
-_tree_effect_disable_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_tree_homogeneous_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   elm_genlist_tree_effect_enabled_set(data, EINA_FALSE);
+   elm_genlist_homogeneous_set(data, elm_check_state_get(obj));
 }
 
 void
 test_genlist6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *gl, *bx, *fr, *bx2, *rd1, *rd2;
+   Evas_Object *win, *gl, *bx, *fr, *bx2, *ck1, *ck2;
 
    api_data *api = calloc(1, sizeof(api_data));
    win = elm_win_util_standard_add("genlist-tree", "Genlist Tree");
@@ -1457,7 +1457,9 @@ test_genlist6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(bx);
 
    fr = elm_frame_add(win);
-   elm_object_text_set(fr, "Genlist Tree Effect");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
+   elm_object_text_set(fr, "Genlist Tree Options");
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
 
@@ -1469,25 +1471,21 @@ test_genlist6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_object_content_set(fr, bx2);
    evas_object_show(bx2);
 
-   rd1 = elm_radio_add(win);
-   elm_radio_state_value_set(rd1, 0);
-   elm_object_text_set(rd1, "Enable    ");
-   evas_object_show(rd1);
-   elm_box_pack_end(bx2, rd1);
+   ck1 = elm_check_add(win);
+   elm_object_text_set(ck1, "Tree Effect");
+   evas_object_show(ck1);
+   elm_box_pack_end(bx2, ck1);
 
-   rd2 = elm_radio_add(win);
-   elm_radio_state_value_set(rd2, 1);
-   elm_radio_group_add(rd1, rd2);
-   elm_object_text_set(rd2, "Disable");
-   evas_object_show(rd2);
-   elm_box_pack_end(bx2, rd2);
+   ck2 = elm_check_add(win);
+   elm_object_text_set(ck2, "Homogeneous");
+   evas_object_show(ck2);
+   elm_box_pack_end(bx2, ck2);
 
    gl = elm_genlist_add(win);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    api->gl = gl;
    evas_object_show(gl);
-   elm_genlist_tree_effect_enabled_set(gl, EINA_TRUE);
    evas_object_smart_callback_add(gl, "edge,left", scroll_left, NULL);
    evas_object_smart_callback_add(gl, "edge,right", scroll_right, NULL);
    evas_object_smart_callback_add(gl, "edge,top", scroll_top, NULL);
@@ -1508,13 +1506,16 @@ test_genlist6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    api->itc2->func.del = gl4_del;
 
    elm_genlist_item_append(gl, api->itc2,
-                           (void *)1/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_TREE, gl4_sel/* func */,
+                           (void *)1/* item data */, NULL/* parent */,
+                           ELM_GENLIST_ITEM_TREE, gl4_sel/* func */,
                            NULL/* func data */);
    elm_genlist_item_append(gl, api->itc2,
-                           (void *)2/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_TREE, gl4_sel/* func */,
+                           (void *)2/* item data */, NULL/* parent */,
+                           ELM_GENLIST_ITEM_TREE, gl4_sel/* func */,
                            NULL/* func data */);
    elm_genlist_item_append(gl, api->itc1,
-                           (void *)3/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
+                           (void *)3/* item data */, NULL/* parent */,
+                           ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
                            NULL/* func data */);
 
    elm_genlist_item_class_free(api->itc1);
@@ -1525,10 +1526,10 @@ test_genlist6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_smart_callback_add(gl, "expanded", gl4_exp, api);
    evas_object_smart_callback_add(gl, "contracted", gl4_con, api);
 
-   elm_box_pack_end(bx, gl);
+   evas_object_smart_callback_add(ck1, "changed", _tree_effect_changed_cb, gl);
+   evas_object_smart_callback_add(ck2, "changed", _tree_homogeneous_changed_cb, gl);
 
-   evas_object_smart_callback_add(rd1, "changed", _tree_effect_enable_cb, gl);
-   evas_object_smart_callback_add(rd2, "changed", _tree_effect_disable_cb, gl);
+   elm_box_pack_end(bx, gl);
 
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
@@ -3112,6 +3113,18 @@ test_genlist17(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
 
 /***  Genlist Tree and Decorate All Mode  ************************************/
+static void
+_tree_effect_enable_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   elm_genlist_tree_effect_enabled_set(data, EINA_TRUE);
+}
+
+static void
+_tree_effect_disable_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   elm_genlist_tree_effect_enabled_set(data, EINA_FALSE);
+}
+
 Evas_Object *
 _tree_effect_frame_new(Evas_Object *win, Evas_Object **rdg, Evas_Object *gl)
 {
