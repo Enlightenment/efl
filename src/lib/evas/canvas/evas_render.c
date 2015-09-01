@@ -20,6 +20,7 @@
 
 #ifdef REND_DBG
 static FILE *dbf = NULL;
+static int __RD_level = 0;
 
 static void
 rend_dbg(const char *txt)
@@ -39,6 +40,7 @@ rend_dbg(const char *txt)
 #define RD(xxxx, args...) \
    do { \
       char __tmpbuf[4096]; int __tmpi; \
+      __RD_level = xxxx; \
       if (xxxx) { \
         for (__tmpi = 0; __tmpi < xxxx * 2; __tmpi++) \
           __tmpbuf[__tmpi] = ' '; \
@@ -51,6 +53,7 @@ rend_dbg(const char *txt)
 #define IFRD(ifcase, xxxx, args...) \
    if (ifcase) { \
       char __tmpbuf[4096]; int __tmpi; \
+      __RD_level = xxxx; \
       if (xxxx) { \
         for (__tmpi = 0; __tmpi < xxxx * 2; __tmpi++) \
           __tmpbuf[__tmpi] = ' '; \
@@ -1273,7 +1276,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
    RD(0, ", ctx:%p, sfc:%p, offset:%i,%i, %s, use_mapped_ctx:%d, %s)\n", context, surface, off_x, off_y,
       mapped ? "mapped" : "normal", use_mapped_ctx, do_async ? "async" : "sync");
    RD(level, "  obj: '%s' %s", obj->type, obj->is_smart ? "(smart) " : "");
-   if (obj->name) RD(0, " '%s'\n", obj->name);
+   if (obj->name) RD(0, "'%s'\n", obj->name);
    else RD(0, "\n");
    if (obj->cur->clipper)
      {
@@ -1285,6 +1288,10 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
            obj->cur->clipper->cur->geometry.x, obj->cur->clipper->cur->geometry.y,
            obj->cur->clipper->cur->geometry.w, obj->cur->clipper->cur->geometry.h);
      }
+
+   RD(level, "  geom: %d,%d %dx%d, cache.clip: (vis: %d) %d,%d %dx%d\n",
+      obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h,
+      obj->cur->cache.clip.visible, obj->cur->cache.clip.x, obj->cur->cache.clip.y, obj->cur->cache.clip.w, obj->cur->cache.clip.h);
 #endif
 
    if (mapped)
@@ -1294,6 +1301,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
              RD(level, "  is mask: redraw:%d sfc:%p\n", obj->mask->redraw, obj->mask->surface);
              if (!use_mapped_ctx || (surface != obj->mask->surface))
                {
+                  RD(level, "  not rendering mask surface\n");
                   RD(level, "}\n");
                   return clean_them;
                }
@@ -1304,6 +1312,9 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
              if ((!evas_object_is_visible(eo_obj, obj)) || (obj->clip.clipees)
                  || (obj->cur->have_clipees) || (obj->no_render))
                {
+                  IFRD(obj->no_render, level, "  proxy_src_clip + no_render\n");
+                  IFRD(obj->clip.clipees || obj->cur->have_clipees, level, "  proxy_src_clip + has clippees\n");
+                  IFRD(!evas_object_is_visible(eo_obj, obj), level, "  not visible\n");
                   RD(level, "}\n");
                   return clean_them;
                }
@@ -1311,12 +1322,15 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
         else if (!evas_object_is_proxy_visible(eo_obj, obj) ||
                  (obj->clip.clipees) || (obj->cur->have_clipees))
           {
+             IFRD(!evas_object_is_proxy_visible(eo_obj, obj), level, "  proxy not visible\n");
+             IFRD(obj->clip.clipees || obj->cur->have_clipees, level, "  has clippees\n");
              RD(level, "}\n");
              return clean_them;
           }
         else if (obj->no_render && (!use_mapped_ctx || (surface != obj->proxy->surface)))
           {
-             RD(level, "  no render\n}\n");
+             RD(level, "  no_render\n");
+             RD(level, "}\n");
              return clean_them;
           }
      }
@@ -1324,6 +1338,9 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                 (_evas_render_can_render(eo_obj, obj))))
              ))
      {
+        IFRD(!evas_object_is_active(eo_obj, obj), level, "  not active\n");
+        IFRD(!_evas_render_can_render(eo_obj, obj), level, "  can't render\n");
+        IFRD(obj->clip.clipees, level, "  has clippees\n");
         RD(level, "}\n");
         return clean_them;
      }
@@ -1581,8 +1598,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
         if (mapped)
           {
-             RD(level, "  draw child of mapped obj: '%s'%s\n",
-                obj->type, obj->is_smart ? " (smart)" : "");
+             RD(level, "  draw child of mapped obj\n");
 
              if (use_mapped_ctx)
                ctx = context;
@@ -1684,6 +1700,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                               }
                          }
                     }
+                  RD(level, "  render()\n");
                   obj->func->render(eo_obj, obj, obj->private_data,
                                     e->engine.data.output, ctx,
                                     surface, off_x, off_y, EINA_FALSE);
@@ -1729,7 +1746,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                     ecx, ecy, ecw, ech);
                }
 
-             RD(level, "  draw normal obj\n");
+             RD(level, "  draw normal obj: render()\n");
              obj->func->render(eo_obj, obj, obj->private_data,
 			       e->engine.data.output, context, surface,
                                off_x, off_y, do_async);
@@ -1754,14 +1771,21 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
    Evas_Public_Data *evas = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Evas_Object_Protected_Data *source;
    Eina_Bool source_clip = EINA_FALSE;
+   int level = 1;
    void *ctx;
    int w, h;
+
+#ifdef REND_DBG
+   level = __RD_level;
+#endif
 
    if (!eo_source) return;
    source = eo_data_scope_get(eo_source, EVAS_OBJECT_CLASS);
 
    w = source->cur->geometry.w;
    h = source->cur->geometry.h;
+
+   RD(level, "  proxy_subrender(source: %p, proxy: %p)\n", source, proxy_obj);
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy,
                         Evas_Object_Proxy_Data, proxy_write)
@@ -1772,6 +1796,7 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
         if ((proxy_write->surface) &&
             ((proxy_write->w != w) || (proxy_write->h != h)))
           {
+             RD(level, "  free surface: %p\n", proxy_write->surface);
              ENFN->image_free(ENDT, proxy_write->surface);
              proxy_write->surface = NULL;
           }
@@ -1781,6 +1806,7 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
         if (!proxy_write->surface)
           {
              proxy_write->surface = ENFN->image_map_surface_new(ENDT, w, h, 1);
+             RD(level, "  created surface: %p %dx%d\n", proxy_write->surface, w, h);
              if (!proxy_write->surface) goto end;
              proxy_write->w = w;
              proxy_write->h = h;
@@ -1788,7 +1814,7 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
 
         ctx = ENFN->context_new(ENDT);
         ENFN->context_color_set(ENDT, ctx, 0, 0,0, 0);
-        ENFN->context_render_op_set(ENDT, ctx,EVAS_RENDER_COPY);
+        ENFN->context_render_op_set(ENDT, ctx, EVAS_RENDER_COPY);
         ENFN->rectangle_draw(ENDT, ctx, proxy_write->surface, 0, 0, w, h, do_async);
         ENFN->context_free(ENDT, ctx);
 
@@ -1806,8 +1832,8 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
         evas_render_mapped(evas, eo_source, source, ctx, proxy_write->surface,
                            -source->cur->geometry.x,
                            -source->cur->geometry.y,
-                           2, 0, 0, evas->output.w, evas->output.h,
-                           &proxy_render_data, 1, EINA_TRUE, do_async);
+                           level + 1, 0, 0, evas->output.w, evas->output.h,
+                           &proxy_render_data, level + 1, EINA_TRUE, do_async);
 
         ENFN->context_free(ENDT, ctx);
         proxy_write->surface = ENFN->image_dirty_region(ENDT, proxy_write->surface, 0, 0, w, h);
@@ -2207,7 +2233,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
 
         /* if it's in our outpout rect and it doesn't clip anything */
         RD(0, "    OBJ: [%p", obj);
-        IFRD(0, " '%s'", obj->name);
+        IFRD(obj->name, 0, " '%s'", obj->name);
         RD(0, "] '%s' %i %i %ix%i\n", obj->type, obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h);
         if ((evas_object_is_in_output_rect(eo_obj, obj, ux - fx, uy - fy, uw, uh) ||
              (obj->is_smart)) &&
