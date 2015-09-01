@@ -3204,14 +3204,14 @@ _elm_genlist_elm_widget_on_focus(Eo *obj, Elm_Genlist_Data *sd)
              eo_it = elm_genlist_first_item_get(obj);
              is_sel = EINA_TRUE;
           }
-          
+
         while (eo_it)
-        {
-           ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
-           if ((!_is_no_select(it)) && (!elm_object_item_disabled_get(eo_it)))
-             break;
-           eo_it = EO_OBJ(ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next));
-        }
+          {
+             ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
+             if ((!_is_no_select(it)) && (!elm_object_item_disabled_get(eo_it)))
+               break;
+             eo_it = EO_OBJ(ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next));
+          }
 
         if (eo_it)
           {
