@@ -11,6 +11,7 @@ enum _slide_style
    SLIDE_STYLE_LAST
 };
 
+/*** Label *******************************************************************/
 void
 test_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -87,6 +88,7 @@ test_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_win_resize_object_add(win, bx);
 }
 
+/*** Label Slide *************************************************************/
 static void
 _cb_size_radio_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
@@ -162,36 +164,14 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_win_resize_object_add(win, gd);
    evas_object_show(gd);
 
-   /* Test Label Ellipsis */
+   /* Test Label Slide */
    lb = elm_label_add(win);
-   elm_object_text_set(lb, "Test Label Ellipsis:");
+   elm_object_text_set(lb, "<b>Test Label Slide:</b>");
    elm_grid_pack(gd, lb, 5, 0, 90, 10);
    evas_object_show(lb);
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    elm_grid_pack(gd, rect, 5, 10, 90, 10);
-   evas_object_color_set(rect, 255, 125, 125, 255);
-   evas_object_show(rect);
-
-   lb = elm_label_add(win);
-   elm_object_text_set(lb,
-                       "This is a label set to ellipsis. "
-                       "If set ellipsis to true and the text doesn't fit "
-                       "in the label an ellipsis(\"...\") will be shown "
-                       "at the end of the widget."
-                       );
-   elm_label_ellipsis_set(lb, EINA_TRUE);
-   elm_grid_pack(gd, lb, 5, 10, 90, 10);
-   evas_object_show(lb);
-
-   /* Test Label Slide */
-   lb = elm_label_add(win);
-   elm_object_text_set(lb, "Test Label Slide:");
-   elm_grid_pack(gd, lb, 5, 20, 90, 10);
-   evas_object_show(lb);
-
-   rect = evas_object_rectangle_add(evas_object_evas_get(win));
-   elm_grid_pack(gd, rect, 5, 30, 90, 10);
    evas_object_color_set(rect, 255, 125, 125, 255);
    evas_object_show(rect);
 
@@ -207,7 +187,7 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_label_slide_mode_set(lb, ELM_LABEL_SLIDE_MODE_AUTO);
    elm_label_slide_speed_set(lb, 40.0);
    elm_label_slide_go(lb);
-   elm_grid_pack(gd, lb, 5, 30, 90, 10);
+   elm_grid_pack(gd, lb, 5, 10, 90, 10);
    evas_object_show(lb);
 
    /* The speed or the duration of the slide animation will change when the
@@ -219,7 +199,7 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_object_text_set(rd, "slide_short");
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
    evas_object_smart_callback_add(rd, "changed", _cb_size_radio_changed, lb);
-   elm_grid_pack(gd, rd, 5, 40, 30, 10);
+   elm_grid_pack(gd, rd, 5, 20, 30, 10);
    evas_object_show(rd);
    rdg = rd;
 
@@ -229,7 +209,7 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_object_text_set(rd, "slide_long");
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
    evas_object_smart_callback_add(rd, "changed", _cb_size_radio_changed, lb);
-   elm_grid_pack(gd, rd, 35, 40, 30, 10);
+   elm_grid_pack(gd, rd, 35, 20, 30, 10);
    evas_object_show(rd);
 
    rd = elm_radio_add(win);
@@ -238,7 +218,7 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_object_text_set(rd, "slide_bounce");
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
    evas_object_smart_callback_add(rd, "changed", _cb_size_radio_changed, lb);
-   elm_grid_pack(gd, rd, 65, 40, 30, 10);
+   elm_grid_pack(gd, rd, 65, 20, 30, 10);
    evas_object_show(rd);
 
    sl = elm_slider_add(win);
@@ -250,7 +230,7 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_smart_callback_add(sl, "changed", _duration_change_cb, lb);
    evas_object_data_set(lb, "duration_slider", sl);
-   elm_grid_pack(gd, sl, 5, 50, 90, 10);
+   elm_grid_pack(gd, sl, 5, 30, 90, 10);
    evas_object_show(sl);
 
    sl = elm_slider_add(win);
@@ -262,17 +242,17 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_smart_callback_add(sl, "changed", _speed_change_cb, lb);
    evas_object_data_set(lb, "speed_slider", sl);
-   elm_grid_pack(gd, sl, 5, 60, 90, 10);
+   elm_grid_pack(gd, sl, 5, 40, 90, 10);
    evas_object_show(sl);
 
    /* Test 2 label at the same speed */
    lb = elm_label_add(win);
-   elm_object_text_set(lb, "Test 2 label with the same speed:");
-   elm_grid_pack(gd, lb, 5, 70, 90, 10);
+   elm_object_text_set(lb, "<b>Test 2 label with the same speed:</b>");
+   elm_grid_pack(gd, lb, 5, 60, 90, 10);
    evas_object_show(lb);
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
-   elm_grid_pack(gd, rect, 5, 80, 90, 20);
+   elm_grid_pack(gd, rect, 5, 70, 90, 20);
    evas_object_color_set(rect, 255, 125, 125, 255);
    evas_object_show(rect);
 
@@ -284,7 +264,7 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_label_slide_mode_set(lb1, ELM_LABEL_SLIDE_MODE_ALWAYS);
    elm_label_slide_speed_set(lb1, 40.0);
    elm_label_slide_go(lb1);
-   elm_grid_pack(gd, lb1, 5, 80, 90, 10);
+   elm_grid_pack(gd, lb1, 5, 70, 90, 10);
    evas_object_show(lb1);
 
    lb2 = elm_label_add(win);
@@ -294,13 +274,14 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_label_slide_mode_set(lb2, ELM_LABEL_SLIDE_MODE_ALWAYS);
    elm_label_slide_speed_set(lb2, 40.0);
    elm_label_slide_go(lb2);
-   elm_grid_pack(gd, lb2, 5, 90, 90, 10);
+   elm_grid_pack(gd, lb2, 5, 80, 90, 10);
    evas_object_show(lb2);
 
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
 
+/*** Label Wrap **************************************************************/
 void
 test_label_wrap(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -320,5 +301,53 @@ test_label_wrap(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    elm_win_resize_object_add(win, lb);
    evas_object_show(lb);
 
+   evas_object_show(win);
+}
+
+
+/*** Label Ellipsis **********************************************************/
+void
+test_label_ellipsis(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *lb;
+
+   win = elm_win_util_standard_add("label-ellipsis", "Label Ellipsis");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   elm_box_padding_set(bx, 0, ELM_SCALE_SIZE(10));
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   lb = elm_label_add(win);
+   elm_object_text_set(lb,
+                       "This is a label set to ellipsis. "
+                       "If set ellipsis to true and the text doesn't fit "
+                       "in the label an ellipsis(\"...\") will be shown "
+                       "at the end of the widget."
+                       );
+   elm_label_ellipsis_set(lb, EINA_TRUE);
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(bx, lb);
+   evas_object_show(lb);
+
+   lb = elm_label_add(win);
+   elm_object_text_set(lb,
+                       "<big>"
+                       "This label also have <b>markups</b>, "
+                       "<hilight>hilight</hilight>, "
+                       "<success>success</success>, "
+                       "<failure>failure</failure>."
+                       "</big>"
+                       );
+   elm_label_ellipsis_set(lb, EINA_TRUE);
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(bx, lb);
+   evas_object_show(lb);
+
+   evas_object_resize(win, 300, 100);
    evas_object_show(win);
 }
