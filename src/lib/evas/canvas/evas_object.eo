@@ -109,18 +109,19 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
       }
       @property size_hint_min {
          set {
-            /*@
-            Sets the hints for an object's minimum size.
+            [[Sets the hints for an object's minimum size.
 
-            This is not a size enforcement in any way, it's just a hint that
-            should be used whenever appropriate.
+              This is not a size enforcement in any way, it's just a hint
+              that should be used whenever appropriate.
 
-            Values @c 0 will be treated as unset hint components, when queried
-            by managers.
+              Values 0 will be treated as unset hint components, when
+              queried by managers.
 
-            @note Smart objects(such as elementary) can have their own size hint
-            policy. So calling this API may or may not affect the size of smart objects.
-
+              Note: Smart objects(such as elementary) can have their own
+              size hint policy. So calling this API may or may not affect
+              the size of smart objects.
+            ]]
+            /* FIXME-doc
             Example:
             @dontinclude evas-hints.c
             @skip evas_object_size_hint_min_set
@@ -129,131 +130,118 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             In this example the minimum size hints change the behavior of an
             Evas box when layouting its children. See the full @ref
             Example_Evas_Size_Hints "example".
-
-            @see evas_object_size_hint_min_get() */
+            */
          }
          get {
-            /*@
-            Retrieves the hints for an object's minimum size.
+            [[Retrieves the hints for an object's minimum size.
 
-            These are hints on the minimum sizes @p obj should have. This is
-            not a size enforcement in any way, it's just a hint that should be
-            used whenever appropriate.
+              These are hints on the minimum sizes $obj should have. This
+              is not a size enforcement in any way, it's just a hint that
+              should be used whenever appropriate.
 
-            @note Use $null pointers on the hint components you're not
-            interested in: they'll be ignored by the function.
-
-            @see evas_object_size_hint_min_set() for an example */
+              Note: Use $null pointers on the hint components you're not
+              interested in: they'll be ignored by the function.
+            ]]
          }
          values {
-            w: Evas.Coord; /*@ Integer to use as the minimum width hint. */
-            h: Evas.Coord; /*@ Integer to use as the minimum height hint. */
+            w: Evas.Coord; [[Integer to use as the minimum width hint.]]
+            h: Evas.Coord; [[Integer to use as the minimum height hint.]]
          }
       }
       @property pointer_mode {
          set {
-            /*@
-            Set pointer behavior.
+            [[Set pointer behavior.
 
-            This function has direct effect on event callbacks related to
-            mouse.
+              This function has direct effect on event callbacks related to
+              mouse.
 
-            If @p setting is EVAS_OBJECT_POINTER_MODE_AUTOGRAB, then when mouse
-            is down at this object, events will be restricted to it as source,
-            mouse moves, for example, will be emitted even if outside this
-            object area.
+              If $setting is EVAS_OBJECT_POINTER_MODE_AUTOGRAB, then when
+              mouse is down at this object, events will be restricted to
+              it as source, mouse moves, for example, will be emitted even
+              if outside this object area.
 
-            If @p setting is EVAS_OBJECT_POINTER_MODE_NOGRAB, then events will
-            be emitted just when inside this object area.
+              If $setting is EVAS_OBJECT_POINTER_MODE_NOGRAB, then events
+              will be emitted just when inside this object area.
 
-            The default value is EVAS_OBJECT_POINTER_MODE_AUTOGRAB.
-
-            @ingroup Evas_Object_Group_Extras */
+              The default value is EVAS_OBJECT_POINTER_MODE_AUTOGRAB.
+            ]]
          }
          get {
-            /*@
-            Determine how pointer will behave.
-            @return pointer behavior.
-            @ingroup Evas_Object_Group_Extras */
+            [[Determine how pointer will behave.]]
          }
          values {
-            pointer_mode: Evas.Object_Pointer_Mode; /*@ desired behavior. */
+            pointer_mode: Evas.Object_Pointer_Mode; [[Desired behavior.]]
          }
       }
       @property render_op {
          set {
-            /*@
-            Sets the render_op to be used for rendering the Evas object.
-            @ingroup Evas_Object_Group_Extras */
+            [[Sets the render_op to be used for rendering the Evas object.]]
          }
          get {
-            /*@
-            Retrieves the current value of the operation used for rendering the Evas object.
-            @return  one of the enumerated values in Evas_Render_Op.
-            @ingroup Evas_Object_Group_Extras */
+            [[Retrieves the current value of the operation used for
+              rendering the Evas object.
+            ]]
          }
          values {
-            render_op: Evas.Render_Op; /*@ one of the Evas_Render_Op values. */
+            render_op: Evas.Render_Op; [[One of the Evas_Render_Op values.]]
          }
       }
       @property freeze_events {
          set {
-            /*@
-            Set whether an Evas object is to freeze (discard) events.
+            [[Set whether an Evas object is to freeze (discard) events.
 
-            If @p freeze is $true, it will make events on @p obj to be @b
-            discarded. Unlike evas_object_pass_events_set(), events will not be
-            passed to @b next lower object. This API can be used for blocking
-            events while @p obj is on transiting.
+              If $freeze is $true, it will make events on $obj to be
+              discarded. Unlike @.pass_events.set, events will not be
+              passed to next lower object. This API can be used for
+              blocking events while $obj is on transiting.
 
-            If @p freeze is $false, events will be processed on that
-            object as normal.
+              If $freeze is $false, events will be processed on that
+              object as normal.
             
-            @warning If you block only key/mouse up events with this API, we won't
-                     guarantee the state of the object, that only had key/mouse down
-                     events, will be.
+              Warning: If you block only key/mouse up events with this API,
+              we won't guarantee the state of the object, that only had
+              key/mouse down events, will be.
 
-            @see evas_object_freeze_events_get()
-            @see evas_object_pass_events_set()
-            @see evas_object_repeat_events_set()
-            @see evas_object_propagate_events_set()
-            @since 1.1 */
+              @since 1.1
+            ]]
          }
          get {
-            /*@
-            Determine whether an object is set to freeze (discard) events.
+            [[Determine whether an object is set to freeze (discard) events.
 
-            @return freeze whether @p obj is set to freeze events ($true) or
-            not ($false)
-
-            @see evas_object_freeze_events_set()
-            @see evas_object_pass_events_get()
-            @see evas_object_repeat_events_get()
-            @see evas_object_propagate_events_get()
-            @since 1.1 */
+              @since 1.1
+            ]]
          }
          values {
-            freeze: bool; /*@ pass whether @p obj is to freeze events ($true) or not
-            ($false) */
+            freeze: bool; [[Pass when $obj is to freeze events ($true)
+                            or not ($false).]]
          }
       }
       @property map {
          set {
-            /*@
-            Set current object transformation map.
+            [[Set current object transformation map.
 
-            This sets the map on a given object. It is copied from the @p map pointer,
-            so there is no need to keep the @p map object if you don't need it anymore.
+              This sets the map on a given object. It is copied from the
+              $map pointer, so there is no need to keep the $map object if
+              you don't need it anymore.
 
-            A map is a set of 4 points which have canvas x, y coordinates per point,
-            with an optional z point value as a hint for perspective correction, if it
-            is available. As well each point has u and v coordinates. These are like
-            "texture coordinates" in OpenGL in that they define a point in the source
-            image that is mapped to that map vertex/point. The u corresponds to the x
-            coordinate of this mapped point and v, the y coordinate. Note that these
-            coordinates describe a bounding region to sample. If you have a 200x100
-            source image and want to display it at 200x100 with proper pixel
-            precision, then do:
+              A map is a set of 4 points which have canvas x, y coordinates
+              per point, with an optional z point value as a hint for
+              perspective correction, if it is available. As well each
+              point has u and v coordinates. These are like "texture
+              coordinates" in OpenGL in that they define a point in the
+              source image that is mapped to that map vertex/point. The u
+              corresponds to the x coordinate of this mapped point and v,
+              the y coordinate. Note that these coordinates describe a
+              bounding region to sample.
+
+              Note: The map points a uv coordinates match the image geometry.
+              If the $map parameter is $null, the stored map will be freed
+              and geometry prior to enabling/setting a map will be restored.
+            ]]
+            /* FIXME-doc
+              If you have a 200x100 source
+              image and want to display it at 200x100 with proper pixel
+              precision, then do:
 
             @code
             Evas_Map *m = evas_map_new(4);
@@ -268,21 +256,19 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             evas_object_map_set(obj, m);
             evas_map_free(m);
             @endcode
-
-            Note that the map points a uv coordinates match the image geometry. If
-            the @p map parameter is NULL, the stored map will be freed and geometry
-            prior to enabling/setting a map will be restored.
-
-            @see evas_map_new() */
+            */
          }
          get {
-            /*@
-            Get current object transformation map.
+            [[Get current object transformation map.
 
-            This returns the current internal map set on the indicated object. It is
-            intended for read-only access and is only valid as long as the object is
-            not deleted or the map on the object is not changed. If you wish to modify
-            the map and set it back do the following:
+              This returns the current internal map set on the indicated
+              object. It is intended for read-only access and is only
+              valid as long as the object is not deleted or the map on
+              the object is not changed. 
+            ]]
+            /* FIXME-doc
+              If you wish to modify the map
+              and set it back do the following:
 
             @code
             const Evas_Map *m = evas_object_map_get(obj);
@@ -291,14 +277,10 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             evas_object_map_set(obj, m2);
             evas_map_free(m2);
             @endcode
-
-            @return map reference to map in use. This is an internal data structure, so
-            do not modify it.
-
-            @see evas_object_map_set() */
+            */
          }
          values {
-            map: const(Evas.Map)*; /*@ new map to use */
+            map: const(Evas.Map)*; [[The map.]]
          }
       }
       @property size_hint_aspect {
@@ -1221,86 +1203,78 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
          }
       }
       clip_unset {
-         /*@
-         Disable/cease clipping on a clipped @p obj object.
+         [[Disable/cease clipping on a clipped $obj object.
 
-         This function disables clipping for the object @p obj, if it was
-         already clipped, i.e., its visibility and color get detached from
-         the previous clipper. If it wasn't, this has no effect. The object
-         @p obj must be a valid .Evas_Object.
+           This function disables clipping for the object $obj, if it was
+           already clipped, i.e., its visibility and color get detached from
+           the previous clipper. If it wasn't, this has no effect. The
+           object $obj must be a valid Evas_Object.
 
-         See also evas_object_clip_set() (for an example),
-         evas_object_clipees_get() and evas_object_clip_get(). */
-
+           See also @.clip.set, @.clipees.get and @.clip.get.
+         ]]
       }
       smart_move_children_relative {
-         /*@
-         Moves all children objects of a given smart object relative to a
-         given offset.
+         [[Moves all children objects of a given smart object relative to a
+           given offset.
 
-         This will make each of @p obj object's children to move, from where
-         they before, with those delta values (offsets) on both directions.
+           This will make each of $obj object's children to move, from where
+           they before, with those delta values (offsets) on both directions.
 
-         @note This is most useful on custom smart @c move() functions.
+           Note: This is most useful on custom smart $move functions.
 
-         @note Clipped smart objects already make use of this function on
-         their @c move() smart function definition. */
-
+           Note: Clipped smart objects already make use of this function on
+           their $move smart function definition.
+         ]]
          params {
-            @in dx: Evas.Coord; /*@ horizontal offset (delta). */
-            @in dy: Evas.Coord; /*@ vertical offset (delta). */
+            @in dx: Evas.Coord; [[Horizontal offset (delta).]]
+            @in dy: Evas.Coord; [[Vertical offset (delta).]]
          }
       }
       smart_type_check_ptr @const {
-         /*@
-         Checks whether a given smart object or any of its smart object
-         parents is of a given smart class, <b>using pointer comparison</b>.
-
-         @return $true, if @a obj or any of its parents is of type @a
-         type, $false otherwise
-
-         @see evas_object_smart_type_check() for more details
-         @see eo_isa
-
-         @ingroup Evas_Smart_Object_Group */
-         return: bool @warn_unused;
+         [[Checks whether a given smart object or any of its smart object
+           parents is of a given smart class, using pointer comparison.
+         ]]
+         return: bool @warn_unused; [[$true if $obj or any of its parents
+                                      is of type $type, $false otherwise.]]
          params {
-            @in type: const(char)* @nonull; /*@ The type (name string) to check for. Must be the name */
+            @in type: const(char)* @nonull; [[The type (name string) to check for. Must be the name.]]
          }
       }
       @property no_render {
          get {
-            /*@
-            Returns the state of the "no-render" flag, which means, when true,
-            that an object should never be rendered on the canvas.
+            [[Returns the state of the "no-render" flag, which means, when
+              true, that an object should never be rendered on the canvas.
 
-            This flag can be used to avoid rendering visible clippers on the
-            canvas, even if they currently don't clip any object.
+              This flag can be used to avoid rendering visible clippers on
+              the canvas, even if they currently don't clip any object.
 
-            @since 1.15 */
+              @since 1.15
+            ]]
             legacy: null;
          }
          set {
-            /*@
-            Disable all rendering on the canvas.
+            [[Disable all rendering on the canvas.
 
-            This flag will be used to indicate to Evas that this object should
-            never be rendered on the canvas under any circurmstances. In
-            particular, this is useful to avoid drawing clipper objects (or masks)
-            even when they don't clip any object. This can also be used to replace
-            the old source_visible flag with proxy objects.
+              This flag will be used to indicate to Evas that this object
+              should never be rendered on the canvas under any
+              circurmstances. In particular, this is useful to avoid
+              drawing clipper objects (or masks) even when they don't
+              clip any object. This can also be used to replace the old
+              source_visible flag with proxy objects.
 
-            This is different to the visible property, as even visible objects
-            marked as "no-render" will never appear on screen. But those objects
-            can still be used as proxy sources or clippers. When hidden, all
-            "no-render" objects will completely disappear from the canvas, and
-            hide their clippees or be invisible when used as proxy sources.
+              This is different to the visible property, as even visible
+              objects marked as "no-render" will never appear on screen.
+              But those objects can still be used as proxy sources or
+              clippers. When hidden, all "no-render" objects will
+              completely disappear from the canvas, and hide their
+              clippees or be invisible when used as proxy sources.
 
-            @since 1.15 */
+              @since 1.15
+            ]]
             legacy: null;
          }
          values {
-            enable: bool; /*@ Enable "no-render" mode. */
+            enable: bool; [[Enable "no-render" mode.]]
          }
       }
    }
