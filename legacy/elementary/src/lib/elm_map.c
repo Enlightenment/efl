@@ -1122,12 +1122,17 @@ _zoom_do(Elm_Map_Data *sd,
               (x, y, vw, vh));
      }
 
-   if (sd->zoom_timer) ecore_timer_del(sd->zoom_timer);
+   if (sd->zoom_timer)
+     {
+        ecore_timer_del(sd->zoom_timer);
+        sd->zoom_timer = NULL;
+     }
    else
       eo_do(sd->obj, eo_event_callback_call
         (EVAS_ZOOMABLE_INTERFACE_EVENT_ZOOM_START, NULL));
 
-   sd->zoom_timer = ecore_timer_add(0.25, _zoom_timeout_cb, sd->obj);
+   if (sd->obj)
+     sd->zoom_timer = ecore_timer_add(0.25, _zoom_timeout_cb, sd->obj);
    eo_do(sd->obj, eo_event_callback_call
      (ELM_MAP_EVENT_ZOOM_CHANGE, NULL));
 
