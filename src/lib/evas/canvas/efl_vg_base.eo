@@ -8,7 +8,7 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
             [[Set an unique name from the parent point of view. $null means
               no name.
 
-              @since 1.15
+              @since 1.16
             ]]
          }
          get {
@@ -18,7 +18,7 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
               defined, it might be forced back to $null if the parent
               already has a node of that name.
 
-              @since 1.15
+              @since 1.16
             ]]
          }
          values {
