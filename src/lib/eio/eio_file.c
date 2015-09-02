@@ -92,9 +92,7 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
 
    if (pack) ecore_thread_feedback(thread, pack);
 
-   eio_file_container_set(&async->ls.common, NULL);
-
-   eina_iterator_free(ls);
+   async->ls.ls = ls;
 }
 
 static void
