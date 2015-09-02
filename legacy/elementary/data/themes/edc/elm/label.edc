@@ -3,8 +3,8 @@ group { name: "elm/label/base/default";
       style { name: "label_style";
          base: "font="FN" font_size=10 text_class=tb_plain align=center color=#ffffffff style=shadow,bottom shadow_color=#00000080";
          tag: "br" "\n";
-         tag: "hilight" "+ font="FNBD" text_class=tb_light";
          tag: "b" "+ font="FNBD" text_class=tb_light";
+         ENABLED_TEXTBLOCK_TAGS
       }
    }
    parts {

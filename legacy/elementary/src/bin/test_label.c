@@ -68,6 +68,18 @@ test_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
+   lb = elm_label_add(win);
+   elm_object_text_set(lb,
+                   "You can also use all the default entry style tags, like "
+                   "<hilight>hilight</hilight>, <success>success</success>, "
+                   "<bigger>bigger</bigger>, <smaller>smaller</smaller>, etc..."
+                   );
+   elm_label_line_wrap_set(lb, ELM_WRAP_WORD);
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, lb);
+   evas_object_show(lb);
+
    evas_object_resize(win, 320, 300);
 
    evas_object_show(bx);
