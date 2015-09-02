@@ -237,29 +237,26 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
       }
       @property focus {
          get {
-            /*@
-            Retrieve the object that currently has focus.
+            [[Retrieve the object that currently has focus.
 
-            @return The object that has focus or $null if there is not one.
+              Evas can have (at most) one of its objects focused at a time.
+              Focused objects will be the ones having key events delivered
+              to, which the programmer can act upon by means of
+              \@ref evas_object_event_callback_add usage.
 
-            Evas can have (at most) one of its objects focused at a time.
-            Focused objects will be the ones having <b>key events</b> delivered
-            to, which the programmer can act upon by means of
-            evas_object_event_callback_add() usage.
+              Note: Most users wouldn't be dealing directly with Evas'
+              focused objects. Instead, they would be using a higher level
+              library for that (like a toolkit, as Elementary) to handle
+              focus and who's receiving input for them.
 
-            @note Most users wouldn't be dealing directly with Evas' focused
-            objects. Instead, they would be using a higher level library for
-            that (like a toolkit, as Elementary) to handle focus and who's
-            receiving input for them.
+              This call returns the object that currently has focus on the
+              canvas $e or $null, if none.
 
-            This call returns the object that currently has focus on the canvas
-            $e or $null, if none.
-
-            @see evas_object_focus_set
-            @see evas_object_focus_get
-            @see evas_object_key_grab
-            @see evas_object_key_ungrab
-
+              See also \@ref evas_object_focus_set,
+              \@ref evas_object_focus_get, \@ref evas_object_key_grab,
+              \@ref evas_object_key_ungrab.
+            ]]
+            /* FIXME-doc
             Example:
             @dontinclude evas-events.c
             @skip evas_event_callback_add(d.canvas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN,
@@ -270,62 +267,56 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
             In this example the $event_info is exactly a pointer to that
             focused rectangle. See the full @ref Example_Evas_Events "example".
-
-            @ingroup Evas_Object_Group_Find */
-            return: Evas.Object * @warn_unused;
+            */
+            return: Evas.Object * @warn_unused; [[The object that has focus
+                                                  or $null if there is not one.]]
          }
       }
       @property object_top {
          get {
-            /*@
-            Get the highest (stacked) Evas object on the canvas $e.
+            [[Get the highest (stacked) Evas object on the canvas $e.
 
-            @return a pointer to the highest object on it, if any, or $null,
-            otherwise
+              This function will take all populated layers in the canvas
+              into account, getting the highest object for the highest
+              layer, naturally.
 
-            This function will take all populated layers in the canvas into
-            account, getting the highest object for the highest layer,
-            naturally.
+              Warning: This function will skip objects parented by smart
+              objects, acting only on the ones at the "top level", with
+              regard to object parenting.
 
-            @see evas_object_layer_get()
-            @see evas_object_layer_set()
-            @see evas_object_below_get()
-            @see evas_object_above_get()
-
-            @warning This function will @b skip objects parented by smart
-            objects, acting only on the ones at the "top level", with regard to
-            object parenting. */
-            return: Evas.Object * @warn_unused;
+              See also \@ref evas_object_layer_get,
+              \@ref evas_object_layer_set, \@ref evas_object_below_get,
+              \@ref evas_object_above_get.
+            ]]
+            return: Evas.Object * @warn_unused; [[A pointer to the highest object
+                                                  on it (if any) or $null otherwise.]]
          }
       }
       @property key_lock {
          get {
-            /*@
-            Returns a handle to the list of lock keys registered in the canvas
-            $e. This is required to check for which locks are set at a given
-            time with the evas_key_lock_is_set() function.
+            [[Returns a handle to the list of lock keys registered in the
+              canvas $e.
 
-            @see evas_key_lock_add
-            @see evas_key_lock_del
-            @see evas_key_lock_on
-            @see evas_key_lock_off
-            @see evas_key_lock_is_set
-
-            @return An .Evas_Lock handle to query Evas' keys subsystem with
-            evas_key_lock_is_set(), or $null on error. */
-            return: const(Evas.Lock)* @warn_unused;
+              This is required to check for which locks are set at a given
+              time with the \@ref evas_key_lock_is_set function.
+            ]]
+            return: const(Evas.Lock)* @warn_unused; [[
+               An Evas_Lock handle to query Evas' keys subsystem with
+               \@ref evas_key_lock_is_set, or $null on error.
+            ]]
          }
       }
       @property pointer_canvas_xy {
          get {
-            /*@
-            This function returns the current known pointer co-ordinates
+            [[This function returns the current known pointer coordinates
 
-            This function returns the current known canvas unit co-ordinates of
-            the mouse pointer and sets the contents of the Evas_Coords pointed
-            to by $x and $y to contain these co-ordinates. If $e is not a
-            valid canvas the results of this function are undefined.
-
+              This function returns the current known canvas unit
+              coordinates of the mouse pointer and sets the contents of
+              the Evas_Coords pointed to by $x and $y to contain these
+              coordinates. If $e is not a valid canvas the results of
+              this function are undefined.
+            ]]
+            /* FIXME-doc
             Example:
             @code
             extern Evas *evas;
@@ -333,76 +324,69 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
             evas_pointer_output_xy_get(evas, &mouse_x, &mouse_y);
             printf("Mouse is at canvas position %d, %d\n", mouse_x, mouse_y);
-            @endcode */
+            @endcode
+            */
          }
          values {
-            x: Evas.Coord; /*@ The pointer to a Evas_Coord to be filled in */
-            y: Evas.Coord; /*@ The pointer to a Evas_Coord to be filled in
-            @ingroup Evas_Pointer_Group */
+            x: Evas.Coord; [[The pointer to a Evas_Coord to be filled in.]]
+            y: Evas.Coord; [[The pointer to a Evas_Coord to be filled in.]]
          }
       }
       @property event_down_count {
          get {
-            /*@
-            Get the number of mouse or multi presses currently active
+            [[Get the number of mouse or multi presses currently active.
 
-            $e The given canvas pointer.
-            @return The number of presses (0 if none active).
-
-            @since 1.2 */
+              @since 1.2
+            ]]
             return: int;
          }
       }
       @property smart_objects_calculate_count {
          get {
-            /*@
-            This gets the internal counter that counts the number of smart calculations
+            [[This gets the internal counter that counts the number of
+              smart calculations.
 
-            Whenever evas performs smart object calculations on the whole canvas
-            it increments a counter by 1. This is the smart object calculate counter
-            that this function returns the value of. It starts at the value of 0 and
-            will increase (and eventually wrap around to negative values and so on) by
-            1 every time objects are calculated. You can use this counter to ensure
-            you don't re-do calculations withint the same calculation generation/run
-            if the calculations maybe cause self-feeding effects.
+              Whenever evas performs smart object calculations on the whole
+              canvas it increments a counter by 1. This is the smart object
+              calculate counter that this function returns the value of.
+              It starts at the value of 0 and will increase (and eventually
+              wrap around to negative values and so on) by 1 every time
+              objects are calculated. You can use this counter to ensure
+              you don't re-do calculations withint the same calculation
+              generation/run if the calculations maybe cause self-feeding
+              effects.
 
-            @ingroup Evas_Smart_Object_Group
-            @since 1.1 */
+              @since 1.1
+            ]]
             return: int;
          }
       }
       @property focus_state {
          get {
-            /*@
-            Get the focus state known by the given evas
-
-            @return $true if it got the focus, $false otherwise.
-            @ingroup Evas_Canvas */
+            [[Get the focus state known by the given evas.]]
             return: bool;
          }
       }
       @property changed {
          get {
-            /*@
-            Get the changed marker for the canvas
+            [[Get the changed marker for the canvas.
 
-            @return $true if something has been marked as changed, $false otherwise.
-            @ingroup Evas_Canvas
-            @since 1.11
-             */
+              @since 1.11
+            ]]
             return: bool;
          }
       }
       @property pointer_output_xy {
          get {
-            /*@
-            This function returns the current known pointer co-ordinates
+            [[This function returns the current known pointer coordinates.
 
-            This function returns the current known screen/output co-ordinates
-            of the mouse pointer and sets the contents of the integers pointed
-            to by $x and $y to contain these co-ordinates. If $e is not a
-            valid canvas the results of this function are undefined.
-
+              This function returns the current known screen/output
+              coordinates of the mouse pointer and sets the contents of
+              the integers pointed to by $x and $y to contain these
+              coordinates. If $e is not a valid canvas the results of
+              this function are undefined.
+            ]]
+            /* FIXME-doc
             Example:
             @code
             extern Evas *evas;
@@ -410,84 +394,86 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
             evas_pointer_output_xy_get(evas, &mouse_x, &mouse_y);
             printf("Mouse is at screen position %i, %i\n", mouse_x, mouse_y);
-            @endcode */
+            @endcode
+            */
          }
          values {
-            x: int; /*@ The pointer to an integer to be filled in */
-            y: int; /*@ The pointer to an integer to be filled in
-            @ingroup Evas_Pointer_Group */
+            x: int; [[The pointer to an integer to be filled in.]]
+            y: int; [[The pointer to an integer to be filled in.]]
          }
       }
       @property pointer_inside {
          get {
-            /*@
-            Returns whether the mouse pointer is logically inside the canvas
+            [[Returns whether the mouse pointer is logically inside the
+              canvas.
 
-            @return An integer that is 1 if the mouse is inside the canvas, 0 otherwise
-            @ingroup Evas_Pointer_Group
+              When this function is called it will return a value of either
+              $false or $true, depending on if
+              \@ref evas_event_feed_mouse_in,
+              \@ref evas_event_feed_mouse_in_data, or
+              \@ref evas_event_feed_mouse_out,
+              \@ref evas_event_feed_mouse_out_data have been called to
+              feed in a  mouse enter event into the canvas.
 
-            When this function is called it will return a value of either 0 or
-            1, depending on if evas_event_feed_mouse_in(),
-            evas_event_feed_mouse_in_data(), or evas_event_feed_mouse_out(),
-            evas_event_feed_mouse_out_data() have been called to feed in a
-            mouse enter event into the canvas.
+              A return value of $true indicates the mouse is logically
+              inside the canvas, and $false implies it is logically
+              outside the canvas.
 
-            A return value of 1 indicates the mouse is logically inside the
-            canvas, and 0 implies it is logically outside the canvas.
+              A canvas begins with the mouse being assumed outside ($false).
 
-            A canvas begins with the mouse being assumed outside (0).
-
-            If $e is not a valid canvas, the return value is undefined.
-
+              If $e is not a valid canvas, the return value is undefined.
+            ]]
+            /* FIXME-doc
             Example:
             @code
             extern Evas *evas;
 
             if (evas_pointer_inside_get(evas)) printf("Mouse is in!\n");
             else printf("Mouse is out!\n");
-            @endcode */
+            @endcode
+            */
             return: bool @warn_unused;
          }
       }
       @property image_max_size {
          get {
-            /*@
-            Get the maximum image size evas can possibly handle
+            [[Get the maximum image size evas can possibly handle.
 
-            This function returns the larges image or surface size that evas can handle
-            in pixels, and if there is one, returns $true. It returns
-            $false if no extra constraint on maximum image size exists. You still
-            should check the return values of $maxw and $maxh as there may still be
-            a limit, just a much higher one.
+              This function returns the largest image or surface size that
+              evas can handle in pixels, and if there is one, returns $true.
+              It returns $false if no extra constraint on maximum image
+              size exists. You still should check the return values of
+              $maxw and $maxh as there may still be a limit, just a
+              much higher one.
 
-            @since 1.1 */
+              @since 1.1
+            ]]
             return: bool;
          }
          values {
-            maxw: int; /*@ Pointer to hold the return value in pixels of the maximum width */
-            maxh: int; /*@ Pointer to hold the return value in pixels of the maximum height */
+            maxw: int; [[Pointer to hold the return value in pixels of the maximum width.]]
+            maxh: int; [[Pointer to hold the return value in pixels of the maximum height.]]
          }
       }
       @property object_bottom {
          get {
-            /*@
-            Get the lowest (stacked) Evas object on the canvas $e.
+            [[Get the lowest (stacked) Evas object on the canvas $e.
 
-            @return a pointer to the lowest object on it, if any, or $null,
-            otherwise
+              This function will take all populated layers in the canvas
+              into account, getting the lowest object for the lowest layer,
+              naturally.
 
-            This function will take all populated layers in the canvas into
-            account, getting the lowest object for the lowest layer, naturally.
+              Warning: This function will skip objects parented by smart
+              objects, acting only on the ones at the "top level", with
+              regard to object parenting.
 
-            @see evas_object_layer_get()
-            @see evas_object_layer_set()
-            @see evas_object_below_get()
-            @see evas_object_above_get()
-
-            @warning This function will @b skip objects parented by smart
-            objects, acting only on the ones at the "top level", with regard to
-            object parenting. */
-            return: Evas.Object * @warn_unused;
+              See also \@ref evas_object_layer_get, \@ref evas_object_layer_set,
+              \@ref evas_object_below_get, \@ref evas_object_below_set.
+            ]]
+            return: Evas.Object * @warn_unused; [[
+               A pointer to the lowest object on it, if any, or $null
+               otherwise.
+            ]]
          }
       }
       @property key_modifier {
