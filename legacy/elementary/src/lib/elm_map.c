@@ -3451,6 +3451,8 @@ _source_mod_cb(Eina_Module *m,
 {
    const char *file;
    Elm_Map_Data *sd = data;
+   char *dir;
+   const char *subfile;
 
    Elm_Map_Module_Source_Name_Func name_cb;
    Elm_Map_Module_Tile_Url_Func tile_url_cb;
@@ -3465,17 +3467,28 @@ _source_mod_cb(Eina_Module *m,
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
 
    file = eina_module_file_get(m);
-   if (!eina_module_load(m))
+   if (!file) return EINA_FALSE;
+
+   dir = ecore_file_dir_get(file);
+   if (!dir) return EINA_FALSE;
+   subfile = ecore_file_file_get(dir);
+   if (!subfile)
      {
-        ERR("Could not load module \"%s\": %s", file,
-            eina_error_msg_get(eina_error_get()));
+        free(dir);
         return EINA_FALSE;
      }
+   if (strcmp(subfile, MODULE_ARCH))
+     {
+        free(dir);
+        return EINA_FALSE;
+     }
+   free(dir);
+
+   if (!eina_module_load(m)) return EINA_FALSE;
+
    name_cb = eina_module_symbol_get(m, "map_module_source_name_get");
    if ((!name_cb))
      {
-        WRN("Could not find map module name from module \"%s\": %s",
-            file, eina_error_msg_get(eina_error_get()));
         eina_module_unload(m);
         return EINA_FALSE;
      }
