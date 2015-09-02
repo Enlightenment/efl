@@ -664,3 +664,67 @@ test_scroller3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_resize(win, 500, 500);
    evas_object_show(win);
 }
+
+void
+test_scroller4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *sc, *bx, *ly, *sc2, *rect, *rect2;
+   char buf[PATH_MAX];
+
+   win = elm_win_util_standard_add("scroller3", "Scroller 3");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   sc = elm_scroller_add(win);
+   elm_scroller_loop_set(sc, EINA_TRUE, EINA_FALSE);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_scroller_page_relative_set(sc, 1.0, 0.0);
+   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_page_scroll_limit_set(sc, 1, 0);
+   elm_win_resize_object_add(win, sc);
+   evas_object_show(sc);
+
+   bx = elm_box_add(sc);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   elm_object_content_set(sc, bx);
+   evas_object_show(bx);
+
+   ly = elm_layout_add(bx);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   elm_layout_file_set(ly, buf, "page_layout");
+   elm_object_part_text_set(ly, "text", "Page1");
+   elm_box_pack_end(bx, ly);
+   evas_object_show(ly);
+
+   sc2 = elm_scroller_add(ly);
+   elm_object_part_content_set(ly, "page", sc2);
+   evas_object_show(sc2);
+
+   rect2 = evas_object_rectangle_add(evas_object_evas_get(sc2));
+   evas_object_color_set(rect2, 50, 0, 0, 50);
+   evas_object_size_hint_min_set(rect2, 0, 2000);
+   elm_object_content_set(sc2, rect2);
+   evas_object_show(rect2);
+
+   ly = elm_layout_add(bx);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   elm_layout_file_set(ly, buf, "page_layout");
+   rect = evas_object_rectangle_add(evas_object_evas_get(ly));
+   evas_object_color_set(rect, 0, 50, 0, 50);
+   elm_object_part_content_set(ly, "page", rect);
+   elm_object_part_text_set(ly, "text", "Page2");
+   elm_box_pack_end(bx, ly);
+   evas_object_show(ly);
+
+   ly = elm_layout_add(bx);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   elm_layout_file_set(ly, buf, "page_layout");
+   rect = evas_object_rectangle_add(evas_object_evas_get(ly));
+   evas_object_color_set(rect, 0, 0, 50, 50);
+   elm_object_part_content_set(ly, "page", rect);
+   elm_object_part_text_set(ly, "text", "Page3");
+   elm_box_pack_end(bx, ly);
+   evas_object_show(ly);
+
+   evas_object_resize(win, 400, 550);
+   evas_object_show(win);
+}
