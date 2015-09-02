@@ -5,20 +5,21 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
    methods {
       @property name {
          set {
-            /*@
-              Set an unique name from the parent point of view. @c NULL means
+            [[Set an unique name from the parent point of view. $null means
               no name.
+
               @since 1.15
-             */
+            ]]
          }
          get {
-            /*@
-              Get an unique name from the parent point of view . @c NULL means
-              no name. When set a parent after the name what defined, it might
-              be forced back to NULL if the parent already has a node of that
-              name.
+            [[Get an unique name from the parent point of view.
+
+              $null means no name. When set a parent after the name what
+              defined, it might be forced back to $null if the parent
+              already has a node of that name.
+
               @since 1.15
-             */
+            ]]
          }
          values {
             name: const(char) *;
