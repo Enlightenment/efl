@@ -285,35 +285,37 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
       }
       @property size_hint_aspect {
          set {
-            /*@
-            Sets the hints for an object's aspect ratio.
+            [[Sets the hints for an object's aspect ratio.
 
-            This is not a size enforcement in any way, it's just a hint that should
-            be used whenever appropriate.
+              This is not a size enforcement in any way, it's just a hint
+              that should be used whenever appropriate.
 
-            If any of the given aspect ratio terms are @c 0,
-            the object's container will ignore the aspect and scale @p obj to
-            occupy the whole available area, for any given policy.
+              If any of the given aspect ratio terms are 0, the object's
+              container will ignore the aspect and scale $obj to occupy
+              the whole available area, for any given policy.
 
-            @note Smart objects(such as elementary) can have their own size hint
-            policy. So calling this API may or may not affect the size of smart objects.
-
-            @see evas_object_size_hint_aspect_get() for more information. */
+              Note: Smart objects(such as elementary) can have their own
+              size hint policy. So calling this API may or may not affect
+              the size of smart objects.
+            ]]
          }
          get {
-            /*@
-            Retrieves the hints for an object's aspect ratio.
+            [[Retrieves the hints for an object's aspect ratio.
 
-            The different aspect ratio policies are documented in the
-            #Evas_Aspect_Control type. A container respecting these size hints
-            would @b resize its children accordingly to those policies.
+              The different aspect ratio policies are documented in the
+              #Evas_Aspect_Control type. A container respecting these size
+              hints would resize its children accordingly to those policies.
 
-            For any policy, if any of the given aspect ratio terms are @c 0,
-            the object's container should ignore the aspect and scale @p obj to
-            occupy the whole available area. If they are both positive
-            integers, that proportion will be respected, under each scaling
-            policy.
+              For any policy, if any of the given aspect ratio terms are 0,
+              the object's container should ignore the aspect and scale $obj
+              to occupy the whole available area. If they are both positive
+              integers, that proportion will be respected, under each
+              scaling policy.
 
+              Note: Use $null pointers on the hint components you're not
+              interested in: they'll be ignored by the function.
+            ]]
+            /* FIXME-doc
             These images illustrate some of the #Evas_Aspect_Control policies:
 
             @image html any-policy.png
@@ -334,132 +336,130 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
 
             This is not a size enforcement in any way, it's just a hint that
             should be used whenever appropriate.
-
-            @note Use $null pointers on the hint components you're not
-            interested in: they'll be ignored by the function.
-
+            ---
             Example:
             @dontinclude evas-aspect-hints.c
             @skip if (strcmp(ev->key, "c") == 0)
             @until }
 
             See the full @ref Example_Evas_Aspect_Hints "example".
-
-            @see evas_object_size_hint_aspect_set() */
+            */
          }
          values {
-            aspect: Evas.Aspect_Control; /*@ The policy/type of aspect ratio to apply to @p obj. */
-            w: Evas.Coord; /*@ Integer to use as aspect width ratio term. */
-            h: Evas.Coord; /*@ Integer to use as aspect height ratio term. */
+            aspect: Evas.Aspect_Control; [[The policy/type of aspect ratio to apply to $obj.]]
+            w: Evas.Coord; [[Integer to use as aspect width ratio term.]]
+            h: Evas.Coord; [[Integer to use as aspect height ratio term.]]
          }
       }
       @property clip {
          set {
-            /*@
-            Clip one object to another.
+            [[Clip one object to another.
 
-            This function will clip the object @p obj to the area occupied by
-            the object @p clip. This means the object @p obj will only be
-            visible within the area occupied by the clipping object (@p clip).
+              This function will clip the object $obj to the area occupied
+              by the object $clip. This means the object $obj will only be
+              visible within the area occupied by the clipping object
+              ($clip).
 
-            The color of the object being clipped will be multiplied by the
-            color of the clipping one, so the resulting color for the former
-            will be <code>RESULT = (OBJ * CLIP) / (255 * 255)</code>, per color
-            element (red, green, blue and alpha).
+              The color of the object being clipped will be multiplied by
+              the color of the clipping one, so the resulting color for the
+              former will be "RESULT = (OBJ * CLIP) / (255 * 255)", per color
+              element (red, green, blue and alpha).
 
-            Clipping is recursive, so clipping objects may be clipped by
-            others, and their color will in term be multiplied. You may @b not
-            set up circular clipping lists (i.e. object 1 clips object 2, which
-            clips object 1): the behavior of Evas is undefined in this case.
+              Clipping is recursive, so clipping objects may be clipped by
+              others, and their color will in term be multiplied. You may
+              not set up circular clipping lists (i.e. object 1 clips
+              object 2, which clips object 1): the behavior of Evas is
+              undefined in this case.
 
-            Objects which do not clip others are visible in the canvas as
-            normal; <b>those that clip one or more objects become invisible
-            themselves</b>, only affecting what they clip. If an object ceases
-            to have other objects being clipped by it, it will become visible
-            again.
+              Objects which do not clip others are visible in the canvas as
+              normal; those that clip one or more objects become invisible
+              themselves, only affecting what they clip. If an object ceases
+              to have other objects being clipped by it, it will become
+              visible again.
 
-            The visibility of an object affects the objects that are clipped by
-            it, so if the object clipping others is not shown (as in
-            evas_object_show()), the objects clipped by it will not be shown
-            either.
+              The visibility of an object affects the objects that are
+              clipped by it, so if the object clipping others is not shown
+              (as in \@ref evas_object_show), the objects clipped by it will
+              not be shown  either.
 
-            If @p obj was being clipped by another object when this function is
-            called, it gets implicitly removed from the old clipper's domain
-            and is made now to be clipped by its new clipper.
+              If $obj was being clipped by another object when this function
+              is  called, it gets implicitly removed from the old clipper's
+              domain and is made now to be clipped by its new clipper.
 
+              Note: At the moment the only objects that can validly be used
+              to clip other objects are rectangle objects. All other object
+              types are invalid and the result of using them is undefined.
+              The clip object $clip must be a valid object, but can also be
+              $null, in which case the effect of this function is the same
+              as @.clip_unset on the $obj object.
+            ]]
+            /* FIXME-doc
             The following figure illustrates some clipping in Evas:
 
             @image html clipping.png
             @image rtf clipping.png
             @image latex clipping.eps
-
-            @note At the moment the <b>only objects that can validly be used to
-            clip other objects are rectangle objects</b>. All other object
-            types are invalid and the result of using them is undefined. The
-            clip object @p clip must be a valid object, but can also be @c
-            NULL, in which case the effect of this function is the same as
-            calling evas_object_clip_unset() on the @p obj object.
-
+            ---
             Example:
             @dontinclude evas-object-manipulation.c
             @skip solid white clipper (note that it's the default color for a
             @until evas_object_show(d.clipper);
 
-            See the full @ref Example_Evas_Object_Manipulation "example". */
+            See the full @ref Example_Evas_Object_Manipulation "example".
+            */
          }
          get {
-            /*@
-            Get the object clipping @p obj (if any).
+            [[Get the object clipping $obj (if any).
 
-            This function returns the object clipping @p obj. If @p obj is
-            not being clipped at all, $null is returned. The object @p obj
-            must be a valid .Evas_Object.
-
-            See also evas_object_clip_set(), evas_object_clip_unset() and
-            evas_object_clipees_get().
-
+              This function returns the object clipping $obj. If $obj is
+              not being clipped at all, $null is returned. The object $obj
+              must be a valid Evas_Object.
+            ]]
+            /* FIXME-doc
             Example:
             @dontinclude evas-object-manipulation.c
             @skip if (evas_object_clip_get(d.img) == d.clipper)
             @until return
 
-            See the full @ref Example_Evas_Object_Manipulation "example". */
+            See the full @ref Example_Evas_Object_Manipulation "example".
+            */
          }
          values {
-            clip: Evas.Object * @nonull; /*@ The object to clip @p obj by */
+            clip: Evas.Object * @nonull; [[The object to clip $obj by.]]
          }
       }
       @property size_hint_padding {
          set {
-            /*@
-            Sets the hints for an object's padding space.
+            [[Sets the hints for an object's padding space.
 
-            This is not a size enforcement in any way, it's just a hint that
-            should be used whenever appropriate.
+              This is not a size enforcement in any way, it's just a hint
+              that should be used whenever appropriate.
 
-            @note Smart objects(such as elementary) can have their own size hint
-            policy. So calling this API may or may not affect the size of smart objects.
-
-            @see evas_object_size_hint_padding_get() for more information */
+              Note: Smart objects(such as elementary) can have their own
+              size hint policy. So calling this API may or may not affect
+              the size of smart objects.
+            ]]
          }
          get {
-            /*@
-            Retrieves the hints for an object's padding space.
+            [[Retrieves the hints for an object's padding space.
 
-            Padding is extra space an object takes on each of its delimiting
-            rectangle sides, in canvas units. This space will be rendered
+              Padding is extra space an object takes on each of its
+              delimiting rectangle sides, in canvas units.
+
+              This is not a size enforcement in any way, it's just a hint
+              that should be used whenever appropriate.
+
+              Note: Use $null pointers on the hint components you're not
+              interested in: they'll be ignored by the function.
+            ]]
+            /* FIXME-doc
+            This space will be rendered
             transparent, naturally, as in the following figure:
 
             @image html padding-hints.png
             @image rtf padding-hints.png
             @image latex padding-hints.eps
-
-            This is not a size enforcement in any way, it's just a hint that
-            should be used whenever appropriate.
-
-            @note Use $null pointers on the hint components you're not
-            interested in: they'll be ignored by the function.
-
+            ---
             Example:
             @dontinclude evas-hints.c
             @skip evas_object_size_hint_padding_set
@@ -468,76 +468,65 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             In this example the padding hints change the behavior of an Evas box
             when layouting its children. See the full @ref
             Example_Evas_Size_Hints "example".
-
-            @see evas_object_size_hint_padding_set() */
+            */
          }
          values {
-            l: Evas.Coord; /*@ Integer to specify left padding. */
-            r: Evas.Coord; /*@ Integer to specify right padding. */
-            t: Evas.Coord; /*@ Integer to specify top padding. */
-            b: Evas.Coord; /*@ Integer to specify bottom padding. */
+            l: Evas.Coord; [[Integer to specify left padding.]]
+            r: Evas.Coord; [[Integer to specify right padding.]]
+            t: Evas.Coord; [[Integer to specify top padding.]]
+            b: Evas.Coord; [[Integer to specify bottom padding.]]
          }
       }
       @property repeat_events {
          set {
-            /*@
-            Set whether an Evas object is to repeat events.
+            [[Set whether an Evas object is to repeat events.
 
-            If @p repeat is $true, it will make events on @p obj to also
-            be repeated for the @b next lower object in the objects' stack (see
-            see evas_object_below_get()).
+              If $repeat is $true, it will make events on $obj to also be
+              repeated for the next lower object in the objects' stack (see
+              see \@ref evas_object_below_get).
 
-            If @p repeat is $false, events occurring on @p obj will be
-            processed only on it.
-
+              If $repeat is $false, events occurring on $obj will be
+              processed only on it.
+            ]]
+            /* FIXME-doc
             Example:
             @dontinclude evas-stacking.c
             @skip if (strcmp(ev->key, "r") == 0)
             @until }
 
             See the full @ref Example_Evas_Stacking "example".
-
-            @see evas_object_repeat_events_get()
-            @see evas_object_pass_events_set()
-            @see evas_object_propagate_events_set()
-            @see evas_object_freeze_events_set() */
+            */
          }
          get {
-            /*@
-            Determine whether an object is set to repeat events.
-
-            @return whether @p obj is set to repeat events ($true)
-            or not ($false)
-
-            @see evas_object_repeat_events_set() for an example
-            @see evas_object_pass_events_get()
-            @see evas_object_propagate_events_get()
-            @see evas_object_freeze_events_get() */
+            [[Determine whether an object is set to repeat events.]]
          }
          values {
-            repeat: bool; /*@ whether @p obj is to repeat events ($true) or not
-            ($false) */
+            repeat: bool; [[Whether $obj is to repeat events ($true) or
+                            not ($false).]]
          }
       }
       @property size_hint_weight {
          set {
-            /*@
-            Sets the hints for an object's weight.
+            [[Sets the hints for an object's weight.
 
-            This is not a size enforcement in any way, it's just a hint that
-            should be used whenever appropriate.
+              This is not a size enforcement in any way, it's just a hint
+              that should be used whenever appropriate.
 
-            This is a hint on how a container object should @b resize a given
-            child within its area. Containers may adhere to the simpler logic
-            of just expanding the child object's dimensions to fit its own (see
-            the #EVAS_HINT_EXPAND helper weight macro) or the complete one of
-            taking each child's weight hint as real @b weights to how much of
-            its size to allocate for them in each axis. A container is supposed
-            to, after @b normalizing the weights of its children (with weight
-            hints), distribute the space it has to layout them by those factors
-            -- most weighted children get larger in this process than the least
-            ones.
+              This is a hint on how a container object should resize a given
+              child within its area. Containers may adhere to the simpler
+              logic of just expanding the child object's dimensions to fit
+              its own (see the #EVAS_HINT_EXPAND helper weight macro) or
+              the complete one of taking each child's weight hint as real
+              weights to how much of its size to allocate for them in each
+              axis. A container is supposed to, after normalizing the
+              weights of its children (with weight  hints), distribut
+              the space it has to layout them by those factors -- most
+              weighted children get larger in this process than the least
+              ones.
 
+              Note: Default weight hint values are 0.0, for both axis.
+            ]]
+            /* FIXME-doc
             Example:
             @dontinclude evas-hints.c
             @skip evas_object_size_hint_weight_set
@@ -546,190 +535,157 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             In this example the weight hints change the behavior of an Evas box
             when layouting its children. See the full @ref
             Example_Evas_Size_Hints "example".
-
-            @note Default weight hint values are 0.0, for both axis.
-
-            @see evas_object_size_hint_weight_get() for more information */
+            */
          }
          get {
-            /*@
-            Retrieves the hints for an object's weight.
+            [[Retrieves the hints for an object's weight.
 
-            Accepted values are zero or positive values. Some users might use
-            this hint as a boolean, but some might consider it as a @b
-            proportion, see documentation of possible users, which in Evas are
-            the @ref Evas_Object_Box "box" and @ref Evas_Object_Table "table"
-            smart objects.
+              Accepted values are zero or positive values. Some users might
+              use this hint as a boolean, but some might consider it as a
+              proportion, see documentation of possible users, which in
+              Evas are the \@ref Evas_Object_Box "box" and
+              \@ref Evas_Object_Table "table" smart objects.
 
-            This is not a size enforcement in any way, it's just a hint that
-            should be used whenever appropriate.
+              This is not a size enforcement in any way, it's just a hint
+              that should be used whenever appropriate.
 
-            @note Use $null pointers on the hint components you're not
-            interested in: they'll be ignored by the function.
-            @note If @c obj is invalid, then the hint components will be set with 0.0
+              Note: Use $null pointers on the hint components you're not
+              interested in: they'll be ignored by the function.
 
-            @see evas_object_size_hint_weight_set() for an example */
+              Note: If $obj is invalid, then the hint components will be
+              set with 0.0.
+            ]]
          }
          values {
-            x: double; /*@ Nonnegative double value to use as horizontal weight hint. */
-            y: double; /*@ Nonnegative double value to use as vertical weight hint. */
+            x: double; [[Non-negative double value to use as horizontal weight hint.]]
+            y: double; [[Non-negative double value to use as vertical weight hint.]]
          }
       }
       @property name {
          set {
-            /*@
-            Sets the name of the given Evas object to the given name.
+            [[Sets the name of the given Evas object to the given name.
 
-            There might be occasions where one would like to name his/her
-            objects.
-
+              There might be occasions where one would like to name his/her
+              objects.
+            ]]
+            /* FIXME-doc
             Example:
             @dontinclude evas-events.c
             @skip d.bg = evas_object_rectangle_add(d.canvas);
             @until evas_object_name_set(d.bg, "our dear rectangle");
 
-            See the full @ref Example_Evas_Events "example". */
+            See the full @ref Example_Evas_Events "example".
+            */
          }
          get {
-            /*@
-            Retrieves the name of the given Evas object.
+            [[Retrieves the name of the given Evas object.
 
-            @return  The name of the object or $null, if no name has been given
-            to it.
-
+              Return: The name of the object or $null, if no name has been
+              given to it.
+            ]]
+            /* FIXME-doc
             Example:
             @dontinclude evas-events.c
             @skip fprintf(stdout, "An object got focused: %s\n",
             @until evas_focus_get
 
-            See the full @ref Example_Evas_Events "example". */
+            See the full @ref Example_Evas_Events "example".
+            */
          }
          values {
-            name: const(char)*; /*@ The given name. */
+            name: const(char)*; [[The given name.]]
          }
       }
       @property scale {
          set {
-            /*@
-            Sets the scaling factor for an Evas object. Does not affect all
-            objects.
+            [[Sets the scaling factor for an Evas object. Does not affect
+              all objects.
 
-            This will multiply the object's dimension by the given factor, thus
-            altering its geometry (width and height). Useful when you want
-            scalable UI elements, possibly at run time.
+              This will multiply the object's dimension by the given factor,
+              thus altering its geometry (width and height). Useful when
+              you want scalable UI elements, possibly at run time.
 
-            @note Only text and textblock objects have scaling change
-            handlers. Other objects won't change visually on this call.
-
-            @see evas_object_scale_get()
-
-            @ingroup Evas_Object_Group_Extras */
+              Note: Only text and textblock objects have scaling change
+              handlers. Other objects won't change visually on this call.
+            ]]
          }
          get {
-            /*@
-            Retrieves the scaling factor for the given Evas object.
-
-            @return  The scaling factor.
-
-            @ingroup Evas_Object_Group_Extras
-
-            @see evas_object_scale_set() */
+            [[Retrieves the scaling factor for the given Evas object.]]
          }
          values {
-            scale: double; /*@ The scaling factor. <c>1.0</c> means no scaling,
-            default size. */
+            scale: double; [[The scaling factor. 1.0 means no scaling,
+                             default size.]]
          }
       }
       @property static_clip {
          set {
-            /*@
-            Set a hint flag on the given Evas object that it's used as a "static
-            clipper".
+            [[Set a hint flag on the given Evas object that it's used as a
+              "static clipper".
 
-            This is a hint to Evas that this object is used as a big static
-            clipper and shouldn't be moved with children and otherwise
-            considered specially. The default value for new objects is
-            $false.
-
-            @see evas_object_static_clip_get()
-
-            @ingroup Evas_Object_Group_Extras */
+              This is a hint to Evas that this object is used as a big
+              static clipper and shouldn't be moved with children and
+              otherwise considered specially. The default value for new
+              objects is $false.
+            ]]
          }
          get {
-            /*@
-            Get the "static clipper" hint flag for a given Evas object.
-
-            @return $true if it's set as a static clipper,
-            $false otherwise.
-
-            @see evas_object_static_clip_set() for more details
-
-            @ingroup Evas_Object_Group_Extras */
+            [[Get the "static clipper" hint flag for a given Evas object.]]
          }
          values {
-            is_static_clip: bool; /*@ $true if it's to be used as a static
-            clipper, $false otherwise. */
+            is_static_clip: bool; [[$true if it's to be used as a static
+                                    clipper, $false otherwise.]]
          }
       }
       @property focus {
          set {
-            /*@
-            Sets or unsets a given object as the currently focused one on its
-            canvas.
+            [[Sets or unsets a given object as the currently focused one on
+              its canvas.
 
-            Changing focus only affects where (key) input events go. There can
-            be only one object focused at any time. If @p focus is $true,
-            @p obj will be set as the currently focused object and it will
-            receive all keyboard events that are not exclusive key grabs on
-            other objects.
+              Changing focus only affects where (key) input events go.
+              There can be only one object focused at any time. If $focus
+              is $true, $obj will be set as the currently focused object
+              and it will receive all keyboard events that are not
+              exclusive key grabs on other objects.
 
+              See also @.key_grab, @.key_ungrab.
+            ]]
+            /* FIXME-doc
             Example:
             @dontinclude evas-events.c
             @skip evas_object_focus_set
             @until evas_object_focus_set
 
             See the full example @ref Example_Evas_Events "here".
-
-            @see evas_object_focus_get
-            @see evas_focus_get
-            @see evas_object_key_grab
-            @see evas_object_key_ungrab */
+            */
          }
          get {
-            /*@
-            Retrieve whether an object has the focus.
+            [[Retrieve whether an object has the focus.
 
-            @return $true if the object has the focus, $false otherwise.
-
-            If the passed object is the currently focused one, $true is
-            returned. $false is returned, otherwise.
-
+              If the passed object is the currently focused one, $true is
+              returned. $false is returned, otherwise.
+            ]]
+            /* FIXME-doc
             Example:
             @dontinclude evas-events.c
             @skip And again
             @until something is bad
 
             See the full example @ref Example_Evas_Events "here".
-
-            @see evas_object_focus_set
-            @see evas_focus_get
-            @see evas_object_key_grab
-            @see evas_object_key_ungrab */
+            */
          }
          values {
-            focus: bool; /*@ $true, to set it as focused or $false,
-            to take away the focus from it. */
+            focus: bool; [[$true when set as focused or $false otherwise.]]
          }
       }
       @property is_frame_object {
          set {
-            /*@             @since 1.2 */
+            [[@since 1.2]]
          }
          get {
-            /*@             @since 1.2 */
+            [[@since 1.2]]
          }
          values {
-            is_frame: bool; /*@ in */
+            is_frame: bool;
          }
       }
       @property map_enable {
