@@ -1243,7 +1243,7 @@ _evas_render_mapped_context_clip_set(Evas_Public_Data *e, Evas_Object *eo_obj, E
 }
 
 Eina_Bool
-evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
+evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                    Evas_Object_Protected_Data *obj, void *context,
                    void *surface, int off_x, int off_y, int mapped, int ecx,
                    int ecy, int ecw, int ech,
@@ -1271,7 +1271,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
 #ifdef REND_DBG
    RD(level, "{\n");
-   RD(level, "  evas_render_mapped(evas:%p, obj:%p", e, obj);
+   RD(level, "  evas_render_mapped(evas:%p, obj:%p", evas, obj);
    IFRD(obj->name, 0, " '%s'", obj->name);
    RD(0, ", ctx:%p, sfc:%p, offset:%i,%i, %s, use_mapped_ctx:%d, %s)\n", context, surface, off_x, off_y,
       mapped ? "mapped" : "normal", use_mapped_ctx, do_async ? "async" : "sync");
@@ -1378,8 +1378,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                   RD(level, "  new surf: %ix%i\n", sw, sh);
 		  EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
 		    {
-                      obj->layer->evas->engine.func->image_free
-			(e->engine.data.output, map_write->surface);
+                      ENFN->image_free(ENDT, map_write->surface);
 		      map_write->surface = NULL;
 		    }
 		  EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
@@ -1392,11 +1391,10 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                   map_write->surface_w = sw;
                   map_write->surface_h = sh;
 
-                  map_write->surface =
-                    obj->layer->evas->engine.func->image_map_surface_new
-                    (e->engine.data.output, map_write->surface_w,
-                     map_write->surface_h,
-                     map_write->cur.map->alpha);
+                  map_write->surface = ENFN->image_map_surface_new
+                        (ENDT, map_write->surface_w,
+                         map_write->surface_h,
+                         map_write->cur.map->alpha);
                }
              EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
 
@@ -1425,21 +1423,15 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
              // and re-render those
              if (obj->map->cur.map->alpha)
                {
-                  ctx = e->engine.func->context_new(e->engine.data.output);
-                  e->engine.func->context_color_set
-                     (e->engine.data.output, ctx, 0, 0, 0, 0);
-                  e->engine.func->context_render_op_set
-                     (e->engine.data.output, ctx, EVAS_RENDER_COPY);
-                  e->engine.func->rectangle_draw(e->engine.data.output,
-                                                 ctx,
-                                                 obj->map->surface,
-                                                 0, 0,
-                                                 obj->map->surface_w,
-                                                 obj->map->surface_h,
-                                                 EINA_FALSE);
-                  e->engine.func->context_free(e->engine.data.output, ctx);
+                  ctx = ENFN->context_new(ENDT);
+                  ENFN->context_color_set(ENDT, ctx, 0, 0, 0, 0);
+                  ENFN->context_render_op_set(ENDT, ctx, EVAS_RENDER_COPY);
+                  ENFN->rectangle_draw(ENDT, ctx, obj->map->surface,
+                                       0, 0, obj->map->surface_w, obj->map->surface_h,
+                                       EINA_FALSE);
+                  ENFN->context_free(ENDT, ctx);
                }
-             ctx = e->engine.func->context_new(e->engine.data.output);
+             ctx = ENFN->context_new(ENDT);
              off_x2 = -obj->cur->geometry.x;
              off_y2 = -obj->cur->geometry.y;
              if (obj->is_smart)
@@ -1447,7 +1439,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                   EINA_INLIST_FOREACH
                      (evas_object_smart_members_get_direct(eo_obj), obj2)
                        {
-                          clean_them |= evas_render_mapped(e, obj2->object,
+                          clean_them |= evas_render_mapped(evas, obj2->object,
                                                            obj2, ctx,
                                                            obj->map->surface,
                                                            off_x2, off_y2, 1,
@@ -1477,14 +1469,13 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                      obj->cur->geometry.w,
                                      obj->cur->geometry.h);
 
-                  e->engine.func->context_clip_set(e->engine.data.output,
-                                                   ctx, x, y, w, h);
+                  ENFN->context_clip_set(ENDT, ctx, x, y, w, h);
                   obj->func->render(eo_obj, obj, obj->private_data,
-				    e->engine.data.output, ctx,
+                                    ENDT, ctx,
                                     obj->map->surface, off_x2, off_y2,
                                     EINA_FALSE);
                }
-             e->engine.func->context_free(e->engine.data.output, ctx);
+             ENFN->context_free(ENDT, ctx);
              rendered = EINA_TRUE;
           }
 
@@ -1494,16 +1485,15 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
           {
              EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
                {
-                  map_write->surface = e->engine.func->image_dirty_region
-                    (e->engine.data.output, map_write->surface,
+                  map_write->surface = ENFN->image_dirty_region
+                    (ENDT, map_write->surface,
                      0, 0, map_write->surface_w, map_write->surface_h);
 
                   map_write->cur.valid_map = EINA_TRUE;
                }
              EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
           }
-        e->engine.func->context_clip_unset(e->engine.data.output,
-                                           context);
+        ENFN->context_clip_unset(ENDT, context);
         if (obj->map->surface)
           {
              if (obj->cur->clipper)
@@ -1518,7 +1508,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                          }
                        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
                     }
-                  _evas_render_mapped_context_clip_set(e, eo_obj, obj, context,
+                  _evas_render_mapped_context_clip_set(evas, eo_obj, obj, context,
                                                        proxy_render_data, off_x,
                                                        off_y);
 
@@ -1531,39 +1521,35 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                           mask, mask->name?":":"", mask->name?mask->name:"",
                           mask->mask->redraw, mask->mask->surface);
                        if (mask->mask->redraw || !mask->mask->surface)
-                         evas_render_mask_subrender(obj->layer->evas, mask, obj->clip.prev_mask, level + 1);
+                         evas_render_mask_subrender(evas, mask, obj->clip.prev_mask, level + 1);
 
                        if (mask->mask->surface)
                          {
                             restore_image_clip = EINA_TRUE;
-                            e->engine.func->context_clip_image_get
-                                  (e->engine.data.output, context,
+                            ENFN->context_clip_image_get
+                                  (ENDT, context,
                                    &oldm_sfc, &oldm_x, &oldm_y);
-                            old_use_clip = e->engine.func->context_clip_get
-                                  (e->engine.data.output, context,
+                            old_use_clip = ENFN->context_clip_get
+                                  (ENDT, context,
                                    &ocx, &ocy, &ocw, &och);
-                            e->engine.func->context_clip_image_set
-                                  (e->engine.data.output, context,
+                            ENFN->context_clip_image_set
+                                  (ENDT, context,
                                    mask->mask->surface,
                                    mask->cur->geometry.x + off_x,
                                    mask->cur->geometry.y + off_y,
-                                   e, do_async);
+                                   evas, do_async);
                          }
                     }
                }
           }
-//        if (surface == e->engine.data.output)
-          e->engine.func->context_clip_clip(e->engine.data.output,
-                                            context,
-                                            ecx, ecy, ecw, ech);
+//        if (surface == ENFN)
+          ENFN->context_clip_clip(ENDT, context, ecx, ecy, ecw, ech);
         if (obj->cur->cache.clip.visible || !proxy_src_clip)
           {
-             obj->layer->evas->engine.func->context_multiplier_unset
-               (e->engine.data.output, context);
-             obj->layer->evas->engine.func->context_render_op_set
-               (e->engine.data.output, context, obj->cur->render_op);
+             ENFN->context_multiplier_unset(ENDT, context);
+             ENFN->context_render_op_set(ENDT, context, obj->cur->render_op);
              evas_draw_image_map_async_check
-               (obj, e->engine.data.output, context, surface,
+               (obj, ENDT, ctx, surface,
                 obj->map->surface, obj->map->spans,
                 obj->map->cur.map->smooth, 0, do_async);
           }
@@ -1571,19 +1557,18 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
         if (restore_image_clip)
           {
              if (old_use_clip)
-               e->engine.func->context_clip_set(e->engine.data.output, context, ocx, ocy, ocw, och);
+               ENFN->context_clip_set(ENDT, context, ocx, ocy, ocw, och);
              else
-               e->engine.func->context_clip_unset(e->engine.data.output, context);
-             e->engine.func->context_clip_image_set
-               (e->engine.data.output, context, oldm_sfc, oldm_x, oldm_y, e, do_async);
+               ENFN->context_clip_unset(ENDT, context);
+             ENFN->context_clip_image_set(ENDT, context, oldm_sfc, oldm_x, oldm_y, evas, do_async);
              /* unref image since clip_image_get refs it */
-             if (oldm_sfc) e->engine.func->image_free(e->engine.data.output, oldm_sfc);
+             if (oldm_sfc) ENFN->image_free(ENDT, oldm_sfc);
           }
 
         // FIXME: needs to cache these maps and
         // keep them only rendering updates
-        //        obj->layer->evas->engine.func->image_free
-        //          (e->engine.data.output, obj->map->surface);
+        //        ENFN->image_free
+        //          (ENDT, obj->map->surface);
         //        obj->map->surface = NULL;
      }
    else // not "has map"
@@ -1603,7 +1588,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
              if (use_mapped_ctx)
                ctx = context;
              else
-               ctx = e->engine.func->context_new(e->engine.data.output);
+               ctx = ENFN->context_new(ENDT);
 
              if (obj->is_smart)
                {
@@ -1620,30 +1605,30 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                           mask, mask->name?":":"", mask->name?mask->name:"",
                           mask->mask->redraw, mask->mask->surface);
                        if (mask->mask->redraw || !mask->mask->surface)
-                         evas_render_mask_subrender(obj->layer->evas, mask, obj->clip.prev_mask, level + 1);
+                         evas_render_mask_subrender(evas, mask, obj->clip.prev_mask, level + 1);
 
                        if (mask->mask->surface)
                          {
                             restore_image_clip = EINA_TRUE;
-                            e->engine.func->context_clip_image_get
-                                  (e->engine.data.output, ctx,
+                            ENFN->context_clip_image_get
+                                  (ENDT, ctx,
                                    &oldm_sfc, &oldm_x, &oldm_y);
-                            old_use_clip = e->engine.func->context_clip_get
-                                  (e->engine.data.output, ctx,
+                            old_use_clip = ENFN->context_clip_get
+                                  (ENDT, ctx,
                                    &ocx, &ocy, &ocw, &och);
-                            e->engine.func->context_clip_image_set
-                                  (e->engine.data.output, ctx,
+                            ENFN->context_clip_image_set
+                                  (ENDT, ctx,
                                    mask->mask->surface,
                                    mask->cur->geometry.x + off_x,
                                    mask->cur->geometry.y + off_y,
-                                   e, do_async);
+                                   evas, do_async);
                          }
                     }
 
                   EINA_INLIST_FOREACH
                      (evas_object_smart_members_get_direct(eo_obj), obj2)
                        {
-                          clean_them |= evas_render_mapped(e, obj2->object,
+                          clean_them |= evas_render_mapped(evas, obj2->object,
                                                            obj2, ctx, surface,
                                                            off_x, off_y, mapped + 1,
                                                            ecx, ecy, ecw, ech,
@@ -1667,7 +1652,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                        if (_evas_render_has_map(eo_obj, obj) ||
                            _evas_render_object_is_mask(obj->cur->clipper))
                          evas_object_clip_recalc(obj);
-                       _evas_render_mapped_context_clip_set(e, eo_obj, obj, ctx,
+                       _evas_render_mapped_context_clip_set(evas, eo_obj, obj, ctx,
                                                             proxy_render_data,
                                                             off_x, off_y);
 
@@ -1680,44 +1665,42 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                mask, mask->name?":":"", mask->name?mask->name:"",
                                mask->mask->redraw, mask->mask->surface);
                             if (mask->mask->redraw || !mask->mask->surface)
-                              evas_render_mask_subrender(obj->layer->evas, mask, obj->clip.prev_mask, level + 1);
+                              evas_render_mask_subrender(evas, mask, obj->clip.prev_mask, level + 1);
 
                             if (mask->mask->surface)
                               {
                                  restore_image_clip = EINA_TRUE;
-                                 e->engine.func->context_clip_image_get
-                                       (e->engine.data.output, ctx,
+                                 ENFN->context_clip_image_get
+                                       (ENDT, ctx,
                                         &oldm_sfc, &oldm_x, &oldm_y);
-                                 old_use_clip = e->engine.func->context_clip_get
-                                       (e->engine.data.output, ctx,
+                                 old_use_clip = ENFN->context_clip_get
+                                       (ENDT, ctx,
                                         &ocx, &ocy, &ocw, &och);
-                                 e->engine.func->context_clip_image_set
-                                       (e->engine.data.output, ctx,
+                                 ENFN->context_clip_image_set
+                                       (ENDT, ctx,
                                         mask->mask->surface,
                                         mask->cur->geometry.x + off_x,
                                         mask->cur->geometry.y + off_y,
-                                        e, do_async);
+                                        evas, do_async);
                               }
                          }
                     }
                   RD(level, "  render()\n");
                   obj->func->render(eo_obj, obj, obj->private_data,
-                                    e->engine.data.output, ctx,
-                                    surface, off_x, off_y, EINA_FALSE);
+                                    ENDT, ctx, surface, off_x, off_y, EINA_FALSE);
                }
              if (restore_image_clip)
                {
                   if (old_use_clip)
-                    e->engine.func->context_clip_set(e->engine.data.output, ctx, ocx, ocy, ocw, och);
+                    ENFN->context_clip_set(ENDT, ctx, ocx, ocy, ocw, och);
                   else
-                    e->engine.func->context_clip_unset(e->engine.data.output, ctx);
-                  e->engine.func->context_clip_image_set
-                    (e->engine.data.output, ctx, oldm_sfc, oldm_x, oldm_y, e, do_async);
+                    ENFN->context_clip_unset(ENDT, ctx);
+                  ENFN->context_clip_image_set(ENDT, ctx, oldm_sfc, oldm_x, oldm_y, evas, do_async);
                   /* unref image since clip_image_get refs it */
-                  if (oldm_sfc) e->engine.func->image_free(e->engine.data.output, oldm_sfc);
+                  if (oldm_sfc) ENFN->image_free(ENDT, oldm_sfc);
                }
              if (!use_mapped_ctx)
-               e->engine.func->context_free(e->engine.data.output, ctx);
+               ENFN->context_free(ENDT, ctx);
           }
         else
           {
@@ -1738,17 +1721,13 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                      clipper->cur->cache.clip.y,
                                      clipper->cur->cache.clip.w,
                                      clipper->cur->cache.clip.h);
-                  e->engine.func->context_clip_set(e->engine.data.output,
-                                                   context,
-                                                   x + off_x, y + off_y, w, h);
-                  e->engine.func->context_clip_clip(e->engine.data.output,
-                                                    context,
-                                                    ecx, ecy, ecw, ech);
+                  ENFN->context_clip_set(ENDT, context, x + off_x, y + off_y, w, h);
+                  ENFN->context_clip_clip(ENDT, context, ecx, ecy, ecw, ech);
                }
 
              RD(level, "  draw normal obj: render()\n");
              obj->func->render(eo_obj, obj, obj->private_data,
-			       e->engine.data.output, context, surface,
+                               ENDT, context, surface,
                                off_x, off_y, do_async);
           }
         if (obj->changed_map) clean_them = EINA_TRUE;
