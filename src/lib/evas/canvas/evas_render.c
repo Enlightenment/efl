@@ -1204,7 +1204,7 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
 }
 
 static void
-_evas_render_mapped_context_clip_set(Evas_Public_Data *e, Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *ctx, Evas_Proxy_Render_Data *proxy_render_data, int off_x, int off_y)
+_evas_render_mapped_context_clip_set(Evas_Public_Data *evas, Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *ctx, Evas_Proxy_Render_Data *proxy_render_data, int off_x, int off_y)
 {
    int x, y, w, h;
    Eina_Bool proxy_src_clip = EINA_TRUE;
@@ -1224,8 +1224,7 @@ _evas_render_mapped_context_clip_set(Evas_Public_Data *e, Evas_Object *eo_obj, E
                            obj->cur->clipper->cur->cache.clip.w,
                            obj->cur->clipper->cur->cache.clip.h);
 
-        e->engine.func->context_clip_set(e->engine.data.output,
-                                         ctx, x + off_x, y + off_y, w, h);
+        ENFN->context_clip_set(ENDT, ctx, x + off_x, y + off_y, w, h);
      }
    else
      {
@@ -1236,8 +1235,7 @@ _evas_render_mapped_context_clip_set(Evas_Public_Data *e, Evas_Object *eo_obj, E
              y = obj->cur->clipper->cur->geometry.y + off_y;
              w = obj->cur->clipper->cur->geometry.w;
              h = obj->cur->clipper->cur->geometry.h;
-             e->engine.func->context_clip_set(e->engine.data.output, ctx, x, y,
-                                              w, h);
+             ENFN->context_clip_clip(ENDT, ctx, x, y, w, h);
           }
      }
 }
@@ -1289,6 +1287,11 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
    RD(level, "  geom: %d,%d %dx%d, cache.clip: (vis: %d) %d,%d %dx%d\n",
       obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h,
       obj->cur->cache.clip.visible, obj->cur->cache.clip.x, obj->cur->cache.clip.y, obj->cur->cache.clip.w, obj->cur->cache.clip.h);
+   {
+      int _c, _cx, _cy, _cw, _ch;
+      _c = ENFN->context_clip_get(ENDT, context, &_cx, &_cy, &_cw, &_ch);
+      RD(level, "  context clip: [%d] %d,%d %dx%d\n", _c, _cx, _cy, _cw, _ch);
+   }
 #endif
 
    if (mapped)
@@ -1467,6 +1470,11 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                                      obj->cur->geometry.h);
 
                   ENFN->context_clip_set(ENDT, ctx, x, y, w, h);
+#ifdef REND_DBG
+                  int _c, _cx, _cy, _cw, _ch;
+                  _c = ENFN->context_clip_get(ENDT, ctx, &_cx, &_cy, &_cw, &_ch);
+                  RD(level, "  draw mapped obj: render(clip: [%d] %d,%d %dx%d)\n", _c, _cx, _cy, _cw, _ch);
+#endif
                   obj->func->render(eo_obj, obj, obj->private_data,
                                     ENDT, ctx,
                                     obj->map->surface, off_x2, off_y2,
@@ -1475,8 +1483,6 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
              ENFN->context_free(ENDT, ctx);
              rendered = EINA_TRUE;
           }
-
-        RD(level, "  draw map\n");
 
         if (rendered)
           {
@@ -1540,6 +1546,11 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
           {
              ENFN->context_multiplier_unset(ENDT, ctx);
              ENFN->context_render_op_set(ENDT, ctx, obj->cur->render_op);
+#ifdef REND_DBG
+             int _c, _cx, _cy, _cw, _ch;
+             _c = ENFN->context_clip_get(ENDT, ctx, &_cx, &_cy, &_cw, &_ch);
+             RD(level, "  draw image map(clip: [%d] %d,%d %dx%d)\n", _c, _cx, _cy, _cw, _ch);
+#endif
              evas_draw_image_map_async_check
                (obj, ENDT, ctx, surface,
                 obj->map->surface, obj->map->spans,
@@ -1566,7 +1577,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
         if (mapped)
           {
-             RD(level, "  draw child of mapped obj\n");
+             RD(level, "  child of mapped obj\n");
 
              if (use_mapped_ctx)
                ctx = ENFN->context_dup(ENDT, context);
@@ -1653,7 +1664,11 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                               }
                          }
                     }
-                  RD(level, "  render()\n");
+#ifdef REND_DBG
+                  int _c, _cx, _cy, _cw, _ch;
+                  _c = ENFN->context_clip_get(ENDT, ctx, &_cx, &_cy, &_cw, &_ch);
+                  RD(level, "  render(clip: [%d] %d,%d %dx%d)\n", _c, _cx, _cy, _cw, _ch);
+#endif
                   obj->func->render(eo_obj, obj, obj->private_data,
                                     ENDT, ctx, surface, off_x, off_y, EINA_FALSE);
                }
@@ -1684,7 +1699,11 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                   ENFN->context_clip_clip(ENDT, context, ecx, ecy, ecw, ech);
                }
 
-             RD(level, "  draw normal obj: render()\n");
+#ifdef REND_DBG
+             int _c, _cx, _cy, _cw, _ch;
+             _c = ENFN->context_clip_get(ENDT, context, &_cx, &_cy, &_cw, &_ch);
+             RD(level, "  draw normal obj: render(clip: [%d] %d,%d %dx%d)\n", _c, _cx, _cy, _cw, _ch);
+#endif
              obj->func->render(eo_obj, obj, obj->private_data,
                                ENDT, context, surface,
                                off_x, off_y, do_async);
@@ -1756,8 +1775,6 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
         ENFN->rectangle_draw(ENDT, ctx, proxy_write->surface, 0, 0, w, h, do_async);
         ENFN->context_free(ENDT, ctx);
 
-        ctx = ENFN->context_new(ENDT);
-
         if (eo_isa(eo_proxy, EVAS_IMAGE_CLASS))
           eo_do(eo_proxy, source_clip = evas_obj_image_source_clip_get());
 
@@ -1767,13 +1784,15 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
              .eo_src = eo_source,
              .source_clip = source_clip
         };
+
+        ctx = ENFN->context_new(ENDT);
         evas_render_mapped(evas, eo_source, source, ctx, proxy_write->surface,
                            -source->cur->geometry.x,
                            -source->cur->geometry.y,
                            level + 1, 0, 0, evas->output.w, evas->output.h,
                            &proxy_render_data, level + 1, EINA_TRUE, do_async);
-
         ENFN->context_free(ENDT, ctx);
+
         proxy_write->surface = ENFN->image_dirty_region(ENDT, proxy_write->surface, 0, 0, w, h);
      }
  end:
