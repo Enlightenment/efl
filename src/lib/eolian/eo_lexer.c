@@ -50,7 +50,7 @@ static const char * const tokens[] =
 {
    "==", "!=", ">=", "<=", "&&", "||", "<<", ">>",
 
-   "<comment>", "<doc>", "<string>", "<char>", "<number>", "<value>",
+   "<doc>", "<string>", "<char>", "<number>", "<value>",
 
    KEYWORDS
 };
@@ -115,7 +115,7 @@ init_hash(void)
    unsigned int i, u;
    if (keyword_map) return;
    keyword_map = eina_hash_string_superfast_new(NULL);
-   for (i = u = 14; i < (sizeof(tokens) / sizeof(const char*)); ++i)
+   for (i = u = 13; i < (sizeof(tokens) / sizeof(const char*)); ++i)
      {
          eina_hash_add(keyword_map, tokens[i], (void*)(size_t)(i - u + 1));
      }
@@ -192,7 +192,7 @@ should_skip_star(Eo_Lexer *ls, int ccol, Eina_Bool *term)
 }
 
 static void
-read_long_comment(Eo_Lexer *ls, Eo_Token *tok, int ccol)
+read_long_comment(Eo_Lexer *ls, int ccol)
 {
    Eina_Bool had_star = EINA_FALSE, had_nl = EINA_FALSE;
    eina_strbuf_reset(ls->buff);
@@ -250,7 +250,6 @@ read_long_comment(Eo_Lexer *ls, Eo_Token *tok, int ccol)
      }
 cend:
    eina_strbuf_trim(ls->buff);
-   if (tok) tok->value.s = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
 }
 
 enum Doc_Tokens {
@@ -752,16 +751,15 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
            next_char(ls);
            if (ls->current == '*')
              {
-                Eina_Bool doc = EINA_FALSE;
                 int ccol = ls->column;
                 next_char(ls);
-                if ((doc = (ls->current == '@')))
-                  next_char(ls);
-                read_long_comment(ls, doc ? tok : NULL, ccol);
-                if (doc)
-                  return TOK_COMMENT;
-                else
-                  continue;
+                if (ls->current == '@')
+                  {
+                     eo_lexer_lex_error(ls, "old style documentation comment", -1);
+                     return -1; /* unreachable */
+                  }
+                read_long_comment(ls, ccol);
+                continue;
              }
            else if (ls->current != '/') return '/';
            next_char(ls);
@@ -1096,7 +1094,7 @@ eo_lexer_token_to_str(int token, char *buf)
 const char *
 eo_lexer_keyword_str_get(int kw)
 {
-   return tokens[kw + 13];
+   return tokens[kw + 12];
 }
 
 Eina_Bool
@@ -1146,7 +1144,7 @@ eo_lexer_shutdown()
 
 static Eina_Bool
 _eo_is_tokstr(int t) {
-    return (t == TOK_COMMENT) || (t == TOK_STRING) || (t == TOK_VALUE);
+    return (t == TOK_STRING) || (t == TOK_VALUE);
 }
 
 void

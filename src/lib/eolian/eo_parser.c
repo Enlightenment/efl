@@ -957,11 +957,6 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void)
         eo_lexer_get(ls);
      }
    check_next(ls, ';');
-   if (ls->t.token == TOK_COMMENT)
-     {
-        ret->comment = eina_stringshare_ref(ls->t.value.s);
-        eo_lexer_get(ls);
-     }
    FILL_DOC(ls, ret, doc);
 }
 
@@ -1039,11 +1034,6 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
      }
 end:
    check_next(ls, ';');
-   if (ls->t.token == TOK_COMMENT)
-     {
-        par->description = eina_stringshare_ref(ls->t.value.s);
-        eo_lexer_get(ls);
-     }
    FILL_DOC(ls, par, doc);
 }
 
@@ -1101,14 +1091,6 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');
-   if (ls->t.token == TOK_COMMENT)
-     {
-        if (is_get)
-          prop->get_description = eina_stringshare_ref(ls->t.value.s);
-        else
-          prop->set_description = eina_stringshare_ref(ls->t.value.s);
-        eo_lexer_get(ls);
-     }
    if (is_get)
      {
         FILL_DOC(ls, prop, get_doc);
@@ -1243,11 +1225,6 @@ body:
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');
-   if (ls->t.token == TOK_COMMENT)
-     {
-        prop->common_description = eina_stringshare_ref(ls->t.value.s);
-        eo_lexer_get(ls);
-     }
    FILL_DOC(ls, prop, common_doc);
    for (;;) switch (ls->t.kw)
      {
@@ -1329,11 +1306,6 @@ body:
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');
-   if (ls->t.token == TOK_COMMENT)
-     {
-        meth->common_description = eina_stringshare_ref(ls->t.value.s);
-        eo_lexer_get(ls);
-     }
    FILL_DOC(ls, meth, common_doc);
    for (;;) switch (ls->t.kw)
      {
@@ -1655,11 +1627,6 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
              has_implements    = EINA_FALSE,
              has_constructors  = EINA_FALSE,
              has_events        = EINA_FALSE;
-   if (ls->t.token == TOK_COMMENT)
-     {
-        ls->tmp.kls->description = eina_stringshare_ref(ls->t.value.s);
-        eo_lexer_get(ls);
-     }
    FILL_DOC(ls, ls->tmp.kls, doc);
    if (type == EOLIAN_CLASS_INTERFACE)
      {
