@@ -51,6 +51,8 @@ lib/ecore_con/ecore_con_eet.c \
 lib/ecore_con/ecore_con_socks.c \
 lib/ecore_con/ecore_con_ssl.c \
 lib/ecore_con/ecore_con_url.c \
+lib/ecore_con/ecore_con_url_curl.c \
+lib/ecore_con/ecore_con_url_curl.h \
 lib/ecore_con/ecore_con_private.h
 
 EXTRA_DIST += lib/ecore_con/ecore_con_legacy.c
