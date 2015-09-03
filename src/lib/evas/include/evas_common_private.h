@@ -739,7 +739,7 @@ struct _RGBA_Draw_Context
    struct RGBA_Draw_Context_clip {
       int    x, y, w, h;
       Evas_Public_Data *evas; // for async unref
-      void  *mask;
+      void  *mask; // RGBA_Image (SW) or Evas_GL_Image (GL)
       int    mask_x, mask_y;
       Eina_Bool use : 1;
       Eina_Bool async : 1;

@@ -1250,13 +1250,10 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                    Evas_Proxy_Render_Data *proxy_render_data, int level,
                    Eina_Bool use_mapped_ctx, Eina_Bool do_async)
 {
-   void *ctx;
-   Eina_Bool restore_image_clip = EINA_FALSE, old_use_clip = EINA_FALSE;
-   int oldm_x = 0, oldm_y = 0, ocx = 0, ocy = 0, ocw = 0, och = 0;
    Evas_Object_Protected_Data *obj2;
    Eina_Bool clean_them = EINA_FALSE;
    Eina_Bool proxy_src_clip = EINA_TRUE;
-   void *oldm_sfc = NULL;
+   void *ctx;
 
    //Don't Render if the source is invisible.
    if (!proxy_render_data)
@@ -1493,7 +1490,11 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                }
              EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
           }
-        ENFN->context_clip_unset(ENDT, context);
+
+        /* duplicate context and reset clip */
+        ctx = ENFN->context_dup(ENDT, context);
+        ENFN->context_clip_unset(ENDT, ctx);
+
         if (obj->map->surface)
           {
              if (obj->cur->clipper)
@@ -1508,7 +1509,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                          }
                        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
                     }
-                  _evas_render_mapped_context_clip_set(evas, eo_obj, obj, context,
+                  _evas_render_mapped_context_clip_set(evas, eo_obj, obj, ctx,
                                                        proxy_render_data, off_x,
                                                        off_y);
 
@@ -1525,45 +1526,27 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
                        if (mask->mask->surface)
                          {
-                            restore_image_clip = EINA_TRUE;
-                            ENFN->context_clip_image_get
-                                  (ENDT, context,
-                                   &oldm_sfc, &oldm_x, &oldm_y);
-                            old_use_clip = ENFN->context_clip_get
-                                  (ENDT, context,
-                                   &ocx, &ocy, &ocw, &och);
-                            ENFN->context_clip_image_set
-                                  (ENDT, context,
-                                   mask->mask->surface,
-                                   mask->cur->geometry.x + off_x,
-                                   mask->cur->geometry.y + off_y,
-                                   evas, do_async);
+                            ENFN->context_clip_image_set(ENDT, ctx, mask->mask->surface,
+                                                         mask->cur->geometry.x + off_x,
+                                                         mask->cur->geometry.y + off_y,
+                                                         evas, do_async);
                          }
                     }
                }
           }
-//        if (surface == ENFN)
-          ENFN->context_clip_clip(ENDT, context, ecx, ecy, ecw, ech);
+        //if (surface == ENFN)
+        ENFN->context_clip_clip(ENDT, ctx, ecx, ecy, ecw, ech);
         if (obj->cur->cache.clip.visible || !proxy_src_clip)
           {
-             ENFN->context_multiplier_unset(ENDT, context);
-             ENFN->context_render_op_set(ENDT, context, obj->cur->render_op);
+             ENFN->context_multiplier_unset(ENDT, ctx);
+             ENFN->context_render_op_set(ENDT, ctx, obj->cur->render_op);
              evas_draw_image_map_async_check
                (obj, ENDT, ctx, surface,
                 obj->map->surface, obj->map->spans,
                 obj->map->cur.map->smooth, 0, do_async);
           }
 
-        if (restore_image_clip)
-          {
-             if (old_use_clip)
-               ENFN->context_clip_set(ENDT, context, ocx, ocy, ocw, och);
-             else
-               ENFN->context_clip_unset(ENDT, context);
-             ENFN->context_clip_image_set(ENDT, context, oldm_sfc, oldm_x, oldm_y, evas, do_async);
-             /* unref image since clip_image_get refs it */
-             if (oldm_sfc) ENFN->image_free(ENDT, oldm_sfc);
-          }
+        ENFN->context_free(ENDT, ctx);
 
         // FIXME: needs to cache these maps and
         // keep them only rendering updates
@@ -1586,7 +1569,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
              RD(level, "  draw child of mapped obj\n");
 
              if (use_mapped_ctx)
-               ctx = context;
+               ctx = ENFN->context_dup(ENDT, context);
              else
                ctx = ENFN->context_new(ENDT);
 
@@ -1609,19 +1592,12 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
                        if (mask->mask->surface)
                          {
-                            restore_image_clip = EINA_TRUE;
-                            ENFN->context_clip_image_get
-                                  (ENDT, ctx,
-                                   &oldm_sfc, &oldm_x, &oldm_y);
-                            old_use_clip = ENFN->context_clip_get
-                                  (ENDT, ctx,
-                                   &ocx, &ocy, &ocw, &och);
-                            ENFN->context_clip_image_set
-                                  (ENDT, ctx,
-                                   mask->mask->surface,
-                                   mask->cur->geometry.x + off_x,
-                                   mask->cur->geometry.y + off_y,
-                                   evas, do_async);
+                            use_mapped_ctx = EINA_TRUE;
+                            ENFN->context_clip_image_set(ENDT, ctx,
+                                                         mask->mask->surface,
+                                                         mask->cur->geometry.x + off_x,
+                                                         mask->cur->geometry.y + off_y,
+                                                         evas, do_async);
                          }
                     }
 
@@ -1634,7 +1610,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                                                            ecx, ecy, ecw, ech,
                                                            proxy_render_data,
                                                            level + 1,
-                                                           restore_image_clip | use_mapped_ctx,
+                                                           use_mapped_ctx,
                                                            do_async);
                           /* We aren't sure this object will be rendered by
                              normal(not proxy) drawing after, we reset this
@@ -1669,19 +1645,11 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
                             if (mask->mask->surface)
                               {
-                                 restore_image_clip = EINA_TRUE;
-                                 ENFN->context_clip_image_get
-                                       (ENDT, ctx,
-                                        &oldm_sfc, &oldm_x, &oldm_y);
-                                 old_use_clip = ENFN->context_clip_get
-                                       (ENDT, ctx,
-                                        &ocx, &ocy, &ocw, &och);
-                                 ENFN->context_clip_image_set
-                                       (ENDT, ctx,
-                                        mask->mask->surface,
-                                        mask->cur->geometry.x + off_x,
-                                        mask->cur->geometry.y + off_y,
-                                        evas, do_async);
+                                 ENFN->context_clip_image_set(ENDT, ctx,
+                                                              mask->mask->surface,
+                                                              mask->cur->geometry.x + off_x,
+                                                              mask->cur->geometry.y + off_y,
+                                                              evas, do_async);
                               }
                          }
                     }
@@ -1689,21 +1657,12 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                   obj->func->render(eo_obj, obj, obj->private_data,
                                     ENDT, ctx, surface, off_x, off_y, EINA_FALSE);
                }
-             if (restore_image_clip)
-               {
-                  if (old_use_clip)
-                    ENFN->context_clip_set(ENDT, ctx, ocx, ocy, ocw, och);
-                  else
-                    ENFN->context_clip_unset(ENDT, ctx);
-                  ENFN->context_clip_image_set(ENDT, ctx, oldm_sfc, oldm_x, oldm_y, evas, do_async);
-                  /* unref image since clip_image_get refs it */
-                  if (oldm_sfc) ENFN->image_free(ENDT, oldm_sfc);
-               }
-             if (!use_mapped_ctx)
-               ENFN->context_free(ENDT, ctx);
+
+             ENFN->context_free(ENDT, ctx);
           }
         else
           {
+             /* in this case we keep the parent context */
              if (obj->cur->clipper)
                {
                   Evas_Object_Protected_Data *clipper = obj->cur->clipper;
