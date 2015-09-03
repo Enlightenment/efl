@@ -78,7 +78,7 @@ _view_smart_window_close(Ewk_View_Smart_Data *sd)
 
    ELM_WEB_CHECK(obj);
 
-   eo_do(obj, eo_event_callback_call(ELM_WEB_EVENT_WINDOWS_CLOSE_REQUEST, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_WEB_EVENT_WINDOWS_CLOSE_REQUEST, NULL));
 }
 
 static void
@@ -106,13 +106,15 @@ _popup_item_selected(void *data,
    evas_object_del(evas_object_data_get(obj, "_notify"));
 }
 
-static void
+static Eina_Bool
 _popup_dismiss_cb(void *data,
-                  Evas_Object *obj,
+                  Eo *obj,
+                  const Eo_Event_Description *desc EINA_UNUSED,
                   void *event_info EINA_UNUSED)
 {
    ewk_popup_menu_close(data);
    evas_object_del(obj);
+   return EINA_TRUE;
 }
 
 static Eina_Bool
