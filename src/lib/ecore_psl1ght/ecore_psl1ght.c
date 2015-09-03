@@ -633,7 +633,6 @@ _ecore_psl1ght_poll_mouse(void)
 static void
 _ecore_psl1ght_poll_move(void)
 {
-   int i;
    u16 new_buttons;
    static int t_pressed = 0;
    static int calibrated = 0;
