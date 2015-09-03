@@ -133,18 +133,6 @@ eolian_function_legacy_get(const Eolian_Function *fid, Eolian_Function_Type ftyp
      }
 }
 
-EAPI Eina_Stringshare *
-eolian_function_description_get(const Eolian_Function *fid, Eolian_Function_Type ftype)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
-   switch (ftype)
-     {
-      case EOLIAN_PROP_GET: return fid->get_description; break;
-      case EOLIAN_PROP_SET: return fid->set_description; break;
-      default: return fid->common_description;
-     }
-}
-
 EAPI const Eolian_Documentation *
 eolian_function_documentation_get(const Eolian_Function *fid, Eolian_Function_Type ftype)
 {
@@ -290,17 +278,6 @@ eolian_function_return_default_value_get(const Eolian_Function *fid, Eolian_Func
      {
       case EOLIAN_PROP_SET: return fid->set_ret_val;
       case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_PROP_GET: return fid->get_ret_val;
-      default: return NULL;
-     }
-}
-
-EAPI Eina_Stringshare *
-eolian_function_return_comment_get(const Eolian_Function *fid, Eolian_Function_Type ftype)
-{
-   switch (ftype)
-     {
-      case EOLIAN_PROP_SET: return fid->set_return_comment; break;
-      case EOLIAN_UNRESOLVED: case EOLIAN_METHOD: case EOLIAN_PROPERTY: case EOLIAN_PROP_GET: return fid->get_return_comment; break;
       default: return NULL;
      }
 }

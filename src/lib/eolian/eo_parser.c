@@ -923,7 +923,6 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
 typedef struct _Eo_Ret_Def
 {
    Eolian_Type *type;
-   Eina_Stringshare *comment;
    Eolian_Documentation *doc;
    Eolian_Expression *default_ret_val;
    Eina_Bool warn_unused:1;
@@ -938,7 +937,6 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void)
      ret->type = parse_type_void(ls);
    else
      ret->type = parse_type(ls);
-   ret->comment = NULL;
    ret->doc = NULL;
    ret->default_ret_val = NULL;
    ret->warn_unused = EINA_FALSE;
@@ -1110,7 +1108,6 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
         if (is_get)
           {
              prop->get_ret_type = ret.type;
-             prop->get_return_comment = ret.comment;
              prop->get_return_doc = ret.doc;
              prop->get_ret_val = ret.default_ret_val;
              prop->get_return_warn_unused = ret.warn_unused;
@@ -1118,7 +1115,6 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
         else
           {
              prop->set_ret_type = ret.type;
-             prop->set_return_comment = ret.comment;
              prop->set_return_doc = ret.doc;
              prop->set_ret_val = ret.default_ret_val;
              prop->set_return_warn_unused = ret.warn_unused;
@@ -1316,7 +1312,6 @@ body:
         pop_type(ls);
         if (ret.default_ret_val) pop_expr(ls);
         meth->get_ret_type = ret.type;
-        meth->get_return_comment = ret.comment;
         meth->get_return_doc = ret.doc;
         meth->get_ret_val = ret.default_ret_val;
         meth->get_return_warn_unused = ret.warn_unused;

@@ -39,10 +39,6 @@ EAPI Eina_Bool evas_object_simple_a_set(Class_Simple *obj, int value);
  * @ingroup Class_Simple
  */
 EAPI int evas_object_simple_a_get(const Class_Simple *obj);
-
-/**
- * No description supplied.
- */
 EAPI void evas_object_simple_b_set(Class_Simple *obj);
 
 /**
@@ -56,12 +52,6 @@ EAPI void evas_object_simple_b_set(Class_Simple *obj);
  * @ingroup Class_Simple
  */
 EAPI char *evas_object_simple_foo(Class_Simple *obj, int a, char *b, double *c);
-
-/**
- * No description supplied.
- *
- * @param[in] x No description supplied.
- */
 EAPI int evas_object_simple_bar(Class_Simple *obj, int x);
 
 #endif

@@ -47,9 +47,6 @@ EOAPI Eina_Bool  evas_obj_simple_a_set(int value);
 EOAPI int  evas_obj_simple_a_get(void);
 #endif
 
-/**
- * No description supplied.
- */
 EOAPI void  evas_obj_simple_b_set(void);
 
 #ifdef CLASS_SIMPLE_BETA
@@ -66,11 +63,6 @@ EOAPI void  evas_obj_simple_b_set(void);
 EOAPI char * evas_obj_simple_foo(int a, char *b, double *c);
 #endif
 
-/**
- * No description supplied.
- *
- * @param[in] x No description supplied.
- */
 EOAPI int  evas_obj_simple_bar(int x);
 
 

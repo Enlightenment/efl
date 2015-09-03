@@ -543,16 +543,6 @@ EAPI Eolian_Class_Type eolian_class_type_get(const Eolian_Class *klass);
 EAPI Eina_Iterator *eolian_all_classes_get(void);
 
 /*
- * @brief Returns the description of a class.
- *
- * @param[in] klass the class
- * @return the description of a class
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_class_description_get(const Eolian_Class *klass);
-
-/*
  * @brief Returns the documentation of a class.
  *
  * @param[in] klass the class
@@ -687,17 +677,6 @@ EAPI const Eolian_Function *eolian_class_function_get_by_name(const Eolian_Class
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_function_legacy_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
-
-/*
- * @brief Returns a description for a function.
- *
- * @param[in] function_id Id of the function
- * @param[in] f_type The function type, for property get/set distinction.
- * @return the description or NULL.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_function_description_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
 
 /*
  * @brief Returns a documentation for a function.
@@ -868,16 +847,6 @@ EAPI const Eolian_Expression *eolian_parameter_default_value_get(const Eolian_Fu
 EAPI Eina_Stringshare *eolian_parameter_name_get(const Eolian_Function_Parameter *param);
 
 /*
- * @brief Get description of a parameter
- *
- * @param[in] param_desc parameter handle
- * @return the description of the parameter or NULL
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_parameter_description_get(const Eolian_Function_Parameter *param);
-
-/*
  * @brief Get documentation of a parameter
  *
  * @param[in] param_desc parameter handle
@@ -946,20 +915,6 @@ EAPI const Eolian_Type *eolian_function_return_type_get(const Eolian_Function *f
  */
 EAPI const Eolian_Expression *
 eolian_function_return_default_value_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
-
-/*
- * @brief Get the return comment of a function.
- *
- * @param[in] function_id id of the function
- * @param[in] ftype type of the function
- * @return the return comment of the function
- *
- * The type of the function is needed because a given function can represent a
- * property, that can be set and get functions.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_function_return_comment_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Get the return docs of a function.

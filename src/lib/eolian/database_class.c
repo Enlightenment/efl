@@ -33,7 +33,6 @@ database_class_del(Eolian_Class *cl)
 
    if (cl->name) eina_stringshare_del(cl->name);
    if (cl->full_name) eina_stringshare_del(cl->full_name);
-   if (cl->description) eina_stringshare_del(cl->description);
    if (cl->legacy_prefix) eina_stringshare_del(cl->legacy_prefix);
    if (cl->eo_prefix) eina_stringshare_del(cl->eo_prefix);
    if (cl->data_type) eina_stringshare_del(cl->data_type);

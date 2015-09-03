@@ -8,7 +8,6 @@ static std::string
 _comment_parameter(Eolian_Function_Parameter *param)
 {
    Eolian_Parameter_Dir direction = eolian_parameter_direction_get(param);
-   Eina_Stringshare *description = eolian_parameter_description_get(param);
 
    std::string doc = "@param";
    if (direction == EOLIAN_IN_PARAM) doc += " ";
@@ -18,7 +17,8 @@ _comment_parameter(Eolian_Function_Parameter *param)
 
    doc += safe_str(::eolian_parameter_name_get(param));
    doc += " ";
-   doc += safe_str(description);
+   /* FIXME */
+   doc += safe_str(NULL);
 
    return doc;
 }
@@ -38,10 +38,11 @@ _comment_parameters_list(Eina_Iterator *params)
 }
 
 static std::string
-_comment_brief_and_params(Eolian_Function const& function, Eolian_Function_Type ftype)
+_comment_brief_and_params(Eolian_Function const& function, Eolian_Function_Type)
 {
    std::string doc = "";
-   std::string func = safe_str(::eolian_function_description_get(&function, ftype));
+   /* FIXME */
+   std::string func = safe_str(NULL);
    if (func != "")
      {
         doc += "@brief " + func + "\n\n";
@@ -64,7 +65,8 @@ _comment_return(Eolian_Function const& function,
    std::string doc = "";
    std::string ret = safe_str(rettypes);
    if (rettypes) eina_stringshare_del(rettypes);
-   std::string comment = safe_str(::eolian_function_return_comment_get(&function, rettype));
+   /* FIXME */
+   std::string comment = safe_str(NULL);
    if (ret != "void" && ret != "" && comment != "")
      {
         doc = "@return " + comment;
@@ -73,9 +75,10 @@ _comment_return(Eolian_Function const& function,
 }
 
 std::string
-convert_comments_class(Eolian_Class const& klass)
+convert_comments_class(Eolian_Class const&)
 {
-   return safe_str(::eolian_class_description_get(&klass));
+   /* FIXME */
+   return safe_str(NULL);
 }
 
 std::string

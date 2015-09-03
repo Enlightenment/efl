@@ -63,13 +63,6 @@ eolian_all_classes_get(void)
    return (_classes ? eina_hash_iterator_data_new(_classes) : NULL);
 }
 
-EAPI Eina_Stringshare *
-eolian_class_description_get(const Eolian_Class *cl)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
-   return cl->description;
-}
-
 EAPI const Eolian_Documentation *
 eolian_class_documentation_get(const Eolian_Class *cl)
 {

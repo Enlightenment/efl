@@ -14,13 +14,6 @@
 static _eolian_class_vars class_env;
 
 static const char
-tmpl_eapi_funcdef_doxygen[] = "\n\
-/**\n\
-@#desc\n\
-@#list_desc_param\
- */\n";
-
-static const char
 tmpl_eapi_funcdef[] = "EAPI @#type_return%s(@#params)@#flags;\n";
 
 /*@#CLASS_CHECK(obj) @#check_ret;\n\*/
@@ -62,7 +55,6 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
 
    Eina_Strbuf *fbody = eina_strbuf_new();
    Eina_Strbuf *fparam = eina_strbuf_new();
-   Eina_Strbuf *descparam = eina_strbuf_new();
 
    _class_func_env_create(class, funcname, ftype, &func_env);
    rettypet = eolian_function_return_type_get(funcid, ftype);
@@ -86,16 +78,7 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
 
    Eina_Bool hasnewdocs = eolian_function_documentation_get(funcid, EOLIAN_UNRESOLVED) ||
                           eolian_function_documentation_get(funcid, ftype);
-
-   if (!hasnewdocs)
-     {
-        /* it will still try to generate, but it'll have nothing to replace
-         * this is ugly, but i CBA to find a better way (it wouldn't make a
-         * difference anyway) and it'll be removed asap (when docs are replaced)
-         */
-        eina_strbuf_append(fbody, tmpl_eapi_funcdef_doxygen);
-     }
-   else
+   if (hasnewdocs)
      {
         Eina_Strbuf *dbuf = docs_generate_function(funcid, ftype, 0, EINA_TRUE);
         eina_strbuf_append_char(fbody, '\n');
@@ -112,26 +95,6 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
            eina_strbuf_append(fparam, "const ");
         eina_strbuf_append_printf(fparam, "%s *obj", class_env.full_classname);
      }
-   Eina_Strbuf *linedesc = eina_strbuf_new();
-   const char *common_desc = eolian_function_description_get(funcid, EOLIAN_UNRESOLVED);
-   const char *specific_desc = (ftype == EOLIAN_PROP_SET || ftype == EOLIAN_PROP_GET) ?
-         eolian_function_description_get(funcid, ftype) : NULL;
-   if (!common_desc && !specific_desc) eina_strbuf_append(linedesc, "No description supplied.");
-   if (common_desc) eina_strbuf_append_printf(linedesc, "%s\n", common_desc);
-   if (specific_desc) eina_strbuf_append(linedesc, specific_desc);
-   if (eina_strbuf_length_get(linedesc))
-     {
-        eina_strbuf_replace_all(linedesc, "\n", "\n * ");
-        eina_strbuf_replace_all(linedesc, " * \n", " *\n");
-        eina_strbuf_prepend(linedesc," * ");
-     }
-   else
-     {
-        eina_strbuf_append(linedesc," *");
-     }
-
-   eina_strbuf_replace_all(fbody, "@#desc", eina_strbuf_string_get(linedesc));
-   eina_strbuf_free(linedesc);
 
    itr = eolian_property_keys_get(funcid, ftype);
    EINA_ITERATOR_FOREACH(itr, data)
@@ -140,14 +103,11 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
         const Eolian_Type *ptypet = eolian_parameter_type_get(param);
         const char *pname = eolian_parameter_name_get(param);
         const char *ptype = eolian_type_c_type_get(ptypet);
-        const char *pdesc = eolian_parameter_description_get(param);
         leg_param_idx++;
         if (eina_strbuf_length_get(fparam)) eina_strbuf_append(fparam, ", ");
         eina_strbuf_append_printf(fparam, "%s %s", ptype, pname);
         eina_stringshare_del(ptype);
-        if (!eina_strbuf_length_get(descparam))
-          eina_strbuf_append(descparam, " *\n");
-        eina_strbuf_append_printf(descparam, " * @param[in] %s %s\n", pname, pdesc?pdesc:"No description supplied.");
+  
         if (eolian_parameter_is_nonull((Eolian_Function_Parameter*)data))
           {
              if (!flags)
@@ -169,9 +129,7 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
             const Eolian_Type *ptypet = eolian_parameter_type_get(param);
             const char *pname = eolian_parameter_name_get(param);
             const char *ptype = eolian_type_c_type_get(ptypet);
-            const char *pdesc = eolian_parameter_description_get(param);
             Eolian_Parameter_Dir pdir = eolian_parameter_direction_get(param);
-            const char *str_dir[] = {"in", "out", "inout"};
             Eina_Bool had_star = !!strchr(ptype, '*');
             if (ftype == EOLIAN_UNRESOLVED || ftype == EOLIAN_METHOD) add_star = (pdir == EOLIAN_OUT_PARAM || pdir == EOLIAN_INOUT_PARAM);
             if (ftype == EOLIAN_PROP_GET) pdir = EOLIAN_OUT_PARAM;
@@ -181,10 +139,6 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
             eina_strbuf_append_printf(fparam, "%s%s%s%s",
                   ptype, had_star?"":" ", add_star?"*":"", pname);
             eina_stringshare_del(ptype);
-            const char *dir_str = str_dir[(int)pdir];
-            if (!eina_strbuf_length_get(descparam))
-              eina_strbuf_append(descparam, " *\n");
-            eina_strbuf_append_printf(descparam, " * @param[%s] %s %s\n", dir_str, pname, pdesc?pdesc:"No description supplied.");
             if (eolian_parameter_is_nonull((Eolian_Function_Parameter*)data))
               {
                  if (!flags)
@@ -204,7 +158,6 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
    if (rettypet) rettype = eolian_type_c_type_get(rettypet);
 
    eina_strbuf_replace_all(fbody, "@#params", eina_strbuf_string_get(fparam));
-   eina_strbuf_replace_all(fbody, "@#list_desc_param", eina_strbuf_string_get(descparam));
    eina_strbuf_reset(fparam);
    eina_strbuf_append_printf(fparam, "%s%s",
          rettype ? rettype : "void",
@@ -227,7 +180,6 @@ end:
    eina_strbuf_free(flags);
    eina_strbuf_free(fbody);
    eina_strbuf_free(fparam);
-   eina_strbuf_free(descparam);
 }
 
 static void
@@ -383,7 +335,6 @@ legacy_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 {
    _class_env_create(class, NULL, &class_env);
 
-   const char *desc = eolian_class_description_get(class);
    const Eolian_Documentation *doc = eolian_class_documentation_get(class);
    if (doc)
      {
@@ -394,17 +345,6 @@ legacy_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
              eina_strbuf_append_char(buf, '\n');
              eina_strbuf_free(cdoc);
           }
-     }
-   else if (desc)
-     {
-        Eina_Strbuf *linedesc = eina_strbuf_new();
-        eina_strbuf_append(linedesc, "/**\n");
-        eina_strbuf_append(linedesc, desc);
-        eina_strbuf_replace_all(linedesc, "\n", "\n * ");
-        eina_strbuf_append(linedesc, "\n */\n");
-        eina_strbuf_replace_all(linedesc, " * \n", " *\n"); /* Remove trailing whitespaces */
-        eina_strbuf_append(buf, eina_strbuf_string_get(linedesc));
-        eina_strbuf_free(linedesc);
      }
 
    Eina_Iterator *itr = eolian_class_implements_get(class);
