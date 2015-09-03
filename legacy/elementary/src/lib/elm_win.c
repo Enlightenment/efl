@@ -1113,7 +1113,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
 
    if (_elm_config->atspi_mode)
      {
-        eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED, NULL));
+        elm_interface_atspi_window_activated_signal_emit(obj);
         elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_ACTIVE, EINA_TRUE);
      }
 
@@ -1151,7 +1151,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
 
    if (_elm_config->atspi_mode)
      {
-        eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED, NULL));
+        elm_interface_atspi_window_deactivated_signal_emit(obj);
         elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_ACTIVE, EINA_FALSE);
      }
 
@@ -1358,15 +1358,13 @@ _elm_win_state_change(Ecore_Evas *ee)
           {
              eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_ICONIFIED, NULL));
              if (_elm_config->atspi_mode)
-               eo_do(obj, eo_event_callback_call
-                 (ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MINIMIZED, NULL));
+               elm_interface_atspi_window_minimized_signal_emit(obj);
           }
         else
           {
              eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_NORMAL, NULL));
              if (_elm_config->atspi_mode)
-               eo_do(obj, eo_event_callback_call
-                 (ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_RESTORED, NULL));
+               elm_interface_atspi_window_restored_signal_emit(obj);
           }
      }
    if (ch_sticky)
@@ -1404,15 +1402,13 @@ _elm_win_state_change(Ecore_Evas *ee)
           {
              eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_MAXIMIZED, NULL));
              if (_elm_config->atspi_mode)
-               eo_do(obj, eo_event_callback_call
-                 (ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MAXIMIZED, NULL));
+               elm_interface_atspi_window_maximized_signal_emit(obj);
           }
         else
           {
              eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_UNMAXIMIZED, NULL));
              if (_elm_config->atspi_mode)
-               eo_do(obj, eo_event_callback_call
-                 (ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_RESTORED, NULL));
+               elm_interface_atspi_window_restored_signal_emit(obj);
           }
      }
    if (ch_profile)
@@ -1620,7 +1616,7 @@ _elm_win_evas_object_smart_hide(Eo *obj, Elm_Win_Data *sd)
 #endif
      }
    if (_elm_config->atspi_mode)
-     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DESTROYED, NULL));
+     elm_interface_atspi_window_deactivated_signal_emit(obj);
 
    if (_elm_win_policy_quit_triggered(obj))
      _elm_win_flush_cache_and_exit(obj);
@@ -1894,6 +1890,9 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
 
    if (sd->autodel_clear) *(sd->autodel_clear) = -1;
 
+   if (_elm_config->atspi_mode)
+     elm_interface_atspi_window_destroyed_signal_emit(obj);
+
    _elm_win_list = eina_list_remove(_elm_win_list, obj);
    _elm_win_count--;
    _elm_win_state_eval_queue();
@@ -1958,9 +1957,6 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
      {
         _elm_win_flush_cache_and_exit(obj);
      }
-
-   if (_elm_config->atspi_mode)
-     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DESTROYED, NULL));
 }
 
 static void
@@ -2079,7 +2075,7 @@ _elm_win_delete_request(Ecore_Evas *ee)
      evas_object_hide(obj);
    // FIXME: if above callback deletes - then the below will be invalid
    if (_elm_config->atspi_mode)
-     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DESTROYED, NULL));
+     elm_interface_atspi_window_destroyed_signal_emit(obj);
    if (autodel) evas_object_del(obj);
    else sd->autodel_clear = NULL;
    evas_object_unref(obj);
@@ -3869,7 +3865,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 
    eo_do(obj, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_WINDOW));
    if (_elm_config->atspi_mode == ELM_ATSPI_MODE_ON)
-     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED, NULL));
+     elm_interface_atspi_window_created_signal_emit(obj);
 
    evas_object_show(sd->edje);
 
@@ -5553,11 +5549,13 @@ _on_atspi_bus_connected(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Ev
          * recieve all org.a11y.window events and could keep track of active
          * windows whithin system.
          */
-        eo_do(win, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED, NULL));
+        elm_interface_atspi_window_created_signal_emit(win);
         if (elm_win_focus_get(win))
-           eo_do(win, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED, NULL));
+          {
+             elm_interface_atspi_window_activated_signal_emit(win);
+          }
         else
-           eo_do(win, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED, NULL));
+          elm_interface_atspi_window_deactivated_signal_emit(win);
      }
    return EINA_TRUE;
 }
