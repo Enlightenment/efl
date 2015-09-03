@@ -438,6 +438,26 @@ eng_context_new(void *data EINA_UNUSED)
    return evas_common_draw_context_new();
 }
 
+static void *
+eng_context_dup(void *data EINA_UNUSED, void *context)
+{
+   RGBA_Draw_Context *ctx;
+
+   ctx = evas_common_draw_context_dup(context);
+   if (ctx->clip.mask)
+     {
+        Image_Entry *im = ctx->clip.mask;
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          evas_cache2_image_ref(im);
+        else
+#endif
+          evas_cache_image_ref(im);
+     }
+
+   return ctx;
+}
+
 static void
 eng_context_clip_set(void *data EINA_UNUSED, void *context, int x, int y, int w, int h)
 {
@@ -3787,6 +3807,7 @@ static Evas_Func func =
      eng_output_dump,
      /* draw context virtual methods */
      eng_context_new,
+     eng_context_dup,
      eng_canvas_alpha_get,
      eng_context_free,
      eng_context_clip_set,

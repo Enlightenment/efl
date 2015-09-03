@@ -11,6 +11,20 @@ evas_common_draw_context_cutouts_new(void)
    return rects;
 }
 
+static void
+evas_common_draw_context_cutouts_dup(Cutout_Rects *rects2, const Cutout_Rects *rects)
+{
+   if (!rects) return;
+   rects2->active = rects->active;
+   rects2->max = rects->max;
+   if (rects->max > 0)
+     {
+        const size_t sz = sizeof(Cutout_Rect) * rects->max;
+        rects2->rects = malloc(sz);
+        memcpy(rects2->rects, rects->rects, sz);
+     }
+}
+
 EAPI void
 evas_common_draw_context_cutouts_free(Cutout_Rects* rects)
 {
@@ -79,6 +93,18 @@ evas_common_draw_context_new(void)
    dc = calloc(1, sizeof(RGBA_Draw_Context));
    dc->sli.h = 1;
    return dc;
+}
+
+EAPI RGBA_Draw_Context *
+evas_common_draw_context_dup(RGBA_Draw_Context *dc)
+{
+   RGBA_Draw_Context *dc2;
+
+   if (!dc) return evas_common_draw_context_new();
+   dc2 = calloc(1, sizeof(RGBA_Draw_Context));
+   memcpy(dc2, dc, sizeof(RGBA_Draw_Context));
+   evas_common_draw_context_cutouts_dup(&dc2->cutout, &dc->cutout);
+   return dc2;
 }
 
 EAPI void

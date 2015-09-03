@@ -2182,6 +2182,18 @@ eng_context_free(void *data, void *context)
    evas_common_draw_context_free(context);
 }
 
+static void *
+eng_context_dup(void *data EINA_UNUSED, void *context)
+{
+   RGBA_Draw_Context *ctx;
+
+   ctx = evas_common_draw_context_dup(context);
+   if (ctx->clip.mask)
+     evas_gl_common_image_ref(ctx->clip.mask);
+
+   return ctx;
+}
+
 static void
 eng_context_3d_use(void *data)
 {
@@ -2565,6 +2577,7 @@ module_open(Evas_Module *em)
    ORD(context_clip_image_set);
    ORD(context_clip_image_unset);
    ORD(context_clip_image_get);
+   ORD(context_dup);
    ORD(context_free);
 
    ORD(rectangle_draw);

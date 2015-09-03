@@ -5,6 +5,7 @@
 EAPI void               evas_common_draw_init                            (void);
 
 EAPI RGBA_Draw_Context *evas_common_draw_context_new                     (void);
+EAPI RGBA_Draw_Context *evas_common_draw_context_dup                     (RGBA_Draw_Context *dc);
 EAPI void               evas_common_draw_context_free                    (RGBA_Draw_Context *dc);
 EAPI void               evas_common_draw_context_font_ext_set            (RGBA_Draw_Context *dc,
                                                                           void *data,
