@@ -137,6 +137,7 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj)
                   .eo_proxy = NULL,
                   .proxy_obj = NULL,
                   .eo_src = pd->source,
+                  .src_obj = source,
                   .source_clip = EINA_FALSE
              };
 

@@ -1824,6 +1824,7 @@ struct _Evas_Proxy_Render_Data
    Evas_Object *eo_proxy;
    Evas_Object_Protected_Data *proxy_obj;
    Evas_Object *eo_src;
+   Evas_Object_Protected_Data *src_obj;
    Eina_Bool source_clip : 1;
 };
 

@@ -1203,6 +1203,31 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_proxy_context_clip(Evas_Public_Data *evas, void *ctx, Evas_Proxy_Render_Data *proxy_render_data, Evas_Object_Protected_Data *obj, int off_x, int off_y)
+{
+   const Evas_Coord_Rectangle *clip;
+   Evas_Object_Protected_Data *clipper;
+
+   /* cache.clip can not be relied on, since the evas is frozen, but we need
+    * to set the clip. so we recurse from clipper to clipper until we reach
+    * the source object's clipper */
+
+   if (!proxy_render_data || proxy_render_data->source_clip) return EINA_TRUE;
+   if (!obj || !obj->cur->clipper) return EINA_TRUE;
+
+   clipper = obj->cur->clipper;
+   if (!clipper->cur->visible) return EINA_FALSE;
+   clip = &clipper->cur->geometry;
+   ENFN->context_clip_clip(ENDT, ctx, clip->x + off_x, clip->y + off_y, clip->w, clip->h);
+
+   /* stop if we found the source object's clipper */
+   if (clipper == proxy_render_data->proxy_obj->cur->clipper) return EINA_TRUE;
+
+   /* recurse to the clipper itself */
+   return _proxy_context_clip(evas, ctx, proxy_render_data, clipper, off_x, off_y);
+}
+
 static void
 _evas_render_mapped_context_clip_set(Evas_Public_Data *evas, Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *ctx, Evas_Proxy_Render_Data *proxy_render_data, int off_x, int off_y)
 {
@@ -1253,9 +1278,9 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
    Eina_Bool proxy_src_clip = EINA_TRUE;
    void *ctx;
 
-   //Don't Render if the source is invisible.
    if (!proxy_render_data)
      {
+        /* don't render if the source is invisible */
         if ((evas_object_is_source_invisible(eo_obj, obj)))
           return clean_them;
      }
@@ -1263,6 +1288,10 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
      proxy_src_clip = proxy_render_data->source_clip;
 
    evas_object_clip_recalc(obj);
+
+   /* leave early if clipper is not visible */
+   if (obj->cur->clipper && !obj->cur->clipper->cur->visible)
+     return clean_them;
 
 #ifdef REND_DBG
    RD(level, "{\n");
@@ -1500,6 +1529,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
         /* duplicate context and reset clip */
         ctx = ENFN->context_dup(ENDT, context);
         ENFN->context_clip_unset(ENDT, ctx);
+        //ENFN->context_multiplier_unset(ENDT, ctx); // this probably should be here, too
 
         if (obj->map->surface)
           {
@@ -1611,6 +1641,18 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                                                          evas, do_async);
                          }
                     }
+                  else if (!proxy_src_clip)
+                    {
+                       if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
+                         return clean_them;
+                    }
+
+#ifdef REND_DBG
+                  int _c, _cx, _cy, _cw, _ch;
+                  _c = ENFN->context_clip_get(ENDT, ctx, &_cx, &_cy, &_cw, &_ch);
+                  RD(level, "  draw smart children(clip: [%d] %d,%d %dx%d)\n",
+                     _c, _cx, _cy, _cw, _ch);
+#endif
 
                   EINA_INLIST_FOREACH
                      (evas_object_smart_members_get_direct(eo_obj), obj2)
@@ -1634,14 +1676,25 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                }
              else
                {
+                  const Evas_Coord_Rectangle *clip = &obj->cur->geometry;
+                  ENFN->context_clip_clip(ENDT, ctx, clip->x + off_x, clip->y + off_y, clip->w, clip->h);
+
                   if (obj->cur->clipper && (mapped > 1))
                     {
-                       if (_evas_render_has_map(eo_obj, obj) ||
-                           _evas_render_object_is_mask(obj->cur->clipper))
-                         evas_object_clip_recalc(obj);
-                       _evas_render_mapped_context_clip_set(evas, eo_obj, obj, ctx,
-                                                            proxy_render_data,
-                                                            off_x, off_y);
+                       if (proxy_src_clip)
+                         {
+                            if (_evas_render_has_map(eo_obj, obj) ||
+                                _evas_render_object_is_mask(obj->cur->clipper))
+                              evas_object_clip_recalc(obj);
+                            _evas_render_mapped_context_clip_set(evas, eo_obj, obj, ctx,
+                                                                 proxy_render_data,
+                                                                 off_x, off_y);
+                         }
+                       else
+                         {
+                            if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
+                              return clean_them;
+                         }
 
                        /* Clipper masks */
                        if (_evas_render_object_is_mask(obj->cur->clipper))
@@ -1664,11 +1717,13 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                               }
                          }
                     }
+
 #ifdef REND_DBG
                   int _c, _cx, _cy, _cw, _ch;
                   _c = ENFN->context_clip_get(ENDT, ctx, &_cx, &_cy, &_cw, &_ch);
                   RD(level, "  render(clip: [%d] %d,%d %dx%d)\n", _c, _cx, _cy, _cw, _ch);
 #endif
+
                   obj->func->render(eo_obj, obj, obj->private_data,
                                     ENDT, ctx, surface, off_x, off_y, EINA_FALSE);
                }
@@ -1677,26 +1732,39 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
           }
         else
           {
-             /* in this case we keep the parent context */
+             const Evas_Coord_Rectangle *clip = &obj->cur->geometry;
+
+             ctx = ENFN->context_dup(ENDT, context);
+             ENFN->context_clip_clip(ENDT, ctx, clip->x + off_x, clip->y + off_y, clip->w, clip->h);
+
              if (obj->cur->clipper)
                {
                   Evas_Object_Protected_Data *clipper = obj->cur->clipper;
                   int x, y, w, h;
 
-                  if (_evas_render_has_map(eo_obj, obj) ||
-                      _evas_render_object_is_mask(obj->cur->clipper))
-                    evas_object_clip_recalc(obj);
-                  x = obj->cur->cache.clip.x;
-                  y = obj->cur->cache.clip.y;
-                  w = obj->cur->cache.clip.w;
-                  h = obj->cur->cache.clip.h;
-                  RECTS_CLIP_TO_RECT(x, y, w, h,
-                                     clipper->cur->cache.clip.x,
-                                     clipper->cur->cache.clip.y,
-                                     clipper->cur->cache.clip.w,
-                                     clipper->cur->cache.clip.h);
-                  ENFN->context_clip_set(ENDT, context, x + off_x, y + off_y, w, h);
-                  ENFN->context_clip_clip(ENDT, context, ecx, ecy, ecw, ech);
+                  if (proxy_src_clip)
+                    {
+                       if (_evas_render_has_map(eo_obj, obj) ||
+                           _evas_render_object_is_mask(obj->cur->clipper))
+                         evas_object_clip_recalc(obj);
+                       x = obj->cur->cache.clip.x;
+                       y = obj->cur->cache.clip.y;
+                       w = obj->cur->cache.clip.w;
+                       h = obj->cur->cache.clip.h;
+                       RECTS_CLIP_TO_RECT(x, y, w, h,
+                                          clipper->cur->cache.clip.x,
+                                          clipper->cur->cache.clip.y,
+                                          clipper->cur->cache.clip.w,
+                                          clipper->cur->cache.clip.h);
+                       ENFN->context_clip_set(ENDT, ctx, x + off_x, y + off_y, w, h);
+                       if (proxy_src_clip)
+                         ENFN->context_clip_clip(ENDT, ctx, ecx, ecy, ecw, ech);
+                    }
+                  else
+                    {
+                       if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
+                         return clean_them;
+                    }
                }
 
 #ifdef REND_DBG
@@ -1704,9 +1772,11 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
              _c = ENFN->context_clip_get(ENDT, context, &_cx, &_cy, &_cw, &_ch);
              RD(level, "  draw normal obj: render(clip: [%d] %d,%d %dx%d)\n", _c, _cx, _cy, _cw, _ch);
 #endif
+
              obj->func->render(eo_obj, obj, obj->private_data,
-                               ENDT, context, surface,
+                               ENDT, ctx, surface,
                                off_x, off_y, do_async);
+             ENFN->context_free(ENDT, ctx);
           }
         if (obj->changed_map) clean_them = EINA_TRUE;
      }
@@ -1782,8 +1852,12 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
              .eo_proxy = eo_proxy,
              .proxy_obj = proxy_obj,
              .eo_src = eo_source,
+             .src_obj = source,
              .source_clip = source_clip
         };
+
+        /* protect changes to the objects' cache.clip */
+        evas_event_freeze(evas->evas);
 
         ctx = ENFN->context_new(ENDT);
         evas_render_mapped(evas, eo_source, source, ctx, proxy_write->surface,
@@ -1794,6 +1868,9 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
         ENFN->context_free(ENDT, ctx);
 
         proxy_write->surface = ENFN->image_dirty_region(ENDT, proxy_write->surface, 0, 0, w, h);
+
+        /* restore previous state */
+        evas_event_thaw(evas->evas);
      }
  end:
    EINA_COW_WRITE_END(evas_object_proxy_cow, source->proxy, proxy_write);
