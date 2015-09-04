@@ -156,5 +156,5 @@ if ELEMENTARY_ENABLE_COVERAGE
 endif
 
 clean-local:
-	rm src/tests/check-results.xml
+	rm -f src/tests/check-results.xml
 endif
