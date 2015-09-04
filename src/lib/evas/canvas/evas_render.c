@@ -12,11 +12,9 @@
 
 #include "evas_render2.h"
 
-/* debug rendering
- * NOTE: Define REND_DBG 1 in evas_private.h to enable debugging. Don't define
- * it here since the flag is used on other places too. */
-
-#define STDOUT_DBG 1
+/* Enable this for extra verbose rendering debug logs */
+//#define REND_DBG
+#define STDOUT_DBG
 
 #ifdef REND_DBG
 static FILE *dbf = NULL;
