@@ -101,7 +101,7 @@ evas_common_draw_context_dup(RGBA_Draw_Context *dc)
    RGBA_Draw_Context *dc2;
 
    if (!dc) return evas_common_draw_context_new();
-   dc2 = calloc(1, sizeof(RGBA_Draw_Context));
+   dc2 = malloc(sizeof(RGBA_Draw_Context));
    memcpy(dc2, dc, sizeof(RGBA_Draw_Context));
    evas_common_draw_context_cutouts_dup(&dc2->cutout, &dc->cutout);
    return dc2;
