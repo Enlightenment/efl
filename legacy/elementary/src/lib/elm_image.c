@@ -56,7 +56,7 @@ _on_image_preloaded(void *data,
                     void *event EINA_UNUSED)
 {
    Elm_Image_Data *sd = data;
-   sd->preloading = EINA_FALSE;
+   sd->preload_status = ELM_IMAGE_PRELOADED;
    if (sd->show) evas_object_show(obj);
    ELM_SAFE_FREE(sd->prev_img, evas_object_del);
 }
@@ -714,7 +714,7 @@ EOLIAN static void
 _elm_image_evas_object_smart_show(Eo *obj, Elm_Image_Data *sd)
 {
    sd->show = EINA_TRUE;
-   if (sd->preloading) return;
+   if (sd->preload_status == ELM_IMAGE_PRELOADING) return;
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
 
@@ -904,7 +904,7 @@ _elm_image_memfile_set(Eo *obj, Elm_Image_Data *sd, const void *img, size_t size
    evas_object_image_memfile_set
      (sd->img, (void *)img, size, (char *)format, (char *)key);
 
-   sd->preloading = EINA_TRUE;
+   sd->preload_status = ELM_IMAGE_PRELOADING;
    evas_object_image_preload(sd->img, EINA_FALSE);
 
    if (evas_object_image_load_error_get(sd->img) != EVAS_LOAD_ERROR_NONE)
@@ -1019,11 +1019,10 @@ _elm_image_smart_internal_file_set(Eo *obj, Elm_Image_Data *sd,
    else
      evas_object_image_file_set(sd->img, file, key);
 
-   evas_object_hide(sd->img);
-
-   if (evas_object_visible_get(obj))
+   if (sd->preload_status != ELM_IMAGE_PRELOAD_DISABLED)
      {
-        sd->preloading = EINA_TRUE;
+        evas_object_hide(sd->img);
+        sd->preload_status = ELM_IMAGE_PRELOADING;
         evas_object_image_preload(sd->img, EINA_FALSE);
      }
 
@@ -1068,9 +1067,9 @@ _elm_image_smart_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf
      }
    else
      {
-        if (evas_object_visible_get(obj))
+        if (sd->preload_status != ELM_IMAGE_PRELOAD_DISABLED)
           {
-             sd->preloading = EINA_TRUE;
+             sd->preload_status = ELM_IMAGE_PRELOADING;
              evas_object_image_preload(sd->img, EINA_FALSE);
           }
 
@@ -1340,18 +1339,23 @@ _elm_image_fill_outside_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 EOLIAN static void
 _elm_image_preload_disabled_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, Eina_Bool disable)
 {
-   if (sd->edje || !sd->preloading) return;
-
-   //FIXME: Need to keep the disabled status for next image loading.
-
-   evas_object_image_preload(sd->img, disable);
-   sd->preloading = !disable;
+   if (sd->edje || !sd->img) return;
 
    if (disable)
      {
-        if (sd->show && sd->img) evas_object_show(sd->img);
-        ELM_SAFE_FREE(sd->prev_img, evas_object_del);
+        if (sd->preload_status == ELM_IMAGE_PRELOADING)
+          {
+             evas_object_image_preload(sd->img, disable);
+             if (sd->show) evas_object_show(sd->img);
+             ELM_SAFE_FREE(sd->prev_img, evas_object_del);
+          }
+        sd->preload_status = ELM_IMAGE_PRELOAD_DISABLED;
      }
+   else if (sd->preload_status == ELM_IMAGE_PRELOAD_DISABLED)
+    {
+       sd->preload_status = ELM_IMAGE_PRELOADING;
+       evas_object_image_preload(sd->img, disable);
+    }
 }
 
 EAPI void
