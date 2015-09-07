@@ -42,16 +42,19 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             return: const(list<Elm.Widget_Item *>)*;
          }
       }
-      @property scroll_enabled {
+      @property scrollable {
          [[Control wether scrolling is enabled.
 
-           This Limit the size of contents and make them scrollable.]]
+           This Limit the size of contents and make them scrollable.
+
+           @since 1.16
+         ]]
          get {
          }
          set {
          }
          values {
-            scroll_enabled: bool; [[$true if scrollable $false otherwise.]]
+            scrollable: bool; [[$true if scrollable $false otherwise.]]
          }
       }
       hover_begin {

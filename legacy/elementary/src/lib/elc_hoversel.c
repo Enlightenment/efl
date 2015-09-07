@@ -777,13 +777,13 @@ _elm_hoversel_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNU
 }
 
 EOLIAN void
-_elm_hoversel_scroll_enabled_set(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd, Eina_Bool scroll_enabled)
+_elm_hoversel_scrollable_set(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd, Eina_Bool scroll)
 {
-   sd->scroll_enabled = !!scroll_enabled;
+   sd->scroll_enabled = !!scroll;
 }
 
 EOLIAN Eina_Bool
-_elm_hoversel_scroll_enabled_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
+_elm_hoversel_scrollable_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    return sd->scroll_enabled;
 }
