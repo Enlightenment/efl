@@ -1,0 +1,61 @@
+collections {
+   filters {
+      filter {
+         name: "filter";
+         script {
+            padding_set(0)
+            blur { 10 }
+         }
+      }
+   }
+   images {
+      // found in tests/emotion/data
+      image: "e_logo.png" COMP;
+   }
+   group { name: "test_group";
+      filters {
+         filter.file: "filter.lua";
+      }
+      parts {
+         part { name: "background";
+            type: RECT;
+            description { state: "default" 0.0;
+               color: 33 32 32 255;
+               rel1.relative: 0 0;
+               rel2.relative: 1 1;
+               max: 250 250;
+            }
+         }
+         image { "img";
+            desc { "default";
+               image.normal: "e_logo.png";
+               fill.type: TILE;
+               rel.to: "background";
+            }
+         }
+         part { name: "snap";
+            type: SNAPSHOT;
+            desc { "default";
+               rel.to: "background";
+               rel1.relative: 0.25 0.25;
+               rel2.relative: 0.75 0.75;
+               filter.code: "filter";
+            }
+            desc { "hid"; inherit: "default"; hid;
+            }
+         }
+      }
+      programs.program {
+         source: "*";
+         signal: "mouse,in";
+         action: STATE_SET "hid" 0.0;
+         targets: "snap";
+      }
+      programs.program {
+         source: "*";
+         signal: "mouse,out";
+         action: STATE_SET "default" 0.0;
+         targets: "snap";
+      }
+   }
+}
