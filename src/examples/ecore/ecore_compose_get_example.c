@@ -155,16 +155,21 @@ int main()
   d = calloc(1, sizeof(Data));
 
   if (!ecore_event_init())
-    return 0;
+    goto ecore_event_init_fail;
 
 /******* end 3 : Ecore compose stuff *******/
 
   if (!ecore_evas_init())
-    return 0;
+    goto ecore_evas_init_fail;
 
   ee = ecore_evas_new(NULL, 10, 10, 0, 0, NULL);
   if (!ee)
-    return -1;
+    {
+       ecore_evas_shutdown();
+       ecore_event_shutdown();
+       free(d);
+       return -1;
+    }
   ecore_evas_callback_delete_request_set(ee, _del);
 
   evas = ecore_evas_get(ee);
@@ -185,8 +190,13 @@ int main()
 
   ecore_main_loop_begin();
 
-  ecore_event_shutdown();
+  ecore_evas_free(ee);
   ecore_evas_shutdown();
 
+ecore_evas_init_fail:
+  ecore_event_shutdown();
+
+ecore_event_init_fail:
+  free(d);
   return 0;
 }
