@@ -1278,6 +1278,7 @@ eng_image_scaled_update(void *data EINA_UNUSED, void *scaled, void *image,
                   dst->w = dst_w;
                   dst->h = dst_h;
                   dst->scaled.smooth = smooth;
+                  free(newdst);
                   return dst;
                }
              src->references++;
