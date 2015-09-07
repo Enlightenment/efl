@@ -3751,12 +3751,10 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
    ecore_evas_callback_state_change_set(sd->ee, _elm_win_state_change);
    ecore_evas_callback_focus_in_set(sd->ee, _elm_win_focus_in);
    ecore_evas_callback_focus_out_set(sd->ee, _elm_win_focus_out);
+   ecore_evas_callback_resize_set(sd->ee, _elm_win_resize);
+   ecore_evas_callback_move_set(sd->ee, _elm_win_move);
    if (type != ELM_WIN_FAKE)
-     {
-        ecore_evas_callback_resize_set(sd->ee, _elm_win_resize);
-        ecore_evas_callback_mouse_in_set(sd->ee, _elm_win_mouse_in);
-        ecore_evas_callback_move_set(sd->ee, _elm_win_move);
-     }
+     ecore_evas_callback_mouse_in_set(sd->ee, _elm_win_mouse_in);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _elm_win_cb_hide, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _elm_win_cb_show, NULL);
 
@@ -3781,24 +3779,26 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 #endif
 
    /* do not append to list; all windows render as black rects */
-   if (type == ELM_WIN_FAKE) return obj;
-   _elm_win_list = eina_list_append(_elm_win_list, obj);
-   _elm_win_count++;
-
-   if ((engine) && ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM))))
+   if (type != ELM_WIN_FAKE)
      {
-        TRAP(sd, fullscreen_set, 1);
-     }
-   else if ((type != ELM_WIN_INLINED_IMAGE) &&
-            ((engine) &&
-             ((!strcmp(engine, ELM_WAYLAND_SHM) ||
-              (!strcmp(engine, ELM_WAYLAND_EGL))))))
-     _elm_win_frame_add(sd, "default");
+        _elm_win_list = eina_list_append(_elm_win_list, obj);
+        _elm_win_count++;
 
-   if (_elm_config->focus_highlight_enable)
-     elm_win_focus_highlight_enabled_set(obj, EINA_TRUE);
-   if (_elm_config->focus_highlight_animate)
-     elm_win_focus_highlight_animate_set(obj, EINA_TRUE);
+        if ((engine) && ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM))))
+          {
+             TRAP(sd, fullscreen_set, 1);
+          }
+        else if ((type != ELM_WIN_INLINED_IMAGE) &&
+                 ((engine) &&
+                  ((!strcmp(engine, ELM_WAYLAND_SHM) ||
+                   (!strcmp(engine, ELM_WAYLAND_EGL))))))
+          _elm_win_frame_add(sd, "default");
+
+        if (_elm_config->focus_highlight_enable)
+          elm_win_focus_highlight_enabled_set(obj, EINA_TRUE);
+        if (_elm_config->focus_highlight_animate)
+          elm_win_focus_highlight_animate_set(obj, EINA_TRUE);
+     }
 
 #ifdef ELM_DEBUG
    Evas_Modifier_Mask mask = evas_key_modifier_mask_get(sd->evas, "Control");
@@ -3811,28 +3811,31 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
      ERR("failed to grab F12 key to elm widgets (dot) tree generation");
 #endif
 
-   if ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_ON) ||
-       ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_AUTO) &&
-        ((engine) && 
-         ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM))))))
+   if (type != ELM_WIN_FAKE)
      {
-        Evas_Object *o;
-        Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
+        if ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_ON) ||
+            ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_AUTO) &&
+             ((engine) &&
+              ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM))))))
+          {
+             Evas_Object *o;
+             Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
 
-        sd->pointer.obj = o = edje_object_add(ecore_evas_get(tmp_sd.ee));
-        _elm_theme_object_set(obj, o, "pointer", "base", "default");
-        edje_object_size_min_calc(o, &mw, &mh);
-        evas_object_resize(o, mw, mh);
-        edje_object_part_geometry_get(o, "elm.swallow.hotspot",
-                                      &hx, &hy, NULL, NULL);
-        sd->pointer.hot_x = hx;
-        sd->pointer.hot_y = hy;
-        evas_object_show(o);
-        ecore_evas_object_cursor_set(tmp_sd.ee, o, EVAS_LAYER_MAX, hx, hy);
-     }
-   else if (_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_OFF)
-     {
-        // do nothing
+             sd->pointer.obj = o = edje_object_add(ecore_evas_get(tmp_sd.ee));
+             _elm_theme_object_set(obj, o, "pointer", "base", "default");
+             edje_object_size_min_calc(o, &mw, &mh);
+             evas_object_resize(o, mw, mh);
+             edje_object_part_geometry_get(o, "elm.swallow.hotspot",
+                                           &hx, &hy, NULL, NULL);
+             sd->pointer.hot_x = hx;
+             sd->pointer.hot_y = hy;
+             evas_object_show(o);
+             ecore_evas_object_cursor_set(tmp_sd.ee, o, EVAS_LAYER_MAX, hx, hy);
+          }
+        else if (_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_OFF)
+          {
+             // do nothing
+          }
      }
 
    sd->edje = edje_object_add(sd->evas);
@@ -3843,9 +3846,12 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
    edje_object_part_swallow(sd->edje, "elm.swallow.contents", sd->box);
    evas_object_move(sd->edje, 0, 0);
    evas_object_resize(sd->edje, 1, 1);
-   edje_object_update_hints_set(sd->edje, EINA_TRUE);
-   evas_object_event_callback_add(sd->edje, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                  _elm_win_on_resize_obj_changed_size_hints, obj);
+   if (type != ELM_WIN_FAKE)
+     {
+        edje_object_update_hints_set(sd->edje, EINA_TRUE);
+        evas_object_event_callback_add(sd->edje, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _elm_win_on_resize_obj_changed_size_hints, obj);
+     }
 
    eo_do(obj, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_WINDOW));
    if (_elm_config->atspi_mode == ELM_ATSPI_MODE_ON)
@@ -3855,7 +3861,11 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 
    eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_ADD, _cb_added, sd),
          eo_event_callback_add(EO_EV_CALLBACK_DEL, _cb_deled, sd));
-
+   if (type == ELM_WIN_FAKE)
+     {
+        _elm_win_resize_job(obj);
+        _elm_win_move(sd->ee);
+     }
    return obj;
 }
 
