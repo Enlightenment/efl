@@ -95,7 +95,7 @@ static Eina_Bool
 _redraw_bounding_object(void *data)
 {
    Evas_Real px, py, pz, sx, sy, sz;
-   Evas_Real x0, y0, z0, x1, y1, z1, radius;
+   Evas_Real x0, y0, z0, x1, y1, z1, rad;
    Scene_Data *scene = (Scene_Data *)data;
    Eo *current_mesh;
    Eina_List *meshes = NULL, *l;
@@ -111,12 +111,12 @@ _redraw_bounding_object(void *data)
       case EVAS_CANVAS3D_FRUSTUM_MODE_BSPHERE:
       {
          eo_do(scene->mesh_node_model,
-               evas_canvas3d_node_bounding_sphere_get(&x0, &y0, &z0, &radius));
+               evas_canvas3d_node_bounding_sphere_get(&x0, &y0, &z0, &rad));
          current_mesh = scene->mesh_sphere;
          px = x0;
          py = y0;
          pz = z0;
-         sx = sy = sz = 2.0 * radius;
+         sx = sy = sz = 2.0 * rad;
          break;
       }
       case EVAS_CANVAS3D_FRUSTUM_MODE_AABB:
@@ -136,12 +136,12 @@ _redraw_bounding_object(void *data)
       case EVAS_CANVAS3D_FRUSTUM_MODE_CENTRAL_POINT:
       {
          eo_do(scene->mesh_node_model,
-               evas_canvas3d_node_bounding_sphere_get(&x0, &y0, &z0, &radius));
+               evas_canvas3d_node_bounding_sphere_get(&x0, &y0, &z0, &rad));
          current_mesh = scene->mesh_sphere;
          px = x0;
          py = y0;
          pz = z0;
-         sx = sy = sz = 0.1 * radius;
+         sx = sy = sz = 0.1 * rad;
          break;
       }
       default:
