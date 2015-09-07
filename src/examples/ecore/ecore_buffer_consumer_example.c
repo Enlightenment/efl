@@ -146,7 +146,7 @@ main(void)
 
    cd = (Consumer_Data *)calloc(sizeof(Consumer_Data), 1);
 
-   if (!(cd->consumer = ecore_buffer_consumer_new(name, queue_size, WIDTH, HEIGHT)))
+   if (!cd || !(cd->consumer = ecore_buffer_consumer_new(name, queue_size, WIDTH, HEIGHT)))
      {
         LOG("Failed to create consumer");
         goto shutdown;
@@ -185,7 +185,7 @@ shutdown:
    if (cd->win.ee) ecore_evas_free(cd->win.ee);
    if (cd->buffer) ecore_buffer_consumer_buffer_release(cd->consumer, cd->buffer);
    if (cd->consumer) ecore_buffer_consumer_free(cd->consumer);
-   if (cd) free(cd);
+   free(cd);
 
    shutdown_all();
    return 0;
