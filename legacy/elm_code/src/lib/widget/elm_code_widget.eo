@@ -5,224 +5,164 @@ class Elm.Code_Widget (Elm.Layout, Elm_Interface_Atspi_Text)
    methods {
       @property code {
          set {
-            /*@
-            Set the underlying code object that this widget renders.
+            [[Set the underlying code object that this widget renders.
             This can only be set during construction, once the widget is created the
-            backing code object cannot be changed.
-
-            @ingroup Data */
+            backing code object cannot be changed.]]
          }
          get {
-            /*@
-            Get the underlying code object we are rendering
-
-            @ingroup Data */
+            [[Get the underlying code object we are rendering]]
          }
          values {
-            code: Elm_Code *; /*@ Our underlying Elm_Code object */
+            code: Elm_Code *; [[Our underlying Elm_Code object]]
          }
       }
       @property font {
          set {
-            /*@
-            Set the font that this widget uses, the font should be a monospaced scalable font.
-            Passing NULL will load the default system monospaced font.
-
-            @ingroup Style */
+            [[Set the font that this widget uses, the font should be a monospaced scalable font.
+            Passing NULL will load the default system monospaced font.]]
          }
          get {
-            /*@
-            Get the font currently in use.
-            The font name is a copy ad should be freed once it is no longer needed
-
-            @ingroup Style */
+            [[Get the font currently in use.
+            The font name is a copy ad should be freed once it is no longer needed]]
          }
          values {
-            name: const(char) *; /*@ The name of the font to load */
-            size: Evas_Font_Size; /*@ The font size for the widget */
+            name: const(char) *; [[The name of the font to load]]
+            size: Evas_Font_Size; [[The font size for the widget]]
          }
       }
       @property gravity {
          set {
-            /*@
-            Set how this widget's scroller should respond to new lines being added.
+            [[Set how this widget's scroller should respond to new lines being added.
 
             An x value of 0.0 will maintain the distance from the left edge, 1.0 will ensure the rightmost edge (of the longest line) is respected
-            With 0.0 for y the view will keep it's position relative to the top whereas 1.0 will scroll downward as lines are added.
-
-            @ingroup Layout */
+            With 0.0 for y the view will keep it's position relative to the top whereas 1.0 will scroll downward as lines are added.]]
          }
          get {
-            /*@
-            Get the current x and y gravity of the widget's scroller
-
-            @ingroup Layout */
+            [[Get the current x and y gravity of the widget's scroller]]
          }
          values {
-            x: double; /*@ The horizontal value of the scroller gravity - valid values are 0.0 and 1.0 */
-            y: double; /*@ The vertical gravity of the widget's scroller - valid values are 0.0 and 1.0 */
+            x: double; [[The horizontal value of the scroller gravity - valid values are 0.0 and 1.0]]
+            y: double; [[The vertical gravity of the widget's scroller - valid values are 0.0 and 1.0]]
          }
       }
       @property policy {
          set {
-           /*@
-           Set the policy for scrollbar visibility.
-
-           @ingroup Layout */
+           [[Set the policy for scrollbar visibility.]]
          }
          get {
-           /*@
-           Get the widget's policy for scrollbar visibility.
-
-           @ingroup Layout */
+           [[Get the widget's policy for scrollbar visibility.]]
          }
          values {
-            policy_h: Elm_Scroller_Policy; /*@ The horizontal scrollbar visibility policy */
-            policy_v: Elm_Scroller_Policy; /*@ The vertical scrollbar visibility policy */
+            policy_h: Elm_Scroller_Policy; [[The horizontal scrollbar visibility policy]]
+            policy_v: Elm_Scroller_Policy; [[The vertical scrollbar visibility policy]]
          }
       }
       @property tabstop {
          set {
-            /*@
-            Set the width of a tab stop, used purely for visual layout of tab characters.
+            [[Set the width of a tab stop, used purely for visual layout of tab characters.
 
-            Recommended value is between 2 and 8.
-
-            @ingroup Layout */
+            Recommended value is between 2 and 8.]]
          }
          get {
-            /*@
-            Get the current width of a tab stop.
-            This is used to determine where characters after a tab should appear in the line..
-
-            @ingroup Layout */
+            [[Get the current width of a tab stop.
+            This is used to determine where characters after a tab should appear in the line.]]
          }
          values {
-            tabstop: uint; /*@ Maximum width of a tab character */
+            tabstop: uint; [[Maximum width of a tab character]]
          }
       }
       @property editable {
          set {
-            /*@
-            Set whether this widget allows editing
+            [[Set whether this widget allows editing
 
-            If @a editable then the widget will allow user input to manipulate
+            If editable then the widget will allow user input to manipulate
             the underlying Elm_Code_File of this Elm_Code instance.
             Any other Elm_Code_Widget's connected to this Elm_Code will
-            update to reflect the changes.
-
-            @ingroup Features */
+            update to reflect the changes.]]
          }
          get {
-            /*@
-            Get the current editable state of this widget
+            [[Get the current editable state of this widget
 
-            @return EINA_TRUE if the widget is editable, EINA_FALSE otherwise.
+            returns EINA_TRUE if the widget is editable, EINA_FALSE otherwise.
             If this widget is not editable the underlying Elm_Code_File could
-            still be manipulated by a different widget or the filesystem.
-
-            @ingroup Features */
+            still be manipulated by a different widget or the filesystem.]]
          }
          values {
-            editable: Eina_Bool; /*@ The editable state of the widget */
+            editable: Eina_Bool; [[The editable state of the widget]]
          }
       }
       @property line_numbers {
          set {
-            /*@
-            Set whether line numbers should be displayed in the left gutter.
+            [[Set whether line numbers should be displayed in the left gutter.
 
             Passing EINA_TRUE will reserve a space for showing line numbers,
-            EINA_FALSE will turn this off.
-
-            @ingroup Features */
+            EINA_FALSE will turn this off.]]
          }
          get {
-            /*@
-            Get the status of line number display for this widget.
-
-            @ingroup Features */
+            [[Get the status of line number display for this widget.]]
          }
          values {
-            line_numbers: Eina_Bool; /*@ Whether or not line numbers (or their placeholder) should be shown */
+            line_numbers: Eina_Bool; [[Whether or not line numbers (or their placeholder) should be shown]]
          }
       }
       @property line_width_marker {
          set {
-            /*@
-            Set where the line width market should be shown.
+            [[Set where the line width market should be shown.
 
             Passing a non-zero value will set which line width to mark with a vertical line.
-            Passing 0 will hide this marker.
-
-            @ingroup Features */
+            Passing 0 will hide this marker.]]
          }
          get {
-            /*@
-            Get the position of the line width marker, any positive return indicates where the marker appears.
-
-            @ingroup Features */
+            [[Get the position of the line width marker, any positive return indicates where the marker appears.]]
          }
          values {
-            line_width_marker: uint; /*@ Where to display a line width marker, if at all */
+            line_width_marker: uint; [[Where to display a line width marker, if at all]]
          }
       }
       @property show_whitespace {
          set {
-            /*@
-            Set where white space should be shown.
-
-            @ingroup Features */
+            [[Set where white space should be shown.]]
          }
          get {
-            /*@
-            Get whether or not white space will be visible.
-
-            @ingroup Features */
+            [[Get whether or not white space will be visible.]]
          }
          values {
-            show_whitespace: Eina_Bool; /*@ Whether or not we show whitespace characters */
+            show_whitespace: Eina_Bool; [[Whether or not we show whitespace characters]]
          }
       }
       @property cursor_position {
          set {
-            /*@
-            Set the current location of the text cursor.
-
-            @ingroup Editing */
+            [[Set the current location of the text cursor.]]
          }
          get {
-            /*@
-            Get the current x and y position of the widget's cursor
-
-            @ingroup Editing */
+            [[Get the current x and y position of the widget's cursor.]]
          }
          values {
-            col: uint; /*@ The horizontal position of the cursor, starting from column 1 */
-            line: uint; /*@ The vertical position of the cursor - the top row is 1 */
+            col: uint; [[The horizontal position of the cursor, starting from column 1]]
+            line: uint; [[The vertical position of the cursor - the top row is 1]]
          }
       }
       line_refresh {
          params {
-            line: Elm_Code_Line *; /*@ @in The line to refresh. */
+            line: Elm_Code_Line *; [[The line to refresh.]]
          }
       }
       line_visible_get {
          params {
-            line: Elm_Code_Line *; /*@ @in The line to test for visibility. */
+            line: Elm_Code_Line *; [[The line to test for visibility.]]
          }
-         return: bool; /*@ true if the line specified is currently visible within the scroll region. */
+         return: bool; [[true if the line specified is currently visible within the scroll region.]]
       }
       lines_visible_get {
-         return: uint; /*@ the number of lines currently visible in the widget. */
+         return: uint; [[the number of lines currently visible in the widget.]]
       }
 
-      /* text functions */
+      //text functions
       text_left_gutter_width_get {
-         return: int; /*@ the current column width of the gutter for the widget. */
+         return: int; [[the current column width of the gutter for the widget.]]
       }
       text_line_number_width_get {
-         return: int; /*@ the column width required to represent the number of lines in the widget. */
+         return: int; [[the column width required to represent the number of lines in the widget.]]
       }
 
       line_text_column_width_to_position {
