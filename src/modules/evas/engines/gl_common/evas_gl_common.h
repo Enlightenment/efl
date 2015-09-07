@@ -296,6 +296,7 @@
 #define SHAD_TEXA   5
 #define SHAD_TEXSAM 6
 #define SHAD_MASK   7
+#define SHAD_MASKSAM 8
 
 typedef struct _Evas_GL_Program               Evas_GL_Program;
 typedef struct _Evas_GL_Program_Source        Evas_GL_Program_Source;
@@ -547,6 +548,7 @@ struct _Evas_Engine_GL_Context
          GLfloat *texa;
          GLfloat *texsam;
          GLfloat *mask;
+         GLfloat *masksam;
          Eina_Bool line: 1;
          Eina_Bool use_vertex : 1; // always true
          Eina_Bool use_color : 1;
@@ -556,6 +558,7 @@ struct _Evas_Engine_GL_Context
          Eina_Bool use_texa : 1;
          Eina_Bool use_texsam : 1;
          Eina_Bool use_mask : 1;
+         Eina_Bool use_masksam : 1;
          Eina_Bool anti_alias : 1;
          Evas_GL_Image *im;
          GLuint buffer;
@@ -846,7 +849,7 @@ void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *g
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
 void              evas_gl_common_shader_program_init_done(void);
 void              evas_gl_common_shader_program_shutdown(Evas_GL_Program *p);
-Evas_GL_Shader    evas_gl_common_img_shader_select(Shader_Sampling sam, int nomul, int afill, int bgra, int mask);
+Evas_GL_Shader    evas_gl_common_img_shader_select(Shader_Sampling sam, int nomul, int afill, int bgra, int mask, int masksam);
 const char       *evas_gl_common_shader_name_get(Evas_GL_Shader shd);
 
 Eina_Bool         evas_gl_common_file_cache_is_dir(const char *file);

@@ -53,6 +53,13 @@ varying vec2 tex_s[4];
 #ifdef SHD_MASK
 uniform sampler2D texm;
 varying vec2 tex_m;
+# if defined(SHD_MASKSAM12) || defined(SHD_MASKSAM21)
+varying float maskdiv_s;
+varying vec2 masktex_s[2];
+# elif defined(SHD_MASKSAM22)
+varying float maskdiv_s;
+varying vec2 masktex_s[4];
+# endif
 #endif
 
 #ifdef SHD_ALPHA
@@ -122,13 +129,30 @@ void main()
    c = vec4(1, 1, 1, 1);
 #endif
 
+#ifdef SHD_MASK
+   float ma;
+# if defined(SHD_MASKSAM12) || defined(SHD_MASKSAM21)
+   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;
+   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;
+   ma = (ma00 + ma01) / maskdiv_s;
+# elif defined(SHD_MASKSAM22)
+   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;
+   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;
+   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;
+   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;
+   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;
+# else
+   ma = texture2D(texm, tex_m).a;
+# endif
+#endif
+
    gl_FragColor =
        c
 #ifndef SHD_NOMUL
      * col
 #endif
 #ifdef SHD_MASK
-     * texture2D(texm, tex_m).a
+	 * ma
 #endif
 #ifdef SHD_TEXA
      * texture2D(texa, tex_a).r

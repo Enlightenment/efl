@@ -8,11 +8,17 @@
 # Rectangles, lines & polygons
 rect:
 rect_mask:mask
+rect_mask12:mask,masksam12
+rect_mask21:mask,masksam21
+rect_mask22:mask,masksam22
 
 
 # Fonts (alpha only)
 font:tex,alpha
 font_mask:tex,mask,alpha
+font_mask12:tex,mask,masksam12,alpha
+font_mask21:tex,mask,masksam21,alpha
+font_mask22:tex,mask,masksam22,alpha
 
 
 # Images: color version
@@ -54,6 +60,58 @@ img_12_bgra_mask_nomul:tex,mask,sam12,bgra,nomul
 img_21_bgra_mask_nomul:tex,mask,sam21,bgra,nomul
 img_22_bgra_mask_nomul:tex,mask,sam22,bgra,nomul
 
+
+# Now the same as above but with MASKSAM
+img_mask12:tex,mask,masksam12
+img_bgra_mask12:tex,mask,masksam12,bgra
+img_12_mask12:tex,mask,masksam12,sam12
+img_21_mask12:tex,mask,masksam12,sam21
+img_22_mask12:tex,mask,masksam12,sam22
+img_12_bgra_mask12:tex,mask,masksam12,sam12,bgra
+img_21_bgra_mask12:tex,mask,masksam12,sam21,bgra
+img_22_bgra_mask12:tex,mask,masksam12,sam22,bgra
+img_mask12_nomul:tex,mask,masksam12,nomul
+img_bgra_mask12_nomul:tex,mask,masksam12,nomul,bgra
+img_12_mask12_nomul:tex,mask,masksam12,sam12,nomul
+img_21_mask12_nomul:tex,mask,masksam12,sam21,nomul
+img_22_mask12_nomul:tex,mask,masksam12,sam22,nomul
+img_12_bgra_mask12_nomul:tex,mask,masksam12,sam12,bgra,nomul
+img_21_bgra_mask12_nomul:tex,mask,masksam12,sam21,bgra,nomul
+img_22_bgra_mask12_nomul:tex,mask,masksam12,sam22,bgra,nomul
+
+img_mask21:tex,mask,masksam21
+img_bgra_mask21:tex,mask,masksam21,bgra
+img_12_mask21:tex,mask,masksam21,sam12
+img_21_mask21:tex,mask,masksam21,sam21
+img_22_mask21:tex,mask,masksam21,sam22
+img_12_bgra_mask21:tex,mask,masksam21,sam12,bgra
+img_21_bgra_mask21:tex,mask,masksam21,sam21,bgra
+img_22_bgra_mask21:tex,mask,masksam21,sam22,bgra
+img_mask21_nomul:tex,mask,masksam21,nomul
+img_bgra_mask21_nomul:tex,mask,masksam21,nomul,bgra
+img_12_mask21_nomul:tex,mask,masksam21,sam12,nomul
+img_21_mask21_nomul:tex,mask,masksam21,sam21,nomul
+img_22_mask21_nomul:tex,mask,masksam21,sam22,nomul
+img_12_bgra_mask21_nomul:tex,mask,masksam21,sam12,bgra,nomul
+img_21_bgra_mask21_nomul:tex,mask,masksam21,sam21,bgra,nomul
+img_22_bgra_mask21_nomul:tex,mask,masksam21,sam22,bgra,nomul
+
+img_mask22:tex,mask,masksam22
+img_bgra_mask22:tex,mask,masksam22,bgra
+img_12_mask22:tex,mask,masksam22,sam12
+img_21_mask22:tex,mask,masksam22,sam21
+img_22_mask22:tex,mask,masksam22,sam22
+img_12_bgra_mask22:tex,mask,masksam22,sam12,bgra
+img_21_bgra_mask22:tex,mask,masksam22,sam21,bgra
+img_22_bgra_mask22:tex,mask,masksam22,sam22,bgra
+img_mask22_nomul:tex,mask,masksam22,nomul
+img_bgra_mask22_nomul:tex,mask,masksam22,nomul,bgra
+img_12_mask22_nomul:tex,mask,masksam22,sam12,nomul
+img_21_mask22_nomul:tex,mask,masksam22,sam21,nomul
+img_22_mask22_nomul:tex,mask,masksam22,sam22,nomul
+img_12_bgra_mask22_nomul:tex,mask,masksam22,sam12,bgra,nomul
+img_21_bgra_mask22_nomul:tex,mask,masksam22,sam21,bgra,nomul
+img_22_bgra_mask22_nomul:tex,mask,masksam22,sam22,bgra,nomul
 
 
 # Some AFILL versions

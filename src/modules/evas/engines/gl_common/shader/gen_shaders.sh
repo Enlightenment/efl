@@ -89,6 +89,7 @@ for (( i = 0; i < ${#SHADERS[@]} ; i++ )) ; do
   nomul=0
   afill=0
   sam="SAM11"
+  masksam="SAM11"
   tex=""
 
   # Urgh. Some fixups
@@ -115,6 +116,9 @@ for (( i = 0; i < ${#SHADERS[@]} ; i++ )) ; do
      sam12) sam="SAM12";;
      sam21) sam="SAM21";;
      sam22) sam="SAM22";;
+     masksam12) masksam="SAM12";;
+     masksam21) masksam="SAM21";;
+     masksam22) masksam="SAM22";;
     esac
   done
 
@@ -145,7 +149,7 @@ for (( i = 0; i < ${#SHADERS[@]} ; i++ )) ; do
     printf "Evas_GL_Program_Source shader_${shdname}_src =\n{\n   ${shdname}_glsl,\n   NULL, 0\n};\n\n" >> ${OUTPUT}
   done
 
-  shaders_source="${shaders_source}   { SHADER_${UNAME}, &(shader_${name}_vert_src), &(shader_${name}_frag_src), \"${name}\", SHD_${TYPE}, SHD_${sam}, ${bgra}, ${mask}, ${nomul}, ${afill} },\n"
+  shaders_source="${shaders_source}   { SHADER_${UNAME}, &(shader_${name}_vert_src), &(shader_${name}_frag_src), \"${name}\", SHD_${TYPE}, SHD_${sam}, SHD_${masksam}, ${bgra}, ${mask}, ${nomul}, ${afill} },\n"
   shaders_enum="${shaders_enum}   SHADER_${UNAME},\n"
 
   # Bind textures to the programs. Only if there is more than 1 texture.
@@ -165,6 +169,7 @@ static const struct {
    const char *name;
    Shader_Type type;
    Shader_Sampling sam;
+   Shader_Sampling masksam;
    Eina_Bool bgra : 1;
    Eina_Bool mask : 1;
    Eina_Bool nomul : 1;

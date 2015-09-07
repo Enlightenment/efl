@@ -57,6 +57,15 @@ varying vec2 tex_s[4];
 #ifdef SHD_MASK
 attribute vec4 mask_coord;
 varying vec2 tex_m;
+# if defined(SHD_MASKSAM12) || defined(SHD_MASKSAM21)
+attribute vec2 tex_masksample;
+varying float maskdiv_s;
+varying vec2 masktex_s[2];
+# elif defined(SHD_MASKSAM22)
+attribute vec2 tex_masksample;
+varying float maskdiv_s;
+varying vec2 masktex_s[4];
+# endif
 #endif
 
 
@@ -89,22 +98,36 @@ void main()
    tex_a = tex_coorda;
 #endif
 
-#if defined(SHD_SAM12) || defined(SHD_SAM21) || defined(SHD_SAM22)
-# if defined(SHD_SAM12)
+#if defined(SHD_SAM12)
    tex_s[0] = vec2(0, -tex_sample.y);
    tex_s[1] = vec2(0,  tex_sample.y);
    div_s = vec4(2, 2, 2, 2);
-# elif defined(SHD_SAM21)
+#elif defined(SHD_SAM21)
    tex_s[0] = vec2(-tex_sample.x, 0);
    tex_s[1] = vec2( tex_sample.x, 0);
    div_s = vec4(2, 2, 2, 2);
-# else
+#elif defined(SHD_SAM22)
    tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);
    tex_s[1] = vec2( tex_sample.x, -tex_sample.y);
    tex_s[2] = vec2( tex_sample.x,  tex_sample.y);
    tex_s[3] = vec2(-tex_sample.x,  tex_sample.y);
    div_s = vec4(4, 4, 4, 4);
-# endif
+#endif
+
+#if defined(SHD_MASKSAM12)
+   masktex_s[0] = vec2(0, -tex_masksample.y);
+   masktex_s[1] = vec2(0,  tex_masksample.y);
+   maskdiv_s = 2.0;
+#elif defined(SHD_MASKSAM21)
+   masktex_s[0] = vec2(-tex_masksample.x, 0);
+   masktex_s[1] = vec2( tex_masksample.x, 0);
+   maskdiv_s = 2.0;
+#elif defined(SHD_MASKSAM22)
+   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);
+   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);
+   masktex_s[2] = vec2( tex_masksample.x,  tex_masksample.y);
+   masktex_s[3] = vec2(-tex_masksample.x,  tex_masksample.y);
+   maskdiv_s = 4.0;
 #endif
 
 #ifdef SHD_MASK
