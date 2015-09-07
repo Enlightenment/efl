@@ -246,7 +246,7 @@ main(void)
 
    pd = (Provider_Data *)calloc(sizeof(Provider_Data), 1);
 
-   if (!(pd->provider = ecore_buffer_provider_new(name)))
+   if (!pd || !(pd->provider = ecore_buffer_provider_new(name)))
      {
         LOG("Failed to create provider");
         goto shutdown;
@@ -267,7 +267,7 @@ shutdown:
            ecore_buffer_free(b);
      }
    if (pd->provider) ecore_buffer_provider_free(pd->provider);
-   if (pd) free(pd);
+   free(pd);
 
    shutdown_all();
    return 0;
