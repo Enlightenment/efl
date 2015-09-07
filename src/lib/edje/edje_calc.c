@@ -2460,7 +2460,7 @@ _edje_part_recalc_single_filter(Edje *ed,
    Evas_Object *obj = ep->object;
    Eina_List *li1, *li2;
 
-   /* handle TEXT, IMAGE, PROXY part types here */
+   /* handle TEXT, IMAGE, PROXY, SNAPSHOT part types here */
    if (ep->part->type == EDJE_PART_TYPE_TEXT)
      {
         Edje_Part_Description_Text *chosen_edt = (Edje_Part_Description_Text *) chosen_desc;
@@ -2484,6 +2484,14 @@ _edje_part_recalc_single_filter(Edje *ed,
         filter = &chosen_edp->filter;
         prev_sources = edp->filter.sources;
         filter_sources = chosen_edp->filter.sources;
+     }
+   else if (ep->part->type == EDJE_PART_TYPE_SNAPSHOT)
+     {
+        Edje_Part_Description_Snapshot *chosen_eds = (Edje_Part_Description_Snapshot *) chosen_desc;
+        Edje_Part_Description_Snapshot *eds = (Edje_Part_Description_Snapshot *) desc;
+        filter = &chosen_eds->filter;
+        prev_sources = eds->filter.sources;
+        filter_sources = chosen_eds->filter.sources;
      }
    else
      {
@@ -2777,6 +2785,7 @@ _edje_part_recalc_single(Edje *ed,
       case EDJE_PART_TYPE_MESH_NODE:
       case EDJE_PART_TYPE_LIGHT:
       case EDJE_PART_TYPE_CAMERA:
+      case EDJE_PART_TYPE_SNAPSHOT:
         break;
 
       case EDJE_PART_TYPE_GRADIENT:
@@ -2861,6 +2870,10 @@ _edje_part_recalc_single(Edje *ed,
         _edje_part_recalc_single_filter(ed, ep, desc, chosen_desc, pos);
      }
    else if (ep->part->type == EDJE_PART_TYPE_PROXY)
+     {
+        _edje_part_recalc_single_filter(ed, ep, desc, chosen_desc, pos);
+     }
+   else if (ep->part->type == EDJE_PART_TYPE_SNAPSHOT)
      {
         _edje_part_recalc_single_filter(ed, ep, desc, chosen_desc, pos);
      }
@@ -3026,6 +3039,7 @@ _edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
            case EDJE_PART_TYPE_BOX:
            case EDJE_PART_TYPE_TABLE:
            case EDJE_PART_TYPE_PROXY:
+           case EDJE_PART_TYPE_SNAPSHOT:
              evas_object_image_source_set(ep->object, pp->object);
              break;
 

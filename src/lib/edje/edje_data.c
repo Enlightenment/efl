@@ -871,13 +871,16 @@ _edje_edd_init(void)
      eet_data_descriptor_file_new(&eddc);
    EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON(_edje_edd_edje_part_description_spacer, Edje_Part_Description_Common);
 
-   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Common);
+   // SNAPSHOT, since 1.16
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Snapshot);
    eddc.func.mem_free = mem_free_snapshot;
    eddc.func.mem_alloc = mem_alloc_snapshot;
    _edje_edd_edje_part_description_snapshot =
      eet_data_descriptor_file_new(&eddc);
-   EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON(_edje_edd_edje_part_description_snapshot, Edje_Part_Description_Common);
-
+   EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB(_edje_edd_edje_part_description_snapshot, Edje_Part_Description_Snapshot, common);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_snapshot, Edje_Part_Description_Snapshot, "filter.code", filter.code, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_LIST_STRING(_edje_edd_edje_part_description_snapshot, Edje_Part_Description_Snapshot, "filter.sources", filter.sources);
+   EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_part_description_snapshot, Edje_Part_Description_Snapshot, "filter.data", filter.data, _edje_edd_edje_part_description_filter_data);
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Common);
    eddc.func.mem_free = mem_free_swallow;
@@ -1135,7 +1138,7 @@ _edje_edd_init(void)
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Common, part_description_rectangle);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Common, part_description_swallow);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Common, part_description_group);
-   EDJE_DEFINE_POINTER_TYPE(Part_Description_Common, part_description_snapshot);
+   EDJE_DEFINE_POINTER_TYPE(Part_Description_Snapshot, part_description_snapshot);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Image, part_description_image);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Proxy, part_description_proxy);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Text, part_description_text);

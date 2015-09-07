@@ -1423,7 +1423,6 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
       case EDJE_PART_TYPE_RECTANGLE:
       case EDJE_PART_TYPE_SWALLOW:
       case EDJE_PART_TYPE_GROUP:
-      case EDJE_PART_TYPE_SNAPSHOT:
 	 result = mem_alloc(SZ(Edje_Part_Description_Common));
 	 break;
       case EDJE_PART_TYPE_TEXT:
@@ -1457,7 +1456,16 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
 
 	   result = &ed->common;
 	   break;
-	}
+        }
+      case EDJE_PART_TYPE_SNAPSHOT:
+        {
+           Edje_Part_Description_Snapshot *ed;
+
+           ed = mem_alloc(SZ(Edje_Part_Description_Snapshot));
+
+           result = &ed->common;
+           break;
+        }
       case EDJE_PART_TYPE_PROXY:
         {
            Edje_Part_Description_Proxy *ed;
@@ -4921,12 +4929,12 @@ _part_desc_free(Edje_Part_Collection *pc,
       case EDJE_PART_TYPE_RECTANGLE:
       case EDJE_PART_TYPE_SWALLOW:
       case EDJE_PART_TYPE_GROUP:
-      case EDJE_PART_TYPE_SNAPSHOT:
          /* Nothing todo, this part only have a common description. */
          break;
       case EDJE_PART_TYPE_BOX:
       case EDJE_PART_TYPE_TABLE:
       case EDJE_PART_TYPE_IMAGE:
+      case EDJE_PART_TYPE_SNAPSHOT:
          /* Nothing todo here */
          break;
       case EDJE_PART_TYPE_TEXT:
@@ -7031,7 +7039,6 @@ st_collections_group_parts_part_description_inherit(void)
       case EDJE_PART_TYPE_RECTANGLE:
       case EDJE_PART_TYPE_SWALLOW:
       case EDJE_PART_TYPE_GROUP:
-      case EDJE_PART_TYPE_SNAPSHOT:
          /* Nothing todo, this part only have a common description. */
          break;
       case EDJE_PART_TYPE_TEXT:
@@ -7090,15 +7097,34 @@ st_collections_group_parts_part_description_inherit(void)
                 }
 
               /* Filters stuff */
-              ied->filter.code = STRDUP(ied->filter.code);
+              ied->filter.code = STRDUP(iparent->filter.code);
               if (ied->filter.code)
                 {
                    Eina_List *list, *l;
                    const char *name;
-                   list = ied->filter.sources;
+                   list = iparent->filter.sources;
                    ied->filter.sources = NULL;
                    EINA_LIST_FOREACH(list, l, name)
                      ied->filter.sources = eina_list_append(ied->filter.sources, STRDUP(name));
+                }
+
+              break;
+           }
+      case EDJE_PART_TYPE_SNAPSHOT:
+           {
+              Edje_Part_Description_Snapshot *sed = (Edje_Part_Description_Snapshot*) ed;
+              Edje_Part_Description_Snapshot *sparent = (Edje_Part_Description_Snapshot*) parent;
+
+              /* Filters stuff */
+              sed->filter.code = STRDUP(sparent->filter.code);
+              if (sed->filter.code)
+                {
+                   Eina_List *list, *l;
+                   const char *name;
+                   list = sparent->filter.sources;
+                   sed->filter.sources = NULL;
+                   EINA_LIST_FOREACH(list, l, name)
+                     sed->filter.sources = eina_list_append(sed->filter.sources, STRDUP(name));
                 }
 
               break;
@@ -7109,6 +7135,18 @@ st_collections_group_parts_part_description_inherit(void)
               Edje_Part_Description_Proxy *pparent = (Edje_Part_Description_Proxy*) parent;
 
               data_queue_copied_part_lookup(pc, &(pparent->proxy.id), &(ped->proxy.id));
+
+              /* Filters stuff */
+              ped->filter.code = STRDUP(pparent->filter.code);
+              if (ped->filter.code)
+                {
+                   Eina_List *list, *l;
+                   const char *name;
+                   list = pparent->filter.sources;
+                   ped->filter.sources = NULL;
+                   EINA_LIST_FOREACH(list, l, name)
+                     ped->filter.sources = eina_list_append(ped->filter.sources, STRDUP(name));
+                }
 
               break;
            }
@@ -11913,9 +11951,11 @@ st_collections_group_parts_part_description_filter_code(void)
      filter = &(((Edje_Part_Description_Image *)current_desc)->filter);
    else if (current_part->type == EDJE_PART_TYPE_PROXY)
      filter = &(((Edje_Part_Description_Proxy *)current_desc)->filter);
+   else if (current_part->type == EDJE_PART_TYPE_SNAPSHOT)
+     filter = &(((Edje_Part_Description_Snapshot *)current_desc)->filter);
    else
      {
-        ERR("parse error %s:%i. filter only supported for: TEXT, IMAGE, PROXY.",
+        ERR("parse error %s:%i. filter only supported for: TEXT, IMAGE, PROXY, SNAPSHOT.",
             file_in, line - 1);
         exit(-1);
      }
@@ -11956,9 +11996,11 @@ st_collections_group_parts_part_description_filter_source(void)
      filter = &(((Edje_Part_Description_Image *)current_desc)->filter);
    else if (current_part->type == EDJE_PART_TYPE_PROXY)
      filter = &(((Edje_Part_Description_Proxy *)current_desc)->filter);
+   else if (current_part->type == EDJE_PART_TYPE_SNAPSHOT)
+     filter = &(((Edje_Part_Description_Snapshot *)current_desc)->filter);
    else
      {
-        ERR("parse error %s:%i. filter set for non-TEXT and non-IMAGE part.",
+        ERR("parse error %s:%i. filter only supported for: TEXT, IMAGE, PROXY, SNAPSHOT.",
             file_in, line - 1);
         exit(-1);
      }
@@ -12051,9 +12093,11 @@ st_collections_group_parts_part_description_filter_data(void)
      filter = &(((Edje_Part_Description_Image *)current_desc)->filter);
    else if (current_part->type == EDJE_PART_TYPE_PROXY)
      filter = &(((Edje_Part_Description_Proxy *)current_desc)->filter);
+   else if (current_part->type == EDJE_PART_TYPE_SNAPSHOT)
+     filter = &(((Edje_Part_Description_Snapshot *)current_desc)->filter);
    else
      {
-        ERR("parse error %s:%i. filter set for non-TEXT and non-IMAGE part.",
+        ERR("parse error %s:%i. filter only supported for: TEXT, IMAGE, PROXY, SNAPSHOT.",
             file_in, line - 1);
         exit(-1);
      }

@@ -33,7 +33,7 @@ edje_cache_emp_alloc(Edje_Part_Collection_Directory_Entry *ce)
   INIT_EMP_BOTH(TABLE, Edje_Part_Description_Table, ce);
   INIT_EMP_BOTH(EXTERNAL, Edje_Part_Description_External, ce);
   INIT_EMP_BOTH(SPACER, Edje_Part_Description_Common, ce);
-  INIT_EMP_BOTH(SNAPSHOT, Edje_Part_Description_Common, ce);
+  INIT_EMP_BOTH(SNAPSHOT, Edje_Part_Description_Snapshot, ce);
   INIT_EMP(part, Edje_Part, ce);
 }
 

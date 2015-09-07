@@ -350,6 +350,7 @@ typedef struct _Edje_Part_Description_External       Edje_Part_Description_Exter
 typedef struct _Edje_Part_Description_Mesh_Node      Edje_Part_Description_Mesh_Node;
 typedef struct _Edje_Part_Description_Light          Edje_Part_Description_Light;
 typedef struct _Edje_Part_Description_Camera         Edje_Part_Description_Camera;
+typedef struct _Edje_Part_Description_Snapshot       Edje_Part_Description_Snapshot;
 typedef struct _Edje_Part_Description_Common         Edje_Part_Description_Common;
 typedef struct _Edje_Part_Description_Spec_Fill      Edje_Part_Description_Spec_Fill;
 typedef struct _Edje_Part_Description_Spec_Border    Edje_Part_Description_Spec_Border;
@@ -1502,6 +1503,12 @@ struct _Edje_Part_Description_Proxy
 {
    Edje_Part_Description_Common common;
    Edje_Part_Description_Spec_Proxy proxy;
+   Edje_Part_Description_Spec_Filter filter;
+};
+
+struct _Edje_Part_Description_Snapshot
+{
+   Edje_Part_Description_Common common;
    Edje_Part_Description_Spec_Filter filter;
 };
 

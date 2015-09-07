@@ -1235,7 +1235,7 @@ typedef enum _Edje_Part_Type
    EDJE_PART_TYPE_MESH_NODE = 13,
    EDJE_PART_TYPE_LIGHT     = 14,
    EDJE_PART_TYPE_CAMERA    = 15,
-   EDJE_PART_TYPE_SNAPSHOT  = 16,
+   EDJE_PART_TYPE_SNAPSHOT  = 16, /**< Snapshot @since 1.16 */
    EDJE_PART_TYPE_LAST      = 17  /**< Last type value */
 } Edje_Part_Type;
 /**
