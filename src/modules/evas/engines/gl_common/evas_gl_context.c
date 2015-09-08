@@ -1227,9 +1227,11 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
 
    gc->state.current.id = SHADER_LAST;
    gc->state.current.cur_prog = PRG_INVALID;
-   gc->state.current.cur_tex = -1;
-   gc->state.current.cur_texu = -1;
-   gc->state.current.cur_texv = -1;
+   gc->state.current.cur_tex = 0;
+   gc->state.current.cur_texu = 0;
+   gc->state.current.cur_texv = 0;
+   gc->state.current.cur_texa = 0;
+   gc->state.current.cur_texm = 0;
    gc->state.current.render_op = -1;
    gc->state.current.smooth = -1;
    gc->state.current.blend = -1;
