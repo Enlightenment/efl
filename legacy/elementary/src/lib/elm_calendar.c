@@ -609,7 +609,7 @@ _populate(Evas_Object *obj)
    sd->filling = EINA_FALSE;
 
    elm_layout_thaw(obj);
-   elm_layout_sizing_eval(obj);
+   edje_object_message_signal_process(elm_layout_edje_get(obj));
 }
 
 static void
