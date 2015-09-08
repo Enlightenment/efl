@@ -462,7 +462,6 @@ _variant_1_new(const char *v1,
         return NULL;
      }
 
-   va = calloc(1, sizeof (Example_Variant));
    va->t.type = eet_mapping[0].name;
    st1 = calloc(1, sizeof (Example_Struct1));
    _st1_set(st1, atof(v1), atoi(v2), eina_stringshare_add(v3));
@@ -485,8 +484,6 @@ _variant_2_new(const char *v1,
           stderr, "ERROR: could not allocate an Example_Variant struct.\n");
         return NULL;
      }
-
-   va = calloc(1, sizeof (Example_Variant));
 
    va->t.type = eet_mapping[1].name;
 
@@ -511,7 +508,6 @@ _variant_3_new(const char *v1)
         return NULL;
      }
 
-   va = calloc(1, sizeof (Example_Variant));
    va->t.type = eet_mapping[2].name;
    st3 = calloc(1, sizeof (Example_Struct3));
    _st3_set(st3, atoi(v1));
