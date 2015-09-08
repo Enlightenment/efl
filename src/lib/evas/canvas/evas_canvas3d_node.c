@@ -1048,8 +1048,11 @@ evas_canvas3d_node_mesh_collect(Evas_Canvas3D_Node *node, void *data)
           {
              mesh_pd = eo_data_scope_get(mesh, MY_CLASS);
              f = evas_canvas3d_mesh_frame_find(mesh_pd, 0);
-             if (f == NULL)
-               ERR("Not existing mesh frame.");
+             if (!f)
+               {
+                  ERR("Not existing mesh frame.");
+                  continue;
+               }
 
              float *tangent_data = (float *)f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_TANGENT].data;
              if (!tangent_data && ((mesh_pd->shade_mode == EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP) ||
