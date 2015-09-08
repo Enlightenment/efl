@@ -24,8 +24,8 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
             enabled: bool; [[$true to enable omit feature, $false to disable]]
          }
       }
-      @property priority {
-         [[Control priority group of index. Priority group will be shown as many items as it can, and other group will be shown one character only.
+      @property standard_priority {
+         [[Control standard_priority group of index. Priority group will be shown as many items as it can, and other group will be shown one character only.
 
            @since 1.16]]
          set {

@@ -1613,7 +1613,7 @@ _elm_index_item_priority_set(Eo *eo_it EINA_UNUSED, Elm_Index_Item_Data *it, int
 }
 
 EOLIAN static void
-_elm_index_priority_set(Eo *obj, Elm_Index_Data *sd, int priority)
+_elm_index_standard_priority_set(Eo *obj, Elm_Index_Data *sd, int priority)
 {
    if (priority < -1)
      {
@@ -1631,7 +1631,7 @@ _elm_index_priority_set(Eo *obj, Elm_Index_Data *sd, int priority)
 }
 
 EOLIAN static int
-_elm_index_priority_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
+_elm_index_standard_priority_get(Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
    return sd->show_group;
 }

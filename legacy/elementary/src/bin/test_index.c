@@ -443,14 +443,14 @@ _index_priority_change_cb(void *data, Evas_Object *obj EINA_UNUSED,
    Evas_Object *index = data;
    int priority;
 
-   priority = elm_index_priority_get(index);
+   priority = elm_index_standard_priority_get(index);
 
    if (priority == 0)
-     elm_index_priority_set(index, 1);
+     elm_index_standard_priority_set(index, 1);
    else
-     elm_index_priority_set(index, 0);
+     elm_index_standard_priority_set(index, 0);
 
-   printf("Priority changed to : %d\n", elm_index_priority_get(index));
+   printf("Priority changed to : %d\n", elm_index_standard_priority_get(index));
 }
 
 void
