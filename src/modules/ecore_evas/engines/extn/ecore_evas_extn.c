@@ -920,6 +920,10 @@ _ipc_server_add(void *data, int type EINA_UNUSED, void *event)
      return ECORE_CALLBACK_PASS_ON;
    extn = bdata->data;
    if (!extn) return ECORE_CALLBACK_PASS_ON;
+   /* If a server relaunches while a client is running, the server cannot get the OP_SHOW.
+      In this case, the client should send the OP_SHOW, when the server is added. */
+   if (ee->visible && extn->ipc.server)
+     ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_SHOW, 0, 0, 0, NULL, 0);
    //FIXME: find a way to let app know server there
    return ECORE_CALLBACK_PASS_ON;
 }
