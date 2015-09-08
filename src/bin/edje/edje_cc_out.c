@@ -382,6 +382,35 @@ check_image_part_desc(Edje_Part_Collection *pc, Edje_Part *ep,
     }
 }
 
+static void
+check_text_part_desc(Edje_Part_Collection *pc, Edje_Part *ep,
+                      Edje_Part_Description_Text *epd, Eet_File *ef)
+{
+   if (epd->text.id_source != -1)
+     {
+        if ((pc->parts[epd->text.id_source]->type != EDJE_PART_TYPE_TEXT) &&
+            (pc->parts[epd->text.id_source]->type != EDJE_PART_TYPE_TEXTBLOCK))
+          {
+             error_and_abort(ef, "Collection \"%s\" Part \"%s\" Description \"%s\" [%.3f]: "
+                          "text.source point to a non TEXT part \"%s\"!",
+                          pc->part, ep->name,epd->common.state.name,
+                          epd->common.state.value, pc->parts[epd->text.id_source]->name);
+          }
+     }
+
+   if (epd->text.id_text_source != -1)
+     {
+        if ((pc->parts[epd->text.id_text_source]->type != EDJE_PART_TYPE_TEXT) &&
+            (pc->parts[epd->text.id_text_source]->type != EDJE_PART_TYPE_TEXTBLOCK))
+          {
+             error_and_abort(ef, "Collection \"%s\" Part \"%s\" Description \"%s\" [%.3f]: "
+                          "text.text_source point to a non TEXT part \"%s\"!",
+                          pc->part, ep->name,epd->common.state.name,
+                          epd->common.state.value, pc->parts[epd->text.id_text_source]->name);
+          }
+     }
+}
+
 /* This function check loops between groups.
    For example:
    > part in group A. It's source is B.
@@ -502,6 +531,14 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
      check_packed_items(pc, ep, ef);
    else if (ep->type == EDJE_PART_TYPE_GROUP)
      check_source_links(pc, ep, ef, group_path);
+   else if (ep->type == EDJE_PART_TYPE_TEXT)
+     {
+        check_text_part_desc(pc, ep, (Edje_Part_Description_Text*) ep->default_desc, ef);
+
+        for (i = 0; i < ep->other.desc_count; ++i)
+          check_text_part_desc(pc, ep, (Edje_Part_Description_Text*) ep->other.desc[i], ef);
+     }
+
 
    /* FIXME: When smart masks are supported, remove this check */
    if (ep->clip_to_id != -1 &&
