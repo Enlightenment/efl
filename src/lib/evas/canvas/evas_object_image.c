@@ -3837,6 +3837,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                                  idx += idw;
                                  idy = ydy;
                               }
+                            eina_rectangle_free(rr);
                          }
                     }
                   EINA_COW_PIXEL_WRITE_END(o, pixi_write);
