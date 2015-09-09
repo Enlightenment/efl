@@ -90,7 +90,7 @@ _xdg_surface_cb_delete(void *data, struct xdg_surface *xdg_surface EINA_UNUSED)
    win = data;
    if (!win) return;
 
-   /* TODO: Free window */
+   ecore_wl2_window_free(win);
 }
 
 static const struct xdg_surface_listener _xdg_surface_listener =
