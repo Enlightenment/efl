@@ -283,6 +283,17 @@ EAPI void ecore_wl2_window_hide(Ecore_Wl2_Window *window);
  */
 EAPI void ecore_wl2_window_free(Ecore_Wl2_Window *window);
 
+/**
+ * Move a given Ecore_Wl2_Window
+ *
+ * @param window The Ecore_Wl2_Window which to move
+ * @param x Desired x position of window
+ * @param y Desired y position of window
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
+EAPI void ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */

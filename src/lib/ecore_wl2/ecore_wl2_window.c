@@ -299,3 +299,25 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
 
    free(window);
 }
+
+EAPI void
+ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   /* test for no-op move */
+   if ((window->geometry.x == x) && (window->geometry.y == y))
+     return;
+
+   window->geometry.x = x;
+   window->geometry.y = y;
+
+   /* TODO: input grab release ? */
+
+   /* TODO: enable once input is done */
+   /* if (window->xdg_surface) */
+   /*   xdg_surface_move(window->xdg_surface, seat, window->display->serial); */
+   /* else if (window->wl_shell_surface) */
+   /*   wl_shell_surface_move(window->wl_shell_surface, seat, */
+   /*                         window->display->serial); */
+}
