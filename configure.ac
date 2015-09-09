@@ -989,6 +989,7 @@ EFL_ADD_CFLAGS([EINA], [${EFL_PTHREAD_CFLAGS}])
 
 EINA_CONFIG([HAVE_PTHREAD_BARRIER], [test "x${efl_have_pthread_barrier}" = "xyes"])
 EINA_CONFIG([HAVE_PTHREAD_AFFINITY], [test "x${efl_have_setaffinity}" = "xyes"])
+EINA_CONFIG([HAVE_PTHREAD_SETNAME], [test "x${efl_have_setname}" = "xyes"])
 EINA_CONFIG([HAVE_DEBUG_THREADS], [test "x${want_debug_threads}" = "xyes"])
 EINA_CONFIG([HAVE_POSIX_SPINLOCK], [test "x${efl_have_posix_threads_spinlock}" = "xyes"])
 EINA_CONFIG([HAVE_OSX_SPINLOCK], [test "x${efl_have_osx_spinlock}" = "xyes"])
@@ -4847,6 +4848,7 @@ fi
 EFL_ADD_FEATURE([thread], [spinlocks], [${efl_have_spinlock}])
 EFL_ADD_FEATURE([thread], [barrier], [${efl_have_pthread_barrier}])
 EFL_ADD_FEATURE([thread], [affinity], [${efl_have_setaffinity}])
+EFL_ADD_FEATURE([thread], [setname], [${efl_have_setname}])
 
 echo
 echo

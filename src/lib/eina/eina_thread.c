@@ -25,6 +25,7 @@
 #include "eina_config.h"
 #include "eina_thread.h"
 #include "eina_sched.h"
+#include "eina_cpu.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
@@ -167,6 +168,15 @@ EAPI void *
 eina_thread_join(Eina_Thread t)
 {
    return _eina_thread_join(t);
+}
+
+EAPI Eina_Bool
+eina_thread_name_set(Eina_Thread t, const char *name)
+{
+#ifdef EINA_HAVE_PTHREAD_SETNAME
+   if (pthread_setname_np((pthread_t)t, name) == 0) return EINA_TRUE;
+#endif
+   return EINA_FALSE;
 }
 
 Eina_Bool

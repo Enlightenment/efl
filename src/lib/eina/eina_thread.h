@@ -115,6 +115,23 @@ EAPI Eina_Bool eina_thread_create(Eina_Thread *t,
 EAPI void *eina_thread_join(Eina_Thread t);
 
 /**
+ * Set the name of a given thread for debugging purposes.
+ *
+ * This maps to the pthread_setname_np() GNU extension or similar
+ * if available. The name may be limited in size (possibly 16
+ * characters including the nul byte terminator). This is useful
+ * for debugging to name a thread so external tools can display a
+ * meaningful name attached to the thread.
+ *
+ * @param t thread to set the name of
+ * @param name a string to name the thread - this cannot be NULL
+ * @return EINA_TRUE if it succeeds in setting the name or EINA_FALSE
+ *         otherwise.
+ * @since 1.16
+ */
+EAPI Eina_Bool eina_thread_name_set(Eina_Thread t, const char *name);
+
+/**
  * @}
  */
 
