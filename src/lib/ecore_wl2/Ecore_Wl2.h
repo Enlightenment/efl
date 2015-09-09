@@ -312,6 +312,15 @@ EAPI void ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y);
  */
 EAPI void ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w, int h, int location);
 
+/**
+ * Raise a given Ecore_Wl2_Window
+ *
+ * @param window The Ecore_Wl2_Window which to raise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
+EAPI void ecore_wl2_window_raise(Ecore_Wl2_Window *window);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */

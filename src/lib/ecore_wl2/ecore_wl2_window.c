@@ -344,3 +344,11 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w, int h, int location)
    /*   wl_shell_surface_resize(window->wl_shell_surface, seat, */
    /*                           window->display->serial, location); */
 }
+
+EAPI void
+ecore_wl2_window_raise(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   /* FIXME: set keyboard focus when input is complete */
+}
