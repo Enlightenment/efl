@@ -265,6 +265,15 @@ EAPI struct wl_surface *ecore_wl2_window_surface_get(Ecore_Wl2_Window *window);
  */
 EAPI void ecore_wl2_window_show(Ecore_Wl2_Window *window);
 
+/**
+ * Hide a given Ecore_Wl2_Window
+ *
+ * @param window The Ecore_Wl2_Window to hide
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
+EAPI void ecore_wl2_window_hide(Ecore_Wl2_Window *window);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */

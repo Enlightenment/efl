@@ -263,3 +263,22 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
 surf_err:
    ERR("Failed to create surface for window: %m");
 }
+
+EAPI void
+ecore_wl2_window_hide(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   if (window->xdg_surface) xdg_surface_destroy(window->xdg_surface);
+   window->xdg_surface = NULL;
+
+   if (window->xdg_popup) xdg_popup_destroy(window->xdg_popup);
+   window->xdg_popup = NULL;
+
+   if (window->wl_shell_surface)
+     wl_shell_surface_destroy(window->wl_shell_surface);
+   window->wl_shell_surface = NULL;
+
+   if (window->surface) wl_surface_destroy(window->surface);
+   window->surface = NULL;
+}
