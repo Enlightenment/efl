@@ -59,6 +59,8 @@ struct _Ecore_Wl2_Display
    Ecore_Fd_Handler *fd_hdl;
 
    Eina_Hash *globals;
+
+   Eina_Bool sync_done : 1;
 };
 
 struct _Ecore_Wl2_Window
@@ -72,13 +74,19 @@ struct _Ecore_Wl2_Window
    const char *class;
 
    struct wl_surface *surface;
-   struct wl_shell_surface *shell_surface;
+   struct wl_shell_surface *wl_shell_surface;
    struct xdg_surface *xdg_surface;
    struct xdg_popup *xdg_popup;
 
    Eina_Rectangle geometry;
 
    Ecore_Wl2_Window_Type type;
+
+   Eina_Bool minimized : 1;
+   Eina_Bool maximized : 1;
+   Eina_Bool fullscreen : 1;
+   Eina_Bool focused : 1;
+   Eina_Bool resizing : 1;
 };
 
 #endif
