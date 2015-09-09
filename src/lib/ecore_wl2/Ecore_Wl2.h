@@ -256,6 +256,15 @@ EAPI int ecore_wl2_window_id_get(Ecore_Wl2_Window *window);
  */
 EAPI struct wl_surface *ecore_wl2_window_surface_get(Ecore_Wl2_Window *window);
 
+/**
+ * Show a given Ecore_Wl2_Window
+ *
+ * @param window The Ecore_Wl2_Window to show
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
+EAPI void ecore_wl2_window_show(Ecore_Wl2_Window *window);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
