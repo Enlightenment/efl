@@ -274,6 +274,15 @@ EAPI void ecore_wl2_window_show(Ecore_Wl2_Window *window);
  */
 EAPI void ecore_wl2_window_hide(Ecore_Wl2_Window *window);
 
+/**
+ * Free a given Ecore_Wl2_Window
+ *
+ * @param window The Ecore_Wl2_Window to free
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
+EAPI void ecore_wl2_window_free(Ecore_Wl2_Window *window);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
