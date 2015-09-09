@@ -321,3 +321,26 @@ ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y)
    /*   wl_shell_surface_move(window->wl_shell_surface, seat, */
    /*                         window->display->serial); */
 }
+
+EAPI void
+ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w, int h, int location)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   /* test for no-op resize */
+   if ((window->geometry.w == w) && (window->geometry.h == h))
+     return;
+
+   window->geometry.w = w;
+   window->geometry.h = h;
+
+   /* TODO: input grab release ? */
+
+   /* TODO: enable once input is done */
+   /* if (window->xdg_surface) */
+   /*   xdg_surface_resize(window->xdg_surface, seat, */
+   /*                      window->display->serial, location); */
+   /* else if (window->wl_shell_surface) */
+   /*   wl_shell_surface_resize(window->wl_shell_surface, seat, */
+   /*                           window->display->serial, location); */
+}

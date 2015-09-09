@@ -294,6 +294,18 @@ EAPI void ecore_wl2_window_free(Ecore_Wl2_Window *window);
  */
 EAPI void ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y);
 
+/**
+ * Resize a given Ecore_Wl2_Window
+ *
+ * @param window The Ecore_Wl2_Window which to resize
+ * @param w Desired width of window
+ * @param h Desired height of window
+ * @param location The edge of the window from where the resize should start
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
+EAPI void ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w, int h, int location);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
