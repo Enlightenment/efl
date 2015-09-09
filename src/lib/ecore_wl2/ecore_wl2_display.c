@@ -185,6 +185,22 @@ _cb_globals_hash_del(void *data)
 }
 
 static void
+_cb_sync_done(void *data, struct wl_callback *cb, uint32_t serial EINA_UNUSED)
+{
+   Ecore_Wl2_Display *ewd;
+
+   ewd = data;
+   ewd->sync_done = EINA_TRUE;
+
+   wl_callback_destroy(cb);
+}
+
+static const struct wl_callback_listener _sync_listener =
+{
+   _cb_sync_done
+};
+
+static void
 _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
 {
    if (ewd->xkb_context) xkb_context_unref(ewd->xkb_context);
@@ -254,6 +270,7 @@ EAPI Ecore_Wl2_Display *
 ecore_wl2_display_connect(const char *name)
 {
    Ecore_Wl2_Display *ewd;
+   struct wl_callback *cb;
 
    /* allocate space for display structure */
    ewd = calloc(1, sizeof(Ecore_Wl2_Display));
@@ -279,6 +296,16 @@ ecore_wl2_display_connect(const char *name)
 
    ewd->xkb_context = xkb_context_new(0);
    if (!ewd->xkb_context) goto context_err;
+
+   /* NB: If we are connecting (as a client), then we will need to setup
+    * a callback for display_sync and wait for it to complete. There is no
+    * other option here as we need the compositor, shell, etc, to be setup
+    * before we can allow a user to make use of the API functions we provide */
+   cb = wl_display_sync(ewd->wl.display);
+   wl_callback_add_listener(cb, &_sync_listener, ewd);
+
+   while (!ewd->sync_done)
+     wl_display_dispatch(ewd->wl.display);
 
    return ewd;
 
