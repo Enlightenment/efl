@@ -282,3 +282,20 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
    if (window->surface) wl_surface_destroy(window->surface);
    window->surface = NULL;
 }
+
+EAPI void
+ecore_wl2_window_free(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   /* TODO: reset input pointer and keyboard focus */
+   /* TODO: delete window anim callback */
+   /* TODO: destroy subsurfaces */
+
+   ecore_wl2_window_hide(window);
+
+   if (window->title) eina_stringshare_del(window->title);
+   if (window->class) eina_stringshare_del(window->class);
+
+   free(window);
+}
