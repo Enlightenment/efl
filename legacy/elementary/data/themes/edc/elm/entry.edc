@@ -628,19 +628,19 @@ group { name: "elm/entry/base/default";
          }
       }
       program { name: "key-down1";
-         action: PLAY_SAMPLE "key-tap1" 1.0;
+         action: PLAY_SAMPLE "key-tap1" 1.0 INPUT;
       }
       program { name: "key-down2";
-         action: PLAY_SAMPLE "key-tap2" 1.0;
+         action: PLAY_SAMPLE "key-tap2" 1.0 INPUT;
       }
       program { name: "key-down3";
-         action: PLAY_SAMPLE "key-tap3" 1.0;
+         action: PLAY_SAMPLE "key-tap3" 1.0 INPUT;
       }
       program { name: "key-down4";
-         action: PLAY_SAMPLE "key-tap4" 1.0;
+         action: PLAY_SAMPLE "key-tap4" 1.0 INPUT;
       }
       program { name: "key-down5";
-         action: PLAY_SAMPLE "key-tap5" 1.0;
+         action: PLAY_SAMPLE "key-tap5" 1.0 INPUT;
       }
    }
 }
