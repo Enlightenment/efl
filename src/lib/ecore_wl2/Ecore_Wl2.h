@@ -286,6 +286,9 @@ EAPI void ecore_wl2_window_free(Ecore_Wl2_Window *window);
 /**
  * Move a given Ecore_Wl2_Window
  *
+ * @brief The position requested (@p x, @p y) is not honored by Wayland because
+ * Wayland does not allow specific window placement to be set.
+ *
  * @param window The Ecore_Wl2_Window which to move
  * @param x Desired x position of window
  * @param y Desired y position of window
@@ -296,6 +299,9 @@ EAPI void ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y);
 
 /**
  * Resize a given Ecore_Wl2_Window
+ *
+ * @brief The size requested (@p w, @p h) is not honored by Wayland because
+ * Wayland does not allow specific window sizes to be set.
  *
  * @param window The Ecore_Wl2_Window which to resize
  * @param w Desired width of window
