@@ -67,7 +67,6 @@ typedef struct _Elm_Atspi_Bridge_Data
    Eldbus_Connection *session_bus;
    Eldbus_Connection *a11y_bus;
    Eina_List *reemited_events;
-   Eo *root;
    Eina_Hash *cache;
    Eldbus_Service_Interface *cache_interface;
    Eldbus_Signal_Handler *register_hdl;
@@ -131,7 +130,7 @@ static Eina_Bool _text_selection_changed_send(void *data, Eo *obj, const Eo_Even
 // bridge private methods
 static void _bridge_object_register(Eo *bridge, Eo *obj);
 static void _bridge_object_unregister(Eo *bridge, Eo *obj);
-static const char * _bridge_path_from_object(Eo *bridge, const Eo *eo);
+static const char * _path_from_object(const Eo *eo);
 static void _bridge_signal_send(Eo *bridge, Eo *obj, const char *ifc, const Eldbus_Signal *signal, const char *minor, unsigned int det1, unsigned int det2, const char *variant_sig, ...);
 static Eo * _bridge_object_from_path(Eo *bridge, const char *path);
 static void _bridge_iter_object_reference_append(Eo *bridge, Eldbus_Message_Iter *iter, const Eo *obj);
@@ -577,7 +576,7 @@ _accessible_get_application(const Eldbus_Service_Interface *iface, const Eldbus_
    Eldbus_Message *ret;
    const char *obj_path = eldbus_message_path_get(msg);
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
-   Eo *obj = _bridge_object_from_path(bridge, obj_path);
+   Eo *root, *obj = _bridge_object_from_path(bridge, obj_path);
 
    ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
 
@@ -585,7 +584,8 @@ _accessible_get_application(const Eldbus_Service_Interface *iface, const Eldbus_
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(ret);
-   _bridge_iter_object_reference_append(bridge, iter, elm_atspi_bridge_root_get(bridge));
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, root = elm_interface_atspi_accessible_root_get());
+   _bridge_iter_object_reference_append(bridge, iter, root);
 
    return ret;
 }
@@ -2006,7 +2006,7 @@ _bridge_object_from_path(Eo *bridge, const char *path)
    unsigned long long eo_ptr = 0;
    Eo *eo = NULL;
    const char *tmp = path;
-   Eo *ret;
+   Eo *ret, *root;
 
    int len = strlen(ELM_ACCESS_OBJECT_PATH_PREFIX);
    if (strncmp(path, ELM_ACCESS_OBJECT_PATH_PREFIX, len))
@@ -2014,7 +2014,10 @@ _bridge_object_from_path(Eo *bridge, const char *path)
 
    tmp = path + len; /* Skip over the prefix */
    if (!strcmp(ELM_ACCESS_OBJECT_PATH_ROOT, tmp))
-     return elm_atspi_bridge_root_get(bridge);
+     {
+        eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, root = elm_interface_atspi_accessible_root_get());
+        return root;
+     }
 
    sscanf(tmp, "%llu", &eo_ptr);
    eo = (Eo *) (uintptr_t) eo_ptr;
@@ -2032,13 +2035,16 @@ _bridge_object_from_path(Eo *bridge, const char *path)
 }
 
 static const char *
-_bridge_path_from_object(Eo *bridge, const Eo *eo)
+_path_from_object(const Eo *eo)
 {
    static char path[64];
+   Eo *root;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(eo, ATSPI_DBUS_PATH_NULL);
+   if (!eo)
+     return ATSPI_DBUS_PATH_NULL;
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, root = elm_interface_atspi_accessible_root_get());
 
-   if (eo == elm_atspi_bridge_root_get(bridge))
+   if (eo == root)
      snprintf(path, sizeof(path), "%s%s", ELM_ACCESS_OBJECT_PATH_PREFIX, ELM_ACCESS_OBJECT_PATH_ROOT);
    else
      snprintf(path, sizeof(path), ELM_ACCESS_OBJECT_REFERENCE_TEMPLATE, (unsigned long long)(uintptr_t)eo);
@@ -3079,7 +3085,7 @@ _bridge_iter_object_reference_append(Eo *bridge, Eldbus_Message_Iter *iter, cons
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
    Eldbus_Message_Iter *iter_struct = eldbus_message_iter_container_new(iter, 'r', NULL);
    EINA_SAFETY_ON_NULL_RETURN(iter);
-   const char *path = _bridge_path_from_object(bridge, obj);
+   const char *path = _path_from_object(obj);
    eldbus_message_iter_basic_append(iter_struct, 's', eldbus_connection_unique_name_get(pd->a11y_bus));
    eldbus_message_iter_basic_append(iter_struct, 'o', path);
    eldbus_message_iter_container_close(iter, iter_struct);
@@ -3137,7 +3143,8 @@ _cache_item_reference_append_cb(Eo *bridge, Eo *data, Eldbus_Message_Iter *iter_
   Eldbus_Message_Iter *iter_struct, *iter_sub_array;
   Elm_Atspi_State_Set states;
   Elm_Atspi_Role role;
-  Eo *root = elm_atspi_bridge_root_get(bridge);
+  Eo *root;
+  eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, root = elm_interface_atspi_accessible_root_get());
 
   eo_do(data, role = elm_interface_atspi_accessible_role_get());
 
@@ -3235,7 +3242,7 @@ _cache_get_items(const Eldbus_Service_Interface *iface, const Eldbus_Message *ms
    iter_array = eldbus_message_iter_container_new(iter, 'a', CACHE_ITEM_SIGNATURE);
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
 
-   eo_do(bridge, root = elm_obj_atspi_bridge_root_get());
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, root = elm_interface_atspi_accessible_root_get());
    to_process = eina_list_append(NULL, root);
 
    while (to_process)
@@ -3610,6 +3617,7 @@ _on_elm_atspi_bridge_app_register(void *data EINA_UNUSED, const Eldbus_Message *
 EAPI Eina_Bool
 _elm_atspi_bridge_app_register(Eo *bridge)
 {
+   Eo *root;
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(bridge, pd, EINA_FALSE);
 
    Eldbus_Message *message = eldbus_message_method_call_new(ATSPI_DBUS_NAME_REGISTRY,
@@ -3618,7 +3626,8 @@ _elm_atspi_bridge_app_register(Eo *bridge)
                                     "Embed");
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(message);
 
-   _bridge_iter_object_reference_append(bridge, iter, elm_atspi_bridge_root_get(bridge));
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, root = elm_interface_atspi_accessible_root_get());
+   _bridge_iter_object_reference_append(bridge, iter, root);
    eldbus_connection_send(pd->a11y_bus, message, _on_elm_atspi_bridge_app_register, NULL, -1);
 
    return EINA_TRUE;
@@ -3630,7 +3639,7 @@ _elm_atspi_bridge_app_unregister(Eo *bridge)
    Eo *root;
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(bridge, pd, EINA_FALSE);
 
-   root = elm_atspi_bridge_root_get(bridge);
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, root = elm_interface_atspi_accessible_root_get());
 
    Eldbus_Message *message = eldbus_message_method_call_new(ATSPI_DBUS_NAME_REGISTRY,
                                     ATSPI_DBUS_PATH_ROOT,
@@ -3990,7 +3999,7 @@ static void _bridge_signal_send(Eo *bridge, Eo *obj, const char *infc, const Eld
    Eldbus_Message *msg;
    Eldbus_Message_Iter *iter , *iter_stack[64], *iter_struct;
    va_list va;
-   Eo *atspi_obj;
+   Eo *atspi_obj, *root;
    const char *path;
    int top = 0;
 
@@ -4000,7 +4009,8 @@ static void _bridge_signal_send(Eo *bridge, Eo *obj, const char *infc, const Eld
    EINA_SAFETY_ON_NULL_RETURN(obj);
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
-   path = _bridge_path_from_object(bridge, obj);
+   path = _path_from_object(obj);
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, root = elm_interface_atspi_accessible_root_get());
 
    msg = eldbus_message_signal_new(path, infc, signal->name);
    if (!msg) return;
@@ -4031,7 +4041,7 @@ static void _bridge_signal_send(Eo *bridge, Eo *obj, const char *infc, const Eld
                    break;
                 case 'o':
                    atspi_obj = va_arg(va, Eo*);
-                   path = _bridge_path_from_object(bridge, atspi_obj);
+                   path = _path_from_object(atspi_obj);
                    eldbus_message_iter_basic_append(iter_stack[top], 'o', path);
                    break;
                 case ')':
@@ -4058,7 +4068,7 @@ static void _bridge_signal_send(Eo *bridge, Eo *obj, const char *infc, const Eld
    eldbus_message_iter_container_close(iter, iter_stack[0]);
 
    iter_struct = eldbus_message_iter_container_new(iter, 'r', NULL);
-   path = _bridge_path_from_object(bridge, elm_atspi_bridge_root_get(bridge));
+   path = _path_from_object(root);
    eldbus_message_iter_basic_append(iter_struct, 's', eldbus_connection_unique_name_get(pd->a11y_bus));
    eldbus_message_iter_basic_append(iter_struct, 'o', path);
    eldbus_message_iter_container_close(iter, iter_struct);
@@ -4591,18 +4601,6 @@ _elm_atspi_bridge_connected_get(Eo *obj EINA_UNUSED, Elm_Atspi_Bridge_Data *pd)
    return pd->connected;
 }
 
-EOLIAN Eo*
-_elm_atspi_bridge_root_get(Eo *obj EINA_UNUSED, Elm_Atspi_Bridge_Data *pd)
-{
-   if (!pd->root)
-     {
-        pd->root = eo_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
-        elm_interface_atspi_accessible_added(pd->root);
-     }
-
-   return pd->root;
-}
-
 static void
 _properties_changed_cb(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event)
 {
@@ -4679,7 +4677,6 @@ _elm_atspi_bridge_eo_base_destructor(Eo *obj, Elm_Atspi_Bridge_Data *pd)
 
    if (pd->bus_obj) eldbus_object_unref(pd->bus_obj);
    if (pd->session_bus) eldbus_connection_unref(pd->session_bus);
-   if (pd->root) eo_del(pd->root);
 
    eo_do_super(obj, ELM_ATSPI_BRIDGE_CLASS, eo_destructor());
 }

@@ -135,6 +135,7 @@ typedef struct _Elm_Interface_Atspi_Accessible_Data Elm_Interface_Atspi_Accessib
 
 
 static Eina_List *global_callbacks;
+static Eo *root;
 
 EOLIAN static int
 _elm_interface_atspi_accessible_index_in_parent_get(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED)
@@ -362,6 +363,7 @@ _elm_interface_atspi_accessible_translation_domain_set(Eo *obj EINA_UNUSED, Elm_
    eina_stringshare_replace(&pd->translation_domain, domain);
 }
 
+
 EOLIAN const char*
 _elm_interface_atspi_accessible_translation_domain_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd)
 {
@@ -539,6 +541,15 @@ _elm_interface_atspi_accessible_relationships_clear(Eo *obj EINA_UNUSED, Elm_Int
 {
    elm_atspi_relation_set_free(sd->relations);
    sd->relations = NULL;
+}
+
+EOLIAN Eo*
+_elm_interface_atspi_accessible_root_get(Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
+{
+   if (!root)
+      root = eo_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
+
+   return root;
 }
 
 #include "elm_interface_atspi_accessible.eo.c"

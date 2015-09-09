@@ -183,6 +183,14 @@ mixin Elm_Interface_Atspi_Accessible ()
       relationships_clear {
          [[Removes all relationships in accessible object.]]
       }
+      @property root @class {
+         get {
+            [[Get root object of accessible object hierarchy]]
+            values {
+               ret: Eo*;
+            }
+         }
+      }
    }
    events {
       property,changed: const(char)*;

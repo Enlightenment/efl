@@ -10,14 +10,6 @@ class Elm.Atspi_Bridge (Eo.Base)
             }
          }
       }
-      @property root {
-         get {
-            [[Get root object of accessible object hierarchy]]
-            values {
-               ret: Eo*;
-            }
-         }
-      }
    }
    implements {
       Eo.Base.constructor;
