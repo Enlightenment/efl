@@ -27,7 +27,12 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
         input->wl.pointer = wl_seat_get_pointer(seat);
         wl_pointer_set_user_data(input->wl.pointer, input);
         /* TODO: pointer listener */
-        /* TODO: pointer surface */
+
+        if (!input->cursor.surface)
+          {
+             input->cursor.surface =
+               wl_compositor_create_surface(input->display->wl.compositor);
+          }
      }
    else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && (input->wl.pointer))
      {
@@ -67,6 +72,29 @@ static const struct wl_seat_listener _seat_listener =
    NULL
 };
 
+static void
+_ecore_wl2_input_cursor_setup(Ecore_Wl2_Input *input)
+{
+   char *tmp;
+
+   input->cursor.size = 32;
+   tmp = getenv("ECORE_WL_CURSOR_SIZE");
+   if (tmp) input->cursor.size = atoi(tmp);
+
+   tmp = getenv("ECORE_WL_CURSOR_THEME_NAME");
+   eina_stringshare_replace(&input->cursor.theme_name, tmp);
+
+   if (!input->cursor.name)
+     input->cursor.name = eina_stringshare_add("left_ptr");
+
+   if (input->display->wl.shm)
+     {
+        input->cursor.theme =
+          wl_cursor_theme_load(input->cursor.theme_name, input->cursor.size,
+                               input->display->wl.shm);
+     }
+}
+
 void
 _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id)
 {
@@ -83,7 +111,8 @@ _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id)
 
    wl_array_init(&input->data.types);
 
-   /* TODO: setup cursor size and theme */
+   /* setup cursor size and theme */
+   _ecore_wl2_input_cursor_setup(input);
 
    input->wl.seat =
      wl_registry_bind(wl_display_get_registry(display->wl.display),
@@ -116,7 +145,8 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
 
    if (input->cursor.surface) wl_surface_destroy(input->cursor.surface);
    if (input->cursor.name) eina_stringshare_del(input->cursor.name);
-   if (input->cursor.theme) eina_stringshare_del(input->cursor.theme);
+   if (input->cursor.theme_name)
+     eina_stringshare_del(input->cursor.theme_name);
 
    if (input->data.types.data)
      {
