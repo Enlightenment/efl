@@ -1084,7 +1084,19 @@ _elm_win_focus_in(Ecore_Evas *ee)
              elm_widget_focus_steal(obj);
           }
         else
-          elm_widget_focus_restore(obj);
+          {
+             Evas_Object *newest = NULL;
+             unsigned int newest_focus_order = 0;
+
+             newest = elm_widget_newest_focus_order_get
+               (obj, &newest_focus_order, EINA_TRUE);
+             if ((newest) &&
+                 _elm_win_focus_highlight_object_get(obj) &&
+                 _elm_widget_onscreen_is(newest))
+               elm_widget_focus_restore(obj);
+             else
+               evas_object_focus_set(obj, EINA_TRUE);
+          }
      }
    // FIXME: the event is deprecated but still in use.
    // Has to be removed in EFL2.0
