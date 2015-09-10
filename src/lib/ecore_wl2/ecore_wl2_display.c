@@ -5,6 +5,17 @@
 #include "ecore_wl2_private.h"
 
 static void
+_xdg_shell_cb_ping(void *data EINA_UNUSED, struct xdg_shell *shell, uint32_t serial)
+{
+   xdg_shell_pong(shell, serial);
+}
+
+static const struct xdg_shell_listener _xdg_shell_listener =
+{
+   _xdg_shell_cb_ping
+};
+
+static void
 _cb_global_event_free(void *data EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Global *ev;
@@ -74,7 +85,7 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
         ewd->wl.xdg_shell =
           wl_registry_bind(registry, id, &xdg_shell_interface, 1);
         xdg_shell_use_unstable_version(ewd->wl.xdg_shell, XDG_VERSION);
-        /* TODO: Add listener */
+        xdg_shell_add_listener(ewd->wl.xdg_shell, &_xdg_shell_listener, NULL);
      }
    else if (!strcmp(interface, "wl_output"))
      _ecore_wl2_output_add(ewd, id);
