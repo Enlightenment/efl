@@ -61,6 +61,7 @@ struct _Ecore_Wl2_Display
    Eina_Hash *globals;
 
    Eina_Inlist *outputs;
+   Eina_Inlist *inputs;
 
    Eina_Bool sync_done : 1;
 };
@@ -103,7 +104,81 @@ struct _Ecore_Wl2_Output
    Eina_Rectangle geometry;
 };
 
+struct _Ecore_Wl2_Input
+{
+   EINA_INLIST;
+
+   Ecore_Wl2_Display *display;
+
+   struct
+     {
+        struct wl_seat *seat;
+        struct wl_pointer *pointer;
+        struct wl_keyboard *keyboard;
+        struct wl_touch *touch;
+     } wl;
+
+   struct
+     {
+        struct wl_data_device *device;
+        struct wl_data_source *source;
+        struct wl_array types;
+     } data;
+
+   struct
+     {
+        const char *name, *theme;
+        unsigned int index, size;
+        struct wl_cursor *wl_cursor;
+        struct wl_surface *surface;
+        struct wl_callback *frame_cb;
+        Ecore_Timer *timer;
+     } cursor;
+
+   struct
+     {
+        Ecore_Wl2_Window *pointer;
+        Ecore_Wl2_Window *keyboard;
+        Ecore_Wl2_Window *touch;
+     } focus;
+
+   struct
+     {
+        unsigned int button, count, timestamp;
+        Ecore_Wl2_Window *window;
+     } grab;
+
+   struct
+     {
+        struct xkb_keymap *keymap;
+        struct xkb_state *state;
+        xkb_mod_mask_t control_mask;
+        xkb_mod_mask_t alt_mask;
+        xkb_mod_mask_t shift_mask;
+        xkb_mod_mask_t win_mask;
+        xkb_mod_mask_t scroll_mask;
+        xkb_mod_mask_t num_mask;
+        xkb_mod_mask_t caps_mask;
+        xkb_mod_mask_t altgr_mask;
+        unsigned int mods_depressed;
+        unsigned int mods_latched;
+        unsigned int mods_locked;
+        unsigned int mods_group;
+     } xkb;
+
+   struct
+     {
+        Ecore_Timer *timer;
+        unsigned int sym, key, time;
+        double rate, delay;
+        Eina_Bool enabled : 1;
+     } repeat;
+};
+
 void _ecore_wl2_output_add(Ecore_Wl2_Display *display, unsigned int id);
 void _ecore_wl2_output_del(Ecore_Wl2_Output *output);
+
+void _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id);
+void _ecore_wl2_input_del(Ecore_Wl2_Input *input);
 
 #endif
