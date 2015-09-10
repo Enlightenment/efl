@@ -34,6 +34,7 @@ typedef struct _Ecore_Wl2_Window Ecore_Wl2_Window;
 
 typedef struct _Ecore_Wl2_Display Ecore_Wl2_Display;
 typedef struct _Ecore_Wl2_Output Ecore_Wl2_Output;
+typedef struct _Ecore_Wl2_Input Ecore_Wl2_Input;
 
 typedef struct _Ecore_Wl2_Global
 {
