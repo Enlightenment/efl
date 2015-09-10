@@ -991,7 +991,9 @@ evas_object_smart_changed_get(Evas_Object *eo_obj)
 
         if (has_map)
           {
-             if (obj->need_surface_clear || ((obj->changed_pchange) && (obj->changed_map)))
+
+             if ((obj->need_surface_clear && obj->changed && !obj->is_smart) ||
+                 ((obj->changed_pchange) && (obj->changed_map)))
                return EINA_TRUE;
           }
      }
