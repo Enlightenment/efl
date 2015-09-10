@@ -231,6 +231,7 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
 
    if (input->repeat.timer) ecore_timer_del(input->repeat.timer);
 
+   if (input->cursor.theme) wl_cursor_theme_destroy(input->cursor.theme);
    if (input->cursor.surface) wl_surface_destroy(input->cursor.surface);
    if (input->cursor.name) eina_stringshare_del(input->cursor.name);
    if (input->cursor.theme_name)
