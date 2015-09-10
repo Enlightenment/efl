@@ -60,6 +60,8 @@ struct _Ecore_Wl2_Display
 
    Eina_Hash *globals;
 
+   Eina_Inlist *outputs;
+
    Eina_Bool sync_done : 1;
 };
 
@@ -88,5 +90,20 @@ struct _Ecore_Wl2_Window
    Eina_Bool focused : 1;
    Eina_Bool resizing : 1;
 };
+
+struct _Ecore_Wl2_Output
+{
+   EINA_INLIST;
+
+   Ecore_Wl2_Display *display;
+   struct wl_output *wl_output;
+
+   int mw, mh, transform;
+   const char *make, *model;
+   Eina_Rectangle geometry;
+};
+
+void _ecore_wl2_output_add(Ecore_Wl2_Display *display, unsigned int id);
+void _ecore_wl2_output_del(Ecore_Wl2_Output *output);
 
 #endif
