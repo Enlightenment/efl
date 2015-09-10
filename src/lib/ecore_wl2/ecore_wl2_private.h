@@ -138,6 +138,13 @@ struct _Ecore_Wl2_Input
 
    struct
      {
+        double sx, sy;
+        unsigned int button;
+        unsigned int enter_serial;
+     } pointer;
+
+   struct
+     {
         Ecore_Wl2_Window *pointer;
         Ecore_Wl2_Window *keyboard;
         Ecore_Wl2_Window *touch;
