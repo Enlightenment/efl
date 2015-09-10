@@ -174,7 +174,14 @@ EAPI Eina_Bool
 eina_thread_name_set(Eina_Thread t, const char *name)
 {
 #ifdef EINA_HAVE_PTHREAD_SETNAME
-   if (pthread_setname_np((pthread_t)t, name) == 0) return EINA_TRUE;
+   char buf[16];
+   if (name)
+     {
+        strncpy(buf, name, 15);
+        buf[15] = 0;
+     }
+   else buf[0] = 0;
+   if (pthread_setname_np((pthread_t)t, buf) == 0) return EINA_TRUE;
 #endif
    return EINA_FALSE;
 }
