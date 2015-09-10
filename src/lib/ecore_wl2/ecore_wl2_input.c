@@ -116,6 +116,8 @@ _pointer_cb_axis(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned in
 
    input = data;
    if (!input) return;
+
+   /* TODO: send mouse wheel event */
 }
 
 static const struct wl_pointer_listener _pointer_listener =
