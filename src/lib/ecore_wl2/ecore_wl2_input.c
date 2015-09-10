@@ -4,6 +4,15 @@
 
 #include "ecore_wl2_private.h"
 
+static const struct wl_pointer_listener _pointer_listener =
+{
+   NULL, // pointer enter
+   NULL, // pointer leave
+   NULL, // pointer motion
+   NULL, // pointer button
+   NULL, // pointer axis
+};
+
 static const struct wl_data_device_listener _data_listener =
 {
    NULL, // data offer
@@ -26,7 +35,7 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
      {
         input->wl.pointer = wl_seat_get_pointer(seat);
         wl_pointer_set_user_data(input->wl.pointer, input);
-        /* TODO: pointer listener */
+        wl_pointer_add_listener(input->wl.pointer, &_pointer_listener, input);
 
         if (!input->cursor.surface)
           {
