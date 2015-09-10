@@ -76,6 +76,8 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
         xdg_shell_use_unstable_version(ewd->wl.xdg_shell, XDG_VERSION);
         /* TODO: Add listener */
      }
+   else if (!strcmp(interface, "wl_output"))
+     _ecore_wl2_output_add(ewd, id);
 
    /* allocate space for event structure */
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Global));
@@ -203,6 +205,13 @@ static const struct wl_callback_listener _sync_listener =
 static void
 _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
 {
+   Ecore_Wl2_Output *output;
+   Eina_Inlist *tmp;
+
+   /* free each output */
+   EINA_INLIST_FOREACH_SAFE(ewd->outputs, tmp, output)
+     _ecore_wl2_output_del(output);
+
    if (ewd->xkb_context) xkb_context_unref(ewd->xkb_context);
 
    wl_registry_destroy(wl_display_get_registry(ewd->wl.display));

@@ -11,6 +11,7 @@ lib_ecore_wl2_libecore_wl2_la_SOURCES = \
 lib/ecore_wl2/xdg-shell-client-protocol.h \
 lib/ecore_wl2/xdg-shell-protocol.c \
 lib/ecore_wl2/ecore_wl2_window.c \
+lib/ecore_wl2/ecore_wl2_output.c \
 lib/ecore_wl2/ecore_wl2_display.c \
 lib/ecore_wl2/ecore_wl2.c \
 lib/ecore_wl2/ecore_wl2_private.h
