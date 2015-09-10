@@ -13,6 +13,16 @@ static const struct wl_pointer_listener _pointer_listener =
    NULL, // pointer axis
 };
 
+static const struct wl_keyboard_listener _keyboard_listener =
+{
+   NULL, // keyboard keymap
+   NULL, // keyboard enter
+   NULL, // keyboard leave
+   NULL, // keyboard key
+   NULL, // keyboard modifiers
+   NULL, // keyboard repeat setup
+};
+
 static const struct wl_data_device_listener _data_listener =
 {
    NULL, // data offer
@@ -55,7 +65,7 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
      {
         input->wl.keyboard = wl_seat_get_keyboard(seat);
         wl_keyboard_set_user_data(input->wl.keyboard, input);
-        /* TODO: keyboard listener */
+        wl_keyboard_add_listener(input->wl.keyboard, &_keyboard_listener, input);
      }
    else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD) && (input->wl.keyboard))
      {
