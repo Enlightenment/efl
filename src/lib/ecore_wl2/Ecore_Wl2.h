@@ -217,7 +217,7 @@ EAPI Eina_Iterator *ecore_wl2_display_globals_get(Ecore_Wl2_Display *display);
  * @defgroup Ecore_Wl2_Window_Group Wayland Library Window Functions
  * @ingroup Ecore_Wl2_Group
  *
- * Functions that deal with creating, connecting, or interacting with
+ * Functions that deal with creating, destroying, or interacting with
  * Wayland windows
  */
 
