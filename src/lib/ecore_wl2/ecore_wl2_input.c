@@ -23,6 +23,15 @@ static const struct wl_keyboard_listener _keyboard_listener =
    NULL, // keyboard repeat setup
 };
 
+static const struct wl_touch_listener _touch_listener =
+{
+   NULL, // touch down
+   NULL, // touch up
+   NULL, // touch motion
+   NULL, // touch frame
+   NULL, // touch cancel
+};
+
 static const struct wl_data_device_listener _data_listener =
 {
    NULL, // data offer
@@ -76,7 +85,7 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
      {
         input->wl.touch = wl_seat_get_touch(seat);
         wl_touch_set_user_data(input->wl.touch, input);
-        /* TODO: touch listener */
+        wl_touch_add_listener(input->wl.touch, &_touch_listener, input);
      }
    else if (!(caps & WL_SEAT_CAPABILITY_TOUCH) && (input->wl.touch))
      {
