@@ -60,6 +60,7 @@ struct _Ecore_Wl2_Display
 
    Eina_Hash *globals;
 
+   Eina_Inlist *windows;
    Eina_Inlist *outputs;
    Eina_Inlist *inputs;
 
@@ -68,6 +69,8 @@ struct _Ecore_Wl2_Display
 
 struct _Ecore_Wl2_Window
 {
+   EINA_INLIST;
+
    Ecore_Wl2_Display *display;
 
    Ecore_Wl2_Window *parent;
@@ -182,6 +185,8 @@ struct _Ecore_Wl2_Input
         Eina_Bool enabled : 1;
      } repeat;
 };
+
+Ecore_Wl2_Window *_ecore_wl2_display_window_surface_find(Ecore_Wl2_Display *display, struct wl_surface *wl_surface);
 
 void _ecore_wl2_output_add(Ecore_Wl2_Display *display, unsigned int id);
 void _ecore_wl2_output_del(Ecore_Wl2_Output *output);

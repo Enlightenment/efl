@@ -187,6 +187,9 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
 
    win->type = ECORE_WL2_WINDOW_TYPE_TOPLEVEL;
 
+   display->windows =
+     eina_inlist_append(display->windows, EINA_INLIST_GET(win));
+
    return win;
 }
 
@@ -286,7 +289,11 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
 EAPI void
 ecore_wl2_window_free(Ecore_Wl2_Window *window)
 {
+   Ecore_Wl2_Display *display;
+
    EINA_SAFETY_ON_NULL_RETURN(window);
+
+   display = window->display;
 
    /* TODO: reset input pointer and keyboard focus */
    /* TODO: delete window anim callback */
@@ -296,6 +303,9 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
 
    if (window->title) eina_stringshare_del(window->title);
    if (window->class) eina_stringshare_del(window->class);
+
+   display->windows =
+     eina_inlist_remove(display->windows, EINA_INLIST_GET(window));
 
    free(window);
 }
