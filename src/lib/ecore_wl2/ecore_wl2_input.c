@@ -4,13 +4,73 @@
 
 #include "ecore_wl2_private.h"
 
+static void
+_pointer_cb_enter(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial, struct wl_surface *surface, wl_fixed_t sx, wl_fixed_t sy)
+{
+   Ecore_Wl2_Input *input;
+   Ecore_Wl2_Window *window;
+
+   input = data;
+   if (!input) return;
+
+   /* trap for a surface that was just destroyed */
+   if (!surface) return;
+
+   input->pointer.enter_serial = serial;
+   input->pointer.sx = wl_fixed_to_double(sx);
+   input->pointer.sy = wl_fixed_to_double(sy);
+
+   /* find the window which this surface belongs to */
+   window = _ecore_wl2_display_window_surface_find(input->display, surface);
+   if (!window) return;
+
+   input->focus.pointer = window;
+   /* TODO: send mouse in event */
+}
+
+static void
+_pointer_cb_leave(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial, struct wl_surface *surface)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
+static void
+_pointer_cb_motion(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int timestamp, wl_fixed_t sx, wl_fixed_t sy)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
+static void
+_pointer_cb_button(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int button, unsigned int state)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
+static void
+_pointer_cb_axis(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int timestamp, unsigned int axis, wl_fixed_t value)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
 static const struct wl_pointer_listener _pointer_listener =
 {
-   NULL, // pointer enter
-   NULL, // pointer leave
-   NULL, // pointer motion
-   NULL, // pointer button
-   NULL, // pointer axis
+   _pointer_cb_enter,
+   _pointer_cb_leave,
+   _pointer_cb_motion,
+   _pointer_cb_button,
+   _pointer_cb_axis,
 };
 
 static const struct wl_keyboard_listener _keyboard_listener =
