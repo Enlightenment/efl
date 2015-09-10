@@ -54,6 +54,7 @@ static void
 _pointer_cb_motion(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int timestamp, wl_fixed_t sx, wl_fixed_t sy)
 {
    Ecore_Wl2_Input *input;
+   Ecore_Wl2_Window *window;
 
    input = data;
    if (!input) return;
@@ -61,9 +62,6 @@ _pointer_cb_motion(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned 
    /* get currently focused window */
    window = input->focus.pointer;
    if (!window) return;
-
-   /* trap for a surface that was just destroyed */
-   if (!surface) return;
 
    input->pointer.sx = wl_fixed_to_double(sx);
    input->pointer.sy = wl_fixed_to_double(sy);
@@ -83,6 +81,32 @@ _pointer_cb_button(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned 
 
    input = data;
    if (!input) return;
+
+   if (state == WL_POINTER_BUTTON_STATE_PRESSED)
+     {
+        if ((input->focus.pointer) && (!input->grab.window))
+          {
+             /* TODO: issue input grab */
+             input->grab.timestamp = timestamp;
+          }
+
+        if (input->focus.pointer)
+          {
+             /* TODO: send mouse down event */
+          }
+     }
+   else
+     {
+        if (input->focus.pointer)
+          {
+             /* TODO: send mouse up event */
+          }
+
+        if ((input->grab.window) && (input->grab.button == button))
+          {
+             /* TODO: issue input ungrab */
+          }
+     }
 }
 
 static void
