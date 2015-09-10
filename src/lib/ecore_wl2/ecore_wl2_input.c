@@ -57,6 +57,23 @@ _pointer_cb_motion(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned 
 
    input = data;
    if (!input) return;
+
+   /* get currently focused window */
+   window = input->focus.pointer;
+   if (!window) return;
+
+   /* trap for a surface that was just destroyed */
+   if (!surface) return;
+
+   input->pointer.sx = wl_fixed_to_double(sx);
+   input->pointer.sy = wl_fixed_to_double(sy);
+
+   /* NB: Unsure if we need this just yet, so commented out for now */
+   /* if ((input->pointer.sx > window->geometry.w) || */
+   /*     (input->pointer.sy > window->geometry.h)) */
+   /*   return; */
+
+   /* TODO: send mouse move event */
 }
 
 static void
