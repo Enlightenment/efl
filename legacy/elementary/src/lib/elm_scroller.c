@@ -113,6 +113,8 @@ _key_action_move(Evas_Object *obj, const char *params)
          (&v_x, &v_y, &v_w, &v_h));
    evas_object_geometry_get(sd->content, &c_x, &c_y, &max_x, &max_y);
 
+   _elm_widget_focus_auto_show(obj);
+
    current_focus = elm_widget_focused_object_get(obj);
    evas_object_geometry_get(current_focus, &f_x, &f_y, &f_w, &f_h);
    can_focus_list = elm_widget_can_focus_child_list_get(obj);

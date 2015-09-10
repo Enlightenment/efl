@@ -1845,6 +1845,7 @@ EOLIAN static void
 _elm_widget_focus_cycle(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Elm_Focus_Direction dir)
 {
    Evas_Object *target = NULL;
+
    if (!_elm_widget_is(obj))
      return;
    focus_origin = dir;
@@ -2887,6 +2888,13 @@ _elm_widget_focus_restore(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
         elm_object_focus_set(newest, EINA_FALSE);
         elm_object_focus_set(newest, EINA_TRUE);
      }
+}
+
+void
+_elm_widget_focus_auto_show(Evas_Object *obj)
+{
+   Evas_Object *top = elm_widget_top_get(obj);
+   if (top && eo_isa(top, ELM_WIN_CLASS)) _elm_win_focus_auto_show(top);
 }
 
 void

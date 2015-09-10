@@ -474,6 +474,7 @@ static Eina_Bool _key_action_move(Evas_Object *obj, const char *params)
          elm_interface_scrollable_content_viewport_geometry_get
          (NULL, NULL, &v_w, &v_h));
 
+   _elm_widget_focus_auto_show(obj);
    /* TODO: fix logic for horizontal mode */
    if (!strcmp(dir, "left"))
      {

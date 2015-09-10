@@ -1829,11 +1829,12 @@ _key_action_move(Evas_Object *obj, const char *params)
    char colorbar_s[128];
    const char *dir = params;
 
+   _elm_widget_focus_auto_show(obj);
    if (!strcmp(dir, "left"))
      {
         if (sd->focused == ELM_COLORSELECTOR_PALETTE && sd->selected)
           cl = eina_list_prev(sd->selected);
-		  else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
+        else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
           _button_clicked_cb(sd->cb_data[sd->sel_color_type],
                              sd->cb_data[sd->sel_color_type]->lbt, NULL, NULL);
         else return EINA_FALSE;

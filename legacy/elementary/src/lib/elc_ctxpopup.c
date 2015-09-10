@@ -115,6 +115,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 
    if (!sd->box) return EINA_FALSE;
 
+   _elm_widget_focus_auto_show(obj);
    if (!strcmp(dir, "previous"))
      elm_widget_focus_cycle(sd->box, ELM_FOCUS_PREVIOUS);
    else if (!strcmp(dir, "next"))

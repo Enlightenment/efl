@@ -933,6 +933,7 @@ _key_action_move(Evas_Object *obj, const char *params)
    ELM_CALENDAR_DATA_GET(obj, sd);
    const char *dir = params;
 
+   _elm_widget_focus_auto_show(obj);
    if (!strcmp(dir, "prior"))
      {
         if (_update_data(obj, EINA_TRUE, -1)) _populate(obj);

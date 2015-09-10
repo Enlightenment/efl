@@ -72,6 +72,7 @@ _key_action_move(Evas_Object *obj, const char *params)
    ELM_PLAYER_DATA_GET(obj, sd);
    const char *dir = params;
 
+   _elm_widget_focus_auto_show(obj);
    if (!strcmp(dir, "left"))
      {
         double current, last;

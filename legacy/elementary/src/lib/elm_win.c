@@ -1507,10 +1507,8 @@ static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
 {
    const char *dir = params;
-   Evas_Object *top;
 
-   top = elm_widget_top_get(obj);
-   if (top && eo_isa(top, ELM_WIN_CLASS)) _elm_win_focus_auto_show(top);
+   _elm_widget_focus_auto_show(obj);
    if (!strcmp(dir, "previous"))
      elm_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS);
    else if (!strcmp(dir, "next"))

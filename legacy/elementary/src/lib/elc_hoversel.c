@@ -677,6 +677,7 @@ _key_action_move(Evas_Object *obj, const char *params)
    eo_litem = eina_list_last_data_get(sd->items);
    eo_fitem = eina_list_data_get(sd->items);
 
+   _elm_widget_focus_auto_show(obj);
    if (!strcmp(dir, "down"))
      {
         if ((!sd->horizontal) &&

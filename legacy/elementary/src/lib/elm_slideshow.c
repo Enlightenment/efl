@@ -43,6 +43,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 {
    const char *dir = params;
 
+   _elm_widget_focus_auto_show(obj);
    if (!strcmp(dir, "left"))
      {
         elm_slideshow_previous(obj);

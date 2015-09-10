@@ -3054,6 +3054,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 
    if (sd->reorder_mode && sd->reorder.running) return EINA_TRUE;
 
+   _elm_widget_focus_auto_show(obj);
    if ((!strcmp(dir, "left") && !mirrored) ||
        (!strcmp(dir, "right") && mirrored))
      {

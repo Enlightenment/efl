@@ -402,6 +402,7 @@ void                 _elm_module_unload(Elm_Module *m);
 const void          *_elm_module_symbol_get(Elm_Module *m,
                                             const char *name);
 
+void                 _elm_widget_focus_auto_show(Evas_Object *obj);
 void                 _elm_widget_top_win_focused_set(Evas_Object *obj,
                                                      Eina_Bool top_win_focused);
 Eina_Bool            _elm_widget_top_win_focused_get(const Evas_Object *obj);
