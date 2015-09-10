@@ -25,6 +25,7 @@ _pointer_cb_enter(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
    if (!window) return;
 
    input->focus.pointer = window;
+
    /* TODO: send mouse in event */
 }
 
@@ -32,9 +33,21 @@ static void
 _pointer_cb_leave(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial, struct wl_surface *surface)
 {
    Ecore_Wl2_Input *input;
+   Ecore_Wl2_Window *window;
 
    input = data;
    if (!input) return;
+
+   input->focus.pointer = NULL;
+
+   /* trap for a surface that was just destroyed */
+   if (!surface) return;
+
+   /* find the window which this surface belongs to */
+   window = _ecore_wl2_display_window_surface_find(input->display, surface);
+   if (!window) return;
+
+   /* TODO: send mouse out event */
 }
 
 static void
