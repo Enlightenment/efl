@@ -234,6 +234,23 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
    eina_hash_free(ewd->globals);
 }
 
+Ecore_Wl2_Window *
+_ecore_wl2_display_window_surface_find(Ecore_Wl2_Display *display, struct wl_surface *wl_surface)
+{
+   Ecore_Wl2_Window *window;
+
+   if ((!display) || (!wl_surface)) return NULL;
+
+   EINA_INLIST_FOREACH(display->windows, window)
+     {
+        if ((window->surface) &&
+            (window->surface == wl_surface))
+          return window;
+     }
+
+   return NULL;
+}
+
 EAPI Ecore_Wl2_Display *
 ecore_wl2_display_create(const char *name)
 {
