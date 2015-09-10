@@ -244,6 +244,7 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
    void *ref;
    int tick = 0;
 
+   eina_thread_name_set(eina_thread_self(), "Eanimator-vsync");
    while (!ecore_thread_check(thread))
      {
         DBG("------- drm_event_is_busy=%i", drm_event_is_busy);

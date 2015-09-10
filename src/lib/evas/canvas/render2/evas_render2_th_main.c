@@ -287,6 +287,7 @@ _evas_render2_th_main(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
    void *ref = NULL;
    Msg_Main_Render *msg;
 
+   eina_thread_name_set(eina_thread_self(), "Eevas-render2");
    for (;;)
      {
         msg = eina_thread_queue_wait(_th_main_queue, &ref);

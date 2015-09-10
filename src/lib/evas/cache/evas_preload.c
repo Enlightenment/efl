@@ -70,6 +70,7 @@ _evas_preload_thread_worker(void *data, Eina_Thread thread EINA_UNUSED)
    Evas_Preload_Pthread_Data *pth = data;
    Evas_Preload_Pthread_Worker *work;
 
+   eina_thread_name_set(eina_thread_self(), "Eevas-preload");
 on_error:
    for (;;)
      {

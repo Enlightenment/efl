@@ -115,6 +115,7 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
    double t0, d;
    int ret;
 
+   eina_thread_name_set(eina_thread_self(), "Eanimator-timer");
    while (!ecore_thread_check(thread))
      {
         DBG("------- timer_event_is_busy=%i", timer_event_is_busy);

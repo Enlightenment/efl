@@ -58,7 +58,8 @@ evas_thread_queue_flush(Evas_Thread_Command_Cb cb, void *data)
 static void*
 evas_thread_worker_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 {
-    while (1)
+   eina_thread_name_set(eina_thread_self(), "Eevas-thread-wk");
+   while (1)
       {
          Evas_Thread_Command *cmd;
          unsigned int len, max;
