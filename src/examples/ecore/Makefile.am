@@ -264,10 +264,12 @@ ecore_getopt_example_SOURCES = ecore_getopt_example.c
 ecore_getopt_example_LDADD = $(ECORE_COMMON_LDADD)
 
 ecore_con_eet_client_example_SOURCES = ecore_con_eet_client_example.c ecore_con_eet_descriptor_example.c
-ecore_con_eet_client_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+ecore_con_eet_client_example_LDADD = $(ECORE_CON_COMMON_LDADD) \
+$(top_builddir)/src/lib/eet/libeet.la
 
 ecore_con_eet_server_example_SOURCES = ecore_con_eet_server_example.c ecore_con_eet_descriptor_example.c
-ecore_con_eet_server_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+ecore_con_eet_server_example_LDADD = $(ECORE_CON_COMMON_LDADD) \
+$(top_builddir)/src/lib/eet/libeet.la
 
 SRCS = \
 ecore_animator_example.c \
