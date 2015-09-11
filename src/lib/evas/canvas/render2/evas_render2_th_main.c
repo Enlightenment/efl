@@ -104,12 +104,12 @@ _evas_render2_th_main_obj_del_handle(Evas_Public_Data *e,
 }
 
 static void
-_evas_render2_th_main_obj_basic_process(Evas_Public_Data *e,
-                                        Evas_Object_Protected_Data *obj,
-                                        void *updates,
-                                        int offx,
-                                        int offy,
-                                        int l EINA_UNUSED)
+_evas_render2_th_main_obj_basic_walk_process(Evas_Public_Data *e,
+                                             Evas_Object_Protected_Data *obj,
+                                             void *updates,
+                                             int offx,
+                                             int offy,
+                                             int l EINA_UNUSED)
 {
    Evas_Object *eo_obj = obj->object;
 
@@ -130,12 +130,12 @@ _evas_render2_th_main_obj_basic_process(Evas_Public_Data *e,
 }
 
 static void
-_evas_render2_th_main_obj_process(Evas_Public_Data *e,
-                                  Evas_Object_Protected_Data *obj,
-                                  void *updates,
-                                  int offx,
-                                  int offy,
-                                  int l EINA_UNUSED)
+_evas_render2_th_main_obj_walk_process(Evas_Public_Data *e,
+                                       Evas_Object_Protected_Data *obj,
+                                       void *updates,
+                                       int offx,
+                                       int offy,
+                                       int l EINA_UNUSED)
 {
    // process object OR walk through child objects if smart and process those
    Evas_Object_Protected_Data *obj2;
@@ -154,8 +154,8 @@ _evas_render2_th_main_obj_process(Evas_Public_Data *e,
           obj->func->render2_walk(eo_obj, obj, obj->private_data,
                                   updates, offx, offy);
         EINA_INLIST_FOREACH(il, obj2)
-          _evas_render2_th_main_obj_process(e, obj2, updates,
-                                            offx, offy, l + 1);
+          _evas_render2_th_main_obj_walk_process(e, obj2, updates,
+                                                 offx, offy, l + 1);
         if (obj->changed)
           {
              evas_object_clip_changes_clean(eo_obj);
@@ -163,8 +163,8 @@ _evas_render2_th_main_obj_process(Evas_Public_Data *e,
              evas_object_change_reset(eo_obj);
           }
      }
-   else _evas_render2_th_main_obj_basic_process(e, obj, updates,
-                                                offx, offy, l);
+   else _evas_render2_th_main_obj_basic_walk_process(e, obj, updates,
+                                                     offx, offy, l);
 }
 
 static Region *
@@ -172,10 +172,11 @@ _evas_render2_regions_merge(Region *region)
 {
    Region *region2;
    Box *rects;
-   int num, i;
+   int num, i, w, h;
    int tsize = 16;
 
-   region2 = region_new();
+   region_size_get(region, &w, &h);
+   region2 = region_new(w, h);
    rects = region_rects(region);
    num = region_rects_num(region);
    for (i = 0; i < num; i++)
@@ -205,16 +206,16 @@ _evas_render2_th_main_do(Eo *eo_e, Evas_Public_Data *e)
    int rects_num, i;
    static int num = 0;
 
-   updates = region_new();
+   updates = region_new(e->output.w, e->output.h);
    printf("........... updates # %i\n", num++);
    t = get_time();
    EINA_INLIST_FOREACH(e->layers, lay)
      {
         EINA_INLIST_FOREACH(lay->objects, obj)
           {
-             _evas_render2_th_main_obj_process(e, obj,
-                                               updates, 0, 0,
-                                               0);
+             _evas_render2_th_main_obj_walk_process(e, obj,
+                                                    updates, 0, 0,
+                                                    0);
           }
      }
    // add explicitly exposed/damaged regions of the canvas
@@ -231,6 +232,7 @@ _evas_render2_th_main_do(Eo *eo_e, Evas_Public_Data *e)
    t = get_time() - t;
    printf("T: update generation: "); out_time(t);
 
+   t = get_time();
    updates = _evas_render2_regions_merge(updates);
 
    rects = region_rects(updates);
@@ -255,6 +257,22 @@ _evas_render2_th_main_do(Eo *eo_e, Evas_Public_Data *e)
    printf("T: merge updates: "); out_time(t);
 
    // ... now render every update region
+   EINA_LIST_FOREACH(updates_list, l, rect)
+     {
+        // XXX: create update buffer
+        EINA_INLIST_FOREACH(e->layers, lay)
+          {
+             EINA_INLIST_FOREACH(lay->objects, obj)
+               {
+// render to update buffer
+//                  _evas_render2_th_main_obj_render_process(e, obj,
+//                                                           updates, 0, 0,
+//                                                           0);
+               }
+          }
+        // delete update buffer
+     }
+   // free up updates we don't need anymore
    region_free(updates);
 
    e->changed = EINA_FALSE;

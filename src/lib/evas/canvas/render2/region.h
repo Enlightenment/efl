@@ -70,8 +70,9 @@ struct _Box
 
 /* creation/destruction */
 
-Region       *region_new          (void);
+Region       *region_new          (int w, int h);
 void          region_free         (Region *region);
+void          region_size_get     (Region *region, int *w, int *h);
 
 void          region_move         (Region *region, int x, int y);
 Eina_Bool     region_copy         (Region *dest, Region *source);

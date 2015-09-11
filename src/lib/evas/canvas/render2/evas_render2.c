@@ -76,7 +76,7 @@ _evas_render2(Eo *eo_e, Evas_Public_Data *e)
    // if render threads not initted - init them - maybe move this later?
    _evas_render2_th_init();
 
-   printf("------------------------------------------------ %p %p\n", eo_e, e);
+   printf("-------------------------------------------- %p %p\n", eo_e, e);
    // wait for any previous render pass to do its thing
    t = get_time();
    evas_canvas_async_block(e);

@@ -64,6 +64,7 @@ struct _Region_Data
 
 struct _Region
 {
+   int w, h;
    struct {
       int          x, y;
       unsigned int w, h;
@@ -712,12 +713,14 @@ _region_del(Region *region, Box *r1, Box *r1end, Box *r2, Box *r2end,
 ///////////////////////////////////////////////////////////////////////////
 
 Region *
-region_new(void)
+region_new(int w, int h)
 {
    Region *region = calloc(1, sizeof(Region));
    if (!region) return NULL;
    region->bound = _region_emptybox;
    region->data = &_region_emptydata;
+   region->w = w;
+   region->h = h;
    return region;
 }
 
@@ -727,6 +730,13 @@ region_free(Region *region)
    if (!region) return;
    FREE_DATA(region);
    free(region);
+}
+
+void
+region_size_get(Region *region, int *w, int *h)
+{
+   *w = region->w;
+   *h = region->h;
 }
 
 int
@@ -746,6 +756,9 @@ region_copy(Region *dest, Region *src)
 {
    dest->last_del.w = 0;
    dest->last_add.w = 0;
+
+   dest->w = src->w;
+   dest->h = src->h;
 
    dest->bound = src->bound;
    if ((!src->data) || (!src->data->size))
@@ -874,6 +887,8 @@ region_rect_add(Region *dest, int x, int y, unsigned int w, unsigned int h)
 {
    Region region;
    Eina_Bool ret;
+
+   RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, dest->w, dest->h);
 
    if (!w || !h) return EINA_FALSE;
 
@@ -1026,16 +1041,16 @@ region_validate(Region *region, Eina_Bool *overlap_ret)
 
    // Set up the first region to be the first rectangle in region
    // Note that step 2 code will never overflow the ri[0].reg rects array
-   ri = malloc(4 * sizeof(Region_Info));
+   ri = calloc(1, 4 * sizeof(Region_Info));
    if (!ri) return _region_break(region);
    size_ri = 4;
    num_ri = 1;
-   ri[0].prev_band = 0;
-   ri[0].cur_band = 0;
    ri[0].reg = *region;
    box = PIXREGION_BOXPTR(&ri[0].reg);
    ri[0].reg.bound = *box;
    ri[0].reg.data->num = 1;
+   ri[0].reg.w = region->w;
+   ri[0].reg.h = region->h;
 
    // Now scatter rectangles into the minimum set of valid regions.  If the
    // next rectangle to be added to a region would force an existing rectangle
@@ -1099,6 +1114,8 @@ region_validate(Region *region, Eina_Bool *overlap_ret)
         rit->cur_band = 0;
         rit->reg.bound = *box;
         rit->reg.data = NULL;
+        rit->reg.w = region->w;
+        rit->reg.h = region->h;
         // MUST force allocation
         if (!_region_rect_alloc(&rit->reg, (i + num_ri) / num_ri)) goto bail;
         next_rect: ;
@@ -1198,6 +1215,8 @@ region_rect_del(Region *dest, int x, int y, unsigned int w, unsigned int h)
 {
    Region region;
    Eina_Bool ret;
+
+   RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, dest->w, dest->h);
 
    if (!w || !h) return EINA_FALSE;
 

@@ -139,9 +139,6 @@ evas_object_rectangle_render2_walk(Evas_Object *eo_obj,
    // just became visible or invisible
    if (visible_is != visible_was)
      {
-        printf("       UP1 %p - %4i %4i %4ix%4i\n", eo_obj,
-               obj->cur->cache.clip.x, obj->cur->cache.clip.y,
-               obj->cur->cache.clip.w, obj->cur->cache.clip.h);
         region_rect_add
           (updates,
            obj->cur->cache.clip.x - offx, obj->cur->cache.clip.y - offy,
@@ -162,9 +159,6 @@ evas_object_rectangle_render2_walk(Evas_Object *eo_obj,
        (obj->restack)
       )
      {
-        printf("       UP2 %p - %4i %4i %4ix%4i\n", eo_obj,
-               obj->prev->cache.clip.x, obj->prev->cache.clip.y,
-               obj->prev->cache.clip.w, obj->prev->cache.clip.h);
         region_rect_add
           (updates,
            obj->prev->cache.clip.x - offx, obj->prev->cache.clip.y - offy,
@@ -179,9 +173,6 @@ nochange:
    // object hasn't really changed
    if ((visible_is) && (evas_object_is_opaque(eo_obj, obj)))
      {
-        printf("       NO- %p - %4i %4i %4ix%4i\n", eo_obj,
-               obj->cur->cache.clip.x, obj->cur->cache.clip.y,
-               obj->cur->cache.clip.w, obj->cur->cache.clip.h);
         region_rect_del
           (updates,
            obj->cur->cache.clip.x - offx, obj->cur->cache.clip.y - offy,
