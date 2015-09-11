@@ -35,6 +35,13 @@
 # include <pthread.h>
 # include <errno.h>
 
+#ifdef EINA_HAVE_PTHREAD_AFFINITY
+#ifndef __linux__
+#include <pthread_np.h>
+#define cpu_set_t cpuset_t
+#endif
+#endif
+
 static inline void *
 _eina_thread_join(Eina_Thread t)
 {
@@ -181,7 +188,15 @@ eina_thread_name_set(Eina_Thread t, const char *name)
         buf[15] = 0;
      }
    else buf[0] = 0;
+#ifndef __linux__
+   pthread_set_name_np((pthread_t)t, buf);
+   return EINA_TRUE;
+#else
    if (pthread_setname_np((pthread_t)t, buf) == 0) return EINA_TRUE;
+#endif
+#else
+   (void)t;
+   (void)name;
 #endif
    return EINA_FALSE;
 }

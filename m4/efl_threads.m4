@@ -56,6 +56,9 @@ pthread_barrier_init(&barrier, NULL, 1);
 #include <stdlib.h>
 #include <pthread.h>
 #include <sched.h>
+#ifndef __linux__
+#include <pthread_np.h>
+#endif
                        ]],
                        [[
 pthread_attr_setaffinity_np(NULL, 0, NULL);
@@ -67,9 +70,16 @@ pthread_attr_setaffinity_np(NULL, 0, NULL);
 #define _GNU_SOURCE
 #include <stdlib.h>
 #include <pthread.h>
+#ifndef __linux__
+#include <pthread_np.h>
+#endif
                        ]],
                        [[
+#ifndef __linux__
+pthread_set_name_np(NULL, NULL);
+#else
 pthread_setname_np(NULL, NULL);
+#endif
                        ]])],
       [efl_have_setname="yes"],
       [efl_have_setname="no"])
