@@ -204,10 +204,10 @@ struct _Elm_Config
    double        thumbscroll_border_friction;
    double        thumbscroll_sensitivity_friction;
    unsigned char scroll_smooth_start_enable;
-   double        scroll_smooth_time_interval;
+//   double        scroll_smooth_time_interval;; // not used anymore
    double        scroll_smooth_amount;
-   double        scroll_smooth_history_weight;
-   double        scroll_smooth_future_time;
+//   double        scroll_smooth_history_weight;; // not used anymore
+//   double        scroll_smooth_future_time;; // not used anymore
    double        scroll_smooth_time_window;
    double        scale;
    int           bgpixmap;

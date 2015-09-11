@@ -166,6 +166,19 @@ sb_change(void *data       EINA_UNUSED,
 }
 
 static void
+ss_change(void *data       EINA_UNUSED,
+          Evas_Object     *obj,
+          void *event_info EINA_UNUSED)
+{
+   Eina_Bool val = elm_check_state_get(obj);
+   Eina_Bool ss = elm_config_scroll_thumbscroll_smooth_start_get();
+
+   if (val == ss) return;
+   elm_config_scroll_thumbscroll_smooth_start_set(val);
+   elm_config_all_flush();
+}
+
+static void
 bf_round(void *data       EINA_UNUSED,
          Evas_Object     *obj,
          void *event_info EINA_UNUSED)
@@ -262,6 +275,56 @@ zf_change(void *data       EINA_UNUSED,
 
    if (zf == val) return;
    elm_config_scroll_zoom_friction_set(val);
+   elm_config_all_flush();
+}
+
+static void
+smooth_round(void *data       EINA_UNUSED,
+             Evas_Object     *obj,
+             void *event_info EINA_UNUSED)
+{
+   double val = elm_slider_value_get(obj);
+   double v;
+
+   v = ((double)((int)(val * 100.0))) / 100.0;
+   if (v != val) elm_slider_value_set(obj, v);
+}
+
+static void
+smooth_change(void *data       EINA_UNUSED,
+              Evas_Object     *obj,
+              void *event_info EINA_UNUSED)
+{
+   double zf = elm_config_scroll_thumbscroll_smooth_amount_get();
+   double val = elm_slider_value_get(obj);
+
+   if (zf == val) return;
+   elm_config_scroll_thumbscroll_smooth_amount_set(val);
+   elm_config_all_flush();
+}
+
+static void
+smooth_win_round(void *data       EINA_UNUSED,
+                 Evas_Object     *obj,
+                 void *event_info EINA_UNUSED)
+{
+   double val = elm_slider_value_get(obj);
+   double v;
+
+   v = ((double)((int)(val * 100.0))) / 100.0;
+   if (v != val) elm_slider_value_set(obj, v);
+}
+
+static void
+smooth_win_change(void *data       EINA_UNUSED,
+                  Evas_Object     *obj,
+                  void *event_info EINA_UNUSED)
+{
+   double zf = elm_config_scroll_thumbscroll_smooth_time_window_get();
+   double val = elm_slider_value_get(obj);
+
+   if (zf == val) return;
+   elm_config_scroll_thumbscroll_smooth_time_window_set(val);
    elm_config_all_flush();
 }
 
@@ -1191,9 +1254,10 @@ _config_display_update(Evas_Object *win)
           ts_min_friction, ts_friction_standard, ts_border_friction,
           ts_sensitivity_friction, ts_acceleration_threshold,
           ts_acceleration_time_limit, ts_acceleration_weight, page_friction,
-          bring_in_friction, zoom_friction, transition_duration;
+          bring_in_friction, zoom_friction, transition_duration,
+          smooth_amount, smooth_time_window;
    const char *curr_theme;
-   Eina_Bool s_bounce, ts;
+   Eina_Bool s_bounce, ts, smooth_start;
    Elm_Theme *th;
    int fs;
 
@@ -1224,6 +1288,9 @@ _config_display_update(Evas_Object *win)
    page_friction = elm_config_scroll_page_scroll_friction_get();
    bring_in_friction = elm_config_scroll_bring_in_scroll_friction_get();
    zoom_friction = elm_config_scroll_zoom_friction_get();
+   smooth_start = elm_config_scroll_thumbscroll_smooth_start_get();
+   smooth_amount = elm_config_scroll_thumbscroll_smooth_amount_get();
+   smooth_time_window = elm_config_scroll_thumbscroll_smooth_time_window_get();
 
    /* gotta update root windows' atoms */
    elm_slider_value_set(evas_object_data_get(win, "scale_slider"), scale);
@@ -1287,6 +1354,15 @@ _config_display_update(Evas_Object *win)
    elm_slider_value_set(evas_object_data_get(win,
                                              "zoom_scroll_friction_slider"),
                         zoom_friction);
+
+   elm_check_state_set(evas_object_data_get(win, "scroll_smooth_start"),
+                       smooth_start);
+   elm_slider_value_set(evas_object_data_get(win,
+                                             "scroll_smooth_amount"),
+                        smooth_amount);
+   elm_slider_value_set(evas_object_data_get(win,
+                                             "scroll_smooth_time_window"),
+                        smooth_time_window);
 
    curr_theme = _elm_theme_current_get(elm_theme_get(NULL));
 
@@ -3355,7 +3431,7 @@ static void
 _status_config_scrolling(Evas_Object *win,
                          Evas_Object *naviframe)
 {
-   Evas_Object *lb, *pd, *bx, *sl, *sc;
+   Evas_Object *lb, *pd, *bx, *sl, *sc, *ck;
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
@@ -3439,6 +3515,55 @@ _status_config_scrolling(Evas_Object *win,
 
    evas_object_smart_callback_add(sl, "changed", zf_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", zf_change, NULL);
+
+   /* Enable Scroll Bounce */
+   CHECK_ADD("Enable smooth start",
+             "Set whether scrollers start smoothly on thumb<br/>"
+             "scroll",
+             ss_change, NULL);
+   evas_object_data_set(win, "scroll_smooth_start", ck);
+   elm_check_state_set(ck, elm_config_scroll_thumbscroll_smooth_start_get());
+
+   /* Scroll Smooth Amount */
+   LABEL_FRAME_ADD("<hilight>Scroll Smooth Amount</>");
+
+   sl = elm_slider_add(win);
+   elm_object_tooltip_text_set(sl, "This is the amount smoothing to apply<br/>"
+                                   "to thumbscroll to avoid jerky input");
+   evas_object_data_set(win, "scroll_smooth_amount", sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.2f");
+   elm_slider_indicator_format_set(sl, "%1.2f");
+   elm_slider_min_max_set(sl, 0.0, 1.0);
+   elm_slider_value_set(sl, elm_config_scroll_thumbscroll_smooth_amount_get());
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", smooth_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", smooth_change, NULL);
+
+   /* Scroll Smooth Time Window */
+   LABEL_FRAME_ADD("<hilight>Scroll Smooth Amount</>");
+
+   sl = elm_slider_add(win);
+   elm_object_tooltip_text_set(sl, "This is the amount smoothing to apply<br/>"
+                                   "to thumbscroll to avoid jerky input");
+   evas_object_data_set(win, "scroll_smooth_time_window", sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.2f");
+   elm_slider_indicator_format_set(sl, "%1.2f");
+   elm_slider_min_max_set(sl, 0.0, 1.0);
+   elm_slider_value_set(sl, elm_config_scroll_thumbscroll_smooth_time_window_get());
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", smooth_win_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", smooth_win_change, NULL);
+
 
    evas_object_data_set(win, "scrolling", sc);
 

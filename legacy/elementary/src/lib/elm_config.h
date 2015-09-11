@@ -490,6 +490,90 @@ EAPI double       elm_config_scroll_thumbscroll_sensitivity_friction_get(void);
 EAPI void         elm_config_scroll_thumbscroll_sensitivity_friction_set(double friction);
 
 /**
+ * Get the smooth start mode for scrolling with your finger
+ *
+ * @return smooth scroll flag
+ * 
+ * @see elm_config_scroll_thumbscroll_smooth_start_set()
+ *
+ * @since 1.16
+ * @ingroup Scrolling
+ */
+EAPI Eina_Bool    elm_config_scroll_thumbscroll_smooth_start_get(void);
+
+/**
+ * Set the smooth start mode for scrolling with your finger
+ *
+ * This enabled finger scrolling to scroll from the currunt point rather than
+ * jumping and playing catch-up to make start of scrolling look smoother once
+ * the finger or mouse goes past the threshold.
+ * 
+ * @param enable The enabled state of the smooth scroller
+ * 
+ * @see elm_config_scroll_thumbscroll_smooth_start_get()
+ *
+ * @since 1.16
+ * @ingroup Scrolling
+ */
+EAPI void         elm_config_scroll_thumbscroll_smooth_start_set(Eina_Bool enable);
+
+/**
+ * Get the amount of smoothing to apply to scrolling
+ *
+ * @return the amount of smoothing to apply from 0.0 to 1.0
+ *
+ * @see elm_config_scroll_thumbscroll_smooth_amount_set()
+ *
+ * @since 1.16
+ * @ingroup Scrolling
+ */
+EAPI double       elm_config_scroll_thumbscroll_smooth_amount_get(void);
+
+/**
+ * Set the amount of smoothing to apply to scrolling
+ *
+ * Scrolling with your finger can be smoothed out and the amount to smooth
+ * is determined by this parameter. 0.0 means to not smooth at all and
+ * 1.0 is to smoth as much as possible.
+ * 
+ * @param the amount to smooth from 0.0 to 1.0 with 0.0 being none
+ *
+ * @see elm_config_thumbscroll_acceleration_threshold_set()
+ * 
+ * @since 1.16
+ * @ingroup Scrolling
+ */
+EAPI void         elm_config_scroll_thumbscroll_smooth_amount_set(double amount);
+
+/**
+ * Get the time window to look back at for events for smoothing
+ *
+ * @return the time window in seconds (between 0.0 and 1.0)
+ *
+ * @see elm_config_scroll_thumbscroll_smooth_time_window_set()
+ *
+ * @since 1.16
+ * @ingroup Scrolling
+ */
+EAPI double       elm_config_scroll_thumbscroll_smooth_time_window_get(void);
+
+/**
+ * Set the time window to look back at for events for smoothing
+ *
+ * Scrolling with your finger can be smoothed out and the window of time
+ * to look at is determined by this config. The value is in seconds and
+ * is from 0.0 to 1.0
+ * 
+ * @param the time window in seconds (between 0.0 and 1.0)
+ *
+ * @see elm_config_scroll_thumbscroll_smooth_time_window_get()
+ * 
+ * @since 1.16
+ * @ingroup Scrolling
+ */
+EAPI void         elm_config_scroll_thumbscroll_smooth_time_window_set(double amount);
+
+/**
  * Get the minimum speed of mouse cursor movement which will accelerate
  * scrolling velocity after a mouse up event
  * (pixels/second).

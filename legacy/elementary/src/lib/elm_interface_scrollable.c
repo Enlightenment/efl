@@ -2964,12 +2964,17 @@ _elm_scroll_hold_enterer(void *data)
 
    fx = sid->down.hold_x;
    fy = sid->down.hold_y;
+//   printf("%1.5f %i ",
+//          ecore_loop_time_get() - sid->down.dragged_began_timestamp,
+//          fy);
 
-   if (_elm_config->scroll_smooth_amount > 0.0)
+   if ((_elm_config->scroll_smooth_amount > 0.0) &&
+       (_elm_config->scroll_smooth_time_window > 0.0))
      {
         int i, count = 0;
         Evas_Coord basex = 0, basey = 0, x, y;
         double dt, t, tdiff, tnow, twin;
+        double xx, yy, tot;
         struct
           {
              Evas_Coord x, y, dx, dy;
@@ -2977,76 +2982,61 @@ _elm_scroll_hold_enterer(void *data)
           } pos[60];
 
         tdiff = sid->down.hist.est_timestamp_diff;
-        tnow = ecore_time_get() - tdiff;
+        tnow = ecore_loop_time_get();
         t = tnow;
         twin = _elm_config->scroll_smooth_time_window;
         for (i = 0; i < 60; i++)
           {
-             if (sid->down.history[i].timestamp >
-                 sid->down.dragged_began_timestamp)
+             if ((sid->down.history[i].timestamp - tdiff) > tnow)
                {
-                  // oldest point is sd->down.history[i]
-                  // newset is sd->down.history[0]
-                  dt = t - sid->down.history[i].timestamp;
-                  if (dt > twin)
-                    {
-                       i--;
-                       count--;
-                       break;
-                    }
+                  continue;
+               }
+             if ((sid->down.history[i].timestamp >
+                 sid->down.dragged_began_timestamp) || (count == 0))
+               {
                   x = sid->down.history[i].x;
                   y = sid->down.history[i].y;
-                  _elm_scroll_down_coord_eval(sid, &x, &y);
                   if (i == 0)
                     {
                        basex = x;
                        basey = y;
                     }
+                  dt = t - sid->down.history[i].timestamp;
+                  if ((dt > twin) && (count > 0)) break;
+                  _elm_scroll_down_coord_eval(sid, &x, &y);
                   pos[i].x = x - basex;
                   pos[i].y = y - basey;
-                  pos[i].t = sid->down.history[i].timestamp - sid->down.history[0].timestamp;
+                  pos[i].t = sid->down.history[0].timestamp - sid->down.history[i].timestamp;
                   count++;
                }
           }
-        if (count >= 2)
+        if (count > 0)
           {
-             double dtsum = 0.0, tadd, maxdt;
-             double dxsum = 0.0, dysum = 0.0, xsum = 0.0, ysum = 0.0;
-             for (i = 0; i < (count - 1); i++)
+             xx = 0.0;
+             yy = 0.0;
+             tot = 0.0;
+             for (i = 0; i < count; i++)
                {
-                  pos[i].dx = pos[i].x - pos[i + 1].x;
-                  pos[i].dy = pos[i].y - pos[i + 1].y;
-                  pos[i].dt = pos[i].t - pos[i + 1].t;
-                  dxsum += pos[i].dx;
-                  dysum += pos[i].dy;
-                  dtsum += pos[i].dt;
-                  xsum += pos[i].x;
-                  ysum += pos[i].y;
+                  double wt = (twin - pos[i].t) / twin;
+
+                  xx += ((double)(pos[i].x)) * wt;
+                  yy += ((double)(pos[i].y)) * wt;
+                  tot += wt;
                }
-             maxdt = pos[i].t;
-             dxsum /= (double)i;
-             dysum /= (double)i;
-             dtsum /= (double)i;
-             if (dtsum > 0)
+             if (tot > 0.0)
                {
-                  xsum /= (double)i;
-                  ysum /= (double)i;
-                  tadd = tnow - sid->down.history[0].timestamp + _elm_config->scroll_smooth_future_time;
-                  tadd = tadd - (maxdt / 2);
-#define WEIGHT(n, o, v) n = (((double)o * (1.0 - v)) + ((double)n * v))
-                  WEIGHT(tadd, sid->down.hist.tadd, _elm_config->scroll_smooth_history_weight);
-                  WEIGHT(dxsum, sid->down.hist.dxsum, _elm_config->scroll_smooth_history_weight);
-                  WEIGHT(dysum, sid->down.hist.dysum, _elm_config->scroll_smooth_history_weight);
-                  fx = basex + xsum + ((dxsum * tadd) / dtsum);
-                  fy = basey + ysum + ((dysum * tadd) / dtsum);
-                  sid->down.hist.tadd = tadd;
-                  sid->down.hist.dxsum = dxsum;
-                  sid->down.hist.dysum = dysum;
-                  WEIGHT(fx, sid->down.hold_x, _elm_config->scroll_smooth_amount);
-                  WEIGHT(fy, sid->down.hold_y, _elm_config->scroll_smooth_amount);
+                  xx = basex + (xx / tot);
+                  yy = basey + (yy / tot);
+                  fx =
+                    (_elm_config->scroll_smooth_amount * xx) +
+                    ((1.0 - _elm_config->scroll_smooth_amount) * fx);
+                  fy =
+                    (_elm_config->scroll_smooth_amount * yy) +
+                    ((1.0 - _elm_config->scroll_smooth_amount) * fy);
                }
           }
      }
+//   printf("%i\n", fy);
 
    eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&ox, &oy));
    if (sid->down.dir_x)
