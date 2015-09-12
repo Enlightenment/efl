@@ -89,6 +89,7 @@ v4_mul_color_sse2(__m128i x, __m128i y)
 {
    const __m128i zero = _mm_setzero_si128();
    const __m128i sym4_mask = _mm_set_epi32(0x00FF00FF, 0x000000FF, 0x00FF00FF, 0x000000FF);
+
    __m128i x_l = _mm_unpacklo_epi8(x, zero);
    __m128i x_h = _mm_unpackhi_epi8(x, zero);
 
@@ -111,6 +112,7 @@ static inline __m128i
 v4_ialpha_sse2(__m128i c)
 {
    __m128i a = _mm_srli_epi32(c, 24);
+
    return _mm_sub_epi32(_mm_set1_epi32(0xff), a);
 }
 
@@ -141,10 +143,14 @@ comp_func_helper_sse2 (uint *dest, int length, uint color, uint alpha)
 void
 comp_func_solid_source_sse2(uint *dest, int length, uint color, uint const_alpha)
 {
-   int ialpha;
-   if (const_alpha == 255) _ector_memfill(dest, length, color);
+   if (const_alpha == 255)
+     {
+        _ector_memfill(dest, length, color);
+     }
    else
      {
+        int ialpha;
+
         ialpha = 255 - const_alpha;
         color = BYTE_MUL(color, const_alpha);
         comp_func_helper_sse2(dest, length, color, ialpha);
@@ -155,9 +161,10 @@ void
 comp_func_solid_source_over_sse2(uint *dest, int length, uint color, uint const_alpha)
 {
    int ialpha;
+
    if (const_alpha != 255)
      color = BYTE_MUL(color, const_alpha);
-   ialpha = _alpha(~color);
+   ialpha = alpha_inverse(color);
    comp_func_helper_sse2(dest, length, color, ialpha);
 }
 
@@ -194,21 +201,23 @@ comp_func_solid_source_over_sse2(uint *dest, int length, uint color, uint const_
 #define V4_COMP_OP_SRC \
   v_src = v4_interpolate_color_sse2(v_alpha, v_src, v_dest);
 
-
-
 static void
 comp_func_source_sse2(uint *dest, const uint *src, int length, uint color, uint const_alpha)
 {
    int ialpha;
    uint src_color;
+
    if (color == 0xffffffff) // No color multiplier
      {
         if (const_alpha == 255)
-          memcpy(dest, src, length * sizeof(uint));
+          {
+             memcpy(dest, src, length * sizeof(uint));
+          }
         else
           {
              ialpha = 255 - const_alpha;
              __m128i v_alpha = _mm_set1_epi32(const_alpha);
+
              LOOP_ALIGNED_U1_A4(dest, length,
                { /* UOP */
                   *dest = INTERPOLATE_PIXEL_256(*src, const_alpha, *dest, ialpha);
@@ -225,6 +234,7 @@ comp_func_source_sse2(uint *dest, const uint *src, int length, uint color, uint 
    else
      {
         __m128i v_color = _mm_set1_epi32(color);
+
         if (const_alpha == 255)
           {
              LOOP_ALIGNED_U1_A4(dest, length,
@@ -243,6 +253,7 @@ comp_func_source_sse2(uint *dest, const uint *src, int length, uint color, uint 
           {
              ialpha = 255 - const_alpha;
              __m128i v_alpha = _mm_set1_epi32(const_alpha);
+
              LOOP_ALIGNED_U1_A4(dest, length,
                { /* UOP */
                   src_color = ECTOR_MUL4_SYM(*src, color);
@@ -264,6 +275,7 @@ static void
 comp_func_source_over_sse2(uint *dest, const uint *src, int length, uint color, uint const_alpha)
 {
    uint s, sia;
+
    if (const_alpha != 255)
      color = BYTE_MUL(color, const_alpha);
 
@@ -272,7 +284,7 @@ comp_func_source_over_sse2(uint *dest, const uint *src, int length, uint color, 
         LOOP_ALIGNED_U1_A4(dest, length,
          { /* UOP */
             s = *src;
-            sia = _alpha(~s);
+            sia = alpha_inverse(s);
             *dest = s + BYTE_MUL(*dest, sia);
             dest++; src++; length--;
          },
@@ -286,10 +298,11 @@ comp_func_source_over_sse2(uint *dest, const uint *src, int length, uint color, 
    else
      {
         __m128i v_color = _mm_set1_epi32(color);
+
         LOOP_ALIGNED_U1_A4(dest, length,
          { /* UOP */
             s = ECTOR_MUL4_SYM(*src, color);
-            sia = _alpha(~s);
+            sia = alpha_inverse(s);
             *dest = s + BYTE_MUL(*dest, sia);
             dest++; src++; length--;
          },
@@ -321,4 +334,3 @@ init_draw_helper_sse2()
       }
 #endif
 }
-

@@ -7,6 +7,7 @@
 
 #ifdef BUILD_NEON
 #include <arm_neon.h>
+
 static void
 comp_func_solid_source_over_neon(uint * __restrict dest, int length, uint color, uint const_alpha)
 {
@@ -39,8 +40,8 @@ comp_func_solid_source_over_neon(uint * __restrict dest, int length, uint color,
    // alpha can only be 0 if color is 0x0. In that case we can just return.
    // Otherwise we can assume alpha != 0. This allows more optimization in
    // NEON code.
-   if(!color)
-      return;
+   if (!color)
+     return;
 
    DATA32 *start = dest;
    int size = length;
@@ -53,46 +54,47 @@ comp_func_solid_source_over_neon(uint * __restrict dest, int length, uint color,
    c_32x4 = vdupq_n_u32(color);
 
    while (start < end)
-   {
-      d0_32x4 = vld1q_u32(start);
-      d1_32x4 = vld1q_u32(start+4);
-      d0_8x16 = vreinterpretq_u8_u32(d0_32x4);
-      d1_8x16 = vreinterpretq_u8_u32(d1_32x4);
+     {
+        d0_32x4 = vld1q_u32(start);
+        d1_32x4 = vld1q_u32(start+4);
+        d0_8x16 = vreinterpretq_u8_u32(d0_32x4);
+        d1_8x16 = vreinterpretq_u8_u32(d1_32x4);
 
-      d00_8x8 = vget_low_u8(d0_8x16);
-      d01_8x8 = vget_high_u8(d0_8x16);
-      d10_8x8 = vget_low_u8(d1_8x16);
-      d11_8x8 = vget_high_u8(d1_8x16);
+        d00_8x8 = vget_low_u8(d0_8x16);
+        d01_8x8 = vget_high_u8(d0_8x16);
+        d10_8x8 = vget_low_u8(d1_8x16);
+        d11_8x8 = vget_high_u8(d1_8x16);
 
-      temp00_16x8 = vmull_u8(alpha_8x8, d00_8x8);
-      temp01_16x8 = vmull_u8(alpha_8x8, d01_8x8);
-      temp10_16x8 = vmull_u8(alpha_8x8, d10_8x8);
-      temp11_16x8 = vmull_u8(alpha_8x8, d11_8x8);
+        temp00_16x8 = vmull_u8(alpha_8x8, d00_8x8);
+        temp01_16x8 = vmull_u8(alpha_8x8, d01_8x8);
+        temp10_16x8 = vmull_u8(alpha_8x8, d10_8x8);
+        temp11_16x8 = vmull_u8(alpha_8x8, d11_8x8);
 
-      temp00_8x8 = vshrn_n_u16(temp00_16x8,8);
-      temp01_8x8 = vshrn_n_u16(temp01_16x8,8);
-      temp10_8x8 = vshrn_n_u16(temp10_16x8,8);
-      temp11_8x8 = vshrn_n_u16(temp11_16x8,8);
+        temp00_8x8 = vshrn_n_u16(temp00_16x8,8);
+        temp01_8x8 = vshrn_n_u16(temp01_16x8,8);
+        temp10_8x8 = vshrn_n_u16(temp10_16x8,8);
+        temp11_8x8 = vshrn_n_u16(temp11_16x8,8);
 
-      temp0_8x16 = vcombine_u8(temp00_8x8, temp01_8x8);
-      temp1_8x16 = vcombine_u8(temp10_8x8, temp11_8x8);
+        temp0_8x16 = vcombine_u8(temp00_8x8, temp01_8x8);
+        temp1_8x16 = vcombine_u8(temp10_8x8, temp11_8x8);
 
-      temp0_32x4 = vreinterpretq_u32_u8(temp0_8x16);
-      temp1_32x4 = vreinterpretq_u32_u8(temp1_8x16);
+        temp0_32x4 = vreinterpretq_u32_u8(temp0_8x16);
+        temp1_32x4 = vreinterpretq_u32_u8(temp1_8x16);
 
-      d0_32x4 = vaddq_u32(c_32x4, temp0_32x4);
-      d1_32x4 = vaddq_u32(c_32x4, temp1_32x4);
+        d0_32x4 = vaddq_u32(c_32x4, temp0_32x4);
+        d1_32x4 = vaddq_u32(c_32x4, temp1_32x4);
 
-      vst1q_u32(start, d0_32x4);
-      vst1q_u32(start+4, d1_32x4);
-      start+=8;
-   }
+        vst1q_u32(start, d0_32x4);
+        vst1q_u32(start+4, d1_32x4);
+        start+=8;
+     }
+
    end += (size & 7);
    while (start <  end)
-   {
-      *start = color + MUL_256(alpha, *start);
-      start++;
-   }
+     {
+        *start = color + MUL_256(alpha, *start);
+        start++;
+     }
 }
 
 /* Note: Optimisation is based on keeping _dest_ aligned: else it's a pair of
@@ -132,6 +134,9 @@ comp_func_source_over_sse2(uint * __restrict dest, const uint * __restrict src, 
    uint8x8_t s1_8x8;
    uint8x8_t sc0_8x8;
    uint8x8_t sc1_8x8;
+   int size;
+   DATA32 *start;
+   DATA32 *end;
 
    if (const_alpha != 255)
      color = BYTE_MUL(color, const_alpha);
@@ -143,69 +148,69 @@ comp_func_source_over_sse2(uint * __restrict dest, const uint * __restrict src, 
    x0_32x4 = vreinterpretq_u32_u8(x0_8x16);
    x1_8x16 = vdupq_n_u8(0x1);
    x1_32x4 = vreinterpretq_u32_u8(x1_8x16);
-   DATA32 *start = dest;
-   int size = l;
-   DATA32 *end = start + (size & ~3);
+   start = dest;
+   size = l;
+   end = start + (size & ~3);
+
    while (start < end)
-   {
+     {
+        s_32x4 = vld1q_u32(src);
+        s_8x16 = vreinterpretq_u8_u32(s_32x4);
 
-      s_32x4 = vld1q_u32(src);
-      s_8x16 = vreinterpretq_u8_u32(s_32x4);
+        d_32x4 = vld1q_u32(start);
+        d_8x16 = vreinterpretq_u8_u32(d_32x4);
+        d0_8x8 = vget_low_u8(d_8x16);
+        d1_8x8 = vget_high_u8(d_8x16);
 
-      d_32x4 = vld1q_u32(start);
-      d_8x16 = vreinterpretq_u8_u32(d_32x4);
-      d0_8x8 = vget_low_u8(d_8x16);
-      d1_8x8 = vget_high_u8(d_8x16);
+        s0_8x8 = vget_low_u8(s_8x16);
+        s1_8x8 = vget_high_u8(s_8x16);
 
-      s0_8x8 = vget_low_u8(s_8x16);
-      s1_8x8 = vget_high_u8(s_8x16);
+        sc0_16x8 = vmull_u8(s0_8x8, c_8x8);
+        sc1_16x8 = vmull_u8(s1_8x8, c_8x8);
+        sc0_16x8 = vaddq_u16(sc0_16x8, x255_16x8);
+        sc1_16x8 = vaddq_u16(sc1_16x8, x255_16x8);
+        sc0_8x8 = vshrn_n_u16(sc0_16x8, 8);
+        sc1_8x8 = vshrn_n_u16(sc1_16x8, 8);
+        sc_8x16 = vcombine_u8(sc0_8x8, sc1_8x8);
 
-      sc0_16x8 = vmull_u8(s0_8x8, c_8x8);
-      sc1_16x8 = vmull_u8(s1_8x8, c_8x8);
-      sc0_16x8 = vaddq_u16(sc0_16x8, x255_16x8);
-      sc1_16x8 = vaddq_u16(sc1_16x8, x255_16x8);
-      sc0_8x8 = vshrn_n_u16(sc0_16x8, 8);
-      sc1_8x8 = vshrn_n_u16(sc1_16x8, 8);
-      sc_8x16 = vcombine_u8(sc0_8x8, sc1_8x8);
+        alpha_32x4 = vreinterpretq_u32_u8(sc_8x16);
+        alpha_32x4 = vshrq_n_u32(alpha_32x4, 24);
+        alpha_32x4 = vmulq_u32(x1_32x4, alpha_32x4);
+        alpha_8x16 = vreinterpretq_u8_u32(alpha_32x4);
+        alpha_8x16 = vsubq_u8(x0_8x16, alpha_8x16);
+        alpha0_8x8 = vget_low_u8(alpha_8x16);
+        alpha1_8x8 = vget_high_u8(alpha_8x16);
 
-      alpha_32x4 = vreinterpretq_u32_u8(sc_8x16);
-      alpha_32x4 = vshrq_n_u32(alpha_32x4, 24);
-      alpha_32x4 = vmulq_u32(x1_32x4, alpha_32x4);
-      alpha_8x16 = vreinterpretq_u8_u32(alpha_32x4);
-      alpha_8x16 = vsubq_u8(x0_8x16, alpha_8x16);
-      alpha0_8x8 = vget_low_u8(alpha_8x16);
-      alpha1_8x8 = vget_high_u8(alpha_8x16);
+        ad0_16x8 = vmull_u8(alpha0_8x8, d0_8x8);
+        ad1_16x8 = vmull_u8(alpha1_8x8, d1_8x8);
+        ad0_8x8 = vshrn_n_u16(ad0_16x8,8);
+        ad1_8x8 = vshrn_n_u16(ad1_16x8,8);
+        ad_8x16 = vcombine_u8(ad0_8x8, ad1_8x8);
+        ad_32x4 = vreinterpretq_u32_u8(ad_8x16);
 
-      ad0_16x8 = vmull_u8(alpha0_8x8, d0_8x8);
-      ad1_16x8 = vmull_u8(alpha1_8x8, d1_8x8);
-      ad0_8x8 = vshrn_n_u16(ad0_16x8,8);
-      ad1_8x8 = vshrn_n_u16(ad1_16x8,8);
-      ad_8x16 = vcombine_u8(ad0_8x8, ad1_8x8);
-      ad_32x4 = vreinterpretq_u32_u8(ad_8x16);
+        alpha_32x4 = vreinterpretq_u32_u8(alpha_8x16);
+        cond_32x4 = vceqq_u32(alpha_32x4, x0_32x4);
+        ad_32x4 = vbslq_u32(cond_32x4, d_32x4 , ad_32x4);
 
-      alpha_32x4 = vreinterpretq_u32_u8(alpha_8x16);
-      cond_32x4 = vceqq_u32(alpha_32x4, x0_32x4);
-      ad_32x4 = vbslq_u32(cond_32x4, d_32x4 , ad_32x4);
+        sc_32x4 = vreinterpretq_u32_u8(sc_8x16);
+        d_32x4 = vaddq_u32(sc_32x4, ad_32x4);
 
-      sc_32x4 = vreinterpretq_u32_u8(sc_8x16);
-      d_32x4 = vaddq_u32(sc_32x4, ad_32x4);
+        vst1q_u32(start, d_32x4);
 
-      vst1q_u32(start, d_32x4);
+        src+=4;
+        start+=4;
+     }
 
-      src+=4;
-      start+=4;
-   }
    end += (size & 3);
    while (start <  end)
-   {
-      DATA32 sc = MUL4_SYM(color, *s);
-      DATA32 alpha = 256 - (sc >> 24);
-      *start = sc + MUL_256(alpha, *start);
-      start++;
-      src++;
-   }
+     {
+        DATA32 sc = MUL4_SYM(color, *s);
+        DATA32 alpha = 256 - (sc >> 24);
+        *start = sc + MUL_256(alpha, *start);
+        start++;
+        src++;
+     }
 }
-
 #endif
 
 void
