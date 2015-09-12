@@ -3545,11 +3545,11 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "delay,changed", smooth_change, NULL);
 
    /* Scroll Smooth Time Window */
-   LABEL_FRAME_ADD("<hilight>Scroll Smooth Amount</>");
+   LABEL_FRAME_ADD("<hilight>Scroll Smooth Time Window</>");
 
    sl = elm_slider_add(win);
-   elm_object_tooltip_text_set(sl, "This is the amount smoothing to apply<br/>"
-                                   "to thumbscroll to avoid jerky input");
+   elm_object_tooltip_text_set(sl, "This is the window of time to look back<br/>"
+                                   "into for smoothing of thumbscroll");
    evas_object_data_set(win, "scroll_smooth_time_window", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
