@@ -2402,14 +2402,29 @@ _item_new(Evas_Object *obj,
         evas_object_size_hint_max_set(it->icon, sd->icon_size, sd->icon_size);
         elm_layout_content_set(VIEW(it), "elm.swallow.icon", it->icon);
         elm_layout_signal_emit(VIEW(it), "elm,state,icon,visible", "elm");
+        elm_layout_signal_emit(VIEW(it), "elm,icon,visible", "elm");
         evas_object_show(it->icon);
         elm_widget_sub_object_add(obj, it->icon);
      }
+   else
+     {
+        elm_layout_signal_emit(VIEW(it), "elm,state,icon,hidden", "elm");
+        elm_layout_signal_emit(VIEW(it), "elm,icon,hidden", "elm");
+     }
+
    if (it->label)
      {
         elm_layout_text_set(VIEW(it), "elm.text", it->label);
         elm_layout_signal_emit(VIEW(it), "elm,state,text,visible", "elm");
+        elm_layout_signal_emit(VIEW(it), "elm,text,visible", "elm");
      }
+   else
+     {
+        elm_layout_signal_emit(VIEW(it), "elm,state,text,hidden", "elm");
+        elm_layout_signal_emit(VIEW(it), "elm,text,hidden", "elm");
+     }
+
+   edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
 
    evas_object_event_callback_add
      (VIEW(it), EVAS_CALLBACK_RESIZE, _item_resize, obj);
