@@ -1131,7 +1131,10 @@ START_TEST(eolian_docs)
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "This is struct Foo. It does stuff."));
    fail_if(strcmp(eolian_documentation_description_get(doc),
+                  "Note: This is a note.\n\n"
                   "This is a longer description for struct Foo.\n\n"
+                  "Warning: This is a warning. You can only use Warning: "
+                  "and Note: at the beginning of a paragraph.\n\n"
                   "This is another paragraph."));
    fail_if(strcmp(eolian_documentation_since_get(doc),
                   "1.66"));

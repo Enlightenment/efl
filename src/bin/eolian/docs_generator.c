@@ -122,11 +122,28 @@ static int
 _append_section(const char *desc, int ind, int curl, Eina_Strbuf *buf,
                 Eina_Strbuf *wbuf, Eina_Bool use_legacy)
 {
+   Eina_Bool try_note = EINA_TRUE;
    while (*desc)
      {
         eina_strbuf_reset(wbuf);
         while (*desc && isspace(*desc) && (*desc != '\n'))
           eina_strbuf_append_char(wbuf, *desc++);
+        if (try_note)
+          {
+#define CHECK_NOTE(str) !strncmp(desc, str ": ", sizeof(str ": ") - 1)
+             if (CHECK_NOTE("Note"))
+               {
+                  eina_strbuf_append(wbuf, "@note ");
+                  desc += sizeof("Note:");
+               }
+             else if (CHECK_NOTE("Warning"))
+               {
+                  eina_strbuf_append(wbuf, "@warning ");
+                  desc += sizeof("Warning:");
+               }
+#undef CHECK_NOTE
+             try_note = EINA_FALSE;
+          }
         if (*desc == '\\')
           {
              desc++;
@@ -182,6 +199,7 @@ _append_section(const char *desc, int ind, int curl, Eina_Strbuf *buf,
                   _indent_line(buf, ind);
                   eina_strbuf_append(buf, " *\n");
                   desc++;
+                  try_note = EINA_TRUE;
                }
              curl = _indent_line(buf, ind) + 3;
              eina_strbuf_append(buf, " * ");

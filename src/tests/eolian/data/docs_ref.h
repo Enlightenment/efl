@@ -14,7 +14,12 @@ typedef Eo Docs;
 /**
  * @brief This is struct Foo. It does stuff.
  *
+ * @note This is a note.
+ *
  * This is a longer description for struct Foo.
+ *
+ * @warning This is a warning. You can only use Warning: and Note: at the
+ * beginning of a paragraph.
  *
  * This is another paragraph.
  *
