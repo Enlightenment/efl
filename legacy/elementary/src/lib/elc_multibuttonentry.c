@@ -1306,6 +1306,7 @@ _box_layout_cb(Evas_Object *o,
    const Eina_List *l, *l_next;
    Evas_Object *obj;
    double ax, ay;
+   Eina_Bool rtl;
 
    if (!_box_min_size_calculate(o, priv, &lineh, data)) return;
 
@@ -1313,6 +1314,10 @@ _box_layout_cb(Evas_Object *o,
 
    evas_object_size_hint_min_get(o, &minw, &minh);
    evas_object_size_hint_align_get(o, &ax, &ay);
+
+   rtl = elm_widget_mirrored_get(data);
+   if (rtl) ax = 1.0 - ax;
+
    if (w < minw)
      {
         x = x + ((w - minw) * (1.0 - ax));
@@ -1342,6 +1347,7 @@ _box_layout_cb(Evas_Object *o,
         fw = fh = EINA_FALSE;
         if (ax == -1.0) {fw = 1; ax = 0.5; }
         if (ay == -1.0) {fh = 1; ay = 0.5; }
+        if (rtl) ax = 1.0 - ax;
 
         ww = mnw;
         if (wx)
@@ -1366,7 +1372,8 @@ _box_layout_cb(Evas_Object *o,
           }
 
         evas_object_move(obj,
-                         xx + (Evas_Coord)(((double)(ww - ow)) * ax),
+                         ((!rtl) ? (xx) : (x + (w - (xx - x) - ww)))
+                         + (Evas_Coord)(((double)(ww - ow)) * ax),
                          yy + (Evas_Coord)(((double)(hh - oh)) * ay));
         evas_object_resize(obj, ow, oh);
 
