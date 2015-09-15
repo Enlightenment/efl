@@ -328,9 +328,9 @@ case EDJE_PART_TYPE_##Short:                                          \
 
       case EDJE_PART_TYPE_SNAPSHOT:
         desc_rtl = eina_mempool_malloc(ce->mp_rtl.SNAPSHOT,
-                                       sizeof (Edje_Part_Description_Common));
+                                       sizeof (Edje_Part_Description_Snapshot));
         ce->count.SNAPSHOT++;
-        memsize = sizeof(Edje_Part_Description_Common);
+        memsize = sizeof(Edje_Part_Description_Snapshot);
         break;
 
       case EDJE_PART_TYPE_SWALLOW:
@@ -4302,6 +4302,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
            case EDJE_PART_TYPE_TEXTBLOCK:
            case EDJE_PART_TYPE_BOX:
            case EDJE_PART_TYPE_TABLE:
+           case EDJE_PART_TYPE_SNAPSHOT:
              evas_object_color_set(ep->object,
                                    (pf->color.r * pf->color.a) / 255,
                                    (pf->color.g * pf->color.a) / 255,
