@@ -48,7 +48,7 @@ typedef enum _Elm_Focus_Direction
    ELM_FOCUS_LEFT,      /**< left direction */
    ELM_FOCUS_MOUSE,      /**< direction is from mouse */
    ELM_FOCUS_REVERT      /**< direction is from focus revert */
-} Elm_Focus_Dicretion;
+} Elm_Focus_Direction;
 
 /**
  * Focus region show mode.
