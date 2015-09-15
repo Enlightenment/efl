@@ -135,7 +135,7 @@ _elm_access_elm_widget_activate(Eo *obj, void *_pd EINA_UNUSED, Elm_Activate act
 }
 
 EOLIAN static Eina_Bool
-_elm_access_elm_widget_on_focus(Eo *obj, void *_pd EINA_UNUSED)
+_elm_access_elm_widget_on_focus(Eo *obj, void *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
    evas_object_focus_set(obj, elm_widget_focus_get(obj));
 
@@ -522,7 +522,7 @@ _access_highlight_next_get(Evas_Object *obj, Elm_Focus_Direction dir)
           }
         else
           {
-             ret = elm_widget_focus_next_get(obj, dir, &target);
+             ret = elm_widget_focus_next_get(obj, dir, &target, NULL);
              if (ret && target)
                _elm_access_highlight_set(target);
           }

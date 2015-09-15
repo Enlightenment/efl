@@ -38,7 +38,7 @@
  *
  * @ingroup Focus
  */
-typedef enum
+typedef enum _Elm_Focus_Direction
 {
    ELM_FOCUS_PREVIOUS, /**< previous direction */
    ELM_FOCUS_NEXT,     /**< next direction */
@@ -48,7 +48,7 @@ typedef enum
    ELM_FOCUS_LEFT,      /**< left direction */
    ELM_FOCUS_MOUSE,      /**< direction is from mouse */
    ELM_FOCUS_REVERT      /**< direction is from focus revert */
-} Elm_Focus_Direction;
+} Elm_Focus_Dicretion;
 
 /**
  * Focus region show mode.
@@ -247,6 +247,47 @@ EAPI Evas_Object *        elm_object_focus_next_object_get(const Evas_Object *ob
  * @ingroup Focus
  */
 EAPI void                 elm_object_focus_next_object_set(Evas_Object *obj, Evas_Object *next, Elm_Focus_Direction dir);
+
+/**
+ * Get next object item which was set with specific focus direction.
+ *
+ * Get next object item which was set by elm_object_focus_next_item_set
+ * with specific focus direction.
+ *
+ * @param obj The Elementary object
+ * @param dir Focus direction
+ * @return Focus next object item or @c NULL, if there is no focus next
+ * object item.
+ *
+ * @see elm_object_focus_next_item_set(), elm_object_focus_next()
+ *
+ * @since 1.16
+ *
+ * @ingroup Focus
+ */
+EAPI Elm_Object_Item *    elm_object_focus_next_item_get(const Evas_Object *obj, Elm_Focus_Direction dir);
+
+/**
+ * Set next object item with specific focus direction.
+ *
+ * When focus next object item is set with specific focus direction,
+ * this object item will be the first candidate when finding
+ * next focusable object or item.
+ * If the focus next object item is set, it is preference to focus next object.
+ * Focus next object item can be registered with six directions that are
+ * previous, next, up, down, right, and left.
+ *
+ * @param obj The Elementary object
+ * @param next_item Focus next object item
+ * @param dir Focus direction
+ *
+ * @see elm_object_focus_next_item_get(), elm_object_focus_next()
+ *
+ * @since 1.16
+ *
+ * @ingroup Focus
+ */
+EAPI void                 elm_object_focus_next_item_set(Evas_Object *obj, Elm_Object_Item *next_item, Elm_Focus_Direction dir);
 
 /**
  * Get focused object in object tree.

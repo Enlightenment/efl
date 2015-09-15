@@ -1952,7 +1952,7 @@ _elm_colorselector_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Col
 }
 
 EOLIAN static Eina_Bool
-_elm_colorselector_elm_widget_focus_next(Eo *obj, Elm_Colorselector_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_colorselector_elm_widget_focus_next(Eo *obj, Elm_Colorselector_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    Eina_List *items = NULL;
    Eina_List *l;
@@ -1985,7 +1985,7 @@ _elm_colorselector_elm_widget_focus_next(Eo *obj, Elm_Colorselector_Data *sd, El
      }
 
    return elm_widget_focus_list_next_get
-            (obj, items, eina_list_data_get, dir, next);
+            (obj, items, eina_list_data_get, dir, next, next_item);
 }
 
 static void

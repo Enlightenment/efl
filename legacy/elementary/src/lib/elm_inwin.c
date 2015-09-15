@@ -46,7 +46,7 @@ _elm_inwin_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_
 }
 
 EOLIAN static Eina_Bool
-_elm_inwin_elm_widget_focus_next(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_inwin_elm_widget_focus_next(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    Evas_Object *content;
 
@@ -55,7 +55,7 @@ _elm_inwin_elm_widget_focus_next(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Elm
    /* attempt to follow focus cycle into sub-object */
    if (content)
      {
-        elm_widget_focus_next_get(content, dir, next);
+        elm_widget_focus_next_get(content, dir, next, next_item);
         if (*next) return EINA_TRUE;
      }
 

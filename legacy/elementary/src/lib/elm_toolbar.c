@@ -742,13 +742,13 @@ _elm_toolbar_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
 }
 
 EOLIAN static Eina_Bool
-_elm_toolbar_elm_widget_on_focus(Eo *obj, Elm_Toolbar_Data *sd)
+_elm_toolbar_elm_widget_on_focus(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus(NULL));
    if (!int_ret) return EINA_FALSE;
    if (!sd->items) return EINA_FALSE;
 
@@ -2854,7 +2854,7 @@ _elm_toolbar_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Toolbar_D
 }
 
 EOLIAN static Eina_Bool
-_elm_toolbar_elm_widget_focus_next(Eo *obj, Elm_Toolbar_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_toolbar_elm_widget_focus_next(Eo *obj, Elm_Toolbar_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    Eina_List *items = NULL;
    Eina_List *list;
@@ -2875,7 +2875,7 @@ _elm_toolbar_elm_widget_focus_next(Eo *obj, Elm_Toolbar_Data *sd, Elm_Focus_Dire
      }
 
    return elm_widget_focus_list_next_get
-            (obj, items, eina_list_data_get, dir, next);
+            (obj, items, eina_list_data_get, dir, next, next_item);
 }
 
 static void

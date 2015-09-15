@@ -406,15 +406,39 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          }
       }
       focus_next_object_set {
+         [[Set the next object with specific focus direction.
+
+           @since 1.8]]
          params {
-            @in next: Evas.Object * @nullable;
-            @in dir: Elm_Focus_Direction;
+            @in next: Evas.Object * @nullable; [[Focus next object]]
+            @in dir: Elm_Focus_Direction; [[Focus direction]]
          }
       }
       focus_next_object_get @const {
-         return: Evas.Object *;
+         [[Get the next object with specific focus direction.
+
+           @since 1.8]]
+         return: Evas.Object *; [[Focus next object]]
          params {
-            @in dir: Elm_Focus_Direction;
+            @in dir: Elm_Focus_Direction; [[Focus direction]]
+         }
+      }
+      focus_next_item_set {
+         [[Set the next object item with specific focus direction.
+
+           @since 1.16]]
+         params {
+            @in next_item: Elm_Object_Item * @nullable; [[Focus next object item]]
+            @in dir: Elm_Focus_Direction; [[Focus direction]]
+         }
+      }
+      focus_next_item_get @const {
+         [[Get the next object item with specific focus direction.
+
+           @since 1.16]]
+         return: Elm_Object_Item *; [[Focus next object item]]
+         params {
+            @in dir: Elm_Focus_Direction; [[Focus direction]]
          }
       }
       focus_tree_unfocusable_handle {
@@ -497,6 +521,9 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       on_focus {
          [['Virtual' function handling focus in/out events on the widget.  return true if this widget can handle focus, false otherwise]]
+         params {
+            @in item: Elm_Object_Item * @nullable;
+         }
          return: bool;
       }
       on_focus_region {
@@ -599,6 +626,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          params {
             @in dir: Elm_Focus_Direction;
             @out next: Evas.Object *;
+            @out next_item: Elm_Object_Item *;
          }
       }
       translatable_part_text_get @const {
@@ -626,6 +654,9 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       focus_custom_chain_unset {
       }
       focus_steal {
+         params {
+            @in item: Elm_Object_Item * @nullable;
+         }
       }
       focus_hide_handle {
       }
@@ -634,6 +665,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          params {
             @in dir: Elm_Focus_Direction;
             @out next: Evas.Object *;
+            @out next_item: Elm_Object_Item *;
          }
          return: bool;
       }
@@ -644,6 +676,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
             @in list_data_get: list_data_get_func_type;
             @in dir: Elm_Focus_Direction;
             @out next: Evas.Object *;
+            @out next_item: Elm_Object_Item *;
          }
       }
       focus_mouse_up_handle {

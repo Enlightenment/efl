@@ -429,7 +429,7 @@ _elm_datetime_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Datetime
 }
 
 EOLIAN static Eina_Bool
-_elm_datetime_elm_widget_focus_next(Eo *obj, Elm_Datetime_Data *_pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_datetime_elm_widget_focus_next(Eo *obj, Elm_Datetime_Data *_pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    const Eina_List *items;
    Eina_List *(*list_free)(Eina_List *list);
@@ -450,18 +450,18 @@ _elm_datetime_elm_widget_focus_next(Eo *obj, Elm_Datetime_Data *_pd EINA_UNUSED,
         if (!items) return EINA_FALSE;
      }
 
-   int_ret = elm_widget_focus_list_next_get(obj, items, list_data_get, dir, next);
+   int_ret = elm_widget_focus_list_next_get(obj, items, list_data_get, dir, next, next_item);
    if (list_free) list_free((Eina_List *)items);
 
    return int_ret;
 }
 
 EOLIAN static Eina_Bool
-_elm_datetime_elm_widget_on_focus(Eo *obj, Elm_Datetime_Data *sd)
+_elm_datetime_elm_widget_on_focus(Eo *obj, Elm_Datetime_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus(NULL));
    if (!int_ret) return EINA_FALSE;
 
    if (!elm_widget_focus_get(obj))

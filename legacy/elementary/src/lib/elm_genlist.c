@@ -2770,9 +2770,13 @@ _elm_genlist_item_content_focus_set(Elm_Gen_Item *it, Elm_Focus_Direction dir)
    if (focused_obj && (dir != ELM_FOCUS_PREVIOUS))
      {
         Evas_Object *nextfocus;
-        if (elm_widget_focus_next_get(focused_obj, dir, &nextfocus))
+        Elm_Object_Item *nextfocus_item;
+        if (elm_widget_focus_next_get(focused_obj, dir, &nextfocus, &nextfocus_item))
           {
-             elm_object_focus_set(nextfocus, EINA_TRUE);
+             if (nextfocus_item)
+               elm_object_item_focus_set(nextfocus_item, EINA_TRUE);
+             else
+               elm_object_focus_set(nextfocus, EINA_TRUE);
              return;
           }
      }
@@ -3179,13 +3183,13 @@ _elm_genlist_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
 }
 
 EOLIAN static Eina_Bool
-_elm_genlist_elm_widget_on_focus(Eo *obj, Elm_Genlist_Data *sd)
+_elm_genlist_elm_widget_on_focus(Eo *obj, Elm_Genlist_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
    Eina_Bool is_sel = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus(NULL));
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj) && (sd->items) && (sd->selected) &&
@@ -3254,7 +3258,7 @@ _elm_genlist_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Genl
 }
 
 EOLIAN static Eina_Bool
-_elm_genlist_elm_widget_focus_next(Eo *obj, Elm_Genlist_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_genlist_elm_widget_focus_next(Eo *obj, Elm_Genlist_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    Evas_Coord x, y, w, h;
    Evas_Coord sx, sy, sw, sh;
@@ -3297,7 +3301,7 @@ _elm_genlist_elm_widget_focus_next(Eo *obj, Elm_Genlist_Data *sd, Elm_Focus_Dire
      }
 
    return elm_widget_focus_list_next_get
-            (obj, items, eina_list_data_get, dir, next);
+            (obj, items, eina_list_data_get, dir, next, next_item);
 }
 
 static void

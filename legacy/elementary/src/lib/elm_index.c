@@ -1126,7 +1126,7 @@ _elm_index_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Index_
 }
 
 EOLIAN static Eina_Bool
-_elm_index_elm_widget_focus_next(Eo *obj, Elm_Index_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_index_elm_widget_focus_next(Eo *obj, Elm_Index_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -1152,7 +1152,7 @@ _elm_index_elm_widget_focus_next(Eo *obj, Elm_Index_Data *sd, Elm_Focus_Directio
      }
 
    int_ret = elm_widget_focus_list_next_get
-            (obj, items, eina_list_data_get, dir, next);
+            (obj, items, eina_list_data_get, dir, next, next_item);
 
    // to hide index item, if there is nothing to focus on autohide disable mode
    if ((!sd->autohide_disabled) && (!int_ret))

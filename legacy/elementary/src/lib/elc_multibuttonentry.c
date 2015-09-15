@@ -321,7 +321,7 @@ _view_update(Elm_Multibuttonentry_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_multibuttonentry_elm_widget_on_focus(Eo *obj, Elm_Multibuttonentry_Data *sd)
+_elm_multibuttonentry_elm_widget_on_focus(Eo *obj, Elm_Multibuttonentry_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    if (elm_widget_focus_get(obj))
      {
@@ -1606,7 +1606,7 @@ _elm_multibuttonentry_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_
 }
 
 EOLIAN static Eina_Bool
-_elm_multibuttonentry_elm_widget_focus_next(Eo *obj, Elm_Multibuttonentry_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_multibuttonentry_elm_widget_focus_next(Eo *obj, Elm_Multibuttonentry_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -1651,7 +1651,7 @@ _elm_multibuttonentry_elm_widget_focus_next(Eo *obj, Elm_Multibuttonentry_Data *
 
    if (int_ret)
      return elm_widget_focus_list_next_get
-              (obj, items, eina_list_data_get, dir, next);
+              (obj, items, eina_list_data_get, dir, next, next_item);
 
    return EINA_FALSE;
 }

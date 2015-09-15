@@ -82,13 +82,14 @@ _elm_panes_elm_widget_theme_apply(Eo *obj, Elm_Panes_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_panes_elm_widget_focus_next(Eo *obj, Elm_Panes_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_panes_elm_widget_focus_next(Eo *obj, Elm_Panes_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    double w, h;
    unsigned char i;
    Evas_Object *to_focus;
    Evas_Object *chain[2];
    Evas_Object *left, *right;
+   Elm_Object_Item *to_focus_item;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -100,7 +101,7 @@ _elm_panes_elm_widget_focus_next(Eo *obj, Elm_Panes_Data *sd, Elm_Focus_Directio
 
    if (((sd->horizontal) && (h == 0.0)) || ((!sd->horizontal) && (w == 0.0)))
      {
-       return elm_widget_focus_next_get(right, dir, next);
+       return elm_widget_focus_next_get(right, dir, next, next_item);
      }
 
    /* Direction */
@@ -118,13 +119,14 @@ _elm_panes_elm_widget_focus_next(Eo *obj, Elm_Panes_Data *sd, Elm_Focus_Directio
 
    i = elm_widget_focus_get(chain[1]);
 
-   if (elm_widget_focus_next_get(chain[i], dir, next)) return EINA_TRUE;
+   if (elm_widget_focus_next_get(chain[i], dir, next, next_item)) return EINA_TRUE;
 
    i = !i;
 
-   if (elm_widget_focus_next_get(chain[i], dir, &to_focus))
+   if (elm_widget_focus_next_get(chain[i], dir, &to_focus, &to_focus_item))
      {
         *next = to_focus;
+        *next_item = to_focus_item;
         return !!i;
      }
 

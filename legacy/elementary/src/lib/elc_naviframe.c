@@ -1306,7 +1306,7 @@ _on_obj_size_hints_changed(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_elm_naviframe_elm_widget_focus_next(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_naviframe_elm_widget_focus_next(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    Evas_Object *ao;
 
@@ -1331,7 +1331,7 @@ _elm_naviframe_elm_widget_focus_next(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED
         if (ao) l = eina_list_append(l, ao);
      }
 
-   int_ret = elm_widget_focus_list_next_get(obj, l, list_data_get, dir, next);
+   int_ret = elm_widget_focus_list_next_get(obj, l, list_data_get, dir, next, next_item);
    eina_list_free(l);
 
 end:

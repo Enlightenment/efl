@@ -352,7 +352,7 @@ _elm_notify_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Notify_Dat
 }
 
 EOLIAN static Eina_Bool
-_elm_notify_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_notify_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    Evas_Object *cur;
 
@@ -361,7 +361,7 @@ _elm_notify_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, Elm_
    cur = sd->content;
 
    /* Try to cycle focus on content */
-   return elm_widget_focus_next_get(cur, dir, next);
+   return elm_widget_focus_next_get(cur, dir, next, next_item);
 }
 
 EOLIAN static Eina_Bool

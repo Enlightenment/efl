@@ -71,15 +71,15 @@ _elm_ctxpopup_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Ctx
 }
 
 EOLIAN static Eina_Bool
-_elm_ctxpopup_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_ctxpopup_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    if (!sd)
      return EINA_FALSE;
 
-   if (!elm_widget_focus_next_get(sd->box, dir, next))
+   if (!elm_widget_focus_next_get(sd->box, dir, next, next_item))
      {
         elm_widget_focused_object_clear(sd->box);
-        elm_widget_focus_next_get(sd->box, dir, next);
+        elm_widget_focus_next_get(sd->box, dir, next, next_item);
      }
 
    return EINA_TRUE;

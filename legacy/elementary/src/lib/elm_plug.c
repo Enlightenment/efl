@@ -59,13 +59,13 @@ _elm_plug_resized(Ecore_Evas *ee)
 }
 
 EOLIAN static Eina_Bool
-_elm_plug_elm_widget_on_focus(Eo *obj, void *sd EINA_UNUSED)
+_elm_plug_elm_widget_on_focus(Eo *obj, void *sd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus(NULL));
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj))

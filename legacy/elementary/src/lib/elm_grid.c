@@ -20,7 +20,7 @@ _elm_grid_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_U
 }
 
 EOLIAN static Eina_Bool
-_elm_grid_elm_widget_focus_next(Eo *obj, void *_pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_grid_elm_widget_focus_next(Eo *obj, void *_pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    const Eina_List *items;
    Eina_List *(*list_free)(Eina_List *list);
@@ -46,7 +46,7 @@ _elm_grid_elm_widget_focus_next(Eo *obj, void *_pd EINA_UNUSED, Elm_Focus_Direct
         if (!items) return EINA_FALSE;
      }
 
-   int_ret = elm_widget_focus_list_next_get(obj, items, list_data_get, dir, next);
+   int_ret = elm_widget_focus_list_next_get(obj, items, list_data_get, dir, next, next_item);
 
    if (list_free) list_free((Eina_List *)items);
 

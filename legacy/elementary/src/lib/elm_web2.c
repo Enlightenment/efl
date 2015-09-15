@@ -633,7 +633,7 @@ _elm_web_elm_widget_theme_apply(Eo *obj, Elm_Web_Data *sd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_web_elm_widget_on_focus(Eo *obj, Elm_Web_Data *sd)
+_elm_web_elm_widget_on_focus(Eo *obj, Elm_Web_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
 #ifdef HAVE_ELEMENTARY_WEB
    Evas_Object *top;
@@ -641,7 +641,7 @@ _elm_web_elm_widget_on_focus(Eo *obj, Elm_Web_Data *sd)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_TRUE);
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus(NULL));
    if (!int_ret) return EINA_TRUE;
 
    top = elm_widget_top_get(obj);

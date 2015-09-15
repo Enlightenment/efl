@@ -473,7 +473,7 @@ _elm_prefs_evas_object_smart_del(Eo *obj, Elm_Prefs_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_prefs_elm_widget_focus_next(Eo *obj, Elm_Prefs_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_prefs_elm_widget_focus_next(Eo *obj, Elm_Prefs_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    const Eina_List *items;
 
@@ -483,12 +483,12 @@ _elm_prefs_elm_widget_focus_next(Eo *obj, Elm_Prefs_Data *sd, Elm_Focus_Directio
    if (items)
      {
         return elm_widget_focus_list_next_get
-           (obj, items, eina_list_data_get, dir, next);
+           (obj, items, eina_list_data_get, dir, next, next_item);
      }
 
    if (sd->root && sd->root->w_obj)
      {
-        return elm_widget_focus_next_get(sd->root->w_obj, dir, next);
+        return elm_widget_focus_next_get(sd->root->w_obj, dir, next, next_item);
      }
 
    if (next) *next = NULL;

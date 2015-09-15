@@ -1156,7 +1156,7 @@ _elm_calendar_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Cal
 }
 
 EOLIAN static Eina_Bool
-_elm_calendar_elm_widget_focus_next(Eo *obj, Elm_Calendar_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_calendar_elm_widget_focus_next(Eo *obj, Elm_Calendar_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    int maxdays, day, i;
    Eina_List *items = NULL;
@@ -1189,7 +1189,7 @@ _elm_calendar_elm_widget_focus_next(Eo *obj, Elm_Calendar_Data *sd, Elm_Focus_Di
      }
 
    return elm_widget_focus_list_next_get
-            (obj, items, eina_list_data_get, dir, next);
+            (obj, items, eina_list_data_get, dir, next, next_item);
 }
 
 static void

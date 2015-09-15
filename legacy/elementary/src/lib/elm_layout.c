@@ -399,7 +399,7 @@ _elm_layout_list_data_get(const Eina_List *list)
 }
 
 EOLIAN static Eina_Bool
-_elm_layout_elm_widget_on_focus(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
+_elm_layout_elm_widget_on_focus(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -472,7 +472,7 @@ _access_focus_list_sort(Eina_List *origin)
  * child objects, but still inheriting from elm_layout, just set its
  * focus_next smart function back to NULL */
 EOLIAN static Eina_Bool
-_elm_layout_elm_widget_focus_next(Eo *obj, Elm_Layout_Smart_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_layout_elm_widget_focus_next(Eo *obj, Elm_Layout_Smart_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    const Eina_List *items;
    void *(*list_data_get)(const Eina_List *list);
@@ -491,7 +491,7 @@ _elm_layout_elm_widget_focus_next(Eo *obj, Elm_Layout_Smart_Data *sd, Elm_Focus_
      }
 
    return elm_widget_focus_list_next_get
-            (obj, items, list_data_get, dir, next);
+            (obj, items, list_data_get, dir, next, next_item);
 }
 
 EOLIAN static Eina_Bool

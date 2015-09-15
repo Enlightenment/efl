@@ -262,7 +262,7 @@ _elm_panel_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Panel_Data 
 }
 
 EOLIAN static Eina_Bool
-_elm_panel_elm_widget_focus_next(Eo *obj, Elm_Panel_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_panel_elm_widget_focus_next(Eo *obj, Elm_Panel_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    Evas_Object *cur;
    Eina_List *items = NULL;
@@ -283,19 +283,19 @@ _elm_panel_elm_widget_focus_next(Eo *obj, Elm_Panel_Data *sd, Elm_Focus_Directio
              items = eina_list_append(items, sd->content);
 
              ret = elm_widget_focus_list_next_get
-                (obj, items, eina_list_data_get, dir, next);
+                (obj, items, eina_list_data_get, dir, next, next_item);
              eina_list_free(items);
 
              return ret;
           }
 
-        return elm_widget_focus_next_get(sd->content, dir, next);
+        return elm_widget_focus_next_get(sd->content, dir, next, next_item);
      }
 
    cur = sd->content;
 
    /* Try to Focus cycle in subitem */
-   if (!sd->hidden) return elm_widget_focus_next_get(cur, dir, next);
+   if (!sd->hidden) return elm_widget_focus_next_get(cur, dir, next, next_item);
 
    /* access */
    if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
@@ -488,7 +488,7 @@ _panel_toggle(void *data EINA_UNUSED,
              if (sd->content && elm_widget_focus_get(sd->content))
                {
                   elm_widget_focused_object_clear(obj);
-                  elm_widget_focus_steal(obj);
+                  elm_widget_focus_steal(obj, NULL);
                }
           }
 

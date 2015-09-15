@@ -2412,7 +2412,7 @@ _elm_fileselector_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_File
 }
 
 EOLIAN static Eina_Bool
-_elm_fileselector_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_fileselector_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    Eina_List *items = NULL;
 
@@ -2425,9 +2425,9 @@ _elm_fileselector_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Fileselector_Da
    if (sd->ok_button) items = eina_list_append(items, sd->ok_button);  
 
    if (_elm_config->access_mode)
-     return elm_widget_focus_list_next_get(obj, items, eina_list_data_get, dir, next);
+     return elm_widget_focus_list_next_get(obj, items, eina_list_data_get, dir, next, next_item);
 
-   if (!elm_widget_focus_list_next_get(obj, items, eina_list_data_get, dir, next))
+   if (!elm_widget_focus_list_next_get(obj, items, eina_list_data_get, dir, next, next_item))
      *next = (Evas_Object *)obj;
 
    eina_list_free(items);

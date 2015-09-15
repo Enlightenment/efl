@@ -112,14 +112,14 @@ _elm_flip_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Flip_Data *_
 }
 
 EOLIAN static Eina_Bool
-_elm_flip_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_flip_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Flip_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
 
    /* attempt to cycle focus on in sub-items */
    if (sd->state)
-     return elm_widget_focus_next_get(sd->front.content, dir, next);
+     return elm_widget_focus_next_get(sd->front.content, dir, next, next_item);
    else
-     return elm_widget_focus_next_get(sd->back.content, dir, next);
+     return elm_widget_focus_next_get(sd->back.content, dir, next, next_item);
 }
 
 EOLIAN static Eina_Bool

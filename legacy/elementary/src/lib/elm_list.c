@@ -289,9 +289,13 @@ _elm_list_item_content_focus_set(Elm_List_Item_Data *it, Elm_Focus_Direction dir
    if (dir != ELM_FOCUS_PREVIOUS)
      {
         Evas_Object *nextfocus;
-        if (elm_widget_focus_next_get(focused, dir, &nextfocus))
+        Elm_Object_Item *nextfocus_item;
+        if (elm_widget_focus_next_get(focused, dir, &nextfocus, &nextfocus_item))
           {
-             elm_object_focus_set(nextfocus, EINA_TRUE);
+             if (nextfocus_item)
+               elm_object_item_focus_set(nextfocus_item, EINA_TRUE);
+             else
+               elm_object_focus_set(nextfocus, EINA_TRUE);
              return EINA_TRUE;
           }
 
@@ -1257,13 +1261,13 @@ _elm_list_nearest_visible_item_get(Evas_Object *obj, Elm_List_Item_Data *it)
 }
 
 EOLIAN static Eina_Bool
-_elm_list_elm_widget_on_focus(Eo *obj, Elm_List_Data *sd)
+_elm_list_elm_widget_on_focus(Eo *obj, Elm_List_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
    Eina_Bool is_sel = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus(NULL));
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj) && sd->selected && !sd->last_selected_item)
@@ -2369,7 +2373,7 @@ _elm_list_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_List_Da
 }
 
 EOLIAN static Eina_Bool
-_elm_list_elm_widget_focus_next(Eo *obj, Elm_List_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_list_elm_widget_focus_next(Eo *obj, Elm_List_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    Eina_List *items = NULL;
    Eina_List *elist = NULL;
@@ -2386,7 +2390,7 @@ _elm_list_elm_widget_focus_next(Eo *obj, Elm_List_Data *sd, Elm_Focus_Direction 
      }
 
    return elm_widget_focus_list_next_get
-            (obj, items, eina_list_data_get, dir, next);
+            (obj, items, eina_list_data_get, dir, next, next_item);
 }
 
 EOLIAN static void

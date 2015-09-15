@@ -1463,6 +1463,23 @@ elm_object_focus_next_object_set(Evas_Object        *obj,
    elm_widget_focus_next_object_set(obj, next, dir);
 }
 
+EAPI Elm_Object_Item *
+elm_object_focus_next_item_get(const Evas_Object  *obj,
+                               Elm_Focus_Direction dir)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+   return elm_widget_focus_next_item_get(obj, dir);
+}
+
+EAPI void
+elm_object_focus_next_item_set(Evas_Object     *obj,
+                               Elm_Object_Item *next_item,
+                               Elm_Focus_Direction dir)
+{
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   elm_widget_focus_next_item_set(obj, next_item, dir);
+}
+
 EAPI Evas_Object *
 elm_object_focused_object_get(const Evas_Object *obj)
 {

@@ -1347,7 +1347,7 @@ _elm_popup_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Popup_Data 
 }
 
 EOLIAN static Eina_Bool
-_elm_popup_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_popup_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    Evas_Object *ao;
    Eina_List *items = NULL;
@@ -1370,7 +1370,7 @@ _elm_popup_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, Elm_Fo
 
    items = eina_list_merge(items, base_items);
 
-   if (!elm_widget_focus_list_next_get(sd->main_layout, items, eina_list_data_get, dir, next))
+   if (!elm_widget_focus_list_next_get(sd->main_layout, items, eina_list_data_get, dir, next, next_item))
      *next = sd->main_layout;
    eina_list_free(items);
 

@@ -380,6 +380,8 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_List                    *tooltips, *cursors;
    Evas_Object                  *focus_previous, *focus_next;
    Evas_Object                  *focus_up, *focus_down, *focus_right, *focus_left;
+   Elm_Object_Item              *item_focus_previous, *item_focus_next;
+   Elm_Object_Item              *item_focus_up, *item_focus_down, *item_focus_right, *item_focus_left;
 
    /* "show region" coordinates. all widgets got those because this
     * info may be set and queried recursively through the widget
@@ -608,6 +610,11 @@ struct _Elm_Widget_Item_Data
    /**< widget delete callback function. don't expose this callback call */
    Elm_Widget_Del_Pre_Cb          del_pre_func;
 
+   Evas_Object                   *focus_previous, *focus_next;
+   Evas_Object                   *focus_up, *focus_down, *focus_right, *focus_left;
+   Elm_Object_Item               *item_focus_previous, *item_focus_next;
+   Elm_Object_Item               *item_focus_up, *item_focus_down, *item_focus_right, *item_focus_left;
+
    Evas_Object                   *access_obj;
    const char                    *access_info;
    Eina_List                     *access_order;
@@ -673,11 +680,13 @@ EAPI void             elm_widget_focus_custom_chain_prepend(Evas_Object *obj, Ev
 EAPI void             elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
 EAPI Eina_Bool        elm_widget_focus_direction_go(Evas_Object *obj, double degree);
 EAPI Eina_Bool        elm_widget_focus_direction_get(const Evas_Object *obj, const Evas_Object *base, double degree, Evas_Object **direction, double *weight);
-EAPI Eina_Bool        elm_widget_focus_next_get(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next);
+EAPI Eina_Bool        elm_widget_focus_next_get(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item);
 EAPI Eina_Bool        elm_widget_focus_list_direction_get(const Evas_Object  *obj, const Evas_Object *base, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), double degree, Evas_Object **direction, double *weight);
-EAPI Eina_Bool        elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next);
+EAPI Eina_Bool        elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item);
 EAPI Evas_Object     *elm_widget_focus_next_object_get(const Evas_Object *obj, Elm_Focus_Direction dir);
 EAPI void             elm_widget_focus_next_object_set(Evas_Object *obj, Evas_Object *next, Elm_Focus_Direction dir);
+EAPI Elm_Object_Item *elm_widget_focus_next_item_get(const Evas_Object *obj, Elm_Focus_Direction dir);
+EAPI void             elm_widget_focus_next_item_set(Evas_Object *obj, Elm_Object_Item *next_item, Elm_Focus_Direction dir);
 EAPI Eina_Bool        elm_widget_focus_highlight_style_set(Evas_Object *obj, const char *style);
 EAPI const char      *elm_widget_focus_highlight_style_get(const Evas_Object *obj);
 EAPI void             elm_widget_parent_highlight_set(Evas_Object *obj, Eina_Bool highlighted);
@@ -686,7 +695,7 @@ EAPI void             elm_widget_focused_object_clear(Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent_get(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent2_get(const Evas_Object *obj);
 EAPI void             elm_widget_parent2_set(Evas_Object *obj, Evas_Object *parent);
-EAPI void             elm_widget_focus_steal(Evas_Object *obj);
+EAPI void             elm_widget_focus_steal(Evas_Object *obj, Elm_Object_Item *next_item);
 EAPI Evas_Object     *elm_widget_newest_focus_order_get(const Evas_Object *obj, unsigned int *newest_focus_order, Eina_Bool can_focus_only);
 EAPI void             elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode);
 EAPI Eina_Bool        elm_widget_focus_highlight_enabled_get(const Evas_Object *obj);

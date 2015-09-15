@@ -1196,11 +1196,11 @@ _elm_slider_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Slide
 }
 
 EOLIAN static Eina_Bool
-_elm_slider_elm_widget_on_focus(Eo *obj, Elm_Slider_Data *sd EINA_UNUSED)
+_elm_slider_elm_widget_on_focus(Eo *obj, Elm_Slider_Data *sd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus());
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus(NULL));
 
    if ((sd->indicator_visible_mode == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS) && elm_widget_focus_get(obj))
      _popup_show(obj, NULL, NULL, NULL);

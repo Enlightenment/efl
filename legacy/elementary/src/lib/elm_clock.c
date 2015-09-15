@@ -708,7 +708,7 @@ _elm_clock_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Clock_Data 
 }
 
 EOLIAN static Eina_Bool
-_elm_clock_elm_widget_focus_next(Eo *obj, Elm_Clock_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_clock_elm_widget_focus_next(Eo *obj, Elm_Clock_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    Evas_Object *ao, *po;
    Eina_List *items = NULL;
@@ -757,7 +757,7 @@ _elm_clock_elm_widget_focus_next(Eo *obj, Elm_Clock_Data *sd, Elm_Focus_Directio
      }
 
    return elm_widget_focus_list_next_get
-           (obj, items, eina_list_data_get, dir, next);
+           (obj, items, eina_list_data_get, dir, next, next_item);
 }
 
 static void
