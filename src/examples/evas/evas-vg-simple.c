@@ -458,9 +458,9 @@ vector_set(int x, int y, int w, int h)
 
    Efl_VG *shape = eo_add(EFL_VG_SHAPE_CLASS, root,
                           efl_vg_name_set("shape"));
-   Efl_VG *rgradient = eo_add(EFL_VG_GRADIENT_RADIAL_CLASS, root,
+   Efl_VG *rgradient = eo_add(EFL_VG_GRADIENT_RADIAL_CLASS, NULL,
                               efl_vg_name_set("rgradient"));
-   Efl_VG *lgradient = eo_add(EFL_VG_GRADIENT_LINEAR_CLASS, root,
+   Efl_VG *lgradient = eo_add(EFL_VG_GRADIENT_LINEAR_CLASS, NULL,
                               efl_vg_name_set("lgradient"));
 
    _arcto(shape, 0, 0, 100, 100, 25, 330);
