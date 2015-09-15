@@ -567,7 +567,6 @@ EAPI_MAIN
  int elm_main(int argc, char **argv)
 {
    Evas *evas = NULL;
-   const char *engine;
    Evas_Object *win = NULL, *bg = NULL, *image = NULL;
    Ecore_Animator *timer = NULL;
    Evas_Object *layout = NULL;
