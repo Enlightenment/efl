@@ -1730,11 +1730,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
           }
         else
           {
-             const Evas_Coord_Rectangle *clip = &obj->cur->geometry;
-
              ctx = ENFN->context_dup(ENDT, context);
-             ENFN->context_clip_clip(ENDT, ctx, clip->x + off_x, clip->y + off_y, clip->w, clip->h);
-
              if (obj->cur->clipper)
                {
                   Evas_Object_Protected_Data *clipper = obj->cur->clipper;
