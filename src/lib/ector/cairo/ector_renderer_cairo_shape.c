@@ -181,7 +181,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
    cairo_append_path(pd->parent->cairo, pd->path);
 
    if (pd->shape->fill)
-     eo_do(pd->shape->fill, ector_renderer_cairo_base_fill());
+     eo_do(pd->shape->fill, ector_renderer_cairo_base_fill(mul_col));
 
    if (pd->shape->stroke.fill || pd->shape->stroke.color.a > 0)
      {
@@ -195,7 +195,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
         cairo_fill_preserve(pd->parent->cairo);
 
         if (pd->shape->stroke.fill)
-          eo_do(pd->shape->stroke.fill, ector_renderer_cairo_base_fill());
+          eo_do(pd->shape->stroke.fill, ector_renderer_cairo_base_fill(mul_col));
        else
          {
             r = (((pd->shape->stroke.color.r * R_VAL(&mul_col)) + 0xff) >> 8);
@@ -236,7 +236,8 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
 
 static Eina_Bool
 _ector_renderer_cairo_shape_ector_renderer_cairo_base_fill(Eo *obj EINA_UNUSED,
-                                                           Ector_Renderer_Cairo_Shape_Data *pd EINA_UNUSED)
+                                                           Ector_Renderer_Cairo_Shape_Data *pd EINA_UNUSED,
+                                                           unsigned int mul_col EINA_UNUSED)
 {
    // FIXME: let's find out how to fill a shape with a shape later.
    // I need to read SVG specification and see how to map that with cairo.

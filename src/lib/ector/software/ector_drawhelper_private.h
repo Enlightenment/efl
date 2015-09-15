@@ -75,7 +75,7 @@ _ector_memfill(uint *dest, int length, uint value)
      }
 }
 
-static inline uint 
+static inline uint
 INTERPOLATE_PIXEL_256(uint x, uint a, uint y, uint b)
 {
    uint t = (x & 0xff00ff) * a + (y & 0xff00ff) * b;

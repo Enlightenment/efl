@@ -65,6 +65,10 @@ static void (*cairo_rectangle)(cairo_t *cr, double x, double y, double width, do
 static void (*cairo_clip)(cairo_t *cr) = NULL;
 static void (*cairo_device_to_user)(cairo_t *cr, double *x, double *y) = NULL;
 
+// This one is used by both gradient, so sharing it here.
+void (*cairo_pattern_add_color_stop_rgba)(cairo_pattern_t *pattern, double offset,
+                                          double red, double green, double blue, double alpha) = NULL;
+
 static cairo_matrix_t identity;
 
 // Cairo need unpremul color, so force unpremul here
