@@ -589,16 +589,7 @@ EAPI_MAIN
     at_port_h mf_at_port = NULL;
 #endif
 
-   if (!elm_init(0, 0)) return 1;
-
-   elm_config_engine_set("software_x11");
-   engine = elm_config_engine_get();
-
-   if (engine != NULL && strcmp("software_x11", engine))
-     {
-        fprintf(stdout, "There is elementary not support OpenGL engine");
-        exit(1);
-     }
+   if (!elm_init(argc, argv)) return 1;
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    win = elm_win_add(NULL, "3D Perfomance", ELM_WIN_BASIC);
