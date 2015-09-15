@@ -2722,16 +2722,17 @@ evas_render_updates_internal(Evas *eo_e,
                                                              fx, fy, alpha,
                                                              do_async,
                                                              &offset);
-
-             eina_evlog("+render_push", eo_e, 0.0, NULL);
-             e->engine.func->output_redraws_next_update_push(e->engine.data.output,
-                                                             surface,
-                                                             ux, uy, uw, uh,
-                                                             render_mode);
-             eina_evlog("-render_push", eo_e, 0.0, NULL);
+             if (!do_async)
+               {
+                  eina_evlog("+render_push", eo_e, 0.0, NULL);
+                  e->engine.func->output_redraws_next_update_push(e->engine.data.output,
+                                                                  surface,
+                                                                  ux, uy, uw, uh,
+                                                                  render_mode);
+                  eina_evlog("-render_push", eo_e, 0.0, NULL);
+               }
           }
 
-        eina_evlog("+render_output_flush", eo_e, 0.0, NULL);
         if (do_async)
           {
              eo_ref(eo_e);
@@ -2742,6 +2743,7 @@ evas_render_updates_internal(Evas *eo_e,
           }
         else if (haveup)
           {
+             eina_evlog("+render_output_flush", eo_e, 0.0, NULL);
              EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
                {
                   _evas_object_image_video_overlay_do(eo_obj);
@@ -2750,8 +2752,8 @@ evas_render_updates_internal(Evas *eo_e,
              e->engine.func->output_flush(e->engine.data.output,
                                           EVAS_RENDER_MODE_SYNC);
              _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
+             eina_evlog("-render_output_flush", eo_e, 0.0, NULL);
           }
-        eina_evlog("-render_output_flush", eo_e, 0.0, NULL);
         eina_evlog("-render_surface", eo_e, 0.0, NULL);
      }
    eina_evlog("-render_phase6", eo_e, 0.0, NULL);
@@ -2940,14 +2942,7 @@ evas_render_wakeup(Evas *eo_e)
 
    EINA_LIST_FREE(e->render.updates, ru)
      {
-        /* punch rect out */
-        e->engine.func->output_redraws_next_update_push
-          (e->engine.data.output, ru->surface,
-           ru->area->x, ru->area->y, ru->area->w, ru->area->h,
-           EVAS_RENDER_MODE_ASYNC_END);
-
         ret_updates = eina_list_append(ret_updates, ru->area);
-        evas_cache_image_drop(ru->surface);
         free(ru);
         haveup = EINA_TRUE;
      }
@@ -2962,8 +2957,6 @@ evas_render_wakeup(Evas *eo_e)
              _evas_object_image_video_overlay_do(eo_obj);
           }
         _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
-        e->engine.func->output_flush(e->engine.data.output,
-                                     EVAS_RENDER_MODE_ASYNC_END);
         _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
      }
 
@@ -3011,6 +3004,25 @@ evas_render_async_wakeup(void *target, Evas_Callback_Type type EINA_UNUSED, void
 static void
 evas_render_pipe_wakeup(void *data)
 {
+   Eina_List *l;
+   Render_Updates *ru;
+   Evas_Public_Data *e = data;
+
+   EINA_LIST_FOREACH(e->render.updates, l, ru)
+     {
+        eina_evlog("+render_push", e->evas, 0.0, NULL);
+        e->engine.func->output_redraws_next_update_push
+          (e->engine.data.output, ru->surface,
+           ru->area->x, ru->area->y, ru->area->w, ru->area->h,
+           EVAS_RENDER_MODE_ASYNC_END);
+        eina_evlog("-render_push", e->evas, 0.0, NULL);
+        evas_cache_image_drop(ru->surface);
+        ru->surface = NULL;
+     }
+   eina_evlog("+render_output_flush", e->evas, 0.0, NULL);
+   e->engine.func->output_flush(e->engine.data.output,
+                                EVAS_RENDER_MODE_ASYNC_END);
+   eina_evlog("+render_output_flush", e->evas, 0.0, NULL);
    evas_async_events_put(data, 0, NULL, evas_render_async_wakeup);
 }
 
