@@ -1019,18 +1019,18 @@ _elm_image_smart_internal_file_set(Eo *obj, Elm_Image_Data *sd,
    else
      evas_object_image_file_set(sd->img, file, key);
 
-   if (sd->preload_status != ELM_IMAGE_PRELOAD_DISABLED)
-     {
-        evas_object_hide(sd->img);
-        sd->preload_status = ELM_IMAGE_PRELOADING;
-        evas_object_image_preload(sd->img, EINA_FALSE);
-     }
-
    if (evas_object_image_load_error_get(sd->img) != EVAS_LOAD_ERROR_NONE)
      {
         ERR("Things are going bad for '%s' (%p)", file, sd->img);
         if (ret) *ret = EINA_FALSE;
         return;
+     }
+
+   if (sd->preload_status != ELM_IMAGE_PRELOAD_DISABLED)
+     {
+        evas_object_hide(sd->img);
+        sd->preload_status = ELM_IMAGE_PRELOADING;
+        evas_object_image_preload(sd->img, EINA_FALSE);
      }
 
    _elm_image_internal_sizing_eval(obj, sd);
