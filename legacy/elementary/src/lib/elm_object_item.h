@@ -5,8 +5,6 @@
  */
 typedef Eo Elm_Object_Item;
 
-typedef enum _Elm_Focus_Direction Elm_Focus_Direction;
-
 /**
  * @typedef Elm_Object_Item_Signal_Cb
  *
