@@ -240,6 +240,8 @@ _drag_start(void *data,
             const char *emission EINA_UNUSED,
             const char *source EINA_UNUSED)
 {
+   if (!elm_widget_focus_get(data))
+     elm_object_focus_set(data, EINA_TRUE);
    _slider_update(data, EINA_TRUE);
    eo_do(data, eo_event_callback_call(ELM_SLIDER_EVENT_SLIDER_DRAG_START, NULL));
    elm_widget_scroll_freeze_push(data);
@@ -644,6 +646,8 @@ _spacer_down_cb(void *data,
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider",
      button_x, button_y);
+   if (!elm_widget_focus_get(data))
+     elm_object_focus_set(data, EINA_TRUE);
    _slider_update(data, EINA_TRUE);
    eo_do(data, eo_event_callback_call(ELM_SLIDER_EVENT_SLIDER_DRAG_START, NULL));
    elm_layout_signal_emit(data, "elm,state,indicator,show", "elm");
