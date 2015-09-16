@@ -346,9 +346,11 @@ _elm_multibuttonentry_elm_widget_on_focus(Eo *obj, Elm_Multibuttonentry_Data *sd
      }
    else
      {
-        _view_update(sd);
-
-        elm_entry_input_panel_hide(sd->entry);
+        if (sd->editable)
+          {
+             _view_update(sd);
+             elm_entry_input_panel_hide(sd->entry);
+          }
         eo_do(obj, eo_event_callback_call
           (ELM_WIDGET_EVENT_UNFOCUSED, NULL));
      }
