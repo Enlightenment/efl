@@ -130,7 +130,7 @@ _append_section(const char *desc, int ind, int curl, Eina_Strbuf *buf,
           eina_strbuf_append_char(wbuf, *desc++);
         if (try_note)
           {
-#define CHECK_NOTE(str) !strncmp(desc, str ": ", sizeof(str ": ") - 1)
+#define CHECK_NOTE(str) !strncmp(desc, str ": ", sizeof(str ":"))
              if (CHECK_NOTE("Note"))
                {
                   eina_strbuf_append(wbuf, "@note ");
@@ -140,6 +140,16 @@ _append_section(const char *desc, int ind, int curl, Eina_Strbuf *buf,
                {
                   eina_strbuf_append(wbuf, "@warning ");
                   desc += sizeof("Warning:");
+               }
+             else if (CHECK_NOTE("Remark"))
+               {
+                  eina_strbuf_append(wbuf, "@remark ");
+                  desc += sizeof("Remark:");
+               }
+             else if (CHECK_NOTE("TODO"))
+               {
+                  eina_strbuf_append(wbuf, "@todo ");
+                  desc += sizeof("TODO:");
                }
 #undef CHECK_NOTE
              try_note = EINA_FALSE;
