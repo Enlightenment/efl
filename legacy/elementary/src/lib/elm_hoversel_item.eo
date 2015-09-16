@@ -21,6 +21,7 @@ class Elm.Hoversel_Item(Elm.Widget_Item)
         Eo.Base.constructor;
         Eo.Base.destructor;
         Elm.Widget_Item.signal_emit;
+        Elm.Widget_Item.part_text.set;
         Elm.Widget_Item.part_text.get;
         Elm.Widget_Item.style.get;
         Elm.Widget_Item.style.set;

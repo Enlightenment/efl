@@ -310,6 +310,19 @@ _size_hints_changed_cb(void *data,
    elm_layout_sizing_eval(data);
 }
 
+static void
+_elm_hoversel_item_elm_widget_item_part_text_set(Eo *eo_it EINA_UNUSED,
+                                            Elm_Hoversel_Item_Data *it,
+                                            const char *part,
+                                            const char *label)
+{
+   if (part && strcmp(part, "default")) return;
+   eina_stringshare_replace(&it->label, label);
+
+   if (VIEW(it))
+     elm_object_text_set(VIEW(it), label);
+}
+
 static const char *
 _elm_hoversel_item_elm_widget_item_part_text_get(Eo *eo_it EINA_UNUSED,
                                             Elm_Hoversel_Item_Data *it,
