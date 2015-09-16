@@ -140,7 +140,7 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
    evas_object_size_hint_min_set(pd->grid, w*cw, h*ch);
 
    if (pd->gravity_x == 1.0 || pd->gravity_y == 1.0)
-     _elm_code_widget_scroll_by(widget, 
+     _elm_code_widget_scroll_by(widget,
         (pd->gravity_x == 1.0 && ww > old_width) ? ww - old_width : 0,
         (pd->gravity_y == 1.0 && wh > old_height) ? wh - old_height : 0);
 }
@@ -993,7 +993,7 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    Elm_Code *code;
    Elm_Code_Line *line;
    unsigned int row, col, position, oldlen, leading;
-   const char *oldtext;
+   char *oldtext;
 
    _elm_code_widget_delete_selection(widget);
    eo_do(widget,
@@ -1006,7 +1006,8 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
         row = elm_code_file_lines_get(code->file);
         line = elm_code_file_line_get(code->file, row);
      }
-   oldtext = elm_code_line_text_get(line, &oldlen);
+   oldtext = (char *) elm_code_line_text_get(line, &oldlen);
+   oldtext = strndup(oldtext, oldlen);
 
    position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
    elm_code_line_split_at(line, position);
@@ -1014,6 +1015,7 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    line = elm_code_file_line_get(code->file, row + 1);
    leading = elm_code_text_leading_whitespace_length(oldtext, oldlen);
    elm_code_line_text_insert(line, 0, oldtext, leading);
+   free(oldtext);
 
    eo_do(widget,
          elm_obj_code_widget_cursor_position_set(
@@ -1551,7 +1553,7 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
    elm_object_focus_allow_set(scroller, EINA_FALSE);
    pd->scroller = scroller;
 
-   grid = evas_object_textgrid_add(obj); 
+   grid = evas_object_textgrid_add(obj);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(grid);
