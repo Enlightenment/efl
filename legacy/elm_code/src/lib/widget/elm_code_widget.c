@@ -300,21 +300,26 @@ _elm_code_widget_fill_selection(Elm_Code_Widget *widget, Elm_Code_Line *line, Ev
 {
    Elm_Code_Widget_Data *pd;
    unsigned int x, start, end;
+   Elm_Code_Widget_Selection_Data *selection;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-
    if (!pd->selection)
      return;
 
-   if (pd->selection->start_line > line->number || pd->selection->end_line < line->number)
-     return;
+   selection = elm_code_widget_selection_normalized_get(widget);
+   if (selection->start_line > line->number || selection->end_line < line->number)
+     {
+        free(selection);
+        return;
+     }
 
-   start = pd->selection->start_col;
-   if (pd->selection->start_line < line->number)
+   start = selection->start_col;
+   if (selection->start_line < line->number)
      start = 1;
-   end = pd->selection->end_col;
-   if (pd->selection->end_line > line->number)
+   end = selection->end_col;
+   if (selection->end_line > line->number)
      end = w;
+   free(selection);
 
    for (x = gutter + start - 1; x < gutter + end && x < (unsigned int) w; x++)
      cells[x].bg = ELM_CODE_WIDGET_COLOR_SELECTION;
@@ -947,13 +952,18 @@ static Eina_Bool
 _elm_code_widget_delete_selection(Elm_Code_Widget *widget)
 {
    Elm_Code_Widget_Data *pd;
+   Elm_Code_Widget_Selection_Data *selection;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (!pd->selection)
      return EINA_FALSE;
 
+   selection = elm_code_widget_selection_normalized_get(widget);
    elm_code_widget_selection_delete(widget);
+   elm_code_widget_cursor_position_set(widget, selection->start_col, selection->start_line);
+   free(selection);
+
    return EINA_TRUE;
 }
 

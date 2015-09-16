@@ -35,6 +35,6 @@ void _elm_code_widget_tooltip_text_set(Evas_Object *widget, const char *text);
 
 void _elm_code_widget_tooltip_add(Evas_Object *widget);
 
-
+EAPI Elm_Code_Widget_Selection_Data *elm_code_widget_selection_normalized_get(Evas_Object *widget);
 
 #endif
