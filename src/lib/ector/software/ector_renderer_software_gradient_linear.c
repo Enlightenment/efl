@@ -108,4 +108,20 @@ _ector_renderer_software_gradient_linear_efl_gfx_gradient_base_stop_set(Eo *obj,
    destroy_color_table(pd);
 }
 
+static unsigned int
+_ector_renderer_software_gradient_linear_ector_renderer_generic_base_crc_get(Eo *obj, Ector_Renderer_Software_Gradient_Data *pd)
+{
+   unsigned int crc;
+
+   eo_do_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS,
+               crc = ector_renderer_crc_get());
+
+   crc = eina_crc((void*) pd->gd->s, sizeof (Efl_Gfx_Gradient_Spread), crc, EINA_FALSE);
+   if (pd->gd->colors_count)
+     crc = eina_crc((void*) pd->gd->colors, sizeof (Efl_Gfx_Gradient_Stop) * pd->gd->colors_count, crc, EINA_FALSE);
+   crc = eina_crc((void*) pd->gld, sizeof (Ector_Renderer_Generic_Gradient_Linear_Data), crc, EINA_FALSE);
+
+   return crc;
+}
+
 #include "ector_renderer_software_gradient_linear.eo.c"

@@ -726,4 +726,29 @@ _ector_renderer_software_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Softwa
 }
 
 
+unsigned int
+_ector_renderer_software_shape_ector_renderer_generic_base_crc_get(Eo *obj,
+                                                                   Ector_Renderer_Software_Shape_Data *pd)
+{
+   unsigned int crc;
+
+   eo_do_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, crc = ector_renderer_crc_get());
+
+   crc = eina_crc((void*) &pd->shape->stroke.marker, sizeof (pd->shape->stroke.marker), crc, EINA_FALSE);
+   crc = eina_crc((void*) &pd->shape->stroke.scale, sizeof (pd->shape->stroke.scale) * 3, crc, EINA_FALSE); // scale, width, centered
+   crc = eina_crc((void*) &pd->shape->stroke.color, sizeof (pd->shape->stroke.color), crc, EINA_FALSE);
+   crc = eina_crc((void*) &pd->shape->stroke.cap, sizeof (pd->shape->stroke.cap), crc, EINA_FALSE);
+   crc = eina_crc((void*) &pd->shape->stroke.join, sizeof (pd->shape->stroke.join), crc, EINA_FALSE);
+
+   if (pd->shape->fill) crc = _renderer_crc_get(pd->shape->fill, crc);
+   if (pd->shape->stroke.fill) crc = _renderer_crc_get(pd->shape->stroke.fill, crc);
+   if (pd->shape->stroke.marker) crc = _renderer_crc_get(pd->shape->stroke.marker, crc);
+   if (pd->shape->stroke.dash_length)
+     {
+        crc = eina_crc((void*) pd->shape->stroke.dash, sizeof (Efl_Gfx_Dash) * pd->shape->stroke.dash_length, crc, EINA_FALSE);
+     }
+
+   return crc;
+}
+
 #include "ector_renderer_software_shape.eo.c"

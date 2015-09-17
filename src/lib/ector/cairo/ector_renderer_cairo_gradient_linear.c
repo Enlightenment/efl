@@ -163,4 +163,26 @@ _ector_renderer_cairo_gradient_linear_efl_gfx_gradient_base_stop_set(Eo *obj,
                efl_gfx_gradient_stop_set(colors, length));
 }
 
+static unsigned int
+_ector_renderer_cairo_gradient_linear_ector_renderer_generic_base_crc_get(Eo *obj, Ector_Renderer_Cairo_Gradient_Linear_Data *pd EINA_UNUSED)
+{
+   Ector_Renderer_Generic_Gradient_Linear_Data *gld;
+   Ector_Renderer_Generic_Gradient_Data *gd;
+   unsigned int crc;
+
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS,
+               crc = ector_renderer_crc_get());
+
+   gld = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_MIXIN);
+   gd = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_MIXIN);
+   if (!gd || !gld) return crc;
+
+   crc = eina_crc((void*) gd->s, sizeof (Efl_Gfx_Gradient_Spread), crc, EINA_FALSE);
+   if (gd->colors_count)
+     crc = eina_crc((void*) gd->colors, sizeof (Efl_Gfx_Gradient_Stop) * gd->colors_count, crc, EINA_FALSE);
+   crc = eina_crc((void*) gld, sizeof (Ector_Renderer_Generic_Gradient_Linear_Data), crc, EINA_FALSE);
+
+   return crc;
+}
+
 #include "ector_renderer_cairo_gradient_linear.eo.c"

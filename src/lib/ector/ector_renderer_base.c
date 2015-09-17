@@ -135,4 +135,20 @@ _ector_renderer_generic_base_prepare(Eo *obj EINA_UNUSED,
    return EINA_TRUE;
 }
 
+static unsigned int
+_ector_renderer_generic_base_crc_get(Eo *obj EINA_UNUSED,
+                                     Ector_Renderer_Generic_Base_Data *pd)
+{
+   unsigned int crc;
+
+   crc = eina_crc((void*) &pd->color, sizeof(pd->color), 0xffffffff, EINA_TRUE);
+   crc = eina_crc((void*) &pd->q, sizeof(pd->q), crc, EINA_FALSE);
+   crc = eina_crc((void*) &pd->origin, sizeof(pd->origin), crc, EINA_FALSE);
+
+   if (pd->m) crc = eina_crc((void*) pd->m, sizeof(Eina_Matrix3), crc, EINA_FALSE);
+   if (pd->mask) crc = _renderer_crc_get(pd->mask, crc);
+
+   return crc;
+}
+
 #include "ector_renderer_generic_base.eo.c"

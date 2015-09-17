@@ -81,6 +81,11 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	    q: Ector_Quality;
 	 }
       }
+      @property crc {
+         get {
+            return: uint;
+	 }
+      }
       bounds_get {
 	 params {
 	    @out r: Eina.Rectangle;

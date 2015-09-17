@@ -168,4 +168,26 @@ _ector_renderer_cairo_gradient_radial_efl_gfx_gradient_base_stop_set(Eo *obj,
                efl_gfx_gradient_stop_set(colors, length));
 }
 
+static unsigned int
+_ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_crc_get(Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd EINA_UNUSED)
+{
+   Ector_Renderer_Generic_Gradient_Radial_Data *grd;
+   Ector_Renderer_Generic_Gradient_Data *gd;
+   unsigned int crc;
+
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS,
+               crc = ector_renderer_crc_get());
+
+   grd = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_MIXIN);
+   gd = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_MIXIN);
+   if (!grd || !gd) return crc;
+
+   crc = eina_crc((void*) gd->s, sizeof (Efl_Gfx_Gradient_Spread), crc, EINA_FALSE);
+   if (gd->colors_count)
+     crc = eina_crc((void*) gd->colors, sizeof (Efl_Gfx_Gradient_Stop) * gd->colors_count, crc, EINA_FALSE);
+   crc = eina_crc((void*) grd, sizeof (Ector_Renderer_Generic_Gradient_Radial_Data), crc, EINA_FALSE);
+
+   return crc;
+}
+
 #include "ector_renderer_cairo_gradient_radial.eo.c"
