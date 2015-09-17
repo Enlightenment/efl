@@ -1777,6 +1777,10 @@ evgl_engine_shutdown(void *eng_data)
         return;
      }
 
+   if (evgl_engine->safe_extensions)
+     eina_hash_free(evgl_engine->safe_extensions);
+   evgl_engine->safe_extensions = NULL;
+
    // Log
    eina_log_domain_unregister(_evas_gl_log_dom);
    _evas_gl_log_dom = -1;
