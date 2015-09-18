@@ -1331,10 +1331,13 @@ _x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Elm_Xdn
      {
         if (last_dropable == dropable) // same
           {
+             Evas_Coord ox, oy;
+
              cnp_debug("same obj dropable %p\n", dropable->obj);
+             evas_object_geometry_get(dropable->obj, &ox, &oy, NULL, NULL);
              EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
                 if ((cbs->types & dropable->last.format) && cbs->poscb)
-                  cbs->poscb(cbs->posdata, dropable->obj, x, y, action);
+                  cbs->poscb(cbs->posdata, dropable->obj, x - ox, y - oy, action);
           }
         else
           {
@@ -1367,7 +1370,10 @@ _x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Elm_Xdn
      {
         if (dropable) // enter new obj
           {
+             Evas_Coord ox, oy;
+
              cnp_debug("enter %p\n", dropable->obj);
+             evas_object_geometry_get(dropable->obj, &ox, &oy, NULL, NULL);
              dropable->last.in = EINA_TRUE;
              EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
                {
@@ -1376,7 +1382,8 @@ _x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Elm_Xdn
                        if (cbs->entercb)
                           cbs->entercb(cbs->enterdata, dropable->obj);
                        if (cbs->poscb)
-                          cbs->poscb(cbs->posdata, dropable->obj, x, y, action);
+                          cbs->poscb(cbs->posdata, dropable->obj,
+                                     x - ox, y - oy, action);
                     }
                }
           }

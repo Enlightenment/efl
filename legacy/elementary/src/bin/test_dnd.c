@@ -217,6 +217,14 @@ _strndup(const char *str, size_t len)
    return ret;
 }
 
+static void
+_gl_poscb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Object_Item *it, Evas_Coord x, Evas_Coord y, int xposret, int yposret, Elm_Xdnd_Action action EINA_UNUSED)
+{
+   printf("<%s> <%d> obj: %p, item: %p <%s>, x y: %d %d, posret: %d %d\n",
+          __func__, __LINE__, obj, it, elm_object_item_text_get(it),
+          x, y, xposret, yposret);
+}
+
 static Eina_Bool
 _gl_dropcb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Object_Item *it, Elm_Selection_Data *ev, int xposret EINA_UNUSED, int yposret)
 {  /* This function is called when data is dropped on the genlist */
@@ -761,17 +769,31 @@ void
 test_dnd_genlist_default_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[PATH_MAX];
-   Evas_Object *win, *gl, *bxx;
+   Evas_Object *win, *gl, *bxx, *bx2, *lb;
    int i, j;
 
    win = elm_win_util_standard_add("dnd-genlist-default-anim", "DnD-Genlist-Default-Anim");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bxx = elm_box_add(win);
-   elm_box_horizontal_set(bxx, EINA_TRUE);
+   elm_box_horizontal_set(bxx, EINA_FALSE);
    evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bxx);
    evas_object_show(bxx);
+
+   lb = elm_label_add(win);
+   elm_object_text_set(lb, "Drag and drop between genlists with default anim.");
+   evas_object_size_hint_min_set(lb, 0, 50);
+   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
+   evas_object_show(lb);
+   elm_box_pack_end(bxx, lb);
+
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bx2);
+   elm_box_pack_end(bxx, bx2);
 
    itc1 = elm_genlist_item_class_new();
    itc1->item_style     = "default";
@@ -791,7 +813,7 @@ test_dnd_genlist_default_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUS
               _gl_item_getcb,
               NULL, NULL,
               NULL, NULL,
-              NULL, NULL,
+              _gl_poscb, NULL,
               _gl_dropcb, NULL);
 
         elm_drag_item_container_add(gl, ANIM_TIME, DRAG_TIMEOUT,
@@ -802,7 +824,7 @@ test_dnd_genlist_default_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUS
         //elm_genlist_mode_set(gl, ELM_LIST_LIMIT);
         evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_box_pack_end(bxx, gl);
+        elm_box_pack_end(bx2, gl);
         evas_object_show(gl);
 
         for (i = 0; i < 20; i++)
