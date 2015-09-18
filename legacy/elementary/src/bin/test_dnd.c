@@ -1250,14 +1250,26 @@ _label_create_icon(void *data, Evas_Object *parent, Evas_Coord *xoff, Evas_Coord
 }
 
 static void
+_label_drag_done_cb(void *data, Evas_Object *obj EINA_UNUSED)
+{
+   free(data);
+}
+
+static void
 _label_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *lb = data;
-   const char *text = elm_object_text_get(lb);
+   const char *mkup = elm_object_text_get(lb);
+   char *text = evas_textblock_text_markup_to_utf8(NULL, mkup);
 
+   if (!text)
+     {
+        printf("Cannot convert text\n");
+     }
    elm_drag_start(lb, ELM_SEL_FORMAT_TEXT, text, ELM_XDND_ACTION_COPY,
                   _label_create_icon, lb,
-                  NULL, NULL, NULL, NULL, NULL, NULL);
+                  NULL, NULL, NULL, NULL,
+                  _label_drag_done_cb, text);
 }
 
 static Evas_Object *
