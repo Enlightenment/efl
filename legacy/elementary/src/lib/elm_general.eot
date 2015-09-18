@@ -107,3 +107,17 @@ enum Elm.Wrap.Type
    last
 }
 
+enum Elm.Focus_Direction
+{
+   [[ Focus directions. ]]
+   legacy: elm_focus;
+   previous, [[ previous direction ]]
+   next,     [[ next direction ]]
+   up,       [[ up direction ]]
+   down,     [[ down direction ]]
+   right,    [[ right direction ]]
+   left,     [[ left direction ]]
+   mouse,    [[ direction is from mouse ]]
+   revert    [[ direction is from focus revert ]]
+}
+

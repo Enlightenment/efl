@@ -1,3 +1,5 @@
+import elm_general;
+
 abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Interface_Atspi_Component)
 {
    eo_prefix: elm_obj_widget;
@@ -367,7 +369,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       @property focus_origin {
          get {
             [[Get the origination of the focus. Arrow key, tab key, mouse or deletion of an object.]]
-            return: Elm_Focus_Direction;
+            return: Elm.Focus_Direction;
          }
       }
       @property parent2 {
@@ -411,7 +413,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
            @since 1.8]]
          params {
             @in next: Evas.Object * @nullable; [[Focus next object]]
-            @in dir: Elm_Focus_Direction; [[Focus direction]]
+            @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
       }
       focus_next_object_get @const {
@@ -420,7 +422,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
            @since 1.8]]
          return: Evas.Object *; [[Focus next object]]
          params {
-            @in dir: Elm_Focus_Direction; [[Focus direction]]
+            @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
       }
       focus_next_item_set {
@@ -429,7 +431,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
            @since 1.16]]
          params {
             @in next_item: Elm_Object_Item * @nullable; [[Focus next object item]]
-            @in dir: Elm_Focus_Direction; [[Focus direction]]
+            @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
       }
       focus_next_item_get @const {
@@ -438,7 +440,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
            @since 1.16]]
          return: Elm_Object_Item *; [[Focus next object item]]
          params {
-            @in dir: Elm_Focus_Direction; [[Focus direction]]
+            @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
       }
       focus_tree_unfocusable_handle {
@@ -538,7 +540,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       focus_cycle {
          params {
-            @in dir: Elm_Focus_Direction;
+            @in dir: Elm.Focus_Direction;
          }
       }
       focus_direction {
@@ -624,7 +626,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       focus_next_get @const {
          return: bool;
          params {
-            @in dir: Elm_Focus_Direction;
+            @in dir: Elm.Focus_Direction;
             @out next: Evas.Object *;
             @out next_item: Elm_Object_Item *;
          }
@@ -663,7 +665,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       focus_next {
          [['Virtual' function handling passing focus to sub-objects.]]
          params {
-            @in dir: Elm_Focus_Direction;
+            @in dir: Elm.Focus_Direction;
             @out next: Evas.Object *;
             @out next_item: Elm_Object_Item *;
          }
@@ -674,7 +676,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          params {
             @in items: const(list<Eo.Base*>)*;
             @in list_data_get: list_data_get_func_type;
-            @in dir: Elm_Focus_Direction;
+            @in dir: Elm.Focus_Direction;
             @out next: Evas.Object *;
             @out next_item: Elm_Object_Item *;
          }
