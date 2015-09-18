@@ -1002,11 +1002,7 @@ _elm_win_focus_highlight_reconfigure_job(void *data)
    if ((!target) || (!common_visible) || (sd->focus_highlight.cur.in_theme))
      {
         if (target)
-          {
-             Elm_Focus_Direction focus_origin = elm_widget_focus_origin_get(target);
-             if (focus_origin >= ELM_FOCUS_UP && focus_origin <= ELM_FOCUS_LEFT)
-               _elm_win_focus_highlight_simple_setup(sd, fobj);
-          }
+          _elm_win_focus_highlight_simple_setup(sd, fobj);
         goto the_end;
      }
 
