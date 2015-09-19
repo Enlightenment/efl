@@ -13,7 +13,7 @@ class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object, Evas.Common_Interface)
               Form defines which function will be chosen to set data to mesh
               on call of evas_canvas3d_mesh_primitive_set.
 
-              Now avaliable next forms of primitives are tabulated primitives (SQUARE and CUBE),
+              Now available next forms of primitives are tabulated primitives (SQUARE and CUBE),
               solids of revolution (CYLINDER, CONE, SPHERE and TORUS) and surfaces (SURFACE and TERRAIN).
 
               Default form is EVAS_CANVAS3D_MESH_PRIMITIVE_NONE.]]
@@ -36,7 +36,7 @@ class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object, Evas.Common_Interface)
                alternative algorithm for primitive with given form
                (like cone without base or sphere textured in alternative way).
 
-               Now avaliable next mods of primitives are
+               Now available next mods of primitives are
                witout base (bases) (supported for cylinder and cone) and
                with alternative UV (supported by sphere).
 
@@ -57,7 +57,7 @@ class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object, Evas.Common_Interface)
 
                Now ratio uses only in torus as the ratio of the
                major radius and minor radius. For this usage
-               Avaliable values is from 1.0 to infinity.
+               Available values is from 1.0 to infinity.
                If ratio for torus has a bad value,
                will be used 3.0 as ratio. Like ratio of usual doughnut.
 
@@ -78,7 +78,7 @@ class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object, Evas.Common_Interface)
 
                Precision uses in all non tabulated primitives and defines
                precision of created primitives.
-               Avaliable values is from 3 to infinity.
+               Available values is from 3 to infinity.
                But if value will be more than 100, should be a warning
                about possibility of incorrect or slow work.
 

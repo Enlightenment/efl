@@ -107,7 +107,7 @@ mixin Efl.Gfx.Shape
          set {
             [[Sets the join style to be used for stroking the path.
               The join style will be used for joining the two line segment
-              while stroking teh path.
+              while stroking the path.
 
               See also \@ref Efl_Gfx_Join.
 

@@ -1259,7 +1259,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
       part_text_unescaped_set {
          [[Sets the raw (non escaped) text for an object part.
 
-           This funciton will not do escape for you if it is a TEXTBLOCK part, that is,
+           This function will not do escape for you if it is a TEXTBLOCK part, that is,
            if text contain tags, these tags will not be interpreted/parsed by TEXTBLOCK.
 
            See also @.part_text_unescaped_get().]]

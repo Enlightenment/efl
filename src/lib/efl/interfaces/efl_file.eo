@@ -127,11 +127,11 @@ interface Efl.File {
          [[Block and wait until all asynchronous operations are completed. Unless
            the async flag was set on this object, this method has no effect.]]
 
-         return: bool;[[$false if an error occured, else $true]]
+         return: bool;[[$false if an error occurred, else $true]]
       }
    }
    events {
       async,opened; [[The file was successfully opened asynchronously]]
-      async,error; [[Error occured in asynchronous file operation]]
+      async,error; [[Error occurred in asynchronous file operation]]
    }
 }

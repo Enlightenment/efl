@@ -105,7 +105,7 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
            buffer.
 
            This function allocates internal index buffer any copy data from
-           the given buffer. Futher modifications can be made within
+           the given buffer. Further modifications can be made within
            map/unmap pair.
 
            See also @.index_data_set.

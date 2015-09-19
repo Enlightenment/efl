@@ -17,7 +17,7 @@ enum Evas.Textgrid.Font_Style {
    italic = (1 << 2)  [[Oblique style]]
 }
 
-/* XXX: Acutal definition is in C. */
+/* XXX: Actual definition is in C. */
 struct Evas.Textgrid.Cell;
 
 class Evas.Textgrid (Evas.Object, Efl.Text_Properties)

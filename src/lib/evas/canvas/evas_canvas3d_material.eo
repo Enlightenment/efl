@@ -7,7 +7,7 @@ class Evas.Canvas3D.Material (Evas.Canvas3D.Object, Evas.Common_Interface)
          [[Set the material attribute color of the given material.
 
            Material color is used also when texture map is enabled. The colors
-           will be modulated (multiplied). To controll the color contribution
+           will be modulated (multiplied). To control the color contribution
            of a material attribute, use gray color. Setting color value for
            normal attribute has no effect.
 
