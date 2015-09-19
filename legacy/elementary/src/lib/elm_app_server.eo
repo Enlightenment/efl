@@ -53,7 +53,7 @@ class Elm_App_Server (Eo.Base)
          legacy: null;
          params {
             @in packageid: const(char)*; [[package of application]]
-            @in create_view_cb: Elm_App_Server_Create_View_Cb; [[callback to be called when user whants to open some application view]]
+            @in create_view_cb: Elm_App_Server_Create_View_Cb; [[callback to be called when user wants to open some application view]]
          }
       }
       close_all {

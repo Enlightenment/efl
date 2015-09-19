@@ -385,7 +385,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                 [[This returns track object of the item.
 
                   Note: This gets a rectangle object that represents the object item's internal
-                  object. If you wanna check the geometry, visibility of the item, you
+                  object. If you want to check the geometry, visibility of the item, you
                   can call the evas apis such as evas_object_geometry_get(),
                   evas_object_visible_get() to the track object. Note that all of the
                   widget items may/may not have the internal object so this api may
@@ -424,7 +424,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
 
                   Note: This gets the reference count for the track object. Whenever you call
                   the @.track, the reference count will be increased by
-                  one. Likely the referece count will be decreased again when you call
+                  one. Likely the reference count will be decreased again when you call
                   the @.untrack. Unless the reference count reaches to
                   zero, the track object won't be deleted. So please be sure to call
                   @.untrack() paired to the elm_object_item_track call
