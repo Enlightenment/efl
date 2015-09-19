@@ -201,7 +201,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 	o = last = evas_object_rectangle_add(evas);
         evas_object_size_hint_min_set(o, 50, 50);
         evas_object_resize(o, 50, 50);
-	evas_object_color_set(o, 255, 0, 0, 128);
+	evas_object_color_set(o, 128, 0, 0, 128);
 	evas_object_show(o);
 
 	if (!edje_object_part_box_append(edje_obj, "example/box", o))
