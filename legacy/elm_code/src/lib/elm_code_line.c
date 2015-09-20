@@ -83,6 +83,68 @@ EAPI void elm_code_line_split_at(Elm_Code_Line *line, unsigned int position)
    free(content);
 }
 
+static void
+_elm_code_line_merge_into(Elm_Code_Line *line1, Elm_Code_Line *line2)
+{
+   Eina_List *tokens1, *tokens2;
+   Elm_Code_Token *token;
+   const char *text1, *text2;
+   char *newtext;
+   unsigned int length1, length2;
+
+   text1 = elm_code_line_text_get(line1, &length1);
+   text2 = elm_code_line_text_get(line2, &length2);
+
+   newtext = malloc(sizeof(char) * (length1 + length2 + 1));
+   snprintf(newtext, length1 + 1, "%s", text1);
+   snprintf(newtext + length1, length2 + 1, "%s", text2);
+
+   tokens1 = line1->tokens;
+   line1->tokens = NULL;
+   tokens2 = line2->tokens;
+   line2->tokens = NULL;
+   elm_code_file_line_remove(line2->file, line2->number);
+   elm_code_line_text_set(line1, newtext, length1 + length2);
+
+   EINA_LIST_FREE(tokens1, token)
+     {
+        token->continues = EINA_FALSE;
+        line1->tokens = eina_list_append(line1->tokens, token);
+     }
+   EINA_LIST_FREE(tokens2, token)
+     {
+        token->start += length1;
+        token->end += length1;
+
+        line1->tokens = eina_list_append(line1->tokens, token);
+     }
+
+   elm_code_callback_fire(line1->file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line1);
+   free(newtext);
+}
+
+EAPI void
+elm_code_line_merge_up(Elm_Code_Line *line)
+{
+   Elm_Code_Line *other;
+
+   other = elm_code_file_line_get(line->file, line->number - 1);
+
+   if (other)
+     _elm_code_line_merge_into(other, line);
+}
+
+EAPI void
+elm_code_line_merge_down(Elm_Code_Line *line)
+{
+   Elm_Code_Line *other;
+
+   other = elm_code_file_line_get(line->file, line->number + 1);
+
+   if (other)
+     _elm_code_line_merge_into(line, other);
+}
+
 EAPI void elm_code_line_status_set(Elm_Code_Line *line, Elm_Code_Status_Type status)
 {
    if (!line)

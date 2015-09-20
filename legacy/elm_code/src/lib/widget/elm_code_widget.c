@@ -1038,12 +1038,8 @@ static void
 _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
 {
    Elm_Code *code;
-   Elm_Code_Line *line, *otherline;
-   unsigned int row, col, position;
-
-   const char *text1, *text2;
-   char *newtext;
-   unsigned int length1, length2;
+   Elm_Code_Line *line, *oldline;
+   unsigned int row, col, oldlength, position;
 
    eo_do(widget,
          code = elm_obj_code_widget_code_get(),
@@ -1052,29 +1048,15 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
 
    if (nextline)
      {
-        otherline = elm_code_file_line_get(code->file, row + 1);
-        text1 = elm_code_line_text_get(line, &length1);
-        text2 = elm_code_line_text_get(otherline, &length2);
+        elm_code_line_merge_down(line);
      }
    else
      {
-        otherline = elm_code_file_line_get(code->file, row - 1);
-        text1 = elm_code_line_text_get(otherline, &length1);
-        text2 = elm_code_line_text_get(line, &length2);
-     }
+        oldline = elm_code_file_line_get(code->file, row - 1);
+        elm_code_line_text_get(oldline, &oldlength);
+        elm_code_line_merge_up(line);
 
-   newtext = malloc(sizeof(char) * (length1 + length2 + 1));
-   snprintf(newtext, length1 + 1, "%s", text1);
-   snprintf(newtext + length1, length2 + 1, "%s", text2);
-
-// TODO we need to merge tokens from these lines (move this to elm_code_line?)
-   elm_code_file_line_remove(code->file, otherline->number);
-   elm_code_line_text_set(line, newtext, length1 + length2);
-
-   free(newtext);
-   if (!nextline)
-     {
-        position = elm_code_widget_line_text_column_width_to_position(widget, line, length1);
+        position = elm_code_widget_line_text_column_width_to_position(widget, oldline, oldlength);
 
         eo_do(widget,
               elm_obj_code_widget_cursor_position_set(position, row - 1));
