@@ -148,6 +148,11 @@ struct _Ecore_Wl2_Input
 
    struct
      {
+        unsigned int modifiers;
+     } keyboard;
+
+   struct
+     {
         Ecore_Wl2_Window *pointer;
         Ecore_Wl2_Window *keyboard;
         Ecore_Wl2_Window *touch;
