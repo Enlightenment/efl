@@ -195,7 +195,7 @@ _elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *c
 
         // TODO handle a token starting before the previous finishes
         end = token_end_col;
-        if (token->end_line > line->number)
+        if (token->continues)
           end = length + offset;
         _elm_code_widget_fill_line_token(cells, count, token_start_col, end, token->type);
 

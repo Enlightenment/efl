@@ -13,7 +13,7 @@ extern "C" {
 typedef struct _Elm_Code_Token
 {
    int start, end;
-   unsigned int end_line;
+   Eina_Bool continues;
 
    Elm_Code_Token_Type type;
 
