@@ -129,14 +129,68 @@ static const struct wl_pointer_listener _pointer_listener =
    _pointer_cb_axis,
 };
 
+static void
+_keyboard_cb_keymap(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int format, int fd, unsigned int size)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
+static void
+_keyboard_cb_enter(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, struct wl_surface *surface, struct wl_array *keys EINA_UNUSED)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
+static void
+_keyboard_cb_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, struct wl_surface *surface)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
+static void
+_keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int keyboard, unsigned int state)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
+static void
+_keyboard_cb_modifiers(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial EINA_UNUSED, unsigned int depressed, unsigned int latched, unsigned int locked, unsigned int group)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
+static void
+_keyboard_cb_repeat_setup(void *data, struct wl_keyboard *keyboard EINA_UNUSED, int32_t rate, int32_t delay)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
 static const struct wl_keyboard_listener _keyboard_listener =
 {
-   NULL, // keyboard keymap
-   NULL, // keyboard enter
-   NULL, // keyboard leave
-   NULL, // keyboard key
-   NULL, // keyboard modifiers
-   NULL, // keyboard repeat setup
+   _keyboard_cb_keymap,
+   _keyboard_cb_enter,
+   _keyboard_cb_leave,
+   _keyboard_cb_key,
+   _keyboard_cb_modifiers,
+   _keyboard_cb_repeat_setup
 };
 
 static const struct wl_touch_listener _touch_listener =
