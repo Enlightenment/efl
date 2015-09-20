@@ -393,13 +393,67 @@ static const struct wl_keyboard_listener _keyboard_listener =
    _keyboard_cb_repeat_setup
 };
 
+static void
+_touch_cb_down(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int serial, unsigned int timestamp, struct wl_surface *surface, int id, wl_fixed_t x, wl_fixed_t y)
+{
+   Ecore_Wl2_Input *input;
+   Ecore_Wl2_Window *window;
+
+   input = data;
+   if (!input) return;
+
+   /* find the window which this surface belongs to */
+   window = _ecore_wl2_display_window_surface_find(input->display, surface);
+   if (!window) return;
+
+   input->focus.touch = window;
+
+   /* TODO: Finish sending ecore events */
+}
+
+static void
+_touch_cb_up(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int serial, unsigned int timestamp, int id)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+   if (!input->focus.touch) return;
+
+   /* TODO: Send ecore mouse up event and do input ungrab */
+}
+
+static void
+_touch_cb_motion(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int timestamp, int id, wl_fixed_t x, wl_fixed_t y)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+   if (!input->focus.touch) return;
+
+   /* TODO: Send ecore mouse move event */
+}
+
+static void
+_touch_cb_frame(void *data EINA_UNUSED, struct wl_touch *touch EINA_UNUSED)
+{
+
+}
+
+static void
+_touch_cb_cancel(void *data EINA_UNUSED, struct wl_touch *tough EINA_UNUSED)
+{
+
+}
+
 static const struct wl_touch_listener _touch_listener =
 {
-   NULL, // touch down
-   NULL, // touch up
-   NULL, // touch motion
-   NULL, // touch frame
-   NULL, // touch cancel
+   _touch_cb_down,
+   _touch_cb_up,
+   _touch_cb_motion,
+   _touch_cb_frame,
+   _touch_cb_cancel
 };
 
 static const struct wl_data_device_listener _data_listener =
