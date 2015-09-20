@@ -228,6 +228,8 @@ _val_set(Evas_Object *obj)
      pos = 1.0;
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", pos, pos);
+
+   eo_do(obj, eo_event_callback_call(ELM_SPINNER_EVENT_CHANGED, NULL));
 }
 
 static void
