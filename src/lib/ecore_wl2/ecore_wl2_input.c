@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#include <unistd.h>
+#include <sys/mman.h>
 #include "ecore_wl2_private.h"
 
 static void
@@ -30,7 +32,7 @@ _pointer_cb_enter(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
 }
 
 static void
-_pointer_cb_leave(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial, struct wl_surface *surface)
+_pointer_cb_leave(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial EINA_UNUSED, struct wl_surface *surface)
 {
    Ecore_Wl2_Input *input;
    Ecore_Wl2_Window *window;
@@ -75,7 +77,7 @@ _pointer_cb_motion(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned 
 }
 
 static void
-_pointer_cb_button(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int button, unsigned int state)
+_pointer_cb_button(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial EINA_UNUSED, unsigned int timestamp, unsigned int button, unsigned int state)
 {
    Ecore_Wl2_Input *input;
 
@@ -133,45 +135,233 @@ static void
 _keyboard_cb_keymap(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int format, int fd, unsigned int size)
 {
    Ecore_Wl2_Input *input;
+   char *map = NULL;
 
    input = data;
-   if (!input) return;
+   if (!input)
+     {
+        close(fd);
+        return;
+     }
+
+   if (format != WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1)
+     {
+        close(fd);
+        return;
+     }
+
+   map = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);
+   if (map == MAP_FAILED)
+     {
+        close(fd);
+        return;
+     }
+
+   /* free any existing keymap and state */
+   if (input->xkb.keymap) xkb_map_unref(input->xkb.keymap);
+   if (input->xkb.state) xkb_state_unref(input->xkb.state);
+
+   input->xkb.keymap =
+     xkb_map_new_from_string(input->display->xkb_context, map,
+                             XKB_KEYMAP_FORMAT_TEXT_V1, 0);
+
+   munmap(map, size);
+   close(fd);
+
+   if (!input->xkb.keymap)
+     {
+        ERR("Failed to compile keymap");
+        return;
+     }
+
+   input->xkb.state = xkb_state_new(input->xkb.keymap);
+   if (!input->xkb.state)
+     {
+        ERR("Failed to create keymap state: %m");
+        xkb_map_unref(input->xkb.keymap);
+        input->xkb.keymap = NULL;
+        return;
+     }
+
+   input->xkb.control_mask =
+     1 << xkb_map_mod_get_index(input->xkb.keymap, XKB_MOD_NAME_CTRL);
+   input->xkb.alt_mask =
+     1 << xkb_map_mod_get_index(input->xkb.keymap, XKB_MOD_NAME_ALT);
+   input->xkb.shift_mask =
+     1 << xkb_map_mod_get_index(input->xkb.keymap, XKB_MOD_NAME_SHIFT);
+   input->xkb.win_mask =
+     1 << xkb_map_mod_get_index(input->xkb.keymap, XKB_MOD_NAME_LOGO);
+   input->xkb.scroll_mask =
+     1 << xkb_map_mod_get_index(input->xkb.keymap, XKB_LED_NAME_SCROLL);
+   input->xkb.num_mask =
+     1 << xkb_map_mod_get_index(input->xkb.keymap, XKB_LED_NAME_NUM);
+   input->xkb.caps_mask =
+     1 << xkb_map_mod_get_index(input->xkb.keymap, XKB_MOD_NAME_CAPS);
+   input->xkb.altgr_mask =
+     1 << xkb_map_mod_get_index(input->xkb.keymap, "ISO_Level3_Shift");
 }
 
 static void
 _keyboard_cb_enter(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, struct wl_surface *surface, struct wl_array *keys EINA_UNUSED)
 {
    Ecore_Wl2_Input *input;
+   Ecore_Wl2_Window *window;
 
    input = data;
    if (!input) return;
+
+   /* TODO: Set display->serial ?? */
+
+   /* TODO: Set input timestamp ?? */
+
+   /* find the window which this surface belongs to */
+   window = _ecore_wl2_display_window_surface_find(input->display, surface);
+   if (!window) return;
+
+   input->focus.keyboard = window;
+
+   /* TODO: Send keyboard enter event (focus in) */
 }
 
 static void
 _keyboard_cb_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, struct wl_surface *surface)
 {
    Ecore_Wl2_Input *input;
+   Ecore_Wl2_Window *window;
 
    input = data;
    if (!input) return;
+
+   /* TODO: Set display->serial ?? */
+
+   input->repeat.sym = 0;
+   input->repeat.key = 0;
+   input->repeat.time = 0;
+   if (input->repeat.timer) ecore_timer_del(input->repeat.timer);
+   input->repeat.timer = NULL;
+
+   /* find the window which this surface belongs to */
+   window = _ecore_wl2_display_window_surface_find(input->display, surface);
+   if (!window) return;
+
+   /* TODO: Send keyboard leave event (focus out) */
+
+   input->focus.keyboard = NULL;
+}
+
+static Eina_Bool
+_keyboard_cb_repeat(void *data)
+{
+   Ecore_Wl2_Input *input;
+   Ecore_Wl2_Window *window;
+
+   input = data;
+   if (!input) return ECORE_CALLBACK_RENEW;
+
+   window = input->focus.keyboard;
+   if (!window) goto out;
+
+   /* TODO: Send ecore key event for preseed */
+
+   return ECORE_CALLBACK_RENEW;
+
+out:
+   input->repeat.sym = 0;
+   input->repeat.key = 0;
+   input->repeat.time = 0;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
-_keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int keyboard, unsigned int state)
+_keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int keycode, unsigned int state)
 {
    Ecore_Wl2_Input *input;
+   Ecore_Wl2_Window *window;
+   unsigned int code, nsyms;
+   const xkb_keysym_t *syms;
+   xkb_keysym_t sym = XKB_KEY_NoSymbol;
 
    input = data;
    if (!input) return;
+
+   /* try to get the window which has keyboard focus */
+   window = input->focus.keyboard;
+   if (!window) return;
+
+   /* xkb rules reflect X broken keycodes, so offset by 8 */
+   code = keycode + 8;
+
+   nsyms = xkb_state_key_get_syms(input->xkb.state, code, &syms);
+   if (nsyms == 1) sym = syms[0];
+
+   /* TODO: Send ecore key event */
+
+   if ((state == WL_KEYBOARD_KEY_STATE_RELEASED) &&
+       (keycode == input->repeat.key))
+     {
+        input->repeat.sym = 0;
+        input->repeat.key = 0;
+        input->repeat.time = 0;
+        if (input->repeat.timer) ecore_timer_del(input->repeat.timer);
+        input->repeat.timer = NULL;
+     }
+   else if ((state == WL_KEYBOARD_KEY_STATE_PRESSED) &&
+            (xkb_keymap_key_repeats(input->xkb.keymap, code)))
+     {
+        /* don't setup key repeat timer if not enabled */
+        if (!input->repeat.enabled) return;
+
+        input->repeat.sym = sym;
+        input->repeat.key = keycode;
+        input->repeat.time = timestamp;
+
+        if (!input->repeat.timer)
+          {
+             input->repeat.timer =
+               ecore_timer_add(input->repeat.rate, _keyboard_cb_repeat, input);
+          }
+
+        ecore_timer_delay(input->repeat.timer, input->repeat.delay);
+     }
 }
 
 static void
 _keyboard_cb_modifiers(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial EINA_UNUSED, unsigned int depressed, unsigned int latched, unsigned int locked, unsigned int group)
 {
    Ecore_Wl2_Input *input;
+   xkb_mod_mask_t mask;
 
    input = data;
    if (!input) return;
+
+   /* skip PC style modifiers if we have no keymap */
+   if (!input->xkb.keymap) return;
+
+   xkb_state_update_mask(input->xkb.state,
+                         depressed, latched, locked, 0, 0, group);
+
+   mask = xkb_state_serialize_mods(input->xkb.state,
+                                   XKB_STATE_MODS_DEPRESSED | XKB_STATE_MODS_LATCHED);
+
+   /* reset modifiers to default */
+   input->keyboard.modifiers = 0;
+
+   if (mask & input->xkb.control_mask)
+     input->keyboard.modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+   if (mask & input->xkb.alt_mask)
+     input->keyboard.modifiers |= ECORE_EVENT_MODIFIER_ALT;
+   if (mask & input->xkb.shift_mask)
+     input->keyboard.modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+   if (mask & input->xkb.win_mask)
+     input->keyboard.modifiers |= ECORE_EVENT_MODIFIER_WIN;
+   if (mask & input->xkb.scroll_mask)
+     input->keyboard.modifiers |= ECORE_EVENT_LOCK_SCROLL;
+   if (mask & input->xkb.num_mask)
+     input->keyboard.modifiers |= ECORE_EVENT_LOCK_NUM;
+   if (mask & input->xkb.caps_mask)
+     input->keyboard.modifiers |= ECORE_EVENT_LOCK_CAPS;
+   if (mask & input->xkb.altgr_mask)
+     input->keyboard.modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
 }
 
 static void
@@ -181,6 +371,16 @@ _keyboard_cb_repeat_setup(void *data, struct wl_keyboard *keyboard EINA_UNUSED, 
 
    input = data;
    if (!input) return;
+
+   if (rate == 0)
+     {
+        input->repeat.enabled = EINA_FALSE;
+        return;
+     }
+
+   input->repeat.enabled = EINA_TRUE;
+   input->repeat.rate = (rate / 1000);
+   input->repeat.delay = (delay / 100);
 }
 
 static const struct wl_keyboard_listener _keyboard_listener =
