@@ -259,12 +259,11 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
 }
 
 static Edje_File *
-_edje_file_open(const Eina_File *f, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, time_t mtime)
+_edje_file_open(const Eina_File *f, int *error_ret, time_t mtime)
 {
    Edje_Color_Class *cc;
    Edje_File *edf;
    Eina_List *l;
-   Edje_Part_Collection *edc;
    Eet_File *ef;
 
    ef = eet_mmap(f);
@@ -373,7 +372,7 @@ find_list:
           }
      }
 
-   edf = _edje_file_open(file, coll, error_ret, edc_ret, eina_file_mtime_get(file));
+   edf = _edje_file_open(file, error_ret, eina_file_mtime_get(file));
    if (!edf) return NULL;
 
    eina_hash_direct_add(_edje_file_hash, &edf->f, edf);
