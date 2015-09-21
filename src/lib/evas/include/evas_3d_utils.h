@@ -2829,14 +2829,6 @@ evas_tangent_space_get(float *data, float *tex_data, float *normal_data, unsigne
         return;
      }
 
-   unsigned short int *tmp_index = (unsigned short int*) malloc((vertex_count) * sizeof(unsigned short int));
-
-   if (tmp_index == NULL)
-     {
-        ERR("Failed to allocate memory %d %s", __LINE__, __FILE__);
-        return;
-     }
-
    float *tmp_tangent = (float*) malloc((3 * vertex_count) * sizeof(float));
    if (tmp_tangent == NULL)
      {
@@ -2934,7 +2926,6 @@ evas_tangent_space_get(float *data, float *tex_data, float *normal_data, unsigne
 
 
    memcpy(*tangent, tmp_tangent, (3 * vertex_count) * sizeof(float));
-   free(tmp_index);
    free(tmp_tangent);
 
    return;
