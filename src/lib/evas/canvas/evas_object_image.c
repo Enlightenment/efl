@@ -691,7 +691,7 @@ _evas_image_orient_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Orient orient)
         ENFN->image_data_preload_cancel(ENDT, o->engine_data, eo_obj);
      }
 
-   if(o->engine_data)
+   if (o->engine_data)
      {
         int stride = 0;
 
