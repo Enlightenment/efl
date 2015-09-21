@@ -2694,6 +2694,8 @@ _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED,
    scene_data.bg_color = pd_scene->bg_color;
    scene_data.shadows_enabled = pd_scene->shadows_enabled;
    scene_data.camera_node = pd_scene->camera_node;
+   scene_data.depth_offset = pd_scene->depth_offset;
+   scene_data.depth_constant = pd_scene->depth_constant;
 
    /* Phase 1 - Update scene graph tree. */
    eo_do(scene, evas_canvas3d_object_update());

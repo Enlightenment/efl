@@ -360,7 +360,33 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
             assembly: Evas.Canvas3D.Vertex_Assembly; [[The vertex assembly.]]
          }
       }
+      @property shadows_edges_filtering {
+        set {
+           [[Set the shadow edges blur parameters. 
 
+             The averaging values in window is used for blurring. 
+             User can set the size of window and num of points in window.
+           ]]
+        }
+        get {
+            [[Get the shadow edges blur parameters.]]
+        }
+        values {
+           blur_level: int; [[Number of points within a bluring radius.]]
+           edges_size: Evas.Real; [[The bluring radius.]]
+        }
+      }
+      @property shadows_constant_bias {
+        set {
+           [[Set offset shadow toward object.]]
+        }
+        get {
+            [[Get offset shadow toward object.]]
+        }
+        values {
+           bias: Evas.Real; [[Offset.]]
+        }
+      }
    }
    implements {
       Eo.Base.constructor;

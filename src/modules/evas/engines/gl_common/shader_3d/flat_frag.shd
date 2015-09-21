@@ -49,7 +49,7 @@ vec4 fragmentFlat()
 void main() {
    vec4 color;
 #ifdef SHADOWED
-   shadow = pcf(vLightPosition, 1.0 / 200.0);
+   shadow = pcf(vLightPosition);
 #endif //SHADOWED
 
    color = fragmentFlat();

@@ -132,6 +132,9 @@ _mesh_init(Evas_Canvas3D_Mesh_Data *pd)
    pd->color_pick_key.b = 0.0;
 #endif
    pd->color_pick_enabled = EINA_FALSE;
+   pd->shadows_edges_filtering_level = 4;
+   pd->shadows_edges_size = 300.0;
+   pd->shadows_constant_bias = 0.00015;
 }
 
 static inline void
@@ -1076,6 +1079,42 @@ _evas_canvas3d_mesh_color_pick_enable_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, 
    if (pd->color_pick_enabled != enabled)
      pd->color_pick_enabled = enabled;
    eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_COLOR_PICK, NULL));
+}
+
+EOLIAN static void
+_evas_canvas3d_mesh_shadows_edges_filtering_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd,
+                                          int blur_level, Evas_Real edges_size)
+{
+   if (blur_level > 0)
+     pd->shadows_edges_filtering_level = blur_level;
+   if (edges_size >= 0)
+     pd->shadows_edges_size = edges_size;
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_SHADOWS_EDGES_FILTERING, NULL));
+}
+
+EOLIAN static void
+_evas_canvas3d_mesh_shadows_edges_filtering_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd,
+                                   int *blur_level, Evas_Real *edges_size)
+{
+   if (blur_level) *blur_level = pd->shadows_edges_filtering_level;
+   if (edges_size) *edges_size = pd->shadows_edges_size;
+}
+
+EOLIAN static void
+_evas_canvas3d_mesh_shadows_constant_bias_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd,
+                                         Evas_Real bias)
+{
+   if (pd->shadows_constant_bias != bias)
+     {
+        pd->shadows_constant_bias = bias;
+        eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_SHADOWS_CONSTANT_BIAS, NULL));
+     }
+}
+
+EOLIAN static Evas_Real
+_evas_canvas3d_mesh_shadows_constant_bias_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
+{
+   return pd->shadows_constant_bias;
 }
 
 #include "canvas/evas_canvas3d_mesh.eo.c"

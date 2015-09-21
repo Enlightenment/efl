@@ -74,6 +74,8 @@ _evas_canvas3d_scene_eo_base_constructor(Eo *obj, Evas_Canvas3D_Scene_Data *pd)
    pd->color_pick_enabled = EINA_FALSE;
    pd->node_mesh_colors = NULL;
    pd->colors_node_mesh = NULL;
+   pd->depth_offset = 4.0;
+   pd->depth_constant = 100.0;
 
    return obj;
 }
@@ -802,6 +804,23 @@ _evas_canvas3d_scene_color_pick_enable_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Sc
 
    eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_SCENE_UPDATED, NULL));
    return EINA_TRUE;
+}
+
+EOLIAN static void
+_evas_canvas3d_scene_shadows_depth_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd,
+                                       Evas_Real depth_offset, Evas_Real depth_constant)
+{
+   pd->depth_offset = depth_offset;
+   pd->depth_constant = depth_constant;
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_SCENE_SHADOWS_DEPTH, NULL));
+}
+
+EOLIAN static void
+_evas_canvas3d_scene_shadows_depth_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd,
+                                       Evas_Real *depth_offset, Evas_Real *depth_constant)
+{
+   if (depth_offset) *depth_offset = pd->depth_offset;
+   if (depth_constant) *depth_constant = pd->depth_constant;
 }
 
 #include "canvas/evas_canvas3d_scene.eo.c"

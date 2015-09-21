@@ -264,6 +264,7 @@ enum Evas.Canvas3D.State
    scene_size,
    scene_shadows_enabled,
    scene_updated, [[@since 1.14]]
+   scene_shadows_depth,
 
    texture_data = 1,
    texture_wrap,
@@ -285,6 +286,8 @@ enum Evas.Canvas3D.State
    mesh_blending,
    mesh_alpha_test,
    mesh_color_pick,
+   mesh_shadows_edges_filtering,
+   mesh_shadows_constant_bias,
 
    camera_projection = 1,
 

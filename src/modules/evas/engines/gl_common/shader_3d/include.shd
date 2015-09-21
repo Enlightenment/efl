@@ -40,27 +40,33 @@ define(`FRAGMENT_SHADER_USE_SHADOWS', `
 #ifdef  SHADOWED
 varying vec4 vLightPosition;
 uniform sampler2D uShadowMap;
+uniform float uShadowsPCFStep;
+uniform float uShadowsPCFSize;
+#ifdef GL_ES
+uniform float uShadowsConstantBias;
+#endif //GL_ES'
 float shadow;
-float pcf(vec4 lpos, float size)
+float pcf(vec4 lpos)
 {
    vec3 smcoord = lpos.xyz / lpos.w * 0.5 + 0.5;
-   float i, j, shadow;
+   float i, j, shadow, q, c;
+   q = floor(uShadowsPCFStep * 2.0);
+   c = floor(uShadowsPCFStep * uShadowsPCFStep * 4.0);
    shadow = 0.0;
 `#ifndef GL_ES'
-   for (i = -4.0; i < 4.0; i++)
-     for (j = -4.0; j < 4.0; j++)
-       shadow += float(smcoord.z <= texture2D(uShadowMap, smcoord.xy + vec2(i / 8.0, j / 8.0) * size).x);
+   for (i = -uShadowsPCFStep; i < uShadowsPCFStep; i += 1.0)
+     for (j = -uShadowsPCFStep; j < uShadowsPCFStep; j += 1.0)
+       shadow += float(smcoord.z <= texture2D(uShadowMap, smcoord.xy + vec2(i / q, j / q) * uShadowsPCFSize).x);
 `#else'
    const vec4 unpack = vec4(1.0 / (256.0 * 256.0 * 256.0), 1.0 / (256.0 * 256.0), 1.0 / 256.0, 1.0);
-   const float bias = 0.00015 /*TODO Optimizate set of offset*/;
-   for (i = -4.0; i < 4.0; i++)
-     for (j = -4.0; j < 4.0; j++)
+   for (i = -uShadowsPCFStep; i < uShadowsPCFStep; i += 1.0)
+     for (j = -uShadowsPCFStep; j < uShadowsPCFStep; j += 1.0)
        {
-          vec4 zvalue = texture2D(uShadowMap, smcoord.xy + vec2(i / 8.0, j / 8.0) * size);
-          shadow += float(smcoord.z < dot(zvalue, unpack) + bias);
+          vec4 zvalue = texture2D(uShadowMap, smcoord.xy + vec2(i / q, j / q) * uShadowsPCFSize);
+          shadow += float(smcoord.z < dot(zvalue, unpack) + uShadowsConstantBias);
        }
 `#endif //GL_ES'
-   return shadow / 64.0;
+   return shadow / c;
 }
 #endif //SHADOWED')
 

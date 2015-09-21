@@ -145,6 +145,21 @@ class Evas.Canvas3D.Scene (Evas.Canvas3D.Object, Evas.Common_Interface)
                                           camera node for the scene.]]
          }
       }
+      @property shadows_depth {
+         set {
+            [[Set scale and units used to calculate depth values.]]
+         }
+         get {
+            [[Get scale and units used to calculate depth values.]]
+         }
+         values {
+            depth_offset: Evas.Real; [[Scale factor that is used to
+                                       create a variable depth offset
+                                       for each polygon.]]
+            depth_constant: Evas.Real; [[Value to create a constant
+                                         depth offset]]
+         }
+      }
    }
    implements {
       Eo.Base.constructor;

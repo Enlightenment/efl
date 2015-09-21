@@ -111,6 +111,12 @@ struct _E3D_Draw_Data
 #else
    Evas_Color color_pick_key;
 #endif
+   /*Sets of the quality of shadow rendering*/
+   Evas_Real               pcf_step;
+   Evas_Real               pcf_size;
+#ifdef GL_GLES
+   Evas_Real               constant_bias;
+#endif
 };
 
 struct _E3D_Texture

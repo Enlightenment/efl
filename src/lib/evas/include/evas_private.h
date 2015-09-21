@@ -229,6 +229,9 @@ struct _Evas_Canvas3D_Scene
 
    Eina_Hash        *node_mesh_colors;
    Eina_Hash        *colors_node_mesh;
+   /*sets constant for shadow rendering*/
+   Evas_Real depth_offset;
+   Evas_Real depth_constant;
 };
 
 struct _Evas_Canvas3D_Node_Mesh
@@ -387,6 +390,10 @@ struct _Evas_Canvas3D_Mesh
    Evas_Color              color_pick_key;
 #endif
    Eina_Bool               color_pick_enabled :1;
+   /*sets of the quality and offsets for shadow rendering*/
+   int                     shadows_edges_filtering_level;
+   Evas_Real               shadows_edges_size;
+   Evas_Real               shadows_constant_bias;
 };
 
 struct _Evas_Canvas3D_Texture
@@ -440,6 +447,10 @@ struct _Evas_Canvas3D_Scene_Public_Data
 
    Eina_Hash        *node_mesh_colors;
    Eina_Hash        *colors_node_mesh;
+
+   /*sets constant for shadow rendering*/
+   Evas_Real depth_offset;
+   Evas_Real depth_constant;
 };
 
 struct _Evas_Canvas3D_Pick_Data

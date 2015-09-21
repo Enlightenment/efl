@@ -1005,7 +1005,14 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
      data->flags |= E3D_SHADER_FLAG_ALPHA_TEST_ENABLED;
 
    if (pdmesh->shadowed)
-     data->flags |= E3D_SHADER_FLAG_SHADOWED;
+     {
+        data->flags |= E3D_SHADER_FLAG_SHADOWED;
+        data->pcf_size = 1 / pdmesh->shadows_edges_size;
+        data->pcf_step = (Evas_Real)pdmesh->shadows_edges_filtering_level;
+#ifdef GL_GLES
+        data->constant_bias = pdmesh->shadows_constant_bias;
+#endif
+     }
 
    if (pdmesh->color_pick_enabled)
      data->color_pick_key = pdmesh->color_pick_key;
@@ -1178,7 +1185,7 @@ void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer,
    Evas_Mat4 matrix_vp;
 
    glEnable(GL_POLYGON_OFFSET_FILL);
-   glPolygonOffset(4.0, 100.0);
+   glPolygonOffset(data->depth_offset, data->depth_constant);
 #ifdef GL_GLES
    glBindFramebuffer(GL_FRAMEBUFFER, drawable->shadow_fbo);
    glBindRenderbuffer(GL_RENDERBUFFER, drawable->depth_render_buf);
