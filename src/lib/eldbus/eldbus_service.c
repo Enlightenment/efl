@@ -669,8 +669,6 @@ _eldbus_service_object_add(Eldbus_Connection *conn, const char *path, Eina_Bool 
    obj->interfaces = eina_hash_string_superfast_new(NULL);
    eldbus_connection_free_cb_add(conn, _on_connection_free, obj);
 
-   if (obj->fallback) return obj;
-
    eina_hash_add(obj->interfaces, introspectable->name, introspectable);
    eina_hash_add(obj->interfaces, properties_iface->name, properties_iface);
 
@@ -1324,17 +1322,10 @@ _object_handler(DBusConnection *dbus_conn EINA_UNUSED, DBusMessage *msg, void *u
    const Eldbus_Method *method;
    Eldbus_Message *eldbus_msg, *reply;
    Eldbus_Connection *conn;
-   const char* fallback_path = NULL;
 
    obj = user_data;
    if (!obj) return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
    conn = obj->conn;
-
-   if (obj->fallback)
-     {
-       fallback_path = eina_stringshare_add(obj->path);
-       eina_stringshare_replace(&obj->path, dbus_message_get_path(msg));
-     }
 
    DBG("Connection@%p Got message:\n"
           "  Type: %s\n"
@@ -1386,12 +1377,6 @@ _object_handler(DBusConnection *dbus_conn EINA_UNUSED, DBusMessage *msg, void *u
 
    eldbus_connection_unref(conn);
    eldbus_shutdown();
-
-   if (obj->fallback)
-     {
-        eina_stringshare_replace(&obj->path, fallback_path);
-        eina_stringshare_del(fallback_path);
-     }
 
    return DBUS_HANDLER_RESULT_HANDLED;
 }
