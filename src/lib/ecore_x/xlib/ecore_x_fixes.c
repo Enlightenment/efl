@@ -309,6 +309,7 @@ ecore_x_region_fetch(Ecore_X_Region region,
    (*bounds).y = xbound.y;
    (*bounds).width = xbound.width;
    (*bounds).height = xbound.height;
+   XFree(xrect);
    return rects;
 #else /* ifdef ECORE_XFIXES */
    return NULL;
