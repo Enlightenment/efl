@@ -1,4 +1,4 @@
-#define FLIP_PICKER_MAX_LEN (50)
+#define FLIP_PICKER_MAX_LEN (50 + 1)
 #define FLIP_PICKER_MAX_LEN_STR "50"
 
 group { name: "elm/flipselector/base/default";
