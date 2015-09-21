@@ -5275,6 +5275,56 @@ edje_edit_part_item_span_set(Evas_Object *obj, const char *part, const char *ite
    return EINA_TRUE;
 }
 
+#define FUNC_PART_ITEM_USHORT(CLASS, VALUE, MEMBER) \
+EAPI unsigned short \
+edje_edit_part_item_##CLASS##_##VALUE##_get(Evas_Object *obj, const char *part, const char *item_name) \
+{ \
+   Edje_Part *ep; \
+   unsigned int i; \
+   Edje_Pack_Element *item = NULL; \
+   GET_RP_OR_RETURN(0); \
+   if (!item_name) return 0; \
+   ep = rp->part; \
+   if (rp->part->type != EDJE_PART_TYPE_TABLE) return EINA_FALSE; \
+   for (i = 0; i < ep->items_count; ++i) \
+     { \
+        if ((ep->items[i]->name) && (!strcmp(ep->items[i]->name, item_name))) \
+          { \
+             item = ep->items[i]; \
+             break; \
+          } \
+     } \
+   if (!item) return 0; \
+   return  item->MEMBER; \
+} \
+EAPI Eina_Bool \
+edje_edit_part_item_##CLASS##_##VALUE##_set(Evas_Object *obj, const char *part, const char *item_name, unsigned short new_val) \
+{ \
+   Edje_Part *ep; \
+   unsigned int i; \
+   Edje_Pack_Element *item = NULL; \
+   GET_RP_OR_RETURN(EINA_FALSE); \
+   if (!item_name) return EINA_FALSE; \
+   ep = rp->part; \
+   if (rp->part->type != EDJE_PART_TYPE_TABLE) return EINA_FALSE; \
+   for (i = 0; i < ep->items_count; i++) \
+     { \
+        if ((ep->items[i]->name) && (!strcmp(ep->items[i]->name, item_name))) \
+          { \
+             item = ep->items[i]; \
+             break; \
+          } \
+     } \
+   if (!item) return EINA_FALSE; \
+   item->MEMBER = new_val; \
+   return EINA_TRUE; \
+}
+
+FUNC_PART_ITEM_USHORT(span, col, colspan)
+FUNC_PART_ITEM_USHORT(span, row, rowspan)
+
+#undef FUNC_PART_ITEM_USHORT
+
 /*********************/
 /*  PART STATES API  */
 /*********************/
