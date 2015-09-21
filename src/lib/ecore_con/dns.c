@@ -3498,9 +3498,6 @@ int dns_hosts_loadfile(struct dns_hosts *hosts, FILE *fp) {
 
 				break;
 			default:
-				if (!wp)
-					break;
-
 				dns_d_anchor(ent.host, sizeof ent.host, word, wp);
 
 				if ((error = dns_hosts_insert(hosts, ent.af, &ent.addr, ent.host, (wc > 2))))
