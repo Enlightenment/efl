@@ -1701,7 +1701,6 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
              return;
           }
      }
-   fclose(f);
 
    if (no_save)
      WRN("You are removing the source from this Edje file. This may break some use cases.\nBe aware of your choice and the poor kitten you are harming with it!");
@@ -1725,13 +1724,16 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
                        strlen(cp->original) + 1, compress_mode);
           }
      }
+   fclose(f);
 
    unlink(sc->tmpn);
    unlink(sc->tmpo);
    eina_tmpstr_del(sc->tmpn);
    eina_tmpstr_del(sc->tmpo);
-   close(sc->tmpn_fd);
-   close(sc->tmpo_fd);
+// closed by fclose(f) in create_script_file()
+//   close(sc->tmpn_fd);
+// closed by fclose(f) above
+//   close(sc->tmpo_fd);
 }
 
 static void
