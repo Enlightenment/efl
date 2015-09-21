@@ -382,30 +382,18 @@ end:
 static void
 _item_del(Elm_Multibuttonentry_Item_Data *item)
 {
-   Eina_List *l;
-   Elm_Object_Item *eo_it;
    Evas_Object *obj = WIDGET(item);
 
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(obj, sd);
 
-   EINA_LIST_FOREACH(sd->items, l, eo_it)
-     {
-        ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_it, it);
-        if (it == item)
-          {
-             sd->items = eina_list_remove(sd->items, eo_it);
-             elm_box_unpack(sd->box, VIEW(it));
+   sd->items = eina_list_remove(sd->items, EO_OBJ(item));
+   elm_box_unpack(sd->box, VIEW(item));
 
-             eo_do(obj, eo_event_callback_call
-               (ELM_MULTIBUTTONENTRY_EVENT_ITEM_DELETED, eo_it));
+   eo_do(obj, eo_event_callback_call
+     (ELM_MULTIBUTTONENTRY_EVENT_ITEM_DELETED, EO_OBJ(item)));
 
-             evas_object_del(VIEW(it));
-
-             if (sd->selected_it == it)
-               sd->selected_it = NULL;
-             break;
-          }
-     }
+   if (sd->selected_it == item)
+     sd->selected_it = NULL;
 
    if (sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK)
      _shrink_mode_set(obj, EINA_TRUE);
@@ -1842,18 +1830,9 @@ _elm_multibuttonentry_item_selected_get(Eo *eo_item,
 EOLIAN static void
 _elm_multibuttonentry_clear(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Data *sd)
 {
-   Elm_Object_Item *eo_item;
+   while (sd->items)
+     eo_do(eina_list_data_get(sd->items), elm_wdg_item_del());
 
-   if (sd->items)
-     {
-        EINA_LIST_FREE(sd->items, eo_item)
-          {
-             ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_item, item);
-             elm_box_unpack(sd->box, VIEW(item));
-             eo_del(eo_item);
-          }
-        sd->items = NULL;
-     }
    sd->selected_it = NULL;
    _view_update(sd);
 }
