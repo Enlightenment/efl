@@ -19,6 +19,7 @@
 
 static Emotion_Version _version = { VMAJ, VMIN, VMIC, VREV };
 static int emotion_pending_objects = 0;
+static Eina_Lock emotion_pending_lock;
 EAPI Emotion_Version *emotion_version = &_version;
 
 Eina_Prefix *_emotion_pfx = NULL;
@@ -199,13 +200,17 @@ static int emotion_pendig_events = 0;
 EAPI void
 _emotion_pending_ecore_begin(void)
 {
+   eina_lock_take(&emotion_pending_lock);
    emotion_pendig_events++;
+   eina_lock_release(&emotion_pending_lock);
 }
 
 EAPI void
 _emotion_pending_ecore_end(void)
 {
+   eina_lock_take(&emotion_pending_lock);
    emotion_pendig_events--;
+   eina_lock_release(&emotion_pending_lock);
 }
 
 EAPI Eina_Bool
@@ -220,11 +225,16 @@ emotion_shutdown(void)
      }
    if (--_emotion_init_count) return EINA_TRUE;
 
+   eina_lock_take(&emotion_pending_lock);
    start = ecore_time_get();
    while (((emotion_pending_objects > 0) ||
            (emotion_pendig_events > 0)) &&
           ((ecore_time_get() - start) < 0.5))
-     ecore_main_loop_iterate();
+     {
+        eina_lock_release(&emotion_pending_lock);
+        ecore_main_loop_iterate();
+        eina_lock_take(&emotion_pending_lock);
+     }
 
    if (emotion_pending_objects > 0)
      {
@@ -234,6 +244,9 @@ emotion_shutdown(void)
      {
         ERR("There is still %i Emotion events queued", emotion_pendig_events);
      }
+   eina_lock_release(&emotion_pending_lock);
+
+   eina_lock_free(&emotion_pending_lock);
 
    emotion_modules_shutdown();
 
@@ -263,11 +276,15 @@ emotion_shutdown(void)
 EAPI void
 _emotion_pending_object_ref(void)
 {
+   eina_lock_take(&emotion_pending_lock);
    emotion_pending_objects++;
+   eina_lock_release(&emotion_pending_lock);
 }
 
 EAPI void
 _emotion_pending_object_unref(void)
 {
+   eina_lock_take(&emotion_pending_lock);
    emotion_pending_objects--;
+   eina_lock_release(&emotion_pending_lock);
 }
