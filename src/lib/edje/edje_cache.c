@@ -319,16 +319,6 @@ _edje_file_open(const Eina_File *f, const char *coll, int *error_ret, Edje_Part_
      if (cc->name)
        eina_hash_direct_add(edf->color_hash, cc->name, cc);
 
-   if (coll)
-     {
-        edc = _edje_file_coll_open(edf, coll);
-        if (!edc)
-          {
-             *error_ret = EDJE_LOAD_ERROR_UNKNOWN_COLLECTION;
-          }
-        if (edc_ret) *edc_ret = edc;
-     }
-
    return edf;
 }
 
