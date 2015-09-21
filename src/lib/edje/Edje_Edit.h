@@ -2776,10 +2776,38 @@ EAPI Eina_Bool edje_edit_part_item_weight_y_set(Evas_Object *obj, const char *pa
  * @param col Column item position.
  * @param row Row item position.
  *
+ * @deprecated Use edje_edit_part_item_position_col_get() and
+ * edje_edit_part_item_position_row_get() instead.
+ *
  * @return @c EINA_TRUE If successfull, @c EINA_FALSE otherwise.
  * @since 1.11
  */
+EINA_DEPRECATED
 EAPI Eina_Bool edje_edit_part_item_position_get(Evas_Object *obj, const char *part, const char *item_name, unsigned short *col, unsigned short *row);
+
+/** Get column position of the part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item_name The name of the item.
+ *
+ * @return The item column value.
+ * @since 1.16
+ */
+EAPI unsigned short
+edje_edit_part_item_position_col_get(Evas_Object *obj, const char *part, const char *item_name);
+
+/** Get row position of the part's item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item_name The name of the item.
+ *
+ * @return The item row value.
+ * @since 1.16
+ */
+EAPI unsigned short
+edje_edit_part_item_position_row_get(Evas_Object *obj, const char *part, const char *item_name);
 
 /** Set column/row position of a new part's item.
  *
@@ -2789,10 +2817,40 @@ EAPI Eina_Bool edje_edit_part_item_position_get(Evas_Object *obj, const char *pa
  * @param col Column item position.
  * @param row Row item position.
  *
+ * @deprecation Use edje_edit_part_item_position_col_set() and
+ * edje_edit_part_item_position_row_set() instead.
+ *
  * @return @c EINA_TRUE If successfull, @c EINA_FALSE otherwise.
  * @since 1.11
  */
+EINA_DEPRECATED
 EAPI Eina_Bool edje_edit_part_item_position_set(Evas_Object *obj, const char *part, const char *item_name, unsigned short col, unsigned short row);
+
+/** Set column position of a part item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item_name The name of the item.
+ * @param col Column item position.
+ *
+ * @return @c EINA_TRUE If successfull, @c EINA_FALSE otherwise.
+ * @since 1.16
+ */
+EAPI Eina_Bool
+edje_edit_part_item_position_col_set(Evas_Object *obj, const char *part, const char *item_name, unsigned short col);
+
+/** Set row position of a part item.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain item.
+ * @param item_name The name of the item.
+ * @param row Row item position.
+ *
+ * @return @c EINA_TRUE If successfull, @c EINA_FALSE otherwise.
+ * @since 1.16
+ */
+EAPI Eina_Bool
+edje_edit_part_item_position_row_set(Evas_Object *obj, const char *part, const char *item_name, unsigned short row);
 
 /** Retrieves the how many columns and rows will span for use by item.
  *
