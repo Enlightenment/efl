@@ -2215,11 +2215,42 @@ edje_edit_state_container_padding_y_set(Evas_Object *obj, const char *part, cons
  * @param x Variable to store x value.
  * @param y Variable to store y value.
  *
+ * @deprecated Use edje_edit_state_container_align_x_set() and
+ * edje_edit_state_container_align_y_set() instead.
+ *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
  * @since 1.14
  */
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 edje_edit_state_container_align_set(Evas_Object *obj, const char *part, const char *state, double value, double x, double y);
+
+/** Set x align for BOX or TABLE part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that has BOX/TABLE type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ * @param x New x align value.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.16
+ */
+EAPI Eina_Bool
+edje_edit_state_container_align_x_set(Evas_Object *obj, const char *part, const char *state, double value, double x);
+
+/** Set y align for BOX or TABLE part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that has BOX/TABLE type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ * @param y New y align value.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.16
+ */
+EAPI Eina_Bool
+edje_edit_state_container_align_y_set(Evas_Object *obj, const char *part, const char *state, double value, double y);
 
 /** Get x and y align for BOX or TABLE part.
  *
@@ -2230,11 +2261,40 @@ edje_edit_state_container_align_set(Evas_Object *obj, const char *part, const ch
  * @param x Value for setting x align.
  * @param y Value for setting y align.
  *
+ * @deprecated Use edje_edit_state_container_align_x_set() and
+ * edje_edit_state_container_align_y_set() instead.
+ *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
  * @since 1.14
  */
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 edje_edit_state_container_align_get(Evas_Object *obj, const char *part, const char *state, double value, double *x, double *y);
+
+/** Get x align for BOX or TABLE part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that has BOX/TABLE type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ *
+ * @return The align by x axis.
+ * @since 1.16
+ */
+EAPI double
+edje_edit_state_container_align_x_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Get y align for BOX or TABLE part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that has BOX/TABLE type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ *
+ * @return The align by y axis.
+ * @since 1.16
+ */
+EAPI double
+edje_edit_state_container_align_y_get(Evas_Object *obj, const char *part, const char *state, double value);
 
 //@}
 /******************************************************************************/

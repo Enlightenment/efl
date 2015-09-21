@@ -4420,6 +4420,64 @@ FUNC_CONTAINER_INT(padding, y)
 
 #undef FUNC_CONTAINER_INT
 
+#define FUNC_CONTAINER_DOUBLE(CLASS, VALUE) \
+EAPI double \
+edje_edit_state_container_##CLASS##_##VALUE##_get(Evas_Object *obj, const char *part, const char *state, double value) \
+{ \
+   double val; \
+   GET_PD_OR_RETURN(0.0) \
+   switch (rp->part->type) \
+     { \
+      case EDJE_PART_TYPE_TABLE: \
+      { \
+         Edje_Part_Description_Table *table; \
+         table = (Edje_Part_Description_Table *)pd; \
+         val = FROM_DOUBLE(table->table.CLASS.VALUE); \
+         break; \
+      } \
+      case EDJE_PART_TYPE_BOX: \
+      { \
+         Edje_Part_Description_Box *box; \
+         box = (Edje_Part_Description_Box *)pd; \
+         val = FROM_DOUBLE(box->box.CLASS.VALUE); \
+         break; \
+      } \
+      default: \
+         val = 0.0; \
+     } \
+   return val; \
+} \
+EAPI Eina_Bool \
+edje_edit_state_container_##CLASS##_##VALUE##_set(Evas_Object *obj, const char *part, const char *state, double value, double new_val) \
+{ \
+   GET_PD_OR_RETURN(EINA_FALSE) \
+   switch (rp->part->type) \
+     { \
+      case EDJE_PART_TYPE_TABLE: \
+      { \
+         Edje_Part_Description_Table *table; \
+         table = (Edje_Part_Description_Table *)pd; \
+         table->table.CLASS.VALUE = TO_DOUBLE(new_val); \
+         break; \
+      } \
+      case EDJE_PART_TYPE_BOX: \
+      { \
+         Edje_Part_Description_Box *box; \
+         box = (Edje_Part_Description_Box *)pd; \
+         box->box.CLASS.VALUE = TO_DOUBLE(new_val); \
+         break; \
+      } \
+      default: \
+        return EINA_FALSE; \
+     } \
+   return EINA_TRUE; \
+}
+
+FUNC_CONTAINER_DOUBLE(align, x)
+FUNC_CONTAINER_DOUBLE(align, y)
+
+#undef FUNC_CONTAINER_DOUBLE
+
 EAPI Eina_Bool
 edje_edit_state_container_align_get(Evas_Object *obj, const char *part, const char *state, double value, double *x, double *y)
 {
