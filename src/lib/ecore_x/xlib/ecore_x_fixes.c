@@ -266,6 +266,7 @@ ecore_x_region_invert(Ecore_X_Region dest,
 
    XFixesInvertRegion(_ecore_x_disp, dest, xbound, source);
    if (_ecore_xlib_sync) ecore_x_sync();
+   free(xbound);
 #endif /* ifdef ECORE_XFIXES */
 }
 
