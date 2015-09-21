@@ -43,6 +43,10 @@ lib_eio_libeio_la_SOURCES += lib/eio/eio_monitor_win32.c
 else
 if HAVE_NOTIFY_COCOA
 lib_eio_libeio_la_SOURCES += lib/eio/eio_monitor_cocoa.c
+else
+if HAVE_NOTIFY_KEVENT
+lib_eio_libeio_la_SOURCES += lib/eio/eio_monitor_kevent.c
+endif
 endif
 endif
 endif

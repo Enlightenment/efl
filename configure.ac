@@ -4086,6 +4086,13 @@ AC_DEFINE_IF([HAVE_NOTIFY_COCOA],
    [File monitoring with fsevent notification])
 AM_CONDITIONAL([HAVE_NOTIFY_COCOA], [test "x${have_darwin}" = "xyes"])
 
+AC_CHECK_FUNC([kevent])
+have_notify_kevent="${ac_cv_func_kevent}"
+AC_DEFINE_IF([HAVE_NOTIFY_KEVENT],
+   [test "x${have_notify_kevent}" = "xyes"], [1],
+   [File monitoring with kqueue/kevent mechanism])
+AM_CONDITIONAL([HAVE_NOTIFY_KEVENT], [test "x${have_notify_kevent}" = "xyes"])
+
 
 EFL_LIB_END([Eio])
 dnl TODO: remove these ifdefs from code!
