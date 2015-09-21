@@ -133,13 +133,48 @@ eina_tmpstr_len(Eina_Tmpstr *tmpstr)
    for (s = strs; s; s = s->next)
      {
         if (s->str == tmpstr)
-	  {
+          {
              size_t ret = s->length;
              eina_lock_release(&_mutex);
              return ret;
-	  }
+          }
      }
    eina_lock_release(&_mutex);
 
    return strlen(tmpstr);
+}
+
+EAPI Eina_Tmpstr *
+eina_tmpstr_strftime(const char *format, const struct tm *tm)
+{
+   const size_t flen = strlen(format);
+   size_t buflen = 16; // An arbitrary starting size
+   char *buf = NULL;
+
+   do {
+      char *tmp;
+      size_t len;
+
+      tmp = realloc(buf, buflen * sizeof(char));
+      if (!tmp) goto on_error;
+      buf = tmp;
+
+      len = strftime(buf, buflen, format, tm);
+      // Check if we have the expected result and return it.
+      if ((len > 0 && len < buflen) || (len == 0 && flen == 0))
+        {
+           Eina_Tmpstr *r;
+
+           r = eina_tmpstr_add_length(buf, len + 1);
+           free(buf);
+           return r;
+        }
+
+      /* Possibly buf overflowed - try again with a bigger buffer */
+      buflen <<= 1; // multiply buffer size by 2
+   } while (buflen < 128 * flen);
+
+ on_error:
+   free(buf);
+   return NULL;
 }

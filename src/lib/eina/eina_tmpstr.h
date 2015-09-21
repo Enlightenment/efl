@@ -238,6 +238,31 @@ EAPI size_t eina_tmpstr_len(Eina_Tmpstr *tmpstr);
 EAPI void eina_tmpstr_del(Eina_Tmpstr *tmpstr) EINA_ARG_NONNULL(1);
 
 /**
+ * @brief Add a new temporary string based on strftime output.
+ *
+ * @param tm Pointer to a tm structure needed by strftime.
+ * @param format String containing format specifiers needed by strftime.
+ *
+ * This will add a new temporary string by updating the string value by output
+ * of strftime.
+ *
+ * Example usage:
+ *
+ * @code
+ * time_t curr_time;
+ * struct tm * info;
+ * Eina_Tmpstr *buf;
+ *
+ * curr_time = time(NULL);
+ * info = localtime(&curr_time);
+ * buf = eina_tmpstr_strftime("%I:%M%p", info);
+ * @endcode
+ *
+ * @since 1.16.0
+ */
+EAPI Eina_Tmpstr *eina_tmpstr_strftime(const char *format, const struct tm *tm) EINA_ARG_NONNULL(2);
+
+/**
  * @}
  */
 
