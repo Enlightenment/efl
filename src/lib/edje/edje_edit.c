@@ -1693,10 +1693,6 @@ edje_edit_group_copy(Evas_Object *obj, const char *group_name, const char *copy_
 
    eet_close(eetf);
 
-   /* we need to save everything to make sure the file won't have broken
-    * references the next time is loaded */
-   edje_edit_save_all(obj);
-
    return EINA_TRUE;
 }
 
@@ -1870,10 +1866,6 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
      }
    if (die) _edje_collection_free(ed->file, die, e);
    eina_hash_del(ed->file->collection, group_name, e);
-
-   /* we need to save everything to make sure the file won't have broken
-    * references the next time is loaded */
-   edje_edit_save_all(obj);
 
    return EINA_TRUE;
 }

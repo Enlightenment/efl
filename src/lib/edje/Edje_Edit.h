@@ -342,6 +342,10 @@ EAPI Eina_Bool edje_edit_group_add(Evas_Object *obj, const char *name);
  * loaded with. This group can be manipulated by other API functions,
  * like @c edje_edit_part_add(), for example.
  *
+ * You need to save everything to make sure the file won't have broken
+ * references the next time is loaded.
+ * @see edje_edit_save_all(), edje_edit_without_source_save().
+ *
  * @attention This group will copy the whole group and this operation can't be undone as all references to the group will be added to the file.
  * (for example all scripts will be written to the file directly)
  *
@@ -360,6 +364,9 @@ EAPI Eina_Bool edje_edit_group_copy(Evas_Object *obj, const char *group_name, co
  * operation can't be undone as all references to the group are removed from
  * the file.
  * This function may fail if the group to be deleted is currently in use.
+ * You need to save everything to make sure the file won't have broken
+ * references the next time is loaded.
+ * @see edje_edit_save_all(), edje_edit_without_source_save().
  *
  * @attention be carefull, if you deleting group, it will delete all it's aliases also,
  * if you deleting alias, then it will delete alias only.
