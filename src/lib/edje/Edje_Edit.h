@@ -2125,11 +2125,40 @@ edje_edit_state_container_min_y_set(Evas_Object *obj, const char *part, const ch
  * @param x Variable to store x padding.
  * @param y Variable to store y padding.
  *
+ * @deprecated Use edje_edit_state_container_padding_x_get() and
+ * edje_edit_state_container_padding_y_get() instead.
+ *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
  * @since 1.14
  */
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 edje_edit_state_container_padding_get(Evas_Object *obj, const char *part, const char *state, double value, int *x, int *y);
+
+/** Get x padding for BOX or TABLE part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that has BOX/TABLE type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ *
+ * @return The padding by x axis.
+ * @since 1.16
+ */
+EAPI int
+edje_edit_state_container_padding_x_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Get y padding for BOX or TABLE part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that has BOX/TABLE type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ *
+ * @return The padding by y axis.
+ * @since 1.16
+ */
+EAPI int
+edje_edit_state_container_padding_y_get(Evas_Object *obj, const char *part, const char *state, double value);
 
 /** Set x and y paddings for BOX or TABLE part.
  *
@@ -2140,11 +2169,42 @@ edje_edit_state_container_padding_get(Evas_Object *obj, const char *part, const 
  * @param x Value for setting x padding.
  * @param y Value for setting y padding.
  *
+ * @deprecated Use edje_edit_state_container_padding_x_set() and
+ * edje_edit_state_container_padding_y_set() instead.
+ *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
  * @since 1.14
  */
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 edje_edit_state_container_padding_set(Evas_Object *obj, const char *part, const char *state, double value, int x, int y);
+
+/** Set x padding for BOX or TABLE part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that has BOX/TABLE type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ * @param x New x padding value.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.16
+ */
+EAPI Eina_Bool
+edje_edit_state_container_padding_x_set(Evas_Object *obj, const char *part, const char *state, double value, int x);
+
+/** Set y padding for BOX or TABLE part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that has BOX/TABLE type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ * @param y New y padding value.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.16
+ */
+EAPI Eina_Bool
+edje_edit_state_container_padding_y_set(Evas_Object *obj, const char *part, const char *state, double value, int y);
 
 /** Set x and y align for BOX or TABLE part.
  *
