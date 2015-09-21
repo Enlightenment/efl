@@ -49,11 +49,10 @@ next_char(Eo_Lexer *ls)
 static const char * const tokens[] =
 {
    "==", "!=", ">=", "<=", "&&", "||", "<<", ">>",
-
-   "<doc>", "<string>", "<char>", "<number>", "<value>",
-
-   KEYWORDS
+   "<doc>", "<string>", "<char>", "<number>", "<value>"
 };
+
+static const char * const keywords[] = { KEYWORDS };
 
 static const char * const ctypes[] =
 {
@@ -112,13 +111,11 @@ throw(Eo_Lexer *ls, const char *fmt, ...)
 static void
 init_hash(void)
 {
-   unsigned int i, u;
+   unsigned int i;
    if (keyword_map) return;
    keyword_map = eina_hash_string_superfast_new(NULL);
-   for (i = u = 13; i < (sizeof(tokens) / sizeof(const char*)); ++i)
-     {
-         eina_hash_add(keyword_map, tokens[i], (void*)(size_t)(i - u + 1));
-     }
+   for (i = 0; i < (sizeof(keywords) / sizeof(keywords[0])); ++i)
+     eina_hash_add(keyword_map, keywords[i], (void *)(size_t)(i + 1));
 }
 
 static void
@@ -1086,7 +1083,12 @@ eo_lexer_token_to_str(int token, char *buf)
      }
    else
      {
-        const char *v = tokens[token - START_CUSTOM];
+        const char *v;
+        size_t idx = token - START_CUSTOM;
+        if (idx >= sizeof(tokens))
+          v = keywords[idx - sizeof(tokens)];
+        else
+          v = tokens[idx];
         memcpy(buf, v, strlen(v) + 1);
      }
 }
@@ -1094,7 +1096,7 @@ eo_lexer_token_to_str(int token, char *buf)
 const char *
 eo_lexer_keyword_str_get(int kw)
 {
-   return tokens[kw + 12];
+   return keywords[kw - 1];
 }
 
 Eina_Bool
