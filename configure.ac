@@ -4332,6 +4332,17 @@ AC_ARG_ENABLE([v4l2],
    ],
    [want_v4l2="${efl_lib_optional_eeze}"])
 
+AC_ARG_ENABLE([libvlc],
+   [AS_HELP_STRING([--enable-libvlc],[enable libvlc support. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_libvlc="yes"
+    else
+       want_libvlc="no"
+    fi
+   ],
+   [want_libvlc="no"])
+
 ### Checks for programs
 
 ### Checks for libraries
@@ -4354,11 +4365,13 @@ have_gst_xoverlay="no"
 EMOTION_MODULE([xine], [${want_xine}])
 EMOTION_MODULE([gstreamer], [${want_gstreamer}])
 EMOTION_MODULE([gstreamer1], [${want_gstreamer1}])
+EMOTION_MODULE([libvlc], [${want_libvlc}])
 EMOTION_MODULE([generic], [${want_emotion_generic}])
 
 EFL_ADD_FEATURE([EMOTION], [xine])
 EFL_ADD_FEATURE([EMOTION], [gstreamer])
 EFL_ADD_FEATURE([EMOTION], [gstreamer1])
+EFL_ADD_FEATURE([EMOTION], [libvlc])
 EFL_ADD_FEATURE([EMOTION], [generic], [${want_emotion_generic}])
 
 EFL_EVAL_PKGS([EMOTION])

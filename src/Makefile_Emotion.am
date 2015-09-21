@@ -157,6 +157,35 @@ modules_emotion_gstreamer1_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 
+# LibVLC
+EMOTION_LIBVLC_SOURCES =\
+modules/emotion/libvlc/emotion_libvlc.c
+
+if EMOTION_STATIC_BUILD_LIBVLC
+lib_emotion_libemotion_la_SOURCES += $(EMOTION_LIBVLC_SOURCES)
+else
+if EMOTION_BUILD_LIBVLC
+emotionmodulelibvlcdir = $(libdir)/emotion/modules/libvlc/$(MODULE_ARCH)
+emotionmodulelibvlc_LTLIBRARIES = modules/emotion/libvlc/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_emotionmodulelibvlcLTLIBRARIES = install-emotionmodulelibvlcLTLIBRARIES
+$(install_emotionmodulelibvlcLTLIBRARIES): install-libLTLIBRARIES
+
+modules_emotion_libvlc_module_la_SOURCES = $(EMOTION_LIBVLC_SOURCES)
+modules_emotion_libvlc_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+@EMOTION_CFLAGS@ \
+@EMOTION_MODULE_LIBVLC_CFLAGS@
+modules_emotion_libvlc_module_la_LIBADD = \
+@USE_EMOTION_LIBS@ \
+@EMOTION_MODULE_LIBVLC_LIBS@
+modules_emotion_libvlc_module_la_DEPENDENCIES = @USE_EMOTION_INTERNAL_LIBS@
+modules_emotion_libvlc_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_emotion_libvlc_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+endif
+
 # Generic
 EMOTION_GENERIC_SOURCES = \
 modules/emotion/generic/emotion_generic.h \

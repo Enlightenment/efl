@@ -58,6 +58,20 @@ AC_DEFUN([EMOTION_MODULE_DEP_CHECK_GSTREAMER1],
    fi
 ])
 
+
+dnl use: EMOTION_MODULE_DEP_CHECK_LIBVLC(want_static)
+dnl where want_engine = yes or static
+AC_DEFUN([EMOTION_MODULE_DEP_CHECK_LIBVLC],
+[dnl
+   LIBVLC_VER=3.0
+   requirements="libvlc >= ${LIBVLC_VER}"
+   if test "$1" = "static"; then
+      EFL_DEPEND_PKG([EMOTION], [EMOTION_MODULE_LIBVLC], [${requirements}])
+   else
+      PKG_CHECK_MODULES([EMOTION_MODULE_LIBVLC], [${requirements}])
+   fi
+])
+
 dnl use: EMOTION_MODULE_DEP_CHECK_GENERIC(want_static)
 dnl where want_engine = yes or static
 AC_DEFUN([EMOTION_MODULE_DEP_CHECK_GENERIC],
