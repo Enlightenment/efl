@@ -168,7 +168,6 @@ ecore_x_screensaver_event_listen_set(Eina_Bool on)
      XScreenSaverSelectInput(_ecore_x_disp, root, 0);
 #else
    return;
-   on = EINA_FALSE;
 #endif /* ifdef ECORE_XSS */
 }
 
