@@ -897,14 +897,15 @@ _get_orientation_app1(const unsigned char *map,
         return EINA_TRUE;
      }
 
-   /* 2. get 14th byte get info for IFD offset */
-   /* 3. get 10&11 byte  get info of "II(0x4949)" or "MM(0x4d4d)" */
+   /* 2. get 10&11 byte  get info of "II(0x4949)" or "MM(0x4d4d)" */
+   /* 3. get 14th - 17th byte get info for IFD offset */
    /* 4. get directory entry IFD */
 
-   ifd_offset += *(buf + 14);
 
    if (!memcmp(buf + 10, MM, sizeof(MM)))
      {
+        // get 4byte by little endian
+        ifd_offset += (*(buf + 14) << 24) + (*(buf + 15) << 16) + (*(buf + 16) << 8) + (*(buf + 17));
         byte_align = EXIF_BYTE_ALIGN_MM;
         num_directory = ((*(buf + ifd_offset) << 8) + *(buf + ifd_offset + 1));
         orientation[0] = 0x01;
@@ -912,6 +913,8 @@ _get_orientation_app1(const unsigned char *map,
      }
    else if (!memcmp(buf + 10, II, sizeof(II)))
      {
+        // get 4byte by big endian
+        ifd_offset += (*(buf + 14))  + (*(buf + 15) << 8) + (*(buf + 16) << 16) + (*(buf + 17) << 24);
         byte_align = EXIF_BYTE_ALIGN_II;
         num_directory = ((*(buf + ifd_offset + 1) << 8) + *(buf + ifd_offset));
         orientation[0] = 0x12;
