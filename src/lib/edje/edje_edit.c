@@ -4304,6 +4304,64 @@ edje_edit_state_table_homogeneous_set(Evas_Object *obj, const char *part, const 
 /*     BOX & TABLE API     */
 /***************************/
 
+#define FUNC_CONTAINER_BOOL(CLASS, VALUE) \
+EAPI Eina_Bool \
+edje_edit_state_container_##CLASS##_##VALUE##_get(Evas_Object *obj, const char *part, const char *state, double value) \
+{ \
+   Eina_Bool val; \
+   GET_PD_OR_RETURN(EINA_FALSE) \
+   switch (rp->part->type) \
+     { \
+      case EDJE_PART_TYPE_TABLE: \
+      { \
+         Edje_Part_Description_Table *table; \
+         table = (Edje_Part_Description_Table *)pd; \
+         val = table->table.CLASS.VALUE; \
+         break; \
+      } \
+      case EDJE_PART_TYPE_BOX: \
+      { \
+         Edje_Part_Description_Box *box; \
+         box = (Edje_Part_Description_Box *)pd; \
+         val = box->box.CLASS.VALUE; \
+         break; \
+      } \
+      default: \
+       val = EINA_FALSE; \
+     } \
+   return val; \
+} \
+EAPI Eina_Bool \
+edje_edit_state_container_##CLASS##_##VALUE##_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool new_val) \
+{ \
+   GET_PD_OR_RETURN(EINA_FALSE) \
+   switch (rp->part->type) \
+     { \
+      case EDJE_PART_TYPE_TABLE: \
+      { \
+         Edje_Part_Description_Table *table; \
+         table = (Edje_Part_Description_Table *)pd; \
+         table->table.CLASS.VALUE = new_val; \
+         break; \
+      } \
+      case EDJE_PART_TYPE_BOX: \
+      { \
+         Edje_Part_Description_Box *box; \
+         box = (Edje_Part_Description_Box *)pd; \
+         box->box.CLASS.VALUE = new_val; \
+         break; \
+      } \
+      default: \
+        return EINA_FALSE; \
+     } \
+   return EINA_TRUE; \
+}
+
+FUNC_CONTAINER_BOOL(min, v)
+FUNC_CONTAINER_BOOL(min, h)
+
+#undef FUNC_CONTAINER_BOOL
+
 EAPI Eina_Bool
 edje_edit_state_container_align_get(Evas_Object *obj, const char *part, const char *state, double value, double *x, double *y)
 {
