@@ -146,6 +146,8 @@ eina_hash_murmur3(const char *key, int len)
          k1 = _rotl32(k1, 16);
          k1 *= c2;
          h1 ^= k1;
+      default:
+         break;
      }
 
    h1 ^= len;
