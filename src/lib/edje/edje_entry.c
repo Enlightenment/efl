@@ -1686,6 +1686,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
              if (shift) _sel_extend(ed, en->cursor, rp->object, en);
           }
         _edje_emit(ed, "entry,key,home", rp->part->name);
+        _edje_emit(ed, "cursor,changed,manual", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((!alt) &&
@@ -1707,6 +1708,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
              if (shift) _sel_extend(ed, en->cursor, rp->object, en);
           }
         _edje_emit(ed, "entry,key,end", rp->part->name);
+        _edje_emit(ed, "cursor,changed,manual", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((control) && (!shift) && (!strcmp(ev->keyname, "v")))
@@ -1830,6 +1832,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
              else _sel_clear(ed, en->cursor, rp->object, en);
           }
         _edje_emit(ed, "entry,key,pgup", rp->part->name);
+        _edje_emit(ed, "cursor,changed,manual", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->key, "Next") ||
@@ -1853,6 +1856,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
              else _sel_clear(ed, en->cursor, rp->object, en);
           }
         _edje_emit(ed, "entry,key,pgdn", rp->part->name);
+        _edje_emit(ed, "cursor,changed,manual", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((!strcmp(ev->key, "Return")) || (!strcmp(ev->key, "KP_Enter")))
