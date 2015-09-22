@@ -735,6 +735,7 @@ edje_color_class_del(const char *color_class)
    free(cc);
 
    members = eina_hash_find(_edje_color_class_member_hash, color_class);
+   if (!members) return;
    it = eina_hash_iterator_data_new(members);
    EINA_ITERATOR_FOREACH(it, er)
      {
