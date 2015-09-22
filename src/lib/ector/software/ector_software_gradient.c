@@ -107,7 +107,7 @@ static void
 loop_break(unsigned int *buffer, int length, int *lprealign, int *lby4 , int *lremaining)
 {
    int l1=0,l2=0,l3=0;
-   while ((int)buffer & 0xF)
+   while ((uintptr_t)buffer & 0xF)
      buffer++ , l1++;
 
    if(length <= l1)
