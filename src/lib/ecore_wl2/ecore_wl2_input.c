@@ -123,6 +123,98 @@ _ecore_wl2_input_mouse_wheel_send(Ecore_Wl2_Input *input, unsigned int axis, int
 }
 
 static void
+_ecore_wl2_input_mouse_down_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, int device, unsigned int button, unsigned int timestamp)
+{
+   Ecore_Event_Mouse_Button *ev;
+
+   ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
+   if (!ev) return;
+
+   if (button == BTN_LEFT)
+     ev->buttons = 1;
+   else if (button == BTN_MIDDLE)
+     ev->buttons = 2;
+   else if (button == BTN_RIGHT)
+     ev->buttons = 3;
+   else
+     ev->buttons = button;
+
+   ev->timestamp = timestamp;
+   ev->x = input->pointer.sx;
+   ev->y = input->pointer.sy;
+   ev->root.x = input->pointer.sx;
+   ev->root.y = input->pointer.sy;
+   ev->modifiers = input->keyboard.modifiers;
+
+   ev->double_click = 0;
+   ev->triple_click = 0;
+
+   /* TODO: handle double/triple click */
+
+   ev->multi.device = device;
+   ev->multi.radius = 1;
+   ev->multi.radius_x = 1;
+   ev->multi.radius_y = 1;
+   ev->multi.pressure = 1.0;
+   ev->multi.angle = 0.0;
+   ev->multi.x = input->pointer.sx;
+   ev->multi.y = input->pointer.sy;
+   ev->multi.root.x = input->pointer.sx;
+   ev->multi.root.y = input->pointer.sy;
+
+   ev->window = window->id;
+   ev->event_window = window->id;
+
+   ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
+}
+
+static void
+_ecore_wl2_input_mouse_up_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, int device, unsigned int button, unsigned int timestamp)
+{
+   Ecore_Event_Mouse_Button *ev;
+
+   ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
+   if (!ev) return;
+
+   if (button == BTN_LEFT)
+     ev->buttons = 1;
+   else if (button == BTN_MIDDLE)
+     ev->buttons = 2;
+   else if (button == BTN_RIGHT)
+     ev->buttons = 3;
+   else
+     ev->buttons = button;
+
+   ev->timestamp = timestamp;
+   ev->x = input->pointer.sx;
+   ev->y = input->pointer.sy;
+   ev->root.x = input->pointer.sx;
+   ev->root.y = input->pointer.sy;
+   ev->modifiers = input->keyboard.modifiers;
+
+   ev->double_click = 0;
+   ev->triple_click = 0;
+
+   /* TODO: handle double/triple click */
+
+   ev->multi.device = device;
+   ev->multi.radius = 1;
+   ev->multi.radius_x = 1;
+   ev->multi.radius_y = 1;
+   ev->multi.pressure = 1.0;
+   ev->multi.angle = 0.0;
+   ev->multi.x = input->pointer.sx;
+   ev->multi.y = input->pointer.sy;
+   ev->multi.root.x = input->pointer.sx;
+   ev->multi.root.y = input->pointer.sy;
+
+   ev->window = window->id;
+   ev->event_window = window->id;
+
+   ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
+}
+
+static void
 _ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, unsigned int button)
 {
    input->grab.window = window;
