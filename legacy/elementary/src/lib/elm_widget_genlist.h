@@ -143,6 +143,14 @@ struct _Elm_Genlist_Data
    Elm_Genlist_Item_Move_Effect_Mode     move_effect_mode;
    int                                   reorder_fast;
 
+   Eina_List                            *filter_queue;
+   Eina_List                            *filtered_list;
+   void                                 *filter_data;
+   unsigned int                          processed_count;
+   unsigned int                          filtered_count;
+   Ecore_Idle_Enterer                   *queue_filter_enterer;
+   Eina_Bool                             filter;
+
    Eina_Bool                             focus_on_selection_enabled : 1;
    Eina_Bool                             tree_effect_enabled : 1;
    Eina_Bool                             auto_scroll_enabled : 1;
@@ -278,6 +286,23 @@ struct _Elm_Genlist_Pan_Data
    Elm_Genlist_Data       *wsd;
    Ecore_Job              *resize_job;
 };
+
+/**
+ * Structure added to genlist for internal filter iterator implementation
+ * Can be extended to genlist as a whole in future if needed.
+ */
+typedef struct _Elm_Genlist_Filter Elm_Genlist_Filter;
+struct _Elm_Genlist_Filter
+{
+   Eina_Iterator iterator;
+   const Eina_Inlist *head;
+   const Eina_Inlist *current;
+};
+
+#define ELM_GENLIST_FILTER_CONTAINER_GET(ptr,                          \
+                                  type) ((type *)((char *)ptr - \
+                                                  offsetof(type, __in_list)))
+
 
 /**
  * @}

@@ -93,7 +93,8 @@
     cmd(SIG_ITEM_UNFOCUSED, "item,unfocused", "") \
     cmd(SIG_PRESSED, "pressed", "") \
     cmd(SIG_RELEASED, "released", "") \
-    cmd(SIG_CHANGED, "changed", "")
+    cmd(SIG_CHANGED, "changed", "") \
+    cmd(SIG_FILTER_DONE, "filter,done", "")
 
 ELM_PRIV_GENLIST_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
@@ -157,6 +158,7 @@ static void _access_activate_cb(void *data EINA_UNUSED,
                                 Elm_Object_Item *item);
 static void _decorate_item_set(Elm_Gen_Item *);
 static void _internal_elm_genlist_clear(Evas_Object *obj);
+static Eina_Bool _item_filtered_get(Elm_Gen_Item *it);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
@@ -2244,6 +2246,12 @@ _item_block_position(Item_Block *itb,
         sd = GL_IT(it)->wsd;
         if (sd->reorder_it == it) continue;
 
+        if (!it->filtered) _item_filtered_get(it);
+        if (it->hide)
+          {
+             if (it->realized) evas_object_hide(VIEW(it));
+             continue;
+          }
         it->x = 0;
         it->y = y;
         it->item->w = itb->w;
@@ -2474,7 +2482,8 @@ _item_multi_select_up(Elm_Genlist_Data *sd)
    while (eo_prev)
      {
         ELM_GENLIST_ITEM_DATA_GET(eo_prev, prev);
-        if ((!_is_no_select(prev)) && (!elm_object_item_disabled_get(eo_prev)))
+        if ((!_is_no_select(prev)) &&
+            (!elm_object_item_disabled_get(eo_prev)) && (!prev->hide))
           break;
         eo_prev = EO_OBJ(ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev));
      }
@@ -2504,7 +2513,8 @@ _item_multi_select_down(Elm_Genlist_Data *sd)
    while ((eo_next))
      {
         ELM_GENLIST_ITEM_DATA_GET(eo_next, next);
-        if ((!_is_no_select(next)) && (!elm_object_item_disabled_get(eo_next)))
+        if ((!_is_no_select(next)) &&
+            (!elm_object_item_disabled_get(eo_next)) && (!next->hide))
           break;
         eo_next = EO_OBJ(ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next));
      }
@@ -2557,7 +2567,7 @@ _item_single_select_up(Elm_Genlist_Data *sd)
    while (prev)
      {
         if ((!_is_no_select(prev)) &&
-            (!elm_object_item_disabled_get(EO_OBJ(prev))))
+            (!elm_object_item_disabled_get(EO_OBJ(prev))) && (!prev->hide))
           break;
         prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
      }
@@ -2587,7 +2597,7 @@ _item_single_select_down(Elm_Genlist_Data *sd)
    while (next)
      {
         if ((!_is_no_select(next)) &&
-            (!elm_object_item_disabled_get(EO_OBJ(next))))
+            (!elm_object_item_disabled_get(EO_OBJ(next))) && (!next->hide))
           break;
         next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
      }
@@ -2703,7 +2713,7 @@ _item_focused_next(Evas_Object *obj, Elm_Focus_Direction dir)
         while ((next) &&
                ((eo_do_ret(EO_OBJ(next), tmp, elm_wdg_item_disabled_get())) ||
                (_is_no_select(next))))
-          next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
+          if (!next->hide) next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
      }
    else
      {
@@ -5050,6 +5060,13 @@ _item_block_recalc(Item_Block *itb,
      {
         sd = GL_IT(it)->wsd;
         show_me |= it->item->show_me;
+
+        if (!it->filtered) _item_filtered_get(it);
+        if (it->hide)
+          {
+             if (it->realized) evas_object_hide(VIEW(it));
+             continue;
+          }
         if (!itb->realized)
           {
              if (qadd || (itb->sd->homogeneous &&
@@ -5609,7 +5626,7 @@ _access_obj_process(Elm_Genlist_Data *sd, Eina_Bool is_access)
              done = EINA_TRUE;
              EINA_LIST_FOREACH(itb->items, l, it)
                {
-                  if (!it->realized) continue;
+                  if (!it->realized || it->hide) continue;
                   if (is_access) _access_widget_item_register(it);
                   else
                     _elm_access_widget_item_unregister(it->base);
@@ -5658,6 +5675,12 @@ _internal_elm_genlist_clear(Evas_Object *obj)
    if (sd->mode_item) sd->mode_item = NULL;
 
    ELM_SAFE_FREE(sd->state, eina_inlist_sorted_state_free);
+
+   sd->filter_data = NULL;
+   if (sd->filter_queue)
+     ELM_SAFE_FREE(sd->queue_filter_enterer, ecore_idle_enterer_del);
+   ELM_SAFE_FREE(sd->filter_queue, eina_list_free);
+   ELM_SAFE_FREE(sd->filtered_list, eina_list_free);
 
    evas_event_freeze(evas_object_evas_get(sd->obj));
 
@@ -7341,6 +7364,214 @@ EOLIAN static int
 _elm_genlist_block_count_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
 {
    return sd->max_items_per_block;
+}
+
+static void
+_filter_item_internal(Elm_Gen_Item *it)
+{
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+   if (sd->filter_data && it->itc->func.filter_get)
+     {
+        if (!it->itc->func.filter_get(
+               (void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)),
+                WIDGET(it), sd->filter_data))
+          {
+             it->hide = EINA_TRUE;
+             it->item->block->changed = EINA_TRUE;
+          }
+        else
+          sd->filtered_count++;
+     }
+   it->filtered = EINA_TRUE;
+   sd->processed_count++;
+}
+
+static Eina_Bool
+_item_filtered_get(Elm_Gen_Item *it)
+{
+   Eina_List *l;
+   if (!it) return EINA_FALSE;
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+   if (!it->filtered)
+     {
+        l = eina_list_data_find_list(sd->filter_queue, it);
+        if (l)
+          sd->filter_queue = eina_list_remove_list(sd->queue, l);
+        l = eina_list_data_find_list(sd->queue, it);
+        if (l)
+          {
+             sd->queue = eina_list_remove_list(sd->queue, l);
+             it->item->queued = EINA_FALSE;
+             _item_process(sd, it);
+             _item_process_post(sd, it, EINA_TRUE);
+          }
+
+        _filter_item_internal(it);
+        it->item->block->changed = EINA_TRUE;
+        ELM_SAFE_FREE(sd->calc_job, ecore_job_del);
+        sd->calc_job = ecore_job_add(_calc_job, sd->obj);
+   }
+   if (!it->hide) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static int
+_filter_queue_process(Elm_Genlist_Data *sd)
+{
+   int n;
+   Elm_Gen_Item *it;
+   double t0;
+
+   t0 = ecore_loop_time_get();
+   for (n = 0; (sd->filter_queue) && (sd->processed_count < sd->item_count); n++)
+     {
+        it = eina_list_data_get(sd->filter_queue);
+        //FIXME: This is added as a fail safe code for items not yet processed.
+        while (it->item->queued)
+          {
+             if ((ecore_loop_time_get() - t0) > (ecore_animator_frametime_get()))
+               return n;
+             sd->filter_queue = eina_list_remove_list
+                              (sd->filter_queue, sd->filter_queue);
+             sd->filter_queue = eina_list_append(sd->filter_queue, it);
+             it = eina_list_data_get(sd->filter_queue);
+          }
+        sd->filter_queue = eina_list_remove_list(sd->filter_queue, sd->filter_queue);
+        _filter_item_internal(it);
+        it->item->block->changed = EINA_TRUE;
+        if ((ecore_loop_time_get() - t0) > (ecore_animator_frametime_get()))
+          {
+             //At least 1 item is filtered by this time, so return n+1 for first loop
+             n++;
+             break;
+          }
+     }
+   return n;
+}
+
+static Eina_Bool
+_filter_process(void *data,
+              Eina_Bool *wakeup)
+{
+   Elm_Genlist_Data *sd = data;
+
+   if (_filter_queue_process(sd) > 0) *wakeup = EINA_TRUE;
+   if (!sd->filter_queue) return ECORE_CALLBACK_CANCEL;
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_item_filter_enterer(void *data)
+{
+   Eina_Bool wakeup = EINA_FALSE;
+   ELM_GENLIST_DATA_GET(data, sd);
+   Eina_Bool ok = _filter_process(sd, &wakeup);
+   if (wakeup)
+     {
+        // wake up mainloop
+        ELM_SAFE_FREE(sd->calc_job, ecore_job_del);
+        sd->calc_job = ecore_job_add(_calc_job, data);
+     }
+   if (ok == ECORE_CALLBACK_CANCEL)
+     {
+        sd->queue_idle_enterer = NULL;
+        eo_do(sd->obj, eo_event_callback_call(ELM_GENLIST_EVENT_FILTER_DONE, NULL));
+     }
+
+   return ok;
+}
+
+EOLIAN void
+_elm_genlist_filter_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, void *filter_data)
+{
+   Item_Block *itb;
+   Eina_List *l;
+   Elm_Gen_Item *it;
+
+   if (sd->filter_queue)
+     ELM_SAFE_FREE(sd->queue_filter_enterer, ecore_idle_enterer_del);
+   ELM_SAFE_FREE(sd->filter_queue, eina_list_free);
+   ELM_SAFE_FREE(sd->filtered_list, eina_list_free);
+   sd->filtered_count = 0;
+   sd->processed_count = 0;
+   sd->filter = EINA_TRUE;
+   sd->filter_data = filter_data;
+
+   EINA_INLIST_FOREACH(sd->blocks, itb)
+     {
+        if (itb->realized)
+          {
+             EINA_LIST_FOREACH(itb->items, l, it)
+               {
+                  it->filtered = EINA_FALSE;
+                  it->hide = EINA_FALSE;
+                  if (it->realized)
+                    _filter_item_internal(it);
+                  else
+                    sd->filter_queue = eina_list_append(sd->filter_queue, it);
+               }
+            itb->changed = EINA_TRUE;
+         }
+       else
+         {
+            EINA_LIST_FOREACH(itb->items, l, it)
+              {
+                 it->filtered = EINA_FALSE;
+                 it->hide = EINA_FALSE;
+                 sd->filter_queue = eina_list_append(sd->filter_queue, it);
+              }
+         }
+     }
+   _calc_job(sd->obj);
+
+   sd->queue_filter_enterer = ecore_idle_enterer_add(_item_filter_enterer,
+                                                     sd->obj);
+}
+
+static Eina_Bool
+_filter_iterator_next(Elm_Genlist_Filter *iter, void **data)
+{
+   if (!iter->current) return EINA_FALSE;
+   Elm_Gen_Item *item;
+   while (iter->current)
+     {
+        item = ELM_GENLIST_FILTER_CONTAINER_GET(iter->current, Elm_Gen_Item);
+        iter->current = iter->current->next;
+        if (_item_filtered_get(item))
+          {
+             if (data)
+               *data = EO_OBJ(item);
+             return EINA_TRUE;
+          }
+     }
+
+   return EINA_FALSE;
+}
+
+static void
+_filter_iterator_free(Elm_Genlist_Filter *it)
+{
+   free(it);
+}
+
+EOLIAN Eina_Iterator *
+_elm_genlist_filter_iterator_new(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
+{
+   Elm_Genlist_Filter *iter;
+   iter = calloc(1, sizeof (Elm_Genlist_Filter));
+   if (!iter) return NULL;
+
+   iter->head = sd->items;
+   iter->current = sd->items;
+
+   iter->iterator.version = EINA_ITERATOR_VERSION;
+   iter->iterator.next = FUNC_ITERATOR_NEXT(_filter_iterator_next);
+   iter->iterator.get_container = sd->obj;
+   iter->iterator.free = FUNC_ITERATOR_FREE(_filter_iterator_free);
+
+   EINA_MAGIC_SET(&iter->iterator, EINA_MAGIC_ITERATOR);
+
+   return &iter->iterator;
 }
 
 EOLIAN static void

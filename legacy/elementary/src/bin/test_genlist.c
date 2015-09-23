@@ -19,6 +19,8 @@ struct _api_data
    Elm_Genlist_Item_Class *itc1;
    Elm_Genlist_Item_Class *itc2;
    void *gl;
+
+   void *filter_data;   /* The data used for filtering     */
 };
 typedef struct _api_data api_data;
 
@@ -285,7 +287,9 @@ _gl_changed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 static void
 _cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   free(data);
+   api_data *api = (api_data *)data;
+   if (api->filter_data) free(api->filter_data);
+   free(api);
 }
 
 void
@@ -4829,5 +4833,147 @@ test_genlist_focus(void *data EINA_UNUSED,
 
    evas_object_resize(win, 420, 600);
    evas_object_show(win);
+}
+
+char *genlist_demo_names[] = {
+        "Aaliyah", "Aamir", "Aaralyn", "Aaron", "Abagail",
+        "Babitha", "Bahuratna", "Bandana", "Bulbul", "Cade", "Caldwell",
+        "Chandan", "Caster", "Dagan ", "Daulat", "Dag", "Earl", "Ebenzer",
+        "Ellison", "Elizabeth", "Filbert", "Fitzpatrick", "Florian", "Fulton",
+        "Frazer", "Gabriel", "Gage", "Galen", "Garland", "Gauhar", "Hadden",
+        "Hafiz", "Hakon", "Haleem", "Hank", "Hanuman", "Jabali ", "Jaimini",
+        "Jayadev", "Jake", "Jayatsena", "Jonathan", "Kamaal", "Jeirk",
+        "Jasper", "Jack", "Mac", "Macy", "Marlon", "Milson",
+        NULL
+};
+
+static char *
+glf_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   char buf[256];
+   snprintf(buf, sizeof(buf), "%s", genlist_demo_names[((int)(uintptr_t)data)%50]);
+   return strdup(buf);
+}
+
+Eina_Bool
+gl_filter_get(void *data, Evas_Object *obj EINA_UNUSED, void *key)
+{
+   if (!strlen((char *)key)) return EINA_TRUE;
+
+   if (strcasestr(genlist_demo_names[((int)(uintptr_t)data)%50], (char *)key))
+     return EINA_TRUE;
+   // Default case should return false (item fails filter hence will be hidden)
+   return EINA_FALSE;
+}
+
+static void
+_gl_filter_finished_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   printf("Filter finished\n");
+}
+
+void
+_entry_change_cb(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   api_data *api = (api_data *)data;
+   char buf[100];
+   Eina_Iterator *filter_iter;
+   unsigned int count = 0;
+   Elm_Object_Item *item;
+
+   if (api->filter_data) free(api->filter_data);
+
+   sprintf(buf, "%s", elm_object_text_get(obj));
+   api->filter_data = strdup(buf);
+   elm_genlist_filter_set(api->gl, (void *)(api->filter_data));
+   if (buf == NULL || !strlen(buf))
+     {
+        printf("Input data string empty; returning\n");
+        return;
+     }
+   filter_iter = elm_genlist_filter_iterator_new(api->gl);
+
+   EINA_ITERATOR_FOREACH(filter_iter, item)
+     if (item) count++;
+
+   printf("Number of matches for %s is %d\n", buf, count);
+   //Iterator needs to be freed by application using eina_iterator_free
+   eina_iterator_free(filter_iter);
+
+}
+
+void
+test_genlist_filter(void *data EINA_UNUSED,
+                    Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *bx2, *entry, *gl;
+   Elm_Genlist_Item_Class *itc = NULL;
+   int i;
+
+   api_data *api = calloc(1, sizeof(api_data));
+   win = elm_win_util_standard_add("genlist-filter", "Genlist filter");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_DEL,
+                                _gl_focus_win_del_cb, NULL);
+
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+   elm_win_focus_highlight_animate_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   entry = elm_entry_add(bx);
+   elm_entry_single_line_set(entry, EINA_TRUE);
+   evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, 0.0);
+   elm_object_part_text_set(entry, "guide", "Search.");
+   elm_box_pack_end(bx, entry);
+   evas_object_show(entry);
+
+   bx2 = elm_box_add(bx);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   gl = elm_genlist_add(bx);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_genlist_select_mode_set(gl, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   elm_genlist_mode_set(gl, ELM_LIST_COMPRESS);
+   elm_genlist_homogeneous_set(gl, EINA_TRUE);
+   elm_box_pack_end(bx2, gl);
+   api->gl = gl;
+   evas_object_show(gl);
+   evas_object_smart_callback_add(gl, "selected", _gl_focus_item_cb, "selected");
+   evas_object_smart_callback_add(gl, "unselected", _gl_focus_item_cb, "unselected");
+   evas_object_smart_callback_add(gl, "activated", _gl_focus_item_cb, "activated");
+   evas_object_smart_callback_add(gl, "highlighted", _gl_focus_item_cb, "highlighted");
+   evas_object_smart_callback_add(gl, "unhighlighted", _gl_focus_item_cb, "unhighlighted");
+   evas_object_smart_callback_add(gl, "filter,done", _gl_filter_finished_cb, NULL);
+   evas_object_event_callback_add(gl, EVAS_CALLBACK_KEY_DOWN, _gl_focus_key_down_cb, NULL);
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "default";
+   itc->func.text_get = glf_text_get;
+   itc->func.content_get = NULL;
+   itc->func.filter_get = gl_filter_get;
+   itc->func.state_get = NULL;
+   itc->func.del = NULL;
+
+   for (i = 0; i < 500; i++)
+     elm_genlist_item_append(gl, itc,
+                             (void *)(long)i, NULL,
+                             ELM_GENLIST_ITEM_NONE,
+                             NULL, NULL);
+
+   evas_object_resize(win, 420, 600);
+   evas_object_show(win);
+   elm_object_focus_set(entry, EINA_TRUE);
+   evas_object_smart_callback_add(entry, "changed,user", _entry_change_cb, api);
 }
 

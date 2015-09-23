@@ -67,6 +67,8 @@ struct Elm_Gen_Item
    Eina_Bool                 flipped : 1; /**< a flag that shows the flip status of the item. */
    Eina_Bool                 has_contents : 1; /**< content objs have or previously did exist (size calcs) */
    Eina_Bool                 cursor_engine_only : 1;
+   Eina_Bool                 hide : 1; /**< flag used for hiding the items which do not match filter text */
+   Eina_Bool                 filtered: 1; /**<flag used to indicate whether or not item has been filtered */
 };
 
 #endif

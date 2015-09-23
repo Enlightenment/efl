@@ -392,6 +392,30 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @out posret: int; [[The position relative to the item returned here.]]
          }
       }
+      @property filter {
+         set {
+            [[Set filter mode with key.
+
+              This initiates the filter mode of genlist with user/application
+              provided key. If key is NULL, the filter mode is turned off.
+
+              The filter data passed has to be managed by application itself and
+              should not be deleted before genlist is deleted(or while filtering
+              is not done.
+            ]]
+         }
+         values {
+            key: void *; [[Filter key]]
+         }
+      }
+      filter_iterator_new {
+         [[Returns an iterator over the list of filtered items.
+
+           Return NULL if filter is not set. Application must take care
+           of the case while calling the API. Must be freed after use.
+         ]]
+         return: free(own(iterator<Elm_Gen_Item *> *), eina_iterator_free); [[Iterator on genlist]]
+      }
       items_count @const {
          [[Return how many items are currently in a list.
 
@@ -554,6 +578,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
       expanded;
       index,update;
       tree,effect,finished;
+      filter,done;
    }
 
 }
