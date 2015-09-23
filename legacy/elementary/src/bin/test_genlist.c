@@ -4867,7 +4867,9 @@ gl_filter_get(void *data, Evas_Object *obj EINA_UNUSED, void *key)
 }
 
 static void
-_gl_filter_finished_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+_gl_filter_finished_cb(void *data EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    printf("Filter finished\n");
 }
