@@ -1,12 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_gl_core_private.h"
 
-//#define TIMDBG 1
-#ifdef TIMDBG
-# include <sys/time.h>
-# include <unistd.h>
-#endif
-
 #include "software/Ector_Software.h"
 
 #include "ector_cairo_software_surface.eo.h"

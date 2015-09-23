@@ -1,12 +1,6 @@
 #include "evas_common_private.h" /* Also includes international specific stuff */
 #include "evas_engine.h"
 
-//#define TIMDBG 1
-#ifdef TIMDBG
-# include <sys/time.h>
-# include <unistd.h>
-#endif
-
 #ifdef HAVE_DLSYM
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
 #else
@@ -116,51 +110,6 @@ int      (*glsym_glXSwapIntervalSGI) (int a) = NULL;
 void     (*glsym_glXSwapIntervalEXT) (Display *s, GLXDrawable b, int c) = NULL;
 void     (*glsym_glXReleaseBuffersMESA)   (Display *a, XID b) = NULL;
 
-#endif
-
-#ifdef TIMDBG
-static double
-gettime(void)
-{
-   struct timeval      timev;
-   
-   gettimeofday(&timev, NULL);
-   return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
-}
-
-static void
-measure(int end, const char *name)
-{
-   FILE *fs; 
-   static unsigned long user = 0, kern = 0, user2 = 0, kern2 = 0;
-   static double t = 0.0, t2 = 0.0;
-   unsigned long u = 0, k = 0;
-   
-   fs = fopen("/proc/self/stat", "rb");
-   if (fs) {
-      fscanf(fs, "%*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s "
-             "%lu %lu %*s", &u, &k);
-      fclose(fs);
-   }
-   if (end)
-     {
-        long hz;
-        
-        t2 = gettime();
-        user2 = u;
-        kern2 = k;
-        hz = sysconf(_SC_CLK_TCK);
-        fprintf(stderr, "(%8lu %8lu) k=%4lu u=%4lu == tot=%4lu@%4li in=%3.5f < %s\n", 
-                user, kern, kern2 - kern, user2 - user, 
-                (kern2 - kern) + (user2 - user), hz, t2 - t, name);
-     }
-   else
-     {
-        user = u;
-        kern = k;
-        t = gettime();
-     }
-}
 #endif
 
 static inline Outbuf *
