@@ -1286,7 +1286,7 @@ _access_widget_item_register(Elm_Gen_Item *it)
 }
 
 static void
-_elm_gengrid_item_focus_raise(Elm_Gen_Item *it)
+_elm_gengrid_item_focus_update(Elm_Gen_Item *it)
 {
    const char *focus_raise;
    Evas_Object *obj = WIDGET(it);
@@ -1402,7 +1402,7 @@ _item_realize(Elm_Gen_Item *it)
 
    if (eo_it == sd->focused_item)
      {
-        _elm_gengrid_item_focus_raise(it);
+        _elm_gengrid_item_focus_update(it);
         _elm_widget_item_highlight_in_theme(WIDGET(it), EO_OBJ(it));
         _elm_widget_highlight_in_theme_update(WIDGET(it));
         _elm_widget_focus_highlight_start(WIDGET(it));
@@ -2023,7 +2023,7 @@ _elm_gengrid_item_focused(Elm_Object_Item *eo_it)
    /* If item is not realized state, widget couldn't get focus_highlight data. */
    if (it->realized)
      {
-        _elm_gengrid_item_focus_raise(it);
+        _elm_gengrid_item_focus_update(it);
         _elm_widget_item_highlight_in_theme(obj, eo_it);
         _elm_widget_highlight_in_theme_update(obj);
         _elm_widget_focus_highlight_start(obj);
