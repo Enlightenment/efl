@@ -28,7 +28,12 @@ _wl_shell_surface_cb_configure(void *data, struct wl_shell_surface *shell_surfac
 static void
 _wl_shell_surface_cb_popup_done(void *data EINA_UNUSED, struct wl_shell_surface *shell_surface EINA_UNUSED)
 {
-   /* TODO: input ungrab ? */
+   Ecore_Wl2_Window *win;
+
+   win = data;
+   if (!win) return;
+
+   _ecore_wl2_input_ungrab(win->input);
 }
 
 static const struct wl_shell_surface_listener _wl_shell_surface_listener =
@@ -322,7 +327,7 @@ ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y)
    window->geometry.x = x;
    window->geometry.y = y;
 
-   /* TODO: input grab release ? */
+   _ecore_wl2_input_ungrab(window->input);
 
    /* TODO: enable once input is done */
    /* if (window->xdg_surface) */
@@ -344,7 +349,7 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w, int h, int location)
    window->geometry.w = w;
    window->geometry.h = h;
 
-   /* TODO: input grab release ? */
+   _ecore_wl2_input_ungrab(window->input);
 
    /* TODO: enable once input is done */
    /* if (window->xdg_surface) */
