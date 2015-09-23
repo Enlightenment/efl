@@ -116,6 +116,12 @@ _ecore_evas_extn_plug_render_post(void *data, Evas *e EINA_UNUSED, void *event_i
    extn = bdata->data;
    if (!extn) return;
    _extnbuf_unlock(extn->b[extn->cur_b].buf);
+   if (extn->b[extn->cur_b].obuf)
+     {
+        _extnbuf_unlock(extn->b[extn->cur_b].obuf);
+        _extnbuf_free(extn->b[extn->cur_b].obuf);
+        extn->b[extn->cur_b].obuf = NULL;
+     }
 }
 
 static void
@@ -1015,12 +1021,6 @@ _ipc_server_data(void *data, int type EINA_UNUSED, void *event)
                    extn->cur_b = n;
 
                    if (extn->b[pn].buf) _extnbuf_unlock(extn->b[pn].buf);
-                   if (extn->b[pn].obuf)
-                     {
-                        _extnbuf_unlock(extn->b[pn].obuf);
-                        _extnbuf_free(extn->b[pn].obuf);
-                        extn->b[pn].obuf = NULL;
-                     }
 
                    evas_object_image_colorspace_set(bdata->image, EVAS_COLORSPACE_ARGB8888);
                    if (extn->b[n].buf)
@@ -1258,6 +1258,12 @@ ecore_evas_extn_plug_new_internal(Ecore_Evas *ee_target)
 
    extn_ee_list = eina_list_append(extn_ee_list, ee);
    ee_target->sub_ecore_evas = eina_list_append(ee_target->sub_ecore_evas, ee);
+
+   evas_event_callback_add(ee_target->evas, EVAS_CALLBACK_RENDER_PRE,
+                           _ecore_evas_extn_plug_render_pre, ee);
+   evas_event_callback_add(ee_target->evas, EVAS_CALLBACK_RENDER_POST,
+                           _ecore_evas_extn_plug_render_post, ee);
+
    return o;
 }
 
