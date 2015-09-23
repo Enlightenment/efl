@@ -253,6 +253,72 @@ enum Doc_Tokens {
     DOC_MANGLED = -2, DOC_UNFINISHED = -1, DOC_TEXT = 0, DOC_SINCE = 1
 };
 
+static void
+doc_ref_class(const char *cname)
+{
+   size_t clen = strlen(cname);
+   char *buf = alloca(clen + 4);
+   memcpy(buf, cname, clen);
+   buf[clen] = '\0';
+   for (char *p = buf; *p; ++p)
+     {
+        if (*p == '.')
+          *p = '_';
+        else
+          *p = tolower(*p);
+     }
+   memcpy(buf + clen, ".eo", sizeof(".eo"));
+   const char *eop = eina_hash_find(_filenames, buf);
+   if (!eop)
+     return;
+   eina_hash_set(_defereos, buf, eop);
+}
+
+static void
+doc_ref(Eo_Lexer *ls)
+{
+#if 0
+   const char *st = ls->stream, *ste = ls->stream_end;
+   size_t rlen = 0;
+   while ((st != ste) && ((*st == '.') || isalnum(*st)))
+     {
+        ++st;
+        ++rlen;
+     }
+   if ((rlen > 1) && (*(st - 1) == '.'))
+     --rlen;
+   if (!rlen)
+     return;
+   if (*ls->stream == '.')
+     return;
+
+   char *buf = alloca(rlen + 1);
+   memcpy(buf, ls->stream, rlen);
+   buf[rlen] = '\0';
+
+   /* actual full class name */
+   doc_ref_class(buf);
+
+   /* method name at the end */
+   char *end = strrchr(buf, '.');
+   if (!end)
+     return;
+   *end = '\0';
+   doc_ref_class(buf);
+
+   /* .get or .set at the end, handle possible property */
+   if (strcmp(end + 1, "get") && strcmp(end + 1, "set"))
+     return;
+   end = strrchr(buf, '.');
+   if (!end)
+     return;
+   *end = '\0';
+   doc_ref_class(buf);
+#else
+   (void)ls;
+#endif
+}
+
 static int
 doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool *since)
 {
@@ -324,6 +390,7 @@ doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool *since)
              tokret = DOC_TEXT;
              goto exit_with_token;
           }
+        doc_ref(ls);
         eina_strbuf_append_char(ls->buff, '@');
         next_char(ls);
         /* in-class references */

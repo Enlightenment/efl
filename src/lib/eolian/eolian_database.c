@@ -27,6 +27,8 @@ Eina_Hash *_declsf     = NULL;
 Eina_Hash *_parsedeos  = NULL;
 Eina_Hash *_parsingeos = NULL;
 
+Eina_Hash *_defereos = NULL;
+
 static int _database_init_count = 0;
 
 static void
@@ -58,6 +60,7 @@ database_init()
    _declsf     = eina_hash_stringshared_new(_hashlist_free);
    _parsedeos  = eina_hash_string_small_new(NULL);
    _parsingeos = eina_hash_string_small_new(NULL);
+   _defereos   = eina_hash_string_small_new(NULL);
    return ++_database_init_count;
 }
 
@@ -91,6 +94,7 @@ database_shutdown()
         eina_hash_free(_declsf    ); _declsf     = NULL;
         eina_hash_free(_parsedeos ); _parsedeos  = NULL;
         eina_hash_free(_parsingeos); _parsingeos = NULL;
+        eina_hash_free(_defereos  ); _defereos   = NULL;
         eina_shutdown();
      }
    return _database_init_count;

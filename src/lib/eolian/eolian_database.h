@@ -53,6 +53,9 @@ extern Eina_Hash *_decls;
 extern Eina_Hash *_parsedeos;
 extern Eina_Hash *_parsingeos;
 
+/* for deferred dependency parsing */
+extern Eina_Hash *_defereos;
+
 typedef struct _Eolian_Object
 {
    const char *file;
