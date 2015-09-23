@@ -95,7 +95,7 @@ _gnutls_log_func(int level,
                  const char *str)
 {
    char buf[128];
-   strncat(buf, str, strlen(str) - 1);
+   strncpy(buf, str, strlen(str) - 1);
    DBG("|<%d>| %s", level, buf);
 }
 
