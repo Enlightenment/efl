@@ -355,9 +355,15 @@ _keyboard_cb_enter(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigne
    input = data;
    if (!input) return;
 
-   /* TODO: Set display->serial ?? */
+   input->display->serial = serial;
 
-   /* TODO: Set input timestamp ?? */
+   if (!input->timestamp)
+     {
+        struct timeval tv;
+
+        gettimeofday(&tv, NULL);
+        input->timestamp = (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+     }
 
    /* find the window which this surface belongs to */
    window = _ecore_wl2_display_window_surface_find(input->display, surface);
@@ -377,7 +383,7 @@ _keyboard_cb_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigne
    input = data;
    if (!input) return;
 
-   /* TODO: Set display->serial ?? */
+   input->display->serial = serial;
 
    input->repeat.sym = 0;
    input->repeat.key = 0;
@@ -432,6 +438,8 @@ _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned 
    /* try to get the window which has keyboard focus */
    window = input->focus.keyboard;
    if (!window) return;
+
+   input->display->serial = serial;
 
    /* xkb rules reflect X broken keycodes, so offset by 8 */
    code = keycode + 8;
