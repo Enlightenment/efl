@@ -4663,6 +4663,8 @@ EAPI Eina_Bool edje_edit_state_text_set(Evas_Object *obj, const char *part, cons
 
 /** Get font name for a given part state.
  *
+ * Remember to free the returned string using edje_edit_string_free().
+ *
  * @param obj Object being edited.
  * @param part The name of the part to get the font of.
  * @param state The state of the part to get the font of.
@@ -5130,20 +5132,6 @@ EAPI Eina_Bool edje_edit_font_del(Evas_Object *obj, const char* alias);
  * @return The path of the given font alias.
  */
 EAPI const char *edje_edit_font_path_get(Evas_Object *obj, const char *alias);
-
-
-/** Get font name for a given part state.
- *
- * Remember to free the returned string using edje_edit_string_free().
- *
- * @param obj Object being edited.
- * @param part Part that contain state.
- * @param state The name of the state to get the name of the font used (not including the state value).
- * @param value The state value.
- *
- * @return The name of the font used in the given part state.
- */
-EAPI const char * edje_edit_state_font_get(Evas_Object *obj, const char *part, const char *state, double value);
 
 //@}
 /******************************************************************************/
