@@ -28,8 +28,8 @@ _ecore_wl2_input_mouse_in_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
 
    ev->x = input->pointer.sx;
    ev->y = input->pointer.sy;
-   ev->window = window;
-   ev->event_window = window;
+   ev->window = window->id;
+   ev->event_window = window->id;
    ev->timestamp = input->timestamp;
    ev->modifiers = input->keyboard.modifiers;
 
@@ -46,12 +46,42 @@ _ecore_wl2_input_mouse_out_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window
 
    ev->x = input->pointer.sx;
    ev->y = input->pointer.sy;
-   ev->window = window;
-   ev->event_window = window;
+   ev->window = window->id;
+   ev->event_window = window->id;
    ev->timestamp = input->timestamp;
    ev->modifiers = input->keyboard.modifiers;
 
    ecore_event_add(ECORE_EVENT_MOUSE_OUT, ev, NULL, NULL);
+}
+
+static void
+_ecore_wl2_input_mouse_move_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, int device)
+{
+   Ecore_Event_Mouse_Move *ev;
+
+   ev = calloc(1, sizeof(Ecore_Event_Mouse_Move));
+   if (!ev) return;
+
+   ev->window = window->id;
+   ev->event_window = window->id;
+   ev->timestamp = input->timestamp;
+   ev->x = input->pointer.sx;
+   ev->y = input->pointer.sy;
+   ev->root.x = input->pointer.sx;
+   ev->root.y = input->pointer.sy;
+   ev->modifiers = input->keyboard.modifiers;
+   ev->multi.device = device;
+   ev->multi.radius = 1;
+   ev->multi.radius_x = 1;
+   ev->multi.radius_y = 1;
+   ev->multi.pressure = 1.0;
+   ev->multi.angle = 0.0;
+   ev->multi.x = input->pointer.sx;
+   ev->multi.y = input->pointer.sy;
+   ev->multi.root.x = input->pointer.sx;
+   ev->multi.root.y = input->pointer.sy;
+
+   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
 }
 
 static void
@@ -123,6 +153,7 @@ _pointer_cb_motion(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned 
    window = input->focus.pointer;
    if (!window) return;
 
+   input->timestamp = timestamp;
    input->pointer.sx = wl_fixed_to_double(sx);
    input->pointer.sy = wl_fixed_to_double(sy);
 
@@ -131,7 +162,7 @@ _pointer_cb_motion(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned 
    /*     (input->pointer.sy > window->geometry.h)) */
    /*   return; */
 
-   /* TODO: send mouse move event */
+   _ecore_wl2_input_mouse_move_send(input, window, 0);
 }
 
 static void
