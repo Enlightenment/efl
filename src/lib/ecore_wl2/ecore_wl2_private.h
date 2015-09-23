@@ -74,6 +74,7 @@ struct _Ecore_Wl2_Window
    EINA_INLIST;
 
    Ecore_Wl2_Display *display;
+   Ecore_Wl2_Input *input;
 
    Ecore_Wl2_Window *parent;
 
@@ -202,5 +203,8 @@ void _ecore_wl2_output_del(Ecore_Wl2_Output *output);
 
 void _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id);
 void _ecore_wl2_input_del(Ecore_Wl2_Input *input);
+
+void _ecore_wl2_input_ungrab(Ecore_Wl2_Input *input);
+void _ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, unsigned int button);
 
 #endif

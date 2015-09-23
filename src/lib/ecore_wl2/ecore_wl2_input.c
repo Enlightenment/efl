@@ -214,14 +214,14 @@ _ecore_wl2_input_mouse_up_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window,
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
 }
 
-static void
+void
 _ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, unsigned int button)
 {
    input->grab.window = window;
    input->grab.button = button;
 }
 
-static void
+void
 _ecore_wl2_input_ungrab(Ecore_Wl2_Input *input)
 {
    if ((input->grab.window) && (input->grab.button))
