@@ -121,8 +121,18 @@ _ecore_wl_init_callback(void *data, struct wl_callback *callback, uint32_t seria
 static void
 _ecore_wl_init_wait(void)
 {
+   int ret;
    while (!_ecore_wl_disp->init_done)
-     wl_display_dispatch(_ecore_wl_disp->wl.display);
+     {
+        ret = wl_display_dispatch(_ecore_wl_disp->wl.display);
+        if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
+          {
+             /* raise exit signal */
+             ERR("Wayland socket error: %s", strerror(errno));
+             abort();
+             break;
+          }
+     }
 }
 
 EAPI int
@@ -262,10 +272,20 @@ ecore_wl_flush(void)
 EAPI void
 ecore_wl_sync(void)
 {
+   int ret;
    if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) return;
    _ecore_wl_sync_wait(_ecore_wl_disp);
    while (_ecore_wl_disp->sync_ref_count > 0)
-     wl_display_dispatch(_ecore_wl_disp->wl.display);
+     {
+        ret = wl_display_dispatch(_ecore_wl_disp->wl.display);
+        if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
+          {
+             /* raise exit signal */
+             ERR("Wayland socket error: %s", strerror(errno));
+             abort();
+             break;
+          }
+     }
 }
 
 EAPI struct wl_shm *
@@ -407,9 +427,18 @@ ecore_wl_dpi_get(void)
 EAPI void
 ecore_wl_display_iterate(void)
 {
+   int ret;
    if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) return;
    if (!_ecore_wl_server_mode)
-     wl_display_dispatch(_ecore_wl_disp->wl.display);
+     {
+        ret = wl_display_dispatch(_ecore_wl_disp->wl.display);
+        if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
+          {
+             /* raise exit signal */
+             ERR("Wayland socket error: %s", strerror(errno));
+             abort();
+          }
+     }
 }
 
 /* @since 1.8 */
