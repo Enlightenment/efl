@@ -248,6 +248,17 @@ _ecore_buffer_con_consumer_create(const char *name, int queue_size, int w, int h
 void
 _ecore_buffer_con_init_wait(void)
 {
+   int ret;
+
    while (!_connection->init_done)
-     wl_display_dispatch(_connection->display);
+     {
+        ret = wl_display_dispatch(_connection->display);
+        if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
+          {
+             /* raise exit signal */
+             ERR("Wayland socket error: %s", strerror(errno));
+             abort();
+             break;
+          }
+     }
 }
