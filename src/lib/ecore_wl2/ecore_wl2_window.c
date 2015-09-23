@@ -295,12 +295,26 @@ EAPI void
 ecore_wl2_window_free(Ecore_Wl2_Window *window)
 {
    Ecore_Wl2_Display *display;
+   Ecore_Wl2_Input *input;
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    display = window->display;
 
-   /* TODO: reset input pointer and keyboard focus */
+   EINA_INLIST_FOREACH(display->inputs, input)
+     {
+        if ((input->focus.pointer) &&
+            (input->focus.pointer == window))
+          input->focus.pointer = NULL;
+        if ((input->focus.keyboard) &&
+            (input->focus.keyboard == window))
+          {
+             input->focus.keyboard = NULL;
+             ecore_timer_del(input->repeat.timer);
+             input->repeat.timer = NULL;
+          }
+     }
+
    /* TODO: delete window anim callback */
    /* TODO: destroy subsurfaces */
 
