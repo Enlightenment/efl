@@ -44,6 +44,26 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static Eina_Bool
+_entry_changed_cb(void *data, Eo *obj EINA_UNUSED,
+                  const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+static Eina_Bool
+_entry_focus_in_cb(void *data, Eo *obj EINA_UNUSED,
+                   const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+static Eina_Bool
+_entry_focus_out_cb(void *data, Eo *obj EINA_UNUSED,
+                    const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+static Eina_Bool
+_entry_clicked_cb(void *data, Eo *obj EINA_UNUSED,
+                  const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+
+EO_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
+   { ELM_MULTIBUTTONENTRY_EVENT_CHANGED, _entry_changed_cb },
+   { ELM_WIDGET_EVENT_FOCUSED, _entry_focus_in_cb },
+   { ELM_WIDGET_EVENT_UNFOCUSED, _entry_focus_out_cb },
+   { EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _entry_clicked_cb }
+);
+
 EOLIAN static Eina_Bool
 _elm_multibuttonentry_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Data *sd)
 {
@@ -1160,14 +1180,7 @@ _callbacks_register(Evas_Object *obj)
      (sd->entry, EVAS_CALLBACK_KEY_DOWN, _entry_key_down_cb, obj);
    evas_object_event_callback_add
      (sd->entry, EVAS_CALLBACK_RESIZE, _entry_resize_cb, obj);
-   eo_do(sd->entry, eo_event_callback_add
-     (ELM_MULTIBUTTONENTRY_EVENT_CHANGED, _entry_changed_cb, obj));
-   eo_do(sd->entry, eo_event_callback_add
-     (ELM_WIDGET_EVENT_FOCUSED, _entry_focus_in_cb, obj));
-   eo_do(sd->entry, eo_event_callback_add
-     (ELM_WIDGET_EVENT_UNFOCUSED, _entry_focus_out_cb, obj));
-   eo_do(sd->entry, eo_event_callback_add
-     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _entry_clicked_cb, obj));
+   eo_do(sd->entry, eo_event_callback_array_add(_multi_buttonentry_cb(), obj));
 }
 
 static void
