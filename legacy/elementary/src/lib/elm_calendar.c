@@ -414,7 +414,7 @@ _access_calendar_register(Evas_Object *obj)
 static void
 _populate(Evas_Object *obj)
 {
-   int maxdays, prev_month_maxdays, day, mon, yr, i;
+   int maxdays, adjusted_wday, prev_month_maxdays, day, mon, yr, i;
    Elm_Calendar_Mark *mark;
    char part[12], day_s[3];
    struct tm first_day;
@@ -580,8 +580,13 @@ _populate(Evas_Object *obj)
                day = mtime->tm_mday;
              else
                break;
+
+             adjusted_wday = (mtime->tm_wday - sd->first_week_day);
+             if (adjusted_wday < 0)
+               adjusted_wday = ELM_DAY_LAST + adjusted_wday;
+
              for (; day <= maxdays; day++)
-               if (mtime->tm_wday == _weekday_get(sd->first_day_it, day))
+               if (adjusted_wday == _weekday_get(sd->first_day_it, day))
                  _cit_mark(obj, day + sd->first_day_it - 1,
                            mark->mark_type);
              break;
