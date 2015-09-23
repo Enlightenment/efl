@@ -766,7 +766,8 @@ _virtualkeypad_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
         evas_object_size_hint_min_set(sd->virtualkeypad, -1, 0);
         evas_object_size_hint_max_set(sd->virtualkeypad, -1, 0);
         _conformant_part_sizing_eval(obj, ELM_CONFORMANT_VIRTUAL_KEYPAD_PART);
-        elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_NONE);
+        if (!sd->clipboard_state)
+          elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_NONE);
         eo_do(obj, eo_event_callback_call(
                  ELM_CONFORMANT_EVENT_VIRTUALKEYPAD_STATE_OFF, NULL));
      }
@@ -805,7 +806,8 @@ _clipboard_state_change(Evas_Object *obj, Ecore_X_Event_Window_Property *ev)
      {
         evas_object_size_hint_min_set(sd->clipboard, -1, 0);
         evas_object_size_hint_max_set(sd->clipboard, -1, 0);
-        elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_NONE);
+        if (!sd->vkb_state)
+          elm_widget_display_mode_set(obj, EVAS_DISPLAY_MODE_NONE);
         eo_do(obj, eo_event_callback_call(
                  ELM_CONFORMANT_EVENT_CLIPBOARD_STATE_OFF, NULL));
      }
