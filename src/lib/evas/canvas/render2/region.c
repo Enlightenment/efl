@@ -899,6 +899,8 @@ region_rect_add(Region *dest, int x, int y, unsigned int w, unsigned int h)
           return EINA_TRUE;
      }
 
+   region.w = dest->w;
+   region.h = dest->h;
    region.data = NULL;
    region.bound.x1 = x;
    region.bound.y1 = y;
@@ -1227,6 +1229,8 @@ region_rect_del(Region *dest, int x, int y, unsigned int w, unsigned int h)
           return EINA_TRUE;
      }
 
+   region.w = dest->w;
+   region.h = dest->h;
    region.data = NULL;
    region.bound.x1 = x;
    region.bound.y1 = y;
