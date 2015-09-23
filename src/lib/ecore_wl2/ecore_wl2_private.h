@@ -54,6 +54,8 @@ struct _Ecore_Wl2_Display
         struct xdg_shell *xdg_shell;
      } wl;
 
+   uint32_t serial;
+
    struct xkb_context *xkb_context;
 
    Ecore_Fd_Handler *fd_hdl;
@@ -112,6 +114,8 @@ struct _Ecore_Wl2_Input
    EINA_INLIST;
 
    Ecore_Wl2_Display *display;
+
+   unsigned int timestamp;
 
    struct
      {
