@@ -57,6 +57,28 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    { NULL, NULL }
 };
 
+static Eina_Bool
+_update_frame(void *data, Eo *obj,
+              const Eo_Event_Description *desc, void *event_info);
+static Eina_Bool
+_update_slider(void *data, Eo *obj EINA_UNUSED,
+               const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+static Eina_Bool
+_play_started(void *data, Eo *obj EINA_UNUSED,
+              const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+static Eina_Bool
+_play_finished(void *data, Eo *obj EINA_UNUSED,
+               const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+static Eina_Bool
+_update_position(void *data, Eo *obj EINA_UNUSED,
+                 const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+static Eina_Bool
+_drag_start(void *data, Eo *obj EINA_UNUSED,
+            const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+static Eina_Bool
+_drag_stop(void *data, Eo *obj EINA_UNUSED,
+           const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_play(Evas_Object *obj, const char *params);
 
@@ -65,6 +87,21 @@ static const Elm_Action key_actions[] = {
    {"play", _key_action_play},
    {NULL, NULL}
 };
+
+EO_CALLBACKS_ARRAY_DEFINE(_emotion_cb,
+   { EMOTION_OBJECT_EVENT_FRAME_DECODE, _update_frame },
+   { EMOTION_OBJECT_EVENT_FRAME_RESIZE, _update_slider },
+   { EMOTION_OBJECT_EVENT_LENGTH_CHANGE, _update_slider },
+   { EMOTION_OBJECT_EVENT_POSITION_UPDATE, _update_frame },
+   { EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, _play_started },
+   { EMOTION_OBJECT_EVENT_PLAYBACK_FINISHED, _play_finished }
+);
+
+EO_CALLBACKS_ARRAY_DEFINE(_slider_cb,
+   { ELM_SLIDER_EVENT_CHANGED, _update_position },
+   { ELM_SLIDER_EVENT_SLIDER_DRAG_START, _drag_start },
+   { ELM_SLIDER_EVENT_SLIDER_DRAG_STOP, _drag_stop }
+);
 
 static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
@@ -625,18 +662,8 @@ _elm_player_elm_container_content_set(Eo *obj, Elm_Player_Data *sd, const char *
      elm_layout_signal_emit(obj, "elm,player,play", "elm");
    else elm_layout_signal_emit(obj, "elm,player,pause", "elm");
 
-   eo_do(sd->emotion, eo_event_callback_add
-     (EMOTION_OBJECT_EVENT_FRAME_DECODE, _update_frame, obj));
-   eo_do(sd->emotion, eo_event_callback_add
-     (EMOTION_OBJECT_EVENT_FRAME_RESIZE, _update_slider, obj));
-   eo_do(sd->emotion, eo_event_callback_add
-     (EMOTION_OBJECT_EVENT_LENGTH_CHANGE, _update_slider, obj));
-   eo_do(sd->emotion, eo_event_callback_add
-     (EMOTION_OBJECT_EVENT_POSITION_UPDATE, _update_frame, obj));
-   eo_do(sd->emotion, eo_event_callback_add
-     (EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, _play_started, obj));
-   eo_do(sd->emotion, eo_event_callback_add
-     (EMOTION_OBJECT_EVENT_PLAYBACK_FINISHED, _play_finished, obj));
+   eo_do(sd->emotion,
+         eo_event_callback_array_add(_emotion_cb(), obj));
 
    /* FIXME: track info from video */
 end:
@@ -683,12 +710,8 @@ _elm_player_evas_object_smart_add(Eo *obj, Elm_Player_Data *priv)
      (priv->slider, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_layout_content_set(obj, "elm.swallow.media_player.positionslider",
                           priv->slider);
-   eo_do(priv->slider, eo_event_callback_add
-     (ELM_SLIDER_EVENT_CHANGED, _update_position, obj));
-   eo_do(priv->slider, eo_event_callback_add
-     (ELM_SLIDER_EVENT_SLIDER_DRAG_START, _drag_start, obj));
-   eo_do(priv->slider, eo_event_callback_add
-     (ELM_SLIDER_EVENT_SLIDER_DRAG_STOP, _drag_stop, obj));
+   eo_do(priv->slider,
+         eo_event_callback_array_add(_slider_cb(), obj));
 
    priv->vslider = elm_slider_add(obj);
    elm_slider_indicator_show_set(priv->vslider, EINA_FALSE);
