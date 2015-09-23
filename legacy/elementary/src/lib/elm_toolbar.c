@@ -3724,14 +3724,13 @@ _elm_toolbar_select_mode_set(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd, Elm_Obje
      return;
 
    if (sd->select_mode == mode) return;
+   sd->select_mode = mode;
 
    if ((mode == ELM_OBJECT_SELECT_MODE_ALWAYS) &&
        (sd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS) &&
        sd->items)
      _item_select(ELM_TOOLBAR_ITEM_FROM_INLIST(sd->items));
 
-   if (sd->select_mode != mode)
-     sd->select_mode = mode;
 }
 
 EOLIAN static Elm_Object_Select_Mode
