@@ -2020,7 +2020,6 @@ _elm_gengrid_item_focused(Elm_Object_Item *eo_it)
 
    sd->focused_item = eo_it;
 
-   if (it->realized) _elm_gengrid_item_focus_raise(it);
    eo_do(obj, eo_event_callback_call(ELM_GENGRID_EVENT_ITEM_FOCUSED, eo_it));
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
