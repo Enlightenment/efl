@@ -331,16 +331,14 @@ _pointer_cb_button(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned 
           }
 
         if (input->focus.pointer)
-          {
-             /* TODO: send mouse down event */
-          }
+          _ecore_wl2_input_mouse_down_send(input, input->focus.pointer,
+                                           0, button, timestamp);
      }
    else
      {
         if (input->focus.pointer)
-          {
-             /* TODO: send mouse up event */
-          }
+          _ecore_wl2_input_mouse_up_send(input, input->focus.pointer,
+                                         0, button, timestamp);
 
         if ((input->grab.window) && (input->grab.button == button))
           _ecore_wl2_input_ungrab(input);
