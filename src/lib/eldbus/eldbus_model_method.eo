@@ -1,13 +1,21 @@
 class Eldbus.Model_Method (Eldbus.Model_Arguments) {
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Eldbus_Model_Method constructor.
+        // @property proxy {
+        //     [[Custom Eldbus_Model_Method constructor.
 
-              @since 1.16]]
-            params {
-                @in proxy: Eldbus_Proxy*; [[Eldbus proxy]]
-                @in method: const(Eldbus_Introspection_Method)*; [[The introspected method]]
+        //       @since 1.16]]
+        //     get {}
+        //     set {}
+        //     values {
+        //         proxy: Eldbus_Proxy*; [[Eldbus proxy]]
+        //     }
+        // }
+        @property method {
+            get {}
+            set {}
+            values {
+                method: const(Eldbus_Introspection_Method)*; [[The introspected method]]
             }
         }
         call {
@@ -26,7 +34,7 @@ class Eldbus.Model_Method (Eldbus.Model_Arguments) {
         Eo.Base.constructor;
     }
     constructors {
-        .constructor;
+        .method;
     }
     events {
       successful,call; [[Event dispatched for a successful method call.]]

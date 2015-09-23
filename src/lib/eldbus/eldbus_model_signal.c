@@ -28,17 +28,48 @@ _eldbus_model_signal_eo_base_constructor(Eo *obj, Eldbus_Model_Signal_Data *pd)
 }
 
 static void
-_eldbus_model_signal_constructor(Eo *obj EINA_UNUSED,
-                                 Eldbus_Model_Signal_Data *pd,
-                                 Eldbus_Proxy *proxy,
-                                 const Eldbus_Introspection_Signal *signal)
+_eldbus_model_signal_proxy_set(Eo *obj EINA_UNUSED,
+                               Eldbus_Model_Signal_Data *pd EINA_UNUSED,
+                               Eldbus_Proxy *proxy)
 {
    DBG("(%p)", obj);
    EINA_SAFETY_ON_NULL_RETURN(proxy);
+
+   eo_do_super(obj, MY_CLASS, eldbus_model_arguments_proxy_set(proxy));
+}
+
+static Eldbus_Proxy*
+_eldbus_model_signal_proxy_get(Eo *obj EINA_UNUSED,
+                               Eldbus_Model_Signal_Data *pd EINA_UNUSED)
+{
+   DBG("(%p)", obj);
+   Eldbus_Proxy* p = NULL;
+   
+   eo_do_super(obj, MY_CLASS, p = eldbus_model_arguments_proxy_get());
+
+   return p;
+}
+
+static void
+_eldbus_model_signal_signal_set(Eo *obj EINA_UNUSED,
+                                Eldbus_Model_Signal_Data *pd,
+                                const Eldbus_Introspection_Signal *signal)
+{
+   DBG("(%p)", obj);
+
    EINA_SAFETY_ON_NULL_RETURN(signal);
-   eo_do_super(obj, MY_CLASS, eldbus_model_arguments_constructor(proxy, signal->name, signal->arguments));
 
    pd->signal = signal;
+   eo_do(obj,
+         eldbus_model_arguments_name_set(signal->name),
+         eldbus_model_arguments_set(signal->arguments));
+}
+
+static const Eldbus_Introspection_Signal*
+_eldbus_model_signal_signal_get(Eo *obj EINA_UNUSED,
+                                Eldbus_Model_Signal_Data *pd)
+{
+   return pd->signal;
 }
 
 static void

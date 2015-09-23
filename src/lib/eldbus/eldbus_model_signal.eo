@@ -1,13 +1,21 @@
 class Eldbus.Model_Signal (Eldbus.Model_Arguments) {
     legacy_prefix: null;
     methods {
-        constructor {
+        @property proxy {
               [[Custom Eldbus_Model_Signal constructor.
 
                 @since 1.16]]
-            params {
-                @in proxy: Eldbus_Proxy*; [[Eldbus proxy]]
-                @in signal: const(Eldbus_Introspection_Signal)*; [[The introspected method]]
+            set {}
+            get {}
+            values {
+               proxy: Eldbus_Proxy*; [[Eldbus proxy]]
+            }
+        }
+        @property signal {
+            set {}
+            get {}
+            values {
+               signal: const(Eldbus_Introspection_Signal)*; [[The introspected method]]
             }
         }
     }
@@ -18,6 +26,7 @@ class Eldbus.Model_Signal (Eldbus.Model_Arguments) {
         Efl.Model.Base.unload;
     }
     constructors {
-        .constructor;
+        .proxy;
+        .signal;
     }
 }

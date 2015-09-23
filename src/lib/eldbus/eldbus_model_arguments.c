@@ -45,19 +45,62 @@ _eldbus_model_arguments_eo_base_constructor(Eo *obj, Eldbus_Model_Arguments_Data
 }
 
 static void
-_eldbus_model_arguments_constructor(Eo *obj EINA_UNUSED,
-                                    Eldbus_Model_Arguments_Data *pd,
-                                    Eldbus_Proxy *proxy,
-                                    const char *name,
-                                    const Eina_List *arguments)
+_eldbus_model_arguments_arguments_set(Eo *obj EINA_UNUSED,
+                                      Eldbus_Model_Arguments_Data *pd,
+                                      const Eina_List *arguments)
+{
+   DBG("(%p)", obj);
+
+   pd->arguments = arguments;
+}
+
+static const Eina_List*
+_eldbus_model_arguments_arguments_get(Eo *obj EINA_UNUSED,
+                                      Eldbus_Model_Arguments_Data *pd)
+{
+   DBG("(%p)", obj);
+
+   return pd->arguments;
+}
+
+static void
+_eldbus_model_arguments_proxy_set(Eo *obj EINA_UNUSED,
+                                  Eldbus_Model_Arguments_Data *pd,
+                                  Eldbus_Proxy *proxy)
 {
    DBG("(%p)", obj);
    EINA_SAFETY_ON_NULL_RETURN(proxy);
-   EINA_SAFETY_ON_NULL_RETURN(name);
 
    pd->proxy = eldbus_proxy_ref(proxy);
-   pd->arguments = arguments;
+}
+
+static Eldbus_Proxy*
+_eldbus_model_arguments_proxy_get(Eo *obj EINA_UNUSED,
+                                  Eldbus_Model_Arguments_Data *pd)
+{
+   DBG("(%p)", obj);
+
+   return pd->proxy;
+}
+
+static void
+_eldbus_model_arguments_name_set(Eo *obj EINA_UNUSED,
+                                 Eldbus_Model_Arguments_Data *pd,
+                                 const char *name)
+{
+   DBG("(%p)", obj);
+   EINA_SAFETY_ON_NULL_RETURN(name);
+
    pd->name = eina_stringshare_add(name);
+}
+
+static const char*
+_eldbus_model_arguments_name_get(Eo *obj EINA_UNUSED,
+                                 Eldbus_Model_Arguments_Data *pd)
+{
+   DBG("(%p)", obj);
+
+   return pd->name;
 }
 
 static void
@@ -255,12 +298,6 @@ _eldbus_model_arguments_efl_model_base_children_load(Eo *obj, Eldbus_Model_Argum
      return;
 
    efl_model_load_set(pd->obj, &pd->load, EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN);
-}
-
-static const char *
-_eldbus_model_arguments_name_get(Eo *obj EINA_UNUSED, Eldbus_Model_Arguments_Data *pd)
-{
-   return pd->name;
 }
 
 static void
