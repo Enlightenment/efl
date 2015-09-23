@@ -18,6 +18,8 @@
 #include <sys/mman.h>
 #include "ecore_wl2_private.h"
 
+static void _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int keycode, unsigned int state);
+
 static void
 _ecore_wl2_input_mouse_in_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
 {
@@ -238,6 +240,94 @@ _ecore_wl2_input_focus_out_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window
    ev->timestamp = input->timestamp;
    ev->window = window->id;
    ecore_event_add(ECORE_WL2_EVENT_FOCUS_OUT, ev, NULL, NULL);
+}
+
+static int
+_ecore_wl2_input_key_translate(xkb_keysym_t keysym, unsigned int modifiers, char *buffer, int bytes)
+{
+   unsigned long hbytes = 0;
+   unsigned char c;
+
+   if (!keysym) return 0;
+   hbytes = (keysym >> 8);
+
+   if (!(bytes &&
+         ((hbytes == 0) ||
+          ((hbytes == 0xFF) &&
+           (((keysym >= XKB_KEY_BackSpace) && (keysym <= XKB_KEY_Clear)) ||
+            (keysym == XKB_KEY_Return) || (keysym == XKB_KEY_Escape) ||
+            (keysym == XKB_KEY_KP_Space) || (keysym == XKB_KEY_KP_Tab) ||
+            (keysym == XKB_KEY_KP_Enter) ||
+            ((keysym >= XKB_KEY_KP_Multiply) && (keysym <= XKB_KEY_KP_9)) ||
+            (keysym == XKB_KEY_KP_Equal) || (keysym == XKB_KEY_Delete))))))
+     return 0;
+
+   if (keysym == XKB_KEY_KP_Space)
+     c = (XKB_KEY_space & 0x7F);
+   else if (hbytes == 0xFF)
+     c = (keysym & 0x7F);
+   else
+     c = (keysym & 0xFF);
+
+   if (modifiers & ECORE_EVENT_MODIFIER_CTRL)
+     {
+        if (((c >= '@') && (c < '\177')) || c == ' ')
+          c &= 0x1F;
+        else if (c == '2')
+          c = '\000';
+        else if ((c >= '3') && (c <= '7'))
+          c -= ('3' - '\033');
+        else if (c == '8')
+          c = '\177';
+        else if (c == '/')
+          c = '_' & 0x1F;
+     }
+   buffer[0] = c;
+   return 1;
+}
+
+static void
+_ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_keysym_t sym, unsigned int code, unsigned int state, unsigned int timestamp)
+{
+   Ecore_Event_Key *ev;
+   char key[256], keyname[256], compose[256];
+
+   memset(key, 0, sizeof(key));
+   xkb_keysym_get_name(sym, key, sizeof(key));
+
+   memset(keyname, 0, sizeof(keyname));
+   memcpy(keyname, key, sizeof(keyname));
+
+   if (keyname[0] == '\0')
+     snprintf(keyname, sizeof(keyname), "Keycode-%u", code);
+
+   memset(compose, 0, sizeof(compose));
+   _ecore_wl2_input_key_translate(sym, input->keyboard.modifiers,
+                                  compose, sizeof(compose));
+
+   ev = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
+               ((compose[0] != '\0') ? strlen(compose) : 0) + 3);
+   if (!ev) return;
+
+   ev->keyname = (char *)(ev + 1);
+   ev->key = ev->keyname + strlen(keyname) + 1;
+   ev->compose = strlen(compose) ? ev->key + strlen(key) + 1 : NULL;
+   ev->string = ev->compose;
+
+   strcpy((char *)ev->keyname, keyname);
+   strcpy((char *)ev->key, key);
+   if (strlen(compose)) strcpy((char *)ev->compose, compose);
+
+   ev->window = window->id;
+   ev->event_window = window->id;
+   ev->timestamp = timestamp;
+   ev->modifiers = input->keyboard.modifiers;
+   ev->keycode = code;
+
+   if (state)
+     ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
+   else
+     ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
 }
 
 void
@@ -527,7 +617,9 @@ _keyboard_cb_repeat(void *data)
    window = input->focus.keyboard;
    if (!window) goto out;
 
-   /* TODO: Send ecore key event for preseed */
+   if (input->focus.keyboard == window)
+     _keyboard_cb_key(input, NULL, input->display->serial,
+                      input->repeat.time, input->repeat.key, EINA_TRUE);
 
    return ECORE_CALLBACK_RENEW;
 
@@ -562,7 +654,9 @@ _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned 
    nsyms = xkb_state_key_get_syms(input->xkb.state, code, &syms);
    if (nsyms == 1) sym = syms[0];
 
-   /* TODO: Send ecore key event */
+   _ecore_wl2_input_key_send(input, window, sym, code, state, timestamp);
+
+   if (!xkb_keymap_key_repeats(input->xkb.keymap, code)) return;
 
    if ((state == WL_KEYBOARD_KEY_STATE_RELEASED) &&
        (keycode == input->repeat.key))
@@ -713,7 +807,7 @@ _touch_cb_motion(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int ti
    if (!input) return;
    if (!input->focus.touch) return;
 
-   _ecore_wl2_input_mouse_move_send(input, input->focus.touch, timestamp, id);
+   _ecore_wl2_input_mouse_move_send(input, input->focus.touch, id);
 }
 
 static void
