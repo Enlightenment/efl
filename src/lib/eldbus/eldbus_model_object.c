@@ -537,7 +537,8 @@ _eldbus_model_object_create_children(Eldbus_Model_Object_Data *pd, Eldbus_Object
 
         // TODO: increment reference to keep 'interface' in memory
         Eo *child = eo_add_ref(ELDBUS_MODEL_PROXY_CLASS, NULL,
-                               eldbus_model_proxy_constructor(object, interface));
+                               eldbus_model_proxy_object_set(object),
+                               eldbus_model_proxy_interface_set(interface));
 
         pd->children_list = eina_list_append(pd->children_list, child);
      }

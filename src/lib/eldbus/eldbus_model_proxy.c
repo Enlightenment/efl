@@ -64,18 +64,45 @@ _eldbus_model_proxy_eo_base_constructor(Eo *obj, Eldbus_Model_Proxy_Data *pd)
 }
 
 static void
-_eldbus_model_proxy_constructor(Eo *obj EINA_UNUSED,
-                                Eldbus_Model_Proxy_Data *pd,
-                                Eldbus_Object *object,
-                                const Eldbus_Introspection_Interface *interface)
+_eldbus_model_proxy_object_set(Eo *obj EINA_UNUSED,
+                               Eldbus_Model_Proxy_Data *pd,
+                               Eldbus_Object *object)
 {
    DBG("(%p)", obj);
    EINA_SAFETY_ON_NULL_RETURN(object);
-   EINA_SAFETY_ON_NULL_RETURN(interface);
 
    pd->object = eldbus_object_ref(object);
+}
+
+static void
+_eldbus_model_proxy_interface_set(Eo *obj EINA_UNUSED,
+                                  Eldbus_Model_Proxy_Data *pd,
+                                  const Eldbus_Introspection_Interface *interface)
+{
+   DBG("(%p)", obj);
+
+   EINA_SAFETY_ON_NULL_RETURN(interface);
+
    pd->name = eina_stringshare_add(interface->name);
    pd->interface = interface;
+}
+
+static Eldbus_Object*
+_eldbus_model_proxy_object_get(Eo *obj EINA_UNUSED,
+                               Eldbus_Model_Proxy_Data *pd)
+{
+   DBG("(%p)", obj);
+
+   return pd->object;
+}
+
+static const Eldbus_Introspection_Interface*
+_eldbus_model_proxy_interface_get(Eo *obj EINA_UNUSED,
+                                  Eldbus_Model_Proxy_Data *pd)
+{
+   DBG("(%p)", obj);
+
+   return pd->interface;
 }
 
 static void

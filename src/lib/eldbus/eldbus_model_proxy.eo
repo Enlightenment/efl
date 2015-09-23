@@ -1,19 +1,27 @@
 class Eldbus.Model_Proxy (Eo.Base, Efl.Model.Base) {
     legacy_prefix: null;
     methods {
-        constructor {
+        @property object {
             [[Custom Eldbus_Model_Proxy constructor.
 
               @since 1.16]]
-            params {
-                @in object: Eldbus_Object *; [[Eldbus object]]
-                @in interface: const(Eldbus_Introspection_Interface)*; [[The introspected interface]]
+            set {}
+            get {}
+            values {
+                object: Eldbus_Object *; [[Eldbus object]]
             }
         }
-    @property name {
+        @property name {
             get {}
             values {
                 value: const(char)*;
+            }
+        }
+        @property interface {
+            get {}
+            set {}
+            values {
+                interface_: const(Eldbus_Introspection_Interface)*; [[The introspected interface]]
             }
         }
     }
@@ -34,6 +42,7 @@ class Eldbus.Model_Proxy (Eo.Base, Efl.Model.Base) {
         Efl.Model.Base.children_load;
     }
     constructors {
-        .constructor;
+        .object;
+        .interface;
     }
 }
