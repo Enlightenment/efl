@@ -157,6 +157,13 @@ _eldbus_connection_send(Eldbus_Connection *conn, Eldbus_Message *msg, Eldbus_Mes
         eldbus_pending_dispatch(pending, error_msg);
         return NULL;
      }
+   if (!pending->dbus_pending)
+     {
+        error_msg = eldbus_message_error_new(msg, "org.enlightenment.DBus.Error",
+                                             "dbus_pending is NULL.");
+        eldbus_pending_dispatch(pending, error_msg);
+        return NULL;
+     }
    if (dbus_pending_call_set_notify(pending->dbus_pending, cb_pending, pending, NULL))
      return pending;
 
@@ -238,7 +245,8 @@ eldbus_pending_dispatch(Eldbus_Pending *pending, Eldbus_Message *msg)
 
    if (msg) eldbus_message_unref(msg);
    eldbus_message_unref(pending->msg_sent);
-   dbus_pending_call_unref(pending->dbus_pending);
+   if (pending->dbus_pending)
+     dbus_pending_call_unref(pending->dbus_pending);
 
    pending->cb = NULL;
    pending->dbus_pending = NULL;
