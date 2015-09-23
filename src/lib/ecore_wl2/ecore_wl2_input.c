@@ -214,6 +214,32 @@ _ecore_wl2_input_mouse_up_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window,
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
 }
 
+static void
+_ecore_wl2_input_focus_in_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
+{
+   Ecore_Wl2_Event_Focus_In *ev;
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Focus_In));
+   if (!ev) return;
+
+   ev->timestamp = input->timestamp;
+   ev->window = window->id;
+   ecore_event_add(ECORE_WL2_EVENT_FOCUS_IN, ev, NULL, NULL);
+}
+
+static void
+_ecore_wl2_input_focus_out_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
+{
+   Ecore_Wl2_Event_Focus_Out *ev;
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Focus_Out));
+   if (!ev) return;
+
+   ev->timestamp = input->timestamp;
+   ev->window = window->id;
+   ecore_event_add(ECORE_WL2_EVENT_FOCUS_OUT, ev, NULL, NULL);
+}
+
 void
 _ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, unsigned int button)
 {
@@ -460,7 +486,7 @@ _keyboard_cb_enter(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigne
 
    input->focus.keyboard = window;
 
-   /* TODO: Send keyboard enter event (focus in) */
+   _ecore_wl2_input_focus_in_send(input, window);
 }
 
 static void
@@ -484,7 +510,7 @@ _keyboard_cb_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigne
    window = _ecore_wl2_display_window_surface_find(input->display, surface);
    if (!window) return;
 
-   /* TODO: Send keyboard leave event (focus out) */
+   _ecore_wl2_input_focus_out_send(input, window);
 
    input->focus.keyboard = NULL;
 }
