@@ -650,7 +650,16 @@ _touch_cb_down(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int seri
 
    input->focus.touch = window;
 
-   /* TODO: Finish sending ecore events */
+   _pointer_cb_enter(data, NULL, serial, surface, x, y);
+
+   if ((!input->grab.window) && (input->focus.touch))
+     {
+        _ecore_wl2_input_grab(input, input->focus.touch, BTN_LEFT);
+        input->grab.timestamp = timestamp;
+     }
+
+   _ecore_wl2_input_mouse_down_send(input, input->focus.touch, id,
+                                    BTN_LEFT, timestamp);
 }
 
 static void
@@ -662,7 +671,11 @@ _touch_cb_up(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int serial
    if (!input) return;
    if (!input->focus.touch) return;
 
-   /* TODO: Send ecore mouse up event and do input ungrab */
+   _ecore_wl2_input_mouse_up_send(input, input->focus.touch, id,
+                                  BTN_LEFT, timestamp);
+
+   if ((input->grab.window) && (input->grab.button == BTN_LEFT))
+     _ecore_wl2_input_ungrab(input);
 }
 
 static void
@@ -674,7 +687,7 @@ _touch_cb_motion(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int ti
    if (!input) return;
    if (!input->focus.touch) return;
 
-   /* TODO: Send ecore mouse move event */
+   _ecore_wl2_input_mouse_move_send(input, input->focus.touch, timestamp, id);
 }
 
 static void
