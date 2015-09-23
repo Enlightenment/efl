@@ -85,6 +85,25 @@ _ecore_wl2_input_mouse_move_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
 }
 
 static void
+_ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, unsigned int button)
+{
+   input->grab.window = window;
+   input->grab.button = button;
+}
+
+static void
+_ecore_wl2_input_ungrab(Ecore_Wl2_Input *input)
+{
+   if ((input->grab.window) && (input->grab.button))
+     {
+        /* TODO: send a mouse up here */
+     }
+
+   input->grab.window = NULL;
+   input->grab.button = 0;
+}
+
+static void
 _pointer_cb_enter(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial, struct wl_surface *surface, wl_fixed_t sx, wl_fixed_t sy)
 {
    Ecore_Wl2_Input *input;
@@ -177,7 +196,7 @@ _pointer_cb_button(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned 
      {
         if ((input->focus.pointer) && (!input->grab.window))
           {
-             /* TODO: issue input grab */
+             _ecore_wl2_input_grab(input, input->focus.pointer, button);
              input->grab.timestamp = timestamp;
           }
 
@@ -194,9 +213,7 @@ _pointer_cb_button(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned 
           }
 
         if ((input->grab.window) && (input->grab.button == button))
-          {
-             /* TODO: issue input ungrab */
-          }
+          _ecore_wl2_input_ungrab(input);
      }
 }
 
@@ -666,25 +683,6 @@ static const struct wl_seat_listener _seat_listener =
    _seat_cb_capabilities,
    NULL
 };
-
-static void
-_ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, unsigned int button)
-{
-   input->grab.window = window;
-   input->grab.button = button;
-}
-
-static void
-_ecore_wl2_input_ungrab(Ecore_Wl2_Input *input)
-{
-   if ((input->grab.window) && (input->grab.button))
-     {
-        /* TODO: send a mouse up here */
-     }
-
-   input->grab.window = NULL;
-   input->grab.button = 0;
-}
 
 static void
 _ecore_wl2_input_cursor_setup(Ecore_Wl2_Input *input)
