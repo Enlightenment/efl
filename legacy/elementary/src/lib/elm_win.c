@@ -1941,6 +1941,8 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
    _elm_win_profile_del(sd);
    _elm_win_available_profiles_del(sd);
 
+   free(sd->wm_rot.rots);
+
    /* Don't let callback in the air that point to sd */
    ecore_evas_callback_delete_request_set(sd->ee, NULL);
    ecore_evas_callback_resize_set(sd->ee, NULL);
