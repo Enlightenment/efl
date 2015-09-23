@@ -6448,7 +6448,7 @@ edje_edit_state_color_class_set(Evas_Object *obj, const char *part, const char *
      {
         if (strcmp(cc->name, color_class) == 0)
           {
-             pd->color_class = (char *)eina_stringshare_add(color_class);
+             pd->color_class = eina_stringshare_add(color_class);
              edje_object_calc_force(obj);
              return EINA_TRUE;
           }

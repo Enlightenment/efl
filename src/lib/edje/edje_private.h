@@ -1192,7 +1192,7 @@ struct _Edje_Part_Description_Common
    Edje_Position step; /* size stepping by n pixels, 0 = none */
    Edje_Aspect_Prefer aspect;
 
-   char      *color_class; /* how to modify the color */
+   const char      *color_class; /* how to modify the color */
    Edje_Color color;
    Edje_Color color2;
 

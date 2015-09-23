@@ -2819,7 +2819,7 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
    Edje_Real_Part *rp;
-   char *s;
+   const char *s;
 
    /* we need at least 3 arguments */
    if (params[0] < (int)(sizeof(Embryo_Cell) * 3))
