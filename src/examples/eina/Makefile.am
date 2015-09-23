@@ -39,6 +39,7 @@ eina_inlist_03.c \
 eina_str_01.c \
 eina_strbuf_01.c \
 eina_stringshare_01.c \
+eina_tmpstr_01.c \
 eina_tiler_01.c \
 eina_simple_xml_parser_01.c \
 eina_value_01.c \
@@ -84,6 +85,7 @@ eina_inlist_03 \
 eina_str_01 \
 eina_strbuf_01 \
 eina_stringshare_01 \
+eina_tmpstr_01 \
 eina_magic_01 \
 eina_simple_xml_parser_01 \
 eina_value_01 \
