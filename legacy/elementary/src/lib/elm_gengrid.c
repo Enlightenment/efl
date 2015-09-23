@@ -2020,6 +2020,15 @@ _elm_gengrid_item_focused(Elm_Object_Item *eo_it)
 
    sd->focused_item = eo_it;
 
+   /* If item is not realized state, widget couldn't get focus_highlight data. */
+   if (it->realized)
+     {
+        _elm_gengrid_item_focus_raise(it);
+        _elm_widget_item_highlight_in_theme(obj, eo_it);
+        _elm_widget_highlight_in_theme_update(obj);
+        _elm_widget_focus_highlight_start(obj);
+     }
+
    eo_do(obj, eo_event_callback_call(ELM_GENGRID_EVENT_ITEM_FOCUSED, eo_it));
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
@@ -4012,15 +4021,6 @@ _elm_gengrid_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bo
              if (sd->focused_item)
                _elm_gengrid_item_unfocused(sd->focused_item);
              _elm_gengrid_item_focused(eo_it);
-
-             /* If item is not realized state, widget couldn't get focus_highlight data. */
-             if (it->realized)
-               {
-                  _elm_gengrid_item_focus_raise(it);
-                  _elm_widget_item_highlight_in_theme(obj, eo_it);
-                  _elm_widget_highlight_in_theme_update(obj);
-                  _elm_widget_focus_highlight_start(obj);
-               }
           }
      }
    else
