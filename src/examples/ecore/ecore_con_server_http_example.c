@@ -58,12 +58,13 @@ _del(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client_Del *e
    client = ecore_con_client_data_get(ev->client);
 
    printf("Lost client with ip %s!\n", ecore_con_client_ip_get(ev->client));
-   printf("Total data received from this client: %d\n", client->sdata);
+   if (client)
+     {
+        printf("Total data received from this client: %d\n", client->sdata);
+        free(client);
+     }
    printf("Client was connected for %0.3f seconds.\n",
           ecore_con_client_uptime_get(ev->client));
-
-   if (client)
-     free(client);
 
    ecore_con_client_del(ev->client);
 
