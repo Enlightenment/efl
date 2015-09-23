@@ -129,9 +129,9 @@ Eo *
 create_connection(void)
 {
    Eo *connection = eo_add_ref(ELDBUS_MODEL_CONNECTION_CLASS, NULL,
-     eldbus_model_connection_constructor(ELDBUS_CONNECTION_TYPE_SESSION,
-                                         NULL,
-                                         EINA_FALSE));
+                               eldbus_model_connection_type_set(ELDBUS_CONNECTION_TYPE_SESSION),
+                               eldbus_model_connection_address_set(NULL),
+                               eldbus_model_connection_private_set(EINA_FALSE));
    ck_assert_ptr_ne(NULL, connection);
    return connection;
 }

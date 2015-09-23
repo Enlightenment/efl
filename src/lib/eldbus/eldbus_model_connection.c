@@ -37,19 +37,19 @@ _eldbus_model_connection_eo_base_constructor(Eo *obj, Eldbus_Model_Connection_Da
    return obj;
 }
 
-static void
-_eldbus_model_connection_constructor(Eo *obj EINA_UNUSED,
-                                     Eldbus_Model_Connection_Data *pd,
-                                     int type,
-                                     const char* address,
-                                     Eina_Bool private)
-{
-   DBG("(%p)", obj);
+/* static void */
+/* _eldbus_model_connection_constructor(Eo *obj EINA_UNUSED, */
+/*                                      Eldbus_Model_Connection_Data *pd, */
+/*                                      int type, */
+/*                                      const char* address, */
+/*                                      Eina_Bool private) */
+/* { */
+/*    DBG("(%p)", obj); */
 
-   pd->type = type;
-   pd->address = eina_stringshare_add(address);
-   pd->private = private;
-}
+/*    pd->type = type; */
+/*    pd->address = eina_stringshare_add(address); */
+/*    pd->private = private; */
+/* } */
 
 static void
 _eldbus_model_connection_eo_base_destructor(Eo *obj, Eldbus_Model_Connection_Data *pd)

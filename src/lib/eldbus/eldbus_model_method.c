@@ -28,17 +28,6 @@ _eldbus_model_method_eo_base_constructor(Eo *obj, Eldbus_Model_Method_Data *pd)
 }
 
 static void
-_eldbus_model_method_proxy_set(Eo *obj EINA_UNUSED,
-                               Eldbus_Model_Method_Data *pd EINA_UNUSED,
-                               Eldbus_Proxy *proxy)
-{
-   DBG("(%p)", obj);
-   EINA_SAFETY_ON_NULL_RETURN(proxy);
-
-   eo_do(obj, eldbus_model_arguments_proxy_set(proxy));
-}
-
-static void
 _eldbus_model_method_method_set(Eo *obj EINA_UNUSED,
                                 Eldbus_Model_Method_Data *pd,
                                 const Eldbus_Introspection_Method *method)
@@ -51,18 +40,6 @@ _eldbus_model_method_method_set(Eo *obj EINA_UNUSED,
    eo_do(obj,
          eldbus_model_arguments_name_set(method->name),
          eldbus_model_arguments_set(method->arguments));
-}
-
-static Eldbus_Proxy*
-_eldbus_model_method_proxy_get(Eo *obj EINA_UNUSED,
-                               Eldbus_Model_Method_Data *pd EINA_UNUSED)
-{
-   DBG("(%p)", obj);
-
-   Eldbus_Proxy* p = NULL;
-   eo_do_super(obj, MY_CLASS, p = eldbus_model_arguments_proxy_get());
-
-   return p;
 }
 
 static const Eldbus_Introspection_Method *

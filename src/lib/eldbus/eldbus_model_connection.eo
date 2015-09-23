@@ -1,27 +1,23 @@
 class Eldbus.Model_Connection (Eo.Base, Efl.Model.Base) {
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Eldbus_Model_Connection constructor.
-
-              @since 1.16]]
-            params {
-                @in type: int; [[The connection type]]
-                @in address: const(char)*; [[Remote address of dbus]]
-                @in private_: bool; [[Non shared dbus connection]]
-            }
-        }
     @property type {
+            get {}
+            set {}
             values {
                 value: int;
             }
         }
     @property address {
+            get {}
+            set {}
             values {
                 value: const(char)*;
             }
         }
     @property private {
+            get {}
+            set {}
             values {
                 value: bool;
             }
@@ -44,6 +40,8 @@ class Eldbus.Model_Connection (Eo.Base, Efl.Model.Base) {
         Efl.Model.Base.children_load;
     }
     constructors {
-        .constructor;
+        .type;
+        .address;
+        .private;
     }
 }
