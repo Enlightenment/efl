@@ -298,7 +298,6 @@ lib/evas/common/evas_scale_smooth.c \
 lib/evas/common/evas_scale_span.c \
 lib/evas/common/evas_thread_render.c \
 lib/evas/common/evas_tiler.c \
-lib/evas/common/evas_regionbuf.c \
 lib/evas/common/evas_pipe.c \
 lib/evas/common/language/evas_bidi_utils.c \
 lib/evas/common/language/evas_language_utils.c \
