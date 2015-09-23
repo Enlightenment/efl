@@ -85,6 +85,44 @@ _ecore_wl2_input_mouse_move_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
 }
 
 static void
+_ecore_wl2_input_mouse_wheel_send(Ecore_Wl2_Input *input, unsigned int axis, int value, unsigned int timestamp)
+{
+   Ecore_Event_Mouse_Wheel *ev;
+
+   ev = calloc(1, sizeof(Ecore_Event_Mouse_Wheel));
+   if (!ev) return;
+
+   ev->timestamp = timestamp;
+   ev->modifiers = input->keyboard.modifiers;
+   ev->x = input->pointer.sx;
+   ev->y = input->pointer.sy;
+
+   if (axis == WL_POINTER_AXIS_VERTICAL_SCROLL)
+     {
+        ev->direction = 0;
+        ev->z = value;
+     }
+   else if (axis == WL_POINTER_AXIS_HORIZONTAL_SCROLL)
+     {
+        ev->direction = 1;
+        ev->z = value;
+     }
+
+   if (input->grab.window)
+     {
+        ev->window = input->grab.window->id;
+        ev->event_window = input->grab.window->id;
+     }
+   else if (input->focus.pointer)
+     {
+        ev->window = input->focus.pointer->id;
+        ev->event_window = input->focus.pointer->id;
+     }
+
+   ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
+}
+
+static void
 _ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, unsigned int button)
 {
    input->grab.window = window;
@@ -225,7 +263,8 @@ _pointer_cb_axis(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned in
    input = data;
    if (!input) return;
 
-   /* TODO: send mouse wheel event */
+   _ecore_wl2_input_mouse_wheel_send(input, axis, wl_fixed_to_int(value),
+                                     timestamp);
 }
 
 static const struct wl_pointer_listener _pointer_listener =
