@@ -579,6 +579,25 @@ static const struct wl_seat_listener _seat_listener =
 };
 
 static void
+_ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, unsigned int button)
+{
+   input->grab.window = window;
+   input->grab.button = button;
+}
+
+static void
+_ecore_wl2_input_ungrab(Ecore_Wl2_Input *input)
+{
+   if ((input->grab.window) && (input->grab.button))
+     {
+        /* TODO: send a mouse up here */
+     }
+
+   input->grab.window = NULL;
+   input->grab.button = 0;
+}
+
+static void
 _ecore_wl2_input_cursor_setup(Ecore_Wl2_Input *input)
 {
    char *tmp;
