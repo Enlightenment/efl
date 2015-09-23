@@ -2,9 +2,57 @@
 # include <config.h>
 #endif
 
+#ifdef __linux__
+# include <linux/input.h>
+#else
+# define BTN_LEFT 0x110
+# define BTN_RIGHT 0x111
+# define BTN_MIDDLE 0x112
+# define BTN_SIDE 0x113
+# define BTN_EXTRA 0x114
+# define BTN_FORWARD 0x115
+# define BTN_BACK 0x116
+#endif
+
 #include <unistd.h>
 #include <sys/mman.h>
 #include "ecore_wl2_private.h"
+
+static void
+_ecore_wl2_input_mouse_in_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
+{
+   Ecore_Event_Mouse_IO *ev;
+
+   ev = calloc(1, sizeof(Ecore_Event_Mouse_IO));
+   if (!ev) return;
+
+   ev->x = input->pointer.sx;
+   ev->y = input->pointer.sy;
+   ev->window = window;
+   ev->event_window = window;
+   ev->timestamp = input->timestamp;
+   ev->modifiers = input->keyboard.modifiers;
+
+   ecore_event_add(ECORE_EVENT_MOUSE_IN, ev, NULL, NULL);
+}
+
+static void
+_ecore_wl2_input_mouse_out_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
+{
+   Ecore_Event_Mouse_IO *ev;
+
+   ev = calloc(1, sizeof(Ecore_Event_Mouse_IO));
+   if (!ev) return;
+
+   ev->x = input->pointer.sx;
+   ev->y = input->pointer.sy;
+   ev->window = window;
+   ev->event_window = window;
+   ev->timestamp = input->timestamp;
+   ev->modifiers = input->keyboard.modifiers;
+
+   ecore_event_add(ECORE_EVENT_MOUSE_OUT, ev, NULL, NULL);
+}
 
 static void
 _pointer_cb_enter(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial, struct wl_surface *surface, wl_fixed_t sx, wl_fixed_t sy)
@@ -18,6 +66,15 @@ _pointer_cb_enter(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
    /* trap for a surface that was just destroyed */
    if (!surface) return;
 
+   if (!input->timestamp)
+     {
+        struct timeval tv;
+
+        gettimeofday(&tv, NULL);
+        input->timestamp = (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+     }
+
+   input->display->serial = serial;
    input->pointer.enter_serial = serial;
    input->pointer.sx = wl_fixed_to_double(sx);
    input->pointer.sy = wl_fixed_to_double(sy);
@@ -28,11 +85,11 @@ _pointer_cb_enter(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
 
    input->focus.pointer = window;
 
-   /* TODO: send mouse in event */
+   _ecore_wl2_input_mouse_in_send(input, window);
 }
 
 static void
-_pointer_cb_leave(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial EINA_UNUSED, struct wl_surface *surface)
+_pointer_cb_leave(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial, struct wl_surface *surface)
 {
    Ecore_Wl2_Input *input;
    Ecore_Wl2_Window *window;
@@ -40,6 +97,7 @@ _pointer_cb_leave(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
    input = data;
    if (!input) return;
 
+   input->display->serial = serial;
    input->focus.pointer = NULL;
 
    /* trap for a surface that was just destroyed */
@@ -49,7 +107,7 @@ _pointer_cb_leave(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
    window = _ecore_wl2_display_window_surface_find(input->display, surface);
    if (!window) return;
 
-   /* TODO: send mouse out event */
+   _ecore_wl2_input_mouse_out_send(input, window);
 }
 
 static void
