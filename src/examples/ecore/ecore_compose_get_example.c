@@ -1,4 +1,4 @@
-/* gcc -g -Wall -o test_keys2 test_keys2.c `pkg-config --cflags --libs ecore-input ecore-evas ecore evas eina` */
+/* gcc -g -Wall -o ecore_compose_get_example ecore_compose_get_example.c `pkg-config --cflags --libs ecore-input ecore-evas ecore evas eina` */
 
 #include <stdio.h>
 
