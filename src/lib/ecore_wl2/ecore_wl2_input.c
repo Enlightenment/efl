@@ -456,14 +456,68 @@ static const struct wl_touch_listener _touch_listener =
    _touch_cb_cancel
 };
 
+static void
+_data_cb_offer(void *data, struct wl_data_device *data_device, struct wl_data_offer *offer)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
+static void
+_data_cb_enter(void *data, struct wl_data_device *data_device, unsigned int timestmap, struct wl_surface *surface, wl_fixed_t x, wl_fixed_t y, struct wl_data_offer *offer)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
+static void
+_data_cb_leave(void *data, struct wl_data_device *data_device)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
+static void
+_data_cb_motion(void *data, struct wl_data_device *data_device, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
+static void
+_data_cb_drop(void *data, struct wl_data_device *data_device)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
+static void
+_data_cb_selection(void *data, struct wl_data_device *data_device, struct wl_data_offer *offer)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
 static const struct wl_data_device_listener _data_listener =
 {
-   NULL, // data offer
-   NULL, // data enter
-   NULL, // data leave
-   NULL, // data motion
-   NULL, // data drop
-   NULL, // data selection
+   _data_cb_offer,
+   _data_cb_enter,
+   _data_cb_leave,
+   _data_cb_motion,
+   _data_cb_drop,
+   _data_cb_selection
 };
 
 static void
