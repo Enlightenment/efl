@@ -225,9 +225,8 @@ static void
 _ecore_wl2_input_ungrab(Ecore_Wl2_Input *input)
 {
    if ((input->grab.window) && (input->grab.button))
-     {
-        /* TODO: send a mouse up here */
-     }
+     _ecore_wl2_input_mouse_up_send(input, input->grab.window, 0,
+                                    input->grab.button, input->grab.timestamp);
 
    input->grab.window = NULL;
    input->grab.button = 0;
