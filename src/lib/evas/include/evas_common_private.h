@@ -427,7 +427,7 @@ typedef struct _RGBA_Font_Glyph       RGBA_Font_Glyph;
 typedef struct _RGBA_Font_Glyph_Out   RGBA_Font_Glyph_Out;
 typedef struct _RGBA_Gfx_Compositor   RGBA_Gfx_Compositor;
 
-typedef struct _Cutout_Rect           Cutout_Rect;
+typedef struct _Cutout_Rect             Cutout_Rect;
 typedef struct _Cutout_Rects            Cutout_Rects;
 
 typedef struct _Convert_Pal             Convert_Pal;
@@ -706,9 +706,12 @@ struct _Cutout_Rect
 
 struct _Cutout_Rects
 {
-   Cutout_Rect*      rects;
+   Cutout_Rect      *rects;
    int               active;
    int               max;
+   struct {
+      int            x, w, y, h;
+   } last_add;
 };
 
 struct _Evas_Common_Transform

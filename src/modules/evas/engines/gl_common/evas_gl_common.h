@@ -381,8 +381,7 @@ struct _Evas_GL_Shared
       Eina_Bool etc1_subimage : 1;
       Eina_Bool s3tc : 1;
       // tuning params - per gpu/cpu combo?
-#define MAX_CUTOUT             512
-#define DEF_CUTOUT                  512
+#define DEF_CUTOUT                  4096
 
 #define MAX_PIPES              128
 #define DEF_PIPES                    32
