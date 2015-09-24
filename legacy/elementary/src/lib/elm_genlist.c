@@ -7535,7 +7535,7 @@ _filter_iterator_next(Elm_Genlist_Filter *iter, void **data)
    Elm_Gen_Item *item;
    while (iter->current)
      {
-        item = ELM_GENLIST_FILTER_CONTAINER_GET(iter->current, Elm_Gen_Item);
+        item = ELM_GENLIST_FILTER_ITERATOR_ITEM_GET(iter->current, Elm_Gen_Item);
         iter->current = iter->current->next;
         if (_item_filtered_get(item))
           {
@@ -7549,9 +7549,16 @@ _filter_iterator_next(Elm_Genlist_Filter *iter, void **data)
 }
 
 static void
-_filter_iterator_free(Elm_Genlist_Filter *it)
+_filter_iterator_free(Elm_Genlist_Filter *iter)
 {
-   free(it);
+   free(iter);
+}
+
+static Evas_Object *
+_filter_iterator_get_container(Elm_Genlist_Filter *iter)
+{
+   Elm_Gen_Item *it = ELM_GENLIST_FILTER_ITERATOR_ITEM_GET(iter->head, Elm_Gen_Item);
+   return WIDGET(it);
 }
 
 EOLIAN Eina_Iterator *
@@ -7566,7 +7573,8 @@ _elm_genlist_filter_iterator_new(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
 
    iter->iterator.version = EINA_ITERATOR_VERSION;
    iter->iterator.next = FUNC_ITERATOR_NEXT(_filter_iterator_next);
-   iter->iterator.get_container = sd->obj;
+   iter->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
+                                    _filter_iterator_get_container);
    iter->iterator.free = FUNC_ITERATOR_FREE(_filter_iterator_free);
 
    EINA_MAGIC_SET(&iter->iterator, EINA_MAGIC_ITERATOR);

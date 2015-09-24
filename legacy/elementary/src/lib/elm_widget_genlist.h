@@ -299,7 +299,7 @@ struct _Elm_Genlist_Filter
    const Eina_Inlist *current;
 };
 
-#define ELM_GENLIST_FILTER_CONTAINER_GET(ptr,                          \
+#define ELM_GENLIST_FILTER_ITERATOR_ITEM_GET(ptr,                 \
                                   type) ((type *)((char *)ptr - \
                                                   offsetof(type, __in_list)))
 
