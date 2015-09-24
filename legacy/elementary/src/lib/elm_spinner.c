@@ -156,12 +156,12 @@ _entry_show(Elm_Spinner_Data *sd)
           }
      }
 
-apply:
    if (_is_label_format_integer(fmt))
      snprintf(buf, sizeof(buf), fmt, (int)sd->val);
    else
      snprintf(buf, sizeof(buf), fmt, sd->val);
 
+apply:
    elm_object_text_set(sd->ent, buf);
 }
 
