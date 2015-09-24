@@ -478,7 +478,7 @@ _ecore_x_window_keygrab_set_internal(Ecore_X_Window win,
    if (!ret)
      {
         WRN("Key(\"%s\") add failed", key);
-        return ret;
+        goto error;
      }
 
    if(grab_mode == ECORE_X_WIN_KEYGRAB_EXCLUSIVE)
@@ -570,7 +570,8 @@ _ecore_x_window_keygrab_unset_internal(Ecore_X_Window win,
         ret = _ecore_x_window_keytable_possible_global_exclusiveness_unset(keycode);
      }
 
-  return EINA_TRUE;
+   _keytable_free(&keytable);
+   return EINA_TRUE;
 error:
    _keytable_free(&keytable);
    return EINA_FALSE;
