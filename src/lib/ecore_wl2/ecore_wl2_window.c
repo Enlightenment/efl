@@ -148,30 +148,44 @@ _ecore_wl2_window_type_set(Ecore_Wl2_Window *win)
                                          win->geometry.x, win->geometry.y, 0);
         break;
       case ECORE_WL2_WINDOW_TYPE_MENU:
-        if ((win->xdg_surface) && (win->input))
           {
-             win->xdg_popup =
-               xdg_shell_get_xdg_popup(win->display->wl.xdg_shell,
-                                       win->surface, win->parent->surface,
-                                       win->input->wl.seat,
-                                       win->display->serial,
-                                       win->geometry.x, win->geometry.y);
-             if (!win->xdg_popup)
+             Ecore_Wl2_Input *input;
+
+             input = win->input;
+             if ((!input) && (win->parent))
                {
-                  ERR("Could not create xdg popup: %m");
-                  return;
+                  input = win->parent->input;
                }
 
-             xdg_popup_set_user_data(win->xdg_popup, win);
-             xdg_popup_add_listener(win->xdg_popup, &_xdg_popup_listener, win);
-          }
-        else if ((win->wl_shell_surface) && (win->input))
-          {
-             wl_shell_surface_set_popup(win->wl_shell_surface,
-                                        win->input->wl.seat,
-                                        win->display->serial,
-                                        win->parent->surface,
-                                        win->geometry.x, win->geometry.y, 0);
+             if ((!input) || (!input->wl.seat)) return;
+
+             if (win->xdg_surface)
+               {
+                  win->xdg_popup =
+                    xdg_shell_get_xdg_popup(win->display->wl.xdg_shell,
+                                            win->surface, win->parent->surface,
+                                            input->wl.seat,
+                                            win->display->serial,
+                                            win->geometry.x, win->geometry.y);
+                  if (!win->xdg_popup)
+                    {
+                       ERR("Could not create xdg popup: %m");
+                       return;
+                    }
+
+                  xdg_popup_set_user_data(win->xdg_popup, win);
+                  xdg_popup_add_listener(win->xdg_popup,
+                                         &_xdg_popup_listener, win);
+               }
+             else if (win->wl_shell_surface)
+               {
+                  wl_shell_surface_set_popup(win->wl_shell_surface,
+                                             input->wl.seat,
+                                             win->display->serial,
+                                             win->parent->surface,
+                                             win->geometry.x,
+                                             win->geometry.y, 0);
+               }
           }
         break;
       case ECORE_WL2_WINDOW_TYPE_TOPLEVEL:
