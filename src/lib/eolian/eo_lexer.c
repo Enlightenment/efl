@@ -277,7 +277,6 @@ doc_ref_class(const char *cname)
 static void
 doc_ref(Eo_Lexer *ls)
 {
-#if 0
    const char *st = ls->stream, *ste = ls->stream_end;
    size_t rlen = 0;
    while ((st != ste) && ((*st == '.') || isalnum(*st)))
@@ -314,9 +313,6 @@ doc_ref(Eo_Lexer *ls)
      return;
    *end = '\0';
    doc_ref_class(buf);
-#else
-   (void)ls;
-#endif
 }
 
 static int
