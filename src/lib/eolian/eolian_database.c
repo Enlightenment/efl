@@ -321,11 +321,13 @@ eolian_file_parse(const char *filepath)
         return EINA_FALSE;
      }
    if (!(eopath = eina_hash_find(is_eo ? _filenames : _tfilenames, filepath)))
-     eopath = filepath;
-   char *vpath = eina_file_path_sanitize(eopath);
-   Eina_Bool ret = eo_parser_database_fill(vpath, !is_eo);
-   free(vpath);
-   return ret;
+     {
+        char *vpath = eina_file_path_sanitize(filepath);
+        Eina_Bool ret = eo_parser_database_fill(vpath, !is_eo);
+        free(vpath);
+        return ret;
+     }
+   return eo_parser_database_fill(eopath, !is_eo);
 }
 
 static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
