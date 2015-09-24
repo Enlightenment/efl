@@ -3,7 +3,7 @@
 
 static const char vertex_color_vert_glsl[] =
    "#ifdef GL_ES\n"
-   "precision highp float;\n"
+   "precision mediump float;\n"
    "precision mediump int;\n"
    "precision lowp sampler2D;\n"
    "#endif\n"
@@ -46,7 +46,7 @@ static const char vertex_color_vert_glsl[] =
 
 static const char vertex_color_frag_glsl[] =
    "#ifdef GL_ES\n"
-   "precision highp float;\n"
+   "precision mediump float;\n"
    "precision mediump int;\n"
    "precision lowp sampler2D;\n"
    "#endif\n"
@@ -116,7 +116,7 @@ static const char vertex_color_frag_glsl[] =
 
 static const char diffuse_vert_glsl[] =
    "#ifdef GL_ES\n"
-   "precision highp float;\n"
+   "precision mediump float;\n"
    "precision mediump int;\n"
    "precision lowp sampler2D;\n"
    "#endif\n"
@@ -160,7 +160,7 @@ static const char diffuse_vert_glsl[] =
 
 static const char diffuse_frag_glsl[] =
    "#ifdef GL_ES\n"
-   "precision highp float;\n"
+   "precision mediump float;\n"
    "precision mediump int;\n"
    "precision lowp sampler2D;\n"
    "#endif\n"
@@ -261,7 +261,7 @@ static const char diffuse_frag_glsl[] =
 
 static const char flat_vert_glsl[] =
    "#ifdef GL_ES\n"
-   "precision highp float;\n"
+   "precision mediump float;\n"
    "precision mediump int;\n"
    "precision lowp sampler2D;\n"
    "#endif\n"
@@ -386,7 +386,7 @@ static const char flat_vert_glsl[] =
 
 static const char flat_frag_glsl[] =
    "#ifdef GL_ES\n"
-   "precision highp float;\n"
+   "precision mediump float;\n"
    "precision mediump int;\n"
    "precision lowp sampler2D;\n"
    "#endif\n"
@@ -403,7 +403,9 @@ static const char flat_frag_glsl[] =
    "uniform sampler2D uShadowMap;\n"
    "uniform float uShadowsPCFStep;\n"
    "uniform float uShadowsPCFSize;\n"
+   "#ifdef GL_ES\n"
    "uniform float uShadowsConstantBias;\n"
+   "#endif //GL_ES\n"
    "float shadow;\n"
    "float pcf(vec4 lpos)\n"
    "{\n"
@@ -632,7 +634,7 @@ static const char flat_frag_glsl[] =
 
 static const char phong_vert_glsl[] =
    "#ifdef GL_ES\n"
-   "precision highp float;\n"
+   "precision mediump float;\n"
    "precision mediump int;\n"
    "precision lowp sampler2D;\n"
    "#endif\n"
@@ -725,7 +727,7 @@ static const char phong_vert_glsl[] =
 
 static const char phong_frag_glsl[] =
    "#ifdef GL_ES\n"
-   "precision highp float;\n"
+   "precision mediump float;\n"
    "precision mediump int;\n"
    "precision lowp sampler2D;\n"
    "#endif\n"
@@ -744,7 +746,9 @@ static const char phong_frag_glsl[] =
    "uniform sampler2D uShadowMap;\n"
    "uniform float uShadowsPCFStep;\n"
    "uniform float uShadowsPCFSize;\n"
+   "#ifdef GL_ES\n"
    "uniform float uShadowsConstantBias;\n"
+   "#endif //GL_ES\n"
    "float shadow;\n"
    "float pcf(vec4 lpos)\n"
    "{\n"
@@ -1009,7 +1013,7 @@ static const char phong_frag_glsl[] =
 
 static const char normal_map_vert_glsl[] =
    "#ifdef GL_ES\n"
-   "precision highp float;\n"
+   "precision mediump float;\n"
    "precision mediump int;\n"
    "precision lowp sampler2D;\n"
    "#endif\n"
@@ -1159,7 +1163,7 @@ static const char normal_map_vert_glsl[] =
 
 static const char normal_map_frag_glsl[] =
    "#ifdef GL_ES\n"
-   "precision highp float;\n"
+   "precision mediump float;\n"
    "precision mediump int;\n"
    "precision lowp sampler2D;\n"
    "#endif\n"
@@ -1178,7 +1182,9 @@ static const char normal_map_frag_glsl[] =
    "uniform sampler2D uShadowMap;\n"
    "uniform float uShadowsPCFStep;\n"
    "uniform float uShadowsPCFSize;\n"
+   "#ifdef GL_ES\n"
    "uniform float uShadowsConstantBias;\n"
+   "#endif //GL_ES\n"
    "float shadow;\n"
    "float pcf(vec4 lpos)\n"
    "{\n"
@@ -1486,7 +1492,7 @@ static const char normal_map_frag_glsl[] =
 
 static const char shadow_map_vert_glsl[] =
    "#ifdef GL_ES\n"
-   "precision highp float;\n"
+   "precision mediump float;\n"
    "precision mediump int;\n"
    "precision lowp sampler2D;\n"
    "#endif\n"
@@ -1522,7 +1528,7 @@ static const char shadow_map_vert_glsl[] =
    "#endif // VERTEX_POSITION\n"
    "#endif //VERTEX_POSITION_BLEND\n"
    "#ifdef ALPHA_TEST_ENABLED\n"
-   "#ifdef VERTEX_TEXCOORD_BLEND\n"
+   "   #ifdef VERTEX_TEXCOORD_BLEND\n"
    "   vTexCoord = mix(aTexCoord1.st, aTexCoord0.st, uTexCoordWeight);\n"
    "#else\n"
    "#ifdef VERTEX_TEXCOORD\n"
@@ -1536,7 +1542,7 @@ static const char shadow_map_vert_glsl[] =
 
 static const char shadow_map_frag_glsl[] =
    "#ifdef GL_ES\n"
-   "precision highp float;\n"
+   "precision mediump float;\n"
    "precision mediump int;\n"
    "precision lowp sampler2D;\n"
    "#endif\n"
@@ -1639,7 +1645,7 @@ static const char shadow_map_frag_glsl[] =
 
 static const char color_pick_vert_glsl[] =
    "#ifdef GL_ES\n"
-   "precision highp float;\n"
+   "precision mediump float;\n"
    "precision mediump int;\n"
    "precision lowp sampler2D;\n"
    "#endif\n"
@@ -1666,7 +1672,7 @@ static const char color_pick_vert_glsl[] =
 
 static const char color_pick_frag_glsl[] =
    "#ifdef GL_ES\n"
-   "precision highp float;\n"
+   "precision mediump float;\n"
    "precision mediump int;\n"
    "precision lowp sampler2D;\n"
    "#endif\n"
@@ -1735,7 +1741,7 @@ static const char color_pick_frag_glsl[] =
 
 static const char parallax_occlusion_vert_glsl[] =
    "#ifdef GL_ES\n"
-   "precision highp float;\n"
+   "precision mediump float;\n"
    "precision mediump int;\n"
    "precision lowp sampler2D;\n"
    "#endif\n"
@@ -1855,7 +1861,7 @@ static const char parallax_occlusion_vert_glsl[] =
 
 static const char parallax_occlusion_frag_glsl[] =
    "#ifdef GL_ES\n"
-   "precision highp float;\n"
+   "precision mediump float;\n"
    "precision mediump int;\n"
    "precision lowp sampler2D;\n"
    "#endif\n"
@@ -1885,7 +1891,9 @@ static const char parallax_occlusion_frag_glsl[] =
    "uniform sampler2D uShadowMap;\n"
    "uniform float uShadowsPCFStep;\n"
    "uniform float uShadowsPCFSize;\n"
+   "#ifdef GL_ES\n"
    "uniform float uShadowsConstantBias;\n"
+   "#endif //GL_ES\n"
    "float shadow;\n"
    "float pcf(vec4 lpos)\n"
    "{\n"
