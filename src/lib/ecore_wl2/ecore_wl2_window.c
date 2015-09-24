@@ -348,6 +348,8 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
 EAPI void
 ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y)
 {
+   Ecore_Wl2_Input *input;
+
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    /* test for no-op move */
@@ -357,14 +359,22 @@ ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y)
    window->geometry.x = x;
    window->geometry.y = y;
 
-   _ecore_wl2_input_ungrab(window->input);
+   input = window->input;
+   if ((!input) && (window->parent))
+     {
+        input = window->parent->input;
+     }
 
-   /* TODO: enable once input is done */
-   /* if (window->xdg_surface) */
-   /*   xdg_surface_move(window->xdg_surface, seat, window->display->serial); */
-   /* else if (window->wl_shell_surface) */
-   /*   wl_shell_surface_move(window->wl_shell_surface, seat, */
-   /*                         window->display->serial); */
+   if ((!input) || (!input->wl.seat)) return;
+
+   _ecore_wl2_input_ungrab(input);
+
+   if (window->xdg_surface)
+     xdg_surface_move(window->xdg_surface, input->wl.seat,
+                      window->display->serial);
+   else if (window->wl_shell_surface)
+     wl_shell_surface_move(window->wl_shell_surface, input->wl.seat,
+                           window->display->serial);
 }
 
 EAPI void
