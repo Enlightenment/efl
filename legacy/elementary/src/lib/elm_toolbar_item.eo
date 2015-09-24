@@ -71,7 +71,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
 
                        If a new item is selected the previously selected will
                        be unselected. Previously selected item can be get with
-                       function \@ref elm_toolbar_selected_item_get.
+                       function @Elm.Toolbar.selected_item.get.
 
                        Selected items will be highlighted.
                      ]]
@@ -89,7 +89,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
 
                        Toolbar will load icon image from fdo or current theme.
                        This behavior can be set by
-                       \@ref elm_toolbar_icon_order_lookup_set function.
+                       @Elm.Toolbar.icon_order_lookup.set function.
                        If an absolute path is provided it will load it direct
                        from a file.
 
@@ -204,7 +204,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                 [[Add a new state to $item.
 
                   Toolbar will load icon image from fdo or current theme.
-                  This behavior can be set by \@ref elm_toolbar_icon_order_lookup_set
+                  This behavior can be set by @Elm.Toolbar.icon_order_lookup.set
                   function. If an absolute path is provided it will load it
                   direct from a file.
 
@@ -267,7 +267,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                   A toolbar item can be set to be a menu, using this function.
 
                   Once it is set to be a menu, it can be manipulated through the
-                  menu-like function \@ref elm_toolbar_menu_parent_set and the
+                  menu-like function @Elm.Toolbar.menu_parent.set and the
                   other elm_menu functions, using the Evas_Object $menu returned
                   by @.menu.get.
 
