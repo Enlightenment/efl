@@ -394,6 +394,8 @@ ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y)
 EAPI void
 ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w, int h, int location)
 {
+   Ecore_Wl2_Input *input;
+
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    /* test for no-op resize */
@@ -403,15 +405,22 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w, int h, int location)
    window->geometry.w = w;
    window->geometry.h = h;
 
-   _ecore_wl2_input_ungrab(window->input);
+   input = window->input;
+   if ((!input) && (window->parent))
+     {
+        input = window->parent->input;
+     }
 
-   /* TODO: enable once input is done */
-   /* if (window->xdg_surface) */
-   /*   xdg_surface_resize(window->xdg_surface, seat, */
-   /*                      window->display->serial, location); */
-   /* else if (window->wl_shell_surface) */
-   /*   wl_shell_surface_resize(window->wl_shell_surface, seat, */
-   /*                           window->display->serial, location); */
+   if ((!input) || (!input->wl.seat)) return;
+
+   _ecore_wl2_input_ungrab(input);
+
+   if (window->xdg_surface)
+     xdg_surface_resize(window->xdg_surface, input->wl.seat,
+                        window->display->serial, location);
+   else if (window->wl_shell_surface)
+     wl_shell_surface_resize(window->wl_shell_surface, input->wl.seat,
+                             window->display->serial, location);
 }
 
 EAPI void
