@@ -683,6 +683,7 @@ _keyboard_cb_enter(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigne
    if (!window) return;
 
    input->focus.keyboard = window;
+   window->input = input;
 
    _ecore_wl2_input_focus_in_send(input, window);
 }
@@ -710,6 +711,7 @@ _keyboard_cb_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigne
 
    _ecore_wl2_input_focus_out_send(input, window);
 
+   window->input = NULL;
    input->focus.keyboard = NULL;
 }
 
