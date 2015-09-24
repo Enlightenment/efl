@@ -60,7 +60,12 @@ static Evas_Func func, pfunc;
 /* Function table for GL APIs */
 static Evas_GL_API gl_funcs;
 
+Eina_Bool _need_context_restore = EINA_FALSE;
 
+void
+_context_restore(void)
+{
+}
 
 static void *
 eng_info(Evas *e EINA_UNUSED)
