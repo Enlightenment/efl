@@ -67,20 +67,56 @@ evas_common_tilebuf_clear(Tilebuf *tb)
    tb->region = region_new(tb->outbuf_w, tb->outbuf_h);
 }
 
+static Region *
+_region_round(Region *region, int tsize)
+{
+   Region *region2;
+   Box *rects;
+   int num, i, w, h;
+
+   region_size_get(region, &w, &h);
+   region2 = region_new(w, h);
+   rects = region_rects(region);
+   num = region_rects_num(region);
+   for (i = 0; i < num; i++)
+     {
+        int x1, y1, x2, y2;
+
+        x1 = (rects[i].x1 / tsize) * tsize;
+        y1 = (rects[i].y1 / tsize) * tsize;
+        x2 = ((rects[i].x2 + tsize - 1) / tsize) * tsize;
+        y2 = ((rects[i].y2 + tsize - 1) / tsize) * tsize;
+        region_rect_add(region2, x1, y1, x2 - x1, y2 - y1);
+     }
+   return region2;
+}
+
 EAPI Tilebuf_Rect *
 evas_common_tilebuf_get_render_rects(Tilebuf *tb)
 {
    Tilebuf_Rect *rects = NULL, *r, *rend, *rbuf;
+   Region *region2;
    Box *rects2, *rs;
    int n;
 
-   rects2 = region_rects(tb->region);
-   if (!rects2) return NULL;
-   n = region_rects_num(tb->region);
+   region2 = _region_round(tb->region, 16);
+   if (!region2) return NULL;
+
+   rects2 = region_rects(region2);
+   if (!rects2)
+     {
+        region_free(region2);
+        return NULL;
+     }
+   n = region_rects_num(region2);
    if (n <= 0) return NULL;
 
    rbuf = malloc(n * sizeof(Tilebuf_Rect));
-   if (!rbuf) return NULL;
+   if (!rbuf)
+     {
+        region_free(region2);
+        return NULL;
+     }
 
    rend = rbuf + n;
    rs = rects2;
@@ -98,6 +134,7 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
           eina_inlist_append(EINA_INLIST_GET(rects),
                              EINA_INLIST_GET(r));
      }
+   region_free(region2);
    return rects;
 }
 

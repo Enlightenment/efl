@@ -181,12 +181,13 @@ _evas_render2_regions_merge(Region *region)
    num = region_rects_num(region);
    for (i = 0; i < num; i++)
      {
-        region_rect_add
-        (region2,
-         (rects[i].x1 / tsize) * tsize,
-         (rects[i].y1 / tsize) * tsize,
-         (((rects[i].x2 - rects[i].x1) + tsize - 1) / tsize) * tsize,
-         (((rects[i].y2 - rects[i].y1) + tsize - 1) / tsize) * tsize);
+        int x1, y1, x2, y2;
+
+        x1 = (rects[i].x1 / tsize) * tsize;
+        y1 = (rects[i].y1 / tsize) * tsize;
+        x2 = ((rects[i].x2 + tsize - 1) / tsize) * tsize;
+        y2 = ((rects[i].y2 + tsize - 1) / tsize) * tsize;
+        region_rect_add(region2, x1, y1, x2 - x1, y2 - y1);
      }
    region_free(region);
    return region2;
