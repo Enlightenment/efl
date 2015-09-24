@@ -44,6 +44,22 @@ static const struct wl_shell_surface_listener _wl_shell_surface_listener =
 };
 
 static void
+_xdg_popup_cb_done(void *data, struct xdg_popup *xdg_popup EINA_UNUSED)
+{
+   Ecore_Wl2_Window *win;
+
+   win = data;
+   if (!win) return;
+
+   _ecore_wl2_input_ungrab(win->input);
+}
+
+static const struct xdg_popup_listener _xdg_popup_listener =
+{
+   _xdg_popup_cb_done,
+};
+
+static void
 _xdg_surface_cb_configure(void *data, struct xdg_surface *xdg_surface EINA_UNUSED, int32_t w, int32_t h, struct wl_array *states, uint32_t serial)
 {
    Ecore_Wl2_Window *win;
@@ -132,30 +148,30 @@ _ecore_wl2_window_type_set(Ecore_Wl2_Window *win)
                                          win->geometry.x, win->geometry.y, 0);
         break;
       case ECORE_WL2_WINDOW_TYPE_MENU:
-        /* TODO: Input and XDG Popup */
-        if (win->xdg_surface)
+        if ((win->xdg_surface) && (win->input))
           {
-             /* win->xdg_popup = */
-             /*   xdg_shell_get_xdg_popup(win->display->wl.xdg_shell, win->surface, */
-             /*                           win->display->input->seat, */
-             /*                           win->display->serial, */
-             /*                           win->geometry.x, win->geometry.y); */
-             /* if (!win->xdg_popup) */
-             /*   { */
-             /*      ERR("Could not create xdg popup: %m"); */
-             /*      return; */
-             /*   } */
+             win->xdg_popup =
+               xdg_shell_get_xdg_popup(win->display->wl.xdg_shell,
+                                       win->surface, win->parent->surface,
+                                       win->input->wl.seat,
+                                       win->display->serial,
+                                       win->geometry.x, win->geometry.y);
+             if (!win->xdg_popup)
+               {
+                  ERR("Could not create xdg popup: %m");
+                  return;
+               }
 
-             /* xdg_popup_set_user_data(win->xdg_popup, win); */
-             /* xdg_popup_add_listener(win->xdg_popup, &_xdg_popup_listener, win); */
+             xdg_popup_set_user_data(win->xdg_popup, win);
+             xdg_popup_add_listener(win->xdg_popup, &_xdg_popup_listener, win);
           }
-        else if (win->wl_shell_surface)
+        else if ((win->wl_shell_surface) && (win->input))
           {
-             /* wl_shell_surface_set_popup(win->wl_shell_surface, */
-             /*                            win->display->input->seat, */
-             /*                            win->display->serial, */
-             /*                            win->parent->surface, */
-             /*                            win->geometry.x, win->geometry.y, 0); */
+             wl_shell_surface_set_popup(win->wl_shell_surface,
+                                        win->input->wl.seat,
+                                        win->display->serial,
+                                        win->parent->surface,
+                                        win->geometry.x, win->geometry.y, 0);
           }
         break;
       case ECORE_WL2_WINDOW_TYPE_TOPLEVEL:
