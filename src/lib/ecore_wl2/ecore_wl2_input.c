@@ -18,7 +18,43 @@
 #include <sys/mman.h>
 #include "ecore_wl2_private.h"
 
+typedef struct _Ecore_Wl2_Mouse_Down_Info
+{
+   EINA_INLIST;
+   int device, sx, sy;
+   int last_win;
+   int last_last_win;
+   int last_event_win;
+   int last_last_event_win;
+   unsigned int last_time;
+   unsigned int last_last_time;
+   Eina_Bool double_click : 1;
+   Eina_Bool triple_click : 1;
+} Ecore_Wl2_Mouse_Down_Info;
+
+static Eina_Inlist *_ecore_wl2_mouse_down_info_list = NULL;
+
 static void _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int keycode, unsigned int state);
+
+static Ecore_Wl2_Mouse_Down_Info *
+_ecore_wl2_input_mouse_down_info_get(int device)
+{
+   Eina_Inlist *l = NULL;
+   Ecore_Wl2_Mouse_Down_Info *info = NULL;
+
+   l = _ecore_wl2_mouse_down_info_list;
+   EINA_INLIST_FOREACH(l, info)
+     if (info->device == device) return info;
+
+   info = calloc(1, sizeof(Ecore_Wl2_Mouse_Down_Info));
+   if (!info) return NULL;
+
+   info->device = device;
+   l = eina_inlist_append(l, (Eina_Inlist *)info);
+   _ecore_wl2_mouse_down_info_list = l;
+
+   return info;
+}
 
 static void
 _ecore_wl2_input_mouse_in_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
@@ -60,6 +96,7 @@ static void
 _ecore_wl2_input_mouse_move_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, int device)
 {
    Ecore_Event_Mouse_Move *ev;
+   Ecore_Wl2_Mouse_Down_Info *info;
 
    ev = calloc(1, sizeof(Ecore_Event_Mouse_Move));
    if (!ev) return;
@@ -82,6 +119,13 @@ _ecore_wl2_input_mouse_move_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
    ev->multi.y = input->pointer.sy;
    ev->multi.root.x = input->pointer.sx;
    ev->multi.root.y = input->pointer.sy;
+
+   info = _ecore_wl2_input_mouse_down_info_get(device);
+   if (info)
+     {
+        info->sx = input->pointer.sx;
+        info->sy = input->pointer.sy;
+     }
 
    ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
 }
@@ -128,6 +172,7 @@ static void
 _ecore_wl2_input_mouse_down_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, int device, unsigned int button, unsigned int timestamp)
 {
    Ecore_Event_Mouse_Button *ev;
+   Ecore_Wl2_Mouse_Down_Info *info;
 
    ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
    if (!ev) return;
@@ -151,7 +196,47 @@ _ecore_wl2_input_mouse_down_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
    ev->double_click = 0;
    ev->triple_click = 0;
 
-   /* TODO: handle double/triple click */
+   info = _ecore_wl2_input_mouse_down_info_get(device);
+   if (info)
+     {
+        info->sx = input->pointer.sx;
+        info->sy = input->pointer.sy;
+        if (info->triple_click)
+          {
+             info->last_win = 0;
+             info->last_last_win = 0;
+             info->last_event_win = 0;
+             info->last_last_event_win = 0;
+             info->last_time = 0;
+             info->last_last_time = 0;
+          }
+
+        if (((int)(timestamp - info->last_time) <= (int)(1000 * 0.25)) &&
+            ((window) && (window->id == info->last_win) &&
+                (window->id == info->last_event_win)))
+          {
+             ev->double_click = 1;
+             info->double_click = EINA_TRUE;
+          }
+        else
+          {
+             info->double_click = EINA_FALSE;
+             info->triple_click = EINA_FALSE;
+          }
+
+        if (((int)(timestamp - info->last_last_time) <=
+             (int)(2 * 1000 * 0.25)) &&
+            ((window) && (window->id == info->last_win) &&
+                (window->id == info->last_last_win) &&
+                (window->id == info->last_event_win) &&
+                (window->id == info->last_last_event_win)))
+          {
+             ev->triple_click = 1;
+             info->triple_click = EINA_TRUE;
+          }
+        else
+          info->triple_click = EINA_FALSE;
+     }
 
    ev->multi.device = device;
    ev->multi.radius = 1;
@@ -168,12 +253,23 @@ _ecore_wl2_input_mouse_down_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *windo
    ev->event_window = window->id;
 
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
+
+   if ((info) && (!info->triple_click))
+     {
+        info->last_last_win = info->last_win;
+        info->last_win = ev->window;
+        info->last_last_event_win = info->last_event_win;
+        info->last_event_win = ev->window;
+        info->last_last_time = info->last_time;
+        info->last_time = timestamp;
+     }
 }
 
 static void
 _ecore_wl2_input_mouse_up_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, int device, unsigned int button, unsigned int timestamp)
 {
    Ecore_Event_Mouse_Button *ev;
+   Ecore_Wl2_Mouse_Down_Info *info;
 
    ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
    if (!ev) return;
@@ -197,7 +293,21 @@ _ecore_wl2_input_mouse_up_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window,
    ev->double_click = 0;
    ev->triple_click = 0;
 
-   /* TODO: handle double/triple click */
+   info = _ecore_wl2_input_mouse_down_info_get(device);
+   if (info)
+     {
+        ev->double_click = info->double_click;
+        ev->triple_click = info->triple_click;
+        ev->x = info->sx;
+        ev->y = info->sy;
+        ev->multi.x = info->sx;
+        ev->multi.y = info->sy;
+     }
+   else
+     {
+        ev->multi.x = input->pointer.sx;
+        ev->multi.y = input->pointer.sy;
+     }
 
    ev->multi.device = device;
    ev->multi.radius = 1;
@@ -205,8 +315,6 @@ _ecore_wl2_input_mouse_up_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window,
    ev->multi.radius_y = 1;
    ev->multi.pressure = 1.0;
    ev->multi.angle = 0.0;
-   ev->multi.x = input->pointer.sx;
-   ev->multi.y = input->pointer.sy;
    ev->multi.root.x = input->pointer.sx;
    ev->multi.root.y = input->pointer.sy;
 
