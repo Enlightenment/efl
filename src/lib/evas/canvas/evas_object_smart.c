@@ -722,6 +722,7 @@ evas_object_smart_callback_del(Evas_Object *eo_obj, const char *event, Evas_Smar
    return NULL;
    MAGIC_CHECK_END();
    o = eo_data_scope_get(eo_obj, MY_CLASS);
+   if (!o) return NULL;
 
    if (!event) return NULL;
    const Eo_Event_Description *eo_desc = eo_base_legacy_only_event_description_get(event);
