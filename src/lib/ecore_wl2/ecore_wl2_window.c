@@ -428,5 +428,7 @@ ecore_wl2_window_raise(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   /* FIXME: set keyboard focus when input is complete */
+   /* FIXME: This should raise xdg surface also...perhaps using xdg activate */
+   if (window->wl_shell_surface)
+     wl_shell_surface_set_toplevel(window->wl_shell_surface);
 }
