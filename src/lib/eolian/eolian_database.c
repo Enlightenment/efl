@@ -218,7 +218,7 @@ join_path(const char *path, const char *file)
    eina_strbuf_append_char(buf, '/');
    eina_strbuf_append(buf, file);
 
-   ret = eina_strbuf_string_steal(buf);
+   ret = eina_file_path_sanitize(eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    return ret;
 }
@@ -322,7 +322,10 @@ eolian_file_parse(const char *filepath)
      }
    if (!(eopath = eina_hash_find(is_eo ? _filenames : _tfilenames, filepath)))
      eopath = filepath;
-   return eo_parser_database_fill(eopath, !is_eo);
+   char *vpath = eina_file_path_sanitize(eopath);
+   Eina_Bool ret = eo_parser_database_fill(vpath, !is_eo);
+   free(vpath);
+   return ret;
 }
 
 static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
