@@ -899,6 +899,9 @@ _touch_cb_up(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int serial
    if (!input) return;
    if (!input->focus.touch) return;
 
+   input->timestamp = timestamp;
+   input->display->serial = serial;
+
    _ecore_wl2_input_mouse_up_send(input, input->focus.touch, id,
                                   BTN_LEFT, timestamp);
 
@@ -914,6 +917,10 @@ _touch_cb_motion(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int ti
    input = data;
    if (!input) return;
    if (!input->focus.touch) return;
+
+   input->timestamp = timestamp;
+   input->pointer.sx = wl_fixed_to_int(x);
+   input->pointer.sy = wl_fixed_to_int(y);
 
    _ecore_wl2_input_mouse_move_send(input, input->focus.touch, id);
 }
