@@ -4,6 +4,10 @@
 
 #include "ecore_wl2_private.h"
 
+static void _anim_cb_animate(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED);
+
+static Eina_Bool _animator_busy = EINA_FALSE;
+
 static void
 _wl_shell_surface_cb_ping(void *data EINA_UNUSED, struct wl_shell_surface *shell_surface, unsigned int serial)
 {
@@ -197,6 +201,50 @@ _ecore_wl2_window_type_set(Ecore_Wl2_Window *win)
       default:
         break;
      }
+}
+
+static const struct wl_callback_listener _anim_listener =
+{
+   _anim_cb_animate
+};
+
+static void
+_anim_cb_animate(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED)
+{
+   Ecore_Wl2_Window *window;
+
+   window = data;
+   if (!window) return;
+
+   ecore_animator_custom_tick();
+
+   wl_callback_destroy(callback);
+   window->anim_cb = NULL;
+
+   if (_animator_busy)
+     {
+        window->anim_cb = wl_surface_frame(window->surface);
+        wl_callback_add_listener(window->anim_cb, &_anim_listener, window);
+        wl_surface_commit(window->surface);
+     }
+}
+
+void
+_ecore_wl2_window_animator_add(Ecore_Wl2_Window *window)
+{
+   _animator_busy = EINA_TRUE;
+
+   if ((!window->surface) || (window->anim_cb)) return;
+
+   window->anim_cb = wl_surface_frame(window->surface);
+   wl_callback_add_listener(window->anim_cb, &_anim_listener, window);
+   wl_surface_commit(window->surface);
+}
+
+void
+_ecore_wl2_window_animator_end(void)
+{
+   _animator_busy = EINA_FALSE;
 }
 
 EAPI Ecore_Wl2_Window *

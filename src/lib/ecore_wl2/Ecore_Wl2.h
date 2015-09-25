@@ -257,6 +257,9 @@ EAPI struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
  */
 EAPI Eina_Iterator *ecore_wl2_display_globals_get(Ecore_Wl2_Display *display);
 
+
+EAPI Eina_Bool ecore_wl2_display_animator_source_set(Ecore_Wl2_Display *display, Ecore_Animator_Source source);
+
 /**
  * @defgroup Ecore_Wl2_Window_Group Wayland Library Window Functions
  * @ingroup Ecore_Wl2_Group
