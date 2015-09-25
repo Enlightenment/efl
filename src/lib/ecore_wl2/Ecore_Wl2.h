@@ -73,6 +73,12 @@ typedef struct _Ecore_Wl2_Event_Dnd_Leave
    unsigned int win, source;
 } Ecore_Wl2_Event_Dnd_Leave;
 
+typedef struct _Ecore_Wl2_Event_Dnd_Motion
+{
+   unsigned int win, source, serial;
+   int x, y;
+} Ecore_Wl2_Event_Dnd_Motion;
+
 typedef enum _Ecore_Wl2_Window_Type
 {
    ECORE_WL2_WINDOW_TYPE_NONE,
@@ -91,6 +97,7 @@ EAPI extern int ECORE_WL2_EVENT_FOCUS_IN;
 EAPI extern int ECORE_WL2_EVENT_FOCUS_OUT;
 EAPI extern int ECORE_WL2_EVENT_DND_ENTER;
 EAPI extern int ECORE_WL2_EVENT_DND_LEAVE;
+EAPI extern int ECORE_WL2_EVENT_DND_MOTION;
 
 /**
  * @file
