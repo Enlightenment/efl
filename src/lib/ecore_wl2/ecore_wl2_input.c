@@ -949,36 +949,37 @@ static const struct wl_touch_listener _touch_listener =
 };
 
 static void
-_data_cb_offer(void *data, struct wl_data_device *data_device, struct wl_data_offer *offer)
+_data_cb_offer(void *data, struct wl_data_device *data_device EINA_UNUSED, struct wl_data_offer *offer)
 {
    Ecore_Wl2_Input *input;
 
    input = data;
    if (!input) return;
 
-   /* TODO: dnd add */
+   _ecore_wl2_dnd_add(input, offer);
 }
 
 static void
-_data_cb_enter(void *data, struct wl_data_device *data_device, unsigned int timestmap, struct wl_surface *surface, wl_fixed_t x, wl_fixed_t y, struct wl_data_offer *offer)
+_data_cb_enter(void *data, struct wl_data_device *data_device EINA_UNUSED, unsigned int timestamp, struct wl_surface *surface, wl_fixed_t x, wl_fixed_t y, struct wl_data_offer *offer)
 {
    Ecore_Wl2_Input *input;
 
    input = data;
    if (!input) return;
 
-   /* TODO: dnd enter */
+   _ecore_wl2_dnd_enter(input, offer, surface,
+                        wl_fixed_to_int(x), wl_fixed_to_int(y), timestamp);
 }
 
 static void
-_data_cb_leave(void *data, struct wl_data_device *data_device)
+_data_cb_leave(void *data, struct wl_data_device *data_device EINA_UNUSED)
 {
    Ecore_Wl2_Input *input;
 
    input = data;
    if (!input) return;
 
-   /* TODO: dnd leave */
+   _ecore_wl2_dnd_leave(input);
 }
 
 static void
@@ -989,29 +990,30 @@ _data_cb_motion(void *data, struct wl_data_device *data_device, unsigned int tim
    input = data;
    if (!input) return;
 
-   /* TODO: dnd motion */
+   _ecore_wl2_dnd_motion(input, wl_fixed_to_int(x),
+                         wl_fixed_to_int(y), timestamp);
 }
 
 static void
-_data_cb_drop(void *data, struct wl_data_device *data_device)
+_data_cb_drop(void *data, struct wl_data_device *data_device EINA_UNUSED)
 {
    Ecore_Wl2_Input *input;
 
    input = data;
    if (!input) return;
 
-   /* TODO: dnd drop */
+   _ecore_wl2_dnd_drop(input);
 }
 
 static void
-_data_cb_selection(void *data, struct wl_data_device *data_device, struct wl_data_offer *offer)
+_data_cb_selection(void *data, struct wl_data_device *data_device EINA_UNUSED, struct wl_data_offer *offer)
 {
    Ecore_Wl2_Input *input;
 
    input = data;
    if (!input) return;
 
-   /* TODO: dnd selection */
+   _ecore_wl2_dnd_selection(input, offer);
 }
 
 static const struct wl_data_device_listener _data_listener =
