@@ -225,7 +225,6 @@ _ecore_con_local_win32_client_read_server_thread(void *data)
           }
      }
 
-   printf(" ### %s\n", __FUNCTION__);
    svr->read_stopped = EINA_TRUE;
    _endthreadex(0);
    return 0;
@@ -264,7 +263,6 @@ _ecore_con_local_win32_server_read_client_thread(void *data)
           }
      }
 
-   printf(" ### %s\n", __FUNCTION__);
    host_svr->read_stopped = EINA_TRUE;
    _endthreadex(0);
    return 0;
@@ -384,7 +382,6 @@ _ecore_con_local_win32_listening(void *data)
 
    DBG("Client connected");
 
-   printf(" ### %s\n", __FUNCTION__);
    _endthreadex(0);
    return 0;
 }
