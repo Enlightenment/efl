@@ -68,6 +68,11 @@ typedef struct _Ecore_Wl2_Event_Dnd_Enter
    struct wl_data_offer *offer;
 } Ecore_Wl2_Event_Dnd_Enter;
 
+typedef struct _Ecore_Wl2_Event_Dnd_Leave
+{
+   unsigned int win, source;
+} Ecore_Wl2_Event_Dnd_Leave;
+
 typedef enum _Ecore_Wl2_Window_Type
 {
    ECORE_WL2_WINDOW_TYPE_NONE,
@@ -85,6 +90,7 @@ EAPI extern int ECORE_WL2_EVENT_GLOBAL_REMOVED;
 EAPI extern int ECORE_WL2_EVENT_FOCUS_IN;
 EAPI extern int ECORE_WL2_EVENT_FOCUS_OUT;
 EAPI extern int ECORE_WL2_EVENT_DND_ENTER;
+EAPI extern int ECORE_WL2_EVENT_DND_LEAVE;
 
 /**
  * @file
