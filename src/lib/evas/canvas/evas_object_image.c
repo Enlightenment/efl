@@ -3747,11 +3747,6 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
              if (!o->pixels->pixel_updates) goto done;
           }
-        if (o->dirty_pixels)
-          {
-             evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-             if (!o->pixels->pixel_updates) goto done;
-          }
         if (o->cur->frame != o->prev->frame)
           {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
