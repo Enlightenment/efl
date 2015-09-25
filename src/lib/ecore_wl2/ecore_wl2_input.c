@@ -955,6 +955,8 @@ _data_cb_offer(void *data, struct wl_data_device *data_device, struct wl_data_of
 
    input = data;
    if (!input) return;
+
+   /* TODO: dnd add */
 }
 
 static void
@@ -964,6 +966,8 @@ _data_cb_enter(void *data, struct wl_data_device *data_device, unsigned int time
 
    input = data;
    if (!input) return;
+
+   /* TODO: dnd enter */
 }
 
 static void
@@ -973,6 +977,8 @@ _data_cb_leave(void *data, struct wl_data_device *data_device)
 
    input = data;
    if (!input) return;
+
+   /* TODO: dnd leave */
 }
 
 static void
@@ -982,6 +988,8 @@ _data_cb_motion(void *data, struct wl_data_device *data_device, unsigned int tim
 
    input = data;
    if (!input) return;
+
+   /* TODO: dnd motion */
 }
 
 static void
@@ -991,6 +999,8 @@ _data_cb_drop(void *data, struct wl_data_device *data_device)
 
    input = data;
    if (!input) return;
+
+   /* TODO: dnd drop */
 }
 
 static void
@@ -1000,6 +1010,8 @@ _data_cb_selection(void *data, struct wl_data_device *data_device, struct wl_dat
 
    input = data;
    if (!input) return;
+
+   /* TODO: dnd selection */
 }
 
 static const struct wl_data_device_listener _data_listener =
