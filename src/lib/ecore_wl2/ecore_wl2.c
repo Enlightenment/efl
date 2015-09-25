@@ -15,6 +15,7 @@ EAPI int ECORE_WL2_EVENT_GLOBAL_ADDED = 0;
 EAPI int ECORE_WL2_EVENT_GLOBAL_REMOVED = 0;
 EAPI int ECORE_WL2_EVENT_FOCUS_IN = 0;
 EAPI int ECORE_WL2_EVENT_FOCUS_OUT = 0;
+EAPI int ECORE_WL2_EVENT_DND_ENTER = 0;
 
 static void
 _cb_wl_log_print(const char *format, va_list args)
@@ -61,6 +62,7 @@ ecore_wl2_init(void)
         ECORE_WL2_EVENT_GLOBAL_REMOVED = ecore_event_type_new();
         ECORE_WL2_EVENT_FOCUS_IN = ecore_event_type_new();
         ECORE_WL2_EVENT_FOCUS_OUT = ecore_event_type_new();
+        ECORE_WL2_EVENT_DND_ENTER = ecore_event_type_new();
      }
 
    wl_log_set_handler_server(_cb_wl_log_print);
