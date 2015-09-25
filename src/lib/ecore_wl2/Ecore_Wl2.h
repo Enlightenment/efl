@@ -36,6 +36,18 @@ typedef struct _Ecore_Wl2_Display Ecore_Wl2_Display;
 typedef struct _Ecore_Wl2_Output Ecore_Wl2_Output;
 typedef struct _Ecore_Wl2_Input Ecore_Wl2_Input;
 
+typedef struct _Ecore_Wl2_Global
+{
+   Eina_Stringshare *interface;
+   unsigned int id, version;
+} Ecore_Wl2_Global;
+
+typedef struct _Ecore_Wl2_Event_Global
+{
+   Eina_Stringshare *interface;
+   unsigned int id, version;
+} Ecore_Wl2_Event_Global;
+
 typedef struct _Ecore_Wl2_Event_Focus_In
 {
    unsigned int window;
@@ -48,17 +60,13 @@ typedef struct _Ecore_Wl2_Event_Focus_Out
    unsigned int timestamp;
 } Ecore_Wl2_Event_Focus_Out;
 
-typedef struct _Ecore_Wl2_Global
+typedef struct _Ecore_Wl2_Event_Dnd_Enter
 {
-   Eina_Stringshare *interface;
-   unsigned int id, version;
-} Ecore_Wl2_Global;
-
-typedef struct _Ecore_Wl2_Event_Global
-{
-   Eina_Stringshare *interface;
-   unsigned int id, version;
-} Ecore_Wl2_Event_Global;
+   unsigned int win, source, serial;
+   char **types;
+   int num_types, x, y;
+   struct wl_data_offer *offer;
+} Ecore_Wl2_Event_Dnd_Enter;
 
 typedef enum _Ecore_Wl2_Window_Type
 {
@@ -76,6 +84,8 @@ EAPI extern int ECORE_WL2_EVENT_GLOBAL_ADDED;
 EAPI extern int ECORE_WL2_EVENT_GLOBAL_REMOVED;
 EAPI extern int ECORE_WL2_EVENT_FOCUS_IN;
 EAPI extern int ECORE_WL2_EVENT_FOCUS_OUT;
+EAPI extern int ECORE_WL2_EVENT_DND_ENTER;
+
 /**
  * @file
  * @brief Ecore functions for dealing with the Wayland display protocol
