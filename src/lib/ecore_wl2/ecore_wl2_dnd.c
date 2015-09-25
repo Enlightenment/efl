@@ -134,7 +134,23 @@ _ecore_wl2_dnd_motion(Ecore_Wl2_Input *input, int x, int y, unsigned int timesta
 void
 _ecore_wl2_dnd_drop(Ecore_Wl2_Input *input)
 {
-   /* TODO: raise dnd drop event */
+   Ecore_Wl2_Event_Dnd_Drop *ev;
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Dnd_Drop));
+   if (!ev) return;
+
+   if (input->drag.source)
+     {
+        if (input->focus.pointer)
+          ev->win = input->focus.pointer->id;
+        if (input->focus.keyboard)
+          ev->source = input->focus.keyboard->id;
+     }
+
+   ev->x = input->pointer.sx;
+   ev->y = input->pointer.sy;
+
+   ecore_event_add(ECORE_WL2_EVENT_DND_DROP, ev, NULL, NULL);
 }
 
 void
