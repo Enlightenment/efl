@@ -36,7 +36,8 @@ typedef enum
 typedef enum 
 {
    MERGE_BOUNDING,
-   MERGE_FULL
+   MERGE_FULL,
+   MERGE_SMART
 } Render_Engine_Merge_Mode;
 
 typedef struct _Render_Engine_Software_Generic Render_Engine_Software_Generic;

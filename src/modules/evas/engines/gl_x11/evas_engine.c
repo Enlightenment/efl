@@ -1589,7 +1589,7 @@ eng_setup(Evas *eo_e, void *in)
    if (!e->engine.data.output)
      {
         Outbuf *ob;
-        Render_Engine_Merge_Mode merge_mode = MERGE_BOUNDING;
+        Render_Engine_Merge_Mode merge_mode = MERGE_SMART;
 
         if (!initted)
           {
@@ -1661,6 +1661,9 @@ eng_setup(Evas *eo_e, void *in)
              else if ((!strcmp(s, "full")) ||
                       (!strcmp(s, "f")))
                merge_mode = MERGE_FULL;
+             else if ((!strcmp(s, "smart")) ||
+                      (!strcmp(s, "s")))
+               merge_mode = MERGE_SMART;
           }
 
         evas_render_engine_software_generic_merge_mode_set(&re->generic.software, merge_mode);
@@ -2792,6 +2795,7 @@ module_open(Evas_Module *em)
         if (getenv("EVAS_GL_PARTIAL_DEBUG")) partial_render_debug = 1;
         else partial_render_debug = 0;
      }
+//   partial_render_debug = 1;
 
    /* store it for later use */
    func = pfunc;

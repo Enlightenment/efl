@@ -5,6 +5,8 @@
 #include "evas_cs2_private.h"
 #endif
 
+#include "region.h"
+
 #include <software/Ector_Software.h>
 
 #include "ector_cairo_software_surface.eo.h"
@@ -3283,6 +3285,118 @@ eng_output_redraws_clear(void *data)
 }
 
 static Tilebuf_Rect *
+_smart_merge(Tilebuf *tb, Tilebuf_Rect *rects)
+{
+   Tilebuf_Rect *merged, *mergelist = NULL, *r;
+   Box *box;
+   Region *region;
+   int i, j, k, n, n2;
+   Eina_Bool did_merge;
+
+   n = eina_inlist_count(EINA_INLIST_GET(rects));
+   box = malloc(n * sizeof(Box));
+   i = 0;
+   EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
+     {
+        box[i].x1 = r->x;
+        box[i].y1 = r->y;
+        box[i].x2 = r->x + r->w;
+        box[i].y2 = r->y + r->h;
+        i++;
+     }
+   evas_common_tilebuf_free_render_rects(rects);
+
+   n2 = n;
+   for (;;)
+     {
+        Box *box2, bbox;
+        int mergenum, area, minarea, area1, area2, perc;
+
+        did_merge = EINA_FALSE;
+        box2 = calloc(1, n2 * sizeof(Box));
+        j = 0;
+        for (i = 0; i < n2; i++)
+          {
+             if (box[i].x1 == box[i].x2) continue;
+
+             mergenum = -1;
+             minarea = 0x7fffffff;
+
+             box2[j] = box[i];
+             area1 = (box[i].x2 - box[i].x1) * (box[i].y2 - box[i].y1);
+             box[i].x1 = 0;
+             box[i].x2 = 0;
+             for (k = i + 1; k < n; k++)
+               {
+                  if (box[k].x1 == box[k].x2) continue;
+                  bbox = box2[j];
+                  if (box[k].x1 < bbox.x1) bbox.x1 = box[k].x1;
+                  if (box[k].y1 < bbox.y1) bbox.y1 = box[k].y1;
+                  if (box[k].x2 > bbox.x2) bbox.x2 = box[k].x2;
+                  if (box[k].y2 > bbox.y2) bbox.y2 = box[k].y2;
+                  area = (bbox.x2 - bbox.x1) * (bbox.y2 - bbox.y1);
+                  if (area < minarea)
+                    {
+                       mergenum = k;
+                       minarea = area;
+                    }
+               }
+             if (mergenum >= 0)
+               {
+                  k = mergenum;
+                  area2 = (box[k].x2 - box[k].x1) * (box[k].y2 - box[k].y1);
+                  perc = (minarea * 100) / (area1 + area2);
+                  // if combined size of bounding box of rects is <= X% of
+                  // the sum of the 2 src areas - then merge
+                  if (perc <= 150)
+                    {
+                       bbox = box2[j];
+                       if (box[k].x1 < bbox.x1) bbox.x1 = box[k].x1;
+                       if (box[k].y1 < bbox.y1) bbox.y1 = box[k].y1;
+                       if (box[k].x2 > bbox.x2) bbox.x2 = box[k].x2;
+                       if (box[k].y2 > bbox.y2) bbox.y2 = box[k].y2;
+                       box2[j] = bbox;
+                       box[k].x1 = 0;
+                       box[k].x2 = 0;
+                       did_merge = EINA_TRUE;
+                    }
+               }
+             j++;
+          }
+        n2 = n;
+        free(box);
+        box = box2;
+        if (!did_merge) break;
+     }
+   region = region_new(tb->outbuf_w, tb->outbuf_h);
+   for (i = 0; i < n2; i++)
+     {
+        if (box[i].x1 == box[i].x2) continue;
+        region_rect_add(region,
+                        box[i].x1, box[i].y1,
+                        box[i].x2 - box[i].x1,
+                        box[i].y2 - box[i].y1);
+     }
+   free(box);
+   box = region_rects(region);
+   n = region_rects_num(region);
+   merged = calloc(1, n * sizeof(Tilebuf_Rect));
+   for (i = 0; i < n; i++)
+     {
+        merged[i].x = box[i].x1;
+        merged[i].y = box[i].y1;
+        merged[i].w = box[i].x2 - box[i].x1;
+        merged[i].h = box[i].y2 - box[i].y1;
+        mergelist = (Tilebuf_Rect *)eina_inlist_append
+          (EINA_INLIST_GET(mergelist), EINA_INLIST_GET(&(merged[i])));
+     }
+   region_free(region);
+   rects = mergelist;
+
+   return rects;
+}
+
+static Tilebuf_Rect *
 _merge_rects(Render_Engine_Merge_Mode merge_mode,
              Tilebuf *tb,
              Tilebuf_Rect *r1,
@@ -3327,27 +3441,37 @@ _merge_rects(Render_Engine_Merge_Mode merge_mode,
    // yes we could try and be smart and figure out size of regions, how far
    // apart etc. etc. to try and figure out an optimal "set". this is a tradeoff
    // between multiple update regions to render and total pixels to render.
-   if (merge_mode == MERGE_BOUNDING && rects)
+   if (rects)
      {
-        int px1, py1, px2, py2;
+        if ((merge_mode == MERGE_BOUNDING)
+// disable smart updates for debugging
+//            || (merge_mode == MERGE_SMART)
+            )
+          {
+             int px1, py1, px2, py2;
 
-        px1 = rects->x; py1 = rects->y;
-        px2 = rects->x + rects->w; py2 = rects->y + rects->h;
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
-          {
-             if (r->x < px1) px1 = r->x;
-             if (r->y < py1) py1 = r->y;
-             if ((r->x + r->w) > px2) px2 = r->x + r->w;
-             if ((r->y + r->h) > py2) py2 = r->y + r->h;
+             px1 = rects->x; py1 = rects->y;
+             px2 = rects->x + rects->w; py2 = rects->y + rects->h;
+             EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
+               {
+                  if (r->x < px1) px1 = r->x;
+                  if (r->y < py1) py1 = r->y;
+                  if ((r->x + r->w) > px2) px2 = r->x + r->w;
+                  if ((r->y + r->h) > py2) py2 = r->y + r->h;
+               }
+             evas_common_tilebuf_free_render_rects(rects);
+             rects = calloc(1, sizeof(Tilebuf_Rect));
+             if (rects)
+               {
+                  rects->x = px1;
+                  rects->y = py1;
+                  rects->w = px2 - px1;
+                  rects->h = py2 - py1;
+               }
           }
-        evas_common_tilebuf_free_render_rects(rects);
-        rects = calloc(1, sizeof(Tilebuf_Rect));
-        if (rects)
+        else if (merge_mode == MERGE_SMART)
           {
-             rects->x = px1;
-             rects->y = py1;
-             rects->w = px2 - px1;
-             rects->h = py2 - py1;
+             rects = _smart_merge(tb, rects);
           }
      }
    evas_common_tilebuf_clear(tb);
@@ -3468,6 +3592,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
         surface = re->outbuf_new_region_for_update(re->ob,
                                                    *x, *y, *w, *h,
                                                    cx, cy, cw, ch);
+//        printf("UP %i %i %ix%i | %i %i %ix%i\n", *x, *y, *w, *h, *cx, *cy, *cw, *ch);
         if ((!re->cur_rect) || (!surface))
           {
              evas_common_tilebuf_free_render_rects(re->rects);
@@ -3501,6 +3626,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
    Render_Engine_Software_Generic *re;
 
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
+//   printf("-------------------------------\n");
 
    re = (Render_Engine_Software_Generic *)data;
    if (re->outbuf_flush) re->outbuf_flush(re->ob, re->rects, render_mode);
