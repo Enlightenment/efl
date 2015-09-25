@@ -109,7 +109,11 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
         return NULL;
      }
    n = region_rects_num(region2);
-   if (n <= 0) return NULL;
+   if (n <= 0)
+     {
+        region_free(region2);
+        return NULL;
+     }
 
    rbuf = malloc(n * sizeof(Tilebuf_Rect));
    if (!rbuf)
