@@ -983,7 +983,7 @@ _data_cb_leave(void *data, struct wl_data_device *data_device EINA_UNUSED)
 }
 
 static void
-_data_cb_motion(void *data, struct wl_data_device *data_device, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y)
+_data_cb_motion(void *data, struct wl_data_device *data_device EINA_UNUSED, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y)
 {
    Ecore_Wl2_Input *input;
 

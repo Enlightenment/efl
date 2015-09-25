@@ -111,10 +111,24 @@ _ecore_wl2_dnd_leave(Ecore_Wl2_Input *input)
 void
 _ecore_wl2_dnd_motion(Ecore_Wl2_Input *input, int x, int y, unsigned int timestamp)
 {
+   Ecore_Wl2_Event_Dnd_Motion *ev;
+
    input->pointer.sx = x;
    input->pointer.sy = y;
 
-   /* TODO: raise dnd motion event */
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Dnd_Motion));
+   if (!ev) return;
+
+   if (input->focus.pointer)
+     ev->win = input->focus.pointer->id;
+   if (input->focus.keyboard)
+     ev->source = input->focus.keyboard->id;
+
+   ev->x = x;
+   ev->y = y;
+   ev->serial = timestamp;
+
+   ecore_event_add(ECORE_WL2_EVENT_DND_MOTION, ev, NULL, NULL);
 }
 
 void
