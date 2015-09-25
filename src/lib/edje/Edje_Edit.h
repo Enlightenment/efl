@@ -2025,8 +2025,8 @@ EAPI unsigned char edje_edit_state_table_homogeneous_get(Evas_Object *obj, const
  * @param h Variable to store horizontal min value.
  * @param v Variable to store vertical min value.
  *
- * @deprecated Use edje_edit_state_container_min_x_get() and
- * edje_edit_state_container_min_y_get() instead.
+ * @deprecated Use edje_edit_state_container_min_h_get() and
+ * edje_edit_state_container_min_v_get() instead.
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
  * @since 1.14
@@ -2047,7 +2047,7 @@ EAPI Eina_Bool edje_edit_state_container_min_get(Evas_Object *obj, const char *p
  * @since 1.16
  */
 EAPI Eina_Bool
-edje_edit_state_container_min_x_get(Evas_Object *obj, const char *part, const char *state, double value);
+edje_edit_state_container_min_h_get(Evas_Object *obj, const char *part, const char *state, double value);
 
 /** Get whether vertical min size of the container is equal to the min vertical
  * size of items (BOX and TABLE part functions).
@@ -2062,7 +2062,7 @@ edje_edit_state_container_min_x_get(Evas_Object *obj, const char *part, const ch
  * @since 1.16
  */
 EAPI Eina_Bool
-edje_edit_state_container_min_y_get(Evas_Object *obj, const char *part, const char *state, double value);
+edje_edit_state_container_min_v_get(Evas_Object *obj, const char *part, const char *state, double value);
 
 /** Set whether vertical or horizontal minimum size's of the box are equal
  * to the minimum vertical or horizontal size of items
@@ -2076,8 +2076,8 @@ edje_edit_state_container_min_y_get(Evas_Object *obj, const char *part, const ch
  * @param h horizontal min value.
  * @param v vertical min value.
  *
- * @deprecated Use edje_edit_state_container_min_x_set() and
- * edje_edit_state_container_min_y_set() instead.
+ * @deprecated Use edje_edit_state_container_min_h_set() and
+ * edje_edit_state_container_min_v_set() instead.
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
  * @since 1.14
@@ -2099,7 +2099,7 @@ EAPI Eina_Bool edje_edit_state_container_min_set(Evas_Object *obj, const char *p
  * @since 1.16
  */
 EAPI Eina_Bool
-edje_edit_state_container_min_x_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v);
+edje_edit_state_container_min_h_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool h);
 
 /** Set whether vertical min size of the container should be equal to the min
  * vertical size of items (BOX and TABLE part functions).
@@ -2114,7 +2114,7 @@ edje_edit_state_container_min_x_set(Evas_Object *obj, const char *part, const ch
  * @since 1.16
  */
 EAPI Eina_Bool
-edje_edit_state_container_min_y_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool h);
+edje_edit_state_container_min_v_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool v);
 
 /** Get x and y paddings for BOX or TABLE part.
  *
