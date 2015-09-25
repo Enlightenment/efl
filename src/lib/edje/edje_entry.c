@@ -1100,8 +1100,6 @@ _anchors_clear(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o EINA_UNUSED,
      {
         Anchor *an = en->anchors->data;
 
-        evas_textblock_cursor_free(an->start);
-        evas_textblock_cursor_free(an->end);
         while (an->sel)
           {
              Sel *sel = an->sel->data;
@@ -1111,6 +1109,8 @@ _anchors_clear(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o EINA_UNUSED,
              free(sel);
              an->sel = eina_list_remove_list(an->sel, an->sel);
           }
+        evas_textblock_cursor_free(an->start);
+        evas_textblock_cursor_free(an->end);
         free(an->name);
         free(an);
         en->anchors = eina_list_remove_list(en->anchors, en->anchors);
