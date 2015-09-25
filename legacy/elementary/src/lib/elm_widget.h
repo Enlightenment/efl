@@ -343,11 +343,13 @@ typedef struct _Elm_Widget_Smart_Class
                                        Evas_Coord *h); /**< 'Virtual' function returning an inner area of a widget that should be brought into the visible area of a broader viewport, may this context arise. On the base Elementary widget class, it defaults to the object's total area, so only override it if you have to. */
    Eina_Bool        (*focus_next)(const Evas_Object *obj,
                                   Elm_Focus_Direction dir,
-                                  Evas_Object **next); /**< 'Virtual' function handling passing focus to sub-objects */
+                                  Evas_Object **next,
+                                  Elm_Object_Item **next_item); /**< 'Virtual' function handling passing focus to sub-objects */
    Eina_Bool        (*focus_direction)(const Evas_Object *obj,
                                        const Evas_Object *base,
                                        double degree,
                                        Evas_Object **target,
+                                       Elm_Object_Item **target_item,
                                        double *weight); /**< 'Virtual' function handling passing focus to sub-objects <b>given a direction, in degrees</b> */
 
    Eina_Bool        (*sub_object_add)(Evas_Object *obj,
@@ -679,9 +681,9 @@ EAPI void             elm_widget_focus_custom_chain_append(Evas_Object *obj, Eva
 EAPI void             elm_widget_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
 EAPI void             elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
 EAPI Eina_Bool        elm_widget_focus_direction_go(Evas_Object *obj, double degree);
-EAPI Eina_Bool        elm_widget_focus_direction_get(const Evas_Object *obj, const Evas_Object *base, double degree, Evas_Object **direction, double *weight);
+EAPI Eina_Bool        elm_widget_focus_direction_get(const Evas_Object *obj, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight);
 EAPI Eina_Bool        elm_widget_focus_next_get(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item);
-EAPI Eina_Bool        elm_widget_focus_list_direction_get(const Evas_Object  *obj, const Evas_Object *base, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), double degree, Evas_Object **direction, double *weight);
+EAPI Eina_Bool        elm_widget_focus_list_direction_get(const Evas_Object  *obj, const Evas_Object *base, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight);
 EAPI Eina_Bool        elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item);
 EAPI Evas_Object     *elm_widget_focus_next_object_get(const Evas_Object *obj, Elm_Focus_Direction dir);
 EAPI void             elm_widget_focus_next_object_set(Evas_Object *obj, Evas_Object *next, Elm_Focus_Direction dir);
@@ -788,7 +790,6 @@ EAPI void             elm_widget_focus_move_policy_set(Evas_Object *obj, Elm_Foc
 EAPI Elm_Focus_Move_Policy elm_widget_focus_move_policy_get(const Evas_Object *obj);
 EAPI void             elm_widget_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mode mode);
 EAPI Elm_Focus_Region_Show_Mode elm_widget_focus_region_show_mode_get(const Evas_Object *obj);
-EAPI Elm_Focus_Direction elm_widget_focus_origin_get(const Evas_Object *obj);
 
 /**
  * Function to operate on a given widget's scrollabe children when necessary.

@@ -117,7 +117,5 @@ enum Elm.Focus_Direction
    down,     [[ down direction ]]
    right,    [[ right direction ]]
    left,     [[ left direction ]]
-   mouse,    [[ direction is from mouse ]]
-   revert    [[ direction is from focus revert ]]
 }
 

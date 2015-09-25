@@ -132,7 +132,7 @@ _elm_flip_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Flip_Da
 }
 
 EOLIAN static Eina_Bool
-_elm_flip_elm_widget_focus_direction(Eo *obj, Elm_Flip_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, double *weight)
+_elm_flip_elm_widget_focus_direction(Eo *obj, Elm_Flip_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
 {
    Eina_Bool ret;
 
@@ -147,7 +147,7 @@ _elm_flip_elm_widget_focus_direction(Eo *obj, Elm_Flip_Data *sd, const Evas_Obje
      l = eina_list_append(l, sd->back.content);
 
    ret = elm_widget_focus_list_direction_get
-            (obj, base, l, list_data_get, degree, direction, weight);
+            (obj, base, l, list_data_get, degree, direction, direction_item, weight);
 
    eina_list_free(l);
 

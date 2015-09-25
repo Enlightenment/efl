@@ -1393,7 +1393,7 @@ _elm_popup_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Popup_
 }
 
 EOLIAN static Eina_Bool
-_elm_popup_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, double *weight)
+_elm_popup_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
 {
    Evas_Object *ao;
    Eina_List *items = NULL;
@@ -1417,7 +1417,7 @@ _elm_popup_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, c
    items = eina_list_merge(items, base_items);
 
    elm_widget_focus_list_direction_get
-     (sd->main_layout, base, items, eina_list_data_get, degree, direction, weight);
+     (sd->main_layout, base, items, eina_list_data_get, degree, direction, direction_item, weight);
    eina_list_free(items);
 
    return EINA_TRUE;

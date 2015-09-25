@@ -1221,7 +1221,7 @@ _elm_spinner_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Spin
 }
 
 EOLIAN static Eina_Bool
-_elm_spinner_elm_widget_focus_direction(Eo *obj, Elm_Spinner_Data *_pd, const Evas_Object *base, double degree, Evas_Object **direction, double *weight)
+_elm_spinner_elm_widget_focus_direction(Eo *obj, Elm_Spinner_Data *_pd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
 {
    Eina_Bool ret;
    Eina_List *items = NULL;
@@ -1241,7 +1241,7 @@ _elm_spinner_elm_widget_focus_direction(Eo *obj, Elm_Spinner_Data *_pd, const Ev
    items = eina_list_append(items, _pd->dec_button);
 
    ret = elm_widget_focus_list_direction_get
-        (obj, base, items, list_data_get, degree, direction, weight);
+        (obj, base, items, list_data_get, degree, direction, direction_item, weight);
    eina_list_free(items);
 
    return ret;

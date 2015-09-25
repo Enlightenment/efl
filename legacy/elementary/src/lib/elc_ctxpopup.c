@@ -86,7 +86,7 @@ _elm_ctxpopup_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd, 
 }
 
 EOLIAN static Eina_Bool
-_elm_ctxpopup_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, double *weight)
+_elm_ctxpopup_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
 {
    Eina_Bool int_ret;
 
@@ -101,7 +101,7 @@ _elm_ctxpopup_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data 
    l = eina_list_append(l, sd->box);
 
    int_ret = elm_widget_focus_list_direction_get
-            (obj, base, l, list_data_get, degree, direction, weight);
+            (obj, base, l, list_data_get, degree, direction, direction_item, weight);
    eina_list_free(l);
 
    return int_ret;

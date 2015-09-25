@@ -3061,7 +3061,6 @@ _key_action_move(Evas_Object *obj, const char *params)
          (NULL, NULL, &v_w, &v_h));
 
    if (sd->reorder_mode && sd->reorder.running) return EINA_TRUE;
-
    _elm_widget_focus_auto_show(obj);
    if ((!strcmp(dir, "left") && !mirrored) ||
        (!strcmp(dir, "right") && mirrored))
@@ -3610,47 +3609,11 @@ _elm_gengrid_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
    return eo_it;
 }
 
-static Elm_Object_Item *
-_elm_gengrid_direction_item_get(Evas_Object *obj, Elm_Focus_Direction dir)
-{
-   double max_weight = 0.0, weight = 0.0;
-   Eina_List *item_list = NULL, *l = NULL;
-   Elm_Object_Item *eo_item = NULL, *best_item = NULL;
-   Evas_Object *fobj = _elm_widget_focus_highlight_object_get(obj);
-
-   double degree = 0.0;
-   if (dir == ELM_FOCUS_UP) degree = 0.0;
-   else if (dir == ELM_FOCUS_DOWN) degree = 180.0;
-   else if (dir == ELM_FOCUS_RIGHT) degree = 90.0;
-   else if (dir == ELM_FOCUS_LEFT) degree = 270.0;
-
-   item_list = elm_gengrid_realized_items_get(obj);
-   best_item = elm_gengrid_first_item_get(obj);
-
-   EINA_LIST_FOREACH(item_list, l, eo_item)
-     {
-        ELM_GENGRID_ITEM_DATA_GET(eo_item, item);
-        weight = _elm_widget_focus_direction_weight_get(fobj, VIEW(item), degree);
-        if ((weight == -1.0) ||
-            ((weight != 0.0) && (max_weight != -1.0) &&
-             ((int)(max_weight * 100000000) < (int)(weight * 100000000))))
-          {
-             best_item = eo_item;
-             max_weight = weight;
-          }
-     }
-   eina_list_free(item_list);
-
-   return best_item;
-}
-
 EOLIAN static Eina_Bool
 _elm_gengrid_elm_widget_on_focus(Eo *obj, Elm_Gengrid_Data *sd, Elm_Object_Item *item)
 {
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
-   Eina_Bool is_sel = EINA_FALSE;
-   Elm_Focus_Direction focus_origin;
 
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus(NULL));
    if (!int_ret) return EINA_FALSE;
@@ -3667,25 +3630,20 @@ _elm_gengrid_elm_widget_on_focus(Eo *obj, Elm_Gengrid_Data *sd, Elm_Object_Item 
         if (item) eo_it = item;
         else
           {
-             focus_origin = elm_widget_focus_origin_get(obj);
-             if (focus_origin >= ELM_FOCUS_UP && focus_origin <= ELM_FOCUS_LEFT)
-               eo_it = _elm_gengrid_direction_item_get(obj, focus_origin);
-             else if (sd->last_focused_item)
+             if (sd->last_focused_item)
                eo_it = sd->last_focused_item;
              else if (sd->last_selected_item)
                eo_it = sd->last_selected_item;
              else if (_elm_config->first_item_focus_on_first_focus_in)
-               {
-                  eo_it = elm_gengrid_first_item_get(obj);
-                  is_sel = EINA_TRUE;
-               }
+               eo_it = elm_gengrid_first_item_get(obj);
           }
         if (eo_it)
           {
              eo_it = _elm_gengrid_nearest_visible_item_get(obj, eo_it);
              if (eo_it)
                {
-                  if (!_elm_config->item_select_on_focus_disable && is_sel)
+                  if (!_elm_config->item_select_on_focus_disable &&
+                      eo_it != sd->last_selected_item)
                     elm_gengrid_item_selected_set(eo_it, EINA_TRUE);
                   else
                     elm_object_item_focus_set(eo_it, EINA_TRUE);
@@ -3733,12 +3691,6 @@ _elm_gengrid_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Gengrid_D
 }
 
 EOLIAN static Eina_Bool
-_elm_gengrid_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
 _elm_gengrid_elm_widget_focus_next(Eo *obj, Elm_Gengrid_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    Eina_List *items = NULL;
@@ -3752,6 +3704,48 @@ _elm_gengrid_elm_widget_focus_next(Eo *obj, Elm_Gengrid_Data *sd, Elm_Focus_Dire
 
    return elm_widget_focus_list_next_get
             (obj, items, eina_list_data_get, dir, next, next_item);
+}
+
+EOLIAN static Eina_Bool
+_elm_gengrid_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *_pd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_gengrid_elm_widget_focus_direction(Eo *obj, Elm_Gengrid_Data *sd EINA_UNUSED, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
+{
+   Eina_List *items = NULL, *l = NULL;
+   Elm_Object_Item *eo_item = NULL;
+   Eina_Bool ret = EINA_FALSE;
+   double c_weight = 0.0;
+
+   items = elm_gengrid_realized_items_get(obj);
+   eo_item = elm_object_focused_item_get(base);
+   if (eo_item)
+     {
+        ELM_GENGRID_ITEM_DATA_GET(eo_item, base_item);
+        base = VIEW(base_item);
+     }
+
+   EINA_LIST_FOREACH(items, l, eo_item)
+     {
+        ELM_GENGRID_ITEM_DATA_GET(eo_item, item);
+
+        c_weight = _elm_widget_focus_direction_weight_get(base, VIEW(item), degree);
+        if ((c_weight == -1.0) ||
+            ((c_weight != 0.0) && (*weight != -1.0) &&
+             ((int)(*weight * 100000000) < (int)(c_weight * 100000000))))
+          {
+             *direction = (Evas_Object *)obj;
+             *direction_item = eo_item;
+             *weight = c_weight;
+             ret = EINA_TRUE;
+          }
+     }
+   eina_list_free(items);
+
+   return ret;
 }
 
 static void

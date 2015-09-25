@@ -371,7 +371,7 @@ _elm_notify_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Notif
 }
 
 EOLIAN static Eina_Bool
-_elm_notify_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, double *weight)
+_elm_notify_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
 {
    Evas_Object *cur;
 
@@ -379,7 +379,7 @@ _elm_notify_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd,
 
    cur = sd->content;
 
-   return elm_widget_focus_direction_get(cur, base, degree, direction, weight);
+   return elm_widget_focus_direction_get(cur, base, degree, direction, direction_item, weight);
 }
 
 EOLIAN static Eina_Bool

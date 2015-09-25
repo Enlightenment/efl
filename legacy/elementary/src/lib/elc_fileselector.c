@@ -2442,7 +2442,7 @@ _elm_fileselector_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm
 }
 
 EOLIAN static Eina_Bool
-_elm_fileselector_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, double *weight)
+_elm_fileselector_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
 {
    Eina_List *items = NULL;
 
@@ -2455,7 +2455,7 @@ _elm_fileselector_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Fileselect
    if (sd->ok_button) items = eina_list_append(items, sd->ok_button);
 
    elm_widget_focus_list_direction_get
-     (obj, base, items, eina_list_data_get, degree, direction, weight);
+     (obj, base, items, eina_list_data_get, degree, direction, direction_item, weight);
 
    eina_list_free(items);
 
