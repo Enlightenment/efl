@@ -37,20 +37,6 @@ _eldbus_model_connection_eo_base_constructor(Eo *obj, Eldbus_Model_Connection_Da
    return obj;
 }
 
-/* static void */
-/* _eldbus_model_connection_constructor(Eo *obj EINA_UNUSED, */
-/*                                      Eldbus_Model_Connection_Data *pd, */
-/*                                      int type, */
-/*                                      const char* address, */
-/*                                      Eina_Bool private) */
-/* { */
-/*    DBG("(%p)", obj); */
-
-/*    pd->type = type; */
-/*    pd->address = eina_stringshare_add(address); */
-/*    pd->private = private; */
-/* } */
-
 static void
 _eldbus_model_connection_eo_base_destructor(Eo *obj, Eldbus_Model_Connection_Data *pd)
 {
@@ -269,6 +255,9 @@ _eldbus_model_connection_type_set(Eo *obj EINA_UNUSED, Eldbus_Model_Connection_D
 static void
 _eldbus_model_connection_connect(Eldbus_Model_Connection_Data *pd)
 {
+  fprintf(stderr, "connecting\n");
+  fflush(stderr);
+  
    EINA_SAFETY_ON_NULL_RETURN(pd);
 
    if (ELDBUS_CONNECTION_TYPE_ADDRESS == pd->type)
@@ -357,7 +346,9 @@ _eldbus_model_connection_names_list_cb(void *data,
         DBG("(%p): bus = %s", pd->obj, bus);
 
         Eo *child = eo_add(ELDBUS_MODEL_OBJECT_CLASS, NULL,
-          eldbus_model_object_connection_constructor(pd->connection, bus, "/"));
+                           eldbus_model_object_connection_set(pd->connection),
+                           eldbus_model_object_bus_set(bus),
+                           eldbus_model_object_path_set("/"));
 
         pd->children_list = eina_list_append(pd->children_list, child);
      }

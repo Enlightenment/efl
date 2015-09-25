@@ -1,16 +1,6 @@
 class Eldbus.Model_Signal (Eldbus.Model_Arguments) {
     legacy_prefix: null;
     methods {
-        @property proxy {
-              [[Custom Eldbus_Model_Signal constructor.
-
-                @since 1.16]]
-            set {}
-            get {}
-            values {
-               proxy: Eldbus_Proxy*; [[Eldbus proxy]]
-            }
-        }
         @property signal {
             set {}
             get {}
@@ -26,7 +16,7 @@ class Eldbus.Model_Signal (Eldbus.Model_Arguments) {
         Efl.Model.Base.unload;
     }
     constructors {
-        .proxy;
+        Eldbus.Model_Arguments.proxy;
         .signal;
     }
 }

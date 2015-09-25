@@ -18,9 +18,9 @@ struct _Eldbus_Model_Object_Data
    Eina_List *object_list;
    Eina_Array *properties_array;
    Eina_List *children_list;
-   Eldbus_Connection_Type type;
-   Eina_Stringshare *address;
-   bool private;
+   // Eldbus_Connection_Type type;
+   // Eina_Stringshare *address;
+   // bool private;
    Eina_Stringshare *bus;
    Eina_Stringshare *path;
    Eina_Value *unique_name;

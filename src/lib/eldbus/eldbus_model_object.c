@@ -4,6 +4,7 @@
 
 #include "eldbus_model_object_private.h"
 #include "eldbus_model_private.h"
+#include "eldbus_model_connection_private.h"
 
 #include <Eina.h>
 
@@ -35,9 +36,6 @@ _eldbus_model_object_eo_base_constructor(Eo *obj, Eldbus_Model_Object_Data *pd)
    pd->object_list = NULL;
    pd->properties_array = NULL;
    pd->children_list = NULL;
-   pd->type = ELDBUS_CONNECTION_TYPE_UNKNOWN;
-   pd->address = NULL;
-   pd->private = false;
    pd->bus = NULL;
    pd->path = NULL;
    pd->unique_name = NULL;
@@ -48,40 +46,40 @@ _eldbus_model_object_eo_base_constructor(Eo *obj, Eldbus_Model_Object_Data *pd)
 }
 
 static void
-_eldbus_model_object_constructor(Eo *obj EINA_UNUSED,
-                                 Eldbus_Model_Object_Data *pd,
-                                 int type,
-                                 const char* address,
-                                 Eina_Bool private,
-                                 const char* bus,
-                                 const char* path)
-{
-   DBG("(%p)", obj);
-   EINA_SAFETY_ON_NULL_RETURN(bus);
-   EINA_SAFETY_ON_NULL_RETURN(path);
-
-   pd->type = type;
-   pd->address = eina_stringshare_add(address);
-   pd->private = private;
-   pd->bus = eina_stringshare_add(bus);
-   pd->path = eina_stringshare_add(path);
-}
-
-static void
-_eldbus_model_object_connection_constructor(Eo *obj EINA_UNUSED,
-                                            Eldbus_Model_Object_Data *pd,
-                                            Eldbus_Connection *connection,
-                                            const char* bus,
-                                            const char* path)
+_eldbus_model_object_connection_set(Eo *obj EINA_UNUSED,
+                                    Eldbus_Model_Object_Data *pd,
+                                    Eldbus_Connection *connection)
 {
    DBG("(%p)", obj);
    EINA_SAFETY_ON_NULL_RETURN(connection);
-   EINA_SAFETY_ON_NULL_RETURN(bus);
-   EINA_SAFETY_ON_NULL_RETURN(path);
 
    pd->connection = eldbus_connection_ref(connection);
-   pd->bus = eina_stringshare_add(bus);
-   pd->path = eina_stringshare_add(path);
+}
+
+static Eldbus_Connection*
+_eldbus_model_object_connection_get(Eo *obj EINA_UNUSED,
+                                    Eldbus_Model_Object_Data *pd)
+{
+   DBG("(%p)", obj);
+
+   return pd->connection;
+}
+
+static void
+_eldbus_model_object_connection_model_set(Eo *obj EINA_UNUSED,
+                                          Eldbus_Model_Object_Data *pd,
+                                          Eldbus_Model_Connection *connection)
+{
+   DBG("(%p)", obj);
+   EINA_SAFETY_ON_NULL_RETURN(connection);
+
+   Eldbus_Model_Connection_Data* connection_data
+     = eo_data_scope_get(connection, ELDBUS_MODEL_CONNECTION_CLASS);
+   eo_do(connection, fprintf(stderr, "%d\n", eldbus_model_connection_type_get()));
+   fflush(stderr);
+   pd->connection = eldbus_connection_ref(connection_data->connection);
+
+   EINA_SAFETY_ON_FALSE_RETURN(NULL != pd->connection);
 }
 
 static void
@@ -89,7 +87,6 @@ _eldbus_model_object_eo_base_destructor(Eo *obj, Eldbus_Model_Object_Data *pd)
 {
    DBG("(%p)", obj);
 
-   eina_stringshare_del(pd->address);
    eina_stringshare_del(pd->bus);
    eina_stringshare_del(pd->path);
 
@@ -271,43 +268,6 @@ _eldbus_model_object_efl_model_base_children_load(Eo *obj, Eldbus_Model_Object_D
 }
 
 static const char *
-_eldbus_model_object_address_get(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
-{
-   return pd->address;
-}
-
-static void
-_eldbus_model_object_address_set(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd, const char *value)
-{
-   eina_stringshare_del(pd->address);
-   pd->address = eina_stringshare_add(value);
-}
-
-static Eina_Bool
-_eldbus_model_object_private_get(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
-{
-   return pd->private;
-}
-
-static void
-_eldbus_model_object_private_set(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd, Eina_Bool value)
-{
-   pd->private = value;
-}
-
-static int
-_eldbus_model_object_type_get(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
-{
-   return pd->type;
-}
-
-static void
-_eldbus_model_object_type_set(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd, int value)
-{
-   pd->type = value;
-}
-
-static const char *
 _eldbus_model_object_bus_get(Eo *obj EINA_UNUSED, Eldbus_Model_Object_Data *pd)
 {
    return pd->bus;
@@ -338,20 +298,20 @@ _eldbus_model_object_connect(Eldbus_Model_Object_Data *pd)
 {
    EINA_SAFETY_ON_NULL_RETURN(pd);
 
-   if (ELDBUS_CONNECTION_TYPE_ADDRESS == pd->type)
-     {
-        if (pd->private)
-          pd->connection = eldbus_address_connection_get(pd->address);
-        else
-          pd->connection = eldbus_private_address_connection_get(pd->address);
-     }
-   else
-     {
-        if (pd->private)
-          pd->connection = eldbus_private_connection_get(pd->type);
-        else
-          pd->connection = eldbus_connection_get(pd->type);
-     }
+   /* if (ELDBUS_CONNECTION_TYPE_ADDRESS == pd->type) */
+   /*   { */
+   /*      if (pd->private) */
+   /*        pd->connection = eldbus_address_connection_get(pd->address); */
+   /*      else */
+   /*        pd->connection = eldbus_private_address_connection_get(pd->address); */
+   /*   } */
+   /* else */
+   /*   { */
+   /*      if (pd->private) */
+   /*        pd->connection = eldbus_private_connection_get(pd->type); */
+   /*      else */
+   /*        pd->connection = eldbus_connection_get(pd->type); */
+   /*   } */
 
    // TODO: Register for disconnection event
 

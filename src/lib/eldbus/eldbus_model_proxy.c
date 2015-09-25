@@ -378,7 +378,7 @@ _eldbus_model_proxy_create_signals_children(Eldbus_Model_Proxy_Data *pd)
         DBG("(%p) Creating signal child: bus = %s, path = %s, signal = %s::%s", pd->obj, bus, path, interface_name, signal_name);
 
         Eo *child = eo_add(ELDBUS_MODEL_SIGNAL_CLASS, NULL,
-                           eldbus_model_signal_proxy_set(pd->proxy),
+                           eldbus_model_arguments_proxy_set(pd->proxy),
                            eldbus_model_signal_set(signal));
 
         pd->children_list = eina_list_append(pd->children_list, child);

@@ -29,12 +29,18 @@ _setup(void)
 
    fake_server = fake_server_start(&fake_server_data);
 
+   Eldbus_Model_Connection* connection
+     = eo_add(ELDBUS_MODEL_CONNECTION_CLASS, NULL,
+              eldbus_model_connection_type_set(ELDBUS_CONNECTION_TYPE_SESSION),
+              eldbus_model_connection_address_set(NULL),
+              eldbus_model_connection_private_set(EINA_FALSE));
+
+   efl_model_load_and_wait_for_load_status(connection, EFL_MODEL_LOAD_STATUS_LOADED);
+
    fake_server_object = eo_add(ELDBUS_MODEL_OBJECT_CLASS, NULL,
-     eldbus_model_object_constructor(ELDBUS_CONNECTION_TYPE_SESSION,
-                                     NULL,
-                                     EINA_FALSE,
-                                     FAKE_SERVER_BUS,
-                                     FAKE_SERVER_PATH));
+                               eldbus_model_object_connection_model_set(connection),
+                               eldbus_model_object_bus_set(FAKE_SERVER_BUS),
+                               eldbus_model_object_path_set(FAKE_SERVER_PATH));
    ck_assert_ptr_ne(NULL, fake_server_object);
 
    efl_model_load_and_wait_for_load_status(fake_server_object, EFL_MODEL_LOAD_STATUS_LOADED);

@@ -147,12 +147,18 @@ create_and_load_connection(void)
 Eo *
 create_object(void)
 {
+   Eo *connection = eo_add(ELDBUS_MODEL_CONNECTION_CLASS, NULL,
+                           eldbus_model_connection_type_set(ELDBUS_CONNECTION_TYPE_SESSION),
+                           eldbus_model_connection_address_set(NULL),
+                           eldbus_model_connection_private_set(EINA_FALSE));
+   ck_assert_ptr_ne(NULL, connection);
+
+   efl_model_load_and_wait_for_load_status(connection, EFL_MODEL_LOAD_STATUS_LOADED);
+   
    Eo *object = eo_add_ref(ELDBUS_MODEL_OBJECT_CLASS, NULL,
-     eldbus_model_object_constructor(ELDBUS_CONNECTION_TYPE_SESSION,
-                                     NULL,
-                                     EINA_FALSE,
-                                     ELDBUS_FDO_BUS,
-                                     ELDBUS_FDO_PATH));
+                           eldbus_model_object_connection_model_set(connection),
+                           eldbus_model_object_bus_set(ELDBUS_FDO_BUS),
+                           eldbus_model_object_path_set(ELDBUS_FDO_PATH));
    ck_assert_ptr_ne(NULL, object);
    return object;
 }

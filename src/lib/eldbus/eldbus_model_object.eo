@@ -2,51 +2,31 @@ class Eldbus.Model_Object (Eo.Base, Efl.Model.Base) {
     legacy_prefix: null;
     data: Eldbus_Model_Object_Data;
     methods {
-        constructor {
-            [[Custom Eldbus_Model_Object constructor.
-
-              @since 1.16]]
-            params {
-                @in type: int; [[The connection type]]
-                @in address: const(char)*; [[Remote address of dbus]]
-                @in private_: bool; [[Non shared dbus connection]]
-                @in bus: const(char)*; [[DBus Name or unique-id]]
-                @in path: const(char)*; [[DBus path]]
-            }
-        }
-        connection_constructor {
-            [[Custom Eldbus_Model_Object connection_constructor.
-
-              @since 1.16]]
-            params {
-                @in connection: Eldbus_Connection*; [[Eldbus connection]]
-                @in bus: const(char)*; [[DBus Name or unique-id]]
-                @in path: const(char)*; [[DBus path]]
-            }
-        }
-    @property type {
-            values {
-                value: int;
-            }
-        }
-    @property address {
-            values {
-                value: const(char)*;
-            }
-        }
-    @property private {
-            values {
-                value: bool;
-            }
-        }
     @property bus {
+            set {}
+            get {}
             values {
                 value: const(char)*;
             }
         }
     @property path {
+            set {}
+            get {}
             values {
                 value: const(char)*;
+            }
+        }
+    @property connection_model {
+            set {}
+            values {
+                value: Eldbus.Model_Connection*;
+            }
+        }
+    @property connection {
+            set {}
+            get {}
+            values {
+                value: Eldbus_Connection*;
             }
         }
     }
@@ -67,7 +47,9 @@ class Eldbus.Model_Object (Eo.Base, Efl.Model.Base) {
         Efl.Model.Base.children_load;
     }
     constructors {
-        .constructor;
-        .connection_constructor;
+        .connection @optional;
+        .connection_model @optional;
+        .bus;
+        .path;
     }
 }
