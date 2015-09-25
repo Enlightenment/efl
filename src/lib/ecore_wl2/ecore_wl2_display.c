@@ -216,6 +216,30 @@ static const struct wl_callback_listener _sync_listener =
 };
 
 static void
+_animator_tick_cb_begin(void *data)
+{
+   Ecore_Wl2_Display *display;
+   Ecore_Wl2_Window *window;
+
+   display = data;
+   if (!display) return;
+
+   EINA_INLIST_FOREACH(display->windows, window)
+     _ecore_wl2_window_animator_add(window);
+}
+
+static void
+_animator_tick_cb_end(void *data)
+{
+   Ecore_Wl2_Display *display;
+
+   display = data;
+   if (!display) return;
+
+   _ecore_wl2_window_animator_end();
+}
+
+static void
 _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
 {
    Ecore_Wl2_Output *output;
@@ -401,4 +425,24 @@ ecore_wl2_display_globals_get(Ecore_Wl2_Display *display)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
    return eina_hash_iterator_data_new(display->globals);
+}
+
+EAPI Eina_Bool
+ecore_wl2_display_animator_source_set(Ecore_Wl2_Display *display, Ecore_Animator_Source source)
+{
+   switch (source)
+     {
+      case ECORE_ANIMATOR_SOURCE_CUSTOM:
+        ecore_animator_custom_source_tick_begin_callback_set
+          (_animator_tick_cb_begin, display);
+        ecore_animator_custom_source_tick_end_callback_set
+          (_animator_tick_cb_end, display);
+        break;
+      case ECORE_ANIMATOR_SOURCE_TIMER:
+        ecore_animator_custom_source_tick_begin_callback_set(NULL, NULL);
+        ecore_animator_custom_source_tick_end_callback_set(NULL, NULL);
+        break;
+     }
+
+   return EINA_TRUE;
 }

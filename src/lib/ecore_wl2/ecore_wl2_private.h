@@ -86,6 +86,7 @@ struct _Ecore_Wl2_Window
    struct wl_shell_surface *wl_shell_surface;
    struct xdg_surface *xdg_surface;
    struct xdg_popup *xdg_popup;
+   struct wl_callback *anim_cb;
 
    Eina_Rectangle geometry;
 
@@ -212,6 +213,9 @@ struct _Ecore_Wl2_Input
 };
 
 Ecore_Wl2_Window *_ecore_wl2_display_window_surface_find(Ecore_Wl2_Display *display, struct wl_surface *wl_surface);
+
+void _ecore_wl2_window_animator_add(Ecore_Wl2_Window *window);
+void _ecore_wl2_window_animator_end(void);
 
 void _ecore_wl2_output_add(Ecore_Wl2_Display *display, unsigned int id);
 void _ecore_wl2_output_del(Ecore_Wl2_Output *output);
