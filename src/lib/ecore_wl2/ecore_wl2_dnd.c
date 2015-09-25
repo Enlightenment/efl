@@ -95,7 +95,17 @@ _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct
 void
 _ecore_wl2_dnd_leave(Ecore_Wl2_Input *input)
 {
-   /* TODO: raise dnd leave event */
+   Ecore_Wl2_Event_Dnd_Leave *ev;
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Dnd_Leave));
+   if (!ev) return;
+
+   if (input->focus.pointer)
+     ev->win = input->focus.pointer->id;
+   if (input->focus.keyboard)
+     ev->source = input->focus.keyboard->id;
+
+   ecore_event_add(ECORE_WL2_EVENT_DND_LEAVE, ev, NULL, NULL);
 }
 
 void
