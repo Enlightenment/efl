@@ -576,8 +576,8 @@ _eo_base_event_callback_del(Eo *obj, Eo_Base_Data *pd,
 
    for (cb = pd->callbacks; cb; cb = cb->next)
      {
-        if ((cb->items.item.desc == desc) && (cb->items.item.func == func) &&
-              (cb->func_data == user_data))
+        if (!cb->delete_me && (cb->items.item.desc == desc) &&
+              (cb->items.item.func == func) && (cb->func_data == user_data))
           {
              const Eo_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
 
@@ -622,7 +622,8 @@ _eo_base_event_callback_array_del(Eo *obj, Eo_Base_Data *pd,
 
    for (cb = pd->callbacks; cb; cb = cb->next)
      {
-        if ((cb->items.item_array == array) && (cb->func_data == user_data))
+        if (!cb->delete_me &&
+              (cb->items.item_array == array) && (cb->func_data == user_data))
           {
              cb->delete_me = EINA_TRUE;
              pd->deletions_waiting = EINA_TRUE;
