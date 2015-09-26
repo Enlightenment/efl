@@ -1,16 +1,6 @@
 class Eldbus.Model_Method (Eldbus.Model_Arguments) {
     legacy_prefix: null;
     methods {
-        // @property proxy {
-        //     [[Custom Eldbus_Model_Method constructor.
-
-        //       @since 1.16]]
-        //     get {}
-        //     set {}
-        //     values {
-        //         proxy: Eldbus_Proxy*; [[Eldbus proxy]]
-        //     }
-        // }
         @property method {
             get {}
             set {}
@@ -34,6 +24,7 @@ class Eldbus.Model_Method (Eldbus.Model_Arguments) {
         Eo.Base.constructor;
     }
     constructors {
+        Eldbus.Model_Arguments.proxy;
         .method;
     }
     events {
