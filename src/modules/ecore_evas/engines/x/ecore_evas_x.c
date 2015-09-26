@@ -1640,10 +1640,11 @@ _ecore_evas_x_event_window_show(void *data EINA_UNUSED, int type EINA_UNUSED, vo
      }
    if ((first_map_bug) && (!strcmp(ee->driver, "opengl_x11")))
      evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-   if (ee->prop.override)
+   if (ee->prop.withdrawn)
      {
         ee->prop.withdrawn = EINA_FALSE;
         if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
+        _ecore_evas_x_hints_update(ee);
      }
    if (ee->visible) return ECORE_CALLBACK_PASS_ON;
 //   if (ee->visible) return ECORE_CALLBACK_DONE;
