@@ -15,8 +15,10 @@ class Eldbus.Model_Arguments (Eo.Base, Efl.Model.Base) {
          [[Custom Eldbus_Model_Arguments constructor.
 
          @since 1.16]]
-         set {}
-         get {}
+         set {
+         }
+         get {
+         }
          values {
             arguments: const(list<Eldbus_Introspection_Argument*>)* @optional; [[The introspected arguments]]
          }

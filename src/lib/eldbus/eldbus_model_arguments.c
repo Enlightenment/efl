@@ -51,7 +51,19 @@ _eldbus_model_arguments_arguments_set(Eo *obj EINA_UNUSED,
 {
    DBG("(%p)", obj);
 
-   pd->arguments = arguments;
+   Eldbus_Introspection_Argument* data;
+   EINA_LIST_FREE(pd->arguments, data)
+     {
+        free(data);
+     }
+   pd->arguments = eina_list_clone(arguments);
+   Eina_List* l;
+   EINA_LIST_FOREACH(pd->arguments, l, data)
+     {
+        void* cp = malloc(sizeof(Eldbus_Introspection_Argument));
+        memcpy(cp, data, sizeof(Eldbus_Introspection_Argument));
+        eina_list_data_set(l, cp);
+     }
 }
 
 static const Eina_List*
@@ -115,6 +127,12 @@ _eldbus_model_arguments_eo_base_destructor(Eo *obj, Eldbus_Model_Arguments_Data 
    eina_stringshare_del(pd->name);
    eldbus_proxy_unref(pd->proxy);
 
+   Eldbus_Introspection_Argument* data;
+   EINA_LIST_FREE(pd->arguments, data)
+     {
+        free(data);
+     }
+   
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 

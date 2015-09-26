@@ -19,7 +19,7 @@ struct _Eldbus_Model_Arguments_Data
    Eina_Hash *properties_hash;
    Eina_Stringshare *name;
    Eina_List *pending_list;
-   const Eina_List *arguments;
+   Eina_List *arguments;
    Eina_Value tmp_value;
 };
 
