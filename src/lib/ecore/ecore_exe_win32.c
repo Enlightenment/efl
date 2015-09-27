@@ -57,16 +57,8 @@ _ecore_exe_threads_terminate(Ecore_Exe *obj)
      {
         exe->close_threads = 1;
         WaitForMultipleObjects(i, threads, TRUE, INFINITE);
-        if (exe->pipe_error.thread)
-          {
-             CloseHandle(exe->pipe_error.thread);
-             exe->pipe_error.thread = NULL;
-          }
-        if (exe->pipe_read.thread)
-          {
-             CloseHandle(exe->pipe_read.thread);
-             exe->pipe_read.thread = NULL;
-          }
+	IF_FN_DEL(CloseHandle, exe->pipe_error.thread);
+	IF_FN_DEL(CloseHandle, exe->pipe_read.thread);
      }
 }
 
@@ -707,26 +699,16 @@ _impl_ecore_exe_eo_base_destructor(Eo *obj, Ecore_Exe_Data *exe)
    if (exe->pre_free_cb)
      exe->pre_free_cb(data, obj);
 
-   if (exe->h_close)
-      ecore_main_win32_handler_del(exe->h_close);
+   IF_FN_DEL(ecore_main_win32_handler_del, exe->h_close);
 
-   CloseHandle(exe->process_thread);
-   CloseHandle(exe->process);
+   IF_FN_DEL(CloseHandle, exe->process_thread);
+   IF_FN_DEL(CloseHandle, exe->process);
+   IF_FN_DEL(CloseHandle, exe->pipe_write.child_pipe);
+   IF_FN_DEL(CloseHandle, exe->pipe_write.child_pipe_x);
+   IF_FN_DEL(CloseHandle, exe->pipe_error.child_pipe);
+   IF_FN_DEL(CloseHandle, exe->pipe_read.child_pipe);
 
-   if (exe->pipe_write.child_pipe)
-     CloseHandle(exe->pipe_write.child_pipe);
-   if (exe->pipe_write.child_pipe_x)
-     CloseHandle(exe->pipe_write.child_pipe_x);
-
-   _ecore_exe_threads_terminate(obj);
-   if (exe->pipe_error.child_pipe)
-     CloseHandle(exe->pipe_error.child_pipe);
-
-   if (exe->pipe_read.child_pipe)
-     CloseHandle(exe->pipe_read.child_pipe);
-
-   if (exe->cmd)
-      free(exe->cmd);
+   IF_FREE(exe->cmd);
 
    _ecore_exe_exes = eina_list_remove(_ecore_exe_exes, obj);
    IF_FREE(exe->tag);
