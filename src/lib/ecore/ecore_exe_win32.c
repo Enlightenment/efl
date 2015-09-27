@@ -497,7 +497,16 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
    if (!CreateProcess(shell, exe->cmd, NULL, NULL, EINA_TRUE,
                       run_pri | CREATE_SUSPENDED, NULL, NULL, &si, &pi))
      {
-        WRN("Failed to create process %s", exe->cmd);
+        char *msg;
+
+	msg = evil_last_error_get();
+	if (msg)
+	  {
+	     WRN("Failed to create process %s: %s", exe->cmd, msg);
+	     free(msg);
+	  }
+	else
+	  WRN("Failed to create process %s: %ld", exe->cmd, GetLastError());
         goto error;
      }
 
