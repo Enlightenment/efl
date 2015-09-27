@@ -193,6 +193,7 @@ _evas_canvas_eo_base_constructor(Eo *eo_obj, Evas_Public_Data *e)
 
 #undef EVAS_ARRAY_SET
    eina_lock_new(&(e->lock_objects));
+   eina_spinlock_new(&(e->render.lock));
 
    return eo_obj;
 }
@@ -316,6 +317,7 @@ _evas_canvas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
    _evas_device_cleanup(eo_e);
 
    eina_lock_free(&(e->lock_objects));
+   eina_spinlock_free(&(e->render.lock));
 
    e->magic = 0;
    eo_do_super(eo_e, MY_CLASS, eo_destructor());

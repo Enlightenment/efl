@@ -2698,17 +2698,21 @@ evas_render_updates_internal(Evas *eo_e,
                   ru = malloc(sizeof(*ru));
                   ru->surface = surface;
                   NEW_RECT(ru->area, ux, uy, uw, uh);
+                  eina_spinlock_take(&(e->render.lock));
                   e->render.updates = eina_list_append(e->render.updates, ru);
                   evas_cache_image_ref(surface);
+                  eina_spinlock_release(&(e->render.lock));
                }
              else if (make_updates)
                {
                   Eina_Rectangle *rect;
 
                   NEW_RECT(rect, ux, uy, uw, uh);
+                  eina_spinlock_take(&(e->render.lock));
                   if (rect)
                     e->render.updates = eina_list_append(e->render.updates,
                                                          rect);
+                  eina_spinlock_release(&(e->render.lock));
                }
 
              clean_them |= evas_render_updates_internal_loop(eo_e, e, surface, e->engine.data.context,
@@ -2898,8 +2902,10 @@ evas_render_updates_internal(Evas *eo_e,
      {
         Evas_Event_Render_Post post;
 
+        eina_spinlock_take(&(e->render.lock));
         post.updated_area = e->render.updates;
         _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_POST, e->render.updates ? &post : NULL);
+        eina_spinlock_release(&(e->render.lock));
      }
 
    RD(0, "---]\n");
@@ -2936,12 +2942,14 @@ evas_render_wakeup(Evas *eo_e)
    Eina_List *ret_updates = NULL;
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
+   eina_spinlock_take(&(e->render.lock));
    EINA_LIST_FREE(e->render.updates, ru)
      {
         ret_updates = eina_list_append(ret_updates, ru->area);
         free(ru);
         haveup = EINA_TRUE;
      }
+   eina_spinlock_release(&(e->render.lock));
 
    /* flush redraws */
    if (haveup)
@@ -3004,6 +3012,7 @@ evas_render_pipe_wakeup(void *data)
    Render_Updates *ru;
    Evas_Public_Data *e = data;
 
+   eina_spinlock_take(&(e->render.lock));
    EINA_LIST_FOREACH(e->render.updates, l, ru)
      {
         eina_evlog("+render_push", e->evas, 0.0, NULL);
@@ -3016,6 +3025,7 @@ evas_render_pipe_wakeup(void *data)
         ru->surface = NULL;
      }
    eina_evlog("+render_output_flush", e->evas, 0.0, NULL);
+   eina_spinlock_release(&(e->render.lock));
    e->engine.func->output_flush(e->engine.data.output,
                                 EVAS_RENDER_MODE_ASYNC_END);
    eina_evlog("+render_output_flush", e->evas, 0.0, NULL);
@@ -3082,8 +3092,10 @@ evas_render_updates_internal_wait(Evas *eo_e,
           return NULL;
      }
 
+   eina_spinlock_take(&(e->render.lock));
    ret = e->render.updates;
    e->render.updates = NULL;
+   eina_spinlock_release(&(e->render.lock));
 
    return ret;
 }

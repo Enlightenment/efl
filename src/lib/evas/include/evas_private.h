@@ -808,6 +808,7 @@ struct _Evas_Public_Data
 
    struct {
       Eina_List *updates;
+      Eina_Spinlock lock;
    } render;
 
    Eina_Array     delete_objects;
