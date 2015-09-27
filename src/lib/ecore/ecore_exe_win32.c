@@ -36,6 +36,40 @@
 
 static int run_pri = NORMAL_PRIORITY_CLASS;
 
+static void
+_ecore_exe_threads_terminate(Ecore_Exe *obj)
+{
+   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
+   HANDLE threads[2] = { NULL, NULL };
+   int i = 0;
+
+   if (exe->pipe_read.thread)
+     {
+        threads[i] = exe->pipe_read.thread;
+        i++;
+     }
+   if (exe->pipe_error.thread)
+     {
+        threads[i] = exe->pipe_error.thread;
+        i++;
+     }
+   if (i > 0)
+     {
+        exe->close_threads = 1;
+        WaitForMultipleObjects(i, threads, TRUE, INFINITE);
+        if (exe->pipe_error.thread)
+          {
+             CloseHandle(exe->pipe_error.thread);
+             exe->pipe_error.thread = NULL;
+          }
+        if (exe->pipe_read.thread)
+          {
+             CloseHandle(exe->pipe_read.thread);
+             exe->pipe_read.thread = NULL;
+          }
+     }
+}
+
 static Eina_Bool
 _ecore_exe_close_cb(void *data,
                     Ecore_Win32_Handler *wh EINA_UNUSED)
@@ -44,6 +78,8 @@ _ecore_exe_close_cb(void *data,
    Ecore_Exe *obj = data;
    Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
    DWORD exit_code = 0;
+
+   _ecore_exe_threads_terminate(obj);
 
    e = calloc(1, sizeof(Ecore_Exe_Event_Del));
    if (!e) return 0;
@@ -83,16 +119,22 @@ _ecore_exe_pipe_read_thread_cb(void *data)
    DWORD current_size = 0;
    BOOL res;
 
-   while (!exe->close_threads)
+   while (1)
      {
-        if (!PeekNamedPipe(exe->pipe_read.child_pipe,
-                           buf, sizeof(buf) - 1, &size, &current_size, NULL))
-          continue;
-        if (size == 0)
-          continue;
+        res = PeekNamedPipe(exe->pipe_read.child_pipe,
+                            buf, sizeof(buf) - 1, &size, &current_size, NULL);
+        if (!res || (size == 0))
+          {
+             if (exe->close_threads)
+               break;
+
+             continue;
+          }
+
         current_buf = (char *)malloc(current_size);
         if (!current_buf)
           continue;
+
         res = ReadFile(exe->pipe_read.child_pipe, current_buf, current_size, &size, NULL);
         if (!res || (size == 0))
           {
@@ -100,16 +142,21 @@ _ecore_exe_pipe_read_thread_cb(void *data)
              current_buf = NULL;
              continue;
           }
-        if (current_size != size)
-          {
-             free(current_buf);
-             current_buf = NULL;
-             continue;
-          }
+
         current_size = size;
 
-        exe->pipe_read.data_buf = current_buf;
-        exe->pipe_read.data_size = current_size;
+        if (!exe->pipe_read.data_buf)
+          {
+             exe->pipe_read.data_buf = current_buf;
+             exe->pipe_read.data_size = current_size;
+          }
+        else
+          {
+             exe->pipe_read.data_buf = realloc(exe->pipe_read.data_buf, exe->pipe_read.data_size + current_size);
+             memcpy((unsigned char *)exe->pipe_read.data_buf + exe->pipe_read.data_size, current_buf, current_size);
+             exe->pipe_read.data_size += current_size;
+             free(current_buf);
+          }
 
         event_data = ecore_exe_event_data_get(obj, ECORE_EXE_PIPE_READ);
         if (event_data)
@@ -141,16 +188,22 @@ _ecore_exe_pipe_error_thread_cb(void *data)
    DWORD current_size = 0;
    BOOL res;
 
-   while (!exe->close_threads)
+   while (1)
      {
-        if (!PeekNamedPipe(exe->pipe_error.child_pipe,
-                           buf, sizeof(buf) - 1, &size, &current_size, NULL))
-          continue;
-        if (size == 0)
-          continue;
+        res = PeekNamedPipe(exe->pipe_error.child_pipe,
+                            buf, sizeof(buf) - 1, &size, &current_size, NULL);
+        if (!res || (size == 0))
+          {
+             if (exe->close_threads)
+               break;
+
+             continue;
+          }
+
         current_buf = (char *)malloc(current_size);
         if (!current_buf)
           continue;
+
         res = ReadFile(exe->pipe_error.child_pipe, current_buf, current_size, &size, NULL);
         if (!res || (size == 0))
           {
@@ -158,16 +211,21 @@ _ecore_exe_pipe_error_thread_cb(void *data)
              current_buf = NULL;
              continue;
           }
-        if (current_size != size)
-          {
-             free(current_buf);
-             current_buf = NULL;
-             continue;
-          }
+
         current_size = size;
 
-        exe->pipe_error.data_buf = current_buf;
-        exe->pipe_error.data_size = current_size;
+        if (!exe->pipe_error.data_buf)
+          {
+             exe->pipe_error.data_buf = current_buf;
+             exe->pipe_error.data_size = current_size;
+          }
+        else
+          {
+             exe->pipe_error.data_buf = realloc(exe->pipe_error.data_buf, exe->pipe_error.data_size + current_size);
+             memcpy((unsigned char *)exe->pipe_error.data_buf + exe->pipe_error.data_size, current_buf, current_size);
+             exe->pipe_error.data_size += current_size;
+             free(current_buf);
+          }
 
         event_data = ecore_exe_event_data_get(obj, ECORE_EXE_PIPE_ERROR);
         if (event_data)
@@ -185,40 +243,6 @@ _ecore_exe_pipe_error_thread_cb(void *data)
    _endthreadex(0);
 
    return 0;
-}
-
-static void
-_ecore_exe_threads_terminate(Ecore_Exe *obj)
-{
-   Ecore_Exe_Data *exe = eo_data_scope_get(obj, ECORE_EXE_CLASS);
-   HANDLE threads[2] = { NULL, NULL };
-   int i = 0;
-
-   if (exe->pipe_read.thread)
-     {
-        threads[i] = exe->pipe_read.thread;
-        i++;
-     }
-   if (exe->pipe_error.thread)
-     {
-        threads[i] = exe->pipe_error.thread;
-        i++;
-     }
-   if (i > 0)
-     {
-        exe->close_threads = 1;
-        WaitForMultipleObjects(i, threads, TRUE, INFINITE);
-        if (exe->pipe_error.thread)
-          {
-             CloseHandle(exe->pipe_error.thread);
-             exe->pipe_error.thread = NULL;
-          }
-        if (exe->pipe_read.thread)
-          {
-             CloseHandle(exe->pipe_read.thread);
-             exe->pipe_read.thread = NULL;
-          }
-     }
 }
 
 static DWORD WINAPI
