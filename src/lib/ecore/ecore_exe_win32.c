@@ -742,7 +742,7 @@ _impl_ecore_exe_interrupt(Ecore_Exe *obj, Ecore_Exe_Data *exe)
    CloseHandle(exe->process);
    exe->process = NULL;
    exe->sig = ECORE_EXE_WIN32_SIGINT;
-   while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj)) ;
+   EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj);
 }
 
 void
@@ -753,7 +753,7 @@ _impl_ecore_exe_quit(Ecore_Exe *obj, Ecore_Exe_Data *exe)
    CloseHandle(exe->process);
    exe->process = NULL;
    exe->sig = ECORE_EXE_WIN32_SIGQUIT;
-   while (EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj)) ;
+   EnumWindows(_ecore_exe_enum_windows_procedure, (LPARAM)obj);
 }
 
 void
