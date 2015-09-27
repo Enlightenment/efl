@@ -389,6 +389,8 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
    char exe_cmd_buf[1024];
    SECURITY_ATTRIBUTES sa;
    STARTUPINFO si;
+   HANDLE child_pipe_read;
+   HANDLE child_pipe_error;
    PROCESS_INFORMATION pi;
    Ecore_Exe_Event_Add *e;
    Eina_Bool use_sh = EINA_FALSE;
@@ -446,7 +448,7 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
    /* stdout pipe */
    if (exe->flags & ECORE_EXE_PIPE_READ)
      {
-        if (!CreatePipe(&exe->pipe_read.child_pipe, &exe->pipe_read.child_pipe_x, &sa, 0))
+        if (!CreatePipe(&exe->pipe_read.child_pipe, &child_pipe_read, &sa, 0))
           goto error;
         if (!SetHandleInformation(exe->pipe_read.child_pipe, HANDLE_FLAG_INHERIT, 0))
           goto error;
@@ -460,7 +462,7 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
    /* stderr pipe */
    if (exe->flags & ECORE_EXE_PIPE_ERROR)
      {
-        if (!CreatePipe(&exe->pipe_error.child_pipe, &exe->pipe_error.child_pipe_x, &sa, 0))
+        if (!CreatePipe(&exe->pipe_error.child_pipe, &child_pipe_error, &sa, 0))
           goto error;
         if (!SetHandleInformation(exe->pipe_error.child_pipe, HANDLE_FLAG_INHERIT, 0))
           goto error;
@@ -486,9 +488,9 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
 
    ZeroMemory(&si, sizeof(STARTUPINFO));
    si.cb = sizeof(STARTUPINFO);
-   si.hStdOutput = exe->pipe_read.child_pipe_x;
+   si.hStdOutput = child_pipe_read;
    si.hStdInput = exe->pipe_write.child_pipe;
-   si.hStdError = exe->pipe_error.child_pipe_x;
+   si.hStdError = child_pipe_error;
    si.dwFlags |= STARTF_USESTDHANDLES;
 
    DBG("CreateProcess: shell:%s child:%s", use_sh ? "yes" : "no", exe->cmd);
@@ -498,6 +500,16 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
         WRN("Failed to create process %s", exe->cmd);
         goto error;
      }
+
+   /*
+    * Close pipe handles (do not continue to modify the parent).
+    * We need to make sure that no handles to the write end of the
+    * output and error pipes are maintained in this process or else
+    * the pipe will not close when the child process exits and the
+    * ReadFile will hang.
+    */
+   CloseHandle(child_pipe_read);
+   CloseHandle(child_pipe_error);
 
    /* be sure that the child process is running */
    /* FIXME: This does not work if the child is an EFL-based app */
@@ -700,13 +712,9 @@ _impl_ecore_exe_eo_base_destructor(Eo *obj, Ecore_Exe_Data *exe)
    _ecore_exe_threads_terminate(obj);
    if (exe->pipe_error.child_pipe)
      CloseHandle(exe->pipe_error.child_pipe);
-   if (exe->pipe_error.child_pipe_x)
-     CloseHandle(exe->pipe_error.child_pipe_x);
 
    if (exe->pipe_read.child_pipe)
      CloseHandle(exe->pipe_read.child_pipe);
-   if (exe->pipe_read.child_pipe_x)
-     CloseHandle(exe->pipe_read.child_pipe_x);
 
    if (exe->cmd)
       free(exe->cmd);

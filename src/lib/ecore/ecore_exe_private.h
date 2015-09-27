@@ -83,7 +83,6 @@ struct _Ecore_Exe_Data
    struct
    {
       HANDLE child_pipe;
-      HANDLE child_pipe_x;
       HANDLE thread;
       void *data_buf;
       DWORD data_size;
@@ -100,7 +99,6 @@ struct _Ecore_Exe_Data
    struct
    {
       HANDLE child_pipe;
-      HANDLE child_pipe_x;
       HANDLE thread;
       void *data_buf;
       DWORD data_size;
