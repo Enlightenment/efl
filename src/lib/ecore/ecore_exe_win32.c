@@ -693,6 +693,8 @@ _impl_ecore_exe_eo_base_destructor(Eo *obj, Ecore_Exe_Data *exe)
 {
    void *data;
 
+   _ecore_exe_threads_terminate(obj);
+
    data = exe->data;
    if (exe->pre_free_cb)
      exe->pre_free_cb(data, obj);
