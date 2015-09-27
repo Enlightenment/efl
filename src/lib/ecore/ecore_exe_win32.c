@@ -378,23 +378,24 @@ _impl_ecore_exe_run_priority_get(void)
 Eo *
 _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
 {
-   char exe_cmd_buf[1024];
+   char exe_cmd_buf[32768];
    SECURITY_ATTRIBUTES sa;
    STARTUPINFO si;
+   PROCESS_INFORMATION pi;
    HANDLE child_pipe_read;
    HANDLE child_pipe_error;
-   PROCESS_INFORMATION pi;
-   Ecore_Exe_Event_Add *e;
-   Eina_Bool use_sh = EINA_FALSE;
    const char *shell = NULL;
+   Ecore_Exe_Event_Add *e;
+   Ecore_Exe_Flags flags;
+   Eina_Bool use_sh = EINA_FALSE;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
-   const char     *exe_cmd = exe->cmd;
-   DBG("Creating process %s", exe_cmd);
-   Ecore_Exe_Flags flags = exe->flags;
+   flags = exe->flags;
 
-   if (!exe_cmd) goto error;
+   DBG("Creating process %s", exe->cmd);
+
+   if (!exe->cmd) goto error;
 
    if ((flags & ECORE_EXE_PIPE_AUTO) && (!(flags & ECORE_EXE_PIPE_ERROR))
        && (!(flags & ECORE_EXE_PIPE_READ)))
@@ -404,20 +405,14 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
    if ((flags & ECORE_EXE_USE_SH))
      use_sh = EINA_TRUE;
    else
-     {
-       char *ret;
-
-       ret = strrstr(exe_cmd, ".bat");
-       if (ret && (ret[4] == '\0'))
-         use_sh = EINA_TRUE;
-     }
+     use_sh = eina_str_has_extension(exe->cmd, ".bat");
 
    if (use_sh)
      {
         int len;
 
         shell = "cmd.exe";
-        len = snprintf(exe_cmd_buf, sizeof(exe_cmd_buf), "/c %s", exe_cmd);
+        len = snprintf(exe_cmd_buf, sizeof(exe_cmd_buf), "/c %s", exe->cmd);
         if (len >= (int)sizeof(exe_cmd_buf))
           exe_cmd_buf[sizeof(exe_cmd_buf) - 1] = '\0';
      }
@@ -426,7 +421,7 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
         int len;
 
         /* FIXME : faster with memset() but one must be careful with size */
-        len = snprintf(exe_cmd_buf, sizeof(exe_cmd_buf), "%s", exe_cmd);
+        len = snprintf(exe_cmd_buf, sizeof(exe_cmd_buf), "%s", exe->cmd);
         if (len >= (int)sizeof(exe_cmd_buf))
           exe_cmd_buf[sizeof(exe_cmd_buf) - 1] = '\0';
      }
@@ -485,8 +480,8 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
    si.hStdError = child_pipe_error;
    si.dwFlags |= STARTF_USESTDHANDLES;
 
-   DBG("CreateProcess: shell:%s child:%s", use_sh ? "yes" : "no", exe->cmd);
-   if (!CreateProcess(shell, exe->cmd, NULL, NULL, EINA_TRUE,
+   DBG("CreateProcess: shell:%s child:%s", use_sh ? "yes" : "no", exe_cmd_buf);
+   if (!CreateProcess(shell, exe_cmd_buf, NULL, NULL, EINA_TRUE,
                       run_pri | CREATE_SUSPENDED, NULL, NULL, &si, &pi))
      {
         char *msg;
@@ -494,11 +489,11 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
 	msg = evil_last_error_get();
 	if (msg)
 	  {
-	     WRN("Failed to create process %s: %s", exe->cmd, msg);
+	     WRN("Failed to create process %s: %s", exe_cmd_buf, msg);
 	     free(msg);
 	  }
 	else
-	  WRN("Failed to create process %s: %ld", exe->cmd, GetLastError());
+	  WRN("Failed to create process %s: %ld", exe_cmd_buf, GetLastError());
         goto error;
      }
 
