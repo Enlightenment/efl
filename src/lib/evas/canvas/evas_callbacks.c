@@ -303,6 +303,7 @@ evas_object_event_callback_priority_add(Evas_Object *eo_obj, Evas_Callback_Type 
    return;
    MAGIC_CHECK_END();
 
+   if (!obj) return;
    if (!func) return;
 
    _eo_evas_object_cb_info *cb_info = calloc(1, sizeof(*cb_info));
