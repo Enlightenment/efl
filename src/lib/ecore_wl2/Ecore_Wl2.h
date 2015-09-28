@@ -397,6 +397,9 @@ EAPI void ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, in
 /* TODO: doxy */
 EAPI Eina_Bool ecore_wl2_window_maximized_get(Ecore_Wl2_Window *window);
 
+/* TODO: doxy */
+EAPI Eina_Bool ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */

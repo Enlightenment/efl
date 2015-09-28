@@ -592,3 +592,14 @@ ecore_wl2_window_maximized_get(Ecore_Wl2_Window *window)
 
    return EINA_FALSE;
 }
+
+EAPI Eina_Bool
+ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
+
+   if (window->type == ECORE_WL2_WINDOW_TYPE_FULLSCREEN)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
