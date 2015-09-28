@@ -412,6 +412,9 @@ EAPI void ecore_wl2_window_class_name_set(Ecore_Wl2_Window *window, const char *
 /* TODO: doxy */
 EAPI void ecore_wl2_window_geometry_get(Ecore_Wl2_Window *window, int *x, int *y, int *w, int *h);
 
+/* TODO: doxy */
+EAPI void ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
