@@ -738,3 +738,37 @@ ecore_wl2_window_iconified_get(Ecore_Wl2_Window *window)
 
    return window->minimized;
 }
+
+EAPI void
+ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   if (window->minimized == iconified) return;
+
+   if (iconified)
+     {
+        if (window->xdg_surface)
+          xdg_surface_set_minimized(window->xdg_surface);
+     }
+   else
+     {
+        if (window->xdg_surface)
+          {
+             struct wl_array states;
+             uint32_t *s;
+
+             wl_array_init(&states);
+             s = wl_array_add(&states, sizeof(*s));
+             *s = XDG_SURFACE_STATE_ACTIVATED;
+             _xdg_surface_cb_configure(window, window->xdg_surface,
+                                       window->geometry.w, window->geometry.h,
+                                       &states, 0);
+             wl_array_release(&states);
+          }
+
+        window->type = ECORE_WL2_WINDOW_TYPE_TOPLEVEL;
+     }
+
+   window->minimized = iconified;
+}
