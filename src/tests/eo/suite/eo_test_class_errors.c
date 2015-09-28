@@ -230,7 +230,7 @@ START_TEST(eo_null_api)
         NULL
    };
 
-   TEST_EO_ERROR("_eo_class_funcs_set", "Class '%s': NULL API not allowed (%d NULL->%p '%s').");
+   TEST_EO_ERROR("_eo_class_funcs_set", "Class '%s': NULL API not allowed (NULL->%p '%s').");
    klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(klass);
    fail_unless(ctx.did);
@@ -295,7 +295,7 @@ START_TEST(eo_api_redefined)
         NULL
    };
 
-   TEST_EO_ERROR("_eo_class_funcs_set", "Class '%s': API previously defined (%d %p->%p '%s').");
+   TEST_EO_ERROR("_eo_class_funcs_set", "Class '%s': API previously defined (%p->%p '%s').");
    klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(klass);
    fail_unless(ctx.did);
@@ -328,7 +328,7 @@ START_TEST(eo_dich_func_override)
         NULL
    };
 
-   TEST_EO_ERROR("_dich_func_set", "Class '%s': Overriding func %p for op %d (%s:'%s') with %p.");
+   TEST_EO_ERROR("_dich_func_set", "Class '%s': Overriding func %p for op %d (%s) with %p.");
    klass = eo_class_new(&class_desc, SIMPLE_CLASS, NULL);
    fail_if(klass);
    fail_unless(ctx.did);

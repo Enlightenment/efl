@@ -132,6 +132,8 @@ enum _Eo_Op_Type
    EO_OP_TYPE_INVALID = -1, /**< Invalid op. */
    EO_OP_TYPE_REGULAR = 0, /**< Regular op. */
    EO_OP_TYPE_CLASS, /**< Class op - a class op. Like static in Java/C++. */
+   EO_OP_TYPE_REGULAR_OVERRIDE, /**< Regular op override (previously defined) */
+   EO_OP_TYPE_CLASS_OVERRIDE, /**< Class op override (previously defined) */
 };
 
 /**
@@ -344,7 +346,6 @@ typedef struct _Eo_Op_Description
 {
    void *api_func;         /**< The EAPI function offering this op. (The name of the func on windows) */
    void *func;             /**< The static function to call for the op. */
-   Eo_Op op;               /**< The op. */
    Eo_Op_Type op_type;     /**< The type of the Op. */
 } Eo_Op_Description;
 
@@ -360,7 +361,7 @@ struct _Eo_Class_Description
    const char *name; /**< The name of the class. */
    Eo_Class_Type type; /**< The type of the class. */
    struct {
-        Eo_Op_Description *descs; /**< The op descriptions array of size count. */
+        const Eo_Op_Description *descs; /**< The op descriptions array of size count. */
         size_t count; /**< Number of op descriptions. */
    } ops; /**< The ops description, should be filled using #EO_CLASS_DESCRIPTION_OPS (later sorted by Eo). */
    const Eo_Event_Description **events; /**< The event descriptions for this class. */
@@ -469,7 +470,7 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
      Eina_Bool ___is_main_loop = eina_main_loop_is();                   \
      static Eo_Op ___op = EO_NOOP;                                      \
      if (___op == EO_NOOP)                                              \
-       ___op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name), ___is_main_loop, __FILE__, __LINE__); \
+       ___op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name)); \
      if (!_eo_call_resolve(#Name, ___op, &___call, ___is_main_loop, __FILE__, __LINE__)) return DefRet; \
      _Eo_##Name##_func _func_ = (_Eo_##Name##_func) ___call.func;       \
 
@@ -522,22 +523,19 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
      EO_HOOK_CALL_PREPAREV(eo_hook_call_post, #Name, Arguments);        \
   }
 
-// OP ID of an overriding function
-#define EO_OP_OVERRIDE ((Eo_Op) -1)
-
 #ifndef _WIN32
 # define _EO_OP_API_ENTRY(a) a
 #else
 # define _EO_OP_API_ENTRY(a) #a
 #endif
 
-#define EO_OP_FUNC(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_NOOP, EO_OP_TYPE_REGULAR }
-#define EO_OP_CLASS_FUNC(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_NOOP, EO_OP_TYPE_CLASS }
-#define EO_OP_FUNC_OVERRIDE(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_OVERRIDE, EO_OP_TYPE_REGULAR }
-#define EO_OP_CLASS_FUNC_OVERRIDE(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_OVERRIDE, EO_OP_TYPE_CLASS }
+#define EO_OP_FUNC(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_TYPE_REGULAR }
+#define EO_OP_CLASS_FUNC(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_TYPE_CLASS }
+#define EO_OP_FUNC_OVERRIDE(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_TYPE_REGULAR_OVERRIDE }
+#define EO_OP_CLASS_FUNC_OVERRIDE(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_TYPE_CLASS_OVERRIDE }
 
 // returns the OP id corresponding to the given api_func
-EAPI Eo_Op _eo_api_op_id_get(const void *api_func, Eina_Bool is_main_loop, const char *file, int line);
+EAPI Eo_Op _eo_api_op_id_get(const void *api_func);
 
 // gets the real function pointer and the object data
 EAPI Eina_Bool _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, Eina_Bool is_main_loop, const char *file, int line);
