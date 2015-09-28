@@ -1689,6 +1689,30 @@ _access_widget_item_register(Elm_Gen_Item *it)
 }
 
 static void
+_elm_genlist_item_focus_update(Elm_Gen_Item *it)
+{
+   const char *focus_raise;
+   Evas_Object *obj = WIDGET(it);
+   ELM_GENLIST_DATA_GET(obj, sd);
+
+   if (elm_widget_focus_highlight_enabled_get(obj))
+     edje_object_signal_emit(VIEW(it), SIGNAL_FOCUSED, "elm");
+
+   focus_raise = edje_object_data_get(VIEW(it), "focusraise");
+   if ((focus_raise) && (!strcmp(focus_raise, "on")))
+     {
+        Elm_Gen_Item *git;
+        Eina_List *l;
+
+        evas_object_raise(VIEW(it));
+        EINA_LIST_FOREACH(sd->group_items, l, git)
+          {
+             if (git->realized) evas_object_raise(VIEW(git));
+          }
+     }
+}
+
+static void
 _item_realize(Elm_Gen_Item *it,
               int in,
               Eina_Bool calc)
@@ -1771,22 +1795,7 @@ _item_realize(Elm_Gen_Item *it,
 
         if (EO_OBJ(it) == sd->focused_item)
           {
-             const char *focus_raise;
-             if (elm_widget_focus_highlight_enabled_get(WIDGET(it)) || _elm_config->win_auto_focus_enable)
-               edje_object_signal_emit(VIEW(it), SIGNAL_FOCUSED, "elm");
-
-             focus_raise = edje_object_data_get(VIEW(it), "focusraise");
-             if ((focus_raise) && (!strcmp(focus_raise, "on")))
-               {
-                  Elm_Gen_Item *git;
-                  Eina_List *l;
-                  evas_object_raise(VIEW(it));
-                  EINA_LIST_FOREACH(sd->group_items, l, git)
-                    {
-                       if (git->realized) evas_object_raise(VIEW(git));
-                    }
-               }
-
+             _elm_genlist_item_focus_update(it);
              _elm_widget_item_highlight_in_theme(WIDGET(it), EO_OBJ(it));
              _elm_widget_highlight_in_theme_update(WIDGET(it));
              _elm_widget_focus_highlight_start(WIDGET(it));
@@ -2617,7 +2626,6 @@ _elm_genlist_item_focused(Elm_Object_Item *eo_it)
    ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
    Evas_Object *obj = WIDGET(it);
    ELM_GENLIST_DATA_GET(obj, sd);
-   const char *focus_raise;
    Eina_Bool tmp;
 
    if (_is_no_select(it) ||
@@ -2642,22 +2650,7 @@ _elm_genlist_item_focused(Elm_Object_Item *eo_it)
    sd->focused_item = eo_it;
 
    if (it->realized)
-     {
-        if (elm_widget_focus_highlight_enabled_get(obj))
-          edje_object_signal_emit(VIEW(it), SIGNAL_FOCUSED, "elm");
-
-        focus_raise = edje_object_data_get(VIEW(it), "focusraise");
-        if ((focus_raise) && (!strcmp(focus_raise, "on")))
-          {
-             Elm_Gen_Item *git;
-             Eina_List *l;
-             evas_object_raise(VIEW(it));
-             EINA_LIST_FOREACH(sd->group_items, l, git)
-               {
-                  if (git->realized) evas_object_raise(VIEW(git));
-               }
-          }
-     }
+     _elm_genlist_item_focus_update(it);
    eo_do(obj, eo_event_callback_call(ELM_GENLIST_EVENT_ITEM_FOCUSED, eo_it));
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
