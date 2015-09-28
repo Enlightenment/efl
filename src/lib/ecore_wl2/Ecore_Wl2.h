@@ -375,6 +375,9 @@ EAPI Ecore_Wl2_Window *ecore_wl2_window_find(Ecore_Wl2_Display *display, int id)
 /* TODO: doxy */
 EAPI Eina_Bool ecore_wl2_window_alpha_get(Ecore_Wl2_Window *window);
 
+/* TODO: doxy */
+EAPI void ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */

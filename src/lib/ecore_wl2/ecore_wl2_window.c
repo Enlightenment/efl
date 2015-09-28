@@ -501,3 +501,14 @@ ecore_wl2_window_alpha_get(Ecore_Wl2_Window *window)
 
    return window->alpha;
 }
+
+EAPI void
+ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   if (win->alpha == alpha) return;
+
+   win->alpha = alpha;
+   /* TODO: set opaque region */
+}
