@@ -625,3 +625,17 @@ ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title)
    else if (window->wl_shell_surface)
      wl_shell_surface_set_title(window->wl_shell_surface, window->title);
 }
+
+EAPI void
+ecore_wl2_window_class_name_set(Ecore_Wl2_Window *window, const char *class_name)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   eina_stringshare_replace(&window->class, class_name);
+   if (!window->class) return;
+
+   if (window->xdg_surface)
+     xdg_surface_set_app_id(window->xdg_surface, window->class);
+   else if (window->wl_shell_surface)
+     wl_shell_surface_set_class(window->wl_shell_surface, window->class);
+}
