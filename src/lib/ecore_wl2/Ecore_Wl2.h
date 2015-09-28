@@ -369,6 +369,9 @@ EAPI void ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w, int h, int lo
  */
 EAPI void ecore_wl2_window_raise(Ecore_Wl2_Window *window);
 
+/* TODO: doxy */
+EAPI Ecore_Wl2_Window *ecore_wl2_window_find(Ecore_Wl2_Display *display, int id);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
