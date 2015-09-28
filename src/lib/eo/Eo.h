@@ -919,6 +919,8 @@ typedef void (*eo_key_data_free_func)(void *);
 
 /**
  * Don't use.
+ * The values of the returned event structure are also internal, don't assume
+ * anything about them.
  * @internal
  */
 EAPI const Eo_Event_Description *eo_base_legacy_only_event_description_get(const char *_event_name);

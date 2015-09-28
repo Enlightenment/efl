@@ -401,11 +401,16 @@ _wref_destruct(Eo_Base_Data *pd)
 
 /* XXX: Legacy support, remove when legacy is dead. */
 static Eina_Hash *_legacy_events_hash = NULL;
+#define _LEGACY_EVENT_FIRST_CHAR 1
 
 EAPI const Eo_Event_Description *
 eo_base_legacy_only_event_description_get(const char *_event_name)
 {
-   Eina_Stringshare *event_name = eina_stringshare_add(_event_name);
+   char buf[1024];
+   buf[0] = _LEGACY_EVENT_FIRST_CHAR; /* Encode it's a legacy event */
+   strncpy(buf + 1, _event_name, sizeof(buf) - 1);
+   buf[sizeof(buf) - 1] = '\0';
+   Eina_Stringshare *event_name = eina_stringshare_add(buf);
    Eo_Event_Description *event_desc = eina_hash_find(_legacy_events_hash, event_name);
    if (!event_desc)
      {
@@ -419,6 +424,26 @@ eo_base_legacy_only_event_description_get(const char *_event_name)
      }
 
    return event_desc;
+}
+
+static Eina_Bool
+_legacy_event_desc_is(const Eo_Event_Description *desc)
+{
+   return (desc->name[0] == _LEGACY_EVENT_FIRST_CHAR);
+}
+
+/* Also supports non legacy. */
+static const char *
+_legacy_event_desc_name_get(const Eo_Event_Description *desc)
+{
+   if (_legacy_event_desc_is(desc))
+     {
+        return desc->name + 1;
+     }
+   else
+     {
+        return desc->name;
+     }
 }
 
 static void
@@ -641,13 +666,19 @@ _cb_desc_match(const Eo_Event_Description *a, const Eo_Event_Description *b)
    if (!a)
       return EINA_FALSE;
 
-   if (a == b)
+   if (_legacy_event_desc_is(a) && _legacy_event_desc_is(b))
      {
-        return EINA_TRUE;
+        return (a->name == b->name);
+     }
+   else if (_legacy_event_desc_is(a) || _legacy_event_desc_is(b))
+     {
+        const char *aname = _legacy_event_desc_name_get(a);
+        const char *bname = _legacy_event_desc_name_get(b);
+        return !strcmp(aname, bname);
      }
    else
      {
-        return !strcmp(a->name, b->name);
+        return (a == b);
      }
 }
 
