@@ -140,7 +140,7 @@ typedef enum _Elm_Atspi_Role Elm_Atspi_Role;
 
 /**
  * @enum _Elm_Atspi_State_Type
- * Describes a possible states of an object visibile to AT-SPI clients.
+ * Describes a possible states of an object visible to AT-SPI clients.
  */
 enum _Elm_Atspi_State_Type
 {

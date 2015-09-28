@@ -26,7 +26,7 @@
  * contained in @b pages (a prefs widget is always bound to one page).
  * Those elements get properties like:
  * - default value,
- * - maximum and minumum ranges,
+ * - maximum and minimum ranges,
  * - acceptance and denial regular expressions, for strings,
  * - visibility,
  * - persistence,

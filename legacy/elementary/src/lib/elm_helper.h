@@ -41,7 +41,7 @@ typedef enum
  * General designed for validate inputed entry text.
  *
  * @param pattern The regex pattern
- * @param signal The part of signal name, which will be emited to style
+ * @param signal The part of signal name, which will be emitted to style
  * @return The regex validator
  *
  * @see elm_validator_regexp_del()

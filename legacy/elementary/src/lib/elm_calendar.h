@@ -6,7 +6,7 @@
  * @image latex calendar_inheritance_tree.eps
  *
  * This is a calendar widget. It helps applications to flexibly
- * display a calender with day of the week, date, year and
+ * display a calendar with day of the week, date, year and
  * month. Applications are able to set specific dates to be reported
  * back, when selected, in the smart callbacks of the calendar
  * widget. The API of this widget lets the applications perform other

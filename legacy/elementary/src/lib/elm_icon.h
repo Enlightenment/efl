@@ -134,7 +134,7 @@
  * @li elm_object_signal_emit()
  * @li elm_object_signal_callback_add()
  * @li elm_object_signal_callback_del()
- * for emmiting and listening to signals on the object, when the
+ * for emitting and listening to signals on the object, when the
  * internal image comes from an Edje object. This behavior was added
  * unintentionally, though, and is @b deprecated. Expect it to be
  * dropped on future releases.

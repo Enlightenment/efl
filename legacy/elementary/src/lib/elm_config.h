@@ -1013,7 +1013,7 @@ EAPI const char *elm_config_accel_preference_get(void);
  * Accepted values for depth are for instance "depth", "depth16", "depth24".
  * Accepted values for stencil are "stencil", "stencil1", "stencil8".
  * For MSAA, only predefined strings are accepted: "msaa", "msaa_low",
- * "msaa_mid" and "msaa_high". The selected configuration is not garanteed
+ * "msaa_mid" and "msaa_high". The selected configuration is not guaranteed
  * and is only valid in case of GL acceleration. Only the base acceleration
  * string will be saved (e.g. "gl" or "hw").
  *

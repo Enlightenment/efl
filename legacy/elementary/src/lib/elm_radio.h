@@ -16,7 +16,7 @@
  * are normally used in groups of 2 or more.
  *
  * elm_radio objects are grouped in a slightly different, compared to other
- * UI toolkits. There is no seperate group name/id to remember or manage.
+ * UI toolkits. There is no separate group name/id to remember or manage.
  * The members represent the group, there are the group. To make a group,
  * use elm_radio_group_add() and pass existing radio object and the new radio
  * object.
