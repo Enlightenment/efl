@@ -235,7 +235,7 @@ _eo_op_desc_name_get(const Eo_Op_Description *desc)
       fct_name = info.dli_sname;
 # endif
 #else
-   fct_name = api_func; /* Same on windows */
+   fct_name = desc->api_func; /* Same on windows */
 #endif
    return fct_name;
 }
