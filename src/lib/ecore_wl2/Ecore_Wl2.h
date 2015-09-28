@@ -378,6 +378,22 @@ EAPI Eina_Bool ecore_wl2_window_alpha_get(Ecore_Wl2_Window *window);
 /* TODO: doxy */
 EAPI void ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha);
 
+/* TODO: doxy */
+EAPI void ecore_wl2_window_transparent_set(Ecore_Wl2_Window *window, Eina_Bool transparent);
+
+/**
+ * Set the opaque region of the Ecore_Wl2_Window
+ *
+ * @param win The window
+ * @param x The left point of the region.
+ * @param y The top point of the region.
+ * @param w The width of the region.
+ * @param h The height of the region.
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
+EAPI void ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */

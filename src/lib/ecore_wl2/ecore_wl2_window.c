@@ -507,8 +507,55 @@ ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   if (win->alpha == alpha) return;
+   if (window->alpha == alpha) return;
 
-   win->alpha = alpha;
-   /* TODO: set opaque region */
+   window->alpha = alpha;
+
+   if (!window->alpha)
+     ecore_wl2_window_opaque_region_set(window, window->opaque.x,
+                                        window->opaque.y, window->opaque.w,
+                                        window->opaque.h);
+   else
+     ecore_wl2_window_opaque_region_set(window, 0, 0, 0, 0);
+}
+
+EAPI void
+ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h)
+{
+   struct wl_region *region;
+
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   window->opaque.x = x;
+   window->opaque.y = y;
+   window->opaque.w = w;
+   window->opaque.h = h;
+
+   /* TODO: transparent or alpha check ? */
+
+   region = wl_compositor_create_region(window->display->wl.compositor);
+   if (!region)
+     {
+        ERR("Failed to create opaque region: %m");
+        return;
+     }
+
+   switch (window->rotation)
+     {
+      case 0:
+        wl_region_add(region, x, y, w, h);
+        break;
+      case 180:
+        wl_region_add(region, x, x + y, w, h);
+        break;
+      case 90:
+        wl_region_add(region, y, x, h, w);
+        break;
+      case 270:
+        wl_region_add(region, x + y, x, h, w);
+        break;
+     }
+
+   wl_surface_set_opaque_region(window->surface, region);
+   wl_region_destroy(region);
 }
