@@ -268,6 +268,11 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
    win->geometry.w = w;
    win->geometry.h = h;
 
+   win->opaque.x = x;
+   win->opaque.y = y;
+   win->opaque.w = w;
+   win->opaque.h = h;
+
    win->type = ECORE_WL2_WINDOW_TYPE_TOPLEVEL;
 
    display->windows =
@@ -512,6 +517,23 @@ ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha)
    window->alpha = alpha;
 
    if (!window->alpha)
+     ecore_wl2_window_opaque_region_set(window, window->opaque.x,
+                                        window->opaque.y, window->opaque.w,
+                                        window->opaque.h);
+   else
+     ecore_wl2_window_opaque_region_set(window, 0, 0, 0, 0);
+}
+
+EAPI void
+ecore_wl2_window_transparent_set(Ecore_Wl2_Window *window, Eina_Bool transparent)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   if (window->transparent == transparent) return;
+
+   window->transparent = transparent;
+
+   if (!window->transparent)
      ecore_wl2_window_opaque_region_set(window, window->opaque.x,
                                         window->opaque.y, window->opaque.w,
                                         window->opaque.h);
