@@ -1524,7 +1524,9 @@ _ecore_evas_wayland_window_get(const Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
 
-   if (!ee) return;
+   if (!(!strncmp(ee->driver, "wayland", 7)))
+     return NULL;
+
    wdata = ee->engine.data;
    return wdata->win;
 }
