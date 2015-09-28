@@ -481,8 +481,20 @@ ecore_wl2_window_raise(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   /* FIXME: This should raise xdg surface also...perhaps using xdg activate */
-   if (window->wl_shell_surface)
+   if (window->xdg_surface)
+     {
+        struct wl_array states;
+        uint32_t *s;
+
+        wl_array_init(&states);
+        s = wl_array_add(&states, sizeof(*s));
+        *s = XDG_SURFACE_STATE_ACTIVATED;
+        _xdg_surface_cb_configure(window, window->xdg_surface,
+                                  window->geometry.w, window->geometry.h,
+                                  &states, 0);
+        wl_array_release(&states);
+     }
+   else if (window->wl_shell_surface)
      wl_shell_surface_set_toplevel(window->wl_shell_surface);
 }
 
