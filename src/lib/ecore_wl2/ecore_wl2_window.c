@@ -650,3 +650,21 @@ ecore_wl2_window_geometry_get(Ecore_Wl2_Window *window, int *x, int *y, int *w, 
    if (w) *w = window->geometry.w;
    if (h) *h = window->geometry.h;
 }
+
+EAPI void
+ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, int w, int h)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   if ((window->geometry.x == x) && (window->geometry.y == y) &&
+       (window->geometry.w == w) && (window->geometry.h == h))
+     return;
+
+   window->geometry.x = x;
+   window->geometry.y = y;
+   window->geometry.w = w;
+   window->geometry.h = h;
+
+   if (window->xdg_surface)
+     xdg_surface_set_window_geometry(window->xdg_surface, x, y, w, h);
+}
