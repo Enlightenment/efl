@@ -403,6 +403,9 @@ EAPI Eina_Bool ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window);
 /* TODO: doxy */
 EAPI void ecore_wl2_window_rotation_set(Ecore_Wl2_Window *window, int rotation);
 
+/* TODO: doxy */
+EAPI void ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */

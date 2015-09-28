@@ -611,3 +611,17 @@ ecore_wl2_window_rotation_set(Ecore_Wl2_Window *window, int rotation)
 
    window->rotation = rotation;
 }
+
+EAPI void
+ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   eina_stringshare_replace(&window->title, title);
+   if (!window->title) return;
+
+   if (window->xdg_surface)
+     xdg_surface_set_title(window->xdg_surface, window->title);
+   else if (window->wl_shell_surface)
+     wl_shell_surface_set_title(window->wl_shell_surface, window->title);
+}
