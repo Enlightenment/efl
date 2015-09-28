@@ -250,14 +250,14 @@ typedef unsigned int Eo_Op;
 #define EO_EVENT_DESCRIPTION(name) { name, EINA_FALSE }
 
 /**
- * @def EO_HOT_EVENT_DESCRIPTION(name)
+ * @def EO_EVENT_DESCRIPTION_HOT(name)
  * An helper macro to help populating #Eo_Event_Description and make
  * the event impossible to freeze.
  * @param name The name of the event.
  * @see Eo_Event_Description
  * @see EO_EVENT_DESCRIPTION
  */
-#define EO_HOT_EVENT_DESCRIPTION(name) { name, EINA_TRUE }
+#define EO_EVENT_DESCRIPTION_HOT(name) { name, EINA_TRUE }
 
 
 
