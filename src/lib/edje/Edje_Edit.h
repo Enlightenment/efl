@@ -277,7 +277,7 @@ EAPI Eina_Bool edje_edit_clean_save_as(Evas_Object *obj, const char* new_file_na
  * because this function DOES NOT generate source code for groups.
  *
  * @note With using this function all source code will be erased. And DOES NOT
- * generated new code. In attempt to decompile edj file, wich was saved with
+ * generated new code. In attempt to decompile edj file, which was saved with
  * using this functions will unpacked only resources(like fonts, images, sounds).
  * If needed saving source code into file, please use  @see edje_edit_save() or
  * @see edje_edit_save_all().
@@ -368,7 +368,7 @@ EAPI Eina_Bool edje_edit_group_copy(Evas_Object *obj, const char *group_name, co
  * references the next time is loaded.
  * @see edje_edit_save_all(), edje_edit_without_source_save().
  *
- * @attention be carefull, if you deleting group, it will delete all it's aliases also,
+ * @attention be careful, if you deleting group, it will delete all it's aliases also,
  * if you deleting alias, then it will delete alias only.
  *
  */
@@ -1255,7 +1255,7 @@ EAPI const char * edje_edit_part_source_get(Evas_Object *obj, const char *part);
 /** Set the source of part.
  *
  * If setting source of the part will lead to recursive reference
- * (when A source to B, and B is going to be source to A because of this funciton),
+ * (when A source to B, and B is going to be source to A because of this function),
  * then it will return EINA_FALSE.
  *
  * @param obj Object being edited.
@@ -2603,7 +2603,7 @@ EAPI int edje_edit_part_item_spread_w_get(Evas_Object *obj, const char *part, co
 
 /** Set the spread width value of a part's item.
  *
- * @attention be carefull, if you set up huge number (like 10 or 100). width and height of
+ * @attention be careful, if you set up huge number (like 10 or 100). width and height of
  * spread is being multiplied and you will get huge number of objects that may "eat"
  * all of your processor performance at once... Or if you want, you may
  * get some coffee and wait until it will recalculate all of those objects :)
@@ -2620,7 +2620,7 @@ EAPI Eina_Bool edje_edit_part_item_spread_w_set(Evas_Object *obj, const char *pa
 
 /** Get the spread height value of a part's item.
  *
- * @attention be carefull, if you set up huge number (like 10 or 100). width and height of
+ * @attention be careful, if you set up huge number (like 10 or 100). width and height of
  * spread is being multiplied and you will get huge number of objects that may "eat"
  * all of your processor performance at once... Or if you want, you may
  * get some coffee and wait until it will recalculate all of those objects :)
@@ -2740,7 +2740,7 @@ EAPI double edje_edit_part_item_weight_x_get(Evas_Object *obj, const char *part,
  * @param item The name of the item to set horizontal weight value.
  * @param weight_x New value of the horizontal weight.
  *
- * @return @c EINA_TRUE If successfull, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE If successful, @c EINA_FALSE otherwise.
  * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_item_weight_x_set(Evas_Object *obj, const char *part, const char *item, double weight_x);
@@ -2763,7 +2763,7 @@ EAPI double edje_edit_part_item_weight_y_get(Evas_Object *obj, const char *part,
  * @param item The name of the item to set vertical weight value.
  * @param weight_y New value of the vertical weight.
  *
- * @return @c EINA_TRUE If successfull, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE If successful, @c EINA_FALSE otherwise.
  * @since 1.11
  */
 EAPI Eina_Bool edje_edit_part_item_weight_y_set(Evas_Object *obj, const char *part, const char *item, double weight_y);
@@ -2779,7 +2779,7 @@ EAPI Eina_Bool edje_edit_part_item_weight_y_set(Evas_Object *obj, const char *pa
  * @deprecated Use edje_edit_part_item_position_col_get() and
  * edje_edit_part_item_position_row_get() instead.
  *
- * @return @c EINA_TRUE If successfull, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE If successful, @c EINA_FALSE otherwise.
  * @since 1.11
  */
 EINA_DEPRECATED
@@ -2820,7 +2820,7 @@ edje_edit_part_item_position_row_get(Evas_Object *obj, const char *part, const c
  * @deprecation Use edje_edit_part_item_position_col_set() and
  * edje_edit_part_item_position_row_set() instead.
  *
- * @return @c EINA_TRUE If successfull, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE If successful, @c EINA_FALSE otherwise.
  * @since 1.11
  */
 EINA_DEPRECATED
@@ -2833,7 +2833,7 @@ EAPI Eina_Bool edje_edit_part_item_position_set(Evas_Object *obj, const char *pa
  * @param item_name The name of the item.
  * @param col Column item position.
  *
- * @return @c EINA_TRUE If successfull, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE If successful, @c EINA_FALSE otherwise.
  * @since 1.16
  */
 EAPI Eina_Bool
@@ -2846,7 +2846,7 @@ edje_edit_part_item_position_col_set(Evas_Object *obj, const char *part, const c
  * @param item_name The name of the item.
  * @param row Row item position.
  *
- * @return @c EINA_TRUE If successfull, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE If successful, @c EINA_FALSE otherwise.
  * @since 1.16
  */
 EAPI Eina_Bool
@@ -4010,7 +4010,7 @@ EAPI const Eina_List * edje_edit_state_external_params_list_get(Evas_Object *obj
  * @param part Part that contain state.
  * @param state The name of the state to get external parameter (not including the state value).
  * @param value The state value.
- * @param param The name of the paramter to look for.
+ * @param param The name of the parameter to look for.
  * @param type The type of the parameter will be stored here.
  * @param val Pointer to value will be stored here - DO NOT FREE IT!
  *
@@ -4024,7 +4024,7 @@ EAPI Eina_Bool edje_edit_state_external_param_get(Evas_Object *obj, const char *
  * @param part Part that contain state.
  * @param state The name of the state to get external parameter of type INT (not including the state value).
  * @param value The state value.
- * @param param The name of the paramter.
+ * @param param The name of the parameter.
  * @param val The value of the parameter.
  *
  * @return @c EINA_TRUE if successful. @c EINA_FALSE if not found or is of different type.
@@ -4037,7 +4037,7 @@ EAPI Eina_Bool edje_edit_state_external_param_int_get(Evas_Object *obj, const ch
  * @param part Part that contain state.
  * @param state The name of the state to get external parameter of type BOOL (not including the state value).
  * @param value The state value.
- * @param param The name of the paramter.
+ * @param param The name of the parameter.
  * @param val The value of the parameter.
  *
  * @return @c EINA_TRUE if successful. @c EINA_FALSE if not found or is of different type.
@@ -4050,7 +4050,7 @@ EAPI Eina_Bool edje_edit_state_external_param_bool_get(Evas_Object *obj, const c
  * @param part Part that contain state.
  * @param state The name of the state to get external parameter of type DOUBLE (not including the state value).
  * @param value The state value.
- * @param param The name of the paramter.
+ * @param param The name of the parameter.
  * @param val The value of the parameter.
  *
  * @return @c EINA_TRUE if successful. @c EINA_FALSE if not found or is of different type.
@@ -4064,7 +4064,7 @@ EAPI Eina_Bool edje_edit_state_external_param_double_get(Evas_Object *obj, const
  * @param state The name of the state to get external parameter of
  *              type STRING (not including the state value).
  * @param value The state value.
- * @param param The name of the paramter.
+ * @param param The name of the parameter.
  * @param val The value of the parameter.
  *
  * @return @c EINA_TRUE if successful. @c EINA_FALSE if not found or is of
@@ -4079,7 +4079,7 @@ EAPI Eina_Bool edje_edit_state_external_param_string_get(Evas_Object *obj, const
  * @param state The name of the state to get external parameter of
  *        type CHOICE (not including the state value).
  * @param value The state value.
- * @param param The name of the paramter.
+ * @param param The name of the parameter.
  * @param val The value of the parameter.
  *
  * @return @c EINA_TRUE if successful. @c EINA_FALSE if not found or is of
@@ -4096,7 +4096,7 @@ EAPI Eina_Bool edje_edit_state_external_param_choice_get(Evas_Object *obj, const
  * @param state The name of the state to get external parameter (not
  *              including the state value).
  * @param value The state value.
- * @param param The name of the paramter set.
+ * @param param The name of the parameter set.
  * @param type The type of the parameter.
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
@@ -4122,7 +4122,7 @@ EAPI Eina_Bool edje_edit_state_external_param_set(Evas_Object *obj, const char *
  * @param state The name of the state to get external parameter of
  *              type INT (not including the state value).
  * @param value The state value.
- * @param param The name of the paramter.
+ * @param param The name of the parameter.
  * @param val Value will be stored here.
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
@@ -4135,7 +4135,7 @@ EAPI Eina_Bool edje_edit_state_external_param_int_set(Evas_Object *obj, const ch
  * @param part Part that contain state.
  * @param state The name of the state to get external parameter of type BOOL (not including the state value).
  * @param value The state value.
- * @param param The name of the paramter.
+ * @param param The name of the parameter.
  * @param val Value will be stored here.
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
@@ -4148,7 +4148,7 @@ EAPI Eina_Bool edje_edit_state_external_param_bool_set(Evas_Object *obj, const c
  * @param part Part that contain state.
  * @param state The name of the state to get external parameter of type DOUBLE (not including the state value).
  * @param value The state value.
- * @param param The name of the paramter.
+ * @param param The name of the parameter.
  * @param val Value will be stored here.
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
@@ -4161,7 +4161,7 @@ EAPI Eina_Bool edje_edit_state_external_param_double_set(Evas_Object *obj, const
  * @param part Part that contain state.
  * @param state The name of the state to get external parameter of type STRING (not including the state value).
  * @param value The state value.
- * @param param The name of the paramter.
+ * @param param The name of the parameter.
  * @param val Value will be stored here.
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
@@ -4174,7 +4174,7 @@ EAPI Eina_Bool edje_edit_state_external_param_string_set(Evas_Object *obj, const
  * @param part Part that contain state.
  * @param state The name of the state to get external parameter of type CHOICE (not including the state value).
  * @param value The state value.
- * @param param The name of the paramter.
+ * @param param The name of the parameter.
  * @param val Value will be stored here.
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
@@ -4223,7 +4223,7 @@ EAPI Eina_Bool edje_edit_state_step_get(Evas_Object *obj, const char *part, cons
  * from zero or to a zero size in corresponding to the limit value.
  * For example, the signals emitted on width changing are <i>'limit,width,over'</i>
  * and <i>'limit,width,zero'</i>
- * The availble values are:
+ * The available values are:
  * <ul>
  * <li>NONE - 0 (the default value)</li>
  * <li>WIDTH - 1</li>
@@ -5459,7 +5459,7 @@ EAPI Eina_Bool edje_edit_sound_sample_add(Evas_Object *obj, const char* name, co
 
 /** Delete sound sample from the collection
  *
- * Deletes sound sample from collection by its name. After successfull deletion
+ * Deletes sound sample from collection by its name. After successful deletion
  * all PLAY_SAMPLE actions in all programs of all groups of current collection
  * that use deleted sound will be deleted.
  *
@@ -5490,7 +5490,7 @@ EAPI Eina_Bool edje_edit_sound_tone_add(Evas_Object *obj, const char* name, int 
 
 /** Delete tone from the collection
  *
- * Deletes tone from collection by its name. After successfull deletion
+ * Deletes tone from collection by its name. After successful deletion
  * all PLAY_TONE actions in all programs of all groups of current collection
  * that use deleted sound will be deleted.
  *
@@ -5541,7 +5541,7 @@ EAPI Eina_Bool edje_edit_sound_tone_frequency_set(Evas_Object *obj, const char *
  * @param obj Object being edited.
  * @param name The name of the tone.
  *
- * @return The frequency of tone if succesful, otherwise returns -1.
+ * @return The frequency of tone if successful, otherwise returns -1.
  * @see edje_edit_sound_tone_frequency_set()
  * @since 1.11
  */
@@ -6429,7 +6429,7 @@ EAPI Eina_Bool edje_edit_script_program_set(Evas_Object *obj, const char *prog, 
  *
  * If required, this function will process all script code for the group and
  * build the bytecode, updating the running Embryo VM Program if the build
- * is succesful.
+ * is successful.
  *
  * @param obj The object being edited
  *

@@ -914,7 +914,7 @@ EAPI double       edje_scale_get                  (void);
  *
  * In Edje it's possible to use a text part as a entry so the user is
  * able to make inputs of text. To do so, the text part must be set
- * with a input panel taht will work as a virtual keyboard.
+ * with a input panel that will work as a virtual keyboard.
  *
  * Some of effects can be applied to the entered text and also plenty
  * actions can be performed after any input.
