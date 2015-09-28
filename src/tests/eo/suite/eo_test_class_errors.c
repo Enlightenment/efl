@@ -217,7 +217,7 @@ START_TEST(eo_null_api)
    const Eo_Class *klass;
 
    static Eo_Op_Description op_descs[] = {
-        EO_OP_FUNC(NULL, _null_fct, "NULL API function"),
+        EO_OP_FUNC(NULL, _null_fct),
         EO_OP_SENTINEL
    };
    static Eo_Class_Description class_desc = {
@@ -283,8 +283,8 @@ START_TEST(eo_api_redefined)
    const Eo_Class *klass;
 
    static Eo_Op_Description op_descs[] = {
-        EO_OP_FUNC(null_fct, _null_fct, "API function"),
-        EO_OP_FUNC(null_fct, NULL, "Redefining API function"),
+        EO_OP_FUNC(null_fct, _null_fct),
+        EO_OP_FUNC(null_fct, NULL),
         EO_OP_SENTINEL
    };
    static Eo_Class_Description class_desc = {

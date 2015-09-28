@@ -722,8 +722,8 @@ EO_FUNC_BODY(multi_a_print, Eina_Bool, EINA_FALSE);
 EO_FUNC_BODY(multi_class_hi_print, Eina_Bool, EINA_FALSE);
 
 static Eo_Op_Description _multi_do_op_descs[] = {
-     EO_OP_FUNC(multi_a_print, _a_print, "Print property a"),
-     EO_OP_FUNC(multi_class_hi_print, _class_hi_print, "Print Hi"),
+     EO_OP_FUNC(multi_a_print, _a_print),
+     EO_OP_FUNC(multi_class_hi_print, _class_hi_print),
      EO_OP_SENTINEL
 };
 

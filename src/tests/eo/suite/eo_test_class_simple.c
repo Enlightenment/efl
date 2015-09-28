@@ -8,7 +8,7 @@
 #define MY_CLASS SIMPLE_CLASS
 
 EAPI const Eo_Event_Description _EV_A_CHANGED =
-        EO_EVENT_DESCRIPTION("a,changed", "Called when a has changed.");
+        EO_EVENT_DESCRIPTION("a,changed");
 
 static void
 _a_set(Eo *obj EINA_UNUSED, void *class_data, int a)
@@ -87,13 +87,13 @@ EO_VOID_FUNC_BODY(simple_no_implementation);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC_OVERRIDE(eo_dbg_info_get, _dbg_info_get),
-     EO_OP_FUNC(simple_a_set, _a_set, "Set property a"),
-     EO_OP_FUNC(simple_a_get, _a_get, "Get property a"),
-     EO_OP_FUNC(simple_a_print, _a_print, "Print property a"),
-     EO_OP_CLASS_FUNC(simple_class_hi_print, _class_hi_print, "Print property a"),
-     EO_OP_FUNC(simple_recursive, _recursive, "Recursive function"),
-     EO_OP_FUNC(simple_part_get, _part_get, "Part getter"),
-     EO_OP_FUNC(simple_pure_virtual, NULL, "Pure Virtual function"),
+     EO_OP_FUNC(simple_a_set, _a_set),
+     EO_OP_FUNC(simple_a_get, _a_get),
+     EO_OP_FUNC(simple_a_print, _a_print),
+     EO_OP_CLASS_FUNC(simple_class_hi_print, _class_hi_print),
+     EO_OP_FUNC(simple_recursive, _recursive),
+     EO_OP_FUNC(simple_part_get, _part_get),
+     EO_OP_FUNC(simple_pure_virtual, NULL),
      EO_OP_SENTINEL
 };
 

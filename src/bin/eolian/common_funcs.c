@@ -155,20 +155,3 @@ _startline(char *str, char *pos)
 
    return ret;
 }
-
-char*
-_source_desc_get(const char *str)
-{
-   Eina_Strbuf *part = eina_strbuf_new();
-   if (str)
-     {
-        const char *p = strchr(str, '\n');
-        size_t offs = (p) ? (size_t)(p - str) : strlen(str);
-        eina_strbuf_append_n(part, str, offs);
-        eina_strbuf_replace_all(part, "\\", "\\\\");
-        eina_strbuf_replace_all(part, "\"", "\\\"");
-     }
-   char *ret = eina_strbuf_string_steal(part);
-   eina_strbuf_free(part);
-   return ret;
-}

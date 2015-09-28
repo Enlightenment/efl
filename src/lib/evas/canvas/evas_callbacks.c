@@ -8,32 +8,30 @@ EVAS_MEMPOOL(_mp_pc);
 extern Eina_Hash* signals_hash_table;
 
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_PRE =
-   EO_EVENT_DESCRIPTION("Render Pre", "Called just before rendering starts on the canvas target @since 1.2");
+   EO_EVENT_DESCRIPTION("Render Pre");
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_POST =
-   EO_EVENT_DESCRIPTION("Render Post", "Called just after rendering stops on the canvas target @since 1.2");
+   EO_EVENT_DESCRIPTION("Render Post");
 
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_AXIS_UPDATE =
-   EO_EVENT_DESCRIPTION("Axis Update", "Device axis value changed");
+   EO_EVENT_DESCRIPTION("Axis Update");
 
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_FOCUS_IN =
-   EO_HOT_EVENT_DESCRIPTION("Canvas Focus In", "Canvas got focus as a whole");
+   EO_HOT_EVENT_DESCRIPTION("Canvas Focus In");
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_FOCUS_OUT =
-   EO_HOT_EVENT_DESCRIPTION("Canvas Focus Out", "Canvas lost focus as a whole");
+   EO_HOT_EVENT_DESCRIPTION("Canvas Focus Out");
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE =
-   EO_HOT_EVENT_DESCRIPTION("Render Flush Pre", "Called just before rendering is updated on the canvas target");
+   EO_HOT_EVENT_DESCRIPTION("Render Flush Pre");
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_POST =
-   EO_HOT_EVENT_DESCRIPTION("Render Flush Post", "Called just after rendering is updated on the canvas target");
+   EO_HOT_EVENT_DESCRIPTION("Render Flush Post");
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_OBJECT_FOCUS_IN =
-   EO_HOT_EVENT_DESCRIPTION("Canvas Object Focus In", "Canvas object got focus");
+   EO_HOT_EVENT_DESCRIPTION("Canvas Object Focus In");
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_OBJECT_FOCUS_OUT =
-   EO_HOT_EVENT_DESCRIPTION("Canvas Object Focus Out", "Canvas object lost focus");
+   EO_HOT_EVENT_DESCRIPTION("Canvas Object Focus Out");
 
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_DEVICE_CHANGED =
-  EO_HOT_EVENT_DESCRIPTION("Device changed",
-                           "Devices added, removed or changed to the canvas");
+  EO_HOT_EVENT_DESCRIPTION("Device changed");
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE =
-  EO_HOT_EVENT_DESCRIPTION("Canvas viewport resize",
-                           "Canvas viewport is resized");
+  EO_HOT_EVENT_DESCRIPTION("Canvas viewport resize");
 /**
  * Evas events descriptions for Eo.
  */

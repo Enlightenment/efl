@@ -138,13 +138,11 @@ Eo_Class const* create_class(eina::index_sequence<S...>)
      );
    op_descs[detail::operation_description_size<E...>::value].op = EO_NOOP;
    op_descs[detail::operation_description_size<E...>::value].op_type = EO_OP_TYPE_REGULAR;
-   op_descs[detail::operation_description_size<E...>::value].doc = NULL;
 
    op_descs[detail::operation_description_size<E...>::value+1].func = 0;
    op_descs[detail::operation_description_size<E...>::value+1].api_func = 0;
    op_descs[detail::operation_description_size<E...>::value+1].op = 0;
    op_descs[detail::operation_description_size<E...>::value+1].op_type = EO_OP_TYPE_INVALID;
-   op_descs[detail::operation_description_size<E...>::value+1].doc = NULL;
 
    typedef inherit<D, E...> inherit_type;
    using namespace detail;

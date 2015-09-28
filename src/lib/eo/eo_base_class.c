@@ -401,7 +401,6 @@ _wref_destruct(Eo_Base_Data *pd)
 
 /* XXX: Legacy support, remove when legacy is dead. */
 static Eina_Hash *_legacy_events_hash = NULL;
-static const char *_legacy_event_desc = "Dynamically generated legacy event";
 
 EAPI const Eo_Event_Description *
 eo_base_legacy_only_event_description_get(const char *_event_name)
@@ -412,7 +411,6 @@ eo_base_legacy_only_event_description_get(const char *_event_name)
      {
         event_desc = calloc(1, sizeof(Eo_Event_Description));
         event_desc->name = event_name;
-        event_desc->doc = _legacy_event_desc;
         eina_hash_add(_legacy_events_hash, event_name, event_desc);
      }
    else
@@ -643,22 +641,13 @@ _cb_desc_match(const Eo_Event_Description *a, const Eo_Event_Description *b)
    if (!a)
       return EINA_FALSE;
 
-   /* If either is legacy, fallback to string comparison. */
-   if ((a->doc == _legacy_event_desc) || (b->doc == _legacy_event_desc))
+   if (a == b)
      {
-        /* Take stringshare shortcut if both are legacy */
-        if (a->doc == b->doc)
-          {
-             return (a->name == b->name);
-          }
-        else
-          {
-             return !strcmp(a->name, b->name);
-          }
+        return EINA_TRUE;
      }
    else
      {
-        return (a == b);
+        return !strcmp(a->name, b->name);
      }
 }
 

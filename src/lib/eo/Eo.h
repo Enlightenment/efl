@@ -242,24 +242,22 @@ typedef unsigned int Eo_Op;
  */
 
 /**
- * @def EO_EVENT_DESCRIPTION(name, doc)
+ * @def EO_EVENT_DESCRIPTION(name)
  * An helper macro to help populating #Eo_Event_Description
  * @param name The name of the event.
- * @param doc Additional doc for the event.
  * @see Eo_Event_Description
  */
-#define EO_EVENT_DESCRIPTION(name, doc) { name, doc, EINA_FALSE }
+#define EO_EVENT_DESCRIPTION(name) { name, EINA_FALSE }
 
 /**
- * @def EO_HOT_EVENT_DESCRIPTION(name, doc)
+ * @def EO_HOT_EVENT_DESCRIPTION(name)
  * An helper macro to help populating #Eo_Event_Description and make
  * the event impossible to freeze.
  * @param name The name of the event.
- * @param doc Additional doc for the event.
  * @see Eo_Event_Description
  * @see EO_EVENT_DESCRIPTION
  */
-#define EO_HOT_EVENT_DESCRIPTION(name, doc) { name, doc, EINA_TRUE }
+#define EO_HOT_EVENT_DESCRIPTION(name) { name, EINA_TRUE }
 
 
 
@@ -351,7 +349,6 @@ typedef struct _Eo_Op_Description
    void *func;             /**< The static function to call for the op. */
    Eo_Op op;               /**< The op. */
    Eo_Op_Type op_type;     /**< The type of the Op. */
-   const char *doc;        /**< Explanation about the Op. */
 } Eo_Op_Description;
 
 /**
@@ -540,11 +537,11 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
 # define _EO_OP_API_ENTRY(a) a, #a
 #endif
 
-#define EO_OP_FUNC(_api, _private, _doc) { _EO_OP_API_ENTRY(_api), _private, EO_NOOP, EO_OP_TYPE_REGULAR, _doc }
-#define EO_OP_CLASS_FUNC(_api, _private, _doc) { _EO_OP_API_ENTRY(_api), _private, EO_NOOP, EO_OP_TYPE_CLASS, _doc }
-#define EO_OP_FUNC_OVERRIDE(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_OVERRIDE, EO_OP_TYPE_REGULAR, NULL }
-#define EO_OP_CLASS_FUNC_OVERRIDE(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_OVERRIDE, EO_OP_TYPE_CLASS, NULL }
-#define EO_OP_SENTINEL { _EO_OP_API_ENTRY(NULL), NULL, 0, EO_OP_TYPE_INVALID, NULL }
+#define EO_OP_FUNC(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_NOOP, EO_OP_TYPE_REGULAR }
+#define EO_OP_CLASS_FUNC(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_NOOP, EO_OP_TYPE_CLASS }
+#define EO_OP_FUNC_OVERRIDE(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_OVERRIDE, EO_OP_TYPE_REGULAR }
+#define EO_OP_CLASS_FUNC_OVERRIDE(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_OVERRIDE, EO_OP_TYPE_CLASS }
+#define EO_OP_SENTINEL { _EO_OP_API_ENTRY(NULL), NULL, 0, EO_OP_TYPE_INVALID }
 
 // returns the OP id corresponding to the given api_func
 EAPI Eo_Op _eo_api_op_id_get(const void *api_func, Eina_Bool is_main_loop, const char *file, int line);

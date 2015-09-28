@@ -38,10 +38,10 @@ _GET_SET_FUNC(a)
 _GET_SET_FUNC(b)
 
 static Eo_Op_Description op_descs[] = {
-     EO_OP_FUNC(simple_a_set, _a_set, "Set property a"),
-     EO_OP_FUNC(simple_a_get, _a_get, "Get property a"),
-     EO_OP_FUNC(simple_b_set, _b_set, "Set property b"),
-     EO_OP_FUNC(simple_b_get, _b_get, "Get property b"),
+     EO_OP_FUNC(simple_a_set, _a_set),
+     EO_OP_FUNC(simple_a_get, _a_get),
+     EO_OP_FUNC(simple_b_set, _b_set),
+     EO_OP_FUNC(simple_b_get, _b_get),
      EO_OP_SENTINEL
 };
 

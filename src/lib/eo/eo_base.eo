@@ -6,7 +6,6 @@ type @extern Eo.Event_Cb: __builtin_event_cb;
 struct Eo.Event_Description {
     [[This struct holds the description of a specific event.]]
     name: const(char) *; [[name of the event.]]
-    doc: const(char) *; [[Explanation about the event.]]
     unfreezable: bool; [[Eina_True if the event cannot be frozen.]]
 }
 

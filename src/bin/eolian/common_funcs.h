@@ -63,8 +63,6 @@ char *_nextline(char *str, unsigned int lines);
 
 char *_startline(char *str, char *pos);
 
-char *_source_desc_get(const char *str);
-
 void _class_env_create(const Eolian_Class *class, const char *over_classname, _eolian_class_vars *env);
 
 void _class_func_env_create(const Eolian_Class *class, const char *funcname, Eolian_Function_Type ftype EINA_UNUSED, _eolian_class_func_vars *env);

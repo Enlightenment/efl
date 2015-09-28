@@ -57,14 +57,14 @@ static Eo_Op_Description _override_op_desc[] = {
      EO_OP_FUNC_OVERRIDE(base_constructor, _override_base_constructor),
      EO_OP_FUNC_OVERRIDE(base_z_get, __eolian_override_base_z_get),
      EO_OP_FUNC_OVERRIDE(base_z_set, __eolian_override_base_z_set),
-     EO_OP_FUNC(override_a_set, NULL, ""),
-     EO_OP_FUNC(override_foo, NULL, ""),
-     EO_OP_FUNC(override_b_set, __eolian_override_b_set, ""),
-     EO_OP_FUNC(override_bar, __eolian_override_bar, ""),
-     EO_OP_FUNC(override_c_get, __eolian_override_c_get, ""),
-     EO_OP_FUNC(override_a_get, _override_a_get, ""),
-     EO_OP_FUNC(override_b_get, _override_b_get, ""),
-     EO_OP_FUNC(override_c_set, _override_c_set, ""),
+     EO_OP_FUNC(override_a_set, NULL),
+     EO_OP_FUNC(override_foo, NULL),
+     EO_OP_FUNC(override_b_set, __eolian_override_b_set),
+     EO_OP_FUNC(override_bar, __eolian_override_bar),
+     EO_OP_FUNC(override_c_get, __eolian_override_c_get),
+     EO_OP_FUNC(override_a_get, _override_a_get),
+     EO_OP_FUNC(override_b_get, _override_b_get),
+     EO_OP_FUNC(override_c_set, _override_c_set),
      EO_OP_SENTINEL
 };
 

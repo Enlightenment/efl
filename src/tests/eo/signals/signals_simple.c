@@ -12,7 +12,7 @@ typedef struct
 } Private_Data;
 
 EAPI const Eo_Event_Description _EV_A_CHANGED =
-        EO_EVENT_DESCRIPTION("a,changed", "Called when a has changed.");
+        EO_EVENT_DESCRIPTION("a,changed");
 
 #define MY_CLASS SIMPLE_CLASS
 
@@ -77,7 +77,7 @@ EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC_OVERRIDE(eo_constructor, _constructor),
-     EO_OP_FUNC(simple_a_set, _a_set, "Set property a"),
+     EO_OP_FUNC(simple_a_set, _a_set),
      EO_OP_SENTINEL
 };
 

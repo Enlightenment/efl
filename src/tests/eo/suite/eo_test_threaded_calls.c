@@ -60,9 +60,9 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED, int v)
 }
 
 static Eo_Op_Description op_descs[] = {
-     EO_OP_FUNC(thread_test_constructor, _constructor, "Constructor."),
-     EO_OP_FUNC(thread_test_v_get, _v_get, "Get property v."),
-     EO_OP_FUNC(thread_test_try_swap_stack, _try_swap_stack, "Swap call stack frames if it is not thread safe."),
+     EO_OP_FUNC(thread_test_constructor, _constructor),
+     EO_OP_FUNC(thread_test_v_get, _v_get),
+     EO_OP_FUNC(thread_test_try_swap_stack, _try_swap_stack),
      EO_OP_SENTINEL
 };
 

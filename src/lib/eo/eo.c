@@ -219,10 +219,32 @@ _eo_op_id_desc_get(Eo_Op op)
 }
 
 static const char *
+_eo_op_desc_name_get(const Eo_Op_Description *desc)
+{
+   static const char *fct_name = "unknown";
+
+   if (!desc)
+     {
+        return fct_name;
+     }
+
+#ifndef _WIN32
+# ifdef HAVE_DLADDR
+   static Dl_info info;
+   if (dladdr(desc->api_func, &info) != 0)
+      fct_name = info.dli_sname;
+# endif
+#else
+   fct_name = api_func; /* Same on windows */
+#endif
+   return fct_name;
+}
+
+static const char *
 _eo_op_id_name_get(Eo_Op op)
 {
    const Eo_Op_Description *desc = _eo_op_id_desc_get(op);
-   return (desc) ? desc->doc : NULL;
+   return _eo_op_desc_name_get(desc);
 }
 
 static inline const op_type_funcs *
@@ -772,16 +794,7 @@ _eo_api_op_id_get(const void *api_func, Eina_Bool is_main_loop, const char *file
 
    if (desc == NULL)
      {
-        const char *fct_name = "unknown";
-#ifndef _WIN32
-# ifdef HAVE_DLADDR
-        Dl_info info;
-        if (dladdr(api_func, &info) != 0)
-          fct_name = info.dli_sname;
-# endif
-#else
-        fct_name = api_func; /* Same on windows */
-#endif
+        const char *fct_name = _eo_op_desc_name_get(desc);
         ERR("in %s:%d: unable to resolve %s api func '%s' %p in class '%s'.",
             file, line, (class_ref ? "class" : "regular"),
             fct_name, api_func, klass->desc->name);
@@ -826,7 +839,7 @@ _eo_class_funcs_set(_Eo_Class *klass)
         if(op_desc->api_func == NULL)
           {
              ERR("Class '%s': NULL API not allowed (%d NULL->%p '%s').",
-                 klass->desc->name, op_desc->op, op_desc->func, op_desc->doc);
+                 klass->desc->name, op_desc->op, op_desc->func, _eo_op_desc_name_get(op_desc));
              return EINA_FALSE;
           }
 
@@ -835,7 +848,7 @@ _eo_class_funcs_set(_Eo_Class *klass)
              if (op_desc->api_func == last_api_func)
                {
                   ERR("Class '%s': API previously defined (%d %p->%p '%s').",
-                      klass->desc->name, op_desc->op, op_desc->api_func, op_desc->func, op_desc->doc);
+                      klass->desc->name, op_desc->op, op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
                   return EINA_FALSE;
                }
              op_desc->op = op_id;
@@ -852,15 +865,14 @@ _eo_class_funcs_set(_Eo_Class *klass)
              if (api_desc == NULL)
                {
                   ERR("Class '%s': Can't find api func description in class hierarchy (%p->%p) (%s).",
-                      klass->desc->name, op_desc->api_func, op_desc->func, op_desc->doc);
+                      klass->desc->name, op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
                   return EINA_FALSE;
                }
 
              op_desc->op = api_desc->op;
-             op_desc->doc = api_desc->doc;
           }
 
-        DBG(" %4d %p->%p '%s'", op_desc->op, op_desc->api_func, op_desc->func, op_desc->doc);
+        DBG(" %4d %p->%p '%s'", op_desc->op, op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
 
         if (!_dich_func_set(klass, op_desc->op, op_desc->func))
           return EINA_FALSE;

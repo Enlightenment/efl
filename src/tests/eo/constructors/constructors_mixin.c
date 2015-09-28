@@ -37,7 +37,7 @@ _destructor(Eo *obj, void *class_data EINA_UNUSED)
 EAPI EO_VOID_FUNC_BODYV(mixin_add_and_print, EO_FUNC_CALL(x), int x);
 
 static Eo_Op_Description op_descs[] = {
-     EO_OP_FUNC(mixin_add_and_print, _add_and_print_set, "Add A + B + param and print it"),
+     EO_OP_FUNC(mixin_add_and_print, _add_and_print_set),
      EO_OP_FUNC_OVERRIDE(eo_constructor, _constructor),
      EO_OP_FUNC_OVERRIDE(eo_destructor, _destructor),
      EO_OP_SENTINEL

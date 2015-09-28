@@ -18,8 +18,8 @@ typedef enum _Evas_Canvas3D_Node_Private_Callback_Type
 
 const Eo_Event_Description evas_canvas3d_node_private_event_desc[] =
 {
-   {"clicked,private", "private event clicked", EINA_FALSE},
-   {"collision,private", "private event collision", EINA_FALSE}
+   EO_EVENT_DESCRIPTION("clicked,private"),
+   EO_EVENT_DESCRIPTION("collision,private")
 };
 
 /*Private callbacks */

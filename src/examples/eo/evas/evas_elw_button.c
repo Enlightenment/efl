@@ -11,7 +11,7 @@
 EAPI Eo_Op ELW_BUTTON_BASE_ID = 0;
 
 EAPI const Eo_Event_Description _EV_CLICKED =
-        EO_EVENT_DESCRIPTION("clicked", "Called when there was a click.");
+        EO_EVENT_DESCRIPTION("clicked");
 
 typedef struct
 {
