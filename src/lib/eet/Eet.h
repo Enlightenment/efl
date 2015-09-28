@@ -4192,7 +4192,7 @@ eet_data_descriptor_decode_cipher(Eet_Data_Descriptor *edd,
  * serialised chunk of data that can be decoded again by
  * eet_data_descriptor_decode(). This is useful for being able to transmit
  * data structures across sockets, pipes, IPC or shared file mechanisms,
- * without having to worry about memory space, machine type, endianess etc.
+ * without having to worry about memory space, machine type, endianness etc.
  *
  * The parameter @p edd must point to a valid data descriptor, and
  * @p data_in must point to the right data structure to encode. If not, the
