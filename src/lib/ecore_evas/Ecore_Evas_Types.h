@@ -48,6 +48,11 @@ typedef void   (*Ecore_Evas_Event_Cb) (Ecore_Evas *ee); /**< Callback used for s
 typedef struct _Ecore_Wl_Window Ecore_Wl_Window;
 #endif
 
+#ifndef _ECORE_WL2_H_
+#define _ECORE_WAYLAND_WINDOW_PREDEF
+typedef struct _Ecore_Wl2_Window Ecore_Wl2_Window;
+#endif
+
 #ifndef _ECORE_GETOPT_PREDEF
 typedef struct _Ecore_Getopt Ecore_Getopt;
 #define _ECORE_GETOPT_PREDEF 1

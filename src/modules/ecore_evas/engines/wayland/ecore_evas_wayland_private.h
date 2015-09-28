@@ -20,6 +20,7 @@
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
 #include <Ecore_Wayland.h>
+#include <Ecore_Wl2.h>
 
 #include <Ecore_Evas.h>
 #include "ecore_evas_private.h"
@@ -29,7 +30,8 @@ typedef struct _Ecore_Evas_Engine_Wl_Data Ecore_Evas_Engine_Wl_Data;
 
 struct _Ecore_Evas_Engine_Wl_Data 
 {
-   Ecore_Wl_Window *parent, *win;
+   Ecore_Wl2_Display *display;
+   Ecore_Wl2_Window *parent, *win;
    Evas_Object *frame;
    int fx, fy, fw, fh;
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL

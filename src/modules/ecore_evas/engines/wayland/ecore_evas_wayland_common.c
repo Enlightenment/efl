@@ -80,7 +80,7 @@ static Eina_Bool
 _ecore_evas_wl_common_cb_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
-   Ecore_Wl_Event_Mouse_In *ev;
+   Ecore_Event_Mouse_IO *ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -166,7 +166,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
 {
    Ecore_Evas *ee;
    Ecore_Evas_Engine_Wl_Data *wdata;
-   Ecore_Wl_Event_Window_Configure *ev;
+   Ecore_Wl2_Event_Window_Configure *ev;
    int nw = 0, nh = 0;
    int fw = 0, fh = 0;
    Eina_Bool prev_max, prev_full;
@@ -232,7 +232,7 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
    if (rot_dif < 0) rot_dif = -rot_dif;
 
    /* set ecore_wayland window rotation */
-   ecore_wl_window_rotation_set(wdata->win, rotation);
+   ecore_wl2_window_rotation_set(wdata->win, rotation);
 
    /* check if rotation is just a flip */
    if (rot_dif != 180)
@@ -253,8 +253,8 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
              if (!ee->prop.fullscreen)
                {
                   /* resize the ecore_wayland window */
-                  ecore_wl_window_resize(wdata->win,
-                                         ee->req.h + fw, ee->req.w + fh, 0);
+                  ecore_wl2_window_resize(wdata->win,
+                                          ee->req.h + fw, ee->req.w + fh, 0);
                }
              else
                {
@@ -262,8 +262,8 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
                   if ((rotation == 0) || (rotation == 180))
                     {
                        /* resize the ecore_wayland window */
-                       ecore_wl_window_resize(wdata->win, 
-                                              ee->req.w, ee->req.h, 0);
+                       ecore_wl2_window_resize(wdata->win,
+                                               ee->req.w, ee->req.h, 0);
 
                        /* resize the canvas */
                        evas_output_size_set(ee->evas, ee->req.w, ee->req.h);
@@ -273,8 +273,8 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
                   else
                     {
                        /* resize the ecore_wayland window */
-                       ecore_wl_window_resize(wdata->win, 
-                                              ee->req.h, ee->req.w, 0);
+                       ecore_wl2_window_resize(wdata->win,
+                                               ee->req.h, ee->req.w, 0);
 
                        /* resize the canvas */
                        evas_output_size_set(ee->evas, ee->req.h, ee->req.w);
@@ -346,7 +346,7 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
    else
      {
         /* resize the ecore_wayland window */
-        ecore_wl_window_resize(wdata->win, ee->w, ee->h, 0);
+        ecore_wl2_window_resize(wdata->win, ee->w, ee->h, 0);
 
         /* record the current rotation of the ecore_evas */
         ee->rotation = rotation;
@@ -391,19 +391,19 @@ _ecore_evas_wl_common_init(void)
      return _ecore_evas_wl_init_count;
 
    _ecore_evas_wl_event_hdls[0] =
-     ecore_event_handler_add(ECORE_WL_EVENT_MOUSE_IN,
+     ecore_event_handler_add(ECORE_EVENT_MOUSE_IN,
                              _ecore_evas_wl_common_cb_mouse_in, NULL);
    _ecore_evas_wl_event_hdls[1] =
-     ecore_event_handler_add(ECORE_WL_EVENT_MOUSE_OUT,
+     ecore_event_handler_add(ECORE_EVENT_MOUSE_OUT,
                              _ecore_evas_wl_common_cb_mouse_out, NULL);
    _ecore_evas_wl_event_hdls[2] =
-     ecore_event_handler_add(ECORE_WL_EVENT_FOCUS_IN,
+     ecore_event_handler_add(ECORE_WL2_EVENT_FOCUS_IN,
                              _ecore_evas_wl_common_cb_focus_in, NULL);
    _ecore_evas_wl_event_hdls[3] =
-     ecore_event_handler_add(ECORE_WL_EVENT_FOCUS_OUT,
+     ecore_event_handler_add(ECORE_WL2_EVENT_FOCUS_OUT,
                              _ecore_evas_wl_common_cb_focus_out, NULL);
    _ecore_evas_wl_event_hdls[4] =
-     ecore_event_handler_add(ECORE_WL_EVENT_WINDOW_CONFIGURE,
+     ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE,
                              _ecore_evas_wl_common_cb_window_configure, NULL);
 
    ecore_event_evas_init();
@@ -452,18 +452,24 @@ _ecore_evas_wl_common_free(Ecore_Evas *ee)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
+
    wdata = ee->engine.data;
-   if (wdata->anim_callback)
-     wl_callback_destroy(wdata->anim_callback);
-   if (wdata->win) ecore_wl_window_free(wdata->win);
+
+   if (wdata->anim_callback) wl_callback_destroy(wdata->anim_callback);
+   wdata->anim_callback = NULL;
+
+   if (wdata->win) ecore_wl2_window_free(wdata->win);
    wdata->win = NULL;
+
+   ecore_wl2_display_disconnect(wdata->display);
    free(wdata);
 
    ecore_event_window_unregister(ee->prop.window);
    ecore_evas_input_event_unregister(ee);
 
    _ecore_evas_wl_common_shutdown();
-   ecore_wl_shutdown();
+
+   ecore_wl2_shutdown();
 }
 
 void
@@ -635,6 +641,14 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 
         if (wdata->frame)
           evas_object_resize(wdata->frame, w, h);
+
+        if (wdata->win)
+          {
+             int x, y;
+
+             ecore_wl2_window_geometry_get(wdata->win, &x, &y, NULL, NULL);
+             ecore_wl2_window_geometry_set(wdata->win, x, y, w, h);
+          }
 
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
@@ -936,11 +950,14 @@ _ecore_evas_wl_common_frame_border_size_get(Evas_Object *obj, int *fx, int *fy, 
 }
 
 void 
-_ecore_evas_wl_common_pointer_xy_get(const Ecore_Evas *ee EINA_UNUSED, Evas_Coord *x, Evas_Coord *y)
+_ecore_evas_wl_common_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
 {
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   ecore_wl_pointer_xy_get(x, y);
+   wdata = ee->engine.data;
+   ecore_wl2_window_pointer_xy_get(wdata->win, x, y);
 }
 
 void
@@ -952,7 +969,7 @@ _ecore_evas_wl_common_raise(Ecore_Evas *ee)
 
    if ((!ee) || (!ee->visible)) return;
    wdata = ee->engine.data;
-   ecore_wl_window_raise(wdata->win);
+   ecore_wl2_window_raise(wdata->win);
 }
 
 void
@@ -977,7 +994,7 @@ _ecore_evas_wl_common_title_set(Ecore_Evas *ee, const char *title)
      }
 
    if (ee->prop.title)
-     ecore_wl_window_title_set(wdata->win, ee->prop.title);
+     ecore_wl2_window_title_set(wdata->win, ee->prop.title);
 }
 
 void
@@ -1001,8 +1018,9 @@ _ecore_evas_wl_common_name_class_set(Ecore_Evas *ee, const char *n, const char *
         ee->prop.clas = NULL;
         if (c) ee->prop.clas = strdup(c);
      }
+
    if (ee->prop.clas)
-     ecore_wl_window_class_name_set(wdata->win, ee->prop.clas);
+     ecore_wl2_window_class_name_set(wdata->win, ee->prop.clas);
 }
 
 void
@@ -1088,14 +1106,15 @@ void
 _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
 {
    int x, y, fx, fy;
-   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+   Ecore_Evas_Engine_Wl_Data *wdata;
    Evas_Object *old;
 
    if (!ee) return;
+   wdata = ee->engine.data;
    old = ee->prop.cursor.object;
    if (obj == NULL)
      {
-        ecore_wl_window_pointer_set(wdata->win, NULL, 0, 0);
+        ecore_wl2_window_pointer_set(wdata->win, NULL, 0, 0);
         ee->prop.cursor.object = NULL;
         ee->prop.cursor.layer = 0;
         ee->prop.cursor.hot.x = 0;
@@ -1112,7 +1131,7 @@ _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int la
 
    if (obj != old)
      {
-        ecore_wl_window_pointer_set(wdata->win, NULL, 0, 0);
+        ecore_wl2_window_pointer_set(wdata->win, NULL, 0, 0);
         evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
         evas_object_pass_events_set(ee->prop.cursor.object, 1);
         if (evas_pointer_inside_get(ee->evas))
@@ -1158,7 +1177,7 @@ _ecore_evas_wl_common_iconified_set(Ecore_Evas *ee, Eina_Bool on)
    ee->prop.iconified = on;
 
    wdata = ee->engine.data;
-   ecore_wl_window_iconified_set(wdata->win, on);
+   ecore_wl2_window_iconified_set(wdata->win, on);
 }
 
 static void
@@ -1208,9 +1227,9 @@ _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, Eina_Bool on)
 
    if (!ee) return;
    if (ee->prop.maximized == on) return;
+
    wdata = ee->engine.data;
-   ecore_wl_window_maximized_set(wdata->win, on);
-//   _ecore_evas_wl_common_state_update(ee);
+   ecore_wl2_window_maximized_set(wdata->win, on);
 }
 
 void
@@ -1222,9 +1241,9 @@ _ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 
    if (!ee) return;
    if (ee->prop.fullscreen == on) return;
+
    wdata = ee->engine.data;
-   ecore_wl_window_fullscreen_set(wdata->win, on);
-//   _ecore_evas_wl_common_state_update(ee);
+   ecore_wl2_window_fullscreen_set(wdata->win, on);
 }
 
 void
@@ -1340,12 +1359,10 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
    int rend = 0;
    Eina_List *l;
    Ecore_Evas *ee2;
-   Ecore_Wl_Window *win = NULL;
    Ecore_Evas_Engine_Wl_Data *wdata;
 
    if (!ee) return 0;
    if (!(wdata = ee->engine.data)) return 0;
-   if (!(win = wdata->win)) return 0;
 
    /* TODO: handle comp no sync */
 
@@ -1403,13 +1420,17 @@ _ecore_evas_wl_common_withdrawn_set(Ecore_Evas *ee, Eina_Bool on)
 }
 
 void
-_ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *w, int *h)
+_ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h)
 {
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (x) *x = 0;
    if (y) *y = 0;
-   ecore_wl_screen_size_get(w, h);
+
+   wdata = ee->engine.data;
+   ecore_wl2_display_screen_size_get(wdata->display, w, h);
 }
 
 void
@@ -1421,8 +1442,11 @@ _ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee EINA_UNUSED, int *xdpi
 
    if (xdpi) *xdpi = 0;
    if (ydpi) *ydpi = 0;
+
    /* FIXME: Ideally this needs to get the DPI from a specific screen */
-   dpi = ecore_wl_dpi_get();
+
+   /* TODO */
+   /* dpi = ecore_wl_dpi_get(); */
    if (xdpi) *xdpi = dpi;
    if (ydpi) *ydpi = dpi;
 }
@@ -1479,32 +1503,33 @@ _ecore_evas_wayland_move(Ecore_Evas *ee, int x, int y)
      {
 	wdata = ee->engine.data;
         if (wdata->win)
-          ecore_wl_window_move(wdata->win, x, y);
+          ecore_wl2_window_move(wdata->win, x, y);
      }
 }
 
-static void
-_ecore_evas_wayland_type_set(Ecore_Evas *ee, int type)
-{
-   Ecore_Evas_Engine_Wl_Data *wdata;
+/* static void */
+/* _ecore_evas_wayland_type_set(Ecore_Evas *ee, int type) */
+/* { */
+   /* Ecore_Evas_Engine_Wl_Data *wdata; */
 
-   if (!ee) return;
-   wdata = ee->engine.data;
-   ecore_wl_window_type_set(wdata->win, type);
-}
+   /* if (!ee) return; */
+   /* wdata = ee->engine.data; */
 
-static Ecore_Wl_Window *
-_ecore_evas_wayland_window_get(const Ecore_Evas *ee)
-{
-   Ecore_Evas_Engine_Wl_Data *wdata;
+   /* TODO */
+   /* ecore_wl_window_type_set(wdata->win, type); */
+/* } */
 
-   if (!(!strncmp(ee->driver, "wayland", 7)))
-     return NULL;
+/* static Ecore_Wl2_Window * */
+/* _ecore_evas_wayland_window_get(const Ecore_Evas *ee) */
+/* { */
+/*    Ecore_Evas_Engine_Wl_Data *wdata; */
 
-   wdata = ee->engine.data;
-   return wdata->win;
-}
+/*    if (!(!strncmp(ee->driver, "wayland", 7))) */
+/*      return NULL; */
 
+/*    wdata = ee->engine.data; */
+/*    return wdata->win; */
+/* } */
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
 static void
@@ -1525,11 +1550,11 @@ _ecore_evas_wayland_pre_post_swap_callback_set(const Ecore_Evas *ee, void *data,
 }
 #endif
 
-static void
-_ecore_evas_wayland_pointer_set(Ecore_Evas *ee EINA_UNUSED, int hot_x EINA_UNUSED, int hot_y EINA_UNUSED)
-{
+/* static void */
+/* _ecore_evas_wayland_pointer_set(Ecore_Evas *ee EINA_UNUSED, int hot_x EINA_UNUSED, int hot_y EINA_UNUSED) */
+/* { */
 
-}
+/* } */
 
 Ecore_Evas_Interface_Wayland *
 _ecore_evas_wl_interface_new(void)
@@ -1544,9 +1569,9 @@ _ecore_evas_wl_interface_new(void)
 
    iface->resize = _ecore_evas_wayland_resize;
    iface->move = _ecore_evas_wayland_move;
-   iface->pointer_set = _ecore_evas_wayland_pointer_set;
-   iface->type_set = _ecore_evas_wayland_type_set;
-   iface->window_get = _ecore_evas_wayland_window_get;
+   /* iface->pointer_set = _ecore_evas_wayland_pointer_set; */
+   /* iface->type_set = _ecore_evas_wayland_type_set; */
+   /* iface->window_get = _ecore_evas_wayland_window_get; */
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
    iface->pre_post_swap_callback_set = 
