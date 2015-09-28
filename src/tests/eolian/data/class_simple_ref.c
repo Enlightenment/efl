@@ -29,7 +29,6 @@ static Eo_Op_Description _class_simple_op_desc[] = {
      EO_OP_FUNC(evas_obj_simple_a_set, _class_simple_a_set),
      EO_OP_FUNC(evas_obj_simple_a_get, _class_simple_a_get),
      EO_OP_FUNC(evas_obj_simple_foo, __eolian_class_simple_foo),
-     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description _class_simple_class_desc = {

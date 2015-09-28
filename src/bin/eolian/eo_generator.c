@@ -19,9 +19,7 @@ static Eina_Hash *_funcs_params_init = NULL;
 
 static const char
 tmpl_eo_ops_desc[] = "\
-static Eo_Op_Description _@#class_op_desc[] = {@#list_op\n\
-     EO_OP_SENTINEL\n\
-};\n\n";
+static Eo_Op_Description _@#class_op_desc[] = {@#list_op\n};\n\n";
 
 static const char
 tmpl_events_desc[] = "\
