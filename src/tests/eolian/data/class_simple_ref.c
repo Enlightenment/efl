@@ -25,7 +25,7 @@ int _class_simple_bar(Eo *obj, Evas_Simple_Data *pd, int x);
 
 EOAPI EO_FUNC_BODYV(evas_obj_simple_bar, int, 0, EO_FUNC_CALL(x), int x);
 
-static Eo_Op_Description _class_simple_op_desc[] = {
+static const Eo_Op_Description _class_simple_op_desc[] = {
      EO_OP_FUNC(evas_obj_simple_a_set, _class_simple_a_set),
      EO_OP_FUNC(evas_obj_simple_a_get, _class_simple_a_get),
      EO_OP_FUNC(evas_obj_simple_foo, __eolian_class_simple_foo),
