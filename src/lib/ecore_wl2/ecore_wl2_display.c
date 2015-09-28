@@ -175,8 +175,14 @@ _cb_connect_data(void *data, Ecore_Fd_Handler *hdl)
         return ECORE_CALLBACK_CANCEL;
      }
 
-   /* if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_READ)) */
-   ret = wl_display_dispatch(ewd->wl.display);
+   if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_READ))
+     ret = wl_display_dispatch(ewd->wl.display);
+   else if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_WRITE))
+     {
+        ret = wl_display_flush(ewd->wl.display);
+        if (ret == 0)
+          ecore_main_fd_handler_active_set(hdl, ECORE_FD_READ);
+     }
 
    if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
      {
@@ -351,7 +357,7 @@ ecore_wl2_display_connect(const char *name)
 
    ewd->fd_hdl =
      ecore_main_fd_handler_add(wl_display_get_fd(ewd->wl.display),
-                               ECORE_FD_READ | ECORE_FD_ERROR,
+                               ECORE_FD_READ | ECORE_FD_WRITE | ECORE_FD_ERROR,
                                _cb_connect_data, ewd, NULL, NULL);
 
    wl_registry_add_listener(wl_display_get_registry(ewd->wl.display),
