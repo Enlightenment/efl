@@ -452,3 +452,36 @@ ecore_wl2_display_animator_source_set(Ecore_Wl2_Display *display, Ecore_Animator
 
    return EINA_TRUE;
 }
+
+EAPI void
+ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, int *h)
+{
+   Ecore_Wl2_Output *output;
+   int ow = 0, oh = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN(display);
+
+   if (w) *w = 0;
+   if (h) *h = 0;
+
+   EINA_INLIST_FOREACH(display->outputs, output)
+     {
+        switch (output->transform)
+          {
+           case WL_OUTPUT_TRANSFORM_90:
+           case WL_OUTPUT_TRANSFORM_270:
+           case WL_OUTPUT_TRANSFORM_FLIPPED_90:
+           case WL_OUTPUT_TRANSFORM_FLIPPED_270:
+             ow += output->geometry.h;
+             oh += output->geometry.w;
+             break;
+           default:
+             ow += output->geometry.w;
+             oh += output->geometry.h;
+             break;
+          }
+     }
+
+   if (w) *w = ow;
+   if (h) *h = oh;
+}
