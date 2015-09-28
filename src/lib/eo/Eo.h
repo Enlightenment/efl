@@ -342,10 +342,7 @@ typedef enum _Eo_Class_Type Eo_Class_Type;
 
 typedef struct _Eo_Op_Description
 {
-   void *api_func;         /**< The EAPI function offering this op. */
-#ifdef _WIN32
-   const char *api_name;   /**< Full name of this API entry-point. Used to work around import indirection in DLL's. */
-#endif
+   void *api_func;         /**< The EAPI function offering this op. (The name of the func on windows) */
    void *func;             /**< The static function to call for the op. */
    Eo_Op op;               /**< The op. */
    Eo_Op_Type op_type;     /**< The type of the Op. */
@@ -463,10 +460,10 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
      if (Hook)                                                          \
        Hook(___call.klass, ___call.obj, FuncName, ___call.func, __VA_ARGS__);
 
-#ifdef _WIN32
-#define EO_FUNC_COMMON_OP_FUNC(Name) ((const void *) #Name)
+#ifndef _WIN32
+# define EO_FUNC_COMMON_OP_FUNC(Name) ((const void *) Name)
 #else
-#define EO_FUNC_COMMON_OP_FUNC(Name) ((const void *) Name)
+# define EO_FUNC_COMMON_OP_FUNC(Name) ((const void *) #Name)
 #endif
 
 // cache OP id, get real fct and object data then do the call
@@ -534,7 +531,7 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
 #ifndef _WIN32
 # define _EO_OP_API_ENTRY(a) a
 #else
-# define _EO_OP_API_ENTRY(a) a, #a
+# define _EO_OP_API_ENTRY(a) #a
 #endif
 
 #define EO_OP_FUNC(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_NOOP, EO_OP_TYPE_REGULAR }

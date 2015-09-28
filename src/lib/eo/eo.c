@@ -739,7 +739,6 @@ _eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class *
                     return op_desc;
                }
 #else
-             const char *api_name = api_func; /* We put it here on windows. */
              /* On Windows, DLL API's will be exported using the dllexport flag.
               * When used by another library or executable, they will be declared
               * using the dllimport flag. What happens really is that two symbols are
@@ -749,10 +748,9 @@ _eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class *
               */
              for (unsigned int i = 0; i < cur_klass->desc->ops.count; i++)
                {
-                  if (api_name && !strcmp(api_name, op_descs[i].api_name))
+                  if (((op_descs[i].api_func != NULL) && (op_descs[i].api_func != ((void (*)())-1))) &&
+                        (api_func && !strcmp(api_func, op_descs[i].api_func)))
                     {
-                       if (op_descs[i].api_func == NULL || op_descs[i].api_func == ((void (*)())-1))
-                          break;
                        return &op_descs[i];
                     }
                }
@@ -856,11 +854,7 @@ _eo_class_funcs_set(_Eo_Class *klass)
           }
         else if (op_desc->op == EO_OP_OVERRIDE)
           {
-#ifdef _WIN32
-             api_desc = _eo_api_desc_get(op_desc->api_name, klass->parent, klass->extensions);
-#else
              api_desc = _eo_api_desc_get(op_desc->api_func, klass->parent, klass->extensions);
-#endif
 
              if (api_desc == NULL)
                {
