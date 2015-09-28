@@ -40,7 +40,6 @@ static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(mixin_add_and_print, _add_and_print_set),
      EO_OP_FUNC_OVERRIDE(eo_constructor, _constructor),
      EO_OP_FUNC_OVERRIDE(eo_destructor, _destructor),
-     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {

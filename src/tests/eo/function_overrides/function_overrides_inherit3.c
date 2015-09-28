@@ -18,7 +18,6 @@ _a_set(Eo *obj, void *class_data EINA_UNUSED, int a)
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
-     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {

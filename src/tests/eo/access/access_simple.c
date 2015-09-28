@@ -34,7 +34,6 @@ EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(simple_a_set, _a_set),
-     EO_OP_SENTINEL
 };
 
 static const Eo_Event_Description *event_desc[] = {

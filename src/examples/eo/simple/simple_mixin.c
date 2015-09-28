@@ -22,7 +22,6 @@ EAPI EO_FUNC_BODY(mixin_a_square_get, int, 0);
 
 static Eo_Op_Description op_desc[] = {
      EO_OP_FUNC(mixin_a_square_get, _a_square_get, "Get the value of A^2"),
-     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {

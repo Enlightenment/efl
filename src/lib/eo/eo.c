@@ -816,6 +816,7 @@ eo_api_funcs_cmp(const void *p1, const void *p2)
 static Eina_Bool
 _eo_class_funcs_set(_Eo_Class *klass)
 {
+   unsigned int i;
    int op_id;
    const void *last_api_func;
    const Eo_Op_Description *api_desc;
@@ -832,7 +833,7 @@ _eo_class_funcs_set(_Eo_Class *klass)
    qsort((void*)op_descs, klass->desc->ops.count, sizeof(Eo_Op_Description), eo_api_funcs_cmp);
 
    last_api_func = NULL;
-   for (op_desc = op_descs; op_desc->op_type != EO_OP_TYPE_INVALID; op_desc++)
+   for (i = 0, op_desc = op_descs; i < klass->desc->ops.count; i++, op_desc++)
      {
         if(op_desc->api_func == NULL)
           {

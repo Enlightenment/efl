@@ -315,7 +315,6 @@ _man_des(Eo *obj, void *data EINA_UNUSED, va_list *list EINA_UNUSED)
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC_OVERRIDE(eo_constructor, _man_con),
      EO_OP_FUNC_OVERRIDE(eo_destructor, _man_des),
-     EO_OP_SENTINEL
 };
 
 START_TEST(eo_man_free)
@@ -724,7 +723,6 @@ EO_FUNC_BODY(multi_class_hi_print, Eina_Bool, EINA_FALSE);
 static Eo_Op_Description _multi_do_op_descs[] = {
      EO_OP_FUNC(multi_a_print, _a_print),
      EO_OP_FUNC(multi_class_hi_print, _class_hi_print),
-     EO_OP_SENTINEL
 };
 
 START_TEST(eo_multiple_do)
@@ -896,7 +894,6 @@ _eo_add_failures_finalize(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED)
 
 static Eo_Op_Description _eo_add_failures_op_descs[] = {
      EO_OP_FUNC_OVERRIDE(eo_finalize, _eo_add_failures_finalize),
-     EO_OP_SENTINEL
 };
 
 START_TEST(eo_add_failures)

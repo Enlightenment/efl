@@ -28,7 +28,6 @@ START_TEST(eo_destructor_unref)
 
    static Eo_Op_Description op_descs [] = {
         EO_OP_FUNC_OVERRIDE(eo_destructor, _destructor_unref),
-        EO_OP_SENTINEL
    };
 
    static Eo_Class_Description class_desc = {

@@ -428,12 +428,9 @@ EAPI Eina_Bool eo_init(void);
  */
 EAPI Eina_Bool eo_shutdown(void);
 
-// computes size of Eo_Op_Description[]
-#define EO_OP_DESC_SIZE(desc) (sizeof(desc)/sizeof(*desc) - 1)
-
 // Helpers macro to help populating #Eo_Class_Description.
 #define EO_CLASS_DESCRIPTION_NOOPS() { NULL, 0}
-#define EO_CLASS_DESCRIPTION_OPS(op_descs) { op_descs, EO_OP_DESC_SIZE(op_descs) }
+#define EO_CLASS_DESCRIPTION_OPS(op_descs) { op_descs, EINA_C_ARRAY_LENGTH(op_descs) }
 
 // to fetch internal function and object data at once
 typedef struct _Eo_Op_Call_Data
@@ -538,7 +535,6 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
 #define EO_OP_CLASS_FUNC(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_NOOP, EO_OP_TYPE_CLASS }
 #define EO_OP_FUNC_OVERRIDE(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_OVERRIDE, EO_OP_TYPE_REGULAR }
 #define EO_OP_CLASS_FUNC_OVERRIDE(_api, _private) { _EO_OP_API_ENTRY(_api), _private, EO_OP_OVERRIDE, EO_OP_TYPE_CLASS }
-#define EO_OP_SENTINEL { _EO_OP_API_ENTRY(NULL), NULL, 0, EO_OP_TYPE_INVALID }
 
 // returns the OP id corresponding to the given api_func
 EAPI Eo_Op _eo_api_op_id_get(const void *api_func, Eina_Bool is_main_loop, const char *file, int line);

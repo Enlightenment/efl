@@ -64,7 +64,6 @@ static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(inherit2_print2, _print2),
      EO_OP_CLASS_FUNC_OVERRIDE(simple_class_print, _class_print),
      EO_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
-     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {

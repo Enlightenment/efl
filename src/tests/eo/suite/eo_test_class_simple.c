@@ -94,7 +94,6 @@ static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(simple_recursive, _recursive),
      EO_OP_FUNC(simple_part_get, _part_get),
      EO_OP_FUNC(simple_pure_virtual, NULL),
-     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {

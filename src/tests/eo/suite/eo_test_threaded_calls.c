@@ -63,7 +63,6 @@ static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(thread_test_constructor, _constructor),
      EO_OP_FUNC(thread_test_v_get, _v_get),
      EO_OP_FUNC(thread_test_try_swap_stack, _try_swap_stack),
-     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {

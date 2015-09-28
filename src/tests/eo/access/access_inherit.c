@@ -20,7 +20,6 @@ EAPI EO_VOID_FUNC_BODY(inherit_prot_print);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(inherit_prot_print, _prot_print),
-     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {

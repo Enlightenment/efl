@@ -166,7 +166,6 @@ static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(simple_a_get32, _a_get),
      EO_OP_FUNC(simple_a_set, _a_set),
      EO_OP_FUNC(simple_a_get, _a_get),
-     EO_OP_SENTINEL
 };
 
 static const Eo_Event_Description *event_desc[] = {

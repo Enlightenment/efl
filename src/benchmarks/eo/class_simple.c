@@ -18,7 +18,6 @@ EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
 
 static Eo_Op_Description op_desc[] = {
      EO_OP_FUNC(simple_a_set, _a_set, "Set property A"),
-     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {

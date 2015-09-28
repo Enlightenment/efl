@@ -65,7 +65,6 @@ static Eo_Op_Description _override_op_desc[] = {
      EO_OP_FUNC(override_a_get, _override_a_get),
      EO_OP_FUNC(override_b_get, _override_b_get),
      EO_OP_FUNC(override_c_set, _override_c_set),
-     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description _override_class_desc = {

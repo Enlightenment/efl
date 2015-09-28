@@ -43,7 +43,6 @@ static Eo_Op_Description op_desc[] = {
      EO_OP_FUNC(simple_a_set, _a_set, "Set property A"),
      EO_OP_FUNC(simple_a_get, _a_get, "Get property A"),
      EO_OP_FUNC_OVERRIDE(interface_a_power_3_get, _a_power_3_get),
-     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {

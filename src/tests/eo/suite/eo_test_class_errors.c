@@ -218,7 +218,6 @@ START_TEST(eo_null_api)
 
    static Eo_Op_Description op_descs[] = {
         EO_OP_FUNC(NULL, _null_fct),
-        EO_OP_SENTINEL
    };
    static Eo_Class_Description class_desc = {
         EO_VERSION,
@@ -251,7 +250,6 @@ START_TEST(eo_wrong_override)
 
    static Eo_Op_Description op_descs[] = {
         EO_OP_FUNC_OVERRIDE(null_fct, _null_fct),
-        EO_OP_SENTINEL
    };
    static Eo_Class_Description class_desc = {
         EO_VERSION,
@@ -285,7 +283,6 @@ START_TEST(eo_api_redefined)
    static Eo_Op_Description op_descs[] = {
         EO_OP_FUNC(null_fct, _null_fct),
         EO_OP_FUNC(null_fct, NULL),
-        EO_OP_SENTINEL
    };
    static Eo_Class_Description class_desc = {
         EO_VERSION,
@@ -319,7 +316,6 @@ START_TEST(eo_dich_func_override)
    static Eo_Op_Description op_descs[] = {
         EO_OP_FUNC_OVERRIDE(simple_a_set, _null_fct),
         EO_OP_FUNC_OVERRIDE(simple_a_set, NULL),
-        EO_OP_SENTINEL
    };
    static Eo_Class_Description class_desc = {
         EO_VERSION,

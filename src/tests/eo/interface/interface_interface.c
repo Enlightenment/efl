@@ -12,7 +12,6 @@ EO_FUNC_BODY(interface_ab_sum_get, int, 0);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(interface_ab_sum_get, NULL),
-     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {

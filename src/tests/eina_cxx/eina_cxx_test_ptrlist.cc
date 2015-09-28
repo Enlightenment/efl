@@ -31,7 +31,6 @@ _destructor(Eo *obj, void *class_data EINA_UNUSED)
 static Eo_Op_Description op_descs[] = {
     EO_OP_FUNC_OVERRIDE(reinterpret_cast<void*>(&eo_constructor), reinterpret_cast<void*>(&_constructor))
   , EO_OP_FUNC_OVERRIDE(reinterpret_cast<void*>(&eo_destructor), reinterpret_cast<void*>(&_destructor))
-  , EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {

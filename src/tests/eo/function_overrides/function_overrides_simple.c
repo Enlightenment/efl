@@ -61,7 +61,6 @@ static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(simple_a_print, _a_print),
      EO_OP_FUNC(simple_class_print, _class_print),
      EO_OP_FUNC(simple_class_print2, _class_print2),
-     EO_OP_SENTINEL
 };
 
 static const Eo_Class_Description class_desc = {
