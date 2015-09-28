@@ -639,3 +639,14 @@ ecore_wl2_window_class_name_set(Ecore_Wl2_Window *window, const char *class_name
    else if (window->wl_shell_surface)
      wl_shell_surface_set_class(window->wl_shell_surface, window->class);
 }
+
+EAPI void
+ecore_wl2_window_geometry_get(Ecore_Wl2_Window *window, int *x, int *y, int *w, int *h)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   if (x) *x = window->geometry.x;
+   if (y) *y = window->geometry.y;
+   if (w) *w = window->geometry.w;
+   if (h) *h = window->geometry.h;
+}
