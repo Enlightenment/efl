@@ -944,7 +944,7 @@ static inline Eina_Bool eio_file_is_lnk(const Eina_Stat *stat);
  * @param open_cb Callback called in the main loop when the file has been successfully opened.
  * @param error_cb Callback called in the main loop when the file couldn't be opened.
  * @param data Unmodified user data passed to callbacks
- * @return Pointer to the file if successfull or NULL otherwise.
+ * @return Pointer to the file if successful or NULL otherwise.
  *
  */
 EAPI Eio_File *eio_file_open(const char *name, Eina_Bool shared,
@@ -958,7 +958,7 @@ EAPI Eio_File *eio_file_open(const char *name, Eina_Bool shared,
  * @param done_cb Callback called in the main loop when the file has been successfully closed.
  * @param error_cb Callback called in the main loop when the file couldn't be closed.
  * @param data Unmodified user data passed to callbacks
- * @return Pointer to the file if successfull or NULL otherwise.
+ * @return Pointer to the file if successful or NULL otherwise.
  */
 EAPI Eio_File *eio_file_close(Eina_File *f,
                               Eio_Done_Cb done_cb,
@@ -973,7 +973,7 @@ EAPI Eio_File *eio_file_close(Eina_File *f,
  * @param map_cb Callback called in the main loop when the file has been successfully mapped.
  * @param error_cb Callback called in the main loop when the file can't be mapped.
  * @param data Unmodified user data passed to callbacks
- * @return Pointer to the file if successfull or NULL otherwise.
+ * @return Pointer to the file if successful or NULL otherwise.
  *
  * The container of the Eio_File is the Eina_File.
  */
@@ -994,7 +994,7 @@ EAPI Eio_File *eio_file_map_all(Eina_File *f,
  * @param map_cb Callback called in the main loop when the file has been successfully mapped.
  * @param error_cb Callback called in the main loop when the file can't be mapped.
  * @param data Unmodified user data passed to callbacks
- * @return Pointer to the file if successfull or NULL otherwise.
+ * @return Pointer to the file if successful or NULL otherwise.
  *
  * The container of the Eio_File is the Eina_File.
  */
