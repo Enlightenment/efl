@@ -42,6 +42,8 @@ _files_compare (const char *ref_filename, const char *tmp_filename)
    if (fread(tmp_content, tmp_filesize, 1, tmp_file) != 1)
      goto end;
    tmp_content[tmp_filesize] = '\0';
+   while (tmp_content[tmp_filesize - 1] == '\n')
+     tmp_content[--tmp_filesize] = '\0';
 
    fseek(ref_file, 0, SEEK_END);
    long ref_filesize = ftell(ref_file);
@@ -51,6 +53,8 @@ _files_compare (const char *ref_filename, const char *tmp_filename)
    if (fread(ref_content, ref_filesize, 1, ref_file) != 1)
      goto end;
    ref_content[ref_filesize] = '\0';
+   while (ref_content[ref_filesize - 1] == '\n')
+     ref_content[--ref_filesize] = '\0';
 
    if (tmp_filesize != ref_filesize) goto end;
 
