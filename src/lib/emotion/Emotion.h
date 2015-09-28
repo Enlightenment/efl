@@ -1266,7 +1266,7 @@ EAPI void         emotion_object_last_position_save(Evas_Object *obj);
  *
  * @param file A stringshared filename that we want to know if Emotion can play.
  *
- * This just actually look at the extention of the file, it doesn't check the mime-type
+ * This just actually look at the extension of the file, it doesn't check the mime-type
  * nor if the file is actually sane. So this is just an hint for your application.
  *
  * @see emotion_object_extension_may_play_get()
@@ -1278,7 +1278,7 @@ EAPI Eina_Bool    emotion_object_extension_may_play_fast_get(const char *file);
  *
  * @param file A filename that we want to know if Emotion can play.
  *
- * This just actually look at the extention of the file, it doesn't check the mime-type
+ * This just actually look at the extension of the file, it doesn't check the mime-type
  * nor if the file is actually sane. So this is just an hint for your application.
  *
  * @see emotion_object_extension_may_play_fast_get()
@@ -1290,7 +1290,7 @@ EAPI Eina_Bool    emotion_object_extension_may_play_get(const char *file);
  *
  * @param obj The object which the query is being ran on.
  *
- * This function is usefull when you want to get a direct access to the pixels.
+ * This function is useful when you want to get a direct access to the pixels.
  *
  * @see emotion_object_image_get()
  */
