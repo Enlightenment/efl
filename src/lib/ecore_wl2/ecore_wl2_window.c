@@ -772,3 +772,17 @@ ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
 
    window->minimized = iconified;
 }
+
+EAPI void
+ecore_wl2_window_pointer_xy_get(Ecore_Wl2_Window *window, int *x, int *y)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   if (x) *x = 0;
+   if (y) *y = 0;
+
+   if (!window->input) return;
+
+   if (x) *x = window->input->pointer.sx;
+   if (y) *y = window->input->pointer.sy;
+}
