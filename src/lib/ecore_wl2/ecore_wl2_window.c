@@ -635,6 +635,38 @@ ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window)
 }
 
 EAPI void
+ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   if ((window->type == ECORE_WL2_WINDOW_TYPE_FULLSCREEN) == fullscreen)
+     return;
+
+   if (fullscreen)
+     {
+        if (window->xdg_surface)
+          xdg_surface_set_fullscreen(window->xdg_surface, NULL);
+        else if (window->wl_shell_surface)
+          wl_shell_surface_set_fullscreen(window->wl_shell_surface,
+                                          WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT,
+                                          0, NULL);
+
+        window->type = ECORE_WL2_WINDOW_TYPE_FULLSCREEN;
+     }
+   else
+     {
+        if (window->xdg_surface)
+          xdg_surface_unset_fullscreen(window->xdg_surface);
+        else if (window->wl_shell_surface)
+          wl_shell_surface_set_toplevel(window->wl_shell_surface);
+
+        window->type = ECORE_WL2_WINDOW_TYPE_TOPLEVEL;
+     }
+
+   /* TODO: send configure ? */
+}
+
+EAPI void
 ecore_wl2_window_rotation_set(Ecore_Wl2_Window *window, int rotation)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
