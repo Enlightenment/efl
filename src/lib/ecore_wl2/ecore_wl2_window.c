@@ -798,3 +798,15 @@ ecore_wl2_window_pointer_xy_get(Ecore_Wl2_Window *window, int *x, int *y)
    if (x) *x = window->input->pointer.sx;
    if (y) *y = window->input->pointer.sy;
 }
+
+EAPI void
+ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surface *surface, int hot_x, int hot_y)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+   EINA_SAFETY_ON_NULL_RETURN(window->input);
+
+   if (window->input->wl.pointer)
+     wl_pointer_set_cursor(window->input->wl.pointer,
+                           window->input->pointer.enter_serial,
+                           surface, hot_x, hot_y);
+}
