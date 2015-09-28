@@ -10,7 +10,7 @@
 EAPI EO_FUNC_BODY(interface_a_power_3_get, int, 0);
 
 static Eo_Op_Description op_desc[] = {
-     EO_OP_FUNC(interface_a_power_3_get, NULL, "Get the a^3"),
+     EO_OP_FUNC(interface_a_power_3_get, NULL),
 };
 
 static const Eo_Class_Description class_desc = {

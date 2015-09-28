@@ -40,8 +40,8 @@ EAPI EO_FUNC_BODY(simple_a_get, int, 0);
 EAPI EO_VOID_FUNC_BODYV(simple_a_set, EO_FUNC_CALL(a), int a);
 
 static Eo_Op_Description op_desc[] = {
-     EO_OP_FUNC(simple_a_set, _a_set, "Set property A"),
-     EO_OP_FUNC(simple_a_get, _a_get, "Get property A"),
+     EO_OP_FUNC(simple_a_set, _a_set),
+     EO_OP_FUNC(simple_a_get, _a_get),
      EO_OP_FUNC_OVERRIDE(interface_a_power_3_get, _a_power_3_get),
 };
 
