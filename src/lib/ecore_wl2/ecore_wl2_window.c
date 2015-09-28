@@ -603,3 +603,11 @@ ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window)
 
    return EINA_FALSE;
 }
+
+EAPI void
+ecore_wl2_window_rotation_set(Ecore_Wl2_Window *window, int rotation)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   window->rotation = rotation;
+}
