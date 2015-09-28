@@ -527,7 +527,7 @@ EAPI int                   elm_map_overlay_class_zoom_max_get(const Elm_Map_Over
  *
  * @return The list of group overlay members.
  *
- * The group overlays are virtually overlays. Those are shown and hidden dynamically.
+ * The group overlays are virtual overlays. Those are shown and hidden dynamically.
  * You can add callback to the class overlay. If one of the group overlays in this class
  * is clicked, callback will be called and return a virtual group overlays.
  *
