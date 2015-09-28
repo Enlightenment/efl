@@ -12568,7 +12568,7 @@ edje_edit_clean_save_as(Evas_Object *obj, const char *new_file_name)
 
    if (ecore_file_exists(new_file_name))
      {
-        ERR("Error. file \"%s\" allready exists",
+        ERR("Error. file \"%s\" already exists",
             new_file_name);
         return EINA_FALSE;
      }
