@@ -427,6 +427,9 @@ EAPI Eina_Bool ecore_wl2_window_iconified_get(Ecore_Wl2_Window *window);
 /* TODO: doxy */
 EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified);
 
+/* TODO: doxy */
+EAPI void ecore_wl2_window_pointer_xy_get(Ecore_Wl2_Window *window, int *x, int *y);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
