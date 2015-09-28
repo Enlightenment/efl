@@ -1024,7 +1024,7 @@ _ecore_evas_wl_common_name_class_set(Ecore_Evas *ee, const char *n, const char *
      }
 
    if (ee->prop.clas)
-     ecore_wl2_window_class_set(wdata->win, ee->prop.clas);
+     ecore_wl2_window_class_name_set(wdata->win, ee->prop.clas);
 }
 
 void

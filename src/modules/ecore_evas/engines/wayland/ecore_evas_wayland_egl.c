@@ -149,6 +149,13 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
         return NULL;
      }
 
+   ewd = ecore_wl2_display_connect(disp_name);
+   if (!ewd)
+     {
+        ERR("Failed to connect to Wayland Display %s", disp_name);
+        return NULL;
+     }
+
    if (!(ee = calloc(1, sizeof(Ecore_Evas))))
      {
         ERR("Failed to allocate Ecore_Evas");
