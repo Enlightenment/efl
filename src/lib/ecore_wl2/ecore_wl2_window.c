@@ -493,3 +493,11 @@ ecore_wl2_window_find(Ecore_Wl2_Display *display, int id)
 
    return NULL;
 }
+
+EAPI Eina_Bool
+ecore_wl2_window_alpha_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
+
+   return window->alpha;
+}
