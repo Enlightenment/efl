@@ -581,3 +581,14 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
    wl_surface_set_opaque_region(window->surface, region);
    wl_region_destroy(region);
 }
+
+EAPI Eina_Bool
+ecore_wl2_window_maximized_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
+
+   if (window->type == ECORE_WL2_WINDOW_TYPE_MAXIMIZED)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
