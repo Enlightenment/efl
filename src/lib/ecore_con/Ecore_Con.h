@@ -73,7 +73,7 @@
  * @defgroup Ecore_Con_Events_Group Ecore Connection Events Functions
  * @ingroup Ecore_Con_Group
  *
- * The Ecore Con events can be catagorized into Server side events
+ * The Ecore Con events can be categorized into Server side events
  * and Client side events.
  * Server side events:
  * @li ECORE_CON_CLIENT_ADD: Whenever a client connection is made to an
