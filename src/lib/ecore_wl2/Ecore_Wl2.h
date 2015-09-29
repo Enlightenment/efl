@@ -338,6 +338,9 @@ EAPI int ecore_wl2_window_id_get(Ecore_Wl2_Window *window);
  */
 EAPI struct wl_surface *ecore_wl2_window_surface_get(Ecore_Wl2_Window *window);
 
+/* TODO: doxy */
+EAPI int ecore_wl2_window_surface_id_get(Ecore_Wl2_Window *window);
+
 /**
  * Show a given Ecore_Wl2_Window
  *
@@ -469,6 +472,7 @@ EAPI void ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surfa
 
 /* TODO: doxy */
 EAPI void ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const char *cursor);
+
 
 /* # ifdef __cplusplus */
 /* } */

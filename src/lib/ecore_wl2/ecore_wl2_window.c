@@ -297,9 +297,19 @@ ecore_wl2_window_surface_get(Ecore_Wl2_Window *window)
      {
         window->surface =
           wl_compositor_create_surface(window->display->wl.compositor);
+
+        window->surface_id =
+          wl_proxy_get_id((struct wl_proxy *)window->surface);
      }
 
    return window->surface;
+}
+
+EAPI int
+ecore_wl2_window_surface_id_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, -1);
+   return window->surface_id;
 }
 
 EAPI void

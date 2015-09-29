@@ -78,7 +78,7 @@ struct _Ecore_Wl2_Window
 
    Ecore_Wl2_Window *parent;
 
-   int id, rotation;
+   int id, rotation, surface_id;
    const char *title;
    const char *class;
    const char *cursor;
