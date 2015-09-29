@@ -280,7 +280,7 @@ main(int argc, char **argv)
     int i;
     char file[PATH_MAX] = { '\0' };
     char util_file[PATH_MAX] = { '\0' };
-    mode_t um;
+    Eina_Tmpstr *tmpstr = NULL;
 
     if (!eina_init()) goto eina_error;
     _efreet_desktop_cache_log_dom =
@@ -351,24 +351,22 @@ main(int argc, char **argv)
     }
 
     /* create cache */
-    snprintf(file, sizeof(file), "%s.XXXXXX", efreet_desktop_cache_file());
-    /* set secure umask for temporary files */
-    um = umask(0077);
-    tmpfd = mkstemp(file);
-    umask(um);
+    snprintf(file, sizeof(file), "%s.XXXXXX.cache", efreet_desktop_cache_file());
+    tmpfd = eina_file_mkstemp(file, &tmpstr);
     if (tmpfd < 0) goto error;
     close(tmpfd);
-    ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
+    ef = eet_open(tmpstr, EET_FILE_MODE_READ_WRITE);
+    eina_tmpstr_del(tmpstr);
+    tmpstr = NULL;
     if (!ef) goto error;
 
-    snprintf(util_file, sizeof(util_file), "%s.XXXXXX", efreet_desktop_util_cache_file());
-    /* set secure umask for temporary files */
-    um = umask(0077);
-    tmpfd = mkstemp(util_file);
-    umask(um);
+    snprintf(util_file, sizeof(util_file), "%s.XXXXXX.cache", efreet_desktop_util_cache_file());
+    tmpfd = eina_file_mkstemp(util_file, &tmpstr);
     if (tmpfd < 0) goto error;
     close(tmpfd);
     util_ef = eet_open(util_file, EET_FILE_MODE_READ_WRITE);
+    eina_tmpstr_del(tmpstr);
+    tmpstr = NULL;
     if (!util_ef) goto error;
 
     /* write cache version */
@@ -524,6 +522,7 @@ main(int argc, char **argv)
     close(lockfd);
     return 0;
 error:
+    eina_tmpstr_del(tmpstr);
     if (stack) eina_inarray_free(stack);
     IF_FREE(dir);
 edd_error:
