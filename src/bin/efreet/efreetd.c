@@ -38,7 +38,7 @@ main(int argc, char *argv[])
 
    if (!eina_init()) return 1;
 
-   snprintf(path, sizeof(path), "efreetd_XXXXXX");
+   snprintf(path, sizeof(path), "efreetd_XXXXXX.cache");
    fd = eina_file_mkstemp(path, NULL);
    if (fd < 0)
      {
