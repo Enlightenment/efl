@@ -265,8 +265,6 @@ _val_set(Evas_Object *obj)
      pos = 1.0;
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", pos, pos);
-
-   eo_do(obj, eo_event_callback_call(ELM_SPINNER_EVENT_CHANGED, NULL));
 }
 
 static void
@@ -373,8 +371,13 @@ _entry_value_apply(Evas_Object *obj)
    str = elm_object_text_get(sd->ent);
    if (!str) return;
    val = strtod(str, &end);
-   if ((*end != '\0') && (!isspace(*end))) return;
+   if (((*end != '\0') && (!isspace(*end))) || (fabs(val - sd->val) < DBL_EPSILON)) return;
    elm_spinner_value_set(obj, val);
+
+   eo_do(obj, eo_event_callback_call(ELM_SPINNER_EVENT_CHANGED, NULL));
+   ecore_timer_del(sd->delay_change_timer);
+   sd->delay_change_timer = ecore_timer_add(ELM_SPINNER_DELAY_CHANGE_TIME,
+                                            _delay_change_timer_cb, obj);
 }
 
 static Eina_Bool
@@ -382,13 +385,7 @@ _entry_activated_cb(void *data,
                     Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                     void *event_info EINA_UNUSED)
 {
-   ELM_SPINNER_DATA_GET(data, sd);
-
    _entry_value_apply(data);
-   eo_do(data, eo_event_callback_call(ELM_SPINNER_EVENT_CHANGED, NULL));
-   ecore_timer_del(sd->delay_change_timer);
-   sd->delay_change_timer = ecore_timer_add(ELM_SPINNER_DELAY_CHANGE_TIME,
-                                            _delay_change_timer_cb, data);
 
    return EINA_TRUE;
 }
