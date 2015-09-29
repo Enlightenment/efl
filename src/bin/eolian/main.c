@@ -84,9 +84,6 @@ _read_file(char *filename, Eina_Strbuf *buffer)
 
         eina_strbuf_append(buffer, content);
         free(content);
-#ifdef _WIN32
-        eina_strbuf_replace_all(buffer, "\r\n", "\n");
-#endif
      }
 
    ret = EINA_TRUE;
