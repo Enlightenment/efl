@@ -150,7 +150,7 @@ main(int argc, char **argv)
    progname = ecore_file_file_get(argv[0]);
    eina_log_print_cb_set(_edje_cc_log_cb, NULL);
 
-   tmp_dir = getenv("TMPDIR");
+   tmp_dir = (char *)eina_environment_tmp_get();
 
    img_dirs = eina_list_append(img_dirs, ".");
    
