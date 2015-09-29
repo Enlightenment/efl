@@ -51,7 +51,7 @@ extern "C" {
  * @ingroup Ecore_Buffer_Queue_Group
  *
  * This group of functions is applied to an Ecore_Buffer_Provider object.
- * Ecore_Buffer_Provider provides Ecore_Buffer to Ecore_Buffer_Consumer(usually
+ * Ecore_Buffer_Provider provides Ecore_Buffer to Ecore_Buffer_Consumer(usally
  * different process or thread from Ecore_Buffer_Provider).
  * Ecore_Buffer_Provider should creates Ecore_Buffer as a provider.
  */
@@ -353,7 +353,7 @@ EAPI void                      ecore_buffer_provider_free(Ecore_Buffer_Provider 
  *
  * This function gives you drawable buffer and inform you the state of Queue.
  * Each return value of enumeration has meaning as below.
- * @li ECORE_BUFFER_RETURN_ERROR, means error occurred.
+ * @li ECORE_BUFFER_RETURN_ERROR, means error occured.
  * @li ECORE_BUFFER_RETURN_SUCCESS, means success to dequeue, therefore ret_buf is valid.
  * @li ECORE_BUFFER_RETURN_EMPTY, means queue is empty, not available slot in Queue.
  *  in other words, there is no free drawable buffer in Queue.

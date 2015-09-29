@@ -134,10 +134,14 @@ START_TEST(eo_signals)
 
         /* Call Eo event with legacy and non-legacy callbacks. */
         _eo_signals_cb_current = 0;
+        eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED2, -1000, _eo_signals_a_changed_never, (void *) 1));
         eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, -100, _eo_signals_a_changed_cb, (void *) 1));
         eo_do(obj, eo_event_callback_add(a_desc, _eo_signals_a_changed_cb2, NULL));
         eo_do(obj, simple_a_set(1));
         ck_assert_int_eq(_eo_signals_cb_flag, 0x3);
+
+        /* We don't need this one anymore. */
+        eo_do(obj, eo_event_callback_del(EV_A_CHANGED2, _eo_signals_a_changed_never, (void *) 1));
 
         /* Call legacy event with legacy and non-legacy callbacks. */
         int a = 3;

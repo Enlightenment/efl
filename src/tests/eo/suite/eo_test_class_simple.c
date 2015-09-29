@@ -10,6 +10,9 @@
 EAPI const Eo_Event_Description _EV_A_CHANGED =
         EO_EVENT_DESCRIPTION("a,changed");
 
+EAPI const Eo_Event_Description _EV_A_CHANGED2 =
+        EO_EVENT_DESCRIPTION("a,changed");
+
 static void
 _a_set(Eo *obj EINA_UNUSED, void *class_data, int a)
 {
