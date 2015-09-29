@@ -106,6 +106,13 @@ typedef struct _Ecore_Wl2_Event_Data_Source_Send
    int fd;
 } Ecore_Wl2_Event_Data_Source_Send;
 
+typedef struct _Ecore_Wl2_Event_Selection_Data_Ready
+{
+   char **data;
+   int len;
+   Eina_Bool done : 1;
+} Ecore_Wl2_Event_Selection_Data_Ready;
+
 typedef enum _Ecore_Wl2_Window_Type
 {
    ECORE_WL2_WINDOW_TYPE_NONE,
@@ -130,6 +137,7 @@ EAPI extern int ECORE_WL2_EVENT_DND_END;
 EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_CANCELLED;
 EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_TARGET;
 EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_SEND;
+EAPI extern int ECORE_WL2_EVENT_SELECTION_DATA_READY;
 
 /**
  * @file
