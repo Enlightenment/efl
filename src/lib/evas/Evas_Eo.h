@@ -189,7 +189,7 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
  * to connect the scene with an evas image object so that the scene is rendered
  * on that image object.
  *
- * Contruction of a 3D scene is process of locating desired cameras, lights and
+ * Construction of a 3D scene is process of locating desired cameras, lights and
  * meshes in the scene. Typically the scene is structured with some hierarchical
  * data structure. Evas 3D support n-ary tree structure for describing the
  * scene. Node is used to build the tree representation of the scene. Other
@@ -271,7 +271,7 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
  * camera on a node. If one wants to locate several cameras having same
  * properties, instead of creating multiple cameras, just create one camera and
  * multiple nodes containing the camera and locate them at each desired position
- * and direction. Just for convinience, use evas_canvas3d_node_position_set() to move
+ * and direction. Just for convenience, use evas_canvas3d_node_position_set() to move
  * the camera to desired position and use evas_canvas3d_node_look_at_set() to adjust
  * the viewing direction of the camera.
  */

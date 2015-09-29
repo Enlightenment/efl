@@ -2046,7 +2046,7 @@ EAPI Efl_Gfx_Join evas_vg_shape_stroke_join_get(Eo *obj);
  *
  * Sets the join style to be used for stroking the path.
  * The join style will be used for joining the two line segment
- * while stroking teh path.
+ * while stroking the path.
  *
  * @see Efl_Gfx_Join
  * @since 1.14

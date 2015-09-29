@@ -929,7 +929,7 @@ EAPI int               evas_async_events_process(void);
  * @param event_info Information about the event.
  * @param func The callback function pointer.
  *
- * @return EINA_FALSE if an error occured, EINA_TRUE otherwise.
+ * @return EINA_FALSE if an error occurred, EINA_TRUE otherwise.
  *
  * This is the way, for a routine running outside evas' main thread,
  * to report an asynchronous event. A callback function is informed,
@@ -1225,7 +1225,7 @@ EAPI void              evas_render_updates_free(Eina_List *updates);
  * part of the canvas @p e will automatically be deleted when the canvas
  * is freed.
  *
- * @return the device node created or NULL if an error occured.
+ * @return the device node created or NULL if an error occurred.
  *
  * @see evas_device_del
  * @since 1.8
@@ -1433,7 +1433,7 @@ EAPI Evas_Device_Class evas_device_class_get(const Evas_Device *dev);
  * @param dev The device to modify
  * @param clas The sub-class to set
  *
- * This sets the sub-class of a device whihc gives much more detailed usage
+ * This sets the sub-class of a device which gives much more detailed usage
  * within a broader category.
  *
  * @since 1.8
@@ -5414,7 +5414,7 @@ EAPI const Eina_List        *evas_font_path_global_list(void) EINA_WARN_UNUSED_R
 
 /**
  * Reinitialize FontConfig. If FontConfig has to be reinitialized
- * according to changes of system enviroments(ex. Changing font config files), it will be useful.
+ * according to changes of system environments(ex. Changing font config files), it will be useful.
  *
  * @ingroup Evas_Font_Path_Group
  * @since 1.14
