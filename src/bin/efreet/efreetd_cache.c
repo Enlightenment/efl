@@ -162,9 +162,9 @@ static void
 subdir_cache_save(void)
 {
    char buf[PATH_MAX], buf2[PATH_MAX];
-   int tmpfd;
-   mode_t um;
    Eet_File *ef;
+   Eina_Tmpstr *tmpstr = NULL;
+   int tmpfd;
 
    // only if subdirs need saving... and we have subdirs.
    if (!subdir_need_save) return;
@@ -172,16 +172,24 @@ subdir_cache_save(void)
    if (!subdir_cache->dirs) return;
 
    // save to tmp file first
-   snprintf(buf2, sizeof(buf2), "%s/efreet/subdirs_%s.eet.XXXXXX", efreet_cache_home_get(), efreet_hostname_get());
-   um = umask(0077);
-   tmpfd = mkstemp(buf2);
-   umask(um);
+   snprintf(buf2, sizeof(buf2), "%s/efreet/subdirs_%s.eet.XXXXXX.cache", efreet_cache_home_get(), efreet_hostname_get());
+   tmpfd = eina_file_mkstemp(buf2, &tmpstr);
    if (tmpfd < 0) return;
 
-   // write out eetf ile to tmp file
+   // write out eet file to tmp file
    ef = eet_open(buf2, EET_FILE_MODE_WRITE);
    eet_data_write(ef, subdir_edd, "subdirs", subdir_cache, EET_COMPRESSION_SUPERFAST);
    eet_close(ef);
+   eina_tmpstr_del(tmpstr);
+
+   /*
+    * On Windows, buf2 has one remaining ref, hence it can not be renamed below.
+    * Stupid NTFS... So we close it first. "Magically", on Windows, this
+    * temporary file is not deleted...
+    */
+#ifdef _WIN32
+   close(tmpfd);
+#endif
 
    // atomically rename subdirs file on top from tmp file
    snprintf(buf, sizeof(buf), "%s/efreet/subdirs_%s.eet", efreet_cache_home_get(), efreet_hostname_get());
