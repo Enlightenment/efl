@@ -168,3 +168,45 @@ _ecore_wl2_dnd_selection(Ecore_Wl2_Input *input, struct wl_data_offer *offer)
         *t = NULL;
      }
 }
+
+EAPI void
+ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types)
+{
+   struct wl_data_device_manager *manager;
+   const char *type;
+   char **t;
+
+   EINA_SAFETY_ON_NULL_RETURN(input);
+   EINA_SAFETY_ON_NULL_RETURN(input->display);
+
+   manager = input->display->wl.data_device_manager;
+
+   if (input->data.types)
+     {
+        wl_array_for_each(t, &input->data.types)
+          free(*t);
+        wl_array_release(&input->data.types);
+        wl_array_init(&input->data.types);
+     }
+
+   if (input->data.source) wl_data_source_destroy(input->data.source);
+   input->data.source = NULL;
+
+   input->data.source = wl_data_device_manager_create_data_source(manager);
+   if (!input->data.source)
+     {
+        ERR("Could not create data source: %m");
+        return;
+     }
+
+   for (type = types; *type; type++)
+     {
+        if (!*type) continue;
+        t = wl_array_add(&input->data.types, sizeof(*t));
+        if (t)
+          {
+             *t = strdup(*type);
+             wl_data_source_offer(input->data.source, *t);
+          }
+     }
+}
