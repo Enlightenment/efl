@@ -831,3 +831,10 @@ ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const char *curs
 
    _ecore_wl2_input_cursor_set(window->input, cursor);
 }
+
+EAPI void
+ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+   window->type = type;
+}
