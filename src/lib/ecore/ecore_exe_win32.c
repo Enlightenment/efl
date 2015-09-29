@@ -382,8 +382,8 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
    SECURITY_ATTRIBUTES sa;
    STARTUPINFO si;
    PROCESS_INFORMATION pi;
-   HANDLE child_pipe_read;
-   HANDLE child_pipe_error;
+   HANDLE child_pipe_read = NULL;
+   HANDLE child_pipe_error = NULL;
    const char *shell = NULL;
    Ecore_Exe_Event_Add *e;
    Ecore_Exe_Flags flags;
@@ -504,8 +504,8 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
     * the pipe will not close when the child process exits and the
     * ReadFile will hang.
     */
-   CloseHandle(child_pipe_read);
-   CloseHandle(child_pipe_error);
+   IF_FN_DEL(CloseHandle, child_pipe_read);
+   IF_FN_DEL(CloseHandle, child_pipe_error);
 
    /* be sure that the child process is running */
    /* FIXME: This does not work if the child is an EFL-based app */
