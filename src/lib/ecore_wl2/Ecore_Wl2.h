@@ -481,6 +481,9 @@ EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_T
 /* TODO: doxy */
 EAPI Ecore_Wl2_Input *ecore_wl2_window_input_get(Ecore_Wl2_Window *window);
 
+/* TODO: doxy */
+EAPI void ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
