@@ -316,3 +316,53 @@ ecore_wl2_dnd_selection_owner_has(Ecore_Wl2_Input *input)
 
    return (input->selection.source != NULL);
 }
+
+EAPI Eina_Bool
+ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types)
+{
+   struct wl_data_device_manager *manager;
+   const char **type;
+   char **t;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input->display, EINA_FALSE);
+
+   manager = input->display->wl.data_device_manager;
+
+   if (input->data.types.data)
+     {
+        wl_array_for_each(t, &input->data.types)
+          free(*t);
+        wl_array_release(&input->data.types);
+        wl_array_init(&input->data.types);
+     }
+
+   input->data.source = NULL;
+
+   if (!types[0]) return EINA_FALSE;
+
+   input->data.source = wl_data_device_manager_create_data_source(manager);
+   if (!input->data.source)
+     {
+        ERR("Could not create data source: %m");
+        return EINA_FALSE;
+     }
+
+   for (type = types; *type; type++)
+     {
+        if (!*type) continue;
+        t = wl_array_add(&input->data.types, sizeof(*t));
+        if (t)
+          {
+             *t = strdup(*type);
+             wl_data_source_offer(input->data.source, *t);
+          }
+     }
+
+   wl_data_source_add_listener(input->data.source, &_source_listener, input);
+
+   wl_data_device_set_selection(input->data.device, input->data.source,
+                                input->display->serial);
+
+   return EINA_TRUE;
+}

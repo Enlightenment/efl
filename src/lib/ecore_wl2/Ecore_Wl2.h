@@ -496,6 +496,9 @@ EAPI void ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input);
 /* TODO: doxy */
 EAPI Eina_Bool ecore_wl2_dnd_selection_owner_has(Ecore_Wl2_Input *input);
 
+/* TODO: doxy */
+EAPI Eina_Bool ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
