@@ -35,6 +35,40 @@ _ecore_wl2_dnd_del(Ecore_Wl2_Dnd_Source *source)
      }
 }
 
+static void
+_source_cb_target(void *data, struct wl_data_source *source EINA_UNUSED, const char *mime_type EINA_UNUSED)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
+static void
+_source_cb_send(void *data, struct wl_data_source *source EINA_UNUSED, const char *mime_type, int32_t fd)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
+static void
+_source_cb_cancelled(void *data, struct wl_data_source *source)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+}
+
+static const struct wl_data_source_listener _source_listener =
+{
+   _source_cb_target,
+   _source_cb_send,
+   _source_cb_cancelled
+};
+
 void
 _ecore_wl2_dnd_add(Ecore_Wl2_Input *input, struct wl_data_offer *offer)
 {
@@ -173,7 +207,7 @@ EAPI void
 ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types)
 {
    struct wl_data_device_manager *manager;
-   const char *type;
+   const char **type;
    char **t;
 
    EINA_SAFETY_ON_NULL_RETURN(input);
@@ -181,7 +215,7 @@ ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types)
 
    manager = input->display->wl.data_device_manager;
 
-   if (input->data.types)
+   if (input->data.types.data)
      {
         wl_array_for_each(t, &input->data.types)
           free(*t);
@@ -208,5 +242,30 @@ ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types)
              *t = strdup(*type);
              wl_data_source_offer(input->data.source, *t);
           }
+     }
+}
+
+EAPI void
+ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore_Wl2_Window *drag_window)
+{
+   struct wl_surface *dsurface, *osurface;
+
+   EINA_SAFETY_ON_NULL_RETURN(input);
+   EINA_SAFETY_ON_NULL_RETURN(input->data.source);
+   EINA_SAFETY_ON_NULL_RETURN(drag_window);
+
+   dsurface = ecore_wl2_window_surface_get(drag_window);
+
+   _ecore_wl2_input_ungrab(input);
+
+   wl_data_source_add_listener(input->data.source, &_source_listener, input);
+
+   osurface = ecore_wl2_window_surface_get(window);
+   if (osurface)
+     {
+        wl_data_device_start_drag(input->data.device, input->data.source,
+                                  osurface, dsurface, input->display->serial);
+
+        ecore_wl2_window_cursor_from_name_set(window, "move");
      }
 }
