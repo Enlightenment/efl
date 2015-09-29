@@ -490,6 +490,9 @@ EAPI void ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *win
 /* TODO: doxy */
 EAPI Eina_Bool ecore_wl2_dnd_drag_get(Ecore_Wl2_Input *input, const char *type);
 
+/* TODO: doxy */
+EAPI void ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */

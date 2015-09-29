@@ -287,3 +287,24 @@ ecore_wl2_dnd_drag_get(Ecore_Wl2_Input *input, const char *type)
 
    return EINA_TRUE;
 }
+
+EAPI void
+ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input)
+{
+   EINA_SAFETY_ON_NULL_RETURN(input);
+
+   if (input->data.types.data)
+     {
+        char **t;
+
+        wl_array_for_each(t, &input->data.types)
+          free(*t);
+        wl_array_release(&input->data.types);
+        wl_array_init(&input->data.types);
+     }
+
+   if (input->data.source) wl_data_source_destroy(input->data.source);
+   input->data.source = NULL;
+
+   /* TODO: Raise dnd end event */
+}
