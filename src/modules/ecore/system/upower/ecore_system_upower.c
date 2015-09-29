@@ -253,6 +253,8 @@ _daemon_version_from_variant(Eldbus_Message_Iter *variant)
              break;
           }
      }
+   free(version[0]);
+   free(version);
 
    _battery_state_get();
 }
