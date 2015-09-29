@@ -502,6 +502,9 @@ EAPI Eina_Bool ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **
 /* TODO: doxy */
 EAPI Eina_Bool ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input, const char *type);
 
+/* TODO: doxy */
+EAPI Eina_Bool ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */

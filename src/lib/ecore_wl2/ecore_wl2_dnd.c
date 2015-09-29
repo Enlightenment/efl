@@ -384,3 +384,15 @@ ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input, const char *type)
 
    return EINA_TRUE;
 }
+
+EAPI Eina_Bool
+ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input->data.device, EINA_FALSE);
+
+   wl_data_device_set_selection(input->data.device,
+                                NULL, input->display->serial);
+
+   return EINA_TRUE;
+}
