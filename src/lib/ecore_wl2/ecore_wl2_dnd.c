@@ -366,3 +366,21 @@ ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types)
 
    return EINA_TRUE;
 }
+
+EAPI Eina_Bool
+ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input, const char *type)
+{
+   char **t;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input->selection.source, EINA_FALSE);
+
+   for (t = input->selection.source->types.data; *t; t++)
+     if (!strcmp(type, *t)) break;
+
+   if (!*t) return EINA_FALSE;
+
+   /* TODO: selection_data_receive */
+
+   return EINA_TRUE;
+}
