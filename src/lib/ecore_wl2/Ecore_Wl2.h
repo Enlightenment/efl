@@ -476,6 +476,9 @@ EAPI void ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const 
 /* TODO: doxy */
 EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type);
 
+/* TODO: doxy */
+EAPI Ecore_Wl2_Input *ecore_wl2_window_input_get(Ecore_Wl2_Window *window);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
