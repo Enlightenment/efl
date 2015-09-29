@@ -85,6 +85,11 @@ typedef struct _Ecore_Wl2_Event_Dnd_Drop
    int x, y;
 } Ecore_Wl2_Event_Dnd_Drop;
 
+typedef struct _Ecore_Wl2_Event_Dnd_End
+{
+   unsigned int win, source;
+} Ecore_Wl2_Event_Dnd_End;
+
 typedef enum _Ecore_Wl2_Window_Type
 {
    ECORE_WL2_WINDOW_TYPE_NONE,
@@ -105,6 +110,7 @@ EAPI extern int ECORE_WL2_EVENT_DND_ENTER;
 EAPI extern int ECORE_WL2_EVENT_DND_LEAVE;
 EAPI extern int ECORE_WL2_EVENT_DND_MOTION;
 EAPI extern int ECORE_WL2_EVENT_DND_DROP;
+EAPI extern int ECORE_WL2_EVENT_DND_END;
 
 /**
  * @file
@@ -404,6 +410,7 @@ EAPI void ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool max
 /* TODO: doxy */
 EAPI Eina_Bool ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window);
 
+/* TODO: doxy */
 EAPI void ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen);
 
 /* TODO: doxy */
@@ -430,6 +437,7 @@ EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool ico
 /* TODO: doxy */
 EAPI void ecore_wl2_window_pointer_xy_get(Ecore_Wl2_Window *window, int *x, int *y);
 
+/* TODO: doxy */
 EAPI void ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surface *surface, int hot_x, int hot_y);
 
 /* # ifdef __cplusplus */
