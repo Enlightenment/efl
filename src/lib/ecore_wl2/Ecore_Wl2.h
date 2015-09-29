@@ -473,6 +473,8 @@ EAPI void ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surfa
 /* TODO: doxy */
 EAPI void ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const char *cursor);
 
+/* TODO: doxy */
+EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type);
 
 /* # ifdef __cplusplus */
 /* } */
