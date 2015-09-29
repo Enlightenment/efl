@@ -838,3 +838,12 @@ ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type)
    EINA_SAFETY_ON_NULL_RETURN(window);
    window->type = type;
 }
+
+EAPI Ecore_Wl2_Input *
+ecore_wl2_window_input_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window->input, NULL);
+
+   return window->input;
+}
