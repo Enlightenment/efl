@@ -35,6 +35,7 @@ typedef struct _Ecore_Wl2_Mouse_Down_Info
 static Eina_Inlist *_ecore_wl2_mouse_down_info_list = NULL;
 
 static void _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int keycode, unsigned int state);
+static void _pointer_cb_frame(void *data, struct wl_callback *callback, unsigned int timestamp EINA_UNUSED);
 
 static Ecore_Wl2_Mouse_Down_Info *
 _ecore_wl2_input_mouse_down_info_get(int device)
@@ -589,6 +590,41 @@ static const struct wl_pointer_listener _pointer_listener =
    _pointer_cb_axis,
 };
 
+static const struct wl_callback_listener _pointer_surface_listener =
+{
+   _pointer_cb_frame
+};
+
+static void
+_pointer_cb_frame(void *data, struct wl_callback *callback, unsigned int timestamp EINA_UNUSED)
+{
+   Ecore_Wl2_Input *input;
+
+   input = data;
+   if (!input) return;
+
+   if (callback)
+     {
+        if (callback != input->cursor.frame_cb) return;
+        wl_callback_destroy(callback);
+        input->cursor.frame_cb = NULL;
+     }
+
+   if (!input->cursor.name)
+     {
+        _ecore_wl2_input_cursor_set(input, NULL);
+        return;
+     }
+
+   if ((input->cursor.wl_cursor->image_count > 1) &&
+       (!input->cursor.frame_cb))
+     {
+        input->cursor.frame_cb = wl_surface_frame(input->cursor.surface);
+        wl_callback_add_listener(input->cursor.frame_cb,
+                                 &_pointer_surface_listener, input);
+     }
+}
+
 static void
 _keyboard_cb_keymap(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned int format, int fd, unsigned int size)
 {
@@ -1107,6 +1143,57 @@ _ecore_wl2_input_cursor_setup(Ecore_Wl2_Input *input)
      }
 }
 
+static Eina_Bool
+_ecore_wl2_input_cursor_update(void *data)
+{
+   Ecore_Wl2_Input *input;
+   struct wl_cursor_image *image;
+   struct wl_buffer *buffer;
+   unsigned int delay = 0;
+
+   input = data;
+   if (!input) return EINA_FALSE;
+
+   image = input->cursor.wl_cursor->images[input->cursor.index];
+   if (!image) return EINA_FALSE;
+
+   buffer = wl_cursor_image_get_buffer(image);
+   if (buffer)
+     {
+        if (input->wl.pointer)
+          wl_pointer_set_cursor(input->wl.pointer, input->pointer.enter_serial,
+                                input->cursor.surface,
+                                image->hotspot_x, image->hotspot_y);
+
+        wl_surface_attach(input->cursor.surface, buffer, 0, 0);
+        wl_surface_damage(input->cursor.surface,
+                          0, 0, image->width, image->height);
+        wl_surface_commit(input->cursor.surface);
+
+        if ((input->cursor.wl_cursor->image_count > 1) &&
+            (!input->cursor.frame_cb))
+          _pointer_cb_frame(input, NULL, 0);
+     }
+
+   if (input->cursor.wl_cursor->image_count <= 1)
+     return ECORE_CALLBACK_CANCEL;
+
+   delay = image->delay;
+   input->cursor.index =
+     (input->cursor.index + 1) % input->cursor.wl_cursor->image_count;
+
+   if (!input->cursor.timer)
+     {
+        input->cursor.timer =
+          ecore_timer_loop_add(delay / 1000.0,
+                               _ecore_wl2_input_cursor_update, input);
+     }
+   else
+     ecore_timer_interval_set(input->cursor.timer, delay / 1000.0);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
 void
 _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id)
 {
@@ -1185,4 +1272,42 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
      eina_inlist_remove(display->inputs, EINA_INLIST_GET(input));
 
    free(input);
+}
+
+void
+_ecore_wl2_input_cursor_set(Ecore_Wl2_Input *input, const char *cursor)
+{
+   struct wl_cursor *wl_cursor;
+
+   eina_stringshare_replace(&input->cursor.name, cursor);
+   if (!cursor) eina_stringshare_replace(&input->cursor.name, "left_ptr");
+
+   wl_cursor =
+     wl_cursor_theme_get_cursor(input->cursor.theme, input->cursor.name);
+   if (!wl_cursor)
+     {
+        wl_cursor =
+          wl_cursor_theme_get_cursor(input->cursor.theme, "left_ptr");
+     }
+
+   if (!wl_cursor)
+     {
+        ERR("Could not get Wayland Cursor from Cursor Theme: %s",
+            input->cursor.theme_name);
+        return;
+     }
+
+   input->cursor.wl_cursor = wl_cursor;
+
+   if ((!wl_cursor->images) || (!wl_cursor->images[0]))
+     {
+        if (input->wl.pointer)
+          wl_pointer_set_cursor(input->wl.pointer, input->pointer.enter_serial,
+                                NULL, 0, 0);
+        return;
+     }
+
+   input->cursor.index = 0;
+
+   _ecore_wl2_input_cursor_update(input);
 }
