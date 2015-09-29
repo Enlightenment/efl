@@ -90,6 +90,22 @@ typedef struct _Ecore_Wl2_Event_Dnd_End
    unsigned int win, source;
 } Ecore_Wl2_Event_Dnd_End;
 
+typedef struct _Ecore_Wl2_Event_Data_Source_Cancelled
+{
+   unsigned int win, source;
+} Ecore_Wl2_Event_Data_Source_Cancelled;
+
+typedef struct _Ecore_Wl2_Event_Data_Source_Target
+{
+   char *type;
+} Ecore_Wl2_Event_Data_Source_Target;
+
+typedef struct _Ecore_Wl2_Event_Data_Source_Send
+{
+   char *type;
+   int fd;
+} Ecore_Wl2_Event_Data_Source_Send;
+
 typedef enum _Ecore_Wl2_Window_Type
 {
    ECORE_WL2_WINDOW_TYPE_NONE,
@@ -111,6 +127,9 @@ EAPI extern int ECORE_WL2_EVENT_DND_LEAVE;
 EAPI extern int ECORE_WL2_EVENT_DND_MOTION;
 EAPI extern int ECORE_WL2_EVENT_DND_DROP;
 EAPI extern int ECORE_WL2_EVENT_DND_END;
+EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_CANCELLED;
+EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_TARGET;
+EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_SEND;
 
 /**
  * @file
