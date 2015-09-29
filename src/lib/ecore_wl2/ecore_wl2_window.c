@@ -810,3 +810,14 @@ ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surface *surfac
                            window->input->pointer.enter_serial,
                            surface, hot_x, hot_y);
 }
+
+EAPI void
+ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const char *cursor)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+   EINA_SAFETY_ON_NULL_RETURN(window->input);
+
+   eina_stringshare_replace(&window->cursor, cursor);
+
+   _ecore_wl2_input_cursor_set(window->input, cursor);
+}

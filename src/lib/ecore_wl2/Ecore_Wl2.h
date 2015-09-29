@@ -467,6 +467,9 @@ EAPI void ecore_wl2_window_pointer_xy_get(Ecore_Wl2_Window *window, int *x, int 
 /* TODO: doxy */
 EAPI void ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surface *surface, int hot_x, int hot_y);
 
+/* TODO: doxy */
+EAPI void ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const char *cursor);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
