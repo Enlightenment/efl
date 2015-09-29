@@ -48,48 +48,47 @@ _filename_get(const char *path)
 }
 
 static Eina_Bool
-_read_file(char *filename, Eina_Strbuf *buffer)
+_read_file(char *filename, Eina_Strbuf **buf)
 {
-   Eina_Bool ret = EINA_FALSE;
-   long file_size = 0;
-   eina_strbuf_reset(buffer);
-
    FILE *fd = fopen(filename, "rb");
-   if (fd)
+   if (!fd)
      {
-        fseek(fd, 0, SEEK_END);
-        file_size = ftell(fd);
-        if (file_size <= 0)
-          {
-             fprintf(stderr, "eolian: could not get length of '%s'\n", filename);
-             goto end;
-          }
-        fseek(fd, 0, SEEK_SET);
-        char *content = malloc(file_size + 1);
-        if (!content)
-          {
-             fprintf(stderr, "eolian: could not allocate memory for '%s'\n", filename);
-             goto end;
-          }
-        long actual_size = (long)fread(content, 1, file_size, fd);
-        if (actual_size != file_size)
-          {
-             fprintf(stderr, "eolian: could not read %ld bytes from '%s' (read %ld bytes)\n",
-                 file_size, filename, actual_size);
-             free(content);
-             goto end;
-          }
-
-        content[file_size] = '\0';
-
-        eina_strbuf_append(buffer, content);
-        free(content);
+        *buf = eina_strbuf_new();
+        return EINA_TRUE;
      }
 
-   ret = EINA_TRUE;
-end:
-   if (fd) fclose(fd);
-   return ret;
+   fseek(fd, 0, SEEK_END);
+   long file_size = ftell(fd);
+   if (file_size <= 0)
+     {
+        fprintf(stderr, "eolian: could not get length of '%s'\n", filename);
+        fclose(fd);
+        return EINA_FALSE;
+     }
+   fseek(fd, 0, SEEK_SET);
+
+   char *content = malloc(file_size + 1);
+   if (!content)
+     {
+        fprintf(stderr, "eolian: could not allocate memory for '%s'\n", filename);
+        fclose(fd);
+        return EINA_FALSE;
+     }
+
+   long actual_size = (long)fread(content, 1, file_size, fd);
+   if (actual_size != file_size)
+     {
+        fprintf(stderr, "eolian: could not read %ld bytes from '%s' (read %ld bytes)\n",
+            file_size, filename, actual_size);
+        free(content);
+        fclose(fd);
+        return EINA_FALSE;
+     }
+
+   content[file_size] = '\0';
+   fclose(fd);
+   *buf = eina_strbuf_manage_new_length(content, file_size);
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -225,25 +224,23 @@ end:
 static Eina_Bool
 _generate_impl_c_file(char *filename, const char *eo_filename)
 {
-   Eina_Bool ret = EINA_FALSE;
-   Eina_Strbuf *buffer = eina_strbuf_new();
-
    const Eolian_Class *class = eolian_class_get_by_file(eo_filename);
-   if (class)
+   if (!class)
+     return EINA_FALSE;
+
+   Eina_Strbuf *buffer = NULL;
+   if (!_read_file(filename, &buffer))
+     return EINA_FALSE;
+
+   if (!impl_source_generate(class, buffer))
      {
-        if (!_read_file(filename, buffer)) goto end;
-
-        if (!impl_source_generate(class, buffer))
-          {
-             fprintf(stderr, "eolian: could not generate source for '%s'\n",
-                     eolian_class_name_get(class));
-             goto end;
-          }
-
-        if (_write_file(filename, buffer, EINA_FALSE))
-           ret = EINA_TRUE;
+        fprintf(stderr, "eolian: could not generate source for '%s'\n",
+                eolian_class_name_get(class));
+        eina_strbuf_free(buffer);
+        return EINA_FALSE;
      }
-end:
+
+   Eina_Bool ret = _write_file(filename, buffer, EINA_FALSE);
    eina_strbuf_free(buffer);
    return ret;
 }
