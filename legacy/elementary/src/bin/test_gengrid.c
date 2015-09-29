@@ -784,6 +784,21 @@ _gg_focus_item_select_on_focus_disable_changed_cb(void *data EINA_UNUSED,
    elm_config_item_select_on_focus_disabled_set(elm_check_state_get(obj));
 }
 
+static void
+_grid_mouse_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
+                    Evas_Object *obj, void *event_info)
+{
+   Elm_Object_Item *it;
+   Evas_Event_Mouse_Down *m_info = event_info;
+
+   if (m_info->button == 1)
+     {
+        printf("mouse at (%d, %d), ", m_info->canvas.x, m_info->canvas.y);
+        it = elm_gengrid_at_xy_item_get(obj, m_info->canvas.x, m_info->canvas.y, NULL, NULL);
+        printf("Item found : %p\n", it);
+     }
+}
+
 void
 test_gengrid2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -804,6 +819,8 @@ test_gengrid2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_min_set(grid, 600, 500);
    elm_box_pack_end(bx, grid);
+   evas_object_event_callback_add(grid, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _grid_mouse_down_cb, NULL);
    evas_object_show(grid);
 
    hbx = elm_box_add(win);
