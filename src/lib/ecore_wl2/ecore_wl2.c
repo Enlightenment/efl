@@ -19,6 +19,7 @@ EAPI int ECORE_WL2_EVENT_DND_ENTER = 0;
 EAPI int ECORE_WL2_EVENT_DND_LEAVE = 0;
 EAPI int ECORE_WL2_EVENT_DND_MOTION = 0;
 EAPI int ECORE_WL2_EVENT_DND_DROP = 0;
+EAPI int ECORE_WL2_EVENT_DND_END = 0;
 
 static void
 _cb_wl_log_print(const char *format, va_list args)
@@ -69,6 +70,7 @@ ecore_wl2_init(void)
         ECORE_WL2_EVENT_DND_LEAVE = ecore_event_type_new();
         ECORE_WL2_EVENT_DND_MOTION = ecore_event_type_new();
         ECORE_WL2_EVENT_DND_DROP = ecore_event_type_new();
+        ECORE_WL2_EVENT_DND_END = ecore_event_type_new();
      }
 
    wl_log_set_handler_server(_cb_wl_log_print);
