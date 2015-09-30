@@ -695,31 +695,27 @@ _eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class *
              cur_klass = *kls_itr;
              op_descs = cur_klass->desc->ops.descs;
 
-#ifndef _WIN32
              for (i = 0, op_desc = op_descs; i < cur_klass->desc->ops.count; i++, op_desc++)
                {
+#ifndef _WIN32
                   if (op_desc->api_func == api_func)
                     {
                        return op_desc;
                     }
-               }
 #else
-             /* On Windows, DLL API's will be exported using the dllexport flag.
-              * When used by another library or executable, they will be declared
-              * using the dllimport flag. What happens really is that two symbols are
-              * created, at two different addresses. So it's impossible to match
-              * them. We fallback to plain string comparison based on the
-              * function name itself. Slow, but this should rarely happen.
-              */
-             for (i = 0; i < cur_klass->desc->ops.count; i++)
-               {
-                  if (((op_descs[i].api_func != NULL) && (op_descs[i].api_func != ((void (*)())-1))) &&
-                        (api_func && !strcmp(api_func, op_descs[i].api_func)))
+                  /* On Windows, DLL API's will be exported using the dllexport flag.
+                   * When used by another library or executable, they will be declared
+                   * using the dllimport flag. What happens really is that two symbols are
+                   * created, at two different addresses. So it's impossible to match
+                   * them. We fallback to plain string comparison based on the
+                   * function name itself. Slow, but this should rarely happen.
+                   */
+                  if (api_func && op_desc->api_func && !strcmp(api_func, op_desc->api_func))
                     {
-                       return &op_descs[i];
+                       return op_desc;
                     }
-               }
 #endif
+               }
           }
      }
 
