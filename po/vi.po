@@ -1,0 +1,239 @@
+# Vietnamese translation for Efl.
+# Copyright (C) 2012 Enlightenment development team
+# This file is put in the public domain.
+# Thiep Ha <thiepha@gmail.com>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: efl 1.15.99.31544\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2015-09-29 19:49+0900\n"
+"PO-Revision-Date: 2015-09-29 19:38+0900\n"
+"Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
+"Language-Team: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: src/lib/ecore/ecore_getopt.c:89
+msgid "Version:"
+msgstr "Phiên Bản:"
+
+#: src/lib/ecore/ecore_getopt.c:98
+msgid "Usage:"
+msgstr "Sử Dụng:"
+
+#: src/lib/ecore/ecore_getopt.c:105
+#, c-format
+msgid "%s [options]"
+msgstr "%s [Lựa Chọn]"
+
+#: src/lib/ecore/ecore_getopt.c:305
+msgid "Copyright:"
+msgstr "Bản Quyền:"
+
+#: src/lib/ecore/ecore_getopt.c:317
+msgid "License:"
+msgstr "Giấy Phép:"
+
+#: src/lib/ecore/ecore_getopt.c:503
+msgid "Type: "
+msgstr "Kiểu:"
+
+#: src/lib/ecore/ecore_getopt.c:579
+msgid "Default: "
+msgstr "Mặc Định:"
+
+#: src/lib/ecore/ecore_getopt.c:606
+msgid "Choices: "
+msgstr "Lựa Chọn:"
+
+#: src/lib/ecore/ecore_getopt.c:644 src/lib/ecore/ecore_getopt.c:645
+msgid "No categories available."
+msgstr "Không có loại nào có sẵn."
+
+#: src/lib/ecore/ecore_getopt.c:649
+msgid "Categories: "
+msgstr "Loại:"
+
+#: src/lib/ecore/ecore_getopt.c:771
+msgid "Options:\n"
+msgstr "Tùy Chọn:\n"
+
+#: src/lib/ecore/ecore_getopt.c:780
+msgid "Positional arguments:\n"
+msgstr "Tham số vị trí:\n"
+
+#: src/lib/ecore/ecore_getopt.c:847
+#, c-format
+msgid "ERROR: unknown category '%s'.\n"
+msgstr "LỖI: không rõ phân loại '%s'.\n"
+
+#: src/lib/ecore/ecore_getopt.c:951
+#, c-format
+msgid "ERROR: unknown option --%s.\n"
+msgstr "LỖI: không rõ tùy chọn --%s.\n"
+
+#: src/lib/ecore/ecore_getopt.c:953
+#, c-format
+msgid "ERROR: unknown option -%c.\n"
+msgstr "LỖI: không rõ tùy chọn -%c.\n"
+
+#: src/lib/ecore/ecore_getopt.c:1016
+msgid "ERROR: "
+msgstr "LỖI:"
+
+#: src/lib/ecore/ecore_getopt.c:1112 src/lib/ecore/ecore_getopt.c:1249
+#: src/lib/ecore/ecore_getopt.c:1265 src/lib/ecore/ecore_getopt.c:1280
+#: src/lib/ecore/ecore_getopt.c:1300 src/lib/ecore/ecore_getopt.c:1347
+#: src/lib/ecore/ecore_getopt.c:1467 src/lib/ecore/ecore_getopt.c:1508
+msgid "value has no pointer set.\n"
+msgstr "giá trị không có trong tập con trỏ.\n"
+
+#: src/lib/ecore/ecore_getopt.c:1144 src/lib/ecore/ecore_getopt.c:1367
+#, c-format
+msgid "unknown boolean value %s.\n"
+msgstr "không biết giá trị kiểu luận lý %s.\n"
+
+#: src/lib/ecore/ecore_getopt.c:1195 src/lib/ecore/ecore_getopt.c:1455
+#, c-format
+msgid "invalid number format %s\n"
+msgstr "định dạng kiểu số không hợp lệ %s\n"
+
+#: src/lib/ecore/ecore_getopt.c:1313
+#, c-format
+msgid "invalid choice \"%s\". Valid values are: "
+msgstr "lựa chọn không hợp lệ \"%s\". Các giá trị hợp lệ là: "
+
+#: src/lib/ecore/ecore_getopt.c:1341
+msgid "missing parameter to append.\n"
+msgstr "thiếu tham số để thêm vào.\n"
+
+#: src/lib/ecore/ecore_getopt.c:1445
+msgid "could not parse value.\n"
+msgstr "không thể phân tích giá trị.\n"
+
+#: src/lib/ecore/ecore_getopt.c:1502
+msgid "missing parameter.\n"
+msgstr "thiếu tham số.\n"
+
+#: src/lib/ecore/ecore_getopt.c:1515
+msgid "missing callback function!\n"
+msgstr "thiếu con trỏ gọi hàm!\n"
+
+#: src/lib/ecore/ecore_getopt.c:1546
+msgid "no version was defined.\n"
+msgstr "không định nghĩa phiên bản.\n"
+
+#: src/lib/ecore/ecore_getopt.c:1563
+msgid "no copyright was defined.\n"
+msgstr "không định nghĩa bản quyền.\n"
+
+#: src/lib/ecore/ecore_getopt.c:1580
+msgid "no license was defined.\n"
+msgstr "không định nghĩa giấy phép.\n"
+
+#: src/lib/ecore/ecore_getopt.c:1670
+#, c-format
+msgid "ERROR: unknown option --%s, ignored.\n"
+msgstr "LỖI: không rõ lựa chọn --%s, bỏ qua.\n"
+
+#: src/lib/ecore/ecore_getopt.c:1703
+#, c-format
+msgid "ERROR: option --%s requires an argument!\n"
+msgstr "LỖI: lựa chọn --%s đòi hỏi một tham số!\n"
+
+#: src/lib/ecore/ecore_getopt.c:1745
+#, c-format
+msgid "ERROR: unknown option -%c, ignored.\n"
+msgstr "LỖI: không rõ lựa chọn -%c, bỏ qua.\n"
+
+#: src/lib/ecore/ecore_getopt.c:1783
+#, c-format
+msgid "ERROR: option -%c requires an argument!\n"
+msgstr "LỖI: lựa chọn -%c đòi hỏi một tham số!\n"
+
+#: src/lib/ecore/ecore_getopt.c:1878
+#, c-format
+msgid "ERROR: missing required positional argument %s.\n"
+msgstr "LỖI: thiếu tham số vị trí được yêu cầu %s.\n"
+
+#: src/lib/ecore/ecore_getopt.c:1910
+#, c-format
+msgid "ERROR: unsupported action type %d for positional argument %s\n"
+msgstr "LỖI: kiểu hoạt động không được hỗ trợ %d cho tham số vị trí %s\n"
+
+#: src/lib/ecore/ecore_getopt.c:2031 src/lib/ecore/ecore_getopt.c:2097
+msgid "ERROR: no parser provided.\n"
+msgstr "LỖI: không cung cấp bộ phân tích.\n"
+
+#: src/lib/ecore/ecore_getopt.c:2036 src/lib/ecore/ecore_getopt.c:2102
+msgid "ERROR: no values provided.\n"
+msgstr "LỖI: không cung cấp giá trị.\n"
+
+#: src/lib/ecore/ecore_getopt.c:2045 src/lib/ecore/ecore_getopt.c:2111
+msgid "ERROR: no arguments provided.\n"
+msgstr "LỖI: không cung cấp đối số.\n"
+
+#: src/lib/ecore/ecore_getopt.c:2071
+msgid "ERROR: invalid options found."
+msgstr "LỖI: phát hiện các tùy chọn không hợp lệ."
+
+#: src/lib/ecore/ecore_getopt.c:2077 src/lib/ecore/ecore_getopt.c:2143
+#, c-format
+msgid " See --%s.\n"
+msgstr "Xem --%s.\n"
+
+#: src/lib/ecore/ecore_getopt.c:2079 src/lib/ecore/ecore_getopt.c:2145
+#, c-format
+msgid " See -%c.\n"
+msgstr "Xem -%c.\n"
+
+#: src/lib/ecore/ecore_getopt.c:2137
+msgid "ERROR: invalid positional arguments found."
+msgstr "LỖI: phát hiện các đối số vị trí không hợp lệ."
+
+#: src/lib/ecore/ecore_getopt.c:2172
+#, c-format
+msgid "ERROR: incorrect geometry value '%s'\n"
+msgstr "LỖI: giá trị hình học không đúng '%s'\n"
+
+#: src/lib/ecore/ecore_getopt.c:2190
+#, c-format
+msgid "ERROR: incorrect size value '%s'\n"
+msgstr "LỖI: giá trị kích thước không đúng '%s'\n"
+
+#: src/lib/efreet/efreet_base.c:123
+msgid "Desktop"
+msgstr "Màn Hình Nền"
+
+#: src/lib/efreet/efreet_base.c:131
+msgid "Downloads"
+msgstr "Tải Về"
+
+#: src/lib/efreet/efreet_base.c:140
+msgid "Templates"
+msgstr "Mẫu"
+
+#: src/lib/efreet/efreet_base.c:149
+msgid "Public"
+msgstr "Công Cộng"
+
+#: src/lib/efreet/efreet_base.c:158
+msgid "Documents"
+msgstr "Tài Liệu"
+
+#: src/lib/efreet/efreet_base.c:166
+msgid "Music"
+msgstr "Âm Nhạc"
+
+#: src/lib/efreet/efreet_base.c:174
+msgid "Pictures"
+msgstr "Hình Ảnh"
+
+#: src/lib/efreet/efreet_base.c:182
+msgid "Videos"
+msgstr "Video"
