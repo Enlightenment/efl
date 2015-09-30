@@ -97,6 +97,7 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
    if (!ev) return;
 
    ev->id = id;
+   ev->display = ewd;
    ev->version = version;
    ev->interface = eina_stringshare_add(interface);
 
@@ -123,6 +124,7 @@ _cb_global_remove(void *data, struct wl_registry *registry EINA_UNUSED, unsigned
    if (!ev) return;
 
    ev->id = id;
+   ev->display = ewd;
    ev->version = global->version;
    ev->interface = eina_stringshare_add(global->interface);
 
