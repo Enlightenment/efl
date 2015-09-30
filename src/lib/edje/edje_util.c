@@ -781,12 +781,13 @@ _edje_color_class_active_iterator_next(Eina_Iterator *it, void **data)
    Edje_Refcount *er = NULL;
    Eina_Iterator *ith;
    Edje_Color_Class *cc;
+   Eina_Bool r = EINA_FALSE;
 
    if (!eina_iterator_next(et->classes, (void **)&tuple)) return EINA_FALSE;
    if (!tuple) return EINA_FALSE;
 
    ith = eina_hash_iterator_data_new(tuple->data);
-   if (!eina_iterator_next(ith, (void **)&er)) return EINA_FALSE;
+   if (!eina_iterator_next(ith, (void **)&er)) goto on_error;
 
    /*
       We actually need to ask on an object to get the correct value.
@@ -794,7 +795,7 @@ _edje_color_class_active_iterator_next(Eina_Iterator *it, void **data)
       This can some times not be the case, but for now we should be fine.
     */
    cc = _edje_color_class_find(er->ed, tuple->key);
-   if (!cc) return EINA_FALSE;
+   if (!cc) goto on_error;
    et->cc = *cc;
 
    /*
@@ -802,11 +803,15 @@ _edje_color_class_active_iterator_next(Eina_Iterator *it, void **data)
       description for this color class. Let's bet on that for now.
     */
    cc = eina_hash_find(er->ed->file->color_hash, tuple->key);
-   if (!cc) return EINA_FALSE;
+   if (!cc) goto on_error;
    et->cc.desc = cc->desc;
 
    *data = &et->cc;
-   return EINA_TRUE;
+   r = EINA_TRUE;
+
+ on_error:
+   eina_iterator_free(ith);
+   return r;
 }
 
 static void *
