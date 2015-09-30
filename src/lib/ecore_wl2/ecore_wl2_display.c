@@ -450,6 +450,8 @@ ecore_wl2_display_animator_source_set(Ecore_Wl2_Display *display, Ecore_Animator
         break;
      }
 
+   ecore_animator_source_set(source);
+
    return EINA_TRUE;
 }
 
