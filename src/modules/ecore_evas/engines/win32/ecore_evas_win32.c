@@ -215,9 +215,13 @@ _ecore_evas_win32_event_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, 
 /*    _ecore_evas_x_modifier_locks_update(ee, e->modifiers); */
    _ecore_evas_mouse_move_process(ee, e->x, e->y, e->timestamp);
 
-   evas_event_feed_mouse_out(ee->evas, e->timestamp, NULL);
-   if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
-   if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
+   if (ee->in)
+     {
+        if ((evas_event_down_count_get(ee->evas) > 0) return ECORE_CALLBACK_PASS_ON;
+        evas_event_feed_mouse_out(ee->evas, e->timestamp, NULL);
+        if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
+        if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
+     }
 
    return ECORE_CALLBACK_PASS_ON;
 }
