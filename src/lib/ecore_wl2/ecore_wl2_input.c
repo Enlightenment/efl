@@ -542,12 +542,14 @@ _pointer_cb_motion(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned 
 }
 
 static void
-_pointer_cb_button(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial EINA_UNUSED, unsigned int timestamp, unsigned int button, unsigned int state)
+_pointer_cb_button(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned int serial, unsigned int timestamp, unsigned int button, unsigned int state)
 {
    Ecore_Wl2_Input *input;
 
    input = data;
    if (!input) return;
+
+   input->display->serial = serial;
 
    if (state == WL_POINTER_BUTTON_STATE_PRESSED)
      {
