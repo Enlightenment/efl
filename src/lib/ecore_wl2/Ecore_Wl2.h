@@ -113,6 +113,12 @@ typedef struct _Ecore_Wl2_Event_Selection_Data_Ready
    Eina_Bool done : 1;
 } Ecore_Wl2_Event_Selection_Data_Ready;
 
+typedef struct _Ecore_Wl2_Event_Window_Configure
+{
+   unsigned int win, event_win, edges;
+   int x, y, w, h;
+} Ecore_Wl2_Event_Window_Configure;
+
 typedef enum _Ecore_Wl2_Window_Type
 {
    ECORE_WL2_WINDOW_TYPE_NONE,
@@ -138,6 +144,7 @@ EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_CANCELLED;
 EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_TARGET;
 EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_SEND;
 EAPI extern int ECORE_WL2_EVENT_SELECTION_DATA_READY;
+EAPI extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE;
 
 /**
  * @file
