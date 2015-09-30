@@ -1090,7 +1090,8 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
         wl_pointer_destroy(input->wl.pointer);
         input->wl.pointer = NULL;
      }
-   else if ((caps & WL_SEAT_CAPABILITY_KEYBOARD) && (!input->wl.keyboard))
+
+   if ((caps & WL_SEAT_CAPABILITY_KEYBOARD) && (!input->wl.keyboard))
      {
         input->wl.keyboard = wl_seat_get_keyboard(seat);
         wl_keyboard_set_user_data(input->wl.keyboard, input);
@@ -1101,7 +1102,8 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
         wl_keyboard_destroy(input->wl.keyboard);
         input->wl.keyboard = NULL;
      }
-   else if ((caps & WL_SEAT_CAPABILITY_TOUCH) && (!input->wl.touch))
+
+   if ((caps & WL_SEAT_CAPABILITY_TOUCH) && (!input->wl.touch))
      {
         input->wl.touch = wl_seat_get_touch(seat);
         wl_touch_set_user_data(input->wl.touch, input);
