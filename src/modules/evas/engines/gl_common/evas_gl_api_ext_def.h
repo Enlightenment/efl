@@ -1646,13 +1646,13 @@ _EVASGL_EXT_BEGIN(EGL_WL_bind_wayland_display)
 
         _EVASGL_EXT_DRVNAME(EGL_WL_bind_wayland_display)
 
-        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglBindWaylandDisplayWL, (EGLDisplay dpy, struct wl_display *display), (dpy, display))
+        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglBindWaylandDisplayWL, (EGLDisplay dpy, void *display), (dpy, display))
                 _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglBindWaylandDisplayWL")
         _EVASGL_EXT_FUNCTION_PRIVATE_END()
-        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglUnbindWaylandDisplayWL, (EGLDisplay dpy, struct wl_display *display), (dpy, display))
+        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglUnbindWaylandDisplayWL, (EGLDisplay dpy, void *display), (dpy, display))
                 _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglUnbindWaylandDisplayWL")
         _EVASGL_EXT_FUNCTION_PRIVATE_END()
-        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglQueryWaylandBufferWL, (EGLDisplay dpy, struct wl_resource *buffer, EGLint attribute, EGLint *value), (dpy, buffer, attribute, value))
+        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglQueryWaylandBufferWL, (EGLDisplay dpy, void *buffer, EGLint attribute, EGLint *value), (dpy, buffer, attribute, value))
                 _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglQueryWaylandBufferWL")
         _EVASGL_EXT_FUNCTION_PRIVATE_END()
 
