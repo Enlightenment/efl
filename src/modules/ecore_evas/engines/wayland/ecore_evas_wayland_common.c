@@ -473,13 +473,17 @@ _ecore_evas_wl_common_free(Ecore_Evas *ee)
 void
 _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 {
-   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+   Ecore_Evas_Engine_Wl_Data *wdata;
    int orig_w, orig_h;
    int ow, oh;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
+
+   wdata = ee->engine.data;
+   if (!wdata) return;
+
    if (w < 1) w = 1;
    if (h < 1) h = 1;
 
@@ -1505,29 +1509,28 @@ _ecore_evas_wayland_move(Ecore_Evas *ee, int x, int y)
      }
 }
 
-/* static void */
-/* _ecore_evas_wayland_type_set(Ecore_Evas *ee, int type) */
-/* { */
-   /* Ecore_Evas_Engine_Wl_Data *wdata; */
+static void
+_ecore_evas_wayland_type_set(Ecore_Evas *ee, int type)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata;
 
-   /* if (!ee) return; */
-   /* wdata = ee->engine.data; */
+   if (!ee) return;
+   wdata = ee->engine.data;
 
-   /* TODO */
-   /* ecore_wl_window_type_set(wdata->win, type); */
-/* } */
+   ecore_wl2_window_type_set(wdata->win, type);
+}
 
-/* static Ecore_Wl2_Window * */
-/* _ecore_evas_wayland_window_get(const Ecore_Evas *ee) */
-/* { */
-/*    Ecore_Evas_Engine_Wl_Data *wdata; */
+static Ecore_Wl2_Window *
+_ecore_evas_wayland_window_get(const Ecore_Evas *ee)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata;
 
-/*    if (!(!strncmp(ee->driver, "wayland", 7))) */
-/*      return NULL; */
+   if (!(!strncmp(ee->driver, "wayland", 7)))
+     return NULL;
 
-/*    wdata = ee->engine.data; */
-/*    return wdata->win; */
-/* } */
+   wdata = ee->engine.data;
+   return wdata->win;
+}
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
 static void
@@ -1568,8 +1571,8 @@ _ecore_evas_wl_interface_new(void)
    iface->resize = _ecore_evas_wayland_resize;
    iface->move = _ecore_evas_wayland_move;
    /* iface->pointer_set = _ecore_evas_wayland_pointer_set; */
-   /* iface->type_set = _ecore_evas_wayland_type_set; */
-   /* iface->window_get = _ecore_evas_wayland_window_get; */
+   iface->type_set = _ecore_evas_wayland_type_set;
+   iface->window_get = _ecore_evas_wayland_window_get;
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
    iface->pre_post_swap_callback_set = 
