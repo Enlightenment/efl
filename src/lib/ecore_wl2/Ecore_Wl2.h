@@ -111,7 +111,7 @@ typedef struct _Ecore_Wl2_Event_Selection_Data_Ready
 {
    char *data;
    int len;
-   Eina_Bool done : 1;
+   Eina_Bool done;
 } Ecore_Wl2_Event_Selection_Data_Ready;
 
 typedef struct _Ecore_Wl2_Event_Window_Configure
