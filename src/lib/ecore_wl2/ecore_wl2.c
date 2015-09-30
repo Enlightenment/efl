@@ -24,6 +24,7 @@ EAPI int ECORE_WL2_EVENT_DATA_SOURCE_CANCELLED = 0;
 EAPI int ECORE_WL2_EVENT_DATA_SOURCE_TARGET = 0;
 EAPI int ECORE_WL2_EVENT_DATA_SOURCE_SEND = 0;
 EAPI int ECORE_WL2_EVENT_SELECTION_DATA_READY = 0;
+EAPI int ECORE_WL2_EVENT_WINDOW_CONFIGURE = 0;
 
 static void
 _cb_wl_log_print(const char *format, va_list args)
@@ -79,6 +80,7 @@ ecore_wl2_init(void)
         ECORE_WL2_EVENT_DATA_SOURCE_TARGET = ecore_event_type_new();
         ECORE_WL2_EVENT_DATA_SOURCE_SEND = ecore_event_type_new();
         ECORE_WL2_EVENT_SELECTION_DATA_READY = ecore_event_type_new();
+        ECORE_WL2_EVENT_WINDOW_CONFIGURE = ecore_event_type_new();
      }
 
    wl_log_set_handler_server(_cb_wl_log_print);

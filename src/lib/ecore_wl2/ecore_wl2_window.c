@@ -9,6 +9,25 @@ static void _anim_cb_animate(void *data, struct wl_callback *callback, uint32_t 
 static Eina_Bool _animator_busy = EINA_FALSE;
 
 static void
+_ecore_wl2_window_configure_send(Ecore_Wl2_Window *window, int w, int h, unsigned int edges)
+{
+   Ecore_Wl2_Event_Window_Configure *ev;
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Configure));
+   if (!ev) return;
+
+   ev->win = window->id;
+   ev->event_win = window->id;
+   ev->x = window->geometry.x;
+   ev->y = window->geometry.y;
+   ev->w = w;
+   ev->h = h;
+   ev->edges = edges;
+
+   ecore_event_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE, ev, NULL, NULL);
+}
+
+static void
 _wl_shell_surface_cb_ping(void *data EINA_UNUSED, struct wl_shell_surface *shell_surface, unsigned int serial)
 {
    wl_shell_surface_pong(shell_surface, serial);
@@ -24,9 +43,7 @@ _wl_shell_surface_cb_configure(void *data, struct wl_shell_surface *shell_surfac
 
    if ((w <= 0) || (h <= 0)) return;
    if ((win->geometry.w != w) || (win->geometry.h != h))
-     {
-        /* TODO: send configure */
-     }
+     _ecore_wl2_window_configure_send(win, w, h, edges);
 }
 
 static void
@@ -100,9 +117,7 @@ _xdg_surface_cb_configure(void *data, struct xdg_surface *xdg_surface EINA_UNUSE
      }
 
    if ((w > 0) && (h > 0))
-     {
-        /* TODO: send configure ?? */
-     }
+     _ecore_wl2_window_configure_send(win, w, h, 0);
 
    xdg_surface_ack_configure(win->xdg_surface, serial);
 }
@@ -481,10 +496,10 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w, int h, int location)
 
    if (window->xdg_surface)
      xdg_surface_resize(window->xdg_surface, input->wl.seat,
-                        window->display->serial, location);
+                        input->display->serial, location);
    else if (window->wl_shell_surface)
      wl_shell_surface_resize(window->wl_shell_surface, input->wl.seat,
-                             window->display->serial, location);
+                             input->display->serial, location);
 }
 
 EAPI void
