@@ -102,7 +102,7 @@ static Eina_Bool
 _ecore_evas_wl_common_cb_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
-   Ecore_Wl_Event_Mouse_Out *ev;
+   Ecore_Event_Mouse_IO *ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -127,14 +127,14 @@ static Eina_Bool
 _ecore_evas_wl_common_cb_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
-   Ecore_Wl_Event_Focus_In *ev;
+   Ecore_Wl2_Event_Focus_In *ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ev = event;
-   ee = ecore_event_window_match(ev->win);
+   ee = ecore_event_window_match(ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (ee->prop.focused) return ECORE_CALLBACK_PASS_ON;
    ee->prop.focused = EINA_TRUE;
    evas_focus_in(ee->evas);
@@ -146,14 +146,14 @@ static Eina_Bool
 _ecore_evas_wl_common_cb_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
-   Ecore_Wl_Event_Focus_In *ev;
+   Ecore_Wl2_Event_Focus_Out *ev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ev = event;
-   ee = ecore_event_window_match(ev->win);
+   ee = ecore_event_window_match(ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (!ee->prop.focused) return ECORE_CALLBACK_PASS_ON;
    evas_focus_out(ee->evas);
    ee->prop.focused = EINA_FALSE;
@@ -215,6 +215,69 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
 
    if (ee->prop.fullscreen || (ee->req.w != nw) || (ee->req.h != nh))
      _ecore_evas_wl_common_resize(ee, nw, nh);
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+   Ecore_Wl2_Event_Window_Configure *ev;
+   int nw = 0, nh = 0;
+   int fw = 0, fh = 0;
+   Eina_Bool prev_max, prev_full;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   ev = event;
+   ee = ecore_event_window_match(ev->win);
+   if (!ee) return ECORE_CALLBACK_PASS_ON;
+   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+
+   wdata = ee->engine.data;
+   if (!wdata) return ECORE_CALLBACK_PASS_ON;
+
+   prev_max = ee->prop.maximized;
+   prev_full = ee->prop.fullscreen;
+   ee->prop.maximized = ecore_wl2_window_maximized_get(wdata->win);
+   ee->prop.fullscreen = ecore_wl2_window_fullscreen_get(wdata->win);
+
+   nw = ev->w;
+   nh = ev->h;
+   if (nw < 1) nw = 1;
+   if (nh < 1) nh = 1;
+
+   if (ee->prop.fullscreen)
+     {
+        if ((nw <= 1) || (nh <= 1))
+          evas_output_size_get(ee->evas, &nw, &nh);
+     }
+
+   if (prev_full != ee->prop.fullscreen)
+     _ecore_evas_wl_common_border_update(ee);
+
+   if (ee->prop.fullscreen)
+     {
+        _ecore_evas_wl_common_move(ee, ev->x, ev->y);
+        _ecore_evas_wl_common_resize(ee, nw, nh);
+
+        if (prev_full != ee->prop.fullscreen)
+          _ecore_evas_wl_common_state_update(ee);
+
+        return ECORE_CALLBACK_PASS_ON;
+     }
+
+   if ((ee->x != ev->x) || (ee->y != ev->y))
+     _ecore_evas_wl_common_move(ee, ev->x, ev->y);
+
+   if ((ee->req.w != nw) || (ee->req.h != nh))
+     _ecore_evas_wl_common_resize(ee, nw, nh);
+
+   if ((prev_max != ee->prop.maximized) ||
+       (prev_full != ee->prop.fullscreen))
+     _ecore_evas_wl_common_state_update(ee);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -1574,7 +1637,7 @@ _ecore_evas_wl_interface_new(void)
    iface->move = _ecore_evas_wayland_move;
    /* iface->pointer_set = _ecore_evas_wayland_pointer_set; */
    iface->type_set = _ecore_evas_wayland_type_set;
-   iface->window_get = _ecore_evas_wayland_window_get;
+   iface->window_get2 = _ecore_evas_wayland_window_get;
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
    iface->pre_post_swap_callback_set = 
