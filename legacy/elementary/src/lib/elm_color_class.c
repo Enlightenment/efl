@@ -776,12 +776,19 @@ elm_color_class_editor_add(Evas_Object *obj)
           {
              if (test)
                {
-                  if (eina_hash_find(test, ecc->name)) continue;
+                  if (eina_hash_find(test, ecc->name))
+                    {
+                       eina_stringshare_del(ecc->name);
+                       eina_stringshare_del(ecc->desc);
+                       free(ecc);
+                       continue;
+                    }
                   eina_hash_add(test, ecc->name, ecc);
                }
              elm_genlist_item_sorted_insert(gl, &itc, ecc, NULL, 0, (Eina_Compare_Cb)_colorclass_sort, NULL, NULL);
           }
      }
+   eina_hash_free(test);
 
    return ly;
 }
