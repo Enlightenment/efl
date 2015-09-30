@@ -1249,6 +1249,8 @@ _ecore_wl2_input_del(Ecore_Wl2_Input *input)
 
    if (input->repeat.timer) ecore_timer_del(input->repeat.timer);
 
+   _ecore_wl2_input_cursor_update_stop(input);
+
    if (input->cursor.theme) wl_cursor_theme_destroy(input->cursor.theme);
    if (input->cursor.surface) wl_surface_destroy(input->cursor.surface);
    if (input->cursor.name) eina_stringshare_del(input->cursor.name);
@@ -1286,6 +1288,8 @@ _ecore_wl2_input_cursor_set(Ecore_Wl2_Input *input, const char *cursor)
 {
    struct wl_cursor *wl_cursor;
 
+   _ecore_wl2_input_cursor_update_stop(input);
+
    eina_stringshare_replace(&input->cursor.name, cursor);
    if (!cursor) eina_stringshare_replace(&input->cursor.name, "left_ptr");
 
@@ -1317,4 +1321,12 @@ _ecore_wl2_input_cursor_set(Ecore_Wl2_Input *input, const char *cursor)
    input->cursor.index = 0;
 
    _ecore_wl2_input_cursor_update(input);
+}
+
+void
+_ecore_wl2_input_cursor_update_stop(Ecore_Wl2_Input *input)
+{
+   if (!input->cursor.timer) return;
+   ecore_timer_del(input->cursor.timer);
+   input->cursor.timer = NULL;
 }

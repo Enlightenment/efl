@@ -833,6 +833,8 @@ ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surface *surfac
 
    if (!window->input) return;
 
+   _ecore_wl2_input_cursor_update_stop(window->input);
+
    if (window->input->wl.pointer)
      wl_pointer_set_cursor(window->input->wl.pointer,
                            window->input->pointer.enter_serial,
@@ -848,6 +850,8 @@ ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const char *curs
    eina_stringshare_replace(&window->cursor, cursor);
 
    if (!window->input) return;
+
+   _ecore_wl2_input_cursor_update_stop(window->input);
    _ecore_wl2_input_cursor_set(window->input, cursor);
 }
 
