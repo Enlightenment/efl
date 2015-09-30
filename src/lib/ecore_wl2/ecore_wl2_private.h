@@ -239,5 +239,6 @@ void _ecore_wl2_dnd_leave(Ecore_Wl2_Input *input);
 void _ecore_wl2_dnd_motion(Ecore_Wl2_Input *input, int x, int y, unsigned int timestamp);
 void _ecore_wl2_dnd_drop(Ecore_Wl2_Input *input);
 void _ecore_wl2_dnd_selection(Ecore_Wl2_Input *input, struct wl_data_offer *offer);
+void _ecore_wl2_dnd_del(Ecore_Wl2_Dnd_Source *source);
 
 #endif

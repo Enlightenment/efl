@@ -38,19 +38,6 @@ static const struct wl_data_offer_listener _offer_listener =
 };
 
 static void
-_ecore_wl2_dnd_del(Ecore_Wl2_Dnd_Source *source)
-{
-   if (!source) return;
-   source->refcount--;
-   if (source->refcount == 0)
-     {
-        wl_data_offer_destroy(source->offer);
-        wl_array_release(&source->types);
-        free(source);
-     }
-}
-
-static void
 _source_cb_target_free(void *data EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Data_Source_Target *ev;
@@ -407,6 +394,19 @@ _ecore_wl2_dnd_selection(Ecore_Wl2_Input *input, struct wl_data_offer *offer)
         input->selection.source = wl_data_offer_get_user_data(offer);
         t = wl_array_add(&input->selection.source->types, sizeof(*t));
         *t = NULL;
+     }
+}
+
+void
+_ecore_wl2_dnd_del(Ecore_Wl2_Dnd_Source *source)
+{
+   if (!source) return;
+   source->refcount--;
+   if (source->refcount == 0)
+     {
+        wl_data_offer_destroy(source->offer);
+        wl_array_release(&source->types);
+        free(source);
      }
 }
 
