@@ -231,6 +231,7 @@ void _ecore_wl2_input_ungrab(Ecore_Wl2_Input *input);
 void _ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, unsigned int button);
 
 void _ecore_wl2_input_cursor_set(Ecore_Wl2_Input *input, const char *cursor);
+void _ecore_wl2_input_cursor_update_stop(Ecore_Wl2_Input *input);
 
 void _ecore_wl2_dnd_add(Ecore_Wl2_Input *input, struct wl_data_offer *offer);
 void _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct wl_surface *surface, int x, int y, unsigned int timestamp);
