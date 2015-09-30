@@ -1,4 +1,5 @@
 #include "evas_engine.h"
+#include "../gl_common/evas_gl_define.h"
 
 static Eina_TLS _outbuf_key = 0;
 static Eina_TLS _context_key = 0;
