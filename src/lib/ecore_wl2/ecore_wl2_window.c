@@ -408,7 +408,8 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
           }
      }
 
-   /* TODO: delete window anim callback */
+   if (window->anim_cb) wl_callback_destroy(window->anim_cb);
+
    /* TODO: destroy subsurfaces */
 
    ecore_wl2_window_hide(window);
