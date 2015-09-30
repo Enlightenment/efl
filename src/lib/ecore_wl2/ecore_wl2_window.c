@@ -656,9 +656,11 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
           wl_shell_surface_set_toplevel(window->wl_shell_surface);
 
         window->type = ECORE_WL2_WINDOW_TYPE_TOPLEVEL;
-     }
 
-   /* TODO: send configure ? */
+        /* FIXME: Should this be sending a 'saved' geom ?? */
+        _ecore_wl2_window_configure_send(window, window->geometry.x,
+                                         window->geometry.y, 0);
+     }
 }
 
 EAPI Eina_Bool
@@ -699,9 +701,11 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
           wl_shell_surface_set_toplevel(window->wl_shell_surface);
 
         window->type = ECORE_WL2_WINDOW_TYPE_TOPLEVEL;
-     }
 
-   /* TODO: send configure ? */
+        /* FIXME: Should this be sending a 'saved' geom ?? */
+        _ecore_wl2_window_configure_send(window, window->geometry.x,
+                                         window->geometry.y, 0);
+     }
 }
 
 EAPI void
