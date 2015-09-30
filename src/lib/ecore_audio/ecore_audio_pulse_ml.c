@@ -121,15 +121,34 @@ struct pa_time_event
 
    pa_time_event_cb_t              callback;
    pa_time_event_destroy_cb_t      destroy_callback;
+   Eina_Bool in_event : 1;
+   Eina_Bool dead : 1;
 };
+
+void
+_ecore_pa_time_free(pa_time_event *event)
+{
+   event->dead = 1;
+   if (event->in_event) return;
+   if (event->timer)
+     ecore_timer_del(event->timer);
+
+   event->timer = NULL;
+
+   free(event);
+}
 
 Eina_Bool
 _ecore_time_wrapper(void *data)
 {
    pa_time_event *event = (pa_time_event *)data;
 
+   event->in_event = 1;
    event->callback(event->mainloop, event, &event->tv, event->userdata);
+   event->in_event = 0;
    event->timer = NULL;
+   if (event->dead)
+     _ecore_pa_time_free(event);
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -191,17 +210,6 @@ _ecore_pa_time_restart(pa_time_event *event, const struct timeval *tv)
         ecore_timer_interval_set(event->timer, interval);
         ecore_timer_reset(event->timer);
      }
-}
-
-void
-_ecore_pa_time_free(pa_time_event *event)
-{
-   if (event->timer)
-     ecore_timer_del(event->timer);
-
-   event->timer = NULL;
-
-   free(event);
 }
 
 void
