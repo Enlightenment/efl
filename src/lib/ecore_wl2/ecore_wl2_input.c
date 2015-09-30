@@ -486,6 +486,7 @@ _pointer_cb_enter(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
    window = _ecore_wl2_display_window_surface_find(input->display, surface);
    if (!window) return;
 
+   window->input = input;
    input->focus.pointer = window;
 
    _ecore_wl2_input_mouse_in_send(input, window);
@@ -509,6 +510,8 @@ _pointer_cb_leave(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
    /* find the window which this surface belongs to */
    window = _ecore_wl2_display_window_surface_find(input->display, surface);
    if (!window) return;
+
+   window->input = NULL;
 
    _ecore_wl2_input_mouse_out_send(input, window);
 }
