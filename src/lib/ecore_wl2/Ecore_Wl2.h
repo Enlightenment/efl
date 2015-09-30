@@ -44,6 +44,7 @@ typedef struct _Ecore_Wl2_Global
 
 typedef struct _Ecore_Wl2_Event_Global
 {
+   Ecore_Wl2_Display *display;
    Eina_Stringshare *interface;
    unsigned int id, version;
 } Ecore_Wl2_Event_Global;
