@@ -813,7 +813,9 @@ EAPI void
 ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surface *surface, int hot_x, int hot_y)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
-   EINA_SAFETY_ON_NULL_RETURN(window->input);
+   /* EINA_SAFETY_ON_NULL_RETURN(window->input); */
+
+   if (!window->input) return;
 
    if (window->input->wl.pointer)
      wl_pointer_set_cursor(window->input->wl.pointer,
@@ -825,10 +827,11 @@ EAPI void
 ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const char *cursor)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
-   EINA_SAFETY_ON_NULL_RETURN(window->input);
+   /* EINA_SAFETY_ON_NULL_RETURN(window->input); */
 
    eina_stringshare_replace(&window->cursor, cursor);
 
+   if (!window->input) return;
    _ecore_wl2_input_cursor_set(window->input, cursor);
 }
 
