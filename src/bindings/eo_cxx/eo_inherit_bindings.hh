@@ -61,29 +61,7 @@ void inherit_constructor_impl(Eo*, Inherit_Private_Data* self, void* this_)
 /// @param this_ The <em>user data</em> to be passed to the resolved function.
 /// @param args An heterogeneous sequence of arguments.
 ///
-EAPI inline
-void inherit_constructor(void* this_)
-{
-   typedef void (*func_t)(Eo *, void *, void*);
-   Eo_Op_Call_Data ___call;
-   static Eo_Op op = EO_NOOP;
-   if ( op == EO_NOOP )
-     op = _eo_api_op_id_get
-       (reinterpret_cast<void*>
-        (&detail::inherit_constructor),
-        ::eina_main_loop_is(), __FILE__, __LINE__);
-   if (!_eo_call_resolve("detail::inherit_constructor", op, &___call,
-                         ::eina_main_loop_is(), __FILE__, __LINE__))
-     {
-        assert(_eo_call_resolve("detail::inherit_constructor", op, &___call,
-                                ::eina_main_loop_is(), __FILE__, __LINE__));
-        return;
-     }
-   func_t func = (func_t) ___call.func;
-   EO_HOOK_CALL_PREPARE(eo_hook_call_pre, "");
-   func(___call.obj, ___call.data, this_);
-   EO_HOOK_CALL_PREPARE(eo_hook_call_post, "");
-}
+inline EOAPI EO_VOID_FUNC_BODYV(inherit_constructor, EO_FUNC_CALL(this_), void* this_);
 
 template <typename T>
 int initialize_operation_description(detail::tag<void>, void*);
@@ -136,12 +114,10 @@ Eo_Class const* create_class(eina::index_sequence<S...>)
      (
       &detail::inherit_constructor
      );
-   op_descs[detail::operation_description_size<E...>::value].op = EO_NOOP;
    op_descs[detail::operation_description_size<E...>::value].op_type = EO_OP_TYPE_REGULAR;
 
    op_descs[detail::operation_description_size<E...>::value+1].func = 0;
    op_descs[detail::operation_description_size<E...>::value+1].api_func = 0;
-   op_descs[detail::operation_description_size<E...>::value+1].op = 0;
    op_descs[detail::operation_description_size<E...>::value+1].op_type = EO_OP_TYPE_INVALID;
 
    typedef inherit<D, E...> inherit_type;

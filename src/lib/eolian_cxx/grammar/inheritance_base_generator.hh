@@ -47,7 +47,6 @@ operator<<(std::ostream& out, inheritance_operation const& x)
        << x._cls.name << "_" << func.name << "_wrapper<T>);" << endl
        << tab(1) << "ops[i].api_func = reinterpret_cast<void*>(& ::"
        << func.impl << ");" << endl
-       << tab(1) << "ops[i].op = EO_OP_OVERRIDE;" << endl
        << tab(1) << "ops[i].op_type = EO_OP_TYPE_REGULAR;" << endl // XXX class ops
        << tab(1) << "++i;" << endl
        << scope_guard_tail(x._cls, func)
