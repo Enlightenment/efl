@@ -1,5 +1,7 @@
 #include "config.h"
 #include "evas_engine.h"
+#include "../gl_common/evas_gl_define.h"
+
 #include <wayland-client.h>
 
 #ifdef HAVE_DLSYM
@@ -16,10 +18,6 @@
 #include "Evas_GL.h"
 
 #define EVAS_GL_UPDATE_TILE_SIZE 16
-
-#ifndef EGL_NATIVE_PIXMAP_KHR
-# define EGL_NATIVE_PIXMAP_KHR 0x30b0
-#endif
 
 /* external variables */
 int _evas_engine_gl_drm_log_dom = -1;

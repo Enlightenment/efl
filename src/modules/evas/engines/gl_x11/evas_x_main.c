@@ -1,4 +1,5 @@
 #include "evas_engine.h"
+#include "../gl_common/evas_gl_define.h"
 
 # define SET_RESTORE_CONTEXT() do { if (glsym_evas_gl_context_restore_set) glsym_evas_gl_context_restore_set(EINA_TRUE); } while(0)
 

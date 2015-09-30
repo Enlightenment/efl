@@ -1,5 +1,6 @@
 #include "evas_common_private.h" /* Also includes international specific stuff */
 #include "evas_engine.h"
+#include "../gl_common/evas_gl_define.h"
 
 #ifdef HAVE_DLSYM
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
@@ -77,16 +78,6 @@ void (*glsym_evas_gl_context_restore_set) (Eina_Bool enable) = NULL;
 
 #ifdef GL_GLES
 
-#ifndef EGL_NATIVE_PIXMAP_KHR
-# define EGL_NATIVE_PIXMAP_KHR 0x30b0
-#endif
-#ifndef EGL_Y_INVERTED_NOK
-# define EGL_Y_INVERTED_NOK 0x307F
-#endif
-
-#ifndef EGL_OPENGL_ES3_BIT
-# define EGL_OPENGL_ES3_BIT 0x00000040
-#endif
 _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
 void    *(*glsym_eglCreateImage)               (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const int *e) = NULL;
 void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
