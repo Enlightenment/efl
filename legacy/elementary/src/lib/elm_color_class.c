@@ -5,11 +5,10 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_color_class.h"
-#include "eldbus_elementary_colorclass.h"
 
-static Eldbus_Proxy *cc_proxy;
-static Ecore_Event_Handler *h1;
-static Ecore_Event_Handler *h2;
+//static Eldbus_Proxy *cc_proxy;
+//static Ecore_Event_Handler *h1;
+//static Ecore_Event_Handler *h2;
 
 typedef struct Colorclass
 {
@@ -28,7 +27,7 @@ typedef struct Colorclass_UI
    Evas_Object *reset;
    Evas_Object *cs;
 
-   uint64_t winid;
+   //uint64_t winid;
    Ecore_Timer *timer;
 
    Colorclass *current; //actually Elm_Color_Overlay
@@ -37,7 +36,7 @@ typedef struct Colorclass_UI
    Eina_Bool change_reset : 1;
    Eina_Bool exist : 1;
 } Colorclass_UI;
-
+#if 0
 typedef enum
 {
    COLORCLASS_SIGNAL_EDIT,
@@ -55,6 +54,7 @@ static const Eldbus_Signal colorclass_editor_signals[] =
 
 static Eina_Inlist *remote_ccuis;
 static Eldbus_Service_Interface *remote_iface;
+#endif
 static Elm_Color_Class_Name_Cb tl_cb;
 static Elm_Color_Class_List_Cb list_cb;
 
@@ -80,7 +80,7 @@ _colorclass_cc_update(Colorclass_UI *cc, int num)
                         0, 0, 0, 0,
                         0, 0, 0, 0);
 }
-
+#if 0
 static void
 _dbus_signal_changed(Colorclass_UI *cc)
 {
@@ -103,7 +103,7 @@ _dbus_signal_changed(Colorclass_UI *cc)
    eldbus_message_iter_container_close(iter, array);
    eldbus_service_signal_send(remote_iface, msg);
 }
-
+#endif
 static void
 _colorclass_select(void *data, Evas_Object *obj EINA_UNUSED, const char *sig, const char *src EINA_UNUSED)
 {
@@ -136,9 +136,9 @@ _colorclass_changed(void *data, Evas_Object *obj EINA_UNUSED,
 
    elm_colorselector_color_get(cc->cs, (int*)&cc->current->color[cc->num].r, (int*)&cc->current->color[cc->num].g,
                                (int*)&cc->current->color[cc->num].b, (int*)&cc->current->color[cc->num].a);
-   if (cc->winid && remote_iface)
-     _dbus_signal_changed(cc);
-   else
+   //if (cc->winid && remote_iface)
+     //_dbus_signal_changed(cc);
+   //else
      edje_color_class_set(cc->current->name,
                           cc->current->color[0].r, cc->current->color[0].g, cc->current->color[0].b, cc->current->color[0].a,
                           cc->current->color[1].r, cc->current->color[1].g, cc->current->color[1].b, cc->current->color[1].a,
@@ -162,17 +162,17 @@ _colorclass_reset(void *data, Evas_Object *obj EINA_UNUSED,
    Colorclass color;
 
    if (!cc->current) return EINA_FALSE;
-   if (cc->winid && remote_iface)
-     {
-        Eldbus_Message *msg;
+   //if (cc->winid && remote_iface)
+     //{
+        //Eldbus_Message *msg;
 
-        msg = eldbus_service_signal_new(remote_iface, COLORCLASS_SIGNAL_RESET);
-        eldbus_message_arguments_append(msg, "t", cc->winid);
-        eldbus_message_arguments_append(msg, "s", cc->current->name);
-        eldbus_service_signal_send(remote_iface, msg);
-        cc->change_reset = 1;
-        return EINA_FALSE;
-     }
+        //msg = eldbus_service_signal_new(remote_iface, COLORCLASS_SIGNAL_RESET);
+        //eldbus_message_arguments_append(msg, "t", cc->winid);
+        //eldbus_message_arguments_append(msg, "s", cc->current->name);
+        //eldbus_service_signal_send(remote_iface, msg);
+        //cc->change_reset = 1;
+        //return EINA_FALSE;
+     //}
    edje_color_class_del(cc->current->name);
    edje_color_class_get(cc->current->name,
                         (int*)&color.color[0].r, (int*)&color.color[0].g, (int*)&color.color[0].b, (int*)&color.color[0].a,
@@ -288,17 +288,17 @@ _colorclass_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    Colorclass_UI *cc = data;
 
    _colorclass_save(cc);
-   if (cc->winid)
-     remote_ccuis = eina_inlist_remove(remote_ccuis, EINA_INLIST_GET(cc));
-   if (cc->winid && remote_iface && (!remote_ccuis))
-     {
-        Eldbus_Connection *conn;
+   //if (cc->winid)
+     //remote_ccuis = eina_inlist_remove(remote_ccuis, EINA_INLIST_GET(cc));
+   //if (cc->winid && remote_iface && (!remote_ccuis))
+     //{
+        //Eldbus_Connection *conn;
 
-        conn = eldbus_service_connection_get(remote_iface);
-        eldbus_name_release(conn, ELM_COLOR_CLASS_METHOD_BASE, NULL, NULL);
-        ELM_SAFE_FREE(remote_iface, eldbus_service_interface_unregister);
-        eldbus_connection_unref(conn);
-     }
+        //conn = eldbus_service_connection_get(remote_iface);
+        //eldbus_name_release(conn, ELM_COLOR_CLASS_METHOD_BASE, NULL, NULL);
+        //ELM_SAFE_FREE(remote_iface, eldbus_service_interface_unregister);
+        //eldbus_connection_unref(conn);
+     //}
    free(cc);
 }
 
@@ -316,7 +316,7 @@ _colorclass_item_del(Edje_Color_Class *ecc, Evas_Object *obj EINA_UNUSED)
    eina_stringshare_del(ecc->desc);
    free(ecc);
 }
-
+#if 0
 static void
 _dbus_request_name_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
@@ -522,7 +522,7 @@ _dbus_reset(void *d EINA_UNUSED, int t EINA_UNUSED, Elementary_Colorclass_Reset_
    eldbus_proxy_send(cc_proxy, msg, NULL, NULL, -1);
    return ECORE_CALLBACK_RENEW;
 }
-
+#endif
 static Elm_Genlist_Item_Class itc =
 {
    .item_style = "default",
@@ -532,7 +532,7 @@ static Elm_Genlist_Item_Class itc =
    },
    .version = ELM_GENLIST_ITEM_CLASS_VERSION
 };
-
+#if 0
 static Colorclass_UI *
 _dbus_ccui_find(uint64_t winid)
 {
@@ -636,29 +636,29 @@ _dbus_timeout(Colorclass_UI *cc)
    elm_object_text_set(cc->ly, "Application was unable to provide color scheme info");
    return EINA_FALSE;
 }
-
+#endif
 /* internal */ void
 elm_color_class_init(void)
 {
-   eldbus_init();
-   cc_proxy = elementary_colorclass_proxy_get(eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION), ELM_COLOR_CLASS_METHOD_BASE, NULL);
-   h1 = ecore_event_handler_add(ELEMENTARY_COLORCLASS_EDIT_EVENT, (Ecore_Event_Handler_Cb)_dbus_edit, NULL);
-   h2 = ecore_event_handler_add(ELEMENTARY_COLORCLASS_CHANGED_EVENT, (Ecore_Event_Handler_Cb)_dbus_changed, NULL);
-   h2 = ecore_event_handler_add(ELEMENTARY_COLORCLASS_RESET_EVENT, (Ecore_Event_Handler_Cb)_dbus_reset, NULL);
+   //eldbus_init();
+   //cc_proxy = elementary_colorclass_proxy_get(eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION), ELM_COLOR_CLASS_METHOD_BASE, NULL);
+   //h1 = ecore_event_handler_add(ELEMENTARY_COLORCLASS_EDIT_EVENT, (Ecore_Event_Handler_Cb)_dbus_edit, NULL);
+   //h2 = ecore_event_handler_add(ELEMENTARY_COLORCLASS_CHANGED_EVENT, (Ecore_Event_Handler_Cb)_dbus_changed, NULL);
+   //h2 = ecore_event_handler_add(ELEMENTARY_COLORCLASS_RESET_EVENT, (Ecore_Event_Handler_Cb)_dbus_reset, NULL);
 }
 
 void
 elm_color_class_shutdown(void)
 {
-   Eldbus_Connection *conn = eldbus_object_connection_get(eldbus_proxy_object_get(cc_proxy));
-   ELM_SAFE_FREE(cc_proxy, eldbus_proxy_unref);
-   eldbus_connection_unref(conn);
-   ecore_event_handler_del(h1);
-   ecore_event_handler_del(h2);
-   h1 = h2 = NULL;
-   eldbus_shutdown();
+   //Eldbus_Connection *conn = eldbus_object_connection_get(eldbus_proxy_object_get(cc_proxy));
+   //ELM_SAFE_FREE(cc_proxy, eldbus_proxy_unref);
+   //eldbus_connection_unref(conn);
+   //ecore_event_handler_del(h1);
+   //ecore_event_handler_del(h2);
+   //h1 = h2 = NULL;
+   //eldbus_shutdown();
 }
-
+#if 0
 static const Eldbus_Method colorclass_editor_methods[] =
 {
       { "SendCC", ELDBUS_ARGS({"t", "Window ID"}, {"b", "reset"}, {"a(ssa(iiii))", "Array of color classes"}), NULL, _dbus_send_cc, 0},
@@ -670,9 +670,9 @@ static const Eldbus_Service_Interface_Desc base_desc =
 {
    ELM_COLOR_CLASS_METHOD_BASE, colorclass_editor_methods, colorclass_editor_signals, NULL, NULL, NULL
 };
-
+#endif
 EAPI Evas_Object *
-elm_color_class_editor_add(Evas_Object *obj, uint64_t winid)
+elm_color_class_editor_add(Evas_Object *obj)
 {
    Evas_Object *ly, *bt, *gl, *cs;
    Colorclass_UI *cc;
@@ -683,7 +683,7 @@ elm_color_class_editor_add(Evas_Object *obj, uint64_t winid)
 
    cc = calloc(1, sizeof(Colorclass_UI));
    if (!cc) return NULL;
-   if (!winid)
+   //if (!winid)
      {
         it = edje_color_class_active_iterator_new();
         EINA_ITERATOR_FOREACH(it, ecc)
@@ -710,6 +710,7 @@ elm_color_class_editor_add(Evas_Object *obj, uint64_t winid)
           }
         eina_iterator_free(it);
      }
+#if 0
    else
      {
         if (!remote_iface)
@@ -725,6 +726,7 @@ elm_color_class_editor_add(Evas_Object *obj, uint64_t winid)
         remote_ccuis = eina_inlist_append(remote_ccuis, EINA_INLIST_GET(cc));
      }
    cc->winid = winid;
+#endif
    cc->ly = ly = elm_layout_add(obj);
    if (!elm_layout_theme_set(ly, "layout", "colorclass", "base"))
      CRI("Failed to set layout!");
@@ -759,14 +761,15 @@ elm_color_class_editor_add(Evas_Object *obj, uint64_t winid)
    EINA_LIST_FREE(ccs, ecc)
      elm_genlist_item_append(gl, &itc, ecc, NULL, 0, NULL, NULL);
 
-   if (winid)
-     {
-        /* FIXME: translate */
-        elm_object_text_set(ly, "Loading color scheme...");
-        elm_object_signal_emit(ly, "elm,state,info", "elm");
-        elm_object_signal_emit(ly, "elm,state,remote", "elm");
-     }
-   else if (list_cb)
+   //if (winid)
+     //{
+        ///* FIXME: translate */
+        //elm_object_text_set(ly, "Loading color scheme...");
+        //elm_object_signal_emit(ly, "elm,state,info", "elm");
+        //elm_object_signal_emit(ly, "elm,state,remote", "elm");
+     //}
+   //else
+   if (list_cb)
      {
         ccs = list_cb();
         EINA_LIST_FREE(ccs, ecc)
@@ -774,7 +777,7 @@ elm_color_class_editor_add(Evas_Object *obj, uint64_t winid)
              if (test)
                {
                   if (eina_hash_find(test, ecc->name)) continue;
-                  eina_hash_add(test, ecc->name, ecc2);
+                  eina_hash_add(test, ecc->name, ecc);
                }
              elm_genlist_item_sorted_insert(gl, &itc, ecc, NULL, 0, (Eina_Compare_Cb)_colorclass_sort, NULL, NULL);
           }

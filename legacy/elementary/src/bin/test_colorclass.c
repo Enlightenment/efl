@@ -12,7 +12,7 @@ test_colorclass()
    win = elm_win_util_standard_add("colorclass", "Color Classes");
    elm_win_autodel_set(win, EINA_TRUE);
 
-   cc = elm_color_class_editor_add(win, 0);
+   cc = elm_color_class_editor_add(win);
    elm_win_resize_object_add(win, cc);
    evas_object_size_hint_weight_set(cc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(cc, EVAS_HINT_FILL, EVAS_HINT_FILL);

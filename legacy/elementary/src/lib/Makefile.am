@@ -510,16 +510,9 @@ libelementary_la_LIBADD = \
 libelementary_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 EXTRA_DIST = \
-elm_color_class.xml \
 elm_factory.h \
 elm_factory.c \
 elm_intro.h.in
-
-$(COLORCLASS_GEN): elm_color_class.xml
-	@cd $(top_builddir)/src/lib && \
-	@eldbus_codegen@ $(abs_top_srcdir)/src/lib/elm_color_class.xml
-elm_color_class.c: $(COLORCLASS_GEN)
-
 
 elm_eolian_files = \
 elm_access.eo \

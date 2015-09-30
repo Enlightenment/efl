@@ -1,6 +1,5 @@
-#ifdef EFL_BETA_API_SUPPORT
-# ifndef ELM_COLOR_CLASS_H
-#  define ELM_COLOR_CLASS_H
+#ifndef ELM_COLOR_CLASS_H
+# define ELM_COLOR_CLASS_H
 
 /**
  * @defgroup Elm_Color_Class_Group Color Class Editor
@@ -10,7 +9,7 @@
  * @{
  */
 
-#define ELM_COLOR_CLASS_METHOD_BASE "org.elementary.colorclass"
+//#define ELM_COLOR_CLASS_METHOD_BASE "org.elementary.colorclass"
 
 /**
  * @typedef Elm_Color_Class_Name_Cb
@@ -31,19 +30,15 @@ typedef Eina_List *(*Elm_Color_Class_List_Cb)(void);
 /**
  * @brief Create a new color class editor
  * @param obj The parent object
- * @param winid The remote window id to edit
  *
  * A color class editor is a visual representation of the color schemes in an application.
  * Values changed in the editor are stored in Elementary's config and will remain until they
  * are reset or the config is cleared. By default, the editor will load only the currently active
  * color classes in an application.
  *
- * If @p winid is provided the editor will run in remote mode, managing color classes over DBus
- * for applications which provide the required interfaces.
- *
  * @since 1.14
  */
-EAPI Evas_Object *elm_color_class_editor_add(Evas_Object *obj, uint64_t winid);
+EAPI Evas_Object *elm_color_class_editor_add(Evas_Object *obj);
 
 /**
  * @brief Set a callback to provide translations for color class descriptions
@@ -83,5 +78,4 @@ EAPI void elm_color_class_list_cb_set(Elm_Color_Class_List_Cb cb);
 EAPI Eina_List *elm_color_class_util_edje_file_list(Eina_File *f);
 /** }@ */
 
-# endif
 #endif
