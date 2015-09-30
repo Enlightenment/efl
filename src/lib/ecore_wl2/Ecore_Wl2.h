@@ -108,7 +108,7 @@ typedef struct _Ecore_Wl2_Event_Data_Source_Send
 
 typedef struct _Ecore_Wl2_Event_Selection_Data_Ready
 {
-   char **data;
+   char *data;
    int len;
    Eina_Bool done : 1;
 } Ecore_Wl2_Event_Selection_Data_Ready;
