@@ -1330,3 +1330,11 @@ _ecore_wl2_input_cursor_update_stop(Ecore_Wl2_Input *input)
    ecore_timer_del(input->cursor.timer);
    input->cursor.timer = NULL;
 }
+
+EAPI void
+ecore_wl2_input_ungrab(Ecore_Wl2_Input *input)
+{
+   EINA_SAFETY_ON_NULL_RETURN(input);
+
+   _ecore_wl2_input_ungrab(input);
+}
