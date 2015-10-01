@@ -94,6 +94,7 @@ _elm_multibuttonentry_elm_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Data 
    int hpad = 0, vpad = 0;
    Eina_List *l;
    Elm_Object_Item *eo_item;
+   double pad_scale;
 
    Eina_Bool int_ret = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
@@ -103,12 +104,9 @@ _elm_multibuttonentry_elm_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Data 
    if (str) hpad = atoi(str);
    str = elm_layout_data_get(obj, "vertical_pad");
    if (str) vpad = atoi(str);
-   elm_box_padding_set
-     (sd->box,
-      hpad * elm_widget_scale_get(obj) * elm_config_scale_get()
-      / edje_object_base_scale_get(elm_layout_edje_get(obj)),
-      vpad * elm_widget_scale_get(obj) * elm_config_scale_get()
-      / edje_object_base_scale_get(elm_layout_edje_get(obj)));
+   pad_scale = elm_widget_scale_get(obj) * elm_config_scale_get()
+      / edje_object_base_scale_get(elm_layout_edje_get(obj));
+   elm_box_padding_set(sd->box, (hpad * pad_scale), (vpad * pad_scale));
 
    EINA_LIST_FOREACH(sd->items, l, eo_item)
      {
@@ -1405,6 +1403,7 @@ static void
 _view_init(Evas_Object *obj, Elm_Multibuttonentry_Data *sd)
 {
    const char *str;
+   double pad_scale;
    int hpad = 0, vpad = 0;
 
    sd->box = elm_box_add(obj);
@@ -1415,12 +1414,9 @@ _view_init(Evas_Object *obj, Elm_Multibuttonentry_Data *sd)
    if (str) hpad = atoi(str);
    str = elm_layout_data_get(obj, "vertical_pad");
    if (str) vpad = atoi(str);
-   elm_box_padding_set
-     (sd->box,
-      hpad * elm_widget_scale_get(obj) * elm_config_scale_get()
-      / edje_object_base_scale_get(elm_layout_edje_get(obj)),
-      vpad * elm_widget_scale_get(obj) * elm_config_scale_get()
-      / edje_object_base_scale_get(elm_layout_edje_get(obj)));
+   pad_scale = elm_widget_scale_get(obj) * elm_config_scale_get()
+      / edje_object_base_scale_get(elm_layout_edje_get(obj));
+   elm_box_padding_set(sd->box, (hpad * pad_scale), (vpad * pad_scale));
 
    elm_box_layout_set(sd->box, _box_layout_cb, obj, NULL);
    elm_box_homogeneous_set(sd->box, EINA_FALSE);
