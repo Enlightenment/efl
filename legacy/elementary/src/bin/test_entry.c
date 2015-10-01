@@ -75,6 +75,13 @@ my_entry_bt_6(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
    elm_entry_line_wrap_set(en, wr);
 }
 
+static void
+my_entry_bt_7(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *en = data;
+   elm_entry_editable_set(en, !elm_entry_editable_get(en));
+}
+
 void
 test_entry(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -187,6 +194,16 @@ test_entry(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Wr");
    evas_object_smart_callback_add(bt, "clicked", my_entry_bt_6, en);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_propagate_events_set(bt, EINA_FALSE);
+   elm_object_focus_allow_set(bt, EINA_FALSE);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Edit");
+   evas_object_smart_callback_add(bt, "clicked", my_entry_bt_7, en);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
