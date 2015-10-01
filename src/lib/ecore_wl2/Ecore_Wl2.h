@@ -308,6 +308,8 @@ EAPI void ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, 
 /* TODO: doxy */
 EAPI Ecore_Wl2_Window *ecore_wl2_display_window_find(Ecore_Wl2_Display *display, unsigned int id);
 
+EAPI struct wl_registry *ecore_wl2_display_registry_get(Ecore_Wl2_Display *display);
+
 /**
  * @defgroup Ecore_Wl2_Window_Group Wayland Library Window Functions
  * @ingroup Ecore_Wl2_Group
