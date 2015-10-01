@@ -404,6 +404,8 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
 {
    Ecore_Wl2_Display *display;
    Ecore_Wl2_Input *input;
+   Ecore_Wl2_Subsurface *subsurf;
+   Eina_Inlist *tmp;
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
@@ -425,7 +427,8 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
 
    if (window->anim_cb) wl_callback_destroy(window->anim_cb);
 
-   /* TODO: destroy subsurfaces */
+   EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
+     _ecore_wl2_subsurf_free(subsurf);
 
    ecore_wl2_window_hide(window);
 
@@ -627,10 +630,10 @@ ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w,
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   window->input.x = x;
-   window->input.y = y;
-   window->input.w = w;
-   window->input.h = h;
+   window->input_rect.x = x;
+   window->input_rect.y = y;
+   window->input_rect.w = w;
+   window->input_rect.h = h;
 
    if (window->type == ECORE_WL2_WINDOW_TYPE_DND) return;
 
