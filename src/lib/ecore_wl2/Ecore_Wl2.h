@@ -302,12 +302,29 @@ EAPI Eina_Iterator *ecore_wl2_display_globals_get(Ecore_Wl2_Display *display);
 /* TODO: doxy */
 EAPI Eina_Bool ecore_wl2_display_animator_source_set(Ecore_Wl2_Display *display, Ecore_Animator_Source source);
 
-/* TODO: doxy */
+/**
+ * Retrieves the size of the current screen.
+ *
+ * @param display The display to get the screen size of
+ * @param w where to return the width. May be NULL. Returns 0 on error.
+ * @param h where to return the height. May be NULL. Returns 0 on error.
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ */
 EAPI void ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, int *h);
 
 /* TODO: doxy */
 EAPI Ecore_Wl2_Window *ecore_wl2_display_window_find(Ecore_Wl2_Display *display, unsigned int id);
 
+/**
+ * Retrieves the Wayland Registry used for the current Wayland display.
+ *
+ * @param display The display to get the registry of
+ *
+ * @return The current wayland registry, or NULL on error
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ */
 EAPI struct wl_registry *ecore_wl2_display_registry_get(Ecore_Wl2_Display *display);
 
 /**
@@ -447,7 +464,21 @@ EAPI void ecore_wl2_window_transparent_set(Ecore_Wl2_Window *window, Eina_Bool t
  */
 EAPI void ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
 
-/* TODO: doxy */
+/**
+ * Set the input region of the Ecore_Wl2_Window.
+ *
+ * To set an empty region, pass width and height as 0.
+ *
+ * An empty input region means the entire window surface will accept input.
+ *
+ * @param window The window to set the input region of
+ * @param x The left point of the region.
+ * @param y The top point of the region.
+ * @param w The width of the region.
+ * @param h The height of the region.
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI void ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
 
 /* TODO: doxy */
@@ -480,10 +511,25 @@ EAPI void ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, 
 /* TODO: doxy */
 EAPI Eina_Bool ecore_wl2_window_iconified_get(Ecore_Wl2_Window *window);
 
-/* TODO: doxy */
+/**
+ * Iconify a window
+ *
+ * @param win The window to iconifiy
+ * @param iconified The new iconified state to set
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified);
 
-/* TODO: doxy */
+/**
+ * Retrieves the mouse position of the current window.
+ *
+ * @param window The window on which to retrieve the mouse position
+ * @param x where to return the horizontal position. May be NULL. Returns 0 on error.
+ * @param y where to return the vertical position. May be NULL. Returns 0 on error.
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI void ecore_wl2_window_pointer_xy_get(Ecore_Wl2_Window *window, int *x, int *y);
 
 /* TODO: doxy */
