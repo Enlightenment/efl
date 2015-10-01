@@ -1575,6 +1575,7 @@ EOLIAN static void
 _elm_multibuttonentry_evas_object_smart_del(Eo *obj, Elm_Multibuttonentry_Data *sd)
 {
    Elm_Object_Item *eo_item;
+   Elm_Multibuttonentry_Item_Filter *_item_filter = NULL;
 
    EINA_LIST_FREE(sd->items, eo_item)
      eo_del(eo_item);
@@ -1590,6 +1591,9 @@ _elm_multibuttonentry_evas_object_smart_del(Eo *obj, Elm_Multibuttonentry_Data *
    evas_object_del(sd->guide_text);
    evas_object_del(sd->end);
    ecore_timer_del(sd->longpress_timer);
+
+   EINA_LIST_FREE(sd->filter_list, _item_filter)
+     _filter_free(_item_filter);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
