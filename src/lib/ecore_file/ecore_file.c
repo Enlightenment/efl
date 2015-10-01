@@ -27,8 +27,60 @@
 
 #include "ecore_file_private.h"
 
+/*
+ * FIXME: the following functions will certainly not work on Windows:
+ * ecore_file_file_get()
+ * ecore_file_app_exe_get()
+ * ecore_file_escape_name()
+ */
+
 int _ecore_file_log_dom = -1;
 static int _ecore_file_init_count = 0;
+
+static Eina_Bool
+_ecore_file_stat(const char *file,
+                 long long *mtime,
+                 long long *size,
+                 mode_t *mode,
+                 Eina_Bool *is_dir,
+                 Eina_Bool *is_reg)
+{
+   struct stat st;
+#ifdef _WIN32
+   /*
+    * On Windows, stat() returns -1 is file is a path finishing with
+    * a slash or blackslash
+    * see https://msdn.microsoft.com/en-us/library/14h5k7ff.aspx
+    * ("Return Value" section)
+    *
+    * so we ensure that file never finishes with \ or /
+    */
+   char f[MAX_PATH];
+   size_t len;
+
+   len = strlen(file);
+   if ((len + 1) > MAX_PATH)
+     return EINA_FALSE;
+
+   memcpy(f, file, len + 1);
+   if ((f[len - 1] == '/') || (f[len - 1] == '\\'))
+     f[len - 1] = '\0';
+
+   if (stat(f, &st) < 0)
+     return EINA_FALSE;
+#else
+   if (stat(file, &st) < 0)
+     return EINA_FALSE;
+#endif
+
+   if (mtime) *mtime = st.st_mtime;
+   if (size) *size = st.st_size;
+   if (mode) *mode = st.st_mode;
+   if (is_dir) *is_dir = S_ISDIR(st.st_mode);
+   if (is_reg) *is_reg = S_ISREG(st.st_mode);
+
+   return EINA_TRUE;
+}
 
 /* externally accessible functions */
 
@@ -134,10 +186,12 @@ ecore_file_shutdown()
 EAPI long long
 ecore_file_mod_time(const char *file)
 {
-   struct stat st;
+   long long time;
 
-   if (stat(file, &st) < 0) return 0;
-   return st.st_mtime;
+   if (!_ecore_file_stat(file, &time, NULL, NULL, NULL, NULL))
+     return 0;
+
+   return time;
 }
 
 /**
@@ -152,10 +206,12 @@ ecore_file_mod_time(const char *file)
 EAPI long long
 ecore_file_size(const char *file)
 {
-   struct stat st;
+   long long size;
 
-   if (stat(file, &st) < 0) return 0;
-   return st.st_size;
+   if (!_ecore_file_stat(file, NULL, &size, NULL, NULL, NULL))
+     return 0;
+
+   return size;
 }
 
 /**
@@ -170,12 +226,17 @@ ecore_file_size(const char *file)
 EAPI Eina_Bool
 ecore_file_exists(const char *file)
 {
+#ifdef _WIN32
+   /* I prefer not touching the specific UNIX code... */
+   return _ecore_file_stat(file, NULL, NULL, NULL, NULL, NULL);
+#else
    struct stat st;
    if (!file) return EINA_FALSE;
 
    /*Workaround so that "/" returns a true, otherwise we can't monitor "/" in ecore_file_monitor*/
    if (stat(file, &st) < 0 && strcmp(file, "/")) return EINA_FALSE;
    return EINA_TRUE;
+#endif
 }
 
 /**
@@ -191,11 +252,12 @@ ecore_file_exists(const char *file)
 EAPI Eina_Bool
 ecore_file_is_dir(const char *file)
 {
-   struct stat st;
+   Eina_Bool is_dir;
 
-   if (stat(file, &st) < 0) return EINA_FALSE;
-   if (S_ISDIR(st.st_mode)) return EINA_TRUE;
-   return EINA_FALSE;
+   if (!_ecore_file_stat(file, NULL, NULL, NULL, &is_dir, NULL))
+     return EINA_FALSE;
+
+   return is_dir;
 }
 
 static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
@@ -299,16 +361,21 @@ ecore_file_mksubdirs(const char *base, const char **subdirs)
    i = 0;
    for (; *subdirs; subdirs++)
      {
+#ifdef HAVE_ATFILE_SOURCE
         struct stat st;
+#endif
+        Eina_Bool is_dir;
 
 #ifndef HAVE_ATFILE_SOURCE
         eina_strlcpy(buf + baselen, *subdirs, sizeof(buf) - baselen);
-        if (stat(buf, &st) == 0)
+        if (_ecore_file_stat(buf, NULL, NULL, NULL, &is_dir, NULL))
+          {
 #else
         if (fstatat(fd, *subdirs, &st, 0) == 0)
-#endif
           {
-             if (S_ISDIR(st.st_mode))
+             is_dir = S_ISDIR(st.st_mode);
+#endif
+             if (is_dir)
                {
                   i++;
                   continue;
@@ -399,21 +466,25 @@ ecore_file_remove(const char *file)
 EAPI Eina_Bool
 ecore_file_recursive_rm(const char *dir)
 {
+#ifndef _WIN32
    struct stat st;
+#endif
+   Eina_Bool is_dir;
 
 #ifdef _WIN32
    char buf[PATH_MAX];
 
    if (readlink(dir, buf, sizeof(buf) - 1) > 0)
      return ecore_file_unlink(dir);
-   if (stat(dir, &st) == -1)
+   if (!_ecore_file_stat(buf, NULL, NULL, NULL, &is_dir, NULL))
      return EINA_FALSE;
 #else
    if (lstat(dir, &st) == -1)
      return EINA_FALSE;
+   is_dir = S_ISDIR(st.st_mode);
 #endif
 
-   if (S_ISDIR(st.st_mode))
+   if (is_dir)
      {
         Eina_File_Direct_Info *info;
         Eina_Iterator *it;
@@ -443,7 +514,7 @@ ecore_file_recursive_rm(const char *dir)
 static inline Eina_Bool
 _ecore_file_mkpath_if_not_exists(const char *path)
 {
-   struct stat st;
+   Eina_Bool is_dir;
 
    /* Windows: path like C: or D: etc are valid, but stat() returns an error */
 #ifdef _WIN32
@@ -454,9 +525,9 @@ _ecore_file_mkpath_if_not_exists(const char *path)
      return EINA_TRUE;
 #endif
 
-   if (stat(path, &st) < 0)
+   if (!_ecore_file_stat(path, NULL, NULL, NULL, &is_dir, NULL))
      return ecore_file_mkdir(path);
-   else if (!S_ISDIR(st.st_mode))
+   else if (!is_dir)
      return EINA_FALSE;
    else
      return EINA_TRUE;
@@ -587,13 +658,14 @@ ecore_file_mv(const char *src, const char *dst)
         // it resides on a different mount point.
         if (errno == EXDEV)
           {
-             struct stat st;
+             mode_t mode;
+             Eina_Bool is_reg;
 
              // Make sure this is a regular file before
              // we do anything fancy.
-             if (stat(src, &st) == -1)
+             if (!_ecore_file_stat(src, NULL, NULL, &mode, NULL, &is_reg))
                  goto FAIL;
-             if (S_ISREG(st.st_mode))
+             if (is_reg)
                {
                   char *dir;
 
@@ -613,7 +685,7 @@ ecore_file_mv(const char *src, const char *dst)
                     goto FAIL;
 
                   // Set file permissions of temp file to match src
-                  if (chmod(buf, st.st_mode) == -1) goto FAIL;
+                  if (chmod(buf, mode) == -1) goto FAIL;
 
                   // Try to atomically move temp file to dst
                   if (rename(buf, dst))
