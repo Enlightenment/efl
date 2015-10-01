@@ -554,8 +554,10 @@ check_state(Edje_Part_Collection *pc, Edje_Part *ep, Edje_Part_Description_Commo
    if (ed->clip_to_id != -1 &&
        (pc->parts[ed->clip_to_id]->type != EDJE_PART_TYPE_RECTANGLE) &&
        (pc->parts[ed->clip_to_id]->type != EDJE_PART_TYPE_IMAGE))
-     error_and_abort(ef, "Collection %i: description.clip_to point to a non RECT/IMAGE part '%s' !",
-                     pc->id, pc->parts[ed->clip_to_id]->name);
+     error_and_abort(ef, "Collection %i: part: '%s' state: '%s' %g clip_to points to "
+                         "a non RECT/IMAGE part '%s'!",
+                     pc->id, ep->name, ed->state.name, ed->state.value,
+                     pc->parts[ed->clip_to_id]->name);
 
    check_nameless_state(pc, ep, ed, ef);
 }
@@ -570,6 +572,7 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
      error_and_abort(ef, "Collection %i: default description missing "
                          "for part \"%s\"", pc->id, ep->name);
 
+   check_state(pc, ep, ep->default_desc, ef);
    for (i = 0; i < ep->other.desc_count; ++i)
      check_state(pc, ep, ep->other.desc[i], ef);
 
