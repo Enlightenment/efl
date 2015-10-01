@@ -1874,6 +1874,19 @@ _elm_multibuttonentry_item_next_get(const Eo *eo_it,
    return NULL;
 }
 
+EOLIAN static void
+_elm_multibuttonentry_item_elm_widget_item_disable(Eo *eo_it, Elm_Multibuttonentry_Item_Data *it)
+{
+   const char* emission;
+   Eina_Bool tmp;
+   if (eo_do_ret(eo_it, tmp, elm_wdg_item_disabled_get()))
+     emission = "elm,state,disabled";
+   else
+     emission = "elm,state,enabled";
+
+   elm_layout_signal_emit(VIEW(it), emission, "elm");
+}
+
 EINA_DEPRECATED EAPI void *
 elm_multibuttonentry_item_data_get(const Elm_Object_Item *it)
 {

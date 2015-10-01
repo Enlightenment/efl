@@ -27,5 +27,6 @@ class Elm.Multibuttonentry_Item(Elm.Widget_Item)
         Elm.Widget_Item.signal_emit;
         Elm.Widget_Item.part_text.get;
         Elm.Widget_Item.part_text.set;
+        Elm.Widget_Item.disable;
    }
 }
