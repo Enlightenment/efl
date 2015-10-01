@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-09-29 18:06+0900\n"
+"POT-Creation-Date: 2015-10-01 12:06+0200\n"
 "PO-Revision-Date: 2015-09-29 18:06+0900\n"
 "Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
 "Language-Team: General\n"
@@ -82,7 +82,7 @@ msgstr "Đã Nhấp"
 
 #: src/lib/elm_button.c:275 src/lib/elm_check.c:244 src/lib/elm_gengrid.c:1252
 #: src/lib/elm_genlist.c:1653 src/lib/elm_list.c:2189 src/lib/elm_radio.c:268
-#: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:905
+#: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:902
 #: src/lib/elm_toolbar.c:2245
 msgid "State: Disabled"
 msgstr "Trạng Thái: Không Khả Dụng"
@@ -280,27 +280,27 @@ msgstr "Mục Điều Khiển Đoạn"
 msgid "slider"
 msgstr "Thanh Trượt"
 
-#: src/lib/elm_spinner.c:935
+#: src/lib/elm_spinner.c:932
 msgid "incremented"
 msgstr "Đã Tăng"
 
-#: src/lib/elm_spinner.c:941
+#: src/lib/elm_spinner.c:938
 msgid "decremented"
 msgstr "Đã Giảm"
 
-#: src/lib/elm_spinner.c:974 src/lib/elm_spinner.c:1041
+#: src/lib/elm_spinner.c:971 src/lib/elm_spinner.c:1038
 msgid "spinner"
 msgstr "Bộ Xoay"
 
-#: src/lib/elm_spinner.c:983 src/lib/elm_spinner.c:1024
+#: src/lib/elm_spinner.c:980 src/lib/elm_spinner.c:1021
 msgid "spinner increment button"
 msgstr "Bút Tăng Bộ Xoay"
 
-#: src/lib/elm_spinner.c:986 src/lib/elm_spinner.c:1033
+#: src/lib/elm_spinner.c:983 src/lib/elm_spinner.c:1030
 msgid "spinner decrement button"
 msgstr "Nút Giảm Bộ Xoay"
 
-#: src/lib/elm_spinner.c:988
+#: src/lib/elm_spinner.c:985
 msgid "spinner text"
 msgstr "Văn Bản Bộ Xoay"
 

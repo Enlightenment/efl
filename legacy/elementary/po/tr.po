@@ -3,12 +3,12 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
 #
-#: src/lib/elm_config.c:3227
+#: src/lib/elm_config.c:3267
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-08-07 10:55+0200\n"
+"POT-Creation-Date: 2015-10-01 12:06+0200\n"
 "PO-Revision-Date: 2014-04-18 13:35+0000\n"
 "Last-Translator: Ali E.İMREK <alierkanimrek@gmail.com>\n"
 "Language-Team: Turkish <tr@li.org>\n"
@@ -31,8 +31,8 @@ msgstr "Ev"
 msgid "Search"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1757 src/lib/elm_entry.c:1591
-#: src/lib/elm_entry.c:1616
+#: src/lib/elc_fileselector.c:1757 src/lib/elm_entry.c:1588
+#: src/lib/elm_entry.c:1613
 msgid "Cancel"
 msgstr "İptal"
 
@@ -40,15 +40,15 @@ msgstr "İptal"
 msgid "OK"
 msgstr "Tamam"
 
-#: src/lib/elc_multibuttonentry.c:642
+#: src/lib/elc_multibuttonentry.c:667
 msgid "multi button entry label"
 msgstr "çoklu düğme giriş etiketi"
 
-#: src/lib/elc_multibuttonentry.c:664
+#: src/lib/elc_multibuttonentry.c:689
 msgid "multi button entry item"
 msgstr "çoklu düğme giriş öğesi"
 
-#: src/lib/elc_multibuttonentry.c:1544
+#: src/lib/elc_multibuttonentry.c:1569
 msgid "multi button entry"
 msgstr "çoklu düğme girişi"
 
@@ -56,19 +56,19 @@ msgstr "çoklu düğme girişi"
 msgid "Title"
 msgstr "Başlık"
 
-#: src/lib/elc_naviframe.c:976 src/lib/elc_naviframe.c:1175
+#: src/lib/elc_naviframe.c:980 src/lib/elc_naviframe.c:1181
 msgid "Back"
 msgstr "Geri"
 
-#: src/lib/elc_naviframe.c:1271
+#: src/lib/elc_naviframe.c:1277
 msgid "Next"
 msgstr "Sonraki"
 
-#: src/lib/elc_popup.c:265 src/lib/elc_popup.c:850
+#: src/lib/elc_popup.c:275 src/lib/elc_popup.c:941
 msgid "Popup Title"
 msgstr "Pencere başlığı"
 
-#: src/lib/elc_popup.c:275 src/lib/elc_popup.c:920
+#: src/lib/elc_popup.c:285 src/lib/elc_popup.c:1017
 msgid "Popup Body Text"
 msgstr "Pencere gövde metni"
 
@@ -81,9 +81,9 @@ msgid "Clicked"
 msgstr "Tıklanmış"
 
 #: src/lib/elm_button.c:275 src/lib/elm_check.c:244 src/lib/elm_gengrid.c:1252
-#: src/lib/elm_genlist.c:1646 src/lib/elm_list.c:2187 src/lib/elm_radio.c:268
-#: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:849
-#: src/lib/elm_toolbar.c:2242
+#: src/lib/elm_genlist.c:1653 src/lib/elm_list.c:2189 src/lib/elm_radio.c:268
+#: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:902
+#: src/lib/elm_toolbar.c:2245
 msgid "State: Disabled"
 msgstr "Durum: Kapalı"
 
@@ -91,43 +91,43 @@ msgstr "Durum: Kapalı"
 msgid "Button"
 msgstr "Düğme"
 
-#: src/lib/elm_calendar.c:219
+#: src/lib/elm_calendar.c:175
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_calendar.c:225
+#: src/lib/elm_calendar.c:181
 msgid "%B"
 msgstr "%B"
 
-#: src/lib/elm_calendar.c:231
+#: src/lib/elm_calendar.c:187
 msgid "%Y"
 msgstr "%Y"
 
-#: src/lib/elm_calendar.c:345
+#: src/lib/elm_calendar.c:301
 msgid "calendar item"
 msgstr "takvim nesnesi"
 
-#: src/lib/elm_calendar.c:371
+#: src/lib/elm_calendar.c:327
 msgid "calendar decrement month button"
 msgstr "takvim ayı azaltma düğmesi"
 
-#: src/lib/elm_calendar.c:376
+#: src/lib/elm_calendar.c:332
 msgid "calendar decrement year button"
 msgstr "takvim yılı azaltma düğmesi"
 
-#: src/lib/elm_calendar.c:381
+#: src/lib/elm_calendar.c:337
 msgid "calendar increment month button"
 msgstr "takvim ayı arttırma düğmesi"
 
-#: src/lib/elm_calendar.c:386
+#: src/lib/elm_calendar.c:342
 msgid "calendar increment year button"
 msgstr "takvim yılı arttırma düğmesi"
 
-#: src/lib/elm_calendar.c:391
+#: src/lib/elm_calendar.c:347
 msgid "calendar month"
 msgstr "takvim ayı"
 
-#: src/lib/elm_calendar.c:396
+#: src/lib/elm_calendar.c:352
 msgid "calendar year"
 msgstr "takvim yılı"
 
@@ -188,7 +188,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr "renk seçici paleti öğesi"
 
-#: src/lib/elm_config.c:3243
+#: src/lib/elm_config.c:3283
 msgid "default:LTR"
 msgstr "varsayılan:LTR"
 
@@ -200,23 +200,23 @@ msgstr "gün seçici ögesi"
 msgid "diskselector item"
 msgstr "disk seçici öğesi"
 
-#: src/lib/elm_entry.c:1578
+#: src/lib/elm_entry.c:1575
 msgid "Copy"
 msgstr "Kopyala"
 
-#: src/lib/elm_entry.c:1583
+#: src/lib/elm_entry.c:1580
 msgid "Cut"
 msgstr "Kes"
 
-#: src/lib/elm_entry.c:1587 src/lib/elm_entry.c:1610
+#: src/lib/elm_entry.c:1584 src/lib/elm_entry.c:1607
 msgid "Paste"
 msgstr "Yapıştır"
 
-#: src/lib/elm_entry.c:1603
+#: src/lib/elm_entry.c:1600
 msgid "Select"
 msgstr "Seç"
 
-#: src/lib/elm_entry.c:3538
+#: src/lib/elm_entry.c:3539
 msgid "Entry"
 msgstr "Girdi"
 
@@ -264,7 +264,7 @@ msgstr "ilerleme çubuğu"
 msgid "Radio"
 msgstr "Radyo"
 
-#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2244
+#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2247
 msgid "State: Selected"
 msgstr "Durum: Seçili"
 
@@ -276,51 +276,51 @@ msgstr "Bölge: Seçilmedi"
 msgid "Segment Control Item"
 msgstr "Bölüm Kontrol Öğesi"
 
-#: src/lib/elm_slider.c:889
+#: src/lib/elm_slider.c:893
 msgid "slider"
 msgstr "kaydırıcı"
 
-#: src/lib/elm_spinner.c:879
+#: src/lib/elm_spinner.c:932
 msgid "incremented"
 msgstr ""
 
-#: src/lib/elm_spinner.c:885
+#: src/lib/elm_spinner.c:938
 msgid "decremented"
 msgstr ""
 
-#: src/lib/elm_spinner.c:918 src/lib/elm_spinner.c:985
+#: src/lib/elm_spinner.c:971 src/lib/elm_spinner.c:1038
 msgid "spinner"
 msgstr "değiştirici"
 
-#: src/lib/elm_spinner.c:927 src/lib/elm_spinner.c:968
+#: src/lib/elm_spinner.c:980 src/lib/elm_spinner.c:1021
 msgid "spinner increment button"
 msgstr "değiştirici arttırma düğmesi"
 
-#: src/lib/elm_spinner.c:930 src/lib/elm_spinner.c:977
+#: src/lib/elm_spinner.c:983 src/lib/elm_spinner.c:1030
 msgid "spinner decrement button"
 msgstr "değiştirici azaltma düğmesi"
 
-#: src/lib/elm_spinner.c:932
+#: src/lib/elm_spinner.c:985
 #, fuzzy
 msgid "spinner text"
 msgstr "değiştirici"
 
-#: src/lib/elm_toolbar.c:1702 src/lib/elm_toolbar.c:2301
+#: src/lib/elm_toolbar.c:1705 src/lib/elm_toolbar.c:2304
 msgid "Selected"
 msgstr "Seçili"
 
-#: src/lib/elm_toolbar.c:2240
+#: src/lib/elm_toolbar.c:2243
 msgid "Separator"
 msgstr "Ayraç"
 
-#: src/lib/elm_toolbar.c:2246
+#: src/lib/elm_toolbar.c:2249
 msgid "Has menu"
 msgstr "menü"
 
-#: src/lib/elm_toolbar.c:2296
+#: src/lib/elm_toolbar.c:2299
 msgid "Unselected"
 msgstr "Seçili değil"
 
-#: src/lib/elm_toolbar.c:2313
+#: src/lib/elm_toolbar.c:2316
 msgid "Toolbar Item"
 msgstr "Araç Çubuğu Öğesi"
