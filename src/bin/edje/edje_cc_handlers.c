@@ -1078,6 +1078,7 @@ New_Statement_Handler statement_handlers_short_single[] =
      {"collections.group.parts.part.noprecise", st_collections_group_parts_part_noprecise},
      {"collections.group.parts.part.scale", st_collections_group_parts_part_scale},
      {"collections.group.parts.part.noscale", st_collections_group_parts_part_noscale},
+     {"collections.group.parts.part.norender", st_collections_group_parts_part_no_render},
      {"collections.group.parts.part.description.vis", st_collections_group_parts_part_description_vis},
      {"collections.group.parts.part.description.hid", st_collections_group_parts_part_description_hid},
      {"collections.group.mouse", st_collections_group_mouse},
@@ -5773,9 +5774,10 @@ st_collections_group_parts_part_clip_to_id(void)
 static void
 st_collections_group_parts_part_no_render(void)
 {
-   check_arg_count(1);
-
-   current_part->no_render = parse_bool(0);
+   if (check_range_arg_count(0, 1) == 1)
+     current_part->no_render = parse_bool(0);
+   else /* lazEDC form */
+     current_part->no_render = EINA_TRUE;
 }
 
 /**
