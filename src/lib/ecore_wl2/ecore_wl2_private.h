@@ -91,6 +91,7 @@ struct _Ecore_Wl2_Window
 
    Eina_Rectangle geometry;
    Eina_Rectangle opaque;
+   Eina_Rectangle input;
 
    Ecore_Wl2_Window_Type type;
 
