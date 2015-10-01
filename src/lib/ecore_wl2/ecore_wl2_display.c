@@ -251,7 +251,12 @@ static void
 _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
 {
    Ecore_Wl2_Output *output;
+   Ecore_Wl2_Input *input;
    Eina_Inlist *tmp;
+
+   /* free each input */
+   EINA_INLIST_FOREACH_SAFE(ewd->inputs, tmp, input)
+     _ecore_wl2_input_del(input);
 
    /* free each output */
    EINA_INLIST_FOREACH_SAFE(ewd->outputs, tmp, output)
