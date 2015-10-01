@@ -767,14 +767,9 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       @virtual .focus_next;
       @virtual .parent_widget.get;
       Elm_Interface_Atspi_Accessible.name.get;
-      Elm_Interface_Atspi_Accessible.description.get;
-      Elm_Interface_Atspi_Accessible.description.set;
-      Elm_Interface_Atspi_Accessible.role.get;
-      Elm_Interface_Atspi_Accessible.role.set;
       Elm_Interface_Atspi_Accessible.state_set.get;
       Elm_Interface_Atspi_Accessible.children.get;
       Elm_Interface_Atspi_Accessible.parent.get;
-      Elm_Interface_Atspi_Accessible.parent.set;
       Elm_Interface_Atspi_Accessible.attributes.get;
       Elm_Interface_Atspi_Accessible.relation_set.get;
       Elm_Interface_Atspi_Component.focus_grab;

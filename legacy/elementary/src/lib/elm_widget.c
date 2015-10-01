@@ -4431,8 +4431,8 @@ _elm_widget_item_eo_base_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
      }
    eina_hash_free(item->labels);
 
-   if (item->description)
-     eina_stringshare_del(item->description);
+   eo_do(eo_item, elm_interface_atspi_accessible_description_set(NULL));
+   eo_do(eo_item, elm_interface_atspi_accessible_name_set(NULL));
 
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_children_changed_del_signal_emit(item->widget, eo_item);
@@ -4559,34 +4559,6 @@ _elm_widget_item_widget_get(const Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data 
    ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item, NULL);
 
    return item->widget;
-}
-
-EOLIAN static const char*
-_elm_widget_item_elm_interface_atspi_accessible_description_get(Eo *eo_item EINA_UNUSED,
-                                                                Elm_Widget_Item_Data *item)
-{
-   return item->description;
-}
-
-EOLIAN static void
-_elm_widget_item_elm_interface_atspi_accessible_description_set(Eo *eo_item EINA_UNUSED,
-                                                                Elm_Widget_Item_Data *item,
-                                                                const char *descr)
-{
-   eina_stringshare_replace(&item->description, descr);
-}
-
-EOLIAN static Elm_Atspi_Role
-_elm_widget_item_elm_interface_atspi_accessible_role_get(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
-{
-   return item->role;
-}
-
-EOLIAN static void
-_elm_widget_item_elm_interface_atspi_accessible_role_set(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item,
-                                                         Elm_Atspi_Role role)
-{
-   item->role = role;
 }
 
 EAPI Eina_Bool
@@ -5713,7 +5685,7 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 }
 
 EOLIAN static Eo *
-_elm_widget_eo_base_constructor(Eo *obj, Elm_Widget_Smart_Data *sd)
+_elm_widget_eo_base_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
    Eo *parent = NULL;
 
@@ -5726,15 +5698,15 @@ _elm_widget_eo_base_constructor(Eo *obj, Elm_Widget_Smart_Data *sd)
    eo_do(obj, elm_obj_widget_parent_set(parent));
    sd->on_create = EINA_FALSE;
 
-   sd->role = ELM_ATSPI_ROLE_UNKNOWN;
+   eo_do(obj, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_UNKNOWN));
    return obj;
 }
 
 EOLIAN static void
-_elm_widget_eo_base_destructor(Eo *obj, Elm_Widget_Smart_Data *sd)
+_elm_widget_eo_base_destructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
-   if (sd->description) eina_stringshare_del(sd->description);
-
+   eo_do(obj, elm_interface_atspi_accessible_description_set(NULL));
+   eo_do(obj, elm_interface_atspi_accessible_name_set(NULL));
    elm_interface_atspi_accessible_removed(obj);
 
    eo_do_super(obj, ELM_WIDGET_CLASS, eo_destructor());
@@ -5836,30 +5808,6 @@ _elm_widget_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Wid
    return _elm_util_mkup_to_text(ret);
 }
 
-EOLIAN static const char*
-_elm_widget_elm_interface_atspi_accessible_description_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd)
-{
-   return _pd->description;
-}
-
-EOLIAN static void
-_elm_widget_elm_interface_atspi_accessible_description_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd, const char *descr)
-{
-   eina_stringshare_replace(&_pd->description, descr);
-}
-
-EOLIAN static Elm_Atspi_Role
-_elm_widget_elm_interface_atspi_accessible_role_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
-{
-   return pd->role;
-}
-
-EOLIAN static void
-_elm_widget_elm_interface_atspi_accessible_role_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Elm_Atspi_Role role)
-{
-   pd->role = role;
-}
-
 EOLIAN static Eina_List*
 _elm_widget_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
@@ -5882,16 +5830,10 @@ _elm_widget_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm
 EOLIAN static Eo*
 _elm_widget_elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
 {
-   if (pd->atspi_custom_parent)
-     return pd->atspi_custom_parent;
-   else
-     return pd->parent_obj;
-}
+   Eo *ret;
+   eo_do_super(obj, ELM_WIDGET_CLASS, ret = elm_interface_atspi_accessible_parent_get());
 
-EOLIAN static void
-_elm_widget_elm_interface_atspi_accessible_parent_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eo *parent)
-{
-   pd->atspi_custom_parent = parent;
+   return ret ? ret : pd->parent_obj;
 }
 
 EOLIAN static Elm_Atspi_State_Set

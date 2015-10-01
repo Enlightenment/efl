@@ -2,7 +2,7 @@ mixin Elm_Interface_Atspi_Accessible ()
 {
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_accessible;
-   data: null;
+   data: Elm_Interface_Atspi_Accessible_Data;
    methods {
       @property localized_role_name @protected {
          get {
@@ -45,7 +45,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             [[Gets widget's accessible children.]]
          }
          values {
-            children: free(own(list<Eo *> *), eina_list_free);
+            children: free(own(list<Elm_Interface_Atspi_Accessible *> *), eina_list_free);
          }
       }
       @property role_name @protected {
@@ -91,7 +91,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             [[Sets widget accessible parent.]]
          }
          values {
-            parent: Eo *;
+            parent: Elm_Interface_Atspi_Accessible *;
          }
       }
       @property state_set @protected {
@@ -118,7 +118,7 @@ mixin Elm_Interface_Atspi_Accessible ()
       }
       event_emit @class @protected {
          params {
-            @in accessible: Eo*; [[Accessibility object.]]
+            @in accessible: Elm_Interface_Atspi_Accessible *; [[Accessibility object.]]
             @in event: const(Eo_Event_Description)*; [[Accessibility event type.]]
             @in event_info: void*; [[Accessibility event details.]]
          }

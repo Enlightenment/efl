@@ -529,10 +529,6 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
       implements {
            Eo.Base.constructor;
            Eo.Base.destructor;
-           Elm_Interface_Atspi_Accessible.description.get;
-           Elm_Interface_Atspi_Accessible.description.set;
-           Elm_Interface_Atspi_Accessible.role.get;
-           Elm_Interface_Atspi_Accessible.role.set;
            Elm_Interface_Atspi_Accessible.state_set.get;
            Elm_Interface_Atspi_Accessible.parent.get;
            Elm_Interface_Atspi_Component.extents.get;

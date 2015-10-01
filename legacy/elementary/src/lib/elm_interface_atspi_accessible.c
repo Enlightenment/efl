@@ -121,10 +121,21 @@ struct _Elm_Atspi_Event_Handler
    void *data;
 };
 
+struct _Elm_Interface_Atspi_Accessible_Data
+{
+   Elm_Atspi_Role role;
+   const char    *name;
+   const char    *description;
+   Elm_Interface_Atspi_Accessible *parent;
+};
+
+typedef struct _Elm_Interface_Atspi_Accessible_Data Elm_Interface_Atspi_Accessible_Data;
+
+
 static Eina_List *global_callbacks;
 
 EOLIAN static int
-_elm_interface_atspi_accessible_index_in_parent_get(Eo *obj, void *pd EINA_UNUSED)
+_elm_interface_atspi_accessible_index_in_parent_get(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED)
 {
    Eina_List *l, *children = NULL;
    Eo *chld, *parent = NULL;
@@ -151,27 +162,24 @@ _elm_interface_atspi_accessible_index_in_parent_get(Eo *obj, void *pd EINA_UNUSE
    return ret;
 }
 
-EOLIAN static Eo *
-_elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+EOLIAN static Elm_Interface_Atspi_Accessible *
+_elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd)
 {
-   Eo *parent = NULL;
-
-   /* By default using Eo_Base object hierarchy */
-   eo_do(obj, parent = eo_parent_get());
-   if (!parent) return NULL;
-
-   return eo_isa(parent, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? parent : NULL;
+   return pd->parent;
 }
 
 EOLIAN static void
-_elm_interface_atspi_accessible_parent_set(Eo *obj, void *priv EINA_UNUSED, Eo *new_parent EINA_UNUSED)
+_elm_interface_atspi_accessible_parent_set(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd, Elm_Interface_Atspi_Accessible *new_parent)
 {
-   WRN("The %s object does not implement the \"accessible_parent_set\" function.",
-       eo_class_name_get(eo_class_get(obj)));
+   if (pd->parent != new_parent)
+     {
+        pd->parent = new_parent;
+        elm_interface_atspi_accessible_parent_changed_signal_emit(obj);
+     }
 }
 
 EOLIAN Eina_List*
-_elm_interface_atspi_accessible_attributes_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_elm_interface_atspi_accessible_attributes_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED)
 {
    WRN("The %s object does not implement the \"accessible_attributes_set\" function.",
        eo_class_name_get(eo_class_get(obj)));
@@ -179,20 +187,23 @@ _elm_interface_atspi_accessible_attributes_get(Eo *obj EINA_UNUSED, void *pd EIN
 }
 
 EOLIAN static Elm_Atspi_Role
-_elm_interface_atspi_accessible_role_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_elm_interface_atspi_accessible_role_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED)
 {
-   return ELM_ATSPI_ROLE_UNKNOWN;
+   return pd->role;
 }
 
 EOLIAN static void
-_elm_interface_atspi_accessible_role_set(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Elm_Atspi_Role role EINA_UNUSED)
+_elm_interface_atspi_accessible_role_set(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED, Elm_Atspi_Role role)
 {
-   WRN("The %s object does not implement the \"accessible_role_set\" function.",
-       eo_class_name_get(eo_class_get(obj)));
+   if (pd->role != role)
+     {
+        pd->role = role;
+        elm_interface_atspi_accessible_role_changed_signal_emit(obj);
+     }
 }
 
 EOLIAN const char *
-_elm_interface_atspi_accessible_role_name_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_elm_interface_atspi_accessible_role_name_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED)
 {
    Elm_Atspi_Role role;
 
@@ -202,36 +213,30 @@ _elm_interface_atspi_accessible_role_name_get(Eo *obj EINA_UNUSED, void *pd EINA
 }
 
 EOLIAN char *
-_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd)
 {
-   WRN("The %s object does not implement the \"accessible_name_get\" function.",
-       eo_class_name_get(eo_class_get(obj)));
-   return NULL;
+   return pd->name ? strdup(pd->name) : NULL;
 }
 
 EOLIAN static void
-_elm_interface_atspi_accessible_name_set(Eo *obj, void *pd EINA_UNUSED, char *val EINA_UNUSED)
+_elm_interface_atspi_accessible_name_set(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd, char *val)
 {
-   WRN("The %s object does not implement the \"accessible_name_set\" function.",
-       eo_class_name_get(eo_class_get(obj)));
+   eina_stringshare_replace(&pd->name, val);
 }
 
-const char * _elm_interface_atspi_accessible_description_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+const char * _elm_interface_atspi_accessible_description_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd)
 {
-   WRN("The %s object does not implement the \"accessible_description_get\" function.",
-       eo_class_name_get(eo_class_get(obj)));
-   return NULL;
+   return pd->description;
 }
 
 EOLIAN static void
-_elm_interface_atspi_accessible_description_set(Eo *obj, void *pd EINA_UNUSED, const char *val EINA_UNUSED)
+_elm_interface_atspi_accessible_description_set(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd, const char *val)
 {
-   WRN("The %s object does not implement the \"accessible_description_set\" function.",
-       eo_class_name_get(eo_class_get(obj)));
+   eina_stringshare_replace(&pd->description, val);
 }
 
 EOLIAN static const char *
-_elm_interface_atspi_accessible_localized_role_name_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_elm_interface_atspi_accessible_localized_role_name_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED)
 {
    const char *ret = NULL;
    eo_do(obj, ret = elm_interface_atspi_accessible_role_name_get());
@@ -242,7 +247,7 @@ _elm_interface_atspi_accessible_localized_role_name_get(Eo *obj EINA_UNUSED, voi
 }
 
 EOLIAN static Eina_List *
-_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED)
 {
    Eina_List *children = NULL;
    Eina_Iterator *iter = NULL;
@@ -263,14 +268,13 @@ _elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, void *pd EINA_
 }
 
 EOLIAN static Elm_Atspi_State_Set
-_elm_interface_atspi_accessible_state_set_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_elm_interface_atspi_accessible_state_set_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED)
 {
-   Elm_Atspi_State_Set ret = 0;
-   return ret;
+   return 0;
 }
 
 EOLIAN Eina_List*
-_elm_interface_atspi_accessible_relation_set_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_elm_interface_atspi_accessible_relation_set_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED)
 {
    WRN("The %s object does not implement the \"accessible_relation_set\" function.",
        eo_class_name_get(eo_class_get(obj)));
