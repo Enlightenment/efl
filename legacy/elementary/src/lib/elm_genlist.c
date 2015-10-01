@@ -4633,6 +4633,12 @@ _item_queue(Elm_Genlist_Data *sd,
 //   evas_event_thaw_eval(evas_object_evas_get(sd->obj));
    evas_object_geometry_get(sd->obj, NULL, NULL, &w, NULL);
    if (w > 0) _requeue_idle_enterer(sd);
+
+   if (_elm_config->atspi_mode)
+     {
+        elm_interface_atspi_accessible_added(EO_OBJ(it));
+        elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
+     }
 }
 
 /* If the application wants to know the relative item, use
@@ -6117,9 +6123,6 @@ _elm_genlist_item_append(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_Ge
    it->item->before = EINA_FALSE;
    _item_queue(sd, it, NULL);
 
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
-
    return EO_OBJ(it);
 }
 
@@ -6166,9 +6169,6 @@ _elm_genlist_item_prepend(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_G
      }
    it->item->before = EINA_TRUE;
    _item_queue(sd, it, NULL);
-
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
 
    return EO_OBJ(it);
 }
@@ -6217,9 +6217,6 @@ _elm_genlist_item_insert_after(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const 
    it->item->before = EINA_FALSE;
    _item_queue(sd, it, NULL);
 
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
-
    return EO_OBJ(it);
 }
 
@@ -6266,9 +6263,6 @@ _elm_genlist_item_insert_before(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist
    GL_IT(before)->rel_revs = eina_list_append(GL_IT(before)->rel_revs, it);
    it->item->before = EINA_TRUE;
    _item_queue(sd, it, NULL);
-
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
 
    return EO_OBJ(it);
 }
@@ -6372,9 +6366,6 @@ _elm_genlist_item_sorted_insert(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist
      }
 
    _item_queue(sd, it, _elm_genlist_item_list_compare);
-
-   if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, eo_it);
 
    return eo_it;
 }

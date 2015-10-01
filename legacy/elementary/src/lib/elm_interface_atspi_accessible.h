@@ -3,6 +3,12 @@
 
 #ifdef EFL_BETA_API_SUPPORT
 
+
+/**
+ * ATSPI event listener
+ */
+typedef struct _Elm_Atspi_Event_Handler Elm_Atspi_Event_Handler;
+
 /**
  * ATSPI object state set.
  */
@@ -266,38 +272,38 @@ EAPI void elm_atspi_attributes_list_free(Eina_List *list);
       Elm_Atspi_Event_State_Changed_Data evinfo; \
       evinfo.type = (tp); \
       evinfo.new_value = (nvl); \
-      eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_STATE_CHANGED, (void*)&evinfo)); \
+      eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_STATE_CHANGED, (void*)&evinfo)); \
    } while(0); }
 
 /**
  * Emits ATSPI 'PropertyChanged' dbus signal for 'Name' property.
  */
 #define elm_interface_atspi_accessible_name_changed_signal_emit(obj) \
-   eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, "name"));
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, "name"));
 
 /**
  * Emits ATSPI 'PropertyChanged' dbus signal for 'Description' property.
  */
 #define elm_interface_atspi_accessible_description_changed_signal_emit(obj) \
-   eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, "description"));
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, "description"));
 
 /**
  * Emits ATSPI 'PropertyChanged' dbus signal for 'Parent' property.
  */
 #define elm_interface_atspi_accessible_parent_changed_signal_emit(obj) \
-   eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, "parent"));
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, "parent"));
 
 /**
  * Emits ATSPI 'PropertyChanged' dbus signal for 'Role' property.
  */
 #define elm_interface_atspi_accessible_role_changed_signal_emit(obj) \
-   eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, "role"));
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, "role"));
 
 /**
  * Emits ATSPI 'PropertyChanged' dbus signal for 'Value' property.
  */
 #define elm_interface_atspi_accessible_value_changed_signal_emit(obj) \
-   eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, "value"));
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, "value"));
 
 /**
  * Emits ATSPI 'ChildrenChanged' dbus signal with added child as argument.
@@ -305,7 +311,7 @@ EAPI void elm_atspi_attributes_list_free(Eina_List *list);
 #define elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, child) \
    do { \
       Elm_Atspi_Event_Children_Changed_Data atspi_data = { EINA_TRUE, child }; \
-      eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED, &atspi_data)); \
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED, &atspi_data)); \
    } while(0);
 
 /**
@@ -314,14 +320,32 @@ EAPI void elm_atspi_attributes_list_free(Eina_List *list);
 #define elm_interface_atspi_accessible_children_changed_del_signal_emit(obj, child) \
    do { \
       Elm_Atspi_Event_Children_Changed_Data atspi_data = { EINA_FALSE, child }; \
-      eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED, &atspi_data)); \
+      eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED, &atspi_data)); \
    } while(0);
 
 /**
- * Emits ATSPI 'ActiveDescendantsChanged' dbus signal with deleted child as argument.
+ * Emits ATSPI 'ActiveDescendantsChanged' dbus signal.
  */
-#define elm_interface_atspi_accessible_active_descendants_changed_signal_emit(obj, desc) \
-   eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_ACTIVE_DESCENDANT_CHANGED, desc));
+#define elm_interface_atspi_accessible_active_descendants_changed_signal_emit(obj, child) \
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_ACTIVE_DESCENDANT_CHANGED, child));
+
+/**
+ * Emits ATSPI 'VisibleDataChanged' dbus signal.
+ */
+#define elm_interface_atspi_accessible_visible_data_changed_signal_emit(obj) \
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_VISIBLE_DATA_CHANGED, NULL));
+
+/**
+ * Emits ATSPI 'AddAccessible' dbus signal.
+ */
+#define elm_interface_atspi_accessible_added(obj) \
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_ADDED, NULL));
+
+/**
+ * Emits ATSPI 'RemoveAccessible' dbus signal.
+ */
+#define elm_interface_atspi_accessible_removed(obj) \
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_REMOVED, NULL));
 
 #include "elm_interface_atspi_accessible.eo.h"
 #endif

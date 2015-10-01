@@ -102,6 +102,27 @@ mixin Elm_Interface_Atspi_Accessible ()
             states: Elm_Atspi_State_Set;
          }
       }
+      event_handler_add @class @protected {
+         [[Register accessibility event listener]]
+         params {
+              @in cb: Eo_Event_Cb; [[callback]]
+              @in data: void*; [[data]]
+         }
+         return: Elm_Atspi_Event_Handler*; [[Event handler]]
+      }
+      event_handler_del @class @protected {
+         [[Deregister accessibility event listener]]
+         params {
+              @in handler: Elm_Atspi_Event_Handler *; [[Event handler]]
+         }
+      }
+      event_emit @class @protected {
+         params {
+            @in accessible: Eo*; [[Accessibility object.]]
+            @in event: const(Eo_Event_Description)*; [[Accessibility event type.]]
+            @in event_info: void*; [[Accessibility event details.]]
+         }
+      }
    }
    events {
       property,changed: const(char)*;
@@ -109,5 +130,7 @@ mixin Elm_Interface_Atspi_Accessible ()
       state,changed: Elm_Atspi_Event_State_Changed_Data;
       visible,data,changed;
       active,descendants,changed;
+      added;
+      removed;
    }
 }

@@ -39,6 +39,7 @@ elm_atspi_bridge.h \
 elm_interface_atspi_accessible.h \
 elm_interface_atspi_text.h \
 elm_interface_atspi_widget_action.h \
+elm_interface_atspi_window.h \
 elm_interface_fileselector.h \
 elm_interface_scrollable.h \
 elm_interfaces.h \

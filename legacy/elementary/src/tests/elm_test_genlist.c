@@ -80,8 +80,11 @@ END_TEST
 
 static Eina_Bool
 _children_changed_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED,
-                     const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+                     const Eo_Event_Description *desc, void *event_info EINA_UNUSED)
 {
+   if (desc != ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED)
+     return EINA_TRUE;
+
    ev_data = *(Elm_Atspi_Event_Children_Changed_Data*)event_info;
    current = obj;
    counter++;
@@ -98,7 +101,7 @@ START_TEST(elm_atspi_children_events_add)
 
    Elm_Object_Item *it[3];
 
-   eo_do(genlist, eo_event_callback_add(ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED, _children_changed_cb, NULL));
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_handler_add(_children_changed_cb, NULL));
 
    it[0] = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
    ck_assert(genlist == current);
@@ -135,7 +138,7 @@ START_TEST(elm_atspi_children_events_del1)
    it[1] = elm_genlist_item_prepend(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
    it[2] = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_TREE, NULL, NULL);
 
-   eo_do(genlist, eo_event_callback_add(ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED, _children_changed_cb, NULL));
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_handler_add(_children_changed_cb, NULL));
 
    elm_object_item_del(it[0]);
    ck_assert(genlist == current);
@@ -163,7 +166,7 @@ START_TEST(elm_atspi_children_events_del2)
 
    it = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 
-   eo_do(genlist, eo_event_callback_add(ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED, _children_changed_cb, NULL));
+   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_handler_add(_children_changed_cb, NULL));
    elm_genlist_clear(genlist);
 
    ck_assert(genlist == current);
