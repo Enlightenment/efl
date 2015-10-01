@@ -47,9 +47,7 @@ typedef enum _E3D_Uniform
    E3D_UNIFORM_SHADOWMAP,
    E3D_UNIFORM_SHADOWS_PCF_STEP,
    E3D_UNIFORM_SHADOWS_PCF_SIZE,
-#ifdef GL_GLES
    E3D_UNIFORM_SHADOWS_CONSTANT_BIAS,
-#endif
 
    E3D_UNIFORM_LIGHT_POSITION,
    E3D_UNIFORM_LIGHT_SPOT_DIR,
@@ -344,9 +342,7 @@ static const char *uniform_names[] =
    "uShadowMap",
    "uShadowsPCFStep",
    "uShadowsPCFSize",
-#ifdef GL_GLES
    "uShadowsConstantBias",
-#endif
    "uLightPosition",
    "uLightSpotDir",
    "uLightSpotExp",
@@ -528,11 +524,9 @@ _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
       case E3D_UNIFORM_SHADOWS_PCF_SIZE:
          glUniform1f(loc, data->pcf_size);
          break;
-#ifdef GL_GLES
       case E3D_UNIFORM_SHADOWS_CONSTANT_BIAS:
          glUniform1f(loc, data->constant_bias);
          break;
-#endif
       case E3D_UNIFORM_LIGHT_POSITION:
          glUniform4f(loc, data->light.position.x, data->light.position.y,
                      data->light.position.z, data->light.position.w);

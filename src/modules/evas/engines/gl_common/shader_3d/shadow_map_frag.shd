@@ -50,9 +50,7 @@ void main() {
    FRAGMENT_SHADER_ALPHA_TEST_GLES_APPLY(color)
 
 #endif //ALPHA_TEST_ENABLED
-#ifndef GL_ES
-   gl_FragColor.r = gl_FragCoord.z;
-#else
+
    const vec4 pack = vec4(256.0 * 256.0 * 256.0, 256.0 * 256.0, 256.0, 1.0);
    const vec4 mask = vec4(0.0, 1.0 / 256.0, 1.0 / 256.0, 1.0 / 256.0);
    vec4 depthcolor;
@@ -61,5 +59,4 @@ void main() {
    depthcolor = vec4(fract(pack * normdist));
    depthcolor -= depthcolor.xxyz * mask;
    gl_FragColor = depthcolor;
-#endif
 }

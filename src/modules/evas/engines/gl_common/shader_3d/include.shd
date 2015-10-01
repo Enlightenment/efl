@@ -29,12 +29,9 @@ define(`FRAGMENT_SHADER_USE_FOG', `
 uniform float uFogFactor;
 uniform vec4  uFogColor;
 #endif //FOG_ENABLED')
-
-define(`FRAGMENT_SHADER_USE_ALPHA_TEST_GLES', `
-#ifdef GL_ES
+define(`FRAGMENT_SHADER_USE_ALPHA_TEST_GLES',
 uniform int   uAlphaTestComparison;
-uniform float uAlphaTestRefValue;
-#endif //GL_ES')
+uniform float uAlphaTestRefValue;)
 
 define(`FRAGMENT_SHADER_USE_SHADOWS', `
 #ifdef  SHADOWED
@@ -42,9 +39,7 @@ varying vec4 vLightPosition;
 uniform sampler2D uShadowMap;
 uniform float uShadowsPCFStep;
 uniform float uShadowsPCFSize;
-#ifdef GL_ES
 uniform float uShadowsConstantBias;
-#endif //GL_ES
 float shadow;
 float pcf(vec4 lpos)
 {
@@ -53,11 +48,6 @@ float pcf(vec4 lpos)
    q = floor(uShadowsPCFStep * 2.0);
    c = floor(uShadowsPCFStep * uShadowsPCFStep * 4.0);
    shadow = 0.0;
-#ifndef GL_ES
-   for (i = -uShadowsPCFStep; i < uShadowsPCFStep; i += 1.0)
-     for (j = -uShadowsPCFStep; j < uShadowsPCFStep; j += 1.0)
-       shadow += float(smcoord.z <= texture2D(uShadowMap, smcoord.xy + vec2(i / q, j / q) * uShadowsPCFSize).x);
-#else
    const vec4 unpack = vec4(1.0 / (256.0 * 256.0 * 256.0), 1.0 / (256.0 * 256.0), 1.0 / 256.0, 1.0);
    for (i = -uShadowsPCFStep; i < uShadowsPCFStep; i += 1.0)
      for (j = -uShadowsPCFStep; j < uShadowsPCFStep; j += 1.0)
@@ -65,7 +55,6 @@ float pcf(vec4 lpos)
           vec4 zvalue = texture2D(uShadowMap, smcoord.xy + vec2(i / q, j / q) * uShadowsPCFSize);
           shadow += float(smcoord.z < dot(zvalue, unpack) + uShadowsConstantBias);
        }
-#endif //GL_ES
    return shadow / c;
 }
 #endif //SHADOWED')
@@ -130,7 +119,6 @@ FRAGMENT_SHADER_USE_TEXTURE(DIFFUSE, Diffuse)
 `#endif //DIFFUSE')
 
 define(`FRAGMENT_SHADER_ALPHA_TEST_GLES_APPLY',
-`#ifdef GL_ES'
 /*uAlphaTestComparison is value of the Evas_3D_Comparison type*/
    const float p = 1000000.0;
    float acolor = floor($1.a * p);
@@ -166,10 +154,7 @@ define(`FRAGMENT_SHADER_ALPHA_TEST_GLES_APPLY',
         if (acolor >= refvalue) gl_FragColor = $1;
         else discard;
      }
-   else if (uAlphaTestComparison == 7) ;
-`#else'
-   gl_FragColor = $1;
-`#endif //GL_ES')
+   else if (uAlphaTestComparison == 7) ;)
 
 
 define(`VERTEX_SHADER_NEED_TEX_COORD',

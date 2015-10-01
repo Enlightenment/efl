@@ -114,9 +114,7 @@ struct _E3D_Draw_Data
    /*Sets of the quality of shadow rendering*/
    Evas_Real               pcf_step;
    Evas_Real               pcf_size;
-#ifdef GL_GLES
    Evas_Real               constant_bias;
-#endif
 };
 
 struct _E3D_Texture
@@ -157,10 +155,6 @@ struct _E3D_Drawable
    GLuint   texDepth;
    GLuint texcolorpick;
    GLuint color_pick_fb_id;
-#ifdef GL_GLES
-   GLuint   shadow_fbo;
-   GLuint   depth_render_buf;
-#endif
 };
 
 /* Texture internal functions. */
