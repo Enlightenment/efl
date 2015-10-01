@@ -561,7 +561,7 @@ ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr)
 /**
  * Sends a message to the given IPC server.
  *
- * The content of the parameters, excluding the @p svr paramter, is up to
+ * The content of the parameters, excluding the @p svr parameter, is up to
  * the client.
  *
  * @param   svr      The given IPC server.
