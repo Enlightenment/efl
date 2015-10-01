@@ -802,7 +802,7 @@ eng_setup(Evas *evas, void *in)
    if (!(re = epd->engine.data.output))
      {
         Outbuf *ob;
-        Render_Engine_Merge_Mode merge_mode = MERGE_BOUNDING;
+        Render_Engine_Merge_Mode merge_mode = MERGE_SMART;
 
         if (!initted)
           {
@@ -864,6 +864,8 @@ eng_setup(Evas *evas, void *in)
                merge_mode = MERGE_BOUNDING;
              else if ((!strcmp(s, "full")) || (!strcmp(s, "f")))
                merge_mode = MERGE_FULL;
+             else if ((!strcmp(s, "smart")) || (!strcmp(s, "s")))
+               merge_mode = MERGE_SMART;
           }
 
         evas_render_engine_software_generic_merge_mode_set(&re->generic.software, merge_mode);
