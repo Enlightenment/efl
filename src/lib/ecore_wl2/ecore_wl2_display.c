@@ -502,3 +502,11 @@ ecore_wl2_display_window_find(Ecore_Wl2_Display *display, unsigned int id)
 
    return NULL;
 }
+
+EAPI struct wl_registry *
+ecore_wl2_display_registry_get(Ecore_Wl2_Display *display)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
+
+   return wl_display_registry_get(display->wl.display);
+}
