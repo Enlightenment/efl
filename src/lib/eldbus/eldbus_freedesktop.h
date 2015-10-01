@@ -125,7 +125,7 @@ typedef void (*Eldbus_Name_Owner_Changed_Cb)(void *data, const char *bus, const 
  *
  * This function implicitly calls eldbus_name_owner_get() in order to be able to
  * monitor the name. If the only interest is to receive notifications when the
- * name in fact changes, pass EINA_FALSE to @param allow_initial_call so your
+ * name in fact changes, pass EINA_FALSE to \p allow_initial_call so your
  * callback will not be called on first retrieval of name owner. If the
  * initial state is important, pass EINA_TRUE to this parameter.
  *
