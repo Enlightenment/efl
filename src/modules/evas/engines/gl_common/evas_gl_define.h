@@ -258,4 +258,10 @@
 #define GL_MULTISAMPLE_BUFFER_BIT7_QCOM               0x80000000
 #endif
 
+#ifndef GL_EXT_discard_framebuffer
+#define GL_COLOR_EXT   0x1800
+#define GL_DEPTH_EXT   0x1801
+#define GL_STENCIL_EXT 0x1802
+#endif
+
 #endif
