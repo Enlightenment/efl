@@ -305,6 +305,9 @@ EAPI Eina_Bool ecore_wl2_display_animator_source_set(Ecore_Wl2_Display *display,
 /* TODO: doxy */
 EAPI void ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, int *h);
 
+/* TODO: doxy */
+EAPI Ecore_Wl2_Window *ecore_wl2_display_window_find(Ecore_Wl2_Display *display, unsigned int id);
+
 /**
  * @defgroup Ecore_Wl2_Window_Group Wayland Library Window Functions
  * @ingroup Ecore_Wl2_Group
@@ -513,6 +516,9 @@ EAPI Eina_Bool ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input, const char *t
 
 /* TODO: doxy */
 EAPI Eina_Bool ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input);
+
+/* TODO: doxy */
+EAPI void ecore_wl2_input_ungrab(Ecore_Wl2_Input *input);
 
 /* # ifdef __cplusplus */
 /* } */
