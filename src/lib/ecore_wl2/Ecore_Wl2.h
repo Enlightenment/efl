@@ -28,6 +28,8 @@
 /* extern "C" { */
 /* # endif */
 
+typedef struct _Ecore_Wl2_Subsurf Ecore_Wl2_Subsurf;
+
 # ifndef _ECORE_WL2_WINDOW_PREDEF
 typedef struct _Ecore_Wl2_Window Ecore_Wl2_Window;
 # endif

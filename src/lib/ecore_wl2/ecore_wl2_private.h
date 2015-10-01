@@ -75,6 +75,23 @@ struct _Ecore_Wl2_Display
    Eina_Bool sync_done : 1;
 };
 
+struct _Ecore_Wl2_Subsurface
+{
+   EINA_INLIST;
+
+   int x, y;
+
+   Ecore_Wl2_Window *parent;
+
+   struct
+     {
+        struct wl_surface *surface;
+        struct wl_subsurface *subsurface;
+     } wl;
+
+   Eina_Bool sync : 1;
+};
+
 struct _Ecore_Wl2_Window
 {
    EINA_INLIST;
@@ -100,6 +117,8 @@ struct _Ecore_Wl2_Window
    Eina_Rectangle input;
 
    Ecore_Wl2_Window_Type type;
+
+   Eina_Inlist *subsurfs;
 
    Eina_Bool minimized : 1;
    Eina_Bool maximized : 1;
