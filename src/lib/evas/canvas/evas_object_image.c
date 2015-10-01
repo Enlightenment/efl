@@ -159,7 +159,7 @@ static void evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_
 				     int x, int y, Eina_Bool do_async);
 static void _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                void *output, void *context, void *surface,
-                               int x, int y, Eina_Bool do_async);
+                               int x, int y, int l, int t, int r, int b, Eina_Bool do_async);
 static void evas_object_image_free(Evas_Object *eo_obj,
 				   Evas_Object_Protected_Data *obj);
 static void evas_object_image_render_pre(Evas_Object *eo_obj,
@@ -3183,6 +3183,8 @@ _evas_image_evas_filter_input_render(Eo *eo_obj, Evas_Image_Data *o,
      {
         l = 0;
         t = 0;
+        r = 0;
+        b = 0;
      }
 
    if (!surface)
@@ -3198,7 +3200,8 @@ _evas_image_evas_filter_input_render(Eo *eo_obj, Evas_Image_Data *o,
    ENFN->context_render_op_set(output, context, EVAS_RENDER_BLEND);
 
    _evas_image_render(eo_obj, obj, output, context, surface,
-                      l - obj->cur->geometry.x, t - obj->cur->geometry.y, do_async);
+                      l - obj->cur->geometry.x, t - obj->cur->geometry.y,
+                      l, t, r, b, do_async);
 
    if (!input_stolen)
      {
@@ -3280,12 +3283,13 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
           return;
      }
 
-   _evas_image_render(eo_obj, obj, output, context, surface, x, y, do_async);
+   _evas_image_render(eo_obj, obj, output, context, surface, x, y, 0, 0, 0, 0, do_async);
 }
 
 static void
 _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
-                   void *output, void *context, void *surface, int x, int y, Eina_Bool do_async)
+                   void *output, void *context, void *surface, int x, int y,
+                   int l, int t, int r, int b, Eina_Bool do_async)
 {
    Evas_Image_Data *o = obj->private_data;
    int imagew, imageh, uvw, uvh;
@@ -3358,7 +3362,6 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    if (pixels)
      {
         Evas_Coord idw, idh, idx, idy;
-        int l = 0, r = 0, t = 0, b = 0;
         int ix, iy, iw, ih;
 
         if ((obj->map->cur.map) && (obj->map->cur.map->count > 3) && (obj->map->cur.usemap))
