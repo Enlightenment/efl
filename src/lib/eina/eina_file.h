@@ -408,7 +408,7 @@ EAPI Eina_Bool eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path);
  *          cost associated with creating the list and stopping halfway through it.
  *
  * @warning If readdir_r doesn't contain file type information, file type is
- *          DT_UNKNOWN.
+ *          EINA_FILE_UNKNOWN.
  * @warning The #Eina_File_Direct_Info returned by the iterator <b>must not</b>
  *          be modified in any way.
  * @warning When the iterator is advanced or deleted the #Eina_File_Direct_Info
