@@ -710,10 +710,12 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 
                      case EDJE_PART_TYPE_PROXY:
                      case EDJE_PART_TYPE_IMAGE:
+                       rp->object = evas_object_image_add(ed->base->evas);
+                       break;
+
                      case EDJE_PART_TYPE_SNAPSHOT:
                        rp->object = evas_object_image_filled_add(ed->base->evas);
-                       if (ep->type == EDJE_PART_TYPE_SNAPSHOT)
-                         evas_object_image_snapshot_set(rp->object, EINA_TRUE);
+                       evas_object_image_snapshot_set(rp->object, EINA_TRUE);
                        break;
 
                      case EDJE_PART_TYPE_TEXT:
