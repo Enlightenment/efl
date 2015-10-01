@@ -956,8 +956,8 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
       }
       @property wl_window {
          get {
-            [[Get the Ecore_Wl_Window of an Evas_Object.]]
-            return: Ecore_Wl_Window *; [[The Ecore_Wl_Window of $obj.]]
+            [[Get the Ecore_Wl2_Window of an Evas_Object.]]
+            return: Ecore_Wl2_Window *; [[The Ecore_Wl2_Window of $obj.]]
             legacy: null;
          }
       }
