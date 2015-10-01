@@ -1256,7 +1256,7 @@ _box_min_size_calculate(Evas_Object *box,
 {
    Evas_Coord mnw, mnh, w, minw, minh = 0, linew = 0, lineh = 0;
    int line_num;
-   Eina_List *l, *l_next;
+   Eina_List *l;
    Evas_Object_Box_Option *opt;
 
    evas_object_geometry_get(box, NULL, NULL, &w, NULL);
@@ -1276,15 +1276,6 @@ _box_min_size_calculate(Evas_Object *box,
           {
              linew = mnw;
              line_num++;
-
-             l_next = eina_list_next(l);
-             opt = eina_list_data_get(l_next);
-             if (l_next && opt && opt->obj &&
-                 eo_isa(opt->obj, ELM_ENTRY_CLASS))
-               {
-                  linew = 0;
-                  line_num++;
-               }
           }
 
         if ((linew != 0) && (l != eina_list_last(priv->children)))
