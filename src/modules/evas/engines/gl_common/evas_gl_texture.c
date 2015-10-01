@@ -946,11 +946,10 @@ void
 pt_unref(Evas_GL_Texture_Pool *pt)
 {
    if (!pt) return;
-   if (!pt->gc) return;
    pt->references--;
    if (pt->references != 0) return;
 
-   if (!((pt->render) || (pt->native)))
+   if ((pt->gc) && !((pt->render) || (pt->native)))
      {
         if (pt->whole)
            pt->gc->shared->tex.whole =
