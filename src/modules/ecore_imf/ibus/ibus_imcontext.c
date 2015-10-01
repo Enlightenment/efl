@@ -452,8 +452,6 @@ ecore_imf_context_ibus_filter_event(Ecore_IMF_Context *ctx,
                   retval = EINA_TRUE;
                }
           }
-        else
-          retval = EINA_FALSE;
 
         if (retval)
           return EINA_TRUE;
