@@ -2,7 +2,6 @@
 # include <config.h>
 #endif
 
-#include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
@@ -32,22 +31,24 @@ static Eina_Bool
 cache_directory_modified(Eina_Hash *dirs, const char *dir)
 {
     Efreet_Cache_Directory *dcache;
-    struct stat st;
+    long long time;
 
     if (!dirs) return EINA_TRUE;
 
-    if (stat(dir, &st) < 0) return EINA_FALSE;
+    time = ecore_file_mod_time(dir);
+    if (!time)
+      return EINA_FALSE;
     dcache = eina_hash_find(dirs, dir);
     if (!dcache)
     {
         dcache = malloc(sizeof (Efreet_Cache_Directory));
         if (!dcache) return EINA_TRUE;
 
-        dcache->modified_time = (long long) st.st_mtime;
+        dcache->modified_time = time;
         eina_hash_add(dirs, dir, dcache);
     }
-    else if (dcache->modified_time == (long long) st.st_mtime) return EINA_FALSE;
-    dcache->modified_time = st.st_mtime;
+    else if (dcache->modified_time == time) return EINA_FALSE;
+    dcache->modified_time = time;
 
     return EINA_TRUE;
 }
@@ -478,12 +479,13 @@ icon_theme_index_read(Efreet_Cache_Icon_Theme *theme, const char *path)
     Efreet_Ini *ini;
     Efreet_Icon_Theme_Directory *dir;
     const char *tmp;
-    struct stat st;
+    long long time;
 
     if (!theme || !path) return EINA_FALSE;
 
-    if (stat(path, &st) < 0) return EINA_FALSE;
-    if (theme->path && !strcmp(theme->path, path) && theme->last_cache_check >= (long long) st.st_mtime)
+    time = ecore_file_mod_time(path);
+    if (!time) return EINA_FALSE;
+    if (theme->path && !strcmp(theme->path, path) && theme->last_cache_check >= time)
     {
         /* no change */
         theme->valid = 1;
@@ -494,8 +496,8 @@ icon_theme_index_read(Efreet_Cache_Icon_Theme *theme, const char *path)
         theme->path = eina_stringshare_add(path);
         eina_array_push(strs, theme->path);
     }
-    if ((long long) st.st_mtime > theme->last_cache_check)
-        theme->last_cache_check = (long long) st.st_mtime;
+    if (time > theme->last_cache_check)
+        theme->last_cache_check = time;
     theme->changed = 1;
 
     ini = efreet_ini_new(path);
@@ -606,13 +608,14 @@ cache_theme_scan(const char *dir)
 
     EINA_ITERATOR_FOREACH(it, entry)
     {
+        char buf[PATH_MAX];
         Efreet_Cache_Icon_Theme *theme;
         const char *name;
         const char *path;
-        char buf[PATH_MAX];
-        struct stat st;
+        long long time;
 
-        if (stat(entry->path, &st) < 0) continue;
+        time = ecore_file_mod_time(entry->path);
+        if (!time) continue;
 
         if ((entry->type != EINA_FILE_DIR) &&
             (entry->type != EINA_FILE_LNK))
@@ -634,9 +637,9 @@ cache_theme_scan(const char *dir)
                           (void *)theme->theme.name.internal, theme);
             theme->changed = 1;
         }
-        if ((long long) st.st_mtime > theme->last_cache_check)
+        if (time > theme->last_cache_check)
         {
-            theme->last_cache_check = (long long) st.st_mtime;
+            theme->last_cache_check = time;
             theme->changed = 1;
         }
 
