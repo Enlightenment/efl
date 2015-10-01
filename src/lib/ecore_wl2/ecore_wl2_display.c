@@ -525,5 +525,5 @@ ecore_wl2_display_registry_get(Ecore_Wl2_Display *display)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
 
-   return wl_display_registry_get(display->wl.display);
+   return wl_display_get_registry(display->wl.display);
 }
