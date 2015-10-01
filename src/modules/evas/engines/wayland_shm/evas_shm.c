@@ -395,7 +395,7 @@ _evas_shm_surface_reconfigure(Shm_Surface *surface, int dx, int dy, int w, int h
         if ((resize) && (!surface->leaf[i].resize_pool))
           {
              surface->leaf[i].resize_pool = 
-               _shm_pool_create(surface->shm, 10 * 1024 * 1024);
+               _shm_pool_create(surface->shm, 6 * 1024 * 1024);
           }
 
         if (!_shm_leaf_create(surface, &surface->leaf[i], w, h))
