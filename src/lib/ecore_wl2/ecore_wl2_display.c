@@ -264,11 +264,21 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
 
    if (ewd->xkb_context) xkb_context_unref(ewd->xkb_context);
 
-   wl_registry_destroy(wl_display_get_registry(ewd->wl.display));
-
    if (ewd->fd_hdl) ecore_main_fd_handler_del(ewd->fd_hdl);
 
    eina_hash_free(ewd->globals);
+
+   if (ewd->wl.xdg_shell) xdg_shell_destroy(ewd->wl.xdg_shell);
+   if (ewd->wl.wl_shell) wl_shell_destroy(ewd->wl.wl_shell);
+   if (ewd->wl.shm) wl_shm_destroy(ewd->wl.shm);
+   if (ewd->wl.data_device_manager)
+     wl_data_device_manager_destroy(ewd->wl.data_device_manager);
+   if (ewd->wl.compositor) wl_compositor_destroy(ewd->wl.compositor);
+   if (ewd->wl.subcompositor) wl_subcompositor_destroy(ewd->wl.subcompositor);
+
+   wl_registry_destroy(wl_display_get_registry(ewd->wl.display));
+
+   wl_display_flush(ewd->wl.display);
 }
 
 Ecore_Wl2_Window *
@@ -402,6 +412,7 @@ ecore_wl2_display_disconnect(Ecore_Wl2_Display *display)
    EINA_SAFETY_ON_NULL_RETURN(display);
    _ecore_wl2_display_cleanup(display);
    wl_display_disconnect(display->wl.display);
+   free(display);
 }
 
 EAPI void
@@ -410,6 +421,7 @@ ecore_wl2_display_destroy(Ecore_Wl2_Display *display)
    EINA_SAFETY_ON_NULL_RETURN(display);
    _ecore_wl2_display_cleanup(display);
    wl_display_destroy(display->wl.display);
+   free(display);
 }
 
 EAPI void
