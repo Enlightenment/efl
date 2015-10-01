@@ -553,7 +553,8 @@ check_state(Edje_Part_Collection *pc, Edje_Part *ep, Edje_Part_Description_Commo
    /* FIXME: When smart masks are supported, remove this check */
    if (ed->clip_to_id != -1 &&
        (pc->parts[ed->clip_to_id]->type != EDJE_PART_TYPE_RECTANGLE) &&
-       (pc->parts[ed->clip_to_id]->type != EDJE_PART_TYPE_IMAGE))
+       (pc->parts[ed->clip_to_id]->type != EDJE_PART_TYPE_IMAGE) &&
+       (pc->parts[ed->clip_to_id]->type != EDJE_PART_TYPE_PROXY))
      error_and_abort(ef, "Collection %i: part: '%s' state: '%s' %g clip_to points to "
                          "a non RECT/IMAGE part '%s'!",
                      pc->id, ep->name, ed->state.name, ed->state.value,
@@ -600,7 +601,8 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
    /* FIXME: When smart masks are supported, remove this check */
    if (ep->clip_to_id != -1 &&
        (pc->parts[ep->clip_to_id]->type != EDJE_PART_TYPE_RECTANGLE) &&
-       (pc->parts[ep->clip_to_id]->type != EDJE_PART_TYPE_IMAGE))
+       (pc->parts[ep->clip_to_id]->type != EDJE_PART_TYPE_IMAGE) &&
+       (pc->parts[ep->clip_to_id]->type != EDJE_PART_TYPE_PROXY))
      error_and_abort(ef, "Collection %i: clip_to point to a non RECT/IMAGE part '%s' !",
                      pc->id, pc->parts[ep->clip_to_id]->name);
 }
