@@ -105,8 +105,10 @@ _elm_multibuttonentry_elm_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Data 
    if (str) vpad = atoi(str);
    elm_box_padding_set
      (sd->box,
-      hpad * elm_widget_scale_get(obj) * elm_config_scale_get(),
-      vpad * elm_widget_scale_get(obj) * elm_config_scale_get());
+      hpad * elm_widget_scale_get(obj) * elm_config_scale_get()
+      / edje_object_base_scale_get(elm_layout_edje_get(obj)),
+      vpad * elm_widget_scale_get(obj) * elm_config_scale_get()
+      / edje_object_base_scale_get(elm_layout_edje_get(obj)));
 
    EINA_LIST_FOREACH(sd->items, l, eo_item)
      {
@@ -1415,8 +1417,10 @@ _view_init(Evas_Object *obj, Elm_Multibuttonentry_Data *sd)
    if (str) vpad = atoi(str);
    elm_box_padding_set
      (sd->box,
-      hpad * elm_widget_scale_get(obj) * elm_config_scale_get(),
-      vpad * elm_widget_scale_get(obj) * elm_config_scale_get());
+      hpad * elm_widget_scale_get(obj) * elm_config_scale_get()
+      / edje_object_base_scale_get(elm_layout_edje_get(obj)),
+      vpad * elm_widget_scale_get(obj) * elm_config_scale_get()
+      / edje_object_base_scale_get(elm_layout_edje_get(obj)));
 
    elm_box_layout_set(sd->box, _box_layout_cb, obj, NULL);
    elm_box_homogeneous_set(sd->box, EINA_FALSE);
