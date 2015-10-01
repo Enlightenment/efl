@@ -12,6 +12,7 @@ lib/ecore_wl2/subsurface-client-protocol.h \
 lib/ecore_wl2/subsurface-protocol.c \
 lib/ecore_wl2/xdg-shell-client-protocol.h \
 lib/ecore_wl2/xdg-shell-protocol.c \
+lib/ecore_wl2/ecore_wl2_subsurf.c \
 lib/ecore_wl2/ecore_wl2_dnd.c \
 lib/ecore_wl2/ecore_wl2_window.c \
 lib/ecore_wl2/ecore_wl2_input.c \

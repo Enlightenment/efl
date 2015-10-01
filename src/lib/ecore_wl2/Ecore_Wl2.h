@@ -28,7 +28,7 @@
 /* extern "C" { */
 /* # endif */
 
-typedef struct _Ecore_Wl2_Subsurf Ecore_Wl2_Subsurf;
+typedef struct _Ecore_Wl2_Subsurface Ecore_Wl2_Subsurface;
 
 # ifndef _ECORE_WL2_WINDOW_PREDEF
 typedef struct _Ecore_Wl2_Window Ecore_Wl2_Window;
@@ -164,6 +164,7 @@ EAPI extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE;
  * @li @ref Ecore_Wl2_Init_Group
  * @li @ref Ecore_Wl2_Display_Group
  * @li @ref Ecore_Wl2_Window_Group
+ * @li @ref Ecore_Wl2_Subsurface_Group
  */
 
 /**
@@ -572,6 +573,22 @@ EAPI Eina_Bool ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input);
 
 /* TODO: doxy */
 EAPI void ecore_wl2_input_ungrab(Ecore_Wl2_Input *input);
+
+/**
+ * Create and return a new subsurface.
+ *
+ * Create a new surface (and subsurface interface), with the parent surface
+ * being the one associated with the given @param win.
+ *
+ * The @param win must be visible, otherwise there will be no surface created
+ * for it yet.
+ *
+ * @return the allocated and initialized Ecore_Wl2_Subsurface object, or
+ * NULL on failure
+ *
+ * @ingroup Ecore_Wl2_Subsurface_Group
+ */
+EAPI Ecore_Wl2_Subsurface *ecore_wl2_subsurface_new(Ecore_Wl2_Window *window);
 
 /* # ifdef __cplusplus */
 /* } */

@@ -114,7 +114,7 @@ struct _Ecore_Wl2_Window
 
    Eina_Rectangle geometry;
    Eina_Rectangle opaque;
-   Eina_Rectangle input;
+   Eina_Rectangle input_rect;
 
    Ecore_Wl2_Window_Type type;
 
@@ -266,5 +266,7 @@ void _ecore_wl2_dnd_motion(Ecore_Wl2_Input *input, int x, int y, unsigned int ti
 void _ecore_wl2_dnd_drop(Ecore_Wl2_Input *input);
 void _ecore_wl2_dnd_selection(Ecore_Wl2_Input *input, struct wl_data_offer *offer);
 void _ecore_wl2_dnd_del(Ecore_Wl2_Dnd_Source *source);
+
+void _ecore_wl2_subsurf_free(Ecore_Wl2_Subsurface *subsurf);
 
 #endif
