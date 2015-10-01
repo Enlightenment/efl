@@ -142,6 +142,8 @@ extern "C" {
  * Recommended reading:
  *
  * @li @ref Eio_Helper for common functions and library initialization.
+ * @li @ref Eio_List for listing files asynchronous.
+ * @li @ref Eio_Management for anyone who want to do a file manager (copy, rm, ...).
  * @li @ref Eio_Map to manipulate files asynchronously (mmap).
  * @li @ref Eio_Xattr to access file extended attributes (xattr).
  * @li @ref Eio_Monitor to monitor for file changes (inotify).
@@ -153,7 +155,6 @@ extern "C" {
  *
  * More examples can be found at @ref eio_examples.
  *
- * @{
  */
 
 /**
@@ -183,6 +184,18 @@ enum _Eio_File_Op
  * Input/Output operations on files.
  */
 typedef enum _Eio_File_Op Eio_File_Op;
+
+/**
+ * @defgroup Eio_List Eio file listing API
+ * @ingroup Eio
+ *
+ * @brief This functions helps list files asynchronously.
+ *
+ * This set of functions work on top of Eina_File and Ecore_Thread
+ * to list files under various condition.
+ *
+ * @{
+ */
 
 /**
  * @typedef Eio_File
@@ -252,14 +265,20 @@ struct _Eio_Progress
  * It's equivalent to the "ls" shell command. Every file will be passed to the
  * filter_cb, so it's your job to decide if you want to pass the file to the
  * main_cb or not. Return EINA_TRUE to pass it to the main_cb or EINA_FALSE to
- * ignore it.
+ * ignore it. It runs eina_file_ls() in a separate thread using
+ * ecore_thread_feedback_run().
+ *
+ * @see eina_file_ls()
+ * @see ecore_thread_feedback_run()
+ * @see eio_file_direct_ls()
+ * @see eio_file_stat_ls()
  */
 EAPI Eio_File *eio_file_ls(const char *dir,
-			   Eio_Filter_Cb filter_cb,
-			   Eio_Main_Cb main_cb,
-			   Eio_Done_Cb done_cb,
-			   Eio_Error_Cb error_cb,
-			   const void *data);
+                           Eio_Filter_Cb filter_cb,
+                           Eio_Main_Cb main_cb,
+                           Eio_Done_Cb done_cb,
+                           Eio_Error_Cb error_cb,
+                           const void *data);
 
 /**
  * @brief List contents of a directory without locking your app.
@@ -271,18 +290,30 @@ EAPI Eio_File *eio_file_ls(const char *dir,
  * @param data Unmodified user data passed to callbacks
  * @return A reference to the I/O operation.
  *
- * eio_file_direct_ls runs eina_file_direct_ls in a separate thread using
- * ecore_thread_feedback_run. This prevents any blocking in your apps.
+ * eio_file_direct_ls() runs eina_file_direct_ls() in a separate thread using
+ * ecore_thread_feedback_run(). This prevents any blocking in your apps.
  * Every file will be passed to the filter_cb, so it's your job to decide if you
  * want to pass the file to the main_cb or not. Return EINA_TRUE to pass it to
  * the main_cb or EINA_FALSE to ignore it.
+ *
+ * @warning If readdir_r doesn't contain file type information, file type is
+ *          EINA_FILE_UNKNOWN.
+ *
+ * @note The iterator walks over '.' and '..' without returning them.
+ * @note The difference between this function and eina_file_stat_ls() is that
+ *       it may not get the file type information however it is likely to be
+ *       faster.
+ *
+ * @see eio_file_stat_ls()
+ * @see eina_file_direct_ls()
+ * @see ecore_thread_feedback_run()
  */
 EAPI Eio_File *eio_file_direct_ls(const char *dir,
-				  Eio_Filter_Direct_Cb filter_cb,
-				  Eio_Main_Direct_Cb main_cb,
-				  Eio_Done_Cb done_cb,
-				  Eio_Error_Cb error_cb,
-				  const void *data);
+                                  Eio_Filter_Direct_Cb filter_cb,
+                                  Eio_Main_Direct_Cb main_cb,
+                                  Eio_Done_Cb done_cb,
+                                  Eio_Error_Cb error_cb,
+                                  const void *data);
 
 /**
  * @brief List content of a directory without locking your app.
@@ -296,8 +327,17 @@ EAPI Eio_File *eio_file_direct_ls(const char *dir,
  *
  * Every file will be passed to the filter_cb, so it's your job to decide if you
  * want to pass the file to the main_cb or not. Return EINA_TRUE to pass it to
- * the main_cb or EINA_FALSE to ignore it.
+ * the main_cb or EINA_FALSE to ignore it. eio_file_stat_ls() run eina_file_stat_ls()
+ * in a separate thread using ecore_thread_feedback_run().
  *
+ * @note The iterator walks over '.' and '..' without returning them.
+ * @note The difference between this function and eio_file_direct_ls() is that
+ *       it guarantees the file type information to be correct by incurring a
+ *       possible performance penalty.
+ *
+ * @see eio_file_stat_ls()
+ * @see eina_file_stat_ls()
+ * @see ecore_thread_feedback_run()
  */
 EAPI Eio_File *eio_file_stat_ls(const char *dir,
                                 Eio_Filter_Direct_Cb filter_cb,
@@ -317,11 +357,16 @@ EAPI Eio_File *eio_file_stat_ls(const char *dir,
  * @return A reference to the I/O operation.
  *
  * eio_dir_stat_ls() runs eina_file_stat_ls() recursively in a separate thread using
- * ecore_thread_feedback_run. This prevents any blocking in your apps.
+ * ecore_thread_feedback_run(). This prevents any blocking in your apps.
  * Every file will be passed to the
  * filter_cb, so it's your job to decide if you want to pass the file to the
  * main_cb or not. Return EINA_TRUE to pass it to the main_cb or EINA_FALSE to
  * ignore it.
+ *
+ * @see eio_file_stat_ls()
+ * @see eio_dir_direct_ls()
+ * @see eina_file_stat_ls()
+ * @see ecore_thread_feedback_run()
  */
 EAPI Eio_File *eio_dir_stat_ls(const char *dir,
                                Eio_Filter_Direct_Cb filter_cb,
@@ -341,17 +386,22 @@ EAPI Eio_File *eio_dir_stat_ls(const char *dir,
  * @return A reference to the I/O operation.
  *
  * eio_dir_direct_ls() runs eina_file_direct_ls() recursively in a separate thread using
- * ecore_thread_feedback_run. This prevents any blocking in your apps.
+ * ecore_thread_feedback_run(). This prevents any blocking in your apps.
  * Every file will be passed to the filter_cb, so it's your job to decide if you
  * want to pass the file to the main_cb or not. Return EINA_TRUE to pass it to
  * the main_cb or EINA_FALSE to ignore it.
+ *
+ * @see eio_file_direct_ls()
+ * @see eio_dir_stat_ls()
+ * @see eina_file_direct_ls()
+ * @see ecore_thread_feedback_run()
  */
 EAPI Eio_File *eio_dir_direct_ls(const char *dir,
-				 Eio_Filter_Dir_Cb filter_cb,
-				 Eio_Main_Direct_Cb main_cb,
-				 Eio_Done_Cb done_cb,
-				 Eio_Error_Cb error_cb,
-				 const void *data);
+                                 Eio_Filter_Dir_Cb filter_cb,
+                                 Eio_Main_Direct_Cb main_cb,
+                                 Eio_Done_Cb done_cb,
+                                 Eio_Error_Cb error_cb,
+                                 const void *data);
 
 /**
  * @brief Stat a file/directory.
@@ -364,9 +414,25 @@ EAPI Eio_File *eio_dir_direct_ls(const char *dir,
  * eio_file_direct_stat calls stat in another thread. This prevents any blocking in your apps.
  */
 EAPI Eio_File *eio_file_direct_stat(const char *path,
-				    Eio_Stat_Cb done_cb,
-				    Eio_Error_Cb error_cb,
-				    const void *data);
+                                    Eio_Stat_Cb done_cb,
+                                    Eio_Error_Cb error_cb,
+                                    const void *data);
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Eio_Management Eio file management API.
+ *
+ * @brief A set of function to manage file asynchronously.
+ *
+ * The function provided by this API are the one useful for any
+ * file manager. Like moving or copying a file, unlinking it, changing
+ * it's access right, ...
+ *
+ * @{
+ */
 
 /**
  * @brief Change rights of a path.
@@ -417,9 +483,9 @@ EAPI Eio_File *eio_file_chown(const char *path,
  * This function will erase a file.
  */
 EAPI Eio_File *eio_file_unlink(const char *path,
-			       Eio_Done_Cb done_cb,
-			       Eio_Error_Cb error_cb,
-			       const void *data);
+                               Eio_Done_Cb done_cb,
+                               Eio_Error_Cb error_cb,
+                               const void *data);
 
 /**
  * @brief Create a new directory.
@@ -433,10 +499,10 @@ EAPI Eio_File *eio_file_unlink(const char *path,
  * Creates a new directory using the mode provided.
  */
 EAPI Eio_File *eio_file_mkdir(const char *path,
-			      mode_t mode,
-			      Eio_Done_Cb done_cb,
-			      Eio_Error_Cb error_cb,
-			      const void *data);
+                              mode_t mode,
+                              Eio_Done_Cb done_cb,
+                              Eio_Error_Cb error_cb,
+                              const void *data);
 
 /**
  * @brief Move a file asynchronously
@@ -455,11 +521,11 @@ EAPI Eio_File *eio_file_mkdir(const char *path,
  * access rights, but not user/group identification.
  */
 EAPI Eio_File *eio_file_move(const char *source,
-			     const char *dest,
-			     Eio_Progress_Cb progress_cb,
-			     Eio_Done_Cb done_cb,
-			     Eio_Error_Cb error_cb,
-			     const void *data);
+                             const char *dest,
+                             Eio_Progress_Cb progress_cb,
+                             Eio_Done_Cb done_cb,
+                             Eio_Error_Cb error_cb,
+                             const void *data);
 
 /**
  * @brief Copy a file asynchronously
@@ -477,11 +543,11 @@ EAPI Eio_File *eio_file_move(const char *source,
  * access rights, but not user/group identification.
  */
 EAPI Eio_File *eio_file_copy(const char *source,
-			     const char *dest,
-			     Eio_Progress_Cb progress_cb,
-			     Eio_Done_Cb done_cb,
-			     Eio_Error_Cb error_cb,
-			     const void *data);
+                             const char *dest,
+                             Eio_Progress_Cb progress_cb,
+                             Eio_Done_Cb done_cb,
+                             Eio_Error_Cb error_cb,
+                             const void *data);
 
 /**
  * @brief Move a directory and its content asynchronously
@@ -507,12 +573,12 @@ EAPI Eio_File *eio_file_copy(const char *source,
  * @note if a rename occurs, the filter callback will not be called.
  */
 EAPI Eio_File *eio_dir_move(const char *source,
-			    const char *dest,
+                            const char *dest,
                             Eio_Filter_Direct_Cb filter_cb,
-			    Eio_Progress_Cb progress_cb,
-			    Eio_Done_Cb done_cb,
-			    Eio_Error_Cb error_cb,
-			    const void *data);
+                            Eio_Progress_Cb progress_cb,
+                            Eio_Done_Cb done_cb,
+                            Eio_Error_Cb error_cb,
+                            const void *data);
 
 /**
  * @brief Copy a directory and its content asynchronously
@@ -535,12 +601,12 @@ EAPI Eio_File *eio_dir_move(const char *source,
  * the main_cb or EINA_FALSE to ignore it.
  */
 EAPI Eio_File *eio_dir_copy(const char *source,
-			    const char *dest,
+                            const char *dest,
                             Eio_Filter_Direct_Cb filter_cb,
-			    Eio_Progress_Cb progress_cb,
-			    Eio_Done_Cb done_cb,
-			    Eio_Error_Cb error_cb,
-			    const void *data);
+                            Eio_Progress_Cb progress_cb,
+                            Eio_Done_Cb done_cb,
+                            Eio_Error_Cb error_cb,
+                            const void *data);
 
 /**
  * @brief Remove a directory and its content asynchronously
@@ -561,14 +627,13 @@ EAPI Eio_File *eio_dir_copy(const char *source,
  */
 EAPI Eio_File *eio_dir_unlink(const char *path,
                               Eio_Filter_Direct_Cb filter_cb,
-			      Eio_Progress_Cb progress_cb,
-			      Eio_Done_Cb done_cb,
-			      Eio_Error_Cb error_cb,
-			      const void *data);
+                              Eio_Progress_Cb progress_cb,
+                              Eio_Done_Cb done_cb,
+                              Eio_Error_Cb error_cb,
+                              const void *data);
 /**
  * @}
  */
-
 
 /**
  * @defgroup Eio_Xattr Eio manipulation of eXtended attribute.
