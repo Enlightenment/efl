@@ -489,3 +489,16 @@ ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, int *h)
    if (w) *w = ow;
    if (h) *h = oh;
 }
+
+EAPI Ecore_Wl2_Window *
+ecore_wl2_display_window_find(Ecore_Wl2_Display *display, unsigned int id)
+{
+   Ecore_Wl2_Window *window;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
+
+   EINA_INLIST_FOREACH(display->windows, window)
+     if (window->id == (int)id) return window;
+
+   return NULL;
+}
