@@ -448,6 +448,9 @@ EAPI void ecore_wl2_window_transparent_set(Ecore_Wl2_Window *window, Eina_Bool t
 EAPI void ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
 
 /* TODO: doxy */
+EAPI void ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
+
+/* TODO: doxy */
 EAPI Eina_Bool ecore_wl2_window_maximized_get(Ecore_Wl2_Window *window);
 
 /* TODO: doxy */

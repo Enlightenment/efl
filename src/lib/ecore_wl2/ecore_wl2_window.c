@@ -620,6 +620,47 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
    wl_region_destroy(region);
 }
 
+EAPI void
+ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h)
+{
+   struct wl_region *region;
+
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   window->input.x = x;
+   window->input.y = y;
+   window->input.w = w;
+   window->input.h = h;
+
+   if (window->type == ECORE_WL2_WINDOW_TYPE_DND) return;
+
+   region = wl_compositor_create_region(window->display->wl.compositor);
+   if (!region)
+     {
+        ERR("Failed to create opaque region: %m");
+        return;
+     }
+
+   switch (window->rotation)
+     {
+      case 0:
+        wl_region_add(region, x, y, w, h);
+        break;
+      case 180:
+        wl_region_add(region, x, x + y, w, h);
+        break;
+      case 90:
+        wl_region_add(region, y, x, h, w);
+        break;
+      case 270:
+        wl_region_add(region, x + y, x, h, w);
+        break;
+     }
+
+   wl_surface_set_input_region(window->surface, region);
+   wl_region_destroy(region);
+}
+
 EAPI Eina_Bool
 ecore_wl2_window_maximized_get(Ecore_Wl2_Window *window)
 {
