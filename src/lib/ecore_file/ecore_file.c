@@ -921,9 +921,9 @@ ecore_file_ls(const char *dir)
  * @brief Return the executable from the given command.
  *
  * @param app The application command, with parameters.
- * @return The executable from @p app as a newly allocated string. Arguments 
- * are removed and escape characters are handled. If @p app is @c NULL, or 
- * on failure, the function returns @c NULL. When not needed anymore, the 
+ * @return The executable from @p app as a newly allocated string. Arguments
+ * are removed and escape characters are handled. If @p app is @c NULL, or
+ * on failure, the function returns @c NULL. When not needed anymore, the
  * returned value must be freed.
  */
 EAPI char *
@@ -1047,7 +1047,7 @@ ecore_file_escape_name(const char *filename)
             *q = 'n';
             q++;
             p++;
-	    continue;
+            continue;
           }
 
         *q = *p;
