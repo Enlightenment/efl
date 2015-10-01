@@ -382,32 +382,86 @@ check_image_part_desc(Edje_Part_Collection *pc, Edje_Part *ep,
     }
 }
 
+static Edje_Part_Collection *
+_source_group_find(const char *source)
+{
+   Edje_Part_Collection *pc2;
+   Eina_List *l;
+   if (!source) return NULL;
+   EINA_LIST_FOREACH(edje_collections, l, pc2)
+     {
+        if (!strcmp(pc2->part, source))
+          return pc2;
+     }
+   return NULL;
+}
+
+static Edje_Part *
+_aliased_text_part_find(Edje_Part_Collection *pc,
+                        int id_source, const char *id_source_part)
+{
+   Edje_Part_Collection *group;
+   unsigned int i;
+
+   if (!pc->parts[id_source]->source)
+     return NULL;
+
+   group = _source_group_find(pc->parts[id_source]->source);
+   if (!group) return NULL;
+
+   for (i = 0; i < group->parts_count; i++)
+     {
+        if (!strcmp(group->parts[i]->name, id_source_part))
+          return group->parts[i];
+     }
+   return NULL;
+}
+
 static void
 check_text_part_desc(Edje_Part_Collection *pc, Edje_Part *ep,
-                      Edje_Part_Description_Text *epd, Eet_File *ef)
+                     Edje_Part_Description_Text *epd, Eet_File *ef)
 {
+   Edje_Part *ep2;
+
    if (epd->text.id_source != -1)
      {
-        if ((pc->parts[epd->text.id_source]->type != EDJE_PART_TYPE_TEXT) &&
-            (pc->parts[epd->text.id_source]->type != EDJE_PART_TYPE_TEXTBLOCK))
+        if ((pc->parts[epd->text.id_source]->type == EDJE_PART_TYPE_TEXT) ||
+            (pc->parts[epd->text.id_source]->type == EDJE_PART_TYPE_TEXTBLOCK))
+          return;
+
+        if (epd->text.id_source_part)
           {
-             error_and_abort(ef, "Collection \"%s\" Part \"%s\" Description \"%s\" [%.3f]: "
-                          "text.source point to a non TEXT part \"%s\"!",
-                          pc->part, ep->name,epd->common.state.name,
-                          epd->common.state.value, pc->parts[epd->text.id_source]->name);
+             ep2 = _aliased_text_part_find(pc, epd->text.id_source, epd->text.id_source_part);
+             if (ep2 && ((ep2->type == EDJE_PART_TYPE_TEXT) ||
+                         (ep2->type == EDJE_PART_TYPE_TEXTBLOCK)))
+               return;
           }
+
+        error_and_abort(ef, "Collection \"%s\" Part \"%s\" Description \"%s\" [%.3f]: "
+                            "text.source point to a non TEXT part \"%s\"!",
+                        pc->part, ep->name, epd->common.state.name,
+                        epd->common.state.value, pc->parts[epd->text.id_source]->name);
      }
 
    if (epd->text.id_text_source != -1)
      {
-        if ((pc->parts[epd->text.id_text_source]->type != EDJE_PART_TYPE_TEXT) &&
-            (pc->parts[epd->text.id_text_source]->type != EDJE_PART_TYPE_TEXTBLOCK))
+
+        if ((pc->parts[epd->text.id_text_source]->type == EDJE_PART_TYPE_TEXT) ||
+            (pc->parts[epd->text.id_text_source]->type == EDJE_PART_TYPE_TEXTBLOCK))
+          return;
+
+        if (epd->text.id_text_source_part)
           {
-             error_and_abort(ef, "Collection \"%s\" Part \"%s\" Description \"%s\" [%.3f]: "
-                          "text.text_source point to a non TEXT part \"%s\"!",
-                          pc->part, ep->name,epd->common.state.name,
-                          epd->common.state.value, pc->parts[epd->text.id_text_source]->name);
+             ep2 = _aliased_text_part_find(pc, epd->text.id_text_source, epd->text.id_text_source_part);
+             if (ep2 && ((ep2->type == EDJE_PART_TYPE_TEXT) ||
+                         (ep2->type == EDJE_PART_TYPE_TEXTBLOCK)))
+               return;
           }
+
+        error_and_abort(ef, "Collection \"%s\" Part \"%s\" Description \"%s\" [%.3f]: "
+                            "text.text_source point to a non TEXT part \"%s\"!",
+                        pc->part, ep->name,epd->common.state.name,
+                        epd->common.state.value, pc->parts[epd->text.id_text_source]->name);
      }
 }
 
