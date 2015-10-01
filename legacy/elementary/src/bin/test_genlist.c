@@ -4888,7 +4888,7 @@ _entry_change_cb(void *data, Evas_Object *obj, void *event EINA_UNUSED)
    sprintf(buf, "%s", elm_object_text_get(obj));
    api->filter_data = strdup(buf);
    elm_genlist_filter_set(api->gl, (void *)(api->filter_data));
-   if (buf == NULL || !strlen(buf))
+   if (!strlen(buf))
      {
         printf("Input data string empty; returning\n");
         return;
