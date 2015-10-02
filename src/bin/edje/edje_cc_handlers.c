@@ -3473,6 +3473,7 @@ _part_copy(Edje_Part *ep, Edje_Part *ep2)
    ep->cursor_mode = ep2->cursor_mode;
    ep->multiline = ep2->multiline;
    ep->access = ep2->access;
+   ep->no_render = ep2->no_render;
    ep->dragable.x = ep2->dragable.x;
    ep->dragable.step_x = ep2->dragable.step_x;
    ep->dragable.count_x = ep2->dragable.count_x;
