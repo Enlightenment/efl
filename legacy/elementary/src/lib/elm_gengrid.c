@@ -898,6 +898,9 @@ _item_content_realize(Elm_Gen_Item *it,
              elm_widget_sub_object_add(WIDGET(it), content);
              if (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()))
                elm_widget_disabled_set(content, EINA_TRUE);
+
+             if (_elm_config->atspi_mode && eo_isa(content, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+               eo_do(content, elm_interface_atspi_accessible_parent_set(EO_OBJ(it)));
           }
      }
 }
@@ -4432,6 +4435,12 @@ _elm_gengrid_item_append(Eo *obj, Elm_Gengrid_Data *sd, const Elm_Gengrid_Item_C
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
 
+   if (_elm_config->atspi_mode)
+     {
+        elm_interface_atspi_accessible_added(EO_OBJ(it));
+        elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
+     }
+
    return EO_OBJ(it);
 }
 
@@ -4451,6 +4460,12 @@ _elm_gengrid_item_prepend(Eo *obj, Elm_Gengrid_Data *sd, const Elm_Gengrid_Item_
 
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, obj);
+
+   if (_elm_config->atspi_mode)
+     {
+        elm_interface_atspi_accessible_added(EO_OBJ(it));
+        elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
+     }
 
    return EO_OBJ(it);
 }

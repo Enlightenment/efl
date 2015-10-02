@@ -2346,6 +2346,13 @@ _item_new(Evas_Object *obj,
           obj);
      }
 
+   if (_elm_config->atspi_mode)
+     {
+        if (it->end) eo_do(it->end, elm_interface_atspi_accessible_parent_set(eo_it));
+        if (it->icon) eo_do(it->icon, elm_interface_atspi_accessible_parent_set(eo_it));
+        elm_interface_atspi_accessible_added(eo_it);
+     }
+
    return it;
 }
 

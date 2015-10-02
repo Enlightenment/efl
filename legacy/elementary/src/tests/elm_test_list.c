@@ -200,6 +200,36 @@ START_TEST (elm_atspi_role_get)
 }
 END_TEST
 
+
+/**
+ * Validate if genlist implementation properly reset parent to Elm_Genlist_Item
+ * from Elm_Genlist
+ */
+START_TEST(elm_atspi_children_parent)
+{
+   Elm_Interface_Atspi_Accessible *parent;
+
+   elm_init(1, NULL);
+   Evas_Object *win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
+
+   Evas_Object *icon = elm_icon_add(win);
+   Evas_Object *end = elm_icon_add(win);
+
+   Evas_Object *list = elm_list_add(win);
+   Elm_Object_Item *it = elm_list_item_append(list, "First Element", icon, end, NULL, NULL);
+
+   evas_object_show(list);
+
+   eo_do(icon, parent = elm_interface_atspi_accessible_parent_get());
+   ck_assert(it == parent);
+
+   eo_do(end, parent = elm_interface_atspi_accessible_parent_get());
+   ck_assert(it == parent);
+
+   elm_shutdown();
+}
+END_TEST
+
 void elm_test_list(TCase *tc)
 {
  tcase_add_test(tc, elm_atspi_role_get);
@@ -212,4 +242,5 @@ void elm_test_list(TCase *tc)
  tcase_add_test(tc, elm_list_atspi_selection_clear);
  tcase_add_test(tc, elm_list_atspi_selection_child_deselect);
 #endif
+   tcase_add_test(tc, elm_atspi_children_parent);
 }
