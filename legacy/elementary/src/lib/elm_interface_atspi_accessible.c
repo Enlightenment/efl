@@ -300,7 +300,7 @@ _elm_interface_atspi_accessible_event_emit(Eo *class EINA_UNUSED, void *pd EINA_
 
    if (!accessible || !event || !eo_isa(accessible, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
      {
-        CRI("Invalid accessibility event emit parameters");
+        CRI("Invalid parameters, event: %s, obj: %s", event ? event->name : "NULL", accessible ? eo_class_name_get(accessible) : "NULL");
         return;
      }
 
