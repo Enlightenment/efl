@@ -126,7 +126,16 @@
  *        <li>@ref sec_collections_group_programs "Programs"</li>
  *        <ul>
  *          <li>@ref sec_collections_group_script "Script"</li>
- *          <li>@ref sec_collections_group_program_sequence "Sequence"</li>
+ *          <li>@ref sec_collections_group_programs_program "Program"</li>
+ *          <ul>
+ *            <li>@ref sec_collections_group_script "Script"</li>
+ *            <li>@ref sec_collections_group_program_sequence "Sequence"</li>
+ *            <ul>
+ *              <li>@ref sec_collections_group_script "Script"</li>
+ *            </ul>
+ *          </ul>
+ *          <li>@ref sec_collections_group_script "Script"</li>
+ *          <li>@ref sec_toplevel_fonts "Fonts"</li>
  *        </ul>
  *        <li>@ref sec_collections_group_physics "Physics"</li>
  *        <ul>
