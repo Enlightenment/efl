@@ -86,13 +86,9 @@ _ector_cairo_surface_context_set(Eo *obj,
                                  Ector_Cairo_Surface_Data *pd,
                                  cairo_t *ctx)
 {
-   if (pd->internal)
-     {
-        USE(obj, cairo_destroy, );
+   USE(obj, cairo_destroy, );
 
-        if (pd->cairo) cairo_destroy(pd->cairo);
-        pd->internal = EINA_FALSE;
-     }
+   if (pd->cairo) cairo_destroy(pd->cairo);
    if (!ctx)
      {
         USE(obj, cairo_image_surface_create, );
@@ -138,6 +134,8 @@ _ector_cairo_surface_eo_base_destructor(Eo *obj EINA_UNUSED,
                                         Ector_Cairo_Surface_Data *pd EINA_UNUSED)
 {
    eo_do_super(obj, ECTOR_CAIRO_SURFACE_CLASS, eo_destructor());
+
+   
 
    if (--_cairo_count) return ;
    if (_cairo_so) eina_module_free(_cairo_so);

@@ -49,7 +49,6 @@ typedef struct _Ector_Cairo_Software_Surface_Data Ector_Cairo_Software_Surface_D
 struct _Ector_Cairo_Software_Surface_Data
 {
    cairo_surface_t *surface;
-   cairo_t *ctx;
 
    void *pixels;
 
@@ -60,13 +59,14 @@ struct _Ector_Cairo_Software_Surface_Data
 void
 _ector_cairo_software_surface_surface_set(Eo *obj, Ector_Cairo_Software_Surface_Data *pd, void *pixels, unsigned int width, unsigned int height)
 {
+   cairo_t *ctx = NULL;
+
    USE(obj, cairo_image_surface_create_for_data, );
    USE(obj, cairo_surface_destroy, );
    USE(obj, cairo_create, );
    USE(obj, cairo_destroy, );
 
    if (pd->surface) cairo_surface_destroy(pd->surface); pd->surface = NULL;
-   if (pd->ctx) cairo_destroy(pd->ctx); pd->ctx = NULL;
 
    pd->pixels = NULL;
    pd->width = 0;
@@ -79,8 +79,7 @@ _ector_cairo_software_surface_surface_set(Eo *obj, Ector_Cairo_Software_Surface_
                                                           width, height, width * sizeof (int));
         if (!pd->surface) goto end;
 
-        pd->ctx = cairo_create(pd->surface);
-        if (!pd->ctx) goto end;
+        ctx = cairo_create(pd->surface);
      }
 
    pd->pixels = pixels;
@@ -91,7 +90,7 @@ _ector_cairo_software_surface_surface_set(Eo *obj, Ector_Cairo_Software_Surface_
    evas_common_cpu_end_opt();
 
    eo_do(obj,
-         ector_cairo_surface_context_set(pd->ctx),
+         ector_cairo_surface_context_set(ctx),
          ector_surface_size_set(pd->width, pd->height));
 }
 

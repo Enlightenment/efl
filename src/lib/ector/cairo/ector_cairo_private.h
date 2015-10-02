@@ -18,8 +18,6 @@ struct _Ector_Cairo_Surface_Data
    struct {
       double x, y;
    } current;
-
-   Eina_Bool internal : 1;
 };
 
 struct _Ector_Renderer_Cairo_Base_Data
