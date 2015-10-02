@@ -226,6 +226,12 @@ START_TEST(edje_test_filters)
    sub = edje_object_part_object_get(obj, "mask");
    fail_if(!eo_do_ret(sub, b, evas_obj_no_render_get()));
 
+   /* check no_render inheritance */
+   sub = edje_object_part_object_get(obj, "mask2");
+   fail_if(eo_do_ret(sub, b, evas_obj_no_render_get()));
+   sub = edje_object_part_object_get(obj, "mask3");
+   fail_if(!eo_do_ret(sub, b, evas_obj_no_render_get()));
+
    /* text part: check filter status */
    text = edje_object_part_object_get(obj, "text");
    fail_if(!text);

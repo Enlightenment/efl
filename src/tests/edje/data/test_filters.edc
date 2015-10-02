@@ -64,6 +64,18 @@ collections {
                image.normal: "pnl.png";
             }
          }
+         part {
+            "mask2";
+            inherit: "mask";
+            render;
+            desc { "default";
+               rel1.relative: 0.0 0.8;
+            }
+         }
+         part {
+            "mask3";
+            inherit: "mask";
+         }
          proxy { "prxy";
             desc { "default";
                filter {
