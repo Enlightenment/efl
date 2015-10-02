@@ -58,7 +58,6 @@ struct _Elm_Calendar_Data
    Eina_Bool                selected : 1;
    Eina_Bool                double_spinners : 1;
    Eina_Bool                filling : 1;
-   Eina_Bool                weekdays_set : 1;
 };
 
 struct _Elm_Calendar_Mark

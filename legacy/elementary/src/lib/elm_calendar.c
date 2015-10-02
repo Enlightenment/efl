@@ -27,6 +27,50 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+/* This two functions should be moved in Eina for next release. */
+static Eina_Tmpstr *
+_eina_tmpstr_strftime(const char *format, const struct tm *tm)
+{
+   const size_t flen = strlen(format);
+   size_t buflen = 16; // An arbitrary starting size
+   char *buf = NULL;
+
+   do {
+      char *tmp;
+      size_t len;
+
+      tmp = realloc(buf, buflen * sizeof(char));
+      if (!tmp) goto on_error;
+      buf = tmp;
+
+      len = strftime(buf, buflen, format, tm);
+      // Check if we have the expected result and return it.
+      if ((len > 0 && len < buflen) || (len == 0 && flen == 0))
+        {
+           Eina_Tmpstr *r;
+
+           r = eina_tmpstr_add_length(buf, len + 1);
+           free(buf);
+           return r;
+        }
+
+      /* Possibly buf overflowed - try again with a bigger buffer */
+      buflen <<= 1; // multiply buffer size by 2
+   } while (buflen < 128 * flen);
+
+ on_error:
+   free(buf);
+   return NULL;
+}
+
+static char *
+_eina_tmpstr_steal(Eina_Tmpstr *s)
+{
+   char *r = s ? strdup(s) : NULL;
+   eina_tmpstr_del(s);
+   return r;
+}
+
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 
 static const Elm_Action key_actions[] = {
@@ -172,19 +216,19 @@ _disable(Elm_Calendar_Data *sd,
 static char *
 _format_month_year(struct tm *selected_time)
 {
-   return eina_tmpstr_strftime(E_("%B %Y"), selected_time);
+   return _eina_tmpstr_steal(_eina_tmpstr_strftime(E_("%B %Y"), selected_time));
 }
 
 static char *
 _format_month(struct tm *selected_time)
 {
-   return eina_tmpstr_strftime(E_("%B"), selected_time);
+   return _eina_tmpstr_steal(_eina_tmpstr_strftime(E_("%B"), selected_time));
 }
 
 static char *
 _format_year(struct tm *selected_time)
 {
-   return eina_tmpstr_strftime(E_("%Y"), selected_time);
+   return _eina_tmpstr_steal(_eina_tmpstr_strftime(E_("%Y"), selected_time));
 }
 
 static inline void
@@ -245,7 +289,7 @@ _set_month_year(Elm_Calendar_Data *sd)
         if (buf)
           {
              elm_layout_text_set(sd->obj, "year_text", buf);
-             eina_tmpstr_del(buf);
+             free(buf);
           }
         else elm_layout_text_set(sd->obj, "year_text", "");
 
@@ -257,7 +301,7 @@ _set_month_year(Elm_Calendar_Data *sd)
    if (buf)
      {
         elm_layout_text_set(sd->obj, "month_text", buf);
-        eina_tmpstr_del(buf);
+        free(buf);
      }
    else elm_layout_text_set(sd->obj, "month_text", "");
    sd->filling = EINA_FALSE;
@@ -579,49 +623,16 @@ _set_headers(Evas_Object *obj)
    static char part[] = "ch_0.text";
    int i;
    ELM_CALENDAR_DATA_GET(obj, sd);
-   time_t weekday = 259200; /* Just the first sunday since epoch */
 
    elm_layout_freeze(obj);
 
    sd->filling = EINA_TRUE;
-   if (sd->weekdays_set)
+   for (i = 0; i < ELM_DAY_LAST; i++)
      {
-        for (i = 0; i < ELM_DAY_LAST; i++)
-          {
-             part[3] = i + '0';
-             elm_layout_text_set(obj, part, sd->weekdays[(i + sd->first_week_day) % ELM_DAY_LAST]);
-          }
+        part[3] = i + '0';
+        elm_layout_text_set
+          (obj, part, sd->weekdays[(i + sd->first_week_day) % ELM_DAY_LAST]);
      }
-   else
-     {
-        for (i = 0; i < ELM_DAY_LAST; i++)
-          {
-             struct tm *info;
-
-             /* I don't know of a better way of doing it */
-             info = gmtime(&weekday);
-             if (info)
-               {
-                  Eina_Tmpstr *buf;
-                  buf = eina_tmpstr_strftime("%a", info);
-                  if (buf)
-                    {
-                       sd->weekdays[i] = eina_stringshare_add(buf);
-                       eina_tmpstr_del(buf);
-                    }
-                  else
-                    {
-                       /* If we failed getting day, get a default value */
-                       sd->weekdays[i] = _days_abbrev[i];
-                       WRN("Failed getting weekday name for '%s' from locale.",
-                           _days_abbrev[i]);
-                    }
-               }
-             part[3] = i + '0';
-             elm_layout_text_set(obj, part, sd->weekdays[i]);
-             weekday += 86400; /* Advance by a day */
-          }
-    }
    sd->filling = EINA_FALSE;
 
    elm_layout_thaw(obj);
@@ -1021,8 +1032,9 @@ _style_changed(void *data,
 EOLIAN static void
 _elm_calendar_evas_object_smart_add(Eo *obj, Elm_Calendar_Data *priv)
 {
+   time_t weekday = 259200; /* Just the first sunday since epoch */
    time_t current_time;
-   int t;
+   int i, t;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1062,6 +1074,33 @@ _elm_calendar_evas_object_smart_add(Eo *obj, Elm_Calendar_Data *priv)
    edje_object_signal_callback_add
       (wd->resize_obj, "load", "*",
        _style_changed, obj);
+
+   for (i = 0; i < ELM_DAY_LAST; i++)
+     {
+        struct tm *info;
+
+        /* I don't know of a better way of doing it */
+        info = gmtime(&weekday);
+        if (info)
+          {
+             Eina_Tmpstr *buf;
+
+             buf = _eina_tmpstr_strftime("%a", info);
+             if (buf)
+               {
+                  priv->weekdays[i] = eina_stringshare_add(buf);
+                  eina_tmpstr_del(buf);
+               }
+             else
+               {
+                  /* If we failed getting day, get a default value */
+                  priv->weekdays[i] = _days_abbrev[i];
+                  WRN("Failed getting weekday name for '%s' from locale.",
+                      _days_abbrev[i]);
+               }
+          }
+        weekday += 86400; /* Advance by a day */
+     }
 
    current_time = time(NULL);
    localtime_r(&current_time, &priv->shown_time);
@@ -1246,7 +1285,6 @@ _elm_calendar_weekdays_names_set(Eo *obj, Elm_Calendar_Data *sd, const char **we
      {
         eina_stringshare_replace(&sd->weekdays[i], weekdays[i]);
      }
-   sd->weekdays_set = EINA_TRUE;
 
    evas_object_smart_changed(obj);
 }
