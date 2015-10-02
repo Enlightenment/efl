@@ -847,7 +847,7 @@ EAPI Evas_GL_Context         *evas_gl_current_context_get (Evas_GL *evas_gl) EIN
 /**
  * @brief Returns the Evas GL surface object in use or set by @ref evas_gl_make_current
  *
- * @param evas_gl The given Evas_GL object
+ * @param[in] evas_gl The given Evas_GL object
  *
  * @return The current surface for the calling thread, or @c NULL in case of
  *         failure and when there is no current surface in this thread.
@@ -862,6 +862,23 @@ EAPI Evas_GL_Context         *evas_gl_current_context_get (Evas_GL *evas_gl) EIN
  */
 EAPI Evas_GL_Surface         *evas_gl_current_surface_get (Evas_GL *evas_gl) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
+/**
+ * @brief Get current Evas GL
+ *
+ * @param[out] context  Optional return value for the current context
+ * @param[out] surface  Optional return value for the current surface
+ *
+ * @return The current Evas GL, ie. the last Evas GL passed to evas_gl_make_current
+ *
+ * @see evas_gl_make_current
+ *
+ * @note This can be used to restore a previous context, for instance if you
+ *       are writing a library that needs to work transparently with Evas GL,
+ *       and may not have control over the other Evas GL objects.
+ *
+ * @since 1.16
+ */
+EAPI Evas_GL                 *evas_gl_current_evas_gl_get (Evas_GL_Context **context, Evas_GL_Surface **surface) EINA_WARN_UNUSED_RESULT;
 
 
 /*-------------------------------------------------------------------------

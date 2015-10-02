@@ -5,6 +5,9 @@
 
 typedef struct _Evas_GL_TLS_data Evas_GL_TLS_data;
 
+/* since 1.16: store current evas gl - this TLS is never destroyed */
+static Eina_TLS _current_evas_gl_key = 0;
+
 struct _Evas_GL
 {
    DATA32      magic;
@@ -126,6 +129,16 @@ evas_gl_new(Evas *e)
    return NULL;
    MAGIC_CHECK_END();
 
+   if (!_current_evas_gl_key)
+     {
+        if (!eina_tls_new(&_current_evas_gl_key))
+          {
+             ERR("Error creating tls key for current Evas GL");
+             return NULL;
+          }
+        eina_tls_set(_current_evas_gl_key, NULL);
+     }
+
    evas_gl = calloc(1, sizeof(Evas_GL));
    if (!evas_gl) return NULL;
 
@@ -136,6 +149,7 @@ evas_gl_new(Evas *e)
    if (!evas_gl->evas->engine.func->gl_context_create)
      {
         ERR("Evas GL engine not available.");
+        eo_data_unref(e, evas_gl->evas);
         free(evas_gl);
         return NULL;
      }
@@ -144,6 +158,7 @@ evas_gl_new(Evas *e)
    if (eina_tls_new(&(evas_gl->resource_key)) == EINA_FALSE)
      {
         ERR("Error creating tls key");
+        eo_data_unref(e, evas_gl->evas);
         free(evas_gl);
         return NULL;
      }
@@ -167,8 +182,12 @@ evas_gl_free(Evas_GL *evas_gl)
    while (evas_gl->contexts)
      evas_gl_context_destroy(evas_gl, evas_gl->contexts->data);
 
-   // Destroy tls
+   // Destroy private tls
    _evas_gl_internal_tls_destroy(evas_gl);
+
+   // Reset current evas gl tls
+   if (_current_evas_gl_key && (evas_gl == eina_tls_get(_current_evas_gl_key)))
+     eina_tls_set(_current_evas_gl_key, NULL);
 
    eo_data_unref(evas_gl->evas->evas, evas_gl->evas);
    evas_gl->magic = 0;
@@ -452,6 +471,9 @@ evas_gl_make_current(Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_GL_Context *c
         return EINA_FALSE;
      }
 
+   if (_current_evas_gl_key)
+     eina_tls_set(_current_evas_gl_key, evas_gl);
+
    return ret;
 }
 
@@ -529,6 +551,26 @@ evas_gl_current_surface_get(Evas_GL *evas_gl)
    ERR("The currently bound surface could not be found.");
    LKU(evas_gl->lck);
    return NULL;
+}
+
+EAPI Evas_GL *
+evas_gl_current_evas_gl_get(Evas_GL_Context **context, Evas_GL_Surface **surface)
+{
+   Evas_GL *evasgl = NULL;
+
+   if (_current_evas_gl_key)
+     evasgl = eina_tls_get(_current_evas_gl_key);
+
+   if (!evasgl)
+     {
+        if (context) *context = NULL;
+        if (surface) *surface = NULL;
+        return NULL;
+     }
+
+   if (context) *context = evas_gl_current_context_get(evasgl);
+   if (surface) *surface = evas_gl_current_surface_get(evasgl);
+   return evasgl;
 }
 
 EAPI const char *
