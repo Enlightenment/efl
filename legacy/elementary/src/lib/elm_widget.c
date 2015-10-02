@@ -4433,6 +4433,7 @@ _elm_widget_item_eo_base_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
 
    eo_do(eo_item, elm_interface_atspi_accessible_description_set(NULL));
    eo_do(eo_item, elm_interface_atspi_accessible_name_set(NULL));
+   eo_do(eo_item, elm_interface_atspi_accessible_translation_domain_set(NULL));
 
    if (_elm_config->atspi_mode && item->widget)
      elm_interface_atspi_accessible_children_changed_del_signal_emit(item->widget, eo_item);
@@ -5707,6 +5708,7 @@ _elm_widget_eo_base_destructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
    eo_do(obj, elm_interface_atspi_accessible_description_set(NULL));
    eo_do(obj, elm_interface_atspi_accessible_name_set(NULL));
+   eo_do(obj, elm_interface_atspi_accessible_translation_domain_set(NULL));
    elm_interface_atspi_accessible_removed(obj);
 
    eo_do_super(obj, ELM_WIDGET_CLASS, eo_destructor());

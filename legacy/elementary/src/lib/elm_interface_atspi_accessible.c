@@ -126,6 +126,7 @@ struct _Elm_Interface_Atspi_Accessible_Data
    Elm_Atspi_Role role;
    const char    *name;
    const char    *description;
+   const char    *translation_domain;
    Elm_Interface_Atspi_Accessible *parent;
 };
 
@@ -215,7 +216,19 @@ _elm_interface_atspi_accessible_role_name_get(Eo *obj EINA_UNUSED, Elm_Interface
 EOLIAN char *
 _elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd)
 {
-   return pd->name ? strdup(pd->name) : NULL;
+   if (pd->name)
+     {
+#ifdef ENABLE_NLS
+        if (pd->translation_domain)
+          return strdup(dgettext(pd->translation_domain, pd->name));
+        else
+          return strdup(pd->name);
+#else
+        return strdup(pd->name);
+#endif
+     }
+
+   return NULL;
 }
 
 EOLIAN static void
@@ -226,6 +239,10 @@ _elm_interface_atspi_accessible_name_set(Eo *obj EINA_UNUSED, Elm_Interface_Atsp
 
 const char * _elm_interface_atspi_accessible_description_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd)
 {
+#ifdef ENABLE_NLS
+   if (pd->translation_domain)
+      return dgettext(pd->translation_domain, pd->description);
+#endif
    return pd->description;
 }
 
@@ -338,6 +355,18 @@ _elm_interface_atspi_accessible_event_handler_del(Eo *class EINA_UNUSED, void *p
              break;
           }
      }
+}
+
+EOLIAN void
+_elm_interface_atspi_accessible_translation_domain_set(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd, const char *domain)
+{
+   eina_stringshare_replace(&pd->translation_domain, domain);
+}
+
+EOLIAN const char*
+_elm_interface_atspi_accessible_translation_domain_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd)
+{
+   return pd->translation_domain;
 }
 
 #include "elm_interface_atspi_accessible.eo.c"

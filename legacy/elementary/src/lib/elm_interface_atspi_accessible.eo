@@ -123,6 +123,30 @@ mixin Elm_Interface_Atspi_Accessible ()
             @in event_info: void*; [[Accessibility event details.]]
          }
       }
+      @property translation_domain @protected {
+         get {
+            [[Gets the translation domain of "name" and "description"
+              properties.]]
+         }
+         set {
+            [[Sets the translation domain of "name" and "description"
+              properties.
+
+              Translation domain should be set if application wants to support i18n
+              for accessibily "name" and "description" properties.
+
+              When translation domain is set values of "name" and "description"
+              properties will be translated with dgettext function using
+              current translation domain as "domainname" parameter.
+
+              It is application developer responsibility to ensure that
+              translation files are loaded and binded to translation domain
+              when accessibility is enabled.]]
+         }
+         values {
+            domain: const(char)*; [[ translation domain ]]
+         }
+      }
    }
    events {
       property,changed: const(char)*;
