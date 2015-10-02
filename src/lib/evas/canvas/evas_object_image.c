@@ -1505,7 +1505,8 @@ _evas_image_data_update_add(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w,
                return;
           }
      }
-   if (cnt >= 512)
+   if ((cnt >= 512) ||
+       (((x == 0) && (y == 0) && (w == o->cur->image.w) && (h == o->cur->image.h))))
      { // too many update rects - just make a single blob update
         EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
           {
