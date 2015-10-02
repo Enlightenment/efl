@@ -677,8 +677,19 @@ get_basic(char type, DBusMessageIter *iter, va_list *vl)
 EAPI Eina_Bool
 eldbus_message_iter_fixed_array_get(Eldbus_Message_Iter *iter, int signature, void *value, int *n_elements)
 {
+   int iter_type;
+
    ELDBUS_MESSAGE_ITERATOR_CHECK_RETVAL(iter, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(iter->writable, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(n_elements, EINA_FALSE);
+
+   iter_type = dbus_message_iter_get_arg_type(&iter->dbus_iterator);
+
+   if (iter_type == DBUS_TYPE_INVALID)
+     {
+        *n_elements = 0;
+        return EINA_TRUE;
+     }
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(
         (dbus_message_iter_get_arg_type(&iter->dbus_iterator) == signature),
@@ -761,9 +772,12 @@ _eldbus_message_iter_arguments_vget(Eldbus_Message_Iter *iter, const char *signa
      {
         int sig_type = dbus_signature_iter_get_current_type(&sig_iter);
 
+        if (sig_type == DBUS_TYPE_INVALID)
+          break;
+
         if (sig_type != iter_type)
           {
-             ERR("Type in iterator different of signature");
+             ERR("Type in iterator different of signature expected:%c got %c", iter_type, sig_type);
              return EINA_FALSE;
           }
 
