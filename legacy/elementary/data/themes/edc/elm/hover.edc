@@ -1,5 +1,6 @@
 /* TODO: replicate diagonal swallow slots to the other hover styles */
 group { name: "elm/hover/base/default";
+   data.item: "dismiss" "on";
    parts {
       part { name: "elm.swallow.offset"; type: SWALLOW;
          description { state: "default" 0.0;
@@ -131,10 +132,18 @@ group { name: "elm/hover/base/default";
          signal: "mouse,up,*"; source: "base";
          action: SIGNAL_EMIT "elm,action,dismiss" "elm";
       }
+      program { name: "hide";
+         signal: "elm,action,hide"; source: "elm";
+         after: "hidefinished";
+      }
+      program { name: "hidefinished";
+         action: SIGNAL_EMIT "elm,action,hide,finished" "elm";
+      }
    }
 }
 
 group { name: "elm/hover/base/popout";
+   data.item: "dismiss" "on";
    images.image: "button_normal.png" COMP;
    parts {
       part { name: "elm.swallow.offset"; type: SWALLOW;
@@ -362,7 +371,12 @@ group { name: "elm/hover/base/popout";
       program { name: "hide";
          signal: "elm,action,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.5;
          target: "base";
+         after: "hidefinished";
+      }
+      program { name: "hidefinished";
+         action: SIGNAL_EMIT "elm,action,hide,finished" "elm";
       }
       program { name: "leftshow";
          signal: "elm,action,slot,left,show"; source: "elm";
@@ -427,6 +441,7 @@ group { name: "elm/hover/base/hoversel_vertical/default";
    alias: "elm/hover/base/hoversel_vertical/entry";
    images.image: "button_normal.png" COMP;
    images.image: "vertical_separated_bar_glow.png" COMP;
+   data.item: "dismiss" "on";
    data.item: "max_size" "60";
    parts {
       part { name: "elm.swallow.offset"; type: SWALLOW;
@@ -597,7 +612,12 @@ group { name: "elm/hover/base/hoversel_vertical/default";
       program { name: "hide";
          signal: "elm,action,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.5;
          target: "base";
+         after: "hidefinished";
+      }
+      program { name: "hidefinished";
+         action: SIGNAL_EMIT "elm,action,hide,finished" "elm";
       }
       
       program { name: "topshow";
@@ -645,6 +665,7 @@ group { name: "elm/hover/base/hoversel_vertical/default";
 group { name: "elm/hover/base/hoversel_horizontal/default";
    alias: "elm/hover/base/hoversel_horizontal/entry";
    images.image: "button_normal.png" COMP;
+   data.item: "dismiss" "on";
    data.item: "max_size" "120";
    parts {
       part { name: "elm.swallow.offset"; type: SWALLOW;
@@ -774,6 +795,10 @@ group { name: "elm/hover/base/hoversel_horizontal/default";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.5;
          target: "base";
+         after: "hidefinished";
+      }
+      program { name: "hidefinished";
+         action: SIGNAL_EMIT "elm,action,hide,finished" "elm";
       }
 
       program { name: "leftshow";

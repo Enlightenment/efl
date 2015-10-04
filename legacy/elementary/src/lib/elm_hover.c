@@ -511,15 +511,65 @@ _target_move_cb(void *data,
 }
 
 static void
+_hide_signals_emit(Evas_Object *obj)
+{
+   ELM_HOVER_DATA_GET(obj, sd);
+
+   elm_layout_signal_emit(obj, "elm,action,hide", "elm");
+
+   ELM_HOVER_PARTS_FOREACH
+     {
+        char buf[1024];
+
+        if (sd->subs[i].obj)
+          {
+             snprintf(buf, sizeof(buf), "elm,action,slot,%s,hide",
+                      sd->subs[i].swallow);
+             elm_layout_signal_emit(obj, buf, "elm");
+          }
+     }
+}
+
+static void
+_hov_hide_cb(void *data,
+                Evas_Object *obj EINA_UNUSED,
+                const char *emission EINA_UNUSED,
+                const char *source EINA_UNUSED)
+{
+   const char *dismissstr;
+
+   dismissstr = edje_object_data_get(elm_layout_edje_get(data), "dismiss");
+
+   if (dismissstr && !strcmp(dismissstr, "on"))
+     {
+        evas_object_hide(data);
+        eo_do(data, eo_event_callback_call(ELM_HOVER_EVENT_DISMISSED, NULL));
+     }
+}
+
+static void
 _hov_dismiss_cb(void *data,
                 Evas_Object *obj EINA_UNUSED,
                 const char *emission EINA_UNUSED,
                 const char *source EINA_UNUSED)
 {
-   evas_object_hide(data);
-   eo_do(data, eo_event_callback_call
-     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
-   eo_do(data, eo_event_callback_call(ELM_HOVER_EVENT_DISMISSED, NULL));
+   const char *dismissstr;
+
+   dismissstr = edje_object_data_get(elm_layout_edje_get(data), "dismiss");
+
+   if (dismissstr && !strcmp(dismissstr, "on"))
+     {
+        _hide_signals_emit(data);
+        eo_do(data, eo_event_callback_call
+          (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
+     }
+   else
+     {
+        evas_object_hide(data);
+        eo_do(data, eo_event_callback_call
+          (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
+        eo_do(data, eo_event_callback_call(ELM_HOVER_EVENT_DISMISSED, NULL));
+     } // for backward compatibility
 }
 
 EOLIAN static void
@@ -538,6 +588,8 @@ _elm_hover_evas_object_smart_add(Eo *obj, Elm_Hover_Data *priv)
 
    elm_layout_signal_callback_add
      (obj, "elm,action,dismiss", "*", _hov_dismiss_cb, obj);
+   elm_layout_signal_callback_add
+     (obj, "elm,action,hide,finished", "elm", _hov_hide_cb, obj);
 
    priv->offset = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_pass_events_set(priv->offset, EINA_TRUE);
@@ -599,23 +651,17 @@ _elm_hover_evas_object_smart_show(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_hover_evas_object_smart_hide(Eo *obj, Elm_Hover_Data *sd)
+_elm_hover_evas_object_smart_hide(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
 {
+   const char *dismissstr;
+
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
-   elm_layout_signal_emit(obj, "elm,action,hide", "elm");
+   // for backward compatibility
+   dismissstr = edje_object_data_get(elm_layout_edje_get(obj), "dismiss");
 
-   ELM_HOVER_PARTS_FOREACH
-   {
-      char buf[1024];
-
-      if (sd->subs[i].obj)
-        {
-           snprintf(buf, sizeof(buf), "elm,action,slot,%s,hide",
-                    sd->subs[i].swallow);
-           elm_layout_signal_emit(obj, buf, "elm");
-        }
-   }
+   if (!dismissstr || strcmp(dismissstr, "on"))
+     _hide_signals_emit(obj);
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*
