@@ -676,11 +676,11 @@ group { name: "elm/hover/base/hoversel_horizontal/default";
          description { state: "default" 0.0;
             rel1.to_x: "elm.swallow.slot.left";
             rel1.to_y: "elm.swallow.slot.left";
-            rel1.offset: -6 0;
+            rel1.offset: -10 -10;
             rel2.to_x: "elm.swallow.slot.middle";
             rel2.to_y: "elm.swallow.slot.left";
             rel2.relative: 0.0 1.0;
-            rel2.offset: 4 1;
+            rel2.offset: 4 9;
             image {
                normal: "button_normal.png";
                border: 7 7 7 7;
@@ -691,10 +691,10 @@ group { name: "elm/hover/base/hoversel_horizontal/default";
             rel1.to_x: "elm.swallow.slot.middle";
             rel1.to_y: "elm.swallow.slot.right";
             rel1.relative: 1.0 0.0;
-            rel1.offset: -5 0;
+            rel1.offset: -5 -10;
             rel2.to_x: "elm.swallow.slot.right";
             rel2.to_y: "elm.swallow.slot.right";
-            rel2.offset: 5 1;
+            rel2.offset: 10 9;
             image {
                normal: "button_normal.png";
                border: 7 7 7 7;

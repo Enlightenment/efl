@@ -142,15 +142,168 @@ _item_unfocused_cb(void *data EINA_UNUSED,
 }
 
 static void
+_create_scroller(Evas_Object *obj, Elm_Hoversel_Data *sd)
+{
+   //table
+   sd->tbl = elm_table_add(obj);
+
+   //spacer
+   sd->spacer = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_color_set(sd->spacer, 0, 0, 0, 0);
+   elm_table_pack(sd->tbl, sd->spacer, 0, 0, 1, 1);
+
+   //Scroller
+   sd->scr = elm_scroller_add(sd->tbl);
+   elm_object_style_set(sd->scr, "popup/no_inset_shadow");
+   evas_object_size_hint_weight_set(sd->scr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(sd->scr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   if (sd->horizontal)
+     {
+        elm_scroller_policy_set(sd->scr, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
+        elm_scroller_content_min_limit(sd->scr, EINA_FALSE, EINA_TRUE);
+        elm_scroller_bounce_set(sd->scr, EINA_TRUE, EINA_FALSE);
+     }
+   else
+     {
+        elm_scroller_policy_set(sd->scr, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_AUTO);
+        elm_scroller_content_min_limit(sd->scr, EINA_TRUE, EINA_FALSE);
+        elm_scroller_bounce_set(sd->scr, EINA_FALSE, EINA_TRUE);
+     }
+   elm_table_pack(sd->tbl, sd->scr, 0, 0, 1, 1);
+   evas_object_show(sd->scr);
+}
+
+static void
+_resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
+{
+   Evas_Object *bx = NULL;
+   const char *max_size_str;
+   int max_size = 0;
+   char buf[128];
+   Evas_Coord box_w = -1, box_h = -1;
+   Evas_Coord x, y, w, h, xx, yy, ww, hh, vw = 0, vh = 0;
+   double align_x;
+   Eina_List *l;
+   Evas_Object *it;
+   Evas_Coord obj_x, obj_y, obj_w, obj_h, it_w, it_h;
+
+   if (sd->scr)
+     bx = elm_object_content_get(sd->scr);
+
+   if ((!sd->expanded) || (!bx)) return;
+
+   edje_object_size_min_calc(elm_layout_edje_get(sd->scr), &vw, &vh);
+   evas_object_geometry_get(obj, &obj_x, &obj_y, &obj_w, &obj_h);
+
+   evas_object_size_hint_align_get(obj, &align_x, NULL);
+   if (!sd->horizontal && align_x == EVAS_HINT_FILL)
+     {
+        l = elm_box_children_get(bx);
+        EINA_LIST_FREE(l, it)
+          {
+             edje_object_size_min_calc(elm_layout_edje_get(it), &it_w, &it_h);
+             if ((obj_w - vw) > it_w)
+               evas_object_size_hint_min_set(it, (obj_w - vw), it_h);
+             else
+               evas_object_size_hint_min_set(it, it_w, it_h);
+          }
+     }
+
+   elm_box_recalculate(bx);
+   evas_object_size_hint_min_get(bx, &box_w, &box_h);
+
+   box_w += vw;
+   box_h += vh;
+
+   max_size_str = edje_object_data_get(elm_layout_edje_get(sd->hover), "max_size");
+   if (max_size_str)
+     max_size = (int)(atoi(max_size_str)
+                      * elm_config_scale_get()
+                      * elm_object_scale_get(obj))
+                      / edje_object_base_scale_get(elm_layout_edje_get(sd->hover));
+
+   if (sd->horizontal)
+     {
+        ww = MIN(box_w, max_size);
+        hh = box_h;
+
+        evas_object_size_hint_min_set(sd->spacer, ww, hh);
+        evas_object_size_hint_max_set(sd->spacer, max_size, -1);
+
+        if (!sd->last_location)
+          sd->last_location = elm_hover_best_content_location_get(sd->hover, ELM_HOVER_AXIS_HORIZONTAL);
+     }
+   else
+     {
+        ww = box_w;
+        hh = MIN(box_h, max_size);
+
+        evas_object_size_hint_min_set(sd->spacer, ww, hh);
+        evas_object_size_hint_max_set(sd->spacer, -1, max_size);
+
+        if (!sd->last_location)
+          sd->last_location = elm_hover_best_content_location_get(sd->hover, ELM_HOVER_AXIS_VERTICAL);
+     }
+
+   evas_object_geometry_get(sd->hover_parent, &x, &y, &w, &h);
+   if (eo_isa(sd->hover_parent, ELM_WIN_CLASS))
+     {
+        x = 0;
+        y = 0;
+     }
+
+   snprintf(buf, sizeof(buf), "elm.swallow.slot.%s", sd->last_location);
+   edje_object_part_geometry_get(elm_layout_edje_get(sd->hover), buf, &xx, &yy, NULL, NULL);
+   xx += x;
+   yy += y;
+
+   if (sd->horizontal)
+     {
+        if (xx < obj_x)
+          {
+             xx = x;
+             if ((xx + ww) > obj_x)
+               ww = obj_x - xx;
+          }
+        else
+          {
+             if ((xx + ww) > (x + w))
+               ww = (x + w) - xx;
+          }
+
+        if (yy < 0) yy = y;
+        if ((yy + hh) > (y + h))
+          hh = (y + h) - yy;
+     }
+   else
+     {
+        if (yy < obj_y)
+          {
+             yy = y;
+             if ((yy + hh) > obj_y)
+               hh = obj_y - yy;
+          }
+        else
+          {
+             if ((yy + hh) > (y + h))
+               hh = (y + h) - yy;
+          }
+
+        if (xx < 0) xx = x;
+        if ((xx + ww) > (x + w))
+          ww = (x + w) - xx;
+     }
+
+   evas_object_size_hint_min_set(sd->spacer, ww, hh);
+}
+
+static void
 _activate(Evas_Object *obj)
 {
    Elm_Object_Item *eo_item;
    Evas_Object *bt, *bx, *ic;
    const Eina_List *l;
    char buf[4096];
-   const char *max_size_str;
-   int max_size = 0;
-   Evas_Coord box_w = -1, box_h = -1;
 
    ELM_HOVERSEL_DATA_GET(obj, sd);
 
@@ -221,38 +374,13 @@ _activate(Evas_Object *obj)
               eo_event_callback_add(ELM_WIDGET_EVENT_UNFOCUSED, _item_unfocused_cb, item));
      }
 
-   elm_box_recalculate(bx);
-
    if (sd->scroll_enabled)
      {
-        max_size_str = edje_object_data_get(elm_layout_edje_get(sd->hover), "max_size");
-        if (max_size_str)
-          max_size = (int)(atoi(max_size_str)
-                           * elm_config_scale_get() * elm_object_scale_get(obj));
-
+        _create_scroller(obj, sd);
         elm_object_content_set(sd->scr, bx);
-        evas_object_show(sd->scr);
 
-        if (sd->horizontal)
-          {
-             evas_object_size_hint_min_get(bx, &box_w, NULL);
-
-             evas_object_size_hint_min_set(sd->spacer, MIN(box_w, max_size), 0);
-             evas_object_size_hint_max_set(sd->spacer, max_size, -1);
-
-             sd->last_location = elm_hover_best_content_location_get(sd->hover, ELM_HOVER_AXIS_HORIZONTAL);
-             elm_object_part_content_set(sd->hover, sd->last_location, sd->tbl);
-          }
-        else
-          {
-             evas_object_size_hint_min_get(bx, NULL, &box_h);
-
-             evas_object_size_hint_min_set(sd->spacer, 0, MIN(box_h, max_size));
-             evas_object_size_hint_max_set(sd->spacer, -1, max_size);
-
-             sd->last_location = elm_hover_best_content_location_get(sd->hover, ELM_HOVER_AXIS_VERTICAL);
-             elm_object_part_content_set(sd->hover, sd->last_location, sd->tbl);
-          }
+        _resizing_eval(obj, sd);
+        elm_object_part_content_set(sd->hover, sd->last_location, sd->tbl);
      }
    else
      {
@@ -386,45 +514,19 @@ _elm_hoversel_item_eo_base_destructor(Eo *eo_item, Elm_Hoversel_Item_Data *item)
 }
 
 static void
-_create_scroller(Evas_Object *obj)
+_on_move_resize(void * data,
+           Evas *e EINA_UNUSED,
+           Evas_Object *obj,
+           void *event_info EINA_UNUSED)
 {
-   ELM_HOVERSEL_DATA_GET(obj, sd);
+   Elm_Hoversel_Data *sd = data;
 
-   //table
-   sd->tbl = elm_table_add(obj);
-   evas_object_event_callback_add(sd->tbl, EVAS_CALLBACK_DEL,
-                                  _on_table_del, obj);
-
-   //spacer
-   sd->spacer = evas_object_rectangle_add(evas_object_evas_get(obj));
-   evas_object_color_set(sd->spacer, 0, 0, 0, 0);
-   elm_table_pack(sd->tbl, sd->spacer, 0, 0, 1, 1);
-
-   //Scroller
-   sd->scr = elm_scroller_add(sd->tbl);
-   elm_object_style_set(sd->scr, "popup/no_inset_shadow");
-   evas_object_size_hint_weight_set(sd->scr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(sd->scr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   if (sd->horizontal)
-     {
-        elm_scroller_policy_set(sd->scr, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
-        elm_scroller_content_min_limit(sd->scr, EINA_FALSE, EINA_TRUE);
-        elm_scroller_bounce_set(sd->scr, EINA_TRUE, EINA_FALSE);
-     }
-   else
-     {
-        elm_scroller_policy_set(sd->scr, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_AUTO);
-        elm_scroller_content_min_limit(sd->scr, EINA_TRUE, EINA_FALSE);
-        elm_scroller_bounce_set(sd->scr, EINA_FALSE, EINA_TRUE);
-     }
-   evas_object_event_callback_add(sd->scr, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                  _size_hints_changed_cb, obj);
-   elm_table_pack(sd->tbl, sd->scr, 0, 0, 1, 1);
-   evas_object_show(sd->scr);
+   if (sd->scroll_enabled)
+     _resizing_eval(obj, sd);
 }
 
 EOLIAN static void
-_elm_hoversel_evas_object_smart_add(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED)
+_elm_hoversel_evas_object_smart_add(Eo *obj, Elm_Hoversel_Data *priv)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
@@ -432,10 +534,11 @@ _elm_hoversel_evas_object_smart_add(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED)
    eo_do(obj, eo_event_callback_add(
          EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_clicked, obj));
 
-   _create_scroller(obj);
-
    //What are you doing here?
    eo_do(obj, elm_obj_widget_theme_apply());
+
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _on_move_resize, priv);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _on_move_resize, priv);
 }
 
 EOLIAN static void
@@ -529,17 +632,20 @@ _elm_hoversel_horizontal_set(Eo *obj, Elm_Hoversel_Data *sd, Eina_Bool horizonta
 {
    sd->horizontal = !!horizontal;
 
-   if (sd->horizontal)
+   if (sd->scr)
      {
-        elm_scroller_policy_set(sd->scr, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
-        elm_scroller_content_min_limit(sd->scr, EINA_FALSE, EINA_TRUE);
-        elm_scroller_bounce_set(sd->scr, EINA_TRUE, EINA_FALSE);
-     }
-   else
-     {
-        elm_scroller_policy_set(sd->scr, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_AUTO);
-        elm_scroller_content_min_limit(sd->scr, EINA_TRUE, EINA_FALSE);
-        elm_scroller_bounce_set(sd->scr, EINA_FALSE, EINA_TRUE);
+        if (sd->horizontal)
+          {
+             elm_scroller_policy_set(sd->scr, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
+             elm_scroller_content_min_limit(sd->scr, EINA_FALSE, EINA_TRUE);
+             elm_scroller_bounce_set(sd->scr, EINA_TRUE, EINA_FALSE);
+          }
+        else
+          {
+             elm_scroller_policy_set(sd->scr, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_AUTO);
+             elm_scroller_content_min_limit(sd->scr, EINA_TRUE, EINA_FALSE);
+             elm_scroller_bounce_set(sd->scr, EINA_FALSE, EINA_TRUE);
+          }
      }
 
    eo_do(obj, elm_obj_widget_theme_apply());
@@ -562,7 +668,6 @@ _elm_hoversel_hover_begin(Eo *obj, Elm_Hoversel_Data *sd)
 EOLIAN static void
 _elm_hoversel_hover_end(Eo *obj, Elm_Hoversel_Data *sd)
 {
-   Evas_Object *bx;
    Elm_Object_Item *eo_item;
    Eina_List *l;
 
@@ -570,20 +675,14 @@ _elm_hoversel_hover_end(Eo *obj, Elm_Hoversel_Data *sd)
 
    sd->expanded = EINA_FALSE;
 
-   if (sd->scroll_enabled)
-     {
-        bx = elm_object_content_unset(sd->scr);
-        evas_object_hide(sd->scr);
-        elm_object_part_content_unset(sd->hover, sd->last_location);
-        elm_object_part_content_set(sd->hover, sd->last_location, bx);
-     }
-
    EINA_LIST_FOREACH(sd->items, l, eo_item)
      {
         ELM_HOVERSEL_ITEM_DATA_GET(eo_item, it);
         VIEW(it) = NULL;
      }
    ELM_SAFE_FREE(sd->hover, evas_object_del);
+   sd->scr = NULL;
+   sd->last_location = NULL;
 
    eo_do(obj, eo_event_callback_call(ELM_HOVERSEL_EVENT_DISMISSED, NULL));
 }
