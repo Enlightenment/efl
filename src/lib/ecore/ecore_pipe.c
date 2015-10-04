@@ -92,7 +92,7 @@ struct _Ecore_Pipe
    Ecore_Pipe_Cb     handler;
    unsigned int      len;
    int               handling;
-   size_t            already_read;
+   unsigned int      already_read;
    void             *passed_data;
    int               message;
    Eina_Bool         delete_me : 1;
@@ -656,12 +656,12 @@ _ecore_pipe_read(void             *data,
 
         /* catch the non error case first */
         /* if we read enough data to finish the message/buffer */
-        if (ret == (ssize_t)(p->len - p->already_read))
+        if (ret == (p->len - p->already_read))
           _ecore_pipe_handler_call(p, p->passed_data, p->len);
         else if (ret > 0)
           {
              /* more data left to read */
-              p->already_read += ret;
+              p->already_read += (unsigned int) ret;
               _ecore_pipe_unhandle(p);
               return ECORE_CALLBACK_RENEW;
           }
