@@ -108,6 +108,22 @@ eldbus_message_method_call_new(const char *dest, const char *path, const char *i
    EINA_SAFETY_ON_NULL_RETURN_VAL(iface, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(method, NULL);
 
+   if (!dbus_validate_bus_name(dest, NULL))
+     {
+        ERR("Invalid bus name '%s'", dest);
+        return NULL;
+     }
+   if (!dbus_validate_path(path, NULL))
+     {
+        ERR("Invalid path '%s'", path);
+        return NULL;
+     }
+   if (!dbus_validate_interface(iface, NULL))
+     {
+        ERR("Invalid interface '%s'", iface);
+        return NULL;
+     }
+
    msg = eldbus_message_new(EINA_TRUE);
    EINA_SAFETY_ON_NULL_GOTO(msg, fail);
 
