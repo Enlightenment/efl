@@ -371,7 +371,7 @@ struct _Evas_Thread_Command_Font
 struct _Evas_Thread_Command_Map
 {
    void *image;
-   RGBA_Draw_Context image_ctx;
+   RGBA_Draw_Context *image_ctx;
    void *surface;
    Eina_Rectangle clip;
    DATA32 mul_col;
@@ -385,7 +385,7 @@ struct _Evas_Thread_Command_Map
 
 struct _Evas_Thread_Command_Multi_Font
 {
-   RGBA_Draw_Context context;
+   RGBA_Draw_Context *context;
    void *surface;
    int x, y;
    Evas_Font_Array *texts;
@@ -2068,25 +2068,25 @@ _draw_thread_map_draw(void *data)
              dw = (m->pts[2 + offset].x >> FP) - dx;
              dh = (m->pts[2 + offset].y >> FP) - dy;
 
-             col = map->image_ctx.mul.col;
-             use = map->image_ctx.mul.use;
-             if (use) map->image_ctx.mul.col = MUL4_SYM(col, m->pts[0].col);
-             else map->image_ctx.mul.col = m->pts[0].col;
-             map->image_ctx.mul.use = 1;
+             col = map->image_ctx->mul.col;
+             use = map->image_ctx->mul.use;
+             if (use) map->image_ctx->mul.col = MUL4_SYM(col, m->pts[0].col);
+             else map->image_ctx->mul.col = m->pts[0].col;
+             map->image_ctx->mul.use = 1;
 
              if (map->smooth)
                evas_common_scale_rgba_in_to_out_clip_cb
-                 (im, map->surface, &map->image_ctx,
+                 (im, map->surface, map->image_ctx,
                   0, 0, im->cache_entry.w, im->cache_entry.h,
                   dx, dy, dw, dh, _map_image_smooth_draw);
              else
                evas_common_scale_rgba_in_to_out_clip_cb
-                 (im, map->surface, &map->image_ctx,
+                 (im, map->surface, map->image_ctx,
                   0, 0, im->cache_entry.w, im->cache_entry.h,
                   dx, dy, dw, dh, _map_image_sample_draw);
 
-             map->image_ctx.mul.col = col;
-             map->image_ctx.mul.use = use;
+             map->image_ctx->mul.col = col;
+             map->image_ctx->mul.use = use;
           }
         else
           {
@@ -2106,6 +2106,7 @@ _draw_thread_map_draw(void *data)
 
  free_out:
    free(m);
+   evas_common_draw_context_free(map->image_ctx);
    eina_mempool_free(_mp_command_map, map);
 }
 
@@ -2119,7 +2120,7 @@ _map_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RG
    if (!cm) return EINA_FALSE;
 
    cm->image = src;
-   memcpy(&cm->image_ctx, dc, sizeof(*dc));
+   cm->image_ctx = evas_common_draw_context_dup(dc);
    cm->surface = dst;
 
    if (dc->clip.use)
@@ -2402,11 +2403,12 @@ _draw_thread_multi_font_draw(void *data)
         b = itr->color.b;
         a = itr->color.a;
 
-        eng_context_color_set(NULL, &mf->context, r, g, b, a);
-        evas_common_font_draw(mf->surface, &mf->context, x, y, itr->glyphs);
+        eng_context_color_set(NULL, mf->context, r, g, b, a);
+        evas_common_font_draw(mf->surface, mf->context, x, y, itr->glyphs);
         evas_common_cpu_end_opt();
      }
 
+   evas_common_draw_context_free(mf->context);
    eina_mempool_free(_mp_command_multi_font, mf);
 }
 
@@ -2424,7 +2426,7 @@ _multi_font_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y
         return EINA_FALSE;
      }
 
-   memcpy(&mf->context, dc, sizeof(*dc));
+   mf->context = evas_common_draw_context_dup(dc);
    mf->surface = dst;
    mf->x = x;
    mf->y = y;

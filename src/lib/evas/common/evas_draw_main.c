@@ -107,6 +107,12 @@ evas_common_draw_context_dup(RGBA_Draw_Context *dc)
    dc2 = malloc(sizeof(RGBA_Draw_Context));
    memcpy(dc2, dc, sizeof(RGBA_Draw_Context));
    evas_common_draw_context_cutouts_dup(&dc2->cutout, &dc->cutout);
+#ifdef HAVE_PIXMAN
+#if defined(PIXMAN_FONT) || defined(PIXMAN_RECT) || defined(PIXMAN_LINE) || defined(PIXMAN_POLY)
+   if (dc2->col.pixman_color_image)
+     pixman_image_ref(dc2->col.pixman_color_image);
+#endif
+#endif
    return dc2;
 }
 
