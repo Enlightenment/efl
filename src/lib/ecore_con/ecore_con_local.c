@@ -303,6 +303,10 @@ ecore_con_local_listen(
         strncpy(buf, svr->name, sizeof(buf) - 1);
         buf[sizeof(buf) - 1] = 0;
      }
+   else
+     {
+        buf[0] = '\0';
+     }
 
    pmode = umask(mask);
 start:
