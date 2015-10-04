@@ -3941,11 +3941,10 @@ _swipe_do(Elm_Gen_Item *it)
 {
    int i, sum = 0;
    Eina_Bool tmp;
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    if (_is_no_select(it) ||
        eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get())) return;
-
-   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    sd->swipe = EINA_FALSE;
    for (i = 0; i < sd->movements; i++)
