@@ -121,7 +121,7 @@ static Eina_Bool _disable_timing = EINA_TRUE;
 static int _abort_level_on_critical = EINA_LOG_LEVEL_CRITICAL;
 
 #ifdef EINA_LOG_BACKTRACE
-static int _backtrace_level = 1; // CRI & ERR by default
+static int _backtrace_level = 2; // CRI & ERR by default
 #endif
 
 static Eina_Bool _threads_enabled = EINA_FALSE;
