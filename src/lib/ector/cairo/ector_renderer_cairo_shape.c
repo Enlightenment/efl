@@ -166,7 +166,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
 {
    int r, g, b, a;
    unsigned i;
-   double *dashinfo;
+
    if (pd->path == NULL) return EINA_FALSE;
 
    USE(obj, cairo_save, EINA_FALSE);
@@ -206,6 +206,8 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
             cairo_set_source_rgba(pd->parent->cairo, r/255.0, g/255.0, b/255.0, a/255.0);
             if (pd->shape->stroke.dash)
               {
+                 double *dashinfo;
+
                  dashinfo = (double *) malloc(2 * pd->shape->stroke.dash_length * sizeof(double));
                  for (i = 0; i < pd->shape->stroke.dash_length; i++)
                    {
@@ -214,6 +216,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
                    }
                  USE(obj, cairo_set_dash, EINA_FALSE);
                  cairo_set_dash(pd->parent->cairo, dashinfo, pd->shape->stroke.dash_length * 2, 0);
+                 free(dashinfo);
               }
          }
 
