@@ -1333,7 +1333,7 @@ _evas_box_layout_flow_horizontal(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_
      (priv, w, &row_count, row_max_h, row_break, row_width, &offset_y, &min_w, &max_h);
 
    inc_y = 0;
-   remain_y = h - (offset_y + max_h);
+   remain_y = h - (priv->pad.v * row_count -1) - (offset_y + max_h);
 
    if (remain_y > 0)
      {
@@ -1353,7 +1353,7 @@ _evas_box_layout_flow_horizontal(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_
         int row_size, remain_x;
 
         row_size = row_break[r] - i;
-        remain_x = (w - row_width[r]);
+        remain_x = (w - (row_width[r] - priv->pad.h));
 
         if (priv->align.h < 0.0)
           {
@@ -1403,6 +1403,9 @@ _evas_box_layout_flow_horizontal(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_
         evas_object_geometry_get(o, &x, NULL, NULL, NULL);
         min_h += row_max_h[r];
         y += row_max_h[r] + inc_y;
+
+        if (r > 0)
+          min_h += priv->pad.v;
      }
 
    evas_object_size_hint_min_set(o, min_w, min_h);
