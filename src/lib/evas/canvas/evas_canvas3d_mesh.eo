@@ -156,6 +156,14 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
          ]]
       }
 
+      frame_exist {
+         [[Returns EINA_TRUE if frame was added and EINA_FALSE in other case.]]
+         params {
+            @in frame: int; [[Frame number.]]
+         }
+         return: Eina_Bool;
+      }
+
       frame_add {
          [[Add a key frame to the given mesh.
 

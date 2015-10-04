@@ -17,9 +17,14 @@
    unsigned short *indices = malloc(sizeof(short) * icount);
 
 #define SET_VERTEX_DATA(frame)                                                     \
+   Eina_Bool frame_exist; \
+   eo_do(mesh, \
+         frame_exist = evas_canvas3d_mesh_frame_exist(frame)); \
+   if (!frame_exist) \
+   eo_do(mesh, \
+         evas_canvas3d_mesh_frame_add(frame)); \
    eo_do(mesh,                                                                     \
          evas_canvas3d_mesh_vertex_count_set(vcount),                                    \
-         evas_canvas3d_mesh_frame_add(frame),                                            \
          evas_canvas3d_mesh_index_data_copy_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT,     \
                                           icount, &indices[0]));                   \
    _set_vec3_vertex_data(mesh, frame, vcount, vertices, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION);  \
@@ -29,9 +34,14 @@
    free(indices);
 
 #define SET_VERTEX_DATA_FROM_ARRAY(mesh, frame, varray, vcount, indices, icount) \
+   Eina_Bool frame_exist; \
+   eo_do(mesh, \
+         frame_exist = evas_canvas3d_mesh_frame_exist(frame)); \
+   if (!frame_exist) \
+   eo_do(mesh, \
+         evas_canvas3d_mesh_frame_add(frame)); \
    eo_do(mesh, \
          evas_canvas3d_mesh_vertex_count_set(vcount), \
-         evas_canvas3d_mesh_frame_add(frame), \
          evas_canvas3d_mesh_index_data_copy_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, \
                                           icount, &indices[0])); \
    _set_vertex_data_from_array(mesh, frame, varray, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, \

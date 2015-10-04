@@ -306,6 +306,17 @@ _evas_canvas3d_mesh_vertex_count_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Dat
    return pd->vertex_count;
 }
 
+EOLIAN static Eina_Bool
+_evas_canvas3d_mesh_frame_exist(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd, int frame)
+{
+   Evas_Canvas3D_Mesh_Frame *f = evas_canvas3d_mesh_frame_find(pd, frame);
+
+   if (f)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
 EOLIAN static void
 _evas_canvas3d_mesh_frame_add(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, int frame)
 {
