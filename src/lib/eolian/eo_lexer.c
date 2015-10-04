@@ -1148,8 +1148,9 @@ eo_lexer_token_to_str(int token, char *buf)
      {
         const char *v;
         size_t idx = token - START_CUSTOM;
-        if (idx >= sizeof(tokens))
-          v = keywords[idx - sizeof(tokens)];
+        size_t tsz = sizeof(tokens) / sizeof(tokens[0]);
+        if (idx >= tsz)
+          v = keywords[idx - tsz];
         else
           v = tokens[idx];
         memcpy(buf, v, strlen(v) + 1);
