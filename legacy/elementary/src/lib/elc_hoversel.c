@@ -110,8 +110,33 @@ _on_item_clicked(void *data EINA_UNUSED,
    Evas_Object *obj2 = WIDGET(item);
    Elm_Object_Item *eo_it = EO_OBJ(item);
 
+   ELM_HOVERSEL_DATA_GET(obj2, sd);
+
    if (item->func) item->func((void *)WIDGET_ITEM_DATA_GET(eo_it), obj2, eo_it);
    eo_do(obj2, eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_it));
+
+   if (sd->auto_changed)
+     {
+        Evas_Object *ic;
+
+        ic = elm_object_part_content_unset(obj2, "icon");
+        ELM_SAFE_FREE(ic, evas_object_del);
+
+        if (item->icon_file)
+          {
+             ic = elm_icon_add(obj2);
+             elm_image_resizable_set(ic, EINA_FALSE, EINA_TRUE);
+             if (item->icon_type == ELM_ICON_FILE)
+               elm_image_file_set(ic, item->icon_file, item->icon_group);
+             else if (item->icon_type == ELM_ICON_STANDARD)
+               elm_icon_standard_set(ic, item->icon_file);
+             elm_object_part_content_set(obj2, "icon", ic);
+          }
+
+        if(item->label)
+          elm_object_text_set(obj2, item->label);
+     }
+
    elm_hoversel_hover_end(obj2);
 
    return EINA_TRUE;
@@ -899,6 +924,18 @@ EOLIAN Eina_Bool
 _elm_hoversel_scrollable_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    return sd->scroll_enabled;
+}
+
+EOLIAN void
+_elm_hoversel_label_auto_changed_set(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd, Eina_Bool auto_changed)
+{
+   sd->auto_changed = !!auto_changed;
+}
+
+EOLIAN Eina_Bool
+_elm_hoversel_label_auto_changed_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
+{
+   return sd->auto_changed;
 }
 
 #include "elm_hoversel_item.eo.c"

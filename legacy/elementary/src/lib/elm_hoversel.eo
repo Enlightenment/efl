@@ -57,6 +57,16 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             scrollable: bool; [[$true if scrollable $false otherwise.]]
          }
       }
+      @property label_auto_changed {
+         [[Change the label of hoversel to that of selected item automatically.]]
+         get{
+         }
+         set{
+         }
+         values {
+            auto_changed: bool; [[$true if the label is changed automatically or $false otherwise]]
+         }
+      }
       hover_begin {
          [[This triggers the hoversel popup from code, the same as if the user had clicked the button.]]
       }
