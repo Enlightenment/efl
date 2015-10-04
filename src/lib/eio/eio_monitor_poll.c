@@ -148,29 +148,29 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
 
         if (!backend->initialised)
           {
-             eina_hash_add(backend->children, info->path + info->name_start, cmp);
+             eina_hash_add(backend->children, info->path, cmp);
           }
         else
           {
-             cmp = eina_hash_find(backend->children, info->path + info->name_start);
+             cmp = eina_hash_find(backend->children, info->path);
              if (!cmp)
                {
                   /* New file or new directory added */
                   ecore_thread_main_loop_begin();
-                  _eio_monitor_send(backend->parent, info->path + info->name_start,
+                  _eio_monitor_send(backend->parent, info->path,
                                     info->type != EINA_FILE_DIR ? EIO_MONITOR_FILE_CREATED : EIO_MONITOR_DIRECTORY_CREATED);
                   ecore_thread_main_loop_end();
 
                   cmp = malloc(sizeof (Eio_Monitor_Stat));
                   memcpy(cmp, &buffer, sizeof (Eina_Stat));
 
-                  eina_hash_add(backend->children, info->path + info->name_start, cmp);
+                  eina_hash_add(backend->children, info->path, cmp);
                }
              else if (memcmp(cmp, &buffer, sizeof (Eina_Stat)) != 0)
                {
                   /* file has been modified */
                   ecore_thread_main_loop_begin();
-                  _eio_monitor_send(backend->parent, info->path + info->name_start,
+                  _eio_monitor_send(backend->parent, info->path,
                                     info->type != EINA_FILE_DIR ? EIO_MONITOR_FILE_MODIFIED : EIO_MONITOR_DIRECTORY_MODIFIED);
                   ecore_thread_main_loop_end();
 
