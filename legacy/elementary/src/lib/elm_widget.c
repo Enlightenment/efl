@@ -4431,9 +4431,12 @@ _elm_widget_item_eo_base_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
      }
    eina_hash_free(item->labels);
 
-   eo_do(eo_item, elm_interface_atspi_accessible_description_set(NULL));
-   eo_do(eo_item, elm_interface_atspi_accessible_name_set(NULL));
-   eo_do(eo_item, elm_interface_atspi_accessible_translation_domain_set(NULL));
+   eo_do(eo_item,
+         elm_interface_atspi_accessible_description_set(NULL),
+         elm_interface_atspi_accessible_name_set(NULL),
+         elm_interface_atspi_accessible_translation_domain_set(NULL),
+         elm_interface_atspi_accessible_relationships_clear()
+         );
 
    if (_elm_config->atspi_mode && item->widget)
      elm_interface_atspi_accessible_children_changed_del_signal_emit(item->widget, eo_item);
@@ -5706,9 +5709,12 @@ _elm_widget_eo_base_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 EOLIAN static void
 _elm_widget_eo_base_destructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
-   eo_do(obj, elm_interface_atspi_accessible_description_set(NULL));
-   eo_do(obj, elm_interface_atspi_accessible_name_set(NULL));
-   eo_do(obj, elm_interface_atspi_accessible_translation_domain_set(NULL));
+   eo_do(obj,
+         elm_interface_atspi_accessible_description_set(NULL),
+         elm_interface_atspi_accessible_name_set(NULL),
+         elm_interface_atspi_accessible_translation_domain_set(NULL),
+         elm_interface_atspi_accessible_relationships_clear()
+         );
    elm_interface_atspi_accessible_removed(obj);
 
    eo_do_super(obj, ELM_WIDGET_CLASS, eo_destructor());
@@ -5879,42 +5885,6 @@ _elm_widget_elm_interface_atspi_accessible_attributes_get(Eo *obj, Elm_Widget_Sm
 
    ret = eina_list_append(ret, attr);
    return ret;
-}
-
-static Elm_Atspi_Relation*
-_relation_new(Elm_Atspi_Relation_Type type, Eo *obj)
-{
-   Elm_Atspi_Relation *rel = calloc(1, sizeof(Elm_Atspi_Relation));
-   if (!rel) return NULL;
-
-   rel->type = type;
-   rel->obj = obj;
-
-   return rel;
-}
-
-EOLIAN static Eina_List*
-_elm_widget_elm_interface_atspi_accessible_relation_set_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
-{
-   Eina_List *list = NULL;
-   Elm_Atspi_Relation *rel;
-   Evas_Object *rel_obj;
-
-   rel_obj = elm_object_focus_next_object_get(obj, ELM_FOCUS_NEXT);
-   if (eo_isa(rel_obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
-     {
-        rel = _relation_new(ELM_ATSPI_RELATION_FLOWS_TO, rel_obj);
-        list = eina_list_append(list, rel);
-     }
-
-   rel_obj = elm_object_focus_next_object_get(obj, ELM_FOCUS_PREVIOUS);
-   if (eo_isa(rel_obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
-     {
-        rel = _relation_new(ELM_ATSPI_RELATION_FLOWS_FROM, rel_obj);
-        list = eina_list_append(list, rel);
-     }
-
-   return list;
 }
 
 EOLIAN static void

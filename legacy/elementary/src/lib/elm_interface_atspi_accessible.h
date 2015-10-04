@@ -252,7 +252,7 @@ typedef struct _Elm_Atspi_Attribute Elm_Atspi_Attribute;
 struct _Elm_Atspi_Relation
 {
    Elm_Atspi_Relation_Type type;
-   const Eo *obj;
+   Eina_List *objects;
 };
 
 typedef struct _Elm_Atspi_Relation Elm_Atspi_Relation;
@@ -261,6 +261,43 @@ typedef struct _Elm_Atspi_Relation Elm_Atspi_Relation;
  * Free Elm_Atspi_Attributes_List
  */
 EAPI void elm_atspi_attributes_list_free(Eina_List *list);
+
+typedef Eina_List *Elm_Atspi_Relation_Set;
+
+/**
+ * Frees relation.
+ */
+EAPI void elm_atspi_relation_free(Elm_Atspi_Relation *relation);
+
+/**
+ * Clones relation.
+ */
+EAPI Elm_Atspi_Relation * elm_atspi_relation_clone(const Elm_Atspi_Relation *relation);
+
+/**
+ * Appends relation to relation set
+ */
+EAPI Eina_Bool elm_atspi_relation_set_relation_append(Elm_Atspi_Relation_Set *set, Elm_Atspi_Relation_Type type, const Eo *rel_obj);
+
+/**
+ * Removes relation from relation set
+ */
+EAPI void elm_atspi_relation_set_relation_remove(Elm_Atspi_Relation_Set *set, Elm_Atspi_Relation_Type type, const Eo *rel_obj);
+
+/**
+ * Removes all relation from relation set of a given type
+ */
+EAPI void elm_atspi_relation_set_relation_type_remove(Elm_Atspi_Relation_Set *set, Elm_Atspi_Relation_Type type);
+
+/**
+ * Frees Elm_Atspi_Relation_Set
+ */
+EAPI void elm_atspi_relation_set_free(Elm_Atspi_Relation_Set set);
+
+/**
+ * Clones Elm_Atspi_Relation_Set
+ */
+EAPI Elm_Atspi_Relation_Set elm_atspi_relation_set_clone(const Elm_Atspi_Relation_Set set);
 
 #ifdef EFL_EO_API_SUPPORT
 

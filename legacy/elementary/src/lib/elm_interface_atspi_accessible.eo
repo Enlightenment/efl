@@ -27,7 +27,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             [[Gets an string describing ATSPI widget role name. Lists and elements Should be free by a user.]]
          }
          values {
-            relations: own(list<own(Elm_Atspi_Relation *)> *);
+            relations: Elm_Atspi_Relation_Set;
          }
       }
       @property role @protected {
@@ -146,6 +146,42 @@ mixin Elm_Interface_Atspi_Accessible ()
          values {
             domain: const(char)*; [[ translation domain ]]
          }
+      }
+      relationship_append @protected {
+         [[Defines the relationship between two accessible objects.
+
+           Adds unique relation between source object and relation_object of a
+           given type.
+
+           Relationships can be queried by Assistive Technology clients to
+           provide customized feedback, improving overall user experience.
+
+           Relationship_append API is asymmetric, which means that
+           appending, for example, relation ELM_ATSPI_RELATION_FLOWS_TO from object A to B,
+           do NOT append relation ELM_ATSPI_RELATION_FLOWS_FROM from object B to
+           object A.
+
+           return: EINA_TRUE is relationship was successfully appended, EINA_FALSE
+           otherwise]]
+         return: bool;
+         params {
+            @in type: Elm_Atspi_Relation_Type;
+            @in relation_object: const(Elm_Interface_Atspi_Accessible)*;
+         }
+      }
+      relationship_remove @protected {
+         [[Removes the relationship between two accessible objects.
+
+          If relation_object is NULL function removes all relations
+          of given type.
+         ]]
+         params {
+            @in type: Elm_Atspi_Relation_Type;
+            @in relation_object: const(Elm_Interface_Atspi_Accessible)*;
+         }
+      }
+      relationships_clear @protected {
+         [[Removes all relationships in accessible object.]]
       }
    }
    events {
