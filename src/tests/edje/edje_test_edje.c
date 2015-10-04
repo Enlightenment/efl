@@ -253,7 +253,7 @@ START_TEST(edje_test_snapshot)
 {
    Evas *evas = EDJE_TEST_INIT_EVAS();
    const Evas_Object *sub;
-   Evas_Object *obj, *src = NULL;
+   Evas_Object *obj;
    Eina_Bool b;
 
    setenv("EVAS_DATA_DIR", EVAS_DATA_DIR, 1);
