@@ -304,17 +304,12 @@ _eo_call_stack_mem_alloc(size_t size)
 static void
 _eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize, size_t size)
 {
-   // FIXME we don't grow
    if (newsize > size)
      {
         CRI("eo call stack overflow, abort.");
         abort();
      }
-   // FIXME resize call stack down
-   return;
-   size_t addr = MEM_PAGE_SIZE * ((newsize + MEM_PAGE_SIZE - 1) /
-                                  MEM_PAGE_SIZE);
-   madvise(((unsigned char *)*ptr) + addr, size - addr, MADV_DONTNEED);
+   return; // Do nothing, code for actual implementation in history. See commit message for details.
 #else
 static void
 _eo_call_stack_mem_resize(void **ptr, size_t newsize, size_t size EINA_UNUSED)
