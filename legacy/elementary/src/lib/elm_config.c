@@ -1524,7 +1524,7 @@ _config_flush_get(void)
    _elm_recache();
    _elm_clouseau_reload();
    _elm_config_key_binding_hash();
-   _elm_win_access(_elm_config->access_mode);
+   if (_elm_config) _elm_win_access(_elm_config->access_mode);
    ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
 }
 
