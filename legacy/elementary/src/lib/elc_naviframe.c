@@ -1018,12 +1018,16 @@ EOLIAN static Eina_Bool
 _elm_naviframe_elm_layout_text_set(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, const char *part, const char *label)
 {
    Elm_Object_Item *it;
+   const char *text = NULL;
 
    it = elm_naviframe_top_item_get(obj);
    if (!it) return EINA_FALSE;
 
    elm_object_item_part_text_set(it, part, label);
-   return !strcmp(elm_object_item_part_text_get(it, part), label);
+   text = elm_object_item_part_text_get(it, part);
+   if ((text) && !strcmp(text, label))
+     return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 EOLIAN static const char*
