@@ -118,6 +118,7 @@ cmakeconfig/ElementaryConfigVersion.cmake
 
 doc:
 	@echo "entering doc/"
+	$(MAKE) -C src/examples screenshots
 	$(MAKE) -C doc doc
 
 screenshots: all
