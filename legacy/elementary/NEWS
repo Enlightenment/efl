@@ -1,6 +1,105 @@
 =================
-Elementary 1.15.0
+Elementary 1.16.0
 =================
+
+Changes since 1.15.0:
+---------------------
+
+Features:
+
+   * multibuttonentry: add horizontal, vertical padding between items.
+   * index: add index item priority APIs for support multilingual
+   * elm_config: Add flag to control pushing naviframe prev button automatically.
+   * focus: add the focus region show mode
+   * focus: item focus moves by geometry.
+   * popup: make scroller optional in popup (T2651)
+   * elm theme - add a blank focus style if you want invisible focus
+   * Label: add support for all the fancy tags already provided for entry
+   * elm - thumbscroll finger scrolling - make it far smoother
+   * focus: add the APIs to set the focus next about item.
+   * Elm_genlist: Add Item filtering support
+   * spinner: delete longpress timer when scroller enabled.
+   * focus: add the focus_direction feature about item.
+   * focus: change the focus don't stay to scroller.
+   * elc_multibuttonentry: add item disable support
+   * atspi: add translation domain for name and description.
+   * atspi: support org.a11y.atspi.Collection interface
+   * atspi: add new relationship append/remove/clear API
+   * elm run - be explicit about elm run not nesting in docs
+
+Fixes:
+
+   * spinner: entry text makes to registered special value instead of number.
+   * multibuttonentry: item object scale set is not need when theme applied.
+   * mbe: remove unnecessary keypad hide call from multibuttonentry.
+   * popup: fix resize issue in case of custom part text set
+   * focus: add del callback always.
+   * focus/list/genlist/gengrid: fix focus highlight issues on list widgets when auto focus enable is on. (T2555)
+   * Tooltip: reset content delete callback directly after invocation
+   * elm_toolbar: fix icon_size to consider edje base scale
+   * spinner: Add to support spinner value %d format.
+   * scroller: fix the focus move bug in scroller.
+   * gengrid: extends D2418 to horizontal mode.
+   * gengird: change focus move mechanism in gengrid.
+   * elementary: Fix Copy and Paste test to actually paste clipboard text
+   * elm theme - conformant - fix to have proper min size of conformant
+   * cnp: init wayland dnd handlers upon creating the first drop target
+   * cnp: initialize Elm_Selection_Data.action for wayland drops
+   * cnp: fix wayland drop format selection
+   * cnp: pass wayland drop event size to handler, do not nul terminate drop data
+   * cnp: end wayland drag on allocation failure
+   * cnp: only nul terminate wayland drops for text type drops
+   * cnp: redo wayland drop to nul terminate for text_uri drops and free on every drop
+   * Gengrid: Set focus after item looping
+   * list: fix crash while setting nearest item in viewport (T2662)
+   * Entry: fix cursor repositioning on theme_apply (T2646)
+   * scroller: fix the misstake. change && -> ||
+   * scroller: fix memory leak on keys traversal
+   * theme: fix theme file path parsing issue on windows.
+   * elm_win: Initilize the variable 'preferred_rot' as a -1 before invoking _elm_win_xwin_update() in _elm_win_finalize_internal().
+   * gengrid: fix item focus movement in case of horizontal mode
+   * gengrid: no need to loop in case of reorder mode is enabled
+   * toolbar: fix issue of focus not coming to item on mouse click (T2697)
+   * config: revert first_item_focus_on_first_focus_in to 0 (T2662)
+   * Genlist: reset item tree expanded state when putting item in cache
+   * elm win - fix to ensure smart calc is done before show
+   * Gengrid: Fix wrong focus movement in _item_single_select_down
+   * multibuttonentry: Use elm focus for items instead of evas focus.
+   * Revert "Elm_Interface_Scrollable: Improvement in looping behavior"
+   * Elc_Naviframe: When push is in progress, block pop until push is complete.
+   * multibuttonentry: Fix mbe  clicked signal is not work.
+   * Elc_Multibuttonentry: Item resize issue on text set
+   * Genlist: Dont select first item if its DISPLAY_ONLY
+   * naviframe: fix a focus issue when deleting the first item
+   * gengrid: fix crash issue.
+   * FileSelector: fix behaviour when the file is chosen
+   * elm map - fix module load craziness loading all elm modules
+   * elm map - fix crash on badly handled zoom timeout callback
+   * FileSelector Entry: fix behaviour for events
+   * elm_image: fix image preload issue
+   * elm theme - make sure key sounds are on input channel for muting config
+   * calendar: fix signal process timing issue when view update.
+   * elm autofocus show - fix cases where focus is inside containers
+   * elm - when focus goes back in to a window dont have scrollers jump
+   * elm toolbar 0 size items fix if icon not found (T2710)
+   * multibuttonentry: Fix box item append rtl when mirror enabled.
+   * elc_multibuttonentry: Input panel should be controlled only if multibuttonentry is editable
+   * focus: remove checking the focus origin in highlight job.
+   * dnd/x11: correct coordinates in pos callback
+   * test_dnd: transfer text without markup when drag label
+   * [spinner] Notify when value is edited directly
+   * elm - fix focus set on focus in on window due to previous focus fix
+   * elm_conformant: display mode set fix
+   * gengrid: fix duplicate edje signal (elm,state,focused) to item on focus
+   * calendar: weekday update when first day of week changed.
+   * spinner: Fix internal logic about special value show instead of number.
+   * multibuttonentry: fix MBE item clear, item delete logic error.
+   * Revert "index: fix index object got a wrong min value."
+   * spinner: fix extra callback calls
+   * multibuttonentry: Fix padding to be affected by base_scale in edc.
+   * multibuttonentry: Fix MBE item box min size calc error.
+   * elc_naviframe: fix crash in strcmp, if text_set is NULL issue
+   * elm_hover: delay hover dismiss while handling edje signal
 
 Changes since 1.14.0:
 ---------------------
