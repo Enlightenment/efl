@@ -10,6 +10,19 @@ Fixes:
    * ecore_evas: fix first render skip in several windows
    * ecore-wl: do not nul terminate drops
    * Evas language: fix script run code (T2670)
+   * ecore_wayland: bind and destroy session_recovery interface correctly.
+   * ecore_pipe: add write fdset and except fdset.
+   * edje: Fix double free scenario caused by static pointer.
+   * Evas textblock: fix case of own_closer in style_set (T2654)
+   * evas - fix texture context bind reset in gl common using wrong texture
+   * eldbus: add dbus_pending NULL check
+   * ecore_evas-x11: unset withdrawn state when window is mapped (T2745)
+   * upower: free version string splits
+   * ecore_win32: fix the mouse out behavior.
+   * ecore-audio: defer deletion of pulseaudio timer until after event processing
+   * doc/eldbus: fix parameter in document
+   * edje_cc: Fix inheritance of "no_render" flag
+   * eldbus - make method calls less crasy since libdbus likes to abort
 
 Changes since 1.14.0:
 ---------------------
