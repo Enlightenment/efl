@@ -972,6 +972,11 @@ EAPI void
 ecore_main_loop_begin(void)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
+   if (in_main_loop > 0)
+     {
+        ERR("Running ecore_main_loop_begin() inside an existing main loop");
+        return;
+     }
    eina_evlog("+mainloop", NULL, 0.0, NULL);
 #ifdef HAVE_SYSTEMD
    sd_notify(0, "READY=1");
