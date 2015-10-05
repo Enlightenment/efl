@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.8.2\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-10-01 12:06+0200\n"
+"POT-Creation-Date: 2015-10-05 15:33+0200\n"
 "PO-Revision-Date: 2014-01-29 15:27+0100\n"
 "Last-Translator: rezso <rezso@rezso.net>\n"
 "Language-Team: General\n"
@@ -47,7 +47,7 @@ msgstr ""
 msgid "multi button entry item"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:1569
+#: src/lib/elc_multibuttonentry.c:1560
 msgid "multi button entry"
 msgstr ""
 
@@ -55,11 +55,11 @@ msgstr ""
 msgid "Title"
 msgstr "Cím"
 
-#: src/lib/elc_naviframe.c:980 src/lib/elc_naviframe.c:1181
+#: src/lib/elc_naviframe.c:980 src/lib/elc_naviframe.c:1185
 msgid "Back"
 msgstr "Vissza"
 
-#: src/lib/elc_naviframe.c:1277
+#: src/lib/elc_naviframe.c:1281
 msgid "Next"
 msgstr "Következő"
 
@@ -79,8 +79,8 @@ msgstr "Buborék"
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elm_button.c:275 src/lib/elm_check.c:244 src/lib/elm_gengrid.c:1252
-#: src/lib/elm_genlist.c:1653 src/lib/elm_list.c:2189 src/lib/elm_radio.c:268
+#: src/lib/elm_button.c:275 src/lib/elm_check.c:244 src/lib/elm_gengrid.c:1255
+#: src/lib/elm_genlist.c:1656 src/lib/elm_list.c:2189 src/lib/elm_radio.c:268
 #: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:902
 #: src/lib/elm_toolbar.c:2245
 msgid "State: Disabled"
@@ -90,43 +90,43 @@ msgstr "Állapot: letiltva"
 msgid "Button"
 msgstr "Gomb"
 
-#: src/lib/elm_calendar.c:175
+#: src/lib/elm_calendar.c:219
 msgid "%B %Y"
 msgstr "%Y. %B"
 
-#: src/lib/elm_calendar.c:181
+#: src/lib/elm_calendar.c:225
 msgid "%B"
 msgstr "%B"
 
-#: src/lib/elm_calendar.c:187
+#: src/lib/elm_calendar.c:231
 msgid "%Y"
 msgstr "%Y"
 
-#: src/lib/elm_calendar.c:301
+#: src/lib/elm_calendar.c:345
 msgid "calendar item"
 msgstr "naptárelem"
 
-#: src/lib/elm_calendar.c:327
+#: src/lib/elm_calendar.c:371
 msgid "calendar decrement month button"
 msgstr "naptár: hónap csökkentése gomb"
 
-#: src/lib/elm_calendar.c:332
+#: src/lib/elm_calendar.c:376
 msgid "calendar decrement year button"
 msgstr "naptár: év csökkentése gomb"
 
-#: src/lib/elm_calendar.c:337
+#: src/lib/elm_calendar.c:381
 msgid "calendar increment month button"
 msgstr "naptár: hónap növelése gomb"
 
-#: src/lib/elm_calendar.c:342
+#: src/lib/elm_calendar.c:386
 msgid "calendar increment year button"
 msgstr "naptár: év növelése gomb"
 
-#: src/lib/elm_calendar.c:347
+#: src/lib/elm_calendar.c:391
 msgid "calendar month"
 msgstr "naptár hónapja"
 
-#: src/lib/elm_calendar.c:352
+#: src/lib/elm_calendar.c:396
 msgid "calendar year"
 msgstr "naptár éve"
 
@@ -219,7 +219,7 @@ msgstr "Kiválaszt"
 msgid "Entry"
 msgstr "Bejegyzés"
 
-#: src/lib/elm_gengrid.c:1282
+#: src/lib/elm_gengrid.c:1285
 msgid "Gengrid Item"
 msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-10-01 12:06+0200\n"
+"POT-Creation-Date: 2015-10-05 15:33+0200\n"
 "PO-Revision-Date: 2015-02-10 09:34+0000\n"
 "Last-Translator: JoanColl <Unknown>\n"
 "Language-Team: Catalan\n"
@@ -47,7 +47,7 @@ msgstr "etiqueta d'entrada múltiple"
 msgid "multi button entry item"
 msgstr "element entrada múltiple"
 
-#: src/lib/elc_multibuttonentry.c:1569
+#: src/lib/elc_multibuttonentry.c:1560
 msgid "multi button entry"
 msgstr "entrada múltiple"
 
@@ -55,11 +55,11 @@ msgstr "entrada múltiple"
 msgid "Title"
 msgstr "Títol"
 
-#: src/lib/elc_naviframe.c:980 src/lib/elc_naviframe.c:1181
+#: src/lib/elc_naviframe.c:980 src/lib/elc_naviframe.c:1185
 msgid "Back"
 msgstr "Enrere"
 
-#: src/lib/elc_naviframe.c:1277
+#: src/lib/elc_naviframe.c:1281
 msgid "Next"
 msgstr "Següent"
 
@@ -79,8 +79,8 @@ msgstr "Bombolla"
 msgid "Clicked"
 msgstr "Clicat"
 
-#: src/lib/elm_button.c:275 src/lib/elm_check.c:244 src/lib/elm_gengrid.c:1252
-#: src/lib/elm_genlist.c:1653 src/lib/elm_list.c:2189 src/lib/elm_radio.c:268
+#: src/lib/elm_button.c:275 src/lib/elm_check.c:244 src/lib/elm_gengrid.c:1255
+#: src/lib/elm_genlist.c:1656 src/lib/elm_list.c:2189 src/lib/elm_radio.c:268
 #: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:902
 #: src/lib/elm_toolbar.c:2245
 msgid "State: Disabled"
@@ -90,43 +90,43 @@ msgstr "Estat: desactivat"
 msgid "Button"
 msgstr "Botó"
 
-#: src/lib/elm_calendar.c:175
+#: src/lib/elm_calendar.c:219
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_calendar.c:181
+#: src/lib/elm_calendar.c:225
 msgid "%B"
 msgstr "%B"
 
-#: src/lib/elm_calendar.c:187
+#: src/lib/elm_calendar.c:231
 msgid "%Y"
 msgstr "%Y"
 
-#: src/lib/elm_calendar.c:301
+#: src/lib/elm_calendar.c:345
 msgid "calendar item"
 msgstr "element de calendari"
 
-#: src/lib/elm_calendar.c:327
+#: src/lib/elm_calendar.c:371
 msgid "calendar decrement month button"
 msgstr "botó decrement de mes"
 
-#: src/lib/elm_calendar.c:332
+#: src/lib/elm_calendar.c:376
 msgid "calendar decrement year button"
 msgstr "botó decrement d'any"
 
-#: src/lib/elm_calendar.c:337
+#: src/lib/elm_calendar.c:381
 msgid "calendar increment month button"
 msgstr "botó increment de mes"
 
-#: src/lib/elm_calendar.c:342
+#: src/lib/elm_calendar.c:386
 msgid "calendar increment year button"
 msgstr "botó increment d'any"
 
-#: src/lib/elm_calendar.c:347
+#: src/lib/elm_calendar.c:391
 msgid "calendar month"
 msgstr "mes del calendari"
 
-#: src/lib/elm_calendar.c:352
+#: src/lib/elm_calendar.c:396
 msgid "calendar year"
 msgstr "any del calendari"
 
@@ -219,7 +219,7 @@ msgstr "Selecciona"
 msgid "Entry"
 msgstr "Entrada"
 
-#: src/lib/elm_gengrid.c:1282
+#: src/lib/elm_gengrid.c:1285
 msgid "Gengrid Item"
 msgstr "Quadrícula genèrica"
 
