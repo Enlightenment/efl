@@ -140,6 +140,10 @@ EAPI int       elm_shutdown(void);
  * called. It will keep looping, running the main
  * (event/processing) loop for Elementary.
  *
+ * This function should be called once only from the same thread that
+ * initted elementary, (elm_init(), eina_init(), ...) and should never
+ * be nested. Never call it from within an instance of itself.
+ *
  * @see elm_init() for an example
  *
  * @ingroup General
