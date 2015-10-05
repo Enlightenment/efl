@@ -192,7 +192,7 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    /* NB: Disabled for right now as it causes textgrid (terminology) 
     * to not draw text anymore */
    /* if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER")) */
-   /*   ee->can_async_render = 0; */
+   ee->can_async_render = 0;
    /* else */
    /*   ee->can_async_render = 1; */
 
@@ -249,6 +249,8 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
         ERR("Failed to get Evas Engine Info for '%s'", ee->driver);
         goto err;
      }
+
+   ecore_wl_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
 
    ecore_evas_callback_pre_free_set(ee, _ecore_evas_wl_common_pre_free);
 
