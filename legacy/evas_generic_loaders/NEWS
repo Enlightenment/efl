@@ -1,6 +1,13 @@
 ===========================
-Evas Generic Loaders 1.15.0
+Evas Generic Loaders 1.16.0
 ===========================
+
+Changes since 1.15.0:
+---------------------
+
+Fixes:
+
+   * generic loaders - fix load if process esits before stdout produced
 
 Changes since 1.14.0:
 ---------------------
