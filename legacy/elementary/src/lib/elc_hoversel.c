@@ -440,6 +440,7 @@ _on_parent_del(void *data,
    elm_hoversel_hover_parent_set(data, NULL);
 }
 
+#if 0
 static void
 _on_table_del(void *data,
               Evas *e EINA_UNUSED,
@@ -462,6 +463,7 @@ _size_hints_changed_cb(void *data,
 {
    elm_layout_sizing_eval(data);
 }
+#endif
 
 static void
 _elm_hoversel_item_elm_widget_item_part_text_set(Eo *eo_it EINA_UNUSED,
