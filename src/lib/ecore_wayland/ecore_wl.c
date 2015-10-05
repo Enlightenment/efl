@@ -43,7 +43,7 @@ static void _ecore_wl_init_callback(void *data, struct wl_callback *callback, ui
 static int _ecore_wl_init_count = 0;
 static Eina_Bool _ecore_wl_animator_busy = EINA_FALSE;
 static Eina_Bool _ecore_wl_fatal_error = EINA_FALSE;
-static Eina_Bool _ecore_wl_server_mode = EINA_FALSE;
+Eina_Bool _ecore_wl_server_mode = EINA_FALSE;
 
 static const struct wl_registry_listener _ecore_wl_registry_listener =
 {
