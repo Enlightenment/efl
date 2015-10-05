@@ -28,8 +28,8 @@ struct _Outbuf_Region
 
 static Eina_List *shmpool = NULL;
 static int shmsize = 0;
-static int shmmemlimit = 10 * 1024 * 1024;
-static const unsigned int shmcountlimit = 32;
+static int shmmemlimit = 20 * 1024 * 1024;
+static const unsigned int shmcountlimit = 128;
 
 static Eina_Spinlock shmpool_lock;
 #define SHMPOOL_LOCK() eina_spinlock_take(&shmpool_lock)
@@ -78,7 +78,10 @@ _find_xob(Display *d, Visual *v, int depth, int w, int h, int shm, void *data)
 	     xl = l;
 	  }
      }
-   if ((fitness > (100 * 100)) || (!xob))
+   if (
+       (fitness > (400 * 400)) ||
+       (!xob)
+      )
      {
         SHMPOOL_UNLOCK();
         xob = evas_software_xlib_x_output_buffer_new(d, v, depth, w, h, shm, data);
