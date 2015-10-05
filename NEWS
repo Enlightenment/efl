@@ -1,6 +1,98 @@
 ==========
-EFL 1.15.0
+EFL 1.16.0
 ==========
+
+Changes since 1.15.0:
+---------------------
+
+Features:
+
+   * ecore-wl: Support wl_keyboard_send_repeat_info for adjusting keyboard repeat rate and delay
+   * evas gl: add support for new partial update extension.
+   * ecore-x: provide property state in Ecore_X_Event_Window_Property
+   * ecore-x: add property member to Ecore_X_Event_Selection_Notify
+   * Evas GL: Restore current context to evas gl context when the backend has taken over
+   * eina: add API to join pahs, as well as path separators
+   * Eo base: Change parent_set to be an assignment of ref.
+   * ecore x vsync - add in exynos checks and move kernel v checks inside
+   * eina thread - add wrapper for setting thread name and fix affinity
+   * efl - set thread names for internally created threads for debugging
+   * eolian/generator: generation of doxygen @note and @warning tags
+   * evas - sw async render - move pixel upload/swap to a thread
+   * evas gl - optimize updates
+   * Edje: Add filter support to SNAPSHOT parts
+   * edje_cc: Allow PROXY as clipper (clip_to and desc.clip_to)
+   * Evas GL: Add new API to get current Evas GL
+   * evas - cutouts - use less cpu by skipping non-intersecting cutout objs
+   * ecore - detect nested ecore_main_loop_begins from silly code
+
+Fixes:
+
+   * Edje entry: Make filter logic consistent across all input methods
+   * evas_check_engine: Remove tests for specific version of EGL
+   * Edje entry: Fix to delete selection when preedit status has not ended.
+   * ecore_evas: fix first render skip in several windows
+   * eolian/generator: fix turning values into @return when generating docs
+   * eina: fix direct_ls_simple and ls_simple tests on Windows
+   * efreet - fix efreetd kill and start with clean cache case blank icons
+   * evas - handle case where layer->evas is null - don't crash
+   * emotion: Fix typos in doxygen
+   * ecore-wl: do not nul terminate drops
+   * eo - fix bug vector when unparenting of an eo obj may affect others
+   * Evas filters: Fix for Lua 5.3 (with --enable-lua-old)
+   * Evas filters: Fix massive memleak with async sw render
+   * Evas language: fix script run code (T2670)
+   * Edje_Entry: check selection before the cursor position change.
+   * eo - destruction - ensure child is removed from parent child list
+   * Evil: fix compilation when MSVC is not available. (T2681)
+   * efl - jp2k loader - guard against openjpeg bug tha causes an abort
+   * ecore_win: fix the incorrect mouse cursor position.
+   * edje_cc_out: Fix edje_cc compile error with script on Windows.
+   * ecore_wayland: bind and destroy session_recovery interface correctly.
+   * ecore_pipe: add write fdset and except fdset.
+   * edje: Fix double free scenario caused by static pointer.
+   * Evas textblock: fix case of own_closer in style_set (T2654)
+   * Eina rectangle: Check for valid rectangle before taking intersection
+   * evas_canvas3d: Recalculation coordinates for pick object from scene
+   * evas - fix texture context bind reset in gl common using wrong texture
+   * Evas masking: Fix potential invalid access to mask image
+   * evas: CID 1323091 (CID1323091)
+   * evas: fix memory leak in evas_object_image_render_pre.
+   * ecore - let the ecore_con_eet_*.c examples build.
+   * efl - edje_cc - fix double close of embryo script fd's to tmp files
+   * ecore_x: free the allocated memory after used.
+   * ecore_x: fix the memory leak.
+   * evas: node that are used for a fill should not have a parent or they are going to be drawn.
+   * ector: fix cairo backend to properly multiply gradient color.
+   * edje_cache: remove duplicated call of _edje_file_coll_open
+   * Ector software gradient: Fix cast from integer to pointer of wrong type.
+   * eldbus: add dbus_pending NULL check
+   * edje: fix internal colorclass field
+   * evas_canvas3d:Broken source file for generation 3D shaders
+   * Evas smart: Add obj type safety check to callback_del.
+   * evas image object - dont update just if image is dirty
+   * edje_adit: fix typos in header
+   * Edje entry: Make cursors to null after free
+   * ecore_evas-x11: unset withdrawn state when window is mapped (T2745)
+   * Eo: fix double callback deletion
+   * evas - protect against invalid obj id in legacy wrapper func
+   * Eo: reduce memory usage across applications.
+   * upower: free version string splits
+   * ecore_win32: fix the mouse out behavior.
+   * ecore-audio: defer deletion of pulseaudio timer until after event processing
+   * doc/eldbus: fix parameter in document
+   * Edje: Fix IMAGE filters
+   * edje_cc: Fix inheritance of "no_render" flag
+   * evas render - async sw - fix context duplication by using proper dup call
+   * eldbus - make method calls less crasy since libdbus likes to abort
+   * Revert "eina: change default log level at which we display backtrace."
+   * eolian: fix out-of-bounds indexing on tokens (CID1324818)
+   * Eo: Remove dead code. (CID1240224)
+   * evas_box: fix children size and position calculation when padding is used for horizontal flow layout
+   * evas-3d: fix primitives
+   * Ecore pipe: clean up handling of already read information. (CID98384)
+   * Ecore Con: Fix possible timing attacks. (CID1039559, CID1039558)
+   * Ecore con: Prevent possible use of uninitialised buffer on the stack. (CID1316016)
 
 Changes since 1.14.0:
 ---------------------
