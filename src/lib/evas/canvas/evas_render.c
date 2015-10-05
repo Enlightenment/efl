@@ -2328,10 +2328,21 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
 
                        obj2 = (Evas_Object_Protected_Data *)eina_array_data_get
                          (&e->temporary_objects, j);
-
                        if (obj2 == top) break;
-
-                       _evas_render_cutout_add(e, context, obj2, off_x + fx, off_y + fy);
+#if 1
+                       if (
+                           RECTS_INTERSECT
+                           (obj->cur->cache.clip.x, obj->cur->cache.clip.y,
+                            obj->cur->cache.clip.w, obj->cur->cache.clip.h,
+                            obj2->cur->cache.clip.x, obj2->cur->cache.clip.y,
+                            obj2->cur->cache.clip.w, obj2->cur->cache.clip.h) &&
+                           RECTS_INTERSECT
+                           (obj2->cur->cache.clip.x, obj2->cur->cache.clip.y,
+                            obj2->cur->cache.clip.w, obj2->cur->cache.clip.h,
+                            ux, uy, uw, uh)
+                          )
+#endif
+                         _evas_render_cutout_add(e, context, obj2, off_x + fx, off_y + fy);
                     }
 #endif
                   clean_them |= evas_render_mapped(e, eo_obj, obj, context,
