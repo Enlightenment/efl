@@ -244,7 +244,7 @@ extern EAPI int _evas_log_dom_global;
 /*****************************************************************************/
 
 /* use exact rects for updates not tiles */
-/* #define RECTUPDATE */
+//#define NEWTILER
 #define TILESIZE 8
 #define IMG_MAX_SIZE 65000
 
@@ -433,7 +433,11 @@ typedef struct _Cutout_Rects            Cutout_Rects;
 typedef struct _Convert_Pal             Convert_Pal;
 
 typedef struct _Tilebuf                 Tilebuf;
-typedef struct _Tilebuf_Rect		Tilebuf_Rect;
+typedef struct _Tilebuf_Rect            Tilebuf_Rect;
+
+#ifndef NEWTILER
+typedef struct _Tilebuf_Tile            Tilebuf_Tile;
+#endif
 
 typedef struct _Evas_Common_Transform        Evas_Common_Transform;
 
@@ -1075,11 +1079,65 @@ struct _RGBA_Gfx_Compositor
    RGBA_Gfx_Pt_Func  (*composite_pixel_mask_pt_get)(Eina_Bool src_alpha, Eina_Bool dst_alpha);
 };
 
+#ifndef NEWTILER
+typedef struct list_node list_node_t;
+typedef struct list list_t;
+typedef struct rect rect_t;
+typedef struct rect_node rect_node_t;
+
+struct list_node
+{
+    struct list_node *next;
+};
+
+struct list
+{
+    struct list_node *head;
+    struct list_node *tail;
+};
+
+struct rect
+{
+    int left;
+    int top;
+    int right;
+    int bottom;
+    int width;
+    int height;
+    int area;
+};
+
+struct rect_node
+{
+    struct list_node _lst;
+    struct rect rect;
+};
+#endif
+
 struct _Tilebuf
 {
    int outbuf_w, outbuf_h;
+#ifdef NEWTILER
    void *region;
+#else
+   struct {
+      short w, h;
+   } tile_size;
+   int need_merge;
+   list_t rects;
+   struct {
+      int x, y, w, h;
+   } prev_add, prev_del;
+   Eina_Bool strict_tiles : 1;
+#endif
 };
+
+#ifndef NEWTILER
+struct _Tilebuf_Tile
+{
+   Eina_Bool redraw : 1;
+};
+#endif
 
 struct _Tilebuf_Rect
 {
