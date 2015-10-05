@@ -447,6 +447,8 @@ ecore_wl_animator_source_set(Ecore_Animator_Source source)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (_ecore_wl_server_mode) return EINA_FALSE;
+
    /* FIXME: check existing source. If custom, disable anim_callbacks */
 
    /* based on the animator source we are using, setup or destroy callbacks */
