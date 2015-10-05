@@ -277,33 +277,6 @@ evas_object_rectangle_render_pre(Evas_Object *eo_obj,
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
 	goto done;
      }
-   /* if it changed geometry - and obviously not visibility or color */
-   /* calculate differences since we have a constant color fill */
-   /* we really only need to update the differences */
-   if ((obj->cur->geometry.x != obj->prev->geometry.x) ||
-       (obj->cur->geometry.y != obj->prev->geometry.y) ||
-       (obj->cur->geometry.w != obj->prev->geometry.w) ||
-       (obj->cur->geometry.h != obj->prev->geometry.h))
-     {
-	evas_rects_return_difference_rects(&obj->layer->evas->clip_changes,
-					   obj->cur->geometry.x,
-					   obj->cur->geometry.y,
-					   obj->cur->geometry.w,
-					   obj->cur->geometry.h,
-					   obj->prev->geometry.x,
-					   obj->prev->geometry.y,
-					   obj->prev->geometry.w,
-					   obj->prev->geometry.h);
-////	rl = evas_rects_return_difference_rects(obj->cur->cache.geometry.x,
-////						obj->cur->cache.geometry.y,
-////						obj->cur->cache.geometry.w,
-////						obj->cur->cache.geometry.h,
-////						obj->prev->cache.geometry.x,
-////						obj->prev->cache.geometry.y,
-////						obj->prev->cache.geometry.w,
-////						obj->prev->cache.geometry.h);
-	goto done;
-     }
    /* it obviously didn't change - add a NO obscure - this "unupdates"  this */
    /* area so if there were updates for it they get wiped. don't do it if we */
    /* arent fully opaque and we are visible */
@@ -330,6 +303,33 @@ evas_object_rectangle_render_pre(Evas_Object *eo_obj,
          x + obj->layer->evas->framespace.x,
          y + obj->layer->evas->framespace.y,
          w, h);
+     }
+   /* if it changed geometry - and obviously not visibility or color */
+   /* calculate differences since we have a constant color fill */
+   /* we really only need to update the differences */
+   if ((obj->cur->geometry.x != obj->prev->geometry.x) ||
+       (obj->cur->geometry.y != obj->prev->geometry.y) ||
+       (obj->cur->geometry.w != obj->prev->geometry.w) ||
+       (obj->cur->geometry.h != obj->prev->geometry.h))
+     {
+	evas_rects_return_difference_rects(&obj->layer->evas->clip_changes,
+					   obj->cur->geometry.x,
+					   obj->cur->geometry.y,
+					   obj->cur->geometry.w,
+					   obj->cur->geometry.h,
+					   obj->prev->geometry.x,
+					   obj->prev->geometry.y,
+					   obj->prev->geometry.w,
+					   obj->prev->geometry.h);
+////	rl = evas_rects_return_difference_rects(obj->cur->cache.geometry.x,
+////						obj->cur->cache.geometry.y,
+////						obj->cur->cache.geometry.w,
+////						obj->cur->cache.geometry.h,
+////						obj->prev->cache.geometry.x,
+////						obj->prev->cache.geometry.y,
+////						obj->prev->cache.geometry.w,
+////						obj->prev->cache.geometry.h);
+	goto done;
      }
    done:
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, eo_obj, is_v, was_v);
