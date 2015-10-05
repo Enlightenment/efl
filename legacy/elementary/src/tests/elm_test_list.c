@@ -241,6 +241,6 @@ void elm_test_list(TCase *tc)
  tcase_add_test(tc, elm_list_atspi_selection_all_children_select);
  tcase_add_test(tc, elm_list_atspi_selection_clear);
  tcase_add_test(tc, elm_list_atspi_selection_child_deselect);
+ tcase_add_test(tc, elm_atspi_children_parent);
 #endif
-   tcase_add_test(tc, elm_atspi_children_parent);
 }
