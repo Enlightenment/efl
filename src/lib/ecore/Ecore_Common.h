@@ -248,6 +248,10 @@ EAPI void ecore_main_loop_glib_always_integrate_disable(void);
  * handlers, etc. Once everything is done, before entering again on idle state,
  * any callback set as @c Idle_Enterer will be called.
  *
+ * This function should be called once only from the same thread that
+ * initted ecore, eina etc. (ecore_init(), eina_init(), ...) and should never
+ * be nested. Never call it from within an instance of itself.
+ *
  * Each main loop iteration is done by calling ecore_main_loop_iterate()
  * internally.
  *
