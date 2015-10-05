@@ -22,6 +22,7 @@
 # endif
 
 extern int _ecore_wl_log_dom;
+extern Eina_Bool _ecore_wl_server_mode;
 
 # ifdef ECORE_WL_DEFAULT_LOG_COLOR
 #  undef ECORE_WL_DEFAULT_LOG_COLOR
