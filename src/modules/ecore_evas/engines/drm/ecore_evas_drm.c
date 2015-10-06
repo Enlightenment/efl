@@ -419,9 +419,10 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
    ee->prop.withdrawn = EINA_TRUE;
    ee->alpha = EINA_FALSE;
 
-   ee->can_async_render = 1;
-   if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER"))
-     ee->can_async_render = 0;
+   /* NB: Disable async rendering for egl. Not Applicable as EGL is sync only */
+   ee->can_async_render = 0;
+   /* if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER")) */
+   /*   ee->can_async_render = 0; */
 
    /* try to initialize evas */
    ee->evas = evas_new();
