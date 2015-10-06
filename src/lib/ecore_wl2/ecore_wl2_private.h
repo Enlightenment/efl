@@ -52,6 +52,7 @@ struct _Ecore_Wl2_Display
    struct
      {
         struct wl_display *display;
+        struct wl_registry *registry;
         struct wl_compositor *compositor;
         struct wl_subcompositor *subcompositor;
         struct wl_data_device_manager *data_device_manager;

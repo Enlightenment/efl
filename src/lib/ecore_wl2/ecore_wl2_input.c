@@ -1221,8 +1221,7 @@ _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id)
    _ecore_wl2_input_cursor_setup(input);
 
    input->wl.seat =
-     wl_registry_bind(wl_display_get_registry(display->wl.display),
-                      id, &wl_seat_interface, 1);
+     wl_registry_bind(display->wl.registry, id, &wl_seat_interface, 1);
 
    display->inputs =
      eina_inlist_append(display->inputs, EINA_INLIST_GET(input));
