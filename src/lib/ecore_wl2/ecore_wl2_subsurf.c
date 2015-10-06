@@ -69,3 +69,11 @@ surf_err:
    free(subsurf);
    return NULL;
 }
+
+EAPI void
+ecore_wl2_subsurface_del(Ecore_Wl2_Subsurface *subsurface)
+{
+   EINA_SAFETY_ON_NULL_RETURN(subsurface);
+
+   _ecore_wl2_subsurf_free(subsurface);
+}
