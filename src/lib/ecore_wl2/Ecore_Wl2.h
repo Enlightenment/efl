@@ -623,6 +623,18 @@ EAPI struct wl_surface *ecore_wl2_subsurface_surface_get(Ecore_Wl2_Subsurface *s
  */
 EAPI void ecore_wl2_subsurface_position_set(Ecore_Wl2_Subsurface *subsurface, int x, int y);
 
+/**
+ * Get the position of this subsurface, relative to its parent surface.
+ * Coordinates will be returned in x and y if non-NULL.
+ *
+ * @param subsurface the subsurface
+ * @param x coordinate in the parent surface, or NULL to ignore
+ * @param y coordinate in the parent surface, or NULL to ignore
+ *
+ * @ingroup Ecore_Wl2_Subsurface_Group
+ */
+EAPI void ecore_wl2_subsurface_position_get(Ecore_Wl2_Subsurface *subsurface, int *x, int *y);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
