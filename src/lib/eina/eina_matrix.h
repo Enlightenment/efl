@@ -520,7 +520,7 @@ EAPI void eina_matrix4_values_get(const Eina_Matrix4 *m,
  * This function returns the determinant of the matrix @p m. No check
  * is done on @p m.
  *
- * @since 1.15
+ * @since 1.16
  */
 EAPI double eina_matrix4_determinant(const Eina_Matrix4 *m);
 
@@ -533,7 +533,7 @@ EAPI double eina_matrix4_determinant(const Eina_Matrix4 *m);
  * This function returns the determinant of the matrix @p m. No check
  * is done on @p m.
  *
- * @since 1.15
+ * @since 1.16
  */
 EAPI Eina_Bool eina_matrix4_normalized(Eina_Matrix4 *out,
                                        const Eina_Matrix4 *in);
@@ -545,7 +545,7 @@ EAPI Eina_Bool eina_matrix4_normalized(Eina_Matrix4 *out,
  * @param in The matrix.
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  *
- * @since 1.15
+ * @since 1.16
  */
 EAPI Eina_Bool eina_matrix4_inverse(Eina_Matrix4 *out, const Eina_Matrix4 *in);
 
@@ -557,7 +557,7 @@ EAPI Eina_Bool eina_matrix4_inverse(Eina_Matrix4 *out, const Eina_Matrix4 *in);
  *
  * Just going to swap row and column.
  *
- * @since 1.15
+ * @since 1.16
  */
 EAPI void eina_matrix4_transpose(Eina_Matrix4 *out, const Eina_Matrix4 *in);
 
@@ -586,7 +586,7 @@ EAPI void eina_matrix3_matrix4_to(Eina_Matrix4 *m4, const Eina_Matrix3 *m3);
  *
  * @param out The matrix to set
  *
- * @since 1.15
+ * @since 1.16
  */
 EAPI void eina_matrix4_identity(Eina_Matrix4 *out);
 
@@ -597,7 +597,7 @@ EAPI void eina_matrix4_identity(Eina_Matrix4 *out);
  * @param a The first member of the multiplication
  * @param b The second member of the multiplication
  *
- * @since 1.15
+ * @since 1.16
  */
 EAPI void eina_matrix4_multiply(Eina_Matrix4 *out,
                                 const Eina_Matrix4 *a, const Eina_Matrix4 *b);
