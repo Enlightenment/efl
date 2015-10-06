@@ -85,3 +85,17 @@ ecore_wl2_subsurface_surface_get(Ecore_Wl2_Subsurface *subsurface)
 
    return subsurface->wl.surface;
 }
+
+EAPI void
+ecore_wl2_subsurface_position_set(Ecore_Wl2_Subsurface *subsurface, int x, int y)
+{
+   EINA_SAFETY_ON_NULL_RETURN(subsurface);
+   EINA_SAFETY_ON_NULL_RETURN(subsurface->wl.subsurface);
+
+   if ((subsurface->x == x) && (subsurface->y == y)) return;
+
+   subsurface->x = x;
+   subsurface->y = y;
+
+   wl_subsurface_set_position(subsurface->wl.subsurface, x, y);
+}

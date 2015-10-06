@@ -610,6 +610,19 @@ EAPI void ecore_wl2_subsurface_del(Ecore_Wl2_Subsurface *subsurface);
  */
 EAPI struct wl_surface *ecore_wl2_subsurface_surface_get(Ecore_Wl2_Subsurface *subsurface);
 
+/**
+ * Set the position of this subsurface, relative to its parent surface.
+ * If subsurface is defined and the x, y coordinates differ from the currently
+ * tracked position, this also schedules a sub-surface position change.
+ *
+ * @param subsurface the subsurface
+ * @param x coordinate in the parent surface
+ * @param y coordinate in the parent surface
+ *
+ * @ingroup Ecore_Wl2_Subsurface_Group
+ */
+EAPI void ecore_wl2_subsurface_position_set(Ecore_Wl2_Subsurface *subsurface, int x, int y);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
