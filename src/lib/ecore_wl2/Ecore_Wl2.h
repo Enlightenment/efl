@@ -662,6 +662,33 @@ EAPI void ecore_wl2_subsurface_place_above(Ecore_Wl2_Subsurface *subsurface, str
  */
 EAPI void ecore_wl2_subsurface_place_below(Ecore_Wl2_Subsurface *subsurface, struct wl_surface *surface);
 
+/**
+ * Enables or disables sub-surface synchronization
+ *
+ * When synchronization is enabled, surface commits on the subsurface
+ * will be cached and only applied when the parent surface's state is
+ * applied.  This ensures atomic updates of the parent and all of its
+ * synchronized sub-surfaces.
+ *
+ * When synchronization is disabled, commits will apply to the pending
+ * state directly without caching, just like a normal wl_surface.  If
+ * there are already cached events when this is set, those events are
+ * applied simultaneously with the desync event.
+ *
+ * Attempting to enable synchronization when the subsurface already
+ * thinks it's sync'd, or desync when it believes its desync'd, will
+ * be trivially ignored and will not generate a Wayland event.
+ *
+ * See Wayland's set_desync documentation for further details and
+ * exceptional cases.
+ *
+ * @param subsurface the subsurface
+ * @param sync true to enable synchronization, false to desynchronize
+ *
+ * @ingroup Ecore_Wl2_Subsurface_Group
+ */
+EAPI void ecore_wl2_subsurface_sync_set(Ecore_Wl2_Subsurface *subsurface, Eina_Bool sync);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
