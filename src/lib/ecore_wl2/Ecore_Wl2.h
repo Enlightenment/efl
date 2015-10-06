@@ -689,6 +689,25 @@ EAPI void ecore_wl2_subsurface_place_below(Ecore_Wl2_Subsurface *subsurface, str
  */
 EAPI void ecore_wl2_subsurface_sync_set(Ecore_Wl2_Subsurface *subsurface, Eina_Bool sync);
 
+/**
+ * Set an opaque region for the given subsurface.
+ *
+ * This is an optimization hint to the compositor to allow it avoid
+ * redrawing content unnecessarily.  Note that marking transparent
+ * content as opaque will cause repaint artifacts.
+ *
+ * Use a 0x0 region size to unset the opaque region.
+ *
+ * @param subsurface the subsurface
+ * @param x coordinate in the parent surface
+ * @param y coordinate in the parent surface
+ * @param w width to set as opaque
+ * @param h height to set as opaque
+ *
+ * @ingroup Ecore_Wl2_Subsurface_Group
+ */
+EAPI void ecore_wl2_subsurface_opaque_region_set(Ecore_Wl2_Subsurface *subsurface, int x, int y, int w, int h);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */

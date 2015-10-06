@@ -143,3 +143,35 @@ ecore_wl2_subsurface_sync_set(Ecore_Wl2_Subsurface *subsurface, Eina_Bool sync)
    else
      wl_subsurface_set_desync(subsurface->wl.subsurface);
 }
+
+EAPI void
+ecore_wl2_subsurface_opaque_region_set(Ecore_Wl2_Subsurface *subsurface, int x, int y, int w, int h)
+{
+   EINA_SAFETY_ON_NULL_RETURN(subsurface);
+   EINA_SAFETY_ON_NULL_RETURN(subsurface->wl.subsurface);
+
+   if ((w > 0) && (h > 0))
+     {
+        Ecore_Wl2_Window *parent;
+
+        parent = subsurface->parent;
+        if (parent)
+          {
+             struct wl_region *region;
+
+             region =
+               wl_compositor_create_region(parent->display->wl.compositor);
+             if (!region)
+               {
+                  ERR("Failed to create opaque region: %m");
+                  return;
+               }
+
+             wl_region_add(region, x, y, w, h);
+             wl_surface_set_opaque_region(subsurface->wl.surface, region);
+             wl_region_destroy(region);
+          }
+     }
+   else
+     wl_surface_set_opaque_region(subsurface->wl.surface, NULL);
+}
