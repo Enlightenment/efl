@@ -218,6 +218,7 @@
 
 - (void) mouseMoved:(NSEvent*) event
 {
+   unsigned int time = (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff);
    Ecore_Event_Mouse_Move * ev = calloc(1, sizeof(Ecore_Event_Mouse_Move));
    if (!ev) return;
 
