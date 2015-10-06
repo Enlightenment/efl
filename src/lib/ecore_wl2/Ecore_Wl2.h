@@ -593,11 +593,22 @@ EAPI Ecore_Wl2_Subsurface *ecore_wl2_subsurface_new(Ecore_Wl2_Window *window);
 /**
  * Destroy the given subsurface, as well as the surface associated with it.
  *
- * @param ess the subsurface
+ * @param subsurface the subsurface
  *
  * @ingroup Ecore_Wl2_Subsurface_Group
  */
 EAPI void ecore_wl2_subsurface_del(Ecore_Wl2_Subsurface *subsurface);
+
+/**
+ * Get the wl_surface for this subsurface
+ *
+ * @param subsurface the subsurface
+ *
+ * @return the wl_surface associated with this subsurface, or NULL on failure
+ *
+ * @ingroup Ecore_Wl2_Subsurface_Group
+ */
+EAPI struct wl_surface *ecore_wl2_subsurface_surface_get(Ecore_Wl2_Subsurface *subsurface);
 
 /* # ifdef __cplusplus */
 /* } */

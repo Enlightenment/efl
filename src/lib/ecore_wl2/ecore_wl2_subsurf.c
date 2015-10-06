@@ -77,3 +77,11 @@ ecore_wl2_subsurface_del(Ecore_Wl2_Subsurface *subsurface)
 
    _ecore_wl2_subsurf_free(subsurface);
 }
+
+EAPI struct wl_surface *
+ecore_wl2_subsurface_surface_get(Ecore_Wl2_Subsurface *subsurface)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(subsurface, NULL);
+
+   return subsurface->wl.surface;
+}
