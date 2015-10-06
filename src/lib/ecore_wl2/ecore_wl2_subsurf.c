@@ -126,3 +126,20 @@ ecore_wl2_subsurface_place_below(Ecore_Wl2_Subsurface *subsurface, struct wl_sur
 
    wl_subsurface_place_below(subsurface->wl.subsurface, surface);
 }
+
+EAPI void
+ecore_wl2_subsurface_sync_set(Ecore_Wl2_Subsurface *subsurface, Eina_Bool sync)
+{
+   EINA_SAFETY_ON_NULL_RETURN(subsurface);
+   EINA_SAFETY_ON_NULL_RETURN(subsurface->wl.subsurface);
+
+   sync = !!sync;
+   if (subsurface->sync == sync) return;
+
+   subsurface->sync = sync;
+
+   if (subsurface->sync)
+     wl_subsurface_set_sync(subsurface->wl.subsurface);
+   else
+     wl_subsurface_set_desync(subsurface->wl.subsurface);
+}
