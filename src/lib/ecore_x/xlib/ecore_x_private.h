@@ -19,9 +19,6 @@
 #ifdef ECORE_XCURSOR
 #include <X11/Xcursor/Xcursor.h>
 #endif /* ifdef ECORE_XCURSOR */
-#ifdef ECORE_XPRINT
-#include <X11/extensions/Print.h>
-#endif /* ifdef ECORE_XPRINT */
 #ifdef ECORE_XINERAMA
 #include <X11/extensions/Xinerama.h>
 #endif /* ifdef ECORE_XINERAMA */
