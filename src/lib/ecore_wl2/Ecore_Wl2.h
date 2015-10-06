@@ -590,6 +590,15 @@ EAPI void ecore_wl2_input_ungrab(Ecore_Wl2_Input *input);
  */
 EAPI Ecore_Wl2_Subsurface *ecore_wl2_subsurface_new(Ecore_Wl2_Window *window);
 
+/**
+ * Destroy the given subsurface, as well as the surface associated with it.
+ *
+ * @param ess the subsurface
+ *
+ * @ingroup Ecore_Wl2_Subsurface_Group
+ */
+EAPI void ecore_wl2_subsurface_del(Ecore_Wl2_Subsurface *subsurface);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
