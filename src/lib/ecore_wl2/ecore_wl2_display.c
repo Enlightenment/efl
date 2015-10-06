@@ -207,6 +207,38 @@ _cb_globals_hash_del(void *data)
    free(global);
 }
 
+static Eina_Bool
+_cb_connect_idle(void *data)
+{
+   Ecore_Wl2_Display *ewd;
+   int ret = 0;
+
+   ewd = data;
+   if (!ewd) return ECORE_CALLBACK_RENEW;
+
+   ret = wl_display_get_error(ewd->wl.display);
+   if (ret < 0) goto err;
+
+   ret = wl_display_dispatch_pending(ewd->wl.display);
+   if (ret < 0) goto err;
+
+   ret = wl_display_flush(ewd->wl.display);
+   if ((ret < 0) && (errno == EAGAIN))
+     ecore_main_fd_handler_active_set(ewd->fd_hdl,
+                                      (ECORE_FD_READ | ECORE_FD_WRITE));
+
+   return ECORE_CALLBACK_RENEW;
+
+err:
+   if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
+     {
+        ERR("Wayland Socket Error: %s", strerror(errno));
+        return ECORE_CALLBACK_CANCEL;
+     }
+
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void
 _cb_sync_done(void *data, struct wl_callback *cb, uint32_t serial EINA_UNUSED)
 {
@@ -264,6 +296,7 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
 
    if (ewd->xkb_context) xkb_context_unref(ewd->xkb_context);
 
+   if (ewd->idle_enterer) ecore_idle_enterer_del(ewd->idle_enterer);
    if (ewd->fd_hdl) ecore_main_fd_handler_del(ewd->fd_hdl);
 
    eina_hash_free(ewd->globals);
@@ -376,6 +409,8 @@ ecore_wl2_display_connect(const char *name)
      ecore_main_fd_handler_add(wl_display_get_fd(ewd->wl.display),
                                ECORE_FD_READ | ECORE_FD_WRITE | ECORE_FD_ERROR,
                                _cb_connect_data, ewd, NULL, NULL);
+
+   ewd->idle_enterer = ecore_idle_enterer_add(_cb_connect_idle, ewd);
 
    wl_registry_add_listener(wl_display_get_registry(ewd->wl.display),
                             &_registry_listener, ewd);
