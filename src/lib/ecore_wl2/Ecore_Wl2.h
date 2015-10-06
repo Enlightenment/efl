@@ -635,6 +635,21 @@ EAPI void ecore_wl2_subsurface_position_set(Ecore_Wl2_Subsurface *subsurface, in
  */
 EAPI void ecore_wl2_subsurface_position_get(Ecore_Wl2_Subsurface *subsurface, int *x, int *y);
 
+/**
+ * Place subsurface on layer above a reference surface
+ *
+ * Moves the @param subsurface to just above the reference @param
+ * surface, changing the z-order.  The reference @param surface must
+ * be either a sibling or parent surface, else a protocol error will
+ * be generated.
+ *
+ * @param subsurface the subsurface
+ * @param surface the sibling reference surface
+ *
+ * @ingroup Ecore_Wl2_Subsurface_Group
+ */
+EAPI void ecore_wl2_subsurface_place_above(Ecore_Wl2_Subsurface *subsurface, struct wl_surface *surface);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
