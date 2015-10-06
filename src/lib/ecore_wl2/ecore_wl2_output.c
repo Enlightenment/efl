@@ -67,8 +67,7 @@ _ecore_wl2_output_add(Ecore_Wl2_Display *display, unsigned int id)
    output->display = display;
 
    output->wl_output =
-     wl_registry_bind(wl_display_get_registry(display->wl.display),
-                      id, &wl_output_interface, 2);
+     wl_registry_bind(display->wl.registry, id, &wl_output_interface, 2);
 
    display->outputs =
      eina_inlist_append(display->outputs, EINA_INLIST_GET(output));

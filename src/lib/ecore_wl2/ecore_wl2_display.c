@@ -309,7 +309,7 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
    if (ewd->wl.compositor) wl_compositor_destroy(ewd->wl.compositor);
    if (ewd->wl.subcompositor) wl_subcompositor_destroy(ewd->wl.subcompositor);
 
-   wl_registry_destroy(wl_display_get_registry(ewd->wl.display));
+   if (ewd->wl.registry) wl_registry_destroy(ewd->wl.registry);
 
    wl_display_flush(ewd->wl.display);
 }
@@ -411,9 +411,8 @@ ecore_wl2_display_connect(const char *name)
                                _cb_connect_data, ewd, NULL, NULL);
 
    ewd->idle_enterer = ecore_idle_enterer_add(_cb_connect_idle, ewd);
-
-   wl_registry_add_listener(wl_display_get_registry(ewd->wl.display),
-                            &_registry_listener, ewd);
+   ewd->wl.registry = wl_display_get_registry(ewd->wl.display);
+   wl_registry_add_listener(ewd->wl.registry, &_registry_listener, ewd);
 
    ewd->xkb_context = xkb_context_new(0);
    if (!ewd->xkb_context) goto context_err;
@@ -432,7 +431,7 @@ ecore_wl2_display_connect(const char *name)
 
 context_err:
    ecore_main_fd_handler_del(ewd->fd_hdl);
-   wl_registry_destroy(wl_display_get_registry(ewd->wl.display));
+   wl_registry_destroy(ewd->wl.registry);
    wl_display_disconnect(ewd->wl.display);
 
 connect_err:
@@ -560,5 +559,5 @@ ecore_wl2_display_registry_get(Ecore_Wl2_Display *display)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
 
-   return wl_display_get_registry(display->wl.display);
+   return display->wl.registry;
 }
