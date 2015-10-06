@@ -11566,6 +11566,17 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 	  {0, 1, 2, 1, 0}
      };
 
+   /* [FIXME!!!] rare case when relayout was not called: cache.clip made
+    * the object not visible (eg. clipped out), but it is actually visible
+    * in this context (eg. inside a proxy) - UGLY DIRTY FIX */
+   if (obj->layer->evas->is_frozen &&
+       (o->changed || o->content_changed || o->format_changed || o->obstacle_changed))
+       _relayout_if_needed(eo_obj, o);
+
+   /* If there are no paragraphs and thus there are no lines,
+    * there's nothing left to do. */
+   if (!o->paragraphs) return;
+
    /* render object to surface with context, and offxet by x,y */
    ENFN->context_multiplier_unset(output, context);
    ENFN->context_multiplier_set(output, context, 0, 0, 0, 0);
@@ -11577,9 +11588,6 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
                               obj->cur->geometry.w,
                               obj->cur->geometry.h);
    clip = ENFN->context_clip_get(output, context, &cx, &cy, &cw, &ch);
-   /* If there are no paragraphs and thus there are no lines,
-    * there's nothing left to do. */
-   if (!o->paragraphs) return;
 
    ENFN->context_color_set(output, context, 0, 0, 0, 0);
    ca = cr = cg = cb = 0;
