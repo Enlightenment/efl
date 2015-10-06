@@ -134,12 +134,12 @@ EAPI Eina_Bool eina_matrix4_quaternion_to(Eina_Quaternion *rotation,
                                           Eina_Point_3D *translation,
                                           Eina_Point_3D *scale,
                                           Eina_Point_3D *skew,
-                                          const Eina_Matrix4 *m);
+                                          const Eina_Matrix4 *m); /**< @since 1.16 */
 EAPI void eina_quaternion_matrix4_to(Eina_Matrix4 *m,
                                      const Eina_Quaternion *rotation,
                                      const Eina_Quaternion *perspective,
                                      const Eina_Point_3D *translation,
                                      const Eina_Point_3D *scale,
-                                     const Eina_Point_3D *skew);
+                                     const Eina_Point_3D *skew); /**< @since 1.16 */
 
 #endif
