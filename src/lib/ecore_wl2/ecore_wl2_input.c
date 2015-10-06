@@ -1242,10 +1242,21 @@ void
 _ecore_wl2_input_del(Ecore_Wl2_Input *input)
 {
    Ecore_Wl2_Display *display;
+   Eina_Inlist *l = NULL;
+   Ecore_Wl2_Mouse_Down_Info *info = NULL;
 
    if (!input) return;
 
    display = input->display;
+
+   l = _ecore_wl2_mouse_down_info_list;
+   while (l)
+     {
+        info = EINA_INLIST_CONTAINER_GET(l, Ecore_Wl2_Mouse_Down_Info);
+        l = eina_inlist_remove(l, l);
+        free(info);
+     }
+   _ecore_wl2_mouse_down_info_list = NULL;
 
    if (input->repeat.timer) ecore_timer_del(input->repeat.timer);
 
