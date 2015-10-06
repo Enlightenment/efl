@@ -117,3 +117,12 @@ ecore_wl2_subsurface_place_above(Ecore_Wl2_Subsurface *subsurface, struct wl_sur
 
    wl_subsurface_place_above(subsurface->wl.subsurface, surface);
 }
+
+EAPI void
+ecore_wl2_subsurface_place_below(Ecore_Wl2_Subsurface *subsurface, struct wl_surface *surface)
+{
+   EINA_SAFETY_ON_NULL_RETURN(subsurface);
+   EINA_SAFETY_ON_NULL_RETURN(surface);
+
+   wl_subsurface_place_below(subsurface->wl.subsurface, surface);
+}
