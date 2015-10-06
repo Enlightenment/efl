@@ -1234,7 +1234,7 @@ _evas_render_mapped_context_clip_set(Evas_Public_Data *evas, Evas_Object *eo_obj
 
    if (proxy_render_data) proxy_src_clip = proxy_render_data->source_clip;
 
-   if (proxy_src_clip)
+   if (proxy_src_clip && !evas->is_frozen)
      {
         x = obj->cur->cache.clip.x;
         y = obj->cur->cache.clip.y;
@@ -1248,6 +1248,10 @@ _evas_render_mapped_context_clip_set(Evas_Public_Data *evas, Evas_Object *eo_obj
                            obj->cur->clipper->cur->cache.clip.h);
 
         ENFN->context_clip_set(ENDT, ctx, x + off_x, y + off_y, w, h);
+     }
+   else if (evas->is_frozen)
+     {
+        /* can't trust cache.clip here - clip should be in ctx already */
      }
    else
      {
@@ -1336,14 +1340,31 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
           }
         else if (proxy_src_clip)
           {
-             if ((!evas_object_is_visible(eo_obj, obj)) || (obj->clip.clipees)
-                 || (obj->cur->have_clipees) || (obj->no_render))
+             if (!evas->is_frozen) /* same as "if (proxy_render_data)" */
                {
-                  IFRD(obj->no_render, level, "  proxy_src_clip + no_render\n");
-                  IFRD(obj->clip.clipees || obj->cur->have_clipees, level, "  proxy_src_clip + has clippees\n");
-                  IFRD(!evas_object_is_visible(eo_obj, obj), level, "  not visible\n");
-                  RD(level, "}\n");
-                  return clean_them;
+                  if ((!evas_object_is_visible(eo_obj, obj)) || (obj->clip.clipees)
+                      || (obj->cur->have_clipees) || (obj->no_render))
+                    {
+                       IFRD(obj->no_render, level, "  no_render\n");
+                       IFRD(obj->clip.clipees || obj->cur->have_clipees, level, "  has clippees\n");
+                       IFRD(!evas_object_is_visible(eo_obj, obj), level, "  not visible\n");
+                       RD(level, "}\n");
+                       return clean_them;
+                    }
+               }
+             else
+               {
+                  /* can not trust cache.clip - evas is frozen */
+                  if (!obj->cur->visible || obj->clip.clipees || obj->no_render ||
+                      (!obj->cur->color.a && (obj->cur->render_op == EVAS_RENDER_BLEND)))
+                    {
+                       IFRD(obj->no_render, level, "  proxy_src_clip + no_render\n");
+                       IFRD(obj->clip.clipees || obj->cur->have_clipees, level, "  proxy_src_clip + has clippees\n");
+                       IFRD(!obj->cur->visible, level, "  proxy_src_clip + not visible\n");
+                       IFRD(!obj->cur->color.a && (obj->cur->render_op == EVAS_RENDER_BLEND), level, "  proxy_src_clip + 0 alpha\n");
+                       RD(level, "}\n");
+                       return clean_them;
+                    }
                }
           }
         else if (!evas_object_is_proxy_visible(eo_obj, obj) ||
