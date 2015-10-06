@@ -3594,7 +3594,6 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
         surface = re->outbuf_new_region_for_update(re->ob,
                                                    *x, *y, *w, *h,
                                                    cx, cy, cw, ch);
-//        printf("UP %i %i %ix%i | %i %i %ix%i\n", *x, *y, *w, *h, *cx, *cy, *cw, *ch);
         if ((!re->cur_rect) || (!surface))
           {
              evas_common_tilebuf_free_render_rects(re->rects);
@@ -3628,7 +3627,6 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
    Render_Engine_Software_Generic *re;
 
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
-//   printf("-------------------------------\n");
 
    re = (Render_Engine_Software_Generic *)data;
    if (re->outbuf_flush) re->outbuf_flush(re->ob, re->rects, render_mode);
