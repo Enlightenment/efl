@@ -108,3 +108,12 @@ ecore_wl2_subsurface_position_get(Ecore_Wl2_Subsurface *subsurface, int *x, int 
    if (x) *x = subsurface->x;
    if (y) *y = subsurface->y;
 }
+
+EAPI void
+ecore_wl2_subsurface_place_above(Ecore_Wl2_Subsurface *subsurface, struct wl_surface *surface)
+{
+   EINA_SAFETY_ON_NULL_RETURN(subsurface);
+   EINA_SAFETY_ON_NULL_RETURN(surface);
+
+   wl_subsurface_place_above(subsurface->wl.subsurface, surface);
+}
