@@ -30,8 +30,8 @@ static void _xcbob_sync(xcb_connection_t *conn);
 /* local variables */
 static Eina_List *_shmpool = NULL;
 static int _shmsize = 0;
-static int _shmlimit = (10 * 1024 * 1024);
-static const unsigned int _shmcountlimit = 32;
+static int _shmlimit = (20 * 1024 * 1024);
+static const unsigned int _shmcountlimit = 128;
 
 static Eina_Spinlock shmpool_lock;
 #define SHMPOOL_LOCK() eina_spinlock_take(&shmpool_lock)
@@ -1158,7 +1158,10 @@ _find_xcbob(xcb_connection_t *conn, xcb_visualtype_t *vis, int depth, int w, int
              fitness = szdif;
           }
      }
-   if ((fitness > (100 * 100)) || (!xcbob)) 
+   if (
+       (fitness > (400 * 400)) ||
+       (!xcbob)
+      )
      {
         SHMPOOL_UNLOCK();
         return evas_software_xcb_output_buffer_new(conn, vis, depth, 
