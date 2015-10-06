@@ -508,7 +508,8 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
    if (ob->info->callback.pre_swap)
      ob->info->callback.pre_swap(ob->info->callback.data, ob->evas);
 
-   if ((glsym_eglSwapBuffersWithDamage) && (ob->swap_mode != MODE_FULL))
+   if ((glsym_eglSwapBuffersWithDamage) && (rects) &&
+       (ob->swap_mode != MODE_FULL))
      {
         EGLint num = 0, *result = NULL, i = 0;
         Tilebuf_Rect *r;
