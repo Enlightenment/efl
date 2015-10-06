@@ -2163,9 +2163,9 @@ _evas_image_scale_hint_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Scale_Hint
         int stride = 0;
 
         if (ENFN->image_scale_hint_set)
-          ENFN->image_scale_hint_set(ENFN->image_native_get, o->engine_data, o->scale_hint);
+          ENFN->image_scale_hint_set(ENDT, o->engine_data, o->scale_hint);
         if (ENFN->image_stride_get)
-          ENFN->image_stride_get(ENFN->image_native_get, o->engine_data, &stride);
+          ENFN->image_stride_get(ENDT, o->engine_data, &stride);
         else
           stride = o->cur->image.w * 4;
 
@@ -2196,7 +2196,7 @@ _evas_image_content_hint_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Content_
         int stride = 0;
 
         if (ENFN->image_content_hint_set)
-          ENFN->image_content_hint_set(ENFN->image_native_get, o->engine_data, o->content_hint);
+          ENFN->image_content_hint_set(ENDT, o->engine_data, o->content_hint);
         if (ENFN->image_stride_get)
           ENFN->image_stride_get(ENDT, o->engine_data, &stride);
         else
