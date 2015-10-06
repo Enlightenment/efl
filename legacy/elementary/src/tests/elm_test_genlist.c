@@ -205,7 +205,7 @@ START_TEST(elm_atspi_children_parent)
    itc.func.content_get = gl_content_get;
 
    it = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
-   elm_gengrid_item_fields_update(it, "*.", ELM_GENGRID_ITEM_FIELD_CONTENT);
+   elm_genlist_item_fields_update(it, "*.", ELM_GENGRID_ITEM_FIELD_CONTENT);
 
    ck_assert(content != NULL);
    eo_do(content, parent = elm_interface_atspi_accessible_parent_get());

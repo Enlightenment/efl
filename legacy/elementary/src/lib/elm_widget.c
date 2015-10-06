@@ -5810,6 +5810,11 @@ EOLIAN static char*
 _elm_widget_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
    const char *ret;
+   char *name;
+   eo_do_super(obj, ELM_WIDGET_CLASS, name = elm_interface_atspi_accessible_name_get());
+
+   if (name) return name;
+
    ret = elm_object_text_get(obj);
    if (!ret) return NULL;
 
