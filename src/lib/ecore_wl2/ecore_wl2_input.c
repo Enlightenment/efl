@@ -818,8 +818,7 @@ _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned 
         if (input->repeat.timer) ecore_timer_del(input->repeat.timer);
         input->repeat.timer = NULL;
      }
-   else if ((state == WL_KEYBOARD_KEY_STATE_PRESSED) &&
-            (xkb_keymap_key_repeats(input->xkb.keymap, code)))
+   else if (state == WL_KEYBOARD_KEY_STATE_PRESSED)
      {
         /* don't setup key repeat timer if not enabled */
         if (!input->repeat.enabled) return;
@@ -832,9 +831,8 @@ _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned 
           {
              input->repeat.timer =
                ecore_timer_add(input->repeat.rate, _keyboard_cb_repeat, input);
+             ecore_timer_delay(input->repeat.timer, input->repeat.delay);
           }
-
-        ecore_timer_delay(input->repeat.timer, input->repeat.delay);
      }
 }
 
