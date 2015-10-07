@@ -481,22 +481,22 @@ eet_flush2(Eet_File *ef)
 
    /* write data */
    data_offset = orig_data_offset;
+   pad = 0;
    for (i = 0; i < num; i++)
      {
         for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
           {
-             if (fwrite(efn->data, efn->size, 1, fp) != 1)
-               goto write_error;
-
-             data_offset += efn->size;
-
-             pad = (((data_offset + (ALIGN - 1)) / ALIGN) * ALIGN) - data_offset;
              if (pad > 0)
                {
                   data_offset += pad;
                   if (fwrite(zeros, pad, 1, fp) != 1)
                     goto write_error;
                }
+             if (fwrite(efn->data, efn->size, 1, fp) != 1)
+               goto write_error;
+
+             data_offset += efn->size;
+             pad = (((data_offset + (ALIGN - 1)) / ALIGN) * ALIGN) - data_offset;
           }
      }
 
@@ -882,10 +882,7 @@ eet_internal_read2(Eet_File *ef)
 
         /* compute the possible position of a signature */
         if (signature_base_offset < (efn->offset + efn->size))
-          {
-             signature_base_offset = efn->offset +
-               (((efn->size + (ALIGN - 1)) / ALIGN) * ALIGN);
-          }
+          signature_base_offset = efn->offset + efn->size;
      }
 
    ef->ed = NULL;
