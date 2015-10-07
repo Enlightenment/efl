@@ -1194,6 +1194,7 @@ struct _Evas_Object_Filter_Data
    } state;
    Eina_Bool            changed : 1;
    Eina_Bool            invalid : 1; // Code parse failed
+   Eina_Bool            async : 1;
 };
 
 struct _Evas_Object_Func
