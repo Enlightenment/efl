@@ -51,8 +51,6 @@
 #include "Eet.h"
 #include "Eet_private.h"
 
-#define EET_MAGIC_SIGN 0x1ee74271
-
 #ifdef HAVE_GNUTLS
 # define MAX_KEY_LEN   32
 # define MAX_IV_LEN    16

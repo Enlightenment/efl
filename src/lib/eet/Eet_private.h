@@ -334,4 +334,6 @@ void eet_mempool_shutdown(void);
 # define EET_ASSERT(Test, Do) if (Test == 0) {abort(); }
 #endif /* ifdef DNDEBUG */
 
+#define EET_MAGIC_SIGN 0x1ee74271
+
 #endif /* ifndef _EET_PRIVATE_H */

@@ -982,18 +982,36 @@ eet_internal_read2(Eet_File *ef)
 #ifdef HAVE_SIGNATURE
         const unsigned char *buffer = ((const unsigned char *)ef->data) +
           signature_base_offset;
-        ef->x509_der = eet_identity_check(ef->data,
-                                          signature_base_offset,
-                                          &ef->sha1,
-                                          &ef->sha1_length,
-                                          buffer,
-                                          ef->data_size - signature_base_offset,
-                                          &ef->signature,
-                                          &ef->signature_length,
-                                          &ef->x509_length);
+        unsigned long int sig_size = ef->data_size - signature_base_offset;
 
-        if (eet_test_close(!ef->x509_der, ef))
-          return NULL;
+        /* check that the signature is a sane size to bother even checking */
+        if (sig_size >= (3 * sizeof(int)))
+          {
+             int head[3];
+
+             /* check the signature has the magic number and sig + cert len
+              * + magic is sane */
+             memcpy(head, buffer, 3 * sizeof(int));
+             head[0] = ntohl(head[0]);
+             head[1] = ntohl(head[1]);
+             head[2] = ntohl(head[2]);
+             if ((head[0] == EET_MAGIC_SIGN) && (head[1] > 0) && (head[2] > 0))
+               {
+                  /* there appears to be an actual valid identity at the end
+                   * so now actually check it */
+                  ef->x509_der = eet_identity_check(ef->data,
+                                                    signature_base_offset,
+                                                    &ef->sha1,
+                                                    &ef->sha1_length,
+                                                    buffer,
+                                                    sig_size,
+                                                    &ef->signature,
+                                                    &ef->signature_length,
+                                                    &ef->x509_length);
+
+                  if (eet_test_close(!ef->x509_der, ef)) return NULL;
+               }
+          }
 
 #else /* ifdef HAVE_SIGNATURE */
         ERR(
