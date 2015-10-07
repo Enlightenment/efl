@@ -27,6 +27,8 @@ _render_engine_swapbuf_setup(int w, int h, unsigned int rotation, unsigned int d
 {
    Render_Engine *re;
    Outbuf *ob;
+   Render_Engine_Merge_Mode merge_mode = MERGE_SMART;
+   const char *s;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -51,6 +53,19 @@ _render_engine_swapbuf_setup(int w, int h, unsigned int rotation, unsigned int d
      goto err;
 
    re->outbuf_reconfigure = _evas_outbuf_reconfigure;
+
+   s = getenv("EVAS_WAYLAND_PARTIAL_MERGE");
+   if (s)
+     {
+        if ((!strcmp(s, "bounding")) || (!strcmp(s, "b")))
+          merge_mode = MERGE_BOUNDING;
+        else if ((!strcmp(s, "full")) || (!strcmp(s, "f")))
+          merge_mode = MERGE_FULL;
+        else if ((!strcmp(s, "smart")) || (!strcmp(s, "s")))
+          merge_mode = MERGE_SMART;
+     }
+
+   evas_render_engine_software_generic_merge_mode_set(&re->generic, merge_mode);
 
    /* return allocated render engine */
    return re;
