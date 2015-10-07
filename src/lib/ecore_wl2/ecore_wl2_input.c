@@ -511,8 +511,6 @@ _pointer_cb_leave(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
    window = _ecore_wl2_display_window_surface_find(input->display, surface);
    if (!window) return;
 
-   window->input = NULL;
-
    _ecore_wl2_input_mouse_out_send(input, window);
 }
 
@@ -525,13 +523,13 @@ _pointer_cb_motion(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned 
    input = data;
    if (!input) return;
 
-   /* get currently focused window */
-   window = input->focus.pointer;
-   if (!window) return;
-
    input->timestamp = timestamp;
    input->pointer.sx = wl_fixed_to_double(sx);
    input->pointer.sy = wl_fixed_to_double(sy);
+
+   /* get currently focused window */
+   window = input->focus.pointer;
+   if (!window) return;
 
    /* NB: Unsure if we need this just yet, so commented out for now */
    /* if ((input->pointer.sx > window->geometry.w) || */
@@ -752,7 +750,6 @@ _keyboard_cb_leave(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigne
 
    _ecore_wl2_input_focus_out_send(input, window);
 
-   window->input = NULL;
    input->focus.keyboard = NULL;
 }
 
