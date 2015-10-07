@@ -120,6 +120,7 @@ _ecore_exe_pipe_read_thread_cb(void *data)
              if (exe->close_threads)
                break;
 
+             Sleep(100);
              continue;
           }
 
@@ -189,6 +190,7 @@ _ecore_exe_pipe_error_thread_cb(void *data)
              if (exe->close_threads)
                break;
 
+             Sleep(100);
              continue;
           }
 
@@ -393,7 +395,7 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
 
    flags = exe->flags;
 
-   DBG("Creating process %s", exe->cmd);
+   DBG("Creating process %s with flags %d", exe->cmd, flags);
 
    if (!exe->cmd) goto error;
 
