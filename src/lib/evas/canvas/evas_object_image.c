@@ -69,8 +69,6 @@ struct _Evas_Object_Image_Pixels
 
    Evas_Video_Surface video;
    unsigned int video_caps;
-
-   int surface_w, surface_h; /* used by snapshot feature */
 };
 
 struct _Evas_Object_Image_State
@@ -3313,8 +3311,8 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    else if (obj->cur->snapshot)
      {
         pixels = o->engine_data;
-        imagew = o->pixels->surface_w;
-        imageh = o->pixels->surface_h;
+        imagew = o->cur->image.w;
+        imageh = o->cur->image.h;
         uvw = imagew;
         uvh = imageh;
      }
@@ -4790,24 +4788,24 @@ _evas_object_image_surface_get(Evas_Object *eo, Evas_Object_Protected_Data *obj)
    Evas_Image_Data *pd = eo_data_scope_get(eo, EVAS_IMAGE_CLASS);
 
    if (pd->engine_data &&
-       pd->pixels->surface_w == obj->cur->geometry.w &&
-       pd->pixels->surface_h == obj->cur->geometry.h)
+       (pd->cur->image.w == obj->cur->geometry.w) &&
+       (pd->cur->image.h == obj->cur->geometry.h))
      return pd->engine_data;
 
    if (pd->engine_data)
      ENFN->image_free(ENDT, pd->engine_data);
 
    // FIXME: alpha forced to 1 for now, need to figure out Evas alpha here
-   EINA_COW_PIXEL_WRITE_BEGIN(pd, pixi_write)
+   EINA_COW_IMAGE_STATE_WRITE_BEGIN(pd, state_write)
      {
         pd->engine_data = ENFN->image_map_surface_new(ENDT,
                                                       obj->cur->geometry.w,
                                                       obj->cur->geometry.h,
                                                       1);
-        pixi_write->surface_w = obj->cur->geometry.w;
-        pixi_write->surface_h = obj->cur->geometry.h;
+        state_write->image.w = obj->cur->geometry.w;
+        state_write->image.h = obj->cur->geometry.h;
      }
-   EINA_COW_PIXEL_WRITE_END(pd, pixi_write);
+   EINA_COW_IMAGE_STATE_WRITE_END(pd, state_write);
 
    return pd->engine_data;
 }
