@@ -110,6 +110,7 @@ struct _Ethumb_Client
    Eina_List             *pending_add;
    Eina_List             *pending_remove;
    Eina_List             *pending_gen;
+   Eina_List             *dbus_pending;
    struct
    {
       Ethumb_Client_Die_Cb cb;
@@ -199,8 +200,11 @@ _ethumb_client_free(Ethumb_Client *client)
 {
    void *data;
    Eldbus_Object *obj;
+   Eldbus_Pending *pending;
 
    if (client->invalid) return;
+   EINA_LIST_FREE(client->dbus_pending, pending)
+     eldbus_pending_cancel(pending);
    client->invalid = EINA_TRUE;
    EINA_LIST_FREE(client->pending_add, data)
      {
@@ -363,13 +367,14 @@ _ethumb_client_report_connect(Ethumb_Client *client, Eina_Bool success)
 }
 
 static void
-_ethumb_client_new_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+_ethumb_client_new_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    const char *errname, *errmsg;
    const char *opath;
    Ethumb_Client *client = data;
    Eldbus_Object *obj;
 
+   client->dbus_pending = eina_list_remove(client->dbus_pending, pending);
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
         ERR("Error: %s %s", errname, errmsg);
@@ -404,10 +409,14 @@ static void
 _ethumb_client_call_new(Ethumb_Client *client)
 {
    Eldbus_Message *msg;
+   Eldbus_Pending *pending;
    msg = eldbus_message_method_call_new(_ethumb_dbus_bus_name,
                                        _ethumb_dbus_path,
                                        _ethumb_dbus_interface, "new");
-   eldbus_connection_send(client->conn, msg, _ethumb_client_new_cb, client, -1);
+   pending = eldbus_connection_send(client->conn, msg,
+                                    _ethumb_client_new_cb, client, -1);
+   if (pending)
+     client->dbus_pending = eina_list_append(client->dbus_pending, pending);
 }
 
 static void
@@ -676,10 +685,13 @@ ethumb_client_on_server_die_callback_set(Ethumb_Client *client, Ethumb_Client_Di
  */
 
 static void
-_ethumb_client_ethumb_setup_cb(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+_ethumb_client_ethumb_setup_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    const char *errname, *errmsg;
    Eina_Bool result = 0;
+   Ethumb_Client *client = data;
+
+   client->dbus_pending = eina_list_remove(client->dbus_pending, pending);
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
@@ -773,6 +785,7 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
    const char *directory, *category;
    double video_time, video_start, video_interval;
    unsigned int video_ntimes, video_fps, document_page;
+   Eldbus_Pending *pending;
 
    EINA_SAFETY_ON_NULL_RETURN(client);
    EINA_SAFETY_ON_FALSE_RETURN(client->connected);
@@ -872,8 +885,10 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
 
    eldbus_message_iter_container_close(main_iter, array);
 
-   eldbus_proxy_send(client->proxy, msg, _ethumb_client_ethumb_setup_cb,
-                    client, -1);
+   pending = eldbus_proxy_send(client->proxy, msg,
+                               _ethumb_client_ethumb_setup_cb, client, -1);
+   if (pending)
+     client->dbus_pending = eina_list_append(client->dbus_pending, pending);
 }
 
 /**
