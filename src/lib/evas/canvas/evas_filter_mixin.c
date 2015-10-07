@@ -254,6 +254,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         fcow = FCOW_BEGIN(pd);
         fcow->output = filter_output;
         fcow->changed = EINA_FALSE;
+        fcow->async = do_async;
         if (!ok) fcow->invalid = EINA_TRUE;
         FCOW_END(fcow, pd);
 
@@ -518,7 +519,12 @@ _evas_filter_destructor(Eo *eo_obj, Evas_Filter_Data *pd)
    if (evas_object_filter_cow_default == pd->data) return;
 
    if (pd->data->output)
-     ENFN->image_free(ENDT, pd->data->output);
+     {
+        if (!pd->data->async)
+          ENFN->image_free(ENDT, pd->data->output);
+        else
+          evas_unref_queue_image_put(obj->layer->evas, pd->data->output);
+     }
    eina_hash_free(pd->data->sources);
    EINA_INLIST_FOREACH_SAFE(pd->data->data, il, db)
      {
