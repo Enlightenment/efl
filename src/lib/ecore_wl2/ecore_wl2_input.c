@@ -892,8 +892,8 @@ _keyboard_cb_repeat_setup(void *data, struct wl_keyboard *keyboard EINA_UNUSED, 
      }
 
    input->repeat.enabled = EINA_TRUE;
-   input->repeat.rate = (rate / 1000);
-   input->repeat.delay = (delay / 100);
+   input->repeat.rate = (rate / 10000);
+   input->repeat.delay = (delay / 1000);
 }
 
 static const struct wl_keyboard_listener _keyboard_listener =
