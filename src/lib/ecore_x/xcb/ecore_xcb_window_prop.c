@@ -518,7 +518,7 @@ ecore_x_window_prop_xid_list_change(Ecore_X_Window win,
                                     Ecore_X_ID     item,
                                     int            op)
 {
-   Ecore_X_ID *lst;
+   Ecore_X_ID *lst, *temp;
    int i = 0, num = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -545,8 +545,12 @@ ecore_x_window_prop_xid_list_change(Ecore_X_Window win,
         if (op == ECORE_X_PROP_LIST_REMOVE)
           goto done;
         num++;
+        temp = lst;
         lst = realloc(lst, num * sizeof(Ecore_X_ID));
-        lst[i] = item;
+        if (lst)
+           lst[i] = item;
+        else
+           lst = temp;
      }
    ecore_x_window_prop_xid_set(win, atom, type, lst, num);
 
