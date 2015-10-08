@@ -404,13 +404,13 @@ ecore_con_local_listen(Ecore_Con_Server *obj)
      }
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_USER)
-     snprintf(buf, sizeof(buf), "\\\\.\\pipe\\%s", svr->name);
+     snprintf(buf, sizeof(buf), "\\\\.\\pipe\\%s%ld", svr->name, GetProcessId(GetCurrentProcess()));
    else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_SYSTEM)
      {
         const char *computername;
 
         computername = getenv("COMPUTERNAME");
-        snprintf(buf, sizeof(buf), "\\\\%s\\pipe\\%s", computername, svr->name);
+        snprintf(buf, sizeof(buf), "\\\\%s\\pipe\\%s%ld", computername, svr->name, GetProcessId(GetCurrentProcess()));
      }
 
    svr->path = strdup(buf);
