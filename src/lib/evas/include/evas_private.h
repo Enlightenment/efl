@@ -1311,6 +1311,7 @@ struct _Evas_Func
    void *(*image_new_from_data)            (void *data, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
    void *(*image_new_from_copied_data)     (void *data, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
    void (*image_free)                      (void *data, void *image);
+   void *(*image_ref)                      (void *data, void *image);
    void (*image_size_get)                  (void *data, void *image, int *w, int *h);
    void *(*image_size_set)                 (void *data, void *image, int w, int h);
    void (*image_stride_get)                (void *data, void *image, int *stride);

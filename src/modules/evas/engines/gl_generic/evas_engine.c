@@ -527,6 +527,15 @@ eng_image_free(void *data, void *image)
    evas_gl_common_image_free(image);
 }
 
+static void *
+eng_image_ref(void *data EINA_UNUSED, void *image)
+{
+   Evas_GL_Image *im = image;
+   if (!im) return NULL;
+   im->references++;
+   return im;
+}
+
 static void
 eng_image_size_get(void *data EINA_UNUSED, void *image, int *w, int *h)
 {
@@ -2591,6 +2600,7 @@ module_open(Evas_Module *em)
    ORD(image_new_from_data);
    ORD(image_new_from_copied_data);
    ORD(image_free);
+   ORD(image_ref);
    ORD(image_size_get);
    ORD(image_size_set);
    ORD(image_dirty_region);

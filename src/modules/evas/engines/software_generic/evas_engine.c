@@ -1221,6 +1221,21 @@ eng_image_free(void *data EINA_UNUSED, void *image)
    evas_cache_image_drop(image);
 }
 
+static void *
+eng_image_ref(void *data EINA_UNUSED, void *image)
+{
+   if (!image) return NULL;
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get() && evas_cache2_image_cached(image))
+     {
+        evas_cache2_image_ref(image);
+        return image;
+     }
+#endif
+   evas_cache_image_ref(image);
+   return image;
+}
+
 static void
 eng_image_size_get(void *data EINA_UNUSED, void *image, int *w, int *h)
 {
@@ -3980,6 +3995,7 @@ static Evas_Func func =
      eng_image_new_from_data,
      eng_image_new_from_copied_data,
      eng_image_free,
+     eng_image_ref,
      eng_image_size_get,
      eng_image_size_set,
      NULL, // eng_image_stride_get
