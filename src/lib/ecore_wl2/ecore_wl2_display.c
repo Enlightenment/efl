@@ -4,6 +4,8 @@
 
 #include "ecore_wl2_private.h"
 
+static Eina_Hash *_client_displays = NULL;
+
 static void
 _xdg_shell_cb_ping(void *data EINA_UNUSED, struct xdg_shell *shell, uint32_t serial)
 {
@@ -296,7 +298,14 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
 
    if (ewd->xkb_context) xkb_context_unref(ewd->xkb_context);
 
-   if (ewd->idle_enterer) ecore_idle_enterer_del(ewd->idle_enterer);
+   if (ewd->idle_enterer)
+     {
+        /* remove this client display from hash */
+        eina_hash_del(_client_displays, ewd->name, ewd);
+
+        ecore_idle_enterer_del(ewd->idle_enterer);
+     }
+
    if (ewd->fd_hdl) ecore_main_fd_handler_del(ewd->fd_hdl);
 
    eina_hash_free(ewd->globals);
@@ -312,6 +321,8 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
    if (ewd->wl.registry) wl_registry_destroy(ewd->wl.registry);
 
    wl_display_flush(ewd->wl.display);
+
+   if (ewd->name) free(ewd->name);
 }
 
 Ecore_Wl2_Window *
@@ -351,21 +362,26 @@ ecore_wl2_display_create(const char *name)
 
    if (!name)
      {
-        ewd->name = wl_display_add_socket_auto(ewd->wl.display);
-        if (!ewd->name)
+        const char *n;
+
+        n = wl_display_add_socket_auto(ewd->wl.display);
+        if (!n)
           {
              ERR("Failed to add display socket: %m");
              goto socket_err;
           }
+
+        ewd->name = strdup(n);
      }
    else
      {
-        ewd->name = strdup(name);
         if (wl_display_add_socket(ewd->wl.display, name))
           {
              ERR("Failed to add display socket: %m");
              goto socket_err;
           }
+
+        ewd->name = strdup(name);
      }
 
    setenv("WAYLAND_DISPLAY", ewd->name, 1);
@@ -392,10 +408,41 @@ ecore_wl2_display_connect(const char *name)
 {
    Ecore_Wl2_Display *ewd;
    struct wl_callback *cb;
+   const char *n;
+
+   if (!_client_displays)
+     _client_displays = eina_hash_string_superfast_new(NULL);
+
+   if (!name)
+     {
+        /* client wants to connect to default display */
+        n = getenv("WAYLAND_DISPLAY");
+        if (n)
+          {
+             /* we have a default wayland display */
+
+             /* check hash of cached client displays for this name */
+             ewd = eina_hash_find(_client_displays, n);
+             if (ewd) return ewd;
+          }
+     }
+   else
+     {
+        /* client wants to connect to specific display */
+
+        /* check hash of cached client displays for this name */
+        ewd = eina_hash_find(_client_displays, name);
+        if (ewd) return ewd;
+     }
 
    /* allocate space for display structure */
    ewd = calloc(1, sizeof(Ecore_Wl2_Display));
    if (!ewd) return NULL;
+
+   if (name)
+     ewd->name = strdup(name);
+   else if (n)
+     ewd->name = strdup(n);
 
    ewd->globals = eina_hash_int32_new(_cb_globals_hash_del);
 
@@ -419,6 +466,9 @@ ecore_wl2_display_connect(const char *name)
    ewd->xkb_context = xkb_context_new(0);
    if (!ewd->xkb_context) goto context_err;
 
+   /* add this new client display to hash */
+   eina_hash_add(_client_displays, ewd->name, ewd);
+
    /* NB: If we are connecting (as a client), then we will need to setup
     * a callback for display_sync and wait for it to complete. There is no
     * other option here as we need the compositor, shell, etc, to be setup
@@ -438,6 +488,7 @@ context_err:
 
 connect_err:
    eina_hash_free(ewd->globals);
+   free(ewd->name);
    free(ewd);
    return NULL;
 }
