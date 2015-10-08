@@ -58,13 +58,13 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
          }
       }
       @property auto_update {
-         [[Change the label of hoversel to that of selected item automatically.]]
+         [[Update icon and text of hoversel same to those of selected item automatically.]]
          get{
          }
          set{
          }
          values {
-            auto_update: bool; [[$true if the label is changed automatically or $false otherwise]]
+            auto_update: bool; [[$true if hoversel is updated automatically or $false otherwise]]
          }
       }
       hover_begin {
