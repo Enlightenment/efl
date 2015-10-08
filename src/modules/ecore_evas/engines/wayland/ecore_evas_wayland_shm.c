@@ -357,6 +357,8 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
 
    if (ee->visible) return;
    ee->visible = 1;
+   ee->should_be_visible = 1;
+   ee->draw_ok = EINA_TRUE;
    if (ee->func.fn_show) ee->func.fn_show(ee);
 }
 
@@ -392,6 +394,7 @@ _ecore_evas_wl_hide(Ecore_Evas *ee)
    if (!ee->visible) return;
    ee->visible = 0;
    ee->should_be_visible = 0;
+   ee->draw_ok = EINA_FALSE;
 
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
