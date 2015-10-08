@@ -2180,7 +2180,6 @@ ecore_x_randr_crtc_info_free(Ecore_X_Randr_Crtc_Info *info)
              if (info->outputs) free(info->outputs);
              if (info->possible) free(info->possible);
              free(info);
-             info = NULL;
           }
      }
 #endif
