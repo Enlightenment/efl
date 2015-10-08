@@ -2367,6 +2367,9 @@ _item_new(Evas_Object *obj,
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      _access_widget_item_register(it);
 
+   eo_do(icon_obj, elm_interface_atspi_accessible_parent_set(VIEW(it)));
+   eo_do(VIEW(it), elm_interface_atspi_accessible_parent_set(eo_it));
+
    if (_item_icon_set(icon_obj, "toolbar/", icon))
      {
         it->icon = icon_obj;
@@ -2434,11 +2437,7 @@ _item_new(Evas_Object *obj,
      _item_select(it);
 
    if (_elm_config->atspi_mode)
-     {
-        eo_do(icon_obj, elm_interface_atspi_accessible_parent_set(eo_it));
-        eo_do(VIEW(it), elm_interface_atspi_accessible_parent_set(eo_it));
         elm_interface_atspi_accessible_added(eo_it);
-     }
 
    return it;
 }

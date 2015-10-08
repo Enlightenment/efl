@@ -1578,6 +1578,14 @@ _elm_win_evas_object_smart_show(Eo *obj, Elm_Win_Data *sd)
 
    TRAP(sd, show);
 
+   if (_elm_config->atspi_mode)
+     {
+        Eo *bridge = _elm_atspi_bridge_get();
+        elm_interface_atspi_window_created_signal_emit(obj);
+        if (bridge)
+           elm_interface_atspi_accessible_children_changed_added_signal_emit(elm_atspi_bridge_root_get(bridge), obj);
+     }
+
    if (sd->shot.info) _shot_handle(sd);
 }
 
@@ -1615,7 +1623,12 @@ _elm_win_evas_object_smart_hide(Eo *obj, Elm_Win_Data *sd)
 #endif
      }
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_window_deactivated_signal_emit(obj);
+     {
+        Eo *bridge = _elm_atspi_bridge_get();
+        elm_interface_atspi_window_destroyed_signal_emit(obj);
+        if (bridge)
+           elm_interface_atspi_accessible_children_changed_del_signal_emit(elm_atspi_bridge_root_get(bridge), obj);
+     }
 
    if (_elm_win_policy_quit_triggered(obj))
      _elm_win_flush_cache_and_exit(obj);
@@ -3867,7 +3880,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
      }
 
    eo_do(obj, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_WINDOW));
-   if (_elm_config->atspi_mode == ELM_ATSPI_MODE_ON)
+   if (_elm_config->atspi_mode)
      elm_interface_atspi_window_created_signal_emit(obj);
 
    evas_object_show(sd->edje);

@@ -397,8 +397,11 @@ _item_content_realize(Elm_Gen_Item *it,
              snprintf(buf, sizeof(buf), "elm,state,%s,visible", key);
              edje_object_signal_emit(target, buf, "elm");
 
-             if (_elm_config->atspi_mode)
-               eo_do(content, elm_interface_atspi_accessible_parent_set(EO_OBJ(it)));
+             if (_elm_config->atspi_mode && eo_isa(content, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+               {
+                  eo_do(content, elm_interface_atspi_accessible_parent_set(EO_OBJ(it)));
+                  elm_interface_atspi_accessible_children_changed_added_signal_emit(EO_OBJ(it), content);
+               }
           }
      }
 }

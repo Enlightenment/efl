@@ -540,9 +540,6 @@ _elm_widget_evas_object_smart_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUS
    if (_elm_config->atspi_mode)
      {
         elm_interface_atspi_accessible_added(obj);
-        Eo *parent;
-        eo_do(obj, parent = elm_interface_atspi_accessible_parent_get());
-        if (parent) elm_interface_atspi_accessible_children_changed_added_signal_emit(parent, obj);
         if (_elm_widget_onscreen_is(obj))
            elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_SHOWING, EINA_TRUE);
      }
@@ -563,12 +560,7 @@ _elm_widget_evas_object_smart_hide(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUS
    eina_iterator_free(it);
 
    if (_elm_config->atspi_mode)
-     {
-        Eo *parent;
-        eo_do(obj, parent = elm_interface_atspi_accessible_parent_get());
-        if (parent) elm_interface_atspi_accessible_children_changed_del_signal_emit(parent, obj);
-        elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_SHOWING, EINA_FALSE);
-     }
+     elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_SHOWING, EINA_FALSE);
 }
 
 EOLIAN static void
@@ -1208,6 +1200,13 @@ _elm_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
 
         elm_widget_display_mode_set(sobj,
               evas_object_size_hint_display_mode_get(obj));
+        if (_elm_config->atspi_mode && !sdc->on_create)
+          {
+             Elm_Interface_Atspi_Accessible *aparent;
+             eo_do(sobj, aparent = elm_interface_atspi_accessible_parent_get());
+             if (obj == aparent)
+                elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, sobj);
+          }
      }
 
 end:
@@ -1278,6 +1277,13 @@ _elm_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
                   if (sdp->child_can_focus) break;
                   parent = sdp->parent_obj;
                }
+          }
+        if (_elm_config->atspi_mode && !sd->on_destroy)
+          {
+             Elm_Interface_Atspi_Accessible *aparent;
+             eo_do(sobj, aparent = elm_interface_atspi_accessible_parent_get());
+             if (obj == aparent)
+                elm_interface_atspi_accessible_children_changed_del_signal_emit(obj, sobj);
           }
 
         ELM_WIDGET_DATA_GET(sobj, sdc);
@@ -5709,15 +5715,17 @@ _elm_widget_eo_base_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 EOLIAN static void
 _elm_widget_eo_base_destructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
+   sd->on_destroy = EINA_TRUE;
    eo_do(obj,
          elm_interface_atspi_accessible_description_set(NULL),
          elm_interface_atspi_accessible_name_set(NULL),
          elm_interface_atspi_accessible_translation_domain_set(NULL),
          elm_interface_atspi_accessible_relationships_clear()
          );
-   elm_interface_atspi_accessible_removed(obj);
-
    eo_do_super(obj, ELM_WIDGET_CLASS, eo_destructor());
+   sd->on_destroy = EINA_FALSE;
+
+   elm_interface_atspi_accessible_removed(obj);
 }
 
 EOLIAN static Eina_Bool
