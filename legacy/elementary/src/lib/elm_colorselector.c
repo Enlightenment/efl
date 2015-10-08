@@ -754,7 +754,7 @@ _create_colorpicker(Evas_Object *obj)
         elm_object_style_set(spinner, style);
         evas_object_data_set(spinner, "parent", obj);
         eo_do(spinner, eo_event_callback_add
-              (ELM_COLORSELECTOR_EVENT_CHANGED, _spinner_changed_cb, sd));
+              (ELM_SPINNER_EVENT_CHANGED, _spinner_changed_cb, sd));
         elm_spinner_editable_set(spinner, EINA_TRUE);
         elm_spinner_interval_set(spinner, 0.1);
         elm_spinner_min_max_set(spinner, 0, 255);
