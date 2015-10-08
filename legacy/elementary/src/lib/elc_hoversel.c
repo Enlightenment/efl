@@ -437,7 +437,7 @@ _activate(Evas_Object *obj)
               eo_event_callback_add(ELM_WIDGET_EVENT_UNFOCUSED, _item_unfocused_cb, item));
      }
 
-   if (sd->scroll_enabled)
+   if (sd->scrollable)
      {
         _create_scroller(obj, sd);
         elm_object_content_set(sd->scr, bx);
@@ -586,7 +586,7 @@ _on_move_resize(void * data,
 {
    Elm_Hoversel_Data *sd = data;
 
-   if (sd->scroll_enabled)
+   if (sd->scrollable)
      _resizing_eval(obj, sd);
 }
 
@@ -970,15 +970,15 @@ _elm_hoversel_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNU
 }
 
 EOLIAN void
-_elm_hoversel_scrollable_set(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd, Eina_Bool scroll)
+_elm_hoversel_scrollable_set(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd, Eina_Bool scrollable)
 {
-   sd->scroll_enabled = !!scroll;
+   sd->scrollable = !!scrollable;
 }
 
 EOLIAN Eina_Bool
 _elm_hoversel_scrollable_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
-   return sd->scroll_enabled;
+   return sd->scrollable;
 }
 
 EOLIAN void
