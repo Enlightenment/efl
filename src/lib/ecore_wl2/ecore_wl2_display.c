@@ -368,6 +368,8 @@ ecore_wl2_display_create(const char *name)
           }
      }
 
+   setenv("WAYLAND_DISPLAY", ewd->name, 1);
+
    loop = wl_display_get_event_loop(ewd->wl.display);
 
    ewd->fd_hdl =
