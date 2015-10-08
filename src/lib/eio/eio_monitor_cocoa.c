@@ -330,6 +330,8 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
 
    if (!_stream)
      {
+        free(monitor_path);
+        free(backend);
         eio_monitor_fallback_add(monitor);
         return;
      }
