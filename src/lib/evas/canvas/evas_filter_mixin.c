@@ -238,8 +238,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
         // Steal output and release previous
         filter_output = evas_filter_buffer_backing_steal(filter, EVAS_FILTER_BUFFER_OUTPUT_ID);
-        if (filter_output != previous)
-          evas_filter_buffer_backing_release(filter, previous);
+        evas_filter_buffer_backing_release(filter, previous);
 
         // Request rendering from the object itself (child class)
         evas_filter_program_padding_get(pd->data->chain, &l, &r, &t, &b);

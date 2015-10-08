@@ -237,11 +237,8 @@ struct _Evas_Filter_Buffer
    Evas_Object *proxy;
 
    Eina_Bool alpha_only : 1;  // 1 channel (A) instead of 4 (RGBA)
-   Eina_Bool allocated : 1;   // allocated on demand, belongs to this context
-   Eina_Bool allocated_gl : 1; // allocated on demand the glimage
    Eina_Bool transient : 1;   // temporary buffer (automatic allocation)
    Eina_Bool locked : 1;      // internal flag
-   Eina_Bool stolen : 1;      // stolen by the client
    Eina_Bool delete_me : 1;   // request delete asap (after released by client)
    Eina_Bool dirty : 1;       // Marked as dirty as soon as a command writes to it
 };
