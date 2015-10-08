@@ -1193,7 +1193,7 @@ _ecore_exe_data_generic_handler(void             *data,
                 * died, this won't do any harm as it must have died
                 * recently and the pid has not had a chance to recycle.
                 * It is also a paranoid catchall, coz the usual ecore_signal
-                * mechenism should kick in.  But let's give it a good
+                * mechanism should kick in.  But let's give it a good
                 * kick in the head anyway.
                 */
                ecore_exe_terminate(obj);
