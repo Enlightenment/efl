@@ -1172,9 +1172,25 @@ unlock:
 }
 
 #ifdef _WIN32
+static void *
+_ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler)
+{
+   if (win32_handler->delete_me)
+     {
+        ERR("win32 handler %p deleted twice", win32_handler);
+        return NULL;
+     }
+
+   win32_handler->delete_me = EINA_TRUE;
+   win32_handlers_to_delete = eina_list_append(win32_handlers_to_delete, win32_handler);
+   return win32_handler->data;
+}
+
 EAPI void *
 ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler)
 {
+   void *ret = NULL;
+
    if (!win32_handler) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!ECORE_MAGIC_CHECK(win32_handler, ECORE_MAGIC_WIN32_HANDLER))
@@ -1183,14 +1199,8 @@ ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler)
                          "ecore_main_win32_handler_del");
         return NULL;
      }
-   if (win32_handler->delete_me)
-     {
-        ERR("win32 handler %p deleted twice", win32_handler);
-        return NULL;
-     }
-   win32_handler->delete_me = EINA_TRUE;
-   win32_handlers_to_delete = eina_list_append(win32_handlers_to_delete, win32_handler);
-   return win32_handler->data;
+   ret = _ecore_main_win32_handler_del(win32_handler);
+   return ret;
 }
 
 #else
