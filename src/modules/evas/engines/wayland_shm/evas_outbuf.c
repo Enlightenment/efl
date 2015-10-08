@@ -160,7 +160,10 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode
 
         /* loop the buffer regions and assign to result */
         EINA_ARRAY_ITER_NEXT(&ob->priv.onebuf_regions, i, rect, it)
-          result[i] = *rect;
+          {
+             result[i] = *rect;
+             evas_rectangle_free(rect);
+          }
 
         _evas_shm_surface_post(ob->surface, result, n);
 
