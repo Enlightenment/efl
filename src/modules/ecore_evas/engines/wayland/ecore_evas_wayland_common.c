@@ -58,23 +58,15 @@ _ecore_evas_wl_common_render_updates_process(Ecore_Evas *ee, Eina_List *updates)
 {
    int rend = 0;
 
-   if ((ee->visible) && (updates))
+   if (((ee->visible) && (ee->draw_ok)) ||
+       ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
+       ((ee->should_be_visible) && (ee->prop.override)))
      {
-        /* Eina_List *l = NULL; */
-        /* Eina_Rectangle *r; */
-        /* Ecore_Evas_Engine_Wl_Data *wdata; */
-
-        /* if (!(wdata = ee->engine.data)) return 0; */
-
-        /* EINA_LIST_FOREACH(updates, l, r) */
-        /*   ecore_wl_window_damage(wdata->win, */
-        /*                          r->x, r->y, r->w, r->h); */
-
-        /* ecore_wl_window_commit(wdata->win); */
-        /* ecore_wl_flush(); */
-
-        _ecore_evas_idle_timeout_update(ee);
-        rend = 1;
+        if (updates)
+          {
+             _ecore_evas_idle_timeout_update(ee);
+             rend = 1;
+          }
      }
    else
      evas_norender(ee->evas);
