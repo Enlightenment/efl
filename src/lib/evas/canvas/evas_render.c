@@ -13,12 +13,13 @@
 #include "evas_render2.h"
 
 /* Enable this for extra verbose rendering debug logs */
-//#define REND_DBG
+//#define REND_DBG 1
 #define STDOUT_DBG
 
 #ifdef REND_DBG
 static FILE *dbf = NULL;
 static int __RD_level = 0;
+static int __RD_enable = REND_DBG;
 
 static void
 rend_dbg(const char *txt)
@@ -36,7 +37,7 @@ rend_dbg(const char *txt)
    fflush(dbf);
 }
 #define RD(xxxx, args...) \
-   do { \
+   do { if (__RD_enable) { \
       char __tmpbuf[4096]; int __tmpi; \
       __RD_level = xxxx; \
       if (xxxx) { \
@@ -47,9 +48,9 @@ rend_dbg(const char *txt)
       } \
       snprintf(__tmpbuf, sizeof(__tmpbuf), ##args); \
       rend_dbg(__tmpbuf); \
-   } while (0)
+   } } while (0)
 #define IFRD(ifcase, xxxx, args...) \
-   if (ifcase) { \
+   if (__RD_enable && (ifcase)) { \
       char __tmpbuf[4096]; int __tmpi; \
       __RD_level = xxxx; \
       if (xxxx) { \
@@ -2218,7 +2219,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
                                   int fx, int fy,
                                   Eina_Bool alpha,
                                   Eina_Bool do_async,
-                                  unsigned int *offset)
+                                  unsigned int *offset, int level)
 {
    Evas_Object *eo_obj;
    Evas_Object_Protected_Data *obj;
@@ -2227,7 +2228,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
    Eina_Bool clean_them = EINA_FALSE;
 
    eina_evlog("+render_setup", eo_e, 0.0, NULL);
-   RD(0, "  [--- UPDATE %i %i %ix%i\n", ux, uy, uw, uh);
+   RD(level, "  [--- UPDATE %i %i %ix%i\n", ux, uy, uw, uh);
 
    off_x = cx - ux;
    off_y = cy - uy;
@@ -2281,9 +2282,9 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
         if (obj == top) break;
 
         /* if it's in our outpout rect and it doesn't clip anything */
-        RD(0, "    OBJ: [%p", obj);
+        RD(level, "    OBJ: [%p", obj);
         IFRD(obj->name, 0, " '%s'", obj->name);
-        RD(0, "] '%s' %i %i %ix%i\n", obj->type, obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h);
+        RD(level, "] '%s' %i %i %ix%i\n", obj->type, obj->cur->geometry.x, obj->cur->geometry.y, obj->cur->geometry.w, obj->cur->geometry.h);
         if ((evas_object_is_in_output_rect(eo_obj, obj, ux - fx, uy - fy, uw, uh) ||
              (obj->is_smart)) &&
             (!obj->clip.clipees) &&
@@ -2295,7 +2296,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
           {
              int x, y, w, h;
 
-             RD(0, "      DRAW (vis: %i, a: %i, clipees: %p)\n", obj->cur->visible, obj->cur->color.a, obj->clip.clipees);
+             RD(level, "      DRAW (vis: %i, a: %i, clipees: %p)\n", obj->cur->visible, obj->cur->color.a, obj->clip.clipees);
              if ((e->temporary_objects.count > *offset) &&
                  (eina_array_data_get(&e->temporary_objects, *offset) == obj))
                (*offset)++;
@@ -2370,7 +2371,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
                                                    surface, off_x + fx,
                                                    off_y + fy, 0,
                                                    cx, cy, cw, ch,
-                                                   NULL, 4,
+                                                   NULL, level + 3,
                                                    EINA_FALSE,
                                                    do_async);
                   e->engine.func->context_cutout_clear(e->engine.data.output,
@@ -2388,7 +2389,8 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
    eina_evlog("-render_objects", eo_e, 0.0, NULL);
    /* free obscuring objects list */
    OBJS_ARRAY_CLEAN(&e->temporary_objects);
-   RD(0, "  ---]\n");
+   if (top) RD(level, "   ---] SNAPSHOT [obj:%p sfc:%p]\n", top, surface);
+   else RD(level, "  ---]\n");
 
    return clean_them;
 }
@@ -2706,6 +2708,7 @@ evas_render_updates_internal(Evas *eo_e,
 
                        pseudo_canvas = _evas_object_image_surface_get(obj->object, obj);
 
+                       RD(0, "  SNAPSHOT [obj:%p sfc:%p ur:%d,%d %dx%d]\n", obj, pseudo_canvas, ur.x, ur.y, ur.w, ur.h);
                        ctx = e->engine.func->context_new(e->engine.data.output);
                        clean_them |= evas_render_updates_internal_loop(eo_e, e, pseudo_canvas, ctx,
                                                                        obj,
@@ -2713,7 +2716,7 @@ evas_render_updates_internal(Evas *eo_e,
                                                                        cr.x, cr.y, cr.w, cr.h,
                                                                        fx, fy, alpha,
                                                                        do_async,
-                                                                       &offset);
+                                                                       &offset, 1);
                        e->engine.func->context_free(e->engine.data.output, ctx);
 
                        // Force the object has changed for filter to take it into
@@ -2753,7 +2756,7 @@ evas_render_updates_internal(Evas *eo_e,
                                                              cx, cy, cw, ch,
                                                              fx, fy, alpha,
                                                              do_async,
-                                                             &offset);
+                                                             &offset, 0);
              if (!do_async)
                {
                   eina_evlog("+render_push", eo_e, 0.0, NULL);
