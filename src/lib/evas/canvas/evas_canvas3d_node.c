@@ -1093,9 +1093,6 @@ evas_canvas3d_node_mesh_collect(Evas_Canvas3D_Node *node, void *data)
         return EINA_FALSE;
      }
 
-   if (pd->type == EVAS_CANVAS3D_NODE_TYPE_MESH)
-     scene_data->mesh_nodes = eina_list_append(scene_data->mesh_nodes, node);
-
    return EINA_TRUE;
 }
 
