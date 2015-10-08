@@ -1546,6 +1546,7 @@ _ecore_main_fd_handlers_bads_rem(void)
                        ERR("Fd function err returned 0, remove it");
                        if (!fdh->delete_me)
                          {
+                            _ecore_main_fdh_poll_del(fdh);
                             fdh->delete_me = EINA_TRUE;
                             fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fdh);
                          }
@@ -1558,6 +1559,7 @@ _ecore_main_fd_handlers_bads_rem(void)
                   ERR("Problematic fd found at %d! setting it for delete", fdh->fd);
                   if (!fdh->delete_me)
                     {
+                       _ecore_main_fdh_poll_del(fdh);
                        fdh->delete_me = EINA_TRUE;
                        fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fdh);
                     }
@@ -1673,6 +1675,7 @@ _ecore_main_fd_handlers_call(void)
                      {
                         if (!fdh->delete_me)
                           {
+                             _ecore_main_fdh_poll_del(fdh);
                              fdh->delete_me = EINA_TRUE;
                              fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fdh);
                           }
