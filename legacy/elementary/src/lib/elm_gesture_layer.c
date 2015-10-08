@@ -1781,6 +1781,9 @@ static Eina_Bool
 _long_tap_timeout(void *data)
 {
    Gesture_Info *gesture = data;
+   Long_Tap_Type *st = gesture->data;
+
+   st->info.timestamp = ecore_time_get() * 1000;
 
    _state_set(gesture, ELM_GESTURE_STATE_MOVE,
               gesture->data, EINA_TRUE);
@@ -2109,13 +2112,13 @@ _n_long_tap_test(Evas_Object *obj,
         _compute_taps_center(st, &st->info.x, &st->info.y, pe);
         st->center_x = st->info.x;  /* Update coords for */
         st->center_y = st->info.y;  /* reporting START  */
+        st->info.timestamp = pe->timestamp;
 
         /* This is the first mouse down we got */
         if (eina_list_count(st->touched) == 1)
           {
              _state_set(gesture, ELM_GESTURE_STATE_START,
                    gesture->data, EINA_FALSE);
-             st->info.timestamp = pe->timestamp;
 
              /* To test long tap */
              /* When this timer expires, gesture STARTED */
@@ -2135,6 +2138,7 @@ _n_long_tap_test(Evas_Object *obj,
       case EVAS_CALLBACK_MOUSE_UP:
         st->touched = _touched_device_remove(st->touched, pe);
         _compute_taps_center(st, &st->center_x, &st->center_y, pe);
+        st->info.timestamp = pe->timestamp;
         if (st->info.n)
           {
              if (gesture->state == ELM_GESTURE_STATE_MOVE)
@@ -2161,6 +2165,7 @@ _n_long_tap_test(Evas_Object *obj,
              Evas_Coord y = 0;
 
              _compute_taps_center(st, &x, &y, pe);
+             st->info.timestamp = pe->timestamp;
              /* ABORT if user moved fingers out of tap area */
              if (!_inside(x, y, st->center_x, st->center_y,
                       sd->tap_finger_size))
