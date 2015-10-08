@@ -3290,7 +3290,7 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                    void *output, void *context, void *surface, int x, int y,
                    int l, int t, int r, int b, Eina_Bool do_async)
 {
-   Evas_Image_Data *o = obj->private_data;
+   Evas_Image_Data *o = obj->private_data, *oi = NULL;
    int imagew, imageh, uvw, uvh;
    void *pixels;
 
@@ -3298,6 +3298,8 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
       (o->cur->source ?
        eo_data_scope_get(o->cur->source, EVAS_OBJECT_CLASS):
        NULL);
+   if (source && (source->type == o_type))
+     oi = eo_data_scope_get(o->cur->source, MY_CLASS);
 
    if (o->cur->scene)
      {
@@ -3333,13 +3335,16 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         uvw = imagew;
         uvh = imageh;
      }
-   else if (source->type == o_type &&
-            ((Evas_Image_Data *)eo_data_scope_get(o->cur->source, MY_CLASS))->engine_data)
+   else if (oi && oi->engine_data)
      {
-        Evas_Image_Data *oi;
-
-        oi = eo_data_scope_get(o->cur->source, MY_CLASS);
         pixels = oi->engine_data;
+        if (oi->has_filter)
+          {
+             void *output_buffer = eo_do_ret(source->object, output_buffer,
+                                             evas_filter_output_buffer_get());
+             if (output_buffer)
+               pixels = output_buffer;
+          }
         imagew = oi->cur->image.w;
         imageh = oi->cur->image.h;
         uvw = source->cur->geometry.w;

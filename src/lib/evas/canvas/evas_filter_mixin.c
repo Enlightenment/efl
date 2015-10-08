@@ -584,4 +584,10 @@ _evas_filter_efl_gfx_filter_data_set(Eo *obj EINA_UNUSED, Evas_Filter_Data *pd,
    FCOW_END(fcow, pd);
 }
 
+EOLIAN void *
+_evas_filter_output_buffer_get(Eo *obj EINA_UNUSED, Evas_Filter_Data *pd)
+{
+   return pd->data->output;
+}
+
 #include "evas_filter.eo.c"

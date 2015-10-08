@@ -57,6 +57,17 @@ mixin Evas.Filter (Efl.Gfx.Filter)
            Virtual, to be implemented in the parent class.
          ]]
       }
+      @property output_buffer @protected {
+         get {
+            [[Retrieve cached output buffer, if any.
+
+              Does not increment the reference count.
+            ]]
+         }
+         values {
+            buffer: void*;
+         }
+      }
    }
    implements {
       Efl.Gfx.Filter.program.set;
