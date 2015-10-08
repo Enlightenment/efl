@@ -30,6 +30,7 @@
 #include "ecore_evas_private.h"
 #include "ecore_evas_x11.h"
 #include "ecore_evas_wayland.h"
+#include "ecore_evas_cocoa.h"
 #include "ecore_evas_extn.h"
 #include "ecore_evas_win32.h"
 
@@ -3991,6 +3992,15 @@ ecore_evas_wayland_window_get2(const Ecore_Evas *ee)
    EINA_SAFETY_ON_NULL_RETURN_VAL(iface, NULL);
 
    return iface->window_get2(ee);
+}
+
+EAPI Ecore_Cocoa_Window *
+ecore_evas_cocoa_window_get(const Ecore_Evas *ee)
+{
+   Ecore_Evas_Interface_Cocoa *iface;
+   iface = (Ecore_Evas_Interface_Cocoa *)_ecore_evas_interface_get(ee, "opengl_cocoa");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, NULL);
+   return iface->window_get(ee);
 }
 
 EAPI Ecore_Evas *

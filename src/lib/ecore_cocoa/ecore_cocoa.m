@@ -61,6 +61,9 @@ ecore_cocoa_init(void)
    /* Start events monitoring */
    [NSApp run];
 
+   if (!_ecore_cocoa_window_init())
+     return --_ecore_cocoa_init_count;
+
    return _ecore_cocoa_init_count;
 }
 

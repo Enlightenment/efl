@@ -26,6 +26,7 @@
 #endif
 
 #include <Eina.h>
+#include "Ecore_Cocoa_Cursor.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -164,6 +165,10 @@ EAPI void ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
 EAPI int ecore_cocoa_titlebar_height_get(void);
 
 EAPI Ecore_Cocoa_Window_Id ecore_cocoa_window_get_window_id(Ecore_Cocoa_Window *window);
+
+
+EAPI void ecore_cocoa_window_cursor_set(Ecore_Cocoa_Window *win, Ecore_Cocoa_Cursor c);
+EAPI void ecore_cocoa_window_cursor_show(Ecore_Cocoa_Window *win, Eina_Bool show);
 
 #ifdef __cplusplus
 }
