@@ -479,29 +479,6 @@ _on_parent_del(void *data,
 }
 
 static void
-_on_table_del(void *data,
-              Evas *e EINA_UNUSED,
-              Evas_Object *obj EINA_UNUSED,
-              void *event_info EINA_UNUSED)
-{
-   ELM_HOVERSEL_DATA_GET(data, sd);
-
-   sd->tbl = NULL;
-   sd->spacer = NULL;
-   sd->scr = NULL;
-   elm_layout_sizing_eval(data);
-}
-
-static void
-_size_hints_changed_cb(void *data,
-                       Evas *e EINA_UNUSED,
-                       Evas_Object *obj EINA_UNUSED,
-                       void *event_info EINA_UNUSED)
-{
-   elm_layout_sizing_eval(data);
-}
-
-static void
 _elm_hoversel_item_elm_widget_item_part_text_set(Eo *eo_it EINA_UNUSED,
                                             Elm_Hoversel_Item_Data *it,
                                             const char *part,
