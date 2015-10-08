@@ -118,6 +118,11 @@ struct _Elm_Win_Data
       Eina_Bool opaque_dirty : 1;
    } wl;
 #endif
+#ifdef HAVE_ELEMENTARY_COCOA
+   struct {
+      Ecore_Cocoa_Window *win;
+   } cocoa;
+#endif
 
    Ecore_Job                     *deferred_resize_job;
    Ecore_Job                     *deferred_child_eval_job;
@@ -2178,6 +2183,34 @@ _elm_win_wlwindow_get(Elm_Win_Data *sd)
 }
 #endif
 
+Ecore_Cocoa_Window *
+_elm_ee_cocoa_win_get(const Ecore_Evas *ee)
+{
+#ifdef HAVE_ELEMENTARY_COCOA
+   const char *engine_name;
+
+   if (!ee) return NULL;
+
+   engine_name = ecore_evas_engine_name_get(ee);
+   if (EINA_UNLIKELY(!engine_name)) return NULL;
+
+   if (!strcmp(engine_name, "opengl_cocoa") ||
+       !strcmp(engine_name, "gl_cocoa"))
+     return ecore_evas_cocoa_window_get(ee);
+#else
+   (void)ee;
+#endif
+   return NULL;
+}
+
+#ifdef HAVE_ELEMENTARY_COCOA
+static void
+_elm_win_cocoawindow_get(Elm_Win_Data *sd)
+{
+   sd->cocoa.win = _elm_ee_cocoa_win_get(sd->ee);
+}
+#endif
+
 #ifdef HAVE_ELEMENTARY_X
 static void
 _elm_win_xwin_update(Elm_Win_Data *sd)
@@ -3719,6 +3752,10 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 
 #ifdef HAVE_ELEMENTARY_WL2
    _elm_win_wlwindow_get(sd);
+#endif
+
+#ifdef HAVE_ELEMENTARY_COCOA
+   _elm_win_cocoawindow_get(sd);
 #endif
 
    if ((_elm_config->bgpixmap)
@@ -5408,6 +5445,20 @@ elm_win_wl_window_get(const Evas_Object *obj)
    Ecore_Wl2_Window *ret = NULL;
    eo_do((Eo *) obj, ret = elm_obj_win_wl_window_get());
    return ret;
+}
+
+EOLIAN static Ecore_Cocoa_Window *
+_elm_win_cocoa_window_get(Eo           *obj,
+                          Elm_Win_Data *sd)
+{
+   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
+   if (!engine_name) return NULL;
+   if (strcmp(engine_name, "gl_cocoa") != 0 &&
+       strcmp(engine_name, "opengl_cocoa") != 0)
+       return NULL;
+
+   Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+   return _elm_ee_cocoa_win_get(ee);
 }
 
 EOLIAN static Ecore_Wl2_Window*
