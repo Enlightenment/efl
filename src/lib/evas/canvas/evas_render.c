@@ -541,7 +541,8 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
 
    if ((!mapped_parent) && ((is_active) || (obj->delete_me != 0)))
       OBJ_ARRAY_PUSH(active_objects, obj);
-   if (is_active && obj->cur->snapshot)
+   if (is_active && obj->cur->snapshot && !obj->delete_me &&
+       evas_object_is_visible(eo_obj, obj))
      OBJ_ARRAY_PUSH(snapshot_objects, obj);
 
 #ifdef REND_DBG
