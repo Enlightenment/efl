@@ -14,6 +14,7 @@ lib_ecore_cocoa_libecore_cocoa_la_SOURCES = \
 lib/ecore_cocoa/ecore_cocoa.m \
 lib/ecore_cocoa/ecore_cocoa_window.h \
 lib/ecore_cocoa/ecore_cocoa_window.m \
+lib/ecore_cocoa/ecore_cocoa_cnp.m \
 lib/ecore_cocoa/ecore_cocoa_app.m \
 lib/ecore_cocoa/ecore_cocoa_app.h \
 lib/ecore_cocoa/ecore_cocoa_private.h
