@@ -153,7 +153,7 @@ START_TEST(eio_model_test_test_file)
    Eo *filemodel = NULL;
    const Eina_Value *value_prop;
    Efl_Model_Load_Status status;
-   Eina_Array *properties_list;
+   Eina_Array *properties_list = NULL;
    Eina_Array_Iterator iterator;
    char *str;
    unsigned int i;
