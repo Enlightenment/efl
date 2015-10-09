@@ -3203,7 +3203,7 @@ _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event)
 }
 
 static Eina_Bool
-_wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+_wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Dnd_End *ev;
    Ecore_Wl2_Window *win;
