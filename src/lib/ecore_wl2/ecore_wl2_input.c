@@ -1343,3 +1343,11 @@ ecore_wl2_input_ungrab(Ecore_Wl2_Input *input)
 
    _ecore_wl2_input_ungrab(input);
 }
+
+EAPI struct wl_seat *
+ecore_wl2_input_seat_get(Ecore_Wl2_Input *input)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
+
+   return input->wl.seat;
+}
