@@ -77,16 +77,16 @@ static const struct xdg_shell_listener xdg_shell_listener =
    xdg_shell_ping,
 };
 
-static void
-_ecore_wl_uuid_receive(void *data EINA_UNUSED, struct session_recovery *session_recovery EINA_UNUSED, const char *uuid)
-{
-   DBG("UUID assigned from compositor: %s", uuid);
-}
+/* static void */
+/* _ecore_wl_uuid_receive(void *data EINA_UNUSED, struct session_recovery *session_recovery EINA_UNUSED, const char *uuid) */
+/* { */
+/*    DBG("UUID assigned from compositor: %s", uuid); */
+/* } */
 
-static const struct session_recovery_listener _ecore_wl_session_recovery_listener =
-{
-   _ecore_wl_uuid_receive,
-};
+/* static const struct session_recovery_listener _ecore_wl_session_recovery_listener = */
+/* { */
+/*    _ecore_wl_uuid_receive, */
+/* }; */
 
 /* external variables */
 int _ecore_wl_log_dom = -1;
