@@ -47,6 +47,7 @@ extern int _ecore_wl2_log_dom;
 
 struct _Ecore_Wl2_Display
 {
+   int refs;
    char *name;
 
    struct

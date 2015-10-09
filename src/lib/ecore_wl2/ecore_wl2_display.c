@@ -288,6 +288,10 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
    Ecore_Wl2_Input *input;
    Eina_Inlist *tmp;
 
+   if (--ewd->refs) return;
+
+   if (ewd->xkb_context) xkb_context_unref(ewd->xkb_context);
+
    /* free each input */
    EINA_INLIST_FOREACH_SAFE(ewd->inputs, tmp, input)
      _ecore_wl2_input_del(input);
@@ -296,15 +300,7 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
    EINA_INLIST_FOREACH_SAFE(ewd->outputs, tmp, output)
      _ecore_wl2_output_del(output);
 
-   if (ewd->xkb_context) xkb_context_unref(ewd->xkb_context);
-
-   if (ewd->idle_enterer)
-     {
-        /* remove this client display from hash */
-        eina_hash_del(_client_displays, ewd->name, ewd);
-
-        ecore_idle_enterer_del(ewd->idle_enterer);
-     }
+   if (ewd->idle_enterer) ecore_idle_enterer_del(ewd->idle_enterer);
 
    if (ewd->fd_hdl) ecore_main_fd_handler_del(ewd->fd_hdl);
 
@@ -323,6 +319,9 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
    wl_display_flush(ewd->wl.display);
 
    if (ewd->name) free(ewd->name);
+
+   /* remove this client display from hash */
+   eina_hash_del(_client_displays, ewd->name, ewd);
 }
 
 Ecore_Wl2_Window *
@@ -423,7 +422,7 @@ ecore_wl2_display_connect(const char *name)
 
              /* check hash of cached client displays for this name */
              ewd = eina_hash_find(_client_displays, n);
-             if (ewd) return ewd;
+             if (ewd) goto found;
           }
      }
    else
@@ -432,12 +431,14 @@ ecore_wl2_display_connect(const char *name)
 
         /* check hash of cached client displays for this name */
         ewd = eina_hash_find(_client_displays, name);
-        if (ewd) return ewd;
+        if (ewd) goto found;
      }
 
    /* allocate space for display structure */
    ewd = calloc(1, sizeof(Ecore_Wl2_Display));
    if (!ewd) return NULL;
+
+   ewd->refs++;
 
    if (name)
      ewd->name = strdup(name);
@@ -491,6 +492,10 @@ connect_err:
    free(ewd->name);
    free(ewd);
    return NULL;
+
+found:
+   ewd->refs++;
+   return ewd;
 }
 
 EAPI void
@@ -498,8 +503,11 @@ ecore_wl2_display_disconnect(Ecore_Wl2_Display *display)
 {
    EINA_SAFETY_ON_NULL_RETURN(display);
    _ecore_wl2_display_cleanup(display);
-   wl_display_disconnect(display->wl.display);
-   free(display);
+   if (display->refs <= 0)
+     {
+        wl_display_disconnect(display->wl.display);
+        free(display);
+     }
 }
 
 EAPI void
