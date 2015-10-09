@@ -255,7 +255,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
         goto err;
      }
 
-   ecore_wl2_display_animator_source_set(ewd, ECORE_ANIMATOR_SOURCE_CUSTOM);
+   /* ecore_wl2_display_animator_source_set(ewd, ECORE_ANIMATOR_SOURCE_CUSTOM); */
 
    ecore_evas_callback_pre_free_set(ee, _ecore_evas_wl_common_pre_free);
 
