@@ -200,11 +200,16 @@ _ethumb_client_free(Ethumb_Client *client)
 {
    void *data;
    Eldbus_Object *obj;
-   Eldbus_Pending *pending;
 
-   if (client->invalid) return;
-   EINA_LIST_FREE(client->dbus_pending, pending)
-     eldbus_pending_cancel(pending);
+   if (client->invalid)
+      return;
+
+     {
+        Eldbus_Pending *pending;
+        EINA_LIST_FREE(client->dbus_pending, pending)
+           eldbus_pending_cancel(pending);
+     }
+
    client->invalid = EINA_TRUE;
    EINA_LIST_FREE(client->pending_add, data)
      {
