@@ -344,7 +344,10 @@ void eo_test_class_errors(TCase *tc)
    tcase_add_test(tc, eo_inherit_errors);
    tcase_add_test(tc, eo_inconsistent_mro);
    tcase_add_test(tc, eo_bad_interface);
+#ifndef _WIN32
+   /* This test is not relevant for WIN32. */
    tcase_add_test(tc, eo_null_api);
+#endif
    tcase_add_test(tc, eo_wrong_override);
    tcase_add_test(tc, eo_api_redefined);
    tcase_add_test(tc, eo_dich_func_override);

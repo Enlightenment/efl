@@ -671,6 +671,23 @@ end:
    return EINA_FALSE;
 }
 
+static inline Eina_Bool
+_eo_api_func_equal(const void *api_func1, const void *api_func2)
+{
+#ifndef _WIN32
+                  return (api_func1 == api_func2);
+#else
+                  /* On Windows, DLL API's will be exported using the dllexport flag.
+                   * When used by another library or executable, they will be declared
+                   * using the dllimport flag. What happens really is that two symbols are
+                   * created, at two different addresses. So it's impossible to match
+                   * them. We fallback to plain string comparison based on the
+                   * function name itself. Slow, but this should rarely happen.
+                   */
+                  return (api_func2 && api_func1 && !strcmp(api_func2, api_func1));
+#endif
+}
+
 /* api_func should be the pointer to the function on all platforms except windows,
  * in which it should be the the name of the function (string).
  */
@@ -692,24 +709,10 @@ _eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class *
 
              for (i = 0, op_desc = op_descs; i < cur_klass->desc->ops.count; i++, op_desc++)
                {
-#ifndef _WIN32
-                  if (op_desc->api_func == api_func)
+                  if (_eo_api_func_equal(op_desc->api_func, api_func))
                     {
                        return op_desc;
                     }
-#else
-                  /* On Windows, DLL API's will be exported using the dllexport flag.
-                   * When used by another library or executable, they will be declared
-                   * using the dllimport flag. What happens really is that two symbols are
-                   * created, at two different addresses. So it's impossible to match
-                   * them. We fallback to plain string comparison based on the
-                   * function name itself. Slow, but this should rarely happen.
-                   */
-                  if (api_func && op_desc->api_func && !strcmp(api_func, op_desc->api_func))
-                    {
-                       return op_desc;
-                    }
-#endif
                }
           }
      }
@@ -731,7 +734,11 @@ EAPI Eo_Op
 _eo_api_op_id_get(const void *api_func)
 {
    eina_spinlock_take(&_ops_storage_lock);
+#ifndef _WIN32
    Eo_Op op = (uintptr_t) eina_hash_find(_ops_storage, &api_func);
+#else
+   Eo_Op op = (uintptr_t) eina_hash_find(_ops_storage, api_func);
+#endif
    eina_spinlock_release(&_ops_storage_lock);
 
    return op;
@@ -767,7 +774,7 @@ _eo_class_funcs_set(_Eo_Class *klass)
 
         if ((op_desc->op_type == EO_OP_TYPE_REGULAR) || (op_desc->op_type == EO_OP_TYPE_CLASS))
           {
-             if (op_desc->api_func == last_api_func)
+             if (_eo_api_func_equal(op_desc->api_func, last_api_func))
                {
                   ERR("Class '%s': API previously defined (%p->%p '%s').",
                       klass->desc->name, op_desc->api_func, op_desc->func, _eo_op_desc_name_get(op_desc));
@@ -776,7 +783,11 @@ _eo_class_funcs_set(_Eo_Class *klass)
 
              op = op_id;
              eina_spinlock_take(&_ops_storage_lock);
+#ifndef _WIN32
              eina_hash_add(_ops_storage, &op_desc->api_func, (void *) (uintptr_t) op);
+#else
+             eina_hash_add(_ops_storage, op_desc->api_func, (void *) (uintptr_t) op);
+#endif
              eina_spinlock_release(&_ops_storage_lock);
 
              op_id++;
@@ -1771,7 +1782,11 @@ eo_init(void)
    eina_magic_string_static_set(EO_CLASS_EINA_MAGIC,
                                 EO_CLASS_EINA_MAGIC_STR);
 
+#ifndef _WIN32
    _ops_storage = eina_hash_pointer_new(NULL);
+#else
+   _ops_storage = eina_hash_string_superfast_new(NULL);
+#endif
 
 #ifdef EO_DEBUG
    /* Call it just for coverage purposes. Ugly I know, but I like it better than
