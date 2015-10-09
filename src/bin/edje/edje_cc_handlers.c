@@ -5081,7 +5081,7 @@ _program_free(Edje_Program *pr)
    free((void*)pr->state2);
    free((void*)pr->sample_name);
    free((void*)pr->tone_name);
-   EINA_LIST_FREE(pr->targets, prt);
+   EINA_LIST_FREE(pr->targets, prt)
       free(prt);
    EINA_LIST_FREE(pr->after, pa)
       free(pa);
