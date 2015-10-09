@@ -83,6 +83,7 @@ struct _Ecore_Evas_Engine_Data_X11 {
    Ecore_X_Sync_Counter sync_counter;
    Ecore_X_Window leader;
    Ecore_X_Sync_Counter netwm_sync_counter;
+   int            configure_reqs;
    int            netwm_sync_val_hi;
    unsigned int   netwm_sync_val_lo;
    int            sync_val; // bigger! this will screw up at 2 billion fram~
@@ -1577,6 +1578,8 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (edata->direct_resize) return ECORE_CALLBACK_PASS_ON;
 
+   if (edata->configure_reqs > 0) edata->configure_reqs--;
+
    edata->configure_coming = 0;
    if ((e->from_wm) || (ee->prop.override))
      {
@@ -1594,8 +1597,11 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
      {
         ee->w = e->w;
         ee->h = e->h;
-        ee->req.w = ee->w;
-        ee->req.h = ee->h;
+        if (edata->configure_reqs == 0)
+          {
+             ee->req.w = ee->w;
+             ee->req.h = ee->h;
+          }
         if (ECORE_EVAS_PORTRAIT(ee))
           {
              evas_output_size_set(ee->evas, ee->w, ee->h);
@@ -2038,6 +2044,7 @@ _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
                {
                   ee->x = x;
                   ee->y = y;
+                  edata->configure_reqs++;
                   ecore_x_window_move(ee->prop.window, x, y);
                   if (!ee->should_be_visible)
                     {
@@ -2060,6 +2067,7 @@ _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
                   ee->x = x;
                   ee->y = y;
                }
+             edata->configure_reqs++;
              ecore_x_window_move(ee->prop.window, x, y);
           }
         if (!ee->should_be_visible)
@@ -2118,6 +2126,7 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
           {
              ee->w = w;
              ee->h = h;
+             edata->configure_reqs++;
              if (ee->prop.window) ecore_x_window_resize(ee->prop.window, w, h);
              if (ECORE_EVAS_PORTRAIT(ee))
                {
@@ -2142,10 +2151,10 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
              if (ee->func.fn_resize) ee->func.fn_resize(ee);
           }
      }
-   else if (((ee->w != w) || (ee->h != h)) || 
-            (edata->configure_coming))
+   else
      {
         edata->configure_coming = 1;
+        edata->configure_reqs++;
         if (ee->prop.window) ecore_x_window_resize(ee->prop.window, w, h);
      }
 }
@@ -2159,6 +2168,7 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
    ee->req.y = y;
    ee->req.w = w;
    ee->req.h = h;
+
    if (edata->direct_resize)
      {
         if ((ee->w != w) || (ee->h != h) || (x != ee->x) || (y != ee->y))
@@ -2170,6 +2180,7 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
                {
                   if ((x != ee->x) || (y != ee->y)) change_pos = 1;
                }
+             edata->configure_reqs++;
              ecore_x_window_move_resize(ee->prop.window, x, y, w, h);
              if (!edata->managed)
                {
@@ -2208,15 +2219,24 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
                }
           }
      }
-   else if (((ee->w != w) || (ee->h != h) || (ee->x != x) || (ee->y != y)) || 
-            (edata->configure_coming))
+   else
      {
-        edata->configure_coming = 1;
-        ecore_x_window_move_resize(ee->prop.window, x, y, w, h);
-        if (!edata->managed)
+        if ((ee->x != x) || (ee->y != y) || (edata->configure_coming))
           {
-             ee->x = x;
-             ee->y = y;
+             edata->configure_coming = 1;
+             edata->configure_reqs++;
+             ecore_x_window_move_resize(ee->prop.window, x, y, w, h);
+             if (!edata->managed)
+               {
+                  ee->x = x;
+                  ee->y = y;
+               }
+          }
+        else
+          {
+             edata->configure_coming = 1;
+             edata->configure_reqs++;
+             if (ee->prop.window) ecore_x_window_resize(ee->prop.window, w, h);
           }
      }
 }
