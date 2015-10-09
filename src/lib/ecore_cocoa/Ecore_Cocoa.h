@@ -40,6 +40,8 @@ EAPI extern int ECORE_COCOA_EVENT_LOST_FOCUS;
 EAPI extern int ECORE_COCOA_EVENT_RESIZE;
 EAPI extern int ECORE_COCOA_EVENT_EXPOSE;
 EAPI extern int ECORE_COCOA_EVENT_WINDOW_DESTROY;
+EAPI extern int ECORE_COCOA_EVENT_DATA_SOURCE_SEND;
+EAPI extern int ECORE_COCOA_EVENT_SELECTION_DATA_READY;
 
 typedef void * Ecore_Cocoa_Window_Id;
 typedef struct _Ecore_Cocoa_Event_Video_Resize Ecore_Cocoa_Event_Video_Resize;
@@ -60,6 +62,15 @@ struct _Ecore_Cocoa_Screen
 {
   int dummy;
 };
+
+typedef enum
+{
+   ECORE_COCOA_CNP_TYPE_UNKNOWN = 0,
+   ECORE_COCOA_CNP_TYPE_STRING  = (1 << 0),
+   ECORE_COCOA_CNP_TYPE_MARKUP  = (1 << 1),
+   ECORE_COCOA_CNP_TYPE_IMAGE   = (1 << 2),
+   ECORE_COCOA_CNP_TYPE_HTML    = (1 << 3)
+} Ecore_Cocoa_Cnp_Type;
 
 /* Core */
 
@@ -166,6 +177,27 @@ EAPI int ecore_cocoa_titlebar_height_get(void);
 
 EAPI Ecore_Cocoa_Window_Id ecore_cocoa_window_get_window_id(const Ecore_Cocoa_Window *window);
 
+
+
+/**
+ * @return false on error, true otherwise
+ *
+ * @ingroup Ecore_Cocoa_Cpn_Group
+ */
+EAPI Eina_Bool ecore_cocoa_selection_clipboard_set(const void *data, int size, Ecore_Cocoa_Cnp_Type type);
+
+/**
+ * @return false if type not found or on error, true otherwise
+ *
+ * @ingroup Ecore_Cocoa_Cnp_Group
+ */
+EAPI void *ecore_cocoa_selection_clipboard_get(int *size, Ecore_Cocoa_Cnp_Type type,
+                                               Ecore_Cocoa_Cnp_Type *retrieved_types);
+
+/**
+ * @ingroup Ecore_Cocoa_Cnp_Group
+ */
+EAPI void ecore_cocoa_selection_clipboard_clear(void);
 
 EAPI void ecore_cocoa_window_cursor_set(Ecore_Cocoa_Window *win, Ecore_Cocoa_Cursor c);
 EAPI void ecore_cocoa_window_cursor_show(Ecore_Cocoa_Window *win, Eina_Bool show);
