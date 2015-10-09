@@ -231,17 +231,24 @@ _anim_cb_animate(void *data, struct wl_callback *callback, uint32_t serial EINA_
    window = data;
    if (!window) return;
 
-   ecore_animator_custom_tick();
-
    wl_callback_destroy(callback);
    window->anim_cb = NULL;
+}
 
-   if (_animator_busy)
-     {
-        window->anim_cb = wl_surface_frame(window->surface);
-        wl_callback_add_listener(window->anim_cb, &_anim_listener, window);
-        wl_surface_commit(window->surface);
-     }
+static Eina_Bool
+_ecore_wl2_window_cb_animate(void *data)
+{
+   Ecore_Wl2_Window *window;
+
+   window = data;
+   if (!window->surface) return ECORE_CALLBACK_CANCEL;
+   if (window->anim_cb) return ECORE_CALLBACK_RENEW;
+
+   window->anim_cb = wl_surface_frame(window->surface);
+   wl_callback_add_listener(window->anim_cb, &_anim_listener, window);
+   wl_surface_commit(window->surface);
+
+   return ECORE_CALLBACK_RENEW;
 }
 
 void
@@ -342,6 +349,10 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
           wl_compositor_create_surface(window->display->wl.compositor);
      }
 
+   if ((window->type == ECORE_WL2_WINDOW_TYPE_DND) ||
+       (window->type == ECORE_WL2_WINDOW_TYPE_NONE))
+     goto type_set;
+
    if ((disp->wl.xdg_shell) && (!window->xdg_surface))
      {
         window->xdg_surface =
@@ -372,7 +383,14 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
                                       &_wl_shell_surface_listener, window);
      }
 
+type_set:
    _ecore_wl2_window_type_set(window);
+
+   if (!window->animator)
+     {
+        window->animator =
+          ecore_animator_add(_ecore_wl2_window_cb_animate, window);
+     }
 
    return;
 
@@ -384,6 +402,12 @@ EAPI void
 ecore_wl2_window_hide(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
+
+   if (window->anim_cb) wl_callback_destroy(window->anim_cb);
+   window->anim_cb = NULL;
+
+   if (window->animator) ecore_animator_del(window->animator);
+   window->animator = NULL;
 
    if (window->xdg_surface) xdg_surface_destroy(window->xdg_surface);
    window->xdg_surface = NULL;
@@ -424,8 +448,6 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
              input->repeat.timer = NULL;
           }
      }
-
-   if (window->anim_cb) wl_callback_destroy(window->anim_cb);
 
    EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp, subsurf)
      _ecore_wl2_subsurf_free(subsurf);
@@ -877,7 +899,6 @@ EAPI void
 ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surface *surface, int hot_x, int hot_y)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
-   /* EINA_SAFETY_ON_NULL_RETURN(window->input); */
 
    if (!window->input) return;
 
@@ -893,7 +914,6 @@ EAPI void
 ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const char *cursor)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
-   /* EINA_SAFETY_ON_NULL_RETURN(window->input); */
 
    eina_stringshare_replace(&window->cursor, cursor);
 
@@ -913,8 +933,17 @@ ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type)
 EAPI Ecore_Wl2_Input *
 ecore_wl2_window_input_get(Ecore_Wl2_Window *window)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(window->input, NULL);
+   Ecore_Wl2_Input *input;
 
-   return window->input;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window->display, NULL);
+
+   if (window->input) return window->input;
+
+   EINA_INLIST_FOREACH(window->display->inputs, input)
+     {
+        if (input->focus.pointer) return input;
+     }
+
+   return NULL;
 }

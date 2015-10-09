@@ -115,6 +115,8 @@ struct _Ecore_Wl2_Window
    struct xdg_popup *xdg_popup;
    struct wl_callback *anim_cb;
 
+   Ecore_Animator *animator;
+
    Eina_Rectangle geometry;
    Eina_Rectangle opaque;
    Eina_Rectangle input_rect;
