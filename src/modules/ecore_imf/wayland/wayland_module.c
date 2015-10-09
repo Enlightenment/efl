@@ -179,6 +179,7 @@ static void
 im_module_shutdown(void)
 {
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "im module shutdown");
+   ecore_wl2_display_disconnect(ewd);
    ecore_wl2_shutdown();
 }
 
