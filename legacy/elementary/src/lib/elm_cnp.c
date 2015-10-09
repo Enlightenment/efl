@@ -8,6 +8,10 @@
 # include <sys/mman.h>
 #endif
 
+#ifdef HAVE_ELEMENTARY_COCOA
+# include <Ecore_Cocoa.h>
+#endif
+
 //#define DEBUGON 1
 #ifdef DEBUGON
 # define cnp_debug(fmt, args...) fprintf(stderr, __FILE__":%s/%d : " fmt , __FUNCTION__, __LINE__, ##args)
@@ -3481,6 +3485,255 @@ _wl_elm_widget_window_get(const Evas_Object *obj)
 
 #endif
 
+#ifdef HAVE_ELEMENTARY_COCOA
+
+typedef struct _Cocoa_Cnp_Selection Cocoa_Cnp_Selection;
+
+struct _Cocoa_Cnp_Selection
+{
+   Ecore_Cocoa_Window *win;
+   Evas_Object        *widget;
+   char               *selbuf;
+   int                 buflen;
+   Evas_Object        *requestwidget;
+   void               *udata;
+   Elm_Sel_Format      requestformat;
+   Elm_Drop_Cb         datacb;
+
+   Elm_Selection_Loss_Cb  loss_cb;
+   void                  *loss_data;
+   int                    pb_count;
+
+   Elm_Sel_Format     format;
+
+   Eina_Bool          active : 1;
+};
+
+static Cocoa_Cnp_Selection _cocoa_cnp_sel;
+
+static Ecore_Cocoa_Window *
+_cocoa_elm_widget_cocoa_window_get(const Evas_Object *obj)
+{
+   Evas_Object *top, *par;
+   Ecore_Cocoa_Window *win = NULL;
+
+   if (elm_widget_is(obj))
+     {
+         top = elm_widget_top_get(obj);
+         if (!top)
+           {
+              par = elm_widget_parent_widget_get(obj);
+              if (par) top = elm_widget_top_get(par);
+           }
+         if ((top) && (eo_isa(top, ELM_WIN_CLASS)))
+           win = elm_win_cocoa_window_get(top);
+     }
+   if (!win)
+     {
+        // FIXME
+        CRI("WIN has not been retrieved!!!");
+     }
+
+   return win;
+}
+
+static Ecore_Cocoa_Cnp_Type
+_elm_sel_format_to_ecore_cocoa_cnp_type(Elm_Sel_Format fmt)
+{
+   Ecore_Cocoa_Cnp_Type type = 0;
+
+   if ((fmt & ELM_SEL_FORMAT_TEXT) ||
+       (fmt & ELM_SEL_FORMAT_VCARD))
+     type |= ECORE_COCOA_CNP_TYPE_STRING;
+   if (fmt & ELM_SEL_FORMAT_MARKUP)
+     type |= ECORE_COCOA_CNP_TYPE_MARKUP;
+   if (fmt & ELM_SEL_FORMAT_HTML)
+     type |= ECORE_COCOA_CNP_TYPE_HTML;
+   if (fmt & ELM_SEL_FORMAT_IMAGE)
+     type |= ECORE_COCOA_CNP_TYPE_IMAGE;
+
+   return type;
+}
+
+static void
+_cocoa_sel_obj_del_req_cb(void        *data,
+                          Evas        *e       EINA_UNUSED,
+                          Evas_Object *obj,
+                          void        *ev_info EINA_UNUSED)
+{
+   Cocoa_Cnp_Selection *sel = data;
+   if (sel->requestwidget == obj) sel->requestwidget = NULL;
+}
+
+static void
+_cocoa_sel_obj_del_cb(void        *data,
+                      Evas        *e       EINA_UNUSED,
+                      Evas_Object *obj,
+                      void        *ev_info EINA_UNUSED)
+{
+   Cocoa_Cnp_Selection *sel = data;
+   if (sel->widget == obj)
+     {
+        sel->widget = NULL;
+        sel->loss_cb = NULL;
+        sel->loss_data = NULL;
+     }
+   if (dragwidget == obj) dragwidget = NULL;
+}
+
+static void
+_job_pb_cb(void *data)
+{
+   Cocoa_Cnp_Selection *sel = data;
+   Elm_Selection_Data ddata;
+   Ecore_Cocoa_Cnp_Type type, get_type;
+   void *pbdata;
+   int pbdata_len;
+
+   if (sel->datacb)
+     {
+        ddata.x = 0;
+        ddata.y = 0;
+
+        /* Pass to cocoa clipboard */
+        type = _elm_sel_format_to_ecore_cocoa_cnp_type(sel->requestformat);
+        pbdata = ecore_cocoa_selection_clipboard_get(&pbdata_len, type, &get_type);
+
+        ddata.format = ELM_SEL_FORMAT_NONE;
+        if (get_type & ECORE_COCOA_CNP_TYPE_STRING)
+          ddata.format |= ELM_SEL_FORMAT_TEXT;
+        if (get_type & ECORE_COCOA_CNP_TYPE_MARKUP)
+          ddata.format |= ELM_SEL_FORMAT_MARKUP;
+        if (get_type & ECORE_COCOA_CNP_TYPE_IMAGE)
+          ddata.format |= ELM_SEL_FORMAT_IMAGE;
+        if (get_type & ECORE_COCOA_CNP_TYPE_HTML)
+          ddata.format |= ELM_SEL_FORMAT_HTML;
+
+        ddata.data = pbdata;
+        ddata.len = pbdata_len;
+        ddata.action = ELM_XDND_ACTION_UNKNOWN;
+        sel->datacb(sel->udata, sel->requestwidget, &ddata);
+        free(pbdata);
+     }
+}
+
+static Eina_Bool
+_cocoa_elm_cnp_selection_set(Ecore_Cocoa_Window *win,
+                             Evas_Object        *obj,
+                             Elm_Sel_Type        selection,
+                             Elm_Sel_Format      format,
+                             const void         *selbuf,
+                             size_t              buflen)
+{
+   Cocoa_Cnp_Selection *sel = &_cocoa_cnp_sel;
+   Ecore_Cocoa_Cnp_Type type;
+   Eina_Bool ok = EINA_TRUE;
+
+   if ((!selbuf) && (format != ELM_SEL_FORMAT_IMAGE))
+     return elm_object_cnp_selection_clear(obj, selection);
+   if (buflen <= 0) return EINA_FALSE;
+
+   if (sel->loss_cb) sel->loss_cb(sel->loss_data, selection);
+   if (sel->widget)
+     evas_object_event_callback_del_full(sel->widget, EVAS_CALLBACK_DEL,
+                                         _cocoa_sel_obj_del_cb, sel);
+
+   sel->widget = obj;
+   sel->win = win;
+   sel->format = format;
+   sel->loss_cb = NULL;
+   sel->loss_data = NULL;
+
+   evas_object_event_callback_add(sel->widget, EVAS_CALLBACK_DEL,
+                                  _cocoa_sel_obj_del_cb, sel);
+   ELM_SAFE_FREE(sel->selbuf, free);
+   sel->buflen = 0;
+   if (selbuf)
+     {
+        sel->selbuf = malloc(buflen + 1);
+        if (EINA_UNLIKELY(!sel->selbuf))
+          {
+             CRI("Failed to allocate memory!");
+             elm_object_cnp_selection_clear(obj, selection);
+             return EINA_FALSE;
+          }
+        memcpy(sel->selbuf, selbuf, buflen);
+        sel->selbuf[buflen] = 0;
+        sel->buflen = buflen;
+        type = _elm_sel_format_to_ecore_cocoa_cnp_type(format);
+        ecore_cocoa_selection_clipboard_set(selbuf, buflen, type);
+     }
+
+   return ok;
+}
+
+static void
+_cocoa_elm_cnp_selection_loss_callback_set(Evas_Object           *obj       EINA_UNUSED,
+                                           Elm_Sel_Type           selection EINA_UNUSED,
+                                           Elm_Selection_Loss_Cb  func      EINA_UNUSED,
+                                           const void            *data      EINA_UNUSED)
+{
+   // Currently, we have no way to track changes in Cocoa pasteboard.
+   // Therefore, don't track this...
+   //sel->loss_cb = func;
+   //sel->loss_data = (void *)data;
+}
+
+static Eina_Bool
+_cocoa_elm_cnp_selection_clear(Evas_Object  *obj       EINA_UNUSED,
+                               Elm_Sel_Type  selection EINA_UNUSED)
+{
+   Cocoa_Cnp_Selection *sel = &_cocoa_cnp_sel;
+
+   if (sel->widget)
+     evas_object_event_callback_del_full(sel->widget, EVAS_CALLBACK_DEL,
+                                         _cocoa_sel_obj_del_cb, sel);
+   if (sel->requestwidget)
+     evas_object_event_callback_del_full(sel->requestwidget, EVAS_CALLBACK_DEL,
+                                         _cocoa_sel_obj_del_req_cb, sel);
+
+   sel->widget = NULL;
+   sel->requestwidget = NULL;
+   sel->loss_cb = NULL;
+   sel->loss_data = NULL;
+   ELM_SAFE_FREE(sel->selbuf, free);
+   sel->buflen = 0;
+   ecore_cocoa_selection_clipboard_clear();
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_cocoa_elm_cnp_selection_get(const Evas_Object  *obj,
+                             Ecore_Cocoa_Window *win,
+                             Elm_Sel_Type        selection EINA_UNUSED,
+                             Elm_Sel_Format      format,
+                             Elm_Drop_Cb         datacb,
+                             void               *udata)
+{
+   Cocoa_Cnp_Selection *sel = &_cocoa_cnp_sel;
+
+   if (sel->requestwidget)
+     evas_object_event_callback_del_full(sel->requestwidget, EVAS_CALLBACK_DEL,
+                                         _cocoa_sel_obj_del_req_cb, sel);
+
+   sel->requestformat = format;
+   sel->requestwidget = (Evas_Object *)obj;
+   sel->win = win;
+   sel->datacb = datacb;
+   sel->udata = udata;
+
+   ecore_job_add(_job_pb_cb, sel);
+
+   evas_object_event_callback_add(sel->requestwidget, EVAS_CALLBACK_DEL,
+                                  _cocoa_sel_obj_del_req_cb, sel);
+
+   return EINA_TRUE;
+}
+
+
+#endif
+
 ////////////////////////////////////////////////////////////////////////////
 // for local (Within 1 app/process) cnp (used by fb as fallback
 ////////////////////////////////////////////////////////////////////////////
@@ -3860,6 +4113,11 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
    if (_wl_elm_widget_window_get(obj))
       return _wl_elm_cnp_selection_set(obj, selection, format, selbuf, buflen);
 #endif
+#ifdef HAVE_ELEMENTARY_COCOA
+   Ecore_Cocoa_Window *win = _cocoa_elm_widget_cocoa_window_get(obj);
+   if (win)
+     return _cocoa_elm_cnp_selection_set(win, obj, selection, format, selbuf, buflen);
+#endif
    return _local_elm_cnp_selection_set(obj, selection, format, selbuf, buflen);
 }
 
@@ -3878,6 +4136,10 @@ elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type selection,
    if (_wl_elm_widget_window_get(obj))
      _wl_elm_cnp_selection_loss_callback_set(obj, selection, func, data);
 #endif
+#ifdef HAVE_ELEMENTARY_COCOA
+   if (_cocoa_elm_widget_cocoa_window_get(obj))
+     _cocoa_elm_cnp_selection_loss_callback_set(obj, selection, func, data);
+#endif
    _local_elm_cnp_selection_loss_callback_set(obj, selection, func, data);
 }
 
@@ -3893,6 +4155,10 @@ elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection)
 #ifdef HAVE_ELEMENTARY_WL2
    if (_wl_elm_widget_window_get(obj))
       return _wl_elm_cnp_selection_clear(obj, selection);
+#endif
+#ifdef HAVE_ELEMENTARY_COCOA
+   if (_cocoa_elm_widget_cocoa_window_get(obj))
+     return _cocoa_elm_cnp_selection_clear(obj, selection);
 #endif
    return _local_elm_object_cnp_selection_clear(obj, selection);
 }
@@ -3911,6 +4177,11 @@ elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection,
 #ifdef HAVE_ELEMENTARY_WL2
    if (_wl_elm_widget_window_get(obj))
       return _wl_elm_cnp_selection_get(obj, selection, format, datacb, udata);
+#endif
+#ifdef HAVE_ELEMENTARY_COCOA
+   Ecore_Cocoa_Window *win = _cocoa_elm_widget_cocoa_window_get(obj);
+   if (win)
+     return _cocoa_elm_cnp_selection_get(obj, win, selection, format, datacb, udata);
 #endif
    return _local_elm_cnp_selection_get(obj, selection, format, datacb, udata);
 }
@@ -4535,3 +4806,4 @@ end:
    doaccept = EINA_FALSE;
    return EINA_TRUE;
 }
+
