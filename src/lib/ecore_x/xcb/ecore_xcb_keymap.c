@@ -126,6 +126,7 @@ _ecore_xcb_keymap_finalize(void)
    ECORE_X_LOCK_NUM = _ecore_xcb_keymap_mask_get(reply, XK_Num_Lock);
    ECORE_X_LOCK_CAPS = _ecore_xcb_keymap_mask_get(reply, XK_Caps_Lock);
    ECORE_X_LOCK_SHIFT = _ecore_xcb_keymap_mask_get(reply, XK_Shift_Lock);
+   free(reply);
 }
 
 void
