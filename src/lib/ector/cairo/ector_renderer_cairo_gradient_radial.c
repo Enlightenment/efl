@@ -56,7 +56,7 @@ _ector_renderer_cairo_gradient_radial_prepare(Eo *obj,
 {
    cairo_pattern_t *pat;
 
-   USE(obj, cairo_pattern_create_radial, EINA_FALSE);
+   USE(obj, cairo_pattern_create_radial, NULL);
 
    pat = cairo_pattern_create_radial(grd->focal.x, grd->focal.y, 0,
                                      grd->radial.x, grd->radial.y, grd->radius);
@@ -64,7 +64,7 @@ _ector_renderer_cairo_gradient_radial_prepare(Eo *obj,
 
    _ector_renderer_cairo_gradient_prepare(obj, pat, gd, mul_col);
 
-   USE(obj, cairo_pattern_set_extend, EINA_FALSE);
+   USE(obj, cairo_pattern_set_extend, NULL);
    cairo_pattern_set_extend(pat, _ector_cairo_extent_get(gd->s));
 
    return pat;
