@@ -34,14 +34,14 @@ _ector_renderer_cairo_gradient_linear_prepare(Eo *obj,
 {
    cairo_pattern_t *pat;
 
-   USE(obj, cairo_pattern_create_linear, EINA_FALSE);
+   USE(obj, cairo_pattern_create_linear, NULL);
 
    pat = cairo_pattern_create_linear(gld->start.x, gld->start.y,
                                      gld->end.x, gld->end.y);
    if (!pat) return NULL;
    _ector_renderer_cairo_gradient_prepare(obj, pat, gd, mul_col);
 
-   USE(obj, cairo_pattern_set_extend, EINA_FALSE);
+   USE(obj, cairo_pattern_set_extend, NULL);
    cairo_pattern_set_extend(pat, _ector_cairo_extent_get(gd->s));
 
    return pat;
