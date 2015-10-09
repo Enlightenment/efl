@@ -366,10 +366,19 @@ opts_get(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-   efl::eina::eina_init eina_init;
-   efl::eolian::eolian_init eolian_init;
-   eolian_cxx::options_type opts = opts_get(argc, argv);
-   eolian_cxx::database_load(opts);
-   eolian_cxx::run(opts);
+   try
+     {
+        efl::eina::eina_init eina_init;
+        efl::eolian::eolian_init eolian_init;
+        eolian_cxx::options_type opts = opts_get(argc, argv);
+        eolian_cxx::database_load(opts);
+        eolian_cxx::run(opts);
+     }
+   catch(std::exception const& e)
+     {
+       std::cerr << "EOLCXX: Eolian C++ failed generation for the following reason: " << e.what() << std::endl;
+       std::cout << "EOLCXX: Eolian C++ failed generation for the following reason: " << e.what() << std::endl;
+       return -1;
+     }
    return 0;
 }
