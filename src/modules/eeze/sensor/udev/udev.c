@@ -48,7 +48,7 @@ udev_shutdown(void)
 {
    char *data;
 
-   EINA_LIST_FREE(devices, data);
+   EINA_LIST_FREE(devices, data)
      free(data);
 
    return EINA_TRUE;
