@@ -118,6 +118,8 @@ _source_cb_cancelled(void *data, struct wl_data_source *source)
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
 
+   if (!ev->win) ev->win = ev->source;
+
    ecore_event_add(ECORE_WL2_EVENT_DATA_SOURCE_CANCELLED, ev, NULL, NULL);
 }
 
@@ -310,6 +312,8 @@ _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
 
+   if (!ev->win) ev->win = ev->source;
+
    ev->x = x;
    ev->y = y;
    ev->offer = offer;
@@ -333,6 +337,8 @@ _ecore_wl2_dnd_leave(Ecore_Wl2_Input *input)
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
 
+   if (!ev->win) ev->win = ev->source;
+
    ecore_event_add(ECORE_WL2_EVENT_DND_LEAVE, ev, NULL, NULL);
 }
 
@@ -351,6 +357,8 @@ _ecore_wl2_dnd_motion(Ecore_Wl2_Input *input, int x, int y, unsigned int timesta
      ev->win = input->focus.pointer->id;
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
+
+   if (!ev->win) ev->win = ev->source;
 
    ev->x = x;
    ev->y = y;
@@ -373,6 +381,8 @@ _ecore_wl2_dnd_drop(Ecore_Wl2_Input *input)
           ev->win = input->focus.pointer->id;
         if (input->focus.keyboard)
           ev->source = input->focus.keyboard->id;
+
+        if (!ev->win) ev->win = ev->source;
      }
 
    ev->x = input->pointer.sx;
@@ -522,6 +532,8 @@ ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input)
      ev->win = input->focus.pointer->id;
    if (input->focus.keyboard)
      ev->source = input->focus.keyboard->id;
+
+   if (!ev->win) ev->win = ev->source;
 
    ecore_event_add(ECORE_WL2_EVENT_DND_END, ev, NULL, NULL);
 }
