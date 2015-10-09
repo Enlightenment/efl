@@ -10,8 +10,6 @@
 static void _ecore_wl_window_cb_ping(void *data EINA_UNUSED, struct wl_shell_surface *shell_surface, unsigned int serial);
 static void _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface EINA_UNUSED, unsigned int edges, int w, int h);
 static void _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surface EINA_UNUSED);
-static void _ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct wl_output *output EINA_UNUSED);
-static void _ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct wl_output *output EINA_UNUSED);
 static void _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, int edges);
 static char *_ecore_wl_window_id_str_get(unsigned int win_id);
 static void _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface, int32_t width, int32_t height,struct wl_array *states, uint32_t serial);
@@ -23,12 +21,6 @@ static void _ecore_session_recovery_uuid(void *data, struct session_recovery *se
 static Eina_Hash *_windows = NULL;
 
 /* wayland listeners */
-static const struct wl_surface_listener _ecore_wl_surface_listener =
-{
-   _ecore_wl_window_cb_surface_enter,
-   _ecore_wl_window_cb_surface_leave
-};
-
 static const struct wl_shell_surface_listener _ecore_wl_shell_surface_listener =
 {
    _ecore_wl_window_cb_ping,
@@ -1078,28 +1070,6 @@ _ecore_session_recovery_uuid(void *data EINA_UNUSED, struct session_recovery *se
 
    if (!session_recovery) return;
    DBG("UUID event received from compositor with UUID: %s", uuid);
-}
-
-static void
-_ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct wl_output *output EINA_UNUSED)
-{
-   Ecore_Wl_Window *win;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!surface) return;
-   if (!(win = data)) return;
-}
-
-static void
-_ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct wl_output *output EINA_UNUSED)
-{
-   Ecore_Wl_Window *win;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (!surface) return;
-   if (!(win = data)) return;
 }
 
 static void
