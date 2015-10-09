@@ -3445,7 +3445,7 @@ _merge_rects(Render_Engine_Merge_Mode merge_mode,
    // between multiple update regions to render and total pixels to render.
    if (rects)
      {
-        if ((merge_mode == MERGE_BOUNDING)
+        if (merge_mode == MERGE_BOUNDING
 // disable smart updates for debugging
 //            || (merge_mode == MERGE_SMART)
             )
