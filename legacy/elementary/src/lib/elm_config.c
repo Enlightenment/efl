@@ -1786,6 +1786,10 @@ _config_update(void)
    _elm_config->naviframe_prev_btn_auto_pushed = tcfg->naviframe_prev_btn_auto_pushed;
    IFCFGEND
 
+   IFCFG(0x0006)
+   _elm_config->cursor_engine_only = 0;
+   IFCFGEND
+
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
     **/
