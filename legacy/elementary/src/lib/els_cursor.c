@@ -229,6 +229,11 @@ _elm_cursor_obj_add(Evas_Object *obj, Elm_Cursor *cur)
                                   _elm_cursor_obj_del, cur);
    edje_object_size_min_get(cur->obj, &x, &y);
    edje_object_size_min_restricted_calc(cur->obj, &x, &y, x, y);
+   if ((x < 8) || (y < 8))
+     {
+        x = 8;
+        y = 8;
+     }
    evas_object_resize(cur->obj, x, y);
    return EINA_TRUE;
 }
