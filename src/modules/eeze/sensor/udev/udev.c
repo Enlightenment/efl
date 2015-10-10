@@ -88,8 +88,7 @@ _udev_read(void)
                   else y++;
                }
            }
-   if (sensors)
-     temp /= (double)sensors;
+        if (sensors) temp /= (double)sensors;
    }
 
    return temp;
@@ -119,8 +118,7 @@ udev_read(Eeze_Sensor_Obj *obj)
 static Eina_Bool
 udev_async_read(Eeze_Sensor_Obj *obj, void *user_data)
 {
-   if (user_data)
-     obj->user_data = user_data;
+   if (user_data) obj->user_data = user_data;
 
    switch (obj->type)
      {
@@ -187,8 +185,7 @@ sensor_udev_shutdown(void)
    Eeze_Sensor_Obj *sens;
 
    eeze_sensor_module_unregister("udev");
-   EINA_LIST_FREE(esensor_module->sensor_list, sens)
-      free(sens);
+   EINA_LIST_FREE(esensor_module->sensor_list, sens) free(sens);
 
    eina_log_domain_unregister(_eeze_sensor_udev_log_dom);
 
