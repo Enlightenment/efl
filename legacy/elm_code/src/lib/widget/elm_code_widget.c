@@ -157,14 +157,17 @@ _elm_code_widget_fill_line_token(Evas_Textgrid_Cell *cells, int count, int start
 }
 
 static unsigned int
-_elm_code_widget_status_type_get(Elm_Code_Widget *widget, Elm_Code_Status_Type set_type, unsigned int col)
+_elm_code_widget_status_type_get(Elm_Code_Widget *widget, Elm_Code_Line *line, unsigned int col)
 {
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   if (set_type != ELM_CODE_STATUS_TYPE_DEFAULT)
-     return set_type;
+   if (line->status != ELM_CODE_STATUS_TYPE_DEFAULT)
+     return line->status;
+
+   if (pd->editable && pd->focussed && pd->cursor_line == line->number)
+     return ELM_CODE_STATUS_TYPE_CURRENT;
 
    if (pd->line_width_marker == col)
      return ELM_CODE_WIDGET_COLOR_GUTTER_BG;
@@ -353,7 +356,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         unichr = eina_unicode_utf8_next_get(chr, &chrpos);
 
         cells[x].codepoint = unichr;
-        cells[x].bg = _elm_code_widget_status_type_get(widget, line->status, x - gutter + 1);
+        cells[x].bg = _elm_code_widget_status_type_get(widget, line, x - gutter + 1);
 
         charwidth = 1;
         if (unichr == '\t')
@@ -361,7 +364,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         for (i = x + 1; i < x + charwidth; i++)
           {
              cells[i].codepoint = 0;
-             cells[i].bg = _elm_code_widget_status_type_get(widget, line->status, i - gutter + 1);
+             cells[i].bg = _elm_code_widget_status_type_get(widget, line, i - gutter + 1);
           }
 
         _elm_code_widget_fill_whitespace(widget, unichr, &cells[x]);
@@ -369,7 +372,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    for (; x < (unsigned int) w; x++)
      {
         cells[x].codepoint = 0;
-        cells[x].bg = _elm_code_widget_status_type_get(widget, line->status, x - gutter + 1);
+        cells[x].bg = _elm_code_widget_status_type_get(widget, line, x - gutter + 1);
      }
 
    _elm_code_widget_fill_selection(widget, line, cells, gutter, w);
@@ -398,7 +401,10 @@ _elm_code_widget_empty_line(Elm_Code_Widget *widget, unsigned int number)
    for (x = gutter; x < (unsigned int) w; x++)
      {
         cells[x].codepoint = 0;
-        cells[x].bg = _elm_code_widget_status_type_get(widget, ELM_CODE_STATUS_TYPE_DEFAULT, x - gutter + 1);
+        if (pd->editable && pd->focussed && pd->cursor_line == number)
+          cells[x].bg = ELM_CODE_STATUS_TYPE_CURRENT;
+        else
+          cells[x].bg = ELM_CODE_STATUS_TYPE_DEFAULT;
      }
 
    _elm_code_widget_fill_cursor(widget, number, cells, gutter, w);
@@ -1456,6 +1462,8 @@ _elm_code_widget_setup_palette(Evas_Object *o)
    // setup status colors
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_DEFAULT,
                                     36, 36, 36, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_CURRENT,
+                                    12, 12, 12, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_IGNORED,
                                     36, 36, 36, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_NOTE,
