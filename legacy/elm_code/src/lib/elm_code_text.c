@@ -210,6 +210,19 @@ elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length
    elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
 }
 
+EAPI void elm_code_line_text_leading_whitespace_strip(Elm_Code_Line *line)
+{
+   unsigned int length, leading;
+   const char *content;
+
+   content = elm_code_line_text_get(line, &length);
+   leading = elm_code_text_leading_whitespace_length(content, length);
+   if (leading == 0)
+     return;
+
+   elm_code_line_text_remove(line, 0, leading);
+}
+
 EAPI void elm_code_line_text_trailing_whitespace_strip(Elm_Code_Line *line)
 {
    unsigned int length, trailing;
@@ -220,8 +233,7 @@ EAPI void elm_code_line_text_trailing_whitespace_strip(Elm_Code_Line *line)
    if (trailing == 0)
      return;
 
-   length -= trailing;;
-   elm_code_line_text_set(line, content, length);
+   elm_code_line_text_remove(line, length - trailing, trailing);
 }
 
 /* generic text functions */

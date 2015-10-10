@@ -36,6 +36,8 @@ EAPI void elm_code_line_text_insert(Elm_Code_Line *line, unsigned int position, 
 
 EAPI void elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length);
 
+EAPI void elm_code_line_text_leading_whitespace_strip(Elm_Code_Line *line);
+
 EAPI void elm_code_line_text_trailing_whitespace_strip(Elm_Code_Line *line);
 
 /**

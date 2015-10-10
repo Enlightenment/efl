@@ -1030,6 +1030,7 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
 
    line = elm_code_file_line_get(code->file, row + 1);
    leading = elm_code_text_leading_whitespace_length(oldtext, oldlen);
+   elm_code_line_text_leading_whitespace_strip(line);
    elm_code_line_text_insert(line, 0, oldtext, leading);
    free(oldtext);
 
