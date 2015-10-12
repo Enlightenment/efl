@@ -172,9 +172,7 @@ evas_outbuf_buffer_state_get(Outbuf *ob)
    /* check for valid output buffer */
    if (!ob) return MODE_FULL;
 
-   delta = (ob->priv.last - ob->priv.curr +
-            (ob->priv.last > ob->priv.last ?
-             0 : ob->priv.num)) % ob->priv.num;
+   delta = (ob->priv.last - ob->priv.curr + ob->priv.num) % ob->priv.num;
 
    /* This is the number of frame since last frame */
    switch (delta)
