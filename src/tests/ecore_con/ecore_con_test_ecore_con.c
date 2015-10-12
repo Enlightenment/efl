@@ -362,9 +362,9 @@ START_TEST(ecore_test_ecore_con_local_user_none)
    unsetenv("HOME");
    unsetenv("TMPDIR");
    _ecore_con_server_client_tests(ECORE_CON_LOCAL_USER, "test_sock", EINA_FALSE, 12345);
-   setenv("TMPDIR", tmp, 1);
-   setenv("HOME", homedir, 1);
-   setenv("XDG_RUNTIME_DIR", xdg_runtime_dir, 1);
+   if (tmp) setenv("TMPDIR", tmp, 1);
+   if (homedir) setenv("HOME", homedir, 1);
+   if (xdg_runtime_dir) setenv("XDG_RUNTIME_DIR", xdg_runtime_dir, 1);
 }
 END_TEST
 
