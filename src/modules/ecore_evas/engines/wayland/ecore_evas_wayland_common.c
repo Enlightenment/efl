@@ -168,7 +168,6 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Wl_Event_Window_Configure *ev;
    int nw = 0, nh = 0;
-   int fw = 0, fh = 0;
    Eina_Bool prev_max, prev_full;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -475,6 +474,8 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
    if (!ee) return;
    if (w < 1) w = 1;
    if (h < 1) h = 1;
+
+   if ((ee->req.w == w) && (ee->req.h == h)) return;
 
    ee->req.w = w;
    ee->req.h = h;
