@@ -94,9 +94,7 @@ _read_file(char *filename, Eina_Strbuf **buf)
 static Eina_Bool
 _write_file(char *filename, const Eina_Strbuf *buffer, Eina_Bool append)
 {
-   const char *data = eina_strbuf_string_get(buffer);
-
-   FILE* fd = fopen(filename, append ? "ab" : "wb");
+   FILE *fd = fopen(filename, append ? "ab" : "wb");
    if (!fd)
      {
         fprintf(stderr, "eolian: could not open '%s' for writing (%s)\n",
@@ -104,7 +102,8 @@ _write_file(char *filename, const Eina_Strbuf *buffer, Eina_Bool append)
         return EINA_FALSE;
      }
 
-   if (data) fputs(data, fd);
+   if (eina_strbuf_length_get(buffer))
+     fwrite(eina_strbuf_string_get(buffer), 1, eina_strbuf_length_get(buffer), fd);
    fclose(fd);
    return EINA_TRUE;
 }
