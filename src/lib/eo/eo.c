@@ -245,7 +245,6 @@ _eo_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op
 EAPI Eo_Hook_Call eo_hook_call_pre = NULL;
 EAPI Eo_Hook_Call eo_hook_call_post = NULL;
 
-#define EO_INVALID_DATA (void *) -1
 // 1024 entries == 16k or 32k (32 or 64bit) for eo call stack. that's 1023
 // imbricated/recursive calls it can handle before barfing. i'd say that's ok
 #define EO_CALL_STACK_DEPTH_MIN 1024
@@ -259,7 +258,6 @@ typedef struct _Eo_Stack_Frame
         const _Eo_Class   *kls;
    } o;
    const _Eo_Class   *cur_klass;
-   void              *obj_data;
 } Eo_Stack_Frame;
 
 #define EO_CALL_STACK_SIZE (EO_CALL_STACK_DEPTH_MIN * sizeof(Eo_Stack_Frame))
@@ -447,7 +445,6 @@ _eo_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
    else
      {
         fptr->eo_id = eo_id;
-        fptr->obj_data = EO_INVALID_DATA;
         if (is_klass)
           {
              EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
@@ -464,8 +461,6 @@ _eo_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
    if (is_super)
      {
         EO_CLASS_POINTER_RETURN_VAL(cur_klass_id, cur_klass, EINA_FALSE);
-        if (fptr->cur_klass == cur_klass)
-          fptr->obj_data = EO_INVALID_DATA;
         fptr->cur_klass = cur_klass;
      }
    else
@@ -514,8 +509,6 @@ _eo_do_end(void *eo_stack)
 
    if (!_eo_is_a_class(fptr->eo_id) && fptr->o.obj)
      _eo_unref(fptr->o.obj);
-
-   fptr->obj_data = EO_INVALID_DATA;
 
    stack->frame_ptr--;
 
@@ -575,15 +568,7 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, c
         if (is_obj)
           {
              call->obj = (Eo *)fptr->eo_id;
-             if (func->src == fptr->o.obj->klass)
-               {
-                  if (fptr->obj_data == EO_INVALID_DATA)
-                    fptr->obj_data = _eo_data_scope_get(fptr->o.obj, func->src);
-
-                  call->data = fptr->obj_data;
-               }
-             else
-               call->data = _eo_data_scope_get(fptr->o.obj, func->src);
+             call->data = _eo_data_scope_get(fptr->o.obj, func->src);
           }
         else
           {
