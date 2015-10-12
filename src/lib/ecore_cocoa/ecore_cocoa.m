@@ -103,7 +103,7 @@ _ecore_cocoa_event_modifiers(unsigned int mod)
 }
 
 
-static inline Ecore_Event_Key*
+static Ecore_Event_Key*
 _ecore_cocoa_event_key(NSEvent *event, int keyType)
 {
    static Eina_Bool compose = EINA_FALSE;
