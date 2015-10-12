@@ -419,7 +419,7 @@ _eo_id_allocate(const _Eo_Object *obj)
 #else
    Eo_Id ret = 0x1;
    (void) obj;
-   return ret << REF_TAG_SHIFT;
+   return MASK_OBJ_TAG;
 #endif
 }
 

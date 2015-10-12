@@ -153,8 +153,7 @@ _eo_is_a_class(const Eo *eo_id)
    if (!eo_id) return EINA_FALSE;
    oid = ((Eo_Header *) eo_id)->id;
 #endif
-   return ((((oid >> REF_TAG_SHIFT) & 0x1) == 0x0) &&
-         (oid & MASK_CLASS_TAG));
+   return (!(oid & MASK_OBJ_TAG) && (oid & MASK_CLASS_TAG));
 }
 
 static inline _Eo_Class *
