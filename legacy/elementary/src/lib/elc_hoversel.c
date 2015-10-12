@@ -93,10 +93,15 @@ _elm_hoversel_elm_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
 
 static Eina_Bool
 _on_hover_clicked(void *data EINA_UNUSED,
-                     Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
+                     Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
                      void *event_info EINA_UNUSED)
 {
-   elm_hoversel_hover_end(data);
+   const char *dismissstr;
+
+   dismissstr = edje_object_data_get(elm_layout_edje_get(obj), "dismiss");
+
+   if (!dismissstr || strcmp(dismissstr, "on"))
+     elm_hoversel_hover_end(data); // for backward compatibility
 
    return EINA_TRUE;
 }
@@ -323,6 +328,37 @@ _resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
 }
 
 static void
+_hover_end_finished(void *data,
+                    Evas_Object *obj EINA_UNUSED,
+                    const char *emission EINA_UNUSED,
+                    const char *source EINA_UNUSED)
+{
+   Elm_Object_Item *eo_item;
+   Eina_List *l;
+   const char *dismissstr;
+
+   ELM_HOVERSEL_DATA_GET(data, sd);
+
+   dismissstr = edje_object_data_get(elm_layout_edje_get(sd->hover), "dismiss");
+
+   if (dismissstr && !strcmp(dismissstr, "on"))
+     {
+        sd->expanded = EINA_FALSE;
+
+        EINA_LIST_FOREACH(sd->items, l, eo_item)
+          {
+             ELM_HOVERSEL_ITEM_DATA_GET(eo_item, it);
+             VIEW(it) = NULL;
+          }
+        ELM_SAFE_FREE(sd->hover, evas_object_del);
+        sd->scr = NULL;
+        sd->last_location = NULL;
+
+        eo_do(obj, eo_event_callback_call(ELM_HOVERSEL_EVENT_DISMISSED, NULL));
+     }
+}
+
+static void
 _activate(Evas_Object *obj)
 {
    Elm_Object_Item *eo_item;
@@ -355,6 +391,8 @@ _activate(Evas_Object *obj)
 
    eo_do(sd->hover, eo_event_callback_add
      (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_hover_clicked, obj));
+   elm_layout_signal_callback_add
+     (sd->hover, "elm,action,hide,finished", "elm", _hover_end_finished, obj);
    elm_hover_target_set(sd->hover, obj);
 
    /* hover's content */
@@ -695,23 +733,38 @@ _elm_hoversel_hover_begin(Eo *obj, Elm_Hoversel_Data *sd)
 EOLIAN static void
 _elm_hoversel_hover_end(Eo *obj, Elm_Hoversel_Data *sd)
 {
+
    Elm_Object_Item *eo_item;
    Eina_List *l;
+   const char *dismissstr;
 
    if (!sd->hover) return;
 
-   sd->expanded = EINA_FALSE;
+   dismissstr = edje_object_data_get(elm_layout_edje_get(sd->hover), "dismiss");
 
-   EINA_LIST_FOREACH(sd->items, l, eo_item)
+   if (dismissstr && !strcmp(dismissstr, "on"))
      {
-        ELM_HOVERSEL_ITEM_DATA_GET(eo_item, it);
-        VIEW(it) = NULL;
-     }
-   ELM_SAFE_FREE(sd->hover, evas_object_del);
-   sd->scr = NULL;
-   sd->last_location = NULL;
+        elm_hover_dismiss(sd->hover);
 
-   eo_do(obj, eo_event_callback_call(ELM_HOVERSEL_EVENT_DISMISSED, NULL));
+
+
+     }
+   else
+
+     {
+        sd->expanded = EINA_FALSE;
+
+        EINA_LIST_FOREACH(sd->items, l, eo_item)
+          {
+             ELM_HOVERSEL_ITEM_DATA_GET(eo_item, it);
+             VIEW(it) = NULL;
+          }
+        ELM_SAFE_FREE(sd->hover, evas_object_del);
+        sd->scr = NULL;
+        sd->last_location = NULL;
+
+        eo_do(obj, eo_event_callback_call(ELM_HOVERSEL_EVENT_DISMISSED, NULL));
+     } // for backward compatibility
 }
 
 EOLIAN static Eina_Bool

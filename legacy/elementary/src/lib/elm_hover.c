@@ -808,7 +808,12 @@ _elm_hover_best_content_location_get(const Eo *obj EINA_UNUSED, Elm_Hover_Data *
 EOLIAN static void
 _elm_hover_dismiss(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
 {
-   elm_layout_signal_emit(obj, "elm,action,dismiss", ""); // XXX: for compat
+   const char *dismissstr;
+
+   dismissstr = edje_object_data_get(elm_layout_edje_get(obj), "dismiss");
+
+   if (!dismissstr || strcmp(dismissstr, "on"))
+     elm_layout_signal_emit(obj, "elm,action,dismiss", ""); // XXX: for compat
    elm_layout_signal_emit(obj, "elm,action,dismiss", "elm");
 }
 
