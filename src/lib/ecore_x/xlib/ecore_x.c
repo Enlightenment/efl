@@ -35,7 +35,7 @@ static Eina_Bool _ecore_x_fd_handler(void *data,
                                      Ecore_Fd_Handler *fd_handler);
 static Eina_Bool _ecore_x_fd_handler_buf(void *data,
                                          Ecore_Fd_Handler *fd_handler);
-static int       _ecore_x_key_mask_get(KeySym sym);
+static int       _ecore_x_key_mask_get(XModifierKeymap *mod, KeySym sym);
 static int       _ecore_x_event_modifier(unsigned int state);
 
 static Ecore_Fd_Handler *_ecore_x_fd_handler_handle = NULL;
@@ -256,6 +256,7 @@ _ecore_x_XKeycodeToKeysym(Display *display, KeyCode keycode, int idx)
 void
 _ecore_x_modifiers_get(void)
 {
+   XModifierKeymap *mod;
    ECORE_X_MODIFIER_SHIFT = 0;
    ECORE_X_MODIFIER_CTRL = 0;
    ECORE_X_MODIFIER_ALT = 0;
@@ -266,24 +267,27 @@ _ecore_x_modifiers_get(void)
    ECORE_X_LOCK_CAPS = 0;
    ECORE_X_LOCK_SHIFT = 0;
 
+   mod = XGetModifierMapping(_ecore_x_disp);
+   if ((!mod) || (mod->max_keypermod <= 0)) goto clean_up;
+
    /* everything has these... unless its like a pda... :) */
-   ECORE_X_MODIFIER_SHIFT = _ecore_x_key_mask_get(XK_Shift_L);
-   ECORE_X_MODIFIER_CTRL = _ecore_x_key_mask_get(XK_Control_L);
+   ECORE_X_MODIFIER_SHIFT = _ecore_x_key_mask_get(mod, XK_Shift_L);
+   ECORE_X_MODIFIER_CTRL = _ecore_x_key_mask_get(mod, XK_Control_L);
 
    /* apple's xdarwin has no alt!!!! */
-   ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Alt_L);
+   ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(mod, XK_Alt_L);
    if (!ECORE_X_MODIFIER_ALT)
-     ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Meta_L);
+     ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(mod, XK_Meta_L);
 
    if (!ECORE_X_MODIFIER_ALT)
-     ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Super_L);
+     ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(mod, XK_Super_L);
 
    /* the windows key... a valid modifier :) */
-   ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Super_L);
+   ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(mod, XK_Super_L);
    if (!ECORE_X_MODIFIER_WIN)
-     ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Meta_L);
+     ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(mod, XK_Meta_L);
 
-   ECORE_X_MODIFIER_ALTGR = _ecore_x_key_mask_get(XK_Mode_switch);
+   ECORE_X_MODIFIER_ALTGR = _ecore_x_key_mask_get(mod, XK_Mode_switch);
 
    if (ECORE_X_MODIFIER_WIN == ECORE_X_MODIFIER_ALT)
      ECORE_X_MODIFIER_WIN = 0;
@@ -333,10 +337,17 @@ _ecore_x_modifiers_get(void)
           }
      }
 
-   ECORE_X_LOCK_SCROLL = _ecore_x_key_mask_get(XK_Scroll_Lock);
-   ECORE_X_LOCK_NUM = _ecore_x_key_mask_get(XK_Num_Lock);
-   ECORE_X_LOCK_CAPS = _ecore_x_key_mask_get(XK_Caps_Lock);
-   ECORE_X_LOCK_SHIFT = _ecore_x_key_mask_get(XK_Shift_Lock);
+   ECORE_X_LOCK_SCROLL = _ecore_x_key_mask_get(mod, XK_Scroll_Lock);
+   ECORE_X_LOCK_NUM = _ecore_x_key_mask_get(mod, XK_Num_Lock);
+   ECORE_X_LOCK_CAPS = _ecore_x_key_mask_get(mod, XK_Caps_Lock);
+   ECORE_X_LOCK_SHIFT = _ecore_x_key_mask_get(mod, XK_Shift_Lock);
+
+clean_up:
+   if (mod)
+     {
+        if (mod->modifiermap) XFree(mod->modifiermap);
+        XFree(mod);
+     }
 }
 
 static Eina_Bool
@@ -1166,9 +1177,8 @@ _ecore_x_fd_handler_buf(void *data,
 }
 
 static int
-_ecore_x_key_mask_get(KeySym sym)
+_ecore_x_key_mask_get(XModifierKeymap *mod, KeySym sym)
 {
-   XModifierKeymap *mod;
    KeySym sym2;
    int i, j, mask = 0;
    const int masks[8] =
@@ -1177,25 +1187,16 @@ _ecore_x_key_mask_get(KeySym sym)
         Mod1Mask, Mod2Mask, Mod3Mask, Mod4Mask, Mod5Mask
      };
 
-   mod = XGetModifierMapping(_ecore_x_disp);
-   if ((mod) && (mod->max_keypermod > 0))
+   for (i = 0; i < (8 * mod->max_keypermod); i++)
      {
-        for (i = 0; i < (8 * mod->max_keypermod); i++)
+        for (j = 0; j < 8; j++)
           {
-             for (j = 0; j < 8; j++)
-               {
-                  sym2 = _ecore_x_XKeycodeToKeysym(_ecore_x_disp,
-                                                   mod->modifiermap[i], j);
-                  if (sym2 != 0)
-                  break;
-               }
-             if (sym2 == sym) mask = masks[i / mod->max_keypermod];
+             sym2 = _ecore_x_XKeycodeToKeysym(_ecore_x_disp,
+                                              mod->modifiermap[i], j);
+             if (sym2 != 0)
+             break;
           }
-     }
-   if (mod)
-     {
-        if (mod->modifiermap) XFree(mod->modifiermap);
-        XFree(mod);
+        if (sym2 == sym) mask = masks[i / mod->max_keypermod];
      }
    return mask;
 }
