@@ -93,6 +93,28 @@ Fixes:
    * Ecore pipe: clean up handling of already read information. (CID98384)
    * Ecore Con: Fix possible timing attacks. (CID1039559, CID1039558)
    * Ecore con: Prevent possible use of uninitialised buffer on the stack. (CID1316016)
+   * evas engines - fix partial swap to not skip swaps if full mode used
+   * Evas image: Fix wrong usage of engine data macro
+   * ethumb - fix client free issue with pending dbus messages (T2769)
+   * Evas filters: Fix crash with async sw rendering
+   * evas-wayland-shm: Fix to add support for MERGE_MODE Smart
+   * evas-wayland-shm: Don't leak rectangles during flush
+   * ecore-evas-wayland-shm: Check for fullscreen and override windows when processing updates
+   * ecore-evas-wayland: Set ee->draw_ok appropriately based on visibility
+   * ecore-evas x - solve internal window size flickrs in e
+   * eio_monitor: fix memory leak issue
+   * evas_canvas3d: fix mesh being added twice added to scene data
+   * Eo: Fix Eo on Windows.
+   * Ector renderer: fix return value to be of the right type.
+   * Edje cc handlers: Fix memory leak and possible crash.
+   * Eeze sensor udev: Fix memory leak and possible crash.
+   * Ector renderer: fix return value to be of the right type.
+   * ecore-wayland: Comment out unused functions for session listener
+   * ecore-wayland: Comment out unused functions
+   * eolian-cxx: Fixed assert which was a tautology (CID1316018)
+   * eolian-cxx: Fixed possible exception escaping main (CID1265600)
+   * Ecore_xcb_keymap: Fix memory leak in _ecore_xcb_keymap_finilize
+   * Evas filter: Fix proxies of filtered images
 
 Changes since 1.14.0:
 ---------------------
