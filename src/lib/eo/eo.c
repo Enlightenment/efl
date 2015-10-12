@@ -1352,6 +1352,11 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         klass->data_offset = klass->parent->data_offset +
            EO_ALIGN_SIZE(klass->parent->desc->data_size);
      }
+   else
+     {
+        /* Data starts after the object size. */
+        klass->data_offset = _eo_sz;
+     }
 
    mro = eina_list_remove(mro, NULL);
    mro = eina_list_prepend(mro, klass);
@@ -1406,7 +1411,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         extn_data_itr->offset = 0;
      }
 
-   klass->obj_size = _eo_sz + extn_data_off;
+   klass->obj_size = extn_data_off;
    if (getenv("EO_DEBUG"))
      {
         fprintf(stderr, "Eo class '%s' will take %u bytes per object.\n",
@@ -1604,7 +1609,7 @@ static inline void *
 _eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass)
 {
    if (EINA_LIKELY((klass->desc->data_size > 0) && (klass->desc->type != EO_CLASS_TYPE_MIXIN)))
-     return ((char *) obj) + _eo_sz + klass->data_offset;
+     return ((char *) obj) + klass->data_offset;
 
    if (EINA_UNLIKELY(klass->desc->data_size == 0))
      {
@@ -1620,7 +1625,7 @@ _eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass)
         while (doff_itr->klass)
           {
              if (doff_itr->klass == klass)
-               return ((char *) obj) + _eo_sz + doff_itr->offset;
+               return ((char *) obj) + doff_itr->offset;
              doff_itr++;
           }
      }
