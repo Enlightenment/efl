@@ -100,6 +100,9 @@ Fixes:
    * multibuttonentry: Fix MBE item box min size calc error.
    * elc_naviframe: fix crash in strcmp, if text_set is NULL issue
    * elm_hover: delay hover dismiss while handling edje signal
+   * elm cursors - if min size is too small then force it to be sane
+   * elm cursor - fix hotspot tracking to actually work right
+   * toolbar: Fix crash on more_item when shrink mode is set with no item.
 
 Changes since 1.14.0:
 ---------------------
