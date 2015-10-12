@@ -2619,6 +2619,8 @@ _elm_win_frame_cb_move_start(void *data,
                              const char *sig EINA_UNUSED,
                              const char *source)
 {
+   int ox, oy;
+
    ELM_WIN_DATA_GET(data, sd);
 
    if (!sd) return;
@@ -2638,7 +2640,9 @@ _elm_win_frame_cb_move_start(void *data,
     * position. The new position will get updated automatically when
     * the move is finished */
 
-   ecore_evas_wayland_move(sd->ee, sd->screen.x, sd->screen.y);
+   edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
+                                 &ox, &oy, NULL, NULL);
+   ecore_evas_wayland_move(sd->ee, ox, oy);
 }
 
 static void
