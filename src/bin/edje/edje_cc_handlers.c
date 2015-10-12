@@ -12781,6 +12781,7 @@ st_collections_group_programs_program_action(void)
    Edje_Part_Collection *pc;
    Edje_Program *ep;
    int i;
+   Eina_Bool found = EINA_FALSE;
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
    if (sequencing)
@@ -12828,15 +12829,21 @@ st_collections_group_programs_program_action(void)
    else if (ep->action == EDJE_ACTION_TYPE_SOUND_SAMPLE)
      {
         ep->sample_name = parse_str(1);
-        for (i = 0; i < (int)edje_file->sound_dir->samples_count; i++)
+        if (edje_file->sound_dir)
           {
-             if (!strcmp(edje_file->sound_dir->samples[i].name, ep->sample_name))
-               break;
-             if (i == (int)(edje_file->sound_dir->samples_count - 1))
+             for (i = 0; i < (int)edje_file->sound_dir->samples_count; i++)
                {
-                  ERR("No Sample name %s exist.", ep->sample_name);
-                  exit(-1);
+                  if (!strcmp(edje_file->sound_dir->samples[i].name, ep->sample_name))
+                    {
+                       found = EINA_TRUE;
+                       break;
+                    }
                }
+          }
+        if (!found)
+          {
+             ERR("No Sample name %s exist.", ep->sample_name);
+             exit(-1);
           }
         ep->speed = parse_float_range(2, 0.0, 100.0);
         if (get_arg_count() >= 4)
@@ -12853,15 +12860,21 @@ st_collections_group_programs_program_action(void)
    else if (ep->action == EDJE_ACTION_TYPE_SOUND_TONE)
      {
         ep->tone_name = parse_str(1);
-        for (i = 0; i < (int)edje_file->sound_dir->tones_count; i++)
+        if (edje_file->sound_dir)
           {
-             if (!strcmp(edje_file->sound_dir->tones[i].name, ep->tone_name))
-               break;
-             if (i == (int)(edje_file->sound_dir->tones_count - 1))
+             for (i = 0; i < (int)edje_file->sound_dir->tones_count; i++)
                {
-                  ERR("No Tone name %s exist.", ep->tone_name);
-                  exit(-1);
+                  if (!strcmp(edje_file->sound_dir->tones[i].name, ep->tone_name))
+                    {
+                       found = EINA_TRUE;
+                       break;
+                    }
                }
+          }
+        if (!found)
+          {
+             ERR("No Tone name %s exist.", ep->tone_name);
+             exit(-1);
           }
         ep->duration = parse_float_range(2, 0.1, 10.0);
      }
