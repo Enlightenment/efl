@@ -1077,6 +1077,8 @@ _item_select(Elm_Toolbar_Item_Data *it)
 
    if (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()) || (it->separator) || (it->object))
      return;
+   if ((sd->shrink_mode == ELM_TOOLBAR_SHRINK_EXPAND) && (!sd->more_item))
+     return;
    sel = it->selected;
 
    if ((sd->select_mode != ELM_OBJECT_SELECT_MODE_NONE) &&
