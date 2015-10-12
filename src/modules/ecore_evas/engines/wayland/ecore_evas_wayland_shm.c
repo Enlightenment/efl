@@ -329,7 +329,6 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
      {
         ecore_wl_window_show(wdata->win);
         ecore_wl_window_alpha_set(wdata->win, ee->alpha);
-        ecore_wl_window_update_size(wdata->win, ee->w + fw, ee->h + fh);
 
         einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
         if (einfo)
@@ -489,16 +488,12 @@ _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location)
    wdata = ee->engine.data;
    if (wdata->win) 
      {
-        int fw, fh;
-
         _ecore_evas_wayland_shm_resize_edge_set(ee, location);
 
-        evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-
         if (ECORE_EVAS_PORTRAIT(ee))
-          ecore_wl_window_resize(wdata->win, ee->w + fw, ee->h + fh, location);
+          ecore_wl_window_resize(wdata->win, ee->w, ee->h, location);
         else
-          ecore_wl_window_resize(wdata->win, ee->w + fh, ee->h + fw, location);
+          ecore_wl_window_resize(wdata->win, ee->w, ee->h, location);
      }
 }
 
