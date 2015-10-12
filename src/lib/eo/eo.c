@@ -1606,9 +1606,20 @@ _eo_condtor_done(Eo *obj_id)
 }
 
 static inline void *
+_eo_data_scope_safe_get(const _Eo_Object *obj, const _Eo_Class *klass)
+{
+   if (EINA_LIKELY(klass->desc->data_size > 0))
+     {
+        return _eo_data_scope_get(obj, klass);
+     }
+
+   return NULL;
+}
+
+static inline void *
 _eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass)
 {
-   if (EINA_LIKELY((klass->desc->data_size > 0) && (klass->desc->type != EO_CLASS_TYPE_MIXIN)))
+   if (EINA_LIKELY(klass->desc->type != EO_CLASS_TYPE_MIXIN))
      return ((char *) obj) + klass->data_offset;
 
    if (EINA_UNLIKELY(klass->desc->data_size == 0))
@@ -1639,7 +1650,7 @@ _eo_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Eo_Cl
    void *data = NULL;
    if (klass != NULL)
      {
-        data = _eo_data_scope_get(obj, klass);
+        data = _eo_data_scope_safe_get(obj, klass);
         if (data == NULL) return NULL;
      }
    (obj->datarefcount)++;
@@ -1723,7 +1734,7 @@ eo_data_scope_get(const Eo *obj_id, const Eo_Class *klass_id)
      }
 #endif
 
-   ret = _eo_data_scope_get(obj, klass);
+   ret = _eo_data_scope_safe_get(obj, klass);
 
 #ifdef EO_DEBUG
    if (!ret && (klass->desc->data_size == 0))
