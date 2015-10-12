@@ -2209,11 +2209,6 @@ _lua_print(lua_State *L)
    return 0;
 }
 
-static const struct luaL_Reg printlib[] = {
-  { "print", _lua_print },
-  { NULL, NULL }
-};
-
 #define LUA_GENERIC_FUNCTION(name) \
 static int \
 _lua_##name(lua_State *L) \

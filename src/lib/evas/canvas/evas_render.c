@@ -2390,8 +2390,11 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
    eina_evlog("-render_objects", eo_e, 0.0, NULL);
    /* free obscuring objects list */
    OBJS_ARRAY_CLEAN(&e->temporary_objects);
+
+#ifdef REND_DBG
    if (top) RD(level, "   ---] SNAPSHOT [obj:%p sfc:%p]\n", top, surface);
    else RD(level, "  ---]\n");
+#endif
 
    return clean_them;
 }
