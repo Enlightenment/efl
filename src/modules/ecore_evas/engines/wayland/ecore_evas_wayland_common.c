@@ -191,27 +191,6 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    if (nw < 1) nw = 1;
    if (nh < 1) nh = 1;
 
-   if (ee->prop.fullscreen)
-     {
-        if ((nw <= 1) || (nh <= 1))
-          evas_output_size_get(ee->evas, &nw, &nh);
-     }
-   else
-     {
-        evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-     }
-
-   if (ECORE_EVAS_PORTRAIT(ee))
-     {
-        nw -= fw;
-        nh -= fh;
-     }
-   else
-     {
-        nw -= fh;
-        nh -= fw;
-     }
-
    if (prev_full != ee->prop.fullscreen)
      _ecore_evas_wl_common_border_update(ee);
 
@@ -620,6 +599,9 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
           }
      }
 
+   if (wdata->win)
+     ecore_wl_window_update_size(wdata->win, ee->req.w, ee->req.h);
+
    evas_output_size_get(ee->evas, &ow, &oh);
    if ((ow != w) || (oh != h))
      {
@@ -650,9 +632,6 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 
         if (wdata->frame)
           evas_object_resize(wdata->frame, w, h);
-
-        if (wdata->win)
-          ecore_wl_window_update_size(wdata->win, w, h);
 
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
