@@ -134,10 +134,20 @@ START_TEST(eina_test_tiler_all)
    Eina_Rectangle *rp;
    Eina_Rectangle r;
    int i = 0;
+   int width, height;
 
    eina_init();
 
-   tl = eina_tiler_new(640, 480);
+   tl = eina_tiler_new(1, 1);
+
+   eina_tiler_area_size_get(tl, &width, &height);
+   fail_if(width != 1 && height != 1);
+
+   width = 640;
+   height = 480;
+   eina_tiler_area_size_set(tl, width, height);
+   eina_tiler_area_size_get(tl, &width, &height);
+   fail_if(width != 640 && height != 480);
 
    eina_tiler_tile_size_set(tl, 32, 32);
 
