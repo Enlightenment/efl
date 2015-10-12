@@ -26,6 +26,16 @@
 
 #ifdef EINA_HAVE_DEBUG
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__)
+# include <mach/mach_time.h>
+#endif
+
+#include <time.h>
+
 # ifdef HAVE_MMAP
 #  include <sys/mman.h>
 # endif
@@ -38,12 +48,42 @@ static int             _evlog_go = 0;
 static Eina_Evlog_Buf *buf; // current event log we are writing events to
 static Eina_Evlog_Buf  buffers[2]; // double-buffer our event log buffers
 
+#if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME)
+static clockid_t _eina_evlog_time_clock_id = -1;
+#elif defined(__APPLE__) && defined(__MACH__)
+static double _eina_evlog_time_clock_conversion = 1e-9;
+#endif
+
 static inline double
 get_time(void)
 {
+#if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME)
+   struct timespec t;
+
+   if (EINA_UNLIKELY(_eina_evlog_time_clock_id < 0))
+     {
+        if (!clock_gettime(CLOCK_MONOTONIC, &t))
+          _eina_evlog_time_clock_id = CLOCK_MONOTONIC;
+        else
+          _eina_evlog_time_clock_id = CLOCK_REALTIME;
+     }
+
+   if (EINA_UNLIKELY(clock_gettime(_eina_evlog_time_clock_id, &t)))
+     {
+        struct timeval timev;
+        gettimeofday(&timev, NULL);
+        return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000.0);
+     }
+   return (double)t.tv_sec + (((double)t.tv_nsec) / 1000000000.0);
+#elif defined(HAVE_EVIL)
+   return evil_time_get();
+#elif defined(__APPLE__) && defined(__MACH__)
+   return _eina_evlog_time_clock_conversion * (double)mach_absolute_time();
+#else
    struct timeval timev;
    gettimeofday(&timev, NULL);
    return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000.0);
+#endif
 }
 
 static void
