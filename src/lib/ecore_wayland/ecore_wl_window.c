@@ -194,8 +194,6 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
 
    input = win->keyboard_device;
 
-   ecore_wl_window_update_size(win, w, h);
-
    if ((!input) && (win->parent))
      {
         if (!(input = win->parent->keyboard_device))
@@ -594,6 +592,7 @@ ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h)
         win->saved.w = w;
         win->saved.h = h;
      }
+
    if (win->xdg_surface)
      xdg_surface_set_window_geometry(win->xdg_surface,
                                      win->allocation.x, win->allocation.y,
@@ -608,6 +607,7 @@ ecore_wl_window_update_location(Ecore_Wl_Window *win, int x, int y)
    if (!win) return;
    win->allocation.x = x;
    win->allocation.y = y;
+
    if (win->xdg_surface)
      xdg_surface_set_window_geometry(win->xdg_surface,
                                      win->allocation.x, win->allocation.y,
@@ -1087,6 +1087,7 @@ _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, int edges)
    ev->w = w;
    ev->h = h;
    ev->edges = edges;
+
    ecore_event_add(ECORE_WL_EVENT_WINDOW_CONFIGURE, ev, NULL, NULL);
 }
 
