@@ -85,8 +85,13 @@ eina_environment_tmp_get(void)
 
    return tmp;
 #else
-   tmp = getenv("TMPDIR");
-   if (!tmp) tmp = getenv("XDG_RUNTIME_DIR");
+# if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+# endif
+     {
+        tmp = getenv("TMPDIR");
+	if (!tmp) tmp = getenv("XDG_RUNTIME_DIR");
+     }
    if (!tmp) tmp = "/tmp";
 
    return tmp;
