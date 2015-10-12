@@ -252,12 +252,12 @@ EAPI Eo_Hook_Call eo_hook_call_post = NULL;
 
 typedef struct _Eo_Stack_Frame
 {
-   const Eo          *eo_id;
    union {
         _Eo_Object        *obj;
         const _Eo_Class   *kls;
    } o;
    const _Eo_Class   *cur_klass;
+   Eina_Bool is_obj : 1;
 } Eo_Stack_Frame;
 
 #define EO_CALL_STACK_SIZE (EO_CALL_STACK_DEPTH_MIN * sizeof(Eo_Stack_Frame))
@@ -431,31 +431,21 @@ _eo_call_stack_resize(Eo_Call_Stack *stack, Eina_Bool grow)
 
 static inline Eina_Bool
 _eo_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
-                Eina_Bool is_super, Eo_Stack_Frame *fptr, Eo_Stack_Frame *pfptr)
+                Eina_Bool is_super, Eo_Stack_Frame *fptr)
 {
-   Eina_Bool is_klass = _eo_is_a_class(eo_id);
+   fptr->is_obj = !_eo_is_a_class(eo_id);
 
    /* If we are already in the same object context, we inherit info from it. */
-   if (pfptr)
+   if (!fptr->is_obj)
      {
-        memcpy(fptr, pfptr, sizeof(Eo_Stack_Frame));
-        if (!is_klass)
-          _eo_ref(fptr->o.obj);
+        EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
+        fptr->o.kls = _klass;
      }
    else
      {
-        fptr->eo_id = eo_id;
-        if (is_klass)
-          {
-             EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
-             fptr->o.kls = _klass;
-          }
-        else
-          {
-             EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
-             fptr->o.obj = _obj;
-             _eo_ref(_obj);
-          }
+        EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
+        fptr->o.obj = _obj;
+        _eo_ref(_obj);
      }
 
    if (is_super)
@@ -475,7 +465,7 @@ EAPI Eina_Bool
 _eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, void *eo_stack)
 {
    Eina_Bool ret = EINA_TRUE;
-   Eo_Stack_Frame *fptr, *pfptr;
+   Eo_Stack_Frame *fptr;
    Eo_Call_Stack *stack = eo_stack;
 
    if (stack->frame_ptr == stack->last_frame)
@@ -483,10 +473,9 @@ _eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, 
 
    fptr = stack->frame_ptr;
 
-   pfptr = ((eo_id) && (fptr->eo_id == eo_id) ? fptr : NULL);
    fptr++;
 
-   if (!_eo_do_internal(eo_id, cur_klass_id, is_super, fptr, pfptr))
+   if (!_eo_do_internal(eo_id, cur_klass_id, is_super, fptr))
      {
         fptr->o.obj = NULL;
         fptr->cur_klass = NULL;
@@ -507,7 +496,7 @@ _eo_do_end(void *eo_stack)
 
    fptr = stack->frame_ptr;
 
-   if (!_eo_is_a_class(fptr->eo_id) && fptr->o.obj)
+   if (fptr->is_obj && fptr->o.obj)
      _eo_unref(fptr->o.obj);
 
    stack->frame_ptr--;
@@ -529,7 +518,7 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, c
    if (EINA_UNLIKELY(!fptr->o.obj))
       return EINA_FALSE;
 
-   is_obj = !_eo_is_a_class(fptr->eo_id);
+   is_obj = fptr->is_obj;
 
    klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
 
@@ -567,7 +556,7 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, c
 
         if (is_obj)
           {
-             call->obj = (Eo *)fptr->eo_id;
+             call->obj = (Eo *) fptr->o.obj->header.id;
              call->data = _eo_data_scope_get(fptr->o.obj, func->src);
           }
         else
@@ -868,7 +857,7 @@ _eo_add_internal_end(Eo *eo_id, Eo_Call_Stack *stack)
 
    fptr = stack->frame_ptr;
 
-   if ((fptr == NULL) || (eo_id && (fptr->eo_id != eo_id)))
+   if (fptr == NULL)
      {
         ERR("Something very wrong happend to the call stack.");
         return NULL;
