@@ -154,6 +154,18 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                      @in type: Elm_Gengrid_Item_Scrollto_Type; [[Where to position the item in the viewport.]]
                 }
            }
+           all_contents_unset {
+                [[Unset all contents fetched by the item class.
+
+                  This instructs gengrid to release references to contents
+                  in the item, meaning that they will no longer be managed
+                  by gengrid and are floating "orphans" that can be re-used
+                  elsewhere if the user wants to.
+                ]]
+                params {
+                     @out l: own(list<own(Evas.Object *)> *); [[The contents list to return.]]
+                }
+           }
            update {
                 [[Update the contents of a given gengrid item
 

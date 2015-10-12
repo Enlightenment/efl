@@ -4585,6 +4585,22 @@ elm_gengrid_item_object_get(const Elm_Object_Item *eo_it)
 }
 
 EOLIAN static void
+_elm_gengrid_item_all_contents_unset(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it, Eina_List **l)
+{
+   Evas_Object *content;
+
+   ELM_GENGRID_ITEM_CHECK_OR_RETURN(it);
+
+   EINA_LIST_FREE(it->contents, content)
+     {
+        elm_widget_sub_object_del(WIDGET(it), content);
+        edje_object_part_unswallow(VIEW(it), content);
+        evas_object_hide(content);
+        if (l) *l = eina_list_append(*l, content);
+     }
+}
+
+EOLIAN static void
 _elm_gengrid_item_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it)
 {
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(it);
