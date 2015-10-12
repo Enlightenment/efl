@@ -245,7 +245,7 @@ ecore_x_cursor_size_set(int size)
    XcursorSetDefaultSize(_ecore_x_disp, size);
    if (_ecore_xlib_sync) ecore_x_sync();
 #else /* ifdef ECORE_XCURSOR */
-   size = 0;
+   (void) size;
 #endif /* ifdef ECORE_XCURSOR */
 }
 
