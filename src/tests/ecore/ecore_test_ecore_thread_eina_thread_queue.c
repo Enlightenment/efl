@@ -196,6 +196,8 @@ th22_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
 START_TEST(ecore_test_ecore_thread_eina_thread_queue_t3)
 {
    int val1 = 99, val2 = 99, cnt = 0;
+   Eina_Thread_Queue *parent;
+
    eina_init();
    ecore_init();
 
@@ -204,6 +206,12 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t3)
    thqmaster = eina_thread_queue_new();
    eina_thread_queue_parent_set(thq1, thqmaster);
    eina_thread_queue_parent_set(thq2, thqmaster);
+
+   parent = eina_thread_queue_parent_get(thq1);
+   fail_if(parent != thqmaster);
+   parent = eina_thread_queue_parent_get(thq2);
+   fail_if(parent != thqmaster);
+
    ecore_thread_feedback_run(th21_do, NULL, NULL, NULL, NULL, EINA_TRUE);
    ecore_thread_feedback_run(th22_do, NULL, NULL, NULL, NULL, EINA_TRUE);
    for (;;)
@@ -546,7 +554,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
 {
    Msg7 *msg;
    void *ref;
-   int msgcnt = 0;
+   int msgcnt = 0, ret;
 
    eina_init();
    ecore_init();
@@ -558,6 +566,10 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
         fail();
      }
    eina_thread_queue_fd_set(thq1, p[1]);
+
+   ret = eina_thread_queue_fd_get(thq1);
+   fail_if(ret != p[1]);
+
    ecore_thread_feedback_run(thspeed21_do, NULL, NULL, NULL, NULL, EINA_TRUE);
    for (;;)
      {
