@@ -338,7 +338,7 @@ _ecore_evas_cocoa_shutdown(void)
         EINA_LIST_FREE(ecore_evases, ee)
           _ecore_evas_free(ee);
 
-        for (i = 0; i < sizeof (ecore_evas_event_handlers) / sizeof (Ecore_Event_Handler*); i++)
+        for (i = 0; i < EINA_C_ARRAY_LENGTH(ecore_evas_event_handlers); i++)
           ecore_event_handler_del(ecore_evas_event_handlers[i]);
 
         ecore_event_evas_shutdown();
