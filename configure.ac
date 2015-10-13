@@ -878,6 +878,9 @@ EINA_CONFIG([MAGIC_DEBUG], [test "x${have_magic_debug}" = "xyes"])
 AC_ARG_WITH([xattr-tests-path],
    [AS_HELP_STRING([--with-xattr-tests-path=DIR],[path of xattr enabled directory to create test files])],[XATTR_TEST_DIR=${withval}][AC_DEFINE_UNQUOTED([XATTR_TEST_DIR],["$withval"], [xattr enabled directory])])
 
+AC_ARG_WITH([dictionaries-hyphen-dir],
+   [AS_HELP_STRING([--with-dictionaries-hyphen-dir=DIR],[path of hunspell-compatible hyphen dictionaries])],[EVAS_DICTS_HYPHEN_DIR=${withval}][AC_DEFINE_UNQUOTED([EVAS_DICTS_HYPHEN_DIR],["$withval"], [Hunspell-compatible hyphen dictionaries install directory])])
+
 ### Checks for programs
 
 ### Checks for libraries
@@ -1609,6 +1612,18 @@ AC_ARG_ENABLE([harfbuzz],
    ],
    [want_harfbuzz="no"])
 
+# Hyphenation
+AC_ARG_ENABLE([hyphen],
+   [AS_HELP_STRING([--enable-hyphen],[enable text hyphenation support. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_hyphen="yes"
+    else
+       want_hyphen="no"
+    fi
+   ],
+   [want_hyphen="no"])
+
 # Egl
 AC_ARG_ENABLE([egl],
    [AS_HELP_STRING([--enable-egl],[enable EGL rendering. @<:@default=disabled@:>@])],
@@ -2065,6 +2080,25 @@ EVAS_CHECK_IMAGE_LOADER([DDS],     [${want_evas_image_loader_dds}])
 EFL_EVAL_PKGS([EVAS])
 
 ### Checks for header files
+
+if test "x$want_hyphen" = "xyes" ; then
+
+   EFL_CHECK_LIB_CODE([EVAS], [-lhyphen], [have_fct], [[
+   #include <string.h>
+   #include <stdlib.h>
+   #include <ctype.h>
+   #include <stdio.h>
+   #include <hyphen.h>
+   ]], [[
+   HyphenDict *dict;
+   ]])
+
+   if test "${have_fct}" = "no"; then
+     AC_MSG_ERROR([Cannot find the hyphen library.])
+   else
+     AC_DEFINE([HAVE_HYPHEN], [1], [have hunspell hyphen support])
+   fi
+fi
 
 if test "x$have_harfbuzz" = "xyes" ; then
 
