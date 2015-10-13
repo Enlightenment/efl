@@ -62,6 +62,7 @@ _ecore_exe_close_cb(void *data,
    e->exited = 1;
    e->pid = exe->pid;
    e->exe = obj;
+   exe->h_close = NULL; // It's going to get deleted in the next callback.
 
    ecore_event_add(ECORE_EXE_EVENT_DEL, e,
                    _ecore_exe_event_del_free, NULL);
