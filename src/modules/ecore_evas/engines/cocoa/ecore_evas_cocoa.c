@@ -183,18 +183,9 @@ _ecore_evas_cocoa_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, 
    Ecore_Cocoa_Event_Window     *e = event;
    Ecore_Evas                   *ee;
 
-   DBG("");
-
-   if (!e->wid)
-     return ECORE_CALLBACK_PASS_ON;
-
    ee = _ecore_evas_cocoa_match(e->wid);
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
 
-   if (!ee)
-     {
-        ERR("Unregistered Ecore_Evas for window Id %p", e->wid);
-        return ECORE_CALLBACK_PASS_ON;
-     }
    ee->prop.focused = EINA_TRUE;
    evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
@@ -208,18 +199,9 @@ _ecore_evas_cocoa_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSED,
    Ecore_Cocoa_Event_Window     *e = event;
    Ecore_Evas                   *ee;
 
-   DBG("");
-
-   if (!e->wid)
-     return ECORE_CALLBACK_PASS_ON;
-
    ee = _ecore_evas_cocoa_match(e->wid);
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
 
-   if (!ee)
-     {
-        ERR("Unregistered Ecore_Evas for window Id %p", e->wid);
-        return ECORE_CALLBACK_PASS_ON;
-     }
    evas_focus_out(ee->evas);
    ee->prop.focused = EINA_FALSE;
    if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
