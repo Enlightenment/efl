@@ -5553,6 +5553,20 @@ _elm_win_window_id_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
         if (sd->parent) return (Ecore_Window)elm_win_xwindow_get(sd->parent);
 #endif
      }
+   else if (engine_name &&
+            ((!strcmp(engine_name, ELM_OPENGL_COCOA)) ||
+             (!strcmp(engine_name, "gl_cocoa"))))
+     {
+#ifdef HAVE_ELEMENTARY_COCOA
+        if (sd->cocoa.win) return (Ecore_Window)(sd->cocoa.win);
+        if (sd->parent)
+          {
+             Ecore_Cocoa_Window *pwin;
+             eo_do(sd->parent, pwin = elm_obj_win_cocoa_window_get());
+             return (Ecore_Window)pwin;
+          }
+#endif
+     }
 
    return 0;
 }
