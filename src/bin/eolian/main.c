@@ -258,7 +258,6 @@ enum
    C_IMPL_GEN
 };
 static int gen_opt = NO_WAY_GEN;
-static int eo_needed = 0;
 static int legacy_support = 0;
 
 #define EO_SUFFIX ".eo"
@@ -291,7 +290,6 @@ int main(int argc, char **argv)
    static struct option long_options[] =
      {
         /* These options set a flag. */
-          {"eo",         no_argument,         &eo_needed, 1},
           {"help",       no_argument,         0, 'h'},
           {"gh",         no_argument,         &gen_opt, H_GEN},
           {"gc",         no_argument,         &gen_opt, C_GEN},
@@ -366,14 +364,6 @@ int main(int argc, char **argv)
 
    eo_filename_copy = strdup(eo_filename);
    eo_file_basename = basename(eo_filename_copy);
-
-   /* Only needed for .eo files */
-   if (is_eo && !eo_needed && !(gen_opt == H_GEN && legacy_support))
-     {
-        /* FIXME: perhaps ditch this completely */
-        fprintf(stderr, "eolian: --eo not specified\n");
-        goto end;
-     }
 
    if (gen_opt)
      {
