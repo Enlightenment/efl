@@ -496,7 +496,8 @@ ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
   [area release];
 }
 
-Ecore_Cocoa_Window_Id ecore_cocoa_window_get_window_id(Ecore_Cocoa_Window *window)
+EAPI Ecore_Cocoa_Window_Id
+ecore_cocoa_window_get_window_id(const Ecore_Cocoa_Window *window)
 {
   if (!window)
     return 0;
