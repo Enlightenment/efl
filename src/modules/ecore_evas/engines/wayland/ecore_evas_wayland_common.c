@@ -161,6 +161,7 @@ _ecore_evas_wl_common_cb_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED,
    return ECORE_CALLBACK_PASS_ON;
 }
 
+<<<<<<< cdc9ff78e4db118ef9e2d70b7425ca9b46bdb2df
 static Eina_Bool
 _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -226,7 +227,6 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Wl2_Event_Window_Configure *ev;
    int nw = 0, nh = 0;
-   int fw = 0, fh = 0;
    Eina_Bool prev_max, prev_full;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -248,12 +248,6 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    nh = ev->h;
    if (nw < 1) nw = 1;
    if (nh < 1) nh = 1;
-
-   if (ee->prop.fullscreen)
-     {
-        if ((nw <= 1) || (nh <= 1))
-          evas_output_size_get(ee->evas, &nw, &nh);
-     }
 
    if (prev_full != ee->prop.fullscreen)
      _ecore_evas_wl_common_border_update(ee);
