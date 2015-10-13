@@ -343,7 +343,6 @@ _ecore_evas_cocoa_shutdown(void)
 
         ecore_event_evas_shutdown();
      }
-   if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;
 }
 
