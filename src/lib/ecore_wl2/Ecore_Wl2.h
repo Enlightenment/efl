@@ -597,6 +597,20 @@ EAPI Eina_Bool ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input, const char *t
 EAPI Eina_Bool ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input);
 
 /**
+ * @defgroup Ecore_Wl2_Subsurface_Group Functions to manipulate subsurfaces.
+ * @ingroup Ecore_Wl2_Group
+ *
+ * Functions to manipulate wayland subsurfaces, using Ecore_Wl2_Subsurface.
+ *
+ * This API is intended to expose Wayland subsurface functionality, although it
+ * should not be necessary for most applications to use it, as soon as we have
+ * means to make Evas automatically switch Evas images to use subsurfaces.
+ *
+ * It can/should be used, for instance, when subsurfaces are needed to be not
+ * in sync with the main window surface.
+ */
+
+/**
  * Create and return a new subsurface.
  *
  * Create a new surface (and subsurface interface), with the parent surface
