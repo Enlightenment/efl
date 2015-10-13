@@ -625,7 +625,6 @@ group { name: "elm/toolbar/item/default";
             inherit: "default" 0.0;
             rel1.offset: 4 2;
             rel1.relative: 0.0 0.0;
-            align: 0.5 0.5;
          }
          description { state: "noicon_disabled" 0.0;
             inherit: "noicon" 0.0;
@@ -718,7 +717,6 @@ group { name: "elm/toolbar/item/default";
             inherit: "default" 0.0;
             rel1.offset: 4 2;
             rel1.relative: 0.0 0.0;
-            align: 0.5 0.5;
          }
          description { state: "noicon_disabled" 0.0;
             inherit: "noicon" 0.0;
