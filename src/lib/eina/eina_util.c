@@ -21,6 +21,7 @@
 #endif
 
 #include <stdlib.h>
+#include <unistd.h>
 #ifdef _WIN32
 # include <string.h>
 #endif
