@@ -1208,21 +1208,35 @@ _proxy_context_clip(Evas_Public_Data *evas, void *ctx, Evas_Proxy_Render_Data *p
 {
    const Evas_Coord_Rectangle *clip;
    Evas_Object_Protected_Data *clipper;
+   int cw, ch;
 
    /* cache.clip can not be relied on, since the evas is frozen, but we need
     * to set the clip. so we recurse from clipper to clipper until we reach
     * the source object's clipper */
 
-   if (!proxy_render_data || proxy_render_data->source_clip) return EINA_TRUE;
+   if (!proxy_render_data) return EINA_TRUE;
+   if (proxy_render_data->source_clip)
+     {
+        /* trust cache.clip since we clip like the source */
+        ENFN->context_clip_clip(ENDT, ctx,
+                                obj->cur->cache.clip.x + off_x,
+                                obj->cur->cache.clip.y + off_y,
+                                obj->cur->cache.clip.w, obj->cur->cache.clip.h);
+        ENFN->context_clip_get(ENDT, ctx, NULL, NULL, &cw, &ch);
+        return (cw && ch);
+     }
+
    if (!obj || !obj->cur->clipper) return EINA_TRUE;
 
    clipper = obj->cur->clipper;
    if (!clipper->cur->visible) return EINA_FALSE;
    clip = &clipper->cur->geometry;
    ENFN->context_clip_clip(ENDT, ctx, clip->x + off_x, clip->y + off_y, clip->w, clip->h);
+   ENFN->context_clip_get(ENDT, ctx, NULL, NULL, &cw, &ch);
+   if (!cw || !ch) return EINA_FALSE;
 
    /* stop if we found the source object's clipper */
-   if (clipper == proxy_render_data->proxy_obj->cur->clipper) return EINA_TRUE;
+   if (clipper == proxy_render_data->src_obj->cur->clipper) return EINA_TRUE;
 
    /* recurse to the clipper itself */
    return _proxy_context_clip(evas, ctx, proxy_render_data, clipper, off_x, off_y);
@@ -1236,7 +1250,7 @@ _evas_render_mapped_context_clip_set(Evas_Public_Data *evas, Evas_Object *eo_obj
 
    if (proxy_render_data) proxy_src_clip = proxy_render_data->source_clip;
 
-   if (proxy_src_clip && !evas->is_frozen)
+   if (proxy_src_clip)
      {
         x = obj->cur->cache.clip.x;
         y = obj->cur->cache.clip.y;

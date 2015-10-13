@@ -579,10 +579,10 @@ eng_context_clip_unset(void *data EINA_UNUSED, void *context)
 static int
 eng_context_clip_get(void *data EINA_UNUSED, void *context, int *x, int *y, int *w, int *h)
 {
-   *x = ((RGBA_Draw_Context *)context)->clip.x;
-   *y = ((RGBA_Draw_Context *)context)->clip.y;
-   *w = ((RGBA_Draw_Context *)context)->clip.w;
-   *h = ((RGBA_Draw_Context *)context)->clip.h;
+   if (x) *x = ((RGBA_Draw_Context *)context)->clip.x;
+   if (y) *y = ((RGBA_Draw_Context *)context)->clip.y;
+   if (w) *w = ((RGBA_Draw_Context *)context)->clip.w;
+   if (h) *h = ((RGBA_Draw_Context *)context)->clip.h;
    return ((RGBA_Draw_Context *)context)->clip.use;
 }
 
