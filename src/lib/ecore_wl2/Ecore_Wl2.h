@@ -558,6 +558,12 @@ EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_T
 /* TODO: doxy */
 EAPI Ecore_Wl2_Input *ecore_wl2_window_input_get(Ecore_Wl2_Window *window);
 
+/* TODO: doxy */
+EAPI void ecore_wl2_input_ungrab(Ecore_Wl2_Input *input);
+
+/* TODO: doxy */
+EAPI struct wl_seat *ecore_wl2_input_seat_get(Ecore_Wl2_Input *input);
+
 /**
  * @defgroup Ecore_Wl2_Output_Group Wayland Library Drag-n-Drop Functions
  * @ingroup Ecore_Wl2_Group
@@ -589,12 +595,6 @@ EAPI Eina_Bool ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input, const char *t
 
 /* TODO: doxy */
 EAPI Eina_Bool ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input);
-
-/* TODO: doxy */
-EAPI void ecore_wl2_input_ungrab(Ecore_Wl2_Input *input);
-
-/* TODO: doxy */
-EAPI struct wl_seat *ecore_wl2_input_seat_get(Ecore_Wl2_Input *input);
 
 /**
  * Create and return a new subsurface.
