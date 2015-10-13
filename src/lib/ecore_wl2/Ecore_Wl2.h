@@ -164,6 +164,9 @@ EAPI extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE;
  * @li @ref Ecore_Wl2_Init_Group
  * @li @ref Ecore_Wl2_Display_Group
  * @li @ref Ecore_Wl2_Window_Group
+ * @li @ref Ecore_Wl2_Output_Group
+ * @li @ref Ecore_Wl2_Dnd_Group
+ * @li @ref Ecore_Wl2_Input_Group
  * @li @ref Ecore_Wl2_Subsurface_Group
  */
 
@@ -544,8 +547,24 @@ EAPI void ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const 
 /* TODO: doxy */
 EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type);
 
+/**
+ * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
+ * @ingroup Ecore_Wl2_Group
+ *
+ * Functions that deal with creating, destroying, or interacting with
+ * Wayland Input
+ */
+
 /* TODO: doxy */
 EAPI Ecore_Wl2_Input *ecore_wl2_window_input_get(Ecore_Wl2_Window *window);
+
+/**
+ * @defgroup Ecore_Wl2_Output_Group Wayland Library Drag-n-Drop Functions
+ * @ingroup Ecore_Wl2_Group
+ *
+ * Functions that deal with creating, destroying, or interacting with
+ * Wayland Drag-n-Drop
+ */
 
 /* TODO: doxy */
 EAPI void ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types);
@@ -710,6 +729,14 @@ EAPI void ecore_wl2_subsurface_sync_set(Ecore_Wl2_Subsurface *subsurface, Eina_B
  * @ingroup Ecore_Wl2_Subsurface_Group
  */
 EAPI void ecore_wl2_subsurface_opaque_region_set(Ecore_Wl2_Subsurface *subsurface, int x, int y, int w, int h);
+
+/**
+ * @defgroup Ecore_Wl2_Output_Group Wayland Library Output Functions
+ * @ingroup Ecore_Wl2_Group
+ *
+ * Functions that deal with creating, destroying, or interacting with
+ * Wayland Outputs
+ */
 
 /**
  * Return the DPI of a given output
