@@ -16,11 +16,12 @@ evas_common_draw_context_cutouts_dup(Cutout_Rects *rects2, const Cutout_Rects *r
 {
    if (!rects) return;
    rects2->active = rects->active;
-   rects2->max = rects->max;
+   rects2->max = rects->active;
    rects2->last_add = rects->last_add;
-   if (rects->max > 0)
+   rects2->rects = NULL;
+   if (rects2->max > 0)
      {
-        const size_t sz = sizeof(Cutout_Rect) * rects->max;
+        const size_t sz = sizeof(Cutout_Rect) * rects2->max;
         rects2->rects = malloc(sz);
         memcpy(rects2->rects, rects->rects, sz);
      }
