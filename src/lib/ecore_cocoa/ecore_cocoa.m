@@ -289,37 +289,6 @@ ecore_cocoa_feed_events(void *anEvent)
 
            break;
         }
-      case NSAppKitDefined:
-        {
-           if ([event subtype] == NSApplicationActivatedEventType)
-             {
-                Ecore_Cocoa_Event_Window *ev;
-
-                ev = malloc(sizeof(Ecore_Cocoa_Event_Window));
-                if (!ev)
-                  {
-                     pass = EINA_FALSE;
-                     break;
-                  }
-                ev->wid = [event window];
-                ecore_event_add(ECORE_COCOA_EVENT_GOT_FOCUS, ev, NULL, NULL);
-             }
-           else if ([event subtype] == NSApplicationDeactivatedEventType)
-             {
-                Ecore_Cocoa_Event_Window *ev;
-
-                ev = malloc(sizeof(Ecore_Cocoa_Event_Window));
-                if (!ev)
-                  {
-                     pass = EINA_FALSE;
-                     break;
-                  }
-                ev->wid = [event window];
-                ecore_event_add(ECORE_COCOA_EVENT_LOST_FOCUS, ev, NULL, NULL);
-             }
-           pass = EINA_TRUE; // pass along AppKit events, for window manager
-           break;
-        }
       case NSScrollWheel:
         {
            DBG("Scroll Wheel");
