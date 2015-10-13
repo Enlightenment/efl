@@ -72,7 +72,6 @@ EAPI extern int ECORE_COCOA_EVENT_LOST_FOCUS;
 /** Event triggered when a window is resized */
 EAPI extern int ECORE_COCOA_EVENT_RESIZE;
 
-EAPI extern int ECORE_COCOA_EVENT_EXPOSE;
 EAPI extern int ECORE_COCOA_EVENT_WINDOW_DESTROY;
 
 /**
