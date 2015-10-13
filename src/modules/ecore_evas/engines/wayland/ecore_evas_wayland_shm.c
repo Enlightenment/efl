@@ -210,7 +210,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
 
    if (parent)
      {
-        p = ecore_wl2_window_find(ewd, parent);
+        p = ecore_wl2_display_window_find(ewd, parent);
         ee->alpha = ecore_wl2_window_alpha_get(p);
      }
 
