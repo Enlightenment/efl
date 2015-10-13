@@ -36,14 +36,11 @@
 # endif
 #endif /* ! _WIN32 */
 
-// FIXME: this engine has lots of problems. only 1 window at a time, drawRect looks wrong, doesnt handle resizes and more
-
 static int                      _ecore_evas_init_count = 0;
 // FIXME: In case we have a lot of windows per app, we should probably use another container
 // like a rbtree or a dictionnary-based container
 static Eina_List                *ecore_evases = NULL;
 static Ecore_Event_Handler      *ecore_evas_event_handlers[5] = { 0 };
-static Ecore_Idle_Enterer       *ecore_evas_idle_enterer = NULL;
 
 static const char *_iface_name = "opengl_cocoa";
 static const int _iface_version = 1;
@@ -352,8 +349,6 @@ _ecore_evas_cocoa_shutdown(void)
         for (i = 0; i < sizeof (ecore_evas_event_handlers) / sizeof (Ecore_Event_Handler*); i++)
           ecore_event_handler_del(ecore_evas_event_handlers[i]);
         ecore_event_evas_shutdown();
-        ecore_idle_enterer_del(ecore_evas_idle_enterer);
-        ecore_evas_idle_enterer = NULL;
 
         ecore_event_evas_shutdown();
      }
