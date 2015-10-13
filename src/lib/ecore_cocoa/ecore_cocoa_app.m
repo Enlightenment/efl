@@ -111,7 +111,7 @@ static Ecore_Cocoa_AppDelegate *_appDelegate = nil;
    return self;
 }
 
-- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *) EINA_UNUSED sender
 {
    // XXX This should be alterable (by Elm_Window policy)
    return YES;
