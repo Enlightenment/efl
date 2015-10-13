@@ -547,6 +547,9 @@ EAPI void ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const 
 /* TODO: doxy */
 EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type);
 
+/* TODO: doxy */
+EAPI Ecore_Wl2_Input *ecore_wl2_window_input_get(Ecore_Wl2_Window *window);
+
 /**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
  * @ingroup Ecore_Wl2_Group
@@ -554,9 +557,6 @@ EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_T
  * Functions that deal with creating, destroying, or interacting with
  * Wayland Input
  */
-
-/* TODO: doxy */
-EAPI Ecore_Wl2_Input *ecore_wl2_window_input_get(Ecore_Wl2_Window *window);
 
 /* TODO: doxy */
 EAPI void ecore_wl2_input_ungrab(Ecore_Wl2_Input *input);
