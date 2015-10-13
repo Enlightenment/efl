@@ -20,8 +20,6 @@ EAPI int ECORE_COCOA_EVENT_LOST_FOCUS = 0;
 EAPI int ECORE_COCOA_EVENT_RESIZE = 0;
 EAPI int ECORE_COCOA_EVENT_EXPOSE = 0;
 EAPI int ECORE_COCOA_EVENT_WINDOW_DESTROY = 0;
-EAPI int ECORE_COCOA_EVENT_DATA_SOURCE_SEND = 0;
-EAPI int ECORE_COCOA_EVENT_SELECTION_DATA_READY = 0;
 
 static int _ecore_cocoa_init_count = 0;
 
@@ -55,8 +53,6 @@ ecore_cocoa_init(void)
    ECORE_COCOA_EVENT_RESIZE     = ecore_event_type_new();
    ECORE_COCOA_EVENT_EXPOSE     = ecore_event_type_new();
    ECORE_COCOA_EVENT_WINDOW_DESTROY = ecore_event_type_new();
-   ECORE_COCOA_EVENT_DATA_SOURCE_SEND     = ecore_event_type_new();
-   ECORE_COCOA_EVENT_SELECTION_DATA_READY = ecore_event_type_new();
 
 
    /* Init the Application handler */
