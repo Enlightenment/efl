@@ -340,7 +340,6 @@ _ecore_evas_cocoa_shutdown(void)
 
         for (i = 0; i < sizeof (ecore_evas_event_handlers) / sizeof (Ecore_Event_Handler*); i++)
           ecore_event_handler_del(ecore_evas_event_handlers[i]);
-        ecore_event_evas_shutdown();
 
         ecore_event_evas_shutdown();
      }
