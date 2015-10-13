@@ -18,23 +18,15 @@
 # undef EAPI
 #endif
 
-#ifdef _WIN32
-# ifdef DLL_EXPORT
-#  define EAPI __declspec(dllexport)
-# else
-#  define EAPI
-# endif /* ! DLL_EXPORT */
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
+#ifdef __GNUC__
+# if __GNUC__ >= 4
+#  define EAPI __attribute__ ((visibility("default")))
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#else
+# define EAPI
+#endif
 
 static int                      _ecore_evas_init_count = 0;
 // FIXME: In case we have a lot of windows per app, we should probably use another container
