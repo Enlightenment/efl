@@ -1395,8 +1395,6 @@ _elm_image_efl_image_load_size_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int 
 EOLIAN static void
 _elm_image_orient_set(Eo *obj, Elm_Image_Data *sd, Elm_Image_Orient orient)
 {
-   int iw, ih;
-
    if (sd->edje) return;
    if (sd->orient == orient) return;
 
