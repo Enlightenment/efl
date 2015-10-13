@@ -93,7 +93,7 @@ ecore_cocoa_shutdown(void)
 }
 
 static unsigned int
-_ecore_cocoa_event_modifiers(unsigned int mod)
+_ecore_cocoa_event_modifiers(NSUInteger mod)
 {
    unsigned int modifiers = 0;
 
@@ -103,13 +103,14 @@ _ecore_cocoa_event_modifiers(unsigned int mod)
    if(mod & NSCommandKeyMask) modifiers |= ECORE_EVENT_MODIFIER_WIN;
    if(mod & NSNumericPadKeyMask) modifiers |= ECORE_EVENT_LOCK_NUM;
 
-   DBG("key modifiers: %d, %d", mod, modifiers);
+   DBG("key modifiers: 0x%lx, %u", mod, modifiers);
    return modifiers;
 }
 
 
 static Ecore_Event_Key*
-_ecore_cocoa_event_key(NSEvent *event, int keyType)
+_ecore_cocoa_event_key(NSEvent     *event,
+                       NSEventType  keyType)
 {
    static Eina_Bool compose = EINA_FALSE;
    static NSText *edit;
@@ -121,7 +122,7 @@ _ecore_cocoa_event_key(NSEvent *event, int keyType)
    NSString *keychar = [event charactersIgnoringModifiers];
    NSString *keycharRaw = [event characters];
 
-   DBG("Event Key, keyTpe : %d", keyType);
+   DBG("Event Key, keyType : %lu", keyType);
 
    ev = calloc(1, sizeof (Ecore_Event_Key));
    if (!ev) return NULL;
