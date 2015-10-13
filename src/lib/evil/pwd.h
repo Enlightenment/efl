@@ -18,6 +18,22 @@
 
 #include <Evil.h>
 
+#ifdef EAPI
+# undef EAPI
+#endif /* EAPI */
+
+#ifdef _WIN32
+# ifdef EFL_EVIL_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+#endif
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -76,6 +92,8 @@ EAPI struct passwd *getpwuid (uid_t uid);
 }
 #endif
 
+#undef EAPI
+#define EAPI
 
 
 /**
