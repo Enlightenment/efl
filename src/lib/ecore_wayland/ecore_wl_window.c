@@ -184,7 +184,7 @@ ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y)
 }
 
 EAPI void
-ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
+ecore_wl_window_resize(Ecore_Wl_Window *win, int w EINA_UNUSED, int h EINA_UNUSED, int location)
 {
    Ecore_Wl_Input *input;
 
