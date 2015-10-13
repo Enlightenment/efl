@@ -94,3 +94,17 @@ _ecore_wl2_output_del(Ecore_Wl2_Output *output)
    free(output);
 }
 
+EAPI int
+ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output)
+{
+   int w, mw;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, 75);
+
+   mw = output->mw;
+   if (mw <= 0) return 75;
+
+   w = output->geometry.w;
+
+   return (((w * 254) / mw) + 5) / 10;
+}

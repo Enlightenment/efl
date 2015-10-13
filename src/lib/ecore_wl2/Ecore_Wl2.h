@@ -711,6 +711,21 @@ EAPI void ecore_wl2_subsurface_sync_set(Ecore_Wl2_Subsurface *subsurface, Eina_B
  */
 EAPI void ecore_wl2_subsurface_opaque_region_set(Ecore_Wl2_Subsurface *subsurface, int x, int y, int w, int h);
 
+/**
+ * Return the DPI of a given output
+ *
+ * This is a simplistic call to get DPI. It does not account for differing
+ * DPI in the x and y axes nor does it account for multihead or xinerama and
+ * xrandr where different parts of the screen may have different DPI etc.
+ *
+ * @param output The output to get the DPI of
+ *
+ * @return the general screen DPI (dots/pixels per inch).
+ *
+ * @ingroup Ecore_Wl2_Output_Group
+ */
+EAPI int ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
