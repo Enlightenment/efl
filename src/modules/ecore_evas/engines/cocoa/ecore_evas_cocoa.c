@@ -32,7 +32,7 @@ static int                      _ecore_evas_init_count = 0;
 // FIXME: In case we have a lot of windows per app, we should probably use another container
 // like a rbtree or a dictionnary-based container
 static Eina_List                *ecore_evases = NULL;
-static Ecore_Event_Handler      *ecore_evas_event_handlers[5] = { 0 };
+static Ecore_Event_Handler      *ecore_evas_event_handlers[4];
 
 static const char *_iface_name = "opengl_cocoa";
 static const int _iface_version = 1;
@@ -301,8 +301,7 @@ _ecore_evas_cocoa_init(void)
    ecore_evas_event_handlers[0] = ecore_event_handler_add(ECORE_COCOA_EVENT_GOT_FOCUS, _ecore_evas_cocoa_event_got_focus, NULL);
    ecore_evas_event_handlers[1] = ecore_event_handler_add(ECORE_COCOA_EVENT_LOST_FOCUS, _ecore_evas_cocoa_event_lost_focus, NULL);
    ecore_evas_event_handlers[2] = ecore_event_handler_add(ECORE_COCOA_EVENT_RESIZE, _ecore_evas_cocoa_event_video_resize, NULL);
-   ecore_evas_event_handlers[3] = ecore_event_handler_add(ECORE_COCOA_EVENT_EXPOSE, _ecore_evas_cocoa_event_video_expose, NULL);
-   ecore_evas_event_handlers[4] = ecore_event_handler_add(ECORE_COCOA_EVENT_WINDOW_DESTROY, _ecore_evas_cocoa_event_window_destroy, NULL);
+   ecore_evas_event_handlers[3] = ecore_event_handler_add(ECORE_COCOA_EVENT_WINDOW_DESTROY, _ecore_evas_cocoa_event_window_destroy, NULL);
 
    return _ecore_evas_init_count;
 }
