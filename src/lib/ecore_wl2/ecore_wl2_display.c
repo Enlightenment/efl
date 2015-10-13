@@ -160,9 +160,19 @@ _cb_create_data(void *data, Ecore_Fd_Handler *hdl)
 
    loop = wl_display_get_event_loop(ewd->wl.display);
    wl_event_loop_dispatch(loop, 0);
-   wl_display_flush_clients(ewd->wl.display);
+
+   /* wl_display_flush_clients(ewd->wl.display); */
 
    return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_cb_create_prepare(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
+{
+   Ecore_Wl2_Display *ewd;
+
+   ewd = data;
+   wl_display_flush_clients(ewd->wl.display);
 }
 
 static Eina_Bool
@@ -392,6 +402,8 @@ ecore_wl2_display_create(const char *name)
                                ECORE_FD_READ | ECORE_FD_ERROR,
                                _cb_create_data, ewd, NULL, NULL);
 
+   ecore_main_fd_handler_prepare_callback_set(ewd->fd_hdl,
+                                              _cb_create_prepare, ewd);
    return ewd;
 
 socket_err:
