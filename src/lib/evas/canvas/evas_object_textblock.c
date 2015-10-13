@@ -453,6 +453,7 @@ struct _Evas_Object_Textblock_Format
    Eina_Bool            wrap_word : 1;  /**< EINA_TRUE if only wraps lines at word boundaries, else EINA_FALSE. */
    Eina_Bool            wrap_char : 1;  /**< EINA_TRUE if wraps at any character, else EINA_FALSE. */
    Eina_Bool            wrap_mixed : 1;  /**< EINA_TRUE if wrap at words if possible, else EINA_FALSE. */
+   Eina_Bool            wrap_hyphenation : 1;  /**< EINA_TRUE if wrap at mixed and hyphenate if possible, else EINA_FALSE. */
    Eina_Bool            underline : 1;  /**< EINA_TRUE if a single line under the text, else EINA_FALSE */
    Eina_Bool            underline2 : 1;  /**< EINA_TRUE if two lines under the text, else EINA_FALSE */
    Eina_Bool            underline_dash : 1;  /**< EINA_TRUE if a dashed line under the text, else EINA_FALSE */
@@ -498,6 +499,7 @@ struct _Evas_Object_Textblock
    Eina_List                          *anchors_a;
    Eina_List                          *anchors_item;
    Eina_List                          *obstacles;
+   Eina_List                          *hyphen_items; /* Hyphen items storage to free when clearing lines */
    int                                 last_w, last_h;
    struct {
       int                              l, r, t, b;
@@ -518,6 +520,7 @@ struct _Evas_Object_Textblock
    Eina_Bool                           content_changed : 1;
    Eina_Bool                           format_changed : 1;
    Eina_Bool                           have_ellipsis : 1;
+   Eina_Bool                           hyphenating : 1;
    Eina_Bool                           legacy_newline : 1;
    Eina_Bool                           inherit_paragraph_direction : 1;
    Eina_Bool                           changed_paragraph_direction : 1;
@@ -614,6 +617,12 @@ static void _evas_textblock_changed(Evas_Textblock_Data *o, Evas_Object *eo_obj)
 static void _evas_textblock_invalidate_all(Evas_Textblock_Data *o);
 static void _evas_textblock_cursors_update_offset(const Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Text *n, size_t start, int offset);
 static void _evas_textblock_cursors_set_node(Evas_Textblock_Data *o, const Evas_Object_Textblock_Node_Text *n, Evas_Object_Textblock_Node_Text *new_node);
+
+
+#ifdef HAVE_HYPHEN
+/* Hyphenation */
+#include "evas_textblock_hyphenation.x"
+#endif
 
 /** selection iterator */
 /**
@@ -900,6 +909,7 @@ static const char escape_strings[] =
 "&ordf;\0"     "\xc2\xaa\0"
 "&laquo;\0"    "\xc2\xab\0"
 "&not;\0"      "\xc2\xac\0"
+"&shy;\0"      "\xc2\xad\0"
 "&reg;\0"      "\xc2\xae\0"
 "&macr;\0"     "\xc2\xaf\0"
 "&deg;\0"      "\xc2\xb0\0"
@@ -1838,6 +1848,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
          * @li "word" - Only wraps lines at word boundaries
          * @li "char" - Wraps at any character
          * @li "mixed" - Wrap at words if possible, if not at any character
+         * @li "hyphenation" - Hyphenate if possible, if not wrap at words if possible, if not at any character
          * @li "" - Don't wrap
          * @code
          * wrap=<value or preset>
@@ -1849,15 +1860,18 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
            Eina_Bool wrap_word;
            Eina_Bool wrap_char;
            Eina_Bool wrap_mixed;
+           Eina_Bool wrap_hyphenation;
         } wrap_named[] = {
-          { "word", 4, 1, 0, 0 },
-          { "char", 4, 0, 1, 0 },
-          { "mixed", 5, 0, 0, 1 },
-          { NULL, 0, 0, 0, 0 }
+          { "word",        4,  1, 0, 0, 0 },
+          { "char",        4,  0, 1, 0, 0 },
+          { "mixed",       5,  0, 0, 1, 0 },
+          { "hyphenation", 11, 0, 0, 0, 1 },
+          { NULL,          0,  0, 0, 0, 0 }
         };
         unsigned int i;
 
-        fmt->wrap_word = fmt->wrap_mixed = fmt->wrap_char = 0;
+        fmt->wrap_word = fmt->wrap_mixed = fmt->wrap_char =
+           fmt->wrap_hyphenation = 0;
         for (i = 0; wrap_named[i].param; i++)
           if (wrap_named[i].len == len &&
               !strcmp(wrap_named[i].param, param))
@@ -1865,8 +1879,19 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
                fmt->wrap_word = wrap_named[i].wrap_word;
                fmt->wrap_char = wrap_named[i].wrap_char;
                fmt->wrap_mixed = wrap_named[i].wrap_mixed;
+               fmt->wrap_hyphenation = wrap_named[i].wrap_hyphenation;
                break;
             }
+
+#ifdef HAVE_HYPHEN
+        /* Hyphenating textblocks are registered as "clients", so we load/unload
+         * the hyphenation dictionaries on-demand. */
+        if (fmt->wrap_hyphenation)
+          {
+             _dicts_hyphen_update(eo_obj);
+          }
+#endif
+
      }
    else if (cmd == left_marginstr)
      {
@@ -2562,6 +2587,7 @@ struct _Ctxt
    Evas_Object_Textblock_Paragraph *paragraphs;
    Evas_Object_Textblock_Paragraph *par;
    Evas_Object_Textblock_Line *ln;
+   Evas_Object_Textblock_Text_Item *hyphen_ti;
 
 
    Eina_List *format_stack;
@@ -2927,15 +2953,35 @@ _layout_update_bidi_props(const Evas_Textblock_Data *o,
  * Free the visual lines in the paragraph (logical items are kept)
  */
 static void
-_paragraph_clear(const Evas_Object *obj EINA_UNUSED,
+_paragraph_clear(const Evas_Object *obj,
       Evas_Object_Textblock_Paragraph *par)
 {
+   Evas_Textblock_Data *o = eo_data_scope_get(obj, MY_CLASS);
+
    while (par->lines)
      {
         Evas_Object_Textblock_Line *ln;
 
         ln = (Evas_Object_Textblock_Line *) par->lines;
         par->lines = (Evas_Object_Textblock_Line *)eina_inlist_remove(EINA_INLIST_GET(par->lines), EINA_INLIST_GET(par->lines));
+
+        /* Could be done better, but it's only when hyphenating and limited
+         * to number of hyphens created */
+        if (o->hyphenating)
+          {
+             Evas_Object_Textblock_Text_Item *ti;
+             Eina_List *i, *i_next;
+
+             EINA_LIST_FOREACH_SAFE(o->hyphen_items, i, i_next, ti)
+               {
+                  if (ti->parent.ln == ln)
+                    {
+                       o->hyphen_items = eina_list_remove_list(o->hyphen_items, i);
+                       _item_free(obj, NULL, _ITEM(ti));
+                    }
+               }
+          }
+
         _line_free(ln);
      }
 }
@@ -3594,6 +3640,16 @@ loop_advance:
 static void
 _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 {
+   if (c->hyphen_ti)
+     {
+        c->ln->items = (Evas_Object_Textblock_Item *)
+           eina_inlist_append(EINA_INLIST_GET(c->ln->items),
+                 EINA_INLIST_GET(_ITEM(c->hyphen_ti)));
+        c->hyphen_ti->parent.ln = c->ln;
+        c->o->hyphen_items =
+           eina_list_append(c->o->hyphen_items, c->hyphen_ti);
+        c->hyphen_ti = NULL;
+     }
    _layout_line_finalize(c, fmt);
    _layout_line_new(c, fmt);
 }
@@ -3646,6 +3702,8 @@ _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt,
      }
    return -1;
 }
+
+static Evas_Object_Textblock_Text_Item * _layout_hyphen_item_new(Ctxt *c, const Evas_Object_Textblock_Text_Item *cur_ti);
 
 /**
  * @internal
@@ -4364,6 +4422,175 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 #define ALLOW_BREAK(i) \
    (breaks[i] <= LINEBREAK_ALLOWBREAK)
 
+/* Give a position in text, find the end of word by using Unicode word
+ * boundary rules */
+static inline size_t
+_layout_word_end(const char *breaks, size_t pos, size_t len)
+{
+   for ( ; (pos < len - 1) && (breaks[pos] != WORDBREAK_BREAK) ; pos++)
+      ;
+   return pos;
+}
+
+#define SHY_HYPHEN 0xad
+
+static int
+_layout_get_hyphenationwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
+      const Evas_Object_Textblock_Item *it, size_t line_start,
+      const char *breaks, const char *wordbreaks)
+{
+   size_t wrap;
+   size_t orig_wrap;
+   const Eina_Unicode *str = eina_ustrbuf_string_get(
+         it->text_node->unicode);
+   int item_start = it->text_pos;
+   size_t len = eina_ustrbuf_length_get(it->text_node->unicode);
+   Eina_Bool try_hyphenate = EINA_FALSE;
+
+     {
+        int swrap = -1;
+        int hyphen_swrap = -1;
+
+        if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
+           swrap = 0;
+        else
+          {
+             Evas_Coord cw;
+
+             /* Get cutoff */
+             swrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it));
+
+             /* Get cutoff considering an additional hyphen item */
+             cw = c->w;
+             c->hyphen_ti = _layout_hyphen_item_new(c, _ITEM_TEXT(it));
+             c->w -= c->hyphen_ti->parent.w;
+             hyphen_swrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it));
+             c->w = cw;
+
+             /* Stronger condition than '< 0' for hyphenations */
+             if (hyphen_swrap >= 2)
+               {
+                  try_hyphenate = EINA_TRUE;
+               }
+             else
+               {
+                  _item_free(c->obj, NULL, _ITEM(c->hyphen_ti));
+                  c->hyphen_ti = NULL;
+               }
+          }
+
+        if (swrap < 0)
+           return -1;
+
+        orig_wrap = wrap = swrap + item_start;
+        if (try_hyphenate)
+          {
+             orig_wrap = wrap = hyphen_swrap + item_start;
+          }
+     }
+
+   if (wrap > line_start)
+     {
+        Eina_Bool found_hyphen = EINA_FALSE;
+        size_t word_end;
+
+        if (!_is_white(str[wrap]) || (wrap + 1 == len))
+           MOVE_PREV_UNTIL(line_start, wrap);
+
+        /* If there's a breakable point inside the text, scan backwards until
+         * we find it */
+        while (wrap > line_start)
+          {
+             /* When iterating back, 'wrap - 1' is the word delimiter,
+              * but isn't the word's start. The word's start is 'wrap'. */
+             if (try_hyphenate && ((wordbreaks[wrap - 1] == WORDBREAK_BREAK) ||
+                      (wrap - 1 == line_start)))
+               {
+                  size_t word_start, word_len;
+
+                  word_start = wrap; /* easier to understand if we tag this */
+                  word_end = _layout_word_end(wordbreaks, wrap, len);
+                  word_len = word_end - word_start + 1;
+
+                  if (word_len >= 4)
+                    {
+                       char *hyphens = NULL;
+                       size_t hyphen_off;
+                       size_t i = 0;
+                       size_t pos = 0;
+
+#ifdef HAVE_HYPHEN
+                       hyphens = _layout_wrap_hyphens_get(str, it->format->font.fdesc->lang, word_start, word_len);
+#endif
+
+                       /* This only happens one time, if the cutoff is in
+                        * the middle of this word */
+                       if (word_end > orig_wrap - 1)
+                         {
+                            word_end = orig_wrap - 1;
+                         }
+
+                       hyphen_off = word_end - word_start;
+
+                       /* We limit our search to the start of the line */
+                       if (word_start < line_start)
+                         {
+                            word_start = line_start;
+                         }
+
+                       for (i = hyphen_off, pos = word_end ; pos > word_start ; i--, pos--)
+                         {
+                            if ((hyphens && (hyphens[i] & 1)) || str[pos] == SHY_HYPHEN)
+                              {
+                                 found_hyphen = EINA_TRUE;
+                                 break;
+                              }
+                         }
+
+                       if (hyphens)
+                         {
+                            free(hyphens);
+                            hyphens = NULL;
+                         }
+
+                       /* Rejecting sequences smaller than 2 characters.
+                        * This also works with 'i' initialized to 0 */
+                       if (found_hyphen)
+                         {
+                            wrap = pos;
+                            break;
+                         }
+                    }
+               }
+
+             /* SHY-HYPHEN is considered a wordbreak. We don't block it
+              * internally in ALLOW_BREAK, just here. */
+             if (ALLOW_BREAK(wrap) && (str[wrap] != SHY_HYPHEN))
+                break;
+             wrap--;
+          }
+
+        /* hyphen item cleanup */
+        if (!found_hyphen && c->hyphen_ti)
+          {
+             _item_free(c->obj, NULL, _ITEM(c->hyphen_ti));
+             c->hyphen_ti = NULL;
+          }
+
+        if ((wrap > line_start) ||
+              ((wrap == line_start) && (ALLOW_BREAK(wrap)) && (wrap < len)))
+          {
+             /* We found a suitable wrapping point, break here. */
+             MOVE_NEXT_UNTIL(len, wrap);
+             return wrap;
+          }
+     }
+
+   /* Hyphenation falls-back to char wrapping at start of line */
+   return _layout_get_charwrap(c, fmt, it,
+         line_start, breaks);
+}
+
 static int
 _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Item *it, Eina_Bool mixed_wrap,
@@ -4816,6 +5043,7 @@ _layout_par(Ctxt *c)
    int ret = 0;
    int wrap = -1;
    char *line_breaks = NULL;
+   char *word_breaks = NULL;
 
    /* Obstacles logic */
    Eina_Bool handle_obstacles = EINA_FALSE;
@@ -4983,7 +5211,7 @@ _layout_par(Ctxt *c)
                    ((2 * it->h + c->y >
                      c->h - c->o->style_pad.t - c->o->style_pad.b) ||
                     (!it->format->wrap_word && !it->format->wrap_char &&
-                     !it->format->wrap_mixed)))
+                     !it->format->wrap_mixed && !it->format->wrap_hyphenation)))
                {
                   _layout_handle_ellipsis(c, it, i);
                   ret = 1;
@@ -4992,7 +5220,7 @@ _layout_par(Ctxt *c)
              /* If we want to wrap and it's worth checking for wrapping
               * (i.e there's actually text). */
              else if (((wrap > 0) || it->format->wrap_word || it->format->wrap_char ||
-                it->format->wrap_mixed) && it->text_node)
+                it->format->wrap_mixed || it->format->wrap_hyphenation) && it->text_node)
                {
                   size_t line_start;
                   size_t it_len;
@@ -5006,7 +5234,8 @@ _layout_par(Ctxt *c)
                   if (!line_breaks)
                     {
                        /* Only relevant in those cases */
-                       if (it->format->wrap_word || it->format->wrap_mixed)
+                       if (it->format->wrap_word || it->format->wrap_mixed ||
+                           it->format->wrap_hyphenation)
                          {
                             const char *lang;
                             lang = (it->format->font.fdesc) ?
@@ -5021,6 +5250,22 @@ _layout_par(Ctxt *c)
                                   len, lang, line_breaks);
                          }
                     }
+
+                  if (!word_breaks && it->format->wrap_hyphenation)
+                    {
+                       const char *lang;
+                       lang = (it->format->font.fdesc) ?
+                          it->format->font.fdesc->lang : "";
+                       size_t len =
+                          eina_ustrbuf_length_get(
+                                it->text_node->unicode);
+                       word_breaks = malloc(len);
+                       set_wordbreaks_utf32((const utf32_t *)
+                             eina_ustrbuf_string_get(
+                                it->text_node->unicode),
+                             len, lang, word_breaks);
+                    }
+
                   if (c->ln->items)
                      line_start = c->ln->items->text_pos;
                   else
@@ -5059,6 +5304,9 @@ _layout_par(Ctxt *c)
                        else if (it->format->wrap_mixed)
                           wrap = _layout_get_mixedwrap(c, it->format, it,
                                 line_start, line_breaks, allow_scan_fwd);
+                       else if (it->format->wrap_hyphenation)
+                          wrap = _layout_get_hyphenationwrap(c, it->format, it,
+                                line_start, line_breaks, word_breaks);
                        else
                           wrap = -1;
                        c->w = save_cw;
@@ -5233,6 +5481,8 @@ _layout_par(Ctxt *c)
 end:
    if (line_breaks)
       free(line_breaks);
+   if (word_breaks)
+      free(word_breaks);
 
 #ifdef BIDI_SUPPORT
    if (c->par->bidi_props)
@@ -5641,6 +5891,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
    c->ln = NULL;
    c->width_changed = (obj->cur->geometry.w != o->last_w);
    c->obs_infos = NULL;
+   c->hyphen_ti = NULL;
 
    /* Start of logical layout creation */
    /* setup default base style */
@@ -7198,6 +7449,47 @@ _layout_item_obstacle_get(Ctxt *c, Evas_Object_Textblock_Item *it)
           }
      }
    return min_obs;
+}
+
+/* Hyphenation (since 1.17) */
+static Evas_Object_Textblock_Text_Item *
+_layout_hyphen_item_new(Ctxt *c, const Evas_Object_Textblock_Text_Item *cur_ti)
+{
+   /* U+2010 - Unicode HYPHEN */
+   const Eina_Unicode _hyphen_str[2] = { 0x2010, '\0' };
+   Evas_Object_Textblock_Text_Item *hyphen_ti;
+   Evas_Script_Type script;
+   Evas_Font_Instance *script_fi = NULL, *cur_fi;
+   size_t len = 1; /* The length of _hyphen_str */
+
+   if (c->hyphen_ti)
+     {
+        _item_free(c->obj, NULL, _ITEM(c->hyphen_ti));
+     }
+   c->hyphen_ti = hyphen_ti = _layout_text_item_new(c, cur_ti->parent.format);
+   hyphen_ti->parent.text_node = cur_ti->parent.text_node;
+   hyphen_ti->parent.text_pos = cur_ti->parent.text_pos + cur_ti->text_props.text_len - 1;
+   script = evas_common_language_script_type_get(_hyphen_str, len);
+
+   evas_common_text_props_bidi_set(&hyphen_ti->text_props,
+         c->par->bidi_props, hyphen_ti->parent.text_pos);
+   evas_common_text_props_script_set (&hyphen_ti->text_props, script);
+
+   if (hyphen_ti->parent.format->font.font)
+     {
+        Evas_Object_Protected_Data *obj = eo_data_scope_get(c->obj, EVAS_OBJECT_CLASS);
+        /* It's only 1 char anyway, we don't need the run end. */
+        (void) ENFN->font_run_end_get(ENDT,
+              hyphen_ti->parent.format->font.font, &script_fi, &cur_fi,
+              script, _hyphen_str, len);
+
+        ENFN->font_text_props_info_create(ENDT,
+              cur_fi, _hyphen_str, &hyphen_ti->text_props,
+              c->par->bidi_props, hyphen_ti->parent.text_pos, len, EVAS_TEXT_PROPS_MODE_SHAPE);
+     }
+
+   _text_item_update_sizes(c, hyphen_ti);
+   return hyphen_ti;
 }
 
 /* cursors */
@@ -11566,6 +11858,14 @@ evas_object_textblock_free(Evas_Object *eo_obj)
 
   /* remove obstacles */
   _obstacles_free(eo_obj, o);
+
+#ifdef HAVE_HYPHEN
+  /* Hyphenation */
+  if (o->hyphenating)
+    {
+       _dicts_hyphen_detach();
+    }
+#endif
 }
 
 static void

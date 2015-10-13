@@ -148,6 +148,7 @@ lib/evas/canvas/evas_object_box.c \
 lib/evas/canvas/evas_object_table.c \
 lib/evas/canvas/evas_object_text.c \
 lib/evas/canvas/evas_object_textblock.c \
+lib/evas/canvas/evas_textblock_hyphenation.x \
 lib/evas/canvas/evas_object_textgrid.c \
 lib/evas/canvas/evas_object_grid.c \
 lib/evas/canvas/evas_font_dir.c \
