@@ -2184,13 +2184,16 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    ox4 = sx;
    oy4 = sy + sh;
 
-   if (tex->im)
+   if ((tex->im) && (tex->im->native.data))
      {
-        if ((tex->im->native.func.yinvert) && (tex->im->native.data))
+        if (tex->im->native.func.yinvert)
           yinvert = tex->im->native.func.yinvert(tex->im->native.func.data, tex->im);
         else
           yinvert = tex->im->native.yinvert;
+     }
 
+   if ((tex->im) && (tex->im->native.data) && (!yinvert))
+     {
         switch (tex->im->orient)
           {
            case EVAS_IMAGE_ORIENT_NONE:
@@ -2250,7 +2253,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    ty3 = ((double)(offsety) + oy3) / ph;
    tx4 = ((double)(offsetx) + ox4) / pw;
    ty4 = ((double)(offsety) + oy4) / ph;
-   if ((tex->im) && (yinvert))
+   if ((tex->im) && (tex->im->native.data) && (!tex->im->native.yinvert))
      {
         ty1 = 1.0 - ty1;
         ty2 = 1.0 - ty2;
@@ -2269,7 +2272,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
      }
 
    PUSH_MASK(pn, mtex, mx, my, mw, mh, masksam);
-
+   
    if (!nomul)
      PUSH_6_COLORS(pn, r, g, b, a);
 }
