@@ -1561,9 +1561,8 @@ _key_action_move(Evas_Object *obj, const char *params)
 }
 
 EOLIAN static Eina_Bool
-_elm_win_elm_widget_event(Eo *obj, Elm_Win_Data *_pd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_win_elm_widget_event(Eo *obj, Elm_Win_Data *_pd EINA_UNUSED, Evas_Object *src EINA_UNUSED, Evas_Callback_Type type, void *event_info)
 {
-   (void) src;
    Evas_Event_Key_Down *ev = event_info;
 
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
