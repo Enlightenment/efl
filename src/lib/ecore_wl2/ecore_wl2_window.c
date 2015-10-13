@@ -549,19 +549,6 @@ ecore_wl2_window_raise(Ecore_Wl2_Window *window)
      wl_shell_surface_set_toplevel(window->wl_shell_surface);
 }
 
-EAPI Ecore_Wl2_Window *
-ecore_wl2_window_find(Ecore_Wl2_Display *display, int id)
-{
-   Ecore_Wl2_Window *window;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
-
-   EINA_INLIST_FOREACH(display->windows, window)
-     if (window->id == id) return window;
-
-   return NULL;
-}
-
 EAPI Eina_Bool
 ecore_wl2_window_alpha_get(Ecore_Wl2_Window *window)
 {
