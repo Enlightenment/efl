@@ -565,7 +565,7 @@ EAPI void ecore_wl2_input_ungrab(Ecore_Wl2_Input *input);
 EAPI struct wl_seat *ecore_wl2_input_seat_get(Ecore_Wl2_Input *input);
 
 /**
- * @defgroup Ecore_Wl2_Output_Group Wayland Library Drag-n-Drop Functions
+ * @defgroup Ecore_Wl2_Dnd_Group Wayland Library Drag-n-Drop Functions
  * @ingroup Ecore_Wl2_Group
  *
  * Functions that deal with creating, destroying, or interacting with
