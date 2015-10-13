@@ -3291,7 +3291,7 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                    int l, int t, int r, int b, Eina_Bool do_async)
 {
    Evas_Image_Data *o = obj->private_data, *oi = NULL;
-   int imagew, imageh, uvw, uvh;
+   int imagew, imageh, uvw, uvh, cw, ch;
    void *pixels;
 
    Evas_Object_Protected_Data *source =
@@ -3349,6 +3349,15 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         imageh = oi->cur->image.h;
         uvw = source->cur->geometry.w;
         uvh = source->cur->geometry.h;
+        /* check source_clip since we skip proxy_subrender here */
+        if (o->proxy_src_clip)
+          {
+             ENFN->context_clip_clip(ENDT, context,
+                                     source->cur->cache.clip.x + x,
+                                     source->cur->cache.clip.y + y,
+                                     source->cur->cache.clip.w,
+                                     source->cur->cache.clip.h);
+          }
      }
    else
      {
@@ -3362,6 +3371,9 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         uvh = imageh;
         o->proxyrendering = EINA_FALSE;
      }
+
+   ENFN->context_clip_get(ENDT, context, NULL, NULL, &cw, &ch);
+   if (!cw || !ch) return;
 
    if (pixels)
      {
