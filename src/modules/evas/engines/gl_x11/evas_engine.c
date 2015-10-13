@@ -2181,7 +2181,7 @@ _native_yinvert_cb(void *data, void *image)
 #else
         glXGetFBConfigAttrib(eng_get_ob(re)->disp, n->config,
                              GLX_Y_INVERTED_EXT, &val);
-        if (val == TRUE) yinvert = 1;
+        if (val == 1) yinvert = 1;
 #endif
      }
    else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
@@ -2539,7 +2539,7 @@ eng_image_native_set(void *data, void *image, void *native)
                                   }
                                 glXGetFBConfigAttrib(eng_get_ob(re)->disp, configs[j],
                                                      GLX_Y_INVERTED_EXT, &val);
-                                if (val == TRUE) yinvert = 1;
+                                if (val == 1) yinvert = 1;
                                 glXGetFBConfigAttrib(eng_get_ob(re)->disp, configs[j],
                                                      GLX_BIND_TO_TEXTURE_TARGETS_EXT,
                                                      &val);
