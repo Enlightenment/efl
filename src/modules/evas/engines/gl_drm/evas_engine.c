@@ -1155,9 +1155,10 @@ eng_image_native_set(void *data, void *image, void *native)
                   attribs[2] = EGL_NONE;
 
                   memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
-                  glsym_eglQueryWaylandBufferWL(ob->egl.disp, wl_buf,
-                                                EGL_WAYLAND_Y_INVERTED_WL,
-                                                &yinvert);
+                  if (glsym_eglQueryWaylandBufferWL(ob->egl.disp, wl_buf,
+                                                    EGL_WAYLAND_Y_INVERTED_WL,
+                                                    &yinvert) == EGL_FALSE)
+                    yinvert = 1;
                   eina_hash_add(ob->gl_context->shared->native_wl_hash,
                                 &wlid, img);
 
