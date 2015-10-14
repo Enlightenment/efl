@@ -13,8 +13,7 @@
 #endif
 
 #ifdef HAVE_ELEMENTARY_COCOA
-#include <Ecore_Cocoa.h>
-#include <Ecore_Cocoa_Cursor.h>
+# include <Ecore_Cocoa_Cursor.h>
 #endif
 
 #define _cursor_key "_elm_cursor"
