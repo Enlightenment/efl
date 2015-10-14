@@ -211,7 +211,7 @@ static void       (*_sym_glGetShaderiv)                         (GLuint shader, 
 static void       (*_sym_glGetShaderInfoLog)                    (GLuint shader, GLsizei bufsize, GLsizei* length, char* infolog) = NULL;
 static void       (*_sym_glGetShaderPrecisionFormat)            (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision) = NULL;
 static void       (*_sym_glGetShaderSource)                     (GLuint shader, GLsizei bufsize, GLsizei* length, char* source) = NULL;
-static const GLubyte *(*_sym_glGetString)                           (GLenum name) = NULL;
+static const GLubyte *(*_sym_glGetString)                       (GLenum name) = NULL;
 static void       (*_sym_glGetTexParameterfv)                   (GLenum target, GLenum pname, GLfloat* params) = NULL;
 static void       (*_sym_glGetTexParameteriv)                   (GLenum target, GLenum pname, GLint* params) = NULL;
 static void       (*_sym_glGetUniformfv)                        (GLuint program, GLint location, GLfloat* params) = NULL;
@@ -4886,11 +4886,53 @@ evgl_glShaderBinary(GLsizei n EINA_UNUSED, const GLuint* shaders EINA_UNUSED, GL
    //n = binaryformat = length = 0;
    //shaders = binary = 0;
 }
-#endif
-//--------------------------------------------------------------//
+
+static const GLubyte *
+evgl_glGetString(GLenum name)
+{
+   static char _version[128] = {0};
+   static char _glsl[128] = {0};
+   const char *ret;
+
+   /* NOTE: Please modify gl_common/evas_gl_api.c as well if you change
+    *       this function!
+    */
+
+   switch (name)
+     {
+      case GL_VENDOR:
+      case GL_RENDERER:
+        // Keep these as-is.
+        break;
+
+      case GL_SHADING_LANGUAGE_VERSION:
+        ret = (const char *) _sym_glGetString(GL_SHADING_LANGUAGE_VERSION);
+        if (!ret) return NULL;
+        snprintf(_glsl, sizeof(_glsl), "OpenGL ES GLSL ES 1.00 Evas GL (%s)", (char *) ret);
+        _version[sizeof(_glsl) - 1] = '\0';
+        return (const GLubyte *) _glsl;
+
+      case GL_VERSION:
+        ret = (const char *) _sym_glGetString(GL_VERSION);
+        if (!ret) return NULL;
+        snprintf(_version, sizeof(_version), "OpenGL ES 2.0 Evas GL (%s)", (char *) ret);
+        _version[sizeof(_version) - 1] = '\0';
+        return (const GLubyte *) _version;
+
+      case GL_EXTENSIONS:
+        // assume OSMesa's extensions are safe (no messing with GL context here)
+        break;
+
+      default:
+        // GL_INVALID_ENUM is generated if name is not an accepted value.
+        WRN("Unknown string requested: %x", (unsigned int) name);
+        break;
+     }
+
+   return _sym_glGetString(name);
+}
 
 
-#ifdef EVAS_GL
 static void
 override_gl_apis(Evas_GL_API *api)
 {
@@ -4959,7 +5001,7 @@ override_gl_apis(Evas_GL_API *api)
    ORD(glGetAttribLocation);
    ORD(glGetBooleanv);
    ORD(glGetBufferParameteriv);
-   ORD(glGetError);
+   ORD(glGetError); // FIXME
    ORD(glGetFloatv);
    ORD(glGetFramebufferAttachmentParameteriv);
    ORD(glGetIntegerv);
@@ -4970,7 +5012,6 @@ override_gl_apis(Evas_GL_API *api)
    ORD(glGetShaderInfoLog);
    ORD(glGetShaderPrecisionFormat);  
    ORD(glGetShaderSource);
-   ORD(glGetString);             // FIXME
    ORD(glGetTexParameterfv);
    ORD(glGetTexParameteriv);
    ORD(glGetUniformfv);
@@ -5044,6 +5085,8 @@ override_gl_apis(Evas_GL_API *api)
 #undef ORD
 
 #define ORD(f) EVAS_API_OVERRIDE(f, &gl_funcs, evgl_)
+   ORD(glGetString);
+
    if (!gl_lib_is_gles)
      {
         // Override functions wrapped by Evas_GL
