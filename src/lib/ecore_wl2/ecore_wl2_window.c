@@ -218,7 +218,7 @@ _ecore_wl2_window_type_set(Ecore_Wl2_Window *win)
      }
 }
 
-static const struct wl_callback_listener _anim_listener =
+static const struct wl_callback_listener _win_anim_listener =
 {
    _anim_cb_animate
 };
@@ -245,7 +245,7 @@ _ecore_wl2_window_cb_animate(void *data)
    if (window->anim_cb) return ECORE_CALLBACK_RENEW;
 
    window->anim_cb = wl_surface_frame(window->surface);
-   wl_callback_add_listener(window->anim_cb, &_anim_listener, window);
+   wl_callback_add_listener(window->anim_cb, &_win_anim_listener, window);
    wl_surface_commit(window->surface);
 
    return ECORE_CALLBACK_RENEW;
@@ -259,7 +259,7 @@ _ecore_wl2_window_animator_add(Ecore_Wl2_Window *window)
    if ((!window->surface) || (window->anim_cb)) return;
 
    window->anim_cb = wl_surface_frame(window->surface);
-   wl_callback_add_listener(window->anim_cb, &_anim_listener, window);
+   wl_callback_add_listener(window->anim_cb, &_win_anim_listener, window);
    wl_surface_commit(window->surface);
 }
 
