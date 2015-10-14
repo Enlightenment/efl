@@ -42,7 +42,7 @@ load_shader(GLData *gld, GLenum type, const char *shader_src )
 
              gl->glGetShaderInfoLog(shader, info_len, NULL, info_log);
              printf("Error compiling shader:\n%s\n======\n%s\n======\n", info_log, shader_src );
-             free(info_log);
+             delete [] info_log;
           }
         gl->glDeleteShader(shader);
         return 0;
