@@ -733,30 +733,16 @@ eina_file_open(const char *path, Eina_Bool shared)
 
    if (handle == INVALID_HANDLE_VALUE)
      {
-        LPVOID lpMsgBuf;
+        char *msg;
 
-        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
-                      FORMAT_MESSAGE_FROM_SYSTEM |
-                      FORMAT_MESSAGE_IGNORE_INSERTS,
-                      NULL,
-                      GetLastError(),
-                      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                      (LPTSTR) &lpMsgBuf,
-                      0, NULL);
-
-        switch (GetLastError())
+        msg = evil_last_error_get();
+        if (msg)
           {
-           case ERROR_FILE_NOT_FOUND:
-              WRN("Could not open file [%s].", filename);
-              free(filename);
-              return NULL;
-           case ERROR_PATH_NOT_FOUND:
-              WRN("Could not find file path [%s].", filename);
-              free(filename);
-              return NULL;
-           default:
-              goto free_file;
+             WRN("eina_file_open() failed with file %s: %s", filename, msg);
+             free(msg);
           }
+        else
+          goto free_file;
      }
 
    if (!GetFileAttributesEx(filename, GetFileExInfoStandard, &fad))
