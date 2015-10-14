@@ -509,9 +509,6 @@ EAPI Ecore_Cocoa_Window_Id
 ecore_cocoa_window_get_window_id(const Ecore_Cocoa_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
-
-   DBG("Return : %p", window->window);
-
    return window->window;
 }
 
