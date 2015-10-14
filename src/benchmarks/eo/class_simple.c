@@ -7,6 +7,9 @@
 
 #define MY_CLASS SIMPLE_CLASS
 
+EOAPI const Eo_Event_Description _SIMPLE_FOO = EO_EVENT_DESCRIPTION("foo");
+EOAPI const Eo_Event_Description _SIMPLE_BAR = EO_EVENT_DESCRIPTION("bar");
+
 static void
 _other_call(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, Eo *other, int times)
 {
