@@ -2805,7 +2805,7 @@ _collection_inorder(Eo *collection, struct collection_match_rule *rule, Eina_Lis
 
   if (max == 0 || count < max)
     count = _collection_sort_order_canonical(rule, list, count, max,
-                                    obj, idx + 1, EINA_TRUE, EINA_FALSE, EINA_TRUE, traverse);
+                                    obj, idx + 1, EINA_TRUE, NULL, EINA_TRUE, traverse);
 
   return count;
 }
