@@ -33,6 +33,7 @@ typedef struct _Ecore_WinCE_Window Ecore_WinCE_Window;
 #endif
 
 #ifndef __ECORE_COCOA_H__
+# define _ECORE_COCOA_WINDOW_PREDEF
 typedef struct _Ecore_Cocoa_Window Ecore_Cocoa_Window;
 #endif
 
