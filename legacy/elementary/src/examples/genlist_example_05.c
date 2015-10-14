@@ -223,12 +223,14 @@ _del_item_cb(void *data, Evas_Object *o, void *event_info)
    elm_genlist_item_subitems_clear(glit);
    elm_object_item_del(glit);
 
+   if (glit_parent)
+     {
+        pdata = elm_object_item_data_get(glit_parent);
+        pdata->children = eina_list_remove(pdata->children, d);
+     }
+
    _clear_list(d);
 
-   if (!glit_parent) return;
-
-   pdata = elm_object_item_data_get(glit_parent);
-   pdata->children = eina_list_remove(pdata->children, d);
    elm_genlist_item_update(glit_parent);
 }
 
