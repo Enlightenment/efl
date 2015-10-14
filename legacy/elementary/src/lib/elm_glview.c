@@ -16,7 +16,6 @@
 
 static const char SIG_FOCUSED[] = "focused";
 static const char SIG_UNFOCUSED[] = "unfocused";
-static const char SIG_LANG_CHANGED[] = "language,changed";
 
 /* smart callbacks coming from elm glview objects: */
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
