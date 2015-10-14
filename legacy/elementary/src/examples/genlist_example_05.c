@@ -20,7 +20,7 @@ static int nitems = 0;
 static char *
 _item_label_get(void *data, Evas_Object *obj, const char *part)
 {
-   char buf[256];
+   char buf[256] = {0};
    Node_Data *d = data;
 
    if (!strcmp(part, "elm.text"))
