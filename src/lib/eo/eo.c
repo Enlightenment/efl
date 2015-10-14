@@ -1579,9 +1579,10 @@ _eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass)
      return ((char *) obj) + _eo_sz + klass->data_offset;
 
    if (EINA_UNLIKELY(klass->desc->data_size == 0))
-     return NULL;
+     {
+        return NULL;
+     }
    else
-
      {
         Eo_Extension_Data_Offset *doff_itr = obj->klass->extn_data_off;
 
