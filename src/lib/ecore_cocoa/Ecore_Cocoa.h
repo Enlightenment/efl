@@ -43,7 +43,9 @@ extern "C" {
  * @typedef Ecore_Cocoa_Window
  * Opaque handler to manipulate a Cocoa Window through Ecore
  */
+#ifndef _ECORE_COCOA_WINDOW_PREDEF
 typedef struct _Ecore_Cocoa_Window Ecore_Cocoa_Window;
+#endif /* ! _ECORE_COCOA_WINDOW_PREDEF */
 
 /**
  * @typedef Ecore_Cocoa_Screen
