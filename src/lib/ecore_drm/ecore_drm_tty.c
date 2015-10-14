@@ -52,7 +52,7 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
 {
    struct stat st;
    int kmode;
-   struct vt_mode vtmode = { 0 };
+   struct vt_mode vtmode = { 0, 0, SIGUSR1, SIGUSR2, 0 };
 
    if ((fstat(dev->tty.fd, &st) == -1) || 
        (major(st.st_rdev) != TTY_MAJOR) || (minor(st.st_rdev) == 0))
@@ -200,7 +200,7 @@ static void
 _ecore_drm_tty_restore(Ecore_Drm_Device *dev)
 {
    int fd = dev->tty.fd;
-   struct vt_mode mode = { 0 };
+   struct vt_mode mode = { 0, 0, SIGUSR1, SIGUSR2, 0 };
 
    if (fd < 0) return;
 

@@ -29,7 +29,7 @@ _ecore_drm_logind_vt_setup(Ecore_Drm_Device *dev)
 {
    struct stat st;
    char buff[64];
-   struct vt_mode vtmode = { 0 };
+   struct vt_mode vtmode = { 0, 0, SIGUSR1, SIGUSR2, 0 };
 
    snprintf(buff, sizeof(buff), "/dev/tty%d", dev->vt);
    buff[sizeof(buff) - 1] = 0;
@@ -260,7 +260,7 @@ _ecore_drm_logind_disconnect(Ecore_Drm_Device *dev)
 void 
 _ecore_drm_logind_restore(Ecore_Drm_Device *dev)
 {
-   struct vt_mode vtmode = { 0 };
+   struct vt_mode vtmode = { 0, 0, SIGUSR1, SIGUSR2, 0 };
 
    if ((!dev) || (dev->tty.fd < 0)) return;
 
