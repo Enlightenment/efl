@@ -67,7 +67,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
    ecore_event_add(ECORE_COCOA_EVENT_WINDOW_DESTROY, event, NULL, NULL);
 }
 
-- (void)windowDidResize:(NSNotification *) EINA_UNUSED notif
+- (void)windowDidResize:(NSNotification *) notif
 {
    Ecore_Cocoa_Event_Video_Resize *event;
    NSSize size = self.frame.size;
