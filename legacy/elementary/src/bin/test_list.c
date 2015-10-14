@@ -1230,7 +1230,6 @@ test_list7(void        *data EINA_UNUSED,
    evas_object_show(win);
 }
 
-static const unsigned _list_focus_objects = 5;
 static const char *_list_focus_names[] = {"None", "Square", "Button", "Check", "Box"};
 static const int _list_focus_combo[] = { 1, 0, 2, 33, 43, 44, 10, 30, 22, 11, 10, -1 };
 
