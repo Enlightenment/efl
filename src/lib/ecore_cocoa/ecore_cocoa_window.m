@@ -52,7 +52,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
     return YES;
 }
 
-- (void)windowWillClose:(NSNotification *) EINA_UNUSED notification
+- (void)windowWillClose:(NSNotification *) notification
 {
    NSLog(@"window is going to be closed");
    Ecore_Cocoa_Event_Window *event;
