@@ -27,6 +27,10 @@ _a_set(Eo *obj, void *class_data EINA_UNUSED, int a)
    eo_do_super(obj, cur_klass, simple_a_set(a));
 }
 
+static Eo_Op_Description op_desc[] = {
+     EO_OP_FUNC_OVERRIDE(simple_a_set, _a_set),
+};
+
 static void
 bench_eo_do_super(int request)
 {
@@ -34,7 +38,7 @@ bench_eo_do_super(int request)
         EO_VERSION,
         "Simple2",
         EO_CLASS_TYPE_REGULAR,
-        EO_CLASS_DESCRIPTION_NOOPS(),
+        EO_CLASS_DESCRIPTION_OPS(op_desc),
         NULL,
         0,
         NULL,
