@@ -77,7 +77,6 @@ _test_evasgl_init(const char *engine, const char *options)
    /* valid current states */
    fail_if(!evas_gl_make_current(evgl, sfc, ctx));
    fail_if(!evas_gl_make_current(evgl, NULL, NULL));
-   fail_if(!evas_gl_make_current(evgl, NULL, ctx));
 
    /* no context but surface: invalid */
    fprintf(stderr, "================ IGNORE ERRORS BEGIN ================\n");
@@ -199,52 +198,76 @@ _test_evasgl_context_version(const char *engine, const char *options)
    END_EVASGL_TEST();
 }
 
-START_TEST(evas_test_evasgl_init_opengl_x11)
+static void
+_test_evasgl_surfaceless_context(const char *engine, const char *options)
 {
-   _test_evasgl_init("opengl_x11", NULL);
-}
-END_TEST
+   if (!_detect_osmesa())
+     return;
 
-START_TEST(evas_test_evasgl_current_get_opengl_x11)
-{
-   _test_evasgl_current_get("opengl_x11", NULL);
-}
-END_TEST
+   START_EVASGL_TEST(engine, options);
+   Evas_GL_Context *ctx;
+   Evas_GL_Surface *sfc;
+   Evas_GL_Config *cfg;
+   Evas_GL_API *gl;
+   Evas_GL *evgl;
+   const char *eexts;
 
-START_TEST(evas_test_evasgl_context_version_opengl_x11)
-{
-   _test_evasgl_context_version("opengl_x11", NULL);
-}
-END_TEST
+   fail_if(!(evgl = evas_gl_new(evas)));
+   fail_if(!(ctx = evas_gl_context_create(evgl, NULL)));
 
-START_TEST(evas_test_evasgl_init_buffer)
-{
-   _test_evasgl_init("buffer", NULL);
-}
-END_TEST
+   // FIXME: evas_gl_string_query will fail before the first make_current
+   fail_if(!(cfg = evas_gl_config_new()));
+   fail_if(!(sfc = evas_gl_surface_create(evgl, cfg, 1, 1)));
+   fail_if(!evas_gl_make_current(evgl, sfc, ctx));
+   // FIXME
 
-START_TEST(evas_test_evasgl_current_get_buffer)
-{
-   _test_evasgl_current_get("buffer", NULL);
-}
-END_TEST
+   eexts = evas_gl_string_query(evgl, EVAS_GL_EXTENSIONS);
+   if (eexts && strstr(eexts, "EGL_KHR_surfaceless_context"))
+     {
+        fail_if(!evas_gl_make_current(evgl, NULL, ctx));
+        fail_if(!(gl = evas_gl_context_api_get(evgl, ctx)));
+        fail_if(!gl->glGetString(GL_VERSION));
+     }
+   else printf("Surfaceless context not supported. Skipped.\n");
 
-START_TEST(evas_test_evasgl_context_version_buffer)
-{
-   _test_evasgl_context_version("buffer", NULL);
+   fail_if(!evas_gl_make_current(evgl, NULL, NULL));
+   evas_gl_context_destroy(evgl, ctx);
+   evas_gl_free(evgl);
+
+   END_EVASGL_TEST();
 }
-END_TEST
+
+#define TEST_ADD(name) \
+   START_TEST(evas ## name ## _opengl_x11) \
+   { name("opengl_x11", NULL); } \
+   END_TEST \
+   START_TEST(evas ## name ## _buffer) \
+   { name("buffer", NULL); } \
+   END_TEST
+
+TEST_ADD(_test_evasgl_init)
+TEST_ADD(_test_evasgl_current_get)
+TEST_ADD(_test_evasgl_context_version)
+TEST_ADD(_test_evasgl_surfaceless_context)
 
 void evas_test_evasgl(TCase *tc)
 {
+#undef TEST_ADD
+#define TEST_ADD(name) tcase_add_test(tc, evas ## name ## _opengl_x11);
+
    if (getenv("DISPLAY"))
      {
-        tcase_add_test(tc, evas_test_evasgl_init_opengl_x11);
-        tcase_add_test(tc, evas_test_evasgl_current_get_opengl_x11);
-        tcase_add_test(tc, evas_test_evasgl_context_version_opengl_x11);
+        TEST_ADD(_test_evasgl_init);
+        TEST_ADD(_test_evasgl_current_get);
+        TEST_ADD(_test_evasgl_context_version);
+        TEST_ADD(_test_evasgl_surfaceless_context);
      }
 
-   tcase_add_test(tc, evas_test_evasgl_init_buffer);
-   tcase_add_test(tc, evas_test_evasgl_current_get_buffer);
-   tcase_add_test(tc, evas_test_evasgl_context_version_buffer);
+#undef TEST_ADD
+#define TEST_ADD(name) tcase_add_test(tc, evas ## name ## _buffer);
+
+   TEST_ADD(_test_evasgl_init);
+   TEST_ADD(_test_evasgl_current_get);
+   TEST_ADD(_test_evasgl_context_version);
+   TEST_ADD(_test_evasgl_surfaceless_context);
 }
