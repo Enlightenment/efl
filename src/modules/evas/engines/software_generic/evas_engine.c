@@ -1096,12 +1096,15 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 
    if (!im || !ns) return im;
 
-   if ((ns->type == EVAS_NATIVE_SURFACE_OPENGL) &&
+   if ((ns->type == EVAS_NATIVE_SURFACE_EVASGL) &&
        (ns->version == EVAS_NATIVE_SURFACE_VERSION))
-     im2 = evas_cache_image_data(evas_common_image_cache_get(), 
-                                 im->w, im->h, 
-                                 ns->data.x11.visual, 1,
-                                 EVAS_COLORSPACE_ARGB8888);
+     {
+
+        im2 = evas_cache_image_data(evas_common_image_cache_get(),
+                                    im->w, im->h,
+                                    ns->data.evasgl.surface, 1,
+                                    EVAS_COLORSPACE_ARGB8888);
+     }
    else
      im2 = evas_cache_image_data(evas_common_image_cache_get(), 
                                  im->w, im->h, 
@@ -3178,9 +3181,9 @@ eng_gl_native_surface_get(void *data EINA_UNUSED, void *surface, void *native_su
 
    if (!sfc) return 0;
 
-   ns->type = EVAS_NATIVE_SURFACE_OPENGL;
+   ns->type = EVAS_NATIVE_SURFACE_EVASGL;
    ns->version = EVAS_NATIVE_SURFACE_VERSION;
-   ns->data.x11.visual = sfc->buffer;
+   ns->data.evasgl.surface = sfc->buffer;
    
    return 1;
 #else

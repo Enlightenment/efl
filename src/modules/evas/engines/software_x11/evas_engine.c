@@ -632,6 +632,20 @@ eng_canvas_alpha_get(void *data, void *context EINA_UNUSED)
      (re->outbuf_alpha_get(re->generic.ob));
 }
 
+static void
+_native_evasgl_free(void *data EINA_UNUSED, void *image)
+{
+   RGBA_Image *im = image;
+   Native *n = im->native.data;
+
+   im->native.data        = NULL;
+   im->native.func.data   = NULL;
+   im->native.func.bind   = NULL;
+   im->native.func.free   = NULL;
+   //im->image.data         = NULL;
+   free(n);
+}
+
 static void *
 eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 {
@@ -640,7 +654,13 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
    Image_Entry *ie = image, *ie2 = NULL;
    RGBA_Image *im = image;
 
-   if (!im || !ns) return im;
+   if (!im) return NULL;
+   if (!ns)
+     {
+        if (im->native.data && im->native.func.free)
+          im->native.func.free(im->native.func.data, im);
+        return NULL;
+     }
 
    if (ns->type == EVAS_NATIVE_SURFACE_X11)
      {
@@ -669,10 +689,10 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
      }
 
    // Code from software_generic
-   if ((ns->type == EVAS_NATIVE_SURFACE_OPENGL) &&
-            (ns->version == EVAS_NATIVE_SURFACE_VERSION))
+   if ((ns->type == EVAS_NATIVE_SURFACE_EVASGL) &&
+       (ns->version == EVAS_NATIVE_SURFACE_VERSION))
      ie2 = evas_cache_image_data(evas_common_image_cache_get(),
-                                 ie->w, ie->h, ns->data.x11.visual, 1,
+                                 ie->w, ie->h, ns->data.evasgl.surface, 1,
                                  EVAS_COLORSPACE_ARGB8888);
    else
      ie2 = evas_cache_image_data(evas_common_image_cache_get(),
@@ -702,9 +722,25 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
         return evas_xcb_image_native_set(re->generic.ob, ie, ns);
 #endif
      }
-   if (ns->type == EVAS_NATIVE_SURFACE_TBM)
+   else if (ns->type == EVAS_NATIVE_SURFACE_TBM)
      {
         return evas_native_tbm_image_set(re->generic.ob, ie, ns);
+     }
+   else if (ns->type == EVAS_NATIVE_SURFACE_EVASGL)
+     {
+        /* Native contains Evas_Native_Surface. What a mess. */
+        Native *n = calloc(1, sizeof(Native));
+        if (n)
+          {
+             im = (RGBA_Image *) ie;
+             n->ns.type = EVAS_NATIVE_SURFACE_EVASGL;
+             n->ns.version = EVAS_NATIVE_SURFACE_VERSION;
+             n->ns.data.evasgl.surface = ns->data.evasgl.surface;
+             im->native.data = n;
+             im->native.func.free = _native_evasgl_free;
+             im->native.func.data = NULL;
+             im->native.func.bind = NULL;
+          }
      }
 
    return ie;
