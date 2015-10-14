@@ -13,5 +13,6 @@ void evas_test_filters(TCase *tc);
 void evas_test_image_object(TCase *tc);
 void evas_test_mesh(TCase *tc);
 void evas_test_mask(TCase *tc);
+void evas_test_evasgl(TCase *tc);
 
 #endif /* _EVAS_SUITE_H */
