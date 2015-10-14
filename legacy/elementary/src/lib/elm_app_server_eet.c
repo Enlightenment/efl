@@ -14,7 +14,6 @@ struct _Elm_App_Server_Views_Eet {
     const char *__eet_filename;
 };
 
-static const char ELM_APP_SERVER_VIEW_PROPS_ENTRY[] = "elm_app_server_view_props";
 static const char ELM_APP_SERVER_VIEWS_EET_ENTRY[] = "elm_app_server_views_eet";
 
 static Eet_Data_Descriptor *_elm_app_server_view_props_descriptor = NULL;
