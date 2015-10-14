@@ -423,21 +423,19 @@ eina_file_path_relative(const char *path)
 Eina_Tmpstr *
 eina_file_current_directory_get(const char *path, size_t len)
 {
-   char *cwd;
    char *tmp;
    DWORD l;
 
    l = GetCurrentDirectory(0, NULL);
-   if (l <= 0) return NULL;
+   if (l == 0) return NULL;
 
-   cwd = alloca(sizeof(char) * (l + 1));
-   GetCurrentDirectory(l + 1, cwd);
-   len += l + 2;
-   tmp = alloca(sizeof (char) * len);
-   snprintf(tmp, len, "%s\\%s", cwd, path);
-   tmp[len - 1] = '\0';
+   tmp = alloca(sizeof (char) * (l + len + 2));
+   l = GetCurrentDirectory(l + 1, tmp);
+   tmp[l] = '\\';
+   memcpy(tmp + l + 1, path, len);
+   tmp[l + len + 1] = '\0';
 
-   return eina_tmpstr_add_length(tmp, len);
+   return eina_tmpstr_add_length(tmp, l + len + 1);
 }
 
 char *
