@@ -39,8 +39,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-static const char SIG_CLICKED[] = "clicked";
-
 static Eina_Bool _on_item_back_btn_clicked(void *data,
       Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
 
