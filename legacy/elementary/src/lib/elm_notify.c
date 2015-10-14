@@ -17,11 +17,6 @@
 
 static const char SIG_BLOCK_CLICKED[] = "block,clicked";
 static const char SIG_TIMEOUT[] = "timeout";
-static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-   {SIG_BLOCK_CLICKED, ""},
-   {SIG_TIMEOUT, ""},
-   {NULL, NULL}
-};
 
 static void
 _notify_theme_apply(Evas_Object *obj)
