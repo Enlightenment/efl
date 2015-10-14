@@ -506,6 +506,11 @@ evgl_api_egl_ext_init(void *getproc, const char *glueexts)
 
    sb = eina_strbuf_new();
 
+   // Always supported by Evas GL (faked with internal pbuffer if needed)
+   // See also GL_OES_surfaceless_context (needs some more work to be actually
+   // supported).
+   eina_strbuf_append(sb, "EGL_KHR_surfaceless_context ");
+
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    // Extension HEADER
    /////////////////////////////////////////////////////////////////////////////////////////////////////
