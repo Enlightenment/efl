@@ -22,10 +22,6 @@
 
 #define MY_CLASS EDJE_EDIT_CLASS
 
-static const char EDJE_EDIT_ERROR_GROUP_CURRENTLY_USED_STR[] = "Current group cannot be deleted";
-static const char EDJE_EDIT_ERROR_GROUP_REFERENCED_STR[] = "Group still in use";
-static const char EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST_STR[] = "Group does not exist";
-
 EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_CURRENTLY_USED = 0;
 EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_REFERENCED = 0;
 EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST = 0;
