@@ -209,6 +209,30 @@ _ecore_evas_cocoa_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSED,
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static void
+_ecore_evas_resize_common(Ecore_Evas *ee,
+                          int         w,
+                          int         h,
+                          Eina_Bool   resize_cocoa)
+{
+   if ((w == ee->w) && (h == ee->h)) return;
+   ee->req.w = w;
+   ee->req.h = h;
+   ee->w = w;
+   ee->h = h;
+
+   DBG("Ecore_Evas Resize %d %d", w, h);
+
+   if (resize_cocoa)
+     ecore_cocoa_window_resize((Ecore_Cocoa_Window *)ee->prop.window, w, h);
+
+   evas_output_size_set(ee->evas, ee->w, ee->h);
+   evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+
+   if (ee->func.fn_resize) ee->func.fn_resize(ee);
+}
+
 static Eina_Bool
 _ecore_evas_cocoa_event_video_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -217,24 +241,15 @@ _ecore_evas_cocoa_event_video_resize(void *data EINA_UNUSED, int type EINA_UNUSE
 
    DBG("");
 
-   if (!e->wid)
-     return ECORE_CALLBACK_PASS_ON;
-
    ee = _ecore_evas_cocoa_match(e->wid);
-   if (!ee)
+   if (EINA_UNLIKELY(!ee))
      {
         ERR("Unregistered Ecore_Evas for window Id %p", e->wid);
         return ECORE_CALLBACK_PASS_ON;
      }
 
-   ee->req.w = ee->w = e->w;
-   ee->req.h = ee->h = e->h;
-
-   evas_output_size_set(ee->evas, e->w, e->h);
-   evas_output_viewport_set(ee->evas, 0, 0, e->w, e->h);
-   evas_damage_rectangle_add(ee->evas, 0, 0, e->w, e->h);
-
-   if (ee->func.fn_resize) ee->func.fn_resize(ee);
+   /* Do the resize */
+   _ecore_evas_resize_common(ee, e->w, e->h, EINA_FALSE);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -340,21 +355,7 @@ static void
 _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 {
    DBG("");
-   if ((w == ee->w) && (h == ee->h)) return;
-   ee->req.w = w;
-   ee->req.h = h;
-   ee->w = w;
-   ee->h = h;
-
-   DBG("Ecore_Evas Resize %d %d", w, h);
-
-   ecore_cocoa_window_resize((Ecore_Cocoa_Window *)ee->prop.window, w, h);
-
-   evas_output_size_set(ee->evas, ee->w, ee->h);
-   evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-
-   if (ee->func.fn_resize) ee->func.fn_resize(ee);
+   _ecore_evas_resize_common(ee, w, h, EINA_TRUE);
 }
 
 static void
