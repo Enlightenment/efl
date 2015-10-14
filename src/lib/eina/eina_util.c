@@ -75,7 +75,7 @@ eina_environment_home_get(void)
 EAPI const char *
 eina_environment_tmp_get(void)
 {
-   char *tmp;
+   char *tmp = NULL;
 
 #ifdef _WIN32
    tmp = getenv("TMP");
