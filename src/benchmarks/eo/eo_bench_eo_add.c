@@ -41,7 +41,7 @@ bench_eo_add_jump_by_2(int request)
 void eo_bench_eo_add(Eina_Benchmark *bench)
 {
    eina_benchmark_register(bench, "eo_add_linear",
-         EINA_BENCHMARK(bench_eo_add_linear), 1000, 50000, 100);
+         EINA_BENCHMARK(bench_eo_add_linear), _EO_BENCH_TIMES(1000, 10, 50000));
    eina_benchmark_register(bench, "eo_add_jump_by_2",
-         EINA_BENCHMARK(bench_eo_add_jump_by_2), 1000, 50000, 100);
+         EINA_BENCHMARK(bench_eo_add_jump_by_2), _EO_BENCH_TIMES(1000, 10, 50000));
 }

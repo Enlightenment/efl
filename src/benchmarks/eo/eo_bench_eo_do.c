@@ -7,7 +7,7 @@
 #include "class_simple.h"
 
 static void
-bench_eo_do_general(int request)
+bench_eo_do_simple(int request)
 {
    int i;
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
@@ -17,6 +17,37 @@ bench_eo_do_general(int request)
      }
 
    eo_unref(obj);
+}
+
+static void
+bench_eo_do_two_objs(int request)
+{
+   int i;
+   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   Eo *obj2 = eo_add(SIMPLE_CLASS, NULL);
+   for (i = 0 ; i < request ; i++)
+     {
+        eo_do(obj, simple_a_set(i));
+        eo_do(obj2, simple_a_set(i));
+     }
+
+   eo_unref(obj);
+   eo_unref(obj2);
+}
+
+static void
+bench_eo_do_two_objs_growing_stack(int request)
+{
+   int i;
+   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   Eo *obj2 = eo_add(SIMPLE_CLASS, NULL);
+   for (i = 0 ; i < request ; i++)
+     {
+        eo_do(obj, simple_other_call(obj2, 20));
+     }
+
+   eo_unref(obj);
+   eo_unref(obj2);
 }
 
 static const Eo_Class *cur_klass;
@@ -58,8 +89,12 @@ bench_eo_do_super(int request)
 
 void eo_bench_eo_do(Eina_Benchmark *bench)
 {
-   eina_benchmark_register(bench, "various",
-         EINA_BENCHMARK(bench_eo_do_general), 1000, 100000, 500);
+   eina_benchmark_register(bench, "simple",
+         EINA_BENCHMARK(bench_eo_do_simple), _EO_BENCH_TIMES(1000, 10, 500000));
    eina_benchmark_register(bench, "super",
-         EINA_BENCHMARK(bench_eo_do_super), 1000, 100000, 500);
+         EINA_BENCHMARK(bench_eo_do_super),  _EO_BENCH_TIMES(1000, 10, 500000));
+   eina_benchmark_register(bench, "two_objs",
+         EINA_BENCHMARK(bench_eo_do_two_objs), _EO_BENCH_TIMES(1000, 10, 500000));
+   eina_benchmark_register(bench, "two_objs_growing_stack",
+         EINA_BENCHMARK(bench_eo_do_two_objs_growing_stack), _EO_BENCH_TIMES(1000, 10, 40000));
 }
