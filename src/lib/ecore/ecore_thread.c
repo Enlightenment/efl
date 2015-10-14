@@ -1398,7 +1398,7 @@ ecore_thread_global_data_wait(const char *key,
         if ((ret) || (!seconds) || ((seconds > 0) && (tm <= ecore_time_get())))
           break;
         LKL(_ecore_thread_global_hash_mutex);
-        CDW(_ecore_thread_global_hash_cond, tm);
+        CDW(_ecore_thread_global_hash_cond, tm - ecore_time_get());
         LKU(_ecore_thread_global_hash_mutex);
      }
    if (ret) return ret->data;
