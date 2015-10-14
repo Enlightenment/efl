@@ -245,7 +245,6 @@ static const char SIG_INDICATOR_PROP_CHANGED[] = "indicator,prop,changed";
 static const char SIG_ROTATION_CHANGED[] = "rotation,changed";
 static const char SIG_PROFILE_CHANGED[] = "profile,changed";
 static const char SIG_WM_ROTATION_CHANGED[] = "wm,rotation,changed";
-static const char SIG_THEME_CHANGED[] = "theme,changed";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_DELETE_REQUEST, ""},
