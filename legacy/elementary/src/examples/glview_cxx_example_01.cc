@@ -98,7 +98,7 @@ init_shaders(GLData *gld)
 
              gl->glGetProgramInfoLog(gld->program, info_len, NULL, info_log);
              printf("Error linking program:\n%s\n", info_log);
-             free(info_log);
+             delete [] info_log;
           }
         gl->glDeleteProgram(gld->program);
         return 0;
