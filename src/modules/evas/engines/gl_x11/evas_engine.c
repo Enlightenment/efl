@@ -179,6 +179,10 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
 
    if ((!context) && (!surface))
      {
+        if (!eglGetCurrentContext() &&
+            !eglGetCurrentSurface(EGL_READ) &&
+            !eglGetCurrentSurface(EGL_DRAW))
+          return 1;
         ret = eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         if (!ret)
           {
