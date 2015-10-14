@@ -413,7 +413,7 @@ _ecore_evas_wayland_egl_alpha_do(Ecore_Evas *ee, int alpha)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
-   if ((ee->alpha == alpha)) return;
+   if (ee->alpha == alpha) return;
    ee->alpha = alpha;
    wdata = ee->engine.data;
 
@@ -453,7 +453,7 @@ _ecore_evas_wayland_egl_transparent_do(Ecore_Evas *ee, int transparent)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
-   if ((ee->transparent == transparent)) return;
+   if (ee->transparent == transparent) return;
    ee->transparent = transparent;
 
    wdata = ee->engine.data;
