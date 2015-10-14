@@ -219,7 +219,7 @@ ecore_cocoa_feed_events(void *anEvent)
         }
       case NSFlagsChanged:
         {
-           int flags = [event modifierFlags];
+           NSUInteger flags = [event modifierFlags];
 
            Ecore_Event_Key *evDown = NULL;
            Ecore_Event_Key *evUp = NULL;
@@ -257,7 +257,7 @@ ecore_cocoa_feed_events(void *anEvent)
                 return pass;
              }
 
-           int changed_flags = flags ^ old_flags;
+           NSUInteger changed_flags = flags ^ old_flags;
 
            // Turn special key flags off
            if (changed_flags & NSShiftKeyMask)
