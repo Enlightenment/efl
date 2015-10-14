@@ -217,16 +217,6 @@ _mouse_up(void *data,
      eo_do(data, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
 }
 
-static inline int
-_icon_size_min_get(Evas_Object *icon)
-{
-   int size;
-
-   elm_image_object_size_get(icon, &size, NULL);
-
-   return (size < 32) ? 32 : size;
-}
-
 static void
 _elm_photo_internal_image_follow(Evas_Object *obj)
 {
