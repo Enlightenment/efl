@@ -75,7 +75,7 @@ _parent_content_get(void *data, Evas_Object *obj, const char *part)
 static char *
 _favorite_label_get(void *data, Evas_Object *obj, const char *part)
 {
-   char buf[256];
+   char buf[256] = {0};
    Node_Data *d = data;
 
    if (!strcmp(part, "elm.text"))
