@@ -3318,7 +3318,7 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         uvw = imagew;
         uvh = imageh;
      }
-   else if (!o->cur->source)
+   else if (!o->cur->source || !source)
      {
         pixels = evas_process_dirty_pixels(eo_obj, obj, o, output, surface, o->engine_data);
         /* pixels = o->engine_data; */
@@ -3340,8 +3340,8 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         pixels = oi->engine_data;
         if (oi->has_filter)
           {
-             void *output_buffer = eo_do_ret(source->object, output_buffer,
-                                             evas_filter_output_buffer_get());
+             void *output_buffer = NULL;
+             eo_do(source->object, output_buffer = evas_filter_output_buffer_get());
              if (output_buffer)
                pixels = output_buffer;
           }
