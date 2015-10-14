@@ -624,7 +624,7 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    gldata_init(gld);
 
    // add a Z-depth buffer to the window and try to use GL
-   accel = elm_config_accel_preference_get();
+   accel = eina_stringshare_add(elm_config_accel_preference_get());
    elm_config_accel_preference_set("gl:depth");
 
    // new window - do the usual and give it a name, title and delete handler
@@ -633,6 +633,7 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    // restore previous accel preference
    elm_config_accel_preference_set(accel);
+   eina_stringshare_del(accel);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
