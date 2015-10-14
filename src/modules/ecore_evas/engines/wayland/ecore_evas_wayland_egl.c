@@ -250,7 +250,7 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
         goto err;
      }
 
-   ecore_wl_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
+   /* ecore_wl_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM); */
 
    ecore_evas_callback_pre_free_set(ee, _ecore_evas_wl_common_pre_free);
 
