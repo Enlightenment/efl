@@ -657,7 +657,7 @@ _evgl_glGetString(GLenum name)
    static char _version[128] = {0};
    static char _glsl[128] = {0};
    EVGL_Resource *rsc;
-   const GLubyte *ret;
+   const char *ret;
 
    /* We wrap two values here:
     *
@@ -678,6 +678,10 @@ _evgl_glGetString(GLenum name)
     * --> crash moved to app side if they blindly call strstr()
     */
 
+   /* NOTE: Please modify software_generic/evas_engine.c as well if you change
+    *       this function!
+    */
+
    if ((!(rsc = _evgl_tls_resource_get())) || !rsc->current_ctx)
      {
         ERR("Current context is NULL, not calling glGetString");
@@ -694,17 +698,17 @@ _evgl_glGetString(GLenum name)
         break;
 
       case GL_SHADING_LANGUAGE_VERSION:
-        ret = glGetString(GL_SHADING_LANGUAGE_VERSION);
+        ret = (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
         if (!ret) return NULL;
 #ifdef GL_GLES
-        if (ret[18] != (GLubyte) '1')
+        if (ret[18] != '1')
           {
              // We try not to remove the vendor fluff
-             snprintf(_glsl, sizeof(_glsl), "OpenGL ES GLSL ES 1.00 Evas GL (%s)", ((char *) ret) + 18);
+             snprintf(_glsl, sizeof(_glsl), "OpenGL ES GLSL ES 1.00 Evas GL (%s)", ret + 18);
              _glsl[sizeof(_glsl) - 1] = '\0';
              return (const GLubyte *) _glsl;
           }
-        return ret;
+        return (const GLubyte *) ret;
 #else
         // Desktop GL, we still keep the official name
         snprintf(_glsl, sizeof(_glsl), "OpenGL ES GLSL ES 1.00 Evas GL (%s)", (char *) ret);
@@ -713,17 +717,17 @@ _evgl_glGetString(GLenum name)
 #endif
 
       case GL_VERSION:
-        ret = glGetString(GL_VERSION);
+        ret = (const char *) glGetString(GL_VERSION);
         if (!ret) return NULL;
 #ifdef GL_GLES
-        if ((ret[10] != (GLubyte) '2') && (ret[10] != (GLubyte) '3'))
+        if ((ret[10] != '2') && (ret[10] != '3'))
           {
              // We try not to remove the vendor fluff
-             snprintf(_version, sizeof(_version), "OpenGL ES 2.0 Evas GL (%s)", ((char *) ret) + 10);
+             snprintf(_version, sizeof(_version), "OpenGL ES 2.0 Evas GL (%s)", ret + 10);
              _version[sizeof(_version) - 1] = '\0';
              return (const GLubyte *) _version;
           }
-        return ret;
+        return (const GLubyte *) ret;
 #else
         // Desktop GL, we still keep the official name
         snprintf(_version, sizeof(_version), "OpenGL ES 2.0 Evas GL (%s)", (char *) ret);
