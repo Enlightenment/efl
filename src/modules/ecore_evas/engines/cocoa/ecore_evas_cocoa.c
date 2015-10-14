@@ -240,32 +240,6 @@ _ecore_evas_cocoa_event_video_resize(void *data EINA_UNUSED, int type EINA_UNUSE
 }
 
 static Eina_Bool
-_ecore_evas_cocoa_event_video_expose(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   Ecore_Cocoa_Event_Window     *e = event;
-   Ecore_Evas                   *ee;
-   int                          w;
-   int                          h;
-
-   DBG("");
-
-   if (!e->wid)
-     return ECORE_CALLBACK_PASS_ON;
-
-   ee = _ecore_evas_cocoa_match(e->wid);
-
-   if (!ee)
-     {
-        ERR("Unregistered Ecore_Evas for window Id %p", e->wid);
-        return ECORE_CALLBACK_PASS_ON;
-     }
-   evas_output_size_get(ee->evas, &w, &h);
-   evas_damage_rectangle_add(ee->evas, 0, 0, w, h);
-
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
 _ecore_evas_cocoa_event_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Cocoa_Event_Window     *e = event;
