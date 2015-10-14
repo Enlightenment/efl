@@ -2799,7 +2799,7 @@ _collection_inorder(Eo *collection, struct collection_match_rule *rule, Eina_Lis
              parent = elm_interface_atspi_accessible_parent_get(),
              idx = elm_interface_atspi_accessible_index_in_parent_get());
        count = _collection_sort_order_canonical(rule, list, count, max, parent,
-                                     idx + 1, EINA_TRUE, EINA_FALSE, EINA_TRUE, traverse);
+                                     idx + 1, EINA_TRUE, NULL, EINA_TRUE, traverse);
        obj = parent;
     }
 
