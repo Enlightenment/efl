@@ -1329,8 +1329,10 @@ try_again:
                }
              else
                {
-                  ERR("Win cfg can't support Evas GL DR win (depth %d, stencil %d, msaa %d)",
-                      native_win_depth, native_win_stencil, native_win_msaa);
+                  ERR("Win cfg can't support Evas GL DR, win: [depth %d, stencil %d, msaa %d] "
+                      "want: [depth %d, stencil %d, msaa %d]",
+                      native_win_depth, native_win_stencil, native_win_msaa,
+                      depth_size, stencil_bit, msaa_samples);
                   support_win_cfg = EINA_FALSE;
                }
 
