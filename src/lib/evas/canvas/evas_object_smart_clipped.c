@@ -206,7 +206,7 @@ evas_object_smart_clipped_smart_member_del(Evas_Object *eo_obj, Evas_Object *mem
    if (!cso->clipper)
      return;
    evas_object_clip_unset(member);
-   if (!evas_object_clipees_get(cso->clipper))
+   if (!evas_object_clipees_has(cso->clipper))
      evas_object_hide(cso->clipper);
 }
 
