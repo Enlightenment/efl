@@ -293,7 +293,7 @@ _evas_filter_efl_gfx_filter_program_set(Eo *eo_obj, Evas_Filter_Data *pd,
         eina_stringshare_replace(&fcow->name, name);
         if (code)
           {
-             alpha = eo_do_ret(eo_obj, alpha, evas_filter_input_alpha());
+             eo_do(eo_obj, alpha = evas_filter_input_alpha());
              pgm = evas_filter_program_new(fcow->name, alpha);
              evas_filter_program_source_set_all(pgm, fcow->sources);
              evas_filter_program_data_set_all(pgm, fcow->data);
