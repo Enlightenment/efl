@@ -123,7 +123,6 @@ typedef OSMesaContext          (*glsym_func_osm_ctx) ();
 static Evas_GL_API gl_funcs;
 static void *gl_lib_handle;
 static int gl_lib_is_gles = 0;
-static Evas_GL_API gl_funcs;
 
 static Eina_Bool _tls_init = EINA_FALSE;
 static Eina_TLS gl_current_ctx_key = 0;
@@ -3087,6 +3086,12 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
 
    _tls_check();
 
+   if ((!sfc) ^ (!ctx))
+     {
+        ERR("Evas GL on SW engine does not support surfaceless contexts.");
+        return 0;
+     }
+
    // Unset surface/context
    if ((!sfc) || (!ctx))
      {
@@ -3101,15 +3106,15 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
    if (!ctx->initialized)
      {
         if (ctx->share_ctx)
-           share_ctx = ctx->share_ctx->context;
+          share_ctx = ctx->share_ctx->context;
         else
-           share_ctx = NULL;
+          share_ctx = NULL;
 
-        ctx->context =  _sym_OSMesaCreateContextExt(sfc->internal_fmt, 
-                                                    sfc->depth_bits,
-                                                    sfc->stencil_bits,
-                                                    0,
-                                                    share_ctx);
+        ctx->context = _sym_OSMesaCreateContextExt(sfc->internal_fmt,
+                                                   sfc->depth_bits,
+                                                   sfc->stencil_bits,
+                                                   0,
+                                                   share_ctx);
         if (!ctx->context)
           {
              ERR("Error initializing context.");
@@ -4939,7 +4944,7 @@ evgl_glGetString(GLenum name)
 static void
 override_gl_apis(Evas_GL_API *api)
 {
-
+   memset(&gl_funcs, 0, sizeof(gl_funcs));
    api->version = EVAS_GL_API_VERSION;
 
 #define ORD(f) EVAS_API_OVERRIDE(f, api, _sym_)
