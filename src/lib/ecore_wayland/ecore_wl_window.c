@@ -16,6 +16,7 @@ static void _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *
 static void _ecore_xdg_handle_surface_delete(void *data, struct xdg_surface *xdg_surface);
 static void _ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup);
 static void _ecore_session_recovery_uuid(void *data, struct session_recovery *session_recovery, const char *uuid);
+static void _anim_cb_animate(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED);
 
 /* local variables */
 static Eina_Hash *_windows = NULL;
@@ -43,6 +44,44 @@ static const struct session_recovery_listener _ecore_session_recovery_listener =
 {
    _ecore_session_recovery_uuid,
 };
+
+static const struct wl_callback_listener _anim_listener =
+{
+   _anim_cb_animate
+};
+
+static void
+_anim_cb_animate(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED)
+{
+   Ecore_Wl_Window *win;
+
+   win = data;
+   if (!win) return;
+
+   if ((win->anim_callback) && (callback != win->anim_callback)) return;
+
+   wl_callback_destroy(callback);
+   win->anim_callback = NULL;
+}
+
+static Eina_Bool
+_ecore_wl_window_cb_animate(void *data)
+{
+   Ecore_Wl_Window *win;
+
+   win = data;
+   if (!win->visible) return ECORE_CALLBACK_CANCEL;
+
+   if (!win->anim_callback)
+     {
+        win->anim_callback = wl_surface_frame(win->surface);
+        wl_callback_add_listener(win->anim_callback, &_anim_listener, win);
+     }
+
+   wl_surface_commit(win->surface);
+
+   return ECORE_CALLBACK_RENEW;
+}
 
 /* internal functions */
 void
@@ -405,6 +444,11 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
       default:
         break;
      }
+
+   win->visible = EINA_TRUE;
+
+   if (!win->animator)
+     win->animator = ecore_animator_add(_ecore_wl_window_cb_animate, win);
 }
 
 EAPI void
@@ -413,6 +457,14 @@ ecore_wl_window_hide(Ecore_Wl_Window *win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
+
+   win->visible = EINA_FALSE;
+
+   if (win->anim_callback) wl_callback_destroy(win->anim_callback);
+   win->anim_callback = NULL;
+
+   if (win->animator) ecore_animator_del(win->animator);
+   win->animator = NULL;
 
    if (win->xdg_surface) xdg_surface_destroy(win->xdg_surface);
    win->xdg_surface = NULL;
