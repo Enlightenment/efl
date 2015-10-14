@@ -22,19 +22,19 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
                    backing: (NSBackingStoreType) bufferingType
                      defer: (BOOL) flag
 {
-    if (![super initWithContentRect: contentRect
-                          styleMask: aStyle
-                            backing: bufferingType
-                              defer: flag]) return nil;
+   if (![super initWithContentRect: contentRect
+                         styleMask: aStyle
+                           backing: bufferingType
+                             defer: flag]) return nil;
 
-    [self setBackgroundColor: [NSColor whiteColor]];
-    [self makeKeyWindow];
-    [self setDelegate:self];
-    [self setAcceptsMouseMovedEvents:YES];
+   [self setBackgroundColor: [NSColor whiteColor]];
+   [self makeKeyWindow];
+   [self setDelegate:self];
+   [self setAcceptsMouseMovedEvents:YES];
 
-    [self setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
+   [self setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
 
-    return self;
+   return self;
 }
 
 - (BOOL)isFullScreen
@@ -49,7 +49,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
 
 - (BOOL)canBecomeKeyWindow
 {
-    return YES;
+   return YES;
 }
 
 - (void)windowWillClose:(NSNotification *) notification
@@ -87,30 +87,30 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
 
 - (void)windowDidBecomeKey:(NSNotification *)notification
 {
-  Ecore_Cocoa_Event_Window *e;
+   Ecore_Cocoa_Event_Window *e;
 
-  e = malloc(sizeof(*e));
-  if (EINA_UNLIKELY(e == NULL))
-    {
-       CRI("Failed to allocate Ecore_Cocoa_Event_Window");
-       return;
-    }
-  e->wid = [notification object];
-  ecore_event_add(ECORE_COCOA_EVENT_GOT_FOCUS, e, NULL, NULL);
+   e = malloc(sizeof(*e));
+   if (EINA_UNLIKELY(e == NULL))
+     {
+        CRI("Failed to allocate Ecore_Cocoa_Event_Window");
+        return;
+     }
+   e->wid = [notification object];
+   ecore_event_add(ECORE_COCOA_EVENT_GOT_FOCUS, e, NULL, NULL);
 }
 
 - (void)windowDidResignKey:(NSNotification *)notification
 {
-  Ecore_Cocoa_Event_Window *e;
+   Ecore_Cocoa_Event_Window *e;
 
-  e = malloc(sizeof(*e));
-  if (EINA_UNLIKELY(e == NULL))
-    {
-       CRI("Failed to allocate Ecore_Cocoa_Event_Window");
-       return;
-    }
-  e->wid = [notification object];
-  ecore_event_add(ECORE_COCOA_EVENT_LOST_FOCUS, e, NULL, NULL);
+   e = malloc(sizeof(*e));
+   if (EINA_UNLIKELY(e == NULL))
+     {
+        CRI("Failed to allocate Ecore_Cocoa_Event_Window");
+        return;
+     }
+   e->wid = [notification object];
+   ecore_event_add(ECORE_COCOA_EVENT_LOST_FOCUS, e, NULL, NULL);
 }
 
 - (void) mouseDown:(NSEvent*) event
@@ -169,12 +169,12 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
 
 - (void) rightMouseDown:(NSEvent*) event
 {
-	[self mouseDown: event];
+   [self mouseDown: event];
 }
 
 - (void) otherMouseDown:(NSEvent*) event
 {
-	[self mouseDown: event];
+   [self mouseDown: event];
 }
 
 - (void) mouseUp:(NSEvent*) event
@@ -226,12 +226,12 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
 
 - (void) rightMouseUp:(NSEvent*) event
 {
-	[self mouseUp: event];
+   [self mouseUp: event];
 }
 
 - (void) otherMouseUp:(NSEvent*) event
 {
-	[self mouseUp: event];
+   [self mouseUp: event];
 }
 
 - (void) mouseMoved:(NSEvent*) event
@@ -269,56 +269,56 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
 
 EAPI Ecore_Cocoa_Window *
 ecore_cocoa_window_new(int x,
-		       int y,
-		       int width,
-		       int height)
+                       int y,
+                       int width,
+                       int height)
 {
-  Ecore_Cocoa_Window *w;
+   Ecore_Cocoa_Window *w;
 
-  EcoreCocoaWindow *window = [[EcoreCocoaWindow alloc] initWithContentRect:NSMakeRect(x, y, width, height)
-                                                                 styleMask:(NSTitledWindowMask    |
-                                                                            NSClosableWindowMask  |
-                                                                            NSResizableWindowMask |
-                                                                            NSMiniaturizableWindowMask)
-                                                                    backing:NSBackingStoreBuffered
+   EcoreCocoaWindow *window = [[EcoreCocoaWindow alloc] initWithContentRect:NSMakeRect(x, y, width, height)
+                                                                  styleMask:(NSTitledWindowMask    |
+                                                                             NSClosableWindowMask  |
+                                                                             NSResizableWindowMask |
+                                                                             NSMiniaturizableWindowMask)
+                                                                  backing:NSBackingStoreBuffered
                                                                     defer:NO];
 
-  if (EINA_UNLIKELY(!window))
-    {
-       CRI("Failed to create EcoreCocoaWindow");
-       return NULL;
-    }
+   if (EINA_UNLIKELY(!window))
+     {
+        CRI("Failed to create EcoreCocoaWindow");
+        return NULL;
+     }
 
-  //Set the process to be a foreground process,
-  //without that it prevents the window to become the key window and
-  //receive all mouse mouve events.
-  [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
-  [NSApp activateIgnoringOtherApps:YES];
+   //Set the process to be a foreground process,
+   //without that it prevents the window to become the key window and
+   //receive all mouse mouve events.
+   [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+   [NSApp activateIgnoringOtherApps:YES];
 
 
-  w = calloc(1, sizeof(Ecore_Cocoa_Window));
-  if (EINA_UNLIKELY(w == NULL))
-    {
-       CRI("Failed to allocate Ecore_Cocoa_Window");
-       [window release];
-       return NULL;
-    }
-  w->window = window;
-  w->borderless = 0;
+   w = calloc(1, sizeof(Ecore_Cocoa_Window));
+   if (EINA_UNLIKELY(w == NULL))
+     {
+        CRI("Failed to allocate Ecore_Cocoa_Window");
+        [window release];
+        return NULL;
+     }
+   w->window = window;
+   w->borderless = 0;
 
-  window.ecore_window_data = w;
+   window.ecore_window_data = w;
 
-  return w;
+   return w;
 }
 
 EAPI void
 ecore_cocoa_window_free(Ecore_Cocoa_Window *window)
 {
-  if (!window)
-    return;
+   if (!window)
+     return;
 
-  [window->window release];
-  free(window);
+   [window->window release];
+   free(window);
 }
 
 EAPI void
@@ -328,8 +328,8 @@ ecore_cocoa_window_size_min_set(Ecore_Cocoa_Window *window,
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-  NSSize size = {w,h};
-  window->window.contentMinSize = size;
+   NSSize size = {w,h};
+   window->window.contentMinSize = size;
 }
 
 EAPI void
@@ -339,8 +339,8 @@ ecore_cocoa_window_size_max_set(Ecore_Cocoa_Window *window,
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-  NSSize size = {w,h};
-  window->window.contentMaxSize = size;
+   NSSize size = {w,h};
+   window->window.contentMaxSize = size;
 }
 
 EAPI void
@@ -350,62 +350,62 @@ ecore_cocoa_window_size_step_set(Ecore_Cocoa_Window *window,
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-  NSSize size = {w,h};
-  window->window.contentResizeIncrements = size;
+   NSSize size = {w,h};
+   window->window.contentResizeIncrements = size;
 }
 
 EAPI void
 ecore_cocoa_window_move(Ecore_Cocoa_Window *window,
-			int                 x,
-			int                 y)
+                        int                 x,
+                        int                 y)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-  NSRect win_frame;
+   NSRect win_frame;
 
-  win_frame = [window->window frame];
-  win_frame.origin.x = x;
-  win_frame.origin.y = y;
+   win_frame = [window->window frame];
+   win_frame.origin.x = x;
+   win_frame.origin.y = y;
 
-  [window->window setFrame:win_frame display:YES];
+   [window->window setFrame:win_frame display:YES];
 }
 
 EAPI void
 ecore_cocoa_window_resize(Ecore_Cocoa_Window *window,
-			  int                 width,
-			  int                 height)
+                          int                 width,
+                          int                 height)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-  NSRect win_frame;
+   NSRect win_frame;
 
-  win_frame = [window->window frame];
-  win_frame.size.height = height +
-     (([window->window isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
-  win_frame.size.width = width;
+   win_frame = [window->window frame];
+   win_frame.size.height = height +
+      (([window->window isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
+   win_frame.size.width = width;
 
-  [window->window setFrame:win_frame display:YES];
+   [window->window setFrame:win_frame display:YES];
 }
 
 EAPI void
 ecore_cocoa_window_move_resize(Ecore_Cocoa_Window *window,
-			       int                 x,
-			       int                 y,
-			       int                 width,
-			       int                 height)
+                               int                 x,
+                               int                 y,
+                               int                 width,
+                               int                 height)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-  NSRect win_frame;
+   NSRect win_frame;
 
-  win_frame = [window->window frame];
-  win_frame.size.height = height +
-     (([window->window isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
-  win_frame.size.width = width;
-  win_frame.origin.x = x;
-  win_frame.origin.y = y;
+   win_frame = [window->window frame];
+   win_frame.size.height = height +
+      (([window->window isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
+   win_frame.size.width = width;
+   win_frame.origin.x = x;
+   win_frame.origin.y = y;
 
-  [window->window setFrame:win_frame display:YES];
+   [window->window setFrame:win_frame display:YES];
 }
 
 EAPI void
@@ -414,7 +414,7 @@ ecore_cocoa_window_title_set(Ecore_Cocoa_Window *window, const char *title)
    EINA_SAFETY_ON_NULL_RETURN(window);
    EINA_SAFETY_ON_NULL_RETURN(title);
 
-  [window->window setTitle:[NSString stringWithUTF8String:title]];
+   [window->window setTitle:[NSString stringWithUTF8String:title]];
 }
 
 EAPI void
@@ -422,8 +422,8 @@ ecore_cocoa_window_show(Ecore_Cocoa_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-  if (![window->window isVisible])
-    [window->window makeKeyAndOrderFront:NSApp];
+   if (![window->window isVisible])
+     [window->window makeKeyAndOrderFront:NSApp];
 }
 
 EAPI void
@@ -431,15 +431,15 @@ ecore_cocoa_window_hide(Ecore_Cocoa_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-  if (![window->window isVisible])
-    [window->window orderOut:NSApp];
+   if (![window->window isVisible])
+     [window->window orderOut:NSApp];
 }
 
 EAPI void
 ecore_cocoa_window_raise(Ecore_Cocoa_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
-  [window->window orderFront:nil];
+   [window->window orderFront:nil];
 }
 
 EAPI void
@@ -478,31 +478,31 @@ ecore_cocoa_window_borderless_set(Ecore_Cocoa_Window *window,
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-  if (on)
-    [window->window setContentBorderThickness:0.0
-	    forEdge:NSMinXEdge | NSMinYEdge | NSMaxXEdge | NSMaxYEdge];
+   if (on)
+     [window->window setContentBorderThickness:0.0
+                                       forEdge:NSMinXEdge | NSMinYEdge | NSMaxXEdge | NSMaxYEdge];
 }
 
 EAPI void
 ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
-			    void *view)
+                            void *view)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
    EINA_SAFETY_ON_NULL_RETURN(view);
 
-  //[[window->window contentView] addSubview:view];
-  NSView *v = view;
-  [window->window setContentView:view];
+   //[[window->window contentView] addSubview:view];
+   NSView *v = view;
+   [window->window setContentView:view];
 
-  NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:[v frame]
-                                                      options:NSTrackingMouseMoved |
-                                                              NSTrackingActiveInActiveApp |
-                                                              NSTrackingInVisibleRect
-                                                        owner:v
-                                                     userInfo:nil];
-  [v addTrackingArea:area];
+   NSTrackingArea *area = [[NSTrackingArea alloc] initWithRect:[v frame]
+                                                       options:NSTrackingMouseMoved |
+                                                       NSTrackingActiveInActiveApp |
+                                                       NSTrackingInVisibleRect
+                                                       owner:v
+                                                    userInfo:nil];
+   [v addTrackingArea:area];
 
-  [area release];
+   [area release];
 }
 
 EAPI Ecore_Cocoa_Window_Id
@@ -510,9 +510,9 @@ ecore_cocoa_window_get_window_id(const Ecore_Cocoa_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
 
-  DBG("Return : %p", window->window);
+   DBG("Return : %p", window->window);
 
-  return window->window;
+   return window->window;
 }
 
 EAPI void
