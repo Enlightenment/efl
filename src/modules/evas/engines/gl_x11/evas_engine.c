@@ -1366,7 +1366,7 @@ gl_extn_veto(Render_Engine *re)
              glsym_eglSetDamageRegionKHR = NULL;
           }
         if (!strstr(str, "EGL_NOK_texture_from_pixmap"))
-          {
+/          {
              extn_have_y_inverted = 0;
           }
         else
