@@ -15,9 +15,6 @@
 #define MY_CLASS_NAME "Elm_Notify"
 #define MY_CLASS_NAME_LEGACY "elm_notify"
 
-static const char SIG_BLOCK_CLICKED[] = "block,clicked";
-static const char SIG_TIMEOUT[] = "timeout";
-
 static void
 _notify_theme_apply(Evas_Object *obj)
 {
