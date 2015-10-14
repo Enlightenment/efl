@@ -52,8 +52,8 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
 {
    self = [super init];
    if (self == nil) {
-        // XXX Critical error. Abort right now! Log?
-        return nil;
+      CRI("Failed to [super init]");
+      return nil;
    }
    NSApp = self; // NSApp is used EVERYWHERE! Set it right now!
    return NSApp;
