@@ -29,7 +29,6 @@
 
 /*
  * FIXME: the following functions will certainly not work on Windows:
- * ecore_file_file_get()
  * ecore_file_app_exe_get()
  * ecore_file_escape_name()
  */
@@ -773,6 +772,23 @@ ecore_file_file_get(const char *path)
    char *result = NULL;
 
    if (!path) return NULL;
+
+#ifdef _WIN32
+   {
+     char buf[MAX_PATH];
+
+     memcpy(buf, path, strlen(path) + 1);
+     EVIL_PATH_SEP_UNIX_TO_WIN32(buf);
+     if ((result = strrchr(buf, '\\')))
+       {
+          result++;
+          return path + (result - buf);
+       }
+     else
+       return path;
+   }
+#endif
+
    if ((result = strrchr(path, '/'))) result++;
    else result = (char *)path;
 
