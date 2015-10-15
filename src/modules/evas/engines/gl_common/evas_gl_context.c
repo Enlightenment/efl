@@ -2192,8 +2192,9 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
           yinvert = tex->im->native.yinvert;
      }
 
-   if ((tex->im) && (tex->im->native.data) && (!yinvert))
+   if ((tex->im) && (!yinvert))
      {
+        // FIXME: What if yinvert is true? How to test that?
         switch (tex->im->orient)
           {
            case EVAS_IMAGE_ORIENT_NONE:
