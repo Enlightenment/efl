@@ -709,8 +709,7 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
                {
                   if (!_cb_desc_match(cb->items.item.desc, desc))
                     continue;
-                  if ((!cb->items.item.desc
-                       || !cb->items.item.desc->unfreezable) &&
+                  if (!cb->items.item.desc->unfreezable &&
                       (event_freeze_count || pd->event_freeze_count))
                     continue;
 
