@@ -122,6 +122,9 @@ im_module_create()
                   break;
                }
           }
+
+        if (!text_input_manager)
+          return NULL;
      }
 
    ctxd = wayland_im_context_new(text_input_manager);
