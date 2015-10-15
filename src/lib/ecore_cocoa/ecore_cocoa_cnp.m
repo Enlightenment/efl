@@ -15,15 +15,11 @@ ecore_cocoa_selection_clipboard_set(const void           *data,
                                     Ecore_Cocoa_Cnp_Type  type)
 {
    static NSMutableArray *objects = nil;
-   NSPasteboard *pb;
    NSString *str = nil;
    BOOL ok = YES;
 
    if (!objects)
      objects = [[NSMutableArray alloc] init];
-
-   pb = [NSPasteboard generalPasteboard];
-   [pb clearContents];
 
    if (type & ECORE_COCOA_CNP_TYPE_STRING)
      {
@@ -56,6 +52,10 @@ ecore_cocoa_selection_clipboard_set(const void           *data,
    /* Write to pasteboard */
    if ([objects count] > 0)
      {
+        NSPasteboard *pb;
+
+        pb = [NSPasteboard generalPasteboard];
+        [pb clearContents];
         ok = [pb writeObjects: objects];
         [objects removeAllObjects];
      }
