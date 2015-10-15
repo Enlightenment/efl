@@ -101,15 +101,19 @@ evas_thread_worker_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 
          DBG("Evas render thread command queue length: %u", len);
 
+         eina_evlog("+thread", NULL, 0.0, NULL);
          while (len)
            {
               assert(cmd->cb);
 
+              eina_evlog("+thread_do", cmd->data, 0.0, NULL);
               cmd->cb(cmd->data);
+              eina_evlog("-thread_do", cmd->data, 0.0, NULL);
 
               cmd++;
               len--;
            }
+         eina_evlog("-thread", NULL, 0.0, NULL);
       }
 
 out:
