@@ -2541,7 +2541,7 @@ evas_render_updates_internal(Evas *eo_e,
                   evas_object_clip_set(obj->object, e->framespace.clip);
                }
           }
-        if (!evas_object_clipees_get(e->framespace.clip))
+        if (!evas_object_clipees_has(e->framespace.clip))
           evas_object_hide(e->framespace.clip);
         evas_event_thaw(eo_e);
      }
