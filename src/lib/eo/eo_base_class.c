@@ -666,12 +666,8 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
             const Eo_Event_Description *desc,
             void *event_info)
 {
-   Eina_Bool ret;
+   Eina_Bool ret = EINA_TRUE;
    Eo_Callback_Description *cb;
-
-   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
-
-   ret = EINA_TRUE;
 
    pd->walking_list++;
 
