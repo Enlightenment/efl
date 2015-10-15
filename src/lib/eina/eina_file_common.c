@@ -920,20 +920,8 @@ eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
    mode_t old_umask;
 #endif
 
-#ifndef HAVE_EVIL
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (getuid() == geteuid())
-#endif
-     {
-        tmpdir = getenv("TMPDIR");
-        if (!tmpdir) tmpdir = getenv("XDG_RUNTIME_DIR");
-     }
-   if (!tmpdir) tmpdir = "/tmp";
-#else
-   tmpdir = (char *)evil_tmpdir_get();
-#endif /* ! HAVE_EVIL */
-
-   len = snprintf(buffer, PATH_MAX, "%s/%s", tmpdir, templatename);
+   len = eina_file_path_join(buffer, sizeof(buffer),
+                             eina_environment_tmp_get(), templatename);
 
    /*
     * Unix:
@@ -972,17 +960,8 @@ eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path)
    const char *tmpdir = NULL;
    char *tmpdirname;
 
-#ifndef HAVE_EVIL
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (getuid() == geteuid())
-#endif
-     tmpdir = getenv("TMPDIR");
-   if (!tmpdir) tmpdir = "/tmp";
-#else
-   tmpdir = (char *)evil_tmpdir_get();
-#endif /* ! HAVE_EVIL */
-
-   snprintf(buffer, PATH_MAX, "%s/%s", tmpdir, templatename);
+   eina_file_path_join(buffer, sizeof(buffer),
+                       eina_environment_tmp_get(), templatename);
 
    tmpdirname = mkdtemp(buffer);
    if (path) *path = eina_tmpstr_add(buffer);
