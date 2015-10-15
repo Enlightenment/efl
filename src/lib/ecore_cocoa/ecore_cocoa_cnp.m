@@ -53,7 +53,7 @@ ecore_cocoa_selection_clipboard_set(const void           *data,
      }
 
 
-   /* Write to pasteboard */ 
+   /* Write to pasteboard */
    if ([objects count] > 0)
      {
         ok = [pb writeObjects: objects];
