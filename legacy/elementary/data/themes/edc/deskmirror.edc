@@ -187,11 +187,13 @@ group { name: "e/deskmirror/frame/default";
             rel2.to: "e.swallow.client";
             visible: 0;
             color: 255 255 255 0;
+            proxy.source_clip: 0;
          }
          description { state: "urgent1";
             inherit: "default" 0.0;
             visible: 1;
             color: 255 255 255 255;
+            proxy.source_clip: 0;
          }
          description { state: "urgent2" 0.0;
             inherit: "default" 0.0;
@@ -199,6 +201,7 @@ group { name: "e/deskmirror/frame/default";
             rel1.relative: -2.0  -2.0;
             rel2.relative: 3.0  3.0;
             color: 255 255 255 0;
+            proxy.source_clip: 0;
          }
       }
       part { name: "shine"; mouse_events: 0;
