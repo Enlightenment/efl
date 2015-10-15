@@ -104,7 +104,8 @@ _ecore_cocoa_event_modifiers(NSUInteger mod)
 
 static Ecore_Event_Key*
 _ecore_cocoa_event_key(NSEvent     *event,
-                       NSEventType  keyType)
+                       NSEventType  keyType,
+                       unsigned int time)
 {
    static Eina_Bool compose = EINA_FALSE;
    static NSText *edit;
@@ -127,6 +128,7 @@ _ecore_cocoa_event_key(NSEvent     *event,
         compose=EINA_FALSE;
      }
 
+   ev->timestamp = time;
    ev->modifiers = _ecore_cocoa_event_modifiers([event modifierFlags]);
 
    ev->keycode = event.keyCode;
@@ -197,10 +199,9 @@ ecore_cocoa_feed_events(void *anEvent)
         {
            Ecore_Event_Key *ev;
 
-           ev = _ecore_cocoa_event_key(event, NSKeyDown);
+           ev = _ecore_cocoa_event_key(event, NSKeyDown, time);
            if (ev == NULL) return EINA_TRUE;
 
-           ev->timestamp = time;
            ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
 
            break;
@@ -209,10 +210,9 @@ ecore_cocoa_feed_events(void *anEvent)
         {
            Ecore_Event_Key *ev;
 
-           ev = _ecore_cocoa_event_key(event, NSKeyUp);
+           ev = _ecore_cocoa_event_key(event, NSKeyUp, time);
            if (ev == NULL) return EINA_TRUE;
 
-           ev->timestamp = time;
            ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
 
            break;
