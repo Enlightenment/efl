@@ -1304,7 +1304,7 @@ _item_theme_hook(Evas_Object *obj,
            (VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
       }
     _resizing_eval_item(it);
-    _sizing_eval(obj);
+    evas_object_smart_need_recalculate_set(obj, EINA_TRUE);
 }
 
 static void
@@ -1475,7 +1475,7 @@ _elm_toolbar_elm_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
      _item_theme_hook(obj, sd->more_item, scale, sd->icon_size);
 
    _elm_toolbar_highlight_in_theme(obj);
-   _sizing_eval(obj);
+   evas_object_smart_need_recalculate_set(obj, EINA_TRUE);
 
    return EINA_TRUE;
 }
@@ -1659,9 +1659,8 @@ _item_resize(void *data,
              Evas_Object *obj EINA_UNUSED,
              void *event_info EINA_UNUSED)
 {
-   _sizing_eval(data);
+   evas_object_smart_need_recalculate_set(data, EINA_TRUE);
    _resizing_eval(data);
-
 }
 
 static void
@@ -3360,7 +3359,7 @@ _elm_toolbar_shrink_mode_set(Eo *obj, Elm_Toolbar_Data *sd, Elm_Toolbar_Shrink_M
       eo_do(obj, elm_interface_scrollable_policy_set
             (ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF));
 
-   _sizing_eval(obj);
+   evas_object_smart_need_recalculate_set(obj, EINA_TRUE);
 }
 
 EOLIAN static Elm_Toolbar_Shrink_Mode
@@ -3957,6 +3956,13 @@ _elm_toolbar_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, E
      }
    return EINA_FALSE;
 }
+
+EOLIAN void
+_elm_toolbar_evas_object_smart_calculate(Eo *obj, Elm_Toolbar_Data *pd)
+{
+   _sizing_eval(obj);
+}
+
 
 #include "elm_toolbar.eo.c"
 #include "elm_toolbar_item.eo.c"
