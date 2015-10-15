@@ -950,7 +950,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 #ifdef EDJE_CALC_CACHE
              ed->all_part_change = EINA_TRUE;
 #endif
-             if ((evas_object_clipees_get(ed->base->clipper)) &&
+             if ((evas_object_clipees_has(ed->base->clipper)) &&
                  (evas_object_visible_get(obj)))
                evas_object_show(ed->base->clipper);
 
