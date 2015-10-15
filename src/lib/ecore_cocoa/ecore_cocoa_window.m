@@ -285,19 +285,11 @@ ecore_cocoa_window_new(int x,
                                                 styleMask:style
                                                 backing:NSBackingStoreBuffered
                                                   defer:NO];
-
    if (EINA_UNLIKELY(!window))
      {
         CRI("Failed to create EcoreCocoaWindow");
         return NULL;
      }
-
-   //Set the process to be a foreground process,
-   //without that it prevents the window to become the key window and
-   //receive all mouse mouve events.
-   [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
-   [NSApp activateIgnoringOtherApps:YES];
-
 
    w = calloc(1, sizeof(Ecore_Cocoa_Window));
    if (EINA_UNLIKELY(w == NULL))
