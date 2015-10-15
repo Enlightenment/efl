@@ -922,11 +922,10 @@ _eo_add_internal_end(Eo *eo_id, Eo_Call_Stack *stack)
      }
 
      {
-        const _Eo_Class *klass = (fptr->cur_klass) ?
-           fptr->cur_klass : fptr->o.obj->klass;
-
         if (!fptr->o.obj->condtor_done)
           {
+             const _Eo_Class *klass = fptr->o.obj->klass;
+
              ERR("Object of class '%s' - Not all of the object constructors have been executed.",
                    klass->desc->name);
              goto cleanup;
