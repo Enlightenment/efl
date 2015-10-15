@@ -122,18 +122,7 @@ START_TEST(eio_model_test_test_monitor_add)
    fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
    fail_if(!eio_init(), "ERROR: Cannot init EIO!\n");
 
-#ifndef HAVE_EVIL
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (getuid() == geteuid())
-#endif
-     {
-        tmpdir = getenv("TMPDIR");
-        if (!tmpdir) tmpdir = getenv("XDG_RUNTIME_DIR");
-     }
-   if (!tmpdir) tmpdir = "/tmp";
-#else
-   tmpdir = (char *)evil_tmpdir_get();
-#endif /* ! HAVE_EVIL */
+   tmpdir = eina_environment_tmp_get();
    
    filemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(tmpdir));
    fail_if(!filemodel, "ERROR: Cannot init model!\n");

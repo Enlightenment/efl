@@ -143,18 +143,7 @@ START_TEST(ecore_test_ecore_file_operations)
    Eina_Bool res;
    Eina_List *list;
 
-#ifndef HAVE_EVIL
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (getuid() == geteuid())
-#endif
-     {
-        tmpdir = getenv("TMPDIR");
-        if (!tmpdir) tmpdir = getenv("XDG_RUNTIME_DIR");
-     }
-   if (!tmpdir) tmpdir = "/tmp";
-#else
-   tmpdir = (char *)evil_tmpdir_get();
-#endif /* ! HAVE_EVIL */
+   tmpdir = eina_environment_tmp_get();
 
    ret = ecore_file_init();
    fail_if(ret != 1);
