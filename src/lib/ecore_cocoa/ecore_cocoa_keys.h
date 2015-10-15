@@ -1,6 +1,12 @@
 #ifndef ECORE_COCOA_KEYS_H__
 #define ECORE_COCOA_KEYS_H__
 
+/* Prevent innocent devs to include this directly. */
+#ifndef _ECORE_COCOA_KEYS_MANUAL_GUARD_
+# error This header must be be included directly!
+#endif
+
+
 struct _ecore_cocoa_keys_s
 {
    int         code;

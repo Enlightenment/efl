@@ -12,7 +12,11 @@
 #include <Ecore_Input.h>
 
 #include "Ecore_Cocoa.h"
-#include "Ecore_Cocoa_Keys.h"
+
+#define _ECORE_COCOA_KEYS_MANUAL_GUARD_
+#include "ecore_cocoa_keys.h"
+#undef _ECORE_COCOA_KEYS_MANUAL_GUARD_
+
 #include "ecore_cocoa_private.h"
 
 EAPI int ECORE_COCOA_EVENT_GOT_FOCUS = 0;
