@@ -987,7 +987,7 @@ elm_main(int argc, char **argv)
                     "$ elementary_test -to [TEST_NAME]\n\n"
                     "Examples:\n"
                     "$ elementary_test -to Button\n\n");
-             exit(EXIT_SUCCESS);
+             goto end;
           }
         autorun = argv[1];
      }
@@ -1012,6 +1012,9 @@ elm_main(int argc, char **argv)
 
    EINA_LIST_FREE(tests, t)
      free(t);
+
+end:
+   eina_log_domain_unregister(_log_domain);
 
    /* exit code */
    return 0;
