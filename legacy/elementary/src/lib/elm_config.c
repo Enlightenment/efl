@@ -3330,6 +3330,9 @@ _elm_config_sub_shutdown(void)
    if (_elm_wl_display) ecore_wl2_display_disconnect(_elm_wl_display);
    ecore_wl2_shutdown();
 #endif
+#ifdef HAVE_ELEMENTARY_WIN32
+   ecore_win32_shutdown();
+#endif
    ELM_SAFE_FREE(_eio_monitor, eio_monitor_del);
    ELM_SAFE_FREE(_config_change_delay_timer, ecore_timer_del);
 }
