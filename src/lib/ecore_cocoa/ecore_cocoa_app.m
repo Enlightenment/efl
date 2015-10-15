@@ -56,6 +56,13 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
       return nil;
    }
    NSApp = self; // NSApp is used EVERYWHERE! Set it right now!
+
+   /* Set the process to be a foreground process,
+    * without that it prevents the window to become the key window and
+    * receive all mouse mouve events. */
+   [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+   [NSApp activateIgnoringOtherApps:YES];
+
    return NSApp;
 }
 
