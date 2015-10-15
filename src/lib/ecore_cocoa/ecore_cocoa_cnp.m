@@ -14,13 +14,11 @@ ecore_cocoa_selection_clipboard_set(const void           *data,
                                     int                   size,
                                     Ecore_Cocoa_Cnp_Type  type)
 {
-   static NSMutableArray *objects = nil;
+   NSMutableArray *objects;
    NSString *str = nil;
    BOOL ok = YES;
 
-   if (!objects)
-     objects = [[NSMutableArray alloc] init];
-
+   objects = [[NSMutableArray alloc] init];
    if (type & ECORE_COCOA_CNP_TYPE_STRING)
      {
         str = [[NSString alloc] initWithBytes: data
@@ -69,7 +67,7 @@ ecore_cocoa_selection_clipboard_get(int                  *size,
                                     Ecore_Cocoa_Cnp_Type  type,
                                     Ecore_Cocoa_Cnp_Type *retrieved_types)
 {
-   static NSMutableArray *classes = nil;
+   NSMutableArray *classes;
    void *data;
    NSDictionary *options;
    NSPasteboard *pb;
@@ -78,8 +76,7 @@ ecore_cocoa_selection_clipboard_get(int                  *size,
    BOOL string_class = NO;
    Ecore_Cocoa_Cnp_Type types = 0;
 
-   if (!classes)
-     classes = [[NSMutableArray alloc] init];
+   classes = [[NSMutableArray alloc] init];
 
    if ((type & ECORE_COCOA_CNP_TYPE_STRING) ||
        (type & ECORE_COCOA_CNP_TYPE_MARKUP))
