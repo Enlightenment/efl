@@ -3364,7 +3364,7 @@ _elm_config_file_monitor_cb(void *data EINA_UNUSED,
 void
 _elm_config_sub_init(void)
 {
-#if defined(HAVE_ELEMENTARY_X) || defined(HAVE_ELEMENTARY_WL2)
+#if defined(HAVE_ELEMENTARY_X) || defined(HAVE_ELEMENTARY_WL2) || defined(HAVE_ELEMENTARY_WIN32)
    const char *ev = getenv("ELM_DISPLAY");
 #endif
 
@@ -3442,6 +3442,9 @@ _elm_config_sub_init(void)
 #endif
 #ifdef HAVE_ELEMENTARY_COCOA
    ecore_cocoa_init();
+#endif
+#ifdef HAVE_ELEMENTARY_WIN32
+   ecore_win32_init();
 #endif
    char buf[PATH_MAX];
    size_t len;

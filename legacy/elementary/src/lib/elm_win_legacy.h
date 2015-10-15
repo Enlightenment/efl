@@ -197,6 +197,23 @@ EAPI void                  elm_win_render(Evas_Object *obj);
  */
 EAPI Ecore_Wl2_Window *elm_win_wl_window_get(const Evas_Object *obj);
 
+/* Windows specific call - returns NULL on non-Windows engines */
+/**
+ * Get the Ecore_Win32_Window of an Evas_Object
+ *
+ * Do not use this function if you'd like your application/library be portable.
+ * You have been warned.
+ *
+ * @param obj the object
+ *
+ * @return The Ecore_Win32_Window of @p obj
+ *
+ * @ingroup Win
+ *
+ * @since 1.16
+ */
+EAPI Ecore_Win32_Window *elm_win_win32_window_get(const Evas_Object *obj);
+
 /**
  * Set the preferred rotation value.
  *
