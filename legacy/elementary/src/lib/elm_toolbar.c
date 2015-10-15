@@ -3010,7 +3010,6 @@ _elm_toolbar_item_append(Eo *obj, Elm_Toolbar_Data *sd, const char *icon, const 
    evas_object_show(VIEW(it));
 
    _item_theme_hook(obj, it, scale, sd->icon_size);
-   _sizing_eval(obj);
    sd->item_count++;
 
    return EO_OBJ(it);
@@ -3030,7 +3029,6 @@ _elm_toolbar_item_prepend(Eo *obj, Elm_Toolbar_Data *sd, const char *icon, const
    evas_object_box_prepend(sd->bx, VIEW(it));
    evas_object_show(VIEW(it));
    _item_theme_hook(obj, it, scale, sd->icon_size);
-   _sizing_eval(obj);
    sd->item_count++;
 
    return EO_OBJ(it);
@@ -3054,7 +3052,6 @@ _elm_toolbar_item_insert_before(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *
        (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(_before));
    evas_object_box_insert_before(sd->bx, VIEW(it), VIEW(_before));
    _item_theme_hook(obj, it, scale, sd->icon_size);
-   _sizing_eval(obj);
    sd->item_count++;
 
    return EO_OBJ(it);
@@ -3078,7 +3075,6 @@ _elm_toolbar_item_insert_after(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *e
        (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(_after));
    evas_object_box_insert_after(sd->bx, VIEW(it), VIEW(_after));
    _item_theme_hook(obj, it, scale, sd->icon_size);
-   _sizing_eval(obj);
    sd->item_count++;
 
    return EO_OBJ(it);
