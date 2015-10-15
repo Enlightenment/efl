@@ -142,18 +142,25 @@ _dich_func_clean_all(_Eo_Class *klass)
 
 /* END OF DICH */
 
+#ifdef HAVE_EO_ID
+# define _EO_ID_GET(Id) ((Eo_Id) (Id))
+#else
+# define _EO_ID_GET(Id) ((Eo_Id) ((Id) ? ((Eo_Header *) (Id))->id : 0))
+#endif
+
+
+static inline Eina_Bool
+_eo_is_a_obj(const Eo *eo_id)
+{
+   Eo_Id oid = (Eo_Id) _EO_ID_GET(eo_id);
+   return !!(oid & MASK_OBJ_TAG);
+}
+
 static inline Eina_Bool
 _eo_is_a_class(const Eo *eo_id)
 {
-   Eo_Id oid;
-#ifdef HAVE_EO_ID
-   oid = (Eo_Id) eo_id;
-#else
-   /* fortunately EO_OBJ_POINTER_RETURN* will handle NULL eo_id */
-   if (!eo_id) return EINA_FALSE;
-   oid = ((Eo_Header *) eo_id)->id;
-#endif
-   return (!(oid & MASK_OBJ_TAG) && (oid & MASK_CLASS_TAG));
+   Eo_Id oid = (Eo_Id) _EO_ID_GET(eo_id);
+   return !!(oid & MASK_CLASS_TAG);
 }
 
 static inline _Eo_Class *
@@ -430,19 +437,19 @@ static inline Eina_Bool
 _eo_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
                 Eina_Bool is_super, Eo_Stack_Frame *fptr)
 {
-   fptr->is_obj = !_eo_is_a_class(eo_id);
+   fptr->is_obj = _eo_is_a_obj(eo_id);
 
    /* If we are already in the same object context, we inherit info from it. */
-   if (!fptr->is_obj)
-     {
-        EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
-        fptr->o.kls = _klass;
-     }
-   else
+   if (fptr->is_obj)
      {
         EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
         fptr->o.obj = _obj;
         _eo_ref(_obj);
+     }
+   else
+     {
+        EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
+        fptr->o.kls = _klass;
      }
 
    if (is_super)
@@ -986,7 +993,7 @@ eo_class_name_get(const Eo_Class *eo_id)
         EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, NULL);
         klass = _klass;
      }
-     else
+   else
      {
         EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL);
         klass = obj->klass;
