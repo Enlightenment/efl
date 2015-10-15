@@ -274,14 +274,18 @@ ecore_cocoa_window_new(int x,
                        int height)
 {
    Ecore_Cocoa_Window *w;
+   EcoreCocoaWindow *window;
+   NSRect frame = NSMakeRect(x, y, width, height);
+   NSUInteger style =
+      NSTitledWindowMask        |
+      NSClosableWindowMask      |
+      NSResizableWindowMask     |
+      NSMiniaturizableWindowMask;
 
-   EcoreCocoaWindow *window = [[EcoreCocoaWindow alloc] initWithContentRect:NSMakeRect(x, y, width, height)
-                                                                  styleMask:(NSTitledWindowMask    |
-                                                                             NSClosableWindowMask  |
-                                                                             NSResizableWindowMask |
-                                                                             NSMiniaturizableWindowMask)
-                                                                  backing:NSBackingStoreBuffered
-                                                                    defer:NO];
+   window = [[EcoreCocoaWindow alloc] initWithContentRect:frame
+                                                styleMask:style
+                                                backing:NSBackingStoreBuffered
+                                                  defer:NO];
 
    if (EINA_UNLIKELY(!window))
      {
