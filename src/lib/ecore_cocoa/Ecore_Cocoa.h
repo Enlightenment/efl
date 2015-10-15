@@ -129,9 +129,6 @@ EAPI int ecore_cocoa_init(void);
  */
 EAPI int ecore_cocoa_shutdown(void);
 
-// XXX Why is this public?
-EAPI Eina_Bool ecore_cocoa_feed_events(void *anEvent);
-
 
 /*============================================================================*
  *                                   Screen                                   *
