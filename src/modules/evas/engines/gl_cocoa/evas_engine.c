@@ -180,7 +180,7 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
    evas_gl_common_context_resize(re->win->gl_context, re->win->width, re->win->height, 0);
    /* simple bounding box */
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, re->win->width, re->win->height);
-   if ((w <= 0) || (h <= 0)) return;
+   if ((w <= 0) || (h <= 0)) goto end;
    if (!re->win->draw.redraw)
      {
 #if 0
@@ -203,6 +203,7 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 	if ((y + h - 1) > re->win->draw.y2) re->win->draw.y2 = y + h - 1;
      }
    re->win->draw.redraw = 1;
+end:
    eng_window_unlock_focus(re->win);
 }
 
