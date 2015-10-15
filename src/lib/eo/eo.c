@@ -529,15 +529,6 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, c
 
    klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
 
-   if (op == EO_NOOP)
-     {
-        ERR("%s:%d: unable to resolve %s api func '%s' in class '%s'.",
-            file, line, (!is_obj ? "class" : "regular"),
-            func_name, klass->desc->name);
-
-        return EINA_FALSE;
-     }
-
    /* If we have a current class, we need to itr to the next. */
    if (fptr->cur_klass)
      {
@@ -702,6 +693,11 @@ _eo_api_op_id_get(const void *api_func)
    Eo_Op op = (uintptr_t) eina_hash_find(_ops_storage, api_func);
 #endif
    eina_spinlock_release(&_ops_storage_lock);
+
+   if (op == EO_NOOP)
+     {
+        ERR("Unable to resolve op for api func %p", api_func);
+     }
 
    return op;
 }

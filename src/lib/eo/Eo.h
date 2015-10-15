@@ -468,8 +468,11 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
 #define EO_FUNC_COMMON_OP(Name, DefRet)                                 \
      Eo_Op_Call_Data ___call;                                           \
      static Eo_Op ___op = EO_NOOP;                                      \
-     if (___op == EO_NOOP)                                              \
-       ___op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name)); \
+     if (EINA_UNLIKELY(___op == EO_NOOP))                               \
+       {                                                                \
+          ___op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name));      \
+          if (___op == EO_NOOP) return DefRet;                          \
+       }                                                                \
      if (!_eo_call_resolve(#Name, ___op, &___call, __FILE__, __LINE__)) return DefRet; \
      _Eo_##Name##_func _func_ = (_Eo_##Name##_func) ___call.func;       \
 
