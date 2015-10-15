@@ -172,8 +172,8 @@ _ecore_cocoa_event_key(NSEvent     *event,
    return ev;
 }
 
-EAPI Eina_Bool
-ecore_cocoa_feed_events(void *anEvent)
+Eina_Bool
+_ecore_cocoa_feed_events(void *anEvent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(anEvent, EINA_FALSE);
 

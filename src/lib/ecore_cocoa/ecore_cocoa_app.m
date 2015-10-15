@@ -90,7 +90,7 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
    /* Some events shall be handled by Ecore (like single non-command keys).
     * If we dispatch all events right to NSApplication, it will complain
     * with NSBeep() when an event is not authorized */
-   to_super = ecore_cocoa_feed_events(anEvent);
+   to_super = _ecore_cocoa_feed_events(anEvent);
    if (to_super)
      [super sendEvent:anEvent];
 }
