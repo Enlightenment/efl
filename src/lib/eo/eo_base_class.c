@@ -673,7 +673,6 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
 
    ret = EINA_TRUE;
 
-   _eo_ref(obj);
    pd->walking_list++;
 
    for (cb = pd->callbacks; cb; cb = cb->next)
@@ -723,7 +722,6 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
 end:
    pd->walking_list--;
    _eo_callbacks_clear(pd);
-   _eo_unref(obj);
 
    return ret;
 }
