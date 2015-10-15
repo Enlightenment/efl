@@ -749,6 +749,8 @@ group { name: "e/widgets/border/sparkle/border";
          insert_after: "top";
          description { state: "default";
             source: "top";
+            proxy.source_clip: 0;
+            proxy.source_visible: 0;
             rel1.to: "top";
             rel2.to: "top";
             fill.smooth: 0;
@@ -771,6 +773,28 @@ group { name: "e/widgets/border/sparkle/border";
          effect: OUTLINE_SHADOW;
          description { state: "focused" 0.0;
             color3: 0 0 0 255;
+         }
+      }
+      part { "clip1";
+         desc { "default";
+            rel1.to: "";
+            rel1.offset: -9999 -9999;
+            rel2.to: "";
+            rel2.offset: 9999 9999;
+         }
+      }
+      part { "clip2";
+         desc { "default";
+            rel1.to: "";
+            rel1.offset: -9999 -9999;
+            rel2.to: "";
+            rel2.offset: 9999 9999;
+         }
+         desc { "focused";
+            rel1.to: "";
+            rel1.offset: -9999 -9999;
+            rel2.to: "";
+            rel2.offset: 9999 9999;
          }
       }
       part { name: "e.event.icon";
