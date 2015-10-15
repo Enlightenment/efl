@@ -334,6 +334,7 @@ _ecore_key_press(int event,
    KeySym sym;
    XComposeStatus status;
    int val;
+   int key_len, keyname_len, compose_len;
 
    _ecore_x_last_event_mouse_move = 0;
    keyname = XKeysymToString(_ecore_x_XKeycodeToKeysym(xevent->display,
@@ -370,14 +371,18 @@ _ecore_key_press(int event,
    if (!key)
      key = keyname;
 
-   e = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
-              (compose ? strlen(compose) : 0) + 3);
+   key_len = strlen(key);
+   keyname_len = strlen(keyname);
+   compose_len = (compose) ? strlen(compose) : 0;
+
+   e = calloc(1, sizeof(Ecore_Event_Key) + key_len + keyname_len +
+              compose_len + 3);
    if (!e)
      goto on_error;
 
    e->keyname = (char *)(e + 1);
-   e->key = e->keyname + strlen(keyname) + 1;
-   e->compose = (compose) ? e->key + strlen(key) + 1 : NULL;
+   e->key = e->keyname + keyname_len + 1;
+   e->compose = (compose) ? e->key + key_len + 1 : NULL;
    e->string = e->compose;
 
    strcpy((char *)e->keyname, keyname);
