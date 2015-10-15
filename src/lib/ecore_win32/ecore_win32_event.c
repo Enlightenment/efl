@@ -40,6 +40,7 @@ static int                  _ecore_win32_mouse_down_did_triple = 0;
 static int                  _ecore_win32_mouse_up_count = 0;
 static Ecore_Win32_Key_Mask _ecore_win32_key_mask = 0;
 static Eina_Bool            _ecore_win32_ctrl_fake = EINA_FALSE;
+static Eina_Bool            _ecore_win32_clipboard_has_data = EINA_FALSE;
 
 static unsigned int
 _ecore_win32_modifiers_get(void)
@@ -1894,4 +1895,73 @@ _ecore_win32_event_handle_delete_request(Ecore_Win32_Callback_Data *msg)
    e->timestamp = _ecore_win32_event_last_time;
 
    ecore_event_add(ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST, e, NULL, NULL);
+}
+
+void
+_ecore_win32_event_handle_selection_notify(Ecore_Win32_Callback_Data *msg)
+{
+   Ecore_Win32_Event_Selection_Notify *e;
+   HGLOBAL global;
+   char *str;
+
+   INF("selection_notify");
+
+   /*
+    * we have text data in clipboard but no data before,
+    * so text data has just been added
+    */
+   if (IsClipboardFormatAvailable(CF_TEXT) && !_ecore_win32_clipboard_has_data)
+     {
+        e = calloc(1, sizeof(Ecore_Win32_Event_Selection_Notify));
+        if (!e) return;
+
+        e->window = (void *)GetWindowLongPtr(msg->window, GWLP_USERDATA);
+        e->timestamp = _ecore_win32_event_last_time;
+        e->selection = ECORE_WIN32_SELECTION_CLIPBOARD;
+
+        if (!OpenClipboard(msg->window))
+          goto free_e;
+
+        global = GetClipboardData(CF_TEXT);
+        if (!global)
+          goto close_clipboard;
+
+        str = GlobalLock(global);
+        if (str)
+          {
+             e->data = strdup(str);
+             GlobalUnlock(global);
+          }
+
+        CloseClipboard();
+
+        ecore_event_add(ECORE_WIN32_EVENT_SELECTION_NOTIFY, e, NULL, NULL);
+
+        _ecore_win32_clipboard_has_data = EINA_TRUE;
+     }
+
+   /*
+    * we have no more text data in clipboard and data before,
+    * so text data has just been removed
+    */
+   if (!IsClipboardFormatAvailable(CF_TEXT) && _ecore_win32_clipboard_has_data)
+     {
+        e = calloc(1, sizeof(Ecore_Win32_Event_Selection_Clear));
+        if (!e) return;
+
+        e->window = (void *)GetWindowLongPtr(msg->window, GWLP_USERDATA);
+        e->timestamp = _ecore_win32_event_last_time;
+        e->selection = ECORE_WIN32_SELECTION_CLIPBOARD;
+
+        ecore_event_add(ECORE_WIN32_EVENT_SELECTION_CLEAR, e, NULL, NULL);
+
+        _ecore_win32_clipboard_has_data = EINA_FALSE;
+     }
+
+   return;
+
+ close_clipboard:
+   CloseClipboard();
+ free_e:
+   free(e);
 }

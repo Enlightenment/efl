@@ -24,10 +24,18 @@
  * @cond LOCAL
  */
 
+/* FIXME: uncomment when mingw-w64 will be updated in win-builds */
+
+/* #if _WIN32_WINNT >= 0x0600 */
+/* # ifndef WM_CLIPBOARDUPDATE */
+#  define WM_CLIPBOARDUPDATE 0x031D
+/* # endif */
+/* #endif */
+
 /* OLE IID for Drag'n Drop */
 
-# define INITGUID
-# include <basetyps.h>
+#define INITGUID
+#include <basetyps.h>
 DEFINE_OLEGUID(IID_IEnumFORMATETC, 0x00000103L, 0, 0);
 DEFINE_OLEGUID(IID_IDataObject,    0x0000010EL, 0, 0);
 DEFINE_OLEGUID(IID_IDropSource,    0x00000121L, 0, 0);
@@ -36,7 +44,10 @@ DEFINE_OLEGUID(IID_IUnknown,       0x00000000L, 0, 0);
 
 #define IDI_ICON 101
 
-static int       _ecore_win32_init_count = 0;
+typedef BOOL WINAPI (*efl_AddClipboardFormatListener)(_In_ HWND hwnd);
+typedef BOOL WINAPI (*efl_RemoveClipboardFormatListener)(_In_ HWND hwnd);
+
+static int _ecore_win32_init_count = 0;
 
 LRESULT CALLBACK
 _ecore_win32_window_procedure(HWND   window,
@@ -194,13 +205,33 @@ _ecore_win32_window_procedure(HWND   window,
        return 0;
        /* Window notifications */
      case WM_CREATE:
-       INF("create window message");
+       {
+          efl_AddClipboardFormatListener acfl;
+
+          INF("create window message");
+          acfl = (efl_AddClipboardFormatListener)GetProcAddress(GetModuleHandle("user32.dll"),
+                                                                "AddClipboardFormatListener");
+          if (acfl)
+            {
+               if (!acfl(window))
+                 INF("can not create clipboard format listener; no clipboard notification will be sent");
+            }
        _ecore_win32_event_handle_create_notify(data);
        return 0;
+       }
      case WM_DESTROY:
-       INF("destroy window message");
-       _ecore_win32_event_handle_destroy_notify(data);
-       return 0;
+       {
+          efl_RemoveClipboardFormatListener rcfl;
+
+          INF("destroy window message");
+          _ecore_win32_event_handle_destroy_notify(data);
+
+          rcfl = (efl_RemoveClipboardFormatListener)GetProcAddress(GetModuleHandle("user32.dll"),
+                                                                   "RemoveClipboardFormatListener");
+          if (rcfl)
+            rcfl(window);
+          return 0;
+       }
      case WM_SHOWWINDOW:
        INF("show window message");
        if ((data->data_param == SW_OTHERUNZOOM) ||
@@ -299,6 +330,10 @@ _ecore_win32_window_procedure(HWND   window,
            return 0;
          }
        return DefWindowProc(window, message, window_param, data_param);
+      case WM_CLIPBOARDUPDATE:
+       INF("clipboard data updated");
+       _ecore_win32_event_handle_selection_notify(data);
+       return 0;
        /* GDI notifications */
      case WM_PAINT:
        {
@@ -358,6 +393,8 @@ int ECORE_WIN32_EVENT_WINDOW_HIDE           = 0;
 int ECORE_WIN32_EVENT_WINDOW_CONFIGURE      = 0;
 int ECORE_WIN32_EVENT_WINDOW_RESIZE         = 0;
 int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = 0;
+int ECORE_WIN32_EVENT_SELECTION_CLEAR       = 0;
+int ECORE_WIN32_EVENT_SELECTION_NOTIFY      = 0;
 
 /*============================================================================*
  *                                   API                                      *
@@ -504,6 +541,8 @@ ecore_win32_init()
         ECORE_WIN32_EVENT_WINDOW_CONFIGURE      = ecore_event_type_new();
         ECORE_WIN32_EVENT_WINDOW_RESIZE         = ecore_event_type_new();
         ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
+        ECORE_WIN32_EVENT_SELECTION_CLEAR       = ecore_event_type_new();
+        ECORE_WIN32_EVENT_SELECTION_NOTIFY      = ecore_event_type_new();
      }
 
    return _ecore_win32_init_count;
