@@ -484,8 +484,11 @@ typedef struct _Eo_Call_Cache
 #define EO_FUNC_COMMON_OP(Name, DefRet)                                 \
      static Eo_Call_Cache ___cache; /* static 0 by default */           \
      Eo_Op_Call_Data ___call;                                           \
-     if (___cache.op == EO_NOOP)                                        \
-       ___cache.op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name));   \
+     if (EINA_UNLIKELY(___cache.op == EO_NOOP))                         \
+       {                                                                \
+          ___cache.op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name)); \
+          if (___cache.op == EO_NOOP) return DefRet;                    \
+       }                                                                \
      if (!_eo_call_resolve(#Name, &___call, &___cache,                  \
                            __FILE__, __LINE__)) return DefRet;          \
      _Eo_##Name##_func _func_ = (_Eo_##Name##_func) ___call.func;       \

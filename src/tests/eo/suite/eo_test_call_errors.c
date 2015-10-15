@@ -37,7 +37,7 @@ START_TEST(eo_api_not_implemented_call)
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
    fail_if(!obj);
 
-   TEST_EO_ERROR("_eo_call_resolve", "%s:%d: unable to resolve %s api func '%s' in class '%s'.");
+   TEST_EO_ERROR("_eo_api_op_id_get", "Unable to resolve op for api func %p");
    eo_do(obj, simple_no_implementation());
    fail_unless(ctx.did);
 

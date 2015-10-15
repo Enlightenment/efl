@@ -743,6 +743,11 @@ _eo_api_op_id_get(const void *api_func)
 #endif
    eina_spinlock_release(&_ops_storage_lock);
 
+   if (op == EO_NOOP)
+     {
+        ERR("Unable to resolve op for api func %p", api_func);
+     }
+
    return op;
 }
 
