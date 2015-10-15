@@ -561,7 +561,11 @@ _eo_base_event_callback_priority_add(Eo *obj, Eo_Base_Data *pd,
    Eo_Callback_Description *cb;
 
    cb = calloc(1, sizeof(*cb));
-   if (!cb) return;
+   if (!cb || !desc || !func)
+     {
+        ERR("Tried adding callback with invalid values: cb: %p desc: %p func: %p\n", cb, desc, func);
+        return;
+     }
    cb->items.item.desc = desc;
    cb->items.item.func = func;
    cb->func_data = (void *) user_data;
@@ -648,21 +652,13 @@ _eo_base_event_callback_array_del(Eo *obj, Eo_Base_Data *pd,
 static Eina_Bool
 _cb_desc_match(const Eo_Event_Description *a, const Eo_Event_Description *b)
 {
-   if (!a)
-      return EINA_FALSE;
-
-   if (_legacy_event_desc_is(a) && _legacy_event_desc_is(b))
-     {
-        return (a->name == b->name);
-     }
-   else if (_legacy_event_desc_is(a) || _legacy_event_desc_is(b))
+   /* If one is legacy and the other is not, strcmp. Else, pointer compare. */
+   if (EINA_UNLIKELY(_legacy_event_desc_is(a) != _legacy_event_desc_is(b)))
      {
         return !strcmp(a->name, b->name);
      }
-   else
-     {
-        return (a == b);
-     }
+
+   return (a == b);
 }
 
 EOLIAN static Eina_Bool
