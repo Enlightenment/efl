@@ -129,6 +129,21 @@ typedef enum
 } Ecore_Win32_DnD_State;
 
 /**
+ * @typedef Ecore_Win32_Selection
+ * Type of the selection.
+ *
+ * @since 1.16
+ */
+typedef enum
+{
+   ECORE_WIN32_SELECTION_PRIMARY,
+   ECORE_WIN32_SELECTION_SECONDARY,
+   ECORE_WIN32_SELECTION_DND,
+   ECORE_WIN32_SELECTION_CLIPBOARD,
+   ECORE_WIN32_SELECTION_OTHER
+} Ecore_Win32_Selection;
+
+/**
  * @typedef Ecore_Win32_Window
  * Abstract type for a window.
  */
@@ -212,6 +227,22 @@ typedef struct _Ecore_Win32_Event_Window_Resize         Ecore_Win32_Event_Window
  * Event sent when the window is deleted.
  */
 typedef struct _Ecore_Win32_Event_Window_Delete_Request Ecore_Win32_Event_Window_Delete_Request;
+
+/**
+ * @typedef Ecore_Win32_Event_Selection_Clear
+ * Event sent when the content of the clipboard has been removed.
+ *
+ * @since 1.16
+ */
+typedef struct _Ecore_Win32_Event_Selection_Clear Ecore_Win32_Event_Selection_Clear;
+
+/**
+ * @typedef Ecore_Win32_Event_Selection_Notify
+ * Event sent when the content of the clipboard has been added.
+ *
+ * @since 1.16
+ */
+typedef struct _Ecore_Win32_Event_Selection_Notify Ecore_Win32_Event_Selection_Notify;
 
 /**
  * @struct _Ecore_Win32_Event_Mouse_In
@@ -351,6 +382,33 @@ struct _Ecore_Win32_Event_Window_Delete_Request
 };
 
 /**
+ * @struct _Ecore_Win32_Event_Selection_Clear
+ * Event sent when the content of the clipboard has been removed.
+ *
+ * @since 1.16
+ */
+struct _Ecore_Win32_Event_Selection_Clear
+{
+   Ecore_Win32_Window   *window; /**< The window that received the event */
+   unsigned long         timestamp; /**< The time the event occurred */
+   Ecore_Win32_Selection selection; /**< The type of the selection */
+};
+
+/**
+ * @struct _Ecore_Win32_Event_Selection_Notify
+ * Event sent when the content of the clipboard has been added.
+ *
+ * @since 1.16
+ */
+struct _Ecore_Win32_Event_Selection_Notify
+{
+   Ecore_Win32_Window   *window; /**< The window that received the event */
+   unsigned long         timestamp; /**< The time the event occurred */
+   Ecore_Win32_Selection selection; /**< The type of the selection */
+   void                 *data; /**< The data of the selection */
+};
+
+/**
  * @typedef Ecore_Win32_Dnd_DropTarget_Callback
  * Callback type for Drop operations. See ecore_win32_dnd_register_drop_target().
  */
@@ -368,6 +426,8 @@ EAPI extern int ECORE_WIN32_EVENT_WINDOW_SHOW; /**< Ecore_Event for the Ecore_Wi
 EAPI extern int ECORE_WIN32_EVENT_WINDOW_CONFIGURE; /**< Ecore_Event for the Ecore_Win32_Event_Configure event */
 EAPI extern int ECORE_WIN32_EVENT_WINDOW_RESIZE; /**< Ecore_Event for the Ecore_Win32_Event_Resize event */
 EAPI extern int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST; /**< Ecore_Event for the #Ecore_Win32_Event_Window_Delete_Request event */
+EAPI extern int ECORE_WIN32_EVENT_SELECTION_CLEAR; /**< Ecore_Event for the #Ecore_Win32_Event_Selection_Clear event @since 1.16 */
+EAPI extern int ECORE_WIN32_EVENT_SELECTION_NOTIFY; /**< Ecore_Event for the #Ecore_Win32_Event_Selection_Notify event @since 1.16 */
 
 
 /* Core */
@@ -515,6 +575,60 @@ EAPI Eina_Bool ecore_win32_dnd_begin(const char *data,
 EAPI Eina_Bool ecore_win32_dnd_register_drop_target(Ecore_Win32_Window                 *window,
                                                     Ecore_Win32_Dnd_DropTarget_Callback callback);
 EAPI void      ecore_win32_dnd_unregister_drop_target(Ecore_Win32_Window *window);
+
+/* Clipboard */
+
+/**
+ * @brief Set data to the clipboard.
+ *
+ * @param[in] window The window that owns the clipboard.
+ * @param[in] data The data to set.
+ * @param[in] size The size of the data.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * This function sets @p data of size @p size in the clipboard owned by
+ * @p window. This function returns #EINA_TRUE on success, and
+ * #EINA_FALSE otherwise. If @p window or @p data are @c NULL, or @p size
+ * is less than or equal to 0, this function returns #EINA_FALSE.
+ *
+ * @since 1.16
+ */
+EAPI Eina_Bool ecore_win32_clipboard_set(const Ecore_Win32_Window *window,
+                                         const void *data,
+                                         int size);
+
+/**
+ * @brief Get data from the clipboard.
+ *
+ * @param[in] window The window that owns the clipboard.
+ * @param[out] data The retrieved data.
+ * @param[out] size The size of the data.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * This function gets @p data of size @p size from the clipboard owned by
+ * @p window. This function returns #EINA_TRUE on success, and
+ * #EINA_FALSE otherwise. If @p window is @c NULL, this function returns
+ * #EINA_FALSE. @p data and @p size must be valid buffers.
+ *
+ * @since 1.16
+ */
+EAPI Eina_Bool ecore_win32_clipboard_get(const Ecore_Win32_Window *window,
+                                         void **data,
+                                         int *size);
+
+/**
+ * @brief Cleat the clipboard.
+ *
+ * @param[in] window The window that owns the clipboard.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * This function clears the clipboard owned by @p window. This
+ * function returns #EINA_TRUE on success, and #EINA_FALSE otherwise.
+ * If @p window is @c NULL, this function returns #EINA_FALSE.
+ *
+ * @since 1.16
+ */
+EAPI Eina_Bool ecore_win32_clipboard_clear(const Ecore_Win32_Window *window);
 
 /**
  * @}

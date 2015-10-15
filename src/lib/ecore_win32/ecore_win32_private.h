@@ -164,6 +164,7 @@ void  _ecore_win32_event_handle_unmap_notify(Ecore_Win32_Callback_Data *msg);
 void  _ecore_win32_event_handle_configure_notify(Ecore_Win32_Callback_Data *msg);
 void  _ecore_win32_event_handle_resize(Ecore_Win32_Callback_Data *msg);
 void  _ecore_win32_event_handle_delete_request(Ecore_Win32_Callback_Data *msg);
+void  _ecore_win32_event_handle_selection_notify(Ecore_Win32_Callback_Data *msg);
 
 void *_ecore_win32_dnd_data_object_new(void *fmtetc, void *stgmeds, int count);
 void _ecore_win32_dnd_data_object_free(void *data_object);
