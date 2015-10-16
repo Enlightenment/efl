@@ -3958,7 +3958,7 @@ _elm_toolbar_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, E
 }
 
 EOLIAN void
-_elm_toolbar_evas_object_smart_calculate(Eo *obj, Elm_Toolbar_Data *pd)
+_elm_toolbar_evas_object_smart_calculate(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED)
 {
    _sizing_eval(obj);
 }
