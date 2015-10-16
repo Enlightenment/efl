@@ -35,6 +35,7 @@ struct _Ecore_Evas_Engine_Wl_Data
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
    struct wl_egl_window *egl_win;
 #endif
+   struct wl_callback *anim_callback;
 };
 
 Ecore_Evas_Interface_Wayland *_ecore_evas_wl_interface_new(void);
