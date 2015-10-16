@@ -125,12 +125,12 @@ START_TEST(eo_signals)
      {
         const Eo_Event_Description *a_desc = eo_base_legacy_only_event_description_get("a,changed");
         fail_if(!a_desc);
-        ck_assert_str_eq(a_desc->name, "\x01" "a,changed");
+        ck_assert_str_eq(a_desc->name, "a,changed");
         fail_if(a_desc == EV_A_CHANGED);
 
         const Eo_Event_Description *bad_desc = eo_base_legacy_only_event_description_get("bad");
         fail_if(!bad_desc);
-        ck_assert_str_eq(bad_desc->name, "\x01" "bad");
+        ck_assert_str_eq(bad_desc->name, "bad");
 
         /* Call Eo event with legacy and non-legacy callbacks. */
         _eo_signals_cb_current = 0;
