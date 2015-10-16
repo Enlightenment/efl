@@ -375,12 +375,16 @@ _eo_call_stack_free(void *ptr)
    free(stack);
 }
 
+static Eo_Call_Stack *main_loop_stack = NULL;
+
+#define _EO_CALL_STACK_GET(is_main_loop) ((EINA_LIKELY(is_main_loop)) ? main_loop_stack : _eo_call_stack_get_thread())
+
 static inline Eo_Call_Stack *
-_eo_call_stack_get(Eina_Bool is_main_loop)
+_eo_call_stack_get_thread(void)
 {
-   static Eo_Call_Stack *main_loop_stack = NULL;
-   Eo_Call_Stack *stack = is_main_loop ?
-     main_loop_stack : eina_tls_get(_eo_call_stack_key);
+   Eo_Call_Stack *stack;
+
+   stack = eina_tls_get(_eo_call_stack_key);
 
    if (stack) return stack;
 
@@ -391,11 +395,7 @@ _eo_call_stack_get(Eina_Bool is_main_loop)
         return NULL;
      }
 
-   if (is_main_loop)
-     {
-        main_loop_stack = stack;
-     }
-   else if (!eina_tls_set(_eo_call_stack_key, stack))
+   if (!eina_tls_set(_eo_call_stack_key, stack))
      {
         EINA_LOG_ERR("Could not set eo call stack in TLS key.");
         _eo_call_stack_free(stack);
@@ -493,7 +493,7 @@ _eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, 
 {
    Eina_Bool ret = EINA_TRUE;
    Eo_Stack_Frame *fptr, *pfptr;
-   Eo_Call_Stack *stack = _eo_call_stack_get(eina_main_loop_is());
+   Eo_Call_Stack *stack = _EO_CALL_STACK_GET(eina_main_loop_is());
 
    if (stack->frame_ptr == stack->last_frame)
      _eo_call_stack_resize(stack, EINA_TRUE);
@@ -520,7 +520,7 @@ EAPI void
 _eo_do_end(void)
 {
    Eo_Stack_Frame *fptr;
-   Eo_Call_Stack *stack = _eo_call_stack_get(eina_main_loop_is()); // Is it possible to extract information from the scope ?
+   Eo_Call_Stack *stack = _EO_CALL_STACK_GET(eina_main_loop_is()); // Is it possible to extract information from the scope ?
 
    fptr = stack->frame_ptr;
 
@@ -549,7 +549,7 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, c
    const op_type_funcs *func;
    Eina_Bool is_obj;
 
-   fptr = _eo_call_stack_get(eina_main_loop_is())->frame_ptr;
+   fptr = _EO_CALL_STACK_GET(eina_main_loop_is())->frame_ptr;
 
    if (EINA_UNLIKELY(!fptr->o.obj))
       return EINA_FALSE;
@@ -898,7 +898,7 @@ static Eo *
 _eo_add_internal_end(Eo *eo_id)
 {
    Eo_Stack_Frame *fptr;
-   Eo_Call_Stack *stack = _eo_call_stack_get(eina_main_loop_is());
+   Eo_Call_Stack *stack = _EO_CALL_STACK_GET(eina_main_loop_is());
 
    fptr = stack->frame_ptr;
 
@@ -1811,6 +1811,13 @@ eo_init(void)
              return EINA_FALSE;
 
           }
+     }
+
+   main_loop_stack = _eo_call_stack_create();
+   if (!main_loop_stack)
+     {
+        EINA_LOG_ERR("Could not alloc eo call stack.");
+        return EINA_FALSE;
      }
 
    return EINA_TRUE;
