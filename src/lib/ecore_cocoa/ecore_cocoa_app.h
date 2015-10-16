@@ -24,7 +24,6 @@
 @interface Ecore_Cocoa_AppDelegate : NSObject <NSApplicationDelegate>
 
 + (Ecore_Cocoa_AppDelegate *)appDelegate;
-- (id)init;
 
 @end
 
