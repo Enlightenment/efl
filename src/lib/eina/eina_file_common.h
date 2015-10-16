@@ -23,6 +23,7 @@
 #include "eina_tmpstr.h"
 #include "eina_lock.h"
 #include "eina_list.h"
+#include "eina_util.h"
 
 #define EINA_FILE_MAGIC 0xFEEDBEEF
 
