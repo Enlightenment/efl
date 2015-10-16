@@ -908,12 +908,6 @@ _eo_add_internal_end(Eo *eo_id, Eo_Call_Stack *stack)
 
    fptr = stack->frame_ptr;
 
-   if (fptr == NULL)
-     {
-        ERR("Something very wrong happend to the call stack.");
-        return NULL;
-     }
-
    if (EINA_UNLIKELY(!fptr->o.obj))
      {
         ERR("Corrupt call stack, shouldn't happen, please report!");
