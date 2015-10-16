@@ -540,28 +540,31 @@ EAPI Eo_Op _eo_api_op_id_get(const void *api_func);
 EAPI Eina_Bool _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, const char *file, int line);
 
 // start of eo_do barrier, gets the object pointer and ref it, put it on the stask
-  EAPI Eina_Bool _eo_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool is_super, const char *file, const char *func, int line);
+  EAPI Eina_Bool _eo_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool is_super, void *eo_stack);
 
 // end of the eo_do barrier, unref the obj, move the stack pointer
-EAPI void _eo_do_end(void);
+EAPI void _eo_do_end(void *eo_stack);
 
 // end of the eo_add. Calls finalize among others
-EAPI Eo * _eo_add_end(void);
+EAPI Eo * _eo_add_end(void *eo_stack);
+
+// XXX: We cheat and make it const to indicate to the compiler that the value never changes
+EAPI EINA_CONST void *_eo_stack_get(void);
 
 // eo object method calls batch,
 
 #define _eo_do_common(eoid, clsid, is_super, ...)                       \
   do {                                                                  \
-       _eo_do_start(eoid, clsid, is_super, __FILE__, __FUNCTION__, __LINE__); \
+       _eo_do_start(eoid, clsid, is_super, _eo_stack_get()); \
        __VA_ARGS__;                                                     \
-       _eo_do_end();                                                    \
+       _eo_do_end(_eo_stack_get());                                                    \
   } while (0)
 
 #define _eo_do_common_ret(eoid, clsid, is_super, ret_tmp, func)      \
   (                                                                     \
-       _eo_do_start(eoid, clsid, is_super, __FILE__, __FUNCTION__, __LINE__), \
+       _eo_do_start(eoid, clsid, is_super, _eo_stack_get()), \
        ret_tmp = func,                                                  \
-       _eo_do_end(),                                                    \
+       _eo_do_end(_eo_stack_get()),                                                    \
        ret_tmp                                                          \
   )
 
@@ -595,9 +598,9 @@ EAPI const Eo_Class *eo_class_get(const Eo *obj);
 #define _eo_add_common(klass, parent, is_ref, ...) \
    ( \
      _eo_do_start(_eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref), \
-        klass, EINA_FALSE, __FILE__, __FUNCTION__, __LINE__) \
+        klass, EINA_FALSE, _eo_stack_get()) \
      , ##__VA_ARGS__, \
-     (Eo *) _eo_add_end() \
+     (Eo *) _eo_add_end(_eo_stack_get()) \
    )
 
 /**

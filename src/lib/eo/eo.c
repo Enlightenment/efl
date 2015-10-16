@@ -377,7 +377,7 @@ _eo_call_stack_free(void *ptr)
 
 static Eo_Call_Stack *main_loop_stack = NULL;
 
-#define _EO_CALL_STACK_GET(is_main_loop) ((EINA_LIKELY(is_main_loop)) ? main_loop_stack : _eo_call_stack_get_thread())
+#define _EO_CALL_STACK_GET() ((EINA_LIKELY(eina_main_loop_is())) ? main_loop_stack : _eo_call_stack_get_thread())
 
 static inline Eo_Call_Stack *
 _eo_call_stack_get_thread(void)
@@ -403,6 +403,12 @@ _eo_call_stack_get_thread(void)
      }
 
    return stack;
+}
+
+EAPI EINA_CONST void *
+_eo_stack_get(void)
+{
+   return _EO_CALL_STACK_GET();
 }
 
 static inline void
@@ -489,11 +495,11 @@ _eo_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
 }
 
 EAPI Eina_Bool
-_eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
+_eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, void *eo_stack)
 {
    Eina_Bool ret = EINA_TRUE;
    Eo_Stack_Frame *fptr, *pfptr;
-   Eo_Call_Stack *stack = _EO_CALL_STACK_GET(eina_main_loop_is());
+   Eo_Call_Stack *stack = eo_stack;
 
    if (stack->frame_ptr == stack->last_frame)
      _eo_call_stack_resize(stack, EINA_TRUE);
@@ -517,10 +523,10 @@ _eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, 
 }
 
 EAPI void
-_eo_do_end(void)
+_eo_do_end(void *eo_stack)
 {
    Eo_Stack_Frame *fptr;
-   Eo_Call_Stack *stack = _EO_CALL_STACK_GET(eina_main_loop_is()); // Is it possible to extract information from the scope ?
+   Eo_Call_Stack *stack = eo_stack;
 
    fptr = stack->frame_ptr;
 
@@ -549,7 +555,7 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, c
    const op_type_funcs *func;
    Eina_Bool is_obj;
 
-   fptr = _EO_CALL_STACK_GET(eina_main_loop_is())->frame_ptr;
+   fptr = _EO_CALL_STACK_GET()->frame_ptr;
 
    if (EINA_UNLIKELY(!fptr->o.obj))
       return EINA_FALSE;
@@ -895,10 +901,9 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 }
 
 static Eo *
-_eo_add_internal_end(Eo *eo_id)
+_eo_add_internal_end(Eo *eo_id, Eo_Call_Stack *stack)
 {
    Eo_Stack_Frame *fptr;
-   Eo_Call_Stack *stack = _EO_CALL_STACK_GET(eina_main_loop_is());
 
    fptr = stack->frame_ptr;
 
@@ -955,11 +960,11 @@ cleanup:
 }
 
 EAPI Eo *
-_eo_add_end(void)
+_eo_add_end(void *eo_stack)
 {
    Eo *ret = eo_finalize();
-   ret = _eo_add_internal_end(ret);
-   _eo_do_end();
+   ret = _eo_add_internal_end(ret, eo_stack);
+   _eo_do_end(eo_stack);
    return ret;
 }
 
