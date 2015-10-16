@@ -74,6 +74,8 @@ struct _Ecore_Win32_Window
    DWORD style;                /* used to go fullscreen to normal */
    RECT  rect;                 /* used to go fullscreen to normal */
 
+   Ecore_Win32_Cursor *cursor;
+
    struct {
       Ecore_Win32_Pos_Hints_Flags flags;
       int                         min_width;
@@ -145,6 +147,7 @@ extern HINSTANCE           _ecore_win32_instance;
 extern double              _ecore_win32_double_click_time;
 extern unsigned long       _ecore_win32_event_last_time;
 extern Ecore_Win32_Window *_ecore_win32_event_last_window;
+extern Ecore_Win32_Cursor *_ecore_win32_cursor_x[77];
 
 
 void  _ecore_win32_event_handle_key_press(Ecore_Win32_Callback_Data *msg);
@@ -174,7 +177,9 @@ void *_ecore_win32_dnd_register_drop_window(HWND hwnd,
                                             Ecore_Win32_Dnd_DropTarget_Callback callback, void *ptr);
 void _ecore_win32_dnd_unregister_drop_window(HWND hwnd, void *drop_target);
 
-  Eina_Bool ecore_win32_window_drag(Ecore_Win32_Window *w, int ptx, int pty);
+Eina_Bool ecore_win32_window_drag(Ecore_Win32_Window *w, int ptx, int pty);
+
+Ecore_Win32_Cursor *_ecore_win32_cursor_x11_shaped_new(Ecore_Win32_Cursor_X11_Shape shape);
 
 
 #ifdef __cplusplus

@@ -10,10 +10,28 @@
 
 #include "Ecore_Win32.h"
 #include "ecore_win32_private.h"
+#include "ecore_win32_cursor_x11.h"
 
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
+
+
+Ecore_Win32_Cursor *
+_ecore_win32_cursor_x11_shaped_new(Ecore_Win32_Cursor_X11_Shape shape)
+{
+   INF("creating X11 shaped cursor");
+
+   if ((shape < ECORE_WIN32_CURSOR_X11_SHAPE_X) ||
+       (shape > ECORE_WIN32_CURSOR_X11_SHAPE_XTERM))
+     return NULL;
+
+   return ecore_win32_cursor_new(_ecore_win32_cursors_x11[shape].mask_and,
+                                 _ecore_win32_cursors_x11[shape].mask_xor,
+                                 32, 32,
+                                 _ecore_win32_cursors_x11[shape].hotspot_x,
+                                 _ecore_win32_cursors_x11[shape].hotspot_y);
+}
 
 
 /*============================================================================*
@@ -157,7 +175,11 @@
  * };
  *
  * Ecore_Win32_Cursor *cursor = ecore_win32_cursor_new(pixels_and, pixels_xor, 32, 32, 19, 2);
+ * ecore_win32_window_cursor_set(window, cursor);
  * @endcode
+ *
+ * @see ecore_win32_cursor_free()
+ * @see ecore_win32_window_cursor_set()
  */
 EAPI Ecore_Win32_Cursor *
 ecore_win32_cursor_new(const void *pixels_and,
@@ -199,12 +221,18 @@ ecore_win32_cursor_new(const void *pixels_and,
  * @param cursor The cursor to free.
  *
  * This function free @p cursor. @p cursor must have been obtained
- * with ecore_win32_cursor_new().
+ * with ecore_win32_cursor_new() or ecore_win32_cursor_x11_shaped_new().
+ *
+ * @see ecore_win32_cursor_new()
+ * @see ecore_win32_cursor_x11_shaped_new()
  */
 EAPI void
 ecore_win32_cursor_free(Ecore_Win32_Cursor *cursor)
 {
    INF("destroying cursor");
+
+   if (!cursor)
+     return;
 
    DestroyCursor(cursor);
 }
@@ -217,7 +245,7 @@ ecore_win32_cursor_free(Ecore_Win32_Cursor *cursor)
  *
  * This function returns a pre-defined cursor with a specified
  * @p shape. This cursor does not need to be freed, as it is loaded
- * from an existing resource.
+ * from an existing resource. On error @c NULL is returned.
  */
 EAPI Ecore_Win32_Cursor *
 ecore_win32_cursor_shaped_new(Ecore_Win32_Cursor_Shape shape)
@@ -279,6 +307,33 @@ ecore_win32_cursor_shaped_new(Ecore_Win32_Cursor_Shape shape)
      return NULL;
 
    return cursor;
+}
+
+/**
+ * @brief Retrieve a X11 cursor from a X Id.
+ *
+ * @param[in] shape The defined X11 shape of the cursor.
+ * @return The new cursor.
+ *
+ * This function returns a defined cursor with a specified X11
+ * @p shape. Do not use ecore_win32_cursor_free() to free the
+ * ressources as it is created once the libray is initialized and
+ * detroyed when it is shut down.
+ *
+ * @see ecore_win32_cursor_new()
+ *
+ * @since 1.16
+ */
+EAPI const Ecore_Win32_Cursor *
+ecore_win32_cursor_x11_shaped_get(Ecore_Win32_Cursor_X11_Shape shape)
+{
+   INF("getting X11 shaped cursor");
+
+   if ((shape < ECORE_WIN32_CURSOR_X11_SHAPE_X) ||
+       (shape > ECORE_WIN32_CURSOR_X11_SHAPE_XTERM))
+     return NULL;
+
+   return _ecore_win32_cursor_x[shape];
 }
 
 /**

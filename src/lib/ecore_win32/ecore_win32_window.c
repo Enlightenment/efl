@@ -155,6 +155,8 @@ _ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
    w->drag.current_mouse_x = -32768;
    w->drag.current_mouse_y = -32768;
 
+   w->cursor = LoadCursor (NULL, IDC_ARROW);
+
    return w;
 }
 
@@ -1436,8 +1438,13 @@ ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
  *
  * This function sets @p cursor to @p window. @p cursor must have been
  * obtained by ecore_win32_cursor_new() or
- * ecore_win32_cursor_shaped_new(). If @p window or @p cursor is
+ * ecore_win32_cursor_shaped_new() or
+ * ecore_win32_cursor_x11_shaped_new(). If @p window or @p cursor is
  * @c NULL, the function does nothing.
+ *
+ * @see ecore_win32_cursor_new()
+ * @see ecore_win32_cursor_shaped_new()
+ * @see ecore_win32_cursor_x11_shaped_new()
  */
 EAPI void
 ecore_win32_window_cursor_set(Ecore_Win32_Window *window,
@@ -1448,11 +1455,7 @@ ecore_win32_window_cursor_set(Ecore_Win32_Window *window,
    if (!window || !cursor)
      return;
 
-   if (!SetClassLongPtr(window->window,
-                        GCLP_HCURSOR, (LONG_PTR)cursor))
-     {
-        ERR("SetClassLong() failed");
-     }
+   window->cursor = cursor;
 }
 
 /**
