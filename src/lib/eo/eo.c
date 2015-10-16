@@ -491,10 +491,9 @@ _eo_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
 EAPI Eina_Bool
 _eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, const char *file EINA_UNUSED, const char *func EINA_UNUSED, int line EINA_UNUSED)
 {
-   Eina_Bool is_main_loop = eina_main_loop_is();
    Eina_Bool ret = EINA_TRUE;
    Eo_Stack_Frame *fptr, *pfptr;
-   Eo_Call_Stack *stack = _eo_call_stack_get(is_main_loop);
+   Eo_Call_Stack *stack = _eo_call_stack_get(eina_main_loop_is());
 
    if (stack->frame_ptr == stack->last_frame)
      _eo_call_stack_resize(stack, EINA_TRUE);
@@ -543,14 +542,14 @@ _eo_do_end(void)
 }
 
 EAPI Eina_Bool
-_eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, Eina_Bool is_main_loop, const char *file, int line)
+_eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, const char *file, int line)
 {
    Eo_Stack_Frame *fptr;
    const _Eo_Class *klass;
    const op_type_funcs *func;
    Eina_Bool is_obj;
 
-   fptr = _eo_call_stack_get(is_main_loop)->frame_ptr;
+   fptr = _eo_call_stack_get(eina_main_loop_is())->frame_ptr;
 
    if (EINA_UNLIKELY(!fptr->o.obj))
       return EINA_FALSE;
