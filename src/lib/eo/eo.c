@@ -375,6 +375,13 @@ _eo_call_stack_free(void *ptr)
    free(stack);
 }
 
+#ifdef HAVE_THREAD_SPECIFIER
+static __thread Eo_Call_Stack *_eo_thread_stack = NULL;
+
+#define _EO_CALL_STACK_GET() ((_eo_thread_stack) ? _eo_thread_stack : (_eo_thread_stack = _eo_call_stack_create()))
+
+#else
+
 static Eo_Call_Stack *main_loop_stack = NULL;
 
 #define _EO_CALL_STACK_GET() ((EINA_LIKELY(eina_main_loop_is())) ? main_loop_stack : _eo_call_stack_get_thread())
@@ -382,9 +389,7 @@ static Eo_Call_Stack *main_loop_stack = NULL;
 static inline Eo_Call_Stack *
 _eo_call_stack_get_thread(void)
 {
-   Eo_Call_Stack *stack;
-
-   stack = eina_tls_get(_eo_call_stack_key);
+   Eo_Call_Stack *stack = eina_tls_get(_eo_call_stack_key);
 
    if (stack) return stack;
 
@@ -393,6 +398,7 @@ _eo_call_stack_get_thread(void)
 
    return stack;
 }
+#endif
 
 EAPI EINA_CONST void *
 _eo_stack_get(void)
@@ -1826,12 +1832,14 @@ eo_init(void)
           }
      }
 
+#ifndef HAVE_THREAD_SPECIFIER
    main_loop_stack = _eo_call_stack_create();
    if (!main_loop_stack)
      {
         EINA_LOG_ERR("Could not alloc eo call stack.");
         return EINA_FALSE;
      }
+#endif
 
    return EINA_TRUE;
 }

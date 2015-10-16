@@ -984,6 +984,20 @@ if test "x${efl_have_threads}" = "xno"; then
    CFOPT_WARNING="xyes"
 fi
 
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[ ]],
+       [[
+        static __thread int a = 0;
+       ]])],
+   [have_thread_specifier="yes"],
+   [have_thread_specifier="no"])
+AC_MSG_CHECKING([for __thread specifier])
+AC_MSG_RESULT([${have_thread_specifier}])
+if test "x${have_thread_specifier}" = "xyes" ; then
+    AC_DEFINE([HAVE_THREAD_SPECIFIER], [1], [Have the __thread specifier])
+fi
+
 EFL_ADD_PUBLIC_LIBS([EINA], [${EFL_PTHREAD_LIBS}])
 EFL_ADD_CFLAGS([EINA], [${EFL_PTHREAD_CFLAGS}])
 
@@ -4868,6 +4882,7 @@ EFL_ADD_FEATURE([thread], [spinlocks], [${efl_have_spinlock}])
 EFL_ADD_FEATURE([thread], [barrier], [${efl_have_pthread_barrier}])
 EFL_ADD_FEATURE([thread], [affinity], [${efl_have_setaffinity}])
 EFL_ADD_FEATURE([thread], [setname], [${efl_have_setname}])
+EFL_ADD_FEATURE([thread], [__thread], [${have_thread_specifier}])
 
 echo
 echo
