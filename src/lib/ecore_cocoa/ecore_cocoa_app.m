@@ -95,6 +95,21 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
      [super sendEvent:anEvent];
 }
 
+- (void) pauseNSRunLoopMonitoring
+{
+   /*
+    * After calling this method, we will run an iteration of
+    * the main loop. We don't want this timer to be fired while
+    * calling manually the ecore loop, because it will query the
+    * NSRunLoop, which blocks during live resize.
+    */
+   ecore_timer_freeze(_timer);
+}
+
+- (void) resumeNSRunLoopMonitoring
+{
+   ecore_timer_thaw(_timer);
+}
 
 @end
 
