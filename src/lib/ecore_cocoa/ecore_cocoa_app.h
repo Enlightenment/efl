@@ -18,6 +18,9 @@
 - (id)init;
 - (void)internalUpdate;
 
+- (void) pauseNSRunLoopMonitoring;
+- (void) resumeNSRunLoopMonitoring;
+
 @end
 
 

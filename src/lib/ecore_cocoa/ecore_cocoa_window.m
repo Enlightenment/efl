@@ -8,6 +8,7 @@
 #include <Ecore_Cocoa.h>
 #include <Ecore_Cocoa_Cursor.h>
 #import "ecore_cocoa_window.h"
+#import "ecore_cocoa_app.h"
 #include "ecore_cocoa_private.h"
 
 static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
@@ -83,6 +84,17 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
       (([self isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
    event->wid = [notif object];
    ecore_event_add(ECORE_COCOA_EVENT_RESIZE, event, NULL, NULL);
+
+   /*
+    * During live resize, NSRunLoop blocks, and prevent the ecore_main_loop
+    * to be run.
+    * This, combined with the -pauseNSRunLoopMonitoring and
+    * -resumeNSRunLoopMonitoring methods invoked in
+    * -windowWillStartLiveResize and -windowDidEndLiveResize
+    * allow the ecore_main_loop to run withing NSRunLoop during the
+    * live resizing of a window.
+    */
+   ecore_main_loop_iterate();
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)notification
@@ -97,6 +109,16 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
      }
    e->wid = [notification object];
    ecore_event_add(ECORE_COCOA_EVENT_GOT_FOCUS, e, NULL, NULL);
+}
+
+- (void) windowWillStartLiveResize:(NSNotification *) EINA_UNUSED notification
+{
+   [NSApp pauseNSRunLoopMonitoring];
+}
+
+- (void) windowDidEndLiveResize:(NSNotification *) EINA_UNUSED notification
+{
+   [NSApp resumeNSRunLoopMonitoring];
 }
 
 - (void)windowDidResignKey:(NSNotification *)notification
