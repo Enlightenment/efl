@@ -3093,10 +3093,8 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
      }
 
    // Unset surface/context
-   if ((!sfc) || (!ctx))
+   if ((!sfc) && (!ctx))
      {
-        if (ctx) ctx->current_sfc = NULL;
-        if (sfc) sfc->current_ctx = NULL;
         eina_tls_set(gl_current_ctx_key, NULL);
         eina_tls_set(gl_current_sfc_key, NULL);
         return 1;
