@@ -4205,6 +4205,7 @@ _gl_focus_sel_popup_create(Evas_Object *parent)
    // popup show should be called after adding all the contents and the buttons
    // of popup to set the focus into popup's contents correctly.
    evas_object_show(popup);
+   elm_object_focus_set(btn, EINA_TRUE);
 }
 
 static void
