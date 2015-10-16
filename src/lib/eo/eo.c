@@ -35,7 +35,6 @@ static void _eo_condtor_reset(_Eo_Object *obj);
 static inline void *_eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass);
 static inline void *_eo_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Eo_Class *klass, const _Eo_Object *ref_obj);
 static inline void _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj);
-static const _Eo_Class *_eo_op_class_get(Eo_Op op);
 
 /* Start of Dich */
 
@@ -101,6 +100,30 @@ _dich_func_get(const _Eo_Class *klass, Eo_Op op)
    if (EINA_UNLIKELY(!chain1->funcs))
       return NULL;
    return &chain1->funcs[DICH_CHAIN_LAST(op)];
+}
+
+/* XXX: Only used for a debug message below. Doesn't matter that it's slow. */
+static const _Eo_Class *
+_eo_op_class_get(Eo_Op op)
+{
+   _Eo_Class **itr = _eo_classes;
+   int mid, max, min;
+
+   min = 0;
+   max = _eo_classes_last_id - 1;
+   while (min <= max)
+     {
+        mid = (min + max) / 2;
+
+        if (itr[mid]->base_id + itr[mid]->desc->ops.count < op)
+           min = mid + 1;
+        else if (itr[mid]->base_id  > op)
+           max = mid - 1;
+        else
+           return itr[mid];
+     }
+
+   return NULL;
 }
 
 static inline Eina_Bool
@@ -171,30 +194,6 @@ _eo_class_pointer_get(const Eo_Class *klass_id)
 #else
    return (_Eo_Class *) klass_id;
 #endif
-}
-
-static const _Eo_Class *
-_eo_op_class_get(Eo_Op op)
-{
-   /* FIXME: Make it fast. */
-   _Eo_Class **itr = _eo_classes;
-   int mid, max, min;
-
-   min = 0;
-   max = _eo_classes_last_id - 1;
-   while (min <= max)
-     {
-        mid = (min + max) / 2;
-
-        if (itr[mid]->base_id + itr[mid]->desc->ops.count < op)
-           min = mid + 1;
-        else if (itr[mid]->base_id  > op)
-           max = mid - 1;
-        else
-           return itr[mid];
-     }
-
-   return NULL;
 }
 
 static const char *
@@ -921,31 +920,29 @@ _eo_add_internal_end(Eo *eo_id, Eo_Call_Stack *stack)
         return NULL;
      }
 
+   if (!fptr->o.obj->condtor_done)
      {
-        if (!fptr->o.obj->condtor_done)
-          {
-             const _Eo_Class *klass = fptr->o.obj->klass;
+        const _Eo_Class *klass = fptr->o.obj->klass;
 
-             ERR("Object of class '%s' - Not all of the object constructors have been executed.",
-                   klass->desc->name);
-             goto cleanup;
-          }
+        ERR("Object of class '%s' - Not all of the object constructors have been executed.",
+              klass->desc->name);
+        goto cleanup;
+     }
 
-        if (!eo_id)
-          {
-// XXX: Given EFL usage of objects, construction is a perfectly valid thing
-// to do. we shouldn't complain about it as handling a NULL obj creation is
-// the job of the caller. a perfect example here is ecore_con and ecore_ipc
-// where you create a con or ipc obj then set up type/destination/port and
-// the finalize of the constructor does the actual connect and thus this
-// fails or succeeds based on if service is there.
-//
-// until there is a better solution - don't complain here.
-// 
-//             ERR("Object of class '%s' - Finalizing the object failed.",
-//                   klass->desc->name);
-             goto cleanup;
-          }
+   if (!eo_id)
+     {
+        // XXX: Given EFL usage of objects, construction is a perfectly valid thing
+        // to do. we shouldn't complain about it as handling a NULL obj creation is
+        // the job of the caller. a perfect example here is ecore_con and ecore_ipc
+        // where you create a con or ipc obj then set up type/destination/port and
+        // the finalize of the constructor does the actual connect and thus this
+        // fails or succeeds based on if service is there.
+        //
+        // until there is a better solution - don't complain here.
+        // 
+        //             ERR("Object of class '%s' - Finalizing the object failed.",
+        //                   klass->desc->name);
+        goto cleanup;
      }
 
    fptr->o.obj->finalized = EINA_TRUE;
