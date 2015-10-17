@@ -389,18 +389,7 @@ _eo_call_stack_get_thread(void)
    if (stack) return stack;
 
    stack = _eo_call_stack_create();
-   if (!stack)
-     {
-        EINA_LOG_ERR("Could not alloc eo call stack.");
-        return NULL;
-     }
-
-   if (!eina_tls_set(_eo_call_stack_key, stack))
-     {
-        EINA_LOG_ERR("Could not set eo call stack in TLS key.");
-        _eo_call_stack_free(stack);
-        return NULL;
-     }
+   eina_tls_set(_eo_call_stack_key, stack);
 
    return stack;
 }
@@ -424,15 +413,9 @@ _eo_call_stack_resize(Eo_Call_Stack *stack, Eina_Bool grow)
      next_sz = sz / 2;
    frame_offset = stack->frame_ptr - stack->frames;
 
-   DBG("resize from %lu to %lu", (long unsigned int)sz, (long unsigned int)next_sz);
    _eo_call_stack_mem_resize((void **)&(stack->frames),
                              next_sz * sizeof(Eo_Stack_Frame),
                              sz * sizeof(Eo_Stack_Frame));
-   if (!stack->frames)
-     {
-        CRI("unable to resize call stack, abort.");
-        abort();
-     }
 
    stack->frame_ptr = &stack->frames[frame_offset];
    stack->last_frame = &stack->frames[next_sz - 1];
@@ -534,12 +517,6 @@ _eo_do_end(void *eo_stack)
      _eo_unref(fptr->o.obj);
 
    fptr->obj_data = EO_INVALID_DATA;
-
-   if (fptr == stack->frames)
-     {
-        CRI("eo call stack underflow, abort.");
-        abort();
-     }
 
    stack->frame_ptr--;
 
