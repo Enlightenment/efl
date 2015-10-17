@@ -254,8 +254,7 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    Eina_Bool movch = EINA_FALSE;
    Evas_Canvas3D_Texture *texture;
 
-   if (!obj->layer) return;
-   if (!obj->layer->evas) return;
+   if ((!obj->layer) || (!obj->layer->evas)) return;
    if (obj->layer->evas->nochange) return;
    obj->layer->evas->changed = EINA_TRUE;
 
