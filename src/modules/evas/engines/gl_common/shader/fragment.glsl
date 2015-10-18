@@ -66,13 +66,13 @@ varying vec2 masktex_s[4];
 # define SWZ aaaa
 #else
 # ifndef SHD_BGRA
-#  ifdef BIGENDIAN
+#  if defined(SHD_IMG) && defined(BIGENDIAN)
 #   define SWZ gbar
 #  else
 #   define SWZ bgra
 #endif
 # else
-#  ifdef BIGENDIAN
+#  if defined(SHD_IMG) && defined(BIGENDIAN)
 #   define SWZ grab
 #  else
 #   define SWZ rgba
