@@ -1541,7 +1541,7 @@ evas_gl_common_shader_select(Evas_Engine_GL_Context *gc,
      }
 
    // image downscale sampling
-   if (smooth && (type == SHD_IMAGE))
+   if (smooth && ((type == SHD_IMAGE) || (type == SHD_IMAGENATIVE)))
      {
         if ((sw >= (w * 2)) && (sh >= (h * 2)))
           sam = SHD_SAM22;
@@ -1605,13 +1605,11 @@ evas_gl_common_shader_select(Evas_Engine_GL_Context *gc,
      {
         if (tex->pt->dyn.img)
           {
-             printf("a... %i\n", (int)tex->alpha);
              afill = !tex->alpha;
              bgra = 1;
           }
         else if (tex->im && tex->im->native.target == GL_TEXTURE_EXTERNAL_OES)
           {
-             printf("b... %i\n", (int)tex->alpha);
              type = SHD_TEX_EXTERNAL;
              afill = !tex->alpha;
           }
@@ -1621,8 +1619,8 @@ evas_gl_common_shader_select(Evas_Engine_GL_Context *gc,
    else
      bgra = gc_bgra;
 
-   if ((type == SHD_IMAGE) || (type == SHD_MAP))
-     shader = evas_gl_common_img_shader_select(sam, nomul, afill, bgra, mask, masksam);
+   if ((type == SHD_IMAGE) || (type == SHD_IMAGENATIVE) || (type == SHD_MAP))
+     shader = evas_gl_common_img_shader_select(type, sam, nomul, afill, bgra, mask, masksam);
    else
      {
 #define SHADERS(name, ...) \
@@ -2090,6 +2088,10 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    int pn = 0, render_op = gc->dc->render_op, nomul = 0;
    Shader_Sampling sam = 0, masksam = 0;
    int yinvert = 0;
+   Shader_Type shd_in = SHD_IMAGE;
+
+   if ((tex->im) && (tex->im->native.data))
+     shd_in = SHD_IMAGENATIVE;
 
    if (!!mtex)
      {
@@ -2100,7 +2102,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    else if (!(render_op == EVAS_RENDER_COPY) && ((a < 255) || (tex->alpha)))
      blend = EINA_TRUE;
 
-   shader = evas_gl_common_shader_select(gc, SHD_IMAGE, NULL, 0, r, g, b, a,
+   shader = evas_gl_common_shader_select(gc, shd_in, NULL, 0, r, g, b, a,
                                          sw, sh, w, h, smooth, tex, tex_only,
                                          mtex, mask_smooth, mw, mh,
                                          &sam, &nomul, &masksam);

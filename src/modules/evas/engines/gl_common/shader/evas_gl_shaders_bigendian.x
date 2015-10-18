@@ -612,7 +612,7 @@ static const char img_frag_glsl[] =
    "void main()\n"
    "{\n"
    "   vec4 c;\n"
-   "   c = texture2D(tex, tex_c).bgra;\n"
+   "   c = texture2D(tex, tex_c).gbar;\n"
    "   gl_FragColor =\n"
    "       c\n"
    "     * col\n"
@@ -6918,6 +6918,6326 @@ Evas_GL_Program_Source shader_img_22_bgra_nomul_afill_vert_src =
    NULL, 0
 };
 
+static const char imgnat_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).bgra;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_frag_src =
+{
+   imgnat_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_vert_src =
+{
+   imgnat_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).rgba;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_frag_src =
+{
+   imgnat_bgra_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_vert_src =
+{
+   imgnat_bgra_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_frag_src =
+{
+   imgnat_12_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_vert_src =
+{
+   imgnat_12_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_frag_src =
+{
+   imgnat_21_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_vert_src =
+{
+   imgnat_21_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).bgra;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).bgra;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_frag_src =
+{
+   imgnat_22_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_vert_src =
+{
+   imgnat_22_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_frag_src =
+{
+   imgnat_12_bgra_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_vert_src =
+{
+   imgnat_12_bgra_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_frag_src =
+{
+   imgnat_21_bgra_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_vert_src =
+{
+   imgnat_21_bgra_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).rgba;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).rgba;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_frag_src =
+{
+   imgnat_22_bgra_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_vert_src =
+{
+   imgnat_22_bgra_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_mask_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).bgra;\n"
+   "   float ma;\n"
+   "   ma = texture2D(texm, tex_m).a;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_mask_frag_src =
+{
+   imgnat_mask_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_mask_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_mask_vert_src =
+{
+   imgnat_mask_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_mask_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).rgba;\n"
+   "   float ma;\n"
+   "   ma = texture2D(texm, tex_m).a;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_mask_frag_src =
+{
+   imgnat_bgra_mask_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_mask_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_mask_vert_src =
+{
+   imgnat_bgra_mask_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_mask_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   ma = texture2D(texm, tex_m).a;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_mask_frag_src =
+{
+   imgnat_12_mask_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_mask_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_mask_vert_src =
+{
+   imgnat_12_mask_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_mask_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   ma = texture2D(texm, tex_m).a;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_mask_frag_src =
+{
+   imgnat_21_mask_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_mask_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_mask_vert_src =
+{
+   imgnat_21_mask_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_mask_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).bgra;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).bgra;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   float ma;\n"
+   "   ma = texture2D(texm, tex_m).a;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_mask_frag_src =
+{
+   imgnat_22_mask_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_mask_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_mask_vert_src =
+{
+   imgnat_22_mask_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_mask_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   ma = texture2D(texm, tex_m).a;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_mask_frag_src =
+{
+   imgnat_12_bgra_mask_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_mask_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_mask_vert_src =
+{
+   imgnat_12_bgra_mask_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_mask_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   ma = texture2D(texm, tex_m).a;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_mask_frag_src =
+{
+   imgnat_21_bgra_mask_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_mask_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_mask_vert_src =
+{
+   imgnat_21_bgra_mask_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_mask_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).rgba;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).rgba;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   float ma;\n"
+   "   ma = texture2D(texm, tex_m).a;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_mask_frag_src =
+{
+   imgnat_22_bgra_mask_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_mask_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_mask_vert_src =
+{
+   imgnat_22_bgra_mask_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).bgra;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_nomul_frag_src =
+{
+   imgnat_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_nomul_vert_src =
+{
+   imgnat_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).rgba;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_nomul_frag_src =
+{
+   imgnat_bgra_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_nomul_vert_src =
+{
+   imgnat_bgra_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_nomul_frag_src =
+{
+   imgnat_12_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_nomul_vert_src =
+{
+   imgnat_12_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_nomul_frag_src =
+{
+   imgnat_21_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_nomul_vert_src =
+{
+   imgnat_21_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).bgra;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).bgra;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_nomul_frag_src =
+{
+   imgnat_22_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_nomul_vert_src =
+{
+   imgnat_22_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_nomul_frag_src =
+{
+   imgnat_12_bgra_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_nomul_vert_src =
+{
+   imgnat_12_bgra_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_nomul_frag_src =
+{
+   imgnat_21_bgra_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_nomul_vert_src =
+{
+   imgnat_21_bgra_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).rgba;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).rgba;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_nomul_frag_src =
+{
+   imgnat_22_bgra_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_nomul_vert_src =
+{
+   imgnat_22_bgra_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_mask_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).bgra;\n"
+   "   float ma;\n"
+   "   ma = texture2D(texm, tex_m).a;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_mask_nomul_frag_src =
+{
+   imgnat_mask_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_mask_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_mask_nomul_vert_src =
+{
+   imgnat_mask_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_mask_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).rgba;\n"
+   "   float ma;\n"
+   "   ma = texture2D(texm, tex_m).a;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_mask_nomul_frag_src =
+{
+   imgnat_bgra_mask_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_mask_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_mask_nomul_vert_src =
+{
+   imgnat_bgra_mask_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_mask_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   ma = texture2D(texm, tex_m).a;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_mask_nomul_frag_src =
+{
+   imgnat_12_mask_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_mask_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_mask_nomul_vert_src =
+{
+   imgnat_12_mask_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_mask_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   ma = texture2D(texm, tex_m).a;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_mask_nomul_frag_src =
+{
+   imgnat_21_mask_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_mask_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_mask_nomul_vert_src =
+{
+   imgnat_21_mask_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_mask_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).bgra;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).bgra;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   float ma;\n"
+   "   ma = texture2D(texm, tex_m).a;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_mask_nomul_frag_src =
+{
+   imgnat_22_mask_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_mask_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_mask_nomul_vert_src =
+{
+   imgnat_22_mask_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_mask_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   ma = texture2D(texm, tex_m).a;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_mask_nomul_frag_src =
+{
+   imgnat_12_bgra_mask_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_mask_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_mask_nomul_vert_src =
+{
+   imgnat_12_bgra_mask_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_mask_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   ma = texture2D(texm, tex_m).a;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_mask_nomul_frag_src =
+{
+   imgnat_21_bgra_mask_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_mask_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_mask_nomul_vert_src =
+{
+   imgnat_21_bgra_mask_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_mask_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).rgba;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).rgba;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   float ma;\n"
+   "   ma = texture2D(texm, tex_m).a;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_mask_nomul_frag_src =
+{
+   imgnat_22_bgra_mask_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_mask_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_mask_nomul_vert_src =
+{
+   imgnat_22_bgra_mask_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_mask12_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).bgra;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_mask12_frag_src =
+{
+   imgnat_mask12_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_mask12_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   masktex_s[0] = vec2(0, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2(0, tex_masksample.y);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_mask12_vert_src =
+{
+   imgnat_mask12_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_mask12_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).rgba;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_mask12_frag_src =
+{
+   imgnat_bgra_mask12_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_mask12_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   masktex_s[0] = vec2(0, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2(0, tex_masksample.y);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_mask12_vert_src =
+{
+   imgnat_bgra_mask12_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_mask12_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_mask12_frag_src =
+{
+   imgnat_12_mask12_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_mask12_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(0, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2(0, tex_masksample.y);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_mask12_vert_src =
+{
+   imgnat_12_mask12_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_mask12_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_mask12_frag_src =
+{
+   imgnat_21_mask12_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_mask12_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(0, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2(0, tex_masksample.y);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_mask12_vert_src =
+{
+   imgnat_21_mask12_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_mask12_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).bgra;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).bgra;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_mask12_frag_src =
+{
+   imgnat_22_mask12_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_mask12_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   masktex_s[0] = vec2(0, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2(0, tex_masksample.y);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_mask12_vert_src =
+{
+   imgnat_22_mask12_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_mask12_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_mask12_frag_src =
+{
+   imgnat_12_bgra_mask12_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_mask12_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(0, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2(0, tex_masksample.y);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_mask12_vert_src =
+{
+   imgnat_12_bgra_mask12_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_mask12_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_mask12_frag_src =
+{
+   imgnat_21_bgra_mask12_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_mask12_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(0, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2(0, tex_masksample.y);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_mask12_vert_src =
+{
+   imgnat_21_bgra_mask12_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_mask12_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).rgba;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).rgba;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_mask12_frag_src =
+{
+   imgnat_22_bgra_mask12_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_mask12_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   masktex_s[0] = vec2(0, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2(0, tex_masksample.y);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_mask12_vert_src =
+{
+   imgnat_22_bgra_mask12_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_mask12_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).bgra;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_mask12_nomul_frag_src =
+{
+   imgnat_mask12_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_mask12_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   masktex_s[0] = vec2(0, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2(0, tex_masksample.y);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_mask12_nomul_vert_src =
+{
+   imgnat_mask12_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_mask12_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).rgba;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_mask12_nomul_frag_src =
+{
+   imgnat_bgra_mask12_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_mask12_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   masktex_s[0] = vec2(0, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2(0, tex_masksample.y);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_mask12_nomul_vert_src =
+{
+   imgnat_bgra_mask12_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_mask12_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_mask12_nomul_frag_src =
+{
+   imgnat_12_mask12_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_mask12_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(0, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2(0, tex_masksample.y);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_mask12_nomul_vert_src =
+{
+   imgnat_12_mask12_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_mask12_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_mask12_nomul_frag_src =
+{
+   imgnat_21_mask12_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_mask12_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(0, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2(0, tex_masksample.y);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_mask12_nomul_vert_src =
+{
+   imgnat_21_mask12_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_mask12_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).bgra;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).bgra;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_mask12_nomul_frag_src =
+{
+   imgnat_22_mask12_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_mask12_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   masktex_s[0] = vec2(0, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2(0, tex_masksample.y);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_mask12_nomul_vert_src =
+{
+   imgnat_22_mask12_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_mask12_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_mask12_nomul_frag_src =
+{
+   imgnat_12_bgra_mask12_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_mask12_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(0, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2(0, tex_masksample.y);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_mask12_nomul_vert_src =
+{
+   imgnat_12_bgra_mask12_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_mask12_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_mask12_nomul_frag_src =
+{
+   imgnat_21_bgra_mask12_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_mask12_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(0, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2(0, tex_masksample.y);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_mask12_nomul_vert_src =
+{
+   imgnat_21_bgra_mask12_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_mask12_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).rgba;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).rgba;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_mask12_nomul_frag_src =
+{
+   imgnat_22_bgra_mask12_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_mask12_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   masktex_s[0] = vec2(0, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2(0, tex_masksample.y);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_mask12_nomul_vert_src =
+{
+   imgnat_22_bgra_mask12_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_mask21_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).bgra;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_mask21_frag_src =
+{
+   imgnat_mask21_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_mask21_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, 0);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, 0);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_mask21_vert_src =
+{
+   imgnat_mask21_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_mask21_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).rgba;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_mask21_frag_src =
+{
+   imgnat_bgra_mask21_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_mask21_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, 0);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, 0);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_mask21_vert_src =
+{
+   imgnat_bgra_mask21_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_mask21_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_mask21_frag_src =
+{
+   imgnat_12_mask21_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_mask21_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, 0);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, 0);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_mask21_vert_src =
+{
+   imgnat_12_mask21_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_mask21_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_mask21_frag_src =
+{
+   imgnat_21_mask21_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_mask21_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, 0);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, 0);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_mask21_vert_src =
+{
+   imgnat_21_mask21_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_mask21_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).bgra;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).bgra;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_mask21_frag_src =
+{
+   imgnat_22_mask21_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_mask21_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, 0);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, 0);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_mask21_vert_src =
+{
+   imgnat_22_mask21_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_mask21_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_mask21_frag_src =
+{
+   imgnat_12_bgra_mask21_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_mask21_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, 0);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, 0);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_mask21_vert_src =
+{
+   imgnat_12_bgra_mask21_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_mask21_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_mask21_frag_src =
+{
+   imgnat_21_bgra_mask21_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_mask21_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, 0);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, 0);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_mask21_vert_src =
+{
+   imgnat_21_bgra_mask21_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_mask21_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).rgba;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).rgba;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_mask21_frag_src =
+{
+   imgnat_22_bgra_mask21_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_mask21_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, 0);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, 0);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_mask21_vert_src =
+{
+   imgnat_22_bgra_mask21_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_mask21_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).bgra;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_mask21_nomul_frag_src =
+{
+   imgnat_mask21_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_mask21_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, 0);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, 0);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_mask21_nomul_vert_src =
+{
+   imgnat_mask21_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_mask21_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).rgba;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_mask21_nomul_frag_src =
+{
+   imgnat_bgra_mask21_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_mask21_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, 0);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, 0);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_mask21_nomul_vert_src =
+{
+   imgnat_bgra_mask21_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_mask21_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_mask21_nomul_frag_src =
+{
+   imgnat_12_mask21_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_mask21_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, 0);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, 0);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_mask21_nomul_vert_src =
+{
+   imgnat_12_mask21_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_mask21_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_mask21_nomul_frag_src =
+{
+   imgnat_21_mask21_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_mask21_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, 0);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, 0);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_mask21_nomul_vert_src =
+{
+   imgnat_21_mask21_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_mask21_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).bgra;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).bgra;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_mask21_nomul_frag_src =
+{
+   imgnat_22_mask21_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_mask21_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, 0);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, 0);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_mask21_nomul_vert_src =
+{
+   imgnat_22_mask21_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_mask21_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_mask21_nomul_frag_src =
+{
+   imgnat_12_bgra_mask21_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_mask21_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, 0);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, 0);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_mask21_nomul_vert_src =
+{
+   imgnat_12_bgra_mask21_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_mask21_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_mask21_nomul_frag_src =
+{
+   imgnat_21_bgra_mask21_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_mask21_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, 0);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, 0);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_mask21_nomul_vert_src =
+{
+   imgnat_21_bgra_mask21_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_mask21_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).rgba;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).rgba;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   ma = (ma00 + ma01) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_mask21_nomul_frag_src =
+{
+   imgnat_22_bgra_mask21_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_mask21_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, 0);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, 0);\n"
+   "   maskdiv_s = 2.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_mask21_nomul_vert_src =
+{
+   imgnat_22_bgra_mask21_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_mask22_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).bgra;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;\n"
+   "   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;\n"
+   "   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_mask22_frag_src =
+{
+   imgnat_mask22_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_mask22_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[2] = vec2( tex_masksample.x, tex_masksample.y);\n"
+   "   masktex_s[3] = vec2(-tex_masksample.x, tex_masksample.y);\n"
+   "   maskdiv_s = 4.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_mask22_vert_src =
+{
+   imgnat_mask22_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_mask22_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).rgba;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;\n"
+   "   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;\n"
+   "   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_mask22_frag_src =
+{
+   imgnat_bgra_mask22_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_mask22_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[2] = vec2( tex_masksample.x, tex_masksample.y);\n"
+   "   masktex_s[3] = vec2(-tex_masksample.x, tex_masksample.y);\n"
+   "   maskdiv_s = 4.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_mask22_vert_src =
+{
+   imgnat_bgra_mask22_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_mask22_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;\n"
+   "   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;\n"
+   "   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_mask22_frag_src =
+{
+   imgnat_12_mask22_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_mask22_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[2] = vec2( tex_masksample.x, tex_masksample.y);\n"
+   "   masktex_s[3] = vec2(-tex_masksample.x, tex_masksample.y);\n"
+   "   maskdiv_s = 4.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_mask22_vert_src =
+{
+   imgnat_12_mask22_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_mask22_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;\n"
+   "   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;\n"
+   "   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_mask22_frag_src =
+{
+   imgnat_21_mask22_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_mask22_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[2] = vec2( tex_masksample.x, tex_masksample.y);\n"
+   "   masktex_s[3] = vec2(-tex_masksample.x, tex_masksample.y);\n"
+   "   maskdiv_s = 4.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_mask22_vert_src =
+{
+   imgnat_21_mask22_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_mask22_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).bgra;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).bgra;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;\n"
+   "   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;\n"
+   "   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_mask22_frag_src =
+{
+   imgnat_22_mask22_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_mask22_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[2] = vec2( tex_masksample.x, tex_masksample.y);\n"
+   "   masktex_s[3] = vec2(-tex_masksample.x, tex_masksample.y);\n"
+   "   maskdiv_s = 4.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_mask22_vert_src =
+{
+   imgnat_22_mask22_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_mask22_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;\n"
+   "   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;\n"
+   "   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_mask22_frag_src =
+{
+   imgnat_12_bgra_mask22_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_mask22_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[2] = vec2( tex_masksample.x, tex_masksample.y);\n"
+   "   masktex_s[3] = vec2(-tex_masksample.x, tex_masksample.y);\n"
+   "   maskdiv_s = 4.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_mask22_vert_src =
+{
+   imgnat_12_bgra_mask22_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_mask22_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;\n"
+   "   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;\n"
+   "   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_mask22_frag_src =
+{
+   imgnat_21_bgra_mask22_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_mask22_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[2] = vec2( tex_masksample.x, tex_masksample.y);\n"
+   "   masktex_s[3] = vec2(-tex_masksample.x, tex_masksample.y);\n"
+   "   maskdiv_s = 4.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_mask22_vert_src =
+{
+   imgnat_21_bgra_mask22_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_mask22_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).rgba;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).rgba;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;\n"
+   "   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;\n"
+   "   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_mask22_frag_src =
+{
+   imgnat_22_bgra_mask22_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_mask22_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[2] = vec2( tex_masksample.x, tex_masksample.y);\n"
+   "   masktex_s[3] = vec2(-tex_masksample.x, tex_masksample.y);\n"
+   "   maskdiv_s = 4.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_mask22_vert_src =
+{
+   imgnat_22_bgra_mask22_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_mask22_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).bgra;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;\n"
+   "   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;\n"
+   "   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_mask22_nomul_frag_src =
+{
+   imgnat_mask22_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_mask22_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[2] = vec2( tex_masksample.x, tex_masksample.y);\n"
+   "   masktex_s[3] = vec2(-tex_masksample.x, tex_masksample.y);\n"
+   "   maskdiv_s = 4.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_mask22_nomul_vert_src =
+{
+   imgnat_mask22_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_mask22_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).rgba;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;\n"
+   "   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;\n"
+   "   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_mask22_nomul_frag_src =
+{
+   imgnat_bgra_mask22_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_mask22_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[2] = vec2( tex_masksample.x, tex_masksample.y);\n"
+   "   masktex_s[3] = vec2(-tex_masksample.x, tex_masksample.y);\n"
+   "   maskdiv_s = 4.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_mask22_nomul_vert_src =
+{
+   imgnat_bgra_mask22_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_mask22_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;\n"
+   "   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;\n"
+   "   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_mask22_nomul_frag_src =
+{
+   imgnat_12_mask22_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_mask22_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[2] = vec2( tex_masksample.x, tex_masksample.y);\n"
+   "   masktex_s[3] = vec2(-tex_masksample.x, tex_masksample.y);\n"
+   "   maskdiv_s = 4.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_mask22_nomul_vert_src =
+{
+   imgnat_12_mask22_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_mask22_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;\n"
+   "   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;\n"
+   "   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_mask22_nomul_frag_src =
+{
+   imgnat_21_mask22_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_mask22_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[2] = vec2( tex_masksample.x, tex_masksample.y);\n"
+   "   masktex_s[3] = vec2(-tex_masksample.x, tex_masksample.y);\n"
+   "   maskdiv_s = 4.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_mask22_nomul_vert_src =
+{
+   imgnat_21_mask22_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_mask22_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).bgra;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).bgra;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;\n"
+   "   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;\n"
+   "   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_mask22_nomul_frag_src =
+{
+   imgnat_22_mask22_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_mask22_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[2] = vec2( tex_masksample.x, tex_masksample.y);\n"
+   "   masktex_s[3] = vec2(-tex_masksample.x, tex_masksample.y);\n"
+   "   maskdiv_s = 4.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_mask22_nomul_vert_src =
+{
+   imgnat_22_mask22_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_mask22_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;\n"
+   "   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;\n"
+   "   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_mask22_nomul_frag_src =
+{
+   imgnat_12_bgra_mask22_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_mask22_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[2] = vec2( tex_masksample.x, tex_masksample.y);\n"
+   "   masktex_s[3] = vec2(-tex_masksample.x, tex_masksample.y);\n"
+   "   maskdiv_s = 4.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_mask22_nomul_vert_src =
+{
+   imgnat_12_bgra_mask22_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_mask22_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;\n"
+   "   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;\n"
+   "   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_mask22_nomul_frag_src =
+{
+   imgnat_21_bgra_mask22_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_mask22_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[2] = vec2( tex_masksample.x, tex_masksample.y);\n"
+   "   masktex_s[3] = vec2(-tex_masksample.x, tex_masksample.y);\n"
+   "   maskdiv_s = 4.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_mask22_nomul_vert_src =
+{
+   imgnat_21_bgra_mask22_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_mask22_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "uniform sampler2D texm;\n"
+   "varying vec2 tex_m;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).rgba;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).rgba;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   float ma;\n"
+   "   float ma00 = texture2D(texm, tex_m + masktex_s[0]).a;\n"
+   "   float ma01 = texture2D(texm, tex_m + masktex_s[1]).a;\n"
+   "   float ma10 = texture2D(texm, tex_m + masktex_s[2]).a;\n"
+   "   float ma11 = texture2D(texm, tex_m + masktex_s[3]).a;\n"
+   "   ma = (ma00 + ma01 + ma10 + ma11) / maskdiv_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "  * ma\n"
+   "   ;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_mask22_nomul_frag_src =
+{
+   imgnat_22_bgra_mask22_nomul_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_mask22_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "attribute vec4 mask_coord;\n"
+   "varying vec2 tex_m;\n"
+   "attribute vec2 tex_masksample;\n"
+   "varying float maskdiv_s;\n"
+   "varying vec2 masktex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "   masktex_s[0] = vec2(-tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[1] = vec2( tex_masksample.x, -tex_masksample.y);\n"
+   "   masktex_s[2] = vec2( tex_masksample.x, tex_masksample.y);\n"
+   "   masktex_s[3] = vec2(-tex_masksample.x, tex_masksample.y);\n"
+   "   maskdiv_s = 4.0;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_mask22_nomul_vert_src =
+{
+   imgnat_22_bgra_mask22_nomul_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).bgra;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "   ;\n"
+   "   gl_FragColor.a = 1.0;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_afill_frag_src =
+{
+   imgnat_afill_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_afill_vert_src =
+{
+   imgnat_afill_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).rgba;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "   ;\n"
+   "   gl_FragColor.a = 1.0;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_afill_frag_src =
+{
+   imgnat_bgra_afill_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_afill_vert_src =
+{
+   imgnat_bgra_afill_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_nomul_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).bgra;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "   ;\n"
+   "   gl_FragColor.a = 1.0;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_nomul_afill_frag_src =
+{
+   imgnat_nomul_afill_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_nomul_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_nomul_afill_vert_src =
+{
+   imgnat_nomul_afill_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_nomul_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   c = texture2D(tex, tex_c).rgba;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "   ;\n"
+   "   gl_FragColor.a = 1.0;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_nomul_afill_frag_src =
+{
+   imgnat_bgra_nomul_afill_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_bgra_nomul_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_bgra_nomul_afill_vert_src =
+{
+   imgnat_bgra_nomul_afill_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "   ;\n"
+   "   gl_FragColor.a = 1.0;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_afill_frag_src =
+{
+   imgnat_12_afill_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_afill_vert_src =
+{
+   imgnat_12_afill_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "   ;\n"
+   "   gl_FragColor.a = 1.0;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_afill_frag_src =
+{
+   imgnat_21_afill_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_afill_vert_src =
+{
+   imgnat_21_afill_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).bgra;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).bgra;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "   ;\n"
+   "   gl_FragColor.a = 1.0;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_afill_frag_src =
+{
+   imgnat_22_afill_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_afill_vert_src =
+{
+   imgnat_22_afill_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "   ;\n"
+   "   gl_FragColor.a = 1.0;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_afill_frag_src =
+{
+   imgnat_12_bgra_afill_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_afill_vert_src =
+{
+   imgnat_12_bgra_afill_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "   ;\n"
+   "   gl_FragColor.a = 1.0;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_afill_frag_src =
+{
+   imgnat_21_bgra_afill_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_afill_vert_src =
+{
+   imgnat_21_bgra_afill_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).rgba;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).rgba;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "     * col\n"
+   "   ;\n"
+   "   gl_FragColor.a = 1.0;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_afill_frag_src =
+{
+   imgnat_22_bgra_afill_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec4 color;\n"
+   "varying vec4 col;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_afill_vert_src =
+{
+   imgnat_22_bgra_afill_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_nomul_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "   ;\n"
+   "   gl_FragColor.a = 1.0;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_nomul_afill_frag_src =
+{
+   imgnat_12_nomul_afill_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_nomul_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_nomul_afill_vert_src =
+{
+   imgnat_12_nomul_afill_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_nomul_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "   ;\n"
+   "   gl_FragColor.a = 1.0;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_nomul_afill_frag_src =
+{
+   imgnat_21_nomul_afill_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_nomul_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_nomul_afill_vert_src =
+{
+   imgnat_21_nomul_afill_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_nomul_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).bgra;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).bgra;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).bgra;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).bgra;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "   ;\n"
+   "   gl_FragColor.a = 1.0;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_nomul_afill_frag_src =
+{
+   imgnat_22_nomul_afill_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_nomul_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_nomul_afill_vert_src =
+{
+   imgnat_22_nomul_afill_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_nomul_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "   ;\n"
+   "   gl_FragColor.a = 1.0;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_nomul_afill_frag_src =
+{
+   imgnat_12_bgra_nomul_afill_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_12_bgra_nomul_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(0, -tex_sample.y);\n"
+   "   tex_s[1] = vec2(0, tex_sample.y);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_12_bgra_nomul_afill_vert_src =
+{
+   imgnat_12_bgra_nomul_afill_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_nomul_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   c = (col00 + col01) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "   ;\n"
+   "   gl_FragColor.a = 1.0;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_nomul_afill_frag_src =
+{
+   imgnat_21_bgra_nomul_afill_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_21_bgra_nomul_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[2];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, 0);\n"
+   "   tex_s[1] = vec2( tex_sample.x, 0);\n"
+   "   div_s = vec4(2, 2, 2, 2);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_21_bgra_nomul_afill_vert_src =
+{
+   imgnat_21_bgra_nomul_afill_vert_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_nomul_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c;\n"
+   "   vec4 col00 = texture2D(tex, tex_c + tex_s[0]).rgba;\n"
+   "   vec4 col01 = texture2D(tex, tex_c + tex_s[1]).rgba;\n"
+   "   vec4 col10 = texture2D(tex, tex_c + tex_s[2]).rgba;\n"
+   "   vec4 col11 = texture2D(tex, tex_c + tex_s[3]).rgba;\n"
+   "   c = (col00 + col01 + col10 + col11) / div_s;\n"
+   "   gl_FragColor =\n"
+   "       c\n"
+   "   ;\n"
+   "   gl_FragColor.a = 1.0;\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_nomul_afill_frag_src =
+{
+   imgnat_22_bgra_nomul_afill_frag_glsl,
+   NULL, 0
+};
+
+static const char imgnat_22_bgra_nomul_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "uniform mat4 mvp;\n"
+   "attribute vec2 tex_coord;\n"
+   "varying vec2 tex_c;\n"
+   "attribute vec2 tex_sample;\n"
+   "varying vec4 div_s;\n"
+   "varying vec2 tex_s[4];\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   tex_s[0] = vec2(-tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[1] = vec2( tex_sample.x, -tex_sample.y);\n"
+   "   tex_s[2] = vec2( tex_sample.x, tex_sample.y);\n"
+   "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
+   "   div_s = vec4(4, 4, 4, 4);\n"
+   "}\n";
+Evas_GL_Program_Source shader_imgnat_22_bgra_nomul_afill_vert_src =
+{
+   imgnat_22_bgra_nomul_afill_vert_glsl,
+   NULL, 0
+};
+
 static const char rgb_a_pair_frag_glsl[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
@@ -9251,6 +15571,102 @@ static const struct {
    { SHADER_IMG_12_BGRA_NOMUL_AFILL, &(shader_img_12_bgra_nomul_afill_vert_src), &(shader_img_12_bgra_nomul_afill_frag_src), "img_12_bgra_nomul_afill", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 1, 0, 1, 1 },
    { SHADER_IMG_21_BGRA_NOMUL_AFILL, &(shader_img_21_bgra_nomul_afill_vert_src), &(shader_img_21_bgra_nomul_afill_frag_src), "img_21_bgra_nomul_afill", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 1, 0, 1, 1 },
    { SHADER_IMG_22_BGRA_NOMUL_AFILL, &(shader_img_22_bgra_nomul_afill_vert_src), &(shader_img_22_bgra_nomul_afill_frag_src), "img_22_bgra_nomul_afill", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 1, 0, 1, 1 },
+   { SHADER_IMGNAT, &(shader_imgnat_vert_src), &(shader_imgnat_frag_src), "imgnat", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_IMGNAT_BGRA, &(shader_imgnat_bgra_vert_src), &(shader_imgnat_bgra_frag_src), "imgnat_bgra", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 0, 0, 0 },
+   { SHADER_IMGNAT_12, &(shader_imgnat_12_vert_src), &(shader_imgnat_12_frag_src), "imgnat_12", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_IMGNAT_21, &(shader_imgnat_21_vert_src), &(shader_imgnat_21_frag_src), "imgnat_21", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_IMGNAT_22, &(shader_imgnat_22_vert_src), &(shader_imgnat_22_frag_src), "imgnat_22", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_IMGNAT_12_BGRA, &(shader_imgnat_12_bgra_vert_src), &(shader_imgnat_12_bgra_frag_src), "imgnat_12_bgra", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 0, 0, 0 },
+   { SHADER_IMGNAT_21_BGRA, &(shader_imgnat_21_bgra_vert_src), &(shader_imgnat_21_bgra_frag_src), "imgnat_21_bgra", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 0, 0, 0 },
+   { SHADER_IMGNAT_22_BGRA, &(shader_imgnat_22_bgra_vert_src), &(shader_imgnat_22_bgra_frag_src), "imgnat_22_bgra", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 0, 0, 0 },
+   { SHADER_IMGNAT_MASK, &(shader_imgnat_mask_vert_src), &(shader_imgnat_mask_frag_src), "imgnat_mask", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_BGRA_MASK, &(shader_imgnat_bgra_mask_vert_src), &(shader_imgnat_bgra_mask_frag_src), "imgnat_bgra_mask", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_12_MASK, &(shader_imgnat_12_mask_vert_src), &(shader_imgnat_12_mask_frag_src), "imgnat_12_mask", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_21_MASK, &(shader_imgnat_21_mask_vert_src), &(shader_imgnat_21_mask_frag_src), "imgnat_21_mask", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_22_MASK, &(shader_imgnat_22_mask_vert_src), &(shader_imgnat_22_mask_frag_src), "imgnat_22_mask", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_12_BGRA_MASK, &(shader_imgnat_12_bgra_mask_vert_src), &(shader_imgnat_12_bgra_mask_frag_src), "imgnat_12_bgra_mask", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_21_BGRA_MASK, &(shader_imgnat_21_bgra_mask_vert_src), &(shader_imgnat_21_bgra_mask_frag_src), "imgnat_21_bgra_mask", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_22_BGRA_MASK, &(shader_imgnat_22_bgra_mask_vert_src), &(shader_imgnat_22_bgra_mask_frag_src), "imgnat_22_bgra_mask", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_NOMUL, &(shader_imgnat_nomul_vert_src), &(shader_imgnat_nomul_frag_src), "imgnat_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_IMGNAT_BGRA_NOMUL, &(shader_imgnat_bgra_nomul_vert_src), &(shader_imgnat_bgra_nomul_frag_src), "imgnat_bgra_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 0, 1, 0 },
+   { SHADER_IMGNAT_12_NOMUL, &(shader_imgnat_12_nomul_vert_src), &(shader_imgnat_12_nomul_frag_src), "imgnat_12_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_IMGNAT_21_NOMUL, &(shader_imgnat_21_nomul_vert_src), &(shader_imgnat_21_nomul_frag_src), "imgnat_21_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_IMGNAT_22_NOMUL, &(shader_imgnat_22_nomul_vert_src), &(shader_imgnat_22_nomul_frag_src), "imgnat_22_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_IMGNAT_12_BGRA_NOMUL, &(shader_imgnat_12_bgra_nomul_vert_src), &(shader_imgnat_12_bgra_nomul_frag_src), "imgnat_12_bgra_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 0, 1, 0 },
+   { SHADER_IMGNAT_21_BGRA_NOMUL, &(shader_imgnat_21_bgra_nomul_vert_src), &(shader_imgnat_21_bgra_nomul_frag_src), "imgnat_21_bgra_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 0, 1, 0 },
+   { SHADER_IMGNAT_22_BGRA_NOMUL, &(shader_imgnat_22_bgra_nomul_vert_src), &(shader_imgnat_22_bgra_nomul_frag_src), "imgnat_22_bgra_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 0, 1, 0 },
+   { SHADER_IMGNAT_MASK_NOMUL, &(shader_imgnat_mask_nomul_vert_src), &(shader_imgnat_mask_nomul_frag_src), "imgnat_mask_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_BGRA_MASK_NOMUL, &(shader_imgnat_bgra_mask_nomul_vert_src), &(shader_imgnat_bgra_mask_nomul_frag_src), "imgnat_bgra_mask_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_12_MASK_NOMUL, &(shader_imgnat_12_mask_nomul_vert_src), &(shader_imgnat_12_mask_nomul_frag_src), "imgnat_12_mask_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_21_MASK_NOMUL, &(shader_imgnat_21_mask_nomul_vert_src), &(shader_imgnat_21_mask_nomul_frag_src), "imgnat_21_mask_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_22_MASK_NOMUL, &(shader_imgnat_22_mask_nomul_vert_src), &(shader_imgnat_22_mask_nomul_frag_src), "imgnat_22_mask_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_12_BGRA_MASK_NOMUL, &(shader_imgnat_12_bgra_mask_nomul_vert_src), &(shader_imgnat_12_bgra_mask_nomul_frag_src), "imgnat_12_bgra_mask_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_21_BGRA_MASK_NOMUL, &(shader_imgnat_21_bgra_mask_nomul_vert_src), &(shader_imgnat_21_bgra_mask_nomul_frag_src), "imgnat_21_bgra_mask_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_22_BGRA_MASK_NOMUL, &(shader_imgnat_22_bgra_mask_nomul_vert_src), &(shader_imgnat_22_bgra_mask_nomul_frag_src), "imgnat_22_bgra_mask_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_MASK12, &(shader_imgnat_mask12_vert_src), &(shader_imgnat_mask12_frag_src), "imgnat_mask12", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM12, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_BGRA_MASK12, &(shader_imgnat_bgra_mask12_vert_src), &(shader_imgnat_bgra_mask12_frag_src), "imgnat_bgra_mask12", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM12, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_12_MASK12, &(shader_imgnat_12_mask12_vert_src), &(shader_imgnat_12_mask12_frag_src), "imgnat_12_mask12", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM12, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_21_MASK12, &(shader_imgnat_21_mask12_vert_src), &(shader_imgnat_21_mask12_frag_src), "imgnat_21_mask12", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM12, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_22_MASK12, &(shader_imgnat_22_mask12_vert_src), &(shader_imgnat_22_mask12_frag_src), "imgnat_22_mask12", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM12, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_12_BGRA_MASK12, &(shader_imgnat_12_bgra_mask12_vert_src), &(shader_imgnat_12_bgra_mask12_frag_src), "imgnat_12_bgra_mask12", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM12, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_21_BGRA_MASK12, &(shader_imgnat_21_bgra_mask12_vert_src), &(shader_imgnat_21_bgra_mask12_frag_src), "imgnat_21_bgra_mask12", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM12, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_22_BGRA_MASK12, &(shader_imgnat_22_bgra_mask12_vert_src), &(shader_imgnat_22_bgra_mask12_frag_src), "imgnat_22_bgra_mask12", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM12, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_MASK12_NOMUL, &(shader_imgnat_mask12_nomul_vert_src), &(shader_imgnat_mask12_nomul_frag_src), "imgnat_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM12, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_BGRA_MASK12_NOMUL, &(shader_imgnat_bgra_mask12_nomul_vert_src), &(shader_imgnat_bgra_mask12_nomul_frag_src), "imgnat_bgra_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM12, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_12_MASK12_NOMUL, &(shader_imgnat_12_mask12_nomul_vert_src), &(shader_imgnat_12_mask12_nomul_frag_src), "imgnat_12_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM12, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_21_MASK12_NOMUL, &(shader_imgnat_21_mask12_nomul_vert_src), &(shader_imgnat_21_mask12_nomul_frag_src), "imgnat_21_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM12, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_22_MASK12_NOMUL, &(shader_imgnat_22_mask12_nomul_vert_src), &(shader_imgnat_22_mask12_nomul_frag_src), "imgnat_22_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM12, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_12_BGRA_MASK12_NOMUL, &(shader_imgnat_12_bgra_mask12_nomul_vert_src), &(shader_imgnat_12_bgra_mask12_nomul_frag_src), "imgnat_12_bgra_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM12, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_21_BGRA_MASK12_NOMUL, &(shader_imgnat_21_bgra_mask12_nomul_vert_src), &(shader_imgnat_21_bgra_mask12_nomul_frag_src), "imgnat_21_bgra_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM12, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_22_BGRA_MASK12_NOMUL, &(shader_imgnat_22_bgra_mask12_nomul_vert_src), &(shader_imgnat_22_bgra_mask12_nomul_frag_src), "imgnat_22_bgra_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM12, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_MASK21, &(shader_imgnat_mask21_vert_src), &(shader_imgnat_mask21_frag_src), "imgnat_mask21", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM21, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_BGRA_MASK21, &(shader_imgnat_bgra_mask21_vert_src), &(shader_imgnat_bgra_mask21_frag_src), "imgnat_bgra_mask21", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM21, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_12_MASK21, &(shader_imgnat_12_mask21_vert_src), &(shader_imgnat_12_mask21_frag_src), "imgnat_12_mask21", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM21, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_21_MASK21, &(shader_imgnat_21_mask21_vert_src), &(shader_imgnat_21_mask21_frag_src), "imgnat_21_mask21", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM21, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_22_MASK21, &(shader_imgnat_22_mask21_vert_src), &(shader_imgnat_22_mask21_frag_src), "imgnat_22_mask21", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM21, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_12_BGRA_MASK21, &(shader_imgnat_12_bgra_mask21_vert_src), &(shader_imgnat_12_bgra_mask21_frag_src), "imgnat_12_bgra_mask21", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM21, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_21_BGRA_MASK21, &(shader_imgnat_21_bgra_mask21_vert_src), &(shader_imgnat_21_bgra_mask21_frag_src), "imgnat_21_bgra_mask21", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM21, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_22_BGRA_MASK21, &(shader_imgnat_22_bgra_mask21_vert_src), &(shader_imgnat_22_bgra_mask21_frag_src), "imgnat_22_bgra_mask21", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM21, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_MASK21_NOMUL, &(shader_imgnat_mask21_nomul_vert_src), &(shader_imgnat_mask21_nomul_frag_src), "imgnat_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM21, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_BGRA_MASK21_NOMUL, &(shader_imgnat_bgra_mask21_nomul_vert_src), &(shader_imgnat_bgra_mask21_nomul_frag_src), "imgnat_bgra_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM21, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_12_MASK21_NOMUL, &(shader_imgnat_12_mask21_nomul_vert_src), &(shader_imgnat_12_mask21_nomul_frag_src), "imgnat_12_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM21, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_21_MASK21_NOMUL, &(shader_imgnat_21_mask21_nomul_vert_src), &(shader_imgnat_21_mask21_nomul_frag_src), "imgnat_21_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM21, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_22_MASK21_NOMUL, &(shader_imgnat_22_mask21_nomul_vert_src), &(shader_imgnat_22_mask21_nomul_frag_src), "imgnat_22_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM21, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_12_BGRA_MASK21_NOMUL, &(shader_imgnat_12_bgra_mask21_nomul_vert_src), &(shader_imgnat_12_bgra_mask21_nomul_frag_src), "imgnat_12_bgra_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM21, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_21_BGRA_MASK21_NOMUL, &(shader_imgnat_21_bgra_mask21_nomul_vert_src), &(shader_imgnat_21_bgra_mask21_nomul_frag_src), "imgnat_21_bgra_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM21, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_22_BGRA_MASK21_NOMUL, &(shader_imgnat_22_bgra_mask21_nomul_vert_src), &(shader_imgnat_22_bgra_mask21_nomul_frag_src), "imgnat_22_bgra_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM21, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_MASK22, &(shader_imgnat_mask22_vert_src), &(shader_imgnat_mask22_frag_src), "imgnat_mask22", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM22, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_BGRA_MASK22, &(shader_imgnat_bgra_mask22_vert_src), &(shader_imgnat_bgra_mask22_frag_src), "imgnat_bgra_mask22", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM22, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_12_MASK22, &(shader_imgnat_12_mask22_vert_src), &(shader_imgnat_12_mask22_frag_src), "imgnat_12_mask22", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM22, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_21_MASK22, &(shader_imgnat_21_mask22_vert_src), &(shader_imgnat_21_mask22_frag_src), "imgnat_21_mask22", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM22, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_22_MASK22, &(shader_imgnat_22_mask22_vert_src), &(shader_imgnat_22_mask22_frag_src), "imgnat_22_mask22", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM22, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_12_BGRA_MASK22, &(shader_imgnat_12_bgra_mask22_vert_src), &(shader_imgnat_12_bgra_mask22_frag_src), "imgnat_12_bgra_mask22", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM22, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_21_BGRA_MASK22, &(shader_imgnat_21_bgra_mask22_vert_src), &(shader_imgnat_21_bgra_mask22_frag_src), "imgnat_21_bgra_mask22", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM22, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_22_BGRA_MASK22, &(shader_imgnat_22_bgra_mask22_vert_src), &(shader_imgnat_22_bgra_mask22_frag_src), "imgnat_22_bgra_mask22", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM22, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_MASK22_NOMUL, &(shader_imgnat_mask22_nomul_vert_src), &(shader_imgnat_mask22_nomul_frag_src), "imgnat_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM22, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_BGRA_MASK22_NOMUL, &(shader_imgnat_bgra_mask22_nomul_vert_src), &(shader_imgnat_bgra_mask22_nomul_frag_src), "imgnat_bgra_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM22, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_12_MASK22_NOMUL, &(shader_imgnat_12_mask22_nomul_vert_src), &(shader_imgnat_12_mask22_nomul_frag_src), "imgnat_12_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM22, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_21_MASK22_NOMUL, &(shader_imgnat_21_mask22_nomul_vert_src), &(shader_imgnat_21_mask22_nomul_frag_src), "imgnat_21_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM22, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_22_MASK22_NOMUL, &(shader_imgnat_22_mask22_nomul_vert_src), &(shader_imgnat_22_mask22_nomul_frag_src), "imgnat_22_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM22, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_12_BGRA_MASK22_NOMUL, &(shader_imgnat_12_bgra_mask22_nomul_vert_src), &(shader_imgnat_12_bgra_mask22_nomul_frag_src), "imgnat_12_bgra_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM22, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_21_BGRA_MASK22_NOMUL, &(shader_imgnat_21_bgra_mask22_nomul_vert_src), &(shader_imgnat_21_bgra_mask22_nomul_frag_src), "imgnat_21_bgra_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM22, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_22_BGRA_MASK22_NOMUL, &(shader_imgnat_22_bgra_mask22_nomul_vert_src), &(shader_imgnat_22_bgra_mask22_nomul_frag_src), "imgnat_22_bgra_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM22, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_AFILL, &(shader_imgnat_afill_vert_src), &(shader_imgnat_afill_frag_src), "imgnat_afill", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 0, 0, 1 },
+   { SHADER_IMGNAT_BGRA_AFILL, &(shader_imgnat_bgra_afill_vert_src), &(shader_imgnat_bgra_afill_frag_src), "imgnat_bgra_afill", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 0, 0, 1 },
+   { SHADER_IMGNAT_NOMUL_AFILL, &(shader_imgnat_nomul_afill_vert_src), &(shader_imgnat_nomul_afill_frag_src), "imgnat_nomul_afill", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 0, 1, 1 },
+   { SHADER_IMGNAT_BGRA_NOMUL_AFILL, &(shader_imgnat_bgra_nomul_afill_vert_src), &(shader_imgnat_bgra_nomul_afill_frag_src), "imgnat_bgra_nomul_afill", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 0, 1, 1 },
+   { SHADER_IMGNAT_12_AFILL, &(shader_imgnat_12_afill_vert_src), &(shader_imgnat_12_afill_frag_src), "imgnat_12_afill", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 0, 0, 1 },
+   { SHADER_IMGNAT_21_AFILL, &(shader_imgnat_21_afill_vert_src), &(shader_imgnat_21_afill_frag_src), "imgnat_21_afill", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 0, 0, 1 },
+   { SHADER_IMGNAT_22_AFILL, &(shader_imgnat_22_afill_vert_src), &(shader_imgnat_22_afill_frag_src), "imgnat_22_afill", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 0, 0, 1 },
+   { SHADER_IMGNAT_12_BGRA_AFILL, &(shader_imgnat_12_bgra_afill_vert_src), &(shader_imgnat_12_bgra_afill_frag_src), "imgnat_12_bgra_afill", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 0, 0, 1 },
+   { SHADER_IMGNAT_21_BGRA_AFILL, &(shader_imgnat_21_bgra_afill_vert_src), &(shader_imgnat_21_bgra_afill_frag_src), "imgnat_21_bgra_afill", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 0, 0, 1 },
+   { SHADER_IMGNAT_22_BGRA_AFILL, &(shader_imgnat_22_bgra_afill_vert_src), &(shader_imgnat_22_bgra_afill_frag_src), "imgnat_22_bgra_afill", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 0, 0, 1 },
+   { SHADER_IMGNAT_12_NOMUL_AFILL, &(shader_imgnat_12_nomul_afill_vert_src), &(shader_imgnat_12_nomul_afill_frag_src), "imgnat_12_nomul_afill", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 0, 1, 1 },
+   { SHADER_IMGNAT_21_NOMUL_AFILL, &(shader_imgnat_21_nomul_afill_vert_src), &(shader_imgnat_21_nomul_afill_frag_src), "imgnat_21_nomul_afill", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 0, 1, 1 },
+   { SHADER_IMGNAT_22_NOMUL_AFILL, &(shader_imgnat_22_nomul_afill_vert_src), &(shader_imgnat_22_nomul_afill_frag_src), "imgnat_22_nomul_afill", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 0, 1, 1 },
+   { SHADER_IMGNAT_12_BGRA_NOMUL_AFILL, &(shader_imgnat_12_bgra_nomul_afill_vert_src), &(shader_imgnat_12_bgra_nomul_afill_frag_src), "imgnat_12_bgra_nomul_afill", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 0, 1, 1 },
+   { SHADER_IMGNAT_21_BGRA_NOMUL_AFILL, &(shader_imgnat_21_bgra_nomul_afill_vert_src), &(shader_imgnat_21_bgra_nomul_afill_frag_src), "imgnat_21_bgra_nomul_afill", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 0, 1, 1 },
+   { SHADER_IMGNAT_22_BGRA_NOMUL_AFILL, &(shader_imgnat_22_bgra_nomul_afill_vert_src), &(shader_imgnat_22_bgra_nomul_afill_frag_src), "imgnat_22_bgra_nomul_afill", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 0, 1, 1 },
    { SHADER_RGB_A_PAIR, &(shader_rgb_a_pair_vert_src), &(shader_rgb_a_pair_frag_src), "rgb_a_pair", SHD_RGB_A_PAIR, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
    { SHADER_RGB_A_PAIR_MASK, &(shader_rgb_a_pair_mask_vert_src), &(shader_rgb_a_pair_mask_frag_src), "rgb_a_pair_mask", SHD_RGB_A_PAIR, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
    { SHADER_RGB_A_PAIR_NOMUL, &(shader_rgb_a_pair_nomul_vert_src), &(shader_rgb_a_pair_nomul_frag_src), "rgb_a_pair_nomul", SHD_RGB_A_PAIR, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },

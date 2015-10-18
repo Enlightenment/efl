@@ -97,6 +97,7 @@ for (( i = 0; i < ${#SHADERS[@]} ; i++ )) ; do
   # Urgh. Some fixups
   case $TYPE in
    IMG) TYPE="IMAGE";;
+   IMGNAT) TYPE="IMAGENATIVE";;
    RGB) TYPE="RGB_A_PAIR";;
    TEX) TYPE="TEX_EXTERNAL";;
   esac

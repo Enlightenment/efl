@@ -222,6 +222,7 @@ enum _Shader_Type {
    SHD_RECT,
    SHD_FONT,
    SHD_IMAGE,
+   SHD_IMAGENATIVE,
    SHD_YUV,
    SHD_YUY2,
    SHD_NV12,
@@ -603,7 +604,7 @@ void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *g
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
 void              evas_gl_common_shader_program_init_done(void);
 void              evas_gl_common_shader_program_shutdown(Evas_GL_Program *p);
-Evas_GL_Shader    evas_gl_common_img_shader_select(Shader_Sampling sam, int nomul, int afill, int bgra, int mask, int masksam);
+Evas_GL_Shader    evas_gl_common_img_shader_select(Shader_Type type, Shader_Sampling sam, int nomul, int afill, int bgra, int mask, int masksam);
 const char       *evas_gl_common_shader_name_get(Evas_GL_Shader shd);
 
 Eina_Bool         evas_gl_common_file_cache_is_dir(const char *file);

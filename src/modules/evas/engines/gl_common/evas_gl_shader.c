@@ -357,16 +357,16 @@ evas_gl_common_shader_program_shutdown(Evas_GL_Program *p)
 }
 
 Evas_GL_Shader
-evas_gl_common_img_shader_select(Shader_Sampling sam, int nomul, int afill, int bgra, int mask, int masksam)
+evas_gl_common_img_shader_select(Shader_Type type, Shader_Sampling sam, int nomul, int afill, int bgra, int mask, int masksam)
 {
    // 256 combinaisons including many impossible
-   static Evas_GL_Shader _shaders[4 * 2 * 2 * 2 * 2 * 4];
+   static Evas_GL_Shader _shaders[4 * 2 * 2 * 2 * 2 * 4 * 2];
    static Eina_Bool init = EINA_FALSE;
    int idx;
 
    if (EINA_UNLIKELY(!init))
      {
-        unsigned k;
+        unsigned int k;
 
         init = EINA_TRUE;
         for (k = 0; k < (sizeof(_shaders) / sizeof(_shaders[0])); k++)
@@ -374,14 +374,27 @@ evas_gl_common_img_shader_select(Shader_Sampling sam, int nomul, int afill, int 
 
         for (k = 0; k < (sizeof(_shaders_source) / sizeof(_shaders_source[0])); k++)
           {
-             if (_shaders_source[k].type != SHD_IMAGE) continue;
-             idx = _shaders_source[k].sam << 6;       // 2 bits
-             idx |= _shaders_source[k].masksam << 4;  // 2 bits
-             idx |= _shaders_source[k].bgra << 3;     // bool
-             idx |= _shaders_source[k].mask << 2;     // bool
-             idx |= _shaders_source[k].nomul << 1;    // bool
-             idx |= _shaders_source[k].afill;         // bool
-             _shaders[idx] = _shaders_source[k].id;
+             if (_shaders_source[k].type == SHD_IMAGE)
+               {
+                  idx = _shaders_source[k].sam << 6;       // 2 bits
+                  idx |= _shaders_source[k].masksam << 4;  // 2 bits
+                  idx |= _shaders_source[k].bgra << 3;     // bool
+                  idx |= _shaders_source[k].mask << 2;     // bool
+                  idx |= _shaders_source[k].nomul << 1;    // bool
+                  idx |= _shaders_source[k].afill;         // bool
+                  _shaders[idx] = _shaders_source[k].id;
+               }
+             else if (_shaders_source[k].type == SHD_IMAGENATIVE)
+               {
+                  idx = _shaders_source[k].sam << 6;       // 2 bits
+                  idx |= _shaders_source[k].masksam << 4;  // 2 bits
+                  idx |= _shaders_source[k].bgra << 3;     // bool
+                  idx |= _shaders_source[k].mask << 2;     // bool
+                  idx |= _shaders_source[k].nomul << 1;    // bool
+                  idx |= _shaders_source[k].afill;         // bool
+                  idx += (4 * 2 * 2 * 2 * 2 * 4);
+                  _shaders[idx] = _shaders_source[k].id;
+               }
           }
      }
 
@@ -391,6 +404,7 @@ evas_gl_common_img_shader_select(Shader_Sampling sam, int nomul, int afill, int 
    idx |= mask << 2;
    idx |= nomul << 1;
    idx |= afill;
+   if (type == SHD_IMAGENATIVE) idx += (4 * 2 * 2 * 2 * 2 * 4);
    return _shaders[idx];
 }
 
