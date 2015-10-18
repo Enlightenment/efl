@@ -334,6 +334,19 @@ _ecore_win32_window_procedure(HWND   window,
        INF("clipboard data updated");
        _ecore_win32_event_handle_selection_notify(data);
        return 0;
+      case WM_SETCURSOR:
+        {
+           Ecore_Win32_Window *w;
+
+           INF("SetCursor");
+           w = (Ecore_Win32_Window *)GetWindowLongPtr(window, GWLP_USERDATA);
+           if (w && w->cursor)
+             {
+                SetCursor(w->cursor);
+                return 1;
+             }
+           return 0;
+        }
        /* GDI notifications */
      case WM_PAINT:
        {
@@ -375,11 +388,12 @@ _ecore_win32_window_procedure(HWND   window,
  *============================================================================*/
 
 
-HINSTANCE           _ecore_win32_instance = NULL;
-double              _ecore_win32_double_click_time = 0.25;
-unsigned long       _ecore_win32_event_last_time = 0;
-Ecore_Win32_Window *_ecore_win32_event_last_window = NULL;
-int                 _ecore_win32_log_dom_global = -1;
+HINSTANCE            _ecore_win32_instance = NULL;
+double               _ecore_win32_double_click_time = 0.25;
+unsigned long        _ecore_win32_event_last_time = 0;
+Ecore_Win32_Window  *_ecore_win32_event_last_window = NULL;
+int                  _ecore_win32_log_dom_global = -1;
+Ecore_Win32_Cursor  *_ecore_win32_cursor_x[77];
 
 int ECORE_WIN32_EVENT_MOUSE_IN              = 0;
 int ECORE_WIN32_EVENT_MOUSE_OUT             = 0;
@@ -456,6 +470,7 @@ ecore_win32_init()
    WNDCLASSEX wc;
    HICON      icon;
    HICON      icon_sm;
+   int        i;
 
    if (++_ecore_win32_init_count != 1)
      return _ecore_win32_init_count;
@@ -545,6 +560,9 @@ ecore_win32_init()
         ECORE_WIN32_EVENT_SELECTION_NOTIFY      = ecore_event_type_new();
      }
 
+   for (i = 0; i < 77; i++)
+     _ecore_win32_cursor_x[i] = _ecore_win32_cursor_x11_shaped_new(i);
+
    return _ecore_win32_init_count;
 
  unregister_class:
@@ -574,8 +592,13 @@ ecore_win32_init()
 EAPI int
 ecore_win32_shutdown()
 {
+   int i;
+
    if (--_ecore_win32_init_count != 0)
      return _ecore_win32_init_count;
+
+   for (i = 0; i < 77; i++)
+     ecore_win32_cursor_free(_ecore_win32_cursor_x[i]);
 
    ecore_win32_dnd_shutdown();
 

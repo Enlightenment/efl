@@ -648,7 +648,7 @@ EAPI void                ecore_win32_cursor_free(Ecore_Win32_Cursor *cursor);
 
 EAPI Ecore_Win32_Cursor *ecore_win32_cursor_shaped_new(Ecore_Win32_Cursor_Shape shape);
 
-EAPI Ecore_Win32_Cursor *ecore_win32_cursor_x11_shaped_new(Ecore_Win32_Cursor_X11_Shape shape);
+EAPI const Ecore_Win32_Cursor *ecore_win32_cursor_x11_shaped_get(Ecore_Win32_Cursor_X11_Shape shape);
 
 EAPI void                ecore_win32_cursor_size_get(int *width, int *height);
 

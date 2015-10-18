@@ -17,6 +17,23 @@
  *============================================================================*/
 
 
+Ecore_Win32_Cursor *
+_ecore_win32_cursor_x11_shaped_new(Ecore_Win32_Cursor_X11_Shape shape)
+{
+   INF("creating X11 shaped cursor");
+
+   if ((shape < ECORE_WIN32_CURSOR_X11_SHAPE_X) ||
+       (shape > ECORE_WIN32_CURSOR_X11_SHAPE_XTERM))
+     return NULL;
+
+   return ecore_win32_cursor_new(_ecore_win32_cursors_x11[shape].mask_and,
+                                 _ecore_win32_cursors_x11[shape].mask_xor,
+                                 32, 32,
+                                 _ecore_win32_cursors_x11[shape].hotspot_x,
+                                 _ecore_win32_cursors_x11[shape].hotspot_y);
+}
+
+
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -293,33 +310,30 @@ ecore_win32_cursor_shaped_new(Ecore_Win32_Cursor_Shape shape)
 }
 
 /**
- * @brief Create a X11 cursor from a X Id.
+ * @brief Retrieve a X11 cursor from a X Id.
  *
  * @param[in] shape The defined X11 shape of the cursor.
  * @return The new cursor.
  *
  * This function returns a defined cursor with a specified X11
- * @p shape. Once the cursor is not used anymore, use
- * ecore_win32_cursor_free() to free the ressources.
+ * @p shape. Do not use ecore_win32_cursor_free() to free the
+ * ressources as it is created once the libray is initialized and
+ * detroyed when it is shut down.
  *
- * @see ecore_win32_cursor_free()
+ * @see ecore_win32_cursor_new()
  *
  * @since 1.16
  */
-EAPI Ecore_Win32_Cursor *
-ecore_win32_cursor_x11_shaped_new(Ecore_Win32_Cursor_X11_Shape shape)
+EAPI const Ecore_Win32_Cursor *
+ecore_win32_cursor_x11_shaped_get(Ecore_Win32_Cursor_X11_Shape shape)
 {
-   INF("getting X11 shape cursor");
+   INF("getting X11 shaped cursor");
 
    if ((shape < ECORE_WIN32_CURSOR_X11_SHAPE_X) ||
        (shape > ECORE_WIN32_CURSOR_X11_SHAPE_XTERM))
      return NULL;
 
-   return ecore_win32_cursor_new(_ecore_win32_cursors_x11[shape].mask_and,
-                                 _ecore_win32_cursors_x11[shape].mask_xor,
-                                 32, 32,
-                                 _ecore_win32_cursors_x11[shape].hotspot_x,
-                                 _ecore_win32_cursors_x11[shape].hotspot_y);
+   return _ecore_win32_cursor_x[shape];
 }
 
 /**
