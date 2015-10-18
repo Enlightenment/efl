@@ -1,4 +1,9 @@
-#include "shader/evas_gl_shaders.x"
+#include "config.h"
+#ifdef WORDS_BIGENDIAN
+# include "shader/evas_gl_shaders_bigendian.x"
+#else
+# include "shader/evas_gl_shaders.x"
+#endif
 
 /////////////////////////////////////////////
 static void

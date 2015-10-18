@@ -5,6 +5,9 @@
 #ifndef GL_TEXTURE_RECTANGLE_NV
 # define GL_TEXTURE_RECTANGLE_NV 0x84F5
 #endif
+#ifndef GL_ABGR
+# define GL_ABGR 0x8000
+#endif
 #ifndef GL_BGRA
 # define GL_BGRA 0x80E1
 #endif

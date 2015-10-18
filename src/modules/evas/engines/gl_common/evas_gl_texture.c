@@ -10,11 +10,19 @@ static const GLenum bgr_fmt    = GL_BGRA;
 static const GLenum bgr_ifmt   = GL_BGRA;
 #else
 static const GLenum rgb_fmt    = GL_RGBA;
+#ifdef WORDS_BIGENDIAN
+static const GLenum rgb_ifmt   = GL_RGBA;
+#else
 static const GLenum rgb_ifmt   = GL_RGB;
+#endif
 static const GLenum bgra_fmt   = GL_BGRA;
 static const GLenum bgra_ifmt  = GL_RGBA;
 static const GLenum bgr_fmt    = GL_BGRA;
+#ifdef WORDS_BIGENDIAN
+static const GLenum bgr_ifmt   = GL_RGBA;
+#else
 static const GLenum bgr_ifmt   = GL_RGB;
+#endif
 #endif
 
 #ifdef GL_GLES

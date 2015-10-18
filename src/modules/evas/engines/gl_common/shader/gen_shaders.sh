@@ -2,8 +2,9 @@
 
 set -e
 
+ENDIAN="$1"
 DIR=`dirname $0`
-OUTPUT=${DIR}/evas_gl_shaders.x
+OUTPUT=${DIR}/evas_gl_shaders"$1".x
 OUTPUT_ENUM=${DIR}/evas_gl_enum.x
 CPP="cpp -P"
 
@@ -82,6 +83,7 @@ for (( i = 0; i < ${#SHADERS[@]} ; i++ )) ; do
   echo "  SHADER   $name"
   UNAME=`echo ${name} |tr "[:lower:]" "[:upper:]"`
   OPTS=""
+  if [[ "$1" == "_bigendian" ]] ; then OPTS="-DBIGENDIAN"; fi
   FGM=${FGM_HEADER}
   TYPE=`echo ${name} |cut -d '_' -f 1 |tr '[:lower:]' '[:upper:]'`
   bgra=0
