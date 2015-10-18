@@ -913,7 +913,6 @@ EAPI int
 eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
 {
    char buffer[PATH_MAX];
-   const char *tmpdir = NULL;
    const char *XXXXXX = NULL;
    int fd, len;
 #ifndef _WIN32
@@ -957,7 +956,6 @@ EAPI Eina_Bool
 eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path)
 {
    char buffer[PATH_MAX];
-   const char *tmpdir = NULL;
    char *tmpdirname;
 
    eina_file_path_join(buffer, sizeof(buffer),
