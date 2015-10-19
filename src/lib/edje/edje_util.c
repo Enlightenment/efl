@@ -5639,7 +5639,7 @@ _edje_program_remove(Edje_Part_Collection *edc, Edje_Program *p)
 EAPI void
 _edje_program_insert(Edje_Part_Collection *edc, Edje_Program *p)
 {
-   Edje_Program ***array;
+   Edje_Program ***array, **temp;
    unsigned int *count;
 
    if (!p->signal && !p->source)
@@ -5671,8 +5671,16 @@ _edje_program_insert(Edje_Part_Collection *edc, Edje_Program *p)
         count = &edc->programs.fnmatch_count;
      }
 
+   temp = *array;
    *array = realloc(*array, sizeof (Edje_Program *) * (*count + 1));
-   (*array)[(*count)++] = p;
+   if (*array)
+     {
+        (*array)[(*count)++] = p;
+     }
+   else
+     {
+        *array = temp;
+     }
 }
 
 const char *
