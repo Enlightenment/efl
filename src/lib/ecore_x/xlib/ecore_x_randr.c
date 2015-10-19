@@ -897,7 +897,6 @@ ecore_x_randr_mode_info_free(Ecore_X_Randr_Mode_Info *mode_info)
           {
              if (mode_info->name) free(mode_info->name);
              free(mode_info);
-             mode_info = NULL;
           }
      }
 #endif
