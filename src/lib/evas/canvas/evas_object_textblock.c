@@ -11533,6 +11533,7 @@ evas_object_textblock_free(Evas_Object *eo_obj)
      }
    if (o->repch) eina_stringshare_del(o->repch);
    if (o->ellip_ti) _item_free(eo_obj, NULL, _ITEM(o->ellip_ti));
+   if (o->bidi_delimiters) eina_stringshare_del(o->bidi_delimiters);
   _format_command_shutdown();
 
   /* remove obstacles */
