@@ -841,11 +841,13 @@ _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Table_Data *pri
 
         cx = x + opt->col * (priv->pad.h);
         cx += _evas_object_table_sum_sizes(cols, 0, opt->col);
-        cw = _evas_object_table_sum_sizes(cols, opt->col, opt->end_col);
+        cw = (opt->colspan - 1) * priv->pad.h;
+        cw += _evas_object_table_sum_sizes(cols, opt->col, opt->end_col);
 
         cy = y + opt->row * (priv->pad.v);
         cy += _evas_object_table_sum_sizes(rows, 0, opt->row);
-        ch = _evas_object_table_sum_sizes(rows, opt->row, opt->end_row);
+        ch = (opt->rowspan - 1) * priv->pad.v;
+        ch += _evas_object_table_sum_sizes(rows, opt->row, opt->end_row);
 
         _evas_object_table_calculate_cell(opt, &cx, &cy, &cw, &ch);
 
