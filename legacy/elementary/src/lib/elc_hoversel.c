@@ -120,7 +120,7 @@ _on_item_clicked(void *data EINA_UNUSED,
    if (item->func) item->func((void *)WIDGET_ITEM_DATA_GET(eo_it), obj2, eo_it);
    eo_do(obj2, eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_it));
 
-   if (sd->auto_changed)
+   if (sd->auto_update)
      {
         Evas_Object *ic;
 
@@ -982,15 +982,15 @@ _elm_hoversel_scrollable_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 }
 
 EOLIAN void
-_elm_hoversel_label_auto_changed_set(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd, Eina_Bool auto_changed)
+_elm_hoversel_auto_update_set(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd, Eina_Bool auto_update)
 {
-   sd->auto_changed = !!auto_changed;
+   sd->auto_update = !!auto_update;
 }
 
 EOLIAN Eina_Bool
-_elm_hoversel_label_auto_changed_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
+_elm_hoversel_auto_update_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
-   return sd->auto_changed;
+   return sd->auto_update;
 }
 
 #include "elm_hoversel_item.eo.c"

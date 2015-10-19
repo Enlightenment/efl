@@ -42,7 +42,7 @@ struct _Elm_Hoversel_Data
    Eina_Bool             horizontal    : 1;
    Eina_Bool             expanded      : 1;
    Eina_Bool             scroll_enabled: 1;
-   Eina_Bool             auto_changed  : 1;
+   Eina_Bool             auto_update   : 1;
 };
 
 typedef struct _Elm_Hoversel_Item_Data Elm_Hoversel_Item_Data;
