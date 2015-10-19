@@ -143,8 +143,8 @@ _evas_gl_common_shader_program_binary_save(Evas_GL_Program *p,
 
 static int
 _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
-                                           Evas_GL_Program_Source *vert,
-                                           Evas_GL_Program_Source *frag,
+                                           const char *vert,
+                                           const char *frag,
                                            const char *name)
 {
    GLint ok;
@@ -152,26 +152,24 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
    p->vert = glCreateShader(GL_VERTEX_SHADER);
    p->frag = glCreateShader(GL_FRAGMENT_SHADER);
 
-   glShaderSource(p->vert, 1,
-                  (const char **)&(vert->src), NULL);
+   glShaderSource(p->vert, 1, &vert, NULL);
    glCompileShader(p->vert);
    ok = 0;
    glGetShaderiv(p->vert, GL_COMPILE_STATUS, &ok);
    if (!ok)
      {
         gl_compile_link_error(p->vert, "compile vertex shader");
-        ERR("Abort compile of shader vert (%s): %s", name, vert->src);
+        ERR("Abort compile of shader vert (%s): %s", name, vert);
         return 0;
      }
-   glShaderSource(p->frag, 1,
-                  (const char **)&(frag->src), NULL);
+   glShaderSource(p->frag, 1, &frag, NULL);
    glCompileShader(p->frag);
    ok = 0;
    glGetShaderiv(p->frag, GL_COMPILE_STATUS, &ok);
    if (!ok)
      {
         gl_compile_link_error(p->frag, "compile fragment shader");
-        ERR("Abort compile of shader frag (%s): %s", name, frag->src);
+        ERR("Abort compile of shader frag (%s): %s", name, frag);
         return 0;
      }
 
@@ -203,8 +201,8 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
    if (!ok)
      {
         gl_compile_link_error(p->prog, "link fragment and vertex shaders");
-        ERR("Abort compile of shader frag (%s): %s", name, frag->src);
-        ERR("Abort compile of shader vert (%s): %s", name, vert->src);
+        ERR("Abort compile of shader frag (%s): %s", name, frag);
+        ERR("Abort compile of shader vert (%s): %s", name, vert);
         return 0;
      }
 

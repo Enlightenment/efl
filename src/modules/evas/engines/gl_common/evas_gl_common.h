@@ -54,7 +54,6 @@
 #define SHAD_MASKSAM 8
 
 typedef struct _Evas_GL_Program               Evas_GL_Program;
-typedef struct _Evas_GL_Program_Source        Evas_GL_Program_Source;
 typedef struct _Evas_GL_Shared                Evas_GL_Shared;
 typedef struct _Evas_Engine_GL_Context        Evas_Engine_GL_Context;
 typedef struct _Evas_GL_Texture_Pool          Evas_GL_Texture_Pool;
@@ -103,11 +102,6 @@ struct _Evas_GL_Program
 
    int tex_count;
    Eina_Bool reset;
-};
-
-struct _Evas_GL_Program_Source
-{
-   const char *src;
 };
 
 struct _Evas_GL_Shared

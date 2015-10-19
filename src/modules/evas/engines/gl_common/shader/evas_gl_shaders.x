@@ -3,7 +3,7 @@
 
 #include "../evas_gl_private.h"
 
-static const char rect_frag_glsl[] =
+static const char rect_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -21,12 +21,8 @@ static const char rect_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_rect_frag_src =
-{
-   rect_frag_glsl
-};
 
-static const char rect_vert_glsl[] =
+static const char rect_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -39,12 +35,8 @@ static const char rect_vert_glsl[] =
    "   gl_Position = mvp * vertex;\n"
    "   col = color;\n"
    "}\n";
-Evas_GL_Program_Source shader_rect_vert_src =
-{
-   rect_vert_glsl
-};
 
-static const char rect_mask_frag_glsl[] =
+static const char rect_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -67,12 +59,8 @@ static const char rect_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_rect_mask_frag_src =
-{
-   rect_mask_frag_glsl
-};
 
-static const char rect_mask_vert_glsl[] =
+static const char rect_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -89,12 +77,8 @@ static const char rect_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_rect_mask_vert_src =
-{
-   rect_mask_vert_glsl
-};
 
-static const char rect_mask12_frag_glsl[] =
+static const char rect_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -121,12 +105,8 @@ static const char rect_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_rect_mask12_frag_src =
-{
-   rect_mask12_frag_glsl
-};
 
-static const char rect_mask12_vert_glsl[] =
+static const char rect_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -149,12 +129,8 @@ static const char rect_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_rect_mask12_vert_src =
-{
-   rect_mask12_vert_glsl
-};
 
-static const char rect_mask21_frag_glsl[] =
+static const char rect_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -181,12 +157,8 @@ static const char rect_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_rect_mask21_frag_src =
-{
-   rect_mask21_frag_glsl
-};
 
-static const char rect_mask21_vert_glsl[] =
+static const char rect_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -209,12 +181,8 @@ static const char rect_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_rect_mask21_vert_src =
-{
-   rect_mask21_vert_glsl
-};
 
-static const char rect_mask22_frag_glsl[] =
+static const char rect_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -243,12 +211,8 @@ static const char rect_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_rect_mask22_frag_src =
-{
-   rect_mask22_frag_glsl
-};
 
-static const char rect_mask22_vert_glsl[] =
+static const char rect_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -273,12 +237,8 @@ static const char rect_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_rect_mask22_vert_src =
-{
-   rect_mask22_vert_glsl
-};
 
-static const char font_frag_glsl[] =
+static const char font_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -298,12 +258,8 @@ static const char font_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_font_frag_src =
-{
-   font_frag_glsl
-};
 
-static const char font_vert_glsl[] =
+static const char font_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -319,12 +275,8 @@ static const char font_vert_glsl[] =
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_font_vert_src =
-{
-   font_vert_glsl
-};
 
-static const char font_mask_frag_glsl[] =
+static const char font_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -349,12 +301,8 @@ static const char font_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_font_mask_frag_src =
-{
-   font_mask_frag_glsl
-};
 
-static const char font_mask_vert_glsl[] =
+static const char font_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -374,12 +322,8 @@ static const char font_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_font_mask_vert_src =
-{
-   font_mask_vert_glsl
-};
 
-static const char font_mask12_frag_glsl[] =
+static const char font_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -408,12 +352,8 @@ static const char font_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_font_mask12_frag_src =
-{
-   font_mask12_frag_glsl
-};
 
-static const char font_mask12_vert_glsl[] =
+static const char font_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -439,12 +379,8 @@ static const char font_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_font_mask12_vert_src =
-{
-   font_mask12_vert_glsl
-};
 
-static const char font_mask21_frag_glsl[] =
+static const char font_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -473,12 +409,8 @@ static const char font_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_font_mask21_frag_src =
-{
-   font_mask21_frag_glsl
-};
 
-static const char font_mask21_vert_glsl[] =
+static const char font_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -504,12 +436,8 @@ static const char font_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_font_mask21_vert_src =
-{
-   font_mask21_vert_glsl
-};
 
-static const char font_mask22_frag_glsl[] =
+static const char font_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -540,12 +468,8 @@ static const char font_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_font_mask22_frag_src =
-{
-   font_mask22_frag_glsl
-};
 
-static const char font_mask22_vert_glsl[] =
+static const char font_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -573,12 +497,8 @@ static const char font_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_font_mask22_vert_src =
-{
-   font_mask22_vert_glsl
-};
 
-static const char img_frag_glsl[] =
+static const char img_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -598,12 +518,8 @@ static const char img_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_frag_src =
-{
-   img_frag_glsl
-};
 
-static const char img_vert_glsl[] =
+static const char img_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -619,12 +535,8 @@ static const char img_vert_glsl[] =
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_vert_src =
-{
-   img_vert_glsl
-};
 
-static const char img_bgra_frag_glsl[] =
+static const char img_bgra_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -644,12 +556,8 @@ static const char img_bgra_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_frag_src =
-{
-   img_bgra_frag_glsl
-};
 
-static const char img_bgra_vert_glsl[] =
+static const char img_bgra_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -665,12 +573,8 @@ static const char img_bgra_vert_glsl[] =
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_vert_src =
-{
-   img_bgra_vert_glsl
-};
 
-static const char img_12_frag_glsl[] =
+static const char img_12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -694,12 +598,8 @@ static const char img_12_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_frag_src =
-{
-   img_12_frag_glsl
-};
 
-static const char img_12_vert_glsl[] =
+static const char img_12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -721,12 +621,8 @@ static const char img_12_vert_glsl[] =
    "   tex_s[1] = vec2(0, tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_vert_src =
-{
-   img_12_vert_glsl
-};
 
-static const char img_21_frag_glsl[] =
+static const char img_21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -750,12 +646,8 @@ static const char img_21_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_frag_src =
-{
-   img_21_frag_glsl
-};
 
-static const char img_21_vert_glsl[] =
+static const char img_21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -777,12 +669,8 @@ static const char img_21_vert_glsl[] =
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_vert_src =
-{
-   img_21_vert_glsl
-};
 
-static const char img_22_frag_glsl[] =
+static const char img_22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -808,12 +696,8 @@ static const char img_22_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_frag_src =
-{
-   img_22_frag_glsl
-};
 
-static const char img_22_vert_glsl[] =
+static const char img_22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -837,12 +721,8 @@ static const char img_22_vert_glsl[] =
    "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
    "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_vert_src =
-{
-   img_22_vert_glsl
-};
 
-static const char img_12_bgra_frag_glsl[] =
+static const char img_12_bgra_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -866,12 +746,8 @@ static const char img_12_bgra_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_frag_src =
-{
-   img_12_bgra_frag_glsl
-};
 
-static const char img_12_bgra_vert_glsl[] =
+static const char img_12_bgra_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -893,12 +769,8 @@ static const char img_12_bgra_vert_glsl[] =
    "   tex_s[1] = vec2(0, tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_vert_src =
-{
-   img_12_bgra_vert_glsl
-};
 
-static const char img_21_bgra_frag_glsl[] =
+static const char img_21_bgra_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -922,12 +794,8 @@ static const char img_21_bgra_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_frag_src =
-{
-   img_21_bgra_frag_glsl
-};
 
-static const char img_21_bgra_vert_glsl[] =
+static const char img_21_bgra_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -949,12 +817,8 @@ static const char img_21_bgra_vert_glsl[] =
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_vert_src =
-{
-   img_21_bgra_vert_glsl
-};
 
-static const char img_22_bgra_frag_glsl[] =
+static const char img_22_bgra_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -980,12 +844,8 @@ static const char img_22_bgra_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_frag_src =
-{
-   img_22_bgra_frag_glsl
-};
 
-static const char img_22_bgra_vert_glsl[] =
+static const char img_22_bgra_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1009,12 +869,8 @@ static const char img_22_bgra_vert_glsl[] =
    "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
    "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_vert_src =
-{
-   img_22_bgra_vert_glsl
-};
 
-static const char img_mask_frag_glsl[] =
+static const char img_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1039,12 +895,8 @@ static const char img_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_mask_frag_src =
-{
-   img_mask_frag_glsl
-};
 
-static const char img_mask_vert_glsl[] =
+static const char img_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1064,12 +916,8 @@ static const char img_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_mask_vert_src =
-{
-   img_mask_vert_glsl
-};
 
-static const char img_bgra_mask_frag_glsl[] =
+static const char img_bgra_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1094,12 +942,8 @@ static const char img_bgra_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_mask_frag_src =
-{
-   img_bgra_mask_frag_glsl
-};
 
-static const char img_bgra_mask_vert_glsl[] =
+static const char img_bgra_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1119,12 +963,8 @@ static const char img_bgra_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_mask_vert_src =
-{
-   img_bgra_mask_vert_glsl
-};
 
-static const char img_12_mask_frag_glsl[] =
+static const char img_12_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1153,12 +993,8 @@ static const char img_12_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_mask_frag_src =
-{
-   img_12_mask_frag_glsl
-};
 
-static const char img_12_mask_vert_glsl[] =
+static const char img_12_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1184,12 +1020,8 @@ static const char img_12_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_mask_vert_src =
-{
-   img_12_mask_vert_glsl
-};
 
-static const char img_21_mask_frag_glsl[] =
+static const char img_21_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1218,12 +1050,8 @@ static const char img_21_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_mask_frag_src =
-{
-   img_21_mask_frag_glsl
-};
 
-static const char img_21_mask_vert_glsl[] =
+static const char img_21_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1249,12 +1077,8 @@ static const char img_21_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_mask_vert_src =
-{
-   img_21_mask_vert_glsl
-};
 
-static const char img_22_mask_frag_glsl[] =
+static const char img_22_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1285,12 +1109,8 @@ static const char img_22_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_mask_frag_src =
-{
-   img_22_mask_frag_glsl
-};
 
-static const char img_22_mask_vert_glsl[] =
+static const char img_22_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1318,12 +1138,8 @@ static const char img_22_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_mask_vert_src =
-{
-   img_22_mask_vert_glsl
-};
 
-static const char img_12_bgra_mask_frag_glsl[] =
+static const char img_12_bgra_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1352,12 +1168,8 @@ static const char img_12_bgra_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_mask_frag_src =
-{
-   img_12_bgra_mask_frag_glsl
-};
 
-static const char img_12_bgra_mask_vert_glsl[] =
+static const char img_12_bgra_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1383,12 +1195,8 @@ static const char img_12_bgra_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_mask_vert_src =
-{
-   img_12_bgra_mask_vert_glsl
-};
 
-static const char img_21_bgra_mask_frag_glsl[] =
+static const char img_21_bgra_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1417,12 +1225,8 @@ static const char img_21_bgra_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_mask_frag_src =
-{
-   img_21_bgra_mask_frag_glsl
-};
 
-static const char img_21_bgra_mask_vert_glsl[] =
+static const char img_21_bgra_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1448,12 +1252,8 @@ static const char img_21_bgra_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_mask_vert_src =
-{
-   img_21_bgra_mask_vert_glsl
-};
 
-static const char img_22_bgra_mask_frag_glsl[] =
+static const char img_22_bgra_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1484,12 +1284,8 @@ static const char img_22_bgra_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_mask_frag_src =
-{
-   img_22_bgra_mask_frag_glsl
-};
 
-static const char img_22_bgra_mask_vert_glsl[] =
+static const char img_22_bgra_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1517,12 +1313,8 @@ static const char img_22_bgra_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_mask_vert_src =
-{
-   img_22_bgra_mask_vert_glsl
-};
 
-static const char img_nomul_frag_glsl[] =
+static const char img_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1540,12 +1332,8 @@ static const char img_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_nomul_frag_src =
-{
-   img_nomul_frag_glsl
-};
 
-static const char img_nomul_vert_glsl[] =
+static const char img_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1558,12 +1346,8 @@ static const char img_nomul_vert_glsl[] =
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_nomul_vert_src =
-{
-   img_nomul_vert_glsl
-};
 
-static const char img_bgra_nomul_frag_glsl[] =
+static const char img_bgra_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1581,12 +1365,8 @@ static const char img_bgra_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_nomul_frag_src =
-{
-   img_bgra_nomul_frag_glsl
-};
 
-static const char img_bgra_nomul_vert_glsl[] =
+static const char img_bgra_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1599,12 +1379,8 @@ static const char img_bgra_nomul_vert_glsl[] =
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_nomul_vert_src =
-{
-   img_bgra_nomul_vert_glsl
-};
 
-static const char img_12_nomul_frag_glsl[] =
+static const char img_12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1626,12 +1402,8 @@ static const char img_12_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_nomul_frag_src =
-{
-   img_12_nomul_frag_glsl
-};
 
-static const char img_12_nomul_vert_glsl[] =
+static const char img_12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1650,12 +1422,8 @@ static const char img_12_nomul_vert_glsl[] =
    "   tex_s[1] = vec2(0, tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_nomul_vert_src =
-{
-   img_12_nomul_vert_glsl
-};
 
-static const char img_21_nomul_frag_glsl[] =
+static const char img_21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1677,12 +1445,8 @@ static const char img_21_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_nomul_frag_src =
-{
-   img_21_nomul_frag_glsl
-};
 
-static const char img_21_nomul_vert_glsl[] =
+static const char img_21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1701,12 +1465,8 @@ static const char img_21_nomul_vert_glsl[] =
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_nomul_vert_src =
-{
-   img_21_nomul_vert_glsl
-};
 
-static const char img_22_nomul_frag_glsl[] =
+static const char img_22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1730,12 +1490,8 @@ static const char img_22_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_nomul_frag_src =
-{
-   img_22_nomul_frag_glsl
-};
 
-static const char img_22_nomul_vert_glsl[] =
+static const char img_22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1756,12 +1512,8 @@ static const char img_22_nomul_vert_glsl[] =
    "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
    "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_nomul_vert_src =
-{
-   img_22_nomul_vert_glsl
-};
 
-static const char img_12_bgra_nomul_frag_glsl[] =
+static const char img_12_bgra_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1783,12 +1535,8 @@ static const char img_12_bgra_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_nomul_frag_src =
-{
-   img_12_bgra_nomul_frag_glsl
-};
 
-static const char img_12_bgra_nomul_vert_glsl[] =
+static const char img_12_bgra_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1807,12 +1555,8 @@ static const char img_12_bgra_nomul_vert_glsl[] =
    "   tex_s[1] = vec2(0, tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_nomul_vert_src =
-{
-   img_12_bgra_nomul_vert_glsl
-};
 
-static const char img_21_bgra_nomul_frag_glsl[] =
+static const char img_21_bgra_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1834,12 +1578,8 @@ static const char img_21_bgra_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_nomul_frag_src =
-{
-   img_21_bgra_nomul_frag_glsl
-};
 
-static const char img_21_bgra_nomul_vert_glsl[] =
+static const char img_21_bgra_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1858,12 +1598,8 @@ static const char img_21_bgra_nomul_vert_glsl[] =
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_nomul_vert_src =
-{
-   img_21_bgra_nomul_vert_glsl
-};
 
-static const char img_22_bgra_nomul_frag_glsl[] =
+static const char img_22_bgra_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1887,12 +1623,8 @@ static const char img_22_bgra_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_nomul_frag_src =
-{
-   img_22_bgra_nomul_frag_glsl
-};
 
-static const char img_22_bgra_nomul_vert_glsl[] =
+static const char img_22_bgra_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1913,12 +1645,8 @@ static const char img_22_bgra_nomul_vert_glsl[] =
    "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
    "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_nomul_vert_src =
-{
-   img_22_bgra_nomul_vert_glsl
-};
 
-static const char img_mask_nomul_frag_glsl[] =
+static const char img_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1941,12 +1669,8 @@ static const char img_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_mask_nomul_frag_src =
-{
-   img_mask_nomul_frag_glsl
-};
 
-static const char img_mask_nomul_vert_glsl[] =
+static const char img_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -1963,12 +1687,8 @@ static const char img_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_mask_nomul_vert_src =
-{
-   img_mask_nomul_vert_glsl
-};
 
-static const char img_bgra_mask_nomul_frag_glsl[] =
+static const char img_bgra_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -1991,12 +1711,8 @@ static const char img_bgra_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_mask_nomul_frag_src =
-{
-   img_bgra_mask_nomul_frag_glsl
-};
 
-static const char img_bgra_mask_nomul_vert_glsl[] =
+static const char img_bgra_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2013,12 +1729,8 @@ static const char img_bgra_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_mask_nomul_vert_src =
-{
-   img_bgra_mask_nomul_vert_glsl
-};
 
-static const char img_12_mask_nomul_frag_glsl[] =
+static const char img_12_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2045,12 +1757,8 @@ static const char img_12_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_mask_nomul_frag_src =
-{
-   img_12_mask_nomul_frag_glsl
-};
 
-static const char img_12_mask_nomul_vert_glsl[] =
+static const char img_12_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2073,12 +1781,8 @@ static const char img_12_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_mask_nomul_vert_src =
-{
-   img_12_mask_nomul_vert_glsl
-};
 
-static const char img_21_mask_nomul_frag_glsl[] =
+static const char img_21_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2105,12 +1809,8 @@ static const char img_21_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_mask_nomul_frag_src =
-{
-   img_21_mask_nomul_frag_glsl
-};
 
-static const char img_21_mask_nomul_vert_glsl[] =
+static const char img_21_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2133,12 +1833,8 @@ static const char img_21_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_mask_nomul_vert_src =
-{
-   img_21_mask_nomul_vert_glsl
-};
 
-static const char img_22_mask_nomul_frag_glsl[] =
+static const char img_22_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2167,12 +1863,8 @@ static const char img_22_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_mask_nomul_frag_src =
-{
-   img_22_mask_nomul_frag_glsl
-};
 
-static const char img_22_mask_nomul_vert_glsl[] =
+static const char img_22_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2197,12 +1889,8 @@ static const char img_22_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_mask_nomul_vert_src =
-{
-   img_22_mask_nomul_vert_glsl
-};
 
-static const char img_12_bgra_mask_nomul_frag_glsl[] =
+static const char img_12_bgra_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2229,12 +1917,8 @@ static const char img_12_bgra_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_mask_nomul_frag_src =
-{
-   img_12_bgra_mask_nomul_frag_glsl
-};
 
-static const char img_12_bgra_mask_nomul_vert_glsl[] =
+static const char img_12_bgra_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2257,12 +1941,8 @@ static const char img_12_bgra_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_mask_nomul_vert_src =
-{
-   img_12_bgra_mask_nomul_vert_glsl
-};
 
-static const char img_21_bgra_mask_nomul_frag_glsl[] =
+static const char img_21_bgra_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2289,12 +1969,8 @@ static const char img_21_bgra_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_mask_nomul_frag_src =
-{
-   img_21_bgra_mask_nomul_frag_glsl
-};
 
-static const char img_21_bgra_mask_nomul_vert_glsl[] =
+static const char img_21_bgra_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2317,12 +1993,8 @@ static const char img_21_bgra_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_mask_nomul_vert_src =
-{
-   img_21_bgra_mask_nomul_vert_glsl
-};
 
-static const char img_22_bgra_mask_nomul_frag_glsl[] =
+static const char img_22_bgra_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2351,12 +2023,8 @@ static const char img_22_bgra_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_mask_nomul_frag_src =
-{
-   img_22_bgra_mask_nomul_frag_glsl
-};
 
-static const char img_22_bgra_mask_nomul_vert_glsl[] =
+static const char img_22_bgra_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2381,12 +2049,8 @@ static const char img_22_bgra_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_mask_nomul_vert_src =
-{
-   img_22_bgra_mask_nomul_vert_glsl
-};
 
-static const char img_mask12_frag_glsl[] =
+static const char img_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2415,12 +2079,8 @@ static const char img_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_mask12_frag_src =
-{
-   img_mask12_frag_glsl
-};
 
-static const char img_mask12_vert_glsl[] =
+static const char img_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2446,12 +2106,8 @@ static const char img_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_mask12_vert_src =
-{
-   img_mask12_vert_glsl
-};
 
-static const char img_bgra_mask12_frag_glsl[] =
+static const char img_bgra_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2480,12 +2136,8 @@ static const char img_bgra_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_mask12_frag_src =
-{
-   img_bgra_mask12_frag_glsl
-};
 
-static const char img_bgra_mask12_vert_glsl[] =
+static const char img_bgra_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2511,12 +2163,8 @@ static const char img_bgra_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_mask12_vert_src =
-{
-   img_bgra_mask12_vert_glsl
-};
 
-static const char img_12_mask12_frag_glsl[] =
+static const char img_12_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2549,12 +2197,8 @@ static const char img_12_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_mask12_frag_src =
-{
-   img_12_mask12_frag_glsl
-};
 
-static const char img_12_mask12_vert_glsl[] =
+static const char img_12_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2586,12 +2230,8 @@ static const char img_12_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_mask12_vert_src =
-{
-   img_12_mask12_vert_glsl
-};
 
-static const char img_21_mask12_frag_glsl[] =
+static const char img_21_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2624,12 +2264,8 @@ static const char img_21_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_mask12_frag_src =
-{
-   img_21_mask12_frag_glsl
-};
 
-static const char img_21_mask12_vert_glsl[] =
+static const char img_21_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2661,12 +2297,8 @@ static const char img_21_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_mask12_vert_src =
-{
-   img_21_mask12_vert_glsl
-};
 
-static const char img_22_mask12_frag_glsl[] =
+static const char img_22_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2701,12 +2333,8 @@ static const char img_22_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_mask12_frag_src =
-{
-   img_22_mask12_frag_glsl
-};
 
-static const char img_22_mask12_vert_glsl[] =
+static const char img_22_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2740,12 +2368,8 @@ static const char img_22_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_mask12_vert_src =
-{
-   img_22_mask12_vert_glsl
-};
 
-static const char img_12_bgra_mask12_frag_glsl[] =
+static const char img_12_bgra_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2778,12 +2402,8 @@ static const char img_12_bgra_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_mask12_frag_src =
-{
-   img_12_bgra_mask12_frag_glsl
-};
 
-static const char img_12_bgra_mask12_vert_glsl[] =
+static const char img_12_bgra_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2815,12 +2435,8 @@ static const char img_12_bgra_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_mask12_vert_src =
-{
-   img_12_bgra_mask12_vert_glsl
-};
 
-static const char img_21_bgra_mask12_frag_glsl[] =
+static const char img_21_bgra_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2853,12 +2469,8 @@ static const char img_21_bgra_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_mask12_frag_src =
-{
-   img_21_bgra_mask12_frag_glsl
-};
 
-static const char img_21_bgra_mask12_vert_glsl[] =
+static const char img_21_bgra_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2890,12 +2502,8 @@ static const char img_21_bgra_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_mask12_vert_src =
-{
-   img_21_bgra_mask12_vert_glsl
-};
 
-static const char img_22_bgra_mask12_frag_glsl[] =
+static const char img_22_bgra_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -2930,12 +2538,8 @@ static const char img_22_bgra_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_mask12_frag_src =
-{
-   img_22_bgra_mask12_frag_glsl
-};
 
-static const char img_22_bgra_mask12_vert_glsl[] =
+static const char img_22_bgra_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -2969,12 +2573,8 @@ static const char img_22_bgra_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_mask12_vert_src =
-{
-   img_22_bgra_mask12_vert_glsl
-};
 
-static const char img_mask12_nomul_frag_glsl[] =
+static const char img_mask12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -3001,12 +2601,8 @@ static const char img_mask12_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_mask12_nomul_frag_src =
-{
-   img_mask12_nomul_frag_glsl
-};
 
-static const char img_mask12_nomul_vert_glsl[] =
+static const char img_mask12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -3029,12 +2625,8 @@ static const char img_mask12_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_mask12_nomul_vert_src =
-{
-   img_mask12_nomul_vert_glsl
-};
 
-static const char img_bgra_mask12_nomul_frag_glsl[] =
+static const char img_bgra_mask12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -3061,12 +2653,8 @@ static const char img_bgra_mask12_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_mask12_nomul_frag_src =
-{
-   img_bgra_mask12_nomul_frag_glsl
-};
 
-static const char img_bgra_mask12_nomul_vert_glsl[] =
+static const char img_bgra_mask12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -3089,12 +2677,8 @@ static const char img_bgra_mask12_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_mask12_nomul_vert_src =
-{
-   img_bgra_mask12_nomul_vert_glsl
-};
 
-static const char img_12_mask12_nomul_frag_glsl[] =
+static const char img_12_mask12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -3125,12 +2709,8 @@ static const char img_12_mask12_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_mask12_nomul_frag_src =
-{
-   img_12_mask12_nomul_frag_glsl
-};
 
-static const char img_12_mask12_nomul_vert_glsl[] =
+static const char img_12_mask12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -3159,12 +2739,8 @@ static const char img_12_mask12_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_mask12_nomul_vert_src =
-{
-   img_12_mask12_nomul_vert_glsl
-};
 
-static const char img_21_mask12_nomul_frag_glsl[] =
+static const char img_21_mask12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -3195,12 +2771,8 @@ static const char img_21_mask12_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_mask12_nomul_frag_src =
-{
-   img_21_mask12_nomul_frag_glsl
-};
 
-static const char img_21_mask12_nomul_vert_glsl[] =
+static const char img_21_mask12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -3229,12 +2801,8 @@ static const char img_21_mask12_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_mask12_nomul_vert_src =
-{
-   img_21_mask12_nomul_vert_glsl
-};
 
-static const char img_22_mask12_nomul_frag_glsl[] =
+static const char img_22_mask12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -3267,12 +2835,8 @@ static const char img_22_mask12_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_mask12_nomul_frag_src =
-{
-   img_22_mask12_nomul_frag_glsl
-};
 
-static const char img_22_mask12_nomul_vert_glsl[] =
+static const char img_22_mask12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -3303,12 +2867,8 @@ static const char img_22_mask12_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_mask12_nomul_vert_src =
-{
-   img_22_mask12_nomul_vert_glsl
-};
 
-static const char img_12_bgra_mask12_nomul_frag_glsl[] =
+static const char img_12_bgra_mask12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -3339,12 +2899,8 @@ static const char img_12_bgra_mask12_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_mask12_nomul_frag_src =
-{
-   img_12_bgra_mask12_nomul_frag_glsl
-};
 
-static const char img_12_bgra_mask12_nomul_vert_glsl[] =
+static const char img_12_bgra_mask12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -3373,12 +2929,8 @@ static const char img_12_bgra_mask12_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_mask12_nomul_vert_src =
-{
-   img_12_bgra_mask12_nomul_vert_glsl
-};
 
-static const char img_21_bgra_mask12_nomul_frag_glsl[] =
+static const char img_21_bgra_mask12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -3409,12 +2961,8 @@ static const char img_21_bgra_mask12_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_mask12_nomul_frag_src =
-{
-   img_21_bgra_mask12_nomul_frag_glsl
-};
 
-static const char img_21_bgra_mask12_nomul_vert_glsl[] =
+static const char img_21_bgra_mask12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -3443,12 +2991,8 @@ static const char img_21_bgra_mask12_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_mask12_nomul_vert_src =
-{
-   img_21_bgra_mask12_nomul_vert_glsl
-};
 
-static const char img_22_bgra_mask12_nomul_frag_glsl[] =
+static const char img_22_bgra_mask12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -3481,12 +3025,8 @@ static const char img_22_bgra_mask12_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_mask12_nomul_frag_src =
-{
-   img_22_bgra_mask12_nomul_frag_glsl
-};
 
-static const char img_22_bgra_mask12_nomul_vert_glsl[] =
+static const char img_22_bgra_mask12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -3517,12 +3057,8 @@ static const char img_22_bgra_mask12_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_mask12_nomul_vert_src =
-{
-   img_22_bgra_mask12_nomul_vert_glsl
-};
 
-static const char img_mask21_frag_glsl[] =
+static const char img_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -3551,12 +3087,8 @@ static const char img_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_mask21_frag_src =
-{
-   img_mask21_frag_glsl
-};
 
-static const char img_mask21_vert_glsl[] =
+static const char img_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -3582,12 +3114,8 @@ static const char img_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_mask21_vert_src =
-{
-   img_mask21_vert_glsl
-};
 
-static const char img_bgra_mask21_frag_glsl[] =
+static const char img_bgra_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -3616,12 +3144,8 @@ static const char img_bgra_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_mask21_frag_src =
-{
-   img_bgra_mask21_frag_glsl
-};
 
-static const char img_bgra_mask21_vert_glsl[] =
+static const char img_bgra_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -3647,12 +3171,8 @@ static const char img_bgra_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_mask21_vert_src =
-{
-   img_bgra_mask21_vert_glsl
-};
 
-static const char img_12_mask21_frag_glsl[] =
+static const char img_12_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -3685,12 +3205,8 @@ static const char img_12_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_mask21_frag_src =
-{
-   img_12_mask21_frag_glsl
-};
 
-static const char img_12_mask21_vert_glsl[] =
+static const char img_12_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -3722,12 +3238,8 @@ static const char img_12_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_mask21_vert_src =
-{
-   img_12_mask21_vert_glsl
-};
 
-static const char img_21_mask21_frag_glsl[] =
+static const char img_21_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -3760,12 +3272,8 @@ static const char img_21_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_mask21_frag_src =
-{
-   img_21_mask21_frag_glsl
-};
 
-static const char img_21_mask21_vert_glsl[] =
+static const char img_21_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -3797,12 +3305,8 @@ static const char img_21_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_mask21_vert_src =
-{
-   img_21_mask21_vert_glsl
-};
 
-static const char img_22_mask21_frag_glsl[] =
+static const char img_22_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -3837,12 +3341,8 @@ static const char img_22_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_mask21_frag_src =
-{
-   img_22_mask21_frag_glsl
-};
 
-static const char img_22_mask21_vert_glsl[] =
+static const char img_22_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -3876,12 +3376,8 @@ static const char img_22_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_mask21_vert_src =
-{
-   img_22_mask21_vert_glsl
-};
 
-static const char img_12_bgra_mask21_frag_glsl[] =
+static const char img_12_bgra_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -3914,12 +3410,8 @@ static const char img_12_bgra_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_mask21_frag_src =
-{
-   img_12_bgra_mask21_frag_glsl
-};
 
-static const char img_12_bgra_mask21_vert_glsl[] =
+static const char img_12_bgra_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -3951,12 +3443,8 @@ static const char img_12_bgra_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_mask21_vert_src =
-{
-   img_12_bgra_mask21_vert_glsl
-};
 
-static const char img_21_bgra_mask21_frag_glsl[] =
+static const char img_21_bgra_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -3989,12 +3477,8 @@ static const char img_21_bgra_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_mask21_frag_src =
-{
-   img_21_bgra_mask21_frag_glsl
-};
 
-static const char img_21_bgra_mask21_vert_glsl[] =
+static const char img_21_bgra_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -4026,12 +3510,8 @@ static const char img_21_bgra_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_mask21_vert_src =
-{
-   img_21_bgra_mask21_vert_glsl
-};
 
-static const char img_22_bgra_mask21_frag_glsl[] =
+static const char img_22_bgra_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -4066,12 +3546,8 @@ static const char img_22_bgra_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_mask21_frag_src =
-{
-   img_22_bgra_mask21_frag_glsl
-};
 
-static const char img_22_bgra_mask21_vert_glsl[] =
+static const char img_22_bgra_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -4105,12 +3581,8 @@ static const char img_22_bgra_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_mask21_vert_src =
-{
-   img_22_bgra_mask21_vert_glsl
-};
 
-static const char img_mask21_nomul_frag_glsl[] =
+static const char img_mask21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -4137,12 +3609,8 @@ static const char img_mask21_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_mask21_nomul_frag_src =
-{
-   img_mask21_nomul_frag_glsl
-};
 
-static const char img_mask21_nomul_vert_glsl[] =
+static const char img_mask21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -4165,12 +3633,8 @@ static const char img_mask21_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_mask21_nomul_vert_src =
-{
-   img_mask21_nomul_vert_glsl
-};
 
-static const char img_bgra_mask21_nomul_frag_glsl[] =
+static const char img_bgra_mask21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -4197,12 +3661,8 @@ static const char img_bgra_mask21_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_mask21_nomul_frag_src =
-{
-   img_bgra_mask21_nomul_frag_glsl
-};
 
-static const char img_bgra_mask21_nomul_vert_glsl[] =
+static const char img_bgra_mask21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -4225,12 +3685,8 @@ static const char img_bgra_mask21_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_mask21_nomul_vert_src =
-{
-   img_bgra_mask21_nomul_vert_glsl
-};
 
-static const char img_12_mask21_nomul_frag_glsl[] =
+static const char img_12_mask21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -4261,12 +3717,8 @@ static const char img_12_mask21_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_mask21_nomul_frag_src =
-{
-   img_12_mask21_nomul_frag_glsl
-};
 
-static const char img_12_mask21_nomul_vert_glsl[] =
+static const char img_12_mask21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -4295,12 +3747,8 @@ static const char img_12_mask21_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_mask21_nomul_vert_src =
-{
-   img_12_mask21_nomul_vert_glsl
-};
 
-static const char img_21_mask21_nomul_frag_glsl[] =
+static const char img_21_mask21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -4331,12 +3779,8 @@ static const char img_21_mask21_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_mask21_nomul_frag_src =
-{
-   img_21_mask21_nomul_frag_glsl
-};
 
-static const char img_21_mask21_nomul_vert_glsl[] =
+static const char img_21_mask21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -4365,12 +3809,8 @@ static const char img_21_mask21_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_mask21_nomul_vert_src =
-{
-   img_21_mask21_nomul_vert_glsl
-};
 
-static const char img_22_mask21_nomul_frag_glsl[] =
+static const char img_22_mask21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -4403,12 +3843,8 @@ static const char img_22_mask21_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_mask21_nomul_frag_src =
-{
-   img_22_mask21_nomul_frag_glsl
-};
 
-static const char img_22_mask21_nomul_vert_glsl[] =
+static const char img_22_mask21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -4439,12 +3875,8 @@ static const char img_22_mask21_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_mask21_nomul_vert_src =
-{
-   img_22_mask21_nomul_vert_glsl
-};
 
-static const char img_12_bgra_mask21_nomul_frag_glsl[] =
+static const char img_12_bgra_mask21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -4475,12 +3907,8 @@ static const char img_12_bgra_mask21_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_mask21_nomul_frag_src =
-{
-   img_12_bgra_mask21_nomul_frag_glsl
-};
 
-static const char img_12_bgra_mask21_nomul_vert_glsl[] =
+static const char img_12_bgra_mask21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -4509,12 +3937,8 @@ static const char img_12_bgra_mask21_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_mask21_nomul_vert_src =
-{
-   img_12_bgra_mask21_nomul_vert_glsl
-};
 
-static const char img_21_bgra_mask21_nomul_frag_glsl[] =
+static const char img_21_bgra_mask21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -4545,12 +3969,8 @@ static const char img_21_bgra_mask21_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_mask21_nomul_frag_src =
-{
-   img_21_bgra_mask21_nomul_frag_glsl
-};
 
-static const char img_21_bgra_mask21_nomul_vert_glsl[] =
+static const char img_21_bgra_mask21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -4579,12 +3999,8 @@ static const char img_21_bgra_mask21_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_mask21_nomul_vert_src =
-{
-   img_21_bgra_mask21_nomul_vert_glsl
-};
 
-static const char img_22_bgra_mask21_nomul_frag_glsl[] =
+static const char img_22_bgra_mask21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -4617,12 +4033,8 @@ static const char img_22_bgra_mask21_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_mask21_nomul_frag_src =
-{
-   img_22_bgra_mask21_nomul_frag_glsl
-};
 
-static const char img_22_bgra_mask21_nomul_vert_glsl[] =
+static const char img_22_bgra_mask21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -4653,12 +4065,8 @@ static const char img_22_bgra_mask21_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_mask21_nomul_vert_src =
-{
-   img_22_bgra_mask21_nomul_vert_glsl
-};
 
-static const char img_mask22_frag_glsl[] =
+static const char img_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -4689,12 +4097,8 @@ static const char img_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_mask22_frag_src =
-{
-   img_mask22_frag_glsl
-};
 
-static const char img_mask22_vert_glsl[] =
+static const char img_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -4722,12 +4126,8 @@ static const char img_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_mask22_vert_src =
-{
-   img_mask22_vert_glsl
-};
 
-static const char img_bgra_mask22_frag_glsl[] =
+static const char img_bgra_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -4758,12 +4158,8 @@ static const char img_bgra_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_mask22_frag_src =
-{
-   img_bgra_mask22_frag_glsl
-};
 
-static const char img_bgra_mask22_vert_glsl[] =
+static const char img_bgra_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -4791,12 +4187,8 @@ static const char img_bgra_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_mask22_vert_src =
-{
-   img_bgra_mask22_vert_glsl
-};
 
-static const char img_12_mask22_frag_glsl[] =
+static const char img_12_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -4831,12 +4223,8 @@ static const char img_12_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_mask22_frag_src =
-{
-   img_12_mask22_frag_glsl
-};
 
-static const char img_12_mask22_vert_glsl[] =
+static const char img_12_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -4870,12 +4258,8 @@ static const char img_12_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_mask22_vert_src =
-{
-   img_12_mask22_vert_glsl
-};
 
-static const char img_21_mask22_frag_glsl[] =
+static const char img_21_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -4910,12 +4294,8 @@ static const char img_21_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_mask22_frag_src =
-{
-   img_21_mask22_frag_glsl
-};
 
-static const char img_21_mask22_vert_glsl[] =
+static const char img_21_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -4949,12 +4329,8 @@ static const char img_21_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_mask22_vert_src =
-{
-   img_21_mask22_vert_glsl
-};
 
-static const char img_22_mask22_frag_glsl[] =
+static const char img_22_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -4991,12 +4367,8 @@ static const char img_22_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_mask22_frag_src =
-{
-   img_22_mask22_frag_glsl
-};
 
-static const char img_22_mask22_vert_glsl[] =
+static const char img_22_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -5032,12 +4404,8 @@ static const char img_22_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_mask22_vert_src =
-{
-   img_22_mask22_vert_glsl
-};
 
-static const char img_12_bgra_mask22_frag_glsl[] =
+static const char img_12_bgra_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -5072,12 +4440,8 @@ static const char img_12_bgra_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_mask22_frag_src =
-{
-   img_12_bgra_mask22_frag_glsl
-};
 
-static const char img_12_bgra_mask22_vert_glsl[] =
+static const char img_12_bgra_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -5111,12 +4475,8 @@ static const char img_12_bgra_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_mask22_vert_src =
-{
-   img_12_bgra_mask22_vert_glsl
-};
 
-static const char img_21_bgra_mask22_frag_glsl[] =
+static const char img_21_bgra_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -5151,12 +4511,8 @@ static const char img_21_bgra_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_mask22_frag_src =
-{
-   img_21_bgra_mask22_frag_glsl
-};
 
-static const char img_21_bgra_mask22_vert_glsl[] =
+static const char img_21_bgra_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -5190,12 +4546,8 @@ static const char img_21_bgra_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_mask22_vert_src =
-{
-   img_21_bgra_mask22_vert_glsl
-};
 
-static const char img_22_bgra_mask22_frag_glsl[] =
+static const char img_22_bgra_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -5232,12 +4584,8 @@ static const char img_22_bgra_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_mask22_frag_src =
-{
-   img_22_bgra_mask22_frag_glsl
-};
 
-static const char img_22_bgra_mask22_vert_glsl[] =
+static const char img_22_bgra_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -5273,12 +4621,8 @@ static const char img_22_bgra_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_mask22_vert_src =
-{
-   img_22_bgra_mask22_vert_glsl
-};
 
-static const char img_mask22_nomul_frag_glsl[] =
+static const char img_mask22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -5307,12 +4651,8 @@ static const char img_mask22_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_mask22_nomul_frag_src =
-{
-   img_mask22_nomul_frag_glsl
-};
 
-static const char img_mask22_nomul_vert_glsl[] =
+static const char img_mask22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -5337,12 +4677,8 @@ static const char img_mask22_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_mask22_nomul_vert_src =
-{
-   img_mask22_nomul_vert_glsl
-};
 
-static const char img_bgra_mask22_nomul_frag_glsl[] =
+static const char img_bgra_mask22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -5371,12 +4707,8 @@ static const char img_bgra_mask22_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_mask22_nomul_frag_src =
-{
-   img_bgra_mask22_nomul_frag_glsl
-};
 
-static const char img_bgra_mask22_nomul_vert_glsl[] =
+static const char img_bgra_mask22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -5401,12 +4733,8 @@ static const char img_bgra_mask22_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_mask22_nomul_vert_src =
-{
-   img_bgra_mask22_nomul_vert_glsl
-};
 
-static const char img_12_mask22_nomul_frag_glsl[] =
+static const char img_12_mask22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -5439,12 +4767,8 @@ static const char img_12_mask22_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_mask22_nomul_frag_src =
-{
-   img_12_mask22_nomul_frag_glsl
-};
 
-static const char img_12_mask22_nomul_vert_glsl[] =
+static const char img_12_mask22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -5475,12 +4799,8 @@ static const char img_12_mask22_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_mask22_nomul_vert_src =
-{
-   img_12_mask22_nomul_vert_glsl
-};
 
-static const char img_21_mask22_nomul_frag_glsl[] =
+static const char img_21_mask22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -5513,12 +4833,8 @@ static const char img_21_mask22_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_mask22_nomul_frag_src =
-{
-   img_21_mask22_nomul_frag_glsl
-};
 
-static const char img_21_mask22_nomul_vert_glsl[] =
+static const char img_21_mask22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -5549,12 +4865,8 @@ static const char img_21_mask22_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_mask22_nomul_vert_src =
-{
-   img_21_mask22_nomul_vert_glsl
-};
 
-static const char img_22_mask22_nomul_frag_glsl[] =
+static const char img_22_mask22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -5589,12 +4901,8 @@ static const char img_22_mask22_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_mask22_nomul_frag_src =
-{
-   img_22_mask22_nomul_frag_glsl
-};
 
-static const char img_22_mask22_nomul_vert_glsl[] =
+static const char img_22_mask22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -5627,12 +4935,8 @@ static const char img_22_mask22_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_mask22_nomul_vert_src =
-{
-   img_22_mask22_nomul_vert_glsl
-};
 
-static const char img_12_bgra_mask22_nomul_frag_glsl[] =
+static const char img_12_bgra_mask22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -5665,12 +4969,8 @@ static const char img_12_bgra_mask22_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_mask22_nomul_frag_src =
-{
-   img_12_bgra_mask22_nomul_frag_glsl
-};
 
-static const char img_12_bgra_mask22_nomul_vert_glsl[] =
+static const char img_12_bgra_mask22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -5701,12 +5001,8 @@ static const char img_12_bgra_mask22_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_mask22_nomul_vert_src =
-{
-   img_12_bgra_mask22_nomul_vert_glsl
-};
 
-static const char img_21_bgra_mask22_nomul_frag_glsl[] =
+static const char img_21_bgra_mask22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -5739,12 +5035,8 @@ static const char img_21_bgra_mask22_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_mask22_nomul_frag_src =
-{
-   img_21_bgra_mask22_nomul_frag_glsl
-};
 
-static const char img_21_bgra_mask22_nomul_vert_glsl[] =
+static const char img_21_bgra_mask22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -5775,12 +5067,8 @@ static const char img_21_bgra_mask22_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_mask22_nomul_vert_src =
-{
-   img_21_bgra_mask22_nomul_vert_glsl
-};
 
-static const char img_22_bgra_mask22_nomul_frag_glsl[] =
+static const char img_22_bgra_mask22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -5815,12 +5103,8 @@ static const char img_22_bgra_mask22_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_mask22_nomul_frag_src =
-{
-   img_22_bgra_mask22_nomul_frag_glsl
-};
 
-static const char img_22_bgra_mask22_nomul_vert_glsl[] =
+static const char img_22_bgra_mask22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -5853,12 +5137,8 @@ static const char img_22_bgra_mask22_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_mask22_nomul_vert_src =
-{
-   img_22_bgra_mask22_nomul_vert_glsl
-};
 
-static const char img_afill_frag_glsl[] =
+static const char img_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -5879,12 +5159,8 @@ static const char img_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_afill_frag_src =
-{
-   img_afill_frag_glsl
-};
 
-static const char img_afill_vert_glsl[] =
+static const char img_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -5900,12 +5176,8 @@ static const char img_afill_vert_glsl[] =
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_afill_vert_src =
-{
-   img_afill_vert_glsl
-};
 
-static const char img_bgra_afill_frag_glsl[] =
+static const char img_bgra_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -5926,12 +5198,8 @@ static const char img_bgra_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_afill_frag_src =
-{
-   img_bgra_afill_frag_glsl
-};
 
-static const char img_bgra_afill_vert_glsl[] =
+static const char img_bgra_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -5947,12 +5215,8 @@ static const char img_bgra_afill_vert_glsl[] =
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_afill_vert_src =
-{
-   img_bgra_afill_vert_glsl
-};
 
-static const char img_nomul_afill_frag_glsl[] =
+static const char img_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -5971,12 +5235,8 @@ static const char img_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_nomul_afill_frag_src =
-{
-   img_nomul_afill_frag_glsl
-};
 
-static const char img_nomul_afill_vert_glsl[] =
+static const char img_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -5989,12 +5249,8 @@ static const char img_nomul_afill_vert_glsl[] =
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_nomul_afill_vert_src =
-{
-   img_nomul_afill_vert_glsl
-};
 
-static const char img_bgra_nomul_afill_frag_glsl[] =
+static const char img_bgra_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6013,12 +5269,8 @@ static const char img_bgra_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_nomul_afill_frag_src =
-{
-   img_bgra_nomul_afill_frag_glsl
-};
 
-static const char img_bgra_nomul_afill_vert_glsl[] =
+static const char img_bgra_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6031,12 +5283,8 @@ static const char img_bgra_nomul_afill_vert_glsl[] =
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_bgra_nomul_afill_vert_src =
-{
-   img_bgra_nomul_afill_vert_glsl
-};
 
-static const char img_12_afill_frag_glsl[] =
+static const char img_12_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6061,12 +5309,8 @@ static const char img_12_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_afill_frag_src =
-{
-   img_12_afill_frag_glsl
-};
 
-static const char img_12_afill_vert_glsl[] =
+static const char img_12_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6088,12 +5332,8 @@ static const char img_12_afill_vert_glsl[] =
    "   tex_s[1] = vec2(0, tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_afill_vert_src =
-{
-   img_12_afill_vert_glsl
-};
 
-static const char img_21_afill_frag_glsl[] =
+static const char img_21_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6118,12 +5358,8 @@ static const char img_21_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_afill_frag_src =
-{
-   img_21_afill_frag_glsl
-};
 
-static const char img_21_afill_vert_glsl[] =
+static const char img_21_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6145,12 +5381,8 @@ static const char img_21_afill_vert_glsl[] =
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_afill_vert_src =
-{
-   img_21_afill_vert_glsl
-};
 
-static const char img_22_afill_frag_glsl[] =
+static const char img_22_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6177,12 +5409,8 @@ static const char img_22_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_afill_frag_src =
-{
-   img_22_afill_frag_glsl
-};
 
-static const char img_22_afill_vert_glsl[] =
+static const char img_22_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6206,12 +5434,8 @@ static const char img_22_afill_vert_glsl[] =
    "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
    "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_afill_vert_src =
-{
-   img_22_afill_vert_glsl
-};
 
-static const char img_12_bgra_afill_frag_glsl[] =
+static const char img_12_bgra_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6236,12 +5460,8 @@ static const char img_12_bgra_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_afill_frag_src =
-{
-   img_12_bgra_afill_frag_glsl
-};
 
-static const char img_12_bgra_afill_vert_glsl[] =
+static const char img_12_bgra_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6263,12 +5483,8 @@ static const char img_12_bgra_afill_vert_glsl[] =
    "   tex_s[1] = vec2(0, tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_afill_vert_src =
-{
-   img_12_bgra_afill_vert_glsl
-};
 
-static const char img_21_bgra_afill_frag_glsl[] =
+static const char img_21_bgra_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6293,12 +5509,8 @@ static const char img_21_bgra_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_afill_frag_src =
-{
-   img_21_bgra_afill_frag_glsl
-};
 
-static const char img_21_bgra_afill_vert_glsl[] =
+static const char img_21_bgra_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6320,12 +5532,8 @@ static const char img_21_bgra_afill_vert_glsl[] =
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_afill_vert_src =
-{
-   img_21_bgra_afill_vert_glsl
-};
 
-static const char img_22_bgra_afill_frag_glsl[] =
+static const char img_22_bgra_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6352,12 +5560,8 @@ static const char img_22_bgra_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_afill_frag_src =
-{
-   img_22_bgra_afill_frag_glsl
-};
 
-static const char img_22_bgra_afill_vert_glsl[] =
+static const char img_22_bgra_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6381,12 +5585,8 @@ static const char img_22_bgra_afill_vert_glsl[] =
    "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
    "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_afill_vert_src =
-{
-   img_22_bgra_afill_vert_glsl
-};
 
-static const char img_12_nomul_afill_frag_glsl[] =
+static const char img_12_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6409,12 +5609,8 @@ static const char img_12_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_nomul_afill_frag_src =
-{
-   img_12_nomul_afill_frag_glsl
-};
 
-static const char img_12_nomul_afill_vert_glsl[] =
+static const char img_12_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6433,12 +5629,8 @@ static const char img_12_nomul_afill_vert_glsl[] =
    "   tex_s[1] = vec2(0, tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_nomul_afill_vert_src =
-{
-   img_12_nomul_afill_vert_glsl
-};
 
-static const char img_21_nomul_afill_frag_glsl[] =
+static const char img_21_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6461,12 +5653,8 @@ static const char img_21_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_nomul_afill_frag_src =
-{
-   img_21_nomul_afill_frag_glsl
-};
 
-static const char img_21_nomul_afill_vert_glsl[] =
+static const char img_21_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6485,12 +5673,8 @@ static const char img_21_nomul_afill_vert_glsl[] =
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_nomul_afill_vert_src =
-{
-   img_21_nomul_afill_vert_glsl
-};
 
-static const char img_22_nomul_afill_frag_glsl[] =
+static const char img_22_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6515,12 +5699,8 @@ static const char img_22_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_nomul_afill_frag_src =
-{
-   img_22_nomul_afill_frag_glsl
-};
 
-static const char img_22_nomul_afill_vert_glsl[] =
+static const char img_22_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6541,12 +5721,8 @@ static const char img_22_nomul_afill_vert_glsl[] =
    "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
    "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_nomul_afill_vert_src =
-{
-   img_22_nomul_afill_vert_glsl
-};
 
-static const char img_12_bgra_nomul_afill_frag_glsl[] =
+static const char img_12_bgra_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6569,12 +5745,8 @@ static const char img_12_bgra_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_nomul_afill_frag_src =
-{
-   img_12_bgra_nomul_afill_frag_glsl
-};
 
-static const char img_12_bgra_nomul_afill_vert_glsl[] =
+static const char img_12_bgra_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6593,12 +5765,8 @@ static const char img_12_bgra_nomul_afill_vert_glsl[] =
    "   tex_s[1] = vec2(0, tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_12_bgra_nomul_afill_vert_src =
-{
-   img_12_bgra_nomul_afill_vert_glsl
-};
 
-static const char img_21_bgra_nomul_afill_frag_glsl[] =
+static const char img_21_bgra_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6621,12 +5789,8 @@ static const char img_21_bgra_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_nomul_afill_frag_src =
-{
-   img_21_bgra_nomul_afill_frag_glsl
-};
 
-static const char img_21_bgra_nomul_afill_vert_glsl[] =
+static const char img_21_bgra_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6645,12 +5809,8 @@ static const char img_21_bgra_nomul_afill_vert_glsl[] =
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_21_bgra_nomul_afill_vert_src =
-{
-   img_21_bgra_nomul_afill_vert_glsl
-};
 
-static const char img_22_bgra_nomul_afill_frag_glsl[] =
+static const char img_22_bgra_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6675,12 +5835,8 @@ static const char img_22_bgra_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_nomul_afill_frag_src =
-{
-   img_22_bgra_nomul_afill_frag_glsl
-};
 
-static const char img_22_bgra_nomul_afill_vert_glsl[] =
+static const char img_22_bgra_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6701,12 +5857,8 @@ static const char img_22_bgra_nomul_afill_vert_glsl[] =
    "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
    "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_img_22_bgra_nomul_afill_vert_src =
-{
-   img_22_bgra_nomul_afill_vert_glsl
-};
 
-static const char imgnat_frag_glsl[] =
+static const char imgnat_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6726,12 +5878,8 @@ static const char imgnat_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_frag_src =
-{
-   imgnat_frag_glsl
-};
 
-static const char imgnat_vert_glsl[] =
+static const char imgnat_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6747,12 +5895,8 @@ static const char imgnat_vert_glsl[] =
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_vert_src =
-{
-   imgnat_vert_glsl
-};
 
-static const char imgnat_bgra_frag_glsl[] =
+static const char imgnat_bgra_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6772,12 +5916,8 @@ static const char imgnat_bgra_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_frag_src =
-{
-   imgnat_bgra_frag_glsl
-};
 
-static const char imgnat_bgra_vert_glsl[] =
+static const char imgnat_bgra_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6793,12 +5933,8 @@ static const char imgnat_bgra_vert_glsl[] =
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_vert_src =
-{
-   imgnat_bgra_vert_glsl
-};
 
-static const char imgnat_12_frag_glsl[] =
+static const char imgnat_12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6822,12 +5958,8 @@ static const char imgnat_12_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_frag_src =
-{
-   imgnat_12_frag_glsl
-};
 
-static const char imgnat_12_vert_glsl[] =
+static const char imgnat_12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6849,12 +5981,8 @@ static const char imgnat_12_vert_glsl[] =
    "   tex_s[1] = vec2(0, tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_vert_src =
-{
-   imgnat_12_vert_glsl
-};
 
-static const char imgnat_21_frag_glsl[] =
+static const char imgnat_21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6878,12 +6006,8 @@ static const char imgnat_21_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_frag_src =
-{
-   imgnat_21_frag_glsl
-};
 
-static const char imgnat_21_vert_glsl[] =
+static const char imgnat_21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6905,12 +6029,8 @@ static const char imgnat_21_vert_glsl[] =
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_vert_src =
-{
-   imgnat_21_vert_glsl
-};
 
-static const char imgnat_22_frag_glsl[] =
+static const char imgnat_22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6936,12 +6056,8 @@ static const char imgnat_22_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_frag_src =
-{
-   imgnat_22_frag_glsl
-};
 
-static const char imgnat_22_vert_glsl[] =
+static const char imgnat_22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -6965,12 +6081,8 @@ static const char imgnat_22_vert_glsl[] =
    "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
    "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_vert_src =
-{
-   imgnat_22_vert_glsl
-};
 
-static const char imgnat_12_bgra_frag_glsl[] =
+static const char imgnat_12_bgra_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -6994,12 +6106,8 @@ static const char imgnat_12_bgra_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_frag_src =
-{
-   imgnat_12_bgra_frag_glsl
-};
 
-static const char imgnat_12_bgra_vert_glsl[] =
+static const char imgnat_12_bgra_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7021,12 +6129,8 @@ static const char imgnat_12_bgra_vert_glsl[] =
    "   tex_s[1] = vec2(0, tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_vert_src =
-{
-   imgnat_12_bgra_vert_glsl
-};
 
-static const char imgnat_21_bgra_frag_glsl[] =
+static const char imgnat_21_bgra_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7050,12 +6154,8 @@ static const char imgnat_21_bgra_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_frag_src =
-{
-   imgnat_21_bgra_frag_glsl
-};
 
-static const char imgnat_21_bgra_vert_glsl[] =
+static const char imgnat_21_bgra_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7077,12 +6177,8 @@ static const char imgnat_21_bgra_vert_glsl[] =
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_vert_src =
-{
-   imgnat_21_bgra_vert_glsl
-};
 
-static const char imgnat_22_bgra_frag_glsl[] =
+static const char imgnat_22_bgra_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7108,12 +6204,8 @@ static const char imgnat_22_bgra_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_frag_src =
-{
-   imgnat_22_bgra_frag_glsl
-};
 
-static const char imgnat_22_bgra_vert_glsl[] =
+static const char imgnat_22_bgra_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7137,12 +6229,8 @@ static const char imgnat_22_bgra_vert_glsl[] =
    "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
    "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_vert_src =
-{
-   imgnat_22_bgra_vert_glsl
-};
 
-static const char imgnat_mask_frag_glsl[] =
+static const char imgnat_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7167,12 +6255,8 @@ static const char imgnat_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_mask_frag_src =
-{
-   imgnat_mask_frag_glsl
-};
 
-static const char imgnat_mask_vert_glsl[] =
+static const char imgnat_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7192,12 +6276,8 @@ static const char imgnat_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_mask_vert_src =
-{
-   imgnat_mask_vert_glsl
-};
 
-static const char imgnat_bgra_mask_frag_glsl[] =
+static const char imgnat_bgra_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7222,12 +6302,8 @@ static const char imgnat_bgra_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_mask_frag_src =
-{
-   imgnat_bgra_mask_frag_glsl
-};
 
-static const char imgnat_bgra_mask_vert_glsl[] =
+static const char imgnat_bgra_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7247,12 +6323,8 @@ static const char imgnat_bgra_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_mask_vert_src =
-{
-   imgnat_bgra_mask_vert_glsl
-};
 
-static const char imgnat_12_mask_frag_glsl[] =
+static const char imgnat_12_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7281,12 +6353,8 @@ static const char imgnat_12_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_mask_frag_src =
-{
-   imgnat_12_mask_frag_glsl
-};
 
-static const char imgnat_12_mask_vert_glsl[] =
+static const char imgnat_12_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7312,12 +6380,8 @@ static const char imgnat_12_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_mask_vert_src =
-{
-   imgnat_12_mask_vert_glsl
-};
 
-static const char imgnat_21_mask_frag_glsl[] =
+static const char imgnat_21_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7346,12 +6410,8 @@ static const char imgnat_21_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_mask_frag_src =
-{
-   imgnat_21_mask_frag_glsl
-};
 
-static const char imgnat_21_mask_vert_glsl[] =
+static const char imgnat_21_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7377,12 +6437,8 @@ static const char imgnat_21_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_mask_vert_src =
-{
-   imgnat_21_mask_vert_glsl
-};
 
-static const char imgnat_22_mask_frag_glsl[] =
+static const char imgnat_22_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7413,12 +6469,8 @@ static const char imgnat_22_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_mask_frag_src =
-{
-   imgnat_22_mask_frag_glsl
-};
 
-static const char imgnat_22_mask_vert_glsl[] =
+static const char imgnat_22_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7446,12 +6498,8 @@ static const char imgnat_22_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_mask_vert_src =
-{
-   imgnat_22_mask_vert_glsl
-};
 
-static const char imgnat_12_bgra_mask_frag_glsl[] =
+static const char imgnat_12_bgra_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7480,12 +6528,8 @@ static const char imgnat_12_bgra_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_mask_frag_src =
-{
-   imgnat_12_bgra_mask_frag_glsl
-};
 
-static const char imgnat_12_bgra_mask_vert_glsl[] =
+static const char imgnat_12_bgra_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7511,12 +6555,8 @@ static const char imgnat_12_bgra_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_mask_vert_src =
-{
-   imgnat_12_bgra_mask_vert_glsl
-};
 
-static const char imgnat_21_bgra_mask_frag_glsl[] =
+static const char imgnat_21_bgra_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7545,12 +6585,8 @@ static const char imgnat_21_bgra_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_mask_frag_src =
-{
-   imgnat_21_bgra_mask_frag_glsl
-};
 
-static const char imgnat_21_bgra_mask_vert_glsl[] =
+static const char imgnat_21_bgra_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7576,12 +6612,8 @@ static const char imgnat_21_bgra_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_mask_vert_src =
-{
-   imgnat_21_bgra_mask_vert_glsl
-};
 
-static const char imgnat_22_bgra_mask_frag_glsl[] =
+static const char imgnat_22_bgra_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7612,12 +6644,8 @@ static const char imgnat_22_bgra_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_mask_frag_src =
-{
-   imgnat_22_bgra_mask_frag_glsl
-};
 
-static const char imgnat_22_bgra_mask_vert_glsl[] =
+static const char imgnat_22_bgra_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7645,12 +6673,8 @@ static const char imgnat_22_bgra_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_mask_vert_src =
-{
-   imgnat_22_bgra_mask_vert_glsl
-};
 
-static const char imgnat_nomul_frag_glsl[] =
+static const char imgnat_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7668,12 +6692,8 @@ static const char imgnat_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_nomul_frag_src =
-{
-   imgnat_nomul_frag_glsl
-};
 
-static const char imgnat_nomul_vert_glsl[] =
+static const char imgnat_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7686,12 +6706,8 @@ static const char imgnat_nomul_vert_glsl[] =
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_nomul_vert_src =
-{
-   imgnat_nomul_vert_glsl
-};
 
-static const char imgnat_bgra_nomul_frag_glsl[] =
+static const char imgnat_bgra_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7709,12 +6725,8 @@ static const char imgnat_bgra_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_nomul_frag_src =
-{
-   imgnat_bgra_nomul_frag_glsl
-};
 
-static const char imgnat_bgra_nomul_vert_glsl[] =
+static const char imgnat_bgra_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7727,12 +6739,8 @@ static const char imgnat_bgra_nomul_vert_glsl[] =
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_nomul_vert_src =
-{
-   imgnat_bgra_nomul_vert_glsl
-};
 
-static const char imgnat_12_nomul_frag_glsl[] =
+static const char imgnat_12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7754,12 +6762,8 @@ static const char imgnat_12_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_nomul_frag_src =
-{
-   imgnat_12_nomul_frag_glsl
-};
 
-static const char imgnat_12_nomul_vert_glsl[] =
+static const char imgnat_12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7778,12 +6782,8 @@ static const char imgnat_12_nomul_vert_glsl[] =
    "   tex_s[1] = vec2(0, tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_nomul_vert_src =
-{
-   imgnat_12_nomul_vert_glsl
-};
 
-static const char imgnat_21_nomul_frag_glsl[] =
+static const char imgnat_21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7805,12 +6805,8 @@ static const char imgnat_21_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_nomul_frag_src =
-{
-   imgnat_21_nomul_frag_glsl
-};
 
-static const char imgnat_21_nomul_vert_glsl[] =
+static const char imgnat_21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7829,12 +6825,8 @@ static const char imgnat_21_nomul_vert_glsl[] =
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_nomul_vert_src =
-{
-   imgnat_21_nomul_vert_glsl
-};
 
-static const char imgnat_22_nomul_frag_glsl[] =
+static const char imgnat_22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7858,12 +6850,8 @@ static const char imgnat_22_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_nomul_frag_src =
-{
-   imgnat_22_nomul_frag_glsl
-};
 
-static const char imgnat_22_nomul_vert_glsl[] =
+static const char imgnat_22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7884,12 +6872,8 @@ static const char imgnat_22_nomul_vert_glsl[] =
    "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
    "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_nomul_vert_src =
-{
-   imgnat_22_nomul_vert_glsl
-};
 
-static const char imgnat_12_bgra_nomul_frag_glsl[] =
+static const char imgnat_12_bgra_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7911,12 +6895,8 @@ static const char imgnat_12_bgra_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_nomul_frag_src =
-{
-   imgnat_12_bgra_nomul_frag_glsl
-};
 
-static const char imgnat_12_bgra_nomul_vert_glsl[] =
+static const char imgnat_12_bgra_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7935,12 +6915,8 @@ static const char imgnat_12_bgra_nomul_vert_glsl[] =
    "   tex_s[1] = vec2(0, tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_nomul_vert_src =
-{
-   imgnat_12_bgra_nomul_vert_glsl
-};
 
-static const char imgnat_21_bgra_nomul_frag_glsl[] =
+static const char imgnat_21_bgra_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -7962,12 +6938,8 @@ static const char imgnat_21_bgra_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_nomul_frag_src =
-{
-   imgnat_21_bgra_nomul_frag_glsl
-};
 
-static const char imgnat_21_bgra_nomul_vert_glsl[] =
+static const char imgnat_21_bgra_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -7986,12 +6958,8 @@ static const char imgnat_21_bgra_nomul_vert_glsl[] =
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_nomul_vert_src =
-{
-   imgnat_21_bgra_nomul_vert_glsl
-};
 
-static const char imgnat_22_bgra_nomul_frag_glsl[] =
+static const char imgnat_22_bgra_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -8015,12 +6983,8 @@ static const char imgnat_22_bgra_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_nomul_frag_src =
-{
-   imgnat_22_bgra_nomul_frag_glsl
-};
 
-static const char imgnat_22_bgra_nomul_vert_glsl[] =
+static const char imgnat_22_bgra_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -8041,12 +7005,8 @@ static const char imgnat_22_bgra_nomul_vert_glsl[] =
    "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
    "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_nomul_vert_src =
-{
-   imgnat_22_bgra_nomul_vert_glsl
-};
 
-static const char imgnat_mask_nomul_frag_glsl[] =
+static const char imgnat_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -8069,12 +7029,8 @@ static const char imgnat_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_mask_nomul_frag_src =
-{
-   imgnat_mask_nomul_frag_glsl
-};
 
-static const char imgnat_mask_nomul_vert_glsl[] =
+static const char imgnat_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -8091,12 +7047,8 @@ static const char imgnat_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_mask_nomul_vert_src =
-{
-   imgnat_mask_nomul_vert_glsl
-};
 
-static const char imgnat_bgra_mask_nomul_frag_glsl[] =
+static const char imgnat_bgra_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -8119,12 +7071,8 @@ static const char imgnat_bgra_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_mask_nomul_frag_src =
-{
-   imgnat_bgra_mask_nomul_frag_glsl
-};
 
-static const char imgnat_bgra_mask_nomul_vert_glsl[] =
+static const char imgnat_bgra_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -8141,12 +7089,8 @@ static const char imgnat_bgra_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_mask_nomul_vert_src =
-{
-   imgnat_bgra_mask_nomul_vert_glsl
-};
 
-static const char imgnat_12_mask_nomul_frag_glsl[] =
+static const char imgnat_12_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -8173,12 +7117,8 @@ static const char imgnat_12_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_mask_nomul_frag_src =
-{
-   imgnat_12_mask_nomul_frag_glsl
-};
 
-static const char imgnat_12_mask_nomul_vert_glsl[] =
+static const char imgnat_12_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -8201,12 +7141,8 @@ static const char imgnat_12_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_mask_nomul_vert_src =
-{
-   imgnat_12_mask_nomul_vert_glsl
-};
 
-static const char imgnat_21_mask_nomul_frag_glsl[] =
+static const char imgnat_21_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -8233,12 +7169,8 @@ static const char imgnat_21_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_mask_nomul_frag_src =
-{
-   imgnat_21_mask_nomul_frag_glsl
-};
 
-static const char imgnat_21_mask_nomul_vert_glsl[] =
+static const char imgnat_21_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -8261,12 +7193,8 @@ static const char imgnat_21_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_mask_nomul_vert_src =
-{
-   imgnat_21_mask_nomul_vert_glsl
-};
 
-static const char imgnat_22_mask_nomul_frag_glsl[] =
+static const char imgnat_22_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -8295,12 +7223,8 @@ static const char imgnat_22_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_mask_nomul_frag_src =
-{
-   imgnat_22_mask_nomul_frag_glsl
-};
 
-static const char imgnat_22_mask_nomul_vert_glsl[] =
+static const char imgnat_22_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -8325,12 +7249,8 @@ static const char imgnat_22_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_mask_nomul_vert_src =
-{
-   imgnat_22_mask_nomul_vert_glsl
-};
 
-static const char imgnat_12_bgra_mask_nomul_frag_glsl[] =
+static const char imgnat_12_bgra_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -8357,12 +7277,8 @@ static const char imgnat_12_bgra_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_mask_nomul_frag_src =
-{
-   imgnat_12_bgra_mask_nomul_frag_glsl
-};
 
-static const char imgnat_12_bgra_mask_nomul_vert_glsl[] =
+static const char imgnat_12_bgra_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -8385,12 +7301,8 @@ static const char imgnat_12_bgra_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_mask_nomul_vert_src =
-{
-   imgnat_12_bgra_mask_nomul_vert_glsl
-};
 
-static const char imgnat_21_bgra_mask_nomul_frag_glsl[] =
+static const char imgnat_21_bgra_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -8417,12 +7329,8 @@ static const char imgnat_21_bgra_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_mask_nomul_frag_src =
-{
-   imgnat_21_bgra_mask_nomul_frag_glsl
-};
 
-static const char imgnat_21_bgra_mask_nomul_vert_glsl[] =
+static const char imgnat_21_bgra_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -8445,12 +7353,8 @@ static const char imgnat_21_bgra_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_mask_nomul_vert_src =
-{
-   imgnat_21_bgra_mask_nomul_vert_glsl
-};
 
-static const char imgnat_22_bgra_mask_nomul_frag_glsl[] =
+static const char imgnat_22_bgra_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -8479,12 +7383,8 @@ static const char imgnat_22_bgra_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_mask_nomul_frag_src =
-{
-   imgnat_22_bgra_mask_nomul_frag_glsl
-};
 
-static const char imgnat_22_bgra_mask_nomul_vert_glsl[] =
+static const char imgnat_22_bgra_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -8509,12 +7409,8 @@ static const char imgnat_22_bgra_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_mask_nomul_vert_src =
-{
-   imgnat_22_bgra_mask_nomul_vert_glsl
-};
 
-static const char imgnat_mask12_frag_glsl[] =
+static const char imgnat_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -8543,12 +7439,8 @@ static const char imgnat_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_mask12_frag_src =
-{
-   imgnat_mask12_frag_glsl
-};
 
-static const char imgnat_mask12_vert_glsl[] =
+static const char imgnat_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -8574,12 +7466,8 @@ static const char imgnat_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_mask12_vert_src =
-{
-   imgnat_mask12_vert_glsl
-};
 
-static const char imgnat_bgra_mask12_frag_glsl[] =
+static const char imgnat_bgra_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -8608,12 +7496,8 @@ static const char imgnat_bgra_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_mask12_frag_src =
-{
-   imgnat_bgra_mask12_frag_glsl
-};
 
-static const char imgnat_bgra_mask12_vert_glsl[] =
+static const char imgnat_bgra_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -8639,12 +7523,8 @@ static const char imgnat_bgra_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_mask12_vert_src =
-{
-   imgnat_bgra_mask12_vert_glsl
-};
 
-static const char imgnat_12_mask12_frag_glsl[] =
+static const char imgnat_12_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -8677,12 +7557,8 @@ static const char imgnat_12_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_mask12_frag_src =
-{
-   imgnat_12_mask12_frag_glsl
-};
 
-static const char imgnat_12_mask12_vert_glsl[] =
+static const char imgnat_12_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -8714,12 +7590,8 @@ static const char imgnat_12_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_mask12_vert_src =
-{
-   imgnat_12_mask12_vert_glsl
-};
 
-static const char imgnat_21_mask12_frag_glsl[] =
+static const char imgnat_21_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -8752,12 +7624,8 @@ static const char imgnat_21_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_mask12_frag_src =
-{
-   imgnat_21_mask12_frag_glsl
-};
 
-static const char imgnat_21_mask12_vert_glsl[] =
+static const char imgnat_21_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -8789,12 +7657,8 @@ static const char imgnat_21_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_mask12_vert_src =
-{
-   imgnat_21_mask12_vert_glsl
-};
 
-static const char imgnat_22_mask12_frag_glsl[] =
+static const char imgnat_22_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -8829,12 +7693,8 @@ static const char imgnat_22_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_mask12_frag_src =
-{
-   imgnat_22_mask12_frag_glsl
-};
 
-static const char imgnat_22_mask12_vert_glsl[] =
+static const char imgnat_22_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -8868,12 +7728,8 @@ static const char imgnat_22_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_mask12_vert_src =
-{
-   imgnat_22_mask12_vert_glsl
-};
 
-static const char imgnat_12_bgra_mask12_frag_glsl[] =
+static const char imgnat_12_bgra_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -8906,12 +7762,8 @@ static const char imgnat_12_bgra_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_mask12_frag_src =
-{
-   imgnat_12_bgra_mask12_frag_glsl
-};
 
-static const char imgnat_12_bgra_mask12_vert_glsl[] =
+static const char imgnat_12_bgra_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -8943,12 +7795,8 @@ static const char imgnat_12_bgra_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_mask12_vert_src =
-{
-   imgnat_12_bgra_mask12_vert_glsl
-};
 
-static const char imgnat_21_bgra_mask12_frag_glsl[] =
+static const char imgnat_21_bgra_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -8981,12 +7829,8 @@ static const char imgnat_21_bgra_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_mask12_frag_src =
-{
-   imgnat_21_bgra_mask12_frag_glsl
-};
 
-static const char imgnat_21_bgra_mask12_vert_glsl[] =
+static const char imgnat_21_bgra_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -9018,12 +7862,8 @@ static const char imgnat_21_bgra_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_mask12_vert_src =
-{
-   imgnat_21_bgra_mask12_vert_glsl
-};
 
-static const char imgnat_22_bgra_mask12_frag_glsl[] =
+static const char imgnat_22_bgra_mask12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -9058,12 +7898,8 @@ static const char imgnat_22_bgra_mask12_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_mask12_frag_src =
-{
-   imgnat_22_bgra_mask12_frag_glsl
-};
 
-static const char imgnat_22_bgra_mask12_vert_glsl[] =
+static const char imgnat_22_bgra_mask12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -9097,12 +7933,8 @@ static const char imgnat_22_bgra_mask12_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_mask12_vert_src =
-{
-   imgnat_22_bgra_mask12_vert_glsl
-};
 
-static const char imgnat_mask12_nomul_frag_glsl[] =
+static const char imgnat_mask12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -9129,12 +7961,8 @@ static const char imgnat_mask12_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_mask12_nomul_frag_src =
-{
-   imgnat_mask12_nomul_frag_glsl
-};
 
-static const char imgnat_mask12_nomul_vert_glsl[] =
+static const char imgnat_mask12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -9157,12 +7985,8 @@ static const char imgnat_mask12_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_mask12_nomul_vert_src =
-{
-   imgnat_mask12_nomul_vert_glsl
-};
 
-static const char imgnat_bgra_mask12_nomul_frag_glsl[] =
+static const char imgnat_bgra_mask12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -9189,12 +8013,8 @@ static const char imgnat_bgra_mask12_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_mask12_nomul_frag_src =
-{
-   imgnat_bgra_mask12_nomul_frag_glsl
-};
 
-static const char imgnat_bgra_mask12_nomul_vert_glsl[] =
+static const char imgnat_bgra_mask12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -9217,12 +8037,8 @@ static const char imgnat_bgra_mask12_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_mask12_nomul_vert_src =
-{
-   imgnat_bgra_mask12_nomul_vert_glsl
-};
 
-static const char imgnat_12_mask12_nomul_frag_glsl[] =
+static const char imgnat_12_mask12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -9253,12 +8069,8 @@ static const char imgnat_12_mask12_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_mask12_nomul_frag_src =
-{
-   imgnat_12_mask12_nomul_frag_glsl
-};
 
-static const char imgnat_12_mask12_nomul_vert_glsl[] =
+static const char imgnat_12_mask12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -9287,12 +8099,8 @@ static const char imgnat_12_mask12_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_mask12_nomul_vert_src =
-{
-   imgnat_12_mask12_nomul_vert_glsl
-};
 
-static const char imgnat_21_mask12_nomul_frag_glsl[] =
+static const char imgnat_21_mask12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -9323,12 +8131,8 @@ static const char imgnat_21_mask12_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_mask12_nomul_frag_src =
-{
-   imgnat_21_mask12_nomul_frag_glsl
-};
 
-static const char imgnat_21_mask12_nomul_vert_glsl[] =
+static const char imgnat_21_mask12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -9357,12 +8161,8 @@ static const char imgnat_21_mask12_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_mask12_nomul_vert_src =
-{
-   imgnat_21_mask12_nomul_vert_glsl
-};
 
-static const char imgnat_22_mask12_nomul_frag_glsl[] =
+static const char imgnat_22_mask12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -9395,12 +8195,8 @@ static const char imgnat_22_mask12_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_mask12_nomul_frag_src =
-{
-   imgnat_22_mask12_nomul_frag_glsl
-};
 
-static const char imgnat_22_mask12_nomul_vert_glsl[] =
+static const char imgnat_22_mask12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -9431,12 +8227,8 @@ static const char imgnat_22_mask12_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_mask12_nomul_vert_src =
-{
-   imgnat_22_mask12_nomul_vert_glsl
-};
 
-static const char imgnat_12_bgra_mask12_nomul_frag_glsl[] =
+static const char imgnat_12_bgra_mask12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -9467,12 +8259,8 @@ static const char imgnat_12_bgra_mask12_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_mask12_nomul_frag_src =
-{
-   imgnat_12_bgra_mask12_nomul_frag_glsl
-};
 
-static const char imgnat_12_bgra_mask12_nomul_vert_glsl[] =
+static const char imgnat_12_bgra_mask12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -9501,12 +8289,8 @@ static const char imgnat_12_bgra_mask12_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_mask12_nomul_vert_src =
-{
-   imgnat_12_bgra_mask12_nomul_vert_glsl
-};
 
-static const char imgnat_21_bgra_mask12_nomul_frag_glsl[] =
+static const char imgnat_21_bgra_mask12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -9537,12 +8321,8 @@ static const char imgnat_21_bgra_mask12_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_mask12_nomul_frag_src =
-{
-   imgnat_21_bgra_mask12_nomul_frag_glsl
-};
 
-static const char imgnat_21_bgra_mask12_nomul_vert_glsl[] =
+static const char imgnat_21_bgra_mask12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -9571,12 +8351,8 @@ static const char imgnat_21_bgra_mask12_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_mask12_nomul_vert_src =
-{
-   imgnat_21_bgra_mask12_nomul_vert_glsl
-};
 
-static const char imgnat_22_bgra_mask12_nomul_frag_glsl[] =
+static const char imgnat_22_bgra_mask12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -9609,12 +8385,8 @@ static const char imgnat_22_bgra_mask12_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_mask12_nomul_frag_src =
-{
-   imgnat_22_bgra_mask12_nomul_frag_glsl
-};
 
-static const char imgnat_22_bgra_mask12_nomul_vert_glsl[] =
+static const char imgnat_22_bgra_mask12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -9645,12 +8417,8 @@ static const char imgnat_22_bgra_mask12_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_mask12_nomul_vert_src =
-{
-   imgnat_22_bgra_mask12_nomul_vert_glsl
-};
 
-static const char imgnat_mask21_frag_glsl[] =
+static const char imgnat_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -9679,12 +8447,8 @@ static const char imgnat_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_mask21_frag_src =
-{
-   imgnat_mask21_frag_glsl
-};
 
-static const char imgnat_mask21_vert_glsl[] =
+static const char imgnat_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -9710,12 +8474,8 @@ static const char imgnat_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_mask21_vert_src =
-{
-   imgnat_mask21_vert_glsl
-};
 
-static const char imgnat_bgra_mask21_frag_glsl[] =
+static const char imgnat_bgra_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -9744,12 +8504,8 @@ static const char imgnat_bgra_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_mask21_frag_src =
-{
-   imgnat_bgra_mask21_frag_glsl
-};
 
-static const char imgnat_bgra_mask21_vert_glsl[] =
+static const char imgnat_bgra_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -9775,12 +8531,8 @@ static const char imgnat_bgra_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_mask21_vert_src =
-{
-   imgnat_bgra_mask21_vert_glsl
-};
 
-static const char imgnat_12_mask21_frag_glsl[] =
+static const char imgnat_12_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -9813,12 +8565,8 @@ static const char imgnat_12_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_mask21_frag_src =
-{
-   imgnat_12_mask21_frag_glsl
-};
 
-static const char imgnat_12_mask21_vert_glsl[] =
+static const char imgnat_12_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -9850,12 +8598,8 @@ static const char imgnat_12_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_mask21_vert_src =
-{
-   imgnat_12_mask21_vert_glsl
-};
 
-static const char imgnat_21_mask21_frag_glsl[] =
+static const char imgnat_21_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -9888,12 +8632,8 @@ static const char imgnat_21_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_mask21_frag_src =
-{
-   imgnat_21_mask21_frag_glsl
-};
 
-static const char imgnat_21_mask21_vert_glsl[] =
+static const char imgnat_21_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -9925,12 +8665,8 @@ static const char imgnat_21_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_mask21_vert_src =
-{
-   imgnat_21_mask21_vert_glsl
-};
 
-static const char imgnat_22_mask21_frag_glsl[] =
+static const char imgnat_22_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -9965,12 +8701,8 @@ static const char imgnat_22_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_mask21_frag_src =
-{
-   imgnat_22_mask21_frag_glsl
-};
 
-static const char imgnat_22_mask21_vert_glsl[] =
+static const char imgnat_22_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -10004,12 +8736,8 @@ static const char imgnat_22_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_mask21_vert_src =
-{
-   imgnat_22_mask21_vert_glsl
-};
 
-static const char imgnat_12_bgra_mask21_frag_glsl[] =
+static const char imgnat_12_bgra_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -10042,12 +8770,8 @@ static const char imgnat_12_bgra_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_mask21_frag_src =
-{
-   imgnat_12_bgra_mask21_frag_glsl
-};
 
-static const char imgnat_12_bgra_mask21_vert_glsl[] =
+static const char imgnat_12_bgra_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -10079,12 +8803,8 @@ static const char imgnat_12_bgra_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_mask21_vert_src =
-{
-   imgnat_12_bgra_mask21_vert_glsl
-};
 
-static const char imgnat_21_bgra_mask21_frag_glsl[] =
+static const char imgnat_21_bgra_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -10117,12 +8837,8 @@ static const char imgnat_21_bgra_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_mask21_frag_src =
-{
-   imgnat_21_bgra_mask21_frag_glsl
-};
 
-static const char imgnat_21_bgra_mask21_vert_glsl[] =
+static const char imgnat_21_bgra_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -10154,12 +8870,8 @@ static const char imgnat_21_bgra_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_mask21_vert_src =
-{
-   imgnat_21_bgra_mask21_vert_glsl
-};
 
-static const char imgnat_22_bgra_mask21_frag_glsl[] =
+static const char imgnat_22_bgra_mask21_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -10194,12 +8906,8 @@ static const char imgnat_22_bgra_mask21_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_mask21_frag_src =
-{
-   imgnat_22_bgra_mask21_frag_glsl
-};
 
-static const char imgnat_22_bgra_mask21_vert_glsl[] =
+static const char imgnat_22_bgra_mask21_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -10233,12 +8941,8 @@ static const char imgnat_22_bgra_mask21_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_mask21_vert_src =
-{
-   imgnat_22_bgra_mask21_vert_glsl
-};
 
-static const char imgnat_mask21_nomul_frag_glsl[] =
+static const char imgnat_mask21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -10265,12 +8969,8 @@ static const char imgnat_mask21_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_mask21_nomul_frag_src =
-{
-   imgnat_mask21_nomul_frag_glsl
-};
 
-static const char imgnat_mask21_nomul_vert_glsl[] =
+static const char imgnat_mask21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -10293,12 +8993,8 @@ static const char imgnat_mask21_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_mask21_nomul_vert_src =
-{
-   imgnat_mask21_nomul_vert_glsl
-};
 
-static const char imgnat_bgra_mask21_nomul_frag_glsl[] =
+static const char imgnat_bgra_mask21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -10325,12 +9021,8 @@ static const char imgnat_bgra_mask21_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_mask21_nomul_frag_src =
-{
-   imgnat_bgra_mask21_nomul_frag_glsl
-};
 
-static const char imgnat_bgra_mask21_nomul_vert_glsl[] =
+static const char imgnat_bgra_mask21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -10353,12 +9045,8 @@ static const char imgnat_bgra_mask21_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_mask21_nomul_vert_src =
-{
-   imgnat_bgra_mask21_nomul_vert_glsl
-};
 
-static const char imgnat_12_mask21_nomul_frag_glsl[] =
+static const char imgnat_12_mask21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -10389,12 +9077,8 @@ static const char imgnat_12_mask21_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_mask21_nomul_frag_src =
-{
-   imgnat_12_mask21_nomul_frag_glsl
-};
 
-static const char imgnat_12_mask21_nomul_vert_glsl[] =
+static const char imgnat_12_mask21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -10423,12 +9107,8 @@ static const char imgnat_12_mask21_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_mask21_nomul_vert_src =
-{
-   imgnat_12_mask21_nomul_vert_glsl
-};
 
-static const char imgnat_21_mask21_nomul_frag_glsl[] =
+static const char imgnat_21_mask21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -10459,12 +9139,8 @@ static const char imgnat_21_mask21_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_mask21_nomul_frag_src =
-{
-   imgnat_21_mask21_nomul_frag_glsl
-};
 
-static const char imgnat_21_mask21_nomul_vert_glsl[] =
+static const char imgnat_21_mask21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -10493,12 +9169,8 @@ static const char imgnat_21_mask21_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_mask21_nomul_vert_src =
-{
-   imgnat_21_mask21_nomul_vert_glsl
-};
 
-static const char imgnat_22_mask21_nomul_frag_glsl[] =
+static const char imgnat_22_mask21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -10531,12 +9203,8 @@ static const char imgnat_22_mask21_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_mask21_nomul_frag_src =
-{
-   imgnat_22_mask21_nomul_frag_glsl
-};
 
-static const char imgnat_22_mask21_nomul_vert_glsl[] =
+static const char imgnat_22_mask21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -10567,12 +9235,8 @@ static const char imgnat_22_mask21_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_mask21_nomul_vert_src =
-{
-   imgnat_22_mask21_nomul_vert_glsl
-};
 
-static const char imgnat_12_bgra_mask21_nomul_frag_glsl[] =
+static const char imgnat_12_bgra_mask21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -10603,12 +9267,8 @@ static const char imgnat_12_bgra_mask21_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_mask21_nomul_frag_src =
-{
-   imgnat_12_bgra_mask21_nomul_frag_glsl
-};
 
-static const char imgnat_12_bgra_mask21_nomul_vert_glsl[] =
+static const char imgnat_12_bgra_mask21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -10637,12 +9297,8 @@ static const char imgnat_12_bgra_mask21_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_mask21_nomul_vert_src =
-{
-   imgnat_12_bgra_mask21_nomul_vert_glsl
-};
 
-static const char imgnat_21_bgra_mask21_nomul_frag_glsl[] =
+static const char imgnat_21_bgra_mask21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -10673,12 +9329,8 @@ static const char imgnat_21_bgra_mask21_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_mask21_nomul_frag_src =
-{
-   imgnat_21_bgra_mask21_nomul_frag_glsl
-};
 
-static const char imgnat_21_bgra_mask21_nomul_vert_glsl[] =
+static const char imgnat_21_bgra_mask21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -10707,12 +9359,8 @@ static const char imgnat_21_bgra_mask21_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_mask21_nomul_vert_src =
-{
-   imgnat_21_bgra_mask21_nomul_vert_glsl
-};
 
-static const char imgnat_22_bgra_mask21_nomul_frag_glsl[] =
+static const char imgnat_22_bgra_mask21_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -10745,12 +9393,8 @@ static const char imgnat_22_bgra_mask21_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_mask21_nomul_frag_src =
-{
-   imgnat_22_bgra_mask21_nomul_frag_glsl
-};
 
-static const char imgnat_22_bgra_mask21_nomul_vert_glsl[] =
+static const char imgnat_22_bgra_mask21_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -10781,12 +9425,8 @@ static const char imgnat_22_bgra_mask21_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_mask21_nomul_vert_src =
-{
-   imgnat_22_bgra_mask21_nomul_vert_glsl
-};
 
-static const char imgnat_mask22_frag_glsl[] =
+static const char imgnat_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -10817,12 +9457,8 @@ static const char imgnat_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_mask22_frag_src =
-{
-   imgnat_mask22_frag_glsl
-};
 
-static const char imgnat_mask22_vert_glsl[] =
+static const char imgnat_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -10850,12 +9486,8 @@ static const char imgnat_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_mask22_vert_src =
-{
-   imgnat_mask22_vert_glsl
-};
 
-static const char imgnat_bgra_mask22_frag_glsl[] =
+static const char imgnat_bgra_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -10886,12 +9518,8 @@ static const char imgnat_bgra_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_mask22_frag_src =
-{
-   imgnat_bgra_mask22_frag_glsl
-};
 
-static const char imgnat_bgra_mask22_vert_glsl[] =
+static const char imgnat_bgra_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -10919,12 +9547,8 @@ static const char imgnat_bgra_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_mask22_vert_src =
-{
-   imgnat_bgra_mask22_vert_glsl
-};
 
-static const char imgnat_12_mask22_frag_glsl[] =
+static const char imgnat_12_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -10959,12 +9583,8 @@ static const char imgnat_12_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_mask22_frag_src =
-{
-   imgnat_12_mask22_frag_glsl
-};
 
-static const char imgnat_12_mask22_vert_glsl[] =
+static const char imgnat_12_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -10998,12 +9618,8 @@ static const char imgnat_12_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_mask22_vert_src =
-{
-   imgnat_12_mask22_vert_glsl
-};
 
-static const char imgnat_21_mask22_frag_glsl[] =
+static const char imgnat_21_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -11038,12 +9654,8 @@ static const char imgnat_21_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_mask22_frag_src =
-{
-   imgnat_21_mask22_frag_glsl
-};
 
-static const char imgnat_21_mask22_vert_glsl[] =
+static const char imgnat_21_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -11077,12 +9689,8 @@ static const char imgnat_21_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_mask22_vert_src =
-{
-   imgnat_21_mask22_vert_glsl
-};
 
-static const char imgnat_22_mask22_frag_glsl[] =
+static const char imgnat_22_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -11119,12 +9727,8 @@ static const char imgnat_22_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_mask22_frag_src =
-{
-   imgnat_22_mask22_frag_glsl
-};
 
-static const char imgnat_22_mask22_vert_glsl[] =
+static const char imgnat_22_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -11160,12 +9764,8 @@ static const char imgnat_22_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_mask22_vert_src =
-{
-   imgnat_22_mask22_vert_glsl
-};
 
-static const char imgnat_12_bgra_mask22_frag_glsl[] =
+static const char imgnat_12_bgra_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -11200,12 +9800,8 @@ static const char imgnat_12_bgra_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_mask22_frag_src =
-{
-   imgnat_12_bgra_mask22_frag_glsl
-};
 
-static const char imgnat_12_bgra_mask22_vert_glsl[] =
+static const char imgnat_12_bgra_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -11239,12 +9835,8 @@ static const char imgnat_12_bgra_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_mask22_vert_src =
-{
-   imgnat_12_bgra_mask22_vert_glsl
-};
 
-static const char imgnat_21_bgra_mask22_frag_glsl[] =
+static const char imgnat_21_bgra_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -11279,12 +9871,8 @@ static const char imgnat_21_bgra_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_mask22_frag_src =
-{
-   imgnat_21_bgra_mask22_frag_glsl
-};
 
-static const char imgnat_21_bgra_mask22_vert_glsl[] =
+static const char imgnat_21_bgra_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -11318,12 +9906,8 @@ static const char imgnat_21_bgra_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_mask22_vert_src =
-{
-   imgnat_21_bgra_mask22_vert_glsl
-};
 
-static const char imgnat_22_bgra_mask22_frag_glsl[] =
+static const char imgnat_22_bgra_mask22_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -11360,12 +9944,8 @@ static const char imgnat_22_bgra_mask22_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_mask22_frag_src =
-{
-   imgnat_22_bgra_mask22_frag_glsl
-};
 
-static const char imgnat_22_bgra_mask22_vert_glsl[] =
+static const char imgnat_22_bgra_mask22_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -11401,12 +9981,8 @@ static const char imgnat_22_bgra_mask22_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_mask22_vert_src =
-{
-   imgnat_22_bgra_mask22_vert_glsl
-};
 
-static const char imgnat_mask22_nomul_frag_glsl[] =
+static const char imgnat_mask22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -11435,12 +10011,8 @@ static const char imgnat_mask22_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_mask22_nomul_frag_src =
-{
-   imgnat_mask22_nomul_frag_glsl
-};
 
-static const char imgnat_mask22_nomul_vert_glsl[] =
+static const char imgnat_mask22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -11465,12 +10037,8 @@ static const char imgnat_mask22_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_mask22_nomul_vert_src =
-{
-   imgnat_mask22_nomul_vert_glsl
-};
 
-static const char imgnat_bgra_mask22_nomul_frag_glsl[] =
+static const char imgnat_bgra_mask22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -11499,12 +10067,8 @@ static const char imgnat_bgra_mask22_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_mask22_nomul_frag_src =
-{
-   imgnat_bgra_mask22_nomul_frag_glsl
-};
 
-static const char imgnat_bgra_mask22_nomul_vert_glsl[] =
+static const char imgnat_bgra_mask22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -11529,12 +10093,8 @@ static const char imgnat_bgra_mask22_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_mask22_nomul_vert_src =
-{
-   imgnat_bgra_mask22_nomul_vert_glsl
-};
 
-static const char imgnat_12_mask22_nomul_frag_glsl[] =
+static const char imgnat_12_mask22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -11567,12 +10127,8 @@ static const char imgnat_12_mask22_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_mask22_nomul_frag_src =
-{
-   imgnat_12_mask22_nomul_frag_glsl
-};
 
-static const char imgnat_12_mask22_nomul_vert_glsl[] =
+static const char imgnat_12_mask22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -11603,12 +10159,8 @@ static const char imgnat_12_mask22_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_mask22_nomul_vert_src =
-{
-   imgnat_12_mask22_nomul_vert_glsl
-};
 
-static const char imgnat_21_mask22_nomul_frag_glsl[] =
+static const char imgnat_21_mask22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -11641,12 +10193,8 @@ static const char imgnat_21_mask22_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_mask22_nomul_frag_src =
-{
-   imgnat_21_mask22_nomul_frag_glsl
-};
 
-static const char imgnat_21_mask22_nomul_vert_glsl[] =
+static const char imgnat_21_mask22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -11677,12 +10225,8 @@ static const char imgnat_21_mask22_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_mask22_nomul_vert_src =
-{
-   imgnat_21_mask22_nomul_vert_glsl
-};
 
-static const char imgnat_22_mask22_nomul_frag_glsl[] =
+static const char imgnat_22_mask22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -11717,12 +10261,8 @@ static const char imgnat_22_mask22_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_mask22_nomul_frag_src =
-{
-   imgnat_22_mask22_nomul_frag_glsl
-};
 
-static const char imgnat_22_mask22_nomul_vert_glsl[] =
+static const char imgnat_22_mask22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -11755,12 +10295,8 @@ static const char imgnat_22_mask22_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_mask22_nomul_vert_src =
-{
-   imgnat_22_mask22_nomul_vert_glsl
-};
 
-static const char imgnat_12_bgra_mask22_nomul_frag_glsl[] =
+static const char imgnat_12_bgra_mask22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -11793,12 +10329,8 @@ static const char imgnat_12_bgra_mask22_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_mask22_nomul_frag_src =
-{
-   imgnat_12_bgra_mask22_nomul_frag_glsl
-};
 
-static const char imgnat_12_bgra_mask22_nomul_vert_glsl[] =
+static const char imgnat_12_bgra_mask22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -11829,12 +10361,8 @@ static const char imgnat_12_bgra_mask22_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_mask22_nomul_vert_src =
-{
-   imgnat_12_bgra_mask22_nomul_vert_glsl
-};
 
-static const char imgnat_21_bgra_mask22_nomul_frag_glsl[] =
+static const char imgnat_21_bgra_mask22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -11867,12 +10395,8 @@ static const char imgnat_21_bgra_mask22_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_mask22_nomul_frag_src =
-{
-   imgnat_21_bgra_mask22_nomul_frag_glsl
-};
 
-static const char imgnat_21_bgra_mask22_nomul_vert_glsl[] =
+static const char imgnat_21_bgra_mask22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -11903,12 +10427,8 @@ static const char imgnat_21_bgra_mask22_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_mask22_nomul_vert_src =
-{
-   imgnat_21_bgra_mask22_nomul_vert_glsl
-};
 
-static const char imgnat_22_bgra_mask22_nomul_frag_glsl[] =
+static const char imgnat_22_bgra_mask22_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -11943,12 +10463,8 @@ static const char imgnat_22_bgra_mask22_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_mask22_nomul_frag_src =
-{
-   imgnat_22_bgra_mask22_nomul_frag_glsl
-};
 
-static const char imgnat_22_bgra_mask22_nomul_vert_glsl[] =
+static const char imgnat_22_bgra_mask22_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -11981,12 +10497,8 @@ static const char imgnat_22_bgra_mask22_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_mask22_nomul_vert_src =
-{
-   imgnat_22_bgra_mask22_nomul_vert_glsl
-};
 
-static const char imgnat_afill_frag_glsl[] =
+static const char imgnat_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12007,12 +10519,8 @@ static const char imgnat_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_afill_frag_src =
-{
-   imgnat_afill_frag_glsl
-};
 
-static const char imgnat_afill_vert_glsl[] =
+static const char imgnat_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12028,12 +10536,8 @@ static const char imgnat_afill_vert_glsl[] =
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_afill_vert_src =
-{
-   imgnat_afill_vert_glsl
-};
 
-static const char imgnat_bgra_afill_frag_glsl[] =
+static const char imgnat_bgra_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12054,12 +10558,8 @@ static const char imgnat_bgra_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_afill_frag_src =
-{
-   imgnat_bgra_afill_frag_glsl
-};
 
-static const char imgnat_bgra_afill_vert_glsl[] =
+static const char imgnat_bgra_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12075,12 +10575,8 @@ static const char imgnat_bgra_afill_vert_glsl[] =
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_afill_vert_src =
-{
-   imgnat_bgra_afill_vert_glsl
-};
 
-static const char imgnat_nomul_afill_frag_glsl[] =
+static const char imgnat_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12099,12 +10595,8 @@ static const char imgnat_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_nomul_afill_frag_src =
-{
-   imgnat_nomul_afill_frag_glsl
-};
 
-static const char imgnat_nomul_afill_vert_glsl[] =
+static const char imgnat_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12117,12 +10609,8 @@ static const char imgnat_nomul_afill_vert_glsl[] =
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_nomul_afill_vert_src =
-{
-   imgnat_nomul_afill_vert_glsl
-};
 
-static const char imgnat_bgra_nomul_afill_frag_glsl[] =
+static const char imgnat_bgra_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12141,12 +10629,8 @@ static const char imgnat_bgra_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_nomul_afill_frag_src =
-{
-   imgnat_bgra_nomul_afill_frag_glsl
-};
 
-static const char imgnat_bgra_nomul_afill_vert_glsl[] =
+static const char imgnat_bgra_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12159,12 +10643,8 @@ static const char imgnat_bgra_nomul_afill_vert_glsl[] =
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_bgra_nomul_afill_vert_src =
-{
-   imgnat_bgra_nomul_afill_vert_glsl
-};
 
-static const char imgnat_12_afill_frag_glsl[] =
+static const char imgnat_12_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12189,12 +10669,8 @@ static const char imgnat_12_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_afill_frag_src =
-{
-   imgnat_12_afill_frag_glsl
-};
 
-static const char imgnat_12_afill_vert_glsl[] =
+static const char imgnat_12_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12216,12 +10692,8 @@ static const char imgnat_12_afill_vert_glsl[] =
    "   tex_s[1] = vec2(0, tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_afill_vert_src =
-{
-   imgnat_12_afill_vert_glsl
-};
 
-static const char imgnat_21_afill_frag_glsl[] =
+static const char imgnat_21_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12246,12 +10718,8 @@ static const char imgnat_21_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_afill_frag_src =
-{
-   imgnat_21_afill_frag_glsl
-};
 
-static const char imgnat_21_afill_vert_glsl[] =
+static const char imgnat_21_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12273,12 +10741,8 @@ static const char imgnat_21_afill_vert_glsl[] =
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_afill_vert_src =
-{
-   imgnat_21_afill_vert_glsl
-};
 
-static const char imgnat_22_afill_frag_glsl[] =
+static const char imgnat_22_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12305,12 +10769,8 @@ static const char imgnat_22_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_afill_frag_src =
-{
-   imgnat_22_afill_frag_glsl
-};
 
-static const char imgnat_22_afill_vert_glsl[] =
+static const char imgnat_22_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12334,12 +10794,8 @@ static const char imgnat_22_afill_vert_glsl[] =
    "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
    "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_afill_vert_src =
-{
-   imgnat_22_afill_vert_glsl
-};
 
-static const char imgnat_12_bgra_afill_frag_glsl[] =
+static const char imgnat_12_bgra_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12364,12 +10820,8 @@ static const char imgnat_12_bgra_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_afill_frag_src =
-{
-   imgnat_12_bgra_afill_frag_glsl
-};
 
-static const char imgnat_12_bgra_afill_vert_glsl[] =
+static const char imgnat_12_bgra_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12391,12 +10843,8 @@ static const char imgnat_12_bgra_afill_vert_glsl[] =
    "   tex_s[1] = vec2(0, tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_afill_vert_src =
-{
-   imgnat_12_bgra_afill_vert_glsl
-};
 
-static const char imgnat_21_bgra_afill_frag_glsl[] =
+static const char imgnat_21_bgra_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12421,12 +10869,8 @@ static const char imgnat_21_bgra_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_afill_frag_src =
-{
-   imgnat_21_bgra_afill_frag_glsl
-};
 
-static const char imgnat_21_bgra_afill_vert_glsl[] =
+static const char imgnat_21_bgra_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12448,12 +10892,8 @@ static const char imgnat_21_bgra_afill_vert_glsl[] =
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_afill_vert_src =
-{
-   imgnat_21_bgra_afill_vert_glsl
-};
 
-static const char imgnat_22_bgra_afill_frag_glsl[] =
+static const char imgnat_22_bgra_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12480,12 +10920,8 @@ static const char imgnat_22_bgra_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_afill_frag_src =
-{
-   imgnat_22_bgra_afill_frag_glsl
-};
 
-static const char imgnat_22_bgra_afill_vert_glsl[] =
+static const char imgnat_22_bgra_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12509,12 +10945,8 @@ static const char imgnat_22_bgra_afill_vert_glsl[] =
    "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
    "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_afill_vert_src =
-{
-   imgnat_22_bgra_afill_vert_glsl
-};
 
-static const char imgnat_12_nomul_afill_frag_glsl[] =
+static const char imgnat_12_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12537,12 +10969,8 @@ static const char imgnat_12_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_nomul_afill_frag_src =
-{
-   imgnat_12_nomul_afill_frag_glsl
-};
 
-static const char imgnat_12_nomul_afill_vert_glsl[] =
+static const char imgnat_12_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12561,12 +10989,8 @@ static const char imgnat_12_nomul_afill_vert_glsl[] =
    "   tex_s[1] = vec2(0, tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_nomul_afill_vert_src =
-{
-   imgnat_12_nomul_afill_vert_glsl
-};
 
-static const char imgnat_21_nomul_afill_frag_glsl[] =
+static const char imgnat_21_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12589,12 +11013,8 @@ static const char imgnat_21_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_nomul_afill_frag_src =
-{
-   imgnat_21_nomul_afill_frag_glsl
-};
 
-static const char imgnat_21_nomul_afill_vert_glsl[] =
+static const char imgnat_21_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12613,12 +11033,8 @@ static const char imgnat_21_nomul_afill_vert_glsl[] =
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_nomul_afill_vert_src =
-{
-   imgnat_21_nomul_afill_vert_glsl
-};
 
-static const char imgnat_22_nomul_afill_frag_glsl[] =
+static const char imgnat_22_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12643,12 +11059,8 @@ static const char imgnat_22_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_nomul_afill_frag_src =
-{
-   imgnat_22_nomul_afill_frag_glsl
-};
 
-static const char imgnat_22_nomul_afill_vert_glsl[] =
+static const char imgnat_22_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12669,12 +11081,8 @@ static const char imgnat_22_nomul_afill_vert_glsl[] =
    "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
    "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_nomul_afill_vert_src =
-{
-   imgnat_22_nomul_afill_vert_glsl
-};
 
-static const char imgnat_12_bgra_nomul_afill_frag_glsl[] =
+static const char imgnat_12_bgra_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12697,12 +11105,8 @@ static const char imgnat_12_bgra_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_nomul_afill_frag_src =
-{
-   imgnat_12_bgra_nomul_afill_frag_glsl
-};
 
-static const char imgnat_12_bgra_nomul_afill_vert_glsl[] =
+static const char imgnat_12_bgra_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12721,12 +11125,8 @@ static const char imgnat_12_bgra_nomul_afill_vert_glsl[] =
    "   tex_s[1] = vec2(0, tex_sample.y);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_12_bgra_nomul_afill_vert_src =
-{
-   imgnat_12_bgra_nomul_afill_vert_glsl
-};
 
-static const char imgnat_21_bgra_nomul_afill_frag_glsl[] =
+static const char imgnat_21_bgra_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12749,12 +11149,8 @@ static const char imgnat_21_bgra_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_nomul_afill_frag_src =
-{
-   imgnat_21_bgra_nomul_afill_frag_glsl
-};
 
-static const char imgnat_21_bgra_nomul_afill_vert_glsl[] =
+static const char imgnat_21_bgra_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12773,12 +11169,8 @@ static const char imgnat_21_bgra_nomul_afill_vert_glsl[] =
    "   tex_s[1] = vec2( tex_sample.x, 0);\n"
    "   div_s = vec4(2, 2, 2, 2);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_21_bgra_nomul_afill_vert_src =
-{
-   imgnat_21_bgra_nomul_afill_vert_glsl
-};
 
-static const char imgnat_22_bgra_nomul_afill_frag_glsl[] =
+static const char imgnat_22_bgra_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12803,12 +11195,8 @@ static const char imgnat_22_bgra_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_nomul_afill_frag_src =
-{
-   imgnat_22_bgra_nomul_afill_frag_glsl
-};
 
-static const char imgnat_22_bgra_nomul_afill_vert_glsl[] =
+static const char imgnat_22_bgra_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12829,12 +11217,8 @@ static const char imgnat_22_bgra_nomul_afill_vert_glsl[] =
    "   tex_s[3] = vec2(-tex_sample.x, tex_sample.y);\n"
    "   div_s = vec4(4, 4, 4, 4);\n"
    "}\n";
-Evas_GL_Program_Source shader_imgnat_22_bgra_nomul_afill_vert_src =
-{
-   imgnat_22_bgra_nomul_afill_vert_glsl
-};
 
-static const char rgb_a_pair_frag_glsl[] =
+static const char rgb_a_pair_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12857,12 +11241,8 @@ static const char rgb_a_pair_frag_glsl[] =
    "     * texture2D(texa, tex_a).r\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_rgb_a_pair_frag_src =
-{
-   rgb_a_pair_frag_glsl
-};
 
-static const char rgb_a_pair_vert_glsl[] =
+static const char rgb_a_pair_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12881,12 +11261,8 @@ static const char rgb_a_pair_vert_glsl[] =
    "   tex_c = tex_coord;\n"
    "   tex_a = tex_coorda;\n"
    "}\n";
-Evas_GL_Program_Source shader_rgb_a_pair_vert_src =
-{
-   rgb_a_pair_vert_glsl
-};
 
-static const char rgb_a_pair_mask_frag_glsl[] =
+static const char rgb_a_pair_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12914,12 +11290,8 @@ static const char rgb_a_pair_mask_frag_glsl[] =
    "     * texture2D(texa, tex_a).r\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_rgb_a_pair_mask_frag_src =
-{
-   rgb_a_pair_mask_frag_glsl
-};
 
-static const char rgb_a_pair_mask_vert_glsl[] =
+static const char rgb_a_pair_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12942,12 +11314,8 @@ static const char rgb_a_pair_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_rgb_a_pair_mask_vert_src =
-{
-   rgb_a_pair_mask_vert_glsl
-};
 
-static const char rgb_a_pair_nomul_frag_glsl[] =
+static const char rgb_a_pair_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -12968,12 +11336,8 @@ static const char rgb_a_pair_nomul_frag_glsl[] =
    "     * texture2D(texa, tex_a).r\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_rgb_a_pair_nomul_frag_src =
-{
-   rgb_a_pair_nomul_frag_glsl
-};
 
-static const char rgb_a_pair_nomul_vert_glsl[] =
+static const char rgb_a_pair_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -12989,12 +11353,8 @@ static const char rgb_a_pair_nomul_vert_glsl[] =
    "   tex_c = tex_coord;\n"
    "   tex_a = tex_coorda;\n"
    "}\n";
-Evas_GL_Program_Source shader_rgb_a_pair_nomul_vert_src =
-{
-   rgb_a_pair_nomul_vert_glsl
-};
 
-static const char rgb_a_pair_mask_nomul_frag_glsl[] =
+static const char rgb_a_pair_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -13020,12 +11380,8 @@ static const char rgb_a_pair_mask_nomul_frag_glsl[] =
    "     * texture2D(texa, tex_a).r\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_rgb_a_pair_mask_nomul_frag_src =
-{
-   rgb_a_pair_mask_nomul_frag_glsl
-};
 
-static const char rgb_a_pair_mask_nomul_vert_glsl[] =
+static const char rgb_a_pair_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -13045,12 +11401,8 @@ static const char rgb_a_pair_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_rgb_a_pair_mask_nomul_vert_src =
-{
-   rgb_a_pair_mask_nomul_vert_glsl
-};
 
-static const char tex_external_frag_glsl[] =
+static const char tex_external_frag_src[] =
    "#ifdef GL_ES\n"
    "# extension GL_OES_EGL_image_external : require\n"
    "# ifdef GL_FRAGMENT_PRECISION_HIGH\n"
@@ -13074,12 +11426,8 @@ static const char tex_external_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_external_frag_src =
-{
-   tex_external_frag_glsl
-};
 
-static const char tex_external_vert_glsl[] =
+static const char tex_external_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -13095,12 +11443,8 @@ static const char tex_external_vert_glsl[] =
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_external_vert_src =
-{
-   tex_external_vert_glsl
-};
 
-static const char tex_external_afill_frag_glsl[] =
+static const char tex_external_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "# extension GL_OES_EGL_image_external : require\n"
    "# ifdef GL_FRAGMENT_PRECISION_HIGH\n"
@@ -13125,12 +11469,8 @@ static const char tex_external_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_external_afill_frag_src =
-{
-   tex_external_afill_frag_glsl
-};
 
-static const char tex_external_afill_vert_glsl[] =
+static const char tex_external_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -13146,12 +11486,8 @@ static const char tex_external_afill_vert_glsl[] =
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_external_afill_vert_src =
-{
-   tex_external_afill_vert_glsl
-};
 
-static const char tex_external_nomul_frag_glsl[] =
+static const char tex_external_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "# extension GL_OES_EGL_image_external : require\n"
    "# ifdef GL_FRAGMENT_PRECISION_HIGH\n"
@@ -13173,12 +11509,8 @@ static const char tex_external_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_external_nomul_frag_src =
-{
-   tex_external_nomul_frag_glsl
-};
 
-static const char tex_external_nomul_vert_glsl[] =
+static const char tex_external_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -13191,12 +11523,8 @@ static const char tex_external_nomul_vert_glsl[] =
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_external_nomul_vert_src =
-{
-   tex_external_nomul_vert_glsl
-};
 
-static const char tex_external_nomul_afill_frag_glsl[] =
+static const char tex_external_nomul_afill_frag_src[] =
    "#ifdef GL_ES\n"
    "# extension GL_OES_EGL_image_external : require\n"
    "# ifdef GL_FRAGMENT_PRECISION_HIGH\n"
@@ -13219,12 +11547,8 @@ static const char tex_external_nomul_afill_frag_glsl[] =
    "   ;\n"
    "   gl_FragColor.a = 1.0;\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_external_nomul_afill_frag_src =
-{
-   tex_external_nomul_afill_frag_glsl
-};
 
-static const char tex_external_nomul_afill_vert_glsl[] =
+static const char tex_external_nomul_afill_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -13237,12 +11561,8 @@ static const char tex_external_nomul_afill_vert_glsl[] =
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_external_nomul_afill_vert_src =
-{
-   tex_external_nomul_afill_vert_glsl
-};
 
-static const char tex_external_mask_frag_glsl[] =
+static const char tex_external_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "# extension GL_OES_EGL_image_external : require\n"
    "# ifdef GL_FRAGMENT_PRECISION_HIGH\n"
@@ -13271,12 +11591,8 @@ static const char tex_external_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_external_mask_frag_src =
-{
-   tex_external_mask_frag_glsl
-};
 
-static const char tex_external_mask_vert_glsl[] =
+static const char tex_external_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -13296,12 +11612,8 @@ static const char tex_external_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_external_mask_vert_src =
-{
-   tex_external_mask_vert_glsl
-};
 
-static const char tex_external_mask_nomul_frag_glsl[] =
+static const char tex_external_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "# extension GL_OES_EGL_image_external : require\n"
    "# ifdef GL_FRAGMENT_PRECISION_HIGH\n"
@@ -13328,12 +11640,8 @@ static const char tex_external_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_external_mask_nomul_frag_src =
-{
-   tex_external_mask_nomul_frag_glsl
-};
 
-static const char tex_external_mask_nomul_vert_glsl[] =
+static const char tex_external_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -13350,12 +11658,8 @@ static const char tex_external_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_tex_external_mask_nomul_vert_src =
-{
-   tex_external_mask_nomul_vert_glsl
-};
 
-static const char yuv_frag_glsl[] =
+static const char yuv_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -13392,12 +11696,8 @@ static const char yuv_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuv_frag_src =
-{
-   yuv_frag_glsl
-};
 
-static const char yuv_vert_glsl[] =
+static const char yuv_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -13419,12 +11719,8 @@ static const char yuv_vert_glsl[] =
    "   tex_c2 = tex_coord2;\n"
    "   tex_c3 = tex_coord3;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuv_vert_src =
-{
-   yuv_vert_glsl
-};
 
-static const char yuv_nomul_frag_glsl[] =
+static const char yuv_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -13459,12 +11755,8 @@ static const char yuv_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuv_nomul_frag_src =
-{
-   yuv_nomul_frag_glsl
-};
 
-static const char yuv_nomul_vert_glsl[] =
+static const char yuv_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -13483,12 +11775,8 @@ static const char yuv_nomul_vert_glsl[] =
    "   tex_c2 = tex_coord2;\n"
    "   tex_c3 = tex_coord3;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuv_nomul_vert_src =
-{
-   yuv_nomul_vert_glsl
-};
 
-static const char yuv_mask_frag_glsl[] =
+static const char yuv_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -13530,12 +11818,8 @@ static const char yuv_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuv_mask_frag_src =
-{
-   yuv_mask_frag_glsl
-};
 
-static const char yuv_mask_vert_glsl[] =
+static const char yuv_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -13561,12 +11845,8 @@ static const char yuv_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuv_mask_vert_src =
-{
-   yuv_mask_vert_glsl
-};
 
-static const char yuv_mask_nomul_frag_glsl[] =
+static const char yuv_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -13606,12 +11886,8 @@ static const char yuv_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuv_mask_nomul_frag_src =
-{
-   yuv_mask_nomul_frag_glsl
-};
 
-static const char yuv_mask_nomul_vert_glsl[] =
+static const char yuv_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -13634,12 +11910,8 @@ static const char yuv_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuv_mask_nomul_vert_src =
-{
-   yuv_mask_nomul_vert_glsl
-};
 
-static const char yuy2_frag_glsl[] =
+static const char yuy2_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -13674,12 +11946,8 @@ static const char yuy2_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuy2_frag_src =
-{
-   yuy2_frag_glsl
-};
 
-static const char yuy2_vert_glsl[] =
+static const char yuy2_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -13698,12 +11966,8 @@ static const char yuy2_vert_glsl[] =
    "   tex_c = tex_coord;\n"
    "   tex_c2 = vec2(tex_coord2.x * 0.5, tex_coord2.y);\n"
    "}\n";
-Evas_GL_Program_Source shader_yuy2_vert_src =
-{
-   yuy2_vert_glsl
-};
 
-static const char yuy2_nomul_frag_glsl[] =
+static const char yuy2_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -13736,12 +12000,8 @@ static const char yuy2_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuy2_nomul_frag_src =
-{
-   yuy2_nomul_frag_glsl
-};
 
-static const char yuy2_nomul_vert_glsl[] =
+static const char yuy2_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -13757,12 +12017,8 @@ static const char yuy2_nomul_vert_glsl[] =
    "   tex_c = tex_coord;\n"
    "   tex_c2 = vec2(tex_coord2.x * 0.5, tex_coord2.y);\n"
    "}\n";
-Evas_GL_Program_Source shader_yuy2_nomul_vert_src =
-{
-   yuy2_nomul_vert_glsl
-};
 
-static const char yuy2_mask_frag_glsl[] =
+static const char yuy2_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -13802,12 +12058,8 @@ static const char yuy2_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuy2_mask_frag_src =
-{
-   yuy2_mask_frag_glsl
-};
 
-static const char yuy2_mask_vert_glsl[] =
+static const char yuy2_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -13830,12 +12082,8 @@ static const char yuy2_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuy2_mask_vert_src =
-{
-   yuy2_mask_vert_glsl
-};
 
-static const char yuy2_mask_nomul_frag_glsl[] =
+static const char yuy2_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -13873,12 +12121,8 @@ static const char yuy2_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuy2_mask_nomul_frag_src =
-{
-   yuy2_mask_nomul_frag_glsl
-};
 
-static const char yuy2_mask_nomul_vert_glsl[] =
+static const char yuy2_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -13898,12 +12142,8 @@ static const char yuy2_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuy2_mask_nomul_vert_src =
-{
-   yuy2_mask_nomul_vert_glsl
-};
 
-static const char nv12_frag_glsl[] =
+static const char nv12_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -13938,12 +12178,8 @@ static const char nv12_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_nv12_frag_src =
-{
-   nv12_frag_glsl
-};
 
-static const char nv12_vert_glsl[] =
+static const char nv12_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -13962,12 +12198,8 @@ static const char nv12_vert_glsl[] =
    "   tex_c = tex_coord;\n"
    "   tex_c2 = tex_coord2 * 0.5;\n"
    "}\n";
-Evas_GL_Program_Source shader_nv12_vert_src =
-{
-   nv12_vert_glsl
-};
 
-static const char nv12_nomul_frag_glsl[] =
+static const char nv12_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -14000,12 +12232,8 @@ static const char nv12_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_nv12_nomul_frag_src =
-{
-   nv12_nomul_frag_glsl
-};
 
-static const char nv12_nomul_vert_glsl[] =
+static const char nv12_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -14021,12 +12249,8 @@ static const char nv12_nomul_vert_glsl[] =
    "   tex_c = tex_coord;\n"
    "   tex_c2 = tex_coord2 * 0.5;\n"
    "}\n";
-Evas_GL_Program_Source shader_nv12_nomul_vert_src =
-{
-   nv12_nomul_vert_glsl
-};
 
-static const char nv12_mask_frag_glsl[] =
+static const char nv12_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -14066,12 +12290,8 @@ static const char nv12_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_nv12_mask_frag_src =
-{
-   nv12_mask_frag_glsl
-};
 
-static const char nv12_mask_vert_glsl[] =
+static const char nv12_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -14094,12 +12314,8 @@ static const char nv12_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_nv12_mask_vert_src =
-{
-   nv12_mask_vert_glsl
-};
 
-static const char nv12_mask_nomul_frag_glsl[] =
+static const char nv12_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -14137,12 +12353,8 @@ static const char nv12_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_nv12_mask_nomul_frag_src =
-{
-   nv12_mask_nomul_frag_glsl
-};
 
-static const char nv12_mask_nomul_vert_glsl[] =
+static const char nv12_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -14162,12 +12374,8 @@ static const char nv12_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_nv12_mask_nomul_vert_src =
-{
-   nv12_mask_nomul_vert_glsl
-};
 
-static const char yuv_709_frag_glsl[] =
+static const char yuv_709_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -14204,12 +12412,8 @@ static const char yuv_709_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuv_709_frag_src =
-{
-   yuv_709_frag_glsl
-};
 
-static const char yuv_709_vert_glsl[] =
+static const char yuv_709_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -14231,12 +12435,8 @@ static const char yuv_709_vert_glsl[] =
    "   tex_c2 = tex_coord2;\n"
    "   tex_c3 = tex_coord3;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuv_709_vert_src =
-{
-   yuv_709_vert_glsl
-};
 
-static const char yuv_709_nomul_frag_glsl[] =
+static const char yuv_709_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -14271,12 +12471,8 @@ static const char yuv_709_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuv_709_nomul_frag_src =
-{
-   yuv_709_nomul_frag_glsl
-};
 
-static const char yuv_709_nomul_vert_glsl[] =
+static const char yuv_709_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -14295,12 +12491,8 @@ static const char yuv_709_nomul_vert_glsl[] =
    "   tex_c2 = tex_coord2;\n"
    "   tex_c3 = tex_coord3;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuv_709_nomul_vert_src =
-{
-   yuv_709_nomul_vert_glsl
-};
 
-static const char yuv_709_mask_frag_glsl[] =
+static const char yuv_709_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -14342,12 +12534,8 @@ static const char yuv_709_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuv_709_mask_frag_src =
-{
-   yuv_709_mask_frag_glsl
-};
 
-static const char yuv_709_mask_vert_glsl[] =
+static const char yuv_709_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -14373,12 +12561,8 @@ static const char yuv_709_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuv_709_mask_vert_src =
-{
-   yuv_709_mask_vert_glsl
-};
 
-static const char yuv_709_mask_nomul_frag_glsl[] =
+static const char yuv_709_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -14418,12 +12602,8 @@ static const char yuv_709_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuv_709_mask_nomul_frag_src =
-{
-   yuv_709_mask_nomul_frag_glsl
-};
 
-static const char yuv_709_mask_nomul_vert_glsl[] =
+static const char yuv_709_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -14446,12 +12626,8 @@ static const char yuv_709_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuv_709_mask_nomul_vert_src =
-{
-   yuv_709_mask_nomul_vert_glsl
-};
 
-static const char yuy2_709_frag_glsl[] =
+static const char yuy2_709_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -14486,12 +12662,8 @@ static const char yuy2_709_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuy2_709_frag_src =
-{
-   yuy2_709_frag_glsl
-};
 
-static const char yuy2_709_vert_glsl[] =
+static const char yuy2_709_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -14510,12 +12682,8 @@ static const char yuy2_709_vert_glsl[] =
    "   tex_c = tex_coord;\n"
    "   tex_c2 = vec2(tex_coord2.x * 0.5, tex_coord2.y);\n"
    "}\n";
-Evas_GL_Program_Source shader_yuy2_709_vert_src =
-{
-   yuy2_709_vert_glsl
-};
 
-static const char yuy2_709_nomul_frag_glsl[] =
+static const char yuy2_709_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -14548,12 +12716,8 @@ static const char yuy2_709_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuy2_709_nomul_frag_src =
-{
-   yuy2_709_nomul_frag_glsl
-};
 
-static const char yuy2_709_nomul_vert_glsl[] =
+static const char yuy2_709_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -14569,12 +12733,8 @@ static const char yuy2_709_nomul_vert_glsl[] =
    "   tex_c = tex_coord;\n"
    "   tex_c2 = vec2(tex_coord2.x * 0.5, tex_coord2.y);\n"
    "}\n";
-Evas_GL_Program_Source shader_yuy2_709_nomul_vert_src =
-{
-   yuy2_709_nomul_vert_glsl
-};
 
-static const char yuy2_709_mask_frag_glsl[] =
+static const char yuy2_709_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -14614,12 +12774,8 @@ static const char yuy2_709_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuy2_709_mask_frag_src =
-{
-   yuy2_709_mask_frag_glsl
-};
 
-static const char yuy2_709_mask_vert_glsl[] =
+static const char yuy2_709_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -14642,12 +12798,8 @@ static const char yuy2_709_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuy2_709_mask_vert_src =
-{
-   yuy2_709_mask_vert_glsl
-};
 
-static const char yuy2_709_mask_nomul_frag_glsl[] =
+static const char yuy2_709_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -14685,12 +12837,8 @@ static const char yuy2_709_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuy2_709_mask_nomul_frag_src =
-{
-   yuy2_709_mask_nomul_frag_glsl
-};
 
-static const char yuy2_709_mask_nomul_vert_glsl[] =
+static const char yuy2_709_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -14710,12 +12858,8 @@ static const char yuy2_709_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_yuy2_709_mask_nomul_vert_src =
-{
-   yuy2_709_mask_nomul_vert_glsl
-};
 
-static const char nv12_709_frag_glsl[] =
+static const char nv12_709_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -14750,12 +12894,8 @@ static const char nv12_709_frag_glsl[] =
    "     * col\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_nv12_709_frag_src =
-{
-   nv12_709_frag_glsl
-};
 
-static const char nv12_709_vert_glsl[] =
+static const char nv12_709_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -14774,12 +12914,8 @@ static const char nv12_709_vert_glsl[] =
    "   tex_c = tex_coord;\n"
    "   tex_c2 = tex_coord2 * 0.5;\n"
    "}\n";
-Evas_GL_Program_Source shader_nv12_709_vert_src =
-{
-   nv12_709_vert_glsl
-};
 
-static const char nv12_709_nomul_frag_glsl[] =
+static const char nv12_709_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -14812,12 +12948,8 @@ static const char nv12_709_nomul_frag_glsl[] =
    "       c\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_nv12_709_nomul_frag_src =
-{
-   nv12_709_nomul_frag_glsl
-};
 
-static const char nv12_709_nomul_vert_glsl[] =
+static const char nv12_709_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -14833,12 +12965,8 @@ static const char nv12_709_nomul_vert_glsl[] =
    "   tex_c = tex_coord;\n"
    "   tex_c2 = tex_coord2 * 0.5;\n"
    "}\n";
-Evas_GL_Program_Source shader_nv12_709_nomul_vert_src =
-{
-   nv12_709_nomul_vert_glsl
-};
 
-static const char nv12_709_mask_frag_glsl[] =
+static const char nv12_709_mask_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -14878,12 +13006,8 @@ static const char nv12_709_mask_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_nv12_709_mask_frag_src =
-{
-   nv12_709_mask_frag_glsl
-};
 
-static const char nv12_709_mask_vert_glsl[] =
+static const char nv12_709_mask_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -14906,12 +13030,8 @@ static const char nv12_709_mask_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_nv12_709_mask_vert_src =
-{
-   nv12_709_mask_vert_glsl
-};
 
-static const char nv12_709_mask_nomul_frag_glsl[] =
+static const char nv12_709_mask_nomul_frag_src[] =
    "#ifdef GL_ES\n"
    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
    "precision highp float;\n"
@@ -14949,12 +13069,8 @@ static const char nv12_709_mask_nomul_frag_glsl[] =
    "  * ma\n"
    "   ;\n"
    "}\n";
-Evas_GL_Program_Source shader_nv12_709_mask_nomul_frag_src =
-{
-   nv12_709_mask_nomul_frag_glsl
-};
 
-static const char nv12_709_mask_nomul_vert_glsl[] =
+static const char nv12_709_mask_nomul_vert_src[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
@@ -14974,16 +13090,12 @@ static const char nv12_709_mask_nomul_vert_glsl[] =
    "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
-Evas_GL_Program_Source shader_nv12_709_mask_nomul_vert_src =
-{
-   nv12_709_mask_nomul_vert_glsl
-};
 
 
 static const struct {
    Evas_GL_Shader id;
-   Evas_GL_Program_Source *vert;
-   Evas_GL_Program_Source *frag;
+   const char *vert;
+   const char *frag;
    const char *name;
    Shader_Type type;
    Shader_Sampling sam;
@@ -14993,241 +13105,241 @@ static const struct {
    Eina_Bool nomul : 1;
    Eina_Bool afill : 1;
 } _shaders_source[] = {
-   { SHADER_RECT, &(shader_rect_vert_src), &(shader_rect_frag_src), "rect", SHD_RECT, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_RECT_MASK, &(shader_rect_mask_vert_src), &(shader_rect_mask_frag_src), "rect_mask", SHD_RECT, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_RECT_MASK12, &(shader_rect_mask12_vert_src), &(shader_rect_mask12_frag_src), "rect_mask12", SHD_RECT, SHD_SAM11, SHD_SAM12, 0, 1, 0, 0 },
-   { SHADER_RECT_MASK21, &(shader_rect_mask21_vert_src), &(shader_rect_mask21_frag_src), "rect_mask21", SHD_RECT, SHD_SAM11, SHD_SAM21, 0, 1, 0, 0 },
-   { SHADER_RECT_MASK22, &(shader_rect_mask22_vert_src), &(shader_rect_mask22_frag_src), "rect_mask22", SHD_RECT, SHD_SAM11, SHD_SAM22, 0, 1, 0, 0 },
-   { SHADER_FONT, &(shader_font_vert_src), &(shader_font_frag_src), "font", SHD_FONT, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_FONT_MASK, &(shader_font_mask_vert_src), &(shader_font_mask_frag_src), "font_mask", SHD_FONT, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_FONT_MASK12, &(shader_font_mask12_vert_src), &(shader_font_mask12_frag_src), "font_mask12", SHD_FONT, SHD_SAM11, SHD_SAM12, 0, 1, 0, 0 },
-   { SHADER_FONT_MASK21, &(shader_font_mask21_vert_src), &(shader_font_mask21_frag_src), "font_mask21", SHD_FONT, SHD_SAM11, SHD_SAM21, 0, 1, 0, 0 },
-   { SHADER_FONT_MASK22, &(shader_font_mask22_vert_src), &(shader_font_mask22_frag_src), "font_mask22", SHD_FONT, SHD_SAM11, SHD_SAM22, 0, 1, 0, 0 },
-   { SHADER_IMG, &(shader_img_vert_src), &(shader_img_frag_src), "img", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_IMG_BGRA, &(shader_img_bgra_vert_src), &(shader_img_bgra_frag_src), "img_bgra", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 1, 0, 0, 0 },
-   { SHADER_IMG_12, &(shader_img_12_vert_src), &(shader_img_12_frag_src), "img_12", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_IMG_21, &(shader_img_21_vert_src), &(shader_img_21_frag_src), "img_21", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_IMG_22, &(shader_img_22_vert_src), &(shader_img_22_frag_src), "img_22", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_IMG_12_BGRA, &(shader_img_12_bgra_vert_src), &(shader_img_12_bgra_frag_src), "img_12_bgra", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 1, 0, 0, 0 },
-   { SHADER_IMG_21_BGRA, &(shader_img_21_bgra_vert_src), &(shader_img_21_bgra_frag_src), "img_21_bgra", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 1, 0, 0, 0 },
-   { SHADER_IMG_22_BGRA, &(shader_img_22_bgra_vert_src), &(shader_img_22_bgra_frag_src), "img_22_bgra", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 1, 0, 0, 0 },
-   { SHADER_IMG_MASK, &(shader_img_mask_vert_src), &(shader_img_mask_frag_src), "img_mask", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_IMG_BGRA_MASK, &(shader_img_bgra_mask_vert_src), &(shader_img_bgra_mask_frag_src), "img_bgra_mask", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 1, 1, 0, 0 },
-   { SHADER_IMG_12_MASK, &(shader_img_12_mask_vert_src), &(shader_img_12_mask_frag_src), "img_12_mask", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_IMG_21_MASK, &(shader_img_21_mask_vert_src), &(shader_img_21_mask_frag_src), "img_21_mask", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_IMG_22_MASK, &(shader_img_22_mask_vert_src), &(shader_img_22_mask_frag_src), "img_22_mask", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_IMG_12_BGRA_MASK, &(shader_img_12_bgra_mask_vert_src), &(shader_img_12_bgra_mask_frag_src), "img_12_bgra_mask", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 1, 1, 0, 0 },
-   { SHADER_IMG_21_BGRA_MASK, &(shader_img_21_bgra_mask_vert_src), &(shader_img_21_bgra_mask_frag_src), "img_21_bgra_mask", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 1, 1, 0, 0 },
-   { SHADER_IMG_22_BGRA_MASK, &(shader_img_22_bgra_mask_vert_src), &(shader_img_22_bgra_mask_frag_src), "img_22_bgra_mask", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 1, 1, 0, 0 },
-   { SHADER_IMG_NOMUL, &(shader_img_nomul_vert_src), &(shader_img_nomul_frag_src), "img_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
-   { SHADER_IMG_BGRA_NOMUL, &(shader_img_bgra_nomul_vert_src), &(shader_img_bgra_nomul_frag_src), "img_bgra_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 1, 0, 1, 0 },
-   { SHADER_IMG_12_NOMUL, &(shader_img_12_nomul_vert_src), &(shader_img_12_nomul_frag_src), "img_12_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 0, 0, 1, 0 },
-   { SHADER_IMG_21_NOMUL, &(shader_img_21_nomul_vert_src), &(shader_img_21_nomul_frag_src), "img_21_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 0, 0, 1, 0 },
-   { SHADER_IMG_22_NOMUL, &(shader_img_22_nomul_vert_src), &(shader_img_22_nomul_frag_src), "img_22_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 0, 0, 1, 0 },
-   { SHADER_IMG_12_BGRA_NOMUL, &(shader_img_12_bgra_nomul_vert_src), &(shader_img_12_bgra_nomul_frag_src), "img_12_bgra_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 1, 0, 1, 0 },
-   { SHADER_IMG_21_BGRA_NOMUL, &(shader_img_21_bgra_nomul_vert_src), &(shader_img_21_bgra_nomul_frag_src), "img_21_bgra_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 1, 0, 1, 0 },
-   { SHADER_IMG_22_BGRA_NOMUL, &(shader_img_22_bgra_nomul_vert_src), &(shader_img_22_bgra_nomul_frag_src), "img_22_bgra_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 1, 0, 1, 0 },
-   { SHADER_IMG_MASK_NOMUL, &(shader_img_mask_nomul_vert_src), &(shader_img_mask_nomul_frag_src), "img_mask_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
-   { SHADER_IMG_BGRA_MASK_NOMUL, &(shader_img_bgra_mask_nomul_vert_src), &(shader_img_bgra_mask_nomul_frag_src), "img_bgra_mask_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 1, 1, 1, 0 },
-   { SHADER_IMG_12_MASK_NOMUL, &(shader_img_12_mask_nomul_vert_src), &(shader_img_12_mask_nomul_frag_src), "img_12_mask_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 0, 1, 1, 0 },
-   { SHADER_IMG_21_MASK_NOMUL, &(shader_img_21_mask_nomul_vert_src), &(shader_img_21_mask_nomul_frag_src), "img_21_mask_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 0, 1, 1, 0 },
-   { SHADER_IMG_22_MASK_NOMUL, &(shader_img_22_mask_nomul_vert_src), &(shader_img_22_mask_nomul_frag_src), "img_22_mask_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 0, 1, 1, 0 },
-   { SHADER_IMG_12_BGRA_MASK_NOMUL, &(shader_img_12_bgra_mask_nomul_vert_src), &(shader_img_12_bgra_mask_nomul_frag_src), "img_12_bgra_mask_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 1, 1, 1, 0 },
-   { SHADER_IMG_21_BGRA_MASK_NOMUL, &(shader_img_21_bgra_mask_nomul_vert_src), &(shader_img_21_bgra_mask_nomul_frag_src), "img_21_bgra_mask_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 1, 1, 1, 0 },
-   { SHADER_IMG_22_BGRA_MASK_NOMUL, &(shader_img_22_bgra_mask_nomul_vert_src), &(shader_img_22_bgra_mask_nomul_frag_src), "img_22_bgra_mask_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 1, 1, 1, 0 },
-   { SHADER_IMG_MASK12, &(shader_img_mask12_vert_src), &(shader_img_mask12_frag_src), "img_mask12", SHD_IMAGE, SHD_SAM11, SHD_SAM12, 0, 1, 0, 0 },
-   { SHADER_IMG_BGRA_MASK12, &(shader_img_bgra_mask12_vert_src), &(shader_img_bgra_mask12_frag_src), "img_bgra_mask12", SHD_IMAGE, SHD_SAM11, SHD_SAM12, 1, 1, 0, 0 },
-   { SHADER_IMG_12_MASK12, &(shader_img_12_mask12_vert_src), &(shader_img_12_mask12_frag_src), "img_12_mask12", SHD_IMAGE, SHD_SAM12, SHD_SAM12, 0, 1, 0, 0 },
-   { SHADER_IMG_21_MASK12, &(shader_img_21_mask12_vert_src), &(shader_img_21_mask12_frag_src), "img_21_mask12", SHD_IMAGE, SHD_SAM21, SHD_SAM12, 0, 1, 0, 0 },
-   { SHADER_IMG_22_MASK12, &(shader_img_22_mask12_vert_src), &(shader_img_22_mask12_frag_src), "img_22_mask12", SHD_IMAGE, SHD_SAM22, SHD_SAM12, 0, 1, 0, 0 },
-   { SHADER_IMG_12_BGRA_MASK12, &(shader_img_12_bgra_mask12_vert_src), &(shader_img_12_bgra_mask12_frag_src), "img_12_bgra_mask12", SHD_IMAGE, SHD_SAM12, SHD_SAM12, 1, 1, 0, 0 },
-   { SHADER_IMG_21_BGRA_MASK12, &(shader_img_21_bgra_mask12_vert_src), &(shader_img_21_bgra_mask12_frag_src), "img_21_bgra_mask12", SHD_IMAGE, SHD_SAM21, SHD_SAM12, 1, 1, 0, 0 },
-   { SHADER_IMG_22_BGRA_MASK12, &(shader_img_22_bgra_mask12_vert_src), &(shader_img_22_bgra_mask12_frag_src), "img_22_bgra_mask12", SHD_IMAGE, SHD_SAM22, SHD_SAM12, 1, 1, 0, 0 },
-   { SHADER_IMG_MASK12_NOMUL, &(shader_img_mask12_nomul_vert_src), &(shader_img_mask12_nomul_frag_src), "img_mask12_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM12, 0, 1, 1, 0 },
-   { SHADER_IMG_BGRA_MASK12_NOMUL, &(shader_img_bgra_mask12_nomul_vert_src), &(shader_img_bgra_mask12_nomul_frag_src), "img_bgra_mask12_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM12, 1, 1, 1, 0 },
-   { SHADER_IMG_12_MASK12_NOMUL, &(shader_img_12_mask12_nomul_vert_src), &(shader_img_12_mask12_nomul_frag_src), "img_12_mask12_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM12, 0, 1, 1, 0 },
-   { SHADER_IMG_21_MASK12_NOMUL, &(shader_img_21_mask12_nomul_vert_src), &(shader_img_21_mask12_nomul_frag_src), "img_21_mask12_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM12, 0, 1, 1, 0 },
-   { SHADER_IMG_22_MASK12_NOMUL, &(shader_img_22_mask12_nomul_vert_src), &(shader_img_22_mask12_nomul_frag_src), "img_22_mask12_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM12, 0, 1, 1, 0 },
-   { SHADER_IMG_12_BGRA_MASK12_NOMUL, &(shader_img_12_bgra_mask12_nomul_vert_src), &(shader_img_12_bgra_mask12_nomul_frag_src), "img_12_bgra_mask12_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM12, 1, 1, 1, 0 },
-   { SHADER_IMG_21_BGRA_MASK12_NOMUL, &(shader_img_21_bgra_mask12_nomul_vert_src), &(shader_img_21_bgra_mask12_nomul_frag_src), "img_21_bgra_mask12_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM12, 1, 1, 1, 0 },
-   { SHADER_IMG_22_BGRA_MASK12_NOMUL, &(shader_img_22_bgra_mask12_nomul_vert_src), &(shader_img_22_bgra_mask12_nomul_frag_src), "img_22_bgra_mask12_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM12, 1, 1, 1, 0 },
-   { SHADER_IMG_MASK21, &(shader_img_mask21_vert_src), &(shader_img_mask21_frag_src), "img_mask21", SHD_IMAGE, SHD_SAM11, SHD_SAM21, 0, 1, 0, 0 },
-   { SHADER_IMG_BGRA_MASK21, &(shader_img_bgra_mask21_vert_src), &(shader_img_bgra_mask21_frag_src), "img_bgra_mask21", SHD_IMAGE, SHD_SAM11, SHD_SAM21, 1, 1, 0, 0 },
-   { SHADER_IMG_12_MASK21, &(shader_img_12_mask21_vert_src), &(shader_img_12_mask21_frag_src), "img_12_mask21", SHD_IMAGE, SHD_SAM12, SHD_SAM21, 0, 1, 0, 0 },
-   { SHADER_IMG_21_MASK21, &(shader_img_21_mask21_vert_src), &(shader_img_21_mask21_frag_src), "img_21_mask21", SHD_IMAGE, SHD_SAM21, SHD_SAM21, 0, 1, 0, 0 },
-   { SHADER_IMG_22_MASK21, &(shader_img_22_mask21_vert_src), &(shader_img_22_mask21_frag_src), "img_22_mask21", SHD_IMAGE, SHD_SAM22, SHD_SAM21, 0, 1, 0, 0 },
-   { SHADER_IMG_12_BGRA_MASK21, &(shader_img_12_bgra_mask21_vert_src), &(shader_img_12_bgra_mask21_frag_src), "img_12_bgra_mask21", SHD_IMAGE, SHD_SAM12, SHD_SAM21, 1, 1, 0, 0 },
-   { SHADER_IMG_21_BGRA_MASK21, &(shader_img_21_bgra_mask21_vert_src), &(shader_img_21_bgra_mask21_frag_src), "img_21_bgra_mask21", SHD_IMAGE, SHD_SAM21, SHD_SAM21, 1, 1, 0, 0 },
-   { SHADER_IMG_22_BGRA_MASK21, &(shader_img_22_bgra_mask21_vert_src), &(shader_img_22_bgra_mask21_frag_src), "img_22_bgra_mask21", SHD_IMAGE, SHD_SAM22, SHD_SAM21, 1, 1, 0, 0 },
-   { SHADER_IMG_MASK21_NOMUL, &(shader_img_mask21_nomul_vert_src), &(shader_img_mask21_nomul_frag_src), "img_mask21_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM21, 0, 1, 1, 0 },
-   { SHADER_IMG_BGRA_MASK21_NOMUL, &(shader_img_bgra_mask21_nomul_vert_src), &(shader_img_bgra_mask21_nomul_frag_src), "img_bgra_mask21_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM21, 1, 1, 1, 0 },
-   { SHADER_IMG_12_MASK21_NOMUL, &(shader_img_12_mask21_nomul_vert_src), &(shader_img_12_mask21_nomul_frag_src), "img_12_mask21_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM21, 0, 1, 1, 0 },
-   { SHADER_IMG_21_MASK21_NOMUL, &(shader_img_21_mask21_nomul_vert_src), &(shader_img_21_mask21_nomul_frag_src), "img_21_mask21_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM21, 0, 1, 1, 0 },
-   { SHADER_IMG_22_MASK21_NOMUL, &(shader_img_22_mask21_nomul_vert_src), &(shader_img_22_mask21_nomul_frag_src), "img_22_mask21_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM21, 0, 1, 1, 0 },
-   { SHADER_IMG_12_BGRA_MASK21_NOMUL, &(shader_img_12_bgra_mask21_nomul_vert_src), &(shader_img_12_bgra_mask21_nomul_frag_src), "img_12_bgra_mask21_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM21, 1, 1, 1, 0 },
-   { SHADER_IMG_21_BGRA_MASK21_NOMUL, &(shader_img_21_bgra_mask21_nomul_vert_src), &(shader_img_21_bgra_mask21_nomul_frag_src), "img_21_bgra_mask21_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM21, 1, 1, 1, 0 },
-   { SHADER_IMG_22_BGRA_MASK21_NOMUL, &(shader_img_22_bgra_mask21_nomul_vert_src), &(shader_img_22_bgra_mask21_nomul_frag_src), "img_22_bgra_mask21_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM21, 1, 1, 1, 0 },
-   { SHADER_IMG_MASK22, &(shader_img_mask22_vert_src), &(shader_img_mask22_frag_src), "img_mask22", SHD_IMAGE, SHD_SAM11, SHD_SAM22, 0, 1, 0, 0 },
-   { SHADER_IMG_BGRA_MASK22, &(shader_img_bgra_mask22_vert_src), &(shader_img_bgra_mask22_frag_src), "img_bgra_mask22", SHD_IMAGE, SHD_SAM11, SHD_SAM22, 1, 1, 0, 0 },
-   { SHADER_IMG_12_MASK22, &(shader_img_12_mask22_vert_src), &(shader_img_12_mask22_frag_src), "img_12_mask22", SHD_IMAGE, SHD_SAM12, SHD_SAM22, 0, 1, 0, 0 },
-   { SHADER_IMG_21_MASK22, &(shader_img_21_mask22_vert_src), &(shader_img_21_mask22_frag_src), "img_21_mask22", SHD_IMAGE, SHD_SAM21, SHD_SAM22, 0, 1, 0, 0 },
-   { SHADER_IMG_22_MASK22, &(shader_img_22_mask22_vert_src), &(shader_img_22_mask22_frag_src), "img_22_mask22", SHD_IMAGE, SHD_SAM22, SHD_SAM22, 0, 1, 0, 0 },
-   { SHADER_IMG_12_BGRA_MASK22, &(shader_img_12_bgra_mask22_vert_src), &(shader_img_12_bgra_mask22_frag_src), "img_12_bgra_mask22", SHD_IMAGE, SHD_SAM12, SHD_SAM22, 1, 1, 0, 0 },
-   { SHADER_IMG_21_BGRA_MASK22, &(shader_img_21_bgra_mask22_vert_src), &(shader_img_21_bgra_mask22_frag_src), "img_21_bgra_mask22", SHD_IMAGE, SHD_SAM21, SHD_SAM22, 1, 1, 0, 0 },
-   { SHADER_IMG_22_BGRA_MASK22, &(shader_img_22_bgra_mask22_vert_src), &(shader_img_22_bgra_mask22_frag_src), "img_22_bgra_mask22", SHD_IMAGE, SHD_SAM22, SHD_SAM22, 1, 1, 0, 0 },
-   { SHADER_IMG_MASK22_NOMUL, &(shader_img_mask22_nomul_vert_src), &(shader_img_mask22_nomul_frag_src), "img_mask22_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM22, 0, 1, 1, 0 },
-   { SHADER_IMG_BGRA_MASK22_NOMUL, &(shader_img_bgra_mask22_nomul_vert_src), &(shader_img_bgra_mask22_nomul_frag_src), "img_bgra_mask22_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM22, 1, 1, 1, 0 },
-   { SHADER_IMG_12_MASK22_NOMUL, &(shader_img_12_mask22_nomul_vert_src), &(shader_img_12_mask22_nomul_frag_src), "img_12_mask22_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM22, 0, 1, 1, 0 },
-   { SHADER_IMG_21_MASK22_NOMUL, &(shader_img_21_mask22_nomul_vert_src), &(shader_img_21_mask22_nomul_frag_src), "img_21_mask22_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM22, 0, 1, 1, 0 },
-   { SHADER_IMG_22_MASK22_NOMUL, &(shader_img_22_mask22_nomul_vert_src), &(shader_img_22_mask22_nomul_frag_src), "img_22_mask22_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM22, 0, 1, 1, 0 },
-   { SHADER_IMG_12_BGRA_MASK22_NOMUL, &(shader_img_12_bgra_mask22_nomul_vert_src), &(shader_img_12_bgra_mask22_nomul_frag_src), "img_12_bgra_mask22_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM22, 1, 1, 1, 0 },
-   { SHADER_IMG_21_BGRA_MASK22_NOMUL, &(shader_img_21_bgra_mask22_nomul_vert_src), &(shader_img_21_bgra_mask22_nomul_frag_src), "img_21_bgra_mask22_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM22, 1, 1, 1, 0 },
-   { SHADER_IMG_22_BGRA_MASK22_NOMUL, &(shader_img_22_bgra_mask22_nomul_vert_src), &(shader_img_22_bgra_mask22_nomul_frag_src), "img_22_bgra_mask22_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM22, 1, 1, 1, 0 },
-   { SHADER_IMG_AFILL, &(shader_img_afill_vert_src), &(shader_img_afill_frag_src), "img_afill", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 0, 0, 0, 1 },
-   { SHADER_IMG_BGRA_AFILL, &(shader_img_bgra_afill_vert_src), &(shader_img_bgra_afill_frag_src), "img_bgra_afill", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 1, 0, 0, 1 },
-   { SHADER_IMG_NOMUL_AFILL, &(shader_img_nomul_afill_vert_src), &(shader_img_nomul_afill_frag_src), "img_nomul_afill", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 0, 0, 1, 1 },
-   { SHADER_IMG_BGRA_NOMUL_AFILL, &(shader_img_bgra_nomul_afill_vert_src), &(shader_img_bgra_nomul_afill_frag_src), "img_bgra_nomul_afill", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 1, 0, 1, 1 },
-   { SHADER_IMG_12_AFILL, &(shader_img_12_afill_vert_src), &(shader_img_12_afill_frag_src), "img_12_afill", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 0, 0, 0, 1 },
-   { SHADER_IMG_21_AFILL, &(shader_img_21_afill_vert_src), &(shader_img_21_afill_frag_src), "img_21_afill", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 0, 0, 0, 1 },
-   { SHADER_IMG_22_AFILL, &(shader_img_22_afill_vert_src), &(shader_img_22_afill_frag_src), "img_22_afill", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 0, 0, 0, 1 },
-   { SHADER_IMG_12_BGRA_AFILL, &(shader_img_12_bgra_afill_vert_src), &(shader_img_12_bgra_afill_frag_src), "img_12_bgra_afill", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 1, 0, 0, 1 },
-   { SHADER_IMG_21_BGRA_AFILL, &(shader_img_21_bgra_afill_vert_src), &(shader_img_21_bgra_afill_frag_src), "img_21_bgra_afill", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 1, 0, 0, 1 },
-   { SHADER_IMG_22_BGRA_AFILL, &(shader_img_22_bgra_afill_vert_src), &(shader_img_22_bgra_afill_frag_src), "img_22_bgra_afill", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 1, 0, 0, 1 },
-   { SHADER_IMG_12_NOMUL_AFILL, &(shader_img_12_nomul_afill_vert_src), &(shader_img_12_nomul_afill_frag_src), "img_12_nomul_afill", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 0, 0, 1, 1 },
-   { SHADER_IMG_21_NOMUL_AFILL, &(shader_img_21_nomul_afill_vert_src), &(shader_img_21_nomul_afill_frag_src), "img_21_nomul_afill", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 0, 0, 1, 1 },
-   { SHADER_IMG_22_NOMUL_AFILL, &(shader_img_22_nomul_afill_vert_src), &(shader_img_22_nomul_afill_frag_src), "img_22_nomul_afill", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 0, 0, 1, 1 },
-   { SHADER_IMG_12_BGRA_NOMUL_AFILL, &(shader_img_12_bgra_nomul_afill_vert_src), &(shader_img_12_bgra_nomul_afill_frag_src), "img_12_bgra_nomul_afill", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 1, 0, 1, 1 },
-   { SHADER_IMG_21_BGRA_NOMUL_AFILL, &(shader_img_21_bgra_nomul_afill_vert_src), &(shader_img_21_bgra_nomul_afill_frag_src), "img_21_bgra_nomul_afill", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 1, 0, 1, 1 },
-   { SHADER_IMG_22_BGRA_NOMUL_AFILL, &(shader_img_22_bgra_nomul_afill_vert_src), &(shader_img_22_bgra_nomul_afill_frag_src), "img_22_bgra_nomul_afill", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 1, 0, 1, 1 },
-   { SHADER_IMGNAT, &(shader_imgnat_vert_src), &(shader_imgnat_frag_src), "imgnat", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_IMGNAT_BGRA, &(shader_imgnat_bgra_vert_src), &(shader_imgnat_bgra_frag_src), "imgnat_bgra", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 0, 0, 0 },
-   { SHADER_IMGNAT_12, &(shader_imgnat_12_vert_src), &(shader_imgnat_12_frag_src), "imgnat_12", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_IMGNAT_21, &(shader_imgnat_21_vert_src), &(shader_imgnat_21_frag_src), "imgnat_21", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_IMGNAT_22, &(shader_imgnat_22_vert_src), &(shader_imgnat_22_frag_src), "imgnat_22", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_IMGNAT_12_BGRA, &(shader_imgnat_12_bgra_vert_src), &(shader_imgnat_12_bgra_frag_src), "imgnat_12_bgra", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 0, 0, 0 },
-   { SHADER_IMGNAT_21_BGRA, &(shader_imgnat_21_bgra_vert_src), &(shader_imgnat_21_bgra_frag_src), "imgnat_21_bgra", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 0, 0, 0 },
-   { SHADER_IMGNAT_22_BGRA, &(shader_imgnat_22_bgra_vert_src), &(shader_imgnat_22_bgra_frag_src), "imgnat_22_bgra", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 0, 0, 0 },
-   { SHADER_IMGNAT_MASK, &(shader_imgnat_mask_vert_src), &(shader_imgnat_mask_frag_src), "imgnat_mask", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_IMGNAT_BGRA_MASK, &(shader_imgnat_bgra_mask_vert_src), &(shader_imgnat_bgra_mask_frag_src), "imgnat_bgra_mask", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 1, 0, 0 },
-   { SHADER_IMGNAT_12_MASK, &(shader_imgnat_12_mask_vert_src), &(shader_imgnat_12_mask_frag_src), "imgnat_12_mask", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_IMGNAT_21_MASK, &(shader_imgnat_21_mask_vert_src), &(shader_imgnat_21_mask_frag_src), "imgnat_21_mask", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_IMGNAT_22_MASK, &(shader_imgnat_22_mask_vert_src), &(shader_imgnat_22_mask_frag_src), "imgnat_22_mask", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_IMGNAT_12_BGRA_MASK, &(shader_imgnat_12_bgra_mask_vert_src), &(shader_imgnat_12_bgra_mask_frag_src), "imgnat_12_bgra_mask", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 1, 0, 0 },
-   { SHADER_IMGNAT_21_BGRA_MASK, &(shader_imgnat_21_bgra_mask_vert_src), &(shader_imgnat_21_bgra_mask_frag_src), "imgnat_21_bgra_mask", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 1, 0, 0 },
-   { SHADER_IMGNAT_22_BGRA_MASK, &(shader_imgnat_22_bgra_mask_vert_src), &(shader_imgnat_22_bgra_mask_frag_src), "imgnat_22_bgra_mask", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 1, 0, 0 },
-   { SHADER_IMGNAT_NOMUL, &(shader_imgnat_nomul_vert_src), &(shader_imgnat_nomul_frag_src), "imgnat_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
-   { SHADER_IMGNAT_BGRA_NOMUL, &(shader_imgnat_bgra_nomul_vert_src), &(shader_imgnat_bgra_nomul_frag_src), "imgnat_bgra_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 0, 1, 0 },
-   { SHADER_IMGNAT_12_NOMUL, &(shader_imgnat_12_nomul_vert_src), &(shader_imgnat_12_nomul_frag_src), "imgnat_12_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 0, 1, 0 },
-   { SHADER_IMGNAT_21_NOMUL, &(shader_imgnat_21_nomul_vert_src), &(shader_imgnat_21_nomul_frag_src), "imgnat_21_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 0, 1, 0 },
-   { SHADER_IMGNAT_22_NOMUL, &(shader_imgnat_22_nomul_vert_src), &(shader_imgnat_22_nomul_frag_src), "imgnat_22_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 0, 1, 0 },
-   { SHADER_IMGNAT_12_BGRA_NOMUL, &(shader_imgnat_12_bgra_nomul_vert_src), &(shader_imgnat_12_bgra_nomul_frag_src), "imgnat_12_bgra_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 0, 1, 0 },
-   { SHADER_IMGNAT_21_BGRA_NOMUL, &(shader_imgnat_21_bgra_nomul_vert_src), &(shader_imgnat_21_bgra_nomul_frag_src), "imgnat_21_bgra_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 0, 1, 0 },
-   { SHADER_IMGNAT_22_BGRA_NOMUL, &(shader_imgnat_22_bgra_nomul_vert_src), &(shader_imgnat_22_bgra_nomul_frag_src), "imgnat_22_bgra_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 0, 1, 0 },
-   { SHADER_IMGNAT_MASK_NOMUL, &(shader_imgnat_mask_nomul_vert_src), &(shader_imgnat_mask_nomul_frag_src), "imgnat_mask_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
-   { SHADER_IMGNAT_BGRA_MASK_NOMUL, &(shader_imgnat_bgra_mask_nomul_vert_src), &(shader_imgnat_bgra_mask_nomul_frag_src), "imgnat_bgra_mask_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 1, 1, 0 },
-   { SHADER_IMGNAT_12_MASK_NOMUL, &(shader_imgnat_12_mask_nomul_vert_src), &(shader_imgnat_12_mask_nomul_frag_src), "imgnat_12_mask_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 1, 1, 0 },
-   { SHADER_IMGNAT_21_MASK_NOMUL, &(shader_imgnat_21_mask_nomul_vert_src), &(shader_imgnat_21_mask_nomul_frag_src), "imgnat_21_mask_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 1, 1, 0 },
-   { SHADER_IMGNAT_22_MASK_NOMUL, &(shader_imgnat_22_mask_nomul_vert_src), &(shader_imgnat_22_mask_nomul_frag_src), "imgnat_22_mask_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 1, 1, 0 },
-   { SHADER_IMGNAT_12_BGRA_MASK_NOMUL, &(shader_imgnat_12_bgra_mask_nomul_vert_src), &(shader_imgnat_12_bgra_mask_nomul_frag_src), "imgnat_12_bgra_mask_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 1, 1, 0 },
-   { SHADER_IMGNAT_21_BGRA_MASK_NOMUL, &(shader_imgnat_21_bgra_mask_nomul_vert_src), &(shader_imgnat_21_bgra_mask_nomul_frag_src), "imgnat_21_bgra_mask_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 1, 1, 0 },
-   { SHADER_IMGNAT_22_BGRA_MASK_NOMUL, &(shader_imgnat_22_bgra_mask_nomul_vert_src), &(shader_imgnat_22_bgra_mask_nomul_frag_src), "imgnat_22_bgra_mask_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 1, 1, 0 },
-   { SHADER_IMGNAT_MASK12, &(shader_imgnat_mask12_vert_src), &(shader_imgnat_mask12_frag_src), "imgnat_mask12", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM12, 0, 1, 0, 0 },
-   { SHADER_IMGNAT_BGRA_MASK12, &(shader_imgnat_bgra_mask12_vert_src), &(shader_imgnat_bgra_mask12_frag_src), "imgnat_bgra_mask12", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM12, 1, 1, 0, 0 },
-   { SHADER_IMGNAT_12_MASK12, &(shader_imgnat_12_mask12_vert_src), &(shader_imgnat_12_mask12_frag_src), "imgnat_12_mask12", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM12, 0, 1, 0, 0 },
-   { SHADER_IMGNAT_21_MASK12, &(shader_imgnat_21_mask12_vert_src), &(shader_imgnat_21_mask12_frag_src), "imgnat_21_mask12", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM12, 0, 1, 0, 0 },
-   { SHADER_IMGNAT_22_MASK12, &(shader_imgnat_22_mask12_vert_src), &(shader_imgnat_22_mask12_frag_src), "imgnat_22_mask12", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM12, 0, 1, 0, 0 },
-   { SHADER_IMGNAT_12_BGRA_MASK12, &(shader_imgnat_12_bgra_mask12_vert_src), &(shader_imgnat_12_bgra_mask12_frag_src), "imgnat_12_bgra_mask12", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM12, 1, 1, 0, 0 },
-   { SHADER_IMGNAT_21_BGRA_MASK12, &(shader_imgnat_21_bgra_mask12_vert_src), &(shader_imgnat_21_bgra_mask12_frag_src), "imgnat_21_bgra_mask12", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM12, 1, 1, 0, 0 },
-   { SHADER_IMGNAT_22_BGRA_MASK12, &(shader_imgnat_22_bgra_mask12_vert_src), &(shader_imgnat_22_bgra_mask12_frag_src), "imgnat_22_bgra_mask12", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM12, 1, 1, 0, 0 },
-   { SHADER_IMGNAT_MASK12_NOMUL, &(shader_imgnat_mask12_nomul_vert_src), &(shader_imgnat_mask12_nomul_frag_src), "imgnat_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM12, 0, 1, 1, 0 },
-   { SHADER_IMGNAT_BGRA_MASK12_NOMUL, &(shader_imgnat_bgra_mask12_nomul_vert_src), &(shader_imgnat_bgra_mask12_nomul_frag_src), "imgnat_bgra_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM12, 1, 1, 1, 0 },
-   { SHADER_IMGNAT_12_MASK12_NOMUL, &(shader_imgnat_12_mask12_nomul_vert_src), &(shader_imgnat_12_mask12_nomul_frag_src), "imgnat_12_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM12, 0, 1, 1, 0 },
-   { SHADER_IMGNAT_21_MASK12_NOMUL, &(shader_imgnat_21_mask12_nomul_vert_src), &(shader_imgnat_21_mask12_nomul_frag_src), "imgnat_21_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM12, 0, 1, 1, 0 },
-   { SHADER_IMGNAT_22_MASK12_NOMUL, &(shader_imgnat_22_mask12_nomul_vert_src), &(shader_imgnat_22_mask12_nomul_frag_src), "imgnat_22_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM12, 0, 1, 1, 0 },
-   { SHADER_IMGNAT_12_BGRA_MASK12_NOMUL, &(shader_imgnat_12_bgra_mask12_nomul_vert_src), &(shader_imgnat_12_bgra_mask12_nomul_frag_src), "imgnat_12_bgra_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM12, 1, 1, 1, 0 },
-   { SHADER_IMGNAT_21_BGRA_MASK12_NOMUL, &(shader_imgnat_21_bgra_mask12_nomul_vert_src), &(shader_imgnat_21_bgra_mask12_nomul_frag_src), "imgnat_21_bgra_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM12, 1, 1, 1, 0 },
-   { SHADER_IMGNAT_22_BGRA_MASK12_NOMUL, &(shader_imgnat_22_bgra_mask12_nomul_vert_src), &(shader_imgnat_22_bgra_mask12_nomul_frag_src), "imgnat_22_bgra_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM12, 1, 1, 1, 0 },
-   { SHADER_IMGNAT_MASK21, &(shader_imgnat_mask21_vert_src), &(shader_imgnat_mask21_frag_src), "imgnat_mask21", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM21, 0, 1, 0, 0 },
-   { SHADER_IMGNAT_BGRA_MASK21, &(shader_imgnat_bgra_mask21_vert_src), &(shader_imgnat_bgra_mask21_frag_src), "imgnat_bgra_mask21", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM21, 1, 1, 0, 0 },
-   { SHADER_IMGNAT_12_MASK21, &(shader_imgnat_12_mask21_vert_src), &(shader_imgnat_12_mask21_frag_src), "imgnat_12_mask21", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM21, 0, 1, 0, 0 },
-   { SHADER_IMGNAT_21_MASK21, &(shader_imgnat_21_mask21_vert_src), &(shader_imgnat_21_mask21_frag_src), "imgnat_21_mask21", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM21, 0, 1, 0, 0 },
-   { SHADER_IMGNAT_22_MASK21, &(shader_imgnat_22_mask21_vert_src), &(shader_imgnat_22_mask21_frag_src), "imgnat_22_mask21", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM21, 0, 1, 0, 0 },
-   { SHADER_IMGNAT_12_BGRA_MASK21, &(shader_imgnat_12_bgra_mask21_vert_src), &(shader_imgnat_12_bgra_mask21_frag_src), "imgnat_12_bgra_mask21", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM21, 1, 1, 0, 0 },
-   { SHADER_IMGNAT_21_BGRA_MASK21, &(shader_imgnat_21_bgra_mask21_vert_src), &(shader_imgnat_21_bgra_mask21_frag_src), "imgnat_21_bgra_mask21", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM21, 1, 1, 0, 0 },
-   { SHADER_IMGNAT_22_BGRA_MASK21, &(shader_imgnat_22_bgra_mask21_vert_src), &(shader_imgnat_22_bgra_mask21_frag_src), "imgnat_22_bgra_mask21", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM21, 1, 1, 0, 0 },
-   { SHADER_IMGNAT_MASK21_NOMUL, &(shader_imgnat_mask21_nomul_vert_src), &(shader_imgnat_mask21_nomul_frag_src), "imgnat_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM21, 0, 1, 1, 0 },
-   { SHADER_IMGNAT_BGRA_MASK21_NOMUL, &(shader_imgnat_bgra_mask21_nomul_vert_src), &(shader_imgnat_bgra_mask21_nomul_frag_src), "imgnat_bgra_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM21, 1, 1, 1, 0 },
-   { SHADER_IMGNAT_12_MASK21_NOMUL, &(shader_imgnat_12_mask21_nomul_vert_src), &(shader_imgnat_12_mask21_nomul_frag_src), "imgnat_12_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM21, 0, 1, 1, 0 },
-   { SHADER_IMGNAT_21_MASK21_NOMUL, &(shader_imgnat_21_mask21_nomul_vert_src), &(shader_imgnat_21_mask21_nomul_frag_src), "imgnat_21_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM21, 0, 1, 1, 0 },
-   { SHADER_IMGNAT_22_MASK21_NOMUL, &(shader_imgnat_22_mask21_nomul_vert_src), &(shader_imgnat_22_mask21_nomul_frag_src), "imgnat_22_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM21, 0, 1, 1, 0 },
-   { SHADER_IMGNAT_12_BGRA_MASK21_NOMUL, &(shader_imgnat_12_bgra_mask21_nomul_vert_src), &(shader_imgnat_12_bgra_mask21_nomul_frag_src), "imgnat_12_bgra_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM21, 1, 1, 1, 0 },
-   { SHADER_IMGNAT_21_BGRA_MASK21_NOMUL, &(shader_imgnat_21_bgra_mask21_nomul_vert_src), &(shader_imgnat_21_bgra_mask21_nomul_frag_src), "imgnat_21_bgra_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM21, 1, 1, 1, 0 },
-   { SHADER_IMGNAT_22_BGRA_MASK21_NOMUL, &(shader_imgnat_22_bgra_mask21_nomul_vert_src), &(shader_imgnat_22_bgra_mask21_nomul_frag_src), "imgnat_22_bgra_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM21, 1, 1, 1, 0 },
-   { SHADER_IMGNAT_MASK22, &(shader_imgnat_mask22_vert_src), &(shader_imgnat_mask22_frag_src), "imgnat_mask22", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM22, 0, 1, 0, 0 },
-   { SHADER_IMGNAT_BGRA_MASK22, &(shader_imgnat_bgra_mask22_vert_src), &(shader_imgnat_bgra_mask22_frag_src), "imgnat_bgra_mask22", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM22, 1, 1, 0, 0 },
-   { SHADER_IMGNAT_12_MASK22, &(shader_imgnat_12_mask22_vert_src), &(shader_imgnat_12_mask22_frag_src), "imgnat_12_mask22", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM22, 0, 1, 0, 0 },
-   { SHADER_IMGNAT_21_MASK22, &(shader_imgnat_21_mask22_vert_src), &(shader_imgnat_21_mask22_frag_src), "imgnat_21_mask22", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM22, 0, 1, 0, 0 },
-   { SHADER_IMGNAT_22_MASK22, &(shader_imgnat_22_mask22_vert_src), &(shader_imgnat_22_mask22_frag_src), "imgnat_22_mask22", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM22, 0, 1, 0, 0 },
-   { SHADER_IMGNAT_12_BGRA_MASK22, &(shader_imgnat_12_bgra_mask22_vert_src), &(shader_imgnat_12_bgra_mask22_frag_src), "imgnat_12_bgra_mask22", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM22, 1, 1, 0, 0 },
-   { SHADER_IMGNAT_21_BGRA_MASK22, &(shader_imgnat_21_bgra_mask22_vert_src), &(shader_imgnat_21_bgra_mask22_frag_src), "imgnat_21_bgra_mask22", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM22, 1, 1, 0, 0 },
-   { SHADER_IMGNAT_22_BGRA_MASK22, &(shader_imgnat_22_bgra_mask22_vert_src), &(shader_imgnat_22_bgra_mask22_frag_src), "imgnat_22_bgra_mask22", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM22, 1, 1, 0, 0 },
-   { SHADER_IMGNAT_MASK22_NOMUL, &(shader_imgnat_mask22_nomul_vert_src), &(shader_imgnat_mask22_nomul_frag_src), "imgnat_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM22, 0, 1, 1, 0 },
-   { SHADER_IMGNAT_BGRA_MASK22_NOMUL, &(shader_imgnat_bgra_mask22_nomul_vert_src), &(shader_imgnat_bgra_mask22_nomul_frag_src), "imgnat_bgra_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM22, 1, 1, 1, 0 },
-   { SHADER_IMGNAT_12_MASK22_NOMUL, &(shader_imgnat_12_mask22_nomul_vert_src), &(shader_imgnat_12_mask22_nomul_frag_src), "imgnat_12_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM22, 0, 1, 1, 0 },
-   { SHADER_IMGNAT_21_MASK22_NOMUL, &(shader_imgnat_21_mask22_nomul_vert_src), &(shader_imgnat_21_mask22_nomul_frag_src), "imgnat_21_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM22, 0, 1, 1, 0 },
-   { SHADER_IMGNAT_22_MASK22_NOMUL, &(shader_imgnat_22_mask22_nomul_vert_src), &(shader_imgnat_22_mask22_nomul_frag_src), "imgnat_22_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM22, 0, 1, 1, 0 },
-   { SHADER_IMGNAT_12_BGRA_MASK22_NOMUL, &(shader_imgnat_12_bgra_mask22_nomul_vert_src), &(shader_imgnat_12_bgra_mask22_nomul_frag_src), "imgnat_12_bgra_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM22, 1, 1, 1, 0 },
-   { SHADER_IMGNAT_21_BGRA_MASK22_NOMUL, &(shader_imgnat_21_bgra_mask22_nomul_vert_src), &(shader_imgnat_21_bgra_mask22_nomul_frag_src), "imgnat_21_bgra_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM22, 1, 1, 1, 0 },
-   { SHADER_IMGNAT_22_BGRA_MASK22_NOMUL, &(shader_imgnat_22_bgra_mask22_nomul_vert_src), &(shader_imgnat_22_bgra_mask22_nomul_frag_src), "imgnat_22_bgra_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM22, 1, 1, 1, 0 },
-   { SHADER_IMGNAT_AFILL, &(shader_imgnat_afill_vert_src), &(shader_imgnat_afill_frag_src), "imgnat_afill", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 0, 0, 1 },
-   { SHADER_IMGNAT_BGRA_AFILL, &(shader_imgnat_bgra_afill_vert_src), &(shader_imgnat_bgra_afill_frag_src), "imgnat_bgra_afill", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 0, 0, 1 },
-   { SHADER_IMGNAT_NOMUL_AFILL, &(shader_imgnat_nomul_afill_vert_src), &(shader_imgnat_nomul_afill_frag_src), "imgnat_nomul_afill", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 0, 1, 1 },
-   { SHADER_IMGNAT_BGRA_NOMUL_AFILL, &(shader_imgnat_bgra_nomul_afill_vert_src), &(shader_imgnat_bgra_nomul_afill_frag_src), "imgnat_bgra_nomul_afill", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 0, 1, 1 },
-   { SHADER_IMGNAT_12_AFILL, &(shader_imgnat_12_afill_vert_src), &(shader_imgnat_12_afill_frag_src), "imgnat_12_afill", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 0, 0, 1 },
-   { SHADER_IMGNAT_21_AFILL, &(shader_imgnat_21_afill_vert_src), &(shader_imgnat_21_afill_frag_src), "imgnat_21_afill", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 0, 0, 1 },
-   { SHADER_IMGNAT_22_AFILL, &(shader_imgnat_22_afill_vert_src), &(shader_imgnat_22_afill_frag_src), "imgnat_22_afill", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 0, 0, 1 },
-   { SHADER_IMGNAT_12_BGRA_AFILL, &(shader_imgnat_12_bgra_afill_vert_src), &(shader_imgnat_12_bgra_afill_frag_src), "imgnat_12_bgra_afill", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 0, 0, 1 },
-   { SHADER_IMGNAT_21_BGRA_AFILL, &(shader_imgnat_21_bgra_afill_vert_src), &(shader_imgnat_21_bgra_afill_frag_src), "imgnat_21_bgra_afill", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 0, 0, 1 },
-   { SHADER_IMGNAT_22_BGRA_AFILL, &(shader_imgnat_22_bgra_afill_vert_src), &(shader_imgnat_22_bgra_afill_frag_src), "imgnat_22_bgra_afill", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 0, 0, 1 },
-   { SHADER_IMGNAT_12_NOMUL_AFILL, &(shader_imgnat_12_nomul_afill_vert_src), &(shader_imgnat_12_nomul_afill_frag_src), "imgnat_12_nomul_afill", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 0, 1, 1 },
-   { SHADER_IMGNAT_21_NOMUL_AFILL, &(shader_imgnat_21_nomul_afill_vert_src), &(shader_imgnat_21_nomul_afill_frag_src), "imgnat_21_nomul_afill", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 0, 1, 1 },
-   { SHADER_IMGNAT_22_NOMUL_AFILL, &(shader_imgnat_22_nomul_afill_vert_src), &(shader_imgnat_22_nomul_afill_frag_src), "imgnat_22_nomul_afill", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 0, 1, 1 },
-   { SHADER_IMGNAT_12_BGRA_NOMUL_AFILL, &(shader_imgnat_12_bgra_nomul_afill_vert_src), &(shader_imgnat_12_bgra_nomul_afill_frag_src), "imgnat_12_bgra_nomul_afill", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 0, 1, 1 },
-   { SHADER_IMGNAT_21_BGRA_NOMUL_AFILL, &(shader_imgnat_21_bgra_nomul_afill_vert_src), &(shader_imgnat_21_bgra_nomul_afill_frag_src), "imgnat_21_bgra_nomul_afill", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 0, 1, 1 },
-   { SHADER_IMGNAT_22_BGRA_NOMUL_AFILL, &(shader_imgnat_22_bgra_nomul_afill_vert_src), &(shader_imgnat_22_bgra_nomul_afill_frag_src), "imgnat_22_bgra_nomul_afill", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 0, 1, 1 },
-   { SHADER_RGB_A_PAIR, &(shader_rgb_a_pair_vert_src), &(shader_rgb_a_pair_frag_src), "rgb_a_pair", SHD_RGB_A_PAIR, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_RGB_A_PAIR_MASK, &(shader_rgb_a_pair_mask_vert_src), &(shader_rgb_a_pair_mask_frag_src), "rgb_a_pair_mask", SHD_RGB_A_PAIR, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_RGB_A_PAIR_NOMUL, &(shader_rgb_a_pair_nomul_vert_src), &(shader_rgb_a_pair_nomul_frag_src), "rgb_a_pair_nomul", SHD_RGB_A_PAIR, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
-   { SHADER_RGB_A_PAIR_MASK_NOMUL, &(shader_rgb_a_pair_mask_nomul_vert_src), &(shader_rgb_a_pair_mask_nomul_frag_src), "rgb_a_pair_mask_nomul", SHD_RGB_A_PAIR, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
-   { SHADER_TEX_EXTERNAL, &(shader_tex_external_vert_src), &(shader_tex_external_frag_src), "tex_external", SHD_TEX_EXTERNAL, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_TEX_EXTERNAL_AFILL, &(shader_tex_external_afill_vert_src), &(shader_tex_external_afill_frag_src), "tex_external_afill", SHD_TEX_EXTERNAL, SHD_SAM11, SHD_SAM11, 0, 0, 0, 1 },
-   { SHADER_TEX_EXTERNAL_NOMUL, &(shader_tex_external_nomul_vert_src), &(shader_tex_external_nomul_frag_src), "tex_external_nomul", SHD_TEX_EXTERNAL, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
-   { SHADER_TEX_EXTERNAL_NOMUL_AFILL, &(shader_tex_external_nomul_afill_vert_src), &(shader_tex_external_nomul_afill_frag_src), "tex_external_nomul_afill", SHD_TEX_EXTERNAL, SHD_SAM11, SHD_SAM11, 0, 0, 1, 1 },
-   { SHADER_TEX_EXTERNAL_MASK, &(shader_tex_external_mask_vert_src), &(shader_tex_external_mask_frag_src), "tex_external_mask", SHD_TEX_EXTERNAL, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_TEX_EXTERNAL_MASK_NOMUL, &(shader_tex_external_mask_nomul_vert_src), &(shader_tex_external_mask_nomul_frag_src), "tex_external_mask_nomul", SHD_TEX_EXTERNAL, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
-   { SHADER_YUV, &(shader_yuv_vert_src), &(shader_yuv_frag_src), "yuv", SHD_YUV, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_YUV_NOMUL, &(shader_yuv_nomul_vert_src), &(shader_yuv_nomul_frag_src), "yuv_nomul", SHD_YUV, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
-   { SHADER_YUV_MASK, &(shader_yuv_mask_vert_src), &(shader_yuv_mask_frag_src), "yuv_mask", SHD_YUV, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_YUV_MASK_NOMUL, &(shader_yuv_mask_nomul_vert_src), &(shader_yuv_mask_nomul_frag_src), "yuv_mask_nomul", SHD_YUV, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
-   { SHADER_YUY2, &(shader_yuy2_vert_src), &(shader_yuy2_frag_src), "yuy2", SHD_YUY2, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_YUY2_NOMUL, &(shader_yuy2_nomul_vert_src), &(shader_yuy2_nomul_frag_src), "yuy2_nomul", SHD_YUY2, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
-   { SHADER_YUY2_MASK, &(shader_yuy2_mask_vert_src), &(shader_yuy2_mask_frag_src), "yuy2_mask", SHD_YUY2, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_YUY2_MASK_NOMUL, &(shader_yuy2_mask_nomul_vert_src), &(shader_yuy2_mask_nomul_frag_src), "yuy2_mask_nomul", SHD_YUY2, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
-   { SHADER_NV12, &(shader_nv12_vert_src), &(shader_nv12_frag_src), "nv12", SHD_NV12, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_NV12_NOMUL, &(shader_nv12_nomul_vert_src), &(shader_nv12_nomul_frag_src), "nv12_nomul", SHD_NV12, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
-   { SHADER_NV12_MASK, &(shader_nv12_mask_vert_src), &(shader_nv12_mask_frag_src), "nv12_mask", SHD_NV12, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_NV12_MASK_NOMUL, &(shader_nv12_mask_nomul_vert_src), &(shader_nv12_mask_nomul_frag_src), "nv12_mask_nomul", SHD_NV12, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
-   { SHADER_YUV_709, &(shader_yuv_709_vert_src), &(shader_yuv_709_frag_src), "yuv_709", SHD_YUV, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_YUV_709_NOMUL, &(shader_yuv_709_nomul_vert_src), &(shader_yuv_709_nomul_frag_src), "yuv_709_nomul", SHD_YUV, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
-   { SHADER_YUV_709_MASK, &(shader_yuv_709_mask_vert_src), &(shader_yuv_709_mask_frag_src), "yuv_709_mask", SHD_YUV, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_YUV_709_MASK_NOMUL, &(shader_yuv_709_mask_nomul_vert_src), &(shader_yuv_709_mask_nomul_frag_src), "yuv_709_mask_nomul", SHD_YUV, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
-   { SHADER_YUY2_709, &(shader_yuy2_709_vert_src), &(shader_yuy2_709_frag_src), "yuy2_709", SHD_YUY2, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_YUY2_709_NOMUL, &(shader_yuy2_709_nomul_vert_src), &(shader_yuy2_709_nomul_frag_src), "yuy2_709_nomul", SHD_YUY2, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
-   { SHADER_YUY2_709_MASK, &(shader_yuy2_709_mask_vert_src), &(shader_yuy2_709_mask_frag_src), "yuy2_709_mask", SHD_YUY2, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_YUY2_709_MASK_NOMUL, &(shader_yuy2_709_mask_nomul_vert_src), &(shader_yuy2_709_mask_nomul_frag_src), "yuy2_709_mask_nomul", SHD_YUY2, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
-   { SHADER_NV12_709, &(shader_nv12_709_vert_src), &(shader_nv12_709_frag_src), "nv12_709", SHD_NV12, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
-   { SHADER_NV12_709_NOMUL, &(shader_nv12_709_nomul_vert_src), &(shader_nv12_709_nomul_frag_src), "nv12_709_nomul", SHD_NV12, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
-   { SHADER_NV12_709_MASK, &(shader_nv12_709_mask_vert_src), &(shader_nv12_709_mask_frag_src), "nv12_709_mask", SHD_NV12, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
-   { SHADER_NV12_709_MASK_NOMUL, &(shader_nv12_709_mask_nomul_vert_src), &(shader_nv12_709_mask_nomul_frag_src), "nv12_709_mask_nomul", SHD_NV12, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_RECT, rect_vert_src, rect_frag_src, "rect", SHD_RECT, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_RECT_MASK, rect_mask_vert_src, rect_mask_frag_src, "rect_mask", SHD_RECT, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_RECT_MASK12, rect_mask12_vert_src, rect_mask12_frag_src, "rect_mask12", SHD_RECT, SHD_SAM11, SHD_SAM12, 0, 1, 0, 0 },
+   { SHADER_RECT_MASK21, rect_mask21_vert_src, rect_mask21_frag_src, "rect_mask21", SHD_RECT, SHD_SAM11, SHD_SAM21, 0, 1, 0, 0 },
+   { SHADER_RECT_MASK22, rect_mask22_vert_src, rect_mask22_frag_src, "rect_mask22", SHD_RECT, SHD_SAM11, SHD_SAM22, 0, 1, 0, 0 },
+   { SHADER_FONT, font_vert_src, font_frag_src, "font", SHD_FONT, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_FONT_MASK, font_mask_vert_src, font_mask_frag_src, "font_mask", SHD_FONT, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_FONT_MASK12, font_mask12_vert_src, font_mask12_frag_src, "font_mask12", SHD_FONT, SHD_SAM11, SHD_SAM12, 0, 1, 0, 0 },
+   { SHADER_FONT_MASK21, font_mask21_vert_src, font_mask21_frag_src, "font_mask21", SHD_FONT, SHD_SAM11, SHD_SAM21, 0, 1, 0, 0 },
+   { SHADER_FONT_MASK22, font_mask22_vert_src, font_mask22_frag_src, "font_mask22", SHD_FONT, SHD_SAM11, SHD_SAM22, 0, 1, 0, 0 },
+   { SHADER_IMG, img_vert_src, img_frag_src, "img", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_IMG_BGRA, img_bgra_vert_src, img_bgra_frag_src, "img_bgra", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 1, 0, 0, 0 },
+   { SHADER_IMG_12, img_12_vert_src, img_12_frag_src, "img_12", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_IMG_21, img_21_vert_src, img_21_frag_src, "img_21", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_IMG_22, img_22_vert_src, img_22_frag_src, "img_22", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_IMG_12_BGRA, img_12_bgra_vert_src, img_12_bgra_frag_src, "img_12_bgra", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 1, 0, 0, 0 },
+   { SHADER_IMG_21_BGRA, img_21_bgra_vert_src, img_21_bgra_frag_src, "img_21_bgra", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 1, 0, 0, 0 },
+   { SHADER_IMG_22_BGRA, img_22_bgra_vert_src, img_22_bgra_frag_src, "img_22_bgra", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 1, 0, 0, 0 },
+   { SHADER_IMG_MASK, img_mask_vert_src, img_mask_frag_src, "img_mask", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_IMG_BGRA_MASK, img_bgra_mask_vert_src, img_bgra_mask_frag_src, "img_bgra_mask", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 1, 1, 0, 0 },
+   { SHADER_IMG_12_MASK, img_12_mask_vert_src, img_12_mask_frag_src, "img_12_mask", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_IMG_21_MASK, img_21_mask_vert_src, img_21_mask_frag_src, "img_21_mask", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_IMG_22_MASK, img_22_mask_vert_src, img_22_mask_frag_src, "img_22_mask", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_IMG_12_BGRA_MASK, img_12_bgra_mask_vert_src, img_12_bgra_mask_frag_src, "img_12_bgra_mask", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 1, 1, 0, 0 },
+   { SHADER_IMG_21_BGRA_MASK, img_21_bgra_mask_vert_src, img_21_bgra_mask_frag_src, "img_21_bgra_mask", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 1, 1, 0, 0 },
+   { SHADER_IMG_22_BGRA_MASK, img_22_bgra_mask_vert_src, img_22_bgra_mask_frag_src, "img_22_bgra_mask", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 1, 1, 0, 0 },
+   { SHADER_IMG_NOMUL, img_nomul_vert_src, img_nomul_frag_src, "img_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_IMG_BGRA_NOMUL, img_bgra_nomul_vert_src, img_bgra_nomul_frag_src, "img_bgra_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 1, 0, 1, 0 },
+   { SHADER_IMG_12_NOMUL, img_12_nomul_vert_src, img_12_nomul_frag_src, "img_12_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_IMG_21_NOMUL, img_21_nomul_vert_src, img_21_nomul_frag_src, "img_21_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_IMG_22_NOMUL, img_22_nomul_vert_src, img_22_nomul_frag_src, "img_22_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_IMG_12_BGRA_NOMUL, img_12_bgra_nomul_vert_src, img_12_bgra_nomul_frag_src, "img_12_bgra_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 1, 0, 1, 0 },
+   { SHADER_IMG_21_BGRA_NOMUL, img_21_bgra_nomul_vert_src, img_21_bgra_nomul_frag_src, "img_21_bgra_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 1, 0, 1, 0 },
+   { SHADER_IMG_22_BGRA_NOMUL, img_22_bgra_nomul_vert_src, img_22_bgra_nomul_frag_src, "img_22_bgra_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 1, 0, 1, 0 },
+   { SHADER_IMG_MASK_NOMUL, img_mask_nomul_vert_src, img_mask_nomul_frag_src, "img_mask_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_IMG_BGRA_MASK_NOMUL, img_bgra_mask_nomul_vert_src, img_bgra_mask_nomul_frag_src, "img_bgra_mask_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 1, 1, 1, 0 },
+   { SHADER_IMG_12_MASK_NOMUL, img_12_mask_nomul_vert_src, img_12_mask_nomul_frag_src, "img_12_mask_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_IMG_21_MASK_NOMUL, img_21_mask_nomul_vert_src, img_21_mask_nomul_frag_src, "img_21_mask_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_IMG_22_MASK_NOMUL, img_22_mask_nomul_vert_src, img_22_mask_nomul_frag_src, "img_22_mask_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_IMG_12_BGRA_MASK_NOMUL, img_12_bgra_mask_nomul_vert_src, img_12_bgra_mask_nomul_frag_src, "img_12_bgra_mask_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 1, 1, 1, 0 },
+   { SHADER_IMG_21_BGRA_MASK_NOMUL, img_21_bgra_mask_nomul_vert_src, img_21_bgra_mask_nomul_frag_src, "img_21_bgra_mask_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 1, 1, 1, 0 },
+   { SHADER_IMG_22_BGRA_MASK_NOMUL, img_22_bgra_mask_nomul_vert_src, img_22_bgra_mask_nomul_frag_src, "img_22_bgra_mask_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 1, 1, 1, 0 },
+   { SHADER_IMG_MASK12, img_mask12_vert_src, img_mask12_frag_src, "img_mask12", SHD_IMAGE, SHD_SAM11, SHD_SAM12, 0, 1, 0, 0 },
+   { SHADER_IMG_BGRA_MASK12, img_bgra_mask12_vert_src, img_bgra_mask12_frag_src, "img_bgra_mask12", SHD_IMAGE, SHD_SAM11, SHD_SAM12, 1, 1, 0, 0 },
+   { SHADER_IMG_12_MASK12, img_12_mask12_vert_src, img_12_mask12_frag_src, "img_12_mask12", SHD_IMAGE, SHD_SAM12, SHD_SAM12, 0, 1, 0, 0 },
+   { SHADER_IMG_21_MASK12, img_21_mask12_vert_src, img_21_mask12_frag_src, "img_21_mask12", SHD_IMAGE, SHD_SAM21, SHD_SAM12, 0, 1, 0, 0 },
+   { SHADER_IMG_22_MASK12, img_22_mask12_vert_src, img_22_mask12_frag_src, "img_22_mask12", SHD_IMAGE, SHD_SAM22, SHD_SAM12, 0, 1, 0, 0 },
+   { SHADER_IMG_12_BGRA_MASK12, img_12_bgra_mask12_vert_src, img_12_bgra_mask12_frag_src, "img_12_bgra_mask12", SHD_IMAGE, SHD_SAM12, SHD_SAM12, 1, 1, 0, 0 },
+   { SHADER_IMG_21_BGRA_MASK12, img_21_bgra_mask12_vert_src, img_21_bgra_mask12_frag_src, "img_21_bgra_mask12", SHD_IMAGE, SHD_SAM21, SHD_SAM12, 1, 1, 0, 0 },
+   { SHADER_IMG_22_BGRA_MASK12, img_22_bgra_mask12_vert_src, img_22_bgra_mask12_frag_src, "img_22_bgra_mask12", SHD_IMAGE, SHD_SAM22, SHD_SAM12, 1, 1, 0, 0 },
+   { SHADER_IMG_MASK12_NOMUL, img_mask12_nomul_vert_src, img_mask12_nomul_frag_src, "img_mask12_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM12, 0, 1, 1, 0 },
+   { SHADER_IMG_BGRA_MASK12_NOMUL, img_bgra_mask12_nomul_vert_src, img_bgra_mask12_nomul_frag_src, "img_bgra_mask12_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM12, 1, 1, 1, 0 },
+   { SHADER_IMG_12_MASK12_NOMUL, img_12_mask12_nomul_vert_src, img_12_mask12_nomul_frag_src, "img_12_mask12_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM12, 0, 1, 1, 0 },
+   { SHADER_IMG_21_MASK12_NOMUL, img_21_mask12_nomul_vert_src, img_21_mask12_nomul_frag_src, "img_21_mask12_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM12, 0, 1, 1, 0 },
+   { SHADER_IMG_22_MASK12_NOMUL, img_22_mask12_nomul_vert_src, img_22_mask12_nomul_frag_src, "img_22_mask12_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM12, 0, 1, 1, 0 },
+   { SHADER_IMG_12_BGRA_MASK12_NOMUL, img_12_bgra_mask12_nomul_vert_src, img_12_bgra_mask12_nomul_frag_src, "img_12_bgra_mask12_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM12, 1, 1, 1, 0 },
+   { SHADER_IMG_21_BGRA_MASK12_NOMUL, img_21_bgra_mask12_nomul_vert_src, img_21_bgra_mask12_nomul_frag_src, "img_21_bgra_mask12_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM12, 1, 1, 1, 0 },
+   { SHADER_IMG_22_BGRA_MASK12_NOMUL, img_22_bgra_mask12_nomul_vert_src, img_22_bgra_mask12_nomul_frag_src, "img_22_bgra_mask12_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM12, 1, 1, 1, 0 },
+   { SHADER_IMG_MASK21, img_mask21_vert_src, img_mask21_frag_src, "img_mask21", SHD_IMAGE, SHD_SAM11, SHD_SAM21, 0, 1, 0, 0 },
+   { SHADER_IMG_BGRA_MASK21, img_bgra_mask21_vert_src, img_bgra_mask21_frag_src, "img_bgra_mask21", SHD_IMAGE, SHD_SAM11, SHD_SAM21, 1, 1, 0, 0 },
+   { SHADER_IMG_12_MASK21, img_12_mask21_vert_src, img_12_mask21_frag_src, "img_12_mask21", SHD_IMAGE, SHD_SAM12, SHD_SAM21, 0, 1, 0, 0 },
+   { SHADER_IMG_21_MASK21, img_21_mask21_vert_src, img_21_mask21_frag_src, "img_21_mask21", SHD_IMAGE, SHD_SAM21, SHD_SAM21, 0, 1, 0, 0 },
+   { SHADER_IMG_22_MASK21, img_22_mask21_vert_src, img_22_mask21_frag_src, "img_22_mask21", SHD_IMAGE, SHD_SAM22, SHD_SAM21, 0, 1, 0, 0 },
+   { SHADER_IMG_12_BGRA_MASK21, img_12_bgra_mask21_vert_src, img_12_bgra_mask21_frag_src, "img_12_bgra_mask21", SHD_IMAGE, SHD_SAM12, SHD_SAM21, 1, 1, 0, 0 },
+   { SHADER_IMG_21_BGRA_MASK21, img_21_bgra_mask21_vert_src, img_21_bgra_mask21_frag_src, "img_21_bgra_mask21", SHD_IMAGE, SHD_SAM21, SHD_SAM21, 1, 1, 0, 0 },
+   { SHADER_IMG_22_BGRA_MASK21, img_22_bgra_mask21_vert_src, img_22_bgra_mask21_frag_src, "img_22_bgra_mask21", SHD_IMAGE, SHD_SAM22, SHD_SAM21, 1, 1, 0, 0 },
+   { SHADER_IMG_MASK21_NOMUL, img_mask21_nomul_vert_src, img_mask21_nomul_frag_src, "img_mask21_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM21, 0, 1, 1, 0 },
+   { SHADER_IMG_BGRA_MASK21_NOMUL, img_bgra_mask21_nomul_vert_src, img_bgra_mask21_nomul_frag_src, "img_bgra_mask21_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM21, 1, 1, 1, 0 },
+   { SHADER_IMG_12_MASK21_NOMUL, img_12_mask21_nomul_vert_src, img_12_mask21_nomul_frag_src, "img_12_mask21_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM21, 0, 1, 1, 0 },
+   { SHADER_IMG_21_MASK21_NOMUL, img_21_mask21_nomul_vert_src, img_21_mask21_nomul_frag_src, "img_21_mask21_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM21, 0, 1, 1, 0 },
+   { SHADER_IMG_22_MASK21_NOMUL, img_22_mask21_nomul_vert_src, img_22_mask21_nomul_frag_src, "img_22_mask21_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM21, 0, 1, 1, 0 },
+   { SHADER_IMG_12_BGRA_MASK21_NOMUL, img_12_bgra_mask21_nomul_vert_src, img_12_bgra_mask21_nomul_frag_src, "img_12_bgra_mask21_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM21, 1, 1, 1, 0 },
+   { SHADER_IMG_21_BGRA_MASK21_NOMUL, img_21_bgra_mask21_nomul_vert_src, img_21_bgra_mask21_nomul_frag_src, "img_21_bgra_mask21_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM21, 1, 1, 1, 0 },
+   { SHADER_IMG_22_BGRA_MASK21_NOMUL, img_22_bgra_mask21_nomul_vert_src, img_22_bgra_mask21_nomul_frag_src, "img_22_bgra_mask21_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM21, 1, 1, 1, 0 },
+   { SHADER_IMG_MASK22, img_mask22_vert_src, img_mask22_frag_src, "img_mask22", SHD_IMAGE, SHD_SAM11, SHD_SAM22, 0, 1, 0, 0 },
+   { SHADER_IMG_BGRA_MASK22, img_bgra_mask22_vert_src, img_bgra_mask22_frag_src, "img_bgra_mask22", SHD_IMAGE, SHD_SAM11, SHD_SAM22, 1, 1, 0, 0 },
+   { SHADER_IMG_12_MASK22, img_12_mask22_vert_src, img_12_mask22_frag_src, "img_12_mask22", SHD_IMAGE, SHD_SAM12, SHD_SAM22, 0, 1, 0, 0 },
+   { SHADER_IMG_21_MASK22, img_21_mask22_vert_src, img_21_mask22_frag_src, "img_21_mask22", SHD_IMAGE, SHD_SAM21, SHD_SAM22, 0, 1, 0, 0 },
+   { SHADER_IMG_22_MASK22, img_22_mask22_vert_src, img_22_mask22_frag_src, "img_22_mask22", SHD_IMAGE, SHD_SAM22, SHD_SAM22, 0, 1, 0, 0 },
+   { SHADER_IMG_12_BGRA_MASK22, img_12_bgra_mask22_vert_src, img_12_bgra_mask22_frag_src, "img_12_bgra_mask22", SHD_IMAGE, SHD_SAM12, SHD_SAM22, 1, 1, 0, 0 },
+   { SHADER_IMG_21_BGRA_MASK22, img_21_bgra_mask22_vert_src, img_21_bgra_mask22_frag_src, "img_21_bgra_mask22", SHD_IMAGE, SHD_SAM21, SHD_SAM22, 1, 1, 0, 0 },
+   { SHADER_IMG_22_BGRA_MASK22, img_22_bgra_mask22_vert_src, img_22_bgra_mask22_frag_src, "img_22_bgra_mask22", SHD_IMAGE, SHD_SAM22, SHD_SAM22, 1, 1, 0, 0 },
+   { SHADER_IMG_MASK22_NOMUL, img_mask22_nomul_vert_src, img_mask22_nomul_frag_src, "img_mask22_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM22, 0, 1, 1, 0 },
+   { SHADER_IMG_BGRA_MASK22_NOMUL, img_bgra_mask22_nomul_vert_src, img_bgra_mask22_nomul_frag_src, "img_bgra_mask22_nomul", SHD_IMAGE, SHD_SAM11, SHD_SAM22, 1, 1, 1, 0 },
+   { SHADER_IMG_12_MASK22_NOMUL, img_12_mask22_nomul_vert_src, img_12_mask22_nomul_frag_src, "img_12_mask22_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM22, 0, 1, 1, 0 },
+   { SHADER_IMG_21_MASK22_NOMUL, img_21_mask22_nomul_vert_src, img_21_mask22_nomul_frag_src, "img_21_mask22_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM22, 0, 1, 1, 0 },
+   { SHADER_IMG_22_MASK22_NOMUL, img_22_mask22_nomul_vert_src, img_22_mask22_nomul_frag_src, "img_22_mask22_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM22, 0, 1, 1, 0 },
+   { SHADER_IMG_12_BGRA_MASK22_NOMUL, img_12_bgra_mask22_nomul_vert_src, img_12_bgra_mask22_nomul_frag_src, "img_12_bgra_mask22_nomul", SHD_IMAGE, SHD_SAM12, SHD_SAM22, 1, 1, 1, 0 },
+   { SHADER_IMG_21_BGRA_MASK22_NOMUL, img_21_bgra_mask22_nomul_vert_src, img_21_bgra_mask22_nomul_frag_src, "img_21_bgra_mask22_nomul", SHD_IMAGE, SHD_SAM21, SHD_SAM22, 1, 1, 1, 0 },
+   { SHADER_IMG_22_BGRA_MASK22_NOMUL, img_22_bgra_mask22_nomul_vert_src, img_22_bgra_mask22_nomul_frag_src, "img_22_bgra_mask22_nomul", SHD_IMAGE, SHD_SAM22, SHD_SAM22, 1, 1, 1, 0 },
+   { SHADER_IMG_AFILL, img_afill_vert_src, img_afill_frag_src, "img_afill", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 0, 0, 0, 1 },
+   { SHADER_IMG_BGRA_AFILL, img_bgra_afill_vert_src, img_bgra_afill_frag_src, "img_bgra_afill", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 1, 0, 0, 1 },
+   { SHADER_IMG_NOMUL_AFILL, img_nomul_afill_vert_src, img_nomul_afill_frag_src, "img_nomul_afill", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 0, 0, 1, 1 },
+   { SHADER_IMG_BGRA_NOMUL_AFILL, img_bgra_nomul_afill_vert_src, img_bgra_nomul_afill_frag_src, "img_bgra_nomul_afill", SHD_IMAGE, SHD_SAM11, SHD_SAM11, 1, 0, 1, 1 },
+   { SHADER_IMG_12_AFILL, img_12_afill_vert_src, img_12_afill_frag_src, "img_12_afill", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 0, 0, 0, 1 },
+   { SHADER_IMG_21_AFILL, img_21_afill_vert_src, img_21_afill_frag_src, "img_21_afill", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 0, 0, 0, 1 },
+   { SHADER_IMG_22_AFILL, img_22_afill_vert_src, img_22_afill_frag_src, "img_22_afill", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 0, 0, 0, 1 },
+   { SHADER_IMG_12_BGRA_AFILL, img_12_bgra_afill_vert_src, img_12_bgra_afill_frag_src, "img_12_bgra_afill", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 1, 0, 0, 1 },
+   { SHADER_IMG_21_BGRA_AFILL, img_21_bgra_afill_vert_src, img_21_bgra_afill_frag_src, "img_21_bgra_afill", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 1, 0, 0, 1 },
+   { SHADER_IMG_22_BGRA_AFILL, img_22_bgra_afill_vert_src, img_22_bgra_afill_frag_src, "img_22_bgra_afill", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 1, 0, 0, 1 },
+   { SHADER_IMG_12_NOMUL_AFILL, img_12_nomul_afill_vert_src, img_12_nomul_afill_frag_src, "img_12_nomul_afill", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 0, 0, 1, 1 },
+   { SHADER_IMG_21_NOMUL_AFILL, img_21_nomul_afill_vert_src, img_21_nomul_afill_frag_src, "img_21_nomul_afill", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 0, 0, 1, 1 },
+   { SHADER_IMG_22_NOMUL_AFILL, img_22_nomul_afill_vert_src, img_22_nomul_afill_frag_src, "img_22_nomul_afill", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 0, 0, 1, 1 },
+   { SHADER_IMG_12_BGRA_NOMUL_AFILL, img_12_bgra_nomul_afill_vert_src, img_12_bgra_nomul_afill_frag_src, "img_12_bgra_nomul_afill", SHD_IMAGE, SHD_SAM12, SHD_SAM11, 1, 0, 1, 1 },
+   { SHADER_IMG_21_BGRA_NOMUL_AFILL, img_21_bgra_nomul_afill_vert_src, img_21_bgra_nomul_afill_frag_src, "img_21_bgra_nomul_afill", SHD_IMAGE, SHD_SAM21, SHD_SAM11, 1, 0, 1, 1 },
+   { SHADER_IMG_22_BGRA_NOMUL_AFILL, img_22_bgra_nomul_afill_vert_src, img_22_bgra_nomul_afill_frag_src, "img_22_bgra_nomul_afill", SHD_IMAGE, SHD_SAM22, SHD_SAM11, 1, 0, 1, 1 },
+   { SHADER_IMGNAT, imgnat_vert_src, imgnat_frag_src, "imgnat", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_IMGNAT_BGRA, imgnat_bgra_vert_src, imgnat_bgra_frag_src, "imgnat_bgra", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 0, 0, 0 },
+   { SHADER_IMGNAT_12, imgnat_12_vert_src, imgnat_12_frag_src, "imgnat_12", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_IMGNAT_21, imgnat_21_vert_src, imgnat_21_frag_src, "imgnat_21", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_IMGNAT_22, imgnat_22_vert_src, imgnat_22_frag_src, "imgnat_22", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_IMGNAT_12_BGRA, imgnat_12_bgra_vert_src, imgnat_12_bgra_frag_src, "imgnat_12_bgra", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 0, 0, 0 },
+   { SHADER_IMGNAT_21_BGRA, imgnat_21_bgra_vert_src, imgnat_21_bgra_frag_src, "imgnat_21_bgra", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 0, 0, 0 },
+   { SHADER_IMGNAT_22_BGRA, imgnat_22_bgra_vert_src, imgnat_22_bgra_frag_src, "imgnat_22_bgra", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 0, 0, 0 },
+   { SHADER_IMGNAT_MASK, imgnat_mask_vert_src, imgnat_mask_frag_src, "imgnat_mask", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_BGRA_MASK, imgnat_bgra_mask_vert_src, imgnat_bgra_mask_frag_src, "imgnat_bgra_mask", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_12_MASK, imgnat_12_mask_vert_src, imgnat_12_mask_frag_src, "imgnat_12_mask", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_21_MASK, imgnat_21_mask_vert_src, imgnat_21_mask_frag_src, "imgnat_21_mask", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_22_MASK, imgnat_22_mask_vert_src, imgnat_22_mask_frag_src, "imgnat_22_mask", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_12_BGRA_MASK, imgnat_12_bgra_mask_vert_src, imgnat_12_bgra_mask_frag_src, "imgnat_12_bgra_mask", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_21_BGRA_MASK, imgnat_21_bgra_mask_vert_src, imgnat_21_bgra_mask_frag_src, "imgnat_21_bgra_mask", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_22_BGRA_MASK, imgnat_22_bgra_mask_vert_src, imgnat_22_bgra_mask_frag_src, "imgnat_22_bgra_mask", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_NOMUL, imgnat_nomul_vert_src, imgnat_nomul_frag_src, "imgnat_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_IMGNAT_BGRA_NOMUL, imgnat_bgra_nomul_vert_src, imgnat_bgra_nomul_frag_src, "imgnat_bgra_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 0, 1, 0 },
+   { SHADER_IMGNAT_12_NOMUL, imgnat_12_nomul_vert_src, imgnat_12_nomul_frag_src, "imgnat_12_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_IMGNAT_21_NOMUL, imgnat_21_nomul_vert_src, imgnat_21_nomul_frag_src, "imgnat_21_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_IMGNAT_22_NOMUL, imgnat_22_nomul_vert_src, imgnat_22_nomul_frag_src, "imgnat_22_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_IMGNAT_12_BGRA_NOMUL, imgnat_12_bgra_nomul_vert_src, imgnat_12_bgra_nomul_frag_src, "imgnat_12_bgra_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 0, 1, 0 },
+   { SHADER_IMGNAT_21_BGRA_NOMUL, imgnat_21_bgra_nomul_vert_src, imgnat_21_bgra_nomul_frag_src, "imgnat_21_bgra_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 0, 1, 0 },
+   { SHADER_IMGNAT_22_BGRA_NOMUL, imgnat_22_bgra_nomul_vert_src, imgnat_22_bgra_nomul_frag_src, "imgnat_22_bgra_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 0, 1, 0 },
+   { SHADER_IMGNAT_MASK_NOMUL, imgnat_mask_nomul_vert_src, imgnat_mask_nomul_frag_src, "imgnat_mask_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_BGRA_MASK_NOMUL, imgnat_bgra_mask_nomul_vert_src, imgnat_bgra_mask_nomul_frag_src, "imgnat_bgra_mask_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_12_MASK_NOMUL, imgnat_12_mask_nomul_vert_src, imgnat_12_mask_nomul_frag_src, "imgnat_12_mask_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_21_MASK_NOMUL, imgnat_21_mask_nomul_vert_src, imgnat_21_mask_nomul_frag_src, "imgnat_21_mask_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_22_MASK_NOMUL, imgnat_22_mask_nomul_vert_src, imgnat_22_mask_nomul_frag_src, "imgnat_22_mask_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_12_BGRA_MASK_NOMUL, imgnat_12_bgra_mask_nomul_vert_src, imgnat_12_bgra_mask_nomul_frag_src, "imgnat_12_bgra_mask_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_21_BGRA_MASK_NOMUL, imgnat_21_bgra_mask_nomul_vert_src, imgnat_21_bgra_mask_nomul_frag_src, "imgnat_21_bgra_mask_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_22_BGRA_MASK_NOMUL, imgnat_22_bgra_mask_nomul_vert_src, imgnat_22_bgra_mask_nomul_frag_src, "imgnat_22_bgra_mask_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_MASK12, imgnat_mask12_vert_src, imgnat_mask12_frag_src, "imgnat_mask12", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM12, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_BGRA_MASK12, imgnat_bgra_mask12_vert_src, imgnat_bgra_mask12_frag_src, "imgnat_bgra_mask12", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM12, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_12_MASK12, imgnat_12_mask12_vert_src, imgnat_12_mask12_frag_src, "imgnat_12_mask12", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM12, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_21_MASK12, imgnat_21_mask12_vert_src, imgnat_21_mask12_frag_src, "imgnat_21_mask12", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM12, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_22_MASK12, imgnat_22_mask12_vert_src, imgnat_22_mask12_frag_src, "imgnat_22_mask12", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM12, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_12_BGRA_MASK12, imgnat_12_bgra_mask12_vert_src, imgnat_12_bgra_mask12_frag_src, "imgnat_12_bgra_mask12", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM12, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_21_BGRA_MASK12, imgnat_21_bgra_mask12_vert_src, imgnat_21_bgra_mask12_frag_src, "imgnat_21_bgra_mask12", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM12, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_22_BGRA_MASK12, imgnat_22_bgra_mask12_vert_src, imgnat_22_bgra_mask12_frag_src, "imgnat_22_bgra_mask12", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM12, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_MASK12_NOMUL, imgnat_mask12_nomul_vert_src, imgnat_mask12_nomul_frag_src, "imgnat_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM12, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_BGRA_MASK12_NOMUL, imgnat_bgra_mask12_nomul_vert_src, imgnat_bgra_mask12_nomul_frag_src, "imgnat_bgra_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM12, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_12_MASK12_NOMUL, imgnat_12_mask12_nomul_vert_src, imgnat_12_mask12_nomul_frag_src, "imgnat_12_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM12, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_21_MASK12_NOMUL, imgnat_21_mask12_nomul_vert_src, imgnat_21_mask12_nomul_frag_src, "imgnat_21_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM12, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_22_MASK12_NOMUL, imgnat_22_mask12_nomul_vert_src, imgnat_22_mask12_nomul_frag_src, "imgnat_22_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM12, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_12_BGRA_MASK12_NOMUL, imgnat_12_bgra_mask12_nomul_vert_src, imgnat_12_bgra_mask12_nomul_frag_src, "imgnat_12_bgra_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM12, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_21_BGRA_MASK12_NOMUL, imgnat_21_bgra_mask12_nomul_vert_src, imgnat_21_bgra_mask12_nomul_frag_src, "imgnat_21_bgra_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM12, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_22_BGRA_MASK12_NOMUL, imgnat_22_bgra_mask12_nomul_vert_src, imgnat_22_bgra_mask12_nomul_frag_src, "imgnat_22_bgra_mask12_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM12, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_MASK21, imgnat_mask21_vert_src, imgnat_mask21_frag_src, "imgnat_mask21", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM21, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_BGRA_MASK21, imgnat_bgra_mask21_vert_src, imgnat_bgra_mask21_frag_src, "imgnat_bgra_mask21", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM21, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_12_MASK21, imgnat_12_mask21_vert_src, imgnat_12_mask21_frag_src, "imgnat_12_mask21", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM21, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_21_MASK21, imgnat_21_mask21_vert_src, imgnat_21_mask21_frag_src, "imgnat_21_mask21", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM21, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_22_MASK21, imgnat_22_mask21_vert_src, imgnat_22_mask21_frag_src, "imgnat_22_mask21", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM21, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_12_BGRA_MASK21, imgnat_12_bgra_mask21_vert_src, imgnat_12_bgra_mask21_frag_src, "imgnat_12_bgra_mask21", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM21, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_21_BGRA_MASK21, imgnat_21_bgra_mask21_vert_src, imgnat_21_bgra_mask21_frag_src, "imgnat_21_bgra_mask21", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM21, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_22_BGRA_MASK21, imgnat_22_bgra_mask21_vert_src, imgnat_22_bgra_mask21_frag_src, "imgnat_22_bgra_mask21", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM21, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_MASK21_NOMUL, imgnat_mask21_nomul_vert_src, imgnat_mask21_nomul_frag_src, "imgnat_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM21, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_BGRA_MASK21_NOMUL, imgnat_bgra_mask21_nomul_vert_src, imgnat_bgra_mask21_nomul_frag_src, "imgnat_bgra_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM21, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_12_MASK21_NOMUL, imgnat_12_mask21_nomul_vert_src, imgnat_12_mask21_nomul_frag_src, "imgnat_12_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM21, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_21_MASK21_NOMUL, imgnat_21_mask21_nomul_vert_src, imgnat_21_mask21_nomul_frag_src, "imgnat_21_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM21, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_22_MASK21_NOMUL, imgnat_22_mask21_nomul_vert_src, imgnat_22_mask21_nomul_frag_src, "imgnat_22_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM21, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_12_BGRA_MASK21_NOMUL, imgnat_12_bgra_mask21_nomul_vert_src, imgnat_12_bgra_mask21_nomul_frag_src, "imgnat_12_bgra_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM21, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_21_BGRA_MASK21_NOMUL, imgnat_21_bgra_mask21_nomul_vert_src, imgnat_21_bgra_mask21_nomul_frag_src, "imgnat_21_bgra_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM21, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_22_BGRA_MASK21_NOMUL, imgnat_22_bgra_mask21_nomul_vert_src, imgnat_22_bgra_mask21_nomul_frag_src, "imgnat_22_bgra_mask21_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM21, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_MASK22, imgnat_mask22_vert_src, imgnat_mask22_frag_src, "imgnat_mask22", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM22, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_BGRA_MASK22, imgnat_bgra_mask22_vert_src, imgnat_bgra_mask22_frag_src, "imgnat_bgra_mask22", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM22, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_12_MASK22, imgnat_12_mask22_vert_src, imgnat_12_mask22_frag_src, "imgnat_12_mask22", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM22, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_21_MASK22, imgnat_21_mask22_vert_src, imgnat_21_mask22_frag_src, "imgnat_21_mask22", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM22, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_22_MASK22, imgnat_22_mask22_vert_src, imgnat_22_mask22_frag_src, "imgnat_22_mask22", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM22, 0, 1, 0, 0 },
+   { SHADER_IMGNAT_12_BGRA_MASK22, imgnat_12_bgra_mask22_vert_src, imgnat_12_bgra_mask22_frag_src, "imgnat_12_bgra_mask22", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM22, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_21_BGRA_MASK22, imgnat_21_bgra_mask22_vert_src, imgnat_21_bgra_mask22_frag_src, "imgnat_21_bgra_mask22", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM22, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_22_BGRA_MASK22, imgnat_22_bgra_mask22_vert_src, imgnat_22_bgra_mask22_frag_src, "imgnat_22_bgra_mask22", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM22, 1, 1, 0, 0 },
+   { SHADER_IMGNAT_MASK22_NOMUL, imgnat_mask22_nomul_vert_src, imgnat_mask22_nomul_frag_src, "imgnat_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM22, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_BGRA_MASK22_NOMUL, imgnat_bgra_mask22_nomul_vert_src, imgnat_bgra_mask22_nomul_frag_src, "imgnat_bgra_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM22, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_12_MASK22_NOMUL, imgnat_12_mask22_nomul_vert_src, imgnat_12_mask22_nomul_frag_src, "imgnat_12_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM22, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_21_MASK22_NOMUL, imgnat_21_mask22_nomul_vert_src, imgnat_21_mask22_nomul_frag_src, "imgnat_21_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM22, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_22_MASK22_NOMUL, imgnat_22_mask22_nomul_vert_src, imgnat_22_mask22_nomul_frag_src, "imgnat_22_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM22, 0, 1, 1, 0 },
+   { SHADER_IMGNAT_12_BGRA_MASK22_NOMUL, imgnat_12_bgra_mask22_nomul_vert_src, imgnat_12_bgra_mask22_nomul_frag_src, "imgnat_12_bgra_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM22, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_21_BGRA_MASK22_NOMUL, imgnat_21_bgra_mask22_nomul_vert_src, imgnat_21_bgra_mask22_nomul_frag_src, "imgnat_21_bgra_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM22, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_22_BGRA_MASK22_NOMUL, imgnat_22_bgra_mask22_nomul_vert_src, imgnat_22_bgra_mask22_nomul_frag_src, "imgnat_22_bgra_mask22_nomul", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM22, 1, 1, 1, 0 },
+   { SHADER_IMGNAT_AFILL, imgnat_afill_vert_src, imgnat_afill_frag_src, "imgnat_afill", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 0, 0, 1 },
+   { SHADER_IMGNAT_BGRA_AFILL, imgnat_bgra_afill_vert_src, imgnat_bgra_afill_frag_src, "imgnat_bgra_afill", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 0, 0, 1 },
+   { SHADER_IMGNAT_NOMUL_AFILL, imgnat_nomul_afill_vert_src, imgnat_nomul_afill_frag_src, "imgnat_nomul_afill", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 0, 0, 1, 1 },
+   { SHADER_IMGNAT_BGRA_NOMUL_AFILL, imgnat_bgra_nomul_afill_vert_src, imgnat_bgra_nomul_afill_frag_src, "imgnat_bgra_nomul_afill", SHD_IMAGENATIVE, SHD_SAM11, SHD_SAM11, 1, 0, 1, 1 },
+   { SHADER_IMGNAT_12_AFILL, imgnat_12_afill_vert_src, imgnat_12_afill_frag_src, "imgnat_12_afill", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 0, 0, 1 },
+   { SHADER_IMGNAT_21_AFILL, imgnat_21_afill_vert_src, imgnat_21_afill_frag_src, "imgnat_21_afill", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 0, 0, 1 },
+   { SHADER_IMGNAT_22_AFILL, imgnat_22_afill_vert_src, imgnat_22_afill_frag_src, "imgnat_22_afill", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 0, 0, 1 },
+   { SHADER_IMGNAT_12_BGRA_AFILL, imgnat_12_bgra_afill_vert_src, imgnat_12_bgra_afill_frag_src, "imgnat_12_bgra_afill", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 0, 0, 1 },
+   { SHADER_IMGNAT_21_BGRA_AFILL, imgnat_21_bgra_afill_vert_src, imgnat_21_bgra_afill_frag_src, "imgnat_21_bgra_afill", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 0, 0, 1 },
+   { SHADER_IMGNAT_22_BGRA_AFILL, imgnat_22_bgra_afill_vert_src, imgnat_22_bgra_afill_frag_src, "imgnat_22_bgra_afill", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 0, 0, 1 },
+   { SHADER_IMGNAT_12_NOMUL_AFILL, imgnat_12_nomul_afill_vert_src, imgnat_12_nomul_afill_frag_src, "imgnat_12_nomul_afill", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 0, 0, 1, 1 },
+   { SHADER_IMGNAT_21_NOMUL_AFILL, imgnat_21_nomul_afill_vert_src, imgnat_21_nomul_afill_frag_src, "imgnat_21_nomul_afill", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 0, 0, 1, 1 },
+   { SHADER_IMGNAT_22_NOMUL_AFILL, imgnat_22_nomul_afill_vert_src, imgnat_22_nomul_afill_frag_src, "imgnat_22_nomul_afill", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 0, 0, 1, 1 },
+   { SHADER_IMGNAT_12_BGRA_NOMUL_AFILL, imgnat_12_bgra_nomul_afill_vert_src, imgnat_12_bgra_nomul_afill_frag_src, "imgnat_12_bgra_nomul_afill", SHD_IMAGENATIVE, SHD_SAM12, SHD_SAM11, 1, 0, 1, 1 },
+   { SHADER_IMGNAT_21_BGRA_NOMUL_AFILL, imgnat_21_bgra_nomul_afill_vert_src, imgnat_21_bgra_nomul_afill_frag_src, "imgnat_21_bgra_nomul_afill", SHD_IMAGENATIVE, SHD_SAM21, SHD_SAM11, 1, 0, 1, 1 },
+   { SHADER_IMGNAT_22_BGRA_NOMUL_AFILL, imgnat_22_bgra_nomul_afill_vert_src, imgnat_22_bgra_nomul_afill_frag_src, "imgnat_22_bgra_nomul_afill", SHD_IMAGENATIVE, SHD_SAM22, SHD_SAM11, 1, 0, 1, 1 },
+   { SHADER_RGB_A_PAIR, rgb_a_pair_vert_src, rgb_a_pair_frag_src, "rgb_a_pair", SHD_RGB_A_PAIR, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_RGB_A_PAIR_MASK, rgb_a_pair_mask_vert_src, rgb_a_pair_mask_frag_src, "rgb_a_pair_mask", SHD_RGB_A_PAIR, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_RGB_A_PAIR_NOMUL, rgb_a_pair_nomul_vert_src, rgb_a_pair_nomul_frag_src, "rgb_a_pair_nomul", SHD_RGB_A_PAIR, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_RGB_A_PAIR_MASK_NOMUL, rgb_a_pair_mask_nomul_vert_src, rgb_a_pair_mask_nomul_frag_src, "rgb_a_pair_mask_nomul", SHD_RGB_A_PAIR, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_TEX_EXTERNAL, tex_external_vert_src, tex_external_frag_src, "tex_external", SHD_TEX_EXTERNAL, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_TEX_EXTERNAL_AFILL, tex_external_afill_vert_src, tex_external_afill_frag_src, "tex_external_afill", SHD_TEX_EXTERNAL, SHD_SAM11, SHD_SAM11, 0, 0, 0, 1 },
+   { SHADER_TEX_EXTERNAL_NOMUL, tex_external_nomul_vert_src, tex_external_nomul_frag_src, "tex_external_nomul", SHD_TEX_EXTERNAL, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_TEX_EXTERNAL_NOMUL_AFILL, tex_external_nomul_afill_vert_src, tex_external_nomul_afill_frag_src, "tex_external_nomul_afill", SHD_TEX_EXTERNAL, SHD_SAM11, SHD_SAM11, 0, 0, 1, 1 },
+   { SHADER_TEX_EXTERNAL_MASK, tex_external_mask_vert_src, tex_external_mask_frag_src, "tex_external_mask", SHD_TEX_EXTERNAL, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_TEX_EXTERNAL_MASK_NOMUL, tex_external_mask_nomul_vert_src, tex_external_mask_nomul_frag_src, "tex_external_mask_nomul", SHD_TEX_EXTERNAL, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_YUV, yuv_vert_src, yuv_frag_src, "yuv", SHD_YUV, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_YUV_NOMUL, yuv_nomul_vert_src, yuv_nomul_frag_src, "yuv_nomul", SHD_YUV, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_YUV_MASK, yuv_mask_vert_src, yuv_mask_frag_src, "yuv_mask", SHD_YUV, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_YUV_MASK_NOMUL, yuv_mask_nomul_vert_src, yuv_mask_nomul_frag_src, "yuv_mask_nomul", SHD_YUV, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_YUY2, yuy2_vert_src, yuy2_frag_src, "yuy2", SHD_YUY2, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_YUY2_NOMUL, yuy2_nomul_vert_src, yuy2_nomul_frag_src, "yuy2_nomul", SHD_YUY2, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_YUY2_MASK, yuy2_mask_vert_src, yuy2_mask_frag_src, "yuy2_mask", SHD_YUY2, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_YUY2_MASK_NOMUL, yuy2_mask_nomul_vert_src, yuy2_mask_nomul_frag_src, "yuy2_mask_nomul", SHD_YUY2, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_NV12, nv12_vert_src, nv12_frag_src, "nv12", SHD_NV12, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_NV12_NOMUL, nv12_nomul_vert_src, nv12_nomul_frag_src, "nv12_nomul", SHD_NV12, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_NV12_MASK, nv12_mask_vert_src, nv12_mask_frag_src, "nv12_mask", SHD_NV12, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_NV12_MASK_NOMUL, nv12_mask_nomul_vert_src, nv12_mask_nomul_frag_src, "nv12_mask_nomul", SHD_NV12, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_YUV_709, yuv_709_vert_src, yuv_709_frag_src, "yuv_709", SHD_YUV, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_YUV_709_NOMUL, yuv_709_nomul_vert_src, yuv_709_nomul_frag_src, "yuv_709_nomul", SHD_YUV, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_YUV_709_MASK, yuv_709_mask_vert_src, yuv_709_mask_frag_src, "yuv_709_mask", SHD_YUV, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_YUV_709_MASK_NOMUL, yuv_709_mask_nomul_vert_src, yuv_709_mask_nomul_frag_src, "yuv_709_mask_nomul", SHD_YUV, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_YUY2_709, yuy2_709_vert_src, yuy2_709_frag_src, "yuy2_709", SHD_YUY2, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_YUY2_709_NOMUL, yuy2_709_nomul_vert_src, yuy2_709_nomul_frag_src, "yuy2_709_nomul", SHD_YUY2, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_YUY2_709_MASK, yuy2_709_mask_vert_src, yuy2_709_mask_frag_src, "yuy2_709_mask", SHD_YUY2, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_YUY2_709_MASK_NOMUL, yuy2_709_mask_nomul_vert_src, yuy2_709_mask_nomul_frag_src, "yuy2_709_mask_nomul", SHD_YUY2, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
+   { SHADER_NV12_709, nv12_709_vert_src, nv12_709_frag_src, "nv12_709", SHD_NV12, SHD_SAM11, SHD_SAM11, 0, 0, 0, 0 },
+   { SHADER_NV12_709_NOMUL, nv12_709_nomul_vert_src, nv12_709_nomul_frag_src, "nv12_709_nomul", SHD_NV12, SHD_SAM11, SHD_SAM11, 0, 0, 1, 0 },
+   { SHADER_NV12_709_MASK, nv12_709_mask_vert_src, nv12_709_mask_frag_src, "nv12_709_mask", SHD_NV12, SHD_SAM11, SHD_SAM11, 0, 1, 0, 0 },
+   { SHADER_NV12_709_MASK_NOMUL, nv12_709_mask_nomul_vert_src, nv12_709_mask_nomul_frag_src, "nv12_709_mask_nomul", SHD_NV12, SHD_SAM11, SHD_SAM11, 0, 1, 1, 0 },
 };
 

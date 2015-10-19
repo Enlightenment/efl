@@ -142,17 +142,15 @@ for (( i = 0; i < ${#SHADERS[@]} ; i++ )) ; do
 
     OIFS=$IFS
     IFS=$'\n'
-    printf "static const char ${shdname}_glsl[] =" >> ${OUTPUT}
+    printf "static const char ${shdname}_src[] =" >> ${OUTPUT}
     for line in `cat ${shd}` ; do
       printf "\n   \"${line}\\\n\"" >> ${OUTPUT}
     done
-    printf ";\n" >> ${OUTPUT}
+    printf ";\n\n" >> ${OUTPUT}
     IFS=${OIFS}
-
-    printf "Evas_GL_Program_Source shader_${shdname}_src =\n{\n   ${shdname}_glsl\n};\n\n" >> ${OUTPUT}
   done
 
-  shaders_source="${shaders_source}   { SHADER_${UNAME}, &(shader_${name}_vert_src), &(shader_${name}_frag_src), \"${name}\", SHD_${TYPE}, SHD_${sam}, SHD_${masksam}, ${bgra}, ${mask}, ${nomul}, ${afill} },\n"
+  shaders_source="${shaders_source}   { SHADER_${UNAME}, ${name}_vert_src, ${name}_frag_src, \"${name}\", SHD_${TYPE}, SHD_${sam}, SHD_${masksam}, ${bgra}, ${mask}, ${nomul}, ${afill} },\n"
   shaders_enum="${shaders_enum}   SHADER_${UNAME},\n"
 
   # Bind textures to the programs. Only if there is more than 1 texture.
@@ -167,8 +165,8 @@ done
 printf "
 static const struct {
    Evas_GL_Shader id;
-   Evas_GL_Program_Source *vert;
-   Evas_GL_Program_Source *frag;
+   const char *vert;
+   const char *frag;
    const char *name;
    Shader_Type type;
    Shader_Sampling sam;
