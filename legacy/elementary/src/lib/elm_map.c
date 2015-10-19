@@ -1289,6 +1289,7 @@ _scroll_cb(Evas_Object *obj,
    else
       eo_do(sd->obj, eo_event_callback_call
         (EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_DRAG_START, NULL));
+   ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
    sd->scr_timer = ecore_timer_add(0.25, _scr_timeout_cb, obj);
    eo_do(sd->obj, eo_event_callback_call
      (EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL, NULL));
@@ -3295,6 +3296,7 @@ _pinch_zoom_start_cb(void *data,
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, EVAS_EVENT_FLAG_NONE);
 
    sd->pinch_zoom = sd->zoom_detail;
+   ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
 
    return EVAS_EVENT_FLAG_NONE;
 }
@@ -3338,6 +3340,7 @@ _pinch_rotate_cb(void *data,
 
         evas_object_smart_changed(sd->pan_obj);
      }
+   ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
 
    return EVAS_EVENT_FLAG_NONE;
 }
