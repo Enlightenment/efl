@@ -228,8 +228,8 @@ struct _Elm_Win_Data
 };
 
 static const char SIG_DELETE_REQUEST[] = "delete,request";
-static const char SIG_FOCUS_OUT[] = "focus,out"; // deprecated. use "focused" instead.
-static const char SIG_FOCUS_IN[] = "focus,in"; // deprecated. use "unfocused" instead.
+static const char SIG_FOCUS_OUT[] = "focus,out"; // deprecated. use "unfocused" instead.
+static const char SIG_FOCUS_IN[] = "focus,in"; // deprecated. use "focused" instead.
 static const char SIG_MOVED[] = "moved";
 static const char SIG_WITHDRAWN[] = "withdrawn";
 static const char SIG_ICONIFIED[] = "iconified";
