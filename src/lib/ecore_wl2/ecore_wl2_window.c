@@ -4,10 +4,6 @@
 
 #include "ecore_wl2_private.h"
 
-static void _anim_cb_animate(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED);
-
-static Eina_Bool _animator_busy = EINA_FALSE;
-
 static void
 _ecore_wl2_window_configure_send(Ecore_Wl2_Window *window, int w, int h, unsigned int edges)
 {
@@ -218,57 +214,6 @@ _ecore_wl2_window_type_set(Ecore_Wl2_Window *win)
      }
 }
 
-static const struct wl_callback_listener _win_anim_listener =
-{
-   _anim_cb_animate
-};
-
-static void
-_anim_cb_animate(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED)
-{
-   Ecore_Wl2_Window *window;
-
-   window = data;
-   if (!window) return;
-
-   wl_callback_destroy(callback);
-   window->anim_cb = NULL;
-}
-
-static Eina_Bool
-_ecore_wl2_window_cb_animate(void *data)
-{
-   Ecore_Wl2_Window *window;
-
-   window = data;
-   if (!window->surface) return ECORE_CALLBACK_CANCEL;
-   if (window->anim_cb) return ECORE_CALLBACK_RENEW;
-
-   window->anim_cb = wl_surface_frame(window->surface);
-   wl_callback_add_listener(window->anim_cb, &_win_anim_listener, window);
-   wl_surface_commit(window->surface);
-
-   return ECORE_CALLBACK_RENEW;
-}
-
-void
-_ecore_wl2_window_animator_add(Ecore_Wl2_Window *window)
-{
-   _animator_busy = EINA_TRUE;
-
-   if ((!window->surface) || (window->anim_cb)) return;
-
-   window->anim_cb = wl_surface_frame(window->surface);
-   wl_callback_add_listener(window->anim_cb, &_win_anim_listener, window);
-   wl_surface_commit(window->surface);
-}
-
-void
-_ecore_wl2_window_animator_end(void)
-{
-   _animator_busy = EINA_FALSE;
-}
-
 EAPI Ecore_Wl2_Window *
 ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x, int y, int w, int h)
 {
@@ -385,13 +330,6 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
 
 type_set:
    _ecore_wl2_window_type_set(window);
-
-   if (!window->animator)
-     {
-        window->animator =
-          ecore_animator_add(_ecore_wl2_window_cb_animate, window);
-     }
-
    return;
 
 surf_err:
@@ -402,12 +340,6 @@ EAPI void
 ecore_wl2_window_hide(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
-
-   if (window->anim_cb) wl_callback_destroy(window->anim_cb);
-   window->anim_cb = NULL;
-
-   if (window->animator) ecore_animator_del(window->animator);
-   window->animator = NULL;
 
    if (window->xdg_surface) xdg_surface_destroy(window->xdg_surface);
    window->xdg_surface = NULL;
