@@ -343,12 +343,6 @@ _elua_get_localeconv(lua_State *L)
    ELUA_LCF_C(p_sign_posn);
    ELUA_LCF_C(n_sign_posn);
    ELUA_LCF_C(int_frac_digits);
-   ELUA_LCF_C(int_p_cs_precedes);
-   ELUA_LCF_C(int_n_cs_precedes);
-   ELUA_LCF_C(int_p_sep_by_space);
-   ELUA_LCF_C(int_n_sep_by_space);
-   ELUA_LCF_C(int_p_sign_posn);
-   ELUA_LCF_C(int_n_sign_posn);
 
 #undef ELUA_LCF_S
 #undef ELUA_LCF_C
