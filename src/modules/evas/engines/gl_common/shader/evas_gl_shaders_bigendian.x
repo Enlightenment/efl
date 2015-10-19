@@ -23,8 +23,7 @@ static const char rect_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rect_frag_src =
 {
-   rect_frag_glsl,
-   NULL, 0
+   rect_frag_glsl
 };
 
 static const char rect_vert_glsl[] =
@@ -42,8 +41,7 @@ static const char rect_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rect_vert_src =
 {
-   rect_vert_glsl,
-   NULL, 0
+   rect_vert_glsl
 };
 
 static const char rect_mask_frag_glsl[] =
@@ -71,8 +69,7 @@ static const char rect_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rect_mask_frag_src =
 {
-   rect_mask_frag_glsl,
-   NULL, 0
+   rect_mask_frag_glsl
 };
 
 static const char rect_mask_vert_glsl[] =
@@ -94,8 +91,7 @@ static const char rect_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rect_mask_vert_src =
 {
-   rect_mask_vert_glsl,
-   NULL, 0
+   rect_mask_vert_glsl
 };
 
 static const char rect_mask12_frag_glsl[] =
@@ -127,8 +123,7 @@ static const char rect_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rect_mask12_frag_src =
 {
-   rect_mask12_frag_glsl,
-   NULL, 0
+   rect_mask12_frag_glsl
 };
 
 static const char rect_mask12_vert_glsl[] =
@@ -156,8 +151,7 @@ static const char rect_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rect_mask12_vert_src =
 {
-   rect_mask12_vert_glsl,
-   NULL, 0
+   rect_mask12_vert_glsl
 };
 
 static const char rect_mask21_frag_glsl[] =
@@ -189,8 +183,7 @@ static const char rect_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rect_mask21_frag_src =
 {
-   rect_mask21_frag_glsl,
-   NULL, 0
+   rect_mask21_frag_glsl
 };
 
 static const char rect_mask21_vert_glsl[] =
@@ -218,8 +211,7 @@ static const char rect_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rect_mask21_vert_src =
 {
-   rect_mask21_vert_glsl,
-   NULL, 0
+   rect_mask21_vert_glsl
 };
 
 static const char rect_mask22_frag_glsl[] =
@@ -253,8 +245,7 @@ static const char rect_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rect_mask22_frag_src =
 {
-   rect_mask22_frag_glsl,
-   NULL, 0
+   rect_mask22_frag_glsl
 };
 
 static const char rect_mask22_vert_glsl[] =
@@ -284,8 +275,7 @@ static const char rect_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rect_mask22_vert_src =
 {
-   rect_mask22_vert_glsl,
-   NULL, 0
+   rect_mask22_vert_glsl
 };
 
 static const char font_frag_glsl[] =
@@ -310,8 +300,7 @@ static const char font_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_font_frag_src =
 {
-   font_frag_glsl,
-   NULL, 0
+   font_frag_glsl
 };
 
 static const char font_vert_glsl[] =
@@ -332,8 +321,7 @@ static const char font_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_font_vert_src =
 {
-   font_vert_glsl,
-   NULL, 0
+   font_vert_glsl
 };
 
 static const char font_mask_frag_glsl[] =
@@ -363,8 +351,7 @@ static const char font_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_font_mask_frag_src =
 {
-   font_mask_frag_glsl,
-   NULL, 0
+   font_mask_frag_glsl
 };
 
 static const char font_mask_vert_glsl[] =
@@ -389,8 +376,7 @@ static const char font_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_font_mask_vert_src =
 {
-   font_mask_vert_glsl,
-   NULL, 0
+   font_mask_vert_glsl
 };
 
 static const char font_mask12_frag_glsl[] =
@@ -424,8 +410,7 @@ static const char font_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_font_mask12_frag_src =
 {
-   font_mask12_frag_glsl,
-   NULL, 0
+   font_mask12_frag_glsl
 };
 
 static const char font_mask12_vert_glsl[] =
@@ -456,8 +441,7 @@ static const char font_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_font_mask12_vert_src =
 {
-   font_mask12_vert_glsl,
-   NULL, 0
+   font_mask12_vert_glsl
 };
 
 static const char font_mask21_frag_glsl[] =
@@ -491,8 +475,7 @@ static const char font_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_font_mask21_frag_src =
 {
-   font_mask21_frag_glsl,
-   NULL, 0
+   font_mask21_frag_glsl
 };
 
 static const char font_mask21_vert_glsl[] =
@@ -523,8 +506,7 @@ static const char font_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_font_mask21_vert_src =
 {
-   font_mask21_vert_glsl,
-   NULL, 0
+   font_mask21_vert_glsl
 };
 
 static const char font_mask22_frag_glsl[] =
@@ -560,8 +542,7 @@ static const char font_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_font_mask22_frag_src =
 {
-   font_mask22_frag_glsl,
-   NULL, 0
+   font_mask22_frag_glsl
 };
 
 static const char font_mask22_vert_glsl[] =
@@ -594,8 +575,7 @@ static const char font_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_font_mask22_vert_src =
 {
-   font_mask22_vert_glsl,
-   NULL, 0
+   font_mask22_vert_glsl
 };
 
 static const char img_frag_glsl[] =
@@ -620,8 +600,7 @@ static const char img_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_frag_src =
 {
-   img_frag_glsl,
-   NULL, 0
+   img_frag_glsl
 };
 
 static const char img_vert_glsl[] =
@@ -642,8 +621,7 @@ static const char img_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_vert_src =
 {
-   img_vert_glsl,
-   NULL, 0
+   img_vert_glsl
 };
 
 static const char img_bgra_frag_glsl[] =
@@ -668,8 +646,7 @@ static const char img_bgra_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_frag_src =
 {
-   img_bgra_frag_glsl,
-   NULL, 0
+   img_bgra_frag_glsl
 };
 
 static const char img_bgra_vert_glsl[] =
@@ -690,8 +667,7 @@ static const char img_bgra_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_vert_src =
 {
-   img_bgra_vert_glsl,
-   NULL, 0
+   img_bgra_vert_glsl
 };
 
 static const char img_12_frag_glsl[] =
@@ -720,8 +696,7 @@ static const char img_12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_frag_src =
 {
-   img_12_frag_glsl,
-   NULL, 0
+   img_12_frag_glsl
 };
 
 static const char img_12_vert_glsl[] =
@@ -748,8 +723,7 @@ static const char img_12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_vert_src =
 {
-   img_12_vert_glsl,
-   NULL, 0
+   img_12_vert_glsl
 };
 
 static const char img_21_frag_glsl[] =
@@ -778,8 +752,7 @@ static const char img_21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_frag_src =
 {
-   img_21_frag_glsl,
-   NULL, 0
+   img_21_frag_glsl
 };
 
 static const char img_21_vert_glsl[] =
@@ -806,8 +779,7 @@ static const char img_21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_vert_src =
 {
-   img_21_vert_glsl,
-   NULL, 0
+   img_21_vert_glsl
 };
 
 static const char img_22_frag_glsl[] =
@@ -838,8 +810,7 @@ static const char img_22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_frag_src =
 {
-   img_22_frag_glsl,
-   NULL, 0
+   img_22_frag_glsl
 };
 
 static const char img_22_vert_glsl[] =
@@ -868,8 +839,7 @@ static const char img_22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_vert_src =
 {
-   img_22_vert_glsl,
-   NULL, 0
+   img_22_vert_glsl
 };
 
 static const char img_12_bgra_frag_glsl[] =
@@ -898,8 +868,7 @@ static const char img_12_bgra_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_frag_src =
 {
-   img_12_bgra_frag_glsl,
-   NULL, 0
+   img_12_bgra_frag_glsl
 };
 
 static const char img_12_bgra_vert_glsl[] =
@@ -926,8 +895,7 @@ static const char img_12_bgra_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_vert_src =
 {
-   img_12_bgra_vert_glsl,
-   NULL, 0
+   img_12_bgra_vert_glsl
 };
 
 static const char img_21_bgra_frag_glsl[] =
@@ -956,8 +924,7 @@ static const char img_21_bgra_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_frag_src =
 {
-   img_21_bgra_frag_glsl,
-   NULL, 0
+   img_21_bgra_frag_glsl
 };
 
 static const char img_21_bgra_vert_glsl[] =
@@ -984,8 +951,7 @@ static const char img_21_bgra_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_vert_src =
 {
-   img_21_bgra_vert_glsl,
-   NULL, 0
+   img_21_bgra_vert_glsl
 };
 
 static const char img_22_bgra_frag_glsl[] =
@@ -1016,8 +982,7 @@ static const char img_22_bgra_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_frag_src =
 {
-   img_22_bgra_frag_glsl,
-   NULL, 0
+   img_22_bgra_frag_glsl
 };
 
 static const char img_22_bgra_vert_glsl[] =
@@ -1046,8 +1011,7 @@ static const char img_22_bgra_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_vert_src =
 {
-   img_22_bgra_vert_glsl,
-   NULL, 0
+   img_22_bgra_vert_glsl
 };
 
 static const char img_mask_frag_glsl[] =
@@ -1077,8 +1041,7 @@ static const char img_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_mask_frag_src =
 {
-   img_mask_frag_glsl,
-   NULL, 0
+   img_mask_frag_glsl
 };
 
 static const char img_mask_vert_glsl[] =
@@ -1103,8 +1066,7 @@ static const char img_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_mask_vert_src =
 {
-   img_mask_vert_glsl,
-   NULL, 0
+   img_mask_vert_glsl
 };
 
 static const char img_bgra_mask_frag_glsl[] =
@@ -1134,8 +1096,7 @@ static const char img_bgra_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_mask_frag_src =
 {
-   img_bgra_mask_frag_glsl,
-   NULL, 0
+   img_bgra_mask_frag_glsl
 };
 
 static const char img_bgra_mask_vert_glsl[] =
@@ -1160,8 +1121,7 @@ static const char img_bgra_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_mask_vert_src =
 {
-   img_bgra_mask_vert_glsl,
-   NULL, 0
+   img_bgra_mask_vert_glsl
 };
 
 static const char img_12_mask_frag_glsl[] =
@@ -1195,8 +1155,7 @@ static const char img_12_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_mask_frag_src =
 {
-   img_12_mask_frag_glsl,
-   NULL, 0
+   img_12_mask_frag_glsl
 };
 
 static const char img_12_mask_vert_glsl[] =
@@ -1227,8 +1186,7 @@ static const char img_12_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_mask_vert_src =
 {
-   img_12_mask_vert_glsl,
-   NULL, 0
+   img_12_mask_vert_glsl
 };
 
 static const char img_21_mask_frag_glsl[] =
@@ -1262,8 +1220,7 @@ static const char img_21_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_mask_frag_src =
 {
-   img_21_mask_frag_glsl,
-   NULL, 0
+   img_21_mask_frag_glsl
 };
 
 static const char img_21_mask_vert_glsl[] =
@@ -1294,8 +1251,7 @@ static const char img_21_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_mask_vert_src =
 {
-   img_21_mask_vert_glsl,
-   NULL, 0
+   img_21_mask_vert_glsl
 };
 
 static const char img_22_mask_frag_glsl[] =
@@ -1331,8 +1287,7 @@ static const char img_22_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_mask_frag_src =
 {
-   img_22_mask_frag_glsl,
-   NULL, 0
+   img_22_mask_frag_glsl
 };
 
 static const char img_22_mask_vert_glsl[] =
@@ -1365,8 +1320,7 @@ static const char img_22_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_mask_vert_src =
 {
-   img_22_mask_vert_glsl,
-   NULL, 0
+   img_22_mask_vert_glsl
 };
 
 static const char img_12_bgra_mask_frag_glsl[] =
@@ -1400,8 +1354,7 @@ static const char img_12_bgra_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_mask_frag_src =
 {
-   img_12_bgra_mask_frag_glsl,
-   NULL, 0
+   img_12_bgra_mask_frag_glsl
 };
 
 static const char img_12_bgra_mask_vert_glsl[] =
@@ -1432,8 +1385,7 @@ static const char img_12_bgra_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_mask_vert_src =
 {
-   img_12_bgra_mask_vert_glsl,
-   NULL, 0
+   img_12_bgra_mask_vert_glsl
 };
 
 static const char img_21_bgra_mask_frag_glsl[] =
@@ -1467,8 +1419,7 @@ static const char img_21_bgra_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_mask_frag_src =
 {
-   img_21_bgra_mask_frag_glsl,
-   NULL, 0
+   img_21_bgra_mask_frag_glsl
 };
 
 static const char img_21_bgra_mask_vert_glsl[] =
@@ -1499,8 +1450,7 @@ static const char img_21_bgra_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_mask_vert_src =
 {
-   img_21_bgra_mask_vert_glsl,
-   NULL, 0
+   img_21_bgra_mask_vert_glsl
 };
 
 static const char img_22_bgra_mask_frag_glsl[] =
@@ -1536,8 +1486,7 @@ static const char img_22_bgra_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_mask_frag_src =
 {
-   img_22_bgra_mask_frag_glsl,
-   NULL, 0
+   img_22_bgra_mask_frag_glsl
 };
 
 static const char img_22_bgra_mask_vert_glsl[] =
@@ -1570,8 +1519,7 @@ static const char img_22_bgra_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_mask_vert_src =
 {
-   img_22_bgra_mask_vert_glsl,
-   NULL, 0
+   img_22_bgra_mask_vert_glsl
 };
 
 static const char img_nomul_frag_glsl[] =
@@ -1594,8 +1542,7 @@ static const char img_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_nomul_frag_src =
 {
-   img_nomul_frag_glsl,
-   NULL, 0
+   img_nomul_frag_glsl
 };
 
 static const char img_nomul_vert_glsl[] =
@@ -1613,8 +1560,7 @@ static const char img_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_nomul_vert_src =
 {
-   img_nomul_vert_glsl,
-   NULL, 0
+   img_nomul_vert_glsl
 };
 
 static const char img_bgra_nomul_frag_glsl[] =
@@ -1637,8 +1583,7 @@ static const char img_bgra_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_nomul_frag_src =
 {
-   img_bgra_nomul_frag_glsl,
-   NULL, 0
+   img_bgra_nomul_frag_glsl
 };
 
 static const char img_bgra_nomul_vert_glsl[] =
@@ -1656,8 +1601,7 @@ static const char img_bgra_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_nomul_vert_src =
 {
-   img_bgra_nomul_vert_glsl,
-   NULL, 0
+   img_bgra_nomul_vert_glsl
 };
 
 static const char img_12_nomul_frag_glsl[] =
@@ -1684,8 +1628,7 @@ static const char img_12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_nomul_frag_src =
 {
-   img_12_nomul_frag_glsl,
-   NULL, 0
+   img_12_nomul_frag_glsl
 };
 
 static const char img_12_nomul_vert_glsl[] =
@@ -1709,8 +1652,7 @@ static const char img_12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_nomul_vert_src =
 {
-   img_12_nomul_vert_glsl,
-   NULL, 0
+   img_12_nomul_vert_glsl
 };
 
 static const char img_21_nomul_frag_glsl[] =
@@ -1737,8 +1679,7 @@ static const char img_21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_nomul_frag_src =
 {
-   img_21_nomul_frag_glsl,
-   NULL, 0
+   img_21_nomul_frag_glsl
 };
 
 static const char img_21_nomul_vert_glsl[] =
@@ -1762,8 +1703,7 @@ static const char img_21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_nomul_vert_src =
 {
-   img_21_nomul_vert_glsl,
-   NULL, 0
+   img_21_nomul_vert_glsl
 };
 
 static const char img_22_nomul_frag_glsl[] =
@@ -1792,8 +1732,7 @@ static const char img_22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_nomul_frag_src =
 {
-   img_22_nomul_frag_glsl,
-   NULL, 0
+   img_22_nomul_frag_glsl
 };
 
 static const char img_22_nomul_vert_glsl[] =
@@ -1819,8 +1758,7 @@ static const char img_22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_nomul_vert_src =
 {
-   img_22_nomul_vert_glsl,
-   NULL, 0
+   img_22_nomul_vert_glsl
 };
 
 static const char img_12_bgra_nomul_frag_glsl[] =
@@ -1847,8 +1785,7 @@ static const char img_12_bgra_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_nomul_frag_src =
 {
-   img_12_bgra_nomul_frag_glsl,
-   NULL, 0
+   img_12_bgra_nomul_frag_glsl
 };
 
 static const char img_12_bgra_nomul_vert_glsl[] =
@@ -1872,8 +1809,7 @@ static const char img_12_bgra_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_nomul_vert_src =
 {
-   img_12_bgra_nomul_vert_glsl,
-   NULL, 0
+   img_12_bgra_nomul_vert_glsl
 };
 
 static const char img_21_bgra_nomul_frag_glsl[] =
@@ -1900,8 +1836,7 @@ static const char img_21_bgra_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_nomul_frag_src =
 {
-   img_21_bgra_nomul_frag_glsl,
-   NULL, 0
+   img_21_bgra_nomul_frag_glsl
 };
 
 static const char img_21_bgra_nomul_vert_glsl[] =
@@ -1925,8 +1860,7 @@ static const char img_21_bgra_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_nomul_vert_src =
 {
-   img_21_bgra_nomul_vert_glsl,
-   NULL, 0
+   img_21_bgra_nomul_vert_glsl
 };
 
 static const char img_22_bgra_nomul_frag_glsl[] =
@@ -1955,8 +1889,7 @@ static const char img_22_bgra_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_nomul_frag_src =
 {
-   img_22_bgra_nomul_frag_glsl,
-   NULL, 0
+   img_22_bgra_nomul_frag_glsl
 };
 
 static const char img_22_bgra_nomul_vert_glsl[] =
@@ -1982,8 +1915,7 @@ static const char img_22_bgra_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_nomul_vert_src =
 {
-   img_22_bgra_nomul_vert_glsl,
-   NULL, 0
+   img_22_bgra_nomul_vert_glsl
 };
 
 static const char img_mask_nomul_frag_glsl[] =
@@ -2011,8 +1943,7 @@ static const char img_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_mask_nomul_frag_src =
 {
-   img_mask_nomul_frag_glsl,
-   NULL, 0
+   img_mask_nomul_frag_glsl
 };
 
 static const char img_mask_nomul_vert_glsl[] =
@@ -2034,8 +1965,7 @@ static const char img_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_mask_nomul_vert_src =
 {
-   img_mask_nomul_vert_glsl,
-   NULL, 0
+   img_mask_nomul_vert_glsl
 };
 
 static const char img_bgra_mask_nomul_frag_glsl[] =
@@ -2063,8 +1993,7 @@ static const char img_bgra_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_mask_nomul_frag_src =
 {
-   img_bgra_mask_nomul_frag_glsl,
-   NULL, 0
+   img_bgra_mask_nomul_frag_glsl
 };
 
 static const char img_bgra_mask_nomul_vert_glsl[] =
@@ -2086,8 +2015,7 @@ static const char img_bgra_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_mask_nomul_vert_src =
 {
-   img_bgra_mask_nomul_vert_glsl,
-   NULL, 0
+   img_bgra_mask_nomul_vert_glsl
 };
 
 static const char img_12_mask_nomul_frag_glsl[] =
@@ -2119,8 +2047,7 @@ static const char img_12_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_mask_nomul_frag_src =
 {
-   img_12_mask_nomul_frag_glsl,
-   NULL, 0
+   img_12_mask_nomul_frag_glsl
 };
 
 static const char img_12_mask_nomul_vert_glsl[] =
@@ -2148,8 +2075,7 @@ static const char img_12_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_mask_nomul_vert_src =
 {
-   img_12_mask_nomul_vert_glsl,
-   NULL, 0
+   img_12_mask_nomul_vert_glsl
 };
 
 static const char img_21_mask_nomul_frag_glsl[] =
@@ -2181,8 +2107,7 @@ static const char img_21_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_mask_nomul_frag_src =
 {
-   img_21_mask_nomul_frag_glsl,
-   NULL, 0
+   img_21_mask_nomul_frag_glsl
 };
 
 static const char img_21_mask_nomul_vert_glsl[] =
@@ -2210,8 +2135,7 @@ static const char img_21_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_mask_nomul_vert_src =
 {
-   img_21_mask_nomul_vert_glsl,
-   NULL, 0
+   img_21_mask_nomul_vert_glsl
 };
 
 static const char img_22_mask_nomul_frag_glsl[] =
@@ -2245,8 +2169,7 @@ static const char img_22_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_mask_nomul_frag_src =
 {
-   img_22_mask_nomul_frag_glsl,
-   NULL, 0
+   img_22_mask_nomul_frag_glsl
 };
 
 static const char img_22_mask_nomul_vert_glsl[] =
@@ -2276,8 +2199,7 @@ static const char img_22_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_mask_nomul_vert_src =
 {
-   img_22_mask_nomul_vert_glsl,
-   NULL, 0
+   img_22_mask_nomul_vert_glsl
 };
 
 static const char img_12_bgra_mask_nomul_frag_glsl[] =
@@ -2309,8 +2231,7 @@ static const char img_12_bgra_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_mask_nomul_frag_src =
 {
-   img_12_bgra_mask_nomul_frag_glsl,
-   NULL, 0
+   img_12_bgra_mask_nomul_frag_glsl
 };
 
 static const char img_12_bgra_mask_nomul_vert_glsl[] =
@@ -2338,8 +2259,7 @@ static const char img_12_bgra_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_mask_nomul_vert_src =
 {
-   img_12_bgra_mask_nomul_vert_glsl,
-   NULL, 0
+   img_12_bgra_mask_nomul_vert_glsl
 };
 
 static const char img_21_bgra_mask_nomul_frag_glsl[] =
@@ -2371,8 +2291,7 @@ static const char img_21_bgra_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_mask_nomul_frag_src =
 {
-   img_21_bgra_mask_nomul_frag_glsl,
-   NULL, 0
+   img_21_bgra_mask_nomul_frag_glsl
 };
 
 static const char img_21_bgra_mask_nomul_vert_glsl[] =
@@ -2400,8 +2319,7 @@ static const char img_21_bgra_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_mask_nomul_vert_src =
 {
-   img_21_bgra_mask_nomul_vert_glsl,
-   NULL, 0
+   img_21_bgra_mask_nomul_vert_glsl
 };
 
 static const char img_22_bgra_mask_nomul_frag_glsl[] =
@@ -2435,8 +2353,7 @@ static const char img_22_bgra_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_mask_nomul_frag_src =
 {
-   img_22_bgra_mask_nomul_frag_glsl,
-   NULL, 0
+   img_22_bgra_mask_nomul_frag_glsl
 };
 
 static const char img_22_bgra_mask_nomul_vert_glsl[] =
@@ -2466,8 +2383,7 @@ static const char img_22_bgra_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_mask_nomul_vert_src =
 {
-   img_22_bgra_mask_nomul_vert_glsl,
-   NULL, 0
+   img_22_bgra_mask_nomul_vert_glsl
 };
 
 static const char img_mask12_frag_glsl[] =
@@ -2501,8 +2417,7 @@ static const char img_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_mask12_frag_src =
 {
-   img_mask12_frag_glsl,
-   NULL, 0
+   img_mask12_frag_glsl
 };
 
 static const char img_mask12_vert_glsl[] =
@@ -2533,8 +2448,7 @@ static const char img_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_mask12_vert_src =
 {
-   img_mask12_vert_glsl,
-   NULL, 0
+   img_mask12_vert_glsl
 };
 
 static const char img_bgra_mask12_frag_glsl[] =
@@ -2568,8 +2482,7 @@ static const char img_bgra_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_mask12_frag_src =
 {
-   img_bgra_mask12_frag_glsl,
-   NULL, 0
+   img_bgra_mask12_frag_glsl
 };
 
 static const char img_bgra_mask12_vert_glsl[] =
@@ -2600,8 +2513,7 @@ static const char img_bgra_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_mask12_vert_src =
 {
-   img_bgra_mask12_vert_glsl,
-   NULL, 0
+   img_bgra_mask12_vert_glsl
 };
 
 static const char img_12_mask12_frag_glsl[] =
@@ -2639,8 +2551,7 @@ static const char img_12_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_mask12_frag_src =
 {
-   img_12_mask12_frag_glsl,
-   NULL, 0
+   img_12_mask12_frag_glsl
 };
 
 static const char img_12_mask12_vert_glsl[] =
@@ -2677,8 +2588,7 @@ static const char img_12_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_mask12_vert_src =
 {
-   img_12_mask12_vert_glsl,
-   NULL, 0
+   img_12_mask12_vert_glsl
 };
 
 static const char img_21_mask12_frag_glsl[] =
@@ -2716,8 +2626,7 @@ static const char img_21_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_mask12_frag_src =
 {
-   img_21_mask12_frag_glsl,
-   NULL, 0
+   img_21_mask12_frag_glsl
 };
 
 static const char img_21_mask12_vert_glsl[] =
@@ -2754,8 +2663,7 @@ static const char img_21_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_mask12_vert_src =
 {
-   img_21_mask12_vert_glsl,
-   NULL, 0
+   img_21_mask12_vert_glsl
 };
 
 static const char img_22_mask12_frag_glsl[] =
@@ -2795,8 +2703,7 @@ static const char img_22_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_mask12_frag_src =
 {
-   img_22_mask12_frag_glsl,
-   NULL, 0
+   img_22_mask12_frag_glsl
 };
 
 static const char img_22_mask12_vert_glsl[] =
@@ -2835,8 +2742,7 @@ static const char img_22_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_mask12_vert_src =
 {
-   img_22_mask12_vert_glsl,
-   NULL, 0
+   img_22_mask12_vert_glsl
 };
 
 static const char img_12_bgra_mask12_frag_glsl[] =
@@ -2874,8 +2780,7 @@ static const char img_12_bgra_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_mask12_frag_src =
 {
-   img_12_bgra_mask12_frag_glsl,
-   NULL, 0
+   img_12_bgra_mask12_frag_glsl
 };
 
 static const char img_12_bgra_mask12_vert_glsl[] =
@@ -2912,8 +2817,7 @@ static const char img_12_bgra_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_mask12_vert_src =
 {
-   img_12_bgra_mask12_vert_glsl,
-   NULL, 0
+   img_12_bgra_mask12_vert_glsl
 };
 
 static const char img_21_bgra_mask12_frag_glsl[] =
@@ -2951,8 +2855,7 @@ static const char img_21_bgra_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_mask12_frag_src =
 {
-   img_21_bgra_mask12_frag_glsl,
-   NULL, 0
+   img_21_bgra_mask12_frag_glsl
 };
 
 static const char img_21_bgra_mask12_vert_glsl[] =
@@ -2989,8 +2892,7 @@ static const char img_21_bgra_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_mask12_vert_src =
 {
-   img_21_bgra_mask12_vert_glsl,
-   NULL, 0
+   img_21_bgra_mask12_vert_glsl
 };
 
 static const char img_22_bgra_mask12_frag_glsl[] =
@@ -3030,8 +2932,7 @@ static const char img_22_bgra_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_mask12_frag_src =
 {
-   img_22_bgra_mask12_frag_glsl,
-   NULL, 0
+   img_22_bgra_mask12_frag_glsl
 };
 
 static const char img_22_bgra_mask12_vert_glsl[] =
@@ -3070,8 +2971,7 @@ static const char img_22_bgra_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_mask12_vert_src =
 {
-   img_22_bgra_mask12_vert_glsl,
-   NULL, 0
+   img_22_bgra_mask12_vert_glsl
 };
 
 static const char img_mask12_nomul_frag_glsl[] =
@@ -3103,8 +3003,7 @@ static const char img_mask12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_mask12_nomul_frag_src =
 {
-   img_mask12_nomul_frag_glsl,
-   NULL, 0
+   img_mask12_nomul_frag_glsl
 };
 
 static const char img_mask12_nomul_vert_glsl[] =
@@ -3132,8 +3031,7 @@ static const char img_mask12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_mask12_nomul_vert_src =
 {
-   img_mask12_nomul_vert_glsl,
-   NULL, 0
+   img_mask12_nomul_vert_glsl
 };
 
 static const char img_bgra_mask12_nomul_frag_glsl[] =
@@ -3165,8 +3063,7 @@ static const char img_bgra_mask12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_mask12_nomul_frag_src =
 {
-   img_bgra_mask12_nomul_frag_glsl,
-   NULL, 0
+   img_bgra_mask12_nomul_frag_glsl
 };
 
 static const char img_bgra_mask12_nomul_vert_glsl[] =
@@ -3194,8 +3091,7 @@ static const char img_bgra_mask12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_mask12_nomul_vert_src =
 {
-   img_bgra_mask12_nomul_vert_glsl,
-   NULL, 0
+   img_bgra_mask12_nomul_vert_glsl
 };
 
 static const char img_12_mask12_nomul_frag_glsl[] =
@@ -3231,8 +3127,7 @@ static const char img_12_mask12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_mask12_nomul_frag_src =
 {
-   img_12_mask12_nomul_frag_glsl,
-   NULL, 0
+   img_12_mask12_nomul_frag_glsl
 };
 
 static const char img_12_mask12_nomul_vert_glsl[] =
@@ -3266,8 +3161,7 @@ static const char img_12_mask12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_mask12_nomul_vert_src =
 {
-   img_12_mask12_nomul_vert_glsl,
-   NULL, 0
+   img_12_mask12_nomul_vert_glsl
 };
 
 static const char img_21_mask12_nomul_frag_glsl[] =
@@ -3303,8 +3197,7 @@ static const char img_21_mask12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_mask12_nomul_frag_src =
 {
-   img_21_mask12_nomul_frag_glsl,
-   NULL, 0
+   img_21_mask12_nomul_frag_glsl
 };
 
 static const char img_21_mask12_nomul_vert_glsl[] =
@@ -3338,8 +3231,7 @@ static const char img_21_mask12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_mask12_nomul_vert_src =
 {
-   img_21_mask12_nomul_vert_glsl,
-   NULL, 0
+   img_21_mask12_nomul_vert_glsl
 };
 
 static const char img_22_mask12_nomul_frag_glsl[] =
@@ -3377,8 +3269,7 @@ static const char img_22_mask12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_mask12_nomul_frag_src =
 {
-   img_22_mask12_nomul_frag_glsl,
-   NULL, 0
+   img_22_mask12_nomul_frag_glsl
 };
 
 static const char img_22_mask12_nomul_vert_glsl[] =
@@ -3414,8 +3305,7 @@ static const char img_22_mask12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_mask12_nomul_vert_src =
 {
-   img_22_mask12_nomul_vert_glsl,
-   NULL, 0
+   img_22_mask12_nomul_vert_glsl
 };
 
 static const char img_12_bgra_mask12_nomul_frag_glsl[] =
@@ -3451,8 +3341,7 @@ static const char img_12_bgra_mask12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_mask12_nomul_frag_src =
 {
-   img_12_bgra_mask12_nomul_frag_glsl,
-   NULL, 0
+   img_12_bgra_mask12_nomul_frag_glsl
 };
 
 static const char img_12_bgra_mask12_nomul_vert_glsl[] =
@@ -3486,8 +3375,7 @@ static const char img_12_bgra_mask12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_mask12_nomul_vert_src =
 {
-   img_12_bgra_mask12_nomul_vert_glsl,
-   NULL, 0
+   img_12_bgra_mask12_nomul_vert_glsl
 };
 
 static const char img_21_bgra_mask12_nomul_frag_glsl[] =
@@ -3523,8 +3411,7 @@ static const char img_21_bgra_mask12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_mask12_nomul_frag_src =
 {
-   img_21_bgra_mask12_nomul_frag_glsl,
-   NULL, 0
+   img_21_bgra_mask12_nomul_frag_glsl
 };
 
 static const char img_21_bgra_mask12_nomul_vert_glsl[] =
@@ -3558,8 +3445,7 @@ static const char img_21_bgra_mask12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_mask12_nomul_vert_src =
 {
-   img_21_bgra_mask12_nomul_vert_glsl,
-   NULL, 0
+   img_21_bgra_mask12_nomul_vert_glsl
 };
 
 static const char img_22_bgra_mask12_nomul_frag_glsl[] =
@@ -3597,8 +3483,7 @@ static const char img_22_bgra_mask12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_mask12_nomul_frag_src =
 {
-   img_22_bgra_mask12_nomul_frag_glsl,
-   NULL, 0
+   img_22_bgra_mask12_nomul_frag_glsl
 };
 
 static const char img_22_bgra_mask12_nomul_vert_glsl[] =
@@ -3634,8 +3519,7 @@ static const char img_22_bgra_mask12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_mask12_nomul_vert_src =
 {
-   img_22_bgra_mask12_nomul_vert_glsl,
-   NULL, 0
+   img_22_bgra_mask12_nomul_vert_glsl
 };
 
 static const char img_mask21_frag_glsl[] =
@@ -3669,8 +3553,7 @@ static const char img_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_mask21_frag_src =
 {
-   img_mask21_frag_glsl,
-   NULL, 0
+   img_mask21_frag_glsl
 };
 
 static const char img_mask21_vert_glsl[] =
@@ -3701,8 +3584,7 @@ static const char img_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_mask21_vert_src =
 {
-   img_mask21_vert_glsl,
-   NULL, 0
+   img_mask21_vert_glsl
 };
 
 static const char img_bgra_mask21_frag_glsl[] =
@@ -3736,8 +3618,7 @@ static const char img_bgra_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_mask21_frag_src =
 {
-   img_bgra_mask21_frag_glsl,
-   NULL, 0
+   img_bgra_mask21_frag_glsl
 };
 
 static const char img_bgra_mask21_vert_glsl[] =
@@ -3768,8 +3649,7 @@ static const char img_bgra_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_mask21_vert_src =
 {
-   img_bgra_mask21_vert_glsl,
-   NULL, 0
+   img_bgra_mask21_vert_glsl
 };
 
 static const char img_12_mask21_frag_glsl[] =
@@ -3807,8 +3687,7 @@ static const char img_12_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_mask21_frag_src =
 {
-   img_12_mask21_frag_glsl,
-   NULL, 0
+   img_12_mask21_frag_glsl
 };
 
 static const char img_12_mask21_vert_glsl[] =
@@ -3845,8 +3724,7 @@ static const char img_12_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_mask21_vert_src =
 {
-   img_12_mask21_vert_glsl,
-   NULL, 0
+   img_12_mask21_vert_glsl
 };
 
 static const char img_21_mask21_frag_glsl[] =
@@ -3884,8 +3762,7 @@ static const char img_21_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_mask21_frag_src =
 {
-   img_21_mask21_frag_glsl,
-   NULL, 0
+   img_21_mask21_frag_glsl
 };
 
 static const char img_21_mask21_vert_glsl[] =
@@ -3922,8 +3799,7 @@ static const char img_21_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_mask21_vert_src =
 {
-   img_21_mask21_vert_glsl,
-   NULL, 0
+   img_21_mask21_vert_glsl
 };
 
 static const char img_22_mask21_frag_glsl[] =
@@ -3963,8 +3839,7 @@ static const char img_22_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_mask21_frag_src =
 {
-   img_22_mask21_frag_glsl,
-   NULL, 0
+   img_22_mask21_frag_glsl
 };
 
 static const char img_22_mask21_vert_glsl[] =
@@ -4003,8 +3878,7 @@ static const char img_22_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_mask21_vert_src =
 {
-   img_22_mask21_vert_glsl,
-   NULL, 0
+   img_22_mask21_vert_glsl
 };
 
 static const char img_12_bgra_mask21_frag_glsl[] =
@@ -4042,8 +3916,7 @@ static const char img_12_bgra_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_mask21_frag_src =
 {
-   img_12_bgra_mask21_frag_glsl,
-   NULL, 0
+   img_12_bgra_mask21_frag_glsl
 };
 
 static const char img_12_bgra_mask21_vert_glsl[] =
@@ -4080,8 +3953,7 @@ static const char img_12_bgra_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_mask21_vert_src =
 {
-   img_12_bgra_mask21_vert_glsl,
-   NULL, 0
+   img_12_bgra_mask21_vert_glsl
 };
 
 static const char img_21_bgra_mask21_frag_glsl[] =
@@ -4119,8 +3991,7 @@ static const char img_21_bgra_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_mask21_frag_src =
 {
-   img_21_bgra_mask21_frag_glsl,
-   NULL, 0
+   img_21_bgra_mask21_frag_glsl
 };
 
 static const char img_21_bgra_mask21_vert_glsl[] =
@@ -4157,8 +4028,7 @@ static const char img_21_bgra_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_mask21_vert_src =
 {
-   img_21_bgra_mask21_vert_glsl,
-   NULL, 0
+   img_21_bgra_mask21_vert_glsl
 };
 
 static const char img_22_bgra_mask21_frag_glsl[] =
@@ -4198,8 +4068,7 @@ static const char img_22_bgra_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_mask21_frag_src =
 {
-   img_22_bgra_mask21_frag_glsl,
-   NULL, 0
+   img_22_bgra_mask21_frag_glsl
 };
 
 static const char img_22_bgra_mask21_vert_glsl[] =
@@ -4238,8 +4107,7 @@ static const char img_22_bgra_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_mask21_vert_src =
 {
-   img_22_bgra_mask21_vert_glsl,
-   NULL, 0
+   img_22_bgra_mask21_vert_glsl
 };
 
 static const char img_mask21_nomul_frag_glsl[] =
@@ -4271,8 +4139,7 @@ static const char img_mask21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_mask21_nomul_frag_src =
 {
-   img_mask21_nomul_frag_glsl,
-   NULL, 0
+   img_mask21_nomul_frag_glsl
 };
 
 static const char img_mask21_nomul_vert_glsl[] =
@@ -4300,8 +4167,7 @@ static const char img_mask21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_mask21_nomul_vert_src =
 {
-   img_mask21_nomul_vert_glsl,
-   NULL, 0
+   img_mask21_nomul_vert_glsl
 };
 
 static const char img_bgra_mask21_nomul_frag_glsl[] =
@@ -4333,8 +4199,7 @@ static const char img_bgra_mask21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_mask21_nomul_frag_src =
 {
-   img_bgra_mask21_nomul_frag_glsl,
-   NULL, 0
+   img_bgra_mask21_nomul_frag_glsl
 };
 
 static const char img_bgra_mask21_nomul_vert_glsl[] =
@@ -4362,8 +4227,7 @@ static const char img_bgra_mask21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_mask21_nomul_vert_src =
 {
-   img_bgra_mask21_nomul_vert_glsl,
-   NULL, 0
+   img_bgra_mask21_nomul_vert_glsl
 };
 
 static const char img_12_mask21_nomul_frag_glsl[] =
@@ -4399,8 +4263,7 @@ static const char img_12_mask21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_mask21_nomul_frag_src =
 {
-   img_12_mask21_nomul_frag_glsl,
-   NULL, 0
+   img_12_mask21_nomul_frag_glsl
 };
 
 static const char img_12_mask21_nomul_vert_glsl[] =
@@ -4434,8 +4297,7 @@ static const char img_12_mask21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_mask21_nomul_vert_src =
 {
-   img_12_mask21_nomul_vert_glsl,
-   NULL, 0
+   img_12_mask21_nomul_vert_glsl
 };
 
 static const char img_21_mask21_nomul_frag_glsl[] =
@@ -4471,8 +4333,7 @@ static const char img_21_mask21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_mask21_nomul_frag_src =
 {
-   img_21_mask21_nomul_frag_glsl,
-   NULL, 0
+   img_21_mask21_nomul_frag_glsl
 };
 
 static const char img_21_mask21_nomul_vert_glsl[] =
@@ -4506,8 +4367,7 @@ static const char img_21_mask21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_mask21_nomul_vert_src =
 {
-   img_21_mask21_nomul_vert_glsl,
-   NULL, 0
+   img_21_mask21_nomul_vert_glsl
 };
 
 static const char img_22_mask21_nomul_frag_glsl[] =
@@ -4545,8 +4405,7 @@ static const char img_22_mask21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_mask21_nomul_frag_src =
 {
-   img_22_mask21_nomul_frag_glsl,
-   NULL, 0
+   img_22_mask21_nomul_frag_glsl
 };
 
 static const char img_22_mask21_nomul_vert_glsl[] =
@@ -4582,8 +4441,7 @@ static const char img_22_mask21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_mask21_nomul_vert_src =
 {
-   img_22_mask21_nomul_vert_glsl,
-   NULL, 0
+   img_22_mask21_nomul_vert_glsl
 };
 
 static const char img_12_bgra_mask21_nomul_frag_glsl[] =
@@ -4619,8 +4477,7 @@ static const char img_12_bgra_mask21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_mask21_nomul_frag_src =
 {
-   img_12_bgra_mask21_nomul_frag_glsl,
-   NULL, 0
+   img_12_bgra_mask21_nomul_frag_glsl
 };
 
 static const char img_12_bgra_mask21_nomul_vert_glsl[] =
@@ -4654,8 +4511,7 @@ static const char img_12_bgra_mask21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_mask21_nomul_vert_src =
 {
-   img_12_bgra_mask21_nomul_vert_glsl,
-   NULL, 0
+   img_12_bgra_mask21_nomul_vert_glsl
 };
 
 static const char img_21_bgra_mask21_nomul_frag_glsl[] =
@@ -4691,8 +4547,7 @@ static const char img_21_bgra_mask21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_mask21_nomul_frag_src =
 {
-   img_21_bgra_mask21_nomul_frag_glsl,
-   NULL, 0
+   img_21_bgra_mask21_nomul_frag_glsl
 };
 
 static const char img_21_bgra_mask21_nomul_vert_glsl[] =
@@ -4726,8 +4581,7 @@ static const char img_21_bgra_mask21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_mask21_nomul_vert_src =
 {
-   img_21_bgra_mask21_nomul_vert_glsl,
-   NULL, 0
+   img_21_bgra_mask21_nomul_vert_glsl
 };
 
 static const char img_22_bgra_mask21_nomul_frag_glsl[] =
@@ -4765,8 +4619,7 @@ static const char img_22_bgra_mask21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_mask21_nomul_frag_src =
 {
-   img_22_bgra_mask21_nomul_frag_glsl,
-   NULL, 0
+   img_22_bgra_mask21_nomul_frag_glsl
 };
 
 static const char img_22_bgra_mask21_nomul_vert_glsl[] =
@@ -4802,8 +4655,7 @@ static const char img_22_bgra_mask21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_mask21_nomul_vert_src =
 {
-   img_22_bgra_mask21_nomul_vert_glsl,
-   NULL, 0
+   img_22_bgra_mask21_nomul_vert_glsl
 };
 
 static const char img_mask22_frag_glsl[] =
@@ -4839,8 +4691,7 @@ static const char img_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_mask22_frag_src =
 {
-   img_mask22_frag_glsl,
-   NULL, 0
+   img_mask22_frag_glsl
 };
 
 static const char img_mask22_vert_glsl[] =
@@ -4873,8 +4724,7 @@ static const char img_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_mask22_vert_src =
 {
-   img_mask22_vert_glsl,
-   NULL, 0
+   img_mask22_vert_glsl
 };
 
 static const char img_bgra_mask22_frag_glsl[] =
@@ -4910,8 +4760,7 @@ static const char img_bgra_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_mask22_frag_src =
 {
-   img_bgra_mask22_frag_glsl,
-   NULL, 0
+   img_bgra_mask22_frag_glsl
 };
 
 static const char img_bgra_mask22_vert_glsl[] =
@@ -4944,8 +4793,7 @@ static const char img_bgra_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_mask22_vert_src =
 {
-   img_bgra_mask22_vert_glsl,
-   NULL, 0
+   img_bgra_mask22_vert_glsl
 };
 
 static const char img_12_mask22_frag_glsl[] =
@@ -4985,8 +4833,7 @@ static const char img_12_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_mask22_frag_src =
 {
-   img_12_mask22_frag_glsl,
-   NULL, 0
+   img_12_mask22_frag_glsl
 };
 
 static const char img_12_mask22_vert_glsl[] =
@@ -5025,8 +4872,7 @@ static const char img_12_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_mask22_vert_src =
 {
-   img_12_mask22_vert_glsl,
-   NULL, 0
+   img_12_mask22_vert_glsl
 };
 
 static const char img_21_mask22_frag_glsl[] =
@@ -5066,8 +4912,7 @@ static const char img_21_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_mask22_frag_src =
 {
-   img_21_mask22_frag_glsl,
-   NULL, 0
+   img_21_mask22_frag_glsl
 };
 
 static const char img_21_mask22_vert_glsl[] =
@@ -5106,8 +4951,7 @@ static const char img_21_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_mask22_vert_src =
 {
-   img_21_mask22_vert_glsl,
-   NULL, 0
+   img_21_mask22_vert_glsl
 };
 
 static const char img_22_mask22_frag_glsl[] =
@@ -5149,8 +4993,7 @@ static const char img_22_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_mask22_frag_src =
 {
-   img_22_mask22_frag_glsl,
-   NULL, 0
+   img_22_mask22_frag_glsl
 };
 
 static const char img_22_mask22_vert_glsl[] =
@@ -5191,8 +5034,7 @@ static const char img_22_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_mask22_vert_src =
 {
-   img_22_mask22_vert_glsl,
-   NULL, 0
+   img_22_mask22_vert_glsl
 };
 
 static const char img_12_bgra_mask22_frag_glsl[] =
@@ -5232,8 +5074,7 @@ static const char img_12_bgra_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_mask22_frag_src =
 {
-   img_12_bgra_mask22_frag_glsl,
-   NULL, 0
+   img_12_bgra_mask22_frag_glsl
 };
 
 static const char img_12_bgra_mask22_vert_glsl[] =
@@ -5272,8 +5113,7 @@ static const char img_12_bgra_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_mask22_vert_src =
 {
-   img_12_bgra_mask22_vert_glsl,
-   NULL, 0
+   img_12_bgra_mask22_vert_glsl
 };
 
 static const char img_21_bgra_mask22_frag_glsl[] =
@@ -5313,8 +5153,7 @@ static const char img_21_bgra_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_mask22_frag_src =
 {
-   img_21_bgra_mask22_frag_glsl,
-   NULL, 0
+   img_21_bgra_mask22_frag_glsl
 };
 
 static const char img_21_bgra_mask22_vert_glsl[] =
@@ -5353,8 +5192,7 @@ static const char img_21_bgra_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_mask22_vert_src =
 {
-   img_21_bgra_mask22_vert_glsl,
-   NULL, 0
+   img_21_bgra_mask22_vert_glsl
 };
 
 static const char img_22_bgra_mask22_frag_glsl[] =
@@ -5396,8 +5234,7 @@ static const char img_22_bgra_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_mask22_frag_src =
 {
-   img_22_bgra_mask22_frag_glsl,
-   NULL, 0
+   img_22_bgra_mask22_frag_glsl
 };
 
 static const char img_22_bgra_mask22_vert_glsl[] =
@@ -5438,8 +5275,7 @@ static const char img_22_bgra_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_mask22_vert_src =
 {
-   img_22_bgra_mask22_vert_glsl,
-   NULL, 0
+   img_22_bgra_mask22_vert_glsl
 };
 
 static const char img_mask22_nomul_frag_glsl[] =
@@ -5473,8 +5309,7 @@ static const char img_mask22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_mask22_nomul_frag_src =
 {
-   img_mask22_nomul_frag_glsl,
-   NULL, 0
+   img_mask22_nomul_frag_glsl
 };
 
 static const char img_mask22_nomul_vert_glsl[] =
@@ -5504,8 +5339,7 @@ static const char img_mask22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_mask22_nomul_vert_src =
 {
-   img_mask22_nomul_vert_glsl,
-   NULL, 0
+   img_mask22_nomul_vert_glsl
 };
 
 static const char img_bgra_mask22_nomul_frag_glsl[] =
@@ -5539,8 +5373,7 @@ static const char img_bgra_mask22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_mask22_nomul_frag_src =
 {
-   img_bgra_mask22_nomul_frag_glsl,
-   NULL, 0
+   img_bgra_mask22_nomul_frag_glsl
 };
 
 static const char img_bgra_mask22_nomul_vert_glsl[] =
@@ -5570,8 +5403,7 @@ static const char img_bgra_mask22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_mask22_nomul_vert_src =
 {
-   img_bgra_mask22_nomul_vert_glsl,
-   NULL, 0
+   img_bgra_mask22_nomul_vert_glsl
 };
 
 static const char img_12_mask22_nomul_frag_glsl[] =
@@ -5609,8 +5441,7 @@ static const char img_12_mask22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_mask22_nomul_frag_src =
 {
-   img_12_mask22_nomul_frag_glsl,
-   NULL, 0
+   img_12_mask22_nomul_frag_glsl
 };
 
 static const char img_12_mask22_nomul_vert_glsl[] =
@@ -5646,8 +5477,7 @@ static const char img_12_mask22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_mask22_nomul_vert_src =
 {
-   img_12_mask22_nomul_vert_glsl,
-   NULL, 0
+   img_12_mask22_nomul_vert_glsl
 };
 
 static const char img_21_mask22_nomul_frag_glsl[] =
@@ -5685,8 +5515,7 @@ static const char img_21_mask22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_mask22_nomul_frag_src =
 {
-   img_21_mask22_nomul_frag_glsl,
-   NULL, 0
+   img_21_mask22_nomul_frag_glsl
 };
 
 static const char img_21_mask22_nomul_vert_glsl[] =
@@ -5722,8 +5551,7 @@ static const char img_21_mask22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_mask22_nomul_vert_src =
 {
-   img_21_mask22_nomul_vert_glsl,
-   NULL, 0
+   img_21_mask22_nomul_vert_glsl
 };
 
 static const char img_22_mask22_nomul_frag_glsl[] =
@@ -5763,8 +5591,7 @@ static const char img_22_mask22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_mask22_nomul_frag_src =
 {
-   img_22_mask22_nomul_frag_glsl,
-   NULL, 0
+   img_22_mask22_nomul_frag_glsl
 };
 
 static const char img_22_mask22_nomul_vert_glsl[] =
@@ -5802,8 +5629,7 @@ static const char img_22_mask22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_mask22_nomul_vert_src =
 {
-   img_22_mask22_nomul_vert_glsl,
-   NULL, 0
+   img_22_mask22_nomul_vert_glsl
 };
 
 static const char img_12_bgra_mask22_nomul_frag_glsl[] =
@@ -5841,8 +5667,7 @@ static const char img_12_bgra_mask22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_mask22_nomul_frag_src =
 {
-   img_12_bgra_mask22_nomul_frag_glsl,
-   NULL, 0
+   img_12_bgra_mask22_nomul_frag_glsl
 };
 
 static const char img_12_bgra_mask22_nomul_vert_glsl[] =
@@ -5878,8 +5703,7 @@ static const char img_12_bgra_mask22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_mask22_nomul_vert_src =
 {
-   img_12_bgra_mask22_nomul_vert_glsl,
-   NULL, 0
+   img_12_bgra_mask22_nomul_vert_glsl
 };
 
 static const char img_21_bgra_mask22_nomul_frag_glsl[] =
@@ -5917,8 +5741,7 @@ static const char img_21_bgra_mask22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_mask22_nomul_frag_src =
 {
-   img_21_bgra_mask22_nomul_frag_glsl,
-   NULL, 0
+   img_21_bgra_mask22_nomul_frag_glsl
 };
 
 static const char img_21_bgra_mask22_nomul_vert_glsl[] =
@@ -5954,8 +5777,7 @@ static const char img_21_bgra_mask22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_mask22_nomul_vert_src =
 {
-   img_21_bgra_mask22_nomul_vert_glsl,
-   NULL, 0
+   img_21_bgra_mask22_nomul_vert_glsl
 };
 
 static const char img_22_bgra_mask22_nomul_frag_glsl[] =
@@ -5995,8 +5817,7 @@ static const char img_22_bgra_mask22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_mask22_nomul_frag_src =
 {
-   img_22_bgra_mask22_nomul_frag_glsl,
-   NULL, 0
+   img_22_bgra_mask22_nomul_frag_glsl
 };
 
 static const char img_22_bgra_mask22_nomul_vert_glsl[] =
@@ -6034,8 +5855,7 @@ static const char img_22_bgra_mask22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_mask22_nomul_vert_src =
 {
-   img_22_bgra_mask22_nomul_vert_glsl,
-   NULL, 0
+   img_22_bgra_mask22_nomul_vert_glsl
 };
 
 static const char img_afill_frag_glsl[] =
@@ -6061,8 +5881,7 @@ static const char img_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_afill_frag_src =
 {
-   img_afill_frag_glsl,
-   NULL, 0
+   img_afill_frag_glsl
 };
 
 static const char img_afill_vert_glsl[] =
@@ -6083,8 +5902,7 @@ static const char img_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_afill_vert_src =
 {
-   img_afill_vert_glsl,
-   NULL, 0
+   img_afill_vert_glsl
 };
 
 static const char img_bgra_afill_frag_glsl[] =
@@ -6110,8 +5928,7 @@ static const char img_bgra_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_afill_frag_src =
 {
-   img_bgra_afill_frag_glsl,
-   NULL, 0
+   img_bgra_afill_frag_glsl
 };
 
 static const char img_bgra_afill_vert_glsl[] =
@@ -6132,8 +5949,7 @@ static const char img_bgra_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_afill_vert_src =
 {
-   img_bgra_afill_vert_glsl,
-   NULL, 0
+   img_bgra_afill_vert_glsl
 };
 
 static const char img_nomul_afill_frag_glsl[] =
@@ -6157,8 +5973,7 @@ static const char img_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_nomul_afill_frag_src =
 {
-   img_nomul_afill_frag_glsl,
-   NULL, 0
+   img_nomul_afill_frag_glsl
 };
 
 static const char img_nomul_afill_vert_glsl[] =
@@ -6176,8 +5991,7 @@ static const char img_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_nomul_afill_vert_src =
 {
-   img_nomul_afill_vert_glsl,
-   NULL, 0
+   img_nomul_afill_vert_glsl
 };
 
 static const char img_bgra_nomul_afill_frag_glsl[] =
@@ -6201,8 +6015,7 @@ static const char img_bgra_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_nomul_afill_frag_src =
 {
-   img_bgra_nomul_afill_frag_glsl,
-   NULL, 0
+   img_bgra_nomul_afill_frag_glsl
 };
 
 static const char img_bgra_nomul_afill_vert_glsl[] =
@@ -6220,8 +6033,7 @@ static const char img_bgra_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_bgra_nomul_afill_vert_src =
 {
-   img_bgra_nomul_afill_vert_glsl,
-   NULL, 0
+   img_bgra_nomul_afill_vert_glsl
 };
 
 static const char img_12_afill_frag_glsl[] =
@@ -6251,8 +6063,7 @@ static const char img_12_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_afill_frag_src =
 {
-   img_12_afill_frag_glsl,
-   NULL, 0
+   img_12_afill_frag_glsl
 };
 
 static const char img_12_afill_vert_glsl[] =
@@ -6279,8 +6090,7 @@ static const char img_12_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_afill_vert_src =
 {
-   img_12_afill_vert_glsl,
-   NULL, 0
+   img_12_afill_vert_glsl
 };
 
 static const char img_21_afill_frag_glsl[] =
@@ -6310,8 +6120,7 @@ static const char img_21_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_afill_frag_src =
 {
-   img_21_afill_frag_glsl,
-   NULL, 0
+   img_21_afill_frag_glsl
 };
 
 static const char img_21_afill_vert_glsl[] =
@@ -6338,8 +6147,7 @@ static const char img_21_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_afill_vert_src =
 {
-   img_21_afill_vert_glsl,
-   NULL, 0
+   img_21_afill_vert_glsl
 };
 
 static const char img_22_afill_frag_glsl[] =
@@ -6371,8 +6179,7 @@ static const char img_22_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_afill_frag_src =
 {
-   img_22_afill_frag_glsl,
-   NULL, 0
+   img_22_afill_frag_glsl
 };
 
 static const char img_22_afill_vert_glsl[] =
@@ -6401,8 +6208,7 @@ static const char img_22_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_afill_vert_src =
 {
-   img_22_afill_vert_glsl,
-   NULL, 0
+   img_22_afill_vert_glsl
 };
 
 static const char img_12_bgra_afill_frag_glsl[] =
@@ -6432,8 +6238,7 @@ static const char img_12_bgra_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_afill_frag_src =
 {
-   img_12_bgra_afill_frag_glsl,
-   NULL, 0
+   img_12_bgra_afill_frag_glsl
 };
 
 static const char img_12_bgra_afill_vert_glsl[] =
@@ -6460,8 +6265,7 @@ static const char img_12_bgra_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_afill_vert_src =
 {
-   img_12_bgra_afill_vert_glsl,
-   NULL, 0
+   img_12_bgra_afill_vert_glsl
 };
 
 static const char img_21_bgra_afill_frag_glsl[] =
@@ -6491,8 +6295,7 @@ static const char img_21_bgra_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_afill_frag_src =
 {
-   img_21_bgra_afill_frag_glsl,
-   NULL, 0
+   img_21_bgra_afill_frag_glsl
 };
 
 static const char img_21_bgra_afill_vert_glsl[] =
@@ -6519,8 +6322,7 @@ static const char img_21_bgra_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_afill_vert_src =
 {
-   img_21_bgra_afill_vert_glsl,
-   NULL, 0
+   img_21_bgra_afill_vert_glsl
 };
 
 static const char img_22_bgra_afill_frag_glsl[] =
@@ -6552,8 +6354,7 @@ static const char img_22_bgra_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_afill_frag_src =
 {
-   img_22_bgra_afill_frag_glsl,
-   NULL, 0
+   img_22_bgra_afill_frag_glsl
 };
 
 static const char img_22_bgra_afill_vert_glsl[] =
@@ -6582,8 +6383,7 @@ static const char img_22_bgra_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_afill_vert_src =
 {
-   img_22_bgra_afill_vert_glsl,
-   NULL, 0
+   img_22_bgra_afill_vert_glsl
 };
 
 static const char img_12_nomul_afill_frag_glsl[] =
@@ -6611,8 +6411,7 @@ static const char img_12_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_nomul_afill_frag_src =
 {
-   img_12_nomul_afill_frag_glsl,
-   NULL, 0
+   img_12_nomul_afill_frag_glsl
 };
 
 static const char img_12_nomul_afill_vert_glsl[] =
@@ -6636,8 +6435,7 @@ static const char img_12_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_nomul_afill_vert_src =
 {
-   img_12_nomul_afill_vert_glsl,
-   NULL, 0
+   img_12_nomul_afill_vert_glsl
 };
 
 static const char img_21_nomul_afill_frag_glsl[] =
@@ -6665,8 +6463,7 @@ static const char img_21_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_nomul_afill_frag_src =
 {
-   img_21_nomul_afill_frag_glsl,
-   NULL, 0
+   img_21_nomul_afill_frag_glsl
 };
 
 static const char img_21_nomul_afill_vert_glsl[] =
@@ -6690,8 +6487,7 @@ static const char img_21_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_nomul_afill_vert_src =
 {
-   img_21_nomul_afill_vert_glsl,
-   NULL, 0
+   img_21_nomul_afill_vert_glsl
 };
 
 static const char img_22_nomul_afill_frag_glsl[] =
@@ -6721,8 +6517,7 @@ static const char img_22_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_nomul_afill_frag_src =
 {
-   img_22_nomul_afill_frag_glsl,
-   NULL, 0
+   img_22_nomul_afill_frag_glsl
 };
 
 static const char img_22_nomul_afill_vert_glsl[] =
@@ -6748,8 +6543,7 @@ static const char img_22_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_nomul_afill_vert_src =
 {
-   img_22_nomul_afill_vert_glsl,
-   NULL, 0
+   img_22_nomul_afill_vert_glsl
 };
 
 static const char img_12_bgra_nomul_afill_frag_glsl[] =
@@ -6777,8 +6571,7 @@ static const char img_12_bgra_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_nomul_afill_frag_src =
 {
-   img_12_bgra_nomul_afill_frag_glsl,
-   NULL, 0
+   img_12_bgra_nomul_afill_frag_glsl
 };
 
 static const char img_12_bgra_nomul_afill_vert_glsl[] =
@@ -6802,8 +6595,7 @@ static const char img_12_bgra_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_12_bgra_nomul_afill_vert_src =
 {
-   img_12_bgra_nomul_afill_vert_glsl,
-   NULL, 0
+   img_12_bgra_nomul_afill_vert_glsl
 };
 
 static const char img_21_bgra_nomul_afill_frag_glsl[] =
@@ -6831,8 +6623,7 @@ static const char img_21_bgra_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_nomul_afill_frag_src =
 {
-   img_21_bgra_nomul_afill_frag_glsl,
-   NULL, 0
+   img_21_bgra_nomul_afill_frag_glsl
 };
 
 static const char img_21_bgra_nomul_afill_vert_glsl[] =
@@ -6856,8 +6647,7 @@ static const char img_21_bgra_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_21_bgra_nomul_afill_vert_src =
 {
-   img_21_bgra_nomul_afill_vert_glsl,
-   NULL, 0
+   img_21_bgra_nomul_afill_vert_glsl
 };
 
 static const char img_22_bgra_nomul_afill_frag_glsl[] =
@@ -6887,8 +6677,7 @@ static const char img_22_bgra_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_nomul_afill_frag_src =
 {
-   img_22_bgra_nomul_afill_frag_glsl,
-   NULL, 0
+   img_22_bgra_nomul_afill_frag_glsl
 };
 
 static const char img_22_bgra_nomul_afill_vert_glsl[] =
@@ -6914,8 +6703,7 @@ static const char img_22_bgra_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_img_22_bgra_nomul_afill_vert_src =
 {
-   img_22_bgra_nomul_afill_vert_glsl,
-   NULL, 0
+   img_22_bgra_nomul_afill_vert_glsl
 };
 
 static const char imgnat_frag_glsl[] =
@@ -6940,8 +6728,7 @@ static const char imgnat_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_frag_src =
 {
-   imgnat_frag_glsl,
-   NULL, 0
+   imgnat_frag_glsl
 };
 
 static const char imgnat_vert_glsl[] =
@@ -6962,8 +6749,7 @@ static const char imgnat_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_vert_src =
 {
-   imgnat_vert_glsl,
-   NULL, 0
+   imgnat_vert_glsl
 };
 
 static const char imgnat_bgra_frag_glsl[] =
@@ -6988,8 +6774,7 @@ static const char imgnat_bgra_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_frag_src =
 {
-   imgnat_bgra_frag_glsl,
-   NULL, 0
+   imgnat_bgra_frag_glsl
 };
 
 static const char imgnat_bgra_vert_glsl[] =
@@ -7010,8 +6795,7 @@ static const char imgnat_bgra_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_vert_src =
 {
-   imgnat_bgra_vert_glsl,
-   NULL, 0
+   imgnat_bgra_vert_glsl
 };
 
 static const char imgnat_12_frag_glsl[] =
@@ -7040,8 +6824,7 @@ static const char imgnat_12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_frag_src =
 {
-   imgnat_12_frag_glsl,
-   NULL, 0
+   imgnat_12_frag_glsl
 };
 
 static const char imgnat_12_vert_glsl[] =
@@ -7068,8 +6851,7 @@ static const char imgnat_12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_vert_src =
 {
-   imgnat_12_vert_glsl,
-   NULL, 0
+   imgnat_12_vert_glsl
 };
 
 static const char imgnat_21_frag_glsl[] =
@@ -7098,8 +6880,7 @@ static const char imgnat_21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_frag_src =
 {
-   imgnat_21_frag_glsl,
-   NULL, 0
+   imgnat_21_frag_glsl
 };
 
 static const char imgnat_21_vert_glsl[] =
@@ -7126,8 +6907,7 @@ static const char imgnat_21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_vert_src =
 {
-   imgnat_21_vert_glsl,
-   NULL, 0
+   imgnat_21_vert_glsl
 };
 
 static const char imgnat_22_frag_glsl[] =
@@ -7158,8 +6938,7 @@ static const char imgnat_22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_frag_src =
 {
-   imgnat_22_frag_glsl,
-   NULL, 0
+   imgnat_22_frag_glsl
 };
 
 static const char imgnat_22_vert_glsl[] =
@@ -7188,8 +6967,7 @@ static const char imgnat_22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_vert_src =
 {
-   imgnat_22_vert_glsl,
-   NULL, 0
+   imgnat_22_vert_glsl
 };
 
 static const char imgnat_12_bgra_frag_glsl[] =
@@ -7218,8 +6996,7 @@ static const char imgnat_12_bgra_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_frag_src =
 {
-   imgnat_12_bgra_frag_glsl,
-   NULL, 0
+   imgnat_12_bgra_frag_glsl
 };
 
 static const char imgnat_12_bgra_vert_glsl[] =
@@ -7246,8 +7023,7 @@ static const char imgnat_12_bgra_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_vert_src =
 {
-   imgnat_12_bgra_vert_glsl,
-   NULL, 0
+   imgnat_12_bgra_vert_glsl
 };
 
 static const char imgnat_21_bgra_frag_glsl[] =
@@ -7276,8 +7052,7 @@ static const char imgnat_21_bgra_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_frag_src =
 {
-   imgnat_21_bgra_frag_glsl,
-   NULL, 0
+   imgnat_21_bgra_frag_glsl
 };
 
 static const char imgnat_21_bgra_vert_glsl[] =
@@ -7304,8 +7079,7 @@ static const char imgnat_21_bgra_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_vert_src =
 {
-   imgnat_21_bgra_vert_glsl,
-   NULL, 0
+   imgnat_21_bgra_vert_glsl
 };
 
 static const char imgnat_22_bgra_frag_glsl[] =
@@ -7336,8 +7110,7 @@ static const char imgnat_22_bgra_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_frag_src =
 {
-   imgnat_22_bgra_frag_glsl,
-   NULL, 0
+   imgnat_22_bgra_frag_glsl
 };
 
 static const char imgnat_22_bgra_vert_glsl[] =
@@ -7366,8 +7139,7 @@ static const char imgnat_22_bgra_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_vert_src =
 {
-   imgnat_22_bgra_vert_glsl,
-   NULL, 0
+   imgnat_22_bgra_vert_glsl
 };
 
 static const char imgnat_mask_frag_glsl[] =
@@ -7397,8 +7169,7 @@ static const char imgnat_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_mask_frag_src =
 {
-   imgnat_mask_frag_glsl,
-   NULL, 0
+   imgnat_mask_frag_glsl
 };
 
 static const char imgnat_mask_vert_glsl[] =
@@ -7423,8 +7194,7 @@ static const char imgnat_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_mask_vert_src =
 {
-   imgnat_mask_vert_glsl,
-   NULL, 0
+   imgnat_mask_vert_glsl
 };
 
 static const char imgnat_bgra_mask_frag_glsl[] =
@@ -7454,8 +7224,7 @@ static const char imgnat_bgra_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_mask_frag_src =
 {
-   imgnat_bgra_mask_frag_glsl,
-   NULL, 0
+   imgnat_bgra_mask_frag_glsl
 };
 
 static const char imgnat_bgra_mask_vert_glsl[] =
@@ -7480,8 +7249,7 @@ static const char imgnat_bgra_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_mask_vert_src =
 {
-   imgnat_bgra_mask_vert_glsl,
-   NULL, 0
+   imgnat_bgra_mask_vert_glsl
 };
 
 static const char imgnat_12_mask_frag_glsl[] =
@@ -7515,8 +7283,7 @@ static const char imgnat_12_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_mask_frag_src =
 {
-   imgnat_12_mask_frag_glsl,
-   NULL, 0
+   imgnat_12_mask_frag_glsl
 };
 
 static const char imgnat_12_mask_vert_glsl[] =
@@ -7547,8 +7314,7 @@ static const char imgnat_12_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_mask_vert_src =
 {
-   imgnat_12_mask_vert_glsl,
-   NULL, 0
+   imgnat_12_mask_vert_glsl
 };
 
 static const char imgnat_21_mask_frag_glsl[] =
@@ -7582,8 +7348,7 @@ static const char imgnat_21_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_mask_frag_src =
 {
-   imgnat_21_mask_frag_glsl,
-   NULL, 0
+   imgnat_21_mask_frag_glsl
 };
 
 static const char imgnat_21_mask_vert_glsl[] =
@@ -7614,8 +7379,7 @@ static const char imgnat_21_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_mask_vert_src =
 {
-   imgnat_21_mask_vert_glsl,
-   NULL, 0
+   imgnat_21_mask_vert_glsl
 };
 
 static const char imgnat_22_mask_frag_glsl[] =
@@ -7651,8 +7415,7 @@ static const char imgnat_22_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_mask_frag_src =
 {
-   imgnat_22_mask_frag_glsl,
-   NULL, 0
+   imgnat_22_mask_frag_glsl
 };
 
 static const char imgnat_22_mask_vert_glsl[] =
@@ -7685,8 +7448,7 @@ static const char imgnat_22_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_mask_vert_src =
 {
-   imgnat_22_mask_vert_glsl,
-   NULL, 0
+   imgnat_22_mask_vert_glsl
 };
 
 static const char imgnat_12_bgra_mask_frag_glsl[] =
@@ -7720,8 +7482,7 @@ static const char imgnat_12_bgra_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_mask_frag_src =
 {
-   imgnat_12_bgra_mask_frag_glsl,
-   NULL, 0
+   imgnat_12_bgra_mask_frag_glsl
 };
 
 static const char imgnat_12_bgra_mask_vert_glsl[] =
@@ -7752,8 +7513,7 @@ static const char imgnat_12_bgra_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_mask_vert_src =
 {
-   imgnat_12_bgra_mask_vert_glsl,
-   NULL, 0
+   imgnat_12_bgra_mask_vert_glsl
 };
 
 static const char imgnat_21_bgra_mask_frag_glsl[] =
@@ -7787,8 +7547,7 @@ static const char imgnat_21_bgra_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_mask_frag_src =
 {
-   imgnat_21_bgra_mask_frag_glsl,
-   NULL, 0
+   imgnat_21_bgra_mask_frag_glsl
 };
 
 static const char imgnat_21_bgra_mask_vert_glsl[] =
@@ -7819,8 +7578,7 @@ static const char imgnat_21_bgra_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_mask_vert_src =
 {
-   imgnat_21_bgra_mask_vert_glsl,
-   NULL, 0
+   imgnat_21_bgra_mask_vert_glsl
 };
 
 static const char imgnat_22_bgra_mask_frag_glsl[] =
@@ -7856,8 +7614,7 @@ static const char imgnat_22_bgra_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_mask_frag_src =
 {
-   imgnat_22_bgra_mask_frag_glsl,
-   NULL, 0
+   imgnat_22_bgra_mask_frag_glsl
 };
 
 static const char imgnat_22_bgra_mask_vert_glsl[] =
@@ -7890,8 +7647,7 @@ static const char imgnat_22_bgra_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_mask_vert_src =
 {
-   imgnat_22_bgra_mask_vert_glsl,
-   NULL, 0
+   imgnat_22_bgra_mask_vert_glsl
 };
 
 static const char imgnat_nomul_frag_glsl[] =
@@ -7914,8 +7670,7 @@ static const char imgnat_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_nomul_frag_src =
 {
-   imgnat_nomul_frag_glsl,
-   NULL, 0
+   imgnat_nomul_frag_glsl
 };
 
 static const char imgnat_nomul_vert_glsl[] =
@@ -7933,8 +7688,7 @@ static const char imgnat_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_nomul_vert_src =
 {
-   imgnat_nomul_vert_glsl,
-   NULL, 0
+   imgnat_nomul_vert_glsl
 };
 
 static const char imgnat_bgra_nomul_frag_glsl[] =
@@ -7957,8 +7711,7 @@ static const char imgnat_bgra_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_nomul_frag_src =
 {
-   imgnat_bgra_nomul_frag_glsl,
-   NULL, 0
+   imgnat_bgra_nomul_frag_glsl
 };
 
 static const char imgnat_bgra_nomul_vert_glsl[] =
@@ -7976,8 +7729,7 @@ static const char imgnat_bgra_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_nomul_vert_src =
 {
-   imgnat_bgra_nomul_vert_glsl,
-   NULL, 0
+   imgnat_bgra_nomul_vert_glsl
 };
 
 static const char imgnat_12_nomul_frag_glsl[] =
@@ -8004,8 +7756,7 @@ static const char imgnat_12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_nomul_frag_src =
 {
-   imgnat_12_nomul_frag_glsl,
-   NULL, 0
+   imgnat_12_nomul_frag_glsl
 };
 
 static const char imgnat_12_nomul_vert_glsl[] =
@@ -8029,8 +7780,7 @@ static const char imgnat_12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_nomul_vert_src =
 {
-   imgnat_12_nomul_vert_glsl,
-   NULL, 0
+   imgnat_12_nomul_vert_glsl
 };
 
 static const char imgnat_21_nomul_frag_glsl[] =
@@ -8057,8 +7807,7 @@ static const char imgnat_21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_nomul_frag_src =
 {
-   imgnat_21_nomul_frag_glsl,
-   NULL, 0
+   imgnat_21_nomul_frag_glsl
 };
 
 static const char imgnat_21_nomul_vert_glsl[] =
@@ -8082,8 +7831,7 @@ static const char imgnat_21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_nomul_vert_src =
 {
-   imgnat_21_nomul_vert_glsl,
-   NULL, 0
+   imgnat_21_nomul_vert_glsl
 };
 
 static const char imgnat_22_nomul_frag_glsl[] =
@@ -8112,8 +7860,7 @@ static const char imgnat_22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_nomul_frag_src =
 {
-   imgnat_22_nomul_frag_glsl,
-   NULL, 0
+   imgnat_22_nomul_frag_glsl
 };
 
 static const char imgnat_22_nomul_vert_glsl[] =
@@ -8139,8 +7886,7 @@ static const char imgnat_22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_nomul_vert_src =
 {
-   imgnat_22_nomul_vert_glsl,
-   NULL, 0
+   imgnat_22_nomul_vert_glsl
 };
 
 static const char imgnat_12_bgra_nomul_frag_glsl[] =
@@ -8167,8 +7913,7 @@ static const char imgnat_12_bgra_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_nomul_frag_src =
 {
-   imgnat_12_bgra_nomul_frag_glsl,
-   NULL, 0
+   imgnat_12_bgra_nomul_frag_glsl
 };
 
 static const char imgnat_12_bgra_nomul_vert_glsl[] =
@@ -8192,8 +7937,7 @@ static const char imgnat_12_bgra_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_nomul_vert_src =
 {
-   imgnat_12_bgra_nomul_vert_glsl,
-   NULL, 0
+   imgnat_12_bgra_nomul_vert_glsl
 };
 
 static const char imgnat_21_bgra_nomul_frag_glsl[] =
@@ -8220,8 +7964,7 @@ static const char imgnat_21_bgra_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_nomul_frag_src =
 {
-   imgnat_21_bgra_nomul_frag_glsl,
-   NULL, 0
+   imgnat_21_bgra_nomul_frag_glsl
 };
 
 static const char imgnat_21_bgra_nomul_vert_glsl[] =
@@ -8245,8 +7988,7 @@ static const char imgnat_21_bgra_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_nomul_vert_src =
 {
-   imgnat_21_bgra_nomul_vert_glsl,
-   NULL, 0
+   imgnat_21_bgra_nomul_vert_glsl
 };
 
 static const char imgnat_22_bgra_nomul_frag_glsl[] =
@@ -8275,8 +8017,7 @@ static const char imgnat_22_bgra_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_nomul_frag_src =
 {
-   imgnat_22_bgra_nomul_frag_glsl,
-   NULL, 0
+   imgnat_22_bgra_nomul_frag_glsl
 };
 
 static const char imgnat_22_bgra_nomul_vert_glsl[] =
@@ -8302,8 +8043,7 @@ static const char imgnat_22_bgra_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_nomul_vert_src =
 {
-   imgnat_22_bgra_nomul_vert_glsl,
-   NULL, 0
+   imgnat_22_bgra_nomul_vert_glsl
 };
 
 static const char imgnat_mask_nomul_frag_glsl[] =
@@ -8331,8 +8071,7 @@ static const char imgnat_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_mask_nomul_frag_src =
 {
-   imgnat_mask_nomul_frag_glsl,
-   NULL, 0
+   imgnat_mask_nomul_frag_glsl
 };
 
 static const char imgnat_mask_nomul_vert_glsl[] =
@@ -8354,8 +8093,7 @@ static const char imgnat_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_mask_nomul_vert_src =
 {
-   imgnat_mask_nomul_vert_glsl,
-   NULL, 0
+   imgnat_mask_nomul_vert_glsl
 };
 
 static const char imgnat_bgra_mask_nomul_frag_glsl[] =
@@ -8383,8 +8121,7 @@ static const char imgnat_bgra_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_mask_nomul_frag_src =
 {
-   imgnat_bgra_mask_nomul_frag_glsl,
-   NULL, 0
+   imgnat_bgra_mask_nomul_frag_glsl
 };
 
 static const char imgnat_bgra_mask_nomul_vert_glsl[] =
@@ -8406,8 +8143,7 @@ static const char imgnat_bgra_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_mask_nomul_vert_src =
 {
-   imgnat_bgra_mask_nomul_vert_glsl,
-   NULL, 0
+   imgnat_bgra_mask_nomul_vert_glsl
 };
 
 static const char imgnat_12_mask_nomul_frag_glsl[] =
@@ -8439,8 +8175,7 @@ static const char imgnat_12_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_mask_nomul_frag_src =
 {
-   imgnat_12_mask_nomul_frag_glsl,
-   NULL, 0
+   imgnat_12_mask_nomul_frag_glsl
 };
 
 static const char imgnat_12_mask_nomul_vert_glsl[] =
@@ -8468,8 +8203,7 @@ static const char imgnat_12_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_mask_nomul_vert_src =
 {
-   imgnat_12_mask_nomul_vert_glsl,
-   NULL, 0
+   imgnat_12_mask_nomul_vert_glsl
 };
 
 static const char imgnat_21_mask_nomul_frag_glsl[] =
@@ -8501,8 +8235,7 @@ static const char imgnat_21_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_mask_nomul_frag_src =
 {
-   imgnat_21_mask_nomul_frag_glsl,
-   NULL, 0
+   imgnat_21_mask_nomul_frag_glsl
 };
 
 static const char imgnat_21_mask_nomul_vert_glsl[] =
@@ -8530,8 +8263,7 @@ static const char imgnat_21_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_mask_nomul_vert_src =
 {
-   imgnat_21_mask_nomul_vert_glsl,
-   NULL, 0
+   imgnat_21_mask_nomul_vert_glsl
 };
 
 static const char imgnat_22_mask_nomul_frag_glsl[] =
@@ -8565,8 +8297,7 @@ static const char imgnat_22_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_mask_nomul_frag_src =
 {
-   imgnat_22_mask_nomul_frag_glsl,
-   NULL, 0
+   imgnat_22_mask_nomul_frag_glsl
 };
 
 static const char imgnat_22_mask_nomul_vert_glsl[] =
@@ -8596,8 +8327,7 @@ static const char imgnat_22_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_mask_nomul_vert_src =
 {
-   imgnat_22_mask_nomul_vert_glsl,
-   NULL, 0
+   imgnat_22_mask_nomul_vert_glsl
 };
 
 static const char imgnat_12_bgra_mask_nomul_frag_glsl[] =
@@ -8629,8 +8359,7 @@ static const char imgnat_12_bgra_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_mask_nomul_frag_src =
 {
-   imgnat_12_bgra_mask_nomul_frag_glsl,
-   NULL, 0
+   imgnat_12_bgra_mask_nomul_frag_glsl
 };
 
 static const char imgnat_12_bgra_mask_nomul_vert_glsl[] =
@@ -8658,8 +8387,7 @@ static const char imgnat_12_bgra_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_mask_nomul_vert_src =
 {
-   imgnat_12_bgra_mask_nomul_vert_glsl,
-   NULL, 0
+   imgnat_12_bgra_mask_nomul_vert_glsl
 };
 
 static const char imgnat_21_bgra_mask_nomul_frag_glsl[] =
@@ -8691,8 +8419,7 @@ static const char imgnat_21_bgra_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_mask_nomul_frag_src =
 {
-   imgnat_21_bgra_mask_nomul_frag_glsl,
-   NULL, 0
+   imgnat_21_bgra_mask_nomul_frag_glsl
 };
 
 static const char imgnat_21_bgra_mask_nomul_vert_glsl[] =
@@ -8720,8 +8447,7 @@ static const char imgnat_21_bgra_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_mask_nomul_vert_src =
 {
-   imgnat_21_bgra_mask_nomul_vert_glsl,
-   NULL, 0
+   imgnat_21_bgra_mask_nomul_vert_glsl
 };
 
 static const char imgnat_22_bgra_mask_nomul_frag_glsl[] =
@@ -8755,8 +8481,7 @@ static const char imgnat_22_bgra_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_mask_nomul_frag_src =
 {
-   imgnat_22_bgra_mask_nomul_frag_glsl,
-   NULL, 0
+   imgnat_22_bgra_mask_nomul_frag_glsl
 };
 
 static const char imgnat_22_bgra_mask_nomul_vert_glsl[] =
@@ -8786,8 +8511,7 @@ static const char imgnat_22_bgra_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_mask_nomul_vert_src =
 {
-   imgnat_22_bgra_mask_nomul_vert_glsl,
-   NULL, 0
+   imgnat_22_bgra_mask_nomul_vert_glsl
 };
 
 static const char imgnat_mask12_frag_glsl[] =
@@ -8821,8 +8545,7 @@ static const char imgnat_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_mask12_frag_src =
 {
-   imgnat_mask12_frag_glsl,
-   NULL, 0
+   imgnat_mask12_frag_glsl
 };
 
 static const char imgnat_mask12_vert_glsl[] =
@@ -8853,8 +8576,7 @@ static const char imgnat_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_mask12_vert_src =
 {
-   imgnat_mask12_vert_glsl,
-   NULL, 0
+   imgnat_mask12_vert_glsl
 };
 
 static const char imgnat_bgra_mask12_frag_glsl[] =
@@ -8888,8 +8610,7 @@ static const char imgnat_bgra_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_mask12_frag_src =
 {
-   imgnat_bgra_mask12_frag_glsl,
-   NULL, 0
+   imgnat_bgra_mask12_frag_glsl
 };
 
 static const char imgnat_bgra_mask12_vert_glsl[] =
@@ -8920,8 +8641,7 @@ static const char imgnat_bgra_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_mask12_vert_src =
 {
-   imgnat_bgra_mask12_vert_glsl,
-   NULL, 0
+   imgnat_bgra_mask12_vert_glsl
 };
 
 static const char imgnat_12_mask12_frag_glsl[] =
@@ -8959,8 +8679,7 @@ static const char imgnat_12_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_mask12_frag_src =
 {
-   imgnat_12_mask12_frag_glsl,
-   NULL, 0
+   imgnat_12_mask12_frag_glsl
 };
 
 static const char imgnat_12_mask12_vert_glsl[] =
@@ -8997,8 +8716,7 @@ static const char imgnat_12_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_mask12_vert_src =
 {
-   imgnat_12_mask12_vert_glsl,
-   NULL, 0
+   imgnat_12_mask12_vert_glsl
 };
 
 static const char imgnat_21_mask12_frag_glsl[] =
@@ -9036,8 +8754,7 @@ static const char imgnat_21_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_mask12_frag_src =
 {
-   imgnat_21_mask12_frag_glsl,
-   NULL, 0
+   imgnat_21_mask12_frag_glsl
 };
 
 static const char imgnat_21_mask12_vert_glsl[] =
@@ -9074,8 +8791,7 @@ static const char imgnat_21_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_mask12_vert_src =
 {
-   imgnat_21_mask12_vert_glsl,
-   NULL, 0
+   imgnat_21_mask12_vert_glsl
 };
 
 static const char imgnat_22_mask12_frag_glsl[] =
@@ -9115,8 +8831,7 @@ static const char imgnat_22_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_mask12_frag_src =
 {
-   imgnat_22_mask12_frag_glsl,
-   NULL, 0
+   imgnat_22_mask12_frag_glsl
 };
 
 static const char imgnat_22_mask12_vert_glsl[] =
@@ -9155,8 +8870,7 @@ static const char imgnat_22_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_mask12_vert_src =
 {
-   imgnat_22_mask12_vert_glsl,
-   NULL, 0
+   imgnat_22_mask12_vert_glsl
 };
 
 static const char imgnat_12_bgra_mask12_frag_glsl[] =
@@ -9194,8 +8908,7 @@ static const char imgnat_12_bgra_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_mask12_frag_src =
 {
-   imgnat_12_bgra_mask12_frag_glsl,
-   NULL, 0
+   imgnat_12_bgra_mask12_frag_glsl
 };
 
 static const char imgnat_12_bgra_mask12_vert_glsl[] =
@@ -9232,8 +8945,7 @@ static const char imgnat_12_bgra_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_mask12_vert_src =
 {
-   imgnat_12_bgra_mask12_vert_glsl,
-   NULL, 0
+   imgnat_12_bgra_mask12_vert_glsl
 };
 
 static const char imgnat_21_bgra_mask12_frag_glsl[] =
@@ -9271,8 +8983,7 @@ static const char imgnat_21_bgra_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_mask12_frag_src =
 {
-   imgnat_21_bgra_mask12_frag_glsl,
-   NULL, 0
+   imgnat_21_bgra_mask12_frag_glsl
 };
 
 static const char imgnat_21_bgra_mask12_vert_glsl[] =
@@ -9309,8 +9020,7 @@ static const char imgnat_21_bgra_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_mask12_vert_src =
 {
-   imgnat_21_bgra_mask12_vert_glsl,
-   NULL, 0
+   imgnat_21_bgra_mask12_vert_glsl
 };
 
 static const char imgnat_22_bgra_mask12_frag_glsl[] =
@@ -9350,8 +9060,7 @@ static const char imgnat_22_bgra_mask12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_mask12_frag_src =
 {
-   imgnat_22_bgra_mask12_frag_glsl,
-   NULL, 0
+   imgnat_22_bgra_mask12_frag_glsl
 };
 
 static const char imgnat_22_bgra_mask12_vert_glsl[] =
@@ -9390,8 +9099,7 @@ static const char imgnat_22_bgra_mask12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_mask12_vert_src =
 {
-   imgnat_22_bgra_mask12_vert_glsl,
-   NULL, 0
+   imgnat_22_bgra_mask12_vert_glsl
 };
 
 static const char imgnat_mask12_nomul_frag_glsl[] =
@@ -9423,8 +9131,7 @@ static const char imgnat_mask12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_mask12_nomul_frag_src =
 {
-   imgnat_mask12_nomul_frag_glsl,
-   NULL, 0
+   imgnat_mask12_nomul_frag_glsl
 };
 
 static const char imgnat_mask12_nomul_vert_glsl[] =
@@ -9452,8 +9159,7 @@ static const char imgnat_mask12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_mask12_nomul_vert_src =
 {
-   imgnat_mask12_nomul_vert_glsl,
-   NULL, 0
+   imgnat_mask12_nomul_vert_glsl
 };
 
 static const char imgnat_bgra_mask12_nomul_frag_glsl[] =
@@ -9485,8 +9191,7 @@ static const char imgnat_bgra_mask12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_mask12_nomul_frag_src =
 {
-   imgnat_bgra_mask12_nomul_frag_glsl,
-   NULL, 0
+   imgnat_bgra_mask12_nomul_frag_glsl
 };
 
 static const char imgnat_bgra_mask12_nomul_vert_glsl[] =
@@ -9514,8 +9219,7 @@ static const char imgnat_bgra_mask12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_mask12_nomul_vert_src =
 {
-   imgnat_bgra_mask12_nomul_vert_glsl,
-   NULL, 0
+   imgnat_bgra_mask12_nomul_vert_glsl
 };
 
 static const char imgnat_12_mask12_nomul_frag_glsl[] =
@@ -9551,8 +9255,7 @@ static const char imgnat_12_mask12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_mask12_nomul_frag_src =
 {
-   imgnat_12_mask12_nomul_frag_glsl,
-   NULL, 0
+   imgnat_12_mask12_nomul_frag_glsl
 };
 
 static const char imgnat_12_mask12_nomul_vert_glsl[] =
@@ -9586,8 +9289,7 @@ static const char imgnat_12_mask12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_mask12_nomul_vert_src =
 {
-   imgnat_12_mask12_nomul_vert_glsl,
-   NULL, 0
+   imgnat_12_mask12_nomul_vert_glsl
 };
 
 static const char imgnat_21_mask12_nomul_frag_glsl[] =
@@ -9623,8 +9325,7 @@ static const char imgnat_21_mask12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_mask12_nomul_frag_src =
 {
-   imgnat_21_mask12_nomul_frag_glsl,
-   NULL, 0
+   imgnat_21_mask12_nomul_frag_glsl
 };
 
 static const char imgnat_21_mask12_nomul_vert_glsl[] =
@@ -9658,8 +9359,7 @@ static const char imgnat_21_mask12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_mask12_nomul_vert_src =
 {
-   imgnat_21_mask12_nomul_vert_glsl,
-   NULL, 0
+   imgnat_21_mask12_nomul_vert_glsl
 };
 
 static const char imgnat_22_mask12_nomul_frag_glsl[] =
@@ -9697,8 +9397,7 @@ static const char imgnat_22_mask12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_mask12_nomul_frag_src =
 {
-   imgnat_22_mask12_nomul_frag_glsl,
-   NULL, 0
+   imgnat_22_mask12_nomul_frag_glsl
 };
 
 static const char imgnat_22_mask12_nomul_vert_glsl[] =
@@ -9734,8 +9433,7 @@ static const char imgnat_22_mask12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_mask12_nomul_vert_src =
 {
-   imgnat_22_mask12_nomul_vert_glsl,
-   NULL, 0
+   imgnat_22_mask12_nomul_vert_glsl
 };
 
 static const char imgnat_12_bgra_mask12_nomul_frag_glsl[] =
@@ -9771,8 +9469,7 @@ static const char imgnat_12_bgra_mask12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_mask12_nomul_frag_src =
 {
-   imgnat_12_bgra_mask12_nomul_frag_glsl,
-   NULL, 0
+   imgnat_12_bgra_mask12_nomul_frag_glsl
 };
 
 static const char imgnat_12_bgra_mask12_nomul_vert_glsl[] =
@@ -9806,8 +9503,7 @@ static const char imgnat_12_bgra_mask12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_mask12_nomul_vert_src =
 {
-   imgnat_12_bgra_mask12_nomul_vert_glsl,
-   NULL, 0
+   imgnat_12_bgra_mask12_nomul_vert_glsl
 };
 
 static const char imgnat_21_bgra_mask12_nomul_frag_glsl[] =
@@ -9843,8 +9539,7 @@ static const char imgnat_21_bgra_mask12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_mask12_nomul_frag_src =
 {
-   imgnat_21_bgra_mask12_nomul_frag_glsl,
-   NULL, 0
+   imgnat_21_bgra_mask12_nomul_frag_glsl
 };
 
 static const char imgnat_21_bgra_mask12_nomul_vert_glsl[] =
@@ -9878,8 +9573,7 @@ static const char imgnat_21_bgra_mask12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_mask12_nomul_vert_src =
 {
-   imgnat_21_bgra_mask12_nomul_vert_glsl,
-   NULL, 0
+   imgnat_21_bgra_mask12_nomul_vert_glsl
 };
 
 static const char imgnat_22_bgra_mask12_nomul_frag_glsl[] =
@@ -9917,8 +9611,7 @@ static const char imgnat_22_bgra_mask12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_mask12_nomul_frag_src =
 {
-   imgnat_22_bgra_mask12_nomul_frag_glsl,
-   NULL, 0
+   imgnat_22_bgra_mask12_nomul_frag_glsl
 };
 
 static const char imgnat_22_bgra_mask12_nomul_vert_glsl[] =
@@ -9954,8 +9647,7 @@ static const char imgnat_22_bgra_mask12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_mask12_nomul_vert_src =
 {
-   imgnat_22_bgra_mask12_nomul_vert_glsl,
-   NULL, 0
+   imgnat_22_bgra_mask12_nomul_vert_glsl
 };
 
 static const char imgnat_mask21_frag_glsl[] =
@@ -9989,8 +9681,7 @@ static const char imgnat_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_mask21_frag_src =
 {
-   imgnat_mask21_frag_glsl,
-   NULL, 0
+   imgnat_mask21_frag_glsl
 };
 
 static const char imgnat_mask21_vert_glsl[] =
@@ -10021,8 +9712,7 @@ static const char imgnat_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_mask21_vert_src =
 {
-   imgnat_mask21_vert_glsl,
-   NULL, 0
+   imgnat_mask21_vert_glsl
 };
 
 static const char imgnat_bgra_mask21_frag_glsl[] =
@@ -10056,8 +9746,7 @@ static const char imgnat_bgra_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_mask21_frag_src =
 {
-   imgnat_bgra_mask21_frag_glsl,
-   NULL, 0
+   imgnat_bgra_mask21_frag_glsl
 };
 
 static const char imgnat_bgra_mask21_vert_glsl[] =
@@ -10088,8 +9777,7 @@ static const char imgnat_bgra_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_mask21_vert_src =
 {
-   imgnat_bgra_mask21_vert_glsl,
-   NULL, 0
+   imgnat_bgra_mask21_vert_glsl
 };
 
 static const char imgnat_12_mask21_frag_glsl[] =
@@ -10127,8 +9815,7 @@ static const char imgnat_12_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_mask21_frag_src =
 {
-   imgnat_12_mask21_frag_glsl,
-   NULL, 0
+   imgnat_12_mask21_frag_glsl
 };
 
 static const char imgnat_12_mask21_vert_glsl[] =
@@ -10165,8 +9852,7 @@ static const char imgnat_12_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_mask21_vert_src =
 {
-   imgnat_12_mask21_vert_glsl,
-   NULL, 0
+   imgnat_12_mask21_vert_glsl
 };
 
 static const char imgnat_21_mask21_frag_glsl[] =
@@ -10204,8 +9890,7 @@ static const char imgnat_21_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_mask21_frag_src =
 {
-   imgnat_21_mask21_frag_glsl,
-   NULL, 0
+   imgnat_21_mask21_frag_glsl
 };
 
 static const char imgnat_21_mask21_vert_glsl[] =
@@ -10242,8 +9927,7 @@ static const char imgnat_21_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_mask21_vert_src =
 {
-   imgnat_21_mask21_vert_glsl,
-   NULL, 0
+   imgnat_21_mask21_vert_glsl
 };
 
 static const char imgnat_22_mask21_frag_glsl[] =
@@ -10283,8 +9967,7 @@ static const char imgnat_22_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_mask21_frag_src =
 {
-   imgnat_22_mask21_frag_glsl,
-   NULL, 0
+   imgnat_22_mask21_frag_glsl
 };
 
 static const char imgnat_22_mask21_vert_glsl[] =
@@ -10323,8 +10006,7 @@ static const char imgnat_22_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_mask21_vert_src =
 {
-   imgnat_22_mask21_vert_glsl,
-   NULL, 0
+   imgnat_22_mask21_vert_glsl
 };
 
 static const char imgnat_12_bgra_mask21_frag_glsl[] =
@@ -10362,8 +10044,7 @@ static const char imgnat_12_bgra_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_mask21_frag_src =
 {
-   imgnat_12_bgra_mask21_frag_glsl,
-   NULL, 0
+   imgnat_12_bgra_mask21_frag_glsl
 };
 
 static const char imgnat_12_bgra_mask21_vert_glsl[] =
@@ -10400,8 +10081,7 @@ static const char imgnat_12_bgra_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_mask21_vert_src =
 {
-   imgnat_12_bgra_mask21_vert_glsl,
-   NULL, 0
+   imgnat_12_bgra_mask21_vert_glsl
 };
 
 static const char imgnat_21_bgra_mask21_frag_glsl[] =
@@ -10439,8 +10119,7 @@ static const char imgnat_21_bgra_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_mask21_frag_src =
 {
-   imgnat_21_bgra_mask21_frag_glsl,
-   NULL, 0
+   imgnat_21_bgra_mask21_frag_glsl
 };
 
 static const char imgnat_21_bgra_mask21_vert_glsl[] =
@@ -10477,8 +10156,7 @@ static const char imgnat_21_bgra_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_mask21_vert_src =
 {
-   imgnat_21_bgra_mask21_vert_glsl,
-   NULL, 0
+   imgnat_21_bgra_mask21_vert_glsl
 };
 
 static const char imgnat_22_bgra_mask21_frag_glsl[] =
@@ -10518,8 +10196,7 @@ static const char imgnat_22_bgra_mask21_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_mask21_frag_src =
 {
-   imgnat_22_bgra_mask21_frag_glsl,
-   NULL, 0
+   imgnat_22_bgra_mask21_frag_glsl
 };
 
 static const char imgnat_22_bgra_mask21_vert_glsl[] =
@@ -10558,8 +10235,7 @@ static const char imgnat_22_bgra_mask21_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_mask21_vert_src =
 {
-   imgnat_22_bgra_mask21_vert_glsl,
-   NULL, 0
+   imgnat_22_bgra_mask21_vert_glsl
 };
 
 static const char imgnat_mask21_nomul_frag_glsl[] =
@@ -10591,8 +10267,7 @@ static const char imgnat_mask21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_mask21_nomul_frag_src =
 {
-   imgnat_mask21_nomul_frag_glsl,
-   NULL, 0
+   imgnat_mask21_nomul_frag_glsl
 };
 
 static const char imgnat_mask21_nomul_vert_glsl[] =
@@ -10620,8 +10295,7 @@ static const char imgnat_mask21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_mask21_nomul_vert_src =
 {
-   imgnat_mask21_nomul_vert_glsl,
-   NULL, 0
+   imgnat_mask21_nomul_vert_glsl
 };
 
 static const char imgnat_bgra_mask21_nomul_frag_glsl[] =
@@ -10653,8 +10327,7 @@ static const char imgnat_bgra_mask21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_mask21_nomul_frag_src =
 {
-   imgnat_bgra_mask21_nomul_frag_glsl,
-   NULL, 0
+   imgnat_bgra_mask21_nomul_frag_glsl
 };
 
 static const char imgnat_bgra_mask21_nomul_vert_glsl[] =
@@ -10682,8 +10355,7 @@ static const char imgnat_bgra_mask21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_mask21_nomul_vert_src =
 {
-   imgnat_bgra_mask21_nomul_vert_glsl,
-   NULL, 0
+   imgnat_bgra_mask21_nomul_vert_glsl
 };
 
 static const char imgnat_12_mask21_nomul_frag_glsl[] =
@@ -10719,8 +10391,7 @@ static const char imgnat_12_mask21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_mask21_nomul_frag_src =
 {
-   imgnat_12_mask21_nomul_frag_glsl,
-   NULL, 0
+   imgnat_12_mask21_nomul_frag_glsl
 };
 
 static const char imgnat_12_mask21_nomul_vert_glsl[] =
@@ -10754,8 +10425,7 @@ static const char imgnat_12_mask21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_mask21_nomul_vert_src =
 {
-   imgnat_12_mask21_nomul_vert_glsl,
-   NULL, 0
+   imgnat_12_mask21_nomul_vert_glsl
 };
 
 static const char imgnat_21_mask21_nomul_frag_glsl[] =
@@ -10791,8 +10461,7 @@ static const char imgnat_21_mask21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_mask21_nomul_frag_src =
 {
-   imgnat_21_mask21_nomul_frag_glsl,
-   NULL, 0
+   imgnat_21_mask21_nomul_frag_glsl
 };
 
 static const char imgnat_21_mask21_nomul_vert_glsl[] =
@@ -10826,8 +10495,7 @@ static const char imgnat_21_mask21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_mask21_nomul_vert_src =
 {
-   imgnat_21_mask21_nomul_vert_glsl,
-   NULL, 0
+   imgnat_21_mask21_nomul_vert_glsl
 };
 
 static const char imgnat_22_mask21_nomul_frag_glsl[] =
@@ -10865,8 +10533,7 @@ static const char imgnat_22_mask21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_mask21_nomul_frag_src =
 {
-   imgnat_22_mask21_nomul_frag_glsl,
-   NULL, 0
+   imgnat_22_mask21_nomul_frag_glsl
 };
 
 static const char imgnat_22_mask21_nomul_vert_glsl[] =
@@ -10902,8 +10569,7 @@ static const char imgnat_22_mask21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_mask21_nomul_vert_src =
 {
-   imgnat_22_mask21_nomul_vert_glsl,
-   NULL, 0
+   imgnat_22_mask21_nomul_vert_glsl
 };
 
 static const char imgnat_12_bgra_mask21_nomul_frag_glsl[] =
@@ -10939,8 +10605,7 @@ static const char imgnat_12_bgra_mask21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_mask21_nomul_frag_src =
 {
-   imgnat_12_bgra_mask21_nomul_frag_glsl,
-   NULL, 0
+   imgnat_12_bgra_mask21_nomul_frag_glsl
 };
 
 static const char imgnat_12_bgra_mask21_nomul_vert_glsl[] =
@@ -10974,8 +10639,7 @@ static const char imgnat_12_bgra_mask21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_mask21_nomul_vert_src =
 {
-   imgnat_12_bgra_mask21_nomul_vert_glsl,
-   NULL, 0
+   imgnat_12_bgra_mask21_nomul_vert_glsl
 };
 
 static const char imgnat_21_bgra_mask21_nomul_frag_glsl[] =
@@ -11011,8 +10675,7 @@ static const char imgnat_21_bgra_mask21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_mask21_nomul_frag_src =
 {
-   imgnat_21_bgra_mask21_nomul_frag_glsl,
-   NULL, 0
+   imgnat_21_bgra_mask21_nomul_frag_glsl
 };
 
 static const char imgnat_21_bgra_mask21_nomul_vert_glsl[] =
@@ -11046,8 +10709,7 @@ static const char imgnat_21_bgra_mask21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_mask21_nomul_vert_src =
 {
-   imgnat_21_bgra_mask21_nomul_vert_glsl,
-   NULL, 0
+   imgnat_21_bgra_mask21_nomul_vert_glsl
 };
 
 static const char imgnat_22_bgra_mask21_nomul_frag_glsl[] =
@@ -11085,8 +10747,7 @@ static const char imgnat_22_bgra_mask21_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_mask21_nomul_frag_src =
 {
-   imgnat_22_bgra_mask21_nomul_frag_glsl,
-   NULL, 0
+   imgnat_22_bgra_mask21_nomul_frag_glsl
 };
 
 static const char imgnat_22_bgra_mask21_nomul_vert_glsl[] =
@@ -11122,8 +10783,7 @@ static const char imgnat_22_bgra_mask21_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_mask21_nomul_vert_src =
 {
-   imgnat_22_bgra_mask21_nomul_vert_glsl,
-   NULL, 0
+   imgnat_22_bgra_mask21_nomul_vert_glsl
 };
 
 static const char imgnat_mask22_frag_glsl[] =
@@ -11159,8 +10819,7 @@ static const char imgnat_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_mask22_frag_src =
 {
-   imgnat_mask22_frag_glsl,
-   NULL, 0
+   imgnat_mask22_frag_glsl
 };
 
 static const char imgnat_mask22_vert_glsl[] =
@@ -11193,8 +10852,7 @@ static const char imgnat_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_mask22_vert_src =
 {
-   imgnat_mask22_vert_glsl,
-   NULL, 0
+   imgnat_mask22_vert_glsl
 };
 
 static const char imgnat_bgra_mask22_frag_glsl[] =
@@ -11230,8 +10888,7 @@ static const char imgnat_bgra_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_mask22_frag_src =
 {
-   imgnat_bgra_mask22_frag_glsl,
-   NULL, 0
+   imgnat_bgra_mask22_frag_glsl
 };
 
 static const char imgnat_bgra_mask22_vert_glsl[] =
@@ -11264,8 +10921,7 @@ static const char imgnat_bgra_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_mask22_vert_src =
 {
-   imgnat_bgra_mask22_vert_glsl,
-   NULL, 0
+   imgnat_bgra_mask22_vert_glsl
 };
 
 static const char imgnat_12_mask22_frag_glsl[] =
@@ -11305,8 +10961,7 @@ static const char imgnat_12_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_mask22_frag_src =
 {
-   imgnat_12_mask22_frag_glsl,
-   NULL, 0
+   imgnat_12_mask22_frag_glsl
 };
 
 static const char imgnat_12_mask22_vert_glsl[] =
@@ -11345,8 +11000,7 @@ static const char imgnat_12_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_mask22_vert_src =
 {
-   imgnat_12_mask22_vert_glsl,
-   NULL, 0
+   imgnat_12_mask22_vert_glsl
 };
 
 static const char imgnat_21_mask22_frag_glsl[] =
@@ -11386,8 +11040,7 @@ static const char imgnat_21_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_mask22_frag_src =
 {
-   imgnat_21_mask22_frag_glsl,
-   NULL, 0
+   imgnat_21_mask22_frag_glsl
 };
 
 static const char imgnat_21_mask22_vert_glsl[] =
@@ -11426,8 +11079,7 @@ static const char imgnat_21_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_mask22_vert_src =
 {
-   imgnat_21_mask22_vert_glsl,
-   NULL, 0
+   imgnat_21_mask22_vert_glsl
 };
 
 static const char imgnat_22_mask22_frag_glsl[] =
@@ -11469,8 +11121,7 @@ static const char imgnat_22_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_mask22_frag_src =
 {
-   imgnat_22_mask22_frag_glsl,
-   NULL, 0
+   imgnat_22_mask22_frag_glsl
 };
 
 static const char imgnat_22_mask22_vert_glsl[] =
@@ -11511,8 +11162,7 @@ static const char imgnat_22_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_mask22_vert_src =
 {
-   imgnat_22_mask22_vert_glsl,
-   NULL, 0
+   imgnat_22_mask22_vert_glsl
 };
 
 static const char imgnat_12_bgra_mask22_frag_glsl[] =
@@ -11552,8 +11202,7 @@ static const char imgnat_12_bgra_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_mask22_frag_src =
 {
-   imgnat_12_bgra_mask22_frag_glsl,
-   NULL, 0
+   imgnat_12_bgra_mask22_frag_glsl
 };
 
 static const char imgnat_12_bgra_mask22_vert_glsl[] =
@@ -11592,8 +11241,7 @@ static const char imgnat_12_bgra_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_mask22_vert_src =
 {
-   imgnat_12_bgra_mask22_vert_glsl,
-   NULL, 0
+   imgnat_12_bgra_mask22_vert_glsl
 };
 
 static const char imgnat_21_bgra_mask22_frag_glsl[] =
@@ -11633,8 +11281,7 @@ static const char imgnat_21_bgra_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_mask22_frag_src =
 {
-   imgnat_21_bgra_mask22_frag_glsl,
-   NULL, 0
+   imgnat_21_bgra_mask22_frag_glsl
 };
 
 static const char imgnat_21_bgra_mask22_vert_glsl[] =
@@ -11673,8 +11320,7 @@ static const char imgnat_21_bgra_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_mask22_vert_src =
 {
-   imgnat_21_bgra_mask22_vert_glsl,
-   NULL, 0
+   imgnat_21_bgra_mask22_vert_glsl
 };
 
 static const char imgnat_22_bgra_mask22_frag_glsl[] =
@@ -11716,8 +11362,7 @@ static const char imgnat_22_bgra_mask22_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_mask22_frag_src =
 {
-   imgnat_22_bgra_mask22_frag_glsl,
-   NULL, 0
+   imgnat_22_bgra_mask22_frag_glsl
 };
 
 static const char imgnat_22_bgra_mask22_vert_glsl[] =
@@ -11758,8 +11403,7 @@ static const char imgnat_22_bgra_mask22_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_mask22_vert_src =
 {
-   imgnat_22_bgra_mask22_vert_glsl,
-   NULL, 0
+   imgnat_22_bgra_mask22_vert_glsl
 };
 
 static const char imgnat_mask22_nomul_frag_glsl[] =
@@ -11793,8 +11437,7 @@ static const char imgnat_mask22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_mask22_nomul_frag_src =
 {
-   imgnat_mask22_nomul_frag_glsl,
-   NULL, 0
+   imgnat_mask22_nomul_frag_glsl
 };
 
 static const char imgnat_mask22_nomul_vert_glsl[] =
@@ -11824,8 +11467,7 @@ static const char imgnat_mask22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_mask22_nomul_vert_src =
 {
-   imgnat_mask22_nomul_vert_glsl,
-   NULL, 0
+   imgnat_mask22_nomul_vert_glsl
 };
 
 static const char imgnat_bgra_mask22_nomul_frag_glsl[] =
@@ -11859,8 +11501,7 @@ static const char imgnat_bgra_mask22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_mask22_nomul_frag_src =
 {
-   imgnat_bgra_mask22_nomul_frag_glsl,
-   NULL, 0
+   imgnat_bgra_mask22_nomul_frag_glsl
 };
 
 static const char imgnat_bgra_mask22_nomul_vert_glsl[] =
@@ -11890,8 +11531,7 @@ static const char imgnat_bgra_mask22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_mask22_nomul_vert_src =
 {
-   imgnat_bgra_mask22_nomul_vert_glsl,
-   NULL, 0
+   imgnat_bgra_mask22_nomul_vert_glsl
 };
 
 static const char imgnat_12_mask22_nomul_frag_glsl[] =
@@ -11929,8 +11569,7 @@ static const char imgnat_12_mask22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_mask22_nomul_frag_src =
 {
-   imgnat_12_mask22_nomul_frag_glsl,
-   NULL, 0
+   imgnat_12_mask22_nomul_frag_glsl
 };
 
 static const char imgnat_12_mask22_nomul_vert_glsl[] =
@@ -11966,8 +11605,7 @@ static const char imgnat_12_mask22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_mask22_nomul_vert_src =
 {
-   imgnat_12_mask22_nomul_vert_glsl,
-   NULL, 0
+   imgnat_12_mask22_nomul_vert_glsl
 };
 
 static const char imgnat_21_mask22_nomul_frag_glsl[] =
@@ -12005,8 +11643,7 @@ static const char imgnat_21_mask22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_mask22_nomul_frag_src =
 {
-   imgnat_21_mask22_nomul_frag_glsl,
-   NULL, 0
+   imgnat_21_mask22_nomul_frag_glsl
 };
 
 static const char imgnat_21_mask22_nomul_vert_glsl[] =
@@ -12042,8 +11679,7 @@ static const char imgnat_21_mask22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_mask22_nomul_vert_src =
 {
-   imgnat_21_mask22_nomul_vert_glsl,
-   NULL, 0
+   imgnat_21_mask22_nomul_vert_glsl
 };
 
 static const char imgnat_22_mask22_nomul_frag_glsl[] =
@@ -12083,8 +11719,7 @@ static const char imgnat_22_mask22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_mask22_nomul_frag_src =
 {
-   imgnat_22_mask22_nomul_frag_glsl,
-   NULL, 0
+   imgnat_22_mask22_nomul_frag_glsl
 };
 
 static const char imgnat_22_mask22_nomul_vert_glsl[] =
@@ -12122,8 +11757,7 @@ static const char imgnat_22_mask22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_mask22_nomul_vert_src =
 {
-   imgnat_22_mask22_nomul_vert_glsl,
-   NULL, 0
+   imgnat_22_mask22_nomul_vert_glsl
 };
 
 static const char imgnat_12_bgra_mask22_nomul_frag_glsl[] =
@@ -12161,8 +11795,7 @@ static const char imgnat_12_bgra_mask22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_mask22_nomul_frag_src =
 {
-   imgnat_12_bgra_mask22_nomul_frag_glsl,
-   NULL, 0
+   imgnat_12_bgra_mask22_nomul_frag_glsl
 };
 
 static const char imgnat_12_bgra_mask22_nomul_vert_glsl[] =
@@ -12198,8 +11831,7 @@ static const char imgnat_12_bgra_mask22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_mask22_nomul_vert_src =
 {
-   imgnat_12_bgra_mask22_nomul_vert_glsl,
-   NULL, 0
+   imgnat_12_bgra_mask22_nomul_vert_glsl
 };
 
 static const char imgnat_21_bgra_mask22_nomul_frag_glsl[] =
@@ -12237,8 +11869,7 @@ static const char imgnat_21_bgra_mask22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_mask22_nomul_frag_src =
 {
-   imgnat_21_bgra_mask22_nomul_frag_glsl,
-   NULL, 0
+   imgnat_21_bgra_mask22_nomul_frag_glsl
 };
 
 static const char imgnat_21_bgra_mask22_nomul_vert_glsl[] =
@@ -12274,8 +11905,7 @@ static const char imgnat_21_bgra_mask22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_mask22_nomul_vert_src =
 {
-   imgnat_21_bgra_mask22_nomul_vert_glsl,
-   NULL, 0
+   imgnat_21_bgra_mask22_nomul_vert_glsl
 };
 
 static const char imgnat_22_bgra_mask22_nomul_frag_glsl[] =
@@ -12315,8 +11945,7 @@ static const char imgnat_22_bgra_mask22_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_mask22_nomul_frag_src =
 {
-   imgnat_22_bgra_mask22_nomul_frag_glsl,
-   NULL, 0
+   imgnat_22_bgra_mask22_nomul_frag_glsl
 };
 
 static const char imgnat_22_bgra_mask22_nomul_vert_glsl[] =
@@ -12354,8 +11983,7 @@ static const char imgnat_22_bgra_mask22_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_mask22_nomul_vert_src =
 {
-   imgnat_22_bgra_mask22_nomul_vert_glsl,
-   NULL, 0
+   imgnat_22_bgra_mask22_nomul_vert_glsl
 };
 
 static const char imgnat_afill_frag_glsl[] =
@@ -12381,8 +12009,7 @@ static const char imgnat_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_afill_frag_src =
 {
-   imgnat_afill_frag_glsl,
-   NULL, 0
+   imgnat_afill_frag_glsl
 };
 
 static const char imgnat_afill_vert_glsl[] =
@@ -12403,8 +12030,7 @@ static const char imgnat_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_afill_vert_src =
 {
-   imgnat_afill_vert_glsl,
-   NULL, 0
+   imgnat_afill_vert_glsl
 };
 
 static const char imgnat_bgra_afill_frag_glsl[] =
@@ -12430,8 +12056,7 @@ static const char imgnat_bgra_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_afill_frag_src =
 {
-   imgnat_bgra_afill_frag_glsl,
-   NULL, 0
+   imgnat_bgra_afill_frag_glsl
 };
 
 static const char imgnat_bgra_afill_vert_glsl[] =
@@ -12452,8 +12077,7 @@ static const char imgnat_bgra_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_afill_vert_src =
 {
-   imgnat_bgra_afill_vert_glsl,
-   NULL, 0
+   imgnat_bgra_afill_vert_glsl
 };
 
 static const char imgnat_nomul_afill_frag_glsl[] =
@@ -12477,8 +12101,7 @@ static const char imgnat_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_nomul_afill_frag_src =
 {
-   imgnat_nomul_afill_frag_glsl,
-   NULL, 0
+   imgnat_nomul_afill_frag_glsl
 };
 
 static const char imgnat_nomul_afill_vert_glsl[] =
@@ -12496,8 +12119,7 @@ static const char imgnat_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_nomul_afill_vert_src =
 {
-   imgnat_nomul_afill_vert_glsl,
-   NULL, 0
+   imgnat_nomul_afill_vert_glsl
 };
 
 static const char imgnat_bgra_nomul_afill_frag_glsl[] =
@@ -12521,8 +12143,7 @@ static const char imgnat_bgra_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_nomul_afill_frag_src =
 {
-   imgnat_bgra_nomul_afill_frag_glsl,
-   NULL, 0
+   imgnat_bgra_nomul_afill_frag_glsl
 };
 
 static const char imgnat_bgra_nomul_afill_vert_glsl[] =
@@ -12540,8 +12161,7 @@ static const char imgnat_bgra_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_bgra_nomul_afill_vert_src =
 {
-   imgnat_bgra_nomul_afill_vert_glsl,
-   NULL, 0
+   imgnat_bgra_nomul_afill_vert_glsl
 };
 
 static const char imgnat_12_afill_frag_glsl[] =
@@ -12571,8 +12191,7 @@ static const char imgnat_12_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_afill_frag_src =
 {
-   imgnat_12_afill_frag_glsl,
-   NULL, 0
+   imgnat_12_afill_frag_glsl
 };
 
 static const char imgnat_12_afill_vert_glsl[] =
@@ -12599,8 +12218,7 @@ static const char imgnat_12_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_afill_vert_src =
 {
-   imgnat_12_afill_vert_glsl,
-   NULL, 0
+   imgnat_12_afill_vert_glsl
 };
 
 static const char imgnat_21_afill_frag_glsl[] =
@@ -12630,8 +12248,7 @@ static const char imgnat_21_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_afill_frag_src =
 {
-   imgnat_21_afill_frag_glsl,
-   NULL, 0
+   imgnat_21_afill_frag_glsl
 };
 
 static const char imgnat_21_afill_vert_glsl[] =
@@ -12658,8 +12275,7 @@ static const char imgnat_21_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_afill_vert_src =
 {
-   imgnat_21_afill_vert_glsl,
-   NULL, 0
+   imgnat_21_afill_vert_glsl
 };
 
 static const char imgnat_22_afill_frag_glsl[] =
@@ -12691,8 +12307,7 @@ static const char imgnat_22_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_afill_frag_src =
 {
-   imgnat_22_afill_frag_glsl,
-   NULL, 0
+   imgnat_22_afill_frag_glsl
 };
 
 static const char imgnat_22_afill_vert_glsl[] =
@@ -12721,8 +12336,7 @@ static const char imgnat_22_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_afill_vert_src =
 {
-   imgnat_22_afill_vert_glsl,
-   NULL, 0
+   imgnat_22_afill_vert_glsl
 };
 
 static const char imgnat_12_bgra_afill_frag_glsl[] =
@@ -12752,8 +12366,7 @@ static const char imgnat_12_bgra_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_afill_frag_src =
 {
-   imgnat_12_bgra_afill_frag_glsl,
-   NULL, 0
+   imgnat_12_bgra_afill_frag_glsl
 };
 
 static const char imgnat_12_bgra_afill_vert_glsl[] =
@@ -12780,8 +12393,7 @@ static const char imgnat_12_bgra_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_afill_vert_src =
 {
-   imgnat_12_bgra_afill_vert_glsl,
-   NULL, 0
+   imgnat_12_bgra_afill_vert_glsl
 };
 
 static const char imgnat_21_bgra_afill_frag_glsl[] =
@@ -12811,8 +12423,7 @@ static const char imgnat_21_bgra_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_afill_frag_src =
 {
-   imgnat_21_bgra_afill_frag_glsl,
-   NULL, 0
+   imgnat_21_bgra_afill_frag_glsl
 };
 
 static const char imgnat_21_bgra_afill_vert_glsl[] =
@@ -12839,8 +12450,7 @@ static const char imgnat_21_bgra_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_afill_vert_src =
 {
-   imgnat_21_bgra_afill_vert_glsl,
-   NULL, 0
+   imgnat_21_bgra_afill_vert_glsl
 };
 
 static const char imgnat_22_bgra_afill_frag_glsl[] =
@@ -12872,8 +12482,7 @@ static const char imgnat_22_bgra_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_afill_frag_src =
 {
-   imgnat_22_bgra_afill_frag_glsl,
-   NULL, 0
+   imgnat_22_bgra_afill_frag_glsl
 };
 
 static const char imgnat_22_bgra_afill_vert_glsl[] =
@@ -12902,8 +12511,7 @@ static const char imgnat_22_bgra_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_afill_vert_src =
 {
-   imgnat_22_bgra_afill_vert_glsl,
-   NULL, 0
+   imgnat_22_bgra_afill_vert_glsl
 };
 
 static const char imgnat_12_nomul_afill_frag_glsl[] =
@@ -12931,8 +12539,7 @@ static const char imgnat_12_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_nomul_afill_frag_src =
 {
-   imgnat_12_nomul_afill_frag_glsl,
-   NULL, 0
+   imgnat_12_nomul_afill_frag_glsl
 };
 
 static const char imgnat_12_nomul_afill_vert_glsl[] =
@@ -12956,8 +12563,7 @@ static const char imgnat_12_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_nomul_afill_vert_src =
 {
-   imgnat_12_nomul_afill_vert_glsl,
-   NULL, 0
+   imgnat_12_nomul_afill_vert_glsl
 };
 
 static const char imgnat_21_nomul_afill_frag_glsl[] =
@@ -12985,8 +12591,7 @@ static const char imgnat_21_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_nomul_afill_frag_src =
 {
-   imgnat_21_nomul_afill_frag_glsl,
-   NULL, 0
+   imgnat_21_nomul_afill_frag_glsl
 };
 
 static const char imgnat_21_nomul_afill_vert_glsl[] =
@@ -13010,8 +12615,7 @@ static const char imgnat_21_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_nomul_afill_vert_src =
 {
-   imgnat_21_nomul_afill_vert_glsl,
-   NULL, 0
+   imgnat_21_nomul_afill_vert_glsl
 };
 
 static const char imgnat_22_nomul_afill_frag_glsl[] =
@@ -13041,8 +12645,7 @@ static const char imgnat_22_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_nomul_afill_frag_src =
 {
-   imgnat_22_nomul_afill_frag_glsl,
-   NULL, 0
+   imgnat_22_nomul_afill_frag_glsl
 };
 
 static const char imgnat_22_nomul_afill_vert_glsl[] =
@@ -13068,8 +12671,7 @@ static const char imgnat_22_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_nomul_afill_vert_src =
 {
-   imgnat_22_nomul_afill_vert_glsl,
-   NULL, 0
+   imgnat_22_nomul_afill_vert_glsl
 };
 
 static const char imgnat_12_bgra_nomul_afill_frag_glsl[] =
@@ -13097,8 +12699,7 @@ static const char imgnat_12_bgra_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_nomul_afill_frag_src =
 {
-   imgnat_12_bgra_nomul_afill_frag_glsl,
-   NULL, 0
+   imgnat_12_bgra_nomul_afill_frag_glsl
 };
 
 static const char imgnat_12_bgra_nomul_afill_vert_glsl[] =
@@ -13122,8 +12723,7 @@ static const char imgnat_12_bgra_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_12_bgra_nomul_afill_vert_src =
 {
-   imgnat_12_bgra_nomul_afill_vert_glsl,
-   NULL, 0
+   imgnat_12_bgra_nomul_afill_vert_glsl
 };
 
 static const char imgnat_21_bgra_nomul_afill_frag_glsl[] =
@@ -13151,8 +12751,7 @@ static const char imgnat_21_bgra_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_nomul_afill_frag_src =
 {
-   imgnat_21_bgra_nomul_afill_frag_glsl,
-   NULL, 0
+   imgnat_21_bgra_nomul_afill_frag_glsl
 };
 
 static const char imgnat_21_bgra_nomul_afill_vert_glsl[] =
@@ -13176,8 +12775,7 @@ static const char imgnat_21_bgra_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_21_bgra_nomul_afill_vert_src =
 {
-   imgnat_21_bgra_nomul_afill_vert_glsl,
-   NULL, 0
+   imgnat_21_bgra_nomul_afill_vert_glsl
 };
 
 static const char imgnat_22_bgra_nomul_afill_frag_glsl[] =
@@ -13207,8 +12805,7 @@ static const char imgnat_22_bgra_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_nomul_afill_frag_src =
 {
-   imgnat_22_bgra_nomul_afill_frag_glsl,
-   NULL, 0
+   imgnat_22_bgra_nomul_afill_frag_glsl
 };
 
 static const char imgnat_22_bgra_nomul_afill_vert_glsl[] =
@@ -13234,8 +12831,7 @@ static const char imgnat_22_bgra_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_imgnat_22_bgra_nomul_afill_vert_src =
 {
-   imgnat_22_bgra_nomul_afill_vert_glsl,
-   NULL, 0
+   imgnat_22_bgra_nomul_afill_vert_glsl
 };
 
 static const char rgb_a_pair_frag_glsl[] =
@@ -13263,8 +12859,7 @@ static const char rgb_a_pair_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rgb_a_pair_frag_src =
 {
-   rgb_a_pair_frag_glsl,
-   NULL, 0
+   rgb_a_pair_frag_glsl
 };
 
 static const char rgb_a_pair_vert_glsl[] =
@@ -13288,8 +12883,7 @@ static const char rgb_a_pair_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rgb_a_pair_vert_src =
 {
-   rgb_a_pair_vert_glsl,
-   NULL, 0
+   rgb_a_pair_vert_glsl
 };
 
 static const char rgb_a_pair_mask_frag_glsl[] =
@@ -13322,8 +12916,7 @@ static const char rgb_a_pair_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rgb_a_pair_mask_frag_src =
 {
-   rgb_a_pair_mask_frag_glsl,
-   NULL, 0
+   rgb_a_pair_mask_frag_glsl
 };
 
 static const char rgb_a_pair_mask_vert_glsl[] =
@@ -13351,8 +12944,7 @@ static const char rgb_a_pair_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rgb_a_pair_mask_vert_src =
 {
-   rgb_a_pair_mask_vert_glsl,
-   NULL, 0
+   rgb_a_pair_mask_vert_glsl
 };
 
 static const char rgb_a_pair_nomul_frag_glsl[] =
@@ -13378,8 +12970,7 @@ static const char rgb_a_pair_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rgb_a_pair_nomul_frag_src =
 {
-   rgb_a_pair_nomul_frag_glsl,
-   NULL, 0
+   rgb_a_pair_nomul_frag_glsl
 };
 
 static const char rgb_a_pair_nomul_vert_glsl[] =
@@ -13400,8 +12991,7 @@ static const char rgb_a_pair_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rgb_a_pair_nomul_vert_src =
 {
-   rgb_a_pair_nomul_vert_glsl,
-   NULL, 0
+   rgb_a_pair_nomul_vert_glsl
 };
 
 static const char rgb_a_pair_mask_nomul_frag_glsl[] =
@@ -13432,8 +13022,7 @@ static const char rgb_a_pair_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rgb_a_pair_mask_nomul_frag_src =
 {
-   rgb_a_pair_mask_nomul_frag_glsl,
-   NULL, 0
+   rgb_a_pair_mask_nomul_frag_glsl
 };
 
 static const char rgb_a_pair_mask_nomul_vert_glsl[] =
@@ -13458,8 +13047,7 @@ static const char rgb_a_pair_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_rgb_a_pair_mask_nomul_vert_src =
 {
-   rgb_a_pair_mask_nomul_vert_glsl,
-   NULL, 0
+   rgb_a_pair_mask_nomul_vert_glsl
 };
 
 static const char tex_external_frag_glsl[] =
@@ -13488,8 +13076,7 @@ static const char tex_external_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_tex_external_frag_src =
 {
-   tex_external_frag_glsl,
-   NULL, 0
+   tex_external_frag_glsl
 };
 
 static const char tex_external_vert_glsl[] =
@@ -13510,8 +13097,7 @@ static const char tex_external_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_tex_external_vert_src =
 {
-   tex_external_vert_glsl,
-   NULL, 0
+   tex_external_vert_glsl
 };
 
 static const char tex_external_afill_frag_glsl[] =
@@ -13541,8 +13127,7 @@ static const char tex_external_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_tex_external_afill_frag_src =
 {
-   tex_external_afill_frag_glsl,
-   NULL, 0
+   tex_external_afill_frag_glsl
 };
 
 static const char tex_external_afill_vert_glsl[] =
@@ -13563,8 +13148,7 @@ static const char tex_external_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_tex_external_afill_vert_src =
 {
-   tex_external_afill_vert_glsl,
-   NULL, 0
+   tex_external_afill_vert_glsl
 };
 
 static const char tex_external_nomul_frag_glsl[] =
@@ -13591,8 +13175,7 @@ static const char tex_external_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_tex_external_nomul_frag_src =
 {
-   tex_external_nomul_frag_glsl,
-   NULL, 0
+   tex_external_nomul_frag_glsl
 };
 
 static const char tex_external_nomul_vert_glsl[] =
@@ -13610,8 +13193,7 @@ static const char tex_external_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_tex_external_nomul_vert_src =
 {
-   tex_external_nomul_vert_glsl,
-   NULL, 0
+   tex_external_nomul_vert_glsl
 };
 
 static const char tex_external_nomul_afill_frag_glsl[] =
@@ -13639,8 +13221,7 @@ static const char tex_external_nomul_afill_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_tex_external_nomul_afill_frag_src =
 {
-   tex_external_nomul_afill_frag_glsl,
-   NULL, 0
+   tex_external_nomul_afill_frag_glsl
 };
 
 static const char tex_external_nomul_afill_vert_glsl[] =
@@ -13658,8 +13239,7 @@ static const char tex_external_nomul_afill_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_tex_external_nomul_afill_vert_src =
 {
-   tex_external_nomul_afill_vert_glsl,
-   NULL, 0
+   tex_external_nomul_afill_vert_glsl
 };
 
 static const char tex_external_mask_frag_glsl[] =
@@ -13693,8 +13273,7 @@ static const char tex_external_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_tex_external_mask_frag_src =
 {
-   tex_external_mask_frag_glsl,
-   NULL, 0
+   tex_external_mask_frag_glsl
 };
 
 static const char tex_external_mask_vert_glsl[] =
@@ -13719,8 +13298,7 @@ static const char tex_external_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_tex_external_mask_vert_src =
 {
-   tex_external_mask_vert_glsl,
-   NULL, 0
+   tex_external_mask_vert_glsl
 };
 
 static const char tex_external_mask_nomul_frag_glsl[] =
@@ -13752,8 +13330,7 @@ static const char tex_external_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_tex_external_mask_nomul_frag_src =
 {
-   tex_external_mask_nomul_frag_glsl,
-   NULL, 0
+   tex_external_mask_nomul_frag_glsl
 };
 
 static const char tex_external_mask_nomul_vert_glsl[] =
@@ -13775,8 +13352,7 @@ static const char tex_external_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_tex_external_mask_nomul_vert_src =
 {
-   tex_external_mask_nomul_vert_glsl,
-   NULL, 0
+   tex_external_mask_nomul_vert_glsl
 };
 
 static const char yuv_frag_glsl[] =
@@ -13818,8 +13394,7 @@ static const char yuv_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuv_frag_src =
 {
-   yuv_frag_glsl,
-   NULL, 0
+   yuv_frag_glsl
 };
 
 static const char yuv_vert_glsl[] =
@@ -13846,8 +13421,7 @@ static const char yuv_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuv_vert_src =
 {
-   yuv_vert_glsl,
-   NULL, 0
+   yuv_vert_glsl
 };
 
 static const char yuv_nomul_frag_glsl[] =
@@ -13887,8 +13461,7 @@ static const char yuv_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuv_nomul_frag_src =
 {
-   yuv_nomul_frag_glsl,
-   NULL, 0
+   yuv_nomul_frag_glsl
 };
 
 static const char yuv_nomul_vert_glsl[] =
@@ -13912,8 +13485,7 @@ static const char yuv_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuv_nomul_vert_src =
 {
-   yuv_nomul_vert_glsl,
-   NULL, 0
+   yuv_nomul_vert_glsl
 };
 
 static const char yuv_mask_frag_glsl[] =
@@ -13960,8 +13532,7 @@ static const char yuv_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuv_mask_frag_src =
 {
-   yuv_mask_frag_glsl,
-   NULL, 0
+   yuv_mask_frag_glsl
 };
 
 static const char yuv_mask_vert_glsl[] =
@@ -13992,8 +13563,7 @@ static const char yuv_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuv_mask_vert_src =
 {
-   yuv_mask_vert_glsl,
-   NULL, 0
+   yuv_mask_vert_glsl
 };
 
 static const char yuv_mask_nomul_frag_glsl[] =
@@ -14038,8 +13608,7 @@ static const char yuv_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuv_mask_nomul_frag_src =
 {
-   yuv_mask_nomul_frag_glsl,
-   NULL, 0
+   yuv_mask_nomul_frag_glsl
 };
 
 static const char yuv_mask_nomul_vert_glsl[] =
@@ -14067,8 +13636,7 @@ static const char yuv_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuv_mask_nomul_vert_src =
 {
-   yuv_mask_nomul_vert_glsl,
-   NULL, 0
+   yuv_mask_nomul_vert_glsl
 };
 
 static const char yuy2_frag_glsl[] =
@@ -14108,8 +13676,7 @@ static const char yuy2_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuy2_frag_src =
 {
-   yuy2_frag_glsl,
-   NULL, 0
+   yuy2_frag_glsl
 };
 
 static const char yuy2_vert_glsl[] =
@@ -14133,8 +13700,7 @@ static const char yuy2_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuy2_vert_src =
 {
-   yuy2_vert_glsl,
-   NULL, 0
+   yuy2_vert_glsl
 };
 
 static const char yuy2_nomul_frag_glsl[] =
@@ -14172,8 +13738,7 @@ static const char yuy2_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuy2_nomul_frag_src =
 {
-   yuy2_nomul_frag_glsl,
-   NULL, 0
+   yuy2_nomul_frag_glsl
 };
 
 static const char yuy2_nomul_vert_glsl[] =
@@ -14194,8 +13759,7 @@ static const char yuy2_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuy2_nomul_vert_src =
 {
-   yuy2_nomul_vert_glsl,
-   NULL, 0
+   yuy2_nomul_vert_glsl
 };
 
 static const char yuy2_mask_frag_glsl[] =
@@ -14240,8 +13804,7 @@ static const char yuy2_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuy2_mask_frag_src =
 {
-   yuy2_mask_frag_glsl,
-   NULL, 0
+   yuy2_mask_frag_glsl
 };
 
 static const char yuy2_mask_vert_glsl[] =
@@ -14269,8 +13832,7 @@ static const char yuy2_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuy2_mask_vert_src =
 {
-   yuy2_mask_vert_glsl,
-   NULL, 0
+   yuy2_mask_vert_glsl
 };
 
 static const char yuy2_mask_nomul_frag_glsl[] =
@@ -14313,8 +13875,7 @@ static const char yuy2_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuy2_mask_nomul_frag_src =
 {
-   yuy2_mask_nomul_frag_glsl,
-   NULL, 0
+   yuy2_mask_nomul_frag_glsl
 };
 
 static const char yuy2_mask_nomul_vert_glsl[] =
@@ -14339,8 +13900,7 @@ static const char yuy2_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuy2_mask_nomul_vert_src =
 {
-   yuy2_mask_nomul_vert_glsl,
-   NULL, 0
+   yuy2_mask_nomul_vert_glsl
 };
 
 static const char nv12_frag_glsl[] =
@@ -14380,8 +13940,7 @@ static const char nv12_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_nv12_frag_src =
 {
-   nv12_frag_glsl,
-   NULL, 0
+   nv12_frag_glsl
 };
 
 static const char nv12_vert_glsl[] =
@@ -14405,8 +13964,7 @@ static const char nv12_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_nv12_vert_src =
 {
-   nv12_vert_glsl,
-   NULL, 0
+   nv12_vert_glsl
 };
 
 static const char nv12_nomul_frag_glsl[] =
@@ -14444,8 +14002,7 @@ static const char nv12_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_nv12_nomul_frag_src =
 {
-   nv12_nomul_frag_glsl,
-   NULL, 0
+   nv12_nomul_frag_glsl
 };
 
 static const char nv12_nomul_vert_glsl[] =
@@ -14466,8 +14023,7 @@ static const char nv12_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_nv12_nomul_vert_src =
 {
-   nv12_nomul_vert_glsl,
-   NULL, 0
+   nv12_nomul_vert_glsl
 };
 
 static const char nv12_mask_frag_glsl[] =
@@ -14512,8 +14068,7 @@ static const char nv12_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_nv12_mask_frag_src =
 {
-   nv12_mask_frag_glsl,
-   NULL, 0
+   nv12_mask_frag_glsl
 };
 
 static const char nv12_mask_vert_glsl[] =
@@ -14541,8 +14096,7 @@ static const char nv12_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_nv12_mask_vert_src =
 {
-   nv12_mask_vert_glsl,
-   NULL, 0
+   nv12_mask_vert_glsl
 };
 
 static const char nv12_mask_nomul_frag_glsl[] =
@@ -14585,8 +14139,7 @@ static const char nv12_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_nv12_mask_nomul_frag_src =
 {
-   nv12_mask_nomul_frag_glsl,
-   NULL, 0
+   nv12_mask_nomul_frag_glsl
 };
 
 static const char nv12_mask_nomul_vert_glsl[] =
@@ -14611,8 +14164,7 @@ static const char nv12_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_nv12_mask_nomul_vert_src =
 {
-   nv12_mask_nomul_vert_glsl,
-   NULL, 0
+   nv12_mask_nomul_vert_glsl
 };
 
 static const char yuv_709_frag_glsl[] =
@@ -14654,8 +14206,7 @@ static const char yuv_709_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuv_709_frag_src =
 {
-   yuv_709_frag_glsl,
-   NULL, 0
+   yuv_709_frag_glsl
 };
 
 static const char yuv_709_vert_glsl[] =
@@ -14682,8 +14233,7 @@ static const char yuv_709_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuv_709_vert_src =
 {
-   yuv_709_vert_glsl,
-   NULL, 0
+   yuv_709_vert_glsl
 };
 
 static const char yuv_709_nomul_frag_glsl[] =
@@ -14723,8 +14273,7 @@ static const char yuv_709_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuv_709_nomul_frag_src =
 {
-   yuv_709_nomul_frag_glsl,
-   NULL, 0
+   yuv_709_nomul_frag_glsl
 };
 
 static const char yuv_709_nomul_vert_glsl[] =
@@ -14748,8 +14297,7 @@ static const char yuv_709_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuv_709_nomul_vert_src =
 {
-   yuv_709_nomul_vert_glsl,
-   NULL, 0
+   yuv_709_nomul_vert_glsl
 };
 
 static const char yuv_709_mask_frag_glsl[] =
@@ -14796,8 +14344,7 @@ static const char yuv_709_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuv_709_mask_frag_src =
 {
-   yuv_709_mask_frag_glsl,
-   NULL, 0
+   yuv_709_mask_frag_glsl
 };
 
 static const char yuv_709_mask_vert_glsl[] =
@@ -14828,8 +14375,7 @@ static const char yuv_709_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuv_709_mask_vert_src =
 {
-   yuv_709_mask_vert_glsl,
-   NULL, 0
+   yuv_709_mask_vert_glsl
 };
 
 static const char yuv_709_mask_nomul_frag_glsl[] =
@@ -14874,8 +14420,7 @@ static const char yuv_709_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuv_709_mask_nomul_frag_src =
 {
-   yuv_709_mask_nomul_frag_glsl,
-   NULL, 0
+   yuv_709_mask_nomul_frag_glsl
 };
 
 static const char yuv_709_mask_nomul_vert_glsl[] =
@@ -14903,8 +14448,7 @@ static const char yuv_709_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuv_709_mask_nomul_vert_src =
 {
-   yuv_709_mask_nomul_vert_glsl,
-   NULL, 0
+   yuv_709_mask_nomul_vert_glsl
 };
 
 static const char yuy2_709_frag_glsl[] =
@@ -14944,8 +14488,7 @@ static const char yuy2_709_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuy2_709_frag_src =
 {
-   yuy2_709_frag_glsl,
-   NULL, 0
+   yuy2_709_frag_glsl
 };
 
 static const char yuy2_709_vert_glsl[] =
@@ -14969,8 +14512,7 @@ static const char yuy2_709_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuy2_709_vert_src =
 {
-   yuy2_709_vert_glsl,
-   NULL, 0
+   yuy2_709_vert_glsl
 };
 
 static const char yuy2_709_nomul_frag_glsl[] =
@@ -15008,8 +14550,7 @@ static const char yuy2_709_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuy2_709_nomul_frag_src =
 {
-   yuy2_709_nomul_frag_glsl,
-   NULL, 0
+   yuy2_709_nomul_frag_glsl
 };
 
 static const char yuy2_709_nomul_vert_glsl[] =
@@ -15030,8 +14571,7 @@ static const char yuy2_709_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuy2_709_nomul_vert_src =
 {
-   yuy2_709_nomul_vert_glsl,
-   NULL, 0
+   yuy2_709_nomul_vert_glsl
 };
 
 static const char yuy2_709_mask_frag_glsl[] =
@@ -15076,8 +14616,7 @@ static const char yuy2_709_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuy2_709_mask_frag_src =
 {
-   yuy2_709_mask_frag_glsl,
-   NULL, 0
+   yuy2_709_mask_frag_glsl
 };
 
 static const char yuy2_709_mask_vert_glsl[] =
@@ -15105,8 +14644,7 @@ static const char yuy2_709_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuy2_709_mask_vert_src =
 {
-   yuy2_709_mask_vert_glsl,
-   NULL, 0
+   yuy2_709_mask_vert_glsl
 };
 
 static const char yuy2_709_mask_nomul_frag_glsl[] =
@@ -15149,8 +14687,7 @@ static const char yuy2_709_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuy2_709_mask_nomul_frag_src =
 {
-   yuy2_709_mask_nomul_frag_glsl,
-   NULL, 0
+   yuy2_709_mask_nomul_frag_glsl
 };
 
 static const char yuy2_709_mask_nomul_vert_glsl[] =
@@ -15175,8 +14712,7 @@ static const char yuy2_709_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_yuy2_709_mask_nomul_vert_src =
 {
-   yuy2_709_mask_nomul_vert_glsl,
-   NULL, 0
+   yuy2_709_mask_nomul_vert_glsl
 };
 
 static const char nv12_709_frag_glsl[] =
@@ -15216,8 +14752,7 @@ static const char nv12_709_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_nv12_709_frag_src =
 {
-   nv12_709_frag_glsl,
-   NULL, 0
+   nv12_709_frag_glsl
 };
 
 static const char nv12_709_vert_glsl[] =
@@ -15241,8 +14776,7 @@ static const char nv12_709_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_nv12_709_vert_src =
 {
-   nv12_709_vert_glsl,
-   NULL, 0
+   nv12_709_vert_glsl
 };
 
 static const char nv12_709_nomul_frag_glsl[] =
@@ -15280,8 +14814,7 @@ static const char nv12_709_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_nv12_709_nomul_frag_src =
 {
-   nv12_709_nomul_frag_glsl,
-   NULL, 0
+   nv12_709_nomul_frag_glsl
 };
 
 static const char nv12_709_nomul_vert_glsl[] =
@@ -15302,8 +14835,7 @@ static const char nv12_709_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_nv12_709_nomul_vert_src =
 {
-   nv12_709_nomul_vert_glsl,
-   NULL, 0
+   nv12_709_nomul_vert_glsl
 };
 
 static const char nv12_709_mask_frag_glsl[] =
@@ -15348,8 +14880,7 @@ static const char nv12_709_mask_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_nv12_709_mask_frag_src =
 {
-   nv12_709_mask_frag_glsl,
-   NULL, 0
+   nv12_709_mask_frag_glsl
 };
 
 static const char nv12_709_mask_vert_glsl[] =
@@ -15377,8 +14908,7 @@ static const char nv12_709_mask_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_nv12_709_mask_vert_src =
 {
-   nv12_709_mask_vert_glsl,
-   NULL, 0
+   nv12_709_mask_vert_glsl
 };
 
 static const char nv12_709_mask_nomul_frag_glsl[] =
@@ -15421,8 +14951,7 @@ static const char nv12_709_mask_nomul_frag_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_nv12_709_mask_nomul_frag_src =
 {
-   nv12_709_mask_nomul_frag_glsl,
-   NULL, 0
+   nv12_709_mask_nomul_frag_glsl
 };
 
 static const char nv12_709_mask_nomul_vert_glsl[] =
@@ -15447,8 +14976,7 @@ static const char nv12_709_mask_nomul_vert_glsl[] =
    "}\n";
 Evas_GL_Program_Source shader_nv12_709_mask_nomul_vert_src =
 {
-   nv12_709_mask_nomul_vert_glsl,
-   NULL, 0
+   nv12_709_mask_nomul_vert_glsl
 };
 
 

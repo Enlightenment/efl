@@ -108,8 +108,6 @@ struct _Evas_GL_Program
 struct _Evas_GL_Program_Source
 {
    const char *src;
-   const unsigned int *bin;
-   int bin_size;
 };
 
 struct _Evas_GL_Shared

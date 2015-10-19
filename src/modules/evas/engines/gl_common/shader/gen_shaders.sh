@@ -149,7 +149,7 @@ for (( i = 0; i < ${#SHADERS[@]} ; i++ )) ; do
     printf ";\n" >> ${OUTPUT}
     IFS=${OIFS}
 
-    printf "Evas_GL_Program_Source shader_${shdname}_src =\n{\n   ${shdname}_glsl,\n   NULL, 0\n};\n\n" >> ${OUTPUT}
+    printf "Evas_GL_Program_Source shader_${shdname}_src =\n{\n   ${shdname}_glsl\n};\n\n" >> ${OUTPUT}
   done
 
   shaders_source="${shaders_source}   { SHADER_${UNAME}, &(shader_${name}_vert_src), &(shader_${name}_frag_src), \"${name}\", SHD_${TYPE}, SHD_${sam}, SHD_${masksam}, ${bgra}, ${mask}, ${nomul}, ${afill} },\n"
