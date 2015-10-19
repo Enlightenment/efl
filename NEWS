@@ -115,6 +115,30 @@ Fixes:
    * eolian-cxx: Fixed possible exception escaping main (CID1265600)
    * Ecore_xcb_keymap: Fix memory leak in _ecore_xcb_keymap_finilize
    * Evas filter: Fix proxies of filtered images
+   * ecore-wl: Don't update window size during ecore_wl_window_resize function
+   * ecore-evas-wayland: Don't resize ecore_wl window to include frame size
+   * ecore-evas-wayland: Fix common window configure callback to not adjust for framespace
+   * evas-drm: remove useless condition
+   * ecore-evas-wayland: Trap for subsequent resize events
+   * edje_cc: fix segfault when a program attempts to play a non-registered sound
+   * Ecore_Con: make sure to create named pipe with a unique name
+   * ecore_exe: read remaining data when the child application has closed
+   * ecore_file: fix ecore_file management function on Windows
+   * Ecore exe win32: Fix double-free errors. (T2675)
+   * eina: Include <unistd.h> for getuid and geteuid functions
+   * Eina: fix eina_file_current_directory_get()
+   * Eina: fix memory leak in eina_file_open()
+   * evas: Fix clang warning for missing field 'async' in default_state
+   * ecore-drm: Add missing field initializers for vt_mode
+   * ecore-evas-wayland-egl: Fix clang warning about extra parentheses
+   * edje_edit: Fix clang warning of unused variables
+   * ecore-wayland: Redo window animators to not use Custom source animators
+   * ecore-evas-wayland: Don't use custom animators for frame callbacks
+   * evas: no need to compute clippees list if we just want to know if there is any.
+   * evas: render - use evas_object_clipees_has instead of evas_object_clipees_get
+   * edje: load - use evas_object_clipees_has instead of evas_object_clipees_get
+   * Eo events: Add a struct member marking if it's a legacy event or not.
+   * evas gl - fix big endian fully by adding a host of new img shaders
 
 Changes since 1.14.0:
 ---------------------
