@@ -361,9 +361,9 @@ EAPI Elm_Atspi_Relation_Set elm_atspi_relation_set_clone(const Elm_Atspi_Relatio
    } while(0);
 
 /**
- * Emits ATSPI 'ActiveDescendantsChanged' dbus signal.
+ * Emits ATSPI 'ActiveDescendantChanged' dbus signal.
  */
-#define elm_interface_atspi_accessible_active_descendants_changed_signal_emit(obj, child) \
+#define elm_interface_atspi_accessible_active_descendant_changed_signal_emit(obj, child) \
    eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_emit(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_ACTIVE_DESCENDANT_CHANGED, child));
 
 /**
