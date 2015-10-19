@@ -713,7 +713,8 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
         h = _ecore_wl_window_hash_get();
         it = eina_hash_iterator_data_new(h);
         EINA_ITERATOR_FOREACH(it, win)
-          _ecore_wl_window_shell_surface_init(win);
+          if (win->surface)
+            _ecore_wl_window_shell_surface_init(win);
      }
    else if (!strcmp(interface, "wl_shell"))
      {
