@@ -103,6 +103,22 @@ Fixes:
    * elm cursors - if min size is too small then force it to be sane
    * elm cursor - fix hotspot tracking to actually work right
    * toolbar: Fix crash on more_item when shrink mode is set with no item.
+   * elementary: Fix calling ecore_evas_wayland_move with improper values
+   * elm_hoversel: fix to show dismiss animation
+   * toolbar: do not change align for "noicon" toolbar items (T2782)
+   * elementary: Remove unused static variable
+   * elementary: Remove unused static variable
+   * elementary: Fix passing wrong parameter
+   * elementary: Fix passing wrong parameter
+   * elementary: Remove unused variable
+   * elementary: Remove unused static varible
+   * elementary: Remove unused function
+   * elementary: Remove unused variables
+   * elementary: Remove unused static variable
+   * elementary: Remove unused static variable
+   * elementary: Fix genlist example to not free data until After it has been removed from the list (CID1327342)
+   * deskmirror: unset proxy.source_clip for urgency effects
+   * border: bring sparklebear theme up-to-date with current efl rendering
 
 Changes since 1.14.0:
 ---------------------
