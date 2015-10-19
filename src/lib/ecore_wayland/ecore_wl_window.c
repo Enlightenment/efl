@@ -65,6 +65,127 @@ _ecore_wl_window_hash_get(void)
    return _windows;
 }
 
+void
+_ecore_wl_window_shell_surface_init(Ecore_Wl_Window *win)
+{
+   if ((win->type == ECORE_WL_WINDOW_TYPE_DND) ||
+       (win->type == ECORE_WL_WINDOW_TYPE_NONE)) return;
+#ifdef USE_IVI_SHELL
+   if ((!win->ivi_surface) && (_ecore_wl_disp->wl.ivi_application))
+     {
+        if (win->parent && win->parent->ivi_surface)
+          win->ivi_surface_id = win->parent->ivi_surface_id + 1;
+        else if ((env = getenv("ECORE_IVI_SURFACE_ID")))
+          win->ivi_surface_id = atoi(env);
+        else
+          win->ivi_surface_id = IVI_SURFACE_ID + getpid();
+
+        win->ivi_surface =
+          ivi_application_surface_create(_ecore_wl_disp->wl.ivi_application,
+                                         win->ivi_surface_id, win->surface);
+     }
+
+   if (!win->ivi_surface)
+     {
+#endif
+        if (_ecore_wl_disp->wl.xdg_shell)
+          {
+             if (win->xdg_surface) return;
+             win->xdg_surface =
+               xdg_shell_get_xdg_surface(_ecore_wl_disp->wl.xdg_shell,
+                                         win->surface);
+             if (!win->xdg_surface) return;
+             if (win->title)
+               xdg_surface_set_title(win->xdg_surface, win->title);
+             if (win->class_name)
+               xdg_surface_set_app_id(win->xdg_surface, win->class_name);
+             xdg_surface_set_user_data(win->xdg_surface, win);
+             xdg_surface_add_listener(win->xdg_surface,
+                                      &_ecore_xdg_surface_listener, win);
+          }
+        else if (_ecore_wl_disp->wl.shell)
+          {
+             if (win->shell_surface) return;
+             win->shell_surface =
+               wl_shell_get_shell_surface(_ecore_wl_disp->wl.shell,
+                                          win->surface);
+             if (!win->shell_surface) return;
+
+             if (win->title)
+               wl_shell_surface_set_title(win->shell_surface, win->title);
+
+             if (win->class_name)
+               wl_shell_surface_set_class(win->shell_surface, win->class_name);
+          }
+
+        if (win->shell_surface)
+          wl_shell_surface_add_listener(win->shell_surface,
+                                        &_ecore_wl_shell_surface_listener, win);
+#ifdef USE_IVI_SHELL
+     }
+#endif
+
+   /* trap for valid shell surface */
+   if ((!win->xdg_surface) && (!win->shell_surface)) return;
+
+   switch (win->type)
+     {
+      case ECORE_WL_WINDOW_TYPE_FULLSCREEN:
+        if (win->xdg_surface)
+          xdg_surface_set_fullscreen(win->xdg_surface, NULL);
+        else if (win->shell_surface)
+          wl_shell_surface_set_fullscreen(win->shell_surface,
+                                          WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT,
+                                          0, NULL);
+        break;
+      case ECORE_WL_WINDOW_TYPE_MAXIMIZED:
+        if (win->xdg_surface)
+          xdg_surface_set_maximized(win->xdg_surface);
+        else if (win->shell_surface)
+          wl_shell_surface_set_maximized(win->shell_surface, NULL);
+        break;
+      case ECORE_WL_WINDOW_TYPE_TRANSIENT:
+        if (win->xdg_surface)
+          xdg_surface_set_parent(win->xdg_surface, win->parent->xdg_surface);
+        else if (win->shell_surface)
+          wl_shell_surface_set_transient(win->shell_surface,
+                                         win->parent->surface,
+                                         win->allocation.x,
+                                         win->allocation.y, 0);
+        break;
+      case ECORE_WL_WINDOW_TYPE_MENU:
+        if (win->xdg_surface)
+          {
+             win->xdg_popup =
+               xdg_shell_get_xdg_popup(_ecore_wl_disp->wl.xdg_shell,
+                                       win->surface,
+                                       win->parent->surface,
+                                       _ecore_wl_disp->input->seat,
+                                       _ecore_wl_disp->serial,
+                                       win->allocation.x, win->allocation.y);
+             if (!win->xdg_popup) return;
+             xdg_popup_set_user_data(win->xdg_popup, win);
+             xdg_popup_add_listener(win->xdg_popup,
+                                    &_ecore_xdg_popup_listener, win);
+          }
+        else if (win->shell_surface)
+          wl_shell_surface_set_popup(win->shell_surface,
+                                     _ecore_wl_disp->input->seat,
+                                     _ecore_wl_disp->serial,
+                                     win->parent->surface,
+                                     win->allocation.x, win->allocation.y, 0);
+        break;
+      case ECORE_WL_WINDOW_TYPE_TOPLEVEL:
+        if (win->xdg_surface)
+          xdg_surface_set_parent(win->xdg_surface, NULL);
+        else if (win->shell_surface)
+          wl_shell_surface_set_toplevel(win->shell_surface);
+        break;
+      default:
+        break;
+     }
+}
+
 EAPI Ecore_Wl_Window *
 ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y, int w, int h, int buffer_type)
 {
@@ -289,122 +410,7 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
 
    ecore_wl_window_surface_create(win);
 
-   if ((win->type != ECORE_WL_WINDOW_TYPE_DND) &&
-       (win->type != ECORE_WL_WINDOW_TYPE_NONE))
-     {
-#ifdef USE_IVI_SHELL
-        if ((!win->ivi_surface) && (_ecore_wl_disp->wl.ivi_application))
-          {
-             if (win->parent && win->parent->ivi_surface)
-               win->ivi_surface_id = win->parent->ivi_surface_id + 1;
-             else if ((env = getenv("ECORE_IVI_SURFACE_ID")))
-               win->ivi_surface_id = atoi(env);
-             else
-               win->ivi_surface_id = IVI_SURFACE_ID + getpid();
-
-             win->ivi_surface =
-               ivi_application_surface_create(_ecore_wl_disp->wl.ivi_application,
-                                              win->ivi_surface_id, win->surface);
-          }
-
-        if (!win->ivi_surface)
-          {
-#endif
-             if ((!win->xdg_surface) && (_ecore_wl_disp->wl.xdg_shell))
-               {
-                  win->xdg_surface =
-                    xdg_shell_get_xdg_surface(_ecore_wl_disp->wl.xdg_shell,
-                                              win->surface);
-                  if (!win->xdg_surface) return;
-                  if (win->title)
-                    xdg_surface_set_title(win->xdg_surface, win->title);
-                  if (win->class_name)
-                    xdg_surface_set_app_id(win->xdg_surface, win->class_name);
-                  xdg_surface_set_user_data(win->xdg_surface, win);
-                  xdg_surface_add_listener(win->xdg_surface,
-                                           &_ecore_xdg_surface_listener, win);
-               }
-             else if ((!win->shell_surface) && (_ecore_wl_disp->wl.shell))
-               {
-                  win->shell_surface =
-                    wl_shell_get_shell_surface(_ecore_wl_disp->wl.shell,
-                                               win->surface);
-                  if (!win->shell_surface) return;
-
-                  if (win->title)
-                    wl_shell_surface_set_title(win->shell_surface, win->title);
-
-                  if (win->class_name)
-                    wl_shell_surface_set_class(win->shell_surface, win->class_name);
-               }
-
-             if (win->shell_surface)
-               wl_shell_surface_add_listener(win->shell_surface,
-                                             &_ecore_wl_shell_surface_listener, win);
-#ifdef USE_IVI_SHELL
-          }
-#endif
-     }
-
-   /* trap for valid shell surface */
-   if ((!win->xdg_surface) && (!win->shell_surface)) return;
-
-   switch (win->type)
-     {
-      case ECORE_WL_WINDOW_TYPE_FULLSCREEN:
-        if (win->xdg_surface)
-          xdg_surface_set_fullscreen(win->xdg_surface, NULL);
-        else if (win->shell_surface)
-          wl_shell_surface_set_fullscreen(win->shell_surface,
-                                          WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT,
-                                          0, NULL);
-        break;
-      case ECORE_WL_WINDOW_TYPE_MAXIMIZED:
-        if (win->xdg_surface)
-          xdg_surface_set_maximized(win->xdg_surface);
-        else if (win->shell_surface)
-          wl_shell_surface_set_maximized(win->shell_surface, NULL);
-        break;
-      case ECORE_WL_WINDOW_TYPE_TRANSIENT:
-        if (win->xdg_surface)
-          xdg_surface_set_parent(win->xdg_surface, win->parent->xdg_surface);
-        else if (win->shell_surface)
-          wl_shell_surface_set_transient(win->shell_surface,
-                                         win->parent->surface,
-                                         win->allocation.x,
-                                         win->allocation.y, 0);
-        break;
-      case ECORE_WL_WINDOW_TYPE_MENU:
-        if (win->xdg_surface)
-          {
-             win->xdg_popup =
-               xdg_shell_get_xdg_popup(_ecore_wl_disp->wl.xdg_shell,
-                                       win->surface,
-                                       win->parent->surface,
-                                       _ecore_wl_disp->input->seat,
-                                       _ecore_wl_disp->serial,
-                                       win->allocation.x, win->allocation.y);
-             if (!win->xdg_popup) return;
-             xdg_popup_set_user_data(win->xdg_popup, win);
-             xdg_popup_add_listener(win->xdg_popup,
-                                    &_ecore_xdg_popup_listener, win);
-          }
-        else if (win->shell_surface)
-          wl_shell_surface_set_popup(win->shell_surface,
-                                     _ecore_wl_disp->input->seat,
-                                     _ecore_wl_disp->serial,
-                                     win->parent->surface,
-                                     win->allocation.x, win->allocation.y, 0);
-        break;
-      case ECORE_WL_WINDOW_TYPE_TOPLEVEL:
-        if (win->xdg_surface)
-          xdg_surface_set_parent(win->xdg_surface, NULL);
-        else if (win->shell_surface)
-          wl_shell_surface_set_toplevel(win->shell_surface);
-        break;
-      default:
-        break;
-     }
+   _ecore_wl_window_shell_surface_init(win);
 }
 
 EAPI void

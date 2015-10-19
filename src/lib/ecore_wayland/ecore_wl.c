@@ -701,11 +701,19 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
 #endif
    else if (!strcmp(interface, "xdg_shell") && !getenv("EFL_WAYLAND_DONT_USE_XDG_SHELL"))
      {
+        Eina_Hash *h;
+        Eina_Iterator *it;
+        Ecore_Wl_Window *win;
+
         ewd->wl.xdg_shell =
           wl_registry_bind(registry, id, &xdg_shell_interface, 1);
         xdg_shell_use_unstable_version(ewd->wl.xdg_shell, XDG_VERSION);
         xdg_shell_add_listener(ewd->wl.xdg_shell, &xdg_shell_listener,
                                ewd->wl.display);
+        h = _ecore_wl_window_hash_get();
+        it = eina_hash_iterator_data_new(h);
+        EINA_ITERATOR_FOREACH(it, win)
+          _ecore_wl_window_shell_surface_init(win);
      }
    else if (!strcmp(interface, "wl_shell"))
      {
