@@ -20,6 +20,7 @@ lib/ecore_win32/ecore_win32_dnd_drop_target.cpp \
 lib/ecore_win32/ecore_win32_event.c \
 lib/ecore_win32/ecore_win32_window.c \
 lib/ecore_win32/ecore_win32_private.h \
+lib/ecore_win32/ecore_win32_cursor_x11.h \
 lib/ecore_win32/ecore_win32_dnd_enumformatetc.h \
 lib/ecore_win32/ecore_win32_dnd_data_object.h \
 lib/ecore_win32/ecore_win32_dnd_drop_source.h \

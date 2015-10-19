@@ -10,7 +10,7 @@
 
 #include "Ecore_Win32.h"
 #include "ecore_win32_private.h"
-#include "ecore_win32_cursor_x11.c"
+#include "ecore_win32_cursor_x11.h"
 
 /*============================================================================*
  *                                  Local                                     *
