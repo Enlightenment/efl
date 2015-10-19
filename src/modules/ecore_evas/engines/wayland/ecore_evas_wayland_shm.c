@@ -137,7 +137,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
 
    if (!ecore_wl2_init())
      {
-        ERR("Failed to initialize Ecore_Wayland");
+        ERR("Failed to initialize Ecore_Wl2");
         return NULL;
      }
 
