@@ -76,7 +76,6 @@ void _outline_destroy(Outline *outline)
         free(outline->ft_outline.tags);
         free(outline->ft_outline.contours);
         free(outline);
-        outline = NULL;
      }
 }
 
