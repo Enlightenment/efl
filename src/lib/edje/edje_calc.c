@@ -2177,7 +2177,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
    if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
        (ep->typedata.swallow))
      {
-        if (ep->typedata.swallow->swallow_params.min.w > desc->min.w)
+        if (ep->typedata.swallow->swallow_params.min.w > *minw)
           *minw = ep->typedata.swallow->swallow_params.min.w;
      }
 
@@ -2242,7 +2242,7 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
    if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
        (ep->typedata.swallow))
      {
-        if (ep->typedata.swallow->swallow_params.min.h > desc->min.h)
+        if (ep->typedata.swallow->swallow_params.min.h > *minh)
           *minh = ep->typedata.swallow->swallow_params.min.h;
      }
 
