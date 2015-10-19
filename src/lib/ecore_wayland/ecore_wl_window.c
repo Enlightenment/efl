@@ -226,9 +226,6 @@ ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y, int w, int h, int buf
    win->title = NULL;
    win->class_name = NULL;
 
-   if (_ecore_wl_server_mode)
-     win->animator = ecore_animator_add(_ecore_wl_window_cb_animate, win);
-
    eina_hash_add(_windows, _ecore_wl_window_id_str_get(win->id), win);
 
    return win;
