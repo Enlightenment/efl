@@ -305,9 +305,6 @@ EAPI struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
  */
 EAPI Eina_Iterator *ecore_wl2_display_globals_get(Ecore_Wl2_Display *display);
 
-/* TODO: doxy */
-EAPI Eina_Bool ecore_wl2_display_animator_source_set(Ecore_Wl2_Display *display, Ecore_Animator_Source source);
-
 /**
  * Retrieves the size of the current screen.
  *
