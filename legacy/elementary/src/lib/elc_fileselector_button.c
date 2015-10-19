@@ -463,6 +463,7 @@ _elm_fileselector_button_elm_interface_fileselector_selected_set(Eo *obj EINA_UN
              free(path);
              return EINA_FALSE;
           }
+        free(path);
      }
 
    eina_stringshare_replace(&sd->fsd.selection, _path);
