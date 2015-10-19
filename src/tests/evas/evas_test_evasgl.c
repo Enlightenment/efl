@@ -285,14 +285,18 @@ _test_evasgl_fbo(const char *engine)
    GLint status;
 
    static const char *vertex =
+         "#ifdef GL_ES\n"
          "precision mediump float;\n"
+         "#endif\n"
          "attribute vec4 vertex;\n"
          "void main()\n"
          "{\n"
          "   gl_Position = vertex;\n"
          "}\n";
    static const char *fragment =
+         "#ifdef GL_ES\n"
          "precision mediump float;\n"
+         "#endif\n"
          "uniform vec4 color;\n"
          "void main()\n"
          "{\n"
