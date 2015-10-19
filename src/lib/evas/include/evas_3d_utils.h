@@ -2927,6 +2927,7 @@ evas_tangent_space_get(float *data, float *tex_data, float *normal_data, unsigne
 
    memcpy(*tangent, tmp_tangent, (3 * vertex_count) * sizeof(float));
    free(tmp_tangent);
+   free(plain);
 
    return;
 }
