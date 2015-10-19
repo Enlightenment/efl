@@ -114,10 +114,10 @@ im_module_create()
                {
                   if (!strcmp(global->interface, "wl_text_input_manager"))
                     {
-                       text_input_manager = 
-                         wl_registry_bind(registry, global->id, 
+                       text_input_manager =
+                         wl_registry_bind(registry, global->id,
                                           &wl_text_input_manager_interface, 1);
-                       EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, 
+                       EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom,
                                          "bound wl_text_input_manager interface");
                        break;
                     }
