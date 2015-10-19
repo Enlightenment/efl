@@ -161,6 +161,7 @@ _ecore_evas_wl_common_cb_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED,
    return ECORE_CALLBACK_PASS_ON;
 }
 
+<<<<<<< HEAD
 <<<<<<< cdc9ff78e4db118ef9e2d70b7425ca9b46bdb2df
 static Eina_Bool
 _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
