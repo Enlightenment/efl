@@ -2589,13 +2589,19 @@ _collection_match_roles_lookup(Eo *obj, struct collection_match_rule *rule)
 
    eo_do(obj, role = elm_interface_atspi_accessible_role_get());
 
-   if (role > 64)
+   if (role >= 64)
      {
         role -= 64;
         role_set = rule->roles[1];
      }
    else
      role_set = rule->roles[0];
+
+   if (role >= 64)
+     {
+        ERR("Elm_Atspi_Role enum value exceeds 127. Unable to compare with roles bit field.");
+        return EINA_FALSE;
+     }
 
    switch (rule->rolematchtype)
      {
