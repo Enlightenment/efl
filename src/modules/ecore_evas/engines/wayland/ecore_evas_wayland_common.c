@@ -1263,18 +1263,31 @@ _ecore_evas_wl_common_pre_render(Ecore_Evas *ee)
 static void
 _anim_cb_animate(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED)
 {
-   Ecore_Evas_Engine_Wl_Data *wdata = data;
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Wl_Data *wdata;
 
-   if ((wdata->anim_callback) && (callback != wdata->anim_callback)) return;
-
+   wdata = ee->engine.data;
    wl_callback_destroy(callback);
    wdata->anim_callback = NULL;
+   ecore_evas_manual_render_set(ee, 0);
 }
 
 static const struct wl_callback_listener _anim_listener =
 {
    _anim_cb_animate
 };
+
+void
+_ecore_evas_wl_common_render_pre(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   wdata = ee->engine.data;
+   wdata->anim_callback = wl_surface_frame(ecore_wl_window_surface_get(wdata->win));
+   wl_callback_add_listener(wdata->anim_callback, &_anim_listener, ee);
+   ecore_evas_manual_render_set(ee, 1);
+}
 
 void 
 _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *event)
@@ -1286,13 +1299,7 @@ _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *e
 
    ee->in_async_render = EINA_FALSE;
 
-   if (_ecore_evas_wl_common_render_updates_process(ee, ev->updated_area))
-     {
-        Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
-
-        wdata->anim_callback = wl_surface_frame(ecore_wl_window_surface_get(wdata->win));
-        wl_callback_add_listener(wdata->anim_callback, &_anim_listener, wdata);
-     }
+   _ecore_evas_wl_common_render_updates_process(ee, ev->updated_area);
 
    if (ee->delayed.alpha_changed)
      {
