@@ -304,11 +304,14 @@ _bounce_cb(void *data)
 {
    Bounce *bounce = data;
    bounce->state++;
-   if (bounce->state > 1) bounce->state = 0;
-   if (bounce->state == 1)
+   if (bounce->state & 0x1)
      elm_genlist_item_bring_in(bounce->it2, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
    else
      elm_genlist_item_bring_in(bounce->it1, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+   if (bounce->state > 50)
+     {
+        if (getenv("ELM_TEST_AUTOBOUNCE")) elm_exit();
+     }
    return EINA_TRUE;
 }
 
