@@ -179,25 +179,6 @@ static const unsigned short cube_indices[] =
    20, 21, 22, 22, 21, 23
 };
 
-static inline vec3
-_normalize(const vec3 *v)
-{
-
-   double l;
-   vec3 vec = {0.0, 0.0, 0.0};
-
-   l = sqrt((v->x * v->x) + (v->y * v->y) + (v->z * v->z));
-
-   if (l != 0)
-     {
-        vec.x = v->x / l;
-        vec.y = v->y / l;
-        vec.z = v->z / l;
-     }
-
-   return vec;
-}
-
 static void
 _sphere_fini()
 {
