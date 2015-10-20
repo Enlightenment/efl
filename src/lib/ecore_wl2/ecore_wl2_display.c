@@ -55,6 +55,8 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
              free(global);
           }
      }
+   else
+     goto event;
 
    if (!strcmp(interface, "wl_compositor"))
      {
@@ -94,6 +96,7 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
    else if (!strcmp(interface, "wl_seat"))
      _ecore_wl2_input_add(ewd, id);
 
+event:
    /* allocate space for event structure */
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Global));
    if (!ev) return;
