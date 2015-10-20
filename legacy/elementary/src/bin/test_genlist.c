@@ -279,9 +279,9 @@ _gl_longpress(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 }
 
 static void
-_gl_changed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_gl_changed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   printf("changed %p\n", event_info);
+//   printf("changed %p\n", event_info);
 }
 
 static void
@@ -292,18 +292,64 @@ _cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    free(api);
 }
 
+typedef struct
+{
+   Evas_Object *gl;
+   Elm_Object_Item *it1, *it2;
+   int state;
+} Bounce;
+
+static Eina_Bool
+_bounce_cb(void *data)
+{
+   Bounce *bounce = data;
+   bounce->state++;
+   if (bounce->state > 1) bounce->state = 0;
+   if (bounce->state == 1)
+     elm_genlist_item_bring_in(bounce->it2, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+   else
+     elm_genlist_item_bring_in(bounce->it1, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+   return EINA_TRUE;
+}
+
+static void
+_btbounce_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Ecore_Timer *tim = evas_object_data_get(obj, "timer");
+   if (!tim)
+     {
+        _bounce_cb(data);
+        tim = ecore_timer_add(0.5, _bounce_cb, data);
+        evas_object_data_set(obj, "timer", tim);
+     }
+}
+
+static void
+_btdel_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Bounce *bounce = data;
+   Ecore_Timer *tim = evas_object_data_get(obj, "timer");
+   if (tim)
+     {
+        ecore_timer_del(tim);
+        evas_object_data_del(obj, "timer");
+     }
+   free(bounce);
+}
+
 void
 test_genlist(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *gl, *bt_50, *bt_1500, *bx, *bxx, *bt;
    Evas_Object *over;
    Elm_Object_Item *gli;
-   int i;
+   int i, max;
+   Bounce *bounce;
    api_data *api = calloc(1, sizeof(api_data));
 
    win = elm_win_util_standard_add("genlist", "Genlist");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, api);
 
    bxx = elm_box_add(win);
    evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -364,7 +410,18 @@ test_genlist(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    evas_object_show(bt_1500);
    elm_box_pack_end(bx, bt_1500);
 
-   for (i = 0; i < 2000; i++)
+   bounce = calloc(1, sizeof(Bounce));
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Bounce");
+   evas_object_show(bt);
+   elm_box_pack_end(bx, bt);
+   bounce->gl = gl;
+   evas_object_smart_callback_add(bt, "clicked", _btbounce_cb, bounce);
+   evas_object_event_callback_add(bt, EVAS_CALLBACK_DEL, _btdel_cb, bounce);
+
+   max = 2000;
+   if (getenv("ELM_TEST_AUTOBOUNCE")) max = 200;
+   for (i = 0; i < max; i++)
      {
         if (i == 5)
           {
@@ -389,12 +446,17 @@ test_genlist(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
           evas_object_smart_callback_add(bt_50, "clicked", _bt50_cb, gli);
         else if (i == 1500)
           evas_object_smart_callback_add(bt_1500, "clicked", _bt1500_cb, gli);
+
+        if (i == 100) bounce->it1 = gli;
+        if (i == 120) bounce->it2 = gli;
      }
    elm_genlist_item_class_free(api->itc1);
 
-   evas_object_resize(win, 480, 800);
+   evas_object_resize(win, 480, 400);
    explode_win_enable(win);
    evas_object_show(win);
+
+   if (max == 200) _btbounce_cb(bounce, bt, NULL);
 }
 
 
