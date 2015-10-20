@@ -224,6 +224,8 @@ ecore_wl_input_cursor_size_set(Ecore_Wl_Input *input, const int size)
 
    EINA_SAFETY_ON_NULL_RETURN(input->display->wl.shm);
 
+   if (input->display->cursor_theme)
+     wl_cursor_theme_destroy(input->display->cursor_theme);
    input->display->cursor_theme =
      wl_cursor_theme_load(NULL, input->cursor_size, input->display->wl.shm);
 }
@@ -239,6 +241,8 @@ ecore_wl_input_cursor_theme_name_set(Ecore_Wl_Input *input, const char *cursor_t
 
    EINA_SAFETY_ON_NULL_RETURN(input->display->wl.shm);
 
+   if (input->display->cursor_theme)
+     wl_cursor_theme_destroy(input->display->cursor_theme);
    input->display->cursor_theme =
      wl_cursor_theme_load(input->cursor_theme_name, input->cursor_size,
                           input->display->wl.shm);

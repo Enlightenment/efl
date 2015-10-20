@@ -554,6 +554,8 @@ _ecore_wl_shutdown(Eina_Bool close)
           wl_compositor_destroy(_ecore_wl_disp->wl.compositor);
         if (_ecore_wl_disp->wl.subcompositor)
           wl_subcompositor_destroy(_ecore_wl_disp->wl.subcompositor);
+        if (_ecore_wl_disp->cursor_theme)
+          wl_cursor_theme_destroy(_ecore_wl_disp->cursor_theme);
         if (_ecore_wl_disp->wl.display)
           {
              wl_registry_destroy(_ecore_wl_disp->wl.registry);
@@ -727,7 +729,7 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
 
         if (ewd->input)
           _ecore_wl_input_setup(ewd->input);
-        else
+        else if (!ewd->cursor_theme)
           {
              ewd->cursor_theme =
                wl_cursor_theme_load(NULL, ECORE_WL_DEFAULT_CURSOR_SIZE,
