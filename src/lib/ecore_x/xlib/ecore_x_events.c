@@ -2120,7 +2120,7 @@ _ecore_x_event_handle_screensaver_notify(XEvent *xevent)
    e->time = screensaver_event->time;
    ecore_event_add(ECORE_X_EVENT_SCREENSAVER_NOTIFY, e, NULL, NULL);
 #else /* ifdef ECORE_XSS */
-   xevent = NULL;
+   (void) xevent;
 #endif /* ifdef ECORE_XSS */
 }
 
