@@ -9,6 +9,9 @@ Eina_Bool _alloc_memory(Axis_Key **ckey, Panel_Struct **pobj, Axis_Key **lkey)
    if (!(*ckey) || !(*pobj) || !(*lkey))
      {
         fprintf(stdout, "Not enough memory - at %s line %d\n", __FILE__, __LINE__);
+        free(*ckey);
+        free(*pobj);
+        free(*lkey);
         return EINA_FALSE;
      }
 
