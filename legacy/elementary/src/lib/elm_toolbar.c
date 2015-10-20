@@ -2432,7 +2432,6 @@ _item_new(Evas_Object *obj,
 
    evas_object_event_callback_add
      (VIEW(it), EVAS_CALLBACK_RESIZE, _item_resize, obj);
-   _resizing_eval_item(it);
    if ((!sd->items) && (sd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS))
      _item_select(it);
 
@@ -3340,6 +3339,7 @@ _elm_toolbar_shrink_mode_set(Eo *obj, Elm_Toolbar_Data *sd, Elm_Toolbar_Shrink_M
         eo_do(obj, elm_interface_scrollable_policy_set
               (ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF));
         sd->more_item = _item_new(obj, "more_menu", "More", NULL, NULL);
+        _resizing_eval_item(sd->more_item);
      }
    else if (shrink_mode == ELM_TOOLBAR_SHRINK_HIDE)
      {
@@ -3353,6 +3353,7 @@ _elm_toolbar_shrink_mode_set(Eo *obj, Elm_Toolbar_Data *sd, Elm_Toolbar_Shrink_M
         eo_do(obj, elm_interface_scrollable_policy_set
               (ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF));
         sd->more_item = _item_new(obj, "more_menu", "More", NULL, NULL);
+        _resizing_eval_item(sd->more_item);
      }
    else
       eo_do(obj, elm_interface_scrollable_policy_set
