@@ -431,7 +431,7 @@ _key_down(void *data,
              if (camera_y < 100.0)
                {
                   camera_y += 0.5;
-                  camera_z += 0.5 * (7 / 4);
+                  camera_z += 0.5 * (7 / (double)4);
                }
           }
         if (!strcmp(ev->key, "n"))
@@ -598,7 +598,7 @@ _create_cubes(Scene_Data *data, Evas_Real r, int count)
    Evas_Real d_alpha;
 
    data->items = NULL;
-   d_alpha = 360 / count;
+   d_alpha = 360 / (double)count;
 
    for (i = 0; i < count; i++)
      {
