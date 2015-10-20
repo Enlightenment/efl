@@ -70,7 +70,6 @@ typedef struct _Elm_Prefs_Item_Node
 /**
  * Base widget smart data extended with prefs instance data.
  */
-typedef struct _Elm_Prefs_Data Elm_Prefs_Data;
 struct _Elm_Prefs_Data
 {
    Elm_Prefs_Page_Node  *root;
