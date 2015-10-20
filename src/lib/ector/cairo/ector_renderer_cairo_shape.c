@@ -208,13 +208,14 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
               {
                  double *dashinfo;
 
+                 USE(obj, cairo_set_dash, EINA_FALSE);
+
                  dashinfo = (double *) malloc(2 * pd->shape->stroke.dash_length * sizeof(double));
                  for (i = 0; i < pd->shape->stroke.dash_length; i++)
                    {
                       dashinfo[i*2] = pd->shape->stroke.dash[i].length;
                       dashinfo[i*2 + 1] = pd->shape->stroke.dash[i].gap;
                    }
-                 USE(obj, cairo_set_dash, EINA_FALSE);
                  cairo_set_dash(pd->parent->cairo, dashinfo, pd->shape->stroke.dash_length * 2, 0);
                  free(dashinfo);
               }
