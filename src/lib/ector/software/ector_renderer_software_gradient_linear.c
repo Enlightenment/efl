@@ -9,31 +9,6 @@
 #include "ector_private.h"
 #include "ector_software_private.h"
 
-
-static void
-_update_linear_data(Ector_Renderer_Software_Gradient_Data *gdata)
-{
-   update_color_table(gdata);
-   gdata->linear.x1 = gdata->gld->start.x;
-   gdata->linear.y1 = gdata->gld->start.y;
-
-   gdata->linear.x2 = gdata->gld->end.x;
-   gdata->linear.y2 = gdata->gld->end.y;
-
-   gdata->linear.dx = gdata->linear.x2 - gdata->linear.x1;
-   gdata->linear.dy = gdata->linear.y2 - gdata->linear.y1;
-   gdata->linear.l = gdata->linear.dx * gdata->linear.dx + gdata->linear.dy * gdata->linear.dy;
-   gdata->linear.off = 0;
-
-   if (gdata->linear.l != 0)
-     {
-        gdata->linear.dx /= gdata->linear.l;
-        gdata->linear.dy /= gdata->linear.l;
-        gdata->linear.off = -gdata->linear.dx * gdata->linear.x1 - gdata->linear.dy * gdata->linear.y1;
-     }
-}
-
-
 static Eina_Bool
 _ector_renderer_software_gradient_linear_ector_renderer_generic_base_prepare(Eo *obj,
                                                                              Ector_Renderer_Software_Gradient_Data *pd)
@@ -47,8 +22,25 @@ _ector_renderer_software_gradient_linear_ector_renderer_generic_base_prepare(Eo 
         pd->surface = eo_data_xref(parent, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
      }
 
-   _update_linear_data(pd);
+   update_color_table(pd);
 
+   pd->linear.x1 = pd->gld->start.x;
+   pd->linear.y1 = pd->gld->start.y;
+
+   pd->linear.x2 = pd->gld->end.x;
+   pd->linear.y2 = pd->gld->end.y;
+
+   pd->linear.dx = pd->linear.x2 - pd->linear.x1;
+   pd->linear.dy = pd->linear.y2 - pd->linear.y1;
+   pd->linear.l = pd->linear.dx * pd->linear.dx + pd->linear.dy * pd->linear.dy;
+   pd->linear.off = 0;
+
+   if (pd->linear.l != 0)
+     {
+        pd->linear.dx /= pd->linear.l;
+        pd->linear.dy /= pd->linear.l;
+        pd->linear.off = -pd->linear.dx * pd->linear.x1 - pd->linear.dy * pd->linear.y1;
+     }
 
    return EINA_FALSE;
 }
