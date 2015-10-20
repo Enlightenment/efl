@@ -262,6 +262,8 @@ ecore_wl2_window_surface_get(Ecore_Wl2_Window *window)
 
    if (!window->surface)
      {
+        EINA_SAFETY_ON_NULL_RETURN_VAL(window->display->wl.compositor, NULL);
+
         window->surface =
           wl_compositor_create_surface(window->display->wl.compositor);
 
