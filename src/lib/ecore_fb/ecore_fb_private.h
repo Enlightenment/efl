@@ -33,6 +33,20 @@
 
 #include "Ecore_Fb.h"
 
+#ifdef EAPI
+# undef EAPI
+#endif
+
+#ifdef __GNUC__
+# if __GNUC__ >= 4
+#  define EAPI __attribute__ ((visibility("default")))
+# else
+#  define EAPI
+# endif
+#else
+# define EAPI
+#endif
+
 /* ecore_fb_li.c */
 struct _Ecore_Fb_Input_Device
 {
@@ -92,4 +106,7 @@ void ecore_fb_vt_shutdown(void);
 #define TS_GET_CAL 0x8014660a
 #endif
   
+#undef EAPI
+#define EAPI
+
 #endif
