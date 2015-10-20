@@ -4730,12 +4730,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    if (!ep->body)
      {
 #endif
-   ep->x = pf->final.x;
-   ep->y = pf->final.y;
-   ep->w = pf->final.w;
-   ep->h = pf->final.h;
+        ep->x = pf->final.x;
+        ep->y = pf->final.y;
+        ep->w = pf->final.w;
+        ep->h = pf->final.h;
 #ifdef HAVE_EPHYSICS
-}
+     }
 
 #endif
 
