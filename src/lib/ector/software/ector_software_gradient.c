@@ -366,7 +366,7 @@ destroy_color_table(Ector_Renderer_Software_Gradient_Data *gdata)
      }
 }
 
-inline static void
+static void
 _linear_helper_generic(uint *buffer, int length, Ector_Renderer_Software_Gradient_Data *g_data,
                        int t_fixed, int inc_fixed)
 {
@@ -429,9 +429,7 @@ fetch_linear_gradient(uint *buffer, Span_Data *data, int y, int x, int length)
       }
 }
 
-
-
-inline static void
+static void
 _radial_helper_generic(uint *buffer, int length, Ector_Renderer_Software_Gradient_Data *g_data, float det,
                        float delta_det, float delta_delta_det, float b, float delta_b)
 {
@@ -445,6 +443,7 @@ _radial_helper_generic(uint *buffer, int length, Ector_Renderer_Software_Gradien
         b += delta_b;
      }
 }
+
 
 void
 fetch_radial_gradient(uint *buffer, Span_Data *data, int y, int x, int length)
