@@ -927,16 +927,6 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
 
              if (!an->sel)
                {
-                  while (an->sel)
-                    {
-                       sel = an->sel->data;
-                       if (sel->obj_bg) evas_object_del(sel->obj_bg);
-                       if (sel->obj_fg) evas_object_del(sel->obj_fg);
-                       if (sel->obj) evas_object_del(sel->obj);
-                       free(sel);
-                       an->sel = eina_list_remove_list(an->sel, an->sel);
-                    }
-
                   sel = calloc(1, sizeof(Sel));
                   an->sel = eina_list_append(an->sel, sel);
 
