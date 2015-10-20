@@ -184,7 +184,7 @@ _normalize(const vec3 *v)
 {
 
    double l;
-   vec3 vec;
+   vec3 vec = {0.0, 0.0, 0.0};
 
    l = sqrt((v->x * v->x) + (v->y * v->y) + (v->z * v->z));
 
