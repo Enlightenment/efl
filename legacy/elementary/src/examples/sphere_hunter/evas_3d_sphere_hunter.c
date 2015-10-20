@@ -707,7 +707,7 @@ char score_buffer[32];
 static char *
 _score_get(int sc)
 {
-   if (sc >= 0 || sc <= 10)
+   if (sc >= 0 && sc <= 10)
      {
         eina_convert_itoa(sc, score_buffer);
         return score_buffer;
