@@ -319,7 +319,7 @@ comp_func_source_over_sse2(uint *dest, const uint *src, int length, uint color, 
 #endif
 
 void
-init_draw_helper_sse2()
+draw_helper_sse2_init()
 {
 #ifdef BUILD_SSE3
    if (eina_cpu_features_get() & EINA_CPU_SSE2)

@@ -475,7 +475,7 @@ fetch_radial_gradient(uint *buffer, Span_Data *data, int y, int x, int length)
 
 
 void
-init_drawhelper_gradient()
+drawhelper_gradient_init()
 {
    radial_helper = _radial_helper_generic;
    linear_helper = _linear_helper_generic;

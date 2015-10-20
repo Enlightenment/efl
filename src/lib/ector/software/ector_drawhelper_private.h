@@ -93,11 +93,11 @@ typedef void (*RGBA_Comp_Func_Solid)(uint *dest, int length, uint color, uint co
 extern RGBA_Comp_Func_Solid func_for_mode_solid[ECTOR_ROP_LAST];
 extern RGBA_Comp_Func func_for_mode[ECTOR_ROP_LAST];
 
-void init_drawhelper_gradient();
-void init_draw_helper_sse2();
-void init_draw_helper_neon();
+void drawhelper_gradient_init();
+void draw_helper_sse2_init();
+void draw_helper_neon_init();
 
-void init_draw_helper();
+void draw_helper_init();
 
 RGBA_Comp_Func_Solid ector_comp_func_solid_span_get(Ector_Rop op, uint color);
 RGBA_Comp_Func ector_comp_func_span_get(Ector_Rop op, uint color, Eina_Bool src_alpha);

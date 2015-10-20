@@ -315,7 +315,7 @@ void ector_software_rasterizer_init(Software_Rasterizer *rasterizer)
    rasterizer->fill_data.clip.enabled = EINA_FALSE;
    rasterizer->fill_data.unclipped_blend = 0;
    rasterizer->fill_data.blend = 0;
-   init_draw_helper();
+   draw_helper_init();
 }
 
 void ector_software_rasterizer_done(Software_Rasterizer *rasterizer)
