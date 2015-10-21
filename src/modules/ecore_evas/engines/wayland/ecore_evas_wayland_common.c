@@ -737,7 +737,8 @@ _border_size_eval(Evas_Object *obj EINA_UNUSED, EE_Wl_Smart_Data *sd)
    /* bottom border */
    if (sd->border[1])
      {
-        evas_object_move(sd->border[1], sd->x, sd->y + sd->h - sd->border_size[1]);
+        evas_object_move(sd->border[1], sd->x,
+                         sd->y + sd->h - sd->border_size[1]);
         evas_object_resize(sd->border[1], sd->w, sd->border_size[1]);
      }
 
@@ -1073,7 +1074,9 @@ _ecore_evas_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
 void
 _ecore_evas_wl_common_object_cursor_unset(Ecore_Evas *ee)
 {
-   evas_object_event_callback_del_full(ee->prop.cursor.object, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
+   evas_object_event_callback_del_full(ee->prop.cursor.object,
+                                       EVAS_CALLBACK_DEL,
+                                       _ecore_evas_object_cursor_del, ee);
 }
 
 void
@@ -1282,7 +1285,8 @@ _ecore_evas_wl_common_render_pre(void *data, Evas *evas EINA_UNUSED, void *event
    Ecore_Evas_Engine_Wl_Data *wdata;
 
    wdata = ee->engine.data;
-   wdata->anim_callback = wl_surface_frame(ecore_wl_window_surface_get(wdata->win));
+   wdata->anim_callback =
+     wl_surface_frame(ecore_wl_window_surface_get(wdata->win));
    wl_callback_add_listener(wdata->anim_callback, &_anim_listener, ee);
    ecore_evas_manual_render_set(ee, 1);
 }
