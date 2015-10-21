@@ -14,6 +14,7 @@ group { name: "elm/notify/block_events/default";
 
 group { name: "elm/notify/top/default";
    images.image: "darken_rounded_square.png" COMP;
+   data.item: "hide_finished_signal" "on";
    parts {
       part { name: "clip"; type: RECT;
          description { state: "default" 0.0;
@@ -65,7 +66,7 @@ group { name: "elm/notify/top/default";
          target: "base";
       }
       program {
-         signal: "elm,hide"; source: "elm";
+         signal: "elm,state,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "clip";
          target: "base";
