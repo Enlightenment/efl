@@ -425,6 +425,12 @@ ecore_wl2_display_connect(const char *name)
         if (ewd) goto found;
      }
 
+   if ((!name) && (!n))
+     {
+        ERR("No Wayland Display Running");
+        goto name_err;
+     }
+
    /* allocate space for display structure */
    ewd = calloc(1, sizeof(Ecore_Wl2_Display));
    if (!ewd) return NULL;
@@ -439,10 +445,10 @@ ecore_wl2_display_connect(const char *name)
    ewd->globals = eina_hash_int32_new(_cb_globals_hash_del);
 
    /* try to connect to wayland display with this name */
-   ewd->wl.display = wl_display_connect(name);
+   ewd->wl.display = wl_display_connect(ewd->name);
    if (!ewd->wl.display)
      {
-        ERR("Could not connect to display %s: %m", name);
+        ERR("Could not connect to display %s: %m", ewd->name);
         goto connect_err;
      }
 
@@ -482,6 +488,10 @@ connect_err:
    eina_hash_free(ewd->globals);
    free(ewd->name);
    free(ewd);
+   return NULL;
+
+name_err:
+   eina_hash_free(_client_displays);
    return NULL;
 
 found:
