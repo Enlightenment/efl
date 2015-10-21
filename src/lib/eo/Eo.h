@@ -437,26 +437,39 @@ EAPI Eina_Bool eo_shutdown(void);
 typedef struct _Eo_Op_Call_Data
 {
    Eo       *obj;
-   Eo_Class *klass;  // remove this not necessary in Eo_Hook_Call
    void     *func;
    void     *data;
 } Eo_Op_Call_Data;
 
-typedef void (*Eo_Hook_Call)(const Eo_Class *klass_id, const Eo *obj, const char *eo_func_name, void *func, ...);
+#define EO_CALL_CACHE_SIZE 1
 
-EAPI extern Eo_Hook_Call eo_hook_call_pre;
-EAPI extern Eo_Hook_Call eo_hook_call_post;
+typedef struct _Eo_Call_Cache_Index
+{
+   const void       *klass;
+} Eo_Call_Cache_Index;
+
+typedef struct _Eo_Call_Cache_Entry
+{
+   const void       *func;
+} Eo_Call_Cache_Entry;
+
+typedef struct _Eo_Call_Cache_Off
+{
+   int               off;
+} Eo_Call_Cache_Off;
+
+typedef struct _Eo_Call_Cache
+{
+   Eo_Call_Cache_Index index[EO_CALL_CACHE_SIZE];
+   Eo_Call_Cache_Entry entry[EO_CALL_CACHE_SIZE];
+   Eo_Call_Cache_Off   off  [EO_CALL_CACHE_SIZE];
+#if EO_CALL_CACHE_SIZE > 1
+   int next_slot;
+#endif
+} Eo_Call_Cache;
 
 // to pass the internal function call to EO_FUNC_BODY (as Func parameter)
 #define EO_FUNC_CALL(...) __VA_ARGS__
-
-#define EO_HOOK_CALL_PREPARE(Hook, FuncName)                                \
-     if (Hook)                                                          \
-       Hook(___call.klass, ___call.obj, FuncName, ___call.func);
-
-#define EO_HOOK_CALL_PREPAREV(Hook, FuncName, ...)                          \
-     if (Hook)                                                          \
-       Hook(___call.klass, ___call.obj, FuncName, ___call.func, __VA_ARGS__);
 
 #ifndef _WIN32
 # define EO_FUNC_COMMON_OP_FUNC(Name) ((const void *) Name)
@@ -466,11 +479,13 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
 
 // cache OP id, get real fct and object data then do the call
 #define EO_FUNC_COMMON_OP(Name, DefRet)                                 \
-     Eo_Op_Call_Data ___call;                                           \
+     static Eo_Call_Cache ___callcache = { 0 };                         \
      static Eo_Op ___op = EO_NOOP;                                      \
+     Eo_Op_Call_Data ___call;                                           \
      if (___op == EO_NOOP)                                              \
-       ___op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name)); \
-     if (!_eo_call_resolve(#Name, ___op, &___call, __FILE__, __LINE__)) return DefRet; \
+       ___op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name));         \
+     if (!_eo_call_resolve(#Name, ___op, &___call, &___callcache,       \
+                           __FILE__, __LINE__)) return DefRet;          \
      _Eo_##Name##_func _func_ = (_Eo_##Name##_func) ___call.func;       \
 
 // to define an EAPI function
@@ -481,9 +496,7 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
      typedef Ret (*_Eo_##Name##_func)(Eo *, void *obj_data);            \
      Ret _r;                                                            \
      EO_FUNC_COMMON_OP(Name, DefRet);                                   \
-     EO_HOOK_CALL_PREPARE(eo_hook_call_pre, #Name);                     \
      _r = _func_(___call.obj, ___call.data);                            \
-     EO_HOOK_CALL_PREPARE(eo_hook_call_post, #Name);                    \
      return _r;                                                         \
   }
 
@@ -493,9 +506,7 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
   {                                                                     \
      typedef void (*_Eo_##Name##_func)(Eo *, void *obj_data);           \
      EO_FUNC_COMMON_OP(Name, );                                         \
-     EO_HOOK_CALL_PREPARE(eo_hook_call_pre, #Name);                     \
      _func_(___call.obj, ___call.data);                                 \
-     EO_HOOK_CALL_PREPARE(eo_hook_call_post, #Name);                    \
   }
 
 #define EO_FUNC_BODYV(Name, Ret, DefRet, Arguments, ...)                \
@@ -505,9 +516,7 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
      typedef Ret (*_Eo_##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
      Ret _r;                                                            \
      EO_FUNC_COMMON_OP(Name, DefRet);                                   \
-     EO_HOOK_CALL_PREPAREV(eo_hook_call_pre, #Name, Arguments);         \
      _r = _func_(___call.obj, ___call.data, Arguments);                 \
-     EO_HOOK_CALL_PREPAREV(eo_hook_call_post, #Name, Arguments);        \
      return _r;                                                         \
   }
 
@@ -517,9 +526,7 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
   {                                                                     \
      typedef void (*_Eo_##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
      EO_FUNC_COMMON_OP(Name, );                                         \
-     EO_HOOK_CALL_PREPAREV(eo_hook_call_pre, #Name, Arguments);         \
      _func_(___call.obj, ___call.data, Arguments);                      \
-     EO_HOOK_CALL_PREPAREV(eo_hook_call_post, #Name, Arguments);        \
   }
 
 #ifndef _WIN32
@@ -537,7 +544,7 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
 EAPI Eo_Op _eo_api_op_id_get(const void *api_func);
 
 // gets the real function pointer and the object data
-EAPI Eina_Bool _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, const char *file, int line);
+EAPI Eina_Bool _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, Eo_Call_Cache *callcache, const char *file, int line);
 
 // start of eo_do barrier, gets the object pointer and ref it, put it on the stask
   EAPI Eina_Bool _eo_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool is_super, void *eo_stack);

@@ -243,9 +243,6 @@ _eo_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op
 
 /************************************ EO ************************************/
 
-EAPI Eo_Hook_Call eo_hook_call_pre = NULL;
-EAPI Eo_Hook_Call eo_hook_call_post = NULL;
-
 #define EO_INVALID_DATA (void *) -1
 // 1024 entries == 16k or 32k (32 or 64bit) for eo call stack. that's 1023
 // imbricated/recursive calls it can handle before barfing. i'd say that's ok
@@ -524,11 +521,13 @@ _eo_do_end(void *eo_stack)
      _eo_call_stack_resize(stack, EINA_FALSE);
 }
 
+#define EO_CALL_RESOLVE_CACHE 1
+
 EAPI Eina_Bool
-_eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, const char *file, int line)
+_eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, Eo_Call_Cache *callcache, const char *file, int line)
 {
    Eo_Stack_Frame *fptr;
-   const _Eo_Class *klass;
+   const _Eo_Class *klass, *inputklass;
    const op_type_funcs *func;
    Eina_Bool is_obj;
 
@@ -539,7 +538,7 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, c
 
    is_obj = !_eo_is_a_class(fptr->eo_id);
 
-   klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
+   inputklass = klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
 
    if (op == EO_NOOP)
      {
@@ -549,6 +548,43 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, c
 
         return EINA_FALSE;
      }
+
+#ifdef EO_CALL_RESOLVE_CACHE
+   if (!fptr->cur_klass)
+     {
+# if EO_CALL_CACHE_SIZE > 1
+        int i;
+
+        for (i = 0; i < EO_CALL_CACHE_SIZE; i++)
+# else
+        const int i = 0;
+# endif
+          {
+             if ((const void *)inputklass == callcache->index[i].klass)
+               {
+                  func = (const op_type_funcs *)callcache->entry[i].func;
+                  call->func = func->func;
+                  if (is_obj)
+                    {
+                       call->obj = (Eo *)fptr->eo_id;
+                       if (func->src == fptr->o.obj->klass)
+                         {
+                            if (fptr->obj_data == EO_INVALID_DATA)
+                              fptr->obj_data = (char *)fptr->o.obj + callcache->off[i].off;
+                            call->data = fptr->obj_data;
+                         }
+                       else
+                         call->data = (char *)fptr->o.obj + callcache->off[i].off;
+                    }
+                  else
+                    {
+                       call->data = NULL;
+                    }
+                  return EINA_TRUE;
+               }
+          }
+     }
+#endif
 
    /* If we have a current class, we need to itr to the next. */
    if (fptr->cur_klass)
@@ -571,7 +607,6 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, c
    if (EINA_LIKELY(func->func && func->src))
      {
         call->func = func->func;
-        call->klass = _eo_class_id_get(klass);
 
         if (is_obj)
           {
@@ -588,9 +623,25 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, c
           }
         else
           {
-             call->obj = call->klass;
              call->data = NULL;
           }
+
+#ifdef EO_CALL_RESOLVE_CACHE
+        if (!fptr->cur_klass)
+          {
+# if EO_CALL_CACHE_SIZE > 1
+             const int slot = callcache->next_slot;
+# else
+             const int slot = 0;
+# endif
+             callcache->index[slot].klass = (const void *)inputklass;
+             callcache->entry[slot].func = (const void *)func;
+             callcache->off[slot].off = (int)((long)((char *)call->data - (char *)fptr->o.obj));
+# if EO_CALL_CACHE_SIZE > 1
+             callcache->next_slot = (slot + 1) % EO_CALL_CACHE_SIZE;
+# endif
+          }
+#endif
 
         return EINA_TRUE;
      }
@@ -623,7 +674,6 @@ end:
              if (EINA_LIKELY(func->func && func->src))
                {
                   call->obj = _eo_id_get(emb_obj);
-                  call->klass = _eo_class_id_get(emb_obj->klass);
                   call->func = func->func;
                   call->data = _eo_data_scope_get(emb_obj, func->src);
 
