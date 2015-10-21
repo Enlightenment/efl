@@ -4624,6 +4624,7 @@ _ephysics_body_box_face_obj_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Obje
          bw = body->size.w;
          bh = h;
          bd = w;
+         break;
       case EPHYSICS_BODY_BOX_FACE_TOP:
       case EPHYSICS_BODY_BOX_FACE_BOTTOM:
          if ((w == body->size.w) && (h == body->size.d))
