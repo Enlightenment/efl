@@ -404,7 +404,7 @@ _key_down(void *data,
              if (camera_y > 26.5)
                {
                   camera_y -= 0.5;
-                  camera_z -= 0.5 * (7 / 4);
+                  camera_z -= 0.5 * (7.0 / 4.0);
                }
           }
         if (!strcmp(ev->key, "Down"))
@@ -412,7 +412,7 @@ _key_down(void *data,
              if (camera_y < 100.0)
                {
                   camera_y += 0.5;
-                  camera_z += 0.5 * (7 / (double)4);
+                  camera_z += 0.5 * (7.0 / 4.0);
                }
           }
         if (!strcmp(ev->key, "n"))
