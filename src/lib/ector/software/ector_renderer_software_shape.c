@@ -31,7 +31,7 @@ typedef struct _Outline
 }Outline;
 
 
-#define TO_FT_COORD(x) ((x) * 64); // to freetype 26.6 coordinate.
+#define TO_FT_COORD(x) ((x) * 64) // to freetype 26.6 coordinate.
 
 static inline void
 _grow_outline_contour(Outline *outline, int num)
@@ -185,14 +185,15 @@ static void _outline_transform(Outline *outline, Eina_Matrix3 *m)
    double x, y;
    SW_FT_Outline *ft_outline = &outline->ft_outline;
 
-   if (m)
+   if (m && (eina_matrix3_type_get(m) != EINA_MATRIX_TYPE_IDENTITY))
      {
         for (i = 0; i < ft_outline->n_points; i++)
           {
              eina_matrix3_point_transform(m,
-                                          ft_outline->points[i].x/64,/* convert back to normal coord.*/
-                                          ft_outline->points[i].y/64,/* convert back to normal coord.*/
+                                          ft_outline->points[i].x/64.0,/* convert back to normal coord.*/
+                                          ft_outline->points[i].y/64.0,/* convert back to normal coord.*/
                                           &x, &y);
+
              ft_outline->points[i].x = TO_FT_COORD(x);
              ft_outline->points[i].y = TO_FT_COORD(y);
           }
