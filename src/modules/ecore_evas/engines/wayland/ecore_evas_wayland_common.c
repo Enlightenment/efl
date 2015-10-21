@@ -477,8 +477,6 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
    if (w < 1) w = 1;
    if (h < 1) h = 1;
 
-   if ((ee->req.w == w) && (ee->req.h == h)) return;
-
    ee->req.w = w;
    ee->req.h = h;
    orig_w = w;
