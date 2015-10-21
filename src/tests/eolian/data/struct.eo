@@ -23,5 +23,8 @@ class Struct {
          }
          return: own(char*);
       }
+      bar {
+         return: Named *;
+      }
    }
 }
