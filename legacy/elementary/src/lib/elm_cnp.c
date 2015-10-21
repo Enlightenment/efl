@@ -2233,8 +2233,6 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    evas_object_show(icon);
    evas_object_show(dragwin);
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x3, &y3);
-   _dragx = x3 - x2;
-   _dragy = y3 - y2;
 
    rot = ecore_evas_rotation_get(ee);
    switch (rot)
@@ -2242,18 +2240,26 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
       case 90:
          xr = y3;
          yr = ew - x3;
+         _dragx = y3 - y2;
+         _dragy = x3 - x2;
          break;
       case 180:
          xr = ew - x3;
          yr = eh - y3;
+         _dragx = x3 - x2;
+         _dragy = y3 - y2;
          break;
       case 270:
          xr = eh - y3;
          yr = x3;
+         _dragx = y3 - y2;
+         _dragy = x3 - x2;
          break;
       default:
          xr = x3;
          yr = y3;
+         _dragx = x3 - x2;
+         _dragy = y3 - y2;
          break;
      }
    x = ex + xr - _dragx;
