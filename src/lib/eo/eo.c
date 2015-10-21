@@ -521,10 +521,8 @@ _eo_do_end(void *eo_stack)
      _eo_call_stack_resize(stack, EINA_FALSE);
 }
 
-#define EO_CALL_RESOLVE_CACHE 1
-
 EAPI Eina_Bool
-_eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, Eo_Call_Cache *callcache, const char *file, int line)
+_eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *cache, const char *file, int line)
 {
    Eo_Stack_Frame *fptr;
    const _Eo_Class *klass, *inputklass;
@@ -540,7 +538,7 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, E
 
    inputklass = klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
 
-   if (op == EO_NOOP)
+   if (cache->op == EO_NOOP)
      {
         ERR("%s:%d: unable to resolve %s api func '%s' in class '%s'.",
             file, line, (!is_obj ? "class" : "regular"),
@@ -549,7 +547,7 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, E
         return EINA_FALSE;
      }
 
-#ifdef EO_CALL_RESOLVE_CACHE
+# if EO_CALL_CACHE_SIZE > 0
    if (!fptr->cur_klass)
      {
 # if EO_CALL_CACHE_SIZE > 1
@@ -560,9 +558,9 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, E
         const int i = 0;
 # endif
           {
-             if ((const void *)inputklass == callcache->index[i].klass)
+             if ((const void *)inputklass == cache->index[i].klass)
                {
-                  func = (const op_type_funcs *)callcache->entry[i].func;
+                  func = (const op_type_funcs *)cache->entry[i].func;
                   call->func = func->func;
                   if (is_obj)
                     {
@@ -570,11 +568,11 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, E
                        if (func->src == fptr->o.obj->klass)
                          {
                             if (fptr->obj_data == EO_INVALID_DATA)
-                              fptr->obj_data = (char *)fptr->o.obj + callcache->off[i].off;
+                              fptr->obj_data = (char *)fptr->o.obj + cache->off[i].off;
                             call->data = fptr->obj_data;
                          }
                        else
-                         call->data = (char *)fptr->o.obj + callcache->off[i].off;
+                         call->data = (char *)fptr->o.obj + cache->off[i].off;
                     }
                   else
                     {
@@ -589,7 +587,7 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, E
    /* If we have a current class, we need to itr to the next. */
    if (fptr->cur_klass)
      {
-        func = _eo_kls_itr_next(klass, fptr->cur_klass, op);
+        func = _eo_kls_itr_next(klass, fptr->cur_klass, cache->op);
 
         if (!func)
           goto end;
@@ -598,7 +596,7 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, E
      }
    else
      {
-        func = _dich_func_get(klass, op);
+        func = _dich_func_get(klass, cache->op);
 
         if (!func)
           goto end;
@@ -626,19 +624,20 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, E
              call->data = NULL;
           }
 
-#ifdef EO_CALL_RESOLVE_CACHE
+# if EO_CALL_CACHE_SIZE > 0
+        #warning "blah"
         if (!fptr->cur_klass)
           {
 # if EO_CALL_CACHE_SIZE > 1
-             const int slot = callcache->next_slot;
+             const int slot = cache->next_slot;
 # else
              const int slot = 0;
 # endif
-             callcache->index[slot].klass = (const void *)inputklass;
-             callcache->entry[slot].func = (const void *)func;
-             callcache->off[slot].off = (int)((long)((char *)call->data - (char *)fptr->o.obj));
+             cache->index[slot].klass = (const void *)inputklass;
+             cache->entry[slot].func = (const void *)func;
+             cache->off[slot].off = (int)((long)((char *)call->data - (char *)fptr->o.obj));
 # if EO_CALL_CACHE_SIZE > 1
-             callcache->next_slot = (slot + 1) % EO_CALL_CACHE_SIZE;
+             cache->next_slot = (slot + 1) % EO_CALL_CACHE_SIZE;
 # endif
           }
 #endif
@@ -649,7 +648,7 @@ _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, E
    if (func->src != NULL)
      {
         ERR("in %s:%d: you called a pure virtual func '%s' (%d) of class '%s'.",
-            file, line, func_name, op, klass->desc->name);
+            file, line, func_name, cache->op, klass->desc->name);
         return EINA_FALSE;
      }
 
@@ -667,7 +666,7 @@ end:
              if (!emb_obj)
                continue;
 
-             func = _dich_func_get(emb_obj->klass, op);
+             func = _dich_func_get(emb_obj->klass, cache->op);
              if (func == NULL)
                continue;
 
@@ -690,14 +689,14 @@ end:
         if (fptr->cur_klass)
           {
              ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s' for super of '%s'.",
-                 file, line, func_name, op, main_klass->desc->name,
+                 file, line, func_name, cache->op, main_klass->desc->name,
                  fptr->cur_klass->desc->name);
           }
         else
           {
              /* we should not be able to take this branch */
              ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s'.",
-                 file, line, func_name, op, main_klass->desc->name);
+                 file, line, func_name, cache->op, main_klass->desc->name);
           }
      }
    return EINA_FALSE;

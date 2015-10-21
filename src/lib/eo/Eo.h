@@ -460,12 +460,15 @@ typedef struct _Eo_Call_Cache_Off
 
 typedef struct _Eo_Call_Cache
 {
+#if EO_CALL_CACHE_SIZE > 0
    Eo_Call_Cache_Index index[EO_CALL_CACHE_SIZE];
    Eo_Call_Cache_Entry entry[EO_CALL_CACHE_SIZE];
    Eo_Call_Cache_Off   off  [EO_CALL_CACHE_SIZE];
-#if EO_CALL_CACHE_SIZE > 1
-   int next_slot;
+# if EO_CALL_CACHE_SIZE > 1
+   int                 next_slot;
+# endif
 #endif
+   Eo_Op               op;
 } Eo_Call_Cache;
 
 // to pass the internal function call to EO_FUNC_BODY (as Func parameter)
@@ -479,12 +482,11 @@ typedef struct _Eo_Call_Cache
 
 // cache OP id, get real fct and object data then do the call
 #define EO_FUNC_COMMON_OP(Name, DefRet)                                 \
-     static Eo_Call_Cache ___callcache; /* static 0 by default */       \
-     static Eo_Op ___op; /* static 0 by default */                      \
+     static Eo_Call_Cache ___cache; /* static 0 by default */           \
      Eo_Op_Call_Data ___call;                                           \
-     if (___op == EO_NOOP)                                              \
-       ___op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name));         \
-     if (!_eo_call_resolve(#Name, ___op, &___call, &___callcache,       \
+     if (___cache.op == EO_NOOP)                                        \
+       ___cache.op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name));   \
+     if (!_eo_call_resolve(#Name, &___call, &___cache,                  \
                            __FILE__, __LINE__)) return DefRet;          \
      _Eo_##Name##_func _func_ = (_Eo_##Name##_func) ___call.func;       \
 
@@ -544,7 +546,7 @@ typedef struct _Eo_Call_Cache
 EAPI Eo_Op _eo_api_op_id_get(const void *api_func);
 
 // gets the real function pointer and the object data
-EAPI Eina_Bool _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, Eo_Call_Cache *callcache, const char *file, int line);
+EAPI Eina_Bool _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *callcache, const char *file, int line);
 
 // start of eo_do barrier, gets the object pointer and ref it, put it on the stask
   EAPI Eina_Bool _eo_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool is_super, void *eo_stack);
