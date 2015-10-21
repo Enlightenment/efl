@@ -1314,7 +1314,7 @@ _ecore_evas_wl_common_render_pre(void *data, Evas *evas EINA_UNUSED, void *event
 
    wdata = ee->engine.data;
    wdata->anim_callback =
-     wl_surface_frame(ecore_wl_window_surface_get(wdata->win));
+     wl_surface_frame(ecore_wl2_window_surface_get(wdata->win));
    wl_callback_add_listener(wdata->anim_callback, &_anim_listener, ee);
    ecore_evas_manual_render_set(ee, 1);
 }
