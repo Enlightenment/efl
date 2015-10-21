@@ -2454,7 +2454,7 @@ _edje_part_recalc_single_filter(Edje *ed,
                                 Edje_Part_Description_Common *chosen_desc,
                                 double pos)
 {
-   Edje_Part_Description_Spec_Filter *filter;
+   Edje_Part_Description_Spec_Filter *filter, *prevfilter;
    Eina_List *filter_sources = NULL, *prev_sources = NULL;
    const char *src1, *src2, *part, *code;
    Evas_Object *obj = ep->object;
@@ -2468,6 +2468,7 @@ _edje_part_recalc_single_filter(Edje *ed,
         filter = &chosen_edt->filter;
         prev_sources = edt->filter.sources;
         filter_sources = chosen_edt->filter.sources;
+        prevfilter = &(edt->filter);
      }
    else if (ep->part->type == EDJE_PART_TYPE_IMAGE)
      {
@@ -2476,6 +2477,7 @@ _edje_part_recalc_single_filter(Edje *ed,
         filter = &chosen_edi->filter;
         prev_sources = edi->filter.sources;
         filter_sources = chosen_edi->filter.sources;
+        prevfilter = &(edi->filter);
      }
    else if (ep->part->type == EDJE_PART_TYPE_PROXY)
      {
@@ -2484,6 +2486,7 @@ _edje_part_recalc_single_filter(Edje *ed,
         filter = &chosen_edp->filter;
         prev_sources = edp->filter.sources;
         filter_sources = chosen_edp->filter.sources;
+        prevfilter = &(edp->filter);
      }
    else if (ep->part->type == EDJE_PART_TYPE_SNAPSHOT)
      {
@@ -2492,12 +2495,15 @@ _edje_part_recalc_single_filter(Edje *ed,
         filter = &chosen_eds->filter;
         prev_sources = eds->filter.sources;
         filter_sources = chosen_eds->filter.sources;
+        prevfilter = &(eds->filter);
      }
    else
      {
         CRI("Invalid call to filter recalc");
         return;
      }
+
+   if ((!filter->code) && (!prevfilter->code)) return;
 
    /* common code below */
    code = _edje_filter_get(ed, filter);
@@ -4700,25 +4706,30 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
           }
         else
           {
-             if (ep->nested_smart) /* Cancel map of smart obj holding nested parts */
+             if ((ep->param1.p.mapped) ||
+                 ((ep->param2) && (ep->param2->p.mapped)) ||
+                 ((ep->custom) && (ep->custom->p.mapped)))
                {
-                  eo_do(ep->nested_smart,
-                        evas_obj_map_enable_set(EINA_FALSE),
-                        evas_obj_map_set(NULL));
-               }
-             else
-               {
-#ifdef HAVE_EPHYSICS
-                  if (!ep->body)
+                  if (ep->nested_smart) /* Cancel map of smart obj holding nested parts */
                     {
-#endif
-                  if (mo)
-                    eo_do(mo,
-                          evas_obj_map_enable_set(0),
-                          evas_obj_map_set(NULL));
+                       eo_do(ep->nested_smart,
+                             evas_obj_map_enable_set(EINA_FALSE),
+                             evas_obj_map_set(NULL));
+                    }
+                  else
+                    {
 #ifdef HAVE_EPHYSICS
-               }
+                       if (!ep->body)
+                         {
 #endif
+                            if (mo)
+                              eo_do(mo,
+                                    evas_obj_map_enable_set(0),
+                                    evas_obj_map_set(NULL));
+#ifdef HAVE_EPHYSICS
+                         }
+#endif
+                    }
                }
           }
      }
