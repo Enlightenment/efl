@@ -12,8 +12,11 @@ int main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    buf = eina_strbuf_new();
 
-   eina_strbuf_append_length(buf, "buffe", 5);
-   eina_strbuf_append_char(buf, 'r');
+   eina_strbuf_append_length(buf, "BUFFE", 5);
+   eina_strbuf_append_char(buf, 'R');
+   printf("%s\n", eina_strbuf_string_get(buf));
+
+   eina_strbuf_tolower(buf);
    printf("%s\n", eina_strbuf_string_get(buf));
 
    eina_strbuf_insert_escaped(buf, "my ", 0);
