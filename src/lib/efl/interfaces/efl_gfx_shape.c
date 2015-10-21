@@ -1118,9 +1118,9 @@ _efl_gfx_path_parse_arc(const char *content, char **end,
             end1 = _skipcomma(end1);
 
             // sweeo
-            *sweep = strtol(end2, &end1, 10) ? EINA_TRUE : EINA_FALSE;
+            *sweep = strtol(end1, &end2, 10) ? EINA_TRUE : EINA_FALSE;
             if (!end1 || (end1 == end2)) return EINA_FALSE;
-            str = _skipcomma(end1);
+            str = _skipcomma(end2);
 
             if (_parse_number(&str, x))
               if (_parse_number(&str, y))
