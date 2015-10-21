@@ -479,8 +479,8 @@ typedef struct _Eo_Call_Cache
 
 // cache OP id, get real fct and object data then do the call
 #define EO_FUNC_COMMON_OP(Name, DefRet)                                 \
-     static Eo_Call_Cache ___callcache = { 0 };                         \
-     static Eo_Op ___op = EO_NOOP;                                      \
+     static Eo_Call_Cache ___callcache; /* static 0 by default */       \
+     static Eo_Op ___op; /* static 0 by default */                      \
      Eo_Op_Call_Data ___call;                                           \
      if (___op == EO_NOOP)                                              \
        ___op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name));         \
