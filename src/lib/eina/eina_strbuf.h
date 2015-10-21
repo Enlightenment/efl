@@ -642,6 +642,15 @@ EAPI void eina_strbuf_ltrim(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 EAPI void eina_strbuf_rtrim(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
+ * @brief Convert the string to lower case.
+ *
+ * @param buf the string buffer to work with.
+ *
+ * This function converts all the characters in the strbuf to lower case.
+ */
+EAPI void eina_strbuf_tolower(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
+
+/**
  * @}
  */
 

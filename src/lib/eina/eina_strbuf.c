@@ -197,6 +197,14 @@ eina_strbuf_rtrim(Eina_Strbuf *buf)
    ((unsigned char *)buf->buf)[buf->len] = '\0';
 }
 
+EAPI void
+eina_strbuf_tolower(Eina_Strbuf *buf)
+{
+   if (!buf || !(buf->buf)) return;
+
+   eina_str_tolower((char **)&(buf->buf));
+}
+
 /* Unicode */
 
 #include "eina_strbuf_template_c.x"
