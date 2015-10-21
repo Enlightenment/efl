@@ -625,7 +625,6 @@ _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *ca
           }
 
 # if EO_CALL_CACHE_SIZE > 0
-        #warning "blah"
         if (!fptr->cur_klass)
           {
 # if EO_CALL_CACHE_SIZE > 1
