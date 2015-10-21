@@ -314,9 +314,12 @@ eet_identity_print(Eet_Key *key,
              while ((err = gnutls_hex_encode(rsa_raw + i, res, &size)) ==
                     GNUTLS_E_SHORT_MEMORY_BUFFER)
                {
+                  char *temp;
+
                   size += 128;
-                  if (!(res = realloc(res, size)))
+                  if (!(temp = realloc(res, size)))
                     goto on_error;
+                  res = temp;
                }
              if (err)
                goto on_error;
