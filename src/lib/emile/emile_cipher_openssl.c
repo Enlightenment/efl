@@ -727,7 +727,6 @@ emile_cipher_server_connect(Emile_Cipher_Type t)
    Emile_SSL *r;
    const char *msg;
    int options;
-   int dh = 0;
 
    if (!emile_cipher_init()) return NULL;
 
@@ -761,18 +760,7 @@ emile_cipher_server_connect(Emile_Cipher_Type t)
    return r;
 
  on_error:
-   if (dh)
-     {
-        if (dh & DH_CHECK_P_NOT_PRIME)
-          msg = "dh_params could not generate a prime!";
-        else
-          msg = "dh_params could not generate a safe prime!";
-     }
-   else
-     {
-        msg = ERR_reason_error_string(ERR_get_error());
-     }
-
+   msg = ERR_reason_error_string(ERR_get_error());
    ERR("OpenSSL error: '%s'.", msg);
    emile_cipher_free(r);
    return NULL;
