@@ -122,17 +122,13 @@ static void
 _elm_image_internal_sizing_eval(Evas_Object *obj, Elm_Image_Data *sd)
 {
    Evas_Coord x, y, w, h;
-   const char *type;
 
    if (!sd->img) return;
 
    w = sd->img_w;
    h = sd->img_h;
 
-   type = evas_object_type_get(sd->img);
-   if (!type) return;
-
-   if (!strcmp(type, "edje"))
+   if (eo_isa(sd->img, EDJE_OBJECT_CLASS))
      {
         x = sd->img_x;
         y = sd->img_y;
@@ -1268,15 +1264,11 @@ _elm_image_object_size_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int *w, int 
 {
    int tw, th;
    int cw = 0, ch = 0;
-   const char *type;
 
    if (w) *w = 0;
    if (h) *h = 0;
 
-   type = evas_object_type_get(sd->img);
-   if (!type) return;
-
-   if (!strcmp(type, "edje"))
+   if (eo_isa(sd->img, EDJE_OBJECT_CLASS))
      edje_object_size_min_get(sd->img, &tw, &th);
    else
      evas_object_image_size_get(sd->img, &tw, &th);
