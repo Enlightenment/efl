@@ -2810,21 +2810,28 @@ _eet_data_dump_token_get(const char *src,
                          int        *len)
 {
    const char *p;
-   char *tok = NULL;
+   char *tok = NULL, *temp;
    int in_token = 0;
    int in_quote = 0;
    int in_escape = 0;
    int tlen = 0, tsize = 0;
 
-#define TOK_ADD(x)                     \
-  do {                                 \
-       tlen++;                         \
-       if (tlen >= tsize)              \
-         {                             \
-            tsize += 32;               \
-            tok = realloc(tok, tsize); \
-         }                             \
-       tok[tlen - 1] = x;              \
+#define TOK_ADD(x)                        \
+  do {                                    \
+       tlen++;                            \
+       if (tlen >= tsize)                 \
+         {                                \
+            tsize += 32;                  \
+            temp = tok;                   \
+            tok = realloc(tok, tsize);    \
+            if (!tok)                     \
+              {                           \
+                 tok = temp;              \
+                 ERR("Realloc failed\n"); \
+                 goto realloc_error;      \
+              }                           \
+         }                                \
+       tok[tlen - 1] = x;                 \
     } while (0)
 
    for (p = src; *len > 0; p++, (*len)--)
@@ -2890,6 +2897,7 @@ _eet_data_dump_token_get(const char *src,
         return tok;
      }
 
+realloc_error:
    free(tok);
 
    return NULL;
