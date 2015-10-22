@@ -57,7 +57,7 @@ emile_compress(const Eina_Binbuf *data,
                               eina_binbuf_length_get(data));
         /* It is going to be smaller and should never fail, if it does you are in deep poo. */
         temp = realloc(compact, length);
-        if (temp) temp = compact;
+        if (temp) compact = temp;
 
         if (length > 0)
           ok = EINA_TRUE;
