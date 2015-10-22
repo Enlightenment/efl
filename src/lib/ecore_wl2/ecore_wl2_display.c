@@ -193,18 +193,26 @@ _cb_connect_data(void *data, Ecore_Fd_Handler *hdl)
      }
 
    if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_READ))
-     ret = wl_display_dispatch(ewd->wl.display);
-   else if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_WRITE))
+     {
+        ret = wl_display_dispatch(ewd->wl.display);
+        if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
+          {
+             /* TODO: handle error case */
+             return ECORE_CALLBACK_CANCEL;
+          }
+     }
+
+   if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_WRITE))
      {
         ret = wl_display_flush(ewd->wl.display);
         if (ret == 0)
           ecore_main_fd_handler_active_set(hdl, ECORE_FD_READ);
-     }
 
-   if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
-     {
-        /* TODO: handle error case */
-        return ECORE_CALLBACK_CANCEL;
+        if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
+          {
+             /* TODO: handle error case */
+             return ECORE_CALLBACK_CANCEL;
+          }
      }
 
    return ECORE_CALLBACK_RENEW;
