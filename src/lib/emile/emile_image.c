@@ -1633,7 +1633,7 @@ _emile_jpeg_data(Emile_Image *image,
    memset(&cinfo, 0, sizeof(cinfo));
    if (prop->rotated)
      {
-        degree = opts->degree;
+        degree = opts ? opts->degree : 0;
         if (degree == 90 || degree == 270)
           change_wh = EINA_TRUE;
      }
