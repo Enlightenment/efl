@@ -462,7 +462,7 @@ ecore_wl2_display_connect(const char *name)
 
    ewd->fd_hdl =
      ecore_main_fd_handler_add(wl_display_get_fd(ewd->wl.display),
-                               ECORE_FD_READ | ECORE_FD_WRITE | ECORE_FD_ERROR,
+                               ECORE_FD_READ | ECORE_FD_ERROR,
                                _cb_connect_data, ewd, NULL, NULL);
 
    ewd->idle_enterer = ecore_idle_enterer_add(_cb_connect_idle, ewd);
