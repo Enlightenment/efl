@@ -401,7 +401,7 @@ _items_create(Evas_Object *obj)
         strftime(buf, sizeof(buf), "%a", &time_daysel);
         elm_object_text_set(chk, buf);
 
-        snprintf(buf, sizeof(buf), "day%d", idx);
+        snprintf(buf, sizeof(buf), "day%u", idx);
         elm_layout_content_set(obj, buf, chk);
 
         // XXX: ACCESS
