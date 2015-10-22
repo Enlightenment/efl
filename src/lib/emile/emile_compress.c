@@ -38,7 +38,7 @@ emile_compress(const Eina_Binbuf *data,
                Emile_Compressor_Type t,
                Emile_Compressor_Level l)
 {
-   void *compact;
+   void *compact, *temp;
    int length;
    int level = l;
    Eina_Bool ok = EINA_FALSE;
@@ -55,19 +55,23 @@ emile_compress(const Eina_Binbuf *data,
         length = LZ4_compress((const char *)eina_binbuf_string_get(data),
                               compact,
                               eina_binbuf_length_get(data));
+        /* It is going to be smaller and should never fail, if it does you are in deep poo. */
+        temp = realloc(compact, length);
+        if (temp) temp = compact;
+
         if (length > 0)
           ok = EINA_TRUE;
-        /* It is going to be smaller and should never fail, if it does you are in deep poo. */
-        compact = realloc(compact, length);
         break;
 
       case EMILE_LZ4HC:
         length = LZ4_compressHC((const char *)eina_binbuf_string_get(data),
                                 compact,
                                 eina_binbuf_length_get(data));
+        temp = realloc(compact, length);
+        if (temp) compact = temp;
+
         if (length > 0)
           ok = EINA_TRUE;
-        compact = realloc(compact, length);
         break;
 
       case EMILE_ZLIB:
