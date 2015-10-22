@@ -1442,10 +1442,6 @@ _edje_object_part_text_raw_set(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp, c
    _edje_recalc(ed);
    if (ed->text_change.func)
      ed->text_change.func(ed->text_change.data, obj, part);
-   if (text)
-     _edje_emit(ed, "text,set", rp->part->name);
-   else
-     _edje_emit(ed, "text,unset", rp->part->name);
    return EINA_TRUE;
 }
 
@@ -2890,7 +2886,6 @@ _edje_object_part_swallow(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_
              eud->u.swallow.child = obj_swallow;
           }
      }
-   _edje_emit(ed, "swallow", rp->part->name);
 
    return EINA_TRUE;
 }
@@ -3167,7 +3162,6 @@ _edje_object_part_unswallow(Eo *obj EINA_UNUSED, Edje *ed, Evas_Object *obj_swal
                     if (eud->type == EDJE_USER_SWALLOW && eud->u.swallow.child == obj_swallow)
                       {
                          _edje_user_definition_free(eud);
-                         _edje_emit(ed, "unswallow", rp->part->name);
                          return;
                       }
                }
@@ -3188,7 +3182,6 @@ _edje_object_part_unswallow(Eo *obj EINA_UNUSED, Edje *ed, Evas_Object *obj_swal
          * -zmike, 6 April 2015
          */
         //_edje_recalc_do(ed);
-        _edje_emit(ed, "unswallow", rp->part->name);
         return;
      }
 }
