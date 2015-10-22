@@ -66,6 +66,17 @@ eina_point_3d_cmp(const Eina_Point_3D *a, const Eina_Point_3D *b)
    return EINA_FALSE;
 }
 
+static inline Eina_Bool
+eina_quaternion_f16p16_cmp(const Eina_Quaternion_F16p16 *a, const Eina_Quaternion_F16p16 *b)
+{
+   if ((a->x ==  b->x) &&
+       (a->y == b->y) &&
+       (a->z == b->z) &&
+       (a->w == b->w))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 START_TEST(eina_test_quaternion_norm)
 {
    static const Eina_Quaternion q = { 1, 3, 4, 5 };
@@ -340,6 +351,34 @@ START_TEST(eina_test_matrix_quaternion)
 }
 END_TEST
 
+START_TEST(eina_test_quaternion_f16p16_lerp)
+{
+   Eina_Quaternion_F16p16 r, p = {0, 0, 0, 0};
+   Eina_Quaternion_F16p16 q = {65536, 65536, 65536, 0};
+   Eina_Quaternion_F16p16  res1 = {65536, 65536, 65536, 0};
+   Eina_Quaternion_F16p16  res2 = {0, 0, 0, 0};
+
+   eina_init();
+
+   eina_quaternion_f16p16_lerp(&r, &p, &q, 65536);
+   fail_if(!eina_quaternion_f16p16_cmp(&r, &res1));
+   eina_quaternion_f16p16_lerp(&r, &p, &q, 0);
+   fail_if(!eina_quaternion_f16p16_cmp(&r, &res2));
+
+   eina_quaternion_f16p16_slerp(&r, &p, &q, 0);
+   fail_if(!eina_quaternion_f16p16_cmp(&r, &res2));
+   eina_quaternion_f16p16_slerp(&r, &p, &q, 65536);
+   fail_if(!eina_quaternion_f16p16_cmp(&r, &res1));
+
+   eina_quaternion_f16p16_nlerp(&r, &p, &q, 0);
+   fail_if(!eina_quaternion_f16p16_cmp(&r, &res2));
+   eina_quaternion_f16p16_nlerp(&r, &p, &q, 65536);
+   fail_if(!eina_quaternion_f16p16_cmp(&r, &res1));
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_quaternion(TCase *tc)
 {
@@ -355,4 +394,5 @@ eina_test_quaternion(TCase *tc)
    tcase_add_test(tc, eina_test_quaternion_normalized);
    //tcase_add_test(tc, eina_test_matrix_quaternion);
    tcase_add_test(tc, eina_test_matrix_recompose);
+   tcase_add_test(tc, eina_test_quaternion_f16p16_lerp);
 }
