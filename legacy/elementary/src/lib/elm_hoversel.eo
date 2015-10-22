@@ -43,7 +43,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
          }
       }
       @property scrollable {
-         [[Control wether scrolling is enabled.
+         [[Control whether scrolling is enabled.
 
            This Limit the size of contents and make them scrollable.
 
