@@ -91,8 +91,6 @@ lib_ecore_audio_libecore_audio_la_LDFLAGS += @coreaudio_ldflags@
 
 endif
 
-endif
-
 if HAVE_ELUA
 
 ecore_audio_eolian_lua = $(ecore_audio_eolian_files:%.eo=%.eo.lua)
@@ -103,5 +101,7 @@ CLEANFILES += $(generated_ecore_audio_lua_all)
 
 installed_ecoreaudioluadir = $(datadir)/elua/modules/ecore_audio
 nodist_installed_ecoreaudiolua_DATA = $(generated_ecore_audio_lua_all)
+
+endif
 
 endif
