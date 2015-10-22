@@ -933,11 +933,10 @@ static void
 _map_uv_set(Evas_Object *obj, Evas_Map *map)
 {
    Evas_Coord x, y, w, h;
-   const char *type = evas_object_type_get(obj);
 
    // FIXME: only handles filled obj
-   if ((type) && (!strcmp(type, "image") &&
-                  !evas_object_image_source_get(obj)))
+   if (eo_isa(obj, EVAS_IMAGE_CLASS) &&
+       !evas_object_image_source_get(obj))
      {
         int iw, ih;
         evas_object_image_size_get(obj, &iw, &ih);
