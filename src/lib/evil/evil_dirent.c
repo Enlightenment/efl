@@ -89,7 +89,7 @@ DIR *opendir(char const *name)
      {
         errno = ENOMEM;
         free(tmp);
-
+        free(dir);
         return NULL;
      }
    dir->handle = FindFirstFile(wname, &dir->data);
