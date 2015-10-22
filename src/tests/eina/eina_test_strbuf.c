@@ -486,6 +486,34 @@ START_TEST(strbuf_trim)
 }
 END_TEST
 
+START_TEST(strbuf_tolower)
+{
+   Eina_Strbuf* buf;
+   const char *str;
+
+   eina_init();
+   buf = eina_strbuf_new();
+   fail_unless(buf != NULL);
+
+   eina_strbuf_append(buf, "UPPER");
+   eina_strbuf_tolower(buf);
+   str = eina_strbuf_string_get(buf);
+   fail_unless(str || strcmp(str, "upper"));
+
+   eina_strbuf_tolower(buf);
+   str = eina_strbuf_string_get(buf);
+   fail_unless(str || strcmp(str, "upper"));
+
+   eina_strbuf_append(buf, "1@ ");
+   eina_strbuf_tolower(buf);
+   str = eina_strbuf_string_get(buf);
+   fail_unless(str || strcmp(str, "upper1@ "));
+
+   eina_strbuf_free(buf);
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_strbuf(TCase *tc)
 {
@@ -499,4 +527,5 @@ eina_test_strbuf(TCase *tc)
    tcase_add_test(tc, strbuf_prepend_realloc);
    tcase_add_test(tc, strbuf_manage_simple);
    tcase_add_test(tc, strbuf_trim);
+   tcase_add_test(tc, strbuf_tolower);
 }
