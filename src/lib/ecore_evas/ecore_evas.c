@@ -1317,7 +1317,7 @@ ecore_evas_rotation_with_resize_set(Ecore_Evas *ee, int rot)
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
         ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
-                         "ecore_evas_rotation_set");
+                         "ecore_evas_rotation_with_resize_set");
         return;
      }
    rot = rot % 360;
