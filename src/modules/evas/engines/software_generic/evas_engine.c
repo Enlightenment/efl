@@ -427,6 +427,9 @@ Eina_Mempool *_mp_command_ector_surface = NULL;
 static int cpunum = 0;
 static int _evas_soft_gen_log_dom = -1;
 
+//#define QCMD evas_thread_cmd_enqueue
+#define QCMD evas_thread_queue_flush
+
 static void
 eng_output_dump(void *data EINA_UNUSED)
 {
@@ -706,7 +709,7 @@ _draw_rectangle_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
    cr->mask_x = dc->clip.mask_x;
    cr->mask_y = dc->clip.mask_y;
 
-   evas_thread_cmd_enqueue(_draw_thread_rectangle_draw, cr);
+   QCMD(_draw_thread_rectangle_draw, cr);
 }
 
 static void
@@ -832,7 +835,7 @@ _line_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
    cl->mask_x = dc->clip.mask_x;
    cl->mask_y = dc->clip.mask_y;
 
-   evas_thread_cmd_enqueue(_draw_thread_line_draw, cl);
+   QCMD(_draw_thread_line_draw, cl);
 }
 
 static void
@@ -969,7 +972,7 @@ _polygon_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
    cp->mask_x = dc->clip.mask_x;
    cp->mask_y = dc->clip.mask_y;
 
-   evas_thread_cmd_enqueue(_draw_thread_polygon_draw, cp);
+   QCMD(_draw_thread_polygon_draw, cp);
 }
 
 static void
@@ -1865,7 +1868,7 @@ _image_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, 
    cr->render_op = dc->render_op;
    cr->smooth = smooth;
 
-   evas_thread_cmd_enqueue(_draw_thread_image_draw, cr);
+   QCMD(_draw_thread_image_draw, cr);
 
    return EINA_TRUE;
 }
@@ -2180,7 +2183,7 @@ _map_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RG
    cm->mask_x = dc->clip.mask_x;
    cm->mask_y = dc->clip.mask_y;
 
-   evas_thread_cmd_enqueue(_draw_thread_map_draw, cm);
+   QCMD(_draw_thread_map_draw, cm);
 
    return EINA_TRUE;
 }
@@ -2449,7 +2452,7 @@ _multi_font_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y
    mf->y = y;
    mf->texts = texts;
 
-   evas_thread_cmd_enqueue(_draw_thread_multi_font_draw, mf);
+   QCMD(_draw_thread_multi_font_draw, mf);
 
    return EINA_TRUE;
 }
@@ -2770,7 +2773,7 @@ _font_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas
    cf->mask_x = dc->clip.mask_x;
    cf->mask_y = dc->clip.mask_y;
 
-   evas_thread_cmd_enqueue(_draw_thread_font_draw, cf);
+   QCMD(_draw_thread_font_draw, cf);
 
    return EINA_TRUE;
 }
@@ -3814,7 +3817,7 @@ eng_ector_renderer_draw(void *data EINA_UNUSED, void *context, void *surface, Ec
         memcpy(ne, &ector, sizeof (Evas_Thread_Command_Ector));
         ne->free_it = EINA_TRUE;
 
-        evas_thread_cmd_enqueue(_draw_thread_ector_draw, ne);
+        QCMD(_draw_thread_ector_draw, ne);
      }
    else
      {
@@ -3876,7 +3879,7 @@ eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface
         nes->x = x;
         nes->y = y;
 
-        evas_thread_cmd_enqueue(_draw_thread_ector_surface_set, nes);
+        QCMD(_draw_thread_ector_surface_set, nes);
      }
    else
      {
@@ -3917,7 +3920,7 @@ eng_ector_end(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface *
         nes->ector = ector;
         nes->surface = NULL;
 
-        evas_thread_cmd_enqueue(_draw_thread_ector_surface_set, nes);
+        QCMD(_draw_thread_ector_surface_set, nes);
      }
    else
      {
