@@ -180,7 +180,7 @@ START_TEST(eina_test_quaternion_f16p16)
    fail_if(!eina_quaternion_cmp(&p, &q));
 
    res = eina_quaternion_f16p16_norm(&r);
-   fail_if(res != 131072);
+   fail_if(res != 131070);
 
    eina_quaternion_f16p16_negative(&s, &r);
    fail_if(s.x != s.y ||

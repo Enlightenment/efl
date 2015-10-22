@@ -58,17 +58,17 @@ eina_f8p24_sqrt(Eina_F8p24 a)
    root = 0; /* Clear root */
    remHi = 0; /* Clear high part of partial remainder */
    remLo = a; /* Get argument into low part of partial remainder */
-   count = (23 + (24 >> 1)); /* Load loop counter */
+   count = 24; /* Load loop counter */
    do {
-      remHi = (remHi << 2) | (remLo >> 30);
+      remHi = (remHi << 8) | (remLo >> 24);
       remLo <<= 2; /* get 2 bits of arg */
       root <<= 1; /* Get ready for the next bit in the root */
       testDiv = (root << 1) + 1; /* Test radical */
       if (remHi >= testDiv)
-	{
-	   remHi -= testDiv;
-	   root++;
-	}
+        {
+           remHi -= testDiv;
+           root++;
+        }
    } while (count-- != 0);
    return (root);
 }

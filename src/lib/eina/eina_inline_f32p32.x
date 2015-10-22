@@ -97,9 +97,9 @@ eina_f32p32_sqrt(Eina_F32p32 a)
    root = 0; /* Clear root */
    remHi = 0; /* Clear high part of partial remainder */
    remLo = a; /* Get argument into low part of partial remainder */
-   count = (31 + (32 >> 1)); /* Load loop counter */
+   count = 32; /* Load loop counter */
    do {
-      remHi = (remHi << 2) | (remLo >> 30);
+      remHi = (remHi << 32) | (remLo >> 32);
       remLo <<= 2; /* get 2 bits of arg */
       root <<= 1; /* Get ready for the next bit in the root */
       testDiv = (root << 1) + 1; /* Test radical */

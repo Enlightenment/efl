@@ -58,9 +58,9 @@ eina_f16p16_sqrt(Eina_F16p16 a)
    root = 0; /* Clear root */
    remHi = 0; /* Clear high part of partial remainder */
    remLo = a; /* Get argument into low part of partial remainder */
-   count = (15 + (16 >> 1)); /* Load loop counter */
+   count = 16; /* Load loop counter */
    do {
-      remHi = (remHi << 2) | (remLo >> 30);
+      remHi = (remHi << 16) | (remLo >> 16);
       remLo <<= 2; /* get 2 bits of arg */
       root <<= 1; /* Get ready for the next bit in the root */
       testDiv = (root << 1) + 1; /* Test radical */
