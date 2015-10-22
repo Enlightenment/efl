@@ -576,6 +576,7 @@ _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *ca
                     }
                   else
                     {
+                       call->obj = _eo_class_id_get(inputklass);
                        call->data = NULL;
                     }
                   return EINA_TRUE;
@@ -621,6 +622,7 @@ _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *ca
           }
         else
           {
+             call->obj = _eo_class_id_get(klass);
              call->data = NULL;
           }
 
