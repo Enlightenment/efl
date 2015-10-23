@@ -4,6 +4,7 @@
 
 #include "ecore_wl2_private.h"
 
+static Eina_Hash *_server_displays = NULL;
 static Eina_Hash *_client_displays = NULL;
 
 static void
@@ -138,7 +139,7 @@ _cb_global_remove(void *data, struct wl_registry *registry EINA_UNUSED, unsigned
                    _cb_global_event_free, NULL);
 
    /* delete this global from our hash */
-   eina_hash_del_by_key(ewd->globals, &id);
+   if (ewd->globals) eina_hash_del_by_key(ewd->globals, &id);
 }
 
 static const struct wl_registry_listener _registry_listener =
@@ -318,7 +319,7 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
    if (ewd->name) free(ewd->name);
 
    /* remove this client display from hash */
-   eina_hash_del(_client_displays, ewd->name, ewd);
+   if (_client_displays) eina_hash_del(_client_displays, ewd->name, ewd);
 }
 
 Ecore_Wl2_Window *
@@ -343,10 +344,41 @@ ecore_wl2_display_create(const char *name)
 {
    Ecore_Wl2_Display *ewd;
    struct wl_event_loop *loop;
+   const char *n;
+
+   if (!_server_displays)
+     _server_displays = eina_hash_string_superfast_new(NULL);
+
+   if (!name)
+     {
+        /* someone wants to create a new server */
+        n = getenv("WAYLAND_DISPLAY");
+        if (n)
+          {
+             /* we have a default wayland display */
+
+             /* check hash of cached server displays for this name */
+             ewd = eina_hash_find(_server_displays, n);
+             if (ewd) goto found;
+          }
+
+     }
+   else
+     {
+        /* someone wants to create a server with a specific display */
+
+        /* check hash of cached server displays for this name */
+        ewd = eina_hash_find(_server_displays, name);
+        if (ewd) goto found;
+
+     }
 
    /* allocate space for display structure */
    ewd = calloc(1, sizeof(Ecore_Wl2_Display));
    if (!ewd) return NULL;
+
+   ewd->refs++;
+   ewd->pid = getpid();
 
    /* try to create new wayland display */
    ewd->wl.display = wl_display_create();
@@ -391,6 +423,10 @@ ecore_wl2_display_create(const char *name)
 
    ecore_main_fd_handler_prepare_callback_set(ewd->fd_hdl,
                                               _cb_create_prepare, ewd);
+
+   /* add this new server display to hash */
+   eina_hash_add(_server_displays, ewd->name, ewd);
+
    return ewd;
 
 socket_err:
@@ -399,12 +435,42 @@ socket_err:
 create_err:
    free(ewd);
    return NULL;
+
+found:
+   ewd->refs++;
+   return ewd;
+}
+
+static Eina_Bool
+_ecore_wl2_display_sync_get(void)
+{
+   Ecore_Wl2_Display *sewd;
+   Eina_Iterator *itr;
+   Eina_Bool ret = EINA_TRUE;
+   void *data;
+
+   if (eina_hash_population(_server_displays) < 1) return ret;
+
+   itr = eina_hash_iterator_data_new(_server_displays);
+   while (eina_iterator_next(itr, &data))
+     {
+        sewd = (Ecore_Wl2_Display *)data;
+        if (sewd->pid == getpid())
+          {
+             ret = EINA_FALSE;
+             break;
+          }
+     }
+   eina_iterator_free(itr);
+
+   return ret;
 }
 
 EAPI Ecore_Wl2_Display *
 ecore_wl2_display_connect(const char *name)
 {
    Ecore_Wl2_Display *ewd;
+   Eina_Bool sync = EINA_TRUE;
    struct wl_callback *cb;
    const char *n;
 
@@ -466,6 +532,7 @@ ecore_wl2_display_connect(const char *name)
                                _cb_connect_data, ewd, NULL, NULL);
 
    ewd->idle_enterer = ecore_idle_enterer_add(_cb_connect_idle, ewd);
+
    ewd->wl.registry = wl_display_get_registry(ewd->wl.display);
    wl_registry_add_listener(ewd->wl.registry, &_registry_listener, ewd);
 
@@ -475,15 +542,39 @@ ecore_wl2_display_connect(const char *name)
    /* add this new client display to hash */
    eina_hash_add(_client_displays, ewd->name, ewd);
 
-   /* NB: If we are connecting (as a client), then we will need to setup
-    * a callback for display_sync and wait for it to complete. There is no
-    * other option here as we need the compositor, shell, etc, to be setup
-    * before we can allow a user to make use of the API functions we provide */
+   /* check server display hash and match on pid. If match, skip sync */
+   sync = _ecore_wl2_display_sync_get();
+
    cb = wl_display_sync(ewd->wl.display);
    wl_callback_add_listener(cb, &_sync_listener, ewd);
 
-   while (!ewd->sync_done)
-     wl_display_dispatch(ewd->wl.display);
+   if (sync)
+     {
+        /* NB: If we are connecting (as a client), then we will need to setup
+         * a callback for display_sync and wait for it to complete. There is no
+         * other option here as we need the compositor, shell, etc, to be setup
+         * before we can allow a user to make use of the API functions */
+        while (!ewd->sync_done)
+          wl_display_dispatch(ewd->wl.display);
+     }
+   else
+     {
+        /* this client is on same pid as server so we need to iterate
+         * main loop until the "server" advertises it's globals
+         *
+         * NB: DO NOT REMOVE THIS !!
+         *
+         * This is NEEDED for E's internal dialogs to function because the
+         * "server" and "client" are on the same PID
+         * and thus the "server" never advertises out it's globals
+         * (wl_compositor, wl_shm, etc) unless we sit here and iterate the
+         * main loop until it's done.
+         *
+         * If we remove this, E will never show an internal dialog as it
+         * just sits and waits for the globals */
+        while (!ewd->sync_done)
+          ecore_main_loop_iterate();
+     }
 
    return ewd;
 
@@ -524,8 +615,11 @@ ecore_wl2_display_destroy(Ecore_Wl2_Display *display)
 {
    EINA_SAFETY_ON_NULL_RETURN(display);
    _ecore_wl2_display_cleanup(display);
-   wl_display_destroy(display->wl.display);
-   free(display);
+   if (display->refs <= 0)
+     {
+        wl_display_destroy(display->wl.display);
+        free(display);
+     }
 }
 
 EAPI void
