@@ -48,7 +48,7 @@ _filename_get(const char *path)
 }
 
 static Eina_Bool
-_read_file(char *filename, Eina_Strbuf **buf)
+_read_file(const char *filename, Eina_Strbuf **buf)
 {
    FILE *fd = fopen(filename, "rb");
    if (!fd)
@@ -92,7 +92,7 @@ _read_file(char *filename, Eina_Strbuf **buf)
 }
 
 static Eina_Bool
-_write_file(char *filename, const Eina_Strbuf *buffer, Eina_Bool append)
+_write_file(const char *filename, const Eina_Strbuf *buffer, Eina_Bool append)
 {
    FILE *fd = fopen(filename, append ? "ab" : "wb");
    if (!fd)
@@ -109,7 +109,7 @@ _write_file(char *filename, const Eina_Strbuf *buffer, Eina_Bool append)
 }
 
 static Eina_Bool
-_generate_header_file(char *filename, const char *eo_filename, Eina_Bool legacy)
+_generate_header_file(const char *filename, const char *eo_filename, Eina_Bool legacy)
 {
    Eina_Bool ret = EINA_FALSE;
 
@@ -160,7 +160,7 @@ end:
 }
 
 static Eina_Bool
-_generate_stub_header_file(char *filename, const char *eo_filename)
+_generate_stub_header_file(const char *filename, const char *eo_filename)
 {
    Eina_Bool ret = EINA_FALSE;
 
@@ -190,7 +190,7 @@ end:
 }
 
 static Eina_Bool
-_generate_c_file(char *filename, const char *eo_filename, Eina_Bool legacy_support)
+_generate_c_file(const char *filename, const char *eo_filename, Eina_Bool legacy_support)
 {
    Eina_Bool ret = EINA_FALSE;
 
@@ -226,7 +226,7 @@ end:
 }
 
 static Eina_Bool
-_generate_impl_c_file(char *filename, const char *eo_filename)
+_generate_impl_c_file(const char *filename, const char *eo_filename)
 {
    const Eolian_Class *class = eolian_class_get_by_file(eo_filename);
    if (!class)
@@ -251,80 +251,66 @@ _generate_impl_c_file(char *filename, const char *eo_filename)
 
 enum
 {
-   NO_WAY_GEN,
-   H_GEN,
-   H_STUB_GEN,
-   C_GEN,
-   C_IMPL_GEN
+   GEN_NOTHING = 0,
+   GEN_H,
+   GEN_H_STUB,
+   GEN_C,
+   GEN_C_IMPL
 };
-static int gen_opt = NO_WAY_GEN;
-static int legacy_support = 0;
 
-#define EO_SUFFIX ".eo"
-#define EOT_SUFFIX ".eot"
-
-int main(int argc, char **argv)
+int
+main(int argc, char **argv)
 {
-   int ret = 1;
+   int gen_what = GEN_NOTHING, do_legacy = 0, ret = 1;
    Eina_Bool help = EINA_FALSE;
-   const char *eo_filename = NULL;
-   char *output_filename = NULL; /* if NULL, have to generate, otherwise use the name stored there */
-   char *eo_filename_copy = NULL, *eo_file_basename;
-   Eina_Bool is_eo = EINA_FALSE;
+   const char *outf = NULL;
 
    eina_init();
    eolian_init();
 
-   const char *log_dom = "eolian_gen";
-   _eolian_gen_log_dom = eina_log_domain_register(log_dom, EINA_COLOR_GREEN);
+   const char *dom = "eolian_gen";
+   _eolian_gen_log_dom = eina_log_domain_register(dom, EINA_COLOR_GREEN);
    if (_eolian_gen_log_dom < 0)
      {
-        EINA_LOG_ERR("Could not register log domain: %s", log_dom);
+        EINA_LOG_ERR("Could not register log domain: %s", dom);
         goto end;
      }
 
-   eina_log_timing(_eolian_gen_log_dom,
-                   EINA_LOG_STATE_STOP,
-                   EINA_LOG_STATE_INIT);
+   eina_log_timing(_eolian_gen_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
 
-   static struct option long_options[] =
-     {
-        /* These options set a flag. */
-          {"help",       no_argument,         0, 'h'},
-          {"gh",         no_argument,         &gen_opt, H_GEN},
-          {"gc",         no_argument,         &gen_opt, C_GEN},
-          {"gi",         no_argument,         &gen_opt, C_IMPL_GEN},
-          {"gs",         no_argument,         &gen_opt, H_STUB_GEN},
-          {"output",     required_argument,   0, 'o'},
-          {"legacy",     no_argument,         &legacy_support, 1},
-          {"include",    required_argument,   0, 'I'},
-          {0, 0, 0, 0}
-     };
-   int long_index =0, opt;
-   while ((opt = getopt_long(argc, argv,"vho:I:", long_options, &long_index )) != -1)
-     {
-        switch (opt) {
-           case 0: break;
-           case 'o':
-                   {
-                      output_filename = strdup(optarg);
-                      break;
-                   }
-           case 'h': help = EINA_TRUE; break;
-           case 'I':
-                     {
-                        const char *dir = optarg;
-                        if (!eolian_directory_scan(dir))
-                          {
-                             fprintf(stderr, "eolian: could not scan '%s'\n", dir);
-                             goto end;
-                          }
-                        break;
-                     }
-           default: help = EINA_TRUE;
-        }
-     }
-   eo_filename = argv[optind++];
+   struct option opts[] = {
+      { "help",    no_argument,       NULL,       'h'        },
+      { "gh",      no_argument,       &gen_what,  GEN_H      },
+      { "gc",      no_argument,       &gen_what,  GEN_C      },
+      { "gi",      no_argument,       &gen_what,  GEN_C_IMPL },
+      { "gs",      no_argument,       &gen_what,  GEN_H_STUB },
+      { "output",  required_argument, NULL,       'o'        },
+      { "legacy",  no_argument,       &do_legacy, 1          },
+      { "include", required_argument, NULL,       'I'        },
+      { NULL, 0, NULL, 0 }
+   };
+
+   for (int opt; (opt = getopt_long(argc, argv, "vho:I:", opts, NULL)) != -1; )
+     switch (opt)
+       {
+        case 0: break;
+        case 'o':
+          outf = optarg;
+          break;
+        case 'h':
+          help = EINA_TRUE;
+          break;
+        case 'I':
+          if (!eolian_directory_scan(optarg))
+            {
+               fprintf(stderr, "eolian: could not scan '%s'\n", optarg);
+               goto end;
+            }
+          break;
+        default:
+          help = EINA_TRUE;
+          break;
+       }
 
    if (help)
      {
@@ -342,17 +328,16 @@ int main(int argc, char **argv)
         goto end;
      }
 
-   if (!eo_filename)
+   const char *eof = argv[optind++];
+   if (!eof)
      {
-        fprintf(stderr, "eolian: no input file specified\n");
+        fprintf(stderr, "eolian: no input file\n");
         goto end;
      }
 
-   is_eo = eina_str_has_suffix(eo_filename, EO_SUFFIX);
-
-   if (!eolian_file_parse(eo_filename))
+   if (!eolian_file_parse(eof))
      {
-        fprintf(stderr, "eolian: error parsing file '%s'\n", eo_filename);
+        fprintf(stderr, "eolian: could not parse file '%s'\n", eof);
         goto end;
      }
 
@@ -362,59 +347,48 @@ int main(int argc, char **argv)
         goto end;
      }
 
-   eo_filename_copy = strdup(eo_filename);
-   eo_file_basename = basename(eo_filename_copy);
+   char *eofc = strdup(eof);
+   char *eobn = basename(eofc);
 
-   if (gen_opt)
+   if (gen_what)
      {
-        if (!output_filename)
+        if (!outf)
           {
-             fprintf(stderr, "eolian: no output file specified\n");
+             fprintf(stderr, "eolian: no output file\n");
+             free(eofc);
              goto end;
           }
-        switch (gen_opt)
+        switch (gen_what)
           {
-           case H_GEN:
-                {
-                   INF("Generating header file %s\n", output_filename);
-                   ret = !_generate_header_file(output_filename, eo_file_basename, legacy_support);
-                   break;
-                }
-           case H_STUB_GEN:
-                {
-                   INF("Generating stubs header file %s\n", output_filename);
-                   ret = !_generate_stub_header_file(output_filename, eo_file_basename);
-                   break;
-                }
-           case C_GEN:
-                {
-                   INF("Generating source file %s\n", output_filename);
-                   ret = !_generate_c_file(output_filename, eo_file_basename, !!legacy_support);
-                   break;
-                }
-           case C_IMPL_GEN:
-                {
-                   INF("Generating user source file %s\n", output_filename);
-                   ret = !_generate_impl_c_file(output_filename, eo_file_basename);
-                   break;
-                }
+           case GEN_H:
+             INF("Generating header file %s\n", outf);
+             ret = !_generate_header_file(outf, eobn, do_legacy);
+             break;
+           case GEN_H_STUB:
+             INF("Generating stub header file %s\n", outf);
+             ret = !_generate_stub_header_file(outf, eobn);
+             break;
+           case GEN_C:
+             INF("Generating source file %s\n", outf);
+             ret = !_generate_c_file(outf, eobn, do_legacy);
+             break;
+           case GEN_C_IMPL:
+             INF("Generating user source file %s\n", outf);
+             ret = !_generate_impl_c_file(outf, eobn);
+             break;
            default:
-              ERR("Bad generation option\n");
-              break;
+             ERR("Wrong generation option\n");
+             break;
           }
      }
-   else ret = 0;
+   else
+     ret = 0;
+
+   free(eofc);
 
 end:
-   free(eo_filename_copy);
-   free(output_filename);
-
-   eina_log_timing(_eolian_gen_log_dom,
-         EINA_LOG_STATE_START,
-         EINA_LOG_STATE_SHUTDOWN);
+   eina_log_timing(_eolian_gen_log_dom, EINA_LOG_STATE_START, EINA_LOG_STATE_SHUTDOWN);
    eina_log_domain_unregister(_eolian_gen_log_dom);
-   _eolian_gen_log_dom = -1;
-
    eolian_shutdown();
    eina_shutdown();
    return ret;
