@@ -3372,8 +3372,8 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         o->proxyrendering = EINA_FALSE;
      }
 
-   ENFN->context_clip_get(ENDT, context, NULL, NULL, &cw, &ch);
-   if (!cw || !ch) return;
+   if (ENFN->context_clip_get(ENDT, context, NULL, NULL, &cw, &ch) && (!cw || !ch))
+     return;
 
    if (pixels)
      {
