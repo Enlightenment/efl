@@ -1,6 +1,7 @@
 #ifndef _ECORE_WL2_PRIVATE_H
 # define _ECORE_WL2_PRIVATE_H
 
+# include <unistd.h>
 # include "Ecore_Wl2.h"
 # include "Ecore_Input.h"
 
@@ -49,6 +50,7 @@ struct _Ecore_Wl2_Display
 {
    int refs;
    char *name;
+   pid_t pid;
 
    struct
      {
