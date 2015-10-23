@@ -46,7 +46,9 @@ evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
         else mtex = NULL;
      }
 
-   if (!gc->dc->cutout.rects)
+   if ((!gc->dc->cutout.rects) ||
+       ((gc->shared->info.tune.cutout.max > 0) &&
+           (gc->dc->cutout.active > gc->shared->info.tune.cutout.max)))
      {
         evas_gl_common_context_rectangle_push(gc, x, y, w, h, cr, cg, cb, ca, mtex, mx, my, mw, mh, mask_smooth);
      }
