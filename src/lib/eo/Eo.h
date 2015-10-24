@@ -549,7 +549,7 @@ EAPI Eo_Op _eo_api_op_id_get(const void *api_func);
 EAPI Eina_Bool _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *callcache, const char *file, int line);
 
 // start of eo_do barrier, gets the object pointer and ref it, put it on the stask
-  EAPI Eina_Bool _eo_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool is_super, void *eo_stack);
+EAPI Eina_Bool _eo_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool is_super, void *eo_stack);
 
 // end of the eo_do barrier, unref the obj, move the stack pointer
 EAPI void _eo_do_end(void *eo_stack);
