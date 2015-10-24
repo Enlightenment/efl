@@ -538,7 +538,7 @@ _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *ca
 
    inputklass = klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
 
-   if (cache->op == EO_NOOP)
+   if (!cache->op)
      {
         ERR("%s:%d: unable to resolve %s api func '%s' in class '%s'.",
             file, line, (!is_obj ? "class" : "regular"),
@@ -547,9 +547,19 @@ _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *ca
         return EINA_FALSE;
      }
 
-# if EO_CALL_CACHE_SIZE > 0
-   if (!fptr->cur_klass)
+   /* If we have a current class, we need to itr to the next. */
+   if (fptr->cur_klass)
      {
+        func = _eo_kls_itr_next(klass, fptr->cur_klass, cache->op);
+
+        if (!func)
+          goto end;
+
+        klass = func->src;
+     }
+   else
+     {
+# if EO_CALL_CACHE_SIZE > 0
 # if EO_CALL_CACHE_SIZE > 1
         int i;
 
@@ -582,21 +592,8 @@ _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *ca
                   return EINA_TRUE;
                }
           }
-     }
 #endif
 
-   /* If we have a current class, we need to itr to the next. */
-   if (fptr->cur_klass)
-     {
-        func = _eo_kls_itr_next(klass, fptr->cur_klass, cache->op);
-
-        if (!func)
-          goto end;
-
-        klass = func->src;
-     }
-   else
-     {
         func = _dich_func_get(klass, cache->op);
 
         if (!func)
