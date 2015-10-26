@@ -68,6 +68,10 @@ _ecore_wl_window_hash_get(void)
 void
 _ecore_wl_window_shell_surface_init(Ecore_Wl_Window *win)
 {
+#ifdef USE_IVI_SHELL
+   char *env;
+#endif
+
    if ((win->type == ECORE_WL_WINDOW_TYPE_DND) ||
        (win->type == ECORE_WL_WINDOW_TYPE_NONE)) return;
 #ifdef USE_IVI_SHELL
@@ -400,10 +404,6 @@ ecore_wl_window_surface_create(Ecore_Wl_Window *win)
 EAPI void
 ecore_wl_window_show(Ecore_Wl_Window *win)
 {
-#ifdef USE_IVI_SHELL
-   char *env;
-#endif
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
