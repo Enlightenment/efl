@@ -157,34 +157,51 @@ typedef unsigned long  gid_t;
 #if (defined(_WIN32) && !defined(_UWIN) && !defined(__CYGWIN__))
 # if defined(_MSC_VER) || defined(__MINGW32__)
 
-# ifdef S_ISDIR
-#  undef S_ISDIR
-# endif
-# ifdef S_ISREG
-#  undef S_ISREG
-# endif
+#ifndef S_ISDIR
 # define S_ISDIR(m) (((m) & _S_IFMT) == _S_IFDIR)
+#endif
+
+#ifndef S_ISREG
 # define S_ISREG(m) (((m) & _S_IFMT) == _S_IFREG)
+#endif
 
 # define S_ISLNK(m) 0
 
-# define S_IRUSR _S_IRUSR
-# define S_IWUSR _S_IWUSR
-# define S_IXUSR _S_IXUSR
+#define S_IRUSR _S_IRUSR
+#ifndef S_IRGRP
 # define S_IRGRP S_IRUSR
+#endif
+#ifndef S_IROTH
 # define S_IROTH S_IRUSR
-# define S_IWGRP S_IWUSR
-# define S_IWOTH S_IWUSR
-# define S_IXGRP S_IXUSR
-# define S_IXOTH S_IXUSR
+#endif
 
-# define _S_IRWXU (_S_IREAD | _S_IWRITE | _S_IEXEC)
+#define S_IWUSR _S_IWUSR
+#ifndef S_IWGRP
+# define S_IWGRP S_IWUSR
+#endif
+#ifndef S_IWOTH
+# define S_IWOTH S_IWUSR
+#endif
+
+#define S_IXUSR _S_IXUSR
+#ifndef S_IXGRP
+# define S_IXGRP S_IXUSR
+#endif
+#ifndef S_IXOTH
+# define S_IXOTH S_IXUSR
+#endif
+
+#define _S_IRWXU (_S_IREAD | _S_IWRITE | _S_IEXEC)
+#ifndef S_IRWXG
+# define S_IRWXG _S_IRWXU
+#endif
+#ifndef S_IRWXO
+# define S_IRWXO _S_IRWXU
+#endif
+
 # define _S_IXUSR _S_IEXEC
 # define _S_IWUSR _S_IWRITE
 # define _S_IRUSR _S_IREAD
-
-#define S_IRWXO _S_IRWXU
-#define S_IRWXG _S_IRWXU
 
   /*
 #  define close(fd) _close(fd)
