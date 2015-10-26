@@ -119,6 +119,11 @@ Fixes:
    * elementary: Fix genlist example to not free data until After it has been removed from the list (CID1327342)
    * deskmirror: unset proxy.source_clip for urgency effects
    * border: bring sparklebear theme up-to-date with current efl rendering
+   * elc_file_selector_button: free allocated path name
+   * elm_win: fix wrong comment.
+   * elm_cnp: DnD/X11: correct drag window position in rotation
+   * dayselector: fix warning related to argument type
+   * multibuttonentry: fix label packed many times in internal box.
 
 Changes since 1.14.0:
 ---------------------
