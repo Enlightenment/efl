@@ -139,6 +139,19 @@ Fixes:
    * edje: load - use evas_object_clipees_has instead of evas_object_clipees_get
    * Eo events: Add a struct member marking if it's a legacy event or not.
    * evas gl - fix big endian fully by adding a host of new img shaders
+   * evas: fix memory leak
+   * evas table: fix miscalcuation in cells with span and padding (T2655)
+   * edje: comparision with non-scaled min values issue fix.
+   * evas textblock: fix memory leak
+   * ecore-wayland: defer shell surface creation for windows if shell is not bound
+   * evas: fix memory leak.
+   * efl - edje - fix edje calc to avoid eo calls when object doesnt change
+   * efl - eo - massively improve eo cal resolv and data scope get with cache
+   * efl: fix copy & paste typo while parsing SVG elliptical arc command. (CID1328426)
+   * evas - software render async - fix async render to actually be all async
+   * emile: prevent segv when rotation is asked and there is no opts provided.
+   * eo - make null object silent if eo id is off
+   * ecore_audio: do not compile elua file if ecore_audio is disabled
 
 Changes since 1.14.0:
 ---------------------
