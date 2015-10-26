@@ -1660,8 +1660,9 @@ eng_gl_get_pixels_set(void *data, void *get_pixels, void *get_pixels_data, void 
 }
 
 static void
-eng_gl_get_pixels_pre(void *data EINA_UNUSED)
+eng_gl_get_pixels_pre(void *data)
 {
+   EVGLINIT(data, );
    evgl_get_pixels_pre();
 }
 
