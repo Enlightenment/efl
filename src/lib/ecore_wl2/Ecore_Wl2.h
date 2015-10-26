@@ -301,6 +301,9 @@ EAPI struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
  *
  * @param display The Ecore_Wl2_Display for which to return a global iterator
  *
+ * @note The caller of this function should free the returned Eina_Iterator
+ * when finished with it.
+ *
  * @ingroup Ecore_Wl2_Display_Group
  */
 EAPI Eina_Iterator *ecore_wl2_display_globals_get(Ecore_Wl2_Display *display);
