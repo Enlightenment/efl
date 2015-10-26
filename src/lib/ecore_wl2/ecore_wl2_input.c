@@ -848,8 +848,9 @@ _keyboard_cb_modifiers(void *data, struct wl_keyboard *keyboard EINA_UNUSED, uns
    xkb_state_update_mask(input->xkb.state,
                          depressed, latched, locked, 0, 0, group);
 
-   mask = xkb_state_serialize_mods(input->xkb.state,
-                                   XKB_STATE_MODS_DEPRESSED | XKB_STATE_MODS_LATCHED);
+   mask =
+     xkb_state_serialize_mods(input->xkb.state,
+                              XKB_STATE_MODS_DEPRESSED | XKB_STATE_MODS_LATCHED);
 
    /* reset modifiers to default */
    input->keyboard.modifiers = 0;
