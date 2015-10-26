@@ -1193,6 +1193,8 @@ _label_set(Evas_Object *obj,
      }
    else
      {
+        if (sd->label_packed)
+          elm_box_unpack(sd->box, sd->label);
         sd->label_packed = EINA_TRUE;
         edje_object_size_min_calc(sd->label, &width, &height);
         evas_object_size_hint_min_set(sd->label, width, height);
