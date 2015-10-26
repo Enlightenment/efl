@@ -319,7 +319,16 @@ EAPI Eina_Iterator *ecore_wl2_display_globals_get(Ecore_Wl2_Display *display);
  */
 EAPI void ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, int *h);
 
-/* TODO: doxy */
+/**
+ * Find an Ecore_Wl2_Window based on id
+ *
+ * @param display The display to search for the window
+ * @param id The id of the window to find
+ *
+ * @return The Ecore_Wl2_Window if found, or NULL if no such window exists
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ */
 EAPI Ecore_Wl2_Window *ecore_wl2_display_window_find(Ecore_Wl2_Display *display, unsigned int id);
 
 /**
@@ -377,7 +386,15 @@ EAPI int ecore_wl2_window_id_get(Ecore_Wl2_Window *window);
  */
 EAPI struct wl_surface *ecore_wl2_window_surface_get(Ecore_Wl2_Window *window);
 
-/* TODO: doxy */
+/**
+ * Get the id of a given Ecore_Wl2_Window
+ *
+ * @param window The window to return the id of
+ *
+ * @return The id of the given window, or -1 on failure
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI int ecore_wl2_window_surface_id_get(Ecore_Wl2_Window *window);
 
 /**
@@ -445,13 +462,36 @@ EAPI void ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w, int h, int lo
  */
 EAPI void ecore_wl2_window_raise(Ecore_Wl2_Window *window);
 
-/* TODO: doxy */
+/**
+ * Get if a given window is alpha
+ *
+ * @param window The window to get if is alpha
+ *
+ * @return EINA_TRUE if window is alpha, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI Eina_Bool ecore_wl2_window_alpha_get(Ecore_Wl2_Window *window);
 
-/* TODO: doxy */
+/**
+ * Set a given window's alpha property
+ *
+ * @param window The window on which to set the alpha property
+ * @param alpha EINA_TRUE to set window as alpha, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI void ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha);
 
-/* TODO: doxy */
+/**
+ * Set a given window's transparent property
+ *
+ * @param window The window on which to set the transparent property
+ * @param transparent EINA_TRUE to set window as transparent,
+ *                    EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI void ecore_wl2_window_transparent_set(Ecore_Wl2_Window *window, Eina_Bool transparent);
 
 /**
@@ -484,34 +524,114 @@ EAPI void ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, in
  */
 EAPI void ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
 
-/* TODO: doxy */
+/**
+ * Get if a given window is maximized
+ *
+ * @param window The window to get the maximized state of
+ *
+ * @return EINA_TRUE if window is maximized, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI Eina_Bool ecore_wl2_window_maximized_get(Ecore_Wl2_Window *window);
 
-/* TODO: doxy */
+/**
+ * Set the maximized state of a given window
+ *
+ * @param window The window to set the maximized state of
+ * @param maximized EINA_TRUE to set maximized, EINA_FALSE to unset
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI void ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized);
 
-/* TODO: doxy */
+/**
+ * Get if a given window is fullscreen
+ *
+ * @param window The window to get the fullscreen state of
+ *
+ * @return EINA_TRUE if window is fullscreen, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI Eina_Bool ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window);
 
-/* TODO: doxy */
+/**
+ * Set the fullscreen state of a given window
+ *
+ * @param window The window to set the fullscreen state of
+ * @param maximized EINA_TRUE to set fullscreen, EINA_FALSE to unset
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI void ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen);
 
 /* TODO: doxy */
 EAPI void ecore_wl2_window_rotation_set(Ecore_Wl2_Window *window, int rotation);
 
-/* TODO: doxy */
+/**
+ * Set the title of a given window
+ *
+ * @param window The window to set the title of
+ * @param title The title of the window
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI void ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title);
 
-/* TODO: doxy */
+/**
+ * Set the class of a given window
+ *
+ * @param window The window to set the class of
+ * @param class_name The class of the window
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI void ecore_wl2_window_class_name_set(Ecore_Wl2_Window *window, const char *class_name);
 
-/* TODO: doxy */
+/**
+ * Get the geometry of a given window
+ *
+ * @brief The window geometry returned here is the window geometry as
+ * recognized by xdg_surface_set_window_geometry. As such, it represents the
+ * "visible bounds" of a window from the user's perspective.
+ *
+ * @param window The window to get the geometry of
+ * @param x The left point of the window geometry
+ * @param y The top point of the window geometry
+ * @param w The width of the window geometry
+ * @param h The height of the window geometry
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI void ecore_wl2_window_geometry_get(Ecore_Wl2_Window *window, int *x, int *y, int *w, int *h);
 
-/* TODO: doxy */
+/**
+ * Set the geometry of a given window
+ *
+ * @brief The window geometry referenced here is the window geometry as
+ * recognized by xdg_surface_set_window_geometry. As such, it represents the
+ * "visible bounds" of a window from the user's perspective.
+ *
+ * @param window The window to set the geometry of
+ * @param x The left point of the window geometry
+ * @param y The top point of the window geometry
+ * @param w The width of the window geometry
+ * @param h The height of the window geometry
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI void ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
 
-/* TODO: doxy */
+/**
+ * Get the iconified state of a given window
+ *
+ * @param window The window to get the iconified state of
+ *
+ * @return EINA_TRUE if window is iconified, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI Eina_Bool ecore_wl2_window_iconified_get(Ecore_Wl2_Window *window);
 
 /**
@@ -535,13 +655,40 @@ EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool ico
  */
 EAPI void ecore_wl2_window_pointer_xy_get(Ecore_Wl2_Window *window, int *x, int *y);
 
-/* TODO: doxy */
+/**
+ * Set a given wl_surface to use as the pointer on a window
+ *
+ * @param window The window to set this surface as the pointer on
+ * @param surface The surface to use as the pointer
+ * @param hot_x The x coordinate to use as the cursor hot spot
+ * @param hot_y The y coordinate to use as the cursor hot spot
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI void ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surface *surface, int hot_x, int hot_y);
 
-/* TODO: doxy */
+/**
+ * Set a specific cursor on a given window
+ *
+ * @brief This function will try to find a matching cursor inside the existing
+ * cursor theme and set the pointer which is over the given window to be
+ * the specified cursor
+ *
+ * @param window The window to set the cursor on
+ * @param cursor The name of the cursor to try and set
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI void ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const char *cursor);
 
-/* TODO: doxy */
+/**
+ * Set the type of a given window
+ *
+ * @param window The window to set the type of
+ * @type The Ecore_Wl2_Window_Type to set on the window
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type);
 
 /* TODO: doxy */
