@@ -4,8 +4,21 @@
 
 #include "ecore_wl2_private.h"
 
+static Eina_Bool _fatal_error = EINA_FALSE;
 static Eina_Hash *_server_displays = NULL;
 static Eina_Hash *_client_displays = NULL;
+
+static void
+_ecore_wl2_display_signal_exit(void)
+{
+   Ecore_Event_Signal_Exit *ev;
+
+   ev = calloc(1, sizeof(Ecore_Event_Signal_Exit));
+   if (!ev) return;
+
+   ev->quit = EINA_TRUE;
+   ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, ev, NULL, NULL);
+}
 
 static void
 _xdg_shell_cb_ping(void *data EINA_UNUSED, struct xdg_shell *shell, uint32_t serial)
@@ -158,7 +171,11 @@ _cb_create_data(void *data, Ecore_Fd_Handler *hdl)
 
    if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_ERROR))
      {
-        /* TODO: handle error case */
+        ERR("Received Fatal Error on Wayland Display");
+
+        _fatal_error = EINA_TRUE;
+        _ecore_wl2_display_signal_exit();
+
         return ECORE_CALLBACK_CANCEL;
      }
 
@@ -187,9 +204,15 @@ _cb_connect_data(void *data, Ecore_Fd_Handler *hdl)
 
    ewd = data;
 
+   if (_fatal_error) return ECORE_CALLBACK_CANCEL;
+
    if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_ERROR))
      {
-        /* TODO: handle error case */
+        ERR("Received Fatal Error on Wayland Display");
+
+        _fatal_error = EINA_TRUE;
+        _ecore_wl2_display_signal_exit();
+
         return ECORE_CALLBACK_CANCEL;
      }
 
@@ -198,7 +221,11 @@ _cb_connect_data(void *data, Ecore_Fd_Handler *hdl)
         ret = wl_display_dispatch(ewd->wl.display);
         if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
           {
-             /* TODO: handle error case */
+             ERR("Received Fatal Error on Wayland Display");
+
+             _fatal_error = EINA_TRUE;
+             _ecore_wl2_display_signal_exit();
+
              return ECORE_CALLBACK_CANCEL;
           }
      }
@@ -211,7 +238,11 @@ _cb_connect_data(void *data, Ecore_Fd_Handler *hdl)
 
         if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
           {
-             /* TODO: handle error case */
+             ERR("Received Fatal Error on Wayland Display");
+
+             _fatal_error = EINA_TRUE;
+             _ecore_wl2_display_signal_exit();
+
              return ECORE_CALLBACK_CANCEL;
           }
      }
@@ -240,6 +271,8 @@ _cb_connect_idle(void *data)
    ewd = data;
    if (!ewd) return ECORE_CALLBACK_RENEW;
 
+   if (_fatal_error) return ECORE_CALLBACK_CANCEL;
+
    ret = wl_display_get_error(ewd->wl.display);
    if (ret < 0) goto err;
 
@@ -257,6 +290,10 @@ err:
    if ((ret < 0) && ((errno != EAGAIN) && (errno != EINVAL)))
      {
         ERR("Wayland Socket Error: %s", strerror(errno));
+
+        _fatal_error = EINA_TRUE;
+        _ecore_wl2_display_signal_exit();
+
         return ECORE_CALLBACK_CANCEL;
      }
 
