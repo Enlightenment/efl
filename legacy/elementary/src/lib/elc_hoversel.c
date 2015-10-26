@@ -254,11 +254,10 @@ _resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
 
    if (sd->horizontal)
      {
-        ww = MIN(box_w, max_size);
+        ww = (max_size > 0) ? MIN(box_w, max_size) : box_w ;
         hh = box_h;
 
         evas_object_size_hint_min_set(sd->spacer, ww, hh);
-        evas_object_size_hint_max_set(sd->spacer, max_size, -1);
 
         if (!sd->last_location)
           sd->last_location = elm_hover_best_content_location_get(sd->hover, ELM_HOVER_AXIS_HORIZONTAL);
@@ -266,10 +265,9 @@ _resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
    else
      {
         ww = box_w;
-        hh = MIN(box_h, max_size);
+        hh = (max_size > 0) ? MIN(box_h, max_size) : box_h ;
 
         evas_object_size_hint_min_set(sd->spacer, ww, hh);
-        evas_object_size_hint_max_set(sd->spacer, -1, max_size);
 
         if (!sd->last_location)
           sd->last_location = elm_hover_best_content_location_get(sd->hover, ELM_HOVER_AXIS_VERTICAL);

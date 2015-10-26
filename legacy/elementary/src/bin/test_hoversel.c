@@ -193,6 +193,13 @@ test_hoversel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                          NULL);
    elm_hoversel_item_add(hoversel, "Item 5 - Long Label Here", NULL, ELM_ICON_NONE, NULL,
                          NULL);
+   elm_hoversel_item_add(hoversel, "Item 6", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 7", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 8", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 9", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 10", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 11", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(hoversel, "Item 12", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_box_pack_end(bx, hoversel);
    evas_object_show(hoversel);
 
