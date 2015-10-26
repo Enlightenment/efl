@@ -1005,8 +1005,27 @@ EFL_EVAL_PKGS([EINA_CXX])
 EFL_LIB_END([Eina_Cxx])
 #### End of Eina CXX
 
-#### Eet
+AC_ARG_WITH([libuv],
+   [AS_HELP_STRING([--with-libuv=@<:@yes|no@:>@],[add libuv support. @<:@default=yes@:>@])],
+   [
+     if test "x${withval}" = "yes" ; then
+       with_libuv="yes"
+     else
+       if test "x${withval}" = "xalways" ; then
+          with_libuv="always"
+       else
+          with_libuv="no"
+       fi
+    fi
+   ],
+   [with_libuv="yes"])
 
+AM_CONDITIONAL([HAVE_LIBUV], [test "x${with_libuv}" = "xyes"])
+AC_DEFINE_IF([HAVE_LIBUV], [test "x${with_js}" = "xyes"],
+             [1], [Compiling libuv event loop integration])
+AC_SUBST([HAVE_LIBUV])
+
+#### Eet
 EFL_LIB_START([Eet])
 
 ### Default values
