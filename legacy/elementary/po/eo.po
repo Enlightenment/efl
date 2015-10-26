@@ -3,12 +3,12 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
-#: src/lib/elm_config.c:3267
+#: src/lib/elm_config.c:3271
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-10-05 15:33+0200\n"
+"POT-Creation-Date: 2015-10-25 11:43+0100\n"
 "PO-Revision-Date: 2013-11-05 18:59+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
@@ -52,15 +52,15 @@ msgstr ""
 msgid "multi button entry"
 msgstr ""
 
-#: src/lib/elc_naviframe.c:434
+#: src/lib/elc_naviframe.c:432
 msgid "Title"
 msgstr "Titolo"
 
-#: src/lib/elc_naviframe.c:980 src/lib/elc_naviframe.c:1185
+#: src/lib/elc_naviframe.c:978 src/lib/elc_naviframe.c:1183
 msgid "Back"
 msgstr "Reen"
 
-#: src/lib/elc_naviframe.c:1281
+#: src/lib/elc_naviframe.c:1279
 msgid "Next"
 msgstr "Antaŭen"
 
@@ -81,9 +81,9 @@ msgid "Clicked"
 msgstr "Alklakita"
 
 #: src/lib/elm_button.c:275 src/lib/elm_check.c:244 src/lib/elm_gengrid.c:1255
-#: src/lib/elm_genlist.c:1656 src/lib/elm_list.c:2189 src/lib/elm_radio.c:268
+#: src/lib/elm_genlist.c:1659 src/lib/elm_list.c:2189 src/lib/elm_radio.c:268
 #: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:902
-#: src/lib/elm_toolbar.c:2245
+#: src/lib/elm_toolbar.c:2246
 msgid "State: Disabled"
 msgstr "Stato: malŝaltita"
 
@@ -188,7 +188,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr "ero de elektilo de kolorpaletro"
 
-#: src/lib/elm_config.c:3283
+#: src/lib/elm_config.c:3287
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -264,7 +264,7 @@ msgstr "progresbreto"
 msgid "Radio"
 msgstr "Radiobutono"
 
-#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2247
+#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2248
 msgid "State: Selected"
 msgstr "Stato: elektita"
 
@@ -305,22 +305,22 @@ msgstr "dekrementa sago-butono"
 msgid "spinner text"
 msgstr "sago-butono"
 
-#: src/lib/elm_toolbar.c:1705 src/lib/elm_toolbar.c:2304
+#: src/lib/elm_toolbar.c:1706 src/lib/elm_toolbar.c:2305
 msgid "Selected"
 msgstr "Elektita"
 
-#: src/lib/elm_toolbar.c:2243
+#: src/lib/elm_toolbar.c:2244
 msgid "Separator"
 msgstr "Disigilo"
 
-#: src/lib/elm_toolbar.c:2249
+#: src/lib/elm_toolbar.c:2250
 msgid "Has menu"
 msgstr "Ĝi havas menuo"
 
-#: src/lib/elm_toolbar.c:2299
+#: src/lib/elm_toolbar.c:2300
 msgid "Unselected"
 msgstr "Malelektita"
 
-#: src/lib/elm_toolbar.c:2316
+#: src/lib/elm_toolbar.c:2317
 msgid "Toolbar Item"
 msgstr "Ilobretero"

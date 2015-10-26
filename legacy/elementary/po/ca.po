@@ -2,12 +2,12 @@
 # This file is put in the public domain.
 # Marc Furtià  i Puig <marc.furtia@gmail.com>, 2013.
 # Joan Coll <jcoll2@gmail.com>, 2013.
-#: src/lib/elm_config.c:3267
+#: src/lib/elm_config.c:3271
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-10-05 15:33+0200\n"
+"POT-Creation-Date: 2015-10-25 11:43+0100\n"
 "PO-Revision-Date: 2015-02-10 09:34+0000\n"
 "Last-Translator: JoanColl <Unknown>\n"
 "Language-Team: Catalan\n"
@@ -51,15 +51,15 @@ msgstr "element entrada múltiple"
 msgid "multi button entry"
 msgstr "entrada múltiple"
 
-#: src/lib/elc_naviframe.c:434
+#: src/lib/elc_naviframe.c:432
 msgid "Title"
 msgstr "Títol"
 
-#: src/lib/elc_naviframe.c:980 src/lib/elc_naviframe.c:1185
+#: src/lib/elc_naviframe.c:978 src/lib/elc_naviframe.c:1183
 msgid "Back"
 msgstr "Enrere"
 
-#: src/lib/elc_naviframe.c:1281
+#: src/lib/elc_naviframe.c:1279
 msgid "Next"
 msgstr "Següent"
 
@@ -80,9 +80,9 @@ msgid "Clicked"
 msgstr "Clicat"
 
 #: src/lib/elm_button.c:275 src/lib/elm_check.c:244 src/lib/elm_gengrid.c:1255
-#: src/lib/elm_genlist.c:1656 src/lib/elm_list.c:2189 src/lib/elm_radio.c:268
+#: src/lib/elm_genlist.c:1659 src/lib/elm_list.c:2189 src/lib/elm_radio.c:268
 #: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:902
-#: src/lib/elm_toolbar.c:2245
+#: src/lib/elm_toolbar.c:2246
 msgid "State: Disabled"
 msgstr "Estat: desactivat"
 
@@ -187,7 +187,7 @@ msgstr "A:"
 msgid "color selector palette item"
 msgstr "paleta de selecció de color"
 
-#: src/lib/elm_config.c:3283
+#: src/lib/elm_config.c:3287
 msgid "default:LTR"
 msgstr "Per defecte: LTR"
 
@@ -263,7 +263,7 @@ msgstr "barra de progrés"
 msgid "Radio"
 msgstr "Opció"
 
-#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2247
+#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2248
 msgid "State: Selected"
 msgstr "Estat: Seleccionat"
 
@@ -303,22 +303,22 @@ msgstr "botó de decrement del spinner"
 msgid "spinner text"
 msgstr "text  rotatiu"
 
-#: src/lib/elm_toolbar.c:1705 src/lib/elm_toolbar.c:2304
+#: src/lib/elm_toolbar.c:1706 src/lib/elm_toolbar.c:2305
 msgid "Selected"
 msgstr "Seleccionat"
 
-#: src/lib/elm_toolbar.c:2243
+#: src/lib/elm_toolbar.c:2244
 msgid "Separator"
 msgstr "Separador"
 
-#: src/lib/elm_toolbar.c:2249
+#: src/lib/elm_toolbar.c:2250
 msgid "Has menu"
 msgstr "Té menú"
 
-#: src/lib/elm_toolbar.c:2299
+#: src/lib/elm_toolbar.c:2300
 msgid "Unselected"
 msgstr "No seleccionat"
 
-#: src/lib/elm_toolbar.c:2316
+#: src/lib/elm_toolbar.c:2317
 msgid "Toolbar Item"
 msgstr "Element de barra d'eines"

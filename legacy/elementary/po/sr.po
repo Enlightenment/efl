@@ -1,12 +1,12 @@
 #
 # Саша Петровић <salepetronije@gmail.com>, 2012, 2015.
 #
-#: src/lib/elm_config.c:3267
+#: src/lib/elm_config.c:3271
 msgid ""
 msgstr ""
 "Project-Id-Version: а\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-10-05 15:33+0200\n"
+"POT-Creation-Date: 2015-10-25 11:43+0100\n"
 "PO-Revision-Date: 2015-01-31 14:06+0100\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: српски <xfce4@xfce4.org>\n"
@@ -52,15 +52,15 @@ msgstr "ставка улаза са више дугмади"
 msgid "multi button entry"
 msgstr "улаз са више дугмади"
 
-#: src/lib/elc_naviframe.c:434
+#: src/lib/elc_naviframe.c:432
 msgid "Title"
 msgstr "Наслов"
 
-#: src/lib/elc_naviframe.c:980 src/lib/elc_naviframe.c:1185
+#: src/lib/elc_naviframe.c:978 src/lib/elc_naviframe.c:1183
 msgid "Back"
 msgstr "Назад"
 
-#: src/lib/elc_naviframe.c:1281
+#: src/lib/elc_naviframe.c:1279
 msgid "Next"
 msgstr "Следеће"
 
@@ -81,9 +81,9 @@ msgid "Clicked"
 msgstr "Кликнуто"
 
 #: src/lib/elm_button.c:275 src/lib/elm_check.c:244 src/lib/elm_gengrid.c:1255
-#: src/lib/elm_genlist.c:1656 src/lib/elm_list.c:2189 src/lib/elm_radio.c:268
+#: src/lib/elm_genlist.c:1659 src/lib/elm_list.c:2189 src/lib/elm_radio.c:268
 #: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:902
-#: src/lib/elm_toolbar.c:2245
+#: src/lib/elm_toolbar.c:2246
 msgid "State: Disabled"
 msgstr "Стање: онемогућено"
 
@@ -188,7 +188,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr "ставка избирача палете боја"
 
-#: src/lib/elm_config.c:3283
+#: src/lib/elm_config.c:3287
 msgid "default:LTR"
 msgstr "задато:слева на десно"
 
@@ -264,7 +264,7 @@ msgstr "трака напретка"
 msgid "Radio"
 msgstr "Искључујуће дугме"
 
-#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2247
+#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2248
 msgid "State: Selected"
 msgstr "Стање: означено"
 
@@ -305,22 +305,22 @@ msgstr "стрелица избирача смањења"
 msgid "spinner text"
 msgstr "избирач са стрелицама"
 
-#: src/lib/elm_toolbar.c:1705 src/lib/elm_toolbar.c:2304
+#: src/lib/elm_toolbar.c:1706 src/lib/elm_toolbar.c:2305
 msgid "Selected"
 msgstr "Изабрано"
 
-#: src/lib/elm_toolbar.c:2243
+#: src/lib/elm_toolbar.c:2244
 msgid "Separator"
 msgstr "Одвајач"
 
-#: src/lib/elm_toolbar.c:2249
+#: src/lib/elm_toolbar.c:2250
 msgid "Has menu"
 msgstr "Има изборник"
 
-#: src/lib/elm_toolbar.c:2299
+#: src/lib/elm_toolbar.c:2300
 msgid "Unselected"
 msgstr "Неозначено"
 
-#: src/lib/elm_toolbar.c:2316
+#: src/lib/elm_toolbar.c:2317
 msgid "Toolbar Item"
 msgstr "Ставка траке алата"

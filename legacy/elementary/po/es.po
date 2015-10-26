@@ -4,12 +4,12 @@
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
 # Adrián Arévalo <adri58@gmail.com>, 2015.
 # Roy W. Reese <waterbearer54@gmx.com>, 2015.
-#: src/lib/elm_config.c:3267
+#: src/lib/elm_config.c:3271
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-10-05 15:33+0200\n"
+"POT-Creation-Date: 2015-10-25 11:43+0100\n"
 "PO-Revision-Date: 2015-05-03 18:19+0100\n"
 "Last-Translator: Adrián Arévalo <adri58@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
@@ -52,15 +52,15 @@ msgstr "elemento de entrada multi-botón"
 msgid "multi button entry"
 msgstr "entrada multi-botón"
 
-#: src/lib/elc_naviframe.c:434
+#: src/lib/elc_naviframe.c:432
 msgid "Title"
 msgstr "Título"
 
-#: src/lib/elc_naviframe.c:980 src/lib/elc_naviframe.c:1185
+#: src/lib/elc_naviframe.c:978 src/lib/elc_naviframe.c:1183
 msgid "Back"
 msgstr "Atrás"
 
-#: src/lib/elc_naviframe.c:1281
+#: src/lib/elc_naviframe.c:1279
 msgid "Next"
 msgstr "Siguiente"
 
@@ -84,9 +84,9 @@ msgid "Clicked"
 msgstr "Seleccionado"
 
 #: src/lib/elm_button.c:275 src/lib/elm_check.c:244 src/lib/elm_gengrid.c:1255
-#: src/lib/elm_genlist.c:1656 src/lib/elm_list.c:2189 src/lib/elm_radio.c:268
+#: src/lib/elm_genlist.c:1659 src/lib/elm_list.c:2189 src/lib/elm_radio.c:268
 #: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:902
-#: src/lib/elm_toolbar.c:2245
+#: src/lib/elm_toolbar.c:2246
 msgid "State: Disabled"
 msgstr "Estado: Desactivado"
 
@@ -193,7 +193,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr "Selector de color de paleta"
 
-#: src/lib/elm_config.c:3283
+#: src/lib/elm_config.c:3287
 msgid "default:LTR"
 msgstr "Predeterminado: LTR"
 
@@ -269,7 +269,7 @@ msgstr "barra de progreso"
 msgid "Radio"
 msgstr "Radio"
 
-#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2247
+#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2248
 msgid "State: Selected"
 msgstr "Estado: Seleccionado"
 
@@ -310,23 +310,23 @@ msgstr "botón de decremento del spinner"
 msgid "spinner text"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1705 src/lib/elm_toolbar.c:2304
+#: src/lib/elm_toolbar.c:1706 src/lib/elm_toolbar.c:2305
 msgid "Selected"
 msgstr "Seleccionado"
 
-#: src/lib/elm_toolbar.c:2243
+#: src/lib/elm_toolbar.c:2244
 msgid "Separator"
 msgstr "Separador"
 
-#: src/lib/elm_toolbar.c:2249
+#: src/lib/elm_toolbar.c:2250
 msgid "Has menu"
 msgstr "Tiene menú"
 
-#: src/lib/elm_toolbar.c:2299
+#: src/lib/elm_toolbar.c:2300
 msgid "Unselected"
 msgstr "Sin seleccionar"
 
-#: src/lib/elm_toolbar.c:2316
+#: src/lib/elm_toolbar.c:2317
 msgid "Toolbar Item"
 msgstr "Elemento de la barra de herramientas"
 
