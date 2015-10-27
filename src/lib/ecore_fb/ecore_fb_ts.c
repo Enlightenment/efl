@@ -111,7 +111,7 @@ ecore_fb_ts_init(void)
           }
      }
 #else
-   _ecore_fb_ts_fd = open("/dev/touchscreen/0", O_RDONLY);
+   _ecore_fb_ts_fd = open("/dev/input/event0", O_RDONLY);
 #endif
    if (_ecore_fb_ts_fd >= 0)
      {
