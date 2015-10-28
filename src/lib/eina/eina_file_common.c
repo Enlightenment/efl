@@ -70,6 +70,10 @@ _eina_file_escape(char *path, size_t len)
    if (!result)
      return NULL;
 
+#ifdef _WIN32
+   EVIL_PATH_SEP_WIN32_TO_UNIX(path);
+#endif
+
    while ((p = strchr(p, '/')))
      {
 	// remove double `/'
