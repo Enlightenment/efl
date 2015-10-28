@@ -227,7 +227,41 @@ _drm_vblank_handler(int fd EINA_UNUSED,
         D("    @%1.5f vblank %i\n", ecore_time_get(), frame);
         if (pframe != frame)
           {
-             _drm_send_time((double)sec + ((double)usec / 1000000));
+#define DELTA_COUNT 10
+             double t = (double)sec + ((double)usec / 1000000);
+             double tnow = ecore_time_get();
+             static double tdelta[DELTA_COUNT];
+             static double tdelta_avg = 0.0;
+             static int tdelta_n = 0;
+
+             if (t > tnow)
+               {
+                  if (tdelta_n > DELTA_COUNT)
+                    {
+                       t = t + tdelta_avg;
+                    }
+                  else if (tdelta_n < DELTA_COUNT)
+                    {
+                       tdelta[tdelta_n] = tnow - t;
+                       tdelta_n++;
+                       t = tnow;
+                    }
+                  else if (tdelta_n == DELTA_COUNT)
+                    {
+                       int i;
+
+                       for (i = 0; i < DELTA_COUNT; i++)
+                         tdelta_avg += tdelta[i];
+                       tdelta_avg /= (double)(DELTA_COUNT);
+                       tdelta_n++;
+                    }
+               }
+             else
+               {
+                  tdelta_avg = 0.0;
+                  tdelta_n = 0;
+               }
+             _drm_send_time(t);
              pframe = frame;
           }
      }
