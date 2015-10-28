@@ -5569,6 +5569,13 @@ _on_atspi_bus_connected(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Ev
         if (elm_win_focus_get(win))
           {
              elm_interface_atspi_window_activated_signal_emit(win);
+             /** Reemit focused event to inform atspi clients about currently
+              * focused object **/
+             unsigned int order = 0;
+             Evas_Object *target;
+             eo_do(win, target = elm_obj_widget_newest_focus_order_get(&order, EINA_TRUE));
+             if (target)
+               elm_interface_atspi_accessible_state_changed_signal_emit(target, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
           }
         else
           elm_interface_atspi_window_deactivated_signal_emit(win);
