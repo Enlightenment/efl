@@ -1,4 +1,4 @@
-if HAVE_ECORDOVA
+
 ### Library
 
 ecordova_eolian_files = \
@@ -31,8 +31,7 @@ lib/ecordova/ecordova_directoryentry.eo \
 lib/ecordova/ecordova_directoryreader.eo \
 lib/ecordova/ecordova_fileentry.eo \
 lib/ecordova/ecordova_mediafile.eo \
-lib/ecordova/ecordova_filetransfer.eo \
-lib/ecordova/ecordova_capture.eo
+lib/ecordova/ecordova_filetransfer.eo
 
 ecordova_eolian_c = $(ecordova_eolian_files:%.eo=%.eo.c)
 ecordova_eolian_h = $(ecordova_eolian_files:%.eo=%.eo.h)
@@ -64,8 +63,8 @@ nodist_installed_ecordovamainheaders_DATA = \
                                             $(ecordova_eolian_h)
 
 lib_ecordova_libecordova_la_SOURCES = \
-lib/ecordova/ecordova_main.c \
-lib/ecordova/ecordova_private.h \
+lib/ecordova/ecordova_main.c
+#lib/ecordova/ecordova_private.h \
 lib/ecordova/ecordova_systeminfo.c \
 lib/ecordova/ecordova_batterystatus.c \
 lib/ecordova/ecordova_console.c \
@@ -99,10 +98,66 @@ lib/ecordova/ecordova_mediafile.c \
 lib/ecordova/ecordova_filetransfer.c \
 lib/ecordova/ecordova_capture.c
 
-lib_ecordova_libecordova_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORDOVA_CFLAGS@ @EFL_CFLAGS@
+lib_ecordova_libecordova_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORDOVA_CFLAGS@ @EFL_CFLAGS@ \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/ecordova\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\"
 lib_ecordova_libecordova_la_LIBADD = @ECORDOVA_LIBS@ @EFL_LIBS@
 lib_ecordova_libecordova_la_DEPENDENCIES = @ECORDOVA_INTERNAL_LIBS@ @EFL_INTERNAL_LIBS@
 lib_ecordova_libecordova_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+# if HAVE_TIZEN_CONFIGURATION_MANAGER
+# ecordovatizenpkgdir = $(libdir)/ecordova/tizen/$(MODULE_ARCH)
+# ecordovatizenpkg_LTLIBRARIES = modules/ecordova/tizen/module.la
+
+# # Workaround for broken parallel install support in automake (relink issue)
+# # http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+# install_ecordovatizenpkgLTLIBRARIES = install-ecordovatizenpkgLTLIBRARIES
+# $(install_ecordovatizenpkgLTLIBRARIES): install-libLTLIBRARIES
+
+# modules_ecordova_tizen_module_la_SOURCES = \
+# modules/ecordova/tizen/ecordova_tizen.c
+# modules_ecordova_tizen_module_la_CPPFLAGS = \
+# -I$(top_builddir)/src/lib/efl \
+# @ECORDOVA_CFLAGS@ \
+# @TIZEN_CONFIGURATION_MANAGER_CFLAGS@
+# modules_ecordova_tizen_module_la_LIBADD = \
+# @USE_ECORDOVA_LIBS@ \
+# @TIZEN_CONFIGURATION_MANAGER_LIBS@
+# modules_ecordova_tizen_module_la_DEPENDENCIES = \
+# @USE_ECORDOVA_INTERNAL_LIBS@
+# modules_ecordova_tizen_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+# modules_ecordova_tizen_module_la_LIBTOOLFLAGS = --tag=disable-static
+# endif
+
+ecordovalinuxpkgdir = $(libdir)/ecordova/linux/$(MODULE_ARCH)
+ecordovalinuxpkg_LTLIBRARIES = modules/ecordova/linux/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecordovalinuxpkgLTLIBRARIES = install-ecordovalinuxpkgLTLIBRARIES
+$(install_ecordovalinuxpkgLTLIBRARIES): install-libLTLIBRARIES
+
+modules_ecordova_linux_module_la_SOURCES = \
+modules/ecordova/linux/ecordova_linux.c \
+modules/ecordova/linux/ecordova_console.c \
+modules/ecordova/linux/ecordova_directoryentry.c \
+modules/ecordova/linux/ecordova_directoryreader.c \
+modules/ecordova/linux/ecordova_entry.c \
+modules/ecordova/linux/ecordova_fileentry.c \
+modules/ecordova/linux/ecordova_file.c \
+modules/ecordova/linux/ecordova_filereader.c \
+modules/ecordova/linux/ecordova_filewriter.c
+modules_ecordova_linux_module_la_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
+@ECORDOVA_CFLAGS@ -DEFL_ECORDOVA_BUILD @EIO_CFLAGS@ @ECORE_FILE_CFLAGS@
+modules_ecordova_linux_module_la_LIBADD = \
+@USE_ECORDOVA_LIBS@ @USE_EIO_LIBS@ @USE_ECORE_FILE_LIBS@ 
+modules_ecordova_linux_module_la_DEPENDENCIES = \
+@USE_ECORDOVA_INTERNAL_LIBS@ @USE_EIO_INTERNAL_LIBS@ @USE_ECORE_FILE_INTERNAL_LIBS@
+modules_ecordova_linux_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_ecordova_linux_module_la_LIBTOOLFLAGS = --tag=disable-static
 
 ### Unit tests
 
@@ -111,9 +166,21 @@ if EFL_ENABLE_TESTS
 check_PROGRAMS += tests/ecordova/ecordova_suite
 TESTS += tests/ecordova/ecordova_suite
 
+
 tests_ecordova_ecordova_suite_SOURCES = \
 tests/ecordova/ecordova_suite.c \
-tests/ecordova/ecordova_suite.h \
+tests/ecordova/ecordova_console_test.c \
+tests/ecordova/ecordova_directoryreader_test.c \
+tests/ecordova/ecordova_directoryentry_test.c \
+tests/ecordova/ecordova_entry_test.c \
+tests/ecordova/ecordova_file_test.c \
+tests/ecordova/ecordova_filereader_test.c \
+tests/ecordova/ecordova_filewriter_test.c \
+tests/ecordova/ecordova_fileentry_test.c
+
+$(tests_ecordova_ecordova_suite_SOURCES:%.c=%.$(OBJEXT)): modules/ecordova/linux/module.la
+
+#tests/ecordova/ecordova_suite.h \
 tests/ecordova/ecordova_contacts_test.c \
 tests/ecordova/ecordova_contacts_test.h \
 tests/ecordova/ecordova_device_test.c \
@@ -136,20 +203,8 @@ tests/ecordova/ecordova_networkinformation_test.c \
 tests/ecordova/ecordova_networkinformation_test.h \
 tests/ecordova/ecordova_vibration_test.c \
 tests/ecordova/ecordova_vibration_test.h \
-tests/ecordova/ecordova_directoryreader_test.c \
-tests/ecordova/ecordova_directoryreader_test.h \
-tests/ecordova/ecordova_directoryentry_test.c \
-tests/ecordova/ecordova_directoryentry_test.h \
 tests/ecordova/ecordova_entry_test.c \
 tests/ecordova/ecordova_entry_test.h \
-tests/ecordova/ecordova_file_test.c \
-tests/ecordova/ecordova_file_test.h \
-tests/ecordova/ecordova_fileentry_test.c \
-tests/ecordova/ecordova_fileentry_test.h \
-tests/ecordova/ecordova_filereader_test.c \
-tests/ecordova/ecordova_filereader_test.h \
-tests/ecordova/ecordova_filewriter_test.c \
-tests/ecordova/ecordova_filewriter_test.h \
 tests/ecordova/ecordova_mediafile_test.c \
 tests/ecordova/ecordova_mediafile_test.h \
 tests/ecordova/ecordova_globalization_test.c \
@@ -159,11 +214,13 @@ tests_ecordova_ecordova_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_SRC_DIR=\"$(abs_top_srcdir)/src/tests/ecordova\" \
 -DTESTS_BUILD_DIR=\"$(abs_top_builddir)/src/tests/ecordova\" \
 @CHECK_CFLAGS@ \
-@ECORDOVA_CFLAGS@ @EFL_CFLAGS@
+@ECORDOVA_CFLAGS@ @EFL_CFLAGS@ @ECORE_FILE_CFLAGS@ @EIO_CFLAGS@
 
 tests_ecordova_ecordova_suite_LDADD = \
 @CHECK_LIBS@ \
 @USE_ECORDOVA_LIBS@ \
+@USE_ECORE_FILE_LIBS@ \
+@USE_EIO_LIBS@ \
 @USE_EFL_LIBS@
 
 tests_ecordova_ecordova_suite_DEPENDENCIES = \
@@ -186,4 +243,4 @@ nodist_installed_ecordovalua_DATA = $(generated_ecordova_lua_all)
 
 endif
 
-endif
+

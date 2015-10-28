@@ -2,17 +2,17 @@
 # include <config.h>
 #endif
 
-#include "ecordova_contacts_test.h"
-#include "ecordova_device_test.h"
-#include "ecordova_devicemotion_test.h"
-#include "ecordova_deviceorientation_test.h"
-#include "ecordova_geolocation_test.h"
-#include "ecordova_batterystatus_test.h"
+/* #include "ecordova_contacts_test.h" */
+/* #include "ecordova_device_test.h" */
+/* #include "ecordova_devicemotion_test.h" */
+/* #include "ecordova_deviceorientation_test.h" */
+/* #include "ecordova_geolocation_test.h" */
+/* #include "ecordova_batterystatus_test.h" */
 #include "ecordova_console_test.h"
-#include "ecordova_filetransfer_test.h"
-#include "ecordova_media_test.h"
-#include "ecordova_networkinformation_test.h"
-#include "ecordova_vibration_test.h"
+/* #include "ecordova_filetransfer_test.h" */
+/* #include "ecordova_media_test.h" */
+/* #include "ecordova_networkinformation_test.h" */
+/* #include "ecordova_vibration_test.h" */
 #include "ecordova_directoryreader_test.h"
 #include "ecordova_directoryentry_test.h"
 #include "ecordova_entry_test.h"
@@ -20,8 +20,8 @@
 #include "ecordova_fileentry_test.h"
 #include "ecordova_filereader_test.h"
 #include "ecordova_filewriter_test.h"
-#include "ecordova_mediafile_test.h"
-#include "ecordova_globalization_test.h"
+/* #include "ecordova_mediafile_test.h" */
+/* #include "ecordova_globalization_test.h" */
 
 #include <Eina.h>
 
@@ -44,16 +44,16 @@ struct _Ecordova_Test_Case
 
 static const Ecordova_Test_Case etc[] = {
   //{ "contacts", ecordova_contacts_test },
-  { "device", ecordova_device_test },
-  { "devicemotion", ecordova_devicemotion_test },
-  { "deviceorientation", ecordova_deviceorientation_test },
-  { "geolocation", ecordova_geolocation_test },
-  { "batterystatus", ecordova_batterystatus_test },
+  /* { "device", ecordova_device_test }, */
+  /* { "devicemotion", ecordova_devicemotion_test }, */
+  /* { "deviceorientation", ecordova_deviceorientation_test }, */
+  /* { "geolocation", ecordova_geolocation_test }, */
+  /* { "batterystatus", ecordova_batterystatus_test }, */
   { "console", ecordova_console_test },
-  { "filetransfer", ecordova_filetransfer_test },
-  { "media", ecordova_media_test },
-  { "networkinformation", ecordova_networkinformation_test },
-  { "vibration", ecordova_vibration_test },
+  /* { "filetransfer", ecordova_filetransfer_test }, */
+  /* { "media", ecordova_media_test }, */
+  /* { "networkinformation", ecordova_networkinformation_test }, */
+  /* { "vibration", ecordova_vibration_test }, */
   { "directoryreader", ecordova_directoryreader_test },
   { "directoryentry", ecordova_directoryentry_test },
   { "entry", ecordova_entry_test },
@@ -61,8 +61,8 @@ static const Ecordova_Test_Case etc[] = {
   { "fileentry", ecordova_fileentry_test },
   { "filereader", ecordova_filereader_test },
   { "filewriter", ecordova_filewriter_test },
-  { "mediafile", ecordova_mediafile_test },
-  { "globalization", ecordova_globalization_test },
+  /* { "mediafile", ecordova_mediafile_test }, */
+  /* { "globalization", ecordova_globalization_test }, */
   { NULL, NULL }
 };
 
@@ -143,6 +143,8 @@ main(int argc, char **argv)
              return 0;
           }
      }
+
+   putenv("EFL_RUN_IN_TREE=1");
 
    srand(time(NULL));
 

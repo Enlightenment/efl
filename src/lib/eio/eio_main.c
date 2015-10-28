@@ -60,23 +60,38 @@ static Eina_Bool memory_pool_suspended = 1;
 static void *
 _eio_pool_malloc(Eio_Alloc_Pool *pool)
 {
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    void *result = NULL;
 
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    if (pool->count)
      {
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         eina_lock_take(&(pool->lock));
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         result = eina_trash_pop(&pool->trash);
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         if (result) pool->count--;
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         eina_lock_release(&(pool->lock));
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
      }
 
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    if (!result)
      {
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         result = malloc(pool->mem_size);
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         eina_spinlock_take(&memory_pool_lock);
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         if (result) memory_pool_usage += pool->mem_size;
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         eina_spinlock_release(&memory_pool_lock);
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
      }
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    return result;
 }
 
@@ -85,9 +100,13 @@ _eio_pool_free(Eio_Alloc_Pool *pool, void *data)
 {
    if (pool->count >= EIO_PROGRESS_LIMIT)
      {
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         eina_spinlock_take(&memory_pool_lock);
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         memory_pool_usage -= pool->mem_size;
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         eina_spinlock_release(&memory_pool_lock);
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         free(data);
 
         if (memory_pool_limit > 0 &&
@@ -364,7 +383,9 @@ eio_shutdown(void)
 
    eina_condition_free(&(memory_pool_cond));
    eina_lock_free(&(memory_pool_mutex));
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    eina_spinlock_free(&(memory_pool_lock));
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    eina_lock_free(&(direct_info_pool.lock));
    eina_lock_free(&(progress_pool.lock));

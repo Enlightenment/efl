@@ -985,7 +985,9 @@ ecore_main_loop_begin(void)
    _ecore_lock();
    in_main_loop++;
    _ecore_time_loop_time = ecore_time_get();
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    while (do_quit == 0) _ecore_main_loop_iterate_internal(0);
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    do_quit = 0;
    in_main_loop--;
    _ecore_unlock();
@@ -1420,14 +1422,19 @@ _ecore_main_select(double timeout)
    FD_ZERO(&wfds);
    FD_ZERO(&exfds);
 
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   
    /* call the prepare callback for all handlers */
    if (fd_handlers_with_prep)
      _ecore_main_prepare_handlers();
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    if (!HAVE_EPOLL || epoll_fd < 0)
      {
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         EINA_INLIST_FOREACH(fd_handlers, fdh)
           {
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
              if (!fdh->delete_me)
                {
                   if (fdh->flags & ECORE_FD_READ)
@@ -1454,6 +1461,7 @@ _ecore_main_select(double timeout)
          max_fd = _ecore_get_epoll_fd();
          FD_SET(max_fd, &rfds);
      }
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    EINA_LIST_FOREACH(file_fd_handlers, l, fdh)
      if (!fdh->delete_me)
        {
@@ -1475,12 +1483,16 @@ _ecore_main_select(double timeout)
           if (fdh->fd > max_fd) max_fd = fdh->fd;
        }
    if (_ecore_signal_count_get()) return -1;
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    _ecore_unlock();
    eina_evlog("!SLEEP", NULL, 0.0, t ? "timeout" : "forever");
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    ret = main_loop_select(max_fd + 1, &rfds, &wfds, &exfds, t);
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    eina_evlog("!WAKE", NULL, 0.0, NULL);
    _ecore_lock();
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
    _ecore_time_loop_time = ecore_time_get();
    if (ret < 0)
@@ -1491,12 +1503,15 @@ _ecore_main_select(double timeout)
           _ecore_main_fd_handlers_bads_rem();
 #endif
      }
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    if (ret > 0)
      {
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         if (HAVE_EPOLL && epoll_fd >= 0)
           _ecore_main_fdh_epoll_mark_active();
         else
           {
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
              EINA_INLIST_FOREACH(fd_handlers, fdh)
                {
                   if (!fdh->delete_me)
@@ -1513,6 +1528,7 @@ _ecore_main_select(double timeout)
           }
         EINA_LIST_FOREACH(file_fd_handlers, l, fdh)
           {
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
              if (!fdh->delete_me)
                {
                   if (FD_ISSET(fdh->fd, &rfds))
@@ -1524,10 +1540,12 @@ _ecore_main_select(double timeout)
                   _ecore_try_add_to_call_list(fdh);
                }
           }
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         _ecore_main_fd_handlers_cleanup();
 #ifdef _WIN32
         _ecore_main_win32_handlers_cleanup();
 #endif
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         return 1;
      }
    return 0;

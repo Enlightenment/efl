@@ -1,7 +1,7 @@
 #ifndef _ECORDOVA_CONSOLE_PRIVATE_H
 #define _ECORDOVA_CONSOLE_PRIVATE_H
 
-#include "ecordova_private.h"
+//#include "ecordova_private.h"
 #include "ecordova_console.eo.h"
 
 typedef struct _Ecordova_Console_Data Ecordova_Console_Data;

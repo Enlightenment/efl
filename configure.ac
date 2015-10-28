@@ -4584,30 +4584,7 @@ EFL_LIB_END([Elocation])
 
 
 #### Ecordova
-AC_ARG_WITH([ecordova],
-   [AS_HELP_STRING([--with-ecordova=tizen|none],[ecordova implementation: tizen or none. @<:@default=none@:>@])],
-   [build_ecordova=${withval}],
-   [build_ecordova="none"])
-
-want_ecordova_tizen="no"
-want_ecordova_none="no"
-want_ecordova="no"
-case "${build_ecordova}" in
-   tizen)
-     want_ecordova_tizen="yes"
-     want_ecordova="yes"
-     ;;
-   none)
-     want_ecordova_none="yes"
-     ;;
-   *)
-     AC_MSG_ERROR([Unknown build ecordova --with-ecordova=${build_ecordova}])
-     ;;
-esac
-
-AM_CONDITIONAL([HAVE_ECORDOVA], [test "x${want_ecordova}" = "xyes"])
-
-EFL_LIB_START_OPTIONAL([Ecordova], [test "x${want_ecordova}" = "xyes"])
+EFL_LIB_START([Ecordova])
 
 ### Additional options to configure
 
@@ -4621,22 +4598,22 @@ EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [eina])
 EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [efl])
 EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [ecore])
-EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [ecore-evas])
-EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [ecore-file])
+#EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [ecore-evas])
+#EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [ecore-file])
 
-EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_VCONF], [vconf])
-EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_CONTACTS_SERVICE], [contacts-service2])
-EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_INFO], [capi-system-info])
-EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_SENSOR], [capi-system-sensor])
-EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_LOCATION_MANAGER], [capi-location-manager])
-EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_HAPTIC], [capi-system-haptic])
-EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_NETWORK_CONNECTION], [capi-network-connection])
-EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_MEDIA_METADATA_EXTRACTOR], [capi-media-metadata-extractor])
-EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_MEDIA_PLAYER], [capi-media-player])
-EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_MEDIA_RECORDER], [capi-media-recorder])
-EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_ecordova_tizen}], [TIZEN_BASE_UTILS_I18N], [capi-base-utils-i18n])
+#EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_tizen}], [TIZEN_VCONF], [vconf])
+#EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_tizen}], [TIZEN_CONTACTS_SERVICE], [contacts-service2])
+#EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_tizen}], [TIZEN_INFO], [capi-system-info])
+#EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_tizen}], [TIZEN_SENSOR], [capi-system-sensor])
+#EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_tizen}], [TIZEN_LOCATION_MANAGER], [capi-location-manager])
+#EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_tizen}], [TIZEN_HAPTIC], [capi-system-haptic])
+#EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_tizen}], [TIZEN_NETWORK_CONNECTION], [capi-network-connection])
+#EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_tizen}], [TIZEN_MEDIA_METADATA_EXTRACTOR], [capi-media-metadata-extractor])
+#EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_tizen}], [TIZEN_MEDIA_PLAYER], [capi-media-player])
+#EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_tizen}], [TIZEN_MEDIA_RECORDER], [capi-media-recorder])
+#EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_tizen}], [TIZEN_BASE_UTILS_I18N], [capi-base-utils-i18n])
 
-EFL_ADD_LIBS([ECORDOVA], [-lm])
+#EFL_ADD_LIBS([ECORDOVA], [-lm])
 
 EFL_EVAL_PKGS([ECORDOVA])
 
@@ -4652,21 +4629,9 @@ EFL_EVAL_PKGS([ECORDOVA])
 
 ### Checks for library functions
 
-EFL_LIB_END_OPTIONAL([Ecordova])
+EFL_LIB_END([Ecordova])
 
 #### End of Ecordova
-
-
-#### Ecordova CXX
-EFL_LIB_START_OPTIONAL([Ecordova_Cxx], [test "x${want_ecordova}" = "xyes"])
-
-EFL_EVAL_PKGS([ECORDOVA_CXX])
-
-EFL_LIB_END_OPTIONAL([Ecordova_Cxx])
-#### End of Ecordova CXX
-
-
-
 
 ### Add Wayland server library if test is enabled
 if test "x${want_tests}" = "xyes" -a "x${want_wayland}" = "xyes"; then
@@ -5025,7 +4990,6 @@ echo "Emotion.........: yes (${features_emotion})"
 echo "Ethumb..........: yes"
 echo "Ethumb_Client...: yes"
 echo "Elua............: $have_elua"
-echo "Ecordova........: ${efl_lib_optional_ecordova} (${COLOR_OTHER}${build_ecordova}${COLOR_RESET})"
 if test "${build_tests}" = "none"; then
 echo "Tests...........: no"
 elif test "${build_tests}" = "auto"; then

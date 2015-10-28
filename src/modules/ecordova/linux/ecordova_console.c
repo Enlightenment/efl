@@ -2,6 +2,9 @@
 # include <config.h>
 #endif
 
+#include <Eina.h>
+#include <Eo.h>
+
 #include "ecordova_console_private.h"
 
 #include <stdbool.h>
@@ -10,6 +13,37 @@
 
 #define MY_CLASS ECORDOVA_CONSOLE_CLASS
 #define MY_CLASS_NAME "Ecordova_Console"
+
+#ifdef EAPI
+# undef EAPI
+#endif
+
+#ifdef _WIN32
+# ifdef DLL_EXPORT
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI
+# endif /* ! DLL_EXPORT */
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif /* ! _WIN32 */
+
+/* logging support */
+extern int _ecordova_log_dom;
+
+#define CRI(...) EINA_LOG_DOM_CRIT(_ecordova_log_dom, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_ecordova_log_dom, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_ecordova_log_dom, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_ecordova_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_ecordova_log_dom, __VA_ARGS__)
 
 static void _ecordova_console_level_log(Ecordova_Console_Data *, Ecordova_Console_LoggerLevel, const char *);
 
@@ -171,5 +205,12 @@ _ecordova_console_level_log(Ecordova_Console_Data *pd,
    if (pd->console_use)
      printf("%s%s\n", level_str[level], message);
 }
+
+#undef EOAPI
+#define EOAPI EAPI
+
+#include "undefs.h"
+
+#define ecordova_console_class_get ecordova_console_impl_class_get
 
 #include "ecordova_console.eo.c"

@@ -140,41 +140,56 @@ _eio_file_eina_ls_heavy(Ecore_Thread *thread, Eio_File_Direct_Ls *async, Eina_It
 
    EINA_ITERATOR_FOREACH(ls, info)
      {
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 	Eina_Bool filter = EINA_TRUE;
 
 	if (async->filter_cb)
 	  {
+             fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 	     filter = async->filter_cb((void*) async->ls.common.data, &async->ls.common, info);
 	  }
 
 	if (filter)
 	  {
+             fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 	     Eio_File_Direct_Info *send_di;
 
+             fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 	     send_di = eio_direct_info_malloc();
+             fprintf(stderr, "%s:%s:%d %d\n", __func__, __FILE__, __LINE__, (int)send_di); fflush(stderr);
 	     if (!send_di) continue;
 
+             fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 	     memcpy(&send_di->info, info, sizeof (Eina_File_Direct_Info));
 	     send_di->associated = async->ls.common.worker.associated;
 	     async->ls.common.worker.associated = NULL;
+             fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 
              pack = eina_list_append(pack, send_di);
+             fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 	  }
 	else if (async->ls.common.worker.associated)
 	  {
+             fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
              eina_hash_free(async->ls.common.worker.associated);
              async->ls.common.worker.associated = NULL;
 	  }
 
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         pack = eio_pack_send(thread, pack, &start);
 
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 	if (ecore_thread_check(thread))
 	  break;
+        fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
      }
 
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    if (pack) ecore_thread_feedback(thread, pack);
 
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    async->ls.ls = ls;
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 }
 
 static void
@@ -191,6 +206,7 @@ _eio_file_direct_heavy(void *data, Ecore_Thread *thread)
 static void
 _eio_file_stat_heavy(void *data, Ecore_Thread *thread)
 {
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    Eio_File_Direct_Ls *async = data;
    Eina_Iterator *ls;
 

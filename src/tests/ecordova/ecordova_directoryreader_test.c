@@ -5,8 +5,6 @@
 #include "ecordova_directoryreader_test.h"
 #include "ecordova_suite.h"
 
-#include <stdbool.h>
-
 static void
 _setup(void)
 {
@@ -40,8 +38,9 @@ END_TEST
 static Eina_Bool
 _timeout_cb(void *data)
 {
-   bool *timeout = data;
-   *timeout = true;
+   Eina_Bool *timeout = data;
+   *timeout = EINA_TRUE;
+   fprintf(stderr, "_timeout_cb\n"); fflush(stderr);
    ecore_main_loop_quit();
    return ECORE_CALLBACK_CANCEL;
 }
@@ -52,11 +51,13 @@ _success_cb(void *data,
             const Eo_Event_Description *desc EINA_UNUSED,
             void *event_info)
 {
-   bool *success = data;
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   Eina_Bool *success = data;
    Eina_List *entries = event_info;
    fail_if(NULL == entries);
 
-   *success = true;
+   *success = EINA_TRUE;
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    ecore_main_loop_quit();
    return EO_CALLBACK_CONTINUE;
 }
@@ -67,11 +68,13 @@ _error_cb(void *data,
           const Eo_Event_Description *desc EINA_UNUSED,
           void *event_info)
 {
-   bool *error = data;
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   Eina_Bool *error = data;
    Ecordova_FileError *error_code = event_info;
    fail_if(NULL == error_code);
 
-   *error = true;
+   *error = EINA_TRUE;
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    ecore_main_loop_quit();
    return EO_CALLBACK_CONTINUE;
 }
@@ -80,22 +83,33 @@ START_TEST(read_entries_success)
 {
    Ecordova_DirectoryReader *directory_reader = _directoryreader_new(TESTS_BUILD_DIR);
 
-   bool success = false;
-   bool error = false;
-   bool timeout = false;
+   Eina_Bool success = EINA_FALSE;
+   Eina_Bool error = EINA_FALSE;
+   Eina_Bool timeout = EINA_FALSE;
 
-   Ecore_Timer *timer = eo_add(ECORE_TIMER_CLASS, NULL, ecore_obj_timer_constructor(10, _timeout_cb, &timeout));
+   /* Ecore_Timer *timer = eo_add(ECORE_TIMER_CLASS, NULL, ecore_obj_timer_constructor(2, _timeout_cb, &timeout)); */
+   fprintf(stderr, "Starting test\n"); fflush(stderr);
    eo_do(directory_reader, eo_event_callback_add(ECORDOVA_DIRECTORYREADER_EVENT_SUCCESS, _success_cb, &success));
    eo_do(directory_reader, eo_event_callback_add(ECORDOVA_DIRECTORYREADER_EVENT_ERROR, _error_cb, &error));
    eo_do(directory_reader, ecordova_directoryreader_entries_read());
-   ecore_main_loop_begin();
 
-   eo_unref(timer);
+   fprintf(stderr, "Going to event loop\n"); fflush(stderr);
+   if(!error && !timeout)
+     ecore_main_loop_begin();
+   fprintf(stderr, "Out of event loop\n"); fflush(stderr);
+
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   /* eo_unref(timer); */
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    fail_if(error);
-   fail_if(timeout);
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   /* fail_if(timeout); */
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    fail_unless(success);
 
+   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    eo_unref(directory_reader);
+   fprintf(stderr, "Out of test\n"); fflush(stderr);
 }
 END_TEST
 
@@ -103,9 +117,9 @@ START_TEST(read_entries_error)
 {
    Ecordova_DirectoryReader *directory_reader = _directoryreader_new("/**??this_directory_doesn't_exist??**");
 
-   bool success = false;
-   bool error = false;
-   bool timeout = false;
+   Eina_Bool success = EINA_FALSE;
+   Eina_Bool error = EINA_FALSE;
+   Eina_Bool timeout = EINA_FALSE;
 
    Ecore_Timer *timer = eo_add(ECORE_TIMER_CLASS, NULL, ecore_obj_timer_constructor(10, _timeout_cb, &timeout));
    eo_do(directory_reader, eo_event_callback_add(ECORDOVA_DIRECTORYREADER_EVENT_SUCCESS, _success_cb, &success));
