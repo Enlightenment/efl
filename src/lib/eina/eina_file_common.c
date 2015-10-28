@@ -359,7 +359,7 @@ eina_file_path_sanitize(const char *path)
    else
      result = path;
 
-   r = _eina_file_escape(eina_file_cleanup(result), len);
+   r = _eina_file_escape(strdup(result ? result : ""), len);
    if (result != path) eina_tmpstr_del(result);
 
    return r;
