@@ -165,7 +165,7 @@ struct _Elm_Prefs_Item_Iface
 
    Eina_Bool                  (*editable_get)(Evas_Object *obj); /**< function to retrieve whether an item widget is editable or not */
 
-   Eina_Bool                  (*expand_want)(Evas_Object *obj); /**< function to get wether the item implementation needs to be expanded in the page's longitudinal axis or not */
+   Eina_Bool                  (*expand_want)(Evas_Object *obj); /**< function to get whether the item implementation needs to be expanded in the page's longitudinal axis or not */
 };
 
 typedef struct _Elm_Prefs_Item_Iface_Info Elm_Prefs_Item_Iface_Info;

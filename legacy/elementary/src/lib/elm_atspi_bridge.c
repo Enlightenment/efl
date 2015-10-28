@@ -2442,7 +2442,7 @@ _collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_mat
    if (!eldbus_message_iter_fixed_array_get(states_iter, 'i', &array, &array_count))
      return EINA_FALSE;
 
-   //Roles according to libatspi impementation are transfered in 2-int element fixed bit array
+   //Roles according to libatspi impementation are transferred in 2-int element fixed bit array
    if (array_count != 2)
      {
         ERR("Unexpected states array size");
@@ -2451,7 +2451,7 @@ _collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_mat
    uint64_t states = ((uint64_t)array[0] | ((uint64_t)array[1] << 32));
    rule->states = _atspi_state_set_to_elm_atspi_state_set(states);
 
-   //Roles according to libatspi impementation are transfered in 4-int element fixed bit array
+   //Roles according to libatspi impementation are transferred in 4-int element fixed bit array
    if (!eldbus_message_iter_fixed_array_get(role_iter, 'i', &array, &array_count))
      return EINA_FALSE;
 

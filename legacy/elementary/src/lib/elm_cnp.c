@@ -3550,7 +3550,7 @@ _local_elm_cnp_selection_loss_callback_set(Evas_Object *obj EINA_UNUSED,
                                            const void *data EINA_UNUSED)
 {
    _local_elm_cnp_init();
-   // this doesnt need to do anything as we never lose selection to anyone
+   // this doesn't need to do anything as we never lose selection to anyone
    // as thisis local
 }
 

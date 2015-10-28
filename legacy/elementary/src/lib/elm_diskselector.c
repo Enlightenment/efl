@@ -536,7 +536,7 @@ _identical_item_check(Elm_Diskselector_Item_Data *it,
 
    if (sd->round)
      {
-        // Get index from indentical item from round items
+        // Get index from identical item from round items
         EINA_LIST_FOREACH(sd->r_items, l, dit)
           {
              if (it == dit) break;

@@ -1394,7 +1394,7 @@ _inside(Evas_Coord xx1,
 {
    w >>= 1; /* Use half the distance, from center to all directions */
    if (!w)  /* use system default instead */
-     w = elm_config_finger_size_get() >> 1; /* Finger size devided by 2 */
+     w = elm_config_finger_size_get() >> 1; /* Finger size divided by 2 */
 
    if (xx1 < (xx2 - w))
      return EINA_FALSE;
@@ -1660,7 +1660,7 @@ static Eina_Bool
 _tap_gesture_check_finish(Gesture_Info *gesture, Evas_Coord tap_finger_size)
 {
    /* Here we check if taps-gesture was completed successfuly */
-   /* Count how many taps were recieved on each device then   */
+   /* Count how many taps were received on each device then   */
    /* determine if it matches n_taps_needed defined on START  */
    unsigned int i;
    Taps_Type *st = gesture->data;

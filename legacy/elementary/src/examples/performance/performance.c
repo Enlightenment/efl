@@ -526,7 +526,7 @@ _load_mesh(void *data, Evas_Object *obj, void *event_info)
         free(a);
         tmp = NULL;
         a = NULL;
-        /*Get extention of file*/
+        /*Get extension of file*/
         tmp = strdup(event_info);
         a = strrchr(tmp,'.');
         format = malloc(sizeof (char) * (strlen(a) - 1));
@@ -591,7 +591,7 @@ EAPI_MAIN
    if (!elm_init(argc, argv)) return 1;
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
-   win = elm_win_add(NULL, "3D Perfomance", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "3D Performance", ELM_WIN_BASIC);
    evas_object_resize(win, WIDTH, HEIGHT);
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_show(win);

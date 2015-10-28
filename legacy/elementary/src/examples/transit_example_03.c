@@ -199,7 +199,7 @@ elm_main(int argc, char **argv)
 
    /* add an object that we are going to play with */
    /* this object isn't packed inside the box because we don't want it to have
-    * its size, position, aspect or anything else controled by the container */
+    * its size, position, aspect or anything else controlled by the container */
    obj = elm_button_add(win);
    elm_object_text_set(obj, "Transformed object!");
    icon = elm_icon_add(win);

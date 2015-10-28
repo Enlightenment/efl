@@ -3891,7 +3891,7 @@ _elm_entry_is_empty(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
    Evas_Textblock_Cursor *cur;
 
    /* It's a hack until we get the support suggested above.  We just
-    * create a cursor, point it to the begining, and then try to
+    * create a cursor, point it to the beginning, and then try to
     * advance it, if it can advance, the tb is not empty, otherwise it
     * is. */
    tb = edje_object_part_object_get(sd->entry_edje, "elm.text");

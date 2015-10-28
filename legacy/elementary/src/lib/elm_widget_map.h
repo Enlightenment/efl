@@ -228,7 +228,7 @@ struct _Overlay_Circle
 {
    Elm_Map_Data *wsd;
    double              lon, lat;
-   double              radius; // Intial pixel in intial view
+   double              radius; // Initial pixel in initial view
    double              ratio; // initial-radius/map-size
    Evas_Object        *obj;
 };

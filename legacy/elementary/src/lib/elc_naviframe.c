@@ -946,7 +946,7 @@ static Eina_Bool
 _on_item_back_btn_clicked(void *data,
       Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   /* Since edje has the event queue, clicked event could be happend
+   /* Since edje has the event queue, clicked event could be happened
       multiple times on some heavy environment. This callback del will
       prevent those scenario and guarantee only one clicked for it's own
       page. */

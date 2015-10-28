@@ -209,7 +209,7 @@ START_TEST (elm_atspi_description_set)
 }
 END_TEST
 
-/* Test if intial description value is NULL */
+/* Test if initial description value is NULL */
 START_TEST (elm_atspi_description_get)
 {
    elm_init(0, NULL);

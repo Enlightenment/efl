@@ -486,7 +486,7 @@ _elm_store_new(size_t size)
    eina_magic_string_set(ELM_STORE_MAGIC, "Elm_Store");
    eina_magic_string_set(ELM_STORE_FILESYSTEM_MAGIC, "Elm_Store_Filesystem");
    eina_magic_string_set(ELM_STORE_ITEM_MAGIC, "Elm_Store_Item");
-   // setup default item class (always the same) if list cb doesnt provide one
+   // setup default item class (always the same) if list cb doesn't provide one
    _store_item_class.item_style = "default";
    _store_item_class.func.text_get = _store_item_text_get;
    _store_item_class.func.content_get  = _store_item_content_get;

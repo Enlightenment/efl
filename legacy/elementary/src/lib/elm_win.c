@@ -2978,7 +2978,7 @@ _elm_win_frame_add(Elm_Win_Data *sd,
 #endif
 
    /* NB: Do NOT remove these calls !! Needed to calculate proper
-    * framespace on inital show of the window */
+    * framespace on initial show of the window */
    edje_object_size_min_calc(sd->frame_obj, &mw, &mh);
    evas_object_move(sd->frame_obj, 0, 0);
    evas_object_resize(sd->frame_obj, mw, mh);
@@ -5562,7 +5562,7 @@ _on_atspi_bus_connected(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Ev
         /**
          * Reemit accessibility events when AT-SPI2 connection is begin
          * established. This assures that Assistive Technology clients will
-         * recieve all org.a11y.window events and could keep track of active
+         * receive all org.a11y.window events and could keep track of active
          * windows whithin system.
          */
         elm_interface_atspi_window_created_signal_emit(win);

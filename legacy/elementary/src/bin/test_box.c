@@ -45,14 +45,14 @@ set_api_state(api_data *api)
    /* use elm_box_children_get() to get list of children */
    switch(api->state)
      { /* Put all api-changes under switch */
-      case BOX_PACK_START:  /* Move last item to begining */
+      case BOX_PACK_START:  /* Move last item to beginning */
          elm_box_unpack(api->box, eina_list_data_get(eina_list_last(items)));
          elm_box_pack_start(api->box, eina_list_data_get(eina_list_last(items)));
          break;
 
       case BOX_PACK_BEFORE:
          if (eina_list_count(items) > 1)
-               {  /* Put last item before the one preceeding it */
+               {  /* Put last item before the one preceding it */
                   elm_box_unpack(api->box, eina_list_data_get(eina_list_last(items)));
                   elm_box_pack_before(api->box,
                         eina_list_data_get(eina_list_last(items)),
