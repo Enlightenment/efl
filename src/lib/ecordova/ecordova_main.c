@@ -280,6 +280,7 @@ ECORDOVA_CLASS_GET(fileentry)
 ECORDOVA_CLASS_GET(filewriter)
 ECORDOVA_CLASS_GET(file)
 ECORDOVA_CLASS_GET(filereader)
+ECORDOVA_CLASS_GET(filetransfer)
 
 ECORDOVA_define_data(Console)
 ECORDOVA_define_data(DirectoryEntry)
@@ -289,6 +290,7 @@ ECORDOVA_define_data(FileEntry)
 ECORDOVA_define_data(FileWriter)
 ECORDOVA_define_data(File)
 ECORDOVA_define_data(FileReader)
+ECORDOVA_define_data(FileTransfer)
 
 #undef EO_DEFINE_CLASS
 #define EO_DEFINE_CLASS(...)
@@ -304,3 +306,4 @@ ECORDOVA_define_data(FileReader)
 #include "ecordova_filewriter.eo.c"
 #include "ecordova_file.eo.c"
 #include "ecordova_filereader.eo.c"
+#include "ecordova_filetransfer.eo.c"

@@ -6,7 +6,10 @@
 #include "ecordova_suite.h"
 #include <Ecore.h>
 #include <ecore_timer.eo.h>
-#include <contacts.h>
+#include <Ecordova.h>
+
+#ifdef HAVE_TIZEN_CONFIGURATION_MANAGER
+#include <contact.h>
 
 #define CHECK(x) {int ret = x; ck_assert_int_eq(CONTACTS_ERROR_NONE, ret);}
 
@@ -244,12 +247,15 @@ START_TEST(find_by_name)
    eo_unref(contacts);
 }
 END_TEST
+#endif
 
 void
 ecordova_contacts_test(TCase *tc)
 {
+#ifdef HAVE_TIZEN_CONFIGURATION_MANAGER
    tcase_add_checked_fixture(tc, _setup, _teardown);
    tcase_add_test(tc, find_all);
    tcase_add_test(tc, find_by_id);
    tcase_add_test(tc, find_by_name);
+#endif
 }

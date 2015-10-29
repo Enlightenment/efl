@@ -4,10 +4,25 @@
 
 #include <Ecore.h>
 
+int _ecordova_log_dom;
+
+#define CRI(...) EINA_LOG_DOM_CRIT(_ecordova_log_dom, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_ecordova_log_dom, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_ecordova_log_dom, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_ecordova_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_ecordova_log_dom, __VA_ARGS__)
+
 static Eina_Bool
 _ecordova_tizen_init(void)
 {
-  return EINA_TRUE;
+   _ecordova_log_dom = eina_log_domain_register("ecordova_tizen", EINA_COLOR_CYAN);
+   if (_ecordova_log_dom < 0)
+     {
+        EINA_LOG_ERR("Unable to create an 'ecordova' log domain");
+        //goto on_error_1;
+     }
+
+   return EINA_TRUE;
 }
 
 static void

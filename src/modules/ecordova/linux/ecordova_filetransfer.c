@@ -7,6 +7,33 @@
 
 #include <Ecore_Con.h>
 
+#ifdef _WIN32
+# ifdef DLL_EXPORT
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI
+# endif /* ! DLL_EXPORT */
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif /* ! _WIN32 */
+
+/* logging support */
+extern int _ecordova_log_dom;
+
+#define CRI(...) EINA_LOG_DOM_CRIT(_ecordova_log_dom, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_ecordova_log_dom, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_ecordova_log_dom, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_ecordova_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_ecordova_log_dom, __VA_ARGS__)
+
 #define MY_CLASS ECORDOVA_FILETRANSFER_CLASS
 #define MY_CLASS_NAME "Ecordova_FileTransfer"
 
@@ -609,5 +636,12 @@ _already_in_progress_error_notify(Ecordova_FileTransfer_Data *pd,
    eo_do(pd->obj,
          eo_event_callback_call(ECORDOVA_FILETRANSFER_EVENT_ERROR, &error));
 }
+
+#undef EOAPI
+#define EOAPI EAPI
+
+#include "undefs.h"
+
+#define ecordova_filetransfer_class_get ecordova_filetransfer_impl_class_get
 
 #include "ecordova_filetransfer.eo.c"

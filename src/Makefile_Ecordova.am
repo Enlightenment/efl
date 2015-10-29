@@ -107,30 +107,6 @@ lib_ecordova_libecordova_la_LIBADD = @ECORDOVA_LIBS@ @EFL_LIBS@
 lib_ecordova_libecordova_la_DEPENDENCIES = @ECORDOVA_INTERNAL_LIBS@ @EFL_INTERNAL_LIBS@
 lib_ecordova_libecordova_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
-# if HAVE_TIZEN_CONFIGURATION_MANAGER
-# ecordovatizenpkgdir = $(libdir)/ecordova/tizen/$(MODULE_ARCH)
-# ecordovatizenpkg_LTLIBRARIES = modules/ecordova/tizen/module.la
-
-# # Workaround for broken parallel install support in automake (relink issue)
-# # http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
-# install_ecordovatizenpkgLTLIBRARIES = install-ecordovatizenpkgLTLIBRARIES
-# $(install_ecordovatizenpkgLTLIBRARIES): install-libLTLIBRARIES
-
-# modules_ecordova_tizen_module_la_SOURCES = \
-# modules/ecordova/tizen/ecordova_tizen.c
-# modules_ecordova_tizen_module_la_CPPFLAGS = \
-# -I$(top_builddir)/src/lib/efl \
-# @ECORDOVA_CFLAGS@ \
-# @TIZEN_CONFIGURATION_MANAGER_CFLAGS@
-# modules_ecordova_tizen_module_la_LIBADD = \
-# @USE_ECORDOVA_LIBS@ \
-# @TIZEN_CONFIGURATION_MANAGER_LIBS@
-# modules_ecordova_tizen_module_la_DEPENDENCIES = \
-# @USE_ECORDOVA_INTERNAL_LIBS@
-# modules_ecordova_tizen_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
-# modules_ecordova_tizen_module_la_LIBTOOLFLAGS = --tag=disable-static
-# endif
-
 ecordovalinuxpkgdir = $(libdir)/ecordova/linux/$(MODULE_ARCH)
 ecordovalinuxpkg_LTLIBRARIES = modules/ecordova/linux/module.la
 
@@ -148,6 +124,7 @@ modules/ecordova/linux/ecordova_entry.c \
 modules/ecordova/linux/ecordova_fileentry.c \
 modules/ecordova/linux/ecordova_file.c \
 modules/ecordova/linux/ecordova_filereader.c \
+modules/ecordova/linux/ecordova_filetransfer.c \
 modules/ecordova/linux/ecordova_filewriter.c
 modules_ecordova_linux_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
@@ -158,6 +135,39 @@ modules_ecordova_linux_module_la_DEPENDENCIES = \
 @USE_ECORDOVA_INTERNAL_LIBS@ @USE_EIO_INTERNAL_LIBS@ @USE_ECORE_FILE_INTERNAL_LIBS@
 modules_ecordova_linux_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecordova_linux_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+if HAVE_TIZEN_CONFIGURATION_MANAGER
+
+ecordovatizenpkgdir = $(libdir)/ecordova/tizen/$(MODULE_ARCH)
+ecordovatizenpkg_LTLIBRARIES = modules/ecordova/tizen/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecordovatizenpkgLTLIBRARIES = install-ecordovatizenpkgLTLIBRARIES
+$(install_ecordovatizenpkgLTLIBRARIES): install-libLTLIBRARIES
+
+modules_ecordova_tizen_module_la_SOURCES = \
+modules/ecordova/tizen/ecordova_tizen.c \
+modules/ecordova/tizen/ecordova_console.c \
+modules/ecordova/tizen/ecordova_directoryentry.c \
+modules/ecordova/tizen/ecordova_directoryreader.c \
+modules/ecordova/tizen/ecordova_entry.c \
+modules/ecordova/tizen/ecordova_fileentry.c \
+modules/ecordova/tizen/ecordova_file.c \
+modules/ecordova/tizen/ecordova_filereader.c \
+modules/ecordova/tizen/ecordova_filetransfer.c \
+modules/ecordova/tizen/ecordova_filewriter.c
+modules_ecordova_tizen_module_la_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
+@ECORDOVA_CFLAGS@ -DEFL_ECORDOVA_BUILD
+modules_ecordova_tizen_module_la_LIBADD = \
+@USE_ECORDOVA_LIBS@
+modules_ecordova_tizen_module_la_DEPENDENCIES = \
+@USE_ECORDOVA_INTERNAL_LIBS@
+modules_ecordova_tizen_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_ecordova_tizen_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+endif
 
 ### Unit tests
 
@@ -176,39 +186,21 @@ tests/ecordova/ecordova_entry_test.c \
 tests/ecordova/ecordova_file_test.c \
 tests/ecordova/ecordova_filereader_test.c \
 tests/ecordova/ecordova_filewriter_test.c \
-tests/ecordova/ecordova_fileentry_test.c
+tests/ecordova/ecordova_filetransfer_test.c \
+tests/ecordova/ecordova_fileentry_test.c \
+tests/ecordova/ecordova_contacts_test.c \
+tests/ecordova/ecordova_device_test.c \
+tests/ecordova/ecordova_devicemotion_test.c \
+tests/ecordova/ecordova_deviceorientation_test.c \
+tests/ecordova/ecordova_geolocation_test.c \
+tests/ecordova/ecordova_batterystatus_test.c \
+tests/ecordova/ecordova_media_test.c \
+tests/ecordova/ecordova_networkinformation_test.c \
+tests/ecordova/ecordova_vibration_test.c \
+tests/ecordova/ecordova_mediafile_test.c \
+tests/ecordova/ecordova_globalization_test.c
 
 $(tests_ecordova_ecordova_suite_SOURCES:%.c=%.$(OBJEXT)): modules/ecordova/linux/module.la
-
-#tests/ecordova/ecordova_suite.h \
-tests/ecordova/ecordova_contacts_test.c \
-tests/ecordova/ecordova_contacts_test.h \
-tests/ecordova/ecordova_device_test.c \
-tests/ecordova/ecordova_device_test.h \
-tests/ecordova/ecordova_devicemotion_test.c \
-tests/ecordova/ecordova_devicemotion_test.h \
-tests/ecordova/ecordova_deviceorientation_test.c \
-tests/ecordova/ecordova_deviceorientation_test.h \
-tests/ecordova/ecordova_geolocation_test.c \
-tests/ecordova/ecordova_geolocation_test.h \
-tests/ecordova/ecordova_batterystatus_test.c \
-tests/ecordova/ecordova_batterystatus_test.h \
-tests/ecordova/ecordova_console_test.c \
-tests/ecordova/ecordova_console_test.h \
-tests/ecordova/ecordova_filetransfer_test.c \
-tests/ecordova/ecordova_filetransfer_test.h \
-tests/ecordova/ecordova_media_test.c \
-tests/ecordova/ecordova_media_test.h \
-tests/ecordova/ecordova_networkinformation_test.c \
-tests/ecordova/ecordova_networkinformation_test.h \
-tests/ecordova/ecordova_vibration_test.c \
-tests/ecordova/ecordova_vibration_test.h \
-tests/ecordova/ecordova_entry_test.c \
-tests/ecordova/ecordova_entry_test.h \
-tests/ecordova/ecordova_mediafile_test.c \
-tests/ecordova/ecordova_mediafile_test.h \
-tests/ecordova/ecordova_globalization_test.c \
-tests/ecordova/ecordova_globalization_test.h
 
 tests_ecordova_ecordova_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_SRC_DIR=\"$(abs_top_srcdir)/src/tests/ecordova\" \

@@ -9,7 +9,7 @@
 /* #include "ecordova_geolocation_test.h" */
 /* #include "ecordova_batterystatus_test.h" */
 #include "ecordova_console_test.h"
-/* #include "ecordova_filetransfer_test.h" */
+#include "ecordova_filetransfer_test.h"
 /* #include "ecordova_media_test.h" */
 /* #include "ecordova_networkinformation_test.h" */
 /* #include "ecordova_vibration_test.h" */
@@ -50,7 +50,7 @@ static const Ecordova_Test_Case etc[] = {
   /* { "geolocation", ecordova_geolocation_test }, */
   /* { "batterystatus", ecordova_batterystatus_test }, */
   { "console", ecordova_console_test },
-  /* { "filetransfer", ecordova_filetransfer_test }, */
+  { "filetransfer", ecordova_filetransfer_test },
   /* { "media", ecordova_media_test }, */
   /* { "networkinformation", ecordova_networkinformation_test }, */
   /* { "vibration", ecordova_vibration_test }, */
