@@ -312,7 +312,7 @@ strptime(const char *buf, const char *fmt, struct tm *tm)
               continue;
 
 #ifndef TIME_MAX
-# if INTPTR_MAX == 0xffffffffffffffff
+# ifdef _WIN64
 #  define TIME_MAX INT64_MAX
 # else
 #  define TIME_MAX INT32_MAX
