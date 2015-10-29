@@ -101,9 +101,6 @@ typedef ptrdiff_t  SW_FT_PtrDist;
 #define SW_FT_UNUSED( x )  (x) = (x)
 
 
-#define SW_FT_TRACE5( x )  do { } while ( 0 )     /* nothing */
-#define SW_FT_TRACE7( x )  do { } while ( 0 )     /* nothing */
-#define SW_FT_ERROR( x )   do { } while ( 0 )     /* nothing */
 #define SW_FT_THROW( e )   SW_FT_ERR_CAT( ErrRaster_, e )
 
   /* The size in bytes of the render pool used by the scan-line converter  */
@@ -350,10 +347,8 @@ typedef struct  SW_FT_Outline_Funcs_
     SW_FT_PtrDist  max_cells;
     SW_FT_PtrDist  num_cells;
 
-    TCoord  cx, cy;
     TPos    x,  y;
 
-    TPos    last_ey;
 
     SW_FT_Vector   bez_stack[32 * 3 + 1];
     int         lev_stack[32];
@@ -588,7 +583,6 @@ typedef struct  SW_FT_Outline_Funcs_
     ras.cover   = 0;
     ras.ex      = ex - ras.min_ex;
     ras.ey      = ey - ras.min_ey;
-    ras.last_ey = SUBPIXELS( ey );
     ras.invalid = 0;
 
     gray_set_cell( RAS_VAR_ ex, ey );
@@ -1238,8 +1232,6 @@ typedef struct  SW_FT_Outline_Funcs_
       int  last;  /* index of last point in contour */
 
 
-      SW_FT_TRACE5(( "SW_FT_Outline_Decompose: Outline %d\n", n ));
-
       last  = outline->contours[n];
       if ( last < 0 )
         goto Invalid_Outline;
@@ -1287,8 +1279,6 @@ typedef struct  SW_FT_Outline_Funcs_
         tags--;
       }
 
-      SW_FT_TRACE5(( "  move to (%.2f, %.2f)\n",
-                  v_start.x / 64.0, v_start.y / 64.0 ));
       error = func_interface->move_to( &v_start, user );
       if ( error )
         goto Exit;
@@ -1309,8 +1299,6 @@ typedef struct  SW_FT_Outline_Funcs_
             vec.x = SCALED( point->x );
             vec.y = SCALED( point->y );
 
-            SW_FT_TRACE5(( "  line to (%.2f, %.2f)\n",
-                        vec.x / 64.0, vec.y / 64.0 ));
             error = func_interface->line_to( &vec, user );
             if ( error )
               goto Exit;
@@ -1337,10 +1325,6 @@ typedef struct  SW_FT_Outline_Funcs_
 
             if ( tag == SW_FT_CURVE_TAG_ON )
             {
-              SW_FT_TRACE5(( "  conic to (%.2f, %.2f)"
-                          " with control (%.2f, %.2f)\n",
-                          vec.x / 64.0, vec.y / 64.0,
-                          v_control.x / 64.0, v_control.y / 64.0 ));
               error = func_interface->conic_to( &v_control, &vec, user );
               if ( error )
                 goto Exit;
@@ -1353,10 +1337,6 @@ typedef struct  SW_FT_Outline_Funcs_
             v_middle.x = ( v_control.x + vec.x ) / 2;
             v_middle.y = ( v_control.y + vec.y ) / 2;
 
-            SW_FT_TRACE5(( "  conic to (%.2f, %.2f)"
-                        " with control (%.2f, %.2f)\n",
-                        v_middle.x / 64.0, v_middle.y / 64.0,
-                        v_control.x / 64.0, v_control.y / 64.0 ));
             error = func_interface->conic_to( &v_control, &v_middle, user );
             if ( error )
               goto Exit;
@@ -1365,10 +1345,6 @@ typedef struct  SW_FT_Outline_Funcs_
             goto Do_Conic;
           }
 
-          SW_FT_TRACE5(( "  conic to (%.2f, %.2f)"
-                      " with control (%.2f, %.2f)\n",
-                      v_start.x / 64.0, v_start.y / 64.0,
-                      v_control.x / 64.0, v_control.y / 64.0 ));
           error = func_interface->conic_to( &v_control, &v_start, user );
           goto Close;
 
@@ -1398,22 +1374,12 @@ typedef struct  SW_FT_Outline_Funcs_
               vec.x = SCALED( point->x );
               vec.y = SCALED( point->y );
 
-              SW_FT_TRACE5(( "  cubic to (%.2f, %.2f)"
-                          " with controls (%.2f, %.2f) and (%.2f, %.2f)\n",
-                          vec.x / 64.0, vec.y / 64.0,
-                          vec1.x / 64.0, vec1.y / 64.0,
-                          vec2.x / 64.0, vec2.y / 64.0 ));
               error = func_interface->cubic_to( &vec1, &vec2, &vec, user );
               if ( error )
                 goto Exit;
               continue;
             }
 
-            SW_FT_TRACE5(( "  cubic to (%.2f, %.2f)"
-                        " with controls (%.2f, %.2f) and (%.2f, %.2f)\n",
-                        v_start.x / 64.0, v_start.y / 64.0,
-                        vec1.x / 64.0, vec1.y / 64.0,
-                        vec2.x / 64.0, vec2.y / 64.0 ));
             error = func_interface->cubic_to( &vec1, &vec2, &v_start, user );
             goto Close;
           }
@@ -1421,8 +1387,6 @@ typedef struct  SW_FT_Outline_Funcs_
       }
 
       /* close the contour with a line segment */
-      SW_FT_TRACE5(( "  line to (%.2f, %.2f)\n",
-                  v_start.x / 64.0, v_start.y / 64.0 ));
       error = func_interface->line_to( &v_start, user );
 
    Close:
@@ -1432,11 +1396,9 @@ typedef struct  SW_FT_Outline_Funcs_
       first = last + 1;
     }
 
-    SW_FT_TRACE5(( "SW_FT_Outline_Decompose: Done\n", n ));
     return 0;
 
   Exit:
-    SW_FT_TRACE5(( "SW_FT_Outline_Decompose: Error %d\n", error ));
     return error;
 
   Invalid_Outline:
@@ -1593,9 +1555,6 @@ typedef struct  SW_FT_Outline_Funcs_
         /* be some problems.                                     */
         if ( middle == bottom )
         {
-#ifdef SW_FT_DEBUG_LEVEL_TRACE
-          SW_FT_TRACE7(( "gray_convert_glyph: rotten glyph\n" ));
-#endif
           return 1;
         }
 
