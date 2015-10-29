@@ -71,8 +71,10 @@
 #include <string.h>
 #include <setjmp.h>
 #include <limits.h>
-#define SW_FT_UINT_MAX  UINT_MAX
-#define SW_FT_INT_MAX   INT_MAX
+#define SW_FT_UINT_MAX   UINT_MAX
+#define SW_FT_INT_MAX    INT_MAX
+#define SW_FT_ULONG_MAX  ULONG_MAX
+#define SW_FT_CHAR_BIT   CHAR_BIT
 
 #define ft_memset   memset
 
@@ -267,6 +269,14 @@ typedef struct  SW_FT_Outline_Funcs_
     }                                                              \
   SW_FT_END_STMNT
 #endif /* __arm__ */
+
+  /* These macros speed up repetitive divisions by replacing them */
+  /* with multiplications and right shifts.                       */ 
+#define SW_FT_UDIVPREP( b )                                       \
+  long  b ## _r = (long)( SW_FT_ULONG_MAX >> PIXEL_BITS ) / ( b )
+#define SW_FT_UDIV( a, b )                                        \
+  ( ( (unsigned long)( a ) * (unsigned long)( b ## _r ) ) >>   \
+    ( sizeof( long ) * SW_FT_CHAR_BIT - PIXEL_BITS ) )
 
 
   /*************************************************************************/
@@ -584,250 +594,139 @@ typedef struct  SW_FT_Outline_Funcs_
     gray_set_cell( RAS_VAR_ ex, ey );
   }
 
-
   /*************************************************************************/
   /*                                                                       */
-  /* Render a scanline as one or more cells.                               */
-  /*                                                                       */
-  static void
-  gray_render_scanline( RAS_ARG_ TCoord  ey,
-                                 TPos    x1,
-                                 TCoord  y1,
-                                 TPos    x2,
-                                 TCoord  y2 )
-  {
-    TCoord  ex1, ex2, fx1, fx2, delta, mod;
-    long    p, first, dx;
-    int     incr;
-
-
-    dx = x2 - x1;
-
-    ex1 = TRUNC( x1 );
-    ex2 = TRUNC( x2 );
-    fx1 = (TCoord)( x1 - SUBPIXELS( ex1 ) );
-    fx2 = (TCoord)( x2 - SUBPIXELS( ex2 ) );
-
-    /* trivial case.  Happens often */
-    if ( y1 == y2 )
-    {
-      gray_set_cell( RAS_VAR_ ex2, ey );
-      return;
-    }
-
-    /* everything is located in a single cell.  That is easy! */
-    /*                                                        */
-    if ( ex1 == ex2 )
-    {
-      delta      = y2 - y1;
-      ras.area  += (TArea)(( fx1 + fx2 ) * delta);
-      ras.cover += delta;
-      return;
-    }
-
-    /* ok, we'll have to render a run of adjacent cells on the same */
-    /* scanline...                                                  */
-    /*                                                              */
-    p     = ( ONE_PIXEL - fx1 ) * ( y2 - y1 );
-    first = ONE_PIXEL;
-    incr  = 1;
-
-    if ( dx < 0 )
-    {
-      p     = fx1 * ( y2 - y1 );
-      first = 0;
-      incr  = -1;
-      dx    = -dx;
-    }
-
-    SW_FT_DIV_MOD( TCoord, p, dx, delta, mod );
-
-    ras.area  += (TArea)(( fx1 + first ) * delta);
-    ras.cover += delta;
-
-    ex1 += incr;
-    gray_set_cell( RAS_VAR_ ex1, ey );
-    y1  += delta;
-
-    if ( ex1 != ex2 )
-    {
-      TCoord  lift, rem;
-
-
-      p = ONE_PIXEL * ( y2 - y1 + delta );
-      SW_FT_DIV_MOD( TCoord, p, dx, lift, rem );
-
-      mod -= (int)dx;
-
-      while ( ex1 != ex2 )
-      {
-        delta = lift;
-        mod  += rem;
-        if ( mod >= 0 )
-        {
-          mod -= (TCoord)dx;
-          delta++;
-        }
-
-        ras.area  += (TArea)(ONE_PIXEL * delta);
-        ras.cover += delta;
-        y1        += delta;
-        ex1       += incr;
-        gray_set_cell( RAS_VAR_ ex1, ey );
-      }
-    }
-
-    delta      = y2 - y1;
-    ras.area  += (TArea)(( fx2 + ONE_PIXEL - first ) * delta);
-    ras.cover += delta;
-  }
-
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* Render a given line as a series of scanlines.                         */
+  /* Render a straight line across multiple cells in any direction.        */
   /*                                                                       */
   static void
   gray_render_line( RAS_ARG_ TPos  to_x,
                              TPos  to_y )
   {
-    TCoord  ey1, ey2, fy1, fy2, mod;
-    TPos    dx, dy, x, x2;
-    long    p, first;
-    int     delta, rem, lift, incr;
+    TPos    dx, dy, fx1, fy1, fx2, fy2;
+    TCoord  ex1, ex2, ey1, ey2;
 
 
-    ey1 = TRUNC( ras.last_ey );
-    ey2 = TRUNC( to_y );     /* if (ey2 >= ras.max_ey) ey2 = ras.max_ey-1; */
-    fy1 = (TCoord)( ras.y - ras.last_ey );
-    fy2 = (TCoord)( to_y - SUBPIXELS( ey2 ) );
+    ex1 = TRUNC( ras.x );
+    ex2 = TRUNC( to_x );
+    ey1 = TRUNC( ras.y );
+    ey2 = TRUNC( to_y );
+
+    /* perform vertical clipping */
+    if ( ( ey1 >= ras.max_ey && ey2 >= ras.max_ey ) ||
+         ( ey1 <  ras.min_ey && ey2 <  ras.min_ey ) )
+      goto End;
 
     dx = to_x - ras.x;
     dy = to_y - ras.y;
 
-    /* perform vertical clipping */
+    fx1 = ras.x - SUBPIXELS( ex1 );
+    fy1 = ras.y - SUBPIXELS( ey1 );
+
+    if ( ex1 == ex2 && ey1 == ey2 )       /* inside one cell */
+      ;
+    else if ( dy == 0 ) /* ex1 != ex2 */  /* any horizontal line */
     {
-      TCoord  min, max;
-
-
-      min = ey1;
-      max = ey2;
-      if ( ey1 > ey2 )
-      {
-        min = ey2;
-        max = ey1;
-      }
-      if ( min >= ras.max_ey || max < ras.min_ey )
-        goto End;
+      ex1 = ex2;
+      gray_set_cell( RAS_VAR_ ex1, ey1 );
     }
-
-    /* everything is on a single scanline */
-    if ( ey1 == ey2 )
+    else if ( dx == 0 )
     {
-      gray_render_scanline( RAS_VAR_ ey1, ras.x, fy1, to_x, fy2 );
-      goto End;
-    }
-
-    /* vertical line - avoid calling gray_render_scanline */
-    incr = 1;
-
-    if ( dx == 0 )
-    {
-      TCoord  ex     = TRUNC( ras.x );
-      TCoord  two_fx = (TCoord)( ( ras.x - SUBPIXELS( ex ) ) << 1 );
-      TArea   area;
-
-
-      first = ONE_PIXEL;
-      if ( dy < 0 )
-      {
-        first = 0;
-        incr  = -1;
-      }
-
-      delta      = (int)( first - fy1 );
-      ras.area  += (TArea)two_fx * delta;
-      ras.cover += delta;
-      ey1       += incr;
-
-      gray_set_cell( RAS_VAR_ ex, ey1 );
-
-      delta = (int)( first + first - ONE_PIXEL );
-      area  = (TArea)two_fx * delta;
-      while ( ey1 != ey2 )
-      {
-        ras.area  += area;
-        ras.cover += delta;
-        ey1       += incr;
-
-        gray_set_cell( RAS_VAR_ ex, ey1 );
-      }
-
-      delta      = (int)( fy2 - ONE_PIXEL + first );
-      ras.area  += (TArea)two_fx * delta;
-      ras.cover += delta;
-
-      goto End;
-    }
-
-    /* ok, we have to render several scanlines */
-    p     = ( ONE_PIXEL - fy1 ) * dx;
-    first = ONE_PIXEL;
-    incr  = 1;
-
-    if ( dy < 0 )
-    {
-      p     = fy1 * dx;
-      first = 0;
-      incr  = -1;
-      dy    = -dy;
-    }
-
-    SW_FT_DIV_MOD( int, p, dy, delta, mod );
-
-    x = ras.x + delta;
-    gray_render_scanline( RAS_VAR_ ey1, ras.x, fy1, x, (TCoord)first );
-
-    ey1 += incr;
-    gray_set_cell( RAS_VAR_ TRUNC( x ), ey1 );
-
-    if ( ey1 != ey2 )
-    {
-      p     = ONE_PIXEL * dx;
-      SW_FT_DIV_MOD( int, p, dy, lift, rem );
-      mod -= (int)dy;
-
-      while ( ey1 != ey2 )
-      {
-        delta = lift;
-        mod  += rem;
-        if ( mod >= 0 )
+      if ( dy > 0 )                       /* vertical line up */
+        do
         {
-          mod -= (int)dy;
-          delta++;
+          fy2 = ONE_PIXEL;
+          ras.cover += ( fy2 - fy1 );
+          ras.area  += ( fy2 - fy1 ) * fx1 * 2;
+          fy1 = 0;
+          ey1++;
+          gray_set_cell( RAS_VAR_ ex1, ey1 );
+        } while ( ey1 != ey2 );
+      else                                /* vertical line down */
+        do
+        {
+          fy2 = 0;
+          ras.cover += ( fy2 - fy1 );
+          ras.area  += ( fy2 - fy1 ) * fx1 * 2;
+          fy1 = ONE_PIXEL;
+          ey1--;
+          gray_set_cell( RAS_VAR_ ex1, ey1 );
+        } while ( ey1 != ey2 );
+    }
+    else                                  /* any other line */
+    {
+      TArea  prod = dx * fy1 - dy * fx1;
+      SW_FT_UDIVPREP( dx );
+      SW_FT_UDIVPREP( dy );
+
+
+      /* The fundamental value `prod' determines which side and the  */
+      /* exact coordinate where the line exits current cell.  It is  */
+      /* also easily updated when moving from one cell to the next.  */
+      do
+      {
+        if      ( prod                                   <= 0 &&
+                  prod - dx * ONE_PIXEL                  >  0 ) /* left */
+        {
+          fx2 = 0;
+          fy2 = (TPos)SW_FT_UDIV( -prod, -dx );
+          prod -= dy * ONE_PIXEL;
+          ras.cover += ( fy2 - fy1 );
+          ras.area  += ( fy2 - fy1 ) * ( fx1 + fx2 );
+          fx1 = ONE_PIXEL;
+          fy1 = fy2;
+          ex1--;
+        }
+        else if ( prod - dx * ONE_PIXEL                  <= 0 &&
+                  prod - dx * ONE_PIXEL + dy * ONE_PIXEL >  0 ) /* up */
+        {
+          prod -= dx * ONE_PIXEL;
+          fx2 = (TPos)SW_FT_UDIV( -prod, dy );
+          fy2 = ONE_PIXEL;
+          ras.cover += ( fy2 - fy1 );
+          ras.area  += ( fy2 - fy1 ) * ( fx1 + fx2 );
+          fx1 = fx2;
+          fy1 = 0;
+          ey1++;
+        }
+        else if ( prod - dx * ONE_PIXEL + dy * ONE_PIXEL <= 0 &&
+                  prod                  + dy * ONE_PIXEL >= 0 ) /* right */
+        {
+          prod += dy * ONE_PIXEL;
+          fx2 = ONE_PIXEL;
+          fy2 = (TPos)SW_FT_UDIV( prod, dx );
+          ras.cover += ( fy2 - fy1 );
+          ras.area  += ( fy2 - fy1 ) * ( fx1 + fx2 );
+          fx1 = 0;
+          fy1 = fy2;
+          ex1++;
+        }
+        else /* ( prod                  + dy * ONE_PIXEL <  0 &&
+                  prod                                   >  0 )    down */
+        {
+          fx2 = (TPos)SW_FT_UDIV( prod, -dy );
+          fy2 = 0;
+          prod += dx * ONE_PIXEL;
+          ras.cover += ( fy2 - fy1 );
+          ras.area  += ( fy2 - fy1 ) * ( fx1 + fx2 );
+          fx1 = fx2;
+          fy1 = ONE_PIXEL;
+          ey1--;
         }
 
-        x2 = x + delta;
-        gray_render_scanline( RAS_VAR_ ey1, x,
-                                       (TCoord)( ONE_PIXEL - first ), x2,
-                                       (TCoord)first );
-        x = x2;
-
-        ey1 += incr;
-        gray_set_cell( RAS_VAR_ TRUNC( x ), ey1 );
-      }
+        gray_set_cell( RAS_VAR_ ex1, ey1 );
+      } while ( ex1 != ex2 || ey1 != ey2 );
     }
 
-    gray_render_scanline( RAS_VAR_ ey1, x,
-                                   (TCoord)( ONE_PIXEL - first ), to_x,
-                                   fy2 );
+    fx2 = to_x - SUBPIXELS( ex2 );
+    fy2 = to_y - SUBPIXELS( ey2 );
+
+    ras.cover += ( fy2 - fy1 );
+    ras.area  += ( fy2 - fy1 ) * ( fx1 + fx2 );
 
   End:
     ras.x       = to_x;
     ras.y       = to_y;
-    ras.last_ey = SUBPIXELS( ey2 );
   }
-
 
   static void
   gray_split_conic( SW_FT_Vector*  base )
