@@ -377,10 +377,8 @@ eng_polygon_draw(void *data, void *context, void *surface EINA_UNUSED, void *pol
 static int
 eng_image_alpha_get(void *data EINA_UNUSED, void *image)
 {
-   //   Render_Engine *re;
    Evas_GL_Image *im;
 
-   //   re = (Render_Engine *)data;
    if (!image) return 1;
    im = image;
    return im->alpha;
@@ -389,10 +387,8 @@ eng_image_alpha_get(void *data EINA_UNUSED, void *image)
 static Evas_Colorspace
 eng_image_colorspace_get(void *data EINA_UNUSED, void *image)
 {
-   //   Render_Engine *re;
    Evas_GL_Image *im;
 
-   //   re = (Render_Engine *)data;
    if (!image) return EVAS_COLORSPACE_ARGB8888;
    im = image;
    return im->cs.space;
@@ -450,42 +446,48 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
 static void *
 eng_image_border_set(void *data EINA_UNUSED, void *image, int l EINA_UNUSED, int r EINA_UNUSED, int t EINA_UNUSED, int b EINA_UNUSED)
 {
-   //   Render_Engine *re;
-   //
-   //   re = (Render_Engine *)data;
    return image;
 }
 
 static void
 eng_image_border_get(void *data EINA_UNUSED, void *image EINA_UNUSED, int *l EINA_UNUSED, int *r EINA_UNUSED, int *t EINA_UNUSED, int *b EINA_UNUSED)
 {
-   //   Render_Engine *re;
-   //
-   //   re = (Render_Engine *)data;
 }
 
 static char *
 eng_image_comment_get(void *data EINA_UNUSED, void *image, char *key EINA_UNUSED)
 {
-   //   Render_Engine *re;
    Evas_GL_Image *im;
 
-   //   re = (Render_Engine *)data;
    if (!image) return NULL;
    im = image;
    if (!im->im) return NULL;
    return im->im->info.comment;
 }
 
-static char *
-eng_image_format_get(void *data EINA_UNUSED, void *image)
+static Evas_Colorspace
+eng_image_file_colorspace_get(void *data EINA_UNUSED, void *image)
 {
-   //   Render_Engine *re;
-   Evas_GL_Image *im;
+   Evas_GL_Image *im = image;
 
-   //   re = (Render_Engine *)data;
-   im = image;
-   return NULL;
+   if (!im || !im->im) return EVAS_COLORSPACE_ARGB8888;
+   if (im->im->cache_entry.cspaces)
+     return im->im->cache_entry.cspaces[0];
+   return im->im->cache_entry.space;
+}
+
+static Eina_Bool
+eng_image_data_has(void *data EINA_UNUSED, void *image, Evas_Colorspace *cspace)
+{
+   Evas_GL_Image *im = image;
+
+   if (!im || !im->im) return EINA_FALSE;
+   if (im->im->image.data)
+     {
+        if (cspace) *cspace = im->im->cache_entry.space;
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
 }
 
 static void
@@ -1378,6 +1380,7 @@ module_open(Evas_Module *em)
    ORD(image_dirty_region);
    ORD(image_data_get);
    ORD(image_data_put);
+   ORD(image_data_has);
    ORD(image_data_preload_request);
    ORD(image_data_preload_cancel);
    ORD(image_alpha_set);
@@ -1386,9 +1389,9 @@ module_open(Evas_Module *em)
    ORD(image_border_get);
    ORD(image_draw);
    ORD(image_comment_get);
-   ORD(image_format_get);
    ORD(image_colorspace_set);
    ORD(image_colorspace_get);
+   ORD(image_file_colorspace_get);
    //   ORD(image_native_set);
    //   ORD(image_native_get);
    
@@ -1412,7 +1415,7 @@ module_open(Evas_Module *em)
 
    ORD(image_load_error_get);    
 
-#define LINK2GENERIC(sym)                       \
+#define LINK2GENERIC(sym) \
    glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
 
    LINK2GENERIC(evas_gl_symbols);
