@@ -1388,6 +1388,22 @@ eng_image_stride_get(void *data EINA_UNUSED, void *image, int *stride)
            case EVAS_COLORSPACE_YCBCR420TM12601_PL:
              *stride = im->w * 1;
              return;
+             /* the strides below are approximations, since stride doesn't
+              * really make sense for ETC & S3TC */
+           case EVAS_COLORSPACE_ETC1:
+           case EVAS_COLORSPACE_RGB8_ETC2:
+           case EVAS_COLORSPACE_RGB_S3TC_DXT1:
+           case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
+             *stride = (im->w + 2 + 3) / 4 * (8 / 4);
+             return;
+           case EVAS_COLORSPACE_ETC1_ALPHA:
+           case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+           case EVAS_COLORSPACE_RGBA_S3TC_DXT2:
+           case EVAS_COLORSPACE_RGBA_S3TC_DXT3:
+           case EVAS_COLORSPACE_RGBA_S3TC_DXT4:
+           case EVAS_COLORSPACE_RGBA_S3TC_DXT5:
+             *stride = (im->w + 2 + 3) / 4 * (16 / 4);
+             return;
            default:
              ERR("Requested stride on an invalid format %d", im->cs.space);
              *stride = 0;
