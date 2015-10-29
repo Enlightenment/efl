@@ -335,7 +335,9 @@ _emile_tgv_head(Emile_Image *image,
                       0, 0,
                       image->size.width, image->size.height);
    if (image->load_opts &&
-       (image->opts.region.w > 0 && image->opts.region.h > 0))
+       ((image->opts.region.w > 0) && (image->opts.region.h > 0) &&
+        (image->opts.region.w != (int) image->size.width) &&
+        (image->opts.region.h != (int) image->size.height)))
      {
         /* ETC colorspace doesn't work with region for now */
         prop->cspaces = NULL;
