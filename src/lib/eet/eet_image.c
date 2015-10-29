@@ -618,7 +618,8 @@ eet_data_image_etc2_decode(const void *data,
                   break;
                }
           }
-        if (!found) goto on_error;
+        if (!found && (cspace != EMILE_COLORSPACE_ARGB8888))
+          goto on_error;
      }
 
    switch (cspace)
@@ -639,7 +640,7 @@ eet_data_image_etc2_decode(const void *data,
          if (lossy != EET_IMAGE_ETC1_ALPHA) goto on_error;
          if (alpha != EINA_TRUE) goto on_error;
          break;
-      case EET_COLORSPACE_ARGB8888:
+      case EMILE_COLORSPACE_ARGB8888:
          break;
       default:
          goto on_error;
@@ -651,7 +652,7 @@ eet_data_image_etc2_decode(const void *data,
      goto on_error;
 
    // TODO: Add support for more unpremultiplied modes (ETC2)
-   if ((cspace == EET_COLORSPACE_ARGB8888) && !prop.premul)
+   if ((cspace == EMILE_COLORSPACE_ARGB8888) && !prop.premul)
      _eet_argb_premul(p, prop.w * prop.h);
 
    r = 1;
