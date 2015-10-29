@@ -10,6 +10,11 @@
 #include <sys/resource.h>
 #endif
 
+#ifdef _WIN32
+# include <winsock2.h>
+# include <libgen.h>
+#endif
+
 #include <Eina.h>
 #include <Eet.h>
 #include <Ecore.h>
