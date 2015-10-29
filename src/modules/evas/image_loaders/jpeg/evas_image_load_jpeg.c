@@ -77,7 +77,7 @@ evas_image_load_file_head_jpeg(void *loader_data,
    Eina_Bool ret;
 
    ret = emile_image_head(loader->image,
-                          prop, sizeof (Emile_Image_Property),
+                          prop, sizeof (*prop),
                           &image_error);
    *error = image_error;
 
@@ -95,7 +95,7 @@ evas_image_load_file_data_jpeg(void *loader_data,
    Eina_Bool ret;
 
    ret = emile_image_data(loader->image,
-                          prop, sizeof (Emile_Image_Property),
+                          prop, sizeof (*prop),
                           pixels,
                           &image_error);
    *error = image_error;

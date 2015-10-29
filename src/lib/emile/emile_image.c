@@ -177,27 +177,28 @@ _roundup(int val, int rup)
 
 /* TGV Handling */
 
-static const Emile_Colorspace cspaces_etc1[2] = {
+static const Emile_Colorspace cspaces_etc1[] = {
    EMILE_COLORSPACE_ETC1,
-   EMILE_COLORSPACE_ARGB8888
-};
-
-static const Emile_Colorspace cspaces_rgb8_etc2[2] = {
    EMILE_COLORSPACE_RGB8_ETC2,
    EMILE_COLORSPACE_ARGB8888
 };
 
-static const Emile_Colorspace cspaces_rgba8_etc2_eac[2] = {
+static const Emile_Colorspace cspaces_rgb8_etc2[] = {
+   EMILE_COLORSPACE_RGB8_ETC2,
+   EMILE_COLORSPACE_ARGB8888
+};
+
+static const Emile_Colorspace cspaces_rgba8_etc2_eac[] = {
    EMILE_COLORSPACE_RGBA8_ETC2_EAC,
    EMILE_COLORSPACE_ARGB8888
 };
 
-static const Emile_Colorspace cspaces_etc1_alpha[2] = {
+static const Emile_Colorspace cspaces_etc1_alpha[] = {
    EMILE_COLORSPACE_ETC1_ALPHA,
    EMILE_COLORSPACE_ARGB8888
 };
 
-static const Emile_Colorspace cspaces_agry[3] = {
+static const Emile_Colorspace cspaces_gry[] = {
    EMILE_COLORSPACE_GRY8,
    EMILE_COLORSPACE_AGRY88,
    EMILE_COLORSPACE_ARGB8888
@@ -1414,7 +1415,7 @@ _emile_jpeg_head(Emile_Image *image,
    if (cinfo.jpeg_color_space == JCS_GRAYSCALE)
      {
         /* We do handle GRY8 and AGRY88 (with FF for alpha) colorspace as an output for JPEG */
-        prop->cspaces = cspaces_agry;
+        prop->cspaces = cspaces_gry;
      }
 
    /* rotation decoding */

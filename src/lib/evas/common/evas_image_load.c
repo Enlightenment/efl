@@ -215,7 +215,7 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
              goto load_error;
 	  }
 
-        memset(&property, 0, sizeof (Evas_Image_Property));
+        memset(&property, 0, sizeof (property));
         if (evas_image_load_func->file_head(ie->loader_data, &property,
                                             error) &&
             (*error == EVAS_LOAD_ERROR_NONE))
@@ -412,7 +412,7 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
 
    if (!ie->f) return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 
-   memset(&property, 0, sizeof (Evas_Image_Property));
+   memset(&property, 0, sizeof (property));
    property.w = ie->w;
    property.h = ie->h;
    property.scale = ie->scale;

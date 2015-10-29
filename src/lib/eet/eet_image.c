@@ -357,14 +357,14 @@ eet_data_image_jpeg_header_decode(const void   *data,
    bin = eina_binbuf_manage_new(data, size, EINA_TRUE);
    if (!bin) return 0;
 
-   memset(&opts, 0, sizeof (Emile_Image_Load_Opts));
+   memset(&opts, 0, sizeof (opts));
 
    image = emile_image_jpeg_memory_open(bin, &opts, NULL, &error);
    if (!image) goto on_error;
 
    memset(&prop, 0, sizeof (prop));
 
-   if (!emile_image_head(image, &prop, sizeof (Emile_Image_Property), &error))
+   if (!emile_image_head(image, &prop, sizeof (prop), &error))
      goto on_error;
 
    *w = prop.w;
@@ -410,7 +410,7 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
    bin = eina_binbuf_manage_new(data, size, EINA_TRUE);
    if (!bin) return 0;
 
-   memset(&opts, 0, sizeof (Emile_Image_Load_Opts));
+   memset(&opts, 0, sizeof (opts));
    opts.region.x = src_x;
    opts.region.y = src_y;
    opts.region.w = w;
@@ -421,12 +421,12 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
 
    memset(&prop, 0, sizeof (prop));
 
-   if (!emile_image_head(image, &prop, sizeof (Emile_Image_Property), &error))
+   if (!emile_image_head(image, &prop, sizeof (prop), &error))
      goto on_error;
 
    prop.cspace = cspace;
 
-   if (!emile_image_data(image, &prop, sizeof (Emile_Image_Property), d, &error))
+   if (!emile_image_data(image, &prop, sizeof (prop), d, &error))
      goto on_error;
 
    r = 1;
@@ -464,7 +464,7 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
    bin = eina_binbuf_manage_new(data, size, EINA_TRUE);
    if (!bin) return 0;
 
-   memset(&opts, 0, sizeof (Emile_Image_Load_Opts));
+   memset(&opts, 0, sizeof (opts));
    opts.region.x = src_x;
    opts.region.y = src_y;
    opts.region.w = w;
@@ -475,7 +475,7 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
 
    memset(&prop, 0, sizeof (prop));
 
-   if (!emile_image_head(image, &prop, sizeof (Emile_Image_Property), &error))
+   if (!emile_image_head(image, &prop, sizeof (prop), &error))
      goto on_error;
 
    remember = tmp = malloc(sizeof (unsigned char) * w * h);
@@ -484,7 +484,7 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
    // Alpha should always be encoded as GRY8
    prop.cspace = EMILE_COLORSPACE_GRY8;
 
-   if (!emile_image_data(image, &prop, sizeof (Emile_Image_Property), tmp, &error))
+   if (!emile_image_data(image, &prop, sizeof (prop), tmp, &error))
      goto on_error;
 
    if (cspace == EMILE_COLORSPACE_AGRY88)
@@ -584,6 +584,7 @@ eet_data_image_etc2_decode(const void *data,
    Emile_Image *image;
    Eina_Binbuf *bin;
    Emile_Image_Load_Error error;
+   Eina_Bool found = EINA_FALSE;
    int i;
    int r = 0;
 
@@ -593,7 +594,7 @@ eet_data_image_etc2_decode(const void *data,
    bin = eina_binbuf_manage_new(data, length, EINA_TRUE);
    if (!bin) return 0;
 
-   memset(&opts, 0, sizeof (Emile_Image_Load_Opts));
+   memset(&opts, 0, sizeof (opts));
    opts.region.x = dst_x;
    opts.region.y = dst_y;
    opts.region.w = dst_w;
@@ -604,12 +605,20 @@ eet_data_image_etc2_decode(const void *data,
 
    memset(&prop, 0, sizeof (prop));
 
-   if (!emile_image_head(image, &prop, sizeof (Emile_Image_Property), &error))
+   if (!emile_image_head(image, &prop, sizeof (prop), &error))
      goto on_error;
 
-   for (i = 0; prop.cspaces[i] != EMILE_COLORSPACE_ARGB8888; i++)
+   if (prop.cspaces)
      {
-        if (prop.cspaces[i] == cspace) break;
+        for (i = 0; prop.cspaces[i] != EMILE_COLORSPACE_ARGB8888; i++)
+          {
+             if (prop.cspaces[i] == cspace)
+               {
+                  found = EINA_TRUE;
+                  break;
+               }
+          }
+        if (!found) goto on_error;
      }
 
    switch (cspace)
@@ -619,7 +628,7 @@ eet_data_image_etc2_decode(const void *data,
          if (alpha != EINA_FALSE) goto on_error;
          break;
       case EMILE_COLORSPACE_RGB8_ETC2:
-         if (lossy != EET_IMAGE_ETC2_RGB) goto on_error;
+         if ((lossy != EET_IMAGE_ETC2_RGB) && (lossy != EET_IMAGE_ETC1)) goto on_error;
          if (alpha != EINA_FALSE) goto on_error;
          break;
       case EMILE_COLORSPACE_RGBA8_ETC2_EAC:
@@ -638,7 +647,7 @@ eet_data_image_etc2_decode(const void *data,
 
    prop.cspace = cspace;
 
-   if (!emile_image_data(image, &prop, sizeof (Emile_Image_Load_Opts), p, &error))
+   if (!emile_image_data(image, &prop, sizeof (prop), p, &error))
      goto on_error;
 
    // TODO: Add support for more unpremultiplied modes (ETC2)
@@ -648,6 +657,7 @@ eet_data_image_etc2_decode(const void *data,
    r = 1;
 
  on_error:
+   ERR("Failed to decode image inside Eet");
    emile_image_close(image);
    eina_binbuf_free(bin);
 
@@ -1641,6 +1651,7 @@ eet_data_image_encode(const void  *data,
 
 static const Eet_Colorspace _eet_etc1_colorspace[] = {
   EET_COLORSPACE_ETC1,
+  EET_COLORSPACE_RGB8_ETC2,
   EET_COLORSPACE_ARGB8888
 };
 
@@ -2201,9 +2212,8 @@ eet_data_image_decode_to_cspace_surface_cipher(const void   *data,
      }
    else
      {
-        if ((cspaces != EET_COLORSPACE_ARGB8888) ||
-            (cspace == EET_COLORSPACE_ARGB8888 &&
-             w * 4 > row_stride))
+        if ((cspace != EET_COLORSPACE_ARGB8888) ||
+            ((cspace == EET_COLORSPACE_ARGB8888) && (w * 4 > row_stride)))
           return 0;
      }
 

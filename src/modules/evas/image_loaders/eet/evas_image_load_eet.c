@@ -64,8 +64,17 @@ _evas_image_load_return_error(int err, int *error)
    return EINA_FALSE;
 }
 
-static const Evas_Colorspace cspaces_etc1[2] = {
+static int
+_roundup(int val, int rup)
+{
+   if (val >= 0 && rup > 0)
+     return (val + rup - 1) - ((val + rup - 1) % rup);
+   return 0;
+}
+
+static const Evas_Colorspace cspaces_etc1[] = {
   EVAS_COLORSPACE_ETC1,
+  EVAS_COLORSPACE_RGB8_ETC2,
   EVAS_COLORSPACE_ARGB8888
 };
 
@@ -93,6 +102,7 @@ evas_image_load_file_head_eet(void *loader_data,
    int       a, compression, quality;
    Eet_Image_Encoding lossy;
    const Eet_Colorspace *cspaces = NULL;
+   Eina_Bool border_set = EINA_FALSE;
    int       ok;
 
    ok = eet_data_image_header_read(loader->ef, loader->key,
@@ -113,21 +123,25 @@ evas_image_load_file_head_eet(void *loader_data,
                  if (cspaces[i] == EET_COLORSPACE_ETC1)
                    {
                       prop->cspaces = cspaces_etc1;
+                      border_set = EINA_TRUE;
                       break;
                    }
                  else if (cspaces[i] == EET_COLORSPACE_ETC1_ALPHA)
                    {
                       prop->cspaces = cspaces_etc1_alpha;
+                      border_set = EINA_TRUE;
                       break;
                    }
                  else if (cspaces[i] == EET_COLORSPACE_RGB8_ETC2)
                    {
                       prop->cspaces = cspaces_etc2_rgb;
+                      border_set = EINA_TRUE;
                       break;
                    }
                  else if (cspaces[i] == EET_COLORSPACE_RGBA8_ETC2_EAC)
                    {
                       prop->cspaces = cspaces_etc2_rgba;
+                      border_set = EINA_TRUE;
                       break;
                    }
               }
@@ -135,6 +149,13 @@ evas_image_load_file_head_eet(void *loader_data,
      }
 
    prop->alpha = !!a;
+   if (border_set)
+     {
+        prop->borders.l = 1;
+        prop->borders.t = 1;
+        prop->borders.r = _roundup(prop->w + 2, 4) - prop->w - 1;
+        prop->borders.b = _roundup(prop->h + 2, 4) - prop->h - 1;
+     }
    *error = EVAS_LOAD_ERROR_NONE;
 
    return EINA_TRUE;
