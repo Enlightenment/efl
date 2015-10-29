@@ -554,7 +554,10 @@ eldbus_fd_handler_del(Eldbus_Handler_Data *hd)
    hd->conn->fd_handlers = eina_inlist_remove(hd->conn->fd_handlers,
                                               EINA_INLIST_GET(hd));
    if (hd->fd_handler)
-     ecore_main_fd_handler_del(hd->fd_handler);
+     {
+        ecore_main_fd_handler_del(hd->fd_handler);
+        hd->fd_handler = NULL;
+     }
 
    free(hd);
 }
