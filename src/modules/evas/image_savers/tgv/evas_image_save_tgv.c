@@ -20,9 +20,9 @@
 #include "rg_etc1.h"
 
 // FIXME: Remove DEBUG
-#ifndef DEBUG
-# define DEBUG
-#endif
+//#ifndef DEBUG
+//# define DEBUG
+//#endif
 #if defined(DEBUG) && defined(HAVE_CLOCK_GETTIME) && defined(_POSIX_MONOTONIC_CLOCK)
 # include <time.h>
 # define DEBUG_STATS

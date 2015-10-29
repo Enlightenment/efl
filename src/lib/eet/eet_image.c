@@ -586,7 +586,6 @@ eet_data_image_etc2_decode(const void *data,
    Emile_Image_Load_Error error;
    Eina_Bool found = EINA_FALSE;
    int i;
-   int r = 0;
 
    // Fix for ABI incompatibility between 1.10 and 1.11
    if (cspace == 8) cspace = 9;
@@ -655,14 +654,15 @@ eet_data_image_etc2_decode(const void *data,
    if ((cspace == EMILE_COLORSPACE_ARGB8888) && !prop.premul)
      _eet_argb_premul(p, prop.w * prop.h);
 
-   r = 1;
+   emile_image_close(image);
+   eina_binbuf_free(bin);
+   return 1;
 
  on_error:
    ERR("Failed to decode image inside Eet");
    emile_image_close(image);
    eina_binbuf_free(bin);
-
-   return r;
+   return 0;
 }
 
 static void *
