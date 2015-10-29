@@ -27,7 +27,7 @@ const Ecore_Getopt optdesc = {
   {
     ECORE_GETOPT_STORE_INT('q', "quality", "define encoding quality in percent."),
     ECORE_GETOPT_STORE_TRUE('c', "compress", "define if data should be compressed."),
-    ECORE_GETOPT_STORE_STR('e', "encoding", "define the codec (for TGV files: etc1, etc2)"),
+    ECORE_GETOPT_STORE_STR('e', "encoding", "define the codec (for TGV files: 'etc1', 'etc2', 'etc1+alpha')"),
     ECORE_GETOPT_LICENSE('L', "license"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
     ECORE_GETOPT_VERSION('V', "version"),
