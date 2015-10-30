@@ -28,12 +28,6 @@ static Eina_Bool initted = EINA_FALSE;
 static int gl_wins = 0;
 
 /* local structures */
-typedef struct _Render_Engine Render_Engine;
-struct _Render_Engine
-{
-   Render_Engine_GL_Generic generic;
-};
-
 typedef struct _Native Native;
 struct _Native
 {
