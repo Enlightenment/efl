@@ -554,25 +554,28 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
                w = h * ee->prop.aspect;
           }
 
-        /* calc new size using base size & step size */
-        if (ee->prop.step.w > 0)
+        if (!ee->prop.maximized)
           {
-             if (ee->prop.base.w >= 0)
-               w = (ee->prop.base.w + 
-                    (((w - ee->prop.base.w) / ee->prop.step.w) * 
-                        ee->prop.step.w));
-             else
-               w = (minw + (((w - minw) / ee->prop.step.w) * ee->prop.step.w));
-          }
+             /* calc new size using base size & step size */
+             if (ee->prop.step.w > 0)
+               {
+                  if (ee->prop.base.w >= 0)
+                    w = (ee->prop.base.w +
+                         (((w - ee->prop.base.w) / ee->prop.step.w) *
+                             ee->prop.step.w));
+                  else
+                    w = (minw + (((w - minw) / ee->prop.step.w) * ee->prop.step.w));
+               }
 
-        if (ee->prop.step.h > 0)
-          {
-             if (ee->prop.base.h >= 0)
-               h = (ee->prop.base.h + 
-                    (((h - ee->prop.base.h) / ee->prop.step.h) * 
-                        ee->prop.step.h));
-             else
-               h = (minh + (((h - minh) / ee->prop.step.h) * ee->prop.step.h));
+             if (ee->prop.step.h > 0)
+               {
+                  if (ee->prop.base.h >= 0)
+                    h = (ee->prop.base.h +
+                         (((h - ee->prop.base.h) / ee->prop.step.h) *
+                             ee->prop.step.h));
+                  else
+                    h = (minh + (((h - minh) / ee->prop.step.h) * ee->prop.step.h));
+               }
           }
 
         if ((maxw > 0) && (w > maxw)) 
