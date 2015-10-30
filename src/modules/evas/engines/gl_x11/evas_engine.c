@@ -773,7 +773,7 @@ evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
    surface_attrs[i++] = sfc->h;
    surface_attrs[i++] = 0;
    pbuf = glXCreatePbuffer(re->software.ob->disp, cfgs[0], surface_attrs);
-   if (cfgs) XFree(cfgs);
+   XFree(cfgs);
 
    if (!pbuf)
      {
