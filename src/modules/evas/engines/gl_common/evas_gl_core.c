@@ -2233,7 +2233,6 @@ evgl_context_destroy(void *eng_data, EVGL_Context *ctx)
 
    // Free context
    free(ctx);
-   ctx = NULL;
 
    return 1;
 }
