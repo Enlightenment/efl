@@ -418,6 +418,40 @@ START_TEST(eina_hash_seed)
 }
 END_TEST
 
+START_TEST(eina_hash_add_del_by_hash)
+{
+   Eina_Hash *hash = NULL;
+   int array[] = { 1, 42, 4, 5, 6 };
+   int key_len, key_hash;
+
+   fail_if(eina_init() != 2);
+
+   hash = eina_hash_new(EINA_KEY_LENGTH(_eina_string_key_length),
+                        EINA_KEY_CMP(_eina_string_key_cmp),
+                        EINA_KEY_HASH(eina_hash_crc),
+                        NULL,
+                        EINA_HASH_BUCKET_SIZE);
+   fail_if(hash == NULL);
+   fail_if(eina_hash_add(hash, "1", &array[0]) != EINA_TRUE);
+   fail_if(eina_hash_add(hash, "42", &array[1]) != EINA_TRUE);
+   fail_if(eina_hash_add(hash, "5", &array[3]) != EINA_TRUE);
+   fail_if(eina_hash_add(hash, "6", &array[4]) != EINA_TRUE);
+
+   key_len = _eina_string_key_length("4");
+   key_hash = eina_hash_crc("4", key_len);
+
+   fail_if(eina_hash_add_by_hash(hash, "4", key_len, key_hash, &array[2]) != EINA_TRUE);
+   fail_if(eina_hash_del_by_hash(hash, "4", key_len, key_hash, &array[2]) != EINA_TRUE);
+   fail_if(eina_hash_del_by_hash(hash, "4", key_len, key_hash, &array[2]) != EINA_FALSE);
+
+   key_len = _eina_string_key_length("42");
+   key_hash =  eina_hash_crc("42", key_len);
+   fail_if(eina_hash_del_by_hash(hash, "42", key_len, key_hash, &array[1]) != EINA_TRUE);
+
+   fail_if(eina_hash_population(hash) != 3);
+}
+END_TEST
+
 void eina_test_hash(TCase *tc)
 {
    tcase_add_test(tc, eina_hash_simple);
@@ -428,4 +462,5 @@ void eina_test_hash(TCase *tc)
    tcase_add_test(tc, eina_hash_seed);
    tcase_add_test(tc, eina_hash_int32_fuzze);
    tcase_add_test(tc, eina_hash_string_fuzze);
+   tcase_add_test(tc, eina_hash_add_del_by_hash);
 }
