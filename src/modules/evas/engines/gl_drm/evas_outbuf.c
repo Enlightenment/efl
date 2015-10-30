@@ -538,28 +538,46 @@ evas_outbuf_unsurf(Outbuf *ob)
 void
 evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
 {
+   Evas_Public_Data *epd;
+   Evas_Engine_Info_GL_Drm *einfo;
+   Render_Engine *re;
+   struct gbm_surface *osurface;
+   Outbuf *nob;
+
    if (depth == OUTBUF_DEPTH_INHERIT) depth = ob->depth;
 
-   /* check for changes */
-   /* if ((ob->w == w) && (ob->h == h) && */
-   /*     (ob->destination_alpha == ob->info->info.destination_alpha) && */
-   /*     ((int)ob->rotation == rot) && (ob->depth == depth)) */
-   /*   return; */
+   epd = eo_data_scope_get(ob->evas, EVAS_CANVAS_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(epd);
 
-   ob->w = w;
-   ob->h = h;
-   ob->depth = depth;
-   ob->rotation = rot;
+   re = epd->engine.data.output;
+   EINA_SAFETY_ON_NULL_RETURN(re);
 
-   /* _evas_outbuf_gbm_surface_destroy(ob); */
+   einfo = ob->info;
+   osurface = ob->surface;
 
-   /* if ((ob->rotation == 0) || (ob->rotation == 180)) */
-   /*   _evas_outbuf_gbm_surface_create(ob, w, h); */
-   /* else if ((ob->rotation == 90) || (ob->rotation == 270)) */
-   /*   _evas_outbuf_gbm_surface_create(ob, h, w); */
+   if ((ob->rotation == 0) || (ob->rotation == 180))
+     nob = evas_outbuf_new(einfo, w, h, ob->swap_mode);
+   else
+     nob = evas_outbuf_new(einfo, h, w, ob->swap_mode);
 
-   evas_outbuf_use(ob);
-   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot);
+   if (!nob)
+     {
+        ERR("Could not create new Outbuf");
+        return;
+     }
+
+   re->generic.software.ob->gl_context->references++;
+
+   evas_outbuf_free(ob);
+   re->generic.software.ob = NULL;
+
+   evas_outbuf_use(nob);
+
+   evas_render_engine_software_generic_update(&re->generic.software, nob, w, h);
+
+   re->generic.software.ob->gl_context->references--;
+
+   glsym_evas_gl_common_context_resize(nob->gl_context, w, h, rot);
 }
 
 Render_Engine_Swap_Mode
