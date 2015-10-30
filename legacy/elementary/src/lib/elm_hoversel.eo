@@ -42,21 +42,6 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             return: const(list<Elm.Widget_Item *>)*;
          }
       }
-      @property scrollable {
-         [[Control whether scrolling is enabled.
-
-           This Limit the size of contents and make them scrollable.
-
-           @since 1.16
-         ]]
-         get {
-         }
-         set {
-         }
-         values {
-            scrollable: bool; [[$true if scrollable $false otherwise.]]
-         }
-      }
       @property auto_update {
          [[Update icon and text of hoversel same to those of selected item automatically.]]
          get{

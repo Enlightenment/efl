@@ -435,23 +435,11 @@ _activate(Evas_Object *obj)
               eo_event_callback_add(ELM_WIDGET_EVENT_UNFOCUSED, _item_unfocused_cb, item));
      }
 
-   if (sd->scrollable)
-     {
-        _create_scroller(obj, sd);
-        elm_object_content_set(sd->scr, bx);
+   _create_scroller(obj, sd);
+   elm_object_content_set(sd->scr, bx);
 
-        _resizing_eval(obj, sd);
-        elm_object_part_content_set(sd->hover, sd->last_location, sd->tbl);
-     }
-   else
-     {
-        if (sd->horizontal)
-          elm_object_part_content_set(sd->hover, elm_hover_best_content_location_get
-                                        (sd->hover, ELM_HOVER_AXIS_HORIZONTAL), bx);
-        else
-          elm_object_part_content_set(sd->hover, elm_hover_best_content_location_get
-                                        (sd->hover, ELM_HOVER_AXIS_VERTICAL), bx);
-     }
+   _resizing_eval(obj, sd);
+   elm_object_part_content_set(sd->hover, sd->last_location, sd->tbl);
 
    eo_do(obj, eo_event_callback_call(ELM_HOVERSEL_EVENT_EXPANDED, NULL));
    evas_object_show(sd->hover);
@@ -559,8 +547,7 @@ _on_move_resize(void * data,
 {
    Elm_Hoversel_Data *sd = data;
 
-   if (sd->scrollable)
-     _resizing_eval(obj, sd);
+   _resizing_eval(obj, sd);
 }
 
 EOLIAN static void
@@ -940,18 +927,6 @@ _elm_hoversel_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNU
           { NULL, NULL, NULL, NULL}
    };
    return &atspi_actions[0];
-}
-
-EOLIAN void
-_elm_hoversel_scrollable_set(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd, Eina_Bool scrollable)
-{
-   sd->scrollable = !!scrollable;
-}
-
-EOLIAN Eina_Bool
-_elm_hoversel_scrollable_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
-{
-   return sd->scrollable;
 }
 
 EOLIAN void

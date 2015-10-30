@@ -181,7 +181,6 @@ test_hoversel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(hoversel);
 
    hoversel = elm_hoversel_add(win);
-   elm_hoversel_scrollable_set(hoversel, EINA_TRUE);
    elm_hoversel_auto_update_set(hoversel, EINA_TRUE);
    elm_hoversel_hover_parent_set(hoversel, win);
    elm_object_text_set(hoversel, "Some Icons");
