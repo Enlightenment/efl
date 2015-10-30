@@ -2507,6 +2507,7 @@ eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface
    Evas_Engine_GL_Context *gl_context;
    Render_Engine_GL_Generic *re = data;
    int w, h;
+   void *temp;
 
    re->window_use(re->software.ob);
    gl_context = re->window_gl_context_get(re->software.ob);
@@ -2515,7 +2516,14 @@ eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface
 
    w = gl_context->w; h = gl_context->h;
 
+   temp = software_buffer;
    software_buffer = realloc(software_buffer, sizeof (unsigned int) * w * h);
+   if (!software_buffer)
+     {
+        ERR("Realloc failed!!");
+        software_buffer = temp;
+        return;
+     }
    memset(software_buffer, 0, sizeof (unsigned int) * w * h);
    if (use_cairo)
      {
