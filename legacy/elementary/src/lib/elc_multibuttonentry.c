@@ -464,6 +464,9 @@ _item_select(Evas_Object *obj,
    if (it)
      {
         _current_item_change(obj, EO_OBJ(it));
+
+        if (it->func) it->func((void *)(WIDGET_ITEM_DATA_GET(EO_OBJ(it))), WIDGET(it), EO_OBJ(it));
+
         if (elm_widget_focus_get(obj))
           {
              elm_object_focus_set(sd->entry, EINA_FALSE);
