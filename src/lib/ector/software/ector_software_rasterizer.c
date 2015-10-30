@@ -50,6 +50,9 @@ _blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
    if (data->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
    if (data->type == RadialGradient) fetchfunc = &fetch_radial_gradient;
 
+   if (!fetchfunc)
+     return;
+
    comp_func = ector_comp_func_span_get(data->op, data->mul_col, data->gradient->alpha);
 
    // move to the offset location
