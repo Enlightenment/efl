@@ -453,6 +453,26 @@ START_TEST(eina_test_quaternion_f16p16_rotate_matrix)
 }
 END_TEST
 
+START_TEST(eina_test_quaternion_rotate)
+{
+   Eina_Point_3D r = { 3, 3, 3 };
+   Eina_Point_3D c = { 0, 0, 0}, res = {3.0, 3.0, 3.0};
+   Eina_Point_3D res1 = {3.0, 3.0, -9.0};
+   Eina_Quaternion q = {1, 1, 1, 0};
+
+   eina_init();
+
+   eina_quaternion_rotate(&r, &c, &q);
+   fail_if(!eina_point_3d_cmp(&r, &res));
+
+   eina_quaternion_set(&q, 1, 1, 0, 0);
+   eina_quaternion_rotate(&r, &c, &q);
+   fail_if(!eina_point_3d_cmp(&r, &res1));
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_quaternion(TCase *tc)
 {
@@ -471,4 +491,5 @@ eina_test_quaternion(TCase *tc)
    tcase_add_test(tc, eina_test_quaternion_f16p16_lerp);
    tcase_add_test(tc, eina_test_quaternion_lerp);
    tcase_add_test(tc, eina_test_quaternion_f16p16_rotate_matrix);
+   tcase_add_test(tc, eina_test_quaternion_rotate);
 }
