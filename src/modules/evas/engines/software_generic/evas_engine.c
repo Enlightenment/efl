@@ -1344,6 +1344,18 @@ eng_image_data_get(void *data EINA_UNUSED, void *image, int to_write, DATA32 **i
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
 	*image_data = im->cs.data;
         break;
+      case EVAS_COLORSPACE_ETC1:
+      case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGB_S3TC_DXT1:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
+        if (to_write)
+          {
+             // abort() ?
+             error = EVAS_LOAD_ERROR_GENERIC;
+             return NULL;
+          }
+        *image_data = im->image.data;
+        break;
       default:
 	abort();
 	break;
@@ -1362,6 +1374,10 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    switch (im->cache_entry.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
+      case EVAS_COLORSPACE_ETC1:
+      case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGB_S3TC_DXT1:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
 	if (image_data != im->image.data)
 	  {
 	     int w, h;

@@ -336,7 +336,7 @@ output(void)
 		    }
 		  ecore_file_mkpath(pp);
 		  free(pp);
-		  if (!evas_object_image_save(im, out, NULL, "quality=100 compress=9"))
+                  if (!evas_object_image_save(im, out, NULL, "quality=100 compress=9 encoding=auto"))
 		    {
 		       ERR("Cannot write file %s. Perhaps missing JPEG or PNG saver modules for Evas.", out);
 		       exit(-1);

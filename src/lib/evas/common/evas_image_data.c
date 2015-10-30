@@ -41,6 +41,21 @@ evas_common_rgba_image_from_data(Image_Entry* ie_dst, int w, int h, DATA32 *imag
 	dst->cs.data = image_data;
 	dst->cs.no_free = 1;
         break;
+      case EVAS_COLORSPACE_ETC1:
+      case EVAS_COLORSPACE_ETC1_ALPHA:
+      case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+        // FIXME: Borders are just guessed, not passed in (they should be)
+        dst->cache_entry.w = w;
+        dst->cache_entry.h = h;
+        dst->cache_entry.borders.l = 1;
+        dst->cache_entry.borders.t = 1;
+        dst->cache_entry.borders.r = ((w + 2 + 3) & ~0x3) - w - 1;
+        dst->cache_entry.borders.b = ((h + 2 + 3) & ~0x3) - h - 1;
+        dst->image.data = image_data;
+        dst->image.no_free = 1;
+        dst->cache_entry.flags.alpha = alpha ? 1 : 0;
+        break;
       default:
 	abort();
 	break;
@@ -119,58 +134,67 @@ evas_common_rgba_image_size_set(Image_Entry *ie_dst, const Image_Entry *ie_im, u
 }
 
 int
-evas_common_rgba_image_colorspace_set(Image_Entry* ie_dst, Evas_Colorspace cspace)
+evas_common_rgba_image_colorspace_set(Image_Entry* ie, Evas_Colorspace cspace)
 {
-   RGBA_Image   *dst = (RGBA_Image *) ie_dst;
-   Eina_Bool change = (dst->cache_entry.space != cspace);
+   RGBA_Image *im = (RGBA_Image *) ie;
+
+   // FIXME: This function looks extremely dubious now, trying to free the
+   // data pointer without even knowing how it was allocated (malloc / mmap).
+   // Also, lacks support for S3TC and exotic formats.
+
+   if (im->cache_entry.space == cspace)
+     return 1;
+
+   if (ie->references > 1)
+     WRN("Releasing data of image with >1 refs. Bad things may happen.");
+
+   if (im->cs.data)
+     {
+        if (!im->cs.no_free) free(im->cs.data);
+        im->cs.data = NULL;
+     }
+   im->cs.no_free = 0;
+   if (im->image.data && !im->image.no_free)
+     {
+        // FIXME: Call _evas_common_rgba_image_surface_munmap
+        free(im->image.data);
+     }
+   ie->allocated.w = 0;
+   ie->allocated.h = 0;
+   ie->flags.preload_done = 0;
+   ie->flags.loaded = 0;
+   im->image.data = NULL;
+   im->image.no_free = 0;
 
    switch (cspace)
      {
       case EVAS_COLORSPACE_ARGB8888:
       case EVAS_COLORSPACE_AGRY88:
       case EVAS_COLORSPACE_GRY8:
-	if (dst->cs.data)
-	  {
-	     if (!dst->cs.no_free) free(dst->cs.data);
-	     dst->cs.data = NULL;
-	     dst->cs.no_free = 0;
-	  }
-        if (change && dst->image.data)
-          {
-             if (!dst->image.no_free) free(dst->image.data);
-             dst->image.data = NULL;
-             dst->image.no_free = 0;
-          }
+        // all good
+        break;
+      case EVAS_COLORSPACE_ETC1:
+      case EVAS_COLORSPACE_ETC1_ALPHA:
+      case EVAS_COLORSPACE_RGB8_ETC2:
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+        // living on the edge (no conversion atm)
         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
       case EVAS_COLORSPACE_YCBCR422601_PL:
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
       case EVAS_COLORSPACE_YCBCR420NV12601_PL:
-	if (dst->image.no_free)
-	  {
-             ie_dst->allocated.w = 0;
-             ie_dst->allocated.h = 0;
-             ie_dst->flags.preload_done = 0;
-             ie_dst->flags.loaded = 0;
-             dst->image.data = NULL;
-	     dst->image.no_free = 0;
-             /* FIXME: Must allocate image.data surface cleanly. */
-	  }
-	if (dst->cs.data)
-	  {
-	     if (!dst->cs.no_free) free(dst->cs.data);
-	  }
-	dst->cs.data = calloc(1, dst->cache_entry.h * sizeof(unsigned char *) * 2);
-	dst->cs.no_free = 0;
+        // prepare cspace conversion buffer
+        im->cs.data = calloc(1, im->cache_entry.h * sizeof(unsigned char *) * 2);
+        im->cs.no_free = 0;
         break;
       default:
-	abort();
-	break;
+        CRI("Can't set colorspace to %u: unsupported", (unsigned) cspace);
+        abort();
+        return 0;
      }
-   dst->cache_entry.space = cspace;
-   evas_common_image_colorspace_dirty(dst);
-
-   _evas_common_rgba_image_post_surface(ie_dst);
-   return 0;
+   im->cache_entry.space = cspace;
+   evas_common_image_colorspace_dirty(im);
+   _evas_common_rgba_image_post_surface(ie);
+   return 1;
 }

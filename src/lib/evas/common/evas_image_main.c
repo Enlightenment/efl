@@ -213,8 +213,8 @@ _evas_common_rgba_image_surface_mmap(Image_Entry *ie, unsigned int w, unsigned i
 #endif
 }
 
-static void
-_evas_common_rgba_image_surface_munmap(void *data, unsigned int w, unsigned int h, Evas_Colorspace cspace)
+void
+evas_common_rgba_image_surface_munmap(void *data, unsigned int w, unsigned int h, Evas_Colorspace cspace)
 {
    if (!data) return ;
 #if defined (HAVE_SYS_MMAN_H) && (!defined (_WIN32))
@@ -379,9 +379,9 @@ evas_common_rgba_image_unload_real(Image_Entry *ie)
 
    if (im->image.data && !im->image.no_free)
      {
-        _evas_common_rgba_image_surface_munmap(im->image.data,
-                                               ie->allocated.w, ie->allocated.h,
-                                               ie->space);
+        evas_common_rgba_image_surface_munmap(im->image.data,
+                                              ie->allocated.w, ie->allocated.h,
+                                              ie->space);
 #ifdef SURFDBG
         surfs = eina_list_remove(surfs, ie);
 #endif        
@@ -532,9 +532,9 @@ _evas_common_rgba_image_surface_alloc(Image_Entry *ie, unsigned int w, unsigned 
 
    if (im->image.data)
      {
-        _evas_common_rgba_image_surface_munmap(im->image.data,
-                                               ie->allocated.w, ie->allocated.h,
-                                               ie->space);
+        evas_common_rgba_image_surface_munmap(im->image.data,
+                                              ie->allocated.w, ie->allocated.h,
+                                              ie->space);
 	im->image.data = NULL;
 #ifdef SURFDBG
         surfs = eina_list_remove(surfs, ie);
@@ -605,9 +605,9 @@ _evas_common_rgba_image_surface_delete(Image_Entry *ie)
 
    if (im->image.data && !im->image.no_free)
      {
-        _evas_common_rgba_image_surface_munmap(im->image.data,
-                                               ie->allocated.w, ie->allocated.h,
-                                               ie->space);
+        evas_common_rgba_image_surface_munmap(im->image.data,
+                                              ie->allocated.w, ie->allocated.h,
+                                              ie->space);
 #ifdef SURFDBG
         surfs = eina_list_remove(surfs, ie);
 #endif
@@ -854,10 +854,10 @@ evas_common_image_colorspace_normalize(RGBA_Image *im)
 #endif
              if (!im->image.no_free)
                {
-                  _evas_common_rgba_image_surface_munmap(im->image.data,
-                                                         im->cache_entry.allocated.w,
-                                                         im->cache_entry.allocated.h,
-                                                         im->cache_entry.space);
+                  evas_common_rgba_image_surface_munmap(im->image.data,
+                                                        im->cache_entry.allocated.w,
+                                                        im->cache_entry.allocated.h,
+                                                        im->cache_entry.space);
 #ifdef SURFDBG
                   surfs = eina_list_remove(surfs, im);
 #endif
