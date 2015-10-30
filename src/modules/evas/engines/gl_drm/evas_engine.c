@@ -403,8 +403,6 @@ evgl_eng_native_window_destroy(void *data, void *native_window)
 
    gbm_surface_destroy((struct gbm_surface *)native_window);
 
-   native_window = NULL;
-
    return 1;
 }
 
