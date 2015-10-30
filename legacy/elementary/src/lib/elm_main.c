@@ -1380,8 +1380,6 @@ elm_object_focus_allow_set(Evas_Object *obj,
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_widget_can_focus_set(obj, enable);
-/*FIXME: According to the elm_object_focus_allow_get(), child_can_focus field
-of the parent should be updated. Otherwise, the checking of it's child focus allow states should not be in elm_object_focus_allow_get() */
 }
 
 EAPI Eina_Bool

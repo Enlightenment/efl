@@ -1401,6 +1401,29 @@ _elm_widget_can_focus_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool can_focu
      }
    else
      {
+        // update child_can_focus of parents */
+        Evas_Object *parent = elm_widget_parent_get(obj);
+        while (parent)
+          {
+             const Eina_List *l;
+             Evas_Object *subobj;
+
+             ELM_WIDGET_DATA_GET(parent, sdp);
+
+             sdp->child_can_focus = EINA_FALSE;
+             EINA_LIST_FOREACH(sdp->subobjs, l, subobj)
+               {
+                  if (_is_focusable(subobj))
+                    {
+                       sdp->child_can_focus = EINA_TRUE;
+                       break;
+                    }
+               }
+             /* break again, child_can_focus went back to
+              * original value */
+             if (sdp->child_can_focus) break;
+             parent = sdp->parent_obj;
+          }
         eo_do(obj, eo_event_callback_array_del(focus_callbacks(), NULL));
      }
 }
