@@ -273,6 +273,7 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
 {
    uint64_t caps;
    int events = 0;
+   drmVersionPtr ver;
 
    /* check for valid device */
    if ((!dev) || (!dev->drm.name)) return EINA_FALSE;
@@ -283,6 +284,18 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
    if (dev->drm.fd < 0) return EINA_FALSE;
 
    DBG("Opened Device %s : %d", dev->drm.name, dev->drm.fd);
+
+   ver = drmGetVersion(dev->drm.fd);
+   if (ver)
+     {
+        DBG("\tDriver Name: %s", ver->name);
+        DBG("\tDriver Date: %s", ver->date);
+        DBG("\tDriver Description: %s", ver->desc);
+        DBG("\tDriver Version: %d.%d.%d",
+            ver->version_major, ver->version_minor,
+            ver->version_patchlevel);
+        drmFreeVersion(ver);
+     }
 
    /* set client capabilities to 'universal planes' so drm core will expose
     * the full universal plane list (including primary & cursor planes) */
