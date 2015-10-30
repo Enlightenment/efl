@@ -57,6 +57,22 @@ eina_matrix3_cmp(const Eina_Matrix3 *a, const Eina_Matrix3 *b)
 }
 
 static inline Eina_Bool
+eina_matrix3_f16p16_cmp(const Eina_Matrix3_F16p16 *a, const Eina_Matrix3_F16p16 *b)
+{
+   if ((a->xx == b->xx) &&
+       (a->xy == b->xy) &&
+       (a->xz == b->xz) &&
+       (a->yx == b->yx) &&
+       (a->yy == b->yy) &&
+       (a->yz == b->yz) &&
+       (a->zx == b->zx) &&
+       (a->zy == b->zy) &&
+       (a->zz == b->zz))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
 eina_point_3d_cmp(const Eina_Point_3D *a, const Eina_Point_3D *b)
 {
    if (FLOAT_CMP(a->x, b->x) &&
@@ -414,6 +430,29 @@ START_TEST(eina_test_quaternion_lerp)
 }
 END_TEST
 
+START_TEST(eina_test_quaternion_f16p16_rotate_matrix)
+{
+   Eina_Quaternion_F16p16 q = {65536, 65536, 65536, 0};
+   Eina_Point_3D_F16p16 r = { 65536, 65536, 65536 };
+   Eina_Point_3D_F16p16 c = { 0, 0, 0 }, res = {65536, 65536, 65536};
+   Eina_Matrix3_F16p16 m, mres = {-262144, 131072, 131072,
+                                  131072, -262144, 131072,
+                                  131072, 131072, -262144 };
+
+   eina_init();
+
+   eina_quaternion_f16p16_rotate(&r, &c, &q);
+   fail_if(r.x != res.x ||
+           r.y != res.y ||
+           r.z != res.z);
+
+   eina_quaternion_f16p16_rotation_matrix3_get(&m, &q);
+   fail_if(!eina_matrix3_f16p16_cmp(&m, &mres));
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_quaternion(TCase *tc)
 {
@@ -431,4 +470,5 @@ eina_test_quaternion(TCase *tc)
    tcase_add_test(tc, eina_test_matrix_recompose);
    tcase_add_test(tc, eina_test_quaternion_f16p16_lerp);
    tcase_add_test(tc, eina_test_quaternion_lerp);
+   tcase_add_test(tc, eina_test_quaternion_f16p16_rotate_matrix);
 }
