@@ -1693,7 +1693,7 @@ _evas_box_append(Eo *o, Evas_Object_Box_Data *priv, Evas_Object *child)
 {
    Evas_Object_Box_Option *opt = NULL;
 
-   if (!child)
+   if (!child || (evas_object_smart_parent_get(child) == o))
      return NULL;
 
    eo_do(o, opt = evas_obj_box_internal_append(child));
