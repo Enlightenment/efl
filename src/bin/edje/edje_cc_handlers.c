@@ -1895,8 +1895,10 @@ st_images_image(void)
 	check_arg_count(2);
    else
      {
-	img->source_param = parse_int_range(2, 0, 100);
-	check_arg_count(3);
+        if (check_range_arg_count(2, 3) > 2)
+          img->source_param = parse_int_range(2, 0, 100);
+        else
+          img->source_param = 90;
      }
 }
 
