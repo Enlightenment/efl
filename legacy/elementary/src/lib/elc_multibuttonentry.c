@@ -1745,8 +1745,11 @@ _elm_multibuttonentry_editable_set(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Dat
    if (sd->editable == editable) return;
    sd->editable = editable;
 
-   if (sd->editable)
-     evas_object_show(sd->entry);
+   if (sd->editable && (sd->view_state != MULTIBUTTONENTRY_VIEW_SHRINK))
+     {
+        elm_box_pack_end(sd->box, sd->entry);
+        evas_object_show(sd->entry);
+     }
    else
      {
         elm_box_unpack(sd->box, sd->entry);
