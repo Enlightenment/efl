@@ -87,7 +87,7 @@ EAPI void eina_quaternion_f16p16_nlerp(Eina_Quaternion_F16p16 *out,
 EAPI void eina_quaternion_f16p16_rotate(Eina_Point_3D_F16p16 *p,
                                         const Eina_Point_3D_F16p16 *center,
                                         const Eina_Quaternion_F16p16 *q); /**< @since 1.15 */
-EAPI void eina_quaternion_f16p16_rotation_matri3_get(Eina_Matrix3_F16p16 *m,
+EAPI void eina_quaternion_f16p16_rotation_matrix3_get(Eina_Matrix3_F16p16 *m,
                                                      const Eina_Quaternion_F16p16 *q); /**< @since 1.15 */
 
 EAPI void eina_quaternion_set(Eina_Quaternion *q, double x,
