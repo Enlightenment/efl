@@ -754,6 +754,13 @@ xim_imf_module_exit(void)
 static Eina_Bool
 _ecore_imf_xim_init(void)
 {
+   const char *s;
+
+   if (!getenv("DISPLAY")) return EINA_FALSE;
+   if ((s = getenv("ELM_DISPLAY")))
+     {
+        if (strcmp(s, "x11")) return EINA_FALSE;
+     }
    eina_init();
 
    _ecore_imf_xim_log_dom = eina_log_domain_register("ecore_imf_xim", NULL);

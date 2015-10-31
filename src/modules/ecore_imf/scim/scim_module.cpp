@@ -57,6 +57,13 @@ extern "C"
 
    static Eina_Bool imf_module_init (void)
      {
+        const char *s;
+
+        if (!getenv("DISPLAY")) return EINA_FALSE;
+        if ((s = getenv("ELM_DISPLAY")))
+          {
+             if (strcmp(s, "x11")) return EINA_FALSE;
+          }
         ecore_imf_module_register (&isf_imf_info, imf_module_create, imf_module_exit);
         return EINA_TRUE;
      }

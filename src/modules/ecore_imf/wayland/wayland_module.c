@@ -145,11 +145,16 @@ im_module_create()
 static Eina_Bool
 im_module_init(void)
 {
+   const char *s;
+
    _ecore_imf_wayland_log_dom = 
      eina_log_domain_register("ecore_imf_wayland", EINA_COLOR_YELLOW);
 
-   if (!getenv("WAYLAND_DISPLAY"))
-     return EINA_FALSE;
+   if (!getenv("WAYLAND_DISPLAY")) return EINA_FALSE;
+   if ((s = getenv("ELM_DISPLAY")))
+     {
+        if (strcmp(s, "wl")) return EINA_FALSE;
+     }
 
    if (!ecore_wl_init(NULL))
      return EINA_FALSE;
