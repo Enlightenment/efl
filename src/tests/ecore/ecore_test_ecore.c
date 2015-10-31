@@ -106,6 +106,26 @@ START_TEST(ecore_test_ecore_main_loop_idle_enterer)
 }
 END_TEST
 
+START_TEST(ecore_test_ecore_main_loop_idle_before_enterer)
+{
+   Eina_Bool did = EINA_FALSE;
+   Ecore_Idle_Enterer *idle_enterer;
+   int ret;
+
+   ret = ecore_init();
+   fail_if(ret < 1);
+
+   idle_enterer = ecore_idle_enterer_before_add(_quit_cb, &did);
+   fail_if(idle_enterer == NULL);
+
+   ecore_main_loop_begin();
+
+   fail_if(did == EINA_FALSE);
+
+   ret = ecore_shutdown();
+}
+END_TEST
+
 START_TEST(ecore_test_ecore_main_loop_idle_exiter)
 {
    Eina_Bool did = EINA_FALSE;
@@ -681,6 +701,7 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_main_loop);
    tcase_add_test(tc, ecore_test_ecore_main_loop_idler);
    tcase_add_test(tc, ecore_test_ecore_main_loop_idle_enterer);
+   tcase_add_test(tc, ecore_test_ecore_main_loop_idle_before_enterer);
    tcase_add_test(tc, ecore_test_ecore_main_loop_idle_exiter);
    tcase_add_test(tc, ecore_test_ecore_main_loop_timer);
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler);
