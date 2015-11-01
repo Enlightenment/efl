@@ -780,7 +780,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                          }
 
                        if (ep->no_render)
-                         eo_do(rp->object, evas_obj_no_render_set(1));
+                         eo_do(rp->object, evas_obj_no_render_set(rp->object, 1));
 
                        if (st_nested && st_nested->nested_children_count) /* Add this to list of children */
                          {
@@ -834,8 +834,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                                  evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
                               }
                             eo_do(rp->object,
-                                  evas_obj_anti_alias_set(ep->anti_alias),
-                                  evas_obj_precise_is_inside_set(ep->precise_is_inside));
+                                  evas_obj_anti_alias_set(rp->object, ep->anti_alias),
+                                  evas_obj_precise_is_inside_set(rp->object, ep->precise_is_inside));
                          }
                        if (rp->part->clip_to_id < 0)
                          evas_object_clip_set(rp->object, ed->base->clipper);

@@ -35,7 +35,7 @@ _colourable_eo_base_constructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
           = eina_log_domain_register("colourable", EINA_COLOR_BLUE);
      }
    DBG("_colourable_constructor(%p, %p)\n", obj, MY_CLASS);
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   return eo_constructor(MY_CLASS, obj);
 }
 
 void

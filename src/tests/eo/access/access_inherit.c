@@ -16,7 +16,7 @@ _prot_print(Eo *obj, void *class_data EINA_UNUSED)
    printf("%s %d\n", __func__, pd->protected_x1);
 }
 
-EAPI EO_VOID_FUNC_BODY(inherit_prot_print);
+EAPI EO_FUNC_VOID_API_DEFINE(inherit_prot_print, );
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(inherit_prot_print, _prot_print),

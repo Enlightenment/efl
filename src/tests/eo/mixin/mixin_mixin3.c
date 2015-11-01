@@ -18,14 +18,14 @@ _ab_sum_get(Eo *obj, void *class_data EINA_UNUSED)
    Mixin3_Public_Data *pd = (Mixin3_Public_Data *) class_data;
    int sum = 0;
    printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
-   eo_do_super(obj, MY_CLASS, sum = mixin_ab_sum_get());
+   sum = eo_super_mixin_ab_sum_get(MY_CLASS, obj);
 
    ++sum;
    pd->count += 3;
 
      {
         int _a = 0, _b = 0;
-        eo_do(obj, _a = simple_a_get(), _b = simple_b_get());
+        eo_do(obj, _a = simple_a_get(obj), _b = simple_b_get(obj));
         fail_if(sum != _a + _b + 2);
      }
 
@@ -35,13 +35,13 @@ _ab_sum_get(Eo *obj, void *class_data EINA_UNUSED)
 static Eo *
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   return eo_super_eo_constructor( MY_CLASS, obj);
 }
 
 static void
 _destructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_super_eo_destructor(MY_CLASS, obj);
 }
 
 static Eo_Op_Description op_descs[] = {

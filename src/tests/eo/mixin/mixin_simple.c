@@ -31,8 +31,8 @@ _##name##_set(Eo *obj EINA_UNUSED, void *class_data, int name) \
    pd->name = name; \
    printf("%s %d\n", __func__, pd->name); \
 } \
-EO_VOID_FUNC_BODYV(simple_##name##_set, EO_FUNC_CALL(name), int name); \
-EO_FUNC_BODY(simple_##name##_get, int, 0);
+EO_FUNC_VOID_API_DEFINE(simple_##name##_set, EO_FUNC_CALL(name), int name); \
+EO_FUNC_API_DEFINE(simple_##name##_get, int, 0, );
 
 _GET_SET_FUNC(a)
 _GET_SET_FUNC(b)

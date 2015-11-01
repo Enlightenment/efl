@@ -95,14 +95,15 @@ evas_object_rectangle_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(EVAS_RECTANGLE_CLASS, e);
+   Evas_Object *eo_obj;
+   eo_add(eo_obj, EVAS_RECTANGLE_CLASS, e);
    return eo_obj;
 }
 
 EOLIAN static Eo *
 _evas_rectangle_eo_base_constructor(Eo *eo_obj, Evas_Rectangle_Data *class_data EINA_UNUSED)
 {
-   eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
+  eo_obj = eo_super_eo_constructor( MY_CLASS, eo_obj);
 
    evas_object_rectangle_init(eo_obj);
 

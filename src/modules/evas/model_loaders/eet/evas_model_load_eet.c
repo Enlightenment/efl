@@ -19,21 +19,21 @@ _set_geometry_to_mesh_from_eet_file(Evas_Canvas3D_Mesh *mesh,
    int stride_pos, stride_nor, stride_tex, j;
 
    eo_do(mesh,
-         evas_canvas3d_mesh_vertex_count_set(eet_mesh->geometries->vertices_count),
-         evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES),
-         evas_canvas3d_mesh_frame_add(0),
+         evas_canvas3d_mesh_vertex_count_set(mesh, eet_mesh->geometries->vertices_count),
+         evas_canvas3d_mesh_vertex_assembly_set(mesh, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES),
+         evas_canvas3d_mesh_frame_add(mesh, 0),
 
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, 0, NULL),
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL,   0, NULL),
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, 0, NULL),
+         evas_canvas3d_mesh_frame_vertex_data_copy_set(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, 0, NULL),
+         evas_canvas3d_mesh_frame_vertex_data_copy_set(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL,   0, NULL),
+         evas_canvas3d_mesh_frame_vertex_data_copy_set(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, 0, NULL),
 
-         pos = (float *)evas_canvas3d_mesh_frame_vertex_data_map(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION),
-         nor = (float *)evas_canvas3d_mesh_frame_vertex_data_map(0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL),
-         tex = (float *)evas_canvas3d_mesh_frame_vertex_data_map(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD),
+         pos = (float *)evas_canvas3d_mesh_frame_vertex_data_map(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION),
+         nor = (float *)evas_canvas3d_mesh_frame_vertex_data_map(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL),
+         tex = (float *)evas_canvas3d_mesh_frame_vertex_data_map(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD),
 
-         stride_pos = evas_canvas3d_mesh_frame_vertex_stride_get(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION),
-         stride_nor = evas_canvas3d_mesh_frame_vertex_stride_get(0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL),
-         stride_tex = evas_canvas3d_mesh_frame_vertex_stride_get(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD));
+         stride_pos = evas_canvas3d_mesh_frame_vertex_stride_get(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION),
+         stride_nor = evas_canvas3d_mesh_frame_vertex_stride_get(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL),
+         stride_tex = evas_canvas3d_mesh_frame_vertex_stride_get(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD));
 
    if (stride_pos == 0) stride_pos = sizeof(float) * 3;
    if (stride_nor == 0) stride_nor = sizeof(float) * 3;
@@ -62,9 +62,9 @@ _set_geometry_to_mesh_from_eet_file(Evas_Canvas3D_Mesh *mesh,
 
         /* unmap vertex buffer */
    eo_do(mesh,
-         evas_canvas3d_mesh_frame_vertex_data_unmap(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION),
-         evas_canvas3d_mesh_frame_vertex_data_unmap(0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL),
-         evas_canvas3d_mesh_frame_vertex_data_unmap(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD));
+         evas_canvas3d_mesh_frame_vertex_data_unmap(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION),
+         evas_canvas3d_mesh_frame_vertex_data_unmap(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL),
+         evas_canvas3d_mesh_frame_vertex_data_unmap(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD));
 }
 
 void
@@ -73,34 +73,34 @@ _set_material_to_mesh_from_eet_file(Evas_Canvas3D_Mesh *mesh,
 {
    Evas_Canvas3D_Object_Data *pd = eo_data_scope_get(mesh, EVAS_CANVAS3D_OBJECT_CLASS);
    Eo *material = NULL;
-   material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, pd->evas);
+   eo_add(material, EVAS_CANVAS3D_MATERIAL_CLASS, pd->evas);
 
    eo_do(material,
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT,
+         evas_canvas3d_material_enable_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT,
                                      !!(eet_mesh->materials->colors[0].a > 0)),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE,
+         evas_canvas3d_material_enable_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE,
                                      !!(eet_mesh->materials->colors[1].a > 0)),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR,
+         evas_canvas3d_material_enable_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR,
                                      !!(eet_mesh->materials->colors[2].a > 0)),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, EINA_TRUE),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT,
+         evas_canvas3d_material_enable_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, EINA_TRUE),
+         evas_canvas3d_material_color_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT,
                                     eet_mesh->materials->colors[0].r,
                                     eet_mesh->materials->colors[0].g,
                                     eet_mesh->materials->colors[0].b,
                                     eet_mesh->materials->colors[0].a),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE,
+         evas_canvas3d_material_color_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE,
                                     eet_mesh->materials->colors[1].r,
                                     eet_mesh->materials->colors[1].g,
                                     eet_mesh->materials->colors[1].b,
                                     eet_mesh->materials->colors[1].a),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR,
+         evas_canvas3d_material_color_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR,
                                     eet_mesh->materials->colors[2].r,
                                     eet_mesh->materials->colors[2].g,
                                     eet_mesh->materials->colors[2].b,
                                     eet_mesh->materials->colors[2].a),
-         evas_canvas3d_material_shininess_set(eet_mesh->materials->shininess));
+         evas_canvas3d_material_shininess_set(material, eet_mesh->materials->shininess));
 
-   eo_do(mesh, evas_canvas3d_mesh_frame_material_set(0, material));
+   eo_do(mesh, evas_canvas3d_mesh_frame_material_set(mesh, 0, material));
 }
 
 void

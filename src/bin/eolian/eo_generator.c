@@ -98,7 +98,23 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
         eina_strbuf_append_char(str_func, '\n');
         eina_strbuf_free(dbuf);
      }
-   eina_strbuf_append_printf(str_func, "EOAPI @#rettype %s(@#full_params);\n", func_env.lower_eo_func);
+   Eina_Bool has_params = EINA_FALSE;
+
+   itr = eolian_property_keys_get(func, ftype);
+   has_params |= (eina_iterator_next(itr, &data));
+   eina_iterator_free(itr);
+
+   if (!has_params && !var_as_ret)
+     {
+        itr = is_prop ? eolian_property_values_get(func, ftype) : eolian_function_parameters_get(func);
+        has_params |= (eina_iterator_next(itr, &data));
+        eina_iterator_free(itr);
+     }
+
+   eina_strbuf_append_printf(str_func, "EOAPI @#rettype %s(Eo const* ___object%s@#full_params);\n", func_env.lower_eo_func
+                             , has_params?", ":"");
+   eina_strbuf_append_printf(str_func, "EOAPI @#rettype eo_super_%s(Eo const* ___klass, Eo const* ___object%s@#full_params);\n", func_env.lower_eo_func
+                             , has_params?", ":"");
 
    if (scope == EOLIAN_SCOPE_PROTECTED)
       eina_strbuf_append_printf(str_func, "#endif\n");
@@ -518,13 +534,13 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
           }
         Eina_Bool ret_is_void = (!rettype || !strcmp(rettype, "void"));
         _class_func_env_create(class, eolian_function_name_get(funcid), ftype, &func_env);
-        eina_strbuf_append_printf(eo_func_decl,
-              "EOAPI EO_%sFUNC_BODY%s(%s",
-              ret_is_void?"VOID_":"", has_params?"V":"",
-              func_env.lower_eo_func);
-        if (!ret_is_void)
+        /* eina_strbuf_append_printf(eo_func_decl, */
+        /*       "EOAPI EO_%sFUNC_BODY%s(%s", */
+        /*       ret_is_void?"VOID_":"", has_params?"V":"", */
+        /*       func_env.lower_eo_func); */
+       const char *val_str = NULL; 
+       if (!ret_is_void)
           {
-             const char *val_str = NULL;
              if (default_ret_val)
                {
                   Eolian_Value val = eolian_expression_eval
@@ -532,25 +548,109 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
                   if (val.type)
                     val_str = eolian_expression_value_to_literal(&val);
                }
-             eina_strbuf_append_printf(eo_func_decl, ", %s, %s",
-                   rettype, val_str?val_str:"0");
-             if (val_str && eolian_expression_type_get(default_ret_val) == EOLIAN_EXPR_NAME)
-               {
-                  Eina_Stringshare *string = eolian_expression_serialize(default_ret_val);
-                  eina_strbuf_append_printf(eo_func_decl, " /* %s */", string);
-                  eina_stringshare_del(string);
-               }
+
+             /* eina_strbuf_append_printf(eo_func_decl, ", %s, %s", */
+             /*       rettype, val_str?val_str:"0"); */
+             /* if (val_str && eolian_expression_type_get(default_ret_val) == EOLIAN_EXPR_NAME) */
+             /*   { */
+             /*      Eina_Stringshare *string = eolian_expression_serialize(default_ret_val); */
+             /*      eina_strbuf_append_printf(eo_func_decl, " /\* %s *\/", string); */
+             /*      eina_stringshare_del(string); */
+             /*   } */
           }
-        if (has_params)
-          {
-             eina_strbuf_replace_all(full_params, " EINA_UNUSED", "");
-             eina_strbuf_append_printf(eo_func_decl, ", EO_FUNC_CALL(%s)%s",
-                   eina_strbuf_string_get(params),
-                   eina_strbuf_string_get(full_params));
-          }
-        eina_strbuf_append_printf(eo_func_decl, ");");
+        /* if (has_params) */
+        /*   { */
+        /*      eina_strbuf_replace_all(full_params, " EINA_UNUSED", ""); */
+        /*      eina_strbuf_append_printf(eo_func_decl, ", EO_FUNC_CALL(%s)%s", */
+        /*            eina_strbuf_string_get(params), */
+        /*            eina_strbuf_string_get(full_params)); */
+        /*   } */
+        /* eina_strbuf_append_printf(eo_func_decl, ");"); */
+
+        eina_strbuf_append_printf(eo_func_decl,
+               "EOAPI %s %s(Eo const* _object%s);\n", ret_is_void?"void":rettype, func_env.lower_eo_func,
+               eina_strbuf_string_get(full_params));
+
+        eina_strbuf_append_printf(eo_func_decl,
+               "static %s _eo_impl_%s(_Eo_Class const* ___klass, Eo const* ___oid, _Eo_Object const* ___object%s)\n{\n"
+                                  , ret_is_void?"void":rettype, func_env.lower_eo_func,
+                                  eina_strbuf_string_get(full_params));
+        eina_strbuf_append_printf(eo_func_decl,
+                                  "   typedef %s (*_Eo_func)(Eo*, void *obj_data%s);\n"
+                                  "   static Eo_Op ___op = EO_NOOP;\n"
+                                  "   fprintf(stderr, \"%%s %%s:%%d\\n\", __func__, __FILE__, __LINE__); fflush(stderr);\n"
+                                  "   if (EINA_UNLIKELY(___op == EO_NOOP))\n"
+                                  "     {\n"
+                                  "        fprintf(stderr, \"%%s %%s:%%d\\n\", __func__, __FILE__, __LINE__); fflush(stderr);\n"
+                                  "        ___op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(%s));\n"
+                                  "        fprintf(stderr, \"%%s %%s:%%d\\n\", __func__, __FILE__, __LINE__); fflush(stderr);\n"
+                                  "        if (___op == EO_NOOP) return %s;\n"
+                                  "     }\n"
+                                  "   fprintf(stderr, \"%%s %%s:%%d\\n\", __func__, __FILE__, __LINE__); fflush(stderr);\n"
+                                  "   const op_type_funcs *___func = _dich_func_get(___klass, ___op);\n"
+                                  "   fprintf(stderr, \"%%s %%s:%%d\\n\", __func__, __FILE__, __LINE__); fflush(stderr);\n"
+                                  "   fprintf(stderr, \"___func %%p\\n\", ___func); fflush(stderr);\n"
+                                  "   //assert(!!___func);\n"
+                                  "   fprintf(stderr, \"___func->func %%p\\n\", ___func->func);fflush(stderr);\n"
+                                  "   fprintf(stderr, \"___func->src %%p\\n\", ___func->src);fflush(stderr);\n"
+                                  "   _Eo_func ___func_ = (_Eo_func) ___func->func;\n"
+                                  "   void* ___data = _eo_data_scope_get(___object, ___func->src);\n"
+                                  "   %s%s\n"
+                                  "   %s ___func_((Eo*)___oid, ___data%s%s);\n"
+                                  "   %s\n}\n"
+                                  , ret_is_void?"void":rettype
+                                  /* , func_env.lower_eo_func */
+                                  , eina_strbuf_string_get(full_params)
+                                  , func_env.lower_eo_func
+                                  , ret_is_void?"":val_str?val_str:"0"
+                                  , ret_is_void?"":rettype
+                                  , ret_is_void?"":" _ret;"
+                                  /* , func_env.lower_eo_func */
+                                  /* , ret_is_void?"":val_str?val_str:"0" */
+                                  , ret_is_void?"":"_ret = "
+                                  , has_params?", ":""
+                                  , eina_strbuf_string_get(params)
+                                  , ret_is_void?"":"return _ret;"
+                                  );
+
+        eina_strbuf_append_printf(eo_func_decl,
+               "EOAPI %s %s(Eo const* ___object%s)\n{\n", ret_is_void?"void":rettype, func_env.lower_eo_func,
+               eina_strbuf_string_get(full_params));
+        eina_strbuf_append_printf(eo_func_decl,
+                                  "   fprintf(stderr, \"%%s %%s:%%d\\n\", __func__, __FILE__, __LINE__); fflush(stderr);\n"
+                                  "   _Eo_Object* ___obj = (_Eo_Object*)_eo_obj_pointer_get((Eo_Id)___object);\n"
+                                  "   if(___obj) {\n"
+                                  "     fprintf(stderr, \"%%s %%s:%%d\\n\", __func__, __FILE__, __LINE__); fflush(stderr);\n"
+                                  "     return _eo_impl_%s(___obj->klass, ___object, ___obj%s%s);\n"
+                                  "   }\n"
+                                  "}\n"
+                                  , func_env.lower_eo_func
+                                  , has_params?", ":""
+                                  , eina_strbuf_string_get(params)
+                                  );
+
+        eina_strbuf_append_printf(eo_func_decl,
+               "EOAPI %s eo_super_%s(Eo_Class const* ___klass, Eo const* ___object%s)\n{\n"
+                                  , ret_is_void?"void":rettype, func_env.lower_eo_func
+                                  , eina_strbuf_string_get(full_params));
+        eina_strbuf_append_printf(eo_func_decl,
+                                  "   fprintf(stderr, \"%%s %%s:%%d\\n\", __func__, __FILE__, __LINE__); fflush(stderr);\n"
+                                  "   _Eo_Object* ___obj = (_Eo_Object*)_eo_obj_pointer_get((Eo_Id)___object);\n"
+                                  "   if(___obj) {\n"
+                                  "      fprintf(stderr, \"%%s %%s:%%d\\n\", __func__, __FILE__, __LINE__); fflush(stderr);\n"
+                                  "      _Eo_Class* ___kls = (_Eo_Class*)_eo_class_pointer_get((Eo_Id)___klass);\n"
+                                  "      fprintf(stderr, \"%%s %%s:%%d\\n\", __func__, __FILE__, __LINE__); fflush(stderr);\n"
+                                  "      if(___kls)\n"
+                                  "        return _eo_impl_%s(___kls->parent, ___object, ___obj%s%s);\n"
+                                  "   }\n"
+                                  "}\n"
+                                  , func_env.lower_eo_func
+                                  , has_params?", ":""
+                                  , eina_strbuf_string_get(params)
+                                  );
+        
         eina_strbuf_append_printf(fbody, "%s\n", eina_strbuf_string_get(eo_func_decl));
-        eina_strbuf_free(eo_func_decl);
+        /* eina_strbuf_free(eo_func_decl); */
      }
 
    if (need_implementation)

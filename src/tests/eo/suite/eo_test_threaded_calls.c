@@ -19,9 +19,9 @@ typedef struct
 #define THREAD_TEST_CLASS thread_test_class_get()
 const Eo_Class *thread_test_class_get(void);
 
-EO_FUNC_BODY(thread_test_v_get, int, 0);
-EO_VOID_FUNC_BODY(thread_test_try_swap_stack);
-EO_VOID_FUNC_BODYV(thread_test_constructor, EO_FUNC_CALL(v), int v);
+EO_FUNC_API_DEFINE(thread_test_v_get, int, 0,);
+EO_FUNC_VOID_API_DEFINE(thread_test_try_swap_stack,);
+EO_FUNC_VOID_API_DEFINE(thread_test_constructor, EO_FUNC_CALL(v), int v);
 
 static int
 _v_get(Eo *obj EINA_UNUSED, void *class_data)
@@ -93,9 +93,9 @@ _thread_job(void *data, Eina_Thread t EINA_UNUSED)
      fail_if(EINA_LOCK_SUCCEED != eina_spinlock_take(&locks[0]));
    }
 
-   obj = eo_add(THREAD_TEST_CLASS, NULL, thread_test_constructor(v));
+   eo_add(obj, THREAD_TEST_CLASS, NULL, thread_test_constructor(obj, v));
 
-   eo_do(obj, thread_test_try_swap_stack(), v = thread_test_v_get());
+   eo_do(obj, thread_test_try_swap_stack(obj), v = thread_test_v_get(obj));
 
    fail_if(EINA_LOCK_SUCCEED != eina_spinlock_release(&locks[1]));
 

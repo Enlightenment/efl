@@ -35,7 +35,7 @@ _colourablesquare_size_constructor(Eo *obj, ColourableSquare_Data *self, int siz
      }
    self->size = size;
    DBG("_colourablesquare_constructor(%d)\n", size);
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   eo_super_eo_constructor(MY_CLASS);
 }
 
 static int

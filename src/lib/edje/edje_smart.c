@@ -20,7 +20,7 @@ edje_object_add(Evas *evas)
 {
    Evas_Object *e;
    EINA_SAFETY_ON_NULL_RETURN_VAL(evas, NULL);
-   e = eo_add(MY_CLASS, evas);
+   eo_add(e, MY_CLASS, evas);
    return e;
 }
 
@@ -30,8 +30,8 @@ _edje_object_eo_base_constructor(Eo *obj, Edje *ed)
    ed->base = eo_data_ref(obj, EVAS_SMART_CLIPPED_CLASS);
    ed->duration_scale = 1.0;
 
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj, evas_obj_type_set(MY_CLASS_NAME_LEGACY));
+   obj = eo_super_eo_constructor( MY_CLASS, obj);
+   eo_do(obj, evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY));
    _edje_lib_ref();
 
    return obj;
@@ -40,23 +40,23 @@ _edje_object_eo_base_constructor(Eo *obj, Edje *ed)
 EOLIAN static void
 _edje_object_eo_base_destructor(Eo *obj, Edje *class_data)
 {
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_super_eo_destructor(MY_CLASS, obj);
    eo_data_unref(obj, class_data->base);
 }
 
 EOLIAN static void
 _edje_object_eo_base_dbg_info_get(Eo *eo_obj, Edje *_pd EINA_UNUSED, Eo_Dbg_Info *root) EINA_ARG_NONNULL(3)
 {
-   eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
+   eo_super_eo_dbg_info_get(MY_CLASS, eo_obj, root);
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
 
    const char *file, *edje_group;
-   eo_do(eo_obj, efl_file_get(&file, &edje_group));
+   eo_do(eo_obj, efl_file_get(eo_obj, &file, &edje_group));
    EO_DBG_INFO_APPEND(group, "File", EINA_VALUE_TYPE_STRING, file);
    EO_DBG_INFO_APPEND(group, "Group", EINA_VALUE_TYPE_STRING, edje_group);
 
    Edje_Load_Error error = EDJE_LOAD_ERROR_NONE;
-   eo_do(eo_obj, error = edje_obj_load_error_get());
+   eo_do(eo_obj, error = edje_obj_load_error_get(eo_obj));
    if (error != EDJE_LOAD_ERROR_NONE)
      {
         EO_DBG_INFO_APPEND(group, "Error", EINA_VALUE_TYPE_STRING,
@@ -81,7 +81,7 @@ _edje_object_evas_object_smart_add(Eo *obj, Edje *ed)
 
    evas_event_freeze(tev);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   eo_super_evas_obj_smart_add(MY_CLASS, obj);
 
    ed->is_rtl = EINA_FALSE;
    ed->have_objects = EINA_TRUE;
@@ -260,7 +260,7 @@ _edje_object_evas_object_smart_show(Eo *obj, Edje *ed)
    Eina_List *l;
    Edje *edg;
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
+   eo_super_evas_obj_smart_show(MY_CLASS, obj);
    if (evas_object_visible_get(obj)) return;
    if (_edje_lua_script_only(ed))
      {
@@ -288,7 +288,7 @@ _edje_object_evas_object_smart_hide(Eo *obj, Edje *ed)
    Eina_List *l;
    Edje *edg;
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
+   eo_super_evas_obj_smart_hide(MY_CLASS, obj);
    if (!evas_object_visible_get(obj)) return;
    if (_edje_lua_script_only(ed))
      {
@@ -372,21 +372,21 @@ edje_object_mmap_set(Edje_Object *obj, const Eina_File *file, const char *group)
 {
    Eina_Bool ret;
 
-   return eo_do_ret(obj, ret, efl_file_mmap_set(file, group));
+   return eo_do_ret(obj, ret, efl_file_mmap_set(obj, file, group));
 }
 
 EAPI Eina_Bool
 edje_object_file_set(Edje_Object *obj, const char *file, const char *group)
 {
    Eina_Bool ret = 0;
-   eo_do(obj, ret = efl_file_set(file, group));
+   eo_do(obj, ret = efl_file_set(obj, file, group));
    return ret;
 }
 
 EAPI void
 edje_object_file_get(const Edje_Object *obj, const char **file, const char **group)
 {
-   eo_do((Edje_Object *)obj, efl_file_get(file, group));
+   eo_do((Edje_Object *)obj, efl_file_get(obj, file, group));
 }
 
 #include "edje_object.eo.c"

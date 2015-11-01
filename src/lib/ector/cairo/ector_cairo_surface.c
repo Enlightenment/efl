@@ -61,14 +61,16 @@ _ector_cairo_surface_ector_generic_surface_renderer_factory_new(Eo *obj,
                                                                 Ector_Cairo_Surface_Data *pd EINA_UNUSED,
                                                                 const Eo_Class *type)
 {
+   Eo* o = NULL;
    if (type == ECTOR_RENDERER_GENERIC_SHAPE_MIXIN)
-     return eo_add(ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj);
+     eo_add(o, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj);
    else if (type == ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_MIXIN)
-     return eo_add(ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, obj);
+     eo_add(o, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, obj);
    else if (type == ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_MIXIN)
-     return eo_add(ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, obj);
-   ERR("Couldn't find class for type: %s\n", eo_class_name_get(type));
-   return NULL;
+     eo_add(o, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, obj);
+   else
+     ERR("Couldn't find class for type: %s\n", eo_class_name_get(type));
+   return o;
 }
 
 typedef struct _cairo_surface_t cairo_surface_t;
@@ -121,7 +123,7 @@ static Eo *
 _ector_cairo_surface_eo_base_constructor(Eo *obj,
                                          Ector_Cairo_Surface_Data *pd)
 {
-   obj = eo_do_super_ret(obj, ECTOR_CAIRO_SURFACE_CLASS, obj, eo_constructor());
+   obj = eo_super_eo_constructor( ECTOR_CAIRO_SURFACE_CLASS, obj);
    _cairo_count++;
 
    _ector_cairo_surface_context_set(obj, pd, NULL);
@@ -133,7 +135,7 @@ static void
 _ector_cairo_surface_eo_base_destructor(Eo *obj EINA_UNUSED,
                                         Ector_Cairo_Surface_Data *pd EINA_UNUSED)
 {
-   eo_do_super(obj, ECTOR_CAIRO_SURFACE_CLASS, eo_destructor());
+   eo_super_eo_destructor(ECTOR_CAIRO_SURFACE_CLASS, obj);
 
    
 

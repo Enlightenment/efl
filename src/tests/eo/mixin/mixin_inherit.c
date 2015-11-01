@@ -13,7 +13,7 @@ static int
 _a_get(Eo *obj, void *class_data EINA_UNUSED)
 {
    int ret = 0;
-   eo_do_super(obj, MY_CLASS, ret = simple_a_get());
+   ret = eo_super_simple_a_get(MY_CLASS, obj);
    printf("%s %d\n", __func__, ret);
 
    return ret;

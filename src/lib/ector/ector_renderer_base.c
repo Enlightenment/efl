@@ -11,7 +11,7 @@ static void
 _ector_renderer_generic_base_eo_base_destructor(Eo *obj, Ector_Renderer_Generic_Base_Data *pd)
 {
    if (pd->m) free(pd->m);
-   eo_do_super(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, eo_destructor());
+   eo_super_eo_destructor(ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
 }
 
 static void
@@ -130,7 +130,7 @@ _ector_renderer_generic_base_prepare(Eo *obj EINA_UNUSED,
                                      Ector_Renderer_Generic_Base_Data *pd)
 {
    if (pd->mask)
-     eo_do(pd->mask, ector_renderer_prepare());
+     eo_do(pd->mask, ector_renderer_prepare(pd->mask));
 
    return EINA_TRUE;
 }

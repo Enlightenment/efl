@@ -5913,7 +5913,8 @@ evas_object_textblock_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(EVAS_TEXTBLOCK_CLASS, e);
+   Evas_Object *eo_obj;
+   eo_add(eo_obj, EVAS_TEXTBLOCK_CLASS, e);
    return eo_obj;
 }
 
@@ -5923,7 +5924,7 @@ _evas_textblock_eo_base_constructor(Eo *eo_obj, Evas_Textblock_Data *class_data 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Textblock_Data *o;
 
-   eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
+   eo_obj = eo_super_eo_constructor( MY_CLASS, eo_obj);
 
    /* set up methods (compulsory) */
    obj->func = &object_func;
@@ -7002,8 +7003,8 @@ _obstacle_update(Evas_Textblock_Obstacle *obs, Eo *eo_obj)
    Evas_Coord ox, oy, ow, oh;
    Eo *eo_obs = obs->eo_obs;
 
-   eo_do(eo_obs, efl_gfx_position_get(&ox, &oy), efl_gfx_size_get(&ow, &oh));
-   eo_do(eo_obj, efl_gfx_position_get(&x, &y));
+   eo_do(eo_obs, efl_gfx_position_get(eo_obs, &ox, &oy), efl_gfx_size_get(eo_obs, &ow, &oh));
+   eo_do(eo_obj, efl_gfx_position_get(eo_obs, &x, &y));
 
    obs->x = ox - x;
    obs->y = oy - y;
@@ -7065,7 +7066,7 @@ _obstacle_del_cb(void *data, Eo *eo_obs,
 static void
 _obstacle_clear(Eo *eo_obj, Evas_Textblock_Obstacle *obs)
 {
-   eo_do(obs->eo_obs, eo_event_callback_del(EVAS_OBJECT_EVENT_DEL,
+   eo_do(obs->eo_obs, eo_event_callback_del(obs->eo_obs, EVAS_OBJECT_EVENT_DEL,
             _obstacle_del_cb, eo_obj));
 }
 
@@ -7102,7 +7103,7 @@ _evas_textblock_obstacle_add(Eo *eo_obj,
    if (!obs) return EINA_FALSE;
 
    obs->eo_obs = eo_obs;
-   eo_do(eo_obs, eo_event_callback_add(EVAS_OBJECT_EVENT_DEL,_obstacle_del_cb,
+   eo_do(eo_obs, eo_event_callback_add(eo_obs, EVAS_OBJECT_EVENT_DEL,_obstacle_del_cb,
             eo_obj));
 
    obj->obstacles = eina_list_append(obj->obstacles, obs);
@@ -7153,7 +7154,7 @@ _layout_item_obstacle_get(Ctxt *c, Evas_Object_Textblock_Item *it)
    EINA_LIST_FOREACH(c->o->obstacles, i, obs)
      {
         Eina_Bool is_visible;
-        eo_do(obs->eo_obs, is_visible = efl_gfx_visible_get());
+        eo_do(obs->eo_obs, is_visible = efl_gfx_visible_get(obs->eo_obs));
         if (!is_visible)
            continue;
         if ((obs->y < c->y + it->h) &&
@@ -11114,7 +11115,7 @@ _evas_textblock_line_number_geometry_get(const Eo *eo_obj, Evas_Textblock_Data *
 static void
 _evas_object_textblock_clear_all(Evas_Object *eo_obj)
 {
-   eo_do(eo_obj, evas_obj_textblock_clear());
+   eo_do(eo_obj, evas_obj_textblock_clear(eo_obj));
 }
 
 EOLIAN static void
@@ -11445,7 +11446,7 @@ _evas_textblock_style_insets_get(Eo *eo_obj, Evas_Textblock_Data *o, Evas_Coord 
 EOLIAN static void
 _evas_textblock_eo_base_dbg_info_get(Eo *eo_obj, Evas_Textblock_Data *o EINA_UNUSED, Eo_Dbg_Info *root)
 {
-   eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
+   eo_super_eo_dbg_info_get(MY_CLASS, eo_obj, root);
    if (!root) return;
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
    Eo_Dbg_Info *node;
@@ -11455,9 +11456,9 @@ _evas_textblock_eo_base_dbg_info_get(Eo *eo_obj, Evas_Textblock_Data *o EINA_UNU
    char shorttext[48];
    const Evas_Textblock_Style *ts = NULL;
 
-   eo_do(eo_obj, ts = evas_obj_textblock_style_get());
+   eo_do(eo_obj, ts = evas_obj_textblock_style_get(eo_obj));
    style = evas_textblock_style_get(ts);
-   eo_do(eo_obj, text = evas_obj_textblock_text_markup_get());
+   eo_do(eo_obj, text = evas_obj_textblock_text_markup_get(eo_obj));
    strncpy(shorttext, text, 38);
    if (shorttext[37])
      strcpy(shorttext + 37, "\xe2\x80\xa6"); /* HORIZONTAL ELLIPSIS */
@@ -11467,7 +11468,7 @@ _evas_textblock_eo_base_dbg_info_get(Eo *eo_obj, Evas_Textblock_Data *o EINA_UNU
 
      {
         int w, h;
-        eo_do(eo_obj, evas_obj_textblock_size_formatted_get(&w, &h));
+        eo_do(eo_obj, evas_obj_textblock_size_formatted_get(eo_obj, &w, &h));
         node = EO_DBG_INFO_LIST_APPEND(group, "Formatted size");
         EO_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, w);
         EO_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, h);
@@ -11475,7 +11476,7 @@ _evas_textblock_eo_base_dbg_info_get(Eo *eo_obj, Evas_Textblock_Data *o EINA_UNU
 
      {
         int w, h;
-        eo_do(eo_obj, evas_obj_textblock_size_native_get(&w, &h));
+        eo_do(eo_obj, evas_obj_textblock_size_native_get(eo_obj, &w, &h));
         node = EO_DBG_INFO_LIST_APPEND(group, "Native size");
         EO_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, w);
         EO_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, h);
@@ -11508,7 +11509,7 @@ EOLIAN static void
 _evas_textblock_eo_base_destructor(Eo *eo_obj, Evas_Textblock_Data *o EINA_UNUSED)
 {
    evas_object_textblock_free(eo_obj);
-   eo_do_super(eo_obj, MY_CLASS, eo_destructor());
+   eo_super_eo_destructor(MY_CLASS, eo_obj);
 }
 
 static void

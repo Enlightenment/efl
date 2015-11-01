@@ -227,7 +227,7 @@ typedef struct
 } _Eo_Ids_Table;
 
 /* Tables handling pointers indirection */
-extern _Eo_Ids_Table **_eo_ids_tables[MAX_MID_TABLE_ID];
+__attribute__ ((visibility("default"))) extern _Eo_Ids_Table **_eo_ids_tables[MAX_MID_TABLE_ID];
 
 /* Current table used for following allocations */
 extern _Eo_Ids_Table *_current_table;
@@ -259,45 +259,6 @@ extern Generation_Counter _eo_generation_counter;
 /* Macro used for readability */
 #define TABLE_FROM_IDS _eo_ids_tables[mid_table_id][table_id]
 
-static inline _Eo_Object *
-_eo_obj_pointer_get(const Eo_Id obj_id)
-{
-#ifdef HAVE_EO_ID
-   _Eo_Id_Entry *entry;
-   Generation_Counter generation;
-   Table_Index mid_table_id, table_id, entry_id;
-
-   // NULL objects will just be sensibly ignored. not worth complaining
-   // every single time.
-   if (!obj_id)
-     {
-        DBG("obj_id is NULL. Possibly unintended access?");
-        return NULL;
-     }
-   else if (!(obj_id & MASK_OBJ_TAG))
-     {
-        DBG("obj_id is not a valid object id.");
-        return NULL;
-     }
-
-   EO_DECOMPOSE_ID(obj_id, mid_table_id, table_id, entry_id, generation);
-
-   /* Check the validity of the entry */
-   if (_eo_ids_tables[mid_table_id] && TABLE_FROM_IDS)
-     {
-        entry = &(TABLE_FROM_IDS->entries[entry_id]);
-        if (entry && entry->active && (entry->generation == generation))
-          return entry->ptr;
-     }
-
-   ERR("obj_id %p is not pointing to a valid object. Maybe it has already been freed.",
-         (void *)obj_id);
-
-   return NULL;
-#else
-   return (_Eo_Object *) obj_id;
-#endif
-}
 
 static inline _Eo_Id_Entry *
 _get_available_entry(_Eo_Ids_Table *table)

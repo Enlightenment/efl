@@ -3679,12 +3679,12 @@ eng_ector_create(void *data EINA_UNUSED)
    ector_backend = getenv("ECTOR_BACKEND");
    if (ector_backend && !strcasecmp(ector_backend, "default"))
      {
-        ector = eo_add(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
+        eo_add(ector, ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
         use_cairo = EINA_FALSE;
      }
    else
      {
-        ector = eo_add(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
+        eo_add(ector, ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
         use_cairo = EINA_TRUE;
      }
    return ector;
@@ -3729,7 +3729,7 @@ _draw_thread_ector_draw(void *data)
    Evas_Thread_Command_Ector *ector = data;
 
    eo_do(ector->r,
-         ector_renderer_draw(ector->render_op,
+         ector_renderer_draw(ector->r, ector->render_op,
                              ector->clips,
                              ector->mul_col));
 
@@ -3848,14 +3848,14 @@ _draw_thread_ector_surface_set(void *data)
    if (use_cairo)
      {
         eo_do(ector_surface->ector,
-              ector_cairo_software_surface_set(pixels, w, h),
-              ector_surface_reference_point_set(x, y));
+              ector_cairo_software_surface_set(ector_surface->ector, pixels, w, h),
+              ector_surface_reference_point_set(ector_surface->ector, x, y));
      }
    else
      {
         eo_do(ector_surface->ector,
-              ector_software_surface_set(pixels, w, h),
-              ector_surface_reference_point_set(x, y));
+              ector_software_surface_set(ector_surface->ector, pixels, w, h),
+              ector_surface_reference_point_set(ector_surface->ector, x, y));
      }
 
    eina_mempool_free(_mp_command_ector_surface, ector_surface);
@@ -3892,14 +3892,14 @@ eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface
         if (use_cairo)
           {
              eo_do(ector,
-                   ector_cairo_software_surface_set(pixels, w, h),
-                   ector_surface_reference_point_set(x, y));
+                   ector_cairo_software_surface_set(ector, pixels, w, h),
+                   ector_surface_reference_point_set(ector, x, y));
           }
         else
           {
              eo_do(ector,
-                   ector_software_surface_set(pixels, w, h),
-                   ector_surface_reference_point_set(x, y));
+                   ector_software_surface_set(ector, pixels, w, h),
+                   ector_surface_reference_point_set(ector, x, y));
           }
      }
 }
@@ -3924,12 +3924,12 @@ eng_ector_end(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface *
         if (use_cairo)
           {
              eo_do(ector,
-                   ector_cairo_software_surface_set(NULL, 0, 0));
+                   ector_cairo_software_surface_set(ector, NULL, 0, 0));
           }
         else
           {
              eo_do(ector,
-                   ector_software_surface_set(NULL, 0, 0));
+                   ector_software_surface_set(ector, NULL, 0, 0));
           }
 
         evas_common_cpu_end_opt();

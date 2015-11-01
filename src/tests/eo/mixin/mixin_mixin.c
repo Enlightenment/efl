@@ -12,7 +12,7 @@ static int
 _ab_sum_get(Eo *obj, void *class_data EINA_UNUSED)
 {
    int a = 0, b = 0;
-   eo_do(obj, a = simple_a_get(), b = simple_b_get());
+   eo_do(obj, a = simple_a_get(obj), b = simple_b_get(obj));
    printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
    return a + b;
 }
@@ -20,16 +20,16 @@ _ab_sum_get(Eo *obj, void *class_data EINA_UNUSED)
 static Eo *
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   return eo_super_eo_constructor( MY_CLASS, obj);
 }
 
 static void
 _destructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_super_eo_destructor(MY_CLASS, obj);
 }
 
-EAPI EO_FUNC_BODY(mixin_ab_sum_get, int, 0);
+EAPI EO_FUNC_API_DEFINE(mixin_ab_sum_get, int, 0,);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC_OVERRIDE(eo_constructor, _constructor),

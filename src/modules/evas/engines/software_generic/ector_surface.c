@@ -21,7 +21,7 @@ _ector_cairo_symbol_get(Eo *ector_surface, const char *name)
    void *sym;
 
    eo_do(ector_surface,
-         sym = ector_cairo_surface_symbol_get(name));
+         sym = ector_cairo_surface_symbol_get(ector_surface, name));
    return sym;
 }
 
@@ -90,8 +90,8 @@ _ector_cairo_software_surface_surface_set(Eo *obj, Ector_Cairo_Software_Surface_
    evas_common_cpu_end_opt();
 
    eo_do(obj,
-         ector_cairo_surface_context_set(ctx),
-         ector_surface_size_set(pd->width, pd->height));
+         ector_cairo_surface_context_set(obj, ctx),
+         ector_surface_size_set(obj, pd->width, pd->height));
 }
 
 void

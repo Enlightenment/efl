@@ -42,7 +42,7 @@ _ector_renderer_software_gradient_linear_ector_renderer_generic_base_prepare(Eo 
      {
         Eo *parent;
 
-        eo_do(obj, parent = eo_parent_get());
+        eo_do(obj, parent = eo_parent_get(obj));
         if (!parent) return EINA_FALSE;
         pd->surface = eo_data_xref(parent, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
      }
@@ -75,7 +75,7 @@ Eo *
 _ector_renderer_software_gradient_linear_eo_base_constructor(Eo *obj,
                                                              Ector_Renderer_Software_Gradient_Data *pd)
 {
-   obj = eo_do_super_ret(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS, obj, eo_constructor());
+   obj = eo_super_eo_constructor( ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS, obj);
    pd->gd  = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_GRADIENT_MIXIN, obj);
    pd->gld = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_MIXIN, obj);
 
@@ -90,20 +90,19 @@ _ector_renderer_software_gradient_linear_eo_base_destructor(Eo *obj,
 
    destroy_color_table(pd);
 
-   eo_do(obj, parent = eo_parent_get());
+   eo_do(obj, parent = eo_parent_get(obj));
    eo_data_xunref(parent, pd->surface, obj);
 
    eo_data_xunref(obj, pd->gd, obj);
    eo_data_xunref(obj, pd->gld, obj);
 
-   eo_do_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS, eo_destructor());
+   eo_super_eo_destructor(ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS, obj);
 }
 
 void
 _ector_renderer_software_gradient_linear_efl_gfx_gradient_base_stop_set(Eo *obj, Ector_Renderer_Software_Gradient_Data *pd, const Efl_Gfx_Gradient_Stop *colors, unsigned int length)
 {
-   eo_do_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS,
-               efl_gfx_gradient_stop_set(colors, length));
+   eo_super_efl_gfx_gradient_stop_set(ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS, obj, colors, length);
 
    destroy_color_table(pd);
 }
@@ -113,8 +112,7 @@ _ector_renderer_software_gradient_linear_ector_renderer_generic_base_crc_get(Eo 
 {
    unsigned int crc;
 
-   eo_do_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS,
-               crc = ector_renderer_crc_get());
+   crc = eo_super_ector_renderer_crc_get(ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS, obj);
 
    crc = eina_crc((void*) pd->gd->s, sizeof (Efl_Gfx_Gradient_Spread), crc, EINA_FALSE);
    if (pd->gd->colors_count)

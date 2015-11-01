@@ -32,8 +32,8 @@ _filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
 
         ERR("Filter failed at runtime!");
         eo_do(eo_obj,
-              evas_filter_invalid_set(EINA_TRUE);
-              evas_filter_dirty());
+              evas_filter_invalid_set(eo_obj, EINA_TRUE);
+              evas_filter_dirty(eo_obj));
         evas_object_change(eo_obj, obj);
         evas_object_clip_dirty(eo_obj, obj);
         evas_object_coords_recalc(eo_obj, obj);
@@ -242,7 +242,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
         // Request rendering from the object itself (child class)
         evas_filter_program_padding_get(pd->data->chain, &l, &r, &t, &b);
-        eo_do(eo_obj, evas_filter_input_render(filter, drawctx, l, r, t, b, do_async));
+        eo_do(eo_obj, evas_filter_input_render(eo_obj, filter, drawctx, l, r, t, b, do_async));
 
         ENFN->context_free(ENDT, drawctx);
 
@@ -293,7 +293,7 @@ _evas_filter_efl_gfx_filter_program_set(Eo *eo_obj, Evas_Filter_Data *pd,
         eina_stringshare_replace(&fcow->name, name);
         if (code)
           {
-             eo_do(eo_obj, alpha = evas_filter_input_alpha());
+             eo_do(eo_obj, alpha = evas_filter_input_alpha(eo_obj));
              pgm = evas_filter_program_new(fcow->name, alpha);
              evas_filter_program_source_set_all(pgm, fcow->sources);
              evas_filter_program_data_set_all(pgm, fcow->data);
@@ -316,7 +316,7 @@ _evas_filter_efl_gfx_filter_program_set(Eo *eo_obj, Evas_Filter_Data *pd,
    FCOW_END(fcow, pd);
 
    // Update object
-   eo_do(eo_obj, evas_filter_dirty());
+   eo_do(eo_obj, evas_filter_dirty(eo_obj));
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_coords_recalc(eo_obj, obj);
@@ -410,7 +410,7 @@ update:
         FCOW_END(fcow, pd);
      }
 
-   eo_do(eo_obj, evas_filter_dirty());
+   eo_do(eo_obj, evas_filter_dirty(eo_obj));
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_coords_recalc(eo_obj, obj);
@@ -456,7 +456,7 @@ _evas_filter_efl_gfx_filter_state_set(Eo *eo_obj, Evas_Filter_Data *pd,
           }
 
         // Mark as changed
-        eo_do(eo_obj, evas_filter_dirty());
+        eo_do(eo_obj, evas_filter_dirty(eo_obj));
         evas_object_change(eo_obj, obj);
         evas_object_clip_dirty(eo_obj, obj);
         evas_object_coords_recalc(eo_obj, obj);

@@ -181,8 +181,8 @@ _efl_gfx_shape_path_set(Eo *obj, Efl_Gfx_Shape_Data *pd,
 
  end:
    eo_do(obj,
-         eo_event_callback_call(EFL_GFX_PATH_CHANGED, NULL),
-         eo_event_callback_call(EFL_GFX_CHANGED, NULL));
+         eo_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL),
+         eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL));
 }
 
 static void
@@ -294,14 +294,14 @@ static inline void
 gfx_property_get(const Eo *obj, Efl_Gfx_Property *property)
 {
    eo_do(obj,
-         property->scale = efl_gfx_shape_stroke_scale_get(),
-         efl_gfx_shape_stroke_color_get(&property->r, &property->g, &property->b, &property->a),
-         efl_gfx_color_get(&property->fr, &property->fg, &property->fb, &property->fa),
-         property->w = efl_gfx_shape_stroke_width_get(),
-         property->centered = efl_gfx_shape_stroke_location_get(),
-         efl_gfx_shape_stroke_dash_get(&property->dash, &property->dash_length),
-         property->c = efl_gfx_shape_stroke_cap_get(),
-         property->j = efl_gfx_shape_stroke_join_get());
+         property->scale = efl_gfx_shape_stroke_scale_get(obj),
+         efl_gfx_shape_stroke_color_get(obj, &property->r, &property->g, &property->b, &property->a),
+         efl_gfx_color_get(obj, &property->fr, &property->fg, &property->fb, &property->fa),
+         property->w = efl_gfx_shape_stroke_width_get(obj),
+         property->centered = efl_gfx_shape_stroke_location_get(obj),
+         efl_gfx_shape_stroke_dash_get(obj, &property->dash, &property->dash_length),
+         property->c = efl_gfx_shape_stroke_cap_get(obj),
+         property->j = efl_gfx_shape_stroke_join_get(obj));
 }
 
 static Eina_Bool
@@ -389,23 +389,23 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
 
 
    eo_do(obj,
-         efl_gfx_shape_stroke_scale_set(interpolate(property_to.scale, property_from.scale, pos_map)),
-         efl_gfx_shape_stroke_color_set(interpolatei(property_to.r, property_from.r, pos_map),
+         efl_gfx_shape_stroke_scale_set(obj, interpolate(property_to.scale, property_from.scale, pos_map)),
+         efl_gfx_shape_stroke_color_set(obj, interpolatei(property_to.r, property_from.r, pos_map),
                                         interpolatei(property_to.g, property_from.g, pos_map),
                                         interpolatei(property_to.b, property_from.b, pos_map),
                                         interpolatei(property_to.a, property_from.a, pos_map)),
-         efl_gfx_color_set(interpolatei(property_to.fr, property_from.fr, pos_map),
+         efl_gfx_color_set(obj, interpolatei(property_to.fr, property_from.fr, pos_map),
                            interpolatei(property_to.fg, property_from.fg, pos_map),
                            interpolatei(property_to.fb, property_from.fb, pos_map),
                            interpolatei(property_to.fa, property_from.fa, pos_map)),
-         efl_gfx_shape_stroke_width_set(interpolate(property_to.w, property_from.w, pos_map)),
-         efl_gfx_shape_stroke_location_set(interpolate(property_to.centered, property_from.centered, pos_map)),
-         efl_gfx_shape_stroke_dash_set(dash, property_to.dash_length),
-         efl_gfx_shape_stroke_cap_set(pos_map < 0.5 ? property_from.c : property_to.c),
-         efl_gfx_shape_stroke_join_set(pos_map < 0.5 ? property_from.j : property_to.j),
+         efl_gfx_shape_stroke_width_set(obj, interpolate(property_to.w, property_from.w, pos_map)),
+         efl_gfx_shape_stroke_location_set(obj, interpolate(property_to.centered, property_from.centered, pos_map)),
+         efl_gfx_shape_stroke_dash_set(obj, dash, property_to.dash_length),
+         efl_gfx_shape_stroke_cap_set(obj, pos_map < 0.5 ? property_from.c : property_to.c),
+         efl_gfx_shape_stroke_join_set(obj, pos_map < 0.5 ? property_from.j : property_to.j),
 
-         eo_event_callback_call(EFL_GFX_PATH_CHANGED, NULL),
-         eo_event_callback_call(EFL_GFX_CHANGED, NULL));
+         eo_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL),
+         eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL));
 
    return EINA_TRUE;
 }
@@ -440,27 +440,27 @@ _efl_gfx_shape_dup(Eo *obj, Efl_Gfx_Shape_Data *pd, const Eo *dup_from)
    if (!from) return ;
 
    eo_do(dup_from,
-         scale = efl_gfx_shape_stroke_scale_get(),
-         efl_gfx_shape_stroke_color_get(&sr, &sg, &sb, &sa),
-         sw = efl_gfx_shape_stroke_width_get(),
-         location = efl_gfx_shape_stroke_location_get(),
-         efl_gfx_shape_stroke_dash_get(&dash, &dash_length),
-         cap = efl_gfx_shape_stroke_cap_get(),
-         j = efl_gfx_shape_stroke_join_get());
+         scale = efl_gfx_shape_stroke_scale_get(dup_from),
+         efl_gfx_shape_stroke_color_get(dup_from, &sr, &sg, &sb, &sa),
+         sw = efl_gfx_shape_stroke_width_get(dup_from),
+         location = efl_gfx_shape_stroke_location_get(dup_from),
+         efl_gfx_shape_stroke_dash_get(dup_from, &dash, &dash_length),
+         cap = efl_gfx_shape_stroke_cap_get(dup_from),
+         j = efl_gfx_shape_stroke_join_get(dup_from));
    eo_do(obj,
-         efl_gfx_shape_stroke_scale_set(scale),
-         efl_gfx_shape_stroke_color_set(sr, sg, sb, sa),
-         efl_gfx_shape_stroke_width_set(sw),
-         efl_gfx_shape_stroke_location_set(location),
-         efl_gfx_shape_stroke_dash_set(dash, dash_length),
-         efl_gfx_shape_stroke_cap_set(cap),
-         efl_gfx_shape_stroke_join_set(j));
+         efl_gfx_shape_stroke_scale_set(obj, scale),
+         efl_gfx_shape_stroke_color_set(obj, sr, sg, sb, sa),
+         efl_gfx_shape_stroke_width_set(obj, sw),
+         efl_gfx_shape_stroke_location_set(obj, location),
+         efl_gfx_shape_stroke_dash_set(obj, dash, dash_length),
+         efl_gfx_shape_stroke_cap_set(obj, cap),
+         efl_gfx_shape_stroke_join_set(obj, j));
 
    _efl_gfx_shape_path_set(obj, pd, from->commands, from->points);
 
    eo_do(obj,
-         eo_event_callback_call(EFL_GFX_PATH_CHANGED, NULL),
-         eo_event_callback_call(EFL_GFX_CHANGED, NULL));
+         eo_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL),
+         eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL));
 }
 
 static void
@@ -480,8 +480,8 @@ _efl_gfx_shape_reset(Eo *obj, Efl_Gfx_Shape_Data *pd)
    pd->current_ctrl.y = 0;
 
    eo_do(obj,
-         eo_event_callback_call(EFL_GFX_PATH_CHANGED, NULL),
-         eo_event_callback_call(EFL_GFX_CHANGED, NULL));
+         eo_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL),
+         eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL));
 }
 
 static void
@@ -501,8 +501,8 @@ _efl_gfx_shape_append_move_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
    pd->current.y = y;
 
    eo_do(obj,
-         eo_event_callback_call(EFL_GFX_PATH_CHANGED, NULL),
-         eo_event_callback_call(EFL_GFX_CHANGED, NULL));
+         eo_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL),
+         eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL));
 }
 
 static void
@@ -522,8 +522,8 @@ _efl_gfx_shape_append_line_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
    pd->current.y = y;
 
    eo_do(obj,
-         eo_event_callback_call(EFL_GFX_PATH_CHANGED, NULL),
-         eo_event_callback_call(EFL_GFX_CHANGED, NULL));
+         eo_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL),
+         eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL));
 }
 
 static void
@@ -551,8 +551,8 @@ _efl_gfx_shape_append_cubic_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
    pd->current_ctrl.y = ctrl_y1;
 
    eo_do(obj,
-         eo_event_callback_call(EFL_GFX_PATH_CHANGED, NULL),
-         eo_event_callback_call(EFL_GFX_CHANGED, NULL));
+         eo_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL),
+         eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL));
 }
 
 static void
@@ -821,8 +821,8 @@ _efl_gfx_shape_append_close(Eo *obj, Efl_Gfx_Shape_Data *pd)
                      pd, &offset_point);
 
    eo_do(obj,
-         eo_event_callback_call(EFL_GFX_PATH_CHANGED, NULL),
-         eo_event_callback_call(EFL_GFX_CHANGED, NULL));
+         eo_event_callback_call(obj, EFL_GFX_PATH_CHANGED, NULL),
+         eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL));
 }
 
 static void

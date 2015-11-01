@@ -1877,7 +1877,7 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
         ENFN->context_free(ENDT, ctx);
 
         if (eo_isa(eo_proxy, EVAS_IMAGE_CLASS))
-          eo_do(eo_proxy, source_clip = evas_obj_image_source_clip_get());
+          eo_do(eo_proxy, source_clip = evas_obj_image_source_clip_get(eo_proxy));
 
         Evas_Proxy_Render_Data proxy_render_data = {
              .eo_proxy = eo_proxy,
@@ -2219,10 +2219,10 @@ _cb_always_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
 {
    int freeze_num = 0, i;
 
-   eo_do(eo_e, freeze_num = eo_event_freeze_count_get());
-   for (i = 0; i < freeze_num; i++) eo_do(eo_e, eo_event_thaw());
+   eo_do(eo_e, freeze_num = eo_event_freeze_count_get(eo_e));
+   for (i = 0; i < freeze_num; i++) eo_do(eo_e, eo_event_thaw(eo_e));
    evas_event_callback_call(eo_e, type, event_info);
-   for (i = 0; i < freeze_num; i++) eo_do(eo_e, eo_event_freeze());
+   for (i = 0; i < freeze_num; i++) eo_do(eo_e, eo_event_freeze(eo_e));
 }
 
 static Eina_Bool

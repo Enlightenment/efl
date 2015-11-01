@@ -2323,7 +2323,7 @@ EAPI Eo *ecore_main_loop_get(void)
 {
    if (!_mainloop_singleton)
      {
-        _mainloop_singleton = eo_add(ECORE_MAINLOOP_CLASS, NULL);
+       eo_add(_mainloop_singleton, ECORE_MAINLOOP_CLASS, NULL);
      }
 
    return _mainloop_singleton;

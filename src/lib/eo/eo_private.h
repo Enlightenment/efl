@@ -32,7 +32,7 @@
    } while (0)
 
 
-extern int _eo_log_dom;
+__attribute__ ((visibility("default"))) extern int _eo_log_dom;
 
 #ifdef CRI
 #undef CRI
@@ -65,7 +65,7 @@ typedef struct _Eo_Object _Eo_Object;
 typedef struct _Eo_Header Eo_Header;
 
 /* Retrieves the pointer to the object from the id */
-static inline _Eo_Object *_eo_obj_pointer_get(const Eo_Id obj_id);
+//EAPI _Eo_Object *_eo_obj_pointer_get(const Eo_Id obj_id);
 
 /* Allocates an entry for the given object */
 static inline Eo_Id _eo_id_allocate(const _Eo_Object *obj);
@@ -78,97 +78,60 @@ static inline void _eo_free_ids_tables(void);
 
 void _eo_condtor_done(Eo *obj);
 
-struct _Eo_Header
-{
-#ifndef HAVE_EO_ID
-     EINA_MAGIC
-#endif
-     Eo_Id id;
-};
-
-struct _Eo_Object
-{
-     Eo_Header header;
-     const _Eo_Class *klass;
-#ifdef EO_DEBUG
-     Eina_Inlist *xrefs;
-     Eina_Inlist *data_xrefs;
-#endif
-
-     Eina_List *composite_objects;
-
-     int refcount;
-     int datarefcount;
-
-     Eina_Bool condtor_done:1;
-     Eina_Bool finalized:1;
-
-     Eina_Bool composite:1;
-     Eina_Bool del_triggered:1;
-     Eina_Bool destructed:1;
-     Eina_Bool manual_free:1;
-};
-
 /* FIXME: Change the type to something generic that makes sense for eo */
 typedef void (*eo_op_func_type)(Eo *, void *class_data, va_list *list);
 
 typedef struct _Dich_Chain1 Dich_Chain1;
-
-typedef struct
-{
-   eo_op_func_type func;
-   const _Eo_Class *src;
-} op_type_funcs;
 
 struct _Dich_Chain1
 {
    op_type_funcs *funcs;
 };
 
-typedef struct
+typedef struct Eo_Extension_Data_Offset
 {
    const _Eo_Class *klass;
    size_t offset;
 } Eo_Extension_Data_Offset;
 
-struct _Eo_Class
-{
-   Eo_Header header;
+struct _Eo_Class;
+// {
+//    Eo_Header header;
 
-   const _Eo_Class *parent;
-   const Eo_Class_Description *desc;
-   Dich_Chain1 *chain; /**< The size is chain size */
+//    const _Eo_Class *parent;
+//    const Eo_Class_Description *desc;
+//    Dich_Chain1 *chain; /**< The size is chain size */
 
-   const _Eo_Class **extensions;
+//    const _Eo_Class **extensions;
 
-   Eo_Extension_Data_Offset *extn_data_off;
+//    Eo_Extension_Data_Offset *extn_data_off;
 
-   const _Eo_Class **mro;
+//    const _Eo_Class **mro;
 
-   /* cached object for faster allocation */
-   struct {
-      Eina_Trash  *trash;
-      Eina_Spinlock    trash_lock;
-      unsigned int trash_count;
-   } objects;
+//    /* cached object for faster allocation */
+//    struct {
+//       Eina_Trash  *trash;
+//       Eina_Spinlock    trash_lock;
+//       unsigned int trash_count;
+//    } objects;
 
-   /* cached iterator for faster allocation cycle */
-   struct {
-      Eina_Trash   *trash;
-      Eina_Spinlock trash_lock;
-      unsigned int  trash_count;
-   } iterators;
+//    /* cached iterator for faster allocation cycle */
+//    struct {
+//       Eina_Trash   *trash;
+//       Eina_Spinlock trash_lock;
+//       unsigned int  trash_count;
+//    } iterators;
 
-   unsigned int obj_size; /**< size of an object of this class */
-   unsigned int chain_size;
-   unsigned int base_id;
-   unsigned int data_offset; /* < Offset of the data within object data. */
+//    unsigned int obj_size; /**< size of an object of this class */
+//    unsigned int chain_size;
+//    unsigned int base_id;
+//    unsigned int data_offset; /* < Offset of the data within object data. */
 
-   Eina_Bool constructed : 1;
-   /* [extensions*] + NULL */
-   /* [mro*] + NULL */
-   /* [extensions data offset] + NULL */
-};
+//    Eina_Bool constructed : 1;
+//    /* [extensions*] + NULL */
+//    /* [mro*] + NULL */
+//    /* [extensions data offset] + NULL */
+// };
 
 typedef struct
 {
@@ -214,11 +177,11 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
 
    const _Eo_Class *klass = obj->klass;
 
-   eo_do(_eo_id_get(obj), eo_event_callback_call(EO_EV_DEL, NULL));
+   eo_do(_eo_id_get(obj), eo_event_callback_call(_eo_id_get(obj), EO_EV_DEL, NULL));
 
    _eo_condtor_reset(obj);
 
-   eo_do(_eo_id_get(obj), eo_destructor());
+   eo_do(_eo_id_get(obj), eo_destructor(_eo_id_get(obj)));
 
    if (!obj->condtor_done)
      {
@@ -232,7 +195,7 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
         Eo *emb_obj;
         EINA_LIST_FOREACH_SAFE(obj->composite_objects, itr, itr_n, emb_obj)
           {
-             eo_do(_eo_id_get(obj), eo_composite_detach(emb_obj));
+             eo_do(_eo_id_get(obj), eo_composite_detach(_eo_id_get(obj), emb_obj));
           }
      }
 

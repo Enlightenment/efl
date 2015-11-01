@@ -181,7 +181,7 @@ _evas_object_layer_set_child(Evas_Object *eo_obj, Evas_Object *par, short l)
 EAPI void
 evas_object_layer_set(Evas_Object *obj, short l)
 {
-   eo_do((Evas_Object *)obj, efl_gfx_stack_layer_set(l));
+  eo_do((Evas_Object *)obj, efl_gfx_stack_layer_set(obj, l));
 }
 
 EOLIAN void
@@ -249,7 +249,7 @@ evas_object_layer_get(const Evas_Object *obj)
 {
    short ret;
 
-   return eo_do_ret((Evas_Object *)obj, ret, efl_gfx_stack_layer_get());
+   return eo_do_ret((Evas_Object *)obj, ret, efl_gfx_stack_layer_get(obj));
 }
 
 EOLIAN short

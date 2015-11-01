@@ -20,9 +20,10 @@ typedef struct
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   eo_super_eo_constructor(MY_CLASS);
 
-   Eo *bt = eo_add(ELW_BUTTON_CLASS, obj);
+   Eo *bt;
+   eo_add(bt, ELW_BUTTON_CLASS, obj);
    eo_do(obj, eo_composite_attach(bt));
    eo_do(bt, eo_event_callback_forwarder_add(EV_CLICKED, obj));
    eo_do(bt, exevas_obj_visibility_set(EINA_TRUE));

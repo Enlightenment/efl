@@ -127,7 +127,7 @@ typedef struct _vec2
 
 
 #define ADD_MESH(Object, Name, a, d, s)                                                   \
-   data->material_##Object = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);                        \
+  eo_add(data->material_##Object, EVAS_CANVAS3D_MATERIAL_CLASS, evas);   \
                                                                                           \
    eo_do(data->material_##Object,                                                         \
          evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),                \
@@ -139,7 +139,7 @@ typedef struct _vec2
          evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, s, s, s, 1.0),             \
          evas_canvas3d_material_shininess_set(50.0));                                           \
                                                                                           \
-   data->mesh_##Name = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
+   eo_add(data->mesh_##Name, EVAS_CANVAS3D_MESH_CLASS, evas);
 
 #define SETUP_DEFAULT_MESH(Object, Name, Shade_Mode)                                      \
    eo_do(data->mesh_##Name,                                                               \
@@ -149,7 +149,7 @@ typedef struct _vec2
 
 
 #define SETUP_MESH_NODE(Name)                                                             \
-   data->mesh_node_##Name = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,                              \
+   eo_add(data->mesh_node_##Name, EVAS_CANVAS3D_NODE_CLASS, evas,         \
                                    evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_MESH));     \
                                                                                           \
    eo_do(data->mesh_node_##Name,                                                          \
@@ -161,7 +161,7 @@ typedef struct _vec2
          efl_file_set(file, NULL));                                                       \
                                                                                           \
    SETUP_DEFAULT_MESH(Object, Name, PHONG)                                                \
-   data->texture_diffuse_##Object = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                  \
+   eo_add(data->texture_diffuse_##Object, EVAS_CANVAS3D_TEXTURE_CLASS, evas); \
                                                                                           \
    eo_do(data->texture_diffuse_##Object,                                                  \
          evas_canvas3d_texture_atlas_enable_set(EINA_FALSE),                                    \
@@ -183,7 +183,7 @@ typedef struct _vec2
          evas_canvas3d_mesh_frame_vertex_data_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD,                         \
                                             2 * sizeof(float), vertex));                        \
    SETUP_DEFAULT_MESH(Object, Name, NORMAL_MAP)                                                 \
-   data->texture_diffuse_##Object = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                        \
+   eo_add(data->texture_diffuse_##Object, EVAS_CANVAS3D_TEXTURE_CLASS, evas); \
                                                                                                 \
    eo_do(data->texture_diffuse_##Object,                                                        \
          evas_canvas3d_texture_atlas_enable_set(EINA_FALSE),                                          \
@@ -200,7 +200,7 @@ typedef struct _vec2
 
 
 #define NORMAL_SET(Object, Name, normal)                                                  \
-   data->texture_normal_##Object = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                   \
+   eo_add(data->texture_normal_##Object, EVAS_CANVAS3D_TEXTURE_CLASS, evas); \
                                                                                           \
    eo_do(data->texture_normal_##Object,                                                   \
          evas_canvas3d_texture_atlas_enable_set(EINA_FALSE),                                    \

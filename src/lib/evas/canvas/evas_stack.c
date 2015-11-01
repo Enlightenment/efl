@@ -40,7 +40,7 @@ evas_object_below_get_internal(const Evas_Object_Protected_Data *obj)
 EAPI void
 evas_object_raise(Evas_Object *obj)
 {
-   eo_do((Evas_Object *)obj, efl_gfx_stack_raise());
+   eo_do((Evas_Object *)obj, efl_gfx_stack_raise(obj));
 }
 
 EOLIAN void
@@ -93,7 +93,7 @@ _evas_object_efl_gfx_stack_raise(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 EAPI void
 evas_object_lower(Evas_Object *obj)
 {
-   eo_do((Evas_Object *)obj, efl_gfx_stack_lower());
+   eo_do((Evas_Object *)obj, efl_gfx_stack_lower(obj));
 }
 
 EOLIAN void
@@ -147,7 +147,7 @@ _evas_object_efl_gfx_stack_lower(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 EAPI void
 evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
 {
-   eo_do((Evas_Object *)obj, efl_gfx_stack_above(above));
+   eo_do((Evas_Object *)obj, efl_gfx_stack_above(obj, above));
 }
 
 EOLIAN void
@@ -229,7 +229,7 @@ _evas_object_efl_gfx_stack_stack_above(Eo *eo_obj, Evas_Object_Protected_Data *o
 EAPI void
 evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
 {
-   eo_do((Evas_Object *)obj, efl_gfx_stack_below(below));
+   eo_do((Evas_Object *)obj, efl_gfx_stack_below(obj, below));
 }
 
 EOLIAN void
@@ -313,7 +313,7 @@ evas_object_above_get(const Evas_Object *obj)
 {
    Evas_Object *ret;
 
-   return eo_do_ret((Evas_Object *)obj, ret, efl_gfx_stack_above_get());
+   return eo_do_ret((Evas_Object *)obj, ret, efl_gfx_stack_above_get(obj));
 }
 
 EOLIAN Efl_Gfx_Stack *
@@ -344,7 +344,7 @@ evas_object_below_get(const Evas_Object *obj)
 {
    Evas_Object *ret;
 
-   return eo_do_ret((Evas_Object *)obj, ret, efl_gfx_stack_below_get());
+   return eo_do_ret((Evas_Object *)obj, ret, efl_gfx_stack_below_get(obj));
 }
 
 EOLIAN Efl_Gfx_Stack *

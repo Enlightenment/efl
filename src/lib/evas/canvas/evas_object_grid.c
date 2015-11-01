@@ -265,15 +265,16 @@ evas_object_grid_add(Evas *evas)
    MAGIC_CHECK(evas, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *obj = eo_add(MY_CLASS, evas);
+   Evas_Object *obj;
+   eo_add(obj, MY_CLASS, evas);
    return obj;
 }
 
 EOLIAN static Eo *
 _evas_grid_eo_base_constructor(Eo *obj, Evas_Grid_Data *class_data EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj, evas_obj_smart_attach(_evas_object_grid_smart_class_new()));
+  obj = eo_super_eo_constructor( MY_CLASS, obj);
+   eo_do(obj, evas_obj_smart_attach(obj, _evas_object_grid_smart_class_new()));
 
    return obj;
 //   return evas_object_smart_add(evas, _evas_object_grid_smart_class_new());

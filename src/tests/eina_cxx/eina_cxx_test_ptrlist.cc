@@ -19,7 +19,7 @@ const Eo_Class *simple_class_get(void);
 static Eo *
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   return eo_super_eo_constructor( MY_CLASS, );
 }
 
 static void
@@ -60,9 +60,13 @@ START_TEST(eina_cxx_ptrlist_push_back)
   int result[] = {5, 10, 15};
   int rresult[] = {15, 10, 5};
 
-  wrapper const w1(eo_add(MY_CLASS, NULL));
-  wrapper const w2(eo_add(MY_CLASS, NULL));
-  wrapper const w3(eo_add(MY_CLASS, NULL));
+  Eo* o;
+  eo_add(o, MY_CLASS, NULL);
+  wrapper const w1(o);
+  eo_add(o, MY_CLASS, NULL);
+  wrapper const w2();
+  eo_add(o, MY_CLASS, NULL);
+  wrapper const w3(o);
   
   {
     efl::eina::ptr_list<int> list;
@@ -109,9 +113,13 @@ START_TEST(eina_cxx_ptrlist_pop_back)
   int result[] = {5, 10};
   int rresult[] = {10, 5};
 
-  wrapper const w1(eo_add(MY_CLASS, NULL));
-  wrapper const w2(eo_add(MY_CLASS, NULL));
-  wrapper const w3(eo_add(MY_CLASS, NULL));
+  Eo* o;
+  eo_add(o, MY_CLASS, NULL);
+  wrapper const w1();
+  eo_add(o, MY_CLASS, NULL);
+  wrapper const w2(o);
+  eo_add(o, MY_CLASS, NULL);
+  wrapper const w3(o);
 
   {
     efl::eina::ptr_list<int> list;

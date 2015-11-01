@@ -8,7 +8,7 @@ _camera_node_change_notify(const Eina_Hash *hash EINA_UNUSED, const void *key,
                         void *data EINA_UNUSED, void *fdata)
 {
    Evas_Canvas3D_Node *n = *(Evas_Canvas3D_Node **)key;
-   eo_do(n, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_CAMERA, (Evas_Canvas3D_Object *)fdata));
+   eo_do(n, evas_canvas3d_object_change(n, EVAS_CANVAS3D_STATE_NODE_CAMERA, (Evas_Canvas3D_Object *)fdata));
    return EINA_TRUE;
 }
 
@@ -66,8 +66,8 @@ EOLIAN static Eo *
 _evas_canvas3d_camera_eo_base_constructor(Eo *obj,
                                        Evas_Canvas3D_Camera_Data *pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj, evas_canvas3d_object_type_set(EVAS_CANVAS3D_OBJECT_TYPE_CAMERA));
+  obj = eo_super_eo_constructor( MY_CLASS, obj);
+   eo_do(obj, evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_CAMERA));
 
    return obj;
 }
@@ -92,7 +92,7 @@ _evas_canvas3d_camera_eo_base_destructor(Eo *obj,
         eina_hash_free(pd->nodes);
      }
 
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_super_eo_destructor(MY_CLASS, obj);
 }
 
 EAPI Evas_Canvas3D_Camera *
@@ -101,7 +101,8 @@ evas_canvas3d_camera_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(MY_CLASS, e);
+   Evas_Object *eo_obj;
+   eo_add(eo_obj, MY_CLASS, e);
    return eo_obj;
 }
 
@@ -110,7 +111,7 @@ _evas_canvas3d_camera_projection_matrix_set(Eo *obj, Evas_Canvas3D_Camera_Data *
                                          const Evas_Real *matrix)
 {
    evas_mat4_array_set(&pd->projection, matrix);
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_CAMERA_PROJECTION, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_CAMERA_PROJECTION, NULL));
 }
 
 EOLIAN static void
@@ -133,7 +134,7 @@ _evas_canvas3d_camera_projection_perspective_set(Eo *obj, Evas_Canvas3D_Camera_D
    xmax = ymax * aspect;
 
    evas_mat4_frustum_set(&pd->projection, -xmax, xmax, -ymax, ymax, dnear, dfar);
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_CAMERA_PROJECTION, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_CAMERA_PROJECTION, NULL));
 }
 
 EOLIAN static void
@@ -143,7 +144,7 @@ _evas_canvas3d_camera_projection_frustum_set(Eo *obj, Evas_Canvas3D_Camera_Data 
                                           Evas_Real dnear, Evas_Real dfar)
 {
    evas_mat4_frustum_set(&pd->projection, left, right, bottom, top, dnear, dfar);
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_CAMERA_PROJECTION, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_CAMERA_PROJECTION, NULL));
 }
 
 EOLIAN static void
@@ -153,7 +154,7 @@ _evas_canvas3d_camera_projection_ortho_set(Eo *obj, Evas_Canvas3D_Camera_Data *p
                                         Evas_Real dnear, Evas_Real dfar)
 {
    evas_mat4_ortho_set(&pd->projection, left, right, bottom, top, dnear, dfar);
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_CAMERA_PROJECTION, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_CAMERA_PROJECTION, NULL));
 }
 
 EOLIAN static Eina_Bool

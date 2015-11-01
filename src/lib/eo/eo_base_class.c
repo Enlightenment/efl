@@ -66,7 +66,7 @@ _eo_base_key_data_set(Eo *obj, Eo_Base_Data *pd,
 
    if (!key) return;
 
-   eo_do(obj, eo_key_data_del(key); );
+   eo_do(obj, eo_key_data_del(obj, key); );
 
    node = malloc(sizeof(Eo_Generic_Data_Node));
    if (!node) return;
@@ -103,9 +103,9 @@ _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
    if (pd->parent == parent_id)
      return;
 
-   if (eo_do_ret(obj, tmp, eo_composite_part_is()) && pd->parent)
+   if (eo_do_ret(obj, tmp, eo_composite_part_is(obj)) && pd->parent)
      {
-        eo_do(pd->parent, eo_composite_detach(obj));
+        eo_do(pd->parent, eo_composite_detach(pd->parent, obj));
      }
 
    if (pd->parent)
@@ -574,7 +574,7 @@ _eo_base_event_callback_priority_add(Eo *obj, Eo_Base_Data *pd,
 
      {
         const Eo_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
-        eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_ADD, (void *)arr));
+        eo_do(obj, eo_event_callback_call(obj, EO_EV_CALLBACK_ADD, (void *)arr));
      }
 }
 
@@ -596,7 +596,7 @@ _eo_base_event_callback_del(Eo *obj, Eo_Base_Data *pd,
              cb->delete_me = EINA_TRUE;
              pd->deletions_waiting = EINA_TRUE;
              _eo_callbacks_clear(pd);
-             eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_DEL, (void *)arr); );
+             eo_do(obj, eo_event_callback_call(obj, EO_EV_CALLBACK_DEL, (void *)arr); );
              return;
           }
      }
@@ -621,7 +621,7 @@ _eo_base_event_callback_array_priority_add(Eo *obj, Eo_Base_Data *pd,
    _eo_callbacks_sorted_insert(pd, cb);
 
      {
-        eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_ADD, (void *)array); );
+        eo_do(obj, eo_event_callback_call(obj, EO_EV_CALLBACK_ADD, (void *)array); );
      }
 }
 
@@ -641,7 +641,7 @@ _eo_base_event_callback_array_del(Eo *obj, Eo_Base_Data *pd,
              pd->deletions_waiting = EINA_TRUE;
              _eo_callbacks_clear(pd);
 
-             eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_DEL, (void *)array); );
+             eo_do(obj, eo_event_callback_call(obj, EO_EV_CALLBACK_DEL, (void *)array); );
              return;
           }
      }
@@ -729,7 +729,7 @@ _eo_event_forwarder_callback(void *data, Eo *obj, const Eo_Event_Description *de
    Eo *new_obj = (Eo *) data;
    Eina_Bool ret = EINA_FALSE;
 
-   eo_do(new_obj, ret = eo_event_callback_call(desc, (void *)event_info); );
+   eo_do(new_obj, ret = eo_event_callback_call(new_obj, desc, (void *)event_info); );
 
    return ret;
 }
@@ -743,7 +743,7 @@ _eo_base_event_callback_forwarder_add(Eo *obj, Eo_Base_Data *pd EINA_UNUSED,
 
    /* FIXME: Add it EO_MAGIC_RETURN(new_obj, EO_EINA_MAGIC); */
 
-   eo_do(obj, eo_event_callback_add(desc, _eo_event_forwarder_callback, new_obj); );
+   eo_do(obj, eo_event_callback_add(obj, desc, _eo_event_forwarder_callback, new_obj); );
 }
 
 EOLIAN static void
@@ -754,7 +754,7 @@ _eo_base_event_callback_forwarder_del(Eo *obj, Eo_Base_Data *pd EINA_UNUSED,
 
    /* FIXME: Add it EO_MAGIC_RETURN(new_obj, EO_EINA_MAGIC); */
 
-   eo_do(obj, eo_event_callback_del(desc, _eo_event_forwarder_callback, new_obj); );
+   eo_do(obj, eo_event_callback_del(obj, desc, _eo_event_forwarder_callback, new_obj); );
 }
 
 EOLIAN static void
@@ -829,7 +829,7 @@ _eo_base_composite_attach(Eo *parent_id, Eo_Base_Data *pd EINA_UNUSED, Eo *comp_
    comp_obj->composite = EINA_TRUE;
    parent->composite_objects = eina_list_prepend(parent->composite_objects, comp_obj_id);
 
-   eo_do(comp_obj_id, eo_parent_set(parent_id));
+   eo_do(comp_obj_id, eo_parent_set(comp_obj_id, parent_id));
 
    return EINA_TRUE;
 }
@@ -845,7 +845,7 @@ _eo_base_composite_detach(Eo *parent_id, Eo_Base_Data *pd EINA_UNUSED, Eo *comp_
 
    comp_obj->composite = EINA_FALSE;
    parent->composite_objects = eina_list_remove(parent->composite_objects, comp_obj_id);
-   eo_do(comp_obj_id, eo_parent_set(NULL));
+   eo_do(comp_obj_id, eo_parent_set(comp_obj_id, NULL));
 
    return EINA_TRUE;
 }
@@ -981,14 +981,14 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
    while (pd->children)
      {
         child = eina_list_data_get(pd->children);
-        eo_do(child, eo_parent_set(NULL));
+        eo_do(child, eo_parent_set(child, NULL));
      }
 
    if (pd->parent)
      {
         ERR("Object '%p' still has a parent at the time of destruction.", obj);
         eo_ref(obj);
-        eo_do(obj, eo_parent_set(NULL));
+        eo_do(obj, eo_parent_set(obj, NULL));
      }
 
    _eo_generic_data_del_all(pd);

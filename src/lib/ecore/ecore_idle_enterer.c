@@ -61,7 +61,7 @@ ecore_idle_enterer_add(Ecore_Task_Cb func,
                        const void   *data)
 {
    Ecore_Idle_Enterer *ie = NULL;
-   ie = eo_add(MY_CLASS, _ecore_parent, ecore_idle_enterer_after_constructor(func, data));
+   eo_add(ie, MY_CLASS, _ecore_parent, ecore_idle_enterer_after_constructor(NULL, func, data));
    return ie;
 }
 
@@ -82,7 +82,7 @@ ecore_idle_enterer_before_add(Ecore_Task_Cb func,
                               const void   *data)
 {
    Ecore_Idle_Enterer *ie = NULL;
-   ie = eo_add(MY_CLASS, _ecore_parent, ecore_idle_enterer_before_constructor(func, data));
+   eo_add(ie, MY_CLASS, _ecore_parent, ecore_idle_enterer_before_constructor(NULL, func, data));
    return ie;
 }
 
@@ -130,7 +130,7 @@ _ecore_idle_enterer_eo_base_destructor(Eo *obj, Ecore_Idle_Enterer_Data *idle_en
    idle_enterer->delete_me = 1;
    idle_enterers_delete_me = 1;
 
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_super_eo_destructor(MY_CLASS, obj);
 }
 
 EOLIAN static Eo *
@@ -141,7 +141,7 @@ _ecore_idle_enterer_eo_base_finalize(Eo *obj, Ecore_Idle_Enterer_Data *idle_ente
         return NULL;
      }
 
-     return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
+   return eo_super_eo_finalize(MY_CLASS, obj);
 }
 
 void
@@ -152,7 +152,7 @@ _ecore_idle_enterer_shutdown(void)
      {
         idle_enterers = (Ecore_Idle_Enterer_Data *)eina_inlist_remove(EINA_INLIST_GET(idle_enterers), EINA_INLIST_GET(idle_enterers));
 
-        eo_do(ie->obj, eo_parent_set(NULL));
+        eo_do(ie->obj, eo_parent_set(ie->obj, NULL));
         if (eo_destructed_is(ie->obj))
           eo_manual_free(ie->obj);
         else
@@ -214,7 +214,7 @@ _ecore_idle_enterer_call(void)
 
                   idle_enterers = (Ecore_Idle_Enterer_Data *)eina_inlist_remove(EINA_INLIST_GET(idle_enterers), EINA_INLIST_GET(ie));
 
-                  eo_do(ie->obj, eo_parent_set(NULL));
+                  eo_do(ie->obj, eo_parent_set(ie->obj, NULL));
                   if (eo_destructed_is(ie->obj))
                     eo_manual_free(ie->obj);
                   else

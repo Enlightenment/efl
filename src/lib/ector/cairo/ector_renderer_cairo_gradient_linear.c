@@ -51,13 +51,13 @@ static Eina_Bool
 _ector_renderer_cairo_gradient_linear_ector_renderer_generic_base_prepare(Eo *obj,
                                                                           Ector_Renderer_Cairo_Gradient_Linear_Data *pd)
 {
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, ector_renderer_prepare());
+   eo_super_ector_renderer_prepare(ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, obj);
 
    if (!pd->parent)
      {
         Eo *parent;
 
-        eo_do(obj, parent = eo_parent_get());
+        eo_do(obj, parent = eo_parent_get(obj));
         if (!parent) return EINA_FALSE;
         pd->parent = eo_data_xref(parent, ECTOR_CAIRO_SURFACE_CLASS, obj);
      }
@@ -82,7 +82,7 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_generic_base_draw(Eo *obj,
    pat = _ector_renderer_cairo_gradient_linear_prepare(obj, gld, gd, mul_col);
    if (!pat) return EINA_FALSE;
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, ector_renderer_draw(op, clips, mul_col));
+   eo_super_ector_renderer_draw(ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, obj, op, clips, mul_col);
 
    USE(obj, cairo_rectangle, EINA_FALSE);
    USE(obj, cairo_fill, EINA_FALSE);
@@ -147,10 +147,10 @@ _ector_renderer_cairo_gradient_linear_eo_base_destructor(Eo *obj,
 {
    Eo *parent;
 
-   eo_do(obj, parent = eo_parent_get());
+   eo_do(obj, parent = eo_parent_get(obj));
    eo_data_xunref(parent, pd->parent, obj);
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, eo_destructor());
+   eo_super_eo_destructor(ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, obj);
 }
 
 void
@@ -159,8 +159,7 @@ _ector_renderer_cairo_gradient_linear_efl_gfx_gradient_base_stop_set(Eo *obj,
                                                                      const Efl_Gfx_Gradient_Stop *colors,
                                                                      unsigned int length)
 {
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS,
-               efl_gfx_gradient_stop_set(colors, length));
+   eo_super_efl_gfx_gradient_stop_set(ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, obj, colors, length);
 }
 
 static unsigned int
@@ -170,8 +169,7 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_generic_base_crc_get(Eo *ob
    Ector_Renderer_Generic_Gradient_Data *gd;
    unsigned int crc;
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS,
-               crc = ector_renderer_crc_get());
+   crc = eo_super_ector_renderer_crc_get(ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, obj);
 
    gld = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_MIXIN);
    gd = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_MIXIN);

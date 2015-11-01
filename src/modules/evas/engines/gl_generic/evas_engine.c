@@ -2383,12 +2383,12 @@ eng_ector_create(void *data EINA_UNUSED)
    ector_backend = getenv("ECTOR_BACKEND");
    if (ector_backend && !strcasecmp(ector_backend, "default"))
      {
-        ector = eo_add(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
+        eo_add(ector, ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
         use_cairo = EINA_FALSE;
      }
    else
      {
-        ector = eo_add(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
+        eo_add(ector, ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
         use_cairo = EINA_TRUE;
      }
    return ector;
@@ -2471,7 +2471,7 @@ eng_ector_renderer_draw(void *data, void *context, void *surface, Ector_Renderer
      eina_array_push(c, eina_rectangle_new(clip.x, clip.y, clip.w, clip.h));
 
    eo_do(renderer,
-         ector_renderer_draw(_evas_render_op_to_ector_rop(gc->dc->render_op),
+         ector_renderer_draw(renderer, _evas_render_op_to_ector_rop(gc->dc->render_op),
                              c,
                              // mul_col will be applied by GL during ector_end
                              0xffffffff));
@@ -2503,14 +2503,14 @@ eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface
    if (use_cairo)
      {
         eo_do(ector,
-              ector_cairo_software_surface_set(software_buffer, w, h),
-              ector_surface_reference_point_set(x, y));
+              ector_cairo_software_surface_set(ector, software_buffer, w, h),
+              ector_surface_reference_point_set(ector, x, y));
      }
    else
      {
         eo_do(ector,
-              ector_software_surface_set(software_buffer, w, h),
-              ector_surface_reference_point_set(x, y));
+              ector_software_surface_set(ector, software_buffer, w, h),
+              ector_surface_reference_point_set(ector, x, y));
      }
 }
 
@@ -2531,12 +2531,12 @@ eng_ector_end(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
    if (use_cairo)
      {
         eo_do(ector,
-              ector_cairo_software_surface_set(NULL, 0, 0));
+              ector_cairo_software_surface_set(ector, NULL, 0, 0));
      }
    else
      {
         eo_do(ector,
-              ector_software_surface_set(NULL, 0, 0));
+              ector_software_surface_set(ector, NULL, 0, 0));
      }
 
    im = evas_gl_common_image_new_from_copied_data(gl_context, w, h, software_buffer, 1, EVAS_COLORSPACE_ARGB8888);

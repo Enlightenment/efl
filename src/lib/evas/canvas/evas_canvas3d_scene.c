@@ -43,15 +43,15 @@ _evas_canvas3d_scene_evas_canvas3d_object_update_notify(Eo *obj EINA_UNUSED, Eva
 {
    if (pd->root_node)
      {
-        eo_do(pd->root_node, evas_canvas3d_object_update());
+        eo_do(pd->root_node, evas_canvas3d_object_update(pd->root_node));
      }
 
    if (pd->camera_node)
      {
-        eo_do(pd->camera_node, evas_canvas3d_object_update());
+        eo_do(pd->camera_node, evas_canvas3d_object_update(pd->camera_node));
      }
 
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_SCENE_UPDATED, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_SCENE_UPDATED, NULL));
 }
 
 EAPI Evas_Canvas3D_Scene *
@@ -60,15 +60,16 @@ evas_canvas3d_scene_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(MY_CLASS, e);
+   Evas_Object *eo_obj;
+   eo_add(eo_obj, MY_CLASS, e);
    return eo_obj;
 }
 
 EOLIAN static Eo *
 _evas_canvas3d_scene_eo_base_constructor(Eo *obj, Evas_Canvas3D_Scene_Data *pd)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj, evas_canvas3d_object_type_set(EVAS_CANVAS3D_OBJECT_TYPE_SCENE));
+  obj = eo_super_eo_constructor( MY_CLASS, obj);
+   eo_do(obj, evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_SCENE));
    evas_color_set(&pd->bg_color, 0.0, 0.0, 0.0, 0.0);
    pd->shadows_enabled = EINA_FALSE;
    pd->color_pick_enabled = EINA_FALSE;
@@ -100,7 +101,7 @@ _evas_canvas3d_scene_root_node_set(Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_C
         evas_canvas3d_node_scene_root_add(node, obj);
      }
 
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_SCENE_ROOT_NODE, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_SCENE_ROOT_NODE, NULL));
 }
 
 EOLIAN static Evas_Canvas3D_Node *
@@ -129,7 +130,7 @@ _evas_canvas3d_scene_camera_node_set(Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas
         evas_canvas3d_node_scene_camera_add(node, obj);
      }
 
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_SCENE_CAMERA_NODE, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_SCENE_CAMERA_NODE, NULL));
 }
 
 EOLIAN static Evas_Canvas3D_Node *
@@ -143,7 +144,7 @@ _evas_canvas3d_scene_size_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd,
 {
    pd->w = w;
    pd->h = h;
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_SCENE_SIZE, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_SCENE_SIZE, NULL));
 }
 
 EOLIAN static void
@@ -158,7 +159,7 @@ _evas_canvas3d_scene_background_color_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Sce
                                    Evas_Real r, Evas_Real g, Evas_Real b, Evas_Real a)
 {
    evas_color_set(&pd->bg_color, r, g, b, a);
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_SCENE_BACKGROUND_COLOR, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_SCENE_BACKGROUND_COLOR, NULL));
 }
 
 EOLIAN static void
@@ -631,7 +632,7 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
         scene_data.shadows_enabled = pd->shadows_enabled;
         scene_data.camera_node = pd->camera_node;
         scene_data.color_pick_enabled = pd->color_pick_enabled;
-        eo_do(obj, update_scene = evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_SCENE_UPDATED));
+        eo_do(obj, update_scene = evas_canvas3d_object_dirty_get(obj, EVAS_CANVAS3D_STATE_SCENE_UPDATED));
         if (update_scene)
           {
              if (pd->node_mesh_colors)
@@ -671,7 +672,7 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
 
                             /*Calling callback clicked*/
                             eo_desc = eo_base_legacy_only_event_description_get("clicked,private");
-                            eo_do(picked_node, eo_event_callback_call(eo_desc, picked_node));
+                            eo_do(picked_node, eo_event_callback_call(picked_node, eo_desc, picked_node));
 
                             return EINA_TRUE;
                          }
@@ -687,7 +688,7 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
         return EINA_FALSE;
      }
    /* Update the scene graph. */
-   eo_do(obj, evas_canvas3d_object_update());
+   eo_do(obj, evas_canvas3d_object_update(obj));
    pd_camera_node = eo_data_scope_get(pd->camera_node, EVAS_CANVAS3D_NODE_CLASS);
    pd_camera = eo_data_scope_get(pd_camera_node->data.camera.camera, EVAS_CANVAS3D_CAMERA_CLASS);
    evas_mat4_multiply(&data.matrix_vp,
@@ -710,7 +711,7 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
 
    /*Calling callback clicked*/
    eo_desc = eo_base_legacy_only_event_description_get("clicked,private");
-   eo_do(data.node, eo_event_callback_call(eo_desc, data.node));
+   eo_do(data.node, eo_event_callback_call(data.node, eo_desc, data.node));
 
    return EINA_TRUE;
 }
@@ -733,7 +734,7 @@ _evas_canvas3d_scene_exist(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Rea
    data.t      = 0.0;
 
    /* Update the scene graph. */
-   eo_do(obj, evas_canvas3d_object_update());
+   eo_do(obj, evas_canvas3d_object_update(obj));
    pd_camera_node = eo_data_scope_get(pd->camera_node, EVAS_CANVAS3D_NODE_CLASS);
    pd_camera = eo_data_scope_get(pd_camera_node->data.camera.camera, EVAS_CANVAS3D_CAMERA_CLASS);
    evas_mat4_multiply(&data.matrix_vp,
@@ -759,18 +760,18 @@ _evas_canvas3d_scene_pick_member_list_get(const Eo *obj, Evas_Canvas3D_Scene_Dat
    Eina_Bool pick = EINA_FALSE;
 
    /* Check pick for given scene. */
-   eo_do(obj, pick = evas_canvas3d_scene_pick(x, y, NULL, NULL, NULL, NULL));
+   eo_do(obj, pick = evas_canvas3d_scene_pick(obj, x, y, NULL, NULL, NULL, NULL));
 
    if (!pick)
      return NULL;
 
    /* Get all members from root node. */
-   eo_do(pd->root_node, list = evas_canvas3d_node_member_list_get());
+   eo_do(pd->root_node, list = evas_canvas3d_node_member_list_get(pd->root_node));
 
    EINA_LIST_FOREACH(list, l, node)
      {
         Evas_Canvas3D_Node *exists;
-        if (eo_do_ret(obj, exists, evas_canvas3d_scene_exist(x, y, node)))
+        if (eo_do_ret(obj, exists, evas_canvas3d_scene_exist(obj, x, y, node)))
           picked_nodes = eina_list_append(picked_nodes, l);
      }
 
@@ -787,7 +788,7 @@ EOLIAN static void
 _evas_canvas3d_scene_shadows_enable_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd, Eina_Bool _shadows_enabled)
 {
    pd->shadows_enabled = _shadows_enabled;
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_SCENE_SHADOWS_ENABLED, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_SCENE_SHADOWS_ENABLED, NULL));
 }
 
 EOLIAN static Eina_Bool
@@ -802,7 +803,7 @@ _evas_canvas3d_scene_color_pick_enable_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Sc
    if (pd->color_pick_enabled != _enabled)
      pd->color_pick_enabled = _enabled;
 
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_SCENE_UPDATED, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_SCENE_UPDATED, NULL));
    return EINA_TRUE;
 }
 
@@ -812,7 +813,7 @@ _evas_canvas3d_scene_shadows_depth_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_
 {
    pd->depth_offset = depth_offset;
    pd->depth_constant = depth_constant;
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_SCENE_SHADOWS_DEPTH, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_SCENE_SHADOWS_DEPTH, NULL));
 }
 
 EOLIAN static void

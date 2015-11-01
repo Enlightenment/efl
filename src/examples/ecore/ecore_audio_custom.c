@@ -25,7 +25,7 @@ int read_cb(void *data EINA_UNUSED, Eo *eo_obj, void *buf, int len)
   float *val = buf;
   int i;
 
-  eo_do(eo_obj, ecore_audio_obj_volume_get(&volume));
+  eo_do(eo_obj, ecore_audio_obj_volume_get(eo_obj, &volume));
 
   for(i=0; i<len/4; i++, phase1++)
     {
@@ -56,9 +56,9 @@ main(int argc, const char *argv[])
 
    ecore_app_args_set(argc, argv);
 
-   out = eo_add(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
+   eo_add(out, ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
 
-   in = eo_add(ECORE_AUDIO_OBJ_IN_CLASS, NULL);
+   eo_add(in, ECORE_AUDIO_OBJ_IN_CLASS, NULL);
    if (!in)
      {
         printf("error when creating ecore audio source.\n");

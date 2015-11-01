@@ -70,7 +70,7 @@ _evas_vg_render_pre(Efl_VG *child, Ector_Surface *s, Eina_Matrix3 *m)
 static inline void
 _efl_vg_base_changed(Eo *obj)
 {
-   eo_do(obj, eo_event_callback_call(EFL_GFX_CHANGED, NULL));
+   eo_do(obj, eo_event_callback_call(obj, EFL_GFX_CHANGED, NULL));
 }
 
 static inline void *

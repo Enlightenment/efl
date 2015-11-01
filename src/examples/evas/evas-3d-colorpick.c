@@ -242,9 +242,9 @@ Eina_Bool
 _init_sphere(void *this, const char *texture)
 {
    Test_object *sphere  = (Test_object *)this;
-   sphere->primitive = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
-   sphere->mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
-   sphere->material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
+   eo_add(sphere->primitive, EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
+   eo_add(sphere->mesh, EVAS_CANVAS3D_MESH_CLASS, evas);
+   eo_add(sphere->material, EVAS_CANVAS3D_MATERIAL_CLASS, evas);
    eo_do(sphere->primitive,
          evas_canvas3d_primitive_form_set(EVAS_CANVAS3D_MESH_PRIMITIVE_SPHERE),
          evas_canvas3d_primitive_precision_set(50));
@@ -255,7 +255,7 @@ _init_sphere(void *this, const char *texture)
 
    eo_do(sphere->mesh,  evas_canvas3d_mesh_color_pick_enable_set(EINA_TRUE));
 
-   sphere->texture = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
+   eo_add(sphere->texture, EVAS_CANVAS3D_TEXTURE_CLASS, evas);
    eo_do(sphere->texture,
          evas_canvas3d_texture_file_set(texture, NULL),
          evas_canvas3d_texture_filter_set(EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST,
@@ -286,17 +286,16 @@ _init_scene(const char *texture)
    Evas_Real tmp;
    Test_object *m;
 
-   globalscene.scene = eo_add(EVAS_CANVAS3D_SCENE_CLASS, evas);
+   eo_add(globalscene.scene, EVAS_CANVAS3D_SCENE_CLASS, evas);
 
-   globalscene.root_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+   eo_add(globalscene.root_node, EVAS_CANVAS3D_NODE_CLASS, evas,
                              evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_NODE));
 
-   globalscene.camera = eo_add(EVAS_CANVAS3D_CAMERA_CLASS, evas);
+   eo_add(globalscene.camera, EVAS_CANVAS3D_CAMERA_CLASS, evas);
    eo_do(globalscene.camera,
          evas_canvas3d_camera_projection_perspective_set(30.0, 1.0, 1.0, 1000.0));
 
-   globalscene.camera_node =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+   eo_add(globalscene.camera_node, EVAS_CANVAS3D_NODE_CLASS, evas,
                     evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_CAMERA));
    eo_do(globalscene.camera_node,
          evas_canvas3d_node_camera_set(globalscene.camera));
@@ -306,15 +305,14 @@ _init_scene(const char *texture)
          evas_canvas3d_node_position_set(0.0, 30.0, 800.0),
          evas_canvas3d_node_look_at_set(EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, -1000.0,
                                   EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0));
-   globalscene.light = eo_add(EVAS_CANVAS3D_LIGHT_CLASS, evas);
+   eo_add(globalscene.light, EVAS_CANVAS3D_LIGHT_CLASS, evas);
    eo_do(globalscene.light,
          evas_canvas3d_light_ambient_set(1.0, 1.0, 1.0, 1.0),
          evas_canvas3d_light_diffuse_set(1.0, 1.0, 1.0, 1.0),
          evas_canvas3d_light_specular_set(1.0, 1.0, 1.0, 1.0),
          evas_canvas3d_light_directional_set(EINA_TRUE));
 
-   globalscene.light_node =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+   eo_add(globalscene.light_node, EVAS_CANVAS3D_NODE_CLASS, evas,
                     evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_LIGHT));
    eo_do(globalscene.light_node,
          evas_canvas3d_node_light_set(globalscene.light),
@@ -339,7 +337,7 @@ _init_scene(const char *texture)
              m->material = spheretmp->material;
              m->texture = spheretmp->texture;
           }
-        m->node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+        eo_add(m->node, EVAS_CANVAS3D_NODE_CLASS, evas,
                          evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_MESH));
         m->speed = tmp;
         m->sphere_animate = _animate_sphere;

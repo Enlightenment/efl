@@ -24,7 +24,7 @@ EAPI @#ret_type\n\
 @#eapi_func(@#full_params)\n\
 {\n\
    @#ret_type ret;\n\
-   eo_do(@#eo_obj, ret = @#eo_func(@#eo_params));\n\
+   eo_do(@#eo_obj, ret = @#eo_func(@#eo_obj%s@#eo_params));\n\
    return ret;\n\
 }\n\
 ";
@@ -34,7 +34,7 @@ tmpl_eapi_body_void[] ="\
 EAPI void\n\
 @#eapi_func(@#full_params)\n\
 {\n\
-   eo_do(@#eo_obj, @#eo_func(@#eo_params));\n\
+   eo_do(@#eo_obj, @#eo_func(@#eo_obj%s@#eo_params));\n\
 }\n\
 ";
 
@@ -229,10 +229,23 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
 
    if (!rettype && rettypet) rettype = eolian_type_c_type_get(rettypet);
 
+   Eina_Bool has_params = EINA_FALSE;
+
+   itr = eolian_property_keys_get(funcid, ftype);
+   has_params |= (eina_iterator_next(itr, &data));
+   eina_iterator_free(itr);
+
+   if (!has_params && !var_as_ret)
+     {
+        itr = is_prop ? eolian_property_values_get(funcid, ftype) : eolian_function_parameters_get(funcid);
+        has_params |= (eina_iterator_next(itr, &data));
+        eina_iterator_free(itr);
+     }
+
    if (rettype && (!ret_is_void))
-     eina_strbuf_append(fbody, tmpl_eapi_body);
+     eina_strbuf_append_printf(fbody, tmpl_eapi_body, has_params?", ":"");
    else
-     eina_strbuf_append(fbody, tmpl_eapi_body_void);
+     eina_strbuf_append_printf(fbody, tmpl_eapi_body_void, has_params?", ":"");
 
    if (!eolian_function_is_class(funcid))
      {

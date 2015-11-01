@@ -22,13 +22,17 @@ main(int argc, char *argv[])
 
    eo_init();
 
-   Eo *parent = eo_add(SIMPLE_CLASS, NULL);
+   Eo *parent;
+   eo_add(parent, SIMPLE_CLASS, NULL);
 
-   Eo *child1 = eo_add(SIMPLE_CLASS, parent);
-   Eo *child2 = eo_add(SIMPLE_CLASS, parent);
-   Eo *child3 = eo_add(SIMPLE_CLASS, parent);
+   Eo *child1;
+   eo_add(child1, SIMPLE_CLASS, parent);
+   Eo *child2;
+   eo_add(child2, SIMPLE_CLASS, parent);
+   Eo *child3;
+   eo_add(child3, SIMPLE_CLASS, parent);
 
-   eo_do(parent, iter = eo_children_iterator_new());
+   eo_do(parent, iter = eo_children_iterator_new(parent));
    fail_if(!iter);
 
    CHECK_ITER_DATA(iter, chld, child1);
@@ -40,7 +44,7 @@ main(int argc, char *argv[])
 
    eo_del(child2);
 
-   eo_do(parent, iter = eo_children_iterator_new());
+   eo_do(parent, iter = eo_children_iterator_new(parent));
    fail_if(!iter);
 
    CHECK_ITER_DATA(iter, chld, child1);
@@ -52,7 +56,7 @@ main(int argc, char *argv[])
 
    eo_del(child1);
 
-   eo_do(parent, iter = eo_children_iterator_new());
+   eo_do(parent, iter = eo_children_iterator_new(parent));
    fail_if(!iter);
 
    CHECK_ITER_DATA(iter, chld, child3);
@@ -62,7 +66,7 @@ main(int argc, char *argv[])
 
    eo_del(child3);
 
-   eo_do(parent, iter = eo_children_iterator_new());
+   eo_do(parent, iter = eo_children_iterator_new(parent));
    fail_if(iter);
 
    eo_unref(parent);

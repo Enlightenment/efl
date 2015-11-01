@@ -13,8 +13,10 @@ main(int argc, char *argv[])
    (void) argv;
    eo_init();
 
-   Eo *simpleobj = eo_add(SIMPLE_CLASS, NULL);
-   Eo *complexobj = eo_add(COMPLEX_CLASS, NULL);
+   Eo *simpleobj;
+   eo_add(simpleobj, SIMPLE_CLASS, NULL);
+   Eo *complexobj;
+   eo_add(complexobj, COMPLEX_CLASS, NULL);
 
    printf("Simple: isa-simple:%d isa-complex:%d isa-mixin:%d isa-interface:%d\n",
          eo_isa(simpleobj, SIMPLE_CLASS),

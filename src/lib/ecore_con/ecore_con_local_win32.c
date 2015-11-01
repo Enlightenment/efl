@@ -286,7 +286,8 @@ _ecore_con_local_win32_client_add(void *data, Ecore_Win32_Handler *wh)
        (svr->client_count >= (unsigned int)svr->client_limit))
      return ECORE_CALLBACK_CANCEL;
 
-   Ecore_Con_Client *cl_obj = eo_add(ECORE_CON_CLIENT_CLASS, NULL);
+   Ecore_Con_Client *cl_obj;
+   eo_add(cl_obj, ECORE_CON_CLIENT_CLASS, NULL);
    Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
    if (!cl)
      {

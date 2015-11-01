@@ -33,10 +33,12 @@ main(int argc, char *argv[])
    elm_init(argc, argv);
    eo_init();
 
-   Eo *win = eo_add(ELW_WIN_CLASS, NULL);
+   Eo *win;
+   eo_add(win, ELW_WIN_CLASS, NULL);
    eo_do(win, exevas_obj_size_set(winw, winh), exevas_obj_visibility_set(EINA_TRUE));
 
-   Eo *bt = eo_add(ELW_BUTTON_CLASS, win);
+   Eo *bt;
+   eo_add(bt, ELW_BUTTON_CLASS, win);
    eo_do(bt, exevas_obj_position_set(25, 25),
          exevas_obj_size_set(50, 50),
          exevas_obj_color_set(255, 0, 0, 255),
@@ -48,7 +50,8 @@ main(int argc, char *argv[])
    eo_do(bt, exevas_obj_color_get(&r, &g, &b, &a));
    printf("RGBa(%d, %d, %d, %d)\n", r, g, b, a);
 
-   Eo *bx = eo_add(ELW_BOXEDBUTTON_CLASS, win);
+   Eo *bx;
+   eo_add(bx, ELW_BOXEDBUTTON_CLASS, win);
    eo_do(bx, exevas_obj_position_set(100, 100),
          exevas_obj_size_set(70, 70),
          exevas_obj_color_set(0, 0, 255, 255),

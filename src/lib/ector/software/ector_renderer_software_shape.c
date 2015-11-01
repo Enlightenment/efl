@@ -520,7 +520,7 @@ _update_rle(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
    Eina_Bool close_path;
    Outline *outline, *dash_outline;
 
-   eo_do(obj, efl_gfx_shape_path_get(&cmds, &pts));
+   eo_do(obj, efl_gfx_shape_path_get(obj, &cmds, &pts));
    if (cmds && (_generate_stroke_data(pd) || _generate_shape_data(pd)))
      {
         outline = _outline_create();
@@ -570,17 +570,17 @@ _ector_renderer_software_shape_ector_renderer_generic_base_prepare(Eo *obj,
 {
    // FIXME: shouldn't that be part of the shape generic implementation ?
    if (pd->shape->fill)
-     eo_do(pd->shape->fill, ector_renderer_prepare());
+     eo_do(pd->shape->fill, ector_renderer_prepare(pd->shape->fill));
    if (pd->shape->stroke.fill)
-     eo_do(pd->shape->stroke.fill, ector_renderer_prepare());
+     eo_do(pd->shape->stroke.fill, ector_renderer_prepare(pd->shape->stroke.fill));
    if (pd->shape->stroke.marker)
-     eo_do(pd->shape->stroke.marker, ector_renderer_prepare());
+     eo_do(pd->shape->stroke.marker, ector_renderer_prepare(pd->shape->stroke.marker));
 
    // shouldn't that be moved to the software base object
    if (!pd->surface)
      {
         Eo *parent;
-        eo_do(obj, parent = eo_parent_get());
+        eo_do(obj, parent = eo_parent_get(obj));
         if (!parent) return EINA_FALSE;
         pd->surface = eo_data_xref(parent, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
         if (!pd->surface) return EINA_FALSE;
@@ -609,7 +609,7 @@ _ector_renderer_software_shape_ector_renderer_generic_base_draw(Eo *obj,
 
    if (pd->shape->fill)
      {
-        eo_do(pd->shape->fill, ector_renderer_software_base_fill());
+        eo_do(pd->shape->fill, ector_renderer_software_base_fill(pd->shape->fill));
         ector_software_rasterizer_draw_rle_data(pd->surface->software,
                                                 x, y, mul_col, op,
                                                 pd->shape_data);
@@ -631,7 +631,7 @@ _ector_renderer_software_shape_ector_renderer_generic_base_draw(Eo *obj,
 
    if (pd->shape->stroke.fill)
      {
-        eo_do(pd->shape->stroke.fill, ector_renderer_software_base_fill());
+        eo_do(pd->shape->stroke.fill, ector_renderer_software_base_fill(pd->shape->stroke.fill));
         ector_software_rasterizer_draw_rle_data(pd->surface->software,
                                                 x, y, mul_col, op,
                                                 pd->outline_data);
@@ -674,7 +674,7 @@ _ector_renderer_software_shape_efl_gfx_shape_path_set(Eo *obj,
    pd->shape_data = NULL;
    pd->outline_data = NULL;
 
-   eo_do_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, efl_gfx_shape_path_set(op, points));
+   eo_super_efl_gfx_shape_path_set(ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, obj, op, points);
 }
 
 
@@ -697,11 +697,11 @@ _ector_renderer_software_shape_path_changed(void *data, Eo *obj EINA_UNUSED,
 Eo *
 _ector_renderer_software_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
 {
-   obj = eo_do_super_ret(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, obj, eo_constructor());
+   obj = eo_super_eo_constructor( ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, obj);
    pd->shape = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_SHAPE_MIXIN, obj);
    pd->base = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
    eo_do(obj,
-         eo_event_callback_add(EFL_GFX_PATH_CHANGED, _ector_renderer_software_shape_path_changed, pd));
+         eo_event_callback_add(obj, EFL_GFX_PATH_CHANGED, _ector_renderer_software_shape_path_changed, pd));
 
    return obj;
 }
@@ -712,17 +712,17 @@ _ector_renderer_software_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Softwa
    Eo *parent;
    //FIXME, As base class  destructor can't call destructor of mixin class.
    // call explicit API to free shape data.
-   eo_do(obj, efl_gfx_shape_reset());
+   eo_do(obj, efl_gfx_shape_reset(obj));
 
    if (pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
    if (pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
 
-   eo_do(obj, parent = eo_parent_get());
+   eo_do(obj, parent = eo_parent_get(obj));
    eo_data_xunref(parent, pd->surface, obj);
 
    eo_data_xunref(obj, pd->shape, obj);
    eo_data_xunref(obj, pd->base, obj);
-   eo_do_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, eo_destructor());
+   eo_super_eo_destructor(ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, obj);
 }
 
 
@@ -732,7 +732,7 @@ _ector_renderer_software_shape_ector_renderer_generic_base_crc_get(Eo *obj,
 {
    unsigned int crc;
 
-   eo_do_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, crc = ector_renderer_crc_get());
+   crc = eo_super_ector_renderer_crc_get(ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, obj);
 
    crc = eina_crc((void*) &pd->shape->stroke.marker, sizeof (pd->shape->stroke.marker), crc, EINA_FALSE);
    crc = eina_crc((void*) &pd->shape->stroke.scale, sizeof (pd->shape->stroke.scale) * 3, crc, EINA_FALSE); // scale, width, centered

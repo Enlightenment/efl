@@ -26,13 +26,13 @@ _distance(float x1, float z1, float x2, float z2)
 void
 _camera_setup(Scene_Data *data)
 {
-   data->camera = eo_add(EVAS_CANVAS3D_CAMERA_CLASS, evas);
+   eo_add(data->camera, EVAS_CANVAS3D_CAMERA_CLASS, evas);
    eo_do(data->camera,
          evas_canvas3d_camera_projection_perspective_set(65.0, 1.0, 1.0, 300.0));
 
-   data->mediator_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+   eo_add(data->mediator_node, EVAS_CANVAS3D_NODE_CLASS, evas,
                                        evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_NODE));
-   data->camera_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+   eo_add(data->camera_node, EVAS_CANVAS3D_NODE_CLASS, evas,
                                      evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_CAMERA));
 
    eo_do(data->root_node, evas_canvas3d_node_member_add(data->mediator_node));
@@ -47,7 +47,7 @@ _camera_setup(Scene_Data *data)
 void
 _light_setup(Scene_Data *data)
 {
-   data->light = eo_add(EVAS_CANVAS3D_LIGHT_CLASS, evas);
+   eo_add(data->light, EVAS_CANVAS3D_LIGHT_CLASS, evas);
 
    eo_do(data->light,
          evas_canvas3d_light_ambient_set(0.2, 0.2, 0.2, 1.0),
@@ -55,7 +55,7 @@ _light_setup(Scene_Data *data)
          evas_canvas3d_light_specular_set(0.2, 0.2, 0.2, 1.0),
                   evas_canvas3d_light_projection_perspective_set(100.0, 1.0, 1.0, 200.0));
 
-   data->light_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+   eo_add(data->light_node, EVAS_CANVAS3D_NODE_CLASS, evas,
                                     evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_LIGHT));
 
    eo_do(data->light_node,

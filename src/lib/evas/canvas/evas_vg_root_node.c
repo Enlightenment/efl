@@ -53,7 +53,7 @@ _efl_vg_root_node_eo_base_parent_set(Eo *obj,
                                      Eo *parent)
 {
    // Nice little hack, jump over parent parent_set in Efl_VG_Root
-   eo_do_super(obj, EFL_VG_BASE_CLASS, eo_parent_set(parent));
+   eo_super_eo_parent_set(EFL_VG_BASE_CLASS, obj, parent);
    if (parent && !eo_isa(parent, EVAS_VG_CLASS))
      {
         ERR("Parent of VG_ROOT_NODE must be a VG_CLASS");
@@ -80,10 +80,10 @@ _efl_vg_root_node_eo_base_constructor(Eo *obj,
    cd->names = eina_hash_stringshared_new(NULL);
 
    // Nice little hack, jump over parent constructor in Efl_VG_Root
-   obj = eo_do_super_ret(obj, EFL_VG_BASE_CLASS, obj, eo_constructor());
+   obj = eo_super_eo_constructor( EFL_VG_BASE_CLASS, obj);
    eo_do(obj,
-         parent = eo_parent_get(),
-         efl_vg_name_set("root"));
+         parent = eo_parent_get(obj),
+         efl_vg_name_set(obj, "root"));
    if (!eo_isa(parent, EVAS_VG_CLASS)) {
         ERR("Parent of VG_ROOT_NODE must be a VG_CLASS");
         return NULL;
@@ -93,7 +93,7 @@ _efl_vg_root_node_eo_base_constructor(Eo *obj,
    nd->render_pre = _evas_vg_root_node_render_pre;
    nd->data = cd;
 
-   eo_do(obj, eo_event_callback_add(EFL_GFX_CHANGED, _evas_vg_root_node_changed, pd));
+   eo_do(obj, eo_event_callback_add(obj, EFL_GFX_CHANGED, _evas_vg_root_node_changed, pd));
 
    return obj;
 }

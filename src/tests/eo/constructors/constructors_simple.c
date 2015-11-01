@@ -31,8 +31,8 @@ _##name##_set(Eo *obj EINA_UNUSED, void *class_data, int name) \
    pd->name = name; \
    printf("%s %d\n", __func__, pd->name); \
 } \
-EO_VOID_FUNC_BODYV(simple_##name##_set, EO_FUNC_CALL(name), int name); \
-EO_FUNC_BODY(simple_##name##_get, int, 0);
+EO_FUNC_VOID_API_DEFINE(simple_##name##_set, EO_FUNC_CALL(name), int name); \
+EO_FUNC_API_DEFINE(simple_##name##_get, int, 0,);
 
 _GET_SET_FUNC(a)
 _GET_SET_FUNC(b)
@@ -42,9 +42,11 @@ extern int my_init_count;
 static Eo *
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
+   fprintf(stderr, "%s %s:%d my_init_count: %d\n", __func__, __FILE__, __LINE__, my_init_count);
    my_init_count++;
+   fprintf(stderr, "%s %s:%d my_init_count: %d\n", __func__, __FILE__, __LINE__, my_init_count);
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   return eo_super_eo_constructor( MY_CLASS, obj);
 }
 
 static Eo*
@@ -53,7 +55,7 @@ _finalize(Eo *obj, void *class_data EINA_UNUSED)
    Eo *ret;
    Private_Data *pd = class_data;
 
-   eo_do_super(obj, MY_CLASS, ret = eo_finalize());
+   ret = eo_super_eo_finalize(MY_CLASS, obj);
 
    if (pd->a < 0)
      {
@@ -66,7 +68,7 @@ _finalize(Eo *obj, void *class_data EINA_UNUSED)
 static void
 _destructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_super_eo_destructor(MY_CLASS, obj);
 
    my_init_count--;
 }
@@ -83,7 +85,7 @@ _class_destructor(Eo_Class *klass EINA_UNUSED)
    free(class_var);
 }
 
-EO_VOID_FUNC_BODYV(simple_constructor, EO_FUNC_CALL(a), int a);
+EO_FUNC_VOID_API_DEFINE(simple_constructor, EO_FUNC_CALL(a), int a);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC_OVERRIDE(eo_constructor, _constructor),

@@ -97,7 +97,8 @@ evas_object_line_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(EVAS_LINE_CLASS, e);
+   Evas_Object *eo_obj;
+   eo_add(eo_obj, EVAS_LINE_CLASS, e);
    return eo_obj;
 }
 
@@ -220,7 +221,7 @@ _evas_line_eo_base_constructor(Eo *eo_obj, Evas_Line_Data *class_data EINA_UNUSE
 {
    Evas_Line_Data *o;
 
-   eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
+   eo_obj = eo_super_eo_constructor( MY_CLASS, eo_obj);
 
    evas_object_line_init(eo_obj);
 

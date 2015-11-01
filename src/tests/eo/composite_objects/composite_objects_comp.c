@@ -16,7 +16,7 @@ static int
 _a_get(Eo *obj, void *class_data EINA_UNUSED)
 {
    int a = 0;
-   eo_do_super(obj, MY_CLASS, a = simple_a_get());
+   a = eo_super_simple_a_get(MY_CLASS, obj);
 
    return a;
 }
@@ -25,16 +25,17 @@ static Eo *
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
    Eina_Bool tmp;
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_super_eo_constructor( MY_CLASS, obj);
 
-   Eo *simple = eo_add(SIMPLE_CLASS, obj);
-   eo_do(obj, eo_composite_attach(simple));
-   eo_do(simple, eo_event_callback_forwarder_add(EV_A_CHANGED, obj));
+   Eo *simple;
+   eo_add(simple, SIMPLE_CLASS, obj);
+   eo_do(obj, eo_composite_attach(obj, simple));
+   eo_do(simple, eo_event_callback_forwarder_add(simple, EV_A_CHANGED, obj));
 
-   fail_if(eo_do_ret(obj, tmp, eo_composite_part_is()));
-   fail_if(!eo_do_ret(simple, tmp, eo_composite_part_is()));
+   fail_if(eo_do_ret(obj, tmp, eo_composite_part_is(obj)));
+   fail_if(!eo_do_ret(simple, tmp, eo_composite_part_is(simple)));
 
-   eo_do(obj, eo_key_data_set("simple-obj", simple));
+   eo_do(obj, eo_key_data_set(obj, "simple-obj", simple));
 
    return obj;
 }

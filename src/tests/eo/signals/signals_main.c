@@ -29,8 +29,8 @@ _a_changed_cb(void *data, Eo *obj, const Eo_Event_Description *desc, void *event
 
    cb_count++;
 
-   eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _null_cb, (void *) 23423));
-   eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _null_cb, (void *) 23423));
+   eo_do(obj, eo_event_callback_priority_add(obj, EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _null_cb, (void *) 23423));
+   eo_do(obj, eo_event_callback_del(obj, EV_A_CHANGED, _null_cb, (void *) 23423));
 
    /* Stop as we reached the 3rd one. */
    return (cb_count != 3);
@@ -43,136 +43,137 @@ main(int argc, char *argv[])
    (void) argv;
    eo_init();
 
-   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   Eo *obj;
+   eo_add(obj, SIMPLE_CLASS, NULL);
    Simple_Public_Data *pd = eo_data_scope_get(obj, SIMPLE_CLASS);
 
    /* The order of these two is undetermined. */
-   eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 2));
-   eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 1));
+   eo_do(obj, eo_event_callback_priority_add(obj, EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 2));
+   eo_do(obj, eo_event_callback_priority_add(obj, EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 1));
    /* This will be called afterwards. */
-   eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_DEFAULT, _a_changed_cb, (void *) 3));
+   eo_do(obj, eo_event_callback_priority_add(obj, EV_A_CHANGED, EO_CALLBACK_PRIORITY_DEFAULT, _a_changed_cb, (void *) 3));
    /* This will never be called because the previous callback returns NULL. */
-   eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_AFTER, _a_changed_cb, (void *) 4));
+   eo_do(obj, eo_event_callback_priority_add(obj, EV_A_CHANGED, EO_CALLBACK_PRIORITY_AFTER, _a_changed_cb, (void *) 4));
 
-   eo_do(obj, simple_a_set(1));
+   eo_do(obj, simple_a_set(obj, 1));
 
    fail_if(cb_count != 3);
 
-   eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _a_changed_cb, (void *) 3));
+   eo_do(obj, eo_event_callback_del(obj, EV_A_CHANGED, _a_changed_cb, (void *) 3));
    fail_if(pd->cb_count != 3);
 
-   eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _a_changed_cb, (void *) 12));
+   eo_do(obj, eo_event_callback_del(obj, EV_A_CHANGED, _a_changed_cb, (void *) 12));
    fail_if(pd->cb_count != 3);
 
-   eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _a_changed_cb, (void *) 4));
+   eo_do(obj, eo_event_callback_del(obj, EV_A_CHANGED, _a_changed_cb, (void *) 4));
    fail_if(pd->cb_count != 2);
 
-   eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _a_changed_cb, (void *) 2));
+   eo_do(obj, eo_event_callback_del(obj, EV_A_CHANGED, _a_changed_cb, (void *) 2));
    fail_if(pd->cb_count != 1);
 
-   eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _a_changed_cb, (void *) 1));
+   eo_do(obj, eo_event_callback_del(obj, EV_A_CHANGED, _a_changed_cb, (void *) 1));
    fail_if(pd->cb_count != 0);
 
    /* Freeze/thaw. */
    int fcount = 0;
    cb_count = 0;
-   eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 1));
+   eo_do(obj, eo_event_callback_priority_add(obj, EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 1));
    fail_if(pd->cb_count != 1);
 
-   eo_do(obj, fcount = eo_event_freeze_count_get());
+   eo_do(obj, fcount = eo_event_freeze_count_get(obj));
    fail_if(fcount != 0);
 
-   eo_do(obj, eo_event_freeze());
-   eo_do(obj, fcount = eo_event_freeze_count_get());
+   eo_do(obj, eo_event_freeze(obj));
+   eo_do(obj, fcount = eo_event_freeze_count_get(obj));
    fail_if(fcount != 1);
 
-   eo_do(obj, eo_event_freeze());
-   eo_do(obj, fcount = eo_event_freeze_count_get());
+   eo_do(obj, eo_event_freeze(obj));
+   eo_do(obj, fcount = eo_event_freeze_count_get(obj));
    fail_if(fcount != 2);
 
-   eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 2));
+   eo_do(obj, eo_event_callback_priority_add(obj, EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 2));
    fail_if(pd->cb_count != 1);
 
-   eo_do(obj, simple_a_set(2));
+   eo_do(obj, simple_a_set(obj, 2));
    fail_if(cb_count != 0);
-   eo_do(obj, eo_event_thaw());
-   eo_do(obj, fcount = eo_event_freeze_count_get());
+   eo_do(obj, eo_event_thaw(obj));
+   eo_do(obj, fcount = eo_event_freeze_count_get(obj));
    fail_if(fcount != 1);
 
-   eo_do(obj, eo_event_thaw());
-   eo_do(obj, fcount = eo_event_freeze_count_get());
+   eo_do(obj, eo_event_thaw(obj));
+   eo_do(obj, fcount = eo_event_freeze_count_get(obj));
    fail_if(fcount != 0);
 
-   eo_do(obj, simple_a_set(3));
+   eo_do(obj, simple_a_set(obj, 3));
    fail_if(cb_count != 2);
 
    cb_count = 0;
-   eo_do(obj, eo_event_thaw());
-   eo_do(obj, fcount = eo_event_freeze_count_get());
+   eo_do(obj, eo_event_thaw(obj));
+   eo_do(obj, fcount = eo_event_freeze_count_get(obj));
    fail_if(fcount != 0);
 
-   eo_do(obj, eo_event_freeze());
-   eo_do(obj, fcount = eo_event_freeze_count_get());
+   eo_do(obj, eo_event_freeze(obj));
+   eo_do(obj, fcount = eo_event_freeze_count_get(obj));
    fail_if(fcount != 1);
 
-   eo_do(obj, simple_a_set(2));
+   eo_do(obj, simple_a_set(obj, 2));
    fail_if(cb_count != 0);
-   eo_do(obj, eo_event_thaw());
-   eo_do(obj, fcount = eo_event_freeze_count_get());
+   eo_do(obj, eo_event_thaw(obj));
+   eo_do(obj, fcount = eo_event_freeze_count_get(obj));
    fail_if(fcount != 0);
 
-   eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _a_changed_cb, (void *) 1));
+   eo_do(obj, eo_event_callback_del(obj, EV_A_CHANGED, _a_changed_cb, (void *) 1));
    fail_if(pd->cb_count != 0);
-   eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _a_changed_cb, (void *) 2));
+   eo_do(obj, eo_event_callback_del(obj, EV_A_CHANGED, _a_changed_cb, (void *) 2));
    fail_if(pd->cb_count != -1);
 
    /* Global Freeze/thaw. */
    fcount = 0;
    cb_count = 0;
    pd->cb_count = 0;
-   eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 1));
+   eo_do(obj, eo_event_callback_priority_add(obj, EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 1));
    fail_if(pd->cb_count != 1);
 
-   eo_do(EO_CLASS, fcount = eo_event_global_freeze_count_get());
+   eo_do(EO_CLASS, fcount = eo_event_global_freeze_count_get(obj));
    fail_if(fcount != 0);
 
-   eo_do(EO_CLASS, eo_event_global_freeze());
-   eo_do(EO_CLASS, fcount = eo_event_global_freeze_count_get());
+   eo_do(EO_CLASS, eo_event_global_freeze(obj));
+   eo_do(EO_CLASS, fcount = eo_event_global_freeze_count_get(obj));
    fail_if(fcount != 1);
 
-   eo_do(EO_CLASS, eo_event_global_freeze());
-   eo_do(EO_CLASS, fcount = eo_event_global_freeze_count_get());
+   eo_do(EO_CLASS, eo_event_global_freeze(obj));
+   eo_do(EO_CLASS, fcount = eo_event_global_freeze_count_get(obj));
    fail_if(fcount != 2);
 
-   eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 2));
+   eo_do(obj, eo_event_callback_priority_add(obj, EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 2));
    fail_if(pd->cb_count != 1);
 
-   eo_do(obj, simple_a_set(2));
+   eo_do(obj, simple_a_set(obj, 2));
    fail_if(cb_count != 0);
-   eo_do(EO_CLASS, eo_event_global_thaw());
-   eo_do(EO_CLASS, fcount = eo_event_global_freeze_count_get());
+   eo_do(EO_CLASS, eo_event_global_thaw(obj));
+   eo_do(EO_CLASS, fcount = eo_event_global_freeze_count_get(obj));
    fail_if(fcount != 1);
 
-   eo_do(EO_CLASS, eo_event_global_thaw());
-   eo_do(EO_CLASS, fcount = eo_event_global_freeze_count_get());
+   eo_do(EO_CLASS, eo_event_global_thaw(obj));
+   eo_do(EO_CLASS, fcount = eo_event_global_freeze_count_get(obj));
    fail_if(fcount != 0);
 
-   eo_do(obj, simple_a_set(3));
+   eo_do(obj, simple_a_set(obj, 3));
    fail_if(cb_count != 2);
 
    cb_count = 0;
-   eo_do(EO_CLASS, eo_event_global_thaw());
-   eo_do(EO_CLASS, fcount = eo_event_global_freeze_count_get());
+   eo_do(EO_CLASS, eo_event_global_thaw(obj));
+   eo_do(EO_CLASS, fcount = eo_event_global_freeze_count_get(obj));
    fail_if(fcount != 0);
 
-   eo_do(EO_CLASS, eo_event_global_freeze());
-   eo_do(EO_CLASS, fcount = eo_event_global_freeze_count_get());
+   eo_do(EO_CLASS, eo_event_global_freeze(obj));
+   eo_do(EO_CLASS, fcount = eo_event_global_freeze_count_get(obj));
    fail_if(fcount != 1);
 
-   eo_do(obj, simple_a_set(2));
+   eo_do(obj, simple_a_set(obj, 2));
    fail_if(cb_count != 0);
-   eo_do(EO_CLASS, eo_event_global_thaw());
-   eo_do(EO_CLASS, fcount = eo_event_global_freeze_count_get());
+   eo_do(EO_CLASS, eo_event_global_thaw(obj));
+   eo_do(EO_CLASS, fcount = eo_event_global_freeze_count_get(obj));
    fail_if(fcount != 0);
 
 

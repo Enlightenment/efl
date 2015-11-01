@@ -63,10 +63,10 @@ _ector_cairo_symbol_get(Eo *obj, const char *name)
    Eo *parent;
    void *sym;
 
-   eo_do(obj, parent = eo_parent_get());
+   eo_do(obj, parent = eo_parent_get(obj));
    if (!parent) return NULL;
 
-   eo_do(parent, sym = ector_cairo_surface_symbol_get(name));
+   eo_do(parent, sym = ector_cairo_surface_symbol_get(parent, name));
    return sym;
 }
 

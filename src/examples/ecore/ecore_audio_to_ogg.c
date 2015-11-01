@@ -49,7 +49,7 @@ main(int argc, char *argv[])
    ecore_audio_init();
 
 
-   in = eo_add(ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL);
+   eo_add(in, ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL);
    eo_do(in, ecore_audio_obj_name_set(basename(argv[1])));
    eo_do(in, ret = ecore_audio_obj_source_set(argv[1]));
    if (!ret) {
@@ -60,7 +60,7 @@ main(int argc, char *argv[])
 
    eo_do(in, eo_event_callback_add(ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL));
 
-   out = eo_add(ECORE_AUDIO_OBJ_OUT_SNDFILE_CLASS, NULL);
+   eo_add(out, ECORE_AUDIO_OBJ_OUT_SNDFILE_CLASS, NULL);
    eo_do(out, ret = ecore_audio_obj_source_set(argv[2]));
    if (!ret) {
      printf("Could not set %s as output\n", argv[2]);

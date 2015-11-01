@@ -5,7 +5,7 @@
 #include "eo_ptr_indirection.h"
 
 /* Tables handling pointers indirection */
-_Eo_Ids_Table **_eo_ids_tables[MAX_MID_TABLE_ID] = { NULL };
+__attribute__ ((visibility("default"))) _Eo_Ids_Table **_eo_ids_tables[MAX_MID_TABLE_ID] = { NULL };
 
 /* Current table used for following allocations */
 _Eo_Ids_Table *_current_table = NULL;

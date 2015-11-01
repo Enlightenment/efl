@@ -49,7 +49,8 @@ EAPI Ecore_Job *
 ecore_job_add(Ecore_Cb    func,
               const void *data)
 {
-   Ecore_Job *job = eo_add(MY_CLASS, _ecore_parent, ecore_job_constructor(func, data));
+   Ecore_Job *job;
+   eo_add(job, MY_CLASS, _ecore_parent, ecore_job_constructor(NULL, func, data));
    return job;
 }
 
@@ -88,7 +89,7 @@ ecore_job_del(Ecore_Job *obj)
    Ecore_Job_Data *job = eo_data_scope_get(obj, MY_CLASS);
    data = job->data;
    ecore_event_del(job->event);
-   eo_do(obj, eo_parent_set(NULL));
+   eo_do(obj, eo_parent_set(obj, NULL));
    return data;
 }
 
@@ -96,7 +97,7 @@ EOLIAN static void
 _ecore_job_eo_base_destructor(Eo *obj, Ecore_Job_Data *_pd EINA_UNUSED)
 {
    /*FIXME: check if ecore_event_del should be called from here*/
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_super_eo_destructor(MY_CLASS, obj);
 }
 
 EOLIAN static Eo *
@@ -107,7 +108,7 @@ _ecore_job_eo_base_finalize(Eo *obj, Ecore_Job_Data *pd)
         return NULL;
      }
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
+   return eo_super_eo_finalize(MY_CLASS, obj);
 }
 
 static Eina_Bool
@@ -126,7 +127,7 @@ static void
 _ecore_job_event_free(void *data,
                       void *job EINA_UNUSED)
 {
-   eo_do(data, eo_parent_set(NULL));
+   eo_do(data, eo_parent_set(data, NULL));
 
    Ecore_Job *obj = data;
 

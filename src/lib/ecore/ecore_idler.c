@@ -39,7 +39,7 @@ ecore_idler_add(Ecore_Task_Cb func,
 
    _ecore_lock();
 
-   ie = eo_add(MY_CLASS, _ecore_parent, ecore_idler_constructor(func, data));
+   eo_add(ie, MY_CLASS, _ecore_parent, ecore_idler_constructor(NULL, func, data));
 
    _ecore_unlock();
    return ie;
@@ -98,7 +98,7 @@ _ecore_idler_eo_base_destructor(Eo *obj, Ecore_Idler_Data *idler)
    idler->delete_me = 1;
    idlers_delete_me = 1;
 
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_super_eo_destructor(MY_CLASS, obj);
 }
 
 EOLIAN static Eo *
@@ -109,7 +109,7 @@ _ecore_idler_eo_base_finalize(Eo *obj, Ecore_Idler_Data *idler)
         return NULL;
      }
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
+   return eo_super_eo_finalize(MY_CLASS, obj);
 }
 
 void
@@ -120,7 +120,7 @@ _ecore_idler_shutdown(void)
      {
         idlers = (Ecore_Idler_Data *)eina_inlist_remove(EINA_INLIST_GET(idlers), EINA_INLIST_GET(idlers));
 
-        eo_do(ie->obj, eo_parent_set(NULL));
+        eo_do(ie->obj, eo_parent_set(ie->obj, NULL));
         if (eo_destructed_is(ie->obj))
           eo_manual_free(ie->obj);
         else
@@ -179,7 +179,7 @@ _ecore_idler_all_call(void)
 
                   idlers = (Ecore_Idler_Data *)eina_inlist_remove(EINA_INLIST_GET(idlers), EINA_INLIST_GET(ie));
 
-                  eo_do(ie->obj, eo_parent_set(NULL));
+                  eo_do(ie->obj, eo_parent_set(ie->obj, NULL));
                   if (eo_destructed_is(ie->obj))
                      eo_manual_free(ie->obj);
                   else

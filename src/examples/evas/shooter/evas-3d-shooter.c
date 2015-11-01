@@ -884,7 +884,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
          evas_canvas3d_node_position_set(10 , 9.0, -12));
 
    /* Setup mesh for bounding sphere */
-   data->material_ball = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
+   eo_add(data->material_ball, EVAS_CANVAS3D_MATERIAL_CLASS, evas);
    eo_do(data->material_ball,
           evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),
           evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE),
@@ -894,7 +894,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
           evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0),
           evas_canvas3d_material_shininess_set(50.0));
 
-   data->mesh_ball = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
+   eo_add(data->mesh_ball, EVAS_CANVAS3D_MESH_CLASS, evas);
 
    _set_ball(data->mesh_ball, 10);
 
@@ -949,7 +949,7 @@ _mesh_setup_column(Scene_Data *data, int index)
 {
    /* Setup mesh for column */
 
-   data->material_column = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
+   eo_add(data->material_column, EVAS_CANVAS3D_MATERIAL_CLASS, evas);
 
    eo_do(data->material_column,
          evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),
@@ -961,7 +961,7 @@ _mesh_setup_column(Scene_Data *data, int index)
          evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0),
          evas_canvas3d_material_shininess_set(50.0));
 
-   data->mesh_column[index] = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
+   eo_add(data->mesh_column[index], EVAS_CANVAS3D_MESH_CLASS, evas);
 
    SETUP_MESH_NODE(column[index])
 
@@ -972,7 +972,7 @@ _mesh_setup_column(Scene_Data *data, int index)
          evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_PHONG),
          evas_canvas3d_mesh_frame_material_set(0, data->material_column));
 
-   data->texture_diffuse_column = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
+   eo_add(data->texture_diffuse_column, EVAS_CANVAS3D_TEXTURE_CLASS, evas);
 
    eo_do(data->texture_diffuse_column,
          evas_canvas3d_texture_file_set(red_brick_path, NULL),
@@ -1090,23 +1090,23 @@ _scene_setup(Scene_Data *data)
    for (i = 0; i < 4; i++)
       motion_vec[i] = 0;
 
-   data->cube_primitive = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
+   eo_add(data->cube_primitive, EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
    eo_do(data->cube_primitive,
          evas_canvas3d_primitive_form_set(EVAS_CANVAS3D_MESH_PRIMITIVE_CUBE),
          evas_canvas3d_primitive_precision_set(10));
 
-   data->sphere_primitive = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
+   eo_add(data->sphere_primitive, EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
    eo_do(data->sphere_primitive,
          evas_canvas3d_primitive_form_set(EVAS_CANVAS3D_MESH_PRIMITIVE_SPHERE),
          evas_canvas3d_primitive_precision_set(50));
 
-   global_scene = eo_add(EVAS_CANVAS3D_SCENE_CLASS, evas);
+   eo_add(global_scene, EVAS_CANVAS3D_SCENE_CLASS, evas);
 
    eo_do(global_scene,
          evas_canvas3d_scene_size_set(WIDTH, HEIGHT),
          evas_canvas3d_scene_background_color_set(0.5, 0.5, 0.9, 0.0));
 
-   data->root_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+   eo_add(data->root_node, EVAS_CANVAS3D_NODE_CLASS, evas,
                                    evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    _camera_setup(data);
@@ -1117,7 +1117,7 @@ _scene_setup(Scene_Data *data)
    for (i = 0; i < 10; i++)
      _mesh_setup_rocket(data, i);
 
-   data->cylinder_primitive = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
+   eo_add(data->cylinder_primitive, EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
    eo_do(data->cylinder_primitive,
          evas_canvas3d_primitive_mode_set(EVAS_CANVAS3D_PRIMITIVE_MODE_WITHOUT_BASE),
          evas_canvas3d_primitive_form_set(EVAS_CANVAS3D_MESH_PRIMITIVE_CYLINDER),
@@ -1174,7 +1174,7 @@ _scene_setup(Scene_Data *data)
           }
      }
 
-   data->carp_mediator_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+   eo_add(data->carp_mediator_node, EVAS_CANVAS3D_NODE_CLASS, evas,
                                          evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_MESH));
 
    eo_do(data->carp_mediator_node,

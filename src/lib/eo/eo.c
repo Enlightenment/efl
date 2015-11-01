@@ -19,7 +19,7 @@
 
 /* Used inside the class_get functions of classes, see #EO_DEFINE_CLASS */
 EAPI Eina_Spinlock _eo_class_creation_lock;
-int _eo_log_dom = -1;
+__attribute__ ((visibility("default"))) int _eo_log_dom = -1;
 
 static _Eo_Class **_eo_classes;
 static Eo_Id _eo_classes_last_id;
@@ -32,7 +32,7 @@ static size_t _eo_sz = 0;
 static size_t _eo_class_sz = 0;
 
 static void _eo_condtor_reset(_Eo_Object *obj);
-static inline void *_eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass);
+/* static inline void *_eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass); */
 static inline void *_eo_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Eo_Class *klass, const _Eo_Object *ref_obj);
 static inline void _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj);
 
@@ -90,7 +90,7 @@ _dich_copy_all(_Eo_Class *dst, const _Eo_Class *src)
      }
 }
 
-static inline const op_type_funcs *
+EAPI const op_type_funcs *
 _dich_func_get(const _Eo_Class *klass, Eo_Op op)
 {
    size_t idx1 = DICH_CHAIN1(op);
@@ -186,7 +186,7 @@ _eo_is_a_class(const Eo *eo_id)
    return !!(oid & MASK_CLASS_TAG);
 }
 
-static inline _Eo_Class *
+EAPI _Eo_Class *
 _eo_class_pointer_get(const Eo_Class *klass_id)
 {
 #ifdef HAVE_EO_ID
@@ -473,10 +473,9 @@ _eo_do_internal(const Eo *eo_id, const Eo_Class *cur_klass_id,
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EAPI Eo*
 _eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, void *eo_stack)
 {
-   Eina_Bool ret = EINA_TRUE;
    Eo_Stack_Frame *fptr;
    Eo_Call_Stack *stack = eo_stack;
 
@@ -492,12 +491,12 @@ _eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, 
         fptr->o.obj = NULL;
         fptr->cur_klass = NULL;
 
-        ret = EINA_FALSE;
+        return NULL;
      }
 
    stack->frame_ptr++;
 
-   return ret;
+   return eo_id;
 }
 
 EAPI void
@@ -832,20 +831,20 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 
    _eo_ref(obj);
 
-   eo_do(eo_id, eo_parent_set(parent_id));
+   eo_do(eo_id, eo_parent_set(eo_id, parent_id));
 
    /* If there's a parent. Ref. Eo_add should return an object with either a
     * parent ref, or with the lack of, just a ref. */
      {
         Eo *parent_tmp;
-        if (ref && eo_do_ret(eo_id, parent_tmp, eo_parent_get()))
+        if (ref && eo_do_ret(eo_id, parent_tmp, eo_parent_get(eo_id)))
           {
              _eo_ref(obj);
           }
      }
 
    /* eo_id can change here. Freeing is done on the resolved object. */
-   eo_do(eo_id, eo_id = eo_constructor());
+   eo_do(eo_id, eo_id = eo_constructor(eo_id));
    if (!eo_id)
      {
         ERR("Object of class '%s' - Error while constructing object",
@@ -858,7 +857,7 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
    return eo_id;
 }
 
-static Eo *
+EAPI Eo *
 _eo_add_internal_end(Eo *eo_id, Eo_Call_Stack *stack)
 {
    Eo_Stack_Frame *fptr;
@@ -909,11 +908,20 @@ cleanup:
 }
 
 EAPI Eo *
-_eo_add_end(void *eo_stack)
+_eo_add_end(Eo* obj_id, void *eo_stack, int x)
 {
-   Eo *ret = eo_finalize();
-   ret = _eo_add_internal_end(ret, eo_stack);
-   _eo_do_end(eo_stack);
+  Eo* ret = NULL;
+  if(obj_id)
+    {
+       fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+       ret = eo_finalize(obj_id);
+       fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+       ret = _eo_add_internal_end(ret, eo_stack);
+       fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+       _eo_do_end(eo_stack);
+    }
+       fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+       fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    return ret;
 }
 
@@ -1190,6 +1198,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
    /* Build class extensions list */
      {
         DBG("Started building extensions list for class '%s'", desc->name);
+        fprintf(stderr, "Started building extensions list for class '%s'\n", desc->name); fflush(stderr);
         extn_list = NULL;
         const _Eo_Class *extn = NULL;
         const Eo_Id *extn_id = NULL;
@@ -1220,6 +1229,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         extn_sz = sizeof(_Eo_Class *) * (eina_list_count(extn_list) + 1);
 
         DBG("Finished building extensions list for class '%s'", desc->name);
+        fprintf(stderr, "Finished building extensions list for class '%s'\n", desc->name); fflush(stderr);
      }
 
    /* Prepare mro list */
@@ -1244,6 +1254,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         const _Eo_Class *kls_itr;
 
         DBG("Started building Mixins list for class '%s'", desc->name);
+        fprintf(stderr, "Started building Mixins list for class '%s'\n", desc->name); fflush(stderr);
 
         mixins = NULL;
         EINA_LIST_FOREACH(mro, itr, kls_itr)
@@ -1258,6 +1269,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
           mixins_sz += sizeof(Eo_Extension_Data_Offset);
 
         DBG("Finished building Mixins list for class '%s'", desc->name);
+        fprintf(stderr, "Finished building Mixins list for class '%s'\n", desc->name);  fflush(stderr);
      }
 
    klass = calloc(1, _eo_class_sz + extn_sz + mro_sz + mixins_sz);
@@ -1297,6 +1309,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
              *(extn_itr++) = extn;
 
              DBG("Added '%s' extension", extn->desc->name);
+             fprintf(stderr, "Added '%s' extension\n", extn->desc->name); fflush(stderr);
           }
         *(extn_itr) = NULL;
      }
@@ -1310,6 +1323,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
              *(mro_itr++) = kls_itr;
 
              DBG("Added '%s' to MRO", kls_itr->desc->name);
+             fprintf(stderr, "Added '%s' to MRO\n", kls_itr->desc->name); fflush(stderr);
           }
         *(mro_itr) = NULL;
      }
@@ -1331,6 +1345,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
              extn_data_itr++;
 
              DBG("Added '%s' to Data Offset info", kls_itr->desc->name);
+             fprintf(stderr, "Added '%s' to Data Offset info\n", kls_itr->desc->name);
           }
         extn_data_itr->klass = 0;
         extn_data_itr->offset = 0;
@@ -1410,6 +1425,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
    _eo_class_constructor(klass);
 
    DBG("Finished building class '%s'", klass->desc->name);
+   fprintf(stderr, "Finished building class '%s'\n", klass->desc->name); fflush(stderr);
 
    return _eo_class_id_get(klass);
 }
@@ -1499,13 +1515,18 @@ EAPI void
 eo_del(const Eo *obj)
 {
    Eo *parent_tmp;
-   if (eo_do_ret(obj, parent_tmp, eo_parent_get()))
+   fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   if (eo_do_ret(obj, parent_tmp, eo_parent_get(obj)))
      {
-        eo_do(obj, eo_parent_set(NULL));
+        fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+        eo_do(obj, eo_parent_set(obj, NULL));
+        fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
      }
    else
      {
+        fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
         eo_unref(obj);
+        fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
      }
 }
 
@@ -1541,7 +1562,7 @@ _eo_data_scope_safe_get(const _Eo_Object *obj, const _Eo_Class *klass)
    return NULL;
 }
 
-static inline void *
+EAPI void *
 _eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass)
 {
    if (EINA_LIKELY(klass->desc->type != EO_CLASS_TYPE_MIXIN))
@@ -1869,5 +1890,46 @@ eo_manual_free(Eo *obj_id)
    _eo_free(obj);
 
    return EINA_TRUE;
+}
+
+__attribute__ ((visibility("default"))) _Eo_Object *
+_eo_obj_pointer_get(const Eo_Id obj_id)
+{
+#ifdef HAVE_EO_ID
+   _Eo_Id_Entry *entry;
+   Generation_Counter generation;
+   Table_Index mid_table_id, table_id, entry_id;
+
+   // NULL objects will just be sensibly ignored. not worth complaining
+   // every single time.
+   if (!obj_id)
+     {
+        DBG("obj_id is NULL. Possibly unintended access?");
+        return NULL;
+     }
+   else if (!(obj_id & MASK_OBJ_TAG))
+     {
+        DBG("obj_id is not a valid object id.");
+        return NULL;
+     }
+
+   EO_DECOMPOSE_ID(obj_id, mid_table_id, table_id, entry_id, generation);
+
+   /* Check the validity of the entry */
+   if (_eo_ids_tables[mid_table_id] && TABLE_FROM_IDS)
+     {
+        entry = &(TABLE_FROM_IDS->entries[entry_id]);
+        if (entry && entry->active && (entry->generation == generation))
+          return entry->ptr;
+     }
+
+   ERR("obj_id %p is not pointing to a valid object. Maybe it has already been freed.",
+         (void *)obj_id);
+
+   return NULL;
+#else
+   return (_Eo_Object *) obj_id;
+#endif
+
 }
 

@@ -277,7 +277,7 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
      }
    if (obj->is_smart)
      {
-        eo_do(eo_obj, evas_obj_smart_clip_set(eo_clip));
+        eo_do(eo_obj, evas_obj_smart_clip_set(eo_obj, eo_clip));
      }
    if (obj->cur->clipper)
      {
@@ -409,7 +409,7 @@ _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    if (evas_object_intercept_call_clip_unset(eo_obj, obj)) return;
    if (obj->is_smart)
      {
-        eo_do(eo_obj, evas_obj_smart_clip_unset());
+        eo_do(eo_obj, evas_obj_smart_clip_unset(eo_obj));
      }
    if (obj->cur->clipper)
      {

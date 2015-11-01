@@ -272,13 +272,13 @@ static const Eo_Callback_Array_Item evas_object_table_callbacks[] = {
 static void
 _evas_object_table_child_connect(Evas_Object *o, Evas_Object *child)
 {
-   eo_do(child, eo_event_callback_array_add(evas_object_table_callbacks, o));
+   eo_do(child, eo_event_callback_array_add(child, evas_object_table_callbacks, o));
 }
 
 static void
 _evas_object_table_child_disconnect(Evas_Object *o, Evas_Object *child)
 {
-   eo_do(child, eo_event_callback_array_del(evas_object_table_callbacks, o));
+   eo_do(child, eo_event_callback_array_del(child, evas_object_table_callbacks, o));
 }
 
 static void
@@ -897,7 +897,7 @@ _evas_table_evas_object_smart_add(Eo *obj, Evas_Table_Data *priv)
    priv->expand_h = 0;
    priv->expand_v = 0;
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   eo_super_evas_obj_smart_add(MY_CLASS, obj);
 }
 
 EOLIAN static void
@@ -921,7 +921,7 @@ _evas_table_evas_object_smart_del(Eo *obj, Evas_Table_Data *priv)
         priv->cache = NULL;
      }
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   eo_super_evas_obj_smart_del(MY_CLASS, obj);
 }
 
 EOLIAN static void
@@ -962,15 +962,16 @@ evas_object_table_add(Evas *evas)
    MAGIC_CHECK(evas, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *obj = eo_add(MY_CLASS, evas);
+   Evas_Object *obj;
+   eo_add(obj, MY_CLASS, evas);
    return obj;
 }
 
 EOLIAN static Eo *
 _evas_table_eo_base_constructor(Eo *obj, Evas_Table_Data *class_data EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj, evas_obj_type_set(MY_CLASS_NAME_LEGACY));
+  obj = eo_super_eo_constructor( MY_CLASS, obj);
+   eo_do(obj, evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY));
 
    return obj;
 }
@@ -1395,7 +1396,7 @@ _evas_table_mirrored_set(Eo *o, Evas_Table_Data *priv, Eina_Bool mirrored)
    if (priv->is_mirrored != mirrored)
      {
         priv->is_mirrored = mirrored;
-        eo_do(o, evas_obj_smart_calculate());
+        eo_do(o, evas_obj_smart_calculate(o));
      }
 }
 

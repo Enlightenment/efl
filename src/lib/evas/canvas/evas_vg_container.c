@@ -33,7 +33,7 @@ _efl_vg_container_eo_base_constructor(Eo *obj,
 
    pd->names = eina_hash_stringshared_new(NULL);
 
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_super_eo_constructor( MY_CLASS, obj);
 
    nd = eo_data_scope_get(obj, EFL_VG_BASE_CLASS);
    nd->render_pre = _efl_vg_container_render_pre;
@@ -46,7 +46,7 @@ static void
 _efl_vg_container_eo_base_destructor(Eo *obj,
                                      Efl_VG_Container_Data *pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_super_eo_destructor(MY_CLASS, obj);
 
    eina_hash_free(pd->names);
    pd->names = NULL;
@@ -68,12 +68,12 @@ _efl_vg_container_efl_vg_base_bounds_get(Eo *obj EINA_UNUSED,
      {
         if (first)
           {
-             eo_do(child, efl_vg_bounds_get(r));
+             eo_do(child, efl_vg_bounds_get(child, r));
              first = EINA_FALSE;
           }
         else
           {
-             eo_do(child, efl_vg_bounds_get(&s));
+             eo_do(child, efl_vg_bounds_get(child, &s));
              eina_rectangle_union(r, &s);
           }
      }
@@ -109,7 +109,7 @@ _efl_vg_container_efl_vg_base_interpolate(Eo *obj,
    Eina_Hash_Tuple *tuple;
    Eina_Bool r;
 
-   eo_do_super(obj, EFL_VG_CONTAINER_CLASS, r = efl_vg_interpolate(from, to, pos_map));
+   r = eo_super_efl_vg_interpolate(EFL_VG_CONTAINER_CLASS, obj, from, to, pos_map);
 
    if (!r) return EINA_FALSE;
 
@@ -128,7 +128,7 @@ _efl_vg_container_efl_vg_base_interpolate(Eo *obj,
         if (!toc || !fromc) continue ;
         if (eo_class_get(toc) != eo_class_get(fromc)) continue ;
 
-        eo_do(cc, r &= efl_vg_interpolate(fromc, toc, pos_map));
+        eo_do(cc, r &= efl_vg_interpolate(cc, fromc, toc, pos_map));
      }
    eina_iterator_free(it);
 
@@ -144,7 +144,7 @@ _efl_vg_container_efl_vg_base_dup(Eo *obj,
    Eina_List *l;
    Eo *child;
 
-   eo_do_super(obj, EFL_VG_CONTAINER_CLASS, efl_vg_dup(from));
+   eo_super_efl_vg_dup(EFL_VG_CONTAINER_CLASS, obj, from);
 
    fromd = eo_data_scope_get(from, EFL_VG_CONTAINER_CLASS);
 
@@ -155,16 +155,19 @@ _efl_vg_container_efl_vg_base_dup(Eo *obj,
      {
         // By setting parent, we automatically reference
         // this new object as a child of obj. Magic at work !
-        eo_add_ref(eo_class_get(child),
+        Eo* tmp;
+        eo_add_ref(tmp, eo_class_get(child),
                    obj,
-                   efl_vg_dup(child));
+                   efl_vg_dup(eo_class_get(child), child));
      }
 }
 
 EAPI Efl_VG*
 evas_vg_container_add(Efl_VG *parent)
 {
-   return eo_add(EFL_VG_CONTAINER_CLASS, parent);
+   Eo* o;
+   eo_add(o, EFL_VG_CONTAINER_CLASS, parent);
+   return o;
 }
 
 #include "efl_vg_container.eo.c"

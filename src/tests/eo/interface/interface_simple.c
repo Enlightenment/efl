@@ -20,18 +20,19 @@ static int \
 _##name##_get(Eo *obj EINA_UNUSED, void *class_data) \
 { \
    const Private_Data *pd = class_data; \
-   printf("%s %d\n", __func__, pd->name); \
+   printf("%s %s:%d %d\n", __func__, __FILE__, __LINE__, pd->name); \
    return pd->name; \
 } \
 static void \
 _##name##_set(Eo *obj EINA_UNUSED, void *class_data, int name) \
 { \
    Private_Data *pd = class_data; \
+   printf("%s %s:%d %d\n", __func__, __FILE__, __LINE__, pd->name); \
    pd->name = name; \
-   printf("%s %d\n", __func__, pd->name); \
+   printf("%s %s:%d %d\n", __func__, __FILE__, __LINE__, pd->name); \
 } \
-EO_VOID_FUNC_BODYV(simple_##name##_set, EO_FUNC_CALL(name), int name); \
-EO_FUNC_BODY(simple_##name##_get, int, 0);
+EO_FUNC_VOID_API_DEFINE(simple_##name##_set, EO_FUNC_CALL(name), int name); \
+EO_FUNC_API_DEFINE(simple_##name##_get, int, 0, );
 
 _GET_SET_FUNC(a)
 _GET_SET_FUNC(b)
@@ -40,8 +41,8 @@ static int
 _ab_sum_get(Eo *obj, void *class_data EINA_UNUSED)
 {
    int a = 0, b = 0;
-   eo_do(obj, a = simple_a_get(), b = simple_b_get());
-   printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
+   eo_do(obj, a = simple_a_get(obj), b = simple_b_get(obj));
+   printf("%s %s:%d %s %s\n", __func__, __FILE__, __LINE__, eo_class_name_get(MY_CLASS), __func__);
    return a + b;
 }
 
@@ -49,8 +50,8 @@ static int
 _ab_sum_get2(Eo *obj, void *class_data EINA_UNUSED)
 {
    int a = 0, b = 0;
-   eo_do(obj, a = simple_a_get(), b = simple_b_get());
-   printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
+   eo_do(obj, a = simple_a_get(obj), b = simple_b_get(obj));
+   printf("%s %s:%d %s %s\n", __func__, __FILE__, __LINE__, eo_class_name_get(MY_CLASS), __func__);
    return a + b + 1;
 }
 

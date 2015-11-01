@@ -12,7 +12,7 @@ static void
 _add_and_print_set(Eo *obj, void *class_data EINA_UNUSED, int x)
 {
    int a = 0, b = 0;
-   eo_do(obj, a = simple_a_get(), b = simple_b_get());
+   eo_do(obj, a = simple_a_get(obj), b = simple_b_get(obj));
    printf("%s %d\n", __func__, a + b + x);
 }
 
@@ -21,20 +21,22 @@ extern int my_init_count;
 static Eo *
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
+   fprintf(stderr, "%s %s:%d my_init_count: %d\n", __func__, __FILE__, __LINE__, my_init_count);
    my_init_count++;
+   fprintf(stderr, "%s %s:%d my_init_count: %d\n", __func__, __FILE__, __LINE__, my_init_count);
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   return eo_super_eo_constructor( MY_CLASS, obj);
 }
 
 static void
 _destructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_super_eo_destructor(MY_CLASS, obj);
 
    my_init_count--;
 }
 
-EAPI EO_VOID_FUNC_BODYV(mixin_add_and_print, EO_FUNC_CALL(x), int x);
+EAPI EO_FUNC_VOID_API_DEFINE(mixin_add_and_print, EO_FUNC_CALL(x), int x);
 
 static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(mixin_add_and_print, _add_and_print_set),

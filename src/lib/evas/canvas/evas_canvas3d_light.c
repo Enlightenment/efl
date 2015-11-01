@@ -8,7 +8,7 @@ _light_node_change_notify(const Eina_Hash *hash EINA_UNUSED, const void *key,
                         void *data EINA_UNUSED, void *fdata)
 {
    Evas_Canvas3D_Node *n = *(Evas_Canvas3D_Node **)key;
-   eo_do(n, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_LIGHT, (Evas_Canvas3D_Object *)fdata));
+   eo_do(n, evas_canvas3d_object_change(n, EVAS_CANVAS3D_STATE_NODE_LIGHT, (Evas_Canvas3D_Object *)fdata));
    return EINA_TRUE;
 }
 
@@ -72,15 +72,16 @@ evas_canvas3d_light_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(MY_CLASS, e);
+   Evas_Object *eo_obj;
+   eo_add(eo_obj, MY_CLASS, e);
    return eo_obj;
 }
 
 EOLIAN static Eo *
 _evas_canvas3d_light_eo_base_constructor(Eo *obj, Evas_Canvas3D_Light_Data *pd)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj, evas_canvas3d_object_type_set(EVAS_CANVAS3D_OBJECT_TYPE_LIGHT));
+  obj = eo_super_eo_constructor( MY_CLASS, obj);
+   eo_do(obj, evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_LIGHT));
    evas_color_set(&pd->ambient, 0.0, 0.0, 0.0, 1.0);
    evas_color_set(&pd->diffuse, 1.0, 1.0, 1.0, 1.0);
    evas_color_set(&pd->specular, 1.0, 1.0, 1.0, 1.0);
@@ -115,7 +116,7 @@ _evas_canvas3d_light_eo_base_destructor(Eo *obj, Evas_Canvas3D_Light_Data *pd)
         eina_hash_free(pd->nodes);
      }
 
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_super_eo_destructor(MY_CLASS, obj);
 }
 
 
@@ -125,7 +126,7 @@ _evas_canvas3d_light_directional_set(Eo *obj, Evas_Canvas3D_Light_Data *pd, Eina
    if (pd->directional != directional)
      {
         pd->directional = directional;
-        eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_ANY, NULL));
+        eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_ANY, NULL));
      }
 }
 
@@ -143,7 +144,7 @@ _evas_canvas3d_light_ambient_set(Eo *obj, Evas_Canvas3D_Light_Data *pd, Evas_Rea
    pd->ambient.b = b;
    pd->ambient.a = a;
 
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_LIGHT_AMBIENT, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_LIGHT_AMBIENT, NULL));
 }
 
 EOLIAN static void
@@ -163,7 +164,7 @@ _evas_canvas3d_light_diffuse_set(Eo *obj, Evas_Canvas3D_Light_Data *pd, Evas_Rea
    pd->diffuse.b = b;
    pd->diffuse.a = a;
 
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_LIGHT_DIFFUSE, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_LIGHT_DIFFUSE, NULL));
 }
 
 EOLIAN static void
@@ -183,7 +184,7 @@ _evas_canvas3d_light_specular_set(Eo *obj, Evas_Canvas3D_Light_Data *pd, Evas_Re
    pd->specular.b = b;
    pd->specular.a = a;
 
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_LIGHT_SPECULAR, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_LIGHT_SPECULAR, NULL));
 }
 
 EOLIAN static void
@@ -199,7 +200,7 @@ EOLIAN static void
 _evas_canvas3d_light_spot_exponent_set(Eo *obj, Evas_Canvas3D_Light_Data *pd, Evas_Real exponent)
 {
    pd->spot_exp = exponent;
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_LIGHT_SPOT_EXP, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_LIGHT_SPOT_EXP, NULL));
 }
 
 EOLIAN static Evas_Real
@@ -213,7 +214,7 @@ _evas_canvas3d_light_spot_cutoff_set(Eo *obj, Evas_Canvas3D_Light_Data *pd, Evas
 {
    pd->spot_cutoff = cutoff;
    pd->spot_cutoff_cos = cos(cutoff * M_PI / 180.0);
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_LIGHT_SPOT_CUTOFF, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_LIGHT_SPOT_CUTOFF, NULL));
 }
 
 EOLIAN static Evas_Real
@@ -228,7 +229,7 @@ _evas_canvas3d_light_attenuation_set(Eo *obj, Evas_Canvas3D_Light_Data *pd, Evas
    pd->atten_const = constant;
    pd->atten_linear = linear;
    pd->atten_quad = quadratic;
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_LIGHT_ATTENUATION, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_LIGHT_ATTENUATION, NULL));
 }
 
 EOLIAN static void
@@ -245,7 +246,7 @@ _evas_canvas3d_light_attenuation_enable_set(Eo *obj, Evas_Canvas3D_Light_Data *p
    if (pd->enable_attenuation != enable)
      {
         pd->enable_attenuation = enable;
-        eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_LIGHT_ATTENUATION, NULL));
+        eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_LIGHT_ATTENUATION, NULL));
      }
 }
 
@@ -260,7 +261,7 @@ _evas_canvas3d_light_projection_matrix_set(Eo *obj, Evas_Canvas3D_Light_Data *pd
                                          const Evas_Real *matrix)
 {
    evas_mat4_array_set(&pd->projection, matrix);
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_LIGHT_PROJECTION, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_LIGHT_PROJECTION, NULL));
 }
 
 EOLIAN static void
@@ -283,7 +284,7 @@ _evas_canvas3d_light_projection_perspective_set(Eo *obj, Evas_Canvas3D_Light_Dat
    xmax = ymax * aspect;
 
    evas_mat4_frustum_set(&pd->projection, -xmax, xmax, -ymax, ymax, dnear, dfar);
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_LIGHT_PROJECTION, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_LIGHT_PROJECTION, NULL));
 }
 
 EOLIAN static void
@@ -293,7 +294,7 @@ _evas_canvas3d_light_projection_frustum_set(Eo *obj, Evas_Canvas3D_Light_Data *p
                                           Evas_Real dnear, Evas_Real dfar)
 {
    evas_mat4_frustum_set(&pd->projection, left, right, bottom, top, dnear, dfar);
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_LIGHT_PROJECTION, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_LIGHT_PROJECTION, NULL));
 }
 
 EOLIAN static void
@@ -303,7 +304,7 @@ _evas_canvas3d_light_projection_ortho_set(Eo *obj, Evas_Canvas3D_Light_Data *pd,
                                         Evas_Real dnear, Evas_Real dfar)
 {
    evas_mat4_ortho_set(&pd->projection, left, right, bottom, top, dnear, dfar);
-   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_LIGHT_PROJECTION, NULL));
+   eo_do(obj, evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_LIGHT_PROJECTION, NULL));
 }
 
 

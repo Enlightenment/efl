@@ -195,7 +195,7 @@ evas_object_smart_clipped_smart_member_add(Evas_Object *eo_obj, Evas_Object *mem
 EOLIAN static void
 _evas_smart_clipped_evas_object_smart_member_add(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Object *member)
 {
-   eo_do_super(eo_obj, MY_CLASS, evas_obj_smart_member_add(member));
+   eo_super_evas_obj_smart_member_add(MY_CLASS, eo_obj, member);
    evas_object_smart_clipped_smart_member_add(eo_obj, member);
 }
 
@@ -214,7 +214,7 @@ EOLIAN static void
 _evas_smart_clipped_evas_object_smart_member_del(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Object *member)
 {
    evas_object_smart_clipped_smart_member_del(eo_obj, member);
-   eo_do_super(eo_obj, MY_CLASS, evas_obj_smart_member_del(member));
+   eo_super_evas_obj_smart_member_del(MY_CLASS, eo_obj, member);
 }
 
 EAPI void
@@ -253,7 +253,7 @@ evas_object_smart_clipped_class_get(void)
 EOLIAN static Eo *
 _evas_smart_clipped_eo_base_constructor(Eo *obj, Evas_Object_Smart_Clipped_Data *class_data EINA_UNUSED)
 {
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+  return eo_super_eo_constructor( MY_CLASS, obj);
 }
 
 #include "canvas/evas_smart_clipped.eo.c"

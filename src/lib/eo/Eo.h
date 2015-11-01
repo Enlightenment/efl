@@ -112,6 +112,102 @@ typedef struct _Eo_Opaque Eo;
  */
 typedef Eo Eo_Class;
 
+#define HAVE_EO_ID
+typedef uintptr_t Eo_Id;
+typedef struct _Eo_Class _Eo_Class;
+
+typedef void (*eo_op_func_type)(Eo *, void *class_data, va_list *list);
+typedef struct op_type_funcs
+{
+   eo_op_func_type func;
+   const _Eo_Class *src;
+} op_type_funcs;
+
+
+struct _Eo_Header
+{
+#ifndef HAVE_EO_ID
+     EINA_MAGIC
+#endif
+     Eo_Id id;
+};
+typedef struct _Eo_Header Eo_Header;
+
+struct _Eo_Object
+{
+     Eo_Header header;
+     const _Eo_Class *klass;
+#ifdef EO_DEBUG
+     Eina_Inlist *xrefs;
+     Eina_Inlist *data_xrefs;
+#endif
+
+     Eina_List *composite_objects;
+
+     int refcount;
+     int datarefcount;
+
+     Eina_Bool condtor_done:1;
+     Eina_Bool finalized:1;
+
+     Eina_Bool composite:1;
+     Eina_Bool del_triggered:1;
+     Eina_Bool destructed:1;
+     Eina_Bool manual_free:1;
+  ///struct _Eo_Context context;
+};
+typedef struct _Eo_Class_Description Eo_Class_Description;
+typedef struct Eo_Extension_Data_Offset Eo_Extension_Data_Offset;
+typedef struct _Dich_Chain1 Dich_Chain1;
+struct _Eo_Class
+{
+   Eo_Header header;
+
+   const _Eo_Class *parent;
+   const Eo_Class_Description *desc;
+   Dich_Chain1 *chain; /**< The size is chain size */
+
+   const _Eo_Class **extensions;
+
+   Eo_Extension_Data_Offset *extn_data_off;
+
+   const _Eo_Class **mro;
+
+   /* cached object for faster allocation */
+   struct {
+      Eina_Trash  *trash;
+      Eina_Spinlock    trash_lock;
+      unsigned int trash_count;
+   } objects;
+
+   /* cached iterator for faster allocation cycle */
+   struct {
+      Eina_Trash   *trash;
+      Eina_Spinlock trash_lock;
+      unsigned int  trash_count;
+   } iterators;
+
+   unsigned int obj_size; /**< size of an object of this class */
+   unsigned int chain_size;
+   unsigned int base_id;
+   unsigned int data_offset; /* < Offset of the data within object data. */
+
+   Eina_Bool constructed : 1;
+   /* [extensions*] + NULL */
+   /* [mro*] + NULL */
+   /* [extensions data offset] + NULL */
+};
+  
+ __attribute__ ((visibility("default"))) struct _Eo_Object *_eo_obj_pointer_get(const Eo_Id obj_id);
+  EAPI _Eo_Class * _eo_class_pointer_get(const Eo_Class *klass_id);
+  
+struct _Eo_Id_Resolve_Cache
+{
+  int flags;
+  Eo* eoid;
+  struct _Eo_Object* object;
+};
+
 /**
  * @var _eo_class_creation_lock
  * This variable is used for locking purposes in the class_get function
@@ -447,8 +543,15 @@ typedef void (*Eo_Hook_Call)(const Eo_Class *klass_id, const Eo *obj, const char
 EAPI extern Eo_Hook_Call eo_hook_call_pre;
 EAPI extern Eo_Hook_Call eo_hook_call_post;
 
+typedef struct op_type_funcs op_type_funcs;
+typedef struct _Eo_Class _Eo_Class;
+typedef struct _Eo_Object _Eo_Object;
+
+EAPI const op_type_funcs *_dich_func_get(const _Eo_Class *klass, Eo_Op op);
+EAPI void *_eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass);
+  
 // to pass the internal function call to EO_FUNC_BODY (as Func parameter)
-#define EO_FUNC_CALL(...) __VA_ARGS__
+#define EO_FUNC_CALL(...) , __VA_ARGS__
 
 #define EO_HOOK_CALL_PREPARE(Hook, FuncName)                                \
      if (Hook)                                                          \
@@ -464,6 +567,89 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
 # define EO_FUNC_COMMON_OP_FUNC(Name) ((const void *) #Name)
 #endif
 
+#define EO_FUNC_VOID_API_DEFINE(Name, Args, ...)                        \
+  EOAPI void Name(Eo const* ___object, ##__VA_ARGS__);                  \
+  EOAPI void _eo_impl_##Name(_Eo_Class const* ___klass, Eo* ___oid, _Eo_Object const* ___object, ##__VA_ARGS__) \
+  {                                                                     \
+    typedef Eo_Base * (*_Eo_func)(Eo*, void *obj_data, ##__VA_ARGS__);  \
+    static Eo_Op ___op = EO_NOOP;                                       \
+    if (EINA_UNLIKELY(___op == EO_NOOP))                                \
+      {                                                                 \
+        fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); \
+        ___op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name));        \
+        fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); \
+        if (___op == EO_NOOP) return 0;                                 \
+      }                                                                 \
+    fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); \
+    const op_type_funcs *___func = _dich_func_get(___klass, ___op);     \
+    fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); \
+    fprintf(stderr, "___func %p\n", ___func); fflush(stderr);           \
+    fprintf(stderr, "___func->func %p\n", ___func->func);fflush(stderr); \
+    fprintf(stderr, "___func->src %p\n", ___func->src);fflush(stderr);  \
+    _Eo_func ___func_ = (_Eo_func) ___func->func;                       \
+    void* ___data = _eo_data_scope_get(___object, ___func->src);        \
+    ___func_((Eo*)___oid, ___data Args);                               \
+  }                                                                     \
+  EOAPI void Name(Eo const* ___object, ##__VA_ARGS__)                   \
+  {                                                                     \
+    _Eo_Object* ___obj = (_Eo_Object*)_eo_obj_pointer_get((Eo_Id)___object); \
+    if(___obj) {                                                        \
+      _eo_impl_##Name(___obj->klass, ___object, ___obj Args);                \
+    }                                                                   \
+  }                                                                     \
+  EOAPI void eo_super_##Name(Eo_Class const* ___klass, Eo const* ___object, ##__VA_ARGS__) \
+  {                                                                     \
+    _Eo_Object* ___obj = (_Eo_Object*)_eo_obj_pointer_get((Eo_Id)___object); \
+    if(___obj) {                                                        \
+      _Eo_Class* ___kls = (_Eo_Class*)_eo_class_pointer_get((Eo_Id)___klass); \
+      if(___kls)                                                        \
+        return _eo_impl_##Name(___kls, ___object, ___obj Args);              \
+    }                                                                   \
+  }                                                                     \
+
+#define EO_FUNC_API_DEFINE(Name, R, DefRet, Args, ...)                  \
+  EOAPI R Name(Eo const* ___object, ##__VA_ARGS__);                     \
+  EOAPI R _eo_impl_##Name(_Eo_Class const* ___klass, Eo* ___oid, _Eo_Object const* ___object, ##__VA_ARGS__) \
+  {                                                                     \
+    typedef Eo_Base * (*_Eo_func)(Eo*, void *obj_data, ##__VA_ARGS__);  \
+    static Eo_Op ___op = EO_NOOP;                                       \
+    if (EINA_UNLIKELY(___op == EO_NOOP))                                \
+      {                                                                 \
+        fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); \
+        ___op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name));        \
+        fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); \
+        if (___op == EO_NOOP) return 0;                                 \
+      }                                                                 \
+    fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); \
+    const op_type_funcs *___func = _dich_func_get(___klass, ___op);     \
+    fprintf(stderr, "%s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); \
+    fprintf(stderr, "___func %p\n", ___func); fflush(stderr);           \
+    fprintf(stderr, "___func->func %p\n", ___func->func);fflush(stderr); \
+    fprintf(stderr, "___func->src %p\n", ___func->src);fflush(stderr);  \
+    _Eo_func ___func_ = (_Eo_func) ___func->func;                       \
+    void* ___data = _eo_data_scope_get(___object, ___func->src);        \
+    R _ret;                                                             \
+    _ret = ___func_((Eo*)___oid, ___data Args);                        \
+    return _ret;                                                        \
+  }                                                                     \
+  EOAPI R Name(Eo const* ___object, ##__VA_ARGS__)                      \
+  {                                                                     \
+    _Eo_Object* ___obj = (_Eo_Object*)_eo_obj_pointer_get((Eo_Id)___object); \
+    if(___obj) {                                                        \
+      return _eo_impl_##Name(___obj->klass, ___object, ___obj Args); \
+    }                                                                   \
+  }                                                                     \
+  EOAPI R eo_super_##Name(Eo_Class const* ___klass, Eo const* ___object, ##__VA_ARGS__) \
+  {                                                                     \
+    _Eo_Object* ___obj = (_Eo_Object*)_eo_obj_pointer_get((Eo_Id)___object); \
+    if(___obj) {                                                        \
+      _Eo_Class* ___kls = (_Eo_Class*)_eo_class_pointer_get((Eo_Id)___klass); \
+      if(___kls)                                                        \
+        return _eo_impl_##Name(___kls, ___object, ___obj Args);              \
+    }                                                                   \
+  }                                                                     \
+  
+  
 // cache OP id, get real fct and object data then do the call
 #define EO_FUNC_COMMON_OP(Name, DefRet)                                 \
      Eo_Op_Call_Data ___call;                                           \
@@ -543,13 +729,13 @@ EAPI Eo_Op _eo_api_op_id_get(const void *api_func);
 EAPI Eina_Bool _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Call_Data *call, const char *file, int line);
 
 // start of eo_do barrier, gets the object pointer and ref it, put it on the stask
-  EAPI Eina_Bool _eo_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool is_super, void *eo_stack);
+EAPI Eo* _eo_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool is_super, void *eo_stack);
 
 // end of the eo_do barrier, unref the obj, move the stack pointer
 EAPI void _eo_do_end(void *eo_stack);
 
 // end of the eo_add. Calls finalize among others
-EAPI Eo * _eo_add_end(void *eo_stack);
+EAPI Eo * _eo_add_end(Eo* obj_id, void *eo_stack, int x);
 
 // XXX: We cheat and make it const to indicate to the compiler that the value never changes
 EAPI EINA_CONST void *_eo_stack_get(void);
@@ -558,35 +744,48 @@ EAPI EINA_CONST void *_eo_stack_get(void);
 
 #define _eo_do_common(eoid, clsid, is_super, ...)                       \
   do {                                                                  \
+       fprintf(stderr, "do super %s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); \
        _eo_do_start(eoid, clsid, is_super, _eo_stack_get()); \
+       fprintf(stderr, "do super %s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); \
        __VA_ARGS__;                                                     \
+       fprintf(stderr, "do super %s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); \
        _eo_do_end(_eo_stack_get());                                                    \
+       fprintf(stderr, "do super %s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); \
   } while (0)
 
 #define _eo_do_common_ret(eoid, clsid, is_super, ret_tmp, func)      \
   (                                                                     \
+       fprintf(stderr, "do super %s %s:%d\n", __func__, __FILE__, __LINE__), fflush(stderr), \
        _eo_do_start(eoid, clsid, is_super, _eo_stack_get()), \
+       fprintf(stderr, "do super %s %s:%d\n", __func__, __FILE__, __LINE__), fflush(stderr), \
        ret_tmp = func,                                                  \
+       fprintf(stderr, "do super %s %s:%d\n", __func__, __FILE__, __LINE__), fflush(stderr), \
        _eo_do_end(_eo_stack_get()),                                                    \
+       fprintf(stderr, "do super %s %s:%d\n", __func__, __FILE__, __LINE__), fflush(stderr), \
        ret_tmp                                                          \
   )
 
 
-#define eo_do(eoid, ...) _eo_do_common(eoid, NULL, EINA_FALSE, __VA_ARGS__)
+//#define eo_do(eoid, ...) _eo_do_common(eoid, NULL, EINA_FALSE, __VA_ARGS__)
 
-#define eo_do_super(eoid, clsid, func) _eo_do_common(eoid, clsid, EINA_TRUE, func)
+#define eo_do(eoid, ...) do { __VA_ARGS__; } while(0)
 
-#define eo_do_ret(eoid, ret_tmp, func) _eo_do_common_ret(eoid, NULL, EINA_FALSE, ret_tmp, func)
+  //#define eo_do_super(eoid, clsid, func) _eo_do_common(eoid, clsid, EINA_TRUE, func)
 
-#define eo_do_super_ret(eoid, clsid, ret_tmp, func) _eo_do_common_ret(eoid, clsid, EINA_TRUE, ret_tmp, func)
+  //#define eo_do_ret(eoid, ret_tmp, func) _eo_do_common_ret(eoid, NULL, EINA_FALSE, ret_tmp, func)
 
-#define eo_do_part(eoid, part_func, ...) \
+#define eo_do_ret(eoid, ret_tmp, func) \
+  (ret_tmp = (func))
+
+  //#define eo_do_super_ret(eoid, clsid, ret_tmp, func) _eo_do_common_ret(eoid, clsid, EINA_TRUE, ret_tmp, func)
+  /*
+#define eo_do_part(eoid, part_func, ...)    \
   do { \
        Eo *__eo_part = eoid; \
        eo_do(eoid, __eo_part = part_func); \
        eo_do(__eo_part, __VA_ARGS__); \
   } while (0)
-
+  */
 /*****************************************************************************/
 
 /**
@@ -597,15 +796,28 @@ EAPI EINA_CONST void *_eo_stack_get(void);
  * @see eo_class_name_get()
  */
 EAPI const Eo_Class *eo_class_get(const Eo *obj);
-
-#define _eo_add_common(klass, parent, is_ref, ...) \
-   ( \
-     _eo_do_start(_eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref), \
-        klass, EINA_FALSE, _eo_stack_get()) \
-     , ##__VA_ARGS__, \
-     (Eo *) _eo_add_end(_eo_stack_get()) \
-   )
-
+  /*
+  #define _eo_add_common(klass, parent, is_ref, ...)                  \
+  (                                                                     \
+   (Eo *) _eo_add_end                                                   \
+   (                                                                     \
+    _eo_do_start(_eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref), \
+                 klass, EINA_FALSE, _eo_stack_get())                    \
+    , _eo_stack_get()                                                   \
+    , (0, ##__VA_ARGS__ , 0)))
+  */
+#define _eo_add_common(obj, klass, parent, is_ref, ...)                  \
+  do {                                                                     \
+    obj = _eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref); \
+    fprintf(stderr, "eo1: %p\n", obj); fflush(stderr);                                  \
+    obj = _eo_do_start(obj, klass, EINA_FALSE, _eo_stack_get());              \
+    fprintf(stderr, "eo2: %p\n", obj); fflush(stderr);                                  \
+    {__VA_ARGS__;}                                                      \
+    fprintf(stderr, "eo3: %p\n", obj); fflush(stderr);                  \
+    obj = _eo_add_end(obj, _eo_stack_get(), 0);                               \
+    fprintf(stderr, "eo4: %p\n", obj); fflush(stderr);                  \
+  } while(0)
+  
 /**
  * @def eo_add
  * @brief Create a new object and call its constructor(If it exits).
@@ -625,7 +837,7 @@ EAPI const Eo_Class *eo_class_get(const Eo *obj);
  * @param ... The ops to run.
  * @return An handle to the new object on success, NULL otherwise.
  */
-#define eo_add(klass, parent, ...) _eo_add_common(klass, parent, EINA_FALSE, ##__VA_ARGS__)
+#define eo_add(obj, klass, parent, ...) _eo_add_common(obj, klass, parent, EINA_FALSE, ##__VA_ARGS__)
 
 /**
  * @def eo_add_ref
@@ -642,9 +854,11 @@ EAPI const Eo_Class *eo_class_get(const Eo *obj);
  * @param ... The ops to run.
  * @return An handle to the new object on success, NULL otherwise.
  */
-#define eo_add_ref(klass, parent, ...) _eo_add_common(klass, parent, EINA_TRUE, ##__VA_ARGS__)
+#define eo_add_ref(obj, klass, parent, ...) _eo_add_common(obj, klass, parent, EINA_TRUE, ##__VA_ARGS__)
 
 EAPI Eo * _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent, Eina_Bool ref);
+struct _Eo_Call_Stack;
+EAPI Eo * _eo_add_internal_end(Eo *eo_id, struct _Eo_Call_Stack *stack);
 
 /**
  * @brief Get a pointer to the data of an object for a specific class.
@@ -902,7 +1116,7 @@ typedef void (*eo_key_data_free_func)(void *);
  */
 #define eo_weak_unref(wref)			   \
   do {						   \
-    if (*wref) eo_do(*wref, eo_wref_del(wref));  \
+    if (*wref) eo_do(*wref, eo_wref_del(*wref, wref));   \
   } while (0)
 
 /**
@@ -993,8 +1207,8 @@ EAPI const Eo_Event_Description *eo_base_legacy_only_event_description_get(const
  *
  * @see eo_event_callback_priority_add()
  */
-#define eo_event_callback_add(desc, cb, data) \
-   eo_event_callback_priority_add(desc, \
+#define eo_event_callback_add(obj, desc, cb, data)       \
+   eo_event_callback_priority_add(obj, desc,               \
          EO_CALLBACK_PRIORITY_DEFAULT, cb, data)
 
 /**
@@ -1007,8 +1221,8 @@ EAPI const Eo_Event_Description *eo_base_legacy_only_event_description_get(const
  *
  * @see eo_event_callback_array_priority_add()
  */
-#define eo_event_callback_array_add(array, data) \
-   eo_event_callback_array_priority_add(array, \
+#define eo_event_callback_array_add(obj, array, data)    \
+   eo_event_callback_array_priority_add(obj, array,        \
          EO_CALLBACK_PRIORITY_DEFAULT, data)
 
 /**

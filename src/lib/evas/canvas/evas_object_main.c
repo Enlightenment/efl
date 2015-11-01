@@ -87,11 +87,11 @@ _evas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    Eo *parent = NULL;
 
-   eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
-   eo_do(eo_obj, evas_obj_type_set(MY_CLASS_NAME));
+   eo_obj = eo_super_eo_constructor( MY_CLASS, eo_obj);
+   eo_do(eo_obj, evas_obj_type_set(eo_obj, MY_CLASS_NAME));
    eo_manual_free_set(eo_obj, EINA_TRUE);
 
-   eo_do(eo_obj, parent = eo_parent_get());
+   eo_do(eo_obj, parent = eo_parent_get(eo_obj));
 
    if (!obj || !_init_cow() || !eo_isa(parent, EVAS_COMMON_INTERFACE_INTERFACE))
      {
@@ -285,7 +285,7 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
      }
    EINA_LIST_FOREACH(obj->proxy->proxy_textures, l, texture)
      {
-        eo_do(texture, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_TEXTURE_DATA, NULL));
+       eo_do(texture, evas_canvas3d_object_change(texture, EVAS_CANVAS3D_STATE_TEXTURE_DATA, NULL));
      }
    if (obj->smart.parent)
      {
@@ -717,7 +717,7 @@ _evas_object_eo_base_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
         if (eo_isa(proxy, EVAS_IMAGE_CLASS))
           evas_object_image_source_unset(proxy);
         else if (eo_isa(proxy, EVAS_TEXT_CLASS))
-          eo_do(proxy, efl_gfx_filter_source_set(NULL, eo_obj));
+          eo_do(proxy, efl_gfx_filter_source_set(proxy, NULL, eo_obj));
      }
 
    /* Eina_Cow has no way to know if we are going to really change something
@@ -728,7 +728,7 @@ _evas_object_eo_base_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
                              Evas_Object_Proxy_Data, proxy_src)
           {
              EINA_LIST_FREE(proxy_src->proxy_textures, texture)
-               eo_do(texture, evas_canvas3d_texture_source_set(NULL));
+               eo_do(texture, evas_canvas3d_texture_source_set(texture, NULL));
           }
         EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_src);
      }
@@ -747,7 +747,7 @@ end:
    evas_object_event_callback_all_del(eo_obj);
    evas_object_event_callback_cleanup(eo_obj);
 
-   eo_do_super(eo_obj, MY_CLASS, eo_destructor());
+   eo_super_eo_destructor(MY_CLASS, eo_obj);
 }
 
 EAPI void
@@ -757,14 +757,14 @@ evas_object_geometry_set(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y, Evas_C
    return;
    MAGIC_CHECK_END();
    eo_do(eo_obj,
-         efl_gfx_position_set(x, y),
-         efl_gfx_size_set(w, h));
+         efl_gfx_position_set(eo_obj, x, y),
+         efl_gfx_size_set(eo_obj, w, h));
 }
 
 EAPI void
 evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
-   eo_do((Evas_Object *)obj, efl_gfx_position_set(x, y));
+   eo_do((Evas_Object *)obj, efl_gfx_position_set(obj, x, y));
 }
 
 EOLIAN static void
@@ -791,7 +791,7 @@ _evas_object_efl_gfx_base_position_set(Eo *eo_obj, Evas_Object_Protected_Data *o
    if ((obj->cur->geometry.x == x) && (obj->cur->geometry.y == y)) return;
 
    Evas_Map *map;
-   eo_do(eo_obj, map = (Evas_Map *) evas_obj_map_get());
+   eo_do(eo_obj, map = (Evas_Map *) evas_obj_map_get(eo_obj));
    if (map && map->move_sync.enabled)
      {
         Evas_Coord diff_x = x - obj->cur->geometry.x;
@@ -813,7 +813,7 @@ _evas_object_efl_gfx_base_position_set(Eo *eo_obj, Evas_Object_Protected_Data *o
 
    if (obj->is_smart)
      {
-        eo_do(eo_obj, evas_obj_smart_move(x, y));
+        eo_do(eo_obj, evas_obj_smart_move(eo_obj, x, y));
      }
 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
@@ -855,7 +855,7 @@ _evas_object_efl_gfx_base_position_set(Eo *eo_obj, Evas_Object_Protected_Data *o
 EAPI void
 evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
-   eo_do((Evas_Object *)obj, efl_gfx_size_set(w, h));
+   eo_do((Evas_Object *)obj, efl_gfx_size_set(obj, w, h));
 }
 
 EOLIAN static void
@@ -895,7 +895,7 @@ _evas_object_efl_gfx_base_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
    if (obj->is_smart)
      {
-        eo_do(eo_obj, evas_obj_smart_resize(w, h));
+        eo_do(eo_obj, evas_obj_smart_resize(eo_obj, w, h));
      }
 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
@@ -944,7 +944,7 @@ evas_object_geometry_get(const Evas_Object *eo_obj, Evas_Coord *x, Evas_Coord *y
    if (x) *x = 0; if (y) *y = 0; if (w) *w = 0; if (h) *h = 0;
    return;
    MAGIC_CHECK_END();
-   eo_do((Eo *)eo_obj, efl_gfx_position_get(x, y), efl_gfx_size_get(w, h));
+   eo_do((Eo *)eo_obj, efl_gfx_position_get(eo_obj, x, y), efl_gfx_size_get(eo_obj, w, h));
 }
 
 EOLIAN static void
@@ -1211,14 +1211,14 @@ evas_object_show(Evas_Object *eo_obj)
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   eo_do(eo_obj, efl_gfx_visible_set(EINA_TRUE));
+   eo_do(eo_obj, efl_gfx_visible_set(eo_obj, EINA_TRUE));
 }
 
 EAPI void
 evas_object_hide(Evas_Object *eo_obj)
 {
    if (!eo_obj) return;
-   eo_do(eo_obj, efl_gfx_visible_set(EINA_FALSE));
+   eo_do(eo_obj, efl_gfx_visible_set(eo_obj, EINA_FALSE));
 }
 
 EAPI Eina_Bool
@@ -1226,7 +1226,7 @@ evas_object_visible_get(const Evas_Object *obj)
 {
    Eina_Bool ret;
 
-   return eo_do_ret((Evas_Object *)obj, ret, efl_gfx_visible_get());
+   return eo_do_ret((Evas_Object *)obj, ret, efl_gfx_visible_get(obj));
 }
 
 static void
@@ -1251,7 +1251,7 @@ _show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    if (evas_object_intercept_call_show(eo_obj, obj)) return;
    if (obj->is_smart)
      {
-        eo_do(eo_obj, evas_obj_smart_show());
+        eo_do(eo_obj, evas_obj_smart_show(eo_obj));
      }
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
@@ -1300,7 +1300,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
   if (evas_object_intercept_call_hide(eo_obj, obj)) return;
    if (obj->is_smart)
      {
-        eo_do(eo_obj, evas_obj_smart_hide());
+        eo_do(eo_obj, evas_obj_smart_hide(eo_obj));
      }
  
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
@@ -1418,7 +1418,7 @@ _evas_object_efl_gfx_base_visible_get(Eo *eo_obj EINA_UNUSED,
 EAPI void
 evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
-   eo_do((Evas_Object *)obj, efl_gfx_color_set(r, g, b, a));
+   eo_do((Evas_Object *)obj, efl_gfx_color_set(obj, r, g, b, a));
 }
 
 EOLIAN static void
@@ -1450,7 +1450,7 @@ _evas_object_efl_gfx_base_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    if (evas_object_intercept_call_color_set(eo_obj, obj, r, g, b, a)) return;
    if (obj->is_smart)
      {
-        eo_do(eo_obj, evas_obj_smart_color_set(r, g, b, a));
+        eo_do(eo_obj, evas_obj_smart_color_set(eo_obj, r, g, b, a));
      }
    if ((obj->cur->color.r == r) &&
        (obj->cur->color.g == g) &&
@@ -1492,7 +1492,7 @@ _evas_object_efl_gfx_base_color_part_set(Eo *obj, Evas_Object_Protected_Data *pd
 EAPI void
 evas_object_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
-   eo_do((Evas_Object *)obj, efl_gfx_color_get(r, g, b, a));
+   eo_do((Evas_Object *)obj, efl_gfx_color_get(obj, r, g, b, a));
 }
 
 EOLIAN static void
@@ -1597,7 +1597,7 @@ _evas_object_render_op_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *o
 EOLIAN static void
 _evas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, Eo_Dbg_Info *root)
 {
-   eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
+   eo_super_eo_dbg_info_get(MY_CLASS, eo_obj, root);
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
    Eo_Dbg_Info *node;
    const char *name;
@@ -1620,24 +1620,24 @@ _evas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *obj EI
    Eina_Bool clipees_has;
 
    eo_do(eo_obj,
-         visible = efl_gfx_visible_get(),
-         layer = efl_gfx_stack_layer_get(),
-         name = evas_obj_name_get(),
-         efl_gfx_position_get(&x, &y),
-         efl_gfx_size_get(&w, &h),
-         scale = evas_obj_scale_get(),
-         evas_obj_size_hint_min_get(&minw, &minh),
-         evas_obj_size_hint_max_get(&maxw, &maxh),
-         evas_obj_size_hint_request_get(&requestw, &requesth),
-         evas_obj_size_hint_align_get(&dblx, &dbly),
-         evas_obj_size_hint_weight_get(&dblw, &dblh),
-         efl_gfx_color_get(&r, &g, &b, &a),
-         focus = evas_obj_focus_get(),
-         m = evas_obj_pointer_mode_get(),
-         pass_event = evas_obj_pass_events_get(),
-         repeat_event = evas_obj_repeat_events_get(),
-         propagate_event = evas_obj_propagate_events_get(),
-         clipees_has = evas_obj_clipees_has());
+         visible = efl_gfx_visible_get(eo_obj),
+         layer = efl_gfx_stack_layer_get(eo_obj),
+         name = evas_obj_name_get(eo_obj),
+         efl_gfx_position_get(eo_obj,  &x, &y),
+         efl_gfx_size_get(eo_obj, &w, &h),
+         scale = evas_obj_scale_get(eo_obj),
+         evas_obj_size_hint_min_get(eo_obj, &minw, &minh),
+         evas_obj_size_hint_max_get(eo_obj, &maxw, &maxh),
+         evas_obj_size_hint_request_get(eo_obj, &requestw, &requesth),
+         evas_obj_size_hint_align_get(eo_obj, &dblx, &dbly),
+         evas_obj_size_hint_weight_get(eo_obj, &dblw, &dblh),
+         efl_gfx_color_get(eo_obj, &r, &g, &b, &a),
+         focus = evas_obj_focus_get(eo_obj),
+         m = evas_obj_pointer_mode_get(eo_obj),
+         pass_event = evas_obj_pass_events_get(eo_obj),
+         repeat_event = evas_obj_repeat_events_get(eo_obj),
+         propagate_event = evas_obj_propagate_events_get(eo_obj),
+         clipees_has = evas_obj_clipees_has(eo_obj));
 
    EO_DBG_INFO_APPEND(group, "Visibility", EINA_VALUE_TYPE_CHAR, visible);
 
@@ -1712,7 +1712,7 @@ _evas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *obj EI
    EO_DBG_INFO_APPEND(group, "Has clipees", EINA_VALUE_TYPE_CHAR, clipees_has);
 
    Evas_Object *clipper = NULL;
-   eo_do(eo_obj, clipper = evas_obj_clip_get());
+   eo_do(eo_obj, clipper = evas_obj_clip_get(eo_obj));
    EO_DBG_INFO_APPEND(group, "Clipper", EINA_VALUE_TYPE_UINT64, (uintptr_t) clipper);
 
    const Evas_Map *map = evas_object_map_get(eo_obj);
@@ -1788,7 +1788,7 @@ evas_object_top_at_pointer_get(const Evas *eo_e)
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    Evas_Object *ret = NULL;
    if (!e) return NULL;
-   eo_do((Eo *)eo_e, ret = evas_canvas_object_top_at_xy_get(e->pointer.x, e->pointer.y, EINA_TRUE,
+   eo_do((Eo *)eo_e, ret = evas_canvas_object_top_at_xy_get(eo_e, e->pointer.x, e->pointer.y, EINA_TRUE,
                                     EINA_TRUE));
    return ret;
 }

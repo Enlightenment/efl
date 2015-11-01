@@ -7,8 +7,8 @@ EOLIAN static Eo *
 _evas_canvas3d_object_eo_base_constructor(Eo *obj, Evas_Canvas3D_Object_Data *pd)
 {
    Eo *e = NULL;
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj, e = eo_parent_get());
+   obj = eo_super_eo_constructor( MY_CLASS, obj);
+   eo_do(obj, e = eo_parent_get(obj));
    pd->evas = e;
    pd->type = EVAS_CANVAS3D_OBJECT_TYPE_INVALID;
    memset(&pd->dirty[0], 0x00, sizeof(Eina_Bool) * EVAS_CANVAS3D_STATE_MAX);
@@ -50,7 +50,7 @@ _evas_canvas3d_object_change(Eo *obj, Evas_Canvas3D_Object_Data *pd, Evas_Canvas
    pd->dirty[state] = EINA_TRUE;
    pd->dirty[EVAS_CANVAS3D_STATE_ANY] = EINA_TRUE;
 
-   eo_do(obj, evas_canvas3d_object_change_notify(state, ref));
+   eo_do(obj, evas_canvas3d_object_change_notify(obj, state, ref));
 }
 
 EOLIAN static void
@@ -59,7 +59,7 @@ _evas_canvas3d_object_update(Eo *obj, Evas_Canvas3D_Object_Data *pd)
    if (!pd->dirty[EVAS_CANVAS3D_STATE_ANY])
      return;
 
-   eo_do(obj, evas_canvas3d_object_update_notify());
+   eo_do(obj, evas_canvas3d_object_update_notify(obj));
 
    memset(&pd->dirty[0], 0x00, sizeof(Eina_Bool) * EVAS_CANVAS3D_STATE_MAX);
 }
@@ -72,8 +72,8 @@ _evas_canvas3d_object_eo_base_event_callback_priority_add(Eo *obj,
                                                     Eo_Event_Cb func,
                                                     const void *user_data)
 {
-   eo_do_super(obj, MY_CLASS, eo_event_callback_priority_add(desc, priority, func, user_data));
-   eo_do(obj, evas_canvas3d_object_callback_register(desc->name, user_data));
+   eo_super_eo_event_callback_priority_add(MY_CLASS, obj, desc, priority, func, user_data);
+   eo_do(obj, evas_canvas3d_object_callback_register(obj, desc->name, user_data));
 }
 
 EOLIAN static void
@@ -82,8 +82,8 @@ _evas_canvas3d_object_eo_base_event_callback_del(Eo *obj, Evas_Canvas3D_Object_D
                                            Eo_Event_Cb func,
                                            const void *user_data)
 {
-   eo_do_super(obj, MY_CLASS, eo_event_callback_del(desc, func, user_data));
-   eo_do(obj, evas_canvas3d_object_callback_unregister(desc->name));
+   eo_super_eo_event_callback_del(MY_CLASS, obj, desc, func, user_data);
+   eo_do(obj, evas_canvas3d_object_callback_unregister(obj, desc->name));
 }
 
 #include "canvas/evas_canvas3d_object.eo.c"

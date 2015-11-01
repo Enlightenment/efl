@@ -479,7 +479,7 @@ _evas_textgrid_eo_base_destructor(Eo *eo_obj, Evas_Textgrid_Data *o EINA_UNUSED)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_textgrid_free(eo_obj, obj);
    eo_data_unref(eo_obj, obj->private_data);
-   eo_do_super(eo_obj, MY_CLASS, eo_destructor());
+   eo_super_eo_destructor(MY_CLASS, eo_obj);
 }
 
 static void
@@ -1055,14 +1055,15 @@ evas_object_textgrid_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   Evas_Object *eo_obj = eo_add(EVAS_TEXTGRID_CLASS, e);
+   Evas_Object *eo_obj;
+   eo_add(eo_obj, EVAS_TEXTGRID_CLASS, e);
    return eo_obj;
 }
 
 EOLIAN static Eo *
 _evas_textgrid_eo_base_constructor(Eo *eo_obj, Evas_Textgrid_Data *class_data EINA_UNUSED)
 {
-   eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
+  eo_obj = eo_super_eo_constructor( MY_CLASS, eo_obj);
 
    evas_object_textgrid_init(eo_obj);
 
@@ -1487,22 +1488,22 @@ _evas_textgrid_update_add(Eo *eo_obj, Evas_Textgrid_Data *o, int x, int y, int w
 EOLIAN static void
 _evas_textgrid_eo_base_dbg_info_get(Eo *eo_obj, Evas_Textgrid_Data *o EINA_UNUSED, Eo_Dbg_Info *root)
 {
-   eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
+   eo_super_eo_dbg_info_get(MY_CLASS, eo_obj, root);
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
    Eo_Dbg_Info *node;
 
    const char *text;
    int size;
-   eo_do(eo_obj, efl_text_properties_font_get(&text, &size));
+   eo_do(eo_obj, efl_text_properties_font_get(eo_obj, &text, &size));
    EO_DBG_INFO_APPEND(group, "Font", EINA_VALUE_TYPE_STRING, text);
    EO_DBG_INFO_APPEND(group, "Text size", EINA_VALUE_TYPE_INT, size);
 
-   eo_do(eo_obj, text = efl_text_properties_font_source_get());
+   eo_do(eo_obj, text = efl_text_properties_font_source_get(eo_obj));
    EO_DBG_INFO_APPEND(group, "Font source", EINA_VALUE_TYPE_STRING, text);
 
      {
         int w, h;
-        eo_do(eo_obj, evas_obj_textgrid_size_get(&w, &h));
+        eo_do(eo_obj, evas_obj_textgrid_size_get(eo_obj, &w, &h));
         node = EO_DBG_INFO_LIST_APPEND(group, "Grid size");
         EO_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, w);
         EO_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, h);
@@ -1512,27 +1513,27 @@ _evas_textgrid_eo_base_dbg_info_get(Eo *eo_obj, Evas_Textgrid_Data *o EINA_UNUSE
 EAPI void
 evas_object_textgrid_font_source_set(Eo *obj, const char *font_source)
 {
-   eo_do((Eo *) obj, efl_text_properties_font_source_set(font_source));
+   eo_do((Eo *) obj, efl_text_properties_font_source_set(obj, font_source));
 }
 
 EAPI const char *
 evas_object_textgrid_font_source_get(const Eo *obj)
 {
    const char *font_source = NULL;
-   eo_do((Eo *) obj, font_source = efl_text_properties_font_source_get());
+   eo_do((Eo *) obj, font_source = efl_text_properties_font_source_get(obj));
    return font_source;
 }
 
 EAPI void
 evas_object_textgrid_font_set(Eo *obj, const char *font_name, Evas_Font_Size font_size)
 {
-   eo_do((Eo *) obj, efl_text_properties_font_set(font_name, font_size));
+   eo_do((Eo *) obj, efl_text_properties_font_set(obj, font_name, font_size));
 }
 
 EAPI void
 evas_object_textgrid_font_get(const Eo *obj, const char **font_name, Evas_Font_Size *font_size)
 {
-   eo_do((Eo *) obj, efl_text_properties_font_get(font_name, font_size));
+   eo_do((Eo *) obj, efl_text_properties_font_get(obj, font_name, font_size));
 }
 
 #include "canvas/evas_textgrid.eo.c"

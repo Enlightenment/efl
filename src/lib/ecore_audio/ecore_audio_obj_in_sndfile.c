@@ -205,7 +205,7 @@ _ecore_audio_in_sndfile_eo_base_destructor(Eo *eo_obj, Ecore_Audio_In_Sndfile_Da
   if (ea_obj->vio)
     _free_vio(ea_obj);
 
-  eo_do_super(eo_obj, MY_CLASS, eo_destructor());
+  eo_super_eo_destructor(MY_CLASS, eo_obj);
 }
 
 #include "ecore_audio_in_sndfile.eo.c"

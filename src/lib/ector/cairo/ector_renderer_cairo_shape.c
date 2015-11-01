@@ -85,27 +85,27 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_R
    const Efl_Gfx_Path_Command *cmds = NULL;
    const double *pts = NULL;
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, ector_renderer_prepare());
+   eo_super_ector_renderer_prepare(ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj);
 
    if (pd->shape->fill)
-     eo_do(pd->shape->fill, ector_renderer_prepare());
+     eo_do(pd->shape->fill, ector_renderer_prepare(pd->shape->fill));
    if (pd->shape->stroke.fill)
-     eo_do(pd->shape->stroke.fill, ector_renderer_prepare());
+     eo_do(pd->shape->stroke.fill, ector_renderer_prepare(pd->shape->stroke.fill));
    if (pd->shape->stroke.marker)
-     eo_do(pd->shape->stroke.marker, ector_renderer_prepare());
+     eo_do(pd->shape->stroke.marker, ector_renderer_prepare(pd->shape->stroke.marker));
 
    // shouldn't that be moved to the cairo base object
    if (!pd->parent)
      {
         Eo *parent;
 
-        eo_do(obj, parent = eo_parent_get());
+        eo_do(obj, parent = eo_parent_get(obj));
         if (!parent) return EINA_FALSE;
         pd->parent = eo_data_xref(parent, ECTOR_CAIRO_SURFACE_CLASS, obj);
         if (!pd->parent) return EINA_FALSE;
      }
 
-   eo_do(obj, efl_gfx_shape_path_get(&cmds, &pts));
+   eo_do(obj, efl_gfx_shape_path_get(obj, &cmds, &pts));
    if (!pd->path && cmds)
      {
         USE(obj, cairo_new_path, EINA_FALSE);
@@ -172,7 +172,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
    USE(obj, cairo_save, EINA_FALSE);
    cairo_save(pd->parent->cairo);
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, ector_renderer_draw(op, clips, mul_col));
+   eo_super_ector_renderer_draw(ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj, op, clips, mul_col);
 
    USE(obj, cairo_new_path, EINA_FALSE);
    USE(obj, cairo_append_path, EINA_FALSE);
@@ -181,7 +181,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
    cairo_append_path(pd->parent->cairo, pd->path);
 
    if (pd->shape->fill)
-     eo_do(pd->shape->fill, ector_renderer_cairo_base_fill(mul_col));
+     eo_do(pd->shape->fill, ector_renderer_cairo_base_fill(pd->shape->fill, mul_col));
 
    if (pd->shape->stroke.fill || pd->shape->stroke.color.a > 0)
      {
@@ -195,7 +195,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
         cairo_fill_preserve(pd->parent->cairo);
 
         if (pd->shape->stroke.fill)
-          eo_do(pd->shape->stroke.fill, ector_renderer_cairo_base_fill(mul_col));
+          eo_do(pd->shape->stroke.fill, ector_renderer_cairo_base_fill(pd->shape->stroke.fill, mul_col));
        else
          {
             r = (((pd->shape->stroke.color.r * R_VAL(&mul_col)) + 0xff) >> 8);
@@ -256,7 +256,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_bounds_get(Eo *obj,
    Ector_Renderer_Cairo_Base_Data *bd;
 
    // FIXME: It should be possible to actually ask cairo about that
-   eo_do(obj, efl_gfx_shape_bounds_get(r));
+   eo_do(obj, efl_gfx_shape_bounds_get(obj, r));
 
    bd = eo_data_scope_get(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS);
    r->x += bd->generic->origin.x;
@@ -266,12 +266,12 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_bounds_get(Eo *obj,
 Eo *
 _ector_renderer_cairo_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
 {
-   obj = eo_do_super_ret(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj, eo_constructor());
+   obj = eo_super_eo_constructor( ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj);
    pd->shape = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_SHAPE_MIXIN, obj);
    pd->base = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
 
    eo_do(obj,
-         eo_event_callback_add(EFL_GFX_PATH_CHANGED, _ector_renderer_cairo_shape_path_changed, pd));
+         eo_event_callback_add(obj, EFL_GFX_PATH_CHANGED, _ector_renderer_cairo_shape_path_changed, pd));
 
    return obj;
 }
@@ -282,15 +282,15 @@ _ector_renderer_cairo_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Cairo_Sha
    Eo *parent;
    //FIXME, As base class  destructor can't call destructor of mixin class.
    // call explicit API to free shape data.
-   eo_do(obj, efl_gfx_shape_reset());
+   eo_do(obj, efl_gfx_shape_reset(obj));
 
-   eo_do(obj, parent = eo_parent_get());
+   eo_do(obj, parent = eo_parent_get(obj));
    eo_data_xunref(parent, pd->parent, obj);
 
    eo_data_xunref(obj, pd->shape, obj);
    eo_data_xunref(obj, pd->base, obj);
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, eo_destructor());
+   eo_super_eo_destructor(ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj);
 
    USE(obj, cairo_path_destroy, );
    if (pd->path) cairo_path_destroy(pd->path);
@@ -302,8 +302,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_crc_get(Eo *obj,
 {
    unsigned int crc;
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS,
-               crc = ector_renderer_crc_get());
+   crc = eo_super_ector_renderer_crc_get(ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj);
 
    crc = eina_crc((void*) &pd->shape->stroke.marker, sizeof (pd->shape->stroke.marker), crc, EINA_FALSE);
    crc = eina_crc((void*) &pd->shape->stroke.scale, sizeof (pd->shape->stroke.scale) * 3, crc, EINA_FALSE); // scale, width, centered

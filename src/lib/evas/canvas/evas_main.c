@@ -151,14 +151,15 @@ evas_shutdown(void)
 EAPI Evas *
 evas_new(void)
 {
-   Evas_Object *eo_obj = eo_add(EVAS_CANVAS_CLASS, NULL);
+   Evas_Object *eo_obj;
+   eo_add(eo_obj, EVAS_CANVAS_CLASS, NULL);
    return eo_obj;
 }
 
 EOLIAN static Eo *
 _evas_canvas_eo_base_constructor(Eo *eo_obj, Evas_Public_Data *e)
 {
-   eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
+  eo_obj = eo_super_eo_constructor( MY_CLASS, eo_obj);
 
    e->evas = eo_obj;
    e->output.render_method = RENDER_METHOD_INVALID;
@@ -320,7 +321,7 @@ _evas_canvas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
    eina_spinlock_free(&(e->render.lock));
 
    e->magic = 0;
-   eo_do_super(eo_e, MY_CLASS, eo_destructor());
+   eo_super_eo_destructor(MY_CLASS, eo_e);
 }
 
 EOLIAN static void
