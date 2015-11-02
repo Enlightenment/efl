@@ -88,7 +88,7 @@ explode_obj(Evas_Object *obj, int n)
         EINA_LIST_FREE(children, o)
           {
              if (!evas_object_visible_get(o)) continue;
-             if (evas_object_clipees_get(o)) continue;
+             if (evas_object_clipees_has(o)) continue;
 
              n = explode_obj(o, n);
           }
