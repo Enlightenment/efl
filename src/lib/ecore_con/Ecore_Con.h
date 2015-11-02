@@ -299,7 +299,7 @@ typedef enum _Ecore_Con_Type
    ECORE_CON_REMOTE_CORK = 8,
    /** Use SSL2: UNSUPPORTED. **/
    ECORE_CON_USE_SSL2 = (1 << 4),
-   /** Use SSL3 */
+   /** Use SSL3: UNSUPPORTED. **/
    ECORE_CON_USE_SSL3 = (1 << 5),
    /** Use TLS */
    ECORE_CON_USE_TLS = (1 << 6),

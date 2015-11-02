@@ -497,6 +497,16 @@ ecore_con_ssl_server_prepare(Ecore_Con_Server *svr,
    if (!emile_cipher_init())
      return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 
+   // We forcibly disable SSL3 now
+   if (ssl_type & ECORE_CON_USE_MIXED)
+     ssl_type &= ~ECORE_CON_USE_SSL3;
+
+   if (ssl_type & ECORE_CON_USE_SSL2)
+     return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
+
+   if (ssl_type & ECORE_CON_USE_SSL3)
+     return ECORE_CON_SSL_ERROR_SSL3_NOT_SUPPORTED;
+
    return SSL_SUFFIX(_ecore_con_ssl_server_prepare) (svr, ssl_type);
 }
 
@@ -754,13 +764,8 @@ _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *obj,
    Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    int ret;
 
-   if (ssl_type & ECORE_CON_USE_SSL2)
-     return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
-
    switch (ssl_type)
      {
-      case ECORE_CON_USE_SSL3:
-      case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
       case ECORE_CON_USE_TLS:
       case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
       case ECORE_CON_USE_MIXED:
@@ -1379,19 +1384,8 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *obj,
    long options;
    int dh = 0;
 
-   if (ssl_type & ECORE_CON_USE_SSL2)
-     return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
-
    switch (ssl_type)
      {
-      case ECORE_CON_USE_SSL3:
-      case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
-        if (!svr->created)
-          SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv3_client_method())));
-        else
-          SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv3_server_method())));
-        break;
-
       case ECORE_CON_USE_TLS:
       case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
         if (!svr->created)

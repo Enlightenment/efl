@@ -410,18 +410,6 @@ START_TEST(ecore_test_ecore_con_remote_nodelay)
 }
 END_TEST
 
-START_TEST(ecore_test_ecore_con_remote_tcp_ssl3)
-{
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_SSL3, "127.0.0.1", EINA_TRUE, 12345);
-}
-END_TEST
-
-START_TEST(ecore_test_ecore_con_remote_tcp_ssl3_load_cert)
-{
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE, 12345);
-}
-END_TEST
-
 START_TEST(ecore_test_ecore_con_remote_tcp_tls)
 {
    _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_TLS, "127.0.0.1", EINA_TRUE, 12345);
@@ -443,18 +431,6 @@ END_TEST
 START_TEST(ecore_test_ecore_con_remote_tcp_mixed_load_cert)
 {
    _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE, 12345);
-}
-END_TEST
-
-START_TEST(ecore_test_ecore_con_remote_nodelay_ssl3)
-{
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_SSL3, "127.0.0.1", EINA_TRUE, 12345);
-}
-END_TEST
-
-START_TEST(ecore_test_ecore_con_remote_nodelay_ssl3_load_cert)
-{
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE, 12345);
 }
 END_TEST
 
@@ -595,15 +571,11 @@ void ecore_con_test_ecore_con(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_con_local_system_negport_fullpath);
    tcase_add_test(tc, ecore_test_ecore_con_local_abstract);
    tcase_add_test(tc, ecore_test_ecore_con_remote_tcp);
-   tcase_add_test(tc, ecore_test_ecore_con_remote_tcp_ssl3);
-   tcase_add_test(tc, ecore_test_ecore_con_remote_tcp_ssl3_load_cert);
    tcase_add_test(tc, ecore_test_ecore_con_remote_tcp_tls);
    tcase_add_test(tc, ecore_test_ecore_con_remote_tcp_tls_load_cert);
    tcase_add_test(tc, ecore_test_ecore_con_remote_tcp_mixed);
    tcase_add_test(tc, ecore_test_ecore_con_remote_tcp_mixed_load_cert);
    tcase_add_test(tc, ecore_test_ecore_con_remote_nodelay);
-   tcase_add_test(tc, ecore_test_ecore_con_remote_nodelay_ssl3);
-   tcase_add_test(tc, ecore_test_ecore_con_remote_nodelay_ssl3_load_cert);
    tcase_add_test(tc, ecore_test_ecore_con_remote_nodelay_tls);
    tcase_add_test(tc, ecore_test_ecore_con_remote_nodelay_tls_load_cert);
    tcase_add_test(tc, ecore_test_ecore_con_remote_nodelay_mixed);

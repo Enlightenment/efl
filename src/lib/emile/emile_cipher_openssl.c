@@ -294,9 +294,6 @@ emile_cipher_server_listen(Emile_Cipher_Type t)
          SSL_CTX_set_options(r->ssl_ctx,
                              options | SSL_OP_NO_SSLv2 | SSL_OP_SINGLE_DH_USE);
          break;
-      case EMILE_SSLv3:
-         r->ssl_ctx = SSL_CTX_new(SSLv3_server_method());
-         break;
       case EMILE_TLSv1:
          r->ssl_ctx = SSL_CTX_new(TLSv1_server_method());
          break;
@@ -741,9 +738,6 @@ emile_cipher_server_connect(Emile_Cipher_Type t)
          options = SSL_CTX_get_options(r->ssl_ctx);
          SSL_CTX_set_options(r->ssl_ctx,
                              options | SSL_OP_NO_SSLv2 | SSL_OP_SINGLE_DH_USE);
-         break;
-      case EMILE_SSLv3:
-         r->ssl_ctx = SSL_CTX_new(SSLv3_client_method());
          break;
       case EMILE_TLSv1:
          r->ssl_ctx = SSL_CTX_new(TLSv1_client_method());

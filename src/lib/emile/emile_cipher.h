@@ -92,7 +92,6 @@ typedef struct _Emile_SSL Emile_SSL;
 typedef enum
 {
   EMILE_SSLv23,
-  EMILE_SSLv3,
   EMILE_TLSv1
 } Emile_Cipher_Type;
 
