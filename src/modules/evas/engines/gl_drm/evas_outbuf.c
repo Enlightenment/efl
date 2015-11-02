@@ -191,24 +191,18 @@ _evas_outbuf_egl_setup(Outbuf *ob)
    ctx_attr[1] = 2;
    ctx_attr[2] = EGL_NONE;
 
-   cfg_attr[n++] = EGL_BUFFER_SIZE;
-   cfg_attr[n++] = 32;
-   cfg_attr[n++] = EGL_DEPTH_SIZE;
-   cfg_attr[n++] = EGL_DONT_CARE;
-   cfg_attr[n++] = EGL_STENCIL_SIZE;
-   cfg_attr[n++] = EGL_DONT_CARE;
    cfg_attr[n++] = EGL_RENDERABLE_TYPE;
    cfg_attr[n++] = EGL_OPENGL_ES2_BIT;
    cfg_attr[n++] = EGL_SURFACE_TYPE;
    cfg_attr[n++] = EGL_WINDOW_BIT;
-#if 0
+
    cfg_attr[n++] = EGL_RED_SIZE;
    cfg_attr[n++] = 1;
    cfg_attr[n++] = EGL_GREEN_SIZE;
    cfg_attr[n++] = 1;
    cfg_attr[n++] = EGL_BLUE_SIZE;
    cfg_attr[n++] = 1;
-#endif
+
 
    cfg_attr[n++] = EGL_ALPHA_SIZE;
    if (ob->destination_alpha) cfg_attr[n++] = 1;
