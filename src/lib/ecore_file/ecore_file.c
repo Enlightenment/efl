@@ -775,6 +775,16 @@ ecore_file_file_get(const char *path)
    if (!path) return NULL;
    if ((result = strrchr(path, '/'))) result++;
    else result = (char *)path;
+
+#ifdef _WIN32
+   char *result_backslash = NULL;
+   if ((result_backslash = strrchr(path, '\\')))
+     {
+        result_backslash++;
+        if (result_backslash > result) result = result_backslash;
+     }
+#endif
+
    return result;
 }
 
