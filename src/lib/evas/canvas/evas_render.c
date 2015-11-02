@@ -1371,7 +1371,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
              else
                {
                   /* can not trust cache.clip - evas is frozen */
-                  if (!obj->cur->visible || obj->clip.clipees || obj->no_render ||
+                  if (!obj->cur->visible || obj->clip.clipees || (obj->no_render && !proxy_render_data) ||
                       (!obj->cur->color.a && (obj->cur->render_op == EVAS_RENDER_BLEND)))
                     {
                        IFRD(obj->no_render, level, "  proxy_src_clip + no_render\n");
