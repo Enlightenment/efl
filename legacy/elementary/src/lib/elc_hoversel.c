@@ -352,7 +352,7 @@ _hover_end_finished(void *data,
         sd->scr = NULL;
         sd->last_location = NULL;
 
-        eo_do(obj, eo_event_callback_call(ELM_HOVERSEL_EVENT_DISMISSED, NULL));
+        eo_do(data, eo_event_callback_call(ELM_HOVERSEL_EVENT_DISMISSED, NULL));
      }
 }
 
