@@ -521,12 +521,8 @@ _check_recurse_monitor_sanity(Eina_Inarray *stack, const char *path, unsigned in
    // detect if we start recursing at $HOME - a sign of something wrong
    if ((home) && (!strcmp(home, path)))
      {
-        char buf[PATH_MAX];
-
-        ERR("Recursively monitor homedir! Remove cache and exit.");
-        snprintf(buf, sizeof(buf), "%s/efreet", efreet_cache_home_get());
-        if (!ecore_file_recursive_rm(buf)) ERR("Can't delete efreet cache dir");
-        exit(-1);
+        ERR("Recursively monitor homedir! Ignore.");
+        return EINA_FALSE;
      }
    return EINA_TRUE;
 }
