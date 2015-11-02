@@ -3446,7 +3446,6 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 #endif
 #ifdef HAVE_ELEMENTARY_FB
              enginelist[p++] = ELM_SOFTWARE_FB;
-             enginelist[p++] = ELM_EGLFS;
 #endif
           }
 #endif
@@ -3507,7 +3506,6 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
                   enginelist[p++] = ELM_DRM;
 #endif
 #ifdef HAVE_ELEMENTARY_FB
-                  enginelist[p++] = ELM_EGLFS;
                   enginelist[p++] = ELM_SOFTWARE_FB;
 #endif
 #ifdef HAVE_ELEMENTARY_COCOA
@@ -3553,7 +3551,6 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
                   enginelist[p++] = ELM_DRM;
 #endif
 #ifdef HAVE_ELEMENTARY_FB
-                  enginelist[p++] = ELM_EGLFS;
                   enginelist[p++] = ELM_SOFTWARE_FB;
 #endif
 #ifdef HAVE_ELEMENTARY_COCOA
@@ -3637,8 +3634,6 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
                tmp_sd.ee = ecore_evas_ews_new(0, 0, 1, 1);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_FB))
                tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-             else if (!strcmp(enginelist[i], ELM_EGLFS))
-               tmp_sd.ee = ecore_evas_eglfs_new(NULL, 0, 1, 1);
              else if (!strcmp(enginelist[i], ELM_BUFFER))
                tmp_sd.ee = ecore_evas_buffer_new(1, 1);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_PSL1GHT))
@@ -3815,7 +3810,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
         _elm_win_list = eina_list_append(_elm_win_list, obj);
         _elm_win_count++;
 
-        if ((engine) && ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM) || (!strcmp(engine, ELM_EGLFS))))
+        if ((engine) && ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM))))
           {
              TRAP(sd, fullscreen_set, 1);
           }
@@ -3847,7 +3842,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
         if ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_ON) ||
             ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_AUTO) &&
              ((engine) &&
-              ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM) || (!strcmp(engine, ELM_EGLFS))))))
+              ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM))))))
           {
              Evas_Object *o;
              Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
@@ -4272,8 +4267,7 @@ _elm_win_fullscreen_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool fullscr
    // YYY: handle if sd->img_obj
    if (engine_name &&
        ((!strcmp(engine_name, ELM_SOFTWARE_FB)) ||
-        (!strcmp(engine_name, ELM_DRM)) ||
-        (!strcmp(engine_name, ELM_EGLFS))))
+        (!strcmp(engine_name, ELM_DRM))))
      {
         // these engines... can ONLY be fullscreen
         return;
@@ -4318,8 +4312,7 @@ _elm_win_fullscreen_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 
    if (engine_name &&
        ((!strcmp(engine_name, ELM_SOFTWARE_FB)) ||
-        (!strcmp(engine_name, ELM_DRM)) ||
-        (!strcmp(engine_name, ELM_EGLFS))))
+        (!strcmp(engine_name, ELM_DRM))))
      {
         // these engines... can ONLY be fullscreen
         return EINA_TRUE;
