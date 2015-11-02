@@ -1,5 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_engine.h"
+#include "../gl_common/evas_gl_define.h"
 
 #ifdef HAVE_DLSYM
 # include <dlfcn.h>
