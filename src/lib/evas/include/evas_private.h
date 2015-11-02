@@ -1012,9 +1012,6 @@ struct _Evas_Object_Protected_State
    Eina_Bool             have_clipees : 1;
    Eina_Bool             anti_alias : 1;
    Eina_Bool             valid_bounding_box : 1;
-
-   Eina_Bool             cached_surface : 1;
-   Eina_Bool             parent_cached_surface : 1;
    Eina_Bool             snapshot : 1;
 };
 

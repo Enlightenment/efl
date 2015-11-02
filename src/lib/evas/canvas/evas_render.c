@@ -1632,14 +1632,6 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
      }
    else // not "has map"
      {
-#if 0
-        if (0 && obj->cur->cached_surface)
-          fprintf(stderr, "We should cache '%s' [%i, %i, %i, %i]\n",
-                  evas_object_type_get(eo_obj),
-                  obj->cur->bounding_box.x, obj->cur->bounding_box.x,
-                  obj->cur->bounding_box.w, obj->cur->bounding_box.h);
-#endif
-
         if (mapped)
           {
              RD(level, "  child of mapped obj\n");
