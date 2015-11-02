@@ -959,15 +959,17 @@ eng_output_free(void *data)
    re = (Render_Engine *)data;
    if (re)
      {
+        Evas_Engine_Info_GL_Drm *info;
+
         glsym_evas_gl_preload_render_relax(eng_preload_make_current, eng_get_ob(re));
 
         if (gl_wins == 1) glsym_evgl_engine_shutdown(re);
 
+        info = eng_get_ob(re)->info;
         /* NB: evas_render_engine_software_generic_clean() frees ob */
         evas_render_engine_software_generic_clean(&re->generic.software);
 
-        eng_gbm_shutdown(eng_get_ob(re)->info);
-
+        eng_gbm_shutdown(info);
         gl_wins--;
 
         free(re);
