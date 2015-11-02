@@ -31,6 +31,8 @@
  * exits)
  * @li "fb", "software-fb", "software_fb" (Linux framebuffer direct software
  * rendering)
+ * @li "fb", "software-fb", "software_fb" (Linux framebuffer accelerated
+ * rendering)
  * @li "sdl", "software-sdl", "software_sdl" (SDL software rendering to SDL
  * buffer)
  * @li "gl-sdl", "gl_sdl", "opengl-sdl", "opengl_sdl" (OpenGL or OpenGL-ES2
