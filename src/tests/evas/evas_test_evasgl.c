@@ -40,7 +40,7 @@ _detect_osmesa(void)
    evas_init(); \
    ecore_evas_init(); \
    if (!options || !strcmp(engine, "buffer")) ee = ecore_evas_new(engine, 0, 0, 1, 1, NULL); \
-   else ee = ecore_evas_gl_x11_options_new(NULL, NULL, 0, 0, 1, 1, options); \
+   else ee = ecore_evas_gl_x11_options_new(NULL, 0, 0, 0, 1, 1, options); \
    if (!ee) { printf("Could not create ecore evas. Skipping Evas GL tests.\n"); \
               goto init_failed; } \
    ecore_evas_show(ee); \
