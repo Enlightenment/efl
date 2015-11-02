@@ -11,12 +11,8 @@
 #error Do not include Elm C API headers before including Elementary.hh
 #endif
 
-#ifdef HAVE_CONFIG_H
-extern "C" {
-#include <elementary_config.h>
-}
-#endif
-
+#define EFL_BETA_API_SUPPORT 1
+#define EFL_EO_API_SUPPORT 1
 #define ELM_INTERNAL_API_ARGESFSDFEFC
 #define ELM_WIDGET_ITEM_PROTECTED
 
