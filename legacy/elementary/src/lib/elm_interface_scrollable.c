@@ -939,6 +939,8 @@ _elm_scroll_drag_stop(Elm_Scrollable_Smart_Interface_Data *sid)
         if (sid->cb_func.page_change &&
             ((x != sid->current_page.x) || (y != sid->current_page.y)))
           sid->cb_func.page_change(sid->obj, NULL);
+        sid->current_page.x = x;
+        sid->current_page.y = y;
      }
 
    if (sid->cb_func.drag_stop)
@@ -948,6 +950,9 @@ _elm_scroll_drag_stop(Elm_Scrollable_Smart_Interface_Data *sid)
 static void
 _elm_scroll_anim_start(Elm_Scrollable_Smart_Interface_Data *sid)
 {
+   sid->current_page.x = _elm_scroll_page_x_get(sid, 0, EINA_FALSE);
+   sid->current_page.y = _elm_scroll_page_y_get(sid, 0, EINA_FALSE);
+
    if (sid->cb_func.animate_start)
      sid->cb_func.animate_start(sid->obj, NULL);
 }
@@ -963,6 +968,8 @@ _elm_scroll_anim_stop(Elm_Scrollable_Smart_Interface_Data *sid)
         y = _elm_scroll_page_y_get(sid, 0, EINA_FALSE);
         if ((x != sid->current_page.x) || (y != sid->current_page.y))
            sid->cb_func.page_change(sid->obj, NULL);
+        sid->current_page.x = x;
+        sid->current_page.y = y;
      }
 
    if (sid->cb_func.animate_stop)
@@ -4395,9 +4402,6 @@ _elm_interface_scrollable_page_bring_in(Eo *obj, Elm_Scrollable_Smart_Interface_
    Evas_Coord x = 0;
    Evas_Coord y = 0;
 
-   sid->current_page.x = _elm_scroll_page_x_get(sid, 0, EINA_FALSE);
-   sid->current_page.y = _elm_scroll_page_y_get(sid, 0, EINA_FALSE);
-
    eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
          (NULL, NULL, &w, &h));
    x = sid->pagesize_h * pagenumber_h;
@@ -4406,12 +4410,6 @@ _elm_interface_scrollable_page_bring_in(Eo *obj, Elm_Scrollable_Smart_Interface_
      {
         _elm_scroll_scroll_to_x(sid, _elm_config->bring_in_scroll_friction, x);
         _elm_scroll_scroll_to_y(sid, _elm_config->bring_in_scroll_friction, y);
-     }
-
-   if ((sid->current_page.x != x) || (sid->current_page.y != y))
-     {
-        if (sid->cb_func.page_change)
-          sid->cb_func.page_change(sid->obj, NULL);
      }
 }
 
