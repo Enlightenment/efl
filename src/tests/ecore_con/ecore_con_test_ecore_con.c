@@ -335,7 +335,7 @@ START_TEST(ecore_test_ecore_con_local_user_home)
 
    unsetenv("XDG_RUNTIME_DIR");
    _ecore_con_server_client_tests(ECORE_CON_LOCAL_USER, "test_soc", EINA_FALSE, 12345);
-   setenv("XDG_RUNTIME_DIR", xdg_runtime_dir, 1);
+   if (xdg_runtime_dir) setenv("XDG_RUNTIME_DIR", xdg_runtime_dir, 1);
 }
 END_TEST
 
@@ -347,8 +347,8 @@ START_TEST(ecore_test_ecore_con_local_user_tmp)
    unsetenv("XDG_RUNTIME_DIR");
    unsetenv("HOME");
    _ecore_con_server_client_tests(ECORE_CON_LOCAL_USER, "test_sock", EINA_FALSE, 12345);
-   setenv("HOME", homedir, 1);
-   setenv("XDG_RUNTIME_DIR", xdg_runtime_dir, 1);
+   if (homedir) setenv("HOME", homedir, 1);
+   if (xdg_runtime_dir) setenv("XDG_RUNTIME_DIR", xdg_runtime_dir, 1);
 }
 END_TEST
 
