@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#if defined(TIZEN_MEDIA_METADATA_EXTRACTOR) && defined(TIZEN_MEDIA_PLAYER) && defined(TIZEN_MEDIA_RECORDER)
 #include "ecordova_media_private.h"
 
 #define MY_CLASS ECORDOVA_MEDIA_CLASS
@@ -529,3 +530,4 @@ _start_record(Ecordova_Media_Data *pd)
 }
 
 #include "ecordova_media.eo.c"
+#endif

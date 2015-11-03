@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#if defined(TIZEN_MEDIA_METADATA_EXTRACTOR) && defined(TIZEN_MEDIA_PLAYER) && defined(TIZEN_MEDIA_RECORDER)
 #include "ecordova_mediafile_private.h"
 #include <stdbool.h>
 #include <limits.h>
@@ -185,3 +186,4 @@ _int_metadata_get(metadata_extractor_h extractor,
 }
 
 #include "ecordova_mediafile.eo.c"
+#endif

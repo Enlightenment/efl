@@ -16,7 +16,6 @@ typedef Eo Ecordova_DirectoryReader;
 #include <ecordova_dialogs.eo.h>
 #include <ecordova_geolocation.eo.h>
 #include <ecordova_globalization.eo.h>
-#include <ecordova_inappbrowser.eo.h>
 #include <ecordova_media.eo.h>
 #include <ecordova_networkinformation.eo.h>
 #include <ecordova_splashscreen.eo.h>
@@ -31,4 +30,3 @@ typedef Eo Ecordova_DirectoryReader;
 #include <ecordova_fileentry.eo.h>
 #include <ecordova_mediafile.eo.h>
 #include <ecordova_filetransfer.eo.h>
-#include <ecordova_capture.eo.h>

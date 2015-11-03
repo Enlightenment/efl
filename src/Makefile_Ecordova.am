@@ -17,7 +17,6 @@ lib/ecordova/ecordova_deviceorientation.eo \
 lib/ecordova/ecordova_dialogs.eo \
 lib/ecordova/ecordova_geolocation.eo \
 lib/ecordova/ecordova_globalization.eo \
-lib/ecordova/ecordova_inappbrowser.eo \
 lib/ecordova/ecordova_media.eo \
 lib/ecordova/ecordova_networkinformation.eo \
 lib/ecordova/ecordova_splashscreen.eo \
@@ -64,39 +63,6 @@ nodist_installed_ecordovamainheaders_DATA = \
 
 lib_ecordova_libecordova_la_SOURCES = \
 lib/ecordova/ecordova_main.c
-#lib/ecordova/ecordova_private.h \
-lib/ecordova/ecordova_systeminfo.c \
-lib/ecordova/ecordova_batterystatus.c \
-lib/ecordova/ecordova_console.c \
-lib/ecordova/ecordova_contacts.c \
-lib/ecordova/ecordova_contact.c \
-lib/ecordova/ecordova_contactaddress.c \
-lib/ecordova/ecordova_contactfield.c \
-lib/ecordova/ecordova_contactname.c \
-lib/ecordova/ecordova_contactorganization.c \
-lib/ecordova/ecordova_contacts_record_utils.c \
-lib/ecordova/ecordova_device.c \
-lib/ecordova/ecordova_devicemotion.c \
-lib/ecordova/ecordova_deviceorientation.c \
-lib/ecordova/ecordova_dialogs.c \
-lib/ecordova/ecordova_geolocation.c \
-lib/ecordova/ecordova_globalization.c \
-lib/ecordova/ecordova_inappbrowser.c \
-lib/ecordova/ecordova_media.c \
-lib/ecordova/ecordova_networkinformation.c \
-lib/ecordova/ecordova_splashscreen.c \
-lib/ecordova/ecordova_vibration.c \
-lib/ecordova/ecordova_file.c \
-lib/ecordova/ecordova_filewriter.c \
-lib/ecordova/ecordova_filereader.c \
-lib/ecordova/ecordova_filesystem.c \
-lib/ecordova/ecordova_entry.c \
-lib/ecordova/ecordova_directoryentry.c \
-lib/ecordova/ecordova_directoryreader.c \
-lib/ecordova/ecordova_fileentry.c \
-lib/ecordova/ecordova_mediafile.c \
-lib/ecordova/ecordova_filetransfer.c \
-lib/ecordova/ecordova_capture.c
 
 lib_ecordova_libecordova_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORDOVA_CFLAGS@ @EFL_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
@@ -156,7 +122,9 @@ modules/ecordova/tizen/ecordova_fileentry.c \
 modules/ecordova/tizen/ecordova_file.c \
 modules/ecordova/tizen/ecordova_filereader.c \
 modules/ecordova/tizen/ecordova_filetransfer.c \
-modules/ecordova/tizen/ecordova_filewriter.c
+modules/ecordova/tizen/ecordova_filewriter.c \
+modules/ecordova/tizen/ecordova_media.c \
+modules/ecordova/tizen/ecordova_mediafile.c
 modules_ecordova_tizen_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
 @ECORDOVA_CFLAGS@ -DEFL_ECORDOVA_BUILD

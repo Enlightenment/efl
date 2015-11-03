@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_TIZEN_NETWORK_CONNECTION
 #include "ecordova_networkinformation_private.h"
 
 #define MY_CLASS ECORDOVA_NETWORKINFORMATION_CLASS
@@ -96,3 +97,4 @@ _type_changed_cb(connection_type_e type, void *user_data)
 }
 
 #include "ecordova_networkinformation.eo.c"
+#endif

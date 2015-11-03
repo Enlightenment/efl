@@ -268,7 +268,6 @@ ECORDOVA_CLASS_GET(filereader)
 ECORDOVA_CLASS_GET(filetransfer)
 ECORDOVA_CLASS_GET(geolocation)
 ECORDOVA_CLASS_GET(globalization)
-ECORDOVA_CLASS_GET(inappbrowser)
 ECORDOVA_CLASS_GET(media)
 ECORDOVA_CLASS_GET(mediafile)
 ECORDOVA_CLASS_GET(networkinformation)
@@ -296,7 +295,6 @@ ECORDOVA_define_data(FileReader)
 ECORDOVA_define_data(FileTransfer)
 ECORDOVA_define_data(Geolocation)
 ECORDOVA_define_data(Globalization)
-ECORDOVA_define_data(InAppBrowser)
 ECORDOVA_define_data(Media)
 ECORDOVA_define_data(MediaFile)
 ECORDOVA_define_data(NetworkInformation)
@@ -349,8 +347,6 @@ ECORDOVA_define_data(Vibration)
 #include "ecordova_geolocation.eo.c"
 #include "ecordova_globalization.eo.h"
 #include "ecordova_globalization.eo.c"
-#include "ecordova_inappbrowser.eo.h"
-#include "ecordova_inappbrowser.eo.c"
 #include "ecordova_media.eo.h"
 #include "ecordova_media.eo.c"
 #include "ecordova_mediafile.eo.h"
