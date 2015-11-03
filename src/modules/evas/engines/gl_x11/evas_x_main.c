@@ -490,7 +490,7 @@ try_gles2:
    // vendor: VMware, Inc.
    // renderer: Gallium 0.4 on softpipe
    // version: 2.1 Mesa 7.9-devel
-   // 
+   //
    if (strstr((const char *)vendor, "Mesa Project"))
      {
         if (strstr((const char *)renderer, "Software Rasterizer"))
@@ -1578,7 +1578,7 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
           }
      }
    else
-      eglSwapBuffers(ob->egl_disp, ob->egl_surface[0]);
+     eglSwapBuffers(ob->egl_disp, ob->egl_surface[0]);
 
 //xx   if (!safe_native) eglWaitGL();
    if (ob->info->callback.post_swap)

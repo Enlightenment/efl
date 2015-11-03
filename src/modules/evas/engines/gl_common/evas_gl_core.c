@@ -486,7 +486,7 @@ _fbo_surface_cap_test(GLint color_ifmt, GLenum color_fmt,
            DBG("glGetError() returns %x ", err);
 
         return 0;
-   }
+     }
    else
       return 1;
 }
@@ -2113,10 +2113,10 @@ evgl_context_create(void *eng_data, EVGL_Context *share_ctx,
      DBG("Creating context GLESv%d (eng = %p, shctx = %p)", version, eng_data, share_ctx);
 
    if (!(rsc = _evgl_tls_resource_get()))
-        {
-           ERR("Error creating resources in tls.");
-           return NULL;
-        }
+     {
+        ERR("Error creating resources in tls.");
+        return NULL;
+     }
 
    // Allocate context object
    ctx = calloc(1, sizeof(EVGL_Context));
@@ -2754,9 +2754,8 @@ evgl_native_surface_direct_opts_get(Evas_Native_Surface *ns,
 
    if (evgl_engine->api_debug_mode)
      {
-        DBG("Found native surface: texid:%u DR:%d CSR:%d",
-            ns->data.opengl.texture_id, (int) sfc->direct_fb_opt,
-            (int) sfc->client_side_rotation);
+        DBG("Found native surface:  DR:%d CSR:%d",
+            (int) sfc->direct_fb_opt, (int) sfc->client_side_rotation);
      }
 
    if (direct_render) *direct_render = sfc->direct_fb_opt;
