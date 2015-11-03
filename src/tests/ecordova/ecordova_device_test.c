@@ -2,8 +2,11 @@
 # include <config.h>
 #endif
 
-#include "ecordova_device_test.h"
+#include <Ecordova.h>
+
 #include "ecordova_suite.h"
+
+#include <check.h>
 
 static void
 _setup(void)
@@ -19,6 +22,7 @@ _teardown(void)
    ck_assert_int_eq(ret, 0);
 }
 
+#if defined(HAVE_TIZEN_CONFIGURATION_MANAGER) && defined(HAVE_TIZEN_INFO)
 static Ecordova_Device *
 _device_new(void)
 {
@@ -98,3 +102,18 @@ ecordova_device_test(TCase *tc)
    //tcase_add_test(tc, uuid_get); // disabled: returns NULL
    tcase_add_test(tc, version_get);
 }
+#else
+START_TEST(device_load_fail)
+{
+   Ecordova_Device *device = eo_add(ECORDOVA_DEVICE_CLASS, NULL);
+   ck_assert_ptr_eq(device, NULL);
+}
+END_TEST
+
+void
+ecordova_device_test(TCase *tc)
+{
+   tcase_add_checked_fixture(tc, _setup, _teardown);
+   tcase_add_test(tc, device_load_fail);
+}
+#endif

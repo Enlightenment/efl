@@ -4,6 +4,7 @@
 
 #include "ecordova_device_private.h"
 
+#ifdef HAVE_TIZEN_INFO
 #include <system/system_info.h>
 
 #define MY_CLASS ECORDOVA_DEVICE_CLASS
@@ -105,3 +106,4 @@ _ecordova_device_version_get(Eo *obj EINA_UNUSED, Ecordova_Device_Data *pd)
 }
 
 #include "ecordova_device.eo.c"
+#endif

@@ -2,11 +2,13 @@
 # include <config.h>
 #endif
 
-#include "ecordova_devicemotion_test.h"
+#include <Ecordova.h>
+
 #include "ecordova_suite.h"
 
-#include <stdbool.h>
+#include <check.h>
 
+#ifdef HAVE_TIZEN_CONFIGURATION_MANAGER
 static void
 _setup(void)
 {
@@ -87,3 +89,23 @@ ecordova_devicemotion_test(TCase *tc)
    tcase_add_test(tc, smoke);
    //tcase_add_test(tc, current_acceleration_get); // disabled: not supported
 }
+#else
+START_TEST(devicemotion_fail_load)
+{
+   ecordova_init();
+
+   Ecordova_Device *devicemotion
+     = eo_add(ECORDOVA_DEVICEMOTION_CLASS, NULL);
+
+   ck_assert_ptr_eq(devicemotion, NULL);
+
+   ecordova_shutdown();
+}
+END_TEST
+
+void
+ecordova_devicemotion_test(TCase *tc)
+{
+   tcase_add_test(tc, devicemotion_fail_load);
+}
+#endif

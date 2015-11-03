@@ -3,7 +3,6 @@
 #endif
 
 #include "ecordova_private.h"
-/* #include "ecordova_systeminfo.eo.h" */
 
 #include <unistd.h>
 #include <dlfcn.h>
@@ -75,29 +74,9 @@ ecordova_init(void)
    if (!eo_init())
      {
         ERR("Unable to initialize ecore");
-        goto on_error_2;
+        goto on_error_3;
      }
    
-   /* if (!ecore_file_init()) */
-   /*   { */
-   /*      ERR("Unable to initialize ecore_file"); */
-   /*      goto on_error_3; */
-   /*   } */
-
-   /* if (!eio_init()) */
-   /*   { */
-   /*      ERR("Unable to initialize eio"); */
-   /*      goto on_error_4; */
-   /*   } */
-
-   /* _ecordova_systeminfo = eo_add(ECORDOVA_SYSTEMINFO_CLASS, NULL, */
-   /*                               ecordova_systeminfo_constructor()); */
-   /* if (!_ecordova_systeminfo) */
-   /*   { */
-   /*      ERR("Unable to initialize systeminfo service"); */
-   /*      goto on_error_4; */
-   /*   } */
-
    _ecordova_pfx = eina_prefix_new(NULL, ecordova_init,
                                 "ECORDOVA", "ecordova", "checkme",
                                 PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
@@ -111,14 +90,11 @@ ecordova_init(void)
    return _ecordova_init_count;
 
 on_error_4:
-/*    ecore_file_shutdown(); */
-
+   eo_shutdown();
 on_error_3:
    ecore_shutdown();
-
 on_error_2:
    eina_log_domain_unregister(_ecordova_log_dom);
-
 on_error_1:
    _ecordova_log_dom = -1;
    eina_shutdown();
@@ -128,9 +104,9 @@ on_error_1:
 EAPI int
 ecordova_shutdown(void)
 {
-   if (_ecordova_init_count <= 0)
+  if (_ecordova_init_count <= 0)
      {
-        ERR("Init count not greater than 0 in shutdown.");
+        ERR("init count not greater than 0 in shutdown.");
         _ecordova_init_count = 0;
         return 0;
      }
@@ -138,6 +114,8 @@ ecordova_shutdown(void)
    if (--_ecordova_init_count)
      return _ecordova_init_count;
 
+   eina_prefix_free(_ecordova_pfx);
+   
    if(_registered_engines)
      {
        eina_array_free(_registered_engines);
@@ -145,9 +123,6 @@ ecordova_shutdown(void)
      }
    
    eo_shutdown();
-   /* eo_unref(_ecordova_systeminfo); */
-   /* eio_shutdown(); */
-   /* ecore_file_shutdown(); */
    ecore_shutdown();
    eina_log_domain_unregister(_ecordova_log_dom);
    _ecordova_log_dom = -1;
@@ -254,7 +229,7 @@ void* ecordova_module_symbol_get(const char* symbol)
     static const Eo_Class *(*class_get)(void);                          \
     if(!class_get)                                                      \
       {                                                                 \
-    fprintf(stderr, "%s:%d\n", __func__, __LINE__); fflush(stderr);     \
+         fprintf(stderr, "%s:%d\n", __func__, __LINE__); fflush(stderr);\
          class_get = ecordova_module_symbol_get(ECORDOVA_symbol(name)); \
          if(!class_get)                                                 \
            {                                                            \
@@ -262,7 +237,7 @@ void* ecordova_module_symbol_get(const char* symbol)
               return NULL;                                              \
            }                                                            \
       }                                                                 \
-    fprintf(stderr, "%s:%d\n", __func__, __LINE__); fflush(stderr);     \
+    fprintf(stderr, "%s:%d symbol %p\n", __func__, __LINE__, class_get); fflush(stderr); \
     return class_get();                                                 \
   }
 
@@ -272,7 +247,17 @@ void* ecordova_module_symbol_get(const char* symbol)
   ECORDOVA_concat_op(ECORDOVA_concat_op(Ecordova_, name), _Data);
 
 
+ECORDOVA_CLASS_GET(batterystatus)
 ECORDOVA_CLASS_GET(console)
+ECORDOVA_CLASS_GET(contactaddress)
+ECORDOVA_CLASS_GET(contact)
+ECORDOVA_CLASS_GET(contacts)
+ECORDOVA_CLASS_GET(contactfield)
+ECORDOVA_CLASS_GET(contactname)
+ECORDOVA_CLASS_GET(contactorganization)
+ECORDOVA_CLASS_GET(device)
+ECORDOVA_CLASS_GET(devicemotion)
+ECORDOVA_CLASS_GET(deviceorientation)
 ECORDOVA_CLASS_GET(directoryentry)
 ECORDOVA_CLASS_GET(directoryreader)
 ECORDOVA_CLASS_GET(entry)
@@ -281,8 +266,26 @@ ECORDOVA_CLASS_GET(filewriter)
 ECORDOVA_CLASS_GET(file)
 ECORDOVA_CLASS_GET(filereader)
 ECORDOVA_CLASS_GET(filetransfer)
+ECORDOVA_CLASS_GET(geolocation)
+ECORDOVA_CLASS_GET(globalization)
+ECORDOVA_CLASS_GET(inappbrowser)
+ECORDOVA_CLASS_GET(media)
+ECORDOVA_CLASS_GET(mediafile)
+ECORDOVA_CLASS_GET(networkinformation)
+ECORDOVA_CLASS_GET(systeminfo)
+ECORDOVA_CLASS_GET(vibration)
 
+ECORDOVA_define_data(BatteryStatus)
+ECORDOVA_define_data(ContactAddress)
+ECORDOVA_define_data(Contact)
+ECORDOVA_define_data(Contacts)
+ECORDOVA_define_data(ContactField)
+ECORDOVA_define_data(ContactName)
+ECORDOVA_define_data(ContactOrganization)
 ECORDOVA_define_data(Console)
+ECORDOVA_define_data(Device)
+ECORDOVA_define_data(DeviceMotion)
+ECORDOVA_define_data(DeviceOrientation)
 ECORDOVA_define_data(DirectoryEntry)
 ECORDOVA_define_data(DirectoryReader)
 ECORDOVA_define_data(Entry)
@@ -291,6 +294,14 @@ ECORDOVA_define_data(FileWriter)
 ECORDOVA_define_data(File)
 ECORDOVA_define_data(FileReader)
 ECORDOVA_define_data(FileTransfer)
+ECORDOVA_define_data(Geolocation)
+ECORDOVA_define_data(Globalization)
+ECORDOVA_define_data(InAppBrowser)
+ECORDOVA_define_data(Media)
+ECORDOVA_define_data(MediaFile)
+ECORDOVA_define_data(NetworkInformation)
+ECORDOVA_define_data(SystemInfo)
+ECORDOVA_define_data(Vibration)
 
 #undef EO_DEFINE_CLASS
 #define EO_DEFINE_CLASS(...)
@@ -298,12 +309,55 @@ ECORDOVA_define_data(FileTransfer)
 #undef EOAPI
 #define EOAPI EAPI
 
+#include "ecordova_batterystatus.eo.h"
+#include "ecordova_batterystatus.eo.c"
+#include "ecordova_contactaddress.eo.h"
+#include "ecordova_contactaddress.eo.c"
+#include "ecordova_contact.eo.h"
+#include "ecordova_contact.eo.c"
+#include "ecordova_contactfield.eo.h"
+#include "ecordova_contactfield.eo.c"
+#include "ecordova_contactname.eo.h"
+#include "ecordova_contactname.eo.c"
+#include "ecordova_contactorganization.eo.h"
+#include "ecordova_contactorganization.eo.c"
+#include "ecordova_console.eo.h"
 #include "ecordova_console.eo.c"
+#include "ecordova_device.eo.h"
+#include "ecordova_device.eo.c"
+#include "ecordova_devicemotion.eo.h"
+#include "ecordova_devicemotion.eo.c"
+#include "ecordova_deviceorientation.eo.h"
+#include "ecordova_deviceorientation.eo.c"
+#include "ecordova_directoryentry.eo.h"
 #include "ecordova_directoryentry.eo.c"
+#include "ecordova_directoryreader.eo.h"
 #include "ecordova_directoryreader.eo.c"
+#include "ecordova_entry.eo.h"
 #include "ecordova_entry.eo.c"
+#include "ecordova_fileentry.eo.h"
 #include "ecordova_fileentry.eo.c"
+#include "ecordova_filewriter.eo.h"
 #include "ecordova_filewriter.eo.c"
+#include "ecordova_file.eo.h"
 #include "ecordova_file.eo.c"
+#include "ecordova_filereader.eo.h"
 #include "ecordova_filereader.eo.c"
+#include "ecordova_filetransfer.eo.h"
 #include "ecordova_filetransfer.eo.c"
+#include "ecordova_geolocation.eo.h"
+#include "ecordova_geolocation.eo.c"
+#include "ecordova_globalization.eo.h"
+#include "ecordova_globalization.eo.c"
+#include "ecordova_inappbrowser.eo.h"
+#include "ecordova_inappbrowser.eo.c"
+#include "ecordova_media.eo.h"
+#include "ecordova_media.eo.c"
+#include "ecordova_mediafile.eo.h"
+#include "ecordova_mediafile.eo.c"
+#include "ecordova_networkinformation.eo.h"
+#include "ecordova_networkinformation.eo.c"
+#include "ecordova_systeminfo.eo.h"
+#include "ecordova_systeminfo.eo.c"
+#include "ecordova_vibration.eo.h"
+#include "ecordova_vibration.eo.c"

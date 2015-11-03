@@ -2,10 +2,11 @@
 # include <config.h>
 #endif
 
-#include "ecordova_deviceorientation_test.h"
+#include <Ecordova.h>
+
 #include "ecordova_suite.h"
 
-#include <stdbool.h>
+#include <check.h>
 
 static void
 _setup(void)
@@ -21,6 +22,7 @@ _teardown(void)
    ck_assert_int_eq(ret, 0);
 }
 
+#ifdef HAVE_TIZEN_CONFIGURATION_MANAGER
 static Ecordova_Device *
 _deviceorientation_new(void)
 {
@@ -87,3 +89,19 @@ ecordova_deviceorientation_test(TCase *tc)
    tcase_add_test(tc, smoke);
    //tcase_add_test(tc, current_heading_get); // disabled: not supported
 }
+#else
+START_TEST(deviceorientation_fail_load)
+{
+   Ecordova_Device *deviceorientation = eo_add(ECORDOVA_DEVICEORIENTATION_CLASS, NULL);
+
+   ck_assert_ptr_eq(deviceorientation, NULL);
+}
+END_TEST
+
+void
+ecordova_deviceorientation_test(TCase *tc)
+{
+   tcase_add_checked_fixture(tc, _setup, _teardown);
+   tcase_add_test(tc, deviceorientation_fail_load);
+}
+#endif

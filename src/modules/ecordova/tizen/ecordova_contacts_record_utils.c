@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_TIZEN_CONTACTS_SERVICE
 #include "ecordova_contacts_record_utils.h"
 
 #include <Eina.h>
@@ -119,3 +120,4 @@ clear_all_contact_record(contacts_record_h contacts_record,
 
    return true;
 }
+#endif

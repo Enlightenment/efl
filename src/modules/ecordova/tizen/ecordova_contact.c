@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_TIZEN_CONTACTS_SERVICE
 #include "ecordova_contact_private.h"
 
 #include "ecordova_contactname_private.h"
@@ -1115,3 +1116,4 @@ _ecordova_contactorganizations_export(Eina_Array *organizations,
 }
 
 #include "ecordova_contact.eo.c"
+#endif

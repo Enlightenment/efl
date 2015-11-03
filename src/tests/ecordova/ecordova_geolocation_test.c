@@ -2,10 +2,11 @@
 # include <config.h>
 #endif
 
-#include "ecordova_geolocation_test.h"
+#include <Ecordova.h>
+
 #include "ecordova_suite.h"
 
-#include <stdbool.h>
+#include <check.h>
 
 static void
 _setup(void)
@@ -21,6 +22,7 @@ _teardown(void)
    ck_assert_int_eq(ret, 0);
 }
 
+#ifdef HAVE_TIZEN_CONFIGURATION_MANAGER
 static Ecordova_Device *
 _geolocation_new(void)
 {
@@ -91,3 +93,18 @@ ecordova_geolocation_test(TCase *tc)
    tcase_add_test(tc, smoke);
    //tcase_add_test(tc, current_position_get); // disabled: not supported
 }
+#else
+START_TEST(geolocation_fail_load)
+{
+   Ecordova_Device *geolocation = eo_add(ECORDOVA_GEOLOCATION_CLASS, NULL);
+   ck_assert_ptr_eq(geolocation, NULL);
+}
+END_TEST
+
+void
+ecordova_geolocation_test(TCase *tc)
+{
+   tcase_add_checked_fixture(tc, _setup, _teardown);
+   tcase_add_test(tc, geolocation_fail_load);
+}
+#endif

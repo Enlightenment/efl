@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#ifdef TIZEN_LOCATION_MANAGER
 #include "ecordova_geolocation_private.h"
 #include <ecore_timer.eo.h>
 
@@ -280,3 +281,4 @@ on_error_1:
 }
 
 #include "ecordova_geolocation.eo.c"
+#endif

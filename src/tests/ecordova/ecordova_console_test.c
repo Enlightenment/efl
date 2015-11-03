@@ -2,7 +2,8 @@
 # include <config.h>
 #endif
 
-#include "ecordova_console_test.h"
+#include <Ecordova.h>
+
 #include "ecordova_suite.h"
 
 #include <stdbool.h>

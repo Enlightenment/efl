@@ -2,10 +2,11 @@
 # include <config.h>
 #endif
 
-#include "ecordova_networkinformation_test.h"
+#include <Ecordova.h>
+
 #include "ecordova_suite.h"
 
-#include <stdbool.h>
+#include <check.h>
 
 static void
 _setup(void)
@@ -21,6 +22,7 @@ _teardown(void)
    ck_assert_int_eq(ret, 0);
 }
 
+#ifdef HAVE_TIZEN_CONFIGURATION_MANAGER
 static Ecordova_Device *
 _networkinformation_new(void)
 {
@@ -40,5 +42,20 @@ void
 ecordova_networkinformation_test(TCase *tc)
 {
    tcase_add_checked_fixture(tc, _setup, _teardown);
-   //tcase_add_test(tc, smoke); // disabled: not supported on common profile
+   tcase_add_test(tc, smoke); // not supported on common profile
 }
+#else
+START_TEST(networkinformation_load_fail)
+{
+   Ecordova_Device *networkinformation = eo_add(ECORDOVA_NETWORKINFORMATION_CLASS, NULL);
+   ck_assert_ptr_eq(networkinformation, NULL);
+}
+END_TEST
+
+void
+ecordova_networkinformation_test(TCase *tc)
+{
+   tcase_add_checked_fixture(tc, _setup, _teardown);
+   tcase_add_test(tc, networkinformation_load_fail);
+}
+#endif

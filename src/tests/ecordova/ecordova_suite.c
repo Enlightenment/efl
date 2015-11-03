@@ -2,27 +2,6 @@
 # include <config.h>
 #endif
 
-/* #include "ecordova_contacts_test.h" */
-/* #include "ecordova_device_test.h" */
-/* #include "ecordova_devicemotion_test.h" */
-/* #include "ecordova_deviceorientation_test.h" */
-/* #include "ecordova_geolocation_test.h" */
-/* #include "ecordova_batterystatus_test.h" */
-#include "ecordova_console_test.h"
-#include "ecordova_filetransfer_test.h"
-/* #include "ecordova_media_test.h" */
-/* #include "ecordova_networkinformation_test.h" */
-/* #include "ecordova_vibration_test.h" */
-#include "ecordova_directoryreader_test.h"
-#include "ecordova_directoryentry_test.h"
-#include "ecordova_entry_test.h"
-#include "ecordova_file_test.h"
-#include "ecordova_fileentry_test.h"
-#include "ecordova_filereader_test.h"
-#include "ecordova_filewriter_test.h"
-/* #include "ecordova_mediafile_test.h" */
-/* #include "ecordova_globalization_test.h" */
-
 #include <Eina.h>
 
 #include <stdbool.h>
@@ -31,6 +10,27 @@
 #include <time.h>
 
 #include "ecordova_suite.h"
+
+void ecordova_batterystatus_test(TCase *);
+void ecordova_contacts_test(TCase *);
+void ecordova_device_test(TCase *);
+void ecordova_devicemotion_test(TCase *);
+void ecordova_deviceorientation_test(TCase *);
+void ecordova_geolocation_test(TCase *);
+void ecordova_console_test(TCase *);
+void ecordova_filetransfer_test(TCase *);
+void ecordova_media_test(TCase *);
+void ecordova_networkinformation_test(TCase *);
+void ecordova_vibration_test(TCase *);
+void ecordova_directoryreader_test(TCase *);
+void ecordova_directoryentry_test(TCase *);
+void ecordova_entry_test(TCase *);
+void ecordova_file_test(TCase *);
+void ecordova_fileentry_test(TCase *);
+void ecordova_filereader_test(TCase *);
+void ecordova_filewriter_test(TCase *);
+void ecordova_mediafile_test(TCase *);
+void ecordova_globalization_test(TCase *);
 
 int _test_ecordova_log_dom = -1;
 
@@ -43,15 +43,15 @@ struct _Ecordova_Test_Case
 };
 
 static const Ecordova_Test_Case etc[] = {
-  //{ "contacts", ecordova_contacts_test },
-  /* { "device", ecordova_device_test }, */
-  /* { "devicemotion", ecordova_devicemotion_test }, */
-  /* { "deviceorientation", ecordova_deviceorientation_test }, */
-  /* { "geolocation", ecordova_geolocation_test }, */
-  /* { "batterystatus", ecordova_batterystatus_test }, */
+  { "contacts", ecordova_contacts_test },
+  { "device", ecordova_device_test },
+  { "devicemotion", ecordova_devicemotion_test },
+  { "deviceorientation", ecordova_deviceorientation_test },
+  { "geolocation", ecordova_geolocation_test },
+  { "batterystatus", ecordova_batterystatus_test },
   { "console", ecordova_console_test },
   { "filetransfer", ecordova_filetransfer_test },
-  /* { "media", ecordova_media_test }, */
+  { "media", ecordova_media_test },
   /* { "networkinformation", ecordova_networkinformation_test }, */
   /* { "vibration", ecordova_vibration_test }, */
   { "directoryreader", ecordova_directoryreader_test },

@@ -19,7 +19,7 @@ _ecordova_tizen_init(void)
    if (_ecordova_log_dom < 0)
      {
         EINA_LOG_ERR("Unable to create an 'ecordova' log domain");
-        //goto on_error_1;
+        return EINA_FALSE;
      }
 
    return EINA_TRUE;
@@ -28,6 +28,8 @@ _ecordova_tizen_init(void)
 static void
 _ecordova_tizen_shutdown(void)
 {
+   eina_log_domain_unregister(_ecordova_log_dom);
+   _ecordova_log_dom = -1;
 }
 
 EINA_MODULE_INIT(_ecordova_system_tizen_init);

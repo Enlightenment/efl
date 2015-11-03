@@ -2,7 +2,7 @@
 # include <config.h>
 #endif
 
-#include "ecordova_file_test.h"
+#include "ecordova_file_tests.h"
 #include "ecordova_suite.h"
 
 static void

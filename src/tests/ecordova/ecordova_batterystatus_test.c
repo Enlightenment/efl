@@ -2,10 +2,11 @@
 # include <config.h>
 #endif
 
-#include "ecordova_batterystatus_test.h"
+#include <Ecordova.h>
+
 #include "ecordova_suite.h"
 
-#include <stdbool.h>
+#include <check.h>
 
 static void
 _setup(void)
@@ -21,6 +22,7 @@ _teardown(void)
    ck_assert_int_eq(ret, 0);
 }
 
+#ifdef HAVE_TIZEN_CONFIGURATION_MANAGER
 static Ecordova_Device *
 _batterystatus_new(void)
 {
@@ -42,3 +44,18 @@ ecordova_batterystatus_test(TCase *tc)
    tcase_add_checked_fixture(tc, _setup, _teardown);
    tcase_add_test(tc, smoke);
 }
+#else
+START_TEST(batterystatus_load_fail)
+{
+   Ecordova_Device *batterystatus = eo_add(ECORDOVA_BATTERYSTATUS_CLASS, NULL);
+   ck_assert_ptr_eq(batterystatus, NULL);
+}
+END_TEST
+
+void
+ecordova_batterystatus_test(TCase *tc)
+{
+   tcase_add_checked_fixture(tc, _setup, _teardown);
+   tcase_add_test(tc, batterystatus_load_fail);
+}
+#endif

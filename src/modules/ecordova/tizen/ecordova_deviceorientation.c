@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_TIZEN_SENSOR
 #include "ecordova_deviceorientation_private.h"
 
 #define MY_CLASS ECORDOVA_DEVICEORIENTATION_CLASS
@@ -178,3 +179,4 @@ _hash_data_free(sensor_listener_h listener)
 }
 
 #include "ecordova_deviceorientation.eo.c"
+#endif

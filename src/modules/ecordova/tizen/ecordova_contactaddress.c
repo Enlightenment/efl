@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_TIZEN_CONTACTS_SERVICE
+
 #include "ecordova_contactaddress_private.h"
 #include "ecordova_contacts_record_utils.h"
 
@@ -310,3 +312,5 @@ ecordova_contactaddress_clone(Ecordova_ContactAddress *other)
 }
 
 #include "ecordova_contactaddress.eo.c"
+
+#endif

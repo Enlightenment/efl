@@ -2,10 +2,11 @@
 # include <config.h>
 #endif
 
-#include "ecordova_globalization_test.h"
+#include <Ecordova.h>
+
 #include "ecordova_suite.h"
 
-#include <stdbool.h>
+#include <check.h>
 
 static void
 _setup(void)
@@ -21,6 +22,7 @@ _teardown(void)
    ck_assert_int_eq(ret, 0);
 }
 
+#ifdef HAVE_TIZEN_CONFIGURATION_MANAGER
 static Ecordova_Device *
 _globalization_new(void)
 {
@@ -592,3 +594,18 @@ ecordova_globalization_test(TCase *tc)
    tcase_add_test(tc, string_to_date);
    tcase_add_test(tc, string_to_number);
 }
+#else
+START_TEST(globalization_fail_load)
+{
+   Ecordova_Globalization *globalization = eo_add(ECORDOVA_GLOBALIZATION_CLASS, NULL);
+   ck_assert_ptr_eq(globalization, NULL);
+}
+END_TEST
+
+void
+ecordova_globalization_test(TCase *tc)
+{
+   tcase_add_checked_fixture(tc, _setup, _teardown);
+   tcase_add_test(tc, globalization_fail_load);
+}
+#endif

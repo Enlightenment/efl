@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_TIZEN_CONTACTS_SERVICE
 #include "ecordova_contacts_private.h"
 #include "ecordova_contact_private.h"
 #include "ecordova_contacts_record_utils.h"
@@ -517,3 +518,4 @@ on_error:
 }
 
 #include "ecordova_contacts.eo.c"
+#endif

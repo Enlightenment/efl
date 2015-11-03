@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_TIZEN_SENSOR
 #include "ecordova_devicemotion_private.h"
 
 #define MY_CLASS ECORDOVA_DEVICEMOTION_CLASS
@@ -174,3 +175,4 @@ _hash_data_free(sensor_listener_h listener)
 }
 
 #include "ecordova_devicemotion.eo.c"
+#endif

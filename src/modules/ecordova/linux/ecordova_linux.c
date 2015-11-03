@@ -15,37 +15,50 @@ int _ecordova_log_dom;
 static Eina_Bool
 _ecordova_linux_init(void)
 {
-   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
-    
+   if (!eina_init())
+     {
+        fputs("Ecordova: Unable to initialize eina\n", stderr);
+        goto on_error_1;
+     }
+
    _ecordova_log_dom = eina_log_domain_register("ecordova_linux", EINA_COLOR_CYAN);
    if (_ecordova_log_dom < 0)
      {
         EINA_LOG_ERR("Unable to create an 'ecordova' log domain");
-        //goto on_error_1;
+        goto on_error_2;
      }
 
    if (!ecore_file_init())
      {
         ERR("Unable to initialize ecore_file");
-        //goto on_error_3;
+        goto on_error_3;
      }
 
    if (!eio_init())
      {
         ERR("Unable to initialize eio");
-        //goto on_error_4;
+        goto on_error_4;
      }
    
-   
    return EINA_TRUE;
+
+on_error_4:
+   ecore_file_shutdown();
+on_error_3:
+   eina_log_domain_unregister(_ecordova_log_dom);
+on_error_2:
+   eina_shutdown();
+on_error_1:
+   return EINA_FALSE;
 }
 
 static void
 _ecordova_linux_shutdown(void)
 {
-   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    eio_shutdown();
    ecore_file_shutdown();
+   eina_log_domain_unregister(_ecordova_log_dom);
+   eina_shutdown();
 }
 
 EINA_MODULE_INIT(_ecordova_linux_init);

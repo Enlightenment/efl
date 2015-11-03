@@ -2,11 +2,7 @@
 # include <config.h>
 #endif
 
-#include "ecordova_filetransfer_test.h"
-#include "ecordova_fileentry_test.h"
-#include "ecordova_directoryentry_test.h"
-#include "ecordova_entry_test.h"
-#include "ecordova_filereader_test.h"
+#include "ecordova_file_tests.h"
 #include "ecordova_suite.h"
 
 #include <Ecore_Con.h>

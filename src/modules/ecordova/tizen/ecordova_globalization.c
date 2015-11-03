@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_TIZEN_BASE_UTILS_I18N
 #include "ecordova_globalization_private.h"
 
 #include <utils_i18n.h>
@@ -1120,3 +1121,4 @@ _date_time_options_to_style(const Ecordova_Globalization_DateTimeOptions *option
 }
 
 #include "ecordova_globalization.eo.c"
+#endif
