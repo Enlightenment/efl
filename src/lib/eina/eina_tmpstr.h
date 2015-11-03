@@ -238,6 +238,38 @@ EAPI size_t eina_tmpstr_len(Eina_Tmpstr *tmpstr);
 EAPI void eina_tmpstr_del(Eina_Tmpstr *tmpstr) EINA_ARG_NONNULL(1);
 
 /**
+ * @brief Add a new temporary string using the passed string. The passed
+ * string is used directly as the buffer. The passed string must be malloced.
+ *
+ * @param str the input string to manage.
+ * @return A pointer to the tmp string that is a standard C string.
+ *
+ * This function creates a new temporary string. On error, @c NULL is
+ * returned. To free the resources, use eina_tmpstr_del().
+ *
+ * @see eina_tmpstr_del()
+ * @since 1.17.0
+ */
+EAPI Eina_Tmpstr *eina_tmpstr_manage_new(char *str) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Add a new temporary string using the passed string. The passed
+ * string is used directly as the buffer. The passed string must be malloced.
+ *
+ * @param str the input string to manage.
+ * @param length the length of the string.
+ * @return A pointer to the tmp string that is a standard C string.
+ *
+ * This function creates a new temporary string. On error, @c NULL is
+ * returned. To free the resources, use eina_tmpstr_del().
+ *
+ * @see eina_tmpstr_manage_new()
+ * @see eina_tmpstr_del()
+ * @since 1.17.0
+ */
+EAPI Eina_Tmpstr *eina_tmpstr_manage_new_length(char *str, size_t length);
+
+/**
  * @}
  */
 

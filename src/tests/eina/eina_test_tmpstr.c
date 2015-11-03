@@ -60,6 +60,70 @@ START_TEST(tmpstr_simple)
 }
 END_TEST
 
+START_TEST(tmpstr_simple_len)
+{
+   eina_init();
+
+   const int cnt_tmp_strings = 10;
+   const int max_str_len = 255;
+   char buf[max_str_len + 1];
+   Eina_Tmpstr *tmp_strings[cnt_tmp_strings];
+
+   // Add several tmp strings
+   for (int i = 0; i != cnt_tmp_strings; ++i)
+     {
+        snprintf(buf, max_str_len, "Tmp string %d", (i + 1));
+        tmp_strings[i] = eina_tmpstr_add_length(buf, (max_str_len + 1));
+
+        fail_if(strcmp(buf, tmp_strings[i]));
+     }
+
+   // Delete these tmp strings
+   for (int i = 0; i != cnt_tmp_strings; ++i)
+     {
+        snprintf(buf, max_str_len, "Tmp string %d", (cnt_tmp_strings - i - 1 + 1));
+
+        fail_if(strcmp(buf, tmp_strings[cnt_tmp_strings - i - 1]));
+
+        eina_tmpstr_del(tmp_strings[cnt_tmp_strings - i - 1]);
+        tmp_strings[cnt_tmp_strings - i - 1] = 0;
+     }
+
+   // Delete non tmp string (should do nothing)
+   eina_tmpstr_del("Some non tmp string");
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(tmpstr_manage)
+{
+   eina_init();
+
+   char *buf = malloc(7);
+   strcpy(buf, "tmpstr");
+   Eina_Tmpstr *tstr1 = eina_tmpstr_manage_new(buf);
+   fail_if(strcmp(buf, tstr1));
+   eina_tmpstr_del(tstr1);
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(tmpstr_manage_len)
+{
+   eina_init();
+
+   char *buf = malloc(10);
+   strcpy(buf, "tmpstr");
+   Eina_Tmpstr *tstr1 = eina_tmpstr_manage_new_length(buf, 7);
+   fail_if(strcmp(buf, tstr1));
+   eina_tmpstr_del(tstr1);
+
+   eina_shutdown();
+}
+END_TEST
+
 START_TEST(tmpstr_len)
 {
    eina_init();
@@ -86,5 +150,8 @@ void
 eina_test_tmpstr(TCase *tc)
 {
    tcase_add_test(tc, tmpstr_simple);
+   tcase_add_test(tc, tmpstr_simple_len);
+   tcase_add_test(tc, tmpstr_manage);
+   tcase_add_test(tc, tmpstr_manage_len);
    tcase_add_test(tc, tmpstr_len);
 }

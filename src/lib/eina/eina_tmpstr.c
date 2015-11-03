@@ -47,6 +47,7 @@ struct _Str
    size_t length;
    Str *next;
    char *str;
+   Eina_Bool ma : 1;
 };
 
 static Eina_Lock _mutex;
@@ -78,6 +79,7 @@ eina_tmpstr_add_length(const char *str, size_t length)
    s->str = ((char *)s) + sizeof(Str);
    strncpy(s->str, str, length);
    s->str[length] = '\0';
+   s->ma = EINA_FALSE;
    eina_lock_take(&_mutex);
    s->next = strs;
    strs = s;
@@ -86,10 +88,38 @@ eina_tmpstr_add_length(const char *str, size_t length)
 }
 
 EAPI Eina_Tmpstr *
+eina_tmpstr_manage_new_length(char *str, size_t length)
+{
+   Str *s;
+
+   if (!str || !length) return NULL;
+   s = calloc(1, sizeof(Str));
+   if (!s) return NULL;
+   s->length = length;
+   s->str = str;
+   s->ma = EINA_TRUE;
+   eina_lock_take(&_mutex);
+   s->next = strs;
+   strs = s;
+   eina_lock_release(&_mutex);
+   return s->str;
+}
+
+EAPI Eina_Tmpstr *
+eina_tmpstr_manage_new(char *str)
+{
+   size_t len;
+
+   if (!str) return NULL;
+   len = strlen(str);
+   return eina_tmpstr_manage_new_length(str, len);
+}
+
+EAPI Eina_Tmpstr *
 eina_tmpstr_add(const char *str)
 {
    size_t len;
-   
+
    if (!str) return NULL;
    len = strlen(str);
    return eina_tmpstr_add_length(str, len);
@@ -99,7 +129,7 @@ EAPI void
 eina_tmpstr_del(Eina_Tmpstr *tmpstr)
 {
    Str *s, *sp;
-   
+
    if ((!strs) || (!tmpstr)) return;
    eina_lock_take(&_mutex);
    for (sp = NULL, s = strs; s; sp = s, s = s->next)
@@ -108,6 +138,7 @@ eina_tmpstr_del(Eina_Tmpstr *tmpstr)
           {
              if (sp) sp->next = s->next;
              else strs = s->next;
+             if (s->ma) free(s->str);
              free(s);
              break;
           }
