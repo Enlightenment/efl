@@ -12,6 +12,7 @@ database_parameter_del(Eolian_Function_Parameter *pdesc)
    eina_stringshare_del(pdesc->name);
 
    database_type_del(pdesc->type);
+   database_expr_del(pdesc->value);
    database_doc_del(pdesc->doc);
    free(pdesc);
 }
