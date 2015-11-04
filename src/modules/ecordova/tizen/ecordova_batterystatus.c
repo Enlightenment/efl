@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_TIZEN_CONFIGURATION_MANAGER
 #include "ecordova_batterystatus_private.h"
 #include "ecordova_systeminfo.eo.h"
 
@@ -186,3 +187,4 @@ _on_battery_changed(void *data,
 }
 
 #include "ecordova_batterystatus.eo.c"
+#endif

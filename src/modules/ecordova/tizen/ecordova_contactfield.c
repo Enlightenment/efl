@@ -2,7 +2,6 @@
 # include <config.h>
 #endif
 
-#ifdef HAVE_TIZEN_CONTACTS_SERVICE
 #include "ecordova_contactfield_private.h"
 #include "ecordova_contacts_record_utils.h"
 
@@ -403,4 +402,3 @@ ecordova_contacturl_label2type(const char *label)
 }
 
 #include "ecordova_contactfield.eo.c"
-#endif

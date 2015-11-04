@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_TIZEN_CONFIGURATION_MANAGER
 #include "ecordova_systeminfo_private.h"
 
 #include <vconf.h>
@@ -129,3 +130,4 @@ _on_battery_changed(keynode_t *node EINA_UNUSED, void *data)
 }
 
 #include "ecordova_systeminfo.eo.c"
+#endif

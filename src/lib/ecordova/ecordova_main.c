@@ -142,9 +142,9 @@ _ecordova_engine_load()
         fprintf(stderr, "is in tree? %d\n", (int)run_in_tree); fflush(stderr);
 
         const char *built_modules[] = {
-#ifdef HAVE_TIZEN_CONFIGURATION_MANAGER
+//#ifdef HAVE_TIZEN_CONFIGURATION_MANAGER
           "tizen",
-#endif
+//#endif
           "linux",
           NULL
         };
@@ -311,6 +311,8 @@ ECORDOVA_define_data(Vibration)
 #include "ecordova_batterystatus.eo.c"
 #include "ecordova_contactaddress.eo.h"
 #include "ecordova_contactaddress.eo.c"
+#include "ecordova_contacts.eo.h"
+#include "ecordova_contacts.eo.c"
 #include "ecordova_contact.eo.h"
 #include "ecordova_contact.eo.c"
 #include "ecordova_contactfield.eo.h"

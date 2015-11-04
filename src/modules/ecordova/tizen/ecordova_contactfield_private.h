@@ -3,8 +3,7 @@
 
 #include "ecordova_private.h"
 #include "ecordova_contactfield.eo.h"
-
-#include <contacts.h>
+#include "ecordova_contacts_service.h"
 
 typedef enum _Ecordova_ContactField_Property
 {

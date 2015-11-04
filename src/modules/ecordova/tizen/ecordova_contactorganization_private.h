@@ -3,8 +3,7 @@
 
 #include "ecordova_private.h"
 #include "ecordova_contactorganization.eo.h"
-
-#include <contacts.h>
+#include "ecordova_contacts_service.h"
 
 typedef struct _Ecordova_ContactOrganization_Data Ecordova_ContactOrganization_Data;
 

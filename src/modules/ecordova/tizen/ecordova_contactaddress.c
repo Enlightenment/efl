@@ -2,8 +2,6 @@
 # include <config.h>
 #endif
 
-#ifdef HAVE_TIZEN_CONTACTS_SERVICE
-
 #include "ecordova_contactaddress_private.h"
 #include "ecordova_contacts_record_utils.h"
 
@@ -22,7 +20,7 @@ _ecordova_contactaddress_eo_base_constructor(Eo *obj,
    pd->obj = obj;
    pd->id = 0;
    pd->record = NULL;
-   int ret = contacts_record_create(_contacts_address._uri, &pd->record);
+   int ret = contacts_record_create((*_contacts_address)._uri, &pd->record);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, NULL);
 
    return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
@@ -52,7 +50,7 @@ _ecordova_contactaddress_pref_get(Eo *obj EINA_UNUSED,
                                   Ecordova_ContactAddress_Data *pd)
 {
    Eina_Bool value = EINA_FALSE;
-   get_bool(pd->record, _contacts_address.is_default, &value);
+   get_bool(pd->record, (*_contacts_address).is_default, &value);
    return value;
 }
 
@@ -61,7 +59,7 @@ _ecordova_contactaddress_pref_set(Eo *obj EINA_UNUSED,
                                   Ecordova_ContactAddress_Data *pd,
                                   Eina_Bool value)
 {
-   set_bool(pd->record, _contacts_address.is_default, value);
+   set_bool(pd->record, (*_contacts_address).is_default, value);
 }
 
 static const char *
@@ -69,7 +67,7 @@ _ecordova_contactaddress_type_get(Eo *obj EINA_UNUSED,
                                   Ecordova_ContactAddress_Data *pd)
 {
    int type;
-   if (!get_int(pd->record, _contacts_address.type, &type))
+   if (!get_int(pd->record, (*_contacts_address).type, &type))
      return NULL;
 
    switch (type)
@@ -91,7 +89,7 @@ _ecordova_contactaddress_type_get(Eo *obj EINA_UNUSED,
       default:
         {
            const char *custom = NULL;
-           get_str_p(pd->record, _contacts_address.label, &custom);
+           get_str_p(pd->record, (*_contacts_address).label, &custom);
            return custom;
         }
      }
@@ -121,9 +119,9 @@ _ecordova_contactaddress_type_set(Eo *obj EINA_UNUSED,
    else
      type = CONTACTS_ADDRESS_TYPE_CUSTOM;
 
-   set_int(pd->record, _contacts_address.type, type);
+   set_int(pd->record, (*_contacts_address).type, type);
    if (strlen(value) != 0)
-     set_str(pd->record, _contacts_address.label, value);
+     set_str(pd->record, (*_contacts_address).label, value);
 }
 
 static const char *
@@ -148,7 +146,7 @@ _ecordova_contactaddress_street_address_get(Eo *obj EINA_UNUSED,
                                             Ecordova_ContactAddress_Data *pd)
 {
    const char *value = NULL;
-   get_str_p(pd->record, _contacts_address.street, &value);
+   get_str_p(pd->record, (*_contacts_address).street, &value);
    return value;
 }
 
@@ -157,7 +155,7 @@ _ecordova_contactaddress_street_address_set(Eo *obj EINA_UNUSED,
                                             Ecordova_ContactAddress_Data *pd,
                                             const char *value)
 {
-   set_str(pd->record, _contacts_address.street, value);
+   set_str(pd->record, (*_contacts_address).street, value);
 }
 
 static const char *
@@ -165,7 +163,7 @@ _ecordova_contactaddress_locality_get(Eo *obj EINA_UNUSED,
                                       Ecordova_ContactAddress_Data *pd)
 {
    const char *value = NULL;
-   get_str_p(pd->record, _contacts_address.locality, &value);
+   get_str_p(pd->record, (*_contacts_address).locality, &value);
    return value;
 }
 
@@ -174,7 +172,7 @@ _ecordova_contactaddress_locality_set(Eo *obj EINA_UNUSED,
                                       Ecordova_ContactAddress_Data *pd,
                                       const char *value)
 {
-   set_str(pd->record, _contacts_address.locality, value);
+   set_str(pd->record, (*_contacts_address).locality, value);
 }
 
 static const char *
@@ -182,7 +180,7 @@ _ecordova_contactaddress_region_get(Eo *obj EINA_UNUSED,
                                     Ecordova_ContactAddress_Data *pd)
 {
    const char *value = NULL;
-   get_str_p(pd->record, _contacts_address.region, &value);
+   get_str_p(pd->record, (*_contacts_address).region, &value);
    return value;
 }
 
@@ -191,7 +189,7 @@ _ecordova_contactaddress_region_set(Eo *obj EINA_UNUSED,
                                     Ecordova_ContactAddress_Data *pd,
                                     const char *value)
 {
-   set_str(pd->record, _contacts_address.region, value);
+   set_str(pd->record, (*_contacts_address).region, value);
 }
 
 static const char *
@@ -199,7 +197,7 @@ _ecordova_contactaddress_postal_code_get(Eo *obj EINA_UNUSED,
                                          Ecordova_ContactAddress_Data *pd)
 {
    const char *value = NULL;
-   get_str_p(pd->record, _contacts_address.postal_code, &value);
+   get_str_p(pd->record, (*_contacts_address).postal_code, &value);
    return value;
 }
 
@@ -208,7 +206,7 @@ _ecordova_contactaddress_postal_code_set(Eo *obj EINA_UNUSED,
                                          Ecordova_ContactAddress_Data *pd,
                                          const char *value)
 {
-   set_str(pd->record, _contacts_address.postal_code, value);
+   set_str(pd->record, (*_contacts_address).postal_code, value);
 }
 
 static const char *
@@ -216,7 +214,7 @@ _ecordova_contactaddress_country_get(Eo *obj EINA_UNUSED,
                                      Ecordova_ContactAddress_Data *pd)
 {
    const char *value = NULL;
-   get_str_p(pd->record, _contacts_address.country, &value);
+   get_str_p(pd->record, (*_contacts_address).country, &value);
    return value;
 }
 
@@ -225,7 +223,7 @@ _ecordova_contactaddress_country_set(Eo *obj EINA_UNUSED,
                                      Ecordova_ContactAddress_Data *pd,
                                      const char *value)
 {
-   set_str(pd->record, _contacts_address.country, value);
+   set_str(pd->record, (*_contacts_address).country, value);
 }
 
 Eina_Bool
@@ -243,7 +241,7 @@ ecordova_contactaddress_import(Ecordova_ContactAddress *obj,
    ret = contacts_record_clone(child_record, &pd->record);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
-   return get_int(child_record, _contacts_address.id, &pd->id);
+   return get_int(child_record, (*_contacts_address).id, &pd->id);
 }
 
 Eina_Bool
@@ -288,4 +286,3 @@ ecordova_contactaddress_clone(Ecordova_ContactAddress *other)
 
 #include "ecordova_contactaddress.eo.c"
 
-#endif

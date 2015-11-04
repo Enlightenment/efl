@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_TIZEN_HAPTIC
 #include "ecordova_vibration_private.h"
 
 #include <haptic.h>
@@ -57,3 +58,4 @@ _ecordova_vibration_vibrate(Eo *obj,
 }
 
 #include "ecordova_vibration.eo.c"
+#endif

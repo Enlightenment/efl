@@ -2,7 +2,6 @@
 # include <config.h>
 #endif
 
-#ifdef HAVE_TIZEN_CONTACTS_SERVICE
 #include "ecordova_contacts_record_utils.h"
 
 #include <Eina.h>
@@ -67,7 +66,7 @@ get_bool(contacts_record_h record, unsigned int property_id, Eina_Bool *value)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(record, EINA_FALSE);
 
-   Eina_Bool raw_value;
+   bool raw_value;
    int ret = contacts_record_get_bool(record, property_id, &raw_value);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
@@ -120,4 +119,3 @@ clear_all_contact_record(contacts_record_h contacts_record,
 
    return EINA_TRUE;
 }
-#endif

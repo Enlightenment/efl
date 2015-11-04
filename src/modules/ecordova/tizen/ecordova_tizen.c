@@ -12,6 +12,9 @@ int _ecordova_log_dom;
 #define INF(...) EINA_LOG_DOM_INFO(_ecordova_log_dom, __VA_ARGS__)
 #define DBG(...) EINA_LOG_DOM_DBG(_ecordova_log_dom, __VA_ARGS__)
 
+void ecordova_contacts_service_init();
+void ecordova_contacts_service_shutdown();
+
 static Eina_Bool
 _ecordova_tizen_init(void)
 {
@@ -22,15 +25,19 @@ _ecordova_tizen_init(void)
         return EINA_FALSE;
      }
 
+   ecordova_contacts_service_init();
+  
    return EINA_TRUE;
 }
 
 static void
 _ecordova_tizen_shutdown(void)
 {
-   eina_log_domain_unregister(_ecordova_log_dom);
+  ecordova_contacts_service_shutdown();
+  
+  eina_log_domain_unregister(_ecordova_log_dom);
    _ecordova_log_dom = -1;
 }
 
-EINA_MODULE_INIT(_ecordova_system_tizen_init);
-EINA_MODULE_SHUTDOWN(_ecordova_system_tizen_shutdown);
+EINA_MODULE_INIT(_ecordova_tizen_init);
+EINA_MODULE_SHUTDOWN(_ecordova_tizen_shutdown);

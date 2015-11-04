@@ -100,8 +100,6 @@ modules_ecordova_linux_module_la_DEPENDENCIES = \
 modules_ecordova_linux_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecordova_linux_module_la_LIBTOOLFLAGS = --tag=disable-static
 
-if HAVE_TIZEN_CONFIGURATION_MANAGER
-
 ecordovatizenpkgdir = $(libdir)/ecordova/tizen/$(MODULE_ARCH)
 ecordovatizenpkg_LTLIBRARIES = modules/ecordova/tizen/module.la
 
@@ -112,17 +110,25 @@ $(install_ecordovatizenpkgLTLIBRARIES): install-libLTLIBRARIES
 
 modules_ecordova_tizen_module_la_SOURCES = \
 modules/ecordova/tizen/ecordova_tizen.c \
-modules/ecordova/tizen/ecordova_console.c \
-modules/ecordova/tizen/ecordova_directoryentry.c \
-modules/ecordova/tizen/ecordova_directoryreader.c \
-modules/ecordova/tizen/ecordova_entry.c \
-modules/ecordova/tizen/ecordova_fileentry.c \
-modules/ecordova/tizen/ecordova_file.c \
-modules/ecordova/tizen/ecordova_filereader.c \
-modules/ecordova/tizen/ecordova_filetransfer.c \
-modules/ecordova/tizen/ecordova_filewriter.c \
+modules/ecordova/tizen/ecordova_contactaddress.c \
+modules/ecordova/tizen/ecordova_contact.c \
+modules/ecordova/tizen/ecordova_contactfield.c \
+modules/ecordova/tizen/ecordova_contactname.c \
+modules/ecordova/tizen/ecordova_contactorganization.c \
+modules/ecordova/tizen/ecordova_contacts.c \
+modules/ecordova/tizen/ecordova_contacts_service.c \
+modules/ecordova/tizen/ecordova_contacts_record_utils.c \
+modules/ecordova/tizen/ecordova_batterystatus.c  \
+modules/ecordova/tizen/ecordova_device.c \
+modules/ecordova/tizen/ecordova_devicemotion.c \
+modules/ecordova/tizen/ecordova_deviceorientation.c \
+modules/ecordova/tizen/ecordova_geolocation.c \
+modules/ecordova/tizen/ecordova_globalization.c \
 modules/ecordova/tizen/ecordova_media.c \
-modules/ecordova/tizen/ecordova_mediafile.c
+modules/ecordova/tizen/ecordova_mediafile.c \
+modules/ecordova/tizen/ecordova_networkinformation.c \
+modules/ecordova/tizen/ecordova_systeminfo.c \
+modules/ecordova/tizen/ecordova_vibration.c
 modules_ecordova_tizen_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
 @ECORDOVA_CFLAGS@ -DEFL_ECORDOVA_BUILD
@@ -133,15 +139,12 @@ modules_ecordova_tizen_module_la_DEPENDENCIES = \
 modules_ecordova_tizen_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_ecordova_tizen_module_la_LIBTOOLFLAGS = --tag=disable-static
 
-endif
-
 ### Unit tests
 
 if EFL_ENABLE_TESTS
 
 check_PROGRAMS += tests/ecordova/ecordova_suite
 TESTS += tests/ecordova/ecordova_suite
-
 
 tests_ecordova_ecordova_suite_SOURCES = \
 tests/ecordova/ecordova_suite.c \
@@ -166,7 +169,7 @@ tests/ecordova/ecordova_vibration_test.c \
 tests/ecordova/ecordova_mediafile_test.c \
 tests/ecordova/ecordova_globalization_test.c
 
-$(tests_ecordova_ecordova_suite_SOURCES:%.c=%.$(OBJEXT)): modules/ecordova/linux/module.la
+$(tests_ecordova_ecordova_suite_SOURCES:%.c=%.$(OBJEXT)): modules/ecordova/linux/module.la modules/ecordova/tizen/module.la
 
 tests_ecordova_ecordova_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_SRC_DIR=\"$(abs_top_srcdir)/src/tests/ecordova\" \

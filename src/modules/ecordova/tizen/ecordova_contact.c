@@ -2,7 +2,6 @@
 # include <config.h>
 #endif
 
-#ifdef HAVE_TIZEN_CONTACTS_SERVICE
 #include "ecordova_contact_private.h"
 
 #include "ecordova_contactname_private.h"
@@ -10,8 +9,6 @@
 #include "ecordova_contacts_record_utils.h"
 #include "ecordova_contactaddress_private.h"
 #include "ecordova_contactorganization_private.h"
-
-#include <contacts.h>
 
 #include <assert.h>
 #include <stdint.h>
@@ -508,14 +505,14 @@ _contactaddress_copy(Ecordova_ContactAddress *address)
 
   return eo_add(ECORDOVA_CONTACTADDRESS_CLASS,
                 NULL,
-                ecordova_contactaddress_constructor(pref,
-                                                    type,
-                                                    formatted,
-                                                    street_address,
-                                                    locality,
-                                                    region,
-                                                    postal_code,
-                                                    country));
+                ecordova_contactaddress_pref_set(pref),
+                ecordova_contactaddress_type_set(type),
+                ecordova_contactaddress_formatted_set(formatted),
+                ecordova_contactaddress_street_address_set(street_address),
+                ecordova_contactaddress_locality_set(locality),
+                ecordova_contactaddress_region_set(region),
+                ecordova_contactaddress_postal_code_set(postal_code),
+                ecordova_contactaddress_country_set(country));
 }
 
 static Ecordova_ContactField *
@@ -533,7 +530,9 @@ _contactfield_copy(Ecordova_ContactField *field)
          pref = ecordova_contactfield_pref_get());
 
   return eo_add(ECORDOVA_CONTACTFIELD_CLASS, NULL,
-     ecordova_contactfield_constructor(type, value, pref));
+                ecordova_contactfield_type_set(type),
+                ecordova_contactfield_value_set(value),
+                ecordova_contactfield_pref_set(pref));
 }
 
 static Ecordova_ContactOrganization *
@@ -556,11 +555,11 @@ _contactorganization_copy(Ecordova_ContactOrganization *organization)
 
   return eo_add(ECORDOVA_CONTACTORGANIZATION_CLASS,
                 NULL,
-                ecordova_contactorganization_constructor(pref,
-                                                         type,
-                                                         name,
-                                                         dept,
-                                                         title));
+                ecordova_contactorganization_pref_set(pref),
+                ecordova_contactorganization_type_set(type),
+                ecordova_contactorganization_name_set(name),
+                ecordova_contactorganization_dept_set(dept),
+                ecordova_contactorganization_title_set(title));
 }
 
 static Eina_Array *
@@ -1115,4 +1114,3 @@ _ecordova_contactorganizations_export(Eina_Array *organizations,
 }
 
 #include "ecordova_contact.eo.c"
-#endif

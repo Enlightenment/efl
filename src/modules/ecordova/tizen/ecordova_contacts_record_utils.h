@@ -2,7 +2,8 @@
 #define _ECORDOVA_CONTACTS_RECORD_UTILS_H
 
 #include <Eina.h>
-#include <contacts.h>
+
+#include "ecordova_contacts_service.h"
 
 Eina_Bool get_str(contacts_record_h, unsigned int, char **);
 Eina_Bool get_str_p(contacts_record_h, unsigned int, const char **);

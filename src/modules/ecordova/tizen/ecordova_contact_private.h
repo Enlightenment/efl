@@ -7,10 +7,7 @@
 #include "ecordova_contactname.eo.h"
 #include "ecordova_contactorganization.eo.h"
 #include "ecordova_contact.eo.h"
-
-#include <contacts.h>
-
-typedef struct _Ecordova_Contact_Data Ecordova_Contact_Data;
+#include "ecordova_contacts_service.h"
 
 /**
  * Ecordova.Contact private data

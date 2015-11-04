@@ -68,7 +68,6 @@ _ecordova_filewriter_eo_base_constructor(Eo *obj,
    pd->truncate_size = 0;
 
    eo_do_super(obj, MY_CLASS, obj = eo_constructor());
-   eo_do(obj, ecordova_entry_file_is_set(EINA_TRUE));
    return obj;
 }
 
