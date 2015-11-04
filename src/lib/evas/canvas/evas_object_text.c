@@ -879,20 +879,26 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
                   /* FIXME: We shouldn't do anything. */
                }
 
-             int cut = ENFN->font_last_up_to_pos(ENDT,
-                   o->font,
-                   &itr->text_props,
-                   ellip_frame - (advance + l + r),
-                   0);
-             if (cut >= 0)
+             /* In case when we reach end of itr list, and have NULL */
+             int cut = -1;
+             if (itr && (itr != end_ellip_it))
                {
-                  end_ellip_it->text_pos = itr->text_pos + cut;
-                  end_ellip_it->visual_pos = itr->visual_pos + cut;
-                  if (_layout_text_item_trim(obj, o, itr, cut, EINA_TRUE))
+                  cut = ENFN->font_last_up_to_pos(ENDT,
+                                                  o->font,
+                                                  &itr->text_props,
+                                                  ellip_frame - (advance + l + r),
+                                                  0);
+                  if (cut >= 0)
                     {
-                       itr = (Evas_Object_Text_Item *) EINA_INLIST_GET(itr)->next;
+                       end_ellip_it->text_pos = itr->text_pos + cut;
+                       end_ellip_it->visual_pos = itr->visual_pos + cut;
+                       if (_layout_text_item_trim(obj, o, itr, cut, EINA_TRUE))
+                         {
+                            itr = (Evas_Object_Text_Item *) EINA_INLIST_GET(itr)->next;
+                         }
                     }
                }
+
 
              /* Remove the rest of the items */
              while (itr)
