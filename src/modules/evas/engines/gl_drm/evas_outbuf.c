@@ -379,7 +379,7 @@ evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_
    ob->depth = info->info.depth;
    ob->rotation = info->info.rotation;
    ob->destination_alpha = info->info.destination_alpha;
-   /* ob->vsync = info->info.vsync; */
+   ob->vsync = info->info.vsync;
    ob->swap_mode = swap_mode;
    ob->priv.num = 2;
 
