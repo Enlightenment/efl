@@ -25,13 +25,6 @@ _ecordova_device_eo_base_constructor(Eo *obj, Ecordova_Device_Data *pd)
 }
 
 static void
-_ecordova_device_constructor(Eo *obj EINA_UNUSED,
-                             Ecordova_Device_Data *pd EINA_UNUSED)
-{
-   DBG("(%p)", obj);
-}
-
-static void
 _ecordova_device_eo_base_destructor(Eo *obj, Ecordova_Device_Data *pd)
 {
    DBG("(%p)", obj);

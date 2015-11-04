@@ -29,13 +29,6 @@ _ecordova_networkinformation_eo_base_constructor(Eo *obj,
 }
 
 static void
-_ecordova_networkinformation_constructor(Eo *obj EINA_UNUSED,
-                                         Ecordova_NetworkInformation_Data *pd EINA_UNUSED)
-{
-   DBG("(%p)", obj);
-}
-
-static void
 _ecordova_networkinformation_eo_base_destructor(Eo *obj,
                                                 Ecordova_NetworkInformation_Data *pd)
 {

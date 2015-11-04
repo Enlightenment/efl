@@ -25,12 +25,12 @@ _teardown(void)
 
 Ecordova_DirectoryEntry *
 directoryentry_new(const char *name,
-                   const char *path,
-                   const char *url)
+                   const char *path)
 {
    return eo_add(ECORDOVA_DIRECTORYENTRY_CLASS,
                  NULL,
-                 ecordova_directoryentry_constructor(name, path, NULL, url));
+                 ecordova_entry_name_set(name),
+                 ecordova_entry_path_set(path));
 }
 
 void
@@ -63,13 +63,13 @@ _create_tmpdir(Eina_Tmpstr **tmpdir)
    strncpy(path, *tmpdir, len);
    path[len] = '\0';
 
-   return directoryentry_new(name, path, *tmpdir);
+   return directoryentry_new(name, path);
 }
 
 START_TEST(smoke)
 {
    Ecordova_DirectoryEntry *directory_entry =
-     directoryentry_new("", TESTS_BUILD_DIR, TESTS_BUILD_DIR);
+     directoryentry_new("", TESTS_BUILD_DIR);
    eo_unref(directory_entry);
 }
 END_TEST

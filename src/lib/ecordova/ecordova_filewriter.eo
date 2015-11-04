@@ -23,9 +23,9 @@ class Ecordova.FileWriter (Eo.Base) {
     [[This class writes to the device file system.]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_FileWriter constructor.
-              @.constructor
+        file_set {
+            [[Custom Ecordova_FileWriter file_set.
+              @.file_set
 
               @since 2.3
             ]]
@@ -87,7 +87,7 @@ class Ecordova.FileWriter (Eo.Base) {
         Eo.Base.destructor;
     }
     constructors {
-        .constructor;
+        .file_set;
     }
     events {
         on,write,start: const(ProgressEvent)*;

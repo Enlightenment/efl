@@ -5,7 +5,6 @@
 #include "ecordova_contactfield.eo.h"
 
 #include <contacts.h>
-#include <stdbool.h>
 
 typedef enum _Ecordova_ContactField_Property
 {
@@ -41,8 +40,8 @@ struct _Ecordova_ContactField_Data
    Ecordova_ContactField_Metadata  metadata;
 };
 
-bool ecordova_contactfield_import(Ecordova_ContactField *, contacts_record_h, const Ecordova_ContactField_Metadata);
-bool ecordova_contactfield_export(Ecordova_ContactField *, contacts_record_h, const Ecordova_ContactField_Metadata);
+Eina_Bool ecordova_contactfield_import(Ecordova_ContactField *, contacts_record_h, const Ecordova_ContactField_Metadata);
+Eina_Bool ecordova_contactfield_export(Ecordova_ContactField *, contacts_record_h, const Ecordova_ContactField_Metadata);
 
 char *ecordova_contactnumber_type2label(int, const char *);
 int ecordova_contactnumber_label2type(const char *);

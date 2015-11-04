@@ -3,21 +3,9 @@ class Ecordova.SystemInfo (Eo.Base) {
       wrt-plugins-tizen SystemInfo.h
     ]]
     legacy_prefix: null;
-    methods {
-        constructor {
-            [[Custom Ecordova_SystemInfo constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-        }
-    }
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
     events {
         battery,changed;

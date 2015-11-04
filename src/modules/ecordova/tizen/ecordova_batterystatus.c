@@ -7,7 +7,6 @@
 
 #include <vconf.h>
 
-#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -22,8 +21,8 @@ static Eina_Bool _del_cb(void *, Eo *, const Eo_Event_Description *, void *);
 static void _start(Ecordova_BatteryStatus_Data *);
 static void _stop(Ecordova_BatteryStatus_Data *);
 static Eina_Bool _on_battery_changed(void *, Eo *, const Eo_Event_Description *, void *);
-static bool _fetch_level(int *);
-static bool _fetch_charging_is(Eina_Bool *);
+static Eina_Bool _fetch_level(int *);
+static Eina_Bool _fetch_charging_is(Eina_Bool *);
 
 static Eo_Base *
 _ecordova_batterystatus_eo_base_constructor(Eo *obj,
@@ -33,17 +32,10 @@ _ecordova_batterystatus_eo_base_constructor(Eo *obj,
 
    pd->obj = obj;
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-}
-
-static void
-_ecordova_batterystatus_constructor(Eo *obj,
-                                    Ecordova_BatteryStatus_Data *pd)
-{
-   DBG("(%p)", obj);
-
    eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_ADD, _add_cb, pd));
    eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_DEL, _del_cb, pd));
+
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
 }
 
 static void
@@ -129,11 +121,11 @@ _stop(Ecordova_BatteryStatus_Data *pd)
                            pd));
 }
 
-static bool
+static Eina_Bool
 _fetch_level(int *level)
 {
     int value = 0;
-    bool ret = vconf_get_int(VCONFKEY_SYSMAN_BATTERY_CAPACITY, &value) == 0;
+    Eina_Bool ret = vconf_get_int(VCONFKEY_SYSMAN_BATTERY_CAPACITY, &value) == 0;
     if (ret)
       ERR("%s", "Failed to get battery capacity");
 
@@ -141,7 +133,7 @@ _fetch_level(int *level)
     return ret;
 }
 
-static bool
+static Eina_Bool
 _fetch_charging_is(Eina_Bool *charging_is)
 {
     int value = 0;

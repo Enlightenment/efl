@@ -2,29 +2,6 @@ class Ecordova.ContactField (Eo.Base) {
     [[Contains information about a single contact.]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_ContactField constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-            params {
-                type: const(char)*;
-                [[A string that indicates what type of field this is, home for
-                  example.
-                ]]
-
-                value: const(char)*;
-                [[The value of the field, such as a phone number or email
-                  address.
-                ]]
-
-                pref: bool;
-                [[Set to true if this ContactField contains the user's preferred
-                  value.
-                ]]
-            }
-        }
         @property id {
             get {}
             values {
@@ -50,8 +27,5 @@ class Ecordova.ContactField (Eo.Base) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
 }

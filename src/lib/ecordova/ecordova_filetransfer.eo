@@ -74,13 +74,6 @@ class Ecordova.FileTransfer (Eo.Base) {
     ]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_FileTransfer constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-        }
         upload {
             [[sends a file to a server.]]
             params {
@@ -133,9 +126,6 @@ class Ecordova.FileTransfer (Eo.Base) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
     events {
         upload,success: const(Ecordova_FileTransfer_UploadResult)*;

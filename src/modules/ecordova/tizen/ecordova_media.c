@@ -28,7 +28,7 @@ static void _set_position_action(Ecordova_Media_Data *, void *);
 static void _set_volume_action(Ecordova_Media_Data *, void *);
 static void _update_status(Ecordova_Media_Data *);
 static void _release(Ecordova_Media_Data *);
-static void _state_changed_cb(recorder_state_e, recorder_state_e, bool, void *);
+static void _state_changed_cb(recorder_state_e, recorder_state_e, Eina_Bool, void *);
 static void _start_record(Ecordova_Media_Data *);
 
 static Eo_Base *
@@ -41,15 +41,15 @@ _ecordova_media_eo_base_constructor(Eo *obj, Ecordova_Media_Data *pd)
    pd->recorder = NULL;
    pd->status = ECORDOVA_MEDIA_STATUS_MEDIA_NONE;
    pd->pending = NULL;
-   pd->record_pending = false;
+   pd->record_pending = EINA_FALSE;
 
    return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
 }
 
 static void
-_ecordova_media_constructor(Eo *obj,
-                            Ecordova_Media_Data *pd,
-                            const char *src)
+_ecordova_media_uri_set(Eo *obj,
+                        Ecordova_Media_Data *pd,
+                        const char *src)
 {
    DBG("(%p)", obj);
    EINA_SAFETY_ON_NULL_RETURN(src);
@@ -221,7 +221,7 @@ _ecordova_media_record_start(Eo *obj, Ecordova_Media_Data *pd)
       case RECORDER_STATE_CREATED:
         ret = recorder_prepare(pd->recorder);
         EINA_SAFETY_ON_FALSE_RETURN(RECORDER_ERROR_NONE == ret);
-        pd->record_pending = true;
+        pd->record_pending = EINA_TRUE;
         return;
       case RECORDER_STATE_READY:
         if (pd->record_pending)
@@ -415,7 +415,7 @@ _set_position_action(Ecordova_Media_Data *pd, void *data)
    int *position = data;
    int ret = player_set_play_position(pd->player,
                                       *position,
-                                      false,
+                                      EINA_FALSE,
                                       _set_position_cb,
                                       pd);
    free(position);
@@ -504,7 +504,7 @@ _release(Ecordova_Media_Data *pd)
 static void
 _state_changed_cb(recorder_state_e previous,
                   recorder_state_e current,
-                  bool by_policy EINA_UNUSED,
+                  Eina_Bool by_policy EINA_UNUSED,
                   void *data)
 {
    Ecordova_Media_Data *pd = data;
@@ -515,7 +515,7 @@ _state_changed_cb(recorder_state_e previous,
      }
 
    if (RECORDER_STATE_RECORDING == current)
-     pd->record_pending = false;
+     pd->record_pending = EINA_FALSE;
 
    // TODO: Check what thread this callback is running to make sure it's on the main thread
    if (RECORDER_STATE_RECORDING == previous && RECORDER_STATE_READY == current)

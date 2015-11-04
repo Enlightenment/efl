@@ -6,7 +6,6 @@
 #include "ecordova_contactfield_private.h"
 #include "ecordova_contacts_record_utils.h"
 
-#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -20,22 +19,12 @@ _ecordova_contactfield_eo_base_constructor(Eo *obj,
    DBG("(%p)", obj);
 
    pd->obj = obj;
+   pd->id = 0;
+   pd->type = NULL;
+   pd->value = NULL;
+   pd->pref = EINA_FALSE;
 
    return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-}
-
-static void
-_ecordova_contactfield_constructor(Eo *obj,
-                                  Ecordova_ContactField_Data *pd,
-                                  const char *type,
-                                  const char *value,
-                                  Eina_Bool pref)
-{
-   DBG("(%p)", obj);
-   pd->id = 0;
-   pd->type = type ? strdup(type) : NULL;
-   pd->value = value ? strdup(value) : NULL;
-   pd->pref = pref;
 }
 
 static void
@@ -104,17 +93,17 @@ _ecordova_contactfield_pref_set(Eo *obj EINA_UNUSED,
    pd->pref = pref;
 }
 
-bool
+Eina_Bool
 ecordova_contactfield_import(Ecordova_ContactField *obj,
                              contacts_record_h record,
                              const Ecordova_ContactField_Metadata metadata)
 {
    DBG("%p", obj);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, false);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(record, false);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(record, EINA_FALSE);
 
    Ecordova_ContactField_Data *pd = eo_data_scope_get(obj, ECORDOVA_CONTACTFIELD_CLASS);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, false);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, EINA_FALSE);
 
    int type = 0;
    const char* label = NULL;
@@ -124,7 +113,7 @@ ecordova_contactfield_import(Ecordova_ContactField *obj,
        !get_str_p(record,
                   *metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_LABEL],
                   &label))
-     return false;
+     return EINA_FALSE;
 
    pd->type = metadata.type2label(type, label);
 
@@ -134,52 +123,52 @@ ecordova_contactfield_import(Ecordova_ContactField *obj,
        !get_str(record,
                 *metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_VALUE],
                 &pd->value))
-     return false;
+     return EINA_FALSE;
 
    if (metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_PREF] &&
        !get_bool(record,
                  *metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_PREF],
                  &pd->pref))
-     return false;
+     return EINA_FALSE;
 
-   return true;
+   return EINA_TRUE;
 }
 
-bool
+Eina_Bool
 ecordova_contactfield_export(Ecordova_ContactField *obj,
                              contacts_record_h record,
                              const Ecordova_ContactField_Metadata metadata)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, false);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(record, false);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(record, EINA_FALSE);
 
    Ecordova_ContactField_Data *pd = eo_data_scope_get(obj, ECORDOVA_CONTACTFIELD_CLASS);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, false);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, EINA_FALSE);
 
    int type = metadata.label2type(pd->type);
    if (!set_int(record,
                 *metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_TYPE],
                 type))
-     return false;
+     return EINA_FALSE;
 
    if (pd->type &&
        !set_str(record,
                 *metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_LABEL],
                 pd->type))
-     return false;
+     return EINA_FALSE;
 
    if (!set_str(record,
                 *metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_VALUE],
                 pd->value))
-     return false;
+     return EINA_FALSE;
 
    if (metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_PREF] &&
        !set_bool(record,
                  *metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_PREF],
                  pd->pref))
-     return false;
+     return EINA_FALSE;
 
-   return true;
+   return EINA_TRUE;
 }
 
 char *

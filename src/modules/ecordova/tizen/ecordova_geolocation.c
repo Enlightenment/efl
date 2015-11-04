@@ -14,15 +14,15 @@ typedef struct
   Eo                           *obj;
   location_manager_h            manager;
   Ecore_Timer                  *timer;
-  bool                          current;
-  bool                          is_ready;
+  Eina_Bool                          current;
+  Eina_Bool                          is_ready;
 } Ecordova_Geolocation_Watch;
 
 static void _watch_free(Ecordova_Geolocation_Watch*);
 static Eina_Bool _interval_cb(void *);
 static void _state_changed_cb(location_service_state_e, void *);
 static void _notify(Ecordova_Geolocation_Watch *);
-static Ecordova_Geolocation_Watch *_create_watch(Eo *, const Ecordova_Geolocation_Options *, bool);
+static Ecordova_Geolocation_Watch *_create_watch(Eo *, const Ecordova_Geolocation_Options *, Eina_Bool);
 
 static Eo_Base *
 _ecordova_geolocation_eo_base_constructor(Eo *obj,
@@ -59,7 +59,7 @@ _ecordova_geolocation_current_position_get(Eo *obj,
                                            Ecordova_Geolocation_Data *pd EINA_UNUSED,
                                            const Ecordova_Geolocation_Options *options)
 {
-   Ecordova_Geolocation_Watch *watch = _create_watch(obj, options, true);
+   Ecordova_Geolocation_Watch *watch = _create_watch(obj, options, EINA_TRUE);
    if (!watch)
      {
         Ecordova_Geolocation_Error error = {
@@ -77,7 +77,7 @@ _ecordova_geolocation_position_watch(Eo *obj,
                                      Ecordova_Geolocation_Data *pd,
                                      const Ecordova_Geolocation_Options *options)
 {
-   Ecordova_Geolocation_Watch *watch = _create_watch(obj, options, false);
+   Ecordova_Geolocation_Watch *watch = _create_watch(obj, options, EINA_FALSE);
    if (!watch)
      {
         Ecordova_Geolocation_Error error = {
@@ -161,7 +161,7 @@ _state_changed_cb(location_service_state_e state, void *data)
      return;
 
    Ecordova_Geolocation_Watch *watch = data;
-   watch->is_ready = true;
+   watch->is_ready = EINA_TRUE;
 
    if (watch->current)
      {
@@ -236,7 +236,7 @@ _notify(Ecordova_Geolocation_Watch* watch)
 static Ecordova_Geolocation_Watch *
 _create_watch(Eo *obj,
               const Ecordova_Geolocation_Options *options,
-              bool is_current)
+              Eina_Bool is_current)
 {
    const Ecordova_Geolocation_Options default_options = {
      .enable_high_accuracy = EINA_FALSE,

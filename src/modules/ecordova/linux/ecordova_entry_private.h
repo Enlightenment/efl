@@ -5,8 +5,6 @@
 
 #include <Eio.h>
 
-#include <stdbool.h>
-
 typedef struct _Ecordova_Entry_Data Ecordova_Entry_Data;
 
 /**
@@ -16,7 +14,6 @@ struct _Ecordova_Entry_Data
 {
    Eo                  *obj;
    Eina_Bool            is_file;
-   Eina_Bool            is_directory;
    char                *name;
    char                *path;
    Ecordova_FileSystem *file_system;
@@ -42,7 +39,7 @@ typedef struct
 Eio_Operation_Data *_data_new(Ecordova_Entry_Data *, Ecordova_Entry_Success_Callback, Ecordova_Entry_Error_Callback);
 void _data_free(Eio_Operation_Data *);
 void _metadata_get(Ecordova_Entry_Data *, Ecordova_Entry_Success_Callback, Ecordova_Entry_Error_Callback);
-void _entry_remove(Ecordova_Entry_Data *, Ecordova_Entry_Success_Callback, Ecordova_Entry_Error_Callback, bool);
+void _entry_remove(Ecordova_Entry_Data *, Ecordova_Entry_Success_Callback, Ecordova_Entry_Error_Callback, Eina_Bool);
 void _error_notify(Eo *, int);
 void _eio_error_cb(void *, Eio_File *, int);
 void _eio_removed_cb(void *, Eio_File *);

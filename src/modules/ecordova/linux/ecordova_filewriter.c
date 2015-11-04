@@ -5,7 +5,6 @@
 #include "ecordova_filewriter_private.h"
 #include "ecordova_entry_private.h"
 
-#include <stdbool.h>
 #include <unistd.h>
 
 #ifdef EAPI
@@ -44,8 +43,8 @@ extern int _ecordova_log_dom;
 
 static void _write_cb(void *, Ecore_Thread *);
 static void _truncate_cb(void *, Ecore_Thread *);
-static bool _stream_init(Ecordova_FileWriter_Data *);
-static bool _offset_set(Ecordova_FileWriter_Data *);
+static Eina_Bool _stream_init(Ecordova_FileWriter_Data *);
+static Eina_Bool _offset_set(Ecordova_FileWriter_Data *);
 static void _write_end_cb(void *, Ecore_Thread *);
 static void _write_abort_cb(void *, Ecore_Thread *);
 static void _write_progress_cb(void *, Ecore_Thread *, void *);
@@ -68,13 +67,15 @@ _ecordova_filewriter_eo_base_constructor(Eo *obj,
    pd->data_size = 0;
    pd->truncate_size = 0;
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   eo_do_super(obj, MY_CLASS, obj = eo_constructor());
+   eo_do(obj, ecordova_entry_file_is_set(EINA_TRUE));
+   return obj;
 }
 
 static void
-_ecordova_filewriter_constructor(Eo *obj,
-                                 Ecordova_FileWriter_Data *pd,
-                                 Ecordova_File *file)
+_ecordova_filewriter_file_set(Eo *obj,
+                              Ecordova_FileWriter_Data *pd,
+                              Ecordova_File *file)
 {
    DBG("(%p)", obj);
    EINA_SAFETY_ON_NULL_RETURN(file);
@@ -278,30 +279,30 @@ _truncate_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
    pd->offset = MIN(pd->offset, pd->truncate_size);
 }
 
-static bool
+static Eina_Bool
 _stream_init(Ecordova_FileWriter_Data *pd)
 {
    pd->stream = fopen(pd->url, "rb+");
    if (!pd->stream)
      {
         pd->error = _translate_errno(errno);
-        return false;
+        return EINA_FALSE;
      }
 
-  return true;
+  return EINA_TRUE;
 }
 
-static bool
+static Eina_Bool
 _offset_set(Ecordova_FileWriter_Data *pd)
 {
   int error = fseek(pd->stream, pd->offset, SEEK_SET);
   if (error)
     {
        pd->error = _translate_errno(errno);
-       return false;
+       return EINA_FALSE;
     }
 
-  return true;
+  return EINA_TRUE;
 }
 
 static void

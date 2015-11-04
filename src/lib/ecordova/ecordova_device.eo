@@ -5,13 +5,6 @@ class Ecordova.Device (Eo.Base) {
     ]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_Device constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-        }
         @property ecordova {
             [[Get the version of Ecordova running on the device.]]
             get {}
@@ -53,8 +46,5 @@ class Ecordova.Device (Eo.Base) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
 }

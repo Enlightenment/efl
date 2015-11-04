@@ -16,21 +16,9 @@ class Ecordova.BatteryStatus (Eo.Base) {
       http://plugins.cordova.io/#/package/org.apache.cordova.battery-status
     ]]
     legacy_prefix: null;
-    methods {
-        constructor {
-            [[Custom Ecordova_BatteryStatus constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-        }
-    }
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
     events {
         battery,status: const(Ecordova.BatteryStatus.EventInfo)*;

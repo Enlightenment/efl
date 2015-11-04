@@ -52,12 +52,14 @@ static void _remove_notify(Eo *, void *);
 static Eina_Bool _eio_remove_non_recursively_filter_cb(void *, Eio_File *, const Eina_File_Direct_Info *);
 static void _parent_get_cb(void *, Eio_File *, const Eina_Stat *);
 static void _parent_get_notify(Eo *, void *);
+static void _sync_native(Ecordova_Entry_Data* pd);
 
 static Eo_Base *
 _ecordova_entry_eo_base_constructor(Eo *obj, Ecordova_Entry_Data *pd)
 {
    DBG("(%p)", obj);
 
+   pd->is_file = EINA_TRUE;
    pd->obj = obj;
    pd->name = NULL;
    pd->path = NULL;
@@ -66,30 +68,6 @@ _ecordova_entry_eo_base_constructor(Eo *obj, Ecordova_Entry_Data *pd)
    pd->pending = NULL;
 
    return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-}
-
-static void
-_ecordova_entry_constructor(Eo *obj,
-                            Ecordova_Entry_Data *pd,
-                            Eina_Bool file_is,
-                            Eina_Bool directory_is,
-                            const char *name,
-                            const char *path,
-                            Ecordova_FileSystem *file_system,
-                            const char *url)
-{
-   EINA_SAFETY_ON_NULL_RETURN(name);
-   EINA_SAFETY_ON_NULL_RETURN(path);
-   //EINA_SAFETY_ON_NULL_RETURN(file_system);
-   EINA_SAFETY_ON_NULL_RETURN(url);
-   DBG("(%p) name=%s, path=%s, url=%s", obj, name, path, url);
-
-   pd->is_file = file_is;
-   pd->is_directory = directory_is;
-   pd->name = strdup(name);
-   pd->path = strdup(path);
-   pd->file_system = eo_ref(file_system);
-   pd->native = strdup(url);
 }
 
 static void
@@ -145,7 +123,6 @@ _ecordova_entry_move(Eo *obj EINA_UNUSED,
    data->path = strdup(dest_dir->native);
 
    // TODO: file_system?
-
    size_t len = strlen(data->path) + 1 + strlen(data->name) + 1;
    data->native = malloc(len);
    EINA_SAFETY_ON_NULL_GOTO(data->native, on_error);
@@ -231,14 +208,14 @@ static void
 _ecordova_entry_remove(Eo *obj EINA_UNUSED, Ecordova_Entry_Data *pd)
 {
    DBG("(%p)", obj);
-   _entry_remove(pd, _remove_notify, _error_notify, false);
+   _entry_remove(pd, _remove_notify, _error_notify, EINA_FALSE);
 }
 
 void
 _entry_remove(Ecordova_Entry_Data *pd,
               Ecordova_Entry_Success_Callback success_cb,
               Ecordova_Entry_Error_Callback error_cb,
-              bool recursively)
+              Eina_Bool recursively)
 {
    DBG("(%p)", pd->obj);
 
@@ -304,10 +281,8 @@ _parent_get_notify(Eo *obj, void *data)
    Ecordova_DirectoryEntry *parent =
      eo_add(ECORDOVA_DIRECTORYENTRY_CLASS,
             NULL,
-            ecordova_directoryentry_constructor(name,
-                                                path,
-                                                NULL, // TODO: filesystem ?
-                                                url));
+            ecordova_entry_name_set(name),
+            ecordova_entry_path_set(path));
    free(name);
    free(path);
    free(url);
@@ -325,7 +300,31 @@ _ecordova_entry_file_is_get(Eo *obj EINA_UNUSED, Ecordova_Entry_Data *pd)
 static Eina_Bool
 _ecordova_entry_directory_is_get(Eo *obj EINA_UNUSED, Ecordova_Entry_Data *pd)
 {
-   return pd->is_directory;
+   return !pd->is_file;
+}
+
+static void
+_ecordova_entry_file_is_set(Eo *obj EINA_UNUSED, Ecordova_Entry_Data *pd, Eina_Bool is_file)
+{
+    pd->is_file = is_file;
+}
+
+static void
+_ecordova_entry_directory_is_set(Eo *obj EINA_UNUSED, Ecordova_Entry_Data *pd, Eina_Bool is_dir)
+{
+    pd->is_file = !is_dir;
+}
+
+static void
+_ecordova_entry_name_set(Eo *obj EINA_UNUSED, Ecordova_Entry_Data *pd, const char* name)
+{
+   if(pd->name)
+     free(pd->name);
+   pd->name = strdup(name);
+   if(pd->path)
+     {
+       _sync_native(pd);
+     }
 }
 
 static const char *
@@ -338,6 +337,18 @@ static const char *
 _ecordova_entry_path_get(Eo *obj EINA_UNUSED, Ecordova_Entry_Data *pd)
 {
    return pd->path;
+}
+
+static void
+_ecordova_entry_path_set(Eo *obj EINA_UNUSED, Ecordova_Entry_Data *pd, const char* path)
+{
+   if(pd->path)
+     free(pd->path);
+   pd->path = strdup(path);
+   if(pd->name)
+     {
+       _sync_native(pd);
+     }
 }
 
 void
@@ -428,17 +439,13 @@ _eio_copied_cb(void *user_data, Eio_File *handler EINA_UNUSED)
    if (data->pd->is_file)
      entry = eo_add(ECORDOVA_FILEENTRY_CLASS,
                     NULL,
-                    ecordova_fileentry_constructor(data->name,
-                                                   data->path,
-                                                   data->pd->file_system,
-                                                   data->native));
+                    ecordova_entry_name_set(data->name),
+                    ecordova_entry_path_set(data->path));
    else
      entry = eo_add(ECORDOVA_DIRECTORYENTRY_CLASS,
                     NULL,
-                    ecordova_directoryentry_constructor(data->name,
-                                                        data->path,
-                                                        data->pd->file_system,
-                                                        data->native));
+                    ecordova_entry_name_set(data->name),
+                    ecordova_entry_path_set(data->path));
 
    data->success_cb(data->pd->obj, entry);
 
@@ -535,6 +542,16 @@ _translate_errno(int error)
      }
 
    return -1;
+}
+
+void _sync_native(Ecordova_Entry_Data* pd)
+{
+  if(pd->native)
+    free(pd->native);
+  size_t len = strlen(pd->path) + 1 + strlen(pd->name) + 1;
+  pd->native = malloc(len);
+  if(pd->native)
+    snprintf(pd->native, len, "%s/%s", pd->path, pd->name);
 }
 
 #include "undefs.h"

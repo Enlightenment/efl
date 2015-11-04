@@ -25,13 +25,6 @@ _ecordova_globalization_eo_base_constructor(Eo *obj,
 }
 
 static void
-_ecordova_globalization_constructor(Eo *obj EINA_UNUSED,
-                                    Ecordova_Globalization_Data *pd EINA_UNUSED)
-{
-   DBG("(%p)", obj);
-}
-
-static void
 _ecordova_globalization_eo_base_destructor(Eo *obj,
                                            Ecordova_Globalization_Data *pd EINA_UNUSED)
 {

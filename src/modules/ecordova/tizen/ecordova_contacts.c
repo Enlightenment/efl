@@ -9,7 +9,6 @@
 
 #include <contacts.h>
 
-#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -34,8 +33,8 @@ typedef enum Contacts_Search_Id {
 
 static contacts_filter_h _filter_get(contacts_filter_h *, const char *);
 static contacts_list_h _get_records(const Eina_List *, const Ecordova_Contacts_FindOptions *);
-static bool _search_records(contacts_filter_h, const char *, contacts_list_h *, Eina_Bool);
-static bool _populate_list(contacts_list_h, Eina_Hash *, contacts_filter_h, const char *, int, Eina_Bool);
+static Eina_Bool _search_records(contacts_filter_h, const char *, contacts_list_h *, Eina_Bool);
+static Eina_Bool _populate_list(contacts_list_h, Eina_Hash *, contacts_filter_h, const char *, int, Eina_Bool);
 
 static Eo_Base *
 _ecordova_contacts_eo_base_constructor(Eo *obj, Ecordova_Contacts_Data *pd)
@@ -45,13 +44,6 @@ _ecordova_contacts_eo_base_constructor(Eo *obj, Ecordova_Contacts_Data *pd)
    pd->obj = obj;
 
    return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-}
-
-static void
-_ecordova_contacts_constructor(Eo *obj EINA_UNUSED,
-                               Ecordova_Contacts_Data *pd EINA_UNUSED)
-{
-   DBG("(%p)", obj);
 }
 
 static void
@@ -154,7 +146,7 @@ _ecordova_contacts_find(Eo *obj,
      eo_unref(contact);
    eina_array_free(contacts);
 
-   ret = contacts_list_destroy(list, true);
+   ret = contacts_list_destroy(list, EINA_TRUE);
    EINA_SAFETY_ON_FALSE_RETURN(CONTACTS_ERROR_NONE == ret);
 }
 
@@ -371,7 +363,7 @@ _get_records(const Eina_List *fields,
                }
 
              int id;
-             bool ok = get_int(record, _contacts_contact.id, &id);
+             Eina_Bool ok = get_int(record, _contacts_contact.id, &id);
              EINA_SAFETY_ON_FALSE_GOTO(ok, on_error_2);
 
              ok = eina_hash_add(contact_ids, &id, &id) == EINA_TRUE;
@@ -418,7 +410,7 @@ on_error_1:
    return list;
 }
 
-static bool
+static Eina_Bool
 _search_records(contacts_filter_h filter,
                 const char *uri,
                 contacts_list_h *list,
@@ -428,7 +420,7 @@ _search_records(contacts_filter_h filter,
    contacts_query_h query = NULL;
 
    ret = contacts_query_create(uri, &query);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, false);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
    ret = contacts_query_set_filter(query, filter);
    EINA_SAFETY_ON_FALSE_GOTO(CONTACTS_ERROR_NONE == ret, on_error_1);
@@ -438,20 +430,20 @@ _search_records(contacts_filter_h filter,
 
    ret = contacts_query_destroy(query);
    EINA_SAFETY_ON_FALSE_GOTO(CONTACTS_ERROR_NONE == ret, on_error_2);
-   return true;
+   return EINA_TRUE;
 
 on_error_2:
-   ret = contacts_list_destroy(*list, true);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, false);
+   ret = contacts_list_destroy(*list, EINA_TRUE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
    *list = NULL;
 
 on_error_1:
    ret = contacts_query_destroy(query);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, false);
-   return false;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
+   return EINA_FALSE;
 }
 
-static bool
+static Eina_Bool
 _populate_list(contacts_list_h list,
                Eina_Hash *contact_ids,
                contacts_filter_h filter,
@@ -461,7 +453,7 @@ _populate_list(contacts_list_h list,
 {
    contacts_list_h sub_list = NULL;
    if (!_search_records(filter, uri, &sub_list, multiple))
-     return false;
+     return EINA_FALSE;
 
    unsigned int contact_id[SEARCH_ID_COUNT] = {
      [SEARCH_CONTACT]   = _contacts_contact.id,
@@ -479,7 +471,7 @@ _populate_list(contacts_list_h list,
    };
 
    int ret;
-   bool result = true;
+   Eina_Bool result = EINA_TRUE;
    do
      {
         contacts_record_h record = NULL;
@@ -512,8 +504,8 @@ _populate_list(contacts_list_h list,
      } while (multiple && contacts_list_next(sub_list) == CONTACTS_ERROR_NONE);
 
 on_error:
-   ret = contacts_list_destroy(sub_list, true);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, false);
+   ret = contacts_list_destroy(sub_list, EINA_TRUE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
    return result;
 }
 

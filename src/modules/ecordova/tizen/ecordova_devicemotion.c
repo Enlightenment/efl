@@ -26,13 +26,6 @@ _ecordova_devicemotion_eo_base_constructor(Eo *obj,
 }
 
 static void
-_ecordova_devicemotion_constructor(Eo *obj EINA_UNUSED,
-                                   Ecordova_DeviceMotion_Data *pd EINA_UNUSED)
-{
-   DBG("(%p)", obj);
-}
-
-static void
 _ecordova_devicemotion_eo_base_destructor(Eo *obj,
                                           Ecordova_DeviceMotion_Data *pd)
 {

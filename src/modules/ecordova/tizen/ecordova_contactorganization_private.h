@@ -18,8 +18,8 @@ struct _Ecordova_ContactOrganization_Data
    contacts_record_h  record;
 };
 
-bool ecordova_contactorganization_import(Ecordova_ContactOrganization *, contacts_record_h);
-bool ecordova_contactorganization_export(Ecordova_ContactOrganization *, contacts_record_h);
+Eina_Bool ecordova_contactorganization_import(Ecordova_ContactOrganization *, contacts_record_h);
+Eina_Bool ecordova_contactorganization_export(Ecordova_ContactOrganization *, contacts_record_h);
 Ecordova_ContactOrganization *ecordova_contactorganization_clone(Ecordova_ContactOrganization *);
 
 #endif

@@ -2,40 +2,6 @@ class Ecordova.ContactAddress (Eo.Base) {
     [[Contains information about a single contact.]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_ContactAddress constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-            params {
-                pref: bool;
-                [[user's preferred value.]]
-
-                type: const(char)*;
-                [[A string indicating what type of field this is, home for
-                  example.
-                ]]
-
-                formatted: const(char)*;
-                [[The full address formatted for display.]]
-
-                street_address: const(char)*;
-                [[The full street address.]]
-
-                locality: const(char)*;
-                [[The city or locality.]]
-
-                region: const(char)*;
-                [[The state or region.]]
-
-                postal_code: const(char)*;
-                [[The zip code or postal code.]]
-
-                country: const(char)*;
-                [[The country name.]]
-            }
-        }
         @property id {
             get {}
             values {
@@ -86,8 +52,5 @@ class Ecordova.ContactAddress (Eo.Base) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
 }

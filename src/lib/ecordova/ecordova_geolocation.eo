@@ -96,13 +96,6 @@ class Ecordova.Geolocation (Eo.Base) {
     ]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_Geolocation constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-        }
         current_position_get {
             [[Returns the device's current position to the geolocationSuccess
               callback with a Position object as the parameter. If there is an
@@ -140,9 +133,6 @@ class Ecordova.Geolocation (Eo.Base) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
     events {
         current,success: Ecordova_Geolocation_Position*;

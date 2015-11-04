@@ -7,7 +7,6 @@
 
 #include "ecordova_console_private.h"
 
-#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -56,13 +55,6 @@ _ecordova_console_eo_base_constructor(Eo *obj, Ecordova_Console_Data *pd)
    pd->logger_use = EINA_TRUE;
 
    return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-}
-
-static void
-_ecordova_console_constructor(Eo *obj EINA_UNUSED,
-                              Ecordova_Console_Data *pd EINA_UNUSED)
-{
-   DBG("(%p)", obj);
 }
 
 static void

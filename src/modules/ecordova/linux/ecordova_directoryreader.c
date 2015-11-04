@@ -70,13 +70,18 @@ _ecordova_directoryreader_eo_base_constructor(Eo *obj,
 }
 
 static void
-_ecordova_directoryreader_constructor(Eo *obj,
-                                      Ecordova_DirectoryReader_Data *pd,
-                                      const char *native)
+_ecordova_directoryreader_native_set(Eo *obj,
+                                     Ecordova_DirectoryReader_Data *pd,
+                                     const char *native)
 {
    DBG("(%p) url=%s", obj, native);
-   fprintf(stderr, "%s:%s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
    pd->native = strdup(native);
+}
+
+static const char*
+_ecordova_directoryreader_native_get(Eo *obj EINA_UNUSED, Ecordova_DirectoryReader_Data *pd)
+{
+   return pd->native;
 }
 
 static void
@@ -149,13 +154,15 @@ _main_cb(void *user_data,
       case EINA_FILE_DIR:
         {
            entry = eo_add(ECORDOVA_DIRECTORYENTRY_CLASS, NULL,
-             ecordova_directoryentry_constructor(name, path, NULL, info->path)); // TODO: filesystem?
+                          ecordova_entry_name_set(name),
+                          ecordova_entry_path_set(path));
            break;
         }
       case EINA_FILE_REG:
         {
            entry = eo_add(ECORDOVA_FILEENTRY_CLASS, NULL,
-             ecordova_fileentry_constructor(name, path, NULL, info->path)); // TODO: filesystem?
+                          ecordova_entry_name_set(name),
+                          ecordova_entry_path_set(path));
            break;
         }
       // TODO: case EINA_FILE_LNK ?

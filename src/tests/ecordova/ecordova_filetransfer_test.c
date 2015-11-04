@@ -29,9 +29,7 @@ _teardown(void)
 static Ecordova_Device *
 _filetransfer_new(void)
 {
-   return eo_add(ECORDOVA_FILETRANSFER_CLASS,
-                 NULL,
-                 ecordova_filetransfer_constructor());
+   return eo_add(ECORDOVA_FILETRANSFER_CLASS, NULL);
 }
 
 START_TEST(smoke)

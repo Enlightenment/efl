@@ -26,14 +26,14 @@ class Ecordova.Media (Eo.Base) {
     ]]
     legacy_prefix: null;
     methods {
-        constructor {
+        uri_set {
             [[Custom Ecordova_Media constructor.
-              @.constructor
+              @.uri_set
 
-              @since 2.3
+              @since 1.17
             ]]
             params {
-                src: const(char)*; [[A URI containing the audio content.]]
+                uri: const(char)*; [[A URI containing the audio content.]]
             }
         }
         current_position_get {
@@ -89,7 +89,7 @@ class Ecordova.Media (Eo.Base) {
         Eo.Base.destructor;
     }
     constructors {
-        .constructor;
+        .uri_set;
     }
     events {
         media,position: int;

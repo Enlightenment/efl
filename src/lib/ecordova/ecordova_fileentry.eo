@@ -2,27 +2,6 @@ class Ecordova.FileEntry (Ecordova.Entry) {
     [[An interface representing a file on the file system.]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_FileEntry constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-            params {
-                name: const(char)*;
-                [[name of the file, excluding the path leading to it]]
-
-                path: const(char)*;
-                [[the absolute full path to the file]]
-
-                file_system: Ecordova.FileSystem*;
-                [[filesystem on which the file resides]]
-
-                url: const(char)*;
-                [[an alternate URL which can be used by native webview
-                  controls, for example media players.]]
-            }
-        }
         writer_create {
             [[Creates a new FileWriter associated with the file that this
               FileEntry represents.]]
@@ -36,9 +15,6 @@ class Ecordova.FileEntry (Ecordova.Entry) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
     events {
         create,writer: Ecordova.FileWriter*;

@@ -19,13 +19,6 @@ class Ecordova.FileReader (Eo.Base) {
     [[This class reads the device file system.]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_FileReader constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-        }
         abort {
             [[Abort reading file.]]
         }
@@ -64,9 +57,6 @@ class Ecordova.FileReader (Eo.Base) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
     events {
         on,load,start: const(Ecordova_ProgressEvent)*;

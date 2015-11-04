@@ -46,7 +46,7 @@ extern int _ecordova_log_dom;
 #define MY_CLASS_NAME "Ecordova_DirectoryEntry"
 
 static void _remove_notify(Eo *, void *);
-static bool _is_absolute(const char *);
+static Eina_Bool _is_absolute(const char *);
 static void _directory_get(Eo *, void *);
 static void _file_get(Eo *, void *);
 static void _eio_directory_get_cb(void *, Eio_File *, const Eina_Stat *);
@@ -65,24 +65,9 @@ _ecordova_directoryentry_eo_base_constructor(Eo *obj,
 
    pd->obj = obj;
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-}
-
-static void
-_ecordova_directoryentry_constructor(Eo *obj,
-                                     Ecordova_DirectoryEntry_Data *pd EINA_UNUSED,
-                                     const char *name,
-                                     const char *path,
-                                     Ecordova_FileSystem *file_system,
-                                     const char *url)
-{
-   DBG("(%p)", obj);
-   eo_do_super(obj, MY_CLASS, ecordova_entry_constructor(EINA_FALSE,
-                                                        EINA_TRUE,
-                                                        name,
-                                                        path,
-                                                        file_system,
-                                                        url));
+   eo_do_super(obj, MY_CLASS, obj = eo_constructor());
+   ecordova_entry_file_is_set(EINA_FALSE);
+   return obj;
 }
 
 static void
@@ -102,7 +87,7 @@ _ecordova_directoryentry_reader_create(Eo *obj,
    EINA_SAFETY_ON_NULL_RETURN_VAL(super, NULL);
 
    return eo_add(ECORDOVA_DIRECTORYREADER_CLASS, NULL,
-     ecordova_directoryreader_constructor(super->native));
+     ecordova_directoryreader_native_set(super->native));
 }
 
 static void
@@ -147,7 +132,8 @@ _eio_directory_get_cb(void *user_data,
    Eio_Operation_Data *data = user_data;
    DBG("(%p)", data->pd->obj);
    Ecordova_DirectoryEntry *directory = eo_add(ECORDOVA_DIRECTORYENTRY_CLASS, NULL,
-     ecordova_directoryentry_constructor(data->name, data->path, NULL, data->native)); // TODO: filesystem?
+                                               ecordova_entry_name_set(data->name),
+                                               ecordova_entry_path_set(data->path));
 
    data->success_cb(data->pd->obj, directory);
    _data_free(data);
@@ -160,7 +146,8 @@ _eio_file_get_cb(void *user_data,
 {
    Eio_Operation_Data *data = user_data;
    Ecordova_FileEntry *file = eo_add(ECORDOVA_FILEENTRY_CLASS, NULL,
-     ecordova_fileentry_constructor(data->name, data->path, NULL, data->native)); // TODO: filesystem?
+                                     ecordova_entry_name_set(data->name),
+                                     ecordova_entry_path_set(data->path));
 
    data->success_cb(data->pd->obj, file);
    _data_free(data);
@@ -225,7 +212,8 @@ _eio_create_file_cb(void *user_data,
    fclose(fd);
 
    Ecordova_FileEntry *file = eo_add(ECORDOVA_FILEENTRY_CLASS, NULL,
-     ecordova_fileentry_constructor(data->name, data->path, NULL, data->native)); // TODO: filesystem?
+                                     ecordova_entry_name_set(data->name),
+                                     ecordova_entry_path_set(data->path));
    data->success_cb(data->pd->obj, file);
    _data_free(data);
 }
@@ -236,7 +224,8 @@ _eio_mkdir_cb(void *user_data, Eio_File *handler EINA_UNUSED)
    Eio_Operation_Data *data = user_data;
    DBG("(%p)", data->pd->obj);
    Ecordova_DirectoryEntry *directory = eo_add(ECORDOVA_DIRECTORYENTRY_CLASS, NULL,
-     ecordova_directoryentry_constructor(data->name, data->path, NULL, data->native)); // TODO: filesystem?
+                                               ecordova_entry_name_set(data->name),
+                                               ecordova_entry_path_set(data->path));
    data->success_cb(data->pd->obj, directory);
    _data_free(data);
 }
@@ -267,7 +256,7 @@ _ecordova_directoryentry_recursively_remove(Eo *obj,
    Ecordova_Entry_Data *super = eo_data_scope_get(obj, ECORDOVA_ENTRY_CLASS);
    EINA_SAFETY_ON_NULL_RETURN(super);
 
-   _entry_remove(super, _remove_notify, _error_notify, true);
+   _entry_remove(super, _remove_notify, _error_notify, EINA_TRUE);
 }
 
 static void
@@ -310,7 +299,7 @@ _remove_notify(Eo *obj, void *data EINA_UNUSED)
      eo_event_callback_call(ECORDOVA_DIRECTORYENTRY_EVENT_REMOVE_SUCCESS, NULL));
 }
 
-static bool
+static Eina_Bool
 _is_absolute(const char *path)
 {
    // TODO: not multiplatform

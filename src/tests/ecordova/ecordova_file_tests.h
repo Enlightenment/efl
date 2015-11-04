@@ -18,7 +18,7 @@ bool directoryentry_get(Ecordova_DirectoryEntry *directory_entry, const char *, 
 bool fileentry_get(Ecordova_DirectoryEntry *directory_entry, const char *, Ecordova_FileFlags, Ecordova_FileEntry **);
 void check_exists(const char *url);
 void check_doesnt_exist(const char *url);
-Ecordova_DirectoryEntry *directoryentry_new(const char *, const char *, const char *);
+Ecordova_DirectoryEntry *directoryentry_new(const char *, const char *);
 
 bool entry_remove(Ecordova_Entry *);
 bool entry_do(Ecordova_Entry *, const Eo_Event_Description *, void(*)());

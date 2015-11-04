@@ -13,12 +13,10 @@ typedef Eo Ecordova_DirectoryReader;
 #include <ecordova_device.eo.h>
 #include <ecordova_devicemotion.eo.h>
 #include <ecordova_deviceorientation.eo.h>
-#include <ecordova_dialogs.eo.h>
 #include <ecordova_geolocation.eo.h>
 #include <ecordova_globalization.eo.h>
 #include <ecordova_media.eo.h>
 #include <ecordova_networkinformation.eo.h>
-#include <ecordova_splashscreen.eo.h>
 #include <ecordova_vibration.eo.h>
 #include <ecordova_file.eo.h>
 #include <ecordova_filewriter.eo.h>

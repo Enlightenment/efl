@@ -16,13 +16,6 @@ class Ecordova.NetworkInformation (Eo.Base) {
     ]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_NetworkInformation constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-        }
         @property type {
             [[This property offers a fast way to determine the device's
               network connection state, and type of connection.]]
@@ -35,9 +28,6 @@ class Ecordova.NetworkInformation (Eo.Base) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
     events {
         offline;

@@ -9,7 +9,6 @@
 #include "ecordova_contact.eo.h"
 
 #include <contacts.h>
-#include <stdbool.h>
 
 typedef struct _Ecordova_Contact_Data Ecordova_Contact_Data;
 
@@ -32,7 +31,7 @@ struct _Ecordova_Contact_Data
    Eina_Array           *urls;
 };
 
-bool ecordova_contact_import(Ecordova_Contact *, contacts_record_h);
-bool ecordova_contact_export(Ecordova_Contact *, contacts_record_h);
+Eina_Bool ecordova_contact_import(Ecordova_Contact *, contacts_record_h);
+Eina_Bool ecordova_contact_export(Ecordova_Contact *, contacts_record_h);
 
 #endif

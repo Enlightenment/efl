@@ -27,12 +27,9 @@ START_TEST(smoke)
 {
    Ecordova_Entry *entry = eo_add(ECORDOVA_ENTRY_CLASS,
                                   NULL,
-                                  ecordova_entry_constructor(EINA_FALSE,
-                                                             EINA_TRUE,
-                                                             "",
-                                                             TESTS_BUILD_DIR,
-                                                             NULL,
-                                                             TESTS_BUILD_DIR));
+                                  ecordova_entry_file_is_set(EINA_TRUE),
+                                  ecordova_entry_name_set(""),
+                                  ecordova_entry_path_set(TESTS_BUILD_DIR));
    eo_unref(entry);
 }
 END_TEST
@@ -438,7 +435,7 @@ END_TEST
 
 START_TEST(dir_root_parent)
 {
-   Ecordova_DirectoryEntry *directory_entry = directoryentry_new("", "/", "/");
+   Ecordova_DirectoryEntry *directory_entry = directoryentry_new("", "/");
 
    Ecordova_FileEntry *parent_entry = NULL;
    bool error = false;

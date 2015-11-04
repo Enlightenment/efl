@@ -8,7 +8,6 @@
 #include "ecordova_contacts_record_utils.h"
 #include "ecordova_contactname.eo.h"
 
-#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -23,6 +22,7 @@ _ecordova_contactname_eo_base_constructor(Eo *obj,
 
    pd->obj = obj;
    pd->record = NULL;
+     
    int ret = contacts_record_create(_contacts_name._uri, &pd->record);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, NULL);
 
@@ -30,31 +30,11 @@ _ecordova_contactname_eo_base_constructor(Eo *obj,
 }
 
 static void
-_ecordova_contactname_constructor(Eo *obj,
-                                  Ecordova_ContactName_Data *pd EINA_UNUSED,
-                                  const char *formatted,
-                                  const char *family_name,
-                                  const char *given_name,
-                                  const char *middle,
-                                  const char *prefix,
-                                  const char *suffix)
-{
-   DBG("(%p)", obj);
-   eo_do(obj,
-         ecordova_contactname_formatted_set(formatted),
-         ecordova_contactname_family_name_set(family_name),
-         ecordova_contactname_given_name_set(given_name),
-         ecordova_contactname_middle_set(middle),
-         ecordova_contactname_prefix_set(prefix),
-         ecordova_contactname_suffix_set(suffix));
-}
-
-static void
 _ecordova_contactname_eo_base_destructor(Eo *obj, Ecordova_ContactName_Data *pd)
 {
    DBG("(%p)", obj);
 
-   int ret = contacts_record_destroy(pd->record, true);
+   int ret = contacts_record_destroy(pd->record, EINA_TRUE);
    EINA_SAFETY_ON_FALSE_RETURN(CONTACTS_ERROR_NONE == ret);
 
    eo_do_super(obj, MY_CLASS, eo_destructor());
@@ -176,15 +156,15 @@ _ecordova_contactname_suffix_set(Eo *obj EINA_UNUSED,
    set_str(pd->record, _contacts_name.suffix, value);
 }
 
-bool
+Eina_Bool
 ecordova_contactname_import(Ecordova_ContactName *obj,
                             contacts_record_h contacts_record)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, false);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(contacts_record, false);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(contacts_record, EINA_FALSE);
 
    Ecordova_ContactName_Data *pd = eo_data_scope_get(obj, ECORDOVA_CONTACTNAME_CLASS);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, false);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, EINA_FALSE);
 
    int ret;
 
@@ -192,48 +172,48 @@ ecordova_contactname_import(Ecordova_ContactName *obj,
    ret = contacts_record_get_child_record_count(contacts_record,
                                                 _contacts_contact.name,
                                                 &count);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, false);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(count == 1, false);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(count == 1, EINA_FALSE);
 
    contacts_record_h contactname_record = NULL;
    ret = contacts_record_get_child_record_at_p(contacts_record,
                                                _contacts_contact.name,
                                                0,
                                                &contactname_record);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, false);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
-   ret = contacts_record_destroy(pd->record, true);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, false);
+   ret = contacts_record_destroy(pd->record, EINA_TRUE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
    ret = contacts_record_clone(contactname_record, &pd->record);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, false);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
    // TODO: check display name
 
-   return true;
+   return EINA_TRUE;
 }
 
-bool
+Eina_Bool
 ecordova_contactname_export(Ecordova_ContactName *obj,
                             contacts_record_h contacts_record)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, false);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(contacts_record, false);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(contacts_record, EINA_FALSE);
 
    Ecordova_ContactName_Data *pd = eo_data_scope_get(obj, ECORDOVA_CONTACTNAME_CLASS);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, false);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, EINA_FALSE);
 
    contacts_record_h contactname_record = NULL;
    int ret = contacts_record_clone(pd->record, &contactname_record);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, false);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
    ret = contacts_record_add_child_record(contacts_record,
                                           _contacts_contact.name,
                                           contactname_record);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, false);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
    // TODO: check display name
 
-   return true;
+   return EINA_TRUE;
 }
 
 Ecordova_ContactName *
@@ -246,7 +226,7 @@ ecordova_contactname_clone(Ecordova_ContactName *other)
    Ecordova_ContactName_Data *other_pd = eo_data_scope_get(other, ECORDOVA_CONTACTNAME_CLASS);
    EINA_SAFETY_ON_NULL_RETURN_VAL(other_pd, NULL);
 
-   int ret = contacts_record_destroy(cloned_pd->record, true);
+   int ret = contacts_record_destroy(cloned_pd->record, EINA_TRUE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, NULL);
    ret = contacts_record_clone(other_pd->record, &cloned_pd->record);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, NULL);

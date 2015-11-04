@@ -5,13 +5,6 @@ class Ecordova.Vibration (Eo.Base) {
     ]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_Vibration constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-        }
         vibrate {
             [[This function has three different functionalities based on
               parameters passed to it.]]
@@ -23,8 +16,5 @@ class Ecordova.Vibration (Eo.Base) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
 }

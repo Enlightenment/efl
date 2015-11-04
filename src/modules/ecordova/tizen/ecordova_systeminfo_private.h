@@ -13,7 +13,7 @@ struct _Ecordova_SystemInfo_Data
 {
    Eo                               *obj;
    int                               ref_count;
-   bool                              info_initialized;
+   Eina_Bool                              info_initialized;
 };
 
 #endif

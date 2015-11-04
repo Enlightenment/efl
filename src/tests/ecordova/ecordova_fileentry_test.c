@@ -26,16 +26,12 @@ _teardown(void)
 
 static Ecordova_File *
 _fileentry_new(const char *name,
-               const char *path,
-               Ecordova_FileSystem *file_system,
-               const char *url)
+               const char *path)
 {
    return eo_add(ECORDOVA_FILEENTRY_CLASS,
                  NULL,
-                 ecordova_fileentry_constructor(name,
-                                                path,
-                                                file_system,
-                                                url));
+                 ecordova_entry_name_set(name),
+                 ecordova_entry_path_set(path));
 }
 
 Ecordova_FileEntry *
@@ -66,7 +62,7 @@ create_tmpfile_size(Eina_Tmpstr **url, unsigned char **content, size_t size)
    write(fd, *content, size);
    close(fd);
 
-   return _fileentry_new(name, path, NULL, *url);
+   return _fileentry_new(name, path);
 }
 
 unsigned char *
@@ -87,7 +83,7 @@ generate_random_buffer_size(size_t size)
 
 START_TEST(smoke)
 {
-   Ecordova_File *fileentry = _fileentry_new("", "", NULL, "");
+   Ecordova_File *fileentry = _fileentry_new("", "");
    eo_unref(fileentry);
 }
 END_TEST

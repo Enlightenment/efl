@@ -27,9 +27,7 @@ _teardown(void)
 static Ecordova_FileReader *
 _filereader_new(void)
 {
-   return eo_add(ECORDOVA_FILEREADER_CLASS,
-                 NULL,
-                 ecordova_filereader_constructor());
+   return eo_add(ECORDOVA_FILEREADER_CLASS, NULL);
 }
 
 START_TEST(smoke)

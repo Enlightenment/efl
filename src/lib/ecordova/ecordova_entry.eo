@@ -7,33 +7,6 @@ class Ecordova.Entry (Eo.Base) {
     [[Represents a file or directory on the local file system.]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_Entry constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-            params {
-                file_is: bool;
-                [[true if Entry is a file]]
-
-                directory_is: bool;
-                [[true if Entry is a directory]]
-
-                name: const(char)*;
-                [[name of the file or directory, excluding the path leading to it]]
-
-                path: const(char)*;
-                [[the absolute full path to the file or directory]]
-
-                file_system: Ecordova.FileSystem*;
-                [[the filesystem on which this entry resides]]
-
-                url: const(char)*;
-                [[an alternate URL which can be used by native webview controls,
-                  for example media players.]]
-            }
-        }
         metadata_get {
             [[Look up the metadata of the entry.]]
         }
@@ -72,7 +45,6 @@ class Ecordova.Entry (Eo.Base) {
             [[Look up the parent DirectoryEntry of this entry.]]
         }
         @property file_is {
-            get {}
             values {
                 value: bool;
             }
@@ -84,13 +56,11 @@ class Ecordova.Entry (Eo.Base) {
             }
         }
         @property name {
-            get {}
             values {
                 value: const(char)*;
             }
         }
         @property path {
-            get {}
             values {
                 value: const(char)*;
             }
@@ -99,9 +69,6 @@ class Ecordova.Entry (Eo.Base) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
     events {
         metadata,get: const(Ecordova_Metadata)*;

@@ -26,9 +26,7 @@ static Ecordova_Device *
 _console_new(void)
 {
    fprintf(stderr, "Creating class\n"); fflush(stderr);
-   return eo_add(ECORDOVA_CONSOLE_CLASS,
-                 NULL,
-                 ecordova_console_constructor());
+   return eo_add(ECORDOVA_CONSOLE_CLASS, NULL);
    fprintf(stderr, "Created class\n"); fflush(stderr);
 }
 

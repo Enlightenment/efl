@@ -15,13 +15,6 @@ class Ecordova.Console (Eo.Base) {
     ]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_Console constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-        }
         log {
             [[Logs a message at the LOG level.]]
             params {
@@ -99,8 +92,5 @@ class Ecordova.Console (Eo.Base) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
 }

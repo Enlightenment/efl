@@ -6,7 +6,6 @@
 #include <player.h>
 #include <recorder.h>
 
-#include <stdbool.h>
 
 typedef struct _Ecordova_Media_Data Ecordova_Media_Data;
 
@@ -20,7 +19,7 @@ struct _Ecordova_Media_Data
    recorder_h             recorder;
    Ecordova_Media_Status  status;
    Eina_List             *pending;
-   bool                   record_pending;
+   Eina_Bool                   record_pending;
 };
 
 #endif

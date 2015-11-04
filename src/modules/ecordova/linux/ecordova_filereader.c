@@ -7,6 +7,10 @@
 
 #include <Eio.h>
 
+#ifdef EAPI
+#undef EAPI
+#endif
+
 #ifdef _WIN32
 # ifdef DLL_EXPORT
 #  define EAPI __declspec(dllexport)
@@ -58,14 +62,9 @@ _ecordova_filereader_eo_base_constructor(Eo *obj, Ecordova_FileReader_Data *pd)
    pd->offset = 0;
    pd->length = 0;
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-}
-
-static void
-_ecordova_filereader_constructor(Eo *obj EINA_UNUSED,
-                                 Ecordova_FileReader_Data *pd EINA_UNUSED)
-{
-   DBG("(%p)", obj);
+   eo_do_super(obj, MY_CLASS, obj = eo_constructor());
+   ecordova_entry_file_is_set(EINA_TRUE);
+   return obj;
 }
 
 static void

@@ -14,12 +14,10 @@ lib/ecordova/ecordova_contactorganization.eo \
 lib/ecordova/ecordova_device.eo \
 lib/ecordova/ecordova_devicemotion.eo \
 lib/ecordova/ecordova_deviceorientation.eo \
-lib/ecordova/ecordova_dialogs.eo \
 lib/ecordova/ecordova_geolocation.eo \
 lib/ecordova/ecordova_globalization.eo \
 lib/ecordova/ecordova_media.eo \
 lib/ecordova/ecordova_networkinformation.eo \
-lib/ecordova/ecordova_splashscreen.eo \
 lib/ecordova/ecordova_vibration.eo \
 lib/ecordova/ecordova_file.eo \
 lib/ecordova/ecordova_filewriter.eo \

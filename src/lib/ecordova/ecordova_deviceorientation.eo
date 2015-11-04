@@ -37,13 +37,6 @@ class Ecordova.DeviceOrientation (Eo.Base) {
     ]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_DeviceOrientation constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-        }
         current_heading_get {
             [[Get the current compass heading. The compass heading is returned
               via a CompassHeading object using the compassSuccess callback
@@ -75,9 +68,6 @@ class Ecordova.DeviceOrientation (Eo.Base) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
     events {
         current,success: Ecordova.DeviceOrientation.Heading*;

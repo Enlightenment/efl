@@ -20,15 +20,6 @@ class Ecordova.DeviceMotion (Eo.Base) {
     ]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_DeviceMotion constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-            params {
-            }
-        }
         current_acceleration_get {
             [[Get the current acceleration]]
         }
@@ -58,9 +49,6 @@ class Ecordova.DeviceMotion (Eo.Base) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
     events {
         current,success: Ecordova.DeviceMotion.Acceleration*;

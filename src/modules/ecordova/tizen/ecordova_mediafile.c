@@ -4,7 +4,6 @@
 
 #if defined(TIZEN_MEDIA_METADATA_EXTRACTOR) && defined(TIZEN_MEDIA_PLAYER) && defined(TIZEN_MEDIA_RECORDER)
 #include "ecordova_mediafile_private.h"
-#include <stdbool.h>
 #include <limits.h>
 
 #define MY_CLASS ECORDOVA_MEDIAFILE_CLASS
@@ -14,7 +13,7 @@ static void _extract_cb(void *, Ecore_Thread *);
 static void _extract_end_cb(void *, Ecore_Thread *);
 static void _extract_cancel_cb(void *, Ecore_Thread *);
 static void _internal_error_notify(Ecordova_MediaFile_Data *pd);
-static bool _bool_metadata_get(metadata_extractor_h, metadata_extractor_attr_e);
+static Eina_Bool _bool_metadata_get(metadata_extractor_h, metadata_extractor_attr_e);
 static int _int_metadata_get(metadata_extractor_h, metadata_extractor_attr_e);
 
 #define NO_ERROR (INT_MAX)
@@ -29,23 +28,6 @@ _ecordova_mediafile_eo_base_constructor(Eo *obj, Ecordova_MediaFile_Data *pd)
    pd->error = NO_ERROR;
 
    return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-}
-
-static void
-_ecordova_mediafile_constructor(Eo *obj,
-                                Ecordova_MediaFile_Data *pd EINA_UNUSED,
-                                const char *name,
-                                const char *url,
-                                const char *type,
-                                time_t last_modified_date,
-                                long size)
-{
-   DBG("(%p)", obj);
-   eo_do_super(obj, MY_CLASS, ecordova_file_constructor(name,
-                                                        url,
-                                                        type,
-                                                        last_modified_date,
-                                                        size));
 }
 
 static void
@@ -95,8 +77,8 @@ _extract_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
    pd->metadata.codecs = NULL; // TODO: what is it?
    pd->metadata.duration = _int_metadata_get(pd->extractor, METADATA_DURATION) / 1000;
 
-   bool has_video = _bool_metadata_get(pd->extractor, METADATA_HAS_VIDEO);
-   bool has_audio = _bool_metadata_get(pd->extractor, METADATA_HAS_AUDIO);
+   Eina_Bool has_video = _bool_metadata_get(pd->extractor, METADATA_HAS_VIDEO);
+   Eina_Bool has_audio = _bool_metadata_get(pd->extractor, METADATA_HAS_AUDIO);
 
    DBG("has_video=%d, has_audio=%d", has_video, has_audio);
    if (has_video)
@@ -151,11 +133,11 @@ _internal_error_notify(Ecordova_MediaFile_Data *pd)
    eo_do(pd->obj, eo_event_callback_call(ECORDOVA_MEDIAFILE_EVENT_ERROR, &error));
 }
 
-static bool
+static Eina_Bool
 _bool_metadata_get(metadata_extractor_h extractor,
                    metadata_extractor_attr_e attr)
 {
-   bool result = false;
+   Eina_Bool result = EINA_FALSE;
    char *value = NULL;
    int ret = metadata_extractor_get_metadata(extractor, attr, &value);
    if (value)
@@ -164,7 +146,7 @@ _bool_metadata_get(metadata_extractor_h extractor,
         free(value);
      }
 
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(METADATA_EXTRACTOR_ERROR_NONE == ret, false);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(METADATA_EXTRACTOR_ERROR_NONE == ret, EINA_FALSE);
    return result;
 }
 

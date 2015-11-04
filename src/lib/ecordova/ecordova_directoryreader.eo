@@ -4,14 +4,13 @@ class Ecordova.DirectoryReader (Eo.Base) {
     [[An interface that lists the files and directories in a directory.]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_DirectoryReader constructor.
-              @.constructor
+        @property native {
+            [[Custom Ecordova_DirectoryReader native property.
 
               @since 2.3
             ]]
-            params {
-                native: const(char)*;
+            values {
+                native: const(char)* @optional;
             }
         }
         entries_read {
@@ -23,7 +22,7 @@ class Ecordova.DirectoryReader (Eo.Base) {
         Eo.Base.destructor;
     }
     constructors {
-        .constructor;
+        .native;
     }
     events {
         success: const(list<Ecordova.Entry*>*); [[called with a list of entries]]

@@ -80,14 +80,9 @@ _ecordova_filetransfer_eo_base_constructor(Eo *obj,
    pd->obj = obj;
    pd->job = NULL;
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-}
-
-static void
-_ecordova_filetransfer_constructor(Eo *obj EINA_UNUSED,
-                                   Ecordova_FileTransfer_Data *pd EINA_UNUSED)
-{
-   DBG("(%p)", obj);
+   eo_do_super(obj, MY_CLASS, obj = eo_constructor());
+   eo_do(obj, ecordova_entry_file_is_set(EINA_TRUE));
+   return obj;
 }
 
 static void
@@ -228,8 +223,8 @@ _download_progress_cb(void *data,
    DBG("(%p)", pd->obj);
    Ecordova_ProgressEvent event = {
       .type = "download",
-      .cancelable = true,
-      .length_computable = true,
+      .cancelable = EINA_TRUE,
+      .length_computable = EINA_TRUE,
       .loaded = dlnow,
       .total = dltotal,
       .target = pd->obj
@@ -253,7 +248,8 @@ _download_completion_cb(void *data, const char *file, int status)
         split_path(NULL, file, &path, &name, &native);
 
         Ecordova_FileEntry *file_entry = eo_add(ECORDOVA_FILEENTRY_CLASS, NULL,
-          ecordova_fileentry_constructor(name, path, NULL, native)); // TODO: filesystem?
+                                                ecordova_entry_name_set(name),
+                                                ecordova_entry_path_set(path));
         eo_do(pd->obj,
               eo_event_callback_call(ECORDOVA_FILETRANSFER_EVENT_DOWNLOAD_SUCCESS, file_entry));
         eo_unref(file_entry);
@@ -491,8 +487,8 @@ _url_progress_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 
    Ecordova_ProgressEvent event = {
       .type = "upload",
-      .cancelable = false,
-      .length_computable = true,
+      .cancelable = EINA_FALSE,
+      .length_computable = EINA_TRUE,
       .loaded = url_progress->up.now,
       .total = url_progress->up.total,
       .target = pd->obj

@@ -26,7 +26,7 @@ _directoryreader_new(const char *path)
 {
    return eo_add(ECORDOVA_DIRECTORYREADER_CLASS,
                  NULL,
-                 ecordova_directoryreader_constructor(path));
+                 ecordova_directoryreader_native_set(path));
 }
 
 START_TEST(smoke)

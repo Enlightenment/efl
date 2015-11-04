@@ -28,13 +28,6 @@ class Ecordova.Contacts (Eo.Base) {
     ]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_Contacts constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-        }
         find {
             [[Returns an array of Contacts matching the search criteria.]]
             params {
@@ -64,9 +57,6 @@ class Ecordova.Contacts (Eo.Base) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
     events {
         find,success: const(array<Ecordova.Contact*>)*;

@@ -27,9 +27,7 @@ _teardown(void)
 static Ecordova_FileWriter *
 _filewriter_new(Ecordova_File *file)
 {
-   return eo_add(ECORDOVA_FILEWRITER_CLASS,
-                 NULL,
-                 ecordova_filewriter_constructor(file));
+   return eo_add(ECORDOVA_FILEWRITER_CLASS, NULL, ecordova_filewriter_file_set(file));
 }
 
 static Eina_Bool

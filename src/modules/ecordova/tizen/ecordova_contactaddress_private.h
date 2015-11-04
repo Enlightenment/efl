@@ -18,8 +18,8 @@ struct _Ecordova_ContactAddress_Data
    contacts_record_h  record;
 };
 
-bool ecordova_contactaddress_import(Ecordova_ContactAddress *, contacts_record_h);
-bool ecordova_contactaddress_export(Ecordova_ContactAddress *, contacts_record_h);
+Eina_Bool ecordova_contactaddress_import(Ecordova_ContactAddress *, contacts_record_h);
+Eina_Bool ecordova_contactaddress_export(Ecordova_ContactAddress *, contacts_record_h);
 Ecordova_ContactAddress *ecordova_contactaddress_clone(Ecordova_ContactAddress *);
 
 #endif

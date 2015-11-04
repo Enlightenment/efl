@@ -6,7 +6,6 @@
 
 #include <vconf.h>
 
-#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -27,17 +26,10 @@ _ecordova_systeminfo_eo_base_constructor(Eo *obj,
 
    pd->obj = obj;
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-}
-
-static void
-_ecordova_systeminfo_constructor(Eo *obj,
-                                 Ecordova_SystemInfo_Data *pd)
-{
-   DBG("(%p)", obj);
-
    eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_ADD, _add_cb, pd));
    eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_DEL, _del_cb, pd));
+   
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
 }
 
 static void

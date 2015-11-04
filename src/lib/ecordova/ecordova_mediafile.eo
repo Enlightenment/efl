@@ -24,20 +24,6 @@ class Ecordova.MediaFile (Ecordova.File) {
     [[Represents a single media file.]]
     legacy_prefix: null;
     methods {
-        constructor {
-            [[Custom Ecordova_MediaFile constructor.
-              @.constructor
-
-              @since 2.3
-            ]]
-            params {
-                name: const(char)*; [[name of the file, without path information]]
-                url: const(char)*; [[the full path of the file, including the name]]
-                type: const(char)*; [[mime type]]
-                last_modified_date: time; [[last modified date]]
-                size: long; [[size of the file in bytes]]
-            }
-        }
         format_data_get {
             [[Retrieves format information about the media capture file.
 
@@ -51,9 +37,6 @@ class Ecordova.MediaFile (Ecordova.File) {
     implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-    }
-    constructors {
-        .constructor;
     }
     events {
         success: const(Ecordova_MediaFileData)*;

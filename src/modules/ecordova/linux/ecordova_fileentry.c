@@ -49,24 +49,9 @@ _ecordova_fileentry_eo_base_constructor(Eo *obj, Ecordova_FileEntry_Data *pd)
 
    pd->obj = obj;
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-}
-
-static void
-_ecordova_fileentry_constructor(Eo *obj,
-                                Ecordova_FileEntry_Data *pd EINA_UNUSED,
-                                const char *name,
-                                const char *path,
-                                Ecordova_FileSystem *file_system,
-                                const char *url)
-{
-   DBG("(%p)", obj);
-   eo_do_super(obj, MY_CLASS, ecordova_entry_constructor(EINA_TRUE,
-                                                         EINA_FALSE,
-                                                         name,
-                                                         path,
-                                                         file_system,
-                                                         url));
+   eo_do_super(obj, MY_CLASS, obj = eo_constructor());
+   ecordova_entry_file_is_set(EINA_TRUE);
+   return obj;
 }
 
 static void
@@ -128,7 +113,7 @@ _writer_create(Eo *obj, void *data)
    const Ecordova_Metadata *metadata = data;
    Ecordova_File *file = _create_file(obj, metadata);
    Ecordova_FileWriter *writer = eo_add(ECORDOVA_FILEWRITER_CLASS, NULL,
-     ecordova_filewriter_constructor(file));
+     ecordova_filewriter_file_set(file));
 
    eo_do(obj,
          eo_event_callback_call(ECORDOVA_FILEENTRY_EVENT_CREATE_WRITER, writer));
