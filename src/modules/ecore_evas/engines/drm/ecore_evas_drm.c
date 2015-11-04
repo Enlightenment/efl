@@ -355,12 +355,6 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
    /* try to init drm */
    if (_ecore_evas_drm_init(device) < 1) return NULL;
 
-   if (!ecore_drm_device_software_setup(dev))
-     {
-        ERR("Could not setup device for software");
-        goto soft_err;
-     }
-
    /* try to load gl libary, gbm libary */
    /* Typically, gbm loads the dri driver However some versions of Mesa
     * do not have libglapi symbols linked in the driver. Because of this,
@@ -501,7 +495,6 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
 
 eng_err:
    ecore_evas_free(ee);
-soft_err:
 ee_err:
    _ecore_evas_drm_shutdown();
    return NULL;
