@@ -142,5 +142,6 @@ _re_wincheck(Outbuf *ob)
 }
 
 extern unsigned int (*glsym_eglSwapBuffersWithDamage)(EGLDisplay a, void *b, const EGLint *d, EGLint c);
+extern unsigned int (*glsym_eglSetDamageRegionKHR)(EGLDisplay a, EGLSurface b, EGLint *c, EGLint d);
 
 #endif
