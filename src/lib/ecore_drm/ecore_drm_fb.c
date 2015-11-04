@@ -257,5 +257,15 @@ ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb
      }
 
    while (fb->pending_flip)
-     drmHandleEvent(dev->drm.fd, &dev->drm_ctx);
+     {
+        int ret = 0;
+
+        ret = drmHandleEvent(dev->drm.fd, &dev->drm_ctx);
+        if (ret < 0)
+          {
+             ERR("drmHandleEvent Failed: %m");
+             free(cb);
+             break;
+          }
+     }
 }
