@@ -1399,7 +1399,7 @@ gl4_sel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    int depth = elm_genlist_item_expanded_depth_get(glit);
-   printf("expanded depth for selected item is %d", depth);
+   printf("item sel callback %p - expanded depth = %d\n", glit, depth);
 }
 
 static void
@@ -1411,6 +1411,7 @@ gl4_exp(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    int val = (int)(uintptr_t) elm_object_item_data_get(glit);
    int i = 0;
 
+   printf("expand %p\n", glit);
    val *= 10;
    for (i = 0; i < 30; i++)
      {
@@ -1429,7 +1430,7 @@ gl4_con(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
    const Eina_List *list = NULL, *l = NULL;
    Elm_Object_Item *it = NULL;
 
-   printf("\n");
+   printf("contract request %p\n", glit);
 
    list = elm_genlist_item_subitems_get(glit);
    EINA_LIST_FOREACH(list, l, it)
@@ -1444,6 +1445,7 @@ static void
 gl4_exp_req(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
+   printf("expand request %p\n", glit);
    elm_genlist_item_expanded_set(glit, EINA_TRUE);
 }
 
@@ -1452,6 +1454,48 @@ gl4_con_req(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 {
    Elm_Object_Item *glit = event_info;
    elm_genlist_item_expanded_set(glit, EINA_FALSE);
+}
+
+static void
+gl4_selected(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *glit = event_info;
+   printf("selected %p\n", glit);
+}
+
+static void
+gl4_activated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *glit = event_info;
+   printf("activated %p\n", glit);
+}
+
+static void
+gl4_unselected(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *glit = event_info;
+   printf("unselected %p\n", glit);
+}
+
+static void
+gl4_longpressed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *glit = event_info;
+   printf("longpressed %p\n", glit);
+}
+
+static void
+gl4_pressed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *glit = event_info;
+   printf("pressed %p\n", glit);
+}
+
+static void
+gl4_released(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *glit = event_info;
+   printf("released %p\n", glit);
 }
 
 char *
@@ -1594,6 +1638,13 @@ test_genlist6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_smart_callback_add(gl, "contract,request", gl4_con_req, api);
    evas_object_smart_callback_add(gl, "expanded", gl4_exp, api);
    evas_object_smart_callback_add(gl, "contracted", gl4_con, api);
+
+   evas_object_smart_callback_add(gl, "selected", gl4_selected, api);
+   evas_object_smart_callback_add(gl, "unselected", gl4_unselected, api);
+   evas_object_smart_callback_add(gl, "activated", gl4_activated, api);
+   evas_object_smart_callback_add(gl, "longpressed", gl4_longpressed, api);
+   evas_object_smart_callback_add(gl, "pressed", gl4_pressed, api);
+   evas_object_smart_callback_add(gl, "released", gl4_released, api);
 
    evas_object_smart_callback_add(ck1, "changed", _tree_effect_changed_cb, gl);
    evas_object_smart_callback_add(ck2, "changed", _tree_homogeneous_changed_cb, gl);
