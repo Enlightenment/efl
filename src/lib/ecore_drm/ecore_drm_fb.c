@@ -176,11 +176,14 @@ ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb)
    EINA_SAFETY_ON_NULL_RETURN(dev);
    EINA_SAFETY_ON_NULL_RETURN(fb);
 
-   if ((fb->w != dev->dumb[0]->w) || (fb->h != dev->dumb[0]->h))
+   if (dev->dumb[0])
      {
-        /* we need to copy from fb to dev->dumb */
-        WRN("Trying to set a Framebuffer of improper size !!");
-        return;
+        if ((fb->w != dev->dumb[0]->w) || (fb->h != dev->dumb[0]->h))
+          {
+             /* we need to copy from fb to dev->dumb */
+             WRN("Trying to set a Framebuffer of improper size !!");
+             return;
+          }
      }
 
    if (!dev->next) dev->next = fb;
