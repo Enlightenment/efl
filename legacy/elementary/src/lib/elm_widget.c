@@ -762,21 +762,29 @@ _elm_widget_focus_region_show(const Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNU
    while (o)
      {
         Evas_Coord px, py;
+        evas_object_geometry_get(o, &px, &py, NULL, NULL);
 
         if (_elm_scrollable_is(o) && !elm_widget_disabled_get(o))
           {
+             Evas_Coord sx, sy;
+             eo_do(o, elm_interface_scrollable_content_region_get(&sx, &sy, NULL, NULL));
+
+             // Get the object's on_focus_region position relative to the scroller. 
+             Evas_Coord rx, ry;
+             rx = ox + x - px + sx;
+             ry = oy + y - py + sy;
+
              switch (_elm_config->focus_autoscroll_mode)
                {
                 case ELM_FOCUS_AUTOSCROLL_MODE_SHOW:
-                   eo_do(o, elm_interface_scrollable_content_region_show(x, y, w, h));
+                   eo_do(o, elm_interface_scrollable_content_region_show(rx, ry, w, h));
                    break;
                 case ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN:
-                   eo_do(o, elm_interface_scrollable_region_bring_in(x, y, w, h));
+                   eo_do(o, elm_interface_scrollable_region_bring_in(rx, ry, w, h));
                    break;
                 default:
                    break;
                }
-
 
              if (!elm_widget_focus_region_get(o, &x, &y, &w, &h))
                {
@@ -786,7 +794,6 @@ _elm_widget_focus_region_show(const Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNU
           }
         else
           {
-             evas_object_geometry_get(o, &px, &py, NULL, NULL);
              x += ox - px;
              y += oy - py;
              ox = px;
