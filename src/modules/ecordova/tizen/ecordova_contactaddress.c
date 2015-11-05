@@ -259,7 +259,7 @@ ecordova_contactaddress_export(Ecordova_ContactAddress *obj,
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
    ret = contacts_record_add_child_record(contacts_record,
-                                          _contacts_contact.address,
+                                          (*_contacts_contact).address,
                                           child_record);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 

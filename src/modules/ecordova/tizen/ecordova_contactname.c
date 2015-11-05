@@ -22,7 +22,7 @@ _ecordova_contactname_eo_base_constructor(Eo *obj,
    pd->obj = obj;
    pd->record = NULL;
      
-   int ret = contacts_record_create(_contacts_name._uri, &pd->record);
+   int ret = contacts_record_create((*_contacts_name)._uri, &pd->record);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, NULL);
 
    return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
@@ -51,7 +51,7 @@ _ecordova_contactname_formatted_get(Eo *obj,
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent_pd, NULL);
 
    const char *value = NULL;
-   get_str_p(parent_pd->record, _contacts_contact.display_name, &value);
+   get_str_p(parent_pd->record, (*_contacts_contact).display_name, &value);
    return value;
 }
 
@@ -67,7 +67,7 @@ _ecordova_contactname_formatted_set(Eo *obj,
    Ecordova_Contact_Data *parent_pd = eo_data_scope_get(parent, ECORDOVA_CONTACT_CLASS);
    EINA_SAFETY_ON_NULL_RETURN(parent_pd);
 
-   set_str(parent_pd->record, _contacts_contact.display_name, value);
+   set_str(parent_pd->record, (*_contacts_contact).display_name, value);
 }
 
 static const char *
@@ -75,7 +75,7 @@ _ecordova_contactname_family_name_get(Eo *obj EINA_UNUSED,
                                       Ecordova_ContactName_Data *pd)
 {
    const char *value = NULL;
-   get_str_p(pd->record, _contacts_name.last, &value);
+   get_str_p(pd->record, (*_contacts_name).last, &value);
    return value;
 }
 
@@ -84,7 +84,7 @@ _ecordova_contactname_family_name_set(Eo *obj EINA_UNUSED,
                                       Ecordova_ContactName_Data *pd,
                                       const char *value)
 {
-   set_str(pd->record, _contacts_name.last, value);
+  set_str(pd->record, (*_contacts_name).last, value);
 }
 
 static const char *
@@ -92,7 +92,7 @@ _ecordova_contactname_given_name_get(Eo *obj EINA_UNUSED,
                                      Ecordova_ContactName_Data *pd)
 {
    const char *value = NULL;
-   get_str_p(pd->record, _contacts_name.first, &value);
+   get_str_p(pd->record, (*_contacts_name).first, &value);
    return value;
 }
 
@@ -101,7 +101,7 @@ _ecordova_contactname_given_name_set(Eo *obj EINA_UNUSED,
                                      Ecordova_ContactName_Data *pd,
                                      const char *value)
 {
-   set_str(pd->record, _contacts_name.first, value);
+  set_str(pd->record, (*_contacts_name).first, value);
 }
 
 static const char *
@@ -109,7 +109,7 @@ _ecordova_contactname_middle_get(Eo *obj EINA_UNUSED,
                                  Ecordova_ContactName_Data *pd)
 {
    const char *value = NULL;
-   get_str_p(pd->record, _contacts_name.addition, &value);
+   get_str_p(pd->record, (*_contacts_name).addition, &value);
    return value;
 }
 
@@ -118,7 +118,7 @@ _ecordova_contactname_middle_set(Eo *obj EINA_UNUSED,
                                  Ecordova_ContactName_Data *pd,
                                  const char *value)
 {
-   set_str(pd->record, _contacts_name.addition, value);
+  set_str(pd->record, (*_contacts_name).addition, value);
 }
 
 static const char *
@@ -126,7 +126,7 @@ _ecordova_contactname_prefix_get(Eo *obj EINA_UNUSED,
                                  Ecordova_ContactName_Data *pd)
 {
    const char *value = NULL;
-   get_str_p(pd->record, _contacts_name.prefix, &value);
+   get_str_p(pd->record, (*_contacts_name).prefix, &value);
    return value;
 }
 
@@ -135,7 +135,7 @@ _ecordova_contactname_prefix_set(Eo *obj EINA_UNUSED,
                                  Ecordova_ContactName_Data *pd,
                                  const char *value)
 {
-   set_str(pd->record, _contacts_name.prefix, value);
+  set_str(pd->record, (*_contacts_name).prefix, value);
 }
 
 static const char *
@@ -143,7 +143,7 @@ _ecordova_contactname_suffix_get(Eo *obj EINA_UNUSED,
                                  Ecordova_ContactName_Data *pd)
 {
    const char *value = NULL;
-   get_str_p(pd->record, _contacts_name.suffix, &value);
+   get_str_p(pd->record, (*_contacts_name).suffix, &value);
    return value;
 }
 
@@ -152,7 +152,7 @@ _ecordova_contactname_suffix_set(Eo *obj EINA_UNUSED,
                                  Ecordova_ContactName_Data *pd,
                                  const char *value)
 {
-   set_str(pd->record, _contacts_name.suffix, value);
+  set_str(pd->record, (*_contacts_name).suffix, value);
 }
 
 Eina_Bool
@@ -169,14 +169,14 @@ ecordova_contactname_import(Ecordova_ContactName *obj,
 
    int count = 0;
    ret = contacts_record_get_child_record_count(contacts_record,
-                                                _contacts_contact.name,
+                                                (*_contacts_contact).name,
                                                 &count);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(count == 1, EINA_FALSE);
 
    contacts_record_h contactname_record = NULL;
    ret = contacts_record_get_child_record_at_p(contacts_record,
-                                               _contacts_contact.name,
+                                               (*_contacts_contact).name,
                                                0,
                                                &contactname_record);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
@@ -206,7 +206,7 @@ ecordova_contactname_export(Ecordova_ContactName *obj,
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
    ret = contacts_record_add_child_record(contacts_record,
-                                          _contacts_contact.name,
+                                          (*_contacts_contact).name,
                                           contactname_record);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 

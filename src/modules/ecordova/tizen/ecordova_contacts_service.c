@@ -48,24 +48,31 @@ int (*contacts_query_create)(const char* view_uri, contacts_query_h* query) = 0;
 int (*contacts_query_set_filter)(contacts_query_h query, contacts_filter_h filter) = 0;
 int (*contacts_query_destroy)(contacts_query_h query) = 0;
 
-_contacts_address_property_ids* _contacts_address = NULL;
-_contacts_contact_property_ids* _contacts_contact = NULL;
-_contacts_nickname_property_ids* _contacts_nickname = NULL;
-_contacts_note_property_ids* _contacts_note = NULL;
-_contacts_name_property_ids* _contacts_name = NULL;
-_contacts_number_property_ids* _contacts_number = NULL;
-_contacts_company_property_ids* _contacts_company = NULL;
-_contacts_email_property_ids* _contacts_email = NULL;
-_contacts_messenger_property_ids* _contacts_messenger = NULL;
-_contacts_image_property_ids* _contacts_image = NULL;
-_contacts_url_property_ids* _contacts_url = NULL;
-_contacts_event_property_ids* _contacts_event = NULL;
+const _contacts_address_property_ids* _contacts_address = NULL;
+const _contacts_contact_property_ids* _contacts_contact = NULL;
+const _contacts_nickname_property_ids* _contacts_nickname = NULL;
+const _contacts_note_property_ids* _contacts_note = NULL;
+const _contacts_name_property_ids* _contacts_name = NULL;
+const _contacts_number_property_ids* _contacts_number = NULL;
+const _contacts_company_property_ids* _contacts_company = NULL;
+const _contacts_email_property_ids* _contacts_email = NULL;
+const _contacts_messenger_property_ids* _contacts_messenger = NULL;
+const _contacts_image_property_ids* _contacts_image = NULL;
+const _contacts_url_property_ids* _contacts_url = NULL;
+const _contacts_event_property_ids* _contacts_event = NULL;
 
 static void* contacts_service_lib;
 
+Ecordova_ContactField_Metadata _contact_number_metadata;
+Ecordova_ContactField_Metadata _contact_email_metadata;
+Ecordova_ContactField_Metadata _contact_messenger_metadata;
+Ecordova_ContactField_Metadata _contact_image_metadata;
+Ecordova_ContactField_Metadata _contact_url_metadata;
+
 void ecordova_contacts_service_shutdown()
 {
-  dlclose(contacts_service_lib);
+  if(contacts_service_lib)
+    dlclose(contacts_service_lib);
   contacts_service_lib = NULL;
   contacts_record_destroy  = NULL;
   contacts_record_clone = NULL;
@@ -115,12 +122,24 @@ void ecordova_contacts_service_shutdown()
   _contacts_event = NULL;
 }
 
+char * ecordova_contactnumber_type2label(int type, const char *custom);
+int ecordova_contactnumber_label2type(const char *label);
+char * ecordova_contactemail_type2label(int type, const char *custom);
+int ecordova_contactemail_label2type(const char *label);
+char * ecordova_contactmessenger_type2label(int type, const char *custom);
+int ecordova_contactmessenger_label2type(const char *label);
+char * ecordova_contactimage_type2label(int type, const char *custom);
+int ecordova_contactimage_label2type(const char *label);
+char * ecordova_contacturl_type2label(int type, const char *custom);
+int ecordova_contacturl_label2type(const char *label);
+
 void ecordova_contacts_service_init()
 {
   if(!contacts_service_lib)
     {
        contacts_service_lib = dlopen("contacts-service2.so", RTLD_NOW);
-
+       if(!contacts_service_lib)
+         goto on_error;
        contacts_record_create = dlsym(contacts_service_lib, "contacts_record_create");
        if(!contacts_record_create)
          goto on_error;
@@ -262,6 +281,56 @@ void ecordova_contacts_service_init()
        _contacts_event = dlsym(contacts_service_lib, "_contacts_event");
        if(!_contacts_event)
          goto on_error;;
+
+       _contact_number_metadata.uri = &(*_contacts_number)._uri;
+       _contact_number_metadata.ids[ECORDOVA_CONTACTFIELD_PARENT_PROPERTY_ID] = &(*_contacts_contact).number;
+       _contact_number_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_ID]        = &(*_contacts_number).id;
+       _contact_number_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_TYPE]      = &(*_contacts_number).type;
+       _contact_number_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_LABEL]     = &(*_contacts_number).label;
+       _contact_number_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_VALUE]     = &(*_contacts_number).number;
+       _contact_number_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_PREF]      = &(*_contacts_number).is_default;
+       _contact_number_metadata.type2label = ecordova_contactnumber_type2label;
+       _contact_number_metadata.label2type = ecordova_contactnumber_label2type;
+
+       _contact_email_metadata.uri = &(*_contacts_email)._uri;
+       _contact_email_metadata.ids[ECORDOVA_CONTACTFIELD_PARENT_PROPERTY_ID] = &(*_contacts_contact).email;
+       _contact_email_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_ID]        = &(*_contacts_email).id;
+       _contact_email_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_TYPE]      = &(*_contacts_email).type;
+       _contact_email_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_LABEL]     = &(*_contacts_email).label;
+       _contact_email_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_VALUE]     = &(*_contacts_email).email;
+       _contact_email_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_PREF]      = &(*_contacts_email).is_default;
+       _contact_email_metadata.type2label = ecordova_contactemail_type2label;
+       _contact_email_metadata.label2type = ecordova_contactemail_label2type;
+
+       _contact_messenger_metadata.uri = &(*_contacts_messenger)._uri;
+       _contact_messenger_metadata.ids[ECORDOVA_CONTACTFIELD_PARENT_PROPERTY_ID] = &(*_contacts_contact).messenger;
+       _contact_messenger_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_ID]        = &(*_contacts_messenger).id;
+       _contact_messenger_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_TYPE]      = &(*_contacts_messenger).type;
+       _contact_messenger_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_LABEL]     = &(*_contacts_messenger).label;
+       _contact_messenger_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_VALUE]     = &(*_contacts_messenger).im_id;
+       _contact_messenger_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_PREF]      = NULL;
+       _contact_messenger_metadata.type2label = ecordova_contactmessenger_type2label;
+       _contact_messenger_metadata.label2type = ecordova_contactmessenger_label2type;
+
+       _contact_image_metadata.uri = &(*_contacts_image)._uri;
+       _contact_image_metadata.ids[ECORDOVA_CONTACTFIELD_PARENT_PROPERTY_ID] = &(*_contacts_contact).image;
+       _contact_image_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_ID]        = &(*_contacts_image).id;
+       _contact_image_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_TYPE]      = &(*_contacts_image).type;
+       _contact_image_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_LABEL]     = &(*_contacts_image).label;
+       _contact_image_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_VALUE]     = &(*_contacts_image).path;
+       _contact_image_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_PREF]      = &(*_contacts_image).is_default;
+       _contact_image_metadata.type2label = ecordova_contactimage_type2label;
+       _contact_image_metadata.label2type = ecordova_contactimage_label2type;
+
+       _contact_url_metadata.uri = &(*_contacts_url)._uri;
+       _contact_url_metadata.ids[ECORDOVA_CONTACTFIELD_PARENT_PROPERTY_ID] = &(*_contacts_contact).url;
+       _contact_url_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_ID]        = &(*_contacts_url).id;
+       _contact_url_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_TYPE]      = &(*_contacts_url).type;
+       _contact_url_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_LABEL]     = &(*_contacts_url).label;
+       _contact_url_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_VALUE]     = &(*_contacts_url).url;
+       _contact_url_metadata.ids[ECORDOVA_CONTACTFIELD_PROPERTY_PREF]      = NULL;
+       _contact_url_metadata.type2label = ecordova_contacturl_type2label;
+       _contact_url_metadata.label2type = ecordova_contacturl_label2type;
     }
 
   return;

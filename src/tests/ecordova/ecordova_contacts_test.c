@@ -9,6 +9,7 @@
 
 #include <check.h>
 
+#ifdef HAVE_TIZEN_CONTACTS_SERVICE
 #define CHECK(x) {int ret = x; ck_assert_int_eq(CONTACTS_ERROR_NONE, ret);}
 
 static int _contact_id;
@@ -23,34 +24,11 @@ _setup(void)
    ck_assert_int_eq(ret, 1);
 
    DBG("%s", "_setup");
-
-   /* CHECK(contacts_connect()); */
-
-   // TODO: delete all record in the database to be back to square 1 and make tests deterministic
-   DBG("%s", "_setup");
-
-   /* // create contact record */
-   /* contacts_record_h contact = NULL; */
-   /* CHECK(contacts_record_create(_contacts_contact._uri, &contact)); */
-
-   /* // add name */
-   /* contacts_record_h name = NULL; */
-   /* CHECK(contacts_record_create(_contacts_name._uri, &name)); */
-   /* CHECK(contacts_record_set_str(name, _contacts_name.first, _contact_name)); */
-   /* CHECK(contacts_record_add_child_record(contact, _contacts_contact.name, name)); */
-
-   /* CHECK(contacts_db_insert_record(contact, &_contact_id)); */
-
-   /* CHECK(contacts_record_destroy(contact, true)); */
 }
 
 static void
 _teardown(void)
 {
-   /* CHECK(contacts_db_delete_record(_contacts_contact._uri, _contact_id)); */
-
-   /* CHECK(contacts_disconnect()); */
-
    int ret = ecordova_shutdown();
    ck_assert_int_eq(ret, 0);
 }
@@ -254,41 +232,42 @@ ecordova_contacts_test(TCase *tc)
    tcase_add_test(tc, find_by_id);
    tcase_add_test(tc, find_by_name);
 }
-/* #else */
-/* START_TEST(contacts_fail_load) */
-/* { */
-/*    ecordova_init(); */
+#else
+START_TEST(contacts_fail_load)
+{
+   ecordova_init();
   
-/*    fprintf(stderr, "contacts_fail_load %s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); */
-/*    Ecordova_Contacts *contacts = eo_add(ECORDOVA_CONTACTS_CLASS, NULL); */
-/*    ck_assert_ptr_eq(contacts, NULL); */
+   fprintf(stderr, "contacts_fail_load %s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   Ecordova_Contacts *contacts = eo_add(ECORDOVA_CONTACTS_CLASS, NULL);
+   ck_assert_ptr_eq(contacts, NULL);
 
-/*    fprintf(stderr, "contacts_fail_load %s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); */
-/*    Ecordova_Contact *contact = eo_add(ECORDOVA_CONTACT_CLASS, NULL); */
-/*    ck_assert_ptr_eq(contact, NULL); */
+   fprintf(stderr, "contacts_fail_load %s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   Ecordova_Contact *contact = eo_add(ECORDOVA_CONTACT_CLASS, NULL);
+   ck_assert_ptr_eq(contact, NULL);
 
-/*    fprintf(stderr, "contacts_fail_load %s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); */
-/*    Ecordova_ContactAddress *contact_address = eo_add(ECORDOVA_CONTACTADDRESS_CLASS, NULL); */
-/*    ck_assert_ptr_eq(contact_address, NULL); */
+   fprintf(stderr, "contacts_fail_load %s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   Ecordova_ContactAddress *contact_address = eo_add(ECORDOVA_CONTACTADDRESS_CLASS, NULL);
+   ck_assert_ptr_eq(contact_address, NULL);
 
-/*    fprintf(stderr, "contacts_fail_load %s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); */
-/*    Ecordova_ContactField *contact_field = eo_add(ECORDOVA_CONTACTFIELD_CLASS, NULL); */
-/*    ck_assert_ptr_eq(contact_field, NULL); */
+   fprintf(stderr, "contacts_fail_load %s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   Ecordova_ContactField *contact_field = eo_add(ECORDOVA_CONTACTFIELD_CLASS, NULL);
+   ck_assert_ptr_eq(contact_field, NULL);
 
-/*    fprintf(stderr, "contacts_fail_load %s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); */
-/*    Ecordova_ContactName *contact_name = eo_add(ECORDOVA_CONTACTNAME_CLASS, NULL); */
-/*    ck_assert_ptr_eq(contact_name, NULL); */
+   fprintf(stderr, "contacts_fail_load %s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   Ecordova_ContactName *contact_name = eo_add(ECORDOVA_CONTACTNAME_CLASS, NULL);
+   ck_assert_ptr_eq(contact_name, NULL);
 
-/*    fprintf(stderr, "contacts_fail_load %s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr); */
-/*    Ecordova_ContactOrganization *contact_organization = eo_add(ECORDOVA_CONTACTORGANIZATION_CLASS, NULL); */
-/*    ck_assert_ptr_eq(contact_organization, NULL); */
+   fprintf(stderr, "contacts_fail_load %s %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
+   Ecordova_ContactOrganization *contact_organization = eo_add(ECORDOVA_CONTACTORGANIZATION_CLASS, NULL);
+   ck_assert_ptr_eq(contact_organization, NULL);
 
-/*    ecordova_shutdown(); */
-/* } */
-/* END_TEST */
+   ecordova_shutdown();
+}
+END_TEST
 
-/* void */
-/* ecordova_contacts_test(TCase *tc) */
-/* { */
-/*    tcase_add_test(tc, contacts_fail_load); */
-/* } */
+void
+ecordova_contacts_test(TCase *tc)
+{
+   tcase_add_test(tc, contacts_fail_load);
+}
+#endif

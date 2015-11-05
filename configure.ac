@@ -4599,6 +4599,7 @@ EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [efl])
 EFL_INTERNAL_DEPEND_PKG([ECORDOVA], [ecore])
 
+EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_tizen}], [TIZEN_CONTACTS_SERVICE], [contacts-service2])
 EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_tizen}], [TIZEN_INFO], [capi-system-info])
 EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_tizen}], [TIZEN_SENSOR], [capi-system-sensor])
 EFL_OPTIONAL_DEPEND_PKG([ECORDOVA], [${want_tizen}], [TIZEN_LOCATION_MANAGER], [capi-location-manager])

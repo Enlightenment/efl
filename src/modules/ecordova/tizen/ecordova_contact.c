@@ -41,7 +41,7 @@ _ecordova_contact_eo_base_constructor(Eo *obj, Ecordova_Contact_Data *pd)
 
    pd->obj = obj;
    pd->record = NULL;
-   int ret = contacts_record_create(_contacts_contact._uri, &pd->record);
+   int ret = contacts_record_create((*_contacts_contact)._uri, &pd->record);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, NULL);
    pd->name = eo_add(ECORDOVA_CONTACTNAME_CLASS, NULL);
    pd->phone_numbers = eina_array_new(1);
@@ -86,7 +86,7 @@ _ecordova_contact_remove(Eo *obj, Ecordova_Contact_Data *pd)
         goto on_error;
      }
 
-   int ret = contacts_db_delete_record(_contacts_contact._uri, pd->id);
+   int ret = contacts_db_delete_record((*_contacts_contact)._uri, pd->id);
    if (CONTACTS_ERROR_NONE != ret)
      {
         ERR("Error deleting record id: %d", pd->id);
@@ -165,7 +165,7 @@ _ecordova_contact_save(Eo *obj, Ecordova_Contact_Data *pd)
 
         // must get the inserted record so we can properly update it further
         contacts_record_h contacts_record = NULL;
-        ret = contacts_db_get_record(_contacts_contact._uri, pd->id, &contacts_record);
+        ret = contacts_db_get_record((*_contacts_contact)._uri, pd->id, &contacts_record);
         if (CONTACTS_ERROR_NONE != ret)
           {
              ERR("Error getting record: %d", ret);
@@ -202,7 +202,7 @@ _ecordova_contact_display_name_get(Eo *obj EINA_UNUSED,
                                    Ecordova_Contact_Data *pd)
 {
    const char *value = NULL;
-   get_str_p(pd->record, _contacts_contact.display_name, &value);
+   get_str_p(pd->record, (*_contacts_contact).display_name, &value);
    return value;
 }
 
@@ -211,7 +211,7 @@ _ecordova_contact_display_name_set(Eo *obj EINA_UNUSED,
                                    Ecordova_Contact_Data *pd,
                                    const char *value)
 {
-   set_str(pd->record, _contacts_contact.display_name, value);
+  set_str(pd->record, (*_contacts_contact).display_name, value);
 }
 
 static Ecordova_ContactName *
@@ -235,7 +235,7 @@ _ecordova_contact_nickname_get(Eo *obj EINA_UNUSED, Ecordova_Contact_Data *pd)
    int ret;
    int count = 0;
    ret = contacts_record_get_child_record_count(pd->record,
-                                                _contacts_contact.nickname,
+                                                (*_contacts_contact).nickname,
                                                 &count);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, NULL);
 
@@ -243,13 +243,13 @@ _ecordova_contact_nickname_get(Eo *obj EINA_UNUSED, Ecordova_Contact_Data *pd)
 
    contacts_record_h child_record = NULL;
    ret = contacts_record_get_child_record_at_p(pd->record,
-                                               _contacts_contact.nickname,
+                                               (*_contacts_contact).nickname,
                                                0,
                                                &child_record);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, NULL);
 
    const char *value = NULL;
-   get_str_p(child_record, _contacts_nickname.name, &value);
+   get_str_p(child_record, (*_contacts_nickname).name, &value);
    return value;
 }
 
@@ -260,17 +260,17 @@ _ecordova_contact_nickname_set(Eo *obj EINA_UNUSED,
 {
    int ret;
    contacts_record_h child_record = NULL;
-   ret = contacts_record_create(_contacts_nickname._uri, &child_record);
+   ret = contacts_record_create((*_contacts_nickname)._uri, &child_record);
    EINA_SAFETY_ON_FALSE_RETURN(CONTACTS_ERROR_NONE == ret);
 
-   if (!set_str(child_record, _contacts_nickname.name, value))
+   if (!set_str(child_record, (*_contacts_nickname).name, value))
      goto on_error;
 
-   if (!clear_all_contact_record(pd->record, _contacts_contact.nickname))
+   if (!clear_all_contact_record(pd->record, (*_contacts_contact).nickname))
      goto on_error;
 
    ret = contacts_record_add_child_record(pd->record,
-                                          _contacts_contact.nickname,
+                                          (*_contacts_contact).nickname,
                                           child_record);
    EINA_SAFETY_ON_FALSE_GOTO(CONTACTS_ERROR_NONE == ret, on_error);
    return;
@@ -379,7 +379,7 @@ _ecordova_contact_note_get(Eo *obj EINA_UNUSED, Ecordova_Contact_Data *pd)
    int ret;
    int count = 0;
    ret = contacts_record_get_child_record_count(pd->record,
-                                                _contacts_contact.note,
+                                                (*_contacts_contact).note,
                                                 &count);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, NULL);
 
@@ -388,13 +388,13 @@ _ecordova_contact_note_get(Eo *obj EINA_UNUSED, Ecordova_Contact_Data *pd)
 
    contacts_record_h child_record = NULL;
    ret = contacts_record_get_child_record_at_p(pd->record,
-                                               _contacts_contact.note,
+                                               (*_contacts_contact).note,
                                                0,
                                                &child_record);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, NULL);
 
    const char *value = NULL;
-   get_str_p(child_record, _contacts_note.note, &value);
+   get_str_p(child_record, (*_contacts_note).note, &value);
    return value;
 }
 
@@ -405,17 +405,17 @@ _ecordova_contact_note_set(Eo *obj EINA_UNUSED,
 {
    int ret;
    contacts_record_h child_record = NULL;
-   ret = contacts_record_create(_contacts_note._uri, &child_record);
+   ret = contacts_record_create((*_contacts_note)._uri, &child_record);
    EINA_SAFETY_ON_FALSE_RETURN(CONTACTS_ERROR_NONE == ret);
 
-   if (!set_str(child_record, _contacts_note.note, value))
+   if (!set_str(child_record, (*_contacts_note).note, value))
      goto on_error;
 
-   if (!clear_all_contact_record(pd->record, _contacts_contact.note))
+   if (!clear_all_contact_record(pd->record, (*_contacts_contact).note))
      goto on_error;
 
    ret = contacts_record_add_child_record(pd->record,
-                                          _contacts_contact.note,
+                                          (*_contacts_contact).note,
                                           child_record);
    EINA_SAFETY_ON_FALSE_GOTO(CONTACTS_ERROR_NONE == ret, on_error);
    return;
@@ -706,75 +706,11 @@ _contactorganization_array_clear_id(Eina_Array *organizations)
      }
 }
 
-static const Ecordova_ContactField_Metadata
-_contact_number_metadata = {
-  .uri = &_contacts_number._uri,
-  .ids = {
-     [ECORDOVA_CONTACTFIELD_PARENT_PROPERTY_ID] = &_contacts_contact.number,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_ID]        = &_contacts_number.id,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_TYPE]      = &_contacts_number.type,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_LABEL]     = &_contacts_number.label,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_VALUE]     = &_contacts_number.number,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_PREF]      = &_contacts_number.is_default},
-  .type2label = ecordova_contactnumber_type2label,
-  .label2type = ecordova_contactnumber_label2type
-};
-
-static const Ecordova_ContactField_Metadata
-_contact_email_metadata = {
-  .uri = &_contacts_email._uri,
-  .ids = {
-     [ECORDOVA_CONTACTFIELD_PARENT_PROPERTY_ID] = &_contacts_contact.email,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_ID]        = &_contacts_email.id,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_TYPE]      = &_contacts_email.type,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_LABEL]     = &_contacts_email.label,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_VALUE]     = &_contacts_email.email,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_PREF]      = &_contacts_email.is_default},
-  .type2label = ecordova_contactemail_type2label,
-  .label2type = ecordova_contactemail_label2type
-};
-
-static const Ecordova_ContactField_Metadata
-_contact_messenger_metadata = {
-  .uri = &_contacts_messenger._uri,
-  .ids = {
-     [ECORDOVA_CONTACTFIELD_PARENT_PROPERTY_ID] = &_contacts_contact.messenger,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_ID]        = &_contacts_messenger.id,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_TYPE]      = &_contacts_messenger.type,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_LABEL]     = &_contacts_messenger.label,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_VALUE]     = &_contacts_messenger.im_id,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_PREF]      = NULL},
-  .type2label = ecordova_contactmessenger_type2label,
-  .label2type = ecordova_contactmessenger_label2type
-};
-
-static const Ecordova_ContactField_Metadata
-_contact_image_metadata = {
-  .uri = &_contacts_image._uri,
-  .ids = {
-     [ECORDOVA_CONTACTFIELD_PARENT_PROPERTY_ID] = &_contacts_contact.image,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_ID]        = &_contacts_image.id,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_TYPE]      = &_contacts_image.type,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_LABEL]     = &_contacts_image.label,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_VALUE]     = &_contacts_image.path,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_PREF]      = &_contacts_image.is_default},
-  .type2label = ecordova_contactimage_type2label,
-  .label2type = ecordova_contactimage_label2type
-};
-
-static const Ecordova_ContactField_Metadata
-_contact_url_metadata = {
-  .uri = &_contacts_url._uri,
-  .ids = {
-     [ECORDOVA_CONTACTFIELD_PARENT_PROPERTY_ID] = &_contacts_contact.url,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_ID]        = &_contacts_url.id,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_TYPE]      = &_contacts_url.type,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_LABEL]     = &_contacts_url.label,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_VALUE]     = &_contacts_url.url,
-     [ECORDOVA_CONTACTFIELD_PROPERTY_PREF]      = NULL},
-  .type2label = ecordova_contacturl_type2label,
-  .label2type = ecordova_contacturl_label2type
-};
+extern Ecordova_ContactField_Metadata _contact_number_metadata;
+extern Ecordova_ContactField_Metadata _contact_email_metadata;
+extern Ecordova_ContactField_Metadata _contact_messenger_metadata;
+extern Ecordova_ContactField_Metadata _contact_image_metadata;
+extern Ecordova_ContactField_Metadata _contact_url_metadata;
 
 Eina_Bool
 ecordova_contact_import(Ecordova_Contact *obj,
@@ -793,7 +729,7 @@ ecordova_contact_import(Ecordova_Contact *obj,
    ret = contacts_record_clone(contacts_record, &pd->record);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
-   ret = contacts_record_get_int(pd->record, _contacts_contact.id, &pd->id);
+   ret = contacts_record_get_int(pd->record, (*_contacts_contact).id, &pd->id);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
    // name
@@ -862,7 +798,7 @@ ecordova_contact_export(Ecordova_Contact *obj,
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd, EINA_FALSE);
 
    // name
-   if (!clear_all_contact_record(contacts_record, _contacts_contact.name) ||
+   if (!clear_all_contact_record(contacts_record, (*_contacts_contact).name) ||
        !ecordova_contactname_export(pd->name, contacts_record))
      return EINA_FALSE;
 
@@ -986,7 +922,7 @@ _ecordova_contactaddresses_import(Eina_Array *fields,
    int ret;
    int count = 0;
    ret = contacts_record_get_child_record_count(contacts_record,
-                                                _contacts_contact.address,
+                                                (*_contacts_contact).address,
                                                 &count);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
@@ -995,7 +931,7 @@ _ecordova_contactaddresses_import(Eina_Array *fields,
      {
         contacts_record_h child_record = NULL;
         ret = contacts_record_get_child_record_at_p(contacts_record,
-                                                    _contacts_contact.address,
+                                                    (*_contacts_contact).address,
                                                     index,
                                                     &child_record);
         EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
@@ -1018,7 +954,7 @@ static Eina_Bool
 _ecordova_contactaddresses_export(Eina_Array *addresses,
                                   contacts_record_h contacts_record)
 {
-   if (!clear_all_contact_record(contacts_record, _contacts_contact.address))
+  if (!clear_all_contact_record(contacts_record, (*_contacts_contact).address))
      return EINA_FALSE;
 
    Ecordova_ContactAddress *address;
@@ -1027,7 +963,7 @@ _ecordova_contactaddresses_export(Eina_Array *addresses,
    EINA_ARRAY_ITER_NEXT(addresses, i, address, iterator)
      {
         contacts_record_h record = NULL;
-        int ret = contacts_record_create(_contacts_address._uri, &record);
+        int ret = contacts_record_create((*_contacts_address)._uri, &record);
         EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
         if (!ecordova_contactaddress_export(address, record))
@@ -1038,7 +974,7 @@ _ecordova_contactaddresses_export(Eina_Array *addresses,
           }
 
         ret = contacts_record_add_child_record(contacts_record,
-                                               _contacts_contact.address,
+                                               (*_contacts_contact).address,
                                                record);
         EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
      }
@@ -1053,7 +989,7 @@ _ecordova_contactorganizations_import(Eina_Array *organizations,
    int ret;
    int count = 0;
    ret = contacts_record_get_child_record_count(contacts_record,
-                                                _contacts_contact.company,
+                                                (*_contacts_contact).company,
                                                 &count);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
@@ -1062,7 +998,7 @@ _ecordova_contactorganizations_import(Eina_Array *organizations,
      {
         contacts_record_h child_record = NULL;
         ret = contacts_record_get_child_record_at_p(contacts_record,
-                                                    _contacts_contact.company,
+                                                    (*_contacts_contact).company,
                                                     index,
                                                     &child_record);
         EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
@@ -1085,7 +1021,7 @@ static Eina_Bool
 _ecordova_contactorganizations_export(Eina_Array *organizations,
                                       contacts_record_h contacts_record)
 {
-   if (!clear_all_contact_record(contacts_record, _contacts_contact.company))
+  if (!clear_all_contact_record(contacts_record, (*_contacts_contact).company))
      return EINA_FALSE;
 
    Ecordova_ContactOrganization *organization;
@@ -1094,7 +1030,7 @@ _ecordova_contactorganizations_export(Eina_Array *organizations,
    EINA_ARRAY_ITER_NEXT(organizations, i, organization, iterator)
      {
         contacts_record_h record = NULL;
-        int ret = contacts_record_create(_contacts_company._uri, &record);
+        int ret = contacts_record_create((*_contacts_company)._uri, &record);
         EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
         if (!ecordova_contactaddress_export(organization, record))
@@ -1105,7 +1041,7 @@ _ecordova_contactorganizations_export(Eina_Array *organizations,
           }
 
         ret = contacts_record_add_child_record(contacts_record,
-                                               _contacts_contact.company,
+                                               (*_contacts_contact).company,
                                                record);
         EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
      }

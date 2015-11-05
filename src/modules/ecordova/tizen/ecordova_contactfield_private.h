@@ -5,27 +5,6 @@
 #include "ecordova_contactfield.eo.h"
 #include "ecordova_contacts_service.h"
 
-typedef enum _Ecordova_ContactField_Property
-{
-   ECORDOVA_CONTACTFIELD_PARENT_PROPERTY_ID,
-   ECORDOVA_CONTACTFIELD_PROPERTY_ID,
-   ECORDOVA_CONTACTFIELD_PROPERTY_TYPE,
-   ECORDOVA_CONTACTFIELD_PROPERTY_LABEL,
-   ECORDOVA_CONTACTFIELD_PROPERTY_VALUE,
-   ECORDOVA_CONTACTFIELD_PROPERTY_PREF,
-   ECORDOVA_CONTACTFIELD_PROPERTY_COUNT
-} Ecordova_ContactField_Property;
-
-typedef struct _Ecordova_ContactField_Metadata
-{
-   const char * const *uri;
-   const unsigned int *ids[ECORDOVA_CONTACTFIELD_PROPERTY_COUNT];
-   char *(*type2label)(int type, const char *custom);
-   int(*label2type)(const char *label);
-} Ecordova_ContactField_Metadata;
-
-typedef struct _Ecordova_ContactField_Data Ecordova_ContactField_Data;
-
 /**
  * Ecordova.ContactField private data
  */

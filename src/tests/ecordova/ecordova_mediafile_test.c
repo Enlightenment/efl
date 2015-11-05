@@ -33,11 +33,9 @@ _mediafile_new(const char *name,
 {
    return eo_add(ECORDOVA_MEDIAFILE_CLASS,
                  NULL,
-                 ecordova_mediafile_constructor(name,
-                                                url,
-                                                type,
-                                                last_modified_date,
-                                                size));
+                 ecordova_entry_name_set(name),
+                 ecordova_entry_url_set(url),
+                 ecordova_mediafile_type_set(type));
 }
 
 START_TEST(smoke)

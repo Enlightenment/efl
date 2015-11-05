@@ -398,6 +398,28 @@ typedef enum
     CONTACTS_ERROR_INTERNAL				= TIZEN_ERROR_CONTACTS | 0xFF,            /**< Implementation Error, Temporary Use */
 } contacts_error_e;
 
+typedef enum _Ecordova_ContactField_Property
+{
+   ECORDOVA_CONTACTFIELD_PARENT_PROPERTY_ID,
+   ECORDOVA_CONTACTFIELD_PROPERTY_ID,
+   ECORDOVA_CONTACTFIELD_PROPERTY_TYPE,
+   ECORDOVA_CONTACTFIELD_PROPERTY_LABEL,
+   ECORDOVA_CONTACTFIELD_PROPERTY_VALUE,
+   ECORDOVA_CONTACTFIELD_PROPERTY_PREF,
+   ECORDOVA_CONTACTFIELD_PROPERTY_COUNT
+} Ecordova_ContactField_Property;
+
+
+typedef struct _Ecordova_ContactField_Metadata
+{
+   const char * const *uri;
+   const unsigned int *ids[ECORDOVA_CONTACTFIELD_PROPERTY_COUNT];
+   char *(*type2label)(int type, const char *custom);
+   int(*label2type)(const char *label);
+} Ecordova_ContactField_Metadata;
+
+typedef struct _Ecordova_ContactField_Data Ecordova_ContactField_Data;
+
 
 #endif
 

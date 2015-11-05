@@ -73,7 +73,7 @@ _ecordova_contacts_find(Eo *obj,
    const char *field = eina_list_data_get(fields);
    if (strcmp("*", field) == 0)
      {
-        int ret = contacts_db_get_all_records(_contacts_contact._uri, 0, 0, &list);
+        int ret = contacts_db_get_all_records((*_contacts_contact)._uri, 0, 0, &list);
         if (CONTACTS_ERROR_NONE != ret)
           {
              ERR("%s returned %d", "contacts_db_get_all_records", ret);
@@ -195,49 +195,49 @@ _get_records(const Eina_List *fields,
    } Search_Metadata;
 
    Search_Metadata search_metadata[] = {
-     {"id",               _contacts_contact.id,           INT_FIELD, SEARCH_CONTACT},
-     {"display_name",     _contacts_contact.display_name, STRING_FIELD, SEARCH_CONTACT},
-     {"formatted",        _contacts_contact.display_name, STRING_FIELD, SEARCH_CONTACT},
-     {"name",             _contacts_contact.display_name, STRING_FIELD, SEARCH_CONTACT},
-     {"given_name",       _contacts_name.first,           STRING_FIELD, SEARCH_NAME},
-     {"family_name",      _contacts_name.last,            STRING_FIELD, SEARCH_NAME},
-     {"honorific_prefix", _contacts_name.prefix,          STRING_FIELD, SEARCH_NAME},
-     {"honorific_suffix", _contacts_name.suffix,          STRING_FIELD, SEARCH_NAME},
-     {"middle_name",      _contacts_name.addition,        STRING_FIELD, SEARCH_NAME},
-     {"country",          _contacts_address.country,      STRING_FIELD, SEARCH_ADDRESS},
-     {"locality",         _contacts_address.locality,     STRING_FIELD, SEARCH_ADDRESS},
-     {"postal_code",      _contacts_address.postal_code,  STRING_FIELD, SEARCH_ADDRESS},
-     {"region",           _contacts_address.region,       STRING_FIELD, SEARCH_ADDRESS},
-     {"street_address",   _contacts_address.street,       STRING_FIELD, SEARCH_ADDRESS},
-     {"phone_numbers",    _contacts_number.number,        STRING_FIELD, SEARCH_NUMBER},
-     {"emails",           _contacts_email.email,          STRING_FIELD, SEARCH_EMAIL},
-     {"urls",             _contacts_url.url,              STRING_FIELD, SEARCH_URL},
-     {"note",             _contacts_note.note,            STRING_FIELD, SEARCH_NOTE},
-     {"ims",              _contacts_messenger.im_id,      STRING_FIELD, SEARCH_MESSENGER},
-     {"nickname",         _contacts_nickname.name,        STRING_FIELD, SEARCH_NICKNAME},
-     {"department",       _contacts_company.department,   STRING_FIELD, SEARCH_COMPANY},
-     {"organizations",    _contacts_company.name,         STRING_FIELD, SEARCH_COMPANY},
-     {"title",            _contacts_company.job_title,    STRING_FIELD, SEARCH_COMPANY},
-     {"photos",           _contacts_image.path,           STRING_FIELD, SEARCH_IMAGE},
-     {"birthday",         _contacts_event.date,           BIRTHDAY_FIELD, SEARCH_EVENT},
+     {"id",               (*_contacts_contact).id,           INT_FIELD, SEARCH_CONTACT},
+     {"display_name",     (*_contacts_contact).display_name, STRING_FIELD, SEARCH_CONTACT},
+     {"formatted",        (*_contacts_contact).display_name, STRING_FIELD, SEARCH_CONTACT},
+     {"name",             (*_contacts_contact).display_name, STRING_FIELD, SEARCH_CONTACT},
+     {"given_name",       (*_contacts_name).first,           STRING_FIELD, SEARCH_NAME},
+     {"family_name",      (*_contacts_name).last,            STRING_FIELD, SEARCH_NAME},
+     {"honorific_prefix", (*_contacts_name).prefix,          STRING_FIELD, SEARCH_NAME},
+     {"honorific_suffix", (*_contacts_name).suffix,          STRING_FIELD, SEARCH_NAME},
+     {"middle_name",      (*_contacts_name).addition,        STRING_FIELD, SEARCH_NAME},
+     {"country",          (*_contacts_address).country,      STRING_FIELD, SEARCH_ADDRESS},
+     {"locality",         (*_contacts_address).locality,     STRING_FIELD, SEARCH_ADDRESS},
+     {"postal_code",      (*_contacts_address).postal_code,  STRING_FIELD, SEARCH_ADDRESS},
+     {"region",           (*_contacts_address).region,       STRING_FIELD, SEARCH_ADDRESS},
+     {"street_address",   (*_contacts_address).street,       STRING_FIELD, SEARCH_ADDRESS},
+     {"phone_numbers",    (*_contacts_number).number,        STRING_FIELD, SEARCH_NUMBER},
+     {"emails",           (*_contacts_email).email,          STRING_FIELD, SEARCH_EMAIL},
+     {"urls",             (*_contacts_url).url,              STRING_FIELD, SEARCH_URL},
+     {"note",             (*_contacts_note).note,            STRING_FIELD, SEARCH_NOTE},
+     {"ims",              (*_contacts_messenger).im_id,      STRING_FIELD, SEARCH_MESSENGER},
+     {"nickname",         (*_contacts_nickname).name,        STRING_FIELD, SEARCH_NICKNAME},
+     {"department",       (*_contacts_company).department,   STRING_FIELD, SEARCH_COMPANY},
+     {"organizations",    (*_contacts_company).name,         STRING_FIELD, SEARCH_COMPANY},
+     {"title",            (*_contacts_company).job_title,    STRING_FIELD, SEARCH_COMPANY},
+     {"photos",           (*_contacts_image).path,           STRING_FIELD, SEARCH_IMAGE},
+     {"birthday",         (*_contacts_event).date,           BIRTHDAY_FIELD, SEARCH_EVENT},
      {"addresses",        0,                              ADDRESSES_FIELD, SEARCH_ADDRESS},
      // TODO: categories:     "categories",       ?
      {0}
    };
 
    const char *uri[SEARCH_ID_COUNT] = {
-     [SEARCH_CONTACT]   = _contacts_contact._uri,
-     [SEARCH_ADDRESS]   = _contacts_address._uri,
-     [SEARCH_EVENT]     = _contacts_event._uri,
-     [SEARCH_COMPANY]   = _contacts_company._uri,
-     [SEARCH_EMAIL]     = _contacts_email._uri,
-     [SEARCH_NAME]      = _contacts_name._uri,
-     [SEARCH_NICKNAME]  = _contacts_nickname._uri,
-     [SEARCH_MESSENGER] = _contacts_messenger._uri,
-     [SEARCH_NOTE]      = _contacts_note._uri,
-     [SEARCH_NUMBER]    = _contacts_number._uri,
-     [SEARCH_URL]       = _contacts_url._uri,
-     [SEARCH_IMAGE]     = _contacts_image._uri
+     [SEARCH_CONTACT]   = (*_contacts_contact)._uri,
+     [SEARCH_ADDRESS]   = (*_contacts_address)._uri,
+     [SEARCH_EVENT]     = (*_contacts_event)._uri,
+     [SEARCH_COMPANY]   = (*_contacts_company)._uri,
+     [SEARCH_EMAIL]     = (*_contacts_email)._uri,
+     [SEARCH_NAME]      = (*_contacts_name)._uri,
+     [SEARCH_NICKNAME]  = (*_contacts_nickname)._uri,
+     [SEARCH_MESSENGER] = (*_contacts_messenger)._uri,
+     [SEARCH_NOTE]      = (*_contacts_note)._uri,
+     [SEARCH_NUMBER]    = (*_contacts_number)._uri,
+     [SEARCH_URL]       = (*_contacts_url)._uri,
+     [SEARCH_IMAGE]     = (*_contacts_image)._uri
    };
 
    contacts_filter_h filters[SEARCH_ID_COUNT] = {NULL};
@@ -299,7 +299,7 @@ _get_records(const Eina_List *fields,
                      int ret = contacts_filter_add_operator(filter, CONTACTS_FILTER_OPERATOR_AND);
                      EINA_SAFETY_ON_FALSE_GOTO(CONTACTS_ERROR_NONE == ret, on_error_1);
 
-                     ret = contacts_filter_add_int(filter, _contacts_event.type, CONTACTS_MATCH_EQUAL, CONTACTS_EVENT_TYPE_BIRTH);
+                     ret = contacts_filter_add_int(filter, (*_contacts_event).type, CONTACTS_MATCH_EQUAL, CONTACTS_EVENT_TYPE_BIRTH);
                      EINA_SAFETY_ON_FALSE_GOTO(CONTACTS_ERROR_NONE == ret, on_error_1);
 
                      break;
@@ -309,31 +309,31 @@ _get_records(const Eina_List *fields,
                      filter = _filter_get(&filters[metadata->search_id], uri[metadata->search_id]);
                      if (!filter) goto on_error_1;
 
-                     ret = contacts_filter_add_str(filter, _contacts_address.country, CONTACTS_MATCH_CONTAINS, options->filter);
+                     ret = contacts_filter_add_str(filter, (*_contacts_address).country, CONTACTS_MATCH_CONTAINS, options->filter);
                      EINA_SAFETY_ON_FALSE_GOTO(CONTACTS_ERROR_NONE == ret, on_error_1);
 
                      ret = contacts_filter_add_operator(filter, CONTACTS_FILTER_OPERATOR_OR);
                      EINA_SAFETY_ON_FALSE_GOTO(CONTACTS_ERROR_NONE == ret, on_error_1);
 
-                     ret = contacts_filter_add_str(filter, _contacts_address.region, CONTACTS_MATCH_CONTAINS, options->filter);
+                     ret = contacts_filter_add_str(filter, (*_contacts_address).region, CONTACTS_MATCH_CONTAINS, options->filter);
                      EINA_SAFETY_ON_FALSE_GOTO(CONTACTS_ERROR_NONE == ret, on_error_1);
 
                      ret = contacts_filter_add_operator(filter, CONTACTS_FILTER_OPERATOR_OR);
                      EINA_SAFETY_ON_FALSE_GOTO(CONTACTS_ERROR_NONE == ret, on_error_1);
 
-                     ret = contacts_filter_add_str(filter, _contacts_address.locality, CONTACTS_MATCH_CONTAINS, options->filter);
+                     ret = contacts_filter_add_str(filter, (*_contacts_address).locality, CONTACTS_MATCH_CONTAINS, options->filter);
                      EINA_SAFETY_ON_FALSE_GOTO(CONTACTS_ERROR_NONE == ret, on_error_1);
 
                      ret = contacts_filter_add_operator(filter, CONTACTS_FILTER_OPERATOR_OR);
                      EINA_SAFETY_ON_FALSE_GOTO(CONTACTS_ERROR_NONE == ret, on_error_1);
 
-                     ret = contacts_filter_add_str(filter, _contacts_address.street, CONTACTS_MATCH_CONTAINS, options->filter);
+                     ret = contacts_filter_add_str(filter, (*_contacts_address).street, CONTACTS_MATCH_CONTAINS, options->filter);
                      EINA_SAFETY_ON_FALSE_GOTO(CONTACTS_ERROR_NONE == ret, on_error_1);
 
                      ret = contacts_filter_add_operator(filter, CONTACTS_FILTER_OPERATOR_OR);
                      EINA_SAFETY_ON_FALSE_GOTO(CONTACTS_ERROR_NONE == ret, on_error_1);
 
-                     ret = contacts_filter_add_str(filter, _contacts_address.postal_code, CONTACTS_MATCH_CONTAINS, options->filter);
+                     ret = contacts_filter_add_str(filter, (*_contacts_address).postal_code, CONTACTS_MATCH_CONTAINS, options->filter);
                      EINA_SAFETY_ON_FALSE_GOTO(CONTACTS_ERROR_NONE == ret, on_error_1);
 
                      break;
@@ -360,7 +360,7 @@ _get_records(const Eina_List *fields,
                }
 
              int id;
-             Eina_Bool ok = get_int(record, _contacts_contact.id, &id);
+             Eina_Bool ok = get_int(record, (*_contacts_contact).id, &id);
              EINA_SAFETY_ON_FALSE_GOTO(ok, on_error_2);
 
              ok = eina_hash_add(contact_ids, &id, &id) == EINA_TRUE;
@@ -453,18 +453,18 @@ _populate_list(contacts_list_h list,
      return EINA_FALSE;
 
    unsigned int contact_id[SEARCH_ID_COUNT] = {
-     [SEARCH_CONTACT]   = _contacts_contact.id,
-     [SEARCH_ADDRESS]   = _contacts_address.contact_id,
-     [SEARCH_EVENT]     = _contacts_event.contact_id,
-     [SEARCH_COMPANY]   = _contacts_company.contact_id,
-     [SEARCH_EMAIL]     = _contacts_email.contact_id,
-     [SEARCH_NAME]      = _contacts_name.contact_id,
-     [SEARCH_NICKNAME]  = _contacts_nickname.contact_id,
-     [SEARCH_MESSENGER] = _contacts_messenger.contact_id,
-     [SEARCH_NOTE]      = _contacts_note.contact_id,
-     [SEARCH_NUMBER]    = _contacts_number.contact_id,
-     [SEARCH_URL]       = _contacts_url.contact_id,
-     [SEARCH_IMAGE]     = _contacts_image.contact_id
+     [SEARCH_CONTACT]   = (*_contacts_contact).id,
+     [SEARCH_ADDRESS]   = (*_contacts_address).contact_id,
+     [SEARCH_EVENT]     = (*_contacts_event).contact_id,
+     [SEARCH_COMPANY]   = (*_contacts_company).contact_id,
+     [SEARCH_EMAIL]     = (*_contacts_email).contact_id,
+     [SEARCH_NAME]      = (*_contacts_name).contact_id,
+     [SEARCH_NICKNAME]  = (*_contacts_nickname).contact_id,
+     [SEARCH_MESSENGER] = (*_contacts_messenger).contact_id,
+     [SEARCH_NOTE]      = (*_contacts_note).contact_id,
+     [SEARCH_NUMBER]    = (*_contacts_number).contact_id,
+     [SEARCH_URL]       = (*_contacts_url).contact_id,
+     [SEARCH_IMAGE]     = (*_contacts_image).contact_id
    };
 
    int ret;

@@ -20,7 +20,7 @@ _ecordova_contactorganization_eo_base_constructor(Eo *obj,
    pd->obj = obj;
    pd->id = 0;
    pd->record = NULL;
-   int ret = contacts_record_create(_contacts_company._uri, &pd->record);
+   int ret = contacts_record_create((*_contacts_company)._uri, &pd->record);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, NULL);
 
    return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
@@ -66,7 +66,7 @@ _ecordova_contactorganization_type_get(Eo *obj EINA_UNUSED,
                                        Ecordova_ContactOrganization_Data *pd)
 {
    int type;
-   if (!get_int(pd->record, _contacts_company.type, &type))
+   if (!get_int(pd->record, (*_contacts_company).type, &type))
      return NULL;
 
    switch (type)
@@ -78,7 +78,7 @@ _ecordova_contactorganization_type_get(Eo *obj EINA_UNUSED,
       default:
         {
            const char *custom = NULL;
-           get_str_p(pd->record, _contacts_company.label, &custom);
+           get_str_p(pd->record, (*_contacts_company).label, &custom);
            return custom;
         }
      }
@@ -97,9 +97,9 @@ _ecordova_contactorganization_type_set(Eo *obj EINA_UNUSED,
    else
      type = CONTACTS_COMPANY_TYPE_CUSTOM;
 
-   set_int(pd->record, _contacts_company.type, type);
+   set_int(pd->record, (*_contacts_company).type, type);
    if (strlen(value) != 0)
-     set_str(pd->record, _contacts_company.label, value);
+     set_str(pd->record, (*_contacts_company).label, value);
 }
 
 static const char *
@@ -107,7 +107,7 @@ _ecordova_contactorganization_name_get(Eo *obj EINA_UNUSED,
                                        Ecordova_ContactOrganization_Data *pd)
 {
    const char *value = NULL;
-   get_str_p(pd->record, _contacts_company.name, &value);
+   get_str_p(pd->record, (*_contacts_company).name, &value);
    return value;
 }
 
@@ -116,7 +116,7 @@ _ecordova_contactorganization_name_set(Eo *obj EINA_UNUSED,
                                        Ecordova_ContactOrganization_Data *pd,
                                        const char *value)
 {
-   set_str(pd->record, _contacts_company.name, value);
+  set_str(pd->record, (*_contacts_company).name, value);
 }
 
 static const char *
@@ -124,7 +124,7 @@ _ecordova_contactorganization_dept_get(Eo *obj EINA_UNUSED,
                                        Ecordova_ContactOrganization_Data *pd)
 {
    const char *value = NULL;
-   get_str_p(pd->record, _contacts_company.department, &value);
+   get_str_p(pd->record, (*_contacts_company).department, &value);
    return value;
 }
 
@@ -133,7 +133,7 @@ _ecordova_contactorganization_dept_set(Eo *obj EINA_UNUSED,
                                        Ecordova_ContactOrganization_Data *pd,
                                        const char *value)
 {
-   set_str(pd->record, _contacts_company.department, value);
+  set_str(pd->record, (*_contacts_company).department, value);
 }
 
 static const char *
@@ -141,7 +141,7 @@ _ecordova_contactorganization_title_get(Eo *obj EINA_UNUSED,
                                         Ecordova_ContactOrganization_Data *pd)
 {
    const char *value = NULL;
-   get_str_p(pd->record, _contacts_company.job_title, &value);
+   get_str_p(pd->record, (*_contacts_company).job_title, &value);
    return value;
 }
 
@@ -150,7 +150,7 @@ _ecordova_contactorganization_title_set(Eo *obj EINA_UNUSED,
                                         Ecordova_ContactOrganization_Data *pd,
                                         const char *value)
 {
-   set_str(pd->record, _contacts_company.job_title, value);
+  set_str(pd->record, (*_contacts_company).job_title, value);
 }
 
 Eina_Bool
@@ -168,7 +168,7 @@ ecordova_contactorganization_import(Ecordova_ContactOrganization *obj,
    ret = contacts_record_clone(child_record, &pd->record);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
-   return get_int(child_record, _contacts_company.id, &pd->id);
+   return get_int(child_record, (*_contacts_company).id, &pd->id);
 }
 
 Eina_Bool
@@ -186,7 +186,7 @@ ecordova_contactorganization_export(Ecordova_ContactOrganization *obj,
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
    ret = contacts_record_add_child_record(contacts_record,
-                                          _contacts_contact.company,
+                                          (*_contacts_contact).company,
                                           child_record);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(CONTACTS_ERROR_NONE == ret, EINA_FALSE);
 
