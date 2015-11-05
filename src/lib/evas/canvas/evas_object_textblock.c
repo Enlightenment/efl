@@ -816,7 +816,8 @@ _format_unref_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt)
    if (fmt->ref > 0) return;
    if (fmt->font.fdesc) evas_font_desc_unref(fmt->font.fdesc);
    if (fmt->font.source) eina_stringshare_del(fmt->font.source);
-   evas_font_free(obj->layer->evas->evas, fmt->font.font);
+   if ((obj->layer) && (obj->layer->evas))
+     evas_font_free(obj->layer->evas->evas, fmt->font.font);
    free(fmt);
 }
 
