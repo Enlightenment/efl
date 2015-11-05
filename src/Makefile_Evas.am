@@ -682,9 +682,8 @@ modules/evas/engines/gl_common/evas_gl_api_gles1.c \
 modules/evas/engines/gl_common/evas_gl_api_gles3_def.h \
 modules/evas/engines/gl_common/evas_gl_api_ext.c \
 modules/evas/engines/gl_common/shader/evas_gl_shaders.x \
-modules/evas/engines/gl_common/shader/evas_gl_shaders_bigendian.x \
 modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x \
-modules/evas/engines/gl_common/shader/evas_gl_enum.x
+$(NULL)
 
 # 3D
 GL_COMMON_SOURCES += \
@@ -696,23 +695,16 @@ modules/evas/engines/gl_common/evas_gl_3d_shader.c
 
 GL_SHADERS_GEN = \
 modules/evas/engines/gl_common/shader/gen_shaders.sh \
-modules/evas/engines/gl_common/shader/shaders.txt \
 modules/evas/engines/gl_common/shader/fragment.glsl \
 modules/evas/engines/gl_common/shader/vertex.glsl \
+modules/evas/engines/gl_common/shader/include.glsl \
 $(NULL)
 
 EXTRA_DIST += $(GL_SHADERS_GEN)
-EXTRA_lib_evas_libevas_la_DEPENDENCIES = modules/evas/engines/gl_common/shader/evas_gl_enum.x
 
 modules/evas/engines/gl_common/shader/evas_gl_shaders.x: $(GL_SHADERS_GEN)
 	@echo "  SHADERS  $@"
 	@bash $(srcdir)/modules/evas/engines/gl_common/shader/gen_shaders.sh
-
-modules/evas/engines/gl_common/shader/evas_gl_shaders_bigendian.x: $(GL_SHADERS_GEN)
-	@echo "  SHADERS  $@"
-	@bash $(srcdir)/modules/evas/engines/gl_common/shader/gen_shaders.sh _bigendian
-
-modules/evas/engines/gl_common/shader/evas_gl_enum.x: modules/evas/engines/gl_common/shader/evas_gl_shaders.x modules/evas/engines/gl_common/shader/evas_gl_shaders_bigendian.x
 
 # NOTE: order here should be equal with modes in file Evas_Eo.h
 GL_SHADERS_3D_GEN = \

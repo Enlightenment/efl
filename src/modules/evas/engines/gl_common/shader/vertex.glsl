@@ -4,13 +4,10 @@
  * through cpp first (in which case the precision must be manually added).
  */
 
-#ifdef GL_ES
-precision highp float;
-#endif
+VERTEX_SHADER
 
 attribute vec4 vertex;
 uniform mat4 mvp;
-
 
 /* All except nomul */
 #ifndef SHD_NOMUL

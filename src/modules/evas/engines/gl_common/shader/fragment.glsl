@@ -4,13 +4,7 @@
  * through cpp first (in which case the precision must be manually added).
  */
 
-#ifdef GL_ES
-#ifdef GL_FRAGMENT_PRECISION_HIGH
-precision highp float;
-#else
-precision mediump float;
-#endif
-#endif
+FRAGMENT_SHADER
 
 #ifndef SHD_NOMUL
 varying vec4 col;

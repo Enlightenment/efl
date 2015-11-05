@@ -67,9 +67,6 @@ typedef struct _Evas_GL_Texture_Async_Preload Evas_GL_Texture_Async_Preload;
 
 typedef Eina_Bool (*evas_gl_make_current_cb)(void *engine_data, void *doit);
 
-/* enum Evas_GL_Shader is defined below */
-#include "shader/evas_gl_enum.x"
-
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -96,12 +93,16 @@ typedef Eina_Bool (*evas_gl_make_current_cb)(void *engine_data, void *doit);
 # endif
 #endif /* ! _WIN32 */
 
+#define PROGRAM_HITCOUNT_MAX 0x1000000
+
 struct _Evas_GL_Program
 {
    GLuint vert, frag, prog;
+   unsigned int flags, hitcount;
 
    int tex_count;
-   Eina_Bool reset;
+   Eina_Bool reset : 1;
+   Eina_Bool bin_saved : 1;
 };
 
 struct _Evas_GL_Shared
@@ -181,12 +182,13 @@ struct _Evas_GL_Shared
    Eina_Hash          *native_tbm_hash;
    Eina_Hash          *native_evasgl_hash;
 
+   Eet_File           *shaders_cache;
+   Eina_Hash          *shaders_hash;
+
 #ifdef GL_GLES
    // FIXME: hack.
    void *eglctxt;
 #endif
-   
-   Evas_GL_Program     shader[SHADER_LAST];
 
    int references;
    int w, h;
@@ -212,6 +214,7 @@ enum _Shader_Sampling {
 enum _Shader_Type {
    SHD_UNKNOWN,
    SHD_RECT,
+   SHD_LINE,
    SHD_FONT,
    SHD_IMAGE,
    SHD_IMAGENATIVE,
@@ -221,9 +224,7 @@ enum _Shader_Type {
    SHD_YUV_709,
    SHD_YUY2_709,
    SHD_NV12_709,
-   SHD_LINE,
    SHD_RGB_A_PAIR,
-   SHD_TEX_EXTERNAL,
    SHD_MAP,
    SHD_TYPE_LAST
 };
@@ -245,8 +246,7 @@ struct _Evas_Engine_GL_Context
    struct {
       int                top_pipe;
       struct {
-         Evas_GL_Shader  id;
-         GLuint          cur_prog;
+         Evas_GL_Program *prog;
          GLuint          cur_tex, cur_texu, cur_texv, cur_texa, cur_texm;
          int             render_op;
          int             cx, cy, cw, ch;
@@ -273,9 +273,8 @@ struct _Evas_Engine_GL_Context
          Eina_Bool       active : 1;
       } clip;
       struct {
-         Evas_GL_Shader  id;
+         Evas_GL_Program *prog;
          Evas_GL_Image  *surface;
-         GLuint          cur_prog;
          GLuint          cur_tex, cur_texu, cur_texv, cur_texa, cur_texm;
          void           *cur_tex_dyn, *cur_texu_dyn, *cur_texv_dyn;
          int             render_op;
@@ -595,9 +594,19 @@ void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *g
 
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
 void              evas_gl_common_shader_program_init_done(void);
-void              evas_gl_common_shader_program_shutdown(Evas_GL_Program *p);
-Evas_GL_Shader    evas_gl_common_img_shader_select(Shader_Type type, Shader_Sampling sam, int nomul, int afill, int bgra, int mask, int masksam);
-const char       *evas_gl_common_shader_name_get(Evas_GL_Shader shd);
+void              evas_gl_common_shader_program_shutdown(Evas_GL_Shared *shared);
+
+Evas_GL_Program  *evas_gl_common_shader_program_get(Evas_Engine_GL_Context *gc,
+                                                    Shader_Type type,
+                                                    RGBA_Map_Point *p, int npoints,
+                                                    int r, int g, int b, int a,
+                                                    int sw, int sh, int w, int h, Eina_Bool smooth,
+                                                    Evas_GL_Texture *tex, Eina_Bool tex_only,
+                                                    Evas_GL_Texture *mtex, Eina_Bool mask_smooth,
+                                                    int mw, int mh,
+                                                    Shader_Sampling *psam, int *pnomul,
+                                                    Shader_Sampling *pmasksam);
+void              evas_gl_common_shader_textures_bind(Evas_GL_Program *p);
 
 Eina_Bool         evas_gl_common_file_cache_is_dir(const char *file);
 Eina_Bool         evas_gl_common_file_cache_mkdir(const char *dir);
@@ -606,7 +615,6 @@ Eina_Bool         evas_gl_common_file_cache_mkpath_if_not_exists(const char *pat
 Eina_Bool         evas_gl_common_file_cache_mkpath(const char *path);
 int               evas_gl_common_file_cache_dir_check(char *cache_dir, int num);
 int               evas_gl_common_file_cache_file_check(const char *cache_dir, const char *cache_name, char *cache_file, int dir_num);
-int               evas_gl_common_file_cache_save(Evas_GL_Shared *shared);
 
 void              evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h);
 
