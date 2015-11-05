@@ -75,20 +75,6 @@ _ecore_drm_device_cb_vblank(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, 
    if (!output->pending_flip) _ecore_drm_output_frame_finish(output);
 }
 
-static Eina_Bool 
-_ecore_drm_device_cb_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
-{
-   Ecore_Drm_Device *dev;
-
-   if (!(dev = data)) return ECORE_CALLBACK_RENEW;
-
-   /* DBG("Drm Device Event"); */
-
-   drmHandleEvent(dev->drm.fd, &dev->drm_ctx);
-
-   return ECORE_CALLBACK_RENEW;
-}
-
 #if 0
 static Eina_Bool 
 _ecore_drm_device_cb_idle(void *data)
