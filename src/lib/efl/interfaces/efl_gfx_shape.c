@@ -1141,9 +1141,8 @@ static void
 _efl_gfx_shape_append_circle(Eo *obj, Efl_Gfx_Shape_Data *pd,
                              double xc, double yc, double radius)
 {
-   _efl_gfx_shape_append_move_to(obj, pd, xc - radius, yc);
-   _efl_gfx_shape_append_arc_to(obj, pd, xc + radius, yc, radius, radius, 0, EINA_TRUE, EINA_TRUE);
-   _efl_gfx_shape_append_arc_to(obj, pd, xc - radius, yc, radius, radius, 0, EINA_TRUE, EINA_TRUE);
+   _efl_gfx_shape_append_arc(obj, pd, xc - radius, yc - radius, 2*radius, 2*radius, 0, 360);
+   _efl_gfx_shape_append_close(obj, pd);
 }
 
 static void
