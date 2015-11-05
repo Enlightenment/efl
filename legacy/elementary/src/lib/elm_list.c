@@ -1420,6 +1420,8 @@ call:
 
    if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
    eo_do(obj, eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_it));
+     if (_elm_config->atspi_mode)
+       elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
    sd->last_selected_item = eo_it;
 
    _elm_list_unwalk(obj, sd);
@@ -1488,6 +1490,8 @@ _item_unselect(Elm_List_Item_Data *it)
               (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)))
           eo_do(WIDGET(it), eo_event_callback_call
             (EVAS_SELECTABLE_INTERFACE_EVENT_UNSELECTED, EO_OBJ(it)));
+        if (_elm_config->atspi_mode)
+          elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
      }
 
    _elm_list_unwalk(obj, sd);

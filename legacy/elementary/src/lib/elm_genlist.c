@@ -3713,6 +3713,8 @@ _item_unselect(Elm_Gen_Item *it)
    sd->selected = eina_list_remove(sd->selected, EO_OBJ(it));
    eo_do(WIDGET(it), eo_event_callback_call
      (EVAS_SELECTABLE_INTERFACE_EVENT_UNSELECTED, EO_OBJ(it)));
+   if (_elm_config->atspi_mode)
+     elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
 }
 
 static void
@@ -5785,6 +5787,8 @@ _item_select(Elm_Gen_Item *it)
    // delete item if it's requested deletion in the above callbacks.
    if ((it->base)->on_deletion) goto item_deleted;
    eo_do(WIDGET(it), eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_it));
+   if (_elm_config->atspi_mode)
+     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
    // delete item if it's requested deletion in the above callbacks.
    if ((it->base)->on_deletion) goto item_deleted;
    it->walking--;
