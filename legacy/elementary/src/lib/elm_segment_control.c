@@ -568,7 +568,7 @@ _item_new(Evas_Object *obj,
    edje_object_part_text_escaped_set(VIEW(it), "elm.text", label);
 
    it->icon = icon;
-   if (it->icon) elm_widget_sub_object_add(VIEW(it), it->icon);
+   if (it->icon) elm_widget_sub_object_add(obj, it->icon);
    evas_object_event_callback_add
      (VIEW(it), EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down, it);
    evas_object_event_callback_add
