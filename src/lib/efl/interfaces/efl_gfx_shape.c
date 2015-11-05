@@ -824,6 +824,306 @@ _efl_gfx_shape_append_arc_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
      }
 }
 
+// append arc implementation
+typedef struct _Point
+{
+   double x;
+   double y;
+} Point;
+
+inline static void
+_bezier_coefficients(double t, double *ap, double *bp, double *cp, double *dp)
+{
+   double a,b,c,d;
+   double m_t = 1. - t;
+
+   b = m_t * m_t;
+   c = t * t;
+   d = c * t;
+   a = b * m_t;
+   b *= 3. * t;
+   c *= 3. * m_t;
+   *ap = a;
+   *bp = b;
+   *cp = c;
+   *dp = d;
+}
+
+#define PATH_KAPPA 0.5522847498
+static double
+_efl_gfx_t_for_arc_angle(double angle)
+{
+   double radians, cos_angle, sin_angle, tc, ts, t;
+
+   if (angle < 0.00001)
+     return 0;
+
+   if (angle == 90.0)
+     return 1;
+
+   radians = M_PI * angle / 180;
+   cos_angle = cos(radians);
+   sin_angle = sin(radians);
+
+   // initial guess
+   tc = angle / 90;
+   // do some iterations of newton's method to approximate cos_angle
+   // finds the zero of the function b.pointAt(tc).x() - cos_angle
+   tc -= ((((2-3*PATH_KAPPA) * tc + 3*(PATH_KAPPA-1)) * tc) * tc + 1 - cos_angle) // value
+   / (((6-9*PATH_KAPPA) * tc + 6*(PATH_KAPPA-1)) * tc); // derivative
+   tc -= ((((2-3*PATH_KAPPA) * tc + 3*(PATH_KAPPA-1)) * tc) * tc + 1 - cos_angle) // value
+   / (((6-9*PATH_KAPPA) * tc + 6*(PATH_KAPPA-1)) * tc); // derivative
+
+   // initial guess
+   ts = tc;
+   // do some iterations of newton's method to approximate sin_angle
+   // finds the zero of the function b.pointAt(tc).y() - sin_angle
+   ts -= ((((3*PATH_KAPPA-2) * ts -  6*PATH_KAPPA + 3) * ts + 3*PATH_KAPPA) * ts - sin_angle)
+   / (((9*PATH_KAPPA-6) * ts + 12*PATH_KAPPA - 6) * ts + 3*PATH_KAPPA);
+   ts -= ((((3*PATH_KAPPA-2) * ts -  6*PATH_KAPPA + 3) * ts + 3*PATH_KAPPA) * ts - sin_angle)
+   / (((9*PATH_KAPPA-6) * ts + 12*PATH_KAPPA - 6) * ts + 3*PATH_KAPPA);
+
+   // use the average of the t that best approximates cos_angle
+   // and the t that best approximates sin_angle
+   t = 0.5 * (tc + ts);
+   return t;
+}
+
+static void
+_find_ellipse_coords(double x, double y, double w, double h, double angle, double length,
+                     Point* start_point, Point *end_point)
+{
+   int i, quadrant;
+   double theta, t, a, b, c, d, px, py, cx, cy;
+   double w2 = w / 2;
+   double h2 = h / 2;
+   double angles[2] = { angle, angle + length };
+   Point *points[2];
+
+   if (!w || !h)
+     {
+        if (start_point)
+          start_point->x = 0 , start_point->y = 0;
+        if (end_point)
+          end_point->x = 0 , end_point->y = 0;
+        return;
+     }
+
+   points[0] = start_point;
+   points[1] = end_point;
+   for (i = 0; i < 2; ++i)
+     {
+        if (!points[i])
+          continue;
+
+        theta = angles[i] - 360 * floor(angles[i] / 360);
+        t = theta / 90;
+        // truncate
+        quadrant = (int)t;
+        t -= quadrant;
+
+        t = _efl_gfx_t_for_arc_angle(90 * t);
+
+        // swap x and y?
+        if (quadrant & 1)
+          t = 1 - t;
+
+        _bezier_coefficients(t, &a, &b, &c, &d);
+        px = a + b + c*PATH_KAPPA;
+        py = d + c + b*PATH_KAPPA;
+
+        // left quadrants
+        if (quadrant == 1 || quadrant == 2)
+          px = -px;
+
+        // top quadrants
+        if (quadrant == 0 || quadrant == 1)
+          py = -py;
+        cx = x+w/2;
+        cy = y+h/2;
+        points[i]->x = cx + w2 * px;
+        points[i]->y = cy + h2 * py;
+     }
+}
+
+// The return value is the starting point of the arc
+static Point
+_curves_for_arc(double x, double y, double w, double h,
+                double start_angle, double sweep_length,
+                Point *curves, int *point_count)
+{
+   int start_segment, end_segment, delta, i, j, end, quadrant;
+   double start_t, end_t;
+   Eina_Bool split_at_start, split_at_end;
+   Eina_Bezier b, res;
+   Point start_point, end_point;
+   double w2 = w / 2;
+   double w2k = w2 * PATH_KAPPA;
+   double h2 = h / 2;
+   double h2k = h2 * PATH_KAPPA;
+
+   Point points[16] =
+   {
+   // start point
+   { x + w, y + h2 },
+
+   // 0 -> 270 degrees
+   { x + w, y + h2 + h2k },
+   { x + w2 + w2k, y + h },
+   { x + w2, y + h },
+
+   // 270 -> 180 degrees
+   { x + w2 - w2k, y + h },
+   { x, y + h2 + h2k },
+   { x, y + h2 },
+
+   // 180 -> 90 degrees
+   { x, y + h2 - h2k },
+   { x + w2 - w2k, y },
+   { x + w2, y },
+
+   // 90 -> 0 degrees
+   { x + w2 + w2k, y },
+   { x + w, y + h2 - h2k },
+   { x + w, y + h2 }
+   };
+
+   *point_count = 0;
+
+   if (sweep_length > 360) sweep_length = 360;
+   else if (sweep_length < -360) sweep_length = -360;
+
+   // Special case fast paths
+   if (start_angle == 0)
+     {
+        if (sweep_length == 360)
+          {
+             for (i = 11; i >= 0; --i)
+               curves[(*point_count)++] = points[i];
+             return points[12];
+          }
+        else if (sweep_length == -360)
+          {
+             for (i = 1; i <= 12; ++i)
+               curves[(*point_count)++] = points[i];
+             return points[0];
+          }
+     }
+
+   start_segment = (int)(floor(start_angle / 90));
+   end_segment = (int)(floor((start_angle + sweep_length) / 90));
+
+   start_t = (start_angle - start_segment * 90) / 90;
+   end_t = (start_angle + sweep_length - end_segment * 90) / 90;
+
+   delta = sweep_length > 0 ? 1 : -1;
+   if (delta < 0)
+     {
+        start_t = 1 - start_t;
+        end_t = 1 - end_t;
+     }
+
+   // avoid empty start segment
+   if (start_t == 1.0)
+     {
+        start_t = 0;
+        start_segment += delta;
+     }
+
+   // avoid empty end segment
+   if (end_t == 0)
+     {
+        end_t = 1;
+        end_segment -= delta;
+     }
+
+   start_t = _efl_gfx_t_for_arc_angle(start_t * 90);
+   end_t = _efl_gfx_t_for_arc_angle(end_t * 90);
+
+   split_at_start = !(fabs(start_t) <= 0.00001f);
+   split_at_end = !(fabs(end_t - 1.0) <= 0.00001f);
+
+   end = end_segment + delta;
+
+   // empty arc?
+   if (start_segment == end)
+     {
+        quadrant = 3 - ((start_segment % 4) + 4) % 4;
+        j = 3 * quadrant;
+        return delta > 0 ? points[j + 3] : points[j];
+     }
+
+   _find_ellipse_coords(x, y, w, h, start_angle, sweep_length, &start_point, &end_point);
+   for (i = start_segment; i != end; i += delta)
+     {
+        quadrant = 3 - ((i % 4) + 4) % 4;
+        j = 3 * quadrant;
+
+        if (delta > 0)
+          eina_bezier_values_set(&b, points[j + 3].x, points[j + 3].y,
+                                 points[j + 2].x, points[j + 2].y,
+                                 points[j + 1].x, points[j + 1].y,
+                                 points[j].x, points[j].y);
+        else
+          eina_bezier_values_set(&b, points[j].x, points[j].y,
+                                 points[j + 1].x, points[j + 1].y,
+                                 points[j + 2].x, points[j + 2].y,
+                                 points[j + 3].x, points[j + 3].y);
+
+        // empty arc?
+        if (start_segment == end_segment && (start_t == end_t))
+            return start_point;
+
+        res = b;
+        if (i == start_segment)
+          {
+             if (i == end_segment && split_at_end)
+               eina_bezier_on_interval(&b, start_t, end_t, &res);
+             else if (split_at_start)
+               eina_bezier_on_interval(&b, start_t, 1, &res);
+          }
+        else if (i == end_segment && split_at_end)
+          {
+             eina_bezier_on_interval(&b, 0, end_t, &res);
+          }
+
+        // push control points
+        curves[(*point_count)].x = res.ctrl_start.x;
+        curves[(*point_count)++].y = res.ctrl_start.y;
+        curves[(*point_count)].x = res.ctrl_end.x;
+        curves[(*point_count)++].y = res.ctrl_end.y;
+        curves[(*point_count)].x = res.end.x;
+        curves[(*point_count)++].y = res.end.y;
+     }
+
+   curves[*(point_count)-1] = end_point;
+
+   return start_point;
+}
+
+static void
+_efl_gfx_shape_append_arc(Eo *obj, Efl_Gfx_Shape_Data *pd,
+                          double x, double y, double w, double h,
+                          double start_angle, double sweep_length)
+{
+   int i, point_count;
+   Point pts[15];
+
+   Point curve_start = _curves_for_arc(x, y, w, h, start_angle, sweep_length, pts, &point_count);
+
+   if (pd->commands_count && (pd->commands[pd->commands_count-2] != EFL_GFX_PATH_COMMAND_TYPE_CLOSE))
+     _efl_gfx_shape_append_line_to(obj, pd, curve_start.x, curve_start.y);
+   else
+     _efl_gfx_shape_append_move_to(obj, pd, curve_start.x, curve_start.y);
+   for (i = 0; i < point_count; i += 3)
+     {
+        _efl_gfx_shape_append_cubic_to(obj, pd,
+                                       pts[i+2].x, pts[i+2].y,
+                                       pts[i].x, pts[i].y,
+                                       pts[i+1].x, pts[i+1].y);
+     }
+}
+
 static void
 _efl_gfx_shape_append_close(Eo *obj, Efl_Gfx_Shape_Data *pd)
 {
