@@ -3826,6 +3826,19 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
           elm_win_focus_highlight_animate_set(obj, EINA_TRUE);
      }
 
+   //Prohibiting auto-rendering, until elm_win is shown.
+   if (_elm_config->auto_norender_withdrawn)
+     {
+        if (elm_win_withdrawn_get(obj))
+          {
+             if (!evas_object_data_get(obj, "__win_auto_norender"))
+               {
+                  elm_win_norender_push(obj);
+                  evas_object_data_set(obj, "__win_auto_norender", obj);
+               }
+          }
+     }
+
 #ifdef ELM_DEBUG
    Evas_Modifier_Mask mask = evas_key_modifier_mask_get(sd->evas, "Control");
    evas_object_event_callback_add
