@@ -340,10 +340,6 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
      eeze_udev_watch_add(EEZE_UDEV_TYPE_DRM, events,
                          _ecore_drm_device_cb_output_event, dev);
 
-   dev->drm.hdlr = 
-     ecore_main_fd_handler_add(dev->drm.fd, ECORE_FD_READ, 
-                               _ecore_drm_device_cb_event, dev, NULL, NULL);
-
    /* dev->drm.idler =  */
    /*   ecore_idle_enterer_add(_ecore_drm_device_cb_idle, dev); */
 
@@ -361,9 +357,6 @@ ecore_drm_device_close(Ecore_Drm_Device *dev)
 
    /* close xkb context */
    if (dev->xkb_ctx) xkb_context_unref(dev->xkb_ctx);
-
-   if (dev->drm.hdlr) ecore_main_fd_handler_del(dev->drm.hdlr);
-   dev->drm.hdlr = NULL;
 
    _ecore_drm_launcher_device_close(dev->drm.name, dev->drm.fd);
 
