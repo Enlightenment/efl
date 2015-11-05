@@ -8,7 +8,6 @@
 
 #include <check.h>
 
-#ifdef HAVE_TIZEN_CONFIGURATION_MANAGER
 static void
 _setup(void)
 {
@@ -23,6 +22,7 @@ _teardown(void)
    ck_assert_int_eq(ret, 0);
 }
 
+#ifdef HAVE_TIZEN_SENSOR
 static Ecordova_Device *
 _devicemotion_new(void)
 {
@@ -92,20 +92,17 @@ ecordova_devicemotion_test(TCase *tc)
 #else
 START_TEST(devicemotion_fail_load)
 {
-   ecordova_init();
-
    Ecordova_Device *devicemotion
      = eo_add(ECORDOVA_DEVICEMOTION_CLASS, NULL);
 
    ck_assert_ptr_eq(devicemotion, NULL);
-
-   ecordova_shutdown();
 }
 END_TEST
 
 void
 ecordova_devicemotion_test(TCase *tc)
 {
+   tcase_add_checked_fixture(tc, _setup, _teardown);
    tcase_add_test(tc, devicemotion_fail_load);
 }
 #endif

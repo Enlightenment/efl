@@ -2,8 +2,7 @@
 #define _ECORDOVA_DEVICEMOTION_PRIVATE_H
 
 #include "ecordova_private.h"
-
-#include <sensor.h>
+#include "ecordova_sensor.h"
 
 typedef struct _Ecordova_DeviceMotion_Data Ecordova_DeviceMotion_Data;
 

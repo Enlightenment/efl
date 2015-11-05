@@ -2,8 +2,7 @@
 #define _ECORDOVA_DEVICEORIENTATION_PRIVATE_H
 
 #include "ecordova_private.h"
-
-#include <sensor.h>
+#include "ecordova_sensor.h"
 
 typedef struct _Ecordova_DeviceOrientation_Data Ecordova_DeviceOrientation_Data;
 

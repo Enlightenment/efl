@@ -22,7 +22,7 @@ _teardown(void)
    ck_assert_int_eq(ret, 0);
 }
 
-#ifdef HAVE_TIZEN_CONFIGURATION_MANAGER
+#ifdef HAVE_TIZEN_SENSOR
 static Ecordova_Device *
 _deviceorientation_new(void)
 {

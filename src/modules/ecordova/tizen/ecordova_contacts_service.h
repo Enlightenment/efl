@@ -5,7 +5,7 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#define CONTACTS_API
+#include "ecordova_tizen.h"
 
 struct __contacts_record_h;
 typedef struct __contacts_record_h* contacts_record_h;
@@ -42,7 +42,7 @@ typedef struct __contacts_query_h* contacts_query_h;
 #define _CONTACTS_PROPERTY_PROJECTION_LLI(property_id_name)     unsigned int property_id_name;
 #define _CONTACTS_END_VIEW(name) \
     } name##_property_ids; \
-    extern CONTACTS_API const name##_property_ids* name;
+    extern const name##_property_ids* name;
 #define _CONTACTS_END_READ_ONLY_VIEW(name) _CONTACTS_END_VIEW(name)
 
 _CONTACTS_BEGIN_VIEW()
@@ -338,36 +338,6 @@ extern int (*contacts_query_set_filter)(contacts_query_h query, contacts_filter_
 extern int (*contacts_query_destroy)(contacts_query_h query);
 
 typedef struct _Ecordova_Contact_Data Ecordova_Contact_Data;
-
-/* Check if slp error or not */
-#define TIZEN_ERROR_MIN_PLATFORM_ERROR (-1073741824LL) /* = -2147483648 / 2 */
-/* Tizen Contacts Error */
-#define TIZEN_ERROR_CONTACTS		-0x02010000
-
-/**
- * @brief Enumeration for tizen errors.
- * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
- *
-*/
-typedef enum
-{
-    TIZEN_ERROR_NONE = 0, /**< Successful */
-    TIZEN_ERROR_OUT_OF_MEMORY = -ENOMEM, /**< Out of memory */
-    TIZEN_ERROR_INVALID_PARAMETER = -EINVAL, /**< Invalid function parameter */
-    TIZEN_ERROR_FILE_NO_SPACE_ON_DEVICE = -ENOSPC, /**< No space left on device */
-    TIZEN_ERROR_PERMISSION_DENIED = -EACCES, /**< Permission denied */
-    TIZEN_ERROR_NO_DATA = -ENODATA, /**< No data available */
-
-    TIZEN_ERROR_UNKNOWN = TIZEN_ERROR_MIN_PLATFORM_ERROR, /**< Unknown error */
-
-    /* This is a place to add new errors here.
-     * Do not assign integer values explicitly. Values are auto-assigned.
-     */
-    TIZEN_ERROR_TIMED_OUT, /**< Time out */
-    TIZEN_ERROR_NOT_SUPPORTED, /**< Not supported */
-    TIZEN_ERROR_USER_NOT_CONSENTED, /**< Not Consented */
-    TIZEN_ERROR_END_OF_COLLECTION,
-} tizen_error_e;
 
 typedef enum
 {
