@@ -4,8 +4,11 @@
 
 #define SHADER_FLAG_SAM_BITSHIFT 3
 #define SHADER_FLAG_MASKSAM_BITSHIFT 6
-#define SHADER_PROG_NAME_FMT "prog_%08x"
+#define SHADER_PROG_NAME_FMT "/shader/%08x"
 #define SHADER_BINARY_EET_COMPRESS 1
+
+#define P(i) ((void*)(intptr_t)i)
+#define I(p) ((int)(intptr_t)p)
 
 #ifdef WORDS_BIGENDIAN
 # define BASEFLAG SHADER_FLAG_BIGENDIAN;
@@ -326,12 +329,224 @@ error:
    return 0;
 }
 
+static inline void
+_program_del(Evas_GL_Program *p)
+{
+   if (p->prog) glDeleteProgram(p->prog);
+   free(p);
+}
+
 static void
 _shaders_hash_free_cb(void *data)
 {
-   Evas_GL_Program *p = data;
-   if (p->prog) glDeleteProgram(p->prog);
-   free(p);
+   _program_del(data);
+}
+
+static char *
+evas_gl_common_shader_glsl_get(unsigned int flags, const char *base)
+{
+   Eina_Strbuf *s = eina_strbuf_new();
+   unsigned int k;
+   char *str;
+
+   for (k = 0; k < SHADER_FLAG_COUNT; k++)
+     {
+        if (flags & (1 << k))
+          eina_strbuf_append_printf(s, "#define SHD_%s\n", _shader_flags[k]);
+     }
+
+   eina_strbuf_append(s, base);
+   str = eina_strbuf_string_steal(s);
+   eina_strbuf_free(s);
+   return str;
+}
+
+static Evas_GL_Program *
+evas_gl_common_shader_compile(unsigned int flags, const char *vertex,
+                              const char *fragment)
+{
+   Evas_GL_Program *p;
+   GLuint vtx, frg, prg;
+   GLint ok = 0;
+
+   compiler_released = EINA_FALSE;
+   vtx = glCreateShader(GL_VERTEX_SHADER);
+   frg = glCreateShader(GL_FRAGMENT_SHADER);
+
+   glShaderSource(vtx, 1, &vertex, NULL);
+   glCompileShader(vtx);
+   glGetShaderiv(vtx, GL_COMPILE_STATUS, &ok);
+   if (!ok)
+     {
+        gl_compile_link_error(vtx, "compile vertex shader");
+        ERR("Abort compile of vertex shader:\n%s", vertex);
+        glDeleteShader(vtx);
+        return NULL;
+     }
+   ok = 0;
+
+   glShaderSource(frg, 1, &fragment, NULL);
+   glCompileShader(frg);
+   glGetShaderiv(frg, GL_COMPILE_STATUS, &ok);
+   if (!ok)
+     {
+        gl_compile_link_error(frg, "compile fragment shader");
+        ERR("Abort compile of fragment shader:\n%s", fragment);
+        glDeleteShader(vtx);
+        glDeleteShader(frg);
+        return NULL;
+     }
+   ok = 0;
+
+   prg = glCreateProgram();
+#ifndef GL_GLES
+   if ((glsym_glGetProgramBinary) && (glsym_glProgramParameteri))
+     glsym_glProgramParameteri(prg, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
+#endif
+   glAttachShader(prg, vtx);
+   glAttachShader(prg, frg);
+
+   glBindAttribLocation(prg, SHAD_VERTEX,  "vertex");
+   glBindAttribLocation(prg, SHAD_COLOR,   "color");
+   glBindAttribLocation(prg, SHAD_TEXUV,   "tex_coord");
+   glBindAttribLocation(prg, SHAD_TEXUV2,  "tex_coord2");
+   glBindAttribLocation(prg, SHAD_TEXUV3,  "tex_coord3");
+   glBindAttribLocation(prg, SHAD_TEXA,    "tex_coorda");
+   glBindAttribLocation(prg, SHAD_TEXSAM,  "tex_sample");
+   glBindAttribLocation(prg, SHAD_MASK,    "mask_coord");
+   glBindAttribLocation(prg, SHAD_MASKSAM, "tex_masksample");
+
+   glLinkProgram(prg);
+   glGetProgramiv(prg, GL_LINK_STATUS, &ok);
+   if (!ok)
+     {
+        gl_compile_link_error(prg, "link fragment and vertex shaders");
+        ERR("Abort compile of shader (flags: %08x)", flags);
+        glDeleteShader(vtx);
+        glDeleteShader(frg);
+        glDeleteProgram(prg);
+        return 0;
+     }
+
+   p = calloc(1, sizeof(*p));
+   p->flags = flags;
+   p->prog = prg;
+   p->reset = EINA_TRUE;
+
+   glDeleteShader(vtx);
+   glDeleteShader(frg);
+
+   return p;
+}
+
+static Eina_List *
+evas_gl_common_shader_precompile_list(Evas_GL_Shared *shared)
+{
+   int bgra, mask, sam, masksam, img, nomul, afill, yuv;
+   Eina_List *li = NULL;
+
+   if (!shared) return NULL;
+
+   // rect
+   li = eina_list_append(li, P(BASEFLAG));
+
+   // text
+   for (mask = 0; mask <= 1; mask++)
+     for (masksam = SHD_SAM11; masksam < (mask ? SHD_SAM_LAST : 1); masksam++)
+       {
+          int           flags  = BASEFLAG | SHADER_FLAG_TEX | SHADER_FLAG_ALPHA;
+          if (mask)     flags |= SHADER_FLAG_MASK;
+          if (masksam)  flags |= (1 << (SHADER_FLAG_MASKSAM_BITSHIFT + masksam - 1));
+          li = eina_list_append(li, P(flags));
+       }
+
+   // images
+   for (mask = 0; mask <= 1; mask++)
+     for (masksam = SHD_SAM11; masksam < (mask ? SHD_SAM_LAST : 1); masksam++)
+       for (sam = SHD_SAM11; sam < SHD_SAM_LAST; sam++)
+         for (bgra = 0; bgra <= shared->info.bgra; bgra++)
+           for (img = 0; img <= 1; img++)
+             for (nomul = 0; nomul <= 1; nomul++)
+               for (afill = 0; afill <= (mask ? 0 : 1); afill++)
+                 {
+                    int           flags  = BASEFLAG | SHADER_FLAG_TEX;
+                    if (mask)     flags |= SHADER_FLAG_MASK;
+                    if (masksam)  flags |= (1 << (SHADER_FLAG_MASKSAM_BITSHIFT + masksam - 1));
+                    if (sam)      flags |= (1 << (SHADER_FLAG_SAM_BITSHIFT + sam - 1));
+                    if (bgra)     flags |= SHADER_FLAG_BGRA;
+                    if (img)      flags |= SHADER_FLAG_IMG;
+                    if (nomul)    flags |= SHADER_FLAG_NOMUL;
+                    if (afill)    flags |= SHADER_FLAG_AFILL;
+                    li = eina_list_append(li, P(flags));
+                 }
+
+   // yuv
+   for (yuv = SHADER_FLAG_YUV; yuv <= SHADER_FLAG_YUV_709; yuv *= 2)
+     for (mask = 0; mask <= 1; mask++)
+       for (masksam = SHD_SAM11; masksam < (mask ? SHD_SAM_LAST : 1); masksam++)
+         for (nomul = 0; nomul <= 1; nomul++)
+           {
+              int           flags  = BASEFLAG | SHADER_FLAG_TEX | yuv;
+              if (mask)     flags |= SHADER_FLAG_MASK;
+              if (masksam)  flags |= (1 << (SHADER_FLAG_MASKSAM_BITSHIFT + masksam - 1));
+              if (yuv == SHADER_FLAG_YUV_709) flags |= SHADER_FLAG_YUV;
+              if (nomul)    flags |= SHADER_FLAG_NOMUL;
+              li = eina_list_append(li, P(flags));
+           }
+
+   // rgb+a pair, external, and others will not be precompiled.
+
+   DBG("Built list of %d shaders to precompile", eina_list_count(li));
+   return li;
+}
+
+static Evas_GL_Program *
+evas_gl_common_shader_generate_and_compile(Evas_GL_Shared *shared, unsigned int flags)
+{
+   char *vertex, *fragment;
+   Evas_GL_Program *p;
+
+   if (eina_hash_find(shared->shaders_hash, &flags))
+     return NULL;
+
+   vertex = evas_gl_common_shader_glsl_get(flags, vertex_glsl);
+   fragment = evas_gl_common_shader_glsl_get(flags, fragment_glsl);
+
+   p = evas_gl_common_shader_compile(flags, vertex, fragment);
+   if (p)
+     {
+        evas_gl_common_shader_textures_bind(p);
+        eina_hash_add(shared->shaders_hash, &flags, p);
+     }
+   else WRN("Failed to compile a shader (flags: %08x)", flags);
+
+   free(vertex);
+   free(fragment);
+
+   return p;
+}
+
+static int
+evas_gl_common_shader_precompile_all(Evas_GL_Shared *shared)
+{
+   Eina_List *li = evas_gl_common_shader_precompile_list(shared);
+   Evas_GL_Program *p;
+   int total, cnt = 0;
+   void *data;
+
+   total = eina_list_count(li);
+   EINA_LIST_FREE(li, data)
+     {
+        p = evas_gl_common_shader_generate_and_compile(shared, I(data));
+        if (p)
+          {
+             p->delete_me = 1;
+             cnt++;
+          }
+     }
+
+   DBG("Precompiled %d/%d shaders!", cnt, total);
+   return cnt;
 }
 
 int
@@ -345,6 +560,7 @@ evas_gl_common_shader_program_init(Evas_GL_Shared *shared)
       /* img1 */ BASEFLAG | SHADER_FLAG_TEX | SHADER_FLAG_IMG | BGRA,
       /* img2 */ BASEFLAG | SHADER_FLAG_TEX | SHADER_FLAG_IMG | SHADER_FLAG_NOMUL | BGRA,
    };
+   Evas_GL_Program *p;
    unsigned i;
 
    shared->shaders_hash = eina_hash_int32_new(_shaders_hash_free_cb);
@@ -352,11 +568,23 @@ evas_gl_common_shader_program_init(Evas_GL_Shared *shared)
      {
         for (i = 0; i < (sizeof(autoload) / sizeof(autoload[0])); i++)
           {
-             Evas_GL_Program *p;
-
              p = _evas_gl_common_shader_program_binary_load(shared->shaders_cache, autoload[i]);
-             if (p) eina_hash_add(shared->shaders_hash, &autoload[i], p);
+             if (p)
+               {
+                  evas_gl_common_shader_textures_bind(p);
+                  eina_hash_add(shared->shaders_hash, &autoload[i], p);
+               }
           }
+     }
+   else
+     {
+        evas_gl_common_shader_precompile_all(shared);
+        for (i = 0; i < (sizeof(autoload) / sizeof(autoload[0])); i++)
+          {
+             p = eina_hash_find(shared->shaders_hash, &autoload[i]);
+             if (p) p->delete_me = 0;
+          }
+        evas_gl_common_shaders_flush();
      }
 
    return 1;
@@ -522,103 +750,6 @@ end:
    return flags;
 }
 
-static char *
-evas_gl_common_shader_glsl_get(unsigned int flags, const char *base)
-{
-   Eina_Strbuf *s = eina_strbuf_new();
-   unsigned int k;
-   char *str;
-
-   for (k = 0; k < SHADER_FLAG_COUNT; k++)
-     {
-        if (flags & (1 << k))
-          eina_strbuf_append_printf(s, "#define SHD_%s\n", _shader_flags[k]);
-     }
-
-   eina_strbuf_append(s, base);
-   str = eina_strbuf_string_steal(s);
-   eina_strbuf_free(s);
-   return str;
-}
-
-static Evas_GL_Program *
-evas_gl_common_shader_compile(unsigned int flags, const char *vertex,
-                              const char *fragment)
-{
-   Evas_GL_Program *p;
-   GLuint vtx, frg, prg;
-   GLint ok = 0;
-
-   compiler_released = EINA_FALSE;
-   vtx = glCreateShader(GL_VERTEX_SHADER);
-   frg = glCreateShader(GL_FRAGMENT_SHADER);
-
-   glShaderSource(vtx, 1, &vertex, NULL);
-   glCompileShader(vtx);
-   glGetShaderiv(vtx, GL_COMPILE_STATUS, &ok);
-   if (!ok)
-     {
-        gl_compile_link_error(vtx, "compile vertex shader");
-        ERR("Abort compile of vertex shader:\n%s", vertex);
-        glDeleteShader(vtx);
-        return NULL;
-     }
-   ok = 0;
-
-   glShaderSource(frg, 1, &fragment, NULL);
-   glCompileShader(frg);
-   glGetShaderiv(frg, GL_COMPILE_STATUS, &ok);
-   if (!ok)
-     {
-        gl_compile_link_error(frg, "compile fragment shader");
-        ERR("Abort compile of fragment shader:\n%s", fragment);
-        glDeleteShader(vtx);
-        glDeleteShader(frg);
-        return NULL;
-     }
-   ok = 0;
-
-   prg = glCreateProgram();
-#ifndef GL_GLES
-   if ((glsym_glGetProgramBinary) && (glsym_glProgramParameteri))
-     glsym_glProgramParameteri(prg, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
-#endif
-   glAttachShader(prg, vtx);
-   glAttachShader(prg, frg);
-
-   glBindAttribLocation(prg, SHAD_VERTEX,  "vertex");
-   glBindAttribLocation(prg, SHAD_COLOR,   "color");
-   glBindAttribLocation(prg, SHAD_TEXUV,   "tex_coord");
-   glBindAttribLocation(prg, SHAD_TEXUV2,  "tex_coord2");
-   glBindAttribLocation(prg, SHAD_TEXUV3,  "tex_coord3");
-   glBindAttribLocation(prg, SHAD_TEXA,    "tex_coorda");
-   glBindAttribLocation(prg, SHAD_TEXSAM,  "tex_sample");
-   glBindAttribLocation(prg, SHAD_MASK,    "mask_coord");
-   glBindAttribLocation(prg, SHAD_MASKSAM, "tex_masksample");
-
-   glLinkProgram(prg);
-   glGetProgramiv(prg, GL_LINK_STATUS, &ok);
-   if (!ok)
-     {
-        gl_compile_link_error(prg, "link fragment and vertex shaders");
-        ERR("Abort compile of shader (flags: %#x)", flags);
-        glDeleteShader(vtx);
-        glDeleteShader(frg);
-        glDeleteProgram(prg);
-        return 0;
-     }
-
-   p = calloc(1, sizeof(*p));
-   p->flags = flags;
-   p->prog = prg;
-   p->reset = EINA_TRUE;
-
-   glDeleteShader(vtx);
-   glDeleteShader(frg);
-
-   return p;
-}
-
 void
 evas_gl_common_shader_textures_bind(Evas_GL_Program *p)
 {
@@ -676,7 +807,7 @@ evas_gl_common_shader_textures_bind(Evas_GL_Program *p)
              loc = glGetUniformLocation(p->prog, textures[i].name);
              if (loc < 0)
                {
-                  ERR("Couldn't find uniform '%s' (shader: %#x)",
+                  ERR("Couldn't find uniform '%s' (shader: %08x)",
                       textures[i].name, p->flags);
                }
              glUniform1i(loc, p->tex_count++);
@@ -706,8 +837,6 @@ evas_gl_common_shader_program_get(Evas_Engine_GL_Context *gc,
    p = eina_hash_find(gc->shared->shaders_hash, &flags);
    if (!p)
      {
-        char *vertex, *fragment;
-
         _evas_gl_common_shader_binary_init(gc->shared);
         if (gc->shared->shaders_cache)
           {
@@ -716,20 +845,13 @@ evas_gl_common_shader_program_get(Evas_Engine_GL_Context *gc,
              p = _evas_gl_common_shader_program_binary_load(gc->shared->shaders_cache, flags);
              if (p)
                {
+                  evas_gl_common_shader_textures_bind(p);
                   eina_hash_add(gc->shared->shaders_hash, &flags, p);
                   goto end;
                }
           }
-
-        vertex = evas_gl_common_shader_glsl_get(flags, vertex_glsl);
-        fragment = evas_gl_common_shader_glsl_get(flags, fragment_glsl);
-
-        p = evas_gl_common_shader_compile(flags, vertex, fragment);
-        evas_gl_common_shader_textures_bind(p);
-        eina_hash_add(gc->shared->shaders_hash, &flags, p);
-
-        free(vertex);
-        free(fragment);
+        p = evas_gl_common_shader_generate_and_compile(gc->shared, flags);
+        if (!p) return NULL;
      }
 end:
    if (p->hitcount < PROGRAM_HITCOUNT_MAX)

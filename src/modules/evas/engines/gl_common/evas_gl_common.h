@@ -102,6 +102,7 @@ struct _Evas_GL_Program
 
    Eina_Bool reset : 1;
    Eina_Bool bin_saved : 1;
+   Eina_Bool delete_me : 1;
 };
 
 struct _Evas_GL_Shared
