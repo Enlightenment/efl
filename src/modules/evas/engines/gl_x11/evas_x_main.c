@@ -276,12 +276,12 @@ try_gles2:
      _tls_context_set(gw->egl_context[0]);
    
    SET_RESTORE_CONTEXT();
-   if (eglMakeCurrent(gw->egl_disp,
+   if (evas_eglMakeCurrent(gw->egl_disp,
                       gw->egl_surface[0],
                       gw->egl_surface[0],
                       gw->egl_context[0]) == EGL_FALSE)
      {
-        ERR("eglMakeCurrent() fail. code=%#x", eglGetError());
+        ERR("evas_eglMakeCurrent() fail. code=%#x", eglGetError());
         eng_window_free(gw);
         return NULL;
      }
@@ -591,7 +591,7 @@ eng_window_free(Outbuf *gw)
      }
 #ifdef GL_GLES
    SET_RESTORE_CONTEXT();
-   eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+   evas_eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
    if (gw->egl_surface[0] != EGL_NO_SURFACE)
       eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
    if (gw->egl_surface[1] != EGL_NO_SURFACE)
@@ -632,12 +632,12 @@ eng_window_make_current(void *data, void *doit)
    SET_RESTORE_CONTEXT();
    if (doit)
      {
-        if (!eglMakeCurrent(gw->egl_disp, gw->egl_surface[0], gw->egl_surface[0], gw->egl_context[0]))
+        if (!evas_eglMakeCurrent(gw->egl_disp, gw->egl_surface[0], gw->egl_surface[0], gw->egl_context[0]))
           return EINA_FALSE;
      }
    else
      {
-        if (!eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT))
+        if (!evas_eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT))
           return EINA_FALSE;
      }
 #else
@@ -670,15 +670,13 @@ eng_window_use(Outbuf *gw)
 #ifdef GL_GLES
    if (xwin)
      {
-        if ((eglGetCurrentDisplay() !=
-             xwin->egl_disp) ||
-            (eglGetCurrentContext() !=
-             xwin->egl_context[0])
+        if ((evas_eglGetCurrentDisplay() != xwin->egl_disp) ||
+            (evas_eglGetCurrentContext() != xwin->egl_context[0])
 #if 0
             // FIXME: Figure out what that offscreen thing was about...
-            || (eglGetCurrentSurface(EGL_READ) !=
+            || (evas_eglGetCurrentSurface(EGL_READ) !=
                 xwin->egl_surface[xwin->offscreen])
-            || (eglGetCurrentSurface(EGL_DRAW) !=
+            || (evas_eglGetCurrentSurface(EGL_DRAW) !=
                 xwin->egl_surface[xwin->offscreen])
 #endif
             )
@@ -706,12 +704,12 @@ eng_window_use(Outbuf *gw)
              if (gw->egl_surface[0] != EGL_NO_SURFACE)
                {
                   SET_RESTORE_CONTEXT();
-                  if (eglMakeCurrent(gw->egl_disp,
+                  if (evas_eglMakeCurrent(gw->egl_disp,
                                      gw->egl_surface[0],
                                      gw->egl_surface[0],
                                      gw->egl_context[0]) == EGL_FALSE)
                     {
-                       ERR("eglMakeCurrent() failed!");
+                       ERR("evas_eglMakeCurrent() failed!");
                     }
                }
 // GLX
@@ -742,7 +740,7 @@ eng_window_unsurf(Outbuf *gw)
    if (xwin == gw)
      {
         SET_RESTORE_CONTEXT();
-        eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        evas_eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         if (gw->egl_surface[0] != EGL_NO_SURFACE)
            eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
         gw->egl_surface[0] = EGL_NO_SURFACE;
@@ -777,12 +775,12 @@ eng_window_resurf(Outbuf *gw)
         return;
      }
    SET_RESTORE_CONTEXT();
-   if (eglMakeCurrent(gw->egl_disp,
+   if (evas_eglMakeCurrent(gw->egl_disp,
                       gw->egl_surface[0],
                       gw->egl_surface[0],
                       gw->egl_context[0]) == EGL_FALSE)
      {
-        ERR("eglMakeCurrent() failed!");
+        ERR("evas_eglMakeCurrent() failed!");
      }
 #else
    Evas_GL_X11_Visual *evis;
@@ -1332,10 +1330,10 @@ eng_gl_context_use(Context_3D *ctx)
 {
 #if GL_GLES
     SET_RESTORE_CONTEXT();
-   if (eglMakeCurrent(ctx->display, ctx->surface,
+   if (evas_eglMakeCurrent(ctx->display, ctx->surface,
                       ctx->surface, ctx->context) == EGL_FALSE)
      {
-        ERR("eglMakeCurrent() failed.");
+        ERR("evas_eglMakeCurrent() failed.");
      }
 #else
    if (!__glXMakeContextCurrent(ctx->display, ctx->glxwin, ctx->context))
