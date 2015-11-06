@@ -48,6 +48,10 @@
 # include <Escape.h>
 #endif
 
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 #ifdef MAP_FAILED
 # undef MAP_FAILED
 #endif
@@ -874,13 +878,13 @@ eina_file_copy(const char *src, const char *dst, Eina_File_Copy_Flags flags, Ein
    EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
 
-   s = open(src, O_RDONLY);
+   s = open(src, O_RDONLY | O_BINARY);
    EINA_SAFETY_ON_TRUE_RETURN_VAL (s < 0, EINA_FALSE);
 
    success = (fstat(s, &st) == 0);
    EINA_SAFETY_ON_FALSE_GOTO(success, end);
 
-   d = open(dst, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+   d = open(dst, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
    EINA_SAFETY_ON_TRUE_GOTO(d < 0, end);
 
    success = _eina_file_copy_internal(s, d, st.st_size, cb, cb_data);
