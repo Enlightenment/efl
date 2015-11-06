@@ -515,6 +515,7 @@ evas_gl_common_shader_generate_and_compile(Evas_GL_Shared *shared, unsigned int 
    p = evas_gl_common_shader_compile(flags, vertex, fragment);
    if (p)
      {
+        shared->needs_shaders_flush = 1;
         evas_gl_common_shader_textures_bind(p);
         eina_hash_add(shared->shaders_hash, &flags, p);
      }
@@ -584,23 +585,45 @@ evas_gl_common_shader_program_init(Evas_GL_Shared *shared)
              p = eina_hash_find(shared->shaders_hash, &autoload[i]);
              if (p) p->delete_me = 0;
           }
-        evas_gl_common_shaders_flush();
+        evas_gl_common_shaders_flush(shared);
      }
 
    return 1;
 }
 
 EAPI void
-evas_gl_common_shaders_flush(void)
+evas_gl_common_shaders_flush(Evas_GL_Shared *shared)
 {
-   if (compiler_released) return;
-   compiler_released = EINA_TRUE;
+
+   if (!shared) return;
+   if (!compiler_released)
+     {
+        compiler_released = EINA_TRUE;
 #ifdef GL_GLES
-   glReleaseShaderCompiler();
+        glReleaseShaderCompiler();
 #else
-   if (glsym_glReleaseShaderCompiler)
-     glsym_glReleaseShaderCompiler();
+        if (glsym_glReleaseShaderCompiler)
+          glsym_glReleaseShaderCompiler();
 #endif
+     }
+   if (shared->needs_shaders_flush)
+     {
+        Eina_List *to_delete = NULL;
+        Eina_Iterator *it;
+        Evas_GL_Program *p;
+
+        _evas_gl_common_shader_binary_save(shared);
+
+        it = eina_hash_iterator_data_new(shared->shaders_hash);
+        EINA_ITERATOR_FOREACH(it, p)
+          {
+             if (p->delete_me)
+               to_delete = eina_list_append(to_delete, p);
+          }
+
+        EINA_LIST_FREE(to_delete, p)
+          eina_hash_del(shared->shaders_hash, &p->flags, p);
+     }
 }
 
 void

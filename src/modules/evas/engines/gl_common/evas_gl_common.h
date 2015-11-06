@@ -198,6 +198,8 @@ struct _Evas_GL_Shared
    int foc, z0, px, py;
    int ax, ay;
    GLfloat proj[16];
+
+   Eina_Bool needs_shaders_flush : 1;
 };
 
 typedef enum _Shader_Sampling Shader_Sampling;
@@ -594,7 +596,7 @@ void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *g
 
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
 void              evas_gl_common_shader_program_shutdown(Evas_GL_Shared *shared);
-EAPI void         evas_gl_common_shaders_flush(void);
+EAPI void         evas_gl_common_shaders_flush(Evas_GL_Shared *shared);
 
 Evas_GL_Program  *evas_gl_common_shader_program_get(Evas_Engine_GL_Context *gc,
                                                     Shader_Type type,

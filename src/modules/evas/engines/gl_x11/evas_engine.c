@@ -1485,10 +1485,10 @@ eng_info_free(Evas *eo_e EINA_UNUSED, void *info)
 }
 
 static void
-eng_outbuf_idle_flush(Outbuf *ob EINA_UNUSED)
+eng_outbuf_idle_flush(Outbuf *ob)
 {
    if (glsym_evas_gl_common_shaders_flush)
-     glsym_evas_gl_common_shaders_flush();
+     glsym_evas_gl_common_shaders_flush(ob->gl_context->shared);
 }
 
 static void
