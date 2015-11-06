@@ -2954,8 +2954,8 @@ evgl_direct_partial_render_end()
      }
 }
 
-void
-evas_gl_context_restore_set(Eina_Bool enable)
+EAPI void
+evas_gl_common_context_restore_set(Eina_Bool enable)
 {
    _need_context_restore = enable;
 }

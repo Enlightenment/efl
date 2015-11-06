@@ -47,6 +47,7 @@ EAPI void         evgl_engine_shutdown(void *eng_data);
 EAPI void        *evgl_native_surface_buffer_get(EVGL_Surface *sfc, Eina_Bool *is_egl_image);
 EAPI int          evgl_native_surface_yinvert_get(EVGL_Surface *sfc);
 EAPI void        *evgl_current_native_context_get(EVGL_Context *ctx);
+EAPI void         evas_gl_common_context_restore_set(Eina_Bool);
 
 typedef void (*EVGL_Engine_Call)(void *eng_data);
 typedef void *(*EVGL_Native_Surface_Call)(void *sfc, Eina_Bool *is_egl_image);

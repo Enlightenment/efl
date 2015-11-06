@@ -1,10 +1,14 @@
 #include "evas_engine.h"
 #include "../gl_common/evas_gl_define.h"
+#include <dlfcn.h>
 
-# define SET_RESTORE_CONTEXT() do { if (glsym_evas_gl_context_restore_set) glsym_evas_gl_context_restore_set(EINA_TRUE); } while(0)
+# define SET_RESTORE_CONTEXT() do { if (glsym_evas_gl_common_context_restore_set) glsym_evas_gl_common_context_restore_set(EINA_TRUE); } while(0)
 
 static Eina_TLS _outbuf_key = 0;
 static Eina_TLS _context_key = 0;
+
+typedef void (*glsym_func_void) ();
+glsym_func_void glsym_evas_gl_common_context_restore_set = NULL;
 
 #ifdef GL_GLES
 typedef EGLContext GLContext;
@@ -37,6 +41,12 @@ eng_init(void)
 {
    if (initted)
      return EINA_TRUE;
+
+#define LINK2GENERIC(sym) \
+   glsym_##sym = dlsym(RTLD_DEFAULT, #sym); \
+   if (!glsym_##sym) ERR("Could not find function '%s'", #sym);
+
+   LINK2GENERIC(evas_gl_common_context_restore_set);
 
    // FIXME: These resources are never released
    if (!eina_tls_new(&_outbuf_key))
