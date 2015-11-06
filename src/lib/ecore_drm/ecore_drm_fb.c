@@ -175,6 +175,8 @@ ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb)
    EINA_SAFETY_ON_NULL_RETURN(dev);
    EINA_SAFETY_ON_NULL_RETURN(fb);
 
+   if (fb->pending_flip) return;
+
    if (dev->dumb[0])
      {
         if ((fb->w != dev->dumb[0]->w) || (fb->h != dev->dumb[0]->h))
@@ -203,7 +205,7 @@ ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb)
         if ((!dev->current) ||
             (dev->current->stride != dev->next->stride))
           {
-             if (drmModeSetCrtc(dev->drm.fd, output->crtc_id, dev->next->id,
+             if (drmModeSetCrtc(dev->drm.fd, output->crtc_id, fb->id,
                                 x, y, &output->conn_id, 1,
                                 &output->current_mode->info))
                {
@@ -257,7 +259,7 @@ ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb
         fb->pending_flip = EINA_TRUE;
      }
 
-   while (fb->pending_flip)
+   /* while (fb->pending_flip) */
      {
         int ret = 0;
 
@@ -265,8 +267,8 @@ ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb
         if (ret < 0)
           {
              ERR("drmHandleEvent Failed: %m");
-             free(cb);
-             break;
+             /* free(cb); */
+             /* break; */
           }
      }
 }
