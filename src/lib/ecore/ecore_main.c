@@ -1641,7 +1641,6 @@ _ecore_main_win32_handlers_cleanup(void)
    if (!win32_handlers_to_delete) return;
    EINA_LIST_FOREACH_SAFE(win32_handlers_to_delete, l, l2, wh)
      {
-       printf(" -- %s 1 : wh %p\n", __FUNCTION__, wh);
         if (!wh)
           {
              win32_handlers_to_delete = eina_list_remove_list(l, win32_handlers_to_delete);
@@ -1653,7 +1652,6 @@ _ecore_main_win32_handlers_cleanup(void)
         win32_handlers = (Ecore_Win32_Handler *)
           eina_inlist_remove(EINA_INLIST_GET(win32_handlers), EINA_INLIST_GET(wh));
         ECORE_MAGIC_SET(wh, ECORE_MAGIC_NONE);
-       printf(" -- %s 2 : wh %p\n", __FUNCTION__, wh);
         ecore_win32_handler_mp_free(wh);
         win32_handlers_to_delete = eina_list_remove_list(win32_handlers_to_delete, l);
      }
