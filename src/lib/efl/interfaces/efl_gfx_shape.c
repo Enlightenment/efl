@@ -25,6 +25,7 @@ struct _Efl_Gfx_Shape_Data
 
    unsigned int commands_count;
    unsigned int points_count;
+   Eina_Bool convex;
 };
 
 static inline unsigned int
@@ -93,7 +94,7 @@ efl_gfx_path_grow(Efl_Gfx_Path_Command command,
    cmd_tmp[cmd_length - 1] = command;
    // NULL terminate the stream
    cmd_tmp[cmd_length] = EFL_GFX_PATH_COMMAND_TYPE_END;
-
+   pd->convex = EINA_FALSE;
    return EINA_TRUE;
 }
 
@@ -470,6 +471,8 @@ _efl_gfx_shape_dup(Eo *obj, Efl_Gfx_Shape_Data *pd, const Eo *dup_from)
 
    _efl_gfx_shape_path_set(obj, pd, from->commands, from->points);
 
+   pd->convex = from->convex;
+
    eo_do(obj,
          eo_event_callback_call(EFL_GFX_PATH_CHANGED, NULL),
          eo_event_callback_call(EFL_GFX_CHANGED, NULL));
@@ -490,7 +493,7 @@ _efl_gfx_shape_reset(Eo *obj, Efl_Gfx_Shape_Data *pd)
    pd->current.y = 0;
    pd->current_ctrl.x = 0;
    pd->current_ctrl.y = 0;
-
+   pd->convex = EINA_FALSE;
    eo_do(obj,
          eo_event_callback_call(EFL_GFX_PATH_CHANGED, NULL),
          eo_event_callback_call(EFL_GFX_CHANGED, NULL));
@@ -1141,8 +1144,11 @@ static void
 _efl_gfx_shape_append_circle(Eo *obj, Efl_Gfx_Shape_Data *pd,
                              double xc, double yc, double radius)
 {
+   Eina_Bool first = (pd->commands_count <= 0);
    _efl_gfx_shape_append_arc(obj, pd, xc - radius, yc - radius, 2*radius, 2*radius, 0, 360);
    _efl_gfx_shape_append_close(obj, pd);
+   //update convex flag
+   pd->convex = first;
 }
 
 static void
@@ -1150,6 +1156,7 @@ _efl_gfx_shape_append_rect(Eo *obj, Efl_Gfx_Shape_Data *pd,
                            double x, double y, double w, double h,
                            double rx, double ry)
 {
+   Eina_Bool first = (pd->commands_count <= 0);
    // check for invalid rectangle
    if (w <=0 || h<= 0)
      return;
@@ -1177,6 +1184,9 @@ _efl_gfx_shape_append_rect(Eo *obj, Efl_Gfx_Shape_Data *pd,
    _efl_gfx_shape_append_arc(obj, pd, x + w - rx, y, rx, ry, 0, 90);
    _efl_gfx_shape_append_arc(obj, pd, x, y, rx, ry, 90, 90);
    _efl_gfx_shape_append_close(obj, pd);
+
+   //update convex flag
+   pd->convex = first;
 }
 
 static void
