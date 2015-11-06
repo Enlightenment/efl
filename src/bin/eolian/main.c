@@ -17,18 +17,21 @@
 static Eina_Strbuf *
 _include_guard_enclose(const char *fname, const char *suffix, Eina_Strbuf *fbody)
 {
+   if (!fbody || !eina_strbuf_string_get(fbody))
+     return fbody;
+
+   if (!suffix)
+     suffix = "";
+
    char incname[255];
-   if (!fbody || !eina_strbuf_string_get(fbody)) return fbody;
    memset(incname, 0, sizeof(incname));
    strncpy (incname, fname, sizeof(incname) - 1);
    char *p = incname;
    eina_str_toupper(&p);
 
    Eina_Strbuf *incguard = eina_strbuf_new();
-   eina_strbuf_append_printf(incguard,
-         "#ifndef _%s_%s\n#define _%s_%s\n\n",
-         incname, suffix?suffix:"",
-         incname, suffix?suffix:"");
+   eina_strbuf_append_printf(incguard, "#ifndef _%s_%s\n#define _%s_%s\n\n",
+                             incname, suffix, incname, suffix);
    eina_strbuf_replace_all(incguard, ".", "_");
    eina_strbuf_append(incguard, eina_strbuf_string_get(fbody));
    eina_strbuf_append(incguard, "\n#endif\n");
@@ -39,12 +42,12 @@ _include_guard_enclose(const char *fname, const char *suffix, Eina_Strbuf *fbody
 static const char *
 _filename_get(const char *path)
 {
-   char *result = NULL;
-
-   if (!path) return NULL;
-   if ((result = strrchr(path, '/'))) result++;
-   else result = (char *)path;
-   return result;
+   if (!path)
+     return NULL;
+   const char *ret = strrchr(path, '/');
+   if (!ret)
+     return path;
+   return ret + 1;
 }
 
 static Eina_Bool
@@ -109,143 +112,139 @@ _write_file(const char *filename, const Eina_Strbuf *buffer, Eina_Bool append)
 }
 
 static Eina_Bool
-_generate_header_file(const char *filename, const char *eo_filename, Eina_Bool legacy)
+_generate_header(const char *outf, const char *inf, Eina_Bool legacy)
 {
-   Eina_Bool ret = EINA_FALSE;
+   Eina_Strbuf *buf = eina_strbuf_new();
 
-   Eina_Strbuf *buffer = eina_strbuf_new();
-
-   if (!types_header_generate(eo_filename, buffer, EINA_TRUE, legacy))
+   if (!types_header_generate(inf, buf, EINA_TRUE, legacy))
      {
-        fprintf(stderr, "eolian: could not generate types of '%s'\n", eo_filename);
-        goto end;
-     }
-   else
-     {
-        buffer = _include_guard_enclose(eo_filename, "TYPES", buffer);
-     }
-
-   Eina_Strbuf *ctbuf = eina_strbuf_new();
-   if (types_class_typedef_generate(eo_filename, ctbuf))
-     {
-        ctbuf = _include_guard_enclose(eo_filename, "CLASS_TYPE", ctbuf);
-        eina_strbuf_append_char(ctbuf, '\n');
-        eina_strbuf_prepend(buffer, eina_strbuf_string_get(ctbuf));
-     }
-   eina_strbuf_free(ctbuf);
-
-   const Eolian_Class *class = eolian_class_get_by_file(eo_filename);
-   if (class)
-     {
-        Eina_Bool gret = legacy ? legacy_header_generate(class, buffer)
-                                : eo_header_generate(class, buffer);
-        if (!gret)
-          {
-             fprintf(stderr, "eolian: could not generate header for '%s'\n",
-                     eolian_class_name_get(class));
-             goto end;
-          }
-     }
-
-   if (class || !legacy)
-     {
-        buffer = _include_guard_enclose(_filename_get(filename), NULL, buffer);
-        if (_write_file(filename, buffer, EINA_FALSE))
-           ret = EINA_TRUE;
-     }
-end:
-   eina_strbuf_free(buffer);
-
-   return ret;
-}
-
-static Eina_Bool
-_generate_stub_header_file(const char *filename, const char *eo_filename)
-{
-   Eina_Bool ret = EINA_FALSE;
-
-   Eina_Strbuf *buffer = eina_strbuf_new();
-
-   if (!types_header_generate(eo_filename, buffer, EINA_FALSE, EINA_FALSE))
-     {
-        fprintf(stderr, "eolian: could not generate types of '%s'\n", eo_filename);
-        goto end;
-     }
-
-   Eina_Strbuf *ctbuf = eina_strbuf_new();
-   if (types_class_typedef_generate(eo_filename, ctbuf))
-     {
-        eina_strbuf_append_char(ctbuf, '\n');
-        eina_strbuf_prepend(buffer, eina_strbuf_string_get(ctbuf));
-     }
-   eina_strbuf_free(ctbuf);
-
-   buffer = _include_guard_enclose(_filename_get(filename), "STUBS", buffer);
-   if (_write_file(filename, buffer, EINA_FALSE))
-      ret = EINA_TRUE;
-end:
-   eina_strbuf_free(buffer);
-
-   return ret;
-}
-
-static Eina_Bool
-_generate_c_file(const char *filename, const char *eo_filename, Eina_Bool legacy_support)
-{
-   Eina_Bool ret = EINA_FALSE;
-
-   Eina_Strbuf *eo_buf = eina_strbuf_new();
-   Eina_Strbuf *legacy_buf = eina_strbuf_new();
-
-   const Eolian_Class *class = eolian_class_get_by_file(eo_filename);
-   if (class)
-     {
-        if (!eo_source_generate(class, eo_buf))
-          {
-             fprintf(stderr, "eolian: could not generate source for '%s'\n",
-                     eolian_class_name_get(class));
-             goto end;
-          }
-
-        if (legacy_support)
-           if (!legacy_source_generate(class, legacy_buf))
-             {
-                fprintf(stderr, "eolian: could not generate source for '%s'\n",
-                        eolian_class_name_get(class));
-                goto end;
-             }
-     }
-
-   if (_write_file(filename, eo_buf, EINA_FALSE) &&
-         _write_file(filename, legacy_buf, EINA_TRUE))
-      ret = EINA_TRUE;
-end:
-   eina_strbuf_free(legacy_buf);
-   eina_strbuf_free(eo_buf);
-   return ret;
-}
-
-static Eina_Bool
-_generate_impl_c_file(const char *filename, const char *eo_filename)
-{
-   const Eolian_Class *class = eolian_class_get_by_file(eo_filename);
-   if (!class)
-     return EINA_FALSE;
-
-   Eina_Strbuf *buffer = NULL;
-   if (!_read_file(filename, &buffer))
-     return EINA_FALSE;
-
-   if (!impl_source_generate(class, buffer))
-     {
-        fprintf(stderr, "eolian: could not generate source for '%s'\n",
-                eolian_class_name_get(class));
-        eina_strbuf_free(buffer);
+        fprintf(stderr, "eolian: could not generate types of '%s'\n", inf);
+        eina_strbuf_free(buf);
         return EINA_FALSE;
      }
 
-   Eina_Bool ret = _write_file(filename, buffer, EINA_FALSE);
-   eina_strbuf_free(buffer);
+   buf = _include_guard_enclose(inf, "TYPES", buf);
+
+   Eina_Strbuf *ctbuf = eina_strbuf_new();
+   if (types_class_typedef_generate(inf, ctbuf))
+     {
+        ctbuf = _include_guard_enclose(inf, "CLASS_TYPE", ctbuf);
+        eina_strbuf_append_char(ctbuf, '\n');
+        eina_strbuf_prepend(buf, eina_strbuf_string_get(ctbuf));
+     }
+   eina_strbuf_free(ctbuf);
+
+   const Eolian_Class *cl = eolian_class_get_by_file(inf);
+   if (cl)
+     {
+        Eina_Bool gret = legacy ? legacy_header_generate(cl, buf)
+                                : eo_header_generate(cl, buf);
+        if (!gret)
+          {
+             fprintf(stderr, "eolian: could not generate header for '%s'\n",
+                     eolian_class_name_get(cl));
+             eina_strbuf_free(buf);
+             return EINA_FALSE;
+          }
+     }
+
+   if (cl || !legacy)
+     {
+        buf = _include_guard_enclose(_filename_get(outf), NULL, buf);
+        if (_write_file(outf, buf, EINA_FALSE))
+          {
+             eina_strbuf_free(buf);
+             return EINA_TRUE;
+          }
+     }
+
+   eina_strbuf_free(buf);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_generate_stub_header(const char *outf, const char *inf)
+{
+   Eina_Strbuf *buf = eina_strbuf_new();
+
+   if (!types_header_generate(inf, buf, EINA_FALSE, EINA_FALSE))
+     {
+        fprintf(stderr, "eolian: could not generate types of '%s'\n", inf);
+        eina_strbuf_free(buf);
+        return EINA_FALSE;
+     }
+
+   Eina_Strbuf *ctbuf = eina_strbuf_new();
+   if (types_class_typedef_generate(inf, ctbuf))
+     {
+        eina_strbuf_append_char(ctbuf, '\n');
+        eina_strbuf_prepend(buf, eina_strbuf_string_get(ctbuf));
+     }
+   eina_strbuf_free(ctbuf);
+
+   buf = _include_guard_enclose(_filename_get(outf), "STUBS", buf);
+
+   Eina_Bool ret = _write_file(outf, buf, EINA_FALSE);
+   eina_strbuf_free(buf);
+   return ret;
+}
+
+static Eina_Bool
+_generate_c(const char *outf, const char *inf, Eina_Bool legacy)
+{
+   Eina_Strbuf *eobuf = eina_strbuf_new(),
+               *lgbuf = eina_strbuf_new();
+
+   const Eolian_Class *cl = eolian_class_get_by_file(inf);
+   if (cl)
+     {
+        if (!eo_source_generate(cl, eobuf))
+          {
+             fprintf(stderr, "eolian: could not generate source for '%s'\n",
+                     eolian_class_name_get(cl));
+             eina_strbuf_free(eobuf);
+             eina_strbuf_free(lgbuf);
+             return EINA_FALSE;
+          }
+
+        if (legacy && !legacy_source_generate(cl, lgbuf))
+          {
+             fprintf(stderr, "eolian: could not generate source for '%s'\n",
+                     eolian_class_name_get(cl));
+             eina_strbuf_free(eobuf);
+             eina_strbuf_free(lgbuf);
+             return EINA_FALSE;
+          }
+     }
+
+   Eina_Bool ret = _write_file(outf, eobuf, EINA_FALSE) &&
+                   _write_file(outf, lgbuf, EINA_TRUE);
+   eina_strbuf_free(eobuf);
+   eina_strbuf_free(lgbuf);
+   return ret;
+}
+
+static Eina_Bool
+_generate_impl(const char *outf, const char *inf)
+{
+   const Eolian_Class *cl = eolian_class_get_by_file(inf);
+   if (!cl)
+     return EINA_FALSE;
+
+   Eina_Strbuf *buf = NULL;
+   if (!_read_file(outf, &buf))
+     return EINA_FALSE;
+
+   if (!impl_source_generate(cl, buf))
+     {
+        fprintf(stderr, "eolian: could not generate source for '%s'\n",
+                eolian_class_name_get(cl));
+        eina_strbuf_free(buf);
+        return EINA_FALSE;
+     }
+
+   Eina_Bool ret = _write_file(outf, buf, EINA_FALSE);
+   eina_strbuf_free(buf);
    return ret;
 }
 
@@ -362,19 +361,19 @@ main(int argc, char **argv)
           {
            case GEN_H:
              INF("Generating header file %s\n", outf);
-             ret = !_generate_header_file(outf, eobn, do_legacy);
+             ret = !_generate_header(outf, eobn, do_legacy);
              break;
            case GEN_H_STUB:
              INF("Generating stub header file %s\n", outf);
-             ret = !_generate_stub_header_file(outf, eobn);
+             ret = !_generate_stub_header(outf, eobn);
              break;
            case GEN_C:
              INF("Generating source file %s\n", outf);
-             ret = !_generate_c_file(outf, eobn, do_legacy);
+             ret = !_generate_c(outf, eobn, do_legacy);
              break;
            case GEN_C_IMPL:
              INF("Generating user source file %s\n", outf);
-             ret = !_generate_impl_c_file(outf, eobn);
+             ret = !_generate_impl(outf, eobn);
              break;
            default:
              ERR("Wrong generation option\n");
