@@ -14,6 +14,10 @@
 #  define MESA_EGL_NO_X11_HEADERS
 # endif
 
+# ifndef EGL_BUFFER_AGE_EXT
+#  define EGL_BUFFER_AGE_EXT 0x313D
+# endif
+
 # include <EGL/egl.h>
 # include <EGL/eglext.h>
 # include <EGL/eglmesaext.h>
@@ -89,10 +93,11 @@ struct _Outbuf
 
    struct 
      {
-        EGLContext context[1];
-        EGLSurface surface[1];
+        EGLContext context[2];
+        EGLSurface surface[2];
         EGLConfig config;
         EGLDisplay disp;
+        Eina_Bool gles3 : 1;
      } egl;
 
    struct 
@@ -110,6 +115,8 @@ struct _Outbuf
    Eina_Bool drew : 1;
 };
 
+void eng_gl_symbols(void);
+
 Eina_Bool eng_gbm_init(Evas_Engine_Info_GL_Drm *info);
 Eina_Bool eng_gbm_shutdown(Evas_Engine_Info_GL_Drm *info);
 
@@ -126,10 +133,11 @@ void *evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int 
 void evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
 void evas_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
 void evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
-Evas_Engine_GL_Context* evas_outbuf_gl_context_get(Outbuf *ob);
+Evas_Engine_GL_Context *evas_outbuf_gl_context_get(Outbuf *ob);
 void *evas_outbuf_egl_display_get(Outbuf *ob);
 Context_3D *evas_outbuf_gl_context_new(Outbuf *ob);
 void evas_outbuf_gl_context_use(Context_3D *ctx);
+void evas_outbuf_gl_context_free(Context_3D *ctx);
 
 static inline Eina_Bool
 _re_wincheck(Outbuf *ob)
@@ -143,5 +151,6 @@ _re_wincheck(Outbuf *ob)
 
 extern unsigned int (*glsym_eglSwapBuffersWithDamage)(EGLDisplay a, void *b, const EGLint *d, EGLint c);
 extern unsigned int (*glsym_eglSetDamageRegionKHR)(EGLDisplay a, EGLSurface b, EGLint *c, EGLint d);
+extern void (*glsym_evas_gl_context_restore_set)(Eina_Bool enable);
 
 #endif

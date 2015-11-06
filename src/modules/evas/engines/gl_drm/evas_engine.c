@@ -26,6 +26,7 @@ int _extn_have_buffer_age = 1;
 /* local variables */
 static Eina_Bool initted = EINA_FALSE;
 static int gl_wins = 0;
+static int _extn_have_y_inverted = 1;
 
 /* local structures */
 typedef struct _Native Native;
@@ -56,6 +57,8 @@ Evas_GL_Common_Context_Call glsym_evas_gl_common_image_all_unload = NULL;
 Evas_GL_Preload glsym_evas_gl_preload_init = NULL;
 Evas_GL_Preload glsym_evas_gl_preload_shutdown = NULL;
 EVGL_Engine_Call glsym_evgl_engine_shutdown = NULL;
+EVGL_Native_Surface_Call glsym_evgl_native_surface_buffer_get = NULL;
+EVGL_Native_Surface_Yinvert_Call glsym_evgl_native_surface_yinvert_get = NULL;
 EVGL_Current_Native_Context_Get_Call glsym_evgl_current_native_context_get = NULL;
 Evas_Gl_Symbols glsym_evas_gl_symbols = NULL;
 
@@ -71,7 +74,10 @@ Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_relax = NULL;
 
+glsym_func_void glsym_evas_gl_common_error_set = NULL;
+glsym_func_int glsym_evas_gl_common_error_get = NULL;
 glsym_func_void_ptr glsym_evas_gl_common_current_context_get = NULL;
+void (*glsym_evas_gl_context_restore_set)(Eina_Bool enable) = NULL;
 
 /* dynamic loaded local egl function pointers */
 _eng_fn (*glsym_eglGetProcAddress)(const char *a) = NULL;
@@ -98,6 +104,9 @@ static int evgl_eng_context_destroy(void *data, void *context);
 static const char *evgl_eng_string_get(void *data);
 static void *evgl_eng_proc_address_get(const char *name);
 static int evgl_eng_rotation_angle_get(void *data);
+static void *evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc, const int *attribs);
+static int evgl_eng_pbuffer_surface_destroy(void *data, void *surface);
+static void *evgl_eng_gles_context_create(void *data, EVGL_Context *share_ctx, EVGL_Surface *sfc);
 
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
@@ -115,11 +124,11 @@ static const EVGL_Interface evgl_funcs =
    evgl_eng_proc_address_get,
    evgl_eng_string_get,
    evgl_eng_rotation_angle_get,
-   NULL, // PBuffer
-   NULL, // PBuffer
-   NULL, // OpenGL-ES 1
-   NULL, // OpenGL-ES 1
-   NULL, // OpenGL-ES 1
+   evgl_eng_pbuffer_surface_create,
+   evgl_eng_pbuffer_surface_destroy,
+   NULL, // indirect surface create
+   NULL, // indirect surface destroy
+   evgl_eng_gles_context_create,
    NULL, // native_win_surface_config_get
 };
 
@@ -194,7 +203,14 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_preload_init);
    LINK2GENERIC(evas_gl_preload_shutdown);
    LINK2GENERIC(evgl_engine_shutdown);
+   LINK2GENERIC(evgl_native_surface_buffer_get);
+   LINK2GENERIC(evgl_native_surface_yinvert_get);
+   LINK2GENERIC(evgl_current_native_context_get);
    LINK2GENERIC(evas_gl_symbols);
+   LINK2GENERIC(evas_gl_common_error_get);
+   LINK2GENERIC(evas_gl_common_error_set);
+   LINK2GENERIC(evas_gl_common_current_context_get);
+   LINK2GENERIC(evas_gl_context_restore_set);
 
 #define FINDSYM(dst, sym, typ) \
    if (glsym_eglGetProcAddress) { \
@@ -207,31 +223,6 @@ gl_symbols(void)
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB", glsym_func_eng_fn);
    FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
-
-   glsym_evas_gl_symbols((void*)glsym_eglGetProcAddress);
-
-   FINDSYM(glsym_eglCreateImage, "eglCreateImageKHR", glsym_func_void_ptr);
-   FINDSYM(glsym_eglCreateImage, "eglCreateImageEXT", glsym_func_void_ptr);
-   FINDSYM(glsym_eglCreateImage, "eglCreateImageARB", glsym_func_void_ptr);
-   FINDSYM(glsym_eglCreateImage, "eglCreateImage", glsym_func_void_ptr);
-
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageKHR", glsym_func_void);
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageEXT", glsym_func_void);
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageARB", glsym_func_void);
-   FINDSYM(glsym_eglDestroyImage, "eglDestroyImage", glsym_func_void);
-
-   FINDSYM(glsym_glEGLImageTargetTexture2DOES,
-           "glEGLImageTargetTexture2DOES", glsym_func_void);
-
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT",
-           glsym_func_uint);
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL",
-           glsym_func_uint);
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage",
-           glsym_func_uint);
-
-   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR",
-           glsym_func_uint);
 
    FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL",
            glsym_func_uint);
@@ -270,6 +261,20 @@ gl_extn_veto(Render_Engine *re)
 
         if (!strstr(str, "EGL_EXT_swap_buffers_with_damage"))
           glsym_eglSwapBuffersWithDamage = NULL;
+
+        if (!strstr(str, "EGL_NOK_texture_from_pixmap"))
+          _extn_have_y_inverted = 0;
+        else
+          {
+             const GLubyte *vendor, *renderer;
+
+             vendor = glGetString(GL_VENDOR);
+             renderer = glGetString(GL_RENDERER);
+             if (((vendor) && (strstr((const char *)vendor, "Intel"))) &&
+                 ((renderer) && (strstr((const char *)renderer, "Mesa"))) &&
+                 ((renderer) && (strstr((const char *)renderer, "Intel"))))
+               _extn_have_y_inverted = 0;
+          }
      }
    else
      {
@@ -336,11 +341,19 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
 
    if ((!context) && (!surface))
      {
+        if ((!eglGetCurrentContext()) && (!eglGetCurrentSurface(EGL_READ)) &&
+            (!eglGetCurrentSurface(EGL_DRAW)))
+          return 1;
+
         ret = eglMakeCurrent(dpy, EGL_NO_SURFACE,
                              EGL_NO_SURFACE, EGL_NO_CONTEXT);
         if (!ret)
           {
-             ERR("eglMakeCurrent() failed! Error Code=%#x", eglGetError());
+             int err;
+
+             err = eglGetError();
+             glsym_evas_gl_common_error_set(data, err - EGL_SUCCESS);
+             ERR("eglMakeCurrent() failed! Error Code=%#x", err);
              return 0;
           }
 
@@ -356,7 +369,11 @@ evgl_eng_make_current(void *data, void *surface, void *context, int flush)
         ret = eglMakeCurrent(dpy, sfc, sfc, ctx);
         if (!ret)
           {
-             ERR("eglMakeCurrent() failed! Error Code=%#x", eglGetError());
+             int err;
+
+             err = eglGetError();
+             glsym_evas_gl_common_error_set(data, err - EGL_SUCCESS);
+             ERR("eglMakeCurrent() failed! Error Code=%#x", err);
              return 0;
           }
      }
@@ -371,10 +388,13 @@ evgl_eng_native_window_create(void *data)
    struct gbm_surface *surface;
    Evas_Engine_Info_GL_Drm *info;
 
+   DBG("NATIVE WINDOW CREATE");
+
    re = (Render_Engine *)data;
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return NULL;
      }
 
@@ -391,6 +411,7 @@ evgl_eng_native_window_create(void *data)
    if (!surface)
      {
         ERR("Could not create gl drm window: %m");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_DISPLAY);
         return NULL;
      }
 
@@ -402,19 +423,24 @@ evgl_eng_native_window_destroy(void *data, void *native_window)
 {
    Render_Engine *re = (Render_Engine *)data;
 
+   DBG("NATIVE WINDOW DESTROY");
+
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return 0;
      }
 
    if (!native_window)
      {
         ERR("Inavlid native surface.");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_NATIVE_WINDOW);
         return 0;
      }
 
    gbm_surface_destroy((struct gbm_surface *)native_window);
+   native_window = NULL;
 
    return 1;
 }
@@ -425,10 +451,13 @@ evgl_eng_window_surface_create(void *data, void *native_window)
    Render_Engine *re;
    EGLSurface surface = EGL_NO_SURFACE;
 
+   DBG("WINDOW SURFACE CREATE");
+
    re = (Render_Engine *)data;
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return NULL;
      }
 
@@ -452,16 +481,20 @@ evgl_eng_window_surface_destroy(void *data, void *surface)
    Render_Engine *re;
    EGLBoolean ret = EGL_FALSE;
 
+   DBG("WINDOW SURFACE DESTROY");
+
    re = (Render_Engine *)data;
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return 0;
      }
 
    if (!surface)
      {
         ERR("Invalid surface.");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_SURFACE);
         return 0;
      }
 
@@ -478,21 +511,37 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
    EGLContext context = EGL_NO_CONTEXT;
    int context_attrs[3];
 
+   DBG("CONTEXT CREATE");
+
    re = (Render_Engine *)data;
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return NULL;
      }
 
-   if (version != EVAS_GL_GLES_2_X)
+   if ((version < EVAS_GL_GLES_2_X) || (version > EVAS_GL_GLES_3_X))
      {
-        ERR("This engine only supports OpenGL-ES 2.0 contexts for now!");
+        ERR("Invalid context version number %d", version);
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_PARAMETER);
         return NULL;
      }
+
+   if ((version == EVAS_GL_GLES_3_X) &&
+       ((!eng_get_ob(re)->gl_context) ||
+           (eng_get_ob(re)->gl_context->gles_version != EVAS_GL_GLES_3_X)))
+     {
+        ERR("GLES3 version not supported");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_ATTRIBUTE);
+        return NULL;
+     }
+
+   if ((eng_get_ob(re)->egl.gles3) && (version >= EVAS_GL_GLES_2_X))
+     version = 3;
 
    context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
-   context_attrs[1] = 2;
+   context_attrs[1] = version;
    context_attrs[2] = EGL_NONE;
 
    // Share context already assumes that it's sharing with evas' context
@@ -502,6 +551,12 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
                                    eng_get_ob(re)->egl.config,
                                    (EGLContext)share_ctx,
                                    context_attrs);
+     }
+   else if ((version == EVAS_GL_GLES_1_X) || (version == EVAS_GL_GLES_3_X))
+     {
+        context = eglCreateContext(eng_get_ob(re)->egl.disp,
+                                   eng_get_ob(re)->egl.config,
+                                   NULL, context_attrs);
      }
    else
      {
@@ -513,7 +568,11 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
 
    if (!context)
      {
-        ERR("eglMakeCurrent() failed! Error Code=%#x", eglGetError());
+        int err;
+
+        err = eglGetError();
+        glsym_evas_gl_common_error_set(data, err - EGL_SUCCESS);
+        ERR("Engine Context Creation Failed: Error: %#x", err);
         return NULL;
      }
 
@@ -526,11 +585,15 @@ evgl_eng_context_destroy(void *data, void *context)
    Render_Engine *re;
    EGLBoolean ret = EGL_FALSE;
 
+   DBG("CONTEXT DESTROY");
+
    re = (Render_Engine *)data;
    if ((!re) || (!context))
      {
         ERR("Invalid Render Input Data. Engine: %p, Context: %p",
             data, context);
+        if (!re) glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
+        if (!context) glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_CONTEXT);
         return 0;
      }
 
@@ -549,6 +612,7 @@ evgl_eng_string_get(void *data)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return NULL;
      }
 
@@ -571,6 +635,7 @@ evgl_eng_rotation_angle_get(void *data)
    if (!re)
      {
         ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
         return 0;
      }
 
@@ -579,8 +644,148 @@ evgl_eng_rotation_angle_get(void *data)
    else
      {
         ERR("Unable to retrieve rotation angle.");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_CONTEXT);
         return 0;
      }
+}
+
+static void *
+evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc, const int *attribs)
+{
+   Render_Engine_GL_Generic *re;
+   Evas_Engine_GL_Context *evasglctx;
+   int cfg_attrs[20], surf_attrs[20];
+   EGLSurface egl_sfc;
+   EGLConfig egl_cfg;
+   int ncfg, i = 0;
+   EGLDisplay disp;
+   EGLContext ctx;
+
+   DBG("PBUFFER SURFACE CREATE");
+
+   re = (Render_Engine_GL_Generic *)data;
+   if (!re)
+     {
+        ERR("Invalid Render Engine Data!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_NOT_INITIALIZED);
+        return NULL;
+     }
+
+   if (attribs)
+     WRN("This PBuffer implementation does not support extra attributes yet");
+
+   disp = re->window_egl_display_get(re->software.ob);
+   evasglctx = re->window_gl_context_get(re->software.ob);
+   ctx = evasglctx->eglctxt;
+
+   cfg_attrs[i++] = EGL_CONFIG_ID;
+   cfg_attrs[i++] = 0;
+   cfg_attrs[i++] = EGL_NONE;
+   eglQueryContext(disp, ctx, EGL_CONFIG_ID, &cfg_attrs[1]);
+
+   if ((!eglChooseConfig(disp, cfg_attrs, &egl_cfg, 1, &ncfg)) || (ncfg < 1))
+     {
+        int err;
+
+        err = eglGetError();
+        glsym_evas_gl_common_error_set(data, err - EGL_SUCCESS);
+        ERR("eglChooseConfig failed with error %x", err);
+        return NULL;
+     }
+
+   i = 0;
+   surf_attrs[i++] = EGL_WIDTH;
+   surf_attrs[i++] = sfc->w;
+   surf_attrs[i++] = EGL_HEIGHT;
+   surf_attrs[i++] = sfc->h;
+   surf_attrs[i++] = EGL_NONE;
+
+   egl_sfc = eglCreatePbufferSurface(disp, egl_cfg, surf_attrs);
+   if (!egl_sfc)
+     {
+        int err;
+
+        err = eglGetError();
+        glsym_evas_gl_common_error_set(data, err - EGL_SUCCESS);
+        ERR("eglCreatePbufferSurface failed with error %x", err);
+     }
+
+   return egl_sfc;
+}
+
+static int
+evgl_eng_pbuffer_surface_destroy(void *data, void *surface)
+{
+   Render_Engine *re;
+   EGLBoolean ret = EGL_FALSE;
+
+   DBG("PBUFFER SURFACE DESTROY");
+
+   re = (Render_Engine *)data;
+   if (!re)
+     {
+        ERR("Invalid Render Engine Data");
+        glsym_evas_gl_common_error_set(NULL, EVAS_GL_NOT_INITIALIZED);
+        return 0;
+     }
+
+   if (!surface)
+     {
+        ERR("Invalid Surface");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_SURFACE);
+        return 0;
+     }
+
+   ret = eglDestroySurface(eng_get_ob(re)->egl.disp, (EGLSurface)surface);
+   if (ret == EGL_TRUE) return 1;
+
+   return 0;
+}
+
+/* TODO: implement indirect surface */
+
+static void *
+evgl_eng_gles_context_create(void *data, EVGL_Context *share_ctx, EVGL_Surface *sfc)
+{
+   Render_Engine *re;
+   EGLContext context = EGL_NO_CONTEXT;
+   int ctx_attrs[3];
+   EGLConfig config;
+
+   DBG("GLES CONTEXT CREATE");
+
+   re = (Render_Engine *)data;
+   if (!re) return NULL;
+
+   if (!share_ctx)
+     {
+        ERR("Share context not set");
+        return NULL;
+     }
+
+   ctx_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
+   ctx_attrs[1] = share_ctx->version;
+   ctx_attrs[2] = EGL_NONE;
+
+   if ((!sfc) || (!sfc->indirect_sfc_config))
+     config = eng_get_ob(re)->egl.config;
+   else
+     config = sfc->indirect_sfc_config;
+
+   context =
+     eglCreateContext(eng_get_ob(re)->egl.disp, config,
+                      share_ctx->context, ctx_attrs);
+   if (!context)
+     {
+        int err;
+
+        err = eglGetError();
+        glsym_evas_gl_common_error_set(data, err - EGL_SUCCESS);
+        ERR("eglCreateContext failed with error 0x%x", err);
+        return NULL;
+     }
+
+   return context;
 }
 
 static Eina_Bool
@@ -1244,6 +1449,78 @@ eng_image_native_set(void *data, void *image, void *native)
    return img;
 }
 
+static int
+eng_gl_error_get(void *data)
+{
+   int err;
+
+   err = glsym_evas_gl_common_error_get(data);
+   if (err != EVAS_GL_SUCCESS) goto end;
+
+   err = eglGetError() - EGL_SUCCESS;
+
+end:
+   glsym_evas_gl_common_error_set(data, EVAS_GL_SUCCESS);
+   return err;
+}
+
+void
+eng_gl_symbols(void)
+{
+   static Eina_Bool done = EINA_FALSE;
+
+   if (done) return;
+
+#define FINDSYM(dst, sym, typ) \
+   if (glsym_eglGetProcAddress) { \
+      if (!dst) dst = (typ)glsym_eglGetProcAddress(sym); \
+   } else { \
+      if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
+   }
+
+   glsym_evas_gl_symbols((void *)glsym_eglGetProcAddress);
+
+   FINDSYM(glsym_eglCreateImage, "eglCreateImageKHR", glsym_func_void_ptr);
+   FINDSYM(glsym_eglCreateImage, "eglCreateImageEXT", glsym_func_void_ptr);
+   FINDSYM(glsym_eglCreateImage, "eglCreateImageARB", glsym_func_void_ptr);
+   FINDSYM(glsym_eglCreateImage, "eglCreateImage", glsym_func_void_ptr);
+
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageKHR", glsym_func_void);
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageEXT", glsym_func_void);
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImageARB", glsym_func_void);
+   FINDSYM(glsym_eglDestroyImage, "eglDestroyImage", glsym_func_void);
+
+   FINDSYM(glsym_glEGLImageTargetTexture2DOES,
+           "glEGLImageTargetTexture2DOES", glsym_func_void);
+
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT",
+           glsym_func_uint);
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL",
+           glsym_func_uint);
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage",
+           glsym_func_uint);
+
+   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR",
+           glsym_func_uint);
+
+   done = EINA_TRUE;
+}
+
+static void *
+eng_gl_current_context_get(void *data EINA_UNUSED)
+{
+   EVGL_Context *ctx;
+   EVGLNative_Context context;
+
+   ctx = glsym_evas_gl_common_current_context_get();
+   if (!ctx) return NULL;
+
+   context = glsym_evgl_current_native_context_get(ctx);
+   if (eglGetCurrentContext() == context) return ctx;
+
+   return NULL;
+}
+
 /* module api functions */
 static int
 module_open(Evas_Module *em)
@@ -1279,6 +1556,8 @@ module_open(Evas_Module *em)
    EVAS_API_OVERRIDE(output_free, &func, eng_);
    EVAS_API_OVERRIDE(output_dump, &func, eng_);
    EVAS_API_OVERRIDE(image_native_set, &func, eng_);
+   EVAS_API_OVERRIDE(gl_error_get, &func, eng_);
+   EVAS_API_OVERRIDE(gl_current_context_get, &func, eng_);
 
    /* Mesa's EGL driver loads wayland egl by default. (called by eglGetProcaddr() )
     * implicit env set (EGL_PLATFORM=drm) prevent that. */

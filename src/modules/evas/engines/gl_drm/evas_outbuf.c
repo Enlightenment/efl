@@ -1,313 +1,296 @@
 #include "evas_engine.h"
 #include "../gl_common/evas_gl_define.h"
 
-/* local variables */
-static Outbuf *_evas_gl_drm_window = NULL;
-static EGLContext context = EGL_NO_CONTEXT;
-static int win_count = 0;
+#define SET_RESTORE_CONTEXT() \
+   do { \
+      if (glsym_evas_gl_context_restore_set) \
+        glsym_evas_gl_context_restore_set(EINA_TRUE); } while(0)
 
-#ifdef EGL_MESA_platform_gbm
-static PFNEGLGETPLATFORMDISPLAYEXTPROC dlsym_eglGetPlatformDisplayEXT = NULL;
-static PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC dlsym_eglCreatePlatformWindowSurfaceEXT = NULL;
-#endif
+static Eina_TLS _outbuf_key = 0;
+static Eina_TLS _context_key = 0;
 
-static void
-_evas_outbuf_gbm_surface_destroy(Outbuf *ob)
+typedef EGLContext GLContext;
+typedef EGLConfig GLConfig;
+static int gles3_supported = -1;
+
+static int _win_count = 0;
+static Eina_Bool initted = EINA_FALSE;
+
+static Eina_Bool
+_eng_init(void)
 {
-   if (!ob) return;
-   if (ob->surface)
-     {
-        gbm_surface_destroy(ob->surface);
-        ob->surface = NULL;
-     }
+   if (initted) return EINA_TRUE;
+
+   if (!eina_tls_new(&_outbuf_key)) goto err;
+   if (!eina_tls_new(&_context_key)) goto err;
+
+   eina_tls_set(_outbuf_key, NULL);
+   eina_tls_set(_context_key, NULL);
+
+   initted = EINA_TRUE;
+   return EINA_TRUE;
+
+err:
+   ERR("Could not create TLS key");
+   return EINA_FALSE;
 }
 
-static void
-_evas_outbuf_gbm_surface_create(Outbuf *ob, int w, int h)
+static inline Outbuf *
+_tls_outbuf_get(void)
 {
-   if (!ob) return;
-
-   ob->surface =
-     gbm_surface_create(ob->info->info.gbm, w, h,
-                        ob->info->info.format, ob->info->info.flags);
-
-   if (!ob->surface) ERR("Failed to create gbm surface: %m");
+   if (!initted) _eng_init();
+   return eina_tls_get(_outbuf_key);
 }
 
-static void
-_evas_outbuf_fb_cb_destroy(struct gbm_bo *bo, void *data)
+static inline Eina_Bool
+_tls_outbuf_set(Outbuf *ob)
 {
-   Ecore_Drm_Fb *fb;
-
-   fb = data;
-   if (fb)
-     {
-        struct gbm_device *gbm;
-
-        gbm = gbm_bo_get_device(bo);
-        drmModeRmFB(gbm_device_get_fd(gbm), fb->id);
-        free(fb);
-     }
+   if (!initted) _eng_init();
+   return eina_tls_set(_outbuf_key, ob);
 }
 
-static Ecore_Drm_Fb *
-_evas_outbuf_fb_get(Ecore_Drm_Device *dev, struct gbm_bo *bo)
+static inline GLContext
+_tls_context_get(void)
 {
-   int ret;
-   Ecore_Drm_Fb *fb;
-   uint32_t format;
-   uint32_t handles[4], pitches[4], offsets[4];
-
-   fb = gbm_bo_get_user_data(bo);
-   if (fb) return fb;
-
-   if (!(fb = calloc(1, sizeof(Ecore_Drm_Fb)))) return NULL;
-
-   format = gbm_bo_get_format(bo);
-
-   fb->w = gbm_bo_get_width(bo);
-   fb->h = gbm_bo_get_height(bo);
-   fb->hdl = gbm_bo_get_handle(bo).u32;
-   fb->stride = gbm_bo_get_stride(bo);
-   fb->size = fb->stride * fb->h;
-
-   handles[0] = fb->hdl;
-   pitches[0] = fb->stride;
-   offsets[0] = 0;
-
-   ret = drmModeAddFB2(dev->drm.fd, fb->w, fb->h, format,
-                       handles, pitches, offsets, &(fb->id), 0);
-   if (ret)
-     ret = drmModeAddFB(dev->drm.fd, fb->w, fb->h, 24, 32,
-                        fb->stride, fb->hdl, &(fb->id));
-
-   if (ret) ERR("FAILED TO ADD FB: %m");
-
-   gbm_bo_set_user_data(bo, fb, _evas_outbuf_fb_cb_destroy);
-
-   return fb;
+   if (!initted) _eng_init();
+   return eina_tls_get(_context_key);
 }
 
-static void
-_evas_outbuf_cb_pageflip(void *data)
+static inline Eina_Bool
+_tls_context_set(GLContext ctx)
 {
-   Outbuf *ob;
-   Ecore_Drm_Fb *fb;
-   struct gbm_bo *bo;
-
-   if (!(ob = data)) return;
-
-   bo = ob->priv.bo[ob->priv.curr];
-   if (!bo) return;
-
-   fb = _evas_outbuf_fb_get(ob->info->info.dev, bo);
-   if (fb) fb->pending_flip = EINA_FALSE;
-
-   gbm_surface_release_buffer(ob->surface, bo);
-
-   ob->priv.last = ob->priv.curr;
-   ob->priv.curr = (ob->priv.curr + 1) % ob->priv.num;
-}
-
-static void
-_evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
-{
-   Ecore_Drm_Fb *fb;
-
-   ob->priv.bo[ob->priv.curr] = gbm_surface_lock_front_buffer(ob->surface);
-   if (!ob->priv.bo[ob->priv.curr])
-     {
-        WRN("Could not lock front buffer: %m");
-        return;
-     }
-
-   fb = _evas_outbuf_fb_get(ob->info->info.dev, ob->priv.bo[ob->priv.curr]);
-   if (fb)
-     {
-        ecore_drm_fb_dirty(fb, rects, count);
-        ecore_drm_fb_set(ob->info->info.dev, fb);
-        ecore_drm_fb_send(ob->info->info.dev, fb, _evas_outbuf_cb_pageflip, ob);
-     }
+   if (!initted) _eng_init();
+   return eina_tls_set(_context_key, ctx);
 }
 
 static Eina_Bool
-_evas_outbuf_make_current(void *data, void *doit)
+_egl_cfg_setup(Outbuf *ob)
 {
-   Outbuf *ob;
+   EGLDisplay *disp;
+   EGLConfig cfgs[200];
+   int maj, min, i, num, cfg_attrs[40];
+   Eina_Bool found = EINA_FALSE;
 
-   if (!(ob = data)) return EINA_FALSE;
-
-   if (doit)
+   disp = eglGetDisplay((EGLNativeDisplayType)ob->info->info.gbm);;
+   if (!disp)
      {
-        if (!eglMakeCurrent(ob->egl.disp, ob->egl.surface[0],
-                            ob->egl.surface[0], ob->egl.context[0]))
-          return EINA_FALSE;
+        ERR("eglGetDisplay() Failed. Code=%#x", eglGetError());
+        return EINA_FALSE;
      }
+
+   ob->egl.disp = disp;
+
+   if (!eglInitialize(disp, &maj, &min))
+     {
+        ERR("eglInitialize() Failed. Code=%#x", eglGetError());
+        return EINA_FALSE;
+     }
+
+   if (!eglBindAPI(EGL_OPENGL_ES_API))
+     {
+        ERR("eglBindAPI() Failed. Code=%#x", eglGetError());
+        return EINA_FALSE;
+     }
+
+   if (gles3_supported == -1)
+     {
+        const char *exts, *s;
+
+        exts = eglQueryString(disp, EGL_EXTENSIONS);
+        if ((exts) && (strstr(exts, "EGL_KHR_create_context")))
+          {
+             int k, ncfg, val;
+             EGLConfig *eglcfgs;
+
+             if ((eglGetConfigs(disp, NULL, 0, &ncfg)) && (ncfg > 0))
+               {
+                  eglcfgs = alloca(ncfg * sizeof(EGLConfig));
+                  eglGetConfigs(disp, eglcfgs, ncfg, &ncfg);
+                  for (k = 0; k < ncfg; k++)
+                    {
+                       val = 0;
+                       if ((eglGetConfigAttrib(disp, eglcfgs[k],
+                                               EGL_RENDERABLE_TYPE, &val)) &&
+                           ((val & EGL_OPENGL_ES3_BIT_KHR) != 0) &&
+                           (eglGetConfigAttrib(disp, eglcfgs[k],
+                                               EGL_SURFACE_TYPE, &val)) &&
+                           ((val & EGL_WINDOW_BIT) != 0))
+                         {
+                            INF("OpenGL ES 3.x is supported");
+                            gles3_supported = EINA_TRUE;
+                            break;
+                         }
+                    }
+               }
+          }
+
+        if ((gles3_supported) &&
+            ((s = getenv("EVAS_GL_DISABLE_GLES3")) && (atoi(s) == 1)))
+          {
+             INF("Disabling OpenGL ES 3.x support");
+             gles3_supported = EINA_FALSE;
+          }
+     }
+
+   ob->egl.gles3 = gles3_supported;
+
+   i = 0;
+   cfg_attrs[i++] = EGL_SURFACE_TYPE;
+   cfg_attrs[i++] = EGL_WINDOW_BIT;
+   cfg_attrs[i++] = EGL_RENDERABLE_TYPE;
+   if (gles3_supported)
+     cfg_attrs[i++] = EGL_OPENGL_ES3_BIT_KHR;
    else
+     cfg_attrs[i++] = EGL_OPENGL_ES2_BIT;
+
+   cfg_attrs[i++] = EGL_ALPHA_SIZE;
+   if (ob->destination_alpha)
+     cfg_attrs[i++] = 1;
+   else
+     cfg_attrs[i++] = 0;
+
+   cfg_attrs[i++] = EGL_NONE;
+   num = 0;
+
+   if ((!eglChooseConfig(disp, cfg_attrs, cfgs, 200, &num)) || (num < 1))
      {
-        if (!eglMakeCurrent(ob->egl.disp, EGL_NO_SURFACE,
-                            EGL_NO_SURFACE, EGL_NO_CONTEXT))
-          return EINA_FALSE;
+        ERR("eglChooseConfig cannot find any configs (gles%d, alpha %d",
+            gles3_supported ? 3 : 2, ob->destination_alpha);
      }
 
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_evas_outbuf_init(void)
-{
-   static int _init = 0;
-   if (_init) return EINA_TRUE;
-#ifdef EGL_MESA_platform_gbm
-   dlsym_eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC)
-         eglGetProcAddress("eglGetPlatformDisplayEXT");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(dlsym_eglGetPlatformDisplayEXT, EINA_FALSE);
-   dlsym_eglCreatePlatformWindowSurfaceEXT = (PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC)
-         eglGetProcAddress("eglCreatePlatformWindowSurfaceEXT");
-   EINA_SAFETY_ON_NULL_RETURN_VAL(dlsym_eglCreatePlatformWindowSurfaceEXT, EINA_FALSE);
-#endif
-   _init = 1;
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_evas_outbuf_egl_setup(Outbuf *ob)
-{
-   int ctx_attr[3];
-   int cfg_attr[40];
-   int maj = 0, min = 0, n = 0, i = 0;
-   EGLint ncfg;
-   EGLConfig *cfgs;
-   const GLubyte *vendor, *renderer, *version, *glslversion;
-   Eina_Bool blacklist = EINA_FALSE;
-
-   if (!_evas_outbuf_init())
-     {
-        ERR("Could not initialize engine!");
-        return EINA_FALSE;
-     }
-
-   /* setup gbm egl surface */
-   ctx_attr[0] = EGL_CONTEXT_CLIENT_VERSION;
-   ctx_attr[1] = 2;
-   ctx_attr[2] = EGL_NONE;
-
-   cfg_attr[n++] = EGL_RENDERABLE_TYPE;
-   cfg_attr[n++] = EGL_OPENGL_ES2_BIT;
-   cfg_attr[n++] = EGL_SURFACE_TYPE;
-   cfg_attr[n++] = EGL_WINDOW_BIT;
-
-   cfg_attr[n++] = EGL_RED_SIZE;
-   cfg_attr[n++] = 1;
-   cfg_attr[n++] = EGL_GREEN_SIZE;
-   cfg_attr[n++] = 1;
-   cfg_attr[n++] = EGL_BLUE_SIZE;
-   cfg_attr[n++] = 1;
-
-
-   cfg_attr[n++] = EGL_ALPHA_SIZE;
-   if (ob->destination_alpha) cfg_attr[n++] = 1;
-   else cfg_attr[n++] = 0;
-   cfg_attr[n++] = EGL_NONE;
-
-#ifdef EGL_MESA_platform_gbm
-   ob->egl.disp =
-     dlsym_eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_MESA, ob->info->info.gbm, NULL);
-#else
-   ob->egl.disp = eglGetDisplay((EGLNativeDisplayType)ob->info->info.gbm);
-#endif
-   if (ob->egl.disp  == EGL_NO_DISPLAY)
-     {
-        ERR("eglGetDisplay() fail. code=%#x", eglGetError());
-        return EINA_FALSE;
-     }
-
-   if (!eglInitialize(ob->egl.disp, &maj, &min))
-     {
-        ERR("eglInitialize() fail. code=%#x", eglGetError());
-        return EINA_FALSE;
-     }
-
-   eglBindAPI(EGL_OPENGL_ES_API);
-   if (eglGetError() != EGL_SUCCESS)
-     {
-        ERR("eglBindAPI() fail. code=%#x", eglGetError());
-        return EINA_FALSE;
-     }
-
-   if (!eglGetConfigs(ob->egl.disp, NULL, 0, &ncfg) || (ncfg == 0))
-     {
-        ERR("eglGetConfigs() fail. code=%#x", eglGetError());
-        return EINA_FALSE;
-     }
-
-   cfgs = malloc(ncfg * sizeof(EGLConfig));
-   if (!cfgs)
-     {
-        ERR("Failed to malloc space for egl configs");
-        return EINA_FALSE;
-     }
-
-   if (!eglChooseConfig(ob->egl.disp, cfg_attr, cfgs,
-                        ncfg, &ncfg) || (ncfg == 0))
-     {
-        ERR("eglChooseConfig() fail. code=%#x", eglGetError());
-        return EINA_FALSE;
-     }
-
-   for (; i < ncfg; ++i)
+   for (i = 0; (i < num) && (!found); i++)
      {
         EGLint format;
 
-        if (!eglGetConfigAttrib(ob->egl.disp, cfgs[i], EGL_NATIVE_VISUAL_ID,
-                                &format))
-          {
-             ERR("eglGetConfigAttrib() fail. code=%#x", eglGetError());
-             return EINA_FALSE;
-          }
-
-        DBG("Config Format: %d", format);
-        DBG("OB Format: %d", ob->info->info.format);
+        if (!eglGetConfigAttrib(disp, cfgs[i], EGL_NATIVE_VISUAL_ID, &format))
+          continue;
 
         if (format == (int)ob->info->info.format)
           {
+             found = EINA_TRUE;
              ob->egl.config = cfgs[i];
              break;
           }
      }
 
-#ifdef EGL_MESA_platform_gbm
-   ob->egl.surface[0] =
-     dlsym_eglCreatePlatformWindowSurfaceEXT(ob->egl.disp, ob->egl.config,
-                                             ob->surface, NULL);
-#else
-   ob->egl.surface[0] =
-     eglCreateWindowSurface(ob->egl.disp, ob->egl.config,
-                            (EGLNativeWindowType)ob->surface, NULL);
-#endif
-   if (ob->egl.surface[0] == EGL_NO_SURFACE)
-     {
-        ERR("eglCreateWindowSurface() fail for %p. code=%#x",
-            ob->surface, eglGetError());
-        return EINA_FALSE;
-     }
+   if (found) return EINA_TRUE;
+   return EINA_FALSE;
+}
 
+static Eina_Bool
+_egl_ctx_setup(Outbuf *ob)
+{
+   GLContext ctx;
+   int ctx_attrs[3];
+
+try_gles2:
+   ctx_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
+   ctx_attrs[1] = ob->egl.gles3 ? 3 : 2;
+   ctx_attrs[2] = EGL_NONE;
+
+   ctx = _tls_context_get();
    ob->egl.context[0] =
-     eglCreateContext(ob->egl.disp, ob->egl.config, context, ctx_attr);
+     eglCreateContext(ob->egl.disp, ob->egl.config, ctx, ctx_attrs);
    if (ob->egl.context[0] == EGL_NO_CONTEXT)
      {
-        ERR("eglCreateContext() fail. code=%#x", eglGetError());
+        ERR("eglCreateContext() Failed. Code=%#x", eglGetError());
+        if (ob->egl.gles3)
+          {
+             ERR("Trying again with an OpenGL ES 2 context");
+             ob->egl.gles3 = EINA_FALSE;
+             goto try_gles2;
+          }
+
         return EINA_FALSE;
      }
 
-   if (context == EGL_NO_CONTEXT) context = ob->egl.context[0];
+   if (ctx == EGL_NO_CONTEXT) _tls_context_set(ob->egl.context[0]);
+
+   SET_RESTORE_CONTEXT();
 
    if (eglMakeCurrent(ob->egl.disp, ob->egl.surface[0],
                       ob->egl.surface[0], ob->egl.context[0]) == EGL_FALSE)
      {
-        ERR("eglMakeCurrent() fail. code=%#x", eglGetError());
+        ERR("eglMakeCurrent() Failed. Code=%#x", eglGetError());
         return EINA_FALSE;
      }
+
+   return EINA_TRUE;
+}
+
+Outbuf *
+evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_Mode swap_mode)
+{
+   Outbuf *ob;
+   const GLubyte *vendor, *renderer, *version, *glslversion;
+   int blacklist = 0, i = 0;
+   char *num;
+
+   ob = calloc(1, sizeof(Outbuf));
+   if (!ob) return NULL;
+
+   ob->w = w;
+   ob->h = h;
+   ob->info = info;
+   ob->depth = info->info.depth;
+   ob->rotation = info->info.rotation;
+   ob->destination_alpha = info->info.destination_alpha;
+   ob->swap_mode = swap_mode;
+   ob->priv.num = 2;
+
+   if ((num = getenv("EVAS_GL_DRM_BUFFERS")))
+     {
+        ob->priv.num = atoi(num);
+        if (ob->priv.num <= 0) ob->priv.num = 1;
+        else if (ob->priv.num > 4) ob->priv.num = 4;
+     }
+
+   ob->surface =
+     gbm_surface_create(info->info.gbm, w, h,
+                        info->info.format, info->info.flags);
+   if (!ob->surface)
+     {
+        ERR("Failed to create gbm surface: %m");
+        evas_outbuf_free(ob);
+        return NULL;
+     }
+
+   if (!_egl_cfg_setup(ob))
+     {
+        evas_outbuf_free(ob);
+        return NULL;
+     }
+
+   ob->egl.surface[0] =
+     eglCreateWindowSurface(ob->egl.disp, ob->egl.config,
+                            (EGLNativeWindowType)ob->surface, NULL);
+   if (ob->egl.surface[0] == EGL_NO_SURFACE)
+     {
+        int err;
+
+        err = eglGetError();
+        ERR("eglCreateWindowSurface() Failed. Code=%#x", err);
+        evas_outbuf_free(ob);
+        return NULL;
+     }
+
+   if (!_egl_ctx_setup(ob))
+     {
+        evas_outbuf_free(ob);
+        return NULL;
+     }
+
+   /* for (; i < ob->priv.num; i++) */
+   /*   { */
+   /*      ob->priv.bo[i] = */
+   /*        gbm_bo_create(info->info.gbm, w, h, info->info.format, */
+   /*                      info->info.flags); */
+   /*      if (!ob->priv.bo[i]) */
+   /*        { */
+   /*           ERR("Failed to create gbm bo: %m"); */
+   /*           break; */
+   /*        } */
+   /*   } */
 
    vendor = glGetString(GL_VENDOR);
    renderer = glGetString(GL_RENDERER);
@@ -328,82 +311,37 @@ _evas_outbuf_egl_setup(Outbuf *ob)
    if (strstr((const char *)vendor, "Mesa Project"))
      {
         if (strstr((const char *)renderer, "Software Rasterizer"))
-          blacklist = EINA_TRUE;
+          blacklist = 1;
      }
    if (strstr((const char *)renderer, "softpipe"))
-     blacklist = EINA_TRUE;
+     blacklist = 1;
    if (strstr((const char *)renderer, "llvmpipe"))
-     blacklist = EINA_TRUE;
-
+     blacklist = 1;
    if ((blacklist) && (!getenv("EVAS_GL_NO_BLACKLIST")))
      {
-        ERR("OpenGL Driver blacklisted:");
-        ERR("Vendor: %s", (const char *)vendor);
-        ERR("Renderer: %s", (const char *)renderer);
-        ERR("Version: %s", (const char *)version);
-        return EINA_FALSE;
-     }
-
-   ob->gl_context = glsym_evas_gl_common_context_new();
-   if (!ob->gl_context) return EINA_FALSE;
-
-#ifdef GL_GLES
-   ob->gl_context->egldisp = ob->egl.disp;
-   ob->gl_context->eglctxt = ob->egl.context[0];
-#endif
-
-   evas_outbuf_use(ob);
-   glsym_evas_gl_common_context_resize(ob->gl_context,
-                                       ob->w, ob->h, ob->rotation);
-
-   ob->surf = EINA_TRUE;
-
-   return EINA_TRUE;
-}
-
-Outbuf *
-evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_Mode swap_mode)
-{
-   Outbuf *ob;
-   char *num;
-
-   if (!info) return NULL;
-
-   /* try to allocate space for outbuf */
-   if (!(ob = calloc(1, sizeof(Outbuf)))) return NULL;
-
-   win_count++;
-
-   ob->w = w;
-   ob->h = h;
-   ob->info = info;
-   ob->depth = info->info.depth;
-   ob->rotation = info->info.rotation;
-   ob->destination_alpha = info->info.destination_alpha;
-   /* ob->vsync = info->info.vsync; */
-   ob->swap_mode = swap_mode;
-   ob->priv.num = 2;
-
-   if ((num = getenv("EVAS_GL_DRM_BUFFERS")))
-     {
-        ob->priv.num = atoi(num);
-        if (ob->priv.num <= 0) ob->priv.num = 1;
-        else if (ob->priv.num > 4) ob->priv.num = 4;
-     }
-
-   /* if ((num = getenv("EVAS_GL_DRM_VSYNC"))) */
-   /*   ob->vsync = atoi(num); */
-
-   if ((ob->rotation == 0) || (ob->rotation == 180))
-     _evas_outbuf_gbm_surface_create(ob, w, h);
-   else if ((ob->rotation == 90) || (ob->rotation == 270))
-     _evas_outbuf_gbm_surface_create(ob, h, w);
-
-   if (!_evas_outbuf_egl_setup(ob))
-     {
+        WRN("OpenGL Driver blacklisted:");
+        WRN("Vendor: %s", (const char *)vendor);
+        WRN("Renderer: %s", (const char *)renderer);
+        WRN("Version: %s", (const char *)version);
         evas_outbuf_free(ob);
         return NULL;
      }
+
+   eng_gl_symbols();
+   ob->gl_context = glsym_evas_gl_common_context_new();
+   if (!ob->gl_context)
+     {
+        ERR("Unable to get a new context");
+        evas_outbuf_free(ob);
+        return NULL;
+     }
+
+   ob->gl_context->egldisp = ob->egl.disp;
+   ob->gl_context->eglctxt = ob->egl.context[0];
+
+   evas_outbuf_use(ob);
+   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, ob->rotation);
+   ob->surf = EINA_TRUE;
 
    return ob;
 }
@@ -411,71 +349,106 @@ evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_
 void
 evas_outbuf_free(Outbuf *ob)
 {
+   Outbuf *tob;
+   GLContext context;
    int ref = 0;
 
-   win_count--;
+   _win_count--;
    evas_outbuf_use(ob);
 
-   if (ob == _evas_gl_drm_window) _evas_gl_drm_window = NULL;
+   context = _tls_context_get();
+   tob = _tls_outbuf_get();
 
+   if (ob == tob) _tls_outbuf_set(NULL);
    if (ob->gl_context)
      {
         ref = ob->gl_context->references - 1;
         glsym_evas_gl_common_context_free(ob->gl_context);
      }
 
+   SET_RESTORE_CONTEXT();
+
    eglMakeCurrent(ob->egl.disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+
+   if (ob->egl.surface[0] != EGL_NO_SURFACE)
+     eglDestroySurface(ob->egl.disp, ob->egl.surface[0]);
+   if (ob->egl.surface[1] != EGL_NO_SURFACE)
+     eglDestroySurface(ob->egl.disp, ob->egl.surface[1]);
 
    if (ob->egl.context[0] != context)
      eglDestroyContext(ob->egl.disp, ob->egl.context[0]);
 
-   if (ob->egl.surface[0] != EGL_NO_SURFACE)
-     eglDestroySurface(ob->egl.disp, ob->egl.surface[0]);
-
-   _evas_outbuf_gbm_surface_destroy(ob);
+   if (ob->surface) gbm_surface_destroy(ob->surface);
 
    if (ref == 0)
      {
         if (context) eglDestroyContext(ob->egl.disp, context);
         eglTerminate(ob->egl.disp);
         eglReleaseThread();
-        context = EGL_NO_CONTEXT;
+        _tls_context_set(EGL_NO_CONTEXT);
      }
 
    free(ob);
+}
+
+static Eina_Bool
+_evas_outbuf_make_current(void *data, void *doit)
+{
+   Outbuf *ob;
+
+   ob = data;
+   SET_RESTORE_CONTEXT();
+   if (doit)
+     {
+        if (!eglMakeCurrent(ob->egl.disp, ob->egl.surface[0],
+                            ob->egl.surface[0], ob->egl.context[0]))
+          return EINA_FALSE;
+     }
+   else
+     {
+        if (!eglMakeCurrent(ob->egl.disp, EGL_NO_SURFACE,
+                            EGL_NO_SURFACE, EGL_NO_CONTEXT))
+          return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
 }
 
 void
 evas_outbuf_use(Outbuf *ob)
 {
    Eina_Bool force = EINA_FALSE;
+   Outbuf *tob;
+
+   tob = _tls_outbuf_get();
 
    glsym_evas_gl_preload_render_lock(_evas_outbuf_make_current, ob);
-
-   if (_evas_gl_drm_window)
+   if (tob)
      {
-        if (eglGetCurrentContext() != _evas_gl_drm_window->egl.context[0])
+        if ((eglGetCurrentDisplay() != tob->egl.disp) ||
+            (eglGetCurrentContext() != tob->egl.context[0]))
           force = EINA_TRUE;
      }
 
-   if ((_evas_gl_drm_window != ob) || (force))
+   if ((tob != ob) || (force))
      {
-        if (_evas_gl_drm_window)
+        if (tob)
           {
-             glsym_evas_gl_common_context_use(_evas_gl_drm_window->gl_context);
-             glsym_evas_gl_common_context_flush(_evas_gl_drm_window->gl_context);
+             glsym_evas_gl_common_context_use(tob->gl_context);
+             glsym_evas_gl_common_context_flush(tob->gl_context);
           }
 
-        _evas_gl_drm_window = ob;
+        _tls_outbuf_set(ob);
 
         if (ob)
           {
              if (ob->egl.surface[0] != EGL_NO_SURFACE)
                {
+                  SET_RESTORE_CONTEXT();
                   if (eglMakeCurrent(ob->egl.disp, ob->egl.surface[0],
                                      ob->egl.surface[0],
                                      ob->egl.context[0]) == EGL_FALSE)
-                    ERR("eglMakeCurrent() failed!");
+                    ERR("eglMakeCurrent() Failed. Code=%#x", eglGetError());
                }
           }
      }
@@ -487,22 +460,22 @@ void
 evas_outbuf_resurf(Outbuf *ob)
 {
    if (ob->surf) return;
-   if (getenv("EVAS_GL_INFO")) printf("resurf %p\n", ob);
-
    ob->egl.surface[0] =
      eglCreateWindowSurface(ob->egl.disp, ob->egl.config,
                             (EGLNativeWindowType)ob->surface, NULL);
-
    if (ob->egl.surface[0] == EGL_NO_SURFACE)
      {
-        ERR("eglCreateWindowSurface() fail for %p. code=%#x",
-            ob->surface, eglGetError());
+        ERR("eglCreateWindowSurface() Failed. Code=%#x", eglGetError());
         return;
      }
 
-   if (eglMakeCurrent(ob->egl.disp, ob->egl.surface[0], ob->egl.surface[0],
-                      ob->egl.context[0]) == EGL_FALSE)
-     ERR("eglMakeCurrent() failed!");
+   SET_RESTORE_CONTEXT();
+
+   if (eglMakeCurrent(ob->egl.disp, ob->egl.surface[0],
+                      ob->egl.surface[0], ob->egl.context[0]) == EGL_FALSE)
+     {
+        ERR("eglMakeCurrent() Failed. Code=%#x", eglGetError());
+     }
 
    ob->surf = EINA_TRUE;
 }
@@ -510,28 +483,31 @@ evas_outbuf_resurf(Outbuf *ob)
 void
 evas_outbuf_unsurf(Outbuf *ob)
 {
+   Outbuf *tob;
+
    if (!ob->surf) return;
    if (!getenv("EVAS_GL_WIN_RESURF")) return;
-   if (getenv("EVAS_GL_INFO")) printf("unsurf %p\n", ob);
 
-   if (_evas_gl_drm_window)
-      glsym_evas_gl_common_context_flush(_evas_gl_drm_window->gl_context);
-   if (_evas_gl_drm_window == ob)
+   tob = _tls_outbuf_get();
+   if (tob) glsym_evas_gl_common_context_flush(tob->gl_context);
+   if (tob == ob)
      {
-        eglMakeCurrent(ob->egl.disp, EGL_NO_SURFACE,
-                       EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        SET_RESTORE_CONTEXT();
+        eglMakeCurrent(ob->egl.disp, EGL_NO_SURFACE, EGL_NO_SURFACE,
+                       EGL_NO_CONTEXT);
         if (ob->egl.surface[0] != EGL_NO_SURFACE)
-           eglDestroySurface(ob->egl.disp, ob->egl.surface[0]);
+          eglDestroySurface(ob->egl.disp, ob->egl.surface[0]);
         ob->egl.surface[0] = EGL_NO_SURFACE;
-
-        _evas_gl_drm_window = NULL;
+        if (ob->egl.surface[1] != EGL_NO_SURFACE)
+          eglDestroySurface(ob->egl.disp, ob->egl.surface[1]);
+        ob->egl.surface[1] = EGL_NO_SURFACE;
+        _tls_outbuf_set(NULL);
      }
-
    ob->surf = EINA_FALSE;
 }
 
 void
-evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
+evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth EINA_UNUSED)
 {
    Evas_Public_Data *epd;
    Evas_Engine_Info_GL_Drm *einfo;
@@ -573,15 +549,25 @@ evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
    re->generic.software.ob->gl_context->references--;
 
    glsym_evas_gl_common_context_resize(nob->gl_context, w, h, rot);
+
+   /* ob->w = w; */
+   /* ob->h = h; */
+   /* ob->rotation = rot; */
+
+   /* if (ob->surface) gbm_surface_destroy(ob->surface); */
+
+   /* ob->surface = */
+   /*   gbm_surface_create(ob->info->info.gbm, w, h, */
+   /*                      ob->info->info.format, ob->info->info.flags); */
+
+   /* evas_outbuf_use(ob); */
+   /* glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot); */
 }
 
 Render_Engine_Swap_Mode
 evas_outbuf_buffer_state_get(Outbuf *ob)
 {
-   /* check for valid output buffer */
-   if (!ob) return MODE_FULL;
-
-   if (ob->swap_mode == MODE_AUTO && _extn_have_buffer_age)
+   if ((ob->swap_mode == MODE_AUTO) && _extn_have_buffer_age)
      {
         Render_Engine_Swap_Mode swap_mode;
         EGLint age = 0;
@@ -600,28 +586,6 @@ evas_outbuf_buffer_state_get(Outbuf *ob)
 
         return swap_mode;
      }
-   else
-     {
-        int delta;
-
-        delta = (ob->priv.last - ob->priv.curr +
-                 (ob->priv.last > ob->priv.last ?
-                     0 : ob->priv.num)) % ob->priv.num;
-
-        switch (delta)
-          {
-           case 0:
-             return MODE_COPY;
-           case 1:
-             return MODE_DOUBLE;
-           case 2:
-             return MODE_TRIPLE;
-           case 3:
-             return MODE_QUADRUPLE;
-           default:
-             return MODE_FULL;
-          }
-     }
 
    return ob->swap_mode;
 }
@@ -635,14 +599,15 @@ evas_outbuf_rot_get(Outbuf *ob)
 Eina_Bool
 evas_outbuf_update_region_first_rect(Outbuf *ob)
 {
-   /* ob->gl_context->preserve_bit = GL_COLOR_BUFFER_BIT0_QCOM; */
+   ob->gl_context->preserve_bit = GL_COLOR_BUFFER_BIT0_QCOM;
 
    glsym_evas_gl_preload_render_lock(_evas_outbuf_make_current, ob);
-   evas_outbuf_use(ob);
 
+   evas_outbuf_use(ob);
    if (!_re_wincheck(ob)) return EINA_TRUE;
 
-   /* glsym_evas_gl_common_context_resize(ob->gl_context, ob->w, ob->h, ob->rotation); */
+   glsym_evas_gl_common_context_resize(ob->gl_context, ob->w, ob->h,
+                                       ob->rotation);
    glsym_evas_gl_common_context_flush(ob->gl_context);
    glsym_evas_gl_common_context_newframe(ob->gl_context);
 
@@ -724,8 +689,6 @@ evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx EI
 void
 evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
-   /* Is it really necessary to flush per region ? Shouldn't we be able to
-      still do that for the full canvas when doing partial update */
    if (!_re_wincheck(ob)) return;
    ob->drew = EINA_TRUE;
    glsym_evas_gl_common_context_flush(ob->gl_context);
@@ -734,7 +697,105 @@ evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update EINA_UNUSED, int x
 void
 evas_outbuf_update_region_free(Outbuf *ob EINA_UNUSED, RGBA_Image *update EINA_UNUSED)
 {
-   /* Nothing to do here as we don't really create an image per area */
+
+}
+
+static void
+_evas_outbuf_fb_cb_destroy(struct gbm_bo *bo, void *data)
+{
+   Ecore_Drm_Fb *fb;
+
+   fb = data;
+   if (fb)
+     {
+        struct gbm_device *gbm;
+
+        gbm = gbm_bo_get_device(bo);
+        drmModeRmFB(gbm_device_get_fd(gbm), fb->id);
+        free(fb);
+     }
+}
+
+static Ecore_Drm_Fb *
+_evas_outbuf_fb_get(Ecore_Drm_Device *dev, struct gbm_bo *bo)
+{
+   int ret;
+   Ecore_Drm_Fb *fb;
+   uint32_t format;
+   uint32_t handles[4], pitches[4], offsets[4];
+
+   fb = gbm_bo_get_user_data(bo);
+   if (fb) return fb;
+
+   if (!(fb = calloc(1, sizeof(Ecore_Drm_Fb)))) return NULL;
+
+   format = gbm_bo_get_format(bo);
+
+   fb->w = gbm_bo_get_width(bo);
+   fb->h = gbm_bo_get_height(bo);
+   fb->hdl = gbm_bo_get_handle(bo).u32;
+   fb->stride = gbm_bo_get_stride(bo);
+   fb->size = fb->stride * fb->h;
+
+   handles[0] = fb->hdl;
+   pitches[0] = fb->stride;
+   offsets[0] = 0;
+
+   ret = drmModeAddFB2(dev->drm.fd, fb->w, fb->h, format,
+                       handles, pitches, offsets, &(fb->id), 0);
+   if (ret)
+     ret = drmModeAddFB(dev->drm.fd, fb->w, fb->h, 24, 32,
+                        fb->stride, fb->hdl, &(fb->id));
+
+   if (ret) ERR("FAILED TO ADD FB: %m");
+
+   gbm_bo_set_user_data(bo, fb, _evas_outbuf_fb_cb_destroy);
+
+   return fb;
+}
+
+static void
+_evas_outbuf_cb_pageflip(void *data)
+{
+   Outbuf *ob;
+   Ecore_Drm_Fb *fb;
+   struct gbm_bo *bo;
+
+   if (!(ob = data)) return;
+
+   bo = ob->priv.bo[ob->priv.curr];
+   if (!bo) return;
+
+   fb = gbm_bo_get_user_data(bo);
+   if (fb) fb->pending_flip = EINA_FALSE;
+
+   /* fb = _evas_outbuf_fb_get(ob->info->info.dev, bo); */
+   /* if (fb) fb->pending_flip = EINA_FALSE; */
+
+   gbm_surface_release_buffer(ob->surface, bo);
+
+   ob->priv.last = ob->priv.curr;
+   ob->priv.curr = (ob->priv.curr + 1) % ob->priv.num;
+}
+static void
+_evas_outbuf_buffer_swap(Outbuf *ob)
+{
+   Ecore_Drm_Fb *fb;
+
+   ob->priv.bo[ob->priv.curr] = gbm_surface_lock_front_buffer(ob->surface);
+   if (!ob->priv.bo[ob->priv.curr])
+     {
+        WRN("Could not lock front buffer: %m");
+        return;
+     }
+
+   fb = _evas_outbuf_fb_get(ob->info->info.dev, ob->priv.bo[ob->priv.curr]);
+   if (fb)
+     {
+        ecore_drm_fb_dirty(fb, NULL, 0);
+        ecore_drm_fb_set(ob->info->info.dev, fb);
+        ecore_drm_fb_send(ob->info->info.dev, fb, _evas_outbuf_cb_pageflip, ob);
+     }
 }
 
 void
@@ -745,6 +806,14 @@ evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
    if (!_re_wincheck(ob)) goto end;
    if (!ob->drew) goto end;
 
+   if (!gbm_surface_has_free_buffers(ob->surface))
+     {
+        INF("Gbm Surface has NO free buffers");
+        gbm_surface_release_buffer(ob->surface, ob->priv.bo[ob->priv.curr]);
+        goto end;
+        /* return; */
+     }
+
    ob->drew = EINA_FALSE;
    evas_outbuf_use(ob);
    glsym_evas_gl_common_context_done(ob->gl_context);
@@ -753,7 +822,7 @@ evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
      {
         if (ob->info->info.vsync) eglSwapInterval(ob->egl.disp, 1);
         else eglSwapInterval(ob->egl.disp, 0);
-        ob->vsync = 1;
+        ob->vsync = EINA_TRUE;
      }
 
    if (ob->info->callback.pre_swap)
@@ -782,36 +851,14 @@ evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
    else
       eglSwapBuffers(ob->egl.disp, ob->egl.surface[0]);
 
+   _evas_outbuf_buffer_swap(ob);
+
    if (ob->info->callback.post_swap)
      ob->info->callback.post_swap(ob->info->callback.data, ob->evas);
-
-   if (rects)
-     {
-        Tilebuf_Rect *r;
-        Eina_Rectangle *res;
-        int num, i = 0;
-
-        num = eina_inlist_count(EINA_INLIST_GET(rects));
-        res = alloca(sizeof(Eina_Rectangle) * num);
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
-          {
-             res[i].x = r->x;
-             res[i].y = r->y;
-             res[i].w = r->w;
-             res[i].h = r->h;
-             i++;
-          }
-
-        _evas_outbuf_buffer_swap(ob, res, num);
-     }
-   else
-     //Flush GL Surface data to Framebuffer
-     _evas_outbuf_buffer_swap(ob, NULL, 0);
 
    ob->priv.frame_cnt++;
 
 end:
-   //TODO: Need render unlock after drm page flip?
    glsym_evas_gl_preload_render_unlock(_evas_outbuf_make_current, ob);
 }
 
@@ -831,30 +878,41 @@ Context_3D *
 evas_outbuf_gl_context_new(Outbuf *ob)
 {
    Context_3D *ctx;
-   int context_attrs[3] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
+   int ctx_attrs[3] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
 
    if (!ob) return NULL;
 
    ctx = calloc(1, sizeof(Context_3D));
    if (!ctx) return NULL;
 
-   ctx->context = eglCreateContext(ob->egl.disp, ob->egl.config,
-                                   ob->egl.context[0], context_attrs);
+   if (ob->egl.gles3) ctx_attrs[1] = 3;
 
+   ctx->context =
+     eglCreateContext(ob->egl.disp, ob->egl.config,
+                      ob->egl.context[0], ctx_attrs);
    if (!ctx->context)
      {
-        ERR("EGL context creation failed.");
-        goto error;
+        ERR("eglCreateContext() Failed. Code=%#x", eglGetError());
+        goto err;
      }
 
    ctx->display = ob->egl.disp;
    ctx->surface = ob->egl.surface[0];
 
-   return ctx;
+   return NULL;
 
-error:
+err:
    free(ctx);
    return NULL;
+}
+
+void
+evas_outbuf_gl_context_use(Context_3D *ctx)
+{
+   SET_RESTORE_CONTEXT();
+   if (eglMakeCurrent(ctx->display, ctx->surface,
+                      ctx->surface, ctx->context) == EGL_FALSE)
+     ERR("eglMakeCurrent() Failed. Code=%#x", eglGetError());
 }
 
 void
@@ -862,12 +920,4 @@ evas_outbuf_gl_context_free(Context_3D *ctx)
 {
    eglDestroyContext(ctx->display, ctx->context);
    free(ctx);
-}
-
-void
-evas_outbuf_gl_context_use(Context_3D *ctx)
-{
-   if (eglMakeCurrent(ctx->display, ctx->surface,
-                      ctx->surface, ctx->context) == EGL_FALSE)
-     ERR("eglMakeCurrent() failed.");
 }
