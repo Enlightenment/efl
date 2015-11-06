@@ -163,13 +163,13 @@ _evas_gl_common_shader_program_binary_load(Eet_File *ef, unsigned int flags)
    p = calloc(1, sizeof(*p));
    p->flags = flags;
    p->prog = prg;
-   p->vert = vtx;
-   p->frag = frg;
    p->reset = EINA_TRUE;
    p->bin_saved = EINA_TRUE;
    evas_gl_common_shader_textures_bind(p);
 
 finish:
+   if (vtx) glDeleteShader(vtx);
+   if (frg) glDeleteShader(frg);
    free(formats);
    if (!direct) free(data);
    return p;
@@ -330,8 +330,6 @@ static void
 _shaders_hash_free_cb(void *data)
 {
    Evas_GL_Program *p = data;
-   if (p->vert) glDeleteShader(p->vert);
-   if (p->frag) glDeleteShader(p->frag);
    if (p->prog) glDeleteProgram(p->prog);
    free(p);
 }
@@ -613,9 +611,10 @@ evas_gl_common_shader_compile(unsigned int flags, const char *vertex,
    p = calloc(1, sizeof(*p));
    p->flags = flags;
    p->prog = prg;
-   p->vert = vtx;
-   p->frag = frg;
    p->reset = EINA_TRUE;
+
+   glDeleteShader(vtx);
+   glDeleteShader(frg);
 
    return p;
 }

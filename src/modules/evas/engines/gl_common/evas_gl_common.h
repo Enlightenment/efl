@@ -97,10 +97,9 @@ typedef Eina_Bool (*evas_gl_make_current_cb)(void *engine_data, void *doit);
 
 struct _Evas_GL_Program
 {
-   GLuint vert, frag, prog;
-   unsigned int flags, hitcount;
+   unsigned int flags, hitcount, tex_count;
+   GLuint prog;
 
-   int tex_count;
    Eina_Bool reset : 1;
    Eina_Bool bin_saved : 1;
 };
