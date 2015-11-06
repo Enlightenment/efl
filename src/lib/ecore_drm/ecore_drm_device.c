@@ -17,42 +17,14 @@ _ecore_drm_device_cb_page_flip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSE
 {
    Ecore_Drm_Pageflip_Callback *cb;
 
-   /* DBG("Drm Page Flip Event"); */
-
    if (!(cb = data)) return;
 
    flip_count++;
    if (flip_count < cb->count) return;
 
-   cb->dev->current = cb->dev->next;
-   cb->dev->next = NULL;
-
    flip_count = 0;
    if (cb->func) cb->func(cb->data);
    /* free(cb); */
-
-   /* Ecore_Drm_Output *output; */
-
-   /* DBG("Drm Page Flip Event"); */
-
-   /* if (!(output = data)) return; */
-
-   /* if (output->pending_flip) */
-   /*   { */
-   /*      if (output->dev->current) */
-   /*        ecore_drm_output_fb_release(output, output->dev->current); */
-   /*      output->dev->current = output->dev->next; */
-   /*      output->dev->next = NULL; */
-   /*   } */
-
-   /* output->pending_flip = EINA_FALSE; */
-   /* if (output->pending_destroy) */
-   /*   { */
-   /*      output->pending_destroy = EINA_FALSE; */
-   /*      ecore_drm_output_free(output); */
-   /*   } */
-   /* else if (!output->pending_vblank) */
-   /*   ecore_drm_output_repaint(output); */
 }
 
 static void 
@@ -60,8 +32,6 @@ _ecore_drm_device_cb_vblank(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, 
 {
    Ecore_Drm_Sprite *sprite;
    Ecore_Drm_Output *output;
-
-   /* DBG("Drm VBlank Event"); */
 
    if (!(sprite = data)) return;
 
