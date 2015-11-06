@@ -933,7 +933,6 @@ evas_gl_common_context_new(void)
         if (gc->state.current.prog)
           glUseProgram(gc->state.current.prog->prog);
 
-        evas_gl_common_shader_program_init_done();
         // in shader:
         // uniform sampler2D tex[8];
         //

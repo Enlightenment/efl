@@ -593,8 +593,8 @@ void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *g
                                                        Evas_Colorspace cspace);
 
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
-void              evas_gl_common_shader_program_init_done(void);
 void              evas_gl_common_shader_program_shutdown(Evas_GL_Shared *shared);
+EAPI void         evas_gl_common_shaders_flush(void);
 
 Evas_GL_Program  *evas_gl_common_shader_program_get(Evas_Engine_GL_Context *gc,
                                                     Shader_Type type,

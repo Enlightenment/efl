@@ -60,7 +60,8 @@ static const char *_shader_flags[SHADER_FLAG_COUNT] = {
    "RGB_A_PAIR"
 };
 
-/////////////////////////////////////////////
+static Eina_Bool compiler_released = EINA_FALSE;
+
 static void
 gl_compile_link_error(GLuint target, const char *action)
 {
@@ -363,11 +364,11 @@ evas_gl_common_shader_program_init(Evas_GL_Shared *shared)
    return 1;
 }
 
-void
-evas_gl_common_shader_program_init_done(void)
+EAPI void
+evas_gl_common_shaders_flush(void)
 {
-#warning FIXME: Disabled compiler unload for now.
-   return;
+   if (compiler_released) return;
+   compiler_released = EINA_TRUE;
 #ifdef GL_GLES
    glReleaseShaderCompiler();
 #else
@@ -550,6 +551,7 @@ evas_gl_common_shader_compile(unsigned int flags, const char *vertex,
    GLuint vtx, frg, prg;
    GLint ok = 0;
 
+   compiler_released = EINA_FALSE;
    vtx = glCreateShader(GL_VERTEX_SHADER);
    frg = glCreateShader(GL_FRAGMENT_SHADER);
 

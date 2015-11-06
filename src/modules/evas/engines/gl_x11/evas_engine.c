@@ -71,6 +71,7 @@ Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_relax = NULL;
 
+glsym_func_void     glsym_evas_gl_common_shaders_flush = NULL;
 glsym_func_void     glsym_evas_gl_common_error_set = NULL;
 glsym_func_int      glsym_evas_gl_common_error_get = NULL;
 glsym_func_void_ptr glsym_evas_gl_common_current_context_get = NULL;
@@ -1200,7 +1201,8 @@ gl_symbols(void)
    if (done) return;
 
 #define LINK2GENERIC(sym) \
-   glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
+   glsym_##sym = dlsym(RTLD_DEFAULT, #sym); \
+   if (!glsym_##sym) ERR("Could not find function '%s'", #sym);
 
    // Get function pointer to evas_gl_common that is now provided through the link of GL_Generic.
    LINK2GENERIC(evas_gl_common_image_all_unload);
@@ -1232,7 +1234,7 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_common_error_set);
    LINK2GENERIC(evas_gl_common_current_context_get);
    LINK2GENERIC(evas_gl_context_restore_set);
-
+   LINK2GENERIC(evas_gl_common_shaders_flush);
 
 #ifdef GL_GLES
 #define FINDSYM(dst, sym, typ) \
@@ -1485,6 +1487,13 @@ eng_info_free(Evas *eo_e EINA_UNUSED, void *info)
 }
 
 static void
+eng_outbuf_idle_flush(Outbuf *ob EINA_UNUSED)
+{
+   if (glsym_evas_gl_common_shaders_flush)
+     glsym_evas_gl_common_shaders_flush();
+}
+
+static void
 _re_winfree(Render_Engine *re)
 {
    if (!eng_get_ob(re)->surf) return;
@@ -1632,7 +1641,7 @@ eng_setup(Evas *eo_e, void *in)
                                                 eng_outbuf_new_region_for_update,
                                                 eng_outbuf_push_updated_region,
                                                 eng_outbuf_push_free_region_for_update,
-                                                NULL,
+                                                eng_outbuf_idle_flush,
                                                 eng_outbuf_flush,
                                                 eng_window_free,
                                                 eng_window_use,

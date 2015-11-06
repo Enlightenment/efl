@@ -309,11 +309,6 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
 }
 
 static void
-eng_output_idle_flush(void *data EINA_UNUSED)
-{
-}
-
-static void
 eng_context_cutout_add(void *data EINA_UNUSED, void *context, int x, int y, int w, int h)
 {
    evas_common_draw_context_add_cutout(context, x, y, w, h);
