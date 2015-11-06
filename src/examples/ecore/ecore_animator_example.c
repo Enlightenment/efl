@@ -11,22 +11,28 @@ static Eina_Bool _start_second_anim(void *data);
 static Eina_Bool _freeze_third_anim(void *data);
 static Eina_Bool _thaw_third_anim(void *data);
 
+static Evas_Object *bg;
+
 int
 main(void)
 {
-   Evas_Object *rect, *bg, *rect2;
+   Evas_Object *rect, *rect2;
    Ecore_Evas *ee;
    Evas *evas;
    Ecore_Animator *anim;
+   int w, h;
 
    ecore_evas_init();
 
-   ee = ecore_evas_new(NULL, 0, 0, 300, 400, NULL);
+   ee = ecore_evas_new(NULL, 0, 0, 1, 1, NULL);
+   ecore_evas_screen_geometry_get(ee, NULL, NULL, &w, &h);
+   ecore_evas_resize(ee, w, h);
    ecore_evas_show(ee);
+
    evas = ecore_evas_get(ee);
 
    bg = evas_object_rectangle_add(evas);
-   evas_object_resize(bg, 300, 400);
+   evas_object_resize(bg, w, h);
    evas_object_show(bg);
 
    rect = evas_object_rectangle_add(evas);
@@ -39,7 +45,7 @@ main(void)
    evas_object_resize(rect2, 50, 50);
    evas_object_show(rect2);
 
-   ecore_animator_frametime_set(1. / 50);
+   ecore_animator_frametime_set(1. / 60);
    ecore_animator_timeline_add(5, _advance_frame, rect);
 
    anim = ecore_animator_add(_advance_frame3, rect2);
@@ -63,6 +69,8 @@ _advance_frame(void *data, double pos)
    double frame = pos;
    frame = ecore_animator_pos_map(pos, ECORE_POS_MAP_SPRING, 1.2, 15);
 
+   evas_object_color_set(bg, 0, 255 * (1 - frame), 255 * frame, 255);
+
    evas_object_resize(data, 50 * (1 + frame), 50 * (1 + frame));
    evas_object_move(data, 100 * frame, 100 * frame);
    evas_object_color_set(data, 255 * frame, 0, 255 * (1 - frame), 255);
@@ -72,7 +80,7 @@ _advance_frame(void *data, double pos)
 static Eina_Bool
 _start_second_anim(void *data)
 {
-   ecore_animator_frametime_set(1. / 10);
+   /* ecore_animator_frametime_set(1. / 60); */
    ecore_animator_timeline_add(20, _advance_frame2, data);
    return ECORE_CALLBACK_CANCEL;
 }
@@ -82,6 +90,8 @@ _advance_frame2(void *data, double pos)
 {
    double frame = pos;
    frame = ecore_animator_pos_map(pos, ECORE_POS_MAP_BOUNCE, 1.2, 50);
+
+   evas_object_color_set(bg, 255 * frame, 255 * (1 - frame), 0, 255);
 
    evas_object_resize(data, 100 - (50 * frame), 100 - (50 * frame));
    evas_object_move(data, 100 * (1 - frame), 100 * (1 - frame));
