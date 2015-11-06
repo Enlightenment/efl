@@ -416,7 +416,13 @@ EAPI Eina_Bool
 eina_main_loop_is(void)
 {
 #ifdef EFL_HAVE_THREADS
-  if (pthread_equal(_eina_main_loop, pthread_self()))
+# ifdef __GNUC__
+   /* pthread_self() can't be optimized, it's a single asm "movl" */
+   if (__builtin_types_compatible_p(pthread_t, unsigned long int))
+     return (pthread_self() == _eina_main_loop);
+   else
+# endif
+   if (pthread_equal(_eina_main_loop, pthread_self()))
      return EINA_TRUE;
 #endif
    return EINA_FALSE;
