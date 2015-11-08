@@ -92,9 +92,9 @@ lib/ector/software/ector_renderer_software_shape.c \
 lib/ector/software/ector_software_gradient.c \
 lib/ector/software/ector_software_rasterizer.c \
 lib/ector/software/ector_software_surface.c \
-lib/ector/software/sw_ft_math.c \
-lib/ector/software/sw_ft_raster.c \
-lib/ector/software/sw_ft_stroker.c \
+static_libs/freetype/sw_ft_math.c \
+static_libs/freetype/sw_ft_raster.c \
+static_libs/freetype/sw_ft_stroker.c \
 lib/ector/software/ector_drawhelper.c \
 lib/ector/software/ector_drawhelper_sse2.c \
 lib/ector/software/ector_drawhelper_neon.c
@@ -106,6 +106,7 @@ lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/ector \
 -I$(top_builddir)/src/lib/ector/cairo \
 -I$(top_builddir)/src/lib/ector/software \
+-I$(top_builddir)/src/static_libs/freetype \
 @ECTOR_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
@@ -152,7 +153,7 @@ lib/ector/ector_private.h \
 lib/ector/cairo/ector_cairo_private.h \
 lib/ector/software/ector_drawhelper_private.h \
 lib/ector/software/ector_software_private.h \
-lib/ector/software/sw_ft_math.h \
-lib/ector/software/sw_ft_raster.h \
-lib/ector/software/sw_ft_stroker.h \
-lib/ector/software/sw_ft_types.h
+static_libs/freetype/sw_ft_math.h \
+static_libs/freetype/sw_ft_raster.h \
+static_libs/freetype/sw_ft_stroker.h \
+static_libs/freetype/sw_ft_types.h
