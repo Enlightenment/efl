@@ -3425,9 +3425,6 @@ START_TEST(evas_textblock_obstacle)
    evas_object_del(rect);
    _obstacle_run(tb, rect3, 0, fw, 0, 0, fh);
    END_TB_TEST();
-   /* Deleting rect3 later, so it will be first removed from observation,
-    * during freeing of the textblock */
-   evas_object_del(rect3);
 }
 END_TEST;
 
