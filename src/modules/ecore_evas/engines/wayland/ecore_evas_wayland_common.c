@@ -191,6 +191,22 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    if (nw < 1) nw = 1;
    if (nh < 1) nh = 1;
 
+   /* NB: We receive window configure sizes based on xdg surface
+    * window geometry, so we need to subtract framespace here */
+
+   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+
+   if (ECORE_EVAS_PORTRAIT(ee))
+     {
+        nw -= fw;
+        nh -= fh;
+     }
+   else
+     {
+        nw -= fh;
+        nh -= fw;
+     }
+
    if (prev_full != ee->prop.fullscreen)
      _ecore_evas_wl_common_border_update(ee);
 
@@ -648,10 +664,10 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 
         if (wdata->win)
           {
-             int x, y;
-
-             ecore_wl2_window_geometry_get(wdata->win, &x, &y, NULL, NULL);
-             ecore_wl2_window_geometry_set(wdata->win, x, y, w, h);
+             if (ECORE_EVAS_PORTRAIT(ee))
+               ecore_wl2_window_geometry_set(wdata->win, 0, 0, w, h);
+             else
+               ecore_wl2_window_geometry_set(wdata->win, 0, 0, h, w);
           }
 
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
