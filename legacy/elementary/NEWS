@@ -26,6 +26,7 @@ Features:
    * atspi: support org.a11y.atspi.Collection interface
    * atspi: add new relationship append/remove/clear API
    * elm run - be explicit about elm run not nesting in docs
+   * gengrid : add all_contents_unset API in gengrid for reusing contents.
 
 Fixes:
 
@@ -124,6 +125,14 @@ Fixes:
    * elm_cnp: DnD/X11: correct drag window position in rotation
    * dayselector: fix warning related to argument type
    * multibuttonentry: fix label packed many times in internal box.
+   * win: reemit atspi "focused" event on bridge connection
+   * multibuttonentry: when item is clicked/selected, select function not called issue fix.
+   * widget: update child_can_focus flag on focusability change
+   * colorselector: picker spinner UI not proper issue fix. (T2401)
+   * autoscroll focus: pass the object region position relative to the scroller. (T1686)
+   * elm_segment_control: fix invalid parameter
+   * atspi: add missing SELECTED changed signals
+   * win : Prohibiting auto-rendering, until elm_win is shown.
 
 Changes since 1.14.0:
 ---------------------
