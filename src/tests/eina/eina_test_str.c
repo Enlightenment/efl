@@ -347,6 +347,24 @@ START_TEST(str_memdup)
 }
 END_TEST
 
+START_TEST(str_strftime)
+{
+   time_t curr_time;
+   struct tm *info;
+   char *buf;
+   eina_init();
+
+   curr_time = time(NULL);
+   info = localtime(&curr_time);
+
+   buf = eina_strftime("%I:%M%p", info);
+   fail_if(buf == NULL);
+   free(buf);
+
+   eina_shutdown();
+}
+END_TEST
+
 #ifdef HAVE_ICONV
 START_TEST(str_convert)
 {
@@ -385,6 +403,7 @@ eina_test_str(TCase *tc)
    tcase_add_test(tc, str_lcat_lcpy);
    tcase_add_test(tc, str_join_len);
    tcase_add_test(tc, str_memdup);
+   tcase_add_test(tc, str_strftime);
 #ifdef HAVE_ICONV
    tcase_add_test(tc, str_convert);
 #endif

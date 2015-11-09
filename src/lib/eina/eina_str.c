@@ -374,6 +374,39 @@ eina_strlcat(char *dst, const char *src, size_t siz)
    return(dlen + (s - src)); /* count does not include NUL */
 }
 
+EAPI char *
+eina_strftime(const char *format, const struct tm *tm)
+{
+   const size_t flen = strlen(format);
+   size_t buflen = 16; // An arbitrary starting size
+   char *buf = NULL;
+
+   do {
+      char *tmp;
+      size_t len;
+
+      tmp = realloc(buf, buflen * sizeof(char));
+      if (!tmp) goto on_error;
+      buf = tmp;
+
+      len = strftime(buf, buflen, format, tm);
+      // Check if we have the expected result and return it.
+      if ((len > 0 && len < buflen) || (len == 0 && flen == 0))
+        {
+           tmp = realloc(buf, ((len + 1) * sizeof(char)));
+           buf = tmp;
+           return buf;
+        }
+
+      /* Possibly buf overflowed - try again with a bigger buffer */
+      buflen <<= 1; // multiply buffer size by 2
+   } while (buflen < 128 * flen);
+
+ on_error:
+   free(buf);
+   return NULL;
+}
+
 EAPI Eina_Bool
 eina_str_has_prefix(const char *str, const char *prefix)
 {

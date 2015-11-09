@@ -355,6 +355,32 @@ static inline size_t eina_strlen_bounded(const char *str, size_t maxlen) EINA_PU
  * @since 1.13
  */
 EAPI unsigned char *eina_memdup(unsigned char *mem, size_t size, Eina_Bool terminate);
+
+/**
+ * @brief Create and update the buffer based on strftime output.
+ *
+ * @param tm Pointer to a tm structure needed by strftime.
+ * @param format String containing format specifiers needed by strftime.
+ * @return Updated buffer based on strftime output
+ *
+ * This will create a buffer of exact required size based on strftime output
+ * once use is complete the buffer has to be freed using free.
+ *
+ * Example usage:
+ * @code
+ * time_t curr_time;
+ * struct tm *info;
+ * char *buf;
+ * curr_time = time(NULL);
+ * info = localtime(&curr_time);
+ * buf = eina_strftime("%I:%M%p", info);
+ * //after use
+ * free(buf);
+ * @endcode
+ *
+ * @since 1.16.0
+ */
+EAPI char *eina_strftime(const char *format, const struct tm *tm);
 #include "eina_inline_str.x"
 
 /**

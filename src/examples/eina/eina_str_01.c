@@ -14,6 +14,9 @@ int main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    char *part2 = "There are many copies. And they have a plan.";
    char **arr;
    int i;
+   char *time_arr;
+   time_t curr_time;
+   struct tm *info;
 
    eina_init();
 
@@ -58,7 +61,13 @@ int main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    eina_strlcat(str, "humans", 14);
    printf("%s\n", str);
    free(str);
-   
+
+   curr_time = time(NULL);
+   info = localtime(&curr_time);
+   time_arr = eina_strftime("%d/%m/%Y", info);
+   printf("Today's Date: %s\n", time_arr);
+   free(time_arr);
+
    eina_shutdown();
 
    return 0;
