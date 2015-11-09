@@ -221,6 +221,8 @@ lib/evas/canvas/evas_canvas3d_node_callback.h
 
 # Model savers/loaders (will be replaced to modules in next commits)
 lib_evas_libevas_la_SOURCES += \
+lib/evas/common3d/save_load/evas_model_load.c \
+lib/evas/common3d/save_load/evas_model_save.c \
 modules/evas/model_loaders/eet/evas_model_load_eet.c \
 modules/evas/model_loaders/md2/evas_model_load_md2.c \
 modules/evas/model_loaders/obj/evas_model_load_obj.c \
@@ -287,8 +289,6 @@ lib/evas/common/evas_image_save.c \
 lib/evas/common/evas_image_main.c \
 lib/evas/common/evas_image_data.c \
 lib/evas/common/evas_image_scalecache.c \
-lib/evas/common/evas_model_load.c \
-lib/evas/common/evas_model_save.c \
 lib/evas/common/evas_line_main.c \
 lib/evas/common/evas_polygon_main.c \
 lib/evas/common/evas_rectangle_main.c \
