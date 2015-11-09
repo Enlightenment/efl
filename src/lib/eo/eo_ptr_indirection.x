@@ -57,14 +57,14 @@
  * it to the fifo.
  */
 
-/* most significant bit is kept to tag Eo_Id with 1 */
 #if SIZEOF_UINTPTR_T == 4
 /* 32 bits */
 # define BITS_MID_TABLE_ID        5
 # define BITS_TABLE_ID            5
 # define BITS_ENTRY_ID           12
-# define BITS_GENERATION_COUNTER  9
-# define REF_TAG_SHIFT           31
+# define BITS_GENERATION_COUNTER  8
+# define REF_TAG_SHIFT           30
+# define SUPER_TAG_SHIF          31
 # define DROPPED_TABLES           0
 # define DROPPED_ENTRIES          4
 typedef int16_t Table_Index;
@@ -74,8 +74,9 @@ typedef uint16_t Generation_Counter;
 # define BITS_MID_TABLE_ID       11
 # define BITS_TABLE_ID           11
 # define BITS_ENTRY_ID           12
-# define BITS_GENERATION_COUNTER 29
-# define REF_TAG_SHIFT           63
+# define BITS_GENERATION_COUNTER 28
+# define REF_TAG_SHIFT           62
+# define SUPER_TAG_SHIFT         63
 # define DROPPED_TABLES           2
 # define DROPPED_ENTRIES          3
 typedef int16_t Table_Index;
@@ -101,6 +102,15 @@ typedef uint32_t Generation_Counter;
 #define MASK_ENTRY_ID         ((1 << BITS_ENTRY_ID) - 1)
 #define MASK_GENERATIONS      (MAX_GENERATIONS - 1)
 #define MASK_OBJ_TAG          (((Eo_Id) 1) << (REF_TAG_SHIFT))
+/* When we have EO_ID use the highest bit.
+   When we don't have EO_ID, we can repurpose the lowest bit, because allocation
+   is at least 8 byte aligned.
+   XXX: If this is ever not the case, we need to allocate from a mempool and ensure it, or find another trick. */
+#ifdef HAVE_EO_ID
+# define MASK_SUPER_TAG       (((Eo_Id) 1) << (SUPER_TAG_SHIFT))
+#else
+# define MASK_SUPER_TAG       ((Eo_Id) 1)
+#endif
 
 /* This only applies to classes. Used to artificially enlarge the class ids
  * to reduce the likelihood of a clash with normal integers. */
@@ -417,7 +427,6 @@ _eo_id_allocate(const _Eo_Object *obj)
                               (entry - _current_table->entries),
                               entry->generation);
 #else
-   Eo_Id ret = 0x1;
    (void) obj;
    return MASK_OBJ_TAG;
 #endif
