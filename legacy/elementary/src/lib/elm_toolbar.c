@@ -2354,16 +2354,10 @@ _item_new(Evas_Object *obj,
 
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
-   icon_obj = elm_icon_add(obj);
-   elm_icon_order_lookup_set(icon_obj, sd->lookup_order);
-   if (!icon_obj) return NULL;
-
    Eo *eo_it = eo_add(ELM_TOOLBAR_ITEM_CLASS, obj);
-   if (!eo_it)
-     {
-        evas_object_del(icon_obj);
-        return NULL;
-     }
+
+   if (!eo_it) return NULL;
+
    ELM_TOOLBAR_ITEM_DATA_GET(eo_it, it);
 
    it->label = eina_stringshare_add(label);
@@ -2376,6 +2370,9 @@ _item_new(Evas_Object *obj,
 
    VIEW(it) = elm_layout_add(obj);
    evas_object_data_set(VIEW(it), "item", it);
+
+   icon_obj = elm_icon_add(VIEW(it));
+   elm_icon_order_lookup_set(icon_obj, sd->lookup_order);
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      _access_widget_item_register(it);
@@ -2411,7 +2408,6 @@ _item_new(Evas_Object *obj,
      it);
    evas_object_event_callback_add
      (VIEW(it), EVAS_CALLBACK_MOUSE_UP, (Evas_Object_Event_Cb)_mouse_up_cb, it);
-   elm_widget_sub_object_add(obj, VIEW(it));
 
    if (it->icon)
      {
