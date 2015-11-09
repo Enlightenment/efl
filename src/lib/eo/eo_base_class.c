@@ -671,46 +671,43 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
 
    pd->walking_list++;
 
+   if (!desc->unfreezable && (event_freeze_count || pd->event_freeze_count))
+     goto end;
+
    for (cb = pd->callbacks; cb; cb = cb->next)
      {
-        if (!cb->delete_me)
+        if (cb->delete_me)
+          continue;
+
+        if (cb->func_array)
           {
-             if (cb->func_array)
-               {
-                  const Eo_Callback_Array_Item *it;
+             const Eo_Callback_Array_Item *it;
 
-                  for (it = cb->items.item_array; it->func; it++)
-                    {
-                       if (!_cb_desc_match(it->desc, desc))
-                          continue;
-                       if (!it->desc->unfreezable &&
-                           (event_freeze_count || pd->event_freeze_count))
-                          continue;
-
-                       /* Abort callback calling if the func says so. */
-                       if (!it->func((void *) cb->func_data, obj_id, desc,
-                                (void *) event_info))
-                         {
-                            ret = EINA_FALSE;
-                            goto end;
-                         }
-                    }
-               }
-             else
+             for (it = cb->items.item_array; it->func; it++)
                {
-                  if (!_cb_desc_match(cb->items.item.desc, desc))
-                    continue;
-                  if (!cb->items.item.desc->unfreezable &&
-                      (event_freeze_count || pd->event_freeze_count))
+                  if (!_cb_desc_match(it->desc, desc))
                     continue;
 
                   /* Abort callback calling if the func says so. */
-                  if (!cb->items.item.func((void *) cb->func_data, obj_id, desc,
-                                           (void *) event_info))
+                  if (!it->func((void *) cb->func_data, obj_id, desc,
+                                (void *) event_info))
                     {
                        ret = EINA_FALSE;
                        goto end;
                     }
+               }
+          }
+        else
+          {
+             if (!_cb_desc_match(cb->items.item.desc, desc))
+               continue;
+
+             /* Abort callback calling if the func says so. */
+             if (!cb->items.item.func((void *) cb->func_data, obj_id, desc,
+                                      (void *) event_info))
+               {
+                  ret = EINA_FALSE;
+                  goto end;
                }
           }
      }
