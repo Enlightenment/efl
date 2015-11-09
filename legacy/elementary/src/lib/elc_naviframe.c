@@ -469,7 +469,7 @@ _elm_naviframe_item_elm_widget_item_part_text_set(Eo *eo_it EINA_UNUSED,
           elm_object_signal_emit(VIEW(it), "elm,state,title_label,hide", "elm");
         elm_object_part_text_set(VIEW(it), TITLE_PART, label);
      }
-   else if (!strcmp("subtitle", part))
+   else if ((!strcmp(part, "subtitle")) || (!strcmp(part, SUBTITLE_PART)))
      {
         eina_stringshare_replace(&nit->subtitle_label, label);
         if (label)
@@ -730,7 +730,7 @@ _item_title_icon_unset(Elm_Naviframe_Item_Data *it)
 static void
 _part_aliasing_eval(const char **part)
 {
-   if (!*part || !strcmp("default", *part))
+   if (!*part || !strcmp(*part, "default"))
      *part = CONTENT_PART;
    else if (!strcmp(*part, "prev_btn"))
      *part = PREV_BTN_PART;
@@ -811,7 +811,7 @@ _elm_naviframe_item_elm_widget_item_part_content_set(Eo *eo_nit EINA_UNUSED,
    _part_aliasing_eval(&part);
 
    //specified parts
-   if (!part || !strcmp(CONTENT_PART, part))
+   if (!strcmp(part, CONTENT_PART))
      _item_content_set(nit, content);
    else if (!strcmp(part, PREV_BTN_PART))
      _item_title_prev_btn_set(nit, content);
@@ -833,7 +833,7 @@ _elm_naviframe_item_elm_widget_item_part_content_get(Eo *eo_nit EINA_UNUSED,
    _part_aliasing_eval(&part);
 
    //specified parts
-   if (!part || !strcmp(CONTENT_PART, part))
+   if (!strcmp(part, CONTENT_PART))
      return nit->content;
    else if (!strcmp(part, PREV_BTN_PART))
      return nit->title_prev_btn;
@@ -887,7 +887,7 @@ _elm_naviframe_item_elm_widget_item_part_content_unset(Eo *eo_nit EINA_UNUSED,
    _part_aliasing_eval(&part);
 
    //specified parts
-   if (!part || !strcmp(CONTENT_PART, part))
+   if (!strcmp(part, CONTENT_PART))
      o = _item_content_unset(nit);
    else if (!strcmp(part, PREV_BTN_PART))
      o = _item_title_prev_btn_unset(nit);
