@@ -94,12 +94,11 @@
  *            <ul>
  *              <li>@ref sec_collections_group_parts_description_relatives "Relatives (rel1/rel2)"</li>
  *              <li>@ref sec_collections_group_parts_description_image "Image"</li>
+ *              <li>@ref sec_collections_group_parts_description_proxy "Proxy"</li>
+ *              <li>@ref sec_collections_group_parts_description_fill "Fill"</li>
  *              <ul>
- *                <li>@ref sec_collections_group_parts_description_image_fill "Fill"</li>
- *                <ul>
- *                  <li>@ref sec_collections_group_parts_description_image_fill_origin "Origin"</li>
- *                  <li>@ref sec_collections_group_parts_description_image_fill_size "Size"</li>
- *                </ul>
+ *                <li>@ref sec_collections_group_parts_description_fill_origin "Origin"</li>
+ *                <li>@ref sec_collections_group_parts_description_fill_size "Size"</li>
  *              </ul>
  *              <li>@ref sec_collections_group_parts_description_text "Text"</li>
  *              <li>@ref sec_collections_group_parts_description_box "Box"</li>
@@ -8408,27 +8407,30 @@ st_collections_group_parts_part_description_image_scale_hint(void)
 				      NULL);
 }
 
-/** @edcsubsection{collections_group_parts_description_image_fill,
- *                 Group.Parts.Part.Description.Image.Fill} */
+/** @edcsubsection{collections_group_parts_description_fill,
+ *                 Group.Parts.Part.Description.Fill} */
 
 /**
     @page edcref
     @block
         fill
     @context
-        image {
-            ..
-            fill {
-                type: SCALE;
-                smooth: 0-1;
-                origin { }
-                size { }
+        part { type: IMAGE or PROXY;
+            description {
+                ..
+                fill {
+                    type: SCALE;
+                    smooth: 0-1;
+                    origin { }
+                    size { }
+                }
+                ..
             }
             ..
         }
     @description
-        The fill method is an optional block that defines the way an IMAGE part
-        is going to be displayed inside its container.
+        The fill method is an optional block that defines the way an IMAGE or
+        PROXY part is going to be displayed inside its container.
         It can be used for tiling (repeating the image) or displaying only
         part of an image. See @ref evas_object_image_fill_set() documentation
         for more details.
@@ -8592,8 +8594,8 @@ st_collections_group_parts_part_description_fill_type(void)
                            NULL);
 }
 
-/** @edcsubsection{collections_group_parts_description_image_fill_origin,
- *                 Group.Parts.Part.Description.Image.Fill.Origin} */
+/** @edcsubsection{collections_group_parts_description_fill_origin,
+ *                 Group.Parts.Part.Description.Fill.Origin} */
 
 /**
     @page edcref
@@ -8716,8 +8718,8 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
    fill->pos_abs_y = parse_int(1);
 }
 
-/** @edcsubsection{collections_group_parts_description_image_fill_size,
- *                 Group.Parts.Part.Description.Image.Fill.Size} */
+/** @edcsubsection{collections_group_parts_description_fill_size,
+ *                 Group.Parts.Part.Description.Fill.Size} */
 
 /**
     @page edcref
@@ -9680,6 +9682,51 @@ static void st_collections_group_parts_part_description_table_padding(void)
    ed->table.padding.y = parse_int_range(1, 0, 0x7fffffff);
 }
 
+/**
+   @edcsubsection{collections_group_parts_description_proxy, Proxy}
+ */
+
+/**
+    @page edcref
+
+    @block
+        proxy
+    @context
+        part { type: PROXY;
+            description {
+                ..
+                proxy {
+                    source_clip:    1;
+                    source_visible: 1;
+                }
+                ..
+            }
+        }
+    @description
+        State flags used for proxy objects.
+    @endblock
+
+    @property
+        source_clip
+    @parameters
+        [0 or 1]
+    @effect
+        Sets the 'source_clip' property on this PROXY object. True by default,
+        this means the proxy will be clipped by its source clipper. False
+        means the source clipper is ignored when rendering the proxy.
+    @endproperty
+
+    @property
+        source_visible
+    @parameters
+        [0 or 1]
+    @effect
+        Sets the 'source_visible' property on this PROXY object. True by
+        default, meaning both the proxy and its source object will be visible.
+        If false, the source object will not be visible. False is equivalent
+        to setting the 'no_render' flag on the source object itself.
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_proxy_source_clip(void)
 {
@@ -9696,6 +9743,24 @@ st_collections_group_parts_part_description_proxy_source_clip(void)
 
    ed = (Edje_Part_Description_Proxy*) current_desc;
    ed->proxy.source_clip = parse_bool(0);
+}
+
+static void
+st_collections_group_parts_part_description_proxy_source_visible(void)
+{
+   Edje_Part_Description_Proxy *ed;
+
+   check_arg_count(1);
+
+   if (current_part->type != EDJE_PART_TYPE_PROXY)
+     {
+        ERR("parse error %s:%i. proxy attributes in non-PROXY part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   ed = (Edje_Part_Description_Proxy*) current_desc;
+   ed->proxy.source_visible = parse_bool(0);
 }
 
 /**
@@ -10823,24 +10888,6 @@ st_collections_group_parts_part_description_mesh_geometry(void)
             file_in, line - 1);
         exit(-1);
      }
-}
-
-static void
-st_collections_group_parts_part_description_proxy_source_visible(void)
-{
-   Edje_Part_Description_Proxy *ed;
-
-   check_arg_count(1);
-
-   if (current_part->type != EDJE_PART_TYPE_PROXY)
-     {
-        ERR("parse error %s:%i. proxy attributes in non-PROXY part.",
-            file_in, line - 1);
-        exit(-1);
-     }
-
-   ed = (Edje_Part_Description_Proxy*) current_desc;
-   ed->proxy.source_visible = parse_bool(0);
 }
 
 static void
