@@ -191,7 +191,11 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    if (nw < 1) nw = 1;
    if (nh < 1) nh = 1;
 
+   /* NB: We receive window configure sizes based on xdg surface
+    * window geometry, so we need to subtract framespace here */
+
    evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+
    if (ECORE_EVAS_PORTRAIT(ee))
      {
         nw -= fw;
