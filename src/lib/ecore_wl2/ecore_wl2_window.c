@@ -412,7 +412,7 @@ ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y)
 
    if ((!input) || (!input->wl.seat)) return;
 
-   _ecore_wl2_input_ungrab(input);
+   window->moving = EINA_TRUE;
 
    if (window->xdg_surface)
      xdg_surface_move(window->xdg_surface, input->wl.seat,
@@ -436,8 +436,6 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w, int h, int location)
      }
 
    if ((!input) || (!input->wl.seat)) return;
-
-   _ecore_wl2_input_ungrab(input);
 
    if (window->xdg_surface)
      xdg_surface_resize(window->xdg_surface, input->wl.seat,
@@ -793,43 +791,52 @@ ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
 EAPI void
 ecore_wl2_window_pointer_xy_get(Ecore_Wl2_Window *window, int *x, int *y)
 {
+   Ecore_Wl2_Input *input;
+
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    if (x) *x = 0;
    if (y) *y = 0;
 
-   if (!window->input) return;
+   input = ecore_wl2_window_input_get(window);
+   if (!input) return;
 
-   if (x) *x = window->input->pointer.sx;
-   if (y) *y = window->input->pointer.sy;
+   if (x) *x = input->pointer.sx;
+   if (y) *y = input->pointer.sy;
 }
 
 EAPI void
 ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surface *surface, int hot_x, int hot_y)
 {
+   Ecore_Wl2_Input *input;
+
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   if (!window->input) return;
+   input = ecore_wl2_window_input_get(window);
+   if (!input) return;
 
-   _ecore_wl2_input_cursor_update_stop(window->input);
+   _ecore_wl2_input_cursor_update_stop(input);
 
-   if (window->input->wl.pointer)
-     wl_pointer_set_cursor(window->input->wl.pointer,
-                           window->input->pointer.enter_serial,
+   if (input->wl.pointer)
+     wl_pointer_set_cursor(input->wl.pointer,
+                           input->pointer.enter_serial,
                            surface, hot_x, hot_y);
 }
 
 EAPI void
 ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const char *cursor)
 {
+   Ecore_Wl2_Input *input;
+
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    eina_stringshare_replace(&window->cursor, cursor);
 
-   if (!window->input) return;
+   input = ecore_wl2_window_input_get(window);
+   if (!input) return;
 
-   _ecore_wl2_input_cursor_update_stop(window->input);
-   _ecore_wl2_input_cursor_set(window->input, cursor);
+   _ecore_wl2_input_cursor_update_stop(input);
+   _ecore_wl2_input_cursor_set(input, cursor);
 }
 
 EAPI void

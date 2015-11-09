@@ -125,6 +125,7 @@ struct _Ecore_Wl2_Window
 
    Eina_Inlist *subsurfs;
 
+   Eina_Bool moving : 1;
    Eina_Bool minimized : 1;
    Eina_Bool maximized : 1;
    Eina_Bool fullscreen : 1;
