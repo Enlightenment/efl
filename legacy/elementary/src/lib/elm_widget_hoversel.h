@@ -35,6 +35,7 @@ struct _Elm_Hoversel_Data
    Evas_Object          *spacer;
    Evas_Object          *tbl;
    Evas_Object          *scr;
+   Evas_Object          *bx;
    const char           *last_location;
 
    Eina_List            *items;
