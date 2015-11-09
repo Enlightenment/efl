@@ -1360,14 +1360,15 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 void
 _ecore_x_event_handle_selection_clear(XEvent *xevent)
 {
-//   Ecore_X_Selection_Intern *d;
+   Ecore_X_Selection_Intern *d;
    Ecore_X_Event_Selection_Clear *e;
    Ecore_X_Atom sel;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    _ecore_x_last_event_mouse_move = 0;
-/* errr..... why? paranoia.
    d = _ecore_x_selection_get(xevent->xselectionclear.selection);
+   if (d && (xevent->xselectionclear.time <= d->time)) return;
+/* errr..... why? paranoia.
    if (d && (xevent->xselectionclear.time > d->time))
      {
         _ecore_x_selection_set(None, NULL, 0,
