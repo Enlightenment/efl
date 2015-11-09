@@ -490,6 +490,13 @@ _pointer_cb_enter(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
    input->focus.pointer = window;
 
    _ecore_wl2_input_mouse_in_send(input, window);
+
+   if ((window->moving) && (input->grab.window == window))
+     {
+        _ecore_wl2_input_mouse_up_send(input, window, 0, input->grab.button,
+                                       input->grab.timestamp);
+        window->moving = EINA_FALSE;
+     }
 }
 
 static void
@@ -510,6 +517,9 @@ _pointer_cb_leave(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned i
    /* find the window which this surface belongs to */
    window = _ecore_wl2_display_window_surface_find(input->display, surface);
    if (!window) return;
+
+   /* NB: Don't send a mouse out if we grabbed this window for moving */
+   if ((window->moving) && (input->grab.window == window)) return;
 
    _ecore_wl2_input_mouse_out_send(input, window);
 }
