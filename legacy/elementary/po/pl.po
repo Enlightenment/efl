@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-10-25 11:43+0100\n"
+"POT-Creation-Date: 2015-11-09 11:01+0100\n"
 "PO-Revision-Date: 2013-11-23 14:48+0100\n"
 "Last-Translator: Konrad Makowski <poczta@konradmakowski.pl>\n"
 "Language-Team: General\n"
@@ -37,15 +37,15 @@ msgstr "Anuluj"
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elc_multibuttonentry.c:667
+#: src/lib/elc_multibuttonentry.c:670
 msgid "multi button entry label"
 msgstr "etykietka przycisku wyboru"
 
-#: src/lib/elc_multibuttonentry.c:689
+#: src/lib/elc_multibuttonentry.c:692
 msgid "multi button entry item"
 msgstr "wartość pozycji przycisku wyboru"
 
-#: src/lib/elc_multibuttonentry.c:1560
+#: src/lib/elc_multibuttonentry.c:1565
 msgid "multi button entry"
 msgstr "przycisk wyboru"
 
@@ -77,10 +77,10 @@ msgstr "Bąbelek"
 msgid "Clicked"
 msgstr "Kliknięty"
 
-#: src/lib/elm_button.c:275 src/lib/elm_check.c:244 src/lib/elm_gengrid.c:1255
-#: src/lib/elm_genlist.c:1659 src/lib/elm_list.c:2189 src/lib/elm_radio.c:268
+#: src/lib/elm_button.c:275 src/lib/elm_check.c:244 src/lib/elm_gengrid.c:1257
+#: src/lib/elm_genlist.c:1659 src/lib/elm_list.c:2193 src/lib/elm_radio.c:268
 #: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:902
-#: src/lib/elm_toolbar.c:2246
+#: src/lib/elm_toolbar.c:2250
 msgid "State: Disabled"
 msgstr "Statuj: wyłączony"
 
@@ -217,7 +217,7 @@ msgstr "Wybór"
 msgid "Entry"
 msgstr "Pozycja"
 
-#: src/lib/elm_gengrid.c:1285
+#: src/lib/elm_gengrid.c:1287
 msgid "Gengrid Item"
 msgstr ""
 
@@ -261,7 +261,7 @@ msgstr "pasek postępu"
 msgid "Radio"
 msgstr ""
 
-#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2248
+#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2252
 msgid "State: Selected"
 msgstr "Stan: wybrany"
 
@@ -302,22 +302,22 @@ msgstr "przycisk zmniejszający typu spinner"
 msgid "spinner text"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1706 src/lib/elm_toolbar.c:2305
+#: src/lib/elm_toolbar.c:1710 src/lib/elm_toolbar.c:2309
 msgid "Selected"
 msgstr "Wybrany"
 
-#: src/lib/elm_toolbar.c:2244
+#: src/lib/elm_toolbar.c:2248
 msgid "Separator"
 msgstr "Separator"
 
-#: src/lib/elm_toolbar.c:2250
+#: src/lib/elm_toolbar.c:2254
 msgid "Has menu"
 msgstr "Posiada menu"
 
-#: src/lib/elm_toolbar.c:2300
+#: src/lib/elm_toolbar.c:2304
 msgid "Unselected"
 msgstr "Nie wybrany"
 
-#: src/lib/elm_toolbar.c:2317
+#: src/lib/elm_toolbar.c:2321
 msgid "Toolbar Item"
 msgstr "Pasek narzędzi"
