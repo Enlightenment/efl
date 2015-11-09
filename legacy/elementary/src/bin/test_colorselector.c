@@ -114,25 +114,29 @@ test_colorselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(fr);
 
    cs = elm_colorselector_add(fr);
-   item = elm_colorselector_palette_color_add(cs, 255, 90, 18, 128);
+   item = elm_colorselector_palette_color_add(cs, 0, 0, 0, 255);
    elm_colorselector_palette_item_selected_set(item, EINA_TRUE);
 
-   elm_colorselector_palette_color_add(cs, 255, 213, 0, 255);
-   elm_colorselector_palette_color_add(cs, 146, 255, 11, 255);
-   elm_colorselector_palette_color_add(cs, 9, 186, 10, 255);
-   elm_colorselector_palette_color_add(cs, 86, 201, 242, 255);
-   elm_colorselector_palette_color_add(cs, 18, 83, 128, 255);
-   elm_colorselector_palette_color_add(cs, 140, 53, 238, 255);
-   elm_colorselector_palette_color_add(cs, 255, 145, 145, 255);
-   elm_colorselector_palette_color_add(cs, 255, 59, 119, 255);
-   elm_colorselector_palette_color_add(cs, 133, 100, 69, 255);
-   elm_colorselector_palette_color_add(cs, 255, 255, 119, 255);
-   elm_colorselector_palette_color_add(cs, 133, 100, 255, 255);
+   elm_colorselector_palette_color_add(cs, 255, 255, 255, 255);
+   elm_colorselector_palette_color_add(cs, 255, 0, 0, 255);
+   elm_colorselector_palette_color_add(cs, 0, 255, 0, 255);
+   elm_colorselector_palette_color_add(cs, 0, 0, 255, 255);
+   elm_colorselector_palette_color_add(cs, 255, 255, 0, 255);
+   elm_colorselector_palette_color_add(cs, 0, 255, 255, 255);
+   elm_colorselector_palette_color_add(cs, 255, 0, 255, 255);
+   elm_colorselector_palette_color_add(cs, 192, 192, 192, 255);
+   elm_colorselector_palette_color_add(cs, 128, 128, 128, 255);
+   elm_colorselector_palette_color_add(cs, 128, 0, 0, 255);
+   elm_colorselector_palette_color_add(cs, 128, 128, 0, 255);
+   elm_colorselector_palette_color_add(cs, 0, 128, 0, 255);
+   elm_colorselector_palette_color_add(cs, 128, 0, 128, 255);
+   elm_colorselector_palette_color_add(cs, 0, 128, 128, 255);
+   elm_colorselector_palette_color_add(cs, 0, 100, 128, 255);
 
    item_list = elm_colorselector_palette_items_get(cs);
    last_item_list = eina_list_last(item_list);
    color_item = eina_list_data_get(last_item_list);
-   elm_colorselector_palette_item_color_set(color_item, 255, 0, 0, 255);
+   elm_colorselector_palette_item_color_set(color_item, 0, 0, 128, 255);
 
    a = 180;
    r = 255;

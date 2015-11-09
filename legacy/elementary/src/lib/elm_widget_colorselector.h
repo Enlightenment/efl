@@ -100,6 +100,13 @@ struct _Elm_Color_Item_Data
    Eina_Bool       still_in : 1;
 };
 
+typedef struct _Elm_Color_Name Elm_Color_Name;
+struct _Elm_Color_Name
+{
+   Elm_Color_RGBA color;
+   const char *name;
+};
+
 /**
  * @}
  */
