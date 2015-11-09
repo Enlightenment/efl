@@ -1017,6 +1017,15 @@ _elm_toolbar_item_elm_widget_item_disable(Eo *eo_toolbar, Elm_Toolbar_Item_Data 
    _resize_cb(WIDGET(toolbar_it), NULL, NULL, NULL);
 }
 
+EOLIAN static void
+_elm_toolbar_item_elm_widget_item_signal_emit(Eo *eo_toolbar_it EINA_UNUSED,
+                                              Elm_Toolbar_Item_Data *toolbar_it,
+                                              const char *emission,
+                                              const char *source)
+{
+   elm_layout_signal_emit(VIEW(toolbar_it), emission, source);
+}
+
 static Eina_Bool
 _item_icon_set(Evas_Object *icon_obj,
                const char *type,
