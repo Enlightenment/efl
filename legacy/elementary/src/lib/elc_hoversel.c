@@ -111,7 +111,7 @@ _on_hover_clicked(void *data EINA_UNUSED,
 {
    const char *dismissstr;
 
-   dismissstr = edje_object_data_get(elm_layout_edje_get(obj), "dismiss");
+   dismissstr = elm_layout_data_get(obj, "dismiss");
 
    if (!dismissstr || strcmp(dismissstr, "on"))
      elm_hoversel_hover_end(data); // for backward compatibility
@@ -258,7 +258,7 @@ _resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
    box_w += vw;
    box_h += vh;
 
-   max_size_str = edje_object_data_get(elm_layout_edje_get(sd->hover), "max_size");
+   max_size_str = elm_layout_data_get(sd->hover, "max_size");
    if (max_size_str)
      max_size = (int)(atoi(max_size_str)
                       * elm_config_scale_get()
@@ -350,7 +350,7 @@ _hover_end_finished(void *data,
 
    ELM_HOVERSEL_DATA_GET(data, sd);
 
-   dismissstr = edje_object_data_get(elm_layout_edje_get(sd->hover), "dismiss");
+   dismissstr = elm_layout_data_get(sd->hover, "dismiss");
 
    if (dismissstr && !strcmp(dismissstr, "on"))
      {
@@ -686,7 +686,7 @@ _elm_hoversel_hover_end(Eo *obj, Elm_Hoversel_Data *sd)
 
    if (!sd->hover) return;
 
-   dismissstr = edje_object_data_get(elm_layout_edje_get(sd->hover), "dismiss");
+   dismissstr = elm_layout_data_get(sd->hover, "dismiss");
 
    if (dismissstr && !strcmp(dismissstr, "on"))
      {

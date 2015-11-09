@@ -538,7 +538,7 @@ _hov_hide_cb(void *data,
 {
    const char *dismissstr;
 
-   dismissstr = edje_object_data_get(elm_layout_edje_get(data), "dismiss");
+   dismissstr = elm_layout_data_get(data, "dismiss");
 
    if (dismissstr && !strcmp(dismissstr, "on"))
      {
@@ -555,7 +555,7 @@ _hov_dismiss_cb(void *data,
 {
    const char *dismissstr;
 
-   dismissstr = edje_object_data_get(elm_layout_edje_get(data), "dismiss");
+   dismissstr = elm_layout_data_get(data, "dismiss");
 
    if (dismissstr && !strcmp(dismissstr, "on"))
      {
@@ -658,7 +658,7 @@ _elm_hover_evas_object_smart_hide(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
    // for backward compatibility
-   dismissstr = edje_object_data_get(elm_layout_edje_get(obj), "dismiss");
+   dismissstr = elm_layout_data_get(obj, "dismiss");
 
    if (!dismissstr || strcmp(dismissstr, "on"))
      _hide_signals_emit(obj);
@@ -810,7 +810,7 @@ _elm_hover_dismiss(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
 {
    const char *dismissstr;
 
-   dismissstr = edje_object_data_get(elm_layout_edje_get(obj), "dismiss");
+   dismissstr = elm_layout_data_get(obj, "dismiss");
 
    if (!dismissstr || strcmp(dismissstr, "on"))
      elm_layout_signal_emit(obj, "elm,action,dismiss", ""); // XXX: for compat
