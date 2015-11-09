@@ -342,7 +342,6 @@ emile_cipher_server_listen(Emile_Cipher_Type t)
    int ret;
 
    if (t != EMILE_SSLv23 &&
-       t != EMILE_SSLv3 &&
        t != EMILE_TLSv1)
      return NULL;
 
@@ -382,12 +381,10 @@ emile_cipher_server_connect(Emile_Cipher_Type t)
      {
       case EMILE_SSLv23:
          break;
-      case EMILE_SSLv3:
-         priority = "NORMAL:%VERIFY_ALLOW_X509_V1_CA_CRT:!VERS-TLS1.0:!VERS-TLS1.1:!VERS-TLS1.2";
-         break;
       case EMILE_TLSv1:
          priority = "NORMAL:%VERIFY_ALLOW_X509_V1_CA_CRT:!VERS-SSL3.0";
          break;
+      case EMILE_SSLv3:
       default:
          return NULL;
      }
