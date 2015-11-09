@@ -20,11 +20,105 @@
 # include "config.h"
 #endif
 
+#define DBL_EPSILON 0.0000001
+
 #include <math.h>
 #include <stdio.h>
 
 #include "eina_suite.h"
 #include "Eina.h"
+
+START_TEST(eina_matrix2)
+{
+   Eina_Matrix2 m;
+   Eina_Matrix2 n;
+   double xx, xy, yx, yy;
+
+   eina_init();
+
+   eina_matrix2_values_set(&m,
+                           1, 0,
+                           0, 1);
+   fail_if(eina_matrix2_type_get(&m) != EINA_MATRIX_TYPE_IDENTITY);
+
+   eina_matrix2_inverse(&n, &m);
+   fail_if(eina_matrix2_type_get(&n) != EINA_MATRIX_TYPE_IDENTITY);
+
+   eina_matrix2_values_get(&m,
+                           &xx, &xy,
+                           &yx, &yy);
+
+   fail_if(xx != yy ||
+           yy != 1);
+   fail_if(xy != yx ||
+           xy != 0);
+
+   eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_matrix2_operation)
+{
+   Eina_Matrix2 m1, m2, m3;
+   double xx, xy, yx, yy;
+   double arr[] = {1, 1, 1, 1};
+
+   eina_matrix2_values_set(&m2,
+                           2, 3,
+                           3, 2);
+   eina_matrix2_inverse(&m1, &m2);
+   eina_matrix2_values_get(&m1,
+                           &xx, &xy,
+                           &yx, &yy);
+   fail_if((xx - (-0.4) > DBL_EPSILON) || (xy - 0.6 > DBL_EPSILON) ||
+           (yx - 0.6 > DBL_EPSILON) || (yy - (-0.4) > DBL_EPSILON));
+
+   eina_matrix2_identity(&m1);
+   eina_matrix2_values_get(&m1,
+                           &xx, &xy,
+                           &yx, &yy);
+   fail_if(xx != yy ||
+           yy != 1 ||
+           xy != yx ||
+           xy != 0);
+
+   eina_matrix2_array_set(&m1, &arr);
+   eina_matrix2_values_get(&m1,
+                           &xx, &xy,
+                           &yx, &yy);
+   fail_if(xx != yy ||
+           yx != xy ||
+           xy != 1);
+
+   eina_matrix2_copy(&m2, &m1);
+   eina_matrix2_values_get(&m2,
+                           &xx, &xy,
+                           &yx, &yy);
+   fail_if(xx != yy ||
+           yx != xy ||
+           xy != 1);
+
+   eina_matrix2_values_set(&m1,
+                           2, 3,
+                           3, 2);
+   eina_matrix2_multiply_copy(&m3, &m1, &m2);
+   eina_matrix2_values_get(&m3,
+                           &xx, &xy,
+                           &yx, &yy);
+   fail_if(xx != yy ||
+           yx != xy ||
+           xy != 5);
+
+   eina_matrix2_multiply(&m3, &m1, &m2);
+   eina_matrix2_values_get(&m3,
+                           &xx, &xy,
+                           &yx, &yy);
+   fail_if(xx != yy ||
+           yx != xy ||
+           xy != 5);
+
+}
+END_TEST
 
 START_TEST(eina_matrix4)
 {
@@ -74,6 +168,128 @@ START_TEST(eina_matrix4)
            wz != 0);
 
    eina_shutdown();
+}
+END_TEST
+
+START_TEST(eina_matrix4_operation)
+{
+   double det;
+   double l=5, r=4, b=4, t=3, dn=3, df=2;
+   Eina_Matrix4 m, m1, m2;
+   double xx, xy, xz, xw,
+          yx, yy, yz, yw,
+          zx, zy, zz, zw,
+          wx, wy, wz, ww;
+   const double arr[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+
+   eina_matrix4_values_set(&m,
+                           0, 0, 2, 0,
+                           2, 0, 0, 0,
+                           0, 0, 0, 2,
+                           0, 2, 0, 0);
+   det = eina_matrix4_determinant(&m);
+   fail_if(det != -16);
+
+   eina_matrix4_inverse(&m1, &m);
+   eina_matrix4_values_get(&m1,
+                           &xx, &xy, &xz, &xw,
+                           &yx, &yy, &yz, &yw,
+                           &zx, &zy, &zz, &zw,
+                           &wx, &wy, &wz, &ww);
+   fail_if (xy != 0.5 ||
+            yw != xy ||
+            zx != yw ||
+            wz != zx);
+
+   eina_matrix4_identity(&m1);
+   eina_matrix4_values_get(&m1,
+                           &xx, &xy, &xz, &xw,
+                           &yx, &yy, &yz, &yw,
+                           &zx, &zy, &zz, &zw,
+                           &wx, &wy, &wz, &ww);
+   fail_if (xx != 1 ||
+            yy != xx ||
+            zz != yy ||
+            ww != zz);
+
+   eina_matrix4_values_set(&m1,
+                           0, 2, 2, 0,
+                           2, 0, 0, 2,
+                           2, 0, 0, 2,
+                           0, 2, 2, 0);
+   eina_matrix4_multiply_copy(&m2, &m1, &m);
+   eina_matrix4_values_get(&m2,
+                           &xx, &xy, &xz, &xw,
+                           &yx, &yy, &yz, &yw,
+                           &zx, &zy, &zz, &zw,
+                           &wx, &wy, &wz, &ww);
+   fail_if (xx != 4 ||
+            xw != xx ||
+            yy != xw ||
+            yz != yy ||
+            zy != yz ||
+            zz != yy ||
+            wx != xx ||
+            ww != zy);
+
+   eina_matrix4_multiply(&m2, &m1, &m);
+   eina_matrix4_values_get(&m2,
+                           &xx, &xy, &xz, &xw,
+                           &yx, &yy, &yz, &yw,
+                           &zx, &zy, &zz, &zw,
+                           &wx, &wy, &wz, &ww);
+   fail_if (xx != 4 ||
+            xw != xx ||
+            yy != xw ||
+            yz != yy ||
+            zy != yz ||
+            zz != yy ||
+            wx != xx ||
+            ww != zy);
+
+   eina_matrix4_array_set(&m1, &arr);
+   eina_matrix4_values_get(&m1,
+                           &xx, &xy, &xz, &xw,
+                           &yx, &yy, &yz, &yw,
+                           &zx, &zy, &zz, &zw,
+                           &wx, &wy, &wz, &ww);
+   fail_if (xx != 1 ||
+            xw != xx ||
+            yy != xw ||
+            yz != yy ||
+            zy != yz ||
+            zz != yy ||
+            wx != xx ||
+            ww != zy);
+
+   eina_matrix4_copy(&m, &m1);
+   eina_matrix4_values_get(&m1,
+                           &xx, &xy, &xz, &xw,
+                           &yx, &yy, &yz, &yw,
+                           &zx, &zy, &zz, &zw,
+                           &wx, &wy, &wz, &ww);
+   fail_if (xx != 1 ||
+            xw != xx ||
+            yy != xw ||
+            yz != yy ||
+            zy != yz ||
+            zz != yy ||
+            wx != xx ||
+            ww != zy);
+
+   eina_matrix4_ortho_set(&m, l, r, b, t, dn, df);
+   eina_matrix4_values_get(&m,
+                           &xx, &xy, &xz, &xw,
+                           &yx, &yy, &yz, &yw,
+                           &zx, &zy, &zz, &zw,
+                           &wx, &wy, &wz, &ww);
+   fail_if (xx != -2 ||
+            yy != -2 ||
+            zz != 2 ||
+            wx != 9 ||
+            wy != 7 ||
+            wz != 5 ||
+            ww != 1);
 }
 END_TEST
 
@@ -155,6 +371,7 @@ START_TEST(eina_matrix3_operations)
           yx, yy, yz,
           zx, zy, zz;
    double tx = 20, ty = 30, ret;
+   const double arr[] = {1, 1, 1, 1, 1, 1, 1, 1, 1};
 
    eina_matrix3_values_set(&m1,
                            1, 0, 0,
@@ -305,6 +522,68 @@ START_TEST(eina_matrix3_operations)
    fail_if (xx != 24 || xy != -12 || xz != -2 ||
             yx != 5 || yy != 3 || yz != -5 ||
             zx != -4 || zy != 2 || zz != 4);
+
+   eina_matrix3_values_set(&m2,
+                           2, 2, 2,
+                           1, 1, 1,
+                           3, 3, 3);
+   eina_matrix3_values_set(&m3,
+                           3, 3, 3,
+                           2, 2, 2,
+                           1, 1, 1);
+   eina_matrix3_multiply_copy(&m1, &m2, &m3);
+   eina_matrix3_values_get(&m1,
+                           &xx, &xy, &xz,
+                           &yx, &yy, &yz,
+                           &zx, &zy, &zz);
+   fail_if (xx != 12 || xy != 12 || xz != 12 ||
+            yx != 6 || yy != 6 || yz != 6 ||
+            zx != 18 || zy != 18 || zz != 18);
+
+   eina_matrix3_values_set(&m2,
+                           2, 2, 2,
+                           1, 1, 1,
+                           0, 0, 0);
+   eina_matrix3_multiply(&m1, &m2, &m3);
+   eina_matrix3_values_get(&m1,
+                           &xx, &xy, &xz,
+                           &yx, &yy, &yz,
+                           &zx, &zy, &zz);
+   fail_if (xx != 12 || xy != 12 || xz != 12 ||
+            yx != 6 || yy != 6 || yz != 6 ||
+            zx != 0 || zy != 0 || zz != 0);
+
+   eina_matrix3_copy(&m1, &m2);
+   eina_matrix3_values_get(&m1,
+                           &xx, &xy, &xz,
+                           &yx, &yy, &yz,
+                           &zx, &zy, &zz);
+   fail_if (xx != 2 || xy != 2 || xz != 2 ||
+            yx != 1 || yy != 1 || yz != 1 ||
+            zx != 0 || zy != 0 || zz != 0);
+
+   eina_matrix3_array_set(&m1, &arr);
+   eina_matrix3_values_get(&m1,
+                           &xx, &xy, &xz,
+                           &yx, &yy, &yz,
+                           &zx, &zy, &zz);
+   fail_if (xx != 1 || xy != 1 || xz != 1 ||
+            yx != 1 || yy != 1 || yz != 1 ||
+            zx != 1 || zy != 1 || zz != 1);
+
+   eina_matrix3_position_transform_set(&m3, 5, 3);
+   eina_matrix3_values_get(&m3,
+                           &xx, &xy, &xz,
+                           &yx, &yy, &yz,
+                           &zx, &zy, &zz);
+   fail_if (xz != 5 || yz != 3);
+
+   eina_matrix3_scale_transform_set(&m2, 6, 7);
+   eina_matrix3_values_get(&m2,
+                           &xx, &xy, &xz,
+                           &yx, &yy, &yz,
+                           &zx, &zy, &zz);
+   fail_if (xx != 6 || yy != 7);
 }
 END_TEST
 
@@ -427,7 +706,10 @@ END_TEST
 void
 eina_test_matrix(TCase *tc)
 {
+   tcase_add_test(tc, eina_matrix2);
+   tcase_add_test(tc, eina_matrix2_operation);
    tcase_add_test(tc, eina_matrix4);
+   tcase_add_test(tc, eina_matrix4_operation);
    tcase_add_test(tc, eina_matrix4_2_3);
    tcase_add_test(tc, eina_matrix3);
    tcase_add_test(tc, eina_matrix3_operations);

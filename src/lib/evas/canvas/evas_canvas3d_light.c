@@ -259,7 +259,7 @@ EOLIAN static void
 _evas_canvas3d_light_projection_matrix_set(Eo *obj, Evas_Canvas3D_Light_Data *pd,
                                          const Evas_Real *matrix)
 {
-   evas_mat4_array_set(&pd->projection, matrix);
+   eina_matrix4_array_set(&pd->projection, matrix);
    eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_LIGHT_PROJECTION, NULL));
 }
 
@@ -268,7 +268,7 @@ _evas_canvas3d_light_projection_matrix_get(const Eo *obj EINA_UNUSED,
                                          Evas_Canvas3D_Light_Data *pd,
                                          Evas_Real *matrix)
 {
-   memcpy(matrix, &pd->projection.m[0], sizeof(Evas_Real) * 16);
+   memcpy(matrix, &pd->projection.xx, sizeof(Evas_Real) * 16);
 }
 
 EOLIAN static void
@@ -302,7 +302,7 @@ _evas_canvas3d_light_projection_ortho_set(Eo *obj, Evas_Canvas3D_Light_Data *pd,
                                         Evas_Real bottom, Evas_Real top,
                                         Evas_Real dnear, Evas_Real dfar)
 {
-   evas_mat4_ortho_set(&pd->projection, left, right, bottom, top, dnear, dfar);
+   eina_matrix4_ortho_set(&pd->projection, left, right, bottom, top, dnear, dfar);
    eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_LIGHT_PROJECTION, NULL));
 }
 

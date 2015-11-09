@@ -373,6 +373,35 @@ _program_uniform_init(E3D_Program *program)
      }
 }
 
+#define UNIFORM_MATRIX3_FOREACH(m, data)     \
+        m[0] = data.xx;                      \
+        m[1] = data.xy;                      \
+        m[2] = data.xz;                      \
+        m[3] = data.yx;                      \
+        m[4] = data.yy;                      \
+        m[5] = data.yz;                      \
+        m[6] = data.zx;                      \
+        m[7] = data.zy;                      \
+        m[8] = data.zz;
+
+#define UNIFORM_MATRIX4_FOREACH(m, data)     \
+        m[0] = data.xx;                      \
+        m[1] = data.xy;                      \
+        m[2] = data.xz;                      \
+        m[3] = data.xw;                      \
+        m[4] = data.yx;                      \
+        m[5] = data.yy;                      \
+        m[6] = data.yz;                      \
+        m[7] = data.yw;                      \
+        m[8] = data.zx;                      \
+        m[9] = data.zy;                      \
+        m[10] = data.zz;                     \
+        m[11] = data.zw;                     \
+        m[12] = data.wx;                     \
+        m[13] = data.wy;                     \
+        m[14] = data.wz;                     \
+        m[15] = data.ww;
+
 static inline void
 _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
 {
@@ -380,8 +409,7 @@ _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
    if (data->materials[attrib].tex##tn)                                        \
      {                                                                         \
         float   m[9];                                                          \
-        for(int i = 0 ; i < 9 ; i++)                                           \
-          m[i] = data->materials[attrib].tex##tn->trans.m[i];                  \
+        UNIFORM_MATRIX3_FOREACH(m, data->materials[attrib].tex##tn->trans);    \
         glUniformMatrix3fv(loc, 1, EINA_FALSE, &m[0]);                         \
      }
 
@@ -389,29 +417,25 @@ _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
      {
       case E3D_UNIFORM_MATRIX_MVP: {
          float   m[16];
-         for(int i = 0 ; i <16 ; i++)
-            m[i] = data->matrix_mvp.m[i];
+         UNIFORM_MATRIX4_FOREACH(m, data->matrix_mvp);
          glUniformMatrix4fv(loc, 1, EINA_FALSE, &m[0]);
          break;
       }
       case E3D_UNIFORM_MATRIX_MV: {
          float   m[16];
-         for(int i = 0 ; i <16 ; i++)
-            m[i] = data->matrix_mv.m[i];
+         UNIFORM_MATRIX4_FOREACH(m, data->matrix_mv);
          glUniformMatrix4fv(loc, 1, EINA_FALSE, &m[0]);
          break;
       }
       case E3D_UNIFORM_MATRIX_NORMAL: {
          float   m[9];
-         for(int i = 0 ; i <9 ; i++)
-            m[i] = data->matrix_normal.m[i];
+         UNIFORM_MATRIX3_FOREACH(m, data->matrix_normal);
          glUniformMatrix3fv(loc, 1, EINA_FALSE, &m[0]);
          break;
       }
       case E3D_UNIFORM_MATRIX_LIGHT: {
          float   m[16];
-         for(int i = 0 ; i <16 ; i++)
-            m[i] = data->matrix_light.m[i];
+         UNIFORM_MATRIX4_FOREACH(m, data->matrix_light);
          glUniformMatrix4fv(loc, 1, EINA_FALSE, &m[0]);
          break;
       }

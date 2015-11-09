@@ -109,7 +109,7 @@ EOLIAN static void
 _evas_canvas3d_camera_projection_matrix_set(Eo *obj, Evas_Canvas3D_Camera_Data *pd,
                                          const Evas_Real *matrix)
 {
-   evas_mat4_array_set(&pd->projection, matrix);
+   eina_matrix4_array_set(&pd->projection, matrix);
    eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_CAMERA_PROJECTION, NULL));
 }
 
@@ -118,7 +118,7 @@ _evas_canvas3d_camera_projection_matrix_get(const Eo *obj EINA_UNUSED,
                                          Evas_Canvas3D_Camera_Data *pd,
                                          Evas_Real *matrix)
 {
-   memcpy(matrix, &pd->projection.m[0], sizeof(Evas_Real) * 16);
+   memcpy(matrix, &pd->projection.xx, sizeof(Evas_Real) * 16);
 }
 
 EOLIAN static void
@@ -152,15 +152,15 @@ _evas_canvas3d_camera_projection_ortho_set(Eo *obj, Evas_Canvas3D_Camera_Data *p
                                         Evas_Real bottom, Evas_Real top,
                                         Evas_Real dnear, Evas_Real dfar)
 {
-   evas_mat4_ortho_set(&pd->projection, left, right, bottom, top, dnear, dfar);
+   eina_matrix4_ortho_set(&pd->projection, left, right, bottom, top, dnear, dfar);
    eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_CAMERA_PROJECTION, NULL));
 }
 
 EOLIAN static Eina_Bool
 _evas_canvas3d_camera_node_visible_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Camera_Data *pd, Evas_Canvas3D_Node *camera_node, Evas_Canvas3D_Node *node, Evas_Canvas3D_Frustum_Mode key)
 {
-   Evas_Mat4 matrix_vp;
-   Evas_Vec4 planes[6];
+   Eina_Matrix4 matrix_vp;
+   Eina_Quaternion planes[6];
    Evas_Canvas3D_Node_Data *pd_node = eo_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
    Evas_Canvas3D_Node_Data *pd_camera = eo_data_scope_get(camera_node, EVAS_CANVAS3D_NODE_CLASS);
    Evas_Vec3 central_point;
@@ -178,7 +178,7 @@ _evas_canvas3d_camera_node_visible_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Camera
      }
 
    /*get need matrix like multiply projection matrix with view matrix*/
-   evas_mat4_multiply(&matrix_vp, &pd->projection, &pd_camera->data.camera.matrix_world_to_eye);
+   eina_matrix4_multiply(&matrix_vp, &pd->projection, &pd_camera->data.camera.matrix_world_to_eye);
 
    evas_frustum_calculate(planes, &matrix_vp);
 

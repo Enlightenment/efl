@@ -16,9 +16,6 @@ typedef struct _Evas_Color Evas_Color;
 typedef struct _Evas_Vec2 Evas_Vec2;
 typedef struct _Evas_Vec3 Evas_Vec3;
 typedef struct _Evas_Vec4 Evas_Vec4;
-typedef struct _Evas_Mat2 Evas_Mat2;
-typedef struct _Evas_Mat3 Evas_Mat3;
-typedef struct _Evas_Mat4 Evas_Mat4;
 typedef struct _Evas_Box2 Evas_Box2;
 typedef struct _Evas_Box3 Evas_Box3;
 typedef struct _Evas_Line3 Evas_Line3;
@@ -53,24 +50,6 @@ struct _Evas_Vec4
    Evas_Real   y;
    Evas_Real   z;
    Evas_Real   w;
-};
-
-struct _Evas_Mat2
-{
-   Evas_Real   m[4];
-   int         flags;
-};
-
-struct _Evas_Mat3
-{
-   Evas_Real   m[9];
-   int         flags;
-};
-
-struct _Evas_Mat4
-{
-   Evas_Real   m[16];
-   int         flags;
 };
 
 struct _Evas_Box2
@@ -204,34 +183,34 @@ evas_vec2_normalize(Evas_Vec2 *out, const Evas_Vec2 *v)
 }
 
 static inline void
-evas_vec2_transform(Evas_Vec2 *out, const Evas_Mat2 *m, const Evas_Vec2 *v)
+evas_vec2_transform(Evas_Vec2 *out, const Eina_Matrix2 *m, const Evas_Vec2 *v)
 {
    Evas_Vec2 tmp;
 
-   tmp.x = (m->m[0] * v->x) + (m->m[2] * v->y);
-   tmp.y = (m->m[1] * v->x) + (m->m[3] * v->y);
+   tmp.x = (m->xx * v->x) + (m->yx * v->y);
+   tmp.y = (m->xy * v->x) + (m->yy * v->y);
 
    evas_vec2_copy(out, &tmp);
 }
 
 static inline void
-evas_vec2_homogeneous_position_transform(Evas_Vec2 *out, const Evas_Mat3 *m, const Evas_Vec2 *v)
+evas_vec2_homogeneous_position_transform(Evas_Vec2 *out, const Eina_Matrix3 *m, const Evas_Vec2 *v)
 {
    Evas_Vec2 tmp;
 
-   tmp.x = (m->m[0] * v->x) + (m->m[3] * v->y) + m->m[6];
-   tmp.y = (m->m[1] * v->x) + (m->m[4] * v->y) + m->m[7];
+   tmp.x = (m->xx * v->x) + (m->yx * v->y) + m->zx;
+   tmp.y = (m->xy * v->x) + (m->yy * v->y) + m->zy;
 
-   evas_vec2_scale(out, &tmp, 1.0 / ((m->m[2] * v->x) + (m->m[5] * v->y) + m->m[8]));
+   evas_vec2_scale(out, &tmp, 1.0 / ((m->xz * v->x) + (m->yz * v->y) + m->zz));
 }
 
 static inline void
-evas_vec2_homogeneous_direction_transform(Evas_Vec2 *out, const Evas_Mat3 *m, const Evas_Vec2 *v)
+evas_vec2_homogeneous_direction_transform(Evas_Vec2 *out, const Eina_Matrix3 *m, const Evas_Vec2 *v)
 {
    Evas_Vec2 tmp;
 
-   tmp.x = (m->m[0] * v->x) + (m->m[3] * v->y);
-   tmp.y = (m->m[1] * v->x) + (m->m[4] * v->y);
+   tmp.x = (m->xx * v->x) + (m->yx * v->y);
+   tmp.y = (m->xy * v->x) + (m->yy * v->y);
 
    evas_vec2_copy(out, &tmp);
 }
@@ -366,56 +345,56 @@ evas_vec3_normalize(Evas_Vec3 *out, const Evas_Vec3 *v)
 }
 
 static inline void
-evas_vec3_transform(Evas_Vec3 *out, const Evas_Vec3 *v,  const Evas_Mat3 *m)
+evas_vec3_transform(Evas_Vec3 *out, const Evas_Vec3 *v,  const Eina_Matrix3 *m)
 {
    Evas_Vec3 tmp;
 
-   if (m->flags & EVAS_MATRIX_IS_IDENTITY)
+   if (eina_matrix3_type_get(m) & EINA_MATRIX_TYPE_IDENTITY)
      {
         evas_vec3_copy(out, v);
         return;
      }
 
-   tmp.x = (m->m[0] * v->x) + (m->m[3] * v->y) + (m->m[6] * v->z);
-   tmp.y = (m->m[1] * v->x) + (m->m[4] * v->y) + (m->m[7] * v->z);
-   tmp.z = (m->m[2] * v->x) + (m->m[5] * v->y) + (m->m[8] * v->z);
+   tmp.x = (m->xx * v->x) + (m->yx * v->y) + (m->zx * v->z);
+   tmp.y = (m->xy * v->x) + (m->yy * v->y) + (m->zy * v->z);
+   tmp.z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z);
 
    evas_vec3_copy(out, &tmp);
 }
 
 static inline void
-evas_vec3_homogeneous_position_transform(Evas_Vec3 *out, const Evas_Vec3 *v, const Evas_Mat4 *m)
+evas_vec3_homogeneous_position_transform(Evas_Vec3 *out, const Evas_Vec3 *v, const Eina_Matrix4 *m)
 {
    Evas_Vec3 tmp;
 
-   if (m->flags & EVAS_MATRIX_IS_IDENTITY)
+   if (eina_matrix4_type_get(m) & EINA_MATRIX_TYPE_IDENTITY)
      {
         evas_vec3_copy(out, v);
         return;
      }
 
-   tmp.x = (m->m[0] * v->x) + (m->m[4] * v->y) + (m->m[8]  * v->z) + m->m[12];
-   tmp.y = (m->m[1] * v->x) + (m->m[5] * v->y) + (m->m[9]  * v->z) + m->m[13];
-   tmp.z = (m->m[2] * v->x) + (m->m[6] * v->y) + (m->m[10] * v->z) + m->m[14];
+   tmp.x = (m->xx * v->x) + (m->zw * v->y) + (m->zx  * v->z) + m->wx;
+   tmp.y = (m->xy * v->x) + (m->yx * v->y) + (m->zy  * v->z) + m->wy;
+   tmp.z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z) + m->wz;
 
    evas_vec3_scale(out, &tmp,
-                   1.0 / ((m->m[3] * v->x) + (m->m[7] * v->y) + (m->m[11] * v->z) + m->m[15]));
+                   1.0 / ((m->xw * v->x) + (m->yw * v->y) + (m->zw * v->z) + m->ww));
 }
 
 static inline void
-evas_vec3_homogeneous_direction_transform(Evas_Vec3 *out, const Evas_Vec3 *v, const Evas_Mat4 *m)
+evas_vec3_homogeneous_direction_transform(Evas_Vec3 *out, const Evas_Vec3 *v, const Eina_Matrix4 *m)
 {
    Evas_Vec3 tmp;
 
-   if (m->flags & EVAS_MATRIX_IS_IDENTITY)
+   if (eina_matrix4_type_get(m) & EINA_MATRIX_TYPE_IDENTITY)
      {
         evas_vec3_copy(out, v);
         return;
      }
 
-   tmp.x = (m->m[0] * v->x) + (m->m[4] * v->y) + (m->m[8]  * v->z);
-   tmp.y = (m->m[1] * v->x) + (m->m[5] * v->y) + (m->m[9]  * v->z);
-   tmp.z = (m->m[2] * v->x) + (m->m[6] * v->y) + (m->m[10] * v->z);
+   tmp.x = (m->xx * v->x) + (m->zw * v->y) + (m->zx  * v->z);
+   tmp.y = (m->xy * v->x) + (m->yx * v->y) + (m->zy  * v->z);
+   tmp.z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z);
 
    evas_vec3_copy(out, &tmp);
 }
@@ -581,20 +560,20 @@ evas_vec4_normalize(Evas_Vec4 *out, const Evas_Vec4 *v)
 }
 
 static inline void
-evas_vec4_transform(Evas_Vec4 *out, const Evas_Vec4 *v, const Evas_Mat4 *m)
+evas_vec4_transform(Evas_Vec4 *out, const Evas_Vec4 *v, const Eina_Matrix4 *m)
 {
    Evas_Vec4 tmp;
 
-   if (m->flags & EVAS_MATRIX_IS_IDENTITY)
+   if (eina_matrix4_type_get(m) & EINA_MATRIX_TYPE_IDENTITY)
      {
         evas_vec4_copy(out, v);
         return;
      }
 
-   tmp.x = (m->m[0] * v->x) + (m->m[4] * v->y) + (m->m[ 8] * v->z) + (m->m[12] * v->w);
-   tmp.y = (m->m[1] * v->x) + (m->m[5] * v->y) + (m->m[ 9] * v->z) + (m->m[13] * v->w);
-   tmp.z = (m->m[2] * v->x) + (m->m[6] * v->y) + (m->m[10] * v->z) + (m->m[14] * v->w);
-   tmp.w = (m->m[3] * v->x) + (m->m[7] * v->y) + (m->m[11] * v->z) + (m->m[15] * v->w);
+   tmp.x = (m->xx * v->x) + (m->yx * v->y) + (m->zx * v->z) + (m->wx * v->w);
+   tmp.y = (m->xy * v->x) + (m->yy * v->y) + (m->zy * v->z) + (m->wy * v->w);
+   tmp.z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z) + (m->wz * v->w);
+   tmp.w = (m->xw * v->x) + (m->yw * v->y) + (m->zw * v->z) + (m->ww * v->w);
 
    evas_vec4_copy(out, &tmp);
 }
@@ -745,108 +724,8 @@ evas_vec4_homogeneous_direction_set(Evas_Vec4 *out, const Evas_Vec3 *v)
    out->w = 0.0;
 }
 
-/* 4x4 matrix */
 static inline void
-evas_mat4_identity_set(Evas_Mat4 *m)
-{
-   m->m[0]  = 1.0;
-   m->m[1]  = 0.0;
-   m->m[2]  = 0.0;
-   m->m[3]  = 0.0;
-
-   m->m[4]  = 0.0;
-   m->m[5]  = 1.0;
-   m->m[6]  = 0.0;
-   m->m[7]  = 0.0;
-
-   m->m[8]  = 0.0;
-   m->m[9]  = 0.0;
-   m->m[10] = 1.0;
-   m->m[11] = 0.0;
-
-   m->m[12] = 0.0;
-   m->m[13] = 0.0;
-   m->m[14] = 0.0;
-   m->m[15] = 1.0;
-
-   m->flags = EVAS_MATRIX_IS_IDENTITY;
-}
-
-static inline void
-evas_mat4_array_set(Evas_Mat4 *m, const Evas_Real *v)
-{
-   memcpy(&m->m[0], v, sizeof(Evas_Real) * 16);
-   m->flags = 0;
-}
-
-static inline void
-evas_mat4_copy(Evas_Mat4 *dst, const Evas_Mat4 *src)
-{
-   memcpy(dst, src, sizeof(Evas_Mat4));
-}
-
-static inline void
-evas_mat4_nocheck_multiply(Evas_Mat4 *out, const Evas_Mat4 *mat_a,
-                           const Evas_Mat4 *mat_b)
-{
-   Evas_Real *d = out->m;
-   const Evas_Real *a = mat_a->m;
-   const Evas_Real *b = mat_b->m;
-
-   if (mat_a->flags & EVAS_MATRIX_IS_IDENTITY)
-     {
-        evas_mat4_copy(out, mat_b);
-        return;
-     }
-
-   if (mat_b->flags & EVAS_MATRIX_IS_IDENTITY)
-     {
-        evas_mat4_copy(out, mat_a);
-        return;
-     }
-
-   d[ 0] = a[ 0] * b[ 0] + a[ 4] * b[ 1] + a[ 8] * b[ 2] + a[12] * b [3];
-   d[ 4] = a[ 0] * b[ 4] + a[ 4] * b[ 5] + a[ 8] * b[ 6] + a[12] * b [7];
-   d[ 8] = a[ 0] * b[ 8] + a[ 4] * b[ 9] + a[ 8] * b[10] + a[12] * b[11];
-   d[12] = a[ 0] * b[12] + a[ 4] * b[13] + a[ 8] * b[14] + a[12] * b[15];
-
-   d[ 1] = a[ 1] * b[ 0] + a[ 5] * b[ 1] + a[ 9] * b[ 2] + a[13] * b [3];
-   d[ 5] = a[ 1] * b[ 4] + a[ 5] * b[ 5] + a[ 9] * b[ 6] + a[13] * b [7];
-   d[ 9] = a[ 1] * b[ 8] + a[ 5] * b[ 9] + a[ 9] * b[10] + a[13] * b[11];
-   d[13] = a[ 1] * b[12] + a[ 5] * b[13] + a[ 9] * b[14] + a[13] * b[15];
-
-   d[ 2] = a[ 2] * b[ 0] + a[ 6] * b[ 1] + a[10] * b[ 2] + a[14] * b [3];
-   d[ 6] = a[ 2] * b[ 4] + a[ 6] * b[ 5] + a[10] * b[ 6] + a[14] * b [7];
-   d[10] = a[ 2] * b[ 8] + a[ 6] * b[ 9] + a[10] * b[10] + a[14] * b[11];
-   d[14] = a[ 2] * b[12] + a[ 6] * b[13] + a[10] * b[14] + a[14] * b[15];
-
-   d[ 3] = a[ 3] * b[ 0] + a[ 7] * b[ 1] + a[11] * b[ 2] + a[15] * b [3];
-   d[ 7] = a[ 3] * b[ 4] + a[ 7] * b[ 5] + a[11] * b[ 6] + a[15] * b [7];
-   d[11] = a[ 3] * b[ 8] + a[ 7] * b[ 9] + a[11] * b[10] + a[15] * b[11];
-   d[15] = a[ 3] * b[12] + a[ 7] * b[13] + a[11] * b[14] + a[15] * b[15];
-
-   out->flags = 0;
-}
-
-static inline void
-evas_mat4_multiply(Evas_Mat4 *out, const Evas_Mat4 *mat_a,
-                   const Evas_Mat4 *mat_b)
-{
-   if (out != mat_a && out != mat_b)
-     {
-        evas_mat4_nocheck_multiply(out, mat_a, mat_b);
-     }
-   else
-     {
-        Evas_Mat4 result;
-
-        evas_mat4_nocheck_multiply(&result, mat_a, mat_b);
-        evas_mat4_copy(out, &result);
-     }
-}
-
-static inline void
-evas_mat4_look_at_set(Evas_Mat4 *m,
+evas_mat4_look_at_set(Eina_Matrix4 *m,
                       const Evas_Vec3 *pos, const Evas_Vec3 *center, const Evas_Vec3 *up)
 {
    Evas_Vec3 x, y, z;
@@ -860,31 +739,29 @@ evas_mat4_look_at_set(Evas_Mat4 *m,
    evas_vec3_cross_product(&y, &z, &x);
    evas_vec3_normalize(&y, &y);
 
-   m->m[ 0] = x.x;
-   m->m[ 1] = y.x;
-   m->m[ 2] = z.x;
-   m->m[ 3] = 0.0;
+   m->xx = x.x;
+   m->xy = y.x;
+   m->xz = z.x;
+   m->xw = 0.0;
 
-   m->m[ 4] = x.y;
-   m->m[ 5] = y.y;
-   m->m[ 6] = z.y;
-   m->m[ 7] = 0.0;
+   m->yx = x.y;
+   m->yy = y.y;
+   m->yz = z.y;
+   m->yw = 0.0;
 
-   m->m[ 8] = x.z;
-   m->m[ 9] = y.z;
-   m->m[10] = z.z;
-   m->m[11] = 0.0;
+   m->zx = x.z;
+   m->zy = y.z;
+   m->zz = z.z;
+   m->zw = 0.0;
 
-   m->m[12] = -evas_vec3_dot_product(&x, pos);
-   m->m[13] = -evas_vec3_dot_product(&y, pos);
-   m->m[14] = -evas_vec3_dot_product(&z, pos);
-   m->m[15] = 1.0;
-
-   m->flags = 0;
+   m->wx = -evas_vec3_dot_product(&x, pos);
+   m->wy = -evas_vec3_dot_product(&y, pos);
+   m->wz = -evas_vec3_dot_product(&z, pos);
+   m->ww = 1.0;
 }
 
 static inline void
-evas_mat4_frustum_set(Evas_Mat4 *m,
+evas_mat4_frustum_set(Eina_Matrix4 *m,
                       Evas_Real left, Evas_Real right, Evas_Real bottom, Evas_Real top,
                       Evas_Real dnear, Evas_Real dfar)
 {
@@ -893,534 +770,25 @@ evas_mat4_frustum_set(Evas_Mat4 *m,
    Evas_Real   depth = dnear - dfar;
    Evas_Real   near_2 = 2.0f * dnear;
 
-   m->m[ 0] = near_2 / w;
-   m->m[ 1] = 0.0f;
-   m->m[ 2] = 0.0f;
-   m->m[ 3] = 0.0f;
-
-   m->m[ 4] = 0.0f;
-   m->m[ 5] = near_2 / h;
-   m->m[ 6] = 0.0f;
-   m->m[ 7] = 0.0f;
-
-   m->m[ 8] = (right + left) / w;
-   m->m[ 9] = (top + bottom) / h;
-   m->m[10] = (dfar + dnear) / depth;
-   m->m[11] = -1.0f;
-
-   m->m[12] = 0.0f;
-   m->m[13] = 0.0f;
-   m->m[14] = near_2 * dfar / depth;
-   m->m[15] = 0.0f;
-
-   m->flags = 0;
-}
-
-static inline void
-evas_mat4_ortho_set(Evas_Mat4 *m,
-                    Evas_Real left, Evas_Real right, Evas_Real bottom, Evas_Real top,
-                    Evas_Real dnear, Evas_Real dfar)
-{
-   Evas_Real   w = right - left;
-   Evas_Real   h = top - bottom;
-   Evas_Real   depth = dnear - dfar;
-
-   m->m[ 0] = 2.0f / w;
-   m->m[ 1] = 0.0f;
-   m->m[ 2] = 0.0f;
-   m->m[ 3] = 0.0f;
-
-   m->m[ 4] = 0.0f;
-   m->m[ 5] = 2.0f / h;
-   m->m[ 6] = 0.0f;
-   m->m[ 7] = 0.0f;
-
-   m->m[ 8] = 0.0f;
-   m->m[ 9] = 0.0f;
-   m->m[10] = 2.0f / depth;
-   m->m[11] = 0.0f;
-
-   m->m[12] = -(right + left) / w;
-   m->m[13] = -(top + bottom) / h;
-   m->m[14] = (dfar + dnear) / depth;
-   m->m[15] = 1.0f;
-
-   m->flags = 0;
-}
-
-static inline void
-evas_mat4_nocheck_inverse(Evas_Mat4 *out, const Evas_Mat4 *mat)
-{
-   Evas_Real *d = out->m;
-   const Evas_Real *m = mat->m;
-   Evas_Real det;
-
-   if (mat->flags & EVAS_MATRIX_IS_IDENTITY)
-     {
-        evas_mat4_copy(out, mat);
-        return;
-     }
-
-   d[ 0] =  m[ 5] * m[10] * m[15] -
-            m[ 5] * m[11] * m[14] -
-            m[ 9] * m[ 6] * m[15] +
-            m[ 9] * m[ 7] * m[14] +
-            m[13] * m[ 6] * m[11] -
-            m[13] * m[ 7] * m[10];
-
-   d[ 4] = -m[ 4] * m[10] * m[15] +
-            m[ 4] * m[11] * m[14] +
-            m[ 8] * m[ 6] * m[15] -
-            m[ 8] * m[ 7] * m[14] -
-            m[12] * m[ 6] * m[11] +
-            m[12] * m[ 7] * m[10];
-
-   d[ 8] =  m[ 4] * m[ 9] * m[15] -
-            m[ 4] * m[11] * m[13] -
-            m[ 8] * m[ 5] * m[15] +
-            m[ 8] * m[ 7] * m[13] +
-            m[12] * m[ 5] * m[11] -
-            m[12] * m[ 7] * m[ 9];
-
-   d[12] = -m[ 4] * m[ 9] * m[14] +
-            m[ 4] * m[10] * m[13] +
-            m[ 8] * m[ 5] * m[14] -
-            m[ 8] * m[ 6] * m[13] -
-            m[12] * m[ 5] * m[10] +
-            m[12] * m[ 6] * m[ 9];
-
-   d[ 1] = -m[ 1] * m[10] * m[15] +
-            m[ 1] * m[11] * m[14] +
-            m[ 9] * m[ 2] * m[15] -
-            m[ 9] * m[ 3] * m[14] -
-            m[13] * m[ 2] * m[11] +
-            m[13] * m[ 3] * m[10];
-
-   d[ 5] =  m[ 0] * m[10] * m[15] -
-            m[ 0] * m[11] * m[14] -
-            m[ 8] * m[ 2] * m[15] +
-            m[ 8] * m[ 3] * m[14] +
-            m[12] * m[ 2] * m[11] -
-            m[12] * m[ 3] * m[10];
-
-   d[ 9] = -m[ 0] * m[ 9] * m[15] +
-            m[ 0] * m[11] * m[13] +
-            m[ 8] * m[ 1] * m[15] -
-            m[ 8] * m[ 3] * m[13] -
-            m[12] * m[ 1] * m[11] +
-            m[12] * m[ 3] * m[ 9];
-
-   d[13] =  m[ 0] * m[ 9] * m[14] -
-            m[ 0] * m[10] * m[13] -
-            m[ 8] * m[ 1] * m[14] +
-            m[ 8] * m[ 2] * m[13] +
-            m[12] * m[ 1] * m[10] -
-            m[12] * m[ 2] * m[ 9];
-
-   d[ 2] =  m[ 1] * m[ 6] * m[15] -
-            m[ 1] * m[ 7] * m[14] -
-            m[ 5] * m[ 2] * m[15] +
-            m[ 5] * m[ 3] * m[14] +
-            m[13] * m[ 2] * m[ 7] -
-            m[13] * m[ 3] * m[ 6];
-
-   d[ 6] = -m[ 0] * m[ 6] * m[15] +
-            m[ 0] * m[ 7] * m[14] +
-            m[ 4] * m[ 2] * m[15] -
-            m[ 4] * m[ 3] * m[14] -
-            m[12] * m[ 2] * m[ 7] +
-            m[12] * m[ 3] * m[ 6];
-
-   d[10] =  m[ 0] * m[ 5] * m[15] -
-            m[ 0] * m[ 7] * m[13] -
-            m[ 4] * m[ 1] * m[15] +
-            m[ 4] * m[ 3] * m[13] +
-            m[12] * m[ 1] * m[ 7] -
-            m[12] * m[ 3] * m[ 5];
-
-   d[14] = -m[ 0] * m[ 5] * m[14] +
-            m[ 0] * m[ 6] * m[13] +
-            m[ 4] * m[ 1] * m[14] -
-            m[ 4] * m[ 2] * m[13] -
-            m[12] * m[ 1] * m[ 6] +
-            m[12] * m[ 2] * m[ 5];
-
-   d[ 3] = -m[ 1] * m[ 6] * m[11] +
-            m[ 1] * m[ 7] * m[10] +
-            m[ 5] * m[ 2] * m[11] -
-            m[ 5] * m[ 3] * m[10] -
-            m[ 9] * m[ 2] * m[ 7] +
-            m[ 9] * m[ 3] * m[ 6];
-
-   d[ 7] =  m[ 0] * m[ 6] * m[11] -
-            m[ 0] * m[ 7] * m[10] -
-            m[ 4] * m[ 2] * m[11] +
-            m[ 4] * m[ 3] * m[10] +
-            m[ 8] * m[ 2] * m[ 7] -
-            m[ 8] * m[ 3] * m[ 6];
-
-   d[11] = -m[ 0] * m[ 5] * m[11] +
-            m[ 0] * m[ 7] * m[ 9] +
-            m[ 4] * m[ 1] * m[11] -
-            m[ 4] * m[ 3] * m[ 9] -
-            m[ 8] * m[ 1] * m[ 7] +
-            m[ 8] * m[ 3] * m[ 5];
-
-   d[15] =  m[ 0] * m[ 5] * m[10] -
-            m[ 0] * m[ 6] * m[ 9] -
-            m[ 4] * m[ 1] * m[10] +
-            m[ 4] * m[ 2] * m[ 9] +
-            m[ 8] * m[ 1] * m[ 6] -
-            m[ 8] * m[ 2] * m[ 5];
-
-   det = m[0] * d[0] + m[1] * d[4] + m[2] * d[8] + m[3] * d[12];
-
-   if (det == 0.0) return;
-
-   det = 1.0 / det;
-
-   d[ 0] *= det;
-   d[ 1] *= det;
-   d[ 2] *= det;
-   d[ 3] *= det;
-   d[ 4] *= det;
-   d[ 5] *= det;
-   d[ 6] *= det;
-   d[ 7] *= det;
-   d[ 8] *= det;
-   d[ 9] *= det;
-   d[10] *= det;
-   d[11] *= det;
-   d[12] *= det;
-   d[13] *= det;
-   d[14] *= det;
-   d[15] *= det;
-
-   out->flags = 0;
-}
-
-static inline void
-evas_mat4_inverse(Evas_Mat4 *out, const Evas_Mat4 *mat)
-{
-   if (out != mat)
-     {
-        evas_mat4_nocheck_inverse(out, mat);
-     }
-   else
-     {
-        Evas_Mat4 tmp;
-
-        evas_mat4_nocheck_inverse(&tmp, mat);
-        evas_mat4_copy(out, &tmp);
-     }
-}
-
-static inline void
-evas_normal_matrix_get(Evas_Mat3 *out, const Evas_Mat4 *m)
-{
-   /* Normal matrix is a transposed matirx of inversed modelview.
-    * And we need only upper-left 3x3 terms to work with. */
-
-   Evas_Real   det;
-   Evas_Real   a = m->m[0];
-   Evas_Real   b = m->m[4];
-   Evas_Real   c = m->m[8];
-   Evas_Real   d = m->m[1];
-   Evas_Real   e = m->m[5];
-   Evas_Real   f = m->m[9];
-   Evas_Real   g = m->m[2];
-   Evas_Real   h = m->m[6];
-   Evas_Real   i = m->m[10];
-
-   det = a * e * i + b * f * g + c * d * h - g * e * c - h * f * a - i * d * b;
-   det = 1.0 / det;
-
-   out->m[0] = (e * i - f * h) * det;
-   out->m[1] = (h * c - i * b) * det;
-   out->m[2] = (b * f - c * e) * det;
-   out->m[3] = (g * f - d * i) * det;
-   out->m[4] = (a * i - g * c) * det;
-   out->m[5] = (d * c - a * f) * det;
-   out->m[6] = (d * h - g * e) * det;
-   out->m[7] = (g * b - a * h) * det;
-   out->m[8] = (a * e - d * b) * det;
-
-   out->flags = 0;
-}
-
-/* 3x3 matrix */
-static inline void
-evas_mat3_identity_set(Evas_Mat3 *m)
-{
-   m->m[0] = 1.0;
-   m->m[1] = 0.0;
-   m->m[2] = 0.0;
-   m->m[3] = 0.0;
-   m->m[4] = 1.0;
-   m->m[5] = 0.0;
-   m->m[6] = 0.0;
-   m->m[7] = 0.0;
-   m->m[8] = 1.0;
-
-   m->flags = EVAS_MATRIX_IS_IDENTITY;
-}
-
-static inline void
-evas_mat3_array_set(Evas_Mat3 *m, const Evas_Real *v)
-{
-   memcpy(&m->m[0], v, sizeof(Evas_Real) * 9);
-   m->flags = 0;
-}
-
-static inline void
-evas_mat3_copy(Evas_Mat3 *dst, const Evas_Mat3 *src)
-{
-   memcpy(dst, src, sizeof(Evas_Mat3));
-}
-
-static inline void
-evas_mat3_nocheck_multiply(Evas_Mat3 *out, const Evas_Mat3 *mat_a, const Evas_Mat3 *mat_b)
-{
-   Evas_Real *d = out->m;
-   const Evas_Real *a = mat_a->m;
-   const Evas_Real *b = mat_b->m;
-
-   if (mat_a->flags & EVAS_MATRIX_IS_IDENTITY)
-     {
-        evas_mat3_copy(out, mat_b);
-        return;
-     }
-
-   if (mat_b->flags & EVAS_MATRIX_IS_IDENTITY)
-     {
-        evas_mat3_copy(out, mat_a);
-        return;
-     }
-
-   d[0] = a[0] * b[0] + a[3] * b[1] + a[6] * b[2];
-   d[3] = a[0] * b[3] + a[3] * b[4] + a[6] * b[5];
-   d[6] = a[0] * b[6] + a[3] * b[7] + a[6] * b[8];
-
-   d[1] = a[1] * b[0] + a[4] * b[1] + a[7] * b[2];
-   d[4] = a[1] * b[3] + a[4] * b[4] + a[7] * b[5];
-   d[7] = a[1] * b[6] + a[4] * b[7] + a[7] * b[8];
-
-   d[2] = a[2] * b[0] + a[5] * b[1] + a[8] * b[2];
-   d[5] = a[2] * b[3] + a[5] * b[4] + a[8] * b[5];
-   d[8] = a[2] * b[6] + a[5] * b[7] + a[8] * b[8];
-
-   out->flags = 0;
-}
-
-static inline void
-evas_mat3_multiply(Evas_Mat3 *out, const Evas_Mat3 *mat_a, const Evas_Mat3 *mat_b)
-{
-   if (out != mat_a && out != mat_b)
-     {
-        evas_mat3_nocheck_multiply(out, mat_a, mat_b);
-     }
-   else
-     {
-        Evas_Mat3 tmp;
-
-        evas_mat3_nocheck_multiply(&tmp, mat_a, mat_b);
-        evas_mat3_copy(out, &tmp);
-     }
-}
-
-static inline void
-evas_mat3_nocheck_inverse(Evas_Mat3 *out, const Evas_Mat3 *mat)
-{
-   Evas_Real        *d = &out->m[0];
-   const Evas_Real  *m = &mat->m[0];
-   Evas_Real         det;
-
-   if (mat->flags & EVAS_MATRIX_IS_IDENTITY)
-     {
-        evas_mat3_copy(out, mat);
-        return;
-     }
-
-   d[0] = m[4] * m[8] - m[7] * m[5];
-   d[1] = m[7] * m[2] - m[1] * m[8];
-   d[2] = m[1] * m[5] - m[4] * m[2];
-   d[3] = m[6] * m[5] - m[3] * m[8];
-   d[4] = m[0] * m[8] - m[6] * m[2];
-   d[5] = m[3] * m[2] - m[0] * m[5];
-   d[6] = m[3] * m[7] - m[6] * m[4];
-   d[7] = m[6] * m[1] - m[0] * m[7];
-   d[8] = m[0] * m[4] - m[3] * m[1];
-
-   det = m[0] * d[0] + m[1] * d[3] + m[2] * d[6];
-
-   if (det == 0.0)
-     return;
-
-   det = 1.0 / det;
-
-   d[0] *= det;
-   d[1] *= det;
-   d[2] *= det;
-   d[3] *= det;
-   d[4] *= det;
-   d[5] *= det;
-   d[6] *= det;
-   d[7] *= det;
-   d[8] *= det;
-
-   out->flags = 0;
-}
-
-static inline void
-evas_mat3_invserse(Evas_Mat3 *out, const Evas_Mat3 *mat)
-{
-   if (out != mat)
-     {
-        evas_mat3_nocheck_inverse(out, mat);
-     }
-   else
-     {
-        Evas_Mat3 tmp;
-
-        evas_mat3_nocheck_inverse(&tmp, mat);
-        evas_mat3_copy(out, &tmp);
-     }
-}
-
-static inline void
-evas_mat3_set_position_transform(Evas_Mat3 *out, const Evas_Real p_x,
-								 const Evas_Real p_y)
-{
-   evas_mat3_identity_set(out);
-   out->m[2] = p_x;
-   out->m[5] = p_y;
-   if ((fabs(p_x) > FLT_EPSILON) ||
-       (fabs(p_y) > FLT_EPSILON))
-     out->flags = 0;
-}
-
-static inline void
-evas_mat3_set_scale_transform(Evas_Mat3 *out, Evas_Real s_x, Evas_Real s_y)
-{
-   evas_mat3_identity_set(out);
-   out->m[0] = s_x;
-   out->m[4] = s_y;
-   if ((fabs(s_x - 1.0) > FLT_EPSILON) ||
-       (fabs(s_y - 1.0) > FLT_EPSILON))
-     out->flags = 0;
-}
-
-/* 2x2 matrix */
-static inline void
-evas_mat2_identity_set(Evas_Mat2 *m)
-{
-   m->m[0] = 1.0;
-   m->m[1] = 0.0;
-   m->m[2] = 0.0;
-   m->m[3] = 1.0;
-
-   m->flags = EVAS_MATRIX_IS_IDENTITY;
-}
-
-static inline void
-evas_mat2_array_set(Evas_Mat2 *m, const Evas_Real *v)
-{
-   memcpy(&m->m[0], v, sizeof(Evas_Real) * 4);
-   m->flags = 0;
-}
-
-static inline void
-evas_mat2_copy(Evas_Mat2 *dst, const Evas_Mat2 *src)
-{
-   memcpy(dst, src, sizeof(Evas_Mat2));
-}
-
-static inline void
-evas_mat2_nocheck_multiply(Evas_Mat2 *out, const Evas_Mat2 *mat_a, const Evas_Mat2 *mat_b)
-{
-   Evas_Real        *d = &out->m[0];
-   const Evas_Real  *a = &mat_a->m[0];
-   const Evas_Real  *b = &mat_b->m[0];
-
-   if (mat_a->flags & EVAS_MATRIX_IS_IDENTITY)
-     {
-        evas_mat2_copy(out, mat_b);
-        return;
-     }
-
-   if (mat_b->flags & EVAS_MATRIX_IS_IDENTITY)
-     {
-        evas_mat2_copy(out, mat_a);
-        return;
-     }
-
-   d[0] = a[0] * b[0] + a[2] * b[1];
-   d[2] = a[0] * b[2] + a[2] * b[3];
-
-   d[1] = a[1] * b[0] + a[3] * b[1];
-   d[3] = a[1] * b[2] + a[3] * b[3];
-
-   out->flags = 0;
-}
-
-static inline void
-evas_mat2_multiply(Evas_Mat2 *out, const Evas_Mat2 *mat_a, const Evas_Mat2 *mat_b)
-{
-   if (out != mat_a && out != mat_b)
-     {
-        evas_mat2_nocheck_multiply(out, mat_a, mat_b);
-     }
-   else
-     {
-        Evas_Mat2 tmp;
-
-        evas_mat2_nocheck_multiply(&tmp, mat_a, mat_b);
-        evas_mat2_copy(out, &tmp);
-     }
-}
-
-static inline void
-evas_mat2_nocheck_inverse(Evas_Mat2 *out, const Evas_Mat2 *mat)
-{
-   Evas_Real        *d = &out->m[0];
-   const Evas_Real  *m = &mat->m[0];
-   Evas_Real         det;
-
-   if (mat->flags & EVAS_MATRIX_IS_IDENTITY)
-     {
-        evas_mat2_copy(out, mat);
-        return;
-     }
-
-   det = m[0] * m[3] - m[2] * m[1];
-
-   if (det == 0.0)
-     return;
-
-   det = 1.0 / det;
-
-   d[0] =  m[3] * det;
-   d[1] = -m[1] * det;
-   d[2] = -m[2] * det;
-   d[3] =  m[0] * det;
-
-   out->flags = 0;
-}
-
-static inline void
-evas_mat2_invserse(Evas_Mat2 *out, const Evas_Mat2 *mat)
-{
-   if (out != mat)
-     {
-        evas_mat2_nocheck_inverse(out, mat);
-     }
-   else
-     {
-        Evas_Mat2 tmp;
-
-        evas_mat2_nocheck_inverse(&tmp, mat);
-        evas_mat2_copy(out, &tmp);
-     }
+   m->xx = near_2 / w;
+   m->xy = 0.0f;
+   m->xz = 0.0f;
+   m->xw = 0.0f;
+
+   m->yx = 0.0f;
+   m->yy = near_2 / h;
+   m->yz = 0.0f;
+   m->yw = 0.0f;
+
+   m->zx = (right + left) / w;
+   m->zy = (top + bottom) / h;
+   m->zz = (dfar + dnear) / depth;
+   m->zw = -1.0f;
+
+   m->wx = 0.0f;
+   m->wy = 0.0f;
+   m->wz = near_2 * dfar / depth;
+   m->ww = 0.0f;
 }
 
 static inline void
@@ -1467,13 +835,13 @@ evas_box3_union(Evas_Box3 *out, const Evas_Box3 *a, const Evas_Box3 *b)
 }
 
 static inline void
-evas_box3_transform(Evas_Box3 *out EINA_UNUSED, const Evas_Box3 *box EINA_UNUSED, const Evas_Mat4 *mat EINA_UNUSED)
+evas_box3_transform(Evas_Box3 *out EINA_UNUSED, const Evas_Box3 *box EINA_UNUSED, const Eina_Matrix4 *mat EINA_UNUSED)
 {
    /* TODO: */
 }
 
 static inline void
-evas_mat4_position_get(const Evas_Mat4 *matrix, Evas_Vec4 *position)
+evas_mat4_position_get(const Eina_Matrix4 *matrix, Evas_Vec4 *position)
 {
    Evas_Vec4 pos;
 
@@ -1486,7 +854,7 @@ evas_mat4_position_get(const Evas_Mat4 *matrix, Evas_Vec4 *position)
 }
 
 static inline void
-evas_mat4_direction_get(const Evas_Mat4 *matrix, Evas_Vec3 *direction)
+evas_mat4_direction_get(const Eina_Matrix4 *matrix, Evas_Vec3 *direction)
 {
    /* TODO: Check correctness. */
 
@@ -1540,7 +908,7 @@ evas_vec4_quaternion_inverse(Evas_Vec4 *out, const Evas_Vec4 *q)
 }
 
 static inline void
-evas_vec4_quaternion_rotation_matrix_get(const Evas_Vec4 *q, Evas_Mat3 *mat)
+evas_vec4_quaternion_rotation_matrix_get(const Evas_Vec4 *q, Eina_Matrix3 *mat)
 {
    Evas_Real x, y, z;
    Evas_Real xx, xy, xz;
@@ -1565,57 +933,55 @@ evas_vec4_quaternion_rotation_matrix_get(const Evas_Vec4 *q, Evas_Mat3 *mat)
    wy = q->w * y;
    wz = q->w * z;
 
-   mat->m[0] = 1.0 - yy - zz;
-   mat->m[1] = xy + wz;
-   mat->m[2] = xz - wy;
-   mat->m[3] = xy - wz;
-   mat->m[4] = 1.0 - xx - zz;
-   mat->m[5] = yz + wx;
-   mat->m[6] = xz + wy;
-   mat->m[7] = yz - wx;
-   mat->m[8] = 1.0 - xx - yy;
+   mat->xx = 1.0 - yy - zz;
+   mat->xy = xy + wz;
+   mat->xz = xz - wy;
+   mat->yx = xy - wz;
+   mat->yy = 1.0 - xx - zz;
+   mat->yz = yz + wx;
+   mat->zx = xz + wy;
+   mat->zy = yz - wx;
+   mat->zz = 1.0 - xx - yy;
 }
 
 static inline void
-evas_mat4_build(Evas_Mat4 *out,
+evas_mat4_build(Eina_Matrix4 *out,
                 const Evas_Vec3 *position, const Evas_Vec4 *orientation, const Evas_Vec3 *scale)
 {
-   Evas_Mat3  rot;
+   Eina_Matrix3  rot;
 
    evas_vec4_quaternion_rotation_matrix_get(orientation, &rot);
 
-   out->m[ 0] = scale->x * rot.m[0];
-   out->m[ 1] = scale->x * rot.m[1];
-   out->m[ 2] = scale->x * rot.m[2];
-   out->m[ 3] = 0.0;
+   out->xx = scale->x * rot.xx;
+   out->xy = scale->y * rot.xy;
+   out->xz = scale->z * rot.xz;
+   out->xw = 0.0;
 
-   out->m[ 4] = scale->y * rot.m[3];
-   out->m[ 5] = scale->y * rot.m[4];
-   out->m[ 6] = scale->y * rot.m[5];
-   out->m[ 7] = 0.0;
+   out->yx = scale->x * rot.yx;
+   out->yy = scale->y * rot.yy;
+   out->yz = scale->z * rot.yz;
+   out->yw = 0.0;
 
-   out->m[ 8] = scale->z * rot.m[6];
-   out->m[ 9] = scale->z * rot.m[7];
-   out->m[10] = scale->z * rot.m[8];
-   out->m[11] = 0.0;
+   out->zx = scale->x * rot.zx;
+   out->zy = scale->y * rot.zy;
+   out->zz = scale->z * rot.zz;
+   out->zw = 0.0;
 
-   out->m[12] = position->x;
-   out->m[13] = position->y;
-   out->m[14] = position->z;
-   out->m[15] = 1.0;
-
-   out->flags = 0;
+   out->wx = position->x;
+   out->wy = position->y;
+   out->wz = position->z;
+   out->ww = 1.0;
 }
 
 static inline void
-evas_mat4_inverse_build(Evas_Mat4 *out, const Evas_Vec3 *position,
+evas_mat4_inverse_build(Eina_Matrix4 *out, const Evas_Vec3 *position,
                         const Evas_Vec4 *orientation, const Evas_Vec3 *scale)
 {
    Evas_Vec4   inv_rotation;
    Evas_Vec3   inv_scale;
    Evas_Vec3   inv_translate;
 
-   Evas_Mat3   rot;
+   Eina_Matrix3   rot;
 
    /* Inverse scale. */
    evas_vec3_set(&inv_scale, 1.0 / scale->x, 1.0 / scale->y, 1.0 / scale->z);
@@ -1631,27 +997,25 @@ evas_mat4_inverse_build(Evas_Mat4 *out, const Evas_Vec3 *position,
    /* Get 3x3 rotation matrix. */
    evas_vec4_quaternion_rotation_matrix_get(&inv_rotation, &rot);
 
-   out->m[ 0] = inv_scale.x * rot.m[0];
-   out->m[ 1] = inv_scale.y * rot.m[1];
-   out->m[ 2] = inv_scale.z * rot.m[2];
-   out->m[ 3] = 0.0;
+   out->xx = inv_scale.x * rot.xx;
+   out->xy = inv_scale.y * rot.xy;
+   out->xz = inv_scale.z * rot.xz;
+   out->xw = 0.0;
 
-   out->m[ 4] = inv_scale.x * rot.m[3];
-   out->m[ 5] = inv_scale.y * rot.m[4];
-   out->m[ 6] = inv_scale.z * rot.m[5];
-   out->m[ 7] = 0.0;
+   out->yx = inv_scale.x * rot.yx;
+   out->yy = inv_scale.y * rot.yy;
+   out->yz = inv_scale.z * rot.yz;
+   out->yw = 0.0;
 
-   out->m[ 8] = inv_scale.x * rot.m[6];
-   out->m[ 9] = inv_scale.y * rot.m[7];
-   out->m[10] = inv_scale.z * rot.m[8];
-   out->m[11] = 0.0;
+   out->zx = inv_scale.x * rot.zx;
+   out->zy = inv_scale.y * rot.zy;
+   out->zz = inv_scale.z * rot.zz;
+   out->zw = 0.0;
 
-   out->m[12] = inv_translate.x;
-   out->m[13] = inv_translate.y;
-   out->m[14] = inv_translate.z;
-   out->m[15] = 1.0;
-
-   out->flags = 0;
+   out->wx = inv_translate.x;
+   out->wy = inv_translate.y;
+   out->wz = inv_translate.z;
+   out->ww = 1.0;
 }
 
 static inline void
@@ -1673,16 +1037,16 @@ evas_color_blend(Evas_Color *dst, const Evas_Color *c0, const Evas_Color *c1, Ev
 }
 
 static inline void
-evas_ray3_init(Evas_Ray3 *ray, Evas_Real x, Evas_Real y, const Evas_Mat4 *mvp)
+evas_ray3_init(Evas_Ray3 *ray, Evas_Real x, Evas_Real y, const Eina_Matrix4 *mvp)
 {
-   Evas_Mat4 mat;
+   Eina_Matrix4 mat;
    Evas_Vec4 dnear, dfar;
 
    memset(&mat, 0, sizeof (mat));
 
    /* Get the matrix which transforms from normalized device coordinate to
       modeling coodrinate. */
-   evas_mat4_inverse(&mat, mvp);
+   eina_matrix4_inverse(&mat, mvp);
 
    /* Transform near point. */
    dnear.x = x;
@@ -2123,38 +1487,35 @@ evas_is_box_in_frustum(Evas_Box3 *box, Evas_Vec4 *planes)
 }
 
 static inline void
-evas_frustum_calculate(Evas_Vec4 *planes, Evas_Mat4 *matrix_vp)
+evas_frustum_calculate(Evas_Vec4 *planes, Eina_Matrix4 *matrix_vp)
 {
    int i;
-   evas_vec4_set(&planes[0], matrix_vp->m[3] - matrix_vp->m[0],
-                             matrix_vp->m[7] - matrix_vp->m[4],
-                             matrix_vp->m[11] - matrix_vp->m[8],
-                             matrix_vp->m[15] - matrix_vp->m[12]);
 
-   evas_vec4_set(&planes[1], matrix_vp->m[3] + matrix_vp->m[0],
-                             matrix_vp->m[7] + matrix_vp->m[4],
-                             matrix_vp->m[11] + matrix_vp->m[8],
-                             matrix_vp->m[15] + matrix_vp->m[12]);
+   evas_vec4_set(&planes[0], matrix_vp->xw - matrix_vp->xx,
+                             matrix_vp->yw - matrix_vp->yx,
+                             matrix_vp->zw - matrix_vp->zx,
+                             matrix_vp->ww - matrix_vp->wx);
+   evas_vec4_set(&planes[1], matrix_vp->xw - matrix_vp->xx,
+                             matrix_vp->yw - matrix_vp->yx,
+                             matrix_vp->zw - matrix_vp->zx,
+                             matrix_vp->ww - matrix_vp->wx);
+   evas_vec4_set(&planes[2], matrix_vp->xw - matrix_vp->xx,
+                             matrix_vp->yw - matrix_vp->yx,
+                             matrix_vp->zw - matrix_vp->zx,
+                             matrix_vp->ww - matrix_vp->wx);
+   evas_vec4_set(&planes[3], matrix_vp->xw - matrix_vp->xx,
+                             matrix_vp->yw - matrix_vp->yx,
+                             matrix_vp->zw - matrix_vp->zx,
+                             matrix_vp->ww - matrix_vp->wx);
+   evas_vec4_set(&planes[4], matrix_vp->xw - matrix_vp->xx,
+                             matrix_vp->yw - matrix_vp->yx,
+                             matrix_vp->zw - matrix_vp->zx,
+                             matrix_vp->ww - matrix_vp->wx);
+   evas_vec4_set(&planes[5], matrix_vp->xw - matrix_vp->xx,
+                             matrix_vp->yw - matrix_vp->yx,
+                             matrix_vp->zw - matrix_vp->zx,
+                             matrix_vp->ww - matrix_vp->wx);
 
-   evas_vec4_set(&planes[2], matrix_vp->m[3] + matrix_vp->m[1],
-                             matrix_vp->m[7] + matrix_vp->m[5],
-                             matrix_vp->m[11] + matrix_vp->m[9],
-                             matrix_vp->m[15] + matrix_vp->m[13]);
-
-   evas_vec4_set(&planes[3], matrix_vp->m[3] - matrix_vp->m[1],
-                             matrix_vp->m[7] - matrix_vp->m[5],
-                             matrix_vp->m[11] - matrix_vp->m[9],
-                             matrix_vp->m[15] - matrix_vp->m[13]);
-
-   evas_vec4_set(&planes[4], matrix_vp->m[3] - matrix_vp->m[2],
-                             matrix_vp->m[7] - matrix_vp->m[6],
-                             matrix_vp->m[11] - matrix_vp->m[10],
-                             matrix_vp->m[15] - matrix_vp->m[14]);
-
-   evas_vec4_set(&planes[5], matrix_vp->m[3] + matrix_vp->m[2],
-                             matrix_vp->m[7] + matrix_vp->m[6],
-                             matrix_vp->m[11] + matrix_vp->m[10],
-                             matrix_vp->m[15] + matrix_vp->m[14]);
    for (i = 0; i < 6; i++)
      {
        evas_plane_normalize(&planes[i]);

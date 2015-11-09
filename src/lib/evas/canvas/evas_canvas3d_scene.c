@@ -554,7 +554,7 @@ _node_pick(Evas_Canvas3D_Node *node, void *data)
 {
    Evas_Ray3            ray;
    Evas_Canvas3D_Pick_Data   *pick = (Evas_Canvas3D_Pick_Data *)data;
-   Evas_Mat4            mvp;
+   Eina_Matrix4            mvp;
    Evas_Canvas3D_Node_Data *pd_node = eo_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
 
    if (! evas_box3_ray3_intersect(&pd_node->aabb, &pick->ray_world))
@@ -569,7 +569,7 @@ _node_pick(Evas_Canvas3D_Node *node, void *data)
         void          *ptr;
 
         /* Transform ray into local coordinate space. */
-        evas_mat4_multiply(&mvp, &pick->matrix_vp, &pd_node->data.mesh.matrix_local_to_world);
+        eina_matrix4_multiply(&mvp, &pick->matrix_vp, &pd_node->data.mesh.matrix_local_to_world);
         evas_ray3_init(&ray, pick->x, pick->y, &mvp);
 
         itr = eina_hash_iterator_data_new(pd_node->data.mesh.node_meshes);
@@ -690,7 +690,7 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
    eo_do(obj, evas_canvas3d_object_update());
    pd_camera_node = eo_data_scope_get(pd->camera_node, EVAS_CANVAS3D_NODE_CLASS);
    pd_camera = eo_data_scope_get(pd_camera_node->data.camera.camera, EVAS_CANVAS3D_CAMERA_CLASS);
-   evas_mat4_multiply(&data.matrix_vp,
+   eina_matrix4_multiply(&data.matrix_vp,
                       &pd_camera->projection,
                       &pd_camera_node->data.camera.matrix_world_to_eye);
 
@@ -736,7 +736,7 @@ _evas_canvas3d_scene_exist(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Rea
    eo_do(obj, evas_canvas3d_object_update());
    pd_camera_node = eo_data_scope_get(pd->camera_node, EVAS_CANVAS3D_NODE_CLASS);
    pd_camera = eo_data_scope_get(pd_camera_node->data.camera.camera, EVAS_CANVAS3D_CAMERA_CLASS);
-   evas_mat4_multiply(&data.matrix_vp,
+   eina_matrix4_multiply(&data.matrix_vp,
                       &pd_camera->projection,
                       &pd_camera_node->data.camera.matrix_world_to_eye);
 

@@ -2,12 +2,12 @@
 #include "evas_gl_3d_private.h"
 
 #define RENDER_MESH_NODE_ITERATE_BEGIN(param)                                                      \
-   Evas_Mat4          matrix_mv;                                                                   \
-   Evas_Mat4          matrix_mvp;                                                                  \
+   Eina_Matrix4          matrix_mv;                                                                   \
+   Eina_Matrix4          matrix_mvp;                                                                  \
    Eina_Iterator     *it;                                                                          \
    void              *ptr;                                                                         \
-   evas_mat4_multiply(&matrix_mv, matrix_##param, &pd_mesh_node->data.mesh.matrix_local_to_world); \
-   evas_mat4_multiply(&matrix_mvp, &pd->projection, &matrix_mv);                                   \
+   eina_matrix4_multiply(&matrix_mv, matrix_##param, &pd_mesh_node->data.mesh.matrix_local_to_world); \
+   eina_matrix4_multiply(&matrix_mvp, &pd->projection, &matrix_mv);                                   \
    it = eina_hash_iterator_data_new(pd_mesh_node->data.mesh.node_meshes);                          \
    while (eina_iterator_next(it, &ptr))                                                            \
      {                                                                                             \
@@ -49,7 +49,7 @@ e3d_texture_new(Eina_Bool use_atlas)
         return NULL;
      }
 
-   evas_mat3_identity_set(&texture->trans);
+   eina_matrix3_identity(&texture->trans);
 
    texture->w = 0;
    texture->h = 0;
@@ -94,7 +94,7 @@ e3d_texture_set(Evas_Engine_GL_Context *gc,
                 E3D_Texture *texture,
                 Evas_GL_Image *im)
 {
-   Evas_Mat3 pt,st;
+   Eina_Matrix3 pt,st;
    Evas_Real pt_x, pt_y, st_x, st_y;
 
    texture->surface = im;
@@ -115,9 +115,9 @@ e3d_texture_set(Evas_Engine_GL_Context *gc,
         st_x = im->tex->pt->w ? (im->w/(Evas_Real)im->tex->pt->w) : 1.0;
         st_y = im->tex->pt->h ? (im->h/(Evas_Real)im->tex->pt->h) : 1.0;
         /*Build adjusting matrix for texture unit coordinates*/
-        evas_mat3_set_position_transform(&pt, pt_x, pt_y);
-        evas_mat3_set_scale_transform(&st, st_x, st_y);
-        evas_mat3_multiply(&texture->trans, &st, &pt);
+        eina_matrix3_position_transform_set(&pt, pt_x, pt_y);
+        eina_matrix3_scale_transform_set(&st, st_x, st_y);
+        eina_matrix3_multiply(&texture->trans, &st, &pt);
      }
 }
 
@@ -898,7 +898,7 @@ _material_texture_build(E3D_Draw_Data *data, int frame,
 static inline void
 _light_build(E3D_Draw_Data *data,
              const Evas_Canvas3D_Node *light,
-             const Evas_Mat4    *matrix_eye)
+             const Eina_Matrix4    *matrix_eye)
 {
    Evas_Canvas3D_Node_Data *pd_light_node = eo_data_scope_get(light, EVAS_CANVAS3D_NODE_CLASS);
    Evas_Canvas3D_Light *l = pd_light_node ? pd_light_node->data.light.light : NULL;
@@ -966,10 +966,10 @@ _light_build(E3D_Draw_Data *data,
 static inline Eina_Bool
 _mesh_draw_data_build(E3D_Draw_Data *data,
                       Evas_Canvas3D_Mesh *mesh, int frame,
-                      const Evas_Mat4 *matrix_eye,
-                      const Evas_Mat4 *matrix_mv,
-                      const Evas_Mat4 *matrix_mvp,
-                      const Evas_Mat4 *matrix_light,
+                      const Eina_Matrix4 *matrix_eye,
+                      const Eina_Matrix4 *matrix_mv,
+                      const Eina_Matrix4 *matrix_mvp,
+                      const Eina_Matrix4 *matrix_light,
                       const Evas_Canvas3D_Node *light)
 {
    Eina_List *l, *r;
@@ -1011,10 +1011,10 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
    data->index_format = pdmesh->index_format;
    data->indices = pdmesh->indices;
 
-   evas_mat4_copy(&data->matrix_mvp, matrix_mvp);
-   evas_mat4_copy(&data->matrix_mv, matrix_mv);
+   eina_matrix4_copy(&data->matrix_mvp, matrix_mvp);
+   eina_matrix4_copy(&data->matrix_mv, matrix_mv);
    if (matrix_light != NULL)
-     evas_mat4_copy(&data->matrix_light, matrix_light);
+     eina_matrix4_copy(&data->matrix_light, matrix_light);
 
    _mesh_frame_find(mesh, frame, &l, &r);
 
@@ -1073,7 +1073,7 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
         BUILD(material_texture,  MATERIAL_ATTRIB_EMISSION,   EINA_FALSE);
 
         _light_build(data, light, matrix_eye);
-        evas_normal_matrix_get(&data->matrix_normal, matrix_mv);
+        eina_normal3_matrix_get(&data->matrix_normal, matrix_mv);
 
         if (_flags_need_tex_coord(data->flags))
           BUILD(vertex_attrib,     VERTEX_ATTRIB_TEXCOORD,     EINA_FALSE);
@@ -1094,7 +1094,7 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
         BUILD(material_texture,  MATERIAL_ATTRIB_EMISSION,   EINA_FALSE);
 
         _light_build(data, light, matrix_eye);
-        evas_normal_matrix_get(&data->matrix_normal, matrix_mv);
+        eina_normal3_matrix_get(&data->matrix_normal, matrix_mv);
 
         if (_flags_need_tex_coord(data->flags))
           BUILD(vertex_attrib,     VERTEX_ATTRIB_TEXCOORD,     EINA_FALSE);
@@ -1124,7 +1124,7 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
         BUILD(material_texture,  MATERIAL_ATTRIB_EMISSION,   EINA_FALSE);
 
         _light_build(data, light, matrix_eye);
-        evas_normal_matrix_get(&data->matrix_normal, matrix_mv);
+        eina_normal3_matrix_get(&data->matrix_normal, matrix_mv);
      }
 
    int num;
@@ -1143,7 +1143,7 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
 
 static inline void
 _mesh_draw(E3D_Renderer *renderer, Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Node *light,
-           const Evas_Mat4 *matrix_eye, const Evas_Mat4 *matrix_mv, const Evas_Mat4 *matrix_mvp, const Evas_Mat4 *matrix_light)
+           const Eina_Matrix4 *matrix_eye, const Eina_Matrix4 *matrix_mv, const Eina_Matrix4 *matrix_mvp, const Eina_Matrix4 *matrix_light)
 {
    E3D_Draw_Data   data;
 
@@ -1154,7 +1154,7 @@ _mesh_draw(E3D_Renderer *renderer, Evas_Canvas3D_Mesh *mesh, int frame, Evas_Can
 }
 
 void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer,
-                       Evas_Canvas3D_Scene_Public_Data *data, Evas_Mat4 *matrix_light_eye,
+                       Evas_Canvas3D_Scene_Public_Data *data, Eina_Matrix4 *matrix_light_eye,
                        Evas_Canvas3D_Node *light)
 {
    Eina_List        *l;
@@ -1162,7 +1162,7 @@ void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer,
    Evas_Canvas3D_Shade_Mode shade_mode;
    Eina_Bool       blend_enabled;
    Evas_Color      c = {1.0, 1.0, 1.0, 1.0};
-   Evas_Mat4 matrix_vp;
+   Eina_Matrix4 matrix_vp;
 
    glEnable(GL_POLYGON_OFFSET_FILL);
    glPolygonOffset(data->depth_offset, data->depth_constant);
@@ -1178,7 +1178,7 @@ void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer,
                                               EVAS_CANVAS3D_LIGHT_CLASS);
 
    Evas_Vec4 planes[6];
-   evas_mat4_multiply(&matrix_vp, &pd->projection, matrix_light_eye);
+   eina_matrix4_multiply(&matrix_vp, &pd->projection, matrix_light_eye);
    evas_frustum_calculate(planes, &matrix_vp);
 
    EINA_LIST_FOREACH(data->mesh_nodes, l, n)
@@ -1212,9 +1212,9 @@ e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_C
 {
    Eina_List        *l;
    Evas_Canvas3D_Node     *n;
-   const Evas_Mat4  *matrix_eye;
+   const Eina_Matrix4  *matrix_eye;
    Evas_Canvas3D_Node     *light;
-   Evas_Mat4        matrix_light_eye, matrix_vp;;
+   Eina_Matrix4        matrix_light_eye, matrix_vp;;
    Evas_Canvas3D_Light_Data *ld = NULL;
    Evas_Canvas3D_Node_Data *pd_light_node;
    Evas_Vec4 planes[6];
@@ -1240,13 +1240,13 @@ e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_C
    e3d_renderer_target_set(renderer, drawable);
    e3d_renderer_clear(renderer, &data->bg_color);
 
-   evas_mat4_multiply(&matrix_vp, &pd->projection, matrix_eye);
+   eina_matrix4_multiply(&matrix_vp, &pd->projection, matrix_eye);
    evas_frustum_calculate(planes, &matrix_vp);
    EINA_LIST_FOREACH(data->mesh_nodes, l, n)
      {
-        Evas_Mat4          matrix_mv;
-        Evas_Mat4          matrix_light;
-        Evas_Mat4          matrix_mvp;
+        Eina_Matrix4          matrix_mv;
+        Eina_Matrix4          matrix_light;
+        Eina_Matrix4          matrix_mvp;
         Eina_Iterator     *it;
         void              *ptr;
         Evas_Canvas3D_Node_Data *pd_mesh_node = eo_data_scope_get(n, EVAS_CANVAS3D_NODE_CLASS);
@@ -1257,14 +1257,14 @@ e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_C
 
              if (data->shadows_enabled)
                {
-                  evas_mat4_multiply(&matrix_mv, &matrix_light_eye,
+                  eina_matrix4_multiply(&matrix_mv, &matrix_light_eye,
                       &pd_mesh_node->data.mesh.matrix_local_to_world);
-                  evas_mat4_multiply(&matrix_light, &ld->projection,
+                  eina_matrix4_multiply(&matrix_light, &ld->projection,
                       &matrix_mv);
                }
 
-             evas_mat4_multiply(&matrix_mv, matrix_eye, &pd_mesh_node->data.mesh.matrix_local_to_world);
-             evas_mat4_multiply(&matrix_mvp, &pd->projection,
+             eina_matrix4_multiply(&matrix_mv, matrix_eye, &pd_mesh_node->data.mesh.matrix_local_to_world);
+             eina_matrix4_multiply(&matrix_mvp, &pd->projection,
                                 &matrix_mv);
 
              it = eina_hash_iterator_data_new(pd_mesh_node->data.mesh.node_meshes);
@@ -1290,7 +1290,7 @@ Eina_Bool
 e3d_drawable_scene_render_to_texture(E3D_Drawable *drawable, E3D_Renderer *renderer,
                                      Evas_Canvas3D_Scene_Public_Data *data)
 {
-   const Evas_Mat4  *matrix_eye;
+   const Eina_Matrix4  *matrix_eye;
    Evas_Canvas3D_Shade_Mode shade_mode;
    Eina_Stringshare *tmp;
    Eina_Iterator *itmn;

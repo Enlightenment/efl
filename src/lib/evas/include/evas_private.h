@@ -268,18 +268,18 @@ struct _Evas_Canvas3D_Node
    union {
         struct {
              Evas_Canvas3D_Camera  *camera;
-             Evas_Mat4        matrix_world_to_eye;
+             Eina_Matrix4        matrix_world_to_eye;
         } camera;
 
         struct {
              Evas_Canvas3D_Light   *light;
-             Evas_Mat4        matrix_local_to_world;
+             Eina_Matrix4        matrix_local_to_world;
         } light;
 
         struct {
              Eina_List       *meshes;
              Eina_Hash       *node_meshes;
-             Evas_Mat4        matrix_local_to_world;
+             Eina_Matrix4        matrix_local_to_world;
         } mesh;
    } data;
 
@@ -296,7 +296,7 @@ struct _Evas_Canvas3D_Node
 
 struct _Evas_Canvas3D_Camera
 {
-   Evas_Mat4      projection;
+   Eina_Matrix4      projection;
    Eina_Hash     *nodes;
 };
 
@@ -315,7 +315,7 @@ struct _Evas_Canvas3D_Light
    Evas_Real      atten_const;
    Evas_Real      atten_linear;
    Evas_Real      atten_quad;
-   Evas_Mat4      projection;
+   Eina_Matrix4      projection;
 
    Eina_Hash     *nodes;
 };
@@ -457,7 +457,7 @@ struct _Evas_Canvas3D_Pick_Data
 {
    /* Input */
    Evas_Real         x, y;
-   Evas_Mat4         matrix_vp;
+   Eina_Matrix4         matrix_vp;
    Evas_Ray3         ray_world;
 
    /* Output */
@@ -1834,10 +1834,10 @@ struct _Evas_Imaging_Font
 
 struct _Evas_Proxy_Render_Data
 {
-   Evas_Object *eo_proxy;
    Evas_Object_Protected_Data *proxy_obj;
-   Evas_Object *eo_src;
    Evas_Object_Protected_Data *src_obj;
+   Evas_Object *eo_proxy;
+   Evas_Object *eo_src;
    Eina_Bool source_clip : 1;
 };
 

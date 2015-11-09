@@ -56,10 +56,10 @@ struct _E3D_Draw_Data
    E3D_Shader_Flag      flags;
    Evas_Canvas3D_Shade_Mode   mode;
 
-   Evas_Mat4   matrix_mvp;
-   Evas_Mat4   matrix_mv;
-   Evas_Mat3   matrix_normal;
-   Evas_Mat4   matrix_light;
+   Eina_Matrix4   matrix_mvp;
+   Eina_Matrix4   matrix_mv;
+   Eina_Matrix3   matrix_normal;
+   Eina_Matrix4   matrix_light;
 
    struct {
         Evas_Canvas3D_Vertex_Buffer vertex0;
@@ -96,7 +96,7 @@ struct _E3D_Draw_Data
    Eina_Bool               alpha_test_enabled :1;
 
    struct {
-        Evas_Vec4   position;
+        Eina_Quaternion   position;
         Evas_Vec3   spot_dir;
         Evas_Real   spot_exp;
         Evas_Real   spot_cutoff_cos;
@@ -125,7 +125,7 @@ struct _E3D_Texture
 
    Evas_GL_Image     *surface;
    /*Tranformation matrix, use it for adjusting texture unit coordinates*/
-   Evas_Mat3         trans;
+   Eina_Matrix3         trans;
 
    GLuint            tex;
 
