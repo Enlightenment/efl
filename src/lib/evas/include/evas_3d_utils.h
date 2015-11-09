@@ -2213,7 +2213,7 @@ tangent_new_basis(Evas_Vec3 *out, Evas_Triangle3 *triangle,
 }
 
 static inline void
-convex_hull_vertex_set(Evas_Triangle3 *el, int *vertex_count, float **vertex,
+convex_hull_vertex_set(Evas_Triangle3 *el, unsigned short int *vertex_count, float **vertex,
                     unsigned short int **index, unsigned int k, int *leader, int coord)
 {
    int color_coords, normal_coords;
@@ -2404,8 +2404,8 @@ convex_hull_first_tr_get(float *data, int count, int stride)
 }
 
 static inline void
-evas_convex_hull_get(float *data, int count, int stride, float **vertex,
-                     unsigned short int **index, int *vertex_count, int *index_count)
+evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
+                     Eina_Inarray *index)
 {
    Evas_Triangle3  first_elem, second_elem, *third_elem = NULL, *el = NULL;
 
@@ -2424,7 +2424,7 @@ evas_convex_hull_get(float *data, int count, int stride, float **vertex,
    int i = 0, j = 0, new_stride = 0, leader = 0;
    int if_two = 0, first_exist_twice = 0, second_exist_twice = 0;
    unsigned int k = 0;
-   unsigned short int *found_index = NULL;
+   unsigned short int *found_index = NULL, index_count, vertex_count = 0;
 
    Eina_Bool exist1 = EINA_FALSE, pushed;
    Eina_Bool equivalent_triangle = EINA_FALSE, triangle_chain = EINA_FALSE;
@@ -2711,17 +2711,15 @@ evas_convex_hull_get(float *data, int count, int stride, float **vertex,
           free (new_elem1);
      }
 
-
-   *vertex_count = 0;
-   *index_count = 3 * eina_array_count(&arr_ch);
+   index_count = 3 * eina_array_count(&arr_ch);
 
    found_vertex = (float*) malloc(10 * sizeof(float));
-   found_index = (unsigned short int*) malloc((*index_count) * sizeof(unsigned short int));
+   found_index = (unsigned short int*) malloc(index_count * sizeof(unsigned short int));
    j = 0;
 
 #define CHECK_AND_SET_VERTEX(coord)                                                   \
   exist1 = EINA_FALSE;                                                                \
-  for (i = 0, new_stride = 0; i < (*vertex_count) && !exist1; i++, new_stride += 10)  \
+  for (i = 0, new_stride = 0; (i < vertex_count) && !exist1; i++, new_stride += 10)  \
      {                                                                                \
         if ((k > 0) && (el->p##coord.x == found_vertex[new_stride]) &&                \
             (el->p##coord.y == found_vertex[new_stride + 1]) &&                       \
@@ -2732,7 +2730,7 @@ evas_convex_hull_get(float *data, int count, int stride, float **vertex,
           }                                                                           \
      }                                                                                \
      if (!exist1)                                                                     \
-       convex_hull_vertex_set(el, vertex_count, &found_vertex,                        \
+       convex_hull_vertex_set(el, &vertex_count, &found_vertex,                        \
                        &found_index, k, &leader, coord);
 
    EINA_ARRAY_ITER_NEXT(&arr_ch, k, el, iterator)
@@ -2744,12 +2742,14 @@ evas_convex_hull_get(float *data, int count, int stride, float **vertex,
         j += 30;
      }
 
-   *vertex = (float*) malloc((10 * (*vertex_count)) * sizeof(float));
-   memcpy(*vertex, found_vertex, (10 * (*vertex_count)) * sizeof(float));
+   for (i = 0; i < 10 * (vertex_count); i++)
+      eina_inarray_push(vertex, &found_vertex[i]);
+
+   for (i = 0; i < index_count; i++)
+      eina_inarray_push(index, &found_index[i]);
+
    free(found_vertex);
 
-   *index = (unsigned short int*) malloc((*index_count) * sizeof(unsigned short int));
-   memcpy(*index, found_index, (*index_count) * sizeof(unsigned short int));
    free(found_index);
 
    EINA_ARRAY_ITER_NEXT(&arr_triangles, k, el, iterator)

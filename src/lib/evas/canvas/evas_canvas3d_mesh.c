@@ -1127,5 +1127,23 @@ _evas_canvas3d_mesh_shadows_constant_bias_get(Eo *obj EINA_UNUSED, Evas_Canvas3D
 {
    return pd->shadows_constant_bias;
 }
+EOLIAN static void
+_evas_canvas3d_mesh_convex_hull_data_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd,
+                                        int frame, Eina_Inarray *vertex, Eina_Inarray *index)
+{
+   int stride;
+
+   Evas_Canvas3D_Mesh_Frame *f = evas_canvas3d_mesh_frame_find(pd, frame);
+   if (f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION].stride != 0)
+     stride = f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION].stride / sizeof(float);
+   else
+     stride = 3;
+
+   float *data = (float *)f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION].data;
+
+   evas_convex_hull_get(data, pd->vertex_count, stride, vertex, index);
+
+   return;
+}
 
 #include "canvas/evas_canvas3d_mesh.eo.c"

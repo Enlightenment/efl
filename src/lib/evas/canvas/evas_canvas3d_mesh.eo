@@ -99,6 +99,15 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
          }
       }
 
+      convex_hull_data_get {
+         [[Get the vertex and index data of convex hull around the given mesh.
+         ]]
+         params {
+            @in frame: int; [[ The number of the key frame.]]
+            @in vertex: Eina_Inarray*;
+            @in index: Eina_Inarray*;
+         }
+      }
 
       index_data_copy_set {
          [[Set the vertex index data of the given mesh by copying from a
@@ -370,9 +379,9 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
       }
       @property shadows_edges_filtering {
         set {
-           [[Set the shadow edges blur parameters. 
+           [[Set the shadow edges blur parameters.
 
-             The averaging values in window is used for blurring. 
+             The averaging values in window is used for blurring.
              User can set the size of window and num of points in window.
            ]]
         }
