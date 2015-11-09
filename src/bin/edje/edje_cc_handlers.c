@@ -8415,7 +8415,7 @@ st_collections_group_parts_part_description_image_scale_hint(void)
     @block
         fill
     @context
-        part { type: IMAGE or PROXY;
+        part { type: [IMAGE or PROXY];
             description {
                 ..
                 fill {
@@ -9683,7 +9683,8 @@ static void st_collections_group_parts_part_description_table_padding(void)
 }
 
 /**
-   @edcsubsection{collections_group_parts_description_proxy, Proxy}
+   @edcsubsection{collections_group_parts_description_proxy,
+                  Group.Parts.Part.Description.Proxy}
  */
 
 /**
@@ -9764,7 +9765,8 @@ st_collections_group_parts_part_description_proxy_source_visible(void)
 }
 
 /**
-   @edcsubsection{collections_group_parts_description_positon,Position}
+   @edcsubsection{collections_group_parts_description_positon,
+                  Group.Parts.Part.Description.Position}
  */
 
 /**
@@ -9912,7 +9914,8 @@ st_collections_group_parts_part_description_position_space(void)
 }
 
 /**
-   @edcsubsection{collections_group_parts_description_camera,Properties}
+   @edcsubsection{collections_group_parts_description_camera,
+                  Group.Parts.Part.Description.Properties}
  */
 
 /**
@@ -9921,7 +9924,7 @@ st_collections_group_parts_part_description_position_space(void)
     @block
         properties
     @context
-        part {
+        part { type: CAMERA;
             description {
                 ..
                 properties {
@@ -9964,7 +9967,8 @@ st_collections_group_parts_part_description_camera_properties(void)
 }
 
 /**
-   @edcsubsection{collections_group_parts_description_properties,Properties}
+   @edcsubsection{collections_group_parts_description_properties,
+                  Group.Parts.Part.Description.Properties}
  */
 
 /**
@@ -9973,7 +9977,7 @@ st_collections_group_parts_part_description_camera_properties(void)
     @block
         properties
     @context
-        part {
+        part { type: [LIGHT or MESH_NODE];
             description {
                 ..
                 properties {
@@ -10297,7 +10301,8 @@ st_collections_group_parts_part_description_properties_shade(void)
 }
 
 /**
-   @edcsubsection{collections_group_parts_description_orientation,Orientation}
+   @edcsubsection{collections_group_parts_description_orientation,
+                  Group.Parts.Part.Description.Orientation}
  */
 
 /**
@@ -10306,7 +10311,7 @@ st_collections_group_parts_part_description_properties_shade(void)
     @block
         orientation
     @context
-        part {
+        part { type: [CAMERA or MESH_NODE or LIGHT];
             description {
                 ..
                 orientation {
@@ -10328,7 +10333,7 @@ st_collections_group_parts_part_description_properties_shade(void)
     @parameters
         [x] [y] [z]
     @effect
-        Indicates a target point for CAMERA and MESH_NODE or for LIGHt to see or
+        Indicates a target point for CAMERA and MESH_NODE or for LIGHT to see or
         to illuminate.
     @endproperty
 */
@@ -10522,7 +10527,8 @@ st_collections_group_parts_part_description_orientation_quaternion(void)
 }
 
 /**
-   @edcsubsection{collections_group_parts_description_texture,Texture}
+   @edcsubsection{collections_group_parts_description_texture,
+                  Group.Parts.Part.Description.Texture}
  */
 
 /**
@@ -11296,7 +11302,7 @@ st_collections_group_parts_part_description_physics_backface_cull(void)
 #endif
 
 /** @edcsubsection{collections_group_parts_description_physics_movement_freedom,
- *                 Group.Parts.Part.Description.Physics.Movement Freedom} */
+ *                 Group.Parts.Part.Description.Physics.Movement_Freedom} */
 
 /**
     @page edcref
@@ -11969,7 +11975,7 @@ st_collections_group_parts_part_description_perspective_focal(void)
         filter
     @context
         part {
-            type: [IMAGE or TEXT];
+            type: [IMAGE or TEXT or PROXY or SNAPSHOT];
             ..
             description {
                 ..
@@ -11992,7 +11998,7 @@ st_collections_group_parts_part_description_perspective_focal(void)
             }
         }
     @description
-        Applies a series of image filters to a TEXT or IMAGE part.
+        Applies a series of image filters to a TEXT, IMAGE, PROXY or SNAPSHOT part.
         For more information, please refer to the page
         @ref evasfiltersref "Evas filters reference".
     @endblock
