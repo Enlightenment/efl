@@ -35,9 +35,15 @@
 /**
   @page evasfiltersref Evas filters reference
 
+  @warning A new online documentation is available on the Wiki under
+  <a href="https://www.enlightenment.org/docs/efl/advanced/eflgfxfilters">
+  EFL Graphics Filters</a>. The documentation below is mostly still valid
+  but incomplete. This page may be removed in the future.
+
   The Evas filters are a combination of filters used to apply specific effects
   to an @ref Evas_Object "Evas Object". For the moment, these effects are
-  specific to the @ref Evas_Object_Text "Text Objects".
+  specific to the @ref Evas_Object_Text "Text" and @ref Evas_Object_Image
+  "Image Objects".
 
   The filters can be applied to an object using simple Lua scripts. A script
   will contain a series of buffer declarations and filter commands to apply
