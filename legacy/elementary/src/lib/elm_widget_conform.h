@@ -52,6 +52,7 @@ struct _Elm_Conformant_Data
    Ecore_Timer                   *port_indi_timer;
 
    int                            rot;
+   Eina_Bool                      win_hidden;
 };
 
 /* Enum to identify conformant swallow parts */
