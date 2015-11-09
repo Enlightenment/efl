@@ -36,6 +36,9 @@
 #include "eina_private.h"
 #include "eina_str.h"
 
+
+static const char *base64_table = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/" ;
+
 /*============================================================================*
 *                                  Local                                     *
 *============================================================================*/
@@ -723,4 +726,53 @@ eina_memdup(unsigned char *mem, size_t size, Eina_Bool terminate)
    if (terminate)
      ret[size] = 0;
    return ret;
+}
+
+EAPI char *
+eina_str_base64_encode(unsigned char const *src, unsigned int len)
+{
+   char *dest;
+   int i = 0, j = 0, k = 0;
+   unsigned char inarr[3], outarr[4];
+
+   if (!src) return NULL;
+
+   dest = malloc(((len + 2) / 3) * 4); // Max length of encoded string.
+   if (!dest) return NULL;
+
+   while (len--)
+     {
+        inarr[i++] = *(src++);
+        if (i == 3)
+          {
+             outarr[0] = (inarr[0] & 0xfc) >> 2;
+             outarr[1] = ((inarr[0] & 0x03) << 4) + ((inarr[1] & 0xf0) >> 4);
+             outarr[2] = ((inarr[1] & 0x0f) << 2) + ((inarr[2] & 0xc0) >> 6);
+             outarr[3] = inarr[2] & 0x3f;
+
+             for(i = 0; (i <4) ; i++)
+               dest[k++] = base64_table[outarr[i]];
+             i = 0;
+          }
+     }
+
+   if (i)
+     {
+        for(j = i; j < 3; j++)
+          inarr[j] = '\0';
+
+        outarr[0] = (inarr[0] & 0xfc) >> 2;
+        outarr[1] = ((inarr[0] & 0x03) << 4) + ((inarr[1] & 0xf0) >> 4);
+        outarr[2] = ((inarr[1] & 0x0f) << 2) + ((inarr[2] & 0xc0) >> 6);
+        outarr[3] = inarr[2] & 0x3f;
+
+        for (j = 0; (j < i + 1); j++)
+          dest[k++] = base64_table[outarr[j]];
+
+        while((i++ < 3))
+          dest[k++] = '=';
+
+     }
+
+   return dest;
 }

@@ -381,6 +381,20 @@ EAPI unsigned char *eina_memdup(unsigned char *mem, size_t size, Eina_Bool termi
  * @since 1.16.0
  */
 EAPI char *eina_strftime(const char *format, const struct tm *tm);
+
+/**
+ * @brief base64 encoding function.
+ * @param src The string to be encoded.
+ * @param len The length of the string that should be encoded.
+ * @return the base64 encoded string.
+ *
+ * This will create a string which is base64 encode of the src. The caller has
+ * to free the returned string using free().
+ *
+ * @since 1.17.0
+ */
+EAPI char *eina_str_base64_encode(unsigned char const *src, unsigned int len);
+
 #include "eina_inline_str.x"
 
 /**
