@@ -53,6 +53,8 @@ lib/ecore_con/ecore_con_ssl.c \
 lib/ecore_con/ecore_con_url.c \
 lib/ecore_con/ecore_con_url_curl.c \
 lib/ecore_con/ecore_con_url_curl.h \
+static_libs/http-parser/http_parser.c \
+static_libs/http-parser/http_parser.h \
 lib/ecore_con/ecore_con_private.h
 
 EXTRA_DIST += lib/ecore_con/ecore_con_legacy.c
@@ -78,9 +80,17 @@ lib_ecore_con_libecore_con_la_LIBADD = @ECORE_CON_LIBS@ @EVIL_LIBS@
 lib_ecore_con_libecore_con_la_DEPENDENCIES = @ECORE_CON_INTERNAL_LIBS@
 lib_ecore_con_libecore_con_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
+lib_ecore_con_libecore_con_la_CPPFLAGS += -I$(top_srcdir)/src/static_libs/http-parser
+
 EXTRA_DIST += \
 tests/ecore_con/server.key \
-tests/ecore_con/server.pem
+tests/ecore_con/server.pem \
+static_libs/http-parser/AUTHORS \
+static_libs/http-parser/CONTRIBUTIONS \
+static_libs/http-parser/README.md \
+static_libs/http-parser/test.c \
+static_libs/http-parser/contrib/parsertrace.c \
+static_libs/http-parser/contrib/url_parser.c
 
 ### Unit tests
 
