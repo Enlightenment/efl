@@ -38,7 +38,7 @@ _wl_shell_surface_cb_configure(void *data, struct wl_shell_surface *shell_surfac
    if (!win) return;
 
    if ((w <= 0) || (h <= 0)) return;
-   if ((win->geometry.w != w) || (win->geometry.h != h))
+   if ((w > 0) && (h > 0))
      _ecore_wl2_window_configure_send(win, w, h, edges);
 }
 
@@ -404,13 +404,6 @@ ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y)
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   /* test for no-op move */
-   /* if ((window->geometry.x == x) && (window->geometry.y == y)) */
-   /*   return; */
-
-   window->geometry.x = x;
-   window->geometry.y = y;
-
    input = window->input;
    if ((!input) && (window->parent))
      {
@@ -435,13 +428,6 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w, int h, int location)
    Ecore_Wl2_Input *input;
 
    EINA_SAFETY_ON_NULL_RETURN(window);
-
-   /* test for no-op resize */
-   /* if ((window->geometry.w == w) && (window->geometry.h == h)) */
-   /*   return; */
-
-   window->geometry.w = w;
-   window->geometry.h = h;
 
    input = window->input;
    if ((!input) && (window->parent))
@@ -628,6 +614,8 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
 
    if (window->type == ECORE_WL2_WINDOW_TYPE_TOPLEVEL)
      {
+        window->saved = window->geometry;
+
         if (window->xdg_surface)
           xdg_surface_set_maximized(window->xdg_surface);
         else if (window->wl_shell_surface)
@@ -644,9 +632,8 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
 
         window->type = ECORE_WL2_WINDOW_TYPE_TOPLEVEL;
 
-        /* FIXME: Should this be sending a 'saved' geom ?? */
-        _ecore_wl2_window_configure_send(window, window->geometry.x,
-                                         window->geometry.y, 0);
+        _ecore_wl2_window_configure_send(window, window->saved.w,
+                                         window->saved.h, 0);
      }
 }
 
@@ -671,6 +658,8 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
 
    if (fullscreen)
      {
+        window->saved = window->geometry;
+
         if (window->xdg_surface)
           xdg_surface_set_fullscreen(window->xdg_surface, NULL);
         else if (window->wl_shell_surface)
@@ -689,9 +678,8 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
 
         window->type = ECORE_WL2_WINDOW_TYPE_TOPLEVEL;
 
-        /* FIXME: Should this be sending a 'saved' geom ?? */
-        _ecore_wl2_window_configure_send(window, window->geometry.x,
-                                         window->geometry.y, 0);
+        _ecore_wl2_window_configure_send(window, window->saved.w,
+                                         window->saved.h, 0);
      }
 }
 

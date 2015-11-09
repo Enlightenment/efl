@@ -116,6 +116,7 @@ struct _Ecore_Wl2_Window
    struct xdg_surface *xdg_surface;
    struct xdg_popup *xdg_popup;
 
+   Eina_Rectangle saved;
    Eina_Rectangle geometry;
    Eina_Rectangle opaque;
    Eina_Rectangle input_rect;
