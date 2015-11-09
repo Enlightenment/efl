@@ -378,7 +378,7 @@ EAPI unsigned char *eina_memdup(unsigned char *mem, size_t size, Eina_Bool termi
  * free(buf);
  * @endcode
  *
- * @since 1.16.0
+ * @since 1.17.0
  */
 EAPI char *eina_strftime(const char *format, const struct tm *tm);
 
