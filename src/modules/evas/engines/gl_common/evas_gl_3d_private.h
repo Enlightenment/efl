@@ -106,11 +106,7 @@ struct _E3D_Draw_Data
         Evas_Color  specular;
    } light;
    Evas_Color fog_color;
-#ifndef GL_GLES
-   double color_pick_key;
-#else
    Evas_Color color_pick_key;
-#endif
    /*Sets of the quality of shadow rendering*/
    Evas_Real               pcf_step;
    Evas_Real               pcf_size;

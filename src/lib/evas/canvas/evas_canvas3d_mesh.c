@@ -124,14 +124,12 @@ _mesh_init(Evas_Canvas3D_Mesh_Data *pd)
    pd->alpha_comparison = EVAS_CANVAS3D_COMPARISON_ALWAYS;
    pd->alpha_ref_value = 0.0f;
    pd->alpha_test_enabled = EINA_FALSE;
-#ifndef GL_GLES
-   pd->color_pick_key = -1.0;
-#else
+
    pd->color_pick_key.r = 0.0;
    pd->color_pick_key.g = 0.0;
    pd->color_pick_key.b = 0.0;
-#endif
    pd->color_pick_enabled = EINA_FALSE;
+
    pd->shadows_edges_filtering_level = 4;
    pd->shadows_edges_size = 300.0;
    pd->shadows_constant_bias = 0.00015;

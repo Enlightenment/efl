@@ -384,11 +384,7 @@ struct _Evas_Canvas3D_Mesh
 
    Evas_Color              fog_color;
    Eina_Bool               fog_enabled :1;
-#ifndef GL_GLES
-   double                  color_pick_key;
-#else
    Evas_Color              color_pick_key;
-#endif
    Eina_Bool               color_pick_enabled :1;
    /*sets of the quality and offsets for shadow rendering*/
    int                     shadows_edges_filtering_level;

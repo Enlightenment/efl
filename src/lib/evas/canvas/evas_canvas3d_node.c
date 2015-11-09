@@ -14,26 +14,6 @@ static Eina_Stringshare *
 _generate_unic_color_key(Evas_Color *color, Evas_Color *bg_color, Evas_Canvas3D_Node *node, Evas_Canvas3D_Mesh *mesh,
                          Eina_Bool init)
 {
-#ifndef GL_GLES
-   static unsigned short red = USHRT_MAX;
-
-   if (init) red = USHRT_MAX;
-
-   if (fabs(bg_color->r - (double)red) <= DBL_EPSILON) red--;
-
-   color->r = (double)red / USHRT_MAX;
-   color->g = 0.0;
-   color->b = 0.0;
-
-   red--;
-
-   if (red == 0)
-     {
-        ERR("Overfill number of color. %d %s", __LINE__, __FILE__);
-        red = USHRT_MAX;
-     }
-
-#else
    static unsigned char red = 0;
    static unsigned char green = 0;
    static unsigned char blue = 0;
@@ -72,7 +52,7 @@ _generate_unic_color_key(Evas_Color *color, Evas_Color *bg_color, Evas_Canvas3D_
    color->b = (double)blue / 255;
 
 #undef GET_NEXT_COLOR
-#endif
+
    return eina_stringshare_printf("%p %p", node, mesh);
 }
 

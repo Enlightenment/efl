@@ -305,11 +305,7 @@ e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_fo
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-#ifndef GL_GLES
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, w, h, 0, GL_RED, GL_UNSIGNED_SHORT, 0);
-#else
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-#endif
 
    glGenFramebuffers(1, &fbo);
    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -1345,13 +1341,9 @@ e3d_drawable_scene_render_to_texture(E3D_Drawable *drawable, E3D_Renderer *rende
                   unic_color = (Evas_Color *)eina_hash_find(data->node_mesh_colors, tmp);
                   if (unic_color)
                     {
-#ifndef GL_GLES
-                       pdmesh->color_pick_key = unic_color->r;
-#else
                        pdmesh->color_pick_key.r = unic_color->r;
                        pdmesh->color_pick_key.g = unic_color->g;
                        pdmesh->color_pick_key.b = unic_color->b;
-#endif
                        shade_mode = pdmesh->shade_mode;
                        pdmesh->shade_mode = EVAS_CANVAS3D_SHADE_MODE_COLOR_PICK;
                        _mesh_draw(renderer, nm->mesh, nm->frame, NULL, matrix_eye, &matrix_mv,
@@ -1377,17 +1369,12 @@ e3d_drawable_texture_pixel_color_get(GLuint tex EINA_UNUSED, int x, int y,
    E3D_Drawable *d = (E3D_Drawable *)drawable;
 
    glBindFramebuffer(GL_FRAMEBUFFER, d->color_pick_fb_id);
-#ifndef GL_GLES
-   GLuint pixel = 0;
-   glReadPixels(x, y, 1, 1, GL_RED, GL_UNSIGNED_SHORT, &pixel);
-   color->r = (double)pixel / USHRT_MAX;
-#else
+
    GLubyte pixel[4] = {0, 0, 0, 0};
    glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
    color->r = (double)pixel[0] / 255;
    color->g = (double)pixel[1] / 255;
    color->b = (double)pixel[2] / 255;
-#endif
 
    glBindFramebuffer(GL_FRAMEBUFFER, d->fbo);
 }
