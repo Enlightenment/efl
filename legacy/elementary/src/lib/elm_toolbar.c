@@ -2412,7 +2412,6 @@ _item_new(Evas_Object *obj,
         elm_layout_signal_emit(VIEW(it), "elm,state,icon,visible", "elm");
         elm_layout_signal_emit(VIEW(it), "elm,icon,visible", "elm");
         evas_object_show(it->icon);
-        elm_widget_sub_object_add(obj, it->icon);
      }
    else
      {
