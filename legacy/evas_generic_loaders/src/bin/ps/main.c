@@ -23,15 +23,15 @@
 #endif
 
 
-SpectreDocument *psdoc;
-int page_count;
+static SpectreDocument *psdoc;
+static int page_count;
 
-SpectrePage *page;
+static SpectrePage *page;
 
-int width = 0;
-int height = 0;
-void *data = NULL;
-double dpi = -1.0;
+static int width = 0;
+static int height = 0;
+static void *data = NULL;
+static double dpi = -1.0;
 
 #define DEF_DPI 72.0
 
