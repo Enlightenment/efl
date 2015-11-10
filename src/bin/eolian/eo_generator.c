@@ -63,7 +63,6 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
    _eolian_class_func_vars func_env;
    Eina_Iterator *itr;
    void *data, *data2;
-   char *tmpstr = malloc(0x1FF);
    Eina_Bool var_as_ret = EINA_FALSE;
    const Eolian_Type *rettypet = NULL;
    const char *rettype = NULL;
@@ -154,11 +153,7 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
 
    if (rettypet) rettype = eolian_type_c_type_get(rettypet);
 
-   tmpstr[0] = '\0';
-   sprintf(tmpstr, "%s%s",
-         rettype ? rettype : "void",
-         rettype && strchr(rettype, '*')?"":" ");
-   eina_strbuf_replace_all(str_func, "@#rettype", tmpstr);
+   eina_strbuf_replace_all(str_func, "@#rettype", rettype ? rettype : "void");
 
    eina_strbuf_replace_all(str_func, "@#list_param", eina_strbuf_string_get(str_par));
    if (!eina_strbuf_length_get(str_par)) eina_strbuf_append(str_par, "void");
@@ -167,7 +162,6 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
 
    if (rettype) eina_stringshare_del(rettype);
 
-   free(tmpstr);
    eina_strbuf_free(str_par);
    eina_strbuf_free(str_pardesc);
 
@@ -182,7 +176,6 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 {
    Eina_Iterator *itr;
    Eolian_Event *event;
-   char *tmpstr = malloc(0x1FF);
    Eina_Strbuf * str_hdr = eina_strbuf_new();
 
    const Eolian_Documentation *doc = eolian_class_documentation_get(class);
@@ -293,7 +286,6 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
 
    eina_strbuf_append(buf, eina_strbuf_string_get(str_hdr));
 
-   free(tmpstr);
    eina_strbuf_free(str_ev);
    eina_strbuf_free(str_extrn_ev);
    eina_strbuf_free(tmpbuf);
