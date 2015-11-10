@@ -95,6 +95,7 @@ Eet_Data_Descriptor *_edje_edd_edje_filter_directory = NULL;
      data = eina_mempool_malloc(_emp_##Type, size); \
      memset(data, 0, size);                         \
      data->clip_to_id = -1;                         \
+     data->map.zoom.x = data->map.zoom.y = 1.0;     \
      return data;                                   \
   }                                                 \
                                                     \
