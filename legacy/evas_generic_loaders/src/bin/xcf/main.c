@@ -448,7 +448,7 @@ extern void combine_pixels_diss (DATA8* src, int src_w, int src_h, DATA8* dest, 
 /* ---------------------------------------------------------------------------- globals ------------ */
 
 /* This makes using the Gimp sources easier */
-struct _GimpImage * image = &_image;
+static struct _GimpImage * image = &_image;
 
 /* ------------------------------------------------------------------------------- code ------------ */
 
