@@ -339,13 +339,35 @@ _resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
 }
 
 static void
+_hover_del(Evas_Object *obj)
+{
+   Elm_Object_Item *eo_item;
+   Eina_List *l;
+
+   ELM_HOVERSEL_DATA_GET(obj, sd);
+
+   sd->expanded = EINA_FALSE;
+
+   EINA_LIST_FOREACH(sd->items, l, eo_item)
+     {
+        ELM_HOVERSEL_ITEM_DATA_GET(eo_item, it);
+        elm_box_unpack(sd->bx, VIEW(it));
+        evas_object_hide(VIEW(it));
+     }
+   ELM_SAFE_FREE(sd->hover, evas_object_del);
+   sd->bx = NULL;
+   sd->scr = NULL;
+   sd->last_location = NULL;
+
+   eo_do(obj, eo_event_callback_call(ELM_HOVERSEL_EVENT_DISMISSED, NULL));
+}
+
+static void
 _hover_end_finished(void *data,
                     Evas_Object *obj EINA_UNUSED,
                     const char *emission EINA_UNUSED,
                     const char *source EINA_UNUSED)
 {
-   Elm_Object_Item *eo_item;
-   Eina_List *l;
    const char *dismissstr;
 
    ELM_HOVERSEL_DATA_GET(data, sd);
@@ -354,20 +376,7 @@ _hover_end_finished(void *data,
 
    if (dismissstr && !strcmp(dismissstr, "on"))
      {
-        sd->expanded = EINA_FALSE;
-
-        EINA_LIST_FOREACH(sd->items, l, eo_item)
-          {
-             ELM_HOVERSEL_ITEM_DATA_GET(eo_item, it);
-             elm_box_unpack(sd->bx, VIEW(it));
-             evas_object_hide(VIEW(it));
-          }
-        ELM_SAFE_FREE(sd->hover, evas_object_del);
-        sd->bx = NULL;
-        sd->scr = NULL;
-        sd->last_location = NULL;
-
-        eo_do(data, eo_event_callback_call(ELM_HOVERSEL_EVENT_DISMISSED, NULL));
+        _hover_del(data);
      }
 }
 
@@ -679,9 +688,6 @@ _elm_hoversel_hover_begin(Eo *obj, Elm_Hoversel_Data *sd)
 EOLIAN static void
 _elm_hoversel_hover_end(Eo *obj, Elm_Hoversel_Data *sd)
 {
-
-   Elm_Object_Item *eo_item;
-   Eina_List *l;
    const char *dismissstr;
 
    if (!sd->hover) return;
@@ -691,27 +697,10 @@ _elm_hoversel_hover_end(Eo *obj, Elm_Hoversel_Data *sd)
    if (dismissstr && !strcmp(dismissstr, "on"))
      {
         elm_hover_dismiss(sd->hover);
-
-
-
      }
    else
-
      {
-        sd->expanded = EINA_FALSE;
-
-        EINA_LIST_FOREACH(sd->items, l, eo_item)
-          {
-             ELM_HOVERSEL_ITEM_DATA_GET(eo_item, it);
-             elm_box_unpack(sd->bx, VIEW(it));
-             evas_object_hide(VIEW(it));
-          }
-        ELM_SAFE_FREE(sd->hover, evas_object_del);
-        sd->scr = NULL;
-        sd->last_location = NULL;
-        sd->bx = NULL;
-
-        eo_do(obj, eo_event_callback_call(ELM_HOVERSEL_EVENT_DISMISSED, NULL));
+        _hover_del(obj);
      } // for backward compatibility
 }
 
