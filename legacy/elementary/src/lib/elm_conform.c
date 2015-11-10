@@ -407,7 +407,8 @@ _create_portrait_indicator(Evas_Object *obj)
    if (!elm_plug_connect(port_indicator, port_indicator_serv_name, 0, EINA_FALSE))
      {
         DBG("Conformant cannot connect to server[%s]\n", port_indicator_serv_name);
-        return NULL;
+        sd->port_indi_timer = ecore_timer_add(ELM_CONFORM_INDICATOR_TIME,
+                                          _port_indicator_connect_cb, obj);
      }
 
    elm_widget_sub_object_add(obj, port_indicator);
@@ -448,7 +449,8 @@ _create_landscape_indicator(Evas_Object *obj)
    if (!elm_plug_connect(land_indicator, land_indicator_serv_name, 0, EINA_FALSE))
      {
         DBG("Conformant cannot connect to server[%s]\n", land_indicator_serv_name);
-        return NULL;
+        sd->land_indi_timer = ecore_timer_add(ELM_CONFORM_INDICATOR_TIME,
+                                          _land_indicator_connect_cb, obj);
      }
 
    elm_widget_sub_object_add(obj, land_indicator);
