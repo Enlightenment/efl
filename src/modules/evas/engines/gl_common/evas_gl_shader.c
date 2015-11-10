@@ -668,7 +668,8 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
           sam = SHD_SAM21;
         else if (sh >= (h * 2))
           sam = SHD_SAM12;
-        flags |= (1 << (SHADER_FLAG_SAM_BITSHIFT + sam - 1));
+        if (sam)
+          flags |= (1 << (SHADER_FLAG_SAM_BITSHIFT + sam - 1));
      }
 
    // mask downscale sampling
@@ -680,7 +681,8 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
           masksam = SHD_SAM21;
         else if (mtex->h >= (mh * 2))
           masksam = SHD_SAM12;
-        flags |= (1 << (SHADER_FLAG_MASKSAM_BITSHIFT + masksam - 1));
+        if (masksam)
+          flags |= (1 << (SHADER_FLAG_MASKSAM_BITSHIFT + masksam - 1));
      }
 
    switch (type)
