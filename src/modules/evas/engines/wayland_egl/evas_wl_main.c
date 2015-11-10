@@ -83,8 +83,7 @@ eng_window_new(Evas *evas, Evas_Engine_Info_Wayland_Egl *einfo, int w, int h, Re
         eng_window_free(gw);
         return NULL;
      }
-   eglBindAPI(EGL_OPENGL_ES_API);
-   if (eglGetError() != EGL_SUCCESS)
+   if (!eglBindAPI(EGL_OPENGL_ES_API))
      {
         ERR("eglBindAPI() fail. code=%#x", eglGetError());
         eng_window_free(gw);
