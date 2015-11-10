@@ -444,7 +444,7 @@ evas_image_save_file_tgv(RGBA_Image *im,
                                case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
                                  etc2_rgba8_block_pack(offset, (uint32_t *) todo, &param);
                                  break;
-                               default: return 0;
+                               default: goto on_error;
                               }
 
 #ifdef DEBUG_STATS
