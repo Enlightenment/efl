@@ -167,6 +167,18 @@ START_TEST(eina_matrix4)
            wy != wz ||
            wz != 0);
 
+   eina_matrix4_values_set(&m,
+                           1, 2, 3, 4,
+                           5, 6, 7, 8,
+                           9, 10, 11, 12,
+                           13, 14, 15, 16);
+
+   eina_matrix4_transpose(&n, &m);
+   fail_if(n.xx != 1 || n.xy != 5 || n.xz != 9 || n.xw != 13 ||
+           n.yx != 2 || n.yy != 6 || n.yz != 10 || n.yw != 14 ||
+           n.zx != 3 || n.zy != 7 || n.zz != 11 || n.zw != 15 ||
+           n.wx != 4 || n.wy != 8 || n.wz != 12 || n.ww != 16);
+
    eina_shutdown();
 }
 END_TEST
