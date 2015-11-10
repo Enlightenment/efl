@@ -47,6 +47,9 @@ class Elm.Genlist_Item(Elm.Widget_Item)
 
                        This returns the item placed before the $item, on
                        the container genlist.
+                       
+                       If filter is set on genlist, this returns the filtered
+                       item placed before $item in the list.
                      ]]
                 }
                 values {
@@ -60,6 +63,9 @@ class Elm.Genlist_Item(Elm.Widget_Item)
 
                        This returns the item placed after the $item, on
                        the container genlist.
+
+                       If filter is set on genlist, this returns the filtered
+                       item placed after $item in the list.
                      ]]
                 }
                 values {

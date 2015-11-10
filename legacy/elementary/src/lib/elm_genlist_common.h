@@ -27,6 +27,11 @@ typedef Elm_Gen_Item_State_Get_Cb Elm_Genlist_Item_State_Get_Cb;
 typedef Elm_Gen_Item_Del_Cb Elm_Genlist_Item_Del_Cb;
 
 /**
+ * @see Elm_Gen_Item_Filter_Get_Cb
+ */
+typedef Elm_Gen_Item_Filter_Get_Cb Elm_Genlist_Item_Filter_Get_Cb;
+
+/**
  * Create a new genlist item class in a given genlist widget.
  *
  * @return New allocated genlist item class.

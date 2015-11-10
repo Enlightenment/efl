@@ -4996,7 +4996,6 @@ _entry_change_cb(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    api_data *api = (api_data *)data;
    char buf[100];
-   Eina_Iterator *filter_iter;
    unsigned int count = 0;
    Elm_Object_Item *item;
 
@@ -5010,15 +5009,19 @@ _entry_change_cb(void *data, Evas_Object *obj, void *event EINA_UNUSED)
         printf("Input data string empty; returning\n");
         return;
      }
-   filter_iter = elm_genlist_filter_iterator_new(api->gl);
 
-   EINA_ITERATOR_FOREACH(filter_iter, item)
-     if (item) count++;
-
+   item = elm_genlist_first_item_get(api->gl);
+   if (!item)
+     {
+        printf("No matches for the key %s\n", buf);
+        return;
+     }
+   while (item)
+     {
+        ++count;
+        item = elm_genlist_item_next_get(item);
+     }
    printf("Number of matches for %s is %d\n", buf, count);
-   //Iterator needs to be freed by application using eina_iterator_free
-   eina_iterator_free(filter_iter);
-
 }
 
 void

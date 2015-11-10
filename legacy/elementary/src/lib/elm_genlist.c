@@ -6526,7 +6526,22 @@ _elm_genlist_at_xy_item_get(const Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Eva
 EOLIAN static Elm_Object_Item*
 _elm_genlist_first_item_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
 {
-   return EO_OBJ(ELM_GEN_ITEM_FROM_INLIST(sd->items));
+   Elm_Gen_Item *it = ELM_GEN_ITEM_FROM_INLIST(sd->items);
+
+   if (!sd->filter)
+     {
+        return EO_OBJ(it);
+     }
+   else
+     {
+        while (it)
+          {
+             if (_item_filtered_get(it)) break;
+             it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
+          }
+        if (it) return EO_OBJ(it);
+        return NULL;
+     }
 }
 
 EOLIAN static Elm_Object_Item*
@@ -6535,19 +6550,44 @@ _elm_genlist_last_item_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
    Elm_Gen_Item *it;
 
    if (!sd->items) return NULL;
-
    it = ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
 
-   return EO_OBJ(it);
+   if (!sd->filter)
+     {
+        return EO_OBJ(it);
+     }
+   else
+     {
+        while (it)
+          {
+             if (_item_filtered_get(it)) break;
+             it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
+          }
+        if (it) return EO_OBJ(it);
+        return NULL;
+     }
 }
 
 EOLIAN static Elm_Object_Item *
 _elm_genlist_item_next_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 {
-   while (it)
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+
+   if (!sd->filter)
      {
-        it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
-        if (it) break;
+        while (it)
+          {
+             it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
+             if (it) break;
+          }
+     }
+   else
+     {
+        while (it)
+          {
+             it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
+             if (it && _item_filtered_get(it)) break;
+          }
      }
 
    if (it) return EO_OBJ(it);
@@ -6557,10 +6597,24 @@ _elm_genlist_item_next_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 EOLIAN static Elm_Object_Item *
 _elm_genlist_item_prev_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 {
-   while (it)
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+
+   if (!it) return NULL;
+   if (!sd->filter)
      {
-        it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
-        if (it) break;
+        while (it)
+          {
+            it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
+            if (it) break;
+          }
+     }
+   else
+     {
+        while (it)
+          {
+            it = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
+            if (it && _item_filtered_get(it)) break;
+          }
      }
 
    if (it) return EO_OBJ(it);
