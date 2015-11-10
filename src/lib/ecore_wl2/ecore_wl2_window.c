@@ -681,6 +681,14 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
      }
 }
 
+EAPI int
+ecore_wl2_window_rotation_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, -1);
+
+   return window->rotation;
+}
+
 EAPI void
 ecore_wl2_window_rotation_set(Ecore_Wl2_Window *window, int rotation)
 {
