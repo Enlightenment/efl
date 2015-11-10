@@ -33,7 +33,6 @@
 
 PDFDoc *pdfdoc;
 bool locked = false;
-SplashOutputDev *output_dev;
 
 ::Page *page;
 int width = 0, height = 0;
