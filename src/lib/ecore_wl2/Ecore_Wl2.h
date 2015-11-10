@@ -184,6 +184,7 @@ EAPI extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE;
  *          shutdown. 0 is returned if an error occurs.
  *
  * @ingroup Ecore_Wl2_Init_Group
+ * @since 1.17
  */
 EAPI int ecore_wl2_init(void);
 
@@ -194,6 +195,7 @@ EAPI int ecore_wl2_init(void);
  *          being shutdown.
  *
  * @ingroup Ecore_Wl2_Init_Group
+ * @since 1.17
  */
 EAPI int ecore_wl2_shutdown(void);
 
@@ -217,6 +219,7 @@ EAPI int ecore_wl2_shutdown(void);
  * @return The newly created Ecore_Wl2_Display
  *
  * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.17
  */
 EAPI Ecore_Wl2_Display *ecore_wl2_display_create(const char *name);
 
@@ -229,6 +232,7 @@ EAPI Ecore_Wl2_Display *ecore_wl2_display_create(const char *name);
  * @param display The display to terminate
  *
  * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_display_destroy(Ecore_Wl2_Display *display);
 
@@ -244,6 +248,7 @@ EAPI void ecore_wl2_display_destroy(Ecore_Wl2_Display *display);
  * @return The Ecore_Wl2_Display which was connected to
  *
  * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.17
  */
 EAPI Ecore_Wl2_Display *ecore_wl2_display_connect(const char *name);
 
@@ -256,6 +261,7 @@ EAPI Ecore_Wl2_Display *ecore_wl2_display_connect(const char *name);
  * @param display The display to disconnect from
  *
  * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_display_disconnect(Ecore_Wl2_Display *display);
 
@@ -269,6 +275,7 @@ EAPI void ecore_wl2_display_disconnect(Ecore_Wl2_Display *display);
  * @param display The Ecore_Wl2_Display to terminate
  *
  * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_display_terminate(Ecore_Wl2_Display *display);
 
@@ -281,6 +288,7 @@ EAPI void ecore_wl2_display_terminate(Ecore_Wl2_Display *display);
  * @return The wl_display which this Ecore_Wl2_Display is using
  *
  * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.17
  */
 EAPI struct wl_display *ecore_wl2_display_get(Ecore_Wl2_Display *display);
 
@@ -293,6 +301,7 @@ EAPI struct wl_display *ecore_wl2_display_get(Ecore_Wl2_Display *display);
  * @return The wl_shm which this Ecore_Wl2_Display is using
  *
  * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.17
  */
 EAPI struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
 
@@ -305,6 +314,7 @@ EAPI struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
  * when finished with it.
  *
  * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.17
  */
 EAPI Eina_Iterator *ecore_wl2_display_globals_get(Ecore_Wl2_Display *display);
 
@@ -316,6 +326,7 @@ EAPI Eina_Iterator *ecore_wl2_display_globals_get(Ecore_Wl2_Display *display);
  * @param h where to return the height. May be NULL. Returns 0 on error.
  *
  * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, int *h);
 
@@ -328,6 +339,7 @@ EAPI void ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, 
  * @return The Ecore_Wl2_Window if found, or NULL if no such window exists
  *
  * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.17
  */
 EAPI Ecore_Wl2_Window *ecore_wl2_display_window_find(Ecore_Wl2_Display *display, unsigned int id);
 
@@ -339,6 +351,7 @@ EAPI Ecore_Wl2_Window *ecore_wl2_display_window_find(Ecore_Wl2_Display *display,
  * @return The current wayland registry, or NULL on error
  *
  * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.17
  */
 EAPI struct wl_registry *ecore_wl2_display_registry_get(Ecore_Wl2_Display *display);
 
@@ -361,6 +374,7 @@ EAPI struct wl_registry *ecore_wl2_display_registry_get(Ecore_Wl2_Display *displ
  * @param h Initial height of window
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI Ecore_Wl2_Window *ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x, int y, int w, int h);
 
@@ -372,6 +386,7 @@ EAPI Ecore_Wl2_Window *ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl
  * @return The id associated with this window
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI int ecore_wl2_window_id_get(Ecore_Wl2_Window *window);
 
@@ -383,6 +398,7 @@ EAPI int ecore_wl2_window_id_get(Ecore_Wl2_Window *window);
  * @return The wl_surface associated with this window.
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI struct wl_surface *ecore_wl2_window_surface_get(Ecore_Wl2_Window *window);
 
@@ -394,6 +410,7 @@ EAPI struct wl_surface *ecore_wl2_window_surface_get(Ecore_Wl2_Window *window);
  * @return The id of the given window, or -1 on failure
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI int ecore_wl2_window_surface_id_get(Ecore_Wl2_Window *window);
 
@@ -403,6 +420,7 @@ EAPI int ecore_wl2_window_surface_id_get(Ecore_Wl2_Window *window);
  * @param window The Ecore_Wl2_Window to show
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_show(Ecore_Wl2_Window *window);
 
@@ -412,6 +430,7 @@ EAPI void ecore_wl2_window_show(Ecore_Wl2_Window *window);
  * @param window The Ecore_Wl2_Window to hide
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_hide(Ecore_Wl2_Window *window);
 
@@ -421,6 +440,7 @@ EAPI void ecore_wl2_window_hide(Ecore_Wl2_Window *window);
  * @param window The Ecore_Wl2_Window to free
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_free(Ecore_Wl2_Window *window);
 
@@ -435,6 +455,7 @@ EAPI void ecore_wl2_window_free(Ecore_Wl2_Window *window);
  * @param y Desired y position of window
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y);
 
@@ -450,6 +471,7 @@ EAPI void ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y);
  * @param location The edge of the window from where the resize should start
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w, int h, int location);
 
@@ -459,6 +481,7 @@ EAPI void ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w, int h, int lo
  * @param window The Ecore_Wl2_Window which to raise
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_raise(Ecore_Wl2_Window *window);
 
@@ -470,6 +493,7 @@ EAPI void ecore_wl2_window_raise(Ecore_Wl2_Window *window);
  * @return EINA_TRUE if window is alpha, EINA_FALSE otherwise
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI Eina_Bool ecore_wl2_window_alpha_get(Ecore_Wl2_Window *window);
 
@@ -480,6 +504,7 @@ EAPI Eina_Bool ecore_wl2_window_alpha_get(Ecore_Wl2_Window *window);
  * @param alpha EINA_TRUE to set window as alpha, EINA_FALSE otherwise
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha);
 
@@ -491,6 +516,7 @@ EAPI void ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha);
  *                    EINA_FALSE otherwise
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_transparent_set(Ecore_Wl2_Window *window, Eina_Bool transparent);
 
@@ -504,6 +530,7 @@ EAPI void ecore_wl2_window_transparent_set(Ecore_Wl2_Window *window, Eina_Bool t
  * @param h The height of the region.
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
 
@@ -521,6 +548,7 @@ EAPI void ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, in
  * @param h The height of the region.
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
 
@@ -532,6 +560,7 @@ EAPI void ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int
  * @return EINA_TRUE if window is maximized, EINA_FALSE otherwise
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI Eina_Bool ecore_wl2_window_maximized_get(Ecore_Wl2_Window *window);
 
@@ -542,6 +571,7 @@ EAPI Eina_Bool ecore_wl2_window_maximized_get(Ecore_Wl2_Window *window);
  * @param maximized EINA_TRUE to set maximized, EINA_FALSE to unset
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized);
 
@@ -553,6 +583,7 @@ EAPI void ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool max
  * @return EINA_TRUE if window is fullscreen, EINA_FALSE otherwise
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI Eina_Bool ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window);
 
@@ -563,6 +594,7 @@ EAPI Eina_Bool ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window);
  * @param maximized EINA_TRUE to set fullscreen, EINA_FALSE to unset
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen);
 
@@ -574,6 +606,7 @@ EAPI void ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fu
  * @return The amount of rotation for this window, or -1 on failure
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI int ecore_wl2_window_rotation_get(Ecore_Wl2_Window *window);
 
@@ -584,6 +617,7 @@ EAPI int ecore_wl2_window_rotation_get(Ecore_Wl2_Window *window);
  * @param rotation The amount of rotation
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_rotation_set(Ecore_Wl2_Window *window, int rotation);
 
@@ -594,6 +628,7 @@ EAPI void ecore_wl2_window_rotation_set(Ecore_Wl2_Window *window, int rotation);
  * @param title The title of the window
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title);
 
@@ -604,6 +639,7 @@ EAPI void ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title
  * @param clas The class of the window
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas);
 
@@ -621,6 +657,7 @@ EAPI void ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas)
  * @param h The height of the window geometry
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_geometry_get(Ecore_Wl2_Window *window, int *x, int *y, int *w, int *h);
 
@@ -638,6 +675,7 @@ EAPI void ecore_wl2_window_geometry_get(Ecore_Wl2_Window *window, int *x, int *y
  * @param h The height of the window geometry
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
 
@@ -649,6 +687,7 @@ EAPI void ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, 
  * @return EINA_TRUE if window is iconified, EINA_FALSE otherwise
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI Eina_Bool ecore_wl2_window_iconified_get(Ecore_Wl2_Window *window);
 
@@ -659,6 +698,7 @@ EAPI Eina_Bool ecore_wl2_window_iconified_get(Ecore_Wl2_Window *window);
  * @param iconified The new iconified state to set
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified);
 
@@ -670,6 +710,7 @@ EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool ico
  * @param y where to return the vertical position. May be NULL. Returns 0 on error.
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_pointer_xy_get(Ecore_Wl2_Window *window, int *x, int *y);
 
@@ -682,6 +723,7 @@ EAPI void ecore_wl2_window_pointer_xy_get(Ecore_Wl2_Window *window, int *x, int 
  * @param hot_y The y coordinate to use as the cursor hot spot
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surface *surface, int hot_x, int hot_y);
 
@@ -696,6 +738,7 @@ EAPI void ecore_wl2_window_pointer_set(Ecore_Wl2_Window *window, struct wl_surfa
  * @param cursor The name of the cursor to try and set
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const char *cursor);
 
@@ -706,6 +749,7 @@ EAPI void ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const 
  * @type The Ecore_Wl2_Window_Type to set on the window
  *
  * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type);
 
@@ -785,6 +829,7 @@ EAPI Eina_Bool ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input);
  * NULL on failure
  *
  * @ingroup Ecore_Wl2_Subsurface_Group
+ * @since 1.17
  */
 EAPI Ecore_Wl2_Subsurface *ecore_wl2_subsurface_new(Ecore_Wl2_Window *window);
 
@@ -794,6 +839,7 @@ EAPI Ecore_Wl2_Subsurface *ecore_wl2_subsurface_new(Ecore_Wl2_Window *window);
  * @param subsurface the subsurface
  *
  * @ingroup Ecore_Wl2_Subsurface_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_subsurface_del(Ecore_Wl2_Subsurface *subsurface);
 
@@ -805,6 +851,7 @@ EAPI void ecore_wl2_subsurface_del(Ecore_Wl2_Subsurface *subsurface);
  * @return the wl_surface associated with this subsurface, or NULL on failure
  *
  * @ingroup Ecore_Wl2_Subsurface_Group
+ * @since 1.17
  */
 EAPI struct wl_surface *ecore_wl2_subsurface_surface_get(Ecore_Wl2_Subsurface *subsurface);
 
@@ -818,6 +865,7 @@ EAPI struct wl_surface *ecore_wl2_subsurface_surface_get(Ecore_Wl2_Subsurface *s
  * @param y coordinate in the parent surface
  *
  * @ingroup Ecore_Wl2_Subsurface_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_subsurface_position_set(Ecore_Wl2_Subsurface *subsurface, int x, int y);
 
@@ -830,6 +878,7 @@ EAPI void ecore_wl2_subsurface_position_set(Ecore_Wl2_Subsurface *subsurface, in
  * @param y coordinate in the parent surface, or NULL to ignore
  *
  * @ingroup Ecore_Wl2_Subsurface_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_subsurface_position_get(Ecore_Wl2_Subsurface *subsurface, int *x, int *y);
 
@@ -845,6 +894,7 @@ EAPI void ecore_wl2_subsurface_position_get(Ecore_Wl2_Subsurface *subsurface, in
  * @param surface the sibling reference surface
  *
  * @ingroup Ecore_Wl2_Subsurface_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_subsurface_place_above(Ecore_Wl2_Subsurface *subsurface, struct wl_surface *surface);
 
@@ -857,6 +907,7 @@ EAPI void ecore_wl2_subsurface_place_above(Ecore_Wl2_Subsurface *subsurface, str
  * @param surface the sibling reference surface
  *
  * @ingroup Ecore_Wl2_Subsurface_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_subsurface_place_below(Ecore_Wl2_Subsurface *subsurface, struct wl_surface *surface);
 
@@ -884,6 +935,7 @@ EAPI void ecore_wl2_subsurface_place_below(Ecore_Wl2_Subsurface *subsurface, str
  * @param sync true to enable synchronization, false to desynchronize
  *
  * @ingroup Ecore_Wl2_Subsurface_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_subsurface_sync_set(Ecore_Wl2_Subsurface *subsurface, Eina_Bool sync);
 
@@ -903,6 +955,7 @@ EAPI void ecore_wl2_subsurface_sync_set(Ecore_Wl2_Subsurface *subsurface, Eina_B
  * @param h height to set as opaque
  *
  * @ingroup Ecore_Wl2_Subsurface_Group
+ * @since 1.17
  */
 EAPI void ecore_wl2_subsurface_opaque_region_set(Ecore_Wl2_Subsurface *subsurface, int x, int y, int w, int h);
 
@@ -926,6 +979,7 @@ EAPI void ecore_wl2_subsurface_opaque_region_set(Ecore_Wl2_Subsurface *subsurfac
  * @return the general screen DPI (dots/pixels per inch).
  *
  * @ingroup Ecore_Wl2_Output_Group
+ * @since 1.17
  */
 EAPI int ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output);
 
