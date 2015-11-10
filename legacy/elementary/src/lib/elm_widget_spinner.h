@@ -35,6 +35,7 @@ struct _Elm_Spinner_Data
    double                drag_prev_pos, drag_val_step;
    double                spin_speed, interval, first_interval;
    int                   round;
+   int                   decimal_points;
    Ecore_Timer          *delay_change_timer; /**< a timer for a delay,changed smart callback */
    Ecore_Timer          *spin_timer; /**< a timer for a repeated spinner value change on mouse down */
    Ecore_Timer          *longpress_timer; /**< a timer to detect long press. After lonpress timeout,

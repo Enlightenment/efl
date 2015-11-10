@@ -390,6 +390,47 @@ _entry_activated_cb(void *data,
    return EINA_TRUE;
 }
 
+static int
+_decimal_points_get(const char *label)
+{
+   char result[2];
+   const char *start = strchr(label, '%');
+
+   while (start)
+     {
+        if (start[1] != '%')
+          {
+             start = strchr(start, '.');
+             start++;
+             break;
+          }
+        else
+          start = strchr(start + 2, '%');
+     }
+
+   sscanf(start, "%[^f]", result);
+
+   return atoi(result);
+}
+
+static void
+_entry_filter_add(Evas_Object *obj)
+{
+   ELM_SPINNER_DATA_GET(obj, sd);
+   static Elm_Entry_Filter_Accept_Set digits_filter_data;
+
+   if (!sd->ent) return;
+
+   elm_entry_markup_filter_remove(sd->ent, elm_entry_filter_accept_set, &digits_filter_data);
+
+   if (sd->decimal_points > 0)
+     digits_filter_data.accepted = ".0123456789";
+   else
+     digits_filter_data.accepted = "0123456789";
+
+   elm_entry_markup_filter_append(sd->ent, elm_entry_filter_accept_set, &digits_filter_data);
+}
+
 static void
 _entry_show_cb(void *data,
                Evas *e EINA_UNUSED,
@@ -435,6 +476,7 @@ _toggle_entry(Evas_Object *obj)
              eo_do(sd->ent, eo_event_callback_add
                (ELM_ENTRY_EVENT_ACTIVATED, _entry_activated_cb, obj));
              elm_layout_content_set(obj, "elm.swallow.entry", sd->ent);
+             _entry_filter_add(obj);
           }
         if (!sd->button_layout)
           {
@@ -1315,8 +1357,13 @@ EOLIAN static void
 _elm_spinner_label_format_set(Eo *obj, Elm_Spinner_Data *sd, const char *fmt)
 {
    eina_stringshare_replace(&sd->label, fmt);
+
+   if (fmt && !(_is_label_format_integer(sd->label)))
+     sd->decimal_points = _decimal_points_get(sd->label);
+
    _label_write(obj);
    elm_layout_sizing_eval(obj);
+   _entry_filter_add(obj);
 }
 
 EOLIAN static const char*
