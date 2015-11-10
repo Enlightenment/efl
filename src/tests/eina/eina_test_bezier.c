@@ -175,6 +175,26 @@ START_TEST(eina_bezier_test_split_at_length)
 }
 END_TEST
 
+START_TEST(eina_bezier_test_bounds_get)
+{
+   Eina_Bezier b;
+   double x, y, w, h;
+
+   eina_init();
+   eina_bezier_values_set(&b,
+                          0, 0,
+                          100, 0,
+                          0, 100,
+                          100, 100);
+
+   eina_bezier_bounds_get(&b, &x, &y, &w, &h);
+
+   fail_if(x !=0 || y!=0 || w !=100 || h !=100 );
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_bezier(TCase *tc)
 {
@@ -184,4 +204,5 @@ eina_test_bezier(TCase *tc)
    tcase_add_test(tc, eina_bezier_test_t_at);
    tcase_add_test(tc, eina_bezier_test_point_at);
    tcase_add_test(tc, eina_bezier_test_split_at_length);
+   tcase_add_test(tc, eina_bezier_test_bounds_get);
 }

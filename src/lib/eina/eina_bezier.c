@@ -273,3 +273,43 @@ eina_bezier_split_at_length(const Eina_Bezier *b, double len,
    t =  eina_bezier_t_at(right, len);
    _eina_bezier_split_left(right, t, left);
 }
+
+EAPI void
+eina_bezier_bounds_get(const Eina_Bezier *b, double *x, double *y, double *w, double *h)
+{
+   double xmin = b->start.x;
+   double xmax = b->start.x;
+   double ymin = b->start.y;
+   double ymax = b->start.y;
+
+   if (b->ctrl_start.x < xmin)
+     xmin = b->ctrl_start.x;
+   else if (b->ctrl_start.x > xmax)
+     xmax = b->ctrl_start.x;
+   if (b->ctrl_end.x < xmin)
+     xmin = b->ctrl_end.x;
+   else if (b->ctrl_end.x > xmax)
+     xmax = b->ctrl_end.x;
+   if (b->end.x < xmin)
+     xmin = b->end.x;
+   else if (b->end.x > xmax)
+     xmax = b->end.x;
+
+   if (b->ctrl_start.y < ymin)
+     ymin = b->ctrl_start.y;
+   else if (b->ctrl_start.y > ymax)
+     ymax = b->ctrl_start.y;
+   if (b->ctrl_end.y < ymin)
+     ymin = b->ctrl_end.y;
+   else if (b->ctrl_end.y > ymax)
+     ymax = b->ctrl_end.y;
+   if (b->end.y < ymin)
+     ymin = b->end.y;
+   else if (b->end.y > ymax)
+     ymax = b->end.y;
+
+   if (x) *x = xmin;
+   if (y) *y = ymin;
+   if (w) *w = xmax - xmin;
+   if (h) *h = ymax - ymin;
+}
