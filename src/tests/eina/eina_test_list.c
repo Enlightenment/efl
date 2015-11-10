@@ -310,6 +310,7 @@ START_TEST(eina_test_sorted_insert)
    int i, count;
    Eina_List *l1, *l2, *itr;
    void *d;
+   int *res, val = 2009;
 
    eina_init();
 
@@ -321,6 +322,12 @@ START_TEST(eina_test_sorted_insert)
 
    fail_if(l1 == NULL);
    fail_if(!eina_list_sorted_check(l1));
+
+   res = eina_list_search_sorted(l1, eina_int_cmp, &data[7]);
+   fail_if(*res != 1664);
+
+   res = eina_list_search_sorted(l1, eina_int_cmp, &val);
+   fail_if(res != NULL);
 
    l2 = NULL;
    EINA_LIST_FOREACH(l1, itr, d)
