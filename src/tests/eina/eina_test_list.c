@@ -489,6 +489,46 @@ START_TEST(eina_test_clone)
 }
 END_TEST
 
+START_TEST(eina_test_move)
+{
+   Eina_List *list1 = NULL, *list2 = NULL;
+   Eina_Bool ret;
+   int data1[] = {1, 2, 3, 4, 5};
+   int data2[] = {6, 7, 8, 9, 10};
+   int i, *list_data;
+
+   eina_init();
+
+   for (i = 0; i < 5; i++)
+   {
+      list1 = eina_list_append(list1, &data1[i]);
+      list2 = eina_list_append(list2, &data2[i]);
+   }
+   fail_if(eina_list_count(list1) != 5);
+   fail_if(eina_list_count(list2) != 5);
+
+   ret = eina_list_move(&list1, &list2, &data2[4]);
+   fail_if(ret != EINA_TRUE);
+   fail_if(eina_list_count(list1) != 6);
+   fail_if(eina_list_count(list2) != 4);
+   list_data = eina_list_nth(list1, 5);
+   fail_if(*list_data != 10);
+
+   ret = eina_list_move_list(&list1, &list2,
+                             eina_list_nth_list(list2, 1));
+   fail_if(ret != EINA_TRUE);
+   fail_if(eina_list_count(list1) != 7);
+   fail_if(eina_list_count(list2) != 3);
+   list_data = eina_list_nth(list1, 6);
+   fail_if(*list_data != 7);
+
+   eina_list_free(list1);
+   eina_list_free(list2);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_list(TCase *tc)
 {
@@ -498,4 +538,5 @@ eina_test_list(TCase *tc)
    tcase_add_test(tc, eina_test_list_split);
    tcase_add_test(tc, eina_test_shuffle);
    tcase_add_test(tc, eina_test_clone);
+   tcase_add_test(tc, eina_test_move);
 }
