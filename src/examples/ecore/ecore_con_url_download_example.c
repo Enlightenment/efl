@@ -31,6 +31,8 @@ _url_progress_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
                percent, url_progress->down.now);
      }
 
+   printf("status: %d\n", ecore_con_url_status_code_get(url_progress->url_con));
+
    return EINA_TRUE;
 }
 
