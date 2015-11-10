@@ -33,7 +33,7 @@ EAPI const Eo_Class *class_simple_class_get(void) EINA_CONST;
  *
  * @ingroup Class_Simple
  */
-EOAPI Eina_Bool  evas_obj_simple_a_set(int value);
+EOAPI Eina_Bool evas_obj_simple_a_set(int value);
 #endif
 
 #ifdef CLASS_SIMPLE_BETA
@@ -44,10 +44,10 @@ EOAPI Eina_Bool  evas_obj_simple_a_set(int value);
  *
  * @ingroup Class_Simple
  */
-EOAPI int  evas_obj_simple_a_get(void);
+EOAPI int evas_obj_simple_a_get(void);
 #endif
 
-EOAPI void  evas_obj_simple_b_set(void);
+EOAPI void evas_obj_simple_b_set(void);
 
 #ifdef CLASS_SIMPLE_BETA
 /**
@@ -63,7 +63,7 @@ EOAPI void  evas_obj_simple_b_set(void);
 EOAPI char * evas_obj_simple_foo(int a, char *b, double *c);
 #endif
 
-EOAPI int  evas_obj_simple_bar(int x);
+EOAPI int evas_obj_simple_bar(int x);
 
 
 #endif
