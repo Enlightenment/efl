@@ -205,6 +205,21 @@ eina_strbuf_tolower(Eina_Strbuf *buf)
    eina_str_tolower((char **)&(buf->buf));
 }
 
+EAPI Eina_Strbuf *
+eina_strbuf_substr_get(Eina_Strbuf *buf, size_t pos, size_t len)
+{
+   char *str;
+
+   if ((!buf) || ((pos + len) > buf->len))
+      return NULL;
+
+   str = calloc(0, len + 1);
+
+   strncpy(str,((char *)(buf->buf)) + pos, len);
+
+   return eina_strbuf_manage_new(str);
+}
+
 /* Unicode */
 
 #include "eina_strbuf_template_c.x"
