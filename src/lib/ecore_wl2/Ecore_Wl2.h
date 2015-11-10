@@ -601,11 +601,11 @@ EAPI void ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title
  * Set the class of a given window
  *
  * @param window The window to set the class of
- * @param class_name The class of the window
+ * @param clas The class of the window
  *
  * @ingroup Ecore_Wl2_Window_Group
  */
-EAPI void ecore_wl2_window_class_name_set(Ecore_Wl2_Window *window, const char *class_name);
+EAPI void ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas);
 
 /**
  * Get the geometry of a given window
