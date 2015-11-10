@@ -762,7 +762,7 @@ _ecore_thread_wait_cancel(void *data, Ecore_Thread *thread)
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker*) thread;
    Ecore_Thread_Waiter *waiter = data;
 
-   waiter->func_cancel((void*) waiter->data, thread);
+   if (waiter->func_cancel) waiter->func_cancel((void*) waiter->data, thread);
    _ecore_thread_wait_reset(waiter, worker);
 }
 
@@ -772,7 +772,7 @@ _ecore_thread_wait_end(void *data, Ecore_Thread *thread)
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker*) thread;
    Ecore_Thread_Waiter *waiter = data;
 
-   waiter->func_end((void*) waiter->data, thread);
+   if (waiter->func_end) waiter->func_end((void*) waiter->data, thread);
    _ecore_thread_wait_reset(waiter, worker);
 }
 
