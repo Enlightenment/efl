@@ -828,6 +828,8 @@ append_string(void       *data,
    length = *string ? strlen(*string) : 0;
    *string = realloc(*string, strlen(str) + length + 1);
 
+   fail_unless(*string); // Fail test case if realloc fails.
+
    memcpy((*string) + length, str, strlen(str) + 1);
 } /* append_string */
 
