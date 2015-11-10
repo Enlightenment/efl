@@ -11,6 +11,7 @@ evas_canvas3d_scene_data_init(Evas_Canvas3D_Scene_Public_Data *data)
    data->mesh_nodes = NULL;
    data->node_mesh_colors = NULL;
    data->colors_node_mesh = NULL;
+   data->render_to_texture = EINA_FALSE;
 }
 
 void

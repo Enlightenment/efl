@@ -170,5 +170,6 @@ void                 e3d_renderer_viewport_set(E3D_Renderer *renderer, int x, in
 void                 e3d_renderer_clear(E3D_Renderer *renderer, const Evas_Color *color);
 void                 e3d_renderer_draw(E3D_Renderer *renderer, E3D_Draw_Data *data);
 void                 e3d_renderer_flush(E3D_Renderer *renderer);
+void                 e3d_renderer_color_pick_target_set(E3D_Renderer *renderer, E3D_Drawable *drawable);
 
 #endif /* EVAS_GL_3D_PRIVATE_H */

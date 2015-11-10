@@ -447,6 +447,7 @@ struct _Evas_Canvas3D_Scene_Public_Data
    /*sets constant for shadow rendering*/
    Evas_Real depth_offset;
    Evas_Real depth_constant;
+   Eina_Bool render_to_texture;
 };
 
 struct _Evas_Canvas3D_Pick_Data

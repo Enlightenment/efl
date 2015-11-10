@@ -1200,11 +1200,21 @@ void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer,
 
      glDisable(GL_POLYGON_OFFSET_FILL);
 
-     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, drawable->tex, 0);
+     if (data->render_to_texture)
+       {
+          data->render_to_texture = EINA_FALSE;
+          e3d_renderer_color_pick_target_set(renderer, drawable);
+       }
+     else
+       {
+          glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                                 drawable->tex, 0);
+          e3d_renderer_clear(renderer, &data->bg_color);
+       }
 }
 
 void
-e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_Canvas3D_Scene_Public_Data *data)
+_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_Canvas3D_Scene_Public_Data *data)
 {
    Eina_List        *l;
    Evas_Canvas3D_Node     *n;
@@ -1232,12 +1242,9 @@ e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_C
          _shadowmap_render(drawable, renderer, data, &matrix_light_eye, light);
      }
 
-   /* Set up render target. */
-   e3d_renderer_target_set(renderer, drawable);
-   e3d_renderer_clear(renderer, &data->bg_color);
-
    eina_matrix4_multiply(&matrix_vp, &pd->projection, matrix_eye);
    evas_frustum_calculate(planes, &matrix_vp);
+
    EINA_LIST_FOREACH(data->mesh_nodes, l, n)
      {
         Eina_Matrix4          matrix_mv;
@@ -1282,6 +1289,17 @@ e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_C
    e3d_renderer_flush(renderer);
 }
 
+void
+e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_Canvas3D_Scene_Public_Data *data)
+{
+   /* Set up render target. */
+   e3d_renderer_target_set(renderer, drawable);
+   e3d_renderer_clear(renderer, &data->bg_color);
+
+   /*Render scene data*/
+   _scene_render(drawable, renderer, data);
+}
+
 Eina_Bool
 e3d_drawable_scene_render_to_texture(E3D_Drawable *drawable, E3D_Renderer *renderer,
                                      Evas_Canvas3D_Scene_Public_Data *data)
@@ -1294,71 +1312,67 @@ e3d_drawable_scene_render_to_texture(E3D_Drawable *drawable, E3D_Renderer *rende
    Eina_List *repeat_node = NULL;
    Evas_Color c = {0.0, 0.0, 0.0, 0.0}, *unic_color = NULL;
 
-   glBindFramebuffer(GL_FRAMEBUFFER, drawable->color_pick_fb_id);
-   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                          GL_TEXTURE_2D, drawable->texcolorpick, 0);
-#ifdef GL_GLES
-   glBindRenderbuffer(GL_RENDERBUFFER, drawable->depth_stencil_buf);
-   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                               GL_TEXTURE_2D, drawable->depth_stencil_buf, 0);
-#else
-   glBindRenderbuffer(GL_RENDERBUFFER, drawable->depth_stencil_buf);
-   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
-                             GL_RENDERBUFFER, drawable->depth_stencil_buf);
-#endif
-
+   e3d_renderer_color_pick_target_set(renderer, drawable);
    e3d_renderer_clear(renderer, &c);
 
-   Evas_Canvas3D_Node_Data *pd_camera_node = eo_data_scope_get(data->camera_node, EVAS_CANVAS3D_NODE_CLASS);
-   matrix_eye = &pd_camera_node->data.camera.matrix_world_to_eye;
-   Evas_Canvas3D_Camera_Data *pd = eo_data_scope_get(pd_camera_node->data.camera.camera, EVAS_CANVAS3D_CAMERA_CLASS);
-
-   itmn = eina_hash_iterator_data_new(data->colors_node_mesh);
-
-   while (eina_iterator_next(itmn, &ptrmn))
+   if (data->color_pick_enabled) //Use rendering to texture in color pick mechanism
      {
-        Evas_Canvas3D_Node      *n;
-        Eina_Array *arr = NULL;
+         Evas_Canvas3D_Node_Data *pd_camera_node = eo_data_scope_get(data->camera_node, EVAS_CANVAS3D_NODE_CLASS);
+         matrix_eye = &pd_camera_node->data.camera.matrix_world_to_eye;
+         Evas_Canvas3D_Camera_Data *pd = eo_data_scope_get(pd_camera_node->data.camera.camera, EVAS_CANVAS3D_CAMERA_CLASS);
 
-        arr = (Eina_Array *)ptrmn;
-        n = (Evas_Canvas3D_Node *)eina_array_data_get(arr, 0);
-        /*To avoid repeatedly render mesh*/
-        if (!repeat_node)
-          repeat_node = eina_list_append(repeat_node, (void*)n);
-        else
-          {
-             if (eina_list_data_find(repeat_node, (void *)n))
-               continue;
-             else
-               repeat_node = eina_list_append(repeat_node, (void *)n);
-          }
-        Evas_Canvas3D_Node_Data *pd_mesh_node = eo_data_scope_get(n, EVAS_CANVAS3D_NODE_CLASS);
-        RENDER_MESH_NODE_ITERATE_BEGIN(eye)
-          {
-             if (pdmesh->color_pick_enabled)
-               {
-                  tmp = eina_stringshare_printf("%p %p", n, nm->mesh);
-                  unic_color = (Evas_Color *)eina_hash_find(data->node_mesh_colors, tmp);
-                  if (unic_color)
-                    {
-                       pdmesh->color_pick_key.r = unic_color->r;
-                       pdmesh->color_pick_key.g = unic_color->g;
-                       pdmesh->color_pick_key.b = unic_color->b;
-                       shade_mode = pdmesh->shade_mode;
-                       pdmesh->shade_mode = EVAS_CANVAS3D_SHADE_MODE_COLOR_PICK;
-                       _mesh_draw(renderer, nm->mesh, nm->frame, NULL, matrix_eye, &matrix_mv,
-                                  &matrix_mvp, NULL);
-                       pdmesh->shade_mode = shade_mode;
-                    }
-                  eina_stringshare_del(tmp);
-               }
-          }
-        RENDER_MESH_NODE_ITERATE_END
+         itmn = eina_hash_iterator_data_new(data->colors_node_mesh);
+
+         while (eina_iterator_next(itmn, &ptrmn))
+           {
+              Evas_Canvas3D_Node      *n;
+              Eina_Array *arr = NULL;
+
+              arr = (Eina_Array *)ptrmn;
+              n = (Evas_Canvas3D_Node *)eina_array_data_get(arr, 0);
+              /*To avoid repeatedly render mesh*/
+              if (!repeat_node)
+                repeat_node = eina_list_append(repeat_node, (void*)n);
+              else
+                {
+                   if (eina_list_data_find(repeat_node, (void *)n))
+                     continue;
+                   else
+                     repeat_node = eina_list_append(repeat_node, (void *)n);
+                }
+              Evas_Canvas3D_Node_Data *pd_mesh_node = eo_data_scope_get(n, EVAS_CANVAS3D_NODE_CLASS);
+              RENDER_MESH_NODE_ITERATE_BEGIN(eye)
+                {
+                   if (pdmesh->color_pick_enabled)
+                     {
+                        tmp = eina_stringshare_printf("%p %p", n, nm->mesh);
+                        unic_color = (Evas_Color *)eina_hash_find(data->node_mesh_colors, tmp);
+                        if (unic_color)
+                          {
+                             pdmesh->color_pick_key.r = unic_color->r;
+                             pdmesh->color_pick_key.g = unic_color->g;
+                             pdmesh->color_pick_key.b = unic_color->b;
+                             shade_mode = pdmesh->shade_mode;
+                             pdmesh->shade_mode = EVAS_CANVAS3D_SHADE_MODE_COLOR_PICK;
+                             _mesh_draw(renderer, nm->mesh, nm->frame, NULL, matrix_eye, &matrix_mv,
+                                        &matrix_mvp, NULL);
+                             pdmesh->shade_mode = shade_mode;
+                          }
+                        eina_stringshare_del(tmp);
+                     }
+                }
+              RENDER_MESH_NODE_ITERATE_END
+           }
+        eina_iterator_free(itmn);
+        eina_list_free(repeat_node);
+     }
+   else
+     {
+        _scene_render(drawable, renderer, data); //Just render scene in texture
      }
 
-   eina_iterator_free(itmn);
-   eina_list_free(repeat_node);
    glBindFramebuffer(GL_FRAMEBUFFER, drawable->fbo);
+
    return EINA_TRUE;
 }
 

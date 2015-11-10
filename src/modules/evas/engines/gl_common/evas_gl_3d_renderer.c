@@ -272,6 +272,25 @@ e3d_renderer_target_set(E3D_Renderer *renderer, E3D_Drawable *target)
 }
 
 void
+e3d_renderer_color_pick_target_set(E3D_Renderer *renderer, E3D_Drawable *drawable)
+{
+   glBindFramebuffer(GL_FRAMEBUFFER, drawable->color_pick_fb_id);
+   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                          GL_TEXTURE_2D, drawable->texcolorpick, 0);
+#ifdef GL_GLES
+   glBindRenderbuffer(GL_RENDERBUFFER, drawable->depth_stencil_buf);
+   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                          GL_TEXTURE_2D, drawable->depth_stencil_buf, 0);
+#else
+   glBindRenderbuffer(GL_RENDERBUFFER, drawable->depth_stencil_buf);
+   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                             GL_RENDERBUFFER, drawable->depth_stencil_buf);
+#endif
+   glViewport(0, 0, drawable->w, drawable->h);
+   renderer->texDepth = drawable->texDepth;
+}
+
+void
 e3d_renderer_clear(E3D_Renderer *renderer EINA_UNUSED, const Evas_Color *color)
 {
    glClearColor(color->r, color->g, color->b, color->a);
