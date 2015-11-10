@@ -239,11 +239,12 @@ define(`VERTEX_SHADER_NORMAL',
 
 define(`VERTEX_SHADER_TEXCOORD',
 `#ifdef VERTEX_TEXCOORD_BLEND'
-   vTexCoord = mix(aTexCoord1.st, aTexCoord0.st, uTexCoordWeight);
+   vTexCoord = mix(vec2(aTexCoord1.s, 1.0 - aTexCoord1.t),
+                   vec2(aTexCoord0.s, 1.0 - aTexCoord0.t), uTexCoordWeight);
 `#else'
 
 `#ifdef VERTEX_TEXCOORD'
-   vTexCoord = aTexCoord0.st;
+   vTexCoord = vec2(aTexCoord0.s, 1.0 - aTexCoord0.t);
 `#endif //VERTEX_TEXCOORD'
 
 `#endif //VERTEX_TEXCOORD_BLEND')
