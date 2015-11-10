@@ -20,7 +20,7 @@ extern "C" {
 #endif
    
 int shm_fd = -1;
-int shm_size = 0;
+static int shm_size = 0;
 void *shm_addr = NULL;
 char *shmfile = NULL;
 
