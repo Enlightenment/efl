@@ -99,7 +99,7 @@ ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height)
      }
 
    fb->mmap =
-     mmap(0, fb->size, PROT_WRITE, MAP_SHARED, dev->drm.fd, marg.offset);
+     mmap(NULL, fb->size, PROT_WRITE, MAP_SHARED, dev->drm.fd, marg.offset);
    if (fb->mmap == MAP_FAILED)
      {
         ERR("Could not mmap framebuffer space: %m");
