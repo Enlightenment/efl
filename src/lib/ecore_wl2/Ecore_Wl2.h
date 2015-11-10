@@ -566,7 +566,25 @@ EAPI Eina_Bool ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window);
  */
 EAPI void ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen);
 
-/* TODO: doxy */
+/**
+ * Get if a given window is rotated
+ *
+ * @param window The window to get the rotation of
+ *
+ * @return The amount of rotation for this window, or -1 on failure
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
+EAPI int ecore_wl2_window_rotation_get(Ecore_Wl2_Window *window);
+
+/**
+ * Set the rotation of a given window
+ *
+ * @param window The window to set the rotation of
+ * @param rotation The amount of rotation
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ */
 EAPI void ecore_wl2_window_rotation_set(Ecore_Wl2_Window *window, int rotation);
 
 /**
