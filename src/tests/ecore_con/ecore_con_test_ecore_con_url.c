@@ -33,12 +33,15 @@ _url_compl_cb(void *data, int type EINA_UNUSED, void *event_info)
 {
    url_test *info = data;
    Ecore_Con_Event_Url_Complete *ev = event_info;
+   int status;
 
    printf("Total downloaded bytes = %d\n",
            ecore_con_url_received_bytes_get(ev->url_con));
 
    if (info->_tmpfd)
      {
+        status = ecore_con_url_status_code_get(ev->url_con);
+        fail_if(status != 220);
         _free_url_test(info);
         ecore_con_url_free(ev->url_con);
      }
