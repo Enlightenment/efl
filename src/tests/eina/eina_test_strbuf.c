@@ -514,6 +514,51 @@ START_TEST(strbuf_tolower)
 }
 END_TEST
 
+START_TEST(strbuf_substr_get)
+{
+   Eina_Strbuf* buf, *substr;
+   const char *str;
+
+   eina_init();
+   buf = eina_strbuf_new();
+   fail_unless(buf != NULL);
+
+   eina_strbuf_append(buf, "string");
+   substr = eina_strbuf_substr_get(buf, 2, 3);
+   str = eina_strbuf_string_get(substr);
+   fail_unless(str || strcmp(str, "rin"));
+   eina_strbuf_free(substr);
+
+   substr = eina_strbuf_substr_get(buf, 0, 6);
+   str = eina_strbuf_string_get(substr);
+   fail_unless(str || strcmp(str, "string"));
+   eina_strbuf_free(substr);
+
+   substr = eina_strbuf_substr_get(buf, 6, 0);
+   str = eina_strbuf_string_get(substr);
+   fail_unless(str || strcmp(str, "0"));
+   eina_strbuf_free(substr);
+
+   substr = eina_strbuf_substr_get(buf, 6, 1);
+   str = eina_strbuf_string_get(substr);
+   fail_if(str);
+   eina_strbuf_free(substr);
+
+   substr = eina_strbuf_substr_get(buf, 0, 7);
+   str = eina_strbuf_string_get(substr);
+   fail_if(str);
+   eina_strbuf_free(substr);
+
+   substr = eina_strbuf_substr_get(NULL, 0, 7);
+   str = eina_strbuf_string_get(substr);
+   fail_if(str);
+   eina_strbuf_free(substr);
+
+   eina_strbuf_free(buf);
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_strbuf(TCase *tc)
 {
@@ -528,4 +573,5 @@ eina_test_strbuf(TCase *tc)
    tcase_add_test(tc, strbuf_manage_simple);
    tcase_add_test(tc, strbuf_trim);
    tcase_add_test(tc, strbuf_tolower);
+   tcase_add_test(tc, strbuf_substr_get);
 }
