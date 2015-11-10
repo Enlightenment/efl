@@ -374,7 +374,7 @@ _best_colormap_get(int backend, void *connection, int screen)
                break;
             }
 
-        return s->default_colormap;
+        if (s) return s->default_colormap;
      }
 #endif
 
