@@ -398,7 +398,7 @@ ecore_wl2_window_free(Ecore_Wl2_Window *window)
 }
 
 EAPI void
-ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y)
+ecore_wl2_window_move(Ecore_Wl2_Window *window, int x EINA_UNUSED, int y EINA_UNUSED)
 {
    Ecore_Wl2_Input *input;
 
@@ -423,7 +423,7 @@ ecore_wl2_window_move(Ecore_Wl2_Window *window, int x, int y)
 }
 
 EAPI void
-ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w, int h, int location)
+ecore_wl2_window_resize(Ecore_Wl2_Window *window, int w EINA_UNUSED, int h EINA_UNUSED, int location)
 {
    Ecore_Wl2_Input *input;
 
