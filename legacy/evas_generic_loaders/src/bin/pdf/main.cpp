@@ -214,7 +214,7 @@ main(int argc, char **argv)
    int i;
    int size_w = 0, size_h = 0;
    int head_only = 0;
-   int page = 0;
+   int page_num = 0;
 
    if (argc < 2) return -1;
    // file is ALWAYS first arg, other options come after
@@ -227,7 +227,7 @@ main(int argc, char **argv)
         else if (!strcmp(argv[i], "-key"))
           {
              i++;
-             page = atoi(argv[i]);
+             page_num = atoi(argv[i]);
              i++;
           }
         else if (!strcmp(argv[i], "-opt-scale-down-by"))
@@ -251,7 +251,7 @@ main(int argc, char **argv)
      }
 
    D("dpi....: %f\n", dpi);
-   D("page...: %d\n", page);
+   D("page...: %d\n", page_num);
 
    // This is a funny hack to call an external tool to generate a pdf that will then be processed by poppler
    extension = strrchr(file, '.');
@@ -306,7 +306,7 @@ main(int argc, char **argv)
 
    // Now process the pdf (or the generated pdf)
    D("poppler_file_init\n");
-   if (!poppler_init(file, page, size_w, size_h))
+   if (!poppler_init(file, page_num, size_w, size_h))
      return -1;
    D("poppler_file_init done\n");
 
