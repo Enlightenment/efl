@@ -1144,7 +1144,7 @@ eina_matrix3_scale_transform_set(Eina_Matrix3 *out, double s_x, double s_y)
 }
 
 EAPI void
-eina_normal_matrix3_get(Eina_Matrix3 *out, const Eina_Matrix4 *m)
+eina_normal3_matrix_get(Eina_Matrix3 *out, const Eina_Matrix4 *m)
 {
    /* Normal matrix is a transposed matrix of inversed modelview.
     * And we need only upper-left 3x3 terms to work with. */
