@@ -1179,9 +1179,10 @@ register cset *cs;
 register char *cp;
 {
         register char *fp = mcfind(cs, cp);
-        register size_t len = strlen(fp);
+        register size_t len;
 
         assert(fp != NULL);
+        len = strlen(fp);
         (void) memmove(fp, fp + len + 1,
                                 cs->smultis - (fp + len + 1 - cs->multis));
         cs->smultis -= len;
