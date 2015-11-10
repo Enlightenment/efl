@@ -198,6 +198,7 @@ apply:
      elm_layout_text_set(sd->text_button, "elm.text", buf);
    else
      elm_layout_text_set(obj, "elm.text", buf);
+
    elm_interface_atspi_accessible_name_changed_signal_emit(obj);
    if (sd->entry_visible) _entry_show(sd);
 }
@@ -260,9 +261,10 @@ _val_set(Evas_Object *obj)
 
    if (sd->val_max > sd->val_min)
      pos = ((sd->val - sd->val_min) / (sd->val_max - sd->val_min));
+
    if (pos < 0.0) pos = 0.0;
-   else if (pos > 1.0)
-     pos = 1.0;
+   else if (pos > 1.0) pos = 1.0;
+
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", pos, pos);
 }
@@ -293,6 +295,7 @@ _drag_cb(void *data,
    else
      eo_do((Eo *)wd->resize_obj,
            edje_obj_part_drag_value_get("elm.dragable.slider", &pos, NULL));
+
    if (sd->drag_prev_pos != 0)
      sd->drag_val_step = pow((pos - sd->drag_prev_pos), 2);
    else
@@ -353,6 +356,7 @@ _entry_hide(Evas_Object *obj)
      }
    else
      elm_layout_signal_emit(obj, "elm,state,inactive", "elm");
+
    sd->entry_visible = EINA_FALSE;
 }
 
@@ -370,6 +374,7 @@ _entry_value_apply(Evas_Object *obj)
    _entry_hide(obj);
    str = elm_object_text_get(sd->ent);
    if (!str) return;
+
    val = strtod(str, &end);
    if (((*end != '\0') && (!isspace(*end))) || (fabs(val - sd->val) < DBL_EPSILON)) return;
    elm_spinner_value_set(obj, val);
@@ -438,6 +443,7 @@ _entry_show_cb(void *data,
                void *event_info EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(data, sd);
+
    _entry_show(sd);
    elm_object_focus_set(obj, EINA_TRUE);
    elm_entry_select_all(obj);
@@ -533,6 +539,7 @@ _val_inc_start(void *data)
    ecore_timer_del(sd->spin_timer);
    sd->spin_timer = ecore_timer_add(sd->interval, _spin_value, data);
    _spin_value(data);
+
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -547,6 +554,7 @@ _val_dec_start(void *data)
    ecore_timer_del(sd->spin_timer);
    sd->spin_timer = ecore_timer_add(sd->interval, _spin_value, data);
    _spin_value(data);
+
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -565,6 +573,7 @@ _key_action_spin(Evas_Object *obj, const char *params)
 {
    const char *dir = params;
    Eina_Bool horz = !!strncmp(elm_widget_style_get(obj), "vertical", 8);
+
    if (((!strcmp(dir, "left")) && horz) ||
        ((!strcmp(dir, "down")) && !horz))
      {
@@ -578,6 +587,7 @@ _key_action_spin(Evas_Object *obj, const char *params)
         elm_layout_signal_emit(obj, "elm,right,anim,activate", "elm");
      }
    else return EINA_FALSE;
+
    return EINA_TRUE;
 }
 
@@ -585,8 +595,10 @@ static Eina_Bool
 _key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(obj, sd);
+
    if (sd->spin_timer) _spin_stop(obj);
    else if (sd->entry_visible) _entry_toggle_cb(NULL, obj, NULL, NULL);
+
    return EINA_FALSE;
 }
 
@@ -635,6 +647,7 @@ _elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Ob
         mev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else return EINA_FALSE;
+
    return EINA_TRUE;
 }
 
@@ -651,6 +664,7 @@ _button_inc_start_cb(void *data,
         _entry_value_apply(obj);
         if ((sd->val_updated) && (sd->val == sd->val_min)) return;
      }
+
    ecore_timer_del(sd->longpress_timer);
    sd->longpress_timer = ecore_timer_add
      (_elm_config->longpress_timeout, _val_inc_start, data);
@@ -670,6 +684,7 @@ _button_inc_stop_cb(void *data,
         sd->spin_speed = sd->step;
         _spin_value(data);
      }
+
    _spin_stop(data);
 }
 
@@ -686,6 +701,7 @@ _button_dec_start_cb(void *data,
         _entry_value_apply(obj);
         if ((sd->val_updated) && (sd->val == sd->val_max)) return;
      }
+
    ecore_timer_del(sd->longpress_timer);
    sd->longpress_timer = ecore_timer_add
      (_elm_config->longpress_timeout, _val_dec_start, data);
@@ -705,6 +721,7 @@ _button_dec_stop_cb(void *data,
         sd->spin_speed = -sd->step;
         _spin_value(data);
      }
+
    _spin_stop(data);
 }
 
@@ -755,6 +772,7 @@ _inc_button_unpressed_cb(void *data,
         ecore_timer_del(sd->longpress_timer);
         sd->longpress_timer = NULL;
      }
+
    _spin_stop(data);
 
    return EINA_TRUE;
@@ -818,6 +836,7 @@ _dec_button_unpressed_cb(void *data,
         ecore_timer_del(sd->longpress_timer);
         sd->longpress_timer = NULL;
      }
+
    _spin_stop(data);
 
    return EINA_TRUE;
@@ -858,6 +877,7 @@ EOLIAN static Eina_Bool
 _elm_spinner_elm_widget_on_focus(Eo *obj, Elm_Spinner_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
+
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus(NULL));
    if (!int_ret) return EINA_FALSE;
 
@@ -932,6 +952,7 @@ _access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
      {
         txt = elm_layout_text_get(spinner, "elm.text");
      }
+
    if (txt) return strdup(txt);
 
    return NULL;
@@ -1248,6 +1269,7 @@ EOLIAN static Eina_Bool
 _elm_spinner_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Spinner_Data *_pd EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(obj, sd);
+
    return _elm_spinner_smart_focus_next_enable | sd->button_layout;
 }
 
@@ -1255,6 +1277,7 @@ EOLIAN static Eina_Bool
 _elm_spinner_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Spinner_Data *_pd EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(obj, sd);
+
    if (sd->button_layout) return EINA_TRUE;
    return EINA_FALSE;
 }
@@ -1376,10 +1399,13 @@ EOLIAN static void
 _elm_spinner_min_max_set(Eo *obj, Elm_Spinner_Data *sd, double min, double max)
 {
    if ((sd->val_min == min) && (sd->val_max == max)) return;
+
    sd->val_min = min;
    sd->val_max = max;
+
    if (sd->val < sd->val_min) sd->val = sd->val_min;
    if (sd->val > sd->val_max) sd->val = sd->val_max;
+
    _val_set(obj);
    _label_write(obj);
 }
@@ -1407,8 +1433,10 @@ EOLIAN static void
 _elm_spinner_value_set(Eo *obj, Elm_Spinner_Data *sd, double val)
 {
    if (sd->val == val) return;
+
    sd->val = val;
    sd->val_updated = EINA_FALSE;
+
    if (sd->val < sd->val_min)
      {
         sd->val = sd->val_min;
@@ -1419,6 +1447,7 @@ _elm_spinner_value_set(Eo *obj, Elm_Spinner_Data *sd, double val)
         sd->val = sd->val_max;
         sd->val_updated = EINA_TRUE;
      }
+
    _val_set(obj);
    _label_write(obj);
 }
