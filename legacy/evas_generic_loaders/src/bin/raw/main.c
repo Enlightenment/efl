@@ -53,7 +53,7 @@ _raw_init(const char *file)
 
    if (stat(file, &ss)) goto close_file;
    seg_size = ss.st_size;
-   seg = mmap(0, seg_size, PROT_READ, MAP_SHARED, fd, 0);
+   seg = mmap(NULL, seg_size, PROT_READ, MAP_SHARED, fd, 0);
    if (seg == MAP_FAILED) goto close_file;
 
    D("raw_init\n");
