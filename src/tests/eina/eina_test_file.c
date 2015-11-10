@@ -681,6 +681,55 @@ START_TEST(eina_test_file_copy)
 }
 END_TEST
 
+START_TEST(eina_test_file_statat)
+{
+   Eina_Tmpstr *test_file1_path, *test_file2_path;
+   Eina_Iterator *it;
+   Eina_Stat st;
+   Eina_File_Direct_Info *info;
+   const char *template = "abcdefghijklmnopqrstuvwxyz";
+   int template_size = strlen(template);
+   int fd, ret;
+
+   eina_init();
+
+   Eina_Tmpstr *test_dirname = get_eina_test_file_tmp_dir();
+   fail_if(test_dirname == NULL);
+
+   test_file1_path = get_full_path(test_dirname, "example1.txt");
+   test_file2_path = get_full_path(test_dirname, "example2.txt");
+
+   fd = open(test_file1_path, O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
+   fail_if(fd == 0);
+   fail_if(write(fd, template, template_size) != template_size);
+   close(fd);
+
+   fd = open(test_file2_path, O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
+   fail_if(fd == 0);
+   fail_if(write(fd, template, template_size) != template_size);
+   close(fd);
+
+   it = eina_file_stat_ls(test_dirname);
+   fprintf(stderr, "file=%s\n", test_dirname);
+   EINA_ITERATOR_FOREACH(it, info)
+     {
+        ret = eina_file_statat(eina_iterator_container_get(it), info, &st);
+        fprintf(stderr, "ret=%d\n", ret);
+        fail_if(ret != 0);
+        fail_if(st.size != template_size);
+     }
+
+   unlink(test_file1_path);
+   unlink(test_file2_path);
+   fail_if(rmdir(test_dirname) != 0);
+   eina_tmpstr_del(test_file1_path);
+   eina_tmpstr_del(test_file2_path);
+   eina_tmpstr_del(test_dirname);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_file(TCase *tc)
 {
@@ -695,4 +744,5 @@ eina_test_file(TCase *tc)
    tcase_add_test(tc, eina_test_file_xattr);
 #endif
    tcase_add_test(tc, eina_test_file_copy);
+   tcase_add_test(tc, eina_test_file_statat);
 }
