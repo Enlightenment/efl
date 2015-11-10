@@ -712,11 +712,11 @@ ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title)
 }
 
 EAPI void
-ecore_wl2_window_class_name_set(Ecore_Wl2_Window *window, const char *class_name)
+ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   eina_stringshare_replace(&window->class, class_name);
+   eina_stringshare_replace(&window->class, clas);
    if (!window->class) return;
 
    if (window->xdg_surface)
