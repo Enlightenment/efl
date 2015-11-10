@@ -21,6 +21,7 @@ ector:           licenses/COPYING.FTL, licenses/COPYING.GPL (dual licenses)
 evas:            licenses/COPYING.BSD
 embryo:          licenses/COPYING.SMALL
 ecore:           licenses/COPYING.BSD
+dns:             licenses/COPYING.DNS
 eio:             licenses/COPYING.LGPL
 eldbus:          licenses/COPYING.LGPL
 efreet:          licenses/COPYING.BSD
