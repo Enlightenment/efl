@@ -26,7 +26,7 @@
 
 START_TEST(binbuf_simple)
 {
-   Eina_Binbuf *buf;
+   Eina_Binbuf *buf, *test_buf;
    unsigned char *txt;
    const unsigned char cbuf[] = "Null in the middle \0 and more text afterwards and \0 anotehr null just there and another one \0 here.";
    size_t size = sizeof(cbuf) - 1; /* We don't care about the real NULL */
@@ -40,6 +40,12 @@ START_TEST(binbuf_simple)
    eina_binbuf_append_length(buf, cbuf, size);
    fail_if(memcmp(eina_binbuf_string_get(buf), cbuf, size));
    fail_if(size != eina_binbuf_length_get(buf));
+
+   test_buf = eina_binbuf_new();
+   fail_if(!test_buf);
+   fail_if(!eina_binbuf_append_buffer(test_buf, buf));
+   fail_if(memcmp(eina_binbuf_string_get(test_buf), cbuf, size));
+   fail_if(size != eina_binbuf_length_get(test_buf));
 
    eina_binbuf_append_length(buf, cbuf, size);
    fail_if(memcmp(eina_binbuf_string_get(buf), cbuf, size));
