@@ -692,7 +692,7 @@ _dummy(void *data EINA_UNUSED, void *buffer EINA_UNUSED, unsigned int nbyte EINA
 }
 
 /* Main */
-Eina_Bool
+static Eina_Bool
 exit_func(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED)
 {
    DBG("Quit signal received !");
