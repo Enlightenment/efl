@@ -77,6 +77,11 @@ START_TEST(eina_test_simple)
    list = eina_list_append(list, &data[2]);
         fail_if(list == NULL);
 
+   list = eina_list_demote_list(list, eina_list_nth_list(list, 1));
+   test1 = eina_list_nth(list, 2);
+   fail_if(test1 == NULL);
+   fail_if(*test1 != 6);
+
    list = eina_list_remove(list, &data[0]);
         fail_if(list == NULL);
 
