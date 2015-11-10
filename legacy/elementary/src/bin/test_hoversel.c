@@ -171,6 +171,8 @@ test_hoversel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_hoversel_item_add(hoversel, "Item 2", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_hoversel_item_add(hoversel, "Item 3", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_hoversel_item_add(hoversel, "Item 4 - Long Label Here", "close", ELM_ICON_STANDARD, NULL, NULL);
+   it = elm_hoversel_item_add(hoversel, "Item 5 - Disabled", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_object_item_disabled_set(it, EINA_TRUE);
    evas_object_smart_callback_add(hoversel, "clicked",
                                   _hoversel_clicked_cb, NULL);
    evas_object_smart_callback_add(hoversel, "selected",

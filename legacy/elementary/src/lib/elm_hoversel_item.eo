@@ -20,6 +20,7 @@ class Elm.Hoversel_Item(Elm.Widget_Item)
    implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
+        Elm.Widget_Item.disable;
         Elm.Widget_Item.signal_emit;
         Elm.Widget_Item.part_text.set;
         Elm.Widget_Item.part_text.get;

@@ -1197,6 +1197,11 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
             visible: 1;
          }
       }
+      rect { name: "block_events";
+         desc { "default";
+            color: 0 0 0 0;
+         }
+      }
       rect { name: "event";
          desc { "default";
             color: 0 0 0 0;

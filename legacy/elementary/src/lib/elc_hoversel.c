@@ -96,6 +96,8 @@ _elm_hoversel_elm_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
         ELM_HOVERSEL_ITEM_DATA_GET(eo_item, item);
         elm_object_style_set(VIEW(item), buf);
         elm_object_text_set(VIEW(item), item->label);
+        elm_widget_disabled_set
+          (VIEW(item), eo_do_ret(eo_item, int_ret, elm_wdg_item_disabled_get()));
      }
 
    eina_stringshare_del(style);
@@ -455,6 +457,15 @@ _on_parent_del(void *data,
                void *event_info EINA_UNUSED)
 {
    elm_hoversel_hover_parent_set(data, NULL);
+}
+
+EOLIAN static void
+_elm_hoversel_item_elm_widget_item_disable(Eo *eo_hoversel_it,
+                                           Elm_Hoversel_Item_Data *hoversel_it EINA_UNUSED)
+{
+   Eina_Bool tmp;
+   elm_widget_disabled_set
+     (VIEW(hoversel_it), eo_do_ret(eo_hoversel_it, tmp, elm_wdg_item_disabled_get()));
 }
 
 static void
