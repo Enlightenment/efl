@@ -177,65 +177,63 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
    Edje_Signal_Callback_Group *gp = (Edje_Signal_Callback_Group *)cgp;
    unsigned int i;
    Edje_Signal_Callback_Flags flags;
+   Edje_Signal_Callback_Matches *tmp;
 
    flags.delete_me = EINA_FALSE;
    flags.just_added = EINA_TRUE;
    flags.propagate = !!propagate;
 
+   tmp = (Edje_Signal_Callback_Matches *)gp->matches;
+
    // let's first try to see if we do find an empty matching stop
-   for (i = 0; i < gp->matches->matches_count; i++)
-     if (sig == gp->matches->matches[i].signal &&
-         src == gp->matches->matches[i].source &&
-         func == gp->matches->matches[i].func)
-       {
-          if (gp->flags[i].delete_me)
-            {
-               _edje_signal_callback_unset(gp, i);
-               _edje_signal_callback_set(gp, i, sig, src, func, data, flags);
-               return;
-            }
-       }
-
-   if (gp->matches->hashed)
+   for (i = 0; i < tmp->matches_count; i++)
      {
-        Edje_Signal_Callback_Matches *tmp;
+        if ((sig == tmp->matches[i].signal) &&
+            (src == tmp->matches[i].source) &&
+            (func == tmp->matches[i].func) &&
+            (gp->flags[i].delete_me))
+          {
+             _edje_signal_callback_unset(gp, i);
+             _edje_signal_callback_set(gp, i, sig, src, func, data, flags);
+             return;
+          }
+     }
 
-        tmp = (Edje_Signal_Callback_Matches *)gp->matches;
-
+   if (tmp->hashed)
+     {
         if (EINA_REFCOUNT_GET(tmp) == 1)
           {
              eina_hash_del(signal_match, tmp, tmp);
-             tmp->hashed = 0;
+             tmp->hashed = EINA_FALSE;
           }
         else
           {
-             Edje_Signal_Callback_Matches *tmp_dup;
-             tmp_dup = (Edje_Signal_Callback_Matches *)_edje_signal_callback_matches_dup(tmp);
+             Edje_Signal_Callback_Matches *tmp_dup =
+               (Edje_Signal_Callback_Matches *)
+               _edje_signal_callback_matches_dup(tmp);
              if (!tmp_dup) return;
              EINA_REFCOUNT_UNREF(tmp)
-               (void) 0; // Nothing to do because the case where refcount == 1 was already handle above.
-             gp->matches = tmp_dup;
+               (void) 0; // do nothing because if refcount == 1 handle above.
+             gp->matches = tmp = tmp_dup;
           }
-
-        assert(gp->matches->hashed == 0);
+        assert(tmp->hashed == EINA_FALSE);
      }
 
    // search an empty spot now
-   for (i = 0; i < gp->matches->matches_count; i++)
-     if (gp->flags[i].delete_me)
-       {
-          _edje_signal_callback_unset(gp, i);
-          _edje_signal_callback_set(gp, i, sig, src, func, data, flags);
-          return;
-       }
+   for (i = 0; i < tmp->matches_count; i++)
+     {
+        if (gp->flags[i].delete_me)
+          {
+             _edje_signal_callback_unset(gp, i);
+             _edje_signal_callback_set(gp, i, sig, src, func, data, flags);
+             return;
+          }
+     }
 
    _edje_signal_callback_grow(gp);
-
    // Set propagate and just_added flags
-   _edje_signal_callback_set(gp, gp->matches->matches_count - 1,
+   _edje_signal_callback_set(gp, tmp->matches_count - 1,
                              sig, src, func, data, flags);
-
-   return;
 }
 
 const Edje_Signal_Callback_Group *
@@ -270,7 +268,10 @@ _edje_signal_callback_matches_unref(Edje_Signal_Callback_Matches *m)
       _edje_signal_callback_patterns_unref(m->patterns);
 
       if (m->hashed)
-        eina_hash_del(signal_match, m, m);
+        {
+           eina_hash_del(signal_match, m, m);
+           m->hashed = EINA_FALSE;
+        }
 
       for (i = 0; i < m->matches_count; ++i)
         {
@@ -278,6 +279,7 @@ _edje_signal_callback_matches_unref(Edje_Signal_Callback_Matches *m)
            eina_stringshare_del(m->matches[i].source);
         }
       free(m->matches);
+      m->matches = NULL;
       free(m);
    }
 }
