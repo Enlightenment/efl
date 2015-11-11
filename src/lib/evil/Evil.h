@@ -107,35 +107,6 @@ extern "C" {
 #include <math.h>
 
 
-#ifdef _MSC_VER
-
-# include <io.h>
-
-# define F_OK 0  /* Check for file existence */
-# define X_OK 1  /* MS access() doesn't check for execute permission. */
-# define W_OK 2  /* Check for write permission */
-# define R_OK 4  /* Check for read permission */
-
-typedef DWORD          pid_t;
-typedef unsigned short mode_t;
-
-typedef unsigned short uint16_t;
-typedef unsigned int uint32_t;
-typedef signed int int32_t;
-typedef __int64 int64_t;
-typedef unsigned __int64 uint64_t;
-typedef SSIZE_T ssize_t;
-
-# define strdup(s) _strdup(s)
-# define unlink(filename) _unlink(filename)
-# define fileno(f) _fileno(f)
-# define fdopen(fd,m) _fdopen((fd),(m))
-# define access(p,m) _access((p),(m))
-# define hypot(x,y) _hypot((x),(y))
-# define tzset _tzset
-
-#endif /* _MSC_VER */
-
 typedef unsigned long  uid_t;
 typedef unsigned long  gid_t;
 
@@ -153,10 +124,6 @@ typedef unsigned long  gid_t;
 #include "evil_util.h"
 #include "evil_macro_pop.h"
 
-
-#if (defined(_WIN32) && !defined(_UWIN) && !defined(__CYGWIN__))
-# if defined(_MSC_VER) || defined(__MINGW32__)
-
 #ifndef S_ISDIR
 # define S_ISDIR(m) (((m) & _S_IFMT) == _S_IFDIR)
 #endif
@@ -165,7 +132,7 @@ typedef unsigned long  gid_t;
 # define S_ISREG(m) (((m) & _S_IFMT) == _S_IFREG)
 #endif
 
-# define S_ISLNK(m) 0
+#define S_ISLNK(m) 0
 
 #define S_IRUSR _S_IRUSR
 #ifndef S_IRGRP
@@ -199,9 +166,9 @@ typedef unsigned long  gid_t;
 # define S_IRWXO _S_IRWXU
 #endif
 
-# define _S_IXUSR _S_IEXEC
-# define _S_IWUSR _S_IWRITE
-# define _S_IRUSR _S_IREAD
+#define _S_IXUSR _S_IEXEC
+#define _S_IWUSR _S_IWRITE
+#define _S_IRUSR _S_IREAD
 
   /*
 #  define close(fd) _close(fd)
@@ -210,9 +177,6 @@ typedef unsigned long  gid_t;
 #  define unlink(filename) _unlink((filename))
 #  define lstat(f,s) _stat((f),(s))
   */
-
-# endif
-#endif
 
 #define sigsetjmp(Env, Save) setjmp(Env)
 
