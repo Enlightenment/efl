@@ -242,7 +242,7 @@ _nominatim_url_cb(const Evas_Object *obj,
 // Refer : http://wiki.openstreetmap.org/wiki/FAQ
 // meters per pixel when latitude is 0 (equator)
 // meters per pixel  = _osm_scale_meter[zoom] * cos (latitude)
-const double _osm_scale_meter[] =
+static const double _osm_scale_meter[] =
 {
    78206, 39135.758482, 19567.879241, 9783.939621, 4891.969810,
    2445.984905, 1222.992453, 611.496226, 305.748113, 152.874057, 76.437028,
@@ -263,7 +263,7 @@ _scale_cb(const Evas_Object *obj EINA_UNUSED,
    return _osm_scale_meter[zoom] * cos(lat * ELM_PI / 180.0);
 }
 
-const Source_Tile src_tiles[] =
+static const Source_Tile src_tiles[] =
 {
    {"Mapnik", 0, 18, _mapnik_url_cb, NULL, NULL, _scale_cb},
    {"Osmarender", 0, 17, _osmarender_url_cb, NULL, NULL, _scale_cb},
@@ -274,7 +274,7 @@ const Source_Tile src_tiles[] =
 };
 
 // FIXME: Fix more open sources
-const Source_Route src_routes[] =
+static const Source_Route src_routes[] =
 {
    {"Yours", _yours_url_cb}    // http://www.yournavigation.org/
    //{"Monav", _monav_url_cb},
@@ -282,14 +282,14 @@ const Source_Route src_routes[] =
 };
 
 // Scale in meters
-const double _scale_tb[] =
+static const double _scale_tb[] =
 {
    10000000, 5000000, 2000000, 1000000, 500000, 200000, 100000, 50000,
    20000, 10000, 5000, 2000, 1000, 500, 500, 200, 100, 50, 20, 10, 5, 2, 1
 };
 
 // FIXME: Add more open sources
-const Source_Name src_names[] =
+static const Source_Name src_names[] =
 {
    {"Nominatim", _nominatim_url_cb}
 };
