@@ -169,6 +169,8 @@ struct _EVGL_Context
 
    // Current FBO
    GLuint       current_fbo;
+   GLuint       current_draw_fbo;    //for GLES3
+   GLuint       current_read_fbo;    //for GLES3
 
    // Direct Rendering Related
    unsigned     scissor_enabled : 1;
@@ -190,6 +192,9 @@ struct _EVGL_Context
    int          partial_render;
 
    EVGL_Surface *current_sfc;
+
+   //glGetError
+   GLenum gl_error;
 };
 
 typedef enum _EVGL_Color_Bit

@@ -14,6 +14,13 @@
 #define EVGLD_FUNC_END() GLERRV(__FUNCTION__)
 #define _EVGL_INT_INIT_VALUE -3
 
+#define SET_GL_ERROR(gl_error_type) \
+    if (ctx->gl_error == GL_NO_ERROR) \
+      { \
+         ctx->gl_error = glGetError(); \
+         if (ctx->gl_error == GL_NO_ERROR) ctx->gl_error = gl_error_type; \
+      }
+
 static void *_gles3_handle = NULL;
 static Evas_GL_API _gles3_api;
 //---------------------------------------//
@@ -80,42 +87,120 @@ _evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
      }
 
    // Take care of BindFramebuffer 0 issue
-   if (framebuffer==0)
+   if (ctx->version == EVAS_GL_GLES_2_X)
      {
-        if (_evgl_direct_enabled())
+        if (framebuffer==0)
           {
-             glBindFramebuffer(target, 0);
-
-             if (rsc->direct.partial.enabled)
+             if (_evgl_direct_enabled())
                {
-                  if (!ctx->partial_render)
+                  glBindFramebuffer(target, 0);
+
+                  if (rsc->direct.partial.enabled)
                     {
-                       evgl_direct_partial_render_start();
-                       ctx->partial_render = 1;
+                       if (!ctx->partial_render)
+                         {
+                            evgl_direct_partial_render_start();
+                            ctx->partial_render = 1;
+                         }
                     }
+               }
+             else
+               {
+                  glBindFramebuffer(target, ctx->surface_fbo);
+               }
+             ctx->current_fbo = 0;
+          }
+        else
+          {
+             if (_evgl_direct_enabled())
+               {
+                  if (ctx->current_fbo == 0)
+                    {
+                       if (rsc->direct.partial.enabled)
+                          evgl_direct_partial_render_end();
+                    }
+               }
+
+             glBindFramebuffer(target, framebuffer);
+
+             // Save this for restore when doing make current
+             ctx->current_fbo = framebuffer;
+          }
+     }
+   else if (ctx->version == EVAS_GL_GLES_3_X)
+     {
+        if (target == GL_FRAMEBUFFER || target == GL_DRAW_FRAMEBUFFER)
+          {
+             if (framebuffer==0)
+               {
+                  if (_evgl_direct_enabled())
+                    {
+                       glBindFramebuffer(target, 0);
+
+                       if (rsc->direct.partial.enabled)
+                         {
+                            if (!ctx->partial_render)
+                              {
+                                 evgl_direct_partial_render_start();
+                                 ctx->partial_render = 1;
+                              }
+                         }
+                    }
+                  else
+                    {
+                       glBindFramebuffer(target, ctx->surface_fbo);
+                    }
+                  ctx->current_draw_fbo = 0;
+
+                  if (target == GL_FRAMEBUFFER)
+                    ctx->current_read_fbo = 0;
+               }
+             else
+               {
+                  if (_evgl_direct_enabled())
+                    {
+                       if (ctx->current_draw_fbo == 0)
+                         {
+                            if (rsc->direct.partial.enabled)
+                               evgl_direct_partial_render_end();
+                         }
+                    }
+
+                  glBindFramebuffer(target, framebuffer);
+
+                  // Save this for restore when doing make current
+                  ctx->current_draw_fbo = framebuffer;
+
+                  if (target == GL_FRAMEBUFFER)
+                    ctx->current_read_fbo = framebuffer;
+               }
+          }
+        else if (target == GL_READ_FRAMEBUFFER)
+          {
+             if (framebuffer==0)
+               {
+                 if (_evgl_direct_enabled())
+                   {
+                      glBindFramebuffer(target, 0);
+                   }
+                 else
+                   {
+                      glBindFramebuffer(target, ctx->surface_fbo);
+                   }
+                 ctx->current_read_fbo = 0;
+               }
+             else
+               {
+                 glBindFramebuffer(target, framebuffer);
+
+                 // Save this for restore when doing make current
+                 ctx->current_read_fbo = framebuffer;
                }
           }
         else
           {
-             glBindFramebuffer(target, ctx->surface_fbo);
+             glBindFramebuffer(target, framebuffer);
           }
-        ctx->current_fbo = 0;
-     }
-   else
-     {
-        if (_evgl_direct_enabled())
-          {
-             if (ctx->current_fbo == 0)
-               {
-                  if (rsc->direct.partial.enabled)
-                     evgl_direct_partial_render_end();
-               }
-          }
-
-        glBindFramebuffer(target, framebuffer);
-
-        // Save this for restore when doing make current
-        ctx->current_fbo = framebuffer;
      }
 }
 
@@ -130,6 +215,61 @@ _evgl_glClearDepthf(GLclampf depth)
 }
 
 void
+_evgl_glDeleteFramebuffers(GLsizei n, const GLuint* framebuffers)
+{
+   EVGL_Context *ctx;
+   int i;
+
+   ctx = evas_gl_common_current_context_get();
+   if (!ctx)
+     {
+        ERR("Unable to retrive Current Context");
+        return;
+     }
+
+   if (!framebuffers)
+     {
+        glDeleteFramebuffers(n, framebuffers);
+        return;
+     }
+
+   if (!_evgl_direct_enabled())
+     {
+        if (ctx->version == EVAS_GL_GLES_2_X)
+          {
+             for (i = 0; i < n; i++)
+               {
+                  if (framebuffers[i] == ctx->current_fbo)
+                    {
+                       glBindFramebuffer(GL_FRAMEBUFFER, ctx->surface_fbo);
+                       ctx->current_fbo = 0;
+                       break;
+                    }
+               }
+          }
+        else if (ctx->version == EVAS_GL_GLES_3_X)
+          {
+             for (i = 0; i < n; i++)
+               {
+                  if (framebuffers[i] == ctx->current_draw_fbo)
+                    {
+                       glBindFramebuffer(GL_DRAW_FRAMEBUFFER, ctx->surface_fbo);
+                       ctx->current_draw_fbo = 0;
+                    }
+
+                  if (framebuffers[i] == ctx->current_read_fbo)
+                    {
+                       glBindFramebuffer(GL_READ_FRAMEBUFFER, ctx->surface_fbo);
+                       ctx->current_read_fbo = 0;
+                    }
+               }
+          }
+     }
+
+   glDeleteFramebuffers(n, framebuffers);
+}
+
+void
 _evgl_glDepthRangef(GLclampf zNear, GLclampf zFar)
 {
 #ifdef GL_GLES
@@ -137,6 +277,34 @@ _evgl_glDepthRangef(GLclampf zNear, GLclampf zFar)
 #else
    glDepthRange(zNear, zFar);
 #endif
+}
+
+GLenum
+_evgl_glGetError(void)
+{
+   GLenum ret;
+   EVGL_Context *ctx = evas_gl_common_current_context_get();
+
+   if (!ctx)
+     {
+        ERR("No current context set.");
+        return GL_NO_ERROR;
+     }
+
+   if (ctx->gl_error != GL_NO_ERROR)
+     {
+        ret = ctx->gl_error;
+
+        //reset error state to GL_NO_ERROR. (EvasGL & Native GL)
+        ctx->gl_error = GL_NO_ERROR;
+        glGetError();
+
+        return ret;
+     }
+   else
+     {
+        return glGetError();
+     }
 }
 
 void
@@ -364,7 +532,8 @@ _evgl_glClear(GLbitfield mask)
 
    if (_evgl_direct_enabled())
      {
-        if (!(rsc->current_ctx->current_fbo))
+        if ((!(rsc->current_ctx->current_fbo) && rsc->current_ctx->version == EVAS_GL_GLES_2_X) ||
+            (!(rsc->current_ctx->current_draw_fbo) && rsc->current_ctx->version == EVAS_GL_GLES_3_X))
           {
              /* Skip glClear() if clearing with transparent color
               * Note: There will be side effects if the object itself is not
@@ -471,7 +640,8 @@ _evgl_glEnable(GLenum cap)
 
              if (rsc)
                {
-                  if (!ctx->current_fbo)
+                  if ((!ctx->current_fbo && ctx->version == EVAS_GL_GLES_2_X) ||
+                      (!ctx->current_draw_fbo && ctx->version == EVAS_GL_GLES_3_X))
                     {
                        // Direct rendering to canvas
                        if (!ctx->scissor_updated)
@@ -539,7 +709,8 @@ _evgl_glDisable(GLenum cap)
 
         if (_evgl_direct_enabled())
           {
-             if (!ctx->current_fbo)
+             if ((!ctx->current_fbo && ctx->version == EVAS_GL_GLES_2_X) ||
+                 (!ctx->current_draw_fbo && ctx->version == EVAS_GL_GLES_3_X))
                {
                   // Restore default scissors for direct rendering
                   int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0}, cc[4] = {0,0,0,0};
@@ -576,73 +747,468 @@ _evgl_glDisable(GLenum cap)
    glDisable(cap);
 }
 
+static void
+_evgl_glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
+{
+    EVGL_Resource *rsc;
+    EVGL_Context *ctx;
+
+    if (!(rsc=_evgl_tls_resource_get()))
+      {
+         ERR("Unable to execute GL command. Error retrieving tls");
+         return;
+      }
+
+    if (!rsc->current_eng)
+      {
+         ERR("Unable to retrive Current Engine");
+         return;
+      }
+
+    ctx = rsc->current_ctx;
+    if (!ctx)
+      {
+         ERR("Unable to retrive Current Context");
+         return;
+      }
+
+    if (!_evgl_direct_enabled())
+      {
+         if (ctx->version == EVAS_GL_GLES_2_X)
+           {
+              if (target == GL_FRAMEBUFFER && ctx->current_fbo == 0)
+                {
+                   SET_GL_ERROR(GL_INVALID_OPERATION);
+                   return;
+                }
+           }
+         else if (ctx->version == EVAS_GL_GLES_3_X)
+           {
+              if (target == GL_DRAW_FRAMEBUFFER || target == GL_FRAMEBUFFER)
+                {
+                   if (ctx->current_draw_fbo == 0)
+                     {
+                        SET_GL_ERROR(GL_INVALID_OPERATION);
+                        return;
+                     }
+                }
+              else if (target == GL_READ_FRAMEBUFFER)
+                {
+                   if (ctx->current_read_fbo == 0)
+                     {
+                        SET_GL_ERROR(GL_INVALID_OPERATION);
+                        return;
+                     }
+                }
+           }
+      }
+
+   glFramebufferTexture2D(target, attachment, textarget, texture, level);
+}
+
+static void
+_evgl_glFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
+{
+    EVGL_Resource *rsc;
+    EVGL_Context *ctx;
+
+    if (!(rsc=_evgl_tls_resource_get()))
+      {
+         ERR("Unable to execute GL command. Error retrieving tls");
+         return;
+      }
+
+    if (!rsc->current_eng)
+      {
+         ERR("Unable to retrive Current Engine");
+         return;
+      }
+
+    ctx = rsc->current_ctx;
+    if (!ctx)
+      {
+         ERR("Unable to retrive Current Context");
+         return;
+      }
+
+    if (!_evgl_direct_enabled())
+      {
+         if(ctx->version == EVAS_GL_GLES_2_X)
+           {
+              if (target == GL_FRAMEBUFFER && ctx->current_fbo == 0)
+                {
+                   SET_GL_ERROR(GL_INVALID_OPERATION);
+                   return;
+                }
+           }
+         else if(ctx->version == EVAS_GL_GLES_3_X)
+           {
+              if (target == GL_DRAW_FRAMEBUFFER || target == GL_FRAMEBUFFER)
+                {
+                   if (ctx->current_draw_fbo == 0)
+                     {
+                        SET_GL_ERROR(GL_INVALID_OPERATION);
+                        return;
+                     }
+                }
+              else if (target == GL_READ_FRAMEBUFFER)
+                {
+                   if (ctx->current_read_fbo == 0)
+                     {
+                        SET_GL_ERROR(GL_INVALID_OPERATION);
+                        return;
+                     }
+                }
+           }
+      }
+
+   glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer);
+}
+
 void
-_evgl_glGetIntegerv(GLenum pname, GLint* params)
+_evgl_glGetFloatv(GLenum pname, GLfloat* params)
 {
    EVGL_Resource *rsc;
    EVGL_Context *ctx;
 
+   if (!params)
+     {
+        ERR("Invalid Parameter");
+        return;
+     }
+
+   if (!(rsc=_evgl_tls_resource_get()))
+     {
+        ERR("Unable to execute GL command. Error retrieving tls");
+        return;
+     }
+
+   ctx = rsc->current_ctx;
+   if (!ctx)
+     {
+        ERR("Unable to retrive Current Context");
+        return;
+     }
+
    if (_evgl_direct_enabled())
      {
-        if (!params)
+        if (ctx->version == EVAS_GL_GLES_2_X)
           {
-             ERR("Invalid Parameter");
-             return;
-          }
-
-        if (!(rsc=_evgl_tls_resource_get()))
-          {
-             ERR("Unable to execute GL command. Error retrieving tls");
-             return;
-          }
-
-        ctx = rsc->current_ctx;
-        if (!ctx)
-          {
-             ERR("Unable to retrive Current Context");
-             return;
-          }
-
-        // Only need to handle it if it's directly rendering to the window
-        if (!(rsc->current_ctx->current_fbo))
-          {
-             if (pname == GL_SCISSOR_BOX)
+             // Only need to handle it if it's directly rendering to the window
+             if (!(rsc->current_ctx->current_fbo))
                {
-                  if (ctx->scissor_updated)
+                  if (pname == GL_SCISSOR_BOX)
                     {
-                       memcpy(params, ctx->scissor_coord, sizeof(int)*4);
+                       if (ctx->scissor_updated)
+                         {
+                            params[0] = (GLfloat)ctx->scissor_coord[0];
+                            params[1] = (GLfloat)ctx->scissor_coord[1];
+                            params[2] = (GLfloat)ctx->scissor_coord[2];
+                            params[3] = (GLfloat)ctx->scissor_coord[3];
+                            return;
+                         }
+                    }
+                  else if (pname == GL_VIEWPORT)
+                    {
+                       if (ctx->viewport_updated)
+                         {
+                            memcpy(params, ctx->viewport_coord, sizeof(int)*4);
+                            return;
+                         }
+                    }
+
+                  // If it hasn't been initialized yet, return img object size
+                  if ((pname == GL_SCISSOR_BOX) || (pname == GL_VIEWPORT))
+                    {
+                       params[0] = (GLfloat)0.0;
+                       params[1] = (GLfloat)0.0;
+                       params[2] = (GLfloat)rsc->direct.img.w;
+                       params[3] = (GLfloat)rsc->direct.img.h;
                        return;
                     }
                }
-             else if (pname == GL_VIEWPORT)
+          }
+        else if (ctx->version == EVAS_GL_GLES_3_X)
+          {
+             // Only need to handle it if it's directly rendering to the window
+             if (!(rsc->current_ctx->current_draw_fbo))
                {
-                  if (ctx->viewport_updated)
+                  if (pname == GL_SCISSOR_BOX)
                     {
-                       memcpy(params, ctx->viewport_coord, sizeof(int)*4);
+                       if (ctx->scissor_updated)
+                         {
+                            params[0] = (GLfloat)ctx->scissor_coord[0];
+                            params[1] = (GLfloat)ctx->scissor_coord[1];
+                            params[2] = (GLfloat)ctx->scissor_coord[2];
+                            params[3] = (GLfloat)ctx->scissor_coord[3];
+                            return;
+                         }
+                    }
+                  else if (pname == GL_VIEWPORT)
+                    {
+                       if (ctx->viewport_updated)
+                         {
+                            memcpy(params, ctx->viewport_coord, sizeof(int)*4);
+                            return;
+                         }
+                    }
+                  // If it hasn't been initialized yet, return img object size
+                  if ((pname == GL_SCISSOR_BOX) )//|| (pname == GL_VIEWPORT))
+                    {
+                       params[0] = (GLfloat)0.0;
+                       params[1] = (GLfloat)0.0;
+                       params[2] = (GLfloat)rsc->direct.img.w;
+                       params[3] = (GLfloat)rsc->direct.img.h;
                        return;
                     }
                }
 
-             // If it hasn't been initialized yet, return img object size
-             if ((pname == GL_SCISSOR_BOX) || (pname == GL_VIEWPORT))
+             if (pname == GL_NUM_EXTENSIONS)
                {
-                  params[0] = 0;
-                  params[1] = 0;
-                  params[2] = (GLint)rsc->direct.img.w;
-                  params[3] = (GLint)rsc->direct.img.h;
+                  *params = (GLfloat)evgl_api_ext_num_extensions_get(ctx->version);
                   return;
                }
           }
      }
    else
      {
-        if (pname == GL_FRAMEBUFFER_BINDING)
+        if (ctx->version == EVAS_GL_GLES_2_X)
           {
-             rsc = _evgl_tls_resource_get();
-             ctx = rsc ? rsc->current_ctx : NULL;
-             if (ctx)
+             if (pname == GL_FRAMEBUFFER_BINDING)
                {
-                  *params = ctx->current_fbo;
+                  rsc = _evgl_tls_resource_get();
+                  ctx = rsc ? rsc->current_ctx : NULL;
+                  if (ctx)
+                    {
+                       *params = (GLfloat)ctx->current_fbo;
+                       return;
+                    }
+               }
+          }
+        else if (ctx->version == EVAS_GL_GLES_3_X)
+          {
+             if (pname == GL_DRAW_FRAMEBUFFER_BINDING || pname == GL_FRAMEBUFFER_BINDING)
+               {
+                  *params = (GLfloat)ctx->current_draw_fbo;
+                  return;
+               }
+             else if (pname == GL_READ_FRAMEBUFFER_BINDING)
+               {
+                  *params = (GLfloat)ctx->current_read_fbo;
+                  return;
+               }
+             else if (pname == GL_READ_BUFFER)
+               {
+                  if (ctx->current_read_fbo == 0)
+                    {
+                       glGetFloatv(pname, params);
+                       if (*params == GL_COLOR_ATTACHMENT0)
+                         {
+                            *params = (GLfloat)GL_BACK;
+                            return;
+                         }
+                    }
+               }
+             else if (pname == GL_NUM_EXTENSIONS)
+               {
+                  *params = (GLfloat)evgl_api_ext_num_extensions_get(ctx->version);
+                  return;
+               }
+          }
+     }
+
+   glGetFloatv(pname, params);
+}
+
+void
+_evgl_glGetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, GLenum pname, GLint* params)
+{
+   EVGL_Context *ctx;
+
+   ctx = evas_gl_common_current_context_get();
+
+   if (!ctx)
+     {
+        ERR("Unable to retrive Current Context");
+        return;
+     }
+
+   if (!_evgl_direct_enabled())
+     {
+        if (ctx->version == EVAS_GL_GLES_2_X)
+          {
+             if (ctx->current_fbo == 0)
+               {
+                  SET_GL_ERROR(GL_INVALID_OPERATION);
+                  return;
+               }
+          }
+        else if (ctx->version == EVAS_GL_GLES_3_X)
+          {
+             if (target == GL_DRAW_FRAMEBUFFER || target == GL_FRAMEBUFFER)
+               {
+                  if (ctx->current_draw_fbo == 0 && attachment == GL_BACK)
+                    {
+                       glGetFramebufferAttachmentParameteriv(target, GL_COLOR_ATTACHMENT0, pname, params);
+                       return;
+                    }
+               }
+             else if (target == GL_READ_FRAMEBUFFER)
+               {
+                  if (ctx->current_read_fbo == 0 && attachment == GL_BACK)
+                    {
+                       glGetFramebufferAttachmentParameteriv(target, GL_COLOR_ATTACHMENT0, pname, params);
+                       return;
+                    }
+               }
+          }
+     }
+
+   glGetFramebufferAttachmentParameteriv(target, attachment, pname, params);
+}
+
+void
+_evgl_glGetIntegerv(GLenum pname, GLint* params)
+{
+   EVGL_Resource *rsc;
+   EVGL_Context *ctx;
+
+   if (!params)
+     {
+        ERR("Invalid Parameter");
+        return;
+     }
+
+   if (!(rsc=_evgl_tls_resource_get()))
+     {
+        ERR("Unable to execute GL command. Error retrieving tls");
+        return;
+     }
+
+   ctx = rsc->current_ctx;
+   if (!ctx)
+     {
+        ERR("Unable to retrive Current Context");
+        return;
+     }
+
+   if (_evgl_direct_enabled())
+     {
+        if (ctx->version == EVAS_GL_GLES_2_X)
+          {
+             // Only need to handle it if it's directly rendering to the window
+             if (!(rsc->current_ctx->current_fbo))
+               {
+                  if (pname == GL_SCISSOR_BOX)
+                    {
+                       if (ctx->scissor_updated)
+                         {
+                            memcpy(params, ctx->scissor_coord, sizeof(int)*4);
+                            return;
+                         }
+                    }
+                  else if (pname == GL_VIEWPORT)
+                    {
+                       if (ctx->viewport_updated)
+                         {
+                            memcpy(params, ctx->viewport_coord, sizeof(int)*4);
+                            return;
+                         }
+                    }
+
+                  // If it hasn't been initialized yet, return img object size
+                  if ((pname == GL_SCISSOR_BOX) || (pname == GL_VIEWPORT))
+                    {
+                       params[0] = 0;
+                       params[1] = 0;
+                       params[2] = (GLint)rsc->direct.img.w;
+                       params[3] = (GLint)rsc->direct.img.h;
+                       return;
+                    }
+               }
+          }
+        else if (ctx->version == EVAS_GL_GLES_3_X)
+          {
+             // Only need to handle it if it's directly rendering to the window
+             if (!(rsc->current_ctx->current_draw_fbo))
+               {
+                  if (pname == GL_SCISSOR_BOX)
+                    {
+                       if (ctx->scissor_updated)
+                         {
+                            memcpy(params, ctx->scissor_coord, sizeof(int)*4);
+                            return;
+                         }
+                    }
+                  else if (pname == GL_VIEWPORT)
+                    {
+                       if (ctx->viewport_updated)
+                         {
+                            memcpy(params, ctx->viewport_coord, sizeof(int)*4);
+                            return;
+                         }
+                    }
+                  // If it hasn't been initialized yet, return img object size
+                  if ((pname == GL_SCISSOR_BOX) )//|| (pname == GL_VIEWPORT))
+                    {
+                       params[0] = 0;
+                       params[1] = 0;
+                       params[2] = (GLint)rsc->direct.img.w;
+                       params[3] = (GLint)rsc->direct.img.h;
+                       return;
+                    }
+               }
+
+             if (pname == GL_NUM_EXTENSIONS)
+               {
+                  *params = evgl_api_ext_num_extensions_get(ctx->version);
+                  return;
+               }
+          }
+     }
+   else
+     {
+        if (ctx->version == EVAS_GL_GLES_2_X)
+          {
+             if (pname == GL_FRAMEBUFFER_BINDING)
+               {
+                  rsc = _evgl_tls_resource_get();
+                  ctx = rsc ? rsc->current_ctx : NULL;
+                  if (ctx)
+                    {
+                       *params = ctx->current_fbo;
+                       return;
+                    }
+               }
+          }
+        else if (ctx->version == EVAS_GL_GLES_3_X)
+          {
+             if (pname == GL_DRAW_FRAMEBUFFER_BINDING || pname == GL_FRAMEBUFFER_BINDING)
+               {
+                  *params = ctx->current_draw_fbo;
+                  return;
+               }
+             else if (pname == GL_READ_FRAMEBUFFER_BINDING)
+               {
+                  *params = ctx->current_read_fbo;
+                  return;
+               }
+             else if (pname == GL_READ_BUFFER)
+               {
+                  if (ctx->current_read_fbo == 0)
+                    {
+                       glGetIntegerv(pname, params);
+
+                       if (*params == GL_COLOR_ATTACHMENT0)
+                         {
+                            *params = GL_BACK;
+                            return;
+                         }
+                    }
+               }
+             else if (pname == GL_NUM_EXTENSIONS)
+               {
+                  *params = evgl_api_ext_num_extensions_get(ctx->version);
                   return;
                }
           }
@@ -748,6 +1314,37 @@ _evgl_glGetString(GLenum name)
    return glGetString(name);
 }
 
+static const GLubyte *
+_evgl_glGetStringi(GLenum name, GLuint index)
+{
+   EVGL_Context *ctx;
+
+   ctx = evas_gl_common_current_context_get();
+
+   if (!ctx)
+     {
+        ERR("Unable to retrive Current Context");
+        return NULL;
+     }
+
+   switch (name)
+     {
+        case GL_EXTENSIONS:
+           if (index < evgl_api_ext_num_extensions_get(ctx->version))
+             {
+                return (GLubyte *)evgl_api_ext_stringi_get(index, ctx->version);
+             }
+           else
+             SET_GL_ERROR(GL_INVALID_VALUE);
+           break;
+        default:
+           SET_GL_ERROR(GL_INVALID_ENUM);
+           break;
+     }
+
+   return NULL;
+}
+
 static void
 _evgl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* pixels)
 {
@@ -779,7 +1376,8 @@ _evgl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum forma
    if (_evgl_direct_enabled())
      {
 
-        if (!(rsc->current_ctx->current_fbo))
+        if ((!(rsc->current_ctx->current_fbo) && rsc->current_ctx->version == EVAS_GL_GLES_2_X) ||
+            (!(rsc->current_ctx->current_read_fbo) && rsc->current_ctx->version == EVAS_GL_GLES_3_X))
           {
              compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
                                     rsc->direct.rot, 1,
@@ -831,7 +1429,8 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
 
    if (_evgl_direct_enabled())
      {
-        if (!(rsc->current_ctx->current_fbo))
+        if ((!(rsc->current_ctx->current_fbo) && rsc->current_ctx->version == EVAS_GL_GLES_2_X) ||
+            (!(rsc->current_ctx->current_draw_fbo) && rsc->current_ctx->version == EVAS_GL_GLES_3_X))
           {
              // Direct rendering to canvas
              if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
@@ -918,7 +1517,8 @@ _evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 
    if (_evgl_direct_enabled())
      {
-        if (!(rsc->current_ctx->current_fbo))
+        if ((!(rsc->current_ctx->current_fbo) && rsc->current_ctx->version == EVAS_GL_GLES_2_X) ||
+            (!(rsc->current_ctx->current_draw_fbo) && rsc->current_ctx->version == EVAS_GL_GLES_3_X))
           {
              if ((!ctx->direct_scissor))
                {
@@ -1002,6 +1602,100 @@ _evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
      }
 }
 
+static void
+_evgl_glDrawBuffers(GLsizei n, const GLenum *bufs)
+{
+    EVGL_Context *ctx;
+    Eina_Bool target_is_fbo = EINA_FALSE;
+    unsigned int drawbuffer;
+
+    ctx = evas_gl_common_current_context_get();
+    if (!ctx)
+      {
+         ERR("Unable to retrive Current Context");
+         return;
+      }
+
+    if (!bufs)
+      {
+         glDrawBuffers(n, bufs);
+         return;
+      }
+
+    if (!_evgl_direct_enabled())
+      {
+         if (ctx->current_draw_fbo == 0)
+           target_is_fbo = EINA_TRUE;
+      }
+
+    if (target_is_fbo)
+      {
+         if (n==1)
+           {
+              if (*bufs == GL_BACK)
+                {
+                   drawbuffer = GL_COLOR_ATTACHMENT0;
+                   glDrawBuffers(n, &drawbuffer);
+                }
+              else if ((*bufs & GL_COLOR_ATTACHMENT0) == GL_COLOR_ATTACHMENT0)
+                {
+                   SET_GL_ERROR(GL_INVALID_OPERATION);
+                }
+              else
+                {
+                   glDrawBuffers(n, bufs);
+                }
+           }
+         else
+           {
+              SET_GL_ERROR(GL_INVALID_OPERATION);
+           }
+      }
+    else
+      {
+        glDrawBuffers(n, bufs);
+      }
+}
+
+static void
+_evgl_glReadBuffer(GLenum src)
+{
+    EVGL_Context *ctx;
+    Eina_Bool target_is_fbo = EINA_FALSE;
+
+    ctx = evas_gl_common_current_context_get();
+    if (!ctx)
+      {
+         ERR("Unable to retrive Current Context");
+         return;
+      }
+
+    if (!_evgl_direct_enabled())
+      {
+         if (ctx->current_read_fbo == 0)
+           target_is_fbo = EINA_TRUE;
+      }
+
+    if (target_is_fbo)
+      {
+         if (src == GL_BACK)
+           {
+              glReadBuffer(GL_COLOR_ATTACHMENT0);
+           }
+         else if((src & GL_COLOR_ATTACHMENT0) == GL_COLOR_ATTACHMENT0)
+           {
+              SET_GL_ERROR(GL_INVALID_OPERATION);
+           }
+         else
+           {
+              glReadBuffer(src);
+           }
+      }
+    else
+      {
+         glReadBuffer(src);
+      }
+}
 
 //-------------------------------------------------------------//
 // Open GLES 2.0 APIs
@@ -1079,6 +1773,20 @@ static void _evgld_##name param1 { \
 
 //-------------------------------------------------------------//
 // Open GLES 3.0 APIs
+#define _EVASGL_FUNCTION_PRIVATE_BEGIN(ret, name, param1, param2) \
+static ret evgl_gles3_##name param1 { \
+   EVGL_FUNC_BEGIN(); \
+   if (!_gles3_api.name) return (ret)0; \
+   return _evgl_##name param2; \
+}
+
+#define _EVASGL_FUNCTION_PRIVATE_BEGIN_VOID(name, param1, param2) \
+static void evgl_gles3_##name param1 { \
+   EVGL_FUNC_BEGIN(); \
+   if (!_gles3_api.name) return; \
+   _evgl_##name param2; \
+}
+
 #define _EVASGL_FUNCTION_BEGIN(ret, name, param1, param2) \
 static ret evgl_gles3_##name param1 { \
    EVGL_FUNC_BEGIN(); \
@@ -1095,12 +1803,31 @@ static void evgl_gles3_##name param1 { \
 
 #include "evas_gl_api_gles3_def.h"
 
+#undef _EVASGL_FUNCTION_PRIVATE_BEGIN
+#undef _EVASGL_FUNCTION_PRIVATE_BEGIN_VOID
 #undef _EVASGL_FUNCTION_BEGIN
 #undef _EVASGL_FUNCTION_BEGIN_VOID
 
 
 //-------------------------------------------------------------//
 // Open GLES 3.0 APIs DEBUG
+#define _EVASGL_FUNCTION_PRIVATE_BEGIN(ret, name, param1, param2) \
+static ret _evgld_##name param1 { \
+   EVGLD_FUNC_BEGIN(); \
+   if (!_gles3_api.name) return (ret)0; \
+   ret _a = _evgl_##name param2; \
+   EVGLD_FUNC_END(); \
+   return _a; \
+}
+
+#define _EVASGL_FUNCTION_PRIVATE_BEGIN_VOID(name, param1, param2) \
+static void _evgld_##name param1 { \
+   EVGLD_FUNC_BEGIN(); \
+   if (!_gles3_api.name) return; \
+   _evgl_##name param2; \
+   EVGLD_FUNC_END(); \
+}
+
 #define _EVASGL_FUNCTION_BEGIN(ret, name, param1, param2) \
 static ret _evgld_##name param1 { \
    EVGLD_FUNC_BEGIN(); \
@@ -1120,6 +1847,8 @@ static void _evgld_##name param1 { \
 
 #include "evas_gl_api_gles3_def.h"
 
+#undef _EVASGL_FUNCTION_PRIVATE_BEGIN
+#undef _EVASGL_FUNCTION_PRIVATE_BEGIN_VOID
 #undef _EVASGL_FUNCTION_BEGIN
 #undef _EVASGL_FUNCTION_BEGIN_VOID
 
