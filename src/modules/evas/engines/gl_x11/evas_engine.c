@@ -1453,6 +1453,10 @@ gl_extn_veto(Render_Engine *re)
           {
              glsym_eglSwapBuffersWithDamage = NULL;
           }
+        if (strstr(str, "EGL_TIZEN_image_native_surface"))
+          {
+             eng_get_ob(re)->gl_context->shared->info.egl_tbm_ext = 1;
+          }
      }
    else
      {

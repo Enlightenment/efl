@@ -124,6 +124,7 @@ struct _Evas_GL_Shared
       Eina_Bool tex_rect : 1;
       Eina_Bool sec_image_map : 1;
       Eina_Bool sec_tbm_surface : 1;
+      Eina_Bool egl_tbm_ext : 1;
       Eina_Bool bin_program : 1;
       Eina_Bool unpack_row_length : 1;
       Eina_Bool etc1 : 1;
