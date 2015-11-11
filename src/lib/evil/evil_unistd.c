@@ -3,18 +3,13 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <errno.h>
+# include <sys/time.h>
 
 #ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN
 #endif
 #include <winsock2.h>
 #undef WIN32_LEAN_AND_MEAN
-
-# include <sys/time.h>
-
-#ifdef _MSC_VER
-# include <direct.h>   /* for _getcwd */
-#endif
 
 #include "Evil.h"
 #include "evil_private.h"
@@ -63,41 +58,6 @@ evil_time_get(void)
 
    return (double)_evil_time_second + (double)(count.QuadPart - _evil_time_count)/ (double)_evil_time_freq;
 }
-
-#ifdef _MSC_VER
-int
-evil_gettimeofday(struct timeval *tp, void *tzp EVIL_UNUSED)
-{
-   LARGE_INTEGER count;
-   LONGLONG      diff;
-
-   QueryPerformanceCounter(&count);
-   diff = count.QuadPart - _evil_time_count;
-   tp->tv_sec = _evil_time_second + (long)(diff / _evil_time_freq);
-   tp->tv_usec = (long)(((diff % _evil_time_freq) * 1000000ll) / _evil_time_freq);
-
-   return 1;
-}
-
-int
-evil_usleep(unsigned long usec)
-{
-   Sleep(usec / 1000);
-   return 0;
-}
-
-
-/*
- * Process identifer related functions
- *
- */
-
-pid_t
-getpid(void)
-{
-  return (pid_t)GetCurrentProcessId();
-}
-#endif
 
 /*
  * File related functions

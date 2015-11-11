@@ -4,10 +4,6 @@
 
 #include <stdlib.h>
 
-#ifdef _MSC_VER
-# include <limits.h>
-#endif /* _MSC_VER */
-
 #ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN
 #endif

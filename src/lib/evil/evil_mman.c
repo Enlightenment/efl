@@ -5,10 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
-
-#ifndef _MSC_VER
-# include <unistd.h>
-#endif
+#include <unistd.h>
 
 #ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN
@@ -16,7 +13,7 @@
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
-# include <io.h>
+#include <io.h>
 
 #include "evil_macro.h"
 #include "sys/mman.h"

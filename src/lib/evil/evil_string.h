@@ -73,28 +73,6 @@ EAPI int ffs(int i);
  */
 EAPI char *strrstr (const char *str, const char *substr);
 
-#ifdef _MSC_VER
-
-/**
- * @brief Compare two string, ignoring case.
- *
- * @param s1 The first string to compare.
- * @param s2 The first string to compare.
- * @return
- *
- * This function compares the two strings @p s1 and @p s2, ignoring
- * the case of the characters. It returns an integer less than, equal
- * to, or greater than zero if s1 is found, respectively, to be less
- * than, to match, or be greater than s2.
- *
- * Conformity: Non applicable.
- *
- * Supported OS: Windows XP (vc++ only)
- */
-EAPI int strcasecmp(const char *s1, const char *s2);
-
-#endif /* _MSC_VER */
-
 /**
  * @brief Locate a substring into a string, ignoring case.
  *
