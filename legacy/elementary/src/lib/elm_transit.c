@@ -1016,7 +1016,7 @@ _translation_nodes_build(Elm_Transit *transit, Elm_Transit_Effect_Translation *t
    return data_list;
 }
 
-void
+static void
 _transit_effect_translation_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(effect);
@@ -1035,7 +1035,7 @@ _transit_effect_translation_context_free(Elm_Transit_Effect *effect, Elm_Transit
    free(translation);
 }
 
-void
+static void
 _transit_effect_translation_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(effect);
@@ -1101,7 +1101,7 @@ struct _Elm_Transit_Effect_Zoom
    float from, to;
 };
 
-void
+static void
 _transit_effect_zoom_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit EINA_UNUSED)
 {
    Elm_Transit_Effect_Zoom *zoom = effect;
@@ -1483,7 +1483,7 @@ _set_image_uv_by_axis_x(Evas_Map *map, Elm_Transit_Effect_ResizableFlip_Node *fl
      }
 }
 
-void
+static void
 _transit_effect_resizable_flip_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(effect);
@@ -1510,7 +1510,7 @@ _transit_effect_resizable_flip_context_free(Elm_Transit_Effect *effect, Elm_Tran
    free(resizable_flip);
 }
 
-void
+static void
 _transit_effect_resizable_flip_op(Elm_Transit_Effect *effect, Elm_Transit *transit EINA_UNUSED, double progress)
 {
    EINA_SAFETY_ON_NULL_RETURN(effect);
@@ -2226,7 +2226,7 @@ _blend_nodes_build(Elm_Transit *transit, Elm_Transit_Effect_Blend *blend)
    return data_list;
 }
 
-void
+static void
 _transit_effect_blend_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit)
 {
    EINA_SAFETY_ON_NULL_RETURN(effect);
@@ -2259,7 +2259,7 @@ _transit_effect_blend_context_free(Elm_Transit_Effect *effect, Elm_Transit *tran
    free(blend);
 }
 
-void
+static void
 _transit_effect_blend_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
 {
    EINA_SAFETY_ON_NULL_RETURN(effect);
