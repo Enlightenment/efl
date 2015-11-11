@@ -1059,7 +1059,7 @@ _alphai(char *s, int *val)
    return s;
 }
 
-char *
+static char *
 _get_numi(char *s, int *val)
 {
    char buf[4096];
@@ -1077,7 +1077,7 @@ _get_numi(char *s, int *val)
    return s + pos;
 }
 
-int
+static int
 _is_numi(char c)
 {
    if (((c >= '0') && (c <= '9')) || ('-' == c) || ('+' == c))
@@ -1086,7 +1086,7 @@ _is_numi(char c)
      return 0;
 }
 
-int
+static int
 _is_op1i(char c)
 {
    switch (c)
@@ -1102,7 +1102,7 @@ _is_op1i(char c)
    return 0;
 }
 
-int
+static int
 _is_op2i(char c)
 {
    switch (c)
@@ -1116,7 +1116,7 @@ _is_op2i(char c)
    return 0;
 }
 
-int
+static int
 _calci(char op, int a, int b)
 {
    switch (op)
@@ -1153,7 +1153,7 @@ _calci(char op, int a, int b)
 
 /* float set of functoins */
 
-double
+static double
 my_atof(const char *s)
 {
    double res = 0;
