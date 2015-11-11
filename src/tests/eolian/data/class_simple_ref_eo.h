@@ -60,7 +60,7 @@ EOAPI void evas_obj_simple_b_set(void);
  *
  * @ingroup Class_Simple
  */
-EOAPI char * evas_obj_simple_foo(int a, char *b, double *c);
+EOAPI char *evas_obj_simple_foo(int a, char *b, double *c);
 #endif
 
 EOAPI int evas_obj_simple_bar(int x);

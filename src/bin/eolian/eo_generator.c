@@ -97,7 +97,7 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
         eina_strbuf_append_char(str_func, '\n');
         eina_strbuf_free(dbuf);
      }
-   eina_strbuf_append_printf(str_func, "EOAPI @#rettype %s(@#full_params);\n", func_env.lower_eo_func);
+   eina_strbuf_append_printf(str_func, "EOAPI @#rettype@#retspace%s(@#full_params);\n", func_env.lower_eo_func);
 
    if (scope == EOLIAN_SCOPE_PROTECTED)
       eina_strbuf_append_printf(str_func, "#endif\n");
@@ -154,6 +154,10 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
    if (rettypet) rettype = eolian_type_c_type_get(rettypet);
 
    eina_strbuf_replace_all(str_func, "@#rettype", rettype ? rettype : "void");
+   if (!rettype || rettype[strlen(rettype) - 1] != '*')
+     eina_strbuf_replace_all(str_func, "@#retspace", " ");
+   else
+     eina_strbuf_replace_all(str_func, "@#retspace", "");
 
    eina_strbuf_replace_all(str_func, "@#list_param", eina_strbuf_string_get(str_par));
    if (!eina_strbuf_length_get(str_par)) eina_strbuf_append(str_par, "void");
