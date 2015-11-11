@@ -641,6 +641,7 @@ _native_evasgl_free(void *data EINA_UNUSED, void *image)
    im->native.data        = NULL;
    im->native.func.data   = NULL;
    im->native.func.bind   = NULL;
+   im->native.func.unbind = NULL;
    im->native.func.free   = NULL;
    //im->image.data         = NULL;
    free(n);
@@ -740,6 +741,7 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
              im->native.func.free = _native_evasgl_free;
              im->native.func.data = NULL;
              im->native.func.bind = NULL;
+             im->native.func.unbind = NULL;
           }
      }
 

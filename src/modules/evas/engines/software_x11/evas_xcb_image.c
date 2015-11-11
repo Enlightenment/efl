@@ -68,6 +68,7 @@ _native_cb_free(void *data EINA_UNUSED, void *image)
    im->native.data = NULL;
    im->native.func.data = NULL;
    im->native.func.bind = NULL;
+   im->native.func.unbind = NULL;
    im->native.func.free = NULL;
    im->image.data = NULL;
 
@@ -116,6 +117,7 @@ evas_xcb_image_native_set(void *data, void *image, void *native)
         im->native.data = n;
         im->native.func.data = NULL;
         im->native.func.bind = _native_cb_bind;
+        im->native.func.unbind = NULL;
         im->native.func.free = _native_cb_free;
 
         _evas_xcb_image_update(data, image, 0, 0, w, h);

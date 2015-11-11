@@ -1956,6 +1956,7 @@ eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image
 
    if (do_async)
      {
+        Eina_Bool ret;
         if (!evas_common_rgba_image_scalecache_prepare(image, surface, context, smooth,
                                                        src_x, src_y, src_w, src_h,
                                                        dst_x, dst_y, dst_w, dst_h))
@@ -1968,15 +1969,23 @@ eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image
                   else
 #endif
                     evas_cache_image_load_data(&im->cache_entry);
-                  if (!im->cache_entry.flags.loaded) return EINA_FALSE;
+                  if (!im->cache_entry.flags.loaded)
+                    {
+                       if (im->native.func.unbind)
+                         im->native.func.unbind(data, image);
+                       return EINA_FALSE;
+                    }
                }
           }
-        return evas_common_rgba_image_scalecache_do_cbs(image, surface,
+        ret = evas_common_rgba_image_scalecache_do_cbs(image, surface,
                                                         context, smooth,
                                                         src_x, src_y, src_w, src_h,
                                                         dst_x, dst_y, dst_w, dst_h,
                                                         _image_thr_cb_sample,
                                                         _image_thr_cb_smooth);
+        if (im->native.func.unbind)
+           im->native.func.unbind(data, image);
+        return ret;
      }
 #ifdef BUILD_PIPE_RENDER
    else if ((cpunum > 1))
