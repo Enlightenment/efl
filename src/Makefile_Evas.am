@@ -1047,12 +1047,14 @@ modules/evas/engines/software_x11/evas_xlib_color.c \
 modules/evas/engines/software_x11/evas_xlib_main.c \
 modules/evas/engines/software_x11/evas_xlib_swapper.c \
 modules/evas/engines/software_x11/evas_xlib_image.c \
+modules/evas/engines/software_x11/evas_xlib_dri_image.c \
 modules/evas/engines/software_x11/evas_xlib_outbuf.h \
 modules/evas/engines/software_x11/evas_xlib_swapbuf.h \
 modules/evas/engines/software_x11/evas_xlib_buffer.h \
 modules/evas/engines/software_x11/evas_xlib_color.h \
 modules/evas/engines/software_x11/evas_xlib_swapper.h \
-modules/evas/engines/software_x11/evas_xlib_image.h
+modules/evas/engines/software_x11/evas_xlib_image.h \
+modules/evas/engines/software_x11/evas_xlib_dri_image.h
 SOFTWARE_X11_CPPFLAGS += @evas_engine_software_xlib_cflags@
 SOFTWARE_X11_LIBADD += @evas_engine_software_xlib_libs@
 endif

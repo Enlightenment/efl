@@ -12,6 +12,7 @@
 # include "evas_xlib_swapbuf.h"
 # include "evas_xlib_color.h"
 # include "evas_xlib_image.h"
+# include "evas_xlib_dri_image.h"
 #endif
 
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
@@ -717,7 +718,11 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
    if (ns->type == EVAS_NATIVE_SURFACE_X11)
      {
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
-        return evas_xlib_image_native_set(re->generic.ob, ie, ns);
+        RGBA_Image *ret_im = NULL;
+        ret_im = evas_xlib_image_dri_native_set(re->generic.ob, ie, ns);
+        if (!ret_im) 
+           ret_im = evas_xlib_image_native_set(re->generic.ob, ie, ns);
+        return ret_im;
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
         return evas_xcb_image_native_set(re->generic.ob, ie, ns);
