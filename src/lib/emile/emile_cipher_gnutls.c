@@ -384,7 +384,6 @@ emile_cipher_server_connect(Emile_Cipher_Type t)
       case EMILE_TLSv1:
          priority = "NORMAL:%VERIFY_ALLOW_X509_V1_CA_CRT:!VERS-SSL3.0";
          break;
-      case EMILE_SSLv3:
       default:
          return NULL;
      }
