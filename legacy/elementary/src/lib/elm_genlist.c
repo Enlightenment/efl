@@ -7522,7 +7522,7 @@ _item_filter_enterer(void *data)
      }
    if (ok == ECORE_CALLBACK_CANCEL)
      {
-        sd->queue_idle_enterer = NULL;
+        sd->queue_filter_enterer = NULL;
         eo_do(sd->obj, eo_event_callback_call(ELM_GENLIST_EVENT_FILTER_DONE, NULL));
      }
 
@@ -7605,8 +7605,8 @@ _filter_iterator_free(Elm_Genlist_Filter *iter)
 static Evas_Object *
 _filter_iterator_get_container(Elm_Genlist_Filter *iter)
 {
-   Elm_Gen_Item *it = ELM_GENLIST_FILTER_ITERATOR_ITEM_GET(iter->head, Elm_Gen_Item);
-   return WIDGET(it);
+   if (!iter) return NULL;
+   return iter->obj;
 }
 
 EOLIAN Eina_Iterator *
@@ -7618,6 +7618,7 @@ _elm_genlist_filter_iterator_new(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
 
    iter->head = sd->items;
    iter->current = sd->items;
+   iter->obj = sd->obj;
 
    iter->iterator.version = EINA_ITERATOR_VERSION;
    iter->iterator.next = FUNC_ITERATOR_NEXT(_filter_iterator_next);

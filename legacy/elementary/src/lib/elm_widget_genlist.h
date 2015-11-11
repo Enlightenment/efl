@@ -297,6 +297,7 @@ struct _Elm_Genlist_Filter
    Eina_Iterator iterator;
    const Eina_Inlist *head;
    const Eina_Inlist *current;
+   Evas_Object *obj;
 };
 
 #define ELM_GENLIST_FILTER_ITERATOR_ITEM_GET(ptr,                 \
