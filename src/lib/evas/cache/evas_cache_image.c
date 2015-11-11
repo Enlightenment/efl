@@ -973,16 +973,20 @@ evas_cache_image_dirty(Image_Entry *im, unsigned int x, unsigned int y, unsigned
    cache = im->cache;
    if (!(im->flags.dirty))
      {
-        im_dirty = 
-          evas_cache_image_copied_data(cache, im->w, im->h, 
-                                       evas_cache_image_pixels(im), 
-                                       im->flags.alpha, im->space);
-        if (!im_dirty) goto on_error;
-        if (cache->func.debug) cache->func.debug("dirty-src", im);
-        cache->func.dirty(im_dirty, im);
-        if (cache->func.debug) cache->func.debug("dirty-out", im_dirty);
-        im_dirty->references = 1;
-        evas_cache_image_drop(im);
+        if (im->references == 1) im_dirty = im;
+        else
+          {
+             im_dirty =
+                evas_cache_image_copied_data(cache, im->w, im->h,
+                                             evas_cache_image_pixels(im),
+                                             im->flags.alpha, im->space);
+             if (!im_dirty) goto on_error;
+             if (cache->func.debug) cache->func.debug("dirty-src", im);
+             cache->func.dirty(im_dirty, im);
+             if (cache->func.debug) cache->func.debug("dirty-out", im_dirty);
+             im_dirty->references = 1;
+             evas_cache_image_drop(im);
+          }
         _evas_cache_image_dirty_add(im_dirty);
      }
 
