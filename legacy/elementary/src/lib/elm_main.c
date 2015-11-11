@@ -271,7 +271,7 @@ _elm_clouseau_reload()
    return EINA_TRUE;
 }
 
-Eina_Bool _sys_memory_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+static Eina_Bool _sys_memory_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Ecore_Memory_State state = ecore_memory_state_get();
 
@@ -282,7 +282,7 @@ Eina_Bool _sys_memory_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void
    return ECORE_CALLBACK_PASS_ON;
 }
 
-Eina_Bool _sys_lang_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+static Eina_Bool _sys_lang_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    char *lang;
 
