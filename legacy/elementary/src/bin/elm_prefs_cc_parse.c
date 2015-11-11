@@ -640,42 +640,12 @@ parse(char *data, off_t size)
    DBG("Parsing done");
 }
 
-int
-is_verbatim(void)
-{
-   return verbatim;
-}
-
-void
-track_verbatim(int on)
-{
-   verbatim = on;
-}
-
 void
 set_verbatim(char *s, int l1, int l2)
 {
    verbatim_line1 = l1;
    verbatim_line2 = l2;
    verbatim_str = s;
-}
-
-char *
-get_verbatim(void)
-{
-   return verbatim_str;
-}
-
-int
-get_verbatim_line1(void)
-{
-   return verbatim_line1;
-}
-
-int
-get_verbatim_line2(void)
-{
-   return verbatim_line2;
 }
 
 void
