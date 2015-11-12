@@ -71,8 +71,6 @@ _ector_renderer_cairo_shape_path_changed(void *data, Eo *obj, const Eo_Event_Des
 {
    Ector_Renderer_Cairo_Shape_Data *pd = data;
 
-   USE(obj, cairo_path_destroy, EINA_TRUE);
-
    if (pd->path) cairo_path_destroy(pd->path);
    pd->path = NULL;
 
@@ -108,8 +106,6 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_R
    eo_do(obj, efl_gfx_shape_path_get(&cmds, &pts));
    if (!pd->path && cmds)
      {
-        USE(obj, cairo_new_path, EINA_FALSE);
-
         cairo_new_path(pd->parent->cairo);
 
         for (; *cmds != EFL_GFX_PATH_COMMAND_TYPE_END; cmds++)
@@ -117,22 +113,16 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_R
              switch (*cmds)
                {
                 case EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO:
-                   USE(obj, cairo_move_to, EINA_FALSE);
-
                    cairo_move_to(pd->parent->cairo, pts[0], pts[1]);
 
                    pts += 2;
                    break;
                 case EFL_GFX_PATH_COMMAND_TYPE_LINE_TO:
-                   USE(obj, cairo_line_to, EINA_FALSE);
-
                    cairo_line_to(pd->parent->cairo, pts[0], pts[1]);
 
                    pts += 2;
                    break;
                 case EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO:
-                   USE(obj, cairo_curve_to, EINA_FALSE);
-
                    // Be careful, we do have a different order than
                    // cairo, first is destination point, followed by
                    // the control point. The opposite of cairo.
@@ -143,8 +133,6 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_R
                    pts += 6;
                    break;
                 case EFL_GFX_PATH_COMMAND_TYPE_CLOSE:
-                   USE(obj, cairo_close_path, EINA_FALSE);
-
                    cairo_close_path(pd->parent->cairo);
                    break;
                 case EFL_GFX_PATH_COMMAND_TYPE_LAST:
@@ -152,8 +140,6 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_R
                    break;
                }
           }
-
-        USE(obj, cairo_copy_path, EINA_FALSE);
 
         pd->path = cairo_copy_path(pd->parent->cairo);
      }
@@ -169,13 +155,9 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
 
    if (pd->path == NULL) return EINA_FALSE;
 
-   USE(obj, cairo_save, EINA_FALSE);
    cairo_save(pd->parent->cairo);
 
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, ector_renderer_draw(op, clips, mul_col));
-
-   USE(obj, cairo_new_path, EINA_FALSE);
-   USE(obj, cairo_append_path, EINA_FALSE);
 
    cairo_new_path(pd->parent->cairo);
    cairo_append_path(pd->parent->cairo, pd->path);
@@ -185,13 +167,6 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
 
    if (pd->shape->stroke.fill || pd->shape->stroke.color.a > 0)
      {
-        USE(obj, cairo_fill_preserve, EINA_FALSE);
-        USE(obj, cairo_set_source_rgba, EINA_FALSE);
-        USE(obj, cairo_stroke, EINA_FALSE);
-        USE(obj, cairo_set_line_width, EINA_FALSE);
-        USE(obj, cairo_set_line_cap, EINA_FALSE);
-        USE(obj, cairo_set_line_join, EINA_FALSE);
-
         cairo_fill_preserve(pd->parent->cairo);
 
         if (pd->shape->stroke.fill)
@@ -207,8 +182,6 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
             if (pd->shape->stroke.dash)
               {
                  double *dashinfo;
-
-                 USE(obj, cairo_set_dash, EINA_FALSE);
 
                  dashinfo = (double *) malloc(2 * pd->shape->stroke.dash_length * sizeof(double));
                  for (i = 0; i < pd->shape->stroke.dash_length; i++)
@@ -229,11 +202,9 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
      }
    else
      {
-        USE(obj, cairo_fill, EINA_FALSE);
         cairo_fill(pd->parent->cairo);
      }
 
-   USE(obj, cairo_restore, EINA_FALSE);
    cairo_restore(pd->parent->cairo);
    return EINA_TRUE;
 }
@@ -267,7 +238,30 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_bounds_get(Eo *obj,
 Eo *
 _ector_renderer_cairo_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
 {
-   obj = eo_do_super_ret(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj, eo_constructor());
+   USE(obj, cairo_path_destroy, NULL);
+   USE(obj, cairo_restore, NULL);
+   USE(obj, cairo_fill, NULL);
+   USE(obj, cairo_set_dash, NULL);
+   USE(obj, cairo_fill_preserve, NULL);
+   USE(obj, cairo_set_source_rgba, NULL);
+   USE(obj, cairo_stroke, NULL);
+   USE(obj, cairo_set_line_width, NULL);
+   USE(obj, cairo_set_line_cap, NULL);
+   USE(obj, cairo_set_line_join, NULL);
+   USE(obj, cairo_new_path, NULL);
+   USE(obj, cairo_append_path, NULL);
+   USE(obj, cairo_save, NULL);
+   USE(obj, cairo_copy_path, NULL);
+   USE(obj, cairo_close_path, NULL);
+   USE(obj, cairo_curve_to, NULL);
+   USE(obj, cairo_line_to, NULL);
+   USE(obj, cairo_new_path, NULL);
+   USE(obj, cairo_path_destroy, NULL);
+   USE(obj, cairo_move_to, NULL);
+
+   obj = eo_do_super_ret(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj, obj = eo_constructor());
+   if (!obj) return NULL;
+
    pd->shape = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_SHAPE_MIXIN, obj);
    pd->base = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
 
@@ -293,7 +287,6 @@ _ector_renderer_cairo_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Cairo_Sha
 
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, eo_destructor());
 
-   USE(obj, cairo_path_destroy, );
    if (pd->path) cairo_path_destroy(pd->path);
 }
 

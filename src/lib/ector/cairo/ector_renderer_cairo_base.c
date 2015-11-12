@@ -107,8 +107,6 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_prepare(Eo *obj, Ector_Re
      }
    if (pd->generic->m)
      {
-        USE(obj, cairo_matrix_init, EINA_FALSE);
-
         if (!pd->m) pd->m = malloc(sizeof (cairo_matrix_t));
         cairo_matrix_init(pd->m,
                           pd->generic->m->xx, pd->generic->m->yx,
@@ -125,7 +123,7 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_prepare(Eo *obj, Ector_Re
 }
 
 static Eina_Bool
-_ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
+_ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj EINA_UNUSED,
                                                             Ector_Renderer_Cairo_Base_Data *pd,
                                                             Ector_Rop op,
                                                             Eina_Array *clips EINA_UNUSED,
@@ -134,11 +132,6 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
    int r, g, b, a;
    cairo_operator_t cop;
    double cx, cy;
-
-   USE(obj, cairo_translate, EINA_FALSE);
-   USE(obj, cairo_set_source_rgba, EINA_FALSE);
-   USE(obj, cairo_transform, EINA_FALSE);
-   USE(obj, cairo_set_operator, EINA_FALSE);
 
    switch (op)
      {
@@ -159,11 +152,6 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
 
    cairo_set_operator(pd->parent->cairo, cop);
 
-
-   USE(obj, cairo_new_path, EINA_FALSE);
-   USE(obj, cairo_rectangle, EINA_FALSE);
-   USE(obj, cairo_clip, EINA_FALSE);
-   USE(obj, cairo_device_to_user, EINA_FALSE);
    if (clips)
      {
         int clip_count =  eina_array_count(clips);
@@ -198,11 +186,21 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
 static Eo *
 _ector_renderer_cairo_base_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Base_Data *pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS, obj, eo_constructor());
+   USE(obj, cairo_matrix_init, NULL);
+   USE(obj, cairo_translate, NULL);
+   USE(obj, cairo_set_source_rgba, NULL);
+   USE(obj, cairo_transform, NULL);
+   USE(obj, cairo_set_operator, NULL);
+   USE(obj, cairo_new_path, NULL);
+   USE(obj, cairo_rectangle, NULL);
+   USE(obj, cairo_clip, NULL);
+   USE(obj, cairo_device_to_user, NULL);
+   USE(obj, cairo_matrix_init_identity, NULL);
+
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS, obj = eo_constructor());
+   if (!obj) return NULL;
 
    pd->generic = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
-
-   USE(obj, cairo_matrix_init_identity, NULL);
 
    cairo_matrix_init_identity(&identity);
 
