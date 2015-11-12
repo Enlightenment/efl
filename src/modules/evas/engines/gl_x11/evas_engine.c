@@ -2110,8 +2110,7 @@ _native_bind_cb(void *data EINA_UNUSED, void *image)
              if (glsym_glEGLImageTargetTexture2DOES)
                {
                   glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, n->egl_surface);
-                  if (eglGetError() != EGL_SUCCESS)
-                    ERR("glEGLImageTargetTexture2DOES() failed.");
+                  GLERRV("glsym_glEGLImageTargetTexture2DOES");
                }
              else
                ERR("Try glEGLImageTargetTexture2DOES on EGL with no support");
