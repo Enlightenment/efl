@@ -248,10 +248,10 @@ _elm_clouseau_reload()
 
    _clouseau_info.handle = eina_module_new(
          PACKAGE_LIB_DIR "/libclouseau" LIBEXT);
-   if (!eina_module_load(_clouseau_info.handle))
+   if (!_clouseau_info.handle || !eina_module_load(_clouseau_info.handle))
      {
         WRN("Failed loading the clouseau library.");
-        eina_module_free(_clouseau_info.handle);
+        if (_clouseau_info.handle) eina_module_free(_clouseau_info.handle);
         _clouseau_info.handle = NULL;
         return EINA_FALSE;
      }
