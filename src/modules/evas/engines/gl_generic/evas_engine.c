@@ -746,9 +746,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
    re->window_use(re->software.ob);
 
    if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.img) && 
-       (im->cs.space == EVAS_COLORSPACE_ARGB8888) &&
-       secsym_tbm_surface_map &&
-       secsym_eglMapImageSEC)
+       (im->cs.space == EVAS_COLORSPACE_ARGB8888))
      {
         if (im->tex->pt->dyn.checked_out > 0)
           {
@@ -756,7 +754,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
              *image_data = im->tex->pt->dyn.data;
              return im;
           }
-        if (im->gc->shared->info.sec_tbm_surface)
+        if ((im->gc->shared->info.sec_tbm_surface) && (secsym_tbm_surface_map))
           {
              tbm_surface_info_s info;
              secsym_tbm_surface_map(im->tex->pt->dyn.buffer,
@@ -764,7 +762,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
                                     &info);
              *image_data = im->tex->pt->dyn.data = (DATA32 *) info.planes[0].ptr;
           }
-        else if (im->gc->shared->info.sec_image_map)
+        else if ((im->gc->shared->info.sec_image_map) && (secsym_eglMapImageSEC))
           {
              void *disp = re->window_egl_display_get(re->software.ob);
              *image_data = im->tex->pt->dyn.data = secsym_eglMapImageSEC(disp,
