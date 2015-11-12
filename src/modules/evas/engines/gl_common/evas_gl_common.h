@@ -253,6 +253,7 @@ struct _Evas_Engine_GL_Context
       struct {
          Evas_GL_Program *prog;
          GLuint          cur_tex, cur_texu, cur_texv, cur_texa, cur_texm;
+         int             tex_target;
          int             render_op;
          int             cx, cy, cw, ch;
          int             smooth;
@@ -282,6 +283,7 @@ struct _Evas_Engine_GL_Context
          Evas_GL_Image  *surface;
          GLuint          cur_tex, cur_texu, cur_texv, cur_texa, cur_texm;
          void           *cur_tex_dyn, *cur_texu_dyn, *cur_texv_dyn;
+         int             tex_target;
          int             render_op;
          int             cx, cy, cw, ch;
          int             smooth;
@@ -355,6 +357,7 @@ struct _Evas_GL_Texture_Pool
       int           w, h;
       int           stride;
       int           checked_out;
+      int           target;
    } dyn;
    Eina_List       *allocations;
    Eina_Rectangle_Pool *eina_pool;
