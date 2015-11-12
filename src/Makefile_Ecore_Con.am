@@ -71,7 +71,8 @@ else
 if HAVE_IPV6
 lib_ecore_con_libecore_con_la_SOURCES += \
 lib/ecore_con/ecore_con_dns.c \
-static_libs/dns/dns.c
+static_libs/dns/dns.c \
+static_libs/dns/dns.h
 else
 lib_ecore_con_libecore_con_la_SOURCES += lib/ecore_con/ecore_con_info.c
 endif
