@@ -1,0 +1,14 @@
+mixin Ector.GL.Buffer.Base (Ector.Generic.Buffer)
+{
+   [[A buffer in Ector GL is a readable & optionally writable image]]
+   eo_prefix: ector_gl_buffer;
+   legacy_prefix: null;
+   implements {
+      Ector.Generic.Buffer.flags.get;
+      Ector.Generic.Buffer.pixels_set;
+      Ector.Generic.Buffer.span_get;
+      Ector.Generic.Buffer.span_free;
+      Ector.Generic.Buffer.map;
+      Ector.Generic.Buffer.unmap;
+   }		     
+}

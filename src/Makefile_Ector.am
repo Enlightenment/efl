@@ -33,10 +33,21 @@ ector_eolian_files_software = \
 	lib/ector/software/ector_renderer_software_gradient_linear.eo
 ector_eolian_software_h = $(ector_eolian_files_software:%.eo=%.eo.h)
 
+# Handle gl backend
+ector_eolian_files_gl = \
+	lib/ector/gl/ector_gl_surface.eo \
+	lib/ector/gl/ector_gl_buffer.eo \
+	lib/ector/gl/ector_gl_buffer_base.eo \
+	lib/ector/gl/ector_renderer_gl_base.eo \
+	lib/ector/gl/ector_renderer_gl_shape.eo \
+	lib/ector/gl/ector_renderer_gl_gradient_radial.eo \
+	lib/ector/gl/ector_renderer_gl_gradient_linear.eo
+
 ector_eolian_files = \
                      $(ector_eolian_files_generic) \
                      $(ector_eolian_files_cairo) \
-                     $(ector_eolian_files_software)
+                     $(ector_eolian_files_software) \
+		     $(ector_eolian_files_gl)
 
 ector_eolian_c = $(ector_eolian_files:%.eo=%.eo.c)
 ector_eolian_h = $(ector_eolian_files:%.eo=%.eo.h)
@@ -63,7 +74,8 @@ lib/ector/ector_util.h \
 lib/ector/ector_surface.h \
 lib/ector/ector_renderer.h \
 lib/ector/cairo/Ector_Cairo.h \
-lib/ector/software/Ector_Software.h
+lib/ector/software/Ector_Software.h \
+lib/ector/gl/Ector_GL.h
 
 # And the generic implementation
 
@@ -115,6 +127,28 @@ static_libs/freetype/sw_ft_raster.c \
 static_libs/freetype/sw_ft_stroker.c \
 $(draw_sources)
 
+# And now the gl backend
+lib_ector_libector_la_SOURCES += \
+lib/ector/gl/ector_renderer_gl_gradient_linear.c \
+lib/ector/gl/ector_renderer_gl_gradient_radial.c \
+lib/ector/gl/ector_renderer_gl_shape.c \
+lib/ector/gl/ector_renderer_gl_base.c \
+lib/ector/gl/ector_gl_buffer.c \
+lib/ector/gl/ector_gl_surface.c \
+lib/ector/gl/ector_gl_private.h \
+lib/ector/gl/shader/ector_gl_shaders.x \
+lib/ector/gl/ector_gl_shader.c
+
+GL_SHADERS_GEN = \
+lib/ector/gl/shader/gen_shaders.sh \
+lib/ector/gl/shader/fragment.glsl \
+lib/ector/gl/shader/vertex.glsl \
+lib/ector/gl/shader/include.glsl
+
+lib/ector/gl/shader/ector_gl_shaders.x: $(GL_SHADERS_GEN)
+	@echo "  SHADERS  $@"
+	@bash $(srcdir)/lib/ector/gl/shader/gen_shaders.sh
+
 installed_ectorsoftwareheadersdir = $(includedir)/ector-@VMAJ@/software
 nodist_installed_ectorsoftwareheaders_DATA = $(ector_eolian_software_h)
 
@@ -122,6 +156,7 @@ lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/ector \
 -I$(top_builddir)/src/lib/ector/cairo \
 -I$(top_builddir)/src/lib/ector/software \
+-I$(top_builddir)/src/lib/ector/gl \
 -I$(top_srcdir)/src/static_libs/freetype \
 -I$(top_srcdir)/src/static_libs/draw \
 @ECTOR_CFLAGS@ \
@@ -175,4 +210,5 @@ static_libs/freetype/sw_ft_raster.h \
 static_libs/freetype/sw_ft_stroker.h \
 static_libs/freetype/sw_ft_types.h \
 static_libs/draw/draw.h \
-static_libs/draw/draw_private.h
+static_libs/draw/draw_private.h \
+$(GL_SHADERS_GEN)

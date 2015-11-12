@@ -1,0 +1,9 @@
+class Ector.GL.Buffer (Eo.Base, Ector.GL.Buffer.Base)
+{
+   legacy_prefix: null;
+   data: null;
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+   }
+}

@@ -123,7 +123,6 @@ _evas_gl_common_shader_program_binary_load(Eet_File *ef, unsigned int flags)
    if (!formats[0]) goto finish;
 
    prg = glCreateProgram();
-
 #if 1
    // TODO: invalid rendering error occurs when attempting to use a
    // glProgramBinary. in order to render correctly we should create a dummy
@@ -151,8 +150,6 @@ _evas_gl_common_shader_program_binary_load(Eet_File *ef, unsigned int flags)
         gl_compile_link_error(prg, "load a program object", EINA_FALSE);
         ERR("Abort load of program (%s)", pname);
         glDeleteProgram(prg);
-        glDeleteShader(vtx);
-        glDeleteShader(frg);
         goto finish;
      }
 

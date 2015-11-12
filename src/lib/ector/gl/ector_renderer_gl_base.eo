@@ -1,0 +1,22 @@
+abstract Ector.Renderer.GL.Base (Ector.Renderer.Generic.Base)
+{
+   legacy_prefix: null;
+   methods {
+      fill {
+         return: bool;
+	 params {
+	    @in flags: uint64_t;
+	    @in vertex: GLshort*;
+	    @in vertex_count: uint;
+	    @in mul_col: uint;
+	 }
+      }
+   }
+   implements {
+      @virtual .fill;
+      Ector.Renderer.Generic.Base.prepare;
+      Ector.Renderer.Generic.Base.draw;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+   }
+}
