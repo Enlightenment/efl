@@ -16,6 +16,8 @@
 
 #include "evas_tests_helpers.h"
 
+#include <locale.h>
+
 /* Functions defined in evas_object_textblock.c */
 EAPI Eina_Bool
 _evas_textblock_check_item_node_link(Evas_Object *obj);
@@ -3620,6 +3622,70 @@ START_TEST(evas_textblock_obstacle)
 }
 END_TEST;
 
+static void
+_hyphenation_width_stress(Evas_Object *tb, Evas_Textblock_Cursor *cur)
+{
+   Evas_Coord bw, bh, iw, nw, nh, w, h;
+
+   evas_object_resize(tb, 100000, 1000);
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   evas_object_resize(tb, 1, 1000);
+   evas_textblock_cursor_format_prepend(cur, "<wrap=mixed>");
+   evas_object_textblock_size_formatted_get(tb, &bw, &bh);
+   evas_textblock_cursor_format_prepend(cur, "<wrap=hyphenation>");
+   for (iw = nw ; iw >= bw ; iw--)
+     {
+        evas_object_resize(tb, iw, 1000);
+        evas_object_textblock_size_formatted_get(tb, &w, &h);
+        ck_assert_int_ge(w, bw);
+        ck_assert_int_le(w, iw);
+     }
+   ck_assert_int_eq(w, bw);
+}
+
+START_TEST(evas_textblock_hyphenation)
+{
+   START_TB_TEST();
+
+   /* SHY-HYPHEN (&shy;) */
+   /* Note: placing &shy; in a ligature is errornuos, so for the sake
+    * of this test, it was removed from the "officia" word */
+   const char *buf =
+      "Lorem ipsum dolor sit amet, cons&shy;ectetur adipisicing elit,"
+      " sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      " Ut enim ad minim veniam, quis nostrud exer&shy;citation ullamco"
+      " laboris nisi ut aliquip ex ea com&shy;modo consequat. Duis aute"
+      " irure dolor in repre&shy;henderit in voluptate velit esse cillum"
+      " dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat"
+      " non proident, sunt in culpa qui oficia deserunt mollit anim"
+      " id est lab&shy;orum.";
+
+   evas_object_textblock_text_markup_set(tb, buf);
+
+   /* Dictionary + locale fallback (en_US) */
+   setlocale(LC_MESSAGES, "en_US.UTF8");
+
+   /* Mixture of Dictionary with SHY-HYPHEN */
+   _hyphenation_width_stress(tb, cur);
+
+   /* Just dictionary */
+   buf =
+      "Lorem ipsum dolor sit amet, consectetur adipisicing elit,"
+      " sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      " Ut enim ad minim veniam, quis nostrud exercitation ullamco"
+      " laboris nisi ut aliquip ex ea commodo consequat. Duis aute"
+      " irure dolor in reprehenderit in voluptate velit esse cillum"
+      " dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat"
+      " non proident, sunt in culpa qui oficia deserunt mollit anim"
+      " id est laborum.";
+
+   evas_object_textblock_text_markup_set(tb, buf);
+   _hyphenation_width_stress(tb, cur);
+
+   END_TB_TEST();
+}
+END_TEST;
+
 void evas_test_textblock(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock_simple);
@@ -3642,5 +3708,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_items);
    tcase_add_test(tc, evas_textblock_delete);
    tcase_add_test(tc, evas_textblock_obstacle);
+   tcase_add_test(tc, evas_textblock_hyphenation);
 }
 
