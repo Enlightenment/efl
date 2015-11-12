@@ -2120,7 +2120,7 @@ AC_CHECK_LIB([m], [lround],
 # Evas cserve2
 
 AC_ARG_ENABLE([cserve],
-   [AS_HELP_STRING([--enable-cserve],[enable shared cache server (cserve2). @<:@default=enabled@:>@])],
+   [AS_HELP_STRING([--enable-cserve],[enable shared cache server (cserve2). @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
        want_evas_cserve2="yes"
