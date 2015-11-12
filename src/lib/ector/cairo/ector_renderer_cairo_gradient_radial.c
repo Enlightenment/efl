@@ -56,15 +56,12 @@ _ector_renderer_cairo_gradient_radial_prepare(Eo *obj,
 {
    cairo_pattern_t *pat;
 
-   USE(obj, cairo_pattern_create_radial, NULL);
-
    pat = cairo_pattern_create_radial(grd->focal.x, grd->focal.y, 0,
                                      grd->radial.x, grd->radial.y, grd->radius);
    if (!pat) return NULL;
 
    _ector_renderer_cairo_gradient_prepare(obj, pat, gd, mul_col);
 
-   USE(obj, cairo_pattern_set_extend, NULL);
    cairo_pattern_set_extend(pat, _ector_cairo_extent_get(gd->s));
 
    return pat;
@@ -87,11 +84,6 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_draw(Eo *obj, 
    if (!pat) return EINA_FALSE;
 
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, ector_renderer_draw(op, clips, mul_col));
-
-   USE(obj, cairo_arc, EINA_FALSE);
-   USE(obj, cairo_fill, EINA_FALSE);
-   USE(obj, cairo_set_source, EINA_FALSE);
-   USE(obj, cairo_pattern_destroy, EINA_FALSE);
 
    cairo_arc(pd->parent->cairo,
              grd->radial.x, grd->radial.y,
@@ -121,9 +113,6 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_cairo_base_fill(Eo *obj,
    pat = _ector_renderer_cairo_gradient_radial_prepare(obj, grd, gd, mul_col);
    if (!pat) return EINA_FALSE;
 
-   USE(obj, cairo_set_source, EINA_FALSE);
-   USE(obj, cairo_pattern_destroy, EINA_FALSE);
-
    cairo_set_source(pd->parent->cairo, pat);
    cairo_pattern_destroy(pat);
 
@@ -146,7 +135,24 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_bounds_get(Eo 
                       gld->radius * 2, gld->radius * 2);
 }
 
-void
+static Eo_Base *
+_ector_renderer_cairo_gradient_radial_eo_base_constructor(Eo *obj,
+                                                          Ector_Renderer_Cairo_Gradient_Radial_Data *pd EINA_UNUSED)
+{
+   USE(obj, cairo_set_source, NULL);
+   USE(obj, cairo_pattern_destroy, NULL);
+   USE(obj, cairo_arc, NULL);
+   USE(obj, cairo_fill, NULL);
+   USE(obj, cairo_set_source, NULL);
+   USE(obj, cairo_pattern_destroy, NULL);
+   USE(obj, cairo_pattern_set_extend, NULL);
+   USE(obj, cairo_pattern_create_radial, NULL);
+
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, obj = eo_constructor());
+   return obj;
+}
+
+static void
 _ector_renderer_cairo_gradient_radial_eo_base_destructor(Eo *obj,
                                                          Ector_Renderer_Cairo_Gradient_Radial_Data *pd)
 {
@@ -158,7 +164,7 @@ _ector_renderer_cairo_gradient_radial_eo_base_destructor(Eo *obj,
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, eo_destructor());
 }
 
-void
+static void
 _ector_renderer_cairo_gradient_radial_efl_gfx_gradient_base_stop_set(Eo *obj,
                                                                      Ector_Renderer_Cairo_Gradient_Radial_Data *pd EINA_UNUSED,
                                                                      const Efl_Gfx_Gradient_Stop *colors,
