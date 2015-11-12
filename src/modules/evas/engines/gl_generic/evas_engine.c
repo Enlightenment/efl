@@ -757,10 +757,15 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
         if ((im->gc->shared->info.sec_tbm_surface) && (secsym_tbm_surface_map))
           {
              tbm_surface_info_s info;
-             secsym_tbm_surface_map(im->tex->pt->dyn.buffer,
+             if (secsym_tbm_surface_map(im->tex->pt->dyn.buffer,
                                     TBM_SURF_OPTION_READ|TBM_SURF_OPTION_WRITE,
-                                    &info);
-             *image_data = im->tex->pt->dyn.data = (DATA32 *) info.planes[0].ptr;
+                                    &info))
+               {
+                  ERR("tbm_surface_map failed!");
+                  *image_data = im->tex->pt->dyn.data = NULL;
+               }
+             else
+               *image_data = im->tex->pt->dyn.data = (DATA32 *) info.planes[0].ptr;
           }
         else if ((im->gc->shared->info.sec_image_map) && (secsym_eglMapImageSEC))
           {
@@ -933,7 +938,10 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
                  if (im->tex->pt->dyn.checked_out == 0)
                    {
                       if (im->gc->shared->info.sec_tbm_surface)
-                        secsym_tbm_surface_unmap(im->tex->pt->dyn.buffer);
+                        {
+                           if (secsym_tbm_surface_unmap(im->tex->pt->dyn.buffer))
+                             ERR("tbm_surface_unmap failed!");
+                        }
                       else if (im->gc->shared->info.sec_image_map)
                         {
                            void *disp = disp = re->window_egl_display_get(re->software.ob);
