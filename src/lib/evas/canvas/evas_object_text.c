@@ -68,8 +68,8 @@ struct _Evas_Text_Data
    float                       max_ascent, max_descent;
 
    Evas_BiDi_Direction         bidi_dir : 2;
-   char                        changed : 1;
-   char                        has_filter : 1;
+   Eina_Bool                   changed : 1;
+   Eina_Bool                   has_filter : 1;
 };
 
 struct _Evas_Object_Text_Item
