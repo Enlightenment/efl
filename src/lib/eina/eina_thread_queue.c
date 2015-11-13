@@ -59,7 +59,7 @@ struct _Eina_Thread_Queue_Msg_Block
    int                           size; // the total allocated bytes of data[]
    int                           first; // the byte pos of the first msg
    int                           last; // the byte pos just after the last msg
-   int                           full : 1; // is this block full yet?
+   Eina_Bool                     full : 1; // is this block full yet?
    Eina_Thread_Queue_Msg         data[1]; // data in memory beyond struct end
 };
 
