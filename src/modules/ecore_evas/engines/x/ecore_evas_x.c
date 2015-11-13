@@ -899,11 +899,11 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
               unsigned char below : 1;
            } x;
            struct {
-              char modal : 1;
-              char maximized : 1;
-              char sticky : 1;
-              char fullscreen : 1;
-              char focus_skip : 1;
+              Eina_Bool modal : 1;
+              Eina_Bool maximized : 1;
+              Eina_Bool sticky : 1;
+              Eina_Bool fullscreen : 1;
+              Eina_Bool focus_skip : 1;
            } prop;
         } prev;
         
