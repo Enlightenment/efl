@@ -18,7 +18,7 @@ struct _Evas_Polygon_Data
       int x, y;
    } offset;
    Evas_Coord_Rectangle geometry;
-   char                 changed : 1;
+   Eina_Bool            changed : 1;
 };
 
 struct _Evas_Polygon_Point
