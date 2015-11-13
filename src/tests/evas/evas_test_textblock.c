@@ -2970,6 +2970,27 @@ START_TEST(evas_textblock_formats)
    evas_object_textblock_text_markup_set(tb, "f<color=#f00>i</color>f");
    evas_object_textblock_size_formatted_get(tb, NULL, NULL);
 
+   /* Line gap and multi language */
+   {
+      Evas_Coord h;
+      Evas_Textblock_Style *newst;
+      buf = "This is a test suite for line gap - ഈ ലൈൻ "
+                  "വിടവ് ടെസ്റ്റ് ടെസ്റ്റ് ടെസ്റ്റ് ടെസ്റ്റ് ഒരു പരീക്ഷണ വെയര് ";
+      newst = evas_textblock_style_new();
+      fail_if(!newst);
+      evas_textblock_style_set(newst,
+            "DEFAULT='" TEST_FONT " font_size=10 color=#000 wrap=word linegap=50'"
+            "br='\n'"
+            "ps='ps'"
+            "tab='\t'");
+      evas_object_textblock_style_set(tb, newst);
+      evas_object_textblock_text_markup_set(tb, buf);
+      fail_if(strcmp(evas_object_textblock_text_markup_get(tb), buf));
+      evas_object_resize(tb, 400, 400);
+      evas_object_textblock_size_formatted_get(tb, NULL, &h);
+      fail_if(h > 150);
+   }
+
    END_TB_TEST();
 }
 END_TEST
