@@ -2744,11 +2744,10 @@ _layout_item_ascent_descent_adjust(const Evas_Object *eo_obj,
              desc = ENFN->font_descent_get(ENDT, fmt->font.font);
           }
      }
+   if (fmt) _layout_format_ascent_descent_adjust(eo_obj, &asc, &desc, fmt);
 
    if (asc > *ascent) *ascent = asc;
    if (desc > *descent) *descent = desc;
-
-   if (fmt) _layout_format_ascent_descent_adjust(eo_obj, ascent, descent, fmt);
 }
 
 /**
