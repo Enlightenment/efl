@@ -34,7 +34,7 @@ struct _Frame_Info
    unsigned short delay; // delay time in 1/100ths of a sec
    short transparent : 10; // -1 == not, anything else == index 
    short dispose : 6; // 0, 1, 2, 3 (others invalid)
-   short interlace : 1; // interlaced or not
+   Eina_Bool interlace : 1; // interlaced or not
 };
 
 #ifndef MIN
