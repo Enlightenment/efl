@@ -81,7 +81,7 @@ struct _Ecore_Ipc_Client
    } prev;
    
    int               event_count;
-   char              delete_me : 1;
+   Eina_Bool         delete_me : 1;
 };
    
 struct _Ecore_Ipc_Server
@@ -99,7 +99,7 @@ struct _Ecore_Ipc_Server
    } prev;
    
    int               event_count;
-   char              delete_me : 1;
+   Eina_Bool         delete_me : 1;
 };
 
 #endif
