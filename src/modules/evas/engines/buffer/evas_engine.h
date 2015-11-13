@@ -44,8 +44,8 @@ struct _Outbuf
 
    int                           alpha_level;
    DATA32                        color_key;
-   char                          use_color_key : 1;
-   char                          first_frame : 1;
+   Eina_Bool                     use_color_key : 1;
+   Eina_Bool                     first_frame : 1;
 
    struct {
       void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes);

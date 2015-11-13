@@ -18,14 +18,14 @@ struct _Evas_Engine_Info_Buffer
    struct {
       int   depth_type;
 
-      void *dest_buffer;
-      int   dest_buffer_row_bytes;
+      void      *dest_buffer;
+      int        dest_buffer_row_bytes;
 
-      char  use_color_key : 1;
-      int   alpha_threshold;
-      int   color_key_r;
-      int   color_key_g;
-      int   color_key_b;
+      Eina_Bool  use_color_key : 1;
+      int        alpha_threshold;
+      int        color_key_r;
+      int        color_key_g;
+      int        color_key_b;
       struct {
 	 void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes);
 	 void   (*free_update_region) (int x, int y, int w, int h, void *data);
