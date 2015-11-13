@@ -117,7 +117,7 @@ _emotion_check_device(Emotion_Webcam *ew)
    if (ioctl(fd, VIDIOC_QUERYCAP, &caps) == -1) goto on_error;
 
    /* Likely not a webcam */
-   if (!caps.capabilities & V4L2_CAP_VIDEO_CAPTURE) goto on_error;
+   if (!(caps.capabilities & V4L2_CAP_VIDEO_CAPTURE)) goto on_error;
    if (caps.capabilities & V4L2_CAP_TUNER
        || caps.capabilities & V4L2_CAP_RADIO
        || caps.capabilities & V4L2_CAP_MODULATOR)
