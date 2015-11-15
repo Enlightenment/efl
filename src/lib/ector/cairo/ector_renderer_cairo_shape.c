@@ -95,12 +95,10 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_R
    // shouldn't that be moved to the cairo base object
    if (!pd->parent)
      {
-        Eo *parent;
+        Ector_Renderer_Generic_Base_Data *base;
 
-        eo_do(obj, parent = eo_parent_get());
-        if (!parent) return EINA_FALSE;
-        pd->parent = eo_data_xref(parent, ECTOR_CAIRO_SURFACE_CLASS, obj);
-        if (!pd->parent) return EINA_FALSE;
+        base = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS);
+        pd->parent = eo_data_xref(base->surface, ECTOR_CAIRO_SURFACE_CLASS, obj);
      }
 
    eo_do(obj, efl_gfx_shape_path_get(&cmds, &pts));
@@ -238,28 +236,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_bounds_get(Eo *obj,
 Eo *
 _ector_renderer_cairo_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
 {
-   USE(obj, cairo_path_destroy, NULL);
-   USE(obj, cairo_restore, NULL);
-   USE(obj, cairo_fill, NULL);
-   USE(obj, cairo_set_dash, NULL);
-   USE(obj, cairo_fill_preserve, NULL);
-   USE(obj, cairo_set_source_rgba, NULL);
-   USE(obj, cairo_stroke, NULL);
-   USE(obj, cairo_set_line_width, NULL);
-   USE(obj, cairo_set_line_cap, NULL);
-   USE(obj, cairo_set_line_join, NULL);
-   USE(obj, cairo_new_path, NULL);
-   USE(obj, cairo_append_path, NULL);
-   USE(obj, cairo_save, NULL);
-   USE(obj, cairo_copy_path, NULL);
-   USE(obj, cairo_close_path, NULL);
-   USE(obj, cairo_curve_to, NULL);
-   USE(obj, cairo_line_to, NULL);
-   USE(obj, cairo_new_path, NULL);
-   USE(obj, cairo_path_destroy, NULL);
-   USE(obj, cairo_move_to, NULL);
-
-   obj = eo_do_super_ret(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj, eo_constructor());
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj = eo_constructor());
    if (!obj) return NULL;
 
    pd->shape = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_SHAPE_MIXIN, obj);
@@ -268,19 +245,48 @@ _ector_renderer_cairo_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Sh
    eo_do(obj,
          eo_event_callback_add(EFL_GFX_PATH_CHANGED, _ector_renderer_cairo_shape_path_changed, pd));
 
+    return obj;
+}
+
+static Eo_Base *
+_ector_renderer_cairo_shape_eo_base_finalize(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
+{
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj = eo_finalize());
+   if (!obj) return NULL;
+
+   USE(pd->base, cairo_path_destroy, NULL);
+   USE(pd->base, cairo_restore, NULL);
+   USE(pd->base, cairo_fill, NULL);
+   USE(pd->base, cairo_set_dash, NULL);
+   USE(pd->base, cairo_fill_preserve, NULL);
+   USE(pd->base, cairo_set_source_rgba, NULL);
+   USE(pd->base, cairo_stroke, NULL);
+   USE(pd->base, cairo_set_line_width, NULL);
+   USE(pd->base, cairo_set_line_cap, NULL);
+   USE(pd->base, cairo_set_line_join, NULL);
+   USE(pd->base, cairo_new_path, NULL);
+   USE(pd->base, cairo_append_path, NULL);
+   USE(pd->base, cairo_save, NULL);
+   USE(pd->base, cairo_copy_path, NULL);
+   USE(pd->base, cairo_close_path, NULL);
+   USE(pd->base, cairo_curve_to, NULL);
+   USE(pd->base, cairo_line_to, NULL);
+   USE(pd->base, cairo_move_to, NULL);
+
    return obj;
 }
 
 void
 _ector_renderer_cairo_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
 {
-   Eo *parent;
+   Ector_Renderer_Generic_Base_Data *base;
+
    //FIXME, As base class  destructor can't call destructor of mixin class.
    // call explicit API to free shape data.
    eo_do(obj, efl_gfx_shape_reset());
 
-   eo_do(obj, parent = eo_parent_get());
-   eo_data_xunref(parent, pd->parent, obj);
+   base = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS);
+   eo_data_xunref(base->surface, pd->parent, obj);
 
    eo_data_xunref(obj, pd->shape, obj);
    eo_data_xunref(obj, pd->base, obj);

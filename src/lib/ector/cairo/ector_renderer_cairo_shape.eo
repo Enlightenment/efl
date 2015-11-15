@@ -9,6 +9,7 @@ class Ector.Renderer.Cairo.Shape (Ector.Renderer.Cairo.Base, Ector.Renderer.Gene
       Ector.Renderer.Generic.Base.crc.get;
       Ector.Renderer.Cairo.Base.fill;
       Eo.Base.constructor;
+      Eo.Base.finalize;
       Eo.Base.destructor;
    }
 }
