@@ -5,6 +5,17 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
    eo_prefix: ector_renderer;
    legacy_prefix: null;
    methods {
+      @property surface {
+         set {
+	    [[Do not use.]]
+	 }
+	 get {
+	    [[Get the surface associated to this renderer. Can not be set.]]
+	 }
+	 values {
+	    s: Ector.Generic.Surface *;
+	 }
+      }
       @property transformation {
          set {
 	 }
