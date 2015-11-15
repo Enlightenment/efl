@@ -99,11 +99,7 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_prepare(Eo *obj, Ector_Re
 {
    if (!pd->parent)
      {
-        Eo *parent;
-
-        eo_do(obj, parent = eo_parent_get());
-        if (!parent) return EINA_FALSE;
-        pd->parent = eo_data_xref(parent, ECTOR_CAIRO_SURFACE_CLASS, obj);
+        pd->parent = eo_data_xref(pd->generic->surface, ECTOR_CAIRO_SURFACE_CLASS, obj);
      }
    if (pd->generic->m)
      {
@@ -186,21 +182,30 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj EINA_UNUSED,
 static Eo *
 _ector_renderer_cairo_base_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Base_Data *pd EINA_UNUSED)
 {
-   USE(obj, cairo_matrix_init, NULL);
-   USE(obj, cairo_translate, NULL);
-   USE(obj, cairo_set_source_rgba, NULL);
-   USE(obj, cairo_transform, NULL);
-   USE(obj, cairo_set_operator, NULL);
-   USE(obj, cairo_new_path, NULL);
-   USE(obj, cairo_rectangle, NULL);
-   USE(obj, cairo_clip, NULL);
-   USE(obj, cairo_device_to_user, NULL);
-   USE(obj, cairo_matrix_init_identity, NULL);
-
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS, obj = eo_constructor());
    if (!obj) return NULL;
 
    pd->generic = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
+
+   return obj;
+}
+
+static Eo_Base *
+_ector_renderer_cairo_base_eo_base_finalize(Eo *obj, Ector_Renderer_Cairo_Base_Data *pd)
+{
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS, obj = eo_finalize());
+   if (!obj) return NULL;
+
+   USE(pd->generic, cairo_matrix_init, NULL);
+   USE(pd->generic, cairo_translate, NULL);
+   USE(pd->generic, cairo_set_source_rgba, NULL);
+   USE(pd->generic, cairo_transform, NULL);
+   USE(pd->generic, cairo_set_operator, NULL);
+   USE(pd->generic, cairo_new_path, NULL);
+   USE(pd->generic, cairo_rectangle, NULL);
+   USE(pd->generic, cairo_clip, NULL);
+   USE(pd->generic, cairo_device_to_user, NULL);
+   USE(pd->generic, cairo_matrix_init_identity, NULL);
 
    cairo_matrix_init_identity(&identity);
 
@@ -210,13 +215,13 @@ _ector_renderer_cairo_base_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Bas
 static void
 _ector_renderer_cairo_base_eo_base_destructor(Eo *obj, Ector_Renderer_Cairo_Base_Data *pd)
 {
-   Eo *parent;
+   Ector_Renderer_Generic_Base_Data *base;
+
+   base = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS);
+   eo_data_xunref(base->surface, pd->parent, obj);
+   eo_data_xunref(obj, pd->generic, obj);
 
    free(pd->m);
-
-   eo_do(obj, parent = eo_parent_get());
-   eo_data_xunref(parent, pd->parent, obj);
-   eo_data_xunref(obj, pd->generic, obj);
 
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS, eo_destructor());
 }

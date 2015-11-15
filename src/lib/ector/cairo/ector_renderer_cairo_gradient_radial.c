@@ -38,18 +38,17 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_prepare(Eo *ob
 
    if (!pd->parent)
      {
-        Eo *parent;
+        Ector_Renderer_Generic_Base_Data *base;
 
-        eo_do(obj, parent = eo_parent_get());
-        if (!parent) return EINA_FALSE;
-        pd->parent = eo_data_xref(parent, ECTOR_CAIRO_SURFACE_CLASS, obj);
+        base = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS);
+        pd->parent = eo_data_xref(base->surface, ECTOR_CAIRO_SURFACE_CLASS, obj);
      }
 
    return EINA_FALSE;
 }
 
 static cairo_pattern_t *
-_ector_renderer_cairo_gradient_radial_prepare(Eo *obj,
+_ector_renderer_cairo_gradient_radial_prepare(Eo *obj EINA_UNUSED,
                                               Ector_Renderer_Generic_Gradient_Radial_Data *grd,
                                               Ector_Renderer_Generic_Gradient_Data *gd,
                                               unsigned int mul_col)
@@ -60,7 +59,7 @@ _ector_renderer_cairo_gradient_radial_prepare(Eo *obj,
                                      grd->radial.x, grd->radial.y, grd->radius);
    if (!pat) return NULL;
 
-   _ector_renderer_cairo_gradient_prepare(obj, pat, gd, mul_col);
+   _ector_renderer_cairo_gradient_prepare(pat, gd, mul_col);
 
    cairo_pattern_set_extend(pat, _ector_cairo_extent_get(gd->s));
 
@@ -136,19 +135,24 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_bounds_get(Eo 
 }
 
 static Eo_Base *
-_ector_renderer_cairo_gradient_radial_eo_base_constructor(Eo *obj,
-                                                          Ector_Renderer_Cairo_Gradient_Radial_Data *pd EINA_UNUSED)
+_ector_renderer_cairo_gradient_radial_eo_base_finalize(Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd EINA_UNUSED)
 {
-   USE(obj, cairo_set_source, NULL);
-   USE(obj, cairo_pattern_destroy, NULL);
-   USE(obj, cairo_arc, NULL);
-   USE(obj, cairo_fill, NULL);
-   USE(obj, cairo_set_source, NULL);
-   USE(obj, cairo_pattern_destroy, NULL);
-   USE(obj, cairo_pattern_set_extend, NULL);
-   USE(obj, cairo_pattern_create_radial, NULL);
+   Ector_Renderer_Generic_Base_Data *base;
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, obj = eo_constructor());
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, obj = eo_finalize());
+   if (!obj) return NULL;
+
+   base = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS);
+
+   USE(base, cairo_set_source, NULL);
+   USE(base, cairo_pattern_destroy, NULL);
+   USE(base, cairo_arc, NULL);
+   USE(base, cairo_fill, NULL);
+   USE(base, cairo_set_source, NULL);
+   USE(base, cairo_pattern_destroy, NULL);
+   USE(base, cairo_pattern_set_extend, NULL);
+   USE(base, cairo_pattern_create_radial, NULL);
+
    return obj;
 }
 
@@ -156,10 +160,10 @@ static void
 _ector_renderer_cairo_gradient_radial_eo_base_destructor(Eo *obj,
                                                          Ector_Renderer_Cairo_Gradient_Radial_Data *pd)
 {
-   Eo *parent;
+   Ector_Renderer_Generic_Base_Data *base;
 
-   eo_do(obj, parent = eo_parent_get());
-   eo_data_xunref(parent, pd->parent, obj);
+   base = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS);
+   eo_data_xunref(base->surface, pd->parent, obj);
 
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, eo_destructor());
 }

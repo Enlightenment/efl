@@ -16,6 +16,7 @@ abstract Ector.Renderer.Cairo.Base (Ector.Renderer.Generic.Base)
       Ector.Renderer.Generic.Base.color.set;
       Ector.Renderer.Generic.Base.color.get;
       Eo.Base.constructor;
+      Eo.Base.finalize;
       Eo.Base.destructor;
    }
 }
