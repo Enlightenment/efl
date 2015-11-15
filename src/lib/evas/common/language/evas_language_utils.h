@@ -128,5 +128,8 @@ evas_common_language_char_script_get(Eina_Unicode unicode);
 
 const char *
 evas_common_language_from_locale_get(void);
+
+const char *
+evas_common_language_from_locale_full_get(void);
 #endif
 
