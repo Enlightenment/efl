@@ -11,7 +11,21 @@ static void
 _ector_renderer_generic_base_eo_base_destructor(Eo *obj, Ector_Renderer_Generic_Base_Data *pd)
 {
    if (pd->m) free(pd->m);
+   eo_unref(pd->surface);
+
    eo_do_super(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, eo_destructor());
+}
+
+static Ector_Generic_Surface *
+_ector_renderer_generic_base_surface_get(Eo *obj EINA_UNUSED, Ector_Renderer_Generic_Base_Data *pd)
+{
+   return pd->surface;
+}
+
+static void
+_ector_renderer_generic_base_surface_set(Eo *obj EINA_UNUSED, Ector_Renderer_Generic_Base_Data *pd, Ector_Generic_Surface *s)
+{
+   pd->surface = eo_xref(s, obj);
 }
 
 static void

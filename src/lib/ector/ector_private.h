@@ -82,6 +82,7 @@ typedef struct _Ector_Renderer_Generic_Shape_Data Ector_Renderer_Generic_Shape_D
 
 struct _Ector_Renderer_Generic_Base_Data
 {
+   Ector_Generic_Surface *surface;
    Eina_Matrix3 *m;
 
    struct {
