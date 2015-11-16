@@ -575,6 +575,7 @@ sprite_err:
 dev_open_err:
    ecore_drm_launcher_disconnect(dev);
    ecore_drm_device_free(dev);
+   dev = NULL;
 launcher_err:
 dev_err:
    ecore_drm_shutdown();
@@ -592,6 +593,7 @@ _ecore_evas_drm_shutdown(void)
    ecore_drm_device_close(dev);
    ecore_drm_launcher_disconnect(dev);
    ecore_drm_device_free(dev);
+   dev = NULL;
    ecore_drm_shutdown();
 
    ecore_event_evas_shutdown();
