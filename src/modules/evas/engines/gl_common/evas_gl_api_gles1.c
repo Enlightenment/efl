@@ -4018,6 +4018,7 @@ static void
 _debug_gles1_api_get(Evas_GL_API *funcs)
 {
    if (!funcs) return;
+   funcs->version = EVAS_GL_API_VERSION;
 
 #define ORD(name) EVAS_API_OVERRIDE(name, funcs, _evgld_gles1_)
    /* Available only in Common profile */
@@ -4174,6 +4175,7 @@ static void
 _normal_gles1_api_get(Evas_GL_API *funcs)
 {
    if (!funcs) return;
+   funcs->version = EVAS_GL_API_VERSION;
 
 #define ORD(name) EVAS_API_OVERRIDE(name, funcs, _evgl_gles1_)
    /* Available only in Common profile */
