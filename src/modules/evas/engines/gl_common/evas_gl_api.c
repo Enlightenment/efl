@@ -2467,6 +2467,9 @@ _evgl_api_gles2_get(Evas_GL_API *funcs, Eina_Bool debug)
 static void
 _normal_gles3_api_get(Evas_GL_API *funcs)
 {
+   if (!funcs) return;
+   funcs->version = EVAS_GL_API_VERSION;
+
 #define ORD(f) EVAS_API_OVERRIDE(f, funcs, evgl_)
    // GLES 3.0 APIs that are same as GLES 2.0
    ORD(glActiveTexture);
@@ -2727,6 +2730,8 @@ _normal_gles3_api_get(Evas_GL_API *funcs)
 static void
 _debug_gles3_api_get(Evas_GL_API *funcs)
 {
+   if (!funcs) return;
+   funcs->version = EVAS_GL_API_VERSION;
 
 #define ORD(f) EVAS_API_OVERRIDE(f, funcs, _evgld_)
    // GLES 3.0 APIs that are same as GLES 2.0

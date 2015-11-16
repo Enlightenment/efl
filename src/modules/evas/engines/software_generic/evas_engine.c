@@ -286,6 +286,8 @@ static void       (*_sym_glViewport)                            (GLint x, GLint 
 /* static void       (*_sym_glGetProgramBinary)                    (GLuint a, GLsizei b, GLsizei* c, GLenum* d, void* e) = NULL; */
 /* static void       (*_sym_glProgramBinary)                       (GLuint a, GLenum b, const void* c, GLint d) = NULL; */
 /* static void       (*_sym_glProgramParameteri)                   (GLuint a, GLuint b, GLint d) = NULL; */
+
+static int gl_lib_init(void);
 #endif
 
 // Threaded Render
@@ -3055,6 +3057,12 @@ eng_gl_context_create(void *data EINA_UNUSED, void *share_context, int version,
    Render_Engine_GL_Context *ctx;
    Render_Engine_GL_Context *share_ctx;
 
+   if (!_tls_check() && !gl_lib_init())
+     {
+        WRN("Failed to initialize Evas GL (with OSMesa)");
+        return NULL;
+     }
+
    if (version != EVAS_GL_GLES_2_X)
      {
         ERR("This engine only supports OpenGL-ES 2.0 contexts for now!");
@@ -3251,6 +3259,9 @@ eng_gl_api_get(void *data EINA_UNUSED, int version)
      return NULL;
 
 #ifdef EVAS_GL
+   if (!_tls_init)
+     gl_lib_init();
+
    return &gl_funcs;
 #else
    return NULL;
@@ -4990,7 +5001,7 @@ evgl_glGetString(GLenum name)
 static void
 override_gl_apis(Evas_GL_API *api)
 {
-   memset(&gl_funcs, 0, sizeof(gl_funcs));
+   memset(api, 0, sizeof(*api));
    api->version = EVAS_GL_API_VERSION;
 
 #define ORD(f) EVAS_API_OVERRIDE(f, api, _sym_)

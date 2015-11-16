@@ -1881,6 +1881,9 @@ evgl_engine_shutdown(void *eng_data)
    if (gles1_funcs) free(gles1_funcs);
    if (gles2_funcs) free(gles2_funcs);
    if (gles3_funcs) free(gles3_funcs);
+   gles1_funcs = NULL;
+   gles2_funcs = NULL;
+   gles3_funcs = NULL;
 
    // Destroy internal resources
    _evgl_tls_resource_destroy(eng_data);
@@ -3053,7 +3056,8 @@ evgl_api_get(void *eng_data, Evas_GL_Context_Version version, Eina_Bool alloc_on
         api = gles3_funcs;
      }
    else return NULL;
-   if (alloc_only) return api;
+   if (alloc_only && (api->version == EVAS_GL_API_VERSION))
+     return api;
 
 #ifdef GL_GLES
     if (!evgl_api_egl_ext_init(evgl_engine->funcs->proc_address_get, evgl_engine->funcs->ext_string_get(eng_data)))
