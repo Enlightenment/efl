@@ -671,8 +671,9 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
+
    if (wdata->win)
-     ecore_wl_window_update_size(wdata->win, ee->req.w, ee->req.h);
+     ecore_wl_window_update_size(wdata->win, w, h);
 }
 
 void
