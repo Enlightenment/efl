@@ -1280,6 +1280,7 @@ _surface_buffers_allocate(void *eng_data EINA_UNUSED, EVGL_Surface *sfc, int w, 
                 w, h);
           }
 #else
+        (void) version;
         _renderbuffer_allocate(sfc->depth_stencil_buf, sfc->depth_stencil_fmt,
                                w, h, sfc->msaa_samples);
 #endif
