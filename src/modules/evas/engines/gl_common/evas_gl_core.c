@@ -2683,12 +2683,6 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
              if (rsc->direct.partial.enabled)
                evgl_direct_partial_render_end();
 
-             if (sfc->color_buf)
-               {
-                  if (!_surface_buffers_fbo_set(sfc, sfc->color_buf, ctx->version))
-                    ERR("Could not detach current FBO");
-               }
-
              // Bind to the previously bound buffer (may be 0)
              if (ctx->version == EVAS_GL_GLES_3_X)
                {
