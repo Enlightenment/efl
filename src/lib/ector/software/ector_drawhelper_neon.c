@@ -5,6 +5,7 @@
 #include <Ector.h>
 #include "ector_drawhelper_private.h"
 
+#undef BUILD_NEON
 #ifdef BUILD_NEON
 #include <arm_neon.h>
 
