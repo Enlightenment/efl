@@ -21,6 +21,7 @@
 #endif
 
 #include <stdlib.h>
+#include <locale.h>
 
 #include <Eina.h>
 
@@ -134,7 +135,7 @@ evas_common_language_from_locale_get(void)
    if (*lang) return lang;
 
    const char *locale;
-   locale = getenv("LANG");
+   locale = setlocale(LC_MESSAGES, NULL);
    if (locale && *locale)
      {
         char *itr;
