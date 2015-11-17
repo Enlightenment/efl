@@ -334,6 +334,9 @@ struct _Evas_Engine_GL_Context
    // FIXME: hack. expose egl display to gl core for egl image sec extn.
    void *egldisp;
    void *eglctxt;
+#else
+   int glxcfg_rgb;
+   int glxcfg_rgba;
 #endif
 
    GLuint preserve_bit;

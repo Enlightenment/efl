@@ -564,6 +564,9 @@ try_gles2:
 #ifdef GL_GLES
    gw->gl_context->egldisp = gw->egl_disp;
    gw->gl_context->eglctxt = gw->egl_context[0];
+#else
+   glXGetFBConfigAttrib(gw->disp, evis->config, GLX_FBCONFIG_ID, &gw->gl_context->glxcfg_rgb);
+   glXGetFBConfigAttrib(gw->disp, evis2->config, GLX_FBCONFIG_ID, &gw->gl_context->glxcfg_rgba);
 #endif
    eng_window_use(gw);
    glsym_evas_gl_common_context_resize(gw->gl_context, w, h, rot);
