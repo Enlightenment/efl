@@ -191,9 +191,15 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    if (nw < 1) nw = 1;
    if (nh < 1) nh = 1;
 
+   if (prev_full != ee->prop.fullscreen)
+     _ecore_evas_wl_common_border_update(ee);
+
+   if ((prev_max != ee->prop.maximized) ||
+       (prev_full != ee->prop.fullscreen))
+     _ecore_evas_wl_common_state_update(ee);
+
    /* NB: We receive window configure sizes based on xdg surface
     * window geometry, so we need to subtract framespace here */
-
    evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
    if (ECORE_EVAS_PORTRAIT(ee))
@@ -207,29 +213,11 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
         nh -= fw;
      }
 
-   if (prev_full != ee->prop.fullscreen)
-     _ecore_evas_wl_common_border_update(ee);
-
-   if (ee->prop.fullscreen)
-     {
-        _ecore_evas_wl_common_move(ee, ev->x, ev->y);
-        _ecore_evas_wl_common_resize(ee, nw, nh);
-
-        if (prev_full != ee->prop.fullscreen)
-          _ecore_evas_wl_common_state_update(ee);
-
-        return ECORE_CALLBACK_PASS_ON;
-     }
-
-   if ((ee->x != ev->x) || (ee->y != ev->y))
+   if (ee->prop.fullscreen || (ee->x != ev->x) || (ee->y != ev->y))
      _ecore_evas_wl_common_move(ee, ev->x, ev->y);
 
-   if ((ee->req.w != nw) || (ee->req.h != nh))
+   if (ee->prop.fullscreen || (ee->req.w != nw) || (ee->req.h != nh))
      _ecore_evas_wl_common_resize(ee, nw, nh);
-
-   if ((prev_max != ee->prop.maximized) ||
-       (prev_full != ee->prop.fullscreen))
-     _ecore_evas_wl_common_state_update(ee);
 
    return ECORE_CALLBACK_PASS_ON;
 }
