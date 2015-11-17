@@ -588,7 +588,10 @@ evas_xlib_image_dri_native_set(void *data, void *image, void *native)
 
    n = calloc(1, sizeof(DRI_Native));
    if (!n)
-     return NULL;
+     {
+        evas_xlib_image_dri_free(exim);
+        return NULL;
+     }
 
    memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
    n->pixmap = pm;
