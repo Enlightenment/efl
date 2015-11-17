@@ -559,7 +559,6 @@ _evas_object_text_item_order(Evas_Object *eo_obj, Evas_Text_Data *o)
 {
    (void) eo_obj;
 #ifdef BIDI_SUPPORT
-   /*FIXME: not very efficient, sort the items arrays. */
    /* Reorder if it's a bidi text */
    if (o->bidi_par_props)
      {
