@@ -27,6 +27,7 @@ struct _Evas_GL_X11_Visual
    XVisualInfo info;
    GLConfig config;
    Colormap cmap;
+   Display *disp;
    Eina_Bool alpha;
 };
 
@@ -125,7 +126,10 @@ __glXMakeContextCurrent(Display *disp, GLXDrawable glxwin, GLXContext context)
 static void
 _visuals_hash_del_cb(void *data)
 {
-   free(data);
+   Evas_GL_X11_Visual *evis = data;
+   if (evis && evis->cmap && evis->disp)
+     XFreeColormap(evis->disp, evis->cmap);
+   free(evis);
 }
 
 static inline int
@@ -604,10 +608,10 @@ eng_window_free(Outbuf *gw)
    if (ref == 0)
      {
         if (context) eglDestroyContext(gw->egl_disp, context);
-        eglTerminate(gw->egl_disp);
-        eglReleaseThread();
         eina_hash_free(_evas_gl_visuals);
         _evas_gl_visuals = NULL;
+        eglTerminate(gw->egl_disp);
+        eglReleaseThread();
         _tls_context_set(EGL_NO_CONTEXT);
      }
 #else
@@ -1220,6 +1224,7 @@ try_again:
    if (!evis->cmap)
      {
         /* save colormap now */
+        evis->disp = einfo->info.display;
         evis->cmap = XCreateColormap(einfo->info.display,
                                     RootWindow(einfo->info.display,
                                                einfo->info.screen),
