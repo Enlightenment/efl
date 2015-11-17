@@ -767,19 +767,22 @@ evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
 
    return egl_sfc;
 #else
+   Evas_Engine_GL_Context *evasglctx;
    GLXPbuffer pbuf;
    GLXFBConfig *cfgs;
    int config_attrs[20];
    int surface_attrs[20];
    int ncfg = 0, i;
 
-   // TODO: Check all required config attributes
+   evasglctx = re->window_gl_context_get(re->software.ob);
 
 #ifndef GLX_VISUAL_ID
 # define GLX_VISUAL_ID 0x800b
 #endif
 
    i = 0;
+#if 0
+   // DISABLED BECAUSE BadMatch HAPPENS
    if (sfc->pbuffer.color_fmt != EVAS_GL_NO_FBO)
      {
         config_attrs[i++] = GLX_BUFFER_SIZE;
@@ -808,6 +811,13 @@ evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
      }
    //config_attrs[i++] = GLX_VISUAL_ID;
    //config_attrs[i++] = XVisualIDFromVisual(vis);
+#else
+   config_attrs[i++] = GLX_FBCONFIG_ID;
+   if (sfc->pbuffer.color_fmt == EVAS_GL_RGB_888)
+     config_attrs[i++] = evasglctx->glxcfg_rgb;
+   else
+     config_attrs[i++] = evasglctx->glxcfg_rgba;
+#endif
    config_attrs[i++] = 0;
 
    cfgs = glXChooseFBConfig(re->software.ob->disp, re->software.ob->screen,
