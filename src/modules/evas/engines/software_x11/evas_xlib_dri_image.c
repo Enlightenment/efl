@@ -564,12 +564,12 @@ evas_xlib_image_dri_native_set(void *data, void *image, void *native)
    unsigned int uidum, depth = 0;
 
    if (!ns || ns->type != EVAS_NATIVE_SURFACE_X11)
-     return EINA_FALSE;
+     return NULL;
 
    d = ob->priv.x11.xlib.disp;
    vis = ns->data.x11.visual;
    pm = ns->data.x11.pixmap;
-   if (!pm) return EINA_FALSE;
+   if (!pm) return NULL;
 
    XGetGeometry(d, pm, &wdum, &idum, &idum, &uidum, &uidum, &uidum, &depth);
 
@@ -581,14 +581,14 @@ evas_xlib_image_dri_native_set(void *data, void *image, void *native)
    if (!exim)
      {
         ERR("evas_xlib_image_dri_new failed.");
-        return EINA_FALSE;
+        return NULL;
      }
 
    exim->draw = (Drawable)ns->data.x11.pixmap;
 
    n = calloc(1, sizeof(DRI_Native));
    if (!n)
-     return EINA_FALSE;
+     return NULL;
 
    memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
    n->pixmap = pm;
@@ -601,7 +601,7 @@ evas_xlib_image_dri_native_set(void *data, void *image, void *native)
    im->native.func.free = _native_free_cb;
 
    if (evas_xlib_image_dri_init(exim, d)) evas_xlib_image_get_buffers(im);
-   else return EINA_FALSE;
+   else return NULL;
    return im;
 }
 
