@@ -1289,6 +1289,23 @@ _elm_win_frame_obj_update(Elm_Win_Data *sd)
 }
 
 static void
+_elm_win_frame_maximized_state_update(Elm_Win_Data *sd, Eina_Bool maximized)
+{
+   const char *emission;
+
+   if (maximized)
+     emission = "elm,state,maximized";
+   else
+     emission = "elm,state,unmaximized";
+
+   edje_object_signal_emit(sd->frame_obj, emission, "elm");
+   edje_object_message_signal_process(sd->frame_obj);
+   evas_object_smart_calculate(sd->frame_obj);
+
+   _elm_win_frame_obj_update(sd);
+}
+
+static void
 _elm_win_state_change(Ecore_Evas *ee)
 {
    Elm_Win_Data *sd = _elm_win_associate_get(ee);
@@ -1409,6 +1426,7 @@ _elm_win_state_change(Ecore_Evas *ee)
              if (_elm_config->atspi_mode)
                elm_interface_atspi_window_restored_signal_emit(obj);
           }
+        _elm_win_frame_maximized_state_update(sd, sd->maximized);
      }
    if (ch_profile)
      {
@@ -2841,23 +2859,6 @@ _elm_win_frame_cb_minimize(void *data,
 }
 
 static void
-_elm_win_frame_maximized_state_update(Elm_Win_Data *sd, Eina_Bool maximized)
-{
-   const char *emission;
-
-   if (maximized)
-     emission = "elm,state,maximized";
-   else
-     emission = "elm,state,unmaximized";
-
-   edje_object_signal_emit(sd->frame_obj, emission, "elm");
-   edje_object_message_signal_process(sd->frame_obj);
-   evas_object_smart_calculate(sd->frame_obj);
-
-   _elm_win_frame_obj_update(sd);
-}
-
-static void
 _elm_win_frame_cb_maximize(void *data,
                            Evas_Object *obj EINA_UNUSED,
                            const char *sig EINA_UNUSED,
@@ -2869,8 +2870,6 @@ _elm_win_frame_cb_maximize(void *data,
    if (!sd) return;
    if (sd->maximized) value = EINA_FALSE;
    else value = EINA_TRUE;
-
-   _elm_win_frame_maximized_state_update(sd, value);
 
    TRAP(sd, maximized_set, value);
 }
