@@ -322,6 +322,25 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
 
+   /* NB: Send a fake mouse move event so that E-Wl gets an updated
+    * pointer position, else we end up with buggers (ref: T2854) */
+     {
+        Ecore_Event_Mouse_Move *ev;
+
+        ev = calloc(1, sizeof(Ecore_Event_Mouse_Move));
+        ev->window = ee->prop.window;
+        ev->event_window = ee->prop.window;
+        ev->root_window = ee->prop.window;
+        ev->same_screen = 1;
+
+        ecore_drm_device_pointer_xy_get(dev, &ev->x, &ev->y);
+
+        ev->root.x = ev->x;
+        ev->root.y = ev->y;
+
+        ecore_event_evas_mouse_move(NULL, ECORE_EVENT_MOUSE_MOVE, ev);
+     }
+
    return ee;
 
 eng_err:
