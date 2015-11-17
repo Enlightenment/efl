@@ -490,7 +490,7 @@ ecore_wl_window_maximized_get(Ecore_Wl_Window *win)
 
    if (!win) return EINA_FALSE;
 
-   return win->maximized || (win->type == ECORE_WL_WINDOW_TYPE_MAXIMIZED);
+   return win->maximized;
 }
 
 EAPI void
@@ -531,7 +531,7 @@ ecore_wl_window_fullscreen_get(Ecore_Wl_Window *win)
 
    if (!win) return EINA_FALSE;
 
-   return win->fullscreen || (win->type == ECORE_WL_WINDOW_TYPE_FULLSCREEN);
+   return win->fullscreen;
 }
 
 EAPI void
