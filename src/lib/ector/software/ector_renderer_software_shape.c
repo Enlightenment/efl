@@ -578,12 +578,12 @@ _ector_renderer_software_shape_ector_renderer_generic_base_prepare(Eo *obj,
    // shouldn't that be moved to the software base object
    if (!pd->surface)
      {
-        Eo *parent;
-        eo_do(obj, parent = eo_parent_get());
-        if (!parent) return EINA_FALSE;
-        pd->surface = eo_data_xref(parent, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
-        if (!pd->surface) return EINA_FALSE;
+        Ector_Renderer_Generic_Base_Data *base;
+
+        base = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS);
+        pd->surface = eo_data_xref(base->surface, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
      }
+
    return EINA_TRUE;
 }
 
@@ -693,10 +693,12 @@ _ector_renderer_software_shape_path_changed(void *data, Eo *obj EINA_UNUSED,
    return EINA_TRUE;
 }
 
-Eo *
+static Eo *
 _ector_renderer_software_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
 {
-   obj = eo_do_super_ret(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, obj, eo_constructor());
+   eo_do_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, obj = eo_constructor());
+   if (!obj) return NULL;
+
    pd->shape = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_SHAPE_MIXIN, obj);
    pd->base = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
    eo_do(obj,
@@ -705,10 +707,11 @@ _ector_renderer_software_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Softw
    return obj;
 }
 
-void
+static void
 _ector_renderer_software_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
 {
-   Eo *parent;
+   Ector_Renderer_Generic_Base_Data *base;
+
    //FIXME, As base class  destructor can't call destructor of mixin class.
    // call explicit API to free shape data.
    eo_do(obj, efl_gfx_shape_reset());
@@ -716,8 +719,8 @@ _ector_renderer_software_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Softwa
    if (pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
    if (pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
 
-   eo_do(obj, parent = eo_parent_get());
-   eo_data_xunref(parent, pd->surface, obj);
+   base = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS);
+   eo_data_xunref(base->surface, pd->surface, obj);
 
    eo_data_xunref(obj, pd->shape, obj);
    eo_data_xunref(obj, pd->base, obj);

@@ -15,11 +15,10 @@ _ector_renderer_software_gradient_linear_ector_renderer_generic_base_prepare(Eo 
 {
    if (!pd->surface)
      {
-        Eo *parent;
+        Ector_Renderer_Generic_Base_Data *base;
 
-        eo_do(obj, parent = eo_parent_get());
-        if (!parent) return EINA_FALSE;
-        pd->surface = eo_data_xref(parent, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
+        base = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS);
+        pd->surface = eo_data_xref(base->surface, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
      }
 
    update_color_table(pd);
@@ -63,27 +62,29 @@ _ector_renderer_software_gradient_linear_ector_renderer_software_base_fill(Eo *o
    return EINA_TRUE;
 }
 
-Eo *
+static Eo *
 _ector_renderer_software_gradient_linear_eo_base_constructor(Eo *obj,
                                                              Ector_Renderer_Software_Gradient_Data *pd)
 {
    obj = eo_do_super_ret(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS, obj, eo_constructor());
+   if (!obj) return NULL;
+
    pd->gd  = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_GRADIENT_MIXIN, obj);
    pd->gld = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_MIXIN, obj);
 
    return obj;
 }
 
-void
+static void
 _ector_renderer_software_gradient_linear_eo_base_destructor(Eo *obj,
                                                             Ector_Renderer_Software_Gradient_Data *pd)
 {
-   Eo *parent;
+   Ector_Renderer_Generic_Base_Data *base;
 
    destroy_color_table(pd);
 
-   eo_do(obj, parent = eo_parent_get());
-   eo_data_xunref(parent, pd->surface, obj);
+   base = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS);
+   eo_data_xunref(base->surface, pd->surface, obj);
 
    eo_data_xunref(obj, pd->gd, obj);
    eo_data_xunref(obj, pd->gld, obj);
