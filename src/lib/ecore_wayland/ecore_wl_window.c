@@ -448,40 +448,34 @@ ecore_wl_window_raise(Ecore_Wl_Window *win)
 EAPI void
 ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized)
 {
+   Eina_Bool prev;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!win) return;
+   EINA_SAFETY_ON_NULL_RETURN(win);
+   prev = ecore_wl_window_maximized_get(win);
 
-   if ((win->type == ECORE_WL_WINDOW_TYPE_MAXIMIZED) == maximized) return;
+   maximized = !!maximized;
 
-   if (win->type == ECORE_WL_WINDOW_TYPE_TOPLEVEL)
+   if (prev == maximized) return;
+
+   if (maximized)
      {
         if (win->xdg_surface)
-          {
-             xdg_surface_set_maximized(win->xdg_surface);
-             win->type = ECORE_WL_WINDOW_TYPE_MAXIMIZED;
-          }
+          xdg_surface_set_maximized(win->xdg_surface);
         else if (win->shell_surface)
-          {
-             wl_shell_surface_set_maximized(win->shell_surface, NULL);
-             win->type = ECORE_WL_WINDOW_TYPE_MAXIMIZED;
-          }
+          wl_shell_surface_set_maximized(win->shell_surface, NULL);
+        win->type = ECORE_WL_WINDOW_TYPE_MAXIMIZED;
      }
-   else if (win->type == ECORE_WL_WINDOW_TYPE_MAXIMIZED)
+   else
      {
         if (win->xdg_surface)
-          {
-             xdg_surface_unset_maximized(win->xdg_surface);
-             win->type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
-             _ecore_wl_window_configure_send(win, win->saved.w, win->saved.h, 0);
-          }
+          xdg_surface_unset_maximized(win->xdg_surface);
         else if (win->shell_surface)
-          {
-             wl_shell_surface_set_toplevel(win->shell_surface);
-             win->type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
-             _ecore_wl_window_configure_send(win, win->saved.w, win->saved.h, 0);
-          }
+          wl_shell_surface_set_toplevel(win->shell_surface);
+        win->type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
      }
+   win->maximized = maximized;
 }
 
 EAPI Eina_Bool
@@ -497,10 +491,17 @@ ecore_wl_window_maximized_get(Ecore_Wl_Window *win)
 EAPI void
 ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen)
 {
+   Eina_Bool prev;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!win) return;
-   if ((win->type == ECORE_WL_WINDOW_TYPE_FULLSCREEN) == fullscreen) return;
+   EINA_SAFETY_ON_NULL_RETURN(win);
+
+   prev = ecore_wl_window_fullscreen_get(win);
+
+   fullscreen = !!fullscreen;
+
+   if (prev == fullscreen) return;
    if (fullscreen)
      {
         win->type = ECORE_WL_WINDOW_TYPE_FULLSCREEN;
@@ -521,8 +522,8 @@ ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen)
           wl_shell_surface_set_toplevel(win->shell_surface);
 
         win->type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
-        _ecore_wl_window_configure_send(win, win->saved.w, win->saved.h, 0);
      }
+   win->fullscreen = fullscreen;
 }
 
 EAPI Eina_Bool
