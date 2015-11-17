@@ -563,8 +563,8 @@ evas_xlib_image_dri_native_set(void *data, void *image, void *native)
    int idum;
    unsigned int uidum, depth = 0;
 
-   if(!ns || ns->type != EVAS_NATIVE_SURFACE_X11)
-      return EINA_FALSE;
+   if (!ns || ns->type != EVAS_NATIVE_SURFACE_X11)
+     return EINA_FALSE;
 
    d = ob->priv.x11.xlib.disp;
    vis = ns->data.x11.visual;
@@ -579,16 +579,16 @@ evas_xlib_image_dri_native_set(void *data, void *image, void *native)
    exim = evas_xlib_image_dri_new(w, h, vis, depth);
 
    if (!exim)
-      {
+     {
         ERR("evas_xlib_image_dri_new failed.");
         return EINA_FALSE;
-      }
+     }
 
    exim->draw = (Drawable)ns->data.x11.pixmap;
 
    n = calloc(1, sizeof(DRI_Native));
    if (!n)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
    n->pixmap = pm;
