@@ -259,7 +259,7 @@ _ector_renderer_cairo_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Sh
    USE(obj, cairo_path_destroy, NULL);
    USE(obj, cairo_move_to, NULL);
 
-   obj = eo_do_super_ret(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj, obj = eo_constructor());
+   obj = eo_do_super_ret(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj, eo_constructor());
    if (!obj) return NULL;
 
    pd->shape = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_SHAPE_MIXIN, obj);
