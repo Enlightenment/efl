@@ -4125,13 +4125,16 @@ _item_select(Elm_Gen_Item *it)
    evas_object_ref(obj);
    it->walking++;
    sd->walking++;
+
+   elm_object_item_focus_set(eo_it, EINA_TRUE);
+   sd->last_selected_item = eo_it;
+
    if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), eo_it);
    if (it->generation == sd->generation)
      {
         eo_do(WIDGET(it), eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_it));
         if (_elm_config->atspi_mode)
           elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
-        elm_object_item_focus_set(eo_it, EINA_TRUE);
      }
 
    it->walking--;
@@ -4144,9 +4147,8 @@ _item_select(Elm_Gen_Item *it)
           {
              it->del_cb(it);
              eo_del(eo_it);
+             sd->last_selected_item = NULL;
           }
-        else
-          sd->last_selected_item = eo_it;
      }
    evas_object_unref(obj);
 }
