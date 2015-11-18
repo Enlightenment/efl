@@ -596,10 +596,7 @@ ecore_wl2_window_maximized_get(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
 
-   if (window->type == ECORE_WL2_WINDOW_TYPE_MAXIMIZED)
-     return EINA_TRUE;
-
-   return EINA_FALSE;
+   return window->maximized;
 }
 
 EAPI void
@@ -607,8 +604,7 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   if ((window->type == ECORE_WL2_WINDOW_TYPE_MAXIMIZED) == maximized)
-     return;
+   if (window->maximized == maximized) return;
 
    if (window->type == ECORE_WL2_WINDOW_TYPE_TOPLEVEL)
      {
@@ -633,6 +629,8 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
         _ecore_wl2_window_configure_send(window, window->saved.w,
                                          window->saved.h, 0);
      }
+
+   window->maximized = maximized;
 }
 
 EAPI Eina_Bool
@@ -640,10 +638,7 @@ ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
 
-   if (window->type == ECORE_WL2_WINDOW_TYPE_FULLSCREEN)
-     return EINA_TRUE;
-
-   return EINA_FALSE;
+   return window->fullscreen;
 }
 
 EAPI void
@@ -651,8 +646,7 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   if ((window->type == ECORE_WL2_WINDOW_TYPE_FULLSCREEN) == fullscreen)
-     return;
+   if (window->fullscreen == fullscreen) return;
 
    if (fullscreen)
      {
@@ -679,6 +673,8 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
         _ecore_wl2_window_configure_send(window, window->saved.w,
                                          window->saved.h, 0);
      }
+
+   window->fullscreen = fullscreen;
 }
 
 EAPI int
