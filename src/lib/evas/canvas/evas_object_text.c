@@ -271,7 +271,7 @@ _evas_object_text_last_up_to_pos(const Evas_Object *eo_obj,
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Object_Text_Item *it;
-   int pos = 0;
+   int pos = -1;
 
 #ifdef BIDI_SUPPORT
    /* Reorder if it's a bidi text */
@@ -301,7 +301,6 @@ _evas_object_text_last_up_to_pos(const Evas_Object *eo_obj,
              x += it->adv;
           }
         eina_list_free(logical_it);
-        return pos;
      }
    else
 #endif
@@ -318,7 +317,7 @@ _evas_object_text_last_up_to_pos(const Evas_Object *eo_obj,
                }
           }
      }
-   return -1;
+   return pos;
 }
 
 static int
