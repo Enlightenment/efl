@@ -12,13 +12,15 @@
 #include "ector_private.h"
 #include "ector_software_private.h"
 
-
 typedef struct _Ector_Renderer_Software_Shape_Data Ector_Renderer_Software_Shape_Data;
 struct _Ector_Renderer_Software_Shape_Data
 {
+   Efl_Gfx_Shape_Public                *public_shape;
+
    Ector_Software_Surface_Data         *surface;
    Ector_Renderer_Generic_Shape_Data   *shape;
    Ector_Renderer_Generic_Base_Data    *base;
+
    Shape_Rle_Data                      *shape_data;
    Shape_Rle_Data                      *outline_data;
 };
@@ -28,7 +30,7 @@ typedef struct _Outline
    SW_FT_Outline ft_outline;
    int points_alloc;
    int contours_alloc;
-}Outline;
+} Outline;
 
 
 #define TO_FT_COORD(x) ((x) * 64) // to freetype 26.6 coordinate.
@@ -495,8 +497,8 @@ _generate_stroke_data(Ector_Renderer_Software_Shape_Data *pd)
    if (pd->outline_data) return EINA_FALSE;
 
    if (!pd->shape->stroke.fill &&
-       ((pd->shape->stroke.color.a == 0) ||
-        (pd->shape->stroke.width < 0.01)))
+       ((pd->public_shape->stroke.color.a == 0) ||
+        (pd->public_shape->stroke.width < 0.01)))
      return EINA_FALSE;
 
    return EINA_TRUE;
@@ -536,17 +538,17 @@ _update_rle(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
         if ( _generate_stroke_data(pd))
           {
              ector_software_rasterizer_stroke_set(pd->surface->software,
-                                                  (pd->shape->stroke.width *
-                                                   pd->shape->stroke.scale),
-                                                  pd->shape->stroke.cap,
-                                                  pd->shape->stroke.join);
+                                                  (pd->public_shape->stroke.width *
+                                                   pd->public_shape->stroke.scale),
+                                                  pd->public_shape->stroke.cap,
+                                                  pd->public_shape->stroke.join);
 
-             if (pd->shape->stroke.dash)
+             if (pd->public_shape->stroke.dash)
                {
                   dash_outline = _outline_create();
                   close_path = _generate_dashed_outline(cmds, pts, dash_outline,
-                                                        pd->shape->stroke.dash,
-                                                        pd->shape->stroke.dash_length);
+                                                        pd->public_shape->stroke.dash,
+                                                        pd->public_shape->stroke.dash_length);
                   _outline_transform(dash_outline, pd->base->m);
                   pd->outline_data = ector_software_rasterizer_generate_stroke_rle_data(pd->surface->software,
                                                                                         &dash_outline->ft_outline,
@@ -633,13 +635,13 @@ _ector_renderer_software_shape_ector_renderer_generic_base_draw(Eo *obj,
      }
    else
      {
-        if (pd->shape->stroke.color.a > 0)
+        if (pd->public_shape->stroke.color.a > 0)
           {
              ector_software_rasterizer_color_set(pd->surface->software,
-                                                 pd->shape->stroke.color.r,
-                                                 pd->shape->stroke.color.g,
-                                                 pd->shape->stroke.color.b,
-                                                 pd->shape->stroke.color.a);
+                                                 pd->public_shape->stroke.color.r,
+                                                 pd->public_shape->stroke.color.g,
+                                                 pd->public_shape->stroke.color.b,
+                                                 pd->public_shape->stroke.color.a);
              ector_software_rasterizer_draw_rle_data(pd->surface->software,
                                                      x, y, mul_col, op,
                                                      pd->outline_data);
@@ -695,6 +697,7 @@ _ector_renderer_software_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Softw
    eo_do_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, obj = eo_constructor());
    if (!obj) return NULL;
 
+   pd->public_shape = eo_data_xref(obj, EFL_GFX_SHAPE_MIXIN, obj);
    pd->shape = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_SHAPE_MIXIN, obj);
    pd->base = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
    eo_do(obj,
@@ -728,18 +731,33 @@ _ector_renderer_software_shape_ector_renderer_generic_base_crc_get(Eo *obj,
 
    eo_do_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, crc = ector_renderer_crc_get());
 
-   crc = eina_crc((void*) &pd->shape->stroke.marker, sizeof (pd->shape->stroke.marker), crc, EINA_FALSE);
-   crc = eina_crc((void*) &pd->shape->stroke.scale, sizeof (pd->shape->stroke.scale) * 3, crc, EINA_FALSE); // scale, width, centered
-   crc = eina_crc((void*) &pd->shape->stroke.color, sizeof (pd->shape->stroke.color), crc, EINA_FALSE);
-   crc = eina_crc((void*) &pd->shape->stroke.cap, sizeof (pd->shape->stroke.cap), crc, EINA_FALSE);
-   crc = eina_crc((void*) &pd->shape->stroke.join, sizeof (pd->shape->stroke.join), crc, EINA_FALSE);
+   crc = eina_crc((void*) &pd->shape->stroke.marker,
+                  sizeof (pd->shape->stroke.marker),
+                  crc, EINA_FALSE);
+   crc = eina_crc((void*) &pd->public_shape->stroke.scale,
+                  sizeof (pd->public_shape->stroke.scale) * 3,
+                  crc, EINA_FALSE); // scale, width, centered
+   crc = eina_crc((void*) &pd->public_shape->stroke.color,
+                  sizeof (pd->public_shape->stroke.color),
+                  crc, EINA_FALSE);
+   crc = eina_crc((void*) &pd->public_shape->stroke.cap,
+                  sizeof (pd->public_shape->stroke.cap),
+                  crc, EINA_FALSE);
+   crc = eina_crc((void*) &pd->public_shape->stroke.join,
+                  sizeof (pd->public_shape->stroke.join),
+                  crc, EINA_FALSE);
 
-   if (pd->shape->fill) crc = _renderer_crc_get(pd->shape->fill, crc);
-   if (pd->shape->stroke.fill) crc = _renderer_crc_get(pd->shape->stroke.fill, crc);
-   if (pd->shape->stroke.marker) crc = _renderer_crc_get(pd->shape->stroke.marker, crc);
-   if (pd->shape->stroke.dash_length)
+   if (pd->shape->fill)
+     crc = _renderer_crc_get(pd->shape->fill, crc);
+   if (pd->shape->stroke.fill)
+     crc = _renderer_crc_get(pd->shape->stroke.fill, crc);
+   if (pd->shape->stroke.marker)
+     crc = _renderer_crc_get(pd->shape->stroke.marker, crc);
+   if (pd->public_shape->stroke.dash_length)
      {
-        crc = eina_crc((void*) pd->shape->stroke.dash, sizeof (Efl_Gfx_Dash) * pd->shape->stroke.dash_length, crc, EINA_FALSE);
+        crc = eina_crc((void*) pd->public_shape->stroke.dash,
+                       sizeof (Efl_Gfx_Dash) * pd->public_shape->stroke.dash_length,
+                       crc, EINA_FALSE);
      }
 
    return crc;

@@ -31,13 +31,6 @@ class Efl.VG.Shape (Efl.VG.Base, Efl.Gfx.Shape)
       }
    }
    implements {
-      Efl.Gfx.Shape.stroke_scale;
-      Efl.Gfx.Shape.stroke_color;
-      Efl.Gfx.Shape.stroke_width;
-      Efl.Gfx.Shape.stroke_location;
-      Efl.Gfx.Shape.stroke_dash;
-      Efl.Gfx.Shape.stroke_cap;
-      Efl.Gfx.Shape.stroke_join;
       Efl.Gfx.Base.color_part.set;
       Efl.Gfx.Base.color_part.get;
       Efl.VG.Base.bounds_get;

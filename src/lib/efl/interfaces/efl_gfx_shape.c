@@ -11,6 +11,8 @@
 typedef struct _Efl_Gfx_Shape_Data Efl_Gfx_Shape_Data;
 struct _Efl_Gfx_Shape_Data
 {
+   Efl_Gfx_Shape_Public public;
+
    struct {
       double x;
       double y;
@@ -1364,6 +1366,135 @@ _efl_gfx_shape_append_svg_path(Eo *obj, Efl_Gfx_Shape_Data *pd,
               return;
           }
      }
+}
+
+static void
+_efl_gfx_shape_stroke_scale_set(Eo *obj EINA_UNUSED,
+                                Efl_Gfx_Shape_Data *pd,
+                                double s)
+{
+   pd->public.stroke.scale = s;
+}
+
+static double
+_efl_gfx_shape_stroke_scale_get(Eo *obj EINA_UNUSED,
+                                Efl_Gfx_Shape_Data *pd)
+{
+   return pd->public.stroke.scale;
+}
+
+static void
+_efl_gfx_shape_stroke_color_set(Eo *obj EINA_UNUSED,
+                                Efl_Gfx_Shape_Data *pd,
+                                int r, int g, int b, int a)
+{
+   pd->public.stroke.color.r = r;
+   pd->public.stroke.color.g = g;
+   pd->public.stroke.color.b = b;
+   pd->public.stroke.color.a = a;
+}
+
+static void
+_efl_gfx_shape_stroke_color_get(Eo *obj EINA_UNUSED,
+                                Efl_Gfx_Shape_Data *pd,
+                                int *r, int *g, int *b, int *a)
+{
+   if (r) *r = pd->public.stroke.color.r;
+   if (g) *g = pd->public.stroke.color.g;
+   if (b) *b = pd->public.stroke.color.b;
+   if (a) *a = pd->public.stroke.color.a;
+}
+
+static void
+_efl_gfx_shape_stroke_width_set(Eo *obj EINA_UNUSED,
+                                Efl_Gfx_Shape_Data *pd,
+                                double w)
+{
+   pd->public.stroke.width = w;
+}
+
+static double
+_efl_gfx_shape_stroke_width_get(Eo *obj EINA_UNUSED,
+                                Efl_Gfx_Shape_Data *pd)
+{
+   return pd->public.stroke.width;
+}
+
+static void
+_efl_gfx_shape_stroke_location_set(Eo *obj EINA_UNUSED,
+                                   Efl_Gfx_Shape_Data *pd,
+                                   double centered)
+{
+   pd->public.stroke.centered = centered;
+}
+
+static double
+_efl_gfx_shape_stroke_location_get(Eo *obj EINA_UNUSED,
+                                   Efl_Gfx_Shape_Data *pd)
+{
+   return pd->public.stroke.centered;
+}
+
+static void
+_efl_gfx_shape_stroke_dash_set(Eo *obj EINA_UNUSED,
+                               Efl_Gfx_Shape_Data *pd,
+                               const Efl_Gfx_Dash *dash, unsigned int length)
+{
+   Efl_Gfx_Dash *tmp;
+
+   if (!dash)
+     {
+        free(pd->public.stroke.dash);
+        pd->public.stroke.dash = NULL;
+        pd->public.stroke.dash_length = 0;
+        return ;
+     }
+
+   tmp = realloc(pd->public.stroke.dash, length * sizeof (Efl_Gfx_Dash));
+   if (!tmp && length) return ;
+   memcpy(tmp, dash, length * sizeof (Efl_Gfx_Dash));
+
+   pd->public.stroke.dash = tmp;
+   pd->public.stroke.dash_length = length;
+}
+
+static void
+_efl_gfx_shape_stroke_dash_get(Eo *obj EINA_UNUSED,
+                               Efl_Gfx_Shape_Data *pd,
+                               const Efl_Gfx_Dash **dash, unsigned int *length)
+{
+   if (dash) *dash = pd->public.stroke.dash;
+   if (length) *length = pd->public.stroke.dash_length;
+}
+
+static void
+_efl_gfx_shape_stroke_cap_set(Eo *obj EINA_UNUSED,
+                              Efl_Gfx_Shape_Data *pd,
+                              Efl_Gfx_Cap c)
+{
+   pd->public.stroke.cap = c;
+}
+
+static Efl_Gfx_Cap
+_efl_gfx_shape_stroke_cap_get(Eo *obj EINA_UNUSED,
+                              Efl_Gfx_Shape_Data *pd)
+{
+   return pd->public.stroke.cap;
+}
+
+static void
+_efl_gfx_shape_stroke_join_set(Eo *obj EINA_UNUSED,
+                               Efl_Gfx_Shape_Data *pd,
+                               Efl_Gfx_Join j)
+{
+   pd->public.stroke.join = j;
+}
+
+static Efl_Gfx_Join
+_efl_gfx_shape_stroke_join_get(Eo *obj EINA_UNUSED,
+                               Efl_Gfx_Shape_Data *pd)
+{
+   return pd->public.stroke.join;
 }
 
 #include "interfaces/efl_gfx_shape.eo.c"

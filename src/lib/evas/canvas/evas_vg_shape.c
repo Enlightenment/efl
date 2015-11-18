@@ -11,20 +11,8 @@ struct _Efl_VG_Shape_Data
    Efl_VG *fill;
 
    struct {
-      Efl_Gfx_Dash *dash;
       Efl_VG *fill;
       Efl_VG *marker;
-
-      double scale;
-      double width;
-      double centered; // from 0 to 1
-
-      int r, g, b, a;
-
-      unsigned int dash_count;
-
-      Efl_Gfx_Cap cap;
-      Efl_Gfx_Join join;
    } stroke;
 };
 
@@ -56,38 +44,8 @@ _efl_vg_shape_fill_get(Eo *obj EINA_UNUSED, Efl_VG_Shape_Data *pd)
    return pd->fill;
 }
 
-static void
-_efl_vg_shape_efl_gfx_shape_stroke_scale_set(Eo *obj EINA_UNUSED,
-                                             Efl_VG_Shape_Data *pd,
-                                             double s)
-{
-   pd->stroke.scale = s;
-
-   _efl_vg_base_changed(obj);
-}
-
-static double
-_efl_vg_shape_efl_gfx_shape_stroke_scale_get(Eo *obj EINA_UNUSED,
-                                             Efl_VG_Shape_Data *pd)
-{
-   return pd->stroke.scale;
-}
-
-static void
-_efl_vg_shape_efl_gfx_shape_stroke_color_set(Eo *obj EINA_UNUSED,
-                                             Efl_VG_Shape_Data *pd,
-                                             int r, int g, int b, int a)
-{
-   pd->stroke.r = r;
-   pd->stroke.g = g;
-   pd->stroke.b = b;
-   pd->stroke.a = a;
-
-   _efl_vg_base_changed(obj);
-}
-
 static Eina_Bool
-_efl_vg_shape_efl_gfx_base_color_part_set(Eo *obj, Efl_VG_Shape_Data *pd,
+_efl_vg_shape_efl_gfx_base_color_part_set(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED,
                                           const char * part,
                                           int r, int g, int b, int a)
 {
@@ -95,7 +53,7 @@ _efl_vg_shape_efl_gfx_base_color_part_set(Eo *obj, Efl_VG_Shape_Data *pd,
 
    if (part && !strcmp(part, "stroke"))
      {
-        _efl_vg_shape_efl_gfx_shape_stroke_color_set(obj, pd, r, g, b, a);
+         eo_do(obj, efl_gfx_shape_stroke_color_set(r, g, b, a));
         return EINA_TRUE;
      }
 
@@ -105,19 +63,8 @@ _efl_vg_shape_efl_gfx_base_color_part_set(Eo *obj, Efl_VG_Shape_Data *pd,
    return ret;
 }
 
-static void
-_efl_vg_shape_efl_gfx_shape_stroke_color_get(Eo *obj EINA_UNUSED,
-                                             Efl_VG_Shape_Data *pd,
-                                             int *r, int *g, int *b, int *a)
-{
-   if (r) *r = pd->stroke.r;
-   if (g) *g = pd->stroke.g;
-   if (b) *b = pd->stroke.b;
-   if (a) *a = pd->stroke.a;
-}
-
 static Eina_Bool
-_efl_vg_shape_efl_gfx_base_color_part_get(Eo *obj, Efl_VG_Shape_Data *pd,
+_efl_vg_shape_efl_gfx_base_color_part_get(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED,
                                           const char * part,
                                           int *r, int *g, int *b, int *a)
 {
@@ -125,7 +72,7 @@ _efl_vg_shape_efl_gfx_base_color_part_get(Eo *obj, Efl_VG_Shape_Data *pd,
 
    if (part && !strcmp(part, "stroke"))
      {
-        _efl_vg_shape_efl_gfx_shape_stroke_color_get(obj, pd, r, g, b, a);
+        eo_do(obj, efl_gfx_shape_stroke_color_get(r, g, b, a));
         return EINA_TRUE;
      }
 
@@ -156,72 +103,6 @@ _efl_vg_shape_stroke_fill_get(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_vg_shape_efl_gfx_shape_stroke_width_set(Eo *obj EINA_UNUSED,
-                                             Efl_VG_Shape_Data *pd,
-                                             double w)
-{
-   pd->stroke.width = w;
-
-   _efl_vg_base_changed(obj);
-}
-
-static double
-_efl_vg_shape_efl_gfx_shape_stroke_width_get(Eo *obj EINA_UNUSED,
-                                             Efl_VG_Shape_Data *pd)
-{
-   return pd->stroke.width;
-}
-
-static void
-_efl_vg_shape_efl_gfx_shape_stroke_location_set(Eo *obj EINA_UNUSED,
-                                                Efl_VG_Shape_Data *pd,
-                                                double centered)
-{
-   pd->stroke.centered = centered;
-
-   _efl_vg_base_changed(obj);
-}
-
-static double
-_efl_vg_shape_efl_gfx_shape_stroke_location_get(Eo *obj EINA_UNUSED,
-                                                Efl_VG_Shape_Data *pd)
-{
-   return pd->stroke.centered;
-}
-
-static void
-_efl_vg_shape_efl_gfx_shape_stroke_dash_set(Eo *obj EINA_UNUSED,
-                                            Efl_VG_Shape_Data *pd,
-                                            const Efl_Gfx_Dash *dash,
-                                            unsigned int length)
-{
-   free(pd->stroke.dash);
-   pd->stroke.dash = NULL;
-   pd->stroke.dash_count = 0;
-
-   // check for null or empty dash
-   if (!dash || !length) return;
-
-   pd->stroke.dash = malloc(sizeof (Efl_Gfx_Dash) * length);
-   if (!pd->stroke.dash) return ;
-
-   memcpy(pd->stroke.dash, dash, sizeof (Efl_Gfx_Dash) * length);
-   pd->stroke.dash_count = length;
-
-   _efl_vg_base_changed(obj);
-}
-
-static void
-_efl_vg_shape_efl_gfx_shape_stroke_dash_get(Eo *obj EINA_UNUSED,
-                                            Efl_VG_Shape_Data *pd,
-                                            const Efl_Gfx_Dash **dash,
-                                            unsigned int *length)
-{
-   if (dash) *dash = pd->stroke.dash;
-   if (length) *length = pd->stroke.dash_count;
-}
-
-static void
 _efl_vg_shape_stroke_marker_set(Eo *obj EINA_UNUSED,
                                 Efl_VG_Shape_Data *pd,
                                 Efl_VG_Shape *m)
@@ -239,40 +120,6 @@ _efl_vg_shape_stroke_marker_get(Eo *obj EINA_UNUSED,
                                 Efl_VG_Shape_Data *pd)
 {
    return pd->stroke.marker;
-}
-
-static void
-_efl_vg_shape_efl_gfx_shape_stroke_cap_set(Eo *obj EINA_UNUSED,
-                                           Efl_VG_Shape_Data *pd,
-                                           Efl_Gfx_Cap c)
-{
-   pd->stroke.cap = c;
-
-   _efl_vg_base_changed(obj);
-}
-
-static Efl_Gfx_Cap
-_efl_vg_shape_efl_gfx_shape_stroke_cap_get(Eo *obj EINA_UNUSED,
-                                           Efl_VG_Shape_Data *pd)
-{
-   return pd->stroke.cap;
-}
-
-static void
-_efl_vg_shape_efl_gfx_shape_stroke_join_set(Eo *obj EINA_UNUSED,
-                                            Efl_VG_Shape_Data *pd,
-                                            Efl_Gfx_Join j)
-{
-   pd->stroke.join = j;
-
-   _efl_vg_base_changed(obj);
-}
-
-static Efl_Gfx_Join
-_efl_vg_shape_efl_gfx_shape_stroke_join_get(Eo *obj EINA_UNUSED,
-                                            Efl_VG_Shape_Data *pd)
-{
-   return pd->stroke.join;
 }
 
 static void
@@ -323,10 +170,11 @@ _efl_vg_shape_eo_base_constructor(Eo *obj, Efl_VG_Shape_Data *pd)
 
    obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
 
-   pd->stroke.cap = EFL_GFX_CAP_BUTT;
-   pd->stroke.join = EFL_GFX_JOIN_MITER;
-   pd->stroke.scale = 1;
-   pd->stroke.centered = 0.5;
+   eo_do(obj,
+         efl_gfx_shape_stroke_scale_set(1),
+         efl_gfx_shape_stroke_location_set(0.5),
+         efl_gfx_shape_stroke_cap_set(EFL_GFX_CAP_BUTT),
+         efl_gfx_shape_stroke_join_set(EFL_GFX_JOIN_MITER));
 
    nd = eo_data_scope_get(obj, EFL_VG_BASE_CLASS);
    nd->render_pre = _efl_vg_shape_render_pre;
