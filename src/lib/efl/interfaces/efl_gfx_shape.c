@@ -434,51 +434,6 @@ _efl_gfx_shape_equal_commands(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_gfx_shape_dup(Eo *obj, Efl_Gfx_Shape_Data *pd, const Eo *dup_from)
-{
-   const Efl_Gfx_Dash *dash = NULL;
-   Efl_Gfx_Shape_Data *from;
-   Efl_Gfx_Fill_Rule fill_rule;
-   unsigned int dash_length = 0;
-   Efl_Gfx_Cap cap;
-   Efl_Gfx_Join j;
-   int sr, sg, sb, sa;
-   double scale, location;
-   double sw;
-
-   if (obj == dup_from) return ;
-   from = eo_data_scope_get(dup_from, EFL_GFX_SHAPE_MIXIN);
-   if (!from) return ;
-
-   eo_do(dup_from,
-         scale = efl_gfx_shape_stroke_scale_get(),
-         efl_gfx_shape_stroke_color_get(&sr, &sg, &sb, &sa),
-         sw = efl_gfx_shape_stroke_width_get(),
-         location = efl_gfx_shape_stroke_location_get(),
-         efl_gfx_shape_stroke_dash_get(&dash, &dash_length),
-         cap = efl_gfx_shape_stroke_cap_get(),
-         j = efl_gfx_shape_stroke_join_get(),
-         fill_rule = efl_gfx_shape_fill_rule_get());
-   eo_do(obj,
-         efl_gfx_shape_stroke_scale_set(scale),
-         efl_gfx_shape_stroke_color_set(sr, sg, sb, sa),
-         efl_gfx_shape_stroke_width_set(sw),
-         efl_gfx_shape_stroke_location_set(location),
-         efl_gfx_shape_stroke_dash_set(dash, dash_length),
-         efl_gfx_shape_stroke_cap_set(cap),
-         efl_gfx_shape_stroke_join_set(j),
-         efl_gfx_shape_fill_rule_set(fill_rule));
-
-   _efl_gfx_shape_path_set(obj, pd, from->commands, from->points);
-
-   pd->convex = from->convex;
-
-   eo_do(obj,
-         eo_event_callback_call(EFL_GFX_PATH_CHANGED, NULL),
-         eo_event_callback_call(EFL_GFX_CHANGED, NULL));
-}
-
-static void
 _efl_gfx_shape_reset(Eo *obj, Efl_Gfx_Shape_Data *pd)
 {
    free(pd->commands);
@@ -1834,6 +1789,35 @@ _efl_gfx_shape_fill_rule_get(Eo *obj EINA_UNUSED,
                              Efl_Gfx_Shape_Data *pd)
 {
    return pd->fill_rule;
+}
+
+static void
+_efl_gfx_shape_dup(Eo *obj, Efl_Gfx_Shape_Data *pd, const Eo *dup_from)
+{
+   Efl_Gfx_Shape_Data *from;
+
+   if (obj == dup_from) return ;
+   from = eo_data_scope_get(dup_from, EFL_GFX_SHAPE_MIXIN);
+   if (!from) return ;
+
+   pd->public.stroke.scale = from->public.stroke.scale;
+   pd->public.stroke.width = from->public.stroke.width;
+   pd->public.stroke.centered = from->public.stroke.centered;
+   pd->public.stroke.cap = from->public.stroke.cap;
+   pd->public.stroke.join = from->public.stroke.join;
+   pd->public.stroke.color.r = from->public.stroke.color.r;
+   pd->public.stroke.color.g = from->public.stroke.color.g;
+   pd->public.stroke.color.b = from->public.stroke.color.b;
+   pd->public.stroke.color.a = from->public.stroke.color.a;
+   pd->fill_rule = from->fill_rule;
+   pd->convex = from->convex;
+
+   _efl_gfx_shape_stroke_dash_set(obj, pd, from->public.stroke.dash, from->public.stroke.dash_length);
+   _efl_gfx_shape_path_set(obj, pd, from->commands, from->points);
+
+   eo_do(obj,
+         eo_event_callback_call(EFL_GFX_PATH_CHANGED, NULL),
+         eo_event_callback_call(EFL_GFX_CHANGED, NULL));
 }
 
 #include "interfaces/efl_gfx_shape.eo.c"
