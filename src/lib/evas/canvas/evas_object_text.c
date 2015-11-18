@@ -274,7 +274,6 @@ _evas_object_text_last_up_to_pos(const Evas_Object *eo_obj,
    int pos = 0;
 
 #ifdef BIDI_SUPPORT
-   /*FIXME: not very efficient, sort the items arrays. */
    /* Reorder if it's a bidi text */
    if (o->bidi_par_props)
      {
