@@ -124,10 +124,39 @@ typedef enum _Efl_Gfx_Gradient_Spread
 } Efl_Gfx_Gradient_Spread;
 
 
+/**
+ * Type defining stroke information.
+ * @note Describe the properties to define the path stroke.
+ * @since 1.14
+ */
+typedef struct _Efl_Gfx_Stroke Efl_Gfx_Stroke;
+struct _Efl_Gfx_Stroke
+{
+  double scale;
+  double width;
+  double centered;
+
+  struct {
+     int r, g, b, a;
+  } color;
+
+  Efl_Gfx_Dash *dash;
+  unsigned int dash_length;
+
+  Efl_Gfx_Cap cap;
+  Efl_Gfx_Join join;
+};
+
+typedef struct _Efl_Gfx_Shape_Public Efl_Gfx_Shape_Public;
+struct _Efl_Gfx_Shape_Public
+{
+   Efl_Gfx_Stroke stroke;
+};
+
 #ifdef EFL_BETA_API_SUPPORT
 
 #include <Efl_Model_Common.h>
-  
+
 /* Interfaces */
 #include "interfaces/efl_control.eo.h"
 #include "interfaces/efl_file.eo.h"

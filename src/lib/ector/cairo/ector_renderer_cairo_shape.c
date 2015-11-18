@@ -60,9 +60,12 @@ static void (*cairo_set_dash) (cairo_t *cr, const double *dashes, int num_dashes
 typedef struct _Ector_Renderer_Cairo_Shape_Data Ector_Renderer_Cairo_Shape_Data;
 struct _Ector_Renderer_Cairo_Shape_Data
 {
+   Efl_Gfx_Shape_Public *public_shape;
+
    Ector_Cairo_Surface_Data *parent;
    Ector_Renderer_Generic_Shape_Data *shape;
    Ector_Renderer_Generic_Base_Data *base;
+
    cairo_path_t *path;
 };
 
@@ -163,7 +166,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
    if (pd->shape->fill)
      eo_do(pd->shape->fill, ector_renderer_cairo_base_fill(mul_col));
 
-   if (pd->shape->stroke.fill || pd->shape->stroke.color.a > 0)
+   if (pd->shape->stroke.fill || pd->public_shape->stroke.color.a > 0)
      {
         cairo_fill_preserve(pd->parent->cairo);
 
@@ -171,31 +174,31 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
           eo_do(pd->shape->stroke.fill, ector_renderer_cairo_base_fill(mul_col));
        else
          {
-            r = (((pd->shape->stroke.color.r * R_VAL(&mul_col)) + 0xff) >> 8);
-            g = (((pd->shape->stroke.color.g * G_VAL(&mul_col)) + 0xff) >> 8);
-            b = (((pd->shape->stroke.color.b * B_VAL(&mul_col)) + 0xff) >> 8);
-            a = (((pd->shape->stroke.color.a * A_VAL(&mul_col)) + 0xff) >> 8);
+            r = (((pd->public_shape->stroke.color.r * R_VAL(&mul_col)) + 0xff) >> 8);
+            g = (((pd->public_shape->stroke.color.g * G_VAL(&mul_col)) + 0xff) >> 8);
+            b = (((pd->public_shape->stroke.color.b * B_VAL(&mul_col)) + 0xff) >> 8);
+            a = (((pd->public_shape->stroke.color.a * A_VAL(&mul_col)) + 0xff) >> 8);
             ector_color_argb_unpremul(a, &r, &g, &b);
             cairo_set_source_rgba(pd->parent->cairo, r/255.0, g/255.0, b/255.0, a/255.0);
-            if (pd->shape->stroke.dash)
+            if (pd->public_shape->stroke.dash)
               {
                  double *dashinfo;
 
-                 dashinfo = (double *) malloc(2 * pd->shape->stroke.dash_length * sizeof(double));
-                 for (i = 0; i < pd->shape->stroke.dash_length; i++)
+                 dashinfo = (double *) malloc(2 * pd->public_shape->stroke.dash_length * sizeof(double));
+                 for (i = 0; i < pd->public_shape->stroke.dash_length; i++)
                    {
-                      dashinfo[i*2] = pd->shape->stroke.dash[i].length;
-                      dashinfo[i*2 + 1] = pd->shape->stroke.dash[i].gap;
+                      dashinfo[i*2] = pd->public_shape->stroke.dash[i].length;
+                      dashinfo[i*2 + 1] = pd->public_shape->stroke.dash[i].gap;
                    }
-                 cairo_set_dash(pd->parent->cairo, dashinfo, pd->shape->stroke.dash_length * 2, 0);
+                 cairo_set_dash(pd->parent->cairo, dashinfo, pd->public_shape->stroke.dash_length * 2, 0);
                  free(dashinfo);
               }
          }
 
        // Set dash, cap and join
-       cairo_set_line_width(pd->parent->cairo, (pd->shape->stroke.width * pd->shape->stroke.scale * 2));
-       cairo_set_line_cap(pd->parent->cairo, (cairo_line_cap_t) pd->shape->stroke.cap);
-       cairo_set_line_join(pd->parent->cairo, (cairo_line_join_t) pd->shape->stroke.join);
+       cairo_set_line_width(pd->parent->cairo, (pd->public_shape->stroke.width * pd->public_shape->stroke.scale * 2));
+       cairo_set_line_cap(pd->parent->cairo, (cairo_line_cap_t) pd->public_shape->stroke.cap);
+       cairo_set_line_join(pd->parent->cairo, (cairo_line_join_t) pd->public_shape->stroke.join);
        cairo_stroke(pd->parent->cairo);
      }
    else
@@ -239,6 +242,7 @@ _ector_renderer_cairo_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Sh
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj = eo_constructor());
    if (!obj) return NULL;
 
+   pd->public_shape = eo_data_xref(obj, EFL_GFX_SHAPE_MIXIN, obj);
    pd->shape = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_SHAPE_MIXIN, obj);
    pd->base = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
 
@@ -306,17 +310,17 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_crc_get(Eo *obj,
                crc = ector_renderer_crc_get());
 
    crc = eina_crc((void*) &pd->shape->stroke.marker, sizeof (pd->shape->stroke.marker), crc, EINA_FALSE);
-   crc = eina_crc((void*) &pd->shape->stroke.scale, sizeof (pd->shape->stroke.scale) * 3, crc, EINA_FALSE); // scale, width, centered
-   crc = eina_crc((void*) &pd->shape->stroke.color, sizeof (pd->shape->stroke.color), crc, EINA_FALSE);
-   crc = eina_crc((void*) &pd->shape->stroke.cap, sizeof (pd->shape->stroke.cap), crc, EINA_FALSE);
-   crc = eina_crc((void*) &pd->shape->stroke.join, sizeof (pd->shape->stroke.join), crc, EINA_FALSE);
+   crc = eina_crc((void*) &pd->public_shape->stroke.scale, sizeof (pd->public_shape->stroke.scale) * 3, crc, EINA_FALSE); // scale, width, centered
+   crc = eina_crc((void*) &pd->public_shape->stroke.color, sizeof (pd->public_shape->stroke.color), crc, EINA_FALSE);
+   crc = eina_crc((void*) &pd->public_shape->stroke.cap, sizeof (pd->public_shape->stroke.cap), crc, EINA_FALSE);
+   crc = eina_crc((void*) &pd->public_shape->stroke.join, sizeof (pd->public_shape->stroke.join), crc, EINA_FALSE);
 
    if (pd->shape->fill) crc = _renderer_crc_get(pd->shape->fill, crc);
    if (pd->shape->stroke.fill) crc = _renderer_crc_get(pd->shape->stroke.fill, crc);
    if (pd->shape->stroke.marker) crc = _renderer_crc_get(pd->shape->stroke.marker, crc);
-   if (pd->shape->stroke.dash_length)
+   if (pd->public_shape->stroke.dash_length)
      {
-        crc = eina_crc((void*) pd->shape->stroke.dash, sizeof (Efl_Gfx_Dash) * pd->shape->stroke.dash_length, crc, EINA_FALSE);
+        crc = eina_crc((void*) pd->public_shape->stroke.dash, sizeof (Efl_Gfx_Dash) * pd->public_shape->stroke.dash_length, crc, EINA_FALSE);
      }
 
    return crc;
