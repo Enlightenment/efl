@@ -12,7 +12,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             localized_name: const(char)*;
          }
       }
-      @property name @protected {
+      @property name {
          get {
             [[Gets an string describing ATSPI widget role name.  Should be free by a user.]]
          }
@@ -30,7 +30,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             relations: Elm_Atspi_Relation_Set;
          }
       }
-      @property role @protected {
+      @property role {
          get {
             [[Gets the role of the widget in ATSPI Accessibility domain.]]
          }
@@ -72,7 +72,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             idx: int;
          }
       }
-      @property description @protected {
+      @property description {
          get {
             [[Gets widget contextual information.]]
          }
@@ -83,7 +83,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             description: const(char)*;
          }
       }
-      @property parent @protected {
+      @property parent {
          get {
             [[Gets widget accessible parent.]]
          }
@@ -123,7 +123,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             @in event_info: void*; [[Accessibility event details.]]
          }
       }
-      @property translation_domain @protected {
+      @property translation_domain {
          get {
             [[Gets the translation domain of "name" and "description"
               properties.]]
@@ -147,7 +147,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             domain: const(char)*; [[ translation domain ]]
          }
       }
-      relationship_append @protected {
+      relationship_append {
          [[Defines the relationship between two accessible objects.
 
            Adds unique relation between source object and relation_object of a
@@ -169,7 +169,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             @in relation_object: const(Elm_Interface_Atspi_Accessible)*;
          }
       }
-      relationship_remove @protected {
+      relationship_remove {
          [[Removes the relationship between two accessible objects.
 
           If relation_object is NULL function removes all relations
@@ -180,7 +180,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             @in relation_object: const(Elm_Interface_Atspi_Accessible)*;
          }
       }
-      relationships_clear @protected {
+      relationships_clear {
          [[Removes all relationships in accessible object.]]
       }
    }
