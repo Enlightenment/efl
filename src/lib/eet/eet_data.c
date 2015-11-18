@@ -191,6 +191,7 @@ struct _Eet_Data_Element
    int                  counter_offset;  /* for a variable array we need the offset of the count variable */
    unsigned char        type;  /* EET_T_XXX */
    unsigned char        group_type;  /* EET_G_XXX */
+   Eina_Bool            subtype_free : 1;
 };
 
 struct _Eet_Data_Encode_Hash_Info
@@ -2108,7 +2109,15 @@ eet_data_descriptor_free(Eet_Data_Descriptor *edd)
 
    _eet_descriptor_hash_free(edd);
    if (edd->elements.set)
-     free(edd->elements.set);
+     {
+        int i;
+        for (i = 0; i < edd->elements.num; i++)
+          {
+             if (edd->elements.set[i].subtype_free)
+               eet_data_descriptor_free(edd->elements.set[i].subtype);
+          }
+        free(edd->elements.set);
+     }
 
    free(edd);
 }
@@ -2200,6 +2209,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
    ede = &(edd->elements.set[edd->elements.num - 1]);
    ede->name = name;
    ede->directory_name_ptr = NULL;
+   ede->subtype_free = EINA_FALSE;
 
    /*
     * We do a special case when we do list,hash or whatever group of simple type.
@@ -2229,6 +2239,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
                                         /* 0,  */ NULL,
                                         NULL);
         type = EET_T_UNKNOW;
+        ede->subtype_free = EINA_TRUE;
      }
 
    ede->type = type;
