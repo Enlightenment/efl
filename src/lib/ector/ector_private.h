@@ -1,6 +1,8 @@
 #ifndef ECTOR_PRIVATE_H_
 #define ECTOR_PRIVATE_H_
 
+#include "Ector.h"
+
 /*
  * variable and macros used for the eina_log module
  */
@@ -65,13 +67,22 @@ typedef unsigned short DATA16;
 #define ARGB_JOIN(a,r,g,b) \
   (((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
 
-static inline void
-_ector_renderer_replace(Ector_Renderer **d, const Ector_Renderer *s)
+static inline Eo *
+_eo_refplace(Eo **d, const Eo *s)
 {
-   Ector_Renderer *tmp = *d;
-
+   Eo *tmp = *d;
    *d = eo_ref(s);
-   eo_unref(tmp);
+   if (tmp) eo_unref(tmp);
+   return *d;
+}
+
+static inline Eo *
+_eo_xrefplace(Eo **d, Eo *s, const Eo *ref_obj)
+{
+   Eo *tmp = *d;
+   *d = eo_xref(s, ref_obj);
+   if (tmp) eo_xunref(tmp, ref_obj);
+   return *d;
 }
 
 typedef struct _Ector_Renderer_Generic_Base_Data Ector_Renderer_Generic_Base_Data;
@@ -79,6 +90,8 @@ typedef struct _Ector_Renderer_Generic_Gradient_Data Ector_Renderer_Generic_Grad
 typedef struct _Ector_Renderer_Generic_Gradient_Linear_Data Ector_Renderer_Generic_Gradient_Linear_Data;
 typedef struct _Ector_Renderer_Generic_Gradient_Radial_Data Ector_Renderer_Generic_Gradient_Radial_Data;
 typedef struct _Ector_Renderer_Generic_Shape_Data Ector_Renderer_Generic_Shape_Data;
+typedef struct _Ector_Renderer_Generic_Buffer_Data Ector_Renderer_Generic_Buffer_Data;
+typedef struct _Ector_Generic_Buffer_Data Ector_Generic_Buffer_Data;
 
 struct _Ector_Renderer_Generic_Base_Data
 {
@@ -130,6 +143,23 @@ struct _Ector_Renderer_Generic_Shape_Data
       Ector_Renderer *fill;
       Ector_Renderer *marker;
    } stroke;
+};
+
+struct _Ector_Generic_Buffer_Data
+{
+   Eo                 *eo;
+   unsigned int        w, h;
+   unsigned char       l, r, t, b;
+   Efl_Gfx_Colorspace  cspace;
+};
+
+struct _Ector_Renderer_Generic_Buffer_Data
+{
+   Ector_Generic_Buffer *eo_buffer;
+   struct {
+      Efl_Gfx_Fill_Spread spread;
+      int x, y, w, h;
+   } fill;
 };
 
 static inline unsigned int

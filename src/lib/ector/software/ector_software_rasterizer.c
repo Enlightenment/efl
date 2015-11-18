@@ -74,6 +74,54 @@ _blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
      }
 }
 
+static void
+_blend_image_gry8(int count, const SW_FT_Span *spans, void *user_data)
+{
+   Span_Data *data = user_data;
+
+#warning Need drawhelper here (no alpha support yet)
+
+   while (count--)
+     {
+        spans++;
+     }
+}
+
+static void
+_blend_image_argb(int count, const SW_FT_Span *spans, void *user_data)
+{
+   Span_Data *data = user_data;
+   RGBA_Comp_Func comp_func;
+   DATA32 *buffer, *target;
+   DATA8 *src8;
+   unsigned int l, length, sy = 0;
+
+#warning FIXME: Image scaling, anyone?
+#warning FIXME: Optimize eo call with early call resolution
+
+   comp_func = ector_comp_func_span_get(data->op, data->mul_col, EINA_TRUE);
+
+   buffer = data->raster_buffer.buffer + ((data->raster_buffer.width * data->offy) + data->offx);
+
+   while (count--)
+     {
+        target = buffer + ((data->raster_buffer.width * spans->y) + spans->x);
+        length = spans->len;
+        while (length)
+          {
+             l = MIN(length, data->buffer->generic.w);
+             eo_do(data->buffer->generic.eo, src8 = ector_buffer_span_get(0, sy, l, EFL_GFX_COLORSPACE_ARGB8888, NULL));
+             comp_func(target, (DATA32 *) src8, l, data->mul_col, spans->coverage);
+             eo_do(data->buffer->generic.eo, ector_buffer_span_free(src8));
+             target += l;
+             length -= l;
+          }
+        ++spans;
+        ++sy;
+        if (sy >= data->buffer->generic.h)
+          sy = 0;
+     }
+}
 
 /*!
     \internal
@@ -279,7 +327,10 @@ _adjust_span_fill_methods(Span_Data *spdata)
           spdata->unclipped_blend = &_blend_gradient;
           break;
         case Image:
-          spdata->unclipped_blend = 0;//&_blend_image;
+          if (spdata->buffer->generic.cspace == EFL_GFX_COLORSPACE_GRY8)
+            spdata->unclipped_blend = &_blend_image_gry8;
+          else
+            spdata->unclipped_blend = &_blend_image_argb;
           break;
      }
 
@@ -514,6 +565,13 @@ void ector_software_rasterizer_radial_gradient_set(Software_Rasterizer *rasteriz
 {
    rasterizer->fill_data.gradient = radial;
    rasterizer->fill_data.type = RadialGradient;
+}
+
+void ector_software_rasterizer_buffer_set(Software_Rasterizer *rasterizer,
+                                          Ector_Software_Buffer *buffer)
+{
+   rasterizer->fill_data.buffer = eo_data_scope_get(buffer, ECTOR_SOFTWARE_BUFFER_CLASS);
+   rasterizer->fill_data.type = Image;
 }
 
 void ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,

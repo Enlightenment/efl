@@ -2,8 +2,10 @@
 ### Library
 ector_eolian_files_generic = \
 	lib/ector/ector_generic_surface.eo \
+	lib/ector/ector_generic_buffer.eo \
 	lib/ector/ector_renderer_generic_base.eo \
 	lib/ector/ector_renderer_generic_shape.eo \
+	lib/ector/ector_renderer_generic_buffer.eo \
 	lib/ector/ector_renderer_generic_gradient.eo \
 	lib/ector/ector_renderer_generic_gradient_radial.eo \
 	lib/ector/ector_renderer_generic_gradient_linear.eo
@@ -21,8 +23,10 @@ ector_eolian_cairo_h = $(ector_eolian_files_cairo:%.eo=%.eo.h)
 # Handle default software backend
 ector_eolian_files_software = \
 	lib/ector/software/ector_software_surface.eo \
+	lib/ector/software/ector_software_buffer.eo \
 	lib/ector/software/ector_renderer_software_base.eo \
 	lib/ector/software/ector_renderer_software_shape.eo \
+	lib/ector/software/ector_renderer_software_buffer.eo \
 	lib/ector/software/ector_renderer_software_gradient_radial.eo \
 	lib/ector/software/ector_renderer_software_gradient_linear.eo
 ector_eolian_software_h = $(ector_eolian_files_software:%.eo=%.eo.h)
@@ -64,8 +68,10 @@ lib/ector/software/Ector_Software.h
 lib_ector_libector_la_SOURCES = \
 lib/ector/ector_main.c \
 lib/ector/ector_surface.c \
+lib/ector/ector_generic_buffer.c \
 lib/ector/ector_renderer_shape.c \
 lib/ector/ector_renderer_base.c \
+lib/ector/ector_renderer_generic_buffer.c \
 lib/ector/ector_renderer_gradient.c \
 lib/ector/ector_renderer_gradient_radial.c \
 lib/ector/ector_renderer_gradient_linear.c
@@ -89,9 +95,11 @@ lib_ector_libector_la_SOURCES += \
 lib/ector/software/ector_renderer_software_gradient_linear.c \
 lib/ector/software/ector_renderer_software_gradient_radial.c \
 lib/ector/software/ector_renderer_software_shape.c \
+lib/ector/software/ector_renderer_software_buffer.c \
 lib/ector/software/ector_software_gradient.c \
 lib/ector/software/ector_software_rasterizer.c \
 lib/ector/software/ector_software_surface.c \
+lib/ector/software/ector_software_buffer.c \
 static_libs/freetype/sw_ft_math.c \
 static_libs/freetype/sw_ft_raster.c \
 static_libs/freetype/sw_ft_stroker.c \
@@ -150,6 +158,7 @@ endif
 
 EXTRA_DIST += \
 lib/ector/ector_private.h \
+lib/ector/ector_buffer.h \
 lib/ector/cairo/ector_cairo_private.h \
 lib/ector/software/ector_drawhelper_private.h \
 lib/ector/software/ector_software_private.h \

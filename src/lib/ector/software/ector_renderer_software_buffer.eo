@@ -1,0 +1,19 @@
+class Ector.Renderer.Software.Buffer (Ector.Renderer.Software.Base, Ector.Renderer.Generic.Buffer)
+{
+   legacy_prefix: null;
+   methods {
+      @property buffer {
+	 set {}
+	 get {}
+	 values {
+	    buf: Ector.Generic.Buffer *;
+	 }
+      }
+   }
+   implements {
+      Ector.Renderer.Generic.Base.prepare;
+      Ector.Renderer.Generic.Base.crc.get;
+      Ector.Renderer.Software.Base.fill;
+      Eo.Base.destructor;
+   }
+}

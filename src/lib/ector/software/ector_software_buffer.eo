@@ -1,0 +1,19 @@
+class Ector.Software.Buffer (Ector.Generic.Buffer)
+{
+   [[A buffer in Ector Software is a readable & optionally writable image]]
+   legacy_prefix: null;
+   methods {
+      pixels_clear @protected {
+	 [[Clear internal pixel buffer]]
+      }
+   }
+   implements {
+      Eo.Base.destructor;
+      Ector.Generic.Buffer.flags.get;
+      Ector.Generic.Buffer.pixels_set;
+      Ector.Generic.Buffer.span_get;
+      Ector.Generic.Buffer.span_free;
+      Ector.Generic.Buffer.map;
+      Ector.Generic.Buffer.unmap;
+   }
+}

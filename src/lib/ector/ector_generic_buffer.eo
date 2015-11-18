@@ -1,0 +1,132 @@
+enum Ector.Buffer.Flag {
+   none              = 0x00, [[Buffer may not have any backing]]
+   cpu_readable      = 0x01, [[Can be read from the CPU after map. Reading may still be very slow.]]
+   cpu_writable      = 0x02, [[Can be written to by the CPU after map. Writing may still be very slow.]]
+   renderable        = 0x04, [[Can be rendered to, ie CPU memory for SW rendering, or an FBO for GL engine]]
+   cpu_readable_fast = 0x08, [[Can be read by the CPU at high speed, ie no need for glReadPixels]]
+   cpu_writable_fast = 0x0A, [[Can be written by the CPU at high speed, ie no need for GPU texture upload]]
+   uncached          = 0x10, [[Backed by uncached memory, ie. slow-ish reads but faster than glReadPixels]]
+/* non_coherent      = 0x20, [[Memory may be mapped but will not be coherent between GPU and CPU. Call flush or invalidate to synchronize it.]] */
+}
+
+enum Ector.Buffer.Access_Flag {
+   none  = 0x0,
+   read  = 0x1,
+   write = 0x2,
+}
+
+abstract Ector.Generic.Buffer (Eo.Base)
+{
+   [[2D pixel buffer interface for Ector
+     @since 1.17
+   ]]
+   eo_prefix: ector_buffer;
+   legacy_prefix: null;
+   methods {
+      @property size {
+	 get {
+	    [[Retrieves the (rectangular) size of the pixel buffer.]]
+	 }
+	 values {
+	    w: int;
+	    h: int;
+	 }
+      }
+      @property cspace {
+	 get {}
+	 values {
+	    cspace: Efl.Gfx.Colorspace;
+	 }
+      }
+      map {
+	 [[Map a region of this buffer for read or write access by the CPU,
+	   fetch data from the GPU if needed.
+	 ]]
+	 params {
+	    @out offset: int; [[Byte offset to the first requested pixel]]
+	    @out length: uint; [[Accessible buffer size in bytes]]
+	    @in mode: Ector.Buffer.Access_Flag;
+	    @in x: uint;
+	    @in y: uint;
+	    @in w: uint; [[If 0, defaults to the buffer width]]
+	    @in h: uint; [[If 0, defaults to the buffer height]]
+	    @in cspace: Efl.Gfx.Colorspace; [[Requested colorspace. If difference from the internal cspace, map may either fail or convert slowly]]
+	    @out stride: uint; [[Optional]]
+	 }
+	 return: uint8* @warn_unused; [[Top-left pixel is at offset bytes after this address. Returns $null in case of failure]]
+      }
+      unmap {
+	 [[Unmap a region of this buffer, and upload data to the GPU (if needed).]]
+	 params {
+	    @in data: void*; [[Data pointer returned by a previous call to map]]
+	    @in offset: int;
+	    @in length: uint;
+	 }
+      }
+      pixels_set {
+	 [[Set the source pixels for this buffer, or allocate a new memory region]]
+	 params {
+	    @in pixels: void*; [[If $null, allocates an empty buffer]]
+	    @in width: int;
+	    @in height: int;
+	    @in stride: int; [[Can be 0]]
+	    @in cspace: Efl.Gfx.Colorspace;
+	    @in writable: bool;
+	    @in l: ubyte; [[Left border pixels, usually 0 or 1]]
+	    @in r: ubyte; [[Right border pixels, usually 0 or 1]]
+	    @in t: ubyte; [[Top border pixels, usually 0 or 1]]
+	    @in b: ubyte; [[Bottom border pixels, usually 0 or 1]]
+	 }
+	 return: bool;
+      }
+      span_get {
+	 [[Get a single horizontal span of length w starting from (x,y)
+
+	   Call span_free() to release it. This function will try not to
+	   allocate any new buffer, whenever possible. This means the data
+	   might be mapped directly from the backing memory buffer.
+	 ]]
+	 params {
+	    @in x: int; [[Ranges from -l to w+r-1]]
+	    @in y: int; [[Ranges from -t to h+b-1]]
+	    @in w: uint; [[Ranges from 1 to w+l+r]]
+	    @in cspace: Efl.Gfx.Colorspace; [[Requested colorspace, may trigger conversion on the fly.]]
+	    @out length: uint; [[Length in bytes of the returned buffer]]
+	 }
+	 return: uint8*; [[A temporary memory buffer containing the pixels requested.]]
+      }
+      span_free {
+	 [[Must be called as soon as possible after span_get]]
+	 params {
+	    data: uint8*;
+	 }
+      }
+      @property flags {
+	 get { [[Get the capabilities of this buffer]] }
+	 values {
+	    flag: Ector.Buffer.Flag; [[A bitmask of capability flags]]
+	 }
+      }
+      @property border {
+	 [[Duplicated pixel borders of this buffer, used for GL scaling]]
+	 get {}
+	 values {
+	    l: int;
+	    r: int;
+	    t: int;
+	    b: int;
+	 }
+      }
+   }
+   events {
+      detached; [[Emitted whenever the previously attached pixels are detached during pixels_set]]
+   }
+   implements {
+      Eo.Base.constructor;
+      @virtual .pixels_set;
+      @virtual .span_get;
+      @virtual .span_free;
+      @virtual .map;
+      @virtual .unmap;
+   }
+}

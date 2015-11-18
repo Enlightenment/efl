@@ -3,6 +3,7 @@
 
 #include "sw_ft_raster.h"
 #include "sw_ft_stroker.h"
+#include "../ector_private.h"
 
 #ifndef DATA32
 typedef unsigned int DATA32;
@@ -48,12 +49,27 @@ typedef struct _Ector_Renderer_Software_Gradient_Data
 
 
 // Rasterizer related structure
+// FIXME: Merge with Ector_Software_Buffer
 typedef struct _Raster_Buffer
 {
    int            width;
    int            height;
    DATA32        *buffer;
 } Raster_Buffer;
+
+typedef struct _Ector_Software_Buffer_Data
+{
+   Ector_Generic_Buffer_Data generic;
+   union {
+      unsigned int     *u32;
+      unsigned char    *u8;
+   } pixels;
+   unsigned int         stride;
+   unsigned int         map_count;
+   Eina_Bool            writable : 1;
+   Eina_Bool            nofree : 1; // pixel data should not be free()'ed
+   Eina_Bool            span_free : 1;
+} Ector_Software_Buffer_Data;
 
 typedef struct _Shape_Rle_Data
 {
@@ -98,7 +114,7 @@ typedef struct _Span_Data
    union {
       DATA32 color;
       Ector_Renderer_Software_Gradient_Data *gradient;
-      //ImageData    texture;
+      Ector_Software_Buffer_Data *buffer;
    };
 } Span_Data;
 
@@ -131,6 +147,7 @@ void ector_software_rasterizer_transform_set(Software_Rasterizer *rasterizer, Ei
 void ector_software_rasterizer_color_set(Software_Rasterizer *rasterizer, int r, int g, int b, int a);
 void ector_software_rasterizer_linear_gradient_set(Software_Rasterizer *rasterizer, Ector_Renderer_Software_Gradient_Data *linear);
 void ector_software_rasterizer_radial_gradient_set(Software_Rasterizer *rasterizer, Ector_Renderer_Software_Gradient_Data *radial);
+void ector_software_rasterizer_buffer_set(Software_Rasterizer *rasterizer, Ector_Software_Buffer *image);
 void ector_software_rasterizer_clip_rect_set(Software_Rasterizer *rasterizer, Eina_Array *clips);
 void ector_software_rasterizer_clip_shape_set(Software_Rasterizer *rasterizer, Shape_Rle_Data *clip);
 

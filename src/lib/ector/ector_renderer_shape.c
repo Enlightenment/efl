@@ -12,7 +12,7 @@ _ector_renderer_generic_shape_fill_set(Eo *obj EINA_UNUSED,
                                        Ector_Renderer_Generic_Shape_Data *pd,
                                        const Ector_Renderer *r)
 {
-   _ector_renderer_replace(&pd->fill, r);
+   _eo_refplace(&pd->fill, r);
 }
 
 static const Ector_Renderer *
@@ -27,7 +27,7 @@ _ector_renderer_generic_shape_stroke_fill_set(Eo *obj EINA_UNUSED,
                                               Ector_Renderer_Generic_Shape_Data *pd,
                                               const Ector_Renderer *r)
 {
-   _ector_renderer_replace(&pd->stroke.fill, r);
+   _eo_refplace(&pd->stroke.fill, r);
 }
 
 static const Ector_Renderer *
@@ -42,7 +42,7 @@ _ector_renderer_generic_shape_stroke_marker_set(Eo *obj EINA_UNUSED,
                                                 Ector_Renderer_Generic_Shape_Data *pd,
                                                 const Ector_Renderer *r)
 {
-   _ector_renderer_replace(&pd->stroke.marker, r);
+   _eo_refplace(&pd->stroke.marker, r);
 }
 
 static const Ector_Renderer *
