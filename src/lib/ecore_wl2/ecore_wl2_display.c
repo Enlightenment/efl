@@ -169,6 +169,8 @@ _cb_create_data(void *data, Ecore_Fd_Handler *hdl)
 
    ewd = data;
 
+   if (_fatal_error) return ECORE_CALLBACK_CANCEL;
+
    if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_ERROR))
      {
         ERR("Received Fatal Error on Wayland Display");
@@ -450,6 +452,7 @@ ecore_wl2_display_create(const char *name)
      }
 
    setenv("WAYLAND_DISPLAY", ewd->name, 1);
+   DBG("WAYLAND_DISPLAY: %s", ewd->name);
 
    loop = wl_display_get_event_loop(ewd->wl.display);
 
