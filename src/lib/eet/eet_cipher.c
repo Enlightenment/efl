@@ -236,9 +236,9 @@ on_error:
 
 # endif /* ifdef HAVE_GNUTLS */
 #else
-   certificate_file = NULL;
-   private_key_file = NULL;
-   cb = NULL;
+   (void) certificate_file;
+   (void) private_key_file;
+   (void) cb;
 #endif /* ifdef HAVE_SIGNATURE */
    return NULL;
 }
