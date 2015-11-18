@@ -271,6 +271,7 @@ _evas_object_text_last_up_to_pos(const Evas_Object *eo_obj,
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Object_Text_Item *it;
+   int pos = 0;
 
 #ifdef BIDI_SUPPORT
    /*FIXME: not very efficient, sort the items arrays. */
@@ -291,15 +292,17 @@ _evas_object_text_last_up_to_pos(const Evas_Object *eo_obj,
           {
              if ((x <= cx) && (cx < x + it->adv))
                {
-                  return it->text_pos + ENFN->font_last_up_to_pos(ENDT,
+                  pos = it->text_pos + ENFN->font_last_up_to_pos(ENDT,
                         o->font,
                         &it->text_props,
                         cx - x,
                         cy);
+                  break;
                }
              x += it->adv;
           }
         eina_list_free(logical_it);
+        return pos;
      }
    else
 #endif
