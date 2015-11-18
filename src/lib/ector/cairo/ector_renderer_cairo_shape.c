@@ -26,6 +26,11 @@ typedef enum _cairo_line_join {
   CAIRO_LINE_JOIN_BEVEL
 } cairo_line_join_t;
 
+typedef enum _cairo_fill_rule {
+  CAIRO_FILL_RULE_WINDING,
+  CAIRO_FILL_RULE_EVEN_ODD
+} cairo_fill_rule_t;
+
 static void (*cairo_move_to)(cairo_t *cr, double x, double y) = NULL;
 static void (*cairo_line_to)(cairo_t *cr, double x, double y) = NULL;
 static void (*cairo_curve_to)(cairo_t *cr,
@@ -56,6 +61,7 @@ static void (*cairo_save)(cairo_t *cr) = NULL;
 static void (*cairo_restore)(cairo_t *cr) = NULL;
 
 static void (*cairo_set_dash) (cairo_t *cr, const double *dashes, int num_dashes, double offset) = NULL;
+static void (*cairo_set_fill_rule) (cairo_t *cr, cairo_fill_rule_t fill_rule);
 
 typedef struct _Ector_Renderer_Cairo_Shape_Data Ector_Renderer_Cairo_Shape_Data;
 struct _Ector_Renderer_Cairo_Shape_Data
@@ -153,6 +159,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
 {
    int r, g, b, a;
    unsigned i;
+   Efl_Gfx_Fill_Rule fill_rule;
 
    if (pd->path == NULL) return EINA_FALSE;
 
@@ -162,6 +169,12 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
 
    cairo_new_path(pd->parent->cairo);
    cairo_append_path(pd->parent->cairo, pd->path);
+
+   eo_do(obj, fill_rule = efl_gfx_shape_fill_rule_get());
+   if (fill_rule == EFL_GFX_FILL_RULE_ODD_EVEN)
+     cairo_set_fill_rule(pd->parent->cairo, CAIRO_FILL_RULE_EVEN_ODD);
+  else
+    cairo_set_fill_rule(pd->parent->cairo, CAIRO_FILL_RULE_WINDING);
 
    if (pd->shape->fill)
      eo_do(pd->shape->fill, ector_renderer_cairo_base_fill(mul_col));
@@ -240,6 +253,7 @@ Eo *
 _ector_renderer_cairo_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
 {
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj = eo_constructor());
+
    if (!obj) return NULL;
 
    pd->public_shape = eo_data_xref(obj, EFL_GFX_SHAPE_MIXIN, obj);
@@ -276,6 +290,7 @@ _ector_renderer_cairo_shape_eo_base_finalize(Eo *obj, Ector_Renderer_Cairo_Shape
    USE(pd->base, cairo_curve_to, NULL);
    USE(pd->base, cairo_line_to, NULL);
    USE(pd->base, cairo_move_to, NULL);
+   USE(pd->base, cairo_set_fill_rule, NULL);
 
    return obj;
 }
