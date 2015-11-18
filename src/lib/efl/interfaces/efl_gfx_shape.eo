@@ -125,6 +125,25 @@ mixin Efl.Gfx.Shape
             j: Efl_Gfx_Join; [[join style to use, default is EFL_GFX_JOIN_MITER]]
          }
       }
+      @property fill_rule {
+         set {
+            [[Sets the fill rule of the given shape object.
+              $EFL_GFX_FILL_RULE_WINDING, or $EFL_GFX_FILL_RULE_ODD_EVEN.
+
+              @since 1.14
+            ]]
+         }
+         get {
+            [[Retrieves the fill rule for the given shape object.
+
+              @since 1.14
+            ]]
+         }
+         values {
+            fill_rule: Efl_Gfx_Fill_Rule; [[The current fill rule of the shape object.
+                                           One of $EFL_GFX_FILL_RULE_WINDING, $EFL_GFX_FILL_RULE_ODD_EVEN]]
+         }
+      }
       @property path {
          set {
             [[Set the list of commands and points to be used to create the
