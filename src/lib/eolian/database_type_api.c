@@ -251,6 +251,23 @@ eolian_type_base_type_get(const Eolian_Type *tp)
    return tp->base_type;
 }
 
+EAPI const Eolian_Type *
+eolian_type_aliased_base_get(const Eolian_Type *tp)
+{
+   if (!tp)
+     return NULL;
+   if (eolian_type_type_get(tp) == EOLIAN_TYPE_REGULAR)
+     {
+        const Eolian_Type *btp = eolian_type_base_type_get(tp);
+        if (btp && (eolian_type_type_get(btp) == EOLIAN_TYPE_ALIAS))
+          return eolian_type_aliased_base_get(btp);
+        return tp;
+     }
+   else if (eolian_type_type_get(tp) != EOLIAN_TYPE_ALIAS)
+     return tp;
+   return eolian_type_aliased_base_get(tp->base_type);
+}
+
 EAPI const Eolian_Class *
 eolian_type_class_get(const Eolian_Type *tp)
 {
