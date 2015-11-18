@@ -27,6 +27,9 @@ _ector_software_surface_ector_generic_surface_renderer_factory_new(Eo *obj,
    else if (type == ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_MIXIN)
      return eo_add(ECTOR_RENDERER_SOFTWARE_GRADIENT_RADIAL_CLASS, NULL,
                    ector_renderer_surface_set(obj));
+   else if (type == ECTOR_RENDERER_GENERIC_BUFFER_MIXIN)
+     return eo_add(ECTOR_RENDERER_SOFTWARE_BUFFER_CLASS, NULL,
+                   ector_renderer_surface_set(obj));
    ERR("Couldn't find class for type: %s\n", eo_class_name_get(type));
    return NULL;
 }

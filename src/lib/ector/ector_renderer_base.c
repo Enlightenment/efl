@@ -114,7 +114,7 @@ _ector_renderer_generic_base_mask_set(Eo *obj EINA_UNUSED,
                                       Ector_Renderer_Generic_Base_Data *pd,
                                       Ector_Renderer *r)
 {
-   _ector_renderer_replace(&pd->mask, r);
+   _eo_refplace(&pd->mask, r);
 }
 
 static Ector_Renderer *

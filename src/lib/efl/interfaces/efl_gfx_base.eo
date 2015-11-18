@@ -1,3 +1,8 @@
+enum Efl.Gfx.Colorspace {
+  argb8888 = 0, [[ARGB 32 bits per pixel, high-byte is Alpha, accessed one 32-bit word at a time]]
+  gry8 = 4,     [[8-bit gray image, or alpha only]]
+}
+
 interface Efl.Gfx.Base {
    legacy_prefix: null;
    eo_prefix: efl_gfx;
