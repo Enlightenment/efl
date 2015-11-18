@@ -369,6 +369,11 @@ START_TEST(eolian_typedef)
    fail_if(!(file = eolian_type_file_get(atype)));
    fail_if(strcmp(file, "typedef.eo"));
 
+   /* Lowest alias base */
+   fail_if(!(atype = eolian_type_alias_get_by_name("Evas.Coord3")));
+   fail_if(!(atype = eolian_type_aliased_base_get(atype)));
+   fail_if(strcmp(eolian_type_name_get(atype), "int"));
+
    /* Complex type */
    fail_if(!(atype = eolian_type_alias_get_by_name("List_Objects")));
    fail_if(!(type_name = eolian_type_name_get(atype)));
@@ -395,6 +400,9 @@ START_TEST(eolian_typedef)
    fail_if(!eina_iterator_next(iter, (void**)&atype));
    fail_if(!(type_name = eolian_type_name_get(atype)));
    fail_if(strcmp(type_name, "List_Objects"));
+   /* coord2 and coord3, skip */
+   fail_if(!eina_iterator_next(iter, (void**)&atype));
+   fail_if(!eina_iterator_next(iter, (void**)&atype));
    /* not generated extern, skip */
    fail_if(!eina_iterator_next(iter, (void**)&atype));
    /* not generated undefined type, skip */
