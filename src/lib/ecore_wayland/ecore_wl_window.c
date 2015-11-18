@@ -455,10 +455,9 @@ ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    EINA_SAFETY_ON_NULL_RETURN(win);
-   prev = ecore_wl_window_maximized_get(win);
 
+   prev = win->maximized;
    maximized = !!maximized;
-
    if (prev == maximized) return;
 
    if (maximized)
@@ -499,11 +498,10 @@ ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen)
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
-   prev = ecore_wl_window_fullscreen_get(win);
-
+   prev = win->fullscreen;
    fullscreen = !!fullscreen;
-
    if (prev == fullscreen) return;
+
    if (fullscreen)
      {
         win->type = ECORE_WL_WINDOW_TYPE_FULLSCREEN;
