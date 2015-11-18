@@ -746,6 +746,7 @@ ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent)
 EAPI void
 ecore_wl_window_iconified_set(Ecore_Wl_Window *win, Eina_Bool iconified)
 {
+   Eina_Bool prev;
    struct wl_array states;
    uint32_t *s;
 
@@ -753,13 +754,14 @@ ecore_wl_window_iconified_set(Ecore_Wl_Window *win, Eina_Bool iconified)
 
    EINA_SAFETY_ON_NULL_RETURN(win);
 
+   prev = win->minimized;
+   iconified = !!iconified;
+   if (prev == iconified) return;
+
    if (iconified)
      {
         if (win->xdg_surface)
-          {
-             xdg_surface_set_minimized(win->xdg_surface);
-             win->minimized = iconified;
-          }
+          xdg_surface_set_minimized(win->xdg_surface);
         else if (win->shell_surface)
           {
              /* TODO: handle case of iconifying a wl_shell surface */
@@ -769,7 +771,6 @@ ecore_wl_window_iconified_set(Ecore_Wl_Window *win, Eina_Bool iconified)
      {
         if (win->xdg_surface)
           {
-             win->type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
              wl_array_init(&states);
              s = wl_array_add(&states, sizeof(*s));
              *s = XDG_SURFACE_STATE_ACTIVATED;
@@ -777,12 +778,12 @@ ecore_wl_window_iconified_set(Ecore_Wl_Window *win, Eina_Bool iconified)
              wl_array_release(&states);
           }
         else if (win->shell_surface)
-          {
-             wl_shell_surface_set_toplevel(win->shell_surface);
-             win->type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
-             _ecore_wl_window_configure_send(win, win->saved.w, win->saved.h, 0);
-          }
+          wl_shell_surface_set_toplevel(win->shell_surface);
+
+        win->type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
      }
+
+   win->minimized = iconified;
 }
 
 EAPI Eina_Bool
