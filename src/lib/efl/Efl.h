@@ -125,6 +125,16 @@ typedef enum _Efl_Gfx_Gradient_Spread
 
 
 /**
+ * Type defining how an image content get filled.
+ * @since 1.14
+ */
+typedef enum _Efl_Gfx_Fill_Rule
+{
+   EFL_GFX_FILL_RULE_WINDING = 0, /**< Draw a horizontal line from the point to a location outside the shape. Determine whether the direction of the line at each intersection point is up or down. The winding number is determined by summing the direction of each intersection. If the number is non zero, the point is inside the shape. This mode is the default */
+   EFL_GFX_FILL_RULE_ODD_EVEN = 1,  /**< Draw a horizontal line from the point to a location outside the shape, and count the number of intersections. If the number of intersections is an odd number, the point is inside the shape. */
+} Efl_Gfx_Fill_Rule;
+
+/**
  * Type defining stroke information.
  * @note Describe the properties to define the path stroke.
  * @since 1.14

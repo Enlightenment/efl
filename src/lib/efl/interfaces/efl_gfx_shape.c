@@ -13,6 +13,8 @@ struct _Efl_Gfx_Shape_Data
 {
    Efl_Gfx_Shape_Public public;
 
+   Efl_Gfx_Fill_Rule fill_rule;
+
    struct {
       double x;
       double y;
@@ -435,6 +437,7 @@ _efl_gfx_shape_dup(Eo *obj, Efl_Gfx_Shape_Data *pd, const Eo *dup_from)
 {
    const Efl_Gfx_Dash *dash = NULL;
    Efl_Gfx_Shape_Data *from;
+   Efl_Gfx_Fill_Rule fill_rule;
    unsigned int dash_length = 0;
    Efl_Gfx_Cap cap;
    Efl_Gfx_Join j;
@@ -453,7 +456,8 @@ _efl_gfx_shape_dup(Eo *obj, Efl_Gfx_Shape_Data *pd, const Eo *dup_from)
          location = efl_gfx_shape_stroke_location_get(),
          efl_gfx_shape_stroke_dash_get(&dash, &dash_length),
          cap = efl_gfx_shape_stroke_cap_get(),
-         j = efl_gfx_shape_stroke_join_get());
+         j = efl_gfx_shape_stroke_join_get(),
+         fill_rule = efl_gfx_shape_fill_rule_get());
    eo_do(obj,
          efl_gfx_shape_stroke_scale_set(scale),
          efl_gfx_shape_stroke_color_set(sr, sg, sb, sa),
@@ -461,7 +465,8 @@ _efl_gfx_shape_dup(Eo *obj, Efl_Gfx_Shape_Data *pd, const Eo *dup_from)
          efl_gfx_shape_stroke_location_set(location),
          efl_gfx_shape_stroke_dash_set(dash, dash_length),
          efl_gfx_shape_stroke_cap_set(cap),
-         efl_gfx_shape_stroke_join_set(j));
+         efl_gfx_shape_stroke_join_set(j),
+         efl_gfx_shape_fill_rule_set(fill_rule));
 
    _efl_gfx_shape_path_set(obj, pd, from->commands, from->points);
 
@@ -1495,6 +1500,21 @@ _efl_gfx_shape_stroke_join_get(Eo *obj EINA_UNUSED,
                                Efl_Gfx_Shape_Data *pd)
 {
    return pd->public.stroke.join;
+}
+
+static void
+_efl_gfx_shape_fill_rule_set(Eo *obj EINA_UNUSED,
+                             Efl_Gfx_Shape_Data *pd,
+                             Efl_Gfx_Fill_Rule fill_rule)
+{
+   pd->fill_rule = fill_rule;
+}
+
+static Efl_Gfx_Fill_Rule
+_efl_gfx_shape_fill_rule_get(Eo *obj EINA_UNUSED,
+                             Efl_Gfx_Shape_Data *pd)
+{
+   return pd->fill_rule;
 }
 
 #include "interfaces/efl_gfx_shape.eo.c"
