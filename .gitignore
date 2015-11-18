@@ -20,6 +20,7 @@ tags
 .libs
 *.trs
 *.log
+*.core
 *.exe
 *.o
 *.lo
