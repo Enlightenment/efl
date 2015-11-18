@@ -853,8 +853,7 @@ _edje_edd_init(void)
 
 #define EET_DATA_DESCRIPTOR_ADD_SUB_NESTED_LOOK(Edd, Type, Dec)                                                     \
   {                                                                                                                 \
-     EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY(Edd, Type, #Dec ".orientation.look1", Dec.orientation.data, EDJE_T_FLOAT); \
-     EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY(Edd, Type, #Dec ".orientation.look2", Dec.orientation.data, EDJE_T_FLOAT); \
+     EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY(Edd, Type, #Dec ".orientation.look", Dec.orientation.data, EDJE_T_FLOAT);  \
      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, #Dec ".orientation.look_to", Dec.orientation.look_to, EET_T_INT);     \
   }
 
