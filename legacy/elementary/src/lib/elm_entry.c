@@ -700,17 +700,12 @@ _drag_drop_cb(void *data EINA_UNUSED,
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
-   edje_object_part_text_cursor_copy
-     (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, /*->*/ EDJE_CURSOR_USER);
    rv = edje_object_part_text_cursor_coord_set
        (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, drop->x, drop->y);
 
    if (!rv) WRN("Warning: Failed to position cursor: paste anyway");
 
    rv = _selection_data_cb(NULL, obj, drop);
-
-   edje_object_part_text_cursor_copy
-     (sd->entry_edje, "elm.text", EDJE_CURSOR_USER, /*->*/ EDJE_CURSOR_MAIN);
 
    return rv;
 }
