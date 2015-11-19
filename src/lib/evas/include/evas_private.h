@@ -1448,9 +1448,11 @@ struct _Evas_Func
 
    Ector_Surface *(*ector_create)        (void *data);
    void  (*ector_destroy)                (void *data, Ector_Surface *surface);
-   void  (*ector_begin)                  (void *data, void *context, Ector_Surface *ector, void *surface, int x, int y, Eina_Bool do_async);
-   void  (*ector_renderer_draw)          (void *data, void *context, void *surface, Ector_Renderer *r, Eina_Array *clips, Eina_Bool do_async);
-   void  (*ector_end)                    (void *data, void *context, Ector_Surface *ector, void *surface, Eina_Bool do_async);
+   void  (*ector_begin)                  (void *data, void *context, Ector_Surface *ector, void *surface, void *engine_data, int x, int y, Eina_Bool do_async);
+   void  (*ector_renderer_draw)          (void *data, void *context, void *surface, void *engine_data, Ector_Renderer *r, Eina_Array *clips, Eina_Bool do_async);
+   void  (*ector_end)                    (void *data, void *context, Ector_Surface *ector, void *surface, void *engine_data, Eina_Bool do_async);
+   void* (*ector_new)                    (void *data, void *context, Ector_Surface *ector, void *surface);
+   void  (*ector_free)                   (void *engine_data);
 };
 
 struct _Evas_Image_Save_Func

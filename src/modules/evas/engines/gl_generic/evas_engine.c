@@ -721,6 +721,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
    if (!im)
      {
         if (err) *err = EVAS_LOAD_ERROR_GENERIC;
+        ERR("No image provided.");
         return NULL;
      }
 
@@ -734,6 +735,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
         if (!im_new)
           {
              if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+             ERR("Rotation failed.");
              return im;
           }
         evas_gl_common_image_free(im);
@@ -745,7 +747,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
 #ifdef GL_GLES
    re->window_use(re->software.ob);
 
-   if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.img) && 
+   if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.img) &&
        (im->cs.space == EVAS_COLORSPACE_ARGB8888))
      {
         if (im->tex->pt->dyn.checked_out > 0)
@@ -779,6 +781,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
         if (!im->tex->pt->dyn.data)
           {
              if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+             ERR("Ressource allocation failed.");
              return im;
           }
         im->tex->pt->dyn.checked_out++;
@@ -821,6 +824,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
         if (!ok)
           {
              if (err) *err = EVAS_LOAD_ERROR_GENERIC;
+             ERR("Lock failed.");
              return NULL;
           }
 
@@ -830,6 +834,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
         if (!im_new)
           {
              if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+             ERR("Allocation failed.");
              return NULL;
           }
 
@@ -840,6 +845,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
         if (!ok)
           {
              if (err) *err = EVAS_LOAD_ERROR_GENERIC;
+             ERR("Unlock failed.");
              return NULL;
           }
         *image_data = im_new->im->image.data;
@@ -974,6 +980,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
               evas_gl_common_image_free(im);
               im = im2;
            }
+         evas_gl_common_image_dirty(im, 0, 0, 0, 0);
          break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
@@ -2460,7 +2467,7 @@ _evas_render_op_to_ector_rop(Evas_Render_Op op)
 }
 
 static void
-eng_ector_renderer_draw(void *data, void *context, void *surface, Ector_Renderer *renderer, Eina_Array *clips, Eina_Bool do_async EINA_UNUSED)
+eng_ector_renderer_draw(void *data, void *context, void *surface, void *engine_data EINA_UNUSED, Ector_Renderer *renderer, Eina_Array *clips, Eina_Bool do_async EINA_UNUSED)
 {
    Evas_GL_Image *dst = surface;
    Evas_Engine_GL_Context *gc;
@@ -2526,16 +2533,43 @@ eng_ector_renderer_draw(void *data, void *context, void *surface, Ector_Renderer
    eina_array_free(c);
 }
 
-static void *software_buffer = NULL;
+typedef struct _Evas_GL_Ector Evas_GL_Ector;
+struct _Evas_GL_Ector
+{
+   Evas_GL_Image *gl;
+   DATA32 *software;
+
+   Eina_Bool tofree;
+};
+
+static void*
+eng_ector_new(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface *ector EINA_UNUSED, void *surface EINA_UNUSED)
+{
+   Evas_GL_Ector *r;
+
+   r = calloc(1, sizeof (Evas_GL_Ector));
+   return r;
+}
 
 static void
-eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface *ector,
-                void *surface, int x, int y, Eina_Bool do_async EINA_UNUSED)
+eng_ector_free(void *engine_data)
+{
+   Evas_GL_Ector *r = engine_data;
+
+   if (r->gl) evas_gl_common_image_free(r->gl);
+   if (r->tofree) free(r->software);
+   free(r);
+}
+
+static void
+eng_ector_begin(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
+                void *surface, void *engine_data,
+                int x, int y, Eina_Bool do_async EINA_UNUSED)
 {
    Evas_Engine_GL_Context *gl_context;
    Render_Engine_GL_Generic *re = data;
+   Evas_GL_Ector *buffer = engine_data;
    int w, h;
-   void *temp;
 
    re->window_use(re->software.ob);
    gl_context = re->window_gl_context_get(re->software.ob);
@@ -2544,36 +2578,51 @@ eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface
 
    w = gl_context->w; h = gl_context->h;
 
-   temp = software_buffer;
-   software_buffer = realloc(software_buffer, sizeof (unsigned int) * w * h);
-   if (!software_buffer)
+   if (!buffer->gl || buffer->gl->w != w || buffer->gl->h != h)
      {
-        ERR("Realloc failed!!");
-        software_buffer = temp;
-        return;
+        int err = EVAS_LOAD_ERROR_NONE;
+
+        if (buffer->gl) evas_gl_common_image_free(buffer->gl);
+        if (buffer->tofree) free(buffer->software);
+        buffer->software = NULL;
+
+        buffer->gl = evas_gl_common_image_new(gl_context, w, h, 1, EVAS_COLORSPACE_ARGB8888);
+        if (!buffer->gl)
+          {
+             ERR("Creation of an image for vector graphics [%i, %i] failed\n", w, h);
+             return ;
+          }
+        /* evas_gl_common_image_content_hint_set(buffer->gl, EVAS_IMAGE_CONTENT_HINT_DYNAMIC); */
+        buffer->gl = eng_image_data_get(data, buffer->gl, 1, &buffer->software, &err, &buffer->tofree);
+        if (!buffer->gl && err != EVAS_LOAD_ERROR_NONE)
+          {
+             ERR("Mapping of an image for vector graphics [%i, %i] failed with %i\n", w, h, err);
+             return ;
+          }
      }
-   memset(software_buffer, 0, sizeof (unsigned int) * w * h);
+   memset(buffer->software, 0, sizeof (unsigned int) * w * h);
    if (use_cairo)
      {
         eo_do(ector,
-              ector_cairo_software_surface_set(software_buffer, w, h),
+              ector_cairo_software_surface_set(buffer->software, w, h),
               ector_surface_reference_point_set(x, y));
      }
    else
      {
         eo_do(ector,
-              ector_software_surface_set(software_buffer, w, h),
+              ector_software_surface_set(buffer->software, w, h),
               ector_surface_reference_point_set(x, y));
      }
 }
 
 static void
 eng_ector_end(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
-              void *surface EINA_UNUSED, Eina_Bool do_async EINA_UNUSED)
+              void *surface EINA_UNUSED, void *engine_data,
+              Eina_Bool do_async EINA_UNUSED)
 {
    Evas_Engine_GL_Context *gl_context;
    Render_Engine_GL_Generic *re = data;
-   Evas_GL_Image *im;
+   Evas_GL_Ector *buffer = engine_data;
    int w, h;
    Eina_Bool mul_use;
 
@@ -2592,24 +2641,22 @@ eng_ector_end(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
               ector_software_surface_set(NULL, 0, 0));
      }
 
-   im = evas_gl_common_image_new_from_copied_data(gl_context, w, h, software_buffer, 1, EVAS_COLORSPACE_ARGB8888);
+   eng_image_data_put(data, buffer->gl, buffer->software);
 
    if (!mul_use)
-   {
-      // @hack as image_draw uses below fields to do colour multiplication.
-      gl_context->dc->mul.col = ector_color_multiply(0xffffffff,gl_context->dc->col.col);
-      gl_context->dc->mul.use = EINA_TRUE;
-   }
-   
+     {
+        // @hack as image_draw uses below fields to do colour multiplication.
+        gl_context->dc->mul.col = ector_color_multiply(0xffffffff, gl_context->dc->col.col);
+        gl_context->dc->mul.use = EINA_TRUE;
+     }
+
    // We actually just bluntly push the pixel all over the
    // destination surface. We don't have the actual information
    // of the widget size. This is not a problem.
    // Later on, we don't want that information and today when
    // using GL backend, you just need to turn on Evas_Map on
    // the Evas_Object_VG.
-   evas_gl_common_image_draw(gl_context, im, 0, 0, w, h, 0, 0, w, h, 0);
-
-   evas_gl_common_image_free(im);
+   evas_gl_common_image_draw(gl_context, buffer->gl, 0, 0, w, h, 0, 0, w, h, 0);
 
    // restore gl state
    gl_context->dc->mul.use = mul_use;
@@ -2764,6 +2811,8 @@ module_open(Evas_Module *em)
    ORD(ector_begin);
    ORD(ector_renderer_draw);
    ORD(ector_end);
+   ORD(ector_new);
+   ORD(ector_free);
 
    /* now advertise out own api */
    em->functions = (void *)(&func);
