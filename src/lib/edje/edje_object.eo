@@ -2138,6 +2138,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
       Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
+      Evas.Object.paragraph_direction.set;
       Evas.Object_Smart.hide;
       Evas.Object_Smart.calculate;
       Evas.Object_Smart.show;

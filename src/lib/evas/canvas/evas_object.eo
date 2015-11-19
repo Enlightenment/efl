@@ -976,6 +976,19 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             dispmode: Evas.Display_Mode; [[Display mode hint.]]
          }
       }
+      @property paragraph_direction {
+         [[This handles text paragraph direction of the given object.
+           Even if the given object is not textblock or text, its smart child objects
+           can inherit the paragraph direction from the given object.
+           The default paragraph direction is @Evas.BiDi_Direction.inherit.]]
+         set {
+         }
+         get {
+         }
+         values {
+            dir: Evas.BiDi_Direction; [[Paragraph direction for the given object.]]
+         }
+      }
       clipees_has @const {
          [[Test if any object is clipped by $obj.
 

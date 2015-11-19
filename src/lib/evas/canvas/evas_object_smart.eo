@@ -300,5 +300,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
       Evas.Object.smart_type_check_ptr;
       Evas.Object.smart_type_check;
       Evas.Object.smart_data.get;
+      Evas.Object.paragraph_direction.set;
+      Evas.Object.paragraph_direction.get;
    }
 }

@@ -362,6 +362,15 @@ START_TEST(evas_text_set_get)
    fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_LTR);
 #endif
 
+#ifdef HAVE_FRIBIDI
+   /* Check direction with evas_object_paragraph_direction_set API */
+   evas_object_text_text_set(to, "12345");
+   fail_if(evas_object_text_direction_get(to) == EVAS_BIDI_DIRECTION_RTL);
+   evas_object_paragraph_direction_set(to, EVAS_BIDI_DIRECTION_RTL);
+   fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_RTL);
+   evas_object_paragraph_direction_set(to, EVAS_BIDI_DIRECTION_NEUTRAL);
+#endif
+
    END_TEXT_TEST();
 }
 END_TEST

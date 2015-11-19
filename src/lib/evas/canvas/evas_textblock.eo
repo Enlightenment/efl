@@ -325,5 +325,7 @@ class Evas.Textblock (Evas.Object)
       Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
+      Evas.Object.paragraph_direction.set;
+      Evas.Object.paragraph_direction.get;
    }
 }

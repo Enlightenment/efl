@@ -507,6 +507,7 @@ struct _Evas_Object_Textblock
    void                               *engine_data;
    const char                         *repch;
    const char                         *bidi_delimiters;
+   Evas_BiDi_Direction                 paragraph_direction : 2;
    struct {
       int                              w, h, oneline_h;
       Eina_Bool                        valid : 1;
@@ -518,6 +519,8 @@ struct _Evas_Object_Textblock
    Eina_Bool                           format_changed : 1;
    Eina_Bool                           have_ellipsis : 1;
    Eina_Bool                           legacy_newline : 1;
+   Eina_Bool                           inherit_paragraph_direction : 1;
+   Eina_Bool                           changed_paragraph_direction : 1;
 };
 
 struct _Evas_Textblock_Selection_Iterator
@@ -2882,15 +2885,34 @@ _layout_update_bidi_props(const Evas_Textblock_Data *o,
      {
         const Eina_Unicode *text;
         int *segment_idxs = NULL;
+        Evas_BiDi_Direction par_dir;
+        EvasBiDiParType bidi_par_type;
+
         text = eina_ustrbuf_string_get(par->text_node->unicode);
 
         if (o->bidi_delimiters)
            segment_idxs = evas_bidi_segment_idxs_get(text, o->bidi_delimiters);
 
+        par_dir = o->paragraph_direction;
+
+        switch (par_dir)
+          {
+           case EVAS_BIDI_DIRECTION_LTR:
+              bidi_par_type = EVAS_BIDI_PARAGRAPH_LTR;
+              break;
+           case EVAS_BIDI_DIRECTION_RTL:
+              bidi_par_type = EVAS_BIDI_PARAGRAPH_RTL;
+              break;
+           case EVAS_BIDI_DIRECTION_NEUTRAL:
+           default:
+              bidi_par_type = EVAS_BIDI_PARAGRAPH_NEUTRAL;
+              break;
+          }
+
         evas_bidi_paragraph_props_unref(par->bidi_props);
         par->bidi_props = evas_bidi_paragraph_props_get(text,
               eina_ustrbuf_length_get(par->text_node->unicode),
-              segment_idxs);
+              segment_idxs, bidi_par_type);
         par->direction = EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(par->bidi_props) ?
            EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
         par->is_bidi = !!par->bidi_props;
@@ -5801,6 +5823,9 @@ _relayout(const Evas_Object *eo_obj)
    o->content_changed = 0;
    o->format_changed = EINA_FALSE;
    o->redraw = 1;
+#ifdef BIDI_SUPPORT
+   o->changed_paragraph_direction = EINA_FALSE;
+#endif
 }
 
 /*
@@ -11502,6 +11527,9 @@ evas_object_textblock_init(Evas_Object *eo_obj)
    evas_object_textblock_text_markup_set(eo_obj, "");
 
    o->legacy_newline = EINA_TRUE;
+#ifdef BIDI_SUPPORT
+   o->inherit_paragraph_direction = EINA_TRUE;
+#endif
 }
 
 EOLIAN static void
@@ -12045,11 +12073,29 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 }
 
 static void
-evas_object_textblock_coords_recalc(Evas_Object *eo_obj EINA_UNUSED,
+evas_object_textblock_coords_recalc(Evas_Object *eo_obj,
                                     Evas_Object_Protected_Data *obj,
                                     void *type_private_data)
 {
    Evas_Textblock_Data *o = type_private_data;
+
+#ifdef BIDI_SUPPORT
+   if (o->inherit_paragraph_direction)
+     {
+        Evas_BiDi_Direction parent_dir = EVAS_BIDI_DIRECTION_NEUTRAL;
+
+        if (obj->smart.parent)
+          {
+             parent_dir = evas_object_paragraph_direction_get(obj->smart.parent);
+          }
+
+        if (parent_dir != o->paragraph_direction)
+          {
+             o->paragraph_direction = parent_dir;
+             o->changed_paragraph_direction = EINA_TRUE;
+          }
+     }
+#endif
 
    if (
        // width changed thus we may have to re-wrap or change centering etc.
@@ -12068,10 +12114,18 @@ evas_object_textblock_coords_recalc(Evas_Object *eo_obj EINA_UNUSED,
        (o->content_changed) ||
        // if format changed (eg styles) we need to re-format/match tags etc.
        (o->format_changed) ||
-       (o->obstacle_changed)
+       (o->obstacle_changed) ||
+       (o->changed_paragraph_direction)
       )
      {
-        LYDBG("ZZ: invalidate 2 %p ## %i != %i || %3.3f || %i && %i != %i | %i %i\n", eo_obj, obj->cur->geometry.w, o->last_w, o->valign, o->have_ellipsis, obj->cur->geometry.h, o->last_h, o->content_changed, o->format_changed);
+        LYDBG("ZZ: invalidate 2 %p ## %i != %i || %3.3f || %i && %i != %i | %i %i || %d\n", eo_obj, obj->cur->geometry.w, o->last_w, o->valign, o->have_ellipsis, obj->cur->geometry.h, o->last_h, o->content_changed, o->format_changed, o->changed_paragraph_direction);
+
+        if (o->changed_paragraph_direction)
+          {
+             _evas_textblock_invalidate_all(o);
+             _evas_textblock_changed(o, eo_obj);
+          }
+
         o->formatted.valid = 0;
         o->changed = 1;
      }
@@ -12289,6 +12343,56 @@ _evas_object_textblock_rehint(Evas_Object *eo_obj)
      }
    _evas_textblock_invalidate_all(o);
    _evas_textblock_changed(o, eo_obj);
+}
+
+EOLIAN static void
+_evas_textblock_evas_object_paragraph_direction_set(Eo *eo_obj,
+                                                    Evas_Textblock_Data *o,
+                                                    Evas_BiDi_Direction dir)
+{
+#ifdef BIDI_SUPPORT
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+
+   if ((!(o->inherit_paragraph_direction) && (o->paragraph_direction == dir)) ||
+       (o->inherit_paragraph_direction && (dir == EVAS_BIDI_DIRECTION_INHERIT)))
+     return;
+
+   if (dir == EVAS_BIDI_DIRECTION_INHERIT)
+     {
+        o->inherit_paragraph_direction = EINA_TRUE;
+        Evas_BiDi_Direction parent_dir = EVAS_BIDI_DIRECTION_NEUTRAL;
+
+        if (obj->smart.parent)
+          parent_dir = evas_object_paragraph_direction_get(obj->smart.parent);
+
+        if (parent_dir != o->paragraph_direction)
+          {
+             o->paragraph_direction = parent_dir;
+             o->changed_paragraph_direction = EINA_TRUE;
+             _evas_textblock_invalidate_all(o);
+             _evas_textblock_changed(o, eo_obj);
+          }
+     }
+   else
+     {
+        o->inherit_paragraph_direction = EINA_FALSE;
+        o->paragraph_direction = dir;
+        o->changed_paragraph_direction = EINA_TRUE;
+        _evas_textblock_invalidate_all(o);
+        _evas_textblock_changed(o, eo_obj);
+     }
+#else
+   (void) eo_obj;
+   (void) o;
+   (void) dir;
+#endif
+}
+
+EOLIAN static Evas_BiDi_Direction
+_evas_textblock_evas_object_paragraph_direction_get(Eo *eo_obj EINA_UNUSED,
+                                                    Evas_Textblock_Data *o)
+{
+   return o->paragraph_direction;
 }
 
 /**

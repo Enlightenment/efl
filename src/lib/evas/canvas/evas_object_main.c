@@ -2013,5 +2013,17 @@ _evas_object_smart_type_check_ptr(const Eo *eo_obj EINA_UNUSED, Evas_Object_Prot
    return EINA_FALSE;
 }
 
+EOLIAN static void
+_evas_object_paragraph_direction_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED, Evas_BiDi_Direction dir EINA_UNUSED)
+{
+   return;
+}
+
+EOLIAN static Evas_BiDi_Direction
+_evas_object_paragraph_direction_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
+{
+   return EVAS_BIDI_DIRECTION_NEUTRAL;
+}
+
 #include "canvas/evas_object.eo.c"
 

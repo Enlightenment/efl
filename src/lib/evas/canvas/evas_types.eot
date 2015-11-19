@@ -72,7 +72,8 @@ enum Evas.BiDi_Direction {
    natural = 0,
    neutral = 0,
    ltr,
-   rtl
+   rtl,
+   inherit
 }
 
 enum Evas.Text_Style_Type {
