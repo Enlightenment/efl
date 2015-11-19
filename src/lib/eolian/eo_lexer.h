@@ -52,7 +52,7 @@ enum Tokens
     \
     KW(accessor), KW(array), KW(iterator), KW(hash), KW(list), KW(generic_value), \
     \
-    KW(__builtin_event_cb), \
+    KW(__builtin_event_cb), KW(__undefined_type), \
     \
     KW(true), KW(false), KW(null)
 

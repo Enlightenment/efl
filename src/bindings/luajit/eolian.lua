@@ -424,7 +424,8 @@ M.type_type = {
     STRUCT_OPAQUE  = 7,
     ENUM           = 8,
     ALIAS          = 9,
-    CLASS          = 10
+    CLASS          = 10,
+    UNDEFINED      = 11
 }
 
 ffi.metatype("Eolian_Struct_Type_Field", {

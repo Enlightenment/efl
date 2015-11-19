@@ -752,6 +752,11 @@ parse_type_void_base(Eo_Lexer *ls, Eina_Bool noptr)
         def->type = EOLIAN_TYPE_VOID;
         eo_lexer_get(ls);
      }
+   else if (ls->t.kw == KW___undefined_type)
+     {
+        def->type = EOLIAN_TYPE_UNDEFINED;
+        eo_lexer_get(ls);
+     }
    else
      {
         int tpid = ls->t.kw;

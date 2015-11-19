@@ -176,6 +176,7 @@ _validate_type(const Eolian_Type *tp)
    switch (tp->type)
      {
       case EOLIAN_TYPE_VOID:
+      case EOLIAN_TYPE_UNDEFINED:
       case EOLIAN_TYPE_COMPLEX:
         return EINA_TRUE;
       case EOLIAN_TYPE_REGULAR:
@@ -185,8 +186,6 @@ _validate_type(const Eolian_Type *tp)
            int id = eo_lexer_keyword_str_to_id(tp->full_name);
            if (id)
              return eo_lexer_is_type_keyword(id);
-           if (!strcmp(tp->full_name, "__undefined_type"))
-             return EINA_TRUE;
            /* user defined */
            tpp = eolian_type_base_type_get(tp);
            if (!tpp)
