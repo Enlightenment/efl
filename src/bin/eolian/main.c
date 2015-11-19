@@ -317,7 +317,6 @@ main(int argc, char **argv)
         printf("       --help/-h Print that help\n");
         printf("       --include/-I Include 'input_dir' as directory to search .eo files into\n");
         printf("       --output/-o Force output filename to 'outfile'\n");
-        printf("       --eo Set generator to eo mode. Must be specified\n");
         printf("       --gh Generate C header file [.h]\n");
         printf("       --gs Generate C type stubs [.h]\n");
         printf("       --gc Generate C source file [.c]\n");
