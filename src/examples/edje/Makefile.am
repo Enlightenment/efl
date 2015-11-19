@@ -49,7 +49,8 @@ toggle_using_filter.edc \
 box_example.edc \
 embryo_tween_anim.edc \
 embryo_set_state_anim.edc \
-bezier-transition-example.edc
+bezier-transition-example.edc \
+textblock-hyphen.edc
 
 DIST_EDCS = $(EDCS)
 
@@ -106,7 +107,8 @@ edje-basic2.c \
 signals2.c \
 edje-swallow2.c \
 edje-multisense.c \
-edje-edit-part-box.c
+edje-edit-part-box.c \
+edje-textblock-hyphenation.c
 
 EXTRA_DIST = $(DIST_EDCS) $(DATA_FILES)
 
@@ -175,7 +177,8 @@ animations2 \
 edje-basic2 \
 signals2 \
 edje-swallow2 \
-edje-edit-part-box
+edje-edit-part-box \
+edje-textblock-hyphenation
 
 if ENABLE_MULTISENSE
 EXTRA_PROGRAMS += edje-multisense
