@@ -113,7 +113,12 @@ _cleanup_reference(void *data,
 void
 _evas_vg_eo_base_destructor(Eo *eo_obj, Evas_VG_Data *pd)
 {
+   Evas_Object_Protected_Data *obj;
    Evas *e = evas_object_evas_get(eo_obj);
+
+   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   if (pd->engine_data)
+     obj->layer->evas->engine.func->ector_free(pd->engine_data);
 
    eo_do(e, eo_event_callback_del(EVAS_CANVAS_EVENT_RENDER_POST, _cleanup_reference, pd));
 
@@ -179,7 +184,7 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Evas_VG_Data *vd,
 
         nd = eo_data_scope_get(n, EFL_VG_BASE_CLASS);
 
-        obj->layer->evas->engine.func->ector_renderer_draw(output, context, surface, nd->renderer, clips, do_async);
+        obj->layer->evas->engine.func->ector_renderer_draw(output, context, surface, vd->engine_data, nd->renderer, clips, do_async);
 
         if (do_async)
           eina_array_push(&vd->cleanup, eo_ref(nd->renderer));
@@ -202,6 +207,9 @@ evas_object_vg_render(Evas_Object *eo_obj EINA_UNUSED,
    // to another Ector_Surface as long as that Ector_Surface is a
    // child of the main Ector_Surface (necessary for Evas_Map).
 
+   if (!vd->engine_data)
+     vd->engine_data = obj->layer->evas->engine.func->ector_new(output, context, ector, surface);
+
    /* render object to surface with context, and offxet by x,y */
    obj->layer->evas->engine.func->context_color_set(output,
                                                     context,
@@ -221,13 +229,14 @@ evas_object_vg_render(Evas_Object *eo_obj EINA_UNUSED,
                                                         obj->cur->render_op);
    obj->layer->evas->engine.func->ector_begin(output, context,
                                               ector, surface,
+                                              vd->engine_data,
                                               obj->cur->geometry.x + x, obj->cur->geometry.y + y,
                                               do_async);
    _evas_vg_render(obj, vd,
                    output, context, surface,
                    vd->root, NULL,
                    do_async);
-   obj->layer->evas->engine.func->ector_end(output, context, ector, surface, do_async);
+   obj->layer->evas->engine.func->ector_end(output, context, ector, surface, vd->engine_data, do_async);
 }
 
 static void

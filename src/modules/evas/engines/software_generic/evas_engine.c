@@ -3795,7 +3795,7 @@ _draw_thread_ector_draw(void *data)
 }
 
 static void
-eng_ector_renderer_draw(void *data EINA_UNUSED, void *context, void *surface, Ector_Renderer *renderer, Eina_Array *clips, Eina_Bool do_async)
+eng_ector_renderer_draw(void *data EINA_UNUSED, void *context, void *surface, void *engine_data EINA_UNUSED, Ector_Renderer *renderer, Eina_Array *clips, Eina_Bool do_async)
 {
    RGBA_Image *dst = surface;
    RGBA_Draw_Context *dc = context;
@@ -3919,8 +3919,19 @@ _draw_thread_ector_surface_set(void *data)
    eina_mempool_free(_mp_command_ector_surface, ector_surface);
 }
 
+static void*
+eng_ector_new(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface *ector EINA_UNUSED, void *surface EINA_UNUSED)
+{
+   return NULL;
+}
+
 static void
-eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface *ector, void *surface, int x, int y, Eina_Bool do_async)
+eng_ector_free(void *engine_data EINA_UNUSED)
+{
+}
+
+static void
+eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface *ector, void *surface, void *engine_data EINA_UNUSED, int x, int y, Eina_Bool do_async)
 {
    if (do_async)
      {
@@ -3963,7 +3974,7 @@ eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface
 }
 
 static void
-eng_ector_end(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface *ector, void *surface EINA_UNUSED, Eina_Bool do_async)
+eng_ector_end(void *data EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface *ector, void *surface EINA_UNUSED, void *engine_data EINA_UNUSED, Eina_Bool do_async)
 {
    if (do_async)
      {
@@ -4182,7 +4193,9 @@ static Evas_Func func =
      eng_ector_destroy,
      eng_ector_begin,
      eng_ector_renderer_draw,
-     eng_ector_end
+     eng_ector_end,
+     eng_ector_new,
+     eng_ector_free
    /* FUTURE software generic calls go here */
 };
 
