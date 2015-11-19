@@ -1,3 +1,8 @@
+# Even though libefl is new, it contains definitions used by legacy APIs
+efl_eolian_legacy_files = \
+	lib/efl/interfaces/efl_gfx_fill.eo \
+	$(NULL)
+
 efl_eolian_files = \
       lib/efl/interfaces/efl_control.eo \
       lib/efl/interfaces/efl_file.eo \
@@ -7,7 +12,6 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_text_properties.eo \
       lib/efl/interfaces/efl_gfx_base.eo \
       lib/efl/interfaces/efl_gfx_stack.eo \
-      lib/efl/interfaces/efl_gfx_fill.eo \
       lib/efl/interfaces/efl_gfx_view.eo \
       lib/efl/interfaces/efl_gfx_shape.eo \
       lib/efl/interfaces/efl_gfx_gradient_base.eo \
@@ -15,18 +19,22 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_gfx_gradient_radial.eo \
       lib/efl/interfaces/efl_gfx_filter.eo \
       lib/efl/interfaces/efl_model_base.eo \
+      $(efl_eolian_legacy_files) \
       $(NULL)
 
 efl_eolian_files_h = $(efl_eolian_files:%.eo=%.eo.h)
 efl_eolian_files_c = $(efl_eolian_files:%.eo=%.eo.c)
+efl_eolian_legacy_files_h = $(efl_eolian_legacy_files:%.eo=%.eo.legacy.h)
 
 BUILT_SOURCES += \
                  $(efl_eolian_files_c) \
-                 $(efl_eolian_files_h)
+                 $(efl_eolian_files_h) \
+                 $(efl_eolian_legacy_files_h)
 
 CLEANFILES += \
               $(efl_eolian_files_c) \
-              $(efl_eolian_files_h)
+              $(efl_eolian_files_h) \
+              $(efl_eolian_legacy_files_h)
 
 EXTRA_DIST += \
       lib/efl/Efl_Config.h \
@@ -55,7 +63,8 @@ dist_installed_eflheaders_DATA = \
 
 installed_eflinterfacesdir = $(includedir)/efl-@VMAJ@/interfaces
 nodist_installed_eflinterfaces_DATA = \
-$(efl_eolian_files_h)
+	$(efl_eolian_files_h) \
+	$(efl_eolian_legacy_files_h)
 
 if HAVE_ELUA
 

@@ -1,3 +1,16 @@
+enum Efl.Gfx.Fill.Spread {
+   [[Type defining how an image content gets filled.
+     @since 1.14
+   ]]
+   legacy: Efl_Gfx_Fill;
+   reflect = 0,          [[Image fill tiling mode - tiling reflects]]
+   repeat = 1,           [[Tiling repeats]]
+   restrict = 2,         [[Tiling clamps, range offset ignored]]
+   restrict_reflect = 3, [[Tiling clamps and any range offset reflects]]
+   restrict_repeat = 4,  [[Tiling clamps and any range offset repeats]]
+   pad = 5,              [[Tiling extends with end values]]
+}
+
 interface Efl.Gfx.Fill {
    legacy_prefix: null;
    methods {
