@@ -5587,7 +5587,8 @@ st_collections_group_parts_part_norepeat(void)
         Specifies whether events with the given flags should be ignored,
         i.e., will not have the signals emitted to the parts. Multiple flags
         must be separated by spaces, the effect will be ignoring all events
-        with one of the flags specified. Possible flags:
+        with one of the flags specified.
+        Possible flags:
             @li NONE (default value, no event will be ignored)
             @li ON_HOLD
     @endproperty
@@ -5610,9 +5611,9 @@ st_collections_group_parts_part_ignore_flags(void)
     @parameters
         [FLAG] ...
     @effect
-        Masks event flags with the given value, so event propagating from this part
-        will go with masked flags. Other library, like Elementary, can determine
-        whether it handles this event. Possible flags:
+        Masks event flags with the given value, so that the event can be repeated
+        to the lower object along with masked event flags.
+        Possible flags:
             @li NONE (default value, no event will be masked)
             @li ON_HOLD
     @endproperty
