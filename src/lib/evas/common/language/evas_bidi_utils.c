@@ -222,11 +222,12 @@ evas_bidi_segment_idxs_get(const Eina_Unicode *str, const char *delim)
  * @param ustr The string to update according to.
  * @param len The length of the string
  * @param segment_idxs A -1 terminated array of points to start a new bidi analysis at (used for section high level bidi overrides). - NULL means none.
+ * @param base_bidi The base BiDi direction of paragraph.
  * @return returns allocated paragraph props on success, NULL otherwise.
  */
 Evas_BiDi_Paragraph_Props *
 evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
-      int *segment_idxs)
+      int *segment_idxs, EvasBiDiParType base_bidi)
 {
    Evas_BiDi_Paragraph_Props *bidi_props = NULL;
    EvasBiDiCharType *char_types = NULL;
@@ -237,8 +238,9 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
    if (!eina_ustr)
       return NULL;
 
-
-   if (!evas_bidi_is_rtl_str(eina_ustr)) /* No need to handle bidi */
+   /* No need to handle bidi */
+   if (!evas_bidi_is_rtl_str(eina_ustr) &&
+       (base_bidi != EVAS_BIDI_PARAGRAPH_RTL))
      {
         len = -1;
         goto cleanup;
@@ -255,6 +257,7 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
 #endif
 
    bidi_props = evas_bidi_paragraph_props_new();
+   bidi_props->direction = base_bidi;
 
    /* Prep work for reordering */
    char_types = (EvasBiDiCharType *) malloc(sizeof(EvasBiDiCharType) * len);
@@ -281,7 +284,7 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
 
         for (itr = segment_idxs ; *itr > 0 ; itr++)
           {
-             direction = EVAS_BIDI_PARAGRAPH_NEUTRAL;
+             direction = base_bidi;
              if (!fribidi_get_par_embedding_levels(char_types + pos,
                       *itr - pos,
                       &direction,
@@ -308,7 +311,7 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
              pos = *itr + 1;
           }
 
-        direction = EVAS_BIDI_PARAGRAPH_NEUTRAL;
+        direction = base_bidi;
         if (!fribidi_get_par_embedding_levels(char_types + pos,
                  len - pos,
                  &direction,

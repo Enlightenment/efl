@@ -421,6 +421,7 @@ START_TEST(evas_textblock_cursor)
         fail_if(evas_textblock_cursor_compare(main_cur, cur));
      }
 
+#ifdef HAVE_FRIBIDI
    /* Check direction */
    evas_object_textblock_text_markup_set(tb, "test");
    fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "test"));
@@ -442,8 +443,199 @@ START_TEST(evas_textblock_cursor)
    evas_textblock_cursor_geometry_get(cur, NULL, NULL, NULL, NULL, &dir,
                                       EVAS_TEXTBLOCK_CURSOR_BEFORE);
    fail_if(dir != EVAS_BIDI_DIRECTION_RTL);
+   evas_object_textblock_text_markup_set(tb, "123");
+   fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "123"));
+   dir = EVAS_BIDI_DIRECTION_RTL;
+   evas_textblock_cursor_geometry_get(cur, NULL, NULL, NULL, NULL, &dir,
+                                      EVAS_TEXTBLOCK_CURSOR_UNDER);
+   fail_if(dir != EVAS_BIDI_DIRECTION_LTR);
+   dir = EVAS_BIDI_DIRECTION_RTL;
+   evas_textblock_cursor_geometry_get(cur, NULL, NULL, NULL, NULL, &dir,
+                                      EVAS_TEXTBLOCK_CURSOR_BEFORE);
+   fail_if(dir != EVAS_BIDI_DIRECTION_LTR);
+   evas_object_textblock_text_markup_set(tb, "%^&amp;");
+   fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "%^&amp;"));
+   dir = EVAS_BIDI_DIRECTION_RTL;
+   evas_textblock_cursor_geometry_get(cur, NULL, NULL, NULL, NULL, &dir,
+                                      EVAS_TEXTBLOCK_CURSOR_UNDER);
+   fail_if(dir != EVAS_BIDI_DIRECTION_LTR);
+   dir = EVAS_BIDI_DIRECTION_RTL;
+   evas_textblock_cursor_geometry_get(cur, NULL, NULL, NULL, NULL, &dir,
+                                      EVAS_TEXTBLOCK_CURSOR_BEFORE);
+   fail_if(dir != EVAS_BIDI_DIRECTION_LTR);
 
-#ifdef HAVE_FRIBIDI
+   /* Check direction with evas_object_paragraph_direction_set API */
+     {
+        Evas_Coord xx, yy, ww, hh;
+
+        /* LTR text case */
+        evas_object_textblock_text_markup_set(tb, "test");
+        fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "test"));
+
+        /* EVAS_TEXTBLOCK_CURSOR_UNDER */
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_NEUTRAL);
+        dir = EVAS_BIDI_DIRECTION_RTL;
+        evas_textblock_cursor_geometry_get(cur, &x, &y, &w, &h, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_UNDER);
+        fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_RTL);
+        dir = EVAS_BIDI_DIRECTION_RTL;
+        evas_textblock_cursor_geometry_get(cur, &xx, &yy, &ww, &hh, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_UNDER);
+        fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
+        fail_if((x >= xx) || (y != yy) || (w != ww) || (h != hh));
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_LTR);
+        dir = EVAS_BIDI_DIRECTION_RTL;
+        evas_textblock_cursor_geometry_get(cur, &xx, &yy, &ww, &hh, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_UNDER);
+        fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
+        fail_if((x != xx) || (y != yy) || (w != ww) || (h != hh));
+
+        /* EVAS_TEXTBLOCK_CURSOR_BEFORE */
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_NEUTRAL);
+        dir = EVAS_BIDI_DIRECTION_RTL;
+        evas_textblock_cursor_geometry_get(cur, &x, &y, &w, &h, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_BEFORE);
+        fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_RTL);
+        dir = EVAS_BIDI_DIRECTION_RTL;
+        evas_textblock_cursor_geometry_get(cur, &xx, &yy, &ww, &hh, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_BEFORE);
+        fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
+        fail_if((x >= xx) || (y != yy) || (w != ww) || (h != hh));
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_LTR);
+        dir = EVAS_BIDI_DIRECTION_RTL;
+        evas_textblock_cursor_geometry_get(cur, &xx, &yy, &ww, &hh, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_BEFORE);
+        fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
+        fail_if((x != xx) || (y != yy) || (w != ww) || (h != hh));
+
+        /* RTL text case */
+        evas_object_textblock_text_markup_set(tb, "עוד פסקה");
+        fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "עוד פסקה"));
+
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_NEUTRAL);
+        dir = EVAS_BIDI_DIRECTION_LTR;
+        evas_textblock_cursor_geometry_get(cur, &x, &y, &w, &h, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_UNDER);
+        fail_if(dir != EVAS_BIDI_DIRECTION_RTL);
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_LTR);
+        dir = EVAS_BIDI_DIRECTION_LTR;
+        evas_textblock_cursor_geometry_get(cur, &xx, &yy, &ww, &hh, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_UNDER);
+        fail_if(dir != EVAS_BIDI_DIRECTION_RTL);
+        fail_if((x <= xx) || (y != yy) || (w != ww) || (h != hh));
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_RTL);
+        dir = EVAS_BIDI_DIRECTION_LTR;
+        evas_textblock_cursor_geometry_get(cur, &xx, &yy, &ww, &hh, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_UNDER);
+        fail_if(dir != EVAS_BIDI_DIRECTION_RTL);
+        fail_if((x != xx) || (y != yy) || (w != ww) || (h != hh));
+
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_NEUTRAL);
+        dir = EVAS_BIDI_DIRECTION_LTR;
+        evas_textblock_cursor_geometry_get(cur, &x, &y, &w, &h, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_BEFORE);
+        fail_if(dir != EVAS_BIDI_DIRECTION_RTL);
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_LTR);
+        dir = EVAS_BIDI_DIRECTION_LTR;
+        evas_textblock_cursor_geometry_get(cur, &xx, &yy, &ww, &hh, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_BEFORE);
+        fail_if(dir != EVAS_BIDI_DIRECTION_RTL);
+        fail_if((x <= xx) || (y != yy) || (w != ww) || (h != hh));
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_RTL);
+        dir = EVAS_BIDI_DIRECTION_LTR;
+        evas_textblock_cursor_geometry_get(cur, &xx, &yy, &ww, &hh, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_BEFORE);
+        fail_if(dir != EVAS_BIDI_DIRECTION_RTL);
+        fail_if((x != xx) || (y != yy) || (w != ww) || (h != hh));
+
+        /* NEUTRAL(European Number) text case */
+        /* It doesn't change characters sequence. */
+        evas_object_textblock_text_markup_set(tb, "123");
+        fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "123"));
+
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_NEUTRAL);
+        dir = EVAS_BIDI_DIRECTION_RTL;
+        evas_textblock_cursor_geometry_get(cur, &x, &y, &w, &h, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_UNDER);
+        fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_RTL);
+        dir = EVAS_BIDI_DIRECTION_RTL;
+        evas_textblock_cursor_geometry_get(cur, &xx, &yy, &ww, &hh, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_UNDER);
+        fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
+        fail_if((x >= xx) || (y != yy) || (w != ww) || (h != hh));
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_LTR);
+        dir = EVAS_BIDI_DIRECTION_RTL;
+        evas_textblock_cursor_geometry_get(cur, &xx, &yy, &ww, &hh, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_UNDER);
+        fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
+        fail_if((x != xx) || (y != yy) || (w != ww) || (h != hh));
+
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_NEUTRAL);
+        dir = EVAS_BIDI_DIRECTION_RTL;
+        evas_textblock_cursor_geometry_get(cur, &x, &y, &w, &h, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_BEFORE);
+        fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_RTL);
+        dir = EVAS_BIDI_DIRECTION_RTL;
+        evas_textblock_cursor_geometry_get(cur, &xx, &yy, &ww, &hh, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_BEFORE);
+        fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
+        fail_if((x >= xx) || (y != yy) || (w != ww) || (h != hh));
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_LTR);
+        dir = EVAS_BIDI_DIRECTION_RTL;
+        evas_textblock_cursor_geometry_get(cur, &xx, &yy, &ww, &hh, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_BEFORE);
+        fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
+        fail_if((x != xx) || (y != yy) || (w != ww) || (h != hh));
+
+        /* NEUTRAL(Other Neutrals) text case */
+        /* It changes characters sequence. */
+        evas_object_textblock_text_markup_set(tb, "%^&amp;");
+        fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "%^&amp;"));
+
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_NEUTRAL);
+        dir = EVAS_BIDI_DIRECTION_RTL;
+        evas_textblock_cursor_geometry_get(cur, &x, &y, &w, &h, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_UNDER);
+        fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_RTL);
+        dir = EVAS_BIDI_DIRECTION_LTR;
+        evas_textblock_cursor_geometry_get(cur, &xx, &yy, &ww, &hh, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_UNDER);
+        fail_if(dir != EVAS_BIDI_DIRECTION_RTL);
+        fail_if((x >= xx) || (y != yy) || (w != ww) || (h != hh));
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_LTR);
+        dir = EVAS_BIDI_DIRECTION_RTL;
+        evas_textblock_cursor_geometry_get(cur, &xx, &yy, &ww, &hh, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_UNDER);
+        fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
+        fail_if((x != xx) || (y != yy) || (w != ww) || (h != hh));
+
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_NEUTRAL);
+        dir = EVAS_BIDI_DIRECTION_RTL;
+        evas_textblock_cursor_geometry_get(cur, &x, &y, &w, &h, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_BEFORE);
+        fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_RTL);
+        dir = EVAS_BIDI_DIRECTION_LTR;
+        evas_textblock_cursor_geometry_get(cur, &xx, &yy, &ww, &hh, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_BEFORE);
+        fail_if(dir != EVAS_BIDI_DIRECTION_RTL);
+        fail_if((x >= xx) || (y != yy) || (w != ww) || (h != hh));
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_LTR);
+        dir = EVAS_BIDI_DIRECTION_RTL;
+        evas_textblock_cursor_geometry_get(cur, &xx, &yy, &ww, &hh, &dir,
+                                           EVAS_TEXTBLOCK_CURSOR_BEFORE);
+        fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
+        fail_if((x != xx) || (y != yy) || (w != ww) || (h != hh));
+
+        /* Reset paragraph direction */
+        evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_NEUTRAL);
+     }
+
    evas_object_textblock_text_markup_set(tb,
          "testנסיוןtestנסיון<ps/>"
          "נסיוןtestנסיוןtest<ps/>"

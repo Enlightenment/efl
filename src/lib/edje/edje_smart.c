@@ -389,4 +389,15 @@ edje_object_file_get(const Edje_Object *obj, const char **file, const char **gro
    eo_do((Edje_Object *)obj, efl_file_get(file, group));
 }
 
+EOLIAN static void
+_edje_object_evas_object_paragraph_direction_set(Eo *obj, Edje *ed, Evas_BiDi_Direction dir)
+{
+   eo_do_super(obj, MY_CLASS, evas_obj_paragraph_direction_set(dir));
+
+   /* Make it dirty to recalculate edje.
+      It needs to move text objects according to new paragraph direction */
+   ed->dirty = EINA_TRUE;
+   eo_do(obj, evas_obj_smart_need_recalculate_set(1));
+}
+
 #include "edje_object.eo.c"

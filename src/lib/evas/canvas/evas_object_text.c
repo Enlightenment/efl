@@ -68,6 +68,9 @@ struct _Evas_Text_Data
    float                       max_ascent, max_descent;
 
    Evas_BiDi_Direction         bidi_dir : 2;
+   Evas_BiDi_Direction         paragraph_direction : 2;
+   Eina_Bool                   inherit_paragraph_direction : 1;
+   Eina_Bool                   changed_paragraph_direction : 1;
    Eina_Bool                   changed : 1;
    Eina_Bool                   has_filter : 1;
 };
@@ -696,7 +699,8 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
        o->cur.text == text &&
        obj->cur->scale == obj->prev->scale &&
        ((o->last_computed.advance <= obj->cur->geometry.w && !o->last_computed.ellipsis) ||
-        o->last_computed.w == obj->cur->geometry.w))
+        (o->last_computed.w == obj->cur->geometry.w)) &&
+       !o->changed_paragraph_direction)
      return;
 
    o->last_computed.ellipsis = EINA_FALSE;
@@ -717,7 +721,28 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
      }
    evas_bidi_paragraph_props_unref(o->bidi_par_props);
    if (text)
-     o->bidi_par_props = evas_bidi_paragraph_props_get(text, len, segment_idxs);
+     {
+        Evas_BiDi_Direction par_dir;
+        EvasBiDiParType bidi_par_type;
+
+        par_dir = o->paragraph_direction;
+
+        switch (par_dir)
+          {
+           case EVAS_BIDI_DIRECTION_LTR:
+              bidi_par_type = EVAS_BIDI_PARAGRAPH_LTR;
+              break;
+           case EVAS_BIDI_DIRECTION_RTL:
+              bidi_par_type = EVAS_BIDI_PARAGRAPH_RTL;
+              break;
+           case EVAS_BIDI_DIRECTION_NEUTRAL:
+           default:
+              bidi_par_type = EVAS_BIDI_PARAGRAPH_NEUTRAL;
+              break;
+          }
+
+        o->bidi_par_props = evas_bidi_paragraph_props_get(text, len, segment_idxs, bidi_par_type);
+     }
 
    if (o->bidi_par_props)
       o->bidi_dir = EVAS_BIDI_PAR_TYPE_TO_DIRECTION(o->bidi_par_props->direction);
@@ -1056,8 +1081,33 @@ _evas_text_efl_text_text_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
 }
 
 EOLIAN static Evas_BiDi_Direction
-_evas_text_direction_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
+_evas_text_direction_get(Eo *eo_obj, Evas_Text_Data *o)
 {
+#ifdef BIDI_SUPPORT
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+
+   if (o->inherit_paragraph_direction)
+     {
+        Evas_BiDi_Direction parent_dir = EVAS_BIDI_DIRECTION_NEUTRAL;
+
+        if (obj->smart.parent)
+          parent_dir = evas_object_paragraph_direction_get(obj->smart.parent);
+
+        if (parent_dir != o->paragraph_direction)
+          {
+             o->paragraph_direction = parent_dir;
+             o->changed_paragraph_direction = EINA_TRUE;
+          }
+     }
+
+   if (o->changed_paragraph_direction)
+     {
+        _evas_object_text_recalc(eo_obj, o->cur.text);
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
+                                            eo_obj, obj);
+     }
+#endif
+
    return o->bidi_dir;
 }
 
@@ -1537,6 +1587,7 @@ evas_object_text_init(Evas_Object *eo_obj)
    o->prev = o->cur;
 #ifdef BIDI_SUPPORT
    o->bidi_par_props = evas_bidi_paragraph_props_new();
+   o->inherit_paragraph_direction = EINA_TRUE;
 #endif
 
    eo_do(eo_obj, evas_filter_constructor());
@@ -1925,12 +1976,30 @@ evas_object_text_render_pre(Evas_Object *eo_obj,
                         obj->cur->clipper,
                         obj->cur->clipper->private_data);
      }
+
+#ifdef BIDI_SUPPORT
+   if (o->inherit_paragraph_direction)
+     {
+        Evas_BiDi_Direction parent_dir = EVAS_BIDI_DIRECTION_NEUTRAL;
+
+        if (obj->smart.parent)
+          parent_dir = evas_object_paragraph_direction_get(obj->smart.parent);
+
+        if (parent_dir != o->paragraph_direction)
+          {
+             o->paragraph_direction = parent_dir;
+             o->changed_paragraph_direction = EINA_TRUE;
+          }
+     }
+#endif
+
    /* If object size changed and ellipsis is set */
    if (((o->cur.ellipsis >= 0.0 ||
        o->cur.ellipsis != o->prev.ellipsis) &&
        ((obj->cur->geometry.w != o->last_computed.w) ||
        (obj->cur->geometry.h != o->last_computed.h))) ||
-       (obj->cur->scale != obj->prev->scale))
+       (obj->cur->scale != obj->prev->scale) ||
+       (o->changed_paragraph_direction))
      {
         _evas_object_text_recalc(eo_obj, o->cur.text);
         evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
@@ -2199,6 +2268,9 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
      }
    o->last_computed.w = obj->cur->geometry.w;
    o->last_computed.h = obj->cur->geometry.h;
+#ifdef BIDI_SUPPORT
+   o->changed_paragraph_direction = EINA_FALSE;
+#endif
 }
 
 EAPI void
@@ -2245,6 +2317,52 @@ _evas_text_efl_gfx_filter_program_set(Eo *obj, Evas_Text_Data *pd EINA_UNUSED, c
 {
    pd->has_filter = (code != NULL);
    eo_do_super(obj, MY_CLASS, efl_gfx_filter_program_set(code, name));
+}
+
+EOLIAN static void
+_evas_text_evas_object_paragraph_direction_set(Eo *eo_obj, Evas_Text_Data *o, Evas_BiDi_Direction dir)
+{
+#ifdef BIDI_SUPPORT
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+
+   if ((!(o->inherit_paragraph_direction) && (o->paragraph_direction == dir)) ||
+       (o->inherit_paragraph_direction && (dir == EVAS_BIDI_DIRECTION_INHERIT)))
+     return;
+
+   if (dir == EVAS_BIDI_DIRECTION_INHERIT)
+     {
+        o->inherit_paragraph_direction = EINA_TRUE;
+        Evas_BiDi_Direction parent_dir = EVAS_BIDI_DIRECTION_NEUTRAL;
+
+        if (obj->smart.parent)
+          parent_dir = evas_object_paragraph_direction_get(obj->smart.parent);
+
+        if (parent_dir != o->paragraph_direction)
+          {
+             o->paragraph_direction = parent_dir;
+             o->changed_paragraph_direction = EINA_TRUE;
+             evas_object_change(eo_obj, obj);
+          }
+     }
+   else
+     {
+        o->inherit_paragraph_direction = EINA_FALSE;
+        o->paragraph_direction = dir;
+        o->changed_paragraph_direction = EINA_TRUE;
+        evas_object_change(eo_obj, obj);
+     }
+#else
+   (void) eo_obj;
+   (void) o;
+   (void) dir;
+#endif
+}
+
+EOLIAN static Evas_BiDi_Direction
+_evas_text_evas_object_paragraph_direction_get(Eo *eo_obj EINA_UNUSED,
+                                               Evas_Text_Data *o)
+{
+   return o->paragraph_direction;
 }
 
 #include "canvas/evas_text.eo.c"

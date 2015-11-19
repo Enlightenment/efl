@@ -264,5 +264,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties, Evas.Filter)
       Evas.Filter.input_alpha;
       Evas.Filter.input_render;
       Evas.Filter.dirty;
+      Evas.Object.paragraph_direction.set;
+      Evas.Object.paragraph_direction.get;
    }
 }
