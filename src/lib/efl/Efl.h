@@ -123,19 +123,6 @@ typedef enum _Efl_Gfx_Gradient_Spread
   EFL_GFX_GRADIENT_SPREAD_LAST /**< End of enum value */
 } Efl_Gfx_Gradient_Spread;
 
-/**
- * Type defining how an image content get filled.
- * @since 1.14
- */
-typedef enum _Efl_Gfx_Fill_Spread
-{
-  EFL_GFX_FILL_REFLECT = 0, /**< image fill tiling mode - tiling reflects */
-  EFL_GFX_FILL_REPEAT = 1,  /**< tiling repeats */
-  EFL_GFX_FILL_RESTRICT = 2, /**< tiling clamps - range offset ignored */
-  EFL_GFX_FILL_RESTRICT_REFLECT = 3, /**< tiling clamps and any range offset reflects */
-  EFL_GFX_FILL_RESTRICT_REPEAT = 4, /**< tiling clamps and any range offset repeats */
-  EFL_GFX_FILL_PAD = 5 /**< tiling extends with end values */
-} Efl_Gfx_Fill_Spread;
 
 #ifdef EFL_BETA_API_SUPPORT
 
@@ -165,6 +152,12 @@ EAPI extern const Eo_Event_Description _EFL_GFX_PATH_CHANGED;
 #include "interfaces/efl_gfx_gradient_linear.eo.h"
 #include "interfaces/efl_gfx_gradient_radial.eo.h"
 #include "interfaces/efl_gfx_filter.eo.h"
+
+#else
+
+#ifndef EFL_NOLEGACY_API_SUPPORT
+#include "interfaces/efl_gfx_fill.eo.legacy.h"
+#endif
 
 #endif
 
