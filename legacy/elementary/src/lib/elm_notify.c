@@ -247,7 +247,6 @@ _elm_notify_evas_object_smart_move(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED, Eva
 static Eina_Bool
 _timer_cb(void *data)
 {
-   const char *hide_signal;
    Evas_Object *obj = data;
 
    ELM_NOTIFY_DATA_GET(obj, sd);
@@ -255,16 +254,7 @@ _timer_cb(void *data)
    sd->timer = NULL;
    if (!evas_object_visible_get(obj)) goto end;
 
-   hide_signal = edje_object_data_get(sd->notify, "hide_finished_signal");
-   if ((hide_signal) && (!strcmp(hide_signal, "on")))
-     {
-        sd->in_timeout = EINA_TRUE;
-        edje_object_signal_emit(sd->notify, "elm,state,hide", "elm");
-     }
-   else //for backport supporting: edc without emitting hide finished signal
-     {
-        evas_object_hide(obj);
-     }
+   evas_object_hide(obj);
    eo_do(obj, eo_event_callback_call(ELM_NOTIFY_EVENT_TIMEOUT, NULL));
 
 end:
@@ -302,7 +292,6 @@ _elm_notify_evas_object_smart_hide(Eo *obj, Elm_Notify_Data *sd)
 
    if (sd->had_hidden && !sd->in_timeout)
      return;
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
 
    hide_signal = edje_object_data_get(sd->notify, "hide_finished_signal");
    if ((hide_signal) && (!strcmp(hide_signal, "on")))
@@ -312,6 +301,7 @@ _elm_notify_evas_object_smart_hide(Eo *obj, Elm_Notify_Data *sd)
      }
    else //for backport supporting: edc without emitting hide finished signal
      {
+        eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
         evas_object_hide(sd->notify);
         if (sd->allow_events) evas_object_hide(sd->block_events);
      }
@@ -431,7 +421,7 @@ _hide_finished_cb(void *data,
    sd->had_hidden = EINA_TRUE;
    evas_object_hide(sd->notify);
    if (!sd->allow_events) evas_object_hide(sd->block_events);
-   evas_object_hide(data);
+   eo_do_super(data, MY_CLASS, evas_obj_smart_hide());
 }
 
 EOLIAN static void
