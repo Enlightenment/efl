@@ -260,8 +260,8 @@ eet_identity_close(Eet_Key *key)
    EVP_PKEY_free(key->private_key);
 # endif /* ifdef HAVE_GNUTLS */
    free(key);
-#else
-   key = NULL;
+# else
+   (void)key;
 #endif /* ifdef HAVE_SIGNATURE */
 }
 
