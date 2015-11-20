@@ -630,7 +630,7 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
                   *redraw_all = 1;
                }
           }
-        if (obj->cur->clipper)
+        if (!map && obj->cur->clipper)
           {
              // Fix some bad clipping issues after an evas_map animation finishes
              evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
