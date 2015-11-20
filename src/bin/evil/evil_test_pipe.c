@@ -45,7 +45,7 @@ test_pipe_test(void)
    int            sockets[2];
    struct timeval t;
    fd_set         rfds;
-   int            ret;
+   int            ret = 0;
    data          *d;
    DWORD          thread_id;
    HANDLE         h;
