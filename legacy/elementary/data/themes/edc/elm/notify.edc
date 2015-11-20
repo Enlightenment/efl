@@ -71,6 +71,10 @@ group { name: "elm/notify/top/default";
          target: "clip";
          target: "base";
          transition: DECELERATE 0.5;
+         after: "hide_finish";
+      }
+      program { name: "hide_finish";
+         action: SIGNAL_EMIT "elm,action,hide,finished" "elm";
       }
    }
 }

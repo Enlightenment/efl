@@ -431,6 +431,7 @@ _hide_finished_cb(void *data,
    sd->had_hidden = EINA_TRUE;
    evas_object_hide(sd->notify);
    if (!sd->allow_events) evas_object_hide(sd->block_events);
+   evas_object_hide(data);
 }
 
 EOLIAN static void
