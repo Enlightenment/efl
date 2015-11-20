@@ -17,6 +17,7 @@ int main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    char *time_arr;
    time_t curr_time;
    struct tm *info;
+   char *b64;
 
    eina_init();
 
@@ -67,6 +68,10 @@ int main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    time_arr = eina_strftime("%d/%m/%Y", info);
    printf("Today's Date: %s\n", time_arr);
    free(time_arr);
+
+   b64 = eina_str_base64_encode((unsigned char *)"Enlightenment", 9);
+   printf("%s\n", b64);
+   free(b64);
 
    eina_shutdown();
 
