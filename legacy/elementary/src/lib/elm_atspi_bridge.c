@@ -4484,6 +4484,7 @@ _key_event_info_new(int event_type, const Ecore_Event_Key *data, Eo *bridge)
    ret->event.key = eina_stringshare_add(data->key);
    ret->event.string = eina_stringshare_add(data->string);
    ret->event.compose = eina_stringshare_add(data->compose);
+   ret->event.modifiers = data->modifiers;
 
    // not sure why it is here, but explicite keep it NULLed.
    ret->event.data = NULL;
@@ -4504,6 +4505,27 @@ _key_event_info_free(Key_Event_Info *data)
    free(data);
 }
 
+static short
+_ecore_modifiers_2_atspi(unsigned int modifiers)
+{
+   short ret = 0;
+
+   if (modifiers & ECORE_EVENT_MODIFIER_SHIFT)
+     ret |= (1 << ATSPI_MODIFIER_SHIFT);
+   if (modifiers & ECORE_EVENT_MODIFIER_CAPS)
+     ret |= (1 << ATSPI_MODIFIER_SHIFTLOCK);
+   if (modifiers & ECORE_EVENT_MODIFIER_CTRL)
+     ret |= (1 << ATSPI_MODIFIER_CONTROL);
+   if (modifiers & ECORE_EVENT_MODIFIER_ALT)
+     ret |= (1 << ATSPI_MODIFIER_ALT);
+   if (modifiers & ECORE_EVENT_MODIFIER_WIN)
+     ret |= ATSPI_MODIFIER_META;
+   if (modifiers & ECORE_EVENT_MODIFIER_NUM)
+     ret |= (1 << ATSPI_MODIFIER_NUMLOCK);
+
+   return ret;
+}
+
 static void
 _iter_marshall_key_event(Eldbus_Message_Iter *iter, Key_Event_Info *data)
 {
@@ -4520,7 +4542,7 @@ _iter_marshall_key_event(Eldbus_Message_Iter *iter, Key_Event_Info *data)
    else
      type = ATSPI_KEY_RELEASED_EVENT;
 
-   eldbus_message_iter_arguments_append(struct_iter, "uiiiisb", type, 0, data->event.keycode, 0, data->event.timestamp, str, is_text);
+   eldbus_message_iter_arguments_append(struct_iter, "uinnisb", type, 0, data->event.keycode, _ecore_modifiers_2_atspi(data->event.modifiers), data->event.timestamp, str, is_text);
    eldbus_message_iter_container_close(iter, struct_iter);
 }
 
