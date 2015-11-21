@@ -714,6 +714,8 @@ efreet_icon_lookup_path_path(Efreet_Cache_Icon_Element *elem, const char *path)
                 r = elem->paths[i];
                 break;
             }
+        if (r)
+          break;
     }
 
     free((void*) path);
