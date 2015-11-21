@@ -4519,7 +4519,7 @@ _ecore_modifiers_2_atspi(unsigned int modifiers)
    if (modifiers & ECORE_EVENT_MODIFIER_ALT)
      ret |= (1 << ATSPI_MODIFIER_ALT);
    if (modifiers & ECORE_EVENT_MODIFIER_WIN)
-     ret |= ATSPI_MODIFIER_META;
+     ret |= (1 << ATSPI_MODIFIER_META);
    if (modifiers & ECORE_EVENT_MODIFIER_NUM)
      ret |= (1 << ATSPI_MODIFIER_NUMLOCK);
 
