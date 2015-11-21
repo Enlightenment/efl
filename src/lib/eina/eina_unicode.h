@@ -179,6 +179,17 @@ EAPI int eina_unicode_utf8_get_len(const char *buf) EINA_ARG_NONNULL(1);
 EAPI Eina_Unicode *eina_unicode_utf8_to_unicode(const char *utf, int *_len) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
+ * Converts an Eina_Unicode string to a newly allocated utf-8 substring at given length.
+ *
+ * @param uni the Eina_Unicode string
+ * @param ulen the length in the unicode string to convert.
+ * @param _len the length byte length of the return utf8 substring.
+ * @return the newly allocated utf-8 substring.
+ * @since 1.17
+ */
+EAPI char * eina_unicode_unicode_to_utf8_range(const Eina_Unicode *uni, int ulen, int *_len) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+
+/**
  * Converts an Eina_Unicode string to a newly allocated utf-8 string.
  *
  * @param uni the Eina_Unicode string
