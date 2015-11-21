@@ -585,6 +585,10 @@ START_TEST(eina_unicode_utf8_conversion)
    char c_in[] = "\xD7\x90""\xEF\xB7\xB6""\x80""\xF0\x9F\x91\x99"
       "\xFB\xBF\xBF\xBF\xBF""\xFD\xBF\xBF\xBF\xBF\xBF""abc";
    char *c_out;
+
+   /* Substring of c_in (offset = 2, length = 3) */
+   char c_sub[] = "\x80""\xF0\x9F\x91\x99""\xFB\xBF\xBF\xBF\xBF";
+   char *c_sub_out;
    int len;
 
    eina_init();
@@ -596,6 +600,19 @@ START_TEST(eina_unicode_utf8_conversion)
    c_out = eina_unicode_unicode_to_utf8(uni_in, &len);
    fail_if((len != 24) || strcmp(c_in, c_out));
    free(c_out);
+
+   /* Range conversion */
+   c_sub_out = eina_unicode_unicode_to_utf8_range(uni_in + 2, 3, &len);
+   ck_assert_int_eq(len, 10);
+   ck_assert_str_eq(c_sub, c_sub_out);
+
+   c_sub_out = eina_unicode_unicode_to_utf8_range(uni_in, 100, &len);
+   ck_assert_int_eq(len, 24);
+   ck_assert_str_eq(c_in, c_sub_out);
+
+   c_sub_out = eina_unicode_unicode_to_utf8_range(uni_in, 0, &len);
+   ck_assert_int_eq(len, 0);
+   ck_assert_str_eq("", c_sub_out);
 
    eina_shutdown();
 }

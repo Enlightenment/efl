@@ -341,21 +341,20 @@ eina_unicode_utf8_to_unicode(const char *utf, int *_len)
 }
 
 EAPI char *
-eina_unicode_unicode_to_utf8(const Eina_Unicode *uni, int *_len)
+eina_unicode_unicode_to_utf8_range(const Eina_Unicode *uni, int ulen, int *_len)
 {
    char *buf, *buf2;
    const Eina_Unicode *uind;
    char *ind;
-   int ulen, len;
+   int i, len;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(uni, NULL);
 
-   ulen = eina_unicode_strlen(uni);
    buf = malloc((ulen + 1) * EINA_UNICODE_UTF8_BYTES_PER_CHAR);
    if (!buf) return NULL;
 
    len = 0;
-   for (uind = uni, ind = buf ; *uind ; uind++)
+   for (uind = uni, ind = buf, i = 0 ; *uind && (i < ulen) ; uind++, i++)
      {
         if (*uind <= 0x7F) /* 1 byte char */
           {
@@ -424,5 +423,10 @@ eina_unicode_unicode_to_utf8(const Eina_Unicode *uni, int *_len)
    return buf2;
 }
 
+EAPI char *
+eina_unicode_unicode_to_utf8(const Eina_Unicode *uni, int *_len)
+{
+   int len = eina_unicode_strlen(uni);
 
-
+   return eina_unicode_unicode_to_utf8_range(uni, len, _len);
+}
