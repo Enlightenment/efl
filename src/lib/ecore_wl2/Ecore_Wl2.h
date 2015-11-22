@@ -37,6 +37,10 @@ typedef struct _Ecore_Wl2_Window Ecore_Wl2_Window;
 typedef struct _Ecore_Wl2_Display Ecore_Wl2_Display;
 typedef struct _Ecore_Wl2_Output Ecore_Wl2_Output;
 typedef struct _Ecore_Wl2_Input Ecore_Wl2_Input;
+typedef struct _Ecore_Wl2_Seat Ecore_Wl2_Seat;
+typedef struct _Ecore_Wl2_Pointer Ecore_Wl2_Pointer;
+typedef struct _Ecore_Wl2_Keyboard Ecore_Wl2_Keyboard;
+typedef struct _Ecore_Wl2_Touch Ecore_Wl2_Touch;
 
 typedef struct _Ecore_Wl2_Global
 {
@@ -134,6 +138,9 @@ typedef enum _Ecore_Wl2_Window_Type
    ECORE_WL2_WINDOW_TYPE_CUSTOM,
    ECORE_WL2_WINDOW_TYPE_LAST
 } Ecore_Wl2_Window_Type;
+
+typedef void (*Ecore_Wl2_Bind_Cb)(struct wl_client *client, void *data, uint32_t version, uint32_t id);
+typedef void (*Ecore_Wl2_Unbind_Cb)(struct wl_resource *resource);
 
 EAPI extern int ECORE_WL2_EVENT_GLOBAL_ADDED;
 EAPI extern int ECORE_WL2_EVENT_GLOBAL_REMOVED;
@@ -982,6 +989,14 @@ EAPI void ecore_wl2_subsurface_opaque_region_set(Ecore_Wl2_Subsurface *subsurfac
  * @since 1.17
  */
 EAPI int ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output);
+
+EAPI Ecore_Wl2_Seat *ecore_wl2_seat_create(Ecore_Wl2_Display *display, const char *name, const struct wl_seat_interface *implementation, int version, Ecore_Wl2_Bind_Cb bind_cb, Ecore_Wl2_Unbind_Cb unbind_cb);
+EAPI void ecore_wl2_seat_destroy(Ecore_Wl2_Seat *seat);
+EAPI void ecore_wl2_seat_capabilities_send(Ecore_Wl2_Seat *seat, enum wl_seat_capability caps);
+EAPI void ecore_wl2_seat_pointer_release(Ecore_Wl2_Seat *seat);
+
+EAPI Ecore_Wl2_Pointer *ecore_wl2_pointer_get(Ecore_Wl2_Seat *seat);
+EAPI Eina_Bool ecore_wl2_pointer_resource_create(Ecore_Wl2_Pointer *ptr, struct wl_client *client, const struct wl_pointer_interface *implementation, int version, uint32_t id);
 
 /* # ifdef __cplusplus */
 /* } */
