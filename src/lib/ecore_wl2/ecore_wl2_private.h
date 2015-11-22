@@ -5,6 +5,10 @@
 # include "Ecore_Wl2.h"
 # include "Ecore_Input.h"
 
+# ifndef MIN
+#  define MIN(x, y) (((x) < (y)) ? (x) : (y))
+# endif
+
 /* NB: Test if subsurface protocol is part of wayland code, if not then
  * include our own copy */
 # ifndef WL_SUBSURFACE_ERROR_ENUM
@@ -76,6 +80,7 @@ struct _Ecore_Wl2_Display
    Eina_Inlist *windows;
    Eina_Inlist *outputs;
    Eina_Inlist *inputs;
+   Eina_Inlist *seats;
 
    Eina_Bool sync_done : 1;
 };
@@ -156,6 +161,97 @@ typedef struct _Ecore_Wl2_Dnd_Source
    struct wl_data_offer *offer;
    struct wl_array types;
 } Ecore_Wl2_Dnd_Source;
+
+
+/** TODO: Refactor ALL Input code :(
+ *
+ * wl_seat is a GROUP of Input Devices (such as):
+ *      keyboards, pointers, touch devices
+ */
+struct _Ecore_Wl2_Pointer
+{
+   EINA_INLIST;
+
+   Ecore_Wl2_Seat *seat;
+
+   double sx, sy;
+   unsigned int button;
+   unsigned int enter_serial;
+
+   struct
+     {
+        const char *name, *theme_name;
+        unsigned int index, size;
+        struct wl_cursor *wl_cursor;
+        struct wl_cursor_theme *theme;
+        struct wl_surface *surface;
+        struct wl_callback *frame_cb;
+        Ecore_Timer *timer;
+     } cursor;
+
+   struct
+     {
+        unsigned int button, count, timestamp;
+        Ecore_Wl2_Window *window;
+     } grab;
+
+   Ecore_Wl2_Window *focus;
+
+   Eina_List *resources;
+};
+
+struct _Ecore_Wl2_Keyboard
+{
+   EINA_INLIST;
+
+   struct
+     {
+        unsigned int button, count, timestamp;
+        Ecore_Wl2_Window *window;
+     } grab;
+};
+
+struct _Ecore_Wl2_Touch
+{
+   EINA_INLIST;
+
+   struct
+     {
+        unsigned int button, count, timestamp;
+        Ecore_Wl2_Window *window;
+     } grab;
+};
+
+struct _Ecore_Wl2_Seat
+{
+   EINA_INLIST;
+
+   uint32_t id;
+   uint32_t version;
+   const char *name;
+   struct wl_global *global;
+   const struct wl_seat_interface *implementation;
+
+   struct
+     {
+        struct wl_global *global;
+        struct wl_resource *resource;
+     } im;
+
+   Ecore_Wl2_Bind_Cb bind_cb;
+   Ecore_Wl2_Unbind_Cb unbind_cb;
+
+   Ecore_Wl2_Pointer *pointer;
+   int pointer_count;
+
+   Ecore_Wl2_Keyboard *keyboard;
+   int keyboard_count;
+
+   Ecore_Wl2_Touch *touch;
+   int touch_count;
+
+   Eina_List *resources;
+};
 
 struct _Ecore_Wl2_Input
 {
@@ -246,6 +342,8 @@ struct _Ecore_Wl2_Input
      {
         Ecore_Wl2_Dnd_Source *source;
      } drag, selection;
+
+   unsigned int seat_version;
 };
 
 Ecore_Wl2_Window *_ecore_wl2_display_window_surface_find(Ecore_Wl2_Display *display, struct wl_surface *wl_surface);
@@ -253,7 +351,7 @@ Ecore_Wl2_Window *_ecore_wl2_display_window_surface_find(Ecore_Wl2_Display *disp
 void _ecore_wl2_output_add(Ecore_Wl2_Display *display, unsigned int id);
 void _ecore_wl2_output_del(Ecore_Wl2_Output *output);
 
-void _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id);
+void _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id, unsigned int version);
 void _ecore_wl2_input_del(Ecore_Wl2_Input *input);
 
 void _ecore_wl2_input_ungrab(Ecore_Wl2_Input *input);
