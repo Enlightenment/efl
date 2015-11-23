@@ -429,8 +429,10 @@ group { name: "e/modules/ibar/menu/item";
 group { name: "e/modules/ibox/icon_overlay";
    alias: "e/modules/ibar/icon_overlay";
    images.image: "darken_square.png" COMP;
+   script_recursion: 1;
    script {
       public urgent;
+      public active;
    }
    parts {
       part { name: "item_clip"; type: RECT;
@@ -578,21 +580,29 @@ group { name: "e/modules/ibox/icon_overlay";
       }
       program { name: "go_active";
          signal: "e,state,focused"; source: "e";
-         action: STATE_SET "visible" 0.0;
-         target: "background";
+         script {
+           set_state(PART:"background", "visible", 0.0);
+           set_int(active, 1);
+         }
          after: "go_active2";
       }
       program { name: "go_active2";
          action: STATE_SET "hidden" 0.0;
          transition: LINEAR 0.5;
          target: "background";
-         after: "go_active";
+         sequence {
+            script {
+               if (get_int(active) == 1)
+                 run_program(get_program_id("go_active"));
+            }
+         }
       }
       program { name: "go_passive";
          signal: "e,state,unfocused"; source: "e";
-         action: ACTION_STOP;
-         target: "go_active";
-         target: "go_active2";
+         script {
+            stop_program(get_program_id("go_passive2"));
+            set_int(active, 0);
+         }
          after: "go_passive2";
       }
       program {
