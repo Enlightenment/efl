@@ -1185,6 +1185,13 @@ _elm_entry_elm_widget_on_focus_region(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, E
 {
    edje_object_part_text_cursor_geometry_get
      (sd->entry_edje, "elm.text", x, y, w, h);
+
+   if (sd->single_line)
+     {
+        evas_object_geometry_get(sd->entry_edje, NULL, NULL, NULL, h);
+        if (y) *y = 0;
+     }
+
    return EINA_TRUE;
 }
 
