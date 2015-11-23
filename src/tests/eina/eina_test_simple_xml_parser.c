@@ -78,8 +78,8 @@ START_TEST(eina_simple_xml_parser_node_dump)
                        ck_assert_str_eq(out, buf);
                        free(out);
                        eina_simple_xml_node_root_free(root);
-                       free(buf);
                     }
+                  free(buf);
                }
           }
         fclose(f);
@@ -251,9 +251,9 @@ START_TEST(eina_simple_xml_parser_parse_with_custom_callback)
                                           EINA_TRUE,
                                           eina_simple_xml_parser_parse_with_custom_callback_tag_cb,
                                           &parse_current_state);
-                    free(buf);
                     fail_if(parse_current_state != simple_xml_parser_current_state_end);
                   }
+                free(buf);
               }
           }
 
