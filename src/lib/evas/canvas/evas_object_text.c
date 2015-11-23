@@ -1791,8 +1791,12 @@ evas_object_text_render(Evas_Object *eo_obj,
    switch (o->cur.style & EVAS_TEXT_STYLE_MASK_BASIC)
      {
       case EVAS_TEXT_STYLE_SHADOW:
+         shad_dst = 1;
+         haveshad = 1;
+         break;
       case EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW:
          shad_dst = 1;
+         shad_sz = 2;
          haveshad = 1;
          break;
       case EVAS_TEXT_STYLE_OUTLINE_SHADOW:
@@ -1909,9 +1913,9 @@ evas_object_text_render(Evas_Object *eo_obj,
           }
 
         /* outlines */
-        if ((o->cur.style == EVAS_TEXT_STYLE_OUTLINE) ||
-              (o->cur.style == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
-              (o->cur.style == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW))
+        if (((o->cur.style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE) ||
+            ((o->cur.style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
+            ((o->cur.style & EVAS_TEXT_STYLE_MASK_BASIC) == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW))
           {
              COLOR_SET(o, cur, outline);
              DRAW_TEXT(-1, 0);
