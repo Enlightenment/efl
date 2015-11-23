@@ -280,12 +280,12 @@ mixin Efl.Gfx.Shape
           @since 1.14
         ]]
         params {
-          @in x: double; [[X co-ordinate of end point of the line.]]
-          @in y: double; [[Y co-ordinate of end point of the line.]]
           @in ctrl_x0: double; [[X co-ordinate of 1st control point.]]
           @in ctrl_y0: double; [[Y co-ordinate of 1st control point.]]
           @in ctrl_x1: double; [[X co-ordinate of 2nd control point.]]
           @in ctrl_y1: double; [[Y co-ordinate of 2nd control point.]]
+          @in x: double; [[X co-ordinate of end point of the line.]]
+          @in y: double; [[Y co-ordinate of end point of the line.]]
         }
       }
       append_scubic_to {

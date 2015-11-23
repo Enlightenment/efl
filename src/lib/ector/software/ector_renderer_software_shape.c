@@ -224,12 +224,9 @@ _generate_outline(const Efl_Gfx_Path_Command *cmds, const double *pts, Outline *
                break;
             case EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO:
 
-               // Be careful, we do have a different order than
-               // freetype first is destination point, followed by
-               // the control point. The opposite of cairo.
                _outline_cubic_to(outline,
-                                 pts[2], pts[3], pts[4], pts[5], // control points
-                                 pts[0], pts[1]); // destination point
+                                 pts[0], pts[1], pts[2], pts[3], // control points
+                                 pts[4], pts[5]); // destination point
                pts += 6;
                break;
 
@@ -474,7 +471,7 @@ _generate_dashed_outline(const Efl_Gfx_Path_Command *cmds, const double *pts, Ou
                pts += 2;
                break;
             case EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO:
-               _dasher_cubic_to(&dasher, pts[2], pts[3], pts[4], pts[5], pts[0], pts[1]);
+               _dasher_cubic_to(&dasher, pts[0], pts[1], pts[2], pts[3], pts[4], pts[5]);
                pts += 6;
                break;
 

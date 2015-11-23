@@ -370,9 +370,9 @@ void _arcto(Efl_VG *obj, int x, int y, int width, int height, int startAngle, in
     for (i = 0; i < point_count; i += 3)
       {
          evas_vg_shape_shape_append_cubic_to(obj,
-                                             pts[i+2].x, pts[i+2].y,
                                              pts[i].x, pts[i].y,
-                                             pts[i+1].x, pts[i+1].y);
+                                             pts[i+1].x, pts[i+1].y,
+                                             pts[i+2].x, pts[i+2].y);
       }
     evas_vg_shape_shape_append_close(obj);
 }
