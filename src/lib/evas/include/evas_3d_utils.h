@@ -1578,7 +1578,7 @@ convex_hull_vertex_set(Evas_Triangle3 *el, unsigned short int *vertex_count, flo
                     unsigned short int **index, unsigned int k, int *leader, int coord)
 {
    int color_coords, normal_coords;
-   Evas_Vec3 vect;
+   Evas_Vec3 vect = {0};
    switch (coord)
      {
       case 0:
@@ -1904,7 +1904,7 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
         on_plain = EINA_FALSE;
         right = EINA_FALSE;
 
-        /* The case when several points are found, is discussed below. 
+        /* The case when several points are found, is discussed below.
            This case is interesting because the convex hull in the
            two-dimensional subspace should be filled further */
         if ((cos != 1.0) && (1 < eina_array_count(&arr_candidates)))
