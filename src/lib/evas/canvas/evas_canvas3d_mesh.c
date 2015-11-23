@@ -1132,6 +1132,13 @@ _evas_canvas3d_mesh_convex_hull_data_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh
    int stride;
 
    Evas_Canvas3D_Mesh_Frame *f = evas_canvas3d_mesh_frame_find(pd, frame);
+
+   if (!f)
+     {
+        ERR("Not existing mesh frame %d %s", __LINE__, __FILE__);
+        return;
+     }
+
    if (f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION].stride != 0)
      stride = f->vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION].stride / sizeof(float);
    else
