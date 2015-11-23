@@ -41,12 +41,6 @@ _generate_unic_color_key(Evas_Color *color, Evas_Color *bg_color, Evas_Canvas3D_
         GET_NEXT_COLOR
      }
 
-   if ((red == 255) && (green == 255) && (blue == 255))
-     {
-        ERR("Overfill number of color. %d %s", __LINE__, __FILE__);
-        red = green = blue = 0;
-     }
-
    color->r = (double)red / 255;
    color->g = (double)green / 255;
    color->b = (double)blue / 255;
