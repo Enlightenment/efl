@@ -130,12 +130,10 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_R
                    pts += 2;
                    break;
                 case EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO:
-                   // Be careful, we do have a different order than
-                   // cairo, first is destination point, followed by
-                   // the control point. The opposite of cairo.
+
                    cairo_curve_to(pd->parent->cairo,
-                                  pts[2], pts[3], pts[4], pts[5], // control points
-                                  pts[0], pts[1]); // destination point
+                                  pts[0], pts[1], pts[2], pts[3], // control points
+                                  pts[4], pts[5]); // destination point
 
                    pts += 6;
                    break;

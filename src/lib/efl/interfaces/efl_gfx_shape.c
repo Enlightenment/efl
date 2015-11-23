@@ -498,9 +498,9 @@ _efl_gfx_shape_append_line_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
 
 static void
 _efl_gfx_shape_append_cubic_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
-                               double x, double y,
                                double ctrl_x0, double ctrl_y0,
-                               double ctrl_x1, double ctrl_y1)
+                               double ctrl_x1, double ctrl_y1,
+                               double x, double y)
 {
    double *offset_point;
 
@@ -508,12 +508,12 @@ _efl_gfx_shape_append_cubic_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
                           pd, &offset_point))
      return ;
 
-   offset_point[0] = x;
-   offset_point[1] = y;
-   offset_point[2] = ctrl_x0;
-   offset_point[3] = ctrl_y0;
-   offset_point[4] = ctrl_x1;
-   offset_point[5] = ctrl_y1;
+   offset_point[0] = ctrl_x0;
+   offset_point[1] = ctrl_y0;
+   offset_point[2] = ctrl_x1;
+   offset_point[3] = ctrl_y1;
+   offset_point[4] = x;
+   offset_point[5] = y;
 
    pd->current.x = x;
    pd->current.y = y;
@@ -542,8 +542,8 @@ _efl_gfx_shape_append_scubic_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
    ctrl_x0 = 2 * current_x - current_ctrl_x;
    ctrl_y0 = 2 * current_y - current_ctrl_y;
 
-   _efl_gfx_shape_append_cubic_to(obj, pd, x, y,
-                                  ctrl_x0, ctrl_y0, ctrl_x, ctrl_y);
+   _efl_gfx_shape_append_cubic_to(obj, pd, ctrl_x0, ctrl_y0,
+                                  ctrl_x, ctrl_y, x, y);
 }
 
 static void
@@ -563,8 +563,8 @@ _efl_gfx_shape_append_quadratic_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
    ctrl_x1 = (x + 2 * ctrl_x) * (1.0 / 3.0);
    ctrl_y1 = (y + 2 * ctrl_y) * (1.0 / 3.0);
 
-   _efl_gfx_shape_append_cubic_to(obj, pd, x, y,
-                                  ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1);
+   _efl_gfx_shape_append_cubic_to(obj, pd, ctrl_x0, ctrl_y0,
+                                  ctrl_x1, ctrl_y1, x, y);
 }
 
 static void
@@ -589,9 +589,9 @@ _efl_gfx_shape_append_squadratic_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
    ctrl_x1 = (x + 2 * xc) * (1.0 / 3.0);
    ctrl_y1 = (y + 2 * yc) * (1.0 / 3.0);
 
-   _efl_gfx_shape_append_cubic_to(obj, pd, x, y,
-                                  ctrl_x0, ctrl_y0,
-                                  ctrl_x1, ctrl_y1);
+   _efl_gfx_shape_append_cubic_to(obj, pd, ctrl_x0, ctrl_y0,
+                                  ctrl_x1, ctrl_y1,
+                                   x, y);
 }
 
 /*
@@ -770,7 +770,7 @@ _efl_gfx_shape_append_arc_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
         c2x = ex + bcp * (cos_phi_rx * sin_theta2 + sin_phi_ry * cos_theta2);
         c2y = ey + bcp * (sin_phi_rx * sin_theta2 - cos_phi_ry * cos_theta2);
 
-        _efl_gfx_shape_append_cubic_to(obj, pd, ex, ey, c1x, c1y, c2x, c2y);
+        _efl_gfx_shape_append_cubic_to(obj, pd, c1x, c1y, c2x, c2y, ex, ey);
 
         // next start point is the current end point (same for angle)
         sx = ex;
@@ -1076,9 +1076,9 @@ _efl_gfx_shape_append_arc(Eo *obj, Efl_Gfx_Shape_Data *pd,
    for (i = 0; i < point_count; i += 3)
      {
         _efl_gfx_shape_append_cubic_to(obj, pd,
-                                       pts[i+2].x, pts[i+2].y,
                                        pts[i].x, pts[i].y,
-                                       pts[i+1].x, pts[i+1].y);
+                                       pts[i+1].x, pts[i+1].y,
+                                       pts[i+2].x, pts[i+2].y);
      }
 }
 
@@ -1292,7 +1292,7 @@ static Eina_Bool
 _efl_gfx_path_parse_six_to(const char *content, char **end,
                            Eo *obj, Efl_Gfx_Shape_Data *pd,
                            double *current_x, double *current_y,
-                           void (*func)(Eo *obj, Efl_Gfx_Shape_Data *pd, double x, double y, double ctrl_x0, double ctrl_y0, double ctrl_x1, double ctrl_y1),
+                           void (*func)(Eo *obj, Efl_Gfx_Shape_Data *pd, double ctrl_x0, double ctrl_y0, double ctrl_x1, double ctrl_y1, double x, double y),
                            Eina_Bool rel)
 {
    double x, y, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1;
@@ -1317,7 +1317,7 @@ _efl_gfx_path_parse_six_to(const char *content, char **end,
              ctrl_x1 += *current_x;
              ctrl_y1 += *current_y;
           }
-        func(obj, pd, x, y, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1);
+        func(obj, pd, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, x, y);
         content = *end;
 
         *current_x = x;
