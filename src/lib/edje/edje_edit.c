@@ -2689,7 +2689,7 @@ edje_edit_style_del(Evas_Object *obj, const char *style)
    ed->file->styles = eina_list_remove(ed->file->styles, s);
 
    _edje_if_string_free(ed, (const char **)&s->name);
-   //~ //s->style HOWTO FREE ???
+   evas_textblock_style_free(s->style);
    while (s->tags)
      {
         Edje_Style_Tag *t;
@@ -2702,7 +2702,6 @@ edje_edit_style_del(Evas_Object *obj, const char *style)
         _edje_if_string_free(ed, &t->font);
         _edje_if_string_free(ed, &t->text_class);
         free(t);
-        t = NULL;
      }
    free(s);
    return EINA_TRUE;
