@@ -341,7 +341,7 @@ fb_list_modes(unsigned int *num_return)
 {
    FILE *f;
    char line[256], label[256], value[256];
-   FB_Mode *modes = NULL;
+   FB_Mode *modes = NULL, *temp;
    int num;
    
    num = 0;
@@ -365,7 +365,15 @@ fb_list_modes(unsigned int *num_return)
                   int timings = 0;
                   
                   num++;
+                  temp = modes;
                   modes = realloc(modes, num * sizeof(FB_Mode));
+                  if (!modes)
+                    {
+                       free(temp);
+                       fclose(f);
+                       *num_return = 0;
+                       return NULL;
+                    }
                   memset(modes + (num - 1), 0, sizeof(FB_Mode));
                   modes[num - 1].width = atoi(f1);
                   modes[num - 1].height = atoi(f2);
