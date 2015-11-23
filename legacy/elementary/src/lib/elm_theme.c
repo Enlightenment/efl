@@ -319,7 +319,12 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
         file = _elm_theme_group_file_find(th, buf2);
         if (file)
           {
-             if (edje_object_mmap_set(o, file, buf2)) return EINA_TRUE;
+             if (edje_object_mmap_set(o, file, buf2))
+               {
+                  DBG("could not set theme style '%s', fallback to default",
+                      style);
+                  return EINA_TRUE;
+               }
              else
                {
                   DBG("could not set theme group '%s' from file '%s': %s",
