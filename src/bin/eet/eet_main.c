@@ -86,7 +86,7 @@ do_eet_list(const char *file, Eina_Bool verbose)
    if (verbose)
      {
         printf("*** ***\n");
-        printf("Total payload size : %lli.\n", total);
+        printf("Total payload size : %llu.\n", total);
      }
 
    eet_close(ef);
