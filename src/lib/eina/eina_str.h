@@ -393,7 +393,7 @@ EAPI char *eina_strftime(const char *format, const struct tm *tm);
  *
  * @since 1.17.0
  */
-EAPI char *eina_str_base64_encode(unsigned char const *src, unsigned int len);
+EAPI char *eina_str_base64_encode(const unsigned char *src, unsigned int len);
 
 #include "eina_inline_str.x"
 
