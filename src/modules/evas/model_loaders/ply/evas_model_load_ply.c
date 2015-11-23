@@ -102,8 +102,6 @@ _read_header(char *map)//Check properties of mesh in .ply file.
      }
 
    sscanf(helping_pointer[1], "%d", &header.vertices_count);
-
-ERR("\n HEADER %d", header.vertices_count);
    free(helping_pointer);
    helping_pointer = eina_str_split(map, "end_header\n", 0);
 
