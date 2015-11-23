@@ -2705,8 +2705,6 @@ edje_edit_style_del(Evas_Object *obj, const char *style)
         t = NULL;
      }
    free(s);
-   s = NULL;
-   s = NULL;
    return EINA_TRUE;
 }
 
