@@ -407,4 +407,12 @@ _elm_table_class_constructor(Eo_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
+EOLIAN void
+_elm_table_evas_object_smart_calculate(Eo *obj, void *pd EINA_UNUSED)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   evas_object_smart_calculate(wd->resize_obj);
+}
+
 #include "elm_table.eo.c"
