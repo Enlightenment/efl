@@ -103,6 +103,7 @@ _read_header(char *map)//Check properties of mesh in .ply file.
 
    sscanf(helping_pointer[1], "%d", &header.vertices_count);
 
+ERR("\n HEADER %d", header.vertices_count);
    free(helping_pointer);
    helping_pointer = eina_str_split(map, "end_header\n", 0);
 
@@ -181,7 +182,7 @@ void
 evas_model_load_file_ply(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
 {
    Evas_Canvas3D_Mesh_Data *pd;
-   int i = 0, j = 0, k = 0, count_of_triangles_in_line = 0;
+   int i = 0, j = 0, count_of_triangles_in_line = 0;
    float *pos, *nor, *tex, *col;
    int stride_pos, stride_nor, stride_tex, stride_col;
    char *current, *map;
@@ -223,20 +224,20 @@ evas_model_load_file_ply(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
      _tex_coords_ply = malloc(header.vertices_count * 2 * sizeof(float));
    if (header.existence_of_colors)
      _colors_ply = malloc(header.vertices_count * 3 * sizeof(float));
-   int *_triangles = malloc(header.triangles_count * 3 * sizeof(int));
+   unsigned short *_indices = malloc(header.triangles_count * 3 * sizeof(unsigned short));
 
    if ((header.existence_of_geometries && (_vertices_ply == NULL)) ||
        (header.existence_of_normals && (_normals_ply == NULL)) ||
        (header.existence_of_texcoords && (_tex_coords_ply == NULL)) ||
        (header.existence_of_colors && (_colors_ply == NULL)) ||
-       (_triangles == NULL))
+       (_indices == NULL))
      {
         ERR("Allocate memory is failed.");
         free(_vertices_ply);
         free(_normals_ply);
         free(_tex_coords_ply);
         free(_colors_ply);
-        free(_triangles);
+        free(_indices);
         return;
      }
 
@@ -252,30 +253,30 @@ evas_model_load_file_ply(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
         current = _to_begin_of_line(current);
      }
 
-   for (i = 0; i < header.triangles_count;)
+   for (i = 0; i < header.triangles_count * 3;)
      {
         sscanf (current,"%d", &count_of_triangles_in_line);
         count_of_triangles_in_line -= 2;
         current = _to_next_number(current, 1);
 
-        sscanf (current,"%i", &ARRAY_2D(_triangles, i, 0, 3));
+        sscanf (current,"%hu", _indices + i);
 
         for (j = 0; j < count_of_triangles_in_line; j++)
           {
              if (j > 0)
-               ARRAY_2D(_triangles, i, 0, 3) = ARRAY_2D(_triangles, (i - 1), 0, 3);
+               _indices[i] = _indices[i - 3];
              current = _to_next_number(current, 1);
-             sscanf (current,"%i %i",
-                     &ARRAY_2D(_triangles, i, 1, 3),
-                     &ARRAY_2D(_triangles, i, 2, 3));
-             i++;
+             sscanf (current,"%hu %hu",
+                     _indices + i + 1,
+                     _indices + i + 2);
+             i+=3;
           }
         current = _to_next_line(current);
      }
 
    /* prepare of mesh and take pointers to data which must be read */
    eo_do(mesh,
-         evas_canvas3d_mesh_vertex_count_set(header.triangles_count * 3),
+         evas_canvas3d_mesh_vertex_count_set(header.vertices_count),
          evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES),
          evas_canvas3d_mesh_frame_add(0),
          evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, 0, NULL),
@@ -298,61 +299,65 @@ evas_model_load_file_ply(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
    if (stride_tex == 0) stride_tex = sizeof(float) * 2;
    if (stride_col == 0) stride_col = sizeof(float) * 4;
 
-   for (j = 0; j < header.triangles_count; j++)
+
+   for (j = 0; j < header.vertices_count; j++)
      {
-        for (k = 0; k < 3; k++)
+        float *p, *n, *t, *c;
+
+        p = (float *)((char *)pos + stride_pos * j);
+        n = (float *)((char *)nor + stride_nor * j);
+        t = (float *)((char *)tex + stride_tex * j);
+        c = (float *)((char *)col + stride_col * j);
+
+
+        p[0] = ARRAY_2D(_vertices_ply, j, 0, 3);
+        p[1] = ARRAY_2D(_vertices_ply, j, 1, 3);
+        p[2] = ARRAY_2D(_vertices_ply, j, 2, 3);
+
+        if (header.existence_of_normals)
           {
-             float *p, *n, *t, *c;
+             n[0] = ARRAY_2D(_normals_ply, j, 0, 3);
+             n[1] = ARRAY_2D(_normals_ply, j, 1, 3);
+             n[2] = ARRAY_2D(_normals_ply, j, 2, 3);
+          }
+        else
+          {
+             n[0] = 0.0;
+             n[1] = 0.0;
+             n[2] = 0.0;
+          }
 
-             p = (float *)((char *)pos + stride_pos * (j * 3 + k));
-             n = (float *)((char *)nor + stride_nor * (j * 3 + k));
-             t = (float *)((char *)tex + stride_tex * (j * 3 + k));
-             c = (float *)((char *)col + stride_col * (j * 3 + k));
+        if (header.existence_of_texcoords)
+          {
+             t[0] = ARRAY_2D(_tex_coords_ply, j, 0, 2);
+             t[1] = ARRAY_2D(_tex_coords_ply, j, 1, 2);
+          }
+        else
+          {
+             t[0] = 0.0;
+             t[1] = 0.0;
+          }
 
-             p[0] = ARRAY_2D(_vertices_ply, ARRAY_2D(_triangles, j, k, 3), 0, 3);
-             p[1] = ARRAY_2D(_vertices_ply, ARRAY_2D(_triangles, j, k, 3), 1, 3);
-             p[2] = ARRAY_2D(_vertices_ply, ARRAY_2D(_triangles, j, k, 3), 2, 3);
-
-             if (header.existence_of_normals)
-               {
-                  n[0] = ARRAY_2D(_normals_ply, ARRAY_2D(_triangles, j, k, 3), 0, 3);
-                  n[1] = ARRAY_2D(_normals_ply, ARRAY_2D(_triangles, j, k, 3), 1, 3);
-                  n[2] = ARRAY_2D(_normals_ply, ARRAY_2D(_triangles, j, k, 3), 2, 3);
-               }
-             else
-               {
-                  n[0] = 0.0;
-                  n[1] = 0.0;
-                  n[2] = 0.0;
-               }
-
-             if (header.existence_of_texcoords)
-               {
-                  t[0] = ARRAY_2D(_tex_coords_ply, ARRAY_2D(_triangles, j, k, 3), 0, 2);
-                  t[1] = ARRAY_2D(_tex_coords_ply, ARRAY_2D(_triangles, j, k, 3), 1, 2);
-               }
-             else
-               {
-                  t[0] = 0.0;
-                  t[1] = 0.0;
-               }
-
-             if (header.existence_of_colors)
-               {
-                  c[0] = ARRAY_2D(_colors_ply, ARRAY_2D(_triangles, j, k, 3), 0, 3);
-                  c[1] = ARRAY_2D(_colors_ply, ARRAY_2D(_triangles, j, k, 3), 1, 3);
-                  c[2] = ARRAY_2D(_colors_ply, ARRAY_2D(_triangles, j, k, 3), 2, 3);
-                  c[3] = 1.0;
-               }
-             else
-               {
-                  c[0] = 0.0;
-                  c[1] = 0.0;
-                  c[2] = 0.0;
-                  c[3] = 1.0;
-               }
+        if (header.existence_of_colors)
+          {
+             c[0] = ARRAY_2D(_colors_ply, j, 0, 3);
+             c[1] = ARRAY_2D(_colors_ply, j, 1, 3);
+             c[2] = ARRAY_2D(_colors_ply, j, 2, 3);
+             c[3] = 1.0;
+          }
+        else
+          {
+             c[0] = 0.0;
+             c[1] = 0.0;
+             c[2] = 0.0;
+             c[3] = 1.0;
           }
      }
+
+   eo_do(mesh,
+         evas_canvas3d_mesh_index_data_copy_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT,
+                                                header.triangles_count * 3,
+                                                _indices));
 
    free(helping_pointer);
    free(_vertices_ply);
@@ -362,7 +367,7 @@ evas_model_load_file_ply(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
      free(_tex_coords_ply);
    if (header.existence_of_colors)
      free(_colors_ply);
-   free(_triangles);
+   free(_indices);
 
         /* Unmap vertex buffer. */
    eo_do(mesh,
