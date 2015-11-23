@@ -729,15 +729,16 @@ eina_memdup(unsigned char *mem, size_t size, Eina_Bool terminate)
 }
 
 EAPI char *
-eina_str_base64_encode(unsigned char const *src, unsigned int len)
+eina_str_base64_encode(const unsigned char *src, unsigned int len)
 {
+   unsigned char inarr[3], outarr[4];
    char *dest;
    int i = 0, j = 0, k = 0;
-   unsigned char inarr[3], outarr[4];
 
    if (!src) return NULL;
 
-   dest = malloc(((len + 2) / 3) * 4); // Max length of encoded string.
+   // Max length of encoded string.
+   dest = malloc(sizeof (char) * (((len + 2) / 3) * 4 + 1));
    if (!dest) return NULL;
 
    while (len--)
@@ -773,6 +774,8 @@ eina_str_base64_encode(unsigned char const *src, unsigned int len)
           dest[k++] = '=';
 
      }
+
+   dest[k] = '\0';
 
    return dest;
 }
