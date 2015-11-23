@@ -1431,6 +1431,7 @@ _view_init(Evas_Object *obj, Elm_Multibuttonentry_Data *sd)
    sd->entry = elm_entry_add(obj);
    if (!sd->entry) return;
    elm_entry_single_line_set(sd->entry, EINA_TRUE);
+   elm_entry_cnp_mode_set(sd->entry, ELM_CNP_MODE_PLAINTEXT);
    elm_object_text_set(sd->entry, "");
    elm_entry_input_panel_enabled_set(sd->entry, EINA_FALSE);
    evas_object_size_hint_min_set(sd->entry, MIN_W_ENTRY, 0);
