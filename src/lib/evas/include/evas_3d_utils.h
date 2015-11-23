@@ -2058,8 +2058,6 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
 
              if ((!equivalent_triangle) && (!second_exist_twice) && (!triangle_chain) && (if_two < 2))
                {
-                  if (new_elem2)
-                    free (new_elem2);
                   new_elem2 = malloc(sizeof(Evas_Triangle3));
                   evas_triangle3_set(new_elem2, best, &tmp2, &tmp1);
                   eina_array_push(&arr_elems,  new_elem2);
