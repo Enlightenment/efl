@@ -368,49 +368,33 @@ END_TEST
 START_TEST(str_base64_encode)
 {
    /* All cases are taken from https://en.wikipedia.org/wiki/Base64 */
+   static const struct {
+      char *str;
+      char *expected;
+      unsigned int len;
+      Eina_Bool not;
+   } tests[] = {
+     { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3VyZS4=", 20 },
+     { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3VyZQ==", 19 },
+     { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3Vy", 18 },
+     { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3U=", 17 },
+     { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhcw==", 16 },
+     { "pleasure.", "cGxlYXN1cmUu", 9 },
+     { "leasure.", "bGVhc3VyZS4=", 8 },
+     { "easure.", "ZWFzdXJlLg==", 7 },
+     { "asure.", "YXN1cmUu", 6 },
+     { "sure.", "c3VyZS4=", 5 }
+   };
+   unsigned int i;
 
-   unsigned char *str = (unsigned char *)"any carnal pleasure.";
-   char *encoded;
+   for (i = 0; i < sizeof (tests) / sizeof (tests[0]); i++)
+     {
+        char *encoded;
 
-   encoded = eina_str_base64_encode(str, 20);
-   fail_unless(strcmp(encoded, "YW55IGNhcm5hbCBwbGVhc3VyZS4="));
-   free(encoded);
-
-   encoded = eina_str_base64_encode(str, 19);
-   fail_unless(strcmp(encoded, "YW55IGNhcm5hbCBwbGVhc3VyZQ=="));
-   free(encoded);
-
-   encoded = eina_str_base64_encode(str, 18);
-   fail_unless(strcmp(encoded, "YW55IGNhcm5hbCBwbGVhc3Vy"));
-   free(encoded);
-
-   encoded = eina_str_base64_encode(str, 17);
-   fail_unless(strcmp(encoded, "YW55IGNhcm5hbCBwbGVhc3U="));
-   free(encoded);
-
-   encoded = eina_str_base64_encode(str, 16);
-   fail_unless(strcmp(encoded, "YW55IGNhcm5hbCBwbGVhcw=="));
-   free(encoded);
-
-   encoded = eina_str_base64_encode((unsigned char *)"pleasure.", 9);
-   fail_unless(strcmp(encoded, "cGxlYXN1cmUu"));
-   free(encoded);
-
-   encoded = eina_str_base64_encode((unsigned char *)"leasure.", 8);
-   fail_unless(strcmp(encoded, "bGVhc3VyZS4="));
-   free(encoded);
-
-   encoded = eina_str_base64_encode((unsigned char *)"easure.", 7);
-   fail_unless(strcmp(encoded, "ZWFzdXJlLg=="));
-   free(encoded);
-
-   encoded = eina_str_base64_encode((unsigned char *)"asure.", 6);
-   fail_unless(strcmp(encoded, "YXN1cmUu"));
-   free(encoded);
-
-   encoded = eina_str_base64_encode((unsigned char *)"sure.", 5);
-   fail_unless(strcmp(encoded, "YXN1cmUu"));
-   free(encoded);
+        encoded = eina_str_base64_encode((unsigned char*) tests[i].str, tests[i].len);
+        fail_if(strcmp(encoded, tests[i].expected));
+        free(encoded);
+     }
 }
 END_TEST
 
