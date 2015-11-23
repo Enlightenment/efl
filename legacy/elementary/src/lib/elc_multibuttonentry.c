@@ -83,7 +83,7 @@ _format_count(int count, void *data EINA_UNUSED)
 {
    char buf[32];
 
-   if (!snprintf(buf, sizeof(buf), "... + %d", count)) return NULL;
+   if (!snprintf(buf, sizeof(buf), "+%d", count)) return NULL;
    return strdup(buf);
 }
 
