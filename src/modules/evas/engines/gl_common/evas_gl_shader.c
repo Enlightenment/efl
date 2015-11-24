@@ -317,12 +317,15 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
         eet_shutdown();
      }
 
-   if (eet_close(ef) != EET_ERROR_NONE) goto error;
-   if (rename(tmp_file, bin_file_path) < 0) goto error;
+   if (eet_close(ef) != EET_ERROR_NONE) goto destroyed;
+   if (rename(tmp_file, bin_file_path) < 0) goto destroyed;
+
    eet_shutdown();
    return 1;
 
-error:
+ destroyed:
+   ef = NULL;
+ error:
    if (ef) eet_close(ef);
    if (evas_gl_common_file_cache_file_exists(tmp_file)) unlink(tmp_file);
    eet_shutdown();
