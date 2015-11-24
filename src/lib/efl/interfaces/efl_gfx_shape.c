@@ -280,18 +280,21 @@ typedef struct _Efl_Gfx_Property Efl_Gfx_Property;
 struct _Efl_Gfx_Property
 {
    double scale;
-   int r, g, b, a;
-   int fr, fg, fb, fa; 
    double w;
    double centered;
-   const Efl_Gfx_Dash *dash;
-   unsigned int dash_length;
+
    Efl_Gfx_Cap c;
    Efl_Gfx_Join j;
+
+   const Efl_Gfx_Dash *dash;
+   unsigned int dash_length;
+
+   int r, g, b, a;
+   int fr, fg, fb, fa;
 };
 
 static inline void
-gfx_property_get(const Eo *obj, Efl_Gfx_Property *property)
+_efl_gfx_property_get(const Eo *obj, Efl_Gfx_Property *property)
 {
    eo_do(obj,
          property->scale = efl_gfx_shape_stroke_scale_get(),
@@ -310,21 +313,23 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
 {
    Efl_Gfx_Shape_Data *from_pd, *to_pd;
    Efl_Gfx_Path_Command *cmds;
-   double *pts, *from_pts, *to_pts;
-   unsigned int i, j;
    Efl_Gfx_Property property_from, property_to;
    Efl_Gfx_Dash *dash = NULL;
+   double *pts, *from_pts, *to_pts;
+   unsigned int i, j;
 
    from_pd = eo_data_scope_get(from, EFL_GFX_SHAPE_MIXIN);
    to_pd = eo_data_scope_get(to, EFL_GFX_SHAPE_MIXIN);
    if (!eo_isa(from, EFL_GFX_SHAPE_MIXIN) ||
-       !eo_isa(to, EFL_GFX_SHAPE_MIXIN)) return EINA_FALSE;
-   if (pd == from_pd || pd == to_pd) return EINA_FALSE;
+       !eo_isa(to, EFL_GFX_SHAPE_MIXIN))
+     return EINA_FALSE;
+   if (pd == from_pd || pd == to_pd)
+     return EINA_FALSE;
    if (!_efl_gfx_shape_equal_commands_internal(from_pd, to_pd))
      return EINA_FALSE;
 
-   gfx_property_get(from, &property_from);
-   gfx_property_get(to, &property_to);
+   _efl_gfx_property_get(from, &property_from);
+   _efl_gfx_property_get(to, &property_to);
 
    if (property_from.dash_length != property_to.dash_length) return EINA_FALSE;
 
