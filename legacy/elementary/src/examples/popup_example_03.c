@@ -18,6 +18,7 @@ elm_main(int argc, char **argv)
 
    win = elm_win_util_standard_add("popup", "Popup");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 480, 800);
 
    popup = elm_popup_add(win);
 
@@ -69,7 +70,6 @@ elm_main(int argc, char **argv)
    //Display the popup object
    evas_object_show(popup);
 
-   evas_object_resize(win, 480, 800);
    evas_object_show(win);
 
    elm_run();
