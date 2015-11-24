@@ -190,7 +190,7 @@ void _shader_flags_add(E3D_Shader_String *shader, E3D_Shader_Flag flags)
 static inline Eina_Bool
 _shader_compile(GLuint shader, const char *src)
 {
-   GLint ok;
+   GLint ok = 0;
 
    glShaderSource(shader, 1, &src, NULL);
    glCompileShader(shader);
@@ -217,7 +217,7 @@ _shader_compile(GLuint shader, const char *src)
 static inline Eina_Bool
 _program_build(E3D_Program *program, const char *vert_src, const char *frag_src)
 {
-   GLint ok;
+   GLint ok = 0;
 
    /* Create OpenGL vertex & fragment shader object. */
    program->vert = glCreateShader(GL_VERTEX_SHADER);
@@ -253,7 +253,7 @@ _program_build(E3D_Program *program, const char *vert_src, const char *frag_src)
    if (!ok)
      {
         GLchar   *log_str;
-        GLint     len;
+        GLint     len = 0;
         GLsizei   info_len;
 
         glGetProgramiv(program->prog, GL_INFO_LOG_LENGTH, &len);
