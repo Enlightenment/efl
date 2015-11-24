@@ -209,9 +209,12 @@ _eina_list_mempool_list_free(Eina_List *list)
 {
    EINA_MAGIC_CHECK_LIST(list);
 
-   list->accounting->count--;
-   if (list->accounting->count == 0)
-     _eina_list_mempool_accounting_free(list->accounting);
+   if (list->accounting)
+     {
+        list->accounting->count--;
+        if (list->accounting->count == 0)
+          _eina_list_mempool_accounting_free(list->accounting);
+     }
 
    EINA_MAGIC_SET(list, EINA_MAGIC_NONE);
    eina_mempool_free(_eina_list_mp, list);
