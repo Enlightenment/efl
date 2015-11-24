@@ -2625,7 +2625,9 @@ AC_CHECK_TYPES([struct ipv6_mreq],
    [have_ipv6="yes"],
    [have_ipv6="no"],
    [[
-#include <netinet/in.h>
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
 #ifdef HAVE_WS2TCPIP_H
 # include <ws2tcpip.h>
 #endif
