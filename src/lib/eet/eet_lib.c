@@ -340,17 +340,25 @@ eet_flush2(Eet_File *ef)
         /* opening for write - delete old copy of file right away */
         unlink(ef->path);
         fd = open(ef->path, O_CREAT | O_TRUNC | O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
-        if (fd < 0) 
-          return EET_ERROR_NOT_WRITABLE;
+        if (fd < 0)
+          {
+             ERR("Can't write file '%s'.", ef->path);
+             return EET_ERROR_NOT_WRITABLE;
+          }
 
         fp = fdopen(fd, "wb");
         if (!fp)
-          return EET_ERROR_NOT_WRITABLE;
+          {
+             ERR("Can't write file '%s'.", ef->path);
+             return EET_ERROR_NOT_WRITABLE;
+          }
 
         if (fcntl(fd, F_SETFD, FD_CLOEXEC)) ERR("can't set CLOEXEC on write fd");
      }
    else
-     return EET_ERROR_NOT_WRITABLE;
+     {
+        return EET_ERROR_NOT_WRITABLE;
+     }
 
    /* calculate string base offset and data base offset */
    num = (1 << ef->header->directory->size);
@@ -436,11 +444,11 @@ eet_flush2(Eet_File *ef)
         for (j = 0; j < ef->ed->count; ++j)
           {
              int sbuf[EET_FILE2_DICTIONARY_ENTRY_COUNT];
-	     int prev = 0;
+             int prev = 0;
 
              // We still use the prev as an hint for knowing if it is the head of the hash
-	     if (ef->ed->hash[ef->ed->all_hash[j]] == j)
-	       prev = -1;
+             if (ef->ed->hash[ef->ed->all_hash[j]] == j)
+               prev = -1;
 
              sbuf[0] = (int)htonl((unsigned int)ef->ed->all_hash[j]);
              sbuf[1] = (int)htonl((unsigned int)offset);
@@ -521,6 +529,7 @@ eet_flush2(Eet_File *ef)
 write_error:
    if (ferror(fp))
      {
+        ERR("Error during write on '%s'.", ef->path);
         switch (errno)
           {
            case EFBIG: error = EET_ERROR_WRITE_ERROR_FILE_TOO_BIG; break;
@@ -1256,11 +1265,14 @@ static Eet_Error
 eet_internal_close(Eet_File *ef,
                    Eina_Bool locked)
 {
-   Eet_Error err;
+   Eet_Error err = EET_ERROR_NONE;
 
    /* check to see its' an eet file pointer */
    if (eet_check_pointer(ef))
-     return EET_ERROR_BAD_OBJECT;
+     {
+        ERR("Bad file descriptor '%p'\n", ef);
+        return EET_ERROR_BAD_OBJECT;
+     }
 
    if (!locked)
      LOCK_CACHE;
