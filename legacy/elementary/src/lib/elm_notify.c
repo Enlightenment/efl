@@ -382,7 +382,6 @@ _elm_notify_elm_container_content_set(Eo *obj, Elm_Notify_Data *sd, const char *
         edje_object_part_swallow(sd->notify, "elm.swallow.content", content);
      }
 
-   _sizing_eval(obj);
    _calc(obj);
 
    return EINA_TRUE;
@@ -515,7 +514,6 @@ _elm_notify_elm_widget_parent_set(Eo *obj, Elm_Notify_Data *sd, Evas_Object *par
           (parent, EVAS_CALLBACK_DEL, _parent_del_cb, obj);
         evas_object_event_callback_add
           (parent, EVAS_CALLBACK_HIDE, _parent_hide_cb, obj);
-        _sizing_eval(obj);
      }
 
    _calc(obj);
