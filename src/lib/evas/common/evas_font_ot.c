@@ -318,7 +318,7 @@ evas_common_font_ot_populate_text_props(const Eina_Unicode *text,
         Evas_Coord adv;
         ot_itr->source_cluster = infos->cluster;
         ot_itr->x_offset = positions->x_offset;
-        ot_itr->y_offset = positions->y_offset;
+        ot_itr->y_offset = 0; // FIXME positions->y_offset; FIXME//
         gl_itr->index = infos->codepoint;
         adv = positions->x_advance;
 
