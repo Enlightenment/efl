@@ -1455,7 +1455,6 @@ _text_default_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus
    const char *obj_path = eldbus_message_path_get(msg);
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
-   int start = -1, end;
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter, *iter_array;
    Eina_List *attrs;
@@ -1470,7 +1469,7 @@ _text_default_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus
    iter_array = eldbus_message_iter_container_new(iter, 'a', "{ss}");
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
 
-   eo_do(obj, attrs = elm_interface_atspi_text_attributes_get(&start, &end));
+   eo_do(obj, attrs = elm_interface_atspi_text_default_attributes_get());
 
    EINA_LIST_FREE(attrs, attr)
     {
@@ -1479,7 +1478,6 @@ _text_default_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus
     }
 
    eldbus_message_iter_container_close(iter, iter_array);
-   eldbus_message_iter_arguments_append(iter, "ii", start, end);
 
    return ret;
 
