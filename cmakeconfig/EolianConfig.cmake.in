@@ -39,3 +39,5 @@ if(_pkgconfig_failed)
 else()
    set (EOLIAN_EO_DIR ${_pkgconfig_invoke_result})
 endif()
+
+include(${CMAKE_CURRENT_LIST_DIR}/EolianHelper.cmake)
