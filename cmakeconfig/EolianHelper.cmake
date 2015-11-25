@@ -1,4 +1,3 @@
-find_package(Eolian 1.16 REQUIRED)
 # macro to create a eolian generated c source file
 #
 # macro adds a generate rule, which depends on the original file the rule will output file.x
