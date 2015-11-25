@@ -313,3 +313,21 @@ eina_bezier_bounds_get(const Eina_Bezier *b, double *x, double *y, double *w, do
    if (w) *w = xmax - xmin;
    if (h) *h = ymax - ymin;
 }
+
+EAPI void
+eina_bezier_on_interval(Eina_Bezier *b, double t0, double t1, Eina_Bezier *result)
+{
+   Eina_Bezier bezier;
+   double t;
+
+   if (t0 == 0 && t1 == 1)
+     {
+        *result = *b;
+        return;
+     }
+
+   bezier = *b;
+   _eina_bezier_split_left(&bezier, t0, result);
+   t = (t1-t0)/(1-t0);
+   _eina_bezier_split_left(&bezier, t, result);
+}
