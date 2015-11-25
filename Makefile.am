@@ -301,7 +301,8 @@ cmakeconfig/EoConfigVersion.cmake
 eolian_cmakeconfigdir = $(libdir)/cmake/Eolian/
 eolian_cmakeconfig_DATA = \
 cmakeconfig/EolianConfig.cmake \
-cmakeconfig/EolianConfigVersion.cmake
+cmakeconfig/EolianConfigVersion.cmake \
+cmakeconfig/EolianHelper.cmake
 
 eolian_cxx_cmakeconfigdir = $(libdir)/cmake/EolianCxx/
 eolian_cxx_cmakeconfig_DATA = \
