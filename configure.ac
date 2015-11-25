@@ -4834,6 +4834,7 @@ cmakeconfig/EoConfig.cmake
 cmakeconfig/EoConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EolianConfig.cmake
 cmakeconfig/EolianConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EolianHelper.cmake
 cmakeconfig/EolianCxxConfig.cmake
 cmakeconfig/EolianCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EinaCxxConfig.cmake
