@@ -85,9 +85,9 @@ Eina_Bool    evgl_native_surface_direct_opts_get(Evas_Native_Surface *ns,
                                                  Eina_Bool *direct_override);
 
 void         evgl_direct_partial_info_set(int pres);
-void         evgl_direct_partial_info_clear();
-void         evgl_direct_partial_render_start();
-void         evgl_direct_partial_render_end();
+void         evgl_direct_partial_info_clear(void);
+void         evgl_direct_partial_render_start(void);
+void         evgl_direct_partial_render_end(void);
 
 #undef EAPI
 #define EAPI
