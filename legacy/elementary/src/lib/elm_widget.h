@@ -518,7 +518,7 @@ struct _Elm_Action
    Eina_Bool (*func)(Evas_Object *obj, const char *params);
 };
 
-void                  _elm_access_shutdown();
+void                  _elm_access_shutdown(void);
 void                  _elm_access_mouse_event_enabled_set(Eina_Bool enabled);
 
 /* if auto_higlight is EINA_TRUE, it  does not steal a focus, it just moves a highlight */
