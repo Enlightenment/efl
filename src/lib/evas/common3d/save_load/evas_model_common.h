@@ -48,7 +48,7 @@ struct _Evas_Model_Load_Save_Stride
 };
 
 /* create new header */
-Evas_Model_Load_Save_Header evas_model_load_save_header_new();
+Evas_Model_Load_Save_Header evas_model_load_save_header_new(void);
 void evas_model_load_vertex_data_unmap(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Model_Load_Save_Header header);
 void evas_model_load_save_data_free(Evas_Model_Load_Save_Header header, Evas_Model_Load_Save_Data *data);
 void evas_model_load_vertex_data_to_mesh(Evas_Canvas3D_Mesh *mesh, Evas_Model_Load_Save_Header header, Evas_Model_Load_Save_Data data, Evas_Model_Load_Save_Stride *stride);
