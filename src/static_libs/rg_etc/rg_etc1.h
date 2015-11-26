@@ -28,7 +28,7 @@ typedef struct
 
 // pack_etc1_block_init() should be called before calling pack_etc1_block(),
 // Otherwise rg_etc1_pack_block() will call rg_etc1_pack_block_init() for you.
-void rg_etc1_pack_block_init();
+void rg_etc1_pack_block_init(void);
 
 // Packs a 4x4 block of 32bpp BGRA pixels to an 8-byte ETC1 block.
 // 32-bit BGRA pixels must always be arranged as (B,G,R,A) (B first, A last) in memory, independent of platform endianness. A should always be 255.
