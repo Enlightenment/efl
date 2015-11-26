@@ -665,11 +665,11 @@ xcf_load_image(void)
         /* restore the saved position so we'll be ready to
          *  read the next offset. */
         xcf_seek_pos (saved_pos);
-    }
-  /* If we were a Gimp we would now load the user-defined channels here ... */
-  /* Flat-o-rama now :) */
-  flatten_image();
-  return;
+     }
+   /* If we were a Gimp we would now load the user-defined channels here ... */
+   /* Flat-o-rama now :) */
+   flatten_image();
+   return;
 error:
    if (num_successful_elements == 0) goto hard_error;
    fprintf(stderr, "XCF: This file is corrupt!  I have loaded as much\nof it as I can, but it is incomplete.\n");
@@ -758,18 +758,18 @@ xcf_load_layer(void)
    int     type;
    char   *name;
 
-  D("Loading one layer ...\n");
-  /* read in the layer width, height and type */
-  image->cp += xcf_read_int32(image->file, (DATA32 *)&width, 1);
-  image->cp += xcf_read_int32(image->file, (DATA32 *)&height, 1);
-  image->cp += xcf_read_int32(image->file, (DATA32 *)&type, 1);
-  image->cp += xcf_read_string(image->file, &name, 1);
-  /* ugly, I know */
-  FREE(name);
+   D("Loading one layer ...\n");
+   /* read in the layer width, height and type */
+   image->cp += xcf_read_int32(image->file, (DATA32 *)&width, 1);
+   image->cp += xcf_read_int32(image->file, (DATA32 *)&height, 1);
+   image->cp += xcf_read_int32(image->file, (DATA32 *)&type, 1);
+   image->cp += xcf_read_string(image->file, &name, 1);
+   /* ugly, I know */
+   FREE(name);
 
-  /* create a new layer */
-  layer = new_layer(width, height, type, 255, NORMAL_MODE);
-  if (!layer) return NULL;
+   /* create a new layer */
+   layer = new_layer(width, height, type, 255, NORMAL_MODE);
+   if (!layer) return NULL;
 
    /* read in the layer properties */
    if (!xcf_load_layer_props(layer)) goto error;
