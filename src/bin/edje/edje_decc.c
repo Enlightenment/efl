@@ -35,8 +35,8 @@ int new_dir = 1;
 
 int        decomp(void);
 void       output(void);
-static int compiler_cmd_is_sane();
-static int root_filename_is_sane();
+static int compiler_cmd_is_sane(void);
+static int root_filename_is_sane(void);
 
 
 static void
