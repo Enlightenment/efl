@@ -80,5 +80,5 @@ void evas_xlib_image_dir_free(Evas_DRI_Image *exim);
 Eina_Bool evas_xlib_image_get_buffers(RGBA_Image *im);
 void evas_xlib_image_buffer_unmap(Evas_DRI_Image *exim);
 Eina_Bool evas_xlib_image_dri_init(Evas_DRI_Image *exim, Display *display);
-Eina_Bool evas_xlib_image_dri_used();
+Eina_Bool evas_xlib_image_dri_used(void);
 void *evas_xlib_image_dri_native_set(void *data, void *image, void *native);
