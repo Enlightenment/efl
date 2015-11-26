@@ -292,8 +292,8 @@ void cserve2_slave_kill(Slave *s);
 
 void cserve2_message_handler(int fd, Fd_Flags flags, void *data);
 
-void cserve2_shm_init();
-void cserve2_shm_shutdown();
+void cserve2_shm_init(void);
+void cserve2_shm_shutdown(void);
 Shm_Handle *cserve2_shm_request(const char *infix, size_t size);
 Shm_Handle *cserve2_shm_segment_request(Shm_Handle *shm, size_t size);
 Shm_Handle *cserve2_shm_resize(Shm_Handle *shm, size_t newsize);
@@ -394,8 +394,8 @@ int cserve2_shared_mempool_generation_id_set(Shared_Mempool *sm, int generation_
 Shared_Array *cserve2_shared_mempool_index_get(Shared_Mempool *sm);
 
 // Shared strings
-const char *cserve2_shared_strings_table_name_get();
-const char *cserve2_shared_strings_index_name_get();
+const char *cserve2_shared_strings_table_name_get(void);
+const char *cserve2_shared_strings_index_name_get(void);
 int cserve2_shared_string_add(const char *str);
 int cserve2_shared_string_ref(int id);
 void cserve2_shared_string_del(int id);
