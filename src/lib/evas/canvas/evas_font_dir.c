@@ -268,12 +268,14 @@ static int _fc_weight_map[] =
    FC_WEIGHT_NORMAL,
    FC_WEIGHT_THIN,
    FC_WEIGHT_ULTRALIGHT,
+   FC_WEIGHT_EXTRALIGHT,
    FC_WEIGHT_LIGHT,
    FC_WEIGHT_BOOK,
    FC_WEIGHT_MEDIUM,
    FC_WEIGHT_SEMIBOLD,
    FC_WEIGHT_BOLD,
    FC_WEIGHT_ULTRABOLD,
+   FC_WEIGHT_EXTRABOLD,
    FC_WEIGHT_BLACK,
    FC_WEIGHT_EXTRABLACK
 };
@@ -328,12 +330,14 @@ static Style_Map _style_weight_map[] =
      {"normal", EVAS_FONT_WEIGHT_NORMAL},
      {"thin", EVAS_FONT_WEIGHT_THIN},
      {"ultralight", EVAS_FONT_WEIGHT_ULTRALIGHT},
+     {"extralight", EVAS_FONT_WEIGHT_EXTRALIGHT},
      {"light", EVAS_FONT_WEIGHT_LIGHT},
      {"book", EVAS_FONT_WEIGHT_BOOK},
      {"medium", EVAS_FONT_WEIGHT_MEDIUM},
      {"semibold", EVAS_FONT_WEIGHT_SEMIBOLD},
      {"bold", EVAS_FONT_WEIGHT_BOLD},
      {"ultrabold", EVAS_FONT_WEIGHT_ULTRABOLD},
+     {"extrabold", EVAS_FONT_WEIGHT_ULTRABOLD},
      {"black", EVAS_FONT_WEIGHT_BLACK},
      {"extrablack", EVAS_FONT_WEIGHT_EXTRABLACK}
 };
