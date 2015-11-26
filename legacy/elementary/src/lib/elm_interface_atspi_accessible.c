@@ -129,6 +129,7 @@ struct _Elm_Interface_Atspi_Accessible_Data
    const char    *translation_domain;
    Elm_Atspi_Relation_Set relations;
    Elm_Interface_Atspi_Accessible *parent;
+   Elm_Atspi_Type type: 2;
 };
 
 typedef struct _Elm_Interface_Atspi_Accessible_Data Elm_Interface_Atspi_Accessible_Data;
@@ -168,11 +169,25 @@ _elm_interface_atspi_accessible_index_in_parent_get(Eo *obj, Elm_Interface_Atspi
 EOLIAN static Elm_Interface_Atspi_Accessible *
 _elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd)
 {
-   return pd->parent;
+   Elm_Atspi_Type type;
+   Eo *parent = obj;
+
+   if (pd->parent) return pd->parent;
+
+   do {
+      eo_do(obj, parent = eo_parent_get());
+      if (eo_isa(parent, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+        {
+           eo_do(parent, type = elm_interface_atspi_accessible_type_get());
+           if (type != ELM_ATSPI_TYPE_SKIPPED) break;
+        }
+   } while (parent);
+
+   return eo_isa(parent, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? parent : NULL;
 }
 
 EOLIAN static void
-_elm_interface_atspi_accessible_parent_set(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd, Elm_Interface_Atspi_Accessible *new_parent)
+_elm_interface_atspi_accessible_parent_set(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED, Elm_Interface_Atspi_Accessible *new_parent)
 {
    if (pd->parent != new_parent)
      {
@@ -314,11 +329,24 @@ _elm_interface_atspi_accessible_event_emit(Eo *class EINA_UNUSED, void *pd EINA_
 {
    Eina_List *l;
    Elm_Atspi_Event_Handler *hdl;
+   Elm_Atspi_Type type;
 
    if (!accessible || !event || !eo_isa(accessible, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
      {
         CRI("Invalid parameters, event: %s, obj: %s", event ? event->name : "NULL", accessible ? eo_class_name_get(accessible) : "NULL");
         return;
+     }
+
+   eo_do(accessible, type = elm_interface_atspi_accessible_type_get());
+   if (type != ELM_ATSPI_TYPE_REGULAR)
+     return;
+
+   if (event == ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED)
+     {
+        Elm_Atspi_Event_Children_Changed_Data *atspi_data = event_info;
+        eo_do(atspi_data->child, type = elm_interface_atspi_accessible_type_get());
+        if (type != ELM_ATSPI_TYPE_REGULAR)
+          return;
      }
 
    EINA_LIST_FOREACH(global_callbacks, l, hdl)
@@ -550,6 +578,18 @@ _elm_interface_atspi_accessible_root_get(Eo *class EINA_UNUSED, void *pd EINA_UN
       root = eo_add(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
    return root;
+}
+
+EOLIAN Elm_Atspi_Type
+_elm_interface_atspi_accessible_type_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd)
+{
+   return pd->type;
+}
+
+EOLIAN void
+_elm_interface_atspi_accessible_type_set(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd, Elm_Atspi_Type val)
+{
+   pd->type = val;
 }
 
 #include "elm_interface_atspi_accessible.eo.c"

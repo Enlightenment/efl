@@ -5860,31 +5860,48 @@ _elm_widget_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Wid
 }
 
 EOLIAN static Eina_List*
-_elm_widget_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
+_elm_widget_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
 {
    Eina_List *l, *accs = NULL;
-   Elm_Widget_Smart_Data *wd;
    Evas_Object *widget;
+   Elm_Atspi_Type type;
 
-   wd = eo_data_scope_get(obj, ELM_WIDGET_CLASS);
-   if (!wd) return NULL;
-
-   EINA_LIST_FOREACH(wd->subobjs, l, widget)
+   EINA_LIST_FOREACH(pd->subobjs, l, widget)
      {
         if (!elm_object_widget_check(widget)) continue;
-        if (eo_isa(widget, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
-          accs = eina_list_append(accs, widget);
+        if (!eo_isa(widget, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN)) continue;
+        eo_do(widget, type = elm_interface_atspi_accessible_type_get());
+        if (type == ELM_ATSPI_TYPE_DISABLED) continue;
+        if (type == ELM_ATSPI_TYPE_SKIPPED)
+          {
+             Eina_List *children;
+             eo_do(widget, children = elm_interface_atspi_accessible_children_get());
+             accs = eina_list_merge(accs, children);
+             continue;
+          }
+        accs = eina_list_append(accs, widget);
      }
    return accs;
 }
 
 EOLIAN static Eo*
-_elm_widget_elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
+_elm_widget_elm_interface_atspi_accessible_parent_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
-   Eo *ret;
-   eo_do_super(obj, ELM_WIDGET_CLASS, ret = elm_interface_atspi_accessible_parent_get());
+   Elm_Atspi_Type type;
+   Elm_Interface_Atspi_Accessible *parent;
 
-   return ret ? ret : pd->parent_obj;
+   eo_do_super(obj, ELM_WIDGET_CLASS, parent = elm_interface_atspi_accessible_parent_get());
+   if (parent)
+     return parent;
+
+   parent = obj;
+   do {
+        ELM_WIDGET_DATA_GET_OR_RETURN(parent, wd, NULL);
+        parent = wd->parent_obj;
+        eo_do(parent, type = elm_interface_atspi_accessible_type_get());
+   } while (parent && (type == ELM_ATSPI_TYPE_SKIPPED));
+
+   return eo_isa(parent, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? parent : NULL;
 }
 
 EOLIAN static Elm_Atspi_State_Set

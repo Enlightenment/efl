@@ -1,3 +1,11 @@
+enum Elm.Atspi.Type
+{
+   [[Type of accessibility object]]
+   regular, [[default accessibile object]]
+   disabled, [[skip object and its children in accessibility hierarchy]]
+   skipped [[skip object in accessibility hierarchy]]
+}
+
 mixin Elm_Interface_Atspi_Accessible ()
 {
    legacy_prefix: null;
@@ -146,6 +154,17 @@ mixin Elm_Interface_Atspi_Accessible ()
          values {
             domain: const(char)*; [[ translation domain ]]
          }
+      }
+      @property type {
+           get {
+                [[Get type of accessibility object]]
+           }
+           set {
+                [[Set type of accessibility object]]
+           }
+           values {
+               type: Elm.Atspi.Type;
+           }
       }
       relationship_append {
          [[Defines the relationship between two accessible objects.
