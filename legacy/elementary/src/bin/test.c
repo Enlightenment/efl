@@ -268,7 +268,7 @@ void test_win_dialog(void *data, Evas_Object *obj, void *event_info);
 void test_box_disable(void *data, Evas_Object *obj, void *event_info);
 void test_layout_disable(void *data, Evas_Object *obj, void *event_info);
 
-void test_colorclass();
+void test_colorclass(void);
 
 Evas_Object *win, *tbx; // TODO: refactoring
 void *tt;
