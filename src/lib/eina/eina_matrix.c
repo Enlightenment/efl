@@ -991,13 +991,13 @@ EAPI void
 eina_matrix4_multiply(Eina_Matrix4 *out, const Eina_Matrix4 *mat_a,
                            const Eina_Matrix4 *mat_b)
 {
-   if (eina_matrix4_type_get(mat_a) & EINA_MATRIX_TYPE_IDENTITY)
+   if (eina_matrix4_type_get(mat_a) == EINA_MATRIX_TYPE_IDENTITY)
      {
         eina_matrix4_copy(out, mat_b);
         return;
      }
 
-   if (eina_matrix4_type_get(mat_b) & EINA_MATRIX_TYPE_IDENTITY)
+   if (eina_matrix4_type_get(mat_b) == EINA_MATRIX_TYPE_IDENTITY)
      {
         eina_matrix4_copy(out, mat_a);
         return;
@@ -1085,13 +1085,13 @@ eina_matrix3_copy(Eina_Matrix3 *dst, const Eina_Matrix3 *src)
 EAPI void
 eina_matrix3_multiply(Eina_Matrix3 *out, const Eina_Matrix3 *mat_a, const Eina_Matrix3 *mat_b)
 {
-   if (eina_matrix3_type_get(mat_a) & EINA_MATRIX_TYPE_IDENTITY)
+   if (eina_matrix3_type_get(mat_a) == EINA_MATRIX_TYPE_IDENTITY)
      {
         eina_matrix3_copy(out, mat_b);
         return;
      }
 
-   if (eina_matrix3_type_get(mat_b) & EINA_MATRIX_TYPE_IDENTITY)
+   if (eina_matrix3_type_get(mat_b) == EINA_MATRIX_TYPE_IDENTITY)
      {
         eina_matrix3_copy(out, mat_a);
         return;
@@ -1206,7 +1206,7 @@ eina_matrix2_inverse(Eina_Matrix2 *out, const Eina_Matrix2 *mat)
 {
    double         det;
 
-   if (eina_matrix2_type_get(mat) & EINA_MATRIX_TYPE_IDENTITY)
+   if (eina_matrix2_type_get(mat) == EINA_MATRIX_TYPE_IDENTITY)
      {
         eina_matrix2_copy(out, mat);
         return;
@@ -1250,13 +1250,13 @@ eina_matrix2_copy(Eina_Matrix2 *dst, const Eina_Matrix2 *src)
 EAPI void
 eina_matrix2_multiply(Eina_Matrix2 *out, const Eina_Matrix2 *mat_a, const Eina_Matrix2 *mat_b)
 {
-   if (eina_matrix2_type_get(mat_a) & EINA_MATRIX_TYPE_IDENTITY)
+   if (eina_matrix2_type_get(mat_a) == EINA_MATRIX_TYPE_IDENTITY)
      {
         eina_matrix2_copy(out, mat_b);
         return;
      }
 
-   if (eina_matrix2_type_get(mat_b) & EINA_MATRIX_TYPE_IDENTITY)
+   if (eina_matrix2_type_get(mat_b) == EINA_MATRIX_TYPE_IDENTITY)
      {
         eina_matrix2_copy(out, mat_a);
         return;
