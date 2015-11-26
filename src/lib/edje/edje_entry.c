@@ -3856,7 +3856,14 @@ _edje_entry_cursor_coord_set(Edje_Real_Part *rp, Edje_Cursor cur,
        (cur == EDJE_CURSOR_SELECTION_END))
      {
         if (en->have_selection)
-          _edje_emit(en->ed, "selection,changed", rp->part->name);
+          {
+             if (en->selection)
+               {
+                  free(en->selection);
+                  en->selection = NULL;
+               }
+             _edje_emit(en->ed, "selection,changed", rp->part->name);
+          }
      }
    return evas_textblock_cursor_char_coord_set(c, x, y);
 }
