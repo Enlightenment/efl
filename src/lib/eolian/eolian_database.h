@@ -266,8 +266,8 @@ struct _Eolian_Variable
    Eina_Bool is_extern :1;
 };
 
-int database_init();
-int database_shutdown();
+int database_init(void);
+int database_shutdown(void);
 
 char *database_class_to_filename(const char *cname);
 Eina_Bool database_validate(void);
