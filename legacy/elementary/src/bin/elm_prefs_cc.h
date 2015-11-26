@@ -79,9 +79,9 @@ void    check_arg_count(int n);
 void    check_regex(const char *regex);
 void    set_verbatim(char *s, int l1, int l2);
 
-void    data_init();
-void    data_write();
-void    data_shutdown();
+void    data_init(void);
+void    data_write(void);
+void    data_shutdown(void);
 
 int     object_handler_num(void);
 int     statement_handler_num(void);
