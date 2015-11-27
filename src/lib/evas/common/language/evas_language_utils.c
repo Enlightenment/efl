@@ -23,6 +23,10 @@
 #include <stdlib.h>
 #include <locale.h>
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include <Eina.h>
 
 #include "evas_language_utils.h"
