@@ -1,4 +1,4 @@
-class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
+class Elm.Menu (Elm.Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Selection)
 {
    eo_prefix: elm_obj_menu;
    methods {
@@ -76,6 +76,9 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
       Elm.Widget.parent;
       Elm.Widget.theme_apply;
       Elm.Widget.translate;
+      Elm_Interface_Atspi_Accessible.children.get;
+      Elm_Interface_Atspi_Selection.selected_children_count.get;
+      Elm_Interface_Atspi_Selection.selected_child.get;
    }
    events {
       language,changed;
