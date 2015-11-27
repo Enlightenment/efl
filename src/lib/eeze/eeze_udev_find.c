@@ -246,6 +246,10 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
 	udev_enumerate_add_match_subsystem(en, "leds");
         break;
 
+      case EEZE_UDEV_TYPE_GRAPHICS:
+	udev_enumerate_add_match_subsystem(en, "graphics");
+        break;
+
       default:
         break;
      }
@@ -256,6 +260,7 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
      {
         devname = udev_list_entry_get_name(cur);
         device = udev_device_new_from_syspath(udev, devname);
+
 
         if (etype == EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR) /* ensure that temp input exists somewhere in this device chain */
           {

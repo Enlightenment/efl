@@ -274,7 +274,11 @@ typedef enum
    /** - Leds
     * @since 1.12
     */
-   EEZE_UDEV_TYPE_LEDS
+   EEZE_UDEV_TYPE_LEDS,
+   /** - Graphics
+    * @since 1.18
+    */
+   EEZE_UDEV_TYPE_GRAPHICS
 } Eeze_Udev_Type;
 /**@}*/
 
