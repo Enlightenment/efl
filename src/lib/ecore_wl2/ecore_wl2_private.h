@@ -200,11 +200,45 @@ struct _Ecore_Wl2_Keyboard
 {
    EINA_INLIST;
 
+   Ecore_Wl2_Seat *seat;
+
+   unsigned int modifiers;
+
+   struct
+     {
+        struct xkb_keymap *keymap;
+        struct xkb_state *state;
+        xkb_mod_mask_t control_mask;
+        xkb_mod_mask_t alt_mask;
+        xkb_mod_mask_t shift_mask;
+        xkb_mod_mask_t win_mask;
+        xkb_mod_mask_t scroll_mask;
+        xkb_mod_mask_t num_mask;
+        xkb_mod_mask_t caps_mask;
+        xkb_mod_mask_t altgr_mask;
+        unsigned int mods_depressed;
+        unsigned int mods_latched;
+        unsigned int mods_locked;
+        unsigned int mods_group;
+     } xkb;
+
+   struct
+     {
+        Ecore_Timer *tmr;
+        unsigned int sym, key, time;
+        double rate, delay;
+        Eina_Bool enabled : 1;
+     } repeat;
+
    struct
      {
         unsigned int button, count, timestamp;
         Ecore_Wl2_Window *window;
      } grab;
+
+   Ecore_Wl2_Window *focus;
+
+   Eina_List *resources;
 };
 
 struct _Ecore_Wl2_Touch
