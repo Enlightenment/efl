@@ -244,7 +244,7 @@ main(void)
         return -1;
      }
 
-   pd = (Provider_Data *)calloc(sizeof(Provider_Data), 1);
+   pd = (Provider_Data *)calloc(1, sizeof(Provider_Data));
 
    if (!pd || !(pd->provider = ecore_buffer_provider_new(name)))
      {

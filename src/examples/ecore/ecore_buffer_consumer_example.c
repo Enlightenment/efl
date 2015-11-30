@@ -144,7 +144,7 @@ main(void)
         return -1;
      }
 
-   cd = (Consumer_Data *)calloc(sizeof(Consumer_Data), 1);
+   cd = (Consumer_Data *)calloc(1, sizeof(Consumer_Data));
 
    if (!cd || !(cd->consumer = ecore_buffer_consumer_new(name, queue_size, WIDTH, HEIGHT)))
      {
