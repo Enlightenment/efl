@@ -267,15 +267,11 @@ START_TEST (elm_atspi_children_and_parent2)
    Eina_List *win_children;
    eo_do(win, win_children = elm_interface_atspi_accessible_children_get());
 
-   ck_assert(eina_list_count(win_children) == 2);
+   ck_assert(eina_list_count(win_children) == 1);
 
    Eo *btn = NULL;
 
    btn = eina_list_nth(win_children, 0);
-   ck_assert(btn != NULL);
-   ck_assert(btn == g_bg);
-
-   btn = eina_list_nth(win_children, 1);
    ck_assert(btn != NULL);
    ck_assert(btn == g_btn);
 
