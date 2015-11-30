@@ -442,12 +442,12 @@ ecore_drm_device_pointer_xy_get(Ecore_Drm_Device *dev, int *x, int *y)
      {
         EINA_LIST_FOREACH(seat->devices, ll, edev)
           {
-             if (!libinput_device_has_capability(edev->device, 
+             if (!libinput_device_has_capability(edev->device,
                                                  LIBINPUT_DEVICE_CAP_POINTER))
                continue;
 
-             if (x) *x = edev->mouse.dx;
-             if (y) *y = edev->mouse.dy;
+             if (x) *x = seat->ptr.dx;
+             if (y) *y = seat->ptr.dy;
 
              return;
           }
