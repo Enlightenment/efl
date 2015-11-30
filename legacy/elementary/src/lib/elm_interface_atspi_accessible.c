@@ -331,7 +331,7 @@ _elm_interface_atspi_accessible_event_emit(Eo *class EINA_UNUSED, void *pd EINA_
 EOLIAN Elm_Atspi_Event_Handler *
 _elm_interface_atspi_accessible_event_handler_add(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Eo_Event_Cb cb, void *data)
 {
-   Elm_Atspi_Event_Handler *ret = calloc(sizeof(Elm_Atspi_Event_Handler), 1);
+   Elm_Atspi_Event_Handler *ret = calloc(1, sizeof(Elm_Atspi_Event_Handler));
 
    ret->cb = cb;
    ret->data = data;
@@ -380,7 +380,7 @@ elm_atspi_relation_free(Elm_Atspi_Relation *relation)
 EAPI Elm_Atspi_Relation *
 elm_atspi_relation_clone(const Elm_Atspi_Relation *relation)
 {
-   Elm_Atspi_Relation *ret = calloc(sizeof(Elm_Atspi_Relation), 1);
+   Elm_Atspi_Relation *ret = calloc(1, sizeof(Elm_Atspi_Relation));
    if (!ret) return NULL;
 
    ret->type = relation->type;
@@ -434,7 +434,7 @@ elm_atspi_relation_set_relation_append(Elm_Atspi_Relation_Set *set, Elm_Atspi_Re
           }
      }
 
-   rel = calloc(sizeof(Elm_Atspi_Relation), 1);
+   rel = calloc(1, sizeof(Elm_Atspi_Relation));
    if (!rel) return EINA_FALSE;
 
    rel->type = type;

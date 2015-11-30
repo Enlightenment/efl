@@ -2476,7 +2476,7 @@ _collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_mat
         const char *key, *value;
         if (eldbus_message_iter_arguments_get(iter_arg, "ss", &key, &value))
           {
-             Elm_Atspi_Attribute *attrib = calloc(sizeof(Elm_Atspi_Attribute), 1);
+             Elm_Atspi_Attribute *attrib = calloc(1, sizeof(Elm_Atspi_Attribute));
              attrib->key = eina_stringshare_add(key);
              attrib->value = eina_stringshare_add(value);
              rule->attributes = eina_list_append(rule->attributes, attrib);
@@ -4471,7 +4471,7 @@ _key_event_info_new(int event_type, const Ecore_Event_Key *data, Eo *bridge)
    Key_Event_Info *ret;
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, NULL);
 
-   ret = calloc(sizeof(Key_Event_Info), 1);
+   ret = calloc(1, sizeof(Key_Event_Info));
 
    ret->type = event_type;
    ret->event = *data;
