@@ -24,7 +24,7 @@ _elm_font_properties_get(Eina_Hash **font_hash,
 
         /* get font name */
         len = token - font;
-        name = calloc(sizeof(char), len + 1);
+        name = calloc(len + 1, sizeof(char));
         if (!name) return NULL;
         strncpy(name, font, len);
 
@@ -68,7 +68,7 @@ _elm_font_properties_get(Eina_Hash **font_hash,
              char *style_old = style;
 
              len = substyle - style;
-             style = calloc(sizeof(char), len + 1);
+             style = calloc(len + 1, sizeof(char));
              if (style)
                {
                   strncpy(style, style_old, len);
