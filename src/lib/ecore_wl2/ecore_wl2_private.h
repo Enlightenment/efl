@@ -5,10 +5,6 @@
 # include "Ecore_Wl2.h"
 # include "Ecore_Input.h"
 
-# ifndef MIN
-#  define MIN(x, y) (((x) < (y)) ? (x) : (y))
-# endif
-
 /* NB: Test if subsurface protocol is part of wayland code, if not then
  * include our own copy */
 # ifndef WL_SUBSURFACE_ERROR_ENUM
