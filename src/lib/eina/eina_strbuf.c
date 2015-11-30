@@ -213,7 +213,7 @@ eina_strbuf_substr_get(Eina_Strbuf *buf, size_t pos, size_t len)
    if ((!buf) || ((pos + len) > buf->len))
       return NULL;
 
-   str = calloc(0, len + 1);
+   str = calloc(1, len + 1);
 
    strncpy(str,((char *)(buf->buf)) + pos, len);
 
