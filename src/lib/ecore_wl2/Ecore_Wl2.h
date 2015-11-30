@@ -998,6 +998,10 @@ EAPI void ecore_wl2_seat_pointer_release(Ecore_Wl2_Seat *seat);
 EAPI Ecore_Wl2_Pointer *ecore_wl2_pointer_get(Ecore_Wl2_Seat *seat);
 EAPI Eina_Bool ecore_wl2_pointer_resource_create(Ecore_Wl2_Pointer *ptr, struct wl_client *client, const struct wl_pointer_interface *implementation, int version, uint32_t id);
 
+EAPI Ecore_Wl2_Keyboard *ecore_wl2_keyboard_get(Ecore_Wl2_Seat *seat);
+EAPI Eina_Bool ecore_wl2_keyboard_resource_create(Ecore_Wl2_Keyboard *kbd, struct wl_client *client, const struct wl_keyboard_interface *implementation, int version, uint32_t id);
+EAPI void ecore_wl2_keyboard_repeat_info_set(Ecore_Wl2_Keyboard *kbd, double rate, double delay);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
