@@ -1098,9 +1098,10 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
         if (input->cursor.surface) wl_surface_destroy(input->cursor.surface);
         input->cursor.surface = NULL;
 
-        if (input->seat_version >= WL_POINTER_RELEASE_SINCE_VERSION)
-          wl_pointer_release(input->wl.pointer);
-        else
+        /* FIXME: Enable these when new wayland git is released */
+        /* if (input->seat_version >= WL_POINTER_RELEASE_SINCE_VERSION) */
+        /*   wl_pointer_release(input->wl.pointer); */
+        /* else */
           wl_pointer_destroy(input->wl.pointer);
         input->wl.pointer = NULL;
      }
@@ -1113,9 +1114,10 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
      }
    else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD) && (input->wl.keyboard))
      {
-        if (input->seat_version >= WL_KEYBOARD_RELEASE_SINCE_VERSION)
-          wl_keyboard_release(input->wl.keyboard);
-        else
+        /* FIXME: Enable these when new wayland git is released */
+        /* if (input->seat_version >= WL_KEYBOARD_RELEASE_SINCE_VERSION) */
+        /*   wl_keyboard_release(input->wl.keyboard); */
+        /* else */
           wl_keyboard_destroy(input->wl.keyboard);
         input->wl.keyboard = NULL;
      }
@@ -1128,9 +1130,10 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
      }
    else if (!(caps & WL_SEAT_CAPABILITY_TOUCH) && (input->wl.touch))
      {
-        if (input->seat_version >= WL_TOUCH_RELEASE_SINCE_VERSION)
-          wl_touch_release(input->wl.touch);
-        else
+        /* FIXME: Enable these when new wayland git is released */
+        /* if (input->seat_version >= WL_TOUCH_RELEASE_SINCE_VERSION) */
+        /*   wl_touch_release(input->wl.touch); */
+        /* else */
           wl_touch_destroy(input->wl.touch);
         input->wl.touch = NULL;
      }
@@ -1225,7 +1228,7 @@ _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id, unsigned int v
    if (!input) return;
 
    input->display = display;
-   input->seat_version = MIN(version, 4);
+   input->seat_version = version;
    input->repeat.rate = 0.025;
    input->repeat.delay = 0.4;
    input->repeat.enabled = EINA_TRUE;

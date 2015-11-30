@@ -30,7 +30,7 @@ _seat_cb_bind(struct wl_client *client, void *data, uint32_t version, uint32_t i
 
    DBG("Seat Bind");
 
-   res = wl_resource_create(client, &wl_seat_interface, MIN(version, 4), id);
+   res = wl_resource_create(client, &wl_seat_interface, version, id);
    if (!res)
      {
         ERR("Failed to create seat resource: %m");
