@@ -1578,7 +1578,7 @@ convex_hull_vertex_set(Evas_Triangle3 *el, unsigned short int *vertex_count, flo
                     unsigned short int **index, unsigned int k, int *leader, int coord)
 {
    int color_coords, normal_coords;
-   Evas_Vec3 vect = {0};
+   Evas_Vec3 vect = {0, 0, 0};
    switch (coord)
      {
       case 0:
