@@ -558,7 +558,7 @@ test_gesture_layer3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    char buf[PATH_MAX];
    int ind = 0;
    Photo_Object **photo_array;
-   photo_array = calloc(sizeof(*photo_array), 4);
+   photo_array = calloc(4, sizeof(*photo_array));
 
    w = 480;
    h = 800;
