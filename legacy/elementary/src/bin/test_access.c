@@ -100,7 +100,7 @@ Evas_Object *gl_access_content_full_get(void *data EINA_UNUSED, Evas_Object *obj
 
    for (i = 0; i < 4; i++)
      {
-        Item_Data *id = calloc(sizeof(Item_Data), 1);
+        Item_Data *id = calloc(1, sizeof(Item_Data));
         id->index = i;
 
         elm_gengrid_item_append(grid, gic, id, NULL, NULL);
@@ -188,7 +188,7 @@ test_access(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    for (i = 1; i < 10; i++)
      {
-        Item_Data *id = calloc(sizeof(Item_Data), 1);
+        Item_Data *id = calloc(1, sizeof(Item_Data));
         id->index = i;
 
         if (i % 4)
