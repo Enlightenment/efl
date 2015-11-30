@@ -349,7 +349,7 @@ evas_vec3_transform(Evas_Vec3 *out, const Evas_Vec3 *v,  const Eina_Matrix3 *m)
 {
    Evas_Vec3 tmp;
 
-   if (eina_matrix3_type_get(m) & EINA_MATRIX_TYPE_IDENTITY)
+   if (eina_matrix3_type_get(m) == EINA_MATRIX_TYPE_IDENTITY)
      {
         evas_vec3_copy(out, v);
         return;
@@ -367,7 +367,7 @@ evas_vec3_homogeneous_position_transform(Evas_Vec3 *out, const Evas_Vec3 *v, con
 {
    Evas_Vec3 tmp;
 
-   if (eina_matrix4_type_get(m) & EINA_MATRIX_TYPE_IDENTITY)
+   if (eina_matrix4_type_get(m) == EINA_MATRIX_TYPE_IDENTITY)
      {
         evas_vec3_copy(out, v);
         return;
@@ -386,7 +386,7 @@ evas_vec3_homogeneous_direction_transform(Evas_Vec3 *out, const Evas_Vec3 *v, co
 {
    Evas_Vec3 tmp;
 
-   if (eina_matrix4_type_get(m) & EINA_MATRIX_TYPE_IDENTITY)
+   if (eina_matrix4_type_get(m) == EINA_MATRIX_TYPE_IDENTITY)
      {
         evas_vec3_copy(out, v);
         return;
@@ -564,7 +564,7 @@ evas_vec4_transform(Evas_Vec4 *out, const Evas_Vec4 *v, const Eina_Matrix4 *m)
 {
    Evas_Vec4 tmp;
 
-   if (eina_matrix4_type_get(m) & EINA_MATRIX_TYPE_IDENTITY)
+   if (eina_matrix4_type_get(m) == EINA_MATRIX_TYPE_IDENTITY)
      {
         evas_vec4_copy(out, v);
         return;
