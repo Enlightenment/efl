@@ -367,7 +367,7 @@ _thumb_generate(Ethumb *e)
    const char *file;
    Ethumb_Thumb_Format f;
    double dv;
-   struct _emotion_plugin *_plugin = calloc(sizeof(struct _emotion_plugin), 1);
+   struct _emotion_plugin *_plugin = calloc(1, sizeof(struct _emotion_plugin));
 
    o = emotion_object_add(ethumb_evas_get(e));
    r = emotion_object_init(o, NULL);
