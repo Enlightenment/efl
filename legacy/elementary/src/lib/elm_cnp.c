@@ -218,6 +218,7 @@ static Eina_Bool      _x11_vcard_send               (char *target, void *data, i
 static Eina_Bool      _x11_is_uri_type_data         (X11_Cnp_Selection *sel EINA_UNUSED, Ecore_X_Event_Selection_Notify *notify);
 static Eina_Bool      _x11_notify_handler_targets   (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
 static Eina_Bool      _x11_data_preparer_text       (Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *ddata, Tmp_Info **tmp_info);
+static Eina_Bool      _x11_data_preparer_markup     (Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *ddata, Tmp_Info **tmp_info);
 static Eina_Bool      _x11_data_preparer_image      (Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *ddata, Tmp_Info **tmp_info);
 static Eina_Bool      _x11_data_preparer_uri        (Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *ddata, Tmp_Info **tmp_info);
 //static int            _x11_notify_handler_html      (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
@@ -451,6 +452,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_MARKUP,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_general_converter,
+        .x_data_preparer = _x11_data_preparer_markup,
 #endif
    },
    ARRAYINIT(CNP_ATOM_text_urilist) {
@@ -951,6 +953,17 @@ _x11_data_preparer_text(Ecore_X_Event_Selection_Notify *notify,
 {
    Ecore_X_Selection_Data *data = notify->data;
    ddata->format = ELM_SEL_FORMAT_TEXT;
+   ddata->data = eina_memdup(data->data, data->length, EINA_TRUE);
+   ddata->len = data->length;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_x11_data_preparer_markup(Ecore_X_Event_Selection_Notify *notify,
+      Elm_Selection_Data *ddata, Tmp_Info **tmp_info EINA_UNUSED)
+{
+   Ecore_X_Selection_Data *data = notify->data;
+   ddata->format = ELM_SEL_FORMAT_MARKUP;
    ddata->data = eina_memdup(data->data, data->length, EINA_TRUE);
    ddata->len = data->length;
    return EINA_TRUE;
