@@ -5,7 +5,7 @@
 
 
 void
-test_colorclass()
+test_colorclass(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *cc;
 
