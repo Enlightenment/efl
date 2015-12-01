@@ -1,18 +1,11 @@
-class Ector.Cairo_Software.Surface (Ector.Cairo.Surface)
+class Ector.Cairo_Software.Surface (Ector.Cairo.Surface, Ector.Software.Buffer.Base)
 {
    eo_prefix: ector_cairo_software_surface;
    legacy_prefix: null;
-   methods {
-      @property surface {
-         set {
-	 }
-	 get {
-	 }
-	 values {
-	    pixels: void *;
-	    width: uint;
-	    height: uint;
-	 }
-      }
+   methods {}
+   implements {
+      Ector.Generic.Buffer.pixels_set;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
    }
 }

@@ -91,7 +91,6 @@ typedef struct _Ector_Renderer_Generic_Gradient_Linear_Data Ector_Renderer_Gener
 typedef struct _Ector_Renderer_Generic_Gradient_Radial_Data Ector_Renderer_Generic_Gradient_Radial_Data;
 typedef struct _Ector_Renderer_Generic_Shape_Data Ector_Renderer_Generic_Shape_Data;
 typedef struct _Ector_Renderer_Generic_Buffer_Data Ector_Renderer_Generic_Buffer_Data;
-typedef struct _Ector_Generic_Buffer_Data Ector_Generic_Buffer_Data;
 
 struct _Ector_Renderer_Generic_Base_Data
 {
@@ -110,7 +109,8 @@ struct _Ector_Renderer_Generic_Base_Data
    Ector_Renderer *mask;
 
    Ector_Quality q;
-   Eina_Bool visibility;
+   Eina_Bool visibility : 1;
+   Eina_Bool finalized : 1;
 };
 
 struct _Ector_Renderer_Generic_Gradient_Data
@@ -145,14 +145,6 @@ struct _Ector_Renderer_Generic_Shape_Data
    } stroke;
 };
 
-struct _Ector_Generic_Buffer_Data
-{
-   Eo                 *eo;
-   unsigned int        w, h;
-   unsigned char       l, r, t, b;
-   Efl_Gfx_Colorspace  cspace;
-};
-
 struct _Ector_Renderer_Generic_Buffer_Data
 {
    Ector_Generic_Buffer *eo_buffer;
@@ -171,5 +163,7 @@ _renderer_crc_get(Eo *obj, unsigned int crc)
    crc = eina_crc((void*) &id, sizeof (id), crc, EINA_FALSE);
    return crc;
 }
+
+#include "ector_buffer.h"
 
 #endif

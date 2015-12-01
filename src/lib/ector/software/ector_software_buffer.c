@@ -9,6 +9,9 @@
 #include "ector_private.h"
 #include "ector_software_private.h"
 #include "ector_generic_buffer.eo.h"
+#include "ector_software_buffer_base.eo.h"
+
+#define MY_CLASS ECTOR_SOFTWARE_BUFFER_CLASS
 
 #define fail(fmt, ...) do { ERR(fmt, ##__VA_ARGS__); goto on_fail; } while (0)
 
@@ -47,7 +50,7 @@ _pixels_gry8_to_argb_convert(uint32_t *dst, const uint8_t *src, int len)
 }
 
 EOLIAN static void
-_ector_software_buffer_pixels_clear(Eo *obj, Ector_Software_Buffer_Data *pd)
+_ector_software_buffer_base_pixels_clear(Eo *obj, Ector_Software_Buffer_Base_Data *pd)
 {
    if (!pd->pixels.u8)
      return;
@@ -62,11 +65,11 @@ _ector_software_buffer_pixels_clear(Eo *obj, Ector_Software_Buffer_Data *pd)
 }
 
 EOLIAN static Eina_Bool
-_ector_software_buffer_ector_generic_buffer_pixels_set(Eo *obj, Ector_Software_Buffer_Data *pd,
-                                                       void *pixels, int width, int height, int stride,
-                                                       Efl_Gfx_Colorspace cspace, Eina_Bool writable,
-                                                       unsigned char l, unsigned char r,
-                                                       unsigned char t, unsigned char b)
+_ector_software_buffer_base_ector_generic_buffer_pixels_set(Eo *obj, Ector_Software_Buffer_Base_Data *pd,
+                                                            void *pixels, int width, int height, int stride,
+                                                            Efl_Gfx_Colorspace cspace, Eina_Bool writable,
+                                                            unsigned char l, unsigned char r,
+                                                            unsigned char t, unsigned char b)
 {
    // safety check
    unsigned px = _min_stride_calc(1, cspace);
@@ -86,12 +89,15 @@ _ector_software_buffer_ector_generic_buffer_pixels_set(Eo *obj, Ector_Software_B
      {
         ERR("Invalid stride %u for width %u (+%u+%u) cspace %u. pixels_set failed.",
             stride, width, l, r, cspace);
-        _ector_software_buffer_pixels_clear(obj, pd);
+        _ector_software_buffer_base_pixels_clear(obj, pd);
         return EINA_FALSE;
      }
 
+   if ((px > 1) && (stride & (px - 1)))
+     ERR("Stride (%d) is not aligned to the pixel size (%d)", stride, px);
+
    if (pd->pixels.u8 && (pd->pixels.u8 != pixels))
-     _ector_software_buffer_pixels_clear(obj, pd);
+     _ector_software_buffer_base_pixels_clear(obj, pd);
 
    if (pixels)
      {
@@ -105,38 +111,39 @@ _ector_software_buffer_ector_generic_buffer_pixels_set(Eo *obj, Ector_Software_B
         pd->nofree = EINA_FALSE;
         pd->writable = EINA_TRUE;
      }
-   pd->generic.w = width;
-   pd->generic.h = height;
-   pd->generic.l = l;
-   pd->generic.r = r;
-   pd->generic.t = t;
-   pd->generic.b = b;
-   pd->generic.cspace = cspace;
+   pd->generic->w = width;
+   pd->generic->h = height;
+   pd->generic->l = l;
+   pd->generic->r = r;
+   pd->generic->t = t;
+   pd->generic->b = b;
+   pd->generic->cspace = cspace;
    pd->stride = stride;
+   pd->pixel_size = px;
    return EINA_TRUE;
 }
 
 EOLIAN static uint8_t *
-_ector_software_buffer_ector_generic_buffer_map(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Data *pd,
-                                                int *offset, unsigned int *length,
-                                                Ector_Buffer_Access_Flag mode EINA_UNUSED,
-                                                unsigned int x, unsigned int y, unsigned int w, unsigned int h,
-                                                Efl_Gfx_Colorspace cspace EINA_UNUSED, unsigned int *stride)
+_ector_software_buffer_base_ector_generic_buffer_map(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd,
+                                                     int *offset, unsigned int *length,
+                                                     Ector_Buffer_Access_Flag mode EINA_UNUSED,
+                                                     unsigned int x, unsigned int y, unsigned int w, unsigned int h,
+                                                     Efl_Gfx_Colorspace cspace EINA_UNUSED, unsigned int *stride)
 {
    int off;
 
    if (!pd->pixels.u8 || !pd->stride)
      fail("Buffer has no pixel data yet");
-   if (cspace != pd->generic.cspace)
+   if (cspace != pd->generic->cspace)
      fail("Invalid colorspace");
-   if (!w || !h || ((x + w) > pd->generic.w) || (y + h > pd->generic.h))
+   if (!w || !h || ((x + w) > pd->generic->w) || (y + h > pd->generic->h))
      fail("Invalid region requested: wanted %u,%u %ux%u but image is %ux%u",
-          x, y, w, h, pd->generic.w, pd->generic.h);
+          x, y, w, h, pd->generic->w, pd->generic->h);
 
    pd->map_count++;
-   off = _min_stride_calc(x + pd->generic.l, pd->generic.cspace) + (pd->stride * (y + pd->generic.t));
+   off = _min_stride_calc(x + pd->generic->l, pd->generic->cspace) + (pd->stride * (y + pd->generic->t));
    if (offset) *offset = off;
-   if (length) *length = (pd->stride * pd->generic.h) - off;
+   if (length) *length = (pd->stride * pd->generic->h) - off;
    if (stride) *stride = pd->stride;
    return pd->pixels.u8;
 
@@ -148,7 +155,7 @@ on_fail:
 }
 
 EOLIAN static void
-_ector_software_buffer_ector_generic_buffer_unmap(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Data *pd, void *data, int offset EINA_UNUSED, unsigned int length EINA_UNUSED)
+_ector_software_buffer_base_ector_generic_buffer_unmap(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd, void *data, int offset EINA_UNUSED, unsigned int length EINA_UNUSED)
 {
    if (!data) return;
    if (data != pd->pixels.u8)
@@ -164,35 +171,35 @@ _ector_software_buffer_ector_generic_buffer_unmap(Eo *obj EINA_UNUSED, Ector_Sof
    pd->map_count--;
 }
 
-EOLIAN uint8_t *
-_ector_software_buffer_ector_generic_buffer_span_get(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Data *pd,
-                                                     int x, int y, unsigned int w, Efl_Gfx_Colorspace cspace,
-                                                     unsigned int *length)
+EOLIAN static uint8_t *
+_ector_software_buffer_base_ector_generic_buffer_span_get(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd,
+                                                          int x, int y, unsigned int w, Efl_Gfx_Colorspace cspace,
+                                                          unsigned int *length)
 {
    uint8_t *src;
    int len, px;
 
    if (!pd->pixels.u8)
      fail("No pixel data");
-   if ((x < -pd->generic.l) || (y < -pd->generic.t) ||
-       ((unsigned) x > pd->generic.w) || ((unsigned) y > pd->generic.h))
+   if ((x < -pd->generic->l) || (y < -pd->generic->t) ||
+       ((unsigned) x > pd->generic->w) || ((unsigned) y > pd->generic->h))
      fail("Out of bounds");
-   if (((unsigned) x + w) > (pd->generic.w + pd->generic.l + pd->generic.r))
+   if (((unsigned) x + w) > (pd->generic->w + pd->generic->l + pd->generic->r))
      fail("Requested span too large");
 
-   px = _min_stride_calc(1, pd->generic.cspace);
+   px = _min_stride_calc(1, pd->generic->cspace);
    len = _min_stride_calc(w, cspace);
    if (length) *length = len;
 
-   src = pd->pixels.u8 + ((pd->generic.t + y) * pd->stride) + (px * (pd->generic.l + x));
+   src = pd->pixels.u8 + ((pd->generic->t + y) * pd->stride) + (px * (pd->generic->l + x));
 
-   if (cspace == pd->generic.cspace)
+   if (cspace == pd->generic->cspace)
      {
         pd->span_free = EINA_FALSE;
         return src;
      }
    else if ((cspace == EFL_GFX_COLORSPACE_ARGB8888) &&
-            (pd->generic.cspace == EFL_GFX_COLORSPACE_GRY8))
+            (pd->generic->cspace == EFL_GFX_COLORSPACE_GRY8))
      {
         uint32_t *buf = malloc(len);
         _pixels_gry8_to_argb_convert(buf, src, w);
@@ -200,7 +207,7 @@ _ector_software_buffer_ector_generic_buffer_span_get(Eo *obj EINA_UNUSED, Ector_
         return (uint8_t *) buf;
      }
    else if ((cspace == EFL_GFX_COLORSPACE_GRY8) &&
-            (pd->generic.cspace == EFL_GFX_COLORSPACE_ARGB8888))
+            (pd->generic->cspace == EFL_GFX_COLORSPACE_ARGB8888))
      {
         uint8_t *buf = malloc(len);
         _pixels_argb_to_gry8_convert(buf, (uint32_t *) src, w);
@@ -215,16 +222,16 @@ on_fail:
    return NULL;
 }
 
-EOLIAN void
-_ector_software_buffer_ector_generic_buffer_span_free(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Data *pd,
-                                                      uint8_t *data)
+EOLIAN static void
+_ector_software_buffer_base_ector_generic_buffer_span_free(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd,
+                                                           uint8_t *data)
 {
    if (pd->span_free) free(data);
    pd->span_free = EINA_FALSE;
 }
 
 EOLIAN static Ector_Buffer_Flag
-_ector_software_buffer_ector_generic_buffer_flags_get(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Data *pd)
+_ector_software_buffer_base_ector_generic_buffer_flags_get(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd)
 {
    return ECTOR_BUFFER_FLAG_CPU_READABLE |
          ECTOR_BUFFER_FLAG_CPU_READABLE_FAST |
@@ -234,11 +241,24 @@ _ector_software_buffer_ector_generic_buffer_flags_get(Eo *obj EINA_UNUSED, Ector
                        : 0);
 }
 
-EOLIAN static void
-_ector_software_buffer_eo_base_destructor(Eo *obj, Ector_Software_Buffer_Data *pd)
+EOLIAN static Eo_Base *
+_ector_software_buffer_eo_base_constructor(Eo *obj, void *data EINA_UNUSED)
 {
-   _ector_software_buffer_pixels_clear(obj, pd);
-   eo_do_super(obj, ECTOR_SOFTWARE_BUFFER_CLASS, eo_destructor());
+   Ector_Software_Buffer_Base_Data *pd;
+   eo_do_super(obj, MY_CLASS, obj = eo_constructor());
+   pd = eo_data_scope_get(obj, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
+   pd->generic = eo_data_ref(obj, ECTOR_GENERIC_BUFFER_MIXIN);
+   pd->generic->eo = obj;
+   return obj;
+}
+
+EOLIAN static void
+_ector_software_buffer_eo_base_destructor(Eo *obj, void *data EINA_UNUSED)
+{
+   Ector_Software_Buffer_Base_Data *pd = eo_data_scope_get(obj, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
+   _ector_software_buffer_base_pixels_clear(obj, pd);
+   eo_data_unref(obj, pd->generic);
+   eo_do_super(obj, MY_CLASS, eo_destructor());
    if (pd->map_count)
      {
         ERR("Pixel data is still mapped during destroy! Check your code!");
@@ -246,3 +266,4 @@ _ector_software_buffer_eo_base_destructor(Eo *obj, Ector_Software_Buffer_Data *p
 }
 
 #include "ector_software_buffer.eo.c"
+#include "ector_software_buffer_base.eo.c"

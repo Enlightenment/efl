@@ -1,19 +1,9 @@
-abstract Ector.Generic.Surface (Eo.Base)
+mixin Ector.Generic.Surface (Ector.Generic.Buffer)
 {
    eo_prefix: ector_surface;
+   legacy_prefix: null;
+   data: null;
    methods {
-      @property size {
-         set {
-            [[Changes the size of the given Evas object.]]
-         }
-         get {
-            [[Retrieves the (rectangular) size of the given Evas object.]]
-         }
-         values {
-            w: int;
-            h: int;
-         }
-      }
       @property reference_point {
          set {
             [[This define where is (0,0) in pixels coordinate inside the surface]]
