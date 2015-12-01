@@ -128,7 +128,6 @@ struct _Elm_Interface_Atspi_Accessible_Data
    const char    *description;
    const char    *translation_domain;
    Elm_Atspi_Relation_Set relations;
-   Elm_Interface_Atspi_Accessible *parent;
    Elm_Atspi_Type type: 2;
 };
 
@@ -167,12 +166,10 @@ _elm_interface_atspi_accessible_index_in_parent_get(Eo *obj, Elm_Interface_Atspi
 }
 
 EOLIAN static Elm_Interface_Atspi_Accessible *
-_elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd)
+_elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED)
 {
    Elm_Atspi_Type type;
    Eo *parent = obj;
-
-   if (pd->parent) return pd->parent;
 
    do {
       eo_do(obj, parent = eo_parent_get());
@@ -187,13 +184,10 @@ _elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Elm_Interface_At
 }
 
 EOLIAN static void
-_elm_interface_atspi_accessible_parent_set(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED, Elm_Interface_Atspi_Accessible *new_parent)
+_elm_interface_atspi_accessible_parent_set(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED, Elm_Interface_Atspi_Accessible *new_parent EINA_UNUSED)
 {
-   if (pd->parent != new_parent)
-     {
-        pd->parent = new_parent;
-        elm_interface_atspi_accessible_parent_changed_signal_emit(obj);
-     }
+   WRN("The %s object does not implement the \"accessible_parent_set\" function.",
+       eo_class_name_get(eo_class_get(obj)));
 }
 
 EOLIAN Eina_List*
@@ -587,8 +581,20 @@ _elm_interface_atspi_accessible_type_get(Eo *obj EINA_UNUSED, Elm_Interface_Atsp
 }
 
 EOLIAN void
-_elm_interface_atspi_accessible_type_set(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd, Elm_Atspi_Type val)
+_elm_interface_atspi_accessible_type_set(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd, Elm_Atspi_Type val)
 {
+   if (val == pd->type)
+     return;
+
+   switch (val)
+     {
+      case ELM_ATSPI_TYPE_DISABLED:
+      case ELM_ATSPI_TYPE_SKIPPED:
+         elm_interface_atspi_accessible_removed(obj);
+         break;
+      case ELM_ATSPI_TYPE_REGULAR:
+         elm_interface_atspi_accessible_added(obj);
+     }
    pd->type = val;
 }
 

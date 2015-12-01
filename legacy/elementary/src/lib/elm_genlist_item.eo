@@ -436,6 +436,5 @@ class Elm.Genlist_Item(Elm.Widget_Item)
            Elm.Widget_Item.cursor_unset;
            Elm_Interface_Atspi_Accessible.name.get;
            Elm_Interface_Atspi_Accessible.state_set.get;
-           Elm_Interface_Atspi_Accessible.children.get;
       }
 }

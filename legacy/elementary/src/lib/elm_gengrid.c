@@ -900,9 +900,6 @@ _item_content_realize(Elm_Gen_Item *it,
              elm_widget_sub_object_add(WIDGET(it), content);
              if (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()))
                elm_widget_disabled_set(content, EINA_TRUE);
-
-             if (_elm_config->atspi_mode && eo_isa(content, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
-               eo_do(content, elm_interface_atspi_accessible_parent_set(EO_OBJ(it)));
           }
      }
 }
@@ -5534,27 +5531,6 @@ _elm_gengrid_item_elm_interface_atspi_accessible_name_get(Eo *eo_it EINA_UNUSED,
    return ret;
 }
 
-EOLIAN Eina_List*
-_elm_gengrid_item_elm_interface_atspi_accessible_children_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
-{
-   Eina_List *ret = NULL;
-   if (VIEW(it))
-     {
-        Eina_List *parts;
-        const char *key;
-        parts = elm_widget_stringlist_get(edje_object_data_get(VIEW(it), "contents"));
-
-        EINA_LIST_FREE(parts, key)
-          {
-             Evas_Object *part;
-             part = edje_object_part_swallow_get(VIEW(it), key);
-             if (part && eo_isa(part, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
-               ret = eina_list_append(ret, part);
-          }
-     }
-   return ret;
-}
-
 EAPI Elm_Object_Item *
 elm_gengrid_nth_item_get(const Evas_Object *obj, unsigned int nth)
 {
@@ -5687,15 +5663,17 @@ _elm_gengrid_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUS
 }
 
 EOLIAN Eina_List*
-_elm_gengrid_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
+_elm_gengrid_elm_interface_atspi_accessible_children_get(Eo *obj, Elm_Gengrid_Data *sd)
 {
-   Eina_List *ret = NULL;
+   Eina_List *ret = NULL, *ret2 = NULL;
    Elm_Gen_Item *it;
 
    EINA_INLIST_FOREACH(sd->items, it)
       ret = eina_list_append(ret, EO_OBJ(it));
 
-   return ret;
+   eo_do_super(obj, ELM_GENGRID_CLASS, ret2 = elm_interface_atspi_accessible_children_get());
+
+   return eina_list_merge(ret, ret2);
 }
 
 EOLIAN Elm_Atspi_State_Set

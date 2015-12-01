@@ -216,15 +216,15 @@ START_TEST(elm_atspi_children_parent)
    Evas_Object *end = elm_icon_add(win);
 
    Evas_Object *list = elm_list_add(win);
-   Elm_Object_Item *it = elm_list_item_append(list, "First Element", icon, end, NULL, NULL);
+   elm_list_item_append(list, "First Element", icon, end, NULL, NULL);
 
    evas_object_show(list);
 
    eo_do(icon, parent = elm_interface_atspi_accessible_parent_get());
-   ck_assert(it == parent);
+   ck_assert(list == parent);
 
    eo_do(end, parent = elm_interface_atspi_accessible_parent_get());
-   ck_assert(it == parent);
+   ck_assert(list == parent);
 
    elm_shutdown();
 }

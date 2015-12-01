@@ -180,41 +180,6 @@ START_TEST(elm_atspi_children_events_del2)
 }
 END_TEST
 
-static Evas_Object *
-gl_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part EINA_UNUSED)
-{
-   content = elm_button_add(obj);
-   return content;
-}
-
-/**
- * Validate if genlist implementation properly reset AT-SPI parent to Elm_Genlist_Item
- * from Elm_Genlist
- */
-START_TEST(elm_atspi_children_parent)
-{
-   test_init();
-
-   evas_object_show(genlist);
-
-   Elm_Object_Item *it;
-   Elm_Interface_Atspi_Accessible *parent;
-   content = NULL;
-
-   itc.item_style = "default";
-   itc.func.content_get = gl_content_get;
-
-   it = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
-   elm_genlist_item_fields_update(it, "*.", ELM_GENGRID_ITEM_FIELD_CONTENT);
-
-   ck_assert(content != NULL);
-   eo_do(content, parent = elm_interface_atspi_accessible_parent_get());
-   ck_assert(it == parent);
-
-   elm_shutdown();
-}
-END_TEST
-
 void elm_test_genlist(TCase *tc)
 {
    tcase_add_test(tc, elm_atspi_role_get);
@@ -223,5 +188,4 @@ void elm_test_genlist(TCase *tc)
    tcase_add_test(tc, elm_atspi_children_events_add);
    tcase_add_test(tc, elm_atspi_children_events_del1);
    tcase_add_test(tc, elm_atspi_children_events_del2);
-   tcase_add_test(tc, elm_atspi_children_parent);
 }

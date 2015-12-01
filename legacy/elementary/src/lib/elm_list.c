@@ -2157,19 +2157,6 @@ _elm_list_item_elm_interface_atspi_accessible_name_get(Eo *eo_it EINA_UNUSED, El
    return data->label ? strdup(data->label) : NULL;
 }
 
-EOLIAN static Eina_List*
-_elm_list_item_elm_interface_atspi_accessible_children_get(Eo *eo_it EINA_UNUSED, Elm_List_Item_Data *data)
-{
-   Eina_List *ret = NULL;
-
-   if (data->icon && eo_isa(data->icon, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
-     ret = eina_list_append(ret, data->icon);
-   if (data->end && eo_isa(data->end, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
-     ret = eina_list_append(ret, data->end);
-
-   return ret;
-}
-
 static char *
 _access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
@@ -2337,19 +2324,19 @@ _item_new(Evas_Object *obj,
 
    if (it->icon)
      {
-        eo_do(it->icon, elm_interface_atspi_accessible_parent_set(eo_it));
         elm_widget_sub_object_add(obj, it->icon);
         evas_object_event_callback_add
           (it->icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb,
           obj);
+        eo_do(it->icon, elm_interface_atspi_accessible_type_set(ELM_ATSPI_TYPE_DISABLED));
      }
    if (it->end)
      {
-        eo_do(it->end, elm_interface_atspi_accessible_parent_set(eo_it));
         elm_widget_sub_object_add(obj, it->end);
         evas_object_event_callback_add
           (it->end, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb,
           obj);
+        eo_do(it->end, elm_interface_atspi_accessible_type_set(ELM_ATSPI_TYPE_DISABLED));
      }
 
    if (_elm_config->atspi_mode)
@@ -2452,6 +2439,7 @@ _elm_list_evas_object_smart_add(Eo *obj, Elm_List_Data *priv)
    priv->box = elm_box_add(obj);
    evas_object_size_hint_weight_set(priv->box, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(priv->box, EVAS_HINT_FILL, 0.0);
+   eo_do(priv->box, elm_interface_atspi_accessible_type_set(ELM_ATSPI_TYPE_DISABLED));
 
    /* FIXME: change this ugly code path later */
    elm_widget_on_show_region_hook_set(priv->box, _show_region_hook, obj);
@@ -3208,9 +3196,11 @@ _elm_list_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN Eina_List*
-_elm_list_elm_interface_atspi_accessible_children_get(Eo *eo_item EINA_UNUSED, Elm_List_Data *pd)
+_elm_list_elm_interface_atspi_accessible_children_get(Eo *obj, Elm_List_Data *pd)
 {
-   return eina_list_clone(pd->items);
+   Eina_List *ret;
+   eo_do_super(obj, ELM_LIST_CLASS, ret = elm_interface_atspi_accessible_children_get());
+   return eina_list_merge(eina_list_clone(pd->items), ret);
 }
 
 EOLIAN int

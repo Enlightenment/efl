@@ -1207,12 +1207,12 @@ _elm_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
 
         elm_widget_display_mode_set(sobj,
               evas_object_size_hint_display_mode_get(obj));
-        if (_elm_config->atspi_mode && !sdc->on_create)
+        if (_elm_config->atspi_mode && !sd->on_create)
           {
              Elm_Interface_Atspi_Accessible *aparent;
              eo_do(sobj, aparent = elm_interface_atspi_accessible_parent_get());
-             if (obj == aparent)
-                elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, sobj);
+             if (aparent)
+                elm_interface_atspi_accessible_children_changed_added_signal_emit(aparent, sobj);
           }
      }
 
@@ -1289,8 +1289,8 @@ _elm_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
           {
              Elm_Interface_Atspi_Accessible *aparent;
              eo_do(sobj, aparent = elm_interface_atspi_accessible_parent_get());
-             if (obj == aparent)
-                elm_interface_atspi_accessible_children_changed_del_signal_emit(obj, sobj);
+             if (aparent)
+                elm_interface_atspi_accessible_children_changed_del_signal_emit(aparent, sobj);
           }
 
         ELM_WIDGET_DATA_GET(sobj, sdc);
@@ -4474,9 +4474,6 @@ _elm_widget_item_eo_base_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
          elm_interface_atspi_accessible_relationships_clear()
          );
 
-   if (_elm_config->atspi_mode && item->widget)
-     elm_interface_atspi_accessible_children_changed_del_signal_emit(item->widget, eo_item);
-
    elm_interface_atspi_accessible_removed(eo_item);
 
    EINA_MAGIC_SET(item, EINA_MAGIC_NONE);
@@ -4676,14 +4673,6 @@ _elm_widget_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_item,
      STATE_TYPE_SET(states, ELM_ATSPI_STATE_SHOWING);
 
    return states;
-}
-
-EOLIAN static Eo*
-_elm_widget_item_elm_interface_atspi_accessible_parent_get(Eo *eo_item, Elm_Widget_Item_Data *item EINA_UNUSED)
-{
-   Eo *parent;
-   eo_do(eo_item, parent = eo_parent_get());
-   return parent;
 }
 
 EAPI void
@@ -5888,13 +5877,8 @@ EOLIAN static Eo*
 _elm_widget_elm_interface_atspi_accessible_parent_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    Elm_Atspi_Type type;
-   Elm_Interface_Atspi_Accessible *parent;
+   Elm_Interface_Atspi_Accessible *parent = obj;
 
-   eo_do_super(obj, ELM_WIDGET_CLASS, parent = elm_interface_atspi_accessible_parent_get());
-   if (parent)
-     return parent;
-
-   parent = obj;
    do {
         ELM_WIDGET_DATA_GET_OR_RETURN(parent, wd, NULL);
         parent = wd->parent_obj;
