@@ -1,6 +1,7 @@
 #ifndef ECTOR_SOFTWARE_PRIVATE_H_
 # define ECTOR_SOFTWARE_PRIVATE_H_
 
+#include "Ector_Software.h"
 #include "sw_ft_raster.h"
 #include "sw_ft_stroker.h"
 #include "../ector_private.h"
@@ -14,8 +15,13 @@ typedef unsigned int uint;
 #endif
 
 typedef struct _Ector_Software_Surface_Data Ector_Software_Surface_Data;
+typedef struct _Ector_Renderer_Software_Base_Data Ector_Renderer_Software_Base_Data;
 
 #define CHECK_SOFTWARE(Parent) (!(Parent && Parent->software))
+
+struct _Ector_Renderer_Software_Base_Data
+{
+};
 
 // Gradient related structure
 typedef struct _Software_Gradient_Linear_Data
@@ -47,30 +53,6 @@ typedef struct _Ector_Renderer_Software_Gradient_Data
    uint* color_table;
 } Ector_Renderer_Software_Gradient_Data;
 
-
-// Rasterizer related structure
-// FIXME: Merge with Ector_Software_Buffer
-typedef struct _Raster_Buffer
-{
-   int            width;
-   int            height;
-   DATA32        *buffer;
-} Raster_Buffer;
-
-typedef struct _Ector_Software_Buffer_Data
-{
-   Ector_Generic_Buffer_Data generic;
-   union {
-      unsigned int     *u32;
-      unsigned char    *u8;
-   } pixels;
-   unsigned int         stride;
-   unsigned int         map_count;
-   Eina_Bool            writable : 1;
-   Eina_Bool            nofree : 1; // pixel data should not be free()'ed
-   Eina_Bool            span_free : 1;
-} Ector_Software_Buffer_Data;
-
 typedef struct _Shape_Rle_Data
 {
    Eina_Rectangle   bbox;
@@ -99,8 +81,7 @@ typedef enum _Span_Data_Type {
 
 typedef struct _Span_Data
 {
-   Raster_Buffer    raster_buffer;
-
+   Ector_Software_Buffer_Base_Data *raster_buffer;
    SW_FT_SpanFunc   blend;
    SW_FT_SpanFunc   unclipped_blend;
 
@@ -114,7 +95,7 @@ typedef struct _Span_Data
    union {
       DATA32 color;
       Ector_Renderer_Software_Gradient_Data *gradient;
-      Ector_Software_Buffer_Data *buffer;
+      Ector_Software_Buffer_Base_Data *buffer;
    };
 } Span_Data;
 

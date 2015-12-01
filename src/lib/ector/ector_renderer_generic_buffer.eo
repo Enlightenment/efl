@@ -1,12 +1,12 @@
-mixin Ector.Renderer.Generic.Buffer (Eo.Base, Efl.Gfx.Fill)
+mixin Ector.Renderer.Generic.Buffer (Ector.Renderer.Generic.Base, Efl.Gfx.Fill)
 {
    [[Ector buffers have a default fill set to repeat]]
    eo_prefix: ector_renderer_buffer;
    legacy_prefix: null;
    methods {
       @property buffer {
-	 set {}
-	 get {}
+	 set { [[Sets the source buffer for this renderer, adds a ref]] }
+	 get { [[Return the current source, no ref change]] }
 	 values {
 	    buf: Ector.Generic.Buffer*;
 	 }

@@ -24,6 +24,7 @@ ector_eolian_cairo_h = $(ector_eolian_files_cairo:%.eo=%.eo.h)
 ector_eolian_files_software = \
 	lib/ector/software/ector_software_surface.eo \
 	lib/ector/software/ector_software_buffer.eo \
+	lib/ector/software/ector_software_buffer_base.eo \
 	lib/ector/software/ector_renderer_software_base.eo \
 	lib/ector/software/ector_renderer_software_shape.eo \
 	lib/ector/software/ector_renderer_software_buffer.eo \
@@ -67,7 +68,6 @@ lib/ector/software/Ector_Software.h
 
 lib_ector_libector_la_SOURCES = \
 lib/ector/ector_main.c \
-lib/ector/ector_surface.c \
 lib/ector/ector_generic_buffer.c \
 lib/ector/ector_renderer_shape.c \
 lib/ector/ector_renderer_base.c \

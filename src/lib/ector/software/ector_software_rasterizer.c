@@ -17,17 +17,18 @@ _blend_color_argb(int count, const SW_FT_Span *spans, void *user_data)
    RGBA_Comp_Func_Solid comp_func;
    Span_Data *data = (Span_Data *)(user_data);
    uint color, *buffer, *target;
+   const int pix_stride = data->raster_buffer->stride / 4;
 
    // multiply the color with mul_col if any
    color = ECTOR_MUL4_SYM(data->color, data->mul_col);
    comp_func = ector_comp_func_solid_span_get(data->op, color);
 
    // move to the offset location
-   buffer = data->raster_buffer.buffer + ((data->raster_buffer.width * data->offy) + data->offx);
+   buffer = data->raster_buffer->pixels.u32 + ((pix_stride * data->offy) + data->offx);
 
    while (count--)
      {
-        target = buffer + ((data->raster_buffer.width * spans->y) + spans->x);
+        target = buffer + ((pix_stride * spans->y) + spans->x);
         comp_func(target, spans->len, color, spans->coverage);
         ++spans;
      }
@@ -45,6 +46,7 @@ _blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
    src_fetch fetchfunc = NULL;
    unsigned int buffer[BLEND_GRADIENT_BUFFER_SIZE], *target, *destbuffer;
    int length, l;
+   const int pix_stride = data->raster_buffer->stride / 4;
 
    //@TODO, Get the proper composition function using ,color, ECTOR_OP etc.
    if (data->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
@@ -56,11 +58,11 @@ _blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
    comp_func = ector_comp_func_span_get(data->op, data->mul_col, data->gradient->alpha);
 
    // move to the offset location
-   destbuffer = data->raster_buffer.buffer + ((data->raster_buffer.width * data->offy) + data->offx);
+   destbuffer = data->raster_buffer->pixels.u32 + ((pix_stride * data->offy) + data->offx);
 
    while (count--)
      {
-        target = destbuffer + ((data->raster_buffer.width * spans->y) + spans->x);
+        target = destbuffer + ((pix_stride * spans->y) + spans->x);
         length = spans->len;
         while (length)
           {
@@ -95,30 +97,31 @@ _blend_image_argb(int count, const SW_FT_Span *spans, void *user_data)
    DATA32 *buffer, *target;
    DATA8 *src8;
    unsigned int l, length, sy = 0;
+   const int pix_stride = data->raster_buffer->stride / 4;
 
 #warning FIXME: Image scaling, anyone?
 #warning FIXME: Optimize eo call with early call resolution
 
    comp_func = ector_comp_func_span_get(data->op, data->mul_col, EINA_TRUE);
 
-   buffer = data->raster_buffer.buffer + ((data->raster_buffer.width * data->offy) + data->offx);
+   buffer = data->raster_buffer->pixels.u32 + ((pix_stride * data->offy) + data->offx);
 
    while (count--)
      {
-        target = buffer + ((data->raster_buffer.width * spans->y) + spans->x);
+        target = buffer + ((pix_stride * spans->y) + spans->x);
         length = spans->len;
         while (length)
           {
-             l = MIN(length, data->buffer->generic.w);
-             eo_do(data->buffer->generic.eo, src8 = ector_buffer_span_get(0, sy, l, EFL_GFX_COLORSPACE_ARGB8888, NULL));
+             l = MIN(length, data->buffer->generic->w);
+             eo_do(data->buffer->generic->eo, src8 = ector_buffer_span_get(0, sy, l, EFL_GFX_COLORSPACE_ARGB8888, NULL));
              comp_func(target, (DATA32 *) src8, l, data->mul_col, spans->coverage);
-             eo_do(data->buffer->generic.eo, ector_buffer_span_free(src8));
+             eo_do(data->buffer->generic->eo, ector_buffer_span_free(src8));
              target += l;
              length -= l;
           }
         ++spans;
         ++sy;
-        if (sy >= data->buffer->generic.h)
+        if (sy >= data->buffer->generic->h)
           sy = 0;
      }
 }
@@ -327,7 +330,7 @@ _adjust_span_fill_methods(Span_Data *spdata)
           spdata->unclipped_blend = &_blend_gradient;
           break;
         case Image:
-          if (spdata->buffer->generic.cspace == EFL_GFX_COLORSPACE_GRY8)
+          if (spdata->buffer->generic->cspace == EFL_GFX_COLORSPACE_GRY8)
             spdata->unclipped_blend = &_blend_image_gry8;
           else
             spdata->unclipped_blend = &_blend_image_argb;
@@ -362,7 +365,6 @@ void ector_software_rasterizer_init(Software_Rasterizer *rasterizer)
    SW_FT_Stroker_Set(rasterizer->stroker, 1<<6,SW_FT_STROKER_LINECAP_BUTT,SW_FT_STROKER_LINEJOIN_MITER,0);
 
    //initialize the span data.
-   rasterizer->fill_data.raster_buffer.buffer = NULL;
    rasterizer->fill_data.clip.enabled = EINA_FALSE;
    rasterizer->fill_data.unclipped_blend = 0;
    rasterizer->fill_data.blend = 0;
@@ -570,7 +572,7 @@ void ector_software_rasterizer_radial_gradient_set(Software_Rasterizer *rasteriz
 void ector_software_rasterizer_buffer_set(Software_Rasterizer *rasterizer,
                                           Ector_Software_Buffer *buffer)
 {
-   rasterizer->fill_data.buffer = eo_data_scope_get(buffer, ECTOR_SOFTWARE_BUFFER_CLASS);
+   rasterizer->fill_data.buffer = eo_data_scope_get(buffer, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
    rasterizer->fill_data.type = Image;
 }
 

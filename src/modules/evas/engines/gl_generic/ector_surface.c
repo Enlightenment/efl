@@ -4,12 +4,15 @@
 
 #include <Ector.h>
 
-#include "cairo/Ector_Cairo.h"
-#include "software/Ector_Software.h"
+#include <cairo/Ector_Cairo.h>
+#include <software/Ector_Software.h>
 
 #include "evas_common_private.h"
 #include "evas_private.h"
 #include "ector_cairo_software_surface.eo.h"
+#include "ector_buffer.h"
+
+#define MY_CLASS ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS
 
 #define USE(Obj, Sym, Error)                            \
   if (!Sym) Sym = _ector_cairo_symbol_get(Obj, #Sym);   \
@@ -49,55 +52,76 @@ typedef struct _Ector_Cairo_Software_Surface_Data Ector_Cairo_Software_Surface_D
 struct _Ector_Cairo_Software_Surface_Data
 {
    cairo_surface_t *surface;
-   cairo_t *ctx;
-
-   void *pixels;
-
-   unsigned int width;
-   unsigned int height;
+   Ector_Software_Buffer_Base_Data *base;
 };
 
-static void
-_ector_cairo_software_surface_surface_set(Eo *obj, Ector_Cairo_Software_Surface_Data *pd, void *pixels, unsigned int width, unsigned int height)
+EOLIAN static Eina_Bool
+_ector_cairo_software_surface_ector_generic_buffer_pixels_set(Eo *obj, Ector_Cairo_Software_Surface_Data *pd,
+                                                              void *pixels, int width, int height, int stride,
+                                                              Efl_Gfx_Colorspace cspace, Eina_Bool writable,
+                                                              unsigned char l, unsigned char r, unsigned char t, unsigned char b)
 {
-   USE(obj, cairo_image_surface_create_for_data, );
-   USE(obj, cairo_surface_destroy, );
-   USE(obj, cairo_create, );
-   USE(obj, cairo_destroy, );
+   cairo_t *ctx = NULL;
+   Eina_Bool ok = EINA_FALSE;
 
-   if (pd->surface) cairo_surface_destroy(pd->surface); pd->surface = NULL;
-   if (pd->ctx) cairo_destroy(pd->ctx); pd->ctx = NULL;
+   if ((cspace != EFL_GFX_COLORSPACE_ARGB8888) || !writable)
+     {
+        ERR("Unsupported surface type!");
+        return EINA_FALSE;
+     }
 
-   pd->pixels = NULL;
-   pd->width = 0;
-   pd->height = 0;
+   USE(obj, cairo_image_surface_create_for_data, EINA_FALSE);
+   USE(obj, cairo_surface_destroy, EINA_FALSE);
+   USE(obj, cairo_create, EINA_FALSE);
+   USE(obj, cairo_destroy, EINA_FALSE);
 
-   if (pixels)
+   if (pd->surface)
+     cairo_surface_destroy(pd->surface);
+   pd->surface = NULL;
+
+   eo_do_super(obj, MY_CLASS,
+               ok = ector_buffer_pixels_set(pixels, width, height, stride,
+                                            cspace, writable, l, r, t, b));
+
+   if (ok && pixels)
      {
         pd->surface = cairo_image_surface_create_for_data(pixels,
                                                           CAIRO_FORMAT_ARGB32,
-                                                          width, height, width);
+                                                          width, height, pd->base->stride);
         if (!pd->surface) goto end;
 
-        pd->ctx = cairo_create(pd->surface);
-        if (!pd->ctx) goto end;
+        ctx = cairo_create(pd->surface);
      }
-   pd->pixels = pixels;
-   pd->width = width;
-   pd->height = height;
 
  end:
-   eo_do(obj,
-         ector_cairo_surface_context_set(pd->ctx),
-         ector_surface_size_set(pd->width, pd->height));
+   evas_common_cpu_end_opt();
+   eo_do(obj, ector_cairo_surface_context_set(ctx));
+   return ok;
 }
 
-static void
+void
 _ector_cairo_software_surface_surface_get(Eo *obj EINA_UNUSED, Ector_Cairo_Software_Surface_Data *pd, void **pixels, unsigned int *width, unsigned int *height)
 {
-   if (pixels) *pixels = pd->pixels;
-   if (width) *width = pd->width;
-   if (height) *height = pd->height;
+   if (pixels) *pixels = pd->base->pixels.u8;
+   if (width) *width = pd->base->generic->w;
+   if (height) *height = pd->base->generic->h;
+}
+
+static Eo_Base *
+_ector_cairo_software_surface_eo_base_constructor(Eo *obj, Ector_Cairo_Software_Surface_Data *pd)
+{
+   eo_do_super(obj, MY_CLASS, obj = eo_constructor());
+   pd->base = eo_data_ref(obj, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
+   pd->base->generic = eo_data_ref(obj, ECTOR_GENERIC_BUFFER_MIXIN);
+   pd->base->generic->eo = obj;
+   return obj;
+}
+
+EOLIAN static void
+_ector_cairo_software_surface_eo_base_destructor(Eo *obj, Ector_Cairo_Software_Surface_Data *pd)
+{
+   eo_data_unref(obj, pd->base);
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 #include "ector_cairo_software_surface.eo.c"

@@ -8,8 +8,6 @@
 #include "ector_private.h"
 #include "ector_generic_buffer.eo.h"
 
-#define MY_CLASS ECTOR_GENERIC_BUFFER_CLASS
-
 EOLIAN static Efl_Gfx_Colorspace
 _ector_generic_buffer_cspace_get(Eo *obj EINA_UNUSED, Ector_Generic_Buffer_Data *pd)
 {
@@ -38,13 +36,5 @@ _ector_generic_buffer_flags_get(Eo *obj EINA_UNUSED, Ector_Generic_Buffer_Data *
    return ECTOR_BUFFER_FLAG_NONE;
 }
 
-EOLIAN static Eo_Base *
-_ector_generic_buffer_eo_base_constructor(Eo *obj, Ector_Generic_Buffer_Data *pd)
-{
-   eo_do_super(obj, MY_CLASS, obj = eo_constructor());
-   pd->eo = obj;
-
-   return obj;
-}
-
 #include "ector_generic_buffer.eo.c"
+#include "ector_generic_surface.eo.c"

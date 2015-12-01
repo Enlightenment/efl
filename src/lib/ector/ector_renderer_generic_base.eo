@@ -121,6 +121,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
    }
    implements {
       Eo.Base.destructor;
+      Eo.Base.finalize;
       @virtual .draw;
       @virtual .bounds_get;
       @virtual .done;

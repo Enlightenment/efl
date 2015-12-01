@@ -1,4 +1,4 @@
-class Ector.Cairo.Surface (Ector.Generic.Surface)
+class Ector.Cairo.Surface (Eo.Base, Ector.Generic.Surface)
 {
    eo_prefix: ector_cairo_surface;
    legacy_prefix: null;

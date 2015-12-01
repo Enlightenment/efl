@@ -2601,18 +2601,10 @@ eng_ector_begin(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
           }
      }
    memset(buffer->software, 0, sizeof (unsigned int) * w * h);
-   if (use_cairo)
-     {
-        eo_do(ector,
-              ector_cairo_software_surface_set(buffer->software, w, h),
-              ector_surface_reference_point_set(x, y));
-     }
-   else
-     {
-        eo_do(ector,
-              ector_software_surface_set(buffer->software, w, h),
-              ector_surface_reference_point_set(x, y));
-     }
+   eo_do(ector,
+         ector_buffer_pixels_set(buffer->software, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888,
+                                 EINA_TRUE, 0, 0, 0, 0),
+         ector_surface_reference_point_set(x, y));
 }
 
 static void
@@ -2630,17 +2622,7 @@ eng_ector_end(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
    w = gl_context->w; h = gl_context->h;
    mul_use = gl_context->dc->mul.use;
 
-   if (use_cairo)
-     {
-        eo_do(ector,
-              ector_cairo_software_surface_set(NULL, 0, 0));
-     }
-   else
-     {
-        eo_do(ector,
-              ector_software_surface_set(NULL, 0, 0));
-     }
-
+   eo_do(ector, ector_buffer_pixels_set(NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0));
    eng_image_data_put(data, buffer->gl, buffer->software);
 
    if (!mul_use)

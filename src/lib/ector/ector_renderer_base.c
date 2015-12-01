@@ -7,13 +7,27 @@
 
 #include "ector_private.h"
 
+#define MY_CLASS ECTOR_RENDERER_GENERIC_BASE_CLASS
+
 static void
 _ector_renderer_generic_base_eo_base_destructor(Eo *obj, Ector_Renderer_Generic_Base_Data *pd)
 {
    if (pd->m) free(pd->m);
    eo_unref(pd->surface);
 
-   eo_do_super(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, eo_destructor());
+   eo_do_super(obj, MY_CLASS, eo_destructor());
+}
+
+static Eo_Base *
+_ector_renderer_generic_base_eo_base_finalize(Eo *obj, Ector_Renderer_Generic_Base_Data *pd)
+{
+   if (!pd->surface)
+     {
+        CRI("surface is not set yet, go fix your code!");
+        return NULL;
+     }
+   pd->finalized = EINA_TRUE;
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
 }
 
 static Ector_Generic_Surface *
@@ -25,6 +39,11 @@ _ector_renderer_generic_base_surface_get(Eo *obj EINA_UNUSED, Ector_Renderer_Gen
 static void
 _ector_renderer_generic_base_surface_set(Eo *obj EINA_UNUSED, Ector_Renderer_Generic_Base_Data *pd, Ector_Generic_Surface *s)
 {
+   if (pd->finalized)
+     {
+        CRI("surface_set can be called during object creation only!");
+        return;
+     }
    pd->surface = eo_xref(s, obj);
 }
 
