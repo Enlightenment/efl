@@ -3,6 +3,8 @@
 
 #include <Eina.h>
 
+#include <eina_eo_concrete_fwd.hh>
+
 #include <cstdlib>
 #include <iterator>
 
@@ -128,8 +130,9 @@ protected:
  * automatically take care of allocating a deallocating resources using
  * the RAII programming idiom.
  */
-template <typename T>
-struct iterator : _common_iterator_base<T const>
+template <typename T, typename Enable = void>
+struct iterator
+  : _common_iterator_base<typename std::enable_if<!std::is_convertible<T*, ::efl::eo::concrete const* const>::value, T const>::type>
 {
 private:
   typedef _common_iterator_base<T const> base_type; /**< Type for the base class. */
@@ -201,6 +204,85 @@ public:
   pointer operator->() const
   {
     return _value;
+  }
+};
+
+template <typename T>
+struct iterator<T, typename std::enable_if<std::is_convertible<T*, ::efl::eo::concrete const* const>::value, void>::type>
+  : _common_iterator_base<Eo const>
+{
+private:
+  typedef _common_iterator_base<Eo const> base_type; /**< Type for the base class. */
+  typename base_type::pointer _value; /**< @internal */
+  typedef iterator<T> self_type; /**< Type for the specialized iterator itself. */
+public:
+  typedef typename base_type::value_type value_type; /**< Type for elements returned by the iterator. */
+  typedef typename base_type::pointer pointer; /**< Type for a pointer to an element. */
+  typedef typename base_type::reference reference; /**< Type for a reference to an element. */
+  typedef typename base_type::difference_type difference_type; /**< Type to represent the distance between two iterators. */
+  typedef typename base_type::iterator_category iterator_category; /**< Defines the iterator category as the same of the base class. */
+
+  /**
+   * @brief Creates a iterator wrapping the given native @c Eina_Iterator handle.
+   *
+   * This constructor creates an iterator that wraps the given native
+   * @c Eina_Iterator handle, providing an OOP interface to it.
+   */
+  explicit iterator(Eina_Iterator* iterator_ = 0)
+    : base_type(iterator_)
+  {
+    if(this->_iterator)
+      ++*this;
+  }
+
+
+  /**
+   * @brief Move the iterator to the next position.
+   * @return The iterator itself.
+   *
+   * This operator increments the iterator, making it point to the
+   * position right after the current one.
+   * At the end, it returns a reference to itself.
+   */
+  self_type& operator++()
+  {
+    void* data;
+    Eina_Bool r = ::eina_iterator_next(this->_iterator, &data);
+    if(!r)
+      this->_iterator = 0;
+    _value = static_cast<pointer>(data);
+    return *this;
+  }
+
+  /**
+   * @brief Move the iterator to the next position.
+   * @return The iterator itself.
+   *
+   * Works exactly like @ref operator++().
+   */
+  self_type& operator++(int)
+  {
+    return ++**this;
+  }
+
+  /**
+   * @brief Get a reference to the element currently pointed by the iterator.
+   * @return Reference to the current element.
+   */
+  T const& operator*() const
+  {
+    // relies on layout compatibility between eo::concrete and Eo*
+    return *reinterpret_cast<T const*>(&_value);
+  }
+
+  /**
+   * @brief Return a pointer to the current element, which member will be accessed.
+   * @return Pointer to the element currently pointed by the iterator.
+   */
+  T const* operator->() const
+  {
+    // relies on layout compatibility between eo::concrete and Eo*
+    return reinterpret_cast<T const*>(&_value);
   }
 };
 

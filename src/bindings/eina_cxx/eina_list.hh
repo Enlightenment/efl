@@ -415,6 +415,30 @@ public:
   {
     return rend();
   }
+  eina::iterator<value_type> ibegin()
+  {
+    return _eo_list_access_traits::ibegin<value_type>(this->_impl._list);
+  }
+  eina::iterator<value_type> iend()
+  {
+    return _eo_list_access_traits::iend<value_type>(this->_impl._list);
+  }
+  eina::iterator<value_type const> ibegin() const
+  {
+    return _eo_list_access_traits::ibegin<value_type>(this->_impl._list);
+  }
+  eina::iterator<value_type const> iend() const
+  {
+    return _eo_list_access_traits::iend<value_type>(this->_impl._list);
+  }
+  eina::iterator<value_type const> cibegin() const
+  {
+    return _eo_list_access_traits::cibegin<value_type>(this->_impl._list);
+  }
+  eina::iterator<value_type const> ciend() const
+  {
+    return _eo_list_access_traits::ciend<value_type>(this->_impl._list);
+  }
   using _base_type::swap;
   using _base_type::max_size;
   using _base_type::native_handle;
