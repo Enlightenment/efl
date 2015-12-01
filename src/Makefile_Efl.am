@@ -90,7 +90,7 @@ bin/efl/efl_debugd.c \
 bin/efl/efl_debug_common.c \
 bin/efl/efl_debug_common.h
 bin_efl_efl_debugd_CPPFLAGS = -I$(top_builddir)/src/bin/efl @EINA_CFLAGS@ @ECORE_CFLAGS@ @ECORE_CON_CFLAGS@
-bin_efl_efl_debugd_LDADD = @USE_EINA_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
+bin_efl_efl_debugd_LDADD = @EFL_LIBS@ @USE_EINA_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
 bin_efl_efl_debugd_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
 
 bin_efl_efl_debug_SOURCES = \
@@ -98,6 +98,6 @@ bin/efl/efl_debug.c \
 bin/efl/efl_debug_common.c \
 bin/efl/efl_debug_common.h
 bin_efl_efl_debug_CPPFLAGS = -I$(top_builddir)/src/bin/efl @EINA_CFLAGS@ @ECORE_CFLAGS@ @ECORE_CON_CFLAGS@
-bin_efl_efl_debug_LDADD = @USE_EINA_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
+bin_efl_efl_debug_LDADD = @EFL_LIBS@ @USE_EINA_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
 bin_efl_efl_debug_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
 
