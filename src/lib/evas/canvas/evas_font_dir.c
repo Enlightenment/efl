@@ -1122,7 +1122,7 @@ static Evas_Font_Dir *
 object_text_font_cache_dir_add(char *dir)
 {
    Evas_Font_Dir *fd;
-   char *tmp, *tmp2;
+   char *tmp, *tmp2, *file;
    Eina_List *fdir;
    Evas_Font *fn;
 
@@ -1183,9 +1183,9 @@ object_text_font_cache_dir_add(char *dir)
 
    /* directoy listing */
    fdir = evas_file_path_list(dir, "*.ttf", 0);
-   while (fdir)
+   EINA_LIST_FREE(fdir, file)
      {
-	tmp = evas_file_path_join(dir, fdir->data);
+	tmp = evas_file_path_join(dir, file);
 	if (tmp)
 	  {
 	     fn = calloc(1, sizeof(Evas_Font));
@@ -1194,12 +1194,12 @@ object_text_font_cache_dir_add(char *dir)
 		  char *p;
 
 		  fn->type = 0;
-		  tmp2 = alloca(strlen(fdir->data) + 1);
-		  strcpy(tmp2, fdir->data);
+		  tmp2 = alloca(strlen(file) + 1);
+		  strcpy(tmp2, file);
 		  p = strrchr(tmp2, '.');
 		  if (p) *p = 0;
 		  fn->simple.name = eina_stringshare_add(tmp2);
-		  tmp2 = evas_file_path_join(dir, fdir->data);
+		  tmp2 = evas_file_path_join(dir, file);
 		  if (tmp2)
 		    {
 		       fn->path = eina_stringshare_add(tmp2);
@@ -1209,8 +1209,7 @@ object_text_font_cache_dir_add(char *dir)
 	       }
 	     free(tmp);
 	  }
-	fdir = eina_list_remove(fdir, fdir->data);
-	free(fdir->data);
+	free(file);
      }
 
    /* fonts.alias */
