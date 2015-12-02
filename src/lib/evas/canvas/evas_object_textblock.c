@@ -667,8 +667,10 @@ _evas_textblock_selection_iterator_get_container(Evas_Textblock_Selection_Iterat
 static void
 _evas_textblock_selection_iterator_free(Evas_Textblock_Selection_Iterator *it)
 {
-   while (it->list)
-     it->list = eina_list_remove_list(it->list, it->list);
+   Evas_Textblock_Rectangle *tr;
+
+   EINA_LIST_FREE(it->list, tr)
+     free(tr);
    EINA_MAGIC_SET(&it->iterator, 0);
    free(it);
 }
