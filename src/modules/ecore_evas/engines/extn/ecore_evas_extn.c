@@ -27,7 +27,6 @@
 static int blank = 0x00000000;
 static const char *interface_extn_name = "extn";
 static const int   interface_extn_version = 1;
-
 static Ecore_Evas_Interface_Extn *_ecore_evas_extn_interface_new(void);
 static void *_ecore_evas_socket_switch(void *data, void *dest_buf);
 
@@ -38,6 +37,7 @@ struct _Extn
    struct {
       Ecore_Ipc_Server *server;
       Eina_List *clients;
+      Eina_List *visible_clients;
       Eina_List *handlers;
    } ipc;
    struct {
@@ -208,6 +208,7 @@ _ecore_evas_extn_free(Ecore_Evas *ee)
                ecore_ipc_client_del(client);
           }
         if (extn->ipc.server) ecore_ipc_server_del(extn->ipc.server);
+        if (extn->ipc.visible_clients) eina_list_free(extn->ipc.visible_clients);
 
         EINA_LIST_FREE(extn->file.updates, ipc)
           free(ipc);
@@ -1594,6 +1595,7 @@ _ipc_client_del(void *data, int type EINA_UNUSED, void *event)
    if (!eina_list_data_find(extn->ipc.clients, e->client)) return ECORE_CALLBACK_PASS_ON;
 
    extn->ipc.clients = eina_list_remove(extn->ipc.clients, e->client);
+   extn->ipc.visible_clients = eina_list_remove(extn->ipc.visible_clients, e->client);
 
    _ecore_evas_extn_event(ee, ECORE_EVAS_EXTN_CLIENT_DEL);
    return ECORE_CALLBACK_PASS_ON;
@@ -1629,6 +1631,8 @@ _ipc_client_data(void *data, int type EINA_UNUSED, void *event)
       case OP_SHOW:
          if (!ee->visible)
            {
+              if (!eina_list_data_find(extn->ipc.visible_clients, e->client))
+                extn->ipc.visible_clients = eina_list_append(extn->ipc.visible_clients, e->client);
               ee->prop.withdrawn = EINA_FALSE;
               if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
               ee->visible = 1;
@@ -1638,10 +1642,14 @@ _ipc_client_data(void *data, int type EINA_UNUSED, void *event)
       case OP_HIDE:
          if (ee->visible)
            {
-              ee->prop.withdrawn = EINA_TRUE;
-              if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
-              ee->visible = 0;
-              if (ee->func.fn_hide) ee->func.fn_hide(ee);
+              extn->ipc.visible_clients = eina_list_remove(extn->ipc.visible_clients, e->client);
+              if (!eina_list_count(extn->ipc.visible_clients))
+                {
+                   ee->prop.withdrawn = EINA_TRUE;
+                   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
+                   ee->visible = 0;
+                   if (ee->func.fn_hide) ee->func.fn_hide(ee);
+                }
            }
          break;
       case OP_FOCUS:
