@@ -3642,6 +3642,8 @@ loop_advance:
 static void
 _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 {
+   Evas_Object_Textblock_Format *last_fmt = fmt;
+
    if (c->hyphen_ti)
      {
         c->ln->items = (Evas_Object_Textblock_Item *)
@@ -3652,7 +3654,11 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
            eina_list_append(c->o->hyphen_items, c->hyphen_ti);
         c->hyphen_ti = NULL;
      }
-   _layout_line_finalize(c, fmt);
+   if (c->ln->items)
+     {
+        last_fmt = _ITEM(EINA_INLIST_GET(c->ln->items)->last)->format;
+     }
+   _layout_line_finalize(c, last_fmt);
    _layout_line_new(c, fmt);
 }
 
