@@ -2,8 +2,7 @@
 #include "config.h"
 #endif
 
-#include <Ector.h>
-#include "ector_drawhelper_private.h"
+#include "draw_private.h"
 
 #undef BUILD_NEON
 #ifdef BUILD_NEON
@@ -36,7 +35,7 @@ comp_func_solid_source_over_neon(uint * __restrict dest, int length, uint color,
    uint8x8_t temp11_8x8;
 
    if (const_alpha != 255)
-     color = BYTE_MUL(color, const_alpha);
+     color = DRAW_BYTE_MUL(color, const_alpha);
 
    // alpha can only be 0 if color is 0x0. In that case we can just return.
    // Otherwise we can assume alpha != 0. This allows more optimization in
@@ -140,7 +139,7 @@ comp_func_source_over_sse2(uint * __restrict dest, const uint * __restrict src, 
    DATA32 *end;
 
    if (const_alpha != 255)
-     color = BYTE_MUL(color, const_alpha);
+     color = DRAW_BYTE_MUL(color, const_alpha);
 
    c_32x2 = vdup_n_u32(color);
    c_8x8 = vreinterpret_u8_u32(c_32x2);
@@ -215,18 +214,18 @@ comp_func_source_over_sse2(uint * __restrict dest, const uint * __restrict src, 
 #endif
 
 void
-draw_helper_neon_init()
+efl_draw_neon_init()
 {
 #ifdef BUILD_NEON
    if (eina_cpu_features_get() & EINA_CPU_NEON)
      {
         // update the comp_function table for solid color
-        //func_for_mode_solid[ECTOR_ROP_COPY] = comp_func_solid_source_sse2;
-        func_for_mode_solid[ECTOR_ROP_BLEND] = comp_func_solid_source_over_neon;
+        //func_for_mode_solid[EFL_GFX_RENDER_OP_COPY] = comp_func_solid_source_sse2;
+        func_for_mode_solid[EFL_GFX_RENDER_OP_BLEND] = comp_func_solid_source_over_neon;
 
         // update the comp_function table for source data
-        //func_for_mode[ECTOR_ROP_COPY] = comp_func_source_sse2;
-        func_for_mode[ECTOR_ROP_BLEND] = comp_func_source_over_neon;
+        //func_for_mode[EFL_GFX_RENDER_OP_COPY] = comp_func_source_sse2;
+        func_for_mode[EFL_GFX_RENDER_OP_BLEND] = comp_func_source_over_neon;
       }
 #endif
 }

@@ -10,6 +10,7 @@
 #include "ector_software_private.h"
 #include "ector_generic_buffer.eo.h"
 #include "ector_software_buffer_base.eo.h"
+#include "draw.h"
 
 #define MY_CLASS ECTOR_SOFTWARE_BUFFER_CLASS
 

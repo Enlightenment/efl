@@ -58,7 +58,7 @@ _ector_renderer_software_gradient_radial_ector_renderer_generic_base_prepare(Eo 
 static Eina_Bool
 _ector_renderer_software_gradient_radial_ector_renderer_generic_base_draw(Eo *obj EINA_UNUSED,
                                                                           Ector_Renderer_Software_Gradient_Data *pd EINA_UNUSED,
-                                                                          Ector_Rop op EINA_UNUSED, Eina_Array *clips EINA_UNUSED,
+                                                                          Efl_Gfx_Render_Op op EINA_UNUSED, Eina_Array *clips EINA_UNUSED,
                                                                           unsigned int mul_col EINA_UNUSED)
 {
    return EINA_TRUE;
@@ -68,7 +68,7 @@ _ector_renderer_software_gradient_radial_ector_renderer_generic_base_draw(Eo *ob
 static Eina_Bool
 _ector_renderer_software_gradient_radial_ector_renderer_software_base_fill(Eo *obj EINA_UNUSED, Ector_Renderer_Software_Gradient_Data *pd)
 {
-   ector_software_rasterizer_radial_gradient_set(pd->surface->software, pd);
+   ector_software_rasterizer_radial_gradient_set(pd->surface->rasterizer, pd);
    return EINA_TRUE;
 }
 

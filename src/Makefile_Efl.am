@@ -1,6 +1,7 @@
 # Even though libefl is new, it contains definitions used by legacy APIs
 efl_eolian_legacy_files = \
 	lib/efl/interfaces/efl_gfx_fill.eo \
+	lib/efl/interfaces/efl_gfx_base.eo \
 	$(NULL)
 
 efl_eolian_files = \
@@ -10,7 +11,6 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_player.eo \
       lib/efl/interfaces/efl_text.eo \
       lib/efl/interfaces/efl_text_properties.eo \
-      lib/efl/interfaces/efl_gfx_base.eo \
       lib/efl/interfaces/efl_gfx_stack.eo \
       lib/efl/interfaces/efl_gfx_view.eo \
       lib/efl/interfaces/efl_gfx_shape.eo \

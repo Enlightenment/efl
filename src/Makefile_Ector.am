@@ -90,6 +90,13 @@ lib/ector/cairo/ector_cairo_surface.c
 installed_ectorcairoheadersdir = $(includedir)/ector-@VMAJ@/cairo
 nodist_installed_ectorcairoheaders_DATA = $(ector_eolian_cairo_h)
 
+# SW draw static lib
+draw_sources = \
+static_libs/draw/draw_main_sse2.c \
+static_libs/draw/draw_main.c \
+static_libs/draw/draw_main_neon.c \
+$(NULL)
+
 # And the default software backend
 lib_ector_libector_la_SOURCES += \
 lib/ector/software/ector_renderer_software_gradient_linear.c \
@@ -103,9 +110,7 @@ lib/ector/software/ector_software_buffer.c \
 static_libs/freetype/sw_ft_math.c \
 static_libs/freetype/sw_ft_raster.c \
 static_libs/freetype/sw_ft_stroker.c \
-lib/ector/software/ector_drawhelper.c \
-lib/ector/software/ector_drawhelper_sse2.c \
-lib/ector/software/ector_drawhelper_neon.c
+$(draw_sources)
 
 installed_ectorsoftwareheadersdir = $(includedir)/ector-@VMAJ@/software
 nodist_installed_ectorsoftwareheaders_DATA = $(ector_eolian_software_h)
@@ -115,6 +120,7 @@ lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/ector/cairo \
 -I$(top_builddir)/src/lib/ector/software \
 -I$(top_srcdir)/src/static_libs/freetype \
+-I$(top_srcdir)/src/static_libs/draw \
 @ECTOR_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
@@ -165,4 +171,6 @@ lib/ector/software/ector_software_private.h \
 static_libs/freetype/sw_ft_math.h \
 static_libs/freetype/sw_ft_raster.h \
 static_libs/freetype/sw_ft_stroker.h \
-static_libs/freetype/sw_ft_types.h
+static_libs/freetype/sw_ft_types.h \
+static_libs/draw/draw.h \
+static_libs/draw/draw_private.h

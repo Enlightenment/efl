@@ -9,7 +9,7 @@
 #include "ector_private.h"
 #include "ector_software_private.h"
 
-#include "ector_drawhelper_private.h"
+#include "draw.h"
 
 static void
 _blend_color_argb(int count, const SW_FT_Span *spans, void *user_data)
@@ -20,8 +20,8 @@ _blend_color_argb(int count, const SW_FT_Span *spans, void *user_data)
    const int pix_stride = data->raster_buffer->stride / 4;
 
    // multiply the color with mul_col if any
-   color = ECTOR_MUL4_SYM(data->color, data->mul_col);
-   comp_func = ector_comp_func_solid_span_get(data->op, color);
+   color = DRAW_MUL4_SYM(data->color, data->mul_col);
+   comp_func = efl_draw_func_solid_span_get(data->op, color);
 
    // move to the offset location
    buffer = data->raster_buffer->pixels.u32 + ((pix_stride * data->offy) + data->offx);
@@ -55,7 +55,7 @@ _blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
    if (!fetchfunc)
      return;
 
-   comp_func = ector_comp_func_span_get(data->op, data->mul_col, data->gradient->alpha);
+   comp_func = efl_draw_func_span_get(data->op, data->mul_col, data->gradient->alpha);
 
    // move to the offset location
    destbuffer = data->raster_buffer->pixels.u32 + ((pix_stride * data->offy) + data->offx);
@@ -102,7 +102,7 @@ _blend_image_argb(int count, const SW_FT_Span *spans, void *user_data)
 #warning FIXME: Image scaling, anyone?
 #warning FIXME: Optimize eo call with early call resolution
 
-   comp_func = ector_comp_func_span_get(data->op, data->mul_col, EINA_TRUE);
+   comp_func = efl_draw_func_span_get(data->op, data->mul_col, EINA_TRUE);
 
    buffer = data->raster_buffer->pixels.u32 + ((pix_stride * data->offy) + data->offx);
 
@@ -368,7 +368,8 @@ void ector_software_rasterizer_init(Software_Rasterizer *rasterizer)
    rasterizer->fill_data.clip.enabled = EINA_FALSE;
    rasterizer->fill_data.unclipped_blend = 0;
    rasterizer->fill_data.blend = 0;
-   draw_helper_init();
+   efl_draw_init();
+   ector_software_gradient_init();
 }
 
 void ector_software_rasterizer_done(Software_Rasterizer *rasterizer)
@@ -551,7 +552,7 @@ void ector_software_rasterizer_clip_shape_set(Software_Rasterizer *rasterizer, S
 
 void ector_software_rasterizer_color_set(Software_Rasterizer *rasterizer, int r, int g, int b, int a)
 {
-   rasterizer->fill_data.color = ECTOR_ARGB_JOIN(a, r, g, b);
+   rasterizer->fill_data.color = DRAW_ARGB_JOIN(a, r, g, b);
    rasterizer->fill_data.type = Solid;
 }
 
@@ -578,7 +579,7 @@ void ector_software_rasterizer_buffer_set(Software_Rasterizer *rasterizer,
 
 void ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
                                              int x, int y, uint mul_col,
-                                             Ector_Rop op, Shape_Rle_Data* rle)
+                                             Efl_Gfx_Render_Op op, Shape_Rle_Data* rle)
 {
    // check for NULL rle data
    if (!rle) return;

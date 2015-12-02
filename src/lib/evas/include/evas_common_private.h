@@ -55,7 +55,6 @@
 # include <Eet.h>
 #endif
 #include "Evas.h"
-//#include "Evas_GL.h"
 
 #ifdef EAPI
 # undef EAPI
@@ -1159,6 +1158,7 @@ struct _Convert_Pal
 /*****************************************************************************/
 #include "evas_macros.h"
 
+#ifndef A_VAL
 #ifndef WORDS_BIGENDIAN
 /* x86 */
 #define A_VAL(p) (((DATA8 *)(p))[3])
@@ -1175,6 +1175,7 @@ struct _Convert_Pal
 #define B_VAL(p) (((DATA8 *)(p))[3])
 #define AR_VAL(p) ((DATA16 *)(p)[0])
 #define GB_VAL(p) ((DATA16 *)(p)[1])
+#endif
 #endif
 
 #define RGB_JOIN(r,g,b) \

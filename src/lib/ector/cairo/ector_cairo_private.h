@@ -1,6 +1,8 @@
 #ifndef ECTOR_CAIRO_PRIVATE_H_
 # define ECTOR_CAIRO_PRIVATE_H_
 
+#include "draw.h"
+
 typedef void cairo_pattern_t;
 
 typedef struct {

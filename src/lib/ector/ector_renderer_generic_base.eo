@@ -105,7 +105,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
       draw {
          return: bool @warn_unused;
 	 params {
-	    @in op: Ector_Rop;
+	    @in op: Efl.Gfx.Render_Op;
 	    @in clips: array<Eina.Rectangle *> *; [[array of @Eina.Rectangle clip]]
 	    @in mul_col: uint;
 	 }

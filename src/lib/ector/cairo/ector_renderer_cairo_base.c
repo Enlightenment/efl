@@ -121,7 +121,7 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_prepare(Eo *obj, Ector_Re
 static Eina_Bool
 _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj EINA_UNUSED,
                                                             Ector_Renderer_Cairo_Base_Data *pd,
-                                                            Ector_Rop op,
+                                                            Efl_Gfx_Render_Op op,
                                                             Eina_Array *clips EINA_UNUSED,
                                                             unsigned int mul_col)
 {
@@ -131,10 +131,10 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj EINA_UNUSED,
 
    switch (op)
      {
-      case ECTOR_ROP_BLEND:
+      case EFL_GFX_RENDER_OP_BLEND:
          cop = CAIRO_OPERATOR_OVER;
          break;
-      case ECTOR_ROP_COPY:
+      case EFL_GFX_RENDER_OP_COPY:
       default:
          cop = CAIRO_OPERATOR_SOURCE;
          break;
