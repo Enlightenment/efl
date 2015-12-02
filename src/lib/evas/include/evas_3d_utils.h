@@ -373,8 +373,8 @@ evas_vec3_homogeneous_position_transform(Evas_Vec3 *out, const Evas_Vec3 *v, con
         return;
      }
 
-   tmp.x = (m->xx * v->x) + (m->zw * v->y) + (m->zx  * v->z) + m->wx;
-   tmp.y = (m->xy * v->x) + (m->yx * v->y) + (m->zy  * v->z) + m->wy;
+   tmp.x = (m->xx * v->x) + (m->yx * v->y) + (m->zx * v->z) + m->wx;
+   tmp.y = (m->xy * v->x) + (m->yy * v->y) + (m->zy * v->z) + m->wy;
    tmp.z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z) + m->wz;
 
    evas_vec3_scale(out, &tmp,
@@ -392,8 +392,8 @@ evas_vec3_homogeneous_direction_transform(Evas_Vec3 *out, const Evas_Vec3 *v, co
         return;
      }
 
-   tmp.x = (m->xx * v->x) + (m->zw * v->y) + (m->zx  * v->z);
-   tmp.y = (m->xy * v->x) + (m->yx * v->y) + (m->zy  * v->z);
+   tmp.x = (m->xx * v->x) + (m->yx * v->y) + (m->zx * v->z);
+   tmp.y = (m->xy * v->x) + (m->yy * v->y) + (m->zy * v->z);
    tmp.z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z);
 
    evas_vec3_copy(out, &tmp);
@@ -953,17 +953,17 @@ evas_mat4_build(Eina_Matrix4 *out,
    evas_vec4_quaternion_rotation_matrix_get(orientation, &rot);
 
    out->xx = scale->x * rot.xx;
-   out->xy = scale->y * rot.xy;
-   out->xz = scale->z * rot.xz;
+   out->xy = scale->x * rot.xy;
+   out->xz = scale->x * rot.xz;
    out->xw = 0.0;
 
-   out->yx = scale->x * rot.yx;
+   out->yx = scale->y * rot.yx;
    out->yy = scale->y * rot.yy;
-   out->yz = scale->z * rot.yz;
+   out->yz = scale->y * rot.yz;
    out->yw = 0.0;
 
-   out->zx = scale->x * rot.zx;
-   out->zy = scale->y * rot.zy;
+   out->zx = scale->z * rot.zx;
+   out->zy = scale->z * rot.zy;
    out->zz = scale->z * rot.zz;
    out->zw = 0.0;
 
@@ -998,17 +998,17 @@ evas_mat4_inverse_build(Eina_Matrix4 *out, const Evas_Vec3 *position,
    evas_vec4_quaternion_rotation_matrix_get(&inv_rotation, &rot);
 
    out->xx = inv_scale.x * rot.xx;
-   out->xy = inv_scale.y * rot.xy;
-   out->xz = inv_scale.z * rot.xz;
+   out->xy = inv_scale.x * rot.xy;
+   out->xz = inv_scale.x * rot.xz;
    out->xw = 0.0;
 
-   out->yx = inv_scale.x * rot.yx;
+   out->yx = inv_scale.y * rot.yx;
    out->yy = inv_scale.y * rot.yy;
-   out->yz = inv_scale.z * rot.yz;
+   out->yz = inv_scale.y * rot.yz;
    out->yw = 0.0;
 
-   out->zx = inv_scale.x * rot.zx;
-   out->zy = inv_scale.y * rot.zy;
+   out->zx = inv_scale.z * rot.zx;
+   out->zy = inv_scale.z * rot.zy;
    out->zz = inv_scale.z * rot.zz;
    out->zw = 0.0;
 

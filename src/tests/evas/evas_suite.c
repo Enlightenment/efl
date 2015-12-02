@@ -30,6 +30,7 @@ static const Evas_Test_Case etc[] = {
   { "Masking", evas_test_mask },
   { "Evas GL", evas_test_evasgl },
   { "Object Smart", evas_test_object_smart },
+  { "Matrix", evas_test_matrix },
   { NULL, NULL }
 };
 

@@ -1004,40 +1004,40 @@ eina_matrix4_multiply(Eina_Matrix4 *out, const Eina_Matrix4 *mat_a,
      }
 
    MATRIX_XX(out) = MATRIX_XX(mat_a) * MATRIX_XX(mat_b) + MATRIX_YX(mat_a) * MATRIX_XY(mat_b) +
-                    MATRIX_ZX(mat_a) * MATRIX_XZ(mat_b) + mat_a->wx * MATRIX_XW(mat_b);
+                    MATRIX_ZX(mat_a) * MATRIX_XZ(mat_b) + MATRIX_WX(mat_a) * MATRIX_XW(mat_b);
    MATRIX_YX(out) = MATRIX_XX(mat_a) * MATRIX_YX(mat_b) + MATRIX_YX(mat_a) * MATRIX_YY(mat_b) +
-                    MATRIX_ZX(mat_a) * MATRIX_YZ(mat_b) + mat_a->wx * MATRIX_YW(mat_b);
+                    MATRIX_ZX(mat_a) * MATRIX_YZ(mat_b) + MATRIX_WX(mat_a) * MATRIX_YW(mat_b);
    MATRIX_ZX(out) = MATRIX_XX(mat_a) * MATRIX_ZX(mat_b) + MATRIX_YX(mat_a) * MATRIX_ZY(mat_b) +
-                    MATRIX_ZX(mat_a) * MATRIX_ZZ(mat_b) + mat_a->wx * MATRIX_ZW(mat_b);
+                    MATRIX_ZX(mat_a) * MATRIX_ZZ(mat_b) + MATRIX_WX(mat_a) * MATRIX_ZW(mat_b);
    MATRIX_WX(out) = MATRIX_XX(mat_a) * MATRIX_WX(mat_b) + MATRIX_YX(mat_a) * MATRIX_WY(mat_b) +
-                    MATRIX_ZX(mat_a) * MATRIX_WZ(mat_b) + mat_a->wx * MATRIX_WW(mat_b);
+                    MATRIX_ZX(mat_a) * MATRIX_WZ(mat_b) + MATRIX_WX(mat_a) * MATRIX_WW(mat_b);
 
    MATRIX_XY(out) = MATRIX_XY(mat_a) * MATRIX_XX(mat_b) + MATRIX_YY(mat_a) * MATRIX_XY(mat_b) +
-                    MATRIX_ZY(mat_a) * MATRIX_XZ(mat_b) + mat_a->wy * MATRIX_XW(mat_b);
+                    MATRIX_ZY(mat_a) * MATRIX_XZ(mat_b) + MATRIX_WY(mat_a) * MATRIX_XW(mat_b);
    MATRIX_YY(out) = MATRIX_XY(mat_a) * MATRIX_YX(mat_b) + MATRIX_YY(mat_a) * MATRIX_YY(mat_b) +
-                    MATRIX_ZY(mat_a) * MATRIX_YZ(mat_b) + mat_a->wy * MATRIX_YW(mat_b);
+                    MATRIX_ZY(mat_a) * MATRIX_YZ(mat_b) + MATRIX_WY(mat_a) * MATRIX_YW(mat_b);
    MATRIX_ZY(out) = MATRIX_XY(mat_a) * MATRIX_ZX(mat_b) + MATRIX_YY(mat_a) * MATRIX_ZY(mat_b) +
-                    MATRIX_ZY(mat_a) * MATRIX_ZZ(mat_b) + mat_a->wy * MATRIX_ZW(mat_b);
+                    MATRIX_ZY(mat_a) * MATRIX_ZZ(mat_b) + MATRIX_WY(mat_a) * MATRIX_ZW(mat_b);
    MATRIX_WY(out) = MATRIX_XY(mat_a) * MATRIX_WX(mat_b) + MATRIX_YY(mat_a) * MATRIX_WY(mat_b) +
-                    MATRIX_ZY(mat_a) * MATRIX_WZ(mat_b) + mat_a->wy * MATRIX_WW(mat_b);
+                    MATRIX_ZY(mat_a) * MATRIX_WZ(mat_b) + MATRIX_WY(mat_a) * MATRIX_WW(mat_b);
 
    MATRIX_XZ(out) = MATRIX_XZ(mat_a) * MATRIX_XX(mat_b) + MATRIX_YZ(mat_a) * MATRIX_XY(mat_b) +
-                    MATRIX_ZZ(mat_a) * MATRIX_XZ(mat_b) + mat_a->wz * MATRIX_XW(mat_b);
+                    MATRIX_ZZ(mat_a) * MATRIX_XZ(mat_b) + MATRIX_WZ(mat_a) * MATRIX_XW(mat_b);
    MATRIX_YZ(out) = MATRIX_XZ(mat_a) * MATRIX_YX(mat_b) + MATRIX_YZ(mat_a) * MATRIX_YY(mat_b) +
-                    MATRIX_ZZ(mat_a) * MATRIX_YZ(mat_b) + mat_a->wz * MATRIX_YW(mat_b);
+                    MATRIX_ZZ(mat_a) * MATRIX_YZ(mat_b) + MATRIX_WZ(mat_a) * MATRIX_YW(mat_b);
    MATRIX_ZZ(out) = MATRIX_XZ(mat_a) * MATRIX_ZX(mat_b) + MATRIX_YZ(mat_a) * MATRIX_ZY(mat_b) +
-                    MATRIX_ZZ(mat_a) * MATRIX_ZZ(mat_b) + mat_a->wz * MATRIX_ZW(mat_b);
+                    MATRIX_ZZ(mat_a) * MATRIX_ZZ(mat_b) + MATRIX_WZ(mat_a) * MATRIX_ZW(mat_b);
    MATRIX_WZ(out) = MATRIX_XZ(mat_a) * MATRIX_WX(mat_b) + MATRIX_YZ(mat_a) * MATRIX_WY(mat_b) +
-                    MATRIX_ZZ(mat_a) * MATRIX_WZ(mat_b) + mat_a->wz * MATRIX_WW(mat_b);
+                    MATRIX_ZZ(mat_a) * MATRIX_WZ(mat_b) + MATRIX_WZ(mat_a) * MATRIX_WW(mat_b);
 
    MATRIX_XW(out) = MATRIX_XW(mat_a) * MATRIX_XX(mat_b) + MATRIX_YW(mat_a) * MATRIX_XY(mat_b) +
-                    MATRIX_ZW(mat_a) * MATRIX_XZ(mat_b) + mat_a->ww * MATRIX_XW(mat_b);
+                    MATRIX_ZW(mat_a) * MATRIX_XZ(mat_b) + MATRIX_WW(mat_a) * MATRIX_XW(mat_b);
    MATRIX_YW(out) = MATRIX_XW(mat_a) * MATRIX_YX(mat_b) + MATRIX_YW(mat_a) * MATRIX_YY(mat_b) +
-                    MATRIX_ZW(mat_a) * MATRIX_YZ(mat_b) + mat_a->ww * MATRIX_YW(mat_b);
+                    MATRIX_ZW(mat_a) * MATRIX_YZ(mat_b) + MATRIX_WW(mat_a) * MATRIX_YW(mat_b);
    MATRIX_ZW(out) = MATRIX_XW(mat_a) * MATRIX_ZX(mat_b) + MATRIX_YW(mat_a) * MATRIX_ZY(mat_b) +
-                    MATRIX_ZW(mat_a) * MATRIX_ZZ(mat_b) + mat_a->ww * MATRIX_ZW(mat_b);
+                    MATRIX_ZW(mat_a) * MATRIX_ZZ(mat_b) + MATRIX_WW(mat_a) * MATRIX_ZW(mat_b);
    MATRIX_WW(out) = MATRIX_XW(mat_a) * MATRIX_WX(mat_b) + MATRIX_YW(mat_a) * MATRIX_WY(mat_b) +
-                    MATRIX_ZW(mat_a) * MATRIX_WZ(mat_b) + mat_a->ww * MATRIX_WW(mat_b);
+                    MATRIX_ZW(mat_a) * MATRIX_WZ(mat_b) + MATRIX_WW(mat_a) * MATRIX_WW(mat_b);
 }
 
 EAPI void
