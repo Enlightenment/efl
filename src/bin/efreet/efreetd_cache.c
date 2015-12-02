@@ -534,7 +534,7 @@ icon_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool b
 
    if (stat(path, &st) == -1) return;
    if (eina_inarray_search(stack, &st, stat_cmp) >= 0) return;
-   if (!_check_recurse_monitor_sanity(stack, path, 8)) return;
+   if (!_check_recurse_monitor_sanity(stack, path, 10)) return;
    eina_inarray_push(stack, &st);
 
    if ((!S_ISDIR(st.st_mode)) && (base))
@@ -573,7 +573,7 @@ desktop_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Boo
 
    if (stat(path, &st) == -1) return;
    if (eina_inarray_search(stack, &st, stat_cmp) >= 0) return;
-   if (!_check_recurse_monitor_sanity(stack, path, 3)) return;
+   if (!_check_recurse_monitor_sanity(stack, path, 10)) return;
    eina_inarray_push(stack, &st);
 
    if ((!S_ISDIR(st.st_mode)) && (base))
