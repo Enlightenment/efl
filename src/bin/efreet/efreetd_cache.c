@@ -698,7 +698,9 @@ error:
 static void
 read_lists(void)
 {
-   fill_list("extra_desktops.dirs", &desktop_extra_dirs);
+// dont use extra dirs as the only way to get extra dirs is by loading a
+// specific desktop file at a specific path, and this is wrong
+//   fill_list("extra_desktops.dirs", &desktop_extra_dirs);
    fill_list("extra_icons.dirs", &icon_extra_dirs);
    fill_list("icons.exts", &icon_exts);
 }
