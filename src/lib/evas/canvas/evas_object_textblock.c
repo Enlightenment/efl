@@ -4803,7 +4803,16 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
 
              if ((wrap > 0) && !IS_AT_END(ti, (size_t) wrap))
                {
-                  _layout_item_text_split_strip_white(c, ti, i, wrap);
+                  Eina_List *l = i;
+
+                  while (l)
+                    {
+                       Evas_Object_Textblock_Item *iit = eina_list_data_get(l);
+                       if (iit == _ITEM(ti)) break;
+                       l = eina_list_prev(l);
+                    }
+
+                  _layout_item_text_split_strip_white(c, ti, l, wrap);
                   break;
                }
              else if (wrap < 0)

@@ -2018,6 +2018,37 @@ START_TEST(evas_textblock_wrapping)
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    ck_assert_int_le(w, ellip_w);
 
+   /* Ellipsis test for multiple items in singleline. */
+     {
+        evas_object_resize(tb, 500, 500);
+        evas_object_textblock_text_markup_set(tb, "ABC 한글한글 DEF");
+        evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0");
+        evas_object_textblock_size_native_get(tb, &nw, &nh);
+        evas_object_resize(tb, nw, nh);
+        evas_object_textblock_size_formatted_get(tb, &w, &h);
+
+        /* Make the object's width smaller. */
+        for (i = 1; (nw / 5) <= (nw - i); i++)
+          {
+             evas_object_resize(tb, nw - i, nh);
+             evas_object_textblock_size_formatted_get(tb, &bw, &bh);
+             ck_assert_int_le(bw, w);
+          }
+
+        /* Revert the object's width to native width. */
+        for (; (nw - i) <= nw; i--)
+          {
+             evas_object_resize(tb, nw - i, nh);
+             evas_object_textblock_size_formatted_get(tb, &bw, &bh);
+             ck_assert_int_le(bw, w);
+          }
+
+        /* The object resized same as native size.
+         * So, formatted width and native width should be same
+         * just like our first check. */
+        ck_assert_int_eq(bw, w);
+     }
+
    {
       double ellip;
       for(ellip = 0.0; ellip <= 1.0; ellip = ellip + 0.1)
