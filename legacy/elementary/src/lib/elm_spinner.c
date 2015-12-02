@@ -540,6 +540,8 @@ _val_inc_start(void *data)
    sd->spin_timer = ecore_timer_add(sd->interval, _spin_value, data);
    _spin_value(data);
 
+   elm_widget_scroll_freeze_push(data);
+
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -555,6 +557,8 @@ _val_dec_start(void *data)
    sd->spin_timer = ecore_timer_add(sd->interval, _spin_value, data);
    _spin_value(data);
 
+   elm_widget_scroll_freeze_push(data);
+
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -566,6 +570,8 @@ _spin_stop(Evas_Object *obj)
    sd->interval = sd->first_interval;
    sd->spin_speed = 0;
    ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
+
+   elm_widget_scroll_freeze_pop(obj);
 }
 
 static Eina_Bool
