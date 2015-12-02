@@ -2429,10 +2429,6 @@ START_TEST(evas_textblock_geometries)
    fail_if((tr->x != tr2->x) || (tr->y != tr2->y) || (tr->w != tr2->w) ||
            (tr->h != tr2->h));
 
-   EINA_LIST_FREE(rects, tr)
-      free(tr);
-   EINA_LIST_FREE(rects2, tr2)
-      free(tr2);
    eina_iterator_free(it);
    eina_iterator_free(it2);
 
@@ -2542,10 +2538,6 @@ START_TEST(evas_textblock_geometries)
    tr3 = eina_list_nth(rects, 3);
    fail_if((tr2->x != tr3->x));
 
-   EINA_LIST_FREE(rects, tr)
-      free(tr);
-   EINA_LIST_FREE(rects2, tr2)
-      free(tr2);
    eina_iterator_free(it);
    eina_iterator_free(it2);
 
@@ -2561,8 +2553,6 @@ START_TEST(evas_textblock_geometries)
 
    fail_if(eina_list_count(rects) != 2);
 
-   EINA_LIST_FREE(rects, tr)
-      free(tr);
    eina_iterator_free(it);
 
    /* Same run different styles */
@@ -2576,8 +2566,6 @@ START_TEST(evas_textblock_geometries)
 
    fail_if(eina_list_count(rects) != 3);
 
-   EINA_LIST_FREE(rects, tr)
-      free(tr);
    eina_iterator_free(it);
 
    /* Bidi text with a few back and forth from bidi. */
@@ -2592,8 +2580,6 @@ START_TEST(evas_textblock_geometries)
 
    ck_assert_int_eq(eina_list_count(rects), 3);
 
-   EINA_LIST_FREE(rects, tr)
-      free(tr);
    eina_iterator_free(it);
 
    END_TB_TEST();
