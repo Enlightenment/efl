@@ -154,7 +154,12 @@ efreet_desktop_get(const char *file)
 
     desktop = efreet_desktop_new(file);
     if (!desktop) return NULL;
-
+    return desktop;
+   // this is wrong - start monitoring every/any dir in which a desktop file
+   // exists that we load a desktop file from. imagine you browse directories
+   // in efm with lots of desktop files in them - we end up monitoring lots
+   // of directories that we then rememebr and don't un-monitor.
+#if 0
     /* If we didn't find this file in the eet cache, add path to search path */
     if (!desktop->eet)
     {
@@ -185,6 +190,7 @@ efreet_desktop_get(const char *file)
         }
     }
     return desktop;
+#endif
 }
 
 EAPI int
