@@ -717,7 +717,7 @@ edje_color_class_get(const char *color_class, int *r, int *g, int *b, int *a, in
      }
 }
 
-void
+EAPI void
 edje_color_class_del(const char *color_class)
 {
    Edje_Color_Class *cc;
