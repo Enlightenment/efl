@@ -9,8 +9,7 @@
 
 #include "ector_private.h"
 #include "ector_software_private.h"
-#include "ector_drawhelper_private.h"
-
+#include "draw.h"
 
 #define GRADIENT_STOPTABLE_SIZE 1024
 #define FIXPT_BITS 8
@@ -302,7 +301,7 @@ _generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_c
 
    curr = gradient_stops;
    if (curr->a != 255) alpha = EINA_TRUE;
-   current_color = ECTOR_ARGB_JOIN(curr->a, curr->r, curr->g, curr->b);
+   current_color = DRAW_ARGB_JOIN(curr->a, curr->r, curr->g, curr->b);
    incr = 1.0 / (double)size;
    fpos = 1.5 * incr;
 
@@ -323,7 +322,7 @@ _generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_c
         next = (gradient_stops + i + 1);
         delta = 1/(next->offset - curr->offset);
         if (next->a != 255) alpha = EINA_TRUE;
-        next_color = ECTOR_ARGB_JOIN(next->a, next->r, next->g, next->b);
+        next_color = DRAW_ARGB_JOIN(next->a, next->r, next->g, next->b);
         func = &_ease_linear;
         while (fpos < next->offset && pos < size)
           {
@@ -405,7 +404,7 @@ fetch_linear_gradient(uint *buffer, Span_Data *data, int y, int x, int length)
     end = buffer + length;
     if (inc > (float)(-1e-5) && inc < (float)(1e-5))
       {
-         _ector_memfill(buffer, length, _gradient_pixel_fixed(g_data, (int)(t * FIXPT_SIZE)));
+         draw_memset32(buffer, _gradient_pixel_fixed(g_data, (int)(t * FIXPT_SIZE)), length);
       }
     else
       {
@@ -456,7 +455,7 @@ fetch_radial_gradient(uint *buffer, Span_Data *data, int y, int x, int length)
    // avoid division by zero
    if (fabsf(g_data->radial.a) <= 0.00001f)
      {
-        _ector_memfill(buffer, length, 0);
+        draw_memset32(buffer, 0, length);
         return;
      }
 
@@ -495,17 +494,21 @@ fetch_radial_gradient(uint *buffer, Span_Data *data, int y, int x, int length)
    _ector_radial_helper(buffer, length, g_data, det, delta_det, delta_delta_det, b, delta_b);
 }
 
-
-void
-drawhelper_gradient_init()
+int
+ector_software_gradient_init(void)
 {
-   _ector_radial_helper = _radial_helper_generic;
-   _ector_linear_helper = _linear_helper_generic;
-#ifdef BUILD_SSE3
-   if (eina_cpu_features_get() & EINA_CPU_SSE3)
+   static int i = 0;
+   if (!(i++))
      {
-        _ector_radial_helper = _radial_helper_sse3;
-        _ector_linear_helper = _linear_helper_sse3;
-     }
+        _ector_radial_helper = _radial_helper_generic;
+        _ector_linear_helper = _linear_helper_generic;
+#ifdef BUILD_SSE3
+        if (eina_cpu_features_get() & EINA_CPU_SSE3)
+          {
+             _ector_radial_helper = _radial_helper_sse3;
+             _ector_linear_helper = _linear_helper_sse3;
+          }
 #endif
+     }
+   return i;
 }

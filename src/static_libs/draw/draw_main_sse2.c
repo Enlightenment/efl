@@ -3,7 +3,7 @@
 #endif
 
 #include <Ector.h>
-#include "ector_drawhelper_private.h"
+#include "draw_private.h"
 
 #ifdef BUILD_SSE3
 #include <immintrin.h>
@@ -125,7 +125,7 @@ comp_func_helper_sse2 (uint *dest, int length, uint color, uint alpha)
 
    LOOP_ALIGNED_U1_A4(dest, length,
       { /* UOP */
-         *dest = color + BYTE_MUL(*dest, alpha);
+         *dest = color + DRAW_BYTE_MUL(*dest, alpha);
          dest++; length--;
       },
       { /* A4OP */
@@ -145,14 +145,14 @@ comp_func_solid_source_sse2(uint *dest, int length, uint color, uint const_alpha
 {
    if (const_alpha == 255)
      {
-        _ector_memfill(dest, length, color);
+        draw_memset32(dest, color, length);
      }
    else
      {
         int ialpha;
 
         ialpha = 255 - const_alpha;
-        color = BYTE_MUL(color, const_alpha);
+        color = DRAW_BYTE_MUL(color, const_alpha);
         comp_func_helper_sse2(dest, length, color, ialpha);
      }
 }
@@ -163,7 +163,7 @@ comp_func_solid_source_over_sse2(uint *dest, int length, uint color, uint const_
    int ialpha;
 
    if (const_alpha != 255)
-     color = BYTE_MUL(color, const_alpha);
+     color = DRAW_BYTE_MUL(color, const_alpha);
    ialpha = alpha_inverse(color);
    comp_func_helper_sse2(dest, length, color, ialpha);
 }
@@ -239,7 +239,7 @@ comp_func_source_sse2(uint *dest, const uint *src, int length, uint color, uint 
           {
              LOOP_ALIGNED_U1_A4(dest, length,
                { /* UOP */
-                  *dest = ECTOR_MUL4_SYM(*src, color);
+                  *dest = DRAW_MUL4_SYM(*src, color);
                   dest++; src++; length--;
                },
                { /* A4OP */
@@ -256,7 +256,7 @@ comp_func_source_sse2(uint *dest, const uint *src, int length, uint color, uint 
 
              LOOP_ALIGNED_U1_A4(dest, length,
                { /* UOP */
-                  src_color = ECTOR_MUL4_SYM(*src, color);
+                  src_color = DRAW_MUL4_SYM(*src, color);
                   *dest = INTERPOLATE_PIXEL_256(src_color, const_alpha, *dest, ialpha);
                   dest++; src++; length--;
                },
@@ -277,7 +277,7 @@ comp_func_source_over_sse2(uint *dest, const uint *src, int length, uint color, 
    uint s, sia;
 
    if (const_alpha != 255)
-     color = BYTE_MUL(color, const_alpha);
+     color = DRAW_BYTE_MUL(color, const_alpha);
 
    if (color == 0xffffffff) // No color multiplier
      {
@@ -285,7 +285,7 @@ comp_func_source_over_sse2(uint *dest, const uint *src, int length, uint color, 
          { /* UOP */
             s = *src;
             sia = alpha_inverse(s);
-            *dest = s + BYTE_MUL(*dest, sia);
+            *dest = s + DRAW_BYTE_MUL(*dest, sia);
             dest++; src++; length--;
          },
          { /* A4OP */
@@ -301,9 +301,9 @@ comp_func_source_over_sse2(uint *dest, const uint *src, int length, uint color, 
 
         LOOP_ALIGNED_U1_A4(dest, length,
          { /* UOP */
-            s = ECTOR_MUL4_SYM(*src, color);
+            s = DRAW_MUL4_SYM(*src, color);
             sia = alpha_inverse(s);
-            *dest = s + BYTE_MUL(*dest, sia);
+            *dest = s + DRAW_BYTE_MUL(*dest, sia);
             dest++; src++; length--;
          },
          { /* A4OP */
@@ -319,18 +319,18 @@ comp_func_source_over_sse2(uint *dest, const uint *src, int length, uint color, 
 #endif
 
 void
-draw_helper_sse2_init()
+efl_draw_sse2_init()
 {
 #ifdef BUILD_SSE3
    if (eina_cpu_features_get() & EINA_CPU_SSE2)
      {
         // update the comp_function table for solid color
-        func_for_mode_solid[ECTOR_ROP_COPY] = comp_func_solid_source_sse2;
-        func_for_mode_solid[ECTOR_ROP_BLEND] = comp_func_solid_source_over_sse2;
+        func_for_mode_solid[EFL_GFX_RENDER_OP_COPY] = comp_func_solid_source_sse2;
+        func_for_mode_solid[EFL_GFX_RENDER_OP_BLEND] = comp_func_solid_source_over_sse2;
 
         // update the comp_function table for source data
-        func_for_mode[ECTOR_ROP_COPY] = comp_func_source_sse2;
-        func_for_mode[ECTOR_ROP_BLEND] = comp_func_source_over_sse2;
+        func_for_mode[EFL_GFX_RENDER_OP_COPY] = comp_func_source_sse2;
+        func_for_mode[EFL_GFX_RENDER_OP_BLEND] = comp_func_source_over_sse2;
       }
 #endif
 }

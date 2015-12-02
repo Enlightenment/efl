@@ -91,7 +91,7 @@ typedef struct _Span_Data
    Span_Data_Type   type;
    Eina_Bool        fast_matrix ;
    DATA32           mul_col;
-   Ector_Rop        op;
+   Efl_Gfx_Render_Op        op;
    union {
       DATA32 color;
       Ector_Renderer_Software_Gradient_Data *gradient;
@@ -112,12 +112,13 @@ struct _Software_Rasterizer
 
 struct _Ector_Software_Surface_Data
 {
-   Software_Rasterizer *software;
+   Software_Rasterizer *rasterizer;
    int x;
    int y;
 };
 
 
+int  ector_software_gradient_init(void);
 void ector_software_rasterizer_init(Software_Rasterizer *rasterizer);
 void ector_software_rasterizer_done(Software_Rasterizer *rasterizer);
 
@@ -137,7 +138,7 @@ void ector_software_rasterizer_clip_shape_set(Software_Rasterizer *rasterizer, S
 Shape_Rle_Data * ector_software_rasterizer_generate_rle_data(Software_Rasterizer *rasterizer, SW_FT_Outline *outline);
 Shape_Rle_Data * ector_software_rasterizer_generate_stroke_rle_data(Software_Rasterizer *rasterizer, SW_FT_Outline *outline, Eina_Bool closePath);
 
-void ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer, int x, int y, uint mul_col, Ector_Rop op, Shape_Rle_Data* rle);
+void ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer, int x, int y, uint mul_col, Efl_Gfx_Render_Op op, Shape_Rle_Data* rle);
 
 void ector_software_rasterizer_destroy_rle_data(Shape_Rle_Data *rle);
 

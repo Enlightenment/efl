@@ -536,13 +536,13 @@ _update_rle(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
 
         //shape data generation 
         if (_generate_shape_data(pd))
-          pd->shape_data = ector_software_rasterizer_generate_rle_data(pd->surface->software,
+          pd->shape_data = ector_software_rasterizer_generate_rle_data(pd->surface->rasterizer,
                                                                        &outline->ft_outline);
 
         //stroke data generation
         if ( _generate_stroke_data(pd))
           {
-             ector_software_rasterizer_stroke_set(pd->surface->software,
+             ector_software_rasterizer_stroke_set(pd->surface->rasterizer,
                                                   (pd->public_shape->stroke.width *
                                                    pd->public_shape->stroke.scale),
                                                   pd->public_shape->stroke.cap,
@@ -555,14 +555,14 @@ _update_rle(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
                                                         pd->public_shape->stroke.dash,
                                                         pd->public_shape->stroke.dash_length);
                   _outline_transform(dash_outline, pd->base->m);
-                  pd->outline_data = ector_software_rasterizer_generate_stroke_rle_data(pd->surface->software,
+                  pd->outline_data = ector_software_rasterizer_generate_stroke_rle_data(pd->surface->rasterizer,
                                                                                         &dash_outline->ft_outline,
                                                                                         close_path);
                   _outline_destroy(dash_outline);
                }
              else
                {
-                  pd->outline_data = ector_software_rasterizer_generate_stroke_rle_data(pd->surface->software,
+                  pd->outline_data = ector_software_rasterizer_generate_stroke_rle_data(pd->surface->rasterizer,
                                                                                         &outline->ft_outline,
                                                                                         close_path);
                }
@@ -593,7 +593,7 @@ _ector_renderer_software_shape_ector_renderer_generic_base_prepare(Eo *obj,
 static Eina_Bool
 _ector_renderer_software_shape_ector_renderer_generic_base_draw(Eo *obj,
                                                                 Ector_Renderer_Software_Shape_Data *pd,
-                                                                Ector_Rop op, Eina_Array *clips,
+                                                                Efl_Gfx_Render_Op op, Eina_Array *clips,
                                                                 unsigned int mul_col)
 {
    int x, y;
@@ -606,13 +606,13 @@ _ector_renderer_software_shape_ector_renderer_generic_base_draw(Eo *obj,
    y = pd->surface->y + (int)pd->base->origin.y;
 
    // fill the span_data structure
-   ector_software_rasterizer_clip_rect_set(pd->surface->software, clips);
-   ector_software_rasterizer_transform_set(pd->surface->software, pd->base->m);
+   ector_software_rasterizer_clip_rect_set(pd->surface->rasterizer, clips);
+   ector_software_rasterizer_transform_set(pd->surface->rasterizer, pd->base->m);
 
    if (pd->shape->fill)
      {
         eo_do(pd->shape->fill, ector_renderer_software_base_fill());
-        ector_software_rasterizer_draw_rle_data(pd->surface->software,
+        ector_software_rasterizer_draw_rle_data(pd->surface->rasterizer,
                                                 x, y, mul_col, op,
                                                 pd->shape_data);
      }
@@ -620,12 +620,12 @@ _ector_renderer_software_shape_ector_renderer_generic_base_draw(Eo *obj,
      {
         if (pd->base->color.a > 0)
           {
-             ector_software_rasterizer_color_set(pd->surface->software,
+             ector_software_rasterizer_color_set(pd->surface->rasterizer,
                                                  pd->base->color.r,
                                                  pd->base->color.g,
                                                  pd->base->color.b,
                                                  pd->base->color.a);
-             ector_software_rasterizer_draw_rle_data(pd->surface->software,
+             ector_software_rasterizer_draw_rle_data(pd->surface->rasterizer,
                                                      x, y, mul_col, op,
                                                      pd->shape_data);
           }
@@ -634,7 +634,7 @@ _ector_renderer_software_shape_ector_renderer_generic_base_draw(Eo *obj,
    if (pd->shape->stroke.fill)
      {
         eo_do(pd->shape->stroke.fill, ector_renderer_software_base_fill());
-        ector_software_rasterizer_draw_rle_data(pd->surface->software,
+        ector_software_rasterizer_draw_rle_data(pd->surface->rasterizer,
                                                 x, y, mul_col, op,
                                                 pd->outline_data);
      }
@@ -642,12 +642,12 @@ _ector_renderer_software_shape_ector_renderer_generic_base_draw(Eo *obj,
      {
         if (pd->public_shape->stroke.color.a > 0)
           {
-             ector_software_rasterizer_color_set(pd->surface->software,
+             ector_software_rasterizer_color_set(pd->surface->rasterizer,
                                                  pd->public_shape->stroke.color.r,
                                                  pd->public_shape->stroke.color.g,
                                                  pd->public_shape->stroke.color.b,
                                                  pd->public_shape->stroke.color.a);
-             ector_software_rasterizer_draw_rle_data(pd->surface->software,
+             ector_software_rasterizer_draw_rle_data(pd->surface->rasterizer,
                                                      x, y, mul_col, op,
                                                      pd->outline_data);
           }

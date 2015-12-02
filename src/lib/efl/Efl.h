@@ -196,6 +196,7 @@ EAPI extern const Eo_Event_Description _EFL_GFX_PATH_CHANGED;
 
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "interfaces/efl_gfx_fill.eo.legacy.h"
+#include "interfaces/efl_gfx_base.eo.legacy.h"
 #endif
 
 #endif

@@ -35,19 +35,19 @@ static Eo *
 _ector_software_surface_eo_base_constructor(Eo *obj, Ector_Software_Surface_Data *pd)
 {
    obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   pd->software = (Software_Rasterizer *) calloc(1, sizeof(Software_Rasterizer));
-   ector_software_rasterizer_init(pd->software);
-   pd->software->fill_data.raster_buffer = eo_data_ref(obj, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
+   pd->rasterizer = (Software_Rasterizer *) calloc(1, sizeof(Software_Rasterizer));
+   ector_software_rasterizer_init(pd->rasterizer);
+   pd->rasterizer->fill_data.raster_buffer = eo_data_ref(obj, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
    return obj;
 }
 
 static void
 _ector_software_surface_eo_base_destructor(Eo *obj, Ector_Software_Surface_Data *pd)
 {
-   ector_software_rasterizer_done(pd->software);
-   eo_data_unref(obj, pd->software->fill_data.raster_buffer);
-   free(pd->software);
-   pd->software = NULL;
+   ector_software_rasterizer_done(pd->rasterizer);
+   eo_data_unref(obj, pd->rasterizer->fill_data.raster_buffer);
+   free(pd->rasterizer);
+   pd->rasterizer = NULL;
    eo_do_super(obj, ECTOR_SOFTWARE_SURFACE_CLASS, eo_destructor());
 }
 

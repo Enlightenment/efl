@@ -43,24 +43,6 @@ extern int _ector_log_dom_global;
 typedef unsigned char DATA8;
 typedef unsigned short DATA16;
 
-#ifndef WORDS_BIGENDIAN
-/* x86 */
-#define A_VAL(p) (((DATA8 *)(p))[3])
-#define R_VAL(p) (((DATA8 *)(p))[2])
-#define G_VAL(p) (((DATA8 *)(p))[1])
-#define B_VAL(p) (((DATA8 *)(p))[0])
-#define AR_VAL(p) ((DATA16 *)(p)[1])
-#define GB_VAL(p) ((DATA16 *)(p)[0])
-#else
-/* ppc */
-#define A_VAL(p) (((DATA8 *)(p))[0])
-#define R_VAL(p) (((DATA8 *)(p))[1])
-#define G_VAL(p) (((DATA8 *)(p))[2])
-#define B_VAL(p) (((DATA8 *)(p))[3])
-#define AR_VAL(p) ((DATA16 *)(p)[0])
-#define GB_VAL(p) ((DATA16 *)(p)[1])
-#endif
-
 #define RGB_JOIN(r,g,b) \
   (((r) << 16) + ((g) << 8) + (b))
 

@@ -153,7 +153,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_R
 }
 
 static Eina_Bool
-_ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd, Ector_Rop op, Eina_Array *clips, unsigned int mul_col)
+_ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd, Efl_Gfx_Render_Op op, Eina_Array *clips, unsigned int mul_col)
 {
    int r, g, b, a;
    unsigned i;

@@ -398,7 +398,7 @@ struct _Evas_Thread_Command_Ector
    Eina_Array *clips;
 
    DATA32 mul_col;
-   Ector_Rop render_op;
+   Efl_Gfx_Render_Op render_op;
 
    Eina_Bool free_it;
 };
@@ -3754,17 +3754,17 @@ eng_ector_destroy(void *data EINA_UNUSED, Ector_Surface *ector)
    if (ector) eo_del(ector);
 }
 
-static Ector_Rop
+static Efl_Gfx_Render_Op
 _evas_render_op_to_ector_rop(Evas_Render_Op op)
 {
    switch (op)
      {
       case EVAS_RENDER_BLEND:
-         return ECTOR_ROP_BLEND;
+         return EFL_GFX_RENDER_OP_BLEND;
       case EVAS_RENDER_COPY:
-         return ECTOR_ROP_COPY;
+         return EFL_GFX_RENDER_OP_COPY;
       default:
-         return ECTOR_ROP_BLEND;
+         return EFL_GFX_RENDER_OP_BLEND;
      }
 }
 

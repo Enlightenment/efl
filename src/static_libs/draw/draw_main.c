@@ -3,7 +3,7 @@
 #endif
 
 #include <Ector.h>
-#include "ector_drawhelper_private.h"
+#include "draw_private.h"
 
 /*
   s = source pixel
@@ -27,10 +27,10 @@ _comp_func_solid_source_over(uint *dest, int length, uint color, uint const_alph
    int ialpha, i;
 
    if (const_alpha != 255)
-     color = BYTE_MUL(color, const_alpha);
+     color = DRAW_BYTE_MUL(color, const_alpha);
    ialpha = alpha_inverse(color);
    for (i = 0; i < length; ++i)
-     dest[i] = color + BYTE_MUL(dest[i], ialpha);
+     dest[i] = color + DRAW_BYTE_MUL(dest[i], ialpha);
 }
 
 static void
@@ -40,7 +40,7 @@ _comp_func_source_over(uint *dest, const uint *src, int length, uint color, uint
    uint s, sc, sia;
 
    if (const_alpha != 255)
-     color = BYTE_MUL(color, const_alpha);
+     color = DRAW_BYTE_MUL(color, const_alpha);
 
    if (color == 0xffffffff) // No color multiplier
      {
@@ -52,7 +52,7 @@ _comp_func_source_over(uint *dest, const uint *src, int length, uint color, uint
              else if (s != 0)
                {
                   sia = alpha_inverse(s);
-                  dest[i] = s + BYTE_MUL(dest[i], sia);
+                  dest[i] = s + DRAW_BYTE_MUL(dest[i], sia);
                }
           }
      }
@@ -61,9 +61,9 @@ _comp_func_source_over(uint *dest, const uint *src, int length, uint color, uint
         for (i = 0; i < length; ++i)
           {
              s = src[i];
-             sc = ECTOR_MUL4_SYM(color, s);
+             sc = DRAW_MUL4_SYM(color, s);
              sia = alpha_inverse(sc);
-             dest[i] = sc + BYTE_MUL(dest[i], sia);
+             dest[i] = sc + DRAW_BYTE_MUL(dest[i], sia);
           }
      }
 }
@@ -79,14 +79,14 @@ _comp_func_solid_source(uint *dest, int length, uint color, uint const_alpha)
 
    if (const_alpha == 255)
      {
-        _ector_memfill(dest, length, color);
+        draw_memset32(dest, color, length);
      }
    else
      {
         ialpha = 255 - const_alpha;
-        color = BYTE_MUL(color, const_alpha);
+        color = DRAW_BYTE_MUL(color, const_alpha);
         for (i = 0; i < length; ++i)
-          dest[i] = color + BYTE_MUL(dest[i], ialpha);
+          dest[i] = color + DRAW_BYTE_MUL(dest[i], ialpha);
      }
 }
 
@@ -114,54 +114,59 @@ _comp_func_source(uint *dest, const uint *src, int length, uint color, uint cons
         if (const_alpha == 255)
           {
              for (i = 0; i < length; ++i)
-               dest[i] = ECTOR_MUL4_SYM(src[i], color);
+               dest[i] = DRAW_MUL4_SYM(src[i], color);
           }
         else
           {
              ialpha = 255 - const_alpha;
              for (i = 0; i < length; ++i)
                {
-                  src_color = ECTOR_MUL4_SYM(src[i], color);
+                  src_color = DRAW_MUL4_SYM(src[i], color);
                   dest[i] = INTERPOLATE_PIXEL_256(src_color, const_alpha, dest[i], ialpha);
                }
           }
      }
 }
 
-RGBA_Comp_Func_Solid func_for_mode_solid[ECTOR_ROP_LAST] = {
+RGBA_Comp_Func_Solid func_for_mode_solid[EFL_GFX_RENDER_OP_LAST] = {
   _comp_func_solid_source_over,
   _comp_func_solid_source
 };
 
-RGBA_Comp_Func func_for_mode[ECTOR_ROP_LAST] = {
+RGBA_Comp_Func func_for_mode[EFL_GFX_RENDER_OP_LAST] = {
   _comp_func_source_over,
   _comp_func_source
 };
 
 RGBA_Comp_Func_Solid
-ector_comp_func_solid_span_get(Ector_Rop op, uint color)
+efl_draw_func_solid_span_get(Efl_Gfx_Render_Op op, uint color)
 {
    if ((color & 0xff000000) == 0xff000000)
      {
-        if (op == ECTOR_ROP_BLEND) op = ECTOR_ROP_COPY;
+        if (op == EFL_GFX_RENDER_OP_BLEND) op = EFL_GFX_RENDER_OP_COPY;
      }
 
    return func_for_mode_solid[op];
 }
 
-RGBA_Comp_Func ector_comp_func_span_get(Ector_Rop op, uint color, Eina_Bool src_alpha)
+RGBA_Comp_Func efl_draw_func_span_get(Efl_Gfx_Render_Op op, uint color, Eina_Bool src_alpha)
 {
    if (((color & 0xff000000) == 0xff000000) && !src_alpha)
      {
-        if (op == ECTOR_ROP_BLEND) op = ECTOR_ROP_COPY;
+        if (op == EFL_GFX_RENDER_OP_BLEND) op = EFL_GFX_RENDER_OP_COPY;
      }
 
    return func_for_mode[op];
 }
 
-void draw_helper_init()
+int
+efl_draw_init()
 {
-   drawhelper_gradient_init();
-   draw_helper_sse2_init();
-   draw_helper_neon_init();
+   static int i = 0;
+   if (!(i++))
+     {
+        efl_draw_sse2_init();
+        efl_draw_neon_init();
+     }
+   return i;
 }
