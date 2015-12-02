@@ -1122,13 +1122,19 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
         _light_build(data, light, matrix_eye);
         eina_normal3_matrix_get(&data->matrix_normal, matrix_mv);
      }
-
-   int num;
+   /*Check possible quantity of texture units*/
+   int num, count = 0;
    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &num);
    data->smap_sampler = num - 1;
 
-   if (data->texture_count >= num)
-     if ((data->flags & E3D_SHADER_FLAG_SHADOWED) || (data->texture_count > num))
+   if (data->render_to_texture)
+     {
+        count++;
+        data->colortex_sampler = num - (count + 1);
+     }
+   if (data->texture_count + count >= num)
+     if ((data->flags & E3D_SHADER_FLAG_SHADOWED) ||
+         (data->texture_count + count > num))
        {
           ERR("Too many textures for your graphics configuration.");
           return EINA_FALSE;
@@ -1144,6 +1150,7 @@ _mesh_draw(E3D_Renderer *renderer, Evas_Canvas3D_Mesh *mesh, int frame, Evas_Can
    E3D_Draw_Data   data;
 
    memset(&data, 0x00, sizeof(E3D_Draw_Data));
+   data.render_to_texture = e3d_renderer_rendering_to_texture_get(renderer);
 
    if (_mesh_draw_data_build(&data, mesh, frame, matrix_eye, matrix_mv, matrix_mvp, matrix_light, light))
      e3d_renderer_draw(renderer, &data);

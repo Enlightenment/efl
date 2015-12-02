@@ -87,6 +87,7 @@ struct _E3D_Draw_Data
    Evas_Real shininess;
 
    GLint                   smap_sampler;
+   GLint                   colortex_sampler;
    Evas_Canvas3D_Blend_Func      blend_sfactor;
    Evas_Canvas3D_Blend_Func      blend_dfactor;
    Eina_Bool               blending : 1;
@@ -111,6 +112,8 @@ struct _E3D_Draw_Data
    Evas_Real               pcf_step;
    Evas_Real               pcf_size;
    Evas_Real               constant_bias;
+
+   Eina_Bool               render_to_texture;
 };
 
 struct _E3D_Texture
@@ -171,5 +174,5 @@ void                 e3d_renderer_clear(E3D_Renderer *renderer, const Evas_Color
 void                 e3d_renderer_draw(E3D_Renderer *renderer, E3D_Draw_Data *data);
 void                 e3d_renderer_flush(E3D_Renderer *renderer);
 void                 e3d_renderer_color_pick_target_set(E3D_Renderer *renderer, E3D_Drawable *drawable);
-
+Eina_Bool            e3d_renderer_rendering_to_texture_get(E3D_Renderer *renderer);
 #endif /* EVAS_GL_3D_PRIVATE_H */
