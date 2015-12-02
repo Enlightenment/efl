@@ -926,8 +926,6 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.aabb2.rel_to", mesh_node.aabb2.rel_to, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.orientation.type", mesh_node.orientation.type, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED_LOOK(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, mesh_node);
-   EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.orientation.angle_axis", mesh_node.orientation.data, EDJE_T_FLOAT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.orientation.quaternion", mesh_node.orientation.data, EDJE_T_FLOAT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.texture.id", mesh_node.texture.id, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.texture.set", mesh_node.texture.set, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_mesh_node, Edje_Part_Description_Mesh_Node, "mesh_node.texture.wrap1", mesh_node.texture.wrap1, EET_T_UCHAR);
@@ -951,8 +949,6 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.position.space", light.position.space, EET_T_CHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.orientation.type", light.orientation.type, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED_LOOK(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, light);
-   EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.orientation.angle_axis", light.orientation.data, EDJE_T_FLOAT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.orientation.quaternion", light.orientation.data, EDJE_T_FLOAT);
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.properties.ambient", light.properties.ambient, _edje_edd_edje_part_description_3d_color);
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.properties.diffuse", light.properties.diffuse, _edje_edd_edje_part_description_3d_color);
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.properties.specular", light.properties.specular, _edje_edd_edje_part_description_3d_color);
@@ -967,8 +963,6 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, "camera.position.space", camera.position.space, EET_T_CHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, "camera.orientation.type", camera.orientation.type, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED_LOOK(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, camera);
-   EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, "camera.orientation.angle_axis", camera.orientation.data, EDJE_T_FLOAT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, "camera.orientation.quaternion", camera.orientation.data, EDJE_T_FLOAT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, "camera.camera.perspective.fovy", camera.camera.fovy, EDJE_T_FLOAT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, "camera.camera.perspective.aspect", camera.camera.aspect, EDJE_T_FLOAT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_camera, Edje_Part_Description_Camera, "camera.camera.perspective.near", camera.camera.frustum_near, EDJE_T_FLOAT);
