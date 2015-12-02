@@ -57,8 +57,6 @@ struct _Elm_Genlist_Data
    Elm_Object_Item                      *last_focused_item; /**< This records the last focused item when widget looses focus. This is required to set the focus on last focused item when widgets gets focus. */
    Ecore_Job                            *calc_job;
    int                                   walking;
-   int                                   item_width, item_height;
-   int                                   group_item_width, group_item_height;
    int                                   minw, minh;
    Eina_Bool                             scr_minw : 1; /* a flag for determining
                                                         * minimum width to limit
@@ -149,8 +147,9 @@ struct _Elm_Genlist_Data
    unsigned int                          processed_count;
    unsigned int                          filtered_count;
    Ecore_Idle_Enterer                   *queue_filter_enterer;
-   Eina_Bool                             filter;
+   Eina_Hash                             *size_caches;
 
+   Eina_Bool                             filter;
    Eina_Bool                             focus_on_selection_enabled : 1;
    Eina_Bool                             tree_effect_enabled : 1;
    Eina_Bool                             auto_scroll_enabled : 1;
@@ -204,6 +203,7 @@ struct _Elm_Genlist_Data
 
 typedef struct _Item_Block Item_Block;
 typedef struct _Item_Cache Item_Cache;
+typedef struct _Item_Size Item_Size;
 
 struct Elm_Gen_Item_Type
 {
@@ -277,6 +277,13 @@ struct _Item_Cache
    Evas_Object *base_view, *spacer;
    const char  *item_style; // it->itc->item_style
    Eina_Bool    tree : 1; // it->group
+};
+
+struct _Item_Size
+{
+     const Elm_Genlist_Item_Class *itc;
+     Evas_Coord minw;
+     Evas_Coord minh;
 };
 
 typedef struct _Elm_Genlist_Pan_Data Elm_Genlist_Pan_Data;
