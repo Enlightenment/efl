@@ -1155,6 +1155,7 @@ elm_language_set(const char *lang)
 {
    setlocale(LC_ALL, lang);
    _elm_win_translate();
+   edje_language_set(lang);
 }
 
 EAPI Eina_Bool
