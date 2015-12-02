@@ -128,5 +128,3 @@ evas_model_load_file_eet(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
 
    _evas_canvas3d_eet_file_free();
 }
-
-
