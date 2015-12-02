@@ -2162,6 +2162,15 @@ START_TEST(evas_textblock_wrapping)
         ck_assert_int_eq(bret, ret);
      }
 
+   /* Check that line wrap produces the same height values as paragraph break */
+   evas_object_resize(tb, 1, 100);
+   evas_object_textblock_text_markup_set(tb, "<wrap=word>hello world");
+   evas_object_textblock_size_formatted_get(tb, NULL, &bh);
+   evas_object_textblock_text_markup_set(tb, "hello<ps>world");
+   evas_object_textblock_size_formatted_get(tb, NULL, &h);
+
+   ck_assert_int_eq(bh, h);
+
    END_TB_TEST();
 }
 END_TEST
