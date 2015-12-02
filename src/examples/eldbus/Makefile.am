@@ -3,6 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/eldbus \
@@ -17,6 +18,7 @@ $(top_builddir)/src/lib/eo/libeo.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/eina/libeina.la \
 $(top_builddir)/src/lib/eldbus/libeldbus.la \
+$(top_builddir)/src/lib/efl/libefl.la \
 @ELDBUS_LDFLAGS@
 
 SRCS = \
@@ -29,7 +31,8 @@ server.c \
 client.c \
 simple-signal-emit.c \
 complex-types-client-eina-value.c \
-connect-address.c
+connect-address.c \
+dbusmodel.c
 
 EXTRA_PROGRAMS = \
 connman-list-services \
@@ -41,7 +44,8 @@ server \
 client \
 simple-signal-emit \
 complex-types-client-eina-value \
-connect-address
+connect-address \
+dbusmodel
 
 connman_list_services_SOURCES = connman-list-services.c
 connman_list_services_LDADD = $(EXAMPLES_LIBS)
@@ -72,6 +76,9 @@ complex_types_client_eina_value_LDADD = $(EXAMPLES_LIBS)
 
 connect_address_SOURCES = connect-address.c
 connect_address_LDADD = $(EXAMPLES_LIBS)
+
+dbusmodel_SOURCES = dbusmodel.c
+dbusmodel_LDADD = $(EXAMPLES_LIBS)
 
 DATA_FILES = Makefile.examples
 
