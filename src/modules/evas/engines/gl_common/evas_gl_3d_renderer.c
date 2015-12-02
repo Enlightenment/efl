@@ -15,7 +15,10 @@ struct _E3D_Renderer
    Eina_Bool      vertex_attrib_enable[E3D_MAX_VERTEX_ATTRIB_COUNT];
    Eina_Bool      depth_test_enable;
    GLuint         texDepth;
-   GLint         smap_sampler;
+   GLint          smap_sampler;
+   Eina_Bool      render_to_texture;
+   GLuint         texcolorpick;
+   GLint          colortex_sampler;
 };
 
 static inline GLenum
@@ -208,6 +211,12 @@ _renderer_texture_bind(E3D_Renderer *renderer, E3D_Draw_Data *data)
         glBindTexture(GL_TEXTURE_2D, renderer->texDepth);
         renderer->smap_sampler = data->smap_sampler;
      }
+   if (renderer->render_to_texture)
+     {
+        glActiveTexture(GL_TEXTURE0 + data->colortex_sampler);
+        glBindTexture(GL_TEXTURE_2D, renderer->texcolorpick);
+        renderer->colortex_sampler = data->colortex_sampler;
+     }
 }
 
 static inline void
@@ -269,6 +278,8 @@ e3d_renderer_target_set(E3D_Renderer *renderer, E3D_Drawable *target)
    glViewport(0, 0, target->w, target->h);
    renderer->fbo = target->fbo;
    renderer->texDepth = target->texDepth;
+   renderer->texcolorpick = target->texcolorpick;
+   renderer->render_to_texture = EINA_FALSE;
 }
 
 void
@@ -288,6 +299,14 @@ e3d_renderer_color_pick_target_set(E3D_Renderer *renderer, E3D_Drawable *drawabl
 #endif
    glViewport(0, 0, drawable->w, drawable->h);
    renderer->texDepth = drawable->texDepth;
+   renderer->texcolorpick = drawable->texcolorpick;
+   renderer->render_to_texture = EINA_TRUE;
+}
+
+Eina_Bool
+e3d_renderer_rendering_to_texture_get(E3D_Renderer *renderer)
+{
+   return renderer->render_to_texture;
 }
 
 void
