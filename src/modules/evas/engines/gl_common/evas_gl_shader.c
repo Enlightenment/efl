@@ -66,32 +66,25 @@ static const char *_shader_flags[SHADER_FLAG_COUNT] = {
 static Eina_Bool compiler_released = EINA_FALSE;
 
 static void
-gl_compile_link_error(GLuint target, const char *action)
+gl_compile_link_error(GLuint target, const char *action, Eina_Bool is_shader)
 {
    int loglen = 0, chars = 0;
    char *logtxt;
 
-   /* Shader info log */
-   glGetShaderiv(target, GL_INFO_LOG_LENGTH, &loglen);
-   if (loglen > 0)
-     {
-        logtxt = calloc(loglen, sizeof(char));
-        if (logtxt)
-          {
-             glGetShaderInfoLog(target, loglen, &chars, logtxt);
-             ERR("Failed to %s: %s", action, logtxt);
-             free(logtxt);
-          }
-     }
+   if (is_shader)
+     /* Shader info log */
+     glGetShaderiv(target, GL_INFO_LOG_LENGTH, &loglen);
+   else
+     /* Program info log */
+     glGetProgramiv(target, GL_INFO_LOG_LENGTH, &loglen);
 
-   /* Program info log */
-   glGetProgramiv(target, GL_INFO_LOG_LENGTH, &loglen);
    if (loglen > 0)
      {
         logtxt = calloc(loglen, sizeof(char));
         if (logtxt)
           {
-             glGetProgramInfoLog(target, loglen, &chars, logtxt);
+             if (is_shader) glGetShaderInfoLog(target, loglen, &chars, logtxt);
+             else glGetProgramInfoLog(target, loglen, &chars, logtxt);
              ERR("Failed to %s: %s", action, logtxt);
              free(logtxt);
           }
@@ -155,7 +148,7 @@ _evas_gl_common_shader_program_binary_load(Eet_File *ef, unsigned int flags)
    glGetProgramiv(prg, GL_LINK_STATUS, &ok);
    if (!ok)
      {
-        gl_compile_link_error(prg, "load a program object");
+        gl_compile_link_error(prg, "load a program object", EINA_FALSE);
         ERR("Abort load of program (%s)", pname);
         glDeleteProgram(prg);
         glDeleteShader(vtx);
@@ -381,7 +374,7 @@ evas_gl_common_shader_compile(unsigned int flags, const char *vertex,
    glGetShaderiv(vtx, GL_COMPILE_STATUS, &ok);
    if (!ok)
      {
-        gl_compile_link_error(vtx, "compile vertex shader");
+        gl_compile_link_error(vtx, "compile vertex shader", EINA_TRUE);
         ERR("Abort compile of vertex shader:\n%s", vertex);
         glDeleteShader(vtx);
         return NULL;
@@ -393,7 +386,7 @@ evas_gl_common_shader_compile(unsigned int flags, const char *vertex,
    glGetShaderiv(frg, GL_COMPILE_STATUS, &ok);
    if (!ok)
      {
-        gl_compile_link_error(frg, "compile fragment shader");
+        gl_compile_link_error(frg, "compile fragment shader", EINA_TRUE);
         ERR("Abort compile of fragment shader:\n%s", fragment);
         glDeleteShader(vtx);
         glDeleteShader(frg);
@@ -423,7 +416,7 @@ evas_gl_common_shader_compile(unsigned int flags, const char *vertex,
    glGetProgramiv(prg, GL_LINK_STATUS, &ok);
    if (!ok)
      {
-        gl_compile_link_error(prg, "link fragment and vertex shaders");
+        gl_compile_link_error(prg, "link fragment and vertex shaders", EINA_FALSE);
         ERR("Abort compile of shader (flags: %08x)", flags);
         glDeleteShader(vtx);
         glDeleteShader(frg);
