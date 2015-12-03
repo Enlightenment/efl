@@ -13,8 +13,8 @@ typedef void (*Alpha_Gfx_Func)       (uint8_t *src, uint8_t *dst, int len);
 
 int efl_draw_init(void);
 
-RGBA_Comp_Func_Solid efl_draw_func_solid_span_get(Efl_Gfx_Render_Op op, uint color);
 RGBA_Comp_Func efl_draw_func_span_get(Efl_Gfx_Render_Op op, uint color, Eina_Bool src_alpha);
+RGBA_Comp_Func_Solid efl_draw_func_solid_span_get(Efl_Gfx_Render_Op op, uint color);
 Alpha_Gfx_Func efl_draw_alpha_func_get(Efl_Gfx_Render_Op op, Eina_Bool has_mask);
 
 
@@ -57,8 +57,12 @@ Alpha_Gfx_Func efl_draw_alpha_func_get(Efl_Gfx_Render_Op op, Eina_Bool has_mask)
    ((((((x) & 0xff00) * ((y) & 0xff00)) + 0xff0000) >> 16) & 0xff00) + \
    (((((x) & 0xff) * ((y) & 0xff)) + 0xff) >> 8) )
 
+#define DRAW_MUL_256(a, c) \
+ ( (((((c) >> 8) & 0x00ff00ff) * (a)) & 0xff00ff00) + \
+   (((((c) & 0x00ff00ff) * (a)) >> 8) & 0x00ff00ff) )
+
 static inline uint
-INTERPOLATE_PIXEL_256(uint x, uint a, uint y, uint b)
+draw_interpolate_256(uint x, uint a, uint y, uint b)
 {
    uint t = (x & 0xff00ff) * a + (y & 0xff00ff) * b;
    t >>= 8;

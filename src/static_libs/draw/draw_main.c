@@ -106,7 +106,7 @@ _comp_func_source(uint *dest, const uint *src, int length, uint color, uint cons
           {
              ialpha = 255 - const_alpha;
              for (i = 0; i < length; ++i)
-               dest[i] = INTERPOLATE_PIXEL_256(src[i], const_alpha, dest[i], ialpha);
+               dest[i] = draw_interpolate_256(src[i], const_alpha, dest[i], ialpha);
           }
      }
    else
@@ -122,7 +122,7 @@ _comp_func_source(uint *dest, const uint *src, int length, uint color, uint cons
              for (i = 0; i < length; ++i)
                {
                   src_color = DRAW_MUL4_SYM(src[i], color);
-                  dest[i] = INTERPOLATE_PIXEL_256(src_color, const_alpha, dest[i], ialpha);
+                  dest[i] = draw_interpolate_256(src_color, const_alpha, dest[i], ialpha);
                }
           }
      }
@@ -149,7 +149,8 @@ efl_draw_func_solid_span_get(Efl_Gfx_Render_Op op, uint color)
    return func_for_mode_solid[op];
 }
 
-RGBA_Comp_Func efl_draw_func_span_get(Efl_Gfx_Render_Op op, uint color, Eina_Bool src_alpha)
+RGBA_Comp_Func
+efl_draw_func_span_get(Efl_Gfx_Render_Op op, uint color, Eina_Bool src_alpha)
 {
    if (((color & 0xff000000) == 0xff000000) && !src_alpha)
      {
