@@ -77,19 +77,6 @@ _blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
 }
 
 static void
-_blend_image_gry8(int count, const SW_FT_Span *spans, void *user_data)
-{
-   Span_Data *data = user_data;
-
-#warning Need drawhelper here (no alpha support yet)
-
-   while (count--)
-     {
-        spans++;
-     }
-}
-
-static void
 _blend_image_argb(int count, const SW_FT_Span *spans, void *user_data)
 {
    Span_Data *data = user_data;
@@ -99,11 +86,13 @@ _blend_image_argb(int count, const SW_FT_Span *spans, void *user_data)
    unsigned int l, length, sy = 0;
    const int pix_stride = data->raster_buffer->stride / 4;
 
-#warning FIXME: Image scaling, anyone?
-#warning FIXME: Optimize eo call with early call resolution
+   /* FIXME:
+    * optimize eo call
+    * implement image scaling
+    * tile and repeat image properly
+    */
 
    comp_func = efl_draw_func_span_get(data->op, data->mul_col, EINA_TRUE);
-
    buffer = data->raster_buffer->pixels.u32 + ((pix_stride * data->offy) + data->offx);
 
    while (count--)
@@ -330,10 +319,7 @@ _adjust_span_fill_methods(Span_Data *spdata)
           spdata->unclipped_blend = &_blend_gradient;
           break;
         case Image:
-          if (spdata->buffer->generic->cspace == EFL_GFX_COLORSPACE_GRY8)
-            spdata->unclipped_blend = &_blend_image_gry8;
-          else
-            spdata->unclipped_blend = &_blend_image_argb;
+          spdata->unclipped_blend = &_blend_image_argb;
           break;
      }
 

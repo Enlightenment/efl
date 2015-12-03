@@ -220,7 +220,7 @@ comp_func_source_sse2(uint *dest, const uint *src, int length, uint color, uint 
 
              LOOP_ALIGNED_U1_A4(dest, length,
                { /* UOP */
-                  *dest = INTERPOLATE_PIXEL_256(*src, const_alpha, *dest, ialpha);
+                  *dest = draw_interpolate_256(*src, const_alpha, *dest, ialpha);
                   dest++; src++; length--;
                },
                { /* A4OP */
@@ -257,7 +257,7 @@ comp_func_source_sse2(uint *dest, const uint *src, int length, uint color, uint 
              LOOP_ALIGNED_U1_A4(dest, length,
                { /* UOP */
                   src_color = DRAW_MUL4_SYM(*src, color);
-                  *dest = INTERPOLATE_PIXEL_256(src_color, const_alpha, *dest, ialpha);
+                  *dest = draw_interpolate_256(src_color, const_alpha, *dest, ialpha);
                   dest++; src++; length--;
                },
                { /* A4OP */

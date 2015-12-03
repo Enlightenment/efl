@@ -329,7 +329,7 @@ _generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_c
              t = func((fpos - curr->offset) * delta);
              dist = (int)(256 * t);
              idist = 256 - dist;
-             color_table[pos] = INTERPOLATE_PIXEL_256(current_color, idist, next_color, dist);
+             color_table[pos] = draw_interpolate_256(current_color, idist, next_color, dist);
              ++pos;
              fpos += incr;
           }
