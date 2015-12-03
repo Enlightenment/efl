@@ -15,10 +15,10 @@
 #define FIXPT_BITS 8
 #define FIXPT_SIZE (1<<FIXPT_BITS)
 
-typedef void (*Ector_Radial_Helper_Func)(uint *buffer, int length, Ector_Renderer_Software_Gradient_Data *g_data,
+typedef void (*Ector_Radial_Helper_Func)(uint32_t *buffer, int length, Ector_Renderer_Software_Gradient_Data *g_data,
                                           float det, float delta_det, float delta_delta_det, float b, float delta_b);
 
-typedef void (*Ector_Linear_Helper_Func)(uint *buffer, int length, Ector_Renderer_Software_Gradient_Data *g_data,
+typedef void (*Ector_Linear_Helper_Func)(uint32_t *buffer, int length, Ector_Renderer_Software_Gradient_Data *g_data,
                                           int t_fixed, int inc_fixed);
 
 static Ector_Radial_Helper_Func _ector_radial_helper;
@@ -50,7 +50,7 @@ _gradient_clamp(const Ector_Renderer_Software_Gradient_Data *data, int ipos)
    return ipos;
 }
 
-static uint
+static uint32_t
 _gradient_pixel_fixed(const Ector_Renderer_Software_Gradient_Data *data, int fixed_pos)
 {
    int ipos = (fixed_pos + (FIXPT_SIZE / 2)) >> FIXPT_BITS;
@@ -58,7 +58,7 @@ _gradient_pixel_fixed(const Ector_Renderer_Software_Gradient_Data *data, int fix
    return data->color_table[_gradient_clamp(data, ipos)];
 }
 
-static inline uint
+static inline uint32_t
 _gradient_pixel(const Ector_Renderer_Software_Gradient_Data *data, float pos)
 {
    int ipos = (int)(pos * (GRADIENT_STOPTABLE_SIZE - 1) + (float)(0.5));
@@ -127,7 +127,7 @@ loop_break(unsigned int *buffer, int length, int *lprealign, int *lby4 , int *lr
 }
 
 static void
-_radial_helper_sse3(uint *buffer, int length, Ector_Renderer_Software_Gradient_Data *g_data,
+_radial_helper_sse3(uint32_t *buffer, int length, Ector_Renderer_Software_Gradient_Data *g_data,
                     float det, float delta_det, float delta_delta_det, float b, float delta_b)
 {
    int lprealign, lby4, lremaining, i;
@@ -198,7 +198,7 @@ _radial_helper_sse3(uint *buffer, int length, Ector_Renderer_Software_Gradient_D
 }
 
 static void
-_linear_helper_sse3(uint *buffer, int length, Ector_Renderer_Software_Gradient_Data *g_data, int t, int inc)
+_linear_helper_sse3(uint32_t *buffer, int length, Ector_Renderer_Software_Gradient_Data *g_data, int t, int inc)
 {
    int lprealign, lby4, lremaining, i;
    vec4_i t_vec;
@@ -232,8 +232,8 @@ _linear_helper_sse3(uint *buffer, int length, Ector_Renderer_Software_Gradient_D
    v_min = _mm_set1_epi32(0);
    v_max = _mm_set1_epi32((GRADIENT_STOPTABLE_SIZE - 1));
 
-   v_repeat_mask = _mm_set1_epi32(~((uint)(0xffffff) << GRADIENT_STOPTABLE_SIZE_SHIFT));
-   v_reflect_mask = _mm_set1_epi32(~((uint)(0xffffff) << (GRADIENT_STOPTABLE_SIZE_SHIFT + 1)));
+   v_repeat_mask = _mm_set1_epi32(~((uint32_t)(0xffffff) << GRADIENT_STOPTABLE_SIZE_SHIFT));
+   v_reflect_mask = _mm_set1_epi32(~((uint32_t)(0xffffff) << (GRADIENT_STOPTABLE_SIZE_SHIFT + 1)));
 
    v_reflect_limit = _mm_set1_epi32(2 * GRADIENT_STOPTABLE_SIZE - 1);
 
@@ -289,12 +289,12 @@ _ease_linear(double t)
 }
 
 static Eina_Bool
-_generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_count, uint *color_table, int size)
+_generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_count, uint32_t *color_table, int size)
 {
    int dist, idist, pos = 0, i;
    Eina_Bool alpha = EINA_FALSE;
    Efl_Gfx_Gradient_Stop *curr, *next;
-   uint current_color, next_color;
+   uint32_t current_color, next_color;
    double delta, t, incr, fpos;
 
    assert(stop_count > 0);
@@ -366,7 +366,7 @@ destroy_color_table(Ector_Renderer_Software_Gradient_Data *gdata)
 }
 
 static void
-_linear_helper_generic(uint *buffer, int length, Ector_Renderer_Software_Gradient_Data *g_data,
+_linear_helper_generic(uint32_t *buffer, int length, Ector_Renderer_Software_Gradient_Data *g_data,
                        int t_fixed, int inc_fixed)
 {
    int i;
@@ -379,11 +379,11 @@ _linear_helper_generic(uint *buffer, int length, Ector_Renderer_Software_Gradien
 }
 
 void
-fetch_linear_gradient(uint *buffer, Span_Data *data, int y, int x, int length)
+fetch_linear_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int length)
 {
    Ector_Renderer_Software_Gradient_Data *g_data = data->gradient;
    float t, inc, rx=0, ry=0;
-   uint *end;
+   uint32_t *end;
    int t_fixed, inc_fixed;
 
    if (g_data->linear.l == 0)
@@ -429,7 +429,7 @@ fetch_linear_gradient(uint *buffer, Span_Data *data, int y, int x, int length)
 }
 
 static void
-_radial_helper_generic(uint *buffer, int length, Ector_Renderer_Software_Gradient_Data *g_data, float det,
+_radial_helper_generic(uint32_t *buffer, int length, Ector_Renderer_Software_Gradient_Data *g_data, float det,
                        float delta_det, float delta_delta_det, float b, float delta_b)
 {
    int i;
@@ -445,7 +445,7 @@ _radial_helper_generic(uint *buffer, int length, Ector_Renderer_Software_Gradien
 
 
 void
-fetch_radial_gradient(uint *buffer, Span_Data *data, int y, int x, int length)
+fetch_radial_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int length)
 {
    Ector_Renderer_Software_Gradient_Data *g_data = data->gradient;
    float rx, ry, inv_a, delta_rx, delta_ry, b, delta_b, b_delta_b, delta_b_delta_b,

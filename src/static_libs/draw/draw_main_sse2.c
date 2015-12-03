@@ -118,7 +118,7 @@ v4_ialpha_sse2(__m128i c)
 
 // dest = color + (dest * alpha)
 inline static void
-comp_func_helper_sse2 (uint *dest, int length, uint color, uint alpha)
+comp_func_helper_sse2(uint32_t *dest, int length, uint32_t color, uint32_t alpha)
 {
    const __m128i v_color = _mm_set1_epi32(color);
    const __m128i v_a = _mm_set1_epi16(alpha);
@@ -141,7 +141,7 @@ comp_func_helper_sse2 (uint *dest, int length, uint color, uint alpha)
 }
 
 void
-comp_func_solid_source_sse2(uint *dest, int length, uint color, uint const_alpha)
+comp_func_solid_source_sse2(uint32_t *dest, int length, uint32_t color, uint32_t const_alpha)
 {
    if (const_alpha == 255)
      {
@@ -158,7 +158,7 @@ comp_func_solid_source_sse2(uint *dest, int length, uint color, uint const_alpha
 }
 
 void
-comp_func_solid_source_over_sse2(uint *dest, int length, uint color, uint const_alpha)
+comp_func_solid_source_over_sse2(uint32_t *dest, int length, uint32_t color, uint32_t const_alpha)
 {
    int ialpha;
 
@@ -202,16 +202,16 @@ comp_func_solid_source_over_sse2(uint *dest, int length, uint color, uint const_
   v_src = v4_interpolate_color_sse2(v_alpha, v_src, v_dest);
 
 static void
-comp_func_source_sse2(uint *dest, const uint *src, int length, uint color, uint const_alpha)
+comp_func_source_sse2(uint32_t *dest, const uint32_t *src, int length, uint32_t color, uint32_t const_alpha)
 {
    int ialpha;
-   uint src_color;
+   uint32_t src_color;
 
    if (color == 0xffffffff) // No color multiplier
      {
         if (const_alpha == 255)
           {
-             memcpy(dest, src, length * sizeof(uint));
+             memcpy(dest, src, length * sizeof(uint32_t));
           }
         else
           {
@@ -272,9 +272,9 @@ comp_func_source_sse2(uint *dest, const uint *src, int length, uint color, uint 
 }
 
 static void
-comp_func_source_over_sse2(uint *dest, const uint *src, int length, uint color, uint const_alpha)
+comp_func_source_over_sse2(uint32_t *dest, const uint32_t *src, int length, uint32_t color, uint32_t const_alpha)
 {
-   uint s, sia;
+   uint32_t s, sia;
 
    if (const_alpha != 255)
      color = DRAW_BYTE_MUL(color, const_alpha);

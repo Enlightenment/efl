@@ -7,14 +7,14 @@
 
 #include <Efl.h>
 
-typedef void (*RGBA_Comp_Func)       (uint *dest, const uint *src, int length, uint mul_col, uint const_alpha);
-typedef void (*RGBA_Comp_Func_Solid) (uint *dest, int length, uint color, uint const_alpha);
+typedef void (*RGBA_Comp_Func)       (uint32_t *dest, const uint32_t *src, int length, uint32_t mul_col, uint32_t const_alpha);
+typedef void (*RGBA_Comp_Func_Solid) (uint32_t *dest, int length, uint32_t color, uint32_t const_alpha);
 typedef void (*Alpha_Gfx_Func)       (uint8_t *src, uint8_t *dst, int len);
 
 int efl_draw_init(void);
 
-RGBA_Comp_Func efl_draw_func_span_get(Efl_Gfx_Render_Op op, uint color, Eina_Bool src_alpha);
-RGBA_Comp_Func_Solid efl_draw_func_solid_span_get(Efl_Gfx_Render_Op op, uint color);
+RGBA_Comp_Func efl_draw_func_span_get(Efl_Gfx_Render_Op op, uint32_t color, Eina_Bool src_alpha);
+RGBA_Comp_Func_Solid efl_draw_func_solid_span_get(Efl_Gfx_Render_Op op, uint32_t color);
 Alpha_Gfx_Func efl_draw_alpha_func_get(Efl_Gfx_Render_Op op, Eina_Bool has_mask);
 
 
@@ -61,10 +61,10 @@ Alpha_Gfx_Func efl_draw_alpha_func_get(Efl_Gfx_Render_Op op, Eina_Bool has_mask)
  ( (((((c) >> 8) & 0x00ff00ff) * (a)) & 0xff00ff00) + \
    (((((c) & 0x00ff00ff) * (a)) >> 8) & 0x00ff00ff) )
 
-static inline uint
-draw_interpolate_256(uint x, uint a, uint y, uint b)
+static inline uint32_t
+draw_interpolate_256(uint32_t x, uint32_t a, uint32_t y, uint32_t b)
 {
-   uint t = (x & 0xff00ff) * a + (y & 0xff00ff) * b;
+   uint32_t t = (x & 0xff00ff) * a + (y & 0xff00ff) * b;
    t >>= 8;
    t &= 0xff00ff;
    x = ((x >> 8) & 0xff00ff) * a + ((y >> 8) & 0xff00ff) * b;
@@ -74,7 +74,7 @@ draw_interpolate_256(uint x, uint a, uint y, uint b)
 }
 
 static inline void
-draw_memset32(uint *dest, uint value, int length)
+draw_memset32(uint32_t *dest, uint32_t value, int length)
 {
    int n;
 
