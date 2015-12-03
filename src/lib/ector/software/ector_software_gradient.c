@@ -78,8 +78,8 @@ typedef union { __m128 v; float f[4];} vec4_f;
   __m128 v_min = _mm_set1_ps(0.0f); \
   __m128 v_max = _mm_set1_ps((float)(GRADIENT_STOPTABLE_SIZE-1)); \
   __m128 v_halff = _mm_set1_ps(0.5f); \
-  __m128i v_repeat_mask = _mm_set1_epi32(~((uint)(0xffffff) << GRADIENT_STOPTABLE_SIZE_SHIFT)); \
-  __m128i v_reflect_mask = _mm_set1_epi32(~((uint)(0xffffff) << (GRADIENT_STOPTABLE_SIZE_SHIFT+1))); \
+  __m128i v_repeat_mask = _mm_set1_epi32(~((uint32_t)(0xffffff) << GRADIENT_STOPTABLE_SIZE_SHIFT)); \
+  __m128i v_reflect_mask = _mm_set1_epi32(~((uint32_t)(0xffffff) << (GRADIENT_STOPTABLE_SIZE_SHIFT+1))); \
   __m128i v_reflect_limit = _mm_set1_epi32(2 * GRADIENT_STOPTABLE_SIZE - 1);
 
 #define FETCH_CLAMP_REPEAT_F \
