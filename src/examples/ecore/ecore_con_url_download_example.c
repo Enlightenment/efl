@@ -10,6 +10,10 @@
 #include <Ecore.h>
 #include <Ecore_Con.h>
 
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 struct _request
 {
    long size;
@@ -68,7 +72,7 @@ main(int argc, const char *argv[])
         return -1;
      }
 
-   fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+   fd = open(filename, O_CREAT | O_BINARY | O_WRONLY | O_TRUNC, 0644);
 
    if (fd == -1)
      {

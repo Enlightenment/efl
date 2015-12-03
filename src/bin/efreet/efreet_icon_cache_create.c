@@ -22,6 +22,10 @@ static int _efreet_icon_cache_log_dom = -1;
 #include "efreet_private.h"
 #include "efreet_cache_private.h"
 
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 static Eina_Array *exts = NULL;
 static Eina_Array *extra_dirs = NULL;
 static Eina_Array *strs = NULL;
@@ -676,7 +680,7 @@ cache_lock_file(void)
     int lockfd;
 
     snprintf(file, sizeof(file), "%s/efreet/icon_data.lock", efreet_cache_home_get());
-    lockfd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+    lockfd = open(file, O_CREAT | O_BINARY | O_RDWR, S_IRUSR | S_IWUSR);
     if (lockfd < 0) return -1;
     efreet_fsetowner(lockfd);
 

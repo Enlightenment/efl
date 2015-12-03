@@ -38,6 +38,10 @@
 # define PATH_SEP_C '/'
 #endif
 
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 static int default_dir_rights = 0777;
 const int file_min_offset = 1;
 
@@ -353,12 +357,12 @@ START_TEST(eina_file_map_new_test)
    strcpy(test_file2_path, (char *)test_dirname);
    strcat(test_file2_path, test_file2_name_part);
    
-   fd = open(test_file_path, O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
+   fd = open(test_file_path, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
    fail_if(fd == 0);   
    fail_if(write(fd, eina_map_test_string, strlen(eina_map_test_string)) != (ssize_t) strlen(eina_map_test_string));
    close(fd);
 
-   fd = open(test_file2_path, O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
+   fd = open(test_file2_path, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
    fail_if(fd == 0);
    fail_if(write(fd, big_buffer, big_buffer_size - file_min_offset) != big_buffer_size - file_min_offset);
    close(fd);
@@ -566,7 +570,7 @@ START_TEST(eina_test_file_xattr)
    eina_init();
    test_file_path = get_full_path(XATTR_TEST_DIR, filename);
 
-   fd = open(test_file_path, O_RDONLY | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
+   fd = open(test_file_path, O_RDONLY | O_BINARY | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
    fail_if(fd == 0);
    close(fd);
 
@@ -699,12 +703,12 @@ START_TEST(eina_test_file_statat)
    test_file1_path = get_full_path(test_dirname, "example1.txt");
    test_file2_path = get_full_path(test_dirname, "example2.txt");
 
-   fd = open(test_file1_path, O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
+   fd = open(test_file1_path, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
    fail_if(fd == 0);
    fail_if(write(fd, template, template_size) != template_size);
    close(fd);
 
-   fd = open(test_file2_path, O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
+   fd = open(test_file2_path, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
    fail_if(fd == 0);
    fail_if(write(fd, template, template_size) != template_size);
    close(fd);

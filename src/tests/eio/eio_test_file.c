@@ -14,6 +14,10 @@
 
 #include "eio_suite.h"
 
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 static unsigned int default_rights = 0755;
 static int test_count = 0;
 static const char *good_dirs[] =
@@ -154,7 +158,7 @@ create_test_dirs(Eina_Tmpstr *test_dirname)
    for (i = 0; i != count; ++i)
      {
         Eina_Tmpstr *filename = get_full_path(test_dirname, files[i]);
-        fd = open(filename, O_RDWR|O_CREAT, default_rights);
+        fd = open(filename, O_RDWR | O_BINARY | O_CREAT, default_rights);
         fail_if(fd < 0);
         fail_if(close(fd) != 0);
         eina_tmpstr_del(filename);
@@ -163,7 +167,7 @@ create_test_dirs(Eina_Tmpstr *test_dirname)
    for (i = 0; i != count; ++i)
      {
         Eina_Tmpstr *filename = get_full_path(nested_dirname, files[i]);
-        fd = open(filename, O_RDWR|O_CREAT, default_rights);
+        fd = open(filename, O_RDWR | O_BINARY | O_CREAT, default_rights);
         fail_if(fd < 0);
         fail_if(close(fd) != 0);
         eina_tmpstr_del(filename);

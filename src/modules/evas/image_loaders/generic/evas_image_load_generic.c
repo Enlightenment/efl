@@ -16,6 +16,10 @@
 #include <fcntl.h>
 #include <ctype.h>
 
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 typedef struct _Evas_Loader_Internal Evas_Loader_Internal;
 struct _Evas_Loader_Internal
 {
@@ -329,7 +333,7 @@ getdata:
 
              // open
              if (tmpfname)
-                fd = open(tmpfname, O_RDONLY, S_IRUSR);
+                fd = open(tmpfname, O_RDONLY | O_BINARY, S_IRUSR);
 #ifdef HAVE_SHM_OPEN
              else if (shmfname)
                 fd = shm_open(shmfname, O_RDONLY, S_IRUSR);

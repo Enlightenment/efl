@@ -15,6 +15,10 @@
 
 #include "ecore_suite.h"
 
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 #define MAXSIZE 256
 
 void
@@ -242,7 +246,7 @@ START_TEST(ecore_test_ecore_file_operations)
    src_file = get_tmp_file();
    fail_if(!src_file);
    fail_if(ecore_file_remove(src_file) != EINA_TRUE);
-   fd = open(src_file, O_RDWR|O_CREAT, 0700);
+   fd = open(src_file, O_RDWR | O_BINARY | O_CREAT, 0700);
    fail_if(fd < 0);
    fail_if(close(fd) != 0);
    fail_if(ecore_file_can_exec(src_file) != EINA_TRUE);
@@ -295,7 +299,7 @@ START_TEST(ecore_test_ecore_file_operations)
    src_file = get_tmp_file();
    fail_if(!src_file);
    fail_if(ecore_file_remove(src_file) != EINA_TRUE);
-   fd = open(src_file, O_RDWR|O_CREAT, 0400);
+   fd = open(src_file, O_RDWR | O_BINARY | O_CREAT, 0400);
    fail_if(fd < 0);
    fail_if(close(fd) != 0);
    fail_if(ecore_file_can_read(src_file) != EINA_TRUE);
@@ -306,7 +310,7 @@ START_TEST(ecore_test_ecore_file_operations)
    src_file = get_tmp_file();
    fail_if(!src_file);
    fail_if(ecore_file_remove(src_file) != EINA_TRUE);
-   fd = open(src_file, O_RDWR|O_CREAT, 0200);
+   fd = open(src_file, O_RDWR | O_BINARY | O_CREAT, 0200);
    fail_if(fd < 0);
    fail_if(close(fd) != 0);
    fail_if(ecore_file_can_read(src_file) != EINA_FALSE);
@@ -316,7 +320,7 @@ START_TEST(ecore_test_ecore_file_operations)
    src_file = get_tmp_file();
    fail_if(!src_file);
    fail_if(ecore_file_remove(src_file) != EINA_TRUE);
-   fd = open(src_file, O_RDWR|O_CREAT, 0100);
+   fd = open(src_file, O_RDWR | O_BINARY | O_CREAT, 0100);
    fail_if(fd < 0);
    fail_if(close(fd) != 0);
    fail_if(ecore_file_can_read(src_file) != EINA_FALSE);
@@ -355,7 +359,7 @@ START_TEST(ecore_test_ecore_file_path)
    src_file = get_tmp_file();
    fail_if(!src_file);
    fail_if(ecore_file_remove(src_file) != EINA_TRUE);
-   fd = open(src_file, O_RDWR|O_CREAT, 0700);
+   fd = open(src_file, O_RDWR | O_BINARY | O_CREAT, 0700);
    fail_if(fd < 0);
    fail_if(close(fd) != 0);
    fail_if(ecore_file_can_exec(src_file) != EINA_TRUE);

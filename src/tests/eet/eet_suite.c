@@ -17,6 +17,10 @@
 
 #include "eet_suite.h"
 
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 static char _key_pem[PATH_MAX] = "";
 static char _cert_pem[PATH_MAX] = "";
 static char _key_enc[PATH_MAX] = "";
@@ -1775,7 +1779,7 @@ START_TEST(eet_identity_simple)
    eet_clearcache();
 
    /* Corrupting the file. */
-   fd = open(file, O_WRONLY);
+   fd = open(file, O_WRONLY | O_BINARY);
    fail_if(fd < 0);
 
    fail_if(lseek(fd, 200, SEEK_SET) != 200);

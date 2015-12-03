@@ -1,5 +1,9 @@
 #include "ecore_evas_extn_engine.h"
 
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 struct _Extnbuf
 {
    const char *file, *lock;
@@ -165,7 +169,7 @@ _extnbuf_lock_file_set(Extnbuf *b, const char *file)
      }
    b->lock = eina_stringshare_add(file);
    if (!b->lock) goto err;
-   b->lockfd = open(b->lock, O_RDWR);
+   b->lockfd = open(b->lock, O_RDWR | O_BINARY);
    if (b->lockfd >= 0) return EINA_TRUE;
 err:
    if (b->lock) eina_stringshare_del(b->lock);

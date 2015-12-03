@@ -35,6 +35,10 @@
 #include <malloc.h>
 #endif
 
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 static Ecore_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Ecore_Version *ecore_version = &_version;
 
@@ -777,11 +781,11 @@ _ecore_fps_debug_init(void)
    tmp = eina_environment_tmp_get();
    pid = (int)getpid();
    snprintf(buf, sizeof(buf), "%s/.ecore_fps_debug-%i", tmp, pid);
-   _ecore_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR, 0644);
+   _ecore_fps_debug_fd = open(buf, O_CREAT | O_BINARY | O_TRUNC | O_RDWR, 0644);
    if (_ecore_fps_debug_fd < 0)
      {
         unlink(buf);
-        _ecore_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR, 0644);
+        _ecore_fps_debug_fd = open(buf, O_CREAT | O_BINARY | O_TRUNC | O_RDWR, 0644);
      }
    if (_ecore_fps_debug_fd >= 0)
      {

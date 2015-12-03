@@ -34,6 +34,10 @@
 #include "ecore_evas_extn.h"
 #include "ecore_evas_win32.h"
 
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 EAPI Eina_Bool _ecore_evas_app_comp_sync = EINA_FALSE;
 EAPI int _ecore_evas_log_dom = -1;
 static int _ecore_evas_init_count = 0;
@@ -2973,11 +2977,11 @@ _ecore_evas_fps_debug_init(void)
 
    snprintf(buf, sizeof(buf), "%s/.ecore_evas_fps_debug-%i",
             eina_environment_tmp_get(), (int)getpid());
-   _ecore_evas_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR, 0644);
+   _ecore_evas_fps_debug_fd = open(buf, O_CREAT | O_BINARY | O_TRUNC | O_RDWR, 0644);
    if (_ecore_evas_fps_debug_fd < 0)
      {
         unlink(buf);
-        _ecore_evas_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR, 0644);
+        _ecore_evas_fps_debug_fd = open(buf, O_CREAT | O_BINARY | O_TRUNC | O_RDWR, 0644);
      }
    if (_ecore_evas_fps_debug_fd >= 0)
      {

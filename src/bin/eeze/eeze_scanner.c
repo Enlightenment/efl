@@ -20,6 +20,10 @@
 #define ERR(...)            EINA_LOG_DOM_ERR(es_log_dom, __VA_ARGS__)
 #define CRI(...)            EINA_LOG_DOM_CRIT(es_log_dom, __VA_ARGS__)
 
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 static int es_log_dom = -1;
 static Ecore_Con_Server *svr = NULL;
 static Eet_Data_Descriptor *es_edd = NULL;
@@ -186,7 +190,7 @@ cdrom_timer(Eeze_Scanner_Device *dev)
    /* cdrom already mounted, no need to poll */
    if (dev->mounted) return EINA_TRUE;
    devpath = eeze_udev_syspath_get_devpath(dev->device);
-   fd = open(devpath, O_RDONLY);
+   fd = open(devpath, O_RDONLY | O_BINARY);
    if (fd < 0)
      {
         Eina_List *l;

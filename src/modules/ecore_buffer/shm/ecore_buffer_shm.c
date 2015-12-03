@@ -14,6 +14,10 @@
 #include <Ecore.h>
 #include <Ecore_Buffer.h>
 
+#ifndef O_BINARY
+# define O_BINARY 0
+#endif
+
 typedef struct _Ecore_Buffer_Shm_Data Ecore_Buffer_Shm_Data;
 
 struct _Ecore_Buffer_Shm_Data {
@@ -102,7 +106,7 @@ _ecore_buffer_shm_buffer_export(Ecore_Buffer_Module_Data bmdata EINA_UNUSED, Eco
    Ecore_Buffer_Shm_Data* b = bdata;
    int fd;
 
-   fd = open(b->file, O_RDWR | O_CLOEXEC);
+   fd = open(b->file, O_RDWR | O_BINARY | O_CLOEXEC);
    if (id) *id = fd;
 
    return EXPORT_TYPE_FD;
