@@ -1,3 +1,6 @@
+#ifndef ECTOR_BUFFER_H
+#define ECTOR_BUFFER_H
+
 #include <Ector.h>
 
 #include "ector_generic_buffer.eo.h"
@@ -25,3 +28,5 @@ typedef struct _Ector_Software_Buffer_Base_Data
    Eina_Bool            nofree : 1; // pixel data should not be free()'ed
    Eina_Bool            span_free : 1;
 } Ector_Software_Buffer_Base_Data;
+
+#endif

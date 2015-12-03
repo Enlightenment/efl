@@ -555,19 +555,10 @@ lib/evas/filters/blur/blur_box_rgba_i386.c \
 lib/evas/filters/blur/blur_box_rgba_sse3.c \
 lib/evas/filters/blur/blur_box_rgba_neon.c
 
-### Vector surface helper
-
-EXTRA_DIST += \
-modules/evas/engines/software_generic/ector_cairo_software_surface.eo \
-modules/evas/engines/gl_generic/ector_cairo_software_surface.eo
-
 ### Engines
 
 if EVAS_STATIC_BUILD_SOFTWARE_GENERIC
-BUILT_SOURCES += \
-modules/evas/engines/software_generic/ector_cairo_software_surface.eo.c \
-modules/evas/engines/software_generic/ector_cairo_software_surface.eo.h
-lib_evas_libevas_la_SOURCES += modules/evas/engines/software_generic/evas_engine.c modules/evas/engines/software_generic/ector_cairo_software_surface.c modules/evas/engines/software_generic/Evas_Engine_Software_Generic.h
+lib_evas_libevas_la_SOURCES += modules/evas/engines/software_generic/evas_engine.c modules/evas/engines/software_generic/Evas_Engine_Software_Generic.h
 lib_evas_libevas_la_LIBADD +=
 else
 enginesoftwaregenericpkgdir = $(libdir)/evas/modules/engines/software_generic/$(MODULE_ARCH)
@@ -656,10 +647,6 @@ endif
 endif
 
 if BUILD_ENGINE_GL_COMMON
-BUILT_SOURCES += \
-modules/evas/engines/gl_generic/ector_cairo_software_surface.eo.c \
-modules/evas/engines/gl_generic/ector_cairo_software_surface.eo.h
-
 GL_COMMON_SOURCES = \
 modules/evas/engines/gl_common/evas_gl_private.h \
 modules/evas/engines/gl_common/evas_gl_common.h \
@@ -740,7 +727,6 @@ modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x: modules/evas/engi
 
 GL_GENERIC_SOURCES = \
 modules/evas/engines/gl_generic/evas_engine.c \
-modules/evas/engines/gl_generic/ector_cairo_software_surface.c \
 modules/evas/engines/gl_generic/Evas_Engine_GL_Generic.h
 
 if EVAS_STATIC_BUILD_GL_COMMON

@@ -14,6 +14,7 @@ ector_eolian_generic_h = $(ector_eolian_files_generic:%.eo=%.eo.h)
 # Handle cairo backend
 ector_eolian_files_cairo = \
 	lib/ector/cairo/ector_cairo_surface.eo \
+	lib/ector/cairo/ector_cairo_software_surface.eo \
 	lib/ector/cairo/ector_renderer_cairo_base.eo \
 	lib/ector/cairo/ector_renderer_cairo_shape.eo \
 	lib/ector/cairo/ector_renderer_cairo_gradient_linear.eo \
@@ -85,6 +86,7 @@ lib/ector/cairo/ector_renderer_cairo_gradient_linear.c \
 lib/ector/cairo/ector_renderer_cairo_gradient_radial.c \
 lib/ector/cairo/ector_renderer_cairo_shape.c \
 lib/ector/cairo/ector_renderer_cairo_base.c \
+lib/ector/cairo/ector_cairo_software_surface.c \
 lib/ector/cairo/ector_cairo_surface.c
 
 installed_ectorcairoheadersdir = $(includedir)/ector-@VMAJ@/cairo
@@ -166,7 +168,6 @@ EXTRA_DIST += \
 lib/ector/ector_private.h \
 lib/ector/ector_buffer.h \
 lib/ector/cairo/ector_cairo_private.h \
-lib/ector/software/ector_drawhelper_private.h \
 lib/ector/software/ector_software_private.h \
 static_libs/freetype/sw_ft_math.h \
 static_libs/freetype/sw_ft_raster.h \
