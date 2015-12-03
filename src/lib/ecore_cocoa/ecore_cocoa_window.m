@@ -578,3 +578,50 @@ _ecore_cocoa_window_init(void)
    return EINA_TRUE;
 }
 
+EAPI void
+ecore_cocoa_window_cursor_set(Ecore_Cocoa_Window *win,
+                              Ecore_Cocoa_Cursor  c)
+{
+   EINA_SAFETY_ON_NULL_RETURN(win);
+   EINA_SAFETY_ON_FALSE_RETURN((c >= 0) && (c <= __ECORE_COCOA_CURSOR_LAST));
+
+   NSCursor *cursor = _cursors[c];
+
+   DBG("Setting cursor %i (%s)", c, [[cursor description] UTF8String]);
+   [cursor set];
+}
+
+EAPI void
+ecore_cocoa_window_cursor_show(Ecore_Cocoa_Window *win,
+                               Eina_Bool           show)
+{
+   EINA_SAFETY_ON_NULL_RETURN(win);
+
+   if (show) [NSCursor unhide];
+   else [NSCursor hide];
+}
+
+Eina_Bool
+_ecore_cocoa_window_init(void)
+{
+   _cursors[ECORE_COCOA_CURSOR_ARROW]                 = [NSCursor arrowCursor];
+   _cursors[ECORE_COCOA_CURSOR_CONTEXTUAL_MENU]       = [NSCursor contextualMenuCursor];
+   _cursors[ECORE_COCOA_CURSOR_CLOSED_HAND]           = [NSCursor closedHandCursor];
+   _cursors[ECORE_COCOA_CURSOR_CROSSHAIR]             = [NSCursor crosshairCursor];
+   _cursors[ECORE_COCOA_CURSOR_DISAPPEARING_ITEM]     = [NSCursor disappearingItemCursor];
+   _cursors[ECORE_COCOA_CURSOR_DRAG_COPY]             = [NSCursor dragCopyCursor];
+   _cursors[ECORE_COCOA_CURSOR_DRAG_LINK]             = [NSCursor dragLinkCursor];
+   _cursors[ECORE_COCOA_CURSOR_IBEAM]                 = [NSCursor IBeamCursor];
+   _cursors[ECORE_COCOA_CURSOR_OPEN_HAND]             = [NSCursor openHandCursor];
+   _cursors[ECORE_COCOA_CURSOR_OPERATION_NOT_ALLOWED] = [NSCursor operationNotAllowedCursor];
+   _cursors[ECORE_COCOA_CURSOR_POINTING_HAND]         = [NSCursor pointingHandCursor];
+   _cursors[ECORE_COCOA_CURSOR_RESIZE_DOWN]           = [NSCursor resizeDownCursor];
+   _cursors[ECORE_COCOA_CURSOR_RESIZE_LEFT]           = [NSCursor resizeLeftCursor];
+   _cursors[ECORE_COCOA_CURSOR_RESIZE_LEFT_RIGHT]     = [NSCursor resizeLeftRightCursor];
+   _cursors[ECORE_COCOA_CURSOR_RESIZE_RIGHT]          = [NSCursor resizeRightCursor];
+   _cursors[ECORE_COCOA_CURSOR_RESIZE_UP]             = [NSCursor resizeUpCursor];
+   _cursors[ECORE_COCOA_CURSOR_RESIZE_UP_DOWN]        = [NSCursor resizeUpDownCursor];
+   _cursors[ECORE_COCOA_CURSOR_IBEAM_VERTICAL]        = [NSCursor IBeamCursorForVerticalLayout];
+
+   return EINA_TRUE;
+}

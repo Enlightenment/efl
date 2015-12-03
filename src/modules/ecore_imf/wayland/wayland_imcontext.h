@@ -24,7 +24,11 @@
 #define __WAYLAND_IM_CONTEXT_H_
 
 #include <Ecore_IMF.h>
+#include <Ecore_Wl2.h>
+
 #include "text-client-protocol.h"
+
+extern Ecore_Wl2_Display *ewd;
 
 typedef struct _WaylandIMContext WaylandIMContext;
 

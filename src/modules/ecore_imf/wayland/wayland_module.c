@@ -26,13 +26,14 @@
 
 #include <Ecore.h>
 #include <Ecore_IMF.h>
-#include <Ecore_Wayland.h>
+#include <Ecore_Wl2.h>
 #include <stdio.h>
 
 #include "wayland_imcontext.h"
 #include "text-client-protocol.h"
 
 int _ecore_imf_wayland_log_dom = -1;
+Ecore_Wl2_Display *ewd;
 
 static const Ecore_IMF_Context_Info wayland_im_info =
 {
@@ -100,27 +101,28 @@ im_module_create()
 
    if (!text_input_manager)
      {
-        Ecore_Wl_Global *global;
-        struct wl_registry *registry;
-        Eina_Inlist *globals;
+        Eina_Iterator *itr;
 
-        if (!(registry = ecore_wl_registry_get()))
-          return NULL;
-
-        if (!(globals = ecore_wl_globals_get()))
-          return NULL;
-
-        EINA_INLIST_FOREACH(globals, global)
+        itr = ecore_wl2_display_globals_get(ewd);
+        if (itr)
           {
-             if (!strcmp(global->interface, "wl_text_input_manager"))
+             Ecore_Wl2_Global *global;
+             struct wl_registry *registry;
+
+             registry = ecore_wl2_display_registry_get(ewd);
+             EINA_ITERATOR_FOREACH(itr, global)
                {
-                  text_input_manager = 
-                    wl_registry_bind(registry, global->id, 
-                                     &wl_text_input_manager_interface, 1);
-                  EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, 
-                                    "bound wl_text_input_manager interface");
-                  break;
+                  if (!strcmp(global->interface, "wl_text_input_manager"))
+                    {
+                       text_input_manager =
+                         wl_registry_bind(registry, global->id,
+                                          &wl_text_input_manager_interface, 1);
+                       EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom,
+                                         "bound wl_text_input_manager interface");
+                       break;
+                    }
                }
+             eina_iterator_free(itr);
           }
 
         if (!text_input_manager)
@@ -156,21 +158,29 @@ im_module_init(void)
         if (strcmp(s, "wl")) return EINA_FALSE;
      }
 
-   if (!ecore_wl_init(NULL))
+   if (!ecore_wl2_init())
      return EINA_FALSE;
+
+   ewd = ecore_wl2_display_connect(NULL);
+   if (!ewd) goto err;
 
    ecore_imf_module_register(&wayland_im_info, im_module_create, 
                              im_module_exit);
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "im module initalized");
 
    return EINA_TRUE;
+
+err:
+   ecore_wl2_shutdown();
+   return EINA_FALSE;
 }
 
 static void
 im_module_shutdown(void)
 {
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "im module shutdown");
-   ecore_wl_shutdown();
+   ecore_wl2_display_disconnect(ewd);
+   ecore_wl2_shutdown();
 }
 
 EINA_MODULE_INIT(im_module_init);

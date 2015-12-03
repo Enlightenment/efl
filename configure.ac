@@ -3026,6 +3026,45 @@ EFL_EVAL_PKGS([ECORE_WAYLAND])
 EFL_LIB_END_OPTIONAL([Ecore_Wayland])
 #### End of Ecore_Wayland
 
+#### Ecore_Wl2
+EFL_LIB_START_OPTIONAL([Ecore_Wl2], [test "${want_wayland}" = "yes"])
+
+if test "x${want_wayland_ivi_shell}" = "xyes" ; then
+   AC_DEFINE(USE_IVI_SHELL, 1, [Ecore_Wl2 IVI-Shell Support])
+fi
+
+### Additional options to configure
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ECORE_WL2], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([ECORE_WL2], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_WL2], [eo])
+EFL_INTERNAL_DEPEND_PKG([ECORE_WL2], [eina])
+
+EFL_DEPEND_PKG([ECORE_WL2], [WAYLAND],
+   [wayland-server >= 1.8.0 wayland-client >= 1.8.0 wayland-cursor >= 1.8.0 xkbcommon >= 0.5.0])
+
+EFL_EVAL_PKGS([ECORE_WL2])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END_OPTIONAL([Ecore_Wl2])
+#### End of Ecore_Wl2
+
 #### Eldbus
 EFL_LIB_START([Eldbus])
 
@@ -4795,6 +4834,7 @@ pc/ecore-fb.pc
 pc/ecore-psl1ght.pc
 pc/ecore-sdl.pc
 pc/ecore-wayland.pc
+pc/ecore-wl2.pc
 pc/ecore-win32.pc
 pc/ecore-x.pc
 pc/ecore-evas.pc
@@ -4964,6 +5004,7 @@ echo "Ecore_IMF.......: yes (${features_ecore_imf})"
 echo "Ecore_X.........: ${with_x11} (${features_ecore_x})"
 echo "Ecore_SDL.......: $want_sdl"
 echo "Ecore_Wayland...: $want_wayland"
+echo "Ecore_Wl2.......: $want_wayland"
 echo "IVI-Shell.......: $want_wayland_ivi_shell"
 echo "Ecore_Buffer....: $want_ecore_buffer (${features_ecore_buffer})"
 if test "${have_linux}" = "yes"; then

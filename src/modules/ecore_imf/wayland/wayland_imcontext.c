@@ -27,7 +27,7 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_Input.h>
-#include <Ecore_Wayland.h>
+#include <Ecore_Wl2.h>
 
 #include "wayland_imcontext.h"
 
@@ -38,9 +38,9 @@ struct _WaylandIMContext
    struct wl_text_input_manager *text_input_manager;
    struct wl_text_input *text_input;
 
-   Ecore_Wl_Window *window;
-   Ecore_Wl_Input  *input;
-   Evas            *canvas;
+   Ecore_Wl2_Window *window;
+   Ecore_Wl2_Input  *input;
+   Evas             *canvas;
 
    char *preedit_text;
    char *preedit_commit;
@@ -292,17 +292,17 @@ static Eina_Bool
 show_input_panel(Ecore_IMF_Context *ctx)
 {
    WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
-   Ecore_Wl_Input *input;
+   Ecore_Wl2_Input *input;
    struct wl_seat *seat;
 
    if ((!imcontext) || (!imcontext->window) || (!imcontext->text_input))
      return EINA_FALSE;
 
-   input = ecore_wl_window_keyboard_get(imcontext->window);
+   input = ecore_wl2_window_input_get(imcontext->window);
    if (!input)
      return EINA_FALSE;
 
-   seat = ecore_wl_input_seat_get(input);
+   seat = ecore_wl2_input_seat_get(input);
    if (!seat)
      return EINA_FALSE;
 
@@ -312,7 +312,7 @@ show_input_panel(Ecore_IMF_Context *ctx)
      {
         wl_text_input_show_input_panel(imcontext->text_input);
         wl_text_input_activate(imcontext->text_input, seat,
-                               ecore_wl_window_surface_get(imcontext->window));
+                               ecore_wl2_window_surface_get(imcontext->window));
 
         wl_text_input_set_content_type(imcontext->text_input,
                                        imcontext->content_hint,
@@ -531,8 +531,8 @@ text_input_keysym(void                 *data,
    strcpy((char *)e->key, key);
    strcpy((char *)e->string, string);
 
-   e->window = ecore_wl_window_id_get(imcontext->window);
-   e->event_window = ecore_wl_window_id_get(imcontext->window);
+   e->window = ecore_wl2_window_id_get(imcontext->window);
+   e->event_window = ecore_wl2_window_id_get(imcontext->window);
    e->timestamp = time;
 
    e->modifiers = 0;
@@ -692,7 +692,7 @@ wayland_im_context_focus_out(Ecore_IMF_Context *ctx)
           wl_text_input_hide_input_panel(imcontext->text_input);
 
         wl_text_input_deactivate(imcontext->text_input,
-                                 ecore_wl_input_seat_get(imcontext->input));
+                                 ecore_wl2_input_seat_get(imcontext->input));
      }
 
    imcontext->input = NULL;
@@ -776,7 +776,10 @@ wayland_im_context_client_window_set(Ecore_IMF_Context *ctx,
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "client window set (window: %p)", window);
 
    if (window != NULL)
-     imcontext->window = ecore_wl_window_find((Ecore_Window)window);
+     {
+        imcontext->window =
+          ecore_wl2_display_window_find(ewd, (Ecore_Window)window);
+     }
 }
 
 EAPI void

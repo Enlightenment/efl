@@ -1,0 +1,30 @@
+if HAVE_ECORE_WL2
+
+### Library
+
+lib_LTLIBRARIES += lib/ecore_wl2/libecore_wl2.la
+
+installed_ecorewl2mainheadersdir = $(includedir)/ecore-wl2-@VMAJ@
+dist_installed_ecorewl2mainheaders_DATA = lib/ecore_wl2/Ecore_Wl2.h
+
+lib_ecore_wl2_libecore_wl2_la_SOURCES = \
+lib/ecore_wl2/subsurface-client-protocol.h \
+lib/ecore_wl2/subsurface-protocol.c \
+lib/ecore_wl2/xdg-shell-client-protocol.h \
+lib/ecore_wl2/xdg-shell-protocol.c \
+lib/ecore_wl2/ecore_wl2_seat.c \
+lib/ecore_wl2/ecore_wl2_subsurf.c \
+lib/ecore_wl2/ecore_wl2_dnd.c \
+lib/ecore_wl2/ecore_wl2_window.c \
+lib/ecore_wl2/ecore_wl2_input.c \
+lib/ecore_wl2/ecore_wl2_output.c \
+lib/ecore_wl2/ecore_wl2_display.c \
+lib/ecore_wl2/ecore_wl2.c \
+lib/ecore_wl2/ecore_wl2_private.h
+
+lib_ecore_wl2_libecore_wl2_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_WL2_CFLAGS@
+lib_ecore_wl2_libecore_wl2_la_LIBADD = @ECORE_WL2_LIBS@
+lib_ecore_wl2_libecore_wl2_la_DEPENDENCIES = @ECORE_WL2_INTERNAL_LIBS@
+lib_ecore_wl2_libecore_wl2_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+endif

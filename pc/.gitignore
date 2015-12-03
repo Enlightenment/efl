@@ -14,6 +14,7 @@
 /ecore-psl1ght.pc
 /ecore-sdl.pc
 /ecore-wayland.pc
+/ecore-wl2.pc
 /ecore-win32.pc
 /ecore-x.pc
 /ecore.pc

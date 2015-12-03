@@ -3993,6 +3993,25 @@ ecore_evas_cocoa_window_get(const Ecore_Evas *ee)
    return iface->window_get(ee);
 }
 
+EAPI Ecore_Wl2_Window *
+ecore_evas_wayland_window_get2(const Ecore_Evas *ee)
+{
+   Ecore_Evas_Interface_Wayland *iface;
+   iface = (Ecore_Evas_Interface_Wayland *)_ecore_evas_interface_get(ee, "wayland");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, NULL);
+
+   return iface->window_get2(ee);
+}
+
+EAPI Ecore_Cocoa_Window *
+ecore_evas_cocoa_window_get(const Ecore_Evas *ee)
+{
+   Ecore_Evas_Interface_Cocoa *iface;
+   iface = (Ecore_Evas_Interface_Cocoa *)_ecore_evas_interface_get(ee, "opengl_cocoa");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iface, NULL);
+   return iface->window_get(ee);
+}
+
 EAPI Ecore_Evas *
 ecore_evas_drm_new(const char *disp_name, unsigned int parent,
                    int x, int y, int w, int h)
