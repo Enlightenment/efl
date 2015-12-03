@@ -2,8 +2,7 @@
 #include "evas_gl_core_private.h"
 
 #include "software/Ector_Software.h"
-
-#include "ector_cairo_software_surface.eo.h"
+#include "cairo/Ector_Cairo.h"
 
 #ifdef HAVE_DLSYM
 # include <dlfcn.h>      /* dlopen,dlclose,etc */

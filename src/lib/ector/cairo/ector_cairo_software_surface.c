@@ -2,15 +2,10 @@
 #include "config.h"  /* so that EAPI in Evas.h is correctly defined */
 #endif
 
-#include <Ector.h>
-
-#include <cairo/Ector_Cairo.h>
+#include "Ector_Cairo.h"
+#include "ector_private.h"
 #include <software/Ector_Software.h>
-
-#include "evas_common_private.h"
-#include "evas_private.h"
 #include "ector_cairo_software_surface.eo.h"
-#include "ector_buffer.h"
 
 #define MY_CLASS ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS
 
@@ -94,7 +89,7 @@ _ector_cairo_software_surface_ector_generic_buffer_pixels_set(Eo *obj, Ector_Cai
      }
 
  end:
-   evas_common_cpu_end_opt();
+   /* evas_common_cpu_end_opt(); // do we need this? */
    eo_do(obj, ector_cairo_surface_context_set(ctx));
    return ok;
 }
