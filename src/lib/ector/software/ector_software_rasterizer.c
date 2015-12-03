@@ -16,7 +16,7 @@ _blend_color_argb(int count, const SW_FT_Span *spans, void *user_data)
 {
    RGBA_Comp_Func_Solid comp_func;
    Span_Data *data = (Span_Data *)(user_data);
-   uint color, *buffer, *target;
+   uint32_t color, *buffer, *target;
    const int pix_stride = data->raster_buffer->stride / 4;
 
    // multiply the color with mul_col if any
@@ -461,7 +461,7 @@ ector_software_rasterizer_generate_rle_data(Software_Rasterizer *rasterizer, SW_
 Shape_Rle_Data *
 ector_software_rasterizer_generate_stroke_rle_data(Software_Rasterizer *rasterizer, SW_FT_Outline *outline, Eina_Bool closePath)
 {
-   uint points,contors;
+   uint32_t points,contors;
    Shape_Rle_Data *rle_data;
    SW_FT_Outline strokeOutline = { 0, 0, NULL, NULL, NULL, 0 };
 
@@ -564,7 +564,7 @@ void ector_software_rasterizer_buffer_set(Software_Rasterizer *rasterizer,
 }
 
 void ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
-                                             int x, int y, uint mul_col,
+                                             int x, int y, uint32_t mul_col,
                                              Efl_Gfx_Render_Op op, Shape_Rle_Data* rle)
 {
    // check for NULL rle data

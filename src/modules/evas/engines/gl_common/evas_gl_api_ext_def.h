@@ -1713,7 +1713,7 @@ _EVASGL_EXT_END()
 _EVASGL_EXT_BEGIN(GLX_SGI_video_sync)
 	_EVASGL_EXT_DRVNAME(GLX_SGI_video_sync)
 
-	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(int, glXGetVideoSyncSGI, (uint *count))
+        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(int, glXGetVideoSyncSGI, (uint32_t *count))
                 _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("glXGetVideoSyncSGI")
 	_EVASGL_EXT_FUNCTION_PRIVATE_END()
 	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(int, glXWaitVideoSyncSGI, (int divisor, int remainder, unsigned int *count))

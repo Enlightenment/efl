@@ -9,7 +9,7 @@
 #include <arm_neon.h>
 
 static void
-comp_func_solid_source_over_neon(uint * __restrict dest, int length, uint color, uint const_alpha)
+comp_func_solid_source_over_neon(uint32_t * __restrict dest, int length, uint32_t color, uint32_t const_alpha)
 {
    uint16x8_t temp00_16x8;
    uint16x8_t temp01_16x8;
@@ -100,7 +100,7 @@ comp_func_solid_source_over_neon(uint * __restrict dest, int length, uint color,
 /* Note: Optimisation is based on keeping _dest_ aligned: else it's a pair of
  * reads, then two writes, a miss on read is 'just' two reads */
 static void
-comp_func_source_over_sse2(uint * __restrict dest, const uint * __restrict src, int length, uint color, uint const_alpha)
+comp_func_source_over_sse2(uint32_t * __restrict dest, const uint32_t * __restrict src, int length, uint32_t color, uint32_t const_alpha)
 {
    uint16x8_t ad0_16x8;
    uint16x8_t ad1_16x8;

@@ -22,7 +22,7 @@
 */
 
 static void
-_comp_func_solid_source_over(uint *dest, int length, uint color, uint const_alpha)
+_comp_func_solid_source_over(uint32_t *dest, int length, uint32_t color, uint32_t const_alpha)
 {
    int ialpha, i;
 
@@ -34,10 +34,10 @@ _comp_func_solid_source_over(uint *dest, int length, uint color, uint const_alph
 }
 
 static void
-_comp_func_source_over(uint *dest, const uint *src, int length, uint color, uint const_alpha)
+_comp_func_source_over(uint32_t *dest, const uint32_t *src, int length, uint32_t color, uint32_t const_alpha)
 {
    int i;
-   uint s, sc, sia;
+   uint32_t s, sc, sia;
 
    if (const_alpha != 255)
      color = DRAW_BYTE_MUL(color, const_alpha);
@@ -73,7 +73,7 @@ _comp_func_source_over(uint *dest, const uint *src, int length, uint color, uint
   dest = s * ca + d * cia
 */
 static void
-_comp_func_solid_source(uint *dest, int length, uint color, uint const_alpha)
+_comp_func_solid_source(uint32_t *dest, int length, uint32_t color, uint32_t const_alpha)
 {
    int ialpha, i;
 
@@ -91,16 +91,16 @@ _comp_func_solid_source(uint *dest, int length, uint color, uint const_alpha)
 }
 
 static void
-_comp_func_source(uint *dest, const uint *src, int length, uint color, uint const_alpha)
+_comp_func_source(uint32_t *dest, const uint32_t *src, int length, uint32_t color, uint32_t const_alpha)
 {
    int i, ialpha;
-   uint src_color;
+   uint32_t src_color;
 
    if (color == 0xffffffff) // No color multiplier
      {
         if (const_alpha == 255)
           {
-             memcpy(dest, src, length * sizeof(uint));
+             memcpy(dest, src, length * sizeof(uint32_t));
           }
         else
           {
@@ -139,7 +139,7 @@ RGBA_Comp_Func func_for_mode[EFL_GFX_RENDER_OP_LAST] = {
 };
 
 RGBA_Comp_Func_Solid
-efl_draw_func_solid_span_get(Efl_Gfx_Render_Op op, uint color)
+efl_draw_func_solid_span_get(Efl_Gfx_Render_Op op, uint32_t color)
 {
    if ((color & 0xff000000) == 0xff000000)
      {
@@ -150,7 +150,7 @@ efl_draw_func_solid_span_get(Efl_Gfx_Render_Op op, uint color)
 }
 
 RGBA_Comp_Func
-efl_draw_func_span_get(Efl_Gfx_Render_Op op, uint color, Eina_Bool src_alpha)
+efl_draw_func_span_get(Efl_Gfx_Render_Op op, uint32_t color, Eina_Bool src_alpha)
 {
    if (((color & 0xff000000) == 0xff000000) && !src_alpha)
      {
