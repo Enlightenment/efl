@@ -93,6 +93,11 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name))
 #define FINDSYM2(dst, sym, typ) if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym)
 #define FALLBAK(dst, typ) if (!dst) dst = (typ)sym_missing
 
+#define SWAP(a, b, tmp) \
+   tmp = *a; \
+   *a = *b; \
+   *b = tmp;
+
 #ifdef GL_GLES
    FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", glsym_func_void);
    FINDSYM2(glsym_glGenFramebuffers, "glGenFramebuffers", glsym_func_void);
@@ -1833,71 +1838,111 @@ again:
    PUSH_6_COLORS(pn, r, g, b, a);
 }
 
+// 1-2      4-1
+// | |  =>  | |
+// 4-3      3-2
 static void
-_rotate_point_90(double *x, double *y, double w, double h)
+_rotate_90(double *x1, double *y1, double *x2, double *y2, double *x3, double *y3, double *x4, double *y4)
 {
-   double tx, ty, t;
+   double tmp;
 
-   tx = *x - w / 2;
-   ty = *y - h / 2;
-   t = tx;
-   tx = ty;
-   ty = t;
-   tx = tx + h / 2;
-   ty = ty + w / 2;
-   *x = tx * h / w;
-   *y = w - ty * w / h;
+   SWAP(x1, x4, tmp);
+   SWAP(y1, y4, tmp);
+
+   SWAP(x4, x3, tmp);
+   SWAP(y4, y3, tmp);
+
+   SWAP(x3, x2, tmp);
+   SWAP(y3, y2, tmp);
 }
 
+// 1-2      3-4
+// | |  =>  | |
+// 4-3      2-1
 static void
-_rotate_point_180(double *x, double *y, double w, double h)
+_rotate_180(double *x1, double *y1, double *x2, double *y2, double *x3, double *y3, double *x4, double *y4)
 {
-   double tx, ty;
+   double tmp;
 
-   tx = *x - w / 2;
-   ty = *y - h / 2;
-   tx = -tx;
-   ty = -ty;
-   tx = tx + w / 2;
-   ty = ty + h / 2;
-   *x = tx;
-   *y = ty;
+   SWAP(x1, x3, tmp);
+   SWAP(y1, y3, tmp);
+
+   SWAP(x2, x4, tmp);
+   SWAP(y2, y4, tmp);
 }
 
+// 1-2      2-3
+// | |  =>  | |
+// 4-3      1-4
 static void
-_rotate_point_270(double *x, double *y, double w, double h)
+_rotate_270(double *x1, double *y1, double *x2, double *y2, double *x3, double *y3, double *x4, double *y4)
 {
-   double tx, ty, t;
+   double tmp;
 
-   tx = *x - h / 2;
-   ty = *y - w / 2;
-   t = tx;
-   tx = ty;
-   ty = t;
-   tx = tx + w / 2;
-   ty = ty + h / 2;
-   *x = h - tx * h / w;
-   *y = ty * w / h;
+   SWAP(x1, x2, tmp);
+   SWAP(y1, y2, tmp);
+
+   SWAP(x2, x3, tmp);
+   SWAP(y2, y3, tmp);
+
+   SWAP(x3, x4, tmp);
+   SWAP(y3, y4, tmp);
 }
 
+// 1-2      2-1
+// | |  =>  | |
+// 4-3      3-4
 static void
-_transpose(double *x, double *y, double w, double h)
+_flip_horizontal(double *x1, double *y1, double *x2, double *y2, double *x3, double *y3, double *x4, double *y4)
 {
-   double t;
+   double tmp;
 
-   t = *x;
-   *x = *y * h / w;
-   *y = t * w / h;
+   SWAP(x1, x2, tmp);
+   SWAP(y1, y2, tmp);
+
+   SWAP(x3, x4, tmp);
+   SWAP(y3, y4, tmp);
 }
 
+// 1-2      4-3
+// | |  =>  | |
+// 4-3      1-2
 static void
-_transverse(double *x, double *y, double w, double h)
+_flip_vertical(double *x1, double *y1, double *x2, double *y2, double *x3, double *y3, double *x4, double *y4)
 {
-   double t;
+   double tmp;
 
-   t = *x;
-   *x = (w - *y) * h / w;
-   *y = (h - t) * w / h;
+   SWAP(x1, x4, tmp);
+   SWAP(y1, y4, tmp);
+
+   SWAP(x2, x3, tmp);
+   SWAP(y2, y3, tmp);
+}
+
+// 1-2      1-4
+// | |  =>  | |
+// 4-3      2-3
+static void
+_transpose(double *x1 EINA_UNUSED, double *y1 EINA_UNUSED, double *x2, double *y2,
+           double *x3 EINA_UNUSED, double *y3 EINA_UNUSED, double *x4, double *y4)
+{
+   double tmp;
+
+   SWAP(x2, x4, tmp);
+   SWAP(y2, y4, tmp);
+}
+
+// 1-2      3-2
+// | |  =>  | |
+// 4-3      4-1
+static void
+_transverse(double *x1, double *y1, double *x2 EINA_UNUSED, double *y2 EINA_UNUSED,
+            double *x3, double *y3, double *x4 EINA_UNUSED, double *y4 EINA_UNUSED)
+{
+   double tmp;
+
+   SWAP(x1, x3, tmp);
+   SWAP(y1, y3, tmp);
 }
 
 void
@@ -1909,6 +1954,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                   int r, int g, int b, int a,
                                   Eina_Bool smooth, Eina_Bool tex_only)
 {
+
    Evas_GL_Texture_Pool *pt;
    double ox1, oy1, ox2, oy2, ox3, oy3, ox4, oy4;
    GLfloat tx1, ty1, tx2, ty2, tx3, ty3, tx4, ty4;
@@ -2002,15 +2048,67 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
 
    pw = pt->w;
    ph = pt->h;
+
    if (tex->im &&
-       (tex->im->orient == EVAS_IMAGE_ORIENT_90 ||
-        tex->im->orient == EVAS_IMAGE_ORIENT_270 ||
-        tex->im->orient == EVAS_IMAGE_FLIP_TRANSPOSE ||
-        tex->im->orient == EVAS_IMAGE_FLIP_TRANSVERSE))
+       (tex->im->orient == EVAS_IMAGE_ORIENT_90))
      {
-        // Adjust size for taking rotation into account as im->w and h are already modified.
-        pw = pt->h;
-        ph = pt->w;
+        double tmp;
+        
+        SWAP(&sw, &sh, tmp);
+        SWAP(&sx, &sy, tmp);
+
+        sy = tex->im->h - sh - sy;
+     }
+
+   if (tex->im &&
+       (tex->im->orient == EVAS_IMAGE_ORIENT_180))
+     {
+        sx = tex->im->w - sw - sx;
+        sy = tex->im->h - sh - sy;
+     }
+
+   if (tex->im &&
+       (tex->im->orient == EVAS_IMAGE_ORIENT_270))
+     {
+        double tmp;
+
+        SWAP(&sw, &sh, tmp);
+        SWAP(&sx, &sy, tmp);
+
+        sx = tex->im->w - sw - sx;
+     }
+
+   if (tex->im &&
+       (tex->im->orient == EVAS_IMAGE_FLIP_HORIZONTAL))
+     {
+        sx = tex->im->w - sw - sx;
+     }
+
+   if (tex->im &&
+       (tex->im->orient == EVAS_IMAGE_FLIP_VERTICAL))
+     {
+        sy = tex->im->h - sh - sy;
+     }
+
+   if (tex->im &&
+       (tex->im->orient == EVAS_IMAGE_FLIP_TRANSVERSE))
+     {
+        double tmp;
+
+        SWAP(&sw, &sh, tmp);
+        SWAP(&sx, &sy, tmp);
+        
+        sx = tex->im->w - sw - sx;
+        sy = tex->im->h - sh - sy;
+     }
+
+   if (tex->im &&
+       (tex->im->orient == EVAS_IMAGE_FLIP_TRANSPOSE))
+     {
+        double tmp;
+
+        SWAP(&sw, &sh, tmp);
+        SWAP(&sx, &sy, tmp);
      }
 
    ox1 = sx;
@@ -2038,46 +2136,25 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
            case EVAS_IMAGE_ORIENT_NONE:
               break;
            case EVAS_IMAGE_ORIENT_90:
-              _rotate_point_90(&ox1, &oy1, tex->im->w, tex->im->h);
-              _rotate_point_90(&ox2, &oy2, tex->im->w, tex->im->h);
-              _rotate_point_90(&ox3, &oy3, tex->im->w, tex->im->h);
-              _rotate_point_90(&ox4, &oy4, tex->im->w, tex->im->h);
+              _rotate_90(&ox1, &oy1, &ox2, &oy2, &ox3, &oy3, &ox4, &oy4);
               break;
            case EVAS_IMAGE_ORIENT_180:
-              _rotate_point_180(&ox1, &oy1, tex->im->w, tex->im->h);
-              _rotate_point_180(&ox2, &oy2, tex->im->w, tex->im->h);
-              _rotate_point_180(&ox3, &oy3, tex->im->w, tex->im->h);
-              _rotate_point_180(&ox4, &oy4, tex->im->w, tex->im->h);
+              _rotate_180(&ox1, &oy1, &ox2, &oy2, &ox3, &oy3, &ox4, &oy4);
               break;
            case EVAS_IMAGE_ORIENT_270:
-              _rotate_point_270(&ox1, &oy1, tex->im->w, tex->im->h);
-              _rotate_point_270(&ox2, &oy2, tex->im->w, tex->im->h);
-              _rotate_point_270(&ox3, &oy3, tex->im->w, tex->im->h);
-              _rotate_point_270(&ox4, &oy4, tex->im->w, tex->im->h);
+              _rotate_270(&ox1, &oy1, &ox2, &oy2, &ox3, &oy3, &ox4, &oy4);
               break;
            case EVAS_IMAGE_FLIP_HORIZONTAL:
-              ox1 = tex->im->w - ox1;
-              ox2 = tex->im->w - ox2;
-              ox3 = tex->im->w - ox3;
-              ox4 = tex->im->w - ox4;
+              _flip_horizontal(&ox1, &oy1, &ox2, &oy2, &ox3, &oy3, &ox4, &oy4);
               break;
            case EVAS_IMAGE_FLIP_VERTICAL:
-              oy1 = tex->im->h - oy1;
-              oy2 = tex->im->h - oy2;
-              oy3 = tex->im->h - oy3;
-              oy4 = tex->im->h - oy4;
+              _flip_vertical(&ox1, &oy1, &ox2, &oy2, &ox3, &oy3, &ox4, &oy4);
               break;
            case EVAS_IMAGE_FLIP_TRANSVERSE:
-              _transverse(&ox1, &oy1, tex->im->w, tex->im->h);
-              _transverse(&ox2, &oy2, tex->im->w, tex->im->h);
-              _transverse(&ox3, &oy3, tex->im->w, tex->im->h);
-              _transverse(&ox4, &oy4, tex->im->w, tex->im->h);
+              _transverse(&ox1, &oy1, &ox2, &oy2, &ox3, &oy3, &ox4, &oy4);
               break;
            case EVAS_IMAGE_FLIP_TRANSPOSE:
-              _transpose(&ox1, &oy1, tex->im->w, tex->im->h);
-              _transpose(&ox2, &oy2, tex->im->w, tex->im->h);
-              _transpose(&ox3, &oy3, tex->im->w, tex->im->h);
-              _transpose(&ox4, &oy4, tex->im->w, tex->im->h);
+              _transpose(&ox1, &oy1, &ox2, &oy2, &ox3, &oy3, &ox4, &oy4);
               break;
            default:
               ERR("Wrong orientation ! %i", tex->im->orient);
