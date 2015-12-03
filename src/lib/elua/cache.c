@@ -80,7 +80,7 @@ bc_tmp_open(const char *fname, char *buf, size_t buflen)
 #endif
    if (fd < 0)
      return NULL;
-   return fdopen(fd, "w");
+   return fdopen(fd, "wb");
 }
 
 static void

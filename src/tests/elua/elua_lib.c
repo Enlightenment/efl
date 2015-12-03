@@ -98,7 +98,7 @@ START_TEST(elua_api)
 
     fd = mkstemp(buf);
     fail_if(fd < 0);
-    f = fdopen(fd, "w");
+    f = fdopen(fd, "wb");
     fail_if(!f);
     fprintf(f, "return 5\n");
     fclose(f);

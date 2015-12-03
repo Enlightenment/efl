@@ -10156,7 +10156,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
    if (fd < 0)
      return EINA_FALSE;  /* FIXME: report something */
 
-   f = fdopen(fd, "w");
+   f = fdopen(fd, "wb");
    if (!f)
      {
         close(fd);

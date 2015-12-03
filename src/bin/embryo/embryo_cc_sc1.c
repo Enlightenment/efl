@@ -193,7 +193,7 @@ sc_eofsrc(void *handle)
 void               *
 sc_openasm(int fd)
 {
-   return fdopen(fd, "w+");
+   return fdopen(fd, "wb+");
 }
 
 void
