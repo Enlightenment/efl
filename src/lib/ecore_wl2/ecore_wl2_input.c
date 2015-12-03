@@ -1087,11 +1087,11 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
         wl_pointer_set_user_data(input->wl.pointer, input);
         wl_pointer_add_listener(input->wl.pointer, &_pointer_listener, input);
 
-        /* if (!input->cursor.surface) */
-        /*   { */
-        /*      input->cursor.surface = */
-        /*        wl_compositor_create_surface(input->display->wl.compositor); */
-        /*   } */
+        if (!input->cursor.surface)
+          {
+             input->cursor.surface =
+               wl_compositor_create_surface(input->display->wl.compositor);
+          }
      }
    else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && (input->wl.pointer))
      {
