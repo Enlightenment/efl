@@ -259,6 +259,10 @@ lib/evas/canvas/evas_vg_gradient_radial.c \
 lib/evas/canvas/evas_vg_utils.c \
 lib/evas/canvas/evas_vg_shape.c
 
+# Static draw lib
+lib_evas_libevas_la_SOURCES += \
+static_libs/draw/draw_alpha_main.c
+
 # Engine
 lib_evas_libevas_la_SOURCES += \
 lib/evas/common/evas_op_copy_main_.c \
@@ -267,7 +271,6 @@ lib/evas/common/evas_op_add_main_.c \
 lib/evas/common/evas_op_sub_main_.c \
 lib/evas/common/evas_op_mask_main_.c \
 lib/evas/common/evas_op_mul_main_.c \
-lib/evas/common/evas_alpha_main.c \
 lib/evas/common/evas_blend_main.c \
 lib/evas/common/evas_blit_main.c \
 lib/evas/common/evas_convert_color.c \

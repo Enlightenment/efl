@@ -7,13 +7,15 @@
 
 #include <Efl.h>
 
-typedef void (*RGBA_Comp_Func)(uint *dest, const uint *src, int length, uint mul_col, uint const_alpha);
-typedef void (*RGBA_Comp_Func_Solid)(uint *dest, int length, uint color, uint const_alpha);
+typedef void (*RGBA_Comp_Func)       (uint *dest, const uint *src, int length, uint mul_col, uint const_alpha);
+typedef void (*RGBA_Comp_Func_Solid) (uint *dest, int length, uint color, uint const_alpha);
+typedef void (*Alpha_Gfx_Func)       (uint8_t *src, uint8_t *dst, int len);
 
 int efl_draw_init(void);
 
 RGBA_Comp_Func_Solid efl_draw_func_solid_span_get(Efl_Gfx_Render_Op op, uint color);
 RGBA_Comp_Func efl_draw_func_span_get(Efl_Gfx_Render_Op op, uint color, Eina_Bool src_alpha);
+Alpha_Gfx_Func efl_draw_alpha_func_get(Efl_Gfx_Render_Op op, Eina_Bool has_mask);
 
 
 /* common sw draw helpers */

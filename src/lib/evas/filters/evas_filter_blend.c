@@ -1,6 +1,7 @@
 #include "evas_filter.h"
 #include "evas_filter_private.h"
 #include "evas_blend_private.h"
+#include "draw.h"
 
 // Use a better formula than R+G+B for rgba to alpha conversion (RGB to YCbCr)
 #define RGBA2ALPHA_WEIGHTED 1
@@ -32,7 +33,7 @@ _image_draw_cpu_alpha2alpha(void *data EINA_UNUSED, void *context,
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL((src_w == dst_w) && (src_h == dst_h), EINA_FALSE);
 
-   func = evas_common_alpha_func_get(dc->render_op);
+   func = efl_draw_alpha_func_get(dc->render_op, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(func, EINA_FALSE);
 
    sw = src->cache_entry.w;

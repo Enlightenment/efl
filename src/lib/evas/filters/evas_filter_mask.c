@@ -2,7 +2,7 @@
 
 #include "evas_filter_private.h"
 #include "evas_blend_private.h"
-
+#include "draw.h"
 
 // Naming convention: _func_engine_incolor_maskcolor_outcolor()
 static Eina_Bool _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd);
@@ -110,7 +110,7 @@ _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd)
      memcpy(dst, src, w * h * sizeof(DATA8));
 
    // Second pass: apply render op
-   func = evas_common_alpha_func_get(render_op);
+   func = efl_draw_alpha_func_get(render_op, EINA_FALSE);
    for (y = 0, my = 0; y < h; y++, my++, msk += mw)
      {
         if (my >= mh)
@@ -314,7 +314,7 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
    span = malloc(stepsize * sizeof(DATA8));
 
    func = evas_common_gfx_func_composite_mask_color_span_get(color, out->cache_entry.flags.alpha, 1, op);
-   span_func = evas_common_alpha_func_get(EVAS_RENDER_MASK);
+   span_func = efl_draw_alpha_func_get(cmd->draw.render_op, EINA_TRUE);
 
    for (y = 0, my = 0; y < h; y++, my++, msk += mw)
      {
