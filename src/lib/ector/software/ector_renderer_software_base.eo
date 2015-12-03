@@ -1,6 +1,7 @@
 class Ector.Renderer.Software.Base (Ector.Renderer.Generic.Base)
 {
    legacy_prefix: null;
+   data: null;
    methods {
       fill {
          return: bool;

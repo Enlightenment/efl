@@ -94,8 +94,8 @@ _blend_image_argb(int count, const SW_FT_Span *spans, void *user_data)
 {
    Span_Data *data = user_data;
    RGBA_Comp_Func comp_func;
-   DATA32 *buffer, *target;
-   DATA8 *src8;
+   uint32_t *buffer, *target;
+   uint8_t *src8;
    unsigned int l, length, sy = 0;
    const int pix_stride = data->raster_buffer->stride / 4;
 
@@ -114,7 +114,7 @@ _blend_image_argb(int count, const SW_FT_Span *spans, void *user_data)
           {
              l = MIN(length, data->buffer->generic->w);
              eo_do(data->buffer->generic->eo, src8 = ector_buffer_span_get(0, sy, l, EFL_GFX_COLORSPACE_ARGB8888, NULL));
-             comp_func(target, (DATA32 *) src8, l, data->mul_col, spans->coverage);
+             comp_func(target, (uint32_t *) src8, l, data->mul_col, spans->coverage);
              eo_do(data->buffer->generic->eo, ector_buffer_span_free(src8));
              target += l;
              length -= l;

@@ -6,22 +6,7 @@
 #include "sw_ft_stroker.h"
 #include "../ector_private.h"
 
-#ifndef DATA32
-typedef unsigned int DATA32;
-#endif
-
-#ifndef uint
-typedef unsigned int uint;
-#endif
-
 typedef struct _Ector_Software_Surface_Data Ector_Software_Surface_Data;
-typedef struct _Ector_Renderer_Software_Base_Data Ector_Renderer_Software_Base_Data;
-
-#define CHECK_SOFTWARE(Parent) (!(Parent && Parent->software))
-
-struct _Ector_Renderer_Software_Base_Data
-{
-};
 
 // Gradient related structure
 typedef struct _Software_Gradient_Linear_Data
@@ -90,16 +75,16 @@ typedef struct _Span_Data
    Eina_Matrix3     inv;
    Span_Data_Type   type;
    Eina_Bool        fast_matrix ;
-   DATA32           mul_col;
+   uint32_t         mul_col;
    Efl_Gfx_Render_Op        op;
    union {
-      DATA32 color;
+      uint32_t color;
       Ector_Renderer_Software_Gradient_Data *gradient;
       Ector_Software_Buffer_Base_Data *buffer;
    };
 } Span_Data;
 
-struct _Software_Rasterizer
+typedef struct _Software_Rasterizer
 {
    SW_FT_Raster     raster;
    SW_FT_Stroker    stroker;
@@ -108,7 +93,7 @@ struct _Software_Rasterizer
    Eina_Matrix3    *transform;
    Eina_Rectangle   system_clip;
 
-};
+} Software_Rasterizer;
 
 struct _Ector_Software_Surface_Data
 {
