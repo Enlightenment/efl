@@ -83,6 +83,15 @@ _done_once_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED)
 }
 
 static void
+_done_file_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED)
+{
+   int *num_of_attr = (int *)data;
+
+   fail_if( (*num_of_attr) != (sizeof (attribute) / sizeof (attribute[0])));
+   ecore_main_loop_quit();
+}
+
+static void
 _done_get_cb(void *data, Eio_File *handler EINA_UNUSED, const char *name, unsigned int len EINA_UNUSED)
 
 {
@@ -170,14 +179,12 @@ START_TEST(eio_test_xattr_set)
 
    num_of_attr = 0;
    fp = eio_file_xattr(test_file_path,
-                       _filter_cb, _main_cb, _done_once_cb, _error_cb,
+                       _filter_cb, _main_cb, _done_file_cb, _error_cb,
                        &num_of_attr);
    fail_if(num_of_attr != 0);
    fail_if(!fp);
 
    ecore_main_loop_begin();
-
-   fail_if(num_of_attr != sizeof (attribute)  / sizeof (attribute[0]));
 
    close(fd);
    unlink(test_file_path);
