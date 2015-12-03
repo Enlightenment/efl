@@ -9,6 +9,7 @@
 
 #include "evas_font_private.h"
 #include "evas_blend_private.h"
+#include "draw.h"
 
 #ifdef EVAS_CSERVE2
 # include "../cserve2/evas_cs2_private.h"
@@ -512,7 +513,7 @@ evas_common_font_glyph_draw(RGBA_Font_Glyph *fg,
         DATA8 *src8;
         int row;
 
-        func = evas_common_alpha_func_get(dc->render_op);
+        func = efl_draw_alpha_func_get(dc->render_op, EINA_FALSE);
         src8 = evas_common_font_glyph_uncompress(fg, NULL, NULL);
         if (!src8) return;
 
