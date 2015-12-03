@@ -239,7 +239,7 @@ eina_benchmark_run(Eina_Benchmark *bench)
             bench->name,
             bench->run);
 
-   main_script = fopen(buffer, "w");
+   main_script = fopen(buffer, "wb");
    if (!main_script)
       return NULL;
 
@@ -293,7 +293,7 @@ eina_benchmark_run(Eina_Benchmark *bench)
                bench->run,
                run->name);
 
-      current_data = fopen(buffer, "w");
+      current_data = fopen(buffer, "wb");
       if (!current_data)
          continue;
 

@@ -29,7 +29,7 @@ rend_dbg(const char *txt)
 #ifdef STDOUT_DBG
         dbf = stdout;
 #else
-        dbf = fopen("EVAS-RENDER-DEBUG.log", "w");
+        dbf = fopen("EVAS-RENDER-DEBUG.log", "wb");
 #endif
         if (!dbf) return;
      }

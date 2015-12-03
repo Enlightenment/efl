@@ -192,7 +192,7 @@ on_error:
    if (!emile_cipher_init()) return NULL;
 
    /* Load the X509 certificate in memory. */
-   fp = fopen(certificate_file, "r");
+   fp = fopen(certificate_file, "rb");
    if (!fp)
      return NULL;
 
@@ -207,7 +207,7 @@ on_error:
      goto on_error;
 
    /* Load the private key in memory. */
-   fp = fopen(private_key_file, "r");
+   fp = fopen(private_key_file, "rb");
    if (!fp)
      goto on_error;
 

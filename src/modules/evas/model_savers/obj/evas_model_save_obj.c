@@ -163,7 +163,7 @@ _save_mesh(Evas_Canvas3D_Mesh_Data *pd,
 
    evas_model_save_data_from_mesh(pd, f, header, &data);
 
-   FILE * _obj_file = fopen(_obj_file_name, "w+");
+   FILE * _obj_file = fopen(_obj_file_name, "wb+");
    if (!_obj_file)
      {
         ERR("File open '%s' for save failed", _obj_file_name);
@@ -191,7 +191,7 @@ _save_material(Evas_Canvas3D_Mesh_Data *pd EINA_UNUSED,
                const char *_mtl_file_name,
                Evas_Canvas3D_Material_Data *mat)
 {
-   FILE * _mtl_file = fopen(_mtl_file_name, "w+");
+   FILE * _mtl_file = fopen(_mtl_file_name, "wb+");
    if (!_mtl_file)
      {
         ERR("File open '%s' for save failed", _mtl_file_name);

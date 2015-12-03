@@ -111,7 +111,7 @@ _save_direct_tgv(RGBA_Image *im, const char *file, int compress)
    // header[7]: options (unused)
    header[7] = 0;
 
-   f = fopen(file, "w");
+   f = fopen(file, "wb");
    if (!f) return 0;
 
    // Write header
@@ -300,7 +300,7 @@ evas_image_save_file_tgv(RGBA_Image *im,
    // Note: consider extending the header instead of filling all the bits here
    header[7] = 0;
 
-   f = fopen(file, "w");
+   f = fopen(file, "wb");
    if (!f) return 0;
 
    // Write header

@@ -617,7 +617,7 @@ elua_util_script_run(Elua_State *es, int argc, char **argv, int n, int *quit)
    if (fname)
      {
         /* check if there is a file of that name */
-        FILE *f = fopen(fname, "r");
+        FILE *f = fopen(fname, "rb");
         if (f)
           {
              fclose(f);

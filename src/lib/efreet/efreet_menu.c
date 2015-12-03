@@ -687,7 +687,7 @@ efreet_menu_save(Efreet_Menu *menu, const char *path)
     EINA_SAFETY_ON_NULL_RETURN_VAL(menu, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(path, 0);
 
-    f = fopen(path, "w");
+    f = fopen(path, "wb");
     if (!f) return 0;
     fprintf(f, "<?xml version=\"1.0\"?>\n");
     fprintf(f, "<!DOCTYPE Menu PUBLIC \"-//freedesktop//DTD Menu 1.0//EN\" "

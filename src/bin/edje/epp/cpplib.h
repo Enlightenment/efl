@@ -345,7 +345,7 @@ struct cpp_options {
 
    char                print_deps_missing_files;
 
-   /* If true, fopen (deps_file, "a") else fopen (deps_file, "w"). */
+   /* If true, fopen (deps_file, "ab") else fopen (deps_file, "wb"). */
    char                print_deps_append;
 
    /* Nonzero means print names of header files (-H).  */

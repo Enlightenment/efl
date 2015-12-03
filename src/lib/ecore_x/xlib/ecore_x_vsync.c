@@ -443,7 +443,7 @@ _drm_init(int *flags)
    if (stat("/sys/module/vboxvideo", &st) == 0)
      {
 /*
-        FILE *fp = fopen("/sys/module/vboxvideo/version", "r");
+        FILE *fp = fopen("/sys/module/vboxvideo/version", "rb");
         if (fp)
           {
              if (fgets(buf, sizeof(buf), fp))
@@ -462,7 +462,7 @@ _drm_init(int *flags)
    // only do this on new kernels = let's say 3.14 and up. 3.16 definitely
    // works
      {
-        FILE *fp = fopen("/proc/sys/kernel/osrelease", "r");
+        FILE *fp = fopen("/proc/sys/kernel/osrelease", "rb");
         if (fp)
           {
              if (fgets(buf, sizeof(buf), fp))

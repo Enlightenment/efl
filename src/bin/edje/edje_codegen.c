@@ -387,11 +387,11 @@ _standardizes_header(const char *filename)
 static Eina_Bool
 _open_file_descriptors(const char *source, const char *header)
 {
-   header_fd = fopen(header, "w");
+   header_fd = fopen(header, "wb");
    if (!header_fd)
      return EINA_FALSE;
 
-   source_fd = fopen(source, "w");
+   source_fd = fopen(source, "wb");
    if (!source_fd)
      goto err;
 

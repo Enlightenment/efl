@@ -75,7 +75,7 @@ evas_model_save_file_ply(const Evas_Canvas3D_Mesh *mesh,
    if (!evas_model_save_header_from_mesh(pd, f, &header)) return;
    evas_model_save_data_from_mesh(pd, f, header, &data);
 
-   FILE *_ply_file = fopen(file, "w+");
+   FILE *_ply_file = fopen(file, "wb+");
    if (!_ply_file)
      {
         ERR("File open '%s' for save failed", file);

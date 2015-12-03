@@ -10,7 +10,7 @@ get_cmdline_from_argv(const char *fname, const char **argv)
    char         pbuf[PATH_MAX];
    const char  *arg = NULL;
 
-   FILE *testf = fopen(fname, "r");
+   FILE *testf = fopen(fname, "rb");
    if  (!testf)
       return NULL;
 

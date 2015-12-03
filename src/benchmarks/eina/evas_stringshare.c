@@ -196,7 +196,7 @@ evas_stringshare_add(const char *str)
 //     {
 //	char bf[256];
 //	snprintf(bf, sizeof(bf), "strlog-%i", getpid());
-//	f = fopen(bf, "w");
+//	f = fopen(bf, "wb");
 //     }
    hash_num = _evas_stringshare_hash_gen(str, &slen);
    for (el = share.buckets[hash_num]; el; pel = el, el = el->next)

@@ -271,7 +271,7 @@ ecore_init(void)
        char tmp[1024];
 
        snprintf(tmp, sizeof(tmp), "ecore_mem_stat.%i", getpid());
-       _ecore_memory_statistic_file = fopen(tmp, "w");
+       _ecore_memory_statistic_file = fopen(tmp, "wb");
 #endif
         _ecore_memory_pid = getpid();
         ecore_animator_add(_ecore_memory_statistic, NULL);

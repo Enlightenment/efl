@@ -7492,7 +7492,7 @@ using_file(const char *filename, const char type)
    FILE *f = NULL;
 
    if (!options.watchfile) return;
-   f = fopen(options.watchfile, "a");
+   f = fopen(options.watchfile, "ab");
    if (!f) return;
    if (annotate)
      {

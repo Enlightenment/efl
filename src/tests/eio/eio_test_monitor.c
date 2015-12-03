@@ -72,7 +72,7 @@ static Eina_Bool _create_directory(void *data)
 
 static Eina_Bool _create_file(void *data)
 {
-   FILE *fd = fopen((const char*)data, "w+");
+   FILE *fd = fopen((const char*)data, "wb+");
    ck_assert_ptr_ne(fd, NULL);
    fprintf(fd, "test test");
    fclose(fd);
@@ -88,7 +88,7 @@ static Eina_Bool _delete_file(void *data)
 
 static Eina_Bool _modify_file(void *data)
 {
-   FILE *fd = fopen((const char*)data, "a");
+   FILE *fd = fopen((const char*)data, "ab");
    ck_assert_ptr_ne(fd, NULL);
    fprintf(fd, "appened");
    fclose(fd);

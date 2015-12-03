@@ -106,7 +106,7 @@ _address_book_load(Eina_Model *model)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(filename, EINA_FALSE);
 
-   f = fopen(filename, "r");
+   f = fopen(filename, "rb");
 
    // Now that we have used filename, we must free its memory holder:
    eina_value_flush(&val);

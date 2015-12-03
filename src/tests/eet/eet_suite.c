@@ -1734,7 +1734,7 @@ START_TEST(eet_identity_simple)
 
    fail_if(-1 == (fd = mkstemp(file)));
    fail_if(!!close(fd));
-   fail_if(!(noread = fopen("/dev/null", "w")));
+   fail_if(!(noread = fopen("/dev/null", "wb")));
 
    /* Sign an eet file. */
    ef = eet_open(file, EET_FILE_MODE_WRITE);

@@ -215,7 +215,7 @@ efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
     /* create info file */
     snprintf(dest, sizeof(dest), "%s/info/%s.trashinfo", trash_dir, fname);
 
-    if ((f = fopen(dest, "w")))
+    if ((f = fopen(dest, "wb")))
     {
         fputs("[Trash Info]\n", f);
 

@@ -3224,7 +3224,7 @@ typedef void (*Eet_Dump_Callback)(void *data, const char *str);
  *   int len;
  *   void *data;
  *
- *   f = fopen(file, "r");
+ *   f = fopen(file, "rb");
  *   fseek(f, 0, SEEK_END);
  *   len = ftell(f);
  *   rewind(f);
@@ -4030,7 +4030,7 @@ eet_data_xattr_cipher_set(const char *filename,
  *   int len;
  *   void *data;
  *
- *   f = fopen(file, "r");
+ *   f = fopen(file, "rb");
  *   fseek(f, 0, SEEK_END);
  *   len = ftell(f);
  *   rewind(f);

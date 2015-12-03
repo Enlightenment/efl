@@ -74,7 +74,7 @@ main(int argc, char **argv)
 
    if (!opts->out_fname || !strcmp(opts->out_fname, ""))
       opts->out_fname = "stdout";
-   else if (!freopen(opts->out_fname, "w", stdout))
+   else if (!freopen(opts->out_fname, "wb", stdout))
       cpp_pfatal_with_name(&parse_in, opts->out_fname);
 
    for (i = 0;; i++)

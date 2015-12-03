@@ -1589,7 +1589,7 @@ _ecore_con_ssl_server_privkey_add_openssl(Ecore_Con_Server *obj,
    FILE *fp = NULL;
    EVP_PKEY *privkey = NULL;
 
-   if (!(fp = fopen(key_file, "r")))
+   if (!(fp = fopen(key_file, "rb")))
      goto error;
 
    SSL_ERROR_CHECK_GOTO_ERROR(!(privkey = PEM_read_PrivateKey(fp, NULL, NULL, NULL)));
@@ -1616,7 +1616,7 @@ _ecore_con_ssl_server_cert_add_openssl(Ecore_Con_Server *obj,
    FILE *fp = NULL;
    X509 *cert = NULL;
 
-   if (!(fp = fopen(cert_file, "r")))
+   if (!(fp = fopen(cert_file, "rb")))
      goto error;
 
    SSL_ERROR_CHECK_GOTO_ERROR(!(cert = PEM_read_X509(fp, NULL, NULL, NULL)));

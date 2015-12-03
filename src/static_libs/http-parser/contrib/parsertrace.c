@@ -108,7 +108,7 @@ int main(int argc, char* argv[]) {
   }
 
   char* filename = argv[2];
-  FILE* file = fopen(filename, "r");
+  FILE* file = fopen(filename, "rb");
   if (file == NULL) {
     perror("fopen");
     return EXIT_FAILURE;

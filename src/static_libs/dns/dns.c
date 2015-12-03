@@ -3516,7 +3516,7 @@ int dns_hosts_loadpath(struct dns_hosts *hosts, const char *path) {
 	FILE *fp;
 	int error;
 
-	if (!(fp = fopen(path, "r")))
+	if (!(fp = fopen(path, "rb")))
 		return dns_syerr();
 
 	error	= dns_hosts_loadfile(hosts, fp);
@@ -4073,7 +4073,7 @@ int dns_resconf_loadpath(struct dns_resolv_conf *resconf, const char *path) {
 	FILE *fp;
 	int error;
 
-	if (!(fp = fopen(path, "r")))
+	if (!(fp = fopen(path, "rb")))
 		return dns_syerr();
 
 	error	= dns_resconf_loadfile(resconf, fp);
@@ -4456,7 +4456,7 @@ int dns_nssconf_loadpath(struct dns_resolv_conf *resconf, const char *path) {
 	FILE *fp;
 	int error;
 
-	if (!(fp = fopen(path, "r")))
+	if (!(fp = fopen(path, "rb")))
 		return dns_syerr();
 
 	error = dns_nssconf_loadfile(resconf, fp);

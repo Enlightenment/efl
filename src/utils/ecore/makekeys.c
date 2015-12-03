@@ -66,7 +66,7 @@ main(int argc, char **argv)
 
    for (l = 1; l < argc; l++) 
      {
-        if (!(fptr = fopen(argv[l], "r"))) 
+        if (!(fptr = fopen(argv[l], "rb")))
           {
              fprintf(stderr, "Could not open %s\n", argv[l]);
              continue;

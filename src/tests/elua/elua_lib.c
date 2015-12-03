@@ -116,7 +116,7 @@ START_TEST(elua_api)
     fail_if(!elua_util_script_run(st, 2, cargv, 1, &quit));
     fail_if(quit != 1);
 
-    f = fopen(buf, "w");
+    f = fopen(buf, "wb");
     fail_if(!f);
     fprintf(f, "return false");
     fclose(f);

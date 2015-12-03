@@ -752,7 +752,7 @@ efreet_mime_fallback_check(const char *file)
    if (ecore_file_can_exec(file))
      return _mime_application_x_executable;
 
-   if (!(f = fopen(file, "r"))) return NULL;
+   if (!(f = fopen(file, "rb"))) return NULL;
 
    i = fread(buf, 1, sizeof(buf), f);
    fclose(f);

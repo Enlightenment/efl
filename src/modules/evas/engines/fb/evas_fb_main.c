@@ -345,7 +345,7 @@ fb_list_modes(unsigned int *num_return)
    int num;
    
    num = 0;
-   f = fopen("/etc/fb.modes","r");
+   f = fopen("/etc/fb.modes","rb");
    if (!f)
      {
         *num_return = 0;

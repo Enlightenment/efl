@@ -20,9 +20,9 @@
 void
 _writeToFile(const char *filePath, char *text)
 {
-   FILE *f = fopen(filePath, "r+");
+   FILE *f = fopen(filePath, "rb+");
    if (f == NULL)
-     f = fopen(filePath, "w");
+     f = fopen(filePath, "wb");
    fail_if(f == NULL);
    fprintf(f, "%s\n", text);
    fclose(f);
