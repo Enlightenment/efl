@@ -271,6 +271,52 @@ _edje_part_make_rtl(Edje_Part_Description_Common *desc)
    desc->rel2.id_x = i;
 }
 
+static Edje_Part_Description_Common *
+_edje_get_custom_description_by_orientation(Edje *ed, Edje_Part_Description_Common *src, Edje_Part_Description_Common **dst, unsigned char type)
+{
+   Edje_Part_Description_Common *ret;
+   size_t memsize = 0;
+
+   if (!(*dst))
+     {
+        ret = _edje_get_description_by_orientation(ed, src, dst, type);
+        return ret;
+     }
+
+#define POPULATE_MEMSIZE_RTL(Short, Type)                        \
+case EDJE_PART_TYPE_##Short:                                          \
+{                                                                     \
+   memsize = sizeof(Edje_Part_Description_##Type);                    \
+   break;                                                             \
+}
+
+   switch (type)
+     {
+        POPULATE_MEMSIZE_RTL(RECTANGLE, Common);
+        POPULATE_MEMSIZE_RTL(SNAPSHOT, Snapshot);
+        POPULATE_MEMSIZE_RTL(SWALLOW, Common);
+        POPULATE_MEMSIZE_RTL(GROUP, Common);
+        POPULATE_MEMSIZE_RTL(SPACER, Common);
+        POPULATE_MEMSIZE_RTL(TEXT, Text);
+        POPULATE_MEMSIZE_RTL(TEXTBLOCK, Text);
+        POPULATE_MEMSIZE_RTL(IMAGE, Image);
+        POPULATE_MEMSIZE_RTL(PROXY, Proxy);
+        POPULATE_MEMSIZE_RTL(BOX, Box);
+        POPULATE_MEMSIZE_RTL(TABLE, Table);
+        POPULATE_MEMSIZE_RTL(EXTERNAL, External);
+        POPULATE_MEMSIZE_RTL(CAMERA, Camera);
+        POPULATE_MEMSIZE_RTL(LIGHT, Light);
+        POPULATE_MEMSIZE_RTL(MESH_NODE, Mesh_Node);
+     }
+#undef POPULATE_MEMSIZE_RTL
+
+   ret = *dst;
+   memcpy(ret, src, memsize);
+   _edje_part_make_rtl(ret);
+
+   return ret;
+}
+
 /**
  * Returns part description
  *
@@ -398,8 +444,8 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *state_name
 
    if (!strcmp(state_name, "custom"))
      return rp->custom ?
-            _edje_get_description_by_orientation(ed, rp->custom->description,
-                                                 &rp->custom->description_rtl, ep->type) : NULL;
+            _edje_get_custom_description_by_orientation(ed, rp->custom->description,
+                                                       &rp->custom->description_rtl, ep->type) : NULL;
 
    if (!strcmp(state_name, "default") && approximate)
      {
