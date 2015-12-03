@@ -46,7 +46,7 @@ _pixels_gry8_to_argb_convert(uint32_t *dst, const uint8_t *src, int len)
    for (k = 0; k < len; k++)
      {
         uint8_t s = *src++;
-        *dst++ = ARGB_JOIN(s, s, s, s);
+        *dst++ = DRAW_ARGB_JOIN(s, s, s, s);
      }
 }
 

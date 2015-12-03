@@ -40,15 +40,6 @@ extern int _ector_log_dom_global;
 
 /* The following macro are internal to Ector only at this stage */
 
-typedef unsigned char DATA8;
-typedef unsigned short DATA16;
-
-#define RGB_JOIN(r,g,b) \
-  (((r) << 16) + ((g) << 8) + (b))
-
-#define ARGB_JOIN(a,r,g,b) \
-  (((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
-
 static inline Eo *
 _eo_refplace(Eo **d, const Eo *s)
 {
