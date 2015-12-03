@@ -31,6 +31,10 @@ Eio_Monitor *_eio_monitor = NULL;
 
 Eina_Hash *_elm_key_bindings = NULL;
 
+#ifdef HAVE_ELEMENTARY_WL2
+Ecore_Wl2_Display *_elm_wl_display = NULL;
+#endif
+
 const char *_elm_engines[] = {
    "software_x11",
    "fb",
@@ -3316,6 +3320,10 @@ _elm_config_sub_shutdown(void)
 #ifdef HAVE_ELEMENTARY_X
    if (ecore_x_display_get()) ecore_x_shutdown();
 #endif
+#ifdef HAVE_ELEMENTARY_WL2
+   if (_elm_wl_display) ecore_wl2_display_disconnect(_elm_wl_display);
+   ecore_wl2_shutdown();
+#endif
    ELM_SAFE_FREE(_eio_monitor, eio_monitor_del);
    ELM_SAFE_FREE(_config_change_delay_timer, ecore_timer_del);
 }
@@ -3350,7 +3358,7 @@ _elm_config_file_monitor_cb(void *data EINA_UNUSED,
 void
 _elm_config_sub_init(void)
 {
-#if defined(HAVE_ELEMENTARY_X) || defined(HAVE_ELEMENTARY_WAYLAND)
+#if defined(HAVE_ELEMENTARY_X) || defined(HAVE_ELEMENTARY_WL2)
    const char *ev = getenv("ELM_DISPLAY");
 #endif
 
@@ -3385,7 +3393,7 @@ _elm_config_sub_init(void)
         ecore_x_init(NULL);
      }
 #endif
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
    Eina_Bool init_wl = EINA_FALSE;
    Eina_Bool have_wl_display = !!getenv("WAYLAND_DISPLAY");
 
@@ -3413,7 +3421,17 @@ _elm_config_sub_init(void)
      }
    if (init_wl)
      {
-        ecore_wl_init(NULL);
+        if (!ecore_wl2_init())
+          {
+             ERR("Could not initialize Ecore_Wl2");
+             goto end;
+          }
+        _elm_wl_display = ecore_wl2_display_connect(NULL);
+        if (!_elm_wl_display)
+          {
+             ERR("Could not connect to Wayland Display");
+             goto end;
+          }
      }
 #endif
    char buf[PATH_MAX];

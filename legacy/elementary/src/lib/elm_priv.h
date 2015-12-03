@@ -6,8 +6,8 @@
 #ifdef HAVE_ELEMENTARY_FB
 #include <Ecore_Fb.h>
 #endif
-#ifdef HAVE_ELEMENTARY_WAYLAND
-#include <Ecore_Wayland.h>
+#ifdef HAVE_ELEMENTARY_WL2
+#include <Ecore_Wl2.h>
 #endif
 #ifdef HAVE_ELEMENTARY_DRM
 #include <Ecore_Drm.h>
@@ -558,6 +558,10 @@ extern const char SIG_WIDGET_LANG_CHANGED[];
 extern const char SIG_WIDGET_ACCESS_CHANGED[];
 extern const char SIG_LAYOUT_FOCUSED[];
 extern const char SIG_LAYOUT_UNFOCUSED[];
+
+#ifdef HAVE_ELEMENTARY_WL2
+extern Ecore_Wl2_Display *_elm_wl_display;
+#endif
 
 #ifdef ENABLE_NLS
 /* Our gettext wrapper, used to disable translation of elm if the app

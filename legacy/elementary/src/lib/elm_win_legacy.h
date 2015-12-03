@@ -195,7 +195,7 @@ EAPI void                  elm_win_render(Evas_Object *obj);
  *
  * @ingroup Win
  */
-EAPI Ecore_Wl_Window *elm_win_wl_window_get(const Evas_Object *obj);
+EAPI Ecore_Wl2_Window *elm_win_wl_window_get(const Evas_Object *obj);
 
 /**
  * Set the preferred rotation value.

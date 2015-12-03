@@ -111,10 +111,10 @@ struct _Elm_Win_Data
       Ecore_Event_Handler *property_handler;
    } x;
 #endif
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
    struct
    {
-      Ecore_Wl_Window *win;
+      Ecore_Wl2_Window *win;
       Eina_Bool opaque_dirty : 1;
    } wl;
 #endif
@@ -349,7 +349,7 @@ _win_noblank_eval(void)
    if (noblanks > 0) ecore_x_screensaver_suspend();
    else ecore_x_screensaver_resume();
 #endif
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
    // XXX: no wl implementation of this yet - maybe higher up at prop level
 #endif
 }
@@ -1246,7 +1246,7 @@ _elm_win_profile_update(Elm_Win_Data *sd)
    eo_do(sd->obj, eo_event_callback_call(ELM_WIN_EVENT_PROFILE_CHANGED, NULL));
 }
 
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
 static void
 _elm_win_opaque_update(Elm_Win_Data *sd)
 {
@@ -1255,15 +1255,17 @@ _elm_win_opaque_update(Elm_Win_Data *sd)
    if (sd->fullscreen)
      {
         ecore_evas_geometry_get(sd->ee, NULL, NULL, &ow, &oh);
-        ecore_wl_window_opaque_region_set(sd->wl.win, 0, 0, ow, oh);
-        ecore_wl_window_update_location(sd->wl.win, 0, 0);
+        ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, ow, oh);
+        /* TODO */
+        /* ecore_wl_window_update_location(sd->wl.win, 0, 0); */
         return;
      }
 
    edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
                                  &ox, &oy, &ow, &oh);
-   ecore_wl_window_opaque_region_set(sd->wl.win, ox, oy, ow, oh);
-   ecore_wl_window_update_location(sd->wl.win, ox, oy);
+   ecore_wl2_window_opaque_region_set(sd->wl.win, ox, oy, ow, oh);
+   /* TODO */
+   /* ecore_wl_window_update_location(sd->wl.win, ox, oy); */
 }
 #endif
 
@@ -1273,7 +1275,7 @@ _elm_win_frame_obj_update(Elm_Win_Data *sd)
    int fx, fy, fw, fh;
    int ox, oy, ow, oh;
 
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
    sd->wl.opaque_dirty = 1;
 #endif
    if (sd->fullscreen)
@@ -2052,8 +2054,9 @@ _elm_win_evas_object_smart_move(Eo *obj, Elm_Win_Data *sd, Evas_Coord x, Evas_Co
      }
    if (sd->frame_obj)
      {
-#ifdef HAVE_ELEMENTARY_WAYLAND
-        ecore_wl_window_update_location(sd->wl.win, x, y);
+#ifdef HAVE_ELEMENTARY_WL2
+        /* TODO */
+        /* ecore_wl_window_update_location(sd->wl.win, x, y); */
 #endif
         sd->screen.x = x;
         sd->screen.y = y;
@@ -2145,10 +2148,10 @@ _internal_elm_win_xwindow_get(Elm_Win_Data *sd)
 }
 #endif
 
-Ecore_Wl_Window *
+Ecore_Wl2_Window *
 _elm_ee_wlwin_get(const Ecore_Evas *ee)
 {
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
    const char *engine_name;
 
    if (!ee) return NULL;
@@ -2159,7 +2162,7 @@ _elm_ee_wlwin_get(const Ecore_Evas *ee)
    if ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
        (!strcmp(engine_name, ELM_WAYLAND_EGL)))
      {
-        return ecore_evas_wayland_window_get(ee);
+        return ecore_evas_wayland_window_get2(ee);
      }
 #else
    (void)ee;
@@ -2167,7 +2170,7 @@ _elm_ee_wlwin_get(const Ecore_Evas *ee)
    return NULL;
 }
 
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
 static void
 _elm_win_wlwindow_get(Elm_Win_Data *sd)
 {
@@ -2657,11 +2660,11 @@ _elm_win_frame_cb_move_start(void *data,
 
    if (!sd) return;
 
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
    if (!strcmp(source, "elm"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win, ELM_CURSOR_HAND1);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win, ELM_CURSOR_HAND1);
    else
-     ecore_wl_window_cursor_default_restore(sd->wl.win);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
 #else
    (void)source;
 #endif
@@ -2687,12 +2690,12 @@ _elm_win_frame_cb_move_stop(void *data,
 
    if (!sd) return;
 
-#ifdef HAVE_ELEMENTARY_WAYLAND
-   ecore_wl_window_cursor_default_restore(sd->wl.win);
+#ifdef HAVE_ELEMENTARY_WL2
+   ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
 #endif
 }
 
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
 struct _resize_info
 {
    const char *name;
@@ -2755,35 +2758,35 @@ _elm_win_frame_cb_resize_show(void *data,
    if (!sd) return;
    if (sd->resizing) return;
 
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
    int i;
    i = sd->rot / 90;
    if (!strcmp(source, "elm.event.resize.t"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win,
-                                          _border_side[(0 + i) % 4].name);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
+                                           _border_side[(0 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.b"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win,
-                                          _border_side[(2 + i) % 4].name);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
+                                           _border_side[(2 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.l"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win,
-                                          _border_side[(1 + i) % 4].name);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
+                                           _border_side[(1 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.r"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win,
-                                          _border_side[(3 + i) % 4].name);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
+                                           _border_side[(3 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.tl"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win,
-                                          _border_corner[(0 + i) % 4].name);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
+                                           _border_corner[(0 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.tr"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win,
-                                          _border_corner[(3 + i) % 4].name);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
+                                           _border_corner[(3 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.bl"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win,
-                                          _border_corner[(1 + i) % 4].name);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
+                                           _border_corner[(1 + i) % 4].name);
    else if (!strcmp(source, "elm.event.resize.br"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win,
-                                          _border_corner[(2 + i) % 4].name);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win,
+                                           _border_corner[(2 + i) % 4].name);
    else
-     ecore_wl_window_cursor_default_restore(sd->wl.win);
+     ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
 #else
    (void)source;
 #endif
@@ -2800,8 +2803,8 @@ _elm_win_frame_cb_resize_hide(void *data,
    if (!sd) return;
    if (sd->resizing) return;
 
-#ifdef HAVE_ELEMENTARY_WAYLAND
-   ecore_wl_window_cursor_default_restore(sd->wl.win);
+#ifdef HAVE_ELEMENTARY_WL2
+   ecore_wl2_window_cursor_from_name_set(sd->wl.win, NULL);
 #endif
 }
 
@@ -2811,7 +2814,7 @@ _elm_win_frame_cb_resize_start(void *data,
                                const char *sig EINA_UNUSED,
                                const char *source)
 {
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
    ELM_WIN_DATA_GET(data, sd);
    int i;
 
@@ -2914,7 +2917,7 @@ _elm_win_frame_cb_close(void *data,
    evas_object_unref(win);
 }
 
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
 static void
 _elm_win_frame_pre_render(void *data, Evas *e EINA_UNUSED, void *ev EINA_UNUSED)
 {
@@ -2974,7 +2977,7 @@ _elm_win_frame_add(Elm_Win_Data *sd,
      (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
    evas_object_event_callback_add
      (sd->frame_obj, EVAS_CALLBACK_RESIZE, _elm_win_frame_obj_resize, sd);
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
    evas_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_PRE, _elm_win_frame_pre_render, sd);
 #endif
 
@@ -3032,7 +3035,7 @@ _elm_win_frame_del(Elm_Win_Data *sd)
           (sd->frame_obj, EVAS_CALLBACK_MOVE, _elm_win_frame_obj_move, sd);
         evas_object_event_callback_del_full
           (sd->frame_obj, EVAS_CALLBACK_RESIZE, _elm_win_frame_obj_resize, sd);
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
         evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_RENDER_PRE, _elm_win_frame_pre_render, sd);
 #endif
 
@@ -3392,7 +3395,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
           }
 #endif
 
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
         else if ((disp) && (!strcmp(disp, "wl")))
           {
              if (_accel_is_gl())
@@ -3473,7 +3476,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
                }
           }
 #endif
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
         else if (!_elm_preferred_engine &&
                  getenv("WAYLAND_DISPLAY") && !getenv("ELM_ENGINE"))
           {
@@ -3500,7 +3503,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 #ifdef HAVE_ELEMENTARY_X
                   enginelist[p++] = ELM_OPENGL_X11;
 #endif
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
                   enginelist[p++] = ELM_WAYLAND_EGL;
 #endif
 #ifdef HAVE_ELEMENTARY_DRM
@@ -3518,7 +3521,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 #ifdef HAVE_ELEMENTARY_X
                   enginelist[p++] = ELM_SOFTWARE_X11;
 #endif
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
                   enginelist[p++] = ELM_WAYLAND_SHM;
 #endif
 #ifdef HAVE_ELEMENTARY_WIN32
@@ -3545,7 +3548,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 #ifdef HAVE_ELEMENTARY_X
                   enginelist[p++] = ELM_SOFTWARE_X11;
 #endif
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
                   enginelist[p++] = ELM_WAYLAND_SHM;
 #endif
 #ifdef HAVE_ELEMENTARY_DRM
@@ -3567,7 +3570,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 #ifdef HAVE_ELEMENTARY_X
                   enginelist[p++] = ELM_OPENGL_X11;
 #endif
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
                   enginelist[p++] = ELM_WAYLAND_EGL;
 #endif
 #ifdef HAVE_ELEMENTARY_DRM
@@ -3714,7 +3717,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
      }
 #endif
 
-#ifdef HAVE_ELEMENTARY_WAYLAND
+#ifdef HAVE_ELEMENTARY_WL2
    _elm_win_wlwindow_get(sd);
 #endif
 
@@ -5384,7 +5387,7 @@ _elm_win_xwindow_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
    return 0;
 }
 
-EAPI Ecore_Wl_Window *
+EAPI Ecore_Wl2_Window *
 elm_win_wl_window_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) NULL;
@@ -5402,15 +5405,15 @@ elm_win_wl_window_get(const Evas_Object *obj)
         return _elm_ee_wlwin_get(ee);
      }
 
-   Ecore_Wl_Window *ret = NULL;
+   Ecore_Wl2_Window *ret = NULL;
    eo_do((Eo *) obj, ret = elm_obj_win_wl_window_get());
    return ret;
 }
 
-EOLIAN static Ecore_Wl_Window*
+EOLIAN static Ecore_Wl2_Window*
 _elm_win_wl_window_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 {
-#if HAVE_ELEMENTARY_WAYLAND
+#if HAVE_ELEMENTARY_WL2
    if (sd->wl.win) return sd->wl.win;
    if (sd->parent) return elm_win_wl_window_get(sd->parent);
 #else
@@ -5476,14 +5479,16 @@ _elm_win_window_id_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
         ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
          (!strcmp(engine_name, ELM_WAYLAND_EGL)))))
      {
-#if HAVE_ELEMENTARY_WAYLAND
-        if (sd->wl.win) return (Ecore_Window)ecore_wl_window_surface_id_get(sd->wl.win);
+#if HAVE_ELEMENTARY_WL2
+        if (sd->wl.win)
+          return (Ecore_Window)ecore_wl2_window_surface_id_get(sd->wl.win);
         if (sd->parent)
           {
-             Ecore_Wl_Window *parent;
+             Ecore_Wl2_Window *parent;
 
              parent = elm_win_wl_window_get(sd->parent);
-             if (parent) return (Ecore_Window)ecore_wl_window_surface_id_get(parent);
+             if (parent)
+               return (Ecore_Window)ecore_wl2_window_surface_id_get(parent);
              return 0;
           }
 #endif
