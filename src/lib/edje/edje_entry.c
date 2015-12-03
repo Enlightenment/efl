@@ -730,7 +730,6 @@ _sel_update(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entr
                   evas_object_move(sel->obj_fg, x + r->x, y + r->y);
                   evas_object_resize(sel->obj_fg, r->w, r->h);
                }
-             free(r);
           }
         eina_iterator_free(range);
 
