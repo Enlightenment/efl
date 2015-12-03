@@ -567,7 +567,7 @@ if EVAS_STATIC_BUILD_SOFTWARE_GENERIC
 BUILT_SOURCES += \
 modules/evas/engines/software_generic/ector_cairo_software_surface.eo.c \
 modules/evas/engines/software_generic/ector_cairo_software_surface.eo.h
-lib_evas_libevas_la_SOURCES += modules/evas/engines/software_generic/evas_engine.c modules/evas/engines/software_generic/ector_surface.c modules/evas/engines/software_generic/Evas_Engine_Software_Generic.h
+lib_evas_libevas_la_SOURCES += modules/evas/engines/software_generic/evas_engine.c modules/evas/engines/software_generic/ector_cairo_software_surface.c modules/evas/engines/software_generic/Evas_Engine_Software_Generic.h
 lib_evas_libevas_la_LIBADD +=
 else
 enginesoftwaregenericpkgdir = $(libdir)/evas/modules/engines/software_generic/$(MODULE_ARCH)
@@ -740,7 +740,7 @@ modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x: modules/evas/engi
 
 GL_GENERIC_SOURCES = \
 modules/evas/engines/gl_generic/evas_engine.c \
-modules/evas/engines/gl_generic/ector_surface.c \
+modules/evas/engines/gl_generic/ector_cairo_software_surface.c \
 modules/evas/engines/gl_generic/Evas_Engine_GL_Generic.h
 
 if EVAS_STATIC_BUILD_GL_COMMON

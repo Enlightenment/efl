@@ -69,12 +69,12 @@ lib/ector/software/Ector_Software.h
 lib_ector_libector_la_SOURCES = \
 lib/ector/ector_main.c \
 lib/ector/ector_generic_buffer.c \
-lib/ector/ector_renderer_shape.c \
-lib/ector/ector_renderer_base.c \
+lib/ector/ector_renderer_generic_shape.c \
+lib/ector/ector_renderer_generic_base.c \
 lib/ector/ector_renderer_generic_buffer.c \
-lib/ector/ector_renderer_gradient.c \
-lib/ector/ector_renderer_gradient_radial.c \
-lib/ector/ector_renderer_gradient_linear.c
+lib/ector/ector_renderer_generic_gradient.c \
+lib/ector/ector_renderer_generic_gradient_radial.c \
+lib/ector/ector_renderer_generic_gradient_linear.c
 
 installed_ectorgenericheadersdir = $(includedir)/ector-@VMAJ@/generic
 nodist_installed_ectorgenericheaders_DATA = $(ector_eolian_generic_h)
