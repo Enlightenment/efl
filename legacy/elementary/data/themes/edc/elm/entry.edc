@@ -416,12 +416,17 @@ group { name: "elm/entry/cursor/default";
    }
    programs {
       program {
-         signal: "selection,start"; source: "elm.text";
+         signal: "selection,changed"; source: "elm.text";
          action: STATE_SET "hidden" 0.0;
          target: "clipper";
       }
       program {
          signal: "selection,cleared"; source: "elm.text";
+         action: STATE_SET "default" 0.0;
+         target: "clipper";
+      }
+      program {
+         signal: "selection,reset"; source: "elm.text";
          action: STATE_SET "default" 0.0;
          target: "clipper";
       }
