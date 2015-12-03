@@ -573,6 +573,19 @@ _sel_enable(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED,
 }
 
 static void
+_emit_sel_state(Edje *ed, Entry *en)
+{
+   if (!evas_textblock_cursor_compare(en->sel_start, en->sel_end))
+     {
+        _edje_emit(ed, "selection,reset", en->rp->part->name);
+     }
+   else
+     {
+        _edje_emit(ed, "selection,changed", en->rp->part->name);
+     }
+}
+
+static void
 _sel_extend(Edje *ed, Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
 {
    if (!en->sel_end) return;
@@ -588,7 +601,7 @@ _sel_extend(Edje *ed, Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
         free(en->selection);
         en->selection = NULL;
      }
-   _edje_emit(ed, "selection,changed", en->rp->part->name);
+   _emit_sel_state(ed, en);
 }
 
 static void
@@ -607,7 +620,7 @@ _sel_preextend(Edje *ed, Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
         free(en->selection);
         en->selection = NULL;
      }
-   _edje_emit(ed, "selection,changed", en->rp->part->name);
+   _emit_sel_state(ed, en);
 }
 
 static void
