@@ -1357,12 +1357,12 @@ group { name: "elm/border/base/default";
    }
    programs {
       program {
-         signal: "e,state,shadow,on"; source: "e";
+         signal: "e,state,shadow,on"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "shadow_clip";
       }
       program {
-         signal: "e,state,shadow,off"; source: "e";
+         signal: "e,state,shadow,off"; source: "elm";
          action: STATE_SET "hidden" 0.0;
          target: "shadow_clip";
       }
