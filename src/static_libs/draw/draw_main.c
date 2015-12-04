@@ -138,12 +138,15 @@ _comp_func_mask_blend(uint32_t *dest, uint8_t *mask, int length, uint32_t color)
 
    for (k = 0; k < length; k++, dest++, mask++)
      {
-        uint32_t c = draw_mul_256(*mask, color);
+        uint32_t c = draw_mul_256((*mask + 1), color);
         int a = 256 - (c >> 24);
         *dest = c + draw_mul_256(a, *dest);
      }
 }
 
+/* s = m * color
+ * d = s * sa
+ */
 static void
 _comp_func_mask_copy(uint32_t *dest, uint8_t *mask, int length, uint32_t color)
 {
@@ -151,8 +154,65 @@ _comp_func_mask_copy(uint32_t *dest, uint8_t *mask, int length, uint32_t color)
 
    for (k = 0; k < length; k++, dest++, mask++)
      {
-        int a = (*mask & 0x80) ? *mask + 1 : *mask;
-        *dest = draw_mul_256(a, color);
+        *dest = draw_mul_256(*mask + 1, color);
+     }
+}
+
+/* w = s * m * c
+ * d = d * (1-wa) + w * wa
+ */
+static void
+_comp_func_mix3_blend(uint32_t *dest, uint32_t *src, uint32_t *mul, int len, uint32_t color)
+{
+   int k, a;
+
+   for (k = 0; k < len; k++, dest++, src++, mul++)
+     {
+        uint32_t c = DRAW_MUL4_SYM(*mul, color);
+        c = DRAW_MUL4_SYM(c, *src);
+        a = 256 - (c >> 24);
+        *dest = c + draw_mul_256(a, *dest);
+     }
+}
+
+/* d = s * m * c */
+static void
+_comp_func_mix3_copy(uint32_t *dest, uint32_t *src, uint32_t *mul, int len, uint32_t color)
+{
+   int k;
+
+   for (k = 0; k < len; k++, dest++, src++, mul++)
+     {
+        uint32_t c = DRAW_MUL4_SYM(*mul, color);
+        *dest = DRAW_MUL4_SYM(c, *src);
+     }
+}
+
+/* w = s * m
+ * d = d * (1-wa) + w * wa
+ */
+static void
+_comp_func_mix3_blend_nomul(uint32_t *dest, uint32_t *src, uint32_t *mul, int len, uint32_t color EINA_UNUSED)
+{
+   int k, a;
+
+   for (k = 0; k < len; k++, dest++, src++, mul++)
+     {
+        uint32_t c = DRAW_MUL4_SYM(*mul, *src);
+        a = 256 - (c >> 24);
+        *dest = c + draw_mul_256(a, *dest);
+     }
+}
+
+/* d = s * m */
+static void
+_comp_func_mix3_copy_nomul(uint32_t *dest, uint32_t *src, uint32_t *mul, int len, uint32_t color EINA_UNUSED)
+{
+   int k;
+
+   for (k = 0; k < len; k++, dest++, src++, mul++)
+     {
+        *dest = DRAW_MUL4_SYM(*mul, *src);
      }
 }
 
@@ -171,10 +231,26 @@ RGBA_Comp_Func func_for_mode[EFL_GFX_RENDER_OP_LAST] = {
   _comp_func_source
 };
 
+Draw_Func_ARGB_Mix3 func_for_mode_argb_mix3[EFL_GFX_RENDER_OP_LAST * 2] = {
+   _comp_func_mix3_blend,
+   _comp_func_mix3_copy,
+   _comp_func_mix3_blend_nomul,
+   _comp_func_mix3_copy_nomul
+};
+
 RGBA_Comp_Func_Mask
 efl_draw_func_mask_span_get(Efl_Gfx_Render_Op op, uint32_t color EINA_UNUSED)
 {
    return func_for_mode_mask[op];
+}
+
+Draw_Func_ARGB_Mix3
+efl_draw_func_argb_mix3_get(Efl_Gfx_Render_Op op, uint32_t color)
+{
+   if (color == 0xffffffff)
+     return func_for_mode_argb_mix3[op + 2];
+   else
+     return func_for_mode_argb_mix3[op];
 }
 
 RGBA_Comp_Func_Solid

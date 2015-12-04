@@ -349,71 +349,81 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
 static Eina_Bool
 _mask_cpu_rgba_rgba_rgba(Evas_Filter_Command *cmd)
 {
-   //Evas_Filter_Command fake_cmd;
-   Evas_Filter_Fill_Mode fillmode;
-   //Evas_Filter_Apply_Func blend;
-   Evas_Filter_Buffer *fb;
-   Eina_Bool ret = EINA_FALSE;
-   int w, h;
+   Draw_Func_ARGB_Mix3 func;
+   RGBA_Image *in, *out, *mask;
+   DATA32 *dst, *msk, *src;
+   int w, h, mw, mh, y, my, r;
+   int stepsize, stepcount, step;
+   DATA32 color;
 
-   fake_cmd = *cmd;
-   w = cmd->input->w;
-   h = cmd->input->h;
-
-   // FIXME: do a single pass
-   /* Blend 2 rgba images into rgba destination.
-    * Mechanism:
-    * 1. Copy input to temp (COPY)
-    * 2. Blend mask to temp (MUL)
-    * 3. Blend temp to output (render_op)
+   /* Mechanism:
+    * 1. Stretch mask as requested in fillmode
+    * 2. Mix 3 colors
     */
 
-   // Copy
-   BUFFERS_LOCK();
-   fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->input, w, h);
-   BUFFERS_UNLOCK();
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
-   fb->locked = EINA_TRUE;
+   in = (RGBA_Image *) cmd->input->backing;
+   out = (RGBA_Image *) cmd->output->backing;
+   mask = (RGBA_Image *) cmd->mask->backing;
 
-   // Repeat mask if unspecified - NONE is not possible
-   fillmode = cmd->draw.fillmode;
-   if ((fillmode & (EVAS_FILTER_FILL_MODE_REPEAT_X | EVAS_FILTER_FILL_MODE_STRETCH_X)) == 0)
+   w = cmd->input->w;
+   h = cmd->input->h;
+   mw = cmd->mask->w;
+   mh = cmd->mask->h;
+   src = in->image.data;
+   dst = out->image.data;
+
+   // Stretch if necessary.
+   if ((mw != w || mh != h) && (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY))
      {
-        DBG("X fillmode not specified: defaults to repeat");
-        fillmode |= EVAS_FILTER_FILL_MODE_REPEAT_X;
+        Evas_Filter_Buffer *fb;
+
+        if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
+          mw = w;
+        if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
+          mh = h;
+
+        BUFFERS_LOCK();
+        fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->mask, mw, mh);
+        BUFFERS_UNLOCK();
+
+        EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
+        fb->locked = EINA_FALSE;
+        mask = fb->backing;
      }
-   if ((fillmode & (EVAS_FILTER_FILL_MODE_REPEAT_Y | EVAS_FILTER_FILL_MODE_STRETCH_Y)) == 0)
+
+   color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
+   msk = mask->image.data;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(msk, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((w > 0) && (mw > 0), EINA_FALSE);
+
+   stepsize  = MIN(mw, w);
+   stepcount = w / stepsize;
+
+   func = efl_draw_func_argb_mix3_get(cmd->draw.rop, color);
+
+   // Apply mask using Gfx functions
+   for (y = 0, my = 0; y < h; y++, my++, msk += mw)
      {
-        DBG("Y fillmode not specified: defaults to repeat");
-        fillmode |= EVAS_FILTER_FILL_MODE_REPEAT_Y;
+        if (my >= mh)
+          {
+             my = 0;
+             msk = mask->image.data;
+          }
+
+        for (step = 0; step < stepcount; step++, dst += stepsize, src += stepsize)
+          func(dst, src, msk, stepsize, color);
+
+        r = w - (stepsize * stepcount);
+        if (r > 0)
+          {
+             func(dst, src, msk, r, color);
+             dst += r;
+             src += r;
+          }
      }
 
-#warning FIXME: filter full RGBA masking is now broken
-   goto finish;
-
-#if 0
-   // Mask --> Temp
-   fake_cmd.input = cmd->mask;
-   fake_cmd.mask = NULL;
-   fake_cmd.output = fb;
-   fake_cmd.draw.rop = EVAS_RENDER_MUL; // FIXME
-   fake_cmd.draw.fillmode = fillmode;
-   blend = evas_filter_blend_cpu_func_get(&fake_cmd);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(blend, EINA_FALSE);
-   ret = blend(&fake_cmd);
-   if (!ret) goto finish;
-
-   // Temp --> Output
-   fake_cmd.draw.rop = EFL_GFX_RENDER_OP_BLEND;
-   fake_cmd.input = fb;
-   fake_cmd.output = cmd->output;
-   fake_cmd.draw.fillmode = EVAS_FILTER_FILL_MODE_NONE;
-   blend = evas_filter_blend_cpu_func_get(&fake_cmd);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(blend, EINA_FALSE);
-   ret = blend(&fake_cmd);
-#endif
-
-finish:
-   fb->locked = EINA_FALSE;
-   return ret;
+   return EINA_TRUE;
 }

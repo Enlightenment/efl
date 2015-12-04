@@ -11,6 +11,7 @@
 typedef void (*RGBA_Comp_Func)       (uint32_t *dest, const uint32_t *src, int length, uint32_t mul_col, uint32_t const_alpha);
 typedef void (*RGBA_Comp_Func_Solid) (uint32_t *dest, int length, uint32_t color, uint32_t const_alpha);
 typedef void (*RGBA_Comp_Func_Mask)  (uint32_t *dest, uint8_t *mask, int length, uint32_t color);
+typedef void (*Draw_Func_ARGB_Mix3)  (uint32_t *dest, uint32_t *src, uint32_t *mul, int len, uint32_t color);
 typedef void (*Alpha_Gfx_Func)       (uint8_t *src, uint8_t *dst, int len);
 
 int efl_draw_init(void);
@@ -18,6 +19,7 @@ int efl_draw_init(void);
 RGBA_Comp_Func       efl_draw_func_span_get         (Efl_Gfx_Render_Op op, uint32_t color, Eina_Bool src_alpha);
 RGBA_Comp_Func_Solid efl_draw_func_solid_span_get   (Efl_Gfx_Render_Op op, uint32_t color);
 RGBA_Comp_Func_Mask  efl_draw_func_mask_span_get    (Efl_Gfx_Render_Op op, uint32_t color);
+Draw_Func_ARGB_Mix3  efl_draw_func_argb_mix3_get    (Efl_Gfx_Render_Op op, uint32_t color);
 Alpha_Gfx_Func       efl_draw_alpha_func_get        (Efl_Gfx_Render_Op op, Eina_Bool has_mask);
 
 
@@ -54,6 +56,7 @@ Alpha_Gfx_Func       efl_draw_alpha_func_get        (Efl_Gfx_Render_Op op, Eina_
 #define DRAW_ARGB_JOIN(a,r,g,b) \
         (((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
 
+/* argb multiply */
 #define DRAW_MUL4_SYM(x, y) \
  ( ((((((x) >> 16) & 0xff00) * (((y) >> 16) & 0xff00)) + 0xff0000) & 0xff000000) + \
    ((((((x) >> 8) & 0xff00) * (((y) >> 16) & 0xff)) + 0xff00) & 0xff0000) + \
