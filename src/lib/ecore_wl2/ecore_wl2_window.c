@@ -112,10 +112,10 @@ _xdg_surface_cb_configure(void *data, struct xdg_surface *xdg_surface EINA_UNUSE
           }
      }
 
+   win->configure_serial = serial;
+
    if ((w > 0) && (h > 0))
      _ecore_wl2_window_configure_send(win, w, h, 0);
-
-   xdg_surface_ack_configure(win->xdg_surface, serial);
 }
 
 static void
@@ -314,6 +314,8 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
         xdg_surface_set_user_data(window->xdg_surface, window);
         xdg_surface_add_listener(window->xdg_surface,
                                  &_xdg_surface_listener, window);
+
+        window->configure_ack = xdg_surface_ack_configure;
      }
    else if ((disp->wl.wl_shell) && (!window->wl_shell_surface))
      {

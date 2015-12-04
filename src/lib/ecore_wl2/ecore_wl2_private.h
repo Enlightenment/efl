@@ -117,6 +117,9 @@ struct _Ecore_Wl2_Window
    struct xdg_surface *xdg_surface;
    struct xdg_popup *xdg_popup;
 
+   uint32_t configure_serial;
+   void (*configure_ack)(struct xdg_surface *surface, uint32_t serial);
+
    Eina_Rectangle saved;
    Eina_Rectangle geometry;
    Eina_Rectangle opaque;
