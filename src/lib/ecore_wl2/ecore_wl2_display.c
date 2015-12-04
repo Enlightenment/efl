@@ -687,7 +687,7 @@ EAPI Eina_Iterator *
 ecore_wl2_display_globals_get(Ecore_Wl2_Display *display)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
-   return eina_hash_iterator_data_new(display->globals);
+   return display->globals ? eina_hash_iterator_data_new(display->globals) : NULL;
 }
 
 EAPI void
