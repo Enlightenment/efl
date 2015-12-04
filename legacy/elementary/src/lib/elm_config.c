@@ -3327,8 +3327,11 @@ _elm_config_sub_shutdown(void)
    if (ecore_x_display_get()) ecore_x_shutdown();
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
-   if (_elm_wl_display) ecore_wl2_display_disconnect(_elm_wl_display);
-   ecore_wl2_shutdown();
+   if (_elm_wl_display)
+     {
+        ecore_wl2_display_disconnect(_elm_wl_display);
+        ecore_wl2_shutdown();
+     }
 #endif
 #ifdef HAVE_ELEMENTARY_WIN32
    ecore_win32_shutdown();
