@@ -1,0 +1,37 @@
+<protocol name="zwp_draw_modes">
+  <interface name="draw_modes" version="1">
+    <request name="set_available_draw_modes">
+      <description summary="advertise optional draw modes for the window">
+	Inform the compositor of optional draw modes which are available
+	for the window.
+
+	Calling this after an xdg_surface's first commit is a client error.
+
+	Required modes are implemented by all clients and are not present in
+	this array. If set_available_draw_modes is not called, only required
+	modes are available.
+      </description>
+      <arg name="surface" type="object" interface="xdg_surface"/>
+      <arg name="states" type="array"/>
+    </request>
+    <enum name="state">
+      <description summary="types of state on the surface">
+	The different state values used on the surface. This is designed for
+	state values like maximized, fullscreen. It is paired with the
+	configure event to ensure that both the client and the compositor
+	setting the state can be synchronized.
+
+	States set in this way are double-buffered. They will get applied on
+	the next commit.
+
+	Compositors will pass a draw mode in every states array when the mode is
+	not "CSD with optional dropshadow".
+        </description>
+        <entry name="draw_noshadow" value="0x2000" summary="CSD with no dropshadow">
+        <description summary="the surface has CSD without dropshadow">
+	  The surface contains a CSD region which does not include a dropshadow.
+        </description>
+      </entry>
+    </enum>
+  </interface>
+</protocol>

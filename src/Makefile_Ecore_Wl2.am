@@ -20,6 +20,8 @@ lib/ecore_wl2/ecore_wl2_input.c \
 lib/ecore_wl2/ecore_wl2_output.c \
 lib/ecore_wl2/ecore_wl2_display.c \
 lib/ecore_wl2/ecore_wl2.c \
+lib/ecore_wl2/draw-mode.c \
+lib/ecore_wl2/draw-mode.h \
 lib/ecore_wl2/ecore_wl2_private.h
 
 lib_ecore_wl2_libecore_wl2_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_WL2_CFLAGS@

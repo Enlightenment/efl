@@ -62,6 +62,7 @@ struct _Ecore_Wl2_Display
         struct wl_shm *shm;
         struct wl_shell *wl_shell;
         struct xdg_shell *xdg_shell;
+        struct draw_modes *draw_modes;
      } wl;
 
    uint32_t serial;
@@ -137,6 +138,7 @@ struct _Ecore_Wl2_Window
    Eina_Bool resizing : 1;
    Eina_Bool alpha : 1;
    Eina_Bool transparent : 1;
+   Eina_Bool no_shadow : 1;
 };
 
 struct _Ecore_Wl2_Output
@@ -404,4 +406,5 @@ void _ecore_wl2_dnd_del(Ecore_Wl2_Dnd_Source *source);
 void _ecore_wl2_subsurf_free(Ecore_Wl2_Subsurface *subsurf);
 
 void _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window);
+void _ecore_wl2_window_draw_modes_init(Ecore_Wl2_Window *window);
 #endif

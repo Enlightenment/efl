@@ -195,7 +195,8 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
      _ecore_evas_wl_common_border_update(ee);
 
    if ((prev_max != ee->prop.maximized) ||
-       (prev_full != ee->prop.fullscreen))
+       (prev_full != ee->prop.fullscreen) ||
+       (wdata->no_shadow != ev->no_shadow))
      _ecore_evas_wl_common_state_update(ee);
 
    /* NB: We receive window configure sizes based on xdg surface

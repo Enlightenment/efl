@@ -3,6 +3,7 @@
 #endif
 
 #include "ecore_wl2_private.h"
+#include "draw-mode.h"
 
 static void
 _ecore_wl2_window_configure_send(Ecore_Wl2_Window *window, int w, int h, unsigned int edges)
@@ -19,6 +20,7 @@ _ecore_wl2_window_configure_send(Ecore_Wl2_Window *window, int w, int h, unsigne
    ev->w = w;
    ev->h = h;
    ev->edges = edges;
+   ev->no_shadow = window->no_shadow;
 
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE, ev, NULL, NULL);
 }
@@ -90,11 +92,15 @@ _xdg_surface_cb_configure(void *data, struct xdg_surface *xdg_surface EINA_UNUSE
    win->fullscreen = EINA_FALSE;
    win->focused = EINA_FALSE;
    win->resizing = EINA_FALSE;
+   win->no_shadow = 0;
 
    wl_array_for_each(s, states)
      {
         switch (*s)
           {
+           case DRAW_MODES_STATE_DRAW_NOSHADOW:
+             win->no_shadow = 1;
+             break;
            case XDG_SURFACE_STATE_MAXIMIZED:
              win->maximized = EINA_TRUE;
              break;
@@ -215,6 +221,19 @@ _ecore_wl2_window_type_set(Ecore_Wl2_Window *win)
 }
 
 void
+_ecore_wl2_window_draw_modes_init(Ecore_Wl2_Window *window)
+{
+   struct wl_array modes;
+   uint32_t *m;
+
+   wl_array_init(&modes);
+   m = wl_array_add(&modes, sizeof(uint32_t));
+   *m = DRAW_MODES_STATE_DRAW_NOSHADOW;
+   draw_modes_set_available_draw_modes(window->display->wl.draw_modes, window->xdg_surface, &modes);
+   wl_array_release(&modes);
+}
+
+void
 _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
 {
    if (!window->surface) return;
@@ -229,6 +248,8 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
         if (window->class)
           xdg_surface_set_app_id(window->xdg_surface, window->class);
 
+        if (window->display->wl.draw_modes)
+          _ecore_wl2_window_draw_modes_init(window);
 
         xdg_surface_set_user_data(window->xdg_surface, window);
         xdg_surface_add_listener(window->xdg_surface,
@@ -305,6 +326,7 @@ ecore_wl2_window_surface_get(Ecore_Wl2_Window *window)
 
    if (!window->surface)
      {
+        fprintf(stderr, "ecore_wl2_window_surface_get() disp %p\n", window->display);
         EINA_SAFETY_ON_NULL_RETURN_VAL(window->display->wl.compositor, NULL);
 
         window->surface =
@@ -873,4 +895,11 @@ ecore_wl2_window_input_get(Ecore_Wl2_Window *window)
      }
 
    return NULL;
+}
+
+EAPI Eina_Bool
+ecore_wl2_window_shadow_get(const Ecore_Wl2_Window *win)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(win, EINA_FALSE);
+   return !win->no_shadow;
 }

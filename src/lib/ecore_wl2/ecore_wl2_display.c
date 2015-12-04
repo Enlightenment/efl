@@ -3,6 +3,7 @@
 #endif
 
 #include "ecore_wl2_private.h"
+#include "draw-mode.h"
 
 static Eina_Bool _fatal_error = EINA_FALSE;
 static Eina_Hash *_server_displays = NULL;
@@ -49,6 +50,7 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
 
    ewd = data;
 
+fprintf(stderr, "wl_global disp %p interface %s\n", ewd, interface);
    /* test to see if we have already added this global to our hash */
    if (!eina_hash_find(ewd->globals, &id))
      {
@@ -74,6 +76,7 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
 
    if (!strcmp(interface, "wl_compositor"))
      {
+        fprintf(stderr, "wl_compositor.bind disp %p\n", ewd);
         ewd->wl.compositor =
           wl_registry_bind(registry, id, &wl_compositor_interface, 3);
      }
@@ -113,6 +116,10 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
      _ecore_wl2_output_add(ewd, id);
    else if (!strcmp(interface, "wl_seat"))
      _ecore_wl2_input_add(ewd, id, version);
+   else if (!strcmp(interface, "draw_modes"))
+     {
+        ewd->wl.draw_modes = wl_registry_bind(registry, id, &draw_modes_interface, 1);
+     }
 
 event:
    /* allocate space for event structure */

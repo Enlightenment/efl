@@ -124,6 +124,7 @@ typedef struct _Ecore_Wl2_Event_Window_Configure
 {
    unsigned int win, event_win, edges;
    int x, y, w, h;
+   Eina_Bool no_shadow;
 } Ecore_Wl2_Event_Window_Configure;
 
 typedef enum _Ecore_Wl2_Window_Type
@@ -1005,6 +1006,8 @@ EAPI void ecore_wl2_keyboard_repeat_info_set(Ecore_Wl2_Keyboard *kbd, double rat
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
+
+EAPI Eina_Bool ecore_wl2_window_shadow_get(const Ecore_Wl2_Window *win);
 
 # undef EAPI
 # define EAPI
