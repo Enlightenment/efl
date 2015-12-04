@@ -21,6 +21,7 @@
 #include <Ecore_Input_Evas.h>
 #include <Ecore_Wayland.h>
 #include <Ecore_Wl2.h>
+#include "ecore_wl2_private.h"
 
 #include <Ecore_Evas.h>
 #include "ecore_evas_private.h"
