@@ -145,7 +145,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
    if (!ewd)
      {
         ERR("Failed to connect to Wayland Display %s", disp_name);
-        return NULL;
+        goto conn_err;
      }
 
    if (!(ee = calloc(1, sizeof(Ecore_Evas))))
@@ -280,12 +280,11 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
 
    return ee;
 
- err:
+err:
    ecore_evas_free(ee);
-   return NULL;
-
- ee_err:
+ee_err:
    ecore_wl2_display_disconnect(ewd);
+conn_err:
    ecore_wl2_shutdown();
    return NULL;
 }
