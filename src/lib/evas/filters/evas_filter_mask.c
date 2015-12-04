@@ -56,7 +56,7 @@ _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd)
    Alpha_Gfx_Func func;
    RGBA_Image *in, *out, *mask;
    DATA8 *src, *dst, *msk;
-   int render_op = cmd->draw.render_op;
+   Efl_Gfx_Render_Op render_op = cmd->draw.rop;
    int w, h, mw, mh, x, y, my;
    int stepsize, stepcount, step;
 
@@ -165,7 +165,7 @@ _mask_cpu_alpha_rgba_rgba(Evas_Filter_Command *cmd)
    RGBA_Image *in, *out, *mask;
    DATA8 *src;
    DATA32 *dst, *msk, *span;
-   int op = cmd->draw.render_op;
+   Efl_Gfx_Render_Op op = cmd->draw.rop;
    int w, h, mw, mh, y, my, r;
    int stepsize, stepcount, step;
    DATA32 color2;
@@ -221,7 +221,7 @@ _mask_cpu_alpha_rgba_rgba(Evas_Filter_Command *cmd)
    span = malloc(stepsize * sizeof(DATA32));
 
    func1 = evas_common_gfx_func_composite_pixel_mask_span_get(mask->cache_entry.flags.alpha, mask->cache_entry.flags.alpha_sparse, out->cache_entry.flags.alpha, 1, EVAS_RENDER_COPY);
-   func2 = evas_common_gfx_func_composite_pixel_color_span_get(mask->cache_entry.flags.alpha, mask->cache_entry.flags.alpha_sparse, color2, out->cache_entry.flags.alpha, 1, op);
+   func2 = evas_common_gfx_func_composite_pixel_color_span_get(mask->cache_entry.flags.alpha, mask->cache_entry.flags.alpha_sparse, color2, out->cache_entry.flags.alpha, 1, _gfx_to_evas_render_op(op));
 
    // Apply mask using Gfx functions
    for (y = 0, my = 0; y < h; y++, my++, msk += mw)
@@ -263,7 +263,7 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
    DATA8 *src, *msk, *span;
    DATA32 *dst;
    DATA32 color;
-   int op = cmd->draw.render_op;
+   Efl_Gfx_Render_Op op = cmd->draw.rop;
    int w, h, mw, mh, y, my, r;
    int stepsize, stepcount, step;
 
@@ -313,8 +313,8 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
    stepcount = w / stepsize;
    span = malloc(stepsize * sizeof(DATA8));
 
-   func = evas_common_gfx_func_composite_mask_color_span_get(color, out->cache_entry.flags.alpha, 1, op);
-   span_func = efl_draw_alpha_func_get(cmd->draw.render_op, EINA_TRUE);
+   func = evas_common_gfx_func_composite_mask_color_span_get(color, out->cache_entry.flags.alpha, 1, _gfx_to_evas_render_op(op));
+   span_func = efl_draw_alpha_func_get(cmd->draw.rop, EINA_TRUE);
 
    for (y = 0, my = 0; y < h; y++, my++, msk += mw)
      {
@@ -349,17 +349,18 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
 static Eina_Bool
 _mask_cpu_rgba_rgba_rgba(Evas_Filter_Command *cmd)
 {
-   Evas_Filter_Command fake_cmd;
+   //Evas_Filter_Command fake_cmd;
    Evas_Filter_Fill_Mode fillmode;
-   Evas_Filter_Apply_Func blend;
+   //Evas_Filter_Apply_Func blend;
    Evas_Filter_Buffer *fb;
-   Eina_Bool ret;
+   Eina_Bool ret = EINA_FALSE;
    int w, h;
 
    fake_cmd = *cmd;
    w = cmd->input->w;
    h = cmd->input->h;
 
+   // FIXME: do a single pass
    /* Blend 2 rgba images into rgba destination.
     * Mechanism:
     * 1. Copy input to temp (COPY)
@@ -387,11 +388,15 @@ _mask_cpu_rgba_rgba_rgba(Evas_Filter_Command *cmd)
         fillmode |= EVAS_FILTER_FILL_MODE_REPEAT_Y;
      }
 
+#warning FIXME: filter full RGBA masking is now broken
+   goto finish;
+
+#if 0
    // Mask --> Temp
    fake_cmd.input = cmd->mask;
    fake_cmd.mask = NULL;
    fake_cmd.output = fb;
-   fake_cmd.draw.render_op = EVAS_RENDER_MUL;
+   fake_cmd.draw.rop = EVAS_RENDER_MUL; // FIXME
    fake_cmd.draw.fillmode = fillmode;
    blend = evas_filter_blend_cpu_func_get(&fake_cmd);
    EINA_SAFETY_ON_NULL_RETURN_VAL(blend, EINA_FALSE);
@@ -399,13 +404,14 @@ _mask_cpu_rgba_rgba_rgba(Evas_Filter_Command *cmd)
    if (!ret) goto finish;
 
    // Temp --> Output
-   fake_cmd.draw.render_op = EVAS_RENDER_BLEND;
+   fake_cmd.draw.rop = EFL_GFX_RENDER_OP_BLEND;
    fake_cmd.input = fb;
    fake_cmd.output = cmd->output;
    fake_cmd.draw.fillmode = EVAS_FILTER_FILL_MODE_NONE;
    blend = evas_filter_blend_cpu_func_get(&fake_cmd);
    EINA_SAFETY_ON_NULL_RETURN_VAL(blend, EINA_FALSE);
    ret = blend(&fake_cmd);
+#endif
 
 finish:
    fb->locked = EINA_FALSE;

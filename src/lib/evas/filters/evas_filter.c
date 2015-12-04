@@ -1017,7 +1017,7 @@ evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *drawctx,
    DRAW_FILL_SET(fillmode);
    cmd->draw.ox = ox;
    cmd->draw.oy = oy;
-   cmd->draw.render_op = ENFN->context_render_op_get(ENDT, drawctx);
+   cmd->draw.rop = _evas_to_gfx_render_op(ENFN->context_render_op_get(ENDT, drawctx));
    cmd->draw.clip_use =
          ENFN->context_clip_get(ENDT, drawctx,
                                 &cmd->draw.clip.x, &cmd->draw.clip.y,
@@ -1213,7 +1213,7 @@ evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx,
    DRAW_FILL_SET(fillmode);
    cmd->displacement.flags = flags & EVAS_FILTER_DISPLACE_BITMASK;
    cmd->displacement.intensity = intensity;
-   cmd->draw.render_op = ENFN->context_render_op_get(ENDT, draw_context);
+   cmd->draw.rop = _evas_to_gfx_render_op(ENFN->context_render_op_get(ENDT, draw_context));
    cmdid = cmd->id;
 
    if (tmp)
@@ -1241,12 +1241,13 @@ evas_filter_command_mask_add(Evas_Filter_Context *ctx, void *draw_context,
 {
    Evas_Filter_Command *cmd;
    Evas_Filter_Buffer *in, *out, *mask;
-   int cmdid = -1, render_op;
+   Efl_Gfx_Render_Op render_op;
+   int cmdid = -1;
    int R, G, B, A;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, -1);
 
-   render_op = ENFN->context_render_op_get(ENDT, draw_context);
+   render_op = _evas_to_gfx_render_op(ENFN->context_render_op_get(ENDT, draw_context));
    ENFN->context_color_get(ENDT, draw_context, &R, &G, &B, &A);
 
    in = _filter_buffer_get(ctx, inbuf);
@@ -1262,7 +1263,7 @@ evas_filter_command_mask_add(Evas_Filter_Context *ctx, void *draw_context,
    cmd = _command_new(ctx, EVAS_FILTER_MODE_MASK, in, mask, out);
    if (!cmd) goto end;
 
-   cmd->draw.render_op = render_op;
+   cmd->draw.rop = render_op;
    DRAW_COLOR_SET(R, G, B, A);
    DRAW_FILL_SET(fillmode);
 

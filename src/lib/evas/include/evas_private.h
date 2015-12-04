@@ -1987,6 +1987,22 @@ struct _Evas_Mempool
 #define EVAS_API_RESET(func, api) \
      (api)->func = NULL
 
+static inline Efl_Gfx_Render_Op
+_evas_to_gfx_render_op(Evas_Render_Op rop)
+{
+   if (rop == EVAS_RENDER_COPY)
+     return EFL_GFX_RENDER_OP_COPY;
+   return EFL_GFX_RENDER_OP_BLEND;
+}
+
+static inline Evas_Render_Op
+_gfx_to_evas_render_op(Efl_Gfx_Render_Op rop)
+{
+   if (rop == EFL_GFX_RENDER_OP_COPY)
+     return EVAS_RENDER_COPY;
+   return EVAS_RENDER_BLEND;
+}
+
 #include "evas_inline.x"
 
 #ifdef __cplusplus

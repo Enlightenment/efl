@@ -203,7 +203,7 @@ struct _Evas_Filter_Command
    };
 
    struct {
-      int render_op;
+      Efl_Gfx_Render_Op rop;
       int R, G, B, A;
       int ox, oy;
       union {

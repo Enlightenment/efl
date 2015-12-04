@@ -11,7 +11,7 @@ static Eina_Bool _mapped_blend(void *data, void *drawctx, void *in, void *out, E
 
 struct Filter_Blend_Draw_Context
 {
-   int render_op;
+   Efl_Gfx_Render_Op rop;
    DATA32 color;
 };
 
@@ -33,7 +33,7 @@ _image_draw_cpu_alpha2alpha(void *data EINA_UNUSED, void *context,
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL((src_w == dst_w) && (src_h == dst_h), EINA_FALSE);
 
-   func = efl_draw_alpha_func_get(dc->render_op, EINA_FALSE);
+   func = efl_draw_alpha_func_get(dc->rop, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(func, EINA_FALSE);
 
    sw = src->cache_entry.w;
@@ -70,7 +70,7 @@ _image_draw_cpu_alpha2rgba(void *data EINA_UNUSED, void *context,
    EINA_SAFETY_ON_FALSE_RETURN_VAL((src_w == dst_w) && (src_h == dst_h), EINA_FALSE);
 
    func = evas_common_gfx_func_composite_mask_color_span_get
-     (dc->color, dst->cache_entry.flags.alpha, 1, dc->render_op);
+     (dc->color, dst->cache_entry.flags.alpha, 1, dc->rop);
    EINA_SAFETY_ON_NULL_RETURN_VAL(func, EINA_FALSE);
 
    sw = src->cache_entry.w;
@@ -141,7 +141,7 @@ _filter_blend_cpu_generic_do(Evas_Filter_Command *cmd,
         in = fb->backing;
      }
 
-   dc.render_op = cmd->draw.render_op;
+   dc.rop = cmd->draw.rop;
    dc.color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
    return _mapped_blend(cmd->ENDT, &dc, in, out, cmd->draw.fillmode,
                         sx, sy, sw, sh, dx, dy, dw, dh, image_draw);
@@ -212,9 +212,9 @@ _image_draw_cpu_rgba2rgba(void *data EINA_UNUSED, void *context,
    if (!dc->color)
      return EINA_TRUE;
    else if (dc->color == 0xFFFFFFFF)
-     func = evas_common_gfx_func_composite_pixel_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, 1, dc->render_op);
+     func = evas_common_gfx_func_composite_pixel_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, 1, dc->rop);
    else
-     func = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dc->color, dst->cache_entry.flags.alpha, 1, dc->render_op);
+     func = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dc->color, dst->cache_entry.flags.alpha, 1, dc->rop);
    EINA_SAFETY_ON_NULL_RETURN_VAL(func, EINA_FALSE);
 
    sw = src->cache_entry.w;
@@ -287,7 +287,7 @@ _filter_blend_cpu_rgba(Evas_Filter_Command *cmd)
      cmd->ENFN->context_multiplier_set(cmd->ENDT, drawctx, cmd->draw.R, cmd->draw.G, cmd->draw.B, cmd->draw.A);
    else
      cmd->ENFN->context_multiplier_unset(cmd->ENDT, drawctx);
-   cmd->ENFN->context_render_op_set(cmd->ENDT, drawctx, cmd->draw.render_op);
+   cmd->ENFN->context_render_op_set(cmd->ENDT, drawctx, _gfx_to_evas_render_op(cmd->draw.rop));
 
    if (cmd->draw.clip_use)
      {

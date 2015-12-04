@@ -218,7 +218,7 @@ _filter_displace_cpu_alpha(Evas_Filter_Command *cmd)
    map_w = cmd->mask->w;
    map_h = cmd->mask->h;
    intensity = cmd->displacement.intensity;
-   blend = (cmd->draw.render_op == EVAS_RENDER_BLEND);
+   blend = (cmd->draw.rop == EFL_GFX_RENDER_OP_BLEND);
 
    // Stretch if necessary.
    if ((map_w != w || map_h != h) && (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY))
@@ -278,7 +278,7 @@ _filter_displace_cpu_rgba(Evas_Filter_Command *cmd)
    map_w = cmd->mask->w;
    map_h = cmd->mask->h;
    intensity = cmd->displacement.intensity;
-   blend = (cmd->draw.render_op == EVAS_RENDER_BLEND);
+   blend = (cmd->draw.rop == EFL_GFX_RENDER_OP_BLEND);
 
    // Stretch if necessary.
    if ((map_w != w || map_h != h) && (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY))

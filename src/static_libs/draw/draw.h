@@ -7,6 +7,7 @@
 
 #include <Efl.h>
 
+/* FIXME: naming convention */
 typedef void (*RGBA_Comp_Func)       (uint32_t *dest, const uint32_t *src, int length, uint32_t mul_col, uint32_t const_alpha);
 typedef void (*RGBA_Comp_Func_Solid) (uint32_t *dest, int length, uint32_t color, uint32_t const_alpha);
 typedef void (*RGBA_Comp_Func_Mask)  (uint32_t *dest, uint8_t *mask, int length, uint32_t color);
