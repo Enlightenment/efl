@@ -128,6 +128,39 @@ _comp_func_source(uint32_t *dest, const uint32_t *src, int length, uint32_t colo
      }
 }
 
+/* s = m * color
+ * d = d * (1-sa) + s * sa
+ */
+static void
+_comp_func_mask_blend(uint32_t *dest, uint8_t *mask, int length, uint32_t color)
+{
+   int k;
+
+   for (k = 0; k < length; k++, dest++, mask++)
+     {
+        uint32_t c = draw_mul_256(*mask, color);
+        int a = 256 - (c >> 24);
+        *dest = c + draw_mul_256(a, *dest);
+     }
+}
+
+static void
+_comp_func_mask_copy(uint32_t *dest, uint8_t *mask, int length, uint32_t color)
+{
+   int k;
+
+   for (k = 0; k < length; k++, dest++, mask++)
+     {
+        int a = (*mask & 0x80) ? *mask + 1 : *mask;
+        *dest = draw_mul_256(a, color);
+     }
+}
+
+RGBA_Comp_Func_Mask func_for_mode_mask[EFL_GFX_RENDER_OP_LAST] = {
+   _comp_func_mask_blend,
+   _comp_func_mask_copy
+};
+
 RGBA_Comp_Func_Solid func_for_mode_solid[EFL_GFX_RENDER_OP_LAST] = {
   _comp_func_solid_source_over,
   _comp_func_solid_source
@@ -137,6 +170,12 @@ RGBA_Comp_Func func_for_mode[EFL_GFX_RENDER_OP_LAST] = {
   _comp_func_source_over,
   _comp_func_source
 };
+
+RGBA_Comp_Func_Mask
+efl_draw_func_mask_span_get(Efl_Gfx_Render_Op op, uint32_t color EINA_UNUSED)
+{
+   return func_for_mode_mask[op];
+}
 
 RGBA_Comp_Func_Solid
 efl_draw_func_solid_span_get(Efl_Gfx_Render_Op op, uint32_t color)

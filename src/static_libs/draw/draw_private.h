@@ -25,6 +25,7 @@
       } \
    }
 
+/* 255 - alpha */
 static inline int
 alpha_inverse(uint32_t color)
 {
