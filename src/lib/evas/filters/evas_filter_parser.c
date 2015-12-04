@@ -2870,7 +2870,6 @@ _buffers_update(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm)
 
              buf->cid = evas_filter_buffer_empty_new(ctx, buf->alpha);
              fb = _filter_buffer_get(ctx, buf->cid);
-             fb->proxy = pb->eo_proxy;
              fb->source = pb->eo_source;
              fb->source_name = eina_stringshare_ref(pb->name);
              fb->ctx->has_proxies = EINA_TRUE;
