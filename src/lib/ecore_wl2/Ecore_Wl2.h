@@ -1002,6 +1002,8 @@ EAPI Ecore_Wl2_Keyboard *ecore_wl2_keyboard_get(Ecore_Wl2_Seat *seat);
 EAPI Eina_Bool ecore_wl2_keyboard_resource_create(Ecore_Wl2_Keyboard *kbd, struct wl_client *client, const struct wl_keyboard_interface *implementation, int version, uint32_t id);
 EAPI void ecore_wl2_keyboard_repeat_info_set(Ecore_Wl2_Keyboard *kbd, double rate, double delay);
 
+EAPI Ecore_Wl2_Display *ecore_wl2_window_display_get(const Ecore_Wl2_Window *window);
+
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */

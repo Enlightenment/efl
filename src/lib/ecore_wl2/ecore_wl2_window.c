@@ -857,6 +857,13 @@ ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type)
    window->type = type;
 }
 
+EAPI Ecore_Wl2_Display *
+ecore_wl2_window_display_get(const Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
+   return window->display;
+}
+
 EAPI Ecore_Wl2_Input *
 ecore_wl2_window_input_get(Ecore_Wl2_Window *window)
 {
