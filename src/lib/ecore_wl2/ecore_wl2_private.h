@@ -403,4 +403,5 @@ void _ecore_wl2_dnd_del(Ecore_Wl2_Dnd_Source *source);
 
 void _ecore_wl2_subsurf_free(Ecore_Wl2_Subsurface *subsurf);
 
+void _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window);
 #endif

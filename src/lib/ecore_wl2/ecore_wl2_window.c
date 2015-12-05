@@ -214,6 +214,49 @@ _ecore_wl2_window_type_set(Ecore_Wl2_Window *win)
      }
 }
 
+void
+_ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
+{
+   if (!window->surface) return;
+   if ((window->display->wl.xdg_shell) && (!window->xdg_surface))
+     {
+        window->xdg_surface =
+          xdg_shell_get_xdg_surface(window->display->wl.xdg_shell, window->surface);
+        if (!window->xdg_surface) goto surf_err;
+
+        if (window->title)
+          xdg_surface_set_title(window->xdg_surface, window->title);
+        if (window->class)
+          xdg_surface_set_app_id(window->xdg_surface, window->class);
+
+
+        xdg_surface_set_user_data(window->xdg_surface, window);
+        xdg_surface_add_listener(window->xdg_surface,
+                                 &_xdg_surface_listener, window);
+
+        window->configure_ack = xdg_surface_ack_configure;
+        _ecore_wl2_window_type_set(window);
+     }
+   else if ((window->display->wl.wl_shell) && (!window->wl_shell_surface))
+     {
+        window->wl_shell_surface =
+          wl_shell_get_shell_surface(window->display->wl.wl_shell, window->surface);
+        if (!window->wl_shell_surface) goto surf_err;
+
+        if (window->title)
+          wl_shell_surface_set_title(window->wl_shell_surface, window->title);
+        if (window->class)
+          wl_shell_surface_set_class(window->wl_shell_surface, window->class);
+
+        wl_shell_surface_add_listener(window->wl_shell_surface,
+                                      &_wl_shell_surface_listener, window);
+        _ecore_wl2_window_type_set(window);
+     }
+   return;
+surf_err:
+   ERR("Failed to create surface for window: %m");
+}
+
 EAPI Ecore_Wl2_Window *
 ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x, int y, int w, int h)
 {
@@ -284,60 +327,22 @@ ecore_wl2_window_surface_id_get(Ecore_Wl2_Window *window)
 EAPI void
 ecore_wl2_window_show(Ecore_Wl2_Window *window)
 {
-   Ecore_Wl2_Display *disp;
-
    EINA_SAFETY_ON_NULL_RETURN(window);
-
-   disp = window->display;
 
    if (!window->surface)
      {
         window->surface =
           wl_compositor_create_surface(window->display->wl.compositor);
+        if (!window->surface)
+          {
+             ERR("Failed to create surface for window: %m");
+             return;
+          }
      }
 
-   if ((window->type == ECORE_WL2_WINDOW_TYPE_DND) ||
-       (window->type == ECORE_WL2_WINDOW_TYPE_NONE))
-     goto type_set;
-
-   if ((disp->wl.xdg_shell) && (!window->xdg_surface))
-     {
-        window->xdg_surface =
-          xdg_shell_get_xdg_surface(disp->wl.xdg_shell, window->surface);
-        if (!window->xdg_surface) goto surf_err;
-
-        if (window->title)
-          xdg_surface_set_title(window->xdg_surface, window->title);
-        if (window->class)
-          xdg_surface_set_app_id(window->xdg_surface, window->class);
-
-        xdg_surface_set_user_data(window->xdg_surface, window);
-        xdg_surface_add_listener(window->xdg_surface,
-                                 &_xdg_surface_listener, window);
-
-        window->configure_ack = xdg_surface_ack_configure;
-     }
-   else if ((disp->wl.wl_shell) && (!window->wl_shell_surface))
-     {
-        window->wl_shell_surface =
-          wl_shell_get_shell_surface(disp->wl.wl_shell, window->surface);
-        if (!window->wl_shell_surface) goto surf_err;
-
-        if (window->title)
-          wl_shell_surface_set_title(window->wl_shell_surface, window->title);
-        if (window->class)
-          wl_shell_surface_set_class(window->wl_shell_surface, window->class);
-
-        wl_shell_surface_add_listener(window->wl_shell_surface,
-                                      &_wl_shell_surface_listener, window);
-     }
-
-type_set:
-   _ecore_wl2_window_type_set(window);
-   return;
-
-surf_err:
-   ERR("Failed to create surface for window: %m");
+   if ((window->type != ECORE_WL2_WINDOW_TYPE_DND) &&
+       (window->type != ECORE_WL2_WINDOW_TYPE_NONE))
+     _ecore_wl2_window_shell_surface_init(window);
 }
 
 EAPI void
