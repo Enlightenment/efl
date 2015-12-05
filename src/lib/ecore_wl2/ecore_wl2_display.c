@@ -359,10 +359,11 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
 
    wl_display_flush(ewd->wl.display);
 
-   if (ewd->name) free(ewd->name);
-
    /* remove this client display from hash */
-   if (_client_displays) eina_hash_del(_client_displays, ewd->name, ewd);
+   eina_hash_del_by_key(_client_displays, ewd->name);
+
+   free(ewd->name);
+   free(ewd);
 }
 
 Ecore_Wl2_Window *
