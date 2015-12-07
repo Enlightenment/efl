@@ -11,7 +11,7 @@
 #define I(p) ((int)(intptr_t)p)
 
 #ifdef WORDS_BIGENDIAN
-# define BASEFLAG SHADER_FLAG_BIGENDIAN;
+# define BASEFLAG SHADER_FLAG_BIGENDIAN
 #else
 # define BASEFLAG 0
 #endif
