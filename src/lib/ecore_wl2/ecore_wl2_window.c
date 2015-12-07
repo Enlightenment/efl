@@ -221,14 +221,14 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
    if ((window->display->wl.xdg_shell) && (!window->xdg_surface))
      {
         window->xdg_surface =
-          xdg_shell_get_xdg_surface(window->display->wl.xdg_shell, window->surface);
+          xdg_shell_get_xdg_surface(window->display->wl.xdg_shell,
+                                    window->surface);
         if (!window->xdg_surface) goto surf_err;
 
         if (window->title)
           xdg_surface_set_title(window->xdg_surface, window->title);
         if (window->class)
           xdg_surface_set_app_id(window->xdg_surface, window->class);
-
 
         xdg_surface_set_user_data(window->xdg_surface, window);
         xdg_surface_add_listener(window->xdg_surface,
@@ -240,7 +240,8 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
    else if ((window->display->wl.wl_shell) && (!window->wl_shell_surface))
      {
         window->wl_shell_surface =
-          wl_shell_get_shell_surface(window->display->wl.wl_shell, window->surface);
+          wl_shell_get_shell_surface(window->display->wl.wl_shell,
+                                     window->surface);
         if (!window->wl_shell_surface) goto surf_err;
 
         if (window->title)
@@ -252,7 +253,9 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
                                       &_wl_shell_surface_listener, window);
         _ecore_wl2_window_type_set(window);
      }
+
    return;
+
 surf_err:
    ERR("Failed to create surface for window: %m");
 }
