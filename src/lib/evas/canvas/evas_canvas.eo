@@ -11,8 +11,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
               given evas.
 
               The framespace size is used in the Wayland engines to denote
-              space where the output is not drawn. This is mainly used in
-              ecore_evas to draw borders.
+              space in the viewport which is occupied by the window
+              frame. This is mainly used in ecore_evas to draw borders.
 
               The units used for $w and $h depend on the engine used by the
               evas.
