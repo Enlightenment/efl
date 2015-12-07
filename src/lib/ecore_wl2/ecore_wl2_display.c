@@ -363,7 +363,6 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
    eina_hash_del_by_key(_client_displays, ewd->name);
 
    free(ewd->name);
-   free(ewd);
 }
 
 Ecore_Wl2_Window *
