@@ -918,6 +918,25 @@ START_TEST(evas_textblock_cursor)
 #endif
      }
 
+   /* Line set with BiDi text */
+     {
+        size_t pos;
+
+        evas_object_textblock_text_markup_set(tb,
+              "שלום עולם hello world<ps>"
+              "שלום עולם hello world<ps>"
+              "hello world שלום עולם");
+        evas_textblock_cursor_line_set(cur, 0);
+        pos = evas_textblock_cursor_pos_get(cur);
+        ck_assert_int_eq(pos, 0);
+        evas_textblock_cursor_line_set(cur, 1);
+        pos = evas_textblock_cursor_pos_get(cur);
+        ck_assert_int_eq(pos, 22);
+        evas_textblock_cursor_line_set(cur, 2);
+        pos = evas_textblock_cursor_pos_get(cur);
+        ck_assert_int_eq(pos, 44);
+     }
+
    END_TB_TEST();
 }
 END_TEST

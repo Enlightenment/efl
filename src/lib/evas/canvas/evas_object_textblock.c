@@ -8348,6 +8348,33 @@ evas_textblock_cursor_paragraph_char_last(Evas_Textblock_Cursor *cur)
 
 }
 
+static void
+_cursor_line_first_char_get(Evas_Object_Textblock_Line *ln,
+                            Evas_Textblock_Cursor *cur,
+                            Evas_Textblock_Data *o)
+{
+   if (ln->items)
+     {
+        Evas_Object_Textblock_Item *it;
+        size_t pos;
+        pos = ln->items->text_pos;
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(ln->items)->next, it)
+          {
+             if (it->text_pos < pos)
+               {
+                  pos = it->text_pos;
+               }
+          }
+        cur->pos = pos;
+        cur->node = ln->items->text_node;
+     }
+   else
+     {
+        cur->pos = 0;
+        cur->node = o->text_nodes;
+     }
+}
+
 EAPI void
 evas_textblock_cursor_line_char_first(Evas_Textblock_Cursor *cur)
 {
@@ -8362,26 +8389,12 @@ evas_textblock_cursor_line_char_first(Evas_Textblock_Cursor *cur)
 
    _relayout_if_needed(cur->obj, o);
 
+   /* We don't actually need 'it', but it needs to be non NULL */
    _find_layout_item_match(cur, &ln, &it);
 
    if (!ln) return;
-   if (ln->items)
-     {
-        Evas_Object_Textblock_Item *i;
-        it = ln->items;
-        EINA_INLIST_FOREACH(ln->items, i)
-          {
-             if (it->text_pos > i->text_pos)
-               {
-                  it = i;
-               }
-          }
-     }
-   if (it)
-     {
-        cur->pos = it->text_pos;
-        cur->node = it->text_node;
-     }
+
+   _cursor_line_first_char_get(ln, cur, o);
 }
 
 EAPI void
@@ -8928,7 +8941,6 @@ EAPI Eina_Bool
 evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
 {
    Evas_Object_Textblock_Line *ln;
-   Evas_Object_Textblock_Item *it;
 
    if (!cur) return EINA_FALSE;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
@@ -8940,17 +8952,9 @@ evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
 
    ln = _find_layout_line_num(cur->obj, line);
    if (!ln) return EINA_FALSE;
-   it = (Evas_Object_Textblock_Item *)ln->items;
-   if (it)
-     {
-        cur->pos = it->text_pos;
-        cur->node = it->text_node;
-     }
-   else
-     {
-        cur->pos = 0;
-        cur->node = o->text_nodes;
-     }
+
+   _cursor_line_first_char_get(ln, cur, o);
+
    return EINA_TRUE;
 }
 
