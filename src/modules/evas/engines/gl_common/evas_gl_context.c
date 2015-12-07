@@ -481,8 +481,16 @@ _evas_gl_common_version_check(int *gles_ver)
         /* Map GL to GLES version: Refer http://en.wikipedia.org/wiki/OpenGL_ES */
         if ((major >= 4) && (minor >= 3))
           *gles_ver = 3;
+        else if ((major > 3) || ((major == 3) && (minor >= 3))) /* >= 3.3 */
+          {
+             const char *exts = (const char *) glGetString(GL_EXTENSIONS);
+             if (exts && strstr(exts, "GL_ARB_ES3_compatibility"))
+               *gles_ver = 3;
+             else
+               *gles_ver = 2;
+          }
         else
-          *gles_ver = 2;
+          *gles_ver = 2; /* emulated support */
         return 1;
      }
 
