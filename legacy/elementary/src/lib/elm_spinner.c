@@ -429,9 +429,9 @@ _entry_filter_add(Evas_Object *obj)
    elm_entry_markup_filter_remove(sd->ent, elm_entry_filter_accept_set, &digits_filter_data);
 
    if (sd->decimal_points > 0)
-     digits_filter_data.accepted = ".0123456789";
+     digits_filter_data.accepted = "-.0123456789";
    else
-     digits_filter_data.accepted = "0123456789";
+     digits_filter_data.accepted = "-0123456789";
 
    elm_entry_markup_filter_append(sd->ent, elm_entry_filter_accept_set, &digits_filter_data);
 }
