@@ -77,17 +77,6 @@ static const struct xdg_shell_listener xdg_shell_listener =
    xdg_shell_ping,
 };
 
-/* static void */
-/* _ecore_wl_uuid_receive(void *data EINA_UNUSED, struct session_recovery *session_recovery EINA_UNUSED, const char *uuid) */
-/* { */
-/*    DBG("UUID assigned from compositor: %s", uuid); */
-/* } */
-
-/* static const struct session_recovery_listener _ecore_wl_session_recovery_listener = */
-/* { */
-/*    _ecore_wl_uuid_receive, */
-/* }; */
-
 /* external variables */
 int _ecore_wl_log_dom = -1;
 Ecore_Wl_Display *_ecore_wl_disp = NULL;
@@ -212,9 +201,6 @@ ecore_wl_init(const char *name)
      wl_display_get_registry(_ecore_wl_disp->wl.display);
    wl_registry_add_listener(_ecore_wl_disp->wl.registry,
                             &_ecore_wl_registry_listener, _ecore_wl_disp);
-
-   //session_recovery_add_listener(_ecore_wl_disp->wl.session_recovery,
-                            //&_ecore_wl_session_recovery_listener, _ecore_wl_disp);
 
    if (!_ecore_wl_xkb_init(_ecore_wl_disp))
      {
