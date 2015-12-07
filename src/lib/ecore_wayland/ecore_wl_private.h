@@ -3,6 +3,7 @@
 
 # include <limits.h>
 # include <unistd.h>
+# include <uuid/uuid.h>
 
 # include "Ecore.h"
 # include "Ecore_Input.h"
@@ -173,6 +174,8 @@ struct _Ecore_Wl_Window
    Ecore_Wl_Subsurf *subsurfs;
 
    void *data;
+
+   uuid_t uuid;
 };
 
 struct _Ecore_Wl_Input

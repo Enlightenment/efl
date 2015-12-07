@@ -1093,10 +1093,17 @@ _ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup)
 static void
 _ecore_session_recovery_uuid(void *data EINA_UNUSED, struct session_recovery *session_recovery, const char *uuid)
 {
+   Ecore_Wl_Window *win;
+   char uuid_string[37];
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!(win = data)) return;
    if (!session_recovery) return;
-   DBG("UUID event received from compositor with UUID: %s", uuid);
+   uuid_parse(uuid, win->uuid);
+
+   uuid_unparse(win->uuid, uuid_string);
+   DBG("UUID event received from compositor with UUID: %s\n", uuid_string);
 }
 
 static void
