@@ -299,6 +299,11 @@ eina_str_split_full_helper(const char *str,
    return str_array;
 }
 
+static inline Eina_Bool is_base64(unsigned char c)
+{
+   return (isalnum(c) || (c == '+') || (c == '/'));
+}
+
 /**
  * @endcond
  */
@@ -778,4 +783,75 @@ eina_str_base64_encode(const unsigned char *src, unsigned int len)
    dest[k] = '\0';
 
    return dest;
+}
+
+EAPI
+unsigned char *eina_str_base64_decode(const char * src, int *decoded_str_len)
+{
+   unsigned char inarr[4], outarr[3];
+   int i = 0, j = 0, k = 0, l = 0;
+   int len;
+   unsigned char *dest;
+
+   if (!src)
+     goto error;
+
+   len = strlen(src);
+   /* The encoded string length should be a multiple of 4. Else it is not a
+    * valid encoded string.
+    */
+   if (len % 4)
+     goto error;
+
+   /* This is the max size the destination string can have.
+    */
+   dest = (unsigned char *)malloc(sizeof(unsigned char) * ((len * 3 / 4) + 1));
+   if (!dest)
+     goto error;
+
+   while (len-- && ( src[k] != '=') && is_base64(src[k]))
+     {
+       inarr[i++] = src[k++];
+       if (i ==4)
+         {
+           for (i = 0; i <4; i++)
+             inarr[i] = strchr(base64_table,(int) inarr[i]) - base64_table;
+
+           outarr[0] = (inarr[0] << 2) + ((inarr[1] & 0x30) >> 4);
+           outarr[1] = ((inarr[1] & 0xf) << 4) + ((inarr[2] & 0x3c) >> 2);
+           outarr[2] = ((inarr[2] & 0x3) << 6) + inarr[3];
+
+           for (i = 0; (i < 3); i++)
+             dest[l++] = outarr[i];
+           i = 0;
+         }
+     }
+
+   if (i)
+     {
+       for (j = i; j <4; j++)
+         inarr[j] = 0;
+
+       for (j = 0; j <4; j++)
+         inarr[j] = strchr(base64_table, (int) inarr[j]) - base64_table;
+
+       outarr[0] = (inarr[0] << 2) + ((inarr[1] & 0x30) >> 4);
+       outarr[1] = ((inarr[1] & 0xf) << 4) + ((inarr[2] & 0x3c) >> 2);
+       outarr[2] = ((inarr[2] & 0x3) << 6) + inarr[3];
+
+       for (j = 0; (j < i - 1); j++)
+         dest[l++] = outarr[j];
+     }
+
+   /* This is to prevent the applications from crashing. */
+   dest[l] = '\0';
+
+   if (decoded_str_len)
+     *decoded_str_len = l;
+   return dest;
+
+error:
+   if (decoded_str_len)
+     *decoded_str_len = 0;
+   return NULL;
 }
