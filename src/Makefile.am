@@ -108,7 +108,8 @@ examples/ephysics \
 examples/edje \
 examples/emotion \
 examples/elocation \
-examples/ethumb_client
+examples/ethumb_client \
+examples/eflat_xml_model
 
 if HAVE_ELUA
 EXAMPLES_SUBDIRS += examples/elua

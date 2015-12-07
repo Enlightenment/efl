@@ -1,7 +1,9 @@
 //Compile with:
 // gcc -o busmodel busmodel.c `pkg-config --cflags --libs eldbus ecore eina`
 
+#ifdef HAVE_CONFIG_H
 # include <config.h>
+#endif
 
 #include <Eldbus.h>
 #include <Eldbus_Model.h>

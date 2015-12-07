@@ -1,0 +1,14 @@
+CC=gcc
+COMMON_FLAGS=`pkg-config --libs --cflags eo,efl,eina,ecore,eldbus`
+
+EXAMPLES= xml_model
+
+all: examples
+examples: $(EXAMPLES)
+
+$(EXAMPLES):
+	$(CC) -o $@ $@.c $(COMMON_FLAGS)
+
+clean:
+	@echo "Cleaning up built objects..."
+	@rm -Rf $(EXAMPLES)
