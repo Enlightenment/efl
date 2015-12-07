@@ -358,11 +358,6 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
    if (ewd->wl.registry) wl_registry_destroy(ewd->wl.registry);
 
    wl_display_flush(ewd->wl.display);
-
-   /* remove this client display from hash */
-   eina_hash_del_by_key(_client_displays, ewd->name);
-
-   free(ewd->name);
 }
 
 Ecore_Wl2_Window *
@@ -650,6 +645,11 @@ ecore_wl2_display_disconnect(Ecore_Wl2_Display *display)
    if (display->refs <= 0)
      {
         wl_display_disconnect(display->wl.display);
+
+        /* remove this client display from hash */
+        eina_hash_del_by_key(_client_displays, display->name);
+
+        free(display->name);
         free(display);
      }
 }
@@ -662,6 +662,11 @@ ecore_wl2_display_destroy(Ecore_Wl2_Display *display)
    if (display->refs <= 0)
      {
         wl_display_destroy(display->wl.display);
+
+        /* remove this client display from hash */
+        eina_hash_del_by_key(_server_displays, display->name);
+
+        free(display->name);
         free(display);
      }
 }
