@@ -1267,16 +1267,14 @@ _elm_win_opaque_update(Elm_Win_Data *sd)
      {
         ecore_evas_geometry_get(sd->ee, NULL, NULL, &ow, &oh);
         ecore_wl2_window_opaque_region_set(sd->wl.win, 0, 0, ow, oh);
-        /* TODO */
-        /* ecore_wl_window_update_location(sd->wl.win, 0, 0); */
+        ecore_wl2_window_geometry_set(sd->wl.win, 0, 0, ow, oh);
         return;
      }
 
    edje_object_part_geometry_get(sd->frame_obj, "elm.spacer.opaque",
                                  &ox, &oy, &ow, &oh);
    ecore_wl2_window_opaque_region_set(sd->wl.win, ox, oy, ow, oh);
-   /* TODO */
-   /* ecore_wl_window_update_location(sd->wl.win, ox, oy); */
+   ecore_wl2_window_geometry_set(sd->wl.win, ox, oy, ow, oh);
 }
 #endif
 
