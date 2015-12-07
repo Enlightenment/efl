@@ -383,7 +383,10 @@ START_TEST(str_base64_encode)
      { "leasure.", "bGVhc3VyZS4=", 8 },
      { "easure.", "ZWFzdXJlLg==", 7 },
      { "asure.", "YXN1cmUu", 6 },
-     { "sure.", "c3VyZS4=", 5 }
+     { "sure.", "c3VyZS4=", 5 },
+     /* The following 2 cases are manually generated for '-' and '/' testing*/
+     { "aabc123!?", "YWFiYzEyMyE/", 9 },
+     { "abc123!?$*&()'-=@~", "YWJjMTIzIT8kKiYoKSctPUB+", 18 }
    };
    unsigned int i;
 
