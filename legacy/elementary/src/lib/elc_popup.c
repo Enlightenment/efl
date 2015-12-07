@@ -1475,7 +1475,10 @@ _elm_popup_evas_object_smart_add(Eo *obj, Elm_Popup_Data *priv)
 
    priv->notify = elm_notify_add(obj);
    elm_object_style_set(priv->notify, style);
-   elm_notify_align_set(priv->notify, 0.5, 0.5);
+
+   elm_notify_align_set(priv->notify,
+                        _elm_config->popup_horizontal_align,
+                        _elm_config->popup_vertical_align);
    elm_notify_allow_events_set(priv->notify, EINA_FALSE);
    evas_object_size_hint_weight_set
      (priv->notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

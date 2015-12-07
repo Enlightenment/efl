@@ -439,6 +439,8 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, win_auto_focus_animate, T_UCHAR);
    ELM_CONFIG_VAL(D, T, transition_duration_factor, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, naviframe_prev_btn_auto_pushed, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, popup_horizontal_align, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, popup_vertical_align, T_DOUBLE);
 #undef T
 #undef D
 #undef T_INT
@@ -1468,6 +1470,8 @@ _config_load(void)
    _elm_config->gl_stencil = 0;
    _elm_config->transition_duration_factor = 1.0;
    _elm_config->naviframe_prev_btn_auto_pushed = EINA_TRUE;
+   _elm_config->popup_horizontal_align = 0.5;
+   _elm_config->popup_vertical_align = 0.5;
 }
 
 static void
@@ -2146,6 +2150,11 @@ _env_get(void)
 
    s = getenv("ELM_TRANSITION_DURATION_FACTOR");
    if (s) _elm_config->transition_duration_factor = atof(s);
+
+   s = getenv("ELM_POPUP_HORIZONTAL_ALIGN");
+   if (s) _elm_config->popup_horizontal_align = _elm_atof(s);
+   s = getenv("ELM_POPUP_VERTICAL_ALIGN");
+   if (s) _elm_config->popup_vertical_align = _elm_atof(s);
 }
 
 static void

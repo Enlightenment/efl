@@ -95,6 +95,8 @@ group "Elm_Config" struct {
   value "win_auto_focus_animate" uchar: 1;
   value "transition_duration_factor" double: 1.0;
   value "naviframe_prev_btn_auto_pushed" uchar: 1;
+  value "popup_horizontal_align" double: 0.5;
+  value "popup_vertical_align" double: 0.5;
   group "color_palette" list {
      group "Elm_Custom_Palette" struct {
         value "palette_name" string: "default";
