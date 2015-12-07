@@ -133,6 +133,7 @@ group { name: "elm/label/base/slide_long";
                min: 1 1;
                ellipsis: -1;
             }
+            fixed: 1 0;
          }
          description { state: "slide_begin" 0.0;
             inherit: "default" 0.0;
@@ -144,6 +145,7 @@ group { name: "elm/label/base/slide_long";
                min: 1 1;
                ellipsis: -1;
             }
+            fixed: 1 0;
          }
       }
    }
@@ -246,6 +248,7 @@ group { name: "elm/label/base/slide_short";
                min: 1 1;
                ellipsis: -1;
             }
+            fixed: 1 0;
          }
          description { state: "slide_begin" 0.0;
             inherit: "default" 0.0;
@@ -256,6 +259,7 @@ group { name: "elm/label/base/slide_short";
                min: 1 1;
                ellipsis: -1;
             }
+            fixed: 1 0;
          }
       }
    }
@@ -369,6 +373,7 @@ group { name: "elm/label/base/slide_bounce";
                min: 1 1;
                ellipsis: -1;
             }
+            fixed: 1 0;
          }
          description { state: "slide_begin" 0.0;
             inherit: "default" 0.0;
@@ -379,6 +384,7 @@ group { name: "elm/label/base/slide_bounce";
                min: 1 1;
                ellipsis: -1;
             }
+            fixed: 1 0;
          }
       }
    }
