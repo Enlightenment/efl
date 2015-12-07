@@ -23,6 +23,12 @@ Fixes:
    * doc/eldbus: fix parameter in document
    * edje_cc: Fix inheritance of "no_render" flag
    * eldbus - make method calls less crasy since libdbus likes to abort
+   * Evas filters: Fix crash with async sw rendering
+   * Ecore_xcb_keymap: Fix memory leak in _ecore_xcb_keymap_finilize
+   * Ecore exe win32: Fix double-free errors. (T2675)
+   * Eina: fix eina_file_current_directory_get()
+   * Eina: fix memory leak in eina_file_open()
+   * edje: initialize map.zoom values to fix old *.edj compatibility issues.
 
 Changes since 1.14.0:
 ---------------------
