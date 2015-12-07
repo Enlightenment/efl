@@ -395,11 +395,22 @@ ecore_wl_window_surface_create(Ecore_Wl_Window *win)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, NULL);
 
+   char uuid[37];
+
    if (win->surface) return win->surface;
-   if (_ecore_wl_disp->wl.session_recovery && getenv("EFL_WAYLAND_SESSION_RECOVERY"))
-     session_recovery_add_listener(_ecore_wl_disp->wl.session_recovery, &_ecore_session_recovery_listener, win);
    win->surface = wl_compositor_create_surface(_ecore_wl_compositor_get());
    if (!win->surface) return NULL;
+
+   if (_ecore_wl_disp->wl.session_recovery && getenv("EFL_WAYLAND_SESSION_RECOVERY"))
+     {
+        session_recovery_add_listener(_ecore_wl_disp->wl.session_recovery,
+                                      &_ecore_session_recovery_listener, win);
+        if (!uuid_is_null(win->uuid))
+          {
+             uuid_unparse(win->uuid, uuid);
+             session_recovery_provide_uuid(_ecore_wl_disp->wl.session_recovery, uuid);
+          }
+     }
    win->surface_id = wl_proxy_get_id((struct wl_proxy *)win->surface);
    return win->surface;
 }
