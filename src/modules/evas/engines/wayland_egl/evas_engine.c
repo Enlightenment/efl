@@ -677,7 +677,11 @@ eng_setup(Evas *evas, void *info)
              ob->info = inf;
              if ((ob->info->info.display != ob->disp) || 
                  (ob->info->info.surface != ob->surface) || 
-                 (ob->info->info.win != ob->win) || 
+                 /* FIXME: comment out below line.
+                  * since there is no place set the info->info.win for now,
+                  * it causes renew the window unnecessarily.
+                  */
+                 /* (ob->info->info.win != ob->win) || */
                  (ob->info->info.depth != ob->depth) || 
                  (ob->info->info.screen != ob->screen) || 
                  (ob->info->info.destination_alpha != ob->alpha))
