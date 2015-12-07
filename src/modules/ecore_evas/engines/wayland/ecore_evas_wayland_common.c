@@ -649,14 +649,6 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
         if (wdata->frame)
           evas_object_resize(wdata->frame, w, h);
 
-        if (wdata->win)
-          {
-             if (ECORE_EVAS_PORTRAIT(ee))
-               ecore_wl2_window_geometry_set(wdata->win, 0, 0, w, h);
-             else
-               ecore_wl2_window_geometry_set(wdata->win, 0, 0, h, w);
-          }
-
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
 }
@@ -1190,8 +1182,7 @@ _ecore_evas_wl_common_border_update(Ecore_Evas *ee)
    Ecore_Evas_Engine_Wl_Data *wdata;
 
    wdata = ee->engine.data;
-   if (!wdata->frame)
-     return;
+   if (!wdata->frame) return;
 
    if ((ee->prop.borderless) || (ee->prop.fullscreen))
      {
