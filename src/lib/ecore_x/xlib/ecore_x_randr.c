@@ -2669,6 +2669,7 @@ ecore_x_randr_output_backlight_level_get(Ecore_X_Window root EINA_UNUSED, Ecore_
 
    if ((!prop) || (items == 0))
      {
+        free(prop);
         /* check legacy backlight property
          * 
          * FIXME: NB: Not sure what randr version we need for the legacy 
@@ -2684,6 +2685,7 @@ ecore_x_randr_output_backlight_level_get(Ecore_X_Window root EINA_UNUSED, Ecore_
    /* safety check */
    if ((!prop) || (type != XA_INTEGER) || (items != 1) || (format != 32))
      {
+        free(prop);
         WRN("Backlight property is not supported on this server or driver");
         return -1;
      }
@@ -2788,7 +2790,7 @@ ecore_x_randr_output_edid_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Out
 {
 #ifdef ECORE_XRANDR
    Atom edid = None, type = None;
-   unsigned char *prop;
+   unsigned char *prop = NULL;
    int format = 0;
    unsigned long nitems = 0, bytes = 0;
 
@@ -2813,10 +2815,12 @@ ecore_x_randr_output_edid_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Out
                {
                   if (length) *length = nitems;
                   memcpy(ret, prop, (nitems * sizeof(unsigned char)));
+                  free(prop);
                   return ret;
                }
           }
      }
+   free(prop);
 #endif
    return NULL;
 }
@@ -2863,7 +2867,7 @@ ecore_x_randr_output_wired_clones_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_R
 {
 #ifdef ECORE_XRANDR
    Atom clones = None, type = None;
-   unsigned char *prop;
+   unsigned char *prop = NULL;
    int format = 0;
    unsigned long nitems = 0, bytes = 0;
 
@@ -2893,10 +2897,12 @@ ecore_x_randr_output_wired_clones_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_R
                {
                   if (num) *num = nitems;
                   memcpy(ret, prop, (nitems * sizeof(Ecore_X_Randr_Output)));
+                  free(prop);
                   return ret;
                }
           }
      }
+   free(prop);
 #endif
    return NULL;
 }
@@ -2933,6 +2939,7 @@ ecore_x_randr_output_signal_formats_get(Ecore_X_Window root EINA_UNUSED, Ecore_X
                             False, False, AnyPropertyType, &type, &format, 
                             &items, &bytes, &prop))
      {
+        free(prop);
         printf("Signal Format property not supported.\n");
         return NULL;
      }
@@ -3001,6 +3008,7 @@ ecore_x_randr_output_signal_properties_get(Ecore_X_Window root EINA_UNUSED, Ecor
                             False, False, AnyPropertyType, &type, &format, 
                             &items, &bytes, &prop))
      {
+        free(prop);
         printf("Signal Properties property not supported.\n");
         return NULL;
      }
@@ -3068,13 +3076,17 @@ ecore_x_randr_output_connector_number_get(Ecore_X_Window root EINA_UNUSED, Ecore
                             False, False, AnyPropertyType, &type, &format, 
                             &items, &bytes, &prop))
      {
+        free(prop);
         printf("ConnectionNumber property not supported.\n");
         return -1;
      }
 
    /* safety check */
    if ((type != XA_INTEGER) || (items != 1) || (format != 32))
-     return -1;
+     {
+        free(prop);
+        return -1;
+     }
 
    val = *((int *)prop);
    free(prop);
@@ -3113,12 +3125,16 @@ ecore_x_randr_output_connector_type_get(Ecore_X_Window root EINA_UNUSED, Ecore_X
    if (XRRGetOutputProperty(_ecore_x_disp, output, connector_type, 0, 100, 
                         False, False, AnyPropertyType, &type, &format, 
                         &items, &bytes, &prop) != Success)
-     return -1;
+     {
+        free(prop);
+        return -1;
+     }
 
    if ((!prop) || (items == 0))
      {
         Atom conn;
 
+        free(prop);
         /* NB: some butthead drivers (*cough* nouveau *cough*) do not 
          * implement randr properly. They are not using the connector type 
          * property of randr, but rather a "subconnector" property */
@@ -3130,6 +3146,7 @@ ecore_x_randr_output_connector_type_get(Ecore_X_Window root EINA_UNUSED, Ecore_X
 
    if ((!prop) || (items == 0))
      {
+        free(prop);
         WRN("ConnectorType Property not supported.");
         return -1;
      }
