@@ -773,32 +773,19 @@ ecore_file_file_get(const char *path)
 
    if (!path) return NULL;
 
-#ifdef _WIN32
-   {
-     char buf[MAX_PATH];
-
-     memcpy(buf, path, strlen(path) + 1);
-     EVIL_PATH_SEP_UNIX_TO_WIN32(buf);
-     if ((result = strrchr(buf, '\\')))
-       {
-          result++;
-          return path + (result - buf);
-       }
-     else
-       return path;
-   }
-#endif
-
    if ((result = strrchr(path, '/'))) result++;
    else result = (char *)path;
 
 #ifdef _WIN32
-   char *result_backslash = NULL;
-   if ((result_backslash = strrchr(path, '\\')))
-     {
-        result_backslash++;
-        if (result_backslash > result) result = result_backslash;
-     }
+   /*
+    * Here, we know that there is no more / in the string beginning at
+    * 'result'. So just check that there is no more \ from it.
+    */
+   {
+      char *result_backslash;
+      if ((result_backslash = strrchr(result, '\\')))
+        result = ++result_backslash;
+   }
 #endif
 
    return result;
