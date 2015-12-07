@@ -612,11 +612,17 @@ ecore_wl2_window_maximized_get(Ecore_Wl2_Window *window)
 EAPI void
 ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
 {
+   Eina_Bool prev;
+
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   if (window->maximized == maximized) return;
+   prev = window->maximized;
+   maximized = !!maximized;
+   if (prev == maximized) return;
 
-   if (window->type == ECORE_WL2_WINDOW_TYPE_TOPLEVEL)
+   window->maximized = maximized;
+
+   if (maximized)
      {
         window->saved = window->geometry;
 
@@ -627,7 +633,7 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
 
         window->type = ECORE_WL2_WINDOW_TYPE_MAXIMIZED;
      }
-   else if (window->type == ECORE_WL2_WINDOW_TYPE_MAXIMIZED)
+   else
      {
         if (window->xdg_surface)
           xdg_surface_unset_maximized(window->xdg_surface);
@@ -639,8 +645,6 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
         _ecore_wl2_window_configure_send(window, window->saved.w,
                                          window->saved.h, 0);
      }
-
-   window->maximized = maximized;
 }
 
 EAPI Eina_Bool
@@ -654,9 +658,15 @@ ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window)
 EAPI void
 ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
 {
+   Eina_Bool prev;
+
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   if (window->fullscreen == fullscreen) return;
+   prev = window->fullscreen;
+   fullscreen = !!fullscreen;
+   if (prev == fullscreen) return;
+
+   window->fullscreen = fullscreen;
 
    if (fullscreen)
      {
@@ -683,8 +693,6 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
         _ecore_wl2_window_configure_send(window, window->saved.w,
                                          window->saved.h, 0);
      }
-
-   window->fullscreen = fullscreen;
 }
 
 EAPI int
