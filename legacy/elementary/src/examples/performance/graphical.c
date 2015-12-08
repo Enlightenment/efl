@@ -575,7 +575,7 @@ _xml_attr_data(void *data, const char *key, const char *value)
              format = malloc(sizeof (char) * (strlen(a) - 1));
              for (i = 0; i <= (int)strlen(a) - 1; i++)
                format[i] = a[i + 1];
-             if (strcmp(format, "md2") || strcmp(format, "obj") || !strcmp(format, "ply"))
+             if (strcmp(format, "md2") && strcmp(format, "obj") && strcmp(format, "ply"))
                {
                   fprintf(stdout, "\nUnsupported fromat file\n");
                   globalGraphical.model_path = NULL;
