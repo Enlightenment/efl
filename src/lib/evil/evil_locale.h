@@ -18,6 +18,8 @@
  * @def LC_MESSAGES
  *
  * New locale value, based on the one in libintl.h
+ *
+ * @since 1.16
  */
 #ifdef LC_MESSAGES
 # undef LC_MESSAGES
@@ -43,18 +45,10 @@
  * Conformity: Non applicable.
  *
  * Supported OS: Windows XP.
+ *
+ * @since 1.16
  */
 EAPI char *evil_setlocale(int category, const char *locale);
-
-/**
- * @def setlocale(cat, loc)
- *
- * Wrapper around evil_setlocale().
- */
-#ifdef setlocale /* libintl.h defines setlocale() but always returns "C" */
-# undef setlocale
-#endif
-#define setlocale(cat, loc) evil_setlocale(cat, loc)
 
 
 /**

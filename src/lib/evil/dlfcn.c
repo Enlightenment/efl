@@ -12,7 +12,8 @@
 
 #include <psapi.h> /*  EnumProcessModules(Ex) */
 
-#include "Evil.h"
+#include "evil_macro.h"
+#include "evil_util.h"
 #include "evil_private.h"
 
 #include "dlfcn.h"

@@ -40,7 +40,6 @@
 
 #include "evil_macro.h"
 #include "evil_inet.h"
-#include "evil_private.h"
 
 #ifndef EMSGSIZE
 # define EMSGSIZE WSAEMSGSIZE

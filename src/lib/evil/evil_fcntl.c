@@ -6,8 +6,10 @@
 #include <sys/locking.h>
 
 #include <winsock2.h> /* for ioctlsocket */
+#include <io.h>
 
-#include "Evil.h"
+#include "evil_macro.h"
+#include "evil_fcntl.h"
 
 
 /*

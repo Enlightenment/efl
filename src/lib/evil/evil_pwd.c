@@ -2,11 +2,13 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
+#include <stdio.h>
+
 #define _POSIX
 #include <io.h>
 #include <lmcons.h>
 
-#include "Evil.h"
+#include "evil_macro.h"
 #include "pwd.h"
 
 

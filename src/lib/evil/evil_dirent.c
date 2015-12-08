@@ -2,10 +2,19 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
+#include <stdlib.h>
 #include <dirent.h>
 #include <errno.h>
+#include <sys/types.h>
 
-#include "Evil.h"
+#ifndef WIN32_LEAN_AND_MEAN
+# define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
+
+#include "evil_macro.h"
+#include "evil_stdio.h"
 
 
 struct DIR

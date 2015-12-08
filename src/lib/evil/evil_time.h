@@ -35,16 +35,6 @@
 EAPI struct tm *evil_localtime_r(const time_t *timep, struct tm *result);
 
 /**
- * @def localtime_r(t, r)
- *
- * Wrapper around evil_localtime_r().
- */
-#ifdef localtime_r
-# undef localtime_r
-#endif
-#define localtime_r(t, r) evil_localtime_r(t, r)
-
-/**
  * @brief Convert a string representation of time to a time tm structure .
  *
  * @param buf The string to convert.

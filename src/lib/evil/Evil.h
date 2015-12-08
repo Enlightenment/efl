@@ -100,13 +100,7 @@ extern "C" {
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <limits.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <math.h>
+#include <sys/stat.h> /* for mkdir in evil_macro_wrapper */
 
 
 typedef unsigned long  uid_t;
@@ -125,7 +119,6 @@ typedef unsigned long  gid_t;
 #include "evil_time.h"
 #include "evil_unistd.h"
 #include "evil_util.h"
-#include "evil_macro_pop.h"
 
 #ifndef S_ISDIR
 # define S_ISDIR(m) (((m) & _S_IFMT) == _S_IFDIR)
@@ -173,18 +166,10 @@ typedef unsigned long  gid_t;
 #define _S_IWUSR _S_IWRITE
 #define _S_IRUSR _S_IREAD
 
-  /*
-#  define close(fd) _close(fd)
-#  define read(fd,buffer,count) _read((fd),(buffer),(count))
-#  define write(fd,buffer,count) _write((fd),(buffer),(count))
-#  define unlink(filename) _unlink((filename))
-#  define lstat(f,s) _stat((f),(s))
-  */
-
 #define sigsetjmp(Env, Save) setjmp(Env)
 
-#undef EAPI
-#define EAPI
+#include "evil_macro_wrapper.h"
+#include "evil_macro_pop.h"
 
 #ifdef __cplusplus
 }

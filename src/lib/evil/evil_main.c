@@ -2,13 +2,17 @@
 # include <config.h>
 #endif
 
+#include <stdio.h>
+
 #ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN
 #endif
 #include <winsock2.h>
 #undef WIN32_LEAN_AND_MEAN
 
-#include "Evil.h"
+#include "evil_macro.h"
+#include "evil_unistd.h"
+#include "evil_main.h"
 #include "evil_private.h"
 
 
@@ -17,6 +21,8 @@ static int      _evil_init_count = 0;
 extern LONGLONG _evil_time_freq;
 extern LONGLONG _evil_time_count;
 extern long     _evil_time_second;
+
+long _evil_systemtime_to_time(SYSTEMTIME st);
 
 int
 evil_init(void)

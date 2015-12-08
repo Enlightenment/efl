@@ -16,8 +16,10 @@
 
 #include "evil_macro.h"
 #include "evil_util.h"
-#include "evil_private.h"
 
+
+/* static void _evil_error_display(const char *fct, LONG res); */
+static void _evil_last_error_display(const char *fct);
 
 wchar_t *
 evil_char_to_wchar(const char *text)
@@ -159,15 +161,15 @@ evil_format_message(long err)
    return disp;
 }
 
-void
-_evil_error_display(const char *fct, LONG res)
-{
-   char *error;
+/* static void */
+/* _evil_error_display(const char *fct, LONG res) */
+/* { */
+/*    char *error; */
 
-   error = evil_format_message(res);
-   fprintf(stderr, "[Evil] [%s] ERROR (%ld): %s\n", fct, res, error);
-   free(error);
-}
+/*    error = evil_format_message(res); */
+/*    fprintf(stderr, "[Evil] [%s] ERROR (%ld): %s\n", fct, res, error); */
+/*    free(error); */
+/* } */
 
 char *
 evil_last_error_get(void)
@@ -178,7 +180,7 @@ evil_last_error_get(void)
    return evil_format_message(err);
 }
 
-void
+static void
 _evil_last_error_display(const char *fct)
 {
    char *error;

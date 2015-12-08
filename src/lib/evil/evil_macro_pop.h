@@ -64,5 +64,8 @@
 #define SCNuPTR "llu"
 #endif /* _WIN64 */
 
+#undef EAPI
+#define EAPI
+
 
 #endif /* __EVIL_MACRO_POP_H__ */

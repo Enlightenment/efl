@@ -90,13 +90,6 @@
 EAPI int evil_inet_pton(int af, const char *src, void *dst);
 
 /**
- * @def inet_pton(x,y,z)
- *
- * Wrapper around evil_inet_pton().
- */
-#define inet_pton(x,y,z) evil_inet_pton(x,y,z)
-
-/**
  * @brief Convert IPv4 and IPv6 addresses from binary to text form.
  *
  * @param af The address family.
@@ -135,13 +128,6 @@ EAPI int evil_inet_pton(int af, const char *src, void *dst);
  *
  */
 EAPI const char *evil_inet_ntop(int af, const char *src, void *dst, size_t size);
-
-/**
- * @def inet_ntop(x,y,z,s)
- *
- * Wrapper around evil_inet_ntop().
- */
-#define inet_ntop(x,y,z,s) evil_inet_ntop(x,y,z,s)
 
 
 #endif /* _WIN32_WINNT >= _WIN32_WINNT_VISTA */

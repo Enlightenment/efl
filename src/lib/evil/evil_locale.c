@@ -14,7 +14,6 @@
 
 #include "evil_macro.h"
 #include "evil_locale.h"
-#include "evil_private.h"
 
 /*
  * LOCALE_SISO639LANGNAME and LOCALE_SISO3166CTRYNAME need at least a buffer

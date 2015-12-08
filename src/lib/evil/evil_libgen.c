@@ -4,7 +4,8 @@
 
 #include <string.h>
 
-#include "Evil.h"
+#include "evil_macro.h"
+#include "evil_libgen.h"
 
 char _evil_basename_buf[PATH_MAX];
 char _evil_dirname_buf[PATH_MAX];

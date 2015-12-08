@@ -2,7 +2,11 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include "Evil.h"
+#include <stdlib.h>
+#include <string.h>
+
+#include "evil_macro.h"
+#include "evil_langinfo.h"
 
 
 static char *

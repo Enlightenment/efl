@@ -19,7 +19,6 @@
 
 #include "evil_macro.h"
 #include "evil_stdlib.h"
-#include "evil_private.h"
 
 /*
  * Environment variable related functions

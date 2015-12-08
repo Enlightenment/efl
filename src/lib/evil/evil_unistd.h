@@ -113,13 +113,6 @@ EAPI ssize_t readlink(const char *path, char *buf, size_t bufsiz);
  */
 EAPI char *evil_getcwd(char *buffer, size_t size);
 
-/**
- * @def getcwd(b,s)
- *
- * Wrapper around evil_getcwd().
- */
-#define getcwd(b,s) evil_getcwd((b),(s))
-
 /*
  * Sockets and pipe related functions
  *
@@ -165,13 +158,6 @@ EAPI void evil_sockets_shutdown(void);
  * Supported OS: Windows XP.
  */
 EAPI int evil_pipe(int *fds);
-
-/**
- * @def pipe(fds)
- *
- * Wrapper around evil_pipe().
- */
-#define pipe(fds) evil_pipe(fds)
 
 
 /**

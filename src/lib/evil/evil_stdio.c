@@ -3,8 +3,11 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <direct.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
-#include "Evil.h"
+#include "evil_macro.h"
+#include "evil_stdio.h"
 #include "evil_private.h"
 
 #undef rename

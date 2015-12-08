@@ -2,8 +2,12 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include "Evil.h"
-#include "evil_private.h"
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#include "evil_macro.h"
+#include "evil_string.h"
 
 
 /*
