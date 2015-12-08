@@ -37,8 +37,6 @@
 #include "eina_str.h"
 
 
-static const char *base64_table = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/" ;
-
 /*============================================================================*
 *                                  Local                                     *
 *============================================================================*/
@@ -46,6 +44,10 @@ static const char *base64_table = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs
 /**
  * @cond LOCAL
  */
+
+static const char *base64_table_normal = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/" ;
+
+static const char *base64_table_url = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_" ;
 
 /*
  * Internal helper function used by eina_str_has_suffix() and
@@ -302,6 +304,66 @@ eina_str_split_full_helper(const char *str,
 static inline Eina_Bool is_base64(unsigned char c)
 {
    return (isalnum(c) || (c == '+') || (c == '/'));
+}
+
+static char *
+eina_str_base64_encode_common(const unsigned char *src, unsigned int len, Eina_Bool is_base64url_encode)
+{
+   unsigned char inarr[3], outarr[4];
+   char *dest;
+   int i = 0, j = 0, k = 0;
+   const char *base64_table;
+
+   if (!src) return NULL;
+
+   // Max length of encoded string.
+   dest = malloc(sizeof (char) * (((len + 2) / 3) * 4 + 1));
+   if (!dest) return NULL;
+
+   if (is_base64url_encode)
+     base64_table = base64_table_url;
+   else
+     base64_table = base64_table_normal;
+
+   while (len--)
+     {
+        inarr[i++] = *(src++);
+        if (i == 3)
+          {
+             outarr[0] = (inarr[0] & 0xfc) >> 2;
+             outarr[1] = ((inarr[0] & 0x03) << 4) + ((inarr[1] & 0xf0) >> 4);
+             outarr[2] = ((inarr[1] & 0x0f) << 2) + ((inarr[2] & 0xc0) >> 6);
+             outarr[3] = inarr[2] & 0x3f;
+
+             for(i = 0; (i <4) ; i++)
+               dest[k++] = base64_table[outarr[i]];
+             i = 0;
+          }
+     }
+
+   if (i)
+     {
+        for(j = i; j < 3; j++)
+          inarr[j] = '\0';
+
+        outarr[0] = (inarr[0] & 0xfc) >> 2;
+        outarr[1] = ((inarr[0] & 0x03) << 4) + ((inarr[1] & 0xf0) >> 4);
+        outarr[2] = ((inarr[1] & 0x0f) << 2) + ((inarr[2] & 0xc0) >> 6);
+        outarr[3] = inarr[2] & 0x3f;
+
+        for (j = 0; (j < i + 1); j++)
+          dest[k++] = base64_table[outarr[j]];
+
+        /* No padding for URL encoding */
+        while((i++ < 3) && (!is_base64url_encode)) {
+          dest[k++] = '=';
+        }
+
+     }
+
+   dest[k] = '\0';
+
+   return dest;
 }
 
 /**
@@ -736,53 +798,13 @@ eina_memdup(unsigned char *mem, size_t size, Eina_Bool terminate)
 EAPI char *
 eina_str_base64_encode(const unsigned char *src, unsigned int len)
 {
-   unsigned char inarr[3], outarr[4];
-   char *dest;
-   int i = 0, j = 0, k = 0;
+   return eina_str_base64_encode_common(src, len, EINA_FALSE);
+}
 
-   if (!src) return NULL;
-
-   // Max length of encoded string.
-   dest = malloc(sizeof (char) * (((len + 2) / 3) * 4 + 1));
-   if (!dest) return NULL;
-
-   while (len--)
-     {
-        inarr[i++] = *(src++);
-        if (i == 3)
-          {
-             outarr[0] = (inarr[0] & 0xfc) >> 2;
-             outarr[1] = ((inarr[0] & 0x03) << 4) + ((inarr[1] & 0xf0) >> 4);
-             outarr[2] = ((inarr[1] & 0x0f) << 2) + ((inarr[2] & 0xc0) >> 6);
-             outarr[3] = inarr[2] & 0x3f;
-
-             for(i = 0; (i <4) ; i++)
-               dest[k++] = base64_table[outarr[i]];
-             i = 0;
-          }
-     }
-
-   if (i)
-     {
-        for(j = i; j < 3; j++)
-          inarr[j] = '\0';
-
-        outarr[0] = (inarr[0] & 0xfc) >> 2;
-        outarr[1] = ((inarr[0] & 0x03) << 4) + ((inarr[1] & 0xf0) >> 4);
-        outarr[2] = ((inarr[1] & 0x0f) << 2) + ((inarr[2] & 0xc0) >> 6);
-        outarr[3] = inarr[2] & 0x3f;
-
-        for (j = 0; (j < i + 1); j++)
-          dest[k++] = base64_table[outarr[j]];
-
-        while((i++ < 3))
-          dest[k++] = '=';
-
-     }
-
-   dest[k] = '\0';
-
-   return dest;
+EAPI char *
+eina_str_base64url_encode(const unsigned char *src, unsigned int len)
+{
+   return eina_str_base64_encode_common(src, len, EINA_TRUE);
 }
 
 EAPI
@@ -815,7 +837,7 @@ unsigned char *eina_str_base64_decode(const char * src, int *decoded_str_len)
        if (i ==4)
          {
            for (i = 0; i <4; i++)
-             inarr[i] = strchr(base64_table,(int) inarr[i]) - base64_table;
+             inarr[i] = strchr(base64_table_normal,(int) inarr[i]) - base64_table_normal;
 
            outarr[0] = (inarr[0] << 2) + ((inarr[1] & 0x30) >> 4);
            outarr[1] = ((inarr[1] & 0xf) << 4) + ((inarr[2] & 0x3c) >> 2);
@@ -833,7 +855,7 @@ unsigned char *eina_str_base64_decode(const char * src, int *decoded_str_len)
          inarr[j] = 0;
 
        for (j = 0; j <4; j++)
-         inarr[j] = strchr(base64_table, (int) inarr[j]) - base64_table;
+         inarr[j] = strchr(base64_table_normal, (int) inarr[j]) - base64_table_normal;
 
        outarr[0] = (inarr[0] << 2) + ((inarr[1] & 0x30) >> 4);
        outarr[1] = ((inarr[1] & 0xf) << 4) + ((inarr[2] & 0x3c) >> 2);

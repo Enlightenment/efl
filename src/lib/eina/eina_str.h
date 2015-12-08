@@ -396,6 +396,21 @@ EAPI char *eina_strftime(const char *format, const struct tm *tm);
 EAPI char *eina_str_base64_encode(const unsigned char *src, unsigned int len);
 
 /**
+ * @brief base64 url and filename safe encoding function.
+ * @param src The string to be encoded.
+ * @param len The length of the string that should be encoded.
+ * @return the base64 url encoded string.
+ *
+ * This will create a string which is base64 encoded with url and
+ * filename safe alphabet of the src. The caller has to free the
+ * returned string using free(). There will be no padding in the
+ * encoded string.
+ *
+ * @since 1.17.0
+ */
+EAPI char *eina_str_base64url_encode(const unsigned char *src, unsigned int len);
+
+/**
  * @brief base64 decoding function.
  * @param src The string to be decoded.
  * @param decoded_str_len The length of the decoded string.
