@@ -60,24 +60,16 @@ static FILE *
 bc_tmp_open(const char *fname, char *buf, size_t buflen)
 {
    int fd;
-#ifndef _WIN32
-   mode_t old_umask;
-#endif
+   /* FIXME: use ecore_file_file_get() ? */
    char *fs = strrchr(fname, '/'), *bs = strrchr(fname, '\\');
    if (!fs && !bs)
-     snprintf(buf, buflen, "./XXXXXX");
+     snprintf(buf, buflen, "./XXXXXX.cache");
    else
      {
         char *ss = (fs > bs) ? fs : bs;
-        snprintf(buf, buflen, "%.*sXXXXXX", (int)(ss - fname + 1), fname);
+        snprintf(buf, buflen, "%.*sXXXXXX.cache", (int)(ss - fname + 1), fname);
      }
-#ifndef _WIN32
-   old_umask = umask(S_IRWXG|S_IRWXO);
-#endif
-   fd = mkstemp(buf);
-#ifndef _WIN32
-   umask(old_umask);
-#endif
+   fd = eina_file_mkstemp(buf, NULL);
    if (fd < 0)
      return NULL;
    return fdopen(fd, "wb");
