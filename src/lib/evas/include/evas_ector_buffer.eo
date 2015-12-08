@@ -1,0 +1,16 @@
+/* Note: only for internal C API */
+
+interface Evas.Ector.Buffer
+{
+   legacy_prefix: null;
+   methods {
+      @property engine_image {
+	 get {}
+	 set { [[This Buffer will hold a reference to the evas image struct.]] }
+	 values {
+	    evas: Evas *; [[The current Evas.]]
+	    image: void *; [[The engine-specific image struct.]]
+	 }
+      }
+   }
+}

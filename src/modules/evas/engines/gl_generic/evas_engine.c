@@ -2458,6 +2458,20 @@ eng_ector_destroy(void *data EINA_UNUSED, Ector_Surface *ector)
    if (ector) eo_del(ector);
 }
 
+static Ector_Buffer *
+eng_ector_buffer_new(void *data EINA_UNUSED, Evas *e, void *engine_image)
+{
+   Evas_GL_Image *im = engine_image;
+   Ector_Buffer *buf = NULL;
+
+   if (!im) return NULL;
+
+#warning FIXME: implement me
+   (void) e;
+
+   return buf;
+}
+
 static Efl_Gfx_Render_Op
 _evas_render_op_to_ector_rop(Evas_Render_Op op)
 {
@@ -2799,6 +2813,7 @@ module_open(Evas_Module *em)
 
    ORD(ector_create);
    ORD(ector_destroy);
+   ORD(ector_buffer_new);
    ORD(ector_begin);
    ORD(ector_renderer_draw);
    ORD(ector_end);

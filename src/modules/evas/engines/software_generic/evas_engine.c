@@ -9,6 +9,8 @@
 
 #include <software/Ector_Software.h>
 #include "cairo/Ector_Cairo.h"
+#include "evas_ector_buffer.eo.h"
+#include "evas_ector_software_buffer.eo.h"
 
 #if defined HAVE_DLSYM && ! defined _WIN32
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
@@ -3755,6 +3757,20 @@ eng_ector_destroy(void *data EINA_UNUSED, Ector_Surface *ector)
    if (ector) eo_del(ector);
 }
 
+static Ector_Buffer *
+eng_ector_buffer_new(void *data EINA_UNUSED, Evas *e, void *engine_image)
+{
+   Image_Entry *ie = engine_image;
+   Ector_Buffer *buf = NULL;
+
+   if (!ie) return NULL;
+
+   buf = eo_add(EVAS_ECTOR_SOFTWARE_BUFFER_CLASS, e,
+                evas_ector_buffer_engine_image_set(e, ie));
+
+   return buf;
+}
+
 static Efl_Gfx_Render_Op
 _evas_render_op_to_ector_rop(Evas_Render_Op op)
 {
@@ -4166,6 +4182,7 @@ static Evas_Func func =
      NULL, // eng_texture_image_get
      eng_ector_create,
      eng_ector_destroy,
+     eng_ector_buffer_new,
      eng_ector_begin,
      eng_ector_renderer_draw,
      eng_ector_end,

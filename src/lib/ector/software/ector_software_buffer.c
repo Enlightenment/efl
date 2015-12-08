@@ -72,8 +72,16 @@ _ector_software_buffer_base_ector_generic_buffer_pixels_set(Eo *obj, Ector_Softw
                                                             unsigned char l, unsigned char r,
                                                             unsigned char t, unsigned char b)
 {
+   unsigned px;
+
+   if (pd->generic->immutable)
+     {
+        ERR("This buffer is immutable.");
+        return EINA_FALSE;
+     }
+
    // safety check
-   unsigned px = _min_stride_calc(1, cspace);
+   px = _min_stride_calc(1, cspace);
    if (px && ((unsigned long long)(uintptr_t)pixels) & (px - 1))
      ERR("Pixel data is not aligned to %u bytes!", px);
 
