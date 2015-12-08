@@ -6591,9 +6591,9 @@ _elm_genlist_item_next_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 EOLIAN static Elm_Object_Item *
 _elm_genlist_item_prev_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 {
+   if (!it) return NULL;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   if (!it) return NULL;
    if (!sd->filter)
      {
         while (it)
