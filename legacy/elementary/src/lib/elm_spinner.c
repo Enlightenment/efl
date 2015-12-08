@@ -398,7 +398,7 @@ _entry_activated_cb(void *data,
 static int
 _decimal_points_get(const char *label)
 {
-   char result[2];
+   char result[2] = "";
    const char *start = strchr(label, '%');
 
    while (start)
@@ -406,14 +406,16 @@ _decimal_points_get(const char *label)
         if (start[1] != '%')
           {
              start = strchr(start, '.');
-             start++;
+             if (start)
+                start++;
              break;
           }
         else
           start = strchr(start + 2, '%');
      }
 
-   sscanf(start, "%[^f]", result);
+   if (start)
+      sscanf(start, "%[^f]", result);
 
    return atoi(result);
 }
