@@ -11212,6 +11212,39 @@ _evas_textblock_cursor_range_in_line_geometry_get(
    return rects;
 }
 
+/* Helper that creates a selection rectangle to a given line.
+ * The given 'inv' indicates an inverse behavior. */
+static Evas_Textblock_Rectangle *
+_line_fill_rect_get(const Evas_Object_Textblock_Line *ln,
+                    Evas_Coord w, Evas_Coord lm, Evas_Coord rm, Eina_Bool inv)
+{
+   Evas_Textblock_Rectangle *tr;
+
+   tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
+   tr->y = ln->par->y + ln->y;
+   tr->h = ln->h;
+
+   //Reminder: ln->x includes the left margin */
+   if ((!inv && (ln->par->direction == EVAS_BIDI_DIRECTION_RTL)) ||
+       (inv && (ln->par->direction != EVAS_BIDI_DIRECTION_RTL)))
+     {
+        tr->x = lm;
+        tr->w = ln->x - lm;
+     }
+   else
+     {
+        tr->x = ln->x + ln->w;
+        tr->w = w - rm - tr->x;
+     }
+
+   if (tr->w == 0)
+     {
+        free(tr);
+        tr = NULL;
+     }
+   return tr;
+}
+
 EAPI Eina_Iterator *
 evas_textblock_cursor_range_simple_geometry_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2)
 {
@@ -11254,9 +11287,12 @@ evas_textblock_cursor_range_simple_geometry_get(const Evas_Textblock_Cursor *cur
         int lm = 0, rm = 0;
         Eina_List *rects2 = NULL;
         Evas_Coord w;
-        Evas_Textblock_Cursor *tc;
         Evas_Textblock_Rectangle *tr;
 
+        evas_object_geometry_get(cur1->obj, NULL, NULL, &w, NULL);
+
+        /* Use the minimum left margin and right margin for a uniform
+         * line coverage of the rectangles */
         if (ln1->items)
           {
              Evas_Object_Textblock_Format *fm = ln1->items->format;
@@ -11267,30 +11303,29 @@ evas_textblock_cursor_range_simple_geometry_get(const Evas_Textblock_Cursor *cur
                }
           }
 
-        evas_object_geometry_get(cur1->obj, NULL, NULL, &w, NULL);
+        if (ln2->items)
+          {
+             Evas_Object_Textblock_Format *fm = ln2->items->format;
+             if (fm)
+               {
+                  if (fm->margin.l < lm) lm = fm->margin.l;
+                  if (fm->margin.r < rm) rm = fm->margin.r;
+               }
+          }
+
+        /* Append the rectangles by visual order (top, middle, bottom). Keep
+         * it like that so it is also easier to test and debug. */
+
+        /* Top line */
         rects = _evas_textblock_cursor_range_in_line_geometry_get(ln1, cur1, NULL);
-
-        /* Extend selection rectangle in first line */
-        tc = evas_object_textblock_cursor_new(cur1->obj);
-        evas_textblock_cursor_copy(cur1, tc);
-        evas_textblock_cursor_line_char_last(tc);
-        tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
-        evas_textblock_cursor_pen_geometry_get(tc, &tr->x, &tr->y, &tr->w, &tr->h);
-        if (ln1->par->direction == EVAS_BIDI_DIRECTION_RTL)
+        /* Fill-in the top line */
+        tr = _line_fill_rect_get(ln1, w, lm, rm, EINA_FALSE);
+        if (tr)
           {
-             tr->w = tr->x + tr->w - rm;
-             tr->x = lm;
+             rects = eina_list_append(rects, tr);
           }
-        else
-          {
-             tr->w = w - tr->x - rm;
-          }
-        rects = eina_list_append(rects, tr);
-        evas_textblock_cursor_free(tc);
 
-        rects2 = _evas_textblock_cursor_range_in_line_geometry_get(ln2, NULL, cur2);
-
-        /* Add middle rect */
+        /* Middle rect (lines) */
         if ((ln1->par->y + ln1->y + ln1->h) != (ln2->par->y + ln2->y))
           {
              tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
@@ -11299,6 +11334,15 @@ evas_textblock_cursor_range_simple_geometry_get(const Evas_Textblock_Cursor *cur
              tr->w = w - tr->x - rm;
              tr->h = ln2->par->y + ln2->y - tr->y;
              rects = eina_list_append(rects, tr);
+          }
+
+        /* Bottom line */
+        rects2 = _evas_textblock_cursor_range_in_line_geometry_get(ln2, NULL, cur2);
+        /* Fill-in the bottom line */
+        tr = _line_fill_rect_get(ln2, w, lm, rm, EINA_TRUE);
+        if (tr)
+          {
+             rects2 = eina_list_append(rects2, tr);
           }
         rects = eina_list_merge(rects, rects2);
      }

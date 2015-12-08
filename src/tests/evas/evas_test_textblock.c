@@ -2560,6 +2560,175 @@ START_TEST(evas_textblock_geometries)
    eina_iterator_free(it);
    eina_iterator_free(it2);
 
+   /* Check number of rectangles in case a of line wrapping */
+   evas_object_textblock_text_markup_set(tb, "<wrap=word>abc def <color=#0ff>ghi");
+   evas_object_resize(tb, w, w / 2);
+   evas_textblock_cursor_pos_set(cur, 10);
+
+     {
+        Evas_Coord cx;
+        evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
+              NULL, NULL, NULL, NULL, NULL,
+              EVAS_TEXTBLOCK_CURSOR_BEFORE);
+        /* enforce wrapping of "ghi" to the next line */
+        evas_object_resize(tb, cx, 400);
+        /* Sanity, check there is actually a second line */
+        fail_if (!evas_textblock_cursor_line_set(cur, 1));
+        fail_if (evas_textblock_cursor_line_set(cur, 2));
+     }
+
+   evas_textblock_cursor_pos_set(cur, 7);
+   evas_textblock_cursor_pos_set(main_cur, 9);
+
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+   ck_assert_int_eq(eina_list_count(rects), 3);
+
+     {
+        Evas_Coord y1, y2;
+        void *tmp = tr;
+        /* We have 3 rectangles */
+        Eina_Iterator *itr = it;
+        fail_if (!eina_iterator_next(itr, &tmp));
+        tr = tmp;
+        y1 = tr->y;
+        fail_if (!eina_iterator_next(itr, &tmp));
+        tr = tmp;
+        y2 = tr->y;
+
+        /* Basically it means that the "extending" rectangle should not somehow
+         * reach the second line in this example. */
+        ck_assert_int_eq(y1, y2);
+        eina_iterator_free(it);
+     }
+
+   /* Alignment fills */
+
+   /* LTR text */
+   evas_object_resize(tb, 400, 400);
+   evas_object_textblock_text_markup_set(tb,
+         "<align=0.1>"
+         "Hello World<ps>"
+         "How are you<ps>");
+   evas_textblock_cursor_line_set(cur, 0);
+   evas_textblock_cursor_line_set(main_cur, 1);
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+   ck_assert_int_eq(eina_list_count(rects), 3);
+   evas_textblock_cursor_char_next(main_cur);
+   eina_iterator_free(it);
+
+   evas_textblock_cursor_char_next(main_cur);
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+   ck_assert_int_eq(eina_list_count(rects), 4);
+   evas_textblock_cursor_char_next(main_cur);
+   eina_iterator_free(it);
+
+   evas_textblock_cursor_line_set(main_cur, 2);
+   evas_textblock_cursor_char_next(main_cur);
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+   ck_assert_int_eq(eina_list_count(rects), 4);
+   evas_textblock_cursor_char_next(main_cur);
+   eina_iterator_free(it);
+
+   /* RTL text aligned to the left */
+   evas_object_textblock_text_markup_set(tb,
+         "<align=left>"
+         "שלום עולם<ps>"
+         "מה שלומך");
+   evas_textblock_cursor_line_set(cur, 0);
+   evas_textblock_cursor_line_set(main_cur, 1);
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+   ck_assert_int_eq(eina_list_count(rects), 2);
+   evas_textblock_cursor_char_next(main_cur);
+   eina_iterator_free(it);
+
+   evas_textblock_cursor_char_next(main_cur);
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+   ck_assert_int_eq(eina_list_count(rects), 3);
+   evas_textblock_cursor_char_next(main_cur);
+   eina_iterator_free(it);
+
+   /* RTL text aligned to the middle */
+   evas_object_textblock_text_markup_set(tb,
+         "<align=middle>"
+         "שלום עולם<ps>"
+         "מה שלומך");
+   evas_textblock_cursor_line_set(cur, 0);
+   evas_textblock_cursor_line_set(main_cur, 1);
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+   ck_assert_int_eq(eina_list_count(rects), 3);
+   eina_iterator_free(it);
+
+   evas_textblock_cursor_char_next(main_cur);
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+   ck_assert_int_eq(eina_list_count(rects), 4);
+   eina_iterator_free(it);
+
+   evas_object_textblock_text_markup_set(tb,
+         "<align=middle>"
+         "שלום עולם<ps>"
+         "מה שלומך");
+   evas_textblock_cursor_line_set(cur, 0);
+   evas_textblock_cursor_line_set(main_cur, 1);
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+   ck_assert_int_eq(eina_list_count(rects), 3);
+   eina_iterator_free(it);
+
+   evas_textblock_cursor_char_next(main_cur);
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+   ck_assert_int_eq(eina_list_count(rects), 4);
+   eina_iterator_free(it);
+
+   /* Auto align RTL and LTR */
+   evas_object_textblock_text_markup_set(tb,
+         "Hello world<ps>"
+         "מה שלומך");
+   evas_textblock_cursor_line_set(cur, 0);
+   evas_textblock_cursor_line_set(main_cur, 1);
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+   ck_assert_int_eq(eina_list_count(rects), 2);
+   eina_iterator_free(it);
+
+   evas_textblock_cursor_char_next(main_cur);
+   it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
+   fail_if(!it);
+   rects = eina_iterator_container_get(it);
+   fail_if(!rects);
+   ck_assert_int_eq(eina_list_count(rects), 3);
+   eina_iterator_free(it);
+
    /* Same run different scripts */
    evas_object_textblock_text_markup_set(tb, "עבריתenglishрусскийעברית");
 
