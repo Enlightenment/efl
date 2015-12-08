@@ -779,9 +779,15 @@ ecore_wl2_window_iconified_get(Ecore_Wl2_Window *window)
 EAPI void
 ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
 {
+   Eina_Bool prev;
+
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   if (window->minimized == iconified) return;
+   prev = window->minimized;
+   iconified = !!iconified;
+   if (prev == iconified) return;
+
+   window->minimized = iconified;
 
    if (iconified)
      {
@@ -806,8 +812,6 @@ ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
 
         window->type = ECORE_WL2_WINDOW_TYPE_TOPLEVEL;
      }
-
-   window->minimized = iconified;
 }
 
 EAPI void
