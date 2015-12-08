@@ -1180,7 +1180,7 @@ void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer,
    Evas_Canvas3D_Light_Data *pd = eo_data_scope_get(pd_light_node->data.light.light,
                                               EVAS_CANVAS3D_LIGHT_CLASS);
 
-   Evas_Vec4 planes[6];
+   Eina_Quaternion planes[6];
    eina_matrix4_multiply(&matrix_vp, &pd->projection, matrix_light_eye);
    evas_frustum_calculate(planes, &matrix_vp);
 
@@ -1230,7 +1230,7 @@ _scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_Canvas3D_Scen
    Eina_Matrix4        matrix_light_eye, matrix_vp;;
    Evas_Canvas3D_Light_Data *ld = NULL;
    Evas_Canvas3D_Node_Data *pd_light_node;
-   Evas_Vec4 planes[6];
+   Eina_Quaternion planes[6];
 
    /* Get eye matrix. */
    Evas_Canvas3D_Node_Data *pd_camera_node = eo_data_scope_get(data->camera_node, EVAS_CANVAS3D_NODE_CLASS);

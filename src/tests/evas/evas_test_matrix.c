@@ -16,12 +16,12 @@
 START_TEST(evas_matrix)
 {
    Evas_Vec3 position;
-   Evas_Vec4 orientation;
+   Eina_Quaternion orientation;
    Evas_Vec3 scale;
    Eina_Matrix4 mat;
 
    evas_vec3_set(&position, 5.0, 3.0, 2.0);
-   evas_vec4_set(&orientation, 30.0, 1.0, 0.0, 0.0);
+   eina_quaternion_set(&orientation, 30.0, 1.0, 0.0, 0.0);
    evas_vec3_set(&scale, 1.0, 2.0, 1.0);
 
    evas_mat4_build(&mat, &position, &orientation, &scale);

@@ -984,3 +984,124 @@ eina_quaternion_matrix4_to(Eina_Matrix4 *m,
    m->wz = tmp.wz;
    m->ww = tmp.ww;
 }
+
+EAPI void
+eina_quaternion_inverse(Eina_Quaternion *out, const Eina_Quaternion *q)
+{
+   double norm = (q->x * q->x) + (q->y * q->y) + (q->z * q->z) + (q->w * q->w);
+
+   if (norm > 0.0)
+     {
+        double inv_norm = 1.0 / norm;
+        out->x = -q->x * inv_norm;
+        out->y = -q->y * inv_norm;
+        out->z = -q->z * inv_norm;
+        out->w =  q->w * inv_norm;
+     }
+   else
+     {
+        out->x = 0.0;
+        out->y = 0.0;
+        out->z = 0.0;
+        out->w = 0.0;
+     }
+}
+
+EAPI void
+eina_quaternion_array_set(Eina_Quaternion *dst, const double *v)
+{
+   dst->x = v[0];
+   dst->y = v[1];
+   dst->z = v[2];
+   dst->w = v[3];
+}
+
+EAPI void
+eina_quaternion_copy(Eina_Quaternion *dst, const Eina_Quaternion *src)
+{
+   dst->x = src->x;
+   dst->y = src->y;
+   dst->z = src->z;
+   dst->w = src->w;
+}
+
+EAPI void
+eina_quaternion_homogeneous_regulate(Eina_Quaternion *out, const Eina_Quaternion *v)
+{
+   if (v->w != 0.0)
+     {
+        double scale = 1.0 / v->w;
+
+        out->x = v->x * scale;
+        out->y = v->y * scale;
+        out->z = v->z * scale;
+        out->w = 1.0;
+     }
+}
+
+EAPI void
+eina_quaternion_subtract(Eina_Quaternion *out, const Eina_Quaternion *a, const Eina_Quaternion *b)
+{
+   out->x = a->x - b->x;
+   out->y = a->y - b->y;
+   out->z = a->z - b->z;
+   out->w = a->w - b->w;
+}
+
+EAPI double
+eina_quaternion_length_get(const Eina_Quaternion *v)
+{
+   return (double)sqrt((double)((v->x * v->x) + (v->y * v->y) +
+                                (v->z * v->z) + (v->w * v->w)));
+}
+
+EAPI double
+eina_quaternion_length_square_get(const Eina_Quaternion *v)
+{
+   return (v->x * v->x) + (v->y * v->y) + (v->z * v->z) + (v->w * v->w);
+}
+
+EAPI double
+eina_quaternion_distance_get(const Eina_Quaternion *a, const Eina_Quaternion *b)
+{
+   Eina_Quaternion v;
+
+   eina_quaternion_subtract(&v, a, b);
+   return eina_quaternion_length_get(&v);
+}
+
+EAPI double
+eina_quaternion_distance_square_get(const Eina_Quaternion *a, const Eina_Quaternion *b)
+{
+   Eina_Quaternion v;
+
+   eina_quaternion_subtract(&v, a, b);
+   return eina_quaternion_length_square_get(&v);
+}
+
+EAPI void
+eina_quaternion_transform(Eina_Quaternion *out, const Eina_Quaternion *v, const Eina_Matrix4 *m)
+{
+   Eina_Quaternion tmp;
+
+   if (eina_matrix4_type_get(m) & EINA_MATRIX_TYPE_IDENTITY)
+     {
+        eina_quaternion_copy(out, v);
+        return;
+     }
+
+   tmp.x = (m->xx * v->x) + (m->yx * v->y) + (m->zx * v->z) + (m->wx * v->w);
+   tmp.y = (m->xy * v->x) + (m->yy * v->y) + (m->zy * v->z) + (m->wy * v->w);
+   tmp.z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z) + (m->wz * v->w);
+   tmp.w = (m->xw * v->x) + (m->yw * v->y) + (m->zw * v->z) + (m->ww * v->w);
+
+   eina_quaternion_copy(out, &tmp);
+}
+
+EAPI double
+eina_quaternion_angle_plains(Eina_Quaternion *a, Eina_Quaternion *b)
+{
+   return (double) ((a->x * b->x) + (a->y * b->y) + (a->z * b->z)) / ((sqrt((a->x * a->x) +
+                    (a->y * a->y) + (a->z * a->z))) * (sqrt((b->x * b->x) + (b->y * b->y) +
+                    (b->z * b->z))));
+}

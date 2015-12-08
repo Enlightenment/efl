@@ -241,13 +241,13 @@ _node_transform_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
           {
              Evas_Canvas3D_Node_Data *pdparent = eo_data_scope_get(pd->parent, MY_CLASS);
              const Evas_Vec3 *scale_parent = &pdparent->scale_world;
-             const Evas_Vec4 *orientation_parent = &pdparent->orientation_world;
+             const Eina_Quaternion *orientation_parent = &pdparent->orientation_world;
 
              /* Orienatation */
              if (pd->orientation_inherit)
                {
-                  evas_vec4_quaternion_multiply(&pd->orientation_world,
-                                                orientation_parent, &pd->orientation);
+                  eina_quaternion_mul(&pd->orientation_world,
+                                      orientation_parent, &pd->orientation);
                }
              else
                {
@@ -383,7 +383,7 @@ _node_item_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
 }
 
 static void
-_rotate_vertices(Evas_Vec4* orientation, int vertex_count, Evas_Vec3* vertex_position)
+_rotate_vertices(Eina_Quaternion* orientation, int vertex_count, Evas_Vec3* vertex_position)
 {
    int i;
    if (orientation->x || orientation->y || orientation->z)
@@ -1148,11 +1148,11 @@ _evas_canvas3d_node_constructor(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canva
    eo_do(obj, evas_canvas3d_object_type_set(EVAS_CANVAS3D_OBJECT_TYPE_NODE));
 
    evas_vec3_set(&pd->position, 0.0, 0.0, 0.0);
-   evas_vec4_set(&pd->orientation, 0.0, 0.0, 0.0, 1.0);
+   eina_quaternion_set(&pd->orientation, 0.0, 0.0, 0.0, 1.0);
    evas_vec3_set(&pd->scale, 1.0, 1.0, 1.0);
 
    evas_vec3_set(&pd->position_world, 0.0, 0.0, 0.0);
-   evas_vec4_set(&pd->orientation_world, 0.0, 0.0, 0.0, 1.0);
+   eina_quaternion_set(&pd->orientation_world, 0.0, 0.0, 0.0, 1.0);
    evas_vec3_set(&pd->scale_world, 1.0, 1.0, 1.0);
 
    pd->position_inherit = EINA_TRUE;

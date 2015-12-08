@@ -15,7 +15,6 @@
 typedef struct _Evas_Color Evas_Color;
 typedef struct _Evas_Vec2 Evas_Vec2;
 typedef struct _Evas_Vec3 Evas_Vec3;
-typedef struct _Evas_Vec4 Evas_Vec4;
 typedef struct _Evas_Box2 Evas_Box2;
 typedef struct _Evas_Box3 Evas_Box3;
 typedef struct _Evas_Line3 Evas_Line3;
@@ -42,14 +41,6 @@ struct _Evas_Vec3
    Evas_Real   x;
    Evas_Real   y;
    Evas_Real   z;
-};
-
-struct _Evas_Vec4
-{
-   Evas_Real   x;
-   Evas_Real   y;
-   Evas_Real   z;
-   Evas_Real   w;
 };
 
 struct _Evas_Box2
@@ -400,7 +391,7 @@ evas_vec3_homogeneous_direction_transform(Evas_Vec3 *out, const Evas_Vec3 *v, co
 }
 
 static inline void
-evas_vec3_quaternion_rotate(Evas_Vec3 *out, const Evas_Vec3 *v, const Evas_Vec4 *q)
+evas_vec3_quaternion_rotate(Evas_Vec3 *out, const Evas_Vec3 *v, const Eina_Quaternion *q)
 {
    Evas_Vec3   uv, uuv;
    Evas_Vec3   axis;
@@ -434,152 +425,8 @@ evas_vec3_orthogonal_projection_on_plain(Evas_Vec3 *out, const Evas_Vec3 *v, con
    return;
 }
 
-/* 4D vector */
 static inline void
-evas_vec4_set(Evas_Vec4 *dst, Evas_Real x, Evas_Real y, Evas_Real z, Evas_Real w)
-{
-   dst->x = x;
-   dst->y = y;
-   dst->z = z;
-   dst->w = w;
-}
-
-static inline void
-evas_vec4_array_set(Evas_Vec4 *dst, const Evas_Real *v)
-{
-   dst->x = v[0];
-   dst->y = v[1];
-   dst->z = v[2];
-   dst->w = v[3];
-}
-
-static inline void
-evas_vec4_copy(Evas_Vec4 *dst, const Evas_Vec4 *src)
-{
-   dst->x = src->x;
-   dst->y = src->y;
-   dst->z = src->z;
-   dst->w = src->w;
-}
-
-static inline void
-evas_vec4_homogeneous_regulate(Evas_Vec4 *out, const Evas_Vec4 *v)
-{
-   if (v->w != 0.0)
-     {
-        Evas_Real scale = 1.0 / v->w;
-
-        out->x = v->x * scale;
-        out->y = v->y * scale;
-        out->z = v->z * scale;
-        out->w = 1.0;
-     }
-}
-
-static inline void
-evas_vec4_negate(Evas_Vec4 *out, const Evas_Vec4 *v)
-{
-   out->x = -v->x;
-   out->y = -v->y;
-   out->z = -v->z;
-   out->w = -v->w;
-}
-
-static inline void
-evas_vec4_add(Evas_Vec4 *out, const Evas_Vec4 *a, const Evas_Vec4 *b)
-{
-   out->x = a->x + b->x;
-   out->y = a->y + b->y;
-   out->z = a->z + b->z;
-   out->w = a->w + b->w;
-}
-
-static inline void
-evas_vec4_subtract(Evas_Vec4 *out, const Evas_Vec4 *a, const Evas_Vec4 *b)
-{
-   out->x = a->x - b->x;
-   out->y = a->y - b->y;
-   out->z = a->z - b->z;
-   out->w = a->w - b->w;
-}
-
-static inline void
-evas_vec4_scale(Evas_Vec4 *out, const Evas_Vec4 *v, Evas_Real scale)
-{
-   out->x = scale * v->x;
-   out->y = scale * v->y;
-   out->z = scale * v->z;
-   out->w = scale * v->w;
-}
-
-static inline void
-evas_vec4_multiply(Evas_Vec4 *out, const Evas_Vec4 *a, const Evas_Vec4 *b)
-{
-   out->x = a->x * b->x;
-   out->y = a->y * b->y;
-   out->z = a->z * b->z;
-   out->w = a->w * b->w;
-}
-
-static inline Evas_Real
-evas_vec4_length_get(const Evas_Vec4 *v)
-{
-   return (Evas_Real)sqrt((double)((v->x * v->x) + (v->y * v->y) +
-                                   (v->z * v->z) + (v->w + v->w)));
-}
-
-static inline Evas_Real
-evas_vec4_length_square_get(const Evas_Vec4 *v)
-{
-   return (v->x * v->x) + (v->y * v->y) + (v->z * v->z) + (v->w * v->w);
-}
-
-static inline Evas_Real
-evas_vec4_distance_get(const Evas_Vec4 *a, const Evas_Vec4 *b)
-{
-   Evas_Vec4 v;
-
-   evas_vec4_subtract(&v, a, b);
-   return evas_vec4_length_get(&v);
-}
-
-static inline Evas_Real
-evas_vec4_distance_square_get(const Evas_Vec4 *a, const Evas_Vec4 *b)
-{
-   Evas_Vec4 v;
-
-   evas_vec4_subtract(&v, a, b);
-   return evas_vec4_length_square_get(&v);
-}
-
-static inline void
-evas_vec4_normalize(Evas_Vec4 *out, const Evas_Vec4 *v)
-{
-   /* Assume "v" is not a zero vector */
-   evas_vec4_scale(out, v, 1.0 / evas_vec4_length_get(v));
-}
-
-static inline void
-evas_vec4_transform(Evas_Vec4 *out, const Evas_Vec4 *v, const Eina_Matrix4 *m)
-{
-   Evas_Vec4 tmp;
-
-   if (eina_matrix4_type_get(m) == EINA_MATRIX_TYPE_IDENTITY)
-     {
-        evas_vec4_copy(out, v);
-        return;
-     }
-
-   tmp.x = (m->xx * v->x) + (m->yx * v->y) + (m->zx * v->z) + (m->wx * v->w);
-   tmp.y = (m->xy * v->x) + (m->yy * v->y) + (m->zy * v->z) + (m->wy * v->w);
-   tmp.z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z) + (m->wz * v->w);
-   tmp.w = (m->xw * v->x) + (m->yw * v->y) + (m->zw * v->z) + (m->ww * v->w);
-
-   evas_vec4_copy(out, &tmp);
-}
-
-static inline void
-evas_vec4_plain_by_points(Evas_Vec4 *out, const Evas_Vec3 *a, const Evas_Vec3 *b, const Evas_Vec3 *c)
+evas_vec3_plain_by_points(Eina_Quaternion *out, const Evas_Vec3 *a, const Evas_Vec3 *b, const Evas_Vec3 *c)
 {
    out->x = (b->y - a->y) * (c->z - a->z) - (b->z - a->z) * (c->y - a->y);
    out->y = -(b->x - a->x) * (c->z - a->z) + (b->z - a->z) * (c->x - a->x);
@@ -589,16 +436,8 @@ evas_vec4_plain_by_points(Evas_Vec4 *out, const Evas_Vec3 *a, const Evas_Vec3 *b
             (-a->z) * ((b->x - a->x) * (c->y - a->y) - (b->y - a->y) * (c->x - a->x));
 }
 
-static inline Evas_Real
-evas_vec4_angle_plains(Evas_Vec4 *a, Evas_Vec4 *b)
-{
-   return (Evas_Real) ((a->x * b->x) + (a->y * b->y) + (a->z * b->z)) / ((sqrt((a->x * a->x) +
-                       (a->y * a->y) + (a->z * a->z))) * (sqrt((b->x * b->x) + (b->y * b->y) +
-                       (b->z * b->z))));
-}
-
 static inline void
-evas_vec3_homogeneous_position_set(Evas_Vec3 *out, const Evas_Vec4 *v)
+evas_vec3_homogeneous_position_set(Evas_Vec3 *out, const Eina_Quaternion *v)
 {
    /* Assume "v" is a positional vector. (v->w != 0.0) */
    Evas_Real h = 1.0 / v->w;
@@ -609,7 +448,7 @@ evas_vec3_homogeneous_position_set(Evas_Vec3 *out, const Evas_Vec4 *v)
 }
 
 static inline void
-evas_vec3_homogeneous_direction_set(Evas_Vec3 *out, const Evas_Vec4 *v)
+evas_vec3_homogeneous_direction_set(Evas_Vec3 *out, const Eina_Quaternion *v)
 {
    /* Assume "v" is a directional vector. (v->w == 0.0) */
    out->x = v->x;
@@ -704,24 +543,6 @@ evas_triangle3_if_equivalent(Evas_Triangle3 *a, Evas_Triangle3 *b)
      return EINA_TRUE;
 
    return EINA_FALSE;
-}
-
-static inline void
-evas_vec4_homogeneous_position_set(Evas_Vec4 *out, const Evas_Vec3 *v)
-{
-   out->x = v->x;
-   out->y = v->y;
-   out->z = v->z;
-   out->w = 1.0;
-}
-
-static inline void
-evas_vec4_homogeneous_direction_set(Evas_Vec4 *out, const Evas_Vec3 *v)
-{
-   out->x = v->x;
-   out->y = v->y;
-   out->z = v->z;
-   out->w = 0.0;
 }
 
 static inline void
@@ -841,16 +662,16 @@ evas_box3_transform(Evas_Box3 *out EINA_UNUSED, const Evas_Box3 *box EINA_UNUSED
 }
 
 static inline void
-evas_mat4_position_get(const Eina_Matrix4 *matrix, Evas_Vec4 *position)
+evas_mat4_position_get(const Eina_Matrix4 *matrix, Eina_Quaternion *position)
 {
-   Evas_Vec4 pos;
+   Eina_Quaternion pos;
 
    pos.x = 0.0;
    pos.y = 0.0;
    pos.z = 0.0;
    pos.w = 1.0;
 
-   evas_vec4_transform(position, &pos, matrix);
+   eina_quaternion_transform(position, &pos, matrix);
 }
 
 static inline void
@@ -858,14 +679,14 @@ evas_mat4_direction_get(const Eina_Matrix4 *matrix, Evas_Vec3 *direction)
 {
    /* TODO: Check correctness. */
 
-   Evas_Vec4 dir;
+   Eina_Quaternion dir;
 
    dir.x = 0.0;
    dir.y = 0.0;
    dir.z = 1.0;
    dir.w = 1.0;
 
-   evas_vec4_transform(&dir, &dir, matrix);
+   eina_quaternion_transform(&dir, &dir, matrix);
 
    direction->x = dir.x;
    direction->y = dir.y;
@@ -873,84 +694,12 @@ evas_mat4_direction_get(const Eina_Matrix4 *matrix, Evas_Vec3 *direction)
 }
 
 static inline void
-evas_vec4_quaternion_multiply(Evas_Vec4 *out, const Evas_Vec4 *a, const Evas_Vec4 *b)
-{
-   Evas_Vec4 r;
-
-   r.x = (a->w * b->x) + (a->x * b->w) + (a->y * b->z) - (a->z * b->y);
-   r.y = (a->w * b->y) - (a->x * b->z) + (a->y * b->w) + (a->z * b->x);
-   r.z = (a->w * b->z) + (a->x * b->y) - (a->y * b->x) + (a->z * b->w);
-   r.w = (a->w * b->w) - (a->x * b->x) - (a->y * b->y) - (a->z * b->z);
-
-   *out = r;
-}
-
-static inline void
-evas_vec4_quaternion_inverse(Evas_Vec4 *out, const Evas_Vec4 *q)
-{
-   Evas_Real norm = (q->x * q->x) + (q->y * q->y) + (q->z * q->z) + (q->w * q->w);
-
-   if (norm > 0.0)
-     {
-        Evas_Real inv_norm = 1.0 / norm;
-        out->x = -q->x * inv_norm;
-        out->y = -q->y * inv_norm;
-        out->z = -q->z * inv_norm;
-        out->w =  q->w * inv_norm;
-     }
-   else
-     {
-        out->x = 0.0;
-        out->y = 0.0;
-        out->z = 0.0;
-        out->w = 0.0;
-     }
-}
-
-static inline void
-evas_vec4_quaternion_rotation_matrix_get(const Evas_Vec4 *q, Eina_Matrix3 *mat)
-{
-   Evas_Real x, y, z;
-   Evas_Real xx, xy, xz;
-   Evas_Real yy, yz;
-   Evas_Real zz;
-   Evas_Real wx, wy, wz;
-
-   x = 2.0 * q->x;
-   y = 2.0 * q->y;
-   z = 2.0 * q->z;
-
-   xx = q->x * x;
-   xy = q->x * y;
-   xz = q->x * z;
-
-   yy = q->y * y;
-   yz = q->y * z;
-
-   zz = q->z * z;
-
-   wx = q->w * x;
-   wy = q->w * y;
-   wz = q->w * z;
-
-   mat->xx = 1.0 - yy - zz;
-   mat->xy = xy + wz;
-   mat->xz = xz - wy;
-   mat->yx = xy - wz;
-   mat->yy = 1.0 - xx - zz;
-   mat->yz = yz + wx;
-   mat->zx = xz + wy;
-   mat->zy = yz - wx;
-   mat->zz = 1.0 - xx - yy;
-}
-
-static inline void
 evas_mat4_build(Eina_Matrix4 *out,
-                const Evas_Vec3 *position, const Evas_Vec4 *orientation, const Evas_Vec3 *scale)
+                const Evas_Vec3 *position, const Eina_Quaternion *orientation, const Evas_Vec3 *scale)
 {
    Eina_Matrix3  rot;
 
-   evas_vec4_quaternion_rotation_matrix_get(orientation, &rot);
+   eina_quaternion_rotation_matrix3_get(&rot, orientation);
 
    out->xx = scale->x * rot.xx;
    out->xy = scale->x * rot.xy;
@@ -975,9 +724,9 @@ evas_mat4_build(Eina_Matrix4 *out,
 
 static inline void
 evas_mat4_inverse_build(Eina_Matrix4 *out, const Evas_Vec3 *position,
-                        const Evas_Vec4 *orientation, const Evas_Vec3 *scale)
+                        const Eina_Quaternion *orientation, const Evas_Vec3 *scale)
 {
-   Evas_Vec4   inv_rotation;
+   Eina_Quaternion   inv_rotation;
    Evas_Vec3   inv_scale;
    Evas_Vec3   inv_translate;
 
@@ -987,7 +736,7 @@ evas_mat4_inverse_build(Eina_Matrix4 *out, const Evas_Vec3 *position,
    evas_vec3_set(&inv_scale, 1.0 / scale->x, 1.0 / scale->y, 1.0 / scale->z);
 
    /* Inverse rotation. */
-   evas_vec4_quaternion_inverse(&inv_rotation, orientation);
+   eina_quaternion_inverse(&inv_rotation, orientation);
 
    /* Inverse translation. */
    evas_vec3_negate(&inv_translate, position);
@@ -995,7 +744,7 @@ evas_mat4_inverse_build(Eina_Matrix4 *out, const Evas_Vec3 *position,
    evas_vec3_multiply(&inv_translate, &inv_translate, &inv_scale);
 
    /* Get 3x3 rotation matrix. */
-   evas_vec4_quaternion_rotation_matrix_get(&inv_rotation, &rot);
+   eina_quaternion_rotation_matrix3_get(&rot, &inv_rotation);
 
    out->xx = inv_scale.x * rot.xx;
    out->xy = inv_scale.x * rot.xy;
@@ -1040,7 +789,7 @@ static inline void
 evas_ray3_init(Evas_Ray3 *ray, Evas_Real x, Evas_Real y, const Eina_Matrix4 *mvp)
 {
    Eina_Matrix4 mat;
-   Evas_Vec4 dnear, dfar;
+   Eina_Quaternion dnear, dfar;
 
    memset(&mat, 0, sizeof (mat));
 
@@ -1054,7 +803,7 @@ evas_ray3_init(Evas_Ray3 *ray, Evas_Real x, Evas_Real y, const Eina_Matrix4 *mvp
    dnear.z = -1.0;
    dnear.w = 1.0;
 
-   evas_vec4_transform(&dnear, &dnear, &mat);
+   eina_quaternion_transform(&dnear, &dnear, &mat);
 
    dnear.w = 1.0 / dnear.w;
    dnear.x *= dnear.w;
@@ -1069,7 +818,7 @@ evas_ray3_init(Evas_Ray3 *ray, Evas_Real x, Evas_Real y, const Eina_Matrix4 *mvp
    dfar.z = 1.0;
    dfar.w = 1.0;
 
-   evas_vec4_transform(&dfar, &dfar, &mat);
+   eina_quaternion_transform(&dfar, &dfar, &mat);
 
    dfar.w = 1.0 / dfar.w;
    dfar.x *= dfar.w;
@@ -1297,7 +1046,7 @@ evas_sphere_empty_set(Evas_Sphere *dst)
 }
 
 static inline void
-evas_plane_normalize(Evas_Vec4 *plane)
+evas_plane_normalize(Eina_Quaternion *plane)
 {
    Evas_Vec3 tmp;
    Evas_Real length;
@@ -1310,7 +1059,7 @@ evas_plane_normalize(Evas_Vec4 *plane)
 }
 
 static inline Eina_Bool
-evas_intersection_line_of_two_planes(Evas_Line3 *line, Evas_Vec4 *plane1, Evas_Vec4 *plane2)
+evas_intersection_line_of_two_planes(Evas_Line3 *line, Eina_Quaternion *plane1, Eina_Quaternion *plane2)
 {
    //TODO:parallel case
    Evas_Vec3 planes3D[2];
@@ -1343,13 +1092,13 @@ evas_intersection_line_of_two_planes(Evas_Line3 *line, Evas_Vec4 *plane1, Evas_V
 }
 
 static inline Eina_Bool
-evas_intersection_point_of_three_planes(Evas_Vec3 *point, Evas_Vec4 *plane1, Evas_Vec4 *plane2, Evas_Vec4 *plane3)
+evas_intersection_point_of_three_planes(Evas_Vec3 *point, Eina_Quaternion *plane1, Eina_Quaternion *plane2, Eina_Quaternion *plane3)
 {
    //TODO:parallel case
    int i;
    Evas_Real delta, deltax, deltay, deltaz;
    Evas_Real matrix_to_det[3][3];
-   Evas_Vec4 planes[3];
+   Eina_Quaternion planes[3];
 
    planes[0] = *plane1;
    planes[1] = *plane2;
@@ -1387,7 +1136,7 @@ evas_intersection_point_of_three_planes(Evas_Vec3 *point, Evas_Vec4 *plane1, Eva
 }
 
 static inline Evas_Real
-evas_point_plane_distance(Evas_Vec3 *point, Evas_Vec4 *plane)
+evas_point_plane_distance(Evas_Vec3 *point, Eina_Quaternion *plane)
 {
    return plane->x * point->x + plane->y * point->y + plane->z * point->z + plane->w;
 }
@@ -1404,7 +1153,7 @@ evas_point_line_distance(Evas_Vec3 *point, Evas_Line3 *line)
 }
 
 static inline Eina_Bool
-evas_is_sphere_in_frustum(Evas_Sphere *bsphere, Evas_Vec4 *planes)
+evas_is_sphere_in_frustum(Evas_Sphere *bsphere, Eina_Quaternion *planes)
 {
    int i;
    Evas_Line3 line;
@@ -1450,7 +1199,7 @@ evas_is_sphere_in_frustum(Evas_Sphere *bsphere, Evas_Vec4 *planes)
 }
 
 static inline Eina_Bool
-evas_is_point_in_frustum(Evas_Vec3 *point, Evas_Vec4 *planes)
+evas_is_point_in_frustum(Evas_Vec3 *point, Eina_Quaternion *planes)
 {
    int i;
    for (i = 0; i < 6; i++)
@@ -1459,7 +1208,7 @@ evas_is_point_in_frustum(Evas_Vec3 *point, Evas_Vec4 *planes)
 }
 
 static inline Eina_Bool
-evas_is_box_in_frustum(Evas_Box3 *box, Evas_Vec4 *planes)
+evas_is_box_in_frustum(Evas_Box3 *box, Eina_Quaternion *planes)
 {
    int i;
    for (i = 0; i < 6; i++)
@@ -1487,31 +1236,31 @@ evas_is_box_in_frustum(Evas_Box3 *box, Evas_Vec4 *planes)
 }
 
 static inline void
-evas_frustum_calculate(Evas_Vec4 *planes, Eina_Matrix4 *matrix_vp)
+evas_frustum_calculate(Eina_Quaternion *planes, Eina_Matrix4 *matrix_vp)
 {
    int i;
 
-   evas_vec4_set(&planes[0], matrix_vp->xw - matrix_vp->xx,
+   eina_quaternion_set(&planes[0], matrix_vp->xw - matrix_vp->xx,
                              matrix_vp->yw - matrix_vp->yx,
                              matrix_vp->zw - matrix_vp->zx,
                              matrix_vp->ww - matrix_vp->wx);
-   evas_vec4_set(&planes[1], matrix_vp->xw - matrix_vp->xx,
+   eina_quaternion_set(&planes[1], matrix_vp->xw - matrix_vp->xx,
                              matrix_vp->yw - matrix_vp->yx,
                              matrix_vp->zw - matrix_vp->zx,
                              matrix_vp->ww - matrix_vp->wx);
-   evas_vec4_set(&planes[2], matrix_vp->xw - matrix_vp->xx,
+   eina_quaternion_set(&planes[2], matrix_vp->xw - matrix_vp->xx,
                              matrix_vp->yw - matrix_vp->yx,
                              matrix_vp->zw - matrix_vp->zx,
                              matrix_vp->ww - matrix_vp->wx);
-   evas_vec4_set(&planes[3], matrix_vp->xw - matrix_vp->xx,
+   eina_quaternion_set(&planes[3], matrix_vp->xw - matrix_vp->xx,
                              matrix_vp->yw - matrix_vp->yx,
                              matrix_vp->zw - matrix_vp->zx,
                              matrix_vp->ww - matrix_vp->wx);
-   evas_vec4_set(&planes[4], matrix_vp->xw - matrix_vp->xx,
+   eina_quaternion_set(&planes[4], matrix_vp->xw - matrix_vp->xx,
                              matrix_vp->yw - matrix_vp->yx,
                              matrix_vp->zw - matrix_vp->zx,
                              matrix_vp->ww - matrix_vp->wx);
-   evas_vec4_set(&planes[5], matrix_vp->xw - matrix_vp->xx,
+   eina_quaternion_set(&planes[5], matrix_vp->xw - matrix_vp->xx,
                              matrix_vp->yw - matrix_vp->yx,
                              matrix_vp->zw - matrix_vp->zx,
                              matrix_vp->ww - matrix_vp->wx);
@@ -1618,7 +1367,7 @@ convex_hull_first_tr_get(float *data, int count, int stride)
    Evas_Vec3   triangle2, triangle2_candidate;
    Evas_Vec3   triangle3, triangle3_candidate;
    Evas_Vec3   first, second, complanar1, complanar2, candidate;
-   Evas_Vec4   normal_a, normal_b;
+   Eina_Quaternion   normal_a, normal_b;
 
    Evas_Real cos = 0.0, new_cos = 0.0, tan = 0.0, new_tan = 0.0, cos_2d = 0.0, new_cos_2d = 0.0;
    int first_num = 0, second_num = 0;
@@ -1715,10 +1464,10 @@ convex_hull_first_tr_get(float *data, int count, int stride)
 
    evas_vec3_set(&complanar1, triangle1.x + 1, triangle1.y, triangle1.z);
    evas_vec3_set(&complanar2, triangle1.x, triangle1.y + 1, triangle1.z);
-   evas_vec4_plain_by_points(&normal_a, &triangle1, &complanar1, &complanar2);
+   evas_vec3_plain_by_points(&normal_a, &triangle1, &complanar1, &complanar2);
 
    if (normal_a.z < 0)
-     evas_vec4_scale(&normal_a, &normal_a, -1);
+     eina_quaternion_scale(&normal_a, &normal_a, -1);
 
    evas_vec3_set(&triangle3, data[0], data[1], data[2]);
 
@@ -1730,12 +1479,12 @@ convex_hull_first_tr_get(float *data, int count, int stride)
          if ((i != first_num) && (i != second_num))
            {
               evas_vec3_set(&candidate, data[j], data[j + 1], data[j + 2]);
-              evas_vec4_plain_by_points(&normal_b, &triangle1, &candidate, &triangle2);
+              evas_vec3_plain_by_points(&normal_b, &triangle1, &candidate, &triangle2);
 
               if (normal_b.z < 0)
-                evas_vec4_scale(&normal_b, &normal_b, -1);
+                eina_quaternion_scale(&normal_b, &normal_b, -1);
 
-              new_cos = evas_vec4_angle_plains(&normal_a, &normal_b);
+              new_cos = eina_quaternion_angle_plains(&normal_a, &normal_b);
 
               if (new_cos > cos + FLT_EPSILON)
                 {
@@ -1772,7 +1521,7 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
 
    Evas_Vec3   *next = NULL, *best = NULL, *next_2d = NULL, *el_vec3 = NULL;
    Evas_Vec3   tmp1, tmp2;
-   Evas_Vec4   normal_a, normal_b;
+   Eina_Quaternion   normal_a, normal_b;
 
    Eina_Array arr_elems;
    Eina_Array arr_triangles;
@@ -1842,8 +1591,8 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
                    /* something like the dihedral angle between the triangles
                       is a determining factor in searching the necessary points */
 
-                   evas_vec4_plain_by_points(&normal_a, &elem->p0, &elem->p1, &elem->p2);
-                   evas_vec4_plain_by_points(&normal_b, &elem->p0, &elem->p1, next);
+                   evas_vec3_plain_by_points(&normal_a, &elem->p0, &elem->p1, &elem->p2);
+                   evas_vec3_plain_by_points(&normal_b, &elem->p0, &elem->p1, next);
 
                    /* MIN_DIFF because vertices that belong to plain shouldn't be included */
                    if (fabs(normal_a.x * data[j] + normal_a.y * data[j + 1] + normal_a.z * data[j + 2] + normal_a.w) < MIN_DIFF)
@@ -1860,11 +1609,11 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
                    else
                      {
                         if (normal_a.x * data[j] + normal_a.y * data[j+1] + normal_a.z * data[j+2] + normal_a.w < 0)
-                          evas_vec4_scale(&normal_a, &normal_a, -1);
+                          eina_quaternion_scale(&normal_a, &normal_a, -1);
                         if (normal_b.x * elem->p2.x + normal_b.y * elem->p2.y + normal_b.z * elem->p2.z + normal_b.w < 0)
-                          evas_vec4_scale(&normal_b, &normal_b, -1);
+                          eina_quaternion_scale(&normal_b, &normal_b, -1);
 
-                        new_cos = evas_vec4_angle_plains(&normal_a, &normal_b);
+                        new_cos = eina_quaternion_angle_plains(&normal_a, &normal_b);
                      }
 
                    /* MIN_DIFF is more useful for dihedral angles apparently */
@@ -1911,7 +1660,7 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
           {
              Evas_Vec3 angle_from, angle_to;
              next_2d = eina_array_data_get(&arr_candidates, 0);
-             evas_vec4_plain_by_points(&normal_b, &elem->p1, &elem->p0, next_2d);
+             evas_vec3_plain_by_points(&normal_b, &elem->p1, &elem->p0, next_2d);
 
              if (normal_b.x * elem->p2.x + normal_b.y * elem->p2.y + normal_b.z * elem->p2.z + normal_b.w > 0)
                {
@@ -1959,8 +1708,8 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
                 {
                    evas_vec3_subtract(&angle_to, next_2d, &elem->p0);
 
-                   evas_vec4_plain_by_points(&normal_a, &elem->p0, &elem->p1, &elem->p2);
-                   evas_vec4_plain_by_points(&normal_b, &elem->p0, &elem->p1, next_2d);
+                   evas_vec3_plain_by_points(&normal_a, &elem->p0, &elem->p1, &elem->p2);
+                   evas_vec3_plain_by_points(&normal_b, &elem->p0, &elem->p1, next_2d);
                    if ((normal_a.x * normal_b.x <= 0) && (normal_a.y * normal_b.y <= 0) && (normal_a.z * normal_b.z <= 0))
                      {
                         new_cos = evas_vec3_dot_product(&angle_from, &angle_to) /
@@ -1983,7 +1732,7 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
         else
           best = eina_array_data_get(&arr_candidates, 0);
 
-        evas_vec4_plain_by_points(&normal_b, &elem->p0, &elem->p1, best);
+        evas_vec3_plain_by_points(&normal_b, &elem->p0, &elem->p1, best);
 
         if_two = 0;
         first_exist_twice = 0;
@@ -2172,7 +1921,7 @@ evas_tangent_space_get(float *data, float *tex_data, float *normal_data, unsigne
    Evas_Triangle3  triangle;
    Evas_Vec2 tex1, tex2, tex3;
    Evas_Vec3 big_tangent, little_tangent, normal;
-   Evas_Vec4 *plain = NULL;
+   Eina_Quaternion *plain = NULL;
    int i, j, k, l, m, found_index = 0;
    int indexes[3];
 
@@ -2241,9 +1990,9 @@ evas_tangent_space_get(float *data, float *tex_data, float *normal_data, unsigne
                              evas_vec3_set(&triangle.p2, data[indexes[2] * stride], data[indexes[2] * stride + 1], data[indexes[2] * stride + 2]);
                              if (plain)
                                free(plain);
-                             plain = malloc(sizeof(Evas_Vec4));
+                             plain = malloc(sizeof(Eina_Quaternion));
 
-                             evas_vec4_plain_by_points(plain, &triangle.p0, &triangle.p1, &triangle.p2);
+                             evas_vec3_plain_by_points(plain, &triangle.p0, &triangle.p1, &triangle.p2);
                              tex1.x = tex_data[indexes[0] * tex_stride];
                              tex1.y = tex_data[indexes[0] * tex_stride + 1];
                              tex2.x = tex_data[indexes[1] * tex_stride];

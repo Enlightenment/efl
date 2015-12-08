@@ -160,7 +160,7 @@ EOLIAN static Eina_Bool
 _evas_canvas3d_camera_node_visible_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Camera_Data *pd, Evas_Canvas3D_Node *camera_node, Evas_Canvas3D_Node *node, Evas_Canvas3D_Frustum_Mode key)
 {
    Eina_Matrix4 matrix_vp;
-   Evas_Vec4 planes[6];
+   Eina_Quaternion planes[6];
    Evas_Canvas3D_Node_Data *pd_node = eo_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
    Evas_Canvas3D_Node_Data *pd_camera = eo_data_scope_get(camera_node, EVAS_CANVAS3D_NODE_CLASS);
    Evas_Vec3 central_point;

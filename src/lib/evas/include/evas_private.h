@@ -248,11 +248,11 @@ struct _Evas_Canvas3D_Node
    Evas_Canvas3D_Node     *billboard_target;
 
    Evas_Vec3         position;
-   Evas_Vec4         orientation;
+   Eina_Quaternion         orientation;
    Evas_Vec3         scale;
 
    Evas_Vec3         position_world;
-   Evas_Vec4         orientation_world;
+   Eina_Quaternion   orientation_world;
    Evas_Vec3         scale_world;
 
    Evas_Box3         aabb;
