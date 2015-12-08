@@ -203,7 +203,7 @@ _get_color_name (unsigned int R, unsigned int G, unsigned int B, unsigned int A)
 
    if (A != 255) return NULL;
    low = 0;
-   high = sizeof(_color_name)/ sizeof(_color_name[0]);
+   high = EINA_C_ARRAY_LENGTH(_color_name) - 1;
    while (low <= high)
      {
         mid = (low + high) / 2;
