@@ -132,8 +132,9 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
             Eolian_Parameter_Dir pdir = eolian_parameter_direction_get(param);
             Eina_Bool had_star = !!strchr(ptype, '*');
             if (ftype == EOLIAN_UNRESOLVED || ftype == EOLIAN_METHOD) add_star = (pdir == EOLIAN_OUT_PARAM || pdir == EOLIAN_INOUT_PARAM);
-            if (ftype == EOLIAN_PROP_GET) pdir = EOLIAN_OUT_PARAM;
-            if (ftype == EOLIAN_PROP_SET) pdir = EOLIAN_IN_PARAM;
+            else if (ftype == EOLIAN_PROP_GET) pdir = EOLIAN_OUT_PARAM;
+            else if (ftype == EOLIAN_PROP_SET) pdir = EOLIAN_IN_PARAM;
+
             leg_param_idx++;
             if (eina_strbuf_length_get(fparam)) eina_strbuf_append(fparam, ", ");
             eina_strbuf_append_printf(fparam, "%s%s%s%s",
