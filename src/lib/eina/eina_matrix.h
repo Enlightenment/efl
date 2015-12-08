@@ -622,7 +622,7 @@ EAPI void eina_matrix4_multiply_copy(Eina_Matrix4 *out,
 /**
  * @brief Set array to matrix.
  *
- * @param m The rsult matrix
+ * @param m The result matrix
  * @param v The the array[16] for set
  *
  * Set to matrix first 16 elements from array
@@ -673,7 +673,7 @@ EAPI void eina_matrix4_ortho_set(Eina_Matrix4 *m,
 /**
  * @brief Set array to matrix.
  *
- * @param m The rsult matrix
+ * @param m The result matrix
  * @param v The the array[9] for set
  *
  * Set to matrix first 9 elements from array
