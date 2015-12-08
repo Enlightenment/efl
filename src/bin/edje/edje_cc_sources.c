@@ -147,7 +147,6 @@ source_fetch_file(const char *fil, const char *filname)
 			      forgetit = 1;
 			    else
 			      {
-				 char *slash;
 				 ssize_t l = 0;
 
 				 /* get the directory of the current file
@@ -155,11 +154,16 @@ source_fetch_file(const char *fil, const char *filname)
 				  */
 				 if (!dir)
 				   {
+                                      char *slash;
 				      if (strrchr(fil, '/'))
 				        {
 				           dir = mem_strdup(fil);
 				           slash = strrchr(dir, '/');
 				        }
+                                      else
+                                        {
+                                           slash = NULL;
+                                        }
 #ifdef _WIN32
 				      if (strrchr(fil, '\\'))
 				        {
