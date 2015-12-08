@@ -73,6 +73,15 @@ _edje_color_class_free(void *data)
    free(cc);
 }
 
+static void
+_edje_size_class_free(void *data)
+{
+   Edje_Size_Class *sc = data;
+
+   if (sc->name) eina_stringshare_del(sc->name);
+   free(sc);
+}
+
 /* Private Routines */
 EOLIAN static void
 _edje_object_evas_object_smart_add(Eo *obj, Edje *ed)
@@ -88,6 +97,7 @@ _edje_object_evas_object_smart_add(Eo *obj, Edje *ed)
    ed->references = 1;
    ed->user_defined = NULL;
    ed->color_classes = eina_hash_string_small_new(_edje_color_class_free);
+   ed->size_classes = eina_hash_string_small_new(_edje_size_class_free);
 
    evas_object_geometry_get(obj, &(ed->x), &(ed->y), &(ed->w), &(ed->h));
    ed->obj = obj;

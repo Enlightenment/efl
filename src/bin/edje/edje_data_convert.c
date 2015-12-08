@@ -194,6 +194,7 @@ _edje_edd_old_init(void)
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_old_edje_file, Old_Edje_File, "data", data, _edje_edd_old_edje_data);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_old_edje_file, Old_Edje_File, "styles", styles, _edje_edd_old_edje_style);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_old_edje_file, Old_Edje_File, "color_classes", color_classes, _edje_edd_old_edje_color_class);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_old_edje_file, Old_Edje_File, "size_classes", size_classes, _edje_edd_old_edje_size_class);
 
    /* parts & programs - loaded induvidually */
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Program_Target);
@@ -357,6 +358,7 @@ _edje_edd_old_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "map.backcull", common.map.backcull, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "persp.zplane", common.persp.zplane, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "persp.focal", common.persp.focal, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "size_class", common.size_class, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_old_edje_part_description, Old_Edje_Part_Description, "external_params", external_params, _edje_edd_old_edje_external_param);
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Pack_Element);

@@ -221,6 +221,11 @@ static void st_color_class_color2(void);
 static void st_color_class_color3(void);
 static void st_color_class_desc(void);
 
+static void ob_size_class(void);
+static void st_size_class_name(void);
+static void st_size_class_min(void);
+static void st_size_class_max(void);
+
 static void ob_filters_filter(void);
 static void ob_filters_filter_script(void);
 static void st_filters_filter_file(void);
@@ -347,6 +352,7 @@ static void st_collections_group_parts_part_description_rel2_to(void);
 static void st_collections_group_parts_part_description_rel2_to_x(void);
 static void st_collections_group_parts_part_description_rel2_to_y(void);
 static void st_collections_group_parts_part_description_clip_to_id(void);
+static void st_collections_group_parts_part_description_size_class(void);
 static void st_collections_group_parts_part_description_image_normal(void);
 static void st_collections_group_parts_part_description_image_tween(void);
 static void st_collections_group_parts_part_description_image_border(void);
@@ -542,6 +548,11 @@ static void st_collections_group_nobroadcast(void);
      {PREFIX"color_classes.color_class.description", st_color_class_desc}, /* dup */ \
      {PREFIX"color_classes.color_class.desc", st_color_class_desc}, /* dup */
 
+#define SIZE_CLASS_STATEMENTS(PREFIX) \
+     {PREFIX"size_classes.size_class.name", st_size_class_name}, /* dup */ \
+     {PREFIX"size_classes.size_class.min", st_size_class_min}, /* dup */ \
+     {PREFIX"size_classes.size_class.max", st_size_class_max}, /* dup */
+
 #define PROGRAM_SEQUENCE(PREFIX, NAME, FN) \
      {PREFIX".program."NAME, FN}, /* dup */ \
      {PREFIX".program.sequence."NAME, FN}, /* dup */
@@ -644,6 +655,7 @@ New_Statement_Handler statement_handlers[] =
      {"externals.external", st_externals_external},
      IMAGE_STATEMENTS("")
      FONT_STYLE_CC_STATEMENTS("")
+     SIZE_CLASS_STATEMENTS("")
      {"data.item", st_data_item},
      {"data.file", st_data_file},
      FILTERS_STATEMENTS("")
@@ -652,6 +664,7 @@ New_Statement_Handler statement_handlers[] =
      IMAGE_SET_STATEMENTS("collections")
      {"collections.font", st_fonts_font}, /* dup */
      FONT_STYLE_CC_STATEMENTS("collections.")
+     SIZE_CLASS_STATEMENTS("collections.")
      {"collections.base_scale", st_collections_base_scale},
      {"collections.translation.file.locale", st_collections_group_translation_file_locale},
      {"collections.translation.file.source", st_collections_group_translation_file_source},
@@ -695,11 +708,13 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.models.model", st_models_model},
      {"collections.group.font", st_fonts_font}, /* dup */
      FONT_STYLE_CC_STATEMENTS("collections.group.")
+     SIZE_CLASS_STATEMENTS("collections.group.")
      {"collections.group.parts.alias", st_collections_group_parts_alias },
      IMAGE_SET_STATEMENTS("collections.group.parts")
      IMAGE_STATEMENTS("collections.group.parts.")
      {"collections.group.parts.font", st_fonts_font}, /* dup */
      FONT_STYLE_CC_STATEMENTS("collections.group.parts.")
+     SIZE_CLASS_STATEMENTS("collections.group.parts.")
      {"collections.group.parts.target_group", st_collections_group_target_group}, /* dup */
      {"collections.group.parts.part.name", st_collections_group_parts_part_name},
      {"collections.group.parts.part.target_group", st_collections_group_target_group}, /* dup */
@@ -743,6 +758,7 @@ New_Statement_Handler statement_handlers[] =
      IMAGE_STATEMENTS("collections.group.parts.part.")
      {"collections.group.parts.part.font", st_fonts_font}, /* dup */
      FONT_STYLE_CC_STATEMENTS("collections.group.parts.part.")
+     SIZE_CLASS_STATEMENTS("collections.group.parts.part.")
      {"collections.group.parts.part.box.items.item.type", st_collections_group_parts_part_box_items_item_type},
      {"collections.group.parts.part.box.items.item.name", st_collections_group_parts_part_box_items_item_name},
      {"collections.group.parts.part.box.items.item.source", st_collections_group_parts_part_box_items_item_source},
@@ -803,6 +819,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.rel2.to_x", st_collections_group_parts_part_description_rel2_to_x},
      {"collections.group.parts.part.description.rel2.to_y", st_collections_group_parts_part_description_rel2_to_y},
      {"collections.group.parts.part.description.clip_to", st_collections_group_parts_part_description_clip_to_id},
+     {"collections.group.parts.part.description.size_class", st_collections_group_parts_part_description_size_class},
      {"collections.group.parts.part.description.image.normal", st_collections_group_parts_part_description_image_normal},
      {"collections.group.parts.part.description.image.tween", st_collections_group_parts_part_description_image_tween},
      IMAGE_SET_STATEMENTS("collections.group.parts.part.description.image")
@@ -921,6 +938,7 @@ New_Statement_Handler statement_handlers[] =
      IMAGE_STATEMENTS("collections.group.parts.part.description.")
      {"collections.group.parts.part.description.font", st_fonts_font}, /* dup */
      FONT_STYLE_CC_STATEMENTS("collections.group.parts.part.description.")
+     SIZE_CLASS_STATEMENTS("collections.group.parts.part.description.")
 #ifdef HAVE_EPHYSICS
      {"collections.group.physics.world.gravity", st_collections_group_physics_world_gravity},
      {"collections.group.physics.world.rate", st_collections_group_physics_world_rate},
@@ -1131,6 +1149,8 @@ New_Object_Handler object_handlers[] =
      {"styles.style", ob_styles_style},
      {"color_classes", NULL},
      {"color_classes.color_class", ob_color_class},
+     {"size_classes", NULL},
+     {"size_classes.size_class", ob_size_class},
      {"spectra", NULL},
      {"filters", NULL},
      {"filters.filter", ob_filters_filter},
@@ -1147,6 +1167,8 @@ New_Object_Handler object_handlers[] =
      {"collections.styles.style", ob_styles_style}, /* dup */
      {"collections.color_classes", NULL}, /* dup */
      {"collections.color_classes.color_class", ob_color_class}, /* dup */
+     {"collections.size_classes", NULL}, /* dup */
+     {"collections.size_classes.size_class", ob_size_class}, /* dup */
      {"collections.sounds", NULL},
      {"collections.group.sounds", NULL}, /* dup */
      {"collections.sounds.sample", NULL},
@@ -1179,6 +1201,8 @@ New_Object_Handler object_handlers[] =
      {"collections.group.styles.style", ob_styles_style}, /* dup */
      {"collections.group.color_classes", NULL}, /* dup */
      {"collections.group.color_classes.color_class", ob_color_class}, /* dup */
+     {"collections.group.size_classes", NULL}, /* dup */
+     {"collections.group.size_classes.size_class", ob_size_class}, /* dup */
      {"collections.group.filters", NULL},
      {"collections.group.filters.filter", ob_filters_filter}, /* dup */
      {"collections.group.filters.filter.script", ob_filters_filter_script}, /* dup */
@@ -1193,6 +1217,8 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.styles.style", ob_styles_style}, /* dup */
      {"collections.group.parts.color_classes", NULL}, /* dup */
      {"collections.group.parts.color_classes.color_class", ob_color_class}, /* dup */
+     {"collections.group.parts.size_classes", NULL}, /* dup */
+     {"collections.group.parts.size_classes.size_class", ob_size_class}, /* dup */
      {"collections.group.parts.part", ob_collections_group_parts_part},
      {"collections.group.parts.part.dragable", NULL},
      {"collections.group.parts.part.set", ob_images_set}, /* dup */
@@ -1205,6 +1231,8 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.styles.style", ob_styles_style}, /* dup */
      {"collections.group.parts.part.color_classes", NULL}, /* dup */
      {"collections.group.parts.part.color_classes.color_class", ob_color_class}, /* dup */
+     {"collections.group.parts.part.size_classes", NULL}, /* dup */
+     {"collections.group.parts.part.size_classes.size_class", ob_size_class}, /* dup */
      {"collections.group.parts.part.box", NULL},
      {"collections.group.parts.part.box.items", NULL},
      {"collections.group.parts.part.box.items.item", ob_collections_group_parts_part_box_items_item},
@@ -1253,6 +1281,8 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.params", NULL},
      {"collections.group.parts.part.description.color_classes", NULL}, /* dup */
      {"collections.group.parts.part.description.color_classes.color_class", ob_color_class}, /* dup */
+     {"collections.group.parts.part.description.size_classes", NULL}, /* dup */
+     {"collections.group.parts.part.description.size_classes.size_class", ob_size_class}, /* dup */
 #ifdef HAVE_EPHYSICS
      {"collections.group.physics", NULL},
      {"collections.group.physics.world", NULL},
@@ -2719,6 +2749,137 @@ st_styles_style_tag(void)
    tag->key = parse_str(0);
    tag->value = parse_str(1);
    stl->tags = eina_list_append(stl->tags, tag);
+}
+
+/** @edcsubsection{toplevel_size_classes,
+ *                 Size Classes} */
+
+/**
+    @page edcref
+    @block
+        size_classes
+    @context
+        size_classes {
+           size_class {
+              name:  "sizeclassname";
+              min: width height;
+              max: width height;
+           }
+            ..
+        }
+    @description
+        The "size_classes" block contains a list of one or more "size_class"
+        blocks. Each "size_class" allows the designer to name an arbitrary
+        group of size to be used in the theme, the application can use that
+        name to alter the min and max size values at runtime.
+    @endblock
+*/
+static void
+ob_size_class(void)
+{
+   Edje_Size_Class *sc;
+
+   sc = mem_alloc(SZ(Edje_Size_Class));
+   edje_file->size_classes = eina_list_append(edje_file->size_classes, sc);
+
+   sc->minw = 0;
+   sc->minh = 0;
+   sc->maxw = -1;
+   sc->maxh = -1;
+}
+
+static void
+_size_class_name(char *name)
+{
+   Edje_Size_Class *sc, *tsc;
+   Eina_List *l;
+
+   sc = eina_list_data_get(eina_list_last(edje_file->size_classes));
+   sc->name = name;
+   EINA_LIST_FOREACH(edje_file->size_classes, l, tsc)
+     {
+        if ((sc != tsc) && (!strcmp(sc->name, tsc->name)))
+          {
+             ERR("parse error %s:%i. There is already a size class named \"%s\"",
+                 file_in, line - 1, sc->name);
+             exit(-1);
+          }
+     }
+}
+
+/**
+    @page edcref
+
+    @property
+        name
+    @parameters
+        [size class name]
+    @effect
+        Sets the name for the size class, used as reference by both the theme
+        and the application.
+    @endproperty
+*/
+static void
+st_size_class_name(void)
+{
+   Edje_Size_Class *sc, *tsc;
+   Eina_List *l;
+
+   sc = eina_list_data_get(eina_list_last(edje_file->size_classes));
+   sc->name = parse_str(0);
+   EINA_LIST_FOREACH(edje_file->size_classes, l, tsc)
+     {
+        if ((sc != tsc) && (!strcmp(sc->name, tsc->name)))
+          {
+             ERR("parse error %s:%i. There is already a size class named \"%s\"",
+                 file_in, line - 1, sc->name);
+             exit(-1);
+          }
+     }
+}
+
+/**
+    @page edcref
+    @property
+        min
+    @parameters
+        [width] [height]
+    @effect
+        The minimum size.
+    @endproperty
+*/
+static void
+st_size_class_min(void)
+{
+   Edje_Size_Class *sc;
+
+   check_arg_count(2);
+
+   sc = eina_list_data_get(eina_list_last(edje_file->size_classes));
+   sc->minw = parse_int_range(0, 0, 0x7fffffff);
+   sc->minh = parse_int_range(1, 0, 0x7fffffff);
+}
+
+/**
+    @page edcref
+    @property
+        max
+    @parameters
+        [width] [height]
+    @effect
+        The maximum size.
+    @endproperty
+*/
+static void
+st_size_class_max(void)
+{
+   Edje_Size_Class *sc;
+
+   check_arg_count(2);
+
+   sc = eina_list_data_get(eina_list_last(edje_file->size_classes));
+   sc->maxw = parse_int_range(0, -1, 0x7fffffff);
+   sc->maxh = parse_int_range(1, -1, 0x7fffffff);
 }
 
 /** @edcsection{collections,Collections Blocks} */
@@ -6873,6 +7034,7 @@ ob_collections_group_parts_part_description(void)
    ed->fixed.h = 0;
    ed->max.w = -1;
    ed->max.h = -1;
+   ed->size_class = NULL;
    ed->rel1.relative_x = FROM_DOUBLE(0.0);
    ed->rel1.relative_y = FROM_DOUBLE(0.0);
    ed->rel1.offset_x = 0;
@@ -7054,6 +7216,7 @@ st_collections_group_parts_part_description_inherit(void)
     */
 #define STRDUP(x) x ? strdup(x) : NULL
 
+   ed->size_class = STRDUP(ed->size_class);
    ed->color_class = STRDUP(ed->color_class);
    ed->map.colors = _copied_map_colors_get(parent);
 
@@ -7606,6 +7769,26 @@ st_collections_group_parts_part_description_max(void)
 
       current_desc->max.limit = EINA_TRUE;
    }
+}
+
+/**
+   @page edcref
+   @property
+      size_class
+   @parameters
+      [size class name]
+   @effect
+      The part will have the min and max size defined in the size class.
+      "min" and "max" property in description can be overridden by the size class
+      at runtime.
+   @endproperty
+*/
+static void
+st_collections_group_parts_part_description_size_class(void)
+{
+   check_arg_count(1);
+
+   current_desc->size_class = parse_str(0);
 }
 
 /**
@@ -13997,6 +14180,13 @@ edje_cc_handlers_wildcard(void)
          _style_name(token);
          stack_pop_quick(EINA_FALSE, EINA_FALSE);
          return EINA_TRUE;
+     }
+   if (edje_file->size_classes && (!strcmp(last, "size_class")))
+     {
+        if (!had_quote) return EINA_FALSE;
+        _size_class_name(token);
+        stack_pop_quick(EINA_FALSE, EINA_FALSE);
+        return EINA_TRUE;
      }
    return EINA_FALSE;
 }

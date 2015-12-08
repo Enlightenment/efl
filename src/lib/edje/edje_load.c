@@ -603,6 +603,28 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                          _edje_color_class_member_add(ed, desc->color_class);
                     }
                }
+             /* sizeclass stuff */
+             for (i = 0; i < ed->collection->parts_count; ++i)
+               {
+                  Edje_Part *ep;
+                  unsigned int k;
+
+                  ep = ed->collection->parts[i];
+
+                  /* Register any size classes in this parts descriptions. */
+                  if ((ep->default_desc) && (ep->default_desc->size_class))
+                    _edje_size_class_member_add(ed, ep->default_desc->size_class);
+
+                  for (k = 0; k < ep->other.desc_count; k++)
+                    {
+                       Edje_Part_Description_Common *desc;
+
+                       desc = ep->other.desc[k];
+
+                       if (desc->size_class)
+                         _edje_size_class_member_add(ed, desc->size_class);
+                    }
+               }
              /* build real parts */
              for (n = 0; n < ed->collection->parts_count; n++)
                {
@@ -1659,6 +1681,7 @@ void
 _edje_file_free(Edje_File *edf)
 {
    Edje_Color_Class *ecc;
+   Edje_Size_Class *esc;
 
 #define HASH_FREE(Hash)            \
   if (Hash) eina_hash_free(Hash);  \
@@ -1757,6 +1780,13 @@ _edje_file_free(Edje_File *edf)
         if (edf->free_strings && ecc->name) eina_stringshare_del(ecc->name);
         if (edf->free_strings) eina_stringshare_del(ecc->desc);
         free(ecc);
+     }
+
+   eina_hash_free(edf->size_hash);
+   EINA_LIST_FREE(edf->size_classes, esc)
+     {
+        if (edf->free_strings && esc->name) eina_stringshare_del(esc->name);
+        free(esc);
      }
 
    if (edf->collection_patterns) edje_match_patterns_free(edf->collection_patterns);

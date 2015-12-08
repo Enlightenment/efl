@@ -114,6 +114,21 @@ EAPI void        *edje_object_signal_callback_del_full(Evas_Object *obj, const c
  */
  EAPI void         edje_object_color_class_del         (Evas_Object *obj, const char *color_class);
 
+/**
+ * @brief Delete the object size class.
+ *
+ * @param obj The edje object's reference.
+ * @param size_class The size class to be deleted.
+ *
+ * This function deletes any values at the object level for the
+ * specified object and size class.
+ * @note Deleting the size class will revert it to the values
+ *       defined by edje_size_class_set() or the size class
+ *       defined in the theme file.
+ *
+ */
+ EAPI void         edje_object_size_class_del         (Evas_Object *obj, const char *size_class);
+
  /**
  * @brief Set the object minimum size.
  *

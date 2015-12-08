@@ -7,6 +7,7 @@ Eet_Data_Descriptor *_edje_edd_edje_string = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_style = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_style_tag = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_color_class = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_size_class = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_external_directory = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_external_directory_entry = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_font_directory_entry = NULL;
@@ -228,6 +229,7 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_style);
    FREED(_edje_edd_edje_style_tag);
    FREED(_edje_edd_edje_color_class);
+   FREED(_edje_edd_edje_size_class);
    FREED(_edje_edd_edje_external_directory);
    FREED(_edje_edd_edje_external_directory_entry);
    FREED(_edje_edd_edje_font_directory_entry);
@@ -535,6 +537,15 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "a3", a3, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "desc", desc, EET_T_STRING);
 
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Size_Class);
+   _edje_edd_edje_size_class =
+      eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_size_class, Edje_Size_Class, "name", name, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_size_class, Edje_Size_Class, "minw", minw, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_size_class, Edje_Size_Class, "minh", minh, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_size_class, Edje_Size_Class, "maxw", maxw, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_size_class, Edje_Size_Class, "maxh", maxh, EET_T_INT);
+
    /* evas filters */
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Spec_Filter_Data);
    _edje_edd_edje_part_description_filter_data = eet_data_descriptor_file_new(&eddc);
@@ -560,6 +571,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "vibration_dir", vibration_dir, _edje_edd_edje_vibration_directory);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "styles", styles, _edje_edd_edje_style);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "color_classes", color_classes, _edje_edd_edje_color_class);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "size_classes", size_classes, _edje_edd_edje_size_class);
    EET_DATA_DESCRIPTOR_ADD_HASH(_edje_edd_edje_file, Edje_File, "data", data, _edje_edd_edje_string);
    EET_DATA_DESCRIPTOR_ADD_HASH(_edje_edd_edje_file, Edje_File, "fonts", fonts, _edje_edd_edje_font_directory_entry);
    EET_DATA_DESCRIPTOR_ADD_HASH(_edje_edd_edje_file, Edje_File, "collection", collection, _edje_edd_edje_part_collection_directory_entry);
@@ -700,6 +712,7 @@ _edje_edd_init(void)
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.id_x", rel2.id_x, EET_T_INT);                                 \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.id_y", rel2.id_y, EET_T_INT);                                 \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "clip_to_id", clip_to_id, EET_T_INT);                               \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "size_class", size_class, EET_T_STRING);                            \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color_class", color_class, EET_T_STRING);                          \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.r", color.r, EET_T_UCHAR);                                   \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.g", color.g, EET_T_UCHAR);                                   \
@@ -791,6 +804,7 @@ _edje_edd_init(void)
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.id_x", Dec.rel2.id_x, EET_T_INT);                                 \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.id_y", Dec.rel2.id_y, EET_T_INT);                                 \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "clip_to_id", Dec.clip_to_id, EET_T_INT);                               \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "size_class", Dec.size_class, EET_T_STRING);                            \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color_class", Dec.color_class, EET_T_STRING);                          \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.r", Dec.color.r, EET_T_UCHAR);                                   \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.g", Dec.color.g, EET_T_UCHAR);                                   \
