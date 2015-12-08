@@ -382,6 +382,7 @@ _ecore_con_socks_read_v5(Ecore_Con_Server *obj, Ecore_Con_Socks_v5 *v5, const un
            default:
              break;
           }
+        break;
 
       case ECORE_CON_PROXY_STATE_REQUEST:
       {
