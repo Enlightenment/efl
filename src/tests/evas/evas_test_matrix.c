@@ -37,5 +37,6 @@ END_TEST
 
 void evas_test_matrix(TCase *tc)
 {
+   (void) _setup_evas;
    tcase_add_test(tc, evas_matrix);
 }
