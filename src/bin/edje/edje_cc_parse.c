@@ -925,6 +925,10 @@ compile(void)
    strncpy(inc, file_in, 4000);
    inc[4001] = 0;
    p = strrchr(inc, '/');
+#ifdef _WIN32
+   char *p_backslash = strrchr(inc, '\\');
+   if (p_backslash > p) p = p_backslash;
+#endif
    if (!p) strcpy(inc, "./");
    else *p = 0;
    fd = eina_file_mkstemp("edje_cc.edc-tmp-XXXXXX", &tmpn);

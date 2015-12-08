@@ -153,12 +153,23 @@ source_fetch_file(const char *fil, const char *filname)
 				 /* get the directory of the current file
 				  * if we haven't already done so
 				  */
-				 if ((!dir) && (strrchr(fil, '/')))
+				 if (!dir)
 				   {
-				      dir = mem_strdup(fil);
-				      slash = strrchr(dir, '/');
-				      *slash = '\0';
-				      dir_len = strlen(dir);
+				      if (strrchr(fil, '/'))
+				        {
+				           dir = mem_strdup(fil);
+				           slash = strrchr(dir, '/');
+				        }
+#ifdef _WIN32
+				      if (strrchr(fil, '\\'))
+				        {
+				           if (!dir) dir = mem_strdup(fil);
+				           char *backslash = strrchr(dir, '\\');
+				           if (backslash > slash) slash = backslash;
+				        }
+#endif
+				      if (slash) *slash = '\0';
+				      if (dir) dir_len = strlen(dir);
 				   }
 
 				 l = pp - p + dir_len + 1;
@@ -211,7 +222,14 @@ source_fetch(void)
      {
 	snprintf(buf, sizeof (buf), "%s", ptr + 1);
      }
-
+#ifdef _WIN32
+   char *ptr_backslash = strrchr(file_in, '\\');
+   if (ptr_backslash)
+     {
+        if (ptr_backslash > ptr)
+          snprintf(buf, sizeof (buf), "%s", ptr_backslash + 1);
+     }
+#endif
    source_fetch_file(file_in, buf[0] ? buf : file_in);
 }
 
