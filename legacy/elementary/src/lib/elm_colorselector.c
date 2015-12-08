@@ -196,7 +196,7 @@ enum Palette_Box_Direction
 };
 
 static const char *
-_get_color_name (unsigned int R, unsigned int G, unsigned int B, unsigned int A)
+_get_color_name(unsigned int R, unsigned int G, unsigned int B, unsigned int A)
 {
    unsigned int low, mid, high;
    unsigned int r, g, b;
@@ -218,7 +218,7 @@ _get_color_name (unsigned int R, unsigned int G, unsigned int B, unsigned int A)
         if ((r < R) || ((r == R) && (g < G)) || ((r == R) && (g == G) && b < B))
           low = mid + 1;
         else
-          high = mid-1;
+          high = mid - 1;
       }
     return NULL;
 }
