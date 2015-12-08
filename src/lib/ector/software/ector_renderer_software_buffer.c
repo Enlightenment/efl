@@ -15,7 +15,7 @@ typedef struct
 {
    Ector_Renderer_Generic_Base_Data *base;
    Software_Rasterizer *surface;
-   Ector_Generic_Buffer *eo_buffer;
+   Ector_Buffer *eo_buffer;
 } Ector_Renderer_Software_Buffer_Data;
 
 

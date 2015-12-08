@@ -6,9 +6,15 @@
 #include "ector_generic_buffer.eo.h"
 #include "software/ector_software_buffer_base.eo.h"
 
+/**
+ * @typedef Ector_Buffer
+ * A generic pixel buffer type (2D). May be readable or writeable or both.
+ */
+typedef Ector_Generic_Buffer Ector_Buffer;
+
 typedef struct _Ector_Generic_Buffer_Data
 {
-   Eo                 *eo;
+   Ector_Buffer       *eo;
    unsigned int        w, h;
    unsigned char       l, r, t, b;
    Efl_Gfx_Colorspace  cspace;
