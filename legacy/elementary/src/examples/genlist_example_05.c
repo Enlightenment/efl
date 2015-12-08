@@ -370,16 +370,17 @@ elm_main(int argc, char **argv)
    _button_add(list, fbox, "add child", _add_child_cb);
    _button_add(list, fbox, "del item", _del_item_cb);
 
+
+   Node_Data *pdata = NULL; // data for the parent of the group
+   Elm_Object_Item *glg = NULL;
    for (i = 0; i < N_ITEMS; i++)
      {
-        Elm_Object_Item *gli = NULL, *glg = NULL;
+        Elm_Object_Item *gli = NULL;
         Node_Data *data = malloc(sizeof(*data)); // data for this item
         data->children = NULL;
         data->value = i;
         data->favorite = EINA_FALSE;
         nitems++;
-
-        Node_Data *pdata = NULL; // data for the parent of the group
 
         printf("creating item: #%d\n", data->value);
         if (i % 3 == 0)
