@@ -493,15 +493,14 @@ _cb_fps_enable(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_load_mesh(void *data, Evas_Object *obj, void *event_info)
+_load_mesh(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
-   char *format = NULL, *tmp = NULL, *a = NULL;
+   char *format = NULL, *a = NULL;
    char name[FILENAME_MAX];
    int i = 0, j = 0;
-   if (event_info)  tmp = strdup(event_info);
-   if (data) tmp = strdup((char *)data);
-   if (tmp)
+   if (event_info)
      {
+        char *tmp = NULL;
         tmp = strdup(event_info);
         /*Get filename in backward*/
         for (i = strlen(tmp) - 1; i >= 0; i--, j++)
