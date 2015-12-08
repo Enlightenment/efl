@@ -853,14 +853,14 @@ region_add(Region *dest, Region *source)
    if (PIXREGION_NIL(source))
      {
         if (PIXREGION_NAR(source)) return _region_break(dest);
-        if (dest != dest) return region_copy(dest, dest);
+        if (dest != source) return region_copy(dest, source);
         return EINA_TRUE;
      }
 
    // Region 1 completely subsumes region 2
    if (!dest->data && CONTAINS(&dest->bound, &source->bound))
      {
-        if (dest != dest) return region_copy(dest, dest);
+        if (dest != source) return region_copy(dest, source);
         return EINA_TRUE;
      }
 
