@@ -161,16 +161,6 @@ evil_format_message(long err)
    return disp;
 }
 
-/* static void */
-/* _evil_error_display(const char *fct, LONG res) */
-/* { */
-/*    char *error; */
-
-/*    error = evil_format_message(res); */
-/*    fprintf(stderr, "[Evil] [%s] ERROR (%ld): %s\n", fct, res, error); */
-/*    free(error); */
-/* } */
-
 char *
 evil_last_error_get(void)
 {
