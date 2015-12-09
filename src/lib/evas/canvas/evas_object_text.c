@@ -54,7 +54,7 @@ struct _Evas_Text_Data
       Evas_Object_Text_Item    *ellipsis_end;
       Evas_Coord                w, h;
       int                       advance;
-      int                       advance_without_ellipsis;
+      int                       width_without_ellipsis;
       Eina_Bool                 ellipsis;
    } last_computed;
 
@@ -348,9 +348,9 @@ _evas_object_text_char_at_coords(const Evas_Object *eo_obj,
 }
 
 static Evas_Coord
-_evas_object_text_horiz_advance_without_ellipsis_get(const Evas_Text_Data *o)
+_evas_object_text_horiz_width_without_ellipsis_get(const Evas_Text_Data *o)
 {
-   return o->last_computed.advance_without_ellipsis;
+   return o->last_computed.width_without_ellipsis;
 }
 
 static Evas_Coord
@@ -685,7 +685,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    EvasBiDiStrIndex *v_to_l = NULL;
-   Evas_Coord advance = 0;
+   Evas_Coord advance = 0, width = 0;
    size_t pos, visual_pos;
    int len = eina_unicode_strlen(text);
    int l = 0, r = 0;
@@ -754,6 +754,8 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
 
    if (text)
      {
+        const Evas_Object_Text_Item *last_it = NULL;
+
         while (len > 0)
           {
              Evas_Font_Instance *script_fi = NULL;
@@ -791,15 +793,22 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
                   pos += run_len;
                   script_len -= run_len;
                   len -= run_len;
+
+                  if (it->w > 0)
+                    last_it = it;
                }
           }
+
+        width = advance;
+        if (last_it)
+          width += last_it->w - last_it->adv;
      }
-   o->last_computed.advance_without_ellipsis = advance;
+   o->last_computed.width_without_ellipsis = width;
 
    _evas_object_text_pad_get(eo_obj, o, &l, &r, NULL, NULL);
 
    /* Handle ellipsis */
-   if (pos && (o->cur.ellipsis >= 0.0) && (advance + l + r > obj->cur->geometry.w) && (obj->cur->geometry.w > 0))
+   if (pos && (o->cur.ellipsis >= 0.0) && (width + l + r > obj->cur->geometry.w) && (obj->cur->geometry.w > 0))
      {
         Evas_Coord ellip_frame = obj->cur->geometry.w;
         Evas_Object_Text_Item *start_ellip_it = NULL, *end_ellip_it = NULL;
@@ -821,7 +830,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
                   start_ellip_it = _layout_ellipsis_item_new(obj, o);
                }
              o->last_computed.ellipsis_start = start_ellip_it;
-             ellip_frame -= start_ellip_it->adv;
+             ellip_frame -= start_ellip_it->w;
           }
         if (o->cur.ellipsis != 1)
           {
@@ -837,18 +846,18 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
                   end_ellip_it = _layout_ellipsis_item_new(obj, o);
                }
              o->last_computed.ellipsis_end = end_ellip_it;
-             ellip_frame -= end_ellip_it->adv;
+             ellip_frame -= end_ellip_it->w;
           }
 
         /* The point where we should start from, going for the full
          * ellip frame. */
-        Evas_Coord ellipsis_coord = o->cur.ellipsis * (advance - ellip_frame);
+        Evas_Coord ellipsis_coord = o->cur.ellipsis * (width - ellip_frame);
         if (start_ellip_it)
           {
              Evas_Object_Text_Item *itr = o->items;
              advance = 0;
 
-             while (itr && (advance + l + r + itr->adv < ellipsis_coord))
+             while (itr && (advance + l + r + itr->w < ellipsis_coord))
                {
                   Eina_Inlist *itrn = EINA_INLIST_GET(itr)->next;
                   if ((itr != start_ellip_it) && (itr != end_ellip_it))
@@ -890,7 +899,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
                {
                   if (itr != end_ellip_it) /* was start_ellip_it */
                     {
-                       if (advance + l + r + itr->adv >= ellip_frame)
+                       if (advance + l + r + itr->w >= ellip_frame)
                          {
                             break;
                          }
@@ -2243,7 +2252,7 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
         int w, h;
         int l = 0, r = 0, t = 0, b = 0;
 
-        w = _evas_object_text_horiz_advance_without_ellipsis_get(o);
+        w = _evas_object_text_horiz_width_without_ellipsis_get(o);
         h = _evas_object_text_vert_advance_get(eo_obj, o);
         _evas_object_text_pad_get(eo_obj, o, &l, &r, &t, &b);
 
