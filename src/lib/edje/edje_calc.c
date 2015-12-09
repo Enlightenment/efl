@@ -461,7 +461,8 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *state_name
      {
         d = ep->other.desc[i];
 
-        if (d->state.name && (!strcmp(d->state.name, state_name)))
+        if (d->state.name && (d->state.name == state_name ||
+                              !strcmp(d->state.name, state_name)))
           {
              if (!approximate)
                {
