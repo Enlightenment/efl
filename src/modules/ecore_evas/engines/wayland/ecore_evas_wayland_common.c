@@ -167,8 +167,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    Ecore_Evas *ee;
    Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Wl2_Event_Window_Configure *ev;
-   int nw = 0, nh = 0;
-   int fw = 0, fh = 0;
+   int nw = 0, nh = 0, fy = 0;
    Eina_Bool prev_max, prev_full;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -200,21 +199,13 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
 
    /* NB: We receive window configure sizes based on xdg surface
     * window geometry, so we need to subtract framespace here */
-   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+   evas_output_framespace_get(ee->evas, NULL, &fy, NULL, NULL);
+   nh = (ev->h - fy);
 
-   if (ECORE_EVAS_PORTRAIT(ee))
-     {
-        nw -= fw;
-        nh -= fh;
-     }
-   else
-     {
-        nw -= fh;
-        nh -= fw;
-     }
-
-   if (ee->prop.fullscreen || (ee->x != ev->x) || (ee->y != ev->y))
-     _ecore_evas_wl_common_move(ee, ev->x, ev->y);
+   /* NB: This block commented out for now. Unsure this is really needed.
+    * Maximize and moving both seem to work fine without this */
+   /* if (ee->prop.fullscreen || (ee->x != ev->x) || (ee->y != ev->y)) */
+   /*   _ecore_evas_wl_common_move(ee, ev->x, ev->y); */
 
    if (ee->prop.fullscreen || (ee->req.w != nw) || (ee->req.h != nh))
      _ecore_evas_wl_common_resize(ee, nw, nh);
