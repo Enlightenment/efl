@@ -43,7 +43,6 @@ mixin Ector.Generic.Buffer
 	   fetch data from the GPU if needed.
 	 ]]
 	 params {
-	    @out offset: int; [[Byte offset to the first requested pixel]]
 	    @out length: uint; [[Accessible buffer size in bytes]]
 	    @in mode: Ector.Buffer.Access_Flag;
 	    @in x: uint;
@@ -53,13 +52,12 @@ mixin Ector.Generic.Buffer
 	    @in cspace: Efl.Gfx.Colorspace; [[Requested colorspace. If difference from the internal cspace, map may either fail or convert slowly]]
 	    @out stride: uint; [[Optional]]
 	 }
-	 return: uint8* @warn_unused; [[Top-left pixel is at offset bytes after this address. Returns $null in case of failure]]
+	 return: void* @warn_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
       }
       unmap {
 	 [[Unmap a region of this buffer, and upload data to the GPU (if needed).]]
 	 params {
 	    @in data: void*; [[Data pointer returned by a previous call to map]]
-	    @in offset: int;
 	    @in length: uint;
 	 }
       }

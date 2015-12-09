@@ -108,7 +108,7 @@ _ector_software_buffer_base_ector_generic_buffer_pixels_set(Eo *obj, Ector_Softw
      }
    else
      {
-        pd->pixels.u8 = malloc(stride * (height + t + b));
+        pd->pixels.u8 = calloc(stride * (height + t + b), 1);
         pd->nofree = EINA_FALSE;
         pd->writable = EINA_TRUE;
      }
@@ -124,10 +124,9 @@ _ector_software_buffer_base_ector_generic_buffer_pixels_set(Eo *obj, Ector_Softw
    return EINA_TRUE;
 }
 
-EOLIAN static uint8_t *
+EOLIAN static void *
 _ector_software_buffer_base_ector_generic_buffer_map(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd,
-                                                     int *offset, unsigned int *length,
-                                                     Ector_Buffer_Access_Flag mode EINA_UNUSED,
+                                                     unsigned int *length, Ector_Buffer_Access_Flag mode,
                                                      unsigned int x, unsigned int y, unsigned int w, unsigned int h,
                                                      Efl_Gfx_Colorspace cspace EINA_UNUSED, unsigned int *stride)
 {
@@ -140,23 +139,24 @@ _ector_software_buffer_base_ector_generic_buffer_map(Eo *obj EINA_UNUSED, Ector_
    if (!w || !h || ((x + w) > pd->generic->w) || (y + h > pd->generic->h))
      fail("Invalid region requested: wanted %u,%u %ux%u but image is %ux%u",
           x, y, w, h, pd->generic->w, pd->generic->h);
+   if ((mode & ECTOR_BUFFER_ACCESS_FLAG_WRITE) && !pd->writable)
+     fail("can not map a read-only buffer for writing");
 
    pd->map_count++;
    off = _min_stride_calc(x + pd->generic->l, pd->generic->cspace) + (pd->stride * (y + pd->generic->t));
-   if (offset) *offset = off;
-   if (length) *length = (pd->stride * pd->generic->h) - off;
+   if (length) *length = (pd->stride * h) - off;
    if (stride) *stride = pd->stride;
-   return pd->pixels.u8;
+   return pd->pixels.u8 + off;
 
 on_fail:
-   if (offset) *offset = 0;
    if (length) *length = 0;
    if (stride) *stride = 0;
    return NULL;
 }
 
 EOLIAN static void
-_ector_software_buffer_base_ector_generic_buffer_unmap(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd, void *data, int offset EINA_UNUSED, unsigned int length EINA_UNUSED)
+_ector_software_buffer_base_ector_generic_buffer_unmap(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd,
+                                                       void *data, unsigned int length EINA_UNUSED)
 {
    if (!data) return;
    if (data != pd->pixels.u8)
