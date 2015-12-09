@@ -13,6 +13,10 @@
 #undef MAX
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 
+/* clamp b between a and c */
+#undef CLAMP
+#define CLAMP(a,b,c) MIN(MAX((b),(a)),(c))
+
 #define SWAP32(x) (x) = \
    ((((x) & 0x000000ff ) << 24) | \
     (((x) & 0x0000ff00 ) << 8)  | \
