@@ -432,11 +432,12 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *state_name
    unsigned int i;
 
    /* RTL flag is set, return RTL description */
-   if (edje_object_mirrored_get(ed->obj))
-     if (!ep->other.desc_rtl)
-       ep->other.desc_rtl = (Edje_Part_Description_Common **)
-         calloc(ep->other.desc_count,
-                sizeof (Edje_Part_Description_Common *));
+   if (edje_object_mirrored_get(ed->obj) && !ep->other.desc_rtl)
+     {
+        ep->other.desc_rtl = (Edje_Part_Description_Common **)
+           calloc(ep->other.desc_count,
+                  sizeof (Edje_Part_Description_Common *));
+     }
 
    if (!strcmp(state_name, "default") && state_val == 0.0)
      return _edje_get_description_by_orientation(ed,
