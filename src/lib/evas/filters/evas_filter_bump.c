@@ -50,7 +50,7 @@ evas_filter_bump_map_cpu_func_get(Evas_Filter_Command *cmd)
 }
 
 static void
-_phong_alpha_generate(DATA8 *phong, DATA8 dark, DATA8 color, DATA8 white,
+_phong_alpha_generate(uint8_t *phong, uint8_t dark, uint8_t color, uint8_t white,
                       float sf)
 {
    int x, y;
@@ -100,22 +100,23 @@ _phong_alpha_generate(DATA8 *phong, DATA8 dark, DATA8 color, DATA8 white,
 static Eina_Bool
 _bump_map_cpu_alpha_alpha(Evas_Filter_Command *cmd)
 {
-   DATA8 *src, *map, *dst, *map_y1, *map_y2;
-   DATA8 dark, color, white;
-   DATA8 *phong;
+   uint8_t *src_map, *map_map, *dst_map;
+   uint8_t *src, *map, *dst, *map_y1, *map_y2;
+   uint8_t dark, color, white;
+   uint8_t *phong = NULL;
+   Eina_Bool ret = EINA_FALSE;
    int x, y, w, h, lx, ly;
+   unsigned int ss, ms, ds, slen, dlen, mlen;
    float xyangle, zangle, sf, lxy;
 
    w = cmd->input->w;
    h = cmd->input->h;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(w > 2 && h > 2, EINA_FALSE);
 
-   src = ((RGBA_Image *) cmd->input->backing)->image.data8;
-   map = ((RGBA_Image *) cmd->mask->backing)->image.data8;
-   dst = ((RGBA_Image *) cmd->output->backing)->image.data8;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(map, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
+   src_map = src = _buffer_map_all(cmd->input->buffer, &slen, E_READ, E_ALPHA, &ss);
+   map_map = map = _buffer_map_all(cmd->mask->buffer, &mlen, E_READ, E_ALPHA, &ms);
+   dst_map = dst = _buffer_map_all(cmd->output->buffer, &dlen, E_WRITE, E_ALPHA, &ds);
+   EINA_SAFETY_ON_FALSE_GOTO(src && dst && map, end);
 
    xyangle = cmd->bump.xyangle;
    zangle = cmd->bump.zangle;
@@ -150,7 +151,7 @@ _bump_map_cpu_alpha_alpha(Evas_Filter_Command *cmd)
 
    // Generate light table
    phong = malloc(256 * 256 * sizeof(*phong));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(phong, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_GOTO(phong, end);
    _phong_alpha_generate(phong, dark, color, white, sf);
 
    for (y = 0; y < h; y++)
@@ -228,31 +229,36 @@ _bump_map_cpu_alpha_alpha(Evas_Filter_Command *cmd)
         src++;
      }
 
+   ret = EINA_TRUE;
+
+end:
+   eo_do(cmd->input->buffer, ector_buffer_unmap(src_map, slen));
+   eo_do(cmd->mask->buffer, ector_buffer_unmap(map_map, mlen));
+   eo_do(cmd->output->buffer, ector_buffer_unmap(dst_map, dlen));
    free(phong);
-   return EINA_TRUE;
+   return ret;
 }
 
 static Eina_Bool
 _bump_map_cpu_alpha_rgba(Evas_Filter_Command *cmd)
 {
-   DATA8 *src, *map, *map_y1, *map_y2;
-   DATA32 *dst;
-   DATA32 dark, color, white, col;
-   //DATA32 *phong;
-   Eina_Bool compensate;
+   uint8_t *src_map, *map_map;
+   uint8_t *src, *map, *map_y1, *map_y2;
+   uint32_t *dst, *dst_map;
+   uint32_t dark, color, white, col;
+   Eina_Bool compensate, ret = EINA_FALSE;
    int x, y, w, h, lx, ly, lz, gz, NL, diffusion, gzlz, gz2;
+   unsigned int ss, ms, ds, slen, dlen, mlen;
    double xyangle, zangle, sf, lxy, elevation;
 
    w = cmd->input->w;
    h = cmd->input->h;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(w > 2 && h > 2, EINA_FALSE);
 
-   src = ((RGBA_Image *) cmd->input->backing)->image.data8;
-   map = ((RGBA_Image *) cmd->mask->backing)->image.data8;
-   dst = ((RGBA_Image *) cmd->output->backing)->image.data;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(map, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
+   src_map = src = _buffer_map_all(cmd->input->buffer, &slen, E_READ, E_ALPHA, &ss);
+   map_map = map = _buffer_map_all(cmd->mask->buffer, &mlen, E_READ, E_ALPHA, &ms);
+   dst_map = dst = (uint32_t *) _buffer_map_all(cmd->output->buffer, &dlen, E_WRITE, E_ARGB, &ds);
+   EINA_SAFETY_ON_FALSE_GOTO(src && dst && map, end);
 
    xyangle = cmd->bump.xyangle;
    zangle = cmd->bump.zangle;
@@ -403,7 +409,13 @@ _bump_map_cpu_alpha_rgba(Evas_Filter_Command *cmd)
           }
    }
 
-   return EINA_TRUE;
+   ret = EINA_TRUE;
+
+end:
+   eo_do(cmd->input->buffer, ector_buffer_unmap(src_map, slen));
+   eo_do(cmd->mask->buffer, ector_buffer_unmap(map_map, mlen));
+   eo_do(cmd->output->buffer, ector_buffer_unmap(dst_map, dlen));
+   return ret;
 }
 
 static Eina_Bool

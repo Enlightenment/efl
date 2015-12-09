@@ -230,7 +230,7 @@ struct _Evas_Filter_Buffer
 
    Evas_Object *source;
    Eina_Stringshare *source_name;
-   RGBA_Image *backing;
+   Ector_Generic_Buffer *buffer;
    void *glimage;
    int w, h;
 
@@ -274,5 +274,21 @@ Evas_Filter_Command *_evas_filter_command_get(Evas_Filter_Context *ctx, int cmdi
 int evas_filter_smallest_pow2_larger_than(int val);
 
 void evas_filter_parser_shutdown(void);
+
+#define E_READ  ECTOR_BUFFER_ACCESS_FLAG_READ
+#define E_WRITE ECTOR_BUFFER_ACCESS_FLAG_WRITE
+#define E_ALPHA EFL_GFX_COLORSPACE_GRY8
+#define E_ARGB  EFL_GFX_COLORSPACE_ARGB8888
+
+static inline void *
+_buffer_map_all(Ector_Buffer *buf, unsigned int *len, Ector_Buffer_Access_Flag mode, Efl_Gfx_Colorspace cspace, unsigned int *stride)
+{
+   void *ret = NULL;
+   int w, h;
+   if (!buf) return NULL;
+   eo_do(buf, ector_buffer_size_get(&w, &h);
+         ret = ector_buffer_map(len, mode, 0, 0, w, h, cspace, stride));
+   return ret;
+}
 
 #endif // EVAS_FILTER_PRIVATE_H

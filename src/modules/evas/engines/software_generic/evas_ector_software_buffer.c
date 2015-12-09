@@ -49,7 +49,7 @@ _evas_ector_software_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
 
    eo_do(obj, ector_buffer_pixels_set(im->image.data,
                                       im->cache_entry.w, im->cache_entry.h, 0,
-                                      _evas_to_gfx_render_op(im->cache_entry.space),
+                                      im->cache_entry.space,
                                       EINA_TRUE, 0, 0, 0, 0));
 }
 

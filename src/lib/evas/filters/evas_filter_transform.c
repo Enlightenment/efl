@@ -10,27 +10,22 @@
 static Eina_Bool
 _vflip_cpu(Evas_Filter_Command *cmd)
 {
-   size_t datasize, stride;
-   DATA8 *in, *out, *span = NULL;
+   unsigned int src_len, src_stride, dst_len, dst_stride;
+   uint8_t *in, *out = NULL, *span = NULL;
    int w, h, sy, dy, oy, center, t, b, objh;
    int s0, s1, d0, d1;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input->backing, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output->backing, EINA_FALSE);
+   Eina_Bool ret = 0;
 
    w = cmd->input->w;
    h = cmd->input->h;
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(cmd->output->w == w, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(cmd->output->h == h, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(cmd->output->alpha_only == cmd->input->alpha_only, EINA_FALSE);
+   in = _buffer_map_all(cmd->input->buffer, &src_len, E_READ, cmd->output->alpha_only ? E_ALPHA : E_ARGB, &src_stride);
+   if (cmd->input->buffer != cmd->output->buffer)
+     out = _buffer_map_all(cmd->output->buffer, &dst_len, E_WRITE, cmd->output->alpha_only ? E_ALPHA : E_ARGB, &dst_stride);
 
-   in = ((RGBA_Image *) cmd->input->backing)->image.data8;
-   out = ((RGBA_Image *) cmd->output->backing)->image.data8;
-   datasize = cmd->input->alpha_only ? sizeof(DATA8) : sizeof(DATA32);
-   stride = w * datasize;
+   EINA_SAFETY_ON_FALSE_GOTO(cmd->output->w == w, end);
+   EINA_SAFETY_ON_FALSE_GOTO(cmd->output->h == h, end);
+   EINA_SAFETY_ON_FALSE_GOTO(src_stride <= dst_stride, end);
+   EINA_SAFETY_ON_FALSE_GOTO(cmd->output->alpha_only == cmd->input->alpha_only, end);
 
    oy = cmd->draw.oy;
    t = cmd->ctx->padt;
@@ -53,28 +48,32 @@ _vflip_cpu(Evas_Filter_Command *cmd)
 
    if (in == out)
      {
-        span = malloc(stride);
-        if (!span) return EINA_FALSE;
+        span = alloca(src_stride);
+        if (!span) goto end;
      }
 
    for (sy = s0, dy = d0; (dy >= d1) && (sy <= s1); sy++, dy--)
      {
-        DATA8* src = in + stride * sy;
-        DATA8* dst = out + stride * dy;
+        uint8_t* src = in + src_stride * sy;
+        uint8_t* dst = out + dst_stride * dy;
 
         if (in == out)
           {
              if (src == dst) break;
-             memcpy(span, dst, stride);
-             memcpy(dst, src, stride);
-             memcpy(src, span, stride);
+             memcpy(span, dst, src_stride);
+             memcpy(dst, src, src_stride);
+             memcpy(src, span, src_stride);
              if (sy >= center) break;
           }
         else
-          memcpy(dst, src, stride);
+          memcpy(dst, src, src_stride);
      }
-   free(span);
-   return EINA_TRUE;
+   ret = EINA_TRUE;
+
+end:
+   eo_do(cmd->input->buffer, ector_buffer_unmap(in, src_len));
+   if (in != out) eo_do(cmd->output->buffer, ector_buffer_unmap(out, dst_len));
+   return ret;
 }
 
 Evas_Filter_Apply_Func

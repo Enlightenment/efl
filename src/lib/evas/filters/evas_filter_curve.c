@@ -5,23 +5,23 @@
 static Eina_Bool
 _filter_curve_cpu_rgba(Evas_Filter_Command *cmd)
 {
-   RGBA_Image *in, *out;
-   DATA32 *src, *dst, *d, *s;
-   DATA8 *curve;
+   unsigned int src_len, src_stride, dst_len, dst_stride;
+   void *src_map = NULL, *dst_map;
+   Eina_Bool ret = EINA_FALSE;
+   uint32_t *src, *dst, *d, *s;
+   uint8_t *curve;
    int k, offset = -1, len;
 
-#define C_VAL(p) (((DATA8 *)(p))[offset])
+#define C_VAL(p) (((uint8_t *)(p))[offset])
 
-   in = cmd->input->backing;
-   out = cmd->output->backing;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(in, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(out, EINA_FALSE);
-   src = in->image.data;
-   dst = out->image.data;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
+   // FIXME: support src_stride != dst_stride
+   // Note: potentially mapping the same region twice (read then write)
+   src_map = src = _buffer_map_all(cmd->input->buffer, &src_len, E_READ, E_ARGB, &src_stride);
+   dst_map = dst = _buffer_map_all(cmd->output->buffer, &dst_len, E_WRITE, E_ARGB, &dst_stride);
+   EINA_SAFETY_ON_FALSE_GOTO(src && dst && (src_len == dst_len), end);
+
    curve = cmd->curve.data;
-   len = in->cache_entry.w * in->cache_entry.h;
+   len = dst_len / sizeof(uint32_t);
 
    switch (cmd->curve.channel)
      {
@@ -38,11 +38,11 @@ _filter_curve_cpu_rgba(Evas_Filter_Command *cmd)
       case EVAS_FILTER_CHANNEL_RGB: break;
       default:
         ERR("Invalid color channel %d", (int) cmd->curve.channel);
-        return EINA_FALSE;
+        goto end;
      }
 
    if (src != dst)
-     memcpy(dst, src, len * sizeof(DATA32));
+     memcpy(dst, src, dst_len);
    evas_data_argb_unpremul(dst, len);
 
    // One channel (R, G or B)
@@ -82,31 +82,39 @@ _filter_curve_cpu_rgba(Evas_Filter_Command *cmd)
 
 premul:
    evas_data_argb_premul(dst, len);
-   return EINA_TRUE;
+   ret = EINA_TRUE;
+
+end:
+   eo_do(cmd->input->buffer, ector_buffer_unmap(src_map, src_len));
+   eo_do(cmd->output->buffer, ector_buffer_unmap(dst_map, dst_len));
+   return ret;
 }
 
 static Eina_Bool
 _filter_curve_cpu_alpha(Evas_Filter_Command *cmd)
 {
-   RGBA_Image *in, *out;
-   DATA8 *src, *dst;
-   DATA8 *curve;
+   unsigned int src_len, src_stride, dst_len, dst_stride;
+   uint8_t *src, *dst, *curve;
+   void *src_map, *dst_map;
+   Eina_Bool ret = EINA_FALSE;
    int k;
 
-   in = cmd->input->backing;
-   out = cmd->output->backing;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(in, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(out, EINA_FALSE);
-   src = in->image.data8;
-   dst = out->image.data8;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
+   // FIXME: support src_stride != dst_stride
+   // Note: potentially mapping the same region twice (read then write)
+   src_map = src = _buffer_map_all(cmd->input->buffer, &src_len, E_READ, E_ALPHA, &src_stride);
+   dst_map = dst = _buffer_map_all(cmd->output->buffer, &dst_len, E_WRITE, E_ALPHA, &dst_stride);
+   EINA_SAFETY_ON_FALSE_GOTO(src && dst && (src_len == dst_len), end);
    curve = cmd->curve.data;
 
-   for (k = in->cache_entry.w * in->cache_entry.h; k; k--)
+   for (k = src_len; k; k--)
      *dst++ = curve[*src++];
 
-   return EINA_TRUE;
+   ret = EINA_TRUE;
+
+end:
+   eo_do(cmd->input->buffer, ector_buffer_unmap(src_map, src_len));
+   eo_do(cmd->output->buffer, ector_buffer_unmap(dst_map, dst_len));
+   return ret;
 }
 
 Evas_Filter_Apply_Func
@@ -124,6 +132,8 @@ evas_filter_curve_cpu_func_get(Evas_Filter_Command *cmd)
    if (cmd->input->alpha_only && cmd->output->alpha_only)
      return _filter_curve_cpu_alpha;
 
-   CRI("Incompatible image formats");
-   return NULL;
+   // Rely on ector buffer's implicit conversion. not great but the command
+   // doesn't make much sense (curve requires same channel count).
+   WRN("Incompatible image formats");
+   return _filter_curve_cpu_rgba;
 }

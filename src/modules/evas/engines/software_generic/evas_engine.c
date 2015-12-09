@@ -3758,7 +3758,7 @@ eng_ector_destroy(void *data EINA_UNUSED, Ector_Surface *ector)
 }
 
 static Ector_Buffer *
-eng_ector_buffer_new(void *data EINA_UNUSED, Evas *e, void *engine_image)
+eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *e, void *engine_image)
 {
    Image_Entry *ie = engine_image;
    Ector_Buffer *buf = NULL;
@@ -3767,6 +3767,22 @@ eng_ector_buffer_new(void *data EINA_UNUSED, Evas *e, void *engine_image)
 
    buf = eo_add(EVAS_ECTOR_SOFTWARE_BUFFER_CLASS, e,
                 evas_ector_buffer_engine_image_set(e, ie));
+
+   return buf;
+}
+
+static Ector_Buffer *
+eng_ector_buffer_new(void *data EINA_UNUSED, Evas *e, void *pixels,
+                     int width, int height, int stride,
+                     Efl_Gfx_Colorspace cspace, Eina_Bool writeable,
+                     int l, int r, int t, int b,
+                     Ector_Buffer_Flag flags EINA_UNUSED)
+{
+   Ector_Buffer *buf = NULL;
+
+   buf = eo_add(ECTOR_SOFTWARE_BUFFER_CLASS, e,
+                ector_buffer_pixels_set(pixels, width, height, stride, cspace,
+                                        writeable, l, r, t, b));
 
    return buf;
 }
@@ -4182,6 +4198,7 @@ static Evas_Func func =
      NULL, // eng_texture_image_get
      eng_ector_create,
      eng_ector_destroy,
+     eng_ector_buffer_wrap,
      eng_ector_buffer_new,
      eng_ector_begin,
      eng_ector_renderer_draw,

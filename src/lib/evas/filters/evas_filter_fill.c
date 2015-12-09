@@ -1,14 +1,17 @@
 #include "evas_filter_private.h"
+#include "draw.h"
 
 static Eina_Bool
 _fill_cpu(Evas_Filter_Command *cmd)
 {
    Evas_Filter_Buffer *fb = cmd->output;
-   int step = fb->alpha_only ? sizeof(DATA8) : sizeof(DATA32);
+   int step = fb->alpha_only ? sizeof(uint8_t) : sizeof(uint32_t);
    int x = MAX(0, cmd->draw.clip.x);
    int y = MAX(0, cmd->draw.clip.y);
-   DATA8 *ptr = ((RGBA_Image *) fb->backing)->image.data8;
-   int w, h, k, j;
+   uint32_t color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
+   unsigned int stride, len;
+   int w, h, k;
+   uint8_t *ptr;
 
    if (!cmd->draw.clip_mode_lrtb)
      {
@@ -29,30 +32,28 @@ _fill_cpu(Evas_Filter_Command *cmd)
         h = CLAMP(0, fb->h - y - cmd->draw.clip.b, fb->h - y);
      }
 
-   ptr += y * step * fb->w;
-   if ((fb->alpha_only)
-       || (!cmd->draw.R && !cmd->draw.G && !cmd->draw.B && !cmd->draw.A)
-       || ((cmd->draw.R == 0xff) && (cmd->draw.G == 0xff)
-           && (cmd->draw.B == 0xff) && (cmd->draw.A == 0xff)))
+   ptr = _buffer_map_all(fb->buffer, &len, E_WRITE, fb->alpha_only ? E_ALPHA : E_ARGB, &stride);
+   if (!ptr) return EINA_FALSE;
+
+   ptr += y * stride;
+   if (fb->alpha_only)
      {
         for (k = 0; k < h; k++)
           {
              memset(ptr + (x * step), cmd->draw.A, step * w);
-             ptr += step * fb->w;
+             ptr += stride;
           }
      }
    else
      {
-        DATA32 *dst = ((DATA32 *) ptr) + x;
-        DATA32 color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
         for (k = 0; k < h; k++)
           {
-             for (j = 0; j < w; j++)
-               *dst++ = color;
-             dst += fb->w - w;
+             uint32_t *dst = ((uint32_t *) (ptr + (y + k) * stride)) + x;
+             draw_memset32(dst, color, w);
           }
      }
 
+   eo_do(fb->buffer, ector_buffer_unmap(ptr, len));
    return EINA_TRUE;
 }
 

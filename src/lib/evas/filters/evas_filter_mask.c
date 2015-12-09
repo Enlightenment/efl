@@ -18,11 +18,11 @@ evas_filter_mask_cpu_func_get(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->mask, NULL);
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input->backing, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output->backing, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->mask->backing, NULL);
-
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input->buffer, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output->buffer, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->mask->buffer, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((cmd->input->w > 0) && (cmd->input->h > 0), NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((cmd->mask->w > 0) && (cmd->mask->h > 0), NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(cmd->input->w == cmd->output->w, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(cmd->input->h == cmd->output->h, NULL);
 
@@ -53,12 +53,14 @@ evas_filter_mask_cpu_func_get(Evas_Filter_Command *cmd)
 static Eina_Bool
 _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd)
 {
-   Alpha_Gfx_Func func;
-   RGBA_Image *in, *out, *mask;
-   DATA8 *src, *dst, *msk;
+   unsigned int src_len, src_stride, msk_len, msk_stride, dst_len, dst_stride;
    Efl_Gfx_Render_Op render_op = cmd->draw.rop;
+   Evas_Filter_Buffer *msk_fb;
+   Alpha_Gfx_Func func;
+   uint8_t *src_map = NULL, *dst, *dst_map = NULL, *msk, *msk_map = NULL;
    int w, h, mw, mh, x, y, my;
    int stepsize, stepcount, step;
+   Eina_Bool ret = EINA_FALSE;
 
    /* Mechanism:
     * 1. Stretch mask as requested in fillmode
@@ -68,56 +70,57 @@ _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd)
     * FIXME: Could probably be optimized into a single op :)
     */
 
-   in = (RGBA_Image *) cmd->input->backing;
-   out = (RGBA_Image *) cmd->output->backing;
-   mask = (RGBA_Image *) cmd->mask->backing;
-
    w = cmd->input->w;
    h = cmd->input->h;
    mw = cmd->mask->w;
    mh = cmd->mask->h;
-   src = in->image.data8;
-   dst = out->image.data8;
-
-   EINA_SAFETY_ON_FALSE_RETURN_VAL((w > 0) && (mw > 0), EINA_FALSE);
-
    stepsize  = MIN(mw, w);
    stepcount = w / stepsize;
 
    // Stretch if necessary.
    if ((mw != w || mh != h) && (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY))
      {
-        Evas_Filter_Buffer *fb;
-
         if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
           mw = w;
         if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
           mh = h;
 
         BUFFERS_LOCK();
-        fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->mask, mw, mh);
+        msk_fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->mask, mw, mh);
         BUFFERS_UNLOCK();
 
-        EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
-        fb->locked = EINA_FALSE;
-        mask = fb->backing;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(msk_fb, EINA_FALSE);
+        msk_fb->locked = EINA_FALSE;
      }
+   else msk_fb = cmd->mask;
 
-   msk = mask->image.data8;
+   msk_map = msk = _buffer_map_all(msk_fb->buffer, &msk_len, E_READ, E_ALPHA, &msk_stride);
+   dst_map = dst = _buffer_map_all(cmd->output->buffer, &dst_len, E_WRITE, E_ALPHA, &dst_stride);
+   EINA_SAFETY_ON_FALSE_GOTO(dst_map && msk_map, end);
 
    // First pass: copy to dest
-   if (src != dst)
-     memcpy(dst, src, w * h * sizeof(DATA8));
+   if (cmd->input->buffer != cmd->output->buffer)
+     {
+        src_map = _buffer_map_all(cmd->input->buffer, &src_len, E_READ, E_ALPHA, &src_stride);
+        EINA_SAFETY_ON_FALSE_GOTO(src_map, end);
+        if (dst_stride == src_stride)
+          memcpy(dst_map, src_map, dst_stride * h * sizeof(uint8_t));
+        else
+          {
+             for (y = 0; y < h; y++)
+               memcpy(dst_map + (y * dst_stride), src_map + (y * src_stride),
+                      MIN(dst_stride, src_stride) * h * sizeof(uint8_t));
+          }
+     }
 
    // Second pass: apply render op
    func = efl_draw_alpha_func_get(render_op, EINA_FALSE);
-   for (y = 0, my = 0; y < h; y++, my++, msk += mw)
+   for (y = 0, my = 0; y < h; y++, my++)
      {
-        if (my >= mh)
-          {
-             my = 0;
-             msk = mask->image.data8;
-          }
+        if (my >= mh) my = 0;
+
+        msk = msk_map + (my * msk_stride);
+        dst = dst_map + (y * dst_stride);
 
         for (step = 0; step < stepcount; step++, dst += stepsize)
           func(msk, dst, stepsize);
@@ -126,11 +129,16 @@ _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd)
         if (x < w)
           {
              func(msk, dst, w - x);
-             dst += w - x;
           }
      }
 
-   return EINA_TRUE;
+   ret = EINA_TRUE;
+
+end:
+   eo_do(cmd->input->buffer, ector_buffer_unmap(src_map, src_len));
+   eo_do(msk_fb->buffer, ector_buffer_unmap(msk_map, msk_len));
+   eo_do(cmd->output->buffer, ector_buffer_unmap(dst_map, dst_len));
+   return ret;
 }
 
 static Eina_Bool
@@ -161,14 +169,16 @@ _mask_cpu_rgba_alpha_rgba(Evas_Filter_Command *cmd)
 static Eina_Bool
 _mask_cpu_alpha_rgba_rgba(Evas_Filter_Command *cmd)
 {
-   RGBA_Gfx_Func func1, func2;
-   RGBA_Image *in, *out, *mask;
-   DATA8 *src;
-   DATA32 *dst, *msk, *span;
+   unsigned int src_len, src_stride, msk_len, msk_stride, dst_len, dst_stride;
    Efl_Gfx_Render_Op op = cmd->draw.rop;
-   int w, h, mw, mh, y, my, r;
+   Evas_Filter_Buffer *msk_fb;
+   RGBA_Gfx_Func func1, func2;
+   uint8_t *src, *src_map = NULL, *msk_map = NULL, *dst_map = NULL;
+   uint32_t *dst, *msk, *span;
+   int w, h, mw, mh, x, y, my;
    int stepsize, stepcount, step;
-   DATA32 color2;
+   Eina_Bool ret = EINA_FALSE;
+   uint32_t color;
 
    /* Mechanism:
     * 1. Stretch mask as requested in fillmode
@@ -178,94 +188,88 @@ _mask_cpu_alpha_rgba_rgba(Evas_Filter_Command *cmd)
     * FIXME: Could probably be optimized into a single op :)
     */
 
-   in = (RGBA_Image *) cmd->input->backing;
-   out = (RGBA_Image *) cmd->output->backing;
-   mask = (RGBA_Image *) cmd->mask->backing;
-
    w = cmd->input->w;
    h = cmd->input->h;
    mw = cmd->mask->w;
    mh = cmd->mask->h;
-   src = in->image.data8;
-   dst = out->image.data;
+   color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
+   stepsize  = MIN(mw, w);
+   stepcount = w / stepsize;
+   span = alloca(stepsize * sizeof(uint32_t));
 
    // Stretch if necessary.
    if ((mw != w || mh != h) && (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY))
      {
-        Evas_Filter_Buffer *fb;
-
         if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
           mw = w;
         if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
           mh = h;
 
         BUFFERS_LOCK();
-        fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->mask, mw, mh);
+        msk_fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->mask, mw, mh);
         BUFFERS_UNLOCK();
 
-        EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
-        fb->locked = EINA_FALSE;
-        mask = fb->backing;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(msk_fb, EINA_FALSE);
+        msk_fb->locked = EINA_FALSE;
      }
+   else msk_fb = cmd->mask;
 
-   color2 = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
-   msk = mask->image.data;
+   src_map = _buffer_map_all(cmd->input->buffer, &src_len, E_WRITE, E_ALPHA, &src_stride);
+   msk_map = _buffer_map_all(msk_fb->buffer, &msk_len, E_READ, E_ARGB, &msk_stride);
+   dst_map = _buffer_map_all(cmd->output->buffer, &dst_len, E_WRITE, E_ARGB, &dst_stride);
+   EINA_SAFETY_ON_FALSE_GOTO(src_map && dst_map && msk_map, end);
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(msk, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL((w > 0) && (mw > 0), EINA_FALSE);
-
-   stepsize  = MIN(mw, w);
-   stepcount = w / stepsize;
-   span = malloc(stepsize * sizeof(DATA32));
-
-   func1 = evas_common_gfx_func_composite_pixel_mask_span_get(mask->cache_entry.flags.alpha, mask->cache_entry.flags.alpha_sparse, out->cache_entry.flags.alpha, 1, EVAS_RENDER_COPY);
-   func2 = evas_common_gfx_func_composite_pixel_color_span_get(mask->cache_entry.flags.alpha, mask->cache_entry.flags.alpha_sparse, color2, out->cache_entry.flags.alpha, 1, _gfx_to_evas_render_op(op));
+   func1 = evas_common_gfx_func_composite_pixel_mask_span_get(1, 0, 1, 1, EVAS_RENDER_COPY);
+   func2 = evas_common_gfx_func_composite_pixel_color_span_get(1, 0, color, 1, 1, _gfx_to_evas_render_op(op));
 
    // Apply mask using Gfx functions
-   for (y = 0, my = 0; y < h; y++, my++, msk += mw)
+   for (y = 0, my = 0; y < h; y++, my++)
      {
-        if (my >= mh)
-          {
-             my = 0;
-             msk = mask->image.data;
-          }
+        if (my >= mh) my = 0;
+
+        src = src_map + (y * src_stride);
+        msk = (uint32_t *) (msk_map + (my * msk_stride));
+        dst = (uint32_t *) (dst_map + (y * dst_stride));
 
         for (step = 0; step < stepcount; step++, dst += stepsize, src += stepsize)
           {
-             memset(span, 0, stepsize * sizeof(DATA32));
+             memset(span, 0, stepsize * sizeof(uint32_t));
              func1(msk, src, 0, span, stepsize);
-             func2(span, NULL, color2, dst, stepsize);
+             func2(span, NULL, color, dst, stepsize);
           }
 
-        r = w - (stepsize * stepcount);
-        if (r > 0)
+        x = stepsize * stepcount;
+        if (x < w)
           {
-             memset(span, 0, r * sizeof(DATA32));
-             func1(msk, src, 0, span, r);
-             func2(span, NULL, color2, dst, r);
-             dst += r;
-             src += r;
+             memset(span, 0, (w - x) * sizeof(uint32_t));
+             func1(msk, src, 0, span, w - x);
+             func2(span, NULL, color, dst, w - x);
           }
      }
 
-   free(span);
-   return EINA_TRUE;
+   ret = EINA_TRUE;
+
+end:
+   eo_do(cmd->input->buffer, ector_buffer_unmap(src_map, src_len));
+   eo_do(msk_fb->buffer, ector_buffer_unmap(msk_map, msk_len));
+   eo_do(cmd->output->buffer, ector_buffer_unmap(dst_map, dst_len));
+   return ret;
 }
 
 static Eina_Bool
 _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
 {
+   unsigned int src_len, src_stride, msk_len, msk_stride, dst_len, dst_stride;
+   uint8_t *src, *msk, *span, *src_map = NULL, *msk_map = NULL, *dst_map = NULL;
+   Evas_Filter_Buffer *msk_fb;
    RGBA_Gfx_Func func;
    Alpha_Gfx_Func span_func;
-   RGBA_Image *in, *out, *mask;
-   DATA8 *src, *msk, *span;
-   DATA32 *dst;
-   DATA32 color;
+   uint32_t *dst;
+   uint32_t color;
    Efl_Gfx_Render_Op op = cmd->draw.rop;
-   int w, h, mw, mh, y, my, r;
+   int w, h, mw, mh, x, y, my;
    int stepsize, stepcount, step;
+   Eina_Bool ret = EINA_FALSE;
 
    /* Mechanism:
     * 1. Copy mask to span buffer (1 line)
@@ -275,155 +279,147 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
     * FIXME: Could probably be optimized into a single op :)
     */
 
-   in = (RGBA_Image *) cmd->input->backing;
-   out = (RGBA_Image *) cmd->output->backing;
-   mask = (RGBA_Image *) cmd->mask->backing;
-
    w = cmd->input->w;
    h = cmd->input->h;
    mw = cmd->mask->w;
    mh = cmd->mask->h;
-   src = in->image.data8;
-   dst = out->image.data;
    color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
-
-   EINA_SAFETY_ON_FALSE_RETURN_VAL((w > 0) && (mw > 0), EINA_FALSE);
+   stepsize  = MIN(mw, w);
+   stepcount = w / stepsize;
+   span = alloca(stepsize * sizeof(uint32_t));
 
    // Stretch if necessary.
    if ((mw != w || mh != h) && (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY))
      {
-        Evas_Filter_Buffer *fb;
-
         if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
           mw = w;
         if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
           mh = h;
 
         BUFFERS_LOCK();
-        fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->mask, mw, mh);
+        msk_fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->mask, mw, mh);
         BUFFERS_UNLOCK();
 
-        EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
-        fb->locked = EINA_FALSE;
-        mask = fb->backing;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(msk_fb, EINA_FALSE);
+        msk_fb->locked = EINA_FALSE;
      }
+   else msk_fb = cmd->mask;
 
-   msk = mask->image.data8;
-   stepsize  = MIN(mw, w);
-   stepcount = w / stepsize;
-   span = malloc(stepsize * sizeof(DATA8));
+   src_map = _buffer_map_all(cmd->input->buffer, &src_len, E_WRITE, E_ALPHA, &src_stride);
+   msk_map = _buffer_map_all(msk_fb->buffer, &msk_len, E_READ, E_ARGB, &msk_stride);
+   dst_map = _buffer_map_all(cmd->output->buffer, &dst_len, E_WRITE, E_ARGB, &dst_stride);
+   EINA_SAFETY_ON_FALSE_GOTO(src_map && dst_map && msk_map, end);
 
-   func = evas_common_gfx_func_composite_mask_color_span_get(color, out->cache_entry.flags.alpha, 1, _gfx_to_evas_render_op(op));
+   func = evas_common_gfx_func_composite_mask_color_span_get(color, 1, 1, _gfx_to_evas_render_op(op));
    span_func = efl_draw_alpha_func_get(cmd->draw.rop, EINA_TRUE);
 
    for (y = 0, my = 0; y < h; y++, my++, msk += mw)
      {
-        if (my >= mh)
-          {
-             my = 0;
-             msk = mask->image.data8;
-          }
+        if (my >= mh) my = 0;
+
+        src = src_map + (y * src_stride);
+        msk = msk_map + (my * msk_stride);
+        dst = (uint32_t *) (dst_map + (y * dst_stride));
 
         for (step = 0; step < stepcount; step++, dst += stepsize, src += stepsize)
           {
-             memcpy(span, msk, stepsize * sizeof(DATA8));
+             memcpy(span, msk, stepsize * sizeof(uint8_t));
              span_func(src, span, stepsize);
              func(NULL, span, color, dst, stepsize);
           }
 
-        r = w - (stepsize * stepcount);
-        if (r > 0)
+        x = stepsize * stepcount;
+        if (x < w)
           {
-             memcpy(span, msk, r * sizeof(DATA8));
-             span_func(src, span, r);
-             func(NULL, span, color, dst, r);
-             dst += r;
-             src += r;
+             memcpy(span, msk, (w - x) * sizeof(uint8_t));
+             span_func(src, span, w - x);
+             func(NULL, span, color, dst, w -x);
           }
      }
 
-   free(span);
-   return EINA_TRUE;
+   ret = EINA_TRUE;
+
+end:
+   eo_do(cmd->input->buffer, ector_buffer_unmap(src_map, src_len));
+   eo_do(msk_fb->buffer, ector_buffer_unmap(msk_map, msk_len));
+   eo_do(cmd->output->buffer, ector_buffer_unmap(dst_map, dst_len));
+   return ret;
 }
 
 static Eina_Bool
 _mask_cpu_rgba_rgba_rgba(Evas_Filter_Command *cmd)
 {
+   unsigned int src_len, src_stride, msk_len, msk_stride, dst_len, dst_stride;
+   uint8_t *src_map = NULL, *msk_map = NULL, *dst_map = NULL;
    Draw_Func_ARGB_Mix3 func;
-   RGBA_Image *in, *out, *mask;
-   DATA32 *dst, *msk, *src;
-   int w, h, mw, mh, y, my, r;
+   Evas_Filter_Buffer *msk_fb;
+   uint32_t *dst, *msk, *src;
+   int w, h, mw, mh, x, y, my;
    int stepsize, stepcount, step;
-   DATA32 color;
+   Eina_Bool ret = EINA_FALSE;
+   uint32_t color;
 
    /* Mechanism:
     * 1. Stretch mask as requested in fillmode
     * 2. Mix 3 colors
     */
 
-   in = (RGBA_Image *) cmd->input->backing;
-   out = (RGBA_Image *) cmd->output->backing;
-   mask = (RGBA_Image *) cmd->mask->backing;
-
    w = cmd->input->w;
    h = cmd->input->h;
    mw = cmd->mask->w;
    mh = cmd->mask->h;
-   src = in->image.data;
-   dst = out->image.data;
+   color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
+   stepsize  = MIN(mw, w);
+   stepcount = w / stepsize;
 
    // Stretch if necessary.
    if ((mw != w || mh != h) && (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_XY))
      {
-        Evas_Filter_Buffer *fb;
-
         if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_X)
           mw = w;
         if (cmd->draw.fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
           mh = h;
 
         BUFFERS_LOCK();
-        fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->mask, mw, mh);
+        msk_fb = evas_filter_buffer_scaled_get(cmd->ctx, cmd->mask, mw, mh);
         BUFFERS_UNLOCK();
 
-        EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
-        fb->locked = EINA_FALSE;
-        mask = fb->backing;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(msk_fb, EINA_FALSE);
+        msk_fb->locked = EINA_FALSE;
      }
+   else msk_fb = cmd->mask;
 
-   color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
-   msk = mask->image.data;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(msk, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL((w > 0) && (mw > 0), EINA_FALSE);
-
-   stepsize  = MIN(mw, w);
-   stepcount = w / stepsize;
+   src_map = _buffer_map_all(cmd->input->buffer, &src_len, E_WRITE, E_ARGB, &src_stride);
+   msk_map = _buffer_map_all(msk_fb->buffer, &msk_len, E_READ, E_ARGB, &msk_stride);
+   dst_map = _buffer_map_all(cmd->output->buffer, &dst_len, E_WRITE, E_ARGB, &dst_stride);
+   EINA_SAFETY_ON_FALSE_GOTO(src_map && dst_map && msk_map, end);
 
    func = efl_draw_func_argb_mix3_get(cmd->draw.rop, color);
 
    // Apply mask using Gfx functions
-   for (y = 0, my = 0; y < h; y++, my++, msk += mw)
+   for (y = 0, my = 0; y < h; y++, my++)
      {
-        if (my >= mh)
-          {
-             my = 0;
-             msk = mask->image.data;
-          }
+        if (my >= mh) my = 0;
+
+        src = (uint32_t *) (src_map + (y * src_stride));
+        msk = (uint32_t *) (msk_map + (my * msk_stride));
+        dst = (uint32_t *) (dst_map + (y * dst_stride));
 
         for (step = 0; step < stepcount; step++, dst += stepsize, src += stepsize)
           func(dst, src, msk, stepsize, color);
 
-        r = w - (stepsize * stepcount);
-        if (r > 0)
+        x = stepsize * stepcount;
+        if (x < w)
           {
-             func(dst, src, msk, r, color);
-             dst += r;
-             src += r;
+             func(dst, src, msk, w - x, color);
           }
      }
 
-   return EINA_TRUE;
+   ret = EINA_TRUE;
+
+end:
+   eo_do(cmd->input->buffer, ector_buffer_unmap(src_map, src_len));
+   eo_do(msk_fb->buffer, ector_buffer_unmap(msk_map, msk_len));
+   eo_do(cmd->output->buffer, ector_buffer_unmap(dst_map, dst_len));
+   return ret;
 }
