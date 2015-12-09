@@ -2563,7 +2563,7 @@ _item_get(void *data,
         o = ip->func(ip->data, data, item);
         if (o) return o;
      }
-   if (!strncmp(item, "file://", 7))
+   if (item && !strncmp(item, "file://", 7))
      {
         const char *fname = item + 7;
 
