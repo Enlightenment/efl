@@ -2669,13 +2669,14 @@ ecore_x_randr_output_backlight_level_get(Ecore_X_Window root EINA_UNUSED, Ecore_
 
    if ((!prop) || (items == 0))
      {
-        free(prop);
         /* check legacy backlight property
          * 
          * FIXME: NB: Not sure what randr version we need for the legacy 
          * backlight property so skip version check */
         if ((backlight = XInternAtom(_ecore_x_disp, "BACKLIGHT", True)))
           {
+             free(prop);
+             prop = NULL;
              XRRGetOutputProperty(_ecore_x_disp, output, backlight, 0, 4, 
                                   False, False, None, &type, &format, 
                                   &items, &bytes, &prop);
