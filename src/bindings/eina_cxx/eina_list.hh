@@ -511,6 +511,7 @@ public:
   using _base_type::crend;
   using _base_type::swap;
   using _base_type::native_handle;
+  using _base_type::release_native_handle;
 };
 
 template <typename T>
@@ -613,6 +614,7 @@ public:
   }
   using _base_type::swap;
   using _base_type::native_handle;
+  using _base_type::release_native_handle;
 
   friend bool operator==(range_list<T> const& rhs, range_list<T> const& lhs)
   {

@@ -120,6 +120,17 @@ struct accessor_common_base
   }
 
   /**
+   * @brief Release the handle of the wrapped @c Eina_Accessor.
+   * @return Handle for the native @c Eina_Accessor.
+   */
+  Eina_Accessor* release_native_handle()
+  {
+    auto h = _impl;
+    _impl = nullptr;
+    return h;
+  }
+
+  /**
    * @brief Swap content between both objects.
    * @param other Other accessor object.
    *

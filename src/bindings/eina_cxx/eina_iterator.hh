@@ -95,6 +95,22 @@ public:
     return *this;
   }
 
+
+  /**
+   * @brief Get the handle for the wrapped @c Eina_Iterator.
+   * @return Internal handle for the native Eina iterator.
+   *
+   * This member function returns the native @c Eina_Iterator handle
+   * that is wrapped inside this object.
+   *
+   * @warning It is important to take care when using it, since the
+   * handle will be automatically release upon object destruction.
+   */
+  Eina_Iterator* native_handle() const
+  {
+    return _iterator;
+  }
+
 protected:
   /**
    * @internal

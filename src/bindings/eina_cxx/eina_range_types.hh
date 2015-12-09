@@ -276,7 +276,7 @@ struct _mutable_range_template : _const_range_template<T, Traits>
   {
     auto h = _handle;
     _handle = nullptr;
-    return h;
+    return const_cast<native_handle_type>(h);
   }
 
   /**
