@@ -232,6 +232,9 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_PRE,
 			     _ecore_evas_wl_common_render_pre, ee);
 
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
+                           _ecore_evas_wl_common_render_flush_pre, ee);
+
    /* FIXME: This needs to be set based on theme & scale */
    if (ee->prop.draw_frame)
      evas_output_framespace_set(ee->evas, fx, fy, fw, fh);

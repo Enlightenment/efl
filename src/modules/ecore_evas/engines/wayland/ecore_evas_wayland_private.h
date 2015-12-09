@@ -75,6 +75,7 @@ int  _ecore_evas_wl_common_pre_render(Ecore_Evas *ee);
 /* int  _ecore_evas_wl_common_render_updates(Ecore_Evas *ee); */
 void _ecore_evas_wl_common_post_render(Ecore_Evas *ee);
 int  _ecore_evas_wl_common_render(Ecore_Evas *ee);
+void _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED);
 void _ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
 void _ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi);
 void _ecore_evas_wl_common_render_pre(void *data, Evas *evas EINA_UNUSED, void *event);

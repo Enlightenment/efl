@@ -1310,6 +1310,18 @@ _ecore_evas_wl_common_render_pre(void *data, Evas *evas EINA_UNUSED, void *event
    ecore_evas_manual_render_set(ee, 1);
 }
 
+void
+_ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   wdata = ee->engine.data;
+   if (wdata->win->configure_ack)
+     wdata->win->configure_ack(wdata->win->xdg_surface,
+                               wdata->win->configure_serial);
+}
+
 void 
 _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *event)
 {
@@ -1342,14 +1354,7 @@ _ecore_evas_wl_common_render_updates(void *data, Evas *evas EINA_UNUSED, void *e
 void
 _ecore_evas_wl_common_post_render(Ecore_Evas *ee)
 {
-   Ecore_Evas_Engine_Wl_Data *wdata;
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   wdata = ee->engine.data;
-   if (wdata->win->configure_ack)
-     wdata->win->configure_ack(wdata->win->xdg_surface,
-                               wdata->win->configure_serial);
 
    _ecore_evas_idle_timeout_update(ee);
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
