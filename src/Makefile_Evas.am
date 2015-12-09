@@ -263,7 +263,6 @@ lib/evas/canvas/evas_vg_shape.c
 lib_evas_libevas_la_SOURCES += \
 static_libs/draw/draw_alpha_main.c \
 static_libs/draw/draw_main_neon.c \
-static_libs/draw/draw_main_sse2.c \
 static_libs/draw/draw_main.c
 
 # Engine
@@ -373,7 +372,8 @@ lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 noinst_LTLIBRARIES += lib/evas/common/libevas_op_blend_sse3.la
 
 lib_evas_common_libevas_op_blend_sse3_la_SOURCES = \
-lib/evas/common/evas_op_blend/op_blend_master_sse3.c
+lib/evas/common/evas_op_blend/op_blend_master_sse3.c \
+static_libs/draw/draw_main_sse2.c
 
 lib_evas_common_libevas_op_blend_sse3_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 $(lib_evas_libevas_la_CPPFLAGS) \
