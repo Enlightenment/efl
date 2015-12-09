@@ -1084,7 +1084,7 @@ eina_quaternion_transform(Eina_Quaternion *out, const Eina_Quaternion *v, const 
 {
    Eina_Quaternion tmp;
 
-   if (eina_matrix4_type_get(m) & EINA_MATRIX_TYPE_IDENTITY)
+   if (eina_matrix4_type_get(m) == EINA_MATRIX_TYPE_IDENTITY)
      {
         eina_quaternion_copy(out, v);
         return;
