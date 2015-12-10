@@ -3044,7 +3044,7 @@ _elm_win_frame_add(Elm_Win_Data *sd,
    evas_object_event_callback_add
      (sd->frame_obj, EVAS_CALLBACK_RESIZE, _elm_win_frame_obj_resize, sd);
 #ifdef HAVE_ELEMENTARY_WL2
-   evas_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_PRE, _elm_win_frame_pre_render, sd);
+   evas_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, _elm_win_frame_pre_render, sd);
 #endif
 
    /* NB: Do NOT remove these calls !! Needed to calculate proper
@@ -3102,7 +3102,7 @@ _elm_win_frame_del(Elm_Win_Data *sd)
         evas_object_event_callback_del_full
           (sd->frame_obj, EVAS_CALLBACK_RESIZE, _elm_win_frame_obj_resize, sd);
 #ifdef HAVE_ELEMENTARY_WL2
-        evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_RENDER_PRE, _elm_win_frame_pre_render, sd);
+        evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, _elm_win_frame_pre_render, sd);
 #endif
 
         edje_object_signal_callback_del
