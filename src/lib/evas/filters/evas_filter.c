@@ -108,66 +108,19 @@ _filter_buffer_backing_free(Evas_Filter_Buffer *fb)
    fb->buffer = NULL;
 }
 
-/* GL engine stuff: read-back from texture */
-static Eina_Bool
-_filter_buffer_glimage_pixels_read(Evas_Filter_Buffer *fb EINA_UNUSED, void *glimage EINA_UNUSED)
-{
-   CRI("not implemented");
-   return 0;
-
-#if 0
-   Eina_Bool ok;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(fb->ctx->gl_engine, EINA_FALSE);
-
-   if (fb->backing)
-     return EINA_TRUE;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fb->ENFN->gl_surface_lock, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fb->ENFN->gl_surface_read_pixels, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fb->ENFN->gl_surface_unlock, EINA_FALSE);
-
-   fb->buffer = _ector_buffer_create(fb, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fb->buffer, EINA_FALSE);
-
-   ok = fb->ENFN->gl_surface_lock(fb->ENDT, glimage);
-   if (!ok)
-     {
-        ERR("Failed to lock the image pixels");
-        return EINA_FALSE;
-     }
-
-   ok = fb->ENFN->gl_surface_read_pixels(fb->ENDT, glimage,
-                                         0, 0, fb->w, fb->h, fb->alpha_only
-                                         ? EVAS_COLORSPACE_GRY8
-                                         : EVAS_COLORSPACE_ARGB8888,
-                                         fb->backing->image.data);
-   if (!ok)
-     ERR("Could not read the image pixels!");
-
-   ok &= fb->ENFN->gl_surface_unlock(fb->ENDT, glimage);
-   return ok;
-#endif
-}
-
 /** @hidden private render proxy objects */
 void
-evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx EINA_UNUSED, Eo *eo_obj EINA_UNUSED,
-                                     Eina_Bool do_async EINA_UNUSED)
+evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
+                                     Eina_Bool do_async)
 {
-   CRI("not implemented");
-   return;
-
-#if 0
    Evas_Object_Protected_Data *source;
    Evas_Object_Protected_Data *obj;
    Evas_Filter_Buffer *fb;
    Eina_List *li;
 
+   if (!ctx->has_proxies) return;
    obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
-   if (!ctx->has_proxies) return;
    EINA_LIST_FOREACH(ctx->buffers, li, fb)
      if (fb->source)
        {
@@ -188,17 +141,10 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx EINA_UNUSED, Eo *e
                evas_render_proxy_subrender(ctx->evas->evas, fb->source, eo_obj, obj, do_async);
             }
           _filter_buffer_backing_free(fb);
-          if (!ctx->gl_engine)
-            fb->backing = ENFN->image_ref(ENDT, source->proxy->surface);
-          else
-            {
-               fb->glimage = ENFN->image_ref(ENDT, source->proxy->surface);
-               _filter_buffer_glimage_pixels_read(fb, fb->glimage);
-            }
+          XDBG("Source #%d '%s' has dimensions %dx%d", fb->id, fb->source_name, fb->w, fb->h);
+          fb->buffer = ENFN->ector_buffer_wrap(ENDT, obj->layer->evas->evas, source->proxy->surface);
           fb->alpha_only = EINA_FALSE;
-          XDBG("Source has dimensions %dx%d (buffer %d)", fb->w, fb->h, fb->id);
        }
-#endif
 }
 
 void
@@ -1504,49 +1450,32 @@ evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid,
 }
 
 
-/* Image draw: glReadPixels or just use SW buffer */
+/* Image draw: scale and draw an original image into a RW surface */
 Eina_Bool
 evas_filter_image_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid,
                        void *image, Eina_Bool do_async)
 {
-   int w = 0, h = 0;
+   int dw = 0, dh = 0, w = 0, h = 0;
+   Eina_Bool async_unref;
+   void *surface;
 
    ENFN->image_size_get(ENDT, image, &w, &h);
    if (!w || !h) return EINA_FALSE;
 
-   if (!ctx->gl_engine)
+   surface = evas_filter_buffer_backing_get(ctx, bufid);
+   if (!surface) return EINA_FALSE;
+
+   ENFN->image_size_get(ENDT, image, &dw, &dh);
+   if (!dw || !dh) return EINA_FALSE;
+
+   async_unref = ENFN->image_draw(ENDT, draw_context, surface, image,
+                                  0, 0, w, h,
+                                  0, 0, dw, dh,
+                                  EINA_TRUE, do_async);
+   if (do_async && async_unref)
      {
-        Eina_Bool async_unref;
-        int dw = 0, dh = 0;
-
-        // Copy the image into our input buffer. We could optimize by reusing the buffer.
-
-        void *surface = evas_filter_buffer_backing_get(ctx, bufid);
-        if (!surface) return EINA_FALSE;
-
-        ENFN->image_size_get(ENDT, image, &dw, &dh);
-        if (!dw || !dh) return EINA_FALSE;
-
-        if (w != dw || h != dh)
-          WRN("Target surface size differs from the image to draw");
-
-        async_unref = ENFN->image_draw(ENDT, draw_context, surface, image,
-                                       0, 0, w, h,
-                                       0, 0, dw, dh,
-                                       EINA_TRUE, do_async);
-        if (do_async && async_unref)
-          {
-             ENFN->image_ref(ENDT, image);
-             evas_unref_queue_image_put(ctx->evas, image);
-          }
-     }
-   else
-     {
-        Evas_Filter_Buffer *fb;
-
-        fb = _filter_buffer_get(ctx, bufid);
-        _filter_buffer_backing_free(fb);
-        _filter_buffer_glimage_pixels_read(fb, image);
+        ENFN->image_ref(ENDT, image);
+        evas_unref_queue_image_put(ctx->evas, image);
      }
 
    return EINA_TRUE;
