@@ -691,6 +691,8 @@ evas_gl_common_context_new(void)
           }
      }
 
+   gc->state.current.tex_target = GL_TEXTURE_2D;
+
    if (!shared)
      {
         const char *ext;
