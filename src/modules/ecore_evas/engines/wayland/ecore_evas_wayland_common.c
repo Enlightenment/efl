@@ -1308,9 +1308,10 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas EINA_UNUSED, void 
    Ecore_Evas_Engine_Wl_Data *wdata;
 
    wdata = ee->engine.data;
-   if (wdata->win->configure_ack)
+   if (wdata->win->configure_ack && wdata->win->configure_serial)
      wdata->win->configure_ack(wdata->win->xdg_surface,
                                wdata->win->configure_serial);
+   wdata->win->configure_serial = 0;
 }
 
 void 
