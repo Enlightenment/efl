@@ -57,13 +57,15 @@ _ecore_idle_exiter_constructor(Eo *obj, Ecore_Idle_Exiter_Data *ie, Ecore_Task_C
    if (!func)
      {
         ERR("callback function must be set up for an object of class: '%s'", MY_CLASS_NAME);
-        return;
+        goto unlock;
      }
 
    ie->func = func;
    ie->data = (void *)data;
 
    idle_exiters = (Ecore_Idle_Exiter_Data *)eina_inlist_append(EINA_INLIST_GET(idle_exiters), EINA_INLIST_GET(ie));
+
+unlock:
    _ecore_unlock();
 }
 
