@@ -41,17 +41,18 @@ _set_geometry_to_eet_file_from_mesh(Evas_Canvas3D_Mesh_Data *mesh,
    if (vb->data == NULL)\
      {\
         ERR("Reading of geometrics is failed.");\
+        free(vertices);\
+        free(geometry);\
+        free(geometries);\
+        return;\
      }\
-   else\
+   src = (float *)vb->data;\
+   for (i = 0; i < mesh->vertex_count; i++)\
      {\
-        src = (float *)vb->data;\
-        for (i = 0; i < mesh->vertex_count; i++)\
-          {\
-             vertices[i].component.x = src[0];\
-             vertices[i].component.y = src[1];\
-             command_for_z_component\
-             src += f->vertices[a].element_count;\
-          }\
+        vertices[i].component.x = src[0];\
+        vertices[i].component.y = src[1];\
+        command_for_z_component\
+        src += f->vertices[a].element_count;\
      }
    geometry->vertices = vertices;
    SAVE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, position, vertices[i].position.z = src[2];)
@@ -189,3 +190,4 @@ evas_model_save_file_eet(const Evas_Canvas3D_Mesh *mesh,
 
    _evas_canvas3d_eet_file_free(eet_file);
 }
+
