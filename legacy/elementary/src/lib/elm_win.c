@@ -130,7 +130,7 @@ struct _Elm_Win_Data
    } win32;
 #endif
 
-   Ecore_Job                     *deferred_resize_job;
+   Eina_Bool                     deferred_resize_job;
    Ecore_Job                     *deferred_child_eval_job;
 
    Elm_Win_Type                   type;
@@ -824,7 +824,7 @@ _elm_win_resize_job(void *data)
    ELM_WIN_DATA_GET(data, sd);
    int w, h;
 
-   sd->deferred_resize_job = NULL;
+   sd->deferred_resize_job = EINA_FALSE;
    ecore_evas_request_geometry_get(sd->ee, NULL, NULL, &w, &h);
    if (sd->constrain)
      {
@@ -848,13 +848,21 @@ _elm_win_resize_job(void *data)
 }
 
 static void
+_elm_win_pre_render(Ecore_Evas *ee)
+{
+   Elm_Win_Data *sd = _elm_win_associate_get(ee);
+
+   if (sd->deferred_resize_job)
+     _elm_win_resize_job(sd->obj);
+}
+
+static void
 _elm_win_resize(Ecore_Evas *ee)
 {
    Elm_Win_Data *sd = _elm_win_associate_get(ee);
    if (!sd) return;
 
-   ecore_job_del(sd->deferred_resize_job);
-   sd->deferred_resize_job = ecore_job_add(_elm_win_resize_job, sd->obj);
+   sd->deferred_resize_job = EINA_TRUE;
 }
 
 static void
@@ -1945,7 +1953,6 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
         ecore_evas_callback_resize_set(sd->ee, NULL);
      }
 
-   ecore_job_del(sd->deferred_resize_job);
    ecore_job_del(sd->deferred_child_eval_job);
    eina_stringshare_del(sd->shot.info);
    ecore_timer_del(sd->shot.timer);
@@ -1992,6 +1999,7 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
    ecore_evas_callback_focus_out_set(sd->ee, NULL);
    ecore_evas_callback_move_set(sd->ee, NULL);
    ecore_evas_callback_state_change_set(sd->ee, NULL);
+   ecore_evas_callback_pre_render_set(sd->ee, NULL);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 
@@ -3856,6 +3864,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
    ecore_evas_callback_focus_out_set(sd->ee, _elm_win_focus_out);
    ecore_evas_callback_resize_set(sd->ee, _elm_win_resize);
    ecore_evas_callback_move_set(sd->ee, _elm_win_move);
+   ecore_evas_callback_pre_render_set(sd->ee, _elm_win_pre_render);
    if (type != ELM_WIN_FAKE)
      ecore_evas_callback_mouse_in_set(sd->ee, _elm_win_mouse_in);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _elm_win_cb_hide, NULL);
