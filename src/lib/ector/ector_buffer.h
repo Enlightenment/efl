@@ -30,7 +30,9 @@ typedef struct _Ector_Software_Buffer_Base_Data
    } pixels;
    unsigned int         stride;
    unsigned int         pixel_size; // in bytes
-   unsigned int         map_count;
+   struct {
+      Eina_Inlist      *maps; // Ector_Software_Buffer_Map
+   } internal;
    Eina_Bool            writable : 1; // pixels can be written to
    Eina_Bool            nofree : 1; // pixel data should not be free()'ed
    Eina_Bool            span_free : 1; // FIXME

@@ -1,20 +1,24 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
-#else
-# define EFL_BETA_API_SUPPORT
 #endif
 
-#include <Eo.h>
 #include "Ector_Software.h"
 #include "ector_private.h"
 #include "ector_software_private.h"
-#include "ector_generic_buffer.eo.h"
-#include "ector_software_buffer_base.eo.h"
+#include "ector_buffer.h"
 #include "draw.h"
 
 #define MY_CLASS ECTOR_SOFTWARE_BUFFER_CLASS
 
 #define fail(fmt, ...) do { ERR(fmt, ##__VA_ARGS__); goto on_fail; } while (0)
+
+typedef struct _Ector_Software_Buffer_Map
+{
+   EINA_INLIST;
+   void *ptr;
+   unsigned int len;
+   Eina_Bool allocated;
+} Ector_Software_Buffer_Map;
 
 static inline int
 _min_stride_calc(int width, Efl_Gfx_Colorspace cspace)
@@ -138,6 +142,7 @@ _ector_software_buffer_base_ector_generic_buffer_map(Eo *obj EINA_UNUSED, Ector_
                                                      unsigned int x, unsigned int y, unsigned int w, unsigned int h,
                                                      Efl_Gfx_Colorspace cspace EINA_UNUSED, unsigned int *stride)
 {
+   Ector_Software_Buffer_Map *map;
    int off;
 
    if (!pd->pixels.u8 || !pd->stride)
@@ -150,11 +155,16 @@ _ector_software_buffer_base_ector_generic_buffer_map(Eo *obj EINA_UNUSED, Ector_
    if ((mode & ECTOR_BUFFER_ACCESS_FLAG_WRITE) && !pd->writable)
      fail("can not map a read-only buffer for writing");
 
-   pd->map_count++;
    off = _min_stride_calc(x + pd->generic->l, pd->generic->cspace) + (pd->stride * (y + pd->generic->t));
-   if (length) *length = (pd->stride * h) - off;
+
+   map = calloc(1, sizeof(*map));
+   map->len = (pd->stride * h) - off;
+   map->ptr = pd->pixels.u8 + off;
+   pd->internal.maps = eina_inlist_append(pd->internal.maps, EINA_INLIST_GET(map));
+
+   if (length) *length = map->len;
    if (stride) *stride = pd->stride;
-   return pd->pixels.u8 + off;
+   return map->ptr;
 
 on_fail:
    if (length) *length = 0;
@@ -164,20 +174,22 @@ on_fail:
 
 EOLIAN static void
 _ector_software_buffer_base_ector_generic_buffer_unmap(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd,
-                                                       void *data, unsigned int length EINA_UNUSED)
+                                                       void *data, unsigned int length)
 {
+   Ector_Software_Buffer_Map *map;
    if (!data) return;
-   if (data != pd->pixels.u8)
+
+   EINA_INLIST_FOREACH(pd->internal.maps, map)
      {
-        CRI("Trying to unmap a non-mapped region!");
-        return;
+        if ((map->ptr == data) && (map->len == length))
+          {
+             pd->internal.maps = eina_inlist_remove(pd->internal.maps, EINA_INLIST_GET(map));
+             free(map);
+             return;
+          }
      }
-   if (pd->map_count == 0)
-     {
-        CRI("Unmapped too many times! Check your code!");
-        return;
-     }
-   pd->map_count--;
+
+   CRI("Tried to unmap a non-mapped region!");
 }
 
 EOLIAN static uint8_t *
@@ -268,7 +280,7 @@ _ector_software_buffer_eo_base_destructor(Eo *obj, void *data EINA_UNUSED)
    _ector_software_buffer_base_pixels_clear(obj, pd);
    eo_data_unref(obj, pd->generic);
    eo_do_super(obj, MY_CLASS, eo_destructor());
-   if (pd->map_count)
+   if (pd->internal.maps)
      {
         ERR("Pixel data is still mapped during destroy! Check your code!");
      }
