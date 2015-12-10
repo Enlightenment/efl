@@ -154,25 +154,7 @@ source_fetch_file(const char *fil, const char *filname)
 				  */
 				 if (!dir)
 				   {
-                                      char *slash;
-				      if (strrchr(fil, '/'))
-				        {
-				           dir = mem_strdup(fil);
-				           slash = strrchr(dir, '/');
-				        }
-                                      else
-                                        {
-                                           slash = NULL;
-                                        }
-#ifdef _WIN32
-				      if (strrchr(fil, '\\'))
-				        {
-				           if (!dir) dir = mem_strdup(fil);
-				           char *backslash = strrchr(dir, '\\');
-				           if (backslash > slash) slash = backslash;
-				        }
-#endif
-				      if (slash) *slash = '\0';
+                                      dir = ecore_file_dir_get(fil);
 				      if (dir) dir_len = strlen(dir);
 				   }
 
@@ -219,22 +201,7 @@ source_fetch_file(const char *fil, const char *filname)
 void
 source_fetch(void)
 {
-   char buf[PATH_MAX] = {0}, *ptr;
-
-   ptr = strrchr(file_in, '/');
-   if (ptr)
-     {
-	snprintf(buf, sizeof (buf), "%s", ptr + 1);
-     }
-#ifdef _WIN32
-   char *ptr_backslash = strrchr(file_in, '\\');
-   if (ptr_backslash)
-     {
-        if (ptr_backslash > ptr)
-          snprintf(buf, sizeof (buf), "%s", ptr_backslash + 1);
-     }
-#endif
-   source_fetch_file(file_in, buf[0] ? buf : file_in);
+   source_fetch_file(file_in, ecore_file_file_get(file_in));
 }
 
 int

@@ -914,23 +914,13 @@ void
 compile(void)
 {
    char buf[4096], buf2[4096];
-   char inc[4096];
    Eina_Tmpstr *tmpn;
    int fd;
    off_t size;
-   char *data, *p;
+   char *data;
    Eina_List *l;
    Edje_Style *stl;
 
-   strncpy(inc, file_in, 4000);
-   inc[4001] = 0;
-   p = strrchr(inc, '/');
-#ifdef _WIN32
-   char *p_backslash = strrchr(inc, '\\');
-   if (p_backslash > p) p = p_backslash;
-#endif
-   if (!p) strcpy(inc, "./");
-   else *p = 0;
    fd = eina_file_mkstemp("edje_cc.edc-tmp-XXXXXX", &tmpn);
    if (fd < 0)
      {
@@ -986,25 +976,30 @@ compile(void)
                    eina_prefix_lib_get(pfx));
         if (ecore_file_exists(buf2))
           {
+             char *inc;
+
+             inc = ecore_file_dir_get(file_in);
              if (depfile)
                snprintf(buf, sizeof(buf), "%s -MMD %s -MT %s %s -I%s %s -o %s"
                         " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
                         buf2, depfile, file_out, file_in,
-                        inc, def, clean_file,
+                        inc ? inc : "./", def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              else if (annotate)
                snprintf(buf, sizeof(buf), "%s -annotate -a %s %s -I%s %s -o %s"
                         " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
                         buf2, watchfile ? watchfile : "/dev/null", file_in,
-                        inc, def, clean_file,
+                        inc ? inc : "./", def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              else
                snprintf(buf, sizeof(buf), "%s -a %s %s -I%s %s -o %s"
                         " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
                         buf2, watchfile ? watchfile : "/dev/null", file_in,
-                        inc, def, clean_file,
+                        inc ? inc : "./", def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              ret = system(buf);
+             if (inc)
+               free(inc);
           }
         else
           {
@@ -1029,9 +1024,9 @@ compile(void)
      }
    DBG("Opening \"%s\" for input", file_in);
 
-   /* lseek can return -1 on error. trap that return and exit so that 
+   /* lseek can return -1 on error. trap that return and exit so that
     * we do not pass malloc a -1
-    * 
+    *
     * NB: Fixes Coverity CID 1040029 */
    size = lseek(fd, 0, SEEK_END);
    if (size < 0)
