@@ -3071,8 +3071,10 @@ evas_render_pipe_wakeup(void *data)
      }
    eina_evlog("+render_output_flush", e->evas, 0.0, NULL);
    eina_spinlock_release(&(e->render.lock));
+   _cb_always_call(e->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
    e->engine.func->output_flush(e->engine.data.output,
                                 EVAS_RENDER_MODE_ASYNC_END);
+   _cb_always_call(e->evas, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
    eina_evlog("-render_output_flush", e->evas, 0.0, NULL);
    evas_async_events_put(data, 0, NULL, evas_render_async_wakeup);
 }
