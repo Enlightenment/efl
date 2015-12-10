@@ -512,6 +512,7 @@ ecore_wl2_display_connect(const char *name)
    Eina_Bool sync = EINA_TRUE;
    struct wl_callback *cb;
    const char *n;
+   Eina_Bool hash_create = !_client_displays;
 
    if (!_client_displays)
      _client_displays = eina_hash_string_superfast_new(NULL);
@@ -629,7 +630,11 @@ connect_err:
    return NULL;
 
 name_err:
-   eina_hash_free(_client_displays);
+   if (hash_create)
+     {
+        eina_hash_free(_client_displays);
+        _client_displays = NULL;
+     }
    return NULL;
 
 found:
