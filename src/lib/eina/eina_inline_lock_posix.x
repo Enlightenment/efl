@@ -46,16 +46,29 @@
 
 #include <sys/time.h>
 #include <stdio.h>
-
-#ifdef EINA_HAVE_DEBUG_THREADS
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef EINA_HAVE_DEBUG_THREADS
 #include <assert.h>
 #include <execinfo.h>
 #define EINA_LOCK_DEBUG_BT_NUM 64
 typedef void (*Eina_Lock_Bt_Func) ();
 
 #include "eina_inlist.h"
+#define EINA_LOCK_ABORT_DEBUG(err, fn, ptr) do { \
+   printf("EINA ERROR: '%s' on %s %p\n", strerror(err), #fn, ptr); \
+   abort(); \
+} while (0)
+#define EINA_LOCK_DEADLOCK_DEBUG(fn, ptr) do { \
+   printf("EINA ERROR: DEADLOCK on %s %p\n", #fn, ptr); \
+   abort(); \
+} while (0)
+#else
+#define EINA_LOCK_ABORT_DEBUG(err, fn, ptr) \
+   printf("EINA ERROR: '%s' on %s %p\n", strerror(err), #fn, ptr)
+#define EINA_LOCK_DEADLOCK_DEBUG(fn, ptr) \
+   printf("EINA ERROR: DEADLOCK on %s %p\n", #fn, ptr)
 #endif
 
 /* For cond_timedwait */
@@ -182,12 +195,15 @@ eina_lock_new(Eina_Lock *mutex)
 static inline void
 eina_lock_free(Eina_Lock *mutex)
 {
+   int ok;
+
 #ifdef EINA_HAVE_DEBUG_THREADS
    if (!_eina_threads_activated)
      assert(pthread_equal(_eina_main_loop, pthread_self()));
 #endif
 
-   pthread_mutex_destroy(&(mutex->mutex));
+   ok = pthread_mutex_destroy(&(mutex->mutex));
+   if (ok != 0) EINA_LOCK_ABORT_DEBUG(ok, mutex_destroy, mutex);
 #ifdef EINA_HAVE_DEBUG_THREADS
    memset(mutex, 0, sizeof(Eina_Lock));
 #endif
@@ -239,13 +255,14 @@ eina_lock_take(Eina_Lock *mutex)
    if (ok == 0) ret = EINA_LOCK_SUCCEED;
    else if (ok == EDEADLK)
      {
-        printf("ERROR ERROR: DEADLOCK on lock %p\n", mutex);
+        printf("EINA ERROR: DEADLOCK on lock %p\n", mutex);
         eina_lock_debug(mutex);
         ret = EINA_LOCK_DEADLOCK; // magic
 #ifdef EINA_HAVE_DEBUG_THREADS
         if (_eina_threads_debug) abort();
 #endif
      }
+   else EINA_LOCK_ABORT_DEBUG(ok, lock, mutex);
 
 #ifdef EINA_HAVE_DEBUG_THREADS
    mutex->locked = 1;
@@ -286,9 +303,10 @@ eina_lock_take_try(Eina_Lock *mutex)
    if (ok == 0) ret = EINA_LOCK_SUCCEED;
    else if (ok == EDEADLK)
      {
-        printf("ERROR ERROR: DEADLOCK on trylock %p\n", mutex);
+        printf("EINA ERROR: DEADLOCK on trylock %p\n", mutex);
         ret = EINA_LOCK_DEADLOCK; // magic
      }
+   else if (ok != EBUSY) EINA_LOCK_ABORT_DEBUG(ok, trylock, mutex);
 #ifdef EINA_HAVE_DEBUG_THREADS
    if (ret == EINA_LOCK_SUCCEED)
      {
@@ -308,7 +326,8 @@ eina_lock_take_try(Eina_Lock *mutex)
 static inline Eina_Lock_Result
 eina_lock_release(Eina_Lock *mutex)
 {
-   Eina_Lock_Result ret;
+   Eina_Lock_Result ret = EINA_LOCK_FAIL;
+   int ok;
 
 #ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated)
@@ -331,8 +350,10 @@ eina_lock_release(Eina_Lock *mutex)
    memset(mutex->lock_bt, 0, EINA_LOCK_DEBUG_BT_NUM * sizeof(Eina_Lock_Bt_Func));
    mutex->lock_bt_num = 0;
 #endif
-   ret = (pthread_mutex_unlock(&(mutex->mutex)) == 0) ?
-      EINA_LOCK_SUCCEED : EINA_LOCK_FAIL;
+   ok = pthread_mutex_unlock(&(mutex->mutex));
+   if (ok == 0) ret = EINA_LOCK_SUCCEED;
+   else if (ok == EPERM) ret = EINA_LOCK_FAIL;
+   else EINA_LOCK_ABORT_DEBUG(ok, unlock, mutex);
    return ret;
 }
 
@@ -340,6 +361,7 @@ static inline Eina_Bool
 eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
 {
    pthread_condattr_t attr;
+   int ok;
 
 #ifdef EINA_HAVE_DEBUG_THREADS
    assert(mutex != NULL);
@@ -369,11 +391,12 @@ eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
 # endif
 #endif
 
-   if (pthread_cond_init(&cond->condition, &attr) != 0)
+   ok = pthread_cond_init(&cond->condition, &attr);
+   if (ok != 0)
      {
         pthread_condattr_destroy(&attr);
 #ifdef EINA_HAVE_DEBUG_THREADS
-        if (errno == EBUSY)
+        if (ok == EBUSY)
           printf("eina_condition_new on already initialized Eina_Condition\n");
 #endif
         return EINA_FALSE;
@@ -400,7 +423,8 @@ eina_condition_free(Eina_Condition *cond)
 static inline Eina_Bool
 eina_condition_wait(Eina_Condition *cond)
 {
-   Eina_Bool r;
+   Eina_Bool r = EINA_FALSE;
+   int ok;
 
 #ifdef EINA_HAVE_DEBUG_THREADS
    assert(_eina_threads_activated);
@@ -412,8 +436,10 @@ eina_condition_wait(Eina_Condition *cond)
    pthread_mutex_unlock(&_eina_tracking_lock);
 #endif
 
-   r = pthread_cond_wait(&(cond->condition),
-			 &(cond->lock->mutex)) == 0 ? EINA_TRUE : EINA_FALSE;
+   ok = pthread_cond_wait(&(cond->condition), &(cond->lock->mutex));
+   if (ok == 0) r = EINA_TRUE;
+   else if (ok == EPERM) r = EINA_FALSE;
+   else EINA_LOCK_ABORT_DEBUG(ok, cond_wait, cond);
 
 #ifdef EINA_HAVE_DEBUG_THREADS
    pthread_mutex_lock(&_eina_tracking_lock);
@@ -432,6 +458,7 @@ eina_condition_timedwait(Eina_Condition *cond, double t)
    time_t sec;
    long nsec;
    int err;
+   Eina_Bool r = EINA_FALSE;
 
    if (t < 0)
      {
@@ -481,6 +508,9 @@ eina_condition_timedwait(Eina_Condition *cond, double t)
    err = pthread_cond_timedwait(&(cond->condition),
                                 &(cond->lock->mutex),
                                 &ts);
+   if (err == 0) r = EINA_TRUE;
+   else if (err == EPERM || err == ETIMEDOUT) r = EINA_FALSE;
+   else EINA_LOCK_ABORT_DEBUG(err, cond_timedwait, cond);
 
 #ifdef EINA_HAVE_DEBUG_THREADS
    pthread_mutex_lock(&_eina_tracking_lock);
@@ -489,40 +519,56 @@ eina_condition_timedwait(Eina_Condition *cond, double t)
    pthread_mutex_unlock(&_eina_tracking_lock);
 #endif
 
-   return (!err) ? EINA_TRUE : EINA_FALSE;
+   return r;
 }
 
 static inline Eina_Bool
 eina_condition_broadcast(Eina_Condition *cond)
 {
+   int ok;
+
 #ifdef EINA_HAVE_DEBUG_THREADS
    assert(cond->lock != NULL);
 #endif
 
-   return pthread_cond_broadcast(&(cond->condition)) == 0 ? EINA_TRUE : EINA_FALSE;
+   ok = pthread_cond_broadcast(&(cond->condition));
+   if (ok == 0) return EINA_TRUE;
+
+   EINA_LOCK_ABORT_DEBUG(ok, cond_broadcast, cond);
+   return EINA_FALSE;
 }
 
 static inline Eina_Bool
 eina_condition_signal(Eina_Condition *cond)
 {
+   int ok;
+
 #ifdef EINA_HAVE_DEBUG_THREADS
    assert(cond->lock != NULL);
 #endif
 
-   return pthread_cond_signal(&(cond->condition)) == 0 ? EINA_TRUE : EINA_FALSE;
+   ok = pthread_cond_signal(&(cond->condition));
+   if (ok == 0) return EINA_TRUE;
+
+   EINA_LOCK_ABORT_DEBUG(ok, cond_signal, cond);
+   return EINA_FALSE;
 }
 
 static inline Eina_Bool
 eina_rwlock_new(Eina_RWLock *mutex)
 {
+   int ok;
+
 #ifdef EINA_HAVE_DEBUG_THREADS
    if (!_eina_threads_activated)
      assert(pthread_equal(_eina_main_loop, pthread_self()));
 #endif
 
-   if (pthread_rwlock_init(&(mutex->mutex), NULL) != 0)
-     return EINA_FALSE;
-   return EINA_TRUE;
+   ok = pthread_rwlock_init(&(mutex->mutex), NULL);
+   if (ok == 0) return EINA_TRUE;
+   else if (ok == EAGAIN || ok == ENOMEM) return EINA_FALSE;
+   else EINA_LOCK_ABORT_DEBUG(ok, rwlock_init, mutex);
+   return EINA_FALSE;
 }
 
 static inline void
@@ -539,6 +585,8 @@ eina_rwlock_free(Eina_RWLock *mutex)
 static inline Eina_Lock_Result
 eina_rwlock_take_read(Eina_RWLock *mutex)
 {
+   int ok;
+
 #ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated)
      {
@@ -549,14 +597,19 @@ eina_rwlock_take_read(Eina_RWLock *mutex)
      }
 #endif
 
-   if (pthread_rwlock_rdlock(&(mutex->mutex)) != 0)
-     return EINA_LOCK_FAIL;
-   return EINA_LOCK_SUCCEED;
+   ok = pthread_rwlock_rdlock(&(mutex->mutex));
+   if (ok == 0) return EINA_LOCK_SUCCEED;
+   else if (ok == EAGAIN || ok == ENOMEM) return EINA_LOCK_FAIL;
+   else if (ok == EDEADLK) EINA_LOCK_DEADLOCK_DEBUG(rwlock_rdlock, mutex);
+   else EINA_LOCK_ABORT_DEBUG(ok, rwlock_rdlock, mutex);
+   return EINA_LOCK_FAIL;
 }
 
 static inline Eina_Lock_Result
 eina_rwlock_take_write(Eina_RWLock *mutex)
 {
+   int ok;
+
 #ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated)
      {
@@ -567,14 +620,19 @@ eina_rwlock_take_write(Eina_RWLock *mutex)
      }
 #endif
 
-   if (pthread_rwlock_wrlock(&(mutex->mutex)) != 0)
-     return EINA_LOCK_FAIL;
-   return EINA_LOCK_SUCCEED;
+   ok = pthread_rwlock_wrlock(&(mutex->mutex));
+   if (ok == 0) return EINA_LOCK_SUCCEED;
+   else if (ok == ENOMEM) return EINA_LOCK_FAIL;
+   else if (ok == EDEADLK) EINA_LOCK_DEADLOCK_DEBUG(rwlock_wrlock, mutex);
+   else EINA_LOCK_ABORT_DEBUG(ok, rwlock_wrlock, mutex);
+   return EINA_LOCK_FAIL;
 }
 
 static inline Eina_Lock_Result
 eina_rwlock_release(Eina_RWLock *mutex)
 {
+   int ok;
+
 #ifdef EINA_HAVE_ON_OFF_THREADS
    if (!_eina_threads_activated)
      {
@@ -585,9 +643,11 @@ eina_rwlock_release(Eina_RWLock *mutex)
      }
 #endif
 
-   if (pthread_rwlock_unlock(&(mutex->mutex)) != 0)
-     return EINA_LOCK_FAIL;
-   return EINA_LOCK_SUCCEED;
+   ok = pthread_rwlock_unlock(&(mutex->mutex));
+   if (ok == 0) return EINA_LOCK_SUCCEED;
+   else if (ok == EPERM) return EINA_LOCK_FAIL;
+   else EINA_LOCK_ABORT_DEBUG(ok, rwlock_unlock, mutex);
+   return EINA_LOCK_FAIL;
 }
 
 static inline Eina_Bool
@@ -636,21 +696,28 @@ struct _Eina_Barrier
 static inline Eina_Bool
 eina_barrier_new(Eina_Barrier *barrier, int needed)
 {
-   if (!pthread_barrier_init(&(barrier->barrier), NULL, needed))
-     return EINA_TRUE;
+   int ok;
+   ok = pthread_barrier_init(&(barrier->barrier), NULL, needed);
+   if (ok == 0) return EINA_TRUE;
+   else if (ok == EAGAIN || ok == ENOMEM) return EINA_FALSE;
+   else EINA_LOCK_ABORT_DEBUG(ok, barrier_init, barrier);
    return EINA_FALSE;
 }
 
 static inline void
 eina_barrier_free(Eina_Barrier *barrier)
 {
-   pthread_barrier_destroy(&(barrier->barrier));
+   int ok;
+   ok = pthread_barrier_destroy(&(barrier->barrier));
+   if (ok != 0) EINA_LOCK_ABORT_DEBUG(ok, barrier_destroy, barrier);
 }
 
 static inline Eina_Bool
 eina_barrier_wait(Eina_Barrier *barrier)
 {
-   pthread_barrier_wait(&(barrier->barrier));
+   int ok;
+   ok = pthread_barrier_wait(&(barrier->barrier));
+   if (ok != 0) EINA_LOCK_ABORT_DEBUG(ok, barrier_wait, barrier);
    return EINA_TRUE;
 }
 
@@ -662,12 +729,17 @@ static inline Eina_Bool
 eina_spinlock_new(Eina_Spinlock *spinlock)
 {
 #if defined(EINA_HAVE_POSIX_SPINLOCK)
-   return pthread_spin_init(spinlock, PTHREAD_PROCESS_PRIVATE) == 0 ? EINA_TRUE : EINA_FALSE;
+   int ok;
+   ok = pthread_spin_init(spinlock, PTHREAD_PROCESS_PRIVATE);
+   if (ok == 0) return EINA_TRUE;
+   else if (ok == EAGAIN || ok == ENOMEM) return EINA_FALSE;
+   else EINA_LOCK_ABORT_DEBUG(ok, spin_init, spinlock);
+   return EINA_FALSE;
 #elif defined(EINA_HAVE_OSX_SPINLOCK)
    /* OSSpinLock is an integer type.  The convention is that unlocked is
     * zero, and locked is nonzero. */
    *spinlock = 0;
-   return EINA_LOCK_SUCCEED;
+   return EINA_TRUE;
 #else
    return eina_lock_new(spinlock);
 #endif
@@ -679,14 +751,13 @@ eina_spinlock_take(Eina_Spinlock *spinlock)
 #if defined(EINA_HAVE_POSIX_SPINLOCK)
    int t;
 
-   do {
-      t = pthread_spin_trylock(spinlock);
-      if (t != 0)
-        {
-           if (errno == EBUSY) sched_yield();
-           else if (errno == EDEADLK) return EINA_LOCK_DEADLOCK;
-        }
-   } while (t != 0);
+   while (EINA_TRUE)
+     {
+        t = pthread_spin_trylock(spinlock);
+        if (t == 0) break;
+        else if (t == EBUSY) sched_yield();
+        else EINA_LOCK_ABORT_DEBUG(t, spin_trylock, spinlock);
+     }
 
    return EINA_LOCK_SUCCEED;
 #elif defined(EINA_HAVE_OSX_SPINLOCK)
@@ -707,7 +778,10 @@ eina_spinlock_take_try(Eina_Spinlock *spinlock)
    int t;
 
    t = pthread_spin_trylock(spinlock);
-   return t ? EINA_LOCK_FAIL : EINA_LOCK_SUCCEED;
+   if (t == 0) return EINA_LOCK_SUCCEED;
+   else if (t == EBUSY) return EINA_LOCK_FAIL;
+   else EINA_LOCK_ABORT_DEBUG(t, spin_trylock, spinlock);
+   return EINA_LOCK_FAIL;
 #elif defined(EINA_HAVE_OSX_SPINLOCK)
    /* bool OSSpinLockTry(OSSpinLock *lock);
     * Immediately returns false if the lock was held, true if it took the
@@ -722,7 +796,12 @@ static inline Eina_Lock_Result
 eina_spinlock_release(Eina_Spinlock *spinlock)
 {
 #if defined(EINA_HAVE_POSIX_SPINLOCK)
-   return pthread_spin_unlock(spinlock) ? EINA_LOCK_FAIL : EINA_LOCK_SUCCEED;
+   int ok;
+   ok = pthread_spin_unlock(spinlock);
+   if (ok == 0) return EINA_LOCK_SUCCEED;
+   else if (ok == EPERM) return EINA_LOCK_FAIL;
+   else EINA_LOCK_ABORT_DEBUG(ok, spin_unlock, spinlock);
+   return EINA_LOCK_FAIL;
 #elif defined(EINA_HAVE_OSX_SPINLOCK)
    /* void OSSpinLockUnlock(OSSpinLock *lock);
     * Unconditionally unlocks the lock by zeroing it. */
@@ -737,7 +816,9 @@ static inline void
 eina_spinlock_free(Eina_Spinlock *spinlock)
 {
 #if defined(EINA_HAVE_POSIX_SPINLOCK)
-   pthread_spin_destroy(spinlock);
+   int ok;
+   ok = pthread_spin_destroy(spinlock);
+   if (ok != 0) EINA_LOCK_ABORT_DEBUG(ok, spin_destroy, spinlock);
 #elif defined(EINA_HAVE_OSX_SPINLOCK)
    /* Not applicable */
    (void) spinlock;
