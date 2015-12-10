@@ -365,13 +365,13 @@ START_TEST(str_strftime)
 }
 END_TEST
 
-START_TEST(str_base64_encode)
+START_TEST(str_base64_encode_decode)
 {
    /* All cases are taken from https://en.wikipedia.org/wiki/Base64 */
    static const struct {
-      char *str;
-      char *expected;
-      unsigned int len;
+      char *decoded_str;
+      char *encoded_str;
+      int len;
       Eina_Bool not;
    } tests[] = {
      { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3VyZS4=", 20 },
@@ -389,15 +389,35 @@ START_TEST(str_base64_encode)
      { "abc123!?$*&()'-=@~", "YWJjMTIzIT8kKiYoKSctPUB+", 18 }
    };
    unsigned int i;
+   int len;
+   unsigned char *decoded;
 
    for (i = 0; i < sizeof (tests) / sizeof (tests[0]); i++)
      {
         char *encoded;
 
-        encoded = eina_str_base64_encode((unsigned char*) tests[i].str, tests[i].len);
-        fail_if(strcmp(encoded, tests[i].expected));
+        encoded = eina_str_base64_encode((unsigned char*) tests[i].decoded_str, tests[i].len);
+        fail_if(strcmp(encoded, tests[i].encoded_str));
+
+        decoded = eina_str_base64_decode(tests[i].encoded_str, &len);
+        fail_if(memcmp(decoded, tests[i].decoded_str, tests[i].len));
+
+        fprintf(stderr, "len = %d, tests[%d].len = %d\n", len, i, tests[i].len);
+        fail_if(len != tests[i].len);
+
         free(encoded);
+        free(decoded);
      }
+
+   //Failure scenarios.
+   decoded = eina_str_base64_decode(NULL, &len);
+   fail_if(decoded);
+
+   decoded = eina_str_base64_decode("TWFu", NULL);
+   fail_if(memcmp(decoded, "Man", 3));
+
+   decoded = eina_str_base64_decode("abc", &len);
+   fail_if(decoded);
 }
 END_TEST
 
@@ -440,7 +460,7 @@ eina_test_str(TCase *tc)
    tcase_add_test(tc, str_join_len);
    tcase_add_test(tc, str_memdup);
    tcase_add_test(tc, str_strftime);
-   tcase_add_test(tc, str_base64_encode);
+   tcase_add_test(tc, str_base64_encode_decode);
 #ifdef HAVE_ICONV
    tcase_add_test(tc, str_convert);
 #endif
