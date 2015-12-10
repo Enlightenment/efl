@@ -73,10 +73,10 @@ _FILE_CHOSEN_fwd(void *data,
    const char *file = event_info;
    char *s;
 
+   if (!file) return EINA_TRUE;
    ELM_FILESELECTOR_ENTRY_DATA_GET(data, sd);
 
    s = elm_entry_utf8_to_markup(file);
-   if (!s) return EINA_TRUE;
    elm_object_text_set(sd->entry, s);
    free(s);
    eo_do(data, eo_event_callback_call
