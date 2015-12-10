@@ -167,7 +167,7 @@ typedef struct _Eolian_Documentation Eolian_Documentation;
 
 typedef enum
 {
-   EOLIAN_UNRESOLVED,
+   EOLIAN_UNRESOLVED = 0,
    EOLIAN_PROPERTY,
    EOLIAN_PROP_SET,
    EOLIAN_PROP_GET,
@@ -176,14 +176,14 @@ typedef enum
 
 typedef enum
 {
-   EOLIAN_IN_PARAM,
+   EOLIAN_IN_PARAM = 0,
    EOLIAN_OUT_PARAM,
    EOLIAN_INOUT_PARAM
 } Eolian_Parameter_Dir;
 
 typedef enum
 {
-   EOLIAN_CLASS_UNKNOWN_TYPE,
+   EOLIAN_CLASS_UNKNOWN_TYPE = 0,
    EOLIAN_CLASS_REGULAR,
    EOLIAN_CLASS_ABSTRACT,
    EOLIAN_CLASS_MIXIN,
@@ -192,7 +192,7 @@ typedef enum
 
 typedef enum
 {
-   EOLIAN_SCOPE_PUBLIC,
+   EOLIAN_SCOPE_PUBLIC = 0,
    EOLIAN_SCOPE_PRIVATE,
    EOLIAN_SCOPE_PROTECTED
 } Eolian_Object_Scope;
@@ -208,7 +208,7 @@ typedef enum
 
 typedef enum
 {
-   EOLIAN_TYPE_UNKNOWN_TYPE,
+   EOLIAN_TYPE_UNKNOWN_TYPE = 0,
    EOLIAN_TYPE_VOID,
    EOLIAN_TYPE_REGULAR,
    EOLIAN_TYPE_COMPLEX,
