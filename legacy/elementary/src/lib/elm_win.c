@@ -2197,11 +2197,9 @@ _elm_ee_cocoa_win_get(const Ecore_Evas *ee)
    engine_name = ecore_evas_engine_name_get(ee);
    if (EINA_UNLIKELY(!engine_name)) return NULL;
 
-   if ((!strcmp(engine_name, ELM_SOFTWARE_WIN32)) ||
-       (!strcmp(engine_name, ELM_SOFTWARE_DDRAW)))
-     {
-        return ecore_evas_win32_window_get(ee);
-     }
+   if (!strcmp(engine_name, "opengl_cocoa") ||
+       !strcmp(engine_name, "gl_cocoa"))
+     return ecore_evas_cocoa_window_get(ee);
 #else
    (void)ee;
 #endif
@@ -2219,9 +2217,11 @@ _elm_ee_win32win_get(const Ecore_Evas *ee)
    engine_name = ecore_evas_engine_name_get(ee);
    if (EINA_UNLIKELY(!engine_name)) return NULL;
 
-   if (!strcmp(engine_name, "opengl_cocoa") ||
-       !strcmp(engine_name, "gl_cocoa"))
-     return ecore_evas_cocoa_window_get(ee);
+   if ((!strcmp(engine_name, ELM_SOFTWARE_WIN32)) ||
+       (!strcmp(engine_name, ELM_SOFTWARE_DDRAW)))
+     {
+        return ecore_evas_win32_window_get(ee);
+     }
 #else
    (void)ee;
 #endif

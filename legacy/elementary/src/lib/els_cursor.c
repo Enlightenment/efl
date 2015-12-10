@@ -15,6 +15,7 @@
 #ifdef HAVE_ELEMENTARY_COCOA
 # include <Ecore_Cocoa_Cursor.h>
 #endif
+
 #ifdef HAVE_ELEMENTARY_WIN32
 #include <Ecore_Win32.h>
 #endif
@@ -40,7 +41,7 @@ struct _Cursor_Id
 #elif defined(HAVE_ELEMENTARY_COCOA)
 #  define CURSOR(_name, _id, _cid) {_name, -1, _cid}
 #elif defined(HAVE_ELEMENTARY_WIN32)
-#  define CURSOR(_name, _id, _cid) {_name, ECORE_WIN32_CURSOR_X11_SHAPE_##_xid, -1 }
+#  define CURSOR(_name, _id, _cid) {_name, ECORE_WIN32_CURSOR_X11_SHAPE_##_id, -1 }
 #else
 #  define CURSOR(_name, _id, _cid) { _name }
 #endif
@@ -505,7 +506,7 @@ _elm_cursor_cur_set(Elm_Cursor *cur)
                        cur->win32.cursor = ecore_win32_cursor_shaped_new(ECORE_WIN32_CURSOR_SHAPE_ARROW);
                     }
                   else
-                    cur->win32.cursor = ecore_win32_cursor_x11_shaped_get(cur_id->id);
+                    cur->win32.cursor = (Ecore_Win32_Cursor *)ecore_win32_cursor_x11_shaped_get(cur_id->id);
                }
 #endif
           }
