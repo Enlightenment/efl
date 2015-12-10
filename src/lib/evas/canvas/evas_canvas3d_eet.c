@@ -2,18 +2,16 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-Evas_Canvas3D_File_Eet* eet_file;
-const char EVAS_CANVAS3D_FILE_CACHE_FILE_ENTRY[] = "evas_3d file";
-Eet_Data_Descriptor *_vec2_descriptor;
-Eet_Data_Descriptor *_vec3_descriptor;
-Eet_Data_Descriptor *_vertex_descriptor;
-Eet_Data_Descriptor *_geometry_descriptor;
-Eet_Data_Descriptor *_color_descriptor;
-Eet_Data_Descriptor *_material_descriptor;
-Eet_Data_Descriptor *_frame_descriptor;
-Eet_Data_Descriptor *_mesh_descriptor;
-Eet_Data_Descriptor *_header_descriptor;
-Eet_Data_Descriptor *_file_descriptor;
+static Eet_Data_Descriptor *_vec2_descriptor = NULL;
+static Eet_Data_Descriptor *_vec3_descriptor = NULL;
+static Eet_Data_Descriptor *_vertex_descriptor = NULL;
+static Eet_Data_Descriptor *_geometry_descriptor = NULL;
+static Eet_Data_Descriptor *_color_descriptor = NULL;
+static Eet_Data_Descriptor *_material_descriptor = NULL;
+static Eet_Data_Descriptor *_frame_descriptor = NULL;
+static Eet_Data_Descriptor *_mesh_descriptor = NULL;
+static Eet_Data_Descriptor *_header_descriptor = NULL;
+static Eet_Data_Descriptor *_file_descriptor = NULL;
 
 Evas_Canvas3D_File_Eet *
 _evas_canvas3d_eet_file_new(void)
@@ -29,8 +27,16 @@ _evas_canvas3d_eet_file_new(void)
    return creating_file;
 }
 
+Eet_Data_Descriptor*
+_evas_canvas3d_eet_file_get()
+{
+   if(_file_descriptor == NULL)
+     _evas_canvas3d_eet_file_init();
+
+   return _file_descriptor;
+}
 void
-_evas_canvas3d_eet_file_init(void)
+_evas_canvas3d_eet_file_init()
 {
    eina_init();
    eet_init();
@@ -153,38 +159,55 @@ _evas_canvas3d_eet_file_init(void)
                                "mesh", mesh, _mesh_descriptor);
    EET_DATA_DESCRIPTOR_ADD_SUB(_file_descriptor, Evas_Canvas3D_File_Eet,
                                "header", header, _header_descriptor);
-
 }
 
 void
-_evas_canvas3d_eet_descriptor_shutdown(void)
+_evas_canvas3d_eet_descriptor_shutdown()
 {
    eet_data_descriptor_free(_geometry_descriptor);
+   _geometry_descriptor = NULL;
    eet_data_descriptor_free(_vertex_descriptor);
+   _vertex_descriptor = NULL;
    eet_data_descriptor_free(_vec2_descriptor);
+   _vec2_descriptor = NULL;
    eet_data_descriptor_free(_vec3_descriptor);
+   _vec3_descriptor = NULL;
    eet_data_descriptor_free(_color_descriptor);
+   _color_descriptor = NULL;
    eet_data_descriptor_free(_material_descriptor);
+   _material_descriptor = NULL;
    eet_data_descriptor_free(_frame_descriptor);
+   _frame_descriptor = NULL;
    eet_data_descriptor_free(_mesh_descriptor);
+   _mesh_descriptor = NULL;
    eet_data_descriptor_free(_header_descriptor);
+   _header_descriptor = NULL;
    eet_data_descriptor_free(_file_descriptor);
+   _file_descriptor = NULL;
 }
 
 void
-_evas_canvas3d_eet_file_free(void)
+_evas_canvas3d_eet_file_free(Evas_Canvas3D_File_Eet* eet_file)
 {
-   free(eet_file->mesh->geometries[0].vertices);
-   free(eet_file->mesh->geometries);
-   free(eet_file->mesh->frames);
-   free(eet_file->mesh->materials[0].colors);
-   free(eet_file->mesh->materials);
-   free(eet_file->mesh);
-   free(eet_file->header->materials);
-   free(eet_file->header->geometries);
-   free(eet_file->header);
-   free(eet_file);
+   if (eet_file->mesh)
+     {
+        free(eet_file->mesh->geometries[0].vertices);
+        free(eet_file->mesh->geometries);
+        free(eet_file->mesh->frames);
+        free(eet_file->mesh->materials[0].colors);
+        free(eet_file->mesh->materials);
+        free(eet_file->mesh);
+     }
 
+   if (eet_file->header)
+     {
+        free(eet_file->header->materials);
+        free(eet_file->header->geometries);
+        free(eet_file->header);
+     }
+
+   free(eet_file);
+   eet_file = NULL;
    _evas_canvas3d_eet_descriptor_shutdown();
    eet_shutdown();
    eina_shutdown();

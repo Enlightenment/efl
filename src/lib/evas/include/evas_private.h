@@ -1784,9 +1784,11 @@ void evas_canvas3d_scene_data_fini(Evas_Canvas3D_Scene_Public_Data *data);
 
 /* Eet saver/loader functions */
 Evas_Canvas3D_File_Eet *_evas_canvas3d_eet_file_new(void);
-void _evas_canvas3d_eet_file_init(void);
-void _evas_canvas3d_eet_descriptor_shutdown(void);
-void _evas_canvas3d_eet_file_free(void);
+Eet_Data_Descriptor* _evas_canvas3d_eet_file_get();
+void _evas_canvas3d_eet_file_init();
+void _evas_canvas3d_eet_descriptor_shutdown();
+void _evas_canvas3d_eet_file_free(Evas_Canvas3D_File_Eet* eet_file);
+
 
 /* Filters */
 void evas_filter_init(void);

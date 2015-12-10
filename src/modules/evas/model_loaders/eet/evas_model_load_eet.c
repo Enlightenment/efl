@@ -7,10 +7,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-extern Evas_Canvas3D_File_Eet* eet_file;
-extern const char EVAS_CANVAS3D_FILE_CACHE_FILE_ENTRY[];
-extern Eet_Data_Descriptor *_file_descriptor;
-
 void
 _set_geometry_to_mesh_from_eet_file(Evas_Canvas3D_Mesh *mesh,
                                     Evas_Canvas3D_Mesh_Eet *eet_mesh)
@@ -107,8 +103,11 @@ void
 evas_model_load_file_eet(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
 {
    Eet_File *ef;
+   Evas_Canvas3D_File_Eet* eet_file;
+   Eet_Data_Descriptor *_file_descriptor;
 
-   _evas_canvas3d_eet_file_init();
+
+   _file_descriptor = _evas_canvas3d_eet_file_get();
    ef = eet_mmap(file);
    eet_file = eet_data_read(ef,
                             _file_descriptor,
@@ -119,14 +118,14 @@ evas_model_load_file_eet(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
    if ((eet_file->mesh == NULL) || (eet_file->header == NULL))
      {
         ERR("Reading of file is failed.");
-        _evas_canvas3d_eet_file_free();
+        _evas_canvas3d_eet_file_free(eet_file);
         return;
      }
 
    _set_geometry_to_mesh_from_eet_file(mesh, eet_file->mesh);
    _set_material_to_mesh_from_eet_file(mesh, eet_file->mesh);
 
-   _evas_canvas3d_eet_file_free();
+   _evas_canvas3d_eet_file_free(eet_file);
 }
 
 
