@@ -371,8 +371,9 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
                   if (fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
                     sh = h;
 
-                  XDBG("Allocating temporary buffer of size %ux%u %s", sw, sh, in->alpha_only ? "alpha" : "rgba");
                   fb = evas_filter_buffer_alloc_new(ctx, sw, sh, in->alpha_only);
+                  XDBG("Allocated temporary buffer #%d of size %ux%u %s",
+                       fb ? fb->id : -1, sw, sh, in->alpha_only ? "alpha" : "rgba");
                   if (!fb) goto alloc_fail;
                   fb->transient = EINA_TRUE;
                }
@@ -386,8 +387,9 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
              if (in->w) sw = in->w;
              if (in->h) sh = in->h;
 
-             XDBG("Allocating temporary buffer of size %ux%u %s", sw, sh, in->alpha_only ? "alpha" : "rgba");
              fb = evas_filter_buffer_alloc_new(ctx, sw, sh, in->alpha_only);
+             XDBG("Allocated temporary buffer #%d of size %ux%u %s",
+                  fb ? fb->id : -1, sw, sh, in->alpha_only ? "alpha" : "rgba");
              if (!fb) goto alloc_fail;
              fb->transient = EINA_TRUE;
           }
@@ -411,8 +413,9 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
              continue;
           }
 
-        XDBG("Allocating buffer of size %ux%u %s", fb->w, fb->h, fb->alpha_only ? "alpha" : "rgba");
         fb->backing = _rgba_image_alloc(fb, NULL);
+        XDBG("Allocating buffer #%d of size %ux%u %s",
+             fb->id, fb->w, fb->h, fb->alpha_only ? "alpha" : "rgba");
         if (!fb->backing) goto alloc_fail;
      }
 
@@ -435,7 +438,7 @@ evas_filter_buffer_empty_new(Evas_Filter_Context *ctx, Eina_Bool alpha_only)
 
    fb->transient = EINA_FALSE;
 
-   XDBG("Created context buffer %d", fb->id);
+   XDBG("Created context buffer %d %s", fb->id, alpha_only ? "alpha" : "rgba");
    return fb->id;
 }
 
