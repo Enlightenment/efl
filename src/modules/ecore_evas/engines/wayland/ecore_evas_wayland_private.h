@@ -39,6 +39,9 @@ struct _Ecore_Evas_Engine_Wl_Data
    struct wl_egl_window *egl_win;
 #endif
    struct wl_callback *anim_callback;
+
+   Eina_Bool sync_done : 1;
+   Eina_Bool defer_show : 1;
 };
 
 Ecore_Evas_Interface_Wayland *_ecore_evas_wl_interface_new(void);

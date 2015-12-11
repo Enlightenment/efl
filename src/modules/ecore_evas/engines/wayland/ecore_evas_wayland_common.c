@@ -1362,6 +1362,7 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
 
    if (!ee) return 0;
    if (!(wdata = ee->engine.data)) return 0;
+   if (!wdata->sync_done) return 0;
 
    /* TODO: handle comp no sync */
 
