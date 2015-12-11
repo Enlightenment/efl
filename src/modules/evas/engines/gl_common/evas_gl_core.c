@@ -1330,7 +1330,6 @@ _internal_config_set(void *eng_data, EVGL_Surface *sfc, Evas_GL_Config *cfg)
    int color_bit = 0, depth_bit = 0, stencil_bit = 0, msaa_samples = 0;
    int depth_size = 0;
    int native_win_depth = 0, native_win_stencil = 0, native_win_msaa = 0;
-   Eina_Bool support_win_cfg = 1;
 
    // Check if engine is valid
    if (!evgl_engine)
@@ -1384,58 +1383,69 @@ try_again:
              sfc->msaa_samples      = evgl_engine->caps.fbo_fmts[i].samples;
 
              // Direct Rendering Option
-             if (evgl_engine->funcs->native_win_surface_config_get)
-               evgl_engine->funcs->native_win_surface_config_get(eng_data, &native_win_depth, &native_win_stencil, &native_win_msaa);
-             if ((native_win_depth >= depth_size)
-                 && (native_win_stencil >= stencil_bit)
-                 && (native_win_msaa >= msaa_samples))
+             if (cfg->options_bits & EVAS_GL_OPTIONS_DIRECT)
                {
-                  DBG("Win cfg can support the Req Evas GL's config successfully");
-                  support_win_cfg = EINA_TRUE;
-               }
-             else
-               {
-                  ERR("Win cfg can't support Evas GL DR, win: [depth %d, stencil %d, msaa %d] "
-                      "want: [depth %d, stencil %d, msaa %d]",
-                      native_win_depth, native_win_stencil, native_win_msaa,
-                      depth_size, stencil_bit, msaa_samples);
-                  support_win_cfg = EINA_FALSE;
-               }
+                  Eina_Bool support_win_cfg = EINA_FALSE;
 
-             if ((sfc->direct_override) || support_win_cfg)
-               sfc->direct_fb_opt = !!(cfg->options_bits & EVAS_GL_OPTIONS_DIRECT);
-             else if (cfg->options_bits & EVAS_GL_OPTIONS_DIRECT)
-               {
-                  const char *s1[] = { "", ":depth8", ":depth16", ":depth24", ":depth32" };
-                  const char *s2[] = { "", ":stencil1", ":stencil2", ":stencil4", ":stencil8", ":stencil16" };
-                  const char *s3[] = { "", ":msaa_low", ":msaa_mid", ":msaa_high" };
-                  INF("Can not enable direct rendering with depth %d, stencil %d "
-                      "and MSAA %d. When using Elementary GLView, try to call "
-                      "elm_config_accel_preference_set(\"opengl%s%s%s\") before "
-                      "creating any window.",
-                      depth_size, stencil_bit, msaa_samples,
-                      s1[cfg->depth_bits], s2[cfg->stencil_bits], s3[cfg->multisample_bits]);
-               }
+                  if (evgl_engine->funcs->native_win_surface_config_get)
+                    evgl_engine->funcs->native_win_surface_config_get(eng_data, &native_win_depth, &native_win_stencil, &native_win_msaa);
+                  if ((native_win_depth >= depth_size)
+                      && (native_win_stencil >= stencil_bit)
+                      && (native_win_msaa >= msaa_samples))
+                    {
+                       DBG("Win cfg can support the Req Evas GL's config successfully");
+                       support_win_cfg = EINA_TRUE;
+                    }
+                  else
+                    {
+                       ERR("Win config can't support Evas GL direct rendering, "
+                           "win: [depth %d, stencil %d, msaa %d] "
+                           "want: [depth %d, stencil %d, msaa %d]. %s",
+                           native_win_depth, native_win_stencil, native_win_msaa,
+                           depth_size, stencil_bit, msaa_samples,
+                           sfc->direct_override ?
+                              "Forcing direct rendering anyway." :
+                              "Falling back to indirect rendering (FBO).");
+                       support_win_cfg = EINA_FALSE;
+                    }
 
-             // When direct rendering is enabled, FBO configuration should match
-             // window surface configuration as FBO will be used in fallback cases.
-             // So we search again for the formats that match window surface's.
-             if (sfc->direct_fb_opt &&
-                 ((native_win_depth != depth_size) ||
-                  (native_win_stencil != stencil_bit) ||
-                  (native_win_msaa != msaa_samples)))
-               {
-                  if (native_win_depth < 8) depth_bit = 0;
-                  else depth_bit = (1 << ((native_win_depth / 8) - 1));
-                  depth_size = native_win_depth;
-                  stencil_bit = native_win_stencil;
-                  msaa_samples = native_win_msaa;
-                  goto try_again;
-               }
+                  if (sfc->direct_override || support_win_cfg)
+                    {
+                       sfc->direct_fb_opt = EINA_TRUE;
 
-             // Extra flags for direct rendering
-             sfc->client_side_rotation = !!(cfg->options_bits & EVAS_GL_OPTIONS_CLIENT_SIDE_ROTATION);
-             sfc->alpha = (cfg->color_format == EVAS_GL_RGBA_8888);
+                       // Extra flags for direct rendering
+                       sfc->client_side_rotation = !!(cfg->options_bits & EVAS_GL_OPTIONS_CLIENT_SIDE_ROTATION);
+                       sfc->alpha = (cfg->color_format == EVAS_GL_RGBA_8888);
+                    }
+                  else
+                    {
+                       const char *s1[] = { "", ":depth8", ":depth16", ":depth24", ":depth32" };
+                       const char *s2[] = { "", ":stencil1", ":stencil2", ":stencil4", ":stencil8", ":stencil16" };
+                       const char *s3[] = { "", ":msaa_low", ":msaa_mid", ":msaa_high" };
+                       INF("Can not enable direct rendering with depth %d, stencil %d "
+                           "and MSAA %d. When using Elementary GLView, try to call "
+                           "elm_config_accel_preference_set(\"opengl%s%s%s\") before "
+                           "creating any window.",
+                           depth_size, stencil_bit, msaa_samples,
+                           s1[cfg->depth_bits], s2[cfg->stencil_bits], s3[cfg->multisample_bits]);
+                    }
+
+                  // When direct rendering is enabled, FBO configuration should match
+                  // window surface configuration as FBO will be used in fallback cases.
+                  // So we search again for the formats that match window surface's.
+                  if (sfc->direct_fb_opt &&
+                      ((native_win_depth != depth_size) ||
+                       (native_win_stencil != stencil_bit) ||
+                       (native_win_msaa != msaa_samples)))
+                    {
+                       if (native_win_depth < 8) depth_bit = 0;
+                       else depth_bit = (1 << ((native_win_depth / 8) - 1));
+                       depth_size = native_win_depth;
+                       stencil_bit = native_win_stencil;
+                       msaa_samples = native_win_msaa;
+                       goto try_again;
+                    }
+               }
 
              cfg_index = i;
              break;
