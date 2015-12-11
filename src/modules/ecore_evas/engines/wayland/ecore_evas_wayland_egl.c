@@ -118,7 +118,7 @@ static Eina_Bool
 _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Ecore_Evas *ee;
-   Evas_Engine_Info_Wayland_Shm *einfo;
+   Evas_Engine_Info_Wayland_Egl *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
 
    ee = data;
@@ -126,13 +126,12 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
    if (wdata->sync_done) return ECORE_CALLBACK_PASS_ON;
    wdata->sync_done = EINA_TRUE;
 
-   if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
+   if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
      {
-        einfo->info.wl_disp = ecore_wl2_display_get(wdata->display);
-        einfo->info.wl_shm = ecore_wl2_display_shm_get(wdata->display);
+        einfo->info.display = ecore_wl2_display_get(wdata->display);
         einfo->info.destination_alpha = EINA_TRUE;
         einfo->info.rotation = ee->rotation;
-        einfo->info.wl_surface = ecore_wl2_window_surface_get(wdata->win);
+        einfo->info.surface = ecore_wl2_window_surface_get(wdata->win);
 
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
@@ -159,15 +158,15 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
         if (wdata->win)
           {
 
-             einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
+             einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
              if (einfo)
                {
                   struct wl_surface *surf;
 
                   surf = ecore_wl2_window_surface_get(wdata->win);
-                  if ((!einfo->info.wl_surface) || (einfo->info.wl_surface != surf))
+                  if ((!einfo->info.surface) || (einfo->info.surface != surf))
                     {
-                       einfo->info.wl_surface = surf;
+                       einfo->info.surface = surf;
                        evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
                        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
                     }
@@ -371,7 +370,7 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process, 
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
 
-   ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONER, _ee_cb_sync_done, ee);
+   ecore_event_handler_add(ECORE_WL2_EVENT_SYNC_DONE, _ee_cb_sync_done, ee);
 
    return ee;
 
