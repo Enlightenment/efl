@@ -560,7 +560,7 @@ else
     gl_library="gl"
 fi
 
-PKG_CHECK_EXISTS([egl ${gl_library} wayland-client >= 1.3.0 wayland-egl >= 9.2.0],
+PKG_CHECK_EXISTS([egl ${gl_library} wayland-client >= 1.3.0 wayland-egl],
    [
     have_dep="yes"
     requirement="egl ${gl_library} wayland-client wayland-egl"
