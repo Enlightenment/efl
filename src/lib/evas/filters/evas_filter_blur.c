@@ -390,39 +390,37 @@ evas_filter_blur_cpu_func_get(Evas_Filter_Command *cmd)
    switch (cmd->blur.type)
      {
       case EVAS_FILTER_BLUR_BOX:
-        if (!cmd->input->alpha_only && !cmd->output->alpha_only)
+        if (!cmd->output->alpha_only)
           {
              if (cmd->blur.dx)
                return _box_blur_horiz_apply_rgba;
              else if (cmd->blur.dy)
                return _box_blur_vert_apply_rgba;
           }
-        else if (cmd->input->alpha_only && cmd->output->alpha_only)
+        else
           {
              if (cmd->blur.dx)
                return _box_blur_horiz_apply_alpha;
              else if (cmd->blur.dy)
                return _box_blur_vert_apply_alpha;
           }
-        CRI("Unsupported operation: mixing RGBA and Alpha surfaces.");
-        return NULL;
+
       case EVAS_FILTER_BLUR_GAUSSIAN:
-        if (!cmd->input->alpha_only && !cmd->output->alpha_only)
+        if (!cmd->output->alpha_only)
           {
              if (cmd->blur.dx)
                return _gaussian_blur_horiz_apply_rgba;
              else if (cmd->blur.dy)
                return _gaussian_blur_vert_apply_rgba;
           }
-        else if (cmd->input->alpha_only && cmd->output->alpha_only)
+        else
           {
              if (cmd->blur.dx)
                return _gaussian_blur_horiz_apply_alpha;
              else if (cmd->blur.dy)
                return _gaussian_blur_vert_apply_alpha;
           }
-        CRI("Unsupported operation: mixing RGBA and Alpha surfaces.");
-        return NULL;
+
       default:
         CRI("Unsupported blur type %d", cmd->blur.type);
         return NULL;

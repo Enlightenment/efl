@@ -14,7 +14,6 @@
 
 static Eina_Bool _bump_map_cpu_alpha_alpha(Evas_Filter_Command *cmd);
 static Eina_Bool _bump_map_cpu_alpha_rgba(Evas_Filter_Command *cmd);
-static Eina_Bool _bump_map_cpu_rgba_rgba(Evas_Filter_Command *cmd);
 
 Evas_Filter_Apply_Func
 evas_filter_bump_map_cpu_func_get(Evas_Filter_Command *cmd)
@@ -25,11 +24,7 @@ evas_filter_bump_map_cpu_func_get(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->mask, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, NULL);
-
    EINA_SAFETY_ON_FALSE_RETURN_VAL(cmd->input != cmd->output, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(cmd->mask->alpha_only, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL((!cmd->output->alpha_only)
-                                   || cmd->input->alpha_only, NULL);
 
    w = cmd->input->w;
    h = cmd->input->h;
@@ -38,15 +33,12 @@ evas_filter_bump_map_cpu_func_get(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_FALSE_RETURN_VAL(cmd->mask->w == w, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(cmd->mask->h == h, NULL);
 
-   if (cmd->input->alpha_only)
-     {
-        if (cmd->output->alpha_only)
-          return _bump_map_cpu_alpha_alpha;
-        else
-          return _bump_map_cpu_alpha_rgba;
-     }
+   // FIXME: Bump map support is not implemented for RGBA input!
+
+   if (cmd->output->alpha_only)
+     return _bump_map_cpu_alpha_alpha;
    else
-     return _bump_map_cpu_rgba_rgba;
+     return _bump_map_cpu_alpha_rgba;
 }
 
 static void
@@ -416,13 +408,4 @@ end:
    eo_do(cmd->mask->buffer, ector_buffer_unmap(map_map, mlen));
    eo_do(cmd->output->buffer, ector_buffer_unmap(dst_map, dlen));
    return ret;
-}
-
-static Eina_Bool
-_bump_map_cpu_rgba_rgba(Evas_Filter_Command *cmd)
-{
-   (void) cmd;
-
-   CRI("Not implemented yet.");
-   return EINA_FALSE;
 }

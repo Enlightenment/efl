@@ -21,7 +21,7 @@ struct Filter_Blend_Draw_Context
 #define LINELEN(stride, ptr) (stride / (sizeof(*ptr)))
 
 static Eina_Bool
-_image_draw_cpu_alpha2alpha(void *data EINA_UNUSED, void *context,
+_image_draw_cpu_alpha_alpha(void *data EINA_UNUSED, void *context,
                             const void *src_map, unsigned int src_stride,
                             void *dst_map, unsigned int dst_stride,
                             int src_x, int src_y, int src_w, int src_h,
@@ -56,7 +56,7 @@ _image_draw_cpu_alpha2alpha(void *data EINA_UNUSED, void *context,
 }
 
 static Eina_Bool
-_image_draw_cpu_alpha2rgba(void *data EINA_UNUSED, void *context,
+_image_draw_cpu_alpha_rgba(void *data EINA_UNUSED, void *context,
                            const void *src_map, unsigned int src_stride,
                            void *dst_map, unsigned int dst_stride,
                            int src_x, int src_y, int src_w, int src_h,
@@ -91,7 +91,7 @@ _image_draw_cpu_alpha2rgba(void *data EINA_UNUSED, void *context,
 }
 
 static Eina_Bool
-_image_draw_cpu_rgba2rgba(void *data EINA_UNUSED, void *context,
+_image_draw_cpu_rgba_rgba(void *data EINA_UNUSED, void *context,
                           const void *src_map, unsigned int src_stride,
                           void *dst_map, unsigned int dst_stride,
                           int src_x, int src_y, int src_w, int src_h,
@@ -131,7 +131,7 @@ _image_draw_cpu_rgba2rgba(void *data EINA_UNUSED, void *context,
 }
 
 static Eina_Bool
-_image_draw_cpu_rgba2alpha(void *data EINA_UNUSED, void *context EINA_UNUSED,
+_image_draw_cpu_rgba_alpha(void *data EINA_UNUSED, void *context EINA_UNUSED,
                            const void *src_map, unsigned int src_stride,
                            void *dst_map, unsigned int dst_stride,
                            int src_x, int src_y, int src_w, int src_h,
@@ -236,25 +236,25 @@ end:
 static Eina_Bool
 _filter_blend_cpu_alpha(Evas_Filter_Command *cmd)
 {
-   return _filter_blend_cpu_generic_do(cmd, _image_draw_cpu_alpha2alpha);
+   return _filter_blend_cpu_generic_do(cmd, _image_draw_cpu_alpha_alpha);
 }
 
 static Eina_Bool
-_filter_blend_cpu_alpha2rgba(Evas_Filter_Command *cmd)
+_filter_blend_cpu_alpha_rgba(Evas_Filter_Command *cmd)
 {
-   return _filter_blend_cpu_generic_do(cmd, _image_draw_cpu_alpha2rgba);
+   return _filter_blend_cpu_generic_do(cmd, _image_draw_cpu_alpha_rgba);
 }
 
 static Eina_Bool
-_filter_blend_cpu_rgba2alpha(Evas_Filter_Command *cmd)
+_filter_blend_cpu_rgba_alpha(Evas_Filter_Command *cmd)
 {
-   return _filter_blend_cpu_generic_do(cmd, _image_draw_cpu_rgba2alpha);
+   return _filter_blend_cpu_generic_do(cmd, _image_draw_cpu_rgba_alpha);
 }
 
 static Eina_Bool
 _filter_blend_cpu_rgba(Evas_Filter_Command *cmd)
 {
-   return _filter_blend_cpu_generic_do(cmd, _image_draw_cpu_rgba2rgba);
+   return _filter_blend_cpu_generic_do(cmd, _image_draw_cpu_rgba_rgba);
 }
 
 static Eina_Bool
@@ -447,12 +447,12 @@ evas_filter_blend_cpu_func_get(Evas_Filter_Command *cmd)
         if (cmd->output->alpha_only)
           return _filter_blend_cpu_alpha;
         else
-          return _filter_blend_cpu_alpha2rgba;
+          return _filter_blend_cpu_alpha_rgba;
      }
    else
      {
         if (cmd->output->alpha_only)
-          return _filter_blend_cpu_rgba2alpha;
+          return _filter_blend_cpu_rgba_alpha;
         else
           return _filter_blend_cpu_rgba;
      }

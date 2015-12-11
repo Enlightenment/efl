@@ -649,6 +649,9 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         goto fail;
      }
 
+   if (!in->alpha_only && out->alpha_only)
+     DBG("Different color formats, implicit conversion may be slow");
+
    if (in == out) out->dirty = EINA_FALSE;
    blend = (out->dirty && !out->transient);
 
@@ -1049,10 +1052,8 @@ evas_filter_command_curve_add(Evas_Filter_Context *ctx,
      }
 
    if (in->alpha_only != out->alpha_only)
-     {
-        ERR("Incompatible formats for color curves");
-        return -1;
-     }
+     WRN("Incompatible formats for color curves, implicit conversion will be "
+         "slow and may not produce the desired output.");
 
    copy = malloc(256 * sizeof(DATA8));
    if (!copy) return -1;
@@ -1098,9 +1099,12 @@ evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx,
      }
 
    if (in->alpha_only != out->alpha_only)
+     DBG("Different color formats, implicit conversion may be slow");
+
+   if (map->alpha_only)
      {
-        ERR("Incompatible formats for displacement map");
-        return -1;
+        WRN("Displacement map is not an RGBA buffer, X and Y axes will be "
+            "displaced together.");
      }
 
    if (in == out)
@@ -1205,6 +1209,13 @@ evas_filter_command_bump_map_add(Evas_Filter_Context *ctx,
         return -1;
      }
 
+   if (!bumpmap->alpha_only)
+     DBG("Bump map is not an Alpha buffer, implicit conversion may be slow");
+
+   // FIXME: Boo!
+   if (!in->alpha_only)
+     WRN("RGBA bump map support is not implemented! This will trigger conversion.");
+
    // FIXME: Must ensure in != out
    if (in == out) CRI("Not acceptable");
    if (bumpmap == out) CRI("Not acceptable");
@@ -1250,6 +1261,9 @@ evas_filter_command_transform_add(Evas_Filter_Context *ctx,
             inbuf, in, outbuf, out);
         return -1;
      }
+
+   if (in->alpha_only != out->alpha_only)
+     DBG("Incompatible buffer formats, will trigger implicit conversion.");
 
    cmd = _command_new(ctx, EVAS_FILTER_MODE_TRANSFORM, in, NULL, out);
    if (!cmd) return -1;

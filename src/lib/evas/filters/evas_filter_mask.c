@@ -28,26 +28,37 @@ evas_filter_mask_cpu_func_get(Evas_Filter_Command *cmd)
 
    if (cmd->input->alpha_only)
      {
-        if (cmd->mask->alpha_only && cmd->output->alpha_only)
-          return _mask_cpu_alpha_alpha_alpha;
-        else if (!cmd->mask->alpha_only && !cmd->output->alpha_only)
+        if (cmd->output->alpha_only)
+          {
+             if (cmd->mask->alpha_only)
+               {
+                  DBG("Input and output are Alpha but mask is RGBA. This is not "
+                      "optimal (implicit conversion and loss of color).");
+               }
+             return _mask_cpu_alpha_alpha_alpha;
+          }
+        else if (!cmd->mask->alpha_only)
           return _mask_cpu_alpha_rgba_rgba;
-        else if (cmd->mask->alpha_only && !cmd->output->alpha_only)
+        else
           return _mask_cpu_alpha_alpha_rgba;
      }
    else
      {
-        if (cmd->mask->alpha_only && !cmd->output->alpha_only)
-          return _mask_cpu_rgba_alpha_rgba;
-        else if (!cmd->mask->alpha_only && !cmd->output->alpha_only)
-          return _mask_cpu_rgba_rgba_rgba;
+        if (!cmd->output->alpha_only)
+          {
+             // rgba -> rgba
+             if (cmd->mask->alpha_only)
+               return _mask_cpu_rgba_alpha_rgba;
+             else
+               return _mask_cpu_rgba_rgba_rgba;
+          }
+        else
+          {
+             // rgba -> alpha
+             DBG("Input is RGBA but output is Alpha, losing colors.");
+             return _mask_cpu_alpha_alpha_alpha;
+          }
      }
-
-   CRI("If input or mask is RGBA, then output must also be RGBA: %s [%s] %s",
-       cmd->input->alpha_only ? "alpha" : "rgba",
-       cmd->mask->alpha_only ? "alpha" : "rgba",
-       cmd->output->alpha_only ? "alpha" : "rgba");
-   return NULL;
 }
 
 static Eina_Bool

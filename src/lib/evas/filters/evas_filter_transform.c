@@ -13,19 +13,19 @@ _vflip_cpu(Evas_Filter_Command *cmd)
    unsigned int src_len, src_stride, dst_len, dst_stride;
    uint8_t *in, *out = NULL, *span = NULL;
    int w, h, sy, dy, oy, center, t, b, objh;
+   Efl_Gfx_Colorspace cspace = cmd->output->alpha_only ? E_ALPHA : E_ARGB;
    int s0, s1, d0, d1;
    Eina_Bool ret = 0;
 
    w = cmd->input->w;
    h = cmd->input->h;
-   in = _buffer_map_all(cmd->input->buffer, &src_len, E_READ, cmd->output->alpha_only ? E_ALPHA : E_ARGB, &src_stride);
+   in = _buffer_map_all(cmd->input->buffer, &src_len, E_READ, cspace, &src_stride);
    if (cmd->input->buffer != cmd->output->buffer)
-     out = _buffer_map_all(cmd->output->buffer, &dst_len, E_WRITE, cmd->output->alpha_only ? E_ALPHA : E_ARGB, &dst_stride);
+     out = _buffer_map_all(cmd->output->buffer, &dst_len, E_WRITE, cspace, &dst_stride);
 
    EINA_SAFETY_ON_FALSE_GOTO(cmd->output->w == w, end);
    EINA_SAFETY_ON_FALSE_GOTO(cmd->output->h == h, end);
    EINA_SAFETY_ON_FALSE_GOTO(src_stride <= dst_stride, end);
-   EINA_SAFETY_ON_FALSE_GOTO(cmd->output->alpha_only == cmd->input->alpha_only, end);
 
    oy = cmd->draw.oy;
    t = cmd->ctx->padt;

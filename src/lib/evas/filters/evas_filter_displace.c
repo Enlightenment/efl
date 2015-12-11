@@ -316,15 +316,8 @@ evas_filter_displace_cpu_func_get(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->mask, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(!cmd->mask->alpha_only, NULL);
 
-   if (cmd->input->alpha_only != cmd->output->alpha_only)
-     {
-        CRI("Invalid color formats");
-        return NULL;
-     }
-
-   if (cmd->input->alpha_only)
+   if (cmd->output->alpha_only)
      return _filter_displace_cpu_alpha;
    else
      return _filter_displace_cpu_rgba;
