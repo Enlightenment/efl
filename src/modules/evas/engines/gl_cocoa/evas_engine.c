@@ -1363,7 +1363,7 @@ module_open(Evas_Module *em)
    ORD(context_cutout_add);
    ORD(context_cutout_clear);
    ORD(output_flush);
-   ORD(output_idle_flush);
+   //   ORD(output_idle_flush);
    //   ORD(output_dump);
    ORD(rectangle_draw);
    ORD(line_draw);
