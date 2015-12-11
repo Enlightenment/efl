@@ -106,6 +106,7 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
           wl_registry_bind(registry, id, &xdg_shell_interface, 1);
         xdg_shell_use_unstable_version(ewd->wl.xdg_shell, XDG_VERSION);
         xdg_shell_add_listener(ewd->wl.xdg_shell, &_xdg_shell_listener, NULL);
+
         EINA_INLIST_FOREACH(ewd->windows, window)
           _ecore_wl2_window_shell_surface_init(window);
      }
@@ -309,12 +310,19 @@ err:
 static void
 _cb_sync_done(void *data, struct wl_callback *cb, uint32_t serial EINA_UNUSED)
 {
+   Ecore_Wl2_Event_Sync_Done *ev;
    Ecore_Wl2_Display *ewd;
 
    ewd = data;
    ewd->sync_done = EINA_TRUE;
 
    wl_callback_destroy(cb);
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Sync_Done));
+   if (!ev) return;
+
+   ev->display = ewd;
+   ecore_event_add(ECORE_WL2_EVENT_SYNC_DONE, ev, NULL, NULL);
 }
 
 static const struct wl_callback_listener _sync_listener =
@@ -596,24 +604,6 @@ ecore_wl2_display_connect(const char *name)
          * before we can allow a user to make use of the API functions */
         while (!ewd->sync_done)
           wl_display_dispatch(ewd->wl.display);
-     }
-   else
-     {
-        /* this client is on same pid as server so we need to iterate
-         * main loop until the "server" advertises it's globals
-         *
-         * NB: DO NOT REMOVE THIS !!
-         *
-         * This is NEEDED for E's internal dialogs to function because the
-         * "server" and "client" are on the same PID
-         * and thus the "server" never advertises out it's globals
-         * (wl_compositor, wl_shm, etc) unless we sit here and iterate the
-         * main loop until it's done.
-         *
-         * If we remove this, E will never show an internal dialog as it
-         * just sits and waits for the globals */
-        while (!ewd->sync_done)
-          ecore_main_loop_iterate();
      }
 
    return ewd;

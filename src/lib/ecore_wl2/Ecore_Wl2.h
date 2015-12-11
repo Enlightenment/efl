@@ -126,6 +126,11 @@ typedef struct _Ecore_Wl2_Event_Window_Configure
    int x, y, w, h;
 } Ecore_Wl2_Event_Window_Configure;
 
+typedef struct _Ecore_Wl2_Event_Sync_Done
+{
+   Ecore_Wl2_Display *display;
+} Ecore_Wl2_Event_Sync_Done;
+
 typedef enum _Ecore_Wl2_Window_Type
 {
    ECORE_WL2_WINDOW_TYPE_NONE,
@@ -156,6 +161,7 @@ EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_TARGET;
 EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_SEND;
 EAPI extern int ECORE_WL2_EVENT_SELECTION_DATA_READY;
 EAPI extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE;
+EAPI extern int ECORE_WL2_EVENT_SYNC_DONE;
 
 /**
  * @file

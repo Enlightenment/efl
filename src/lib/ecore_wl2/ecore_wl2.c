@@ -25,6 +25,7 @@ EAPI int ECORE_WL2_EVENT_DATA_SOURCE_TARGET = 0;
 EAPI int ECORE_WL2_EVENT_DATA_SOURCE_SEND = 0;
 EAPI int ECORE_WL2_EVENT_SELECTION_DATA_READY = 0;
 EAPI int ECORE_WL2_EVENT_WINDOW_CONFIGURE = 0;
+EAPI int ECORE_WL2_EVENT_SYNC_DONE = 0;
 
 /* public API functions */
 EAPI int
@@ -75,6 +76,7 @@ ecore_wl2_init(void)
         ECORE_WL2_EVENT_DATA_SOURCE_SEND = ecore_event_type_new();
         ECORE_WL2_EVENT_SELECTION_DATA_READY = ecore_event_type_new();
         ECORE_WL2_EVENT_WINDOW_CONFIGURE = ecore_event_type_new();
+        ECORE_WL2_EVENT_SYNC_DONE = ecore_event_type_new();
      }
 
    return _ecore_wl2_init_count;
@@ -117,6 +119,7 @@ ecore_wl2_shutdown(void)
    ECORE_WL2_EVENT_DATA_SOURCE_SEND = 0;
    ECORE_WL2_EVENT_SELECTION_DATA_READY = 0;
    ECORE_WL2_EVENT_WINDOW_CONFIGURE = 0;
+   ECORE_WL2_EVENT_SYNC_DONE = 0;
 
    /* shutdown Ecore_Event */
    ecore_event_shutdown();
