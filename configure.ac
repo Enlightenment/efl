@@ -4692,7 +4692,7 @@ AM_CONDITIONAL([ALWAYS_BUILD_EXAMPLES], [test "${want_always_build_examples}" = 
 
 BARF_OK="xno"
 # Harfbuzz
-AC_ARG_ENABLE([i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba],
+AC_ARG_ENABLE([i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb],
    [ You will be told when this is needed ],
    [
     if test "x${enableval}" = "xyes" ; then
