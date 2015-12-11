@@ -33,8 +33,8 @@ alpha_inverse(uint32_t color)
    return A_VAL(&color);
 }
 
-RGBA_Comp_Func_Solid func_for_mode_solid[EFL_GFX_RENDER_OP_LAST];
-RGBA_Comp_Func func_for_mode[EFL_GFX_RENDER_OP_LAST];
+extern RGBA_Comp_Func_Solid func_for_mode_solid[EFL_GFX_RENDER_OP_LAST];
+extern RGBA_Comp_Func func_for_mode[EFL_GFX_RENDER_OP_LAST];
 
 void efl_draw_sse2_init(void);
 void efl_draw_neon_init(void);
