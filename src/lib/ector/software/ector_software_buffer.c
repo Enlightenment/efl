@@ -15,9 +15,12 @@
 typedef struct _Ector_Software_Buffer_Map
 {
    EINA_INLIST;
-   void *ptr;
+   uint8_t *ptr;
    unsigned int size; // in bytes
+   unsigned int x, y, w, h;
+   Efl_Gfx_Colorspace cspace;
    Eina_Bool allocated;
+   Ector_Buffer_Access_Flag mode;
 } Ector_Software_Buffer_Map;
 
 static inline int
@@ -84,6 +87,12 @@ _ector_software_buffer_base_ector_generic_buffer_pixels_set(Eo *obj, Ector_Softw
         return EINA_FALSE;
      }
 
+   if (pd->internal.maps)
+     {
+        ERR("Can not call pixels_set when the buffer is mapped.");
+        return EINA_FALSE;
+     }
+
    // safety check
    px = _min_stride_calc(1, cspace);
    if (px && ((unsigned long long)(uintptr_t)pixels) & (px - 1))
@@ -143,7 +152,8 @@ _ector_software_buffer_base_ector_generic_buffer_map(Eo *obj EINA_UNUSED, Ector_
                                                      Efl_Gfx_Colorspace cspace EINA_UNUSED, unsigned int *stride)
 {
    Ector_Software_Buffer_Map *map = NULL;
-   unsigned int off, k;
+   Eina_Bool need_cow = EINA_FALSE;
+   unsigned int off, k, dst_stride;
 
    if (!w) w = pd->generic->w;
    if (!h) h = pd->generic->h;
@@ -158,10 +168,29 @@ _ector_software_buffer_base_ector_generic_buffer_map(Eo *obj EINA_UNUSED, Ector_
    if ((mode & ECTOR_BUFFER_ACCESS_FLAG_WRITE) && !pd->writable)
      fail("Can not map a read-only buffer for writing");
 
+   if ((mode & ECTOR_BUFFER_ACCESS_FLAG_WRITE) &&
+       (mode & ECTOR_BUFFER_ACCESS_FLAG_COW))
+     {
+        EINA_INLIST_FOREACH(pd->internal.maps, map)
+          if (map->mode == ECTOR_BUFFER_ACCESS_FLAG_READ)
+            {
+               need_cow = EINA_TRUE;
+               break;
+            }
+     }
+
    map = calloc(1, sizeof(*map));
    if (!map) fail("Out of memory");
 
+   map->mode = mode;
+   map->cspace = cspace;
+   map->x = x;
+   map->y = y;
+   map->w = w;
+   map->h = h;
+
    off = _min_stride_calc(x + pd->generic->l, pd->generic->cspace) + (pd->stride * (y + pd->generic->t));
+   dst_stride = _min_stride_calc(w, cspace);
 
    if (cspace != pd->generic->cspace)
      {
@@ -170,7 +199,6 @@ _ector_software_buffer_base_ector_generic_buffer_map(Eo *obj EINA_UNUSED, Ector_
         map->allocated = EINA_TRUE;
         map->ptr = malloc(map->size);
         if (!map->ptr) fail("Out of memory");
-        if (stride) *stride = _min_stride_calc(w, cspace);
 
         if (cspace == EFL_GFX_COLORSPACE_ARGB8888)
           {
@@ -180,18 +208,30 @@ _ector_software_buffer_base_ector_generic_buffer_map(Eo *obj EINA_UNUSED, Ector_
         else
           {
              for (k = 0; k < h; k++)
-               _pixels_argb_to_gry8_convert((uint8_t *) map->ptr + (k * w), (uint32_t *) (pd->pixels.u8 + off + (k * pd->stride)), w);
+               _pixels_argb_to_gry8_convert(map->ptr + (k * w), (uint32_t *) (pd->pixels.u8 + off + (k * pd->stride)), w);
           }
+     }
+   else if (need_cow)
+     {
+        // copy-on-write access
+        map->size = _min_stride_calc(w, cspace) * h;
+        map->allocated = EINA_TRUE;
+        map->ptr = malloc(map->size);
+        if (!map->ptr) fail("Out of memory");
+        for (k = 0; k < h; k++)
+          memcpy(map->ptr + k * dst_stride, pd->pixels.u8 + x + (k + y) * pd->stride, dst_stride);
      }
    else
      {
+        // direct access, zero-copy
         map->size = (pd->stride * h) - off;
         map->ptr = pd->pixels.u8 + off;
-        if (stride) *stride = pd->stride;
+        dst_stride = pd->stride;
      }
 
    pd->internal.maps = eina_inlist_prepend(pd->internal.maps, EINA_INLIST_GET(map));
    if (length) *length = map->size;
+   if (stride) *stride = dst_stride;
    return map->ptr;
 
 on_fail:
@@ -214,7 +254,41 @@ _ector_software_buffer_base_ector_generic_buffer_unmap(Eo *obj EINA_UNUSED, Ecto
           {
              pd->internal.maps = eina_inlist_remove(pd->internal.maps, EINA_INLIST_GET(map));
              if (map->allocated)
-               free(map->ptr);
+               {
+                  if (map->mode & ECTOR_BUFFER_ACCESS_FLAG_WRITE)
+                    {
+                       unsigned k, dst_stride;
+
+                       if (map->cspace != pd->generic->cspace)
+                         {
+                            if (pd->generic->cspace == EFL_GFX_COLORSPACE_ARGB8888)
+                              {
+                                 for (k = 0; k < map->h; k++)
+                                   _pixels_gry8_to_argb_convert((uint32_t *) (pd->pixels.u8 + (k + map->y) * pd->stride),
+                                                                map->ptr + (k * map->w),
+                                                                map->w);
+                              }
+                            else
+                              {
+                                 for (k = 0; k < map->h; k++)
+                                   _pixels_argb_to_gry8_convert(pd->pixels.u8 + (k + map->y) * pd->stride,
+                                                                (uint32_t *) map->ptr + (k * map->w),
+                                                                map->w);
+                              }
+                         }
+                       else
+                         {
+                            dst_stride = _min_stride_calc(map->w, map->cspace);
+                            for (k = 0; k < map->h; k++)
+                              {
+                                 memcpy(pd->pixels.u8 + map->x + (k + map->y) * pd->stride,
+                                        map->ptr + k * dst_stride,
+                                        dst_stride);
+                              }
+                         }
+                    }
+                  free(map->ptr);
+               }
              free(map);
              return;
           }

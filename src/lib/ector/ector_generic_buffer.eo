@@ -10,9 +10,10 @@ enum Ector.Buffer.Flag {
 }
 
 enum Ector.Buffer.Access_Flag {
-   none  = 0x0,
-   read  = 0x1,
-   write = 0x2,
+   none      = 0x0,
+   read      = 0x1,
+   write     = 0x2,
+   cow       = 0x4,  [[Forces copy-on-write if already mapped as read-only. Requires write.]]
 }
 
 mixin Ector.Generic.Buffer
@@ -62,7 +63,7 @@ mixin Ector.Generic.Buffer
 	 [[Unmap a region of this buffer, and upload data to the GPU (if needed).]]
 	 params {
 	    @in data: void*; [[Data pointer returned by a previous call to map]]
-	    @in length: uint; [[Must be the same as returned
+	    @in length: uint; [[Must be the same as returned by map.]]
 	 }
       }
       pixels_set {
