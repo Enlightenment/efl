@@ -82,10 +82,19 @@ my_entry_bt_7(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
    elm_entry_editable_set(en, !elm_entry_editable_get(en));
 }
 
+static void
+changed_cb1(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *ck = data;
+   printf("ck %p to %i\n", obj, elm_check_state_get(obj));
+   elm_config_context_menu_disabled_set(elm_check_state_get(obj));
+   printf("ck2 %p is now %i\n", ck, elm_check_state_get(ck));
+}
+
 void
 test_entry(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx, *bx2, *bt, *en;
+   Evas_Object *win, *bx, *bx2, *bt, *en, *ck;
    char buf[4096];
 
    win = elm_win_util_standard_add("entry", "Entry");
@@ -203,6 +212,12 @@ test_entry(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_box_pack_end(bx2, bt);
    elm_object_focus_allow_set(bt, EINA_FALSE);
    evas_object_show(bt);
+
+   ck = elm_check_add(win);
+   elm_object_text_set(ck, "Context Menu Disable");
+   evas_object_smart_callback_add(ck, "changed", changed_cb1, ck);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
 
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);

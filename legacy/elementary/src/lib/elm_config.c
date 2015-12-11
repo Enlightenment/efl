@@ -375,6 +375,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, focus_highlight_clip_disable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, focus_move_policy, T_UCHAR);
    ELM_CONFIG_VAL(D, T, focus_autoscroll_mode, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, context_menu_disabled, T_UCHAR);
    ELM_CONFIG_VAL(D, T, slider_indicator_visible_mode, T_INT);
    ELM_CONFIG_VAL(D, T, item_select_on_focus_disable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, first_item_focus_on_first_focus_in, T_UCHAR);
@@ -1416,6 +1417,7 @@ _config_load(void)
    _elm_config->longpress_timeout = 1.0;
    _elm_config->effect_enable = EINA_TRUE;
    _elm_config->desktop_entry = EINA_FALSE;
+   _elm_config->context_menu_disabled = EINA_FALSE;
    _elm_config->is_mirrored = EINA_FALSE; /* Read sys value in env_get() */
    _elm_config->password_show_last = EINA_FALSE;
    _elm_config->password_show_last_timeout = 2.0;
@@ -2098,6 +2100,9 @@ _env_get(void)
 
    s = getenv("ELM_ICON_SIZE");
    if (s) _elm_config->icon_size = atoi(s);
+
+   s = getenv("ELM_CONTEXT_MENU_DISABLED");
+   if (s) _elm_config->context_menu_disabled = !!atoi(s);
 
    s = getenv("ELM_LONGPRESS_TIMEOUT");
    if (s) _elm_config->longpress_timeout = _elm_atof(s);
@@ -2893,6 +2898,18 @@ EAPI double
 elm_config_scroll_thumbscroll_sensitivity_friction_get(void)
 {
    return _elm_config->thumbscroll_sensitivity_friction;
+}
+
+EAPI Eina_Bool
+elm_config_context_menu_disabled_get(void)
+{
+	return _elm_config->context_menu_disabled;
+}
+
+EAPI void
+elm_config_context_menu_disabled_set(Eina_Bool enabled)
+{
+	_elm_config->context_menu_disabled = !!enabled;
 }
 
 EAPI void

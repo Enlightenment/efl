@@ -216,6 +216,26 @@ EAPI double       elm_config_scroll_page_scroll_friction_get(void);
 EAPI void         elm_config_scroll_page_scroll_friction_set(double friction);
 
 /**
+ * Get enable status of context menu disabled.
+ *
+ * @see elm_config_context_menu_disabled_set()
+ * @ingroup Entry
+ * @since 1.17
+ */
+EAPI Eina_Bool elm_config_context_menu_disabled_get(void);
+
+/**
+ * Set enable status of context menu disabled.
+ *
+ * @param enabled enable context menu if @c EINA_TRUE, disable otherwise
+ *
+ * @see elm_config_focus_auto_scroll_bring_in_enabled_get()
+ * @ingroup Entry
+ * @since 1.17
+ */
+EAPI void elm_config_context_menu_disabled_set(Eina_Bool enabled);
+
+/**
  * Get the amount of inertia a scroller will impose at region bring
  * animations.
  *

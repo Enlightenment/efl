@@ -256,6 +256,7 @@ struct _Elm_Config
    double        longpress_timeout;
    unsigned char effect_enable;
    unsigned char desktop_entry;
+   unsigned char context_menu_disabled;
    unsigned char password_show_last;
    double        password_show_last_timeout;
    unsigned char glayer_zoom_finger_enable;
