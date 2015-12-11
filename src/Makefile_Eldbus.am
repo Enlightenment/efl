@@ -40,6 +40,8 @@ lib/eldbus/eldbus_proxy.h \
 lib/eldbus/eldbus_service.h \
 lib/eldbus/eldbus_signal_handler.h \
 lib/eldbus/eldbus_message_helper.h \
+lib/eldbus/eldbus_introspection.h \
+lib/eldbus/Eldbus_Model.h \
 lib/eldbus/eldbus_message_eina_value.h
 
 nodist_installed_eldbusmainheaders_DATA = $(eldbus_eolian_h)
@@ -54,8 +56,6 @@ lib/eldbus/eldbus_model_arguments_private.h \
 lib/eldbus/eldbus_model_connection_private.h \
 lib/eldbus/eldbus_model_signal_private.h \
 lib/eldbus/eldbus_model_method_private.h \
-lib/eldbus/eldbus_introspection.h \
-lib/eldbus/Eldbus_Model.h \
 lib/eldbus/eldbus_proxy.c \
 lib/eldbus/eldbus_core.c \
 lib/eldbus/eldbus_message.c \
