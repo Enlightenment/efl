@@ -16,7 +16,7 @@ typedef struct _Ector_Software_Buffer_Map
 {
    EINA_INLIST;
    void *ptr;
-   unsigned int len;
+   unsigned int size; // in bytes
    Eina_Bool allocated;
 } Ector_Software_Buffer_Map;
 
@@ -142,8 +142,11 @@ _ector_software_buffer_base_ector_generic_buffer_map(Eo *obj EINA_UNUSED, Ector_
                                                      unsigned int x, unsigned int y, unsigned int w, unsigned int h,
                                                      Efl_Gfx_Colorspace cspace EINA_UNUSED, unsigned int *stride)
 {
-   Ector_Software_Buffer_Map *map;
-   int off;
+   Ector_Software_Buffer_Map *map = NULL;
+   unsigned int off, k;
+
+   if (!w) w = pd->generic->w;
+   if (!h) h = pd->generic->h;
 
    if (!pd->pixels.u8 || !pd->stride)
      fail("Buffer has no pixel data yet");
@@ -153,20 +156,46 @@ _ector_software_buffer_base_ector_generic_buffer_map(Eo *obj EINA_UNUSED, Ector_
      fail("Invalid region requested: wanted %u,%u %ux%u but image is %ux%u",
           x, y, w, h, pd->generic->w, pd->generic->h);
    if ((mode & ECTOR_BUFFER_ACCESS_FLAG_WRITE) && !pd->writable)
-     fail("can not map a read-only buffer for writing");
+     fail("Can not map a read-only buffer for writing");
+
+   map = calloc(1, sizeof(*map));
+   if (!map) fail("Out of memory");
 
    off = _min_stride_calc(x + pd->generic->l, pd->generic->cspace) + (pd->stride * (y + pd->generic->t));
 
-   map = calloc(1, sizeof(*map));
-   map->len = (pd->stride * h) - off;
-   map->ptr = pd->pixels.u8 + off;
-   pd->internal.maps = eina_inlist_append(pd->internal.maps, EINA_INLIST_GET(map));
+   if (cspace != pd->generic->cspace)
+     {
+        // convert on the fly
+        map->size = _min_stride_calc(w, cspace) * h;
+        map->allocated = EINA_TRUE;
+        map->ptr = malloc(map->size);
+        if (!map->ptr) fail("Out of memory");
+        if (stride) *stride = _min_stride_calc(w, cspace);
 
-   if (length) *length = map->len;
-   if (stride) *stride = pd->stride;
+        if (cspace == EFL_GFX_COLORSPACE_ARGB8888)
+          {
+             for (k = 0; k < h; k++)
+               _pixels_gry8_to_argb_convert((uint32_t *) map->ptr + (k * w), pd->pixels.u8 + off + (k * pd->stride), w);
+          }
+        else
+          {
+             for (k = 0; k < h; k++)
+               _pixels_argb_to_gry8_convert((uint8_t *) map->ptr + (k * w), (uint32_t *) (pd->pixels.u8 + off + (k * pd->stride)), w);
+          }
+     }
+   else
+     {
+        map->size = (pd->stride * h) - off;
+        map->ptr = pd->pixels.u8 + off;
+        if (stride) *stride = pd->stride;
+     }
+
+   pd->internal.maps = eina_inlist_prepend(pd->internal.maps, EINA_INLIST_GET(map));
+   if (length) *length = map->size;
    return map->ptr;
 
 on_fail:
+   free(map);
    if (length) *length = 0;
    if (stride) *stride = 0;
    return NULL;
@@ -181,9 +210,11 @@ _ector_software_buffer_base_ector_generic_buffer_unmap(Eo *obj EINA_UNUSED, Ecto
 
    EINA_INLIST_FOREACH(pd->internal.maps, map)
      {
-        if ((map->ptr == data) && (map->len == length))
+        if ((map->ptr == data) && ((map->size == length) || (length == (unsigned int) -1)))
           {
              pd->internal.maps = eina_inlist_remove(pd->internal.maps, EINA_INLIST_GET(map));
+             if (map->allocated)
+               free(map->ptr);
              free(map);
              return;
           }
@@ -193,62 +224,22 @@ _ector_software_buffer_base_ector_generic_buffer_unmap(Eo *obj EINA_UNUSED, Ecto
 }
 
 EOLIAN static uint8_t *
-_ector_software_buffer_base_ector_generic_buffer_span_get(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd,
+_ector_software_buffer_base_ector_generic_buffer_span_get(Eo *obj, Ector_Software_Buffer_Base_Data *pd,
                                                           int x, int y, unsigned int w, Efl_Gfx_Colorspace cspace,
                                                           unsigned int *length)
 {
-   uint8_t *src;
-   int len, px;
-
-   if (!pd->pixels.u8)
-     fail("No pixel data");
-   if ((x < -pd->generic->l) || (y < -pd->generic->t) ||
-       ((unsigned) x > pd->generic->w) || ((unsigned) y > pd->generic->h))
-     fail("Out of bounds");
-   if (((unsigned) x + w) > (pd->generic->w + pd->generic->l + pd->generic->r))
-     fail("Requested span too large");
-
-   px = _min_stride_calc(1, pd->generic->cspace);
-   len = _min_stride_calc(w, cspace);
-   if (length) *length = len;
-
-   src = pd->pixels.u8 + ((pd->generic->t + y) * pd->stride) + (px * (pd->generic->l + x));
-
-   if (cspace == pd->generic->cspace)
-     {
-        pd->span_free = EINA_FALSE;
-        return src;
-     }
-   else if ((cspace == EFL_GFX_COLORSPACE_ARGB8888) &&
-            (pd->generic->cspace == EFL_GFX_COLORSPACE_GRY8))
-     {
-        uint32_t *buf = malloc(len);
-        _pixels_gry8_to_argb_convert(buf, src, w);
-        pd->span_free = EINA_TRUE;
-        return (uint8_t *) buf;
-     }
-   else if ((cspace == EFL_GFX_COLORSPACE_GRY8) &&
-            (pd->generic->cspace == EFL_GFX_COLORSPACE_ARGB8888))
-     {
-        uint8_t *buf = malloc(len);
-        _pixels_argb_to_gry8_convert(buf, (uint32_t *) src, w);
-        pd->span_free = EINA_TRUE;
-        return buf;
-     }
-   else
-     fail("Unsupported colorspace %u", cspace);
-
-on_fail:
-   if (length) *length = 0;
-   return NULL;
+   // ector_buffer_map
+   return _ector_software_buffer_base_ector_generic_buffer_map
+         (obj, pd, length, ECTOR_BUFFER_ACCESS_FLAG_READ, x, y, w, 1, cspace, NULL);
 }
 
 EOLIAN static void
-_ector_software_buffer_base_ector_generic_buffer_span_free(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd,
+_ector_software_buffer_base_ector_generic_buffer_span_free(Eo *obj, Ector_Software_Buffer_Base_Data *pd,
                                                            uint8_t *data)
 {
-   if (pd->span_free) free(data);
-   pd->span_free = EINA_FALSE;
+   // ector_buffer_unmap
+   return _ector_software_buffer_base_ector_generic_buffer_unmap
+         (obj, pd, data, (unsigned int) -1);
 }
 
 EOLIAN static Ector_Buffer_Flag

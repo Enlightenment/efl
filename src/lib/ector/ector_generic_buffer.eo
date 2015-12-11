@@ -40,17 +40,21 @@ mixin Ector.Generic.Buffer
       }
       map {
 	 [[Map a region of this buffer for read or write access by the CPU,
-	   fetch data from the GPU if needed.
+	   fetch data from the GPU if needed. This operation may be slow if
+	   cpu_readable_fast or cpu_writeable_fast are not true, or if the
+	   required colorspace is different from the internal one.
 	 ]]
 	 params {
-	    @out length: uint; [[Accessible buffer size in bytes]]
-	    @in mode: Ector.Buffer.Access_Flag;
-	    @in x: uint;
-	    @in y: uint;
+	    @out length: uint; [[Accessible buffer size in bytes, should not be $null.]]
+	    @in mode: Ector.Buffer.Access_Flag; [[Specifies whether to map for read-only,
+						  write-only or read-write access (OR combinaison of flags).]]
+	    @in x: uint; [[X position of the top-left pixel to map]]
+	    @in y: uint; [[Y position of the top-left pixel to map]]
 	    @in w: uint; [[If 0, defaults to the buffer width]]
 	    @in h: uint; [[If 0, defaults to the buffer height]]
-	    @in cspace: Efl.Gfx.Colorspace; [[Requested colorspace. If difference from the internal cspace, map may either fail or convert slowly]]
-	    @out stride: uint; [[Optional]]
+	    @in cspace: Efl.Gfx.Colorspace; [[Requested colorspace. If differen from the internal cspace,
+					      map should try to convert the data into a new buffer]]
+	    @out stride: uint @optional; [[Returns the length in bytes of a mapped line]]
 	 }
 	 return: void* @warn_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
       }
@@ -58,7 +62,7 @@ mixin Ector.Generic.Buffer
 	 [[Unmap a region of this buffer, and upload data to the GPU (if needed).]]
 	 params {
 	    @in data: void*; [[Data pointer returned by a previous call to map]]
-	    @in length: uint;
+	    @in length: uint; [[Must be the same as returned
 	 }
       }
       pixels_set {
