@@ -37,9 +37,6 @@ static Ecore_Event_Handler      *ecore_evas_event_handlers[4];
 static const char *_iface_name = "opengl_cocoa";
 static const int _iface_version = 1;
 
-static const char *_iface_name = "opengl_cocoa";
-static const int _iface_version = 1;
-
 static int
 _render_updates_process(Ecore_Evas *ee, Eina_List *updates)
 {

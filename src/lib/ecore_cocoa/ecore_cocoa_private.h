@@ -67,4 +67,6 @@ Eina_Bool _ecore_cocoa_window_init(void);
 
 Eina_Bool _ecore_cocoa_feed_events(void *anEvent);
 
+
+
 #endif
