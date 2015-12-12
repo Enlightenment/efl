@@ -304,6 +304,7 @@ evas_module_register(const Evas_Module_Api *module, Evas_Module_Type type)
    em = calloc(1, sizeof (Evas_Module));
    if (!em) return EINA_FALSE;
 
+   LKI(em->lock);
    em->definition = module;
 
    if (type == EVAS_MODULE_TYPE_ENGINE)
@@ -405,6 +406,7 @@ evas_module_unregister(const Evas_Module_Api *module, Evas_Module_Type type)
      eina_array_data_set(evas_engines, em->id_engine - 1, NULL);
 
    eina_hash_del(evas_modules[type], module->name, em);
+   LKD(em->lock);
    free(em);
 
    return EINA_TRUE;
@@ -512,7 +514,6 @@ evas_module_load(Evas_Module *em)
    if (!em->definition->func.open(em)) return 0;
    em->loaded = 1;
 
-   LKI(em->lock);
    return 1;
 }
 
@@ -528,7 +529,6 @@ evas_module_unload(Evas_Module *em)
 //   em->definition->func.close(em);
 //   em->loaded = 0;
 
-   LKD(em->lock);
 }
 
 void
