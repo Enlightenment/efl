@@ -339,6 +339,18 @@ _ecore_win32_window_procedure(HWND   window,
            Ecore_Win32_Window *w;
 
            INF("SetCursor");
+
+           /*
+            * Do not change the cursors on the non client area
+            * we are in the client area if and only if LOWORD(data_param) == 1
+            */
+           if (LOWORD(data_param) != 1)
+             return DefWindowProc(window, message, window_param, data_param);
+
+           /*
+            * Otherwise, we use the cursors set by the API for the
+            *current window
+            */
            w = (Ecore_Win32_Window *)GetWindowLongPtr(window, GWLP_USERDATA);
            if (w && w->cursor)
              {
