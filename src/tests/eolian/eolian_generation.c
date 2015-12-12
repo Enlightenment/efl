@@ -93,12 +93,7 @@ START_TEST(eolian_dev_impl_code)
 {
    char output_filepath[PATH_MAX] = "";
    snprintf(output_filepath, PATH_MAX, "%s/object_impl.c",
-#ifdef HAVE_EVIL
-         (char *)evil_tmpdir_get()
-#else
-         "/tmp"
-#endif
-         );
+            eina_environment_tmp_get());
    remove(output_filepath);
    fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/object_impl.eo", "--gi", output_filepath));
    fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/object_impl_ref.c", output_filepath));
@@ -114,12 +109,7 @@ START_TEST(eolian_types_generation)
 {
    char output_filepath[PATH_MAX] = "";
    snprintf(output_filepath, PATH_MAX, "%s/types_output.c",
-#ifdef HAVE_EVIL
-         (char *)evil_tmpdir_get()
-#else
-         "/tmp"
-#endif
-         );
+            eina_environment_tmp_get());
    remove(output_filepath);
    fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/typedef.eo", "--gh", output_filepath));
    fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/typedef_ref.c", output_filepath));
@@ -132,12 +122,7 @@ START_TEST(eolian_default_values_generation)
 {
    char output_filepath[PATH_MAX] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_output.c",
-#ifdef HAVE_EVIL
-         (char *)evil_tmpdir_get()
-#else
-         "/tmp"
-#endif
-         );
+            eina_environment_tmp_get());
    remove(output_filepath);
    fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/class_simple.eo", "--gc", output_filepath));
    fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/class_simple_ref.c", output_filepath));
@@ -148,12 +133,7 @@ START_TEST(eolian_override_generation)
 {
    char output_filepath[PATH_MAX] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_output.c",
-#ifdef HAVE_EVIL
-         (char *)evil_tmpdir_get()
-#else
-         "/tmp"
-#endif
-         );
+            eina_environment_tmp_get());
    remove(output_filepath);
    fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/override.eo", "--gc", output_filepath));
    fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/override_ref.c", output_filepath));
@@ -164,12 +144,7 @@ START_TEST(eolian_functions_descriptions)
 {
    char output_filepath[PATH_MAX] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_output.h",
-#ifdef HAVE_EVIL
-         (char *)evil_tmpdir_get()
-#else
-         "/tmp"
-#endif
-         );
+            eina_environment_tmp_get());
    remove(output_filepath);
    fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/class_simple.eo", "--gh", output_filepath));
    fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/class_simple_ref_eo.h", output_filepath));
@@ -183,12 +158,7 @@ START_TEST(eolian_import)
 {
    char output_filepath[PATH_MAX] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_import_types.h",
-#ifdef HAVE_EVIL
-         (char *)evil_tmpdir_get()
-#else
-         "/tmp"
-#endif
-         );
+            eina_environment_tmp_get());
    remove(output_filepath);
    fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/import_types.eot", "--gh", output_filepath));
    fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/import_types_ref.h", output_filepath));
@@ -200,12 +170,7 @@ START_TEST(eolian_docs)
 {
    char output_filepath[PATH_MAX] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_output.h",
-#ifdef HAVE_EVIL
-         (char *)evil_tmpdir_get()
-#else
-         "/tmp"
-#endif
-         );
+            eina_environment_tmp_get());
    remove(output_filepath);
    fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/docs.eo", "--gh", output_filepath));
    fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/docs_ref.h", output_filepath));
