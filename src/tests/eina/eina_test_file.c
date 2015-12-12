@@ -720,7 +720,7 @@ START_TEST(eina_test_file_statat)
         ret = eina_file_statat(eina_iterator_container_get(it), info, &st);
         fprintf(stderr, "ret=%d\n", ret);
         fail_if(ret != 0);
-        fail_if(st.size != template_size);
+        fail_if(st.size != (unsigned int)template_size);
      }
 
    unlink(test_file1_path);
