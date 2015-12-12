@@ -16,9 +16,11 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H 
-# include "config.h" 
-#endif               
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <time.h>
 
 #include "eina_suite.h"
 #include "Eina.h"
@@ -217,7 +219,6 @@ START_TEST(eina_test_rwlock)
    fail_if(counter != 7200);
    fail_if(eina_rwlock_release(&mutex) != EINA_LOCK_SUCCEED);
 
-#ifndef _WIN32
    fail_if(eina_lock_take(&mtcond) != EINA_LOCK_SUCCEED);
    clock_gettime(CLOCK_REALTIME, &ts);
    eina_condition_timedwait(&cond, 0.050);
@@ -226,7 +227,6 @@ START_TEST(eina_test_rwlock)
    fail_if(delay < 50);
    fail_if(delay > 200);
    fail_if(eina_lock_release(&mtcond) != EINA_LOCK_SUCCEED);
-#endif
 
    eina_thread_join(thread);
 
