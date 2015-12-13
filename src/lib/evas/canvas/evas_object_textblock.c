@@ -9873,9 +9873,6 @@ _evas_textblock_cursor_range_text_markup_get(const Evas_Textblock_Cursor *cur1, 
    Eina_Strbuf *buf;
    Evas_Textblock_Cursor *cur2;
 
-   if (!cur1 || !cur1->node) return NULL;
-   if (!_cur2 || !_cur2->node) return NULL;
-   if (cur1->obj != _cur2->obj) return NULL;
    buf = eina_strbuf_new();
 
    if (evas_textblock_cursor_compare(cur1, _cur2) > 0)
@@ -9984,9 +9981,6 @@ _evas_textblock_cursor_range_text_plain_get(const Evas_Textblock_Cursor *cur1, c
    Evas_Object_Textblock_Node_Text *n1, *n2;
    Evas_Textblock_Cursor *cur2;
 
-   if (!cur1 || !cur1->node) return NULL;
-   if (!_cur2 || !_cur2->node) return NULL;
-   if (cur1->obj != _cur2->obj) return NULL;
    buf = eina_ustrbuf_new();
 
    if (evas_textblock_cursor_compare(cur1, _cur2) > 0)
@@ -10111,7 +10105,13 @@ evas_textblock_cursor_range_formats_get(const Evas_Textblock_Cursor *cur1, const
 EAPI char *
 evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2, Evas_Textblock_Text_Type format)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur1->obj, EVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj;
+
+   if (!cur1 || !cur1->node) return NULL;
+   if (!cur2 || !cur2->node) return NULL;
+   if (cur1->obj != cur2->obj) return NULL;
+
+   obj = eo_data_scope_get(cur1->obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    if (format == EVAS_TEXTBLOCK_TEXT_MARKUP)
       return _evas_textblock_cursor_range_text_markup_get(cur1, cur2);

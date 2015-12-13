@@ -2923,6 +2923,14 @@ START_TEST(evas_textblock_text_getters)
             "and now in english."));
 
    /* Range get */
+   /* If one of the given cursor is NULL, it returns NULL. */
+   fail_if(evas_textblock_cursor_range_text_get(NULL, NULL,
+            EVAS_TEXTBLOCK_TEXT_MARKUP));
+   fail_if(evas_textblock_cursor_range_text_get(cur, NULL,
+            EVAS_TEXTBLOCK_TEXT_MARKUP));
+   fail_if(evas_textblock_cursor_range_text_get(NULL, cur,
+            EVAS_TEXTBLOCK_TEXT_MARKUP));
+
    Evas_Textblock_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
    evas_textblock_cursor_pos_set(main_cur, 2);
    evas_textblock_cursor_pos_set(cur, 2);
