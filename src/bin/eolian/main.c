@@ -62,7 +62,7 @@ _read_file(const char *filename, Eina_Strbuf **buf)
 
    fseek(fd, 0, SEEK_END);
    long file_size = ftell(fd);
-   if (file_size <= 0)
+   if (file_size < 0)
      {
         fprintf(stderr, "eolian: could not get length of '%s'\n", filename);
         fclose(fd);
