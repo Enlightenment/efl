@@ -3,11 +3,11 @@ class Ector.Renderer.Software.Buffer (Ector.Renderer.Software.Base, Ector.Render
    legacy_prefix: null;
    methods {
       @property buffer {
-	 set {}
-	 get {}
-	 values {
-	    buf: Ector.Generic.Buffer *;
-	 }
+         set {}
+         get {}
+         values {
+            buf: Ector.Generic.Buffer *;
+         }
       }
    }
    implements {

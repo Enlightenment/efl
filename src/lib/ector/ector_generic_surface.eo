@@ -7,17 +7,17 @@ mixin Ector.Generic.Surface (Ector.Generic.Buffer)
       @property reference_point {
          set {
             [[This define where is (0,0) in pixels coordinate inside the surface]]
-	 }
-	 values {
-	    x: int;
-	    y: int;
-	 }
+         }
+         values {
+            x: int;
+            y: int;
+         }
       }
       renderer_factory_new {
          return: Ector_Renderer *;
-	 params {
-	    @in type: const(Eo_Class) * @nonull;
-	 }
+         params {
+            @in type: const(Eo_Class) * @nonull;
+         }
       }
    }
    implements {

@@ -25,100 +25,100 @@ mixin Ector.Generic.Buffer
    legacy_prefix: null;
    methods {
       @property size {
-	 get {
-	    [[Retrieves the (rectangular) size of the pixel buffer.]]
-	 }
-	 values {
-	    w: int;
-	    h: int;
-	 }
+         get {
+            [[Retrieves the (rectangular) size of the pixel buffer.]]
+         }
+         values {
+            w: int;
+            h: int;
+         }
       }
       @property cspace {
-	 get {}
-	 values {
-	    cspace: Efl.Gfx.Colorspace;
-	 }
+         get {}
+         values {
+            cspace: Efl.Gfx.Colorspace;
+         }
       }
       map {
-	 [[Map a region of this buffer for read or write access by the CPU,
-	   fetch data from the GPU if needed. This operation may be slow if
-	   cpu_readable_fast or cpu_writeable_fast are not true, or if the
-	   required colorspace is different from the internal one.
-	 ]]
-	 params {
-	    @out length: uint; [[Accessible buffer size in bytes, should not be $null.]]
-	    @in mode: Ector.Buffer.Access_Flag; [[Specifies whether to map for read-only,
-						  write-only or read-write access (OR combinaison of flags).]]
-	    @in x: uint; [[X position of the top-left pixel to map]]
-	    @in y: uint; [[Y position of the top-left pixel to map]]
-	    @in w: uint; [[If 0, defaults to the buffer width]]
-	    @in h: uint; [[If 0, defaults to the buffer height]]
-	    @in cspace: Efl.Gfx.Colorspace; [[Requested colorspace. If differen from the internal cspace,
-					      map should try to convert the data into a new buffer]]
-	    @out stride: uint @optional; [[Returns the length in bytes of a mapped line]]
-	 }
-	 return: void* @warn_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
+         [[Map a region of this buffer for read or write access by the CPU,
+           fetch data from the GPU if needed. This operation may be slow if
+           cpu_readable_fast or cpu_writeable_fast are not true, or if the
+           required colorspace is different from the internal one.
+         ]]
+         params {
+            @out length: uint; [[Accessible buffer size in bytes, should not be $null.]]
+            @in mode: Ector.Buffer.Access_Flag; [[Specifies whether to map for read-only,
+                                                  write-only or read-write access (OR combinaison of flags).]]
+            @in x: uint; [[X position of the top-left pixel to map]]
+            @in y: uint; [[Y position of the top-left pixel to map]]
+            @in w: uint; [[If 0, defaults to the buffer width]]
+            @in h: uint; [[If 0, defaults to the buffer height]]
+            @in cspace: Efl.Gfx.Colorspace; [[Requested colorspace. If differen from the internal cspace,
+                                              map should try to convert the data into a new buffer]]
+            @out stride: uint @optional; [[Returns the length in bytes of a mapped line]]
+         }
+         return: void* @warn_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
       }
       unmap {
-	 [[Unmap a region of this buffer, and upload data to the GPU (if needed).]]
-	 params {
-	    @in data: void*; [[Data pointer returned by a previous call to map]]
-	    @in length: uint; [[Must be the same as returned by map.]]
-	 }
+         [[Unmap a region of this buffer, and upload data to the GPU (if needed).]]
+         params {
+            @in data: void*; [[Data pointer returned by a previous call to map]]
+            @in length: uint; [[Must be the same as returned by map.]]
+         }
       }
       pixels_set {
-	 [[Set the source pixels for this buffer, or allocate a new memory region]]
-	 params {
-	    @in pixels: void*; [[If $null, allocates an empty buffer]]
-	    @in width: int;
-	    @in height: int;
-	    @in stride: int; [[Can be 0]]
-	    @in cspace: Efl.Gfx.Colorspace;
-	    @in writable: bool;
-	    @in l: ubyte; [[Left border pixels, usually 0 or 1]]
-	    @in r: ubyte; [[Right border pixels, usually 0 or 1]]
-	    @in t: ubyte; [[Top border pixels, usually 0 or 1]]
-	    @in b: ubyte; [[Bottom border pixels, usually 0 or 1]]
-	 }
-	 return: bool;
+         [[Set the source pixels for this buffer, or allocate a new memory region]]
+         params {
+            @in pixels: void*; [[If $null, allocates an empty buffer]]
+            @in width: int;
+            @in height: int;
+            @in stride: int; [[Can be 0]]
+            @in cspace: Efl.Gfx.Colorspace;
+            @in writable: bool;
+            @in l: ubyte; [[Left border pixels, usually 0 or 1]]
+            @in r: ubyte; [[Right border pixels, usually 0 or 1]]
+            @in t: ubyte; [[Top border pixels, usually 0 or 1]]
+            @in b: ubyte; [[Bottom border pixels, usually 0 or 1]]
+         }
+         return: bool;
       }
       span_get {
-	 [[Get a single horizontal span of length w starting from (x,y)
+         [[Get a single horizontal span of length w starting from (x,y)
 
-	   Call span_free() to release it. This function will try not to
-	   allocate any new buffer, whenever possible. This means the data
-	   might be mapped directly from the backing memory buffer.
-	 ]]
-	 params {
-	    @in x: int; [[Ranges from -l to w+r-1]]
-	    @in y: int; [[Ranges from -t to h+b-1]]
-	    @in w: uint; [[Ranges from 1 to w+l+r]]
-	    @in cspace: Efl.Gfx.Colorspace; [[Requested colorspace, may trigger conversion on the fly.]]
-	    @out length: uint; [[Length in bytes of the returned buffer]]
-	 }
-	 return: uint8*; [[A temporary memory buffer containing the pixels requested.]]
+           Call span_free() to release it. This function will try not to
+           allocate any new buffer, whenever possible. This means the data
+           might be mapped directly from the backing memory buffer.
+         ]]
+         params {
+            @in x: int; [[Ranges from -l to w+r-1]]
+            @in y: int; [[Ranges from -t to h+b-1]]
+            @in w: uint; [[Ranges from 1 to w+l+r]]
+            @in cspace: Efl.Gfx.Colorspace; [[Requested colorspace, may trigger conversion on the fly.]]
+            @out length: uint; [[Length in bytes of the returned buffer]]
+         }
+         return: uint8*; [[A temporary memory buffer containing the pixels requested.]]
       }
       span_free {
-	 [[Must be called as soon as possible after span_get]]
-	 params {
-	    data: uint8*;
-	 }
+         [[Must be called as soon as possible after span_get]]
+         params {
+            data: uint8*;
+         }
       }
       @property flags {
-	 get { [[Get the capabilities of this buffer]] }
-	 values {
-	    flag: Ector.Buffer.Flag; [[A bitmask of capability flags]]
-	 }
+         get { [[Get the capabilities of this buffer]] }
+         values {
+            flag: Ector.Buffer.Flag; [[A bitmask of capability flags]]
+         }
       }
       @property border {
-	 [[Duplicated pixel borders of this buffer, used for GL scaling]]
-	 get {}
-	 values {
-	    l: int;
-	    r: int;
-	    t: int;
-	    b: int;
-	 }
+         [[Duplicated pixel borders of this buffer, used for GL scaling]]
+         get {}
+         values {
+            l: int;
+            r: int;
+            t: int;
+            b: int;
+         }
       }
    }
    events {

@@ -5,7 +5,7 @@ mixin Ector.Software.Buffer.Base (Ector.Generic.Buffer)
    legacy_prefix: null;
    methods {
       pixels_clear @protected {
-	[[Clear internal pixel buffer]]
+        [[Clear internal pixel buffer]]
       }
    }
    implements {
