@@ -33,8 +33,11 @@ extern Eina_Prefix *_eolian_prefix;
 
 extern Eina_Hash *_classes;
 extern Eina_Hash *_aliases;
+extern Eina_Hash *_aliasesd;
 extern Eina_Hash *_structs;
+extern Eina_Hash *_structsd;
 extern Eina_Hash *_enums;
+extern Eina_Hash *_enumsd;
 extern Eina_Hash *_globals;
 extern Eina_Hash *_constants;
 extern Eina_Hash *_classesf;
@@ -177,6 +180,20 @@ struct _Eolian_Type
    Eina_Stringshare *freefunc;
    Eina_Bool is_const  :1;
    Eina_Bool is_own    :1;
+   Eina_Bool is_extern :1;
+};
+
+struct _Eolian_Typedef
+{
+   Eolian_Object base;
+   Eolian_Typedef_Type type;
+   Eina_Stringshare *name;
+   Eina_Stringshare *full_name;
+   Eina_List        *namespaces;
+   Eina_Hash        *fields;
+   Eina_List        *field_list;
+   Eolian_Documentation *doc;
+   Eina_Stringshare *legacy;
    Eina_Bool is_extern :1;
 };
 

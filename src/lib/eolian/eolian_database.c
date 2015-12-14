@@ -9,8 +9,11 @@
 
 Eina_Hash *_classes    = NULL;
 Eina_Hash *_aliases    = NULL;
+Eina_Hash *_aliasesd   = NULL;
 Eina_Hash *_structs    = NULL;
+Eina_Hash *_structsd   = NULL;
 Eina_Hash *_enums      = NULL;
+Eina_Hash *_enumsd     = NULL;
 Eina_Hash *_globals    = NULL;
 Eina_Hash *_constants  = NULL;
 Eina_Hash *_classesf   = NULL;
