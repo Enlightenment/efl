@@ -183,10 +183,10 @@ struct _Eolian_Type
    Eina_Bool is_extern :1;
 };
 
-struct _Eolian_Typedef
+struct _Eolian_Typedecl
 {
    Eolian_Object base;
-   Eolian_Typedef_Type type;
+   Eolian_Typedecl_Type type;
    Eina_Stringshare *name;
    Eina_Stringshare *full_name;
    Eina_List        *namespaces;
