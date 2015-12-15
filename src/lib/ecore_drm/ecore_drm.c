@@ -87,6 +87,8 @@ ecore_drm_init(void)
    /* try to init eeze */
    if (!eeze_init()) goto eeze_err;
 
+   _ecore_drm_inputs_init();
+
    ECORE_DRM_EVENT_ACTIVATE = ecore_event_type_new();
    ECORE_DRM_EVENT_OUTPUT = ecore_event_type_new();
    ECORE_DRM_EVENT_SEAT_ADD = ecore_event_type_new();
@@ -140,6 +142,8 @@ ecore_drm_shutdown(void)
 
    /* shutdown eina */
    eina_shutdown();
+
+   _ecore_drm_inputs_shutdown();
 
    /* return init count */
    return _ecore_drm_init_count;

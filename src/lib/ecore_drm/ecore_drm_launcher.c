@@ -167,5 +167,6 @@ _ecore_drm_launcher_device_close(const char *device, int fd)
 {
    if ((logind) && (device)) _ecore_drm_logind_device_close(device);
 
+   if (fd < 0) return;
    close(fd);
 }

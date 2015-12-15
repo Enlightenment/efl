@@ -289,4 +289,6 @@ void _ecore_drm_dbus_device_release(uint32_t major, uint32_t minor);
 Eina_Bool _ecore_drm_dbus_session_take(void);
 Eina_Bool _ecore_drm_dbus_session_release(void);
 
+void _ecore_drm_inputs_init(void);
+void _ecore_drm_inputs_shutdown(void);
 #endif
