@@ -8,6 +8,12 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina
 
+if HAVE_WINDOWS
+AM_CPPFLAGS += \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil
+endif
+
 LDADD = $(top_builddir)/src/lib/eina/libeina.la @EINA_LDFLAGS@
 
 SRCS = \

@@ -15,6 +15,12 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/eio
 
+if HAVE_WINDOWS
+AM_CPPFLAGS += \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil
+endif
+
 EXTRA_PROGRAMS = \
 eio_file_ls \
 eio_file_copy

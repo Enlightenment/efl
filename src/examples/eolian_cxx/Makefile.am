@@ -42,6 +42,12 @@ AM_CXXFLAGS = \
 	-I$(top_srcdir)/src/lib/ecore_evas \
 	-I$(top_builddir)/src/lib/ecore_evas
 
+if HAVE_WINDOWS
+AM_CXXFLAGS += \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil
+endif
+
 AM_CFLAGS = $(AM_CXXFLAGS)
 
 AM_LDFLAGS = \
