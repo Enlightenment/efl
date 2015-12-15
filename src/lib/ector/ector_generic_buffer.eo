@@ -1,12 +1,13 @@
 enum Ector.Buffer.Flag {
-   none              = 0x00, [[Buffer may not have any backing]]
+   none              = 0x00, [[Buffer may not have any backing, indicates an invalid buffer.]]
    cpu_readable      = 0x01, [[Can be read from the CPU after map. Reading may still be very slow.]]
    cpu_writable      = 0x02, [[Can be written to by the CPU after map. Writing may still be very slow.]]
-   renderable        = 0x04, [[Can be rendered to, ie CPU memory for SW rendering, or an FBO for GL engine]]
-   cpu_readable_fast = 0x08, [[Can be read by the CPU at high speed, ie no need for glReadPixels]]
-   cpu_writable_fast = 0x0A, [[Can be written by the CPU at high speed, ie no need for GPU texture upload]]
-   uncached          = 0x10, [[Backed by uncached memory, ie. slow-ish reads but faster than glReadPixels]]
-/* non_coherent      = 0x20, [[Memory may be mapped but will not be coherent between GPU and CPU. Call flush or invalidate to synchronize it.]] */
+   renderable        = 0x04, [[Can be rendered to, ie CPU memory for SW rendering, or an FBO for GL engine.]]
+   drawable          = 0x08, [[Can be used as a source of pixels to draw on Evas.]]
+   cpu_readable_fast = 0x10, [[Can be read by the CPU at high speed, ie no need for glReadPixels.]]
+   cpu_writable_fast = 0x20, [[Can be written by the CPU at high speed, ie no need for GPU texture upload.]]
+   uncached          = 0x40, [[Backed by uncached memory, ie. slow-ish reads but faster than glReadPixels.]]
+/* non_coherent      = 0x80, [[Memory may be mapped but will not be coherent between GPU and CPU. Call flush or invalidate to synchronize it.]] */
 }
 
 enum Ector.Buffer.Access_Flag {
