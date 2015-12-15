@@ -121,7 +121,7 @@ static Eina_Bool _disable_timing = EINA_TRUE;
 static int _abort_level_on_critical = EINA_LOG_LEVEL_CRITICAL;
 
 #ifdef EINA_LOG_BACKTRACE
-static int _backtrace_level = 2; // CRI & ERR by default
+static int _backtrace_level = 1; // CRI & ERR by default
 #endif
 
 static Eina_Bool _threads_enabled = EINA_FALSE;
@@ -1850,7 +1850,7 @@ eina_log_domain_registered_level_set(int domain, int level)
 
 #ifdef EINA_LOG_BACKTRACE
 # define DISPLAY_BACKTRACE(File, Level) \
-   if (EINA_UNLIKELY(Level < _backtrace_level)) { \
+   if (EINA_UNLIKELY(Level <= _backtrace_level)) { \
       fprintf(File, "*** Backtrace ***\n"); \
       EINA_BT(File); \
    }
@@ -1953,7 +1953,7 @@ eina_log_print_cb_journald(const Eina_Log_Domain *d,
    cur = SELF();
 
 #ifdef EINA_LOG_BACKTRACE
-   if (EINA_LIKELY(level >= _backtrace_level))
+   if (EINA_LIKELY(level > _backtrace_level))
 #endif
      sd_journal_send_with_location(file_prefixed, line_str, fnc,
 				   "PRIORITY=%i", level,
