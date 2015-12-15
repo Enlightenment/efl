@@ -14,8 +14,7 @@ database_type_del(Eolian_Type *tp)
    if (tp->base.file) eina_stringshare_del(tp->base.file);
    if (tp->subtypes) EINA_LIST_FREE(tp->subtypes, stp)
      database_type_del(stp);
-   if (tp->base_type)
-     database_type_del(tp->base_type);
+   database_type_del(tp->base_type);
    if (tp->name) eina_stringshare_del(tp->name);
    if (tp->full_name) eina_stringshare_del(tp->full_name);
    if (tp->fields) eina_hash_free(tp->fields);
@@ -24,6 +23,24 @@ database_type_del(Eolian_Type *tp)
      eina_stringshare_del(sp);
    if (tp->legacy) eina_stringshare_del(tp->legacy);
    if (tp->freefunc) eina_stringshare_del(tp->freefunc);
+   database_doc_del(tp->doc);
+   free(tp);
+}
+
+void
+database_typedecl_del(Eolian_Typedecl *tp)
+{
+   if (!tp) return;
+   const char *sp;
+   if (tp->base.file) eina_stringshare_del(tp->base.file);
+   database_type_del(tp->base_type);
+   if (tp->name) eina_stringshare_del(tp->name);
+   if (tp->full_name) eina_stringshare_del(tp->full_name);
+   if (tp->fields) eina_hash_free(tp->fields);
+   if (tp->field_list) eina_list_free(tp->field_list);
+   if (tp->namespaces) EINA_LIST_FREE(tp->namespaces, sp)
+     eina_stringshare_del(sp);
+   if (tp->legacy) eina_stringshare_del(tp->legacy);
    database_doc_del(tp->doc);
    free(tp);
 }

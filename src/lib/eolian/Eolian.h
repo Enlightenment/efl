@@ -105,6 +105,12 @@ typedef struct _Eolian_Function Eolian_Function;
  */
 typedef struct _Eolian_Type Eolian_Type;
 
+/* Type declaration.
+ *
+ * @ingroup Eolian
+ */
+typedef struct _Eolian_Typedecl Eolian_Typedecl;
+
 /* Class function parameter information
  *
  * @ingroup Eolian

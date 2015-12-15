@@ -187,6 +187,7 @@ struct _Eolian_Typedecl
 {
    Eolian_Object base;
    Eolian_Typedecl_Type type;
+   Eolian_Type      *base_type;
    Eina_Stringshare *name;
    Eina_Stringshare *full_name;
    Eina_List        *namespaces;
@@ -303,6 +304,8 @@ void database_struct_add(Eolian_Type *tp);
 void database_enum_add(Eolian_Type *tp);
 void database_type_del(Eolian_Type *tp);
 void database_typedef_del(Eolian_Type *tp);
+
+void database_typedecl_del(Eolian_Typedecl *tp);
 
 void database_type_print(Eolian_Type *type);
 void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name);
