@@ -2527,7 +2527,7 @@ evas_render_updates_internal(Evas *eo_e,
              if (!eina_rectangles_intersect(&clip_rect, &obj_rect))
                continue;
 
-             if (!evas_object_clip_get(obj->object))
+             if ((!evas_object_clip_get(obj->object)) && (!obj->smart.parent))
                {
                   /* clip this object to the master clip */
                   evas_object_clip_set(obj->object, e->framespace.clip);
