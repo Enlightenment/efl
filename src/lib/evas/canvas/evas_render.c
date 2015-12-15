@@ -2600,6 +2600,10 @@ evas_render_updates_internal(Evas *eo_e,
         ERR("viewport size != output size!");
      }
 
+   if (e->framespace.clip && (e->framespace.changed || e->viewport.changed))
+     evas_object_resize(e->framespace.clip,
+                   e->viewport.w - e->framespace.w,
+                   e->viewport.h - e->framespace.h);
    if (e->framespace.changed)
      {
         /* NB: If the framespace changes, we need to add a redraw rectangle
