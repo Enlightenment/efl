@@ -1704,7 +1704,7 @@ eina_value_optional_type_get(Eina_Value *value)
 
    void *mem = eina_value_memory_get(value);
    if (!mem)
-     return EINA_FALSE;
+     return NULL;
    
    if(2*sizeof(void*) <= sizeof(Eina_Value_Union))
      {

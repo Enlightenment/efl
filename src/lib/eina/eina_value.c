@@ -4406,12 +4406,12 @@ eina_value_optional_new(Eina_Value_Type const *subtype,
    if (!eina_value_setup(value, EINA_VALUE_TYPE_OPTIONAL))
      {
         eina_mempool_free(_eina_value_mp, value);
-        return EINA_FALSE;
+        return NULL;
      }
    if (!eina_value_optional_pset(value, subtype, initial_value))
      {
         eina_mempool_free(_eina_value_mp, value);
-        return EINA_FALSE;
+        return NULL;
      }
    return value;
 }
