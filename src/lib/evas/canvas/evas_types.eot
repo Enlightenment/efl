@@ -193,8 +193,8 @@ enum Evas.Callback_Type
 
    canvas_focus_in, [[Canvas got focus as a whole]]
    canvas_focus_out, [[Canvas lost focus as a whole]]
-   render_flush_pre, [[Called just before rendering is updated on the canvas target]]
-   render_flush_post, [[Called just after rendering is updated on the canvas target]]
+   render_flush_pre, [[Called after render update regions have been calculated, but only if update regions exist]]
+   render_flush_post, [[Called after render update regions have been sent to the display server, but only if update regions existed for the most recent frame]]
    canvas_object_focus_in, [[Canvas object got focus]]
    canvas_object_focus_ouT, [[Canvas object lost focus]]
 
