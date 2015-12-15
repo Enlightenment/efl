@@ -69,6 +69,7 @@ eina_safety_checks_init(void)
    if (!(initcnt++))
      {
         EINA_SAFETY_LOG_DOMAIN = eina_log_domain_register("eina_safety", EINA_COLOR_RED);
+        EINA_ERROR_SAFETY_FAILED = eina_error_msg_static_register("Safety check failed");
      }
    return EINA_TRUE;
 }
@@ -76,6 +77,7 @@ eina_safety_checks_init(void)
 EAPI void
 _eina_safety_error(const char *file, const char *func, int line, const char *str)
 {
+   eina_error_set(EINA_ERROR_SAFETY_FAILED);
    if (EINA_SAFETY_LOG_DOMAIN)
      {
         eina_log_print(EINA_SAFETY_LOG_DOMAIN, EINA_LOG_LEVEL_ERR,
