@@ -2787,7 +2787,8 @@ evas_render_updates_internal(Evas *eo_e,
              eo_ref(eo_e);
              e->rendering = EINA_TRUE;
              _rendering_evases = eina_list_append(_rendering_evases, e);
-
+             if (haveup)
+               _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
              evas_thread_queue_flush((Evas_Thread_Command_Cb)done_func, done_data);
           }
         else if (haveup)
@@ -3009,7 +3010,6 @@ evas_render_wakeup(Evas *eo_e)
           {
              _evas_object_image_video_overlay_do(eo_obj);
           }
-        _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
         _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
      }
 
