@@ -741,7 +741,7 @@ eina_simple_xml_node_tag_free(Eina_Simple_XML_Node_Tag *tag)
    if (!tag)
      return;
 
-   EINA_MAGIC_CHECK_TAG(&tag->base);
+   EINA_MAGIC_CHECK_TAG(&(tag->base));
    if (tag->base.type != EINA_SIMPLE_XML_NODE_TAG)
      {
         ERR("expected tag node!");
@@ -793,7 +793,7 @@ eina_simple_xml_node_data_free(Eina_Simple_XML_Node_Data *node)
    if (!node)
      return;
 
-   EINA_MAGIC_CHECK_DATA(&node->base);
+   EINA_MAGIC_CHECK_DATA(&(node->base));
    if (node->base.type != EINA_SIMPLE_XML_NODE_DATA)
      {
         ERR("expected node of type: data!");
@@ -815,7 +815,7 @@ eina_simple_xml_node_cdata_free(Eina_Simple_XML_Node_Data *node)
    if (!node)
      return;
 
-   EINA_MAGIC_CHECK_DATA(&node->base);
+   EINA_MAGIC_CHECK_DATA(&(node->base));
    if (node->base.type != EINA_SIMPLE_XML_NODE_CDATA)
      {
         ERR("expected node of type: cdata!");
@@ -837,7 +837,7 @@ eina_simple_xml_node_doctype_child_free(Eina_Simple_XML_Node_Data *node)
    if (!node)
      return;
 
-   EINA_MAGIC_CHECK_DATA(&node->base);
+   EINA_MAGIC_CHECK_DATA(&(node->base));
    if (node->base.type != EINA_SIMPLE_XML_NODE_DOCTYPE_CHILD)
      {
         ERR("expected node of type: doctype child!");
@@ -859,7 +859,7 @@ eina_simple_xml_node_processing_free(Eina_Simple_XML_Node_Data *node)
    if (!node)
      return;
 
-   EINA_MAGIC_CHECK_DATA(&node->base);
+   EINA_MAGIC_CHECK_DATA(&(node->base));
    if (node->base.type != EINA_SIMPLE_XML_NODE_PROCESSING)
      {
         ERR("expected node of type: processing!");
@@ -881,7 +881,7 @@ eina_simple_xml_node_doctype_free(Eina_Simple_XML_Node_Data *node)
    if (!node)
      return;
 
-   EINA_MAGIC_CHECK_DATA(&node->base);
+   EINA_MAGIC_CHECK_DATA(&(node->base));
    if (node->base.type != EINA_SIMPLE_XML_NODE_DOCTYPE)
      {
         ERR("expected node of type: doctype!");
@@ -903,7 +903,7 @@ eina_simple_xml_node_comment_free(Eina_Simple_XML_Node_Data *node)
    if (!node)
      return;
 
-   EINA_MAGIC_CHECK_DATA(&node->base);
+   EINA_MAGIC_CHECK_DATA(&(node->base));
    if (node->base.type != EINA_SIMPLE_XML_NODE_COMMENT)
      {
         ERR("expected node of type: comment!");
@@ -1042,7 +1042,7 @@ EAPI void
 eina_simple_xml_node_root_free(Eina_Simple_XML_Node_Root *root)
 {
    if (!root) return;
-   EINA_MAGIC_CHECK_TAG(&root->base);
+   EINA_MAGIC_CHECK_TAG(&(root->base));
    if (root->base.type != EINA_SIMPLE_XML_NODE_ROOT)
      {
         ERR("expected root node!");
