@@ -2882,26 +2882,6 @@ evas_render_updates_internal(Evas *eo_e,
           }
      }
 
-   if (!strncmp(e->engine.module->definition->name, "wayland", 7))
-     {
-        /* unclip objects from master clip */
-        for (i = 0; i < e->render_objects.count; ++i)
-          {
-             obj = eina_array_data_get(&e->render_objects, i);
-             if (obj->is_frame) continue;
-             if (obj->object == e->framespace.clip) continue;
-
-             if (evas_object_clip_get(obj->object) == e->framespace.clip)
-               {
-                  /* unclip this object from the master clip */
-                  evas_object_clip_unset(obj->object);
-               }
-          }
-
-        /* delete master clip */
-        evas_object_del(e->framespace.clip);
-        e->framespace.clip = NULL;
-     }
 
    e->changed = EINA_FALSE;
    e->viewport.changed = EINA_FALSE;
