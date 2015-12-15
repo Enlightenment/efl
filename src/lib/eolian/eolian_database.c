@@ -84,8 +84,11 @@ database_shutdown()
      {
         eina_hash_free(_classes   ); _classes    = NULL;
         eina_hash_free(_aliases   ); _aliases    = NULL;
+        eina_hash_free(_aliasesd  ); _aliasesd   = NULL;
         eina_hash_free(_structs   ); _structs    = NULL;
+        eina_hash_free(_structsd  ); _structsd   = NULL;
         eina_hash_free(_enums     ); _enums      = NULL;
+        eina_hash_free(_enumsd    ); _enumsd     = NULL;
         eina_hash_free(_globals   ); _globals    = NULL;
         eina_hash_free(_constants ); _constants  = NULL;
         eina_hash_free(_classesf  ); _classesf   = NULL;
