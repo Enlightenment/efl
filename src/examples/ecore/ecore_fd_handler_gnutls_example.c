@@ -1,15 +1,27 @@
 //Compile with:
 // gcc -o ecore_fd_handler_gnutls_example ecore_fd_handler_gnutls_example.c `pkg-config --cflags --libs ecore gnutls`
 
-#include <Ecore.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <fcntl.h>
-#include <netinet/tcp.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
+#ifdef HAVE_NETINET_TCP_H
+# include <netinet/tcp.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+#ifdef HAVE_ARPA_INET_H
+# include <arpa/inet.h>
+#endif
 #include <errno.h>
 #include <unistd.h>
 #include <gnutls/gnutls.h>
+#include <Ecore.h>
 
 /* Ecore_Fd_Handler example
  * 2010 Mike Blumenkrantz
@@ -109,8 +121,13 @@ tcp_connect(void)
 static void
 tcp_close(int sd)
 {
+#ifdef _WIN32
+   shutdown(sd, SD_BOTH);     /* no more receptions */
+   closesocket(sd);
+#else
    shutdown(sd, SHUT_RDWR);     /* no more receptions */
    close(sd);
+#endif
 }
 
 static Eina_Bool
@@ -185,7 +202,7 @@ main(void)
    sd = tcp_connect();
 
    /* associate gnutls with socket */
-   gnutls_transport_set_ptr(client, (gnutls_transport_ptr_t)sd);
+   gnutls_transport_set_ptr(client, (gnutls_transport_ptr_t)(uintptr_t)sd);
    /* add a callback for data being available for send/receive on socket */
    if (!ecore_main_fd_handler_add(sd, ECORE_FD_READ | ECORE_FD_WRITE, (Ecore_Fd_Cb)_process_data, client, NULL, NULL))
      {
