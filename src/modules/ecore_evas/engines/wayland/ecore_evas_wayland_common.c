@@ -1289,7 +1289,7 @@ static const struct wl_callback_listener _anim_listener =
 };
 
 void
-_ecore_evas_wl_common_render_pre(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED)
+_ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Wl_Data *wdata;
@@ -1299,15 +1299,6 @@ _ecore_evas_wl_common_render_pre(void *data, Evas *evas EINA_UNUSED, void *event
      wl_surface_frame(ecore_wl2_window_surface_get(wdata->win));
    wl_callback_add_listener(wdata->anim_callback, &_anim_listener, ee);
    ecore_evas_manual_render_set(ee, 1);
-}
-
-void
-_ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED)
-{
-   Ecore_Evas *ee = data;
-   Ecore_Evas_Engine_Wl_Data *wdata;
-
-   wdata = ee->engine.data;
    if (wdata->win->configure_ack && wdata->win->configure_serial)
      wdata->win->configure_ack(wdata->win->xdg_surface,
                                wdata->win->configure_serial);
