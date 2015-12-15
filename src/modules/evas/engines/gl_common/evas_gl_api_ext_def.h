@@ -1468,8 +1468,13 @@ _EVASGL_EXT_END()
 
 // Disable warnings about deprecated functions here
 #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__clang__)
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #endif
+
 
 _EVASGL_EXT_BEGIN(EGL_KHR_image_base)
 
@@ -1503,7 +1508,9 @@ _EVASGL_EXT_BEGIN(EGL_KHR_image_base)
 _EVASGL_EXT_END()
 
 #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
-#pragma GCC diagnostic pop
+# pragma GCC diagnostic pop
+#elif defined(__clang__)
+# pragma clang diagnostic pop
 #endif
 
 
