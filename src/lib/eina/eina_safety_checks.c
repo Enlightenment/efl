@@ -25,44 +25,32 @@
 #include "eina_log.h"
 #include "eina_safety_checks.h"
 
-/*============================================================================*
-*                                  Local                                     *
-*============================================================================*/
+EAPI Eina_Error EINA_ERROR_SAFETY_FAILED = 0;
 
-/*============================================================================*
-*                                 Global                                     *
-*============================================================================*/
+static int EINA_SAFETY_LOG_DOMAIN = 0;
+static int initcnt = 0;
 
 /**
+ * Log entry-point called every time an eina safety check fails.
+ *
+ * One purpose of this dedicated function is to provide a convenient breakpoint
+ * for GDB debugging. Also, this gives it a dedicated log domain, rather than
+ * using the default one.
+ *
+ * @since 1.17
  * @internal
- * @brief Shut down the safety checks module.
- *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
- *
- * This function shuts down the error module set up by
- * eina_safety_checks_init(). It is called by eina_shutdown().
- *
- * @see eina_shutdown()
  */
 Eina_Bool
 eina_safety_checks_shutdown(void)
 {
+   if (!initcnt) return EINA_FALSE;
+   if (!(--initcnt))
+     {
+        eina_log_domain_unregister(EINA_SAFETY_LOG_DOMAIN);
+        EINA_SAFETY_LOG_DOMAIN = 0;
+     }
    return EINA_TRUE;
 }
-
-/*============================================================================*
-*                                   API                                      *
-*============================================================================*/
-
-/**
- * @cond LOCAL
- */
-
-EAPI Eina_Error EINA_ERROR_SAFETY_FAILED = 0;
-
-/**
- * @endcond
- */
 
 /**
  * @internal
@@ -78,9 +66,24 @@ EAPI Eina_Error EINA_ERROR_SAFETY_FAILED = 0;
 Eina_Bool
 eina_safety_checks_init(void)
 {
+   if (!(initcnt++))
+     {
+        EINA_SAFETY_LOG_DOMAIN = eina_log_domain_register("eina_safety", EINA_COLOR_RED);
+     }
    return EINA_TRUE;
 }
 
-/**
- * @}
- */
+EAPI void
+_eina_safety_error(const char *file, const char *func, int line, const char *str)
+{
+   if (EINA_SAFETY_LOG_DOMAIN)
+     {
+        eina_log_print(EINA_SAFETY_LOG_DOMAIN, EINA_LOG_LEVEL_ERR,
+                       file, func, line, "%s", str);
+     }
+   else
+     {
+        eina_log_print(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_ERR,
+                       file, func, line, "%s", str);
+     }
+}
