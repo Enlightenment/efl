@@ -583,16 +583,21 @@ _elm_interface_atspi_accessible_type_get(Eo *obj EINA_UNUSED, Elm_Interface_Atsp
 EOLIAN void
 _elm_interface_atspi_accessible_type_set(Eo *obj, Elm_Interface_Atspi_Accessible_Data *pd, Elm_Atspi_Type val)
 {
+   Elm_Interface_Atspi_Accessible *parent;
    if (val == pd->type)
      return;
+
+   eo_do(obj, parent = elm_interface_atspi_accessible_parent_get());
 
    switch (val)
      {
       case ELM_ATSPI_TYPE_DISABLED:
       case ELM_ATSPI_TYPE_SKIPPED:
+         if (parent) elm_interface_atspi_accessible_children_changed_del_signal_emit(parent, obj);
          elm_interface_atspi_accessible_removed(obj);
          break;
       case ELM_ATSPI_TYPE_REGULAR:
+         if (parent) elm_interface_atspi_accessible_children_changed_added_signal_emit(parent, obj);
          elm_interface_atspi_accessible_added(obj);
      }
    pd->type = val;

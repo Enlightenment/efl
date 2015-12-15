@@ -4,6 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
+#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -386,7 +387,6 @@ _item_del(Elm_Multibuttonentry_Item_Data *item)
 
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(obj, sd);
 
-   sd->items = eina_list_remove(sd->items, EO_OBJ(item));
    elm_box_unpack(sd->box, VIEW(item));
 
    eo_do(obj, eo_event_callback_call
@@ -540,6 +540,7 @@ _on_item_deleted(void *data,
         if (VIEW(temp_it) == obj)
           {
              eo_do(eo_temp_it, elm_wdg_item_del());
+             sd->items = eina_list_remove(sd->items, eo_temp_it);
              break;
           }
      }
@@ -649,6 +650,8 @@ EOLIAN static void
 _elm_multibuttonentry_item_eo_base_destructor(Eo *eo_it,
                                               Elm_Multibuttonentry_Item_Data *it)
 {
+   if (_elm_config->atspi_mode)
+     elm_interface_atspi_accessible_children_changed_del_signal_emit(WIDGET(it), eo_it);
    _item_del(it);
 
    eo_do_super(eo_it, ELM_MULTIBUTTONENTRY_ITEM_CLASS, eo_destructor());
@@ -742,8 +745,12 @@ _item_new(Elm_Multibuttonentry_Data *sd,
      return NULL;
    WIDGET_ITEM_DATA_SET(eo_item, data);
 
+   eo_do(eo_item, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_PUSH_BUTTON));
+
    ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_item, item);
    VIEW(item) = elm_layout_add(obj);
+
+   eo_do(VIEW(item), elm_interface_atspi_accessible_type_set(ELM_ATSPI_TYPE_DISABLED));
 
    if (!elm_layout_theme_set
        (VIEW(item), "multibuttonentry", "btn", elm_widget_style_get(obj)))
@@ -905,8 +912,15 @@ _item_new(Elm_Multibuttonentry_Data *sd,
       default:
         break;
      }
+
    eo_do(obj, eo_event_callback_call
      (ELM_MULTIBUTTONENTRY_EVENT_ITEM_ADDED, eo_item));
+
+   if (_elm_config->atspi_mode)
+     {
+        elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, eo_item);
+        elm_interface_atspi_accessible_added(eo_item);
+     }
 
    return eo_item;
 }
@@ -1985,6 +1999,62 @@ _elm_multibuttonentry_class_constructor(Eo_Class *klass)
 
    if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
       _elm_multibuttonentry_smart_focus_next_enable = EINA_TRUE;
+}
+
+EOLIAN static Eina_List*
+_elm_multibuttonentry_elm_interface_atspi_accessible_children_get(Eo *obj, Elm_Multibuttonentry_Data *sd)
+{
+   Eina_List *ret;
+   eo_do_super(obj, ELM_MULTIBUTTONENTRY_CLASS, ret = elm_interface_atspi_accessible_children_get());
+   return eina_list_merge(eina_list_clone(sd->items), ret);
+}
+
+EOLIAN static char*
+_elm_multibuttonentry_item_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Multibuttonentry_Item_Data *item)
+{
+   char *ret;
+   eo_do_super(obj, ELM_MULTIBUTTONENTRY_ITEM_CLASS, ret = elm_interface_atspi_accessible_name_get());
+   if (ret) return ret;
+
+   const char *txt = elm_object_part_text_get(VIEW(item), "elm.btn.text");
+   return txt ? strdup(txt) : NULL;
+}
+
+static Eina_Bool
+_key_action_activate(Eo *obj, const char *params EINA_UNUSED)
+{
+   ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(obj, it);
+   elm_layout_signal_emit(VIEW(it), "mouse,clicked,1", "elm");
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_key_action_delete(Eo *obj, const char *params EINA_UNUSED)
+{
+   ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(obj, it);
+   elm_layout_signal_emit(VIEW(it), "elm,deleted", "elm");
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_key_action_longpress(Eo *obj, const char *params EINA_UNUSED)
+{
+   ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(obj, it);
+   eo_do(WIDGET(it), eo_event_callback_call
+     (ELM_MULTIBUTTONENTRY_EVENT_ITEM_LONGPRESSED, obj));
+   return EINA_TRUE;
+}
+
+EOLIAN const Elm_Atspi_Action *
+_elm_multibuttonentry_item_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Item_Data *pd EINA_UNUSED)
+{
+   static Elm_Atspi_Action atspi_actions[] = {
+          { "activate", NULL, NULL, _key_action_activate },
+          { "delete", NULL, NULL, _key_action_delete},
+          { "longpress", NULL, NULL, _key_action_longpress},
+          { NULL, NULL, NULL, NULL}
+   };
+   return &atspi_actions[0];
 }
 
 #include "elm_multibuttonentry_item.eo.c"

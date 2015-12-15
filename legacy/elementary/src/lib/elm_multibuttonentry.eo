@@ -184,6 +184,7 @@ class Elm.Multibuttonentry (Elm.Layout)
       Elm.Layout.text_set;
       Elm.Layout.text_get;
       Elm.Layout.sizing_eval;
+      Elm_Interface_Atspi_Accessible.children.get;
    }
    events {
       item,selected;
