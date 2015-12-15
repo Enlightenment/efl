@@ -196,10 +196,10 @@ rotate_xyz(float matrix[16], const float anglex, const float angley,
 
 static int
 view_set_ortho(float result[16], const float left, const float right,
-               const float bottom, const float top, const float near,
-               const float far)
+               const float bottom, const float top, const float near_,
+               const float far_)
 {
-   if ((right - left) == 0.0f || (top - bottom) == 0.0f || (far - near) == 0.0f)
+   if ((right - left) == 0.0f || (top - bottom) == 0.0f || (far_ - near_) == 0.0f)
         return 0;
 
     result[0] = 2.0f / (right - left);
@@ -212,11 +212,11 @@ view_set_ortho(float result[16], const float left, const float right,
     result[7] = 0.0f;
     result[8] = 0.0f;
     result[9] = 0.0f;
-    result[10] = -2.0f / (far - near);
+    result[10] = -2.0f / (far_ - near_);
     result[11] = 0.0f;
     result[12] = -(right + left) / (right - left);
     result[13] = -(top + bottom) / (top - bottom);
-    result[14] = -(far + near) / (far - near);
+    result[14] = -(far_ + near_) / (far_ - near_);
     result[15] = 1.0f;
 
     return 1;
