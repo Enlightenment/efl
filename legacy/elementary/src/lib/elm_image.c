@@ -333,16 +333,20 @@ _elm_image_async_open_done(void *data, Ecore_Thread *thread EINA_UNUSED)
 
    ELM_IMAGE_DATA_GET(obj, sd);
 
-   // no need to lock here, thread can't be running now
+   // async open thread can't be running now
+   // locking anyways to be sure (memory barrier), see CID 1343345
+   eina_spinlock_take(&sd->async.lck);
 
    sd->async.th = NULL;
    sd->async_failed = EINA_FALSE;
 
    if (sd->async.todo)
      {
+        eina_spinlock_release(&sd->async.lck);
         sd->async.th = ecore_thread_run(_elm_image_async_open_do,
                                         _elm_image_async_open_done,
                                         _elm_image_async_open_cancel, obj);
+
         return;
      }
 
@@ -354,12 +358,14 @@ _elm_image_async_open_done(void *data, Ecore_Thread *thread EINA_UNUSED)
         // done should be NULL only after cancel... not here
         ERR("Async open failed for an unknown reason.");
         sd->async_failed = EINA_TRUE;
+        eina_spinlock_release(&sd->async.lck);
         eo_do(obj, eo_event_callback_call(EFL_FILE_EVENT_ASYNC_ERROR, NULL));
         return;
      }
 
    DBG("Async open succeeded");
    sd->async.done = NULL;
+   eina_spinlock_release(&sd->async.lck);
    key = done->key;
    map = done->map;
    f = done->f_open;
