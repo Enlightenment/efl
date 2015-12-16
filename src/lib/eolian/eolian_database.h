@@ -178,6 +178,7 @@ struct _Eolian_Type
    Eolian_Documentation *doc;
    Eina_Stringshare *legacy;
    Eina_Stringshare *freefunc;
+   Eolian_Typedecl *decl;
    Eina_Bool is_const  :1;
    Eina_Bool is_own    :1;
    Eina_Bool is_extern :1;
