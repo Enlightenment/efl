@@ -54,7 +54,7 @@ lib_emile_libemile_la_LIBADD = @EMILE_LIBS@
 lib_emile_libemile_la_DEPENDENCIES = @EMILE_INTERNAL_LIBS@
 lib_emile_libemile_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
-if ! ENABLE_LIBLZ4
+if ENABLE_LIBLZ4
 lib_emile_libemile_la_LIBADD += @LIBLZ4_LIBS@
 endif
 
