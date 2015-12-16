@@ -2667,6 +2667,9 @@ module_open(Evas_Module *em)
         return 0;
      }
 
+   ector_init();
+   ector_glsym_set(dlsym, RTLD_DEFAULT);
+
    /* store it for later use */
    func = pfunc;
    /* now to override methods */
@@ -2810,6 +2813,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
+   ector_shutdown();
    eina_log_domain_unregister(_evas_engine_GL_log_dom);
    evas_gl_common_module_close();
 }

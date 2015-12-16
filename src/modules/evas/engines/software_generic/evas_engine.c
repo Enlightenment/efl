@@ -5269,7 +5269,9 @@ module_open(Evas_Module *em)
      eina_mempool_add("chained_mempool", "Evas_Thread_Command_Ector_Surface",
                       NULL, sizeof(Evas_Thread_Command_Ector_Surface), 128);
 
+   ector_init();
    init_gl();
+   ector_glsym_set(dlsym, RTLD_DEFAULT);
    evas_common_pipe_init();
 
    em->functions = (void *)(&func);
@@ -5280,6 +5282,7 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
+   ector_shutdown();
    eina_mempool_del(_mp_command_rect);
    eina_mempool_del(_mp_command_line);
    eina_mempool_del(_mp_command_polygon);
