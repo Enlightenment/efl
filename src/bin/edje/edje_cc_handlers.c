@@ -168,6 +168,8 @@ static Eina_List *sequencing_lookups = NULL;
 
 Eina_List *po_files;
 
+static Eina_Hash *desc_hash = NULL;
+
 struct _Edje_Cc_Handlers_Hierarchy_Info
 {  /* Struct that keeps globals value to impl hierarchy */
    Edje_Part_Collection_Directory_Entry *current_de;
@@ -2751,6 +2753,7 @@ ob_collections(void)
      {
         edje_file->collection = eina_hash_string_small_new(NULL);
         edje_collections_lookup = eina_hash_int32_new(NULL);
+        desc_hash = eina_hash_pointer_new(NULL);
      }
 }
 
@@ -4857,6 +4860,7 @@ _part_type_set(unsigned int type)
           {
              new = _edje_part_description_alloc(type, pc->part, ep->name);
              memcpy(new, previous, sizeof (Edje_Part_Description_Common));
+             eina_hash_add(desc_hash, &new, ep);
 
              ep->default_desc = new;
           }
@@ -4866,6 +4870,7 @@ _part_type_set(unsigned int type)
              previous = ep->other.desc[i];
              new = _edje_part_description_alloc(type, pc->part, ep->name);
              memcpy(new, previous, sizeof (Edje_Part_Description_Common));
+             eina_hash_add(desc_hash, &new, ep);
              ep->other.desc[i] = new;
           }
      }
@@ -4927,6 +4932,8 @@ _part_desc_free(Edje_Part_Collection *pc,
                 Edje_Part_Description_Common *ed)
 {
    if (!ed) return NULL;
+
+   eina_hash_del_by_key(desc_hash, &ed);
 
    part_lookup_del(pc, &(ed->rel1.id_x));
    part_lookup_del(pc, &(ed->rel1.id_y));
@@ -6834,6 +6841,7 @@ ob_collections_group_parts_part_description(void)
    ep = current_part;
 
    ed = _edje_part_description_alloc(ep->type, pc->part, ep->name);
+   eina_hash_add(desc_hash, &ed, ep);
 
    ed->rel1.id_x = -1;
    ed->rel1.id_y = -1;
@@ -6937,7 +6945,7 @@ static void
 st_collections_group_parts_part_description_inherit(void)
 {
    Edje_Part_Collection *pc;
-   Edje_Part *ep;
+   Edje_Part *ep, *parent_ep = NULL;
    Edje_Part_Description_Common *ed, *parent = NULL;
    Edje_Part_Image_Id *iid;
    char *parent_name;
@@ -6949,7 +6957,9 @@ st_collections_group_parts_part_description_inherit(void)
    ed = current_desc;
 
    parent = parent_desc;
-   if (!parent)
+   if (parent)
+     parent_ep = eina_hash_find(desc_hash, &parent);
+   else
      {
         /* inherit may not be used in the default description */
         if (!ep->other.desc_count)
@@ -7053,6 +7063,14 @@ st_collections_group_parts_part_description_inherit(void)
 
    ed->color_class = STRDUP(ed->color_class);
    ed->map.colors = _copied_map_colors_get(parent);
+
+   if (parent_ep && (parent_ep->type != ep->type))
+     {
+        /* ensure parent's owner is a compatible type of part */
+        if (((ep->type != EDJE_PART_TYPE_TEXT) && (ep->type != EDJE_PART_TYPE_TEXTBLOCK)) ||
+            ((parent_ep->type != EDJE_PART_TYPE_TEXT) && (parent_ep->type != EDJE_PART_TYPE_TEXTBLOCK)))
+          return;
+     }
 
    switch (ep->type)
      {
