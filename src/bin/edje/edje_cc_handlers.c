@@ -4837,6 +4837,61 @@ edje_cc_handlers_part_make(int id)
    return ep;
 }
 
+static void *
+_part_desc_free(Edje_Part_Collection *pc,
+                Edje_Part *ep,
+                Edje_Part_Description_Common *ed)
+{
+   if (!ed) return NULL;
+
+   eina_hash_del_by_key(desc_hash, &ed);
+
+   part_lookup_del(pc, &(ed->rel1.id_x));
+   part_lookup_del(pc, &(ed->rel1.id_y));
+   part_lookup_del(pc, &(ed->rel2.id_x));
+   part_lookup_del(pc, &(ed->rel2.id_y));
+   part_lookup_del(pc, &(ed->clip_to_id));
+   part_lookup_del(pc, &(ed->map.id_persp));
+   part_lookup_del(pc, &(ed->map.id_light));
+   part_lookup_del(pc, &(ed->map.rot.id_center));
+
+   switch (ep->type)
+     {
+      case EDJE_PART_TYPE_SPACER:
+      case EDJE_PART_TYPE_RECTANGLE:
+      case EDJE_PART_TYPE_SWALLOW:
+      case EDJE_PART_TYPE_GROUP:
+         /* Nothing todo, this part only have a common description. */
+         break;
+      case EDJE_PART_TYPE_BOX:
+      case EDJE_PART_TYPE_TABLE:
+      case EDJE_PART_TYPE_IMAGE:
+      case EDJE_PART_TYPE_SNAPSHOT:
+         /* Nothing todo here */
+         break;
+      case EDJE_PART_TYPE_TEXT:
+      case EDJE_PART_TYPE_TEXTBLOCK:
+        {
+           Edje_Part_Description_Text *ted = (Edje_Part_Description_Text*) ed;
+
+           part_lookup_del(pc, &(ted->text.id_source));
+           part_lookup_del(pc, &(ted->text.id_text_source));
+           break;
+        }
+      case EDJE_PART_TYPE_PROXY:
+        {
+           Edje_Part_Description_Proxy *ped = (Edje_Part_Description_Proxy*) ed;
+
+           part_lookup_del(pc, &(ped->proxy.id));
+           break;
+        }
+     }
+
+   free((void*)ed->state.name);
+   free(ed);
+   return NULL;
+}
+
 static void
 _part_type_set(unsigned int type)
 {
@@ -4923,61 +4978,6 @@ static void
 ob_collections_group_parts_part(void)
 {
    _part_create();
-}
-
-static void *
-_part_desc_free(Edje_Part_Collection *pc,
-                Edje_Part *ep,
-                Edje_Part_Description_Common *ed)
-{
-   if (!ed) return NULL;
-
-   eina_hash_del_by_key(desc_hash, &ed);
-
-   part_lookup_del(pc, &(ed->rel1.id_x));
-   part_lookup_del(pc, &(ed->rel1.id_y));
-   part_lookup_del(pc, &(ed->rel2.id_x));
-   part_lookup_del(pc, &(ed->rel2.id_y));
-   part_lookup_del(pc, &(ed->clip_to_id));
-   part_lookup_del(pc, &(ed->map.id_persp));
-   part_lookup_del(pc, &(ed->map.id_light));
-   part_lookup_del(pc, &(ed->map.rot.id_center));
-
-   switch (ep->type)
-     {
-      case EDJE_PART_TYPE_SPACER:
-      case EDJE_PART_TYPE_RECTANGLE:
-      case EDJE_PART_TYPE_SWALLOW:
-      case EDJE_PART_TYPE_GROUP:
-         /* Nothing todo, this part only have a common description. */
-         break;
-      case EDJE_PART_TYPE_BOX:
-      case EDJE_PART_TYPE_TABLE:
-      case EDJE_PART_TYPE_IMAGE:
-      case EDJE_PART_TYPE_SNAPSHOT:
-         /* Nothing todo here */
-         break;
-      case EDJE_PART_TYPE_TEXT:
-      case EDJE_PART_TYPE_TEXTBLOCK:
-        {
-           Edje_Part_Description_Text *ted = (Edje_Part_Description_Text*) ed;
-
-           part_lookup_del(pc, &(ted->text.id_source));
-           part_lookup_del(pc, &(ted->text.id_text_source));
-           break;
-        }
-      case EDJE_PART_TYPE_PROXY:
-        {
-           Edje_Part_Description_Proxy *ped = (Edje_Part_Description_Proxy*) ed;
-
-           part_lookup_del(pc, &(ped->proxy.id));
-           break;
-        }
-     }
-
-   free((void*)ed->state.name);
-   free(ed);
-   return NULL;
 }
 
 static void *
