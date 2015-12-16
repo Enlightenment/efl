@@ -524,7 +524,7 @@ _elm_widget_evas_object_smart_resize(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data 
 }
 
 EOLIAN static void
-_elm_widget_evas_object_smart_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
+_elm_widget_evas_object_smart_show(Eo *obj, Elm_Widget_Smart_Data *_pd)
 {
    Eina_Iterator *it;
    Evas_Object *o;
@@ -540,13 +540,13 @@ _elm_widget_evas_object_smart_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUS
    if (_elm_config->atspi_mode)
      {
         elm_interface_atspi_accessible_added(obj);
-        if (_elm_widget_onscreen_is(obj))
+        if (!_pd->on_destroy && _elm_widget_onscreen_is(obj))
            elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_SHOWING, EINA_TRUE);
      }
 }
 
 EOLIAN static void
-_elm_widget_evas_object_smart_hide(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
+_elm_widget_evas_object_smart_hide(Eo *obj, Elm_Widget_Smart_Data *_pd)
 {
    Eina_Iterator *it;
    Evas_Object *o;
@@ -559,7 +559,7 @@ _elm_widget_evas_object_smart_hide(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUS
      }
    eina_iterator_free(it);
 
-   if (_elm_config->atspi_mode)
+   if (_elm_config->atspi_mode && !_pd->on_destroy)
      elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_SHOWING, EINA_FALSE);
 }
 
