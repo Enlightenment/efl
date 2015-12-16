@@ -3,6 +3,8 @@
 
 #include "Ector.h"
 
+#include "ector_gl_internal.h"
+
 /*
  * variable and macros used for the eina_log module
  */

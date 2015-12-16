@@ -162,6 +162,8 @@ EAPI int ector_init(void);
  */
 EAPI int ector_shutdown(void);
 
+EAPI Eina_Bool ector_glsym_set(void *(*glsym)(void *lib, const char *name), void *lib);
+
 #include "ector_surface.h"
 #include "ector_renderer.h"
 #include "ector_util.h"
