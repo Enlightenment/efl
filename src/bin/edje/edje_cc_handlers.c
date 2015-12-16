@@ -4913,8 +4913,13 @@ _part_type_set(unsigned int type)
         if (previous)
           {
              new = _edje_part_description_alloc(type, pc->part, ep->name);
-             memcpy(new, previous, sizeof (Edje_Part_Description_Common));
              eina_hash_add(desc_hash, &new, ep);
+             parent_desc = previous;
+             new->state.name = strdup(previous->state.name);
+             new->state.value = previous->state.value;
+             st_collections_group_parts_part_description_inherit();
+             parent_desc = NULL;
+             _part_desc_free(pc, ep, previous);
 
              ep->default_desc = new;
           }
@@ -4923,8 +4928,13 @@ _part_type_set(unsigned int type)
           {
              previous = ep->other.desc[i];
              new = _edje_part_description_alloc(type, pc->part, ep->name);
-             memcpy(new, previous, sizeof (Edje_Part_Description_Common));
              eina_hash_add(desc_hash, &new, ep);
+             parent_desc = previous;
+             new->state.name = strdup(previous->state.name);
+             new->state.value = previous->state.value;
+             st_collections_group_parts_part_description_inherit();
+             parent_desc = NULL;
+             _part_desc_free(pc, ep, previous);
              ep->other.desc[i] = new;
           }
      }
