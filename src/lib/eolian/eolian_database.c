@@ -9,11 +9,8 @@
 
 Eina_Hash *_classes    = NULL;
 Eina_Hash *_aliases    = NULL;
-Eina_Hash *_aliasesd   = NULL;
 Eina_Hash *_structs    = NULL;
-Eina_Hash *_structsd   = NULL;
 Eina_Hash *_enums      = NULL;
-Eina_Hash *_enumsd     = NULL;
 Eina_Hash *_globals    = NULL;
 Eina_Hash *_constants  = NULL;
 Eina_Hash *_classesf   = NULL;
@@ -47,11 +44,8 @@ database_init()
    eina_init();
    _classes    = eina_hash_stringshared_new(EINA_FREE_CB(database_class_del));
    _aliases    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedef_del));
-   _aliasesd   = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    _structs    = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
-   _structsd   = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    _enums      = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
-   _enumsd     = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    _globals    = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
    _constants  = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
    _classesf   = eina_hash_stringshared_new(NULL);
@@ -84,11 +78,8 @@ database_shutdown()
      {
         eina_hash_free(_classes   ); _classes    = NULL;
         eina_hash_free(_aliases   ); _aliases    = NULL;
-        eina_hash_free(_aliasesd  ); _aliasesd   = NULL;
         eina_hash_free(_structs   ); _structs    = NULL;
-        eina_hash_free(_structsd  ); _structsd   = NULL;
         eina_hash_free(_enums     ); _enums      = NULL;
-        eina_hash_free(_enumsd    ); _enumsd     = NULL;
         eina_hash_free(_globals   ); _globals    = NULL;
         eina_hash_free(_constants ); _constants  = NULL;
         eina_hash_free(_classesf  ); _classesf   = NULL;

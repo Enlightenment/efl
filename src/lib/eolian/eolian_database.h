@@ -33,11 +33,8 @@ extern Eina_Prefix *_eolian_prefix;
 
 extern Eina_Hash *_classes;
 extern Eina_Hash *_aliases;
-extern Eina_Hash *_aliasesd;
 extern Eina_Hash *_structs;
-extern Eina_Hash *_structsd;
 extern Eina_Hash *_enums;
-extern Eina_Hash *_enumsd;
 extern Eina_Hash *_globals;
 extern Eina_Hash *_constants;
 extern Eina_Hash *_classesf;
