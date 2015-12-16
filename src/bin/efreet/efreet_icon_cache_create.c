@@ -1056,6 +1056,7 @@ main(int argc, char **argv)
     eet_data_write(theme_ef, efreet_version_edd(), EFREET_CACHE_VERSION, theme_version, 1);
 
     eet_close(theme_ef);
+    theme_ef = NULL;
     efreet_setowner(efreet_icon_theme_cache_file());
     free(theme_version);
 
