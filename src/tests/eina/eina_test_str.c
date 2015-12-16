@@ -365,29 +365,31 @@ START_TEST(str_strftime)
 }
 END_TEST
 
+/* All cases are taken from https://en.wikipedia.org/wiki/Base64 */
+static const struct {
+   char *decoded_str;
+   char *encoded_normal;
+   char *encoded_url;
+   unsigned int len;
+   Eina_Bool not;
+} tests[] = {
+  { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3VyZS4=", "YW55IGNhcm5hbCBwbGVhc3VyZS4", 20 },
+  { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3VyZQ==", "YW55IGNhcm5hbCBwbGVhc3VyZQ", 19 },
+  { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3Vy", "YW55IGNhcm5hbCBwbGVhc3Vy", 18 },
+  { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3U=", "YW55IGNhcm5hbCBwbGVhc3U", 17 },
+  { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhcw==", "YW55IGNhcm5hbCBwbGVhcw", 16 },
+  { "pleasure.", "cGxlYXN1cmUu", "cGxlYXN1cmUu", 9 },
+  { "leasure.", "bGVhc3VyZS4=", "bGVhc3VyZS4", 8 },
+  { "easure.", "ZWFzdXJlLg==", "ZWFzdXJlLg", 7 },
+  { "asure.", "YXN1cmUu", "YXN1cmUu", 6 },
+  { "sure.", "c3VyZS4=", "c3VyZS4", 5 },
+  /* The following 2 cases are manually generated for -/ testing*/
+  { "aabc123!?", "YWFiYzEyMyE/", "YWFiYzEyMyE_", 9 },
+  { "abc123!?$*&()'-=@~", "YWJjMTIzIT8kKiYoKSctPUB+", "YWJjMTIzIT8kKiYoKSctPUB-", 18 }
+};
+
 START_TEST(str_base64_encode_decode)
 {
-   /* All cases are taken from https://en.wikipedia.org/wiki/Base64 */
-   static const struct {
-      char *decoded_str;
-      char *encoded_str;
-      int len;
-      Eina_Bool not;
-   } tests[] = {
-     { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3VyZS4=", 20 },
-     { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3VyZQ==", 19 },
-     { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3Vy", 18 },
-     { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3U=", 17 },
-     { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhcw==", 16 },
-     { "pleasure.", "cGxlYXN1cmUu", 9 },
-     { "leasure.", "bGVhc3VyZS4=", 8 },
-     { "easure.", "ZWFzdXJlLg==", 7 },
-     { "asure.", "YXN1cmUu", 6 },
-     { "sure.", "c3VyZS4=", 5 },
-     /* The following 2 cases are manually generated for '-' and '/' testing*/
-     { "aabc123!?", "YWFiYzEyMyE/", 9 },
-     { "abc123!?$*&()'-=@~", "YWJjMTIzIT8kKiYoKSctPUB+", 18 }
-   };
    unsigned int i;
    int len;
    unsigned char *decoded;
@@ -397,9 +399,9 @@ START_TEST(str_base64_encode_decode)
         char *encoded;
 
         encoded = eina_str_base64_encode((unsigned char*) tests[i].decoded_str, tests[i].len);
-        fail_if(strcmp(encoded, tests[i].encoded_str));
+        fail_if(strcmp(encoded, tests[i].encoded_normal));
 
-        decoded = eina_str_base64_decode(tests[i].encoded_str, &len);
+        decoded = eina_str_base64_decode(tests[i].encoded_normal, &len);
         fail_if(memcmp(decoded, tests[i].decoded_str, tests[i].len));
 
         fprintf(stderr, "len = %d, tests[%d].len = %d\n", len, i, tests[i].len);
@@ -418,6 +420,21 @@ START_TEST(str_base64_encode_decode)
 
    decoded = eina_str_base64_decode("abc", &len);
    fail_if(decoded);
+}
+END_TEST
+
+START_TEST(str_base64url_encode)
+{
+   unsigned int i;
+
+   for (i = 0; i < sizeof (tests) / sizeof (tests[0]); i++)
+     {
+        char *encoded;
+
+        encoded = eina_str_base64url_encode((unsigned char*) tests[i].decoded_str, tests[i].len);
+        fail_if(strcmp(encoded, tests[i].encoded_url));
+        free(encoded);
+     }
 }
 END_TEST
 
@@ -461,6 +478,7 @@ eina_test_str(TCase *tc)
    tcase_add_test(tc, str_memdup);
    tcase_add_test(tc, str_strftime);
    tcase_add_test(tc, str_base64_encode_decode);
+   tcase_add_test(tc, str_base64url_encode);
 #ifdef HAVE_ICONV
    tcase_add_test(tc, str_convert);
 #endif
