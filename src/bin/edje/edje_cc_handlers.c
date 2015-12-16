@@ -4718,8 +4718,7 @@ st_filters_filter_file(void)
         exit(-1);
      }
 
-   current_filter->script = mem_alloc(sz);
-   memcpy((char *) current_filter->script, script, sz);
+   current_filter->script = (char*)eina_memdup((unsigned char*)script, sz, 1);
    eina_file_map_free(f, script);
    eina_file_close(f);
 
