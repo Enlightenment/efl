@@ -851,6 +851,7 @@ static void
 _elm_win_pre_render(Ecore_Evas *ee)
 {
    Elm_Win_Data *sd = _elm_win_associate_get(ee);
+   if (!sd) return;
 
    if (sd->deferred_resize_job)
      _elm_win_resize_job(sd->obj);
