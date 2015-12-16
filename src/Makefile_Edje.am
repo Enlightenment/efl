@@ -255,6 +255,7 @@ tests/edje/data/test_parens.edc \
 tests/edje/data/test_masking.edc \
 tests/edje/data/test_filters.edc \
 tests/edje/data/test_snapshot.edc \
+tests/edje/data/test_size_class.edc \
 tests/edje/data/filter.lua
 
 
@@ -297,6 +298,7 @@ EDJE_DATA_FILES = tests/edje/data/test_layout.edc \
                   tests/edje/data/test_masking.edc \
                   tests/edje/data/test_filters.edc \
                   tests/edje/data/test_snapshot.edc \
+                  tests/edje/data/test_size_class.edc \
                   tests/edje/data/filter.lua
 
 edjedatafilesdir = $(datadir)/edje/data
@@ -305,14 +307,16 @@ edjedatafiles_DATA = tests/edje/data/test_layout.edj \
                      tests/edje/data/test_parens.edj \
                      tests/edje/data/test_masking.edj \
                      tests/edje/data/test_filters.edj \
-                     tests/edje/data/test_snapshot.edj
+                     tests/edje/data/test_snapshot.edj \
+                     tests/edje/data/test_size_class.edj
 
 CLEANFILES += tests/edje/data/test_layout.edj \
               tests/edje/data/complex_layout.edj \
               tests/edje/data/test_parens.edj \
               tests/edje/data/test_masking.edj \
               tests/edje/data/test_filters.edj \
-              tests/edje/data/test_snapshot.edj
+              tests/edje/data/test_snapshot.edj \
+              tests/edje/data/test_size_class.edj
 
 endif
 

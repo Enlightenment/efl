@@ -273,6 +273,60 @@ START_TEST(edje_test_snapshot)
 }
 END_TEST
 
+START_TEST(edje_test_size_class)
+{
+   int minw, minh, minw2, minh2;
+   Evas *evas = EDJE_TEST_INIT_EVAS();
+   Eina_List *l;
+   Eina_Stringshare *name;
+   Evas_Object *obj, *obj2;
+   Eina_Bool b;
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_size_class.edj"), "test_group"));
+
+   obj2 = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj2, test_layout_get("test_size_class.edj"), "test_group"));
+
+   evas_object_resize(obj, 200, 200);
+   evas_object_resize(obj2, 200, 200);
+
+   /* check predefined min size of rect part by edc */
+   edje_object_part_geometry_get(obj, "rect", NULL, NULL, &minw, &minh);
+   fail_if(minw != 50 || minh != 50);
+
+   /* check that edje_size_class_set works */
+   b = edje_size_class_set("rect_size", 100, 100, -1, -1);
+   edje_object_part_geometry_get(obj, "rect", NULL, NULL, &minw, &minh);
+   edje_object_part_geometry_get(obj2, "rect", NULL, NULL, &minw2, &minh2);
+   fail_if(!b || minw != 100 || minh != 100 || minw2 != 100 || minh2 != 100);
+
+   /* check that edje_size_class_get works */
+   b = edje_size_class_get("rect_size", &minw, &minh, NULL, NULL);
+   fail_if(!b || minw != 100 || minh != 100);
+
+   /* check that edje_size_class_list works */
+   l = edje_size_class_list();
+   EINA_LIST_FREE(l, name)
+     {
+        fail_if(strcmp(name, "rect_size"));
+        eina_stringshare_del(name);
+     }
+
+   /* check that edje_object_size_class_set works */
+   b = edje_object_size_class_set(obj, "rect_size", 150, 150, -1, -1);
+   edje_object_part_geometry_get(obj, "rect", NULL, NULL, &minw, &minh);
+   edje_object_part_geometry_get(obj2, "rect", NULL, NULL, &minw2, &minh2);
+   fail_if(!b || minw != 150 || minh != 150 || minw2 != 100 || minh2 != 100);
+
+   /* check that edje_object_size_class_get works */
+   b = edje_object_size_class_get(obj, "rect_size", &minw, &minh, NULL, NULL);
+   fail_if(!b || minw != 150 || minh != 150);
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
 void edje_test_edje(TCase *tc)
 {    
    tcase_add_test(tc, edje_test_edje_init);
@@ -284,4 +338,5 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_masking);
    tcase_add_test(tc, edje_test_filters);
    tcase_add_test(tc, edje_test_snapshot);
+   tcase_add_test(tc, edje_test_size_class);
 }
