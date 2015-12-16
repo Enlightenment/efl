@@ -5061,23 +5061,30 @@ _part_type_set(unsigned int type)
    /* handle type change of inherited part */
    if (type != current_part->type)
      {
-        Edje_Part_Description_Common *new, *previous;
+        Edje_Part_Description_Common *new, *previous, *cur;
         Edje_Part_Collection *pc;
-        Edje_Part *ep;
+        Edje_Part *ep, *dummy;
         unsigned int i;
 
         /* we don't free old part as we don't remove all reference to them */
         part_description_image_cleanup(current_part);
+        current_part->type = type;
 
         pc = eina_list_data_get(eina_list_last(edje_collections));
         ep = current_part;
 
         previous = ep->default_desc;
+        cur = current_desc;
+        dummy = mem_alloc(SZ(Edje_Part));
+        /* ensure type is incompatible with new type */
+        dummy->type = ep->type + 2;
         if (previous)
           {
              new = _edje_part_description_alloc(type, pc->part, ep->name);
              eina_hash_add(desc_hash, &new, ep);
+             eina_hash_set(desc_hash, &previous, dummy);
              parent_desc = previous;
+             current_desc = new;
              new->state.name = strdup(previous->state.name);
              new->state.value = previous->state.value;
              st_collections_group_parts_part_description_inherit();
@@ -5092,7 +5099,9 @@ _part_type_set(unsigned int type)
              previous = ep->other.desc[i];
              new = _edje_part_description_alloc(type, pc->part, ep->name);
              eina_hash_add(desc_hash, &new, ep);
+             eina_hash_set(desc_hash, &previous, dummy);
              parent_desc = previous;
+             current_desc = new;
              new->state.name = strdup(previous->state.name);
              new->state.value = previous->state.value;
              st_collections_group_parts_part_description_inherit();
@@ -5100,9 +5109,9 @@ _part_type_set(unsigned int type)
              _part_desc_free(pc, ep, previous);
              ep->other.desc[i] = new;
           }
+        free(dummy);
+        current_desc = cur;
      }
-
-   current_part->type = type;
 }
 
 static void
