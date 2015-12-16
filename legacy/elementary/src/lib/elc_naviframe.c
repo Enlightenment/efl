@@ -508,6 +508,16 @@ _elm_naviframe_item_elm_widget_item_part_text_set(Eo *eo_it EINA_UNUSED,
    if (_elm_config->access_mode)
      _access_obj_process(nit, EINA_TRUE);
 
+   memset(buf, 0x0, sizeof(buf));
+   if (nit->title_label)
+     strncat(buf, nit->title_label, sizeof(buf) - 1);
+   if (nit->subtitle_label)
+     {
+        if (nit->title_label) strncat(buf, " ", 1);
+        strncat(buf, nit->subtitle_label, sizeof(buf) - strlen(buf) - 2);
+     }
+   eo_do(VIEW(it), elm_interface_atspi_accessible_name_set(buf));
+
    elm_layout_sizing_eval(WIDGET(nit));
 }
 
@@ -1221,6 +1231,10 @@ _item_new(Evas_Object *obj,
 
    if (!elm_widget_sub_object_add(obj, VIEW(it)))
      ERR("could not add %p as sub object of %p", VIEW(it), obj);
+
+   eo_do(VIEW(it),
+         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_PAGE_TAB),
+         elm_interface_atspi_accessible_name_set((char*)title_label));
 
    evas_object_event_callback_add
      (VIEW(it), EVAS_CALLBACK_CHANGED_SIZE_HINTS,
