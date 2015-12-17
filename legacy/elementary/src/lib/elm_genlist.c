@@ -849,6 +849,8 @@ _elm_genlist_elm_layout_sizing_eval(Eo *obj, Elm_Genlist_Data *sd)
              Item_Block *itb;
 
              sd->prev_viewport_w = vw;
+             /* Free all buckets for updaing changed width */
+             eina_hash_free_buckets(sd->size_caches);
 
              EINA_INLIST_FOREACH(sd->blocks, itb)
                {
