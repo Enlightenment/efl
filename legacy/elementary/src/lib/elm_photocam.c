@@ -1708,6 +1708,9 @@ EAPI Evas_Load_Error
 elm_photocam_file_set(Elm_Photocam *obj, const char *file)
 {
    Eina_Bool ret;
+
+   ELM_PHOTOCAM_CHECK(obj) EVAS_LOAD_ERROR_NONE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EVAS_LOAD_ERROR_NONE);
    if (eo_do_ret(obj, ret, efl_file_set(file, NULL))) return EVAS_LOAD_ERROR_NONE;
 
    Eina_Error err = eina_error_get();
