@@ -364,8 +364,6 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
    if (ewd->wl.subcompositor) wl_subcompositor_destroy(ewd->wl.subcompositor);
 
    if (ewd->wl.registry) wl_registry_destroy(ewd->wl.registry);
-
-   wl_display_flush(ewd->wl.display);
 }
 
 Ecore_Wl2_Window *
