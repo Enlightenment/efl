@@ -5061,7 +5061,6 @@ _item_block_recalc(Item_Block *itb,
    Evas_Coord minw = 0, minh = 0;
    Eina_Bool show_me = EINA_FALSE, changed = EINA_FALSE;
    Evas_Coord y = 0;
-   Elm_Genlist_Data *sd = NULL;
    Item_Size *size = NULL;
 
    itb->num = in;
