@@ -18,7 +18,7 @@ START_TEST (elm_atspi_role_get)
    hover = elm_hover_add(win);
    eo_do(hover, role = elm_interface_atspi_accessible_role_get());
 
-   ck_assert(role == ELM_ATSPI_ROLE_GLASS_PANE);
+   ck_assert(role == ELM_ATSPI_ROLE_POPUP_MENU);
 
    elm_shutdown();
 }
