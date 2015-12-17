@@ -3808,6 +3808,7 @@ again:
         for (i = 0; i < ed->table_parts_size; i++)
           {
              Edje_Real_Part *ep = ed->table_parts[i];
+             Evas_Coord ins_l, ins_r;
 
              if (!ep->chosen_description) continue;
 
@@ -3826,6 +3827,8 @@ again:
                        Evas_Coord tb_mw;
                        evas_object_textblock_size_formatted_get(ep->object,
                                                                 &tb_mw, NULL);
+                       evas_object_textblock_style_insets_get(ep->object, &ins_l, &ins_r, NULL, NULL);
+                       tb_mw = ins_l + tb_mw + ins_r;
                        tb_mw -= ep->req.w;
                        if (tb_mw > over_w) over_w = tb_mw;
                        has_fixed_tb = EINA_FALSE;
