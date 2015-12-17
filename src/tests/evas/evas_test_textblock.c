@@ -1693,7 +1693,7 @@ END_TEST
 /* Testing items */
 START_TEST(evas_textblock_items)
 {
-   Evas_Coord w, h, w2, h2, nw, nh, ih;
+   Evas_Coord x, y, w, h, w2, h2, nw, nh, ih;
    START_TB_TEST();
    const char *buf = "This is an <item absize=93x152></>.";
 
@@ -1797,6 +1797,18 @@ START_TEST(evas_textblock_items)
    evas_textblock_cursor_pos_set(cur, 1);
    if (evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h))
      fail_if((w != 64) || (h != 64));
+
+   /* Test char coordinate for item at middle position of the item to decide cursor position,
+    * it means when char coordinate exceeds the half width of the item then only
+    * cursor position is changed. */
+   buf = "<item size=100x100 vsize=full></>.";
+   evas_object_textblock_text_markup_set(tb, buf);
+   evas_textblock_cursor_format_item_geometry_get(cur, &x, &y, &w, NULL);
+   evas_textblock_cursor_char_coord_set(cur, x + (w / 2) + 1, y);
+   fail_if(evas_textblock_cursor_pos_get(cur) != 1);
+   /* Test small increment in x and cursor position will be same */
+   evas_textblock_cursor_char_coord_set(cur, x + 10, y);
+   fail_if(evas_textblock_cursor_pos_get(cur) != 0);
 
    /* FIXME: Also verify x,y positions of the item. */
 

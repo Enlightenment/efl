@@ -10786,7 +10786,15 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
                               {
                                  Evas_Object_Textblock_Format_Item *fi;
                                  fi = _ITEM_FORMAT(it);
-                                 cur->pos = fi->parent.text_pos;
+                                 /* Lets keep cur position half way for easy positioning */
+                                 if (x > (ln->x + it->x + (it->adv / 2)))
+                                   {
+                                      cur->pos = fi->parent.text_pos + 1;
+                                   }
+                                 else
+                                   {
+                                      cur->pos = fi->parent.text_pos;
+                                   }
                                  cur->node = found_par->text_node;
                                  return EINA_TRUE;
                               }
