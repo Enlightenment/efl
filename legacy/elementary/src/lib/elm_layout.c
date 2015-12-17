@@ -1424,7 +1424,7 @@ _elm_layout_table_pack(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Eva
          (wd->resize_obj, part, child, col,
          row, colspan, rowspan))
      {
-        ERR("child %p could not be packed into box part '%s' col=%uh, row=%hu,"
+        ERR("child %p could not be packed into table part '%s' col=%uh, row=%hu,"
             " colspan=%hu, rowspan=%hu", child, part, col, row, colspan,
             rowspan);
         return EINA_FALSE;
