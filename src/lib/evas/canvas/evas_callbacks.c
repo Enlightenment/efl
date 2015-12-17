@@ -424,7 +424,7 @@ evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
 
    if (!e->callbacks) return NULL;
 
-   EINA_INLIST_FOREACH(e->callbacks, info)
+   EINA_INLIST_REVERSE_FOREACH(e->callbacks, info)
      {
         if ((info->func == func) && (info->type == type))
           {
