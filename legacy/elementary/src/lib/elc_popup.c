@@ -1826,16 +1826,18 @@ _elm_popup_class_constructor(Eo_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
+static Eina_Bool
+_action_dismiss(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   eo_do(obj, eo_event_callback_call(ELM_POPUP_EVENT_BLOCK_CLICKED, NULL));
+   return EINA_TRUE;
+}
+
 EOLIAN const Elm_Atspi_Action *
 _elm_popup_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Popup_Data *pd EINA_UNUSED)
 {
    static Elm_Atspi_Action atspi_actions[] = {
-          { "move,previous", "move", "previous", _key_action_move},
-          { "move,next", "move", "next", _key_action_move},
-          { "move,left", "move", "left", _key_action_move},
-          { "move,right", "move", "right", _key_action_move},
-          { "move,up", "move", "up", _key_action_move},
-          { "move,down", "move", "down", _key_action_move},
+          { "dismiss", NULL, NULL, _action_dismiss},
           { NULL, NULL, NULL, NULL }
    };
    return &atspi_actions[0];
