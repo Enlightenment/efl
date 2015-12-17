@@ -1,14 +1,50 @@
 mixin Ector.GL.Buffer.Base (Ector.Generic.Buffer)
 {
-   [[A buffer in Ector GL is a readable & optionally writable image]]
-   eo_prefix: ector_gl_buffer;
    legacy_prefix: null;
+   methods {
+      @property texture {
+         get {}
+         values {
+            texid: int; [[GL texture ID]]
+         }
+      }
+      @property fbo {
+         get {}
+         values {
+            fboid: int; [[GL framebuffer ID, 0 if there is no FBO]]
+         }
+      }
+      @property whole {
+         [[If $true, the image is covering the entire GL texture, ie. it's not
+           part of an atlas.
+         ]]
+         get {}
+         values {
+            is_whole: bool;
+         }
+      }
+      @property size {
+         [[The size in pixels of this image.
+
+           If the image is whole, then this is equal to the atlas size.
+         ]]
+         get {}
+         values {
+            w: int;
+            h: int;
+         }
+      }
+      @property vertices {
+         [[Returns the texture vertices to use to map this image with no rotation]]
+         get {}
+         values {
+            x: double; [[X position of this image inside the texture atlas, from 0 to 1]]
+            y: double; [[Y position of this image inside the texture atlas, from 0 to 1]]
+            w: double; [[Width of this image inside the texture atlas, from 0 to 1]]
+            h: double; [[Height of this image inside the texture atlas, from 0 to 1]]
+         }
+      }
+   }
    implements {
-      Ector.Generic.Buffer.flags.get;
-      Ector.Generic.Buffer.pixels_set;
-      Ector.Generic.Buffer.span_get;
-      Ector.Generic.Buffer.span_free;
-      Ector.Generic.Buffer.map;
-      Ector.Generic.Buffer.unmap;
-   }		     
+   }
 }

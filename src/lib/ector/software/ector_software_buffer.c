@@ -166,9 +166,7 @@ _ector_software_buffer_base_ector_generic_buffer_map(Eo *obj EINA_UNUSED, Ector_
 
    if (!pd->pixels.u8 || !pd->stride)
      fail("Buffer has no pixel data yet");
-   if (cspace != pd->generic->cspace)
-     fail("Invalid colorspace");
-   if (!w || !h || ((x + w) > pd->generic->w) || (y + h > pd->generic->h))
+   if (((x + w) > pd->generic->w) || (y + h > pd->generic->h))
      fail("Invalid region requested: wanted %u,%u %ux%u but image is %ux%u",
           x, y, w, h, pd->generic->w, pd->generic->h);
    if ((mode & ECTOR_BUFFER_ACCESS_FLAG_WRITE) && !pd->writable)

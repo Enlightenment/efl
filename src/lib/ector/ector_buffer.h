@@ -12,16 +12,19 @@
  */
 typedef Ector_Generic_Buffer Ector_Buffer;
 
-typedef struct _Ector_Generic_Buffer_Data
+typedef struct _Ector_Generic_Buffer_Data Ector_Generic_Buffer_Data;
+typedef struct _Ector_Software_Buffer_Base_Data Ector_Software_Buffer_Base_Data;
+
+struct _Ector_Generic_Buffer_Data
 {
    Ector_Buffer       *eo;
    unsigned int        w, h;
    unsigned char       l, r, t, b;
    Efl_Gfx_Colorspace  cspace;
    Eina_Bool            immutable : 1; // pixels_set is forbidden
-} Ector_Generic_Buffer_Data;
+};
 
-typedef struct _Ector_Software_Buffer_Base_Data
+struct _Ector_Software_Buffer_Base_Data
 {
    Ector_Generic_Buffer_Data *generic; /* ugly */
    union {
@@ -35,6 +38,6 @@ typedef struct _Ector_Software_Buffer_Base_Data
    } internal;
    Eina_Bool            writable : 1; // pixels can be written to
    Eina_Bool            nofree : 1; // pixel data should not be free()'ed
-} Ector_Software_Buffer_Base_Data;
+};
 
 #endif

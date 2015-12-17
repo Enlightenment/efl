@@ -1,6 +1,8 @@
 #ifndef ECTOR_GL_PRIVATE_H_
 # define ECTOR_GL_PRIVATE_H_
 
+#include "ector_private.h"
+
 #define SHADER_FLAG_SAM_BITSHIFT 3
 #define SHADER_FLAG_MASKSAM_BITSHIFT 6
 
