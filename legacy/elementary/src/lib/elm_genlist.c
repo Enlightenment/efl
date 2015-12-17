@@ -5066,7 +5066,6 @@ _item_block_recalc(Item_Block *itb,
    itb->num = in;
    EINA_LIST_FOREACH(itb->items, l, it)
      {
-        sd = GL_IT(it)->wsd;
         show_me |= it->item->show_me;
 
         if (!it->filtered) _item_filtered_get(it);
