@@ -35,13 +35,34 @@ mixin Ector.GL.Buffer.Base (Ector.Generic.Buffer)
          }
       }
       @property vertices {
-         [[Returns the texture vertices to use to map this image with no rotation]]
+         [[Returns the texture vertices to draw this image with no rotation
+
+           The 4 points are then defined as (x,y), (x+w,y), (x,y+h), (x+w,y+h).
+         ]]
          get {}
          values {
             x: double; [[X position of this image inside the texture atlas, from 0 to 1]]
             y: double; [[Y position of this image inside the texture atlas, from 0 to 1]]
             w: double; [[Width of this image inside the texture atlas, from 0 to 1]]
             h: double; [[Height of this image inside the texture atlas, from 0 to 1]]
+         }
+      }
+      attach @protected {
+         [[Attach to an existing texture (or FBO). Used from child classes.]]
+         params {
+            texid: int;
+            fboid: int;
+            cspace: Efl.Gfx.Colorspace;
+            imw: int;
+            imh: int;
+            tx: int;
+            ty: int;
+            tw: int;
+            th: int;
+            l: int;
+            r: int;
+            t: int;
+            b: int;
          }
       }
    }

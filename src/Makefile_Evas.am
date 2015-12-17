@@ -750,7 +750,32 @@ modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x: modules/evas/engi
 
 GL_GENERIC_SOURCES = \
 modules/evas/engines/gl_generic/evas_engine.c \
-modules/evas/engines/gl_generic/Evas_Engine_GL_Generic.h
+modules/evas/engines/gl_generic/Evas_Engine_GL_Generic.h \
+modules/evas/engines/gl_generic/evas_ector_gl_buffer.c \
+modules/evas/engines/gl_generic/evas_ector_gl_image_buffer.c
+$(NULL)
+
+evas_gl_generic_eolian_files = \
+modules/evas/engines/gl_generic/evas_ector_gl_buffer.eo \
+modules/evas/engines/gl_generic/evas_ector_gl_image_buffer.eo \
+$(NULL)
+
+evas_gl_generic_eolian_c = $(evas_gl_generic_eolian_files:%.eo=%.eo.c)
+evas_gl_generic_eolian_h = $(evas_gl_generic_eolian_files:%.eo=%.eo.h) \
+                $(evas_gl_generic_eolian_files:%.eo=%.eo.legacy.h) \
+                $(evas_gl_generic_eolian_type_files:%.eot=%.eot.h)
+
+BUILT_SOURCES += \
+                 $(evas_gl_generic_eolian_c) \
+                 $(evas_gl_generic_eolian_h)
+
+CLEANFILES += \
+              $(evas_gl_generic_eolian_c) \
+              $(evas_gl_generic_eolian_h)
+
+#evaseolianfilesdir = $(datadir)/eolian/include/evas-@VMAJ@
+#evaseolianfiles_DATA += $(evas_gl_generic_eolian_files)
+
 
 if EVAS_STATIC_BUILD_GL_COMMON
 lib_evas_libevas_la_SOURCES += $(GL_COMMON_SOURCES) $(GL_GENERIC_SOURCES)
@@ -776,6 +801,7 @@ modules_evas_engines_gl_generic_module_la_SOURCES = $(GL_GENERIC_SOURCES)
 modules_evas_engines_gl_generic_module_la_CFLAGS = \
 -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
+-I$(top_builddir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/modules/evas/engines/gl_common \
 -I$(top_builddir)/src/modules/evas/engines/gl_generic \

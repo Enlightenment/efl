@@ -18,6 +18,8 @@
 # define MESA_EGL_NO_X11_HEADERS
 #endif
 
+#ifndef EVAS_GL_NO_HEADERS
+
 #ifdef BUILD_ENGINE_GL_COCOA
 # include <OpenGL/gl.h>
 # include <OpenGL/glext.h>
@@ -39,6 +41,8 @@
 #   include <GL/glext.h>
 #  endif
 # endif
+#endif
+
 #endif
 
 #include "evas_gl_define.h"
@@ -649,6 +653,7 @@ Evas_GL_Texture  *evas_gl_common_texture_nv12tiled_new(Evas_Engine_GL_Context *g
 void              evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **row, unsigned int w, unsigned int h);
 Evas_GL_Texture  *evas_gl_common_texture_rgb_a_pair_new(Evas_Engine_GL_Context *gc, RGBA_Image *im);
 void              evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex, RGBA_Image *im);
+Evas_Colorspace   evas_gl_common_gl_format_to_colorspace(GLuint f);
 
 void              evas_gl_common_image_alloc_ensure(Evas_GL_Image *im);
 Evas_GL_Image    *evas_gl_common_image_load(Evas_Engine_GL_Context *gc, const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error);
@@ -864,6 +869,8 @@ __evas_gl_errdyn(int err, const char *file, const char *func, int line, const ch
 Eina_Bool evas_gl_common_module_open(void);
 void      evas_gl_common_module_close(void);
 
+#ifndef EVAS_GL_NO_HEADERS
+
 static inline void
 _tex_sub_2d(Evas_Engine_GL_Context *gc, int x, int y, int w, int h, int fmt, int type, const void *pix)
 {
@@ -879,6 +886,8 @@ _comp_tex_sub_2d(Evas_Engine_GL_Context *gc, int x, int y, int w, int h, int fmt
        (h > gc->shared->info.max_texture_size)) return;
    glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, fmt, imgsize, pix);
 }
+
+#endif
 
 #include "evas_gl_3d_common.h"
 

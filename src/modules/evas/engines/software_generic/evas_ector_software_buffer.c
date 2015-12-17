@@ -15,7 +15,7 @@
 typedef struct {
    Ector_Software_Buffer_Base_Data *base;
    Evas *evas;
-   Image_Entry *ie;
+   Image_Entry *image;
 } Evas_Ector_Software_Buffer_Data;
 
 #define ENFN e->engine.func
@@ -44,8 +44,8 @@ _evas_ector_software_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
      }
 
    pd->evas = eo_xref(evas, obj);
-   pd->ie = ENFN->image_ref(ENDT, ie);
-   if (!pd->ie) return;
+   pd->image = ENFN->image_ref(ENDT, ie);
+   if (!pd->image) return;
 
    eo_do(obj, ector_buffer_pixels_set(im->image.data,
                                       im->cache_entry.w, im->cache_entry.h, 0,
@@ -59,7 +59,7 @@ _evas_ector_software_buffer_evas_ector_buffer_engine_image_get(Eo *obj EINA_UNUS
                                                                Evas **evas, void **image)
 {
    if (evas) *evas = pd->evas;
-   if (image) *image = pd->ie;
+   if (image) *image = pd->image;
 }
 
 EOLIAN static Eo *
@@ -73,11 +73,8 @@ _evas_ector_software_buffer_eo_base_constructor(Eo *obj, Evas_Ector_Software_Buf
 EOLIAN static Eo *
 _evas_ector_software_buffer_eo_base_finalize(Eo *obj, Evas_Ector_Software_Buffer_Data *pd)
 {
-   if (!pd->ie)
-     {
-        CRI("engine_image must be set at construction time only");
-        return NULL;
-     }
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->base, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->image, NULL);
    pd->base->generic->immutable = EINA_TRUE;
    return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
 }
@@ -88,7 +85,7 @@ _evas_ector_software_buffer_eo_base_destructor(Eo *obj, Evas_Ector_Software_Buff
    Evas_Public_Data *e = eo_data_scope_get(pd->evas, EVAS_CANVAS_CLASS);
 
    eo_data_xunref(obj, pd->base, obj);
-   ENFN->image_free(ENDT, pd->ie);
+   ENFN->image_free(ENDT, pd->image);
    eo_xunref(pd->evas, obj);
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }

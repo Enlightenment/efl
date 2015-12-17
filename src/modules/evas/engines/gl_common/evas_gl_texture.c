@@ -161,6 +161,21 @@ _evas_gl_texture_search_format(Eina_Bool alpha, Eina_Bool bgra, Evas_Colorspace 
    return -1;
 }
 
+Evas_Colorspace
+evas_gl_common_gl_format_to_colorspace(GLuint f)
+{
+   unsigned i;
+
+   for (i = 0; i < sizeof(matching_format) / sizeof(matching_format[0]); i++)
+     {
+        if (*matching_format[i].format == f)
+          return matching_format[i].cspace;
+     }
+
+   ERR("Unknown texture format!");
+   return EVAS_COLORSPACE_ARGB8888;
+}
+
 static void
 _print_tex_count(void)
 {
