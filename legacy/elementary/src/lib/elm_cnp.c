@@ -2410,7 +2410,8 @@ _wl_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Form
 
    win = _wl_elm_widget_window_get(obj);
 
-   if (sel->loss_cb) sel->loss_cb(sel->loss_data, selection);
+   if ((sel->widget != obj) && sel->loss_cb)
+     sel->loss_cb(sel->loss_data, selection);
 
    if (sel->widget)
      evas_object_event_callback_del_full(sel->widget,
