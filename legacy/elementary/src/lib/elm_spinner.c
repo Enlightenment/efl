@@ -1654,6 +1654,9 @@ _elm_spinner_elm_interface_atspi_value_increment_get(Eo *obj EINA_UNUSED, Elm_Sp
 EOLIAN static char*
 _elm_spinner_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED)
 {
+   char *name;
+   eo_do_super(obj, ELM_SPINNER_CLASS, name = elm_interface_atspi_accessible_name_get());
+   if (name) return name;
    const char *ret = elm_layout_text_get(obj, "elm.text");
    return ret ? strdup(ret) : NULL;
 }

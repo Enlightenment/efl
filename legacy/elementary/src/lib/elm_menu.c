@@ -1315,8 +1315,11 @@ _elm_menu_item_elm_interface_atspi_accessible_role_get(Eo *obj EINA_UNUSED, Elm_
 }
 
 EOLIAN static char*
-_elm_menu_item_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Menu_Item_Data *sd)
+_elm_menu_item_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Menu_Item_Data *sd)
 {
+   char *ret;
+   eo_do_super(obj, ELM_MENU_ITEM_CLASS, ret = elm_interface_atspi_accessible_name_get());
+   if (ret) return ret;
    return sd->label ? strdup(sd->label) : NULL;
 }
 

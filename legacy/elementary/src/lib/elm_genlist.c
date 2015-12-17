@@ -8038,11 +8038,13 @@ _elm_genlist_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_Ge
 }
 
 EOLIAN char*
-_elm_genlist_item_elm_interface_atspi_accessible_name_get(Eo *eo_it EINA_UNUSED,
-                                                          Elm_Gen_Item *it)
+_elm_genlist_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_Gen_Item *it)
 {
    char *ret;
    Eina_Strbuf *buf;
+
+   eo_do_super(eo_it, ELM_GENLIST_ITEM_CLASS, ret = elm_interface_atspi_accessible_name_get());
+   if (ret) return ret;
 
    buf = eina_strbuf_new();
 

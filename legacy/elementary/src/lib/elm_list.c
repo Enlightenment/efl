@@ -2152,8 +2152,11 @@ _elm_list_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_List_
 }
 
 EOLIAN static char*
-_elm_list_item_elm_interface_atspi_accessible_name_get(Eo *eo_it EINA_UNUSED, Elm_List_Item_Data *data)
+_elm_list_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_List_Item_Data *data)
 {
+   char *ret;
+   eo_do_super(eo_it, ELM_LIST_ITEM_CLASS, ret = elm_interface_atspi_accessible_name_get());
+   if (ret) return ret;
    return data->label ? strdup(data->label) : NULL;
 }
 

@@ -3797,8 +3797,11 @@ _elm_toolbar_item_bring_in(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item,
 }
 
 EOLIAN static char*
-_elm_toolbar_item_elm_interface_atspi_accessible_name_get(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item)
+_elm_toolbar_item_elm_interface_atspi_accessible_name_get(Eo *eo_item, Elm_Toolbar_Item_Data *item)
 {
+   char *ret;
+   eo_do_super(eo_item, ELM_TOOLBAR_ITEM_CLASS, ret = elm_interface_atspi_accessible_name_get());
+   if (ret) return ret;
    return item->label ? strdup(item->label) : NULL;
 }
 

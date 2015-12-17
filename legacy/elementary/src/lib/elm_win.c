@@ -5810,8 +5810,11 @@ _elm_win_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Win_Data *sd 
 EOLIAN static char*
 _elm_win_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Win_Data *sd EINA_UNUSED)
 {
-   const char *ret = elm_win_title_get(obj);
-   return ret ? strdup(ret) : strdup("");
+   char *ret;
+   eo_do_super(obj, ELM_WIN_CLASS, ret = elm_interface_atspi_accessible_name_get());
+   if (ret) return ret;
+   const char *name = elm_win_title_get(obj);
+   return name ? strdup(name) : NULL;
 }
 
 #include "elm_win.eo.c"

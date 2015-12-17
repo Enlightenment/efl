@@ -5718,8 +5718,11 @@ _elm_entry_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Entry_Data 
 }
 
 EOLIAN static char*
-_elm_entry_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Entry_Data *sd)
 {
+   char *name;
+   eo_do_super(obj, ELM_ENTRY_CLASS, name = elm_interface_atspi_accessible_name_get());
+   if (name && strncmp("", name, 1)) return name;
    const char *ret = edje_object_part_text_get(sd->entry_edje, "elm.guide");
    return ret ? strdup(ret) : NULL;
 }
