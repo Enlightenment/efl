@@ -1268,7 +1268,7 @@ evas_cache_image_preload_data(Image_Entry *im, const Eo *target,
 {
    RGBA_Image *img = (RGBA_Image *)im;
 
-   if (((im->flags.loaded) && (img->image.data)) || im->flags.cached)
+   if (((im->flags.loaded) && (img->image.data)) || (im->flags.textured && !im->flags.updated_data))
      {
         evas_object_inform_call_image_preloaded((Evas_Object*)target);
         return;

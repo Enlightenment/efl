@@ -1427,6 +1427,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
      }
 
    evas_gl_common_texture_upload(tex, im, bytes_count);
+   im->cache_entry.flags.textured = 1;
 }
 
 void
@@ -1483,6 +1484,12 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force EINA_UNUSED)
    tex->ptu2 = NULL;
    tex->ptv2 = NULL;
    tex->ptuv = NULL;
+
+   if (tex->im) 
+     {
+        tex->im->tex = NULL;
+        if (tex->im->im) tex->im->im->cache_entry.flags.textured = 0;
+     }
 
    evas_gl_common_texture_light_free(tex);
 }
