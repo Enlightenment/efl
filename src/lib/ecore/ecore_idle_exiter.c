@@ -96,7 +96,7 @@ _ecore_idle_exiter_del(Ecore_Idle_Exiter *obj)
 EOLIAN static Eo *
 _ecore_idle_exiter_eo_base_finalize(Eo *obj, Ecore_Idle_Exiter_Data *idle_exiter)
 {
-   if (!idle_exiter)
+   if (!idle_exiter->func)
      {
         return NULL;
      }
