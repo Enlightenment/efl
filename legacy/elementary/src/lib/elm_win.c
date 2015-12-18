@@ -3830,7 +3830,6 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
    evas_object_color_set(obj, 0, 0, 0, 0);
    evas_object_move(obj, 0, 0);
    evas_object_resize(obj, 1, 1);
-   evas_object_layer_set(obj, 50);
    evas_object_pass_events_set(obj, EINA_TRUE);
 
    if (type == ELM_WIN_INLINED_IMAGE)
