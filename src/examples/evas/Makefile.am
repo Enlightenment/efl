@@ -47,7 +47,7 @@ ECORE_EVAS_COMMON_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_file \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_builddir)/src/lib/ecore_evas \
--DPACKAGE_EXAMPLES_DIR=\".\" \
+-DPACKAGE_EXAMPLES_DIR=\"$(top_srcdir)/src/examples/evas\" \
 @EVAS_CFLAGS@
 
 ECORE_EVAS_COMMON_LDADD = \
@@ -91,7 +91,7 @@ EDJE_COMMON_CPPFLAGS = \
 -I$(top_builddir)/src/lib/edje \
 -I$(top_srcdir)/src/lib/edje/include \
 -I$(top_builddir)/src/lib/edje/include \
--DPACKAGE_EXAMPLES_DIR=\".\" \
+-DPACKAGE_EXAMPLES_DIR=\"$(top_srcdir)/src/examples/evas\" \
 @EVAS_CFLAGS@
 
 EDJE_COMMON_LDADD = \

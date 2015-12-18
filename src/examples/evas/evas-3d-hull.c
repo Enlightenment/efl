@@ -351,7 +351,7 @@ _mesh_setup(Scene_Data *data)
    MODEL_MESH_INIT(column, column_ch)
    MODEL_MESH_INIT(home, home_ch)
    MODEL_MESH_INIT(sonic, sonic_ch)
-   MODEL_MESH_INIT(eagle, "shooter/assets/models/eagle.md2")
+   MODEL_MESH_INIT(eagle, PACKAGE_EXAMPLES_DIR "/shooter/assets/models/eagle.md2")
 
    MODEL_MESH_INIT(blender_sphere, sphere)
    MODEL_MESH_INIT(blender_torus, torus)
