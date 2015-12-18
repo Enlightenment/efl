@@ -405,7 +405,7 @@ START_TEST(str_base64_encode_decode)
         fail_if(memcmp(decoded, tests[i].decoded_str, tests[i].len));
 
         fprintf(stderr, "len = %d, tests[%d].len = %d\n", len, i, tests[i].len);
-        fail_if(len != tests[i].len);
+        fail_if(len != (int)tests[i].len);
 
         free(encoded);
         free(decoded);
