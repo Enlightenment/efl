@@ -15,7 +15,7 @@ static char *_ecore_wl_window_id_str_get(unsigned int win_id);
 static void _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface, int32_t width, int32_t height,struct wl_array *states, uint32_t serial);
 static void _ecore_xdg_handle_surface_delete(void *data, struct xdg_surface *xdg_surface);
 static void _ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup);
-static void _ecore_session_recovery_uuid(void *data, struct session_recovery *session_recovery, const char *uuid);
+static void _ecore_session_recovery_uuid(void *data, struct zwp_e_session_recovery *session_recovery, const char *uuid);
 
 /* local variables */
 static Eina_Hash *_windows = NULL;
@@ -39,7 +39,7 @@ static const struct xdg_popup_listener _ecore_xdg_popup_listener =
    _ecore_xdg_handle_popup_done,
 };
 
-static const struct session_recovery_listener _ecore_session_recovery_listener =
+static const struct zwp_e_session_recovery_listener _ecore_session_recovery_listener =
 {
    _ecore_session_recovery_uuid,
 };
@@ -403,12 +403,12 @@ ecore_wl_window_surface_create(Ecore_Wl_Window *win)
 
    if (_ecore_wl_disp->wl.session_recovery && getenv("EFL_WAYLAND_SESSION_RECOVERY"))
      {
-        session_recovery_add_listener(_ecore_wl_disp->wl.session_recovery,
+        zwp_e_session_recovery_add_listener(_ecore_wl_disp->wl.session_recovery,
                                       &_ecore_session_recovery_listener, win);
         if (!uuid_is_null(win->uuid))
           {
              uuid_unparse(win->uuid, uuid);
-             session_recovery_provide_uuid(_ecore_wl_disp->wl.session_recovery, uuid);
+             zwp_e_session_recovery_provide_uuid(_ecore_wl_disp->wl.session_recovery, uuid);
           }
      }
    win->surface_id = wl_proxy_get_id((struct wl_proxy *)win->surface);
@@ -1102,7 +1102,7 @@ _ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup)
 }
 
 static void
-_ecore_session_recovery_uuid(void *data EINA_UNUSED, struct session_recovery *session_recovery, const char *uuid)
+_ecore_session_recovery_uuid(void *data EINA_UNUSED, struct zwp_e_session_recovery *session_recovery, const char *uuid)
 {
    Ecore_Wl_Window *win;
    char uuid_string[37];

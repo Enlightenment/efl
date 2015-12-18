@@ -1,6 +1,6 @@
-<protocol name="session_recovery">
+<protocol name="e_session_recovery">
 
-  <interface name="session_recovery" version="1">
+  <interface name="zwp_e_session_recovery" version="1">
     <request name="provide_uuid">
       <arg name="uuid" type="string"/>
     </request>
