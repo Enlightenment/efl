@@ -232,7 +232,8 @@ efreet_language_get(void)
  * @internal
  * @return Returns no value
  * @brief Parses out the language, country and modifer setting from the
- * LC_MESSAGES environment variable
+ * LC_MESSAGES environment variable on UNIX. On Windows, retrieve them from
+ * the system.
  */
 static void
 efreet_parse_locale(void)
@@ -247,7 +248,7 @@ efreet_parse_locale(void)
 
    if (efreet_parse_locale_setting("LC_MESSAGES"))
      return;
-   
+
    efreet_language = eina_stringshare_add("C");
 }
 
@@ -257,10 +258,41 @@ efreet_parse_locale(void)
  * @return Returns 1 if we parsed something of @a env, 0 otherwise
  * @brief Tries to parse the lang settings out of the given environment
  * variable
+ *
+ * @note @a env is not used on Windows.
  */
 static int
 efreet_parse_locale_setting(const char *env)
 {
+#ifdef _WIN32
+   char buf_lang[18];
+   char buf[9];
+   int l1;
+   int l2;
+
+   l1 = GetLocaleInfo(LOCALE_SYSTEM_DEFAULT, LOCALE_SISO639LANGNAME,
+                      buf, sizeof(buf));
+   if (!l1)
+     return 0;
+
+   efreet_lang = eina_stringshare_add(buf);
+   memcpy(buf_lang, buf, l1 - 1);
+   buf_lang[l1 - 1] = '_';
+
+   l2 = GetLocaleInfo(LOCALE_SYSTEM_DEFAULT, LOCALE_SISO3166CTRYNAME,
+                      buf, sizeof(buf));
+   if (!l2)
+     return 0;
+
+   efreet_lang_country = eina_stringshare_add(buf);
+   memcpy(buf_lang + l1, buf, l2);
+
+   efreet_language = eina_stringshare_add(buf_lang);
+
+   return 1;
+
+   (void)env;
+#else
    int found = 0;
    char *setting;
    char *p;
@@ -303,6 +335,7 @@ efreet_parse_locale_setting(const char *env)
    if (found)
      efreet_language = eina_stringshare_add(getenv(env));
    return found;
+#endif
 }
 
 /**
