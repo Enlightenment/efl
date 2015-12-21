@@ -1403,6 +1403,7 @@ _bus_main_handler(void *data)
                                      ev);
                 gst_tag_list_free(new_tags);
              }
+           _emotion_title_set(ev->obj, ev->metadata->title);
            break;
         }
       case GST_MESSAGE_ASYNC_DONE:
