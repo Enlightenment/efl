@@ -388,13 +388,14 @@ ecore_wl2_display_create(const char *name)
 {
    Ecore_Wl2_Display *ewd;
    struct wl_event_loop *loop;
-   const char *n;
 
    if (!_server_displays)
      _server_displays = eina_hash_string_superfast_new(NULL);
 
    if (!name)
      {
+        const char *n;
+
         /* someone wants to create a new server */
         n = getenv("WAYLAND_DISPLAY");
         if (n)
