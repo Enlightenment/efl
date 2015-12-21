@@ -3758,7 +3758,7 @@ _cb_added(void *data EINA_UNUSED,
 }
 
 static Eina_Bool
-_cb_deled(void *data EINA_UNUSED,
+_cb_deleted(void *data EINA_UNUSED,
           Eo *obj,
           const Eo_Event_Description *desc EINA_UNUSED,
           void *event_info)
@@ -3781,7 +3781,7 @@ _elm_entry_eo_base_constructor(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_ENTRY),
          eo_event_callback_add(EO_EV_CALLBACK_ADD, _cb_added, NULL),
-         eo_event_callback_add(EO_EV_CALLBACK_DEL, _cb_deled, NULL));
+         eo_event_callback_add(EO_EV_CALLBACK_DEL, _cb_deleted, NULL));
 
    return obj;
 }
