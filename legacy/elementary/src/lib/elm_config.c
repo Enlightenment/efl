@@ -1132,11 +1132,11 @@ _profile_fetch_from_conf(void)
                        memcpy(_elm_profile, p, len);
                        _elm_profile[len] = 0;
                        free(p);
+                       p = strchr(_elm_profile, '/');
+                       if (p) *p = 0;
                     }
                   else free(p);
                   eet_close(ef);
-                  p = strchr(_elm_profile, '/');
-                  if (p) *p = 0;
                   return;
                }
              eet_close(ef);
