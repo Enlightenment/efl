@@ -30,9 +30,9 @@
  * Unicode 6.0.0:
  *      <URL:http://www.unicode.org/reports/tr29/tr29-17.html>
  *
- * This library has been updated according to Revision 25, for
- * Unicode 7.0.0:
- *      <URL:http://www.unicode.org/reports/tr29/tr29-25.html>
+ * This library has been updated according to Revision 27, for
+ * Unicode 8.0.0:
+ *      <URL:http://www.unicode.org/reports/tr29/tr29-27.html>
  *
  * The Unicode Terms of Use are available at
  *      <URL:http://www.unicode.org/copyright.html>
@@ -44,7 +44,7 @@
  * Implementation of the word breaking algorithm as described in Unicode
  * Standard Annex 29.
  *
- * @version 2.6, 2015/04/18
+ * @version 3.1, 2015/05/18
  * @author  Tom Hacohen
  */
 
@@ -127,6 +127,7 @@ static void set_brks_to(
     {
         utf32_t ch;
         ch = get_next_char(s, len, &posNext);
+        (void)ch;
         assert(ch != EOS);
         for (; posStart < posNext - 1; ++posStart)
             brks[posStart] = WORDBREAK_INSIDEACHAR;

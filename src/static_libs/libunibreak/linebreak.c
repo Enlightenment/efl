@@ -31,9 +31,9 @@
  * Unicode 5.0.0:
  *      <URL:http://www.unicode.org/reports/tr14/tr14-19.html>
  *
- * This library has been updated according to Revision 33, for
- * Unicode 7.0.0:
- *      <URL:http://www.unicode.org/reports/tr14/tr14-33.html>
+ * This library has been updated according to Revision 35, for
+ * Unicode 8.0.0:
+ *      <URL:http://www.unicode.org/reports/tr14/tr14-35.html>
  *
  * The Unicode Terms of Use are available at
  *      <URL:http://www.unicode.org/copyright.html>
@@ -45,7 +45,7 @@
  * Implementation of the line breaking algorithm as described in Unicode
  * Standard Annex 14.
  *
- * @version 2.7, 2015/04/18
+ * @version 3.0, 2015/05/10
  * @author  Wu Yongwei
  * @author  Petr Filipsky
  */
@@ -123,12 +123,12 @@ static enum BreakAction baTable[LBP_RI][LBP_RI] = {
     {   /* EX */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
+        DIR_BRK, PRH_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK },
     {   /* SY */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
-        PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK, DIR_BRK,
+        PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK, PRH_BRK,
         DIR_BRK, DIR_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK },
@@ -503,7 +503,7 @@ static int get_lb_result_simple(
         lbpCtx->lbcCur = LBP_CR;
         return LINEBREAK_NOBREAK;       /* Rule LB6 */
     case LBP_CB:
-        lbpCtx->lbcCur = LBP_BA;
+        lbpCtx->lbcCur = LBP_B2;
         return LINEBREAK_ALLOWBREAK;    /* Rule LB20 */
     default:
         return LINEBREAK_UNDEFINED;     /* Table lookup is needed */
