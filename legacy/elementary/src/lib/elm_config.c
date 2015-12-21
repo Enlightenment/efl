@@ -2194,6 +2194,7 @@ _elm_config_modifier_check(const Evas_Modifier *m,
 
 Eina_Bool
 _elm_config_key_binding_call(Evas_Object *obj,
+                             const char *name,
                              const Evas_Event_Key_Down *ev,
                              const Elm_Action *actions)
 {
@@ -2201,7 +2202,7 @@ _elm_config_key_binding_call(Evas_Object *obj,
    Eina_List *binding_list, *l;
    int i = 0;
 
-   binding_list = eina_hash_find(_elm_key_bindings, elm_widget_type_get(obj));
+   binding_list = eina_hash_find(_elm_key_bindings, name);
 
    if (binding_list)
      {

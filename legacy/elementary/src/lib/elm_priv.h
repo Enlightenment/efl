@@ -474,6 +474,7 @@ Eina_Bool            _elm_config_access_get(void);
 void                 _elm_config_access_set(Eina_Bool is_access);
 
 Eina_Bool            _elm_config_key_binding_call(Evas_Object *obj,
+                                                  const char *name,
                                                   const Evas_Event_Key_Down *ev,
                                                   const Elm_Action *actions);
 

@@ -621,7 +621,7 @@ _elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Ob
         Eina_Bool ret;
 
         if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-        ret = _elm_config_key_binding_call(obj, ev, key_actions);
+        ret = _elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions);
         if (!ret)
           {
              if (sd->spin_timer) _spin_stop(obj);

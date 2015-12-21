@@ -2106,7 +2106,7 @@ _elm_colorselector_elm_widget_event(Eo *obj, Elm_Colorselector_Data *sd, Evas_Ob
    if (!sd) return EINA_FALSE;
    if (!sd->selected) sd->selected = sd->items;
 
-   if (!_elm_config_key_binding_call(obj, ev, key_actions))
+   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
      return EINA_FALSE;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
