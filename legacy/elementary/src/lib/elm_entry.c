@@ -2604,6 +2604,79 @@ _item_get(void *data,
    return o;
 }
 
+static Eina_Bool
+_entry_has_new_line(const char *text)
+{
+   if (!text) return EINA_FALSE;
+
+   while (*text)
+     {
+        if (!strncmp(text, "<br", 3) || !strncmp(text, "<ps", 3))
+          {
+             if (text[4] == '>' || ((text[4] == '/') && (text[5] == '>')))
+               {
+                  return EINA_TRUE;
+               }
+          }
+        text++;
+     }
+
+   return EINA_FALSE;
+}
+
+static char *
+_entry_remove_new_line(const char *text)
+{
+   Eina_Strbuf *str;
+   char *new_text;
+
+   if (!_entry_has_new_line(text)) return NULL;
+
+   str = eina_strbuf_new();
+   eina_strbuf_append(str, text);
+   eina_strbuf_replace_all(str, "<br>", "");
+   eina_strbuf_replace_all(str, "<br/>", "");
+   eina_strbuf_replace_all(str, "<ps>", "");
+   eina_strbuf_replace_all(str, "<ps/>", "");
+   new_text = eina_strbuf_string_steal(str);
+   eina_strbuf_free(str);
+   return new_text;
+}
+
+static void
+_entry_new_line_filter_init(Evas_Object *obj)
+{
+   const char *text;
+   char *text2 = NULL;
+
+   if (elm_entry_is_empty(obj)) return;
+
+   text = elm_entry_entry_get(obj);
+   text2 = _entry_remove_new_line(text);
+   if (text2)
+     {
+        elm_entry_entry_set(obj, text2);
+        free(text2);
+     }
+}
+
+static void
+_entry_new_line_filter_cb(void *data EINA_UNUSED,
+                          Evas_Object *entry EINA_UNUSED,
+                          char **text)
+{
+   char *old_text;
+
+   if (!*text) return;
+
+   old_text = *text;
+   *text = _entry_remove_new_line((const char*)*text);
+   if (*text)
+     free(old_text);
+   else
+     *text = old_text;
+}
+
 static void
 _markup_filter_cb(void *data,
                   Evas_Object *edje EINA_UNUSED,
@@ -3816,6 +3889,15 @@ _elm_entry_single_line_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool single_line)
    sd->line_wrap = ELM_WRAP_NONE;
    if (elm_entry_cnp_mode_get(obj) == ELM_CNP_MODE_MARKUP)
      elm_entry_cnp_mode_set(obj, ELM_CNP_MODE_NO_IMAGE);
+   if (sd->single_line)
+     {
+        _entry_new_line_filter_init(obj);
+        elm_entry_markup_filter_append(obj, _entry_new_line_filter_cb, NULL);
+     }
+   else
+     {
+        elm_entry_markup_filter_remove(obj, _entry_new_line_filter_cb, NULL);
+     }
    eo_do(obj, elm_obj_widget_theme_apply());
 
    if (sd->scroll)
