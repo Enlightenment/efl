@@ -2665,16 +2665,17 @@ _entry_new_line_filter_cb(void *data EINA_UNUSED,
                           Evas_Object *entry EINA_UNUSED,
                           char **text)
 {
-   char *old_text;
+   char *ret;
 
    if (!*text) return;
 
-   old_text = *text;
-   *text = _entry_remove_new_line((const char*)*text);
-   if (*text)
-     free(old_text);
-   else
-     *text = old_text;
+   ret = _entry_remove_new_line(*text);
+
+   if (ret)
+     {
+        free(*text);
+        *text = ret;
+     }
 }
 
 static void
