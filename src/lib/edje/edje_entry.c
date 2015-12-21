@@ -2052,6 +2052,44 @@ _edje_key_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
 #endif
 }
 
+static Evas_Textblock_Cursor *
+_edje_cursor_char_coord_set(Edje_Real_Part *rp, Evas_Coord canvasx, Evas_Coord canvasy, Evas_Coord *cx, Evas_Coord *cy)
+{
+   Entry *en;
+   Evas_Coord x, y, lh = 0, cly = 0;
+   Evas_Textblock_Cursor *line_cur;
+   Evas_Textblock_Cursor *tc;
+
+   en = rp->typedata.text->entry_data;
+   tc = evas_object_textblock_cursor_new(rp->object);
+   evas_textblock_cursor_copy(en->cursor, tc);
+   evas_object_geometry_get(rp->object, &x, &y, NULL, NULL);
+   *cx = canvasx - x;
+   *cy = canvasy - y;
+
+   line_cur = evas_object_textblock_cursor_new(rp->object);
+   evas_textblock_cursor_paragraph_last(line_cur);
+   evas_textblock_cursor_line_geometry_get(line_cur, NULL, &cly, NULL, &lh);
+   /* Consider a threshold of half the line height */
+   if (*cy > (cly + lh) && *cy < (cly + lh + lh / 2))
+     {
+        *cy = cly + lh - 1; // Make it inside Textblock
+     }
+   evas_textblock_cursor_paragraph_first(line_cur);
+   evas_textblock_cursor_line_geometry_get(line_cur, NULL, &cly, NULL, NULL);
+
+   if (*cy < cly && *cy > (cly - lh / 2))
+     {
+        *cy = cly;
+     }
+   evas_textblock_cursor_free(line_cur);
+   /* No need to check return value if not able to set the char coord Textblock
+    * will take care */
+   evas_textblock_cursor_char_coord_set(en->cursor, *cx, *cy);
+
+   return tc;
+}
+
 static void
 _edje_part_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -2072,11 +2110,11 @@ _edje_part_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    Edje_Real_Part *rp = data;
    Evas_Event_Mouse_Down *ev = event_info;
    Entry *en;
-   Evas_Coord x, y, w, h;
    //   Eina_Bool multiline;
    Evas_Textblock_Cursor *tc = NULL;
    Eina_Bool dosel = EINA_FALSE;
    Eina_Bool shift;
+
    if ((!rp) || (!ev)) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
@@ -2165,48 +2203,8 @@ _edje_part_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
              goto end;
           }
      }
-   tc = evas_object_textblock_cursor_new(rp->object);
-   evas_textblock_cursor_copy(en->cursor, tc);
-   //   multiline = rp->part->multiline;
-   evas_object_geometry_get(rp->object, &x, &y, &w, &h);
-   cx = ev->canvas.x - x;
-   cy = ev->canvas.y - y;
-   if (!evas_textblock_cursor_char_coord_set(en->cursor, cx, cy))
-     {
-        Evas_Coord lx, ly, lw, lh;
-        int line;
+   tc = _edje_cursor_char_coord_set(rp, ev->canvas.x, ev->canvas.y, &cx, &cy);
 
-        line = evas_textblock_cursor_line_coord_set(en->cursor, cy);
-        if (line == -1)
-          {
-             if (rp->part->multiline)
-               _curs_end(en->cursor, rp->object, en);
-             else
-               {
-                  evas_textblock_cursor_paragraph_first(en->cursor);
-                  evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
-                  if (!evas_textblock_cursor_char_coord_set(en->cursor, cx, ly + (lh / 2)))
-                    _curs_end(en->cursor, rp->object, en);
-               }
-          }
-        else
-          {
-             int lnum;
-
-             lnum = evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
-             if (lnum < 0)
-               {
-                  _curs_lin_start(en->cursor, rp->object, en);
-               }
-             else
-               {
-                  if (cx <= lx)
-                    _curs_lin_start(en->cursor, rp->object, en);
-                  else
-                    _curs_lin_end(en->cursor, rp->object, en);
-               }
-          }
-     }
    if (dosel)
      {
         if ((en->have_selection) &&
@@ -2294,8 +2292,8 @@ _edje_part_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    Edje_Real_Part *rp = data;
    Evas_Event_Mouse_Up *ev = event_info;
    Entry *en;
-   Evas_Coord x, y, w, h;
    Evas_Textblock_Cursor *tc;
+
    if ((!ev) || (ev->button != 1)) return;
    if (!rp) return;
    if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK) return;
@@ -2322,47 +2320,9 @@ _edje_part_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
      }
 #endif
 
-   tc = evas_object_textblock_cursor_new(rp->object);
-   evas_textblock_cursor_copy(en->cursor, tc);
-   evas_object_geometry_get(rp->object, &x, &y, &w, &h);
-   cx = ev->canvas.x - x;
-   cy = ev->canvas.y - y;
-   if (!evas_textblock_cursor_char_coord_set(en->cursor, cx, cy))
-     {
-        Evas_Coord lx, ly, lw, lh;
-        int line;
+   /* cx cy are unused but needed in mouse down, please bear with it */
+   tc = _edje_cursor_char_coord_set(rp, ev->canvas.x, ev->canvas.y, &cx, &cy);
 
-        line = evas_textblock_cursor_line_coord_set(en->cursor, cy);
-        if (line == -1)
-          {
-             if (rp->part->multiline)
-               _curs_end(en->cursor, rp->object, en);
-             else
-               {
-                  evas_textblock_cursor_paragraph_first(en->cursor);
-                  evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
-                  if (!evas_textblock_cursor_char_coord_set(en->cursor, cx, ly + (lh / 2)))
-                    _curs_end(en->cursor, rp->object, en);
-               }
-          }
-        else
-          {
-             int lnum;
-
-             lnum = evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
-             if (lnum < 0)
-               {
-                  _curs_lin_start(en->cursor, rp->object, en);
-               }
-             else
-               {
-                  if (cx <= lx)
-                    _curs_lin_start(en->cursor, rp->object, en);
-                  else
-                    _curs_lin_end(en->cursor, rp->object, en);
-               }
-          }
-     }
    if (en->select_allow)
      {
         if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_EXPLICIT)
