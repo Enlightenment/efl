@@ -12,8 +12,8 @@
          base: "font="FN" font_size=10 color=#151515 style=shadow_bottom shadow_color=#ffffffc0 align=center";\
       }\
 
-#define CAL_SPIN(_sufix, _signal_sufix, _text, _relative)\
-      part { name: "left_bt"#_sufix; type: RECT;\
+#define CAL_SPIN(_sufix, _text, _relative)\
+      part { name: "left_bt"#_sufix; type: SPACER;\
          scale: 1;\
          description { state: "default" 0.0;\
             fixed: 1 1;\
@@ -26,30 +26,6 @@
             align: 0.0 0.5;\
             min: 15 15;\
             max: 15 15;\
-            color: 0 0 0 0;\
-         }\
-      }\
-      part { name: "left_bt"#_sufix"_over"; repeat_events: 1;\
-         scale: 1;\
-         description { state: "default" 0.0;\
-            min: 15 15;\
-            max: 15 15;\
-            align: 0.5 0.5;\
-            rel1.to: "left_bt"#_sufix;\
-            rel2.to: "left_bt"#_sufix;\
-            image.normal: "sym_left_light_normal.png";\
-         }\
-         description { state: "rtl" 0.0;\
-            inherit: "default" 0.0;\
-            image.normal: "sym_right_light_normal.png";\
-         }\
-         description { state: "clicked" 0.0;\
-            inherit: "default" 0.0;\
-            image.normal: "sym_left_glow_normal.png";\
-         }\
-         description { state: "clicked_rtl" 0.0;\
-            inherit: "default" 0.0;\
-            image.normal: "sym_right_glow_normal.png";\
          }\
       }\
       part { name: "right_bt"#_sufix; type: RECT;\
@@ -68,26 +44,32 @@
             color: 0 0 0 0;\
          }\
       }\
-      part { name: "right_bt"#_sufix"_over"; repeat_events: 1;\
+      part { name: "elm,calendar,button"#_sufix",left";\
+         type: SWALLOW;\
          scale: 1;\
          description { state: "default" 0.0;\
-            min: 15 15;\
-            max: 15 15;\
-            rel1.to: "right_bt"#_sufix;\
-            rel2.to: "right_bt"#_sufix;\
-            image.normal: "sym_right_light_normal.png";\
+            fixed: 1 1;\
+            rel1.to: "left_bt"#_sufix;\
+            rel2.to: "left_bt"#_sufix;\
          }\
          description { state: "rtl" 0.0;\
             inherit: "default" 0.0;\
-            image.normal: "sym_left_light_normal.png";\
+            rel1.to: "right_bt"#_sufix;\
+            rel2.to: "right_bt"#_sufix;\
          }\
-         description { state: "clicked" 0.0;\
-            inherit: "default" 0.0;\
-            image.normal: "sym_right_glow_normal.png";\
+      }\
+      part { name: "elm,calendar,button"#_sufix",right";\
+         type: SWALLOW;\
+         scale: 1;\
+         description { state: "default" 0.0;\
+            fixed: 1 1;\
+            rel1.to: "right_bt"#_sufix;\
+            rel2.to: "right_bt"#_sufix;\
          }\
-         description { state: "clicked_rtl" 0.0;\
+         description { state: "rtl" 0.0;\
             inherit: "default" 0.0;\
-            image.normal: "sym_left_glow_normal.png";\
+            rel1.to: "left_bt"#_sufix;\
+            rel2.to: "left_bt"#_sufix;\
          }\
       }\
       part { name: #_text; type: TEXT; mouse_events: 0;\
@@ -104,76 +86,6 @@
             color: FN_COL_DEFAULT;\
             text { font: FNBD; size: 10;\
                min: 0 1;\
-            }\
-         }\
-      }\
-      programs {\
-         program {\
-            signal: "mouse,down,1"; source: "left_bt"#_sufix;\
-            action: SIGNAL_EMIT "elm,action,decrement,start"#_signal_sufix "elm";\
-         }\
-         program {\
-            signal: "mouse,up,1"; source: "left_bt"#_sufix;\
-            action: SIGNAL_EMIT "elm,action,stop"#_signal_sufix "elm"; \
-         }\
-         program { name:   "left_bt"#_sufix"_click";\
-            signal: "mouse,down,1"; source: "left_bt"#_sufix;\
-            script {\
-               if (get_int(rtl) == 1)\
-                 set_state(PART:"left_bt"#_sufix"_over", "clicked_rtl", 0.0);\
-               else\
-                 set_state(PART:"left_bt"#_sufix"_over", "clicked", 0.0);\
-            }\
-         }\
-         program { name:   "left_bt"#_sufix"_unclick";\
-            signal: "mouse,up,1"; source: "left_bt"#_sufix;\
-            script {\
-               if (get_int(rtl) == 1)\
-                 set_state(PART:"left_bt"#_sufix"_over", "rtl", 0.0);\
-               else\
-                 set_state(PART:"left_bt"#_sufix"_over", "default", 0.0);\
-            }\
-         }\
-         program {\
-            signal: "mouse,down,1"; source: "right_bt"#_sufix;\
-            action: SIGNAL_EMIT "elm,action,increment,start"#_signal_sufix "elm";\
-         }\
-         program {\
-            signal: "mouse,up,1"; source: "right_bt"#_sufix;\
-            action: SIGNAL_EMIT "elm,action,stop"#_signal_sufix "elm";     \
-         }\
-         program { name:   "right_bt"#_sufix"_click";\
-            signal: "mouse,down,1"; source: "right_bt"#_sufix;\
-            script {\
-               if (get_int(rtl) == 1)\
-                 set_state(PART:"right_bt"#_sufix"_over", "clicked_rtl", 0.0);\
-               else\
-                 set_state(PART:"right_bt"#_sufix"_over", "clicked", 0.0);\
-            }\
-         }\
-         program { name:   "right_bt"#_sufix"_unclick";\
-            signal: "mouse,up,1"; source: "right_bt"#_sufix;\
-            script {\
-               if (get_int(rtl) == 1)\
-                 set_state(PART:"right_bt"#_sufix"_over", "rtl", 0.0);\
-               else\
-                 set_state(PART:"right_bt"#_sufix"_over", "default", 0.0);\
-            }\
-         }\
-         program { name:   "rtl"#_sufix;\
-            signal: "edje,state,rtl"; source: "edje";\
-            script {\
-               set_int(rtl, 1);\
-               set_state(PART:"left_bt"#_sufix"_over", "rtl", 0.0);\
-               set_state(PART:"right_bt"#_sufix"_over", "rtl", 0.0);\
-            }\
-         }\
-         program { name:   "ltr"#_sufix;\
-            signal: "edje,state,ltr"; source: "edje";\
-            script {\
-               set_int(rtl, 0);\
-               set_state(PART:"left_bt"#_sufix"_over", "default", 0.0);\
-               set_state(PART:"right_bt"#_sufix"_over", "default", 0.0);\
             }\
          }\
       }
@@ -512,7 +424,7 @@ group { name: "elm/calendar/base/default";
          }
       }
 
-      CAL_SPIN(,,month_text, spinner-base1)
+      CAL_SPIN(,month_text, spinner-base1)
       CH(0)   CH(1)   CH(2)   CH(3)   CH(4)   CH(5)   CH(6)
       CIT(0)  CIT(1)  CIT(2)  CIT(3)  CIT(4)  CIT(5)  CIT(6)
       CIT(7)  CIT(8)  CIT(9)  CIT(10) CIT(11) CIT(12) CIT(13)
@@ -551,8 +463,8 @@ group { name: "elm/calendar/base/double_spinners";
             align: 0.0 0.0;
          }
       }
-      CAL_SPIN(,,month_text, spinner-base1)
-      CAL_SPIN(_year, year, year_text, spinner-base2)
+      CAL_SPIN(,month_text, spinner-base1)
+      CAL_SPIN(_year, year_text, spinner-base2)
    }
 }
 

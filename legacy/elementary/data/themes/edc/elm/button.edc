@@ -1337,6 +1337,8 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
 /******************* SPINNER BUTTONS STYLES **********************/
    group { name: "elm/button/base/spinner/increase/default";
       alias: "elm/button/base/spinner/increase/colorselector/default";
+      alias: "elm/button/base/calendar/increase/default";
+      alias: "elm/button/base/calendar/increase/double_spinners";
       images.image: "sym_right_light_normal.png" COMP;
       images.image: "sym_right_glow_normal.png" COMP;
       images.image: "sym_right_dark_normal.png" COMP;
@@ -1489,6 +1491,8 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
    group { name: "elm/button/base/spinner/decrease/default";
       alias: "elm/button/base/spinner/decrease/colorselector/default";
       inherit: "elm/button/base/spinner/increase/default";
+      alias: "elm/button/base/calendar/decrease/default";
+      alias: "elm/button/base/calendar/decrease/double_spinners";
       images.image: "sym_left_light_normal.png" COMP;
       images.image: "sym_left_glow_normal.png" COMP;
       images.image: "sym_left_dark_normal.png" COMP;

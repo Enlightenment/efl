@@ -44,11 +44,11 @@ struct _Elm_Calendar_Data
    const char              *weekdays[ELM_DAY_LAST];
    struct tm                current_time, selected_time, shown_time;
    Day_Color                day_color[42]; // EINA_DEPRECATED
-   Evas_Object             *inc_btn_month_access;
-   Evas_Object             *dec_btn_month_access;
+   Evas_Object             *inc_btn_month;
+   Evas_Object             *dec_btn_month;
    Evas_Object             *month_access;
-   Evas_Object             *inc_btn_year_access;
-   Evas_Object             *dec_btn_year_access;
+   Evas_Object             *inc_btn_year;
+   Evas_Object             *dec_btn_year;
    Evas_Object             *year_access;
 
    Elm_Calendar_Weekday     first_week_day;
@@ -59,6 +59,8 @@ struct _Elm_Calendar_Data
    Eina_Bool                double_spinners : 1;
    Eina_Bool                filling : 1;
    Eina_Bool                weekdays_set : 1;
+   Eina_Bool                month_repeated : 1;
+   Eina_Bool                year_repeated : 1;
 };
 
 struct _Elm_Calendar_Mark
