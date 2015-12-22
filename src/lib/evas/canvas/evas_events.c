@@ -2863,8 +2863,71 @@ _evas_object_propagate_events_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_
 }
 
 EOLIAN void
-_evas_object_pointer_mode_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Object_Pointer_Mode setting)
+_evas_object_pointer_mode_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object_Pointer_Mode setting)
 {
+   int addgrab;
+   Evas_Object *cobj;
+   const Eina_List *l;
+
+   /* ignore no-ops */
+   if (obj->pointer_mode == setting) return;
+
+   /* adjust by number of pointer down events */
+   addgrab = obj->layer->evas->pointer.downs;
+   switch (obj->pointer_mode)
+     {
+      /* nothing needed */
+      case EVAS_OBJECT_POINTER_MODE_NOGRAB: break;
+      /* decrement canvas nogrep (NO Grab/REPeat) counter */
+      case EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN:
+        if (obj->mouse_grabbed)
+          obj->layer->evas->pointer.nogrep--;
+        /* fall through */
+      /* remove related grabs from canvas and object */
+      case EVAS_OBJECT_POINTER_MODE_AUTOGRAB:
+        if (obj->mouse_grabbed)
+          {
+             obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
+             obj->mouse_grabbed = 0;
+          }
+     }
+   /* adjustments for new mode */
+   switch (setting)
+     {
+      /* nothing needed */
+      case EVAS_OBJECT_POINTER_MODE_NOGRAB: break;
+      /* increment canvas nogrep (NO Grab/REPeat) counter */
+      case EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN:
+        obj->layer->evas->pointer.nogrep++;
+        /* having nogrep set indicates that any object following it in
+         * the pointer.object.in list will not be receiving events, meaning
+         * that they will fail to unset any existing grabs/flags. unset them
+         * now to avoid breaking the canvas
+         */
+        EINA_LIST_FOREACH(obj->layer->evas->pointer.object.in, l, cobj)
+          {
+             Evas_Object_Protected_Data *cobj_data;
+
+             /* skip to the current object */
+             if (cobj != eo_obj) continue;
+             /* only change objects past it */
+             EINA_LIST_FOREACH(l->next, l, cobj)
+               {
+                  cobj_data = eo_data_scope_get(cobj, EVAS_OBJECT_CLASS);
+                  if (!cobj_data->mouse_grabbed) continue;
+                  cobj_data->mouse_grabbed -= addgrab;
+                  cobj_data->layer->evas->pointer.mouse_grabbed -= addgrab;
+                  if (cobj_data->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)
+                    cobj_data->layer->evas->pointer.nogrep--;
+               }
+             break;
+          }
+        /* fall through */
+      /* add all button grabs to this object */
+      case EVAS_OBJECT_POINTER_MODE_AUTOGRAB:
+        obj->mouse_grabbed += addgrab;
+        obj->layer->evas->pointer.mouse_grabbed += addgrab;
+     }
    obj->pointer_mode = setting;
 }
 
