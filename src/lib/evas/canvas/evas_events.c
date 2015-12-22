@@ -459,7 +459,8 @@ _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event_M
      {
         if (src->delete_me) return;
         child = eo_data_scope_get(eo_child, EVAS_OBJECT_CLASS);
-        if ((child->pointer_mode == EVAS_OBJECT_POINTER_MODE_AUTOGRAB) &&
+        if (((child->pointer_mode == EVAS_OBJECT_POINTER_MODE_AUTOGRAB) ||
+             (child->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)) ||
             (child->mouse_grabbed > 0))
           {
              child->mouse_grabbed--;
@@ -620,7 +621,8 @@ _evas_event_source_multi_up_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event_M
      {
         ev->canvas = point;
         child = eo_data_scope_get(eo_child, EVAS_OBJECT_CLASS);
-        if ((child->pointer_mode != EVAS_OBJECT_POINTER_MODE_NOGRAB) &&
+        if (((child->pointer_mode == EVAS_OBJECT_POINTER_MODE_AUTOGRAB) ||
+             (child->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)) ||
             (child->mouse_grabbed > 0))
           {
              child->mouse_grabbed--;
@@ -1274,7 +1276,8 @@ _evas_canvas_event_feed_mouse_up(Eo *eo_e, Evas_Public_Data *e, int b, Evas_Butt
         EINA_LIST_FOREACH(copy, l, eo_obj)
           {
              Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-             if ((obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_AUTOGRAB) &&
+             if (((obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_AUTOGRAB) ||
+                 (obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)) &&
                  (obj->mouse_grabbed > 0))
                {
                   obj->mouse_grabbed--;
@@ -2217,7 +2220,8 @@ _canvas_event_feed_multi_up_internal(Evas *eo_e, void *_pd,
           ev.canvas.xsub = ev.canvas.x; // fixme - lost precision
         if (y != ev.canvas.y)
           ev.canvas.ysub = ev.canvas.y; // fixme - lost precision
-        if ((obj->pointer_mode != EVAS_OBJECT_POINTER_MODE_NOGRAB) &&
+        if (((obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_AUTOGRAB) ||
+            (obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)) &&
             (obj->mouse_grabbed > 0))
           {
              obj->mouse_grabbed--;
