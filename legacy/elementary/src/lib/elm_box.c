@@ -374,6 +374,14 @@ _transition_layout_animation_exec(Evas_Object *obj,
 }
 
 EOLIAN static void
+_elm_box_evas_object_smart_calculate(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   evas_object_smart_calculate(wd->resize_obj);
+}
+
+EOLIAN static void
 _elm_box_evas_object_smart_add(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
