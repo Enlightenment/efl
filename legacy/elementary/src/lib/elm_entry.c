@@ -1857,11 +1857,13 @@ _mouse_up_cb(void *data,
         /* Since context menu disabled flag was checked at long press start while mouse
          * down, hence the same should be checked at mouse up from a long press
          * as well */
-        if ((sd->long_pressed) && (!_elm_config->context_menu_disabled) &&
-            (_elm_config->magnifier_enable))
+        if ((sd->long_pressed) && (_elm_config->magnifier_enable))
           {
              _magnifier_hide(data);
-             _menu_call(data);
+             if (!_elm_config->context_menu_disabled)
+               {
+                  _menu_call(data);
+               }
           }
         else
           {
