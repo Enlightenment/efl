@@ -273,7 +273,12 @@ _edje_mouse_move_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
              evas_object_geometry_get(obj, &x, &y, &w, &h);
              if ((ev->cur.canvas.x < x) || (ev->cur.canvas.y < y) ||
                  (ev->cur.canvas.x >= (x + w)) || (ev->cur.canvas.y >= (y + h)))
-               rp->still_in = EINA_FALSE;
+               {
+                  if ((ev->buttons) && ((!ev->event_flags) || (!ignored)))
+                    _edje_emit(ed, "mouse,pressed,out", rp->part->name);
+
+                  rp->still_in = EINA_FALSE;
+               }
           }
      }
    else
@@ -285,7 +290,12 @@ _edje_mouse_move_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
              evas_object_geometry_get(obj, &x, &y, &w, &h);
              if ((ev->cur.canvas.x >= x) && (ev->cur.canvas.y >= y) &&
                  (ev->cur.canvas.x < (x + w)) && (ev->cur.canvas.y < (y + h)))
-               rp->still_in = EINA_TRUE;
+               {
+                  if ((ev->buttons) && ((!ev->event_flags) || (!ignored)))
+                    _edje_emit(ed, "mouse,pressed,in", rp->part->name);
+
+                  rp->still_in = EINA_TRUE;
+               }
           }
      }
    _edje_util_freeze(ed);
