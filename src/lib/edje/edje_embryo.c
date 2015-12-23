@@ -1293,6 +1293,7 @@ _edje_embryo_fn_set_tween_state_anim(Embryo_Program *ep, Embryo_Cell *params)
         if (HASNPARAMS(8))
           {
              GETSTR(tmp, params[8]);
+             if (!tmp) return 0;
              if (!strcmp(tmp, "CURRENT"))
                anim_type |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
           }
@@ -1303,6 +1304,7 @@ _edje_embryo_fn_set_tween_state_anim(Embryo_Program *ep, Embryo_Cell *params)
         if (HASNPARAMS(9))
           {
              GETSTR(tmp, params[9]);
+             if (!tmp) return 0;
              if (!strcmp(tmp, "CURRENT"))
                anim_type |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
           }
@@ -1319,6 +1321,7 @@ _edje_embryo_fn_set_tween_state_anim(Embryo_Program *ep, Embryo_Cell *params)
         if (HASNPARAMS(10))
           {
              GETSTR(tmp, params[10]);
+             if (!tmp) return 0;
              if (!strcmp(tmp, "CURRENT"))
                anim_type |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
           }
@@ -1335,6 +1338,7 @@ _edje_embryo_fn_set_tween_state_anim(Embryo_Program *ep, Embryo_Cell *params)
         if (HASNPARAMS(12))
           {
              GETSTR(tmp, params[10]);
+             if (!tmp) return 0;
              if (!strcmp(tmp, "CURRENT"))
                anim_type |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
           }
