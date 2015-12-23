@@ -12898,6 +12898,8 @@ st_collections_group_programs_program_name(void)
           - hold,off;
           - mouse,in;
           - mouse,out;
+          - mouse,pressed,in;
+          - mouse,pressed,out;
           - mouse,down,N: where N - mouse button number;
           - mouse,down,N,double: where N - mouse button number;
           - mouse,down,N,triple: where N - mouse button number;
