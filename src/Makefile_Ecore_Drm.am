@@ -25,7 +25,7 @@ lib/ecore_drm/ecore_drm_private.h
 
 lib_ecore_drm_libecore_drm_la_CPPFLAGS = \
   -I$(top_builddir)/src/lib/efl \
-  @ECORE_DRM_CFLAGS@ \
+  @ECORE_DRM_CFLAGS@ @EFL_CFLAGS@ \
   -DPACKAGE_LIB_DIR=\"$(libdir)\" \
   -DMODULE_ARCH=\"$(MODULE_ARCH)\"
 
