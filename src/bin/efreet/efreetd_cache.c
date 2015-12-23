@@ -737,6 +737,8 @@ cache_exe_data_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         Eina_Bool update = EINA_FALSE;
 
         if ((ev->lines) && (*ev->lines->line == 'c')) update = EINA_TRUE;
+        if (!desktop_exists)
+          send_signal_desktop_cache_build();
         desktop_exists = EINA_TRUE;
         send_signal_desktop_cache_update(update);
      }

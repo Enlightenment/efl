@@ -184,6 +184,12 @@ send_signal_desktop_cache_update(Eina_Bool update)
    _broadcast(ipc, 3 /* desktop cache update */, update, NULL, 0);
 }
 
+void
+send_signal_desktop_cache_build(void)
+{
+   _broadcast(ipc, 1 /* desktop cache build */, 1, NULL, 0);
+}
+
 Eina_Bool
 ipc_init(void)
 {
