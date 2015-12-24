@@ -1877,7 +1877,7 @@ ecore_x_window_permanent_new(Ecore_X_Window parent, Ecore_X_Atom unique_atom)
    XGrabServer(disp);
    if (XGetWindowProperty(disp, parent, unique_atom, 0, 0x7fffffff,
                           False, XA_WINDOW, &type_ret, &format_ret,
-                          &num_ret, &bytes_after, &prop_ret))
+                          &num_ret, &bytes_after, &prop_ret) == Success)
      {
         if (prop_ret)
           {
@@ -1889,7 +1889,7 @@ ecore_x_window_permanent_new(Ecore_X_Window parent, Ecore_X_Atom unique_atom)
                   XFree(prop_ret);
                   if (XGetWindowProperty(disp, win, unique_atom, 0, 0x7fffffff,
                                          False, XA_WINDOW, &type_ret, &format_ret,
-                                         &num_ret, &bytes_after, &prop_ret))
+                                         &num_ret, &bytes_after, &prop_ret) == Success)
                     {
                        if (prop_ret)
                          {
