@@ -1586,6 +1586,29 @@ EAPI void         edje_text_class_del             (const char *text_class);
 EAPI Eina_List   *edje_text_class_list            (void);
 
 /**
+ * @brief Iterate over all active classes of an application.
+ *
+ * @return an iterator of Edje_Text_Class of the currently active text class
+ *
+ * This function only iterates over the Edje_Text_Class in use by
+ * an application.
+ *
+ * @since 1.17
+ *
+ */
+EAPI Eina_Iterator *edje_text_class_active_iterator_new(void);
+
+/**
+ * @brief Iterate over all text classes provided by an Edje file.
+ *
+ * @return an iterator of Edje_Text_Class provided by the Edje file.
+ *
+ * @since 1.17
+ *
+ */
+EAPI Eina_Iterator *edje_mmap_text_class_iterator_new(Eina_File *f);
+
+/**
  * @}
  */
 

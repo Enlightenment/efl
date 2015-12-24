@@ -262,6 +262,7 @@ static Edje_File *
 _edje_file_open(const Eina_File *f, int *error_ret, time_t mtime)
 {
    Edje_Color_Class *cc;
+   Edje_Text_Class *tc;
    Edje_Size_Class *sc;
    Edje_File *edf;
    Eina_List *l;
@@ -318,6 +319,11 @@ _edje_file_open(const Eina_File *f, int *error_ret, time_t mtime)
    EINA_LIST_FOREACH(edf->color_classes, l, cc)
      if (cc->name)
        eina_hash_direct_add(edf->color_hash, cc->name, cc);
+
+   edf->text_hash = eina_hash_string_small_new(NULL);
+   EINA_LIST_FOREACH(edf->text_classes, l, tc)
+      if (tc->name)
+         eina_hash_direct_add(edf->text_hash, tc->name, tc);
 
    edf->size_hash = eina_hash_string_small_new(NULL);
    EINA_LIST_FOREACH(edf->size_classes, l, sc)

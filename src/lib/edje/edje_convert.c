@@ -212,6 +212,7 @@ _edje_file_convert(Eet_File *file, Old_Edje_File *oedf)
    edf->oef = oedf;
    edf->styles = oedf->styles;
    edf->color_classes = oedf->color_classes;
+   edf->text_classes = oedf->text_classes;
    edf->size_classes = oedf->size_classes;
    edf->version = oedf->version;
    edf->feature_ver = oedf->feature_ver;

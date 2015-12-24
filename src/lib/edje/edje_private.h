@@ -544,6 +544,9 @@ struct _Edje_File
    Eina_List                      *color_classes;
    Eina_Hash                      *color_hash;
 
+   Eina_List                      *text_classes;
+   Eina_Hash                      *text_hash;
+
    Eina_List                      *size_classes;
    Eina_Hash                      *size_hash;
 
@@ -1591,7 +1594,7 @@ struct _Edje
    Eina_List            *actions; /* currently running actions */
    Eina_List            *pending_actions;
    Eina_Hash            *color_classes;
-   Eina_List            *text_classes;
+   Eina_Hash            *text_classes;
    Eina_Hash            *size_classes;
    /* variable pool for Edje Embryo scripts */
    Edje_Var_Pool        *var_pool;

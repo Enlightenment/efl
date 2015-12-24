@@ -74,6 +74,16 @@ _edje_color_class_free(void *data)
 }
 
 static void
+_edje_text_class_free(void *data)
+{
+   Edje_Text_Class *tc = data;
+
+   if (tc->name) eina_stringshare_del(tc->name);
+   if (tc->font) eina_stringshare_del(tc->font);
+   free(tc);
+}
+
+static void
 _edje_size_class_free(void *data)
 {
    Edje_Size_Class *sc = data;
@@ -97,6 +107,7 @@ _edje_object_evas_object_smart_add(Eo *obj, Edje *ed)
    ed->references = 1;
    ed->user_defined = NULL;
    ed->color_classes = eina_hash_string_small_new(_edje_color_class_free);
+   ed->text_classes = eina_hash_string_small_new(_edje_text_class_free);
    ed->size_classes = eina_hash_string_small_new(_edje_size_class_free);
 
    evas_object_geometry_get(obj, &(ed->x), &(ed->y), &(ed->w), &(ed->h));

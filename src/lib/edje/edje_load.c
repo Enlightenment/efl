@@ -1681,6 +1681,7 @@ void
 _edje_file_free(Edje_File *edf)
 {
    Edje_Color_Class *ecc;
+   Edje_Text_Class *etc;
    Edje_Size_Class *esc;
 
 #define HASH_FREE(Hash)            \
@@ -1780,6 +1781,17 @@ _edje_file_free(Edje_File *edf)
         if (edf->free_strings && ecc->name) eina_stringshare_del(ecc->name);
         if (edf->free_strings) eina_stringshare_del(ecc->desc);
         free(ecc);
+     }
+
+   eina_hash_free(edf->text_hash);
+   EINA_LIST_FREE(edf->text_classes, etc)
+     {
+        if (edf->free_strings)
+          {
+             if (etc->name) eina_stringshare_del(etc->name);
+             if (etc->font) eina_stringshare_del(etc->font);
+          }
+        free(etc);
      }
 
    eina_hash_free(edf->size_hash);

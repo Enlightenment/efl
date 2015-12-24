@@ -194,6 +194,7 @@ _edje_edd_old_init(void)
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_old_edje_file, Old_Edje_File, "data", data, _edje_edd_old_edje_data);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_old_edje_file, Old_Edje_File, "styles", styles, _edje_edd_old_edje_style);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_old_edje_file, Old_Edje_File, "color_classes", color_classes, _edje_edd_old_edje_color_class);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_old_edje_file, Old_Edje_File, "text_classes", text_classes, _edje_edd_old_edje_text_class);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_old_edje_file, Old_Edje_File, "size_classes", size_classes, _edje_edd_old_edje_size_class);
 
    /* parts & programs - loaded induvidually */

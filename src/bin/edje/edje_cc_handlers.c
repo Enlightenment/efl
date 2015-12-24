@@ -223,6 +223,11 @@ static void st_color_class_color2(void);
 static void st_color_class_color3(void);
 static void st_color_class_desc(void);
 
+static void ob_text_class(void);
+static void st_text_class_name(void);
+static void st_text_class_font(void);
+static void st_text_class_size(void);
+
 static void ob_size_class(void);
 static void st_size_class_name(void);
 static void st_size_class_min(void);
@@ -550,6 +555,11 @@ static void st_collections_group_nobroadcast(void);
      {PREFIX"color_classes.color_class.description", st_color_class_desc}, /* dup */ \
      {PREFIX"color_classes.color_class.desc", st_color_class_desc}, /* dup */
 
+#define TEXT_CLASS_STATEMENTS(PREFIX) \
+     {PREFIX"text_classes.text_class.name", st_text_class_name}, /* dup */ \
+     {PREFIX"text_classes.text_class.font", st_text_class_font}, /* dup */ \
+     {PREFIX"text_classes.text_class.size", st_text_class_size}, /* dup */
+
 #define SIZE_CLASS_STATEMENTS(PREFIX) \
      {PREFIX"size_classes.size_class.name", st_size_class_name}, /* dup */ \
      {PREFIX"size_classes.size_class.min", st_size_class_min}, /* dup */ \
@@ -657,6 +667,7 @@ New_Statement_Handler statement_handlers[] =
      {"externals.external", st_externals_external},
      IMAGE_STATEMENTS("")
      FONT_STYLE_CC_STATEMENTS("")
+     TEXT_CLASS_STATEMENTS("")
      SIZE_CLASS_STATEMENTS("")
      {"data.item", st_data_item},
      {"data.file", st_data_file},
@@ -666,6 +677,7 @@ New_Statement_Handler statement_handlers[] =
      IMAGE_SET_STATEMENTS("collections")
      {"collections.font", st_fonts_font}, /* dup */
      FONT_STYLE_CC_STATEMENTS("collections.")
+     TEXT_CLASS_STATEMENTS("collections.")
      SIZE_CLASS_STATEMENTS("collections.")
      {"collections.base_scale", st_collections_base_scale},
      {"collections.translation.file.locale", st_collections_group_translation_file_locale},
@@ -710,12 +722,14 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.models.model", st_models_model},
      {"collections.group.font", st_fonts_font}, /* dup */
      FONT_STYLE_CC_STATEMENTS("collections.group.")
+     TEXT_CLASS_STATEMENTS("collections.group.")
      SIZE_CLASS_STATEMENTS("collections.group.")
      {"collections.group.parts.alias", st_collections_group_parts_alias },
      IMAGE_SET_STATEMENTS("collections.group.parts")
      IMAGE_STATEMENTS("collections.group.parts.")
      {"collections.group.parts.font", st_fonts_font}, /* dup */
      FONT_STYLE_CC_STATEMENTS("collections.group.parts.")
+     TEXT_CLASS_STATEMENTS("collections.group.parts.")
      SIZE_CLASS_STATEMENTS("collections.group.parts.")
      {"collections.group.parts.target_group", st_collections_group_target_group}, /* dup */
      {"collections.group.parts.part.name", st_collections_group_parts_part_name},
@@ -760,6 +774,7 @@ New_Statement_Handler statement_handlers[] =
      IMAGE_STATEMENTS("collections.group.parts.part.")
      {"collections.group.parts.part.font", st_fonts_font}, /* dup */
      FONT_STYLE_CC_STATEMENTS("collections.group.parts.part.")
+     TEXT_CLASS_STATEMENTS("collections.group.parts.part.")
      SIZE_CLASS_STATEMENTS("collections.group.parts.part.")
      {"collections.group.parts.part.box.items.item.type", st_collections_group_parts_part_box_items_item_type},
      {"collections.group.parts.part.box.items.item.name", st_collections_group_parts_part_box_items_item_name},
@@ -940,6 +955,7 @@ New_Statement_Handler statement_handlers[] =
      IMAGE_STATEMENTS("collections.group.parts.part.description.")
      {"collections.group.parts.part.description.font", st_fonts_font}, /* dup */
      FONT_STYLE_CC_STATEMENTS("collections.group.parts.part.description.")
+     TEXT_CLASS_STATEMENTS("collections.group.parts.part.description.")
      SIZE_CLASS_STATEMENTS("collections.group.parts.part.description.")
 #ifdef HAVE_EPHYSICS
      {"collections.group.physics.world.gravity", st_collections_group_physics_world_gravity},
@@ -1151,6 +1167,8 @@ New_Object_Handler object_handlers[] =
      {"styles.style", ob_styles_style},
      {"color_classes", NULL},
      {"color_classes.color_class", ob_color_class},
+     {"text_classes", NULL},
+     {"text_classes.text_class", ob_text_class},
      {"size_classes", NULL},
      {"size_classes.size_class", ob_size_class},
      {"spectra", NULL},
@@ -1169,6 +1187,8 @@ New_Object_Handler object_handlers[] =
      {"collections.styles.style", ob_styles_style}, /* dup */
      {"collections.color_classes", NULL}, /* dup */
      {"collections.color_classes.color_class", ob_color_class}, /* dup */
+     {"collections.text_classes", NULL},
+     {"collections.text_classes.text_class", ob_text_class}, /* dup */
      {"collections.size_classes", NULL}, /* dup */
      {"collections.size_classes.size_class", ob_size_class}, /* dup */
      {"collections.sounds", NULL},
@@ -1203,6 +1223,8 @@ New_Object_Handler object_handlers[] =
      {"collections.group.styles.style", ob_styles_style}, /* dup */
      {"collections.group.color_classes", NULL}, /* dup */
      {"collections.group.color_classes.color_class", ob_color_class}, /* dup */
+     {"collections.group.text_classes", NULL},
+     {"collections.group.text_classes.text_class", ob_text_class}, /* dup */
      {"collections.group.size_classes", NULL}, /* dup */
      {"collections.group.size_classes.size_class", ob_size_class}, /* dup */
      {"collections.group.filters", NULL},
@@ -1219,6 +1241,8 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.styles.style", ob_styles_style}, /* dup */
      {"collections.group.parts.color_classes", NULL}, /* dup */
      {"collections.group.parts.color_classes.color_class", ob_color_class}, /* dup */
+     {"collections.group.parts.text_classes", NULL},
+     {"collections.group.parts.text_classes.text_class", ob_text_class}, /* dup */
      {"collections.group.parts.size_classes", NULL}, /* dup */
      {"collections.group.parts.size_classes.size_class", ob_size_class}, /* dup */
      {"collections.group.parts.part", ob_collections_group_parts_part},
@@ -1233,6 +1257,8 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.styles.style", ob_styles_style}, /* dup */
      {"collections.group.parts.part.color_classes", NULL}, /* dup */
      {"collections.group.parts.part.color_classes.color_class", ob_color_class}, /* dup */
+     {"collections.group.parts.part.text_classes", NULL},
+     {"collections.group.parts.part.text_classes.text_class", ob_text_class}, /* dup */
      {"collections.group.parts.part.size_classes", NULL}, /* dup */
      {"collections.group.parts.part.size_classes.size_class", ob_size_class}, /* dup */
      {"collections.group.parts.part.box", NULL},
@@ -1283,6 +1309,8 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.params", NULL},
      {"collections.group.parts.part.description.color_classes", NULL}, /* dup */
      {"collections.group.parts.part.description.color_classes.color_class", ob_color_class}, /* dup */
+     {"collections.group.parts.part.description.text_classes", NULL}, /* dup */
+     {"collections.group.parts.part.description.text_classes.text_class", ob_text_class}, /* dup */
      {"collections.group.parts.part.description.size_classes", NULL}, /* dup */
      {"collections.group.parts.part.description.size_classes.size_class", ob_size_class}, /* dup */
 #ifdef HAVE_EPHYSICS
@@ -2751,6 +2779,135 @@ st_styles_style_tag(void)
    tag->key = parse_str(0);
    tag->value = parse_str(1);
    stl->tags = eina_list_append(stl->tags, tag);
+}
+
+/** @edcsubsection{toplevel_text_classes,
+ *                 Text Classes} */
+
+/**
+    @page edcref
+    @block
+        text_classes
+    @context
+        text_classes {
+           text_class {
+              name: "text_class name";
+              font: "font name";
+              size: SIZE";
+           }
+            ..
+        }
+    @description
+        The "text_classes" block contains a list of one or more "text_class"
+        blocks. Each "text_class" allows the designer to name an arbitrary
+        group of font and size to be used in the theme, the application can
+        use that name to alter the font and its size at runtime.
+    @endblock
+*/
+static void
+ob_text_class(void)
+{
+   Edje_Text_Class *tc;
+
+   tc = mem_alloc(SZ(Edje_Text_Class));
+   edje_file->text_classes = eina_list_append(edje_file->text_classes, tc);
+
+   tc->font = "";
+   tc->size = 0;
+}
+
+static void
+_text_class_name(char *name)
+{
+   Edje_Text_Class *tc, *ttc;
+   Eina_List *l;
+
+   tc = eina_list_data_get(eina_list_last(edje_file->text_classes));
+   tc->name = name;
+   EINA_LIST_FOREACH(edje_file->text_classes, l, ttc)
+     {
+        if ((tc != ttc) && (!strcmp(tc->name, ttc->name)))
+          {
+             ERR("parse error %s:%i. There is already a text class named \"%s\"",
+                 file_in, line - 1, tc->name);
+             exit(-1);
+          }
+     }
+}
+
+/**
+    @page edcref
+
+    @property
+        name
+    @parameters
+        [text class name]
+    @effect
+        Sets the name for the text class, used as reference by both the theme
+        and the application.
+    @endproperty
+*/
+static void
+st_text_class_name(void)
+{
+   Edje_Text_Class *tc, *ttc;
+   Eina_List *l;
+
+   tc = eina_list_data_get(eina_list_last(edje_file->text_classes));
+   tc->name = parse_str(0);
+   EINA_LIST_FOREACH(edje_file->text_classes, l, ttc)
+     {
+        if ((tc != ttc) && (!strcmp(tc->name, ttc->name)))
+          {
+             ERR("parse error %s:%i. There is already a text class named \"%s\"",
+                 file_in, line - 1, tc->name);
+             exit(-1);
+          }
+     }
+}
+
+/**
+    @page edcref
+
+    @property
+        font
+    @parameters
+        [font name]
+    @effect
+        Sets the font family for the text class.
+    @endproperty
+*/
+static void
+st_text_class_font(void)
+{
+   Edje_Text_Class *tc;
+
+   check_arg_count(1);
+
+   tc = eina_list_data_get(eina_list_last(edje_file->text_classes));
+   tc->font = parse_str(0);
+}
+
+/**
+    @page edcref
+
+    @property
+        size
+    @parameters
+        [font size in points (pt)]
+    @effect
+        Sets the font size for the text class.
+    @endproperty
+*/
+static void
+st_text_class_size(void)
+{
+   Edje_Text_Class *tc;
+
+   check_arg_count(1);
+
+   tc = eina_list_data_get(eina_list_last(edje_file->text_classes));
+   tc->size = parse_int_range(0, 0, 255);
 }
 
 /** @edcsubsection{toplevel_size_classes,
@@ -14218,6 +14375,13 @@ edje_cc_handlers_wildcard(void)
          _style_name(token);
          stack_pop_quick(EINA_FALSE, EINA_FALSE);
          return EINA_TRUE;
+     }
+   if (edje_file->text_classes && (!strcmp(last, "text_class")))
+     {
+        if (!had_quote) return EINA_FALSE;
+        _text_class_name(token);
+        stack_pop_quick(EINA_FALSE, EINA_FALSE);
+        return EINA_TRUE;
      }
    if (edje_file->size_classes && (!strcmp(last, "size_class")))
      {
