@@ -117,7 +117,7 @@ e3d_texture_set(Evas_Engine_GL_Context *gc,
         /*Build adjusting matrix for texture unit coordinates*/
         eina_matrix3_position_transform_set(&pt, pt_x, pt_y);
         eina_matrix3_scale_transform_set(&st, st_x, st_y);
-        eina_matrix3_multiply(&texture->trans, &st, &pt);
+        eina_matrix3_multiply(&texture->trans, &pt, &st);
      }
 }
 
