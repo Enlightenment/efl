@@ -27,7 +27,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static void
 _sizing_eval(Evas_Object *obj)
 {
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord minw = 0, minh = 0, maxw = -1, maxh = -1;
    double scale;
 
    ELM_PHOTO_DATA_GET(obj, sd);

@@ -18,7 +18,7 @@
 static void
 _sizing_eval(Evas_Object *obj)
 {
-   Evas_Coord minw = -1, minh = -1;
+   Evas_Coord minw = 0, minh = 0;
    Evas_Coord maxw = -1, maxh = -1;
 
    ELM_MAPBUF_DATA_GET(obj, sd);

@@ -104,7 +104,7 @@ _photocam_image_file_set(Evas_Object *obj, Elm_Photocam_Data *sd)
 static void
 _sizing_eval(Evas_Object *obj)
 {
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord minw = 0, minh = 0, maxw = -1, maxh = -1;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_size_hint_max_get

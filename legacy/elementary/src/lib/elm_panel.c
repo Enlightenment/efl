@@ -51,7 +51,7 @@ _mirrored_set(Evas_Object *obj,
 EOLIAN static void
 _elm_panel_elm_layout_sizing_eval(Eo *obj, Elm_Panel_Data *sd)
 {
-   Evas_Coord mw = -1, mh = -1;
+   Evas_Coord mw = 0, mh = 0;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
