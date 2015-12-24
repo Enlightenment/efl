@@ -259,6 +259,8 @@ ecore_x_e_window_profile_get(Ecore_X_Window win)
    if (atom)
      profile = ecore_x_atom_name_get(atom[0]);
 
+   if (data) free(data);
+
    return profile;
 }
 

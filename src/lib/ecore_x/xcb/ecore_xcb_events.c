@@ -1491,6 +1491,7 @@ _ecore_xcb_event_handle_client_message(xcb_generic_event_t *event)
                     e->types[i] = ecore_x_atom_name_get(types[i]);
                }
              e->num_types = num_ret;
+             if (data) free(data);
           }
         else
           {
