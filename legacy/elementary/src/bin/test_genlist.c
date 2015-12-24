@@ -4121,20 +4121,23 @@ _gl_del_text_get(void *data, Evas_Object *obj EINA_UNUSED,
 {
    char buf[256] = { 0 };
    int num = (int)(uintptr_t)data;
-   int num_category = num % 4;
+   int num_category = num % 10;
 
-   if (num_category == 0)
+   if (num_category == 3)
      snprintf(buf, sizeof(buf),
               "Item #%.02i - 1. Item Del", num);
-   else if (num_category == 1)
+   else if (num_category == 5)
      snprintf(buf, sizeof(buf),
               "Item #%.02i - 2. Genlist Clear and Item Append", num);
-   else if (num_category == 2)
+   else if (num_category == 7)
      snprintf(buf, sizeof(buf),
               "Item #%.02i - 3. Genlist Del", num);
-   else if (num_category == 3)
+   else if (num_category == 9)
      snprintf(buf, sizeof(buf),
               "Item #%.02i - 4. Genlist Clear on double-click", num);
+   else
+     snprintf(buf, sizeof(buf),
+              "Item #%.02i - Normal item", num);
 
    return strdup(buf);
 }
@@ -4143,19 +4146,19 @@ static void
 _gl_del_sel(void *data, Evas_Object *obj, void *event_info)
 {
    int num = (int)(uintptr_t)data;
-   int num_category = num % 4;
+   int num_category = num % 10;
    Elm_Object_Item *it = event_info;
    Elm_Genlist_Item_Class *itc =
       (Elm_Genlist_Item_Class *)elm_genlist_item_item_class_get(it);
 
-   if (num_category == 0)
+   if (num_category == 3)
      elm_object_item_del(it);
-   else if (num_category == 1)
+   else if (num_category == 5)
      {
         elm_genlist_clear(obj);
         _gl_del_item_append(obj, itc);
      }
-   else if (num_category == 2)
+   else if (num_category == 7)
      {
         evas_object_del(obj);
      }
