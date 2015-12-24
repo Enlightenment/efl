@@ -79,6 +79,7 @@ _button_widget_year_dec_start(void *data,
                               void *event_info EINA_UNUSED);
 
 /* This two functions should be moved in Eina for next release. */
+#if 0
 static Eina_Tmpstr *
 _eina_tmpstr_strftime(const char *format, const struct tm *tm)
 {
@@ -121,6 +122,7 @@ _eina_tmpstr_steal(Eina_Tmpstr *s)
    eina_tmpstr_del(s);
    return r;
 }
+#endif
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 
