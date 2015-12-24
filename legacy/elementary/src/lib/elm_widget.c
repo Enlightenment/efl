@@ -372,14 +372,6 @@ _elm_widget_evas_object_smart_add(Eo *obj, Elm_Widget_Smart_Data *priv)
                                   _obj_mouse_up, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_IN,
                                   _obj_mouse_in, obj);
-   /* just a helper for inheriting classes */
-   if (priv->resize_obj)
-     {
-        Evas_Object *r_obj = priv->resize_obj;
-        priv->resize_obj = NULL;
-
-        elm_widget_resize_object_set(obj, r_obj, EINA_TRUE);
-     }
 }
 
 static void
