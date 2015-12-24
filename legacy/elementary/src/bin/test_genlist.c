@@ -130,10 +130,7 @@ gl_text_get1(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNU
    char buf[256];
    int num = (int)(uintptr_t)data;
 
-   if (num == 5)
-     snprintf(buf, sizeof(buf), "Item # %i (Genlist Clear on Select)", num);
-   else
-     snprintf(buf, sizeof(buf), "Item # %i", num);
+   snprintf(buf, sizeof(buf), "Item # %i", num);
 
    return strdup(buf);
 }
@@ -217,13 +214,6 @@ gl_sel(void *data, Evas_Object *obj, void *event_info)
 {
    printf("sel item data [%p] on genlist obj [%p], item pointer [%p], index [%d]\n",
           data, obj, event_info, elm_genlist_item_index_get(event_info));
-}
-
-static void
-gl_sel_clear_cb(void *data EINA_UNUSED, Evas_Object *obj,
-                void *event_info EINA_UNUSED)
-{
-   elm_genlist_clear(obj);
 }
 
 static void
@@ -426,24 +416,12 @@ test_genlist(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    if (getenv("ELM_TEST_AUTOBOUNCE")) max = 200;
    for (i = 0; i < max; i++)
      {
-        if (i == 5)
-          {
-             gli = elm_genlist_item_append(gl, api->itc1,
-                                           (void *)(uintptr_t)i/* item data */,
-                                           NULL/* parent */,
-                                           ELM_GENLIST_ITEM_NONE,
-                                           gl_sel_clear_cb/* func */,
-                                           (void *)(uintptr_t)(i * 10)/* func data */);
-          }
-        else
-          {
-             gli = elm_genlist_item_append(gl, api->itc1,
-                                           (void *)(uintptr_t)i/* item data */,
-                                           NULL/* parent */,
-                                           ELM_GENLIST_ITEM_NONE,
-                                           gl_sel/* func */,
-                                           (void *)(uintptr_t)(i * 10)/* func data */);
-          }
+        gli = elm_genlist_item_append(gl, api->itc1,
+                                      (void *)(uintptr_t)i/* item data */,
+                                      NULL/* parent */,
+                                      ELM_GENLIST_ITEM_NONE,
+                                      gl_sel/* func */,
+                                      (void *)(uintptr_t)(i * 10)/* func data */);
 
         if (i == 50)
           evas_object_smart_callback_add(bt_50, "clicked", _bt50_cb, gli);
