@@ -1,6 +1,36 @@
 ==========
-EFL 1.16.0
+EFL 1.16.1
 ==========
+
+Changes since 1.16.0:
+---------------------
+
+Fixes:
+
+   * edje: initialize map.zoom values to fix old *.edj compatibility issues.
+   * ecore-evas wayland: use correct values when updating wayland window size
+   * ecore-evas drm: null global device pointer after free (T2844)
+   * ector: disable NEON build. (T2851)
+   * ecore-evas-wl: Fix issue of improper window geometry (T2842)
+   * ecore-drm: Don't send mouse_move event too early
+   * ecore-evas-drm: Send fake mouse_move event after registering (T2854)
+   * ecore-wayland: Make ecore_wl_window_maximized_get return proper values
+   * ecore-evas wayland: enforce frame/state change triggering before move/resize (T2841)
+   * ecore-wayland: return only the relevant state value for maximize/fullscreen
+   * ecore-wayland: rewrite maximize/fullscreen set functions for consistency (T2841)
+   * edje: fix edje RTL description in case of custom state of a part
+   * emotion - fix gst back-end to report title and other meta changes
+   * evas: do not add unclipped smart members to the master clip
+   * evas: trigger FLUSH_PRE callback prior to kicking off an async render
+   * evas: do not unset/delete master clip after every frame
+   * efreet_icon_cache_create: null theme eet file to avoid double free
+   * edje_cc: track parts for descriptions, ensure part types match when inheriting
+   * edje_cc: terminate filter file scripts
+   * edje_cc: correctly copy part descriptions when setting part type
+   * edje_cc: redo part type setting to be even more correct
+   * evas: unset pointer ungrabs when using EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN
+   * evas: handle existing pointer grabs when changing object pointer mode
+   * efreetd: send ipc for EFREET_EVENT_DESKTOP_CACHE_BUILD...always (T2733)
 
 Changes since 1.15.0:
 ---------------------
@@ -183,30 +213,6 @@ Fixes:
    * ecore-drm: Fix issue of hanging in read() (T2791)
    * ecore-drm: Remove unused function
    * eina/efreet: open file with binary file on Windows
-   * edje: initialize map.zoom values to fix old *.edj compatibility issues.
-   * ecore-evas wayland: use correct values when updating wayland window size
-   * ecore-evas drm: null global device pointer after free (T2844)
-   * ector: disable NEON build. (T2851)
-   * ecore-evas-wl: Fix issue of improper window geometry (T2842)
-   * ecore-drm: Don't send mouse_move event too early
-   * ecore-evas-drm: Send fake mouse_move event after registering (T2854)
-   * ecore-wayland: Make ecore_wl_window_maximized_get return proper values
-   * ecore-evas wayland: enforce frame/state change triggering before move/resize (T2841)
-   * ecore-wayland: return only the relevant state value for maximize/fullscreen
-   * ecore-wayland: rewrite maximize/fullscreen set functions for consistency (T2841)
-   * edje: fix edje RTL description in case of custom state of a part
-   * emotion - fix gst back-end to report title and other meta changes
-   * evas: do not add unclipped smart members to the master clip
-   * evas: trigger FLUSH_PRE callback prior to kicking off an async render
-   * evas: do not unset/delete master clip after every frame
-   * efreet_icon_cache_create: null theme eet file to avoid double free
-   * edje_cc: track parts for descriptions, ensure part types match when inheriting
-   * edje_cc: terminate filter file scripts
-   * edje_cc: correctly copy part descriptions when setting part type
-   * edje_cc: redo part type setting to be even more correct
-   * evas: unset pointer ungrabs when using EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN
-   * evas: handle existing pointer grabs when changing object pointer mode
-   * efreetd: send ipc for EFREET_EVENT_DESKTOP_CACHE_BUILD...always (T2733)
 
 Changes since 1.14.0:
 ---------------------
