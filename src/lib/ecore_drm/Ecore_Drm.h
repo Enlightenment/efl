@@ -940,6 +940,41 @@ EAPI Eina_Bool ecore_drm_output_possible_crtc_get(Ecore_Drm_Output *output, unsi
  */
 EAPI Eina_Bool ecore_drm_output_mode_set(Ecore_Drm_Output *output, Ecore_Drm_Output_Mode *mode, int x, int y);
 
+/**
+ * Enable key remap functionality on a Ecore_Drm_Evdev
+ *
+ * This function will enable the key remap functionality to the given Ecore_Drm_Evdev
+ *
+ * @param edev The Ecore_Drm_Evdev to enable the key remap on
+ * @param enable A valid Eina_Bool to enable or disable the key remap on the device
+ *
+ * @return EINA_FALSE is returned if the Ecore_Drm_Evdev is not valid, or if no libinput device has been
+ * assigned to it yet. EINA_TRUE will be returned if enabling key remap for this device succeeded.
+ *
+ * @ingroup Ecore_Drm_Input_Group
+ * @since 1.17
+ */
+EAPI Eina_Bool ecore_drm_evdev_key_remap_enable(Ecore_Drm_Evdev *edev, Eina_Bool enable);
+
+/**
+ * Set a given set of keys as remapped keys on a Ecore_Drm_Evdev
+ *
+ * This function will create a hash table of remapping keys as a member of the given Ecore_Drm_Evdev
+ *
+ * @param edev The Ecore_Drm_Evdev to set the remapping keys on
+ * @param from_keys A set of keycodes which contains the original keycode
+ * @param to_keys A set of keycodes which contains the keycode to be remapped
+ * @param num The number of keys to be applied
+ *
+ * @return EINA_FALSE is returned if the Ecore_Drm_Evdev is not valid, if no libinput device has been
+ * assigned to it yet, if key remap is not enabled yet, or the some of the given parameters such as
+ * from_keys, to_keys, num are not valid. EINA_TRUE will be returned if setting key remap for this device succeeded.
+ *
+ * @ingroup Ecore_Drm_Input_Group
+ * @since 1.17
+ */
+EAPI Eina_Bool ecore_drm_evdev_key_remap_set(Ecore_Drm_Evdev *edev, int *from_keys, int *to_keys, int num);
+
 # ifdef __cplusplus
 }
 # endif

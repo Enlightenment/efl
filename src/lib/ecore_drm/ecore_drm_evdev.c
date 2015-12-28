@@ -247,13 +247,29 @@ _device_modifiers_update(Ecore_Drm_Evdev *edev)
 
 }
 
+static int
+_device_remapped_key_get(Ecore_Drm_Evdev *edev, int code)
+{
+   void *ret = NULL;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edev, code);
+   if (!edev->key_remap_enabled) return code;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edev->key_remap_hash, code);
+
+   ret = eina_hash_find(edev->key_remap_hash, &code);
+
+   if (ret) code = (int)(intptr_t)ret;
+
+   return code;
+}
+
 static void
 _device_handle_key(struct libinput_device *device, struct libinput_event_keyboard *event)
 {
    Ecore_Drm_Evdev *edev;
    Ecore_Drm_Input *input;
-   uint32_t timestamp;
-   uint32_t code, nsyms;
+   uint32_t timestamp, nsyms;
+   uint32_t code = 0;
    const xkb_keysym_t *syms;
    enum libinput_key_state state;
    int key_count;
@@ -267,7 +283,12 @@ _device_handle_key(struct libinput_device *device, struct libinput_event_keyboar
    if (!(input = edev->seat->input)) return;
 
    timestamp = libinput_event_keyboard_get_time(event);
-   code = libinput_event_keyboard_get_key(event) + 8;
+   code = libinput_event_keyboard_get_key(event);
+
+   if (!code) return;
+
+   code = _device_remapped_key_get(edev, code) + 8;
+
    state = libinput_event_keyboard_get_key_state(event);
    key_count = libinput_event_keyboard_get_seat_key_count(event);
 
@@ -835,6 +856,7 @@ _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *edev)
 
    if (edev->path) eina_stringshare_del(edev->path);
    if (edev->device) libinput_device_unref(edev->device);
+   if (edev->key_remap_hash) eina_hash_free(edev->key_remap_hash);
 
    free(edev);
 }
@@ -941,4 +963,85 @@ cont:
         eina_stringshare_del(device);
         continue;
      }
+}
+
+/**
+ * @brief Enable key remap functionality on the given device
+ *
+ * @param edev The Ecore_Drm_Evdev to enable the key remap on.
+ * @param enable An Eina_Bool value to enable or disable the key remap on the device.
+ * @return EINA_FALSE is returned if the Ecore_Drm_Evdev is not valid, or if no libinput device has been
+ * assigned to it yet. EINA_TRUE will be returned if enabling key remap for this device succeeded.
+ *
+ * This function enables/disables key remap functionality with the given enable value.
+ * If the given enable value is EINA_FALSE, the key remap functionality wil be disable and
+ * the existing hash table for remapping keys will be freed.
+ */
+EAPI Eina_Bool
+ecore_drm_evdev_key_remap_enable(Ecore_Drm_Evdev *edev, Eina_Bool enable)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edev, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edev->device, EINA_FALSE);
+
+   edev->key_remap_enabled = enable;
+
+   if (enable == EINA_FALSE && edev->key_remap_hash)
+     {
+        eina_hash_free(edev->key_remap_hash);
+        edev->key_remap_hash = NULL;
+     }
+
+   return EINA_TRUE;
+}
+
+/**
+ * @brief Set a set of keys as remapping keys on the given device.
+ *
+ * @param edev The Ecore_Drm_Evdev to set the remapping keys on
+ * @param from_keys A set of keys which contains the original keycodes
+ * @param to_keys A set of keys which contains the keycodes to be remapped
+ * @param num The number of keys to be applied
+ * @return EINA_FALSE is returned if the Ecore_Drm_Evdev is not valid, if no libinput device has been
+ * assigned to it yet, if key remap is not enabled yet, or the some of the given parameters such as
+ * from_keys, to_keys, num are not valid. EINA_TRUE will be returned if setting key remap for this device succeeded.
+ *
+ * This function will create a hash table of remapping keys as a member of the given device.
+ * This hash table will be used in _device_remapped_key_get() later on.
+ * Whenever a key event is coming from the the backend of ecore drm layer
+ * the keycode of it can be replaced with the key found in the hash table.
+ * If there is no key found, the coming keycode will be used.
+ */
+EAPI Eina_Bool
+ecore_drm_evdev_key_remap_set(Ecore_Drm_Evdev *edev, int *from_keys, int *to_keys, int num)
+{
+   int i;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edev, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edev->device, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(from_keys, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(to_keys, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(num <= 0, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!edev->key_remap_enabled, EINA_FALSE);
+
+   if (!edev->key_remap_hash) edev->key_remap_hash = eina_hash_int32_new(NULL);
+
+   if (!edev->key_remap_hash)
+     {
+        ERR("Failed to set remap key information : creating a hash is failed.");
+        return EINA_FALSE;
+     }
+
+   for (i = 0; i < num ; i++)
+     {
+        if ((!from_keys[i]) || (!to_keys[i]))
+          {
+             ERR("Failed to set remap key information : given arguments are invalid.");
+             return EINA_FALSE;
+          }
+     }
+
+   for (i = 0; i < num ; i++)
+     eina_hash_add(edev->key_remap_hash, &from_keys[i], (void *)(intptr_t)to_keys[i]);
+
+   return EINA_TRUE;
 }
