@@ -236,6 +236,7 @@ static void
 _elm_cursor_hot_change(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Cursor *cur = data;
+   if (cur->hotupdate_job) ecore_job_del(cur->hotupdate_job);
    cur->hotupdate_job = ecore_job_add(_elm_cursor_set_hot_spots, data);
 }
 
