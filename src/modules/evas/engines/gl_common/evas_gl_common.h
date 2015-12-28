@@ -763,7 +763,11 @@ void pt_unref(Evas_GL_Texture_Pool *pt);
 //#define GL_ERRORS_TRACE 1
 
 #ifdef GL_ERRORS
-#include <dlfcn.h>
+
+# ifndef _WIN32
+#  include <dlfcn.h>
+# endif
+
 static inline void
 __evas_gl_errdyn(int err, const char *file, const char *func, int line, const char *op)
 {

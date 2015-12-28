@@ -1,7 +1,7 @@
 #define _EVAS_GL_CONTEXT_C
 #include "evas_gl_private.h"
 
-#ifdef HAVE_DLSYM
+#if defined HAVE_DLSYM && ! defined _WIN32
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
 #else
 # error gl_common should not get compiled if dlsym is not found on the system!

@@ -2,7 +2,7 @@
 # include <config.h>
 #endif
 
-#ifdef HAVE_DLADDR
+#if defined HAVE_DLADDR && ! defined _WIN32
 # include <dlfcn.h>
 #endif
 

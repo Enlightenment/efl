@@ -4,7 +4,7 @@
 #include "software/Ector_Software.h"
 #include "cairo/Ector_Cairo.h"
 
-#ifdef HAVE_DLSYM
+#if defined HAVE_DLSYM && ! defined _WIN32
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
 #else
 # error gl_x11 should not get compiled if dlsym is not found on the system!

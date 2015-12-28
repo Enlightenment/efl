@@ -1,7 +1,9 @@
 #define GL_ERRORS_NODEF 1
 #include "evas_gl_core_private.h"
 
-#include <dlfcn.h>
+#ifndef _WIN32
+# include <dlfcn.h>
+#endif
 
 #define EVGL_FUNC_BEGIN() if (UNLIKELY(_need_context_restore)) _context_restore()
 

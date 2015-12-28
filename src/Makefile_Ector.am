@@ -130,8 +130,8 @@ lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @VALGRIND_CFLAGS@ \
 @SSE3_CFLAGS@
 
-lib_ector_libector_la_LIBADD = @ECTOR_LIBS@ @DL_LIBS@
-lib_ector_libector_la_DEPENDENCIES = @ECTOR_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
+lib_ector_libector_la_LIBADD = @ECTOR_LIBS@
+lib_ector_libector_la_DEPENDENCIES = @ECTOR_INTERNAL_LIBS@
 lib_ector_libector_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### Unit tests

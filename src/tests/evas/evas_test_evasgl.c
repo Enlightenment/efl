@@ -11,7 +11,10 @@
 #endif
 
 #include <stdio.h>
-#include <dlfcn.h>
+
+#ifndef _WIN32
+# include <dlfcn.h>
+#endif
 
 #define EFL_GFX_FILTER_BETA
 #include "evas_suite.h"

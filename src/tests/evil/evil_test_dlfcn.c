@@ -20,7 +20,6 @@
 # include "config.h"
 #endif
 
-#include <dlfcn.h>
 #include <Evil.h>
 
 #include "evil_suite.h"

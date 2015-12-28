@@ -10,9 +10,11 @@
 #include <software/Ector_Software.h>
 #include "cairo/Ector_Cairo.h"
 
-#ifdef HAVE_DLSYM
+#if defined HAVE_DLSYM && ! defined _WIN32
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
+#endif
 
+#if defined HAVE_DLSYM
 # define EVAS_GL 1
 # define EVAS_GL_NO_GL_H_CHECK 1
 # include "Evas_GL.h"

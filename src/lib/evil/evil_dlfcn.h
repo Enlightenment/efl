@@ -5,30 +5,8 @@
 #include <limits.h>
 
 
-#ifdef EAPI
-# undef EAPI
-#endif /* EAPI */
-
-#ifdef _WIN32
-# ifdef EFL_EVIL_DLFCN_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif /* ! DLL_EXPORT */
-# else
-#  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EVIL_DLFCN_BUILD */
-#endif /* _WIN32 */
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
 /**
- * @file dlfcn.h
+ * @file evil_dlfcn.h
  * @brief The file that provides functions to manage dynamic-link libraries
  * @defgroup Evil_Dlfcn Functions that manage dynamic-link libraries.
  * @ingroup Evil
@@ -181,7 +159,7 @@ EAPI void *dlopen(const char* path, int mode);
  *
  * @ingroup Evil_Dlfcn
  */
-EAPI int   dlclose(void* handle);
+EAPI int dlclose(void* handle);
 
 /**
  * @brief Get the address of a symbol.
@@ -258,11 +236,6 @@ EAPI int dladdr (const void *addr, Dl_info *info);
  * @ingroup Evil_Dlfcn
  */
 EAPI char *dlerror (void);
-
-
-#ifdef __cplusplus
-}
-#endif
 
 
 #endif /* __EVIL_DLFCN_H__ */

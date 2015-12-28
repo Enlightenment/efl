@@ -1,5 +1,8 @@
 #include "evas_gl_core_private.h"
-#include <dlfcn.h>
+
+#ifndef _WIN32
+# include <dlfcn.h>
+#endif
 
 // EVGL GL Format Pair
 typedef struct _GL_Format

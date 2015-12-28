@@ -172,7 +172,9 @@ timerfd_settime(int                      fd EINA_UNUSED,
 #error No uv.h header found?
 #endif
 
-#include <dlfcn.h>
+#if defined HAVE_DLOPEN && ! defined _WIN32
+# include <dlfcn.h>
+#endif
 
 static uv_prepare_t _ecore_main_uv_prepare;
 static uv_check_t _ecore_main_uv_check;

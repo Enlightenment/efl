@@ -3,7 +3,6 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <string.h>
-#include <dlfcn.h>
 
 #include <Evil.h>
 

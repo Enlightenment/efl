@@ -2,11 +2,12 @@
 if HAVE_WINDOWS
 ### Library
 
-lib_LTLIBRARIES += lib/evil/libevil.la lib/evil/libdl.la
+lib_LTLIBRARIES += lib/evil/libevil.la
 
 install_evilheadersdir = $(includedir)/evil-@VMAJ@
 dist_install_evilheaders_DATA = \
 lib/evil/Evil.h \
+lib/evil/evil_dlfcn.h \
 lib/evil/evil_fcntl.h \
 lib/evil/evil_inet.h \
 lib/evil/evil_langinfo.h \
@@ -22,7 +23,6 @@ lib/evil/evil_time.h \
 lib/evil/evil_unistd.h \
 lib/evil/evil_util.h \
 lib/evil/dirent.h \
-lib/evil/dlfcn.h \
 lib/evil/fnmatch.h \
 lib/evil/pwd.h
 
@@ -32,6 +32,7 @@ lib/evil/sys/mman.h
 
 lib_evil_libevil_la_SOURCES = \
 lib/evil/evil_dirent.c \
+lib/evil/evil_dlfcn.c \
 lib/evil/evil_fcntl.c \
 lib/evil/evil_fnmatch.c \
 lib/evil/evil_fnmatch_list_of_states.c \
@@ -51,6 +52,7 @@ lib/evil/evil_util.c \
 lib/evil/evil_private.h \
 lib/evil/evil_fnmatch_private.h
 
+lib_evil_libevil_la_CPPFLAGS = @EVIL_CPPFLAGS@
 lib_evil_libevil_la_CFLAGS = @EVIL_CFLAGS@ @EVIL_CFLAGS_WRN@ -D__USE_MINGW_ANSI_STDIO
 lib_evil_libevil_la_CXXFLAGS = @EVIL_CXXFLAGS@ @EVIL_CFLAGS@
 lib_evil_libevil_la_LIBADD = @EVIL_LIBS@
@@ -71,22 +73,10 @@ lib/evil/regex/cname.h \
 lib/evil/regex/regex2.h \
 lib/evil/regex/utils.h
 
-lib_evil_libevil_la_CPPFLAGS = \
+lib_evil_libevil_la_CPPFLAGS += \
 -I$(top_srcdir)/src/lib/evil \
 -I$(top_srcdir)/src/lib/evil/regex \
 -DPOSIX_MISTAKE
-
-#libdl
-
-lib_evil_libdl_la_SOURCES = lib/evil/dlfcn.c
-
-lib_evil_libdl_la_CPPFLAGS = \
--I$(top_builddir)/src/lib/efl \
-@EVIL_CFLAGS@ \
-@EVIL_DLFCN_CPPFLAGS@
-lib_evil_libdl_la_LIBADD = @USE_EVIL_LIBS@ @EVIL_DLFCN_LIBS@
-lib_evil_libdl_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
-lib_evil_libdl_la_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@
 
 ### Binary
 
@@ -120,12 +110,12 @@ bin/evil/evil_test_util.h
 #suite_SOURCES +=  bin/evil/memcpy_glibc_i686.S # see EXTRA_DIST below!
 
 bin_evil_evil_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EVIL_CFLAGS@
-bin_evil_evil_suite_LDADD = @USE_EVIL_LIBS@ @DL_LIBS@ -lm
-bin_evil_evil_suite_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
+bin_evil_evil_suite_LDADD = @USE_EVIL_LIBS@ -lm
+bin_evil_evil_suite_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@
 
 bin_evil_test_evil_SOURCES = bin/evil/test_evil.c
 bin_evil_test_evil_LDADD = @USE_EVIL_LIBS@
-bin_evil_test_evil_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
+bin_evil_test_evil_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@
 
 ### Unit tests
 
@@ -147,8 +137,8 @@ tests_evil_evil_suite_CPPFLAGS = \
 -DTESTS_BUILD_DIR=PACKAGE_BUILD_DIR \
 @CHECK_CFLAGS@ \
 @EVIL_CFLAGS@
-tests_evil_evil_suite_LDADD = @USE_EVIL_LIBS@ @DL_LIBS@ @CHECK_LIBS@
-tests_evil_evil_suite_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
+tests_evil_evil_suite_LDADD = @USE_EVIL_LIBS@ @CHECK_LIBS@
+tests_evil_evil_suite_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@
 
 endif
 

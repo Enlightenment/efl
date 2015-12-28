@@ -241,8 +241,8 @@ lib_eina_libeina_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eina\" \
 @VALGRIND_CFLAGS@
 
-lib_eina_libeina_la_LIBADD = @EINA_LIBS@ @DL_LIBS@ @UNWIND_LIBS@
-lib_eina_libeina_la_DEPENDENCIES = @EINA_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
+lib_eina_libeina_la_LIBADD = @EINA_LIBS@ @UNWIND_LIBS@
+lib_eina_libeina_la_DEPENDENCIES = @EINA_INTERNAL_LIBS@
 lib_eina_libeina_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### Binaries

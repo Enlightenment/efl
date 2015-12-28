@@ -2,7 +2,9 @@
 #include "evas_private.h"
 #include "evas_engine.h"
 
-#include <dlfcn.h>
+#ifndef _WIN32
+# include <dlfcn.h>
+#endif
 
 #include <SDL2/SDL_opengl.h>
 

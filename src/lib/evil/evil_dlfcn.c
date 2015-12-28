@@ -14,9 +14,8 @@
 
 #include "evil_macro.h"
 #include "evil_util.h"
+#include "evil_dlfcn.h"
 #include "evil_private.h"
-
-#include "dlfcn.h"
 
 
 static char *_dl_err = NULL;

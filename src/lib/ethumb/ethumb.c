@@ -41,7 +41,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
-#include <dlfcn.h>
 #include <ctype.h>
 #include <pwd.h>
 

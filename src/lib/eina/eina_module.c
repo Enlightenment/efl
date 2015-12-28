@@ -27,7 +27,7 @@
 #include <libgen.h>
 #include <unistd.h>
 
-#ifdef HAVE_DLOPEN
+#if defined HAVE_DLOPEN && ! defined _WIN32
 # include <dlfcn.h>
 #endif
 
