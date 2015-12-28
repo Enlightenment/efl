@@ -399,7 +399,6 @@ case "$host_os" in
 dnl managed by evil
       AC_DEFINE([HAVE_DLADDR], [1], [Define to 1 if you have the `dladdr' function.])
       have_dlopen="yes"
-      requirement_elm_libs="-ldl ${requirement_elm_libs}"
       ;;
    linux*)
       AC_CHECK_LIB([dl], [dlopen], [res=yes], [res=no])
