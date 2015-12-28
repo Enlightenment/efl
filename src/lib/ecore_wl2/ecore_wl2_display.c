@@ -77,7 +77,7 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
 
    if (!strcmp(interface, "wl_compositor"))
      {
-        int request_version = 3;
+        unsigned int request_version = 3;
 #ifdef WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION
         request_version = 4;
 #endif
