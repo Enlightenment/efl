@@ -564,6 +564,7 @@ _eo_base_event_callback_priority_add(Eo *obj, Eo_Base_Data *pd,
    if (!cb || !desc || !func)
      {
         ERR("Tried adding callback with invalid values: cb: %p desc: %p func: %p\n", cb, desc, func);
+        free(cb);
         return;
      }
    cb->items.item.desc = desc;
