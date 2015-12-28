@@ -1191,8 +1191,14 @@ _ecore_wl2_input_cursor_update(void *data)
                                 image->hotspot_x, image->hotspot_y);
 
         wl_surface_attach(input->cursor.surface, buffer, 0, 0);
-        wl_surface_damage(input->cursor.surface,
-                          0, 0, image->width, image->height);
+#ifdef WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION
+        if (input->display->wl.compositor_version >= WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION)
+           wl_surface_damage_buffer(input->cursor.surface,
+                                    0, 0, image->width, image->height);
+        else
+#endif
+           wl_surface_damage(input->cursor.surface,
+                             0, 0, image->width, image->height);
         wl_surface_commit(input->cursor.surface);
 
         if ((input->cursor.wl_cursor->image_count > 1) &&

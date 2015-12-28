@@ -62,6 +62,7 @@ struct _Ecore_Wl2_Display
         struct wl_shm *shm;
         struct wl_shell *wl_shell;
         struct xdg_shell *xdg_shell;
+        int compositor_version;
      } wl;
 
    uint32_t serial;

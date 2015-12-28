@@ -309,7 +309,7 @@ _shm_leaf_release(Shm_Leaf *leaf)
 }
 
 Shm_Surface *
-_evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha)
+_evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha, int compositor_version)
 {
    Shm_Surface *surf;
    int i = 0;
@@ -328,6 +328,7 @@ _evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_
    surf->num_buff = num_buff;
    surf->alpha = alpha;
    surf->flags = 0;
+   surf->compositor_version = compositor_version;
 
    /* create surface buffers */
    for (; i < surf->num_buff; i++)
@@ -505,12 +506,24 @@ _evas_shm_surface_post(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int
         unsigned int k = 0;
 
         for (; k < count; k++)
-          wl_surface_damage(surface->surface,
-                            rects[k].x, rects[k].y,
-                            rects[k].w, rects[k].h);
+#ifdef WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION
+          if (surface->compositor_version >= WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION)
+            wl_surface_damage_buffer(surface->surface,
+                                      rects[k].x, rects[k].y,
+                                      rects[k].w, rects[k].h);
+          else
+#endif
+            wl_surface_damage(surface->surface,
+                               rects[k].x, rects[k].y,
+                               rects[k].w, rects[k].h);
      }
    else
-     wl_surface_damage(surface->surface, 0, 0, leaf->w, leaf->h);
+#ifdef WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION
+     if (surface->compositor_version >= WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION)
+       wl_surface_damage_buffer(surface->surface, 0, 0, leaf->w, leaf->h);
+     else
+#endif
+       wl_surface_damage(surface->surface, 0, 0, leaf->w, leaf->h);
 
    /* frame_cb = wl_surface_frame(surface->surface); */
    /* wl_callback_add_listener(frame_cb, &_shm_frame_listener, surface); */

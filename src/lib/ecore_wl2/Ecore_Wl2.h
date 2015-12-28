@@ -996,6 +996,18 @@ EAPI void ecore_wl2_subsurface_opaque_region_set(Ecore_Wl2_Subsurface *subsurfac
  */
 EAPI int ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output);
 
+/**
+ * Return the version of the display's compositor object
+ *
+ * @param disp the display to get the compositor object version from
+ *
+ * @return the version of the display's compositor object
+ *
+ * @ingroup Ecore_Wl2_Display_Group
+ * @since 1.17
+ */
+EAPI int ecore_wl2_display_compositor_version_get(Ecore_Wl2_Display *disp);
+
 EAPI Ecore_Wl2_Seat *ecore_wl2_seat_create(Ecore_Wl2_Display *display, const char *name, const struct wl_seat_interface *implementation, int version, Ecore_Wl2_Bind_Cb bind_cb, Ecore_Wl2_Unbind_Cb unbind_cb);
 EAPI void ecore_wl2_seat_destroy(Ecore_Wl2_Seat *seat);
 EAPI void ecore_wl2_seat_capabilities_send(Ecore_Wl2_Seat *seat, enum wl_seat_capability caps);

@@ -21,6 +21,7 @@ struct _Evas_Engine_Info_Wayland_Shm
         int edges;
 
         struct wl_display *wl_disp;
+        int compositor_version;
      } info;
 
    /* non-blocking or blocking mode */

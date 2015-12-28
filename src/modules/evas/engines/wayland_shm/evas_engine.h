@@ -81,6 +81,7 @@ struct _Shm_Surface
    int w, h;
    int dx, dy;
    int num_buff;
+   int compositor_version;
 
    Shm_Leaf leaf[MAX_BUFFERS];
    Shm_Leaf *current;
@@ -117,14 +118,14 @@ struct _Outbuf
      } priv;
 };
 
-Shm_Surface *_evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha);
+Shm_Surface *_evas_shm_surface_create(struct wl_display *disp, struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha, int compositor_version);
 void _evas_shm_surface_destroy(Shm_Surface *surface);
 void _evas_shm_surface_reconfigure(Shm_Surface *surface, int dx, int dy, int w, int h, int num_buff, uint32_t flags);
 void *_evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h);
 Eina_Bool _evas_shm_surface_assign(Shm_Surface *surface);
 void _evas_shm_surface_post(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int count);
 
-Outbuf *_evas_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface, struct wl_display *disp);
+Outbuf *_evas_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface, struct wl_display *disp, int compositor_version);
 void _evas_outbuf_free(Outbuf *ob);
 void _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
 void _evas_outbuf_idle_flush(Outbuf *ob);

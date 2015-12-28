@@ -4,6 +4,9 @@
 
 #include "ecore_wl2_private.h"
 
+/* for MIN() */
+#include <sys/param.h>
+
 static Eina_Bool _fatal_error = EINA_FALSE;
 static Eina_Hash *_server_displays = NULL;
 static Eina_Hash *_client_displays = NULL;
@@ -74,8 +77,14 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
 
    if (!strcmp(interface, "wl_compositor"))
      {
+        int request_version = 3;
+#ifdef WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION
+        request_version = 4;
+#endif
         ewd->wl.compositor =
-          wl_registry_bind(registry, id, &wl_compositor_interface, 3);
+          wl_registry_bind(registry, id, &wl_compositor_interface,
+                           MIN(version, request_version));
+        ewd->wl.compositor_version = MIN(version, request_version);
      }
    else if (!strcmp(interface, "wl_subcompositor"))
      {
@@ -745,4 +754,12 @@ ecore_wl2_display_registry_get(Ecore_Wl2_Display *display)
    EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
 
    return display->wl.registry;
+}
+
+EAPI int
+ecore_wl2_display_compositor_version_get(Ecore_Wl2_Display *display)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(display, 0);
+
+   return display->wl.compositor_version;
 }

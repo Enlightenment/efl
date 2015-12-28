@@ -130,6 +130,7 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
      {
         einfo->info.wl_disp = ecore_wl2_display_get(wdata->display);
         einfo->info.wl_shm = ecore_wl2_display_shm_get(wdata->display);
+        einfo->info.compositor_version = ecore_wl2_display_compositor_version_get(wdata->display);
         einfo->info.destination_alpha = EINA_TRUE;
         einfo->info.rotation = ee->rotation;
         einfo->info.wl_surface = ecore_wl2_window_surface_get(wdata->win);
@@ -329,6 +330,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
              einfo->info.destination_alpha = EINA_TRUE;
              einfo->info.rotation = ee->rotation;
              einfo->info.wl_surface = ecore_wl2_window_surface_get(wdata->win);
+             einfo->info.compositor_version = ecore_wl2_display_compositor_version_get(ewd);
 
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
                {
