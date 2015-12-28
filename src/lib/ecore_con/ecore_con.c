@@ -1751,7 +1751,7 @@ _ecore_con_cb_udp_listen(void *data,
                             &mreq6.ipv6mr_multiaddr))
                goto error;
              mreq6.ipv6mr_interface = htonl(INADDR_ANY);
-             if (setsockopt(svr->fd, IPPROTO_IP, IP_ADD_MEMBERSHIP,
+             if (setsockopt(svr->fd, IPPROTO_IPV6, IPV6_ADD_MEMBERSHIP,
                             (const void *)&mreq6, sizeof(mreq6)) != 0)
                goto error;
           }
