@@ -116,7 +116,7 @@ signal_connection make_signal_connection(std::unique_ptr<F>& data, Eo* eo, ::Eo_
 {
   signal_connection c(_event_deleter<F>(data.get(), eo, cb, description));
   data.release();
-  return std::move(c);
+  return c;
 }
 
 namespace _detail {
