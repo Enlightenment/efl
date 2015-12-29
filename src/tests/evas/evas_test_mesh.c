@@ -16,22 +16,26 @@
 #define TESTS_MD2_MESH_DIR TESTS_MESH_DIR"/md2"
 #define TESTS_PLY_MESH_DIR TESTS_MESH_DIR"/ply"
 
-#define COMPARE_GEOMETRICS(a)                               \
-   vb1 = &f1->vertices[a];                                  \
-   vb2 = &f2->vertices[a];                                  \
-   if ((vb1->data == NULL) || (vb2->data == NULL))          \
-      return 1;                                             \
-   src1 = (float *)vb1->data;                               \
-   src2 = (float *)vb2->data;                               \
-   for (i = 0; i < pd1->vertex_count; i++)                  \
-     {                                                      \
-        if ((src1[0] != src2[0]) || (src1[1] != src2[1]))   \
-           return 1;                                        \
-        if (a != EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD)             \
-           if (src1[2] != src2[2])                          \
-              return 1;                                     \
-        src1 += f1->vertices[a].element_count;              \
-        src2 += f2->vertices[a].element_count;              \
+#define COMPARE_GEOMETRICS(a)                                    \
+   vb1 = &f1->vertices[a];                                       \
+   vb2 = &f2->vertices[a];                                       \
+   if ((a == EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION) &&            \
+       ((vb1->data == NULL) || (vb2->data == NULL)))             \
+      return 1;                                                  \
+   if ((vb1->data != NULL) && (vb2->data != NULL))               \
+     {                                                           \
+        src1 = (float *)vb1->data;                               \
+        src2 = (float *)vb2->data;                               \
+        for (i = 0; i < pd1->vertex_count; i++)                  \
+           {                                                     \
+              if ((src1[0] != src2[0]) || (src1[1] != src2[1]))  \
+                return 1;                                        \
+              if (a != EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD)     \
+              if (src1[2] != src2[2])                            \
+                return 1;                                        \
+              src1 += f1->vertices[a].element_count;             \
+              src2 += f2->vertices[a].element_count;             \
+           }                                                     \
      }
 
 #define CHECK_MESHES_IN_FOLDER(folder, ext)                             \
