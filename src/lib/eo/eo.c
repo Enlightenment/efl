@@ -1849,9 +1849,20 @@ eo_shutdown(void)
 {
    size_t i;
    _Eo_Class **cls_itr = _eo_classes;
+   const char *s;
 
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(_eo_init_count > 0, EINA_FALSE);
    if (--_eo_init_count > 0)
      return EINA_TRUE;
+
+   /* We can't actually shutdown Eo for similar reasons that closing a
+    * shared library is risky: all Eo_Class IDs are stored inside their
+    * classname_get() function and can't be safely reset to NULL. */
+   if (!(s = getenv("EO_SHUTDOWN_ENABLE")) || (atoi(s) != 1))
+     {
+        _eo_init_count = 1;
+        return EINA_TRUE;
+     }
 
    eina_log_timing(_eo_log_dom,
                    EINA_LOG_STATE_START,
@@ -1872,7 +1883,10 @@ eo_shutdown(void)
    eina_spinlock_free(&_eo_class_creation_lock);
 
    if (_eo_call_stack_key != 0)
-     eina_tls_free(_eo_call_stack_key);
+     {
+        eina_tls_free(_eo_call_stack_key);
+        _eo_call_stack_key = 0;
+     }
 
    _eo_free_ids_tables();
 
