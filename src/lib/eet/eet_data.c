@@ -1018,7 +1018,8 @@ eet_data_put_float(Eet_Dictionary *ed,
    char buf[128];
    int idx;
 
-   eina_convert_dtoa((double)(*(float *)src), buf);
+   if (!eina_convert_dtoa((double)(*(float *)src), buf))
+     return NULL;
 
    if (!ed)
      {
@@ -1094,7 +1095,8 @@ eet_data_put_double(Eet_Dictionary *ed,
    char buf[128];
    int idx;
 
-   eina_convert_dtoa((double)(*(double *)src), buf);
+   if (!eina_convert_dtoa((double)(*(double *)src), buf))
+     return NULL;
 
    if (!ed)
      {
