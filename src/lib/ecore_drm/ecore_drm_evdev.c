@@ -647,6 +647,8 @@ _ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, struct libinput_device *dev
 
    if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_POINTER))
      {
+        Ecore_Drm_Device *dev;
+
         edev->seat_caps |= EVDEV_SEAT_POINTER;
 
         /* TODO: make this configurable */
