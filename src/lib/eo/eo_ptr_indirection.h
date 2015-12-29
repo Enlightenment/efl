@@ -10,13 +10,18 @@
 
 #ifdef HAVE_EO_ID
 
+void _eo_pointer_error(const char *msg);
+
+#define _EO_POINTER_ERR(fmt, ptr) \
+   do { char buf[256]; sprintf(buf, fmt, ptr); _eo_pointer_error(buf); } while (0)
+
 #define EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, ret) \
    _Eo_Object *obj; \
    do { \
         if (!obj_id) return ret; \
         obj = _eo_obj_pointer_get((Eo_Id)obj_id); \
         if (!obj) { \
-             ERR("Obj (%p) is an invalid ref.", obj_id); \
+             _EO_POINTER_ERR("Obj (%p) is an invalid ref.", obj_id); \
              return ret; \
         } \
    } while (0)
@@ -27,7 +32,7 @@
         if (!obj_id) return; \
         obj = _eo_obj_pointer_get((Eo_Id)obj_id);   \
         if (!obj) { \
-             ERR("Obj (%p) is an invalid ref.", obj_id); \
+             _EO_POINTER_ERR("Obj (%p) is an invalid ref.", obj_id); \
              return; \
         } \
    } while (0)
@@ -38,7 +43,7 @@
         if (!klass_id) return ret; \
         klass = _eo_class_pointer_get(klass_id); \
         if (!klass) { \
-             ERR("Klass (%p) is an invalid ref.", klass_id); \
+             _EO_POINTER_ERR("Klass (%p) is an invalid ref.", klass_id); \
              return ret; \
         } \
    } while (0)
@@ -49,7 +54,7 @@
         if (!klass_id) return; \
         klass = _eo_class_pointer_get(klass_id); \
         if (!klass) { \
-             ERR("Klass (%p) is an invalid ref.", klass_id); \
+             _EO_POINTER_ERR("Klass (%p) is an invalid ref.", klass_id); \
              return; \
         } \
    } while (0)

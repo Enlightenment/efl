@@ -15,3 +15,9 @@ _Eo_Ids_Table *_empty_table = NULL;
 
 /* Next generation to use when assigning a new entry to a Eo pointer */
 Generation_Counter _eo_generation_counter = 0;
+
+void
+_eo_pointer_error(const char *msg)
+{
+   ERR("%s", msg);
+}
