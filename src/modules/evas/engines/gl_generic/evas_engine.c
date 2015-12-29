@@ -970,6 +970,8 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
+      case EVAS_COLORSPACE_AGRY88:
+      case EVAS_COLORSPACE_GRY8:
          if ((!im->im) || (image_data != im->im->image.data))
            {
               im2 = eng_image_new_from_data(data, im->w, im->h, image_data,
@@ -997,8 +999,8 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
          evas_gl_common_image_dirty(im, 0, 0, 0, 0);
          break;
       default:
-         abort();
-         break;
+         ERR("colorspace %d is not supported here", im->cs.space);
+         return NULL;
      }
    return im;
 }

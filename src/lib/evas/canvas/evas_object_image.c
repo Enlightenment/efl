@@ -4709,6 +4709,22 @@ evas_object_image_data_convert_internal(Evas_Image_Data *o, void *data, Evas_Col
                                                     o->cur->image.h,
                                                     to_cspace);
           break;
+      case EVAS_COLORSPACE_AGRY88:
+          out = evas_common_convert_agry88_to(data,
+                                              o->cur->image.w,
+                                              o->cur->image.h,
+                                              o->cur->image.stride,
+                                              o->cur->has_alpha,
+                                              to_cspace);
+          break;
+      case EVAS_COLORSPACE_GRY8:
+          out = evas_common_convert_gry8_to(data,
+                                            o->cur->image.w,
+                                            o->cur->image.h,
+                                            o->cur->image.stride,
+                                            o->cur->has_alpha,
+                                            to_cspace);
+          break;
         default:
           WRN("unknow colorspace: %i\n", o->cur->cspace);
           break;

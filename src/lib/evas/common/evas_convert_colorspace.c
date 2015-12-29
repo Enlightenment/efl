@@ -47,6 +47,90 @@ evas_common_convert_rgb565_a5p_to_argb8888(void *data, int w, int h, int stride,
 }
 
 static inline void *
+evas_common_convert_agry88_to_argb8888(const void *data, int w, int h, int stride, Eina_Bool has_alpha)
+{
+   const DATA16 *src, *end;
+   DATA32 *ret, *dst;
+
+   src = data;
+   end = src + ((stride >> 1) * h);
+   ret = malloc(w * h * sizeof(DATA32));
+   dst = ret;
+
+   if (has_alpha)
+     {
+        for (; src < end; src++, dst++)
+          {
+             int c = (*src) & 0xFF;
+             *dst = ARGB_JOIN((*src >> 8), c, c, c);
+          }
+     }
+   else
+     {
+        for (; src < end; src++, dst++)
+          {
+             int c = (*src) & 0xFF;
+             *dst = ARGB_JOIN(0xFF, c, c, c);
+          }
+     }
+
+   return ret;
+}
+
+void *
+evas_common_convert_agry88_to(const void *data, int w, int h, int stride, Eina_Bool has_alpha, Evas_Colorspace cspace)
+{
+   switch (cspace) {
+      case EVAS_COLORSPACE_ARGB8888:
+        return evas_common_convert_agry88_to_argb8888(data, w, h, stride, has_alpha);
+      default:
+        return NULL;
+     }
+}
+
+static inline void *
+evas_common_convert_gry8_to_argb8888(const void *data, int w, int h, int stride, Eina_Bool has_alpha)
+{
+   const DATA8 *src, *end;
+   DATA32 *ret, *dst;
+
+   src = data;
+   end = src + (stride * h);
+   ret = malloc(w * h * sizeof(DATA32));
+   dst = ret;
+
+   if (has_alpha)
+     {
+        for (; src < end; src++, dst++)
+          {
+             int c = (*src) & 0xFF;
+             *dst = ARGB_JOIN(c, c, c, c);
+          }
+     }
+   else
+     {
+        for (; src < end; src++, dst++)
+          {
+             int c = (*src) & 0xFF;
+             *dst = ARGB_JOIN(0xFF, c, c, c);
+          }
+     }
+
+   return ret;
+}
+
+void *
+evas_common_convert_gry8_to(const void *data, int w, int h, int stride, Eina_Bool has_alpha, Evas_Colorspace cspace)
+{
+   switch (cspace) {
+      case EVAS_COLORSPACE_ARGB8888:
+        return evas_common_convert_gry8_to_argb8888(data, w, h, stride, has_alpha);
+      default:
+        return NULL;
+     }
+}
+
+static inline void *
 evas_common_convert_argb8888_to_a8(void *data, int w, int h, int stride, Eina_Bool has_alpha)
 {
    uint32_t *src, *end;
@@ -67,8 +151,6 @@ evas_common_convert_argb8888_to_a8(void *data, int w, int h, int stride, Eina_Bo
       *dst = CONVERT_ARGB_8888_TO_A_8(*src);
    return ret;
 }
-
-
 
 EAPI void *
 evas_common_convert_argb8888_to(void *data, int w, int h, int stride, Eina_Bool has_alpha, Evas_Colorspace cspace)
