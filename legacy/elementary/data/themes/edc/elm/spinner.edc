@@ -106,8 +106,8 @@ group { name: "elm/spinner/base/default";
          dragable.y: 0 0 0;
          description { state: "default" 0.0;
             fixed: 1 0;
-            rel1.to: "inset";
-            rel2.to: "inset";
+            rel1.to: "elm.swallow.text_button";
+            rel2.to: "elm.swallow.text_button";
             color: 0 0 0 0;
          }
       }
