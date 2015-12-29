@@ -273,7 +273,8 @@ _elm_clouseau_reload()
    return EINA_TRUE;
 }
 
-static Eina_Bool _sys_memory_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+static Eina_Bool
+_sys_memory_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    Ecore_Memory_State state = ecore_memory_state_get();
 
@@ -284,7 +285,8 @@ static Eina_Bool _sys_memory_changed(void *data EINA_UNUSED, int type EINA_UNUSE
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static Eina_Bool _sys_lang_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+static Eina_Bool
+_sys_lang_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    char *lang;
 
@@ -303,8 +305,7 @@ static Eina_Bool _sys_lang_changed(void *data EINA_UNUSED, int type EINA_UNUSED,
 }
 
 EAPI int
-elm_init(int    argc,
-         char **argv)
+elm_init(int argc, char **argv)
 {
    _elm_init_count++;
    if (_elm_init_count > 1) return _elm_init_count;
@@ -312,8 +313,10 @@ elm_init(int    argc,
    elm_quicklaunch_sub_init(argc, argv);
    _prefix_shutdown();
 
-   system_handlers[0] = ecore_event_handler_add(ECORE_EVENT_MEMORY_STATE, _sys_memory_changed, NULL);
-   system_handlers[1] = ecore_event_handler_add(ECORE_EVENT_LOCALE_CHANGED, _sys_lang_changed, NULL);
+   system_handlers[0] =
+     ecore_event_handler_add(ECORE_EVENT_MEMORY_STATE, _sys_memory_changed, NULL);
+   system_handlers[1] =
+     ecore_event_handler_add(ECORE_EVENT_LOCALE_CHANGED, _sys_lang_changed, NULL);
 
    if (_elm_config->atspi_mode != ELM_ATSPI_MODE_OFF)
      _elm_atspi_bridge_init();
@@ -325,9 +328,8 @@ EAPI int
 elm_shutdown(void)
 {
    if (_elm_init_count <= 0)
-     {
-        return 0;
-     }
+     return 0;
+
    _elm_init_count--;
    if (_elm_init_count > 0) return _elm_init_count;
 
@@ -488,8 +490,10 @@ elm_need_e_dbus(void)
 #ifndef RTLD_NOLOAD
 # define RTLD_NOLOAD RTLD_GLOBAL
 #endif
-   if (!e_dbus_handle) e_dbus_handle = dlopen("libedbus.so", RTLD_LAZY | RTLD_NOLOAD);
-   if (!e_dbus_handle) e_dbus_handle = dlopen("libedbus.so.1", RTLD_LAZY | RTLD_NOLOAD);
+   if (!e_dbus_handle)
+     e_dbus_handle = dlopen("libedbus.so", RTLD_LAZY | RTLD_NOLOAD);
+   if (!e_dbus_handle)
+     e_dbus_handle = dlopen("libedbus.so.1", RTLD_LAZY | RTLD_NOLOAD);
    if (!e_dbus_handle) return EINA_FALSE;
    init_func = dlsym(e_dbus_handle, "e_dbus_init");
    if (!init_func) return EINA_FALSE;
@@ -640,7 +644,8 @@ elm_quicklaunch_init(int    argc,
    ecore_file_init();
    eio_init();
 
-   _elm_exit_handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
+   _elm_exit_handler =
+     ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
 
    if (argv)
      {
@@ -662,9 +667,7 @@ elm_quicklaunch_init(int    argc,
    if (!_elm_data_dir) _elm_data_dir = eina_stringshare_add("/");
    if (!_elm_lib_dir) _elm_lib_dir = eina_stringshare_add("/");
 
-   eina_log_timing(_elm_log_dom,
-                   EINA_LOG_STATE_STOP,
-                   EINA_LOG_STATE_INIT);
+   eina_log_timing(_elm_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
 
    if (quicklaunch_on)
      _elm_init_count++;
@@ -736,9 +739,7 @@ elm_quicklaunch_shutdown(void)
    _elm_ql_init_count--;
    if (_elm_ql_init_count > 0) return _elm_ql_init_count;
 
-   eina_log_timing(_elm_log_dom,
-                   EINA_LOG_STATE_STOP,
-                   EINA_LOG_STATE_SHUTDOWN);
+   eina_log_timing(_elm_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_SHUTDOWN);
 
    if (pfx) eina_prefix_free(pfx);
    pfx = NULL;
