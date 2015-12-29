@@ -190,7 +190,7 @@ public:
   typedef typename _base_type::reverse_iterator reverse_iterator;
   typedef typename _base_type::const_reverse_iterator const_reverse_iterator;
 
-  using _base_type::native_handle_type;
+  typedef typename _base_type::native_handle_type native_handle_type;
   
   list& operator=(list&& other) = default;
   list(list&& other) = default;
@@ -254,7 +254,7 @@ public:
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-  using _base_type::native_handle_type;
+  typedef typename _base_type::native_handle_type native_handle_type;
 
   explicit list(typename _self_type::native_handle_type handle)
     : _base_type(handle) {}
@@ -470,7 +470,7 @@ public:
   typedef typename _base_type::reverse_iterator reverse_iterator;
   typedef typename _base_type::const_reverse_iterator const_reverse_iterator;
 
-  using _base_type::native_handle_type;
+  typedef typename _base_type::native_handle_type native_handle_type;
 
   using _base_type::_base_type;
   using _base_type::size;
@@ -509,7 +509,7 @@ public:
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-  using _base_type::native_handle_type;
+  typedef typename _base_type::native_handle_type native_handle_type;
 
   explicit range_list(typename _self_type::native_handle_type handle)
     : _base_type(handle) {}
