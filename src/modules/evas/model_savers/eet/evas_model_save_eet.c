@@ -40,7 +40,7 @@ _set_geometry_to_eet_file_from_mesh(Evas_Canvas3D_Mesh_Data *mesh,
    vb = &f->vertices[a];\
    if (vb->data == NULL)\
      {\
-        ERR("Reading of geometrics is failed.");\
+        ERR("Failed to read geometrics for '%s'.", #component);\
      }\
    else\
      {\
@@ -89,8 +89,8 @@ _set_material_to_eet_file_from_mesh(Evas_Canvas3D_Mesh_Eet *eet_mesh,
 
    if (material == NULL)
      {
-        ERR("Default material is set to saved file, because custom material \
-             was not saved before using of function evas_3d_mesh_save.");
+        ERR("Material is set to the default values, because no custom material "
+             "was saved earlier by evas_3d_mesh_save.");
 
         for (i = 0; i < 5; i++)
           {

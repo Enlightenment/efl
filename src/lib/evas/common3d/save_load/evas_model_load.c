@@ -41,7 +41,7 @@ evas_common_load_model_from_file(Evas_Canvas3D_Mesh *model, const char *file)
 
    if (tmp_file == NULL)
      {
-        ERR("Failed to open file %s\n", file);
+        ERR("Failed to open file %s", file);
         ERR("Failed to initialize loader.");
         return;
      }
