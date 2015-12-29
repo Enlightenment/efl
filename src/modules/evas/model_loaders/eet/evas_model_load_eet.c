@@ -115,9 +115,9 @@ evas_model_load_file_eet(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
 
    eet_close(ef);
 
-   if ((eet_file->mesh == NULL) || (eet_file->header == NULL))
+   if (!eet_file || !eet_file->mesh || !eet_file->header)
      {
-        ERR("Reading of file is failed.");
+        ERR("Failed to read model file");
         _evas_canvas3d_eet_file_free(eet_file);
         return;
      }
