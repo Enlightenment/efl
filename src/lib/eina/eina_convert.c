@@ -290,7 +290,8 @@ eina_convert_dtoa(double d, char *des)
    int p;
    int i;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(des, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(des, 0);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(!isnan(d) && !isinf(d), 0);
 
    if (d < 0.0)
      {
