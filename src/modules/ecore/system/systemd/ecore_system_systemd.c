@@ -11,6 +11,7 @@ static Eldbus_Connection *_conn = NULL;
 
 static Eina_List *_objs = NULL;
 static Eina_List *_proxies = NULL;
+static Eina_Bool _eldbus_initialized = EINA_FALSE;
 
 #ifdef CRI
 #undef CRI
@@ -249,7 +250,22 @@ static void _ecore_system_systemd_shutdown(void);
 static Eina_Bool
 _ecore_system_systemd_init(void)
 {
-   eldbus_init();
+   int ref;
+
+   ref = eldbus_init();
+   if (!ref) return EINA_FALSE;
+   if (ref > 1)
+     {
+        // remove extra ref here, otherwise we have a loop like this:
+        // eldbus -> ecore -> (this module) -> eldbus
+        // and neither eldbus nor ecore can't be shutdown
+        _eldbus_initialized = EINA_FALSE;
+        eldbus_shutdown();
+     }
+   else
+     {
+        _eldbus_initialized = EINA_TRUE;
+     }
 
    _log_dom = eina_log_domain_register("ecore_system_systemd", NULL);
    if (_log_dom < 0)
@@ -315,7 +331,9 @@ _ecore_system_systemd_shutdown(void)
         _log_dom = -1;
      }
 
-   eldbus_shutdown();
+   if (_eldbus_initialized)
+     eldbus_shutdown();
+   _eldbus_initialized = EINA_FALSE;
 }
 
 EINA_MODULE_INIT(_ecore_system_systemd_init);
