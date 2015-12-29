@@ -77,7 +77,7 @@ struct message_iterator
       }
     return *this;
   }
-  message_iterator operator++() const
+  message_iterator operator++(int)
   {
     message_iterator tmp(*this);
     ++*this;
