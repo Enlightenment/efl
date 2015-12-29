@@ -556,3 +556,37 @@ ecore_drm_device_output_name_find(Ecore_Drm_Device *dev, const char *name)
 
    return NULL;
 }
+
+EAPI Eina_Bool
+ecore_drm_device_pointer_left_handed_set(Ecore_Drm_Device *dev, Eina_Bool left_handed)
+{
+   Ecore_Drm_Seat *seat = NULL;
+   Ecore_Drm_Evdev *edev = NULL;
+   Eina_List *l = NULL, *l2 = NULL;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev->seats, EINA_FALSE);
+
+   if (dev->left_handed == left_handed)
+     return EINA_TRUE;
+   dev->left_handed = !!left_handed;
+
+   EINA_LIST_FOREACH(dev->seats, l, seat)
+     {
+        EINA_LIST_FOREACH(seat->devices, l2, edev)
+          {
+             if (libinput_device_has_capability(edev->device,
+                                                LIBINPUT_DEVICE_CAP_POINTER))
+               {
+                  if (libinput_device_config_left_handed_set(edev->device, (int)left_handed) !=
+                      LIBINPUT_CONFIG_STATUS_SUCCESS)
+                    {
+                       WRN("Failed to set left hand mode about device: %s\n",
+                           libinput_device_get_name(edev->device));
+                       continue;
+                    }
+               }
+          }
+     }
+   return EINA_TRUE;
+}

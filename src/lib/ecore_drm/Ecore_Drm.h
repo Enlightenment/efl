@@ -129,6 +129,7 @@ struct _Ecore_Drm_Device
    drmEventContext drm_ctx;
 
    Eina_Bool active : 1;
+   Eina_Bool left_handed : 1;
 };
 
 struct _Ecore_Drm_Event_Activate
@@ -363,6 +364,22 @@ EAPI const char *ecore_drm_device_name_get(Ecore_Drm_Device *dev);
  * @since 1.14
  */
 EAPI Eina_Bool ecore_drm_device_software_setup(Ecore_Drm_Device *dev);
+
+/**
+ * Set a left handed mode at the given Ecore_Drm_Device
+ *
+ * This function will loop all the registered inputs in Ecore_Drm_Device and
+ * set/unset left handed mode.
+ *
+ * @param dev The Ecore_Drm_Device to set left handed mode
+ * @param left_handed The flag of enable/disable left handed mode
+ *
+ * @return EINA_TRUE on success, EINA_FALSE on failure
+ *
+ * @ingroup Ecore_Drm_Device_Group
+ * @since 1.17
+ */
+EAPI Eina_Bool ecore_drm_device_pointer_left_handed_set(Ecore_Drm_Device *dev, Eina_Bool left_handed);
 
 /**
  * Find an Ecore_Drm_Output at the given coordinates
