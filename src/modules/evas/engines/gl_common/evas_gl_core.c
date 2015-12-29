@@ -819,6 +819,9 @@ _surface_cap_cache_save()
    char cap_file_path[PATH_MAX];
    char tmp_file[PATH_MAX];
 
+   /* use eet */
+   if (!eet_init()) return 0;
+
    if (!evas_gl_common_file_cache_dir_check(cap_dir_path, sizeof(cap_dir_path)))
      {
         res = evas_gl_common_file_cache_mkpath(cap_dir_path);
@@ -833,9 +836,6 @@ _surface_cap_cache_save()
    tmpfd = eina_file_mkstemp(tmp_file, NULL);
    if (tmpfd < 0) goto error;
    close(tmpfd);
-
-   /* use eet */
-   if (!eet_init()) goto error;
 
    et = eet_open(tmp_file, EET_FILE_MODE_WRITE);
    if (!et) goto error;
