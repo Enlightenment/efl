@@ -1296,6 +1296,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.texture", ob_collections_group_parts_part_description_texture},
      {"collections.group.parts.part.description.mesh", NULL},
      {"collections.group.parts.part.description.filter", NULL},
+     {"collections.group.parts.part.description.proxy", NULL},
 #ifdef HAVE_EPHYSICS
      {"collections.group.parts.part.description.physics", NULL},
      {"collections.group.parts.part.description.physics.movement_freedom", NULL},
