@@ -1,6 +1,8 @@
 #ifndef _EMBRYO_PRIVATE_H
 #define _EMBRYO_PRIVATE_H
 
+#include <Eina.h>
+
 typedef enum _Embryo_Opcode Embryo_Opcode;
 
 enum _Embryo_Opcode
@@ -145,6 +147,33 @@ enum _Embryo_Opcode
      /* ----- */
      EMBRYO_OP_NUM_OPCODES
 };
+
+EAPI extern int _embryo_default_log_dom ;
+
+#ifdef EMBRYO_DEFAULT_LOG_COLOR
+# undef EMBRYO_DEFAULT_LOG_COLOR
+#endif
+#define EMBRYO_DEFAULT_LOG_COLOR EINA_COLOR_CYAN
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_embryo_default_log_dom, __VA_ARGS__)
+#ifdef INF
+# undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_embryo_default_log_dom, __VA_ARGS__)
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_embryo_default_log_dom, __VA_ARGS__)
+#ifdef CRI
+# undef CRI
+#endif
+#define CRI(...) EINA_LOG_DOM_CRIT(_embryo_default_log_dom, __VA_ARGS__)
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_embryo_default_log_dom, __VA_ARGS__)
 
 #define NUMENTRIES(hdr, field, nextfield) \
 (int)(((hdr)->nextfield - (hdr)->field) / (hdr)->defsize)
