@@ -433,7 +433,7 @@ void                 _elm_config_init(void);
 void                 _elm_config_sub_init(void);
 void                 _elm_config_shutdown(void);
 void                 _elm_config_sub_shutdown(void);
-Eina_Bool            _elm_config_save(void);
+Eina_Bool            _elm_config_save(const char *profile);
 void                 _elm_config_reload(void);
 size_t               _elm_config_user_dir_snprintf(char *dst, size_t size,
                                                    const char *fmt, ...)
@@ -445,7 +445,7 @@ void                 _elm_recache(void);
 const char          *_elm_config_current_profile_get(void);
 const char          *_elm_config_profile_dir_get(const char *prof,
                                                  Eina_Bool is_user);
-Eina_List           *_elm_config_profiles_list(void);
+Eina_List           *_elm_config_profiles_list(Eina_Bool hide_profiles);
 void                 _elm_config_all_update(void);
 void                 _elm_config_profile_set(const char *profile);
 

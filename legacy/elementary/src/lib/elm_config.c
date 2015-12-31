@@ -1053,7 +1053,7 @@ _elm_config_colors_free(const char *palette_name)
 }
 
 Eina_List *
-_elm_config_profiles_list(void)
+_elm_config_profiles_list(Eina_Bool hide_profiles)
 {
    Eina_File_Direct_Info *info;
    Eina_List *flist = NULL;
@@ -1065,8 +1065,7 @@ _elm_config_profiles_list(void)
    len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config");
 
    file_it = eina_file_stat_ls(buf);
-   if (!file_it)
-     goto sys;
+   if (!file_it) goto sys;
 
    buf[len] = '/';
    len++;
@@ -1075,15 +1074,15 @@ _elm_config_profiles_list(void)
 
    EINA_ITERATOR_FOREACH(file_it, info)
      {
-        if (info->name_length >= len)
-          continue;
+        if (info->name_length >= len) continue;
+        if ((hide_profiles) && (info->path[info->name_start] == '.')) continue;
 
         if (info->type == EINA_FILE_DIR)
           {
              flist =
                eina_list_sorted_insert(flist, _sort_files_cb,
-                                       eina_stringshare_add(info->path +
-                                                            info->name_start));
+                                       eina_stringshare_add
+                                         (info->path + info->name_start));
           }
      }
 
@@ -1095,8 +1094,7 @@ sys:
                            sizeof("config") - 1);
 
    file_it = eina_file_stat_ls(buf);
-   if (!file_it)
-     goto list_free;
+   if (!file_it) goto list_free;
 
    buf[len] = '/';
    len++;
@@ -1104,26 +1102,26 @@ sys:
    len = sizeof(buf) - len;
    EINA_ITERATOR_FOREACH(file_it, info)
      {
-        if (info->name_length >= len)
-          continue;
+        if (info->name_length >= len) continue;
+        if ((hide_profiles) && (info->path[info->name_start] == '.')) continue;
 
         switch (info->type)
           {
            case EINA_FILE_DIR:
-           {
-              const Eina_List *l;
-              const char *tmp;
+               {
+                  const Eina_List *l;
+                  const char *tmp;
 
-              EINA_LIST_FOREACH(flist, l, tmp)
-                if (!strcmp(info->path + info->name_start, tmp))
-                  break;
-
-              if (!l)
-                flist =
-                  eina_list_sorted_insert(flist, _sort_files_cb,
-                                          eina_stringshare_add(info->path +
-                                                               info->name_start));
-           }
+                  EINA_LIST_FOREACH(flist, l, tmp)
+                    {
+                       if (!strcmp(info->path + info->name_start, tmp)) break;
+                    }
+                  if (!l)
+                    flist = eina_list_sorted_insert(flist, _sort_files_cb,
+                                                    eina_stringshare_add
+                                                    (info->path +
+                                                     info->name_start));
+               }
            break;
 
            default:
@@ -1134,9 +1132,7 @@ sys:
    return flist;
 
 list_free:
-   EINA_LIST_FREE(flist, dir)
-     eina_stringshare_del(dir);
-
+   EINA_LIST_FREE(flist, dir) eina_stringshare_del(dir);
    return NULL;
 }
 
@@ -1700,7 +1696,7 @@ err:
 }
 
 Eina_Bool
-_elm_config_save(void)
+_elm_config_save(const char *profile)
 {
    char buf[4096], buf2[4096];
    int ok = 0, ret;
@@ -1721,7 +1717,7 @@ _elm_config_save(void)
      }
 
    len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s",
-                                       _elm_profile);
+                                       profile ? profile : _elm_profile);
    if (len + 1 >= sizeof(buf))
      return EINA_FALSE;
 
@@ -1733,8 +1729,11 @@ _elm_config_save(void)
         return EINA_FALSE;
      }
 
-   if (!_elm_config_profile_save())
-     return EINA_FALSE;
+   if (!profile)
+     {
+        if (!_elm_config_profile_save())
+          return EINA_FALSE;
+     }
 
    buf[len] = '/';
    len++;
@@ -1889,7 +1888,7 @@ _config_update(void)
    _elm_config->config_version = ELM_CONFIG_VERSION;
    /* after updating user config, we must save */
    _config_free(tcfg);
-   _elm_config_save();
+   _elm_config_save(NULL);
 }
 
 static void
@@ -2387,7 +2386,7 @@ elm_config_password_show_last_timeout_set(double password_show_last_timeout)
 EAPI Eina_Bool
 elm_config_save(void)
 {
-   return _elm_config_save();
+   return _elm_config_save(NULL);
 }
 
 EAPI void
@@ -2418,7 +2417,13 @@ elm_config_profile_dir_free(const char *p_dir)
 EAPI Eina_List *
 elm_config_profile_list_get(void)
 {
-   return _elm_config_profiles_list();
+   return _elm_config_profiles_list(EINA_TRUE);
+}
+
+EAPI Eina_List *
+elm_config_profile_list_full_get(void)
+{
+   return _elm_config_profiles_list(EINA_FALSE);
 }
 
 EAPI void
@@ -2436,6 +2441,14 @@ elm_config_profile_set(const char *profile)
    EINA_SAFETY_ON_NULL_RETURN(profile);
    _elm_config_profile_set(profile);
 }
+
+EAPI void
+elm_config_profile_save(const char *profile)
+{
+   EINA_SAFETY_ON_NULL_RETURN(profile);
+   _elm_config_save(profile);
+}
+
 
 EAPI const char *
 elm_config_engine_get(void)
@@ -3368,6 +3381,7 @@ elm_config_all_flush(void)
      }
 
    ecore_file_unlink(buf2);
+   elm_config_save();
    return;
 
 err:

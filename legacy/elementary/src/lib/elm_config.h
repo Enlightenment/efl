@@ -116,6 +116,22 @@ EAPI void        elm_config_profile_dir_free(const char *p_dir);
 EAPI Eina_List  *elm_config_profile_list_get(void);
 
 /**
+ * Get Elementary's list of available profiles including hidden ones.
+ *
+ * This gets a full list of profiles even with hidden names that should not
+ * be user-visible.
+ *
+ * @return The profiles list. List node data are the profile name
+ *         strings.
+ * @ingroup Profile
+ *
+ * @note One must free this list, after usage, with the function
+ *       elm_config_profile_list_free().
+ * @since 1.17
+ */
+EAPI Eina_List  *elm_config_profile_list_full_get(void);
+
+/**
  * Free Elementary's list of available profiles.
  *
  * @param l The profiles list, as returned by elm_config_profile_list_get().
@@ -136,6 +152,20 @@ EAPI void        elm_config_profile_list_free(Eina_List *l);
  *
  */
 EAPI void        elm_config_profile_set(const char *profile);
+
+/**
+ * Take the current config and write it out to the named profile
+ *
+ * This will take the current in-memory config and write it out to the named
+ * profile specified by @p profile. This will not change profile for the
+ * application or make other processes switch profile.
+ * 
+ * @param profile The profile's name
+ * @ingroup Profile
+ *
+ * @since 1.17
+ */
+EAPI void        elm_config_profile_save(const char *profile);
 
 /**
  * @}
