@@ -3758,7 +3758,7 @@ eng_ector_destroy(void *data EINA_UNUSED, Ector_Surface *ector)
 }
 
 static Ector_Buffer *
-eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *e, void *engine_image)
+eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *e, void *engine_image, Eina_Bool is_rgba_image EINA_UNUSED)
 {
    Image_Entry *ie = engine_image;
    Ector_Buffer *buf = NULL;

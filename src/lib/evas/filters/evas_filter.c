@@ -40,6 +40,8 @@ _evas_image_get(Ector_Buffer *buf)
 {
    void *image = NULL;
    if (!buf) return NULL;
+   /* FIXME: This MAY return RGBA_Image because engine_image_set MAY pass an
+    * RGBA_Image... Baaaaah */
    eo_do(buf, evas_ector_buffer_engine_image_get(NULL, &image));
    return image;
 }
@@ -73,7 +75,7 @@ evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async)
    if (ctx->gl_engine)
      {
         // FIXME!!!
-        CRI("gl support not implemented");
+        ERR("GL support not fully implemented! Repair work is in progress!");
      }
    return ctx;
 }
@@ -142,7 +144,7 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
             }
           _filter_buffer_backing_free(fb);
           XDBG("Source #%d '%s' has dimensions %dx%d", fb->id, fb->source_name, fb->w, fb->h);
-          fb->buffer = ENFN->ector_buffer_wrap(ENDT, obj->layer->evas->evas, source->proxy->surface);
+          fb->buffer = ENFN->ector_buffer_wrap(ENDT, obj->layer->evas->evas, source->proxy->surface, EINA_FALSE);
           fb->alpha_only = EINA_FALSE;
        }
 }
@@ -204,7 +206,7 @@ _ector_buffer_create(Evas_Filter_Buffer const *fb, void *data)
    // This should be fixed by implementing full support in ector
    // Note: dropped support for cserve2, that was not needed anyway
 
-   cspace = fb->alpha_only ? E_ALPHA : E_ARGB;
+   cspace = fb->alpha_only ? EVAS_COLORSPACE_GRY8 : EVAS_COLORSPACE_ARGB8888;
 #if 0
    // ideal code
    return fb->ENFN->ector_buffer_new(fb->ENDT, fb->ctx->evas->evas,
@@ -230,7 +232,7 @@ _ector_buffer_create(Evas_Filter_Buffer const *fb, void *data)
         data = ((RGBA_Image *) ie)->image.data;
         memset(data, 0, fb->w * fb->h * (fb->alpha_only ? 1 : 4));
      }
-   return fb->ENFN->ector_buffer_wrap(fb->ENDT, fb->ctx->evas->evas, ie);
+   return fb->ENFN->ector_buffer_wrap(fb->ENDT, fb->ctx->evas->evas, ie, EINA_TRUE);
 }
 
 Eina_Bool
@@ -396,7 +398,7 @@ _filter_buffer_new_from_evas_surface(Evas_Filter_Context *ctx, void *image)
 
    fb->id = ++(ctx->last_buffer_id);
    fb->ctx = ctx;
-   fb->buffer = ENFN->ector_buffer_wrap(ENDT, ctx->evas->evas, image);
+   fb->buffer = ENFN->ector_buffer_wrap(ENDT, ctx->evas->evas, image, EINA_FALSE);
    ENFN->image_size_get(ENDT, image, &fb->w, &fb->h);
    fb->alpha_only = (ENFN->image_colorspace_get(ENDT, image)
                      == EVAS_COLORSPACE_GRY8);

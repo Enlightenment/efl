@@ -42,8 +42,7 @@ _evas_ector_gl_image_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
      }
 
    pd->evas = eo_xref(evas, obj);
-   pd->image = ENFN->image_ref(ENDT, im);
-   if (!pd->image) return;
+   EINA_SAFETY_ON_NULL_RETURN(im);
 
    if (im->tex && im->tex->pt)
      {
@@ -60,9 +59,11 @@ _evas_ector_gl_image_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
              if (!im->tex->pt->fb)
                l = r = t = b = 1;
           }
+
+        pd->image = ENFN->image_ref(ENDT, im);
         eo_do(obj, ector_gl_buffer_base_attach(im->tex->pt->texture,
                                                im->tex->pt->fb,
-                                               evas_gl_common_gl_format_to_colorspace(im->tex->pt->format),
+                                               (Efl_Gfx_Colorspace) evas_gl_common_gl_format_to_colorspace(im->tex->pt->format),
                                                im->tex->w, im->tex->h,
                                                im->tex->x, im->tex->y,
                                                im->tex->pt->w, im->tex->pt->h,
@@ -70,7 +71,9 @@ _evas_ector_gl_image_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
      }
    else
      {
-        ERR("What do we do now?");
+        // FIXME: This might be required to support texture upload here
+        ERR("Image has no attached texture! Unsupported!");
+        pd->image = NULL;
      }
 }
 
@@ -87,7 +90,7 @@ EOLIAN static Eo_Base *
 _evas_ector_gl_image_buffer_eo_base_constructor(Eo *obj, Evas_Ector_GL_Image_Buffer_Data *pd)
 {
    eo_do_super(obj, MY_CLASS, obj = eo_constructor());
-   pd->base = eo_data_ref(obj, ECTOR_GL_BUFFER_CLASS);
+   pd->base = eo_data_ref(obj, ECTOR_GL_BUFFER_BASE_MIXIN);
    pd->base->generic = eo_data_ref(obj, ECTOR_GENERIC_BUFFER_MIXIN);
    pd->base->generic->eo = obj;
    return obj;

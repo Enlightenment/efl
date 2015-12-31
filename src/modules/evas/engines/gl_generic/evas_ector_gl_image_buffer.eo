@@ -1,4 +1,4 @@
-class Evas.Ector.GL.Image.Buffer (Evas.Ector.GL.Buffer)
+class Evas.Ector.GL.Image.Buffer (Evas.Ector.GL.Buffer, Evas.Ector.Buffer)
 {
    [[An Ector GL buffer wrapping an existing Evas_GL_Image.]]
    legacy_prefix: null;
