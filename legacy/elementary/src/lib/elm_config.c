@@ -2435,6 +2435,25 @@ elm_config_profile_list_free(Eina_List *l)
      eina_stringshare_del(dir);
 }
 
+EAPI Eina_Bool
+elm_config_profile_exists(const char *profile)
+{
+   char buf[PATH_MAX], buf2[PATH_MAX];
+
+   if (!profile) return EINA_FALSE;
+
+   _elm_config_user_dir_snprintf(buf, sizeof(buf),
+                                 "config/%s/base.cfg", profile);
+   if (ecore_file_exists(buf)) return EINA_TRUE;
+
+   snprintf(buf2, sizeof(buf2), "config/%s/base.cfg", profile);
+   eina_str_join_len(buf, sizeof(buf), '/',
+                     _elm_data_dir, strlen(_elm_data_dir),
+                     buf2, strlen(buf2));
+   if (ecore_file_exists(buf)) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 EAPI void
 elm_config_profile_set(const char *profile)
 {

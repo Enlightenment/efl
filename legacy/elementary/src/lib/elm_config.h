@@ -141,6 +141,17 @@ EAPI Eina_List  *elm_config_profile_list_full_get(void);
 EAPI void        elm_config_profile_list_free(Eina_List *l);
 
 /**
+ * Return if a profile of the given name exists
+ * 
+ * @return EINA_TRUE if the profile exists, or EINA_FALSE if not
+ * @param profile The profile's name
+ * @ingroup Profile
+ *
+ * @since 1.17
+ */
+EAPI Eina_Bool   elm_config_profile_exists(const char *profile);
+
+/**
  * Set Elementary's profile.
  *
  * This sets the global profile that is applied to Elementary
