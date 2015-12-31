@@ -78,6 +78,10 @@ int main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    free(b64);
    free(decoded);
 
+   b64 = eina_str_base64url_encode((unsigned char *)"www.enlightenment.org", 21);
+   printf("%s\n", b64);
+   free(b64);
+
    eina_shutdown();
 
    return 0;
