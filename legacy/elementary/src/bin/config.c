@@ -856,7 +856,6 @@ sel_change(void *data       EINA_UNUSED,
    if (val == sel) return;
    elm_config_selection_unfocused_clear_set(val);
    elm_config_all_flush();
-   elm_config_save();
 }
 
 static void
@@ -870,7 +869,6 @@ dbg_change(void *data       EINA_UNUSED,
    if (val == sel) return;
    elm_config_clouseau_enabled_set(val);
    elm_config_all_flush();
-   elm_config_save();
 }
 
 static void
@@ -884,7 +882,6 @@ atspi_change(void *data       EINA_UNUSED,
    if (val == sel) return;
    elm_config_atspi_mode_set(val);
    elm_config_all_flush();
-   elm_config_save();
 }
 
 static void
@@ -897,7 +894,6 @@ transition_duration_change(void *data EINA_UNUSED,
 
    if (scale == val) return;
    elm_config_transition_duration_factor_set(val);
-   elm_config_save();
    elm_config_all_flush();
 }
 
@@ -1132,7 +1128,6 @@ _font_overlay_set_all(void            *data,
      }
 
    elm_config_all_flush();
-   elm_config_save();
 }
 
 static void
@@ -1170,7 +1165,6 @@ _font_overlay_reset(void            *data,
    ELM_LIST_DISABLE(fsizes);
 
    elm_config_all_flush();
-   elm_config_save();
 }
 
 static void
@@ -1210,7 +1204,6 @@ _font_overlay_reset_all(void            *data,
    ELM_LIST_DISABLE(fsizes);
 
    elm_config_all_flush();
-   elm_config_save();
 }
 
 static void
@@ -1239,7 +1232,6 @@ _font_overlay_change(void *data       EINA_UNUSED,
 
    elm_config_font_overlay_apply();
    elm_config_all_flush();
-   elm_config_save();
 
    /* TODO: apply hinting */
 }
@@ -1411,7 +1403,6 @@ _profile_use(void            *data,
 
    _config_display_update(elm_object_top_widget_get(li));
    elm_config_all_flush();
-   elm_config_save(); /* make sure new profile has its data dir */
 }
 
 static void
@@ -1436,7 +1427,6 @@ _profile_reset(void            *data,
    if (!selection) return;
 
    elm_config_all_flush();
-   elm_config_save(); /* dump config into old profile's data dir */
 
    pdir = elm_config_profile_dir_get(selection, EINA_TRUE);
    if (!pdir)
@@ -1449,7 +1439,6 @@ _profile_reset(void            *data,
 
    elm_config_all_flush();
    _config_display_update(elm_object_top_widget_get(li));
-   elm_config_save(); /* make sure new profile has its data dir */
 }
 
 static void
@@ -1466,7 +1455,6 @@ _theme_use(void *data       EINA_UNUSED,
    defth = elm_theme_get(th);
    elm_theme_set(NULL, defth);
    elm_config_all_flush();
-   elm_config_save();
 }
 
 static void
@@ -3580,7 +3568,6 @@ _cb_accel(void *data, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
      {
         elm_config_accel_preference_set(val);
         elm_config_all_flush();
-        elm_config_save();
      }
 }
 
@@ -3594,7 +3581,6 @@ _cb_accel_override(void *data EINA_UNUSED, Evas_Object *obj, void *info EINA_UNU
      {
         elm_config_accel_preference_override_set(val);
         elm_config_all_flush();
-        elm_config_save();
      }
 }
 
@@ -3608,7 +3594,6 @@ _cb_vsync(void *data EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
      {
         elm_config_vsync_set(val);
         elm_config_all_flush();
-        elm_config_save();
      }
 }
 
