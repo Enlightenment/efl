@@ -260,13 +260,149 @@ _embryo_str_strcut(Embryo_Program *ep, Embryo_Cell *params)
 }
 
 static Embryo_Cell
+_str_snprintf(Embryo_Program *ep, char *s1, char *s2, int max_len, int pnum, Embryo_Cell *params)
+{
+   int i, o, p;
+   int inesc = 0;
+   int insub = 0;
+
+   for (p = 0, o = 0, i = 0; (s1[i]) && (o < max_len) && (p < (pnum + 1)); i++)
+     {
+        if ((!inesc) && (!insub))
+          {
+             if      (s1[i] == '\\') inesc = 1;
+             else if (s1[i] == '%')  insub = 1;
+             if ((!inesc) && (!insub))
+               {
+                  s2[o] = s1[i];
+                  o++;
+               }
+          }
+        else
+          {
+             Embryo_Cell *cptr;
+
+             if (inesc)
+               {
+                  switch (s1[i])
+                    {
+                     case 't':
+                        s2[o] = '\t';
+                        o++;
+                        break;
+                     case 'n':
+                        s2[o] = '\n';
+                        o++;
+                        break;
+                     default:
+                        s2[o] = s1[i];
+                        o++;
+                        break;
+                    }
+                  inesc = 0;
+               }
+             if ((insub) && (s1[i] == '%')) pnum++;
+             if ((insub) && (p < pnum))
+               {
+                  switch (s1[i])
+                    {
+                     case '%':
+                        s2[o] = '%';
+                        o++;
+                        break;
+                     case 'c':
+                        cptr = embryo_data_address_get(ep, params[p]);
+                        if (cptr) s2[o] = (char)(*cptr);
+                        p++;
+                        o++;
+                        break;
+                     case 'i':
+                     case 'd':
+                     case 'x':
+                     case 'X':
+                          {
+                             char fmt[10] = "";
+                             char tmp[256] = "";
+                             int l;
+
+                             if      (s1[i] == 'i') strcpy(fmt, "%i");
+                             else if (s1[i] == 'd') strcpy(fmt, "%d");
+                             else if (s1[i] == 'x') strcpy(fmt, "%x");
+                             else if (s1[i] == 'X') strcpy(fmt, "%08x");
+                             cptr = embryo_data_address_get(ep, params[p]);
+                             if (cptr) snprintf(tmp, sizeof(tmp), fmt, (int)(*cptr));
+                             l = strlen(tmp);
+                             if ((o + l) > max_len)
+                               {
+                                  l = max_len - o;
+                                  if (l < 0) l = 0;
+                                  tmp[l] = 0;
+                               }
+                             strcpy(s2 + o, tmp);
+                             o += l;
+                             p++;
+                          }
+                        break;
+                     case 'f':
+                          {
+                             char tmp[256] = "";
+                             int l;
+
+                             cptr = embryo_data_address_get(ep, params[p]);
+                             if (cptr) snprintf(tmp, sizeof(tmp), "%f", (double)EMBRYO_CELL_TO_FLOAT(*cptr));
+                             l = strlen(tmp);
+                             if ((o + l) > max_len)
+                               {
+                                  l = max_len - o;
+                                  if (l < 0) l = 0;
+                                  tmp[l] = 0;
+                               }
+                             strcpy(s2 + o, tmp);
+                             o += l;
+                             p++;
+                          }
+                        break;
+                     case 's':
+                          {
+                             char *tmp;
+                             int l;
+
+                             STRGET(ep, tmp, params[p]);
+                             if (tmp)
+                               {
+                                  l = strlen(tmp);
+                                  if ((o + l) > max_len)
+                                    {
+                                       l = max_len - o;
+                                       if (l < 0) l = 0;
+                                       tmp[l] = 0;
+                                    }
+                                  strcpy(s2 + o, tmp);
+                                  o += l;
+                               }
+                             p++;
+                          }
+                        break;
+                     default:
+                        break;
+                    }
+                  insub = 0;
+               }
+             else if (insub)
+               insub = 0;
+          }
+     }
+   s2[o] = 0;
+
+   return o;
+}
+
+static Embryo_Cell
 _embryo_str_snprintf(Embryo_Program *ep, Embryo_Cell *params)
 {
    char *s1, *s2;
-   int i, o;
-   int inesc = 0;
-   int insub = 0;
-   int p, pnum;
+   int o = 0;
+   int pnum;
 
    /* params[1] = buf */
    /* params[2] = bufsize */
@@ -280,135 +416,37 @@ _embryo_str_snprintf(Embryo_Program *ep, Embryo_Cell *params)
    if (!s2) return -1;
    s2[0] = 0;
    pnum = (params[0] / sizeof(Embryo_Cell)) - 3;
-   for (p = 0, o = 0, i = 0; (s1[i]) && (o < (params[2] - 1)) && (p < (pnum + 1)); i++)
-     {
-	if ((!inesc) && (!insub))
-	  {
-	     if      (s1[i] == '\\') inesc = 1;
-	     else if (s1[i] == '%')  insub = 1;
-	     if ((!inesc) && (!insub))
-	       {
-		  s2[o] = s1[i];
-		  o++;
-	       }
-	  }
-	else
-	  {
-	     Embryo_Cell *cptr;
 
-	     if (inesc)
-	       {
-		  switch (s1[i])
-		    {
-		     case 't':
-		       s2[o] = '\t';
-		       o++;
-		       break;
-		     case 'n':
-		       s2[o] = '\n';
-		       o++;
-		       break;
-		     default:
-		       s2[o] = s1[i];
-		       o++;
-		       break;
-		    }
-		  inesc = 0;
-	       }
-	     if ((insub) && (s1[i] == '%')) pnum++;
-	     if ((insub) && (p < pnum))
-	       {
-		  switch (s1[i])
-		    {
-		     case '%':
-		       s2[o] = '%';
-		       o++;
-		       break;
-		     case 'c':
-		       cptr = embryo_data_address_get(ep, params[4 + p]);
-		       if (cptr) s2[o] = (char)(*cptr);
-		       p++;
-		       o++;
-		       break;
-		     case 'i':
-		     case 'd':
-		     case 'x':
-		     case 'X':
-			 {
-			    char fmt[10] = "";
-			    char tmp[256] = "";
-			    int l;
-
-			    if      (s1[i] == 'i') strcpy(fmt, "%i");
-			    else if (s1[i] == 'd') strcpy(fmt, "%d");
-			    else if (s1[i] == 'x') strcpy(fmt, "%x");
-			    else if (s1[i] == 'X') strcpy(fmt, "%08x");
-			    cptr = embryo_data_address_get(ep, params[4 + p]);
-			    if (cptr) snprintf(tmp, sizeof(tmp), fmt, (int)(*cptr));
-			    l = strlen(tmp);
-			    if ((o + l) > (params[2] - 1))
-			      {
-				 l = params[2] - 1 - o;
-				 if (l < 0) l = 0;
-				 tmp[l] = 0;
-			      }
-			    strcpy(s2 + o, tmp);
-			    o += l;
-			    p++;
-			 }
-		       break;
-		     case 'f':
-			 {
-			    char tmp[256] = "";
-			    int l;
-
-			    cptr = embryo_data_address_get(ep, params[4 + p]);
-			    if (cptr) snprintf(tmp, sizeof(tmp), "%f", (double)EMBRYO_CELL_TO_FLOAT(*cptr));
-			    l = strlen(tmp);
-			    if ((o + l) > (params[2] - 1))
-			      {
-				 l = params[2] - 1 - o;
-				 if (l < 0) l = 0;
-				 tmp[l] = 0;
-			      }
-			    strcpy(s2 + o, tmp);
-			    o += l;
-			    p++;
-			 }
-		       break;
-		     case 's':
-			 {
-			    char *tmp;
-			    int l;
-
-			    STRGET(ep, tmp, params[4 + p]);
-                            if (tmp)
-                              {
-                                 l = strlen(tmp);
-                                 if ((o + l) > (params[2] - 1))
-                                   {
-                                      l = params[2] - 1 - o;
-                                      if (l < 0) l = 0;
-                                      tmp[l] = 0;
-                                   }
-                                 strcpy(s2 + o, tmp);
-                                 o += l;
-                              }
-			    p++;
-			 }
-		       break;
-		     default:
-		       break;
-		    }
-		  insub = 0;
-	       }
-	     else if (insub)
-	       insub = 0;
-	  }
-     }
-   s2[o] = 0;
+   _str_snprintf(ep, s1, s2, params[2], pnum, &params[4]);
 
    STRSET(ep, params[1], s2);
+
+   return o;
+}
+
+static Embryo_Cell
+_embryo_str_printf(Embryo_Program *ep, Embryo_Cell *params)
+{
+   char *s1, *s2;
+   int o = 0;
+   int pnum;
+   int max_len = 0;
+
+   /* params[1] = format_string */
+   /* params[2] = first arg ... */
+   if (params[0] < (Embryo_Cell)(1 * sizeof(Embryo_Cell))) return 0;
+   STRGET(ep, s1, params[1]);
+   if (!s1) return -1;
+   max_len = strlen(s1) + (params[0] - 1) * 256;
+   s2 = alloca(max_len + 1);
+   if (!s2) return -1;
+   s2[0] = 0;
+   pnum = (params[0] / sizeof(Embryo_Cell)) - 1;
+
+   _str_snprintf(ep, s1, s2, max_len, pnum, &params[2]);
+
+   DBG("%s", s2);
+
    return o;
 }
 
@@ -481,4 +519,5 @@ _embryo_str_init(Embryo_Program *ep)
    embryo_program_native_call_add(ep, "strstr",   _embryo_str_strstr);
    embryo_program_native_call_add(ep, "strchr",   _embryo_str_strchr);
    embryo_program_native_call_add(ep, "strrchr",  _embryo_str_strrchr);
+   embryo_program_native_call_add(ep, "printf",   _embryo_str_printf);
 }

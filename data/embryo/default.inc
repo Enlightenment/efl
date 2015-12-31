@@ -95,6 +95,8 @@ native       strstr(str[], ndl[]);
 native       strchr(str[], ch[]);
 /* same as strrchr, except ch must be a 1 charater long string and returns string index */
 native       strrchr(str[], ch[]);
+/* same as printf, except only supports %%, %c, %i, %d, %f, %x, %X, %s, \n and \t */
+native       printf(fmt[], ...);
 /* return random number 0 - 65535 */
 native       rand();
 /* return random number 0.0 - 1.0 */
