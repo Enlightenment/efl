@@ -41,6 +41,13 @@ _popup_close_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_popup_dismiss_btn_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                      void *event_info EINA_UNUSED)
+{
+   elm_popup_dismiss(data);
+}
+
+static void
 _popup_align_cb(void *data, Evas_Object *obj EINA_UNUSED,
                void *event_info EINA_UNUSED)
 {
@@ -796,6 +803,34 @@ _popup_content_only_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_popup_center_title_text_1button_hide_effect_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                                                void *event_info EINA_UNUSED)
+{
+   Evas_Object *popup;
+   Evas_Object *btn;
+
+   popup = elm_popup_add(data);
+   elm_popup_scrollable_set(popup, is_popup_scroll);
+
+   // popup text
+   elm_object_text_set(popup, "This Popup has title area, content area and "
+                       "action area set, action area has one button Close");
+   // popup title
+   elm_object_part_text_set(popup, "title,text", "Title");
+
+   // popup buttons
+   btn = elm_button_add(popup);
+   elm_object_text_set(btn, "Close");
+   elm_object_part_content_set(popup, "button1", btn);
+   evas_object_smart_callback_add(popup, "dismissed", _response_cb, NULL);
+   evas_object_smart_callback_add(btn, "clicked", _popup_dismiss_btn_cb, popup);
+
+   // popup show should be called after adding all the contents and the buttons
+   // of popup to set the focus into popup's contents correctly.
+   evas_object_show(popup);
+}
+
+static void
 _focus_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Eina_Bool check = elm_check_state_get(obj);
@@ -873,6 +908,8 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_list_item_append(list, "popup with content only",
                         NULL, NULL, _popup_content_only_cb,
                         win);
+   elm_list_item_append(list, "popup-center-title + text + 1 button + hide effect", NULL,
+                        NULL, _popup_center_title_text_1button_hide_effect_cb, win);
    elm_list_go(list);
    evas_object_show(list);
 

@@ -156,6 +156,9 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @in data: const(void)* @optional; [[Data passed to $func above.]]
          }
       }
+      dismiss {
+         [[Dismiss a Popup object.]]
+      }
    }
    implements {
       class.constructor;
@@ -188,6 +191,7 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       item,unfocused;
       language,changed;
       access,changed;
+      dismissed;
    }
 
 }

@@ -421,6 +421,7 @@ _hide_finished_cb(void *data,
    evas_object_hide(sd->notify);
    if (!sd->allow_events) evas_object_hide(sd->block_events);
    eo_do_super(data, MY_CLASS, evas_obj_smart_hide());
+   eo_do(data, eo_event_callback_call(ELM_NOTIFY_EVENT_DISMISSED, NULL));
 }
 
 EOLIAN static void
@@ -663,6 +664,14 @@ _elm_notify_align_set(Eo *obj, Elm_Notify_Data *sd, double horizontal, double ve
    _notify_theme_apply(obj);
    _calc(obj);
 }
+
+EOLIAN static void
+_elm_notify_dismiss(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
+{
+   elm_layout_signal_emit(sd->block_events, "elm,state,hide", "elm");
+   edje_object_signal_emit(sd->notify, "elm,state,hide", "elm");
+}
+
 
 EOLIAN static void
 _elm_notify_align_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, double *horizontal, double *vertical)
