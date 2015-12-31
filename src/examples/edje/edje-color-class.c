@@ -5,7 +5,7 @@
  * buffer one). See stdout/stderr for output.
  *
  * @verbatim
- * edje_cc color-class.edc && gcc -o edje-table edje-color-class.c `pkg-config --libs --cflags evas ecore ecore-evas edje`
+ * edje_cc color-class.edc && gcc -o edje-color-class edje-color-class.c `pkg-config --libs --cflags eina evas ecore ecore-evas edje`
  * @endverbatim
  */
 
