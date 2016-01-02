@@ -109,7 +109,8 @@ _smart_extents_non_homogeneous_calc(Evas_Object_Box_Data *priv, int w, int h, in
    Eina_Bool max = EINA_TRUE, asp = EINA_FALSE;
 
    cminw = *minw, cminh = *minh;
-   *minw = *minh = *maxw = *maxh = 0;
+   *minw = *minh = 0;
+   *maxw = *maxh = -1;
    /* use pointers to values to simplify horizontal vs vertical calculations into
     * a single algorithm for both orientations
     */
