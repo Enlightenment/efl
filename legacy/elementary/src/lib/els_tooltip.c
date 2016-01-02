@@ -58,11 +58,13 @@ struct _Elm_Tooltip
      } rel_pos;
    Elm_Tooltip_Orient       orient; /** orientation for tooltip */
    int                      move_freeze;
+   unsigned short           ref;
 
    double                   hide_timeout; /* from theme */
    Eina_Bool                visible_lock:1;
    Eina_Bool                changed_style:1;
    Eina_Bool                free_size : 1;
+   Eina_Bool                unset_me : 1;
 };
 
 static void _elm_tooltip_reconfigure(Elm_Tooltip *tt);
@@ -73,6 +75,7 @@ static void _elm_tooltip_hide_anim_stop(Elm_Tooltip *tt);
 static void _elm_tooltip_show_timer_stop(Elm_Tooltip *tt);
 static void _elm_tooltip_hide(Elm_Tooltip *tt);
 static void _elm_tooltip_data_clean(Elm_Tooltip *tt);
+static void _elm_tooltip_unset(Elm_Tooltip *tt);
 
 static void
 _elm_tooltip_content_changed_hints_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -354,7 +357,15 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
 
    if (!tt->content)
      {
+        tt->ref++;
         tt->content = tt->func((void *)tt->data, tt->owner, tt->tt_win ? : tt->owner);
+        tt->ref--;
+        if (tt->unset_me)
+          {
+             _elm_tooltip_unset(tt);
+             return;
+          }
+
         if (!tt->content)
           {
              WRN("could not create tooltip content!");
@@ -697,6 +708,11 @@ static void _elm_tooltip_obj_free_cb(void *data, Evas *e  EINA_UNUSED, Evas_Obje
 static void
 _elm_tooltip_unset(Elm_Tooltip *tt)
 {
+   if (tt->ref > 0)
+     {
+        tt->unset_me = EINA_TRUE;
+        return;
+     }
    tt->visible_lock = EINA_FALSE;
    _elm_tooltip_hide(tt);
    _elm_tooltip_data_clean(tt);
