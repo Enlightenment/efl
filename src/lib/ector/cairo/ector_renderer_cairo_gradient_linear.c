@@ -126,7 +126,7 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_generic_base_bounds_get(Eo 
                       bd->generic->origin.x + gld->start.x,
                       bd->generic->origin.y + gld->start.y,
                       gld->end.x - gld->start.x,
-                      gld->end.y - gld->start.x);
+                      gld->end.y - gld->start.y);
 }
 
 static Eo_Base *
