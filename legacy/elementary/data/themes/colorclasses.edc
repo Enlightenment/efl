@@ -110,6 +110,38 @@ color_classes {
       color: FN_COL_HIGHLIGHT_DISABLE;
       desc: "Text of a disabled anchor link";
    }
+   color_class { name: "calendar_year_text";
+      color: FN_COL_DEFAULT;
+      desc: "Year Text in Title Area";
+   }
+   color_class { name: "calendar_month_text";
+      color: FN_COL_DEFAULT;
+      desc: "Month Text in Title Area";
+   }
+   color_class { name: "calendar_weekday_text";
+      color: FN_COL_DISABLE;
+      desc: "Weekday Text";
+   }
+   color_class { name: "calendar_day_text";
+      color: 255 255 255 255;
+      color3: 0 0 0 128;
+      desc: "Day Text";
+   }
+   color_class { name: "calendar_day_text_holiday";
+      color: 128 128 128 255;
+      color3: 0 0 0 128;
+      desc: "Holiday Text";
+   }
+   color_class { name: "calendar_day_text_today";
+      color: 51 153 255 255;
+      color2: 51 153 255 24;
+      desc: "Today Text";
+   }
+   color_class { name: "calendar_day_text_disabled";
+      color: 21 21 21 255;
+      color3: 255 255 255 192;
+      desc: "Disabled Day Text";
+   }
    color_class { name: "check_text";
       color: FN_COL_DEFAULT;
       desc: "Text of a checkbox's label";
