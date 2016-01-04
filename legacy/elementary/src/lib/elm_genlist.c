@@ -385,6 +385,21 @@ _item_content_realize(Elm_Gen_Item *it,
                content = it->itc->func.content_get
                   ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
              if (!content) continue;
+
+             // FIXME: cause elm_layout sizing eval is delayed by smart calc,
+             // genlist cannot get actual min size of edje.
+             // This is workaround code to set min size directly.
+             if (eo_class_get(content) == ELM_LAYOUT_CLASS)
+               {
+                  Evas_Coord old_w, old_h, minw = 0, minh = 0;
+                  evas_object_size_hint_min_get(content, &old_w, &old_h);
+                  edje_object_size_min_calc(elm_layout_edje_get(content), &minw, &minh);
+
+                  if (old_w > minw) minw = old_w;
+                  if (old_h > minh) minw = old_h;
+                  evas_object_size_hint_min_set(content, minw, minh);
+               }
+
              *contents = eina_list_append(*contents, content);
              if (!edje_object_part_swallow(target, key, content))
                {
