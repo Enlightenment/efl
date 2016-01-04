@@ -3772,17 +3772,52 @@ eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *e, void *engine_image, Eina_
 }
 
 static Ector_Buffer *
-eng_ector_buffer_new(void *data EINA_UNUSED, Evas *e, void *pixels,
+eng_ector_buffer_new(void *data EINA_UNUSED, Evas *evas, void *pixels,
                      int width, int height, int stride,
                      Efl_Gfx_Colorspace cspace, Eina_Bool writeable,
                      int l, int r, int t, int b,
                      Ector_Buffer_Flag flags EINA_UNUSED)
 {
    Ector_Buffer *buf = NULL;
+   int pxs = (cspace == EFL_GFX_COLORSPACE_ARGB8888) ? 4 : 1;
+   int iw = width + l + r;
+   int ih = height + t + b;
 
-   buf = eo_add(ECTOR_SOFTWARE_BUFFER_CLASS, e,
-                ector_buffer_pixels_set(pixels, width, height, stride, cspace,
-                                        writeable, l, r, t, b));
+   if ((flags & (ECTOR_BUFFER_FLAG_RENDERABLE | ECTOR_BUFFER_FLAG_DRAWABLE)) == 0)
+     {
+        buf = eo_add(ECTOR_SOFTWARE_BUFFER_CLASS, evas,
+                     ector_buffer_pixels_set(pixels, width, height, stride, cspace,
+                                             writeable, l, r, t, b));
+     }
+   else
+     {
+        // Create an RGBA Image as backing
+        Image_Entry *ie;
+
+        if (pixels)
+          {
+             // no copy
+             ie = evas_cache_image_data(evas_common_image_cache_get(), iw, ih,
+                                        pixels, EINA_TRUE, (Evas_Colorspace) cspace);
+             if (!ie) return NULL;
+          }
+        else
+          {
+             // alloc buffer
+             ie = evas_cache_image_copied_data(evas_common_image_cache_get(), iw, ih,
+                                               NULL, EINA_TRUE, (Evas_Colorspace) cspace);
+             if (!ie) return NULL;
+             pixels = ((RGBA_Image *) ie)->image.data;
+             memset(pixels, 0, iw * ih * pxs);
+          }
+        ie->borders.l = l;
+        ie->borders.r = r;
+        ie->borders.t = t;
+        ie->borders.b = b;
+
+        buf = eng_ector_buffer_wrap(data, evas, ie, EINA_TRUE);
+        evas_cache_image_drop(ie);
+     }
 
    return buf;
 }

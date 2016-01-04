@@ -7,39 +7,65 @@ evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx,
                               Evas_Filter_Buffer *src,
                               unsigned w, unsigned h)
 {
-   Evas_Filter_Buffer *fb;
-   RGBA_Image *dstim, *srcim;
+   unsigned int src_len = 0, src_stride, dst_len = 0, dst_stride;
+   uint8_t *src_map = NULL, *dst_map = NULL;
+   Evas_Filter_Buffer *dst;
+   RGBA_Image dstim, srcim;
    RGBA_Draw_Context dc;
    Eina_Bool ok;
 
-   // only for RGBA
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(!src->alpha_only, NULL);
+   DBG("Scaling buffer from %dx%d to %dx%d, this is a slow operation!",
+       src->w, src->h, w, h);
+   DEBUG_TIME_BEGIN();
 
-   srcim = evas_filter_buffer_backing_get(ctx, src->id);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(srcim, NULL);
+   // Get destination buffer
+   dst = evas_filter_temporary_buffer_get(ctx, w, h, src->alpha_only);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, NULL);
 
-   fb = evas_filter_temporary_buffer_get(ctx, w, h, src->alpha_only);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fb, NULL);
+   // Map input and output
+   src_map = _buffer_map_all(src->buffer, &src_len, E_READ, E_ARGB, &src_stride);
+   dst_map = _buffer_map_all(dst->buffer, &dst_len, E_WRITE, E_ARGB, &dst_stride);
+   EINA_SAFETY_ON_FALSE_GOTO(src_map && dst_map, end);
+   EINA_SAFETY_ON_FALSE_GOTO((src_stride == ((unsigned) src->w * 4)) &&
+                             (dst_stride == (w * 4)), end);
 
-   dstim = evas_filter_buffer_backing_get(ctx, fb->id);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(dstim, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL((dstim->cache_entry.w == w) &&
-                                   (dstim->cache_entry.h == h), NULL);
+   // Wrap as basic RGBA_Images
+   memset(&dstim, 0, sizeof(dstim));
+   dstim.cache_entry.w = w;
+   dstim.cache_entry.h = h;
+   dstim.cache_entry.flags.alpha = 1;
+   dstim.cache_entry.flags.alpha_sparse = 0;
+   dstim.cache_entry.space = EVAS_COLORSPACE_ARGB8888;
+   dstim.image.data8 = dst_map;
 
+   memset(&srcim, 0, sizeof(srcim));
+   srcim.cache_entry.w = src->w;
+   srcim.cache_entry.h = src->h;
+   srcim.cache_entry.flags.alpha = 1;
+   srcim.cache_entry.flags.alpha_sparse = 0;
+   srcim.cache_entry.space = EVAS_COLORSPACE_ARGB8888;
+   srcim.image.data8 = src_map;
+
+   // Basic draw context
    memset(&dc, 0, sizeof(dc));
    dc.sli.h = 1;
    dc.render_op = EVAS_RENDER_COPY;
 
+   // Do the scale
    ok = evas_common_scale_rgba_in_to_out_clip_smooth
-         (srcim, dstim, &dc, 0, 0, src->w, src->h, 0, 0, w, h);
+         (&srcim, &dstim, &dc, 0, 0, src->w, src->h, 0, 0, w, h);
 
    if (!ok)
      {
        ERR("RGBA Image scaling failed.");
-       return NULL;
+       dst = NULL;
      }
 
-   return fb;
+end:
+   if (src_map) eo_do(src->buffer, ector_buffer_unmap(src_map, src_len));
+   if (dst_map) eo_do(dst->buffer, ector_buffer_unmap(dst_map, dst_len));
+   DEBUG_TIME_END();
+   return dst;
 }
 
 static Eina_Bool

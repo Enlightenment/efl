@@ -64,7 +64,7 @@ evas_filter_mask_cpu_func_get(Evas_Filter_Command *cmd)
 static Eina_Bool
 _mask_cpu_alpha_alpha_alpha(Evas_Filter_Command *cmd)
 {
-   unsigned int src_len, src_stride, msk_len, msk_stride, dst_len, dst_stride;
+   unsigned int src_len = 0, src_stride, msk_len = 0, msk_stride, dst_len = 0, dst_stride;
    Efl_Gfx_Render_Op render_op = cmd->draw.rop;
    Evas_Filter_Buffer *msk_fb;
    Alpha_Gfx_Func func;
@@ -225,7 +225,7 @@ _mask_cpu_alpha_rgba_rgba(Evas_Filter_Command *cmd)
      }
    else msk_fb = cmd->mask;
 
-   src_map = _buffer_map_all(cmd->input->buffer, &src_len, E_WRITE, E_ALPHA, &src_stride);
+   src_map = _buffer_map_all(cmd->input->buffer, &src_len, E_READ, E_ALPHA, &src_stride);
    msk_map = _buffer_map_all(msk_fb->buffer, &msk_len, E_READ, E_ARGB, &msk_stride);
    dst_map = _buffer_map_all(cmd->output->buffer, &dst_len, E_WRITE, E_ARGB, &dst_stride);
    EINA_SAFETY_ON_FALSE_GOTO(src_map && dst_map && msk_map, end);
@@ -316,8 +316,8 @@ _mask_cpu_alpha_alpha_rgba(Evas_Filter_Command *cmd)
      }
    else msk_fb = cmd->mask;
 
-   src_map = _buffer_map_all(cmd->input->buffer, &src_len, E_WRITE, E_ALPHA, &src_stride);
-   msk_map = _buffer_map_all(msk_fb->buffer, &msk_len, E_READ, E_ARGB, &msk_stride);
+   src_map = _buffer_map_all(cmd->input->buffer, &src_len, E_READ, E_ALPHA, &src_stride);
+   msk_map = _buffer_map_all(msk_fb->buffer, &msk_len, E_READ, E_ALPHA, &msk_stride);
    dst_map = _buffer_map_all(cmd->output->buffer, &dst_len, E_WRITE, E_ARGB, &dst_stride);
    EINA_SAFETY_ON_FALSE_GOTO(src_map && dst_map && msk_map, end);
 
@@ -400,7 +400,7 @@ _mask_cpu_rgba_rgba_rgba(Evas_Filter_Command *cmd)
      }
    else msk_fb = cmd->mask;
 
-   src_map = _buffer_map_all(cmd->input->buffer, &src_len, E_WRITE, E_ARGB, &src_stride);
+   src_map = _buffer_map_all(cmd->input->buffer, &src_len, E_READ, E_ARGB, &src_stride);
    msk_map = _buffer_map_all(msk_fb->buffer, &msk_len, E_READ, E_ARGB, &msk_stride);
    dst_map = _buffer_map_all(cmd->output->buffer, &dst_len, E_WRITE, E_ARGB, &dst_stride);
    EINA_SAFETY_ON_FALSE_GOTO(src_map && dst_map && msk_map, end);

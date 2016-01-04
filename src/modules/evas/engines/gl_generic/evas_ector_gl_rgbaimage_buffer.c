@@ -73,6 +73,12 @@ _evas_ector_gl_rgbaimage_buffer_evas_ector_buffer_engine_image_get(Eo *obj EINA_
      goto end;
 
    gc = re->window_gl_context_get(re->software.ob);
+#ifdef EVAS_CSERVE2
+   if (evas_cache2_image_cached(&pd->image->cache_entry))
+     evas_cache2_image_ref(&pd->image->cache_entry);
+   else
+#endif
+   evas_cache_image_ref(&pd->image->cache_entry);
    pd->glim = evas_gl_common_image_new_from_rgbaimage(gc, pd->image, NULL, &err);
    if ((err != EVAS_LOAD_ERROR_NONE) || !pd->glim)
      {

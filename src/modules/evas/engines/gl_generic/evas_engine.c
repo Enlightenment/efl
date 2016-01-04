@@ -2502,7 +2502,7 @@ eng_ector_buffer_new(void *data, Evas *evas, void *pixels,
    Ector_Buffer *buf = NULL;
    int iw = width + l + r;
    int ih = height + t + b;
-   int pxs = (cspace = EFL_GFX_COLORSPACE_ARGB8888) ? 4 : 1;
+   int pxs = (cspace == EFL_GFX_COLORSPACE_ARGB8888) ? 4 : 1;
 
    if (stride && (stride != iw * pxs))
      WRN("stride support is not implemented for ector gl buffers at this point!");

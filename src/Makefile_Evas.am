@@ -778,6 +778,8 @@ CLEANFILES += \
               $(evas_gl_generic_eolian_c) \
               $(evas_gl_generic_eolian_h)
 
+EXTRA_DIST += $(evas_gl_generic_eolian_files)
+
 #evaseolianfilesdir = $(datadir)/eolian/include/evas-@VMAJ@
 #evaseolianfiles_DATA += $(evas_gl_generic_eolian_files)
 

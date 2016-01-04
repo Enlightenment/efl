@@ -209,6 +209,8 @@ _ector_buffer_create(Evas_Filter_Buffer const *fb, void *data)
    flags = ECTOR_BUFFER_FLAG_CPU_READABLE | ECTOR_BUFFER_FLAG_CPU_WRITABLE;
    if (fb->id == EVAS_FILTER_BUFFER_INPUT_ID)
      flags |= ECTOR_BUFFER_FLAG_RENDERABLE;
+   else if (fb->id == EVAS_FILTER_BUFFER_OUTPUT_ID)
+     flags |= ECTOR_BUFFER_FLAG_DRAWABLE;
 
    cspace = fb->alpha_only ? EVAS_COLORSPACE_GRY8 : EVAS_COLORSPACE_ARGB8888;
    return fb->ENFN->ector_buffer_new(fb->ENDT, fb->ctx->evas->evas,

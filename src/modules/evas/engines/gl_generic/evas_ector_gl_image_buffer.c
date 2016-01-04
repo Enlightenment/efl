@@ -54,17 +54,6 @@ _pixels_argb_to_gry8_convert(uint8_t *dst, const uint32_t *src, int len)
      }
 }
 
-static inline void
-_pixels_gry8_to_argb_convert(uint32_t *dst, const uint8_t *src, int len)
-{
-   int k;
-   for (k = 0; k < len; k++)
-     {
-        uint8_t s = *src++;
-        *dst++ = ARGB_JOIN(s, s, s, s);
-     }
-}
-
 EOLIAN static void
 _evas_ector_gl_image_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ector_GL_Image_Buffer_Data *pd,
                                                                Evas *evas, void *image)
@@ -175,7 +164,7 @@ _evas_ector_gl_image_buffer_ector_generic_buffer_map(Eo *obj EINA_UNUSED, Evas_E
    if (tofree)
      map->im = im;
    else
-     map->im = ENFN->image_ref(ENDT, im);
+     map->im = NULL;
 
    len = w * h;
    if (cspace == EFL_GFX_COLORSPACE_GRY8)
@@ -218,7 +207,8 @@ _evas_ector_gl_image_buffer_ector_generic_buffer_unmap(Eo *obj EINA_UNUSED, Evas
                {
                   CRI("Not implemented yet. Dropping pixel changes.");
                }
-             ENFN->image_free(ENDT, map->im);
+             if (map->im)
+               ENFN->image_free(ENDT, map->im);
              if (map->allocated)
                free(map->ptr);
              return;

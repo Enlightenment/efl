@@ -11,6 +11,9 @@
 #define ENFN obj->layer->evas->engine.func
 #define ENDT obj->layer->evas->engine.data.output
 
+#define FCOW_BEGIN(_pd) eina_cow_write(evas_object_filter_cow, (const Eina_Cow_Data**)&(_pd->data))
+#define FCOW_END(_fcow, _pd) eina_cow_done(evas_object_filter_cow, (const Eina_Cow_Data**)&(_pd->data), _fcow, EINA_TRUE)
+
 typedef struct _Evas_Filter_Data Evas_Filter_Data;
 struct _Evas_Filter_Data
 {
@@ -21,9 +24,9 @@ static void
 _filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
 {
    Eo *eo_obj = data;
+   Evas_Filter_Data *pd = eo_data_scope_get(eo_obj, MY_CLASS);
 
-   // Destroy context as we won't reuse it.
-   evas_filter_context_destroy(ctx);
+   // FIXME: This needs to run in the main loop
 
    // Redraw text with normal styles in case of failure
    if (!success)
@@ -39,6 +42,18 @@ _filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
         evas_object_coords_recalc(eo_obj, obj);
         evas_object_inform_call_resize(eo_obj);
      }
+   else
+     {
+        Evas_Object_Filter_Data *fcow;
+        void *output = evas_filter_buffer_backing_steal(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID);
+
+        fcow = FCOW_BEGIN(pd);
+        fcow->output = output;
+        FCOW_END(fcow, pd);
+     }
+
+   // Destroy context as we won't reuse it.
+   evas_filter_context_destroy(ctx);
 }
 
 static void
@@ -76,15 +91,16 @@ _filter_source_hash_free_cb(void *data)
    free(pb);
 }
 
-#define FCOW_BEGIN(_pd) eina_cow_write(evas_object_filter_cow, (const Eina_Cow_Data**)&(_pd->data))
-#define FCOW_END(_fcow, _pd) eina_cow_done(evas_object_filter_cow, (const Eina_Cow_Data**)&(_pd->data), _fcow, EINA_TRUE)
-
 Eina_Bool
 evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                           void *output, void *context, void *surface,
                           int x, int y, Eina_Bool do_async, Eina_Bool alpha)
 {
    Evas_Filter_Data *pd = eo_data_scope_get(eo_obj, MY_CLASS);
+
+   // FIXME: Forcing sync render for all engines! (cb needs the main loop)
+   if (do_async) WRN("Disarding async render flag!");
+   do_async = EINA_FALSE;
 
    if (!pd->data->invalid && (pd->data->chain || pd->data->code))
      {
@@ -94,7 +110,6 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         Eina_Bool ok;
         void *previous = pd->data->output;
         Evas_Object_Filter_Data *fcow;
-        void *filter_output;
 
         /* NOTE: Filter rendering is now done ENTIRELY on CPU.
          * So we rely on cache/cache2 to allocate a real image buffer,
@@ -236,8 +251,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         evas_filter_context_buffers_allocate_all(filter);
         evas_filter_target_set(filter, context, surface, X + x, Y + y);
 
-        // Steal output and release previous
-        filter_output = evas_filter_buffer_backing_steal(filter, EVAS_FILTER_BUFFER_OUTPUT_ID);
+        // Release previous output
         evas_filter_buffer_backing_release(filter, previous);
 
         // Request rendering from the object itself (child class)
@@ -252,7 +266,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         ok = evas_filter_run(filter);
 
         fcow = FCOW_BEGIN(pd);
-        fcow->output = filter_output;
+        fcow->output = NULL;
         fcow->changed = EINA_FALSE;
         fcow->async = do_async;
         if (!ok) fcow->invalid = EINA_TRUE;
