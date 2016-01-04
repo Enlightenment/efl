@@ -1221,7 +1221,7 @@ eina_hash_iterator_data_new(const Eina_Hash *hash)
 {
    Eina_Iterator_Hash *it;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
+   if (!hash) return NULL;
    EINA_MAGIC_CHECK_HASH(hash);
 
    it = calloc(1, sizeof (Eina_Iterator_Hash));
@@ -1247,7 +1247,7 @@ eina_hash_iterator_key_new(const Eina_Hash *hash)
 {
    Eina_Iterator_Hash *it;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
+   if (!hash) return NULL;
    EINA_MAGIC_CHECK_HASH(hash);
 
    it = calloc(1, sizeof (Eina_Iterator_Hash));
@@ -1274,7 +1274,7 @@ eina_hash_iterator_tuple_new(const Eina_Hash *hash)
 {
    Eina_Iterator_Hash *it;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(hash, NULL);
+   if (!hash) return NULL;
    EINA_MAGIC_CHECK_HASH(hash);
 
    it = calloc(1, sizeof (Eina_Iterator_Hash));
