@@ -348,6 +348,8 @@ elm_systray_eo.h \
 elm_systray_common.h \
 elm_systray_watcher.h \
 elm_sys_notify.h \
+elm_sys_notify.eo.h \
+elm_sys_notify_dbus.eo.h \
 elm_table.h \
 elm_table_eo.h \
 elm_table_legacy.h \
@@ -477,7 +479,9 @@ elm_spinner.c \
 elm_store.c \
 elm_systray.c \
 elm_systray_watcher.c \
+elm_sys_notify_interface.c \
 elm_sys_notify.c \
+elm_sys_notify_dbus.c \
 elm_table.c \
 elm_theme.c \
 elm_thumb.c \
@@ -594,6 +598,9 @@ elm_separator.eo \
 elm_slider.eo \
 elm_slideshow.eo \
 elm_spinner.eo \
+elm_sys_notify_interface.eo \
+elm_sys_notify.eo \
+elm_sys_notify_dbus.eo \
 elm_systray.eo \
 elm_table.eo \
 elm_thumb.eo \
