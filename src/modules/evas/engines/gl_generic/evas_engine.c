@@ -287,10 +287,10 @@ eng_image_colorspace_set(void *data, void *image, Evas_Colorspace cspace)
    if (im->cs.space == cspace) return;
    re->window_use(re->software.ob);
    evas_gl_common_image_alloc_ensure(im);
-   evas_cache_image_colorspace(&im->im->cache_entry, cspace);
    switch (cspace)
      {
       case EVAS_COLORSPACE_ARGB8888:
+         evas_cache_image_colorspace(&im->im->cache_entry, cspace);
          if (im->cs.data)
            {
               if (!im->cs.no_free) free(im->cs.data);
@@ -303,6 +303,7 @@ eng_image_colorspace_set(void *data, void *image, Evas_Colorspace cspace)
       case EVAS_COLORSPACE_YCBCR422601_PL:
       case EVAS_COLORSPACE_YCBCR420NV12601_PL:
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
+         evas_cache_image_colorspace(&im->im->cache_entry, cspace);
          if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
          im->tex = NULL;
          if (im->cs.data)
@@ -317,8 +318,8 @@ eng_image_colorspace_set(void *data, void *image, Evas_Colorspace cspace)
          im->cs.no_free = 0;
          break;
       default:
-         abort();
-         break;
+         ERR("colorspace %d is not supported here", im->cs.space);
+         return;
      }
    im->cs.space = cspace;
 }
@@ -912,7 +913,8 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
          error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
          break;
       default:
-         abort();
+         ERR("colorspace %d is not supported here", im->cs.space);
+         error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
          break;
      }
    if (err) *err = error;
@@ -1000,7 +1002,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
          break;
       default:
          ERR("colorspace %d is not supported here", im->cs.space);
-         return NULL;
+         break;
      }
    return im;
 }
