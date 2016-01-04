@@ -90,7 +90,35 @@ color_classes {
    }
 
 // widgets
+   color_class { name: "button_bg";
+      color: 255 255 255 255;
+      desc: "Text of a button";
+   }
+   color_class { name: "button_bg_pressed";
+      color: 255 255 255 255;
+      desc: "Text of a button";
+   }
+   color_class { name: "button_bg_disabled";
+      color: 255 255 255 255;
+      desc: "Text of a button";
+   }
+   color_class { name: "button_icon";
+      color: 255 255 255 255;
+      desc: "Text of a button";
+   }
+   color_class { name: "button_icon_pressed";
+      color: 255 255 255 255;
+      desc: "Text of a button";
+   }
+   color_class { name: "button_icon_disabled";
+      color: 255 255 255 64;
+      desc: "Text of a button";
+   }
    color_class { name: "button_text";
+      color: FN_COL_DEFAULT;
+      desc: "Text of a button";
+   }
+   color_class { name: "button_text_pressed";
       color: FN_COL_DEFAULT;
       desc: "Text of a button";
    }
