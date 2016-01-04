@@ -121,19 +121,13 @@ _on_hover_clicked(void *data EINA_UNUSED,
    return EINA_TRUE;
 }
 
-static Eina_Bool
-_on_item_clicked(void *data EINA_UNUSED,
-                     Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                     void *event_info EINA_UNUSED)
+static void
+_auto_update(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *item = data;
    Evas_Object *obj2 = WIDGET(item);
-   Elm_Object_Item *eo_it = EO_OBJ(item);
 
    ELM_HOVERSEL_DATA_GET(obj2, sd);
-
-   if (item->func) item->func((void *)WIDGET_ITEM_DATA_GET(eo_it), obj2, eo_it);
-   eo_do(obj2, eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_it));
 
    if (sd->auto_update)
      {
@@ -156,6 +150,23 @@ _on_item_clicked(void *data EINA_UNUSED,
         if(item->label)
           elm_object_text_set(obj2, item->label);
      }
+}
+
+static Eina_Bool
+_on_item_clicked(void *data EINA_UNUSED,
+                     Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
+{
+   Elm_Hoversel_Item_Data *item = data;
+   Evas_Object *obj2 = WIDGET(item);
+   Elm_Object_Item *eo_it = EO_OBJ(item);
+
+   ELM_HOVERSEL_DATA_GET(obj2, sd);
+
+   if (item->func) item->func((void *)WIDGET_ITEM_DATA_GET(eo_it), obj2, eo_it);
+   eo_do(obj2, eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_it));
+
+   evas_object_event_callback_add(sd->hover, EVAS_CALLBACK_DEL, _auto_update, item);
 
    elm_hoversel_hover_end(obj2);
 

@@ -107,7 +107,6 @@ _hoversel_selected_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    const char *txt = elm_object_item_text_get(event_info);
 
    printf("'selected' callback is called. (selected item : %s)\n", txt);
-   elm_object_text_set(obj, txt);
 }
 
 static void
@@ -165,6 +164,7 @@ test_hoversel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    hoversel = elm_hoversel_add(win);
 // FIXME: need to add horizontal hoversel theme to default some day
 //   elm_hoversel_horizontal_set(bt, EINA_TRUE);
+   elm_hoversel_auto_update_set(hoversel, EINA_TRUE);
    elm_hoversel_hover_parent_set(hoversel, win);
    elm_object_text_set(hoversel, "Labels");
    elm_hoversel_item_add(hoversel, "Item 1", NULL, ELM_ICON_NONE, NULL, NULL);
@@ -265,6 +265,7 @@ test_hoversel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(hoversel);
 
    hoversel = elm_hoversel_add(win);
+   elm_hoversel_auto_update_set(hoversel, EINA_TRUE);
    elm_hoversel_hover_parent_set(hoversel, win);
    elm_object_text_set(hoversel, "Custom Item Style");
    elm_hoversel_item_add(hoversel, "Item 1", NULL, ELM_ICON_NONE, NULL, NULL);
