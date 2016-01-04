@@ -1,0 +1,54 @@
+class Elm_Combobox (Elm.Button, Evas.Selectable_Interface,
+                    Elm_Interface_Atspi_Widget_Action,
+                    Elm.Entry, Elm.Genlist, Elm.Hover)
+{
+   eo_prefix: elm_obj_combobox;
+   methods {
+      @property expanded {
+         get {
+            [[Returns whether the combobox is expanded.
+
+            This will return EINA_TRUE if the combobox is expanded or
+            EINA_FALSE if it is not expanded.
+            ]]
+            return: bool;
+         }
+      }
+      hover_begin {
+         [[This triggers the combobox popup from code, the same as if the user
+         had clicked the button.
+         ]]
+      }
+      hover_end {
+         [[This dismisses the combobox popup as if the user had clicked
+         outside the hover.
+         ]]
+      }
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.hide;
+      Evas.Object_Smart.show;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.del;
+      Evas.Object_Smart.resize;
+      Elm.Widget.part_text.set;
+      Elm.Widget.part_text.get;
+      Elm.Widget.theme_apply;
+      Elm.Widget.translate;
+      Elm.Widget.event;
+      Elm.Button.admits_autorepeat.get;
+      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
+   }
+   events {
+      selected;
+      dismissed;
+      expanded;
+      clicked;
+      item,pressed;
+      filter,done;
+      language,changed;
+      access,changed;
+   }
+}

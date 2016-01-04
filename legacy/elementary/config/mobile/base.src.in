@@ -1,5 +1,5 @@
 group "Elm_Config" struct {
-  value "config_version" int: 131078;
+  value "config_version" int: 131079;
   value "engine" string: "";
   value "vsync" uchar: 0;
   value "thumbscroll_enable" uchar: 1;
@@ -433,6 +433,53 @@ group "Elm_Config" struct {
               value "key" string: "space";
               value "action" string: "activate";
               value "params" string: "";
+           }
+        }
+     }
+     group "Elm_Config_Bindings_Widget" struct {
+        value "name" string: "Elm_Combobox";
+        group "key_bindings" list {
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Return";
+              value "action" string: "activate";
+              value "params" string: "return";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "KP_Enter";
+              value "action" string: "activate";
+              value "params" string: "return";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "space";
+              value "action" string: "activate";
+              value "params" string: "return";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Up";
+              value "action" string: "move";
+              value "params" string: "up";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "KP_Up";
+              value "action" string: "move";
+              value "params" string: "up";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Down";
+              value "action" string: "move";
+              value "params" string: "down";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "KP_Down";
+              value "action" string: "move";
+              value "params" string: "down";
            }
         }
      }

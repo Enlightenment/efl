@@ -56,6 +56,7 @@ elm_widget_clock.h \
 elm_widget_colorselector.h \
 elm_widget_conform.h \
 elm_widget_container.h \
+elm_widget_combobox.h \
 elm_widget_ctxpopup.h \
 elm_widget_datetime.h \
 elm_widget_dayselector.h \
@@ -114,6 +115,8 @@ includesub_HEADERS = \
 elc_ctxpopup.h \
 elc_ctxpopup_eo.h \
 elc_ctxpopup_legacy.h \
+elc_combobox.h \
+elc_combobox_legacy.h \
 elc_fileselector.h \
 elc_fileselector_eo.h \
 elc_fileselector_legacy.h \
@@ -415,6 +418,7 @@ elm_clock.c \
 elm_cnp.c \
 elm_colorselector.c \
 elm_color_class.c \
+elc_combobox.c \
 elm_config.c \
 elm_conform.c \
 elm_container.c \
@@ -531,6 +535,7 @@ elm_calendar.eo \
 elm_check.eo \
 elm_clock.eo \
 elm_colorselector.eo \
+elm_combobox.eo \
 elm_conformant.eo \
 elm_container.eo \
 elm_ctxpopup.eo \

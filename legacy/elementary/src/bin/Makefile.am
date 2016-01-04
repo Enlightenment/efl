@@ -43,6 +43,7 @@ test_clock.c \
 test_cnp.c \
 test_colorselector.c \
 test_colorclass.c \
+test_combobox.c \
 test_config.c \
 test_conform.c \
 test_conform_indicator.c \

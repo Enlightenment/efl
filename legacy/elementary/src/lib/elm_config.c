@@ -1848,6 +1848,33 @@ _config_update(void)
    _elm_config->cursor_engine_only = 0;
    IFCFGEND
 
+   IFCFG(0x0007)
+   Elm_Config_Bindings_Widget *wb, *twb = NULL;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(tcfg->bindings, l, wb)
+     {
+        if (wb->name && !strcmp(wb->name, "Elm_Combobox"))
+          {
+             twb = wb;
+             break;
+          }
+     }
+   if (twb)
+     {
+        EINA_LIST_FOREACH(_elm_config->bindings, l, wb)
+           {
+              if (wb->name && !strcmp(wb->name, "Elm_Combobox"))
+                {
+                   // simply swap bindngs for Elm_Combobox with system ones
+                   Eina_List *tmp = wb->key_bindings;
+                   wb->key_bindings = twb->key_bindings;
+                   twb->key_bindings = tmp;
+                   break;
+                }
+           }
+     }
+   IFCFGEND
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
     **/
