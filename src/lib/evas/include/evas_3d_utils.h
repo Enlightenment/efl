@@ -1366,11 +1366,11 @@ convex_hull_first_tr_get(float *data, int count, int stride)
    Evas_Vec3   triangle1;
    Evas_Vec3   triangle2, triangle2_candidate;
    Evas_Vec3   triangle3, triangle3_candidate;
-   Evas_Vec3   first, second, complanar1, complanar2, candidate;
+   Evas_Vec3   first, diagonal, complanar1, complanar2, candidate;
    Eina_Quaternion   normal_a, normal_b;
 
-   Evas_Real cos = 0.0, new_cos = 0.0, tan = 0.0, new_tan = 0.0, cos_2d = 0.0, new_cos_2d = 0.0;
-   int first_num = 0, second_num = 0;
+   Evas_Real cos = 0.0, new_cos = 0.0, sin = 0.0, new_sin = 0.0, cos_2d = 0.0, new_cos_2d = 0.0;
+   int first_num = 0;
    int i = 0, j = 0;
 
    evas_vec3_set(&triangle1, data[0], data[1], data[2]);
@@ -1389,12 +1389,10 @@ convex_hull_first_tr_get(float *data, int count, int stride)
    if (first_num)
      evas_vec3_set(&triangle2, data[0], data[1], data[2]);
    else
-     {
-        evas_vec3_set(&triangle2, data[3], data[4], data[5]);
-        second_num = 1;
-     }
+     evas_vec3_set(&triangle2, data[3], data[4], data[5]);
 
-   tan = fabs(triangle2.z - triangle1.z) / fabs(triangle2.y - triangle1.y);
+   evas_vec3_subtract(&diagonal, &triangle2, &triangle1);
+   sin = fabs(triangle2.z - triangle1.z) / evas_vec3_length_get(&diagonal);
 
 #define COMPARE_ANGLES(trigonom, triangle, previous, big, little)     \
    if (little > big + FLT_EPSILON)                                    \
@@ -1416,48 +1414,23 @@ convex_hull_first_tr_get(float *data, int count, int stride)
              FLT_COMPARISON(data[j + 1], triangle1.y) ||
              FLT_COMPARISON(data[j + 2], triangle1.z))
            {
-              new_tan = fabs(data[j + 2] - triangle1.z) / fabs(data[j + 1] - triangle1.y);
+              evas_vec3_set(&triangle2_candidate, data[j], data[j + 1], data[j + 2]);
+              evas_vec3_subtract(&diagonal, &triangle2_candidate, &triangle1);
+              new_sin = fabs(data[j + 2] - triangle1.z) / evas_vec3_length_get(&diagonal);
 
-              if (FLT_COMPARISON(data[j + 1], triangle1.y) &&
-                  FLT_COMPARISON(triangle2.y, triangle1.y))
+              if (sin > new_sin + FLT_EPSILON)
                 {
-                   if (tan > new_tan + FLT_EPSILON)
-                     {
-                        tan = new_tan;
-                        evas_vec3_set(&triangle2, data[j], data[j + 1], data[j + 2]);
-                        second_num = i;
-                        evas_vec3_subtract(&first, &complanar1, &triangle1);
-                        evas_vec3_subtract(&second, &triangle2, &triangle1);
-                        cos_2d = evas_vec3_angle_get(&complanar1, &second);
-                     }
-                   else if (!FLT_COMPARISON(tan, new_tan))
-                     {
-                        evas_vec3_subtract(&first, &complanar1, &triangle2);
-                        evas_vec3_set(&triangle2_candidate, data[j], data[j + 1], data[j + 2]);
-                        evas_vec3_subtract(&first, &complanar1, &triangle1);
-                        evas_vec3_subtract(&second, &triangle2_candidate, &triangle1);
-                        new_cos_2d = evas_vec3_angle_get(&complanar1, &second);
-                        if (new_cos_2d > cos_2d + FLT_EPSILON)
-                          second_num = i;
-
-                        COMPARE_ANGLES(cos, triangle2, triangle1, cos_2d, new_cos_2d)
-                     }
+                   sin = new_sin;
+                   evas_vec3_set(&triangle2, data[j], data[j + 1], data[j + 2]);
+                   evas_vec3_subtract(&diagonal, &triangle2, &triangle1);
+                   cos_2d = evas_vec3_angle_get(&complanar1, &diagonal);
                 }
-
-              else if (!FLT_COMPARISON(data[j + 1], triangle1.y) &&
-                       !FLT_COMPARISON(data[j + 2], triangle1.z) &&
-                       FLT_COMPARISON(triangle2.y, triangle1.y))
-                evas_vec3_set(&triangle2, data[j], data[j + 1], data[j + 2]);
-
-              else if (!FLT_COMPARISON(data[j + 1], triangle1.y) &&
-                       !FLT_COMPARISON(data[j + 2], triangle1.z) &&
-                       !FLT_COMPARISON(triangle2.z, triangle1.z) &&
-                       !FLT_COMPARISON(triangle2.y, triangle1.y))
+              else if (!FLT_COMPARISON(sin, new_sin))
                 {
-                   evas_vec3_set(&triangle2_candidate, data[j], data[j + 1], data[j + 2]);
-                   if (evas_vec3_distance_get(&triangle2_candidate, &triangle1) >
-                       evas_vec3_distance_get(&triangle2, &triangle1))
-                     evas_vec3_set(&triangle2, data[j], data[j + 1], data[j + 2]);
+                   evas_vec3_subtract(&diagonal, &triangle2_candidate, &triangle1);
+                   new_cos_2d = evas_vec3_angle_get(&complanar1, &diagonal);
+
+                   COMPARE_ANGLES(cos, triangle2, triangle1, cos_2d, new_cos_2d)
                 }
            }
       }
@@ -1476,9 +1449,15 @@ convex_hull_first_tr_get(float *data, int count, int stride)
 
    for (i = 0, j = 0; i < count; i++, j += stride)
       {
-         if ((i != first_num) && (i != second_num))
+         evas_vec3_set(&candidate, data[j], data[j + 1], data[j + 2]);
+
+         if ((FLT_COMPARISON(data[j], triangle1.x) ||
+             FLT_COMPARISON(data[j + 1], triangle1.y) ||
+             FLT_COMPARISON(data[j + 2], triangle1.z)) &&
+             (FLT_COMPARISON(data[j], triangle2.x) ||
+             FLT_COMPARISON(data[j + 1], triangle2.y) ||
+             FLT_COMPARISON(data[j + 2], triangle2.z)))
            {
-              evas_vec3_set(&candidate, data[j], data[j + 1], data[j + 2]);
               evas_vec3_plain_by_points(&normal_b, &triangle1, &candidate, &triangle2);
 
               if (normal_b.z < 0)
@@ -1490,19 +1469,19 @@ convex_hull_first_tr_get(float *data, int count, int stride)
                 {
                    evas_vec3_set(&triangle3_candidate, data[j], data[j + 1], data[j + 2]);
                    evas_vec3_subtract(&first, &triangle2, &triangle1);
-                   evas_vec3_subtract(&second, &triangle3, &triangle1);
+                   evas_vec3_subtract(&diagonal, &triangle3, &triangle1);
                    cos = new_cos;
                    evas_vec3_set(&triangle3, data[j], data[j + 1], data[j + 2]);
-                   cos_2d = evas_vec3_angle_get(&second, &first);
+                   cos_2d = evas_vec3_angle_get(&diagonal, &first);
                 }
               else if (!FLT_COMPARISON(new_cos, cos))
                 {
                    evas_vec3_set(&triangle3_candidate, data[j], data[j + 1], data[j + 2]);
                    evas_vec3_subtract(&first, &triangle1, &triangle2);
-                   evas_vec3_subtract(&second, &triangle3_candidate, &triangle2);
-                   new_cos_2d = evas_vec3_angle_get(&first, &second);
+                   evas_vec3_subtract(&diagonal, &triangle3_candidate, &triangle2);
+                   new_cos_2d = evas_vec3_angle_get(&first, &diagonal);
 
-                   COMPARE_ANGLES(tan, triangle3, triangle2, new_cos_2d, cos_2d)
+                   COMPARE_ANGLES(cos, triangle3, triangle2, new_cos_2d, cos_2d)
                 }
            }
       }
