@@ -423,6 +423,20 @@ EAPI char *eina_str_base64url_encode(const unsigned char *src, unsigned int len)
  */
 EAPI unsigned char * eina_str_base64_decode(const char * src, int *decoded_str_len);
 
+/**
+ * @brief decoding function for base64 url and filename safe encoding.
+ * @param src The string to be decoded.
+ * @param decoded_str_len The length of the decoded string.
+ * @return the base64url decoded string.
+ *
+ * This will create a NULL terminated string which is base64url
+ * decode of the src.
+ * The caller has to free the returned string using free().
+ *
+ * @since 1.17.0
+ */
+EAPI unsigned char * eina_str_base64url_decode(const char * src, int *decoded_str_len);
+
 #include "eina_inline_str.x"
 
 /**
