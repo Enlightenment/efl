@@ -5227,22 +5227,32 @@ _layout_par(Ctxt *c)
               * fast path.
               * Other values of 0.0 <= ellipsis < 1.0 are handled in
               * _layout_par_ellipsis_items */
-             int ascent = 0, descent = 0, maxasc = 0, maxdesc = 0;
-             _layout_item_ascent_descent_adjust(c->obj, &ascent, &descent,
-                                                it, it->format);
+             int ellip_h_thresh = 0;
 
-             if (c->position == TEXTBLOCK_POSITION_START)
-               _layout_item_max_ascent_descent_calc(c->obj, &maxasc, &maxdesc,
-                                                    it, TEXTBLOCK_POSITION_SINGLE);
-             else
-               _layout_item_max_ascent_descent_calc(c->obj, &maxasc, &maxdesc,
-                                                    it, TEXTBLOCK_POSITION_END);
+             /* Calculate ellipsis threshold height. */
+               {
+                  int ascent = 0, descent = 0, maxasc = 0, maxdesc = 0;
 
-             if (ascent > maxasc) maxasc = ascent;
-             if (descent > maxdesc) maxdesc = descent;
+                  _layout_item_ascent_descent_adjust(c->obj, &ascent, &descent,
+                        it, it->format);
+
+                  if (c->position == TEXTBLOCK_POSITION_START)
+                     _layout_item_max_ascent_descent_calc(c->obj, &maxasc, &maxdesc,
+                           it, TEXTBLOCK_POSITION_SINGLE);
+                  else
+                     _layout_item_max_ascent_descent_calc(c->obj, &maxasc, &maxdesc,
+                           it, TEXTBLOCK_POSITION_END);
+
+                  if (ascent > maxasc) maxasc = ascent;
+                  if (descent > maxdesc) maxdesc = descent;
+
+                  /* The ascent/descent of this item + the ascent descent of
+                   * the next item as if it was the last. */
+                  ellip_h_thresh = ascent + descent + maxasc + maxdesc;
+               }
 
              if ((it->format->ellipsis == 1.0) && (c->h >= 0) &&
-                   ((ascent + descent + maxasc + maxdesc + c->y >
+                   ((c->y + ellip_h_thresh >
                      c->h - c->o->style_pad.t - c->o->style_pad.b) ||
                     (!it->format->wrap_word && !it->format->wrap_char &&
                      !it->format->wrap_mixed && !it->format->wrap_hyphenation)))
