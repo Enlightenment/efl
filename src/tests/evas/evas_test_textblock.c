@@ -2202,6 +2202,16 @@ START_TEST(evas_textblock_wrapping)
 
    ck_assert_int_eq(bh, h);
 
+   /* Check that unnecessary ellipsis is not applied */
+   evas_object_textblock_text_markup_set(tb, "This is test for ellipsis with formatted height.");
+   evas_textblock_cursor_format_prepend(cur, "+ wrap=mixed");
+   evas_object_resize(tb, 100, 100);
+   evas_object_textblock_size_formatted_get(tb, NULL, &bh);
+   evas_object_resize(tb, 100, bh);
+   evas_textblock_cursor_format_prepend(cur, "+ wrap=mixed ellipsis=1.0");
+   evas_object_textblock_size_formatted_get(tb, NULL, &h);
+   ck_assert_int_ge(h, bh);
+
    END_TB_TEST();
 }
 END_TEST
