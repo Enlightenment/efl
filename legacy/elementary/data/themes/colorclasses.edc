@@ -316,6 +316,10 @@ color_classes {
       color: 255 255 255 255;
       desc: "Text color of popup text";
    }
+   color_class { name: "ctxpopup_bg";
+      color: 255 255 255 255;
+      desc: "Color of ctxpopup background";
+   }
    
 // modules
    color_class { name: "module_label";
