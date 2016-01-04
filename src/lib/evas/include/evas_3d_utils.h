@@ -528,7 +528,6 @@ evas_vec3_if_equivalent_as_triangle(Evas_Vec3 *v0, Evas_Vec3 *v1, Evas_Vec3 *v2,
    return EINA_FALSE;
 }
 
-
 static inline Eina_Bool
 evas_triangle3_if_equivalent(Evas_Triangle3 *a, Evas_Triangle3 *b)
 {
