@@ -231,7 +231,6 @@ struct _Evas_Filter_Buffer
    Evas_Object *source;
    Eina_Stringshare *source_name;
    Ector_Generic_Buffer *buffer;
-   void *glimage;
    int w, h;
 
    Eina_Bool alpha_only : 1;  // 1 channel (A) instead of 4 (RGBA)

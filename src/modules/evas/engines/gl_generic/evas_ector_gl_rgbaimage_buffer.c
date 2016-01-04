@@ -64,15 +64,14 @@ _evas_ector_gl_rgbaimage_buffer_evas_ector_buffer_engine_image_get(Eo *obj EINA_
 {
    Evas_Public_Data *e = eo_data_scope_get(pd->evas, EVAS_CANVAS_CLASS);
    Render_Engine_GL_Generic *re = e->engine.data.output;
-   Evas_Engine_GL_Context *gc = NULL;
    int err = EVAS_LOAD_ERROR_NONE;
+   Evas_Engine_GL_Context *gc;
 
    if (evas) *evas = pd->evas;
    if (image) *image = NULL;
    if (pd->glim)
      goto end;
 
-   EINA_SAFETY_ON_NULL_RETURN(re);
    gc = re->window_gl_context_get(re->software.ob);
    pd->glim = evas_gl_common_image_new_from_rgbaimage(gc, pd->image, NULL, &err);
    if ((err != EVAS_LOAD_ERROR_NONE) || !pd->glim)

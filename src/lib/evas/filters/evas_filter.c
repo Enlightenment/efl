@@ -200,39 +200,21 @@ static Ector_Buffer *
 _ector_buffer_create(Evas_Filter_Buffer const *fb, void *data)
 {
    Evas_Colorspace cspace;
-   Image_Entry *ie;
+   Ector_Buffer_Flag flags;
 
    // FIXME: We still rely on evas image structs (scaling and target render)
    // This should be fixed by implementing full support in ector
    // Note: dropped support for cserve2, that was not needed anyway
 
+   flags = ECTOR_BUFFER_FLAG_CPU_READABLE | ECTOR_BUFFER_FLAG_CPU_WRITABLE;
+   if (fb->id == EVAS_FILTER_BUFFER_INPUT_ID)
+     flags |= ECTOR_BUFFER_FLAG_RENDERABLE;
+
    cspace = fb->alpha_only ? EVAS_COLORSPACE_GRY8 : EVAS_COLORSPACE_ARGB8888;
-#if 0
-   // ideal code
    return fb->ENFN->ector_buffer_new(fb->ENDT, fb->ctx->evas->evas,
                                      data, fb->w, fb->h, 0,
-                                     cspace, EINA_TRUE, 0, 0, 0, 0,
-                                     ECTOR_BUFFER_FLAG_CPU_READABLE |
-                                     ECTOR_BUFFER_FLAG_CPU_WRITABLE);
-#endif
-
-   if (data)
-     {
-        // no copy
-        ie = evas_cache_image_data(evas_common_image_cache_get(), fb->w, fb->h,
-                                   data, EINA_TRUE, cspace);
-        if (!ie) return NULL;
-     }
-   else
-     {
-         // alloc buffer
-        ie = evas_cache_image_copied_data(evas_common_image_cache_get(), fb->w, fb->h,
-                                          NULL, EINA_TRUE, cspace);
-        if (!ie) return NULL;
-        data = ((RGBA_Image *) ie)->image.data;
-        memset(data, 0, fb->w * fb->h * (fb->alpha_only ? 1 : 4));
-     }
-   return fb->ENFN->ector_buffer_wrap(fb->ENDT, fb->ctx->evas->evas, ie, EINA_TRUE);
+                                     (Efl_Gfx_Colorspace )cspace, EINA_TRUE,
+                                     0, 0, 0, 0, flags);
 }
 
 Eina_Bool
@@ -323,7 +305,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
 
    EINA_LIST_FOREACH(ctx->buffers, li, fb)
      {
-        if (fb->buffer || fb->source || fb->glimage)
+        if (fb->buffer || fb->source)
           continue;
 
         if (!fb->w && !fb->h)
@@ -1439,27 +1421,14 @@ evas_filter_font_draw(Evas_Filter_Context *ctx, void *draw_context, int bufid,
    surface = _evas_image_get(fb->buffer);
    if (!surface) return EINA_FALSE;
 
-   if (!ctx->gl_engine)
+   // Copied from evas_font_draw_async_check
+   async_unref = ENFN->font_draw(ENDT, draw_context, surface,
+                                 font, x, y, fb->w, fb->h, fb->w, fb->h,
+                                 text_props, do_async);
+   if (do_async && async_unref)
      {
-        // Copied from evas_font_draw_async_check
-        async_unref = ENFN->font_draw(ENDT, draw_context, surface,
-                                      font, x, y, fb->w, fb->h, fb->w, fb->h,
-                                      text_props, do_async);
-        if (do_async && async_unref)
-          {
-             evas_common_font_glyphs_ref(text_props->glyphs);
-             evas_unref_queue_glyph_put(ctx->evas, text_props->glyphs);
-          }
-     }
-   else
-     {
-        // FIXME/GL: Render in software only.
-        // Copied from eng_font_draw in the software engine.
-
-        if (do_async) WRN("Async flag is ignored here!");
-        evas_common_font_draw_prepare(text_props);
-        evas_common_font_draw(surface, draw_context, x, y, text_props->glyphs);
-        evas_common_cpu_end_opt();
+        evas_common_font_glyphs_ref(text_props->glyphs);
+        evas_unref_queue_glyph_put(ctx->evas, text_props->glyphs);
      }
 
    return EINA_TRUE;

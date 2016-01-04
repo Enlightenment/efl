@@ -47,7 +47,7 @@ _image_draw_cpu_alpha_alpha(void *data EINA_UNUSED, void *context,
    dstdata += dst_y * dw;
    for (y = src_h; y; y--)
      {
-        func(srcdata + src_x, dstdata + dst_x, src_w);
+        func((uint8_t *) srcdata + src_x, dstdata + dst_x, src_w);
         srcdata += sw;
         dstdata += dw;
      }
@@ -181,7 +181,7 @@ _filter_blend_cpu_generic_do(Evas_Filter_Command *cmd, draw_func image_draw)
    struct Filter_Blend_Draw_Context dc;
    Eina_Bool ret = EINA_FALSE;
    Evas_Filter_Buffer *src_fb;
-   void *src, *dst;
+   void *src = NULL, *dst = NULL;
 
    sx = 0;
    sy = 0;
@@ -220,6 +220,7 @@ _filter_blend_cpu_generic_do(Evas_Filter_Command *cmd, draw_func image_draw)
 
    src = _buffer_map_all(src_fb->buffer, &src_len, E_READ, src_fb->alpha_only ? E_ALPHA : E_ARGB, &src_stride);
    dst = _buffer_map_all(cmd->output->buffer, &dst_len, E_WRITE, cmd->output->alpha_only ? E_ALPHA : E_ARGB, &dst_stride);
+   EINA_SAFETY_ON_FALSE_GOTO(src && dst, end);
 
    dc.rop = cmd->draw.rop;
    dc.color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
@@ -228,8 +229,8 @@ _filter_blend_cpu_generic_do(Evas_Filter_Command *cmd, draw_func image_draw)
                         sx, sy, sw, sh, dx, dy, dw, dh, image_draw);
 
 end:
-   eo_do(src_fb->buffer, ector_buffer_unmap(src, src_len));
-   eo_do(cmd->output->buffer, ector_buffer_unmap(dst, dst_len));
+   if (src) eo_do(src_fb->buffer, ector_buffer_unmap(src, src_len));
+   if (dst) eo_do(cmd->output->buffer, ector_buffer_unmap(dst, dst_len));
    return ret;
 }
 
