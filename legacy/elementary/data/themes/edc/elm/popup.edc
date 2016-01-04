@@ -139,7 +139,7 @@ group { name: "elm/label/base/popup/default";
    alias: "elm/label/base/popup/transparent";
    styles {
       style { name: "popup_desc_style";
-         base: "font="FN" font_size=10 text_class=label align=center color=#fff style=shadow,bottom shadow_color=#00000080 wrap=mixed";
+         base: "font="FN" font_size=10 text_class=label align=center color=#fff color_class=popup_text style=shadow,bottom shadow_color=#00000080 wrap=mixed";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" text_class=label_light";
          tag: "b" "+ font="FNBD" text_class=label_light";
@@ -175,7 +175,7 @@ group { name: "elm/popup/base/default";
    alias: "elm/popup/base/transparent";
    styles {
       style { name: "popup_title_style";
-         base: "font="FNBD" font_size=10 text_class=label align=center color=#fff style=shadow,bottom shadow_color=#00000080 wrap=mixed";
+         base: "font="FNBD" font_size=10 text_class=label align=center color=#fff color_class=popup_title_text style=shadow,bottom shadow_color=#00000080 wrap=mixed";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" text_class=label_light";
          tag: "b" "+ font="FNBD" text_class=label_light";
@@ -184,10 +184,11 @@ group { name: "elm/popup/base/default";
       }
    }
    parts {
-      part { name: "base"; type: SPACER;
+      part { name: "base"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
             min: 240 0;
+            color_class: "popup_bg";
          }
       }
       part { name: "elm.bg.title"; type: RECT;
@@ -195,7 +196,7 @@ group { name: "elm/popup/base/default";
             fixed: 1 1;
             rel1.to: "elm.text.title";
             rel2.to: "elm.text.title";
-            visible: 0;
+            color_class: "popup_title_bg";
          }
       }
       part { name: "elm.text.title"; type: TEXTBLOCK;

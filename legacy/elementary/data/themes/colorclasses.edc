@@ -300,6 +300,22 @@ color_classes {
       color: FN_COL_HIGHLIGHT;
       desc: "Text of an active hoverselector item";
    }
+   color_class { name: "popup_bg";
+      color: 0 0 0 0;
+      desc: "Color of popup background";
+   }
+   color_class { name: "popup_title_bg";
+      color: 0 0 0 0;
+      desc: "Color of popup title background";
+   }
+   color_class { name: "popup_title_text";
+      color: 255 255 255 255;
+      desc: "Text color of popup title text";
+   }
+   color_class { name: "popup_text";
+      color: 255 255 255 255;
+      desc: "Text color of popup text";
+   }
    
 // modules
    color_class { name: "module_label";
