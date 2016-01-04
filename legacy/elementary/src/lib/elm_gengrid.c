@@ -400,6 +400,12 @@ _item_show_region(void *data)
                   it_xpos = it_xpos - ((vw - sd->item_width) / 2);
                   it_ypos = it_ypos - ((vh - sd->item_height) / 2);
                   break;
+               case ELM_GENGRID_ITEM_SCROLLTO_BOTTOM:
+                  eo_do(WIDGET(it), elm_interface_scrollable_content_viewport_geometry_get
+                        (NULL, NULL, &vw, &vh));
+                  it_xpos = it_xpos - vw + sd->item_width;
+                  it_ypos = it_ypos - vh + sd->item_height;
+                  break;
                default:
                   vw = sd->item_width;
                   vh = sd->item_height;

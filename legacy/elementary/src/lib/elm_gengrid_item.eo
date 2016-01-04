@@ -7,7 +7,8 @@ enum Elm.Gengrid.Item.Scrollto_Type
    none = 0,   [[No scrollto.]]
    in = (1 << 0),   [[To the nearest viewport.]]
    top = (1 << 1),   [[To the top of viewport.]]
-   middle = (1 << 2)   [[To the middle of viewport.]]
+   middle = (1 << 2),   [[To the middle of viewport.]]
+   bottom = (1 << 3)   [[To the bottom of viewport.]]
 }
 
 enum Elm.Gengrid.Item.Field_Type
