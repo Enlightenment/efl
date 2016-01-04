@@ -752,6 +752,7 @@ struct _Edje_Program /* a conditional program to be run */
 
    const char *signal; /* if signal emission name matches the glob here... */
    const char *source; /* if part that emitted this (name) matches this glob */
+   int source_3d_id; /* id of real 3D part */
    const char *sample_name;
    const char *tone_name;
    double duration;
@@ -1407,14 +1408,15 @@ struct _Edje_Part_Description_Spec_Table
 struct _Edje_Part_Description_Spec_Mesh_Node
 {
    struct {
-      Edje_Part_Image_Id      **tweens;
-      unsigned int            tweens_count;
-      int                     id;
+      Edje_Part_Image_Id            **tweens;
+      unsigned int                  tweens_count;
+      int                           id;
 
-      Eina_Bool               set;
+      Eina_Bool                     set;
 
       Evas_Canvas3D_Mesh_Primitive  primitive;
       Evas_Canvas3D_Vertex_Assembly assembly;
+      int                           frame;
    } mesh;
 
    struct {
@@ -1451,6 +1453,8 @@ struct _Edje_Part_Description_Spec_Mesh_Node
       FLOAT_T                            data[6];
       int                                look_to; /* -1 = whole part collection, or part ID */
    } orientation;
+
+   Edje_3D_Vec            scale_3d;
 
    struct {
       Edje_3D_Vec   point;
@@ -1774,6 +1778,12 @@ struct _Edje_Calc_Params
 	 int            size; // 4
 	 Edje_Color     color2, color3; // 8
       } text; // 36
+      struct {
+	 int            frame; //4
+	 FLOAT_T        data[6];
+         Edje_3D_Vec    point;
+         Edje_3D_Vec    scale_3d;
+      } node; // 4
    } type; // 40
    const Edje_Calc_Params_Map *map; // 88
 #ifdef HAVE_EPHYSICS

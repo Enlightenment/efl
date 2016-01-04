@@ -413,11 +413,14 @@ static void st_collections_group_parts_part_description_properties_material(void
 static void st_collections_group_parts_part_description_properties_normal(void);
 static void st_collections_group_parts_part_description_properties_shininess(void);
 static void st_collections_group_parts_part_description_properties_shade(void);
+static void st_collections_group_parts_part_description_orientation_angle_axis(void);
 static void st_collections_group_parts_part_description_orientation_look1(void);
 static void st_collections_group_parts_part_description_orientation_look2(void);
 static void st_collections_group_parts_part_description_orientation_look_to(void);
 static void st_collections_group_parts_part_description_orientation_angle_axis(void);
 static void st_collections_group_parts_part_description_orientation_quaternion(void);
+static void st_collections_group_parts_part_description_scale(void);
+static void st_collections_group_parts_part_description_mesh_primitive(void);
 static void ob_collections_group_parts_part_description_texture(void);
 static void st_collections_group_parts_part_description_texture_image(void);
 static void st_collections_group_parts_part_description_texture_wrap1(void);
@@ -426,6 +429,7 @@ static void st_collections_group_parts_part_description_texture_filter1(void);
 static void st_collections_group_parts_part_description_texture_filter2(void);
 static void st_collections_group_parts_part_description_mesh_assembly(void);
 static void st_collections_group_parts_part_description_mesh_geometry(void);
+static void st_collections_group_parts_part_description_mesh_frame(void);
 static void st_collections_group_parts_part_description_filter_code(void);
 static void st_collections_group_parts_part_description_filter_source(void);
 static void st_collections_group_parts_part_description_filter_data(void);
@@ -896,11 +900,13 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.properties.normal", st_collections_group_parts_part_description_properties_normal},
      {"collections.group.parts.part.description.properties.shininess", st_collections_group_parts_part_description_properties_shininess},
      {"collections.group.parts.part.description.properties.shade", st_collections_group_parts_part_description_properties_shade},
+     {"collections.group.parts.part.description.mesh.primitive", st_collections_group_parts_part_description_mesh_primitive},
      {"collections.group.parts.part.description.orientation.look1", st_collections_group_parts_part_description_orientation_look1},
      {"collections.group.parts.part.description.orientation.look2", st_collections_group_parts_part_description_orientation_look2},
      {"collections.group.parts.part.description.orientation.look_to", st_collections_group_parts_part_description_orientation_look_to},
      {"collections.group.parts.part.description.orientation.angle_axis", st_collections_group_parts_part_description_orientation_angle_axis},
      {"collections.group.parts.part.description.orientation.quaternion", st_collections_group_parts_part_description_orientation_quaternion},
+     {"collections.group.parts.part.description.scale", st_collections_group_parts_part_description_scale},
      {"collections.group.parts.part.description.texture.image", st_collections_group_parts_part_description_texture_image},
      {"collections.group.parts.part.description.texture.wrap1", st_collections_group_parts_part_description_texture_wrap1},
      {"collections.group.parts.part.description.texture.wrap2", st_collections_group_parts_part_description_texture_wrap2},
@@ -908,6 +914,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.texture.filter2", st_collections_group_parts_part_description_texture_filter2},
      {"collections.group.parts.part.description.mesh.assembly", st_collections_group_parts_part_description_mesh_assembly},
      {"collections.group.parts.part.description.mesh.geometry", st_collections_group_parts_part_description_mesh_geometry},
+     {"collections.group.parts.part.description.mesh.frame", st_collections_group_parts_part_description_mesh_frame},
      {"collections.group.parts.part.description.filter.code", st_collections_group_parts_part_description_filter_code},
      {"collections.group.parts.part.description.filter.source", st_collections_group_parts_part_description_filter_source},
      {"collections.group.parts.part.description.filter.data", st_collections_group_parts_part_description_filter_data},
@@ -1596,6 +1603,157 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
 	   result = &ed->common;
 	   break;
 	}
+      case EDJE_PART_TYPE_MESH_NODE:
+        {
+           Edje_Part_Description_Mesh_Node *ed;
+
+           ed = mem_alloc(SZ(Edje_Part_Description_Mesh_Node));
+
+           ed->mesh_node.mesh.id = -1;
+           ed->mesh_node.mesh.primitive = 0;
+           ed->mesh_node.mesh.assembly = 1;
+           ed->mesh_node.mesh.frame = 0;
+
+           ed->mesh_node.texture.id = -1;
+           ed->mesh_node.texture.wrap1 = 0;
+           ed->mesh_node.texture.wrap2 = 0;
+           ed->mesh_node.texture.filter1 = 0;
+           ed->mesh_node.texture.filter2 = 0;
+
+           ed->mesh_node.properties.shade = EVAS_CANVAS3D_SHADE_MODE_VERTEX_COLOR;
+           ed->mesh_node.properties.ambient.r = 50;
+           ed->mesh_node.properties.ambient.g = 50;
+           ed->mesh_node.properties.ambient.b = 50;
+           ed->mesh_node.properties.ambient.a = 255;
+           ed->mesh_node.properties.diffuse.r = 255;
+           ed->mesh_node.properties.diffuse.g = 255;
+           ed->mesh_node.properties.diffuse.b = 255;
+           ed->mesh_node.properties.diffuse.a = 255;
+           ed->mesh_node.properties.specular.r = 255;
+           ed->mesh_node.properties.specular.g = 255;
+           ed->mesh_node.properties.specular.b = 255;
+           ed->mesh_node.properties.specular.a = 255;
+
+           ed->mesh_node.properties.material_attrib = 1;
+           ed->mesh_node.properties.normal = 1;
+           ed->mesh_node.properties.shininess = 50;
+
+           ed->mesh_node.aabb1.relative.x = -1.0;
+           ed->mesh_node.aabb1.relative.y = -1.0;
+           ed->mesh_node.aabb1.relative.z = -1.0;
+           ed->mesh_node.aabb1.offset.x = 0;
+           ed->mesh_node.aabb1.offset.y = 0;
+           ed->mesh_node.aabb1.offset.z = 0;
+           ed->mesh_node.aabb1.rel_to = -1;
+           ed->mesh_node.aabb2.relative.x = 1.0;
+           ed->mesh_node.aabb2.relative.y = 1.0;
+           ed->mesh_node.aabb2.relative.z = 1.0;
+           ed->mesh_node.aabb2.offset.x = 0;
+           ed->mesh_node.aabb2.offset.y = 0;
+           ed->mesh_node.aabb2.offset.z = 0;
+           ed->mesh_node.aabb2.rel_to = -1;
+
+           ed->mesh_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_NONE;
+           /* x1 is angle for angle_axis and cosine of half angle for quternion,
+              x2, x3, x4 define axis for angle_axis and quaternion,
+              x1, x2, x3 are coordinates of point to look at for look_at,
+              x4, x5, x6 define a vector that indicates the angle at which
+              the subject is looking at the target for look_at and look_to */
+           ed->mesh_node.orientation.data[0] = 1.0;
+           ed->mesh_node.orientation.data[1] = 0.0;
+           ed->mesh_node.orientation.data[2] = 0.0;
+           ed->mesh_node.orientation.data[3] = 0.0;
+           ed->mesh_node.orientation.data[4] = 1.0;
+           ed->mesh_node.orientation.data[5] = 0.0;
+           ed->mesh_node.orientation.look_to = -1;
+
+           ed->mesh_node.scale_3d.x = 1.0;
+           ed->mesh_node.scale_3d.y = 1.0;
+           ed->mesh_node.scale_3d.z = 1.0;
+
+           ed->mesh_node.position.point.x = 0.0;
+           ed->mesh_node.position.point.y = 0.0;
+           ed->mesh_node.position.point.z = 0.0;
+           ed->mesh_node.position.space = EVAS_CANVAS3D_SPACE_PARENT;
+
+           result = &ed->common;
+           break;
+        }
+      case EDJE_PART_TYPE_LIGHT:
+        {
+           Edje_Part_Description_Light *ed;
+
+           ed = mem_alloc(SZ(Edje_Part_Description_Light));
+
+           ed->light.properties.ambient.r = 50;
+           ed->light.properties.ambient.g = 50;
+           ed->light.properties.ambient.b = 50;
+           ed->light.properties.ambient.a = 255;
+           ed->light.properties.diffuse.r = 255;
+           ed->light.properties.diffuse.g = 255;
+           ed->light.properties.diffuse.b = 255;
+           ed->light.properties.diffuse.a = 255;
+           ed->light.properties.specular.r = 255;
+           ed->light.properties.specular.g = 255;
+           ed->light.properties.specular.b = 255;
+           ed->light.properties.specular.a = 255;
+
+           ed->light.position.point.x = 0.0;
+           ed->light.position.point.y = 0.0;
+           ed->light.position.point.z = 1.0;
+           ed->light.position.space = EVAS_CANVAS3D_SPACE_PARENT;
+
+           ed->light.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_NONE;
+           /* x1 is angle for angle_axis and cosine of half angle for quternion,
+              x2, x3, x4 define axis for angle_axis and quaternion,
+              x1, x2, x3 are coordinates of point to look at for look_at,
+              x4, x5, x6 define a vector that indicates the angle at which
+              the subject is looking at the target for look_at and look_to */
+           ed->light.orientation.data[0] = 1.0;
+           ed->light.orientation.data[1] = 0.0;
+           ed->light.orientation.data[2] = 0.0;
+           ed->light.orientation.data[3] = 0.0;
+           ed->light.orientation.data[4] = 1.0;
+           ed->light.orientation.data[5] = 0.0;
+           ed->light.orientation.look_to = -1;
+
+           result = &ed->common;
+           break;
+        }
+      case EDJE_PART_TYPE_CAMERA:
+        {
+           Edje_Part_Description_Camera *ed;
+
+           ed = mem_alloc(SZ(Edje_Part_Description_Camera));
+
+           ed->camera.camera.fovy = 60.0;
+           ed->camera.camera.aspect = 1.0;
+           ed->camera.camera.frustum_near = 2.0;
+           ed->camera.camera.frustum_far = 50.0;
+
+           ed->camera.position.point.x = 0.0;
+           ed->camera.position.point.y = 0.0;
+           ed->camera.position.point.z = 5.0;
+
+           ed->camera.position.space = EVAS_CANVAS3D_SPACE_PARENT;
+
+           ed->camera.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_NONE;
+           /* x1 is angle for angle_axis and cosine of half angle for quternion,
+              x2, x3, x4 define axis for angle_axis and quaternion,
+              x1, x2, x3 are coordinates of point to look at for look_at,
+              x4, x5, x6 define a vector that indicates the angle at which
+              the subject is looking at the target for look_at and look_to */
+           ed->camera.orientation.data[0] = 1.0;
+           ed->camera.orientation.data[1] = 0.0;
+           ed->camera.orientation.data[2] = 0.0;
+           ed->camera.orientation.data[3] = 0.0;
+           ed->camera.orientation.data[4] = 1.0;
+           ed->camera.orientation.data[5] = 0.0;
+           ed->camera.orientation.look_to = -1;
+
+           result = &ed->common;
+           break;
+        }
      }
 
    if (!result)
@@ -5659,6 +5817,9 @@ st_collections_group_parts_part_name(void)
             @li BOX
             @li TABLE
             @li EXTERNAL
+            @li MESH_NODE
+            @li CAMERA
+            @li LIGHT
             @li PROXY
             @li SPACER
             @li SNAPSHOT
@@ -5668,6 +5829,9 @@ static void
 st_collections_group_parts_part_type(void)
 {
    unsigned int type;
+   unsigned int i = 0;
+
+   Edje_Part_Collection *pc;
 
    check_arg_count(1);
 
@@ -5686,6 +5850,21 @@ st_collections_group_parts_part_type(void)
                      "SPACER", EDJE_PART_TYPE_SPACER,
                      "SNAPSHOT", EDJE_PART_TYPE_SNAPSHOT,
                      NULL);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+
+   if (type == EDJE_PART_TYPE_CAMERA)
+     {
+        for (i = 0; i < (pc->parts_count - 1); i++)
+          {
+             if (pc->parts[i]->type == EDJE_PART_TYPE_CAMERA)
+               {
+                  WRN("parse error %s:%i. more then one part of type CAMERA in scene.",
+                      file_in, line - 1);
+                  exit(-1);
+               }
+          }
+     }
 
    _part_type_set(type);
 }
@@ -5986,7 +6165,8 @@ st_collections_group_parts_part_mask_flags(void)
         such as font size, min/max size of the part, and possibly can be used
         to scale based on DPI of the target device. The reason to be selective
         is that some things work well being scaled, others do not, so the
-        designer gets to choose what works best.
+        designer gets to choose what works best. For MESH_NODE parts three
+        parameters specify how much the part will stretched along each axis.
     @endproperty
 */
 static void
@@ -7569,6 +7749,45 @@ st_collections_group_parts_part_description_inherit(void)
                 }
               break;
            }
+      case EDJE_PART_TYPE_CAMERA:
+           {
+              Edje_Part_Description_Camera *ced = (Edje_Part_Description_Camera *) ed;
+              Edje_Part_Description_Camera *cparent = (Edje_Part_Description_Camera *) parent;
+
+              ced->camera = cparent->camera;
+
+              data_queue_copied_part_lookup(pc, &(cparent->camera.orientation.look_to), &(ced->camera.orientation.look_to));
+
+              break;
+           }
+      case EDJE_PART_TYPE_LIGHT:
+           {
+              Edje_Part_Description_Light *led = (Edje_Part_Description_Light *) ed;
+              Edje_Part_Description_Light *lparent = (Edje_Part_Description_Light *) parent;
+
+              led->light = lparent->light;
+
+              data_queue_copied_part_lookup(pc, &(lparent->light.orientation.look_to), &(led->light.orientation.look_to));
+
+              break;
+           }
+      case EDJE_PART_TYPE_MESH_NODE:
+           {
+              Edje_Part_Description_Mesh_Node *med = (Edje_Part_Description_Mesh_Node *) ed;
+              Edje_Part_Description_Mesh_Node *mparent = (Edje_Part_Description_Mesh_Node *) parent;
+
+              med->mesh_node = mparent->mesh_node;
+
+              data_queue_model_remove(&med->mesh_node.mesh.id, &med->mesh_node.mesh.set);
+              data_queue_copied_model_lookup(&mparent->mesh_node.mesh.id, &med->mesh_node.mesh.id, &med->mesh_node.mesh.set);
+
+              data_queue_image_remove(&med->mesh_node.texture.id, &med->mesh_node.texture.set);
+              data_queue_copied_model_lookup(&mparent->mesh_node.texture.id, &med->mesh_node.texture.id, &med->mesh_node.texture.set);
+
+              data_queue_copied_part_lookup(pc, &(mparent->mesh_node.orientation.look_to), &(med->mesh_node.orientation.look_to));
+
+              break;
+           }
      }
 
 #undef STRDUP
@@ -8549,6 +8768,8 @@ st_collections_group_parts_part_description_image_normal(void)
 
    {
       char *name;
+
+      ed->image.set = EINA_TRUE;
 
       name = parse_str(0);
       data_queue_image_remove(&(ed->image.id), &(ed->image.set));
@@ -10327,23 +10548,25 @@ st_collections_group_parts_part_description_position_space(void)
 static void
 st_collections_group_parts_part_description_camera_properties(void)
 {
-   Edje_Part_Description_Camera *ed;
-
    check_arg_count(4);
 
-   if (current_part->type != EDJE_PART_TYPE_CAMERA)
+   if (current_part->type == EDJE_PART_TYPE_CAMERA)
      {
-        ERR("parse error %s:%i. camera attributes in non-CAMERA part.",
+        Edje_Part_Description_Camera *ed;
+
+        ed = (Edje_Part_Description_Camera*) current_desc;
+
+        ed->camera.camera.fovy = FROM_DOUBLE(parse_float(0));
+        ed->camera.camera.aspect = FROM_DOUBLE(parse_float(1));
+        ed->camera.camera.frustum_near = FROM_DOUBLE(parse_float(2));
+        ed->camera.camera.frustum_far = FROM_DOUBLE(parse_float(3));
+     }
+   else
+     {
+        ERR("parse error %s:%i. camera attributes in non-CAMERA and non-LIGHT part.",
             file_in, line - 1);
         exit(-1);
      }
-
-   ed = (Edje_Part_Description_Camera*) current_desc;
-
-   ed->camera.camera.fovy = FROM_DOUBLE(parse_float(0));
-   ed->camera.camera.aspect = FROM_DOUBLE(parse_float(1));
-   ed->camera.camera.frustum_near = FROM_DOUBLE(parse_float(2));
-   ed->camera.camera.frustum_far = FROM_DOUBLE(parse_float(3));
 }
 
 /**
@@ -10397,10 +10620,10 @@ st_collections_group_parts_part_description_properties_ambient(void)
 
            ed = (Edje_Part_Description_Light*) current_desc;
 
-           ed->light.properties.ambient.r = parse_int_range(0, 0, 255);
-           ed->light.properties.ambient.g = parse_int_range(1, 0, 255);
-           ed->light.properties.ambient.b = parse_int_range(2, 0, 255);
-           ed->light.properties.ambient.a = parse_int_range(3, 0, 255);
+           ed->light.properties.specular.r = parse_int_range(0, 0, 255);
+           ed->light.properties.specular.g = parse_int_range(1, 0, 255);
+           ed->light.properties.specular.b = parse_int_range(2, 0, 255);
+           ed->light.properties.specular.a = parse_int_range(3, 0, 255);
            break;
         }
       case EDJE_PART_TYPE_MESH_NODE:
@@ -10409,10 +10632,10 @@ st_collections_group_parts_part_description_properties_ambient(void)
 
            ed = (Edje_Part_Description_Mesh_Node*) current_desc;
 
-           ed->mesh_node.properties.ambient.r = parse_int_range(0, 0, 255);
-           ed->mesh_node.properties.ambient.g = parse_int_range(1, 0, 255);
-           ed->mesh_node.properties.ambient.b = parse_int_range(2, 0, 255);
-           ed->mesh_node.properties.ambient.a = parse_int_range(3, 0, 255);
+           ed->mesh_node.properties.specular.r = parse_int_range(0, 0, 255);
+           ed->mesh_node.properties.specular.g = parse_int_range(1, 0, 255);
+           ed->mesh_node.properties.specular.b = parse_int_range(2, 0, 255);
+           ed->mesh_node.properties.specular.a = parse_int_range(3, 0, 255);
            break;
         }
       default:
@@ -10907,6 +11130,37 @@ st_collections_group_parts_part_description_orientation_quaternion(void)
 }
 
 /**
+    @page edcref
+    @property
+        scale
+    @parameters
+        [scale_x] [scale_y] [scale_z]
+    @effect
+        Specifies the scale parametr for MESH_NODE.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_scale(void)
+{
+   if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        Edje_Part_Description_Mesh_Node *ed;
+
+        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+        ed->mesh_node.scale_3d.x = FROM_DOUBLE(parse_float_range(0, 0.0, 1000.0));
+        ed->mesh_node.scale_3d.y = FROM_DOUBLE(parse_float_range(1, 0.0, 1000.0));
+        ed->mesh_node.scale_3d.z = FROM_DOUBLE(parse_float_range(2, 0.0, 1000.0));
+     }
+   else
+     {
+        ERR("parse error %s:%i. mesh_node  attributes in non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+/**
    @edcsubsection{collections_group_parts_description_texture,
                   Group.Parts.Part.Description.Texture}
  */
@@ -11184,6 +11438,71 @@ st_collections_group_parts_part_description_texture_filter2(void)
 }
 
 /**
+   @edcsubsection{collections_group_parts_description_mesh,Mesh}
+ */
+
+/**
+    @page edcref
+
+    @block
+        mesh
+    @context
+        part {
+            description {
+                ..
+                mesh {
+                    geometry:        "file_name";
+                    primitive:        CUBE;
+                    assembly:         LINEAR;
+                }
+                ..
+            }
+        }
+    @description
+    @endblock
+
+    @property
+        primitive
+    @parameters
+        [PRIMITIVE]
+    @effect
+        Specifies the the type of primitive model to be used.
+        Valid primitives:
+            @li NONE
+            @li CUBE
+            @li SPHERE
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_mesh_primitive(void)
+{
+   unsigned int primitive;
+
+   check_arg_count(1);
+
+   primitive = parse_enum(0,
+                     "NONE", EVAS_CANVAS3D_MESH_PRIMITIVE_NONE,
+                     "CUBE", EVAS_CANVAS3D_MESH_PRIMITIVE_CUBE,
+                     "SPHERE", EVAS_CANVAS3D_MESH_PRIMITIVE_SPHERE,
+                     NULL);
+
+   if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        Edje_Part_Description_Mesh_Node *ed;
+
+        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+        ed->mesh_node.mesh.primitive = primitive;
+     }
+   else
+     {
+        ERR("parse error %s:%i. mesh_node attributes in non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+/**
     @page edcref
     @property
         assembly
@@ -11271,6 +11590,28 @@ st_collections_group_parts_part_description_mesh_geometry(void)
      {
         ERR("parse error %s:%i. "
             "image attributes in non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+static void
+st_collections_group_parts_part_description_mesh_frame(void)
+{
+   check_arg_count(1);
+
+
+   if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        Edje_Part_Description_Mesh_Node *ed;
+
+        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+        ed->mesh_node.mesh.frame = parse_int(0);
+     }
+   else
+     {
+        ERR("parse error %s:%i. mesh_node attributes in non-MESH_NODE part.",
             file_in, line - 1);
         exit(-1);
      }
@@ -12983,6 +13324,7 @@ ob_collections_group_programs_program(void)
 
    ep = mem_alloc(SZ(Edje_Program_Parser));
    ep->id = -1;
+   ep->source_3d_id = -1;
    ep->tween.mode = EDJE_TWEEN_MODE_LINEAR;
    ep->tween.use_duration_factor = EINA_FALSE;
    ep->after = NULL;

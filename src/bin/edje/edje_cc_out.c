@@ -627,6 +627,30 @@ check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
       default:
 	 break;
      }
+   Edje_Program_Target *et;
+   Eina_List *l;
+   unsigned int i = 0;
+   int camera_id = -1;
+
+   for (i = 0; (i < pc->parts_count) && (camera_id < 0); i++)
+     {
+        if (pc->parts[i]->type == EDJE_PART_TYPE_CAMERA)
+          camera_id = i;
+     }
+
+   EINA_LIST_FOREACH(ep->targets, l, et)
+     {
+        if (((ep->action == EDJE_ACTION_TYPE_STATE_SET) || (ep->action == EDJE_ACTION_TYPE_SIGNAL_EMIT)) &&
+            (pc->parts[et->id]->type == EDJE_PART_TYPE_MESH_NODE) && strstr(ep->signal, "mouse"))
+          {
+             for (i = 0; (i < pc->parts_count) && (ep->source_3d_id < 0); i++)
+               {
+                  if (!strcmp(pc->parts[i]->name, ep->source))
+                    ep->source_3d_id = i;
+               }
+             ep->source = mem_strdup(pc->parts[camera_id]->name);
+          }
+     }
 }
 
 static void
@@ -1301,6 +1325,40 @@ data_write_images(Eet_File *ef, int *image_num)
                   error_and_abort_image_load_error(ef, img->entry, load_err);
                   exit(1); // ensure static analysis tools know we exit
                }
+          }
+     }
+}
+
+static void
+data_check_models(Eet_File *ef EINA_UNUSED, int *model_num EINA_UNUSED)
+{
+   int i;
+
+   if (!((edje_file) && (edje_file->model_dir))) return;
+
+   for (i = 0; i < (int)edje_file->model_dir->entries_count; i++)
+     {
+        Edje_Model_Directory_Entry *model;
+        Eina_List *ll;
+        char *s;
+        Eina_Bool file_exist = EINA_FALSE;
+
+        model = &edje_file->model_dir->entries[i];
+
+        EINA_LIST_FOREACH(model_dirs, ll, s)
+          {
+             char buf[PATH_MAX];
+
+             snprintf(buf, sizeof(buf), "%s/%s", s, model->entry);
+
+             file_exist = file_exist || ecore_file_exists(buf);
+
+          }
+        if (!file_exist)
+          {
+             ERR("Unablegstsh to load model \"%s\". Check if path to file is correct (both directory and file name).",
+                 model->entry);
+             exit(-1);
           }
      }
 }
@@ -2410,6 +2468,7 @@ data_write(void)
    Eet_File *ef;
    Eet_Error err;
    int image_num = 0;
+   int model_num = 0;
    int sound_num = 0;
    int mo_num = 0;
    int vibration_num = 0;
@@ -2469,6 +2528,8 @@ data_write(void)
    INF("fontmap: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_write_images(ef, &image_num);
    INF("images: %3.5f", ecore_time_get() - t); t = ecore_time_get();
+   data_check_models(ef, &model_num);
+   INF("models: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_write_fonts(ef, &font_num);
    INF("fonts: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_write_sounds(ef, &sound_num);
@@ -3026,6 +3087,19 @@ data_queue_model_remove(int *dest, Eina_Bool *set)
              free(il);
              return;
           }
+     }
+}
+
+void
+data_queue_copied_model_lookup(int *src, int *dest, Eina_Bool *set)
+{
+   Eina_List *l;
+   Image_Lookup *il;
+
+   EINA_LIST_FOREACH(model_lookups, l, il)
+     {
+        if (il->dest == src)
+          data_queue_model_lookup(il->name, dest, set);
      }
 }
 
@@ -3625,6 +3699,8 @@ free_group:
                               eina_hash_direct_add(images_in_use, set->name, set);
                             break;
                          }
+                       else
+                         *(image->set) = EINA_FALSE;
                     }
                }
           }
