@@ -8,5 +8,10 @@ class Evas.Ector.GL.Image.Buffer (Evas.Ector.GL.Buffer, Evas.Ector.Buffer)
       Eo.Base.destructor;
       Evas.Ector.Buffer.engine_image.set;
       Evas.Ector.Buffer.engine_image.get;
+      Ector.Generic.Buffer.flags.get;
+      Ector.Generic.Buffer.span_get;
+      Ector.Generic.Buffer.span_free;
+      Ector.Generic.Buffer.map;
+      Ector.Generic.Buffer.unmap;
    }
 }
