@@ -1,8 +1,0 @@
-class Ecore.Con.Connector (Ecore.Con.Server) {
-   legacy_prefix: null;
-   eo_prefix: ecore_con_connector_obj;
-   data: null;
-   implements {
-      Eo.Base.finalize;
-   }
-}

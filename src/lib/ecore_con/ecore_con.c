@@ -306,7 +306,7 @@ _ecore_con_base_lookup(Eo *kls_obj EINA_UNUSED, void *pd EINA_UNUSED, const char
    if (!name || !done_cb)
      return EINA_FALSE;
 
-   obj = eo_add(ECORE_CON_CONNECTOR_CLASS, NULL,
+   obj = eo_add(EFL_NETWORK_CONNECTOR_CLASS, NULL,
          ecore_con_server_obj_connection_type_set(ECORE_CON_REMOTE_TCP),
          ecore_con_server_obj_name_set(name),
          ecore_con_obj_port_set(1025));
@@ -462,7 +462,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
    /* local  system socket: FILE:   /tmp/.ecore_service|[name]|[port] */
    /* remote system socket: TCP/IP: [name]:[port] */
-   obj = eo_add(ECORE_CON_CONNECTOR_CLASS, NULL,
+   obj = eo_add(EFL_NETWORK_CONNECTOR_CLASS, NULL,
          ecore_con_server_obj_connection_type_set(compl_type),
          ecore_con_server_obj_name_set(name),
          ecore_con_obj_port_set(port));
@@ -473,7 +473,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 }
 
 EOLIAN static Eo *
-_ecore_con_connector_eo_base_finalize(Ecore_Con_Server *obj, void *pd EINA_UNUSED)
+_efl_network_connector_eo_base_finalize(Ecore_Con_Server *obj, void *pd EINA_UNUSED)
 {
    Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
    Ecore_Con_Type compl_type = svr->type;
@@ -3004,4 +3004,4 @@ _ecore_con_lookup_done(void *data,
 #include "ecore_con_base.eo.c"
 #include "ecore_con_client.eo.c"
 #include "ecore_con_server.eo.c"
-#include "ecore_con_connector.eo.c"
+#include "efl_network_connector.eo.c"

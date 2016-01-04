@@ -1,0 +1,7 @@
+class Efl.Network.Connector (Ecore.Con.Server) {
+   eo_prefix: efl_network_connector_obj;
+   data: null;
+   implements {
+      Eo.Base.finalize;
+   }
+}
