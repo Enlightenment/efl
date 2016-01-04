@@ -962,7 +962,7 @@ EAPI const Eina_Value_Type *EO_DBG_INFO_TYPE = &_EO_DBG_INFO_TYPE;
 EOLIAN static Eo *
 _eo_base_constructor(Eo *obj, Eo_Base_Data *pd EINA_UNUSED)
 {
-   DBG("%p - %s.", obj, eo_class_name_get(MY_CLASS));
+   DBG("%p - %s.", obj, eo_class_name_get(obj));
 
    _eo_condtor_done(obj);
 
@@ -974,7 +974,7 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
 {
    Eo *child;
 
-   DBG("%p - %s.", obj, eo_class_name_get(MY_CLASS));
+   DBG("%p - %s.", obj, eo_class_name_get(obj));
 
    // special removal - remove from children list by hand after getting
    // child handle in case unparent method is overridden and does
