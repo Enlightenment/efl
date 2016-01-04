@@ -214,8 +214,7 @@ group { name: "elm/scroller/entry_single/default";
          description { state: "default" 0.0;
             rel1.to: "elm.swallow.background";
             rel2.to: "elm.swallow.background";
-            color: DARK_GREY_BG_COLOR;
-            color_class: "scrollframe_base";
+            color_class: "entry_scrollframe_base";
          }
       }
       part { name: "clipper"; type: RECT;
@@ -395,6 +394,7 @@ group { name: "elm/entry/cursor/default";
             image.border: 4 4 4 4;
             fill.smooth: 0;
             color: 255 255 255 0;
+            color_class: "entry_cursor";
             min: 9 10;
          }
          description { state: "visible" 0.0;
@@ -530,23 +530,23 @@ group { name: "elm/entry/base/default";
    
    styles {
       style { name: "entry_style";
-         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=word text_class=entry color_class=entry left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=word text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_nowrap_style";
-         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 text_class=entry color_class=entry left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_disabled_style";
-         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=word text_class=entry color_class=entry_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=word text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_nowrap_disabled_style";
-         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 text_class=entry color_class=entry_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style";
-         base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=word text_class=entry color_class=entry_guide left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=word text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -654,15 +654,15 @@ group { name: "elm/entry/base-mixedwrap/default";
    inherit: "elm/entry/base/default";
    styles {
       style { name: "entry_style_mixedwrap";
-         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=mixed text_class=entry color_class=entry left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=mixed text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_disabled_style_mixedwrap";
-         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=mixed text_class=entry color_class=entry_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=mixed text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style_mixedwrap";
-         base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=mixed text_class=entry color_class=entry_guide left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=mixed text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -704,15 +704,15 @@ group { name: "elm/entry/base-charwrap/default";
    inherit: "elm/entry/base/default";
    styles {
       style { name: "entry_style_charwrap";
-         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=char text_class=entry color_class=entry left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=char text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_disabled_style_charwrap";
-         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=char text_class=entry color_class=entry_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=char text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style_charwrap";
-         base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=char text_class=entry color_class=entry_guide left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=char text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -790,15 +790,15 @@ group { name: "elm/entry/base-single/default";
    inherit: "elm/entry/base/default";
    styles {
       style { name: "entry_single_style";
-         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=none text_class=entry color_class=entry left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=none text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_single_disabled_style";
-         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=none text_class=entry color_class=entry_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=none text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_single_guide_style";
-         base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=none text_class=entry color_class=entry_guide left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=none text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -1077,6 +1077,7 @@ group { name: "elm/entry/handler/start/default";
             min: 21 27; // 42 54
             image.normal: "handle_pick_up_left.png";
             align: (29/42) (11/54);
+            color_class: "entry_selection_handler";
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -1124,6 +1125,7 @@ group { name: "elm/entry/handler/end/default";
             min: 21 27; // 42 54
             image.normal: "handle_pick_up_right.png";
             align: (12/42) (11/54);
+            color_class: "entry_selection_handler";
             visible: 0;
          }
          description { state: "visible" 0.0;

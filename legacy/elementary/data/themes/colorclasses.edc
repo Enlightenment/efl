@@ -179,12 +179,21 @@ color_classes {
       desc: "Text in a disabled datetime separator area";
    }
    color_class { name: "entry_text";
-      color: FN_COL_DEFAULT_BASIC;
+      color: FN_COL_DEFAULT;
       desc: "Text in an entry box";
    }
    color_class { name: "entry_text_disabled";
-      color: FN_COL_DEFAULT_BASIC;
+      color: FN_COL_DISABLE;
       desc: "Text in a disabled entry box";
+   }
+   color_class { name: "entry_guide_text";
+      color: 0 0 0 255;
+      color3: 255 255 255 25;
+      desc: "Guide Text in a entry box";
+   }
+   color_class { name: "entry_scrollframe_base";
+      color: DARK_GREY_BG_COLOR;
+      desc: "Base of a entry's scroller widget";
    }
    color_class { name: "label_text";
       color: FN_COL_DEFAULT;
