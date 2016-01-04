@@ -232,11 +232,8 @@ _elm_hover_smt_sub_re_eval(Evas_Object *obj)
    prev = sd->smt_sub;
 
    _elm_hover_left_space_calc(sd, &spc_l, &spc_t, &spc_r, &spc_b);
-   elm_layout_content_unset(obj, sd->smt_sub->swallow);
 
    sub = sd->smt_sub->obj;
-
-   sd->smt_sub->obj = NULL;
 
    sd->smt_sub =
      _elm_hover_smart_content_location_get(sd, spc_l, spc_t, spc_r, spc_b);
@@ -373,9 +370,6 @@ _elm_hover_elm_widget_sub_object_del(Eo *obj, Elm_Hover_Data *sd, Evas_Object *s
         evas_object_event_callback_del_full
           (sd->smt_sub->obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
           _on_smt_sub_changed, obj);
-
-        sd->smt_sub->obj = NULL;
-        sd->smt_sub = NULL;
      }
    else
      {
@@ -397,6 +391,7 @@ _elm_hover_subs_del(Elm_Hover_Data *sd)
 {
    ELM_HOVER_PARTS_FOREACH
      ELM_SAFE_FREE(sd->subs[i].obj, evas_object_del);
+   sd->smt_sub = NULL;
 }
 
 EOLIAN static Eina_Bool

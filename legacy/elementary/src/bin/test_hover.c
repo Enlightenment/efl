@@ -221,7 +221,7 @@ test_hover3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                                   _hover_show_cb, hv);
 
    bx = elm_box_add(win);
-   elm_object_part_content_set(hv, "bottom-right", bx);
+   elm_object_part_content_set(hv, "smart", bx);
    evas_object_show(bx);
 
    bt = elm_button_add(win);
