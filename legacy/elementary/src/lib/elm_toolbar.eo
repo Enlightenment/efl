@@ -125,6 +125,14 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
            aggregate items which didn't fit with the #ELM_TOOLBAR_SHRINK_MENU
            mode.
 
+           If shrink mode is changed, Toolbar will send one of the following
+           signal to each item for informing the current shrink mode.
+             "elm,state,shrink,default"
+             "elm,state,shrink,hide"
+             "elm,state,shrink,scroll"
+             "elm,state,shrink,menu"
+             "elm,state,shrink,expand"
+
            Warning: This function's behavior will clash with those of
            elm_scroller_policy_set(), so use either one of them, but not both.]]
          set {

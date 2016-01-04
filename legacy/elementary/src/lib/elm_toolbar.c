@@ -1224,6 +1224,31 @@ _item_del(Elm_Toolbar_Item_Data *it)
 }
 
 static void
+_item_shrink_signal_emit(Evas_Object *view, Elm_Toolbar_Shrink_Mode shrink_mode)
+{
+   switch (shrink_mode)
+     {
+      case ELM_TOOLBAR_SHRINK_HIDE:
+         elm_layout_signal_emit(view, "elm,state,shrink,hide", "elm");
+         break;
+      case ELM_TOOLBAR_SHRINK_SCROLL:
+         elm_layout_signal_emit(view, "elm,state,shrink,scroll", "elm");
+         break;
+      case ELM_TOOLBAR_SHRINK_MENU:
+         elm_layout_signal_emit(view, "elm,state,shrink,menu", "elm");
+         break;
+      case ELM_TOOLBAR_SHRINK_EXPAND:
+         elm_layout_signal_emit(view, "elm,state,shrink,expand", "elm");
+         break;
+      case ELM_TOOLBAR_SHRINK_NONE:
+      case ELM_TOOLBAR_SHRINK_LAST:
+      default:
+         elm_layout_signal_emit(view, "elm,state,shrink,default", "elm");
+         break;
+     }
+}
+
+static void
 _item_theme_hook(Evas_Object *obj,
                  Elm_Toolbar_Item_Data *it,
                  double scale,
@@ -1285,6 +1310,8 @@ _item_theme_hook(Evas_Object *obj,
              elm_layout_content_set(view, "elm.swallow.object", it->object);
           }
      }
+
+   _item_shrink_signal_emit(view, sd->shrink_mode);
 
    if (sd->vertical)
      elm_layout_signal_emit(view, "elm,orient,vertical", "elm");
@@ -3326,6 +3353,7 @@ _elm_toolbar_item_separator_get(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *
 EOLIAN static void
 _elm_toolbar_shrink_mode_set(Eo *obj, Elm_Toolbar_Data *sd, Elm_Toolbar_Shrink_Mode shrink_mode)
 {
+   Elm_Toolbar_Item_Data *it;
    Eina_Bool bounce;
 
    if (sd->shrink_mode == shrink_mode) return;
@@ -3365,6 +3393,9 @@ _elm_toolbar_shrink_mode_set(Eo *obj, Elm_Toolbar_Data *sd, Elm_Toolbar_Shrink_M
    else
       eo_do(obj, elm_interface_scrollable_policy_set
             (ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF));
+
+   EINA_INLIST_FOREACH(sd->items, it)
+      _item_shrink_signal_emit(VIEW(it), sd->shrink_mode);
 
    evas_object_smart_need_recalculate_set(obj, EINA_TRUE);
 }
