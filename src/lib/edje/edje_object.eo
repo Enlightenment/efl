@@ -1910,6 +1910,12 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             @in color_class: const(char)*;
          }
       }
+      color_class_clear @const {
+         [[Clear object color classes.
+
+           @since 1.17.0]]
+         return: bool; [[$true, on success or $false, on error]]
+      }
       size_class_set {
          [[Sets the object size class.
 

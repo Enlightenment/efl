@@ -1023,6 +1023,52 @@ edje_object_color_class_del(Evas_Object *obj, const char *color_class)
    _edje_emit(ed, "color_class,del", color_class);
 }
 
+EOLIAN Eina_Bool
+_edje_object_color_class_clear(const Eo *obj EINA_UNUSED, Edje *ed)
+{
+   Edje_List_Foreach_Data fdata;
+   Edje_Color_Class *cc = NULL;
+   Eina_List *l;
+   char *color_class;
+   unsigned int i;
+   Eina_Bool int_ret = EINA_TRUE;
+
+   if (!ed) return EINA_FALSE;
+
+   memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
+   eina_hash_foreach(ed->color_classes, _edje_color_class_list_foreach, &fdata);
+
+   EINA_LIST_FOREACH(fdata.list, l, color_class)
+     eina_hash_del(ed->color_classes, color_class, cc);
+
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        Edje_Real_Part *rp;
+
+        rp = ed->table_parts[i];
+        if ((rp->part->type == EDJE_PART_TYPE_GROUP) &&
+            ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
+             (rp->typedata.swallow)) &&
+            (rp->typedata.swallow->swallowed_object))
+          int_ret &= edje_object_color_class_clear(rp->typedata.swallow->swallowed_object);
+     }
+
+   ed->dirty = EINA_TRUE;
+   ed->recalc_call = EINA_TRUE;
+#ifdef EDJE_CALC_CACHE
+   ed->all_part_change = EINA_TRUE;
+#endif
+   _edje_recalc(ed);
+
+   EINA_LIST_FREE(fdata.list, color_class)
+     {
+        _edje_emit(ed, "color_class,del", color_class);
+        free(color_class);
+     }
+
+   return int_ret;
+}
+
 typedef struct _Edje_File_Color_Class_Iterator Edje_File_Color_Class_Iterator;
 struct _Edje_File_Color_Class_Iterator
 {
