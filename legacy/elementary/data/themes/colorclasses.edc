@@ -166,6 +166,18 @@ color_classes {
       color: FN_COL_DISABLE;
       desc: "Text of a disabled checkbox's label when checked";
    }
+   color_class { name: "datetime_bg";
+      color: 0 0 0 0;
+      desc: "Background of a datetime widget";
+   }
+   color_class { name: "datetime_separator_text";
+      color: FN_COL_DEFAULT;
+      desc: "Text in a datetime separator area";
+   }
+   color_class { name: "datetime_separator_text_disabled";
+      color: FN_COL_DISABLE;
+      desc: "Text in a disabled datetime separator area";
+   }
    color_class { name: "entry_text";
       color: FN_COL_DEFAULT_BASIC;
       desc: "Text in an entry box";
