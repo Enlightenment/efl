@@ -423,9 +423,11 @@ START_TEST(str_base64_encode_decode)
 }
 END_TEST
 
-START_TEST(str_base64url_encode)
+START_TEST(str_base64url_encode_decode)
 {
    unsigned int i;
+   int len;
+   unsigned char *decoded;
 
    for (i = 0; i < sizeof (tests) / sizeof (tests[0]); i++)
      {
@@ -433,8 +435,23 @@ START_TEST(str_base64url_encode)
 
         encoded = eina_str_base64url_encode((unsigned char*) tests[i].decoded_str, tests[i].len);
         fail_if(strcmp(encoded, tests[i].encoded_url));
+
+        decoded = eina_str_base64url_decode(tests[i].encoded_url, &len);
+        fail_if(memcmp(decoded, tests[i].decoded_str, tests[i].len));
+
+        fprintf(stderr, "len = %d, tests[%d].len = %d\n", len, i, tests[i].len);
+        fail_if(len != (int)tests[i].len);
+
         free(encoded);
+        free(decoded);
      }
+
+   //Failure scenarios.
+   decoded = eina_str_base64url_decode(NULL, &len);
+   fail_if(decoded);
+
+   decoded = eina_str_base64url_decode("TWFu", NULL);
+   fail_if(memcmp(decoded, "Man", 3));
 }
 END_TEST
 
@@ -478,7 +495,7 @@ eina_test_str(TCase *tc)
    tcase_add_test(tc, str_memdup);
    tcase_add_test(tc, str_strftime);
    tcase_add_test(tc, str_base64_encode_decode);
-   tcase_add_test(tc, str_base64url_encode);
+   tcase_add_test(tc, str_base64url_encode_decode);
 #ifdef HAVE_ICONV
    tcase_add_test(tc, str_convert);
 #endif
