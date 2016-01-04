@@ -665,6 +665,285 @@ _elm_config_user_dir_snprintf(char       *dst,
    return 0;
 }
 
+typedef struct _Elm_Config_Derived          Elm_Config_Derived;
+typedef struct _Elm_Config_Derived_Profile  Elm_Config_Derived_Profile;
+
+struct _Elm_Config_Derived
+{
+   Eina_List *profiles;
+};
+
+struct _Elm_Config_Derived_Profile
+{
+   const char *profile;
+   const char *derive_options;
+};
+
+static Eet_Data_Descriptor *_config_derived_edd = NULL;
+static Eet_Data_Descriptor *_config_derived_profile_edd = NULL;
+
+static void
+_elm_config_profile_derived_init(void)
+{
+   Eet_Data_Descriptor_Class eddc;
+
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Config_Derived);
+   eddc.func.str_direct_alloc = NULL;
+   eddc.func.str_direct_free = NULL;
+   _config_derived_edd = eet_data_descriptor_file_new(&eddc);
+
+   memset(&eddc, 0, sizeof(eddc)); /* just in case... */
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Config_Derived_Profile);
+   eddc.func.str_direct_alloc = NULL;
+   eddc.func.str_direct_free = NULL;
+   _config_derived_profile_edd = eet_data_descriptor_file_new(&eddc);
+
+#define T        Elm_Config_Derived_Profile
+#define D        _config_derived_profile_edd
+   ELM_CONFIG_VAL(D, T, profile, EET_T_STRING);
+   ELM_CONFIG_VAL(D, T, derive_options, EET_T_STRING);
+#undef T
+#undef D
+
+#define T        Elm_Config_Derived
+#define D        _config_derived_edd
+   ELM_CONFIG_LIST(D, T, profiles, _config_derived_profile_edd);
+#undef T
+#undef D
+}
+
+static void
+_elm_config_profile_derived_shutdown(void)
+{
+   if (_config_derived_profile_edd)
+     {
+        eet_data_descriptor_free(_config_derived_profile_edd);
+        _config_derived_profile_edd = NULL;
+     }
+   if (_config_derived_edd)
+     {
+        eet_data_descriptor_free(_config_derived_edd);
+        _config_derived_edd = NULL;
+     }
+}
+
+static Elm_Config_Derived *
+_elm_config_derived_load(const char *profile)
+{
+   char buf[PATH_MAX];
+   Eet_File *ef;
+   Elm_Config_Derived *derived;
+
+   if (!profile) profile = _elm_profile;
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s/derived.cfg",
+                                 profile);
+   ef = eet_open(buf, EET_FILE_MODE_READ);
+   if (ef)
+     {
+        derived = eet_data_read(ef, _config_derived_edd, "config");
+        eet_close(ef);
+        if (derived) return derived;
+     }
+   snprintf(buf, sizeof(buf), "%s/config/%s/derived.cfg",
+            _elm_data_dir, profile);
+   ef = eet_open(buf, EET_FILE_MODE_READ);
+   if (ef)
+     {
+        derived = eet_data_read(ef, _config_derived_edd, "config");
+        eet_close(ef);
+        if (derived) return derived;
+     }
+   return NULL;
+}
+
+static void
+_elm_config_profile_derived_save(const char *profile, Elm_Config_Derived *derived)
+{
+   Eet_File *ef;
+   char buf[PATH_MAX], buf2[PATH_MAX];
+
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s",
+                                 profile ? profile : _elm_profile);
+   ecore_file_mkpath(buf);
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s/derived.cfg.tmp",
+                                 profile ? profile : _elm_profile);
+   _elm_config_user_dir_snprintf(buf2, sizeof(buf2), "config/%s/derived.cfg",
+                                 profile ? profile : _elm_profile);
+   ef = eet_open(buf, EET_FILE_MODE_WRITE);
+   if (ef)
+     {
+        eet_data_write(ef, _config_derived_edd, "config", derived, 1);
+        eet_close(ef);
+        ecore_file_mv(buf, buf2);
+     }
+}
+
+static void
+_elm_config_derived_free(Elm_Config_Derived *derived)
+{
+   Elm_Config_Derived_Profile *dp;
+
+   if (!derived) return;
+   EINA_LIST_FREE(derived->profiles, dp)
+     {
+        eina_stringshare_del(dp->profile);
+        eina_stringshare_del(dp->derive_options);
+        free(dp);
+     }
+   free(derived);
+}
+
+static void
+_elm_config_derived_option_op_apply(Elm_Config *cfg, const char *op, const char *params)
+{
+   if (!strcmp(op, "scale-mul"))
+     {
+        int multiplier = atoi(params);
+        if (multiplier > 0)
+          {
+             cfg->scale = cfg->scale * (((double)multiplier) / 100.0);
+          }
+     }
+   // Add more derivation commands here
+}
+
+static void
+_elm_config_derived_option_apply(Elm_Config *cfg, const char *option)
+{
+   const char *p;
+   char *buf = alloca(strlen(option) + 1);
+   char *bp = buf;
+
+   p = option;
+   bp = buf;
+   for (;;)
+     {
+        if ((*p == 0) || (*p == ' '))
+          {
+             if (*p == ' ') p++;
+             *bp = 0;
+             _elm_config_derived_option_op_apply(cfg, buf, p);
+             return;
+          }
+        else
+          {
+             *bp = *p;
+             bp++;
+          }
+        if (*p == 0) break;
+        p++;
+     }
+}
+
+static void
+_elm_config_derived_apply(Elm_Config *cfg, const char *derive_options)
+{
+   // derive_options = "option1 param param2 ...; option2 param1 ..."
+   const char *p;
+   char *buf = alloca(strlen(derive_options) + 1);
+   char *bp = buf;
+
+   p = derive_options;
+   for (;;)
+     {
+        if ((*p == 0) || (*p == ';'))
+          {
+             if (*p == ';') p++;
+             *bp = 0;
+             _elm_config_derived_option_apply(cfg, buf);
+             bp = buf;
+          }
+        else
+          {
+             *bp = *p;
+             bp++;
+          }
+        if (*p == 0) break;
+        p++;
+     }
+}
+
+static void
+_elm_config_derived_save(Elm_Config *cfg, Elm_Config_Derived *derived)
+{
+   Elm_Config_Derived_Profile *dp;
+   Eina_List *l;
+
+   if (!derived) return;
+   EINA_LIST_FOREACH(derived->profiles, l, dp)
+     {
+        if ((dp->profile) && (dp->derive_options))
+          {
+             Elm_Config *cfg2;
+
+             cfg2 = malloc(sizeof(Elm_Config));
+             if (cfg2)
+               {
+                  memcpy(cfg2, cfg, sizeof(Elm_Config));
+                  _elm_config_derived_apply(cfg2, dp->derive_options);
+                  _elm_config_save(cfg2, dp->profile);
+                  free(cfg2);
+               }
+          }
+     }
+}
+
+EAPI void
+elm_config_profile_derived_add(const char *profile, const char *derive_options)
+{
+   Elm_Config_Derived *derived;
+
+   derived = _elm_config_derived_load(_elm_profile);
+   if (!derived) derived = calloc(1, sizeof(derived));
+   if (derived)
+     {
+        Elm_Config_Derived_Profile *dp = calloc(1, sizeof(Elm_Config_Derived_Profile));
+
+        if (dp)
+          {
+             dp->profile = eina_stringshare_add(profile);
+             dp->derive_options = eina_stringshare_add(derive_options);
+             derived->profiles = eina_list_append(derived->profiles, dp);
+             _elm_config_profile_derived_save(_elm_profile, derived);
+             _elm_config_derived_save(_elm_config, derived);
+          }
+        _elm_config_derived_free(derived);
+     }
+}
+
+EAPI void
+elm_config_profile_derived_del(const char *profile)
+{
+   Elm_Config_Derived *derived;
+   Elm_Config_Derived_Profile *dp;
+   Eina_List *l;
+
+   if (!profile) return;
+   derived = _elm_config_derived_load(_elm_profile);
+   if (derived)
+     {
+        EINA_LIST_FOREACH(derived->profiles, l, dp)
+          {
+             if ((dp->profile) && (!strcmp(dp->profile, profile)))
+               {
+                  char buf[PATH_MAX];
+
+                  _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s",
+                                                profile);
+                  ecore_file_recursive_rm(buf);
+                  derived->profiles = eina_list_remove_list(derived->profiles, l);
+                  eina_stringshare_del(dp->profile);
+                  eina_stringshare_del(dp->derive_options);
+                  free(dp);
+                  _elm_config_profile_derived_save(_elm_profile, derived);
+                  _elm_config_derived_free(derived);
+                  return;
+               }
+          }
+        _elm_config_derived_free(derived);
+     }
+}
+
 const char *
 _elm_config_profile_dir_get(const char *prof,
                             Eina_Bool   is_user)
@@ -1688,6 +1967,13 @@ _elm_config_profile_save(void)
      }
 
    ecore_file_unlink(buf2);
+
+   derived = _elm_config_derived_load(profile ? profile : _elm_profile);
+   if (derived)
+     {
+        _elm_config_derived_save(cfg, derived);
+        _elm_config_derived_free(derived);
+     }
    return EINA_TRUE;
 
 err:
@@ -1696,8 +1982,9 @@ err:
 }
 
 Eina_Bool
-_elm_config_save(const char *profile)
+_elm_config_save(Elm_Config *cfg, const char *profile)
 {
+   Elm_Config_Derived *derived;
    char buf[4096], buf2[4096];
    int ok = 0, ret;
    const char *err;
@@ -1754,7 +2041,7 @@ _elm_config_save(const char *profile)
    if (!ef)
      return EINA_FALSE;
 
-   ok = eet_data_write(ef, _config_edd, "config", _elm_config, 1);
+   ok = eet_data_write(ef, _config_edd, "config", cfg, 1);
    if (!ok)
      goto err;
 
@@ -1888,7 +2175,7 @@ _config_update(void)
    _elm_config->config_version = ELM_CONFIG_VERSION;
    /* after updating user config, we must save */
    _config_free(tcfg);
-   _elm_config_save(NULL);
+   _elm_config_save(_elm_config, NULL);
 }
 
 static void
@@ -2386,7 +2673,7 @@ elm_config_password_show_last_timeout_set(double password_show_last_timeout)
 EAPI Eina_Bool
 elm_config_save(void)
 {
-   return _elm_config_save(NULL);
+   return _elm_config_save(_elm_config, NULL);
 }
 
 EAPI void
@@ -2465,9 +2752,8 @@ EAPI void
 elm_config_profile_save(const char *profile)
 {
    EINA_SAFETY_ON_NULL_RETURN(profile);
-   _elm_config_save(profile);
+   _elm_config_save(_elm_config, profile);
 }
-
 
 EAPI const char *
 elm_config_engine_get(void)
@@ -3441,6 +3727,7 @@ _elm_config_init(void)
    if (!ELM_EVENT_CONFIG_ALL_CHANGED)
       ELM_EVENT_CONFIG_ALL_CHANGED = ecore_event_type_new();
    _desc_init();
+   _elm_config_profile_derived_init();
    _profile_fetch_from_conf();
    _config_load();
    _env_get();
@@ -3821,6 +4108,7 @@ _elm_config_shutdown(void)
    ELM_SAFE_FREE(_elm_profile, free);
    _elm_font_overlays_del_free();
 
+   _elm_config_profile_derived_shutdown();
    _desc_shutdown();
 
    ELM_SAFE_FREE(_elm_key_bindings, eina_hash_free);

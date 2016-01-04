@@ -433,7 +433,7 @@ void                 _elm_config_init(void);
 void                 _elm_config_sub_init(void);
 void                 _elm_config_shutdown(void);
 void                 _elm_config_sub_shutdown(void);
-Eina_Bool            _elm_config_save(const char *profile);
+Eina_Bool            _elm_config_save(Elm_Config *cfg, const char *profile);
 void                 _elm_config_reload(void);
 size_t               _elm_config_user_dir_snprintf(char *dst, size_t size,
                                                    const char *fmt, ...)

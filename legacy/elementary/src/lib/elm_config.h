@@ -179,6 +179,47 @@ EAPI void        elm_config_profile_set(const char *profile);
 EAPI void        elm_config_profile_save(const char *profile);
 
 /**
+ * Add a new profile of the given name to be derived from the current profile
+ *
+ * This creates a new profile of name @p profile that will be derived from
+ * the currently used profile using the modification commands encoded in the
+ * @p derive_options string.
+ *
+ * At this point it is not expected that anyone would generally use this API
+ * except if you are a destktop environment and so the user base of this API
+ * will be enlightenment itself.
+ *
+ * @param profile The new profile's name
+ * @param derive_options A string of derive options detailing how to modify
+ *
+ * @see elm_config_profile_derived_del
+ * @ingroup Profile
+ *
+ * @since 1.17
+ */
+EAPI void        elm_config_profile_derived_add(const char *profile, const char *derive_options);
+
+/**
+ * Deletes a profile that is derived from the current one
+ *
+ * This deletes a derived profile added by elm_config_profile_derived_add().
+ * This will delete the profile of the given name @p profile that is derived
+ * from the current profile.
+ *
+ * At this point it is not expected that anyone would generally use this API
+ * except if you are a destktop environment and so the user base of this API
+ * will be enlightenment itself.
+ *
+ * @param profile The profile's name that is to be deleted
+ *
+ * @see elm_config_profile_derived_add
+ * @ingroup Profile
+ *
+ * @since 1.17
+ */
+EAPI void        elm_config_profile_derived_del(const char *profile);
+
+/**
  * @}
  */
 
