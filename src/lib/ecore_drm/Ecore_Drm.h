@@ -6,6 +6,7 @@
 # include <drm_fourcc.h>
 # include <Ecore.h>
 # include <Eeze.h>
+# include <xkbcommon/xkbcommon.h>
 
 # ifdef EAPI
 #  undef EAPI
@@ -380,6 +381,32 @@ EAPI Eina_Bool ecore_drm_device_software_setup(Ecore_Drm_Device *dev);
  * @since 1.17
  */
 EAPI Eina_Bool ecore_drm_device_pointer_left_handed_set(Ecore_Drm_Device *dev, Eina_Bool left_handed);
+
+/**
+ * Setup a cached context to use same context for each devices
+ *
+ * This function will setup a cached context to use same context for each devices
+ * This function will be called before initialize Ecore_Drm.
+ *
+ * @param ctx struct xkb_context used in libxkbcommon
+ *
+ * @ingroup Ecore_Drm_Device_Group
+ * @since 1.17
+ */
+EAPI void ecore_drm_device_keyboard_cached_context_set(struct xkb_context *ctx);
+
+/**
+ * Setup a cached keymap to use same keymap for each devices
+ *
+ * This function will setup a cached keymap to use same keymap for each devices
+ * This function will be called before initialize Ecore_Drm.
+ *
+ * @param map struct xkb_keymap used in libxkbcommon
+ *
+ * @ingroup Ecore_Drm_Device_Group
+ * @since 1.17
+ */
+EAPI void ecore_drm_device_keyboard_cached_keymap_set(struct xkb_keymap *map);
 
 /**
  * Find an Ecore_Drm_Output at the given coordinates

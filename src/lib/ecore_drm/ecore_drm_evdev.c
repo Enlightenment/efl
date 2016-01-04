@@ -116,7 +116,7 @@ _device_keyboard_setup(Ecore_Drm_Evdev *edev)
    if (!input->dev->xkb_ctx) return;
 
    /* create keymap from xkb context */
-   edev->xkb.keymap = xkb_map_new_from_names(input->dev->xkb_ctx, NULL, 0);
+   edev->xkb.keymap = _ecore_drm_device_cached_keymap_get(input->dev->xkb_ctx, NULL, 0);
    if (!edev->xkb.keymap)
      {
         ERR("Failed to create keymap: %m");

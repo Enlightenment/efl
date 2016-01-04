@@ -24,7 +24,6 @@
 # include <linux/major.h>
 # include <linux/input.h>
 # include <libinput.h>
-# include <xkbcommon/xkbcommon.h>
 
 # ifdef HAVE_SYSTEMD
 #  include <systemd/sd-login.h>
@@ -69,6 +68,8 @@
 # endif
 
 extern int _ecore_drm_log_dom;
+struct xkb_keymap *cached_keymap;
+struct xkb_context *cached_context;
 
 # define EVDEV_MAX_SLOTS 32
 
@@ -294,4 +295,9 @@ Eina_Bool _ecore_drm_dbus_session_release(void);
 
 void _ecore_drm_inputs_init(void);
 void _ecore_drm_inputs_shutdown(void);
+
+struct xkb_context *_ecore_drm_device_cached_context_get(enum xkb_context_flags flags);
+struct xkb_keymap *_ecore_drm_device_cached_keymap_get(struct xkb_context *ctx,
+                       const struct xkb_rule_names *names,
+                       enum xkb_keymap_compile_flags flags);
 #endif

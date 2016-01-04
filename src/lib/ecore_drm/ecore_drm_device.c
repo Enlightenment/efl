@@ -107,6 +107,58 @@ _ecore_drm_device_cb_output_event(const char *device EINA_UNUSED, Eeze_Udev_Even
    _ecore_drm_outputs_update(dev);
 }
 
+struct xkb_context *
+_ecore_drm_device_cached_context_get(enum xkb_context_flags flags)
+{
+   if (!cached_context)
+     return xkb_context_new(flags);
+   else
+     return xkb_context_ref(cached_context);
+}
+
+struct xkb_keymap *
+_ecore_drm_device_cached_keymap_get(struct xkb_context *ctx,
+                       const struct xkb_rule_names *names,
+                       enum xkb_keymap_compile_flags flags)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
+
+   if (!cached_keymap)
+     return xkb_map_new_from_names(ctx, names, flags);
+   else
+     return xkb_map_ref(cached_keymap);
+}
+
+void
+_ecore_drm_device_cached_context_update(struct xkb_context *ctx)
+{
+   Eina_List *l;
+   Ecore_Drm_Device *dev;
+
+   EINA_LIST_FOREACH(drm_devices, l, dev)
+     {
+        xkb_context_unref(dev->xkb_ctx);
+        dev->xkb_ctx = xkb_context_ref(ctx);
+     }
+}
+
+void
+_ecore_drm_device_cached_keymap_update(struct xkb_keymap *map)
+{
+   Eina_List *l, *l2, *l3;
+   Ecore_Drm_Device *dev;
+   Ecore_Drm_Seat *seat;
+   Ecore_Drm_Evdev *edev;
+
+   EINA_LIST_FOREACH(drm_devices, l, dev)
+     EINA_LIST_FOREACH(dev->seats, l2, seat)
+       EINA_LIST_FOREACH(seat->devices, l3, edev)
+         {
+            xkb_keymap_unref(edev->xkb.keymap);
+            edev->xkb.keymap = xkb_keymap_ref(map);
+         }
+}
+
 /**
  * @defgroup Ecore_Drm_Device_Group Device manipulation functions
  * 
@@ -308,7 +360,7 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
      }
 
    /* try to create xkb context */
-   if (!(dev->xkb_ctx = xkb_context_new(0)))
+   if (!(dev->xkb_ctx = _ecore_drm_device_cached_context_get(0)))
      {
         ERR("Failed to create xkb context: %m");
         return EINA_FALSE;
@@ -589,4 +641,30 @@ ecore_drm_device_pointer_left_handed_set(Ecore_Drm_Device *dev, Eina_Bool left_h
           }
      }
    return EINA_TRUE;
+}
+
+EAPI void
+ecore_drm_device_keyboard_cached_context_set(struct xkb_context *ctx)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ctx);
+
+   if (cached_context == ctx) return;
+
+   if (cached_context)
+     _ecore_drm_device_cached_context_update(ctx);
+
+   cached_context = ctx;
+}
+
+EAPI void
+ecore_drm_device_keyboard_cached_keymap_set(struct xkb_keymap *map)
+{
+   EINA_SAFETY_ON_NULL_RETURN(map);
+
+   if (cached_keymap == map) return;
+
+   if (cached_keymap)
+      _ecore_drm_device_cached_keymap_update(map);
+
+   cached_keymap = map;
 }
