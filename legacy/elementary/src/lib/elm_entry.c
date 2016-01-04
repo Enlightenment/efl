@@ -1235,13 +1235,13 @@ _elm_entry_elm_widget_sub_object_del(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, E
 static void
 _hoversel_position(Evas_Object *obj)
 {
-   Evas_Coord cx, cy, cw, ch, x, y, mw, mh;
+   Evas_Coord cx, cy, cw, ch, x, y, mw, mh, w, h;
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
    cx = cy = 0;
    cw = ch = 1;
-   evas_object_geometry_get(sd->entry_edje, &x, &y, NULL, NULL);
+   evas_object_geometry_get(sd->entry_edje, &x, &y, &w, &h);
    if (sd->use_down)
      {
         cx = sd->downx - x;
@@ -1254,18 +1254,12 @@ _hoversel_position(Evas_Object *obj)
        (sd->entry_edje, "elm.text", &cx, &cy, &cw, &ch);
 
    evas_object_size_hint_min_get(sd->hoversel, &mw, &mh);
-   if (cw < mw)
-     {
-        cx += (cw - mw) / 2;
-        cw = mw;
-     }
-   if (ch < mh)
-     {
-        cy += (ch - mh) / 2;
-        ch = mh;
-     }
+   if (cx + mw > w)
+     cx = w - mw;
+   if (cy + mh > h)
+     cy = h - mh;
    evas_object_move(sd->hoversel, x + cx, y + cy);
-   evas_object_resize(sd->hoversel, cw, ch);
+   evas_object_resize(sd->hoversel, mw, mh);
 }
 
 static void

@@ -334,9 +334,20 @@ _resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
 
         if (xx < 0) xx = x;
         if ((xx + ww) > (x + w))
-          ww = (x + w) - xx;
+          {
+             if ((obj_x + obj_w - x) > ((x + w) - obj_x))
+               {
+                  elm_layout_signal_emit(sd->hover, "elm,state,align,right", "elm");
+                  if ((obj_x + obj_w - ww) < x)
+                    ww = obj_x + obj_w - x;
+               }
+             else
+               {
+                  elm_layout_signal_emit(sd->hover, "elm,state,align,default", "elm");
+                  ww = (x + w) - xx;
+               }
+          }
      }
-
    evas_object_size_hint_min_set(sd->spacer, ww, hh);
 }
 

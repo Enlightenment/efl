@@ -1069,7 +1069,7 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
       image { "base"; nomouse;
          desc { "default";
             fixed: 1 1;
-            rel1.offset: -6 0;
+            rel1.offset: 0 0;
             image.normal: "vgrad_med_dark.png";
             fill.smooth: 0;
             TILED_HORIZ(120)
@@ -1174,7 +1174,7 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
             color_class: "hoversel_text";
             color3: 255 255 255 255;
             text { font: FN; size: 10;
-               align: -1 0.5;
+               align: 0.0 0.5;
                min: 0 0;
                text_class: "button";
             }
