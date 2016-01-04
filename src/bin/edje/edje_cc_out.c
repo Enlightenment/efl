@@ -2609,6 +2609,8 @@ reorder_parts(void)
                        if (ep->reorder.insert_before &&
                            !strcmp(ep->reorder.insert_before, pc->parts[j]->name))
                          {
+                            needed_part_exists(pc, ep->reorder.insert_before);
+
                             ep2 = (Edje_Part_Parser *)pc->parts[j];
                             if (ep2->reorder.after)
                               ERR("The part \"%s\" is ambiguous ordered part.",
@@ -2619,7 +2621,7 @@ reorder_parts(void)
                             /* Need it to be able to insert an element before the first */
                             if (j == 0) k = 0;
                             else k = j - 1;
-			    found = EINA_TRUE;
+                            found = EINA_TRUE;
                             ep2->reorder.linked_prev += ep->reorder.linked_prev + 1;
                             ep->reorder.before = (Edje_Part_Parser *)pc->parts[j];
                             while (ep2->reorder.before)
@@ -2630,15 +2632,17 @@ reorder_parts(void)
                             break;
                          }
                        else if (ep->reorder.insert_after &&
-                           !strcmp(ep->reorder.insert_after, pc->parts[j]->name))
+                                !strcmp(ep->reorder.insert_after, pc->parts[j]->name))
                          {
+                            needed_part_exists(pc, ep->reorder.insert_after);
+
                             ep2 = (Edje_Part_Parser *)pc->parts[j];
                             if (ep2->reorder.before)
                               ERR("The part \"%s\" is ambiguous ordered part.", pc->parts[i]->name);
                             if (ep2->reorder.linked_next)
                               ERR("Unable to insert two or more parts in same part \"%s\".", pc->parts[j]->name);
                             k = j;
-			    found = EINA_TRUE;
+                            found = EINA_TRUE;
                             ep2->reorder.linked_next += ep->reorder.linked_next + 1;
                             ep->reorder.after = (Edje_Part_Parser *)pc->parts[j];
                             while (ep2->reorder.after)
@@ -4108,4 +4112,30 @@ using_file(const char *filename, const char type)
           }
         fclose(f);
      }
+}
+
+Eina_Bool
+needed_part_exists(Edje_Part_Collection *pc, const char *name)
+{
+   Eina_Bool found;
+   unsigned int i;
+
+   found = EINA_FALSE;
+
+   for (i = 0; i < pc->parts_count; i++)
+     {
+        if (!strcmp(pc->parts[i]->name, name))
+          {
+             found = EINA_TRUE;
+             break;
+          }
+     }
+
+   if (!found)
+     {
+        ERR("Unable to find part name \"%s\" needed in group \"%s\".",
+            name, pc->part);
+        exit(-1);
+     }
+   return found;
 }
