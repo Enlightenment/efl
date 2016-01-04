@@ -32,7 +32,6 @@ _elm_inwin_elm_layout_sizing_eval(Eo *obj, void *_pd EINA_UNUSED)
 
    if (!content) return;
 
-   evas_object_size_hint_min_get(content, &minw, &minh);
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
 
    evas_object_size_hint_min_set(obj, minw, minh);
