@@ -424,7 +424,6 @@ ecore_wl2_display_create(const char *name)
         /* check hash of cached server displays for this name */
         ewd = eina_hash_find(_server_displays, name);
         if (ewd) goto found;
-
      }
 
    /* allocate space for display structure */
