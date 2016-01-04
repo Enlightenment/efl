@@ -40,6 +40,16 @@ int main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    eina_strbuf_replace_all(buf, "length", "size");
    printf("%s\n", eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
+
+   buf = eina_strbuf_manage_read_only_new_length("Example string", 14);
+   printf("%s\n", eina_strbuf_string_get(buf));
+
+   eina_strbuf_append_char(buf, '.');
+   printf("%s\n", eina_strbuf_string_get(buf));
+
+   eina_strbuf_append_length(buf, "Another string.", 15);
+   printf("%s\n", eina_strbuf_string_get(buf));
 
    eina_strbuf_free(buf);
    eina_shutdown();
