@@ -6872,6 +6872,10 @@ _elm_genlist_item_coordinates_calc(Elm_Gen_Item *it,
         *y = it->y + it->item->block->y - (*h / 2) + (it->item->h / 2);
         break;
 
+      case ELM_GENLIST_ITEM_SCROLLTO_BOTTOM:
+        *y = it->y + it->item->block->y - *h + it->item->h;
+        break;
+
       default:
         return EINA_FALSE;
      }
