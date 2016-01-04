@@ -7,7 +7,7 @@ group { name: "elm/multibuttonentry/base/default";
          type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color_class: "multibuttonentry_bg";
          }
       }
       part { name: "box.swallow"; type: SWALLOW;
@@ -74,7 +74,20 @@ group { name: "elm/multibuttonentry/btn/default";
          tag: "tab" "\t";
       }
    }
+
+   script {
+      public disabled = 0;
+   }
+
    parts {
+      part { name: "bg"; type: RECT;
+         description { state: "default" 0.0;
+            color_class: "multibuttonentry_item_bg";
+         }
+         description { state: "pressed" 0.0;
+            color_class: "multibuttonentry_item_bg_selected";
+         }
+      }
       part { name: "base";
          description { state: "default" 0.0;
             image.normal: "button_normal.png";
@@ -84,7 +97,7 @@ group { name: "elm/multibuttonentry/btn/default";
             rel2.offset: 0 1;
             fill.smooth: 0;
          }
-         description { state: "clicked" 0.0;
+         description { state: "pressed" 0.0;
             inherit: "default" 0.0;
             image.normal: "button_clicked.png";
             image.border: 5 5 4 6;
@@ -141,12 +154,12 @@ group { name: "elm/multibuttonentry/btn/default";
       part { name: "elm.btn.text"; type: TEXTBLOCK; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            color_class: "multibuttonentry_label";
+            color_class: "multibuttonentry_item_text";
             text { style: "multibuttonentry_textblock_style";
                min: 1 1;
                ellipsis: -1;
-               text_class: "multibuttonentry_label";
-            }               
+               text_class: "multibuttonentry_item_text";
+            }
             visible: 0;
             rel1.offset: 5 5;
             rel1.to: "base";
@@ -159,12 +172,12 @@ group { name: "elm/multibuttonentry/btn/default";
       part { name: "text"; type: TEXTBLOCK; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            color_class: "multibuttonentry_label";
+            color_class: "multibuttonentry_item_text";
             text { style: "multibuttonentry_textblock_style";
                text_source: "elm.btn.text";
                min: 0 1;
                align: 0.0 0.5;
-               text_class: "multibuttonentry_label";
+               text_class: "multibuttonentry_item_text";
             }
             align: 0.0 0.5;
             rel1.offset: 5 5;
@@ -174,12 +187,30 @@ group { name: "elm/multibuttonentry/btn/default";
             rel2.relative: 0.0 1.0;
             rel2.offset: -3 -7;
          }
+         description { state: "pressed" 0.0;
+            inherit: "default";
+            color_class: "multibuttonentry_item_text_pressed";
+            text {
+               text_class: "multibuttonentry_item_text_pressed";
+            }
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default";
+            color_class: "multibuttonentry_item_text_disabled";
+            text {
+               text_class: "multibuttonentry_item_text_disabled";
+            }
+         }
       }
    }
    programs {
       program {
          signal: "mouse,clicked,1"; source: "base";
-         action: SIGNAL_EMIT "clicked" "elm";
+         script {
+            if (get_int(disabled) == 0) {
+               emit("clicked", "");
+            }
+         }
       }
       program {
          signal: "elm,state,default"; source: "elm";
@@ -192,14 +223,43 @@ group { name: "elm/multibuttonentry/btn/default";
          target: "glow";
       }
       program {
+         signal: "elm,state,enabled"; source: "elm";
+         script {
+            set_state(PART:"text", "default", 0.0);
+            set_int(disabled , 0);
+         }
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         script {
+            new st[31];
+            new Float: vl;
+            get_state(PART:"glow", st, 30, vl);
+            if (!strcmp(st, "focused"))
+              set_state(PART:"glow", "default", 0.0);
+            set_state(PART:"text", "disabled", 0.0);
+            set_int(disabled , 1);
+         }
+      }
+      program {
          signal: "mouse,down,1"; source: "base";
-         action: STATE_SET "clicked" 0.0;
-         target: "base";
+         script {
+            if (get_int(disabled) == 0) {
+               set_state(PART:"base", "pressed", 0.0);
+               set_state(PART:"bg", "pressed", 0.0);
+               set_state(PART:"text", "pressed", 0.0);
+            }
+         }
       }
       program {
          signal: "mouse,up,1"; source: "base";
-         action: STATE_SET "default" 0.0;
-         target: "base";
+         script {
+            if (get_int(disabled) == 0) {
+               set_state(PART:"base", "default", 0.0);
+               set_state(PART:"bg", "default", 0.0);
+               set_state(PART:"text", "default", 0.0);
+            }
+         }
       }
       program {
          signal: "mouse,clicked,1"; source: "del";

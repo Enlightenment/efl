@@ -324,6 +324,30 @@ color_classes {
       color: 255 255 255 255;
       desc: "Color of ctxpopup background";
    }
+   color_class { name: "multibuttonentry_bg";
+      color: 0 0 0 0;
+      desc: "Background of a multibuttonentry widget";
+   }
+   color_class { name: "multibuttonentry_item_bg";
+      color: 0 0 0 0;
+      desc: "Background of a multibuttonentry item object";
+   }
+   color_class { name: "multibuttonentry_item_bg_selected";
+      color: 0 0 0 0;
+      desc: "Background of a selected multibuttonentry item object";
+   }
+   color_class { name: "multibuttonentry_item_text";
+      color: FN_COL_DEFAULT;
+      desc: "Text of a multibuttonentry item";
+   }
+   color_class { name: "multibuttonentry_item_text_pressed";
+      color: FN_COL_HIGHLIGHT;
+      desc: "Text of a pressed multibuttonentry item";
+   }
+   color_class { name: "multibuttonentry_item_text_disabled";
+      color: FN_COL_DISABLE;
+      desc: "Text of a disabled multibuttonentry item";
+   }
    
 // modules
    color_class { name: "module_label";
