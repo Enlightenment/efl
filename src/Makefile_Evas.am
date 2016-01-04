@@ -755,12 +755,14 @@ GL_GENERIC_SOURCES = \
 modules/evas/engines/gl_generic/evas_engine.c \
 modules/evas/engines/gl_generic/Evas_Engine_GL_Generic.h \
 modules/evas/engines/gl_generic/evas_ector_gl_buffer.c \
-modules/evas/engines/gl_generic/evas_ector_gl_image_buffer.c
+modules/evas/engines/gl_generic/evas_ector_gl_image_buffer.c \
+modules/evas/engines/gl_generic/evas_ector_gl_rgbaimage_buffer.c \
 $(NULL)
 
 evas_gl_generic_eolian_files = \
 modules/evas/engines/gl_generic/evas_ector_gl_buffer.eo \
 modules/evas/engines/gl_generic/evas_ector_gl_image_buffer.eo \
+modules/evas/engines/gl_generic/evas_ector_gl_rgbaimage_buffer.eo \
 $(NULL)
 
 evas_gl_generic_eolian_c = $(evas_gl_generic_eolian_files:%.eo=%.eo.c)
