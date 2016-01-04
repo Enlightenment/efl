@@ -80,7 +80,10 @@ int main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    b64 = eina_str_base64url_encode((unsigned char *)"www.enlightenment.org", 21);
    printf("%s\n", b64);
+   decoded = eina_str_base64_decode(b64, &decoded_len);
+   printf("decoded string: %s, decoded_len: %d\n", decoded, decoded_len);
    free(b64);
+   free(decoded);
 
    eina_shutdown();
 
