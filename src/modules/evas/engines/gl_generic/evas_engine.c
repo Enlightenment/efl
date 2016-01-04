@@ -3,6 +3,7 @@
 
 #include "software/Ector_Software.h"
 #include "cairo/Ector_Cairo.h"
+#include "gl/Ector_GL.h"
 
 #if defined HAVE_DLSYM && ! defined _WIN32
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
@@ -2431,7 +2432,8 @@ eng_texture_image_get(void *data EINA_UNUSED, void *texture)
    return e3d_texture_get((E3D_Texture *)texture);
 }
 
-static Eina_Bool use_cairo;
+static Eina_Bool use_cairo = EINA_FALSE;
+static Eina_Bool use_gl = EINA_FALSE;
 
 static Ector_Surface *
 eng_ector_create(void *data EINA_UNUSED)
@@ -2442,7 +2444,11 @@ eng_ector_create(void *data EINA_UNUSED)
    if (ector_backend && !strcasecmp(ector_backend, "default"))
      {
         ector = eo_add(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
-        use_cairo = EINA_FALSE;
+     }
+   else if (ector_backend && !strcasecmp(ector_backend, "experimental"))
+     {
+        ector = eo_add(ECTOR_GL_SURFACE_CLASS, NULL);
+        use_gl = EINA_TRUE;
      }
    else
      {
@@ -2596,35 +2602,44 @@ eng_ector_begin(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
    evas_gl_common_context_target_surface_set(gl_context, surface);
    gl_context->dc = context;
 
-   w = gl_context->w; h = gl_context->h;
-
-   if (!buffer->gl || buffer->gl->w != w || buffer->gl->h != h)
+   if (use_cairo|| !use_gl)
      {
-        int err = EVAS_LOAD_ERROR_NONE;
+        w = gl_context->w; h = gl_context->h;
 
-        if (buffer->gl) evas_gl_common_image_free(buffer->gl);
-        if (buffer->tofree) free(buffer->software);
-        buffer->software = NULL;
+        if (!buffer->gl || buffer->gl->w != w || buffer->gl->h != h)
+          {
+             int err = EVAS_LOAD_ERROR_NONE;
 
-        buffer->gl = evas_gl_common_image_new(gl_context, w, h, 1, EVAS_COLORSPACE_ARGB8888);
-        if (!buffer->gl)
-          {
-             ERR("Creation of an image for vector graphics [%i, %i] failed\n", w, h);
-             return ;
+             if (buffer->gl) evas_gl_common_image_free(buffer->gl);
+             if (buffer->tofree) free(buffer->software);
+             buffer->software = NULL;
+
+             buffer->gl = evas_gl_common_image_new(gl_context, w, h, 1, EVAS_COLORSPACE_ARGB8888);
+             if (!buffer->gl)
+               {
+                  ERR("Creation of an image for vector graphics [%i, %i] failed\n", w, h);
+                  return ;
+               }
+             /* evas_gl_common_image_content_hint_set(buffer->gl, EVAS_IMAGE_CONTENT_HINT_DYNAMIC); */
+             buffer->gl = eng_image_data_get(data, buffer->gl, 1, &buffer->software, &err, &buffer->tofree);
+             if (!buffer->gl && err != EVAS_LOAD_ERROR_NONE)
+               {
+                  ERR("Mapping of an image for vector graphics [%i, %i] failed with %i\n", w, h, err);
+                  return ;
+               }
           }
-        /* evas_gl_common_image_content_hint_set(buffer->gl, EVAS_IMAGE_CONTENT_HINT_DYNAMIC); */
-        buffer->gl = eng_image_data_get(data, buffer->gl, 1, &buffer->software, &err, &buffer->tofree);
-        if (!buffer->gl && err != EVAS_LOAD_ERROR_NONE)
-          {
-             ERR("Mapping of an image for vector graphics [%i, %i] failed with %i\n", w, h, err);
-             return ;
-          }
+        memset(buffer->software, 0, sizeof (unsigned int) * w * h);
+        eo_do(ector,
+              ector_buffer_pixels_set(buffer->software, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888,
+                                      EINA_TRUE, 0, 0, 0, 0),
+              ector_surface_reference_point_set(x, y));
      }
-   memset(buffer->software, 0, sizeof (unsigned int) * w * h);
-   eo_do(ector,
-         ector_buffer_pixels_set(buffer->software, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888,
-                                 EINA_TRUE, 0, 0, 0, 0),
-         ector_surface_reference_point_set(x, y));
+   else
+     {
+        evas_gl_common_context_flush(gl_context);
+
+        eo_do(ector, ector_surface_reference_point_set(x, y));
+     }
 }
 
 static void
@@ -2638,30 +2653,38 @@ eng_ector_end(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
    int w, h;
    Eina_Bool mul_use;
 
-   gl_context = re->window_gl_context_get(re->software.ob);
-   w = gl_context->w; h = gl_context->h;
-   mul_use = gl_context->dc->mul.use;
-
-   eo_do(ector, ector_buffer_pixels_set(NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0));
-   eng_image_data_put(data, buffer->gl, buffer->software);
-
-   if (!mul_use)
+   if (use_cairo || !use_gl)
      {
-        // @hack as image_draw uses below fields to do colour multiplication.
-        gl_context->dc->mul.col = ector_color_multiply(0xffffffff, gl_context->dc->col.col);
-        gl_context->dc->mul.use = EINA_TRUE;
+        gl_context = re->window_gl_context_get(re->software.ob);
+        w = gl_context->w; h = gl_context->h;
+        mul_use = gl_context->dc->mul.use;
+
+        eo_do(ector, ector_buffer_pixels_set(NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+        eng_image_data_put(data, buffer->gl, buffer->software);
+
+        if (!mul_use)
+          {
+             // @hack as image_draw uses below fields to do colour multiplication.
+             gl_context->dc->mul.col = ector_color_multiply(0xffffffff, gl_context->dc->col.col);
+             gl_context->dc->mul.use = EINA_TRUE;
+          }
+
+        // We actually just bluntly push the pixel all over the
+        // destination surface. We don't have the actual information
+        // of the widget size. This is not a problem.
+        // Later on, we don't want that information and today when
+        // using GL backend, you just need to turn on Evas_Map on
+        // the Evas_Object_VG.
+        evas_gl_common_image_draw(gl_context, buffer->gl, 0, 0, w, h, 0, 0, w, h, 0);
+
+        // restore gl state
+        gl_context->dc->mul.use = mul_use;
      }
-
-   // We actually just bluntly push the pixel all over the
-   // destination surface. We don't have the actual information
-   // of the widget size. This is not a problem.
-   // Later on, we don't want that information and today when
-   // using GL backend, you just need to turn on Evas_Map on
-   // the Evas_Object_VG.
-   evas_gl_common_image_draw(gl_context, buffer->gl, 0, 0, w, h, 0, 0, w, h, 0);
-
-   // restore gl state
-   gl_context->dc->mul.use = mul_use;
+   else if (use_gl)
+     {
+        // FIXME: Need to find a cleaner way to do so (maybe have a reset in evas_gl_context)
+        // Force a full pipe reinitialization for now
+     }
 }
 
 static Evas_Func func, pfunc;
