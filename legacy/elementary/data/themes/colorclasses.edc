@@ -231,6 +231,10 @@ color_classes {
       color: WIN_DEFAULT_BASIC;
       desc: "Base of a scroller widget";
    }
+   color_class { name: "spinner_bg";
+      color: 0 0 0 0;
+      desc: "Background of a spinner widget";
+   }
    color_class { name: "radio_text";
       color: FN_COL_DEFAULT;
       desc: "Text of a radio widget's label";

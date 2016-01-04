@@ -9,9 +9,10 @@ group { name: "elm/spinner/base/default";
          }
       }
       part { name: "bg";
-         type: SPACER;
+         type: RECT;
          scale: 1;
          description { state: "default" 0.0;
+            color_class: "spinner_bg";
          }
       }
       part { name: "inset"; mouse_events: 0;

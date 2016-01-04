@@ -134,6 +134,7 @@ static const Elm_Color_Class _elm_color_classes[] = {
    {"slider_text", "Slider Text"},
    {"slider_text_disabled", "Slider Disabled Text"},
    {"slider_indicator", "Slider Indicator Text"},
+   {"spinner_bg", "Spinner Background"},
    {"progressbar_text", "Progressbar Text"},
    {"progressbar_text_disabled", "Progressbar Disabled Text"},
    {"progressbar_status", "Progressbar Status Text"},
