@@ -1,7 +1,7 @@
 
 ### Library
 
-evas_eolian_files = \
+evas_public_eo_files = \
 	lib/evas/canvas/evas_object.eo \
 	lib/evas/canvas/evas_line.eo \
 	lib/evas/canvas/evas_polygon.eo \
@@ -42,6 +42,9 @@ evas_eolian_files = \
 	lib/evas/canvas/efl_vg_gradient_radial.eo \
 	lib/evas/canvas/efl_vg_gradient_linear.eo \
 	lib/evas/canvas/evas_filter.eo \
+	$(NULL)
+
+evas_eolian_files = $(evas_public_eo_files) \
 	lib/evas/include/evas_ector_buffer.eo \
 	$(NULL)
 
@@ -2245,7 +2248,7 @@ tests/evas/images/bg_gray.png
 
 if HAVE_ELUA
 
-evas_eolian_lua = $(evas_eolian_files:%.eo=%.eo.lua)
+evas_eolian_lua = $(evas_public_eo_files:%.eo=%.eo.lua)
 
 generated_evas_lua_all = $(evas_eolian_lua)
 
@@ -2266,7 +2269,7 @@ dist_installed_evasfilters_DATA = $(evas_filters_lua)
 
 if HAVE_JS
 
-generated_evas_js_bindings = $(evas_eolian_files:%.eo=%.eo.js.cc)
+generated_evas_js_bindings = $(evas_public_eo_files:%.eo=%.eo.js.cc)
 
 CLEANFILES += $(generated_evas_js_bindings)
 

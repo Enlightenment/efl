@@ -3,8 +3,8 @@ if HAVE_CXX11
 
 ### Generated headers
 
-generated_evas_canvas_cxx_bindings = $(evas_eolian_files:%.eo=%.eo.hh)
-generated_evas_canvas_cxx_impl_bindings = $(evas_eolian_files:%.eo=%.eo.impl.hh)
+generated_evas_canvas_cxx_bindings = $(evas_public_eo_files:%.eo=%.eo.hh)
+generated_evas_canvas_cxx_impl_bindings = $(evas_public_eo_files:%.eo=%.eo.impl.hh)
 
 lib/evas/Evas.hh: $(generated_evas_canvas_cxx_bindings)
 	@echo @ECHO_E@ "#ifndef EFL_CXX_EVAS_HH\n#define EFL_CXX_EVAS_HH\n" > $(top_builddir)/src/lib/evas/Evas.hh
@@ -36,6 +36,7 @@ tests_evas_cxx_cxx_compile_test_SOURCES = tests/evas_cxx/cxx_compile_test.cc
 tests_evas_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
  -I$(top_builddir)/src/lib/efl/interfaces/ \
  -I$(top_builddir)/src/lib/evas/canvas/ \
+ -I$(top_builddir)/src/lib/evas/include/ \
  -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/evas_cxx\" \
  -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/evas_cxx\" \
  @CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EVAS_CXX_CFLAGS@ @EO_CXX_CFLAGS@ \
