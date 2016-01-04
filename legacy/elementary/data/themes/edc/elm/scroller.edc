@@ -694,7 +694,7 @@ group { name: "elm/scroller/base/default";
             rel2.to: "elm.swallow.background";
 //            color: 64 64 64 200;
             color: 0 0 0 0;
-            color_class: "scrollframe_base";
+            color_class: "scroller_bg`";
          }
       }
       part { name: "clipper"; type: RECT;
@@ -925,6 +925,7 @@ group { name: "elm/scroller/base/default";
             min: 3 13;
             TILED_HORIZ(120)
             fixed: 1 1;
+            color_class: "scroller_bar";
          }
       }
       part { name: "bevel_vbar"; mouse_events: 0;

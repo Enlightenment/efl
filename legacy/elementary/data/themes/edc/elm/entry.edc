@@ -214,7 +214,8 @@ group { name: "elm/scroller/entry_single/default";
          description { state: "default" 0.0;
             rel1.to: "elm.swallow.background";
             rel2.to: "elm.swallow.background";
-            color_class: "entry_scrollframe_base";
+            color: DARK_GREY_BG_COLOR;
+            color_class: "scroller_bg";
          }
       }
       part { name: "clipper"; type: RECT;

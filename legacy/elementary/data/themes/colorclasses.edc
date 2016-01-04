@@ -227,9 +227,13 @@ color_classes {
       color: WIN_DEFAULT_BASIC;
       desc: "Base of a frame widget";
    }
-   color_class { name: "scrollframe_base";
+   color_class { name: "scroller_bg";
       color: WIN_DEFAULT_BASIC;
-      desc: "Base of a scroller widget";
+      desc: "Background of a scroller widget";
+   }
+   color_class { name: "scroller_bar";
+      color: 255 255 255 255;
+      desc: "Bar of a scroller widget";
    }
    color_class { name: "spinner_bg";
       color: 0 0 0 0;

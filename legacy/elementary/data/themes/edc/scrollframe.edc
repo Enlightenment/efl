@@ -339,7 +339,7 @@ group { name: "e/widgets/scrollframe";
             rel1.to: "e.swallow.content";
             rel2.to: "e.swallow.content";
             color: 64 64 64 255;
-            color_class: "scrollframe_base";
+            color_class: "scroller_bg";
          }
       }
       part { name: "clipper"; type: RECT;
