@@ -2658,7 +2658,9 @@ _wl_selection_receive(void *udata, int type EINA_UNUSED, void *event)
                   sdata.data = ev->data;
                   sdata.len = ev->len;
                   sdata.action = sel->action;
-                  sel->datacb(sel->udata, sel->widget, &sdata);
+                  sel->datacb(sel->udata,
+                              sel->requestwidget,
+                              &sdata);
                }
              else
                {
