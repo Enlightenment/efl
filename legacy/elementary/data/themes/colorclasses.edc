@@ -195,6 +195,26 @@ color_classes {
       color: DARK_GREY_BG_COLOR;
       desc: "Base of a entry's scroller widget";
    }
+   color_class { name: "index_bg";
+      color: 0 0 0 0;
+      desc: "Background of a index widget";
+   }
+   color_class { name: "index_highlight_text";
+      color: FN_COL_HIGHLIGHT;
+      desc: "Text of a hlghlight item text";
+   }
+   color_class { name: "index_item_bg";
+      color: 0 0 0 0;
+      desc: "Background of a index item object";
+   }
+   color_class { name: "index_item_text";
+      color: FN_COL_DEFAULT;
+      desc: "Text of a index item";
+   }
+   color_class { name: "index_item_text_selected";
+      color: FN_COL_HIGHLIGHT;
+      desc: "Text of a selected index item";
+   }
    color_class { name: "label_text";
       color: FN_COL_DEFAULT;
       desc: "Text of a generic label";
