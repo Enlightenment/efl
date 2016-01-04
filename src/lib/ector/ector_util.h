@@ -1,6 +1,20 @@
 #ifndef ECTOR_UTIL_H
 # define ECTOR_UTIL_H
 
+#define ECTOR_COLOR_SET(value) (value << 8)
+
+#define ECTOR_COLOR16_SET(value) (value)
+
+typedef struct _Ector_Color Ector_Color;
+
+struct _Ector_Color
+{
+	unsigned short r;
+	unsigned short g;
+	unsigned short b;
+	unsigned short a;
+};
+
 static inline void
 ector_color_argb_premul(int a, int *r, int *g, int *b)
 {
@@ -27,6 +41,26 @@ ector_color_multiply(unsigned int c1, unsigned int c2)
             ((((((c1) >> 8) & 0xff00) * (((c2) >> 16) & 0xff)) + 0xff00) & 0xff0000) +
             ((((((c1) & 0xff00) * ((c2) & 0xff00)) + 0xff0000) >> 16) & 0xff00) +
             (((((c1) & 0xff) * ((c2) & 0xff)) + 0xff) >> 8) );
+}
+
+static inline void
+ector_color_set(Ector_Color *color, unsigned char r, unsigned char g,
+                                    unsigned char b, unsigned char a)
+{
+   color->r = ECTOR_COLOR_SET(r);
+   color->g = ECTOR_COLOR_SET(g);
+   color->b = ECTOR_COLOR_SET(b);
+   color->a = ECTOR_COLOR_SET(a);
+}
+
+static inline void
+ector_color16_set(Ector_Color *color, unsigned short r, unsigned short g,
+                                      unsigned short b, unsigned short a)
+{
+   color->r = ECTOR_COLOR16_SET(r);
+   color->g = ECTOR_COLOR16_SET(g);
+   color->b = ECTOR_COLOR16_SET(b);
+   color->a = ECTOR_COLOR16_SET(a);
 }
 
 #endif
