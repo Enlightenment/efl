@@ -570,9 +570,21 @@ lib/evas/filters/blur/blur_box_rgba_neon.c
 
 ### Engine Ector stuff
 
-EXTRA_DIST += \
+evas_software_generic_eolian_files = \
 modules/evas/engines/software_generic/evas_ector_software_buffer.eo
 
+EXTRA_DIST += $(evas_software_generic_eolian_files)
+
+evas_software_generic_eolian_c = $(evas_software_generic_eolian_files:%.eo=%.eo.c)
+evas_software_generic_eolian_h = $(evas_software_generic_eolian_files:%.eo=%.eo.h)
+
+BUILT_SOURCES += \
+$(evas_software_generic_eolian_c) \
+$(evas_software_generic_eolian_h)
+
+CLEANFILES += \
+$(evas_software_generic_eolian_c) \
+$(evas_software_generic_eolian_h)
 
 ### Engines
 
