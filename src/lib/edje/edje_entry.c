@@ -2719,50 +2719,52 @@ _edje_entry_real_part_configure(Edje *ed, Edje_Real_Part *rp)
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
    if (!en) return;
-   switch (rp->part->cursor_mode)
-     {
-      case EDJE_ENTRY_CURSOR_MODE_BEFORE:
-        cur_type = EVAS_TEXTBLOCK_CURSOR_BEFORE;
-        break;
-
-      case EDJE_ENTRY_CURSOR_MODE_UNDER:
-      /* no break for a reason */
-      default:
-        cur_type = EVAS_TEXTBLOCK_CURSOR_UNDER;
-     }
 
    _sel_update(ed, en->cursor, rp->object, en);
    _anchors_update_check(ed, rp);
-   x = y = w = h = -1;
-   xx = yy = ww = hh = -1;
-   evas_object_geometry_get(rp->object, &x, &y, &w, &h);
-   bidi_cursor = evas_textblock_cursor_geometry_bidi_get(en->cursor, &xx, &yy, &ww, &hh, &xx2, &yy2, NULL, NULL, cur_type);
-   if (ww < 1) ww = 1;
-   if (hh < 1) hh = 1;
-   if (en->cursor_bg)
+   if (rp->part->entry_mode >= EDJE_ENTRY_EDIT_MODE_EDITABLE)
      {
-        evas_object_move(en->cursor_bg, x + xx, y + yy);
-        evas_object_resize(en->cursor_bg, ww, hh);
-     }
-   if (en->cursor_fg)
-     {
-        evas_object_move(en->cursor_fg, x + xx, y + yy);
-        evas_object_resize(en->cursor_fg, ww, hh);
-     }
-   if (en->cursor_fg2)
-     {
-        if (bidi_cursor)
-          {
-             evas_object_image_fill_set(en->cursor_fg2, 0, 0, ww, hh / 2);
-             evas_object_move(en->cursor_fg2, x + xx2, y + yy2 + (hh / 2));
-             evas_object_resize(en->cursor_fg, ww, hh / 2);
-             evas_object_resize(en->cursor_fg2, ww, hh / 2);
+        switch (rp->part->cursor_mode)
+         {
+           case EDJE_ENTRY_CURSOR_MODE_BEFORE:
+              cur_type = EVAS_TEXTBLOCK_CURSOR_BEFORE;
+            break;
 
-             evas_object_show(en->cursor_fg2);
-          }
-        else
+           case EDJE_ENTRY_CURSOR_MODE_UNDER:
+          /* no break for a reason */
+           default:
+             cur_type = EVAS_TEXTBLOCK_CURSOR_UNDER;
+         }
+        x = y = w = h = -1;
+        xx = yy = ww = hh = -1;
+        evas_object_geometry_get(rp->object, &x, &y, &w, &h);
+        bidi_cursor = evas_textblock_cursor_geometry_bidi_get(en->cursor, &xx, &yy, &ww, &hh, &xx2, &yy2, NULL, NULL, cur_type);
+        if (ww < 1) ww = 1;
+        if (hh < 1) hh = 1;
+        if (en->cursor_bg)
           {
-             evas_object_hide(en->cursor_fg2);
+             evas_object_move(en->cursor_bg, x + xx, y + yy);
+             evas_object_resize(en->cursor_bg, ww, hh);
+          }
+        if (en->cursor_fg)
+          {
+             evas_object_move(en->cursor_fg, x + xx, y + yy);
+             evas_object_resize(en->cursor_fg, ww, hh);
+          }
+        if (en->cursor_fg2)
+          {
+             if (bidi_cursor)
+               {
+                  evas_object_image_fill_set(en->cursor_fg2, 0, 0, ww, hh / 2);
+                  evas_object_move(en->cursor_fg2, x + xx2, y + yy2 + (hh / 2));
+                  evas_object_resize(en->cursor_fg, ww, hh / 2);
+                  evas_object_resize(en->cursor_fg2, ww, hh / 2);
+                  evas_object_show(en->cursor_fg2);
+               }
+             else
+               {
+                  evas_object_hide(en->cursor_fg2);
+               }
           }
      }
 }
