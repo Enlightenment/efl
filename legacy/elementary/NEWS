@@ -1,6 +1,80 @@
 =================
-Elementary 1.16.0
+Elementary 1.17.0
 =================
+
+Changes since 1.16.0:
+---------------------
+
+Features:
+
+   * toolbar: add item_signal_emit.
+   * spinner: add entry filter for accepted only digits and "."
+   * hoversel: add item disabling support.
+   * Elm entry: Keep cursor at inserted position after dnd.
+   * atspi: support key modifers in bridge.
+   * atspi: add type of accessibility object
+   * elementary: Port elementary to use Ecore_Wl2 library
+   * cnp: add Copy & Paste support for Windows
+   * cursor: add cursor support on Windows.
+   * popup: add popup default align config for other profiles.
+   * Entry: Context Menu is now configurable
+   * genlist: supporting homogeneous mode about each item class.
+   * calendar: Apply elm_button widgets instead of manually implemented spinner buttons.
+   * efl-js: JavaScript Eolian binding
+   * popup: add popup dismiss function for hide effect
+   * box: implement aspected item layout
+   * toolbar: Send a signal when shrink mode is changed.
+   * genlist: new SCROLLTO_BOTTOM alignment
+   * calendar: add color classes and text classes.
+   * datetime: add color classes and text classes.
+   * index: add color classes and text classes.
+   * spinner: add color classes and text classes.
+   * multibuttonentry: add color classes and text classes.
+   * elm config - allow the ability to save out to another hidden profile
+   * elm config - add function to check if profile exists
+   * elm config - add the ability to have derived configurations from others
+
+Fixes:
+
+   * calendar: weekdays do not get translated when language is dynamically changed issue fix
+   * index: internal item's edje object handling logic changed to improve performance.
+   * naviframe: subtitle,show signal not sent
+   * segment_control: fix variable affectation
+   * Genlist: Fixed a possible crash in filter iterator and a typo.
+   * Clouseau: handle case when the library is not installed
+   * win: only perform maximize frame state updating during ecore-evas callback
+   * gengrid: Prevent duplicated selected function calls when item is unselected in the function.
+   * atspi: unprotect subset of methods
+   * notify: fix broken timeout feature in elm_notify (T2853)
+   * notify: fix hide animation
+   * multibuttonentry: change default format count.
+   * multibuttonentry: internal entry cnp mode set as "ELM_CNP_MODE_PLAINTEXT".
+   * datetime: fix field arrange code for dynamically field sequence change case.
+   * comp base: allow mouse events to propagate through comp base -> wallpaper
+   * Entry: add markup cnp handlers
+   * elementary: Fix test_colorclass function
+   * elm: set language to edje when elm_language_set is called.
+   * spinner: prevent scrolling when longpress timer enabled.
+   * elementary: Don't call ecore_wl2_shutdown unless we have a display
+   * elm border: change shadow toggle program signal source e -> elm
+   * elementary: Update ecore wayland window geometry (T2919)
+   * spinner: add possibility to enter negative value. (T2915)
+   * gengrid: fix Logic in _item_single_select_left and _item_single_select_right.
+   * Elm entry: fix null item in item provider.
+   * Fileselector entry: fix a case when file was not selected
+   * genlist : fix size hash issue when genlist layout sizing evaluated
+   * genlist: remove unnecessary data creation
+   * elm_photocam: add NULL check
+   * atspi: return previous name in overloaded getters
+   * Elm config: use a name instead of elm_widget_type_get (T2891)
+   * Entry: Add newline filter for single line entry (T2660)
+   * [config] fix static analysis issue
+   * Elm entry: Fix to hide magnifier when menu is disabled.
+   * elm - cursor - fix job handling to not leave rogue jobs
+   * genlist : add size_calc forcely about content when elm_layout.
+   * elm wl cnp - fix paste to not crash anymore
+   * elm config - monitor JUST the correct files for profile and cfg change
+   * elementary: Fix elementary not compiling
 
 Changes since 1.15.0:
 ---------------------
