@@ -1,5 +1,5 @@
-EFL_VERSION([1], [16], [99], [dev])
-AC_INIT([evas_generic_loaders], [efl_version], [enlightenment-devel@lists.sourceforge.net])
+EFL_VERSION([1], [17], [0], [release])
+AC_INIT([evas_generic_loaders], [efl_version-alpha1], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
