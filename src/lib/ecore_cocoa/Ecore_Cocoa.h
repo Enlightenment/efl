@@ -198,11 +198,11 @@ EAPI void ecore_cocoa_window_move_resize(Ecore_Cocoa_Window *window,
                                          int                 width,
                                          int                 height);
 
-EAPI void ecore_cocoa_window_geometry_get(Ecore_Cocoa_Window *window,
-                                          int                *x,
-                                          int                *y,
-                                          int                *width,
-                                          int                *height);
+EAPI void ecore_cocoa_window_geometry_get(const Ecore_Cocoa_Window *window,
+                                          int                      *x,
+                                          int                      *y,
+                                          int                      *w,
+                                          int                      *h);
 
 EAPI void ecore_cocoa_window_size_get(Ecore_Cocoa_Window *window,
                                       int                *width,
