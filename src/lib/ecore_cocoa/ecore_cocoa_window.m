@@ -537,7 +537,7 @@ ecore_cocoa_window_activate(Ecore_Cocoa_Window *window)
 
 EAPI void
 ecore_cocoa_window_iconified_set(Ecore_Cocoa_Window *window,
-                                 int                 on)
+                                 Eina_Bool           on)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
@@ -553,13 +553,17 @@ ecore_cocoa_window_iconified_set(Ecore_Cocoa_Window *window,
 
 EAPI void
 ecore_cocoa_window_borderless_set(Ecore_Cocoa_Window *window,
-                                  int                 on)
+                                  Eina_Bool           on)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    if (on)
      [window->window setContentBorderThickness:0.0
                                        forEdge:NSMinXEdge | NSMinYEdge | NSMaxXEdge | NSMaxYEdge];
+   else
+     {
+        // TODO
+     }
 }
 
 EAPI void

@@ -246,10 +246,10 @@ EAPI void ecore_cocoa_window_title_set(Ecore_Cocoa_Window *window,
                                        const char         *title);
 
 EAPI void ecore_cocoa_window_iconified_set(Ecore_Cocoa_Window *window,
-                                           int                 on);
+                                           Eina_Bool           on);
 
 EAPI void ecore_cocoa_window_borderless_set(Ecore_Cocoa_Window *window,
-                                            int                 on);
+                                            Eina_Bool           on);
 
 EAPI void ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
                                       void *view);
