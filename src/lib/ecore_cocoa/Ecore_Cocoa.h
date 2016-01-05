@@ -215,28 +215,28 @@ EAPI void ecore_cocoa_window_size_get(const Ecore_Cocoa_Window *window,
                                       int                      *h);
 
 EAPI void ecore_cocoa_window_size_min_set(Ecore_Cocoa_Window *window,
-                                          unsigned int        min_width,
-                                          unsigned int        min_height);
+                                          int                 w,
+                                          int                 h);
 
 EAPI void ecore_cocoa_window_size_min_get(const Ecore_Cocoa_Window *window,
-                                          unsigned int             *min_width,
-                                          unsigned int             *min_height);
+                                          int                      *w,
+                                          int                      *h);
 
 EAPI void ecore_cocoa_window_size_max_set(Ecore_Cocoa_Window *window,
-                                          unsigned int        max_width,
-                                          unsigned int        max_height);
+                                          int                 w,
+                                          int                 h);
 
 EAPI void ecore_cocoa_window_size_max_get(const Ecore_Cocoa_Window *window,
-                                          unsigned int             *max_width,
-                                          unsigned int             *max_height);
+                                          int                      *w,
+                                          int                      *h);
 
 EAPI void ecore_cocoa_window_size_step_set(Ecore_Cocoa_Window *window,
-                                           unsigned int        step_width,
-                                           unsigned int        step_height);
+                                           int                 w,
+                                           int                 h);
 
 EAPI void ecore_cocoa_window_size_step_get(const Ecore_Cocoa_Window *window,
-                                           unsigned int             *step_width,
-                                           unsigned int             *step_height);
+                                           int                      *w,
+                                           int                      *h);
 
 EAPI void ecore_cocoa_window_show(Ecore_Cocoa_Window *window);
 

@@ -341,8 +341,8 @@ ecore_cocoa_window_free(Ecore_Cocoa_Window *window)
 
 EAPI void
 ecore_cocoa_window_size_min_set(Ecore_Cocoa_Window *window,
-                                unsigned int w,
-                                unsigned int h)
+                                int                 w,
+                                int                 h)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
@@ -351,20 +351,20 @@ ecore_cocoa_window_size_min_set(Ecore_Cocoa_Window *window,
 
 EAPI void
 ecore_cocoa_window_size_min_get(const Ecore_Cocoa_Window *window,
-                                unsigned int             *min_width,
-                                unsigned int             *min_height)
+                                int                      *w,
+                                int                      *h)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    const NSSize size = window->window.contentMinSize;
-   if (min_width) *min_width = size.width;
-   if (min_height) *min_height = size.height;
+   if (w) *w = size.width;
+   if (h) *h = size.height;
 }
 
 EAPI void
 ecore_cocoa_window_size_max_set(Ecore_Cocoa_Window *window,
-                                unsigned int w,
-                                unsigned int h)
+                                int                 w,
+                                int                 h)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
@@ -373,20 +373,20 @@ ecore_cocoa_window_size_max_set(Ecore_Cocoa_Window *window,
 
 EAPI void
 ecore_cocoa_window_size_max_get(const Ecore_Cocoa_Window *window,
-                                unsigned int             *max_width,
-                                unsigned int             *max_height)
+                                int                      *w,
+                                int                      *h)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    const NSSize size = window->window.contentMaxSize;
-   if (max_width) *max_width = size.width;
-   if (max_height) *max_height = size.height;
+   if (w) *w = size.width;
+   if (h) *h = size.height;
 }
 
 EAPI void
 ecore_cocoa_window_size_step_set(Ecore_Cocoa_Window *window,
-                                 unsigned int w,
-                                 unsigned int h)
+                                 int                 w,
+                                 int                 h)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
@@ -395,14 +395,14 @@ ecore_cocoa_window_size_step_set(Ecore_Cocoa_Window *window,
 
 EAPI void
 ecore_cocoa_window_size_step_get(const Ecore_Cocoa_Window *window,
-                                 unsigned int             *step_width,
-                                 unsigned int             *step_height)
+                                 int                      *w,
+                                 int                      *h)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    const NSSize size = window->window.contentResizeIncrements;
-   if (step_width) *step_width = size.width;
-   if (step_height) *step_height = size.height;
+   if (w) *w = size.width;
+   if (h) *h = size.height;
 }
 
 EAPI void
@@ -470,17 +470,17 @@ EAPI void
 ecore_cocoa_window_move_resize(Ecore_Cocoa_Window *window,
                                int                 x,
                                int                 y,
-                               int                 width,
-                               int                 height)
+                               int                 w,
+                               int                 h)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    NSRect win_frame;
 
    win_frame = [window->window frame];
-   win_frame.size.height = height +
+   win_frame.size.height = h +
       (([window->window isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
-   win_frame.size.width = width;
+   win_frame.size.width = w;
    win_frame.origin.x = x;
    win_frame.origin.y = y;
 
