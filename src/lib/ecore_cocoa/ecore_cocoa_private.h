@@ -61,6 +61,11 @@ struct _Ecore_Cocoa_Window
    unsigned int borderless : 1;
 };
 
+struct _Ecore_Cocoa_Screen
+{
+  int dummy;
+};
+
 
 /* Internal init */
 Eina_Bool _ecore_cocoa_window_init(void);

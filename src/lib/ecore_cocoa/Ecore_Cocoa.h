@@ -94,11 +94,6 @@ struct _Ecore_Cocoa_Event_Window
    Ecore_Cocoa_Window_Id wid;
 };
 
-struct _Ecore_Cocoa_Screen
-{
-  int dummy;
-};
-
 /**
  * @typedef Ecore_Cocoa_Cnp_Type
  * Type used to interact with the Cocoa pasteboard.
