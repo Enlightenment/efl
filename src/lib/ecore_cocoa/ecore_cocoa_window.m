@@ -346,8 +346,7 @@ ecore_cocoa_window_size_min_set(Ecore_Cocoa_Window *window,
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   NSSize size = {w,h};
-   window->window.contentMinSize = size;
+   window->window.contentMinSize = NSMakeSize(w, h);
 }
 
 EAPI void
@@ -357,8 +356,7 @@ ecore_cocoa_window_size_max_set(Ecore_Cocoa_Window *window,
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   NSSize size = {w,h};
-   window->window.contentMaxSize = size;
+   window->window.contentMaxSize = NSMakeSize(w, h);
 }
 
 EAPI void
@@ -368,8 +366,7 @@ ecore_cocoa_window_size_step_set(Ecore_Cocoa_Window *window,
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   NSSize size = {w,h};
-   window->window.contentResizeIncrements = size;
+   window->window.contentResizeIncrements = NSMakeSize(w, h);
 }
 
 EAPI void
