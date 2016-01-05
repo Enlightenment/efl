@@ -225,9 +225,13 @@ _elm_sys_notify_class_constructor(Eo_Class *klass EINA_UNUSED)
 void
 _elm_unneed_sys_notify(void)
 {
-   eo_do(_singleton,
-         elm_obj_sys_notify_servers_set(ELM_SYS_NOTIFY_SERVER_NONE));
-   eo_del(_singleton);
+   Elm_Sys_Notify *manager = elm_sys_notify_singleton_get();
+   if (manager)
+     {
+        eo_do(manager,
+              elm_obj_sys_notify_servers_set(ELM_SYS_NOTIFY_SERVER_NONE));
+        eo_del(manager);
+     }
 }
 
 EAPI Eina_Bool
