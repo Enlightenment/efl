@@ -2206,7 +2206,7 @@ _native_free_cb(void *data, void *image)
               }
             else
               ERR("Try glXDestroyPixmap on GLX with no support");
-            n->ns_data.x11->surface = 0;
+            n->ns_data.x11.surface = 0;
          }
 # endif
 #endif
@@ -2738,12 +2738,12 @@ eng_image_native_set(void *data, void *image, void *native)
                       pixmap_att[i++] = 0;
 
                       memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
-                      n->ns_data.x11->pixmap = pm;
-                      n->ns_data.x11->visual = vis;
+                      n->ns_data.x11.pixmap = pm;
+                      n->ns_data.x11.visual = vis;
                       if (glsym_glXCreatePixmap)
                         n->ns_data.x11.surface = (void *)glsym_glXCreatePixmap(eng_get_ob(re)->disp,
-                                                                   n->ns_data.x11->config,
-                                                                   n->ns_data.x11->pixmap,
+                                                                   n->ns_data.x11.config,
+                                                                   n->ns_data.x11.pixmap,
                                                                    pixmap_att);
                       else
                         ERR("Try glXCreatePixmap on GLX with no support");
@@ -2756,7 +2756,7 @@ eng_image_native_set(void *data, void *image, void *native)
                                 ERR("no target :(");
                                 if (glsym_glXQueryDrawable)
                                   glsym_glXQueryDrawable(eng_get_ob(re)->disp,
-                                                         n->ns_data.x11->pixmap,
+                                                         n->ns_data.x11.pixmap,
                                                          GLX_TEXTURE_TARGET_EXT,
                                                          &target);
                              }
