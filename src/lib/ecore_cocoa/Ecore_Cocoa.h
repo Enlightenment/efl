@@ -228,9 +228,9 @@ EAPI void ecore_cocoa_window_size_step_set(Ecore_Cocoa_Window *window,
                                            unsigned int        step_width,
                                            unsigned int        step_height);
 
-EAPI void ecore_cocoa_window_size_step_get(Ecore_Cocoa_Window *window,
-                                           unsigned int       *step_width,
-                                           unsigned int       *step_height);
+EAPI void ecore_cocoa_window_size_step_get(const Ecore_Cocoa_Window *window,
+                                           unsigned int             *step_width,
+                                           unsigned int             *step_height);
 
 EAPI void ecore_cocoa_window_show(Ecore_Cocoa_Window *window);
 

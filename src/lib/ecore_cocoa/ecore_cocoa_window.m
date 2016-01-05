@@ -394,6 +394,18 @@ ecore_cocoa_window_size_step_set(Ecore_Cocoa_Window *window,
 }
 
 EAPI void
+ecore_cocoa_window_size_step_get(const Ecore_Cocoa_Window *window,
+                                 unsigned int             *step_width,
+                                 unsigned int             *step_height)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   const NSSize size = window->window.contentResizeIncrements;
+   if (step_width) *step_width = size.width;
+   if (step_height) *step_height = size.height;
+}
+
+EAPI void
 ecore_cocoa_window_move(Ecore_Cocoa_Window *window,
                         int                 x,
                         int                 y)
