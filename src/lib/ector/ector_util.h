@@ -7,12 +7,20 @@
 
 typedef struct _Ector_Color Ector_Color;
 
+typedef enum _Ector_Color_Type
+  {
+    ECTOR_COLOR,
+    ECTOR_COLOR16
+  } Ector_Color_Type;
+
 struct _Ector_Color
 {
-	unsigned short r;
-	unsigned short g;
-	unsigned short b;
-	unsigned short a;
+   unsigned short r;
+   unsigned short g;
+   unsigned short b;
+   unsigned short a;
+
+   Ector_Color_Type type;
 };
 
 static inline void
@@ -51,6 +59,8 @@ ector_color_set(Ector_Color *color, unsigned char r, unsigned char g,
    color->g = ECTOR_COLOR_SET(g);
    color->b = ECTOR_COLOR_SET(b);
    color->a = ECTOR_COLOR_SET(a);
+
+   color->type = ECTOR_COLOR;
 }
 
 static inline void
@@ -61,6 +71,14 @@ ector_color16_set(Ector_Color *color, unsigned short r, unsigned short g,
    color->g = ECTOR_COLOR16_SET(g);
    color->b = ECTOR_COLOR16_SET(b);
    color->a = ECTOR_COLOR16_SET(a);
+
+   color->type = ECTOR_COLOR16;
+}
+
+static inline Ector_Color_Type
+ector_color_type_get(Ector_Color *color)
+{
+   return color->type;
 }
 
 #endif
