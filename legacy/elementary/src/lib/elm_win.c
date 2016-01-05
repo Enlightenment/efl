@@ -1253,6 +1253,7 @@ _elm_win_profile_update(Elm_Win_Data *sd)
           _internal_elm_win_profile_set(sd, sd->profile.available_list[0]);
      }
 
+   _config_profile_lock = EINA_TRUE;
    _elm_config_profile_set(sd->profile.name);
 
    /* update sub ee */

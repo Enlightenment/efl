@@ -574,6 +574,8 @@ extern const char SIG_WIDGET_ACCESS_CHANGED[];
 extern const char SIG_LAYOUT_FOCUSED[];
 extern const char SIG_LAYOUT_UNFOCUSED[];
 
+extern Eina_Bool _config_profile_lock;
+
 #ifdef HAVE_ELEMENTARY_WL2
 extern Ecore_Wl2_Display *_elm_wl_display;
 #endif

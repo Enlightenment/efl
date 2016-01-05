@@ -26,8 +26,14 @@ Eina_List  *_color_overlays_del = NULL;
 
 static Ecore_Poller *_elm_cache_flush_poller = NULL;
 static void _elm_config_key_binding_hash(void);
+
+Eina_Bool _config_profile_lock = EINA_FALSE;
 static Ecore_Timer *_config_change_delay_timer = NULL;
-Eio_Monitor *_eio_monitor = NULL;
+static Ecore_Timer *_config_profile_change_delay_timer = NULL;
+static Ecore_Event_Handler *_monitor_file_created_handler = NULL;
+static Ecore_Event_Handler *_monitor_directory_created_handler = NULL;
+static Eio_Monitor *_eio_config_monitor = NULL;
+static Eio_Monitor *_eio_profile_monitor = NULL;
 
 Eina_Hash *_elm_key_bindings = NULL;
 
@@ -1607,6 +1613,12 @@ _config_user_load(void)
    Eet_File *ef;
    char buf[PATH_MAX];
 
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s",
+                          _elm_profile);
+   if (_eio_config_monitor) eio_monitor_del(_eio_config_monitor);
+   printf("monitor dir %s\n", buf);
+   _eio_config_monitor = eio_monitor_add(buf);
+
    _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s/base.cfg",
                           _elm_profile);
 
@@ -1800,53 +1812,13 @@ _config_load(void)
 }
 
 static void
-_config_flush_load(void)
-{
-   Elm_Config *cfg = NULL;
-   Eet_File *ef;
-   char buf[PATH_MAX];
-
-   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/flush.cfg");
-
-   ef = eet_open(buf, EET_FILE_MODE_READ);
-   if (ef)
-     {
-        cfg = eet_data_read(ef, _config_edd, "config");
-        eet_close(ef);
-     }
-
-   if (cfg)
-     {
-        size_t len;
-
-        len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "themes/");
-        if (len + 1 < sizeof(buf))
-          ecore_file_mkpath(buf);
-
-        _elm_config = cfg;
-
-        if ((_elm_config->config_version >> ELM_CONFIG_VERSION_EPOCH_OFFSET) < ELM_CONFIG_EPOCH)
-           {
-              WRN("User's elementary config seems outdated and unusable. Fallback to load system config.");
-              _config_free(_elm_config);
-              _elm_config = NULL;
-           }
-        else
-          {
-             if (_elm_config->config_version < ELM_CONFIG_VERSION)
-               _config_update();
-          }
-     }
-}
-
-static void
 _config_flush_get(void)
 {
    _elm_config_font_overlays_cancel();
    _color_overlays_cancel();
    _config_free(_elm_config);
    _elm_config = NULL;
-   _config_flush_load();
+   _config_load();
    _env_get();
    _config_apply();
    _config_sub_apply();
@@ -3608,10 +3580,8 @@ elm_config_window_auto_focus_animate_set(Eina_Bool enable)
 EAPI void
 elm_config_all_flush(void)
 {
-   char buf[4096], buf2[4096];
-   int ok = 0, ret;
-   const char *err;
-   Eet_File *ef;
+   char buf[PATH_MAX];
+   int ok = 0;
    size_t len;
 
    len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "themes/");
@@ -3644,53 +3614,7 @@ elm_config_all_flush(void)
         return;
      }
 
-   buf[len] = '/';
-   len++;
-
-   if (len + sizeof("flush.cfg") >= sizeof(buf) - len)
-     return;
-
-   memcpy(buf + len, "flush.cfg", sizeof("flush.cfg"));
-   len += sizeof("flush.cfg") - 1;
-
-   if (len + sizeof(".tmp") >= sizeof(buf))
-     return;
-
-   memcpy(buf2, buf, len);
-   memcpy(buf2 + len, ".tmp", sizeof(".tmp"));
-
-   ef = eet_open(buf2, EET_FILE_MODE_WRITE);
-   if (!ef)
-     return;
-
-   ok = eet_data_write(ef, _config_edd, "config", _elm_config, 1);
-   if (!ok)
-     {
-        ERR("Failed to write config (error %i)", ok);
-        goto err;
-     }
-
-   err = _elm_config_eet_close_error_get(ef, buf2);
-   if (err)
-     {
-        ERR("%s", err);
-        free((void *)err);
-        goto err;
-     }
-
-   ret = ecore_file_mv(buf2, buf);
-   if (!ret)
-     {
-        ERR("Error saving Elementary's configuration file");
-        goto err;
-     }
-
-   ecore_file_unlink(buf2);
    elm_config_save();
-   return;
-
-err:
-   ecore_file_unlink(buf2);
    return;
 }
 
@@ -3758,33 +3682,86 @@ _elm_config_sub_shutdown(void)
 #ifdef HAVE_ELEMENTARY_WIN32
    ecore_win32_shutdown();
 #endif
-   ELM_SAFE_FREE(_eio_monitor, eio_monitor_del);
+   ELM_SAFE_FREE(_eio_config_monitor, eio_monitor_del);
+   ELM_SAFE_FREE(_eio_profile_monitor, eio_monitor_del);
    ELM_SAFE_FREE(_config_change_delay_timer, ecore_timer_del);
+   ELM_SAFE_FREE(_config_profile_change_delay_timer, ecore_timer_del);
+   ELM_SAFE_FREE(_monitor_file_created_handler, ecore_event_handler_del);
+   ELM_SAFE_FREE(_monitor_directory_created_handler, ecore_event_handler_del);
+}
+
+static Eina_Bool
+_config_profile_change_delay_cb(void *data EINA_UNUSED)
+{
+   char *pprof = NULL;
+
+   if (_elm_profile) pprof = strdup(_elm_profile);
+   _profile_fetch_from_conf();
+   if ((!pprof) || (!(!strcmp(pprof, _elm_profile))))
+     {
+        _config_flush_get();
+     }
+   free(pprof);
+   _config_profile_change_delay_timer = NULL;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static Eina_Bool
 _config_change_delay_cb(void *data EINA_UNUSED)
 {
-   char buf[PATH_MAX];
+   _elm_config_reload();
 
-   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/flush.cfg");
-   if (ecore_file_exists(buf)) _config_flush_get();
    _config_change_delay_timer = NULL;
-
    return ECORE_CALLBACK_CANCEL;
 }
 
 static Eina_Bool
 _elm_config_file_monitor_cb(void *data EINA_UNUSED,
-                            int type EINA_UNUSED,
+                            int type,
                             void *event)
 {
    Eio_Monitor_Event *ev = event;
+   const char *file = ecore_file_file_get(ev->filename);
+   char buf[PATH_MAX];
 
-   if (ev->monitor != _eio_monitor) return ECORE_CALLBACK_PASS_ON;
-
-   ecore_timer_del(_config_change_delay_timer);
-   _config_change_delay_timer = ecore_timer_add(0.1, _config_change_delay_cb, NULL);
+   if (ev->monitor == _eio_config_monitor)
+     {
+        if (type == EIO_MONITOR_FILE_CREATED)
+          {
+             if (!strcmp(file, "base.cfg"))
+               {
+                  if (_config_change_delay_timer)
+                    ecore_timer_del(_config_change_delay_timer);
+                  _config_change_delay_timer = ecore_timer_add(0.1, _config_change_delay_cb, NULL);
+               }
+          }
+     }
+   if (ev->monitor == _eio_profile_monitor)
+     {
+        if (type == EIO_MONITOR_FILE_CREATED)
+          {
+             if ((!_config_profile_lock) && (!strcmp(file, "profile.cfg")))
+               {
+                  if (_config_profile_change_delay_timer)
+                    ecore_timer_del(_config_profile_change_delay_timer);
+                  _config_profile_change_delay_timer = ecore_timer_add(0.1, _config_profile_change_delay_cb, NULL);
+               }
+          }
+        else if (type == EIO_MONITOR_DIRECTORY_CREATED)
+          {
+             if (!_eio_config_monitor)
+               {
+                  _eio_config_monitor = eio_monitor_add(ev->filename);
+                  snprintf(buf, sizeof(buf), "%s/base.cfg", ev->filename);
+                  if (ecore_file_exists(buf))
+                    {
+                       if (_config_change_delay_timer)
+                         ecore_timer_del(_config_change_delay_timer);
+                       _config_change_delay_timer = ecore_timer_add(0.1, _config_change_delay_cb, NULL);
+                    }
+               }
+          }
+     }
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -3875,13 +3852,9 @@ _elm_config_sub_init(void)
    ecore_win32_init();
 #endif
    char buf[PATH_MAX];
-   size_t len;
    int ok = 0;
 
-   len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/");
-   if (len + 10 >= sizeof(buf)) // the space to add "flush.cfg"
-     goto end;
-
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config");
    ok = ecore_file_mkpath(buf);
    if (!ok)
      {
@@ -3889,12 +3862,11 @@ _elm_config_sub_init(void)
             buf);
         goto end;
      }
-
-   strcat(buf, "flush.cfg");
-   if (!ecore_file_exists(buf)) elm_config_all_flush();
-
-   _eio_monitor = eio_monitor_add(buf);
-   ecore_event_handler_add(EIO_MONITOR_FILE_MODIFIED, _elm_config_file_monitor_cb, NULL);
+   _eio_profile_monitor = eio_monitor_add(buf);
+   _monitor_file_created_handler = ecore_event_handler_add
+     (EIO_MONITOR_FILE_CREATED, _elm_config_file_monitor_cb, NULL);
+   _monitor_directory_created_handler = ecore_event_handler_add
+     (EIO_MONITOR_DIRECTORY_CREATED, _elm_config_file_monitor_cb, NULL);
 
 end:
    _config_sub_apply();
