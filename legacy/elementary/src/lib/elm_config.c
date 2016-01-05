@@ -1898,8 +1898,9 @@ _elm_config_eet_close_error_get(Eet_File *ef,
 }
 
 static Eina_Bool
-_elm_config_profile_save(void)
+_elm_config_profile_save(const char *profile)
 {
+   Elm_Config_Derived *derived;
    char buf[4096], buf2[4096];
    int ok = 0, ret;
    const char *err;
@@ -1943,7 +1944,7 @@ _elm_config_profile_save(void)
    derived = _elm_config_derived_load(profile ? profile : _elm_profile);
    if (derived)
      {
-        _elm_config_derived_save(cfg, derived);
+        _elm_config_derived_save(_elm_config, derived);
         _elm_config_derived_free(derived);
      }
    return EINA_TRUE;
@@ -1956,7 +1957,6 @@ err:
 Eina_Bool
 _elm_config_save(Elm_Config *cfg, const char *profile)
 {
-   Elm_Config_Derived *derived;
    char buf[4096], buf2[4096];
    int ok = 0, ret;
    const char *err;
@@ -1990,7 +1990,7 @@ _elm_config_save(Elm_Config *cfg, const char *profile)
 
    if (!profile)
      {
-        if (!_elm_config_profile_save())
+        if (!_elm_config_profile_save(NULL))
           return EINA_FALSE;
      }
 
@@ -3608,7 +3608,7 @@ elm_config_all_flush(void)
         return;
      }
 
-   if (!_elm_config_profile_save())
+   if (!_elm_config_profile_save(NULL))
      {
         ERR("Failed to save profile");
         return;
