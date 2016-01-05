@@ -42,12 +42,13 @@ ector_eolian_files_gl = \
 	lib/ector/gl/ector_renderer_gl_shape.eo \
 	lib/ector/gl/ector_renderer_gl_gradient_radial.eo \
 	lib/ector/gl/ector_renderer_gl_gradient_linear.eo
+ector_eolian_gl_h = $(ector_eolian_files_gl:%.eo=%.eo.h)
 
 ector_eolian_files = \
                      $(ector_eolian_files_generic) \
                      $(ector_eolian_files_cairo) \
                      $(ector_eolian_files_software) \
-		     $(ector_eolian_files_gl)
+                     $(ector_eolian_files_gl)
 
 ector_eolian_c = $(ector_eolian_files:%.eo=%.eo.c)
 ector_eolian_h = $(ector_eolian_files:%.eo=%.eo.h)
@@ -152,6 +153,9 @@ lib/ector/gl/shader/ector_gl_shaders.x: $(GL_SHADERS_GEN)
 
 installed_ectorsoftwareheadersdir = $(includedir)/ector-@VMAJ@/software
 nodist_installed_ectorsoftwareheaders_DATA = $(ector_eolian_software_h)
+
+installed_ectorglheadersdir = $(includedir)/ector-@VMAJ@/gl
+nodist_installed_ectorglheaders_DATA = $(ector_eolian_gl_h)
 
 lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/ector \
