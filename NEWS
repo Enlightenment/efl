@@ -1,6 +1,170 @@
 ==========
-EFL 1.16.0
+EFL 1.17.0
 ==========
+
+Changes since 1.16.0:
+---------------------
+
+Features:
+
+   * eina: add eina_tmpstr_manage_new, eina_tmpstr_manage_new_length APIs
+   * eina: add API eina_strftime
+   * Edje: Directly embed TGV files inside EDJ when possible
+   * eolian: add eolian_type_aliased_base_get
+   * Evas object: Add paragraph_direciton APIs
+   * Evas textblock: add support for hyphenation wrap style
+   * cmake: Add a helper script which defines generator rules for eo files
+   * evas: Add ExtraLight, ExtraBold for font weight.
+   * Evil: add support for LC_MESSAGES for setlocale()
+   * ecore_win32: add clipboard management
+   * ecore_win32: add support of X11 shaped cursors
+   * ecore_cocoa: add support for system cursors
+   * Ector: Implement pixel buffer support
+   * ecore_cocoa: add support for system cursors
+   * ecore: Add a new wayland module (T2842, T2841)
+   * eina: Adding API for base64 decode.
+   * edje: introduce size_class attribute
+   * Static deps unibreak: Update to latest version.
+   * edje_callbacks: Add mouse,pressed,in/out signal.
+   * efl-js: JavaScript Eolian binding
+   * edje: add text_classes syntax to EDC (T2900)
+   * Add a new Ecore_Drm API for setting left-handed mouse
+   * edje_embryo: add printf feature.
+   * ecore-drm: Add a new API for keymap cache
+   * Evas_Engine: add TBM surface and clean up Native Struct
+
+Fixes:
+
+   * eina: fix computation of sqrt near 1.
+   * efl: fix build out of tree
+   * Evas: Allow edje_decc to work with ETC images
+   * edje: initialize map.zoom values to fix old *.edj compatibility issues.
+   * Evas sw_generic/x11: Fix calls to native_bind_cb/unbind_cb
+   * edje - signal match code - clean up function readablity and fix crash
+   * ecore_con: remove last occurence of EMILE_SSLv3
+   * efl: Fix configure help message for cserve
+   * efl: Fix configure help message for multisense
+   * ecore-evas wayland: use correct values when updating wayland window size
+   * ecore-evas drm: null global device pointer after free (T2844)
+   * Evas GL: Fix BadMatch with pbuffer make current
+   * Evas GL: Remove invalid call inside make current pbuffer
+   * ector: disable NEON build. (T2851)
+   * Evas language: Fix language from locale function.
+   * evas-gl: Remove extra parentheses
+   * evas-software-x11: Fix returning NULL pointer
+   * evas-software-x11: Fix resource leak (CID1339782)
+   * ector: Fix incorrect expression (CID1339786)
+   * ecore-evas-wl: Fix issue of improper window geometry (T2842)
+   * ecore-drm: Don't send mouse_move event too early
+   * ecore-evas-drm: Send fake mouse_move event after registering (T2854)
+   * ecore-wayland: Make ecore_wl_window_maximized_get return proper values
+   * evas-gl_drm: Remove set but unused variable
+   * ecore-evas wayland: enforce frame/state change triggering before move/resize (T2841)
+   * ecore-wayland: return only the relevant state value for maximize/fullscreen
+   * ecore-wayland: rewrite maximize/fullscreen set functions for consistency (T2841)
+   * Edje: Fix Evas 3D eet data descriptors
+   * Evas text: Fix memory leak
+   * ecore-wayland: Add EINA_SAFETY checks to window functions
+   * ecore-wayland: Fix iconified functions for consistency
+   * ecore-wayland: Reduce overhead for maximize/fullscreen set functions
+   * [eolian_gen] remove documentation for removed argument.
+   * evas: fix unreachable code in _generate_unic_color_key function in Evas.Canvas3D.
+   * evas: fix possible accsess to NULL pointer in Evas.Canvas3d.
+   * evas: fix uninitialize variable in convex_hull_vertex_set function
+   * evas: remove useless part of code in evas_convex_hull_get function
+   * ector: fix the rounding issue when applying transformation to shape data in freetype backend.
+   * efreet_icon: Fix wrong inherit selection
+   * edje entry: return correct selection
+   * evas-3d: Fix missing field initializers
+   * Evas: use LC_MESSAGES on Windows to fix compilation
+   * eina: fix missing header
+   * ecore_file: fix ecore_file_file_get() on Windows
+   * ecore_cocoa: don't track NSAppKitDefined event
+   * ecore_cocoa: fix live resize of windows
+   * evas: fix a NULL dereference issue in font.
+   * efl: fix build failure when it builds with coverage.
+   * edje cc fix - we parsed floats not intsfor min and max desc size
+   * Evas Textblock: Fix text disappear issue when text is made up with multiple items. (T2709)
+   * efreet desktop tracking - fix monitoring of dirs of custom desktops
+   * fix efreetd to scan more subdirs for desktop and icon files
+   * Evas textblock: fix height on line wrapping (T1583)
+   * ecore_evas: fix disappearing socket image
+   * edje: fix edje RTL description in case of custom state of a part
+   * evas: rewrite gl image transformation logic in a very simple way
+   * edje_entry: Fix crash on selection (T2910)
+   * Edje entry: Use markup text for password in preedit mode
+   * ecore-wl2: Fix not sending compositor reguests when we use ecore_wl2_display_connect
+   * ecore-wl2: Fix issue of compositors not flushing clients properly
+   * ecore-evas-wl: Fix issue of resize jumping
+   * ecore-wl2: Fix maximized and fullscreen functions to restore geometry
+   * ecore-wl2: Fix issue of not unsetting move mouse pointer
+   * ecore-wl2: Change name of ecore_wl2_window_class_name_set function
+   * ecore-evas wayland: use correct values when updating wayland window size
+   * ecore-evas wayland: enforce frame/state change triggering before move/resize (T2841)
+   * ecore-wl2: Fix maximized & fullscreen functions to use window flag
+   * ecore-wl2: Remove setting custom wl_log handler
+   * ecore-evas wayland: use correct values when updating wayland window size
+   * ecore-evas-wl: Fix issue of improper window geometry (T2842)
+   * ecore-evas wayland: enforce frame/state change triggering before move/resize (T2841)
+   * ecore-evas wayland: use correct values when updating wayland window size
+   * ecore-evas-wl: Fix issue of improper window geometry (T2842)
+   * ecore-evas-wl: Fix issue of resize jumping
+   * ecore-evas wayland: enforce frame/state change triggering before move/resize (T2841)
+   * ecore-evas-wayland: Use proper Ecore_Wl2 window functions
+   * Evas textblock: Skip layout logic for an text item which doesn't have font.
+   * ecore-evas-wl: Cleanup creating a wayland canvas
+   * ecore-evas-wayland: Properly cleanup ecore_wl2 during error
+   * ecore-wl2: Implement function pointer for configure acknowledge
+   * ecore-evas-wayland: Acknowledge configure event post render
+   * efl - ecore-x xrandr - fix memleaks of properties fetched
+   * ecore-wl2: Don't free display structure during display cleanup function
+   * evas-wayland-egl: Fix the unnecessary renewal of the engine window.
+   * Evas textblock: fix evas_textblock_cursor_line_set
+   * ecore-wl2: Fix issue of cleanup function always removing from client display hash
+   * evas: Fix definition of framespace in canvas eo file
+   * ecore-wl2: rewrite maximize/fullscreen set functions for consistency (T2919)
+   * ecore-evas-wayland: Don't set window geometry in ecore_evas (T2919)
+   * Edje cc: Fix use of uninitialised value.
+   * Evas textblock: improve and fix line range rectangles (T2648)
+   * ecore-wl2: rewrite iconified set function for consistency (T2919)
+   * efl - ecore-x randr - fix coverity issue found after previous leak fix
+   * Evas text: Fix Evas Text truncated text case.
+   * edje: calc - remove pointer comparison while finding part desc
+   * ecore-evas-wayland: Move configure acknowledge to render_flush_pre
+   * ecore-evas-wayland: Fix issue of starting resizing causing size jumps
+   * evas_eet: Add Type Safety check
+   * Evas textblock: add missing test fonts (T2908)
+   * evas: trigger RENDER_FLUSH callbacks during async render
+   * ecore-wl2: Add new event for sync done
+   * ecore-evas-wl: Defer creating surfaces for wayland canvas
+   * ecore-evas-wl: Fix copy/paste errors
+   * evas - fix evas module locks to init/del when movile created/destroyed
+   * Evas Textblock: Fix NULL dereferencing issue
+   * Eolian gen: Don't fail if file is empty (--gi)
+   * ecore-drm: Fix failure of setting/closing evdev->fd which causes fd leak
+   * ecore-evas wayland: move frame sending to pre-flush callback
+   * evas: do not add unclipped smart members to the master clip
+   * evas: trigger FLUSH_PRE callback prior to kicking off an async render
+   * evas: do not unset/delete master clip after every frame
+   * efreet_icon_cache_create: null theme eet file to avoid double free
+   * edje_cc: track parts for descriptions, ensure part types match when inheriting
+   * edje_cc: terminate filter file scripts
+   * edje_cc: correctly copy part descriptions when setting part type
+   * edje_cc: redo part type setting to be even more correct
+   * Edje entry: Fix issue with width calculation and padding
+   * emotion - fix gst back-end to report title and other meta changes
+   * Edje entry: Fix cursor position on mouse up and down
+   * evas: unset pointer ungrabs when using EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN
+   * evas: handle existing pointer grabs when changing object pointer mode
+   * efreetd: send ipc for EFREET_EVENT_DESKTOP_CACHE_BUILD...always (T2733)
+   * ecore_x: fix memory leak
+   * ecore_x: fix memory leak
+   * ecore-wl2: Fix MIN() macro comparing int vs unsigned int
+   * eo: Fix resource leak (CID1339783)
+   * ecore-drm: Add missing variable 'dev'
+   * Edje_cc: support braces for description.proxy attribute.
+   * edje: custom state - if RTL flag is not set, return original description
+   * edje: Fix compiler warning about set but not used variables
 
 Changes since 1.15.0:
 ---------------------
