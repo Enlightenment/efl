@@ -316,13 +316,17 @@ struct _libv8_callback_info_test
 {
 };
 
+// NOTE: ifndef needed because a bug in doxygen makes it fail with this class
+#ifndef EFL_DOXYGEN
 template <typename T = v8::ObjectTemplate, typename Enable = void>
 struct _libv8_property_callback_info_test
   : std::true_type {};
+#endif
 
 typedef v8::Handle<v8::Value>(*_libv8_getter_callback)(v8::Local<v8::String>, v8::AccessorInfo const&);
 typedef void(*_libv8_setter_callback)(v8::Local<v8::String>, v8::Local<v8::Value>, v8::AccessorInfo const&);
 
+#ifndef EFL_DOXYGEN
 template <typename T>
 struct _libv8_property_callback_info_test
 <T, typename std::enable_if
@@ -339,6 +343,7 @@ struct _libv8_property_callback_info_test
   : std::false_type
 {
 };
+#endif
 
 static constexpr bool const v8_uses_isolate = _libv8_isolate_test<>::value;
 static constexpr bool const v8_uses_callback_info = _libv8_callback_info_test<>::value;
