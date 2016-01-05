@@ -167,8 +167,6 @@ EAPI Ecore_Cocoa_Window *ecore_cocoa_window_new(int x,
  */
 EAPI void ecore_cocoa_window_free(Ecore_Cocoa_Window *window);
 
-EAPI void *ecore_cocoa_window_hwnd_get(Ecore_Cocoa_Window *window);
-
 /**
  * Moves a Cocoa window to a given point
  * @param window The window to be moved
