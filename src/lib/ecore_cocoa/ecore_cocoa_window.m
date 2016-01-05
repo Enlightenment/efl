@@ -372,6 +372,18 @@ ecore_cocoa_window_size_max_set(Ecore_Cocoa_Window *window,
 }
 
 EAPI void
+ecore_cocoa_window_size_max_get(const Ecore_Cocoa_Window *window,
+                                unsigned int             *max_width,
+                                unsigned int             *max_height)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   const NSSize size = window->window.contentMaxSize;
+   if (max_width) *max_width = size.width;
+   if (max_height) *max_height = size.height;
+}
+
+EAPI void
 ecore_cocoa_window_size_step_set(Ecore_Cocoa_Window *window,
                                  unsigned int w,
                                  unsigned int h)

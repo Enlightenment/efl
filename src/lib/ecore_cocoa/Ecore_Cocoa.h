@@ -220,9 +220,9 @@ EAPI void ecore_cocoa_window_size_max_set(Ecore_Cocoa_Window *window,
                                           unsigned int        max_width,
                                           unsigned int        max_height);
 
-EAPI void ecore_cocoa_window_size_max_get(Ecore_Cocoa_Window *window,
-                                          unsigned int       *max_width,
-                                          unsigned int       *max_height);
+EAPI void ecore_cocoa_window_size_max_get(const Ecore_Cocoa_Window *window,
+                                          unsigned int             *max_width,
+                                          unsigned int             *max_height);
 
 EAPI void ecore_cocoa_window_size_step_set(Ecore_Cocoa_Window *window,
                                            unsigned int        step_width,
