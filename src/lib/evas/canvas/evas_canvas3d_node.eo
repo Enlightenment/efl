@@ -52,6 +52,11 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
            See also @Evas.Canvas3D.Node.member_add.]]
          return: const(list<Evas.Canvas3D.Node *>)*; [[The list of member nodes if any or $null if there are none.]]
       }
+      scene_root_get {
+         [[Get hash table of scenes using this node as root.]]
+
+         return: Eina.Hash *; [[ scenes using this node as root.]]
+      }
       position_set {
          [[Set the position of the given node.
 

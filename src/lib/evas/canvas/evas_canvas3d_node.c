@@ -760,6 +760,12 @@ evas_canvas3d_node_scene_root_del(Evas_Canvas3D_Node *node, Evas_Canvas3D_Scene 
      eina_hash_set(pd->scenes_root, &scene, (const void *)(uintptr_t)(count - 1));
 }
 
+EOLIAN static Eina_Hash*
+_evas_canvas3d_node_scene_root_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd)
+{
+   return pd->scenes_root;
+}
+
 void
 evas_canvas3d_node_scene_camera_add(Evas_Canvas3D_Node *node, Evas_Canvas3D_Scene *scene)
 {
