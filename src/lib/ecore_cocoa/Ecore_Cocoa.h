@@ -18,6 +18,8 @@
 # warning "and is subject to change. You use this at your own risk."
 #endif
 
+#include <Eina.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -32,7 +34,6 @@
 # define EAPI
 #endif
 
-#include <Eina.h>
 #include "Ecore_Cocoa_Cursor.h"
 
 #ifdef __cplusplus
