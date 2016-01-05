@@ -277,6 +277,10 @@ _edje_get_custom_description_by_orientation(Edje *ed, Edje_Part_Description_Comm
    Edje_Part_Description_Common *ret;
    size_t memsize = 0;
 
+   /* RTL flag is not set, return original description */
+   if (!edje_object_mirrored_get(ed->obj))
+     return src;
+
    if (!(*dst))
      {
         ret = _edje_get_description_by_orientation(ed, src, dst, type);
