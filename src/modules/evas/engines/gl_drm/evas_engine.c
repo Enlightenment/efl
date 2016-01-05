@@ -1,6 +1,7 @@
 #include "config.h"
 #include "evas_engine.h"
 #include "../gl_common/evas_gl_define.h"
+#include "../software_generic/evas_native_common.h"
 
 #include <wayland-client.h>
 
@@ -26,15 +27,6 @@ int _extn_have_buffer_age = 1;
 /* local variables */
 static Eina_Bool initted = EINA_FALSE;
 static int gl_wins = 0;
-
-/* local structures */
-typedef struct _Native Native;
-struct _Native
-{
-   Evas_Native_Surface ns;
-   struct wl_buffer *wl_buf;
-   void *egl_surface;
-};
 
 /* local function prototype types */
 typedef void (*_eng_fn)(void);
@@ -627,11 +619,11 @@ _native_cb_bind(void *data EINA_UNUSED, void *image)
 
    if (n->ns.type == EVAS_NATIVE_SURFACE_WL)
      {
-        if (n->egl_surface)
+        if (n->ns_data.wl_surface.surface)
           {
              if (glsym_glEGLImageTargetTexture2DOES)
                {
-                  glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, n->egl_surface);
+                  glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, n->ns_data.wl_surface.surface);
                   GLERRV("glsym_glEGLImageTargetTexture2DOES");
                }
              else
@@ -680,13 +672,13 @@ _native_cb_free(void *data, void *image)
 
    if (n->ns.type == EVAS_NATIVE_SURFACE_WL)
      {
-        wlid = (void*)n->wl_buf;
+        wlid = (void*)n->ns_data.wl_surface.wl_buf;
         eina_hash_del(ob->gl_context->shared->native_wl_hash, &wlid, img);
-        if (n->egl_surface)
+        if (n->ns_data.wl_surface.surface)
           {
              if (glsym_eglDestroyImage)
                {
-                  glsym_eglDestroyImage(ob->egl.disp, n->egl_surface);
+                  glsym_eglDestroyImage(ob->egl.disp, n->ns_data.wl_surface.surface);
                   if (eglGetError() != EGL_SUCCESS)
                     ERR("eglDestroyImage() failed.");
                }
@@ -1168,9 +1160,9 @@ eng_image_native_set(void *data, void *image, void *native)
                   eina_hash_add(ob->gl_context->shared->native_wl_hash,
                                 &wlid, img);
 
-                  n->wl_buf = wl_buf;
+                  n->ns_data.wl_surface.wl_buf = wl_buf;
                   if (glsym_eglCreateImage)
-                    n->egl_surface = glsym_eglCreateImage(ob->egl.disp,
+                    n->ns_data.wl_surface.surface = glsym_eglCreateImage(ob->egl.disp,
                                                           NULL,
                                                           EGL_WAYLAND_BUFFER_WL,
                                                           wl_buf, attribs);
@@ -1184,7 +1176,7 @@ eng_image_native_set(void *data, void *image, void *native)
                        return NULL;
                     }
 
-                  if (!n->egl_surface)
+                  if (!n->ns_data.wl_surface.surface)
                     {
                        ERR("eglCreatePixmapSurface() for %p failed", wl_buf);
                        eina_hash_del(ob->gl_context->shared->native_wl_hash,
@@ -1221,7 +1213,7 @@ eng_image_native_set(void *data, void *image, void *native)
                   eina_hash_add(ob->gl_context->shared->native_tex_hash,
                                 &texid, img);
 
-                  n->egl_surface = 0;
+                  n->ns_data.opengl.surface = 0;
 
                   img->native.yinvert = 0;
                   img->native.loose = 0;

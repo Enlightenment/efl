@@ -1,14 +1,6 @@
 #include "evas_common_private.h"
-#ifdef BUILD_ENGINE_SOFTWARE_XLIB
-# include "evas_xlib_image.h"
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_XCB
-# include "evas_xcb_image.h"
-#endif
 #include "evas_private.h"
-
-#include "Evas_Engine_Software_X11.h"
-#include "evas_engine.h"
+#include "evas_native_common.h"
 
 #ifdef HAVE_DLSYM
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
@@ -28,6 +20,8 @@
 #define __tbm_fourcc_code(a,b,c,d) ((uint32_t)(a) | ((uint32_t)(b) << 8) | \
 			      ((uint32_t)(c) << 16) | ((uint32_t)(d) << 24))
 
+#define TBM_FORMAT_ARGB8888 __tbm_fourcc_code('A', 'R', '2', '4')
+#define TBM_FORMAT_ABGR8888 __tbm_fourcc_code('A', 'B', '2', '4')
 #define TBM_FORMAT_RGBX8888	__tbm_fourcc_code('R', 'X', '2', '4') /* [31:0] R:G:B:x 8:8:8:8 little endian */
 #define TBM_FORMAT_RGBA8888	__tbm_fourcc_code('R', 'A', '2', '4') /* [31:0] R:G:B:A 8:8:8:8 little endian */
 #define TBM_FORMAT_BGRA8888	__tbm_fourcc_code('B', 'A', '2', '4') /* [31:0] B:G:R:A 8:8:8:8 little endian */
@@ -68,7 +62,6 @@ typedef struct _tbm_surface_info
     void *reserved5;   /**< Reserved pointer5 */
     void *reserved6;   /**< Reserved pointer6 */
 } tbm_surface_info_s;
-
 
 /* returns 0 on success */
 static int (*sym_tbm_surface_map) (tbm_surface_h surface, int opt, tbm_surface_info_s *info) = NULL;
@@ -214,17 +207,24 @@ _evas_video_nv12(unsigned char *evas_data, const unsigned char *source_data, uns
 static void
 _native_bind_cb(void *data EINA_UNUSED, void *image, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
-   RGBA_Image *im;
-   Native *n;
+   RGBA_Image *im = image;
+   Native *n = im->native.data;
+   tbm_surface_info_s info;
+   tbm_surface_h *tbm_surf;
 
-   if (!(im = image)) return;
-
-   n = im->native.data;
-   if ((n) && (n->ns.type == EVAS_NATIVE_SURFACE_TBM))
+   if (!im) return;
+   if (n)
      {
-        tbm_surface_info_s info;
+        if (n->ns.type == EVAS_NATIVE_SURFACE_TBM)
+          {
+             tbm_surf = n->ns.data.tbm.buffer;
+          }
+        else tbm_surf = NULL;
 
-        if (sym_tbm_surface_map(n->ns.data.tbm.buffer, TBM_SURF_OPTION_READ|TBM_SURF_OPTION_WRITE, &info)) return;
+        if (!tbm_surf)
+          return;
+        if (sym_tbm_surface_map(tbm_surf, TBM_SURF_OPTION_READ|TBM_SURF_OPTION_WRITE, &info))
+          return;
 
         im->image.data = (DATA32 *)info.planes[0].ptr;
      }
@@ -233,28 +233,32 @@ _native_bind_cb(void *data EINA_UNUSED, void *image, int x EINA_UNUSED, int y EI
 static void
 _native_unbind_cb(void *data EINA_UNUSED, void *image)
 {
-   RGBA_Image *im;
-   Native *n;
+   RGBA_Image *im = image;
+   Native *n = im->native.data;
+   tbm_surface_h *tbm_surf;
 
-   if (!(im = image)) return;
-
-   n = im->native.data;
-   if ((n) && (n->ns.type == EVAS_NATIVE_SURFACE_TBM))
+   if (!im) return;
+   if (n)
      {
-        sym_tbm_surface_unmap(n->ns.data.tbm.buffer);
+        if (n->ns.type == EVAS_NATIVE_SURFACE_TBM)
+          {
+             tbm_surf = n->ns.data.tbm.buffer;
+          }
+        else tbm_surf = NULL;
+
+        if (!tbm_surf)
+          return;
+        sym_tbm_surface_unmap(tbm_surf);
      }
 }
 
 static void
 _native_free_cb(void *data EINA_UNUSED, void *image)
 {
-   RGBA_Image *im;
-   Native *n;
+   RGBA_Image *im = image;
+   Native *n = im->native.data;
 
-   if (!(im = image)) return;
-
-   n = im->native.data;
-
+   if (!im) return;
    im->native.data        = NULL;
    im->native.func.bind   = NULL;
    im->native.func.unbind = NULL;
@@ -267,20 +271,30 @@ _native_free_cb(void *data EINA_UNUSED, void *image)
    tbm_shutdown();
 }
 
-void *
-evas_native_tbm_image_set(void *data EINA_UNUSED, void *image, void *native)
+EAPI void *
+evas_native_tbm_surface_image_set(void *data EINA_UNUSED, void *image, void *native)
 {
    Evas_Native_Surface *ns = native;
    RGBA_Image *im = image;
+   tbm_surface_h *tbm_surf;
 
    if (!im) return NULL;
-   if ((ns) && (ns->type == EVAS_NATIVE_SURFACE_TBM))
+
+   if (ns)
      {
         void *pixels_data;
         int w, h, stride;
         tbm_format format;
         tbm_surface_info_s info;
         Native *n;
+
+        if (ns->type == EVAS_NATIVE_SURFACE_TBM)
+           {
+              tbm_surf = ns->data.tbm.buffer;
+           }
+        else tbm_surf = NULL;
+
+        if (!tbm_surf) return NULL;
 
         if (!tbm_init())
           {
@@ -291,7 +305,7 @@ evas_native_tbm_image_set(void *data EINA_UNUSED, void *image, void *native)
         n = calloc(1, sizeof(Native));
         if (!n) return NULL;
 
-        if (sym_tbm_surface_map(ns->data.tbm.buffer, TBM_SURF_OPTION_READ|TBM_SURF_OPTION_WRITE, &info))
+        if (sym_tbm_surface_map(tbm_surf, TBM_SURF_OPTION_READ|TBM_SURF_OPTION_WRITE, &info))
           {
              free(n);
              return im;
@@ -311,6 +325,8 @@ evas_native_tbm_image_set(void *data EINA_UNUSED, void *image, void *native)
            case TBM_FORMAT_RGBA8888:
            case TBM_FORMAT_RGBX8888:
            case TBM_FORMAT_BGRA8888:
+           case TBM_FORMAT_ARGB8888:
+           case TBM_FORMAT_ABGR8888:
               im->cache_entry.w = stride / 4;
               evas_cache_image_colorspace(&im->cache_entry, EVAS_COLORSPACE_ARGB8888);
               im->cache_entry.flags.alpha = (format == TBM_FORMAT_RGBX8888 ? 0 : 1);
@@ -346,8 +362,7 @@ evas_native_tbm_image_set(void *data EINA_UNUSED, void *image, void *native)
         im->native.func.unbind = _native_unbind_cb;
         im->native.func.free   = _native_free_cb;
 
-        sym_tbm_surface_unmap(ns->data.tbm.buffer);
+        sym_tbm_surface_unmap(tbm_surf);
      }
    return im;
 }
-

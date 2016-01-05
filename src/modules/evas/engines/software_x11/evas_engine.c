@@ -26,6 +26,13 @@
 #include "evas_x_egl.h"
 #endif
 
+#include "../software_generic/evas_native_common.h"
+
+#ifdef HAVE_DLSYM
+# include <dlfcn.h>
+#endif
+
+Evas_Native_Tbm_Surface_Image_Set_Call  glsym_evas_native_tbm_surface_image_set = NULL;
 int _evas_engine_soft_x11_log_dom = -1;
 
 /* function tables - filled in later (func and parent func) */
@@ -414,6 +421,22 @@ _best_depth_get(int backend, void *connection, int screen)
    return 0;
 }
 
+static void
+_symbols(void)
+{
+   static int done = 0;
+
+   if (done) return;
+
+#define LINK2GENERIC(sym) \
+   glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
+
+   // Get function pointer to native_common that is now provided through the link of SW_Generic.
+   LINK2GENERIC(evas_native_tbm_surface_image_set);
+
+   done = 1;
+}
+
 /* engine api this module provides */
 static void *
 eng_info(Evas *eo_e EINA_UNUSED)
@@ -730,7 +753,7 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
      }
    else if (ns->type == EVAS_NATIVE_SURFACE_TBM)
      {
-        return evas_native_tbm_image_set(re->generic.ob, ie, ns);
+        return glsym_evas_native_tbm_surface_image_set(re->generic.ob, ie, ns);
      }
    else if (ns->type == EVAS_NATIVE_SURFACE_EVASGL)
      {
@@ -738,6 +761,7 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
         Native *n = calloc(1, sizeof(Native));
         if (n)
           {
+             n->ns_data.evasgl.surface = ns->data.evasgl.surface;
              im = (RGBA_Image *) ie;
              n->ns.type = EVAS_NATIVE_SURFACE_EVASGL;
              n->ns.version = EVAS_NATIVE_SURFACE_VERSION;
@@ -796,6 +820,7 @@ module_open(Evas_Module *em)
    ORD(image_native_set);
    ORD(image_native_get);
 
+   _symbols();
    /* now advertise out own api */
    em->functions = (void *)(&func);
    return 1;

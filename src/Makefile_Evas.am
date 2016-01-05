@@ -577,13 +577,12 @@ modules/evas/engines/software_generic/evas_ector_software_buffer.eo
 ### Engines
 
 if EVAS_STATIC_BUILD_SOFTWARE_GENERIC
-BUILT_SOURCES += \
-	modules/evas/engines/software_generic/evas_ector_software_buffer.eo.c \
-	modules/evas/engines/software_generic/evas_ector_software_buffer.eo.h
 lib_evas_libevas_la_SOURCES += \
-	modules/evas/engines/software_generic/evas_engine.c \
-	modules/evas/engines/software_generic/Evas_Engine_Software_Generic.h \
-	modules/evas/engines/software_generic/evas_ector_software_buffer.c
+modules/evas/engines/software_generic/evas_engine.c \
+modules/evas/engines/software_generic/Evas_Engine_Software_Generic.h \
+modules/evas/engines/software_generic/evas_native_tbm.c \
+modules/evas/engines/software_generic/evas_ector_software_buffer.c \
+modules/evas/engines/software_generic/evas_native_common.h
 lib_evas_libevas_la_LIBADD +=
 lib_evas_libevas_la_CPPFLAGS += -I$(top_srcdir)/src/lib/ector
 else
@@ -595,7 +594,12 @@ enginesoftwaregenericpkg_LTLIBRARIES = modules/evas/engines/software_generic/mod
 install_enginesoftwaregenericpkgLTLIBRARIES = install-enginesoftwaregenericpkgLTLIBRARIES
 $(install_enginesoftwaregenericpkgLTLIBRARIES): install-libLTLIBRARIES
 
-modules_evas_engines_software_generic_module_la_SOURCES = modules/evas/engines/software_generic/evas_engine.c modules/evas/engines/software_generic/Evas_Engine_Software_Generic.h
+modules_evas_engines_software_generic_module_la_SOURCES = \
+modules/evas/engines/software_generic/evas_engine.c \
+modules/evas/engines/software_generic/Evas_Engine_Software_Generic.h \
+modules/evas/engines/software_generic/evas_native_tbm.c \
+modules/evas/engines/software_generic/evas_ector_software_buffer.c \
+modules/evas/engines/software_generic/evas_native_common.h
 modules_evas_engines_software_generic_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
@@ -1075,8 +1079,7 @@ SOFTWARE_X11_SOURCES = \
 modules/evas/engines/software_x11/evas_engine.c \
 modules/evas/engines/software_x11/evas_engine.h \
 modules/evas/engines/software_x11/evas_x_egl.c \
-modules/evas/engines/software_x11/evas_x_egl.h \
-modules/evas/engines/software_x11/evas_native_tbm.c
+modules/evas/engines/software_x11/evas_x_egl.h
 SOFTWARE_X11_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
