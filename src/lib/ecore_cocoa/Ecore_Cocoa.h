@@ -250,8 +250,6 @@ EAPI void ecore_cocoa_window_activate(Ecore_Cocoa_Window *window);
 EAPI void ecore_cocoa_window_title_set(Ecore_Cocoa_Window *window,
                                        const char         *title);
 
-EAPI void ecore_cocoa_window_focus_set(Ecore_Cocoa_Window *window);
-
 EAPI void ecore_cocoa_window_iconified_set(Ecore_Cocoa_Window *window,
                                            int                 on);
 
