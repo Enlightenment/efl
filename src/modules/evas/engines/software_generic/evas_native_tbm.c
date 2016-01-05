@@ -210,24 +210,17 @@ _native_bind_cb(void *data EINA_UNUSED, void *image, int x EINA_UNUSED, int y EI
    RGBA_Image *im = image;
    Native *n = im->native.data;
    tbm_surface_info_s info;
-   tbm_surface_h *tbm_surf;
+   tbm_surface_h tbm_surf;
 
-   if (!im) return;
-   if (n)
-     {
-        if (n->ns.type == EVAS_NATIVE_SURFACE_TBM)
-          {
-             tbm_surf = n->ns.data.tbm.buffer;
-          }
-        else tbm_surf = NULL;
+   if (!im || !n) return;
+   if (n->ns.type != EVAS_NATIVE_SURFACE_TBM)
+     return;
 
-        if (!tbm_surf)
-          return;
-        if (sym_tbm_surface_map(tbm_surf, TBM_SURF_OPTION_READ|TBM_SURF_OPTION_WRITE, &info))
-          return;
+   tbm_surf = n->ns.data.tbm.buffer;
+   if (sym_tbm_surface_map(tbm_surf, TBM_SURF_OPTION_READ|TBM_SURF_OPTION_WRITE, &info))
+     return;
 
-        im->image.data = (DATA32 *)info.planes[0].ptr;
-     }
+   im->image.data = (DATA32 *)info.planes[0].ptr;
 }
 
 static void
@@ -235,21 +228,14 @@ _native_unbind_cb(void *data EINA_UNUSED, void *image)
 {
    RGBA_Image *im = image;
    Native *n = im->native.data;
-   tbm_surface_h *tbm_surf;
+   tbm_surface_h tbm_surf;
 
-   if (!im) return;
-   if (n)
-     {
-        if (n->ns.type == EVAS_NATIVE_SURFACE_TBM)
-          {
-             tbm_surf = n->ns.data.tbm.buffer;
-          }
-        else tbm_surf = NULL;
+   if (!im || !n) return;
+   if (n->ns.type != EVAS_NATIVE_SURFACE_TBM)
+     return;
 
-        if (!tbm_surf)
-          return;
-        sym_tbm_surface_unmap(tbm_surf);
-     }
+   tbm_surf = n->ns.data.tbm.buffer;
+   sym_tbm_surface_unmap(tbm_surf);
 }
 
 static void
@@ -276,7 +262,7 @@ evas_native_tbm_surface_image_set(void *data EINA_UNUSED, void *image, void *nat
 {
    Evas_Native_Surface *ns = native;
    RGBA_Image *im = image;
-   tbm_surface_h *tbm_surf;
+   tbm_surface_h tbm_surf;
 
    if (!im) return NULL;
 
@@ -288,13 +274,10 @@ evas_native_tbm_surface_image_set(void *data EINA_UNUSED, void *image, void *nat
         tbm_surface_info_s info;
         Native *n;
 
-        if (ns->type == EVAS_NATIVE_SURFACE_TBM)
-           {
-              tbm_surf = ns->data.tbm.buffer;
-           }
-        else tbm_surf = NULL;
+        if (ns->type != EVAS_NATIVE_SURFACE_TBM)
+          return NULL;
 
-        if (!tbm_surf) return NULL;
+        tbm_surf = ns->data.tbm.buffer;
 
         if (!tbm_init())
           {
