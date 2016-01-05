@@ -401,22 +401,7 @@ ecore_wl2_display_create(const char *name)
    if (!_server_displays)
      _server_displays = eina_hash_string_superfast_new(NULL);
 
-   if (!name)
-     {
-        const char *n;
-
-        /* someone wants to create a new server */
-        n = getenv("WAYLAND_DISPLAY");
-        if (n)
-          {
-             /* we have a default wayland display */
-
-             /* check hash of cached server displays for this name */
-             ewd = eina_hash_find(_server_displays, n);
-             if (ewd) goto found;
-          }
-     }
-   else
+   if (name)
      {
         /* someone wants to create a server with a specific display */
 
