@@ -5982,13 +5982,13 @@ st_collections_group_parts_part_physics_body(void)
 static void
 st_collections_group_parts_part_insert_before(void)
 {
-   Edje_Part_Collection *pc;
+   /* Edje_Part_Collection *pc; */
    Edje_Part_Parser *epp;
    char *name;
 
    check_arg_count(1);
 
-   pc = eina_list_data_get(eina_list_last(edje_collections));
+   /* pc = eina_list_data_get(eina_list_last(edje_collections)); */
    name = parse_str(0);
    epp = (Edje_Part_Parser *)current_part;
    epp->reorder.insert_before = name;
@@ -6010,13 +6010,13 @@ st_collections_group_parts_part_insert_before(void)
 static void
 st_collections_group_parts_part_insert_after(void)
 {
-   Edje_Part_Collection *pc;
+   /* Edje_Part_Collection *pc; */
    Edje_Part_Parser *epp;
    char *name;
 
    check_arg_count(1);
 
-   pc = eina_list_data_get(eina_list_last(edje_collections));
+   /* pc = eina_list_data_get(eina_list_last(edje_collections)); */
    name = parse_str(0);
    epp = (Edje_Part_Parser *)current_part;
    epp->reorder.insert_after = name;
