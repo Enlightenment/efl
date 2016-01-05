@@ -419,6 +419,18 @@ ecore_cocoa_window_geometry_get(const Ecore_Cocoa_Window *window,
 }
 
 EAPI void
+ecore_cocoa_window_size_get(const Ecore_Cocoa_Window *window,
+                            int                      *w,
+                            int                      *h)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   const NSSize size = window->window.frame.size;
+   if (w) *w = size.width;
+   if (h) *h = size.height;
+}
+
+EAPI void
 ecore_cocoa_window_move_resize(Ecore_Cocoa_Window *window,
                                int                 x,
                                int                 y,
