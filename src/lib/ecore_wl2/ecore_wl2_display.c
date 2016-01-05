@@ -415,7 +415,6 @@ ecore_wl2_display_create(const char *name)
              ewd = eina_hash_find(_server_displays, n);
              if (ewd) goto found;
           }
-
      }
    else
      {
