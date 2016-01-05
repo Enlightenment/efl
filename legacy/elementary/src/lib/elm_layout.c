@@ -121,7 +121,6 @@ _sizing_eval(Evas_Object *obj, Elm_Layout_Smart_Data *sd)
    edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh,
                                         rest_w, rest_h);
    evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
 
    sd->restricted_calc_w = sd->restricted_calc_h = EINA_FALSE;
 }
