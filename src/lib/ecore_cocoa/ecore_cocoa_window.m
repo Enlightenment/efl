@@ -568,7 +568,7 @@ ecore_cocoa_window_borderless_set(Ecore_Cocoa_Window *window,
 
 EAPI void
 ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
-                            void *view)
+                            Ecore_Cocoa_Object *view)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
    EINA_SAFETY_ON_NULL_RETURN(view);

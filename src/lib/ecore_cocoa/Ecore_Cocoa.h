@@ -61,6 +61,12 @@ typedef struct _Ecore_Cocoa_Screen Ecore_Cocoa_Screen;
 typedef void * Ecore_Cocoa_Window_Id;
 
 /**
+ * @typedef Ecore_Cocoa_Object
+ * Opaque handler to refer to an objective-c object (aka id)
+ */
+typedef void Ecore_Cocoa_Object;
+
+/**
  * @typedef Ecore_Cocoa_Event_Video_Resize
  * Type of event thrown when a window is resized
  */
@@ -252,7 +258,7 @@ EAPI void ecore_cocoa_window_borderless_set(Ecore_Cocoa_Window *window,
                                             Eina_Bool           on);
 
 EAPI void ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
-                                      void *view);
+                                      Ecore_Cocoa_Object *view);
 
 EAPI int ecore_cocoa_titlebar_height_get(void);
 
