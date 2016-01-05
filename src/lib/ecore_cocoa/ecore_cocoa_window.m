@@ -350,6 +350,18 @@ ecore_cocoa_window_size_min_set(Ecore_Cocoa_Window *window,
 }
 
 EAPI void
+ecore_cocoa_window_size_min_get(const Ecore_Cocoa_Window *window,
+                                unsigned int             *min_width,
+                                unsigned int             *min_height)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   const NSSize size = window->window.contentMinSize;
+   if (min_width) *min_width = size.width;
+   if (min_height) *min_height = size.height;
+}
+
+EAPI void
 ecore_cocoa_window_size_max_set(Ecore_Cocoa_Window *window,
                                 unsigned int w,
                                 unsigned int h)

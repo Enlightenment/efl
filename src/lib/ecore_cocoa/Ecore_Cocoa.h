@@ -212,9 +212,9 @@ EAPI void ecore_cocoa_window_size_min_set(Ecore_Cocoa_Window *window,
                                           unsigned int        min_width,
                                           unsigned int        min_height);
 
-EAPI void ecore_cocoa_window_size_min_get(Ecore_Cocoa_Window *window,
-                                          unsigned int       *min_width,
-                                          unsigned int       *min_height);
+EAPI void ecore_cocoa_window_size_min_get(const Ecore_Cocoa_Window *window,
+                                          unsigned int             *min_width,
+                                          unsigned int             *min_height);
 
 EAPI void ecore_cocoa_window_size_max_set(Ecore_Cocoa_Window *window,
                                           unsigned int        max_width,
