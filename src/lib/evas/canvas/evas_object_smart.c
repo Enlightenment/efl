@@ -1019,12 +1019,11 @@ evas_object_smart_changed_get(Evas_Object *eo_obj)
 
    if (!obj->clip.clipees)
      {
-        has_map = _evas_render_has_map(eo_obj, obj);
+        has_map = _evas_render_has_map(obj) && !_evas_render_can_map(obj);
         if (obj->changed && !obj->is_smart && !has_map) return EINA_TRUE;
 
         if (has_map)
           {
-
              if ((obj->need_surface_clear && obj->changed && !obj->is_smart) ||
                  ((obj->changed_pchange) && (obj->changed_map)))
                return EINA_TRUE;

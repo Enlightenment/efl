@@ -463,10 +463,10 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
                 evas_object_smart_members_get_direct(eo_obj),
                 obj->map->cur.map, obj->map->cur.usemap,
                 obj->map->prev.map, obj->map->prev.usemap,
-                _evas_render_has_map(eo_obj, obj),
+                _evas_render_has_map(obj),
                 _evas_render_had_map(obj));
              if ((obj->is_smart) &&
-                 ((_evas_render_has_map(eo_obj, obj) ||
+                 (((_evas_render_has_map(obj) && !_evas_render_can_map(obj)) ||
                  (obj->changed_src_visible))))
                {
                   RD(0, "      has map + smart\n");
@@ -505,8 +505,8 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
                                    Eina_Bool src_changed, int level)
 {
    Eina_Bool clean_them = EINA_FALSE;
+   Eina_Bool map, hmap, can_map;
    int is_active;
-   Eina_Bool map, hmap;
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    //Need pre render for the children of mapped object.
@@ -554,10 +554,11 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
      }
 #endif
 
-   map = _evas_render_has_map(eo_obj, obj);
+   map = _evas_render_has_map(obj);
    hmap = _evas_render_had_map(obj);
+   can_map = _evas_render_can_map(obj);
 
-   if ((restack) && (!map))
+   if (restack && !(map && !can_map))
      {
         if (!obj->changed)
           {
@@ -568,7 +569,7 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
         clean_them = EINA_TRUE;
      }
 
-   if (map)
+   if (map && !can_map)
      {
         RD(level, "  obj mapped\n");
         if (!hmap && obj->cur->clipper)
@@ -614,7 +615,7 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
           }
         return clean_them;
      }
-   else if (hmap)
+   else if (hmap) // && !can_map) // FIXME
      {
         RD(level, "  had map - restack objs\n");
         //        OBJ_ARRAY_PUSH(restack_objects, obj);
@@ -623,14 +624,15 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
           {
              if (!map)
                {
-                  if ((obj->map->cur.map) && (obj->map->cur.usemap)) map = EINA_TRUE;
+                  if ((obj->map->cur.map) && (obj->map->cur.usemap))
+                    map = EINA_TRUE;
                }
              if (map != hmap)
                {
                   *redraw_all = 1;
                }
           }
-        if (!map && obj->cur->clipper)
+        if (!(map && !can_map) && obj->cur->clipper)
           {
              // Fix some bad clipping issues after an evas_map animation finishes
              evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
@@ -847,7 +849,7 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *eo_e EINA_
         if (!obj->layer) goto clean_stuff;
 
        //If the children are in active objects, They should be cleaned up.
-       if (obj->changed_map && _evas_render_has_map(eo_obj, obj))
+       if (obj->changed_map && _evas_render_has_map(obj) && !_evas_render_can_map(obj))
          goto clean_stuff;
 
         evas_object_clip_recalc(obj);
@@ -960,15 +962,17 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
    /* Check if any one is the stack make this object mapped */
    eo_tmp = eo_obj;
    tmp = eo_data_scope_get(eo_tmp, EVAS_OBJECT_CLASS);
-   while (tmp && !_evas_render_has_map(eo_tmp, tmp))
+   while (tmp && !(_evas_render_has_map(tmp) && !_evas_render_can_map(tmp)))
      {
         tmp = eo_data_scope_get(eo_tmp, EVAS_OBJECT_CLASS);
         eo_tmp = tmp->smart.parent;
      }
 
-   if (tmp && _evas_render_has_map(eo_tmp, tmp)) return EINA_FALSE; /* we are mapped, we can't be an overlay */
+   if (tmp && _evas_render_has_map(tmp) && !_evas_render_can_map(tmp))
+     return EINA_FALSE; /* we are mapped, we can't be an overlay */
 
-   if (!evas_object_is_visible(eo_obj, obj)) return EINA_FALSE; /* no need to update the overlay if it's not visible */
+   if (!evas_object_is_visible(eo_obj, obj))
+     return EINA_FALSE; /* no need to update the overlay if it's not visible */
 
    /* If any recoloring of the surface is needed, n overlay to */
    if ((obj->cur->cache.clip.r != 255) ||
@@ -1411,12 +1415,11 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
    // set render_pre - for child objs that may not have gotten it.
    obj->pre_render_done = EINA_TRUE;
-   RD(level, "  hasmap: %s [can_map:%p (%d)] cur.map:%p cur.usemap:%d\n",
-      _evas_render_has_map(eo_obj, obj) ? "yes" : "no",
-      obj->func->can_map,
+   RD(level, "  hasmap: %s [can_map: %d] cur.map:%p cur.usemap:%d\n",
+      _evas_render_has_map(obj) ? "yes" : "no",
       obj->func->can_map ? obj->func->can_map(eo_obj): -1,
       obj->map->cur.map, obj->map->cur.usemap);
-   if (_evas_render_has_map(eo_obj, obj))
+   if (_evas_render_has_map(obj) && !_evas_render_can_map(obj))
      {
         int sw, sh;
         Eina_Bool changed = EINA_FALSE, rendered = EINA_FALSE;
@@ -1539,6 +1542,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                   _c = ENFN->context_clip_get(ENDT, ctx, &_cx, &_cy, &_cw, &_ch);
                   RD(level, "  draw mapped obj: render(clip: [%d] %d,%d %dx%d)\n", _c, _cx, _cy, _cw, _ch);
 #endif
+                  // FIXME: Should this really be sync render?
                   obj->func->render(eo_obj, obj, obj->private_data,
                                     ENDT, ctx,
                                     obj->map->surface, off_x2, off_y2,
@@ -1605,7 +1609,6 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                     }
                }
           }
-        //if (surface == ENFN)
         ENFN->context_clip_clip(ENDT, ctx, ecx, ecy, ecw, ech);
         if (obj->cur->cache.clip.visible || !proxy_src_clip)
           {
@@ -1710,7 +1713,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                     {
                        if (proxy_src_clip)
                          {
-                            if (_evas_render_has_map(eo_obj, obj) ||
+                            if ((_evas_render_has_map(obj) && !_evas_render_can_map(obj)) ||
                                 _evas_render_object_is_mask(obj->cur->clipper))
                               evas_object_clip_recalc(obj);
                             _evas_render_mapped_context_clip_set(evas, eo_obj, obj, ctx,
@@ -1767,7 +1770,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
                   if (proxy_src_clip)
                     {
-                       if (_evas_render_has_map(eo_obj, obj) ||
+                       if ((_evas_render_has_map(obj) && !_evas_render_can_map(obj)) ||
                            _evas_render_object_is_mask(obj->cur->clipper))
                          evas_object_clip_recalc(obj);
                        x = obj->cur->cache.clip.x;

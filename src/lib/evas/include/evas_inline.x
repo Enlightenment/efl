@@ -4,11 +4,16 @@
 #include "evas_private.h"
 
 static inline Eina_Bool
-_evas_render_has_map(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+_evas_render_has_map(Evas_Object_Protected_Data *obj)
 {
-   return (((obj->map->cur.map) && (obj->map->cur.usemap)) &&
-           !((obj->func->can_map) && (obj->func->can_map(eo_obj))));
-   //   return ((obj->map->cur.map) && (obj->map->cur.usemap));
+   return (obj->map->cur.map && obj->map->cur.usemap);
+}
+
+static inline Eina_Bool
+_evas_render_can_map(Evas_Object_Protected_Data *obj)
+{
+   if (!obj->func->can_map) return EINA_FALSE;
+   return obj->func->can_map(obj->object);
 }
 
 static inline void
