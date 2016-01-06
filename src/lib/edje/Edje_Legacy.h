@@ -143,6 +143,7 @@ EAPI void         edje_object_text_class_del         (Evas_Object *obj, const ch
  *       defined by edje_size_class_set() or the size class
  *       defined in the theme file.
  *
+ * @since 1.17
  */
  EAPI void         edje_object_size_class_del         (Evas_Object *obj, const char *size_class);
 
