@@ -3,8 +3,8 @@ if HAVE_CXX11
 
 ### Generated headers
 
-generated_evas_canvas_cxx_bindings = $(evas_public_eo_files:%.eo=%.eo.hh)
-generated_evas_canvas_cxx_impl_bindings = $(evas_public_eo_files:%.eo=%.eo.impl.hh)
+generated_evas_canvas_cxx_bindings = $(evas_eolian_pub_files:%.eo=%.eo.hh)
+generated_evas_canvas_cxx_impl_bindings = $(evas_eolian_pub_files:%.eo=%.eo.impl.hh)
 
 lib/evas/Evas.hh: $(generated_evas_canvas_cxx_bindings)
 	@echo @ECHO_E@ "#ifndef EFL_CXX_EVAS_HH\n#define EFL_CXX_EVAS_HH\n" > $(top_builddir)/src/lib/evas/Evas.hh
