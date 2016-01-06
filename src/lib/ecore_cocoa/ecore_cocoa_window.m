@@ -56,7 +56,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
 - (void)windowWillClose:(NSNotification *) notification
 {
    NSLog(@"window is going to be closed");
-   Ecore_Cocoa_Event_Window *event;
+   Ecore_Cocoa_Event_Window_Destroy *event;
 
    event = malloc(sizeof(*event));
    if (EINA_UNLIKELY(event == NULL))
@@ -99,7 +99,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
 
 - (void)windowDidBecomeKey:(NSNotification *)notification
 {
-   Ecore_Cocoa_Event_Window *e;
+   Ecore_Cocoa_Event_Window_Focused *e;
 
    e = malloc(sizeof(*e));
    if (EINA_UNLIKELY(e == NULL))
@@ -123,7 +123,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
 
 - (void)windowDidResignKey:(NSNotification *)notification
 {
-   Ecore_Cocoa_Event_Window *e;
+   Ecore_Cocoa_Event_Window_Unfocused *e;
 
    e = malloc(sizeof(*e));
    if (EINA_UNLIKELY(e == NULL))

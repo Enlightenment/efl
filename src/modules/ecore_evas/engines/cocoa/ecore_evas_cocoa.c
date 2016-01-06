@@ -180,8 +180,8 @@ _ecore_evas_cocoa_match(Ecore_Cocoa_Object *cocoa_win)
 static Eina_Bool
 _ecore_evas_cocoa_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   Ecore_Cocoa_Event_Window     *e = event;
-   Ecore_Evas                   *ee;
+   Ecore_Cocoa_Event_Window_Focused *e = event;
+   Ecore_Evas                       *ee;
 
    ee = _ecore_evas_cocoa_match(e->cocoa_window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
@@ -196,8 +196,8 @@ _ecore_evas_cocoa_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, 
 static Eina_Bool
 _ecore_evas_cocoa_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   Ecore_Cocoa_Event_Window     *e = event;
-   Ecore_Evas                   *ee;
+   Ecore_Cocoa_Event_Window_Unfocused *e = event;
+   Ecore_Evas                         *ee;
 
    ee = _ecore_evas_cocoa_match(e->cocoa_window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
@@ -257,8 +257,8 @@ _ecore_evas_cocoa_event_window_resize(void *data EINA_UNUSED, int type EINA_UNUS
 static Eina_Bool
 _ecore_evas_cocoa_event_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   Ecore_Cocoa_Event_Window     *e = event;
-   Ecore_Evas                   *ee;
+   Ecore_Cocoa_Event_Window_Destroy *e = event;
+   Ecore_Evas                       *ee;
 
    DBG("");
 

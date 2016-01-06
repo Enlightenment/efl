@@ -40,11 +40,11 @@
 extern "C" {
 #endif
 
+#ifndef _ECORE_COCOA_WINDOW_PREDEF
 /**
  * @typedef Ecore_Cocoa_Window
  * Opaque handler to manipulate a Cocoa Window through Ecore
  */
-#ifndef _ECORE_COCOA_WINDOW_PREDEF
 typedef struct _Ecore_Cocoa_Window Ecore_Cocoa_Window;
 #endif /* ! _ECORE_COCOA_WINDOW_PREDEF */
 
@@ -66,15 +66,34 @@ typedef void Ecore_Cocoa_Object;
  */
 typedef struct _Ecore_Cocoa_Event_Window_Resize_Request Ecore_Cocoa_Event_Window_Resize_Request;
 
-/** Event triggered when a window receives focus */
+/**
+ * @typedef Ecore_Cocoa_Event_Window_Focused
+ * Type of event thrown when a Cocoa window receives focus
+ */
+typedef struct _Ecore_Cocoa_Event_Window_Focused Ecore_Cocoa_Event_Window_Focused;
+
+/**
+ * @typedef Ecore_Cocoa_Event_Window_Unfocused
+ * Type of event thrown when a Cocoa window loses the focus
+ */
+typedef struct _Ecore_Cocoa_Event_Window_Unfocused Ecore_Cocoa_Event_Window_Unfocused;
+
+/**
+ * @typedef Ecore_Cocoa_Event_Window_Destroy
+ * Type of event thrown when a Cocoa window gets destoyed
+ */
+typedef struct _Ecore_Cocoa_Event_Window_Destroy Ecore_Cocoa_Event_Window_Destroy;
+
+/** Event triggered when a Cocoa window receives focus */
 EAPI extern int ECORE_COCOA_EVENT_WINDOW_FOCUSED;
 
-/** Event triggered when a window loses focus */
+/** Event triggered when a Cocoa window loses focus */
 EAPI extern int ECORE_COCOA_EVENT_WINDOW_UNFOCUSED;
 
-/** Event triggered when a window is resized */
+/** Event triggered when a Cocoa window is resized */
 EAPI extern int ECORE_COCOA_EVENT_WINDOW_RESIZE_REQUEST;
 
+/** Event triggered when a Cocoa window get destroyed */
 EAPI extern int ECORE_COCOA_EVENT_WINDOW_DESTROY;
 
 /**
@@ -88,8 +107,17 @@ struct _Ecore_Cocoa_Event_Window_Resize_Request
    Ecore_Cocoa_Object *cocoa_window; /**< Handler of the Cocoa window */
 };
 
-typedef struct _Ecore_Cocoa_Event_Window Ecore_Cocoa_Event_Window;
-struct _Ecore_Cocoa_Event_Window
+struct _Ecore_Cocoa_Event_Window_Focused
+{
+   Ecore_Cocoa_Object *cocoa_window;
+};
+
+struct _Ecore_Cocoa_Event_Window_Unfocused
+{
+   Ecore_Cocoa_Object *cocoa_window;
+};
+
+struct _Ecore_Cocoa_Event_Window_Destroy
 {
    Ecore_Cocoa_Object *cocoa_window;
 };
