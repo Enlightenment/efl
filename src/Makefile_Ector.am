@@ -73,6 +73,7 @@ dist_installed_ectormainheaders_DATA = \
 lib/ector/Ector.h \
 lib/ector/ector_util.h \
 lib/ector/ector_surface.h \
+lib/ector/ector_buffer.h \
 lib/ector/ector_renderer.h \
 lib/ector/cairo/Ector_Cairo.h \
 lib/ector/software/Ector_Software.h \
@@ -207,7 +208,6 @@ endif
 
 EXTRA_DIST += \
 lib/ector/ector_private.h \
-lib/ector/ector_buffer.h \
 lib/ector/cairo/ector_cairo_private.h \
 lib/ector/software/ector_software_private.h \
 static_libs/freetype/sw_ft_math.h \
