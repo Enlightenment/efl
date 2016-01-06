@@ -50,7 +50,7 @@ class Elm.Sys_Notify (Eo.Base, Elm.Sys_Notify_Interface)
          get {
             [[Get the notification servers that have been registered
 
-              @since 1.16
+              @since 1.17
             ]]
          }
          set {
@@ -60,6 +60,8 @@ class Elm.Sys_Notify (Eo.Base, Elm.Sys_Notify_Interface)
                     fullfill very specific purposes. Use elm_need_sys_notify()
                     which activates the default available notification
                     servers.
+
+              @since 1.17
             ]]
             return: bool; [[$true on success, $false on failure]]
          }
@@ -73,7 +75,10 @@ class Elm.Sys_Notify (Eo.Base, Elm.Sys_Notify_Interface)
       singleton_get @class {
          [[Returns the singleton instance of the notification manager
          Elm.Sys_Notify. It is initialized upon the first call of this
-         function]]
+         function
+
+           @since 1.17
+         ]]
          return: Elm.Sys_Notify *; [[The unique notification manager]]
       }
    }
