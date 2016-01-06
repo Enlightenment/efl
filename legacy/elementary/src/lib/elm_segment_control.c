@@ -202,7 +202,8 @@ _update_list(Elm_Segment_Control_Data *sd)
         else
           edje_object_signal_emit(VIEW(it), "elm,state,segment,normal", "elm");
 
-        if (elm_widget_disabled_get(sd->obj))
+        if (elm_widget_disabled_get(sd->obj)
+            || elm_object_item_disabled_get(eo_it))
           edje_object_signal_emit(VIEW(it), "elm,state,disabled", "elm");
         else
           edje_object_signal_emit(VIEW(it), "elm,state,enabled", "elm");
@@ -308,6 +309,8 @@ _segment_on(Elm_Segment_Control_Item_Data *it)
    ELM_SEGMENT_CONTROL_DATA_GET(WIDGET(it), sd);
 
    if (it == sd->selected_item) return;
+
+   if (elm_object_item_disabled_get(EO_OBJ(it))) return;
 
    if (sd->selected_item) _segment_off(sd->selected_item);
 
