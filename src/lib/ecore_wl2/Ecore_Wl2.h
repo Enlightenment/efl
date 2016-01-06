@@ -28,11 +28,13 @@
 /* extern "C" { */
 /* # endif */
 
+# ifdef EFL_BETA_API_SUPPORT
+
 typedef struct _Ecore_Wl2_Subsurface Ecore_Wl2_Subsurface;
 
-# ifndef _ECORE_WL2_WINDOW_PREDEF
+#  ifndef _ECORE_WL2_WINDOW_PREDEF
 typedef struct _Ecore_Wl2_Window Ecore_Wl2_Window;
-# endif
+#  endif
 
 typedef struct _Ecore_Wl2_Display Ecore_Wl2_Display;
 typedef struct _Ecore_Wl2_Output Ecore_Wl2_Output;
@@ -1046,6 +1048,8 @@ EAPI Ecore_Wl2_Display *ecore_wl2_window_display_get(const Ecore_Wl2_Window *win
 /* # ifdef __cplusplus */
 /* } */
 /* # endif */
+
+# endif
 
 # undef EAPI
 # define EAPI
