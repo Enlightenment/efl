@@ -157,7 +157,9 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          }
       }
       dismiss {
-         [[Dismiss a Popup object.]]
+         [[Dismiss a Popup object.
+           @since 1.17
+         ]]
       }
    }
    implements {

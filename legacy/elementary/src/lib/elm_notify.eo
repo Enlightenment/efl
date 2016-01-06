@@ -69,7 +69,9 @@ class Elm.Notify (Elm.Container)
          }
       }
       dismiss {
-         [[Dismiss a notify object.]]
+         [[Dismiss a notify object.
+           @since 1.17
+         ]]
       }
    }
    implements {
