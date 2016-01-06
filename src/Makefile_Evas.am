@@ -1,7 +1,7 @@
 
 ### Library
 
-evas_public_eo_files = \
+evas_eolian_pub_files = \
 	lib/evas/canvas/evas_object.eo \
 	lib/evas/canvas/evas_line.eo \
 	lib/evas/canvas/evas_polygon.eo \
@@ -44,17 +44,23 @@ evas_public_eo_files = \
 	lib/evas/canvas/evas_filter.eo \
 	$(NULL)
 
-evas_eolian_files = $(evas_public_eo_files) \
+evas_eolian_priv_files = \
 	lib/evas/include/evas_ector_buffer.eo \
 	$(NULL)
 
 evas_eolian_type_files = \
     lib/evas/canvas/evas_types.eot
 
-evas_eolian_c = $(evas_eolian_files:%.eo=%.eo.c)
-evas_eolian_h = $(evas_eolian_files:%.eo=%.eo.h) \
-                $(evas_eolian_files:%.eo=%.eo.legacy.h) \
-                $(evas_eolian_type_files:%.eot=%.eot.h)
+evas_eolian_pub_c = $(evas_eolian_pub_files:%.eo=%.eo.c)
+evas_eolian_priv_c = $(evas_eolian_priv_files:%.eo=%.eo.h)
+
+evas_eolian_pub_c = $(evas_eolian_pub_files:%.eo=%.eo.c)
+evas_eolian_pub_h = $(evas_eolian_pub_files:%.eo=%.eo.h) \
+                    $(evas_eolian_pub_files:%.eo=%.eo.legacy.h) \
+                    $(evas_eolian_type_files:%.eot=%.eot.h)
+
+evas_eolian_files = $(evas_eolian_pub_files) $(evas_eolian_priv_files)
+evas_eolian_c = $(evas_eolian_pub_c) $(evas_eolian_pub_h)
 
 BUILT_SOURCES += \
                  $(evas_eolian_c) \
@@ -86,9 +92,12 @@ lib/evas/Evas_Loader.h
 
 installed_evascanvasheadersdir = $(includedir)/evas-@VMAJ@/canvas
 nodist_installed_evascanvasheaders_DATA = \
-                                          $(evas_eolian_h)
+                                          $(evas_eolian_pub_h)
 
 noinst_HEADERS = \
+$(evas_eolian_priv_h)
+
+noinst_HEADERS += \
 lib/evas/include/evas_inline.x \
 lib/evas/include/evas_private.h \
 lib/evas/include/evas_options.h \
@@ -2267,7 +2276,7 @@ tests/evas/images/bg_gray.png
 
 if HAVE_ELUA
 
-evas_eolian_lua = $(evas_public_eo_files:%.eo=%.eo.lua)
+evas_eolian_lua = $(evas_eolian_pub_files:%.eo=%.eo.lua)
 
 generated_evas_lua_all = $(evas_eolian_lua)
 
@@ -2288,7 +2297,7 @@ dist_installed_evasfilters_DATA = $(evas_filters_lua)
 
 if HAVE_JS
 
-generated_evas_js_bindings = $(evas_public_eo_files:%.eo=%.eo.js.cc)
+generated_evas_js_bindings = $(evas_eolian_pub_files:%.eo=%.eo.js.cc)
 
 CLEANFILES += $(generated_evas_js_bindings)
 
