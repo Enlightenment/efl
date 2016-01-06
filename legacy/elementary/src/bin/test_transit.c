@@ -115,7 +115,7 @@ _transit_del_cb(void *data, Elm_Transit *transit EINA_UNUSED)
 }
 
 static void
-_transit_image_animation(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_transit_image_animation(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Eina_List *images = NULL;
    char buf[PATH_MAX];
@@ -145,7 +145,7 @@ _transit_image_animation(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
 }
 
 static void
-_transit_resizing(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_transit_resizing(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans;
 
@@ -175,7 +175,7 @@ _transit_flip(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 }
 
 static void
-_transit_zoom(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_transit_zoom(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans;
 
