@@ -6,7 +6,6 @@
 
 #include <Ecore.h>
 #include <Ecore_Cocoa.h>
-#include <Ecore_Cocoa_Cursor.h>
 #import "ecore_cocoa_window.h"
 #import "ecore_cocoa_app.h"
 #include "ecore_cocoa_private.h"

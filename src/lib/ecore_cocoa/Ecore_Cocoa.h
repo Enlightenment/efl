@@ -34,7 +34,6 @@
 # define EAPI
 #endif
 
-#include "Ecore_Cocoa_Cursor.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -83,6 +82,39 @@ typedef struct _Ecore_Cocoa_Event_Window_Unfocused Ecore_Cocoa_Event_Window_Unfo
  * Type of event thrown when a Cocoa window gets destoyed
  */
 typedef struct _Ecore_Cocoa_Event_Window_Destroy Ecore_Cocoa_Event_Window_Destroy;
+
+/**
+ * @typedef Ecore_Cocoa_Cursor
+ * Values of the Cocoa cursors handled by Ecore_Cocoa
+ * See https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ApplicationKit/Classes/NSCursor_Class/index.html for images of each cursors.
+ */
+typedef enum
+{
+   ECORE_COCOA_CURSOR_ARROW = 0, /**< Arrow cursor */
+   ECORE_COCOA_CURSOR_CONTEXTUAL_MENU, /**< Contextual menu cursor */
+   ECORE_COCOA_CURSOR_CLOSED_HAND, /**< Closed hand cursor */
+   ECORE_COCOA_CURSOR_CROSSHAIR, /**< Crosshair cursor */
+   ECORE_COCOA_CURSOR_DISAPPEARING_ITEM, /**< Disappearing item cursor */
+   ECORE_COCOA_CURSOR_DRAG_COPY, /** Drag copy cursor */
+   ECORE_COCOA_CURSOR_DRAG_LINK, /**< Drag link cursor */
+   ECORE_COCOA_CURSOR_IBEAM, /**< IBeam cursor */
+   ECORE_COCOA_CURSOR_OPEN_HAND, /**< Open hand cursor */
+   ECORE_COCOA_CURSOR_OPERATION_NOT_ALLOWED, /**< Operation not allowed cursor */
+   ECORE_COCOA_CURSOR_POINTING_HAND, /**< Pointing hand cursor */
+   ECORE_COCOA_CURSOR_RESIZE_DOWN, /**< Resize down cursor */
+   ECORE_COCOA_CURSOR_RESIZE_LEFT, /**< Resize left cursor */
+   ECORE_COCOA_CURSOR_RESIZE_LEFT_RIGHT, /**< Resize left right cursor */
+   ECORE_COCOA_CURSOR_RESIZE_RIGHT, /**< Resize right cursor */
+   ECORE_COCOA_CURSOR_RESIZE_UP, /**< Resize up cursor */
+   ECORE_COCOA_CURSOR_RESIZE_UP_DOWN, /**< Resize up down cursor */
+   ECORE_COCOA_CURSOR_IBEAM_VERTICAL, /**< IBeam vertical cursor */
+
+   __ECORE_COCOA_CURSOR_LAST, /**< Sentinel. DO NOT USE */
+
+   ECORE_COCOA_CURSOR_DEFAULT = ECORE_COCOA_CURSOR_ARROW /**< Default Cocoa cursor */
+
+} Ecore_Cocoa_Cursor;
+
 
 /** Event triggered when a Cocoa window receives focus */
 EAPI extern int ECORE_COCOA_EVENT_WINDOW_FOCUSED;

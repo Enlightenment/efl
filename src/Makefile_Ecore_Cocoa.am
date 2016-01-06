@@ -6,8 +6,7 @@ lib_LTLIBRARIES += lib/ecore_cocoa/libecore_cocoa.la
 
 installed_ecorecocoamainheadersdir = $(includedir)/ecore-cocoa-@VMAJ@
 dist_installed_ecorecocoamainheaders_DATA = \
-lib/ecore_cocoa/Ecore_Cocoa.h \
-lib/ecore_cocoa/Ecore_Cocoa_Cursor.h
+lib/ecore_cocoa/Ecore_Cocoa.h
 
 lib_ecore_cocoa_libecore_cocoa_la_SOURCES = \
 lib/ecore_cocoa/ecore_cocoa.m \
