@@ -10,6 +10,8 @@ class Elm_Combobox (Elm.Button, Evas.Selectable_Interface,
 
             This will return EINA_TRUE if the combobox is expanded or
             EINA_FALSE if it is not expanded.
+
+              @since 1.17
             ]]
             return: bool;
          }
@@ -17,11 +19,15 @@ class Elm_Combobox (Elm.Button, Evas.Selectable_Interface,
       hover_begin {
          [[This triggers the combobox popup from code, the same as if the user
          had clicked the button.
+
+           @since 1.17
          ]]
       }
       hover_end {
          [[This dismisses the combobox popup as if the user had clicked
          outside the hover.
+
+           @since 1.17
          ]]
       }
    }
