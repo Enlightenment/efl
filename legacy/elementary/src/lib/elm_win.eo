@@ -963,7 +963,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
       }
       @property cocoa_window {
          get {
-            [[Get the Ecore_Cocoa_Window of an Evas.Object.]]
+            [[Get the Ecore_Cocoa_Window of an Evas.Object.
+
+              @since 1.17
+            ]]
             return: Ecore_Cocoa_Window *; [[The Ecore_Cocoa_Window of $obj.]]
 	 }
       }
@@ -971,7 +974,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
          get {
             [[Get the Ecore_Win32_Window of an Evas_Object
 
-              @since 1.16
+              @since 1.17
             ]]
             return: Ecore_Win32_Window *; [[The Ecore_Win32_Window of $obj.]]
             legacy: null;
