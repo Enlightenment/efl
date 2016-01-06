@@ -64,12 +64,7 @@ CLEANFILES += \
 ectoreolianfilesdir = $(datadir)/eolian/include/ector-@VMAJ@
 ectoreolianfiles_DATA = $(ector_eolian_files)
 
-EXTRA_DIST += $(ectoreolianfiles_DATA)
-
-lib_LTLIBRARIES += lib/ector/libector.la
-
-installed_ectormainheadersdir = $(includedir)/ector-@VMAJ@
-dist_installed_ectormainheaders_DATA = \
+EXTRA_DIST += $(ectoreolianfiles_DATA) \
 lib/ector/Ector.h \
 lib/ector/ector_util.h \
 lib/ector/ector_surface.h \
@@ -78,6 +73,8 @@ lib/ector/ector_renderer.h \
 lib/ector/cairo/Ector_Cairo.h \
 lib/ector/software/Ector_Software.h \
 lib/ector/gl/Ector_GL.h
+
+lib_LTLIBRARIES += lib/ector/libector.la
 
 # And the generic implementation
 
@@ -92,9 +89,6 @@ lib/ector/ector_renderer_generic_gradient.c \
 lib/ector/ector_renderer_generic_gradient_radial.c \
 lib/ector/ector_renderer_generic_gradient_linear.c
 
-installed_ectorgenericheadersdir = $(includedir)/ector-@VMAJ@/generic
-nodist_installed_ectorgenericheaders_DATA = $(ector_eolian_generic_h)
-
 # And now the cairo backend
 lib_ector_libector_la_SOURCES += \
 lib/ector/cairo/ector_renderer_cairo_gradient_linear.c \
@@ -103,9 +97,6 @@ lib/ector/cairo/ector_renderer_cairo_shape.c \
 lib/ector/cairo/ector_renderer_cairo_base.c \
 lib/ector/cairo/ector_cairo_software_surface.c \
 lib/ector/cairo/ector_cairo_surface.c
-
-installed_ectorcairoheadersdir = $(includedir)/ector-@VMAJ@/cairo
-nodist_installed_ectorcairoheaders_DATA = $(ector_eolian_cairo_h)
 
 # SW draw static lib
 draw_sources = \
@@ -151,12 +142,6 @@ lib/ector/gl/shader/include.glsl
 lib/ector/gl/shader/ector_gl_shaders.x: $(GL_SHADERS_GEN)
 	@echo "  SHADERS  $@"
 	@bash $(srcdir)/lib/ector/gl/shader/gen_shaders.sh
-
-installed_ectorsoftwareheadersdir = $(includedir)/ector-@VMAJ@/software
-nodist_installed_ectorsoftwareheaders_DATA = $(ector_eolian_software_h)
-
-installed_ectorglheadersdir = $(includedir)/ector-@VMAJ@/gl
-nodist_installed_ectorglheaders_DATA = $(ector_eolian_gl_h)
 
 lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/ector \

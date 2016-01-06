@@ -4,9 +4,9 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: ector
-Description: Enlightenned retained mode drawing library
+Description: Enlightened retained mode drawing library
 Requires.private: @requirements_pc_ector@
 Version: @VERSION@
 Libs: -L${libdir} -lector
 Libs.private: @requirements_libs_ector@
-Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ector-@VMAJ@
+Cflags:
