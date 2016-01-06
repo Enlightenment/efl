@@ -70,20 +70,20 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
 
 - (void)windowDidResize:(NSNotification *) notif
 {
-   Ecore_Cocoa_Event_Video_Resize *event;
+   Ecore_Cocoa_Event_Window_Resize_Request *event;
    NSSize size = self.frame.size;
 
    event = malloc(sizeof(*event));
    if (EINA_UNLIKELY(event == NULL))
      {
-        CRI("Failed to allocate Ecore_Cocoa_Event_Video_Resize");
+        CRI("Failed to allocate Ecore_Cocoa_Event_Window_Resize_Request");
         return;
      }
    event->w = size.width;
    event->h = size.height -
       (([self isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
    event->cocoa_window = [notif object];
-   ecore_event_add(ECORE_COCOA_EVENT_RESIZE, event, NULL, NULL);
+   ecore_event_add(ECORE_COCOA_EVENT_WINDOW_RESIZE_REQUEST, event, NULL, NULL);
 
    /*
     * During live resize, NSRunLoop blocks, and prevent the ecore_main_loop
@@ -108,7 +108,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
         return;
      }
    e->cocoa_window = [notification object];
-   ecore_event_add(ECORE_COCOA_EVENT_GOT_FOCUS, e, NULL, NULL);
+   ecore_event_add(ECORE_COCOA_EVENT_WINDOW_FOCUSED, e, NULL, NULL);
 }
 
 - (void) windowWillStartLiveResize:(NSNotification *) EINA_UNUSED notification
@@ -132,7 +132,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
         return;
      }
    e->cocoa_window = [notification object];
-   ecore_event_add(ECORE_COCOA_EVENT_LOST_FOCUS, e, NULL, NULL);
+   ecore_event_add(ECORE_COCOA_EVENT_WINDOW_UNFOCUSED, e, NULL, NULL);
 }
 
 - (void) mouseDown:(NSEvent*) event

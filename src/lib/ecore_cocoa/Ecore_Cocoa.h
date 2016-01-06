@@ -61,27 +61,27 @@ typedef struct _Ecore_Cocoa_Screen Ecore_Cocoa_Screen;
 typedef void Ecore_Cocoa_Object;
 
 /**
- * @typedef Ecore_Cocoa_Event_Video_Resize
- * Type of event thrown when a window is resized
+ * @typedef Ecore_Cocoa_Event_Window_Resize_Request
+ * Type of event thrown when a Cocoa window is resized
  */
-typedef struct _Ecore_Cocoa_Event_Video_Resize Ecore_Cocoa_Event_Video_Resize;
+typedef struct _Ecore_Cocoa_Event_Window_Resize_Request Ecore_Cocoa_Event_Window_Resize_Request;
 
 /** Event triggered when a window receives focus */
-EAPI extern int ECORE_COCOA_EVENT_GOT_FOCUS;
+EAPI extern int ECORE_COCOA_EVENT_WINDOW_FOCUSED;
 
 /** Event triggered when a window loses focus */
-EAPI extern int ECORE_COCOA_EVENT_LOST_FOCUS;
+EAPI extern int ECORE_COCOA_EVENT_WINDOW_UNFOCUSED;
 
 /** Event triggered when a window is resized */
-EAPI extern int ECORE_COCOA_EVENT_RESIZE;
+EAPI extern int ECORE_COCOA_EVENT_WINDOW_RESIZE_REQUEST;
 
 EAPI extern int ECORE_COCOA_EVENT_WINDOW_DESTROY;
 
 /**
- * @struct _Ecore_Cocoa_Event_Video_Resize
+ * @struct _Ecore_Cocoa_Event_Window_Resize_Request
  * Data available when a window is resized
  */
-struct _Ecore_Cocoa_Event_Video_Resize
+struct _Ecore_Cocoa_Event_Window_Resize_Request
 {
    int             w; /**< Current width of the window */
    int             h; /**< Current height of the window */

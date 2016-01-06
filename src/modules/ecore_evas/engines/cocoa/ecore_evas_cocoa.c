@@ -234,9 +234,9 @@ _ecore_evas_resize_common(Ecore_Evas *ee,
 }
 
 static Eina_Bool
-_ecore_evas_cocoa_event_video_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_ecore_evas_cocoa_event_window_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   Ecore_Cocoa_Event_Video_Resize *e = event;
+   Ecore_Cocoa_Event_Window_Resize_Request *e = event;
    Ecore_Evas                   *ee;
 
    DBG("");
@@ -287,10 +287,18 @@ _ecore_evas_cocoa_init(void)
 
    ecore_event_evas_init();
 
-   ecore_evas_event_handlers[0] = ecore_event_handler_add(ECORE_COCOA_EVENT_GOT_FOCUS, _ecore_evas_cocoa_event_got_focus, NULL);
-   ecore_evas_event_handlers[1] = ecore_event_handler_add(ECORE_COCOA_EVENT_LOST_FOCUS, _ecore_evas_cocoa_event_lost_focus, NULL);
-   ecore_evas_event_handlers[2] = ecore_event_handler_add(ECORE_COCOA_EVENT_RESIZE, _ecore_evas_cocoa_event_video_resize, NULL);
-   ecore_evas_event_handlers[3] = ecore_event_handler_add(ECORE_COCOA_EVENT_WINDOW_DESTROY, _ecore_evas_cocoa_event_window_destroy, NULL);
+   ecore_evas_event_handlers[0] =
+      ecore_event_handler_add(ECORE_COCOA_EVENT_WINDOW_UNFOCUSED,
+                              _ecore_evas_cocoa_event_got_focus, NULL);
+   ecore_evas_event_handlers[1] =
+      ecore_event_handler_add(ECORE_COCOA_EVENT_WINDOW_FOCUSED,
+                              _ecore_evas_cocoa_event_lost_focus, NULL);
+   ecore_evas_event_handlers[2] =
+      ecore_event_handler_add(ECORE_COCOA_EVENT_WINDOW_RESIZE_REQUEST,
+                              _ecore_evas_cocoa_event_window_resize, NULL);
+   ecore_evas_event_handlers[3] =
+      ecore_event_handler_add(ECORE_COCOA_EVENT_WINDOW_DESTROY,
+                              _ecore_evas_cocoa_event_window_destroy, NULL);
 
    return _ecore_evas_init_count;
 }

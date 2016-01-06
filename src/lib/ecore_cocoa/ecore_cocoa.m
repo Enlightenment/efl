@@ -19,9 +19,9 @@
 
 #include "ecore_cocoa_private.h"
 
-EAPI int ECORE_COCOA_EVENT_GOT_FOCUS = 0;
-EAPI int ECORE_COCOA_EVENT_LOST_FOCUS = 0;
-EAPI int ECORE_COCOA_EVENT_RESIZE = 0;
+EAPI int ECORE_COCOA_EVENT_WINDOW_UNFOCUSED = 0;
+EAPI int ECORE_COCOA_EVENT_WINDOW_FOCUSED = 0;
+EAPI int ECORE_COCOA_EVENT_WINDOW_RESIZE_REQUEST = 0;
 EAPI int ECORE_COCOA_EVENT_WINDOW_DESTROY = 0;
 
 static int _ecore_cocoa_init_count = 0;
@@ -51,9 +51,9 @@ ecore_cocoa_init(void)
 
    DBG("");
 
-   ECORE_COCOA_EVENT_GOT_FOCUS  = ecore_event_type_new();
-   ECORE_COCOA_EVENT_LOST_FOCUS = ecore_event_type_new();
-   ECORE_COCOA_EVENT_RESIZE     = ecore_event_type_new();
+   ECORE_COCOA_EVENT_WINDOW_UNFOCUSED = ecore_event_type_new();
+   ECORE_COCOA_EVENT_WINDOW_FOCUSED = ecore_event_type_new();
+   ECORE_COCOA_EVENT_WINDOW_RESIZE_REQUEST = ecore_event_type_new();
    ECORE_COCOA_EVENT_WINDOW_DESTROY = ecore_event_type_new();
 
 
