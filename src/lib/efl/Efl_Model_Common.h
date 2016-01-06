@@ -35,6 +35,8 @@ typedef struct _Efl_Model_Children_Event Efl_Model_Children_Event;
   * @param model The model to call the event @c EFL_MODEL_EVENT_LOAD_STATUS
   * @param load The load status to be changed
   * @param status The new status
+  *
+  * @since 1.17
   */
 EAPI void efl_model_load_set(Efl_Model_Base *model, Efl_Model_Load *load, Efl_Model_Load_Status status) EINA_ARG_NONNULL(1, 2);
 
@@ -47,6 +49,8 @@ EAPI void efl_model_load_set(Efl_Model_Base *model, Efl_Model_Load *load, Efl_Mo
  * @param start The nth element to start the slice
  * @param count The number of elements
  * @return The accessor to the sliced elements or @c NULL if error
+ *
+ * @since 1.17
  */
 EAPI Eina_Accessor *efl_model_list_slice(Eina_List *list, unsigned start, unsigned count) EINA_ARG_NONNULL(1);
 
@@ -54,6 +58,8 @@ EAPI Eina_Accessor *efl_model_list_slice(Eina_List *list, unsigned start, unsign
  * @brief Notifies an error with an @c EFL_MODEL_EVENT_LOAD_STATUS
  *
  * @param model The model to be notified
+ *
+ * @since 1.17
  */
 EAPI void efl_model_error_notify(Efl_Model_Base *model) EINA_ARG_NONNULL(1);
 
@@ -62,6 +68,8 @@ EAPI void efl_model_error_notify(Efl_Model_Base *model) EINA_ARG_NONNULL(1);
  *
  * @param model The model to be notified
  * @param property The changed property
+ *
+ * @since 1.17
  */
 EAPI void efl_model_property_changed_notify(Efl_Model_Base *model, const char *property);
 
@@ -70,6 +78,8 @@ EAPI void efl_model_property_changed_notify(Efl_Model_Base *model, const char *p
  *
  * @param model The model to be notified
  * @param property The invalidated property
+ *
+ * @since 1.17
  */
 EAPI void efl_model_property_invalidated_notify(Efl_Model_Base *model, const char *property);
 
@@ -89,6 +99,8 @@ typedef void (*Efl_Model_Value_Struct_Member_Setup_Cb)(void *data, int index, Ei
  * @param setup_cb The callback to setup struct members
  * @param data The user data
  * @return Returns the struct description
+ *
+ * @since 1.17
  */
 EAPI Eina_Value_Struct_Desc *efl_model_value_struct_description_new(unsigned int member_count, Efl_Model_Value_Struct_Member_Setup_Cb setup_cb, void *data) EINA_ARG_NONNULL(2);
 
@@ -96,6 +108,8 @@ EAPI Eina_Value_Struct_Desc *efl_model_value_struct_description_new(unsigned int
  * @brief Frees the memory allocated to the struct description.
  *
  * @param desc The struct description. If @c NULL, the function returns immediately.
+ *
+ * @since 1.17
  */
 EAPI void efl_model_value_struct_description_free(Eina_Value_Struct_Desc *desc);
 
