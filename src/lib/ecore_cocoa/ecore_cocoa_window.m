@@ -292,19 +292,18 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
 EAPI Ecore_Cocoa_Window *
 ecore_cocoa_window_new(int x,
                        int y,
-                       int width,
-                       int height)
+                       int w,
+                       int h)
 {
-   Ecore_Cocoa_Window *w;
+   Ecore_Cocoa_Window *win;
    EcoreCocoaWindow *window;
-   NSRect frame = NSMakeRect(x, y, width, height);
    NSUInteger style =
       NSTitledWindowMask        |
       NSClosableWindowMask      |
       NSResizableWindowMask     |
       NSMiniaturizableWindowMask;
 
-   window = [[EcoreCocoaWindow alloc] initWithContentRect:frame
+   window = [[EcoreCocoaWindow alloc] initWithContentRect:NSMakeRect(x, y, w, h)
                                                 styleMask:style
                                                 backing:NSBackingStoreBuffered
                                                   defer:NO];
@@ -314,19 +313,19 @@ ecore_cocoa_window_new(int x,
         return NULL;
      }
 
-   w = calloc(1, sizeof(Ecore_Cocoa_Window));
-   if (EINA_UNLIKELY(w == NULL))
+   win = calloc(1, sizeof(*win));
+   if (EINA_UNLIKELY(win == NULL))
      {
         CRI("Failed to allocate Ecore_Cocoa_Window");
         [window release];
         return NULL;
      }
-   w->window = window;
-   w->borderless = 0;
+   win->window = window;
+   win->borderless = 0;
 
-   window.ecore_window_data = w;
+   window.ecore_window_data = win;
 
-   return w;
+   return win;
 }
 
 EAPI void
@@ -423,17 +422,17 @@ ecore_cocoa_window_move(Ecore_Cocoa_Window *window,
 
 EAPI void
 ecore_cocoa_window_resize(Ecore_Cocoa_Window *window,
-                          int                 width,
-                          int                 height)
+                          int                 w,
+                          int                 h)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    NSRect win_frame;
 
    win_frame = [window->window frame];
-   win_frame.size.height = height +
+   win_frame.size.height = h +
       (([window->window isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
-   win_frame.size.width = width;
+   win_frame.size.width = w;
 
    [window->window setFrame:win_frame display:YES];
 }

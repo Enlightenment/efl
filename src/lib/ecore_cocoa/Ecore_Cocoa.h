@@ -147,14 +147,14 @@ EAPI void ecore_cocoa_screen_size_get(Ecore_Cocoa_Screen *screen, int *w, int *h
  * Creates a Cocoa window
  * @param x The origin (X) where the window must be created
  * @param y The origin (Y) where the window must be created
- * @param width The width of the window
- * @param height The height of the window
+ * @param w The width of the window
+ * @param h The height of the window
  * @return A handler on the window. NULL on failure
  */
 EAPI Ecore_Cocoa_Window *ecore_cocoa_window_new(int x,
                                                 int y,
-                                                int width,
-                                                int height);
+                                                int w,
+                                                int h);
 
 /**
  * Releases a Cocoa window
@@ -175,28 +175,28 @@ EAPI void ecore_cocoa_window_move(Ecore_Cocoa_Window *window,
 /**
  * Resizes a Cocoa window to a given size
  * @param window The window to be moved
- * @param width The new width of the window
- * @param height The new height of the window
+ * @param w The new width of the window
+ * @param h The new height of the window
  */
 EAPI void ecore_cocoa_window_resize(Ecore_Cocoa_Window *window,
-                                    int                 width,
-                                    int                 height);
+                                    int                 w,
+                                    int                 h);
 
 /**
  * Moves and resizes a Cocoa window to a given point and size
  * @param window The window to be moved
  * @param x The new origin of the window (X)
  * @param y The new origin of the window (Y)
- * @param width The new width of the window
- * @param height The new height of the window
+ * @param w The new width of the window
+ * @param h The new height of the window
  * @see ecore_cocoa_window_resize()
  * @see ecore_cocoa_window_move()
  */
 EAPI void ecore_cocoa_window_move_resize(Ecore_Cocoa_Window *window,
                                          int                 x,
                                          int                 y,
-                                         int                 width,
-                                         int                 height);
+                                         int                 w,
+                                         int                 h);
 
 EAPI void ecore_cocoa_window_geometry_get(const Ecore_Cocoa_Window *window,
                                           int                      *x,
