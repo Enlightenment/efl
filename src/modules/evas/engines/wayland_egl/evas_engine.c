@@ -964,12 +964,11 @@ _native_cb_free(void *data, void *image)
 }
 
 static int
-_native_cb_yinvert(void *data, void *image)
+_native_cb_yinvert(void *data EINA_UNUSED, void *image)
 {
-   Render_Engine *re = data;
    Evas_GL_Image *im = image;
    Native *n = im->native.data;
-   int yinvert = 0, val;
+   int yinvert = 0;
 
    // Yinvert callback should only be used for EVAS_NATIVE_SURFACE_EVASGL type now,
    // as yinvert value is not changed for other types.
@@ -1323,18 +1322,6 @@ eng_image_native_set(void *data, void *image, void *native)
     }
 
    return img;
-}
-
-static void *
-eng_image_native_get(void *data EINA_UNUSED, void *image)
-{
-   Evas_GL_Image *im = image;
-   Evas_Native_Surface *n;
-
-   if (!im) return NULL;
-   n = im->native.data;
-   if (!n) return NULL;
-   return n;
 }
 
 Eina_Bool
