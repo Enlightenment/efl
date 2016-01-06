@@ -647,6 +647,8 @@ EAPI void eina_strbuf_rtrim(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
  * @param buf the string buffer to work with.
  *
  * This function converts all the characters in the strbuf to lower case.
+ *
+ * @since 1.17
  */
 EAPI void eina_strbuf_tolower(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 
@@ -661,6 +663,8 @@ EAPI void eina_strbuf_tolower(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
  *
  * This function creates a Eina_Strbuf which is a substring of buf which
  * is passed from pos position with len length.
+ *
+ * @since 1.17
  */
 EAPI Eina_Strbuf * eina_strbuf_substr_get(Eina_Strbuf *buf, size_t pos, size_t len) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
