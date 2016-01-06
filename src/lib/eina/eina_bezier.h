@@ -153,7 +153,7 @@ EAPI void eina_bezier_split_at_length(const Eina_Bezier *b, double len, Eina_Bez
  * @param h height of bounding box.
  *
  * @p b. No check is done on @p b.
- * @since 1.16
+ * @since 1.17
  */
 EAPI void eina_bezier_bounds_get(const Eina_Bezier *b, double *x, double *y, double *w, double *h) EINA_ARG_NONNULL(1);
 
@@ -166,7 +166,7 @@ EAPI void eina_bezier_bounds_get(const Eina_Bezier *b, double *x, double *y, dou
  * @param result The result bezier.
  *
  * @p b. No check is done on @p b.
- * @since 1.16
+ * @since 1.17
  */
 EAPI void eina_bezier_on_interval(Eina_Bezier *b, double t0, double t1, Eina_Bezier *result);
 
