@@ -692,7 +692,7 @@ eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 }
 
 static void *
-eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, int *err)
+eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, int *err, Eina_Bool *tofree EINA_UNUSED)
 {
    Render_Engine *re;
    Evas_GL_Image *im;
