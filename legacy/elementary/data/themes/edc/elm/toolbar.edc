@@ -379,8 +379,6 @@ group { name: "elm/toolbar/item/default";
 #define DISABLE  4
    script {   
       public btmode;
-      public vertical = 0;
-      public scroll = 0;
       public eval_mode(m) {
          new m1 = m & MASK;
          new d = m & DISABLE;
@@ -434,44 +432,6 @@ group { name: "elm/toolbar/item/default";
             }
          }
       }
-
-      public enable_scroll() {
-         set_int(scroll, 1);
-
-         if (get_int(vertical))
-            set_state(PART:"base", "vert_scroll", 0.0);
-         else
-            set_state(PART:"base", "scroll", 0.0);
-      }
-
-      public disable_scroll() {
-         set_int(scroll, 0);
-
-         if (get_int(vertical))
-            set_state(PART:"base", "vert", 0.0);
-         else
-            set_state(PART:"base", "default", 0.0);
-      }
-
-      public enable_vertical() {
-         set_int(vertical, 1);
-
-         if (get_int(scroll))
-            set_state(PART:"base", "vert_scroll", 0.0);
-         else
-            set_state(PART:"base", "vert", 0.0);
-         set_state(PART:"bend_clip", "vert", 0.0);
-      }
-
-      public disable_vertical() {
-         set_int(vertical, 0);
-
-         if (get_int(scroll))
-            set_state(PART:"base", "scroll", 0.0);
-         else
-            set_state(PART:"base", "default", 0.0);
-         set_state(PART:"bend_clip", "default", 0.0);
-      }
    }
    parts {
       part { name: "base"; type: SPACER;
@@ -480,14 +440,6 @@ group { name: "elm/toolbar/item/default";
          description { state: "vert" 0.0;
             rel1.offset: -1 0;
             rel2.offset: 0 -1;
-         }
-         description { state: "scroll" 0.0;
-            inherit: "default" 0.0;
-            min: 80 0;
-         }
-         description { state: "vert_scroll" 0.0;
-            inherit: "vert" 0.0;
-            min: 0 80;
          }
       }
       part { name: "shadow1"; mouse_events: 0;
@@ -858,45 +810,15 @@ group { name: "elm/toolbar/item/default";
    programs {
       program {
          signal: "elm,orient,horizontal"; source: "elm";
-         script {
-            disable_vertical();
-         }
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         target: "bend_clip";
       }
       program {
          signal: "elm,orient,vertical"; source: "elm";
-         script {
-            enable_vertical();
-         }
-      }
-      program {
-         signal: "elm,state,shrink,scroll"; source: "elm";
-         script {
-            enable_scroll();
-         }
-      }
-      program {
-         signal: "elm,state,shrink,none"; source: "elm";
-         script {
-            disable_scroll()
-         }
-      }
-      program {
-         signal: "elm,state,shrink,hide"; source: "elm";
-         script {
-            disable_scroll()
-         }
-      }
-      program {
-         signal: "elm,state,shrink,menu"; source: "elm";
-         script {
-            disable_scroll()
-         }
-      }
-      program {
-         signal: "elm,state,shrink,expand"; source: "elm";
-         script {
-            disable_scroll()
-         }
+         action: STATE_SET "vert" 0.0;
+         target: "base";
+         target: "bend_clip";
       }
       
       program { name: "st0";
