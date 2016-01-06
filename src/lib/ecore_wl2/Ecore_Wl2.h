@@ -147,21 +147,21 @@ typedef enum _Ecore_Wl2_Window_Type
 typedef void (*Ecore_Wl2_Bind_Cb)(struct wl_client *client, void *data, uint32_t version, uint32_t id);
 typedef void (*Ecore_Wl2_Unbind_Cb)(struct wl_resource *resource);
 
-EAPI extern int ECORE_WL2_EVENT_GLOBAL_ADDED;
-EAPI extern int ECORE_WL2_EVENT_GLOBAL_REMOVED;
-EAPI extern int ECORE_WL2_EVENT_FOCUS_IN;
-EAPI extern int ECORE_WL2_EVENT_FOCUS_OUT;
-EAPI extern int ECORE_WL2_EVENT_DND_ENTER;
-EAPI extern int ECORE_WL2_EVENT_DND_LEAVE;
-EAPI extern int ECORE_WL2_EVENT_DND_MOTION;
-EAPI extern int ECORE_WL2_EVENT_DND_DROP;
-EAPI extern int ECORE_WL2_EVENT_DND_END;
-EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_CANCELLED;
-EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_TARGET;
-EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_SEND;
-EAPI extern int ECORE_WL2_EVENT_SELECTION_DATA_READY;
-EAPI extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE;
-EAPI extern int ECORE_WL2_EVENT_SYNC_DONE;
+EAPI extern int ECORE_WL2_EVENT_GLOBAL_ADDED; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_GLOBAL_REMOVED; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_FOCUS_IN; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_FOCUS_OUT; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_DND_ENTER; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_DND_LEAVE; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_DND_MOTION; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_DND_DROP; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_DND_END; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_CANCELLED; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_TARGET; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_SEND; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_SELECTION_DATA_READY; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE; /** @since 1.17 */
+EAPI extern int ECORE_WL2_EVENT_SYNC_DONE; /** @since 1.17 */
 
 /**
  * @file
@@ -767,6 +767,7 @@ EAPI void ecore_wl2_window_cursor_from_name_set(Ecore_Wl2_Window *window, const 
 EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type);
 
 /* TODO: doxy */
+/** @since 1.17 */
 EAPI Ecore_Wl2_Input *ecore_wl2_window_input_get(Ecore_Wl2_Window *window);
 
 /**
@@ -778,9 +779,11 @@ EAPI Ecore_Wl2_Input *ecore_wl2_window_input_get(Ecore_Wl2_Window *window);
  */
 
 /* TODO: doxy */
+/** @since 1.17 */
 EAPI void ecore_wl2_input_ungrab(Ecore_Wl2_Input *input);
 
 /* TODO: doxy */
+/** @since 1.17 */
 EAPI struct wl_seat *ecore_wl2_input_seat_get(Ecore_Wl2_Input *input);
 
 /**
@@ -792,27 +795,35 @@ EAPI struct wl_seat *ecore_wl2_input_seat_get(Ecore_Wl2_Input *input);
  */
 
 /* TODO: doxy */
+/** @since 1.17 */
 EAPI void ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types);
 
 /* TODO: doxy */
+/** @since 1.17 */
 EAPI void ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore_Wl2_Window *drag_window);
 
 /* TODO: doxy */
+/** @since 1.17 */
 EAPI Eina_Bool ecore_wl2_dnd_drag_get(Ecore_Wl2_Input *input, const char *type);
 
 /* TODO: doxy */
+/** @since 1.17 */
 EAPI void ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input);
 
 /* TODO: doxy */
+/** @since 1.17 */
 EAPI Eina_Bool ecore_wl2_dnd_selection_owner_has(Ecore_Wl2_Input *input);
 
 /* TODO: doxy */
+/** @since 1.17 */
 EAPI Eina_Bool ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types);
 
 /* TODO: doxy */
+/** @since 1.17 */
 EAPI Eina_Bool ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input, const char *type);
 
 /* TODO: doxy */
+/** @since 1.17 */
 EAPI Eina_Bool ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input);
 
 /**
@@ -1008,18 +1019,28 @@ EAPI int ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output);
  */
 EAPI int ecore_wl2_display_compositor_version_get(Ecore_Wl2_Display *disp);
 
+/** @since 1.17 */
 EAPI Ecore_Wl2_Seat *ecore_wl2_seat_create(Ecore_Wl2_Display *display, const char *name, const struct wl_seat_interface *implementation, int version, Ecore_Wl2_Bind_Cb bind_cb, Ecore_Wl2_Unbind_Cb unbind_cb);
+/** @since 1.17 */
 EAPI void ecore_wl2_seat_destroy(Ecore_Wl2_Seat *seat);
+/** @since 1.17 */
 EAPI void ecore_wl2_seat_capabilities_send(Ecore_Wl2_Seat *seat, enum wl_seat_capability caps);
+/** @since 1.17 */
 EAPI void ecore_wl2_seat_pointer_release(Ecore_Wl2_Seat *seat);
 
+/** @since 1.17 */
 EAPI Ecore_Wl2_Pointer *ecore_wl2_pointer_get(Ecore_Wl2_Seat *seat);
+/** @since 1.17 */
 EAPI Eina_Bool ecore_wl2_pointer_resource_create(Ecore_Wl2_Pointer *ptr, struct wl_client *client, const struct wl_pointer_interface *implementation, int version, uint32_t id);
 
+/** @since 1.17 */
 EAPI Ecore_Wl2_Keyboard *ecore_wl2_keyboard_get(Ecore_Wl2_Seat *seat);
+/** @since 1.17 */
 EAPI Eina_Bool ecore_wl2_keyboard_resource_create(Ecore_Wl2_Keyboard *kbd, struct wl_client *client, const struct wl_keyboard_interface *implementation, int version, uint32_t id);
+/** @since 1.17 */
 EAPI void ecore_wl2_keyboard_repeat_info_set(Ecore_Wl2_Keyboard *kbd, double rate, double delay);
 
+/** @since 1.17 */
 EAPI Ecore_Wl2_Display *ecore_wl2_window_display_get(const Ecore_Wl2_Window *window);
 
 /* # ifdef __cplusplus */
