@@ -3492,20 +3492,21 @@ static inline Eina_Bool eina_value_type_pget(const Eina_Value_Type *type, const 
  * @var EINA_VALUE_TYPE_OPTIONAL
  * manages optional type.
  *
- * @since 1.16
+ * @since 1.17
  */
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL;
 
 /**
  * @typedef Eina_Value_Optional type to be used with Eina_Value_Struct
  *
- * @since 1.16
+ * @since 1.17
  */
 typedef Eina_Value_Union Eina_Value_Optional;
 
 /**
  * @brief Create an empty optional. This is the same as eina_value_new(EINA_VALUE_TYPE_OPTIONAL).
  * @return returns an empty optional eina value.
+ * @since 1.17
  */
 static inline Eina_Value *eina_value_optional_empty_new();
 
@@ -3514,7 +3515,7 @@ static inline Eina_Value *eina_value_optional_empty_new();
  * @param subtype Eina_Value_Type of parameter value
  * @param value The value to be used to construct optional eina value
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
- * @since 1.16
+ * @since 1.17
  */
 EAPI Eina_Value *eina_value_optional_new(const Eina_Value_Type *subtype,
                                          const void* value) EINA_ARG_NONNULL(1, 2);
@@ -3524,7 +3525,7 @@ EAPI Eina_Value *eina_value_optional_new(const Eina_Value_Type *subtype,
  * @param value Eina Value Optional
  * @param is_empty #EINA_TRUE if optional is empty, #EINA_FALSE otherwise.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
- * @since 1.16
+ * @since 1.17
  */
 static inline Eina_Bool eina_value_optional_empty_is(const Eina_Value *value,
                                                      Eina_Bool *is_empty) EINA_ARG_NONNULL(1, 2);
@@ -3535,7 +3536,7 @@ static inline Eina_Bool eina_value_optional_empty_is(const Eina_Value *value,
  * @param subtype Type of subvalue
  * @param subvalue Value to be set in optional
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
- * @since 1.16
+ * @since 1.17
  */
 EAPI Eina_Bool eina_value_optional_pset(Eina_Value *value,
                                         Eina_Value_Type const* subtype,
@@ -3547,7 +3548,7 @@ EAPI Eina_Bool eina_value_optional_pset(Eina_Value *value,
  * @param subvalue Pointer to where value is to be copied to. You must use
  * the correct type according to eina_value_optional_type_get
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
- * @since 1.16
+ * @since 1.17
  */
 EAPI Eina_Bool eina_value_optional_pget(Eina_Value *value,
                                         void *subvalue) EINA_ARG_NONNULL(1, 2);
@@ -3556,7 +3557,7 @@ EAPI Eina_Bool eina_value_optional_pget(Eina_Value *value,
  * @brief Resets eina optional to empty
  * @param value Eina Value Optional
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
- * @since 1.16
+ * @since 1.17
  */
 EAPI Eina_Bool eina_value_optional_reset(Eina_Value *value) EINA_ARG_NONNULL(1);
 
@@ -3564,7 +3565,7 @@ EAPI Eina_Bool eina_value_optional_reset(Eina_Value *value) EINA_ARG_NONNULL(1);
  * @brief Get type from value that is stored on Eina Value Optional
  * @param value Eina Value Optional
  * @return The optional sub-type.
- * @since 1.16
+ * @since 1.17
  */
 static inline const Eina_Value_Type *eina_value_optional_type_get(Eina_Value *value) EINA_ARG_NONNULL(1);
 
