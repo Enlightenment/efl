@@ -37,6 +37,7 @@ widget_preview_check2 \
 widget_preview_check3 \
 widget_preview_clock \
 widget_preview_colorselector \
+widget_preview_combobox \
 widget_preview_conformant \
 widget_preview_ctxpopup \
 widget_preview_datetime1 \
@@ -118,6 +119,7 @@ EXTRA_DIST = \
 	widget_preview_clock.c \
 	widget_preview_colorselector.c \
 	widget_preview_conformant.c \
+	widget_preview_combobox.c \
 	widget_preview_slider.c \
 	widget_preview_panes.c \
 	widget_preview_toolbar.c \

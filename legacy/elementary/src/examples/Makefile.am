@@ -52,6 +52,7 @@ codegen_example.edc \
 colorselector_example_01.c \
 conformant_example_01.c \
 conformant_example_02.c \
+combobox_example_01.c \
 ctxpopup_example_01.c \
 datetime_example.c \
 dayselector_example.c \
@@ -237,6 +238,7 @@ codegen_example \
 colorselector_example_01 \
 conformant_example_01 \
 conformant_example_02 \
+combobox_example_01 \
 ctxpopup_example_01 \
 datetime_example \
 dayselector_example \
@@ -419,6 +421,7 @@ label_example_01:label_example_01.png:0.0 \
 theme_example_01:theme_example_01.png:0.0 \
 conformant_example_01:conformant_example_01.png:0.0 \
 conformant_example_02:conformant_example_02.png:0.0 \
+combobox_example_01:combobox_example_01.png:0.0 \
 calendar_example_01:calendar_example_01.png:0.0 \
 calendar_example_02:calendar_example_02.png:0.0 \
 calendar_example_03:calendar_example_03.png:0.0 \

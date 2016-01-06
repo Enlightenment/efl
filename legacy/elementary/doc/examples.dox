@@ -29,6 +29,8 @@
  *
  * @ref calendar_example_06
  *
+ * @ref combobox_example_01
+ *
  * @ref spinner_example
  *
  * @ref slider_example
@@ -6809,4 +6811,70 @@
  * @example efl_thread_win32_4.c
  * @example location_example_01.c
  * @example naviframe_example.c
+ */
+
+/**
+ * @page tutorial_combobox Combobox example
+ * @dontinclude combobox_example_01.c
+ *
+ * In this example we will create a combobox with 1000 items.
+ *
+ * We will start with the normal creation of window stuff:
+ * @until show(bg)
+ *
+ * Next we will create a box.
+ * @until show(bx)
+ *
+ * And now we create our combobox and set some of it's properties. We set @p win
+ * as its parent, set a text "A Simple List" (which acts as a placeholder).
+ * We pack the combobox in box.
+ * @until show(combobox)
+ *
+ * Next we create a new genlist item class and sets its properties:
+ * item_style as deafult , callback for text_get and set others as NULL.
+ * @until itc->func.del = NULL;
+
+ * Next we will append 1000 items to the combobox, this is similar to appending
+ * items to the genlist
+ * @until ));
+ *
+ * We also set a pair of callbacks to be called whenever any item is selected or
+ * pressed.
+ * when the combobox is activated, dismissed, expanded :
+ * @until _combobox_item_pressed_cb, NULL);
+ *
+ * And then ask that our combobox be shown and run the main loop:
+ * @until ELM_MAIN
+ *
+ * We now have the callback for setting text in the each item of genlist:
+ * @until }
+ *
+ * Next we have the callback which is called when the combobox is clicked:
+ * @until }
+ *
+ * Next we have the callback that is called whenever an item is selected and
+ * text of that item is set on combobox:
+ * @until }
+
+ * Next we have the callback that is called whenever an item is pressed and
+ * text of that item is set on combobox and the hover is closed:
+ * @until }
+ *
+ * Next we have the callback that is called whenever an item is double-clicked
+ * or pressing (enter|return|spacebar) on an item also the text(event_info) of that item is set on
+ * combobox and the hover is closed:
+ * @until }
+
+ * And the callback that is called when the hover,genlist are closed.
+ * @until }
+ *
+ * And finally the callback is called when hover,genlist are shown.
+ * @until }
+ *
+ * Our example will initially look like this:
+ *
+ * @image html screenshots/combobox_example_01.png
+ * @image latex screenshots/combobox_example_01.eps width=\textwidth
+ *
+ * @example combobox_example_01.c
  */

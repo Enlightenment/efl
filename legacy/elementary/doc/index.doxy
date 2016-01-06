@@ -77,6 +77,10 @@
  *
  * @image html img/widget/ctxpopup/preview-00.png
  * @image latex img/widget/ctxpopup/preview-00.eps
+ * @li @ref Combobox
+ *
+ * @image html img/widget/combobox/preview-00.png
+ * @image latex img/widget/combobox/preview-00.eps
  * @li @ref Datetime
  *
  * @image html img/widget/datetime/preview-00.png

@@ -26,6 +26,7 @@ WGT_PREVIEW = \
 	clock:preview-00.png:widget_preview_clock:200:100 \
 	colorselector:preview-00.png:widget_preview_colorselector:320:300 \
 	conformant:preview-00.png:widget_preview_conformant:200:400 \
+	combobox:preview-00.png:widget_preview_combobox:300:300 \
 	ctxpopup:preview-00.png:widget_preview_ctxpopup:200:130 \
 	datetime:preview-00.png:widget_preview_datetime1:360:60 \
 	datetime:preview-01.png:widget_preview_datetime2:200:60 \
@@ -101,6 +102,7 @@ WGT_TREE = \
 	colorselector \
 	conformant \
 	container \
+	combobox \
 	ctxpopup \
 	datetime \
 	dayselector \

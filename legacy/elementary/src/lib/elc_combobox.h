@@ -24,15 +24,15 @@
  *   is the selected item
  * - @c "dismissed" - the hover is dismissed
  * - @c "expanded" - This is called on clicking combobox and elm_combobox_hover_begin().
- * - @c "language,changed" - the program's language changed (since 1.9)
- * - @c "item,focused" - When the combobox item has received focus. (since 1.10)
- * - @c "item,unfocused" - When the combobox item has lost focus. (since 1.10)
+ * - @c "language,changed" - the program's language changed.
+ * - @c "item,pressed" - When the combobox item is pressed.
+ * - @c "filter,done" - When the combobox completes the filter process.
  *
- * Default content parts of the combobox widget that you can use for are:
- * @li "icon" - An icon of the combobox
+ * Default content parts of the combobox widget that you can use are the
+ * the same that you use with the @ref Button
  *
- * Default text parts of the combobox widget that you can use for are:
- * @li "default" - A label of the combobox
+ * Default text parts of the combobox widget that you can use are the
+ * the same that you use with the @ref Entry
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_disabled_set
