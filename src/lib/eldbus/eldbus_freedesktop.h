@@ -249,6 +249,8 @@ EAPI Eldbus_Pending        *eldbus_proxy_property_set(Eldbus_Proxy *proxy, const
  * @param cb The callback to be called when receiving an answer.
  * @param data Data to be passed to the callback.
  * @return Eldbus_Pending object corresponding to the message sent.
+ *
+ * @since 1.17
  */
 EAPI Eldbus_Pending        *eldbus_proxy_property_value_set(Eldbus_Proxy *proxy, const char *name, const char *sig, const Eina_Value *value, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 3, 4);
 
