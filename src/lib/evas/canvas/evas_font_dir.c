@@ -148,7 +148,8 @@ evas_fonts_zero_free(Evas *eo_evas)
      {
         if (fd->fdesc) evas_font_desc_unref(fd->fdesc);
 	if (fd->source) eina_stringshare_del(fd->source);
-	evas->engine.func->font_free(evas->engine.data.output, fd->font);
+	if ((evas->engine.func) && (evas->engine.func->font_free))
+	  evas->engine.func->font_free(evas->engine.data.output, fd->font);
 #ifdef HAVE_FONTCONFIG
 	if (fd->set) FcFontSetDestroy(fd->set);
 	if (fd->p_nm) FcPatternDestroy(fd->p_nm);
@@ -173,7 +174,8 @@ evas_fonts_zero_pressure(Evas *eo_evas)
 
         if (fd->fdesc) evas_font_desc_unref(fd->fdesc);
 	if (fd->source) eina_stringshare_del(fd->source);
-	evas->engine.func->font_free(evas->engine.data.output, fd->font);
+	if ((evas->engine.func) && (evas->engine.func->font_free))
+	  evas->engine.func->font_free(evas->engine.data.output, fd->font);
 #ifdef HAVE_FONTCONFIG
 	if (fd->set) FcFontSetDestroy(fd->set);
 	if (fd->p_nm) FcPatternDestroy(fd->p_nm);
