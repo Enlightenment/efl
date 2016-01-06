@@ -12,10 +12,6 @@
 #include <Ecore_X_Cursor.h>
 #endif
 
-#ifdef HAVE_ELEMENTARY_COCOA
-# include <Ecore_Cocoa_Cursor.h>
-#endif
-
 #ifdef HAVE_ELEMENTARY_WIN32
 #include <Ecore_Win32.h>
 #endif
