@@ -22,7 +22,7 @@
 #include <Ector.h>
 #include "ector_private.h"
 
-Ector_GL_API GL = { 0, };
+Ector_GL_API GL;
 int _ector_log_dom_global = 0;
 
 static int _ector_main_count = 0;
@@ -46,6 +46,7 @@ ector_init(void)
    _ector_main_count = 1;
 
    eina_log_timing(_ector_log_dom_global, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
+   GL.init = 0;
 
    return _ector_main_count;
 
@@ -216,6 +217,7 @@ ector_glsym_set(void *(*glsym)(void *lib, const char *name), void *lib)
    ORD(glVertexAttribPointer);
    ORD(glViewport);
 
+   GL.init = r;
    return r;
 }
 
@@ -232,6 +234,7 @@ ector_shutdown(void)
    if (EINA_LIKELY(_ector_main_count > 0))
      return _ector_main_count;
 
+   GL.init = 0;
    eina_log_timing(_ector_log_dom_global,
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
