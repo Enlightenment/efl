@@ -2,7 +2,7 @@
  * @file Ecore_Cocoa.h
  *
  * @brief Ecore_Cocoa Wrapper Library to interact with the Cocoa
- * envirnement (Mac OS X) from the E environment
+ * environment (Mac OS X) from the E environment
  *
  */
 #ifndef __ECORE_COCOA_H__
@@ -335,10 +335,21 @@ EAPI void ecore_cocoa_window_size_max_get(const Ecore_Cocoa_Window *window,
                                           int                      *w,
                                           int                      *h);
 
+/**
+ * Set a Cocoa window's resize increment
+ * @param window The Cocoa window which resize increment is to be set
+ * @param w The width size increment
+ * @param h The height size increment
+ */
 EAPI void ecore_cocoa_window_size_step_set(Ecore_Cocoa_Window *window,
                                            int                 w,
                                            int                 h);
-
+/**
+ * Get a Cocoa window's resize increment
+ * @param window The Cocoa window which resize increment queried
+ * @param w The width size increment
+ * @param h The height size increment
+ */
 EAPI void ecore_cocoa_window_size_step_get(const Ecore_Cocoa_Window *window,
                                            int                      *w,
                                            int                      *h);
