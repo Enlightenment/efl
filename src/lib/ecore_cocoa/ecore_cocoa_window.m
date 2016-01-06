@@ -64,7 +64,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
         CRI("Failed to allocate Ecore_Cocoa_Event_Window");
         return;
      }
-   event->wid = [notification object];
+   event->cocoa_window = [notification object];
    ecore_event_add(ECORE_COCOA_EVENT_WINDOW_DESTROY, event, NULL, NULL);
 }
 
@@ -82,7 +82,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
    event->w = size.width;
    event->h = size.height -
       (([self isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
-   event->wid = [notif object];
+   event->cocoa_window = [notif object];
    ecore_event_add(ECORE_COCOA_EVENT_RESIZE, event, NULL, NULL);
 
    /*
@@ -107,7 +107,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
         CRI("Failed to allocate Ecore_Cocoa_Event_Window");
         return;
      }
-   e->wid = [notification object];
+   e->cocoa_window = [notification object];
    ecore_event_add(ECORE_COCOA_EVENT_GOT_FOCUS, e, NULL, NULL);
 }
 
@@ -131,7 +131,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
         CRI("Failed to allocate Ecore_Cocoa_Event_Window");
         return;
      }
-   e->wid = [notification object];
+   e->cocoa_window = [notification object];
    ecore_event_add(ECORE_COCOA_EVENT_LOST_FOCUS, e, NULL, NULL);
 }
 
@@ -588,8 +588,8 @@ ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
    [area release];
 }
 
-EAPI Ecore_Cocoa_Window_Id
-ecore_cocoa_window_get_window_id(const Ecore_Cocoa_Window *window)
+EAPI Ecore_Cocoa_Object *
+ecore_cocoa_window_get(const Ecore_Cocoa_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
    return window->window;

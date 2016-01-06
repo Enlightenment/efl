@@ -162,7 +162,7 @@ _ecore_evas_cocoa_render(Ecore_Evas *ee)
 
 
 static Ecore_Evas *
-_ecore_evas_cocoa_match(Ecore_Cocoa_Window_Id wid)
+_ecore_evas_cocoa_match(Ecore_Cocoa_Object *cocoa_win)
 {
    Eina_List *it;
    Ecore_Evas *ee;
@@ -170,7 +170,7 @@ _ecore_evas_cocoa_match(Ecore_Cocoa_Window_Id wid)
    DBG("");
    EINA_LIST_FOREACH(ecore_evases, it, ee)
      {
-        if (ecore_cocoa_window_get_window_id((Ecore_Cocoa_Window *)ee->prop.window) == wid)
+        if (ecore_cocoa_window_get((Ecore_Cocoa_Window *)ee->prop.window) == cocoa_win)
           return ee;
      }
    return NULL;
@@ -183,7 +183,7 @@ _ecore_evas_cocoa_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, 
    Ecore_Cocoa_Event_Window     *e = event;
    Ecore_Evas                   *ee;
 
-   ee = _ecore_evas_cocoa_match(e->wid);
+   ee = _ecore_evas_cocoa_match(e->cocoa_window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
 
    ee->prop.focused = EINA_TRUE;
@@ -199,7 +199,7 @@ _ecore_evas_cocoa_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSED,
    Ecore_Cocoa_Event_Window     *e = event;
    Ecore_Evas                   *ee;
 
-   ee = _ecore_evas_cocoa_match(e->wid);
+   ee = _ecore_evas_cocoa_match(e->cocoa_window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
 
    evas_focus_out(ee->evas);
@@ -241,10 +241,10 @@ _ecore_evas_cocoa_event_video_resize(void *data EINA_UNUSED, int type EINA_UNUSE
 
    DBG("");
 
-   ee = _ecore_evas_cocoa_match(e->wid);
+   ee = _ecore_evas_cocoa_match(e->cocoa_window);
    if (EINA_UNLIKELY(!ee))
      {
-        ERR("Unregistered Ecore_Evas for window Id %p", e->wid);
+        ERR("Unregistered Ecore_Evas for Cocoa window %p", e->cocoa_window);
         return ECORE_CALLBACK_PASS_ON;
      }
 
@@ -262,13 +262,13 @@ _ecore_evas_cocoa_event_window_destroy(void *data EINA_UNUSED, int type EINA_UNU
 
    DBG("");
 
-   if (!e->wid)
+   if (!e->cocoa_window)
      return ECORE_CALLBACK_PASS_ON;
 
-   ee = _ecore_evas_cocoa_match(e->wid);
+   ee = _ecore_evas_cocoa_match(e->cocoa_window);
    if (!ee)
      {
-        ERR("Unregistered Ecore_Evas for window Id %p", e->wid);
+        ERR("Unregistered Ecore_Evas for Cocoa window %p", e->cocoa_window);
         return ECORE_CALLBACK_PASS_ON;
      }
 

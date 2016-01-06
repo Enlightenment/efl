@@ -55,12 +55,6 @@ typedef struct _Ecore_Cocoa_Window Ecore_Cocoa_Window;
 typedef struct _Ecore_Cocoa_Screen Ecore_Cocoa_Screen;
 
 /**
- * @typedef Ecore_Cocoa_Window_Id
- * Opaque handler to reference the actual Cocoa window
- */
-typedef void * Ecore_Cocoa_Window_Id;
-
-/**
  * @typedef Ecore_Cocoa_Object
  * Opaque handler to refer to an objective-c object (aka id)
  */
@@ -91,13 +85,13 @@ struct _Ecore_Cocoa_Event_Video_Resize
 {
    int             w; /**< Current width of the window */
    int             h; /**< Current height of the window */
-   Ecore_Cocoa_Window_Id wid; /**< Handler of the Cocoa window */
+   Ecore_Cocoa_Object *cocoa_window; /**< Handler of the Cocoa window */
 };
 
 typedef struct _Ecore_Cocoa_Event_Window Ecore_Cocoa_Event_Window;
 struct _Ecore_Cocoa_Event_Window
 {
-   Ecore_Cocoa_Window_Id wid;
+   Ecore_Cocoa_Object *cocoa_window;
 };
 
 /**
@@ -262,7 +256,7 @@ EAPI void ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
 
 EAPI int ecore_cocoa_titlebar_height_get(void);
 
-EAPI Ecore_Cocoa_Window_Id ecore_cocoa_window_get_window_id(const Ecore_Cocoa_Window *window);
+EAPI Ecore_Cocoa_Object *ecore_cocoa_window_get(const Ecore_Cocoa_Window *window);
 
 
 EAPI Eina_Bool ecore_cocoa_selection_clipboard_set(const void *data, int size, Ecore_Cocoa_Cnp_Type type);
