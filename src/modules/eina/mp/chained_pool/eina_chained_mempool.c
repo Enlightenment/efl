@@ -27,8 +27,13 @@
 # include <assert.h>
 #endif
 
-#if defined(EINA_DEBUG_MALLOC) && defined(__linux__)
-# include <malloc.h>
+#ifdef EINA_DEBUG_MALLOC
+# ifdef __linux__
+#  include <malloc.h>
+# endif
+# ifdef __FreeBSD__
+#  include <malloc_np.h>
+# endif
 #endif
 
 #include "eina_config.h"
