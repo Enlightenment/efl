@@ -900,7 +900,7 @@ elm_config_profile_derived_add(const char *profile, const char *derive_options)
    Elm_Config_Derived *derived;
 
    derived = _elm_config_derived_load(_elm_profile);
-   if (!derived) derived = calloc(1, sizeof(derived));
+   if (!derived) derived = calloc(1, sizeof(Elm_Config_Derived));
    if (derived)
      {
         Elm_Config_Derived_Profile *dp = calloc(1, sizeof(Elm_Config_Derived_Profile));
