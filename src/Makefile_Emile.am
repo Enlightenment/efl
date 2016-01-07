@@ -7,13 +7,15 @@ dist_installed_emilemainheaders_DATA = \
 lib/emile/Emile.h \
 lib/emile/emile_cipher.h \
 lib/emile/emile_compress.h \
-lib/emile/emile_image.h
+lib/emile/emile_image.h \
+lib/emile/emile_base64.h
 
 lib_emile_libemile_la_SOURCES = \
 lib/emile/emile_private.h \
 lib/emile/emile_main.c \
 lib/emile/emile_compress.c \
 lib/emile/emile_image.c \
+lib/emile/emile_base64.c \
 static_libs/rg_etc/rg_etc1.c \
 static_libs/rg_etc/rg_etc2.c \
 static_libs/rg_etc/rg_etc1.h \

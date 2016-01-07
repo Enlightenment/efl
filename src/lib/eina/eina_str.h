@@ -382,61 +382,6 @@ EAPI unsigned char *eina_memdup(unsigned char *mem, size_t size, Eina_Bool termi
  */
 EAPI char *eina_strftime(const char *format, const struct tm *tm);
 
-/**
- * @brief base64 encoding function.
- * @param src The string to be encoded.
- * @param len The length of the string that should be encoded.
- * @return the base64 encoded string.
- *
- * This will create a string which is base64 encode of the src. The caller has
- * to free the returned string using free().
- *
- * @since 1.17.0
- */
-EAPI char *eina_str_base64_encode(const unsigned char *src, unsigned int len);
-
-/**
- * @brief base64 url and filename safe encoding function.
- * @param src The string to be encoded.
- * @param len The length of the string that should be encoded.
- * @return the base64 url encoded string.
- *
- * This will create a string which is base64 encoded with url and
- * filename safe alphabet of the src. The caller has to free the
- * returned string using free(). There will be no padding in the
- * encoded string.
- *
- * @since 1.17.0
- */
-EAPI char *eina_str_base64url_encode(const unsigned char *src, unsigned int len);
-
-/**
- * @brief base64 decoding function.
- * @param src The string to be decoded.
- * @param decoded_str_len The length of the decoded string.
- * @return the base64 decoded string.
- *
- * This will create a NULL terminated string which is base64 decode of the src.
- * The caller has to free the returned string using free().
- *
- * @since 1.17.0
- */
-EAPI unsigned char * eina_str_base64_decode(const char * src, int *decoded_str_len);
-
-/**
- * @brief decoding function for base64 url and filename safe encoding.
- * @param src The string to be decoded.
- * @param decoded_str_len The length of the decoded string.
- * @return the base64url decoded string.
- *
- * This will create a NULL terminated string which is base64url
- * decode of the src.
- * The caller has to free the returned string using free().
- *
- * @since 1.17.0
- */
-EAPI unsigned char * eina_str_base64url_decode(const char * src, int *decoded_str_len);
-
 #include "eina_inline_str.x"
 
 /**

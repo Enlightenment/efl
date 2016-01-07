@@ -109,6 +109,7 @@ EAPI int emile_shutdown(void);
 #include "emile_cipher.h"
 #include "emile_compress.h"
 #include "emile_image.h"
+#include "emile_base64.h"
 
 #ifdef __cplusplus
 }
