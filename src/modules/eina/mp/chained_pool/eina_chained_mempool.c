@@ -27,7 +27,7 @@
 # include <assert.h>
 #endif
 
-#ifdef EINA_DEBUG_MALLOC
+#if defined(EINA_DEBUG_MALLOC) && defined(__linux__)
 # include <malloc.h>
 #endif
 
