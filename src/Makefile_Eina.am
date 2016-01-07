@@ -165,7 +165,6 @@ lib/eina/eina_private.h \
 lib/eina/eina_share_common.h \
 lib/eina/eina_strbuf_common.h \
 lib/eina/eina_quaternion.c \
-lib/eina/eina_vector.c \
 lib/eina/eina_bezier.c
 
 if HAVE_WIN32
