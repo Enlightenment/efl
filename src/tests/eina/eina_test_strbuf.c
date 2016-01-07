@@ -526,17 +526,17 @@ START_TEST(strbuf_substr_get)
    eina_strbuf_append(buf, "string");
    substr = eina_strbuf_substr_get(buf, 2, 3);
    str = eina_strbuf_string_get(substr);
-   fail_unless(str || strcmp(str, "rin"));
+   fail_unless(str && !strcmp(str, "rin"));
    eina_strbuf_free(substr);
 
    substr = eina_strbuf_substr_get(buf, 0, 6);
    str = eina_strbuf_string_get(substr);
-   fail_unless(str || strcmp(str, "string"));
+   fail_unless(str && !strcmp(str, "string"));
    eina_strbuf_free(substr);
 
    substr = eina_strbuf_substr_get(buf, 6, 0);
    str = eina_strbuf_string_get(substr);
-   fail_unless(str || strcmp(str, "0"));
+   fail_unless(str && !strcmp(str, ""));
    eina_strbuf_free(substr);
 
    substr = eina_strbuf_substr_get(buf, 6, 1);
@@ -550,9 +550,7 @@ START_TEST(strbuf_substr_get)
    eina_strbuf_free(substr);
 
    substr = eina_strbuf_substr_get(NULL, 0, 7);
-   str = eina_strbuf_string_get(substr);
-   fail_if(str);
-   eina_strbuf_free(substr);
+   fail_if(substr);
 
    eina_strbuf_free(buf);
    eina_shutdown();
