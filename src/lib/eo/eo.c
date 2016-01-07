@@ -1439,9 +1439,10 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
         return NULL;
      }
 
-   eina_spinlock_take(&_eo_class_creation_lock);
-   klass->header.id = ++_eo_classes_last_id | MASK_CLASS_TAG;
      {
+        Eo_Id new_id = ++_eo_classes_last_id | MASK_CLASS_TAG;
+        eina_spinlock_take(&_eo_class_creation_lock);
+
         /* FIXME: Handle errors. */
         size_t arrsize = _eo_classes_last_id * sizeof(*_eo_classes);
         _Eo_Class **tmp;
@@ -1452,9 +1453,12 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
            memset(tmp, 0, arrsize);
 
         _eo_classes = tmp;
-        _eo_classes[_UNMASK_ID(klass->header.id) - 1] = klass;
+        _eo_classes[_UNMASK_ID(new_id) - 1] = klass;
+
+        eina_spinlock_release(&_eo_class_creation_lock);
+
+        klass->header.id = new_id;
      }
-   eina_spinlock_release(&_eo_class_creation_lock);
 
    _eo_class_constructor(klass);
 
