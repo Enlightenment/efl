@@ -987,6 +987,7 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer EINA_UNU
      {
         win->pointer_device = input;
         input->pointer_focus = win;
+        input->touch_focus = win;
 
         if (win->pointer.set)
           {
