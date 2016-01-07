@@ -95,6 +95,7 @@ lib/eina/eina_evlog.h \
 lib/eina/eina_util.h \
 lib/eina/eina_quaternion.h \
 lib/eina/eina_vector.h \
+lib/eina/eina_inline_vector.x \
 lib/eina/eina_bezier.h
 
 lib_eina_libeina_la_SOURCES = \

@@ -263,6 +263,7 @@ extern "C" {
 #include <eina_cow.h>
 #include <eina_thread_queue.h>
 #include <eina_matrix.h>
+#include <eina_vector.h>
 #include <eina_crc.h>
 #include <eina_evlog.h>
 #include <eina_util.h>
