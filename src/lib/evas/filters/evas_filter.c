@@ -72,11 +72,6 @@ evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async)
     * better and implement filters direcly with shaders.
     */
    ctx->gl_engine = (evas->engine.func->gl_surface_read_pixels != NULL);
-   if (ctx->gl_engine)
-     {
-        // FIXME!!!
-        ERR("GL support not fully implemented! Repair work is in progress!");
-     }
    return ctx;
 }
 
