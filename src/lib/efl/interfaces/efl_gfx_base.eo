@@ -9,6 +9,22 @@ enum Efl.Gfx.Render_Op {
   last
 }
 
+enum Efl.Gfx.Color_Type {
+  bits8,     [[Color is encoded in the top 8 bits of the unsigned short as a unsigned char.]]
+  bits16,    [[Color is encoded in the 16 bits as an unsigned char.]]
+  last
+}
+
+struct Efl.Gfx.Color {
+  [[Define an RGBA color.]]
+  r: ushort; [[The red component.]]
+  g: ushort; [[The green component.]]
+  b: ushort; [[The blue component.]]
+  a: ushort; [[The alpha component.]]
+
+  type: Efl.Gfx.Color_Type;
+}
+
 interface Efl.Gfx.Base {
    legacy_prefix: null;
    eo_prefix: efl_gfx;
