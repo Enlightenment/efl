@@ -3998,13 +3998,13 @@ ecore_evas_cocoa_window_get(const Ecore_Evas *ee)
 }
 
 EAPI Ecore_Wl2_Window *
-ecore_evas_wayland_window_get2(const Ecore_Evas *ee)
+ecore_evas_wayland2_window_get(const Ecore_Evas *ee)
 {
    Ecore_Evas_Interface_Wayland *iface;
    iface = (Ecore_Evas_Interface_Wayland *)_ecore_evas_interface_get(ee, "wayland");
    EINA_SAFETY_ON_NULL_RETURN_VAL(iface, NULL);
 
-   return iface->window_get2(ee);
+   return iface->window2_get(ee);
 }
 
 EAPI Ecore_Evas *

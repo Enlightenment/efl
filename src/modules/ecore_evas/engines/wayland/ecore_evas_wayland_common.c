@@ -1561,7 +1561,7 @@ _ecore_evas_wl_interface_new(void)
    iface->move = _ecore_evas_wayland_move;
    /* iface->pointer_set = _ecore_evas_wayland_pointer_set; */
    iface->type_set = _ecore_evas_wayland_type_set;
-   iface->window_get2 = _ecore_evas_wayland_window_get;
+   iface->window2_get = _ecore_evas_wayland_window_get;
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
    iface->pre_post_swap_callback_set = 
