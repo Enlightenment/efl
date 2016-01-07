@@ -663,6 +663,8 @@ EAPI void eina_strbuf_tolower(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
  *
  * This function creates a Eina_Strbuf which is a substring of buf which
  * is passed from pos position with len length.
+ * If buf is NULL then returns NULL.
+ * If len is 0, then an empty strbuf is returned.
  *
  * @since 1.17
  */
