@@ -2180,7 +2180,7 @@ _elm_ee_wlwin_get(const Ecore_Evas *ee)
    if ((!strcmp(engine_name, ELM_WAYLAND_SHM)) ||
        (!strcmp(engine_name, ELM_WAYLAND_EGL)))
      {
-        return ecore_evas_wayland_window_get2(ee);
+        return ecore_evas_wayland2_window_get(ee);
      }
 #else
    (void)ee;

@@ -2944,7 +2944,7 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
         if (!(ee = ecore_evas_ecore_evas_get(evas)))
           return EINA_FALSE;
 
-        parent = ecore_evas_wayland_window_get2(ee);
+        parent = ecore_evas_wayland2_window_get(ee);
      }
 
    ecore_wl2_dnd_drag_start(ecore_wl2_window_input_get(win), parent, win);
@@ -3469,12 +3469,12 @@ _wl_elm_widget_window_get(const Evas_Object *obj)
           {
              ee = ecore_evas_buffer_ecore_evas_parent_get(ee);
              if (!ee) return NULL;
-             win = ecore_evas_wayland_window_get2(ee);
+             win = ecore_evas_wayland2_window_get(ee);
           }
         else if (!strncmp(engine_name, "wayland", sizeof("wayland") - 1))
           {
              /* In case the engine is not a buffer, we want to check once. */
-             win = ecore_evas_wayland_window_get2(ee);
+             win = ecore_evas_wayland2_window_get(ee);
              if (!win) return NULL;
           }
      }
