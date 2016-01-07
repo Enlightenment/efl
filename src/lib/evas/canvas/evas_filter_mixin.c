@@ -15,24 +15,35 @@
 #define FCOW_END(_fcow, _pd) eina_cow_done(evas_object_filter_cow, (const Eina_Cow_Data**)&(_pd->data), _fcow, EINA_TRUE)
 
 typedef struct _Evas_Filter_Data Evas_Filter_Data;
+typedef struct _Evas_Filter_Post_Render_Data Evas_Filter_Post_Render_Data;
+
 struct _Evas_Filter_Data
 {
    const Evas_Object_Filter_Data *data;
+   Eina_Bool has_cb;
+   SLK(lck);
+   Eina_List *post_data;
+};
+
+struct _Evas_Filter_Post_Render_Data
+{
+   Evas_Filter_Context *ctx;
+   Eina_Bool success;
 };
 
 static void
-_filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
+_filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,
+                 Evas_Filter_Data *pd, Eina_Bool success)
 {
-   Eo *eo_obj = data;
-   Evas_Filter_Data *pd = eo_data_scope_get(eo_obj, MY_CLASS);
+   void *previous = pd->data->output;
+   Eo *eo_obj = obj->object;
 
-   // FIXME: This needs to run in the main loop
+#ifdef DEBUG
+   EINA_SAFETY_ON_FALSE_RETURN(eina_main_loop_is());
+#endif
 
-   // Redraw text with normal styles in case of failure
    if (!success)
      {
-        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-
         ERR("Filter failed at runtime!");
         eo_do(eo_obj,
               evas_filter_invalid_set(EINA_TRUE);
@@ -53,7 +64,55 @@ _filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
      }
 
    // Destroy context as we won't reuse it.
+   evas_filter_buffer_backing_release(ctx, previous);
    evas_filter_context_destroy(ctx);
+}
+
+static Eina_Bool
+_render_post_cb(void *data, Eo *evas EINA_UNUSED,
+                const Eo_Event_Description2 *desc EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   Eo *eo_obj = data;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Filter_Data *pd = eo_data_scope_get(eo_obj, MY_CLASS);
+   Eina_List *post_data;
+   Evas_Filter_Post_Render_Data *task;
+
+   SLKL(pd->lck);
+   post_data = pd->post_data;
+   pd->post_data = NULL;
+   SLKU(pd->lck);
+
+   EINA_LIST_FREE(post_data, task)
+     {
+        _filter_end_sync(task->ctx, obj, pd, task->success);
+        free(task);
+     }
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+static void
+_filter_cb(Evas_Filter_Context *ctx, void *data, Eina_Bool success)
+{
+   Eo *eo_obj = data;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Filter_Data *pd = eo_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Filter_Post_Render_Data *post_data;
+
+   if (!pd->data->async)
+     {
+        _filter_end_sync(ctx, obj, pd, success);
+        return;
+     }
+
+   post_data = calloc(1, sizeof(*post_data));
+   post_data->success = success;
+   post_data->ctx = ctx;
+   SLKL(pd->lck);
+   pd->post_data = eina_list_append(pd->post_data, post_data);
+   SLKU(pd->lck);
 }
 
 static void
@@ -97,10 +156,6 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                           int x, int y, Eina_Bool do_async, Eina_Bool alpha)
 {
    Evas_Filter_Data *pd = eo_data_scope_get(eo_obj, MY_CLASS);
-
-   // FIXME: Forcing sync render for all engines! (cb needs the main loop)
-   if (do_async) WRN("Disarding async render flag!");
-   do_async = EINA_FALSE;
 
    if (!pd->data->invalid && (pd->data->chain || pd->data->code))
      {
@@ -206,6 +261,15 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
              if (!redraw)
                {
+                  if (pd->has_cb)
+                    {
+                       // Post render callback is not required anymore
+                       Evas *e = obj->layer->evas->evas;
+                       eo_do(e, eo_event_callback_del(EVAS_CANVAS_EVENT_RENDER_POST,
+                                                      _render_post_cb, eo_obj));
+                       pd->has_cb = EINA_FALSE;
+                    }
+
                   // Render this image only
                   ENFN->image_draw(ENDT, context,
                                    surface, previous,
@@ -251,9 +315,6 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         evas_filter_context_buffers_allocate_all(filter);
         evas_filter_target_set(filter, context, surface, X + x, Y + y);
 
-        // Release previous output
-        evas_filter_buffer_backing_release(filter, previous);
-
         // Request rendering from the object itself (child class)
         evas_filter_program_padding_get(pd->data->chain, &l, &r, &t, &b);
         eo_do(eo_obj, ok = evas_filter_input_render(filter, drawctx, l, r, t, b, do_async));
@@ -262,11 +323,17 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         ENFN->context_free(ENDT, drawctx);
 
         // Add post-run callback and run filter
+        if (do_async && !pd->has_cb)
+          {
+             Evas *e = obj->layer->evas->evas;
+             eo_do(e, eo_event_callback_add(EVAS_CANVAS_EVENT_RENDER_POST,
+                                            _render_post_cb, eo_obj));
+             pd->has_cb = EINA_TRUE;
+          }
         evas_filter_context_post_run_callback_set(filter, _filter_cb, eo_obj);
         ok = evas_filter_run(filter);
 
         fcow = FCOW_BEGIN(pd);
-        fcow->output = NULL;
         fcow->changed = EINA_FALSE;
         fcow->async = do_async;
         if (!ok) fcow->invalid = EINA_TRUE;
@@ -520,6 +587,7 @@ EOLIAN void
 _evas_filter_constructor(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd)
 {
    pd->data = eina_cow_alloc(evas_object_filter_cow);
+   SLKI(pd->lck);
 }
 
 EOLIAN void
@@ -549,6 +617,13 @@ _evas_filter_destructor(Eo *eo_obj, Evas_Filter_Data *pd)
    evas_filter_program_del(pd->data->chain);
    eina_stringshare_del(pd->data->code);
    eina_cow_free(evas_object_filter_cow, (const Eina_Cow_Data **) &pd->data);
+   if (pd->has_cb)
+     {
+        Evas *e = obj->layer->evas->evas;
+        eo_do(e, eo_event_callback_del(EVAS_CANVAS_EVENT_RENDER_POST,
+                                       _render_post_cb, eo_obj));
+     }
+   SLKD(pd->lck);
 }
 
 EOLIAN void

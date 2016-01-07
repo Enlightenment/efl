@@ -61,17 +61,6 @@ evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async)
    ctx->evas = evas;
    ctx->async = async;
 
-   /* Note:
-    * For now, we need to detect whether the engine is full SW or GL.
-    * In case of GL, we will have two buffers in parallel:
-    * RGBA_Image backing and a GL texture (glimage). We can't just leave it
-    * to the engine to handle the image data since it will try to discard the
-    * original buffer as early as possible to save memory, but we still need
-    * it for filtering.
-    * In the future, Evas_Engine functions need to be added to abstract this
-    * better and implement filters direcly with shaders.
-    */
-   ctx->gl_engine = (evas->engine.func->gl_surface_read_pixels != NULL);
    return ctx;
 }
 
@@ -462,14 +451,11 @@ evas_filter_buffer_backing_release(Evas_Filter_Context *ctx,
    if (!stolen_buffer) return EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
 
-   if (ctx->async)
-     evas_unref_queue_image_put(ctx->evas, stolen_buffer);
-   else
-     {
-        ctx->post_run.buffers_to_free =
-              eina_list_append(ctx->post_run.buffers_to_free, stolen_buffer);
-     }
+#ifdef DEBUG
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_main_loop_is(), EINA_FALSE);
+#endif
 
+   ENFN->image_free(ENDT, stolen_buffer);
    return EINA_TRUE;
 }
 
@@ -1286,28 +1272,6 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
      ctx->evas->engine.func->image_free(ctx->evas->engine.data.output, ctx->target.mask);
    ctx->target.mask = mask;
 
-#if 0
-   if (ctx->gl_engine)
-     {
-        // Since GL has sync rendering, draw_context is safe to keep around
-        Evas_Filter_Buffer *fb;
-
-        ctx->target.context = draw_context;
-
-        fb = _filter_buffer_get(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID);
-        EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
-        if (!fb->backing)
-          return EINA_FALSE;
-
-        fb->glimage = ENFN->image_new_from_data
-          (ENDT, fb->w, fb->h, fb->backing->image.data, EINA_TRUE,
-           fb->backing->cache_entry.space);
-
-        XDBG("Set target as #%d (%p) and output #%d (%p, gl %p)",
-            ctx->target.bufid, surface, fb->id, fb->backing, fb->glimage);
-     }
-#endif
-
    return EINA_TRUE;
 }
 
@@ -1326,35 +1290,9 @@ _filter_target_render(Evas_Filter_Context *ctx)
    EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
 
-#if 0
-   if (ctx->gl_engine)
-     {
-        drawctx = ctx->target.context;
-        surface = dst->glimage;
-        if (src->glimage)
-          {
-             XDBG("Using glimage from output buffer.");
-             if (src->backing)
-               ENFN->image_data_put(ENDT, src->glimage, src->backing->image.data);
-          }
-        else
-          {
-             RGBA_Image *im = src->backing;
-
-             XDBG("Creating glimage from output buffer.");
-             src->glimage = ENFN->image_new_from_data(ENDT, src->w, src->h,
-                                               im->image.data, EINA_TRUE,
-                                               EVAS_COLORSPACE_ARGB8888);
-          }
-        image = src->glimage;
-     }
-   else
-#endif
-     {
-        drawctx = ENFN->context_new(ENDT);
-        image = _evas_image_get(src->buffer);
-        surface = _evas_image_get(dst->buffer);
-     }
+   drawctx = ENFN->context_new(ENDT);
+   image = _evas_image_get(src->buffer);
+   surface = _evas_image_get(dst->buffer);
    EINA_SAFETY_ON_NULL_RETURN_VAL(image, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, EINA_FALSE);
 
@@ -1390,16 +1328,7 @@ _filter_target_render(Evas_Filter_Context *ctx)
                     ctx->target.x, ctx->target.y, src->w, src->h,
                     EINA_TRUE, EINA_FALSE);
 
-   if (ctx->target.mask)
-     ENFN->context_clip_image_unset(ENDT, drawctx);
-
-   if (!ctx->gl_engine)
-     ENFN->context_free(ENDT, drawctx);
-   else if (use_clip)
-     ENFN->context_clip_set(ENDT, drawctx, cx, cy, cw, ch);
-   else
-     ENFN->context_clip_unset(ENDT, drawctx);
-
+   ENFN->context_free(ENDT, drawctx);
    return EINA_TRUE;
 }
 
@@ -1639,9 +1568,6 @@ end:
    ctx->running = EINA_FALSE;
    DEBUG_TIME_END();
 
-   EINA_LIST_FREE(ctx->post_run.buffers_to_free, buffer)
-     ENFN->image_free(ENDT, buffer);
-
    return ok;
 }
 
@@ -1668,9 +1594,9 @@ evas_filter_run(Evas_Filter_Context *ctx)
    if (!ctx->commands)
      return EINA_TRUE;
 
-   if (ctx->gl_engine && !warned)
+   if (ENFN->gl_surface_read_pixels && !warned)
      {
-        DBG("OpenGL support through SW functions, expect low performance!");
+        WRN("OpenGL support through SW functions, expect low performance!");
         warned = 1;
      }
 

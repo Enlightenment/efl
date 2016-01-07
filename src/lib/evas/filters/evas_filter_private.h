@@ -126,7 +126,6 @@ struct _Evas_Filter_Context
       /** Post-processing callback. The context can be safely destroyed here. */
       Evas_Filter_Cb cb;
       void *data;
-      Eina_List *buffers_to_free; // Some buffers should be queued for deletion
    } post_run;
 
    struct
@@ -143,7 +142,6 @@ struct _Evas_Filter_Context
    } target;
 
    Eina_Bool async : 1;
-   Eina_Bool gl_engine : 1;
    Eina_Bool running : 1;
    Eina_Bool has_proxies : 1;
 };
