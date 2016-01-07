@@ -14,20 +14,20 @@ _evas_xcb_image_update(void *data EINA_UNUSED, void *image, int x, int y, int w,
    im = image;
    n = im->native.data;
 
-   if (ecore_x_image_get(n->ns_data.x11->exim, n->ns_data.x11->pixmap, 0, 0, x, y, w, h))
+   if (ecore_x_image_get(n->ns_data.x11.exim, n->ns_data.x11.pixmap, 0, 0, x, y, w, h))
      {
         char *pix;
         int bpl, rows, bpp;
 
-        pix = ecore_x_image_data_get(n->ns_data.x11->exim, &bpl, &rows, &bpp);
-        if (!ecore_x_image_is_argb32_get(n->ns_data.x11->exim))
+        pix = ecore_x_image_data_get(n->ns_data.x11.exim, &bpl, &rows, &bpp);
+        if (!ecore_x_image_is_argb32_get(n->ns_data.x11.exim))
           {
              Ecore_X_Colormap colormap;
 
              if (!im->image.data)
                im->image.data = (DATA32 *)malloc(im->cache_entry.w * im->cache_entry.h * sizeof(DATA32));
              colormap = ecore_x_default_colormap_get(ecore_x_display_get(), ecore_x_default_screen_get());
-             ecore_x_image_to_argb_convert(pix, bpp, bpl, colormap, n->ns_data.x11->visual,
+             ecore_x_image_to_argb_convert(pix, bpp, bpl, colormap, n->ns_data.x11.visual,
                                            x, y, w, h, im->image.data, 
                                            (w * sizeof(int)), 0, 0);
           }
@@ -58,12 +58,12 @@ _native_cb_free(void *data EINA_UNUSED, void *image)
    im = image;
    n = im->native.data;
 
-   if (n->ns_data.x11->exim)
+   if (n->ns_data.x11.exim)
      {
-        ecore_x_image_free(n->ns_data.x11->exim);
-        n->ns_data.x11->exim = NULL;
+        ecore_x_image_free(n->ns_data.x11.exim);
+        n->ns_data.x11.exim = NULL;
      }
-   n->ns_data.x11->visual = NULL;
+   n->ns_data.x11.visual = NULL;
 
    im->native.data = NULL;
    im->native.func.data = NULL;
@@ -110,9 +110,9 @@ evas_xcb_image_native_set(void *data, void *image, void *native)
           }
 
         memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
-        n->ns_data.x11->pixmap = pm;
-        n->ns_data.x11->visual = vis;
-        n->ns_data.x11->exim = exim;
+        n->ns_data.x11.pixmap = pm;
+        n->ns_data.x11.visual = vis;
+        n->ns_data.x11.exim = exim;
 
         im->native.data = n;
         im->native.func.data = NULL;
