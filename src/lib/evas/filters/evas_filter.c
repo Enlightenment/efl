@@ -1676,7 +1676,7 @@ evas_filter_run(Evas_Filter_Context *ctx)
 
    if (ctx->async)
      {
-        evas_thread_cmd_enqueue(_filter_thread_run_cb, ctx);
+        evas_thread_queue_flush(_filter_thread_run_cb, ctx);
         return EINA_TRUE;
      }
 
