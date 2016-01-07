@@ -5566,7 +5566,7 @@ if test -n "$CFOPT_WARNING"; then
   echo "_____________________________________________________________________"
   if test -n "$BARF_OK"; then
     echo "Please add the following option to acknowledge this:"
-    echo "  --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba"
+    echo "  --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb"
     echo "_____________________________________________________________________"
     rm -f Makefile
     exit 1
