@@ -1366,6 +1366,14 @@ _ecore_wl2_input_cursor_update_stop(Ecore_Wl2_Input *input)
 }
 
 EAPI void
+ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, unsigned int button)
+{
+   EINA_SAFETY_ON_NULL_RETURN(input);
+
+   _ecore_wl2_input_grab(input, window, button);
+}
+
+EAPI void
 ecore_wl2_input_ungrab(Ecore_Wl2_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN(input);

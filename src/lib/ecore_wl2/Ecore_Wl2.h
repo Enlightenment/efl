@@ -782,6 +782,10 @@ EAPI Ecore_Wl2_Input *ecore_wl2_window_input_get(Ecore_Wl2_Window *window);
 
 /* TODO: doxy */
 /** @since 1.17 */
+EAPI void ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, unsigned int button);
+
+/* TODO: doxy */
+/** @since 1.17 */
 EAPI void ecore_wl2_input_ungrab(Ecore_Wl2_Input *input);
 
 /* TODO: doxy */
