@@ -117,9 +117,7 @@ _ecore_drm_device_cached_context_get(enum xkb_context_flags flags)
 }
 
 struct xkb_keymap *
-_ecore_drm_device_cached_keymap_get(struct xkb_context *ctx,
-                       const struct xkb_rule_names *names,
-                       enum xkb_keymap_compile_flags flags)
+_ecore_drm_device_cached_keymap_get(struct xkb_context *ctx, const struct xkb_rule_names *names, enum xkb_keymap_compile_flags flags)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
 
