@@ -54,12 +54,12 @@ EAPI void register_timer(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 namespace con {
 EAPI void register_base(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_client(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_connector(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_server(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 }
 }
 
 namespace efl { namespace network {
+EAPI void register_connector(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_url(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 }}
 
@@ -167,7 +167,7 @@ EAPI void init(v8::Handle<v8::Object> exports)
         ecore::register_timer(exports, v8::Isolate::GetCurrent());
         ecore::con::register_base(exports, v8::Isolate::GetCurrent());
         ecore::con::register_client(exports, v8::Isolate::GetCurrent());
-        ecore::con::register_connector(exports, v8::Isolate::GetCurrent());
+        efl::network::register_connector(exports, v8::Isolate::GetCurrent());
         ecore::con::register_server(exports, v8::Isolate::GetCurrent());
         efl::network::register_url(exports, v8::Isolate::GetCurrent());
 #if 1
