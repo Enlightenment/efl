@@ -169,7 +169,7 @@ _smart_extents_non_homogeneous_calc(Evas_Object_Box_Data *priv, int w, int h, in
 
         if (do_aspect && aspect)
           {
-             int ww, hh, fw, fh;
+             int ww, hh, fw = 0, fh = 0;
              double wx, wy, ax, ay;
 
              evas_object_size_hint_weight_get(opt->obj, &wx, &wy);
