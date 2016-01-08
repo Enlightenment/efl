@@ -1339,6 +1339,7 @@ convex_hull_vertex_set(Evas_Triangle3 *el, unsigned short int *vertex_count, flo
         vect = el->p2;
         break;
      }
+
    (*vertex_count)++;
    *vertex = (float*) realloc(*vertex, (10 * (*vertex_count)) * sizeof(float));
 
@@ -1805,11 +1806,11 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
 
 #define CHECK_AND_SET_VERTEX(coord)                                                   \
   exist1 = EINA_FALSE;                                                                \
-  for (i = 0, new_stride = 0; (i < vertex_count) && !exist1; i++, new_stride += 10)  \
+  for (i = 0, new_stride = 0; (i < vertex_count) && !exist1; i++, new_stride += 10)   \
      {                                                                                \
-        if ((k > 0) && (el->p##coord.x == found_vertex[new_stride]) &&                \
-            (el->p##coord.y == found_vertex[new_stride + 1]) &&                       \
-            (el->p##coord.z == found_vertex[new_stride + 2]))                         \
+        if ((k > 0) && !FLT_COMPARISON(el->p##coord.x, found_vertex[new_stride]) &&   \
+            !FLT_COMPARISON(el->p##coord.y, found_vertex[new_stride + 1]) &&          \
+            !FLT_COMPARISON(el->p##coord.z, found_vertex[new_stride + 2]))            \
           {                                                                           \
              exist1 = EINA_TRUE;                                                      \
              found_index[3 * k + coord] = i;                                          \
