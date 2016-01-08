@@ -17,7 +17,7 @@ menu_it = menu.itemAdd(null, "mail-reply-all", "second intem", null, null);
 
 menu.itemAdd(menu_it, "object-rotate-left", "menu 1", null, null);
 button = new elm.Elm.Button(win);
-button.textSet("elm.text", "button - delete items");
+button.setText("elm.text", "button - delete items");
 menu_it1 = menu.itemAdd(menu_it, null, null, null, null);
 menu_it1.setPartContent(null, button);
 
@@ -32,6 +32,6 @@ menu_it = menu.itemAdd(null, null, "third item", null, null);
 menu_it.setDisabled(true);
 
 menu.setVisible(true);
-rect.on('mouse_down', function(){menu.visible_set(true)});
+rect.on('mouse_down', function(){menu.setVisible(true)});
 win.setSize(250, 350);
 win.setVisible(true);

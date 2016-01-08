@@ -2,7 +2,7 @@ efl = require('efl');
 elm = require('elm');
 
 _btn_options_cb = function(_btn) {
-     var text = _btn.textGet("elm.text");
+     var text = _btn.getText("elm.text");
      var lbl = text.split(": ");
 
      var t = parseFloat(lbl[1]);

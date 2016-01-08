@@ -78,13 +78,13 @@ sp7.setEditable(true);
 sp7.on('changed',
   function(obj)
   {
-      console.log("Value changed to " + obj.value_get());
+      console.log("Value changed to " + obj.getValue());
   });
 
 sp7.on('delay_changed',
   function(obj)
   {
-      console.log("Value delay changed to " + obj.value_get());
+      console.log("Value delay changed to " + obj.getValue());
   });
 
 win.setVisible(true);

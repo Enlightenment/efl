@@ -20,7 +20,7 @@ sl.setVisible(true);
 
 /* with icon, end and label */
 sl = new elm.Elm.Slider(win);
-sl.textSet("elm.text", "Counter");
+sl.setText("elm.text", "Counter");
 
 ic = new elm.Elm.Icon(win);
 ic.setStandard("home");
@@ -91,14 +91,14 @@ sl.setVisible(true);
 
 sl.on('changed', function(obj)
                   {
-                     val = obj.value_get();
+                     val = obj.getValue();
                      console.log("Changed to " + val);
                   });
 
 sl.on('delay_changed', function(obj)
                  {
-                    val = obj.value_get();
-                    console.log("Delay changed to " + val);
+                     val = obj.getValue();
+                     console.log("Delay changed to " + val);
                  });
 
 win.setVisible(true);

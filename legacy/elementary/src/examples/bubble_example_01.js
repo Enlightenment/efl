@@ -35,9 +35,9 @@ bubble1.on('clicked',
   {
       ++corner;
       if (corner > 3)
-          bubble1.pos_set(corner = 0);
+          bubble1.setPos(corner = 0);
       else
-          bubble1.pos_set(corner);
+          bubble1.setPos(corner);
   });
 
 label2 = new elm.Elm.Label(win);
