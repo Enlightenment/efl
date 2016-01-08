@@ -353,6 +353,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal
         if (*rwy > 0.0) expand += *rwy;
      }
    _smart_extents_calculate(o, priv, w, h, expand, horizontal, homogeneous);
+   evas_object_geometry_get(o, &x, &y, &w, &h);
 
    evas_object_size_hint_min_get(o, &minw, &minh);
    evas_object_box_align_get(o, &ax, &ay);
