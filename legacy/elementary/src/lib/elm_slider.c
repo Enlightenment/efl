@@ -325,6 +325,7 @@ _popup_show(void *data,
         edje_object_signal_emit(sd->popup, "popup,show", "elm"); // XXX: for compat
         edje_object_signal_emit(sd->popup, "elm,popup,show", "elm");
      }
+   ELM_SAFE_FREE(sd->wheel_indicator_timer, ecore_timer_del);
 }
 
 static void
@@ -412,6 +413,16 @@ _key_action_drag(Evas_Object *obj, const char *params)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_wheel_indicator_timer_cb(void *data)
+{
+   ELM_SLIDER_DATA_GET(data, sd);
+   sd->wheel_indicator_timer = NULL;
+
+   _popup_hide(data, NULL, NULL, NULL);
+   return ECORE_CALLBACK_CANCEL;
+}
+
 EOLIAN static Eina_Bool
 _elm_slider_elm_widget_event(Eo *obj, Elm_Slider_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
 {
@@ -439,6 +450,12 @@ _elm_slider_elm_widget_event(Eo *obj, Elm_Slider_Data *sd EINA_UNUSED, Evas_Obje
         if (mev->z < 0) _drag_up(obj, NULL, NULL, NULL);
         else _drag_down(obj, NULL, NULL, NULL);
         mev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        _popup_show(obj, NULL, NULL, NULL);
+        _slider_update(obj, EINA_TRUE);
+        sd->wheel_indicator_timer =
+           ecore_timer_add(0.5, _wheel_indicator_timer_cb, obj);
+        return EINA_TRUE;
+
      }
    else return EINA_FALSE;
 
@@ -857,6 +874,8 @@ _elm_slider_evas_object_smart_add(Eo *obj, Elm_Slider_Data *priv)
    priv->indicator_show = EINA_TRUE;
    priv->indicator_visible_mode = elm_config_slider_indicator_visible_mode_get();
    priv->val_max = 1.0;
+   //TODO: customize this time duration from api or theme data.
+   priv->wheel_indicator_duration = 0.25;
    priv->step = SLIDER_STEP;
 
    if (!elm_layout_theme_set

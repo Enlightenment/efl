@@ -40,6 +40,8 @@ struct _Elm_Slider_Data
 
    double                val, val_min, val_max, val2, step;
 
+   Ecore_Timer           *wheel_indicator_timer;
+   double                wheel_indicator_duration;
    Elm_Slider_Indicator_Visible_Mode indicator_visible_mode; /**< indicator_visible_mode of the slider.
                                                                 This indicates when to show an indicator */
 
