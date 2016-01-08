@@ -421,6 +421,7 @@ _activate(Evas_Object *obj)
    sd->expanded = EINA_TRUE;
 
    if (elm_widget_disabled_get(obj)) return;
+   if (!sd->items) return;
 
    sd->hover = elm_hover_add(sd->hover_parent);
    elm_widget_sub_object_add(obj, sd->hover);
@@ -793,7 +794,6 @@ _elm_hoversel_item_add(Eo *obj, Elm_Hoversel_Data *sd, const char *label, const 
    else
      snprintf(buf, sizeof(buf), "hoversel_vertical_entry/%s",
               elm_widget_style_get(obj));
-
 
    VIEW(item) = bt = elm_button_add(obj);
    elm_widget_mirrored_set(bt, elm_widget_mirrored_get(obj));
