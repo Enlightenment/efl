@@ -2700,6 +2700,12 @@ _edje_entry_real_part_shutdown(Edje *ed, Edje_Real_Part *rp)
    evas_object_del(en->cursor_fg);
    evas_object_del(en->cursor_fg2);
 
+   if (en->cursor_user)
+     evas_textblock_cursor_free(en->cursor_user);
+
+   if (en->cursor_user_extra)
+     evas_textblock_cursor_free(en->cursor_user_extra);
+
    if (en->pw_timer)
      {
         ecore_timer_del(en->pw_timer);
