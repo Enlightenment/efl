@@ -237,6 +237,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
    }
    events {
       dismissed;
+      geometry,update;
    }
 
 }

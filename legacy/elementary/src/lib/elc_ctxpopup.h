@@ -31,6 +31,9 @@
  * changed.
  * - @c "focused" - When the ctxpopup has received focus. (since 1.8)
  * - @c "unfocused" - When the ctxpopup has lost focus. (since 1.8)
+ * - @c "geometry,update" - When the ctxpopup geometry is updated. This smart event passes the ctxpopup geometry information with the given event_info argument which type is Evas_Coord_Rectangle. (since 1.18)
+
+ *
  * Default content parts of the ctxpopup widget that you can use for are:
  * @li "default" - A content of the ctxpopup
  *

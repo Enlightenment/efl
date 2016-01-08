@@ -20,6 +20,8 @@ EAPI const char ELM_CTXPOPUP_SMART_NAME[] = "elm_ctxpopup";
 
 #define ELM_PRIV_CTXPOPUP_SIGNALS(cmd) \
    cmd(SIG_DISMISSED, "dismissed", "") \
+   cmd(SIG_GEOMETRY_UPDATE, "geometry,update", "") \
+
 
 ELM_PRIV_CTXPOPUP_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
@@ -672,6 +674,8 @@ _elm_ctxpopup_elm_layout_sizing_eval(Eo *obj, Elm_Ctxpopup_Data *sd)
    evas_object_resize(wd->resize_obj, rect.w, rect.h);
 
    _show_signals_emit(obj, sd->dir);
+
+   eo_do(obj, eo_event_callback_call(ELM_CTXPOPUP_EVENT_GEOMETRY_UPDATE, &rect));
 }
 
 static void

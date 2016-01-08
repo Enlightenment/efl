@@ -72,6 +72,13 @@ _ctxpopup_item_new(Evas_Object *obj, const char *label, const char *icon)
 }
 
 static void
+_geometry_update(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Evas_Coord_Rectangle *geom = event_info;
+   printf("ctxpopup geometry(%d %d %d %d)\n", geom->x, geom->y, geom->w, geom->h);
+}
+
+static void
 _list_item_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *ctxpopup;
@@ -82,6 +89,7 @@ _list_item_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UN
 
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
+   evas_object_smart_callback_add(ctxpopup, "geometry,update", _geometry_update, NULL);
 
    _ctxpopup_item_new(ctxpopup, "Go to home folder", "home");
    _ctxpopup_item_new(ctxpopup, "Save file", "file");
@@ -110,6 +118,7 @@ _list_item_cb2(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
 
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
+   evas_object_smart_callback_add(ctxpopup, "geometry,update", _geometry_update, NULL);
 
    _ctxpopup_item_new(ctxpopup, NULL, "home");
    _ctxpopup_item_new(ctxpopup, NULL, "file");
@@ -137,6 +146,7 @@ _list_item_cb3(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
 
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
+   evas_object_smart_callback_add(ctxpopup, "geometry,update", _geometry_update, NULL);
 
    _ctxpopup_item_new(ctxpopup, "Eina", NULL);
    _ctxpopup_item_new(ctxpopup, "Eet", NULL);
@@ -162,6 +172,7 @@ _list_item_cb4(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
 
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
+   evas_object_smart_callback_add(ctxpopup, "geometry,update", _geometry_update, NULL);
 
    elm_ctxpopup_horizontal_set(ctxpopup, EINA_TRUE);
 
@@ -206,6 +217,7 @@ _list_item_cb5(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
 
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
+   evas_object_smart_callback_add(ctxpopup, "geometry,update", _geometry_update, NULL);
 
    elm_object_content_set(ctxpopup, bx);
 
@@ -273,6 +285,7 @@ _list_item_cb6(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
 
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
+   evas_object_smart_callback_add(ctxpopup, "geometry,update", _geometry_update, NULL);
 
    elm_object_content_set(ctxpopup, bx);
 
@@ -312,6 +325,7 @@ _list_item_cb7(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
    if (list_mouse_down > 0) return;
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
+   evas_object_smart_callback_add(ctxpopup, "geometry,update", _geometry_update, NULL);
 
    elm_ctxpopup_item_append(ctxpopup, "Disable this item", NULL, _ctxpopup_item_disable_cb, ctxpopup);
    elm_ctxpopup_item_append(ctxpopup, "Delete this ctxpopup", NULL, _ctxpopup_item_delete_cb, ctxpopup);
@@ -335,6 +349,8 @@ _list_item_cb8(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
 
    ctxpopup = elm_ctxpopup_add(obj);
    evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
+   evas_object_smart_callback_add(ctxpopup, "geometry,update", _geometry_update, NULL);
+
    elm_ctxpopup_auto_hide_disabled_set(ctxpopup, EINA_TRUE);
 
    _ctxpopup_item_new(ctxpopup, "Go to home folder", "home");
