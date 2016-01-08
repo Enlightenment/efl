@@ -120,6 +120,7 @@ _table_resize(void *data)
      {
         int hover_parent_w, hover_parent_h, obj_h, obj_w, obj_y, win_y_offset;
         int current_height, h;
+        const char *best_location;
         sd->item = elm_genlist_first_item_get(sd->genlist);
         elm_genlist_item_selected_set(sd->item, EINA_TRUE);
         //FIXME:- the height of item is zero, sometimes.
@@ -131,11 +132,12 @@ _table_resize(void *data)
         evas_object_geometry_get(sd->hover_parent, NULL, NULL, &hover_parent_w,
                                  &hover_parent_h);
         current_height = sd->item_height * sd->count;
-        if (!strcmp(elm_hover_best_content_location_get(sd->hover,
-                                                       ELM_HOVER_AXIS_VERTICAL),
-                                                       "bottom"))
+        best_location = elm_hover_best_content_location_get(sd->hover,
+                                                       ELM_HOVER_AXIS_VERTICAL);
+        if (best_location && !strcmp(best_location , "bottom"))
           win_y_offset = hover_parent_h - obj_y - obj_h;
         else win_y_offset = obj_y;
+
         if (current_height < win_y_offset)
           evas_object_size_hint_min_set(sd->spacer, obj_w * elm_config_scale_get(),
                                         current_height + (2 * elm_config_scale_get()));
@@ -152,6 +154,9 @@ _activate(Evas_Object *obj)
    sd->expanded = EINA_TRUE;
    eo_do(obj, eo_event_callback_call(ELM_COMBOBOX_EVENT_EXPANDED, NULL));
    _table_resize(obj);
+   elm_object_part_content_set(sd->hover, elm_hover_best_content_location_get
+                               (sd->hover, ELM_HOVER_AXIS_VERTICAL), sd->tbl);
+   evas_object_show(sd->genlist);
    evas_object_show(sd->hover);
 }
 
@@ -294,7 +299,6 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
    evas_object_size_hint_align_set(sd->spacer, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_color_set(sd->spacer, 0, 0, 0, 0);
    elm_table_pack(sd->tbl, sd->spacer, 0, 0, 1, 1);
-   evas_object_show(sd->tbl);
 
    // This is the genlist object that will take over the genlist call
    sd->genlist = gl = eo_add(ELM_GENLIST_CLASS, obj);
@@ -307,8 +311,8 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
    eo_do(gl, eo_event_callback_add(ELM_GENLIST_EVENT_FILTER_DONE,
          _gl_filter_finished_cb, obj));
    elm_genlist_homogeneous_set(gl, EINA_TRUE);
+   elm_genlist_mode_set(gl, ELM_LIST_COMPRESS);
    elm_table_pack(sd->tbl, gl, 0, 0, 1, 1);
-   evas_object_show(sd->genlist);
 
    // This is the entry object that will take over the entry call
    sd->entry = entry = eo_add(ELM_ENTRY_CLASS, obj);
@@ -327,8 +331,6 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
    snprintf(buf, sizeof(buf), "combobox_vertical/%s", elm_widget_style_get(obj));
    elm_object_style_set(sd->hover, buf);
    evas_object_smart_callback_add(sd->hover, "clicked", _on_hover_clicked, obj);
-   elm_object_part_content_set(sd->hover, elm_hover_best_content_location_get
-                               (sd->hover, ELM_HOVER_AXIS_VERTICAL), sd->tbl);
    eo_do(obj,
          eo_composite_attach(gl),
          eo_composite_attach(entry));
