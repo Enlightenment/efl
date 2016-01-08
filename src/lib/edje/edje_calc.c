@@ -3058,6 +3058,23 @@ _edje_table_recalc_apply(Edje *ed EINA_UNUSED,
 }
 
 static void
+_edje_group_recalc_apply(Edje *ed,
+                         Edje_Real_Part *ep,
+                         Edje_Calc_Params *p3 EINA_UNUSED,
+                         Edje_Part_Description_Common *chosen_desc EINA_UNUSED)
+{
+   Edje_Object *obj = ep->typedata.swallow->swallowed_object;
+
+   edje_object_mirrored_set(obj, edje_object_mirrored_get(ed->obj));
+   if (evas_object_smart_need_recalculate_get(obj))
+     {
+        eo_do(obj,
+              evas_obj_smart_need_recalculate_set(0),
+              evas_obj_smart_calculate());
+     }
+}
+
+static void
 _edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description_Proxy *chosen_desc, FLOAT_T pos)
 {
    Edje_Real_Part *pp;
@@ -4685,10 +4702,13 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              _edje_textblock_recalc_apply(ed, ep, pf, (Edje_Part_Description_Text *)chosen_desc);
              break;
 
+           case EDJE_PART_TYPE_GROUP:
+             _edje_group_recalc_apply(ed, ep, pf, chosen_desc);
+             break;
+
            case EDJE_PART_TYPE_EXTERNAL:
            case EDJE_PART_TYPE_RECTANGLE:
            case EDJE_PART_TYPE_SWALLOW:
-           case EDJE_PART_TYPE_GROUP:
              /* Nothing special to do for this type of object. */
              break;
 
