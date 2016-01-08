@@ -102,6 +102,19 @@ START_TEST(strbuf_manage_simple)
 
    eina_strbuf_free(buf);
 
+   buf = eina_strbuf_manage_read_only_new_length(TEST_TEXT, strlen(TEST_TEXT));
+   fail_if(!buf);
+
+   fail_if(strcmp(eina_strbuf_string_get(buf), TEST_TEXT));
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   eina_strbuf_append(buf, TEST_TEXT);
+   fail_if(strcmp(eina_strbuf_string_get(buf), TEST_TEXT TEST_TEXT));
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   txt = eina_strbuf_string_steal(buf);
+   fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
+   fail_if(strcmp(txt, TEST_TEXT TEST_TEXT));
+   free(txt);
+
    eina_shutdown();
 #undef TEST_TEXT
 }
