@@ -989,16 +989,13 @@ _edje_object_color_class_description_get(Eo *obj EINA_UNUSED, Edje *ed, const ch
    return cc ? cc->desc : NULL;
 }
 
-void
-edje_object_color_class_del(Evas_Object *obj, const char *color_class)
+EOLIAN void
+_edje_object_color_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class)
 {
-   Edje *ed;
    Edje_Color_Class *cc = NULL;
    unsigned int i;
 
-   ed = _edje_fetch(obj);
-
-   if ((!ed) || (!color_class)) return;
+   if (!color_class) return;
 
    eina_hash_del(ed->color_classes, color_class, cc);
 
@@ -1226,7 +1223,7 @@ edje_text_class_get(const char *text_class, const char **font, Evas_Font_Size *s
    return EINA_TRUE;
 }
 
-void
+EAPI void
 edje_text_class_del(const char *text_class)
 {
    Edje_Text_Class *tc;
@@ -1449,16 +1446,13 @@ _edje_object_text_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *text_clas
    return EINA_TRUE;
 }
 
-EAPI void
-edje_object_text_class_del(Evas_Object *obj, const char *text_class)
+EOLIAN void
+_edje_object_text_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class)
 {
-   Edje *ed;
    Edje_Text_Class *tc = NULL;
    unsigned int i;
 
-   ed = _edje_fetch(obj);
-
-   if ((!ed) || (!text_class)) return;
+   if (!text_class) return;
 
    eina_hash_del(ed->text_classes, text_class, tc);
 
@@ -1646,7 +1640,7 @@ edje_size_class_get(const char *size_class, Evas_Coord *minw, Evas_Coord *minh, 
    return EINA_TRUE;
 }
 
-void
+EAPI void
 edje_size_class_del(const char *size_class)
 {
    Edje_Size_Class *sc;
@@ -1867,16 +1861,13 @@ _edje_object_size_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *size_clas
    return EINA_TRUE;
 }
 
-EAPI void
-edje_object_size_class_del(Evas_Object *obj, const char *size_class)
+EOLIAN void
+_edje_object_size_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *size_class)
 {
-   Edje *ed;
    Edje_Size_Class *sc = NULL;
    unsigned int i;
 
-   ed = _edje_fetch(obj);
-
-   if ((!ed) || (!size_class)) return;
+   if (!size_class) return;
 
    eina_hash_del(ed->size_classes, size_class, sc);
 

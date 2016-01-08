@@ -1835,6 +1835,21 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             @out size: Evas.Font.Size; [[Font Size]]
          }
       }
+      text_class_del {
+         [[Delete the object text class.
+
+           This function deletes any values at the object level for the
+           specified object and text class.
+
+           Deleting the text class will revert it to the values
+           defined by edje_text_class_set() or the text class
+           defined in the theme file.
+
+           @since 1.17]]
+         params {
+            @in text_class: const(char)*; [[The color class to be deleted.]]
+         }
+      }
       color_class_set {
          [[Sets the object color class.
 
@@ -1916,12 +1931,30 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
            @since 1.17.0]]
          return: bool; [[$true, on success or $false, on error]]
       }
+      color_class_del {
+         [[Delete the object color class.
+
+           This function deletes any values at the object level for the
+           specified object and color class.
+
+           Deleting the color class will revert it to the values
+           defined by edje_color_class_set() or the color class
+           defined in the theme file.
+
+           Deleting the color class will emit the signal "color_class,del"
+           for the given Edje object.]]
+         params {
+            @in color_class: const(char)*; [[The color class to be deleted.]]
+         }
+      }
       size_class_set {
          [[Sets the object size class.
 
            This function sets the min and max values for an object level size
            class. This will make all edje parts in the specified object that
-           have the specified size class update their min and max size with given values.]]
+           have the specified size class update their min and max size with given values.
+
+           @since 1.17]]
          return: bool; [[$true, on success or $false, on error]]
          params {
             @in size_class: const(char)*; [[The size class name]]
@@ -1936,7 +1969,9 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
            This function gets the min and max values for an object level size
            class. These values will only be valid until the size class is changed
-           or the edje object is deleted.]]
+           or the edje object is deleted.
+
+           @since 1.17]]
          return: bool; [[$true, on success or $false, on error]]
          params {
             @in size_class: const(char)*; [[The size class name]]
@@ -1944,6 +1979,21 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             @out minh: int; [[The min height]]
             @out maxw: int; [[The max width]]
             @out maxh: int; [[The max height]]
+         }
+      }
+      size_class_del {
+         [[Delete the object size class.
+
+	   This function deletes any values at the object level for the
+           specified object and size class.
+
+           Deleting the size class will revert it to the values
+           defined by edje_size_class_set() or the color class
+           defined in the theme file.
+
+           @since 1.17]]
+         params {
+            @in size_class: const(char)*;
          }
       }
       part_drag_step {
