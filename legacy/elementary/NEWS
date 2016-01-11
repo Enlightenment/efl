@@ -33,6 +33,7 @@ Features:
    * elm config - allow the ability to save out to another hidden profile
    * elm config - add function to check if profile exists
    * elm config - add the ability to have derived configurations from others
+   * ctxpopup: add geometry,update smart callback. (T2042)
 
 Fixes:
 
@@ -75,6 +76,14 @@ Fixes:
    * elm wl cnp - fix paste to not crash anymore
    * elm config - monitor JUST the correct files for profile and cfg change
    * elementary: Fix elementary not compiling
+   * sys_notify: fix shutdown of elm_sys_notify
+   * segment_control: check item disable (T2883)
+   * elementary_test: remove wrong usage of EINA_UNUSED.
+   * layout: do not unset max size hint during sizing eval
+   * hide indicator after mouse wheel activation. (T2348)
+   * combobox: fix recalc and hover's best_location error
+   * js: fix examples functions
+   * elm entry: check for null return from eina_rectangle_new
 
 Changes since 1.15.0:
 ---------------------
