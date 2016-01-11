@@ -310,7 +310,7 @@ eldbus_model_arguments_process_arguments(Eldbus_Model_Arguments_Data *pd,
      {
         if (ELDBUS_INTROSPECTION_ARGUMENT_DIRECTION_IN != argument->direction)
           {
-             const Eina_Stringshare *property;
+             Eina_Stringshare *property;
              Eina_Bool ret;
 
              property = eina_array_data_get(pd->properties_array, i);
@@ -401,7 +401,7 @@ _eldbus_model_arguments_is_output_argument(Eldbus_Model_Arguments_Data *pd, cons
 static unsigned int
 _eldbus_model_arguments_argument_index_get(Eldbus_Model_Arguments_Data *pd, const char *argument)
 {
-   const Eina_Stringshare *name;
+   Eina_Stringshare *name;
    Eina_Array_Iterator it;
    unsigned int i = 0;
 

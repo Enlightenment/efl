@@ -53,7 +53,7 @@ _eldbus_model_method_call(Eo *obj EINA_UNUSED, Eldbus_Model_Method_Data *pd EINA
 
    EINA_LIST_FOREACH(data->arguments, it, argument)
      {
-        const Eina_Stringshare *name;
+        Eina_Stringshare *name;
         const Eina_Value *value;
         const char *signature;
         Eina_Bool ret;
