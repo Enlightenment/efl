@@ -579,7 +579,6 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
       overlay,clicked;
       overlay,del;
       language,changed;
-      access,changed;
    }
 
 }

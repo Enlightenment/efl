@@ -428,7 +428,6 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       changed;
       display,changed;
       language,changed;
-      access,changed;
    }
 
 }

@@ -182,7 +182,6 @@ class Elm.Glview (Elm.Widget)
    }
    events {
       language,changed;
-      access,changed;
    }
    constructors {
       .version_constructor;

@@ -251,7 +251,6 @@ class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface
       level,up;
       level,down;
       language,changed;
-      access,changed;
    }
 
 }

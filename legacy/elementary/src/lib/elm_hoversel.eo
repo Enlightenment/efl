@@ -106,7 +106,6 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
       item,focused;
       item,unfocused;
       language,changed;
-      access,changed;
    }
 
 }

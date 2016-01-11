@@ -77,7 +77,6 @@ class Elm.Actionslider (Elm.Layout, Evas.Selectable_Interface)
    }
    events {
       language,changed;
-      access,changed;
       pos_changed;
    }
 

@@ -82,7 +82,6 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface, Elm_Interface_Atspi_Select
    }
    events {
       language,changed;
-      access,changed;
       dismissed;
       elm,action,block_menu;
       elm,action,unblock_menu;

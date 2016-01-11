@@ -192,7 +192,6 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       item,focused;
       item,unfocused;
       language,changed;
-      access,changed;
       dismissed;
    }
 

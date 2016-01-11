@@ -245,6 +245,5 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
       spinner,drag,start;
       spinner,drag,stop;
       language,changed;
-      access,changed;
    }
 }

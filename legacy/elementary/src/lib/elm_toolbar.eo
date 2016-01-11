@@ -396,7 +396,6 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
    }
    events {
       language,changed;
-      access,changed;
       item,focused;
       item,unfocused;
    }

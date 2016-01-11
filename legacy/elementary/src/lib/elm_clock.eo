@@ -231,7 +231,6 @@ class Elm.Clock (Elm.Layout)
    events {
       changed;
       language,changed;
-      access,changed;
    }
 
 }

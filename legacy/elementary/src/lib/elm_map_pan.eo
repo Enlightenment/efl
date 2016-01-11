@@ -26,7 +26,6 @@ class Elm.Map_Pan (Elm_Pan)
       overlay,clicked;
       overlay,del;
       language,changed;
-      access,changed;
    }
 
 }

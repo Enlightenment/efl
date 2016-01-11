@@ -60,7 +60,6 @@ class Elm.Frame (Elm.Layout, Evas.Clickable_Interface)
    }
    events {
       language,changed;
-      access,changed;
    }
 
 }

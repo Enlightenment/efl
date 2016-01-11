@@ -170,7 +170,6 @@ class Elm.Progressbar (Elm.Layout)
    events {
       changed;
       language,changed;
-      access,changed;
    }
 
 }

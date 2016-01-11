@@ -131,7 +131,6 @@ class Elm.Label (Elm.Layout)
    }
    events {
       language,changed;
-      access,changed;
       slide,end;
    }
 

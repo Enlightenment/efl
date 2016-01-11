@@ -312,7 +312,6 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       changed;
       transition,end;
       language,changed;
-      access,changed;
    }
 
 }
