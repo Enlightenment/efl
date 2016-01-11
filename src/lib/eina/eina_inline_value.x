@@ -1657,7 +1657,7 @@ eina_value_struct_member_value_set(Eina_Value *dst, const Eina_Value_Struct_Memb
   EINA_SAFETY_ON_FALSE_RETURN_VAL(value->type->setup == EINA_VALUE_TYPE_OPTIONAL->setup, retval)
 
 static inline Eina_Value*
-eina_value_optional_empty_new()
+eina_value_optional_empty_new(void)
 {
   return eina_value_new(EINA_VALUE_TYPE_OPTIONAL);
 }
