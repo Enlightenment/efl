@@ -127,6 +127,8 @@ ecore_drm_shutdown(void)
    /* if we are still in use, decrement init count and get out */
    if (--_ecore_drm_init_count != 0) return _ecore_drm_init_count;
 
+   _ecore_drm_inputs_shutdown();
+
    /* close eeze */
    eeze_shutdown();
 
@@ -142,8 +144,6 @@ ecore_drm_shutdown(void)
 
    /* shutdown eina */
    eina_shutdown();
-
-   _ecore_drm_inputs_shutdown();
 
    /* return init count */
    return _ecore_drm_init_count;
