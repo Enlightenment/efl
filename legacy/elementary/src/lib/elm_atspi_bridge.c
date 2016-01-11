@@ -280,7 +280,7 @@ static const Eldbus_Signal _window_obj_signals[] = {
    {NULL, ELDBUS_ARGS({NULL, NULL}), 0}
 };
 
-const int elm_roles_to_atspi_roles[][2] = {
+static const int elm_roles_to_atspi_roles[][2] = {
    { ELM_ATSPI_ROLE_INVALID, ATSPI_ROLE_INVALID },
    { ELM_ATSPI_ROLE_ACCELERATOR_LABEL, ATSPI_ROLE_ACCELERATOR_LABEL },
    { ELM_ATSPI_ROLE_ALERT, ATSPI_ROLE_ALERT },
@@ -394,7 +394,7 @@ struct atspi_state_desc
    const char *name;
 };
 
-const struct atspi_state_desc elm_states_to_atspi_state[] = {
+static const struct atspi_state_desc elm_states_to_atspi_state[] = {
    { ELM_ATSPI_STATE_INVALID, ATSPI_STATE_INVALID, "invalid" },
    { ELM_ATSPI_STATE_ACTIVE, ATSPI_STATE_ACTIVE, "active" },
    { ELM_ATSPI_STATE_ARMED, ATSPI_STATE_ARMED, "armed" },
@@ -439,7 +439,7 @@ const struct atspi_state_desc elm_states_to_atspi_state[] = {
    { ELM_ATSPI_STATE_LAST_DEFINED, ATSPI_STATE_LAST_DEFINED, "last-defined" },
 };
 
-const int elm_relation_to_atspi_relation_mapping[] = {
+static const int elm_relation_to_atspi_relation_mapping[] = {
    [ELM_ATSPI_RELATION_NULL] =  ATSPI_RELATION_NULL,
    [ELM_ATSPI_RELATION_LABEL_FOR] =  ATSPI_RELATION_LABEL_FOR,
    [ELM_ATSPI_RELATION_LABELLED_BY] = ATSPI_RELATION_LABELLED_BY,
