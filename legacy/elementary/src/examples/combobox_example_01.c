@@ -1,6 +1,9 @@
 //Compile with:
 //gcc -o combobox_example_01 combobox_example_01.c -g `pkg-config --cflags --libs elementary`
 
+#define _GNU_SOURCE
+#include <string.h>
+
 #include <Elementary.h>
 
 static void
