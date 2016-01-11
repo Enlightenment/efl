@@ -13,38 +13,9 @@
 
 #include <check.h>
 
-const Eo_Class *simple_class_get(void);
-#define MY_CLASS simple_class_get()
-
-static Eo *
-_constructor(Eo *obj, void *class_data EINA_UNUSED)
-{
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+extern "C" {
+#include "simple.eo.h"
 }
-
-static void
-_destructor(Eo *obj, void *class_data EINA_UNUSED)
-{
-   eo_do_super(obj, MY_CLASS, eo_destructor());
-}
-
-static Eo_Op_Description op_descs[] = {
-    EO_OP_FUNC_OVERRIDE(reinterpret_cast<void*>(&eo_constructor), reinterpret_cast<void*>(&_constructor))
-  , EO_OP_FUNC_OVERRIDE(reinterpret_cast<void*>(&eo_destructor), reinterpret_cast<void*>(&_destructor))
-};
-
-static const Eo_Class_Description class_desc = {
-     EO_VERSION,
-     "Simple",
-     EO_CLASS_TYPE_REGULAR,
-     EO_CLASS_DESCRIPTION_OPS(op_descs),
-     NULL,
-     0,
-     0,
-     0
-};
-
-EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, NULL);
 
 struct wrapper : efl::eo::concrete
 {
@@ -60,9 +31,9 @@ START_TEST(eina_cxx_ptrlist_push_back)
   int result[] = {5, 10, 15};
   int rresult[] = {15, 10, 5};
 
-  wrapper const w1(eo_add(MY_CLASS, NULL));
-  wrapper const w2(eo_add(MY_CLASS, NULL));
-  wrapper const w3(eo_add(MY_CLASS, NULL));
+  wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+  wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+  wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
   
   {
     efl::eina::ptr_list<int> list;
@@ -109,9 +80,9 @@ START_TEST(eina_cxx_ptrlist_pop_back)
   int result[] = {5, 10};
   int rresult[] = {10, 5};
 
-  wrapper const w1(eo_add(MY_CLASS, NULL));
-  wrapper const w2(eo_add(MY_CLASS, NULL));
-  wrapper const w3(eo_add(MY_CLASS, NULL));
+  wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+  wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+  wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
 
   {
     efl::eina::ptr_list<int> list;
@@ -175,9 +146,9 @@ START_TEST(eina_cxx_ptrlist_push_front)
     ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
   }
   {
-    wrapper const w1(eo_add(MY_CLASS, NULL));
-    wrapper const w2(eo_add(MY_CLASS, NULL));
-    wrapper const w3(eo_add(MY_CLASS, NULL));
+    wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
 
     efl::eina::list<wrapper> list;
 
@@ -203,9 +174,9 @@ START_TEST(eina_cxx_ptrlist_pop_front)
   int result[] = {10, 5};
   int rresult[] = {5, 10};
 
-  wrapper const w1(eo_add(MY_CLASS, NULL));
-  wrapper const w2(eo_add(MY_CLASS, NULL));
-  wrapper const w3(eo_add(MY_CLASS, NULL));
+  wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+  wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+  wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
 
   {
     efl::eina::ptr_list<int> list;
@@ -305,11 +276,11 @@ START_TEST(eina_cxx_ptrlist_insert)
     ck_assert(std::equal(list.begin(), list.end(), list4.begin()));
   }
   {
-    wrapper const w0(eo_add(MY_CLASS, NULL));
-    wrapper const w1(eo_add(MY_CLASS, NULL));
-    wrapper const w2(eo_add(MY_CLASS, NULL));
-    wrapper const w3(eo_add(MY_CLASS, NULL));
-    wrapper const w4(eo_add(MY_CLASS, NULL));
+    wrapper const w0(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w4(eo_add(SIMPLE_CLASS, NULL));
 
     efl::eina::list<wrapper> list;
 
@@ -398,11 +369,11 @@ START_TEST(eina_cxx_ptrlist_constructors)
     ck_assert(list2 == list4);
   }
   {
-    wrapper const w0(eo_add(MY_CLASS, NULL));
-    wrapper const w1(eo_add(MY_CLASS, NULL));
-    wrapper const w2(eo_add(MY_CLASS, NULL));
-    wrapper const w3(eo_add(MY_CLASS, NULL));
-    wrapper const w4(eo_add(MY_CLASS, NULL));
+    wrapper const w0(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
+    wrapper const w4(eo_add(SIMPLE_CLASS, NULL));
 
     efl::eina::list<wrapper> list1;
     ck_assert(list1.empty());

@@ -59,13 +59,33 @@ tests/eina_cxx/eina_cxx_test_error.cc \
 tests/eina_cxx/eina_cxx_test_accessor.cc \
 tests/eina_cxx/eina_cxx_test_thread.cc \
 tests/eina_cxx/eina_cxx_test_optional.cc \
-tests/eina_cxx/eina_cxx_test_value.cc
+tests/eina_cxx/eina_cxx_test_value.cc \
+tests/eina_cxx/simple.c
 
-tests_eina_cxx_eina_cxx_suite_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
+tests/eina_cxx/tests_eina_cxx_eina_cxx_suite-eina_cxx_test_accessor.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
+tests/eina_cxx/tests_eina_cxx_eina_cxx_suite-eina_cxx_test_ptrarray.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
+tests/eina_cxx/tests_eina_cxx_eina_cxx_suite-eina_cxx_test_ptrlist.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
+
+tests/eina_cxx/tests_eina_cxx_eina_cxx_suite-simple.$(OBJEXT): tests/eina_cxx/simple.eo.c tests/eina_cxx/simple.eo.h
+
+CLEANFILES += \
+tests/eina_cxx/simple.eo.c \
+tests/eina_cxx/simple.eo.h \
+tests/eina_cxx/simple.eo.hh \
+tests/eina_cxx/simple.eo.impl.hh
+
+EXTRA_DIST += \
+tests/eina_cxx/simple.eo
+
+tests_eina_cxx_eina_cxx_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eina_cxx\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eina_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eina_cxx\" \
+-I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/efl/interfaces \
+-I$(top_srcdir)/src/bin/eina_cxx \
+-I$(top_builddir)/src/tests/eina_cxx \
 @CHECK_CFLAGS@ \
 @EO_CFLAGS@ \
 @ECORE_CFLAGS@ \
@@ -76,4 +96,3 @@ tests_eina_cxx_eina_cxx_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_IN
 
 endif
 endif
-
