@@ -428,6 +428,7 @@ _viewport_region_get(Evas_Object *obj)
    Eina_Rectangle *rect = eina_rectangle_new(0, 0, 0, 0);
    Evas_Object *parent;
 
+   if (!rect) return NULL;
    if (sd->scroll)
      eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
            (&rect->x, &rect->y, &rect->w, &rect->h));
