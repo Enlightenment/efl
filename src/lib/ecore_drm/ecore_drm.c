@@ -108,15 +108,18 @@ log_err:
 
 /**
  * Shutdown the Ecore_Drm library.
- * 
+ *
  * @return  The number of times the library has been initialized without
  *          being shutdown. 0 is returned if an error occurs.
- * 
+ *
  * @ingroup Ecore_Drm_Init_Group
  */
-EAPI int 
+EAPI int
 ecore_drm_shutdown(void)
 {
+   Eina_List *lists;
+   Ecore_Drm_Device *dev;
+
    /* _ecore_drm_init_count should not go below zero. */
    if (_ecore_drm_init_count < 1)
      {
@@ -126,6 +129,13 @@ ecore_drm_shutdown(void)
 
    /* if we are still in use, decrement init count and get out */
    if (--_ecore_drm_init_count != 0) return _ecore_drm_init_count;
+
+   /* free the list of devices */
+   lists = eina_list_clone(ecore_drm_devices_get());
+   EINA_LIST_FREE(lists, dev)
+     {
+        ecore_drm_device_free(dev);
+     }
 
    _ecore_drm_inputs_shutdown();
 
