@@ -3500,10 +3500,13 @@ _edje_object_part_swallow(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_
    rpcur = evas_object_data_get(obj_swallow, "\377 edje.swallowing_part");
    if (rpcur)
      {
+        Edje *sed;
+
         /* the object is already swallowed in the requested part */
         if (rpcur == rp) return EINA_TRUE;
+        sed = evas_object_data_get(obj_swallow, ".edje");
         /* The object is already swallowed somewhere, unswallow it first */
-        edje_object_part_unswallow(ed->obj, obj_swallow);
+        edje_object_part_unswallow(sed->obj, obj_swallow);
      }
 
    if (!rp)
