@@ -2081,6 +2081,8 @@ int
 evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
 {
    EVGL_Resource *rsc;
+   Eina_List *l;
+   EVGL_Context *ctx;
    Eina_Bool dbg;
 
    // Check input parameter
@@ -2182,6 +2184,12 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
    LKL(evgl_engine->resource_lock);
    evgl_engine->surfaces = eina_list_remove(evgl_engine->surfaces, sfc);
    LKU(evgl_engine->resource_lock);
+
+   EINA_LIST_FOREACH(evgl_engine->contexts, l, ctx)
+     {
+        if (ctx->current_sfc == sfc)
+          ctx->current_sfc = NULL;
+     }
 
    free(sfc);
 
