@@ -212,7 +212,6 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      language,changed;
    }
 
 }

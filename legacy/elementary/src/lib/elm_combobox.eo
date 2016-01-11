@@ -54,6 +54,5 @@ class Elm_Combobox (Elm.Button, Evas.Selectable_Interface,
       clicked;
       item,pressed;
       filter,done;
-      language,changed;
    }
 }

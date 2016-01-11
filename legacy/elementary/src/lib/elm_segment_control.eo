@@ -146,7 +146,6 @@ class Elm.Segment_Control (Elm.Layout)
    }
    events {
       changed;
-      language,changed;
    }
 
 }

@@ -93,7 +93,6 @@ class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
    }
    events {
       changed;
-      language,changed;
    }
 
 }

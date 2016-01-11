@@ -76,7 +76,6 @@ class Elm.Actionslider (Elm.Layout, Evas.Selectable_Interface)
       Elm.Layout.sizing_eval;
    }
    events {
-      language,changed;
       pos_changed;
    }
 

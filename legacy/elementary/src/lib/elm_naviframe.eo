@@ -164,7 +164,6 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       transition,finished;
       title,transition,finished;
       title,clicked;
-      language,changed;
    }
 
 }

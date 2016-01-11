@@ -59,7 +59,6 @@ class Elm.Frame (Elm.Layout, Evas.Clickable_Interface)
       Elm.Layout.content_aliases.get;
    }
    events {
-      language,changed;
    }
 
 }

@@ -122,7 +122,6 @@ selected.]]
       color,item,longpressed;
       changed;
       changed,user;
-      language,changed;
    }
 
 }

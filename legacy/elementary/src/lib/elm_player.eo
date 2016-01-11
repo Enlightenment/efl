@@ -24,7 +24,6 @@ class Elm.Player (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       eject,clicked;
       volume,clicked;
       mute,clicked;
-      language,changed;
    }
 
 }

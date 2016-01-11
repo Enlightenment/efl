@@ -472,7 +472,6 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
       item,unfocused;
       item,reorder,anim,start;
       item,reorder,anim,stop;
-      language,changed;
    }
 
 }

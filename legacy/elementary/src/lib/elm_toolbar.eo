@@ -395,7 +395,6 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
       Elm_Interface_Atspi_Selection.clear;
    }
    events {
-      language,changed;
       item,focused;
       item,unfocused;
    }

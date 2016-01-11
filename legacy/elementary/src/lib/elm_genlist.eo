@@ -548,7 +548,6 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
       Elm_Interface_Atspi_Selection.clear;
    }
    events {
-      language,changed;
       item,focused;
       item,unfocused;
       vbar,drag;

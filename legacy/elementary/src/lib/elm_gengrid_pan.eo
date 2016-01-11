@@ -13,7 +13,6 @@ class Elm.Gengrid_Pan (Elm_Pan)
       Elm_Pan.pos_max.get;
    }
    events {
-      language,changed;
    }
 
 }

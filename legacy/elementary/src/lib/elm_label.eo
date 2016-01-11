@@ -130,7 +130,6 @@ class Elm.Label (Elm.Layout)
       Elm.Layout.sizing_eval;
    }
    events {
-      language,changed;
       slide,end;
    }
 

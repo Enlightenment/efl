@@ -100,7 +100,6 @@ class Elm.Fileselector_Button (Elm.Button, Elm_Interface_Fileselector)
       Elm_Interface_Fileselector.mode;
    }
    events {
-      language,changed;
       file,chosen;
    }
 
