@@ -60,6 +60,7 @@ elm_prefs_entry_value_validate(Evas_Object *obj)
    size_t min;
 
    val = elm_entry_entry_get(obj);
+   if (!val) return EINA_FALSE;
 
    regex = evas_object_data_get(obj, "accept_regex");
    if (regex)
@@ -209,6 +210,7 @@ elm_prefs_entry_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
    elm_entry_markup_filter_append(obj, elm_entry_filter_limit_size, &limit);
    elm_layout_text_set(obj, NULL, spec.s.placeholder);
 
+   regfree(regex);
    return obj;
 }
 
