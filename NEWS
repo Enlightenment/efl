@@ -165,6 +165,16 @@ Fixes:
    * Edje_cc: support braces for description.proxy attribute.
    * edje: custom state - if RTL flag is not set, return original description
    * edje: Fix compiler warning about set but not used variables
+   * eina_js: Fix documentation generation (T3005)
+   * ecore-wl2: Fix support for nested compositors
+   * efreet: fix undeclared function
+   * ecore_con: fix compiling on OS X
+   * evas_gl_cocoa: update function parameters
+   * ecore_wayland: set touch_focus window when gets pointer_enter
+   * eina mp: only include malloc.h on linux
+   * js: fix binding after namespace change of connector
+   * Edje UI mirroring: Fix UI mirroring for GROUP parts. (T3021)
+   * Edje entry: Fix memory leak.
 
 Changes since 1.15.0:
 ---------------------
