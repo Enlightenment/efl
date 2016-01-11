@@ -237,6 +237,7 @@ cont:
 
    if ((dev = calloc(1, sizeof(Ecore_Drm_Device))))
      {
+        dev->drm.fd = -1;
         dev->drm.name = eeze_udev_syspath_get_devpath(device);
         dev->drm.path = eina_stringshare_add(device);
 
@@ -314,8 +315,15 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
    /* check for valid device */
    if ((!dev) || (!dev->drm.name)) return EINA_FALSE;
 
+   /* check if device is already opened */
+   if (dev->drm.fd != -1)
+     {
+        ERR("Device is already opened");
+        return EINA_FALSE;
+     }
+
    /* DRM device node is needed immediately to keep going. */
-   dev->drm.fd = 
+   dev->drm.fd =
      _ecore_drm_launcher_device_open_no_pending(dev->drm.name, O_RDWR);
    if (dev->drm.fd < 0) return EINA_FALSE;
 
@@ -382,11 +390,14 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 ecore_drm_device_close(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
    EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
+
+   /* check if device is opened */
+   if (dev->drm.fd == -1) return EINA_FALSE;
 
    /* delete udev watch */
    if (dev->watch) eeze_udev_watch_del(dev->watch);
