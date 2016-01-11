@@ -9,7 +9,7 @@
 EAPI int ELM_EVENT_CONFIG_ALL_CHANGED = 0;
 
 Elm_Config *_elm_config = NULL;
-char *_elm_profile = NULL;
+static char *_elm_profile = NULL;
 static Eet_Data_Descriptor *_config_edd = NULL;
 static Eet_Data_Descriptor *_config_font_overlay_edd = NULL;
 static Eet_Data_Descriptor *_config_color_edd = NULL;
@@ -20,9 +20,9 @@ static Eet_Data_Descriptor *_config_binding_key_edd = NULL;
 static Eet_Data_Descriptor *_config_binding_modifier_edd = NULL;
 const char *_elm_preferred_engine = NULL;
 const char *_elm_accel_preference = NULL;
-const char *_elm_gl_preference = NULL;
-Eina_List  *_font_overlays_del = NULL;
-Eina_List  *_color_overlays_del = NULL;
+static const char *_elm_gl_preference = NULL;
+static Eina_List  *_font_overlays_del = NULL;
+static Eina_List  *_color_overlays_del = NULL;
 
 static Ecore_Poller *_elm_cache_flush_poller = NULL;
 static void _elm_config_key_binding_hash(void);
@@ -996,12 +996,12 @@ void _elm_config_access_set(Eina_Bool is_access)
    if (!is_access) _elm_access_shutdown();
 }
 
-Eina_Bool _elm_config_atspi_mode_get(void)
+static Eina_Bool _elm_config_atspi_mode_get(void)
 {
    return _elm_config->atspi_mode;
 }
 
-void _elm_config_atspi_mode_set(Eina_Bool is_enabled)
+static void _elm_config_atspi_mode_set(Eina_Bool is_enabled)
 {
    is_enabled = !!is_enabled;
    if (_elm_config->atspi_mode == is_enabled) return;
@@ -1011,12 +1011,12 @@ void _elm_config_atspi_mode_set(Eina_Bool is_enabled)
    else _elm_atspi_bridge_init();
 }
 
-Eina_Bool _elm_config_selection_unfocused_clear_get(void)
+static Eina_Bool _elm_config_selection_unfocused_clear_get(void)
 {
    return _elm_config->selection_clear_enable;
 }
 
-void _elm_config_selection_unfocused_clear_set(Eina_Bool enabled)
+static void _elm_config_selection_unfocused_clear_set(Eina_Bool enabled)
 {
    enabled = !!enabled;
    if (_elm_config->selection_clear_enable == enabled) return;
@@ -2510,7 +2510,7 @@ _elm_config_key_binding_hash(void)
      }
 }
 
-Eina_Bool
+static Eina_Bool
 _elm_config_modifier_check(const Evas_Modifier *m,
                            Eina_List *mod_list)
 {
