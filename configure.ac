@@ -1636,7 +1636,7 @@ if test "${want_sdl}" = "yes"; then
    EFL_PKG_CHECK_STRICT([sdl2 >= 2.0.0])
 fi
 
-# We only enable SDL with opengl if it is not the full version and not ES
+# We only enable SDL with opengl if it is the full version and not ES
 # This can be changed if we ported our SDL code over to SDL 2.0. For older
 # versions the SDL_opengles.h has never been released.
 want_gl_sdl="no"
@@ -1828,6 +1828,14 @@ AC_ARG_ENABLE([egl],
     fi
    ],
    [want_egl="no"])
+
+# Verify OpenGL + EGL modes match (full+glx or es+egl)
+if test "x${want_egl}" = "xyes" && test "x${with_opengl}" != "xes" ; then
+  AC_MSG_ERROR([Full OpenGL with EGL is not supported, please add --with-opengl=es to your configure options to switch to EGL + OpenGL ES.])
+fi
+if test "x${want_egl}" = "xno" && test "x${with_opengl}" = "xes" ; then
+  AC_MSG_ERROR([OpenGL ES requires EGL, please add --enable-egl to your configure options to switch to EGL + OpenGL ES.])
+fi
 
 # Pixman
 AC_ARG_ENABLE([pixman],
@@ -5247,6 +5255,12 @@ else
    osname="${host_os}"
 fi
 
+if test "x${want_egl}" = "xyes" ; then
+   opengl_egl="(EGL)"
+else
+   opengl_egl=""
+fi
+
 echo "Configuration...: ${COLOR_OTHER}profile=${build_profile} os=${osname}${COLOR_RESET}"
 echo "  EFL API Set...: ${efl_api}"
 echo "  CPU Extensions: ${host_cpu} (${features_cpu})"
@@ -5254,7 +5268,7 @@ echo "  System Feature: ${features_system}"
 echo "  Threads.......: ${efl_have_threads} (${features_thread})"
 echo "  Cryptography..: ${build_crypto}"
 echo "  X11...........: ${with_x11}"
-echo "  OpenGL........: ${with_opengl}"
+echo "  OpenGL........: ${with_opengl} ${opengl_egl}"
 echo "  C++11.........: ${have_cxx11}"
 echo "  JavaScript....: ${want_js}"
 echo "  JavaScript flg: $EINA_JS_LIBS"
