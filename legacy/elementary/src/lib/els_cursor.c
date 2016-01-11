@@ -47,7 +47,7 @@ struct _Cursor_Id
 #endif
 
 /* Please keep order in sync with Ecore_X_Cursor.h values! */
-struct _Cursor_Id _cursors[] =
+static struct _Cursor_Id _cursors[] =
 {
    CURSOR(ELM_CURSOR_X                  , X                  , ECORE_COCOA_CURSOR_CROSSHAIR),
    CURSOR(ELM_CURSOR_ARROW              , ARROW              , ECORE_COCOA_CURSOR_ARROW),
