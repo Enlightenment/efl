@@ -210,7 +210,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
            Elm.Widget_Item.tooltip_unset;
            Elm.Widget_Item.cursor.set;
            Elm.Widget_Item.cursor_unset;
-           Elm_Interface_Atspi_Accessible.name.get;
-           Elm_Interface_Atspi_Accessible.state_set.get;
+           Elm.Interface_Atspi_Accessible.name.get;
+           Elm.Interface_Atspi_Accessible.state_set.get;
       }
 }

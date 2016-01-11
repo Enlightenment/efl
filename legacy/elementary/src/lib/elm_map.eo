@@ -1,5 +1,5 @@
-class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
-               Elm_Interface_Atspi_Widget_Action,
+class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
+               Elm.Interface_Atspi_Widget_Action,
                Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_map;
@@ -561,7 +561,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus;
       Elm.Widget.event;
-      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
       press;

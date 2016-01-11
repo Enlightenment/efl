@@ -2,7 +2,7 @@ enum Elm.Scroller.Policy
 {
    [[Type that controls when scrollbars should appear.
 
-     See also @Elm_Interface_Scrollable.policy.set.
+     See also @Elm.Interface_Scrollable.policy.set.
    ]]
    auto = 0, [[Show scrollbars as needed]]
    on, [[Always show scrollbars]]
@@ -14,7 +14,7 @@ enum Elm.Scroller.Single_Direction
 {
    [[Type that controls how the content is scrolled.
 
-     See also @Elm_Interface_Scrollable.single_direction.set.
+     See also @Elm.Interface_Scrollable.single_direction.set.
    ]]
    none = 0, [[Scroll every direction]]
    soft, [[Scroll single direction if the direction is certain]]
@@ -34,8 +34,8 @@ enum Elm.Scroller.Movement_Block
    block_horizontal = 1 << 2 [[Block horizontal movements]]
 }
 
-class Elm.Scroller (Elm.Layout, Elm_Interface_Scrollable,
-                    Elm_Interface_Atspi_Widget_Action,
+class Elm.Scroller (Elm.Layout, Elm.Interface_Scrollable,
+                    Elm.Interface_Atspi_Widget_Action,
                     Evas.Scrollable_Interface)
 {
    eo_prefix: elm_obj_scroller;
@@ -110,10 +110,10 @@ class Elm.Scroller (Elm.Layout, Elm_Interface_Scrollable,
       Elm.Container.content_set;
       Elm.Container.content_unset;
       Elm.Layout.sizing_eval;
-      Elm_Interface_Scrollable.page_size.set;
-      Elm_Interface_Scrollable.policy.set;
-      Elm_Interface_Scrollable.single_direction;
-      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface_Scrollable.page_size.set;
+      Elm.Interface_Scrollable.policy.set;
+      Elm.Interface_Scrollable.single_direction;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
       scroll,page,changed;

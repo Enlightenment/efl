@@ -23,8 +23,8 @@ enum Elm.Toolbar.Shrink_Mode
    last [[Indicates error if returned by elm_toolbar_shrink_mode_get()]]
 }
 
-class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
-                   Elm_Interface_Atspi_Widget_Action, Elm_Interface_Atspi_Selection,
+class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable,
+                   Elm.Interface_Atspi_Widget_Action, Elm.Interface_Atspi_Selection,
                    Evas.Clickable_Interface, Evas.Selectable_Interface)
 {
    eo_prefix: elm_obj_toolbar;
@@ -382,17 +382,17 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
       Elm.Widget.event;
       Elm.Widget.focus_highlight_geometry_get;
       Elm.Widget.focused_item.get;
-      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
-      Elm_Interface_Atspi_Accessible.children.get;
-      Elm_Interface_Atspi_Accessible.state_set.get;
-      Elm_Interface_Atspi_Selection.selected_children_count.get;
-      Elm_Interface_Atspi_Selection.selected_child.get;
-      Elm_Interface_Atspi_Selection.selected_child_deselect;
-      Elm_Interface_Atspi_Selection.child_select;
-      Elm_Interface_Atspi_Selection.child_deselect;
-      Elm_Interface_Atspi_Selection.is_child_selected;
-      Elm_Interface_Atspi_Selection.all_children_select;
-      Elm_Interface_Atspi_Selection.clear;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface_Atspi_Accessible.children.get;
+      Elm.Interface_Atspi_Accessible.state_set.get;
+      Elm.Interface_Atspi_Selection.selected_children_count.get;
+      Elm.Interface_Atspi_Selection.selected_child.get;
+      Elm.Interface_Atspi_Selection.selected_child_deselect;
+      Elm.Interface_Atspi_Selection.child_select;
+      Elm.Interface_Atspi_Selection.child_deselect;
+      Elm.Interface_Atspi_Selection.is_child_selected;
+      Elm.Interface_Atspi_Selection.all_children_select;
+      Elm.Interface_Atspi_Selection.clear;
    }
    events {
       item,focused;

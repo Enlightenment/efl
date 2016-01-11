@@ -1,4 +1,4 @@
-mixin Elm_Interface_Atspi_Widget_Action (Elm_Interface_Atspi_Action)
+mixin Elm.Interface_Atspi_Widget_Action (Elm.Interface_Atspi_Action)
 {
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_widget_action;
@@ -13,12 +13,12 @@ mixin Elm_Interface_Atspi_Widget_Action (Elm_Interface_Atspi_Action)
       }
    }
    implements {
-      Elm_Interface_Atspi_Action.action_do;
-      Elm_Interface_Atspi_Action.keybinding_get;
-      Elm_Interface_Atspi_Action.name.get;
-      Elm_Interface_Atspi_Action.description.set;
-      Elm_Interface_Atspi_Action.description.get;
-      Elm_Interface_Atspi_Action.actions.get;
+      Elm.Interface_Atspi_Action.action_do;
+      Elm.Interface_Atspi_Action.keybinding_get;
+      Elm.Interface_Atspi_Action.name.get;
+      Elm.Interface_Atspi_Action.description.set;
+      Elm.Interface_Atspi_Action.description.get;
+      Elm.Interface_Atspi_Action.actions.get;
       @virtual .elm_actions.get;
    }
 }

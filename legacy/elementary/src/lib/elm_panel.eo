@@ -8,8 +8,8 @@ enum Elm.Panel.Orient
    right [[Panel (dis)appears from the right]]
 }
 
-class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
-                 Elm_Interface_Atspi_Widget_Action)
+class Elm.Panel (Elm.Layout, Elm.Interface_Scrollable,
+                 Elm.Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_panel;
    methods {
@@ -83,6 +83,6 @@ class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
       Elm.Container.content_unset;
       Elm.Container.content_set;
       Elm.Layout.sizing_eval;
-      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
    }
 }

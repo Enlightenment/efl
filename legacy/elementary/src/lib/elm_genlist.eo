@@ -1,7 +1,7 @@
 import elm_general;
 
-class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
-                   Elm_Interface_Atspi_Widget_Action, Elm_Interface_Atspi_Selection,
+class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
+                   Elm.Interface_Atspi_Widget_Action, Elm.Interface_Atspi_Selection,
                    Evas.Selectable_Interface)
 {
    eo_prefix: elm_obj_genlist;
@@ -533,19 +533,19 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
       Elm.Widget.item_loop_enabled.get;
       Elm.Layout.sub_object_add_enable;
       Elm.Layout.sizing_eval;
-      Elm_Interface_Scrollable.bounce_allow;
-      Elm_Interface_Scrollable.policy;
-      Elm_Interface_Atspi_Accessible.children.get;
-      Elm_Interface_Atspi_Accessible.state_set.get;
-      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
-      Elm_Interface_Atspi_Selection.selected_children_count.get;
-      Elm_Interface_Atspi_Selection.selected_child.get;
-      Elm_Interface_Atspi_Selection.selected_child_deselect;
-      Elm_Interface_Atspi_Selection.child_select;
-      Elm_Interface_Atspi_Selection.child_deselect;
-      Elm_Interface_Atspi_Selection.is_child_selected;
-      Elm_Interface_Atspi_Selection.all_children_select;
-      Elm_Interface_Atspi_Selection.clear;
+      Elm.Interface_Scrollable.bounce_allow;
+      Elm.Interface_Scrollable.policy;
+      Elm.Interface_Atspi_Accessible.children.get;
+      Elm.Interface_Atspi_Accessible.state_set.get;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface_Atspi_Selection.selected_children_count.get;
+      Elm.Interface_Atspi_Selection.selected_child.get;
+      Elm.Interface_Atspi_Selection.selected_child_deselect;
+      Elm.Interface_Atspi_Selection.child_select;
+      Elm.Interface_Atspi_Selection.child_deselect;
+      Elm.Interface_Atspi_Selection.is_child_selected;
+      Elm.Interface_Atspi_Selection.all_children_select;
+      Elm.Interface_Atspi_Selection.clear;
    }
    events {
       item,focused;

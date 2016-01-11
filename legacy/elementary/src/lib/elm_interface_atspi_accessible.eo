@@ -6,7 +6,7 @@ enum Elm.Atspi.Type
    skipped [[skip object in accessibility hierarchy]]
 }
 
-mixin Elm_Interface_Atspi_Accessible ()
+mixin Elm.Interface_Atspi_Accessible ()
 {
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_accessible;
@@ -53,7 +53,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             [[Gets widget's accessible children.]]
          }
          values {
-            children: free(own(list<Elm_Interface_Atspi_Accessible *> *), eina_list_free);
+            children: free(own(list<Elm.Interface_Atspi_Accessible *> *), eina_list_free);
          }
       }
       @property role_name @protected {
@@ -99,7 +99,7 @@ mixin Elm_Interface_Atspi_Accessible ()
             [[Sets widget accessible parent.]]
          }
          values {
-            parent: Elm_Interface_Atspi_Accessible *;
+            parent: Elm.Interface_Atspi_Accessible *;
          }
       }
       @property state_set @protected {
@@ -126,7 +126,7 @@ mixin Elm_Interface_Atspi_Accessible ()
       }
       event_emit @class @protected {
          params {
-            @in accessible: Elm_Interface_Atspi_Accessible *; [[Accessibility object.]]
+            @in accessible: Elm.Interface_Atspi_Accessible *; [[Accessibility object.]]
             @in event: const(Eo_Event_Description)*; [[Accessibility event type.]]
             @in event_info: void*; [[Accessibility event details.]]
          }
@@ -185,7 +185,7 @@ mixin Elm_Interface_Atspi_Accessible ()
          return: bool;
          params {
             @in type: Elm_Atspi_Relation_Type;
-            @in relation_object: const(Elm_Interface_Atspi_Accessible)*;
+            @in relation_object: const(Elm.Interface_Atspi_Accessible)*;
          }
       }
       relationship_remove {
@@ -196,7 +196,7 @@ mixin Elm_Interface_Atspi_Accessible ()
          ]]
          params {
             @in type: Elm_Atspi_Relation_Type;
-            @in relation_object: const(Elm_Interface_Atspi_Accessible)*;
+            @in relation_object: const(Elm.Interface_Atspi_Accessible)*;
          }
       }
       relationships_clear {
@@ -206,7 +206,7 @@ mixin Elm_Interface_Atspi_Accessible ()
          get {
             [[Get root object of accessible object hierarchy]]
             values {
-               ret: Eo*;
+               ret: Eo.Base*;
             }
          }
       }

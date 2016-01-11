@@ -1,4 +1,4 @@
-mixin Elm_Interface_Atspi_Image ()
+mixin Elm.Interface_Atspi_Image ()
 {
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_image;

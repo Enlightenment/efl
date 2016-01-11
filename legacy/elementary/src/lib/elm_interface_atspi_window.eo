@@ -1,4 +1,4 @@
-interface Elm_Interface_Atspi_Window ()
+interface Elm.Interface_Atspi_Window ()
 {
    events {
       window,created; [[Called when new window has been created.]]

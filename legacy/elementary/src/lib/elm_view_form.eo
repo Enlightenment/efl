@@ -1,4 +1,4 @@
-class Elm_View_Form (Eo.Base)
+class Elm.View_Form (Eo.Base)
 {
     legacy_prefix: null;
     methods {

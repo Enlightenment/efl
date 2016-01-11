@@ -1,4 +1,4 @@
-class Elm.Fileselector_Entry (Elm.Layout, Elm_Interface_Fileselector,
+class Elm.Fileselector_Entry (Elm.Layout, Elm.Interface_Fileselector,
                               Evas.Clickable_Interface, Evas.Selectable_Interface)
 {
    eo_prefix: elm_obj_fileselector_entry;
@@ -96,11 +96,11 @@ class Elm.Fileselector_Entry (Elm.Layout, Elm_Interface_Fileselector,
       Elm.Layout.text.set;
       Elm.Layout.text.get;
       Elm.Layout.sizing_eval;
-      Elm_Interface_Fileselector.selected;
-      Elm_Interface_Fileselector.folder_only;
-      Elm_Interface_Fileselector.is_save;
-      Elm_Interface_Fileselector.path;
-      Elm_Interface_Fileselector.expandable;
+      Elm.Interface_Fileselector.selected;
+      Elm.Interface_Fileselector.folder_only;
+      Elm.Interface_Fileselector.is_save;
+      Elm.Interface_Fileselector.path;
+      Elm.Interface_Fileselector.expandable;
    }
    events {
       changed;

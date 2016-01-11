@@ -1,4 +1,4 @@
-class Elm_View_List (Eo.Base)
+class Elm.View_List (Eo.Base)
 {
     legacy_prefix: null;
     methods {
@@ -53,7 +53,7 @@ class Elm_View_List (Eo.Base)
                @since 1.11
              ]]
              params {
-                 @out model: Eo *; [[Returned Emodel]]
+                 @out model: Efl.Model.Base *; [[Returned Emodel]]
              }
         }
     }

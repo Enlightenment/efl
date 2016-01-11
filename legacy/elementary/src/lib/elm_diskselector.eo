@@ -1,5 +1,5 @@
-class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
-                        Elm_Interface_Atspi_Widget_Action,
+class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
+                        Elm.Interface_Atspi_Widget_Action,
                         Evas.Clickable_Interface, Evas.Scrollable_Interface,
                         Evas.Selectable_Interface)
 {
@@ -208,8 +208,8 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
       Elm.Widget.translate;
       Elm.Widget.sub_object_del;
       Elm.Widget.event;
-      Elm_Interface_Scrollable.policy;
-      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface_Scrollable.policy;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
    }

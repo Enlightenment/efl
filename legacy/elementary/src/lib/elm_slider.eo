@@ -1,5 +1,5 @@
-class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
-                  Elm_Interface_Atspi_Widget_Action)
+class Elm.Slider (Elm.Layout, Elm.Interface_Atspi_Value,
+                  Elm.Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_slider;
    methods {
@@ -279,11 +279,11 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
       Elm.Layout.text_aliases.get;
       Elm.Layout.content_aliases.get;
       Elm.Layout.sizing_eval;
-      Elm_Interface_Atspi_Value.value_and_text.get;
-      Elm_Interface_Atspi_Value.value_and_text.set;
-      Elm_Interface_Atspi_Value.range.get;
-      Elm_Interface_Atspi_Value.increment.get;
-      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm.Interface_Atspi_Value.value_and_text.get;
+      Elm.Interface_Atspi_Value.value_and_text.set;
+      Elm.Interface_Atspi_Value.range.get;
+      Elm.Interface_Atspi_Value.increment.get;
+      Elm.Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
       changed;

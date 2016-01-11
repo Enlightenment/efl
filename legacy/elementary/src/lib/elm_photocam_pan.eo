@@ -1,4 +1,4 @@
-class Elm.Photocam_Pan (Elm_Pan)
+class Elm.Photocam_Pan (Elm.Pan)
 {
    eo_prefix: elm_obj_photocam_pan;
    implements {
@@ -7,10 +7,10 @@ class Elm.Photocam_Pan (Elm_Pan)
       Evas.Object_Smart.calculate;
       Evas.Object_Smart.move;
       Evas.Object_Smart.resize;
-      Elm_Pan.content_size.get;
-      Elm_Pan.pos;
-      Elm_Pan.pos_min.get;
-      Elm_Pan.pos_max.get;
+      Elm.Pan.content_size.get;
+      Elm.Pan.pos;
+      Elm.Pan.pos_min.get;
+      Elm.Pan.pos_max.get;
    }
    events {
       load;
