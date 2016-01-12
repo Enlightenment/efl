@@ -3620,8 +3620,11 @@ loop_advance:
 
    c->par->h = c->ln->y + c->ln->h;
    if (c->ln->w > c->par->w)
-     c->par->w = c->ln->w;
+     {
+        c->par->w = c->ln->w;
+     }
 
+   /* Calculate new max width */
      {
         Evas_Coord new_wmax = c->ln->w +
            c->marginl + c->marginr - (c->o->style_pad.l + c->o->style_pad.r);
