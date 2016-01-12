@@ -3989,26 +3989,15 @@ _elm_entry_entry_append(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *ent
 EOLIAN static Eina_Bool
 _elm_entry_is_empty(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
-   Eina_Bool ret;
-   /* FIXME: until there's support for that in textblock, we just
-    * check to see if the there is text or not. */
-   const Evas_Object *tb;
-   Evas_Textblock_Cursor *cur;
+   edje_object_part_text_cursor_copy
+               (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, EDJE_CURSOR_USER);
+   edje_object_part_text_cursor_pos_set
+                              (sd->entry_edje, "elm.text", EDJE_CURSOR_USER, 1);
+   if (edje_object_part_text_cursor_pos_get
+                            (sd->entry_edje, "elm.text", EDJE_CURSOR_USER) == 1)
+     return EINA_FALSE;
 
-   /* It's a hack until we get the support suggested above.  We just
-    * create a cursor, point it to the beginning, and then try to
-    * advance it, if it can advance, the tb is not empty, otherwise it
-    * is. */
-   tb = edje_object_part_object_get(sd->entry_edje, "elm.text");
-
-   /* This is actually, ok for the time being, these hackish stuff
-      will be removed once evas 1.0 is out */
-   cur = evas_object_textblock_cursor_new((Evas_Object *)tb);
-   evas_textblock_cursor_pos_set(cur, 0);
-   ret = evas_textblock_cursor_char_next(cur);
-   evas_textblock_cursor_free(cur);
-
-   return !ret;
+   return EINA_TRUE;
 }
 
 EOLIAN static Evas_Object*
