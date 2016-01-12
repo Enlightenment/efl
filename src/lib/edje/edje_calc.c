@@ -818,6 +818,9 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
                   ted->recalc_call = ted->dirty = ted->recalc_hints = EINA_TRUE;
                   _edje_recalc(ted);
                }
+
+             edje_object_mirrored_set(ep->typedata.swallow->swallowed_object,
+                   edje_object_mirrored_get(ed->obj));
           }
      }
 
