@@ -12,6 +12,7 @@ static Eina_Bool _edje_entry_imf_retrieve_selection_cb(void *data, Ecore_IMF_Con
 typedef struct _Entry  Entry;
 typedef struct _Sel    Sel;
 typedef struct _Anchor Anchor;
+typedef struct _Item_Obj Item_Obj;
 
 static void _edje_entry_imf_cursor_location_set(Entry *en);
 static void _edje_entry_imf_cursor_info_set(Entry *en);
@@ -35,6 +36,7 @@ struct _Entry
    Eina_List             *anchorlist;
    Eina_List             *itemlist;
    Eina_List             *seq;
+   Item_Obj              *item_objs;
    char                  *selection;
    Edje_Input_Panel_Lang  input_panel_lang;
    Eina_Bool              composing : 1;
@@ -68,6 +70,14 @@ struct _Anchor
    Evas_Textblock_Cursor *start, *end;
    Eina_List             *sel;
    Eina_Bool              item : 1;
+};
+
+struct _Item_Obj
+{
+   EINA_INLIST;
+   Anchor                *an;
+   char                  *name;
+   Evas_Object           *obj;
 };
 
 #ifdef HAVE_ECORE_IMF
@@ -914,6 +924,89 @@ _edje_anchor_mouse_out_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 }
 
 static void
+_item_obj_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Item_Obj *io = data;
+   Anchor *an = io->an;
+   Entry *en;
+
+   if (!an)
+     {
+        ERR("Failed to free item object struct. Anchor is NULL!");
+        return;
+     }
+
+   en = an->en;
+   en->item_objs = (Item_Obj *)eina_inlist_remove(EINA_INLIST_GET(en->item_objs),
+                                                  EINA_INLIST_GET(io));
+   io->an = NULL;
+   free(io->name);
+   free(io);
+}
+
+static Evas_Object *
+_item_obj_get(Anchor *an, Evas_Object *o, Evas_Object *smart, Evas_Object *clip)
+{
+   Evas_Object *obj;
+   Item_Obj *io;
+   Entry *en = an->en;
+   Edje *ed = en->ed;
+
+   EINA_INLIST_FOREACH(en->item_objs, io)
+     {
+        if (!io->an && io->name && !strcmp(an->name, io->name))
+          {
+             io->an = an;
+             return io->obj;
+          }
+     }
+
+   io = calloc(1, sizeof(Item_Obj));
+
+   obj = ed->item_provider.func
+      (ed->item_provider.data, smart,
+       en->rp->part->name, an->name);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _item_obj_del_cb, io);
+   evas_object_smart_member_add(obj, smart);
+   evas_object_stack_above(obj, o);
+   evas_object_clip_set(obj, clip);
+   evas_object_pass_events_set(obj, EINA_TRUE);
+   evas_object_show(obj);
+
+   io->an = an;
+   io->name = strdup(an->name);
+   io->obj = obj;
+   en->item_objs = (Item_Obj *)eina_inlist_append(EINA_INLIST_GET(en->item_objs),
+                                                  EINA_INLIST_GET(io));
+
+   return io->obj;
+}
+
+static void
+_unused_item_objs_free(Entry *en)
+{
+   Item_Obj *io;
+   Eina_Inlist *l;
+
+   EINA_INLIST_FOREACH_SAFE(en->item_objs, l, io)
+     {
+        if (!io->an)
+          {
+             if (io->obj)
+               {
+                  evas_object_event_callback_del_full(io->obj, EVAS_CALLBACK_DEL, _item_obj_del_cb, io);
+                  evas_object_del(io->obj);
+               }
+
+             en->item_objs = (Item_Obj *)eina_inlist_remove(EINA_INLIST_GET(en->item_objs),
+                                                            EINA_INLIST_GET(io));
+             free(io->name);
+             free(io);
+          }
+     }
+}
+
+static void
 _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
 {
    Eina_List *l, *ll, *range = NULL;
@@ -944,14 +1037,7 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
 
                   if (ed->item_provider.func)
                     {
-                       ob = ed->item_provider.func
-                           (ed->item_provider.data, smart,
-                           en->rp->part->name, an->name);
-                       evas_object_smart_member_add(ob, smart);
-                       evas_object_stack_above(ob, o);
-                       evas_object_clip_set(ob, clip);
-                       evas_object_pass_events_set(ob, EINA_TRUE);
-                       evas_object_show(ob);
+                       ob = _item_obj_get(an, o, smart, clip);
                        sel->obj = ob;
                     }
                }
@@ -1058,6 +1144,8 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
                }
           }
      }
+
+   _unused_item_objs_free(en);
 }
 
 static void
@@ -1100,6 +1188,8 @@ _anchors_need_update(Edje_Real_Part *rp)
 static void
 _anchors_clear(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o EINA_UNUSED, Entry *en)
 {
+   Item_Obj *io;
+
    while (en->anchorlist)
      {
         free(en->anchorlist->data);
@@ -1119,7 +1209,7 @@ _anchors_clear(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o EINA_UNUSED,
              Sel *sel = an->sel->data;
              if (sel->obj_bg) evas_object_del(sel->obj_bg);
              if (sel->obj_fg) evas_object_del(sel->obj_fg);
-             if (sel->obj) evas_object_del(sel->obj);
+             if (!an->item && sel->obj) evas_object_del(sel->obj);
              free(sel);
              an->sel = eina_list_remove_list(an->sel, an->sel);
           }
@@ -1129,6 +1219,9 @@ _anchors_clear(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o EINA_UNUSED,
         free(an);
         en->anchors = eina_list_remove_list(en->anchors, en->anchors);
      }
+
+   EINA_INLIST_FOREACH(en->item_objs, io)
+      io->an = NULL;
 }
 
 /* FIXME: This is horrible. It's just a copy&paste (with some adjustments)
@@ -2671,6 +2764,7 @@ _edje_entry_real_part_shutdown(Edje *ed, Edje_Real_Part *rp)
    rp->typedata.text->entry_data = NULL;
    _sel_clear(ed, en->cursor, rp->object, en);
    _anchors_clear(en->cursor, rp->object, en);
+   _unused_item_objs_free(en);
 #ifdef HAVE_ECORE_IMF
    _preedit_clear(en);
 #endif
