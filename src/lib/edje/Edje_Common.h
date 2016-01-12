@@ -42,6 +42,38 @@ struct _Edje_Color_Class
 };
 
 /**
+ * @typedef Edje_Text_Class
+ * Type for edje text class
+ *
+ * @since 1.17
+ */
+typedef struct _Edje_Text_Class Edje_Text_Class;
+
+struct _Edje_Text_Class
+{
+   const char     *name;
+   const char     *font;
+   Evas_Font_Size  size;
+};
+
+/**
+ * @typedef Edje_Size_Class
+ * Type for edje size class
+ *
+ * @since 1.17
+ */
+typedef struct _Edje_Size_Class Edje_Size_Class;
+
+struct _Edje_Size_Class
+{
+   Eina_Stringshare *name;
+   Evas_Coord        minw;
+   Evas_Coord        minh;
+   Evas_Coord        maxw;
+   Evas_Coord        maxh;
+};
+
+/**
  * @defgroup Edje_Object_Communication_Interface_Signal Edje Communication Interface: Signal
  *
  * @brief Functions that deal with signals.

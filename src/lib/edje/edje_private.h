@@ -384,8 +384,6 @@ typedef struct _Edje_Calc_Params_Map Edje_Calc_Params_Map;
 typedef struct _Edje_Calc_Params_Physics Edje_Calc_Params_Physics;
 typedef struct _Edje_Pending_Program Edje_Pending_Program;
 typedef struct _Edje_Text_Style Edje_Text_Style;
-typedef struct _Edje_Text_Class Edje_Text_Class;
-typedef struct _Edje_Size_Class Edje_Size_Class;
 typedef struct _Edje_Var Edje_Var;
 typedef struct _Edje_Var_Int Edje_Var_Int;
 typedef struct _Edje_Var_Float Edje_Var_Float;
@@ -1980,22 +1978,6 @@ struct _Edje_Text_Style
       signed   char x, y; /* offset */
       unsigned char alpha;
    } members[32];
-};
-
-struct _Edje_Text_Class
-{
-   const char     *name;
-   const char     *font;
-   Evas_Font_Size  size;
-};
-
-struct _Edje_Size_Class
-{
-   Eina_Stringshare *name;
-   Evas_Coord        minw;
-   Evas_Coord        minh;
-   Evas_Coord        maxw;
-   Evas_Coord        maxh;
 };
 
 struct _Edje_Var_Int
