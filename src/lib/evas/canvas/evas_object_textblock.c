@@ -5515,7 +5515,7 @@ _layout_par(Ctxt *c)
 
    if (c->ln->items)
      {
-        if (c->par && !EINA_INLIST_GET(c->par)->next)
+        if (!EINA_INLIST_GET(c->par)->next)
           {
              c->position = (c->position == TEXTBLOCK_POSITION_START) ?
                 TEXTBLOCK_POSITION_SINGLE : TEXTBLOCK_POSITION_END;
