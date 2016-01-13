@@ -201,9 +201,12 @@ _smart_extents_non_homogeneous_calc(Evas_Object_Box_Data *priv, int w, int h, in
              if (ay < 0) fh = 1;
 
              /* if aspecting succeeds, use aspected size for min size */
-             if (_box_object_aspect_calc(rrw, rrh, mnw, mnh, mxw, mxh,
+             if (_box_object_aspect_calc(&ow, &oh, mnw, mnh, mxw, mxh,
                  fw, fh, ww, hh, aspect, asx / (double)asy))
-               *rminh += (*rrh - *rh);
+               {
+                  *rminh += (*rrh - *rh);
+                  if (*rminw < *rrw) *rminw = *rrw;
+               }
           }
         if (*rxw >= 0)
           {
