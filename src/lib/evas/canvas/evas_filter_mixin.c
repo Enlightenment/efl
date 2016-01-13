@@ -353,7 +353,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    return EINA_FALSE;
 }
 
-EOLIAN void
+EOLIAN static void
 _evas_filter_efl_gfx_filter_program_set(Eo *eo_obj, Evas_Filter_Data *pd,
                                         const char *code, const char *name)
 {
@@ -405,14 +405,14 @@ _evas_filter_efl_gfx_filter_program_set(Eo *eo_obj, Evas_Filter_Data *pd,
    evas_object_inform_call_resize(eo_obj);
 }
 
-EOLIAN void
+EOLIAN static void
 _evas_filter_efl_gfx_filter_program_get(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd, const char **code, const char **name)
 {
    if (code) *code = pd->data->code;
    if (name) *name = pd->data->name;
 }
 
-EOLIAN void
+EOLIAN static void
 _evas_filter_efl_gfx_filter_source_set(Eo *eo_obj, Evas_Filter_Data *pd,
                                        const char *name, Efl_Gfx_Base *eo_source)
 {
@@ -499,7 +499,7 @@ update:
    evas_object_inform_call_resize(eo_obj);
 }
 
-EOLIAN void
+EOLIAN static void
 _evas_filter_efl_gfx_filter_source_get(const Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd,
                                        const char *name, Efl_Gfx_Base **source)
 {
@@ -507,7 +507,7 @@ _evas_filter_efl_gfx_filter_source_get(const Eo *eo_obj EINA_UNUSED, Evas_Filter
    *source = eina_hash_find(pd->data->sources, name);
 }
 
-EOLIAN void
+EOLIAN static void
 _evas_filter_efl_gfx_filter_state_set(Eo *eo_obj, Evas_Filter_Data *pd,
                                       const char *cur_state, double cur_val,
                                       const char *next_state, double next_val,
@@ -546,7 +546,7 @@ _evas_filter_efl_gfx_filter_state_set(Eo *eo_obj, Evas_Filter_Data *pd,
      }
 }
 
-EOLIAN void
+EOLIAN static void
 _evas_filter_efl_gfx_filter_padding_get(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd,
                                         int *l, int *r, int *t, int *b)
 {
@@ -561,7 +561,7 @@ _evas_filter_efl_gfx_filter_padding_get(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data
    evas_filter_program_padding_get(pd->data->chain, l, r, t, b);
 }
 
-EOLIAN void
+EOLIAN static void
 _evas_filter_changed_set(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd, Eina_Bool val)
 {
    if ((evas_object_filter_cow_default != pd->data) && (pd->data->changed != val))
@@ -572,7 +572,7 @@ _evas_filter_changed_set(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd, Eina_Bool
      }
 }
 
-EOLIAN void
+EOLIAN static void
 _evas_filter_invalid_set(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd, Eina_Bool val)
 {
    if (pd->data->invalid != val)
@@ -583,14 +583,14 @@ _evas_filter_invalid_set(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd, Eina_Bool
      }
 }
 
-EOLIAN void
+EOLIAN static void
 _evas_filter_constructor(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd)
 {
    pd->data = eina_cow_alloc(evas_object_filter_cow);
    SLKI(pd->lck);
 }
 
-EOLIAN void
+EOLIAN static void
 _evas_filter_destructor(Eo *eo_obj, Evas_Filter_Data *pd)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
@@ -626,7 +626,7 @@ _evas_filter_destructor(Eo *eo_obj, Evas_Filter_Data *pd)
    SLKD(pd->lck);
 }
 
-EOLIAN void
+EOLIAN static void
 _evas_filter_efl_gfx_filter_data_set(Eo *obj EINA_UNUSED, Evas_Filter_Data *pd,
                                      const char *name, const char *value,
                                      Eina_Bool execute)
@@ -673,7 +673,7 @@ _evas_filter_efl_gfx_filter_data_set(Eo *obj EINA_UNUSED, Evas_Filter_Data *pd,
    FCOW_END(fcow, pd);
 }
 
-EOLIAN void *
+EOLIAN static void *
 _evas_filter_output_buffer_get(Eo *obj EINA_UNUSED, Evas_Filter_Data *pd)
 {
    return pd->data->output;

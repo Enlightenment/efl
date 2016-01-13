@@ -1653,7 +1653,7 @@ evas_font_draw_async_check(Evas_Object_Protected_Data *obj,
 
 /* ugly binding between evas_fitler_mixin.c and this object */
 
-EOLIAN void
+EOLIAN static void
 _evas_text_evas_filter_dirty(Eo *eo_obj, Evas_Text_Data *o)
 {
    _evas_object_text_items_clear(o);
@@ -1661,13 +1661,13 @@ _evas_text_evas_filter_dirty(Eo *eo_obj, Evas_Text_Data *o)
    _evas_object_text_recalc(eo_obj, o->cur.text);
 }
 
-EOLIAN Eina_Bool
+EOLIAN static Eina_Bool
 _evas_text_evas_filter_input_alpha(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
-EOLIAN Eina_Bool
+EOLIAN static Eina_Bool
 _evas_text_evas_filter_input_render(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o,
                                     void *_filter, void *drawctx,
                                     int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
@@ -2325,7 +2325,7 @@ evas_object_text_text_get(const Eo *obj)
    return eo_do_ret((Eo *) obj, ret, efl_text_get());
 }
 
-EOLIAN void
+EOLIAN static void
 _evas_text_efl_gfx_filter_program_set(Eo *obj, Evas_Text_Data *pd EINA_UNUSED, const char *code, const char *name)
 {
    pd->has_filter = (code != NULL);

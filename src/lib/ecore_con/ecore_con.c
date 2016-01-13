@@ -629,7 +629,7 @@ _ecore_con_server_ecore_con_base_connected_get(Eo *obj EINA_UNUSED, Ecore_Con_Se
    return !svr->connecting;
 }
 
-EOLIAN const Eina_List *
+EOLIAN static const Eina_List *
 _ecore_con_server_clients_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
 {
    return svr->clients;

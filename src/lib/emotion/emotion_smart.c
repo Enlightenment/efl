@@ -417,7 +417,7 @@ emotion_object_file_get(const Evas_Object *obj)
    return file;
 }
 
-EOLIAN void
+EOLIAN static void
 _emotion_object_efl_file_file_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd, const char **file, const char **key)
 {
    if (file) *file = sd->file;

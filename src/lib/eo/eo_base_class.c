@@ -319,7 +319,7 @@ _eo_base_wref_add(Eo *obj, Eo_Base_Data *pd, Eo **wref)
    *wref = obj;
 }
 
-EOLIAN void
+EOLIAN static void
 _eo_base_wref_del(Eo *obj, Eo_Base_Data *pd, Eo **wref)
 {
    size_t count;
