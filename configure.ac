@@ -4342,6 +4342,9 @@ EFL_EVAL_PKGS([ECORE_EVAS])
 ### Checks for linker characteristics
 
 ### Checks for library functions
+if test "x${want_gl_drm}" = "xyes" ; then
+   EFL_CHECK_FUNCS([ECORE_EVAS], [dlopen])
+fi
 
 EFL_LIB_END([Ecore_Evas])
 #### End of Ecore_Evas
