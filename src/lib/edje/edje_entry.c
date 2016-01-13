@@ -4182,7 +4182,11 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx EINA
    char *preedit_string;
    char *markup_txt = NULL;
    char *tagname[] = {
-      NULL, "preedit", "preedit_sel", "preedit_sel",
+      NULL, "preedit",
+      // XXX: FIXME: EFL2 - make these 2 preedit_sel's different for efl
+      // 2.0 and beyond. maybe use "preedit_sel", "preedit_hilight",
+      // See https://phab.enlightenment.org/D2980 for this issue
+      "preedit_sel", "preedit_sel",
       "preedit_sub1", "preedit_sub2", "preedit_sub3", "preedit_sub4"
    };
    int i;
