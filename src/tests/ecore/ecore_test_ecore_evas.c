@@ -18,17 +18,17 @@ START_TEST(ecore_test_ecore_evas_associate)
 
    ret = ecore_evas_init();
    fail_if(ret == 0);
-   
+
    ee = ecore_evas_buffer_new(WINDOW_WIDTH, WINDOW_HEIGHT);
    fail_if(ee == NULL);
-   
+
    canvas = ecore_evas_get(ee);
    fail_if(ecore_evas_ecore_evas_get(canvas) != ee);
-   
+
    bg = evas_object_rectangle_add(canvas);
    ret = ecore_evas_object_associate(ee, bg, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
    fail_if(ret == 0);
-   
+
    ecore_evas_free(ee);
 
    ret = ecore_evas_shutdown();
