@@ -83,6 +83,7 @@ static const Eina_Test_Case etc[] = {
    { "Quad", eina_test_quad },
    { "Matrix", eina_test_matrix },
    { "Quaternion", eina_test_quaternion },
+   { "Vector", eina_test_vector },
    { "Bezier", eina_test_bezier },
    { NULL, NULL }
 };
