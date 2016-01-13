@@ -4444,8 +4444,9 @@ _edje_embryo_script_reset(Edje *ed)
 
 /* this may change in future - thus "test_run" is its name */
 void
-_edje_embryo_test_run(Edje *ed, const char *fname, const char *sig, const char *src)
+_edje_embryo_test_run(Edje *ed, Edje_Program *pr, const char *sig, const char *src)
 {
+   char fname[128];
    Embryo_Function fn;
 
    if (!ed) return;
@@ -4455,6 +4456,7 @@ _edje_embryo_test_run(Edje *ed, const char *fname, const char *sig, const char *
    _edje_embryo_globals_init(ed);
 
    //   _edje_embryo_script_reset(ed);
+   snprintf(fname, sizeof(fname), "_p%i", pr->id);
    fn = embryo_program_function_find(ed->collection->script, (char *)fname);
    if (fn != EMBRYO_FUNCTION_NONE)
      {
@@ -4478,20 +4480,24 @@ _edje_embryo_test_run(Edje *ed, const char *fname, const char *sig, const char *
         /* like 0.03 - 0.05 seconds or even more */
         embryo_program_max_cycle_run_set(ed->collection->script, 5000000);
         if (embryo_program_recursion_get(ed->collection->script) && (!ed->collection->script_recursion))
-          ERR("You are running Embryo->EDC->Embryo with script program '%s';\nBy the power of Grayskull, your previous Embryo stack is now broken!", fname);
+          ERR("You are running Embryo->EDC->Embryo with script program '%s';\n"
+              "A run_program runs the '%d'th program '%s' in the group '%s' of file %s;\n"
+              "By the power of Grayskull, your previous Embryo stack is now broken!",
+              fname, (fn + 1), pr->name, ed->group, ed->path);
+
         ret = embryo_program_run(ed->collection->script, fn);
         if (ret == EMBRYO_PROGRAM_FAIL)
           {
              ERR("ERROR with embryo script. "
                  "OBJECT NAME: '%s', "
                  "OBJECT FILE: '%s', "
-                 "ENTRY POINT: '%s', "
+                 "ENTRY POINT: '%s (%s)', "
                  "SIGNAL: '%s', "
                  "SOURCE: '%s', "
                  "ERROR: '%s'",
                  ed->collection->part,
                  ed->file->path,
-                 fname,
+                 fname, pr->name,
                  sig, src,
                  embryo_error_string_get(embryo_program_error_get(ed->collection->script)));
           }
@@ -4500,13 +4506,13 @@ _edje_embryo_test_run(Edje *ed, const char *fname, const char *sig, const char *
              ERR("ERROR with embryo script. "
                  "OBJECT NAME: '%s', "
                  "OBJECT FILE: '%s', "
-                 "ENTRY POINT: '%s', "
+                 "ENTRY POINT: '%s (%s)', "
                  "SIGNAL: '%s', "
                  "SOURCE: '%s', "
                  "ERROR: 'Script exceeded maximum allowed cycle count of %i'",
                  ed->collection->part,
                  ed->file->path,
-                 fname,
+                 fname, pr->name,
                  sig, src,
                  embryo_program_max_cycle_run_get(ed->collection->script));
           }

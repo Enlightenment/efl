@@ -927,12 +927,9 @@ low_mem_current:
 
       case EDJE_ACTION_TYPE_SCRIPT:
       {
-         char fname[128];
-
          // _edje_emit(ed, "program,start", pr->name);
          if (_edje_block_break(ed)) goto break_prog;
-         snprintf(fname, sizeof(fname), "_p%i", pr->id);
-         _edje_embryo_test_run(ed, fname, ssig, ssrc);
+         _edje_embryo_test_run(ed, pr, ssig, ssrc);
          // _edje_emit(ed, "program,stop", pr->name);
          if (_edje_block_break(ed)) goto break_prog;
          _edje_recalc_do(ed);

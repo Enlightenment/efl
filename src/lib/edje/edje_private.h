@@ -2419,7 +2419,7 @@ char             *_edje_text_unescape(const char *text);
 void          _edje_embryo_script_init      (Edje_Part_Collection *edc);
 void          _edje_embryo_script_shutdown  (Edje_Part_Collection *edc);
 void          _edje_embryo_script_reset     (Edje *ed);
-void          _edje_embryo_test_run         (Edje *ed, const char *fname, const char *sig, const char *src);
+void          _edje_embryo_test_run         (Edje *ed, Edje_Program *pr, const char *sig, const char *src);
 Edje_Var     *_edje_var_new                 (void);
 void          _edje_var_free                (Edje_Var *var);
 void          _edje_var_init                (Edje *ed);
