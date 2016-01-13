@@ -1164,7 +1164,9 @@ eina_normal3_matrix_get(Eina_Matrix3 *out, const Eina_Matrix4 *m)
    double   i = MATRIX_ZZ(m);
 
    det = a * e * i + b * f * g + c * d * h - g * e * c - h * f * a - i * d * b;
-   det = 1.0 / det;
+
+   if (fabs(det) >= DBL_EPSILON) det = 1.0 / det;
+   else det = 0.0;
 
    MATRIX_XX(out) = (e * i - f * h) * det;
    MATRIX_XY(out) = (h * c - i * b) * det;
