@@ -775,9 +775,7 @@ _keyboard_cb_repeat(void *data)
    window = input->focus.keyboard;
    if (!window) goto out;
 
-   if (input->focus.keyboard == window)
-     _keyboard_cb_key(input, NULL, input->display->serial,
-                      input->repeat.time, input->repeat.key, EINA_TRUE);
+   _ecore_wl2_input_key_send(input, input->focus.keyboard, input->repeat.sym, input->repeat.key + 8, WL_KEYBOARD_KEY_STATE_PRESSED,  input->repeat.time);
 
    return ECORE_CALLBACK_RENEW;
 
@@ -833,6 +831,10 @@ _keyboard_cb_key(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsigned 
         input->repeat.sym = sym;
         input->repeat.key = keycode;
         input->repeat.time = timestamp;
+
+        /* Delete this timer if there is still one */
+        if (input->repeat.timer) ecore_timer_del(input->repeat.timer);
+        input->repeat.timer = NULL;
 
         if (!input->repeat.timer)
           {
