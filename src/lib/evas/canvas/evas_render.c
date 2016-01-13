@@ -1990,7 +1990,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
           if (bl || br || bt || bb)
             border = EINA_TRUE;
 
-          if (!border && filled & !prev_mask && mask->func->engine_data_get)
+          if (!border && filled && !prev_mask && mask->func->engine_data_get)
             {
                /* Fast path (for GL) that avoids creating a map surface, render the
                 * scaled image in it, when the shaders can just scale on the fly. */
