@@ -3472,6 +3472,8 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eina])
 EFL_DEPEND_PKG([ECORE_DRM], [DRM], [libdrm >= 2.4 xkbcommon >= 0.3.0 gbm])
 EFL_DEPEND_PKG([ECORE_DRM], [LIBINPUT], [libinput >= 0.6.0])
 
+EFL_ADD_LIBS([ECORE_DRM], [-lm])
+
 # API change from 0.7 to 0.8. So we define this to support both for now.
 PKG_CHECK_EXISTS([libinput >= 0.8.0],
                  [have_libinput_new="yes"],

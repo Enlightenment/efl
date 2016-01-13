@@ -4,6 +4,7 @@
 
 #include "ecore_drm_private.h"
 #include <ctype.h>
+#include <math.h>
 
 static void  _device_modifiers_update(Ecore_Drm_Evdev *edev);
 
