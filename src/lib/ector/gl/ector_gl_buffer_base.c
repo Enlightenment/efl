@@ -28,13 +28,6 @@ _ector_gl_buffer_base_whole_get(Eo *obj EINA_UNUSED, Ector_GL_Buffer_Base_Data *
 }
 
 EOLIAN static void
-_ector_gl_buffer_base_size_get(Eo *obj EINA_UNUSED, Ector_GL_Buffer_Base_Data *pd, int *w, int *h)
-{
-   if (w) *w = pd->generic->w;
-   if (h) *h = pd->generic->h;
-}
-
-EOLIAN static void
 _ector_gl_buffer_base_vertices_get(Eo *obj EINA_UNUSED, Ector_GL_Buffer_Base_Data *pd, double *x, double *y, double *w, double *h)
 {
    if (x) *x = (double) pd->atlas.x / pd->atlas.w;

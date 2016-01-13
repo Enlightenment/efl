@@ -23,17 +23,6 @@ mixin Ector.GL.Buffer.Base (Ector.Generic.Buffer)
             is_whole: bool;
          }
       }
-      @property size {
-         [[The size in pixels of this image.
-
-           If the image is whole, then this is equal to the atlas size.
-         ]]
-         get {}
-         values {
-            w: int;
-            h: int;
-         }
-      }
       @property vertices {
          [[Returns the texture vertices to draw this image with no rotation
 
@@ -65,7 +54,5 @@ mixin Ector.GL.Buffer.Base (Ector.Generic.Buffer)
             b: int;
          }
       }
-   }
-   implements {
    }
 }
