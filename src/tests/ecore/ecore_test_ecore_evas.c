@@ -36,7 +36,42 @@ START_TEST(ecore_test_ecore_evas_associate)
 }
 END_TEST
 
+START_TEST(ecore_test_ecore_evas_cocoa)
+{
+   int ret;
+   Ecore_Evas *ee;
+   Ecore_Cocoa_Window *win;
+
+   ret = ecore_evas_init();
+   fail_if(ret != 1);
+
+   ret = ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_COCOA);
+   if (ret == EINA_TRUE)
+     {
+        /* Engine supported. Shall not fail... */
+        ee = ecore_evas_cocoa_new(NULL, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+        fail_if(ee == NULL);
+        win = ecore_evas_cocoa_window_get(ee);
+        fail_if(win == NULL);
+     }
+   else
+     {
+        /* Engine not supported. Shall not succeed... */
+        ee = ecore_evas_cocoa_new(NULL, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+        fail_if(ee != NULL);
+        win = ecore_evas_cocoa_window_get(ee);
+        fail_if(win != NULL);
+     }
+
+   ecore_evas_free(ee);
+
+   ret = ecore_evas_shutdown();
+   fail_if(ret != 0);
+}
+END_TEST
+
 void ecore_test_ecore_evas(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_evas_associate);
+   tcase_add_test(tc, ecore_test_ecore_evas_cocoa);
 }
