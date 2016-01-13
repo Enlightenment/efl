@@ -1,6 +1,9 @@
 /* TODO: replicate diagonal swallow slots to the other hover styles */
 group { name: "elm/hover/base/default";
    data.item: "dismiss" "on";
+   script {
+      public on_dismiss = 0;
+   }
    parts {
       part { name: "elm.swallow.offset"; type: SWALLOW;
          description { state: "default" 0.0;
@@ -130,14 +133,22 @@ group { name: "elm/hover/base/default";
    programs {
       program { name: "end";
          signal: "mouse,up,*"; source: "base";
-         action: SIGNAL_EMIT "elm,action,dismiss" "elm";
+         script {
+            if (get_int(on_dismiss) == 0) {
+               emit("elm,action,dismiss", "elm");
+               set_int(on_dismiss, 1);
+            }
+         }
       }
       program { name: "hide";
          signal: "elm,action,hide"; source: "elm";
          after: "hidefinished";
       }
       program { name: "hidefinished";
-         action: SIGNAL_EMIT "elm,action,hide,finished" "elm";
+         script {
+            set_int(on_dismiss, 0);
+            emit("elm,action,hide,finished", "elm");
+         }
       }
    }
 }
@@ -145,6 +156,9 @@ group { name: "elm/hover/base/default";
 group { name: "elm/hover/base/popout";
    data.item: "dismiss" "on";
    images.image: "button_normal.png" COMP;
+   script {
+      public on_dismiss = 0;
+   }
    parts {
       part { name: "elm.swallow.offset"; type: SWALLOW;
          description { state: "default" 0.0;
@@ -361,7 +375,12 @@ group { name: "elm/hover/base/popout";
    programs {
       program { name: "end";
          signal: "mouse,up,*"; source: "base";
-         action: SIGNAL_EMIT "elm,action,dismiss" "elm";
+         script {
+            if (get_int(on_dismiss) == 0) {
+               emit("elm,action,dismiss", "elm");
+               set_int(on_dismiss, 1);
+            }
+         }
       }
       program { name: "show";
          signal: "elm,action,show"; source: "elm";
@@ -376,7 +395,10 @@ group { name: "elm/hover/base/popout";
          after: "hidefinished";
       }
       program { name: "hidefinished";
-         action: SIGNAL_EMIT "elm,action,hide,finished" "elm";
+         script {
+            set_int(on_dismiss, 0);
+            emit("elm,action,hide,finished", "elm");
+         }
       }
       program { name: "leftshow";
          signal: "elm,action,slot,left,show"; source: "elm";
@@ -450,6 +472,7 @@ group { name: "elm/hover/base/hoversel_vertical/default";
    script {
       public visible = 0;
       public right = 0;
+      public on_dismiss = 0;
       public topshow2() {
          if (get_int(right) == 0)
             run_program(PROGRAM:"topshow_default");
@@ -644,7 +667,12 @@ group { name: "elm/hover/base/hoversel_vertical/default";
    programs {
       program { name: "end";
          signal: "mouse,up,*"; source: "base";
-         action: SIGNAL_EMIT "elm,action,dismiss" "elm";
+         script {
+            if (get_int(on_dismiss) == 0) {
+               emit("elm,action,dismiss", "elm");
+               set_int(on_dismiss, 1);
+            }
+         }
       }
       program { name: "show";
          signal: "elm,action,show"; source: "elm";
@@ -659,7 +687,10 @@ group { name: "elm/hover/base/hoversel_vertical/default";
          after: "hidefinished";
       }
       program { name: "hidefinished";
-         action: SIGNAL_EMIT "elm,action,hide,finished" "elm";
+         script {
+            set_int(on_dismiss, 0);
+            emit("elm,action,hide,finished", "elm");
+         }
       }
       program { name: "topshow";
          signal: "elm,action,slot,top,show"; source: "elm";
@@ -779,6 +810,9 @@ group { name: "elm/hover/base/hoversel_horizontal/default";
    alias: "elm/hover/base/combobox_horizontal/entry";
    images.image: "button_normal.png" COMP;
    data.item: "dismiss" "on";
+   script {
+      public on_dismiss = 0;
+   }
    // max_size limits the maximum size of expanded hoversel
    // when it's scrollable.
    //data.item: "max_size" "120";
@@ -897,7 +931,12 @@ group { name: "elm/hover/base/hoversel_horizontal/default";
    programs {
       program { name: "end";
          signal: "mouse,up,*"; source: "base";
-         action: SIGNAL_EMIT "elm,action,dismiss" "elm";
+         script {
+            if (get_int(on_dismiss) == 0) {
+               emit("elm,action,dismiss", "elm");
+               set_int(on_dismiss, 1);
+            }
+         }
       }
       program { name: "show";
          signal: "elm,action,show"; source: "elm";
@@ -913,7 +952,10 @@ group { name: "elm/hover/base/hoversel_horizontal/default";
          after: "hidefinished";
       }
       program { name: "hidefinished";
-         action: SIGNAL_EMIT "elm,action,hide,finished" "elm";
+         script {
+            set_int(on_dismiss, 0);
+            emit("elm,action,hide,finished", "elm");
+         }
       }
 
       program { name: "leftshow";
