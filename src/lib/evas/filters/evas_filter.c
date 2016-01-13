@@ -1280,8 +1280,6 @@ _filter_target_render(Evas_Filter_Context *ctx)
 {
    Evas_Filter_Buffer *src, *dst;
    void *drawctx, *image = NULL, *surface = NULL;
-   int cx, cy, cw, ch;
-   Eina_Bool use_clip = EINA_FALSE;
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(ctx->target.bufid, EINA_FALSE);
 
@@ -1300,7 +1298,6 @@ _filter_target_render(Evas_Filter_Context *ctx)
 
    if (ctx->target.clip_use)
      {
-        use_clip = ENFN->context_clip_get(ENDT, drawctx, &cx, &cy, &cw, &ch);
         ENFN->context_clip_set(ENDT, drawctx, ctx->target.cx, ctx->target.cy,
                                ctx->target.cw, ctx->target.ch);
      }

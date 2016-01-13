@@ -131,7 +131,6 @@ struct _Evas_Filter_Context
    struct
    {
       int bufid;
-      void *context;
       int x, y;
       int cx, cy, cw, ch; // clip
       int r, g, b, a; // clip color
