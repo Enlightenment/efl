@@ -715,6 +715,53 @@ START_TEST(eina_matrix3_map_transform)
 }
 END_TEST
 
+START_TEST(eina_normal3_test)
+{
+   Eina_Matrix3 out;
+   Eina_Matrix4 m;
+   double xx, xy, xz,
+          yx, yy, yz,
+          zx, zy, zz;
+
+   eina_init();
+   eina_matrix4_values_set(&m,
+                           1, 0, 0, 0,
+                           0, 1, 0, 0,
+                           0, 0, 1, 0,
+                           0, 0, 0, 1);
+   eina_normal3_matrix_get(&out, &m);
+   eina_matrix3_values_get(&out,
+                           &xx, &xy, &xz,
+                           &yx, &yy, &yz,
+                           &zx, &zy, &zz
+                           );
+
+   fail_if((fabs(xy) - 1.0) > DBL_EPSILON ||
+           (fabs(yx) - 1.0) > DBL_EPSILON ||
+           (fabs(yz) - 1.0) > DBL_EPSILON ||
+           (fabs(zy) - 1.0) > DBL_EPSILON
+          );
+
+   eina_matrix4_values_set(&m,
+                           0, 0, 0, 0,
+                           0, 1, 0, 0,
+                           0, 0, 0, 0,
+                           0, 0, 0, 1);
+   eina_normal3_matrix_get(&out, &m);
+   eina_matrix3_values_get(&out,
+                           &xx, &xy, &xz,
+                           &yx, &yy, &yz,
+                           &zx, &zy, &zz
+                           );
+   fail_if((fabs(xy)) > DBL_EPSILON ||
+           (fabs(yx)) > DBL_EPSILON ||
+           (fabs(yz)) > DBL_EPSILON ||
+           (fabs(zy)) > DBL_EPSILON
+          );
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_matrix(TCase *tc)
 {
@@ -727,4 +774,5 @@ eina_test_matrix(TCase *tc)
    tcase_add_test(tc, eina_matrix3_operations);
    tcase_add_test(tc, eina_matrix3_f16p16);
    tcase_add_test(tc, eina_matrix3_map_transform);
+   tcase_add_test(tc, eina_normal3_test);
 }
