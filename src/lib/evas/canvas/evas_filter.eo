@@ -19,13 +19,13 @@ mixin Evas.Filter (Efl.Gfx.Filter)
             val: bool;
          }
       }
-      constructor @protected {
+      ctor @protected {
          [[Initialize the Evas.Filter mixin.
 
            Should be called in a parent's class constructor.
          ]]
       }
-      destructor @protected {
+      dtor @protected {
          [[Release all data held by this Evas.Filter.
 
            This may include image buffers allocated by the Evas engine.

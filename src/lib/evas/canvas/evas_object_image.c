@@ -371,7 +371,7 @@ _evas_image_eo_base_constructor(Eo *eo_obj, Evas_Image_Data *o)
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
      }
 
-   eo_do(eo_obj, evas_filter_constructor());
+   eo_do(eo_obj, evas_filter_ctor());
 
    return eo_obj;
 }
@@ -3031,7 +3031,7 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
        EINA_COW_PIXEL_WRITE_END(o, pixi_write);
      }
 
-   eo_do(eo_obj, evas_filter_destructor());
+   eo_do(eo_obj, evas_filter_dtor());
 }
 
 static void

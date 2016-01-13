@@ -584,14 +584,14 @@ _evas_filter_invalid_set(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd, Eina_Bool
 }
 
 EOLIAN static void
-_evas_filter_constructor(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd)
+_evas_filter_ctor(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd)
 {
    pd->data = eina_cow_alloc(evas_object_filter_cow);
    SLKI(pd->lck);
 }
 
 EOLIAN static void
-_evas_filter_destructor(Eo *eo_obj, Evas_Filter_Data *pd)
+_evas_filter_dtor(Eo *eo_obj, Evas_Filter_Data *pd)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Filter_Data_Binding *db;

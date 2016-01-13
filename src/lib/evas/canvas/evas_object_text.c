@@ -1599,7 +1599,7 @@ evas_object_text_init(Evas_Object *eo_obj)
    o->inherit_paragraph_direction = EINA_TRUE;
 #endif
 
-   eo_do(eo_obj, evas_filter_constructor());
+   eo_do(eo_obj, evas_filter_ctor());
 }
 
 EOLIAN static void
@@ -1616,7 +1616,7 @@ evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    Evas_Text_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
 
    /* free obj */
-   eo_do(eo_obj, evas_filter_destructor());
+   eo_do(eo_obj, evas_filter_dtor());
    _evas_object_text_items_clear(o);
    if (o->cur.utf8_text) eina_stringshare_del(o->cur.utf8_text);
    if (o->cur.font) eina_stringshare_del(o->cur.font);
