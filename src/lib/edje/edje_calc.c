@@ -3621,7 +3621,8 @@ _edje_map_prop_set(Evas_Map *map, const Edje_Calc_Params *pf,
 #define Rel1Y 1
 #define Rel2X 2
 #define Rel2Y 3
-Eina_Bool circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Eina_List **clist)
+static Eina_Bool
+_circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Eina_List **clist)
 {
    Edje_Real_Part *rp = NULL;
 
@@ -3638,7 +3639,7 @@ Eina_Bool circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part 
                {
                   if (!cep) cep = ep;
                   rp = ed->table_parts[cep->param1.description->rel1.id_x];
-                  if (circular_dependency_find(ed, ep, rp, clist))
+                  if (_circular_dependency_find(ed, ep, rp, clist))
                     {
                        *clist = eina_list_prepend(*clist, rp->part->name);
                        return EINA_TRUE;
@@ -3648,7 +3649,7 @@ Eina_Bool circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part 
                {
                   if (!cep) cep = ep;
                   rp = ed->table_parts[cep->param1.description->rel2.id_x];
-                  if (circular_dependency_find(ed, ep, rp, clist))
+                  if (_circular_dependency_find(ed, ep, rp, clist))
                     {
                        *clist = eina_list_prepend(*clist, rp->part->name);
                        return EINA_TRUE;
@@ -3662,7 +3663,7 @@ Eina_Bool circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part 
                {
                   if (!cep) cep = ep;
                   rp = ed->table_parts[cep->param2->description->rel1.id_x];
-                  if (circular_dependency_find(ed, ep, rp, clist))
+                  if (_circular_dependency_find(ed, ep, rp, clist))
                     {
                        *clist = eina_list_prepend(*clist, rp->part->name);
                        return EINA_TRUE;
@@ -3672,7 +3673,7 @@ Eina_Bool circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part 
                {
                   if (!cep) cep = ep;
                   rp = ed->table_parts[cep->param2->description->rel2.id_x];
-                  if (circular_dependency_find(ed, ep, rp, clist))
+                  if (_circular_dependency_find(ed, ep, rp, clist))
                     {
                        *clist = eina_list_prepend(*clist, rp->part->name);
                        return EINA_TRUE;
@@ -3688,7 +3689,7 @@ Eina_Bool circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part 
                {
                   if (!cep) cep = ep;
                   rp = ed->table_parts[cep->param1.description->rel1.id_y];
-                  if (circular_dependency_find(ed, ep, rp, clist))
+                  if (_circular_dependency_find(ed, ep, rp, clist))
                     {
                        *clist = eina_list_prepend(*clist, rp->part->name);
                        return EINA_TRUE;
@@ -3698,7 +3699,7 @@ Eina_Bool circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part 
                {
                   if (!cep) cep = ep;
                   rp = ed->table_parts[cep->param1.description->rel2.id_y];
-                  if (circular_dependency_find(ed, ep, rp, clist))
+                  if (_circular_dependency_find(ed, ep, rp, clist))
                     {
                        *clist = eina_list_prepend(*clist, rp->part->name);
                        return EINA_TRUE;
@@ -3711,7 +3712,7 @@ Eina_Bool circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part 
                {
                   if (!cep) cep = ep;
                   rp = ed->table_parts[cep->param2->description->rel1.id_y];
-                  if (circular_dependency_find(ed, ep, rp, clist))
+                  if (_circular_dependency_find(ed, ep, rp, clist))
                     {
                        *clist = eina_list_prepend(*clist, rp->part->name);
                        return EINA_TRUE;
@@ -3721,7 +3722,7 @@ Eina_Bool circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part 
                {
                   if (!cep) cep = ep;
                   rp = ed->table_parts[cep->param2->description->rel2.id_y];
-                  if (circular_dependency_find(ed, ep, rp, clist))
+                  if (_circular_dependency_find(ed, ep, rp, clist))
                     {
                        *clist = eina_list_prepend(*clist, rp->part->name);
                        return EINA_TRUE;
@@ -3809,9 +3810,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         Eina_List *l = NULL;
         char *part_name;
         char depends_path[PATH_MAX] = "";
-        circular_dependency_find(ed, ep, NULL, &clist);
+        _circular_dependency_find(ed, ep, NULL, &clist);
         strncat(depends_path, ep->part->name,
-                sizeof(ep->part->name) - strlen(ep->part->name) - 1);
+                sizeof(depends_path) - strlen(depends_path) - 1);
         EINA_LIST_FOREACH(clist, l, part_name)
           {
              strncat(depends_path, " -> ",
@@ -3819,7 +3820,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              strncat(depends_path, part_name,
                      sizeof(depends_path) - strlen(depends_path) - 1);
           }
-        ERR("Circular dependency: %s", depends_path);
+        ERR("Circular dependency in the group '%s' : %s", ed->group, depends_path);
         eina_list_free(clist);
 #endif
         return;
