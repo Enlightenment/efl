@@ -480,7 +480,7 @@ START_TEST(eina_test_quaternion_operations)
    Eina_Quaternion out;
    const double v[] = {0, 1, 2, 3};
    double angle;
-
+   Eina_Matrix4 m;
    eina_init();
 
    eina_quaternion_inverse(&out, &in);
@@ -511,6 +511,29 @@ START_TEST(eina_test_quaternion_operations)
    angle = eina_quaternion_angle_plains(&in, &in2);
    fail_if(angle - 0.963 > DBL_EPSILON);
 
+   eina_matrix4_values_set(&m,
+                           1, 0, 0, 0,
+                           0, 1, 0, 0,
+                           0, 0, 1, 0,
+                           0, 0, 0, 1);
+   eina_quaternion_transform(&out, &in, &m);
+   fail_if((fabs(out.x) - 2.0) > DBL_EPSILON ||
+           (fabs(out.y) - 2.0) > DBL_EPSILON ||
+           (fabs(out.z) - 1.0) > DBL_EPSILON ||
+           (fabs(out.w) - 1.0) > DBL_EPSILON
+          );
+
+   eina_matrix4_values_set(&m,
+                           0.5, 0, 0, 0,
+                           0, 0.5, 0, 0,
+                           0, 0, 1, 0,
+                           0, 0, 0, 1);
+   eina_quaternion_transform(&out, &in, &m);
+   fail_if((fabs(out.x) - 1.0) > DBL_EPSILON ||
+           (fabs(out.y) - 1.0) > DBL_EPSILON ||
+           (fabs(out.z) - 1.0) > DBL_EPSILON ||
+           (fabs(out.w) - 1.0) > DBL_EPSILON
+          );
    eina_shutdown();
 }
 END_TEST
