@@ -453,6 +453,8 @@ main(void)
 
    if (!ecore_evas_init()) return 0;
 
+   printf("Loading 3d meshes. Press Left or Right to switch between models.\n");
+
    ecore_evas = ecore_evas_new(NULL, 10, 10, WIDTH, HEIGHT, NULL);
    if (!ecore_evas) return 0;
 
