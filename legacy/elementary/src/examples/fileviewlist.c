@@ -1,9 +1,12 @@
 //Compile with:
-// gcc -o fileviewlist fileviewlist.c `pkg-config --cflags --libs emodel`
+// gcc -o fileviewlist fileviewlist.c `pkg-config --cflags --libs elementary`
 
-//#ifdef HAVE_CONFIG_H
+#ifdef HAVE_CONFIG_H
 # include "../../elementary_config.h"
-//#endif
+#else
+# define EFL_BETA_API_SUPPORT 1
+# define EFL_EO_API_SUPPORT 1
+#endif
 
 #include <Elementary.h>
 #include <Efl.h>
