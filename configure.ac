@@ -5064,6 +5064,7 @@ src/examples/eldbus/Makefile
 src/examples/ephysics/Makefile
 src/examples/edje/Makefile
 src/examples/emotion/Makefile
+src/examples/emile/Makefile
 src/examples/ethumb_client/Makefile
 src/examples/elua/Makefile
 src/examples/eolian_cxx/Makefile

@@ -118,6 +118,7 @@ examples/eldbus \
 examples/ephysics \
 examples/edje \
 examples/emotion \
+examples/emile \
 examples/elocation \
 examples/ethumb_client
 
