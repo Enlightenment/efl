@@ -70,17 +70,25 @@ typedef struct _Scene_Data
    Eo *mesh_blender_home;
    Eo *mesh_blender_sonic;
    Eo *mesh_blender_eagle;
+   Eo *mesh_blender_test_sphere;
+   Eo *mesh_blender_test_torus;
+   Eo *mesh_blender_test_cube;
+   Eo *mesh_blender_test_plain;
+   Eo *mesh_blender_test_column;
+   Eo *mesh_blender_test_home;
+   Eo *mesh_blender_test_sonic;
+   Eo *mesh_blender_test_eagle;
    Eo *material;
 } Scene_Data;
 
 int rr;
 
-#define MODEL_MESH_INIT(name, model)                                              \
+#define MODEL_MESH_INIT(name, model, shade)                                              \
    data->mesh_##name = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);                          \
    eo_do(data->mesh_##name,                                                       \
          efl_file_set(model, NULL),                                               \
          evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES),     \
-         evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_DIFFUSE),                   \
+         evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_##shade),                   \
          evas_canvas3d_mesh_frame_material_set(0, data->material));
 
 #define CONVEX_HULL_MESH_INIT(name)                                                              \
@@ -129,23 +137,32 @@ int rr;
               evas_canvas3d_node_mesh_del(mesh),                                        \
               evas_canvas3d_node_mesh_add(scene->mesh_blender_##name),                  \
               evas_canvas3d_node_scale_set(scale, scale, scale));                       \
-        _print_result(scene->mesh_##name##_ch, scene->mesh_blender_##name);       \
+        _print_result(scene->mesh_##name##_ch, scene->mesh_blender_test_##name);       \
         break;                                                                    \
      }
 
-static const char *home_ch = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/sweet_home_without_tex_coords.obj";
-static const char *sonic_ch = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/sonic.md2";
+static const char *home = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/sweet_home_without_tex_coords.obj";
+static const char *sonic = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/sonic.md2";
+static const char *eagle = PACKAGE_EXAMPLES_DIR "/shooter/assets/models/eagle.md2";
 
-static const char *column_ch = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/column_test.ply";
-static const char *plain_ch = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/plain.ply";
-static const char *plain = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/plain_blender_ch.ply";
-static const char *sphere = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/sphere_blender_ch.ply";
-static const char *torus = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/torus_blender_ch.ply";
-static const char *cube = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/cube_blender_ch.ply";
-static const char *column = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/column_blender_ch.ply";
-static const char *home = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/home_blender_ch.obj";
-static const char *sonic = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/sonic_blender_ch.ply";
-static const char *eagle = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/eagle_blender_ch.ply";
+static const char *column = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/column.ply";
+static const char *plain = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/plain.ply";
+static const char *plain_ch = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/plain_blender_ch.ply";
+static const char *sphere_ch = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/sphere_blender_ch.ply";
+static const char *torus_ch = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/torus_blender_ch.ply";
+static const char *cube_ch = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/cube_blender_ch.ply";
+static const char *column_ch = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/column_blender_ch.ply";
+static const char *home_ch = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/home_blender_ch.obj";
+static const char *sonic_ch = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/sonic_blender_ch.ply";
+static const char *eagle_ch = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/eagle_blender_ch.ply";
+static const char *plain_test = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/plain_blender_ch_test.ply";
+static const char *sphere_test = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/sphere_blender_ch_test.ply";
+static const char *torus_test = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/torus_blender_ch_test.ply";
+static const char *cube_test = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/cube_blender_ch_test.ply";
+static const char *column_test = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/column_blender_ch_test.ply";
+static const char *home_test = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/home_blender_ch_test.ply";
+static const char *sonic_test = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/sonic_blender_ch_test.ply";
+static const char *eagle_test = PACKAGE_EXAMPLES_DIR EVAS_CONVEX_HULL_FOLDER "/eagle_blender_ch_test.ply";
 
 static Ecore_Evas *ecore_evas = NULL;
 static Evas *evas = NULL;
@@ -286,13 +303,6 @@ _light_setup(Scene_Data *data)
 static void
 _mesh_setup(Scene_Data *data)
 {
-   /*int vertex_ch_count = 0, index_ch_count = 0;
-   float *vert = NULL;
-   unsigned short int *ind = NULL;
-   int count = 0;
-   float *v = NULL;
-   unsigned short int *indx = NULL;*/
-
    Eina_Inarray *vert, *ind;
    float *vertex;
    unsigned short int *index;
@@ -347,20 +357,29 @@ _mesh_setup(Scene_Data *data)
          evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_PHONG),
          evas_canvas3d_mesh_frame_material_set(0, data->material));
 
-   MODEL_MESH_INIT(plain, plain_ch)
-   MODEL_MESH_INIT(column, column_ch)
-   MODEL_MESH_INIT(home, home_ch)
-   MODEL_MESH_INIT(sonic, sonic_ch)
-   MODEL_MESH_INIT(eagle, PACKAGE_EXAMPLES_DIR "/shooter/assets/models/eagle.md2")
+   MODEL_MESH_INIT(plain, plain, PHONG)
+   MODEL_MESH_INIT(column, column, PHONG)
+   MODEL_MESH_INIT(home, home, PHONG)
+   MODEL_MESH_INIT(sonic, sonic, PHONG)
+   MODEL_MESH_INIT(eagle, eagle, PHONG)
 
-   MODEL_MESH_INIT(blender_sphere, sphere)
-   MODEL_MESH_INIT(blender_torus, torus)
-   MODEL_MESH_INIT(blender_cube, cube)
-   MODEL_MESH_INIT(blender_plain, plain)
-   MODEL_MESH_INIT(blender_column, column)
-   MODEL_MESH_INIT(blender_home, home)
-   MODEL_MESH_INIT(blender_eagle, eagle)
-   MODEL_MESH_INIT(blender_sonic, sonic)
+   MODEL_MESH_INIT(blender_sphere, sphere_ch, PHONG)
+   MODEL_MESH_INIT(blender_torus, torus_ch, PHONG)
+   MODEL_MESH_INIT(blender_cube, cube_ch, PHONG)
+   MODEL_MESH_INIT(blender_plain, plain_ch, PHONG)
+   MODEL_MESH_INIT(blender_column, column_ch, PHONG)
+   MODEL_MESH_INIT(blender_home, home_ch, PHONG)
+   MODEL_MESH_INIT(blender_eagle, eagle_ch, PHONG)
+   MODEL_MESH_INIT(blender_sonic, sonic_ch, PHONG)
+
+   MODEL_MESH_INIT(blender_test_sphere, sphere_test, DIFFUSE)
+   MODEL_MESH_INIT(blender_test_torus, torus_test, DIFFUSE)
+   MODEL_MESH_INIT(blender_test_cube, cube_test, DIFFUSE)
+   MODEL_MESH_INIT(blender_test_plain, plain_test, DIFFUSE)
+   MODEL_MESH_INIT(blender_test_column, column_test, DIFFUSE)
+   MODEL_MESH_INIT(blender_test_home, home_test, DIFFUSE)
+   MODEL_MESH_INIT(blender_test_eagle, eagle_test, DIFFUSE)
+   MODEL_MESH_INIT(blender_test_sonic, sonic_test, DIFFUSE)
 
    data->mesh_node =
       eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
@@ -380,7 +399,7 @@ _mesh_setup(Scene_Data *data)
    CONVEX_HULL_MESH_INIT(sonic)
    CONVEX_HULL_MESH_INIT(eagle)
 
-   _print_result(data->mesh_sphere_ch, data->mesh_blender_sphere);
+   _print_result(data->mesh_sphere_ch, data->mesh_blender_test_sphere);
 
    data->mesh_node_convex_hull =
       eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
