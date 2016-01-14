@@ -767,6 +767,7 @@ _elm_config_profile_derived_save(const char *profile, Elm_Config_Derived *derive
 {
    Eet_File *ef;
    char buf[PATH_MAX], buf2[PATH_MAX];
+   int ret;
 
    _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s",
                                  profile ? profile : _elm_profile);
@@ -778,9 +779,9 @@ _elm_config_profile_derived_save(const char *profile, Elm_Config_Derived *derive
    ef = eet_open(buf, EET_FILE_MODE_WRITE);
    if (ef)
      {
-        eet_data_write(ef, _config_derived_edd, "config", derived, 1);
+        ret = eet_data_write(ef, _config_derived_edd, "config", derived, 1);
         eet_close(ef);
-        ecore_file_mv(buf, buf2);
+        if (ret) ecore_file_mv(buf, buf2);
      }
 }
 
