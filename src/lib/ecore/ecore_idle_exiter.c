@@ -44,13 +44,9 @@ ecore_idle_exiter_add(Ecore_Task_Cb func,
 EOLIAN static void
 _ecore_idle_exiter_constructor(Eo *obj, Ecore_Idle_Exiter_Data *ie, Ecore_Task_Cb func, const void *data)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
+
    _ecore_lock();
-    if (EINA_UNLIKELY(!eina_main_loop_is()))
-      {
-         EINA_MAIN_LOOP_CHECK_RETURN;
-      }
-
-
    ie->obj = obj;
    eo_manual_free_set(obj, EINA_TRUE);
 
