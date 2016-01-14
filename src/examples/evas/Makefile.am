@@ -389,7 +389,7 @@ resources/models/sweet_home_only_vertex_coords.obj \
 resources/models/sweet_home_without_normals.obj \
 resources/models/sweet_home_without_tex_coords.obj \
 resources/models/convex_hull/column_blender_ch.ply \
-resources/models/convex_hull/column_test.ply \
+resources/models/convex_hull/column.ply \
 resources/models/convex_hull/cube_blender_ch.ply \
 resources/models/convex_hull/eagle_blender_ch.ply \
 resources/models/convex_hull/home_blender_ch.obj \
