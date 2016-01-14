@@ -330,15 +330,13 @@ ecore_shutdown(void)
    /*
     * take a lock here because _ecore_event_shutdown() does callbacks
     */
-     _ecore_lock();
      if (_ecore_init_count <= 0)
        {
           ERR("Init count not greater than 0 in shutdown.");
-          _ecore_unlock();
           return 0;
        }
      if (_ecore_init_count-- != _ecore_init_count_threshold)
-       goto unlock;
+       goto end;
 
      ecore_system_modules_unload();
 
@@ -430,9 +428,7 @@ ecore_shutdown(void)
 
      eo_unref(_ecore_parent);
      eo_shutdown();
-unlock:
-     _ecore_unlock();
-
+ end:
      return _ecore_init_count;
 }
 

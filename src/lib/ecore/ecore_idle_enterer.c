@@ -68,13 +68,9 @@ ecore_idle_enterer_add(Ecore_Task_Cb func,
 EOLIAN static void
 _ecore_idle_enterer_after_constructor(Eo *obj, Ecore_Idle_Enterer_Data *ie, Ecore_Task_Cb func, const void *data)
 {
-   _ecore_lock();
-   if (!_ecore_idle_enterer_add(obj, ie, func, data)) goto unlock;
+   if (!_ecore_idle_enterer_add(obj, ie, func, data)) return;
 
    idle_enterers = (Ecore_Idle_Enterer_Data *)eina_inlist_append(EINA_INLIST_GET(idle_enterers), EINA_INLIST_GET(ie));
-
-unlock:
-   _ecore_unlock();
 }
 
 EAPI Ecore_Idle_Enterer *
@@ -89,27 +85,18 @@ ecore_idle_enterer_before_add(Ecore_Task_Cb func,
 EOLIAN static void
 _ecore_idle_enterer_before_constructor(Eo *obj, Ecore_Idle_Enterer_Data *ie, Ecore_Task_Cb func, const void *data)
 {
-   _ecore_lock();
-   if (!_ecore_idle_enterer_add(obj, ie, func, data)) goto unlock;
+   if (!_ecore_idle_enterer_add(obj, ie, func, data)) return;
 
    idle_enterers = (Ecore_Idle_Enterer_Data *)eina_inlist_prepend(EINA_INLIST_GET(idle_enterers), EINA_INLIST_GET(ie));
-
-unlock:
-   _ecore_unlock();
 }
 
 EAPI void *
 ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer)
 {
-   void *data = NULL;
-
    if (!idle_enterer) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
-   _ecore_lock();
-   data = _ecore_idle_enterer_del(idle_enterer);
-   _ecore_unlock();
-   return data;
+   return _ecore_idle_enterer_del(idle_enterer);
 }
 
 static void *

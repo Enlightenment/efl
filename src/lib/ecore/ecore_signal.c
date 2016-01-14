@@ -251,10 +251,8 @@ _ecore_signal_call(void)
 
                          doomsday_clock = _ecore_exe_doomsday_clock_get(e->exe);
                          IF_FN_DEL(ecore_timer_del, doomsday_clock);
-                         _ecore_unlock();
                          doomsday_clock = ecore_timer_add
                              (0.1, _ecore_signal_exe_exit_delay, e);
-                         _ecore_lock();
                          _ecore_exe_doomsday_clock_set(e->exe, doomsday_clock);
                     }
                   else

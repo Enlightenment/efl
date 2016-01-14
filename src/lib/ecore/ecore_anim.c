@@ -380,9 +380,7 @@ ecore_animator_add(Ecore_Task_Cb func,
 EOLIAN static void
 _ecore_animator_constructor(Eo *obj, Ecore_Animator_Data *animator, Ecore_Task_Cb func, const void *data)
 {
-   _ecore_lock();
    _ecore_animator_add(obj, animator, func, data);
-   _ecore_unlock();
 }
 
 EAPI Ecore_Animator *
@@ -399,19 +397,15 @@ ecore_animator_timeline_add(double            runtime,
 EOLIAN static void
 _ecore_animator_timeline_constructor(Eo *obj, Ecore_Animator_Data *animator, double runtime, Ecore_Timeline_Cb func, const void *data)
 {
-   _ecore_lock();
    if (runtime <= 0.0) runtime = 0.0;
 
-   if (!_ecore_animator_add(obj, animator, _ecore_animator_run, NULL)) goto unlock;
+   if (!_ecore_animator_add(obj, animator, _ecore_animator_run, NULL)) return;
 
    animator->data = obj;
    animator->run_func = func;
    animator->run_data = (void *)data;
    animator->start = ecore_loop_time_get();
    animator->run = runtime;
-
-unlock:
-   _ecore_unlock();
 }
 
 static double
@@ -665,13 +659,12 @@ ecore_animator_del(Ecore_Animator *obj)
    if (!obj) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    Ecore_Animator_Data *animator = eo_data_scope_get(obj, MY_CLASS);
-   _ecore_lock();
 
-   if (!animator) goto unlock;
+   if (!animator) return NULL;
    if (animator->delete_me)
      {
         data = animator->data;
-        goto unlock;
+        goto end;
      }
    animator->delete_me = EINA_TRUE;
    animators_delete_me++;
@@ -679,8 +672,7 @@ ecore_animator_del(Ecore_Animator *obj)
      data = animator->run_data;
    else
      data = animator->data;
-unlock:
-   _ecore_unlock();
+ end:
    return data;
 }
 
@@ -708,14 +700,11 @@ EAPI void
 ecore_animator_frametime_set(double frametime)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   _ecore_lock();
    if (frametime < 0.0) frametime = 0.0;
-   if (animators_frametime == frametime) goto unlock;
+   if (animators_frametime == frametime) return ;
    animators_frametime = frametime;
    _end_tick();
    if (_have_animators()) _begin_tick();
-unlock:
-   _ecore_unlock();
 }
 
 EAPI double
@@ -736,16 +725,13 @@ EOLIAN static void
 _ecore_animator_eo_base_event_freeze(Eo *obj EINA_UNUSED, Ecore_Animator_Data *animator)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   _ecore_lock();
-   if (animator->delete_me) goto unlock;
+   if (animator->delete_me) return ;
    if (!animator->suspended)
      {
         animator->suspended = EINA_TRUE;
         animators_suspended++;
         if (!_have_animators()) _end_tick();
      }
-unlock:
-   _ecore_unlock();
 }
 
 EAPI void
@@ -760,27 +746,22 @@ _ecore_animator_eo_base_event_thaw(Eo *obj EINA_UNUSED, Ecore_Animator_Data *ani
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
 
-   _ecore_lock();
-   if (animator->delete_me) goto unlock;
+   if (animator->delete_me) return;
    if (animator->suspended)
      {
         animator->suspended = EINA_FALSE;
         animators_suspended--;
         if (_have_animators()) _begin_tick();
      }
-unlock:
-   _ecore_unlock();
 }
 
 EAPI void
 ecore_animator_source_set(Ecore_Animator_Source source)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   _ecore_lock();
    _end_tick();
    src = source;
    if (_have_animators()) _begin_tick();
-   _ecore_unlock();
 }
 
 EAPI Ecore_Animator_Source
@@ -795,12 +776,10 @@ ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb    func,
                                                      const void *data)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   _ecore_lock();
    _end_tick();
    begin_tick_cb = func;
    begin_tick_data = data;
    if (_have_animators()) _begin_tick();
-   _ecore_unlock();
 }
 
 EAPI void
@@ -808,21 +787,17 @@ ecore_animator_custom_source_tick_end_callback_set(Ecore_Cb    func,
                                                    const void *data)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   _ecore_lock();
    _end_tick();
    end_tick_cb = func;
    end_tick_data = data;
    if (_have_animators()) _begin_tick();
-   _ecore_unlock();
 }
 
 EAPI void
 ecore_animator_custom_tick(void)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   _ecore_lock();
    if (src == ECORE_ANIMATOR_SOURCE_CUSTOM) _do_tick();
-   _ecore_unlock();
 }
 
 void

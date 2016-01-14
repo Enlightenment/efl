@@ -76,17 +76,13 @@ EAPI void
 ecore_timer_precision_set(double value)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   _ecore_lock();
 
    if (value < 0.0)
      {
         ERR("Precision %f less than zero, ignored", value);
-        goto unlock;
+        return ;
      }
    precision = value;
-
-unlock:
-   _ecore_unlock();
 }
 
 EAPI Ecore_Timer *
@@ -139,11 +135,9 @@ _ecore_timer_constructor(Eo *obj, Ecore_Timer_Data *timer, double in, Ecore_Task
 {
    double now;
 
-   _ecore_lock();
    now = ecore_time_get();
 
    _ecore_timer_add(obj, timer, now, in, func, data);
-   _ecore_unlock();
 }
 
 EOLIAN static void
@@ -161,28 +155,16 @@ ecore_timer_loop_add(double        in,
                      Ecore_Task_Cb func,
                      const void   *data)
 {
-   Ecore_Timer *timer;
-
-   _ecore_lock();
-   timer = _ecore_timer_loop_add(in, func, data);
-   _ecore_unlock();
-
-   return timer;
+   return _ecore_timer_loop_add(in, func, data);
 }
 
 EAPI void *
 ecore_timer_del(Ecore_Timer *timer)
 {
-   void *data = NULL;
-
    if (!timer) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   _ecore_lock();
 
-   data = _ecore_timer_del(timer);
-
-   _ecore_unlock();
-   return data;
+   return _ecore_timer_del(timer);
 }
 
 EOLIAN static void
@@ -191,9 +173,7 @@ _ecore_timer_interval_set(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer, double i
    EINA_MAIN_LOOP_CHECK_RETURN;
    if (in < 0.0) in = 0.0;
 
-   _ecore_lock();
    timer->in = in;
-   _ecore_unlock();
 }
 
 EOLIAN static double
@@ -202,9 +182,7 @@ _ecore_timer_interval_get(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
    double ret = -1.0;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(ret);
-   _ecore_lock();
    ret = timer->in;
-   _ecore_unlock();
 
    return ret;
 }
@@ -214,9 +192,7 @@ _ecore_timer_delay(Eo *obj, Ecore_Timer_Data *_pd EINA_UNUSED, double add)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
 
-   _ecore_lock();
    _ecore_timer_util_delay(obj, add);
-   _ecore_unlock();
 }
 
 EOLIAN static void
@@ -225,7 +201,6 @@ _ecore_timer_reset(Eo *obj, Ecore_Timer_Data *timer)
    double now, add;
    EINA_MAIN_LOOP_CHECK_RETURN;
 
-   _ecore_lock();
    now = ecore_time_get();
 
    if (timer->frozen)
@@ -233,7 +208,6 @@ _ecore_timer_reset(Eo *obj, Ecore_Timer_Data *timer)
    else
      add = timer->at - now;
    _ecore_timer_util_delay(obj, timer->in - add);
-   _ecore_unlock();
 }
 
 EOLIAN static double
@@ -244,15 +218,12 @@ _ecore_timer_pending_get(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(ret);
 
-   _ecore_lock();
-
    now = ecore_time_get();
 
    if (timer->frozen)
      ret = timer->pending;
    else
      ret = timer->at - now;
-   _ecore_unlock();
 
    return ret;
 }
@@ -271,11 +242,9 @@ _ecore_timer_eo_base_event_freeze(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
 
    EINA_MAIN_LOOP_CHECK_RETURN;
 
-   _ecore_lock();
-
    /* Timer already frozen */
    if (timer->frozen)
-     goto unlock;
+     return;
 
    timers = (Ecore_Timer_Data *)eina_inlist_remove(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
    suspended = (Ecore_Timer_Data *)eina_inlist_prepend(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
@@ -285,8 +254,6 @@ _ecore_timer_eo_base_event_freeze(Eo *obj EINA_UNUSED, Ecore_Timer_Data *timer)
    timer->pending = timer->at - now;
    timer->at = 0.0;
    timer->frozen = 1;
-unlock:
-   _ecore_unlock();
 }
 
 EAPI Eina_Bool
@@ -320,18 +287,14 @@ _ecore_timer_eo_base_event_thaw(Eo *obj, Ecore_Timer_Data *timer)
 
    EINA_MAIN_LOOP_CHECK_RETURN;
 
-   _ecore_lock();
-
    /* Timer not frozen */
    if (!timer->frozen)
-     goto unlock;
+     return ;
 
    suspended = (Ecore_Timer_Data *)eina_inlist_remove(EINA_INLIST_GET(suspended), EINA_INLIST_GET(timer));
    now = ecore_time_get();
 
    _ecore_timer_set(obj, timer->pending + now, timer->in, timer->func, timer->data);
-unlock:
-   _ecore_unlock();
 }
 
 EAPI char *
@@ -346,7 +309,6 @@ ecore_timer_dump(void)
    int unknow_timer = 0;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   _ecore_lock();
    result = eina_strbuf_new();
 
    EINA_INLIST_FOREACH(timers, tm)
@@ -382,7 +344,6 @@ ecore_timer_dump(void)
 
    out = eina_strbuf_string_steal(result);
    eina_strbuf_free(result);
-   _ecore_unlock();
 
    return out;
 #else
@@ -678,7 +639,6 @@ _ecore_timer_reschedule(Ecore_Timer *obj,
      _ecore_timer_set(obj, timer->at + timer->in, timer->in, timer->func, timer->data);
 }
 
-/* assume that we hold the ecore lock when entering this function */
 void
 _ecore_timer_expired_timers_call(double when)
 {
@@ -686,7 +646,6 @@ _ecore_timer_expired_timers_call(double when)
     while (_ecore_timer_expired_call(when)) ;
 }
 
-/* assume that we hold the ecore lock when entering this function */
 int
 _ecore_timer_expired_call(double when)
 {

@@ -80,12 +80,11 @@ ecore_event_handler_add(int                    type,
    Ecore_Event_Handler *eh = NULL;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   _ecore_lock();
 
-   if (!func) goto unlock;
-   if ((type <= ECORE_EVENT_NONE) || (type >= event_id_max)) goto unlock;
+   if (!func) return NULL;
+   if ((type <= ECORE_EVENT_NONE) || (type >= event_id_max)) return NULL;
    eh = ecore_event_handler_calloc(1);
-   if (!eh) goto unlock;
+   if (!eh) return NULL;
    ECORE_MAGIC_SET(eh, ECORE_MAGIC_EVENT_HANDLER);
    eh->type = type;
    eh->func = func;
@@ -106,7 +105,7 @@ ecore_event_handler_add(int                    type,
              if (!new_handlers)
                {
                   ecore_event_handler_mp_free(eh);
-                  goto unlock;
+                  return NULL;
                }
              event_handlers = new_handlers;
              for (i = p_alloc_num; i < event_handlers_alloc_num; i++)
@@ -118,48 +117,33 @@ ecore_event_handler_add(int                    type,
    else if (type < event_handlers_alloc_num)
      event_handlers[type] = (Ecore_Event_Handler *)eina_inlist_append(EINA_INLIST_GET(event_handlers[type]), EINA_INLIST_GET(eh));
 
-unlock:
-   _ecore_unlock();
    return eh;
 }
 
 EAPI void *
 ecore_event_handler_del(Ecore_Event_Handler *event_handler)
 {
-   void *data = NULL;
-
    if (!event_handler) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   _ecore_lock();
    if (!ECORE_MAGIC_CHECK(event_handler, ECORE_MAGIC_EVENT_HANDLER))
      {
         ECORE_MAGIC_FAIL(event_handler, ECORE_MAGIC_EVENT_HANDLER,
                          "ecore_event_handler_del");
-        goto unlock;
+        return NULL;
      }
-   data = _ecore_event_handler_del(event_handler);
-unlock:
-   _ecore_unlock();
-
-   return data;
+   return _ecore_event_handler_del(event_handler);
 }
 
 EAPI void *
 ecore_event_handler_data_get(Ecore_Event_Handler *eh)
 {
-   void *data = NULL;
-
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   _ecore_lock();
    if (!ECORE_MAGIC_CHECK(eh, ECORE_MAGIC_EVENT_HANDLER))
      {
         ECORE_MAGIC_FAIL(eh, ECORE_MAGIC_EVENT_HANDLER, "ecore_event_handler_data_get");
-        goto unlock;
+        return NULL;
      }
-   data = eh->data;
-unlock:
-   _ecore_unlock();
-   return data;
+   return eh->data;
 }
 
 EAPI void *
@@ -169,16 +153,13 @@ ecore_event_handler_data_set(Ecore_Event_Handler *eh,
    void *old = NULL;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   _ecore_lock();
    if (!ECORE_MAGIC_CHECK(eh, ECORE_MAGIC_EVENT_HANDLER))
      {
         ECORE_MAGIC_FAIL(eh, ECORE_MAGIC_EVENT_HANDLER, "ecore_event_handler_data_set");
-        goto unlock;
+        return NULL;
      }
    old = eh->data;
    eh->data = (void *)data;
-unlock:
-   _ecore_unlock();
 
    return old;
 }
@@ -196,53 +177,34 @@ ecore_event_add(int          type,
                 Ecore_End_Cb func_free,
                 void        *data)
 {
-   Ecore_Event *event = NULL;
-
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   _ecore_lock();
 
-/*   if (!ev) goto unlock; */
-   if (type <= ECORE_EVENT_NONE) goto unlock;
-   if (type >= event_id_max) goto unlock;
+   if (type <= ECORE_EVENT_NONE) return NULL;
+   if (type >= event_id_max) return NULL;
    if ((ev) && (!func_free)) func_free = _ecore_event_generic_free;
-   event = _ecore_event_add(type, ev, func_free, data);
-unlock:
-   _ecore_unlock();
-   return event;
+   return _ecore_event_add(type, ev, func_free, data);
 }
 
 EAPI void *
 ecore_event_del(Ecore_Event *event)
 {
-   void *data = NULL;
-
    if (!event) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   _ecore_lock();
    if (!ECORE_MAGIC_CHECK(event, ECORE_MAGIC_EVENT))
      {
         ECORE_MAGIC_FAIL(event, ECORE_MAGIC_EVENT, "ecore_event_del");
-        goto unlock;
+        return NULL;
      }
-   EINA_SAFETY_ON_TRUE_GOTO(event->delete_me, unlock);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(event->delete_me, NULL);
    event->delete_me = 1;
-   data = event->data;
-unlock:
-   _ecore_unlock();
-   return data;
+   return event->data;
 }
 
 EAPI int
 ecore_event_type_new(void)
 {
-   int id;
-
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
-   _ecore_lock();
-   id = event_id_max++;
-   _ecore_unlock();
-
-   return id;
+   return event_id_max++;
 }
 
 EAPI Ecore_Event_Filter *
@@ -254,42 +216,33 @@ ecore_event_filter_add(Ecore_Data_Cb   func_start,
    Ecore_Event_Filter *ef = NULL;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   _ecore_lock();
-   if (!func_filter) goto unlock;
+   if (!func_filter) return NULL;
    ef = ecore_event_filter_calloc(1);
-   if (!ef) goto unlock;
+   if (!ef) return NULL;
    ECORE_MAGIC_SET(ef, ECORE_MAGIC_EVENT_FILTER);
    ef->func_start = func_start;
    ef->func_filter = func_filter;
    ef->func_end = func_end;
    ef->data = (void *)data;
    event_filters = (Ecore_Event_Filter *)eina_inlist_append(EINA_INLIST_GET(event_filters), EINA_INLIST_GET(ef));
-unlock:
-   _ecore_unlock();
+
    return ef;
 }
 
 EAPI void *
 ecore_event_filter_del(Ecore_Event_Filter *ef)
 {
-   void *data = NULL;
-
    if (!ef) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   _ecore_lock();
    if (!ECORE_MAGIC_CHECK(ef, ECORE_MAGIC_EVENT_FILTER))
      {
         ECORE_MAGIC_FAIL(ef, ECORE_MAGIC_EVENT_FILTER, "ecore_event_filter_del");
-        goto unlock;
+        return NULL;
      }
-   EINA_SAFETY_ON_TRUE_GOTO(ef->delete_me, unlock);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(ef->delete_me, NULL);
    ef->delete_me = 1;
    event_filters_delete_me = 1;
-   data = ef->data;
-unlock:
-   _ecore_unlock();
-
-   return data;
+   return ef->data;
 }
 
 EAPI int

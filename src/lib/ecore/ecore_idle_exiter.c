@@ -46,37 +46,28 @@ _ecore_idle_exiter_constructor(Eo *obj, Ecore_Idle_Exiter_Data *ie, Ecore_Task_C
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
 
-   _ecore_lock();
    ie->obj = obj;
    eo_manual_free_set(obj, EINA_TRUE);
 
    if (!func)
      {
         ERR("callback function must be set up for an object of class: '%s'", MY_CLASS_NAME);
-        goto unlock;
+        return ;
      }
 
    ie->func = func;
    ie->data = (void *)data;
 
    idle_exiters = (Ecore_Idle_Exiter_Data *)eina_inlist_append(EINA_INLIST_GET(idle_exiters), EINA_INLIST_GET(ie));
-
-unlock:
-   _ecore_unlock();
 }
 
 EAPI void *
 ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter)
 {
-   void *data;
-
    if (!idle_exiter) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
-   _ecore_lock();
-   data = _ecore_idle_exiter_del(idle_exiter);
-   _ecore_unlock();
-   return data;
+   return _ecore_idle_exiter_del(idle_exiter);
 }
 
 static void *

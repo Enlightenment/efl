@@ -108,9 +108,7 @@ ecore_pipe_add(Ecore_Pipe_Cb handler,
 {
    Ecore_Pipe *p;
 
-   _ecore_lock();
    p = _ecore_pipe_add(handler, data);
-   _ecore_unlock();
 
    return p;
 }
@@ -118,24 +116,19 @@ ecore_pipe_add(Ecore_Pipe_Cb handler,
 EAPI void *
 ecore_pipe_del(Ecore_Pipe *p)
 {
-   void *r;
    if (!p) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   _ecore_lock();
-   r = _ecore_pipe_del(p);
-   _ecore_unlock();
-   return r;
+   return _ecore_pipe_del(p);
 }
 
 EAPI void
 ecore_pipe_read_close(Ecore_Pipe *p)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   _ecore_lock();
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
         ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_read_close");
-        goto out;
+        return ;
      }
    if (p->fd_handler)
      {
@@ -147,8 +140,6 @@ ecore_pipe_read_close(Ecore_Pipe *p)
         pipe_close(p->fd_read);
         p->fd_read = PIPE_FD_INVALID;
      }
-out:
-   _ecore_unlock();
 }
 
 EAPI int
@@ -162,30 +153,26 @@ EAPI void
 ecore_pipe_freeze(Ecore_Pipe *p)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   _ecore_lock();
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
         ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_read_freeze");
-        goto out;
+        return ;
      }
    if (p->fd_handler)
      {
         _ecore_main_fd_handler_del(p->fd_handler);
         p->fd_handler = NULL;
      }
-out:
-   _ecore_unlock();
 }
 
 EAPI void
 ecore_pipe_thaw(Ecore_Pipe *p)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   _ecore_lock();
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
         ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_read_thaw");
-        goto out;
+        return ;
      }
    if (!p->fd_handler && p->fd_read != PIPE_FD_INVALID)
      {
@@ -195,8 +182,6 @@ ecore_pipe_thaw(Ecore_Pipe *p)
                                                   p,
                                                   NULL, NULL);
      }
-out:
-   _ecore_unlock();
 }
 
 EAPI int
@@ -204,29 +189,22 @@ ecore_pipe_wait(Ecore_Pipe *p,
                 int         message_count,
                 double      wait)
 {
-   int r;
-   _ecore_lock();
-   r = _ecore_pipe_wait(p, message_count, wait);
-   _ecore_unlock();
-   return r;
+   return _ecore_pipe_wait(p, message_count, wait);
 }
 
 EAPI void
 ecore_pipe_write_close(Ecore_Pipe *p)
 {
-   _ecore_lock();
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
         ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_write_close");
-        goto out;
+        return ;
      }
    if (p->fd_write != PIPE_FD_INVALID)
      {
         pipe_close(p->fd_write);
         p->fd_write = PIPE_FD_INVALID;
      }
-out:
-   _ecore_unlock();
 }
 
 EAPI int
@@ -246,7 +224,6 @@ ecore_pipe_write(Ecore_Pipe  *p,
    int retry = ECORE_PIPE_WRITE_RETRY;
    Eina_Bool ok = EINA_FALSE;
 
-   _ecore_lock();
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
         ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_write");
@@ -329,7 +306,6 @@ ecore_pipe_write(Ecore_Pipe  *p,
    while (retry--);
 
 out:
-   _ecore_unlock();
    return ok;
 }
 
@@ -529,9 +505,7 @@ _ecore_pipe_handler_call(Ecore_Pipe *p,
 
    if (!p->delete_me)
      {
-        _ecore_unlock();
         p->handler(data, buf, len);
-        _ecore_lock();
      }
 
    // free p->passed_data

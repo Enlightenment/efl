@@ -700,7 +700,6 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
 {
    gboolean ready = FALSE;
 
-   _ecore_lock();
    in_main_loop++;
 
    if (!ecore_idling && !_ecore_glib_idle_enterer_called)
@@ -779,7 +778,6 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
 
    in_main_loop--;
    DBG("leave, timeout = %d", *next_time);
-   _ecore_unlock();
 
    /* ready if we're not running (about to quit) */
    return ready;
@@ -790,7 +788,6 @@ _ecore_main_gsource_check(GSource *source EINA_UNUSED)
 {
    gboolean ret = FALSE;
 
-   _ecore_lock();
    in_main_loop++;
 
    /* check if old timers expired */
@@ -830,7 +827,6 @@ _ecore_main_gsource_check(GSource *source EINA_UNUSED)
      ret = (0.0 == _ecore_timer_next_get());
 
    in_main_loop--;
-   _ecore_unlock();
 
    return ret;
 }
@@ -844,7 +840,6 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
    gboolean events_ready, timers_ready, idlers_ready;
    double next_time;
 
-   _ecore_lock();
    _ecore_time_loop_time = ecore_time_get();
    _ecore_timer_enable_new();
    next_time = _ecore_timer_next_get();
@@ -905,7 +900,6 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
      }
 
    in_main_loop--;
-   _ecore_unlock();
 
    return TRUE; /* what should be returned here? */
 }
@@ -1016,11 +1010,10 @@ _ecore_main_loop_uv_check(uv_check_t* handle EINA_UNUSED)
 {
    DBG("_ecore_main_loop_uv_check idling? %d", (int)_ecore_main_uv_idling);
    in_main_loop++;
-   _ecore_lock();
 
    if(do_quit)
      goto quit;
-   
+
    do
      {
        _ecore_main_fd_handlers_call();
@@ -1033,9 +1026,8 @@ _ecore_main_loop_uv_check(uv_check_t* handle EINA_UNUSED)
        _ecore_timer_cleanup();
      }
    while(fd_handlers_to_call);
-quit:   
+quit:
    in_main_loop--;
-   _ecore_unlock();
 }
 #endif
 
@@ -1233,10 +1225,8 @@ ecore_main_loop_iterate(void)
    if(!_dl_uv_run) {
 #endif
 #ifndef USE_G_MAIN_LOOP
-   _ecore_lock();
    _ecore_time_loop_time = ecore_time_get();
    _ecore_main_loop_iterate_internal(1);
-   _ecore_unlock();
 #else
    g_main_context_iteration(NULL, 0);
 #endif
@@ -1255,12 +1245,10 @@ ecore_main_loop_iterate_may_block(int may_block)
    if(!_dl_uv_run) {
 #endif
 #ifndef USE_G_MAIN_LOOP
-   _ecore_lock();
    _ecore_time_loop_time = ecore_time_get();
 in_main_loop++;
    _ecore_main_loop_iterate_internal(!may_block);
 in_main_loop--;
-   _ecore_unlock();
    return _ecore_event_exist();
 #else
    return g_main_context_iteration(NULL, may_block);
@@ -1291,13 +1279,11 @@ ecore_main_loop_begin(void)
    if(!_dl_uv_run) {
 #endif
 #ifndef USE_G_MAIN_LOOP
-   _ecore_lock();
    in_main_loop++;
    _ecore_time_loop_time = ecore_time_get();
    while (do_quit == 0) _ecore_main_loop_iterate_internal(0);
    do_quit = 0;
    in_main_loop--;
-   _ecore_unlock();
 #else
    if (!do_quit)
      {
@@ -1420,9 +1406,7 @@ ecore_main_fd_handler_add(int                    fd,
 {
    Ecore_Fd_Handler *fdh = NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   _ecore_lock();
    fdh = _ecore_main_fd_handler_add(fd, flags, func, data, buf_func, buf_data, EINA_FALSE);
-   _ecore_unlock();
    return fdh;
 }
 
@@ -1434,13 +1418,8 @@ ecore_main_fd_handler_file_add(int                    fd,
                                Ecore_Fd_Cb            buf_func,
                                const void            *buf_data)
 {
-   Ecore_Fd_Handler *fdh = NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   _ecore_lock();
-   fdh = _ecore_main_fd_handler_add(fd, flags, func, data, buf_func, buf_data, EINA_TRUE);
-   _ecore_unlock();
-
-   return fdh;
+   return _ecore_main_fd_handler_add(fd, flags, func, data, buf_func, buf_data, EINA_TRUE);
 }
 
 #ifdef _WIN32
@@ -1481,22 +1460,16 @@ ecore_main_win32_handler_add(void                 *h EINA_UNUSED,
 EAPI void *
 ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
 {
-   void *ret = NULL;
-
    if (!fd_handler) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   _ecore_lock();
 
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
      {
         ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER,
                          "ecore_main_fd_handler_del");
-        goto unlock;
+        return NULL;
      }
-   ret = _ecore_main_fd_handler_del(fd_handler);
-unlock:
-   _ecore_unlock();
-   return ret;
+   return _ecore_main_fd_handler_del(fd_handler);
 }
 
 #ifdef _WIN32
@@ -1546,13 +1519,12 @@ ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler,
                                            const void       *data)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   _ecore_lock();
 
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
      {
         ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER,
                          "ecore_main_fd_handler_prepare_callback_set");
-        goto unlock;
+        return ;
      }
    fd_handler->prep_func = func;
    fd_handler->prep_data = (void *)data;
@@ -1560,28 +1532,20 @@ ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler,
        (fd_handlers_with_prep && (!eina_list_data_find(fd_handlers_with_prep, fd_handler))))
      /* FIXME: THIS WILL NOT SCALE WITH LOTS OF PREP FUNCTIONS!!! */
      fd_handlers_with_prep = eina_list_append(fd_handlers_with_prep, fd_handler);
-unlock:
-   _ecore_unlock();
 }
 
 EAPI int
 ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler)
 {
-   int fd = -1;
-
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(-1);
-   _ecore_lock();
 
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
      {
         ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER,
                          "ecore_main_fd_handler_fd_get");
-        goto unlock;
+        return -1;
      }
-   fd = fd_handler->fd;
-unlock:
-   _ecore_unlock();
-   return fd;
+   return fd_handler->fd;
 }
 
 EAPI Eina_Bool
@@ -1591,19 +1555,16 @@ ecore_main_fd_handler_active_get(Ecore_Fd_Handler      *fd_handler,
    int ret = EINA_FALSE;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FALSE);
-   _ecore_lock();
 
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
      {
         ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER,
                          "ecore_main_fd_handler_active_get");
-        goto unlock;
+        return EINA_FALSE;
      }
    if ((flags & ECORE_FD_READ) && (fd_handler->read_active)) ret = EINA_TRUE;
    if ((flags & ECORE_FD_WRITE) && (fd_handler->write_active)) ret = EINA_TRUE;
    if ((flags & ECORE_FD_ERROR) && (fd_handler->error_active)) ret = EINA_TRUE;
-unlock:
-   _ecore_unlock();
    return ret;
 }
 
@@ -1614,13 +1575,12 @@ ecore_main_fd_handler_active_set(Ecore_Fd_Handler      *fd_handler,
    int ret;
 
    EINA_MAIN_LOOP_CHECK_RETURN;
-   _ecore_lock();
 
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
      {
         ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER,
                          "ecore_main_fd_handler_active_set");
-        goto unlock;
+        return ;
      }
    fd_handler->flags = flags;
    ret = _ecore_main_fdh_poll_modify(fd_handler);
@@ -1628,8 +1588,6 @@ ecore_main_fd_handler_active_set(Ecore_Fd_Handler      *fd_handler,
      {
         ERR("Failed to mod epoll fd %d: %s!", fd_handler->fd, strerror(ret));
      }
-unlock:
-   _ecore_unlock();
 }
 
 void
@@ -1804,11 +1762,9 @@ _ecore_main_select(double timeout)
        }
    if (_ecore_signal_count_get()) return -1;
 
-   _ecore_unlock();
    eina_evlog("!SLEEP", NULL, 0.0, t ? "timeout" : "forever");
    ret = main_loop_select(max_fd + 1, &rfds, &wfds, &exfds, t);
    eina_evlog("!WAKE", NULL, 0.0, NULL);
-   _ecore_lock();
 
    _ecore_time_loop_time = ecore_time_get();
    if (ret < 0)
@@ -2082,7 +2038,6 @@ _ecore_main_fd_handlers_buf_call(void)
 static void
 _ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
 {
-   _ecore_lock();
    _dl_uv_timer_stop(&_ecore_main_uv_handle_timers);
    if(in_main_loop == 0 && do_quit)
      {
@@ -2112,17 +2067,16 @@ _ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
        fd_handlers_to_call_current = NULL;
        fd_handlers_to_delete = NULL;
        fd_handler_current = NULL;
-       
+
        _dl_uv_prepare_stop(&_ecore_main_uv_prepare);
        _dl_uv_check_stop(&_ecore_main_uv_check);
        _dl_uv_stop(_dl_uv_default_loop());
 
-       _ecore_unlock();
        return;
      }
-   
+
    in_main_loop++;
-  
+
    if(!_ecore_main_uv_idling)
      {
         _ecore_main_uv_idling = EINA_TRUE;
@@ -2147,7 +2101,7 @@ _ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
          {
             _ecore_idle_exiter_call();
             _ecore_animator_run_reset();
-       
+
             _ecore_main_uv_idling = EINA_FALSE;
          }
 
@@ -2185,7 +2139,6 @@ _ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
    if (fd_handlers_with_prep)
      _ecore_main_prepare_handlers();
 
-   _ecore_unlock();
    in_main_loop--;
 }
 #endif

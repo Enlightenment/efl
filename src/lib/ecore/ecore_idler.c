@@ -35,14 +35,7 @@ EAPI Ecore_Idler *
 ecore_idler_add(Ecore_Task_Cb func,
                 const void   *data)
 {
-   Ecore_Idler *ie = NULL;
-
-   _ecore_lock();
-
-   ie = eo_add(MY_CLASS, _ecore_parent, ecore_idler_constructor(func, data));
-
-   _ecore_unlock();
-   return ie;
+   return eo_add(MY_CLASS, _ecore_parent, ecore_idler_constructor(func, data));
 }
 
 EOLIAN static void
@@ -70,15 +63,10 @@ _ecore_idler_constructor(Eo *obj, Ecore_Idler_Data *ie, Ecore_Task_Cb func, cons
 EAPI void *
 ecore_idler_del(Ecore_Idler *idler)
 {
-   void *data = NULL;
-
    if (!idler) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
-   _ecore_lock();
-   data = _ecore_idler_del(idler);
-   _ecore_unlock();
-   return data;
+   return _ecore_idler_del(idler);
 }
 
 static void *

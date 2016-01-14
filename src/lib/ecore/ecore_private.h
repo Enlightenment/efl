@@ -274,82 +274,19 @@ void _ecore_throttle(void);
 
 void _ecore_main_call_flush(void);
 
-extern int _ecore_main_lock_count;
-extern Eina_Lock _ecore_main_loop_lock;
 
-static inline void
-_ecore_lock(void)
-{
-#ifdef HAVE_THREAD_SAFETY
-   /* THIS IS BROKEN AND NEEDS FIXING
-    *
-    * the concept of lock to execute main-loop related functions is okay
-    * and the code below is correct per se, but with its usage in Ecore
-    * is leading to hard locks that must be investigated.
-    *
-    * One failure possibility is missing _ecore_unlock() that leaves
-    * the lock taken and on next take it will block.
-    *
-    * Another failure possibility is one function that takes the lock
-    * and calls some API function that also takes the lock, leading to
-    * block.
-    *
-    * When these are fixed, remove the HAVE_THREAD_SAFETY and leave it
-    * always on. To eliminate the lock overhead for non-threaded
-    * applications, have a global boolean that is set to TRUE by user
-    * if he uses this features, much like eina_log_threads_enable().
-    *  -- Gustavo, December 6th 2012.
-    */
-   eina_lock_take(&_ecore_main_loop_lock);
-#else
-   /* at least check we're not being called from a thread */
-   EINA_MAIN_LOOP_CHECK_RETURN;
-#endif
-   _ecore_main_lock_count++;
-   /* assert(_ecore_main_lock_count == 1); */
-}
-
-static inline void
-_ecore_unlock(void)
-{
-#ifndef HAVE_THREAD_SAFETY
-   /* see _ecore_lock(); no-op unless EINA_HAVE_DEBUG_THREADS is defined */
-   EINA_MAIN_LOOP_CHECK_RETURN;
-#endif
-   _ecore_main_lock_count--;
-   /* assert(_ecore_main_lock_count == 0); */
-#ifdef HAVE_THREAD_SAFETY
-   eina_lock_release(&_ecore_main_loop_lock);
-#endif
-}
-
-/*
- * Callback wrappers all assume that ecore _ecore_lock has been called
- */
 static inline Eina_Bool
 _ecore_call_task_cb(Ecore_Task_Cb func,
                     void *data)
 {
-   Eina_Bool r;
-
-   _ecore_unlock();
-   r = func(data);
-   _ecore_lock();
-
-   return r;
+   return func(data);
 }
 
 static inline void *
 _ecore_call_data_cb(Ecore_Data_Cb func,
                     void *data)
 {
-   void *r;
-
-   _ecore_unlock();
-   r = func(data);
-   _ecore_lock();
-
-   return r;
+   return func(data);
 }
 
 static inline void
@@ -357,9 +294,7 @@ _ecore_call_end_cb(Ecore_End_Cb func,
                    void *user_data,
                    void *func_data)
 {
-   _ecore_unlock();
    func(user_data, func_data);
-   _ecore_lock();
 }
 
 static inline Eina_Bool
@@ -369,13 +304,7 @@ _ecore_call_filter_cb(Ecore_Filter_Cb func,
                       int type,
                       void *event)
 {
-   Eina_Bool r;
-
-   _ecore_unlock();
-   r = func(data, loop_data, type, event);
-   _ecore_lock();
-
-   return r;
+   return func(data, loop_data, type, event);
 }
 
 static inline Eina_Bool
@@ -384,13 +313,7 @@ _ecore_call_handler_cb(Ecore_Event_Handler_Cb func,
                        int type,
                        void *event)
 {
-   Eina_Bool r;
-
-   _ecore_unlock();
-   r = func(data, type, event);
-   _ecore_lock();
-
-   return r;
+   return func(data, type, event);
 }
 
 static inline void
@@ -398,9 +321,7 @@ _ecore_call_prep_cb(Ecore_Fd_Prep_Cb func,
                     void *data,
                     Ecore_Fd_Handler *fd_handler)
 {
-   _ecore_unlock();
    func(data, fd_handler);
-   _ecore_lock();
 }
 
 static inline Eina_Bool
@@ -408,13 +329,7 @@ _ecore_call_fd_cb(Ecore_Fd_Cb func,
                   void *data,
                   Ecore_Fd_Handler *fd_handler)
 {
-   Eina_Bool r;
-
-   _ecore_unlock();
-   r = func(data, fd_handler);
-   _ecore_lock();
-
-   return r;
+   return func(data, fd_handler);
 }
 
 extern int _ecore_fps_debug;
