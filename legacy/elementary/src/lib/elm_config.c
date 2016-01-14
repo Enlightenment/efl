@@ -780,8 +780,15 @@ _elm_config_profile_derived_save(const char *profile, Elm_Config_Derived *derive
    if (ef)
      {
         ret = eet_data_write(ef, _config_derived_edd, "config", derived, 1);
+        if (ret)
+          {
+             ecore_file_mv(buf, buf2);
+          }
+        else
+          {
+             ERR("Error saving Elementary's derived configuration profile file");
+          }
         eet_close(ef);
-        if (ret) ecore_file_mv(buf, buf2);
      }
 }
 
