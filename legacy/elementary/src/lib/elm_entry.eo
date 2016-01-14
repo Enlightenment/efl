@@ -880,7 +880,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
          params {
             @in label: const(char)* @optional; [[The item's text label.]]
             @in icon_file: const(char)* @optional; [[The item's icon file.]]
-            @in icon_type: Elm_Icon_Type; [[The item's icon type.]]
+            @in icon_type: Elm.Icon.Type; [[The item's icon type.]]
             @in func: Evas_Smart_Cb @optional; [[The callback to execute when the item is clicked.]]
             @in data: const(void)* @optional; [[The data to associate with the item for related functions.]]
          }

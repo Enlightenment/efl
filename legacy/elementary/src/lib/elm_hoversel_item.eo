@@ -13,7 +13,7 @@ class Elm.Hoversel_Item(Elm.Widget_Item)
              values {
                 icon_file: const (char) * @nullable; [[An image file path on disk to use for the icon or standard icon name]]
                 icon_group: const (char) * @nullable; [[The edje group to use if $icon_file is an edje file. Set this to NULL if the icon is not an edje file]]
-                icon_type: Elm_Icon_Type; [[The icon type]]
+                icon_type: Elm.Icon.Type; [[The icon type]]
              }
         }
    }
