@@ -3279,6 +3279,36 @@ _resize_cb(void *data,
 }
 
 static void
+_selection_handlers_offset_calc(Evas_Object *obj, Evas_Object *handler, Evas_Coord canvasx, Evas_Coord canvasy)
+{
+   Evas_Coord ex, ey;
+   Evas_Coord cx, cy, cw, ch;
+   Evas_Coord hh;
+
+   ELM_ENTRY_DATA_GET(obj, sd);
+
+   evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
+   edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
+                                                           &cx, &cy, &cw, &ch);
+   edje_object_size_min_calc(handler, NULL, &hh);
+
+   sd->ox = canvasx - (ex + cx + (cw / 2));
+   if (ch > hh)
+     sd->oy = canvasy - (ey + cy + ch);
+   else
+     sd->oy = canvasy - (ey + cy + (ch / 2));
+
+   ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
+   sd->long_pressed = EINA_FALSE;
+   if (_elm_config->magnifier_enable)
+     {
+        _magnifier_create(obj);
+        _magnifier_show(obj);
+        _magnifier_move(obj, ex + cx, ey + cy + (ch / 2));
+     }
+}
+
+static void
 _start_handler_mouse_down_cb(void *data,
                              Evas *e EINA_UNUSED,
                              Evas_Object *obj EINA_UNUSED,
@@ -3287,8 +3317,6 @@ _start_handler_mouse_down_cb(void *data,
    ELM_ENTRY_DATA_GET(data, sd);
 
    Evas_Event_Mouse_Down *ev = event_info;
-   Evas_Coord ex, ey;
-   Evas_Coord cx, cy, cw, ch;
    int start_pos, end_pos, main_pos, pos;
 
    sd->start_handler_down = EINA_TRUE;
@@ -3311,20 +3339,7 @@ _start_handler_mouse_down_cb(void *data,
    if (pos != main_pos)
      edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
                                           EDJE_CURSOR_MAIN, pos);
-   edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
-                                             &cx, &cy, &cw, &ch);
-   evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
-   sd->ox = ev->canvas.x - (ex + cx + (cw / 2));
-   sd->oy = ev->canvas.y - (ey + cy + (ch / 2));
-
-   ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
-   sd->long_pressed = EINA_FALSE;
-   if (_elm_config->magnifier_enable)
-     {
-        _magnifier_create(data);
-        _magnifier_show(data);
-        _magnifier_move(data, ex + cx, ey + cy + (ch / 2));
-     }
+   _selection_handlers_offset_calc(data, sd->start_handler, ev->canvas.x, ev->canvas.y);
 }
 
 static void
@@ -3388,8 +3403,6 @@ _end_handler_mouse_down_cb(void *data,
    ELM_ENTRY_DATA_GET(data, sd);
 
    Evas_Event_Mouse_Down *ev = event_info;
-   Evas_Coord ex, ey;
-   Evas_Coord cx, cy, cw, ch;
    int pos, start_pos, end_pos, main_pos;
 
    sd->end_handler_down = EINA_TRUE;
@@ -3412,21 +3425,7 @@ _end_handler_mouse_down_cb(void *data,
    if (pos != main_pos)
      edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
                                           EDJE_CURSOR_MAIN, pos);
-
-   edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
-                                             &cx, &cy, &cw, &ch);
-   evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
-   sd->ox = ev->canvas.x - (ex + cx + (cw / 2));
-   sd->oy = ev->canvas.y - (ey + cy + (ch / 2));
-
-   ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
-   sd->long_pressed = EINA_FALSE;
-   if (_elm_config->magnifier_enable)
-     {
-        _magnifier_create(data);
-        _magnifier_show(data);
-        _magnifier_move(data, ex + cx, ey + cy + (ch / 2));
-     }
+   _selection_handlers_offset_calc(data, sd->end_handler, ev->canvas.x, ev->canvas.y);
 }
 
 static void
