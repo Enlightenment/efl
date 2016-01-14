@@ -2139,6 +2139,9 @@ _config_update(void)
                 }
            }
      }
+
+   _elm_config->popup_horizontal_align = 0.5;
+   _elm_config->popup_vertical_align = 0.5;
    IFCFGEND
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
