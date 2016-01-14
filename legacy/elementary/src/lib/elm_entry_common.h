@@ -228,18 +228,6 @@ struct _Elm_Entry_Filter_Accept_Set
 EAPI void                   elm_entry_filter_accept_set(void *data, Evas_Object *entry, char **text);
 
 /**
- * Enum of entry's copy & paste policy.
- *
- * @see elm_entry_cnp_mode_set()
- * @see elm_entry_cnp_mode_get()
- */
-typedef enum {
-   ELM_CNP_MODE_MARKUP,   /**< copy & paste text with markup tag */
-   ELM_CNP_MODE_NO_IMAGE, /**< copy & paste text without item(image) tag */
-   ELM_CNP_MODE_PLAINTEXT /**< copy & paste text without markup tag */
-} Elm_Cnp_Mode;
-
-/**
  * Get the text of the contextual menu item of entry.
  *
  * @param item The item to get the label

@@ -96,6 +96,20 @@ enum Elm.Input.Hints
                                      @since 1.12]]
 }
 
+
+enum Elm.Cnp_Mode
+{
+   [[
+     Enum of entry's copy & paste policy.
+
+     See also @Elm.Entry.cnp_mode.set,
+     @Elm.Entry.cnp_mode.get.
+   ]]
+   markup,    [[ copy & paste text with markup tag ]]
+   no_image,  [[ copy & paste text without item(image) tag ]]
+   plaintext, [[ copy & paste text without markup tag ]]
+}
+
 class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
                  Elm.Interface_Atspi_Text, Elm.Interface_Atspi_Editable_Text, Efl.File,
                  Evas.Selectable_Interface, Evas.Scrollable_Interface)
@@ -172,7 +186,7 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
             ]]
          }
          values {
-            cnp_mode: Elm_Cnp_Mode; [[One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP, #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.]]
+            cnp_mode: Elm.Cnp_Mode; [[One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP, #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.]]
          }
       }
       @property file_text_format {
