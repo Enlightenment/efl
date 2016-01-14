@@ -446,7 +446,7 @@ ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types)
    input->data.source = wl_data_device_manager_create_data_source(manager);
    if (!input->data.source)
      {
-        ERR("Could not create data source: %m");
+        ERR("Could not create data source");
         return;
      }
 
@@ -573,7 +573,7 @@ ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types)
    input->data.source = wl_data_device_manager_create_data_source(manager);
    if (!input->data.source)
      {
-        ERR("Could not create data source: %m");
+        ERR("Could not create data source");
         return EINA_FALSE;
      }
 

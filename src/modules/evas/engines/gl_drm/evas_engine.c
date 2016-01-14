@@ -125,7 +125,7 @@ eng_gbm_init(Evas_Engine_Info_GL_Drm *info)
 
    if (!(info->info.gbm = gbm_create_device(dev->drm.fd)))
      {
-        ERR("Coult not create gbm device: %m");
+        ERR("Coult not create gbm device");
         return EINA_FALSE;
      }
 
@@ -382,7 +382,7 @@ evgl_eng_native_window_create(void *data)
                                 info->info.format, info->info.flags);
    if (!surface)
      {
-        ERR("Could not create gl drm window: %m");
+        ERR("Could not create gl drm window");
         return NULL;
      }
 

@@ -120,14 +120,14 @@ _device_keyboard_setup(Ecore_Drm_Evdev *edev)
    edev->xkb.keymap = _ecore_drm_device_cached_keymap_get(input->dev->xkb_ctx, NULL, 0);
    if (!edev->xkb.keymap)
      {
-        ERR("Failed to create keymap: %m");
+        ERR("Failed to create keymap");
         return;
      }
 
    /* create xkb state */
    if (!(edev->xkb.state = xkb_state_new(edev->xkb.keymap)))
      {
-        ERR("Failed to create xkb state: %m");
+        ERR("Failed to create xkb state");
         return;
      }
 

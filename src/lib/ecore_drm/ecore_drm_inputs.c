@@ -191,7 +191,7 @@ _cb_input_dispatch(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
    if (!(input = data)) return EINA_TRUE;
 
    if (libinput_dispatch(input->libinput) != 0)
-     ERR("Failed to dispatch libinput events: %m");
+     ERR("Failed to dispatch libinput events");
 
    /* process pending events */
    _input_events_process(input);
@@ -226,7 +226,7 @@ ecore_drm_inputs_create(Ecore_Drm_Device *dev)
      libinput_udev_create_context(&_input_interface, input, eeze_udev_get());
    if (!input->libinput)
      {
-        ERR("Could not create libinput context: %m");
+        ERR("Could not create libinput context");
         goto err;
      }
 
@@ -236,7 +236,7 @@ ecore_drm_inputs_create(Ecore_Drm_Device *dev)
    /* assign udev seat */
    if (libinput_udev_assign_seat(input->libinput, dev->seat) != 0)
      {
-        ERR("Failed to assign seat: %m");
+        ERR("Failed to assign seat");
         goto err;
      }
 

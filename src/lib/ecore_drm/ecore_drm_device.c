@@ -374,7 +374,7 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
    /* try to create xkb context */
    if (!(dev->xkb_ctx = _ecore_drm_device_cached_context_get(0)))
      {
-        ERR("Failed to create xkb context: %m");
+        ERR("Failed to create xkb context");
         return EINA_FALSE;
      }
 
@@ -544,7 +544,7 @@ ecore_drm_device_software_setup(Ecore_Drm_Device *dev)
      {
         if (!(dev->dumb[i] = ecore_drm_fb_create(dev, w, h)))
           {
-             ERR("Could not create dumb framebuffer: %m");
+             ERR("Could not create dumb framebuffer");
              goto err;
           }
 

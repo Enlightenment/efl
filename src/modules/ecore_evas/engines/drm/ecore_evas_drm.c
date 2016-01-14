@@ -563,21 +563,21 @@ _ecore_evas_drm_init(const char *device)
    /* try to create sprites */
    if (!ecore_drm_sprites_create(dev))
      {
-        ERR("Could not create sprites: %m");
+        ERR("Could not create sprites");
         goto sprite_err;
      }
 
    /* try to create outputs */
    if (!ecore_drm_outputs_create(dev))
      {
-        ERR("Could not create outputs: %m");
+        ERR("Could not create outputs");
         goto output_err;
      }
 
    /* try to create inputs */
    if (!ecore_drm_inputs_create(dev))
      {
-        ERR("Could not create inputs: %m");
+        ERR("Could not create inputs");
         goto input_err;
      }
 

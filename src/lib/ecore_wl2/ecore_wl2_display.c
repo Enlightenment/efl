@@ -421,7 +421,7 @@ ecore_wl2_display_create(const char *name)
    ewd->wl.display = wl_display_create();
    if (!ewd->wl.display)
      {
-        ERR("Could not create wayland display: %m");
+        ERR("Could not create wayland display");
         goto create_err;
      }
 
@@ -432,7 +432,7 @@ ecore_wl2_display_create(const char *name)
         n = wl_display_add_socket_auto(ewd->wl.display);
         if (!n)
           {
-             ERR("Failed to add display socket: %m");
+             ERR("Failed to add display socket");
              goto socket_err;
           }
 
@@ -442,7 +442,7 @@ ecore_wl2_display_create(const char *name)
      {
         if (wl_display_add_socket(ewd->wl.display, name))
           {
-             ERR("Failed to add display socket: %m");
+             ERR("Failed to add display socket");
              goto socket_err;
           }
 
@@ -561,7 +561,7 @@ ecore_wl2_display_connect(const char *name)
    ewd->wl.display = wl_display_connect(ewd->name);
    if (!ewd->wl.display)
      {
-        ERR("Could not connect to display %s: %m", ewd->name);
+        ERR("Could not connect to display %s", ewd->name);
         goto connect_err;
      }
 

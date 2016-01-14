@@ -21,7 +21,7 @@ _ecore_drm_launcher_cb_vt_switch(void *data, int type EINA_UNUSED, void *event)
         vt = (keycode - KEY_F1 + 1);
 
         if (!_ecore_drm_tty_switch(dev, vt))
-          ERR("Failed to activate vt: %m");
+          ERR("Failed to activate vt");
      }
 
    return ECORE_CALLBACK_PASS_ON;

@@ -16,7 +16,7 @@ _ecore_drm_logind_vt_get(Ecore_Drm_Device *dev)
    ret = sd_session_get_vt(dev->session, &dev->vt);
    if (ret < 0)
      {
-        ERR("Could not get systemd tty: %m");
+        ERR("Could not get systemd tty");
         return EINA_FALSE;
      }
 
@@ -185,13 +185,13 @@ _ecore_drm_logind_connect(Ecore_Drm_Device *dev)
    /* get session id */
    if (sd_pid_get_session(getpid(), &dev->session) < 0)
      {
-        ERR("Could not get systemd session: %m");
+        ERR("Could not get systemd session");
         return EINA_FALSE;
      }
 
    if (sd_session_get_seat(dev->session, &seat) < 0)
      {
-        ERR("Could not get systemd seat: %m");
+        ERR("Could not get systemd seat");
         return EINA_FALSE;
      }
    else if (strcmp(dev->seat, seat))

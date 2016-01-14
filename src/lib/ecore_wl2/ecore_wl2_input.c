@@ -684,7 +684,7 @@ _keyboard_cb_keymap(void *data, struct wl_keyboard *keyboard EINA_UNUSED, unsign
    input->xkb.state = xkb_state_new(input->xkb.keymap);
    if (!input->xkb.state)
      {
-        ERR("Failed to create keymap state: %m");
+        ERR("Failed to create keymap state");
         xkb_map_unref(input->xkb.keymap);
         input->xkb.keymap = NULL;
         return;

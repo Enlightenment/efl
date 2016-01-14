@@ -81,7 +81,7 @@ ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height)
 
    if (!_ecore_drm_fb_create2(dev->drm.fd, fb))
      {
-        WRN("Could not add framebuffer2: %m");
+        WRN("Could not add framebuffer2");
         if (drmModeAddFB(dev->drm.fd, fb->w, fb->h, 24, 32,
                          fb->stride, fb->hdl, &fb->id))
           {
@@ -264,7 +264,7 @@ ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb
         ret = drmHandleEvent(dev->drm.fd, &dev->drm_ctx);
         if (ret < 0)
           {
-             ERR("drmHandleEvent Failed: %m");
+             ERR("drmHandleEvent Failed");
              free(cb);
              break;
           }

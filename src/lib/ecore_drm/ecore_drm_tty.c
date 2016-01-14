@@ -57,7 +57,7 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
    if ((fstat(dev->tty.fd, &st) == -1) || 
        (major(st.st_rdev) != TTY_MAJOR) || (minor(st.st_rdev) == 0))
      {
-        ERR("Failed to get stats for tty: %m");
+        ERR("Failed to get stats for tty");
         return EINA_FALSE;
      }
 

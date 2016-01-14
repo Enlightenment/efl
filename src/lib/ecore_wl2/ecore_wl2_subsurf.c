@@ -44,7 +44,7 @@ ecore_wl2_subsurface_new(Ecore_Wl2_Window *window)
    subsurf->wl.surface = wl_compositor_create_surface(display->wl.compositor);
    if (!subsurf->wl.surface)
      {
-        ERR("Failed to create surface: %m");
+        ERR("Failed to create surface");
         goto surf_err;
      }
 
@@ -53,7 +53,7 @@ ecore_wl2_subsurface_new(Ecore_Wl2_Window *window)
                                      subsurf->wl.surface, window->surface);
    if (!subsurf->wl.subsurface)
      {
-        ERR("Could not create subsurface: %m");
+        ERR("Could not create subsurface");
         goto sub_surf_err;
      }
 
@@ -163,7 +163,7 @@ ecore_wl2_subsurface_opaque_region_set(Ecore_Wl2_Subsurface *subsurface, int x, 
                wl_compositor_create_region(parent->display->wl.compositor);
              if (!region)
                {
-                  ERR("Failed to create opaque region: %m");
+                  ERR("Failed to create opaque region");
                   return;
                }
 

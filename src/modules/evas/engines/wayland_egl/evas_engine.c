@@ -285,7 +285,7 @@ evgl_eng_native_window_create(void *data)
 
    if (!(win = wl_egl_window_create(ob->info->info.surface, 1, 1)))
      {
-        ERR("Could not create wl_egl window: %m");
+        ERR("Could not create wl_egl window");
         return NULL;
      }
 

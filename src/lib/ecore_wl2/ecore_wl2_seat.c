@@ -33,7 +33,7 @@ _seat_cb_bind(struct wl_client *client, void *data, uint32_t version, uint32_t i
    res = wl_resource_create(client, &wl_seat_interface, version, id);
    if (!res)
      {
-        ERR("Failed to create seat resource: %m");
+        ERR("Failed to create seat resource");
         return;
      }
 
@@ -152,7 +152,7 @@ ecore_wl2_seat_create(Ecore_Wl2_Display *display, const char *name, const struct
                       seat, _seat_cb_bind);
    if (!seat->global)
      {
-        ERR("Could not create seat global: %m");
+        ERR("Could not create seat global");
         free(seat);
         return NULL;
      }
@@ -255,7 +255,7 @@ ecore_wl2_pointer_resource_create(Ecore_Wl2_Pointer *ptr, struct wl_client *clie
    res = wl_resource_create(client, &wl_pointer_interface, version, id);
    if (!res)
      {
-        ERR("Could not create pointer resource: %m");
+        ERR("Could not create pointer resource");
         wl_client_post_no_memory(client);
         return EINA_FALSE;
      }
@@ -315,7 +315,7 @@ ecore_wl2_keyboard_resource_create(Ecore_Wl2_Keyboard *kbd, struct wl_client *cl
    res = wl_resource_create(client, &wl_keyboard_interface, version, id);
    if (!res)
      {
-        ERR("Could not create keyboard resource: %m");
+        ERR("Could not create keyboard resource");
         wl_client_post_no_memory(client);
         return EINA_FALSE;
      }

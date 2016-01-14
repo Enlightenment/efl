@@ -214,7 +214,7 @@ _ecore_drm_output_crtc_find(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConne
         /* get the encoder on this connector */
         if (!(enc = drmModeGetEncoder(dev->drm.fd, conn->encoders[j])))
           {
-             WRN("Failed to get encoder: %m");
+             WRN("Failed to get encoder");
              continue;
           }
 
@@ -904,7 +904,7 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
    /* get the resources */
    if (!(res = drmModeGetResources(dev->drm.fd)))
      {
-        ERR("Could not get resources for drm card: %m");
+        ERR("Could not get resources for drm card");
         return EINA_FALSE;
      }
 
@@ -1081,7 +1081,7 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
 
         vbl.request.signal = (unsigned long)sprite;
         ret = drmWaitVBlank(dev->drm.fd, &vbl);
-        if (ret) ERR("Error Wait VBlank: %m");
+        if (ret) ERR("Error Wait VBlank");
 
         sprite->output = output;
         output->pending_vblank = EINA_TRUE;
@@ -1384,7 +1384,7 @@ ecore_drm_output_possible_crtc_get(Ecore_Drm_Output *output, unsigned int crtc)
    /* get the resources */
    if (!(res = drmModeGetResources(dev->drm.fd)))
      {
-        ERR("Could not get resources for drm card: %m");
+        ERR("Could not get resources for drm card");
         return EINA_FALSE;
      }
 
@@ -1399,7 +1399,7 @@ ecore_drm_output_possible_crtc_get(Ecore_Drm_Output *output, unsigned int crtc)
              /* get the encoder on this connector */
              if (!(enc = drmModeGetEncoder(dev->drm.fd, conn->encoders[j])))
                {
-                  WRN("Failed to get encoder: %m");
+                  WRN("Failed to get encoder");
                   continue;
                }
 

@@ -184,7 +184,7 @@ _ecore_wl2_window_type_set(Ecore_Wl2_Window *win)
                                             win->geometry.x, win->geometry.y);
                   if (!win->xdg_popup)
                     {
-                       ERR("Could not create xdg popup: %m");
+                       ERR("Could not create xdg popup");
                        return;
                     }
 
@@ -257,7 +257,7 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
    return;
 
 surf_err:
-   ERR("Failed to create surface for window: %m");
+   ERR("Failed to create surface for window");
 }
 
 EAPI Ecore_Wl2_Window *
@@ -338,7 +338,7 @@ ecore_wl2_window_show(Ecore_Wl2_Window *window)
           wl_compositor_create_surface(window->display->wl.compositor);
         if (!window->surface)
           {
-             ERR("Failed to create surface for window: %m");
+             ERR("Failed to create surface for window");
              return;
           }
      }
@@ -536,7 +536,7 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
    region = wl_compositor_create_region(window->display->wl.compositor);
    if (!region)
      {
-        ERR("Failed to create opaque region: %m");
+        ERR("Failed to create opaque region");
         return;
      }
 
@@ -577,7 +577,7 @@ ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w,
    region = wl_compositor_create_region(window->display->wl.compositor);
    if (!region)
      {
-        ERR("Failed to create opaque region: %m");
+        ERR("Failed to create opaque region");
         return;
      }
 

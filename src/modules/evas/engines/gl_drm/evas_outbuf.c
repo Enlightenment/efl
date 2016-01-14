@@ -31,7 +31,7 @@ _evas_outbuf_gbm_surface_create(Outbuf *ob, int w, int h)
      gbm_surface_create(ob->info->info.gbm, w, h,
                         ob->info->info.format, ob->info->info.flags);
 
-   if (!ob->surface) ERR("Failed to create gbm surface: %m");
+   if (!ob->surface) ERR("Failed to create gbm surface");
 }
 
 static void
@@ -117,7 +117,7 @@ _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    ob->priv.bo[ob->priv.curr] = gbm_surface_lock_front_buffer(ob->surface);
    if (!ob->priv.bo[ob->priv.curr])
      {
-        WRN("Could not lock front buffer: %m");
+        WRN("Could not lock front buffer");
         return;
      }
 

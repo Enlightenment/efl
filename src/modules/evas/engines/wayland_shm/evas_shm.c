@@ -184,7 +184,7 @@ _shm_data_create_from_pool(Shm_Pool *pool, int w, int h, Eina_Bool alpha)
                                (w * sizeof(int)), wl_format);
    if (!data->buffer)
      {
-        ERR("Could not create buffer from pool: %m");
+        ERR("Could not create buffer from pool");
         goto err;
      }
 
