@@ -211,7 +211,9 @@ group { name: "elm/segment_control/item/default";
             fixed: 1 1;
             min: 1 1;
             rel1.to: "elm.text";
+            rel1.offset: -2 -2;
             rel2.to: "elm.text";
+            rel2.offset: 1 1;
             text {
                font: FN;
                size: 10;
