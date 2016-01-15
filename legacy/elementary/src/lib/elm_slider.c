@@ -930,6 +930,7 @@ _elm_slider_evas_object_smart_del(Eo *obj, Elm_Slider_Data *sd)
    eina_stringshare_del(sd->indicator);
    eina_stringshare_del(sd->units);
    ecore_timer_del(sd->delay);
+   ecore_timer_del(sd->wheel_indicator_timer);
    evas_object_del(sd->popup);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
