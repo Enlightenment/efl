@@ -2139,7 +2139,9 @@ _config_update(void)
                 }
            }
      }
+   IFCFGEND
 
+   IFCFG(0x0008)
    _elm_config->popup_horizontal_align = 0.5;
    _elm_config->popup_vertical_align = 0.5;
    IFCFGEND
