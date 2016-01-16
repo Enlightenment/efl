@@ -25,6 +25,7 @@ Eina_Unicode status_icons[] = {
  ' ',
  '!',
  '!',
+ '!',
 
  '+',
  '-',
@@ -32,6 +33,8 @@ Eina_Unicode status_icons[] = {
 
  0x2713,
  0x2717,
+
+ 0x2610,
 
  0
 };
