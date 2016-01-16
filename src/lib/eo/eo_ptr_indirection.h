@@ -43,7 +43,7 @@ void _eo_pointer_error(const char *msg);
         if (!klass_id) return ret; \
         klass = _eo_class_pointer_get(klass_id); \
         if (!klass) { \
-             _EO_POINTER_ERR("Klass (%p) is an invalid ref.", klass_id); \
+             _EO_POINTER_ERR("Class (%p) is an invalid ref.", klass_id); \
              return ret; \
         } \
    } while (0)
@@ -54,7 +54,7 @@ void _eo_pointer_error(const char *msg);
         if (!klass_id) return; \
         klass = _eo_class_pointer_get(klass_id); \
         if (!klass) { \
-             _EO_POINTER_ERR("Klass (%p) is an invalid ref.", klass_id); \
+             _EO_POINTER_ERR("Class (%p) is an invalid ref.", klass_id); \
              return; \
         } \
    } while (0)
