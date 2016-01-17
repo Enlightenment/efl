@@ -16,6 +16,3 @@ elm_code_test_main.c \
 elm_code_test_private.h
 
 elm_code_test_LDADD = @EFL_LIBS@ $(top_builddir)/elm_code/src/lib/libelm_code.la
-
-elm_code_test_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
-
