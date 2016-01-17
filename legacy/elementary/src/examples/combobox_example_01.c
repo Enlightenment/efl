@@ -53,20 +53,6 @@ gl_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUS
    return strdup(buf);
 }
 
-static Evas_Object *gl_content_get(void *data EINA_UNUSED, Evas_Object *obj,
-                                    const char *part)
-{
-   char buf[PATH_MAX];
-   Evas_Object *ic = elm_icon_add(obj);
-   if (!strcmp(part, "elm.swallow.end"))
-     snprintf(buf, sizeof(buf), "%s/images/bubble.png", elm_app_data_dir_get());
-   else
-     snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_image_file_set(ic, buf, NULL);
-   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-   return ic;
-}
-
 static Eina_Bool gl_state_get(void *data EINA_UNUSED,
                                Evas_Object *obj EINA_UNUSED,
                                const char *part EINA_UNUSED)
@@ -86,15 +72,6 @@ gl_filter_get(void *data, Evas_Object *obj EINA_UNUSED, void *key)
    // Default case should return false (item fails filter hence will be hidden)
    return EINA_FALSE;
 }
-
-static void
-_gl_filter_finished_cb(void *data EINA_UNUSED,
-                       Evas_Object *obj EINA_UNUSED,
-                       void *event_info EINA_UNUSED)
-{
-   printf("Filter finished\n");
-}
-
 
 EAPI_MAIN int
 elm_main(int argc EINA_UNUSED, char **argv)
