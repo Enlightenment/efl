@@ -1306,6 +1306,7 @@ test_gengrid4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_gengrid_item_class_free(gic);
    elm_gengrid_item_show(ti[2579].item, sd->scrollto);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_min_set(grid, 600, 400);
    evas_object_show(grid);
    sd->grid = grid;

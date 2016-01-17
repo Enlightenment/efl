@@ -328,14 +328,13 @@ static void
 _item_show_region(void *data)
 {
    Elm_Gengrid_Data *sd = data;
-   Evas_Coord cvw, cvh, it_xpos = 0, it_ypos = 0, col = 0, row = 0, minx = 0, miny = 0;
+   Evas_Coord cvw, cvh, it_xpos = 0, it_ypos = 0, minx = 0, miny = 0;
    Evas_Coord vw = 0, vh = 0;
    Elm_Object_Item *eo_it = NULL;
    evas_object_geometry_get(sd->pan_obj, NULL, NULL, &cvw, &cvh);
 
    if ((cvw != 0) && (cvh != 0))
        {
-          int x = 0, y = 0;
           if (sd->show_region)
             eo_it = sd->show_it;
           else if (sd->bring_in)
@@ -347,45 +346,21 @@ _item_show_region(void *data)
           eo_do(sd->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
           if (sd->horizontal && (sd->item_height > 0))
             {
-               row = cvh / sd->item_height;
-               if (row <= 0) row = 1;
-               x = (it->position - 1) / row;
-               if (elm_widget_mirrored_get(sd->obj))
-                 {
-                    col = sd->item_count / row;
-                    if (sd->item_count % row == 0)
-                      col--;
-                    x = col - x;
-                 }
-
-               y = (it->position - 1) % row;
-               if (x >= 1)
-                 it_xpos = ((x - GG_IT(it)->prev_group) * sd->item_width)
+               if (it->x >= 1)
+                 it_xpos = ((it->x - GG_IT(it)->prev_group) * sd->item_width)
                     + (GG_IT(it)->prev_group * sd->group_item_width)
                     + minx;
                else it_xpos = minx;
-               miny = miny + ((cvh - (sd->item_height * row))
-                    * sd->align_y);
-               it_ypos = y * sd->item_height + miny;
-               it->x = x;
-               it->y = y;
+               it_ypos = it->y * sd->item_height + miny;
             }
           else if (sd->item_width > 0)
             {
-               col = cvw / sd->item_width;
-               if (col <= 0) col = 1;
-               y = (it->position - 1) / col;
-               x = (it->position - 1) % col;
-               it_xpos = x * sd->item_width + minx;
-               if (y >= 1)
-                 it_ypos = ((y - GG_IT(it)->prev_group) * sd->item_height)
+               it_xpos = it->x * sd->item_width + minx;
+               if (it->y >= 1)
+                 it_ypos = ((it->y - GG_IT(it)->prev_group) * sd->item_height)
                     + (GG_IT(it)->prev_group * sd->group_item_height)
                     + miny;
                else it_ypos = miny;
-               minx = minx + ((cvw - (sd->item_width * col))
-                    * sd->align_x);
-               it->x = x;
-               it->y = y;
             }
 
           switch (sd->scroll_to_type)
