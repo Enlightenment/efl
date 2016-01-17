@@ -75,7 +75,7 @@ elm_code_text_strnpos(const char *content, unsigned int length, const char *sear
 EAPI int
 elm_code_line_text_strpos(Elm_Code_Line *line, const char *search, int offset)
 {
-   unsigned int length;
+   unsigned int length = 0;
    const char *content;
 
    content = elm_code_line_text_get(line, &length);
@@ -212,7 +212,8 @@ elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length
 
 EAPI void elm_code_line_text_leading_whitespace_strip(Elm_Code_Line *line)
 {
-   unsigned int length, leading;
+   unsigned int length = 0;
+   unsigned int leading;
    const char *content;
 
    content = elm_code_line_text_get(line, &length);
@@ -225,7 +226,8 @@ EAPI void elm_code_line_text_leading_whitespace_strip(Elm_Code_Line *line)
 
 EAPI void elm_code_line_text_trailing_whitespace_strip(Elm_Code_Line *line)
 {
-   unsigned int length, trailing;
+   unsigned int length = 0;
+   unsigned int trailing;
    const char *content;
 
    content = elm_code_line_text_get(line, &length);
