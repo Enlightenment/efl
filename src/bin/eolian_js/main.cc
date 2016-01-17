@@ -647,7 +647,7 @@ int main(int argc, char** argv)
                {
                   k = "::efl::eina::js::nonclass_cls_name_getter";
                }
-             ss << "      prototype_->SetAccessor(::efl::eina::js::compatibility_new<v8::String>(isolate_, \"" << format::generic(field_name) << "\"),\n";
+             ss << "      prototype_->SetAccessor(::efl::eina::js::compatibility_new<v8::String>(isolate_, \"" << format::format_field(field_name) << "\"),\n";
              ss << "        static_cast<v8::AccessorGetterCallback>(&::efl::eo::js::get_struct_member<" << struct_c_name << ", decltype(" << member_ref << "), &" << member_ref << ", " << k << ">),\n";
              ss << "        static_cast<v8::AccessorSetterCallback>(&::efl::eo::js::set_struct_member<" << struct_c_name << ", " << field_type_tag_name << ", decltype(" << member_ref << "), &" << member_ref << ", " << k << ">));\n";
           }
@@ -659,11 +659,11 @@ int main(int argc, char** argv)
             if (comma)
               ss << ", ";
             comma = true;
-            ss << '"' << format::generic(&*ns_it) << '"';
+            ss << '"' << format::format_namespace(&*ns_it) << '"';
           }
         ss << "}, isolate, global);\n";
         ss << "    ::efl::eo::js::register_struct<" << struct_c_name << ">(isolate, \""
-           << format::generic(struct_name) << "\", \"" << struct_type_full_name << "\", to_export, fields_func);\n";
+           << format::format_struct(struct_name) << "\", \"" << struct_type_full_name << "\", to_export, fields_func);\n";
         ss << "  }\n";
 
         structs_ss << ss.str();
@@ -717,10 +717,10 @@ int main(int argc, char** argv)
                    member_name = eolian_function_name_get(function);
                    break;
                  case EOLIAN_PROP_SET:
-                   member_name = std::string("set_") + eolian_function_name_get(function);
+                   member_name = eolian_function_name_get(function) + std::string("_set");
                    break;
                  case EOLIAN_PROP_GET:
-                   member_name = std::string("get_") + eolian_function_name_get(function);
+                   member_name = eolian_function_name_get(function) + std::string("_get");
                    break;
                  case EOLIAN_PROPERTY:
                    EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "EOLIAN_PROPERTY function type is invalid at this point";
@@ -739,7 +739,7 @@ int main(int argc, char** argv)
                       {
                          if(! ::eolian_function_is_constructor(function, klass))
                            ss << "  prototype->Set( ::efl::eina::js::compatibility_new<v8::String>(isolate, \""
-                              << format::generic(name) << "\")\n"
+                              << format::format_method(name) << "\")\n"
                               << "    , ::efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, &efl::eo::js::call_function\n"
                               << "    , efl::eo::js::call_function_data<\n"
                               << "      ::efl::eina::_mpl::tuple_c<std::size_t";
@@ -1005,7 +1005,7 @@ int main(int argc, char** argv)
    os << "  register_" << lower_case_class_name << "_from_constructor(isolate, constructor, &constructor_from_eo);\n";
 
    os << "  constructor->SetClassName( ::efl::eina::js::compatibility_new<v8::String>(isolate, \""
-      << format::generic(class_name)
+      << format::format_class(class_name)
       << "\"));\n";
 
    os << "  auto to_export = ::efl::eo::js::get_namespace({";
@@ -1017,13 +1017,13 @@ int main(int argc, char** argv)
              if (comma)
                os << ", ";
              comma = true;
-             os << '"' << format::generic(&*ns_it) << '"';
+             os << '"' << format::format_namespace(&*ns_it) << '"';
           }
      }
    os << "}, isolate, global);\n";
 
    os << "  to_export->Set( ::efl::eina::js::compatibility_new<v8::String>(isolate, \""
-      << format::generic(class_name) << "\")"
+      << format::format_class(class_name) << "\")"
       << ", constructor->GetFunction());\n";
 
 
@@ -1031,7 +1031,7 @@ int main(int argc, char** argv)
    os << "    v8::Handle<v8::FunctionTemplate> constructor = ::efl::eina::js::compatibility_new<v8::FunctionTemplate>\n";
    os << "      (isolate, &efl::eo::js::construct_from_eo);\n";
    os << "    constructor->SetClassName( ::efl::eina::js::compatibility_new<v8::String>(isolate, \""
-      << format::generic(class_name)
+      << format::format_class(class_name)
       << "\"));\n";
    os << "    v8::Local<v8::ObjectTemplate> instance = "
       << "register_" << lower_case_class_name << "_from_constructor(isolate, constructor, &constructor_from_eo);\n";
@@ -1058,12 +1058,12 @@ int main(int argc, char** argv)
             if (comma)
               os << ", ";
             comma = true;
-            os << '"' << format::generic(&*ns_it) << '"';
+            os << '"' << format::format_namespace(&*ns_it) << '"';
           }
         os << "}, isolate, global);\n";
         os << "    v8::Handle<v8::Object> enum_obj = efl::eina::js::compatibility_new<v8::Object>(isolate);\n";
         os << "    to_export->Set(efl::eina::js::compatibility_new<v8::String>(isolate, \""
-           << format::generic(enum_name) << "\"), enum_obj);\n";
+           << format::format_enum(enum_name) << "\"), enum_obj);\n";
         for (efl::eina::iterator<Eolian_Enum_Type_Field> ef(::eolian_type_enum_fields_get(tp))
              , ef_end; ef != ef_end; ++ef)
           {
