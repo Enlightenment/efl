@@ -214,7 +214,7 @@ AC_CHECK_HEADER([openjpeg.h], [have_dep="yes"])
 
 if test "x${have_dep}" = "xyes" ; then
    AC_CHECK_LIB([openjp2],
-      [opj_set_default_decoder_parameters],
+      [opj_cio_open],
       [
        evas_image_loader_[]$1[]_libs="-lopenjp2"
        have_dep="yes"
