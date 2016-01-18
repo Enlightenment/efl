@@ -1227,6 +1227,7 @@ ecore_x_window_root_list(int *num_ret)
    *num_ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, NULL);
    num = ScreenCount(_ecore_x_disp);
    roots = malloc(num * sizeof(Ecore_X_Window));
    if (!roots)
@@ -1241,6 +1242,7 @@ ecore_x_window_root_list(int *num_ret)
 EAPI Ecore_X_Window
 ecore_x_window_root_first_get(void)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
    return RootWindow(_ecore_x_disp, 0);
 /*
    int num;
@@ -1277,6 +1279,7 @@ ecore_x_window_manage(Ecore_X_Window win)
    XWindowAttributes att;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
    if (XGetWindowAttributes(_ecore_x_disp, win, &att) != True)
      return EINA_FALSE;
 
@@ -1309,6 +1312,7 @@ EAPI void
 ecore_x_window_container_manage(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    XSelectInput(_ecore_x_disp, win,
                 SubstructureRedirectMask |
                 SubstructureNotifyMask);
@@ -1319,6 +1323,7 @@ EAPI void
 ecore_x_window_client_manage(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    XSelectInput(_ecore_x_disp, win,
                 PropertyChangeMask |
 //		ResizeRedirectMask |
@@ -1337,6 +1342,7 @@ EAPI void
 ecore_x_window_sniff(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    XSelectInput(_ecore_x_disp, win,
                 PropertyChangeMask |
                 SubstructureNotifyMask);
@@ -1347,6 +1353,7 @@ EAPI void
 ecore_x_window_client_sniff(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    XSelectInput(_ecore_x_disp, win,
                 PropertyChangeMask |
                 FocusChangeMask |
@@ -1367,6 +1374,7 @@ ecore_x_window_attributes_get(Ecore_X_Window win,
    Eina_Bool ret;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
    ret = XGetWindowAttributes(_ecore_x_disp, win, &att);
    if (_ecore_xlib_sync) ecore_x_sync();
    if (!ret) return EINA_FALSE;
@@ -1408,6 +1416,7 @@ EAPI void
 ecore_x_window_save_set_add(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    XAddToSaveSet(_ecore_x_disp, win);
    if (_ecore_xlib_sync) ecore_x_sync();
 }
@@ -1416,6 +1425,7 @@ EAPI void
 ecore_x_window_save_set_del(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    XRemoveFromSaveSet(_ecore_x_disp, win);
    if (_ecore_xlib_sync) ecore_x_sync();
 }
@@ -1430,6 +1440,7 @@ ecore_x_window_children_get(Ecore_X_Window win,
    unsigned int children_ret_num = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, NULL);
    success = XQueryTree(_ecore_x_disp, win, &root_ret, &parent_ret, &children_ret,
                    &children_ret_num);
    if (_ecore_xlib_sync) ecore_x_sync();
@@ -1460,6 +1471,7 @@ ecore_x_pointer_control_set(int accel_num,
 {
    Eina_Bool ret;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
    ret = !!XChangePointerControl(_ecore_x_disp, 1, 1,
                                 accel_num, accel_denom, threshold);
    if (_ecore_xlib_sync) ecore_x_sync();
@@ -1473,6 +1485,7 @@ ecore_x_pointer_control_get(int *accel_num,
 {
    Eina_Bool ret;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
    ret = !!XGetPointerControl(_ecore_x_disp,
                              accel_num, accel_denom, threshold);
    if (_ecore_xlib_sync) ecore_x_sync();
@@ -1485,6 +1498,7 @@ ecore_x_pointer_mapping_set(unsigned char *map,
 {
    Eina_Bool ret;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
    ret = (XSetPointerMapping(_ecore_x_disp, map, nmap) == MappingSuccess);
    if (_ecore_xlib_sync) ecore_x_sync();
    return ret;
@@ -1496,6 +1510,7 @@ ecore_x_pointer_mapping_get(unsigned char *map,
 {
    Eina_Bool ret;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
    ret = !!XGetPointerMapping(_ecore_x_disp, map, nmap);
    if (_ecore_xlib_sync) ecore_x_sync();
    return ret;
@@ -1506,6 +1521,7 @@ ecore_x_pointer_grab(Ecore_X_Window win)
 {
    Eina_Bool ret;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
    ret = (XGrabPointer(_ecore_x_disp, win, False,
                     ButtonPressMask | ButtonReleaseMask |
                     EnterWindowMask | LeaveWindowMask | PointerMotionMask,
@@ -1520,6 +1536,7 @@ ecore_x_pointer_confine_grab(Ecore_X_Window win)
 {
    Eina_Bool ret;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
    ret = (XGrabPointer(_ecore_x_disp, win, False,
                     ButtonPressMask | ButtonReleaseMask |
                     EnterWindowMask | LeaveWindowMask | PointerMotionMask,
@@ -1533,6 +1550,7 @@ EAPI void
 ecore_x_pointer_ungrab(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    XUngrabPointer(_ecore_x_disp, CurrentTime);
    if (_ecore_xlib_sync) ecore_x_sync();
 }
@@ -1544,6 +1562,7 @@ ecore_x_pointer_warp(Ecore_X_Window win,
 {
    Eina_Bool ret;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
    ret = !!XWarpPointer(_ecore_x_disp, None, win, 0, 0, 0, 0, x, y);
    if (_ecore_xlib_sync) ecore_x_sync();
    return ret;
@@ -1554,6 +1573,7 @@ ecore_x_keyboard_grab(Ecore_X_Window win)
 {
    Eina_Bool ret;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
    ret = (XGrabKeyboard(_ecore_x_disp, win, False,
                      GrabModeAsync, GrabModeAsync,
                      CurrentTime) == GrabSuccess);
@@ -1565,6 +1585,7 @@ EAPI void
 ecore_x_keyboard_ungrab(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    XUngrabKeyboard(_ecore_x_disp, CurrentTime);
 }
 
@@ -1572,6 +1593,7 @@ EAPI void
 ecore_x_grab(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    _ecore_x_grab_count++;
    if (_ecore_x_grab_count == 1)
      XGrabServer(_ecore_x_disp);
@@ -1581,6 +1603,7 @@ EAPI void
 ecore_x_ungrab(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    _ecore_x_grab_count--;
    if (_ecore_x_grab_count < 0)
      _ecore_x_grab_count = 0;
