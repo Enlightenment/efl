@@ -142,7 +142,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                   region containing the given $item item, if it is not fully
                   visible.]]
                 params {
-                     @in type: Elm_Gengrid_Item_Scrollto_Type; [[Where to position the item in the viewport.]]
+                     @in type: Elm.Gengrid.Item.Scrollto_Type; [[Where to position the item in the viewport.]]
                 }
            }
            bring_in {
@@ -152,7 +152,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                   it (by scrolling), if it is not fully visible. This will use
                   animation to do so and take a period of time to complete.]]
                 params {
-                     @in type: Elm_Gengrid_Item_Scrollto_Type; [[Where to position the item in the viewport.]]
+                     @in type: Elm.Gengrid.Item.Scrollto_Type; [[Where to position the item in the viewport.]]
                 }
            }
            update {
