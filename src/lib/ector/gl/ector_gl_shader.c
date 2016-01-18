@@ -5,8 +5,6 @@
 #include <Eina.h>
 #include <Ector.h>
 
-#include <dlfcn.h>
-
 #include "gl/Ector_GL.h"
 #include "ector_private.h"
 #include "ector_gl_private.h"

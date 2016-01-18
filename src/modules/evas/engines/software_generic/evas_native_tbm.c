@@ -2,7 +2,7 @@
 #include "evas_private.h"
 #include "evas_native_common.h"
 
-#ifdef HAVE_DLSYM
+#if defined HAVE_DLSYM && ! defined _WIN32
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
 #else
 # warning native_tbm should not get compiled if dlsym is not found on the system!

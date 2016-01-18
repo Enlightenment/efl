@@ -21,20 +21,27 @@ x * This header provides functions to load and unload dynamic-link
  * @def RTLD_LAZY
  * Lazy function call binding.
  */
-# define RTLD_LAZY    0x00001  /* lazy function call binding */
+# define RTLD_LAZY    0x00001  /* lazy function call binding. Unused */
 
 /**
  * @def RTLD_NOW
  * Immediate function call binding.
  */
-# define RTLD_NOW     0x00002  /* immediate function call binding */
+# define RTLD_NOW     0x00002  /* immediate function call binding. Unused */
 
 /**
  * @def RTLD_GLOBAL
  * Symbols in this dlopen'ed obj are visible to other dlopen'ed objs.
  */
-# define RTLD_GLOBAL  0x00100  /* symbols in this dlopen'ed obj are visible
-			          to other dlopen'ed objs */
+# define RTLD_GLOBAL  0x00004  /* symbols in this dlopen'ed obj are visible
+			          to other dlopen'ed objs. Unused */
+
+/**
+ * @def RTLD_LOCAL
+ * Symbols in this dlopen'ed obj are not visible to other dlopen'ed objs.
+ */
+# define RTLD_LOCAL  0x00008  /* symbols in this dlopen'ed obj are not visible
+			         to other dlopen'ed objs. Unused */
 
 /**
  * @def RTLD_NODELETE
