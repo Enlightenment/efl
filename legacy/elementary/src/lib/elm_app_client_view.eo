@@ -7,7 +7,7 @@ class Elm.App_Client_View (Eo.Base)
             [[Get state of view]]
          }
          values {
-            state: Elm_App_View_State; [[state of view]]
+            state: Elm.App.View_State; [[state of view]]
          }
       }
       @property new_events {

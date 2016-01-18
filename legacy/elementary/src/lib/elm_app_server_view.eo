@@ -59,7 +59,7 @@ class Elm.App_Server_View (Eo.Base)
          get {
          }
          values {
-            ret: Elm_App_View_State;
+            ret: Elm.App.View_State;
          }
       }
       @property path {

@@ -119,3 +119,12 @@ enum Elm.Focus_Direction
    left,     [[ left direction ]]
 }
 
+enum Elm.App.View_State
+{
+   unknown = 0,
+   live,
+   paused,
+   closed,
+   shallow,
+}
+
