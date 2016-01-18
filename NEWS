@@ -175,6 +175,15 @@ Fixes:
    * js: fix binding after namespace change of connector
    * Edje UI mirroring: Fix UI mirroring for GROUP parts. (T3021)
    * Edje entry: Fix memory leak.
+   * eina-cxx: Remove Eo classes defined manually (T2940)
+   * edje: unswallow objects from parent edje when swallowing into new edje
+   * ecore-drm: Call inputs shutdown before eina_shutdown
+   * ecore_wayland: send mouse_move when sets touch_focus window in cb_touch_down
+   * ecore_wayland: move check for pointer capability
+   * ecore_drm/ecore_wl2: logging: remove errant usage of %m
+   * win32: Fix compilation due to recent changes in Evil
+   * embryo: change the log catagory of printf in embryo
+   * ecore imf: fix imf module load hangs when not even configured
 
 Changes since 1.15.0:
 ---------------------
