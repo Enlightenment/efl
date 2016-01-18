@@ -101,6 +101,17 @@ _hoversel_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_hoversel_clicked_populate_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                              void *event_info EINA_UNUSED)
+{
+   printf("Hover button is clicked and 'clicked' callback is called.\n");
+   elm_hoversel_item_add(obj, "Item 1", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(obj, "Item 2", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(obj, "Item 3", NULL, ELM_ICON_NONE, NULL, NULL);
+   elm_hoversel_item_add(obj, "Item 4", NULL, ELM_ICON_NONE, NULL, NULL);
+}
+
+static void
 _hoversel_selected_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                       void *event_info)
 {
@@ -123,10 +134,13 @@ _hoversel_expanded_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    Elm_Object_Item *it = data;
 
    printf("'expanded' callback is called.\n");
-   printf("old style: %s\n", elm_object_item_style_get(it));
-   //item type is button. set the style of button
-   elm_object_item_style_set(it, "anchor");
-   printf("new style: %s\n", elm_object_item_style_get(it));
+   if (it)
+     {
+        printf("old style: %s\n", elm_object_item_style_get(it));
+        //item type is button. set the style of button
+        elm_object_item_style_set(it, "anchor");
+        printf("new style: %s\n", elm_object_item_style_get(it));
+     }
 }
 
 void
@@ -282,6 +296,20 @@ test_hoversel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    //pass the last item as data and use elm_object_item_style_set() to change the item style.
    evas_object_smart_callback_add(hoversel, "expanded",
                                   _hoversel_expanded_cb, it);
+   elm_box_pack_end(bx, hoversel);
+   evas_object_show(hoversel);
+
+   hoversel = elm_hoversel_add(win);
+   elm_hoversel_hover_parent_set(hoversel, win);
+   elm_object_text_set(hoversel, "Add items when clicked");
+   evas_object_smart_callback_add(hoversel, "clicked",
+                                  _hoversel_clicked_populate_cb, NULL);
+   evas_object_smart_callback_add(hoversel, "selected",
+                                  _hoversel_selected_cb, NULL);
+   evas_object_smart_callback_add(hoversel, "dismissed",
+                                  _hoversel_dismissed_cb, NULL);
+   evas_object_smart_callback_add(hoversel, "expanded",
+                                  _hoversel_expanded_cb, NULL);
    elm_box_pack_end(bx, hoversel);
    evas_object_show(hoversel);
 
