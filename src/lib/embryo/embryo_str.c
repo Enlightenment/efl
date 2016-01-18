@@ -445,7 +445,7 @@ _embryo_str_printf(Embryo_Program *ep, Embryo_Cell *params)
 
    _str_snprintf(ep, s1, s2, max_len, pnum, &params[2]);
 
-   DBG("%s", s2);
+   INF("%s", s2);
 
    return o;
 }
