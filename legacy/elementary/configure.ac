@@ -217,10 +217,12 @@ requirement_elm_pc=""
 case "$host_os" in
    mingw*)
       requirement_elm_pc="evil >= efl_version"
+      requirement_elm_pc_only="evil >= efl_version"
       ;;
 esac
 
 requirement_elm_pc_only="\
+    ${requirement_elm_pc_only} \
     efl >= efl_version \
     eina >= efl_version \
     eet >= efl_version \
