@@ -84,6 +84,11 @@ Fixes:
    * combobox: fix recalc and hover's best_location error
    * js: fix examples functions
    * elm entry: check for null return from eina_rectangle_new
+   * [Hover] Fixed the delaying of hover dismiss on continuous mouse clicks (T3006)
+   * box: enforce size recalc during unpack_all()
+   * config: try to properly update config for popup new align value. (T3008)
+   * config: Correct defaults in upgrade of popup conf (T3008)
+   * Gengrid: improve item_region_show code
 
 Changes since 1.15.0:
 ---------------------
