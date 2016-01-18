@@ -74,9 +74,6 @@ tests/eina_cxx/simple.eo.h \
 tests/eina_cxx/simple.eo.hh \
 tests/eina_cxx/simple.eo.impl.hh
 
-EXTRA_DIST += \
-tests/eina_cxx/simple.eo
-
 tests_eina_cxx_eina_cxx_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eina_cxx\" \
@@ -95,4 +92,8 @@ tests_eina_cxx_eina_cxx_suite_LDADD = @CHECK_LIBS@ @USE_EINA_LIBS@ @USE_EO_LIBS@
 tests_eina_cxx_eina_cxx_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 
 endif
+
+EXTRA_DIST += \
+tests/eina_cxx/simple.eo
+
 endif
