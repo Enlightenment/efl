@@ -34,6 +34,8 @@ ecore_imf_context_available_ids_by_canvas_type_get(const char *canvas_type)
  * 'en', 'en_UK' against 'en_US' => 2
  *  all locales, against '*'     => 1
  */
+/* XXX: disable because nto used anymore - see below
+ * ecore_imf_context_default_id_by_canvas_type_get
 static int
 _ecore_imf_context_match_locale(const char *locale, const char *against, int against_len)
 {
@@ -48,6 +50,7 @@ _ecore_imf_context_match_locale(const char *locale, const char *against, int aga
 
    return 0;
 }
+*/
 
 EAPI const char *
 ecore_imf_context_default_id_get(void)
@@ -56,16 +59,10 @@ ecore_imf_context_default_id_get(void)
 }
 
 EAPI const char *
-ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type)
+ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type EINA_UNUSED)
 {
-   const char *id;
-   Eina_List *modules;
-   Ecore_IMF_Module *module;
-   char *locale;
-   char *tmp;
-   int best_goodness = 0;
+   const char *id = getenv("ECORE_IMF_MODULE");
 
-   id = getenv("ECORE_IMF_MODULE");
    if (id)
      {
         if (strcmp(id, "none") == 0) return NULL;
@@ -79,6 +76,18 @@ ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type)
              if (ecore_imf_module_get(id)) return id;
           }
      }
+   return NULL;
+/* XXX: I am not sure we need/want this. this causes imf modules to be
+ * used where ECORE_IMF_MODULE is not set (and this causes issues with things
+ * like scim where on some distros and some versions an scim connect BLOCKS
+ * and if no scim is around this means an app blocks/hangs ... so disable
+ * this so either you are in wayland mode OR you have to set
+ * ECORE_IMF_MODULE
+   Eina_List *modules;
+   Ecore_IMF_Module *module;
+   char *locale;
+   char *tmp;
+   int best_goodness = 0;
 
    modules = ecore_imf_module_available_get();
    if (!modules) return NULL;
@@ -119,6 +128,7 @@ ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type)
 
    free(locale);
    return id;
+ */
 }
 
 EAPI const Ecore_IMF_Context_Info *
