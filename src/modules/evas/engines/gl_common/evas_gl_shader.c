@@ -243,7 +243,7 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
    char bin_dir_path[PATH_MAX];
    char bin_file_path[PATH_MAX];
    char tmp_file_name[PATH_MAX];
-   int tmpfd = -1, res = 0, copy;
+   int tmpfd = -1, copy;
    Eina_Tmpstr *tmp_file_path = NULL;
    Eet_File *ef = NULL;
    Evas_GL_Program *p;
@@ -255,8 +255,8 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
 
    if (!evas_gl_common_file_cache_dir_check(bin_dir_path, sizeof(bin_dir_path)))
      {
-        res = evas_gl_common_file_cache_mkpath(bin_dir_path);
-        if (!res) return 0; /* we can't make directory */
+        if (!evas_gl_common_file_cache_mkpath(bin_dir_path))
+          return 0; /* we can't make directory */
      }
 
    copy = evas_gl_common_file_cache_file_check(bin_dir_path, "binary_shader", bin_file_path,

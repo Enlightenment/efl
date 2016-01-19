@@ -816,43 +816,51 @@ _surface_cap_cache_save()
 {
    /* check eet */
    Eet_File *et = NULL; //check eet file
-   int tmpfd;
-   int res = 0;
+   int tmpfd = -1;
    char cap_dir_path[PATH_MAX];
    char cap_file_path[PATH_MAX];
-   char tmp_file[PATH_MAX];
+   char tmp_file_name[PATH_MAX];
+   Eina_Tmpstr *tmp_file_path = NULL;
 
    /* use eet */
    if (!eet_init()) return 0;
 
    if (!evas_gl_common_file_cache_dir_check(cap_dir_path, sizeof(cap_dir_path)))
      {
-        res = evas_gl_common_file_cache_mkpath(cap_dir_path);
-        if (!res) return 0; /* we can't make directory */
+        if (!evas_gl_common_file_cache_mkpath(cap_dir_path))
+          return 0; /* we can't make directory */
      }
 
    evas_gl_common_file_cache_file_check(cap_dir_path, "surface_cap", cap_file_path,
                                         sizeof(cap_dir_path));
 
    /* use mkstemp for writing */
-   snprintf(tmp_file, sizeof(tmp_file), "%s.XXXXXX.cache", cap_file_path);
-   tmpfd = eina_file_mkstemp(tmp_file, NULL);
+   snprintf(tmp_file_name, sizeof(tmp_file_name), "%s.XXXXXX.cache", cap_file_path);
+   tmpfd = eina_file_mkstemp(tmp_file_name, &tmp_file_path);
    if (tmpfd < 0) goto error;
-   close(tmpfd);
 
-   et = eet_open(tmp_file, EET_FILE_MODE_WRITE);
+   et = eet_open(tmp_file_path, EET_FILE_MODE_WRITE);
    if (!et) goto error;
 
    if (!_surface_cap_save(et)) goto error;
 
-   if (eet_close(et) != EET_ERROR_NONE) goto error;
-   if (rename(tmp_file,cap_file_path) < 0) goto error;
+   if (eet_close(et) != EET_ERROR_NONE) goto destroyed;
+   if (rename(tmp_file_path, cap_file_path) < 0) goto destroyed;
+   eina_tmpstr_del(tmp_file_path);
+   close(tmpfd);
    eet_shutdown();
+
    return 1;
 
+destroyed:
+   et = NULL;
+
 error:
+   if (tmpfd >= 0) close(tmpfd);
    if (et) eet_close(et);
-   if (evas_gl_common_file_cache_file_exists(tmp_file)) unlink(tmp_file);
+   if (evas_gl_common_file_cache_file_exists(tmp_file_path))
+     unlink(tmp_file_path);
+   eina_tmpstr_del(tmp_file_path);
    eet_shutdown();
    return 0;
 }
