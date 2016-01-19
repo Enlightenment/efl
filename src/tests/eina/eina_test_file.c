@@ -787,6 +787,7 @@ START_TEST(eina_test_file_mktemp)
         eina_file_close(file);
         unlink(tmpfile);
         eina_tmpstr_del(tmpfile);
+        close(fd);
      }
 
    /* temp directory */
@@ -806,6 +807,7 @@ START_TEST(eina_test_file_mktemp)
 
    fd = eina_file_mkstemp(buf, &tmpfile);
    fail_if((fd < 0) || !tmpfile || errno);
+   close(fd);
 
    it = eina_file_direct_ls(tmpdir);
    fail_if(!it);
