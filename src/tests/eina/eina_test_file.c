@@ -183,6 +183,8 @@ START_TEST(eina_file_direct_ls_simple)
     * 1) Do not end a directory with a period
     * 2) '*' (asterisk) is a reserved character
     * 3) ':' (colon) is a reserved character
+    *
+    * Note: UTF-8 symbol U+03BC is greek lower mu
     */
 
    const char *good_dirs[] =
@@ -195,7 +197,7 @@ START_TEST(eina_file_direct_ls_simple)
 #ifndef _WIN32
         "~$a@:-*$b!{}"
 #else
-        "~$a@µ-#$b!{}"
+        "~$a@\u03bc-#$b!{}"
 #endif
      };
    const int good_dirs_count = sizeof(good_dirs) / sizeof(const char *);
@@ -257,7 +259,7 @@ START_TEST(eina_file_ls_simple)
 #ifndef _WIN32
         "~$b@:-*$a!{}"
 #else
-        "~$b@µ-#$a!{}"
+        "~$b@\u03bc-#$a!{}"
 #endif
      };
    const int good_dirs_count = sizeof(good_dirs) / sizeof(const char *);
