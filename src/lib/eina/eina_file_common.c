@@ -913,14 +913,27 @@ EAPI int
 eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
 {
    char buffer[PATH_MAX];
-   const char *XXXXXX = NULL;
+   const char *XXXXXX = NULL, *sep;
    int fd, len;
 #ifndef _WIN32
    mode_t old_umask;
 #endif
 
-   len = eina_file_path_join(buffer, sizeof(buffer),
-                             eina_environment_tmp_get(), templatename);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(templatename, -1);
+
+   sep = strchr(templatename, '/');
+#ifdef _WIN32
+   if (!sep) sep = strchr(templatename, '\\');
+#endif
+   if (sep)
+     {
+        len = eina_strlcpy(buffer, templatename, sizeof(buffer));
+     }
+   else
+     {
+        len = eina_file_path_join(buffer, sizeof(buffer),
+                                  eina_environment_tmp_get(), templatename);
+     }
 
    /*
     * Unix:
@@ -945,10 +958,13 @@ eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
    umask(old_umask);
 #endif
 
-   if (path) *path = eina_tmpstr_add(buffer);
    if (fd < 0)
-     return -1;
+     {
+        if (path) *path = NULL;
+        return -1;
+     }
 
+   if (path) *path = eina_tmpstr_add(buffer);
    return fd;
 }
 
@@ -956,16 +972,32 @@ EAPI Eina_Bool
 eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path)
 {
    char buffer[PATH_MAX];
-   char *tmpdirname;
+   char *tmpdirname, *sep;
 
-   eina_file_path_join(buffer, sizeof(buffer),
-                       eina_environment_tmp_get(), templatename);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(templatename, EINA_FALSE);
+
+   sep = strchr(templatename, '/');
+#ifdef _WIN32
+   if (!sep) sep = strchr(templatename, '\\');
+#endif
+   if (sep)
+     {
+        eina_strlcpy(buffer, templatename, sizeof(buffer));
+     }
+   else
+     {
+        eina_file_path_join(buffer, sizeof(buffer),
+                            eina_environment_tmp_get(), templatename);
+     }
 
    tmpdirname = mkdtemp(buffer);
-   if (path) *path = eina_tmpstr_add(buffer);
    if (tmpdirname == NULL)
-     return EINA_FALSE;
+     {
+        if (path) *path = NULL;
+        return EINA_FALSE;
+     }
 
+   if (path) *path = eina_tmpstr_add(tmpdirname);
    return EINA_TRUE;
 }
 

@@ -353,14 +353,14 @@ EAPI Eina_Iterator *eina_file_stat_ls(const char *dir) EINA_WARN_UNUSED_RESULT E
 EAPI int eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2, 3);
 
 /**
- * @brief Generates and creates a uniquely named temporary file from template.
- *        Generated file is opened with the open(2) O_EXCL flag.
+ * @brief Generates and creates a uniquely named temporary file from a template name.
+ *        The generated file is opened with the open(2) @c O_EXCL flag.
  *
  * @param[in] templatename This is a string. It must contain the six characters 'XXXXXX'
  *                         at the end or directly followed by an extension as in 
  *                         'prefixXXXXXX.ext'.
- * @param[out] path Where to put the name of the created file. If not @c NULL
- *                  should be released by eina_tmpstr_del().
+ * @param[out] path The path to the created temporary file, or @c NULL in case of failure.
+ *                  It must be released by eina_tmpstr_del().
  * @return On success @c file descriptor of the temporary file is returned, 
  *         On error @c -1 is returned, in which case @c errno is set appropriately.
  *
@@ -371,28 +371,43 @@ EAPI int eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Sta
  * @note If a filename extension was specified in @p templatename, then the new @p path
  *       will also contain this extension (since 1.10).
  *
+ * @note If the @p templatename is a simple file name (no relative or absolute
+ *       path to another directory), then a temporary file will be created inside
+ *       the system temporary directory (@see eina_environment_tmp_get()). If the
+ *       @p templatename contains a directory separator ('/', or '\\' on Windows)
+ *       then the file will be created inside this directory, which must exist and
+ *       be writable. Use ./filename.XXXXXX to create files in the current
+ *       working directory. (since 1.17)
+ *
  * @see eina_file_mkdtemp()
  * @since 1.8
  */
-EAPI int eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path);
+EAPI int eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Generates and creates a uniquely named temporary directory from template.
+ * @brief Generates and creates a uniquely named temporary directory from a template name.
  *
  * @param[in] templatename This is a string. The last six characters of @p templatename 
  *                         must be XXXXXX.
- * @param[out] path Where to put the name of the created directory. If not @c NULL
- *                  should be released by eina_tmpstr_del().
+ * @param[out] path The path to the created temporary directory, or @c NULL in case of failure.
+ *                  It must be released by eina_tmpstr_del().
  * @return On success @c EINA_TRUE is returned, On error @c EINA_FALSE is returned, 
  *                    in which case @c errno is set appropriately.
  *
  * @details This function calls mkdtemp(). The directory is then created with 
- *           permissions 0700. 
+ *           permissions 0700.
+ *
+ * @note If the @p templatename is a simple directory name (no relative or absolute
+ *       path to another directory), then a temporary directory will be created inside
+ *       the system temporary directory (@see eina_environment_tmp_get()). If the
+ *       @p templatename contains a directory separator ('/', or '\\' on Windows)
+ *       then the temporary directory will be created inside that other directory,
+ *       which must exist and be writable. (since 1.17)
  *
  * @see eina_file_mkstemp()
  * @since 1.8
  */
-EAPI Eina_Bool eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path);
+EAPI Eina_Bool eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path) EINA_ARG_NONNULL(1,2);
 
 /**
  * @brief Gets an iterator to list the content of a directory, with direct
