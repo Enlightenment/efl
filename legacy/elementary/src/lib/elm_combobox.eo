@@ -48,10 +48,10 @@ class Elm_Combobox (Elm.Button, Evas.Selectable_Interface,
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      selected;
       dismissed;
       expanded;
       clicked;
+      item,selected;
       item,pressed;
       filter,done;
    }

@@ -12,11 +12,11 @@ _combobox_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_combobox_selected_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
-                      void *event_info)
+_combobox_item_selected_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                           void *event_info)
 {
    const char *txt = elm_object_item_text_get(event_info);
-   printf("'selected' callback is called. (selected item : %s)\n", txt);
+   printf("'item,selected' callback is called. (selected item : %s)\n", txt);
 }
 
 static void
@@ -125,12 +125,12 @@ test_combobox(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                                    (void*)(uintptr_t)(i * 10));
    evas_object_smart_callback_add(combobox, "clicked",
                                   _combobox_clicked_cb, NULL);
-   evas_object_smart_callback_add(combobox, "selected",
-                                  _combobox_selected_cb, NULL);
    evas_object_smart_callback_add(combobox, "dismissed",
                                   _combobox_dismissed_cb, NULL);
    evas_object_smart_callback_add(combobox, "expanded",
                                   _combobox_expanded_cb, NULL);
+   evas_object_smart_callback_add(combobox, "item,selected",
+                                  _combobox_item_selected_cb, NULL);
    evas_object_smart_callback_add(combobox, "item,pressed",
                                   _combobox_item_pressed_cb, NULL);
    evas_object_smart_callback_add(combobox, "filter,done",
@@ -148,8 +148,10 @@ test_combobox(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                                    (void*)(uintptr_t)(i * 10));
    evas_object_smart_callback_add(combobox, "clicked",
                                   _combobox_clicked_cb, NULL);
-   evas_object_smart_callback_add(combobox, "selected",
-                                  _combobox_selected_cb, NULL);
+   evas_object_smart_callback_add(combobox, "item,selected",
+                                  _combobox_item_selected_cb, NULL);
+   evas_object_smart_callback_add(combobox, "item,pressed",
+                                  _combobox_item_pressed_cb, NULL);
    evas_object_smart_callback_add(combobox, "dismissed",
                                   _combobox_dismissed_cb, NULL);
    evas_object_smart_callback_add(combobox, "expanded",

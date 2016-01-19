@@ -15,16 +15,16 @@
 #define MY_CLASS_NAME "Elm_Combobox"
 #define MY_CLASS_NAME_LEGACY "elm_combobox"
 
-static const char SIG_SELECTED[] = "selected";
 static const char SIG_DISMISSED[] = "dismissed";
 static const char SIG_EXPANDED[] = "expanded";
+static const char SIG_ITEM_SELECTED[] = "item,selected";
 static const char SIG_ITEM_PRESSED[] = "item,pressed";
 static const char SIG_FILTER_DONE[] = "filter,done";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-   {SIG_SELECTED, ""},
    {SIG_DISMISSED, ""},
    {SIG_EXPANDED, ""},
+   {SIG_ITEM_SELECTED, ""},
    {SIG_ITEM_PRESSED, ""},
    {SIG_FILTER_DONE, ""},
    {"clicked", ""}, /**< handled by parent button class */
@@ -165,7 +165,7 @@ _on_item_selected(void *data , Evas_Object *obj EINA_UNUSED, void *event)
 {
    ELM_COMBOBOX_DATA_GET(data, sd);
    elm_object_focus_set(sd->entry, EINA_TRUE);
-   eo_do(data, eo_event_callback_call(ELM_COMBOBOX_EVENT_SELECTED, event));
+   eo_do(data, eo_event_callback_call(ELM_COMBOBOX_EVENT_ITEM_SELECTED, event));
 }
 
 static void
