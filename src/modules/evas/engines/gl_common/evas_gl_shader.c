@@ -240,16 +240,18 @@ error:
 static int
 _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
 {
-   // FIXME: Save should happen early, before shutdown.
-
    char bin_dir_path[PATH_MAX];
    char bin_file_path[PATH_MAX];
-   char tmp_file[PATH_MAX];
-   int tmpfd, res = 0, copy;
+   char tmp_file_name[PATH_MAX];
+   int tmpfd = -1, res = 0, copy;
+   Eina_Tmpstr *tmp_file_path = NULL;
    Eet_File *ef = NULL;
    Evas_GL_Program *p;
    Eina_Iterator *it;
    char pname[32];
+
+   /* use eet */
+   if (!eet_init()) return 0;
 
    if (!evas_gl_common_file_cache_dir_check(bin_dir_path, sizeof(bin_dir_path)))
      {
@@ -261,19 +263,15 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
                                                sizeof(bin_dir_path));
 
    /* use mkstemp for writing */
-   snprintf(tmp_file, sizeof(tmp_file), "%s.XXXXXX.cache", bin_file_path);
-   tmpfd = eina_file_mkstemp(tmp_file, NULL);
-   if (tmpfd < 0) return 0;
-   close(tmpfd);
-
-   /* use eet */
-   if (!eet_init()) return 0;
+   snprintf(tmp_file_name, sizeof(tmp_file_name), "%s.XXXXXX.cache", bin_file_path);
+   tmpfd = eina_file_mkstemp(tmp_file_name, &tmp_file_path);
+   if (tmpfd < 0) goto error;
 
    /* copy old file */
    if (copy)
-     eina_file_copy(bin_file_path, tmp_file, EINA_FILE_COPY_DATA, NULL, NULL);
+     eina_file_copy(bin_file_path, tmp_file_path, EINA_FILE_COPY_DATA, NULL, NULL);
 
-   ef = eet_open(tmp_file, EET_FILE_MODE_READ_WRITE);
+   ef = eet_open(tmp_file_path, EET_FILE_MODE_READ_WRITE);
    if (!ef) goto error;
 
    it = eina_hash_iterator_data_new(shared->shaders_hash);
@@ -300,16 +298,23 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
      }
 
    if (eet_close(ef) != EET_ERROR_NONE) goto destroyed;
-   if (rename(tmp_file, bin_file_path) < 0) goto destroyed;
-
+   if (rename(tmp_file_path, bin_file_path) < 0) goto destroyed;
+   eina_tmpstr_del(tmp_file_path);
+   close(tmpfd);
    eet_shutdown();
+
+   shared->needs_shaders_flush = 0;
    return 1;
 
  destroyed:
    ef = NULL;
+
  error:
+   if (tmpfd >= 0) close(tmpfd);
    if (ef) eet_close(ef);
-   if (evas_gl_common_file_cache_file_exists(tmp_file)) unlink(tmp_file);
+   if (evas_gl_common_file_cache_file_exists(tmp_file_path))
+     unlink(tmp_file_path);
+   eina_tmpstr_del(tmp_file_path);
    eet_shutdown();
    return 0;
 }
