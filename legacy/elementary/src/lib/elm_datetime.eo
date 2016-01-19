@@ -151,7 +151,7 @@ class Elm.Datetime (Elm.Layout)
 
          return: bool; [[$true if minimum value is accepted.]]
          params {
-            @in mintime: const(Elm_Datetime_Time)*; [[Time structure containing the minimum time value.]]
+            @in mintime: const(Efl.Time)*; [[Time structure containing the minimum time value.]]
          }
       }
       value_min_get @const {
@@ -172,7 +172,7 @@ class Elm.Datetime (Elm.Layout)
          ]]
          return: bool; [[$true if minimum value is successfully returned.]]
          params {
-            @inout mintime: Elm_Datetime_Time; [[Time structure.]]
+            @inout mintime: Efl.Time; [[Time structure.]]
          }
       }
       value_set {
@@ -193,7 +193,7 @@ class Elm.Datetime (Elm.Layout)
          ]]
          return: bool; [[$true if current time is set successfully.]]
          params {
-            @in newtime: const(Elm_Datetime_Time)*; [[Time structure filled with values to be set.]]
+            @in newtime: const(Efl.Time)*; [[Time structure filled with values to be set.]]
          }
       }
       value_get @const {
@@ -214,7 +214,7 @@ class Elm.Datetime (Elm.Layout)
          ]]
          return: bool; [[$true if current time is returned successfully.]]
          params {
-            @inout currtime: Elm_Datetime_Time; [[Time structure.]]
+            @inout currtime: Efl.Time; [[Time structure.]]
          }
       }
       field_visible_set {
@@ -260,7 +260,7 @@ class Elm.Datetime (Elm.Layout)
          ]]
          return: bool; [[$true if maximum value is accepted.]]
          params {
-            @in maxtime: const(Elm_Datetime_Time)*; [[Time structure containing the maximum time value.]]
+            @in maxtime: const(Efl.Time)*; [[Time structure containing the maximum time value.]]
          }
       }
       value_max_get @const {
@@ -281,7 +281,7 @@ class Elm.Datetime (Elm.Layout)
          ]]
          return: bool; [[$true if maximum value is returned successfully.]]
          params {
-            @inout maxtime: Elm_Datetime_Time; [[Time structure containing the maximum time value.]]
+            @inout maxtime: Efl.Time; [[Time structure containing the maximum time value.]]
          }
       }
    }

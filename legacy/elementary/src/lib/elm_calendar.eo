@@ -306,7 +306,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
            \@ref calendar_example_04
          ]]
          params {
-            @in selected_time: Elm_Calendar_Time *; [[A tm struct to represent the selected date.]]
+            @in selected_time: Efl.Time *; [[A tm struct to represent the selected date.]]
          }
       }
       selected_time_get @const {
@@ -323,7 +323,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
          ]]
          return: bool;
          params {
-            @inout selected_time: Elm_Calendar_Time; [[A tm struct to point to selected date.]]
+            @inout selected_time: Efl.Time; [[A tm struct to point to selected date.]]
          }
       }
       mark_add {
@@ -368,7 +368,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
             @in mark_type: const(char)*; [[A string used to define the type of mark. It will be
             emitted to the theme, that should display a related modification on these
             days representation.]]
-            @in mark_time: Elm_Calendar_Time *; [[A time struct to represent the date of inclusion of the
+            @in mark_time: Efl.Time *; [[A time struct to represent the date of inclusion of the
             mark. For marks that repeats it will just be displayed after the inclusion
             date in the calendar.]]
             @in repeat: Elm.Calendar.Mark.Repeat.Type; [[Repeat the event following this periodicity. Can be a unique
@@ -425,7 +425,7 @@ class Elm.Calendar (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
          ]]
          return: bool;
          params {
-            @inout displayed_time: Elm_Calendar_Time; [[A tm struct to point to displayed date.]]
+            @inout displayed_time: Efl.Time; [[A tm struct to point to displayed date.]]
          }
       }
    }
