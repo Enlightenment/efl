@@ -59,19 +59,14 @@ writef(lua_State *L EINA_UNUSED, const void *p, size_t size, void *ud)
 static FILE *
 bc_tmp_open(const char *fname, char *buf, size_t buflen)
 {
+   Eina_Tmpstr *tmp_file;
    int fd;
-   /* FIXME: use ecore_file_file_get() ? */
-   char *fs = strrchr(fname, '/'), *bs = strrchr(fname, '\\');
-   if (!fs && !bs)
-     snprintf(buf, buflen, "./XXXXXX.cache");
-   else
-     {
-        char *ss = (fs > bs) ? fs : bs;
-        snprintf(buf, buflen, "%.*sXXXXXX.cache", (int)(ss - fname + 1), fname);
-     }
-   fd = eina_file_mkstemp(buf, NULL);
+   snprintf(buf, buflen, "%s.XXXXXX.cache", fname);
+   fd = eina_file_mkstemp(buf, &tmp_file);
    if (fd < 0)
      return NULL;
+   eina_strlcpy(buf, tmp_file, buflen);
+   eina_tmpstr_del(tmp_file);
    return fdopen(fd, "wb");
 }
 
@@ -88,6 +83,7 @@ write_bc(lua_State *L, const char *fname)
              fclose(f);
              /* there really is nothing to handle here */
              (void)!!remove(buf);
+             return;
           }
         else fclose(f);
         snprintf(buf2, sizeof(buf2), "%sc", fname);
