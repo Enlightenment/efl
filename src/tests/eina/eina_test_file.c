@@ -736,6 +736,91 @@ START_TEST(eina_test_file_statat)
 }
 END_TEST
 
+START_TEST(eina_test_file_mktemp)
+{
+   Eina_Tmpstr *tmpfile, *tmpdir = NULL;
+   char buf[PATH_MAX], fmt[256];
+   Eina_File_Direct_Info *info;
+   Eina_Iterator *it;
+   Eina_File *file;
+   int fd;
+
+   static const char *patterns[] = {
+      "XXXXXX",
+      "XXXXXX.txt",
+      "eina_file_test_XXXXXX",
+      "eina_file_test_XXXXXX.txt",
+      "./eina_file_test_XXXXXX.txt",
+   };
+
+   errno = 0;
+
+   /* test NULL */
+   fd = eina_file_mkstemp(NULL, NULL);
+   fail_if(fd >= 0);
+
+   fd = eina_file_mkstemp(patterns[0], NULL);
+   fail_if((fd < 0) || errno);
+
+   /* here's an attempt at removing the file, without knowing its path */
+#ifdef F_GETPATH
+   /* most likely Mac OS */
+   if (fcntl(fd, F_GETPATH, buf) != -1)
+     unlink(buf);
+#elif !defined _WIN32
+   sprintf(fmt, "/proc/self/fd/%d", fd);
+   if (readlink(fmt, buf, sizeof(buf)))
+     unlink(buf);
+#else
+   // TODO: need to implement windows support with GetFinalPathNameByHandle
+#endif
+   close(fd);
+
+   for (unsigned int k = 0; k < sizeof(patterns) / sizeof(patterns[0]); k++)
+     {
+        errno = 0;
+        tmpfile = NULL;
+        fd = eina_file_mkstemp(patterns[k], &tmpfile);
+        fail_if((fd < 0) || !tmpfile || errno);
+        file = eina_file_open(tmpfile, EINA_FALSE);
+        fail_if(!file);
+        eina_file_close(file);
+        unlink(tmpfile);
+        eina_tmpstr_del(tmpfile);
+     }
+
+   /* temp directory */
+   fail_if(!eina_file_mkdtemp("eina_file_test_XXXXXX", &tmpdir) || !tmpdir);
+
+   it = eina_file_direct_ls(tmpdir);
+   fail_if(!it);
+
+   /* should be empty! */
+   EINA_ITERATOR_FOREACH(it, info)
+     fail();
+
+   eina_iterator_free(it);
+
+   /* file inside that directory */
+   eina_file_path_join(buf, sizeof(buf), tmpdir, "eina_file_test_XXXXXX.txt");
+
+   fd = eina_file_mkstemp(buf, &tmpfile);
+   fail_if((fd < 0) || !tmpfile || errno);
+
+   it = eina_file_direct_ls(tmpdir);
+   fail_if(!it);
+
+   /* should be empty! */
+   EINA_ITERATOR_FOREACH(it, info)
+     fail_if(strcmp(info->path, tmpfile));
+
+   eina_iterator_free(it);
+
+   unlink(tmpfile);
+   remove(tmpdir);
+}
+END_TEST
+
 void
 eina_test_file(TCase *tc)
 {
@@ -751,4 +836,5 @@ eina_test_file(TCase *tc)
 #endif
    tcase_add_test(tc, eina_test_file_copy);
    tcase_add_test(tc, eina_test_file_statat);
+   tcase_add_test(tc, eina_test_file_mktemp);
 }
