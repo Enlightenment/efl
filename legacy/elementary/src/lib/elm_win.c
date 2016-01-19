@@ -5613,14 +5613,14 @@ _elm_win_window_id_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
      {
 #if HAVE_ELEMENTARY_WL2
         if (sd->wl.win)
-          return (Ecore_Window)ecore_wl2_window_surface_id_get(sd->wl.win);
+          return (Ecore_Window)ecore_wl2_window_id_get(sd->wl.win);
         if (sd->parent)
           {
              Ecore_Wl2_Window *parent;
 
              parent = elm_win_wl_window_get(sd->parent);
              if (parent)
-               return (Ecore_Window)ecore_wl2_window_surface_id_get(parent);
+               return (Ecore_Window)ecore_wl2_window_id_get(parent);
              return 0;
           }
 #endif
