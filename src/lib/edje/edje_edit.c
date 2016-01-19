@@ -9153,8 +9153,6 @@ edje_edit_program_filter_part_set(Evas_Object *obj, const char *prog, const char
    GET_ED_OR_RETURN(EINA_FALSE);
    GET_EPR_OR_RETURN(EINA_FALSE);
 
-   if (!filter_part) return EINA_FALSE;
-
    _edje_if_string_replace(ed, &epr->filter.part, filter_part);
 
    return EINA_TRUE;
@@ -9174,8 +9172,6 @@ edje_edit_program_filter_state_set(Evas_Object *obj, const char *prog, const cha
 {
    GET_ED_OR_RETURN(EINA_FALSE);
    GET_EPR_OR_RETURN(EINA_FALSE);
-
-   if (!filter_state) return EINA_FALSE;
 
    _edje_if_string_replace(ed, &epr->filter.state, filter_state);
 
