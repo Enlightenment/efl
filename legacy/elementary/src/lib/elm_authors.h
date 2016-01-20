@@ -164,6 +164,7 @@
  * @author Kumar Navneet <k.navneet@@samsung.com>
  * @author Godly T Alias <godly.talias@@samsung.com>
  * @author Divyesh Purohit <div.purohit@samsung.com> <purohit.div@gmail.com>
+ * @author Minkyu Kang <mk7.kang@samsung.com>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
