@@ -1041,6 +1041,7 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
         eina_hash_free(gc->shared->native_wl_hash);
         eina_hash_free(gc->shared->native_tbm_hash);
         eina_hash_free(gc->shared->native_evasgl_hash);
+        eina_stringshare_del(gc->shared->shaders_cache_name);
         free(gc->shared);
         shared = NULL;
      }

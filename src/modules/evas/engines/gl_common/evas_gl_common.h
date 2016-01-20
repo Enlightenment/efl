@@ -191,6 +191,7 @@ struct _Evas_GL_Shared
 
    Eet_File           *shaders_cache;
    Eina_Hash          *shaders_hash;
+   Eina_Stringshare   *shaders_cache_name;
 
 #ifdef GL_GLES
    // FIXME: hack.

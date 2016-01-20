@@ -204,6 +204,20 @@ _evas_gl_common_shader_program_binary_save(Evas_GL_Program *p, Eet_File *ef)
    return 1;
 }
 
+static void
+_evas_gl_common_shader_binary_hash(Evas_GL_Shared *shared)
+{
+   if (shared->shaders_cache_name)
+     return;
+
+   /* This hash makes it sure that if the shaders code changes, then we
+    * will not reuse the old binaries. */
+   shared->shaders_cache_name = eina_stringshare_printf
+         ("%#x:%#x::binary_shader",
+          eina_hash_superfast(fragment_glsl, strlen(fragment_glsl)),
+          eina_hash_superfast(vertex_glsl, strlen(vertex_glsl)));
+}
+
 static int
 _evas_gl_common_shader_binary_init(Evas_GL_Shared *shared)
 {
@@ -220,8 +234,9 @@ _evas_gl_common_shader_binary_init(Evas_GL_Shared *shared)
    if (!evas_gl_common_file_cache_dir_check(bin_dir_path, sizeof(bin_dir_path)))
      return 0;
 
-   if (!evas_gl_common_file_cache_file_check(bin_dir_path, "binary_shader", bin_file_path,
-                                             sizeof(bin_dir_path)))
+   _evas_gl_common_shader_binary_hash(shared);
+   if (!evas_gl_common_file_cache_file_check(bin_dir_path, shared->shaders_cache_name,
+                                             bin_file_path, sizeof(bin_dir_path)))
      return 0;
 
    if (!eet_init()) return 0;
@@ -259,8 +274,9 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
           return 0; /* we can't make directory */
      }
 
-   copy = evas_gl_common_file_cache_file_check(bin_dir_path, "binary_shader", bin_file_path,
-                                               sizeof(bin_dir_path));
+   _evas_gl_common_shader_binary_hash(shared);
+   copy = evas_gl_common_file_cache_file_check(bin_dir_path, shared->shaders_cache_name,
+                                               bin_file_path, sizeof(bin_dir_path));
 
    /* use mkstemp for writing */
    snprintf(tmp_file_name, sizeof(tmp_file_name), "%s.XXXXXX.cache", bin_file_path);
