@@ -5743,29 +5743,21 @@ _elm_widget_eo_base_destructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 EOLIAN static Eina_Bool
 _elm_widget_on_focus(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
-   if (elm_widget_can_focus_get(obj))
-     {
-        if (elm_widget_focus_get(obj))
-          {
-             if (!sd->resize_obj)
-               evas_object_focus_set(obj, EINA_TRUE);
-              eo_do(obj, eo_event_callback_call
-               (ELM_WIDGET_EVENT_FOCUSED, NULL));
-             if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
-               elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
-          }
-        else
-          {
-             if (!sd->resize_obj)
-               evas_object_focus_set(obj, EINA_FALSE);
-             eo_do(obj, eo_event_callback_call
-               (ELM_WIDGET_EVENT_UNFOCUSED, NULL));
-             if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
-               elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
-    }
-     }
-   else
+   Eina_Bool focused;
+   const Eo_Event_Description *desc;
+
+   if (!elm_widget_can_focus_get(obj))
      return EINA_FALSE;
+
+   focused = elm_widget_focus_get(obj);
+   desc = focused ? ELM_WIDGET_EVENT_FOCUSED : ELM_WIDGET_EVENT_UNFOCUSED;
+
+   if (!sd->resize_obj)
+     evas_object_focus_set(obj, focused);
+   eo_do(obj, eo_event_callback_call(desc, NULL));
+
+   if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
+     elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, focused);
 
    return EINA_TRUE;
 }
