@@ -637,8 +637,8 @@ evas_gl_common_shader_program_shutdown(Evas_GL_Shared *shared)
 {
    if (!shared) return;
 
-   if (shared->info.bin_program)
-     _evas_gl_common_shader_binary_save(shared);
+   if (shared->needs_shaders_flush)
+     evas_gl_common_shaders_flush(shared);
 
    if (shared->shaders_cache)
      {
