@@ -646,7 +646,7 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
                                 Shader_Sampling *psam, int *pnomul, Shader_Sampling *pmasksam)
 {
    Shader_Sampling sam = SHD_SAM11, masksam = SHD_SAM11;
-   int nomul = 1, bgra = 0, k, noalpha = 1;
+   int nomul = 1, bgra = 0, k;
    unsigned int flags = BASEFLAG;
 
    // image downscale sampling
@@ -717,17 +717,12 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
                if (map_points[k].col != 0xffffffff)
                  {
                     nomul = 0;
-                    if (A_VAL(&map_points[k].col) < 255)
-                      noalpha = 0;
+                    break;
                  }
           }
      }
    else
-     {
-        if (a < 255)
-          noalpha = 0;
-        nomul = 0;
-     }
+     nomul = 0;
 
    if (nomul)
      flags |= SHADER_FLAG_NOMUL;
@@ -746,7 +741,7 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
    if (tex)
      {
         flags |= SHADER_FLAG_TEX;
-        if (!tex->alpha && !mtex && noalpha)
+        if (!tex->alpha)
           flags |= SHADER_FLAG_AFILL;
      }
 

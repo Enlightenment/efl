@@ -148,6 +148,10 @@ void main()
 # endif
 #endif
 
+#ifdef SHD_AFILL
+   c.a = 1.0;
+#endif
+
    gl_FragColor =
        c
 #ifndef SHD_NOMUL
@@ -160,9 +164,5 @@ void main()
      * texture2D(texa, tex_a).r
 #endif
    ;
-
-#ifdef SHD_AFILL
-   gl_FragColor.a = 1.0;
-#endif
 }
 

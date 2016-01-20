@@ -146,6 +146,9 @@ static const char fragment_glsl[] =
    "   ma = texture2D(texm, tex_m).a;\n"
    "# endif\n"
    "#endif\n"
+   "#ifdef SHD_AFILL\n"
+   "   c.a = 1.0;\n"
+   "#endif\n"
    "   gl_FragColor =\n"
    "       c\n"
    "#ifndef SHD_NOMUL\n"
@@ -158,9 +161,6 @@ static const char fragment_glsl[] =
    "     * texture2D(texa, tex_a).r\n"
    "#endif\n"
    "   ;\n"
-   "#ifdef SHD_AFILL\n"
-   "   gl_FragColor.a = 1.0;\n"
-   "#endif\n"
    "}\n";
 
 static const char vertex_glsl[] =
