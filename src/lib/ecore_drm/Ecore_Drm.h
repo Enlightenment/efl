@@ -69,6 +69,13 @@ typedef enum _Ecore_Drm_Seat_Capabilities
    EVDEV_SEAT_TOUCH = (1 << 2),
 } Ecore_Drm_Seat_Capabilities;
 
+typedef enum _Ecore_Drm_Plane_Type
+{
+   ECORE_DRM_PLANE_TYPE_OVERLAY,
+   ECORE_DRM_PLANE_TYPE_PRIMARY,
+   ECORE_DRM_PLANE_TYPE_CURSOR
+} Ecore_Drm_Plane_Type;
+
 /* structure for fb objects */
 typedef struct _Ecore_Drm_Fb
 {
@@ -207,6 +214,10 @@ typedef struct _Ecore_Drm_Event_Output Ecore_Drm_Event_Output;
 
 /** @since 1.14 */
 typedef void (*Ecore_Drm_Pageflip_Cb)(void *data);
+
+/* opaque structure to represent a drm hardware plane */
+/** @since 1.18 */
+typedef struct _Ecore_Drm_Plane Ecore_Drm_Plane;
 
 EAPI extern int ECORE_DRM_EVENT_ACTIVATE;
 
@@ -1002,11 +1013,10 @@ EAPI Eina_Bool ecore_drm_output_possible_crtc_get(Ecore_Drm_Output *output, unsi
  */
 EAPI Eina_Bool ecore_drm_output_mode_set(Ecore_Drm_Output *output, Ecore_Drm_Output_Mode *mode, int x, int y);
 
-/* TODO: doxy */
+/* TODO: Doxy */
 /* @since 1.18 */
 EAPI unsigned int ecore_drm_output_supported_rotations_get(Ecore_Drm_Output *output, Ecore_Drm_Plane_Type type);
 
-/* TODO: doxy */
 /* @since 1.18 */
 EAPI Eina_Bool ecore_drm_output_rotation_set(Ecore_Drm_Output *output, Ecore_Drm_Plane_Type type, unsigned int rotation);
 
