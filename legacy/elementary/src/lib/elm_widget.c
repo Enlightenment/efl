@@ -2914,10 +2914,9 @@ _elm_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
    return sd->parent_obj;
 }
 
-EOLIAN static void
-_elm_widget_focused_object_clear(Eo *obj, Elm_Widget_Smart_Data *sd)
+static void
+_focused_object_clear(Elm_Widget_Smart_Data *sd)
 {
-   if (!sd->focused) return;
    if (sd->resize_obj && elm_widget_is(sd->resize_obj) &&
          elm_widget_focus_get(sd->resize_obj))
      {
@@ -2936,6 +2935,13 @@ _elm_widget_focused_object_clear(Eo *obj, Elm_Widget_Smart_Data *sd)
                }
           }
      }
+}
+
+EOLIAN static void
+_elm_widget_focused_object_clear(Eo *obj, Elm_Widget_Smart_Data *sd)
+{
+   if (!sd->focused) return;
+   _focused_object_clear(sd);
    sd->focused = EINA_FALSE;
    eo_do(obj, elm_obj_widget_on_focus(NULL));
 }
@@ -2968,27 +2974,7 @@ _elm_widget_focus_steal(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Object_Item *ite
         if (!parent2) parent2 = elm_widget_parent2_get(parent);
         parent = parent2;
         sd = eo_data_scope_get(parent, MY_CLASS);
-        if (sd)
-          {
-             if (sd->resize_obj && elm_widget_is(sd->resize_obj) &&
-                   elm_widget_focus_get(sd->resize_obj))
-               {
-                  eo_do(sd->resize_obj, elm_obj_widget_focused_object_clear());
-               }
-             else
-               {
-                  const Eina_List *l;
-                  Evas_Object *child;
-                  EINA_LIST_FOREACH(sd->subobjs, l, child)
-                    {
-                       if (_elm_widget_is(child) && elm_widget_focus_get(child))
-                         {
-                            eo_do(child, elm_obj_widget_focused_object_clear());
-                            break;
-                         }
-                    }
-               }
-          }
+        if (sd) _focused_object_clear(sd);
      }
    _parent_focus(obj, item);
    elm_widget_focus_region_show(obj);
