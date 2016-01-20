@@ -2083,10 +2083,9 @@ _elm_win_evas_object_smart_move(Eo *obj, Elm_Win_Data *sd, Evas_Coord x, Evas_Co
 EOLIAN static void
 _elm_win_evas_object_smart_resize(Eo *obj, Elm_Win_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
-
    if (sd->img_obj)
      {
+        eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
         if (sd->constrain)
           {
              int sw, sh;
@@ -2443,7 +2442,8 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
    if (h < minh) h = minh;
    if (w > maxw) w = maxw;
    if (h > maxh) h = maxh;
-   evas_object_resize(obj, w, h);
+   if (sd->img_obj) evas_object_resize(obj, w, h);
+   else TRAP(sd, resize, w, h);
 }
 
 static void
