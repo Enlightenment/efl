@@ -2595,8 +2595,7 @@ reorder_parts(void)
           {
              ep = (Edje_Part_Parser *)pc->parts[i];
              if (ep->reorder.insert_before && ep->reorder.insert_after)
-               error_and_abort(NULL, "In group \"%s\": Unable to use together insert_before and insert_after in part \"%s\".",
-                               pc->part, pc->parts[i]->name);
+               ERR("Unable to use together insert_before and insert_after in part \"%s\".", pc->parts[i]->name);
 
              if (ep->reorder.done)
                {
@@ -2610,13 +2609,15 @@ reorder_parts(void)
                        if (ep->reorder.insert_before &&
                            !strcmp(ep->reorder.insert_before, pc->parts[j]->name))
                          {
+                            needed_part_exists(pc, ep->reorder.insert_before);
+
                             ep2 = (Edje_Part_Parser *)pc->parts[j];
                             if (ep2->reorder.after)
-                              error_and_abort(NULL, "In group \"%s\": The part \"%s\" is ambiguous ordered part.",
-                                              pc->part, pc->parts[i]->name);
+                              ERR("The part \"%s\" is ambiguous ordered part.",
+                                  pc->parts[i]->name);
                             if (ep2->reorder.linked_prev)
-                              error_and_abort(NULL, "In group \"%s\": Unable to insert two or more parts in same part \"%s\".",
-                                              pc->part, pc->parts[j]->name);
+                              ERR("Unable to insert two or more parts in same part \"%s\".",
+                                  pc->parts[j]->name);
                             /* Need it to be able to insert an element before the first */
                             if (j == 0) k = 0;
                             else k = j - 1;
@@ -2633,13 +2634,13 @@ reorder_parts(void)
                        else if (ep->reorder.insert_after &&
                                 !strcmp(ep->reorder.insert_after, pc->parts[j]->name))
                          {
+                            needed_part_exists(pc, ep->reorder.insert_after);
+
                             ep2 = (Edje_Part_Parser *)pc->parts[j];
                             if (ep2->reorder.before)
-                              error_and_abort(NULL, "In group \"%s\": The part \"%s\" is ambiguous ordered part.",
-                                              pc->part, pc->parts[i]->name);
+                              ERR("The part \"%s\" is ambiguous ordered part.", pc->parts[i]->name);
                             if (ep2->reorder.linked_next)
-                              error_and_abort(NULL, "In group \"%s\": Unable to insert two or more parts in same part \"%s\".",
-                                              pc->part, pc->parts[j]->name);
+                              ERR("Unable to insert two or more parts in same part \"%s\".", pc->parts[j]->name);
                             k = j;
                             found = EINA_TRUE;
                             ep2->reorder.linked_next += ep->reorder.linked_next + 1;
@@ -2658,7 +2659,7 @@ reorder_parts(void)
 
                        if (((i > k) && ((i - ep->reorder.linked_prev) <= k))
                            || ((i < k) && ((i + ep->reorder.linked_next) >= k)))
-                         error_and_abort(NULL, "In group \"%s\": The part order is wrong. It has circular dependency.", pc->part);
+                         ERR("The part order is wrong. It has circular dependency.");
 
                        amount = ep->reorder.linked_prev + ep->reorder.linked_next + 1;
                        linked = i - ep->reorder.linked_prev;
@@ -2697,15 +2698,6 @@ reorder_parts(void)
                          }
                        ep->reorder.done = EINA_TRUE;
                        free(parts);
-                    }
-                  else
-                    {
-                       if (ep->reorder.insert_before)
-                         error_and_abort(NULL, "In group \"%s\": Unable to find part \"%s\" for insert_before in part \"%s\".",
-                                         pc->part, ep->reorder.insert_before, pc->parts[i]->name);
-                       else
-                         error_and_abort(NULL, "In group \"%s\": Unable to find part \"%s\" for insert_after in part \"%s\".",
-                                         pc->part, ep->reorder.insert_after, pc->parts[i]->name);
                     }
                }
           }
@@ -4120,4 +4112,30 @@ using_file(const char *filename, const char type)
           }
         fclose(f);
      }
+}
+
+Eina_Bool
+needed_part_exists(Edje_Part_Collection *pc, const char *name)
+{
+   Eina_Bool found;
+   unsigned int i;
+
+   found = EINA_FALSE;
+
+   for (i = 0; i < pc->parts_count; i++)
+     {
+        if (!strcmp(pc->parts[i]->name, name))
+          {
+             found = EINA_TRUE;
+             break;
+          }
+     }
+
+   if (!found)
+     {
+        ERR("Unable to find part name \"%s\" needed in group \"%s\".",
+            name, pc->part);
+        exit(-1);
+     }
+   return found;
 }
