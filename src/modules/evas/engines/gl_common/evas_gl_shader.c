@@ -646,7 +646,7 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
                                 Shader_Sampling *psam, int *pnomul, Shader_Sampling *pmasksam)
 {
    Shader_Sampling sam = SHD_SAM11, masksam = SHD_SAM11;
-   int nomul = 1, bgra = 0, afill = 0, k;
+   int nomul = 1, bgra = 0, k, noalpha = 1;
    unsigned int flags = BASEFLAG;
 
    // image downscale sampling
@@ -717,12 +717,17 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
                if (map_points[k].col != 0xffffffff)
                  {
                     nomul = 0;
-                    break;
+                    if (A_VAL(&map_points[k].col) < 255)
+                      noalpha = 0;
                  }
           }
      }
    else
-     nomul = 0;
+     {
+        if (a < 255)
+          noalpha = 0;
+        nomul = 0;
+     }
 
    if (nomul)
      flags |= SHADER_FLAG_NOMUL;
@@ -730,16 +735,8 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
    // bgra
    if (tex_only)
      {
-        if (tex->pt->dyn.img)
-          {
-             afill = !tex->alpha;
-             bgra = 1;
-          }
-        else if (tex->im && tex->im->native.target == GL_TEXTURE_EXTERNAL_OES)
-          {
-             flags |= SHADER_FLAG_EXTERNAL;
-             afill = !tex->alpha;
-          }
+        if (tex->im && tex->im->native.target == GL_TEXTURE_EXTERNAL_OES)
+          flags |= SHADER_FLAG_EXTERNAL;
         else
           bgra = 1;
      }
@@ -747,13 +744,14 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
      bgra = shared->info.bgra;
 
    if (tex)
-     flags |= SHADER_FLAG_TEX;
+     {
+        flags |= SHADER_FLAG_TEX;
+        if (!tex->alpha && !mtex && noalpha)
+          flags |= SHADER_FLAG_AFILL;
+     }
 
    if (mtex)
      flags |= SHADER_FLAG_MASK;
-
-   if (afill)
-     flags |= SHADER_FLAG_AFILL;
 
    if (bgra)
      flags |= SHADER_FLAG_BGRA;
