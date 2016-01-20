@@ -875,6 +875,7 @@ EINA_CONFIG([MAGIC_DEBUG], [test "x${have_magic_debug}" = "xyes"])
 AC_ARG_WITH([xattr-tests-path],
    [AS_HELP_STRING([--with-xattr-tests-path=DIR],[path of xattr enabled directory to create test files])],[XATTR_TEST_DIR=${withval}][AC_DEFINE_UNQUOTED([XATTR_TEST_DIR],["$withval"], [xattr enabled directory])])
 
+EVAS_DICTS_HYPHEN_DIR="/usr/share/hyphen/"
 AC_ARG_WITH([dictionaries-hyphen-dir],
    [AS_HELP_STRING([--with-dictionaries-hyphen-dir=DIR],[path of hunspell-compatible hyphen dictionaries])],[EVAS_DICTS_HYPHEN_DIR=${withval}][AC_DEFINE_UNQUOTED([EVAS_DICTS_HYPHEN_DIR],["$withval"], [Hunspell-compatible hyphen dictionaries install directory])])
 
