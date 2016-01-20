@@ -126,7 +126,7 @@ _ector_gl_shader_glsl_link(uint64_t flags,
    if (!ok)
      {
         gl_compile_link_error(prg, "link fragment and vertex shaders", EINA_FALSE);
-        ERR("Abort compile of shader (flags: %16lx)", flags);
+        ERR("Abort compile of shader (flags: %16" PRIx64 ")", flags);
         GL.glDeleteProgram(prg);
         prg = 0;
         goto on_error;
