@@ -648,7 +648,11 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
             (conn->count_modes == 0) ? ", built-in" : "");
      }
 
+<<<<<<< 94082f54e8ce7d47402ea5d8d57e3871f8fa98a4
    _ecore_drm_output_planes_get(output);
+=======
+   _ecore_drm_output_planes_find(output);
+>>>>>>> ecore-drm: Add API functions for rotation support
 
    return output;
 
@@ -885,6 +889,100 @@ _ecore_drm_output_render_disable(Ecore_Drm_Output *output)
    ecore_drm_output_dpms_set(output, DRM_MODE_DPMS_OFF);
 }
 
+<<<<<<< 94082f54e8ce7d47402ea5d8d57e3871f8fa98a4
+=======
+#if 0
+static void
+_ecore_drm_output_planes_get(Ecore_Drm_Device *dev)
+{
+   drmModePlaneRes *pres;
+   unsigned int i = 0, j = 0;
+   int k = 0;
+
+   pres = drmModeGetPlaneResources(dev->drm.fd);
+   if (!pres) return;
+
+   for (; i < pres->count_planes; i++)
+     {
+        drmModePlane *plane;
+        drmModeObjectPropertiesPtr props;
+        int type = -1;
+
+        plane = drmModeGetPlane(dev->drm.fd, pres->planes[i]);
+        if (!plane) continue;
+
+        props = drmModeObjectGetProperties(dev->drm.fd, plane->plane_id,
+                                           DRM_MODE_OBJECT_PLANE);
+        if (!props) goto free_plane;
+
+        DBG("Plane %u Properties:", plane->plane_id);
+
+        for (j = 0; type == -1 && j < props->count_props; j++)
+          {
+             drmModePropertyPtr prop;
+
+             prop = drmModeGetProperty(dev->drm.fd, props->props[j]);
+             if (!prop) continue;
+
+             if (!strcmp(prop->name, "type"))
+               type = props->prop_values[j];
+
+             drmModeFreeProperty(prop);
+          }
+
+        DBG("\tFormats:");
+        for (j = 0; j < plane->count_formats; j++)
+          DBG("\t\t%4.4s", (char *)&plane->formats[j]);
+
+        for (j = 0; j < props->count_props; j++ )
+          {
+             drmModePropertyPtr prop;
+
+             prop = drmModeGetProperty(dev->drm.fd, props->props[j]);
+             if (!prop) continue;
+
+             DBG("\tProperty Name: %s", prop->name);
+
+             if (prop->flags & DRM_MODE_PROP_RANGE)
+               {
+                  DBG("\t\tRange Property");
+                  for (k = 0; k < prop->count_values; k++)
+                    DBG("\t\t\t%"PRIu64, prop->values[k]);
+               }
+             if (prop->flags & DRM_MODE_PROP_ENUM)
+               {
+                  DBG("\t\tEnum Property");
+                  for (k = 0; k < prop->count_enums; k++)
+                    DBG("\t\t\t%s=%llu", prop->enums[k].name,
+                        prop->enums[k].value);
+               }
+             if (prop->flags & DRM_MODE_PROP_BITMASK)
+               {
+                  DBG("\t\tBitmask Property");
+                  for (k = 0; k < prop->count_enums; k++)
+                    DBG("\t\t\t%s=0x%llx", prop->enums[k].name,
+                        (1LL << prop->enums[k].value));
+               }
+
+             DBG("\t\tValue: %"PRIu64, props->prop_values[j]);
+
+             drmModeFreeProperty(prop);
+          }
+
+        DBG("\tCurrent Crtc: %d", plane->crtc_id);
+        DBG("\tPossible Crtcs: 0x%08x", plane->possible_crtcs);
+
+        drmModeFreeObjectProperties(props);
+
+free_plane:
+        drmModeFreePlane(plane);
+     }
+
+   drmModeFreePlaneResources(pres);
+}
+#endif
+
+>>>>>>> ecore-drm: Add API functions for rotation support
 /* public functions */
 
 /**
@@ -957,6 +1055,12 @@ next:
         drmModeFreeConnector(conn);
      }
 
+<<<<<<< 94082f54e8ce7d47402ea5d8d57e3871f8fa98a4
+=======
+   /* TODO: Planes */
+   /* _ecore_drm_output_planes_get(dev); */
+
+>>>>>>> ecore-drm: Add API functions for rotation support
    ret = EINA_TRUE;
    if (eina_list_count(dev->outputs) < 1) 
      ret = EINA_FALSE;
@@ -1486,6 +1590,7 @@ ecore_drm_output_mode_set(Ecore_Drm_Output *output, Ecore_Drm_Output_Mode *mode,
    return ret;
 }
 
+<<<<<<< 94082f54e8ce7d47402ea5d8d57e3871f8fa98a4
 EAPI unsigned int
 ecore_drm_output_supported_rotations_get(Ecore_Drm_Output *output, Ecore_Drm_Plane_Type type)
 {
@@ -1505,6 +1610,8 @@ ecore_drm_output_supported_rotations_get(Ecore_Drm_Output *output, Ecore_Drm_Pla
    return rot;
 }
 
+=======
+>>>>>>> ecore-drm: Add API functions for rotation support
 EAPI Eina_Bool
 ecore_drm_output_rotation_set(Ecore_Drm_Output *output, Ecore_Drm_Plane_Type type, unsigned int rotation)
 {
@@ -1527,8 +1634,33 @@ ecore_drm_output_rotation_set(Ecore_Drm_Output *output, Ecore_Drm_Plane_Type typ
                                  DRM_MODE_OBJECT_PLANE,
                                  output->rotation_prop_id,
                                  plane->rotation_map[ffs(rotation)]);
+<<<<<<< 94082f54e8ce7d47402ea5d8d57e3871f8fa98a4
         break;
+=======
+>>>>>>> ecore-drm: Add API functions for rotation support
      }
 
    return EINA_TRUE;
 }
+<<<<<<< 94082f54e8ce7d47402ea5d8d57e3871f8fa98a4
+=======
+
+EAPI unsigned int
+ecore_drm_output_supported_rotations_get(Ecore_Drm_Output *output, Ecore_Drm_Plane_Type type)
+{
+   Ecore_Drm_Plane *plane;
+   Eina_List *l;
+   unsigned int rot = -1;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, rot);
+
+   EINA_LIST_FOREACH(output->planes, l, plane)
+     {
+        if (plane->type != type) continue;
+        rot = plane->supported_rotations;
+        break;
+     }
+
+   return rot;
+}
+>>>>>>> ecore-drm: Add API functions for rotation support
