@@ -202,9 +202,13 @@ _create_scroller(Evas_Object *obj, Elm_Hoversel_Data *sd)
 {
    //table
    sd->tbl = elm_table_add(obj);
+   evas_object_size_hint_align_set(sd->tbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(sd->tbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    //spacer
    sd->spacer = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_size_hint_align_set(sd->spacer, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(sd->spacer, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_color_set(sd->spacer, 0, 0, 0, 0);
    elm_table_pack(sd->tbl, sd->spacer, 0, 0, 1, 1);
 
@@ -232,44 +236,17 @@ _create_scroller(Evas_Object *obj, Elm_Hoversel_Data *sd)
 static void
 _resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
 {
-   Evas_Object *bx = NULL;
    const char *max_size_str;
    int max_size = 0;
    char buf[128];
    Evas_Coord box_w = -1, box_h = -1;
-   Evas_Coord x, y, w, h, xx, yy, ww, hh, vw = 0, vh = 0;
-   double align_x;
-   Eina_List *l;
-   Evas_Object *it;
-   Evas_Coord obj_x, obj_y, obj_w, obj_h, it_w, it_h;
+   Evas_Coord x, y, w, h, xx, yy, ww, hh;
+   Evas_Coord obj_x, obj_y, obj_w;
 
-   if (sd->scr)
-     bx = elm_object_content_get(sd->scr);
+   if ((!sd->expanded) || (!sd->bx)) return;
 
-   if ((!sd->expanded) || (!bx)) return;
-
-   edje_object_size_min_calc(elm_layout_edje_get(sd->scr), &vw, &vh);
-   evas_object_geometry_get(obj, &obj_x, &obj_y, &obj_w, &obj_h);
-
-   evas_object_size_hint_align_get(obj, &align_x, NULL);
-   if (!sd->horizontal && align_x == EVAS_HINT_FILL)
-     {
-        l = elm_box_children_get(bx);
-        EINA_LIST_FREE(l, it)
-          {
-             edje_object_size_min_calc(elm_layout_edje_get(it), &it_w, &it_h);
-             if ((obj_w - vw) > it_w)
-               evas_object_size_hint_min_set(it, (obj_w - vw), it_h);
-             else
-               evas_object_size_hint_min_set(it, it_w, it_h);
-          }
-     }
-
-   elm_box_recalculate(bx);
-   evas_object_size_hint_min_get(bx, &box_w, &box_h);
-
-   box_w += vw;
-   box_h += vh;
+   elm_box_recalculate(sd->bx);
+   evas_object_size_hint_min_get(sd->bx, &box_w, &box_h);
 
    max_size_str = elm_layout_data_get(sd->hover, "max_size");
    if (max_size_str)
@@ -310,6 +287,8 @@ _resizing_eval(Evas_Object *obj, Elm_Hoversel_Data *sd)
    edje_object_part_geometry_get(elm_layout_edje_get(sd->hover), buf, &xx, &yy, NULL, NULL);
    xx += x;
    yy += y;
+
+   evas_object_geometry_get(obj, &obj_x, &obj_y, &obj_w, NULL);
 
    if (sd->horizontal)
      {
@@ -445,6 +424,8 @@ _activate(Evas_Object *obj)
    sd->bx = elm_box_add(sd->hover);
    elm_box_homogeneous_set(sd->bx, EINA_TRUE);
    elm_box_horizontal_set(sd->bx, sd->horizontal);
+   evas_object_size_hint_align_set(sd->bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(sd->bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    EINA_LIST_FOREACH(sd->items, l, eo_item)
      {

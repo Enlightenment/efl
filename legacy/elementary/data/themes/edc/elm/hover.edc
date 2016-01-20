@@ -607,7 +607,9 @@ group { name: "elm/hover/base/hoversel_vertical/default";
             rel1.offset: 0 -1;
             rel2.to: "elm.swallow.slot.middle";
             rel2.relative: 1.0 0.0;
-            rel2.offset: -1 -1;
+            /* set negative offset along x axis not to make
+               "select_line" part exceed parent's width */
+            rel2.offset: -9 -1;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -636,10 +638,12 @@ group { name: "elm/hover/base/hoversel_vertical/default";
             align: 0.0 1.0;
             rel1.to: "elm.swallow.slot.middle";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 0 2;
+            rel1.offset: 0 0;
             rel2.to: "elm.swallow.slot.middle";
             rel2.relative: 1.0 1.0;
-            rel2.offset: -1 2;
+            /* set negative offset along x axis not to make
+               "select_line" part exceed parent's width */
+            rel2.offset: -9 2;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
