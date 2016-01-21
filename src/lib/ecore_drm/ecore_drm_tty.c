@@ -17,8 +17,10 @@ _ecore_drm_tty_cb_vt_signal(void *data, int type EINA_UNUSED, void *event)
 
    ev = event;
    sig = ev->data;
-   if (sig.si_code != SI_KERNEL) return ECORE_CALLBACK_RENEW;
-   if (!(dev = data)) return ECORE_CALLBACK_RENEW;
+   if (sig.si_code != SI_KERNEL) return ECORE_CALLBACK_PASS_ON;
+   if (!(dev = data)) return ECORE_CALLBACK_PASS_ON;
+
+   DBG("TTY SWITCH SIGNAL");
 
    switch (ev->number)
      {
@@ -38,7 +40,7 @@ _ecore_drm_tty_cb_vt_signal(void *data, int type EINA_UNUSED, void *event)
         break;
      }
 
-   return ECORE_CALLBACK_RENEW;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 Eina_Bool
@@ -55,7 +57,8 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
    struct vt_mode vtmode = { 0, 0, SIGUSR1, SIGUSR2, 0 };
 
    if ((fstat(dev->tty.fd, &st) == -1) || 
-       (major(st.st_rdev) != TTY_MAJOR) || (minor(st.st_rdev) == 0))
+       (major(st.st_rdev) != TTY_MAJOR) || (minor(st.st_rdev) <= 0) ||
+       (minor(st.st_rdev) >= 64))
      {
         ERR("Failed to get stats for tty");
         return EINA_FALSE;
@@ -70,23 +73,25 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
    if (kmode != KD_TEXT)
      WRN("Virtual Terminal already in KD_GRAPHICS mode");
 
-   if (ioctl(dev->tty.fd, VT_ACTIVATE, minor(st.st_rdev)) < 0)
-     {
-        ERR("Failed to activate vt: %m");
-        return EINA_FALSE;
-     }
+   /* if (ioctl(dev->tty.fd, VT_ACTIVATE, minor(st.st_rdev)) < 0) */
+   /*   { */
+   /*      ERR("Failed to activate vt: %m"); */
+   /*      return EINA_FALSE; */
+   /*   } */
 
-   if (ioctl(dev->tty.fd, VT_WAITACTIVE, minor(st.st_rdev)) < 0)
-     {
-        ERR("Failed to wait active: %m");
-        return EINA_FALSE;
-     }
+   /* if (ioctl(dev->tty.fd, VT_WAITACTIVE, minor(st.st_rdev)) < 0) */
+   /*   { */
+   /*      ERR("Failed to wait active: %m"); */
+   /*      return EINA_FALSE; */
+   /*   } */
 
    if (ioctl(dev->tty.fd, KDGKBMODE, &kbd_mode))
      {
-        ERR("Could not get curent kbd mode: %m");
-        return EINA_FALSE;
+        WRN("Could not get current kbd mode: %m");
+        dev->tty.kbd_mode = K_UNICODE;
      }
+   else if (dev->tty.kbd_mode == K_OFF)
+     dev->tty.kbd_mode = K_UNICODE;
 
    if (ioctl(dev->tty.fd, KDSKBMUTE, 1) && 
        ioctl(dev->tty.fd, KDSKBMODE, K_OFF))
@@ -105,6 +110,7 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
    vtmode.waitv = 0;
    vtmode.relsig = SIGUSR1;
    vtmode.acqsig = SIGUSR2;
+
    if (ioctl(dev->tty.fd, VT_SETMODE, &vtmode) < 0)
      {
         ERR("Could not set Terminal Mode: %m");
@@ -115,6 +121,8 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
 err_setmode:
    ioctl(dev->tty.fd, KDSETMODE, KD_TEXT);
 err_kmode:
+   ioctl(dev->tty.fd, KDSKBMUTE, 0);
+   ioctl(dev->tty.fd, KDSKBMODE, dev->tty.kbd_mode);
    return EINA_FALSE;
 }
 
@@ -158,10 +166,10 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
      {
         DBG("Trying to Open Tty: %s", tty);
 
-        dev->tty.fd = open(tty, (O_RDWR | O_CLOEXEC)); //O_RDWR | O_NOCTTY);
+        dev->tty.fd = open(tty, (O_RDWR | O_CLOEXEC | O_NONBLOCK));
         if (dev->tty.fd < 0)
           {
-             DBG("Failed to Open Tty: %m");
+             DBG("Failed to Open Tty %s: %m", tty);
              return EINA_FALSE;
           }
      }
@@ -193,7 +201,7 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
    return EINA_TRUE;
 }
 
-static void
+void
 _ecore_drm_tty_restore(Ecore_Drm_Device *dev)
 {
    int fd = dev->tty.fd;
@@ -226,8 +234,10 @@ ecore_drm_tty_close(Ecore_Drm_Device *dev)
    _ecore_drm_tty_restore(dev);
 
    close(dev->tty.fd);
-
    dev->tty.fd = -1;
+
+   if (dev->tty.event_hdlr)
+     ecore_event_handler_del(dev->tty.event_hdlr);
 
    /* clear the tty name */
    if (dev->tty.name) eina_stringshare_del(dev->tty.name);
