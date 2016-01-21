@@ -106,6 +106,8 @@ static Eo_Base *
 _ector_cairo_software_surface_eo_base_constructor(Eo *obj, Ector_Cairo_Software_Surface_Data *pd)
 {
    eo_do_super(obj, MY_CLASS, obj = eo_constructor());
+
+   if (!obj) return NULL;
    pd->base = eo_data_ref(obj, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
    pd->base->generic = eo_data_ref(obj, ECTOR_GENERIC_BUFFER_MIXIN);
    pd->base->generic->eo = obj;
