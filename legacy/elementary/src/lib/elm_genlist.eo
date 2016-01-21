@@ -345,7 +345,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interfac
             @in data: const(void)*; [[The item data.]]
             @in parent: Elm.Widget_Item * @nullable; [[The parent item, or $null if none.]]
             @in before_it: Elm.Widget_Item *; [[The item to place this new one before.]]
-            @in type: Elm_Genlist_Item_Type; [[Item type.]]
+            @in type: Elm.Genlist.Item.Type; [[Item type.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called when the item is selected.]]
             @in func_data: const(void)* @optional; [[Data passed to $func above.]]
          }
@@ -373,7 +373,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interfac
             @in data: const(void)*; [[The item data.]]
             @in parent: Elm.Widget_Item * @nullable; [[The parent item, or $null if none.]]
             @in after_it: Elm.Widget_Item *; [[The item to place this new one after.]]
-            @in type: Elm_Genlist_Item_Type; [[Item type.]]
+            @in type: Elm.Genlist.Item.Type; [[Item type.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called when the item is selected.]]
             @in func_data: const(void)* @optional; [[Data passed to $func above.]]
          }
@@ -441,7 +441,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interfac
             @in itc: const(Elm.Genlist.Item.Class)*; [[The item class for the item.]]
             @in data: const(void)*; [[The item data.]]
             @in parent: Elm.Widget_Item * @nullable; [[The parent item, or $null if none.]]
-            @in type: Elm_Genlist_Item_Type; [[Item type.]]
+            @in type: Elm.Genlist.Item.Type; [[Item type.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called when the item is selected.]]
             @in func_data: const(void)* @optional; [[Data passed to $func above.]]
          }
@@ -463,7 +463,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interfac
             @in itc: const(Elm.Genlist.Item.Class)*; [[The item class for the item.]]
             @in data: const(void)*; [[The item data.]]
             @in parent: Elm.Widget_Item * @nullable; [[The parent item, or $null if none.]]
-            @in type: Elm_Genlist_Item_Type; [[Item type.]]
+            @in type: Elm.Genlist.Item.Type; [[Item type.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called when the item is selected.]]
             @in func_data: const(void)* @optional; [[Data passed to $func above.]]
          }
@@ -480,7 +480,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interfac
             @in itc: const(Elm.Genlist.Item.Class)*; [[The item class for the item.]]
             @in data: const(void)*; [[The item data.]]
             @in parent: Elm.Widget_Item * @nullable; [[The parent item, or $null if none.]]
-            @in type: Elm_Genlist_Item_Type; [[Item type.]]
+            @in type: Elm.Genlist.Item.Type; [[Item type.]]
             @in comp: Eina_Compare_Cb; [[The function called for the sort.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called when the item is selected.]]
             @in func_data: const(void)* @optional; [[Data passed to $func above.]]

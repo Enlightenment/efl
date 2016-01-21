@@ -9,7 +9,7 @@ class Elm.View_List (Eo.Base)
              ]]
              params {
                  @in genlist: Evas_Object*; [[Genlist object]]
-                 @in item_type: Elm_Genlist_Item_Type; [[Item type]]
+                 @in item_type: Elm.Genlist.Item.Type; [[Item type]]
                  @in item_style: const(char)*; [[The current item style name. $null would be default.]]
              }
         }
