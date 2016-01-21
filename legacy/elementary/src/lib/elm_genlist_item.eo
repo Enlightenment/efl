@@ -163,7 +163,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      ]]
                 }
                 values {
-                     itc: const (Elm_Genlist_Item_Class) *; [[Genlist Item class for the given item.]]
+                     itc: const (Elm.Genlist.Item.Class) *; [[Genlist Item class for the given item.]]
                 }
            }
            @property index {
@@ -373,7 +373,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                   @.update is called on the item $it.
                 ]]
                 params {
-                     @in itc: const (Elm_Genlist_Item_Class) *; [[The item class for the item.]]
+                     @in itc: const (Elm.Genlist.Item.Class) *; [[The item class for the item.]]
                 }
            }
            decorate_mode_set {

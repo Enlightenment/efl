@@ -150,6 +150,7 @@ typedef struct _Elm_Version
 EAPI extern Elm_Version *elm_version;
 
 /* include these first for general used definitions */
+#include <elm_gen.h>
 #include <elm_general.h>
 #include <elm_config.h>
 #include <elm_focus.h>
@@ -217,7 +218,6 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_flipselector.h>
 #include <elm_font.h>
 #include <elm_frame.h>
-#include <elm_gen.h>
 #include <elm_gengrid.h>
 #include <elm_genlist.h>
 #include <elm_gesture_layer.h>

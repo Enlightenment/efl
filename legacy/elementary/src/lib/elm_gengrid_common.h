@@ -1,9 +1,5 @@
 #define ELM_GENGRID_ITEM_CLASS_VERSION ELM_GEN_ITEM_CLASS_VERSION
 #define ELM_GENGRID_ITEM_CLASS_HEADER ELM_GEN_ITEM_CLASS_HEADER
-/**
- * @see Elm_Gen_Item_Class
- */
-typedef Elm_Gen_Item_Class Elm_Gengrid_Item_Class;
 
 /**
  * @see Elm_Gen_Item_Text_Get_Cb

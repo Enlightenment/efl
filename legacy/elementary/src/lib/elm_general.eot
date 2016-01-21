@@ -6,6 +6,47 @@ struct Elm.Event.Policy_Changed
    old_value: int; [[new value the policy got]]
 }
 
+struct Elm.Gen.Item.Class.Functions
+{
+   text_get: Elm_Gen_Item_Text_Get_Cb; [[ Text fetching class function for
+                                          genlist/gengrid item classes. ]]
+   content_get: Elm_Gen_Item_Content_Get_Cb; [[ Content fetching class function
+                                                for genlist/gengrid item classes. ]]
+   state_get: Elm_Gen_Item_State_Get_Cb; [[ State fetching class function for
+                                            genlist/gengrid item classes. ]]
+   del: Elm_Gen_Item_Del_Cb; [[ Deletion class function for genlist/gengrid
+                                item classes. ]]
+   filter_get: Elm_Gen_Item_Filter_Get_Cb;  [[ Filter seeking class function for
+                                               genlist/gengrid item classes. ]]
+}
+
+struct Elm.Gen.Item.Class
+{
+   [[ Gengrid or Genlist item class definition. ]]
+   version: int; [[Set by elementary if you alloc an item class using
+                   elm_genlist/gengrid_item_class_new(), or if you set your own
+                   class (must be const) then set it to
+                   ELM_GENLIST/GENGRID_ITEM_CLASS_VERSION. ]]
+   refcount: uint; [[ Set it to 0 if you use your own const class, or
+                              its managed for you by class ref/unref calls. ]]
+   delete_me: bool; [[ Leave this alone - set it to 0 if you have a
+                               const class of your own. ]]
+   item_style: const(char) *; [[ Name of the visual style to use for this item.
+                                If you don't know use "default". ]]
+   decorate_item_style: const(char) *; [[ Style used if item is set to a decorate
+                                         mode. see elm_genlist_item_decorate_mode_set()
+                                         or NULL if you don't care. currently
+                                         it's used only in genlist. ]]
+   decorate_all_item_style: const(char) *; [[ Style to use when in edit mode, or
+                                             NULL if you don't care. Currently
+                                             it's used only in genlist. ]]
+   func: Elm.Gen.Item.Class.Functions; [[ Set of callbacks ]]
+}
+
+type Elm.Gengrid.Item.Class: Elm.Gen.Item.Class; [[ See @Elm.Gen.Item.Class. ]]
+
+type Elm.Genlist.Item.Class: Elm.Gen.Item.Class; [[ See @Elm.Gen.Item.Class. ]]
+
 enum Elm.Policy
 {
    [[Policy identifiers.]]
