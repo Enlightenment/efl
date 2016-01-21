@@ -5,41 +5,6 @@
  */
 
 /**
- * Enum of supported gesture types.
- */
-typedef enum
-{
-   ELM_GESTURE_FIRST = 0,
-
-   ELM_GESTURE_N_TAPS, /**< N fingers single taps */
-   ELM_GESTURE_N_LONG_TAPS, /**< N fingers single long-taps */
-   ELM_GESTURE_N_DOUBLE_TAPS, /**< N fingers double-single taps */
-   ELM_GESTURE_N_TRIPLE_TAPS, /**< N fingers triple-single taps */
-
-   ELM_GESTURE_MOMENTUM, /**< Reports momentum in the direction of move */
-
-   ELM_GESTURE_N_LINES, /**< N fingers line gesture */
-   ELM_GESTURE_N_FLICKS, /**< N fingers flick gesture */
-
-   ELM_GESTURE_ZOOM, /**< Zoom */
-   ELM_GESTURE_ROTATE, /**< Rotate */
-
-   ELM_GESTURE_LAST
-} Elm_Gesture_Type;
-
-/**
- * Enum of gesture states.
- */
-typedef enum
-{
-   ELM_GESTURE_STATE_UNDEFINED = -1, /**< Gesture not STARTed */
-   ELM_GESTURE_STATE_START, /**< Gesture STARTed     */
-   ELM_GESTURE_STATE_MOVE, /**< Gesture is ongoing  */
-   ELM_GESTURE_STATE_END, /**< Gesture completed   */
-   ELM_GESTURE_STATE_ABORT /**< Ongoing gesture was ABORTed */
-} Elm_Gesture_State;
-
-/**
  * Holds taps info for user
  */
 typedef struct _Elm_Gesture_Taps_Info Elm_Gesture_Taps_Info;

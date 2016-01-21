@@ -1,3 +1,34 @@
+enum Elm.Gesture.Type
+{
+   [[
+     Enum of supported gesture types.
+   ]]
+   legacy: elm_gesture;
+   first = 0,
+   n_taps, [[N fingers single taps]]
+   n_long_taps, [[N fingers single long-taps]]
+   n_double_taps, [[N fingers double-single taps]]
+   n_triple_taps, [[N fingers triple-single taps]]
+   momentum, [[Reports momentum in the direction of move]]
+   n_lines, [[N fingers line gesture]]
+   n_flicks, [[N fingers flick gesture]]
+   zoom, [[Zoom]]
+   rotate, [[Rotate]]
+   last
+}
+
+enum Elm.Gesture.State
+{
+   [[
+     Enum of gesture states.
+   ]]
+   undefined = -1, [[Gesture not started]]
+   start, [[Gesture started]]
+   move, [[Gesture is ongoing]]
+   end, [[Gesture completed]]
+   abort [[Ongoing gesture was aborted]]
+}
+
 class Elm.Gesture_Layer (Elm.Widget)
 {
    eo_prefix: elm_obj_gesture_layer;
@@ -72,8 +103,8 @@ class Elm.Gesture_Layer (Elm.Widget)
             ]]
          }
          values {
-            idx: Elm_Gesture_Type; [[The gesture you want to track state of.]]
-            cb_type: Elm_Gesture_State; [[The event the callback tracks (START, MOVE, END, ABORT).]]
+            idx: Elm.Gesture.Type; [[The gesture you want to track state of.]]
+            cb_type: Elm.Gesture.State; [[The event the callback tracks (START, MOVE, END, ABORT).]]
             cb: Elm_Gesture_Event_Cb; [[The callback itself.]]
             data: void * @optional; [[Custom data to be passed.]]
          }
@@ -93,8 +124,8 @@ class Elm.Gesture_Layer (Elm.Widget)
       cb_del {
          [[Remove a gesture callback.]]
          params {
-            @in idx: Elm_Gesture_Type; [[The gesture you want to track state of.]]
-            @in cb_type: Elm_Gesture_State; [[The event the callback tracks (START, MOVE, END, ABORT).]]
+            @in idx: Elm.Gesture.Type; [[The gesture you want to track state of.]]
+            @in cb_type: Elm.Gesture.State; [[The event the callback tracks (START, MOVE, END, ABORT).]]
             @in cb: Elm_Gesture_Event_Cb; [[The callback itself.]]
             @in data: void * @nullable; [[Custom callback data.]]
          }
@@ -111,8 +142,8 @@ class Elm.Gesture_Layer (Elm.Widget)
            use only one of these functions for a gesture object.
          ]]
          params {
-            @in idx: Elm_Gesture_Type; [[The gesture you want to track state of.]]
-            @in cb_type: Elm_Gesture_State; [[The event the callback tracks (START, MOVE, END, ABORT).]]
+            @in idx: Elm.Gesture.Type; [[The gesture you want to track state of.]]
+            @in cb_type: Elm.Gesture.State; [[The event the callback tracks (START, MOVE, END, ABORT).]]
             @in cb: Elm_Gesture_Event_Cb; [[The callback itself.]]
             @in data: void * @optional; [[Custom data to be passed.]]
          }

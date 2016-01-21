@@ -1,3 +1,5 @@
+#include "elm_gesture_layer.eo.legacy.h"
+
 /**
  * Call this function to construct a new gesture-layer object.
  *
@@ -50,5 +52,3 @@ EAPI void elm_gesture_layer_tap_longpress_cb_add(Evas_Object *obj, Elm_Gesture_S
  * @ingroup Elm_Gesture_Layer
  */
 EAPI void elm_gesture_layer_tap_longpress_cb_del(Evas_Object *obj, Elm_Gesture_State state, Elm_Gesture_Event_Cb cb, void *data);
-
-#include "elm_gesture_layer.eo.legacy.h"
