@@ -575,7 +575,7 @@ _eo_base_event_callback_priority_add(Eo *obj, Eo_Base_Data *pd,
 
      {
         const Eo_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
-        eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_ADD, (void *)arr));
+        eo_do(obj, eo_event_callback_call(EO_BASE_EVENT_CALLBACK_ADD, (void *)arr));
      }
 }
 
@@ -597,7 +597,7 @@ _eo_base_event_callback_del(Eo *obj, Eo_Base_Data *pd,
              cb->delete_me = EINA_TRUE;
              pd->deletions_waiting = EINA_TRUE;
              _eo_callbacks_clear(pd);
-             eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_DEL, (void *)arr); );
+             eo_do(obj, eo_event_callback_call(EO_BASE_EVENT_CALLBACK_DEL, (void *)arr); );
              return;
           }
      }
@@ -622,7 +622,7 @@ _eo_base_event_callback_array_priority_add(Eo *obj, Eo_Base_Data *pd,
    _eo_callbacks_sorted_insert(pd, cb);
 
      {
-        eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_ADD, (void *)array); );
+        eo_do(obj, eo_event_callback_call(EO_BASE_EVENT_CALLBACK_ADD, (void *)array); );
      }
 }
 
@@ -642,7 +642,7 @@ _eo_base_event_callback_array_del(Eo *obj, Eo_Base_Data *pd,
              pd->deletions_waiting = EINA_TRUE;
              _eo_callbacks_clear(pd);
 
-             eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_DEL, (void *)array); );
+             eo_do(obj, eo_event_callback_call(EO_BASE_EVENT_CALLBACK_DEL, (void *)array); );
              return;
           }
      }

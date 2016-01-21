@@ -214,7 +214,7 @@ _eo_del_internal(const char *file, int line, _Eo_Object *obj)
 
    const _Eo_Class *klass = obj->klass;
 
-   eo_do(_eo_id_get(obj), eo_event_callback_call(EO_EV_DEL, NULL));
+   eo_do(_eo_id_get(obj), eo_event_callback_call(EO_BASE_EVENT_DEL, NULL));
 
    _eo_condtor_reset(obj);
 

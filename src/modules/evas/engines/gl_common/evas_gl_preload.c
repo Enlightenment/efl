@@ -316,7 +316,7 @@ evas_gl_preload_target_register(Evas_GL_Texture *tex, Eo *target)
    EINA_SAFETY_ON_NULL_RETURN(tex);
 
    eo_do(target,
-         eo_event_callback_add(EO_EV_DEL, _evas_gl_preload_target_die, tex));
+         eo_event_callback_add(EO_BASE_EVENT_DEL, _evas_gl_preload_target_die, tex));
    tex->targets = eina_list_append(tex->targets, target);
    tex->references++;
 }
@@ -330,7 +330,7 @@ evas_gl_preload_target_unregister(Evas_GL_Texture *tex, Eo *target)
    EINA_SAFETY_ON_NULL_RETURN(tex);
 
    eo_do(target,
-         eo_event_callback_del(EO_EV_DEL, _evas_gl_preload_target_die, tex));
+         eo_event_callback_del(EO_BASE_EVENT_DEL, _evas_gl_preload_target_die, tex));
 
    EINA_LIST_FOREACH(tex->targets, l, o)
      if (o == target)
