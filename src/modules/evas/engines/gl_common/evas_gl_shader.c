@@ -6,6 +6,8 @@
 #define SHADER_FLAG_MASKSAM_BITSHIFT 6
 #define SHADER_PROG_NAME_FMT "/shader/%08x"
 #define SHADER_BINARY_EET_COMPRESS 1
+#define SHADER_EET_CHECKSUM "/shader/checksum"
+#define SHADER_EET_CACHENAME "binary_shader"
 
 #define P(i) ((void*)(intptr_t)i)
 #define I(p) ((int)(intptr_t)p)
@@ -207,15 +209,46 @@ _evas_gl_common_shader_program_binary_save(Evas_GL_Program *p, Eet_File *ef)
 static void
 _evas_gl_common_shader_binary_hash(Evas_GL_Shared *shared)
 {
-   if (shared->shaders_cache_name)
+   if (shared->shaders_checksum)
      return;
 
    /* This hash makes it sure that if the shaders code changes, then we
     * will not reuse the old binaries. */
-   shared->shaders_cache_name = eina_stringshare_printf
-         ("%#x:%#x::binary_shader",
+   shared->shaders_checksum = eina_stringshare_printf
+         ("%#x:%#x",
           eina_hash_superfast(fragment_glsl, strlen(fragment_glsl)),
           eina_hash_superfast(vertex_glsl, strlen(vertex_glsl)));
+}
+
+static Eina_Bool
+_evas_gl_common_shader_binary_checksum_check(Evas_GL_Shared *shared, Eet_File *ef)
+{
+   Eina_Bool ret = EINA_FALSE;
+   const char *old_hash;
+   int len = 0;
+
+   if (!ef) return EINA_FALSE;
+   _evas_gl_common_shader_binary_hash(shared);
+   old_hash = eet_read_direct(ef, SHADER_EET_CHECKSUM, &len);
+   if (old_hash &&
+       (len == (eina_stringshare_strlen(shared->shaders_checksum) + 1)) &&
+       (!strcmp(shared->shaders_checksum, old_hash)))
+     ret = EINA_TRUE;
+
+   return ret;
+}
+
+static Eina_Bool
+_evas_gl_common_shader_binary_checksum_write(Evas_GL_Shared *shared, Eet_File *ef)
+{
+   int ret, len;
+
+   if (!ef) return EINA_FALSE;
+   _evas_gl_common_shader_binary_hash(shared);
+   len = eina_stringshare_strlen(shared->shaders_checksum) + 1;
+   ret = eet_write(ef, SHADER_EET_CHECKSUM, shared->shaders_checksum, len, 0);
+
+   return (ret == len);
 }
 
 static int
@@ -234,14 +267,14 @@ _evas_gl_common_shader_binary_init(Evas_GL_Shared *shared)
    if (!evas_gl_common_file_cache_dir_check(bin_dir_path, sizeof(bin_dir_path)))
      return 0;
 
-   _evas_gl_common_shader_binary_hash(shared);
-   if (!evas_gl_common_file_cache_file_check(bin_dir_path, shared->shaders_cache_name,
+   if (!evas_gl_common_file_cache_file_check(bin_dir_path, SHADER_EET_CACHENAME,
                                              bin_file_path, sizeof(bin_dir_path)))
      return 0;
 
    if (!eet_init()) return 0;
    ef = eet_open(bin_file_path, EET_FILE_MODE_READ);
-   if (!ef) goto error;
+   if (!_evas_gl_common_shader_binary_checksum_check(shared, ef))
+     goto error;
 
    shared->shaders_cache = ef;
    return 1;
@@ -274,8 +307,7 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
           return 0; /* we can't make directory */
      }
 
-   _evas_gl_common_shader_binary_hash(shared);
-   copy = evas_gl_common_file_cache_file_check(bin_dir_path, shared->shaders_cache_name,
+   copy = evas_gl_common_file_cache_file_check(bin_dir_path, SHADER_EET_CACHENAME,
                                                bin_file_path, sizeof(bin_dir_path));
 
    /* use mkstemp for writing */
@@ -285,10 +317,22 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
 
    /* copy old file */
    if (copy)
-     eina_file_copy(bin_file_path, tmp_file_path, EINA_FILE_COPY_DATA, NULL, NULL);
+     {
+        ef = eet_open(tmp_file_path, EET_FILE_MODE_READ);
+        if (!ef) goto save;
+        if (!_evas_gl_common_shader_binary_checksum_check(shared, ef))
+          copy = EINA_FALSE;
+        eet_close(ef);
+        if (copy)
+          eina_file_copy(bin_file_path, tmp_file_path, EINA_FILE_COPY_DATA, NULL, NULL);
+     }
 
-   ef = eet_open(tmp_file_path, EET_FILE_MODE_READ_WRITE);
+save:
+   ef = eet_open(tmp_file_path, copy ? EET_FILE_MODE_READ_WRITE : EET_FILE_MODE_WRITE);
    if (!ef) goto error;
+
+   if (!_evas_gl_common_shader_binary_checksum_write(shared, ef))
+     goto error;
 
    it = eina_hash_iterator_data_new(shared->shaders_hash);
    EINA_ITERATOR_FOREACH(it, p)
