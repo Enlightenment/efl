@@ -55,7 +55,7 @@ group "Elm_Config" struct {
   value "longpress_timeout" double: 1.0;
   value "effect_enable" uchar: 1;
   value "desktop_entry" uchar: 1;
-  value "context_menu_disabled" uchar: 1;
+  value "context_menu_disabled" uchar: 0;
   value "password_show_last" uchar: 0;
   value "password_show_last_timeout" double: 2.0;
   value "glayer_zoom_finger_enable" uchar: 1;

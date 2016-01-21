@@ -307,15 +307,15 @@ EAPI void         elm_config_scroll_page_scroll_friction_set(double friction);
 EAPI Eina_Bool elm_config_context_menu_disabled_get(void);
 
 /**
- * Set enable status of context menu disabled.
+ * Enable or disable the context menu in entries.
  *
- * @param enabled enable context menu if @c EINA_TRUE, disable otherwise
+ * @param disabled disable context menu if @c EINA_TRUE, enable otherwise
  *
- * @see elm_config_focus_auto_scroll_bring_in_enabled_get()
+ * @see elm_config_context_menu_disabled_get()
  * @ingroup Entry
  * @since 1.17
  */
-EAPI void elm_config_context_menu_disabled_set(Eina_Bool enabled);
+EAPI void elm_config_context_menu_disabled_set(Eina_Bool disabled);
 
 /**
  * Get the amount of inertia a scroller will impose at region bring

@@ -3285,9 +3285,9 @@ elm_config_context_menu_disabled_get(void)
 }
 
 EAPI void
-elm_config_context_menu_disabled_set(Eina_Bool enabled)
+elm_config_context_menu_disabled_set(Eina_Bool disabled)
 {
-	_elm_config->context_menu_disabled = !!enabled;
+	_elm_config->context_menu_disabled = !!disabled;
 }
 
 EAPI void
