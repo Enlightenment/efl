@@ -604,16 +604,21 @@ dev_err:
 static int
 _ecore_evas_drm_shutdown(void)
 {
+   Ecore_Drm_Output *output;
+
    if (--_ecore_evas_init_count != 0) return _ecore_evas_init_count;
 
    ecore_drm_inputs_destroy(dev);
-   /* NB: No need to free outputs here. Is done in device free */
+
+   EINA_LIST_FREE(dev->outputs, output)
+     ecore_drm_output_free(output);
+
    ecore_drm_sprites_destroy(dev);
    ecore_drm_device_close(dev);
    ecore_drm_launcher_disconnect(dev);
    ecore_drm_device_free(dev);
-   dev = NULL;
    ecore_drm_shutdown();
+   dev = NULL;
 
    ecore_event_evas_shutdown();
 
