@@ -51,7 +51,7 @@ _view_append(Elm_App_Server_Data *data, Elm_App_Server_View *view)
      }
 
    eina_hash_add(data->views, view_id, view);
-   eo_do(view, eo_event_callback_add(EO_EV_DEL, _view_del_cb, data));
+   eo_do(view, eo_event_callback_add(EO_BASE_EVENT_DEL, _view_del_cb, data));
    return EINA_TRUE;
 }
 
@@ -264,7 +264,7 @@ _elm_app_server_constructor(Eo *obj, Elm_App_Server_Data *data, const char *pkg,
                    elm_app_server_view_icon_set(icon_name),
                    elm_app_server_view_progress_set(progress),
                    elm_app_server_view_new_events_set(new_events),
-                   eo_event_callback_add(EO_EV_DEL, _view_del_cb, data),
+                   eo_event_callback_add(EO_BASE_EVENT_DEL, _view_del_cb, data),
                    elm_app_server_view_shallow());
 
              eina_hash_add(data->views, view_id, view);
@@ -434,7 +434,7 @@ _elm_app_server_eo_base_destructor(Eo *obj, Elm_App_Server_Data *data)
    EINA_ITERATOR_FOREACH(iter, view)
      {
         //do not modify hash when iterating
-        eo_do(view, eo_event_callback_del(EO_EV_DEL, _view_del_cb, data));
+        eo_do(view, eo_event_callback_del(EO_BASE_EVENT_DEL, _view_del_cb, data));
         eo_del(view);
      }
    eina_iterator_free(iter);

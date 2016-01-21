@@ -3985,8 +3985,8 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 
    evas_object_show(sd->edje);
 
-   eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_ADD, _cb_added, sd),
-         eo_event_callback_add(EO_EV_CALLBACK_DEL, _cb_deled, sd));
+   eo_do(obj, eo_event_callback_add(EO_BASE_EVENT_CALLBACK_ADD, _cb_added, sd),
+         eo_event_callback_add(EO_BASE_EVENT_CALLBACK_DEL, _cb_deled, sd));
    if (type == ELM_WIN_FAKE)
      {
         _elm_win_resize_job(obj);
