@@ -277,6 +277,8 @@ ecore_drm_device_free(Ecore_Drm_Device *dev)
         dev->dumb[i] = NULL;
      }
 
+   if (dev->watch) eeze_udev_watch_del(dev->watch);
+
    /* free crtcs */
    if (dev->crtcs) free(dev->crtcs);
 
@@ -394,9 +396,11 @@ ecore_drm_device_close(Ecore_Drm_Device *dev)
 
    /* delete udev watch */
    if (dev->watch) eeze_udev_watch_del(dev->watch);
+   dev->watch = NULL;
 
    /* close xkb context */
    if (dev->xkb_ctx) xkb_context_unref(dev->xkb_ctx);
+   dev->xkb_ctx = NULL;
 
    _ecore_drm_launcher_device_close(dev->drm.name, dev->drm.fd);
 
