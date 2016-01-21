@@ -266,7 +266,6 @@ out:
 EAPI void 
 ecore_drm_device_free(Ecore_Drm_Device *dev)
 {
-   Ecore_Drm_Output *output;
    unsigned int i = 0;
 
    /* check for valid device */
@@ -277,18 +276,6 @@ ecore_drm_device_free(Ecore_Drm_Device *dev)
         if (dev->dumb[i]) ecore_drm_fb_destroy(dev->dumb[i]);
         dev->dumb[i] = NULL;
      }
-   /* destroy all sprites*/
-   ecore_drm_sprites_destroy(dev);
-   /* clear inputs */
-   ecore_drm_inputs_destroy(dev);
-   /* free outputs */
-   EINA_LIST_FREE(dev->outputs, output)
-     ecore_drm_output_free(output);
-   /* disconnect launcher */
-   ecore_drm_launcher_disconnect(dev);
-   /* close myself */
-   ecore_drm_device_close(dev);
-
 
    /* free crtcs */
    if (dev->crtcs) free(dev->crtcs);

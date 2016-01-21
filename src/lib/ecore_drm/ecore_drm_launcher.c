@@ -88,6 +88,7 @@ EAPI void
 ecore_drm_launcher_disconnect(Ecore_Drm_Device *dev)
 {
    EINA_SAFETY_ON_NULL_RETURN(dev);
+
    if (dev->tty.switch_hdlr) ecore_event_handler_del(dev->tty.switch_hdlr);
    dev->tty.switch_hdlr = NULL;
 
