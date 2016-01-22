@@ -2,31 +2,6 @@
 # error You shall not include this header directly
 #endif
 
-EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_FOCUS_IN;
-EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_FOCUS_OUT;
-EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE;
-EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_POST;
-EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_OBJECT_FOCUS_IN;
-EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_OBJECT_FOCUS_OUT;
-EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_PRE;
-EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_RENDER_POST;
-EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_DEVICE_CHANGED;
-EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_AXIS_UPDATE;
-EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
-
-// Callbacks events for use with Evas canvases
-#define EVAS_CANVAS_EVENT_FOCUS_IN (&(_EVAS_CANVAS_EVENT_FOCUS_IN))
-#define EVAS_CANVAS_EVENT_FOCUS_OUT (&(_EVAS_CANVAS_EVENT_FOCUS_OUT))
-#define EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE (&(_EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE))
-#define EVAS_CANVAS_EVENT_RENDER_FLUSH_POST (&(_EVAS_CANVAS_EVENT_RENDER_FLUSH_POST))
-#define EVAS_CANVAS_EVENT_OBJECT_FOCUS_IN (&(_EVAS_CANVAS_EVENT_OBJECT_FOCUS_IN))
-#define EVAS_CANVAS_EVENT_OBJECT_FOCUS_OUT (&(_EVAS_CANVAS_EVENT_OBJECT_FOCUS_OUT))
-#define EVAS_CANVAS_EVENT_RENDER_PRE (&(_EVAS_CANVAS_EVENT_RENDER_PRE))
-#define EVAS_CANVAS_EVENT_RENDER_POST (&(_EVAS_CANVAS_EVENT_RENDER_POST))
-#define EVAS_CANVAS_EVENT_DEVICE_CHANGED (&(_EVAS_CANVAS_EVENT_DEVICE_CHANGED))
-#define EVAS_CANVAS_EVENT_AXIS_UPDATE (&(_EVAS_CANVAS_EVENT_AXIS_UPDATE))
-#define EVAS_CANVAS_EVENT_VIEWPORT_RESIZE (&(_EVAS_CANVAS_EVENT_VIEWPORT_RESIZE))
-
 #include "canvas/evas_signal_interface.eo.h"
 #include "canvas/evas_draggable_interface.eo.h"
 #include "canvas/evas_clickable_interface.eo.h"

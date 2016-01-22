@@ -1638,5 +1638,17 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
       Eo.Base.event_freeze;
       Evas.Common_Interface.evas.get;
    }
-
+   events {
+      focus,in;
+      focus,out;
+      object,focus,in;
+      object,focus,out;
+      render,pre;
+      render,post;
+      render,flush,pre;
+      render,flush,post;
+      device,changed;
+      axis,update;
+      viewport,resize;
+   }
 }
