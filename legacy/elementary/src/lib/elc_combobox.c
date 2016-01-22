@@ -179,8 +179,18 @@ _gl_filter_finished_cb(void *data, Eo *obj EINA_UNUSED,
                        const Eo_Event_Description *desc EINA_UNUSED, void *event)
 {
    ELM_COMBOBOX_DATA_GET(data, sd);
-   eo_do(data, eo_event_callback_call(ELM_COMBOBOX_EVENT_FILTER_DONE, event));
+
    count_items_genlist(data);
+
+   if (sd->first_filter)
+     {
+        sd->first_filter = EINA_FALSE;
+        elm_combobox_hover_end(data);
+        return EINA_TRUE;
+     }
+
+   eo_do(data, eo_event_callback_call(ELM_COMBOBOX_EVENT_FILTER_DONE, event));
+
    if (sd->count > 0)
      {
         if (sd->expanded == EINA_TRUE)
@@ -204,16 +214,16 @@ static Eina_Bool
 _on_changed(void *data, Eo *obj EINA_UNUSED,
             const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   elm_combobox_hover_begin(data);
+   eo_do(data, eo_event_callback_call(ELM_ENTRY_EVENT_CHANGED, NULL));
    return EINA_TRUE;
 }
 
 static void
-_on_clicked(void *data,
-            Evas_Object *obj EINA_UNUSED,
+_on_clicked(void *data EINA_UNUSED,
+            Evas_Object *obj,
             void *event_info EINA_UNUSED)
 {
-   elm_combobox_hover_begin(data);
+   elm_combobox_hover_begin(obj);
 }
 
 EOLIAN static void
@@ -275,6 +285,8 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
 
+   sd->first_filter = EINA_TRUE;
+
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
@@ -302,6 +314,7 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
 
    // This is the genlist object that will take over the genlist call
    sd->genlist = gl = eo_add(ELM_GENLIST_CLASS, obj);
+   elm_genlist_filter_set(gl, NULL);
    elm_widget_mirrored_automatic_set(gl, EINA_FALSE);
    elm_widget_mirrored_set(gl, elm_widget_mirrored_get(obj));
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -340,11 +353,11 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
 }
 
 EOLIAN static void
-_elm_combobox_hover_begin(Eo *obj EINA_UNUSED, Elm_Combobox_Data *sd)
+_elm_combobox_hover_begin(Eo *obj, Elm_Combobox_Data *sd)
 {
    if (!sd->hover) return;
    elm_object_focus_set(sd->entry, EINA_TRUE);
-   elm_genlist_filter_set(sd->genlist, (void *)elm_object_text_get(sd->entry));
+   _activate(obj);
 }
 
 EOLIAN static void
@@ -434,6 +447,14 @@ _elm_combobox_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNU
       {NULL, NULL, NULL, NULL}
    };
    return &atspi_actions[0];
+}
+
+EOLIAN void
+_elm_combobox_elm_genlist_filter_set(Eo *obj, Elm_Combobox_Data *pd, void *key)
+{
+   pd->first_filter = EINA_FALSE;
+
+   eo_do(pd->genlist, elm_obj_genlist_filter_set(key));
 }
 
 EOLIAN void

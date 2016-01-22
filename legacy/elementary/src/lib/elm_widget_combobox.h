@@ -38,6 +38,7 @@ struct _Elm_Combobox_Data
    int                   count;
    int                   item_height;
    Eina_Bool             expanded:1;
+   Eina_Bool             first_filter:1;
 };
 
 /**

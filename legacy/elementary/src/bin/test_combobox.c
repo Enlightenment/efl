@@ -86,6 +86,14 @@ gl_filter_get(void *data, Evas_Object *obj EINA_UNUSED, void *key)
 }
 
 static void
+_gl_filter_restart_cb(void *data EINA_UNUSED,
+                       Evas_Object *obj,
+                       void *event_info EINA_UNUSED)
+{
+   elm_genlist_filter_set(obj, (void *)elm_object_text_get(obj));
+}
+
+static void
 _gl_filter_finished_cb(void *data EINA_UNUSED,
                        Evas_Object *obj EINA_UNUSED,
                        void *event_info EINA_UNUSED)
@@ -135,6 +143,8 @@ test_combobox(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                                   _combobox_item_pressed_cb, NULL);
    evas_object_smart_callback_add(combobox, "filter,done",
                                   _gl_filter_finished_cb, NULL);
+   evas_object_smart_callback_add(combobox, "changed",
+                                  _gl_filter_restart_cb, NULL);
    elm_box_pack_end(bx, combobox);
    evas_object_show(combobox);
 
