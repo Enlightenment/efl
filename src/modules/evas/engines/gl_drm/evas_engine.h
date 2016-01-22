@@ -97,10 +97,7 @@ struct _Outbuf
 
    struct 
      {
-        int prev_age;
-        int curr, last, num;
-        struct gbm_bo *bo[4];
-        Eina_List *pending_writes;
+        struct gbm_bo *bo[2];
      } priv;
 
    Eina_Bool destination_alpha : 1;

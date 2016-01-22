@@ -352,7 +352,6 @@ Outbuf *
 evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_Mode swap_mode)
 {
    Outbuf *ob;
-   char *num;
 
    if (!info) return NULL;
 
@@ -369,14 +368,6 @@ evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_
    ob->destination_alpha = info->info.destination_alpha;
    /* ob->vsync = info->info.vsync; */
    ob->swap_mode = swap_mode;
-   ob->priv.num = 2;
-
-   if ((num = getenv("EVAS_GL_DRM_BUFFERS")))
-     {
-        ob->priv.num = atoi(num);
-        if (ob->priv.num <= 0) ob->priv.num = 1;
-        else if (ob->priv.num > 4) ob->priv.num = 4;
-     }
 
    /* if ((num = getenv("EVAS_GL_DRM_VSYNC"))) */
    /*   ob->vsync = atoi(num); */
@@ -580,8 +571,6 @@ evas_outbuf_buffer_state_get(Outbuf *ob)
         else if (age == 3) swap_mode = MODE_TRIPLE;
         else if (age == 4) swap_mode = MODE_QUADRUPLE;
         else swap_mode = MODE_FULL;
-        if ((int)age != ob->priv.prev_age) swap_mode = MODE_FULL;
-        ob->priv.prev_age = age;
 
         return swap_mode;
      }
