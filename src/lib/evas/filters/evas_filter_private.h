@@ -8,9 +8,9 @@
 extern int _evas_filter_log_dom;
 #define EVAS_FILTER_LOG_COLOR EINA_COLOR_LIGHTBLUE
 
-//#ifdef DEBUG
+#ifdef DEBUG
 # define FILTERS_DEBUG
-//#endif
+#endif
 
 #ifdef ERR
 # undef ERR
