@@ -1229,15 +1229,21 @@ evas_filter_command_transform_add(Evas_Filter_Context *ctx,
         return -1;
      }
 
-   if (in->alpha_only != out->alpha_only)
-     DBG("Incompatible buffer formats, will trigger implicit conversion.");
-
    cmd = _command_new(ctx, EVAS_FILTER_MODE_TRANSFORM, in, NULL, out);
    if (!cmd) return -1;
 
+   DRAW_COLOR_SET(255, 255, 255, 255);
    cmd->transform.flags = flags;
    cmd->draw.ox = ox;
    cmd->draw.oy = oy;
+
+   if (in->alpha_only == out->alpha_only)
+     {
+        DBG("Incompatible buffer formats, will trigger implicit conversion.");
+        cmd->draw.rop = EFL_GFX_RENDER_OP_COPY;
+     }
+   else
+     cmd->draw.rop = EFL_GFX_RENDER_OP_BLEND;
 
    out->dirty = EINA_TRUE;
 
