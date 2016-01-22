@@ -515,7 +515,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
             ]]
             @in part_name: const(char) *; [[Name of the TEXT part of gengrid item to search string in.]]
             @in pattern: const(char) *; [[The search pattern.]]
-            @in flags: Elm_Glob_Match_Flags; [[Search flags.]]
+            @in flags: Elm.Glob.Match_Flags; [[Search flags.]]
          }
       }
       reorder_mode_start {
