@@ -143,8 +143,36 @@ create_handles(Evas_Object *obj)
      }
 }
 
+static Eina_Bool
+_notify_end(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   eo_del(obj);
+   return EINA_FALSE;
+}
+
+static inline void
+_notify_error(Evas_Object *parent, const char *msg)
+{
+   Evas_Object *notif, *txt;
+
+   printf("%s\n", msg);
+
+   notif = elm_notify_add(parent);
+   evas_object_size_hint_weight_set(notif, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_notify_align_set(notif, 0.5, 1.0);
+   elm_notify_timeout_set(notif, 3.0);
+   eo_do(notif, eo_event_callback_add(ELM_NOTIFY_EVENT_DISMISSED, _notify_end, NULL));
+
+   txt = elm_label_add(notif);
+   elm_object_text_set(txt, msg);
+   elm_object_content_set(notif, txt);
+
+   evas_object_show(txt);
+   evas_object_show(notif);
+}
+
 void
-test_win_plug(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_win_plug(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg, *plug;
    char buf[PATH_MAX];
@@ -165,7 +193,7 @@ test_win_plug(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_event_callback_add(plug, EVAS_CALLBACK_DEL, _timer_del, NULL);
    if (!elm_plug_connect(plug, "ello", 0, EINA_FALSE))
      {
-        printf("Cannot connect plug\n");
+        _notify_error(data, "Unable to connect to the Window Socket!");
         return;
      }
 
