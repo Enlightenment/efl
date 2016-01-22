@@ -281,9 +281,10 @@ struct _Item_Cache
 
 struct _Item_Size
 {
-     const Elm_Genlist_Item_Class *itc;
-     Evas_Coord minw;
-     Evas_Coord minh;
+   const Elm_Genlist_Item_Class *itc;
+   Evas_Coord minw;
+   Evas_Coord minh;
+   int expanded_depth;
 };
 
 typedef struct _Elm_Genlist_Pan_Data Elm_Genlist_Pan_Data;

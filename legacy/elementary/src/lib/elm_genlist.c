@@ -1829,6 +1829,7 @@ _item_realize(Elm_Gen_Item *it,
      {
         GL_IT(it)->w = GL_IT(it)->minw = size->minw;
         GL_IT(it)->h = GL_IT(it)->minh = size->minh;
+        size->expanded_depth = it->item->expanded_depth;
         it->item->mincalcd = EINA_TRUE;
      }
    else
@@ -1880,6 +1881,7 @@ _item_realize(Elm_Gen_Item *it,
 
                        size = ELM_NEW(Item_Size);
                        size->itc = it->itc;
+                       size->expanded_depth = it->item->expanded_depth;
                        size->minw = mw;
                        size->minh = mh;
                        eina_hash_add(sd->size_caches, &(it->itc), size);
@@ -5099,7 +5101,7 @@ _item_block_recalc(Item_Block *itb,
                   if (!it->item->mincalcd) changed = EINA_TRUE;
                   if (changed)
                     {
-                       if (!size)
+                       if (!size || (it->item->expanded_depth != size->expanded_depth))
                          {
                             _item_realize(it, in, EINA_TRUE);
                             _elm_genlist_item_unrealize(it, EINA_TRUE);
@@ -5115,6 +5117,7 @@ _item_block_recalc(Item_Block *itb,
              else
                {
                   if ((itb->sd->homogeneous) && size &&
+                      (it->item->expanded_depth == size->expanded_depth) &&
                       (itb->sd->mode == ELM_LIST_COMPRESS))
                     {
                        it->item->w = it->item->minw = size->minw;
@@ -5155,7 +5158,7 @@ _update_job(void *data)
    Eina_Bool position = EINA_FALSE, recalc = EINA_FALSE;
    ELM_GENLIST_DATA_GET(data, sd);
    Item_Block *itb;
-   Eina_List *l2;
+  Eina_List *l2;
    int num, num0;
 
    sd->update_job = NULL;
