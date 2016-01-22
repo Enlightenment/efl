@@ -89,44 +89,31 @@ _evas_outbuf_fb_get(Ecore_Drm_Device *dev, struct gbm_bo *bo)
 }
 
 static void
-_evas_outbuf_cb_pageflip(void *data)
-{
-   Outbuf *ob;
-   Ecore_Drm_Fb *fb;
-   struct gbm_bo *bo;
-
-   if (!(ob = data)) return;
-
-   bo = ob->priv.bo[ob->priv.curr];
-   if (!bo) return;
-
-   fb = _evas_outbuf_fb_get(ob->info->info.dev, bo);
-   if (fb) fb->pending_flip = EINA_FALSE;
-
-   gbm_surface_release_buffer(ob->surface, bo);
-
-   ob->priv.last = ob->priv.curr;
-   ob->priv.curr = (ob->priv.curr + 1) % ob->priv.num;
-}
-
-static void
 _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
 {
    Ecore_Drm_Fb *fb;
 
-   ob->priv.bo[ob->priv.curr] = gbm_surface_lock_front_buffer(ob->surface);
-   if (!ob->priv.bo[ob->priv.curr])
+   /* Repulsive hack:  Right now we don't actually have a proper way to retire
+    * buffers because the ticker and the flip handler are out of sync, the
+    * flip handler is per output, fbs are submit to multiple outputs and may
+    * be denied (and re-queued) by any output they're supposed to be on.
+    * This will all be magically fixed when evas supports multiple target
+    * regions, but until then we do this:
+    * always have 2 buffers locked
+    */
+   if (ob->priv.bo[1]) gbm_surface_release_buffer(ob->surface, ob->priv.bo[1]);
+   ob->priv.bo[1] = ob->priv.bo[0];
+   ob->priv.bo[0] = gbm_surface_lock_front_buffer(ob->surface);
+   if (!ob->priv.bo[0])
      {
         WRN("Could not lock front buffer");
         return;
      }
-
-   fb = _evas_outbuf_fb_get(ob->info->info.dev, ob->priv.bo[ob->priv.curr]);
+   fb = _evas_outbuf_fb_get(ob->info->info.dev, ob->priv.bo[0]);
    if (fb)
      {
         ecore_drm_fb_dirty(fb, rects, count);
-        ecore_drm_fb_set(ob->info->info.dev, fb);
-        ecore_drm_fb_send(ob->info->info.dev, fb, _evas_outbuf_cb_pageflip, ob);
+        ecore_drm_fb_send(ob->info->info.dev, fb, NULL, NULL);
      }
 }
 
