@@ -806,8 +806,6 @@ evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
      //Flush GL Surface data to Framebuffer
      _evas_outbuf_buffer_swap(ob, NULL, 0);
 
-   ob->priv.frame_cnt++;
-
 end:
    //TODO: Need render unlock after drm page flip?
    glsym_evas_gl_preload_render_unlock(_evas_outbuf_make_current, ob);
