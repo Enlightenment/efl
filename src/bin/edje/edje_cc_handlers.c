@@ -9532,9 +9532,6 @@ st_collections_group_parts_part_description_text_text(void)
    ed->text.text.str = str;
 }
 
-/** @edcsubsection{collections_group_parts_description_domain,
- *                 Group.Parts.Part.Description.Domain} */
-
 /**
     @page edcref
 
@@ -9564,6 +9561,7 @@ st_collections_group_parts_part_description_text_domain(void)
 
    ed->text.domain = parse_str(0);
 }
+
 /**
     @page edcref
 
