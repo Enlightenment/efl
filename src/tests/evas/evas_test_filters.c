@@ -188,33 +188,12 @@ START_TEST(evas_filter_parser)
       "White"
    };
 
-#if 0
-   // New color class defaults to black
-   static const char *colors_bad[] = {
-      "newcolor",
-      "ABC",
-      "#ZZZ",
-      "#-10"
-   };
-#endif
-
    for (size_t c = 0; c < sizeof(colors) / sizeof(colors[0]); c++)
      {
         char buf[64];
         sprintf(buf, "blend { color = '%s' }", colors[c]);
         CHKGOOD(buf);
      }
-
-#if 0
-   fprintf(stderr, "Evas filters tests: start invalid cases. Ignore the following ERRs.\n");
-   for (size_t c = 0; c < sizeof(colors_bad) / sizeof(colors_bad[0]); c++)
-     {
-        char buf[64];
-        sprintf(buf, "blend { color = '%s' }", colors_bad[c]);
-        CHKBAAD(buf);
-     }
-   fprintf(stderr, "Evas filters tests: end of invalid cases.\n");
-#endif
 
    // fillmodes are parsed when converting from instructions to commands
 }
@@ -277,11 +256,9 @@ static struct Filter_Test_Case _test_cases[] = {
    { 7, 7, 7, 7, "a = buffer ({ 'rgba' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) blend ({ dst = a }) displace ({ map = b, src = a, intensity = 7, flags = 'smooth_stretch' })", NULL },
 
    /* FIXME Fix transform filter!!! FIXME */
-#if 0
    { 0, 0, 0, 40, "a = buffer ({ 'alpha' }) transform ({ a, 'vflip', oy = 20 }) blend ({ src = a })", NULL },
    { 0, 0, 40, 0, "a = buffer ({ 'alpha' }) transform ({ a, 'vflip', oy = -20 }) blend ({ src = a })", NULL },
    { 0, 0, 0, 40, "a = buffer ({ 'alpha' }) blend ({ dst = a }) transform ({ a, 'vflip', oy = 20, src = a }) blend ({ src = a })", NULL },
-#endif
 
    // Filter combos. TODO: Add some more tricky cases : })
    { 3, 5, 7, 11, "blend ({ ox = -3, oy = 11 })  blend ({ ox = 5, oy = -7 })", NULL },
