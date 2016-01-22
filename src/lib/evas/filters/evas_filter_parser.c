@@ -1772,7 +1772,7 @@ _transform_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction
 
    instr->type = EVAS_FILTER_MODE_TRANSFORM;
    instr->pad.update = _transform_padding_update;
-   _instruction_param_seq_add(instr, "dst", VT_BUFFER, NULL);
+   _instruction_param_seq_add(instr, "dst", VT_BUFFER, _buffer_get(pgm, "output"));
    _instruction_param_seq_add(instr, "op", VT_STRING, "vflip");
    _instruction_param_seq_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
    //_instruction_param_name_add(instr, "ox", VT_INT, 0);
