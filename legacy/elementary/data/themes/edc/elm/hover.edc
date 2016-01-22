@@ -699,8 +699,8 @@ group { name: "elm/hover/base/hoversel_vertical/default";
       program { name: "topshow";
          signal: "elm,action,slot,top,show"; source: "elm";
          script {
-            set_state(PART:"limit0", "visible", 0.0);
-            set_state(PART:"limit1", "visible", 0.0);
+            set_state(PART:"limit0", "default", 0.0);
+            set_state(PART:"limit1", "default", 0.0);
             set_state(PART:"button_image", "default", 0.0);
             topshow2();
          }
@@ -810,8 +810,6 @@ group { name: "elm/hover/base/hoversel_vertical/default";
 
 group { name: "elm/hover/base/hoversel_horizontal/default";
    alias: "elm/hover/base/hoversel_horizontal/entry";
-   alias: "elm/hover/base/combobox_horizontal/default";
-   alias: "elm/hover/base/combobox_horizontal/entry";
    images.image: "button_normal.png" COMP;
    data.item: "dismiss" "on";
    script {

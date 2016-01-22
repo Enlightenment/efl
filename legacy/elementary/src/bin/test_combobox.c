@@ -41,6 +41,7 @@ _combobox_item_pressed_cb(void *data EINA_UNUSED, Evas_Object *obj,
    printf("'item,pressed' callback is called. (selected item : %s)\n", txt);
    elm_object_text_set(obj, txt);
    elm_combobox_hover_end(obj);
+   elm_entry_cursor_end_set(obj);
 }
 
 static char *

@@ -107,7 +107,7 @@ _elm_hoversel_elm_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
 }
 
 static Eina_Bool
-_on_hover_clicked(void *data EINA_UNUSED,
+_on_hover_clicked(void *data,
                      Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
                      void *event_info EINA_UNUSED)
 {
