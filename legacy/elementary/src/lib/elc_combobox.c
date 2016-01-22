@@ -384,9 +384,7 @@ _key_action_move(Evas_Object *obj, const char *params)
    const char *dir = params;
    if (!sd->hover) return EINA_FALSE;
 
-   if (!strcmp(dir, "return"))
-     eo_do(obj, eo_event_callback_call(ELM_COMBOBOX_EVENT_CLICKED, NULL));
-   else if (!strcmp(dir, "up"))
+   if (!strcmp(dir, "up"))
      {
         it = sd->item;
         it = elm_genlist_item_prev_get(it);
@@ -409,7 +407,15 @@ _key_action_move(Evas_Object *obj, const char *params)
 static Eina_Bool
 _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   elm_combobox_hover_begin(obj);
+   ELM_COMBOBOX_DATA_GET(obj, sd);
+   if (!sd->expanded)
+     elm_combobox_hover_begin(obj);
+   else
+     {
+        eo_do(sd->genlist, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_PRESSED,
+                                                  sd->item));
+        elm_entry_cursor_end_set(sd->entry);
+     }
    return EINA_TRUE;
 }
 
