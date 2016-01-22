@@ -600,25 +600,7 @@ evas_outbuf_buffer_state_get(Outbuf *ob)
      }
    else
      {
-        int delta;
-
-        delta = (ob->priv.last - ob->priv.curr +
-                 (ob->priv.last > ob->priv.last ?
-                     0 : ob->priv.num)) % ob->priv.num;
-
-        switch (delta)
-          {
-           case 0:
-             return MODE_COPY;
-           case 1:
-             return MODE_DOUBLE;
-           case 2:
-             return MODE_TRIPLE;
-           case 3:
-             return MODE_QUADRUPLE;
-           default:
-             return MODE_FULL;
-          }
+        return MODE_FULL;
      }
 
    return ob->swap_mode;
