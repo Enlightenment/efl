@@ -2673,6 +2673,7 @@ EAPI void evas_object_image_mmap_get(const Eo *obj, const Eina_File **f, const c
 /**
  *
  * Save the given image object's contents to an (image) file.
+ * Proxy object is image object, but it doesn't have contents. So you can't use this function for proxy objects.
  *
  * The extension suffix on @p file will determine which <b>saver
  * module</b> Evas is to use when saving, thus the final file's
@@ -2682,11 +2683,11 @@ EAPI void evas_object_image_mmap_get(const Eo *obj, const Eina_File **f, const c
  * You can specify some flags when saving the image.  Currently
  * acceptable flags are @c quality and @c compress. Eg.: @c
  * "quality=100 compress=9"
- * 
- * quality is hint for the quality of image,0-100. 0 means low quality 
+ *
+ * quality is hint for the quality of image,0-100. 0 means low quality
  * and saved image size is small. 100 means high quality and saved image size is big.
  *
- * compress is hint for the compression modes (Eet ones) or for the compression flags (Png one) 
+ * compress is hint for the compression modes (Eet ones) or for the compression flags (Png one)
  * (1 == compress, 0 = don't compress).
  *
  * @param[in] file The filename to be used to save the image (extension
