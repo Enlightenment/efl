@@ -255,7 +255,7 @@ static struct Filter_Test_Case _test_cases[] = {
    { 7, 7, 7, 7, "a = buffer ({ 'rgba' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) blend ({ dst = a }) displace ({ map = b, src = a, intensity = 7, flags = 'nearest_stretch' })", NULL },
    { 7, 7, 7, 7, "a = buffer ({ 'rgba' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) blend ({ dst = a }) displace ({ map = b, src = a, intensity = 7, flags = 'smooth_stretch' })", NULL },
 
-   /* FIXME Fix transform filter!!! FIXME */
+   /* Transform filter. TODO: Improve API and test it more */
    { 0, 0, 0, 40, "a = buffer ({ 'alpha' }) transform ({ a, 'vflip', oy = 20 }) blend ({ src = a })", NULL },
    { 0, 0, 40, 0, "a = buffer ({ 'alpha' }) transform ({ a, 'vflip', oy = -20 }) blend ({ src = a })", NULL },
    { 0, 0, 0, 40, "a = buffer ({ 'alpha' }) blend ({ dst = a }) transform ({ a, 'vflip', oy = 20, src = a }) blend ({ src = a })", NULL },
