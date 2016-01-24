@@ -4881,11 +4881,12 @@ _item_mouse_up_cb(void *data,
           }
      }
 
-   if (_is_no_select(it) ||
+   if ((ev->flags != EVAS_BUTTON_NONE) ||
+       (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) ||
+       !it->base->still_in ||
+       _is_no_select(it) ||
        (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get())))
      return;
-
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD || !it->base->still_in) return;
 
    evas_object_ref(sd->obj);
 
@@ -4928,7 +4929,7 @@ _item_mouse_up_cb(void *data,
         if (_item_select(it)) goto deleted;
      }
 
-   if ((ev->flags == EVAS_BUTTON_NONE) && (sd->focused_item != EO_OBJ(it)))
+   if (sd->focused_item != EO_OBJ(it))
      elm_object_item_focus_set(EO_OBJ(it), EINA_TRUE);
 
 deleted:
