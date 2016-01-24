@@ -41,6 +41,7 @@ struct _emotion_plugin
    Eina_Bool first;
    Eet_File *ef;
    Evas_Object *video;
+   Evas_Object *edje_frame;
    Ethumb *e;
    int w, h;
 };
@@ -66,8 +67,16 @@ _resize_movie(struct _emotion_plugin *_plugin)
 
    ethumb_plugin_image_resize(e, _plugin->w, _plugin->h);
 
-   evas_object_resize(_plugin->video, fw, fh);
-   evas_object_move(_plugin->video, fx, fy);
+   if (_plugin->edje_frame)
+     {
+        evas_object_resize(_plugin->edje_frame, fw, fh);
+        evas_object_move(_plugin->edje_frame, fx, fy);
+     }
+   else
+     {
+        evas_object_resize(_plugin->video, fw, fh);
+        evas_object_move(_plugin->video, fx, fy);
+     }
    emotion_object_audio_mute_set(_plugin->video, 1);
 }
 
@@ -199,6 +208,7 @@ _finish_thumb_obj(void *data)
 {
    struct _emotion_plugin *_plugin = data;
    evas_object_del(_plugin->video);
+   if (_plugin->edje_frame) evas_object_del(_plugin->edje_frame);
    free(_plugin);
 }
 
@@ -260,7 +270,9 @@ _frame_grab_single(void *data)
            EMOTION_OBJECT_EVENT_FRAME_RESIZE,  _frame_resized_cb, _plugin));
 
    emotion_object_play_set(_plugin->video, 0);
+
    evas_object_del(_plugin->video);
+   if (_plugin->edje_frame) evas_object_del(_plugin->edje_frame);
    free(_plugin);
 
    ethumb_finished_callback_call(e, 1);
@@ -368,6 +380,7 @@ _thumb_generate(Ethumb *e)
    Ethumb_Thumb_Format f;
    double dv;
    struct _emotion_plugin *_plugin = calloc(1, sizeof(struct _emotion_plugin));
+   const char *ffile, *fgroup, *fswallow;
 
    o = emotion_object_add(ethumb_evas_get(e));
    r = emotion_object_init(o, NULL);
@@ -413,6 +426,32 @@ _thumb_generate(Ethumb *e)
    emotion_object_play_set(o, 1);
    evas_object_show(o);
 
+   ethumb_frame_get(e, &ffile, &fgroup, &fswallow);
+   if (ffile && fgroup && fswallow)
+     {
+        Evas_Object *ed = edje_object_add(ethumb_evas_get(e));
+        if (!ed)
+          {
+             ERR("could not create edje frame object.");
+             return _plugin;
+          }
+        if (!edje_object_file_set(ed, ffile, fgroup))
+          {
+             ERR("could not load frame theme.");
+             evas_object_del(ed);
+             return _plugin;
+          }
+        edje_object_part_swallow(ed, fswallow, o);
+        if (!edje_object_part_swallow_get(ed, fswallow))
+          {
+             ERR("could not swallow video to edje frame.");
+             evas_object_del(ed);
+             return _plugin;
+          }
+        evas_object_show(ed);
+        _plugin->edje_frame = ed;
+     }
+
    return _plugin;
 }
 
@@ -423,6 +462,7 @@ _thumb_cancel(Ethumb *e EINA_UNUSED, void *data)
 
    if (_plugin->ef) eet_close(_plugin->ef);
    evas_object_del(_plugin->video);
+   if (_plugin->edje_frame) evas_object_del(_plugin->edje_frame);
    free(_plugin);
 }
 
