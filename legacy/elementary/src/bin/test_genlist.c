@@ -4214,9 +4214,11 @@ gl_focus_top_items_text_get(void *data, Evas_Object *obj EINA_UNUSED,
    if (!strcmp(data, "do_nothing"))
      return strdup("Genlist Item");
    else if (!strcmp(data, "popup_sel"))
-     return strdup("Create a popup on Select");
+     return strdup("Create a popup on Select (popup parent is gl)");
    else if (!strcmp(data, "popup_mouse_down"))
-     return strdup("Create a popup on Mouse Down");
+     return strdup("Create a popup on Mouse Down (popup parent is gl)");
+   else if (!strcmp(data, "popup_activate"))
+     return strdup("Create a popup on Activate (popup parent is win)");
    else if (!strcmp(data, "clear_on_focus"))
      return strdup("Genlist Clear on Focus");
    else
@@ -4400,9 +4402,17 @@ _gl_focus_item_unfocus_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_gl_focus_item_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+_gl_focus_item_cb(void *data, Evas_Object *obj, void *event_info)
 {
-   printf("%s: %p\n", (char *)data, event_info);
+   Elm_Object_Item *it = event_info;
+
+   printf("%s: %p\n", (char *)data, it);
+
+   if (!strcmp((char *)data, "activated") &&
+       !strcmp((char *)elm_object_item_data_get(it), "popup_activate"))
+     {
+         _gl_focus_sel_popup_create(elm_object_top_widget_get(obj));
+     }
 }
 
 static void
@@ -4895,6 +4905,8 @@ test_genlist_focus(void *data EINA_UNUSED,
    elm_genlist_item_append(gl, itc, "popup_sel", NULL, ELM_GENLIST_ITEM_NONE,
                            _gl_focus_0_item_sel_cb, NULL);
    elm_genlist_item_append(gl, itc, "popup_mouse_down", NULL, ELM_GENLIST_ITEM_NONE,
+                           NULL, NULL);
+   elm_genlist_item_append(gl, itc, "popup_activate", NULL, ELM_GENLIST_ITEM_NONE,
                            NULL, NULL);
 
    it = elm_genlist_item_append(gl, itc, "clear_on_focus", NULL, ELM_GENLIST_ITEM_NONE,
