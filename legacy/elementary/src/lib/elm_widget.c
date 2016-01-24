@@ -331,10 +331,12 @@ static void
 _obj_mouse_up(void *data,
               Evas *e EINA_UNUSED,
               Evas_Object *obj,
-              void *event_info EINA_UNUSED)
+              void *event_info)
 {
    ELM_WIDGET_DATA_GET(data, sd);
-   if (sd->still_in &&
+   Evas_Event_Mouse_Up *ev = event_info;
+
+   if (sd->still_in && (ev->flags == EVAS_BUTTON_NONE) &&
        (sd->focus_move_policy == ELM_FOCUS_MOVE_POLICY_CLICK))
      elm_widget_focus_mouse_up_handle(obj);
 

@@ -1099,7 +1099,7 @@ _item_mouse_up_cb(void *data,
         return;
      }
 
-   if (sd->focused_item != eo_it)
+   if ((ev->flags == EVAS_BUTTON_NONE) && (sd->focused_item != eo_it))
      elm_object_item_focus_set(eo_it, EINA_TRUE);
 
    if (sd->multi &&

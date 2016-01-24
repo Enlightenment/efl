@@ -4928,7 +4928,7 @@ _item_mouse_up_cb(void *data,
         if (_item_select(it)) goto deleted;
      }
 
-   if (sd->focused_item != EO_OBJ(it))
+   if ((ev->flags == EVAS_BUTTON_NONE) && (sd->focused_item != EO_OBJ(it)))
      elm_object_item_focus_set(EO_OBJ(it), EINA_TRUE);
 
 deleted:
