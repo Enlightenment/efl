@@ -502,7 +502,7 @@ _elm_combobox_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNU
 }
 
 EOLIAN void
-_elm_combobox_elm_genlist_filter_set(Eo *obj, Elm_Combobox_Data *pd, void *key)
+_elm_combobox_elm_genlist_filter_set(Eo *obj EINA_UNUSED, Elm_Combobox_Data *pd, void *key)
 {
    pd->first_filter = EINA_FALSE;
 
