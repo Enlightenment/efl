@@ -19,6 +19,11 @@ class Elm.Naviframe_Item(Elm.Widget_Item)
 
               The items between the top and the given item will be deleted
               first, and then the top item will be popped at last.
+
+              Warning: The pop callback function set by
+              elm_naviframe_item_pop_cb_set is not called for items between the
+              top item and the destination item since those items are deleted
+              without being popped.
             ]]
         }
       title_enabled_get @const {
@@ -54,6 +59,9 @@ class Elm.Naviframe_Item(Elm.Widget_Item)
               additionally if the function does an exact same logic with
               this $func. When hardware back key is pressed then both
               callbacks will be called.
+              Warning: The pop callback function is called only if the item is
+              popped. Therefore, the pop callback function is not called if the
+              item is deleted without being popped.
 
               @since 1.8
             ]]
