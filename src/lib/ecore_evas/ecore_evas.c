@@ -3070,11 +3070,58 @@ _ecore_evas_fps_debug_rendertime_add(double t)
 }
 
 EAPI void
+ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport)
+{
+   Ecore_Evas *subee;
+   Eina_List *l;
+   Efl_Core_Event_Animator_Tick a = { { 0 } };
+
+   if (!viewport)
+     {
+        evas_output_size_get(ee->evas, &a.update_area.w, &a.update_area.h);
+     }
+   else
+     {
+        a.update_area = *viewport;
+     }
+
+   eo_do(ee->evas, eo_event_callback_call(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, &a));
+
+   // FIXME: We do not support partial animator in the subcanvas
+   a.update_area.x = 0;
+   a.update_area.y = 0;
+   EINA_LIST_FOREACH(ee->sub_ecore_evas, l, subee)
+     {
+        evas_output_size_get(subee->evas, &a.update_area.w, &a.update_area.h);
+        eo_do(subee->evas, eo_event_callback_call(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, &a));
+     }
+}
+
+static Eina_Bool
+_ecore_evas_animator_fallback(void *data)
+{
+   ecore_evas_animator_tick(data, NULL);
+   return EINA_TRUE;
+}
+
+EAPI void
 _ecore_evas_register(Ecore_Evas *ee)
 {
    ee->registered = 1;
    ecore_evases = (Ecore_Evas *)eina_inlist_prepend
      (EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
+
+   if (ee->engine.func->fn_animator_register &&
+       ee->engine.func->fn_animator_unregister)
+     {
+        // Backend support per window vsync
+        ee->engine.func->fn_animator_register(ee);
+     }
+   else
+     {
+        // Backend doesn't support per window vsync, fallback to generic support
+        ee->anim = ecore_animator_add(_ecore_evas_animator_fallback, ee);
+     }
 
 #ifdef RENDER_SYNC
    ecore_evas_first = EINA_TRUE;
@@ -3106,6 +3153,17 @@ _ecore_evas_free(Ecore_Evas *ee)
 
    ee->deleted = EINA_TRUE;
    if (ee->refcount > 0) return;
+
+   // Stop all vsync first
+   if (ee->engine.func->fn_animator_register &&
+       ee->engine.func->fn_animator_unregister)
+     {
+        // Backend support per window vsync
+        ee->engine.func->fn_animator_unregister(ee);
+     }
+   if (ee->anim)
+     ecore_animator_del(ee->anim);
+   ee->anim = NULL;
 
    if (ee->func.fn_pre_free) ee->func.fn_pre_free(ee);
    while (ee->sub_ecore_evas)

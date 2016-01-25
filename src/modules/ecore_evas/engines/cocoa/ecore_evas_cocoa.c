@@ -643,7 +643,19 @@ static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
     _ecore_evas_screen_geometry_get,
     NULL, // screen_dpi_get
     NULL,
-    NULL  // msg_send
+    NULL,  // msg_send
+
+    NULL, // fn_pointer_xy_get
+    NULL, // fn_pointer_warp
+
+    NULL, // fn_wm_rot_preferred_rotation_set
+    NULL, // fn_wm_rot_available_rotations_set
+    NULL, // fn_wm_rot_manual_rotation_done_set
+    NULL, // fn_wm_rot_manual_rotation_done
+
+    NULL, // fn_aux_hints_set
+    NULL, // fn_animator_register
+    NULL  // fn_animator_unregister
   };
 
 static Ecore_Cocoa_Window *

@@ -153,6 +153,9 @@ struct _Ecore_Evas_Engine_Func
    void (*fn_wm_rot_manual_rotation_done) (Ecore_Evas *ee);
 
    void (*fn_aux_hints_set) (Ecore_Evas *ee, const char *hints);
+
+   void (*fn_animator_register)  (Ecore_Evas *ee);
+   void (*fn_animator_unregister)(Ecore_Evas *ee);
 };
 
 struct _Ecore_Evas_Interface
@@ -294,6 +297,9 @@ struct _Ecore_Evas
    Ecore_Evas_Engine engine;
    Eina_List *sub_ecore_evas;
 
+   // Animator code
+   Ecore_Animator *anim;
+
    struct {
       unsigned char avoid_damage;
       unsigned char resize_shape : 1;
@@ -418,6 +424,8 @@ Eina_Module *_ecore_evas_engine_load(const char *engine);
 const Eina_List *_ecore_evas_available_engines_get(void);
 void _ecore_evas_engine_init(void);
 void _ecore_evas_engine_shutdown(void);
+
+EAPI void ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport);
 
 #undef EAPI
 #define EAPI

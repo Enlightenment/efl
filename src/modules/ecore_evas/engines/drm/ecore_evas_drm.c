@@ -172,7 +172,10 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, // wm_rot_manual_rotation_done_set
    NULL, // wm_rot_manual_rotation_done
 
-   NULL  // aux_hints_set
+   NULL, // aux_hints_set
+
+   NULL, // fn_animator_register
+   NULL  // fn_animator_unregister
 };
 
 EAPI Ecore_Evas *
