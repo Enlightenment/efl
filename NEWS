@@ -184,6 +184,24 @@ Fixes:
    * win32: Fix compilation due to recent changes in Evil
    * embryo: change the log catagory of printf in embryo
    * ecore imf: fix imf module load hangs when not even configured
+   * ecore-x: add safety checks for _ecore_x_disp in some functions
+   * Eina: Fix eina_file_mk[ds]temp when a path is passed
+   * elua: Fix use of eina_file_mkstemp after previous patch
+   * Evas GL: Also fix surface cap cache
+   * edje/edje_edit: make posible to unset the program filter part and state
+   * ecore-drm: Cleanup ecore-drm shutdown routine
+   * ecore-evas-drm: Cleanup drm outputs during shutdown
+   * ecore-drm: Refactor logind code to use tty functions
+   * ecore-drm: Destroy any existing eeze watch when we free the device
+   * ecore-drm: Don't unset logind variable when disconnecting a device
+   * ecore-drm: Unify and cleanup tty code
+   * ector: fix potential crash if cairo is not found on the system. (T2938)
+   * Ethumb: make the emotion plugin correctly use the edje frame if requested.
+   * ecore_evas_extn: Add safety checks, fixing a crash in elm_test (T2835)
+   * edje: Fix potential NULL pointer dereference (CID1349866)
+   * efreet: reject invalid "" data for Efreet_Desktop->x hash (T3096)
+   * efreet: add locking for efreet_desktop_x_field_get()
+
 
 Changes since 1.15.0:
 ---------------------
