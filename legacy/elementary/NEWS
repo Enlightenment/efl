@@ -89,6 +89,12 @@ Fixes:
    * config: try to properly update config for popup new align value. (T3008)
    * config: Correct defaults in upgrade of popup conf (T3008)
    * Gengrid: improve item_region_show code
+   * elementary: Fix elm_win_window_id_get function (T3058)
+   * Adjust "context_menu_disabled" configuration.
+   * genlist : fix tree item floating issue when homoegeneous mode is enabled (T2708)
+   * combobox: move responsibility to define filter and content to the user of a combobox
+   * combobox: "return" key handled correctly and removed unreachable code. (T3075)
+   * Genlist: do not select the item two times in case of a double click.
 
 Changes since 1.15.0:
 ---------------------
