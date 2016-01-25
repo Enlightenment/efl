@@ -118,6 +118,7 @@ _extnbuf_data_get(Extnbuf *b, int *w, int *h, int *stride)
 void *
 _extnbuf_lock(Extnbuf *b, int *w, int *h, int *stride)
 {
+   if (!b) return NULL;
    if (!b->have_lock)
      {
         if (b->lockfd >= 0)
@@ -136,7 +137,7 @@ _extnbuf_lock(Extnbuf *b, int *w, int *h, int *stride)
 void
 _extnbuf_unlock(Extnbuf *b)
 {
-   if (!b->have_lock) return;
+   if (!b || !b->have_lock) return;
    if (b->lockfd >= 0)
      {
         if (lockf(b->lockfd, F_ULOCK, 0) < 0)
