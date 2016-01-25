@@ -6,3 +6,31 @@ struct @extern Ecore.Time; [[
                              Each language should manually bind it.
                              @since 1.18
                            ]]
+
+enum Ecore.Pos_Map
+{
+   [[Defines the position mappings for the animation.]]
+   linear, [[Linear 0.0 -> 1.0]]
+   accelerate, [[Start slow then speed up]]
+   decelerate, [[Start fast then slow down]]
+   sinusoidal, [[Start slow, speed up then slow down at end]]
+   accelerate_factor, [[Start slow then speed up, v1 being a power factor,
+                        0.0 being linear, 1.0 being normal accelerate,
+                        2.0 being much more pronounced accelerate (squared),
+                        3.0 being cubed, etc.]]
+   decelerate_factor, [[Start fast then slow down, v1 being a power factor,
+                        0.0 being linear, 1.0 being normal decelerate,
+                        2.0 being much more pronounced decelerate (squared),
+                        3.0 being cubed, etc.]]
+   sinusoidal_factor, [[Start slow, speed up then slow down at end,
+                        v1 being a power factor, 0.0 being linear,
+                        1.0 being normal sinusoidal, 2.0 being much more
+                        pronounced sinusoidal (squared), 3.0 being cubed, etc.]]
+   divisor_interp, [[Start at gradient * v1, interpolated via power of v2 curve]]
+   bounce, [[Start at 0.0 then "drop" like a ball bouncing to the ground at 1.0,
+             and bounce v2 times, with decay factor of v1]]
+   spring, [[Start at 0.0 then "wobble" like a spring rest position 1.0,
+             and wobble v2 times, with decay factor of v1]]
+   cubic_bezier, [[Follow the cubic-bezier curve calculated with the control
+                   points (x1, y1), (x2, y2)]]
+}
