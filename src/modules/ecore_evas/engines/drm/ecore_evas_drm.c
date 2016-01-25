@@ -93,6 +93,7 @@ static int _ecore_evas_drm_render_updates_process(Ecore_Evas *ee, Eina_List *upd
 
 static void _ecore_evas_drm_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *w, int *h);
 static void _ecore_evas_drm_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y);
+Eina_Bool _ecore_evas_drm_pointer_warp(const Ecore_Evas *ee EINA_UNUSED, Evas_Coord x, Evas_Coord y);
 
 /* local variables */
 static int _ecore_evas_init_count = 0;
@@ -165,7 +166,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    NULL, //void (*fn_msg_send) (Ecore_Evas *ee, int maj, int min, void *data, int size);
 
    _ecore_evas_drm_pointer_xy_get,
-   NULL, // pointer_warp
+   _ecore_evas_drm_pointer_warp,
 
    NULL, // wm_rot_preferred_rotation_set
    NULL, // wm_rot_available_rotations_set
@@ -1134,4 +1135,11 @@ _ecore_evas_drm_pointer_xy_get(const Ecore_Evas *ee EINA_UNUSED, Evas_Coord *x, 
 {
    /* get pointer position from input */
    ecore_drm_device_pointer_xy_get(dev, x, y);
+}
+
+Eina_Bool
+_ecore_evas_drm_pointer_warp(const Ecore_Evas *ee EINA_UNUSED, Evas_Coord x, Evas_Coord y)
+{
+   ecore_drm_device_pointer_warp(dev, x, y);
+   return EINA_TRUE;
 }
