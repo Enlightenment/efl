@@ -524,7 +524,7 @@ class Elm.Gengrid (Elm.Layout, Elm.Interface_Scrollable,
             @since 1.10
          ]]
          params {
-            @in tween_mode: Ecore_Pos_Map; [[ Position mappings for animation ]]
+            @in tween_mode: Ecore.Pos_Map; [[ Position mappings for animation ]]
          }
       }
       reorder_mode_stop {
