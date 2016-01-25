@@ -509,6 +509,30 @@ ecore_drm_device_pointer_xy_get(Ecore_Drm_Device *dev, int *x, int *y)
      }
 }
 
+EAPI void
+ecore_drm_device_pointer_warp(Ecore_Drm_Device *dev, int x, int y)
+{
+   Ecore_Drm_Seat *seat;
+   Ecore_Drm_Evdev *edev;
+   Eina_List *l, *ll;
+
+   /* check for valid device */
+   EINA_SAFETY_ON_TRUE_RETURN((!dev) || (dev->drm.fd < 0));
+   EINA_LIST_FOREACH(dev->seats, l, seat)
+     {
+        EINA_LIST_FOREACH(seat->devices, ll, edev)
+          {
+             if (!libinput_device_has_capability(edev->device,
+                                                 LIBINPUT_DEVICE_CAP_POINTER))
+               continue;
+
+             seat->ptr.dx = seat->ptr.ix = x;
+             seat->ptr.dy = seat->ptr.iy = y;
+             _ecore_drm_pointer_motion_post(edev);
+          }
+     }
+}
+
 EAPI Eina_Bool
 ecore_drm_device_software_setup(Ecore_Drm_Device *dev)
 {

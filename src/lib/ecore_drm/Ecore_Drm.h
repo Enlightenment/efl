@@ -836,6 +836,20 @@ EAPI void ecore_drm_output_gamma_set(Ecore_Drm_Output *output, uint16_t size, ui
 EAPI void ecore_drm_device_pointer_xy_get(Ecore_Drm_Device *dev, int *x, int *y);
 
 /**
+ * Warp the pointer position of Ecore_Drm_Device
+ *
+ * This function will set the pointer position of Ecore_Drm_Device
+ *
+ * @param dev The Ecore_Drm_Device to set pointer position for
+ * @param x The new x co-ordinate
+ * @param y The new y co-ordinate
+ *
+ * @ingroup Ecore_Drm_Device_Group
+ * @since 1.18
+ */
+EAPI void ecore_drm_device_pointer_warp(Ecore_Drm_Device *dev, int x, int y);
+
+/**
  * Get the list of drm devices which are allocated.
  *
  * @return Eina_List of drm devices, NULL otherwise

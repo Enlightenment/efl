@@ -283,6 +283,7 @@ void _ecore_drm_tty_restore(Ecore_Drm_Device *dev);
 Ecore_Drm_Evdev *_ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, struct libinput_device *device);
 void _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *evdev);
 Eina_Bool _ecore_drm_evdev_event_process(struct libinput_event *event);
+void _ecore_drm_pointer_motion_post(Ecore_Drm_Evdev *evdev);
 
 Ecore_Drm_Fb *_ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height);
 void _ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
