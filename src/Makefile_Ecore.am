@@ -16,9 +16,13 @@ ecore_eolian_files = \
 	lib/ecore/ecore_mainloop.eo \
 	lib/ecore/ecore_parent.eo
 
+ecore_eolian_type_files = \
+	lib/ecore/ecore_types.eot
+
 ecore_eolian_c = $(ecore_eolian_files:%.eo=%.eo.c)
 ecore_eolian_h = $(ecore_eolian_files:%.eo=%.eo.h) \
-                 $(ecore_eolian_files_legacy:%.eo=%.eo.legacy.h)
+                 $(ecore_eolian_files_legacy:%.eo=%.eo.legacy.h) \
+                 $(ecore_eolian_type_files:%.eot=%.eot.h)
 
 BUILT_SOURCES += \
                  $(ecore_eolian_c) \
@@ -29,7 +33,8 @@ CLEANFILES += \
               $(ecore_eolian_h)
 
 ecoreeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
-ecoreeolianfiles_DATA = $(ecore_eolian_files)
+ecoreeolianfiles_DATA = $(ecore_eolian_files) \
+                        $(ecore_eolian_type_files)
 
 EXTRA_DIST += \
               ${ecoreeolianfiles_DATA}

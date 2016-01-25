@@ -4,6 +4,19 @@ extern "C" {
 
 #include <Efl_Config.h>
 
+#include "ecore_types.eot.h"
+
+
+/**
+ * @ingroup Ecore
+ * @since 1.18
+ *
+ * This type is a alias to struct tm.
+ * It is intended to be a standard way to reference it in .eo files.
+ * Each language should manually bind it.
+ */
+typedef struct tm Ecore_Time;
+
 /**
  * @defgroup Ecore_Init_Group Ecore initialization, shutdown functions and reset on fork.
  * @ingroup Ecore
