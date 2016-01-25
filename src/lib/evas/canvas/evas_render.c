@@ -964,8 +964,8 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
    tmp = eo_data_scope_get(eo_tmp, EVAS_OBJECT_CLASS);
    while (tmp && !(_evas_render_has_map(tmp) && !_evas_render_can_map(tmp)))
      {
-        tmp = eo_data_scope_get(eo_tmp, EVAS_OBJECT_CLASS);
         eo_tmp = tmp->smart.parent;
+        tmp = eo_data_scope_get(eo_tmp, EVAS_OBJECT_CLASS);
      }
 
    if (tmp && _evas_render_has_map(tmp) && !_evas_render_can_map(tmp))
