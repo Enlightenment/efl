@@ -299,6 +299,7 @@ struct _Ecore_Evas
 
    // Animator code
    Ecore_Animator *anim;
+   unsigned int anim_count;
 
    struct {
       unsigned char avoid_damage;
