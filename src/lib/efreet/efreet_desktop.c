@@ -509,6 +509,7 @@ efreet_desktop_x_field_set(Efreet_Desktop *desktop, const char *key, const char 
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, EINA_FALSE);
     EINA_SAFETY_ON_TRUE_RETURN_VAL(strncmp(key, "X-", 2), EINA_FALSE);
+    EINA_SAFETY_ON_TRUE_RETURN_VAL(data && (!data[0]), EINA_FALSE);
 
     eina_lock_take(&_lock);
     if (!desktop->x)
@@ -531,10 +532,15 @@ efreet_desktop_x_field_get(Efreet_Desktop *desktop, const char *key)
     EINA_SAFETY_ON_TRUE_RETURN_VAL(strncmp(key, "X-", 2), NULL);
 
     ret = eina_hash_find(desktop->x, key);
-    if (!ret)
-        return NULL;
+    ret = eina_stringshare_add(ret);
+    if (ret && (!ret[0]))
+      {
+         /* invalid null key somehow accepted; remove */
+         efreet_desktop_x_field_del(desktop, key);
+         eina_stringshare_replace(&ret, NULL);
+      }
 
-    return eina_stringshare_add(ret);
+    return ret;
 }
 
 EAPI Eina_Bool
