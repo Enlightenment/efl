@@ -1119,6 +1119,13 @@ _elm_image_efl_file_file_set(Eo *obj, Elm_Image_Data *sd, const char *file, cons
    if (sd->remote) _elm_url_cancel(sd->remote);
    sd->remote = NULL;
 
+   if (sd->anim)
+     {
+        ELM_SAFE_FREE(sd->anim_timer, ecore_timer_del);
+        sd->play = EINA_FALSE;
+        sd->anim = EINA_FALSE;
+     }
+
    for (i = 0; i < sizeof (remote_uri) / sizeof (remote_uri[0]); ++i)
      if (file && !strncmp(remote_uri[i], file, strlen(remote_uri[i])))
        {
