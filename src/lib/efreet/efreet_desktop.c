@@ -531,8 +531,10 @@ efreet_desktop_x_field_get(Efreet_Desktop *desktop, const char *key)
     EINA_SAFETY_ON_NULL_RETURN_VAL(desktop->x, NULL);
     EINA_SAFETY_ON_TRUE_RETURN_VAL(strncmp(key, "X-", 2), NULL);
 
+    eina_lock_take(&_lock);
     ret = eina_hash_find(desktop->x, key);
     ret = eina_stringshare_add(ret);
+    eina_lock_release(&_lock);
     if (ret && (!ret[0]))
       {
          /* invalid null key somehow accepted; remove */
