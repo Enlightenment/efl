@@ -374,78 +374,65 @@ _edje_mouse_wheel_signal_cb(void *data, Eo *obj, const Eo_Event_Description *des
 }
 
 Eina_Bool
-_edje_timer_cb(void *data EINA_UNUSED)
+_edje_timer_cb(void *data,
+               Eo *obj EINA_UNUSED,
+               const Eo_Event_Description *desc EINA_UNUSED,
+               void *event_info EINA_UNUSED) // FIXME: figure out how to use event_info
 {
    double t;
    Eina_List *l;
-   Eina_List *animl = NULL;
-   Edje *ed;
+   Eina_List *newl = NULL;
+   Edje *ed = data;
 
    t = ecore_loop_time_get();
-   EINA_LIST_FOREACH(_edje_animators, l, ed)
-     {
-        _edje_ref(ed);
-        animl = eina_list_append(animl, ed);
-     }
-   while (animl)
-     {
-        Eina_List *newl = NULL;
+   _edje_ref(ed);
 
-        ed = eina_list_data_get(animl);
-        _edje_block(ed);
-        _edje_util_freeze(ed);
-        animl = eina_list_remove(animl, eina_list_data_get(animl));
-        if ((!ed->paused) && (!ed->delete_me))
+   _edje_block(ed);
+   _edje_util_freeze(ed);
+   if ((!ed->paused) && (!ed->delete_me))
+     {
+        const void *tmp;
+
+        ed->walking_actions = EINA_TRUE;
+        EINA_LIST_FOREACH(ed->actions, l, tmp)
+          newl = eina_list_append(newl, tmp);
+        while (newl)
           {
-             const void *tmp;
+             Edje_Running_Program *runp;
 
-             ed->walking_actions = EINA_TRUE;
-             EINA_LIST_FOREACH(ed->actions, l, tmp)
-               newl = eina_list_append(newl, tmp);
-             while (newl)
+             runp = eina_list_data_get(newl);
+             newl = eina_list_remove(newl, eina_list_data_get(newl));
+             if (!runp->delete_me)
+               _edje_program_run_iterate(runp, t);
+             if (_edje_block_break(ed))
                {
-                  Edje_Running_Program *runp;
-
-                  runp = eina_list_data_get(newl);
-                  newl = eina_list_remove(newl, eina_list_data_get(newl));
-                  if (!runp->delete_me)
-                    _edje_program_run_iterate(runp, t);
-                  if (_edje_block_break(ed))
-                    {
-                       eina_list_free(newl);
-                       newl = NULL;
-                       goto break_prog;
-                    }
+                  eina_list_free(newl);
+                  newl = NULL;
+                  goto break_prog;
                }
-             EINA_LIST_FOREACH(ed->actions, l, tmp)
-               newl = eina_list_append(newl, tmp);
-             while (newl)
-               {
-                  Edje_Running_Program *runp;
-
-                  runp = eina_list_data_get(newl);
-                  newl = eina_list_remove(newl, eina_list_data_get(newl));
-                  if (runp->delete_me)
-                    {
-                       _edje_anim_count--;
-                       runp->edje->actions =
-                         eina_list_remove(runp->edje->actions, runp);
-                       if (!runp->edje->actions)
-                         _edje_animators =
-                           eina_list_remove(_edje_animators, runp->edje);
-                       free(runp);
-                    }
-               }
-             ed->walking_actions = EINA_FALSE;
           }
-break_prog:
-        _edje_unblock(ed);
-        _edje_util_thaw(ed);
-        _edje_unref(ed);
+        EINA_LIST_FOREACH(ed->actions, l, tmp)
+          newl = eina_list_append(newl, tmp);
+        while (newl)
+          {
+             Edje_Running_Program *runp;
+
+             runp = eina_list_data_get(newl);
+             newl = eina_list_remove(newl, eina_list_data_get(newl));
+             if (runp->delete_me)
+               {
+                  _edje_program_run_cleanup(ed, runp);
+                  free(runp);
+               }
+          }
+        ed->walking_actions = EINA_FALSE;
      }
-   if (_edje_anim_count > 0) return ECORE_CALLBACK_RENEW;
-   _edje_timer = NULL;
-   return ECORE_CALLBACK_CANCEL;
+break_prog:
+   _edje_unblock(ed);
+   _edje_util_thaw(ed);
+   _edje_unref(ed);
+
+   return EO_CALLBACK_CONTINUE;
 }
 
 Eina_Bool

@@ -2220,8 +2220,6 @@ EAPI void _edje_edd_shutdown(void);
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_file;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_collection;
 
-extern int              _edje_anim_count;
-extern Ecore_Animator  *_edje_timer;
 extern Eina_List       *_edje_animators;
 extern Eina_List       *_edje_edjes;
 
@@ -2279,7 +2277,7 @@ void  _edje_recalc_do(Edje *ed);
 int   _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, FLOAT_T *x, FLOAT_T *y);
 void  _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y);
 
-Eina_Bool _edje_timer_cb(void *data);
+Eina_Bool _edje_timer_cb(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
 Eina_Bool _edje_pending_timer_cb(void *data);
 void  _edje_callbacks_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp);
 void  _edje_callbacks_focus_add(Evas_Object *obj, Edje *ed, Edje_Real_Part *rp);
@@ -2322,6 +2320,7 @@ void  _edje_clean_objects(Edje *ed);
 void  _edje_ref(Edje *ed);
 void  _edje_unref(Edje *ed);
 
+void _edje_program_run_cleanup(Edje *ed, Edje_Running_Program *runp);
 Eina_Bool _edje_program_run_iterate(Edje_Running_Program *runp, double tim);
 void  _edje_program_end(Edje *ed, Edje_Running_Program *runp);
 void  _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig, const char *ssrc);

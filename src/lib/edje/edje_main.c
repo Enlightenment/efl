@@ -233,12 +233,6 @@ edje_shutdown(void)
    if (--_edje_init_count != 0)
      return _edje_init_count;
 
-   if (_edje_timer)
-     {
-        ecore_animator_del(_edje_timer);
-        _edje_timer = NULL;
-     }
-
    _edje_shutdown_core();
 
    return _edje_init_count;
@@ -248,8 +242,6 @@ edje_shutdown(void)
 void
 _edje_del(Edje *ed)
 {
-   Edje_Running_Program *runp;
-   Edje_Pending_Program *pp;
    Edje_Text_Insert_Filter_Callback *cb;
 
    if (ed->processing_messages)
@@ -265,14 +257,6 @@ _edje_del(Edje *ed)
    if (ed->parent) eina_stringshare_del(ed->parent);
    ed->path = NULL;
    ed->group = NULL;
-   if ((ed->actions) || (ed->pending_actions))
-     {
-        _edje_animators = eina_list_remove(_edje_animators, ed);
-     }
-   EINA_LIST_FREE(ed->actions, runp)
-     free(runp);
-   EINA_LIST_FREE(ed->pending_actions, pp)
-     free(pp);
    eina_hash_free(ed->color_classes);
    eina_hash_free(ed->text_classes);
    eina_hash_free(ed->size_classes);

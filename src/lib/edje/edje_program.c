@@ -4,8 +4,6 @@ static void _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Messa
 static void _edje_param_copy(Edje *ed, Edje_Real_Part *src_part, const char *src_param, Edje_Real_Part *dst_part, const char *dst_param);
 static void _edje_param_set(Edje *ed, Edje_Real_Part *part, const char *param, const char *value);
 
-int _edje_anim_count = 0;
-Ecore_Animator *_edje_timer = NULL;
 Eina_List *_edje_animators = NULL;
 static double _edje_transition_duration_scale = 0;
 
@@ -421,6 +419,15 @@ _edje_object_animation_get(Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 /* Private Routines */
+void
+_edje_program_run_cleanup(Edje *ed, Edje_Running_Program *runp)
+{
+   ed->actions = eina_list_remove(ed->actions, runp);
+   if (!ed->actions)
+     {
+        eo_do(ed->obj, eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed));
+     }
+}
 
 Eina_Bool
 _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
@@ -486,12 +493,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
         _edje_recalc(ed);
         runp->delete_me = EINA_TRUE;
         if (!ed->walking_actions)
-          {
-             _edje_anim_count--;
-             ed->actions = eina_list_remove(ed->actions, runp);
-             if (!ed->actions)
-               _edje_animators = eina_list_remove(_edje_animators, ed);
-          }
+          _edje_program_run_cleanup(ed, runp);
         //	_edje_emit(ed, "program,stop", runp->program->name);
         if (_edje_block_break(ed))
           {
@@ -568,13 +570,8 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
    //   pname = runp->program->name;
    if (!ed->walking_actions)
      {
-        _edje_anim_count--;
-        ed->actions = eina_list_remove(ed->actions, runp);
+        _edje_program_run_cleanup(ed, runp);
         free_runp = 1;
-        if (!ed->actions)
-          {
-             _edje_animators = eina_list_remove(_edje_animators, ed);
-          }
      }
    //   _edje_emit(ed, "program,stop", pname);
    _edje_util_thaw(ed);
@@ -726,15 +723,16 @@ low_mem_current:
                   ed->actions = eina_list_append(ed->actions, runp);
                   goto break_prog;
                }
+
              if (!ed->actions)
-               _edje_animators = eina_list_append(_edje_animators, ed);
+               {
+                  eo_do(ed->obj, eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed));
+               }
              ed->actions = eina_list_append(ed->actions, runp);
+
              runp->start_time = ecore_loop_time_get();
              runp->edje = ed;
              runp->program = pr;
-             if (!_edje_timer)
-               _edje_timer = ecore_animator_add(_edje_timer_cb, NULL);
-             _edje_anim_count++;
           }
         else
           {

@@ -1641,17 +1641,18 @@ _edje_file_del(Edje *ed)
         _edje_cache_file_unref(ed->file);
         ed->file = NULL;
      }
+
+   // Cleanup all animator
    if (ed->actions)
      {
         Edje_Running_Program *runp;
 
         EINA_LIST_FREE(ed->actions, runp)
-          {
-             _edje_anim_count--;
-             free(runp);
-          }
+          free(runp);
      }
    _edje_animators = eina_list_remove(_edje_animators, ed);
+   eo_do(ed->obj, eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed));
+
    if (ed->pending_actions)
      {
         Edje_Pending_Program *pp;
