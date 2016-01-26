@@ -1357,6 +1357,10 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
         if (!fmt->font.fdesc)
           {
              fmt->font.fdesc = evas_font_desc_new();
+
+             /* Set default language according to locale. */
+             eina_stringshare_replace(&(fmt->font.fdesc->lang),
+                                      evas_font_lang_normalize("auto"));
           }
         else if (!fmt->font.fdesc->is_new)
           {
@@ -1515,11 +1519,15 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
          * @subsection evas_textblock_style_lang Language
          *
          * Sets the language of the text for FontConfig.
+         * The value can either be a language text or one of presets:
+         * @li "auto" - Respects system locale settings as language
+         * @li "none" - Disable language support
          * @code
          * lang=<language>
          * @endcode
          */
-        eina_stringshare_replace(&(fmt->font.fdesc->lang), param);
+        eina_stringshare_replace(&(fmt->font.fdesc->lang),
+                                 evas_font_lang_normalize(param));
      }
    else if (cmd == colorstr)
      /**

@@ -423,6 +423,9 @@ _evas_text_efl_text_properties_font_set(Eo *eo_obj, Evas_Text_Data *o, const cha
    if (!(o->cur.font && !strcmp(font, o->cur.font)))
      {
         fdesc = evas_font_desc_new();
+
+        /* Set default language according to locale. */
+        eina_stringshare_replace(&(fdesc->lang), evas_font_lang_normalize("auto"));
         evas_font_name_parse(fdesc, font);
      }
    else

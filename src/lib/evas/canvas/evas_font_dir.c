@@ -469,6 +469,17 @@ evas_font_desc_cmp(const Evas_Font_Description *a,
          (a->spacing == b->spacing) && (a->lang == b->lang));
 }
 
+const char *
+evas_font_lang_normalize(const char *lang)
+{
+   if (!lang || !strcmp(lang, "none")) return NULL;
+
+   if (!strcmp(lang, "auto"))
+     return evas_common_language_from_locale_full_get();
+
+   return lang;
+}
+
 void
 evas_font_name_parse(Evas_Font_Description *fdesc, const char *name)
 {
@@ -520,6 +531,7 @@ evas_font_name_parse(Evas_Font_Description *fdesc, const char *name)
           {
              const char *tmp = name + 6;
              eina_stringshare_replace_length(&(fdesc->lang), tmp, tend - tmp);
+             eina_stringshare_replace(&(fdesc->lang), evas_font_lang_normalize(fdesc->lang));
           }
      }
 }

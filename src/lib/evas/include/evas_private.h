@@ -1591,6 +1591,7 @@ Evas_Font_Description *evas_font_desc_dup(const Evas_Font_Description *fdesc);
 void evas_font_desc_unref(Evas_Font_Description *fdesc);
 int evas_font_desc_cmp(const Evas_Font_Description *a, const Evas_Font_Description *b);
 Evas_Font_Description *evas_font_desc_ref(Evas_Font_Description *fdesc);
+const char *evas_font_lang_normalize(const char *lang);
 void * evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Evas_Font_Size size);
 void evas_font_load_hinting_set(Evas *evas, void *font, int hinting);
 void evas_object_smart_member_cache_invalidate(Evas_Object *obj, Eina_Bool pass_events, Eina_Bool freeze_events, Eina_Bool sourve_invisible);
