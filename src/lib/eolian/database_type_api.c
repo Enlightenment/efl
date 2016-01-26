@@ -16,6 +16,14 @@ eolian_type_alias_get_by_name(const char *name)
    return tp;
 }
 
+EAPI const Eolian_Typedecl *
+eolian_typedecl_alias_get_by_name(const char *name)
+{
+   const Eolian_Type *ret = eolian_type_alias_get_by_name(name);
+   if (!ret) return NULL;
+   return ret->decl;
+}
+
 EAPI const Eolian_Type *
 eolian_type_struct_get_by_name(const char *name)
 {
@@ -26,6 +34,14 @@ eolian_type_struct_get_by_name(const char *name)
    return tp;
 }
 
+EAPI const Eolian_Typedecl *
+eolian_typedecl_struct_get_by_name(const char *name)
+{
+   const Eolian_Type *ret = eolian_type_struct_get_by_name(name);
+   if (!ret) return NULL;
+   return ret->decl;
+}
+
 EAPI const Eolian_Type *
 eolian_type_enum_get_by_name(const char *name)
 {
@@ -34,6 +50,14 @@ eolian_type_enum_get_by_name(const char *name)
    Eolian_Type *tp = eina_hash_find(_enums, shr);
    eina_stringshare_del(shr);
    return tp;
+}
+
+EAPI const Eolian_Typedecl *
+eolian_typedecl_enum_get_by_name(const char *name)
+{
+   const Eolian_Type *ret = eolian_type_enum_get_by_name(name);
+   if (!ret) return NULL;
+   return ret->decl;
 }
 
 EAPI Eina_Iterator *
@@ -76,6 +100,13 @@ eolian_type_type_get(const Eolian_Type *tp)
    return tp->type;
 }
 
+EAPI Eolian_Typedecl_Type
+eolian_typedecl_type_get(const Eolian_Typedecl *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, EOLIAN_TYPEDECL_UNKNOWN);
+   return tp->type;
+}
+
 EAPI Eina_Iterator *
 eolian_type_subtypes_get(const Eolian_Type *tp)
 {
@@ -96,6 +127,15 @@ eolian_type_struct_fields_get(const Eolian_Type *tp)
    return eina_list_iterator_new(tp->field_list);
 }
 
+EAPI Eina_Iterator *
+eolian_typedecl_struct_fields_get(const Eolian_Typedecl *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   if (tp->type != EOLIAN_TYPEDECL_STRUCT)
+     return NULL;
+   return eina_list_iterator_new(tp->field_list);
+}
+
 EAPI const Eolian_Struct_Type_Field *
 eolian_type_struct_field_get(const Eolian_Type *tp, const char *field)
 {
@@ -103,6 +143,19 @@ eolian_type_struct_field_get(const Eolian_Type *tp, const char *field)
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
    if (tp->type != EOLIAN_TYPE_STRUCT)
+     return NULL;
+   sf = eina_hash_find(tp->fields, field);
+   if (!sf) return NULL;
+   return sf;
+}
+
+EAPI const Eolian_Struct_Type_Field *
+eolian_typedecl_struct_field_get(const Eolian_Typedecl *tp, const char *field)
+{
+   Eolian_Struct_Type_Field *sf = NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
+   if (tp->type != EOLIAN_TYPEDECL_STRUCT)
      return NULL;
    sf = eina_hash_find(tp->fields, field);
    if (!sf) return NULL;
@@ -139,6 +192,15 @@ eolian_type_enum_fields_get(const Eolian_Type *tp)
    return eina_list_iterator_new(tp->field_list);
 }
 
+EAPI Eina_Iterator *
+eolian_typedecl_enum_fields_get(const Eolian_Typedecl *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   if (tp->type != EOLIAN_TYPEDECL_ENUM)
+     return NULL;
+   return eina_list_iterator_new(tp->field_list);
+}
+
 EAPI const Eolian_Enum_Type_Field *
 eolian_type_enum_field_get(const Eolian_Type *tp, const char *field)
 {
@@ -146,6 +208,19 @@ eolian_type_enum_field_get(const Eolian_Type *tp, const char *field)
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
    if (tp->type != EOLIAN_TYPE_ENUM)
+     return NULL;
+   ef = eina_hash_find(tp->fields, field);
+   if (!ef) return NULL;
+   return ef;
+}
+
+EAPI const Eolian_Enum_Type_Field *
+eolian_typedecl_enum_field_get(const Eolian_Typedecl *tp, const char *field)
+{
+   Eolian_Enum_Type_Field *ef = NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
+   if (tp->type != EOLIAN_TYPEDECL_ENUM)
      return NULL;
    ef = eina_hash_find(tp->fields, field);
    if (!ef) return NULL;
@@ -206,6 +281,15 @@ eolian_type_enum_legacy_prefix_get(const Eolian_Type *tp)
    return tp->legacy;
 }
 
+EAPI Eina_Stringshare *
+eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typedecl *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   if (tp->type != EOLIAN_TYPEDECL_ENUM)
+     return NULL;
+   return tp->legacy;
+}
+
 EAPI const Eolian_Documentation *
 eolian_type_documentation_get(const Eolian_Type *tp)
 {
@@ -213,8 +297,22 @@ eolian_type_documentation_get(const Eolian_Type *tp)
    return tp->doc;
 }
 
+EAPI const Eolian_Documentation *
+eolian_typedecl_documentation_get(const Eolian_Typedecl *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   return tp->doc;
+}
+
 EAPI Eina_Stringshare *
 eolian_type_file_get(const Eolian_Type *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   return tp->base.file;
+}
+
+EAPI Eina_Stringshare *
+eolian_typedecl_file_get(const Eolian_Typedecl *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    return tp->base.file;
@@ -249,6 +347,17 @@ eolian_type_base_type_get(const Eolian_Type *tp)
 }
 
 EAPI const Eolian_Type *
+eolian_typedecl_base_type_get(const Eolian_Typedecl *tp)
+{
+   Eolian_Typedecl_Type tpt;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   tpt = eolian_typedecl_type_get(tp);
+   if (tpt != EOLIAN_TYPEDECL_ALIAS)
+     return NULL;
+   return tp->base_type;
+}
+
+EAPI const Eolian_Type *
 eolian_type_aliased_base_get(const Eolian_Type *tp)
 {
    if (!tp)
@@ -262,6 +371,14 @@ eolian_type_aliased_base_get(const Eolian_Type *tp)
      }
    else if (eolian_type_type_get(tp) != EOLIAN_TYPE_ALIAS)
      return tp;
+   return eolian_type_aliased_base_get(tp->base_type);
+}
+
+EAPI const Eolian_Type *
+eolian_typedecl_aliased_base_get(const Eolian_Typedecl *tp)
+{
+   if (!tp || tp->type != EOLIAN_TYPEDECL_ALIAS)
+     return NULL;
    return eolian_type_aliased_base_get(tp->base_type);
 }
 
@@ -290,6 +407,13 @@ eolian_type_is_const(const Eolian_Type *tp)
 
 EAPI Eina_Bool
 eolian_type_is_extern(const Eolian_Type *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, EINA_FALSE);
+   return tp->is_extern;
+}
+
+EAPI Eina_Bool
+eolian_typedecl_is_extern(const Eolian_Typedecl *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, EINA_FALSE);
    return tp->is_extern;

@@ -1276,6 +1276,7 @@ EAPI Eina_Stringshare *eolian_class_c_get_function_name_get(const Eolian_Class *
  * @ingroup Eolian
  */
 EAPI const Eolian_Type *eolian_type_alias_get_by_name(const char *name);
+EAPI const Eolian_Typedecl *eolian_typedecl_alias_get_by_name(const char *name);
 
 /*
  * @brief Get a struct by name. Supports namespaces.
@@ -1286,6 +1287,7 @@ EAPI const Eolian_Type *eolian_type_alias_get_by_name(const char *name);
  * @ingroup Eolian
  */
 EAPI const Eolian_Type *eolian_type_struct_get_by_name(const char *name);
+EAPI const Eolian_Typedecl *eolian_typedecl_struct_get_by_name(const char *name);
 
 /*
  * @brief Get an enum by name. Supports namespaces.
@@ -1296,6 +1298,7 @@ EAPI const Eolian_Type *eolian_type_struct_get_by_name(const char *name);
  * @ingroup Eolian
  */
 EAPI const Eolian_Type *eolian_type_enum_get_by_name(const char *name);
+EAPI const Eolian_Typedecl *eolian_typedecl_enum_get_by_name(const char *name);
 
 /*
  * @brief Get an iterator to all aliases contained in a file.
@@ -1342,6 +1345,7 @@ EAPI Eina_Iterator *eolian_type_enums_get_by_file(const char *fname);
  * @ingroup Eolian
  */
 EAPI Eolian_Type_Type eolian_type_type_get(const Eolian_Type *tp);
+EAPI Eolian_Typedecl_Type eolian_typedecl_type_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get an iterator to all subtypes of a type.
@@ -1362,6 +1366,7 @@ EAPI Eina_Iterator *eolian_type_subtypes_get(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_type_struct_fields_get(const Eolian_Type *tp);
+EAPI Eina_Iterator *eolian_typedecl_struct_fields_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get a field of a struct type.
@@ -1374,6 +1379,7 @@ EAPI Eina_Iterator *eolian_type_struct_fields_get(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI const Eolian_Struct_Type_Field *eolian_type_struct_field_get(const Eolian_Type *tp, const char *field);
+EAPI const Eolian_Struct_Type_Field *eolian_typedecl_struct_field_get(const Eolian_Typedecl *tp, const char *field);
 
 /*
  * @brief Get the name of a field of a struct type.
@@ -1384,6 +1390,7 @@ EAPI const Eolian_Struct_Type_Field *eolian_type_struct_field_get(const Eolian_T
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_struct_field_name_get(const Eolian_Struct_Type_Field *fl);
+#define eolian_typedecl_struct_field_name_get eolian_type_struct_field_name_get
 
 /*
  * @brief Get the documentation of a field of a struct type.
@@ -1394,6 +1401,7 @@ EAPI Eina_Stringshare *eolian_type_struct_field_name_get(const Eolian_Struct_Typ
  * @ingroup Eolian
  */
 EAPI const Eolian_Documentation *eolian_type_struct_field_documentation_get(const Eolian_Struct_Type_Field *fl);
+#define eolian_typedecl_struct_field_documentation_get eolian_type_struct_field_documentation_get
 
 /*
  * @brief Get the type of a field of a struct type.
@@ -1404,6 +1412,7 @@ EAPI const Eolian_Documentation *eolian_type_struct_field_documentation_get(cons
  * @ingroup Eolian
  */
 EAPI const Eolian_Type *eolian_type_struct_field_type_get(const Eolian_Struct_Type_Field *fl);
+#define eolian_typedecl_struct_field_type_get eolian_type_struct_field_type_get
 
 /*
  * @brief Get an iterator to all fields of an enum type.
@@ -1414,6 +1423,7 @@ EAPI const Eolian_Type *eolian_type_struct_field_type_get(const Eolian_Struct_Ty
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_type_enum_fields_get(const Eolian_Type *tp);
+EAPI Eina_Iterator *eolian_typedecl_enum_fields_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get a field of an enum type.
@@ -1429,6 +1439,7 @@ EAPI Eina_Iterator *eolian_type_enum_fields_get(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI const Eolian_Enum_Type_Field *eolian_type_enum_field_get(const Eolian_Type *tp, const char *field);
+EAPI const Eolian_Enum_Type_Field *eolian_typedecl_enum_field_get(const Eolian_Typedecl *tp, const char *field);
 
 /*
  * @brief Get the name of a field of an enum type.
@@ -1439,6 +1450,7 @@ EAPI const Eolian_Enum_Type_Field *eolian_type_enum_field_get(const Eolian_Type 
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_enum_field_name_get(const Eolian_Enum_Type_Field *fl);
+#define eolian_typedecl_enum_field_name_get eolian_type_enum_field_name_get
 
 /*
  * @brief Get the C name of a field of an enum type.
@@ -1451,6 +1463,7 @@ EAPI Eina_Stringshare *eolian_type_enum_field_name_get(const Eolian_Enum_Type_Fi
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl);
+#define eolian_typedecl_enum_field_c_name_get eolian_type_enum_field_c_name_get
 
 /*
  * @brief Get the documentation of a field of an enum type.
@@ -1461,6 +1474,7 @@ EAPI Eina_Stringshare *eolian_type_enum_field_c_name_get(const Eolian_Enum_Type_
  * @ingroup Eolian
  */
 EAPI const Eolian_Documentation *eolian_type_enum_field_documentation_get(const Eolian_Enum_Type_Field *fl);
+#define eolian_typedecl_enum_field_documentation_get eolian_type_enum_field_documentation_get
 
 /*
  * @brief Get the value of a field of an enum type.
@@ -1476,6 +1490,7 @@ EAPI const Eolian_Documentation *eolian_type_enum_field_documentation_get(const 
  * @ingroup Eolian
  */
 EAPI const Eolian_Expression *eolian_type_enum_field_value_get(const Eolian_Enum_Type_Field *fl, Eina_Bool force);
+#define eolian_typedecl_enum_field_value_get eolian_type_enum_field_value_get
 
 /*
  * @brief Get the legacy prefix of enum field names. When not specified,
@@ -1487,6 +1502,7 @@ EAPI const Eolian_Expression *eolian_type_enum_field_value_get(const Eolian_Enum
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_enum_legacy_prefix_get(const Eolian_Type *tp);
+EAPI Eina_Stringshare *eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the documentation of a struct/alias type.
@@ -1498,6 +1514,7 @@ EAPI Eina_Stringshare *eolian_type_enum_legacy_prefix_get(const Eolian_Type *tp)
  * @ingroup Eolian
  */
 EAPI const Eolian_Documentation *eolian_type_documentation_get(const Eolian_Type *tp);
+EAPI const Eolian_Documentation *eolian_typedecl_documentation_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the filename of a struct/alias type.
@@ -1508,6 +1525,7 @@ EAPI const Eolian_Documentation *eolian_type_documentation_get(const Eolian_Type
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_file_get(const Eolian_Type *tp);
+EAPI Eina_Stringshare *eolian_typedecl_file_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the base type of a pointer, alias or regular type.
@@ -1521,6 +1539,7 @@ EAPI Eina_Stringshare *eolian_type_file_get(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI const Eolian_Type *eolian_type_base_type_get(const Eolian_Type *tp);
+EAPI const Eolian_Type *eolian_typedecl_base_type_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the lowest base type of an alias stack.
@@ -1538,6 +1557,7 @@ EAPI const Eolian_Type *eolian_type_base_type_get(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI const Eolian_Type *eolian_type_aliased_base_get(const Eolian_Type *tp);
+EAPI const Eolian_Type *eolian_typedecl_aliased_base_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the class associated with an EOLIAN_TYPE_CLASS type.
@@ -1580,6 +1600,7 @@ EAPI Eina_Bool eolian_type_is_const(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_type_is_extern(const Eolian_Type *tp);
+EAPI Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the full C type name of the given type with a name.
