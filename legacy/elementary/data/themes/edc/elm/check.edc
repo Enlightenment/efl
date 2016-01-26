@@ -677,7 +677,6 @@ group { name: "elm/check/base/toggle";
             inherit: "default" 0.0;
             fixed: 0 0;
             visible: 1;
-            aspect: 1.0 1.0; aspect_preference: VERTICAL;
             min: 16 16;
          }
       }
