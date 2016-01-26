@@ -1083,8 +1083,12 @@ _elm_panel_evas_object_smart_move(Eo *obj, Elm_Panel_Data *sd, Evas_Coord x, Eva
    evas_object_move(sd->hit_rect, x, y);
 }
 
+// FIXME: This is definitively not an animator, but a pre calc function
+// Not sure if I can hook on smart calc or on RENDER_PRE, will be left for later
 static Eina_Bool
-_elm_panel_anim_cb(void *data)
+_elm_panel_anim_cb(void *data,
+                   Eo *o EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
    Evas_Object *obj = data;
    ELM_PANEL_DATA_GET(obj, sd);
@@ -1095,7 +1099,7 @@ _elm_panel_anim_cb(void *data)
    if (sd->hidden) _drawer_close(obj, w, h, EINA_FALSE);
    else _drawer_open(obj, w, h, EINA_FALSE);
 
-   return ECORE_CALLBACK_CANCEL;
+   return EO_CALLBACK_STOP;
 }
 
 EOLIAN static void
@@ -1125,7 +1129,8 @@ _elm_panel_evas_object_smart_resize(Eo *obj, Elm_Panel_Data *sd, Evas_Coord w, E
          break;
      }
 
-   ecore_animator_add(_elm_panel_anim_cb, obj);
+   eo_do(obj,
+         eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj));
 }
 
 EOLIAN static void
@@ -1178,6 +1183,15 @@ _elm_panel_eo_base_constructor(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_PANEL));
 
    return obj;
+}
+
+EOLIAN static void
+_elm_panel_eo_base_destructor(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
+{
+   eo_do(obj,
+         eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj));
+
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 EOLIAN static void
@@ -1379,7 +1393,8 @@ _elm_panel_scrollable_content_size_set(Eo *obj, Elm_Panel_Data *sd, double ratio
          break;
      }
 
-   ecore_animator_add(_elm_panel_anim_cb, obj);
+   eo_do(obj,
+         eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj));
 }
 
 EOLIAN static Eina_Bool
