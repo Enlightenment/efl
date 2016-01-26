@@ -1720,6 +1720,7 @@ group { name: "elm/button/base/combobox_vertical/default";
    images.image: "button_normal.png" COMP;
    images.image: "button_clicked.png" COMP;
    images.image: "vertical_separated_bar_glow.png" COMP;
+   images.image: "vertical_separated_bar_disabled.png" COMP;
    parts {
       image { "base"; nomouse;
          desc { "default";
@@ -1741,7 +1742,7 @@ group { name: "elm/button/base/combobox_vertical/default";
          }
          desc { "disabled";
             inherit: "default";
-            color: 255 255 255 64;
+            color: 255 255 255 180;
          }
       }
       rect { "event";
@@ -1784,6 +1785,10 @@ group { name: "elm/button/base/combobox_vertical/default";
             inherit: "default";
             rel1.offset: 0 -2;
             rel2.offset: 0 -1;
+         }
+         desc { "disabled";
+            inherit: "default";
+            image.normal: "vertical_separated_bar_disabled.png";
          }
       }
    }
@@ -1830,12 +1835,14 @@ group { name: "elm/button/base/combobox_vertical/default";
          action: STATE_SET "disabled" 0.0;
          target: "icon_clip";
          target: "event";
+         target: "select_line";
       }
       program { name: "button_state_enabled";
          signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "icon_clip";
          target: "event";
+         target: "select_line";
       }
    }
 }
