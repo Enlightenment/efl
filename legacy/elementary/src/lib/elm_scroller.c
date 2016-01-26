@@ -60,7 +60,7 @@ static void
 _elm_scroller_proxy_set(Evas_Object *obj, Elm_Scroller_Data *sd, Evas_Object *proxy)
 {
    Evas_Coord h_pagesize, v_pagesize;
-   Evas_Coord cw, ch;
+   Evas_Coord cw = 0, ch = 0;
    Evas_Object *content = sd->content;
 
    if (!content) return;
