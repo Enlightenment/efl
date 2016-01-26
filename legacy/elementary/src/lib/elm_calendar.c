@@ -1747,6 +1747,16 @@ _elm_calendar_mark_add(Eo *obj, Elm_Calendar_Data *sd, const char *mark_type, st
    return mark;
 }
 
+EOLIAN static void
+_elm_calendar_mark_del(Eo *obj, Elm_Calendar_Data *sd, Elm_Calendar_Mark *mark)
+{
+   EINA_SAFETY_ON_NULL_RETURN(mark);
+   EINA_SAFETY_ON_TRUE_RETURN(mark->obj != obj);
+
+   sd->marks = eina_list_remove_list(sd->marks, mark->node);
+   _mark_free(mark);
+}
+
 EAPI void
 elm_calendar_mark_del(Elm_Calendar_Mark *mark)
 {

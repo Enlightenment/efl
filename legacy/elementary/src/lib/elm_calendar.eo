@@ -70,6 +70,11 @@ enum Elm.Calendar.Selectable
    day = (1 << 2)
 }
 
+struct Elm.Calendar.Mark; [[Item handle for a calendar mark.
+                            Created with @Elm.Calendar.mark_add and deleted
+                            with @Elm.Calendar.mark_del.
+                          ]]
+
 class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_calendar;
@@ -282,7 +287,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             [[Get a list of all the calendar marks.
 
               See also @.mark_add,
-              \@ref elm_calendar_mark_del(),
+              @.mark_del(),
               @.marks_clear.
 
             ]]
@@ -333,10 +338,10 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
            next or previous month calendar forces marks drawn.
 
            Marks created with this method can be deleted with
-           \@ref elm_calendar_mark_del().
+           @.mark_del().
 
            See also @.marks_draw,
-           \@ref elm_calendar_mark_del().
+           @.mark_del().
 
            \@ref calendar_example_06
          ]]
@@ -358,7 +363,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             * elm_calendar_marks_draw(cal);
             * @endcode
             */
-         return: Elm_Calendar_Mark *;
+         return: Elm.Calendar.Mark *;
          params {
             @in mark_type: const(char)*; [[A string used to define the type of mark. It will be
             emitted to the theme, that should display a related modification on these
@@ -370,11 +375,26 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             mark (that don't repeat), daily, weekly, monthly or annually.]]
          }
       }
+      mark_del {
+         [[
+           Delete mark from the calendar.
+
+           If deleting all calendar marks is required, @.marks_clear()
+           should be used instead of getting marks list and deleting each one.
+
+           See also @.mark_add(),
+           @.marks_clear().
+         ]]
+         legacy: null;
+         params {
+            @in mark: Elm.Calendar.Mark *; [[ The mark to be deleted. ]]
+         }
+      }
       marks_clear {
          [[Remove all calendar's marks
 
            See also  @.mark_add,
-           \@ref elm_calendar_mark_del().
+           @.mark_del().
 
          ]]
 
@@ -391,7 +411,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
            marks will be drawn.
 
            See also  @.mark_add,
-           \@ref elm_calendar_mark_del(),
+           @.mark_del(),
            @.marks_clear.
 
            \@ref calendar_example_06
