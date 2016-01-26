@@ -149,7 +149,6 @@ _table_resize(void *data)
         int current_height, h;
         const char *best_location;
         sd->item = elm_genlist_first_item_get(sd->genlist);
-        elm_genlist_item_selected_set(sd->item, EINA_TRUE);
         //FIXME:- the height of item is zero, sometimes.
         evas_object_geometry_get(elm_object_item_track(sd->item), NULL, NULL,
                                  NULL, &h);
@@ -188,6 +187,7 @@ _activate(Evas_Object *obj)
    elm_object_part_content_set(sd->hover, elm_hover_best_content_location_get
                                (sd->hover, ELM_HOVER_AXIS_VERTICAL), sd->tbl);
    evas_object_show(sd->genlist);
+   elm_genlist_item_selected_set(sd->item, EINA_TRUE);
    evas_object_show(sd->hover);
    eo_do(obj, eo_event_callback_call(ELM_COMBOBOX_EVENT_EXPANDED, NULL));
 }
@@ -217,7 +217,6 @@ _gl_filter_finished_cb(void *data, Eo *obj EINA_UNUSED,
    if (sd->first_filter)
      {
         sd->first_filter = EINA_FALSE;
-        elm_combobox_hover_end(data);
         return EINA_TRUE;
      }
 
@@ -229,6 +228,7 @@ _gl_filter_finished_cb(void *data, Eo *obj EINA_UNUSED,
         else _table_resize(data);
      }
    else elm_combobox_hover_end(data);
+   elm_genlist_item_selected_set(sd->item, EINA_TRUE);
    return EINA_TRUE;
 }
 
