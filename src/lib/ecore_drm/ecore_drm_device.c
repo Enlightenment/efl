@@ -65,7 +65,7 @@ _ecore_drm_device_cb_page_flip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSE
    if (next)
      {
         output->next = NULL;
-        ecore_drm_fb_send(output->dev, next, NULL, NULL);
+        _ecore_drm_output_fb_send(output->dev, next, output);
      }
 }
 
