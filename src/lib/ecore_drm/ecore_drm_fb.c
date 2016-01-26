@@ -174,6 +174,58 @@ ecore_drm_fb_set(Ecore_Drm_Device *dev EINA_UNUSED, Ecore_Drm_Fb *fb EINA_UNUSED
    */
 }
 
+void
+_ecore_drm_output_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Output *output)
+{
+   if (output->next) WRN("fb reused too soon, tearing may be visible");
+
+   /* If we changed display parameters or haven't displayed anything
+    * yet we need to do a SetCrtc
+    */
+   if ((!output->current) ||
+       (output->current->stride != fb->stride))
+     {
+        int x = 0, y = 0;
+
+        if (!output->cloned)
+          {
+             x = output->x;
+             y = output->y;
+          }
+        if (drmModeSetCrtc(dev->drm.fd, output->crtc_id, fb->id,
+                           x, y, &output->conn_id, 1,
+                           &output->current_mode->info))
+          {
+             ERR("Failed to set Mode %dx%d for Output %s: %m",
+                 output->current_mode->width, output->current_mode->height,
+                 output->name);
+             return;
+          }
+          output->current = fb;
+          output->next = NULL;
+
+          /* TODO: set dpms on ?? */
+          return;
+     }
+
+   /* The normal case: We do a flip which waits for vblank and
+    * posts an event.
+    */
+   if (drmModePageFlip(dev->drm.fd, output->crtc_id, fb->id,
+                       DRM_MODE_PAGE_FLIP_EVENT, output) < 0)
+     {
+        /* Failure to flip - likely there's already a flip
+         * queued, and we can't cancel, so just store this
+         * fb for later and it'll be queued in the flip
+         * handler */
+        DBG("flip crtc %u for connector %u failed, re-queued",
+            output->crtc_id, output->conn_id);
+        output->next = fb;
+        return;
+     }
+   output->current = fb;
+}
+
 EAPI void
 ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb func EINA_UNUSED, void *data EINA_UNUSED)
 {
@@ -199,52 +251,6 @@ ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb
      {
         if ((!output->enabled) || (!output->current_mode)) continue;
 
-        if (output->next) WRN("fb reused too soon, tearing may be visible");
-
-        /* If we changed display parameters or haven't displayed anything
-         * yet we need to do a SetCrtc
-         */
-        if ((!output->current) ||
-            (output->current->stride != fb->stride))
-          {
-             int x = 0, y = 0;
-
-             if (!output->cloned)
-               {
-                  x = output->x;
-                  y = output->y;
-               }
-             if (drmModeSetCrtc(dev->drm.fd, output->crtc_id, fb->id,
-                                x, y, &output->conn_id, 1,
-                                &output->current_mode->info))
-               {
-                  ERR("Failed to set Mode %dx%d for Output %s: %m",
-                      output->current_mode->width, output->current_mode->height,
-                      output->name);
-                  continue;
-               }
-               output->current = fb;
-               output->next = NULL;
-
-               /* TODO: set dpms on ?? */
-               continue;
-          }
-
-        /* The normal case: We do a flip which waits for vblank and
-         * posts an event.
-         */
-        if (drmModePageFlip(dev->drm.fd, output->crtc_id, fb->id,
-                            DRM_MODE_PAGE_FLIP_EVENT, output) < 0)
-          {
-             /* Failure to flip - likely there's already a flip
-              * queued, and we can't cancel, so just store this
-              * fb for later and it'll be queued in the flip
-              * handler */
-             DBG("flip crtc %u for connector %u failed, re-queued",
-                 output->crtc_id, output->conn_id);
-             output->next = fb;
-             continue;
-          }
-        output->current = fb;
+        _ecore_drm_output_fb_send(dev, fb, output);
      }
 }

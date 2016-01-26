@@ -293,6 +293,7 @@ void _ecore_drm_output_frame_finish(Ecore_Drm_Output *output);
 void _ecore_drm_outputs_update(Ecore_Drm_Device *dev);
 void _ecore_drm_output_render_enable(Ecore_Drm_Output *output);
 void _ecore_drm_output_render_disable(Ecore_Drm_Output *output);
+void _ecore_drm_output_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Output *output);
 
 Eina_Bool _ecore_drm_logind_connect(Ecore_Drm_Device *dev);
 void _ecore_drm_logind_disconnect(Ecore_Drm_Device *dev);
