@@ -30,6 +30,17 @@
        return val;                                              \
     }
 
+#define ELM_ANIMATOR_CONNECT(Obj, Bool, Callback, Data)                 \
+  eo_do(Obj,                                                            \
+        eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, Callback, Data), \
+        eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, Callback, Data)); \
+  Bool = 1;
+
+#define ELM_ANIMATOR_DISCONNECT(Obj, Bool, Callback, Data)              \
+  eo_do(Obj,                                                            \
+        eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, Callback, Data)); \
+  Bool = 0;
+
 static const char SIG_CHANGED[] = "changed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CHANGED, ""},
@@ -49,6 +60,15 @@ static void
 _elm_scroll_wanted_coordinates_update(Elm_Scrollable_Smart_Interface_Data *sid,
                                       Evas_Coord x,
                                       Evas_Coord y);
+
+static Eina_Bool _elm_scroll_hold_animator(void *data, Eo *o, const Eo_Event_Description *desc, void *event_info);
+static Eina_Bool _elm_scroll_on_hold_animator(void *data, Eo *o, const Eo_Event_Description *desc, void *event_info);
+static Eina_Bool _elm_scroll_scroll_to_y_animator(void *data, Eo *o, const Eo_Event_Description *desc, void *event_info);
+static Eina_Bool _elm_scroll_scroll_to_x_animator(void *data, Eo *o, const Eo_Event_Description *desc, void *event_info);
+static Eina_Bool _elm_scroll_bounce_y_animator(void *data, Eo *o, const Eo_Event_Description *desc, void *event_info);
+static Eina_Bool _elm_scroll_bounce_x_animator(void *data, Eo *o, const Eo_Event_Description *desc, void *event_info);
+static Eina_Bool _elm_scroll_momentum_animator(void *data, Eo *o, const Eo_Event_Description *desc, void *event_info);
+
 static double
 _round(double value, int pos)
 {
@@ -1269,7 +1289,7 @@ _elm_scroll_momentum_end(Elm_Scrollable_Smart_Interface_Data *sid)
         eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&px, &py));
         _elm_scroll_wanted_coordinates_update(sid, px, py);
 
-        ELM_SAFE_FREE(sid->down.momentum_animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.momentum_animator, _elm_scroll_momentum_animator, sid);
         sid->down.bounce_x_hold = EINA_FALSE;
         sid->down.bounce_y_hold = EINA_FALSE;
         sid->down.ax = 0;
@@ -1284,7 +1304,7 @@ _elm_scroll_momentum_end(Elm_Scrollable_Smart_Interface_Data *sid)
 }
 
 static Eina_Bool
-_elm_scroll_bounce_x_animator(void *data)
+_elm_scroll_bounce_x_animator(void *data, Eo *o EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    ELM_SCROLL_IFACE_DATA_GET_OR_RETURN_VAL(data, sid, EINA_FALSE);
    Evas_Coord x, y, dx, w, odx, ed, md;
@@ -1327,20 +1347,19 @@ _elm_scroll_bounce_x_animator(void *data)
              if ((!sid->down.bounce_y_animator) &&
                  (!sid->scrollto.y.animator))
                _elm_scroll_anim_stop(sid);
-             sid->down.bounce_x_animator = NULL;
              sid->down.pdx = 0;
              sid->bouncemex = EINA_FALSE;
              _elm_scroll_momentum_end(sid);
              if (sid->content_info.resized)
                _elm_scroll_wanted_region_set(sid->obj);
-             return ECORE_CALLBACK_CANCEL;
+             ELM_ANIMATOR_CONNECT(sid->obj, sid->down.bounce_x_animator, _elm_scroll_bounce_x_animator, sid->obj);
           }
      }
-   return ECORE_CALLBACK_RENEW;
+   return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool
-_elm_scroll_bounce_y_animator(void *data)
+_elm_scroll_bounce_y_animator(void *data, Eo *o EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    ELM_SCROLL_IFACE_DATA_GET_OR_RETURN_VAL(data, sid, EINA_FALSE);
    Evas_Coord x, y, dy, h, ody, ed, md;
@@ -1383,17 +1402,16 @@ _elm_scroll_bounce_y_animator(void *data)
              if ((!sid->down.bounce_x_animator) &&
                  (!sid->scrollto.y.animator))
                _elm_scroll_anim_stop(sid);
-             sid->down.bounce_y_animator = NULL;
              sid->down.pdy = 0;
              sid->bouncemey = EINA_FALSE;
              _elm_scroll_momentum_end(sid);
              if (sid->content_info.resized)
                _elm_scroll_wanted_region_set(sid->obj);
-             return ECORE_CALLBACK_CANCEL;
+             ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.bounce_y_animator, _elm_scroll_bounce_y_animator, sid->obj);
           }
      }
 
-   return ECORE_CALLBACK_RENEW;
+   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -1408,13 +1426,13 @@ _elm_scroll_bounce_eval(Elm_Scrollable_Smart_Interface_Data *sid)
    if (sid->down.now) return;  // down bounce while still held down
    if (sid->down.onhold_animator)
      {
-        ELM_SAFE_FREE(sid->down.onhold_animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.onhold_animator, _elm_scroll_on_hold_animator, sid);
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
      }
    if (sid->down.hold_animator)
      {
-        ELM_SAFE_FREE(sid->down.hold_animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.hold_animator, _elm_scroll_hold_animator, sid);
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
      }
@@ -1438,9 +1456,8 @@ _elm_scroll_bounce_eval(Elm_Scrollable_Smart_Interface_Data *sid)
           {
              if (sid->bouncemex)
                {
-                  ELM_SAFE_FREE(sid->scrollto.x.animator, ecore_animator_del);
-                  sid->down.bounce_x_animator =
-                    ecore_animator_add(_elm_scroll_bounce_x_animator, sid->obj);
+                  ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.x.animator, _elm_scroll_scroll_to_x_animator, sid);
+                  ELM_ANIMATOR_CONNECT(sid->obj, sid->down.bounce_x_animator, _elm_scroll_bounce_x_animator, sid->obj);
                   sid->down.anim_start2 = ecore_loop_time_get();
                   sid->down.bx = bx;
                   sid->down.bx0 = bx;
@@ -1458,9 +1475,8 @@ _elm_scroll_bounce_eval(Elm_Scrollable_Smart_Interface_Data *sid)
           {
              if (sid->bouncemey)
                {
-                  ELM_SAFE_FREE(sid->scrollto.y.animator, ecore_animator_del);
-                  sid->down.bounce_y_animator =
-                    ecore_animator_add(_elm_scroll_bounce_y_animator, sid->obj);
+                  ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.y.animator, _elm_scroll_scroll_to_y_animator, sid);
+                  ELM_ANIMATOR_CONNECT(sid->obj, sid->down.bounce_y_animator, _elm_scroll_bounce_y_animator, sid->obj);
                   sid->down.anim_start3 = ecore_loop_time_get();
                   sid->down.by = by;
                   sid->down.by0 = by;
@@ -1720,18 +1736,18 @@ _elm_scroll_content_region_show_internal(Evas_Object *obj,
    if ((sid->down.bounce_x_animator) || (sid->down.bounce_y_animator) ||
        (sid->scrollto.x.animator) || (sid->scrollto.y.animator))
      {
-        ELM_SAFE_FREE(sid->scrollto.x.animator, ecore_animator_del);
-        ELM_SAFE_FREE(sid->scrollto.y.animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.x.animator, _elm_scroll_scroll_to_x_animator, sid);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.y.animator, _elm_scroll_scroll_to_y_animator, sid);
         if (sid->down.bounce_x_animator)
           {
-             ELM_SAFE_FREE(sid->down.bounce_x_animator, ecore_animator_del);
+             ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.bounce_x_animator, _elm_scroll_bounce_x_animator, sid->obj);
              sid->bouncemex = EINA_FALSE;
              if (sid->content_info.resized)
                _elm_scroll_wanted_region_set(sid->obj);
           }
         if (sid->down.bounce_y_animator)
           {
-             ELM_SAFE_FREE(sid->down.bounce_y_animator, ecore_animator_del);
+             ELM_ANIMATOR_CONNECT(sid->obj, sid->down.bounce_y_animator, _elm_scroll_bounce_y_animator, sid->obj);
              sid->bouncemey = EINA_FALSE;
              if (sid->content_info.resized)
                _elm_scroll_wanted_region_set(sid->obj);
@@ -1741,7 +1757,7 @@ _elm_scroll_content_region_show_internal(Evas_Object *obj,
      }
    if (sid->down.hold_animator)
      {
-        ELM_SAFE_FREE(sid->down.hold_animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.hold_animator, _elm_scroll_hold_animator, sid);
         _elm_scroll_drag_stop(sid);
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
@@ -1749,7 +1765,7 @@ _elm_scroll_content_region_show_internal(Evas_Object *obj,
    ELM_SAFE_FREE(sid->down.hold_enterer, ecore_idle_enterer_del);
    if (sid->down.momentum_animator)
      {
-        ELM_SAFE_FREE(sid->down.momentum_animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.momentum_animator, _elm_scroll_momentum_animator, sid);
         sid->down.bounce_x_hold = EINA_FALSE;
         sid->down.bounce_y_hold = EINA_FALSE;
         sid->down.ax = 0;
@@ -1905,18 +1921,18 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
      {
         _elm_scroll_anim_stop(sid);
      }
-   ELM_SAFE_FREE(sid->scrollto.x.animator, ecore_animator_del);
-   ELM_SAFE_FREE(sid->scrollto.y.animator, ecore_animator_del);
+   ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.x.animator, _elm_scroll_scroll_to_x_animator, sid);
+   ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.y.animator, _elm_scroll_scroll_to_y_animator, sid);
    if (sid->down.bounce_x_animator)
      {
-        ELM_SAFE_FREE(sid->down.bounce_x_animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.bounce_x_animator, _elm_scroll_bounce_x_animator, sid->obj);
         sid->bouncemex = EINA_FALSE;
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
      }
    if (sid->down.bounce_y_animator)
      {
-        ELM_SAFE_FREE(sid->down.bounce_y_animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.bounce_y_animator, _elm_scroll_bounce_y_animator, sid->obj);
         sid->bouncemey = EINA_FALSE;
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
@@ -2067,7 +2083,7 @@ _paging_is_enabled(Elm_Scrollable_Smart_Interface_Data *sid)
 }
 
 static Eina_Bool
-_elm_scroll_momentum_animator(void *data)
+_elm_scroll_momentum_animator(void *data, Eo *o EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    double t, at, dt, p, r;
    Elm_Scrollable_Smart_Interface_Data *sid = data;
@@ -2076,8 +2092,8 @@ _elm_scroll_momentum_animator(void *data)
 
    if (!sid->pan_obj)
      {
-        sid->down.momentum_animator = NULL;
-        return ECORE_CALLBACK_CANCEL;
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.momentum_animator, _elm_scroll_momentum_animator, sid);
+        return EO_CALLBACK_CONTINUE;
      }
 
    t = ecore_loop_time_get();
@@ -2136,7 +2152,7 @@ _elm_scroll_momentum_animator(void *data)
           {
              _elm_scroll_anim_stop(sid);
 
-             sid->down.momentum_animator = NULL;
+             ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.momentum_animator, _elm_scroll_momentum_animator, sid);
              sid->down.bounce_x_hold = EINA_FALSE;
              sid->down.bounce_y_hold = EINA_FALSE;
              sid->down.ax = 0;
@@ -2145,12 +2161,10 @@ _elm_scroll_momentum_animator(void *data)
              sid->down.pdy = 0;
              if (sid->content_info.resized)
                _elm_scroll_wanted_region_set(sid->obj);
-
-             return ECORE_CALLBACK_CANCEL;
           }
      }
 
-   return ECORE_CALLBACK_RENEW;
+   return EO_CALLBACK_CONTINUE;
 }
 
 static Evas_Coord
@@ -2248,17 +2262,13 @@ _elm_scroll_page_y_get(Elm_Scrollable_Smart_Interface_Data *sid,
 }
 
 static Eina_Bool
-_elm_scroll_scroll_to_x_animator(void *data)
+_elm_scroll_scroll_to_x_animator(void *data, Eo *o EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
    Evas_Coord px, py;
    double t, tt;
 
-   if (!sid->pan_obj)
-     {
-        sid->scrollto.x.animator = NULL;
-        return ECORE_CALLBACK_CANCEL;
-     }
+   if (!sid->pan_obj) goto on_end;
 
    t = ecore_loop_time_get();
    tt = (t - sid->scrollto.x.t_start) /
@@ -2276,24 +2286,27 @@ _elm_scroll_scroll_to_x_animator(void *data)
         sid->down.x = sid->down.history[0].x;
         sid->down.pdx = 0;
         _elm_scroll_wanted_coordinates_update(sid, px, py);
-        sid->scrollto.x.animator = NULL;
         if ((!sid->scrollto.y.animator) && (!sid->down.bounce_y_animator))
           _elm_scroll_anim_stop(sid);
-        return ECORE_CALLBACK_CANCEL;
+        goto on_end;
      }
    eo_do(sid->obj, elm_interface_scrollable_content_pos_set(px, py, EINA_TRUE));
    _elm_scroll_wanted_coordinates_update(sid, px, py);
-   return ECORE_CALLBACK_RENEW;
+   return EO_CALLBACK_CONTINUE;
+
+ on_end:
+   ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.x.animator, _elm_scroll_scroll_to_x_animator, sid);
+   return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool
-_elm_scroll_scroll_to_y_animator(void *data)
+_elm_scroll_scroll_to_y_animator(void *data, Eo *o EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
    Evas_Coord px, py;
    double t, tt;
 
-   if (!sid->pan_obj) return EINA_FALSE;
+   if (!sid->pan_obj) goto on_end;
 
    t = ecore_loop_time_get();
    tt = (t - sid->scrollto.y.t_start) /
@@ -2311,15 +2324,18 @@ _elm_scroll_scroll_to_y_animator(void *data)
         sid->down.y = sid->down.history[0].y;
         sid->down.pdy = 0;
         _elm_scroll_wanted_coordinates_update(sid, px, py);
-        sid->scrollto.y.animator = NULL;
         if ((!sid->scrollto.x.animator) && (!sid->down.bounce_x_animator))
           _elm_scroll_anim_stop(sid);
-        return ECORE_CALLBACK_CANCEL;
+        goto on_end;
      }
    eo_do(sid->obj, elm_interface_scrollable_content_pos_set(px, py, EINA_TRUE));
    _elm_scroll_wanted_coordinates_update(sid, px, py);
 
-   return ECORE_CALLBACK_RENEW;
+   return EO_CALLBACK_CONTINUE;
+
+ on_end:
+   ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.y.animator, _elm_scroll_scroll_to_y_animator, sid);
+   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -2350,14 +2366,13 @@ _elm_scroll_scroll_to_y(Elm_Scrollable_Smart_Interface_Data *sid,
    sid->scrollto.y.t_end = t + t_in;
    if (!sid->scrollto.y.animator)
      {
-        sid->scrollto.y.animator =
-          ecore_animator_add(_elm_scroll_scroll_to_y_animator, sid);
+        ELM_ANIMATOR_CONNECT(sid->obj, sid->scrollto.y.animator, _elm_scroll_scroll_to_y_animator, sid);
         if (!sid->scrollto.x.animator)
           _elm_scroll_anim_start(sid);
      }
    if (sid->down.bounce_y_animator)
      {
-        ELM_SAFE_FREE(sid->down.bounce_y_animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.bounce_y_animator, _elm_scroll_bounce_y_animator, sid->obj);
         _elm_scroll_momentum_end(sid);
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
@@ -2394,14 +2409,13 @@ _elm_scroll_scroll_to_x(Elm_Scrollable_Smart_Interface_Data *sid,
    sid->scrollto.x.t_end = t + t_in;
    if (!sid->scrollto.x.animator)
      {
-        sid->scrollto.x.animator =
-          ecore_animator_add(_elm_scroll_scroll_to_x_animator, sid);
+        ELM_ANIMATOR_CONNECT(sid->obj, sid->scrollto.x.animator, _elm_scroll_scroll_to_x_animator, sid);
         if (!sid->scrollto.y.animator)
           _elm_scroll_anim_start(sid);
      }
    if (sid->down.bounce_x_animator)
      {
-        ELM_SAFE_FREE(sid->down.bounce_x_animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.bounce_x_animator, _elm_scroll_bounce_x_animator, sid->obj);
         _elm_scroll_momentum_end(sid);
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
@@ -2442,7 +2456,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
      {
         if (sid->down.onhold_animator)
           {
-             ELM_SAFE_FREE(sid->down.onhold_animator, ecore_animator_del);
+             ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.onhold_animator, _elm_scroll_on_hold_animator, sid);
              if (sid->content_info.resized)
                _elm_scroll_wanted_region_set(sid->obj);
           }
@@ -2573,9 +2587,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                                      (!elm_widget_drag_child_locked_y_get
                                         (sid->obj)))
                                    {
-                                      sid->down.momentum_animator =
-                                        ecore_animator_add
-                                          (_elm_scroll_momentum_animator, sid);
+                                      ELM_ANIMATOR_CONNECT(sid->obj, sid->down.momentum_animator, _elm_scroll_momentum_animator, sid);
                                       ev->event_flags |=
                                         EVAS_EVENT_FLAG_ON_SCROLL;
                                       _elm_scroll_anim_start(sid);
@@ -2665,7 +2677,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
           }
         if (sid->down.hold_animator)
           {
-             ELM_SAFE_FREE(sid->down.hold_animator, ecore_animator_del);
+             ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.hold_animator, _elm_scroll_hold_animator, sid);
              if (sid->content_info.resized)
                _elm_scroll_wanted_region_set(sid->obj);
           }
@@ -2733,25 +2745,25 @@ _elm_scroll_mouse_down_event_cb(void *data,
         sid->down.hold = EINA_TRUE;
         _elm_scroll_anim_stop(sid);
      }
-   ELM_SAFE_FREE(sid->scrollto.x.animator, ecore_animator_del);
-   ELM_SAFE_FREE(sid->scrollto.y.animator, ecore_animator_del);
+   ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.x.animator, _elm_scroll_scroll_to_x_animator, sid);
+   ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.y.animator, _elm_scroll_scroll_to_y_animator, sid);
    if (sid->down.bounce_x_animator)
      {
-        ELM_SAFE_FREE(sid->down.bounce_x_animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.bounce_x_animator, _elm_scroll_bounce_x_animator, sid->obj);
         sid->bouncemex = EINA_FALSE;
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
      }
    if (sid->down.bounce_y_animator)
      {
-        ELM_SAFE_FREE(sid->down.bounce_y_animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.bounce_y_animator, _elm_scroll_bounce_y_animator, sid->obj);
         sid->bouncemey = EINA_FALSE;
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
      }
    if (sid->down.hold_animator)
      {
-        ELM_SAFE_FREE(sid->down.hold_animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.hold_animator, _elm_scroll_hold_animator, sid);
         _elm_scroll_drag_stop(sid);
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
@@ -2759,7 +2771,7 @@ _elm_scroll_mouse_down_event_cb(void *data,
    ELM_SAFE_FREE(sid->down.hold_enterer, ecore_idle_enterer_del);
    if (sid->down.momentum_animator)
      {
-        ELM_SAFE_FREE(sid->down.momentum_animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.momentum_animator, _elm_scroll_momentum_animator, sid);
         sid->down.bounce_x_hold = EINA_FALSE;
         sid->down.bounce_y_hold = EINA_FALSE;
         sid->down.ax = 0;
@@ -3084,18 +3096,24 @@ _elm_scroll_hold_enterer(void *data)
 }
 
 static Eina_Bool
-_elm_scroll_hold_animator(void *data)
+_elm_scroll_hold_animator(void *data,
+                          Eo *o EINA_UNUSED,
+                          const Eo_Event_Description *desc EINA_UNUSED,
+                          void *event_info EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
    ecore_idle_enterer_del(sid->down.hold_enterer);
    sid->down.hold_enterer =
      ecore_idle_enterer_before_add(_elm_scroll_hold_enterer, sid);
-   return ECORE_CALLBACK_RENEW;
+   return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool
-_elm_scroll_on_hold_animator(void *data)
+_elm_scroll_on_hold_animator(void *data,
+                             Eo *o EINA_UNUSED,
+                             const Eo_Event_Description *desc EINA_UNUSED,
+                             void *event_info EINA_UNUSED)
 {
    double t, td;
    double vx, vy;
@@ -3141,7 +3159,7 @@ _elm_scroll_on_hold_animator(void *data)
      }
    sid->down.onhold_tlast = t;
 
-   return ECORE_CALLBACK_RENEW;
+   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -3175,7 +3193,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
        !(sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
      {
         Evas_Coord px = 0;
-        ELM_SAFE_FREE(sid->scrollto.x.animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.x.animator, _elm_scroll_scroll_to_x_animator, sid);
         eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, NULL));
         sid->down.sx = px;
         sid->down.x = sid->down.history[0].x;
@@ -3185,7 +3203,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
        !(sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL))
      {
         Evas_Coord py = 0;
-        ELM_SAFE_FREE(sid->scrollto.y.animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.y.animator, _elm_scroll_scroll_to_y_animator, sid);
         eo_do(sid->pan_obj, elm_obj_pan_pos_get(NULL, &py));
         sid->down.sy = py;
         sid->down.y = sid->down.history[0].y;
@@ -3394,9 +3412,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
 
              sid->down.hold_x = x;
              sid->down.hold_y = y;
-             if (!sid->down.hold_animator)
-               sid->down.hold_animator =
-                 ecore_animator_add(_elm_scroll_hold_animator, sid);
+             ELM_ANIMATOR_CONNECT(sid->obj, sid->down.hold_animator, _elm_scroll_hold_animator, sid);
           }
         else
           {
@@ -3465,15 +3481,15 @@ _elm_scroll_mouse_move_event_cb(void *data,
                   sid->down.onhold_vxe = 0.0;
                   sid->down.onhold_vye = 0.0;
                   sid->down.onhold_tlast = 0.0;
-                  sid->down.onhold_animator = ecore_animator_add
-                      (_elm_scroll_on_hold_animator, sid);
+
+                  ELM_ANIMATOR_CONNECT(sid->obj, sid->down.onhold_animator, _elm_scroll_on_hold_animator, sid);
                }
           }
         else
           {
              if (sid->down.onhold_animator)
                {
-                  ELM_SAFE_FREE(sid->down.onhold_animator, ecore_animator_del);
+                  ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.onhold_animator, _elm_scroll_on_hold_animator, sid);
                   if (sid->content_info.resized)
                     _elm_scroll_wanted_region_set(sid->obj);
                }
@@ -4080,7 +4096,7 @@ _elm_interface_scrollable_momentum_animator_disabled_set(Eo *obj EINA_UNUSED, El
      {
         if (sid->down.momentum_animator)
           {
-             ELM_SAFE_FREE(sid->down.momentum_animator, ecore_animator_del);
+             ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.momentum_animator, _elm_scroll_momentum_animator, sid);
              if (sid->content_info.resized)
                _elm_scroll_wanted_region_set(sid->obj);
           }
@@ -4099,8 +4115,8 @@ _elm_interface_scrollable_bounce_animator_disabled_set(Eo *obj EINA_UNUSED, Elm_
    sid->bounce_animator_disabled = disabled;
    if (sid->bounce_animator_disabled)
      {
-        ELM_SAFE_FREE(sid->scrollto.x.animator, ecore_animator_del);
-        ELM_SAFE_FREE(sid->scrollto.y.animator, ecore_animator_del);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.x.animator, _elm_scroll_scroll_to_x_animator, sid);
+        ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.y.animator, _elm_scroll_scroll_to_y_animator, sid);
      }
 }
 
@@ -4224,7 +4240,7 @@ _elm_interface_scrollable_freeze_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_I
      {
         if (sid->down.onhold_animator)
           {
-             ELM_SAFE_FREE(sid->down.onhold_animator, ecore_animator_del);
+             ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.onhold_animator, _elm_scroll_on_hold_animator, sid);
              if (sid->content_info.resized)
                _elm_scroll_wanted_region_set(sid->obj);
           }
@@ -4524,13 +4540,13 @@ _elm_interface_scrollable_evas_object_smart_del(Eo *obj, Elm_Scrollable_Smart_In
    if (!sid->extern_pan) evas_object_del(sid->pan_obj);
 
    ecore_idle_enterer_del(sid->down.hold_enterer);
-   ecore_animator_del(sid->down.hold_animator);
-   ecore_animator_del(sid->down.onhold_animator);
-   ecore_animator_del(sid->down.momentum_animator);
-   ecore_animator_del(sid->down.bounce_x_animator);
-   ecore_animator_del(sid->down.bounce_y_animator);
-   ecore_animator_del(sid->scrollto.x.animator);
-   ecore_animator_del(sid->scrollto.y.animator);
+   ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.hold_animator, _elm_scroll_hold_animator, sid);
+   ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.onhold_animator, _elm_scroll_on_hold_animator, sid);
+   ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.momentum_animator, _elm_scroll_momentum_animator, sid);
+   ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.bounce_x_animator, _elm_scroll_bounce_x_animator, sid->obj);
+   ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.bounce_y_animator, _elm_scroll_bounce_y_animator, sid->obj);
+   ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.x.animator, _elm_scroll_scroll_to_x_animator, sid);
+   ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.y.animator, _elm_scroll_scroll_to_y_animator, sid);
 }
 
 EOLIAN static void

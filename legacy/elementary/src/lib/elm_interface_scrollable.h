@@ -112,11 +112,12 @@ struct _Elm_Scrollable_Smart_Interface_Data
       int             hdir, vdir;
 
       Ecore_Idle_Enterer *hold_enterer;
-      Ecore_Animator *hold_animator;
-      Ecore_Animator *onhold_animator;
-      Ecore_Animator *momentum_animator; /**< an animator which is called whenever a scroller is moving due to a flick action(mouse down, move, up) */
-      Ecore_Animator *bounce_x_animator; /**< an animator to express the bouncing animation on x axis. */
-      Ecore_Animator *bounce_y_animator; /**< an animator to express the bouncing animation on y axis. */
+
+      Eina_Bool       hold_animator : 1;
+      Eina_Bool       onhold_animator : 1;
+      Eina_Bool       momentum_animator : 1; /**< an animator which is called whenever a scroller is moving due to a flick action(mouse down, move, up) */
+      Eina_Bool       bounce_x_animator : 1; /**< an animator to express the bouncing animation on x axis. */
+      Eina_Bool       bounce_y_animator : 1; /**< an animator to express the bouncing animation on y axis. */
 
       Eina_Bool       last_hold_x_wheel : 1;
       Eina_Bool       last_hold_y_wheel : 1;
@@ -180,7 +181,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
       {
          Evas_Coord      start, end;
          double          t_start, t_end;
-         Ecore_Animator *animator;
+         Eina_Bool       animator;
       } x, y;
    } scrollto;
 
