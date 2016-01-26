@@ -479,6 +479,7 @@ group { name: "elm/hover/base/hoversel_vertical/default";
          else
             run_program(PROGRAM:"topshow_right");
          set_int(visible, 1);
+         set_int(on_dismiss, 0);
       }
       public bottomshow2() {
          if (get_int(right) == 0)
@@ -486,6 +487,7 @@ group { name: "elm/hover/base/hoversel_vertical/default";
          else
             run_program(PROGRAM:"bottomshow_right");
          set_int(visible, 1);
+         set_int(on_dismiss, 0);
       }
    }
    parts {

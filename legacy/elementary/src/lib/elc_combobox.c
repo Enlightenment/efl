@@ -225,7 +225,7 @@ _gl_filter_finished_cb(void *data, Eo *obj EINA_UNUSED,
 
    if (sd->count > 0)
      {
-         if (!sd->expanded) _activate(data);
+        if (!sd->expanded) _activate(data);
         else _table_resize(data);
      }
    else elm_combobox_hover_end(data);
@@ -237,7 +237,7 @@ _on_aborted(void *data, Eo *obj EINA_UNUSED,
             const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    ELM_COMBOBOX_DATA_GET(data, sd);
-   if (sd->expanded == EINA_TRUE) elm_combobox_hover_end(data);
+   if (sd->expanded) elm_combobox_hover_end(data);
    return EINA_TRUE;
 }
 
