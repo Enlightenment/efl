@@ -176,6 +176,7 @@ abstract Eo.Base ()
            callbacks of the same priority are called in reverse order of
            creation.
          ]]
+	 return: bool; [[Return true when the callback has been successfully added.]]
          params {
             @in desc: const(Eo.Event_Description)*; [[The description of the event to listen to]]
             @in priority: Eo.Callback_Priority; [[The priority of the callback]]
@@ -185,6 +186,7 @@ abstract Eo.Base ()
       }
       event_callback_del {
          [[Del a callback with a specific data associated to it for an event.]]
+	 return: bool; [[Return true when the callback has been successfully removed.]]
          params {
             @in desc: const(Eo.Event_Description)*; [[The description of the event to listen to]]
             @in func: Eo.Event_Cb; [[the callback to delete]]
@@ -197,6 +199,7 @@ abstract Eo.Base ()
            callbacks of the same priority are called in reverse order of
            creation.
          ]]
+	 return: bool; [[Return true when the callback has been successfully added.]]
          params {
             @in array: const(Eo.Callback_Array_Item)*; [[an #Eo_Callback_Array_Item of events to listen to]]
             @in priority: Eo.Callback_Priority; [[The priority of the callback]]
@@ -207,6 +210,7 @@ abstract Eo.Base ()
          [[Del a callback array with a specific data associated to it for an
            event.
          ]]
+	 return: bool; [[Return true when the callback has been successfully removed.]]
          params {
             @in array: const(Eo.Callback_Array_Item)*; [[an #Eo_Callback_Array_Item of events to listen to]]
             @in user_data: const(void)*; [[The data to compare]]

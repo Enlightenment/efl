@@ -551,13 +551,14 @@ _eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb)
      }
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _eo_base_event_callback_priority_add(Eo *obj, Eo_Base_Data *pd,
                     const Eo_Event_Description *desc,
                     Eo_Callback_Priority priority,
                     Eo_Event_Cb func,
                     const void *user_data)
 {
+   const Eo_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
    Eo_Callback_Description *cb;
 
    cb = calloc(1, sizeof(*cb));
@@ -565,7 +566,7 @@ _eo_base_event_callback_priority_add(Eo *obj, Eo_Base_Data *pd,
      {
         ERR("Tried adding callback with invalid values: cb: %p desc: %p func: %p\n", cb, desc, func);
         free(cb);
-        return;
+        return EINA_FALSE;
      }
    cb->items.item.desc = desc;
    cb->items.item.func = func;
@@ -573,13 +574,12 @@ _eo_base_event_callback_priority_add(Eo *obj, Eo_Base_Data *pd,
    cb->priority = priority;
    _eo_callbacks_sorted_insert(pd, cb);
 
-     {
-        const Eo_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
-        eo_do(obj, eo_event_callback_call(EO_BASE_EVENT_CALLBACK_ADD, (void *)arr));
-     }
+   eo_do(obj, eo_event_callback_call(EO_BASE_EVENT_CALLBACK_ADD, (void *)arr));
+
+   return EINA_TRUE;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _eo_base_event_callback_del(Eo *obj, Eo_Base_Data *pd,
                     const Eo_Event_Description *desc,
                     Eo_Event_Cb func,
@@ -598,14 +598,15 @@ _eo_base_event_callback_del(Eo *obj, Eo_Base_Data *pd,
              pd->deletions_waiting = EINA_TRUE;
              _eo_callbacks_clear(pd);
              eo_do(obj, eo_event_callback_call(EO_BASE_EVENT_CALLBACK_DEL, (void *)arr); );
-             return;
+             return EINA_TRUE;
           }
      }
 
    DBG("Callback of object %p with function %p and data %p not found.", obj, func, user_data);
+   return EINA_FALSE;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _eo_base_event_callback_array_priority_add(Eo *obj, Eo_Base_Data *pd,
                           const Eo_Callback_Array_Item *array,
                           Eo_Callback_Priority priority,
@@ -614,19 +615,24 @@ _eo_base_event_callback_array_priority_add(Eo *obj, Eo_Base_Data *pd,
    Eo_Callback_Description *cb;
 
    cb = calloc(1, sizeof(*cb));
-   if (!cb) return;
+   if (!cb || !array)
+     {
+        ERR("Tried adding array of callbacks with invalid values: cb: %p array: %p\n", cb, array);
+        free(cb);
+        return EINA_FALSE;
+     }
    cb->func_data = (void *) user_data;
    cb->priority = priority;
    cb->items.item_array = array;
    cb->func_array = EINA_TRUE;
    _eo_callbacks_sorted_insert(pd, cb);
 
-     {
-        eo_do(obj, eo_event_callback_call(EO_BASE_EVENT_CALLBACK_ADD, (void *)array); );
-     }
+   eo_do(obj, eo_event_callback_call(EO_BASE_EVENT_CALLBACK_ADD, (void *)array); );
+
+   return EINA_TRUE;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _eo_base_event_callback_array_del(Eo *obj, Eo_Base_Data *pd,
                  const Eo_Callback_Array_Item *array,
                  const void *user_data)
@@ -643,11 +649,12 @@ _eo_base_event_callback_array_del(Eo *obj, Eo_Base_Data *pd,
              _eo_callbacks_clear(pd);
 
              eo_do(obj, eo_event_callback_call(EO_BASE_EVENT_CALLBACK_DEL, (void *)array); );
-             return;
+             return EINA_TRUE;
           }
      }
 
    DBG("Callback of object %p with function array %p and data %p not found.", obj, array, user_data);
+   return EINA_FALSE;
 }
 
 static Eina_Bool

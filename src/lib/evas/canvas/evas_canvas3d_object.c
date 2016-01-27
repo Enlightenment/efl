@@ -64,7 +64,7 @@ _evas_canvas3d_object_update(Eo *obj, Evas_Canvas3D_Object_Data *pd)
    memset(&pd->dirty[0], 0x00, sizeof(Eina_Bool) * EVAS_CANVAS3D_STATE_MAX);
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _evas_canvas3d_object_eo_base_event_callback_priority_add(Eo *obj,
                                                     Evas_Canvas3D_Object_Data *pd EINA_UNUSED,
                                                     const Eo_Event_Description *desc,
@@ -72,18 +72,24 @@ _evas_canvas3d_object_eo_base_event_callback_priority_add(Eo *obj,
                                                     Eo_Event_Cb func,
                                                     const void *user_data)
 {
-   eo_do_super(obj, MY_CLASS, eo_event_callback_priority_add(desc, priority, func, user_data));
+   Eina_Bool r = EINA_FALSE;
+
+   eo_do_super(obj, MY_CLASS, r = eo_event_callback_priority_add(desc, priority, func, user_data));
    eo_do(obj, evas_canvas3d_object_callback_register(desc->name, user_data));
+
+   return r;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _evas_canvas3d_object_eo_base_event_callback_del(Eo *obj, Evas_Canvas3D_Object_Data *pd EINA_UNUSED,
                                            const Eo_Event_Description *desc,
                                            Eo_Event_Cb func,
                                            const void *user_data)
 {
-   eo_do_super(obj, MY_CLASS, eo_event_callback_del(desc, func, user_data));
-   eo_do(obj, evas_canvas3d_object_callback_unregister(desc->name));
+   Eina_Bool r = EINA_FALSE;
+   eo_do_super(obj, MY_CLASS, r = eo_event_callback_del(desc, func, user_data));
+   if (r) eo_do(obj, evas_canvas3d_object_callback_unregister(desc->name));
+   return r;
 }
 
 #include "canvas/evas_canvas3d_object.eo.c"
