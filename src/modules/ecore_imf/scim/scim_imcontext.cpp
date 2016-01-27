@@ -556,6 +556,7 @@ isf_imf_context_add(Ecore_IMF_Context *ctx)
    context_scim->impl->use_preedit         = _on_the_spot;
    context_scim->impl->preedit_started     = false;
    context_scim->impl->preedit_updating    = false;
+   context_scim->impl->prediction_allow    = false;
 
    if (!_ic_list)
      context_scim->next = NULL;
