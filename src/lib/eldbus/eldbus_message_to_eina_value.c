@@ -164,12 +164,18 @@ _message_iter_basic_array_to_eina_value(char type, Eina_Value *value, Eldbus_Mes
               eina_value_array_append(value, txt);
             break;
          }
-       case 'b'://boolean
        case 'y'://byte
          {
             unsigned char byte;
             while (eldbus_message_iter_get_and_next(iter, type, &byte))
               eina_value_array_append(value, byte);
+            break;
+         }
+       case 'b'://boolean
+         {
+            uint32_t boolean;
+            while (eldbus_message_iter_get_and_next(iter, type, &boolean))
+              eina_value_array_append(value, (uint8_t)boolean);
             break;
          }
        case 'n'://int16
@@ -316,7 +322,6 @@ _message_iter_struct_to_eina_value(Eldbus_Message_Iter *iter)
                 eina_value_set(v, txt);
                 break;
              }
-           case 'b'://boolean
            case 'y'://byte
              {
                 unsigned char byte;
@@ -324,6 +329,14 @@ _message_iter_struct_to_eina_value(Eldbus_Message_Iter *iter)
                 eldbus_message_iter_basic_get(iter, &byte);
                 eina_value_set(v, byte);
                 break;
+             }
+           case 'b'://boolean
+             {
+                 uint32_t value;
+                 v = eina_value_new(EINA_VALUE_TYPE_UCHAR);
+                 eldbus_message_iter_basic_get(iter, &value);
+                 eina_value_set(v, (uint8_t)value);
+                 break;
              }
            case 'n'://int16
              {
