@@ -63,7 +63,8 @@ evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx,
 
 end:
    if (src_map) eo_do(src->buffer, ector_buffer_unmap(src_map, src_len));
-   if (dst_map) eo_do(dst->buffer, ector_buffer_unmap(dst_map, dst_len));
+   if ((dst) && (dst_map))
+     eo_do(dst->buffer, ector_buffer_unmap(dst_map, dst_len));
    DEBUG_TIME_END();
    return dst;
 }
