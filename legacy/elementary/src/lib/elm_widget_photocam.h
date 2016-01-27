@@ -81,7 +81,6 @@ struct _Elm_Photocam_Data
          int             x_end, y_end;
          double          t_start;
          double          t_end;
-         Ecore_Animator *animator;
       } bounce;
    } g_layer_zoom;
 
@@ -94,7 +93,6 @@ struct _Elm_Photocam_Data
    Ecore_Job      *calc_job;
    Ecore_Timer    *scr_timer;
    Ecore_Timer    *long_timer;
-   Ecore_Animator *zoom_animator;
    double          t_start, t_end;
 
    struct

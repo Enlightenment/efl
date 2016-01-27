@@ -766,10 +766,12 @@ _zoom_do(Evas_Object *obj,
 }
 
 static Eina_Bool
-_zoom_anim_cb(void *data)
+_zoom_anim_cb(void *data,
+             Eo *o EINA_UNUSED,
+             const Eo_Event_Description *desc EINA_UNUSED,
+             void *event_info EINA_UNUSED)
 {
    double t;
-   Eina_Bool go;
    Evas_Object *obj = data;
 
    ELM_PHOTOCAM_DATA_GET(obj, sd);
@@ -783,16 +785,16 @@ _zoom_anim_cb(void *data)
      t = 1.0;
    t = 1.0 - t;
    t = 1.0 - (t * t);
-   go = _zoom_do(obj, t);
-   if (!go)
+   if (!_zoom_do(obj, t))
      {
         sd->no_smooth--;
         if (!sd->no_smooth) _smooth_update(data);
-        sd->zoom_animator = NULL;
+        eo_do(obj,
+              eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj));
         eo_do(obj, eo_event_callback_call(EVAS_ZOOMABLE_INTERFACE_EVENT_ZOOM_STOP, NULL));
      }
 
-   return go;
+   return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool
@@ -1037,8 +1039,11 @@ _elm_photocam_elm_widget_event(Eo *obj, Elm_Photocam_Data *_pd EINA_UNUSED, Evas
    return EINA_TRUE;
 }
 
-Eina_Bool
-_bounce_eval(void *data)
+static Eina_Bool
+_bounce_eval(void *data,
+             Eo *o EINA_UNUSED,
+             const Eo_Event_Description *desc EINA_UNUSED,
+             void *event_info EINA_UNUSED)
 {
    Evas_Object *obj = data;
    ELM_PHOTOCAM_DATA_GET(obj, sd);
@@ -1046,16 +1051,7 @@ _bounce_eval(void *data)
 
    if ((sd->g_layer_zoom.imx == sd->g_layer_zoom.bounce.x_end) &&
        (sd->g_layer_zoom.imy == sd->g_layer_zoom.bounce.y_end))
-     {
-        sd->g_layer_zoom.imx = 0;
-        sd->g_layer_zoom.imy = 0;
-        sd->zoom_g_layer = EINA_FALSE;
-        sd->g_layer_zoom.bounce.animator = NULL;
-
-        eo_do(obj, elm_interface_scrollable_freeze_set(EINA_FALSE));
-
-        return ECORE_CALLBACK_CANCEL;
-     }
+     goto on_end;
 
    t = ecore_loop_time_get();
    tt = (t - sd->g_layer_zoom.bounce.t_start) /
@@ -1066,15 +1062,8 @@ _bounce_eval(void *data)
 
    if (t > sd->g_layer_zoom.bounce.t_end)
      {
-        sd->g_layer_zoom.imx = 0;
-        sd->g_layer_zoom.imy = 0;
-        sd->zoom_g_layer = EINA_FALSE;
-
-        eo_do(obj, elm_interface_scrollable_freeze_set(EINA_FALSE));
-
         _zoom_do(obj, 1.0);
-        sd->g_layer_zoom.bounce.animator = NULL;
-        return ECORE_CALLBACK_CANCEL;
+        goto on_end;
      }
 
    if (sd->g_layer_zoom.imx != sd->g_layer_zoom.bounce.x_end)
@@ -1089,7 +1078,44 @@ _bounce_eval(void *data)
 
    _zoom_do(obj, 1.0 - (1.0 - tt));
 
-   return ECORE_CALLBACK_RENEW;
+   return EO_CALLBACK_CONTINUE;
+
+ on_end:
+   sd->g_layer_zoom.imx = 0;
+   sd->g_layer_zoom.imy = 0;
+   sd->zoom_g_layer = EINA_FALSE;
+
+   eo_do(obj, elm_interface_scrollable_freeze_set(EINA_FALSE));
+
+   eo_do(obj,
+         eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _bounce_eval, obj));
+   return EO_CALLBACK_CONTINUE;
+}
+
+static void
+_elm_photocam_bounce_reset(Eo *obj, Elm_Photocam_Data *sd EINA_UNUSED)
+{
+   Eina_Bool r;
+
+   eo_do(obj,
+         r = eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _bounce_eval, obj));
+   if (r) _zoom_do(obj, 1.0);
+}
+
+static void
+_elm_photocam_zoom_reset(Eo *obj, Elm_Photocam_Data *sd)
+{
+   Eina_Bool r;
+
+   eo_do(obj,
+         r = eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj));
+   if (r)
+     {
+        sd->no_smooth--;
+        if (!sd->no_smooth) _smooth_update(obj);
+        _zoom_do(obj, 1.0);
+        eo_do(obj, eo_event_callback_call(EVAS_ZOOMABLE_INTERFACE_EVENT_ZOOM_STOP, NULL));
+     }
 }
 
 static void
@@ -1165,7 +1191,7 @@ _g_layer_zoom_start_cb(void *data,
    Evas_Coord rw = 0, rh = 0;
    int x, y, w, h;
 
-   ELM_SAFE_FREE(sd->g_layer_zoom.bounce.animator, ecore_animator_del);
+   _elm_photocam_bounce_reset(obj, sd);
    sd->zoom_g_layer = EINA_TRUE;
 
    eo_do(obj, elm_interface_scrollable_freeze_set(EINA_TRUE));
@@ -1287,8 +1313,8 @@ _g_layer_zoom_end_cb(void *data,
         sd->g_layer_zoom.bounce.t_end = t +
           _elm_config->page_scroll_friction;
 
-        sd->g_layer_zoom.bounce.animator =
-          ecore_animator_add(_bounce_eval, obj);
+        eo_do(obj,
+              eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _bounce_eval, obj));
      }
    else
      {
@@ -1457,8 +1483,9 @@ _elm_photocam_evas_object_smart_del(Eo *obj, Elm_Photocam_Data *sd)
    ecore_job_del(sd->calc_job);
    ecore_timer_del(sd->scr_timer);
    ecore_timer_del(sd->long_timer);
-   ecore_animator_del(sd->zoom_animator);
-   ecore_animator_del(sd->g_layer_zoom.bounce.animator);
+   eo_do(obj,
+         eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj),
+         eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _bounce_eval, obj));
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -1645,14 +1672,11 @@ _elm_photocam_file_set_internal(Eo *obj, Elm_Photocam_Data *sd, const char *file
    unsigned int i;
 
    _grid_clear_all(obj);
-   ELM_SAFE_FREE(sd->g_layer_zoom.bounce.animator, ecore_animator_del);
-   if (sd->zoom_animator)
-     {
-        sd->no_smooth--;
-        if (sd->no_smooth == 0) _smooth_update(obj);
-        ecore_animator_del(sd->zoom_animator);
-        sd->zoom_animator = NULL;
-     }
+   _elm_photocam_zoom_reset(obj, sd);
+   _elm_photocam_bounce_reset(obj, sd);
+   sd->no_smooth--;
+   if (sd->no_smooth == 0) _smooth_update(obj);
+
    ecore_job_del(sd->calc_job);
    evas_object_hide(sd->img);
    if (sd->f) eina_file_close(sd->f);
@@ -1747,10 +1771,10 @@ _elm_photocam_zoom_set(Eo *obj, Elm_Photocam_Data *sd, double zoom)
 {
    double z;
    Eina_List *l;
-   Ecore_Animator *an;
    Elm_Phocam_Grid *g, *g_zoom = NULL;
    Evas_Coord pw, ph, rx, ry, rw, rh;
    int zoom_changed = 0, started = 0;
+   Eina_Bool an = EINA_FALSE;
 
    if (zoom <= (1.0 / 256.0)) zoom = (1.0 / 256.0);
    if (zoom == sd->zoom) return;
@@ -1932,22 +1956,24 @@ done:
      }
    else
      {
-        if (!sd->zoom_animator)
+        eo_do(obj,
+              an = eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj),
+              eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj));
+        if (!an)
           {
-             sd->zoom_animator = ecore_animator_add(_zoom_anim_cb, obj);
              sd->no_smooth++;
              if (sd->no_smooth == 1) _smooth_update(obj);
              started = 1;
           }
      }
 
-   an = sd->zoom_animator;
    if (an)
      {
-        if (!_zoom_anim_cb(obj))
+        // FIXME: If one day we do support partial animator in photocam, this would require change
+        if (!_zoom_anim_cb(obj, evas_object_evas_get(obj), NULL, NULL))
           {
-             ecore_animator_del(an);
-             an = NULL;
+             _elm_photocam_bounce_reset(obj, sd);
+             an = 0;
           }
      }
 
@@ -2060,20 +2086,10 @@ _elm_photocam_image_region_show(Eo *obj, Elm_Photocam_Data *sd, int x, int y, in
    if (rh < 1) rh = 1;
    if ((rx + rw) > sd->size.w) rx = sd->size.w - rw;
    if ((ry + rh) > sd->size.h) ry = sd->size.h - rh;
-   if (sd->g_layer_zoom.bounce.animator)
-     {
-        ecore_animator_del(sd->g_layer_zoom.bounce.animator);
-        sd->g_layer_zoom.bounce.animator = NULL;
-        _zoom_do(obj, 1.0);
-     }
-   if (sd->zoom_animator)
-     {
-        sd->no_smooth--;
-        ecore_animator_del(sd->zoom_animator);
-        sd->zoom_animator = NULL;
-        _zoom_do(obj, 1.0);
-        eo_do(obj, eo_event_callback_call(EVAS_ZOOMABLE_INTERFACE_EVENT_ZOOM_STOP, NULL));
-     }
+
+   _elm_photocam_bounce_reset(obj, sd);
+   _elm_photocam_zoom_reset(obj, sd);
+
    eo_do(obj, elm_interface_scrollable_content_region_show(rx, ry, rw, rh));
 }
 
@@ -2102,21 +2118,10 @@ _elm_photocam_elm_interface_scrollable_region_bring_in(Eo *obj, Elm_Photocam_Dat
    if (rh < 1) rh = 1;
    if ((rx + rw) > sd->size.w) rx = sd->size.w - rw;
    if ((ry + rh) > sd->size.h) ry = sd->size.h - rh;
-   if (sd->g_layer_zoom.bounce.animator)
-     {
-        ecore_animator_del(sd->g_layer_zoom.bounce.animator);
-        sd->g_layer_zoom.bounce.animator = NULL;
-        _zoom_do(obj, 1.0);
-     }
-   if (sd->zoom_animator)
-     {
-        sd->no_smooth--;
-        if (!sd->no_smooth) _smooth_update(obj);
-        ecore_animator_del(sd->zoom_animator);
-        sd->zoom_animator = NULL;
-        _zoom_do(obj, 1.0);
-        eo_do(obj, eo_event_callback_call(EVAS_ZOOMABLE_INTERFACE_EVENT_ZOOM_STOP, NULL));
-     }
+
+   _elm_photocam_bounce_reset(obj, sd);
+   _elm_photocam_zoom_reset(obj, sd);
+
    eo_do_super(obj, MY_CLASS, elm_interface_scrollable_region_bring_in(rx, ry, rw, rh));
 }
 
@@ -2129,19 +2134,8 @@ _elm_photocam_paused_set(Eo *obj, Elm_Photocam_Data *sd, Eina_Bool paused)
    sd->paused = paused;
    if (!sd->paused) return;
 
-   if (sd->g_layer_zoom.bounce.animator)
-     {
-        ecore_animator_del(sd->g_layer_zoom.bounce.animator);
-        sd->g_layer_zoom.bounce.animator = NULL;
-        _zoom_do(obj, 1.0);
-     }
-   if (sd->zoom_animator)
-     {
-        ecore_animator_del(sd->zoom_animator);
-        sd->zoom_animator = NULL;
-        _zoom_do(obj, 1.0);
-        eo_do(obj, eo_event_callback_call(EVAS_ZOOMABLE_INTERFACE_EVENT_ZOOM_STOP, NULL));
-     }
+   _elm_photocam_bounce_reset(obj, sd);
+   _elm_photocam_zoom_reset(obj, sd);
 }
 
 EOLIAN static Eina_Bool
