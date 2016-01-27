@@ -3541,6 +3541,7 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
           {
              Evas_Coord asc = 0, desc = 0;
              Evas_Coord maxasc = 0, maxdesc = 0;
+
              _layout_item_ascent_descent_adjust(c->obj, &asc, &desc,
                    it, it->format);
              _layout_item_max_ascent_descent_calc(c->obj, &maxasc, &maxdesc,
@@ -11986,11 +11987,12 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
 {
    Evas_Object_Textblock_Paragraph *par, *start = NULL;
    Evas_Object_Textblock_Item *itr;
-   Evas_Object_Textblock_Line *ln;
+   Evas_Object_Textblock_Line *ln, *cur_ln = NULL;
    Evas_Textblock_Data *o = type_private_data;
    Eina_List *shadows = NULL;
    Eina_List *glows = NULL;
    Eina_List *outlines = NULL;
+   int strikethrough_thickness, underline_thickness, underline_position;
    int i, j;
    int cx, cy, cw, ch, clip;
    int ca, cr, cg, cb;
@@ -12430,11 +12432,9 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
      }
 
    /* normal text and lines */
-   /* Get the thickness and position, and save them for non-text items. */
-   int line_thickness =
-           evas_common_font_instance_underline_thickness_get(NULL);
-   int line_position =
-           evas_common_font_instance_underline_position_get(NULL);
+   /* Get the thickness, and save it for strikethrough of non-text items. */
+   strikethrough_thickness = underline_thickness = evas_common_font_instance_underline_thickness_get(NULL);
+   underline_position = evas_common_font_instance_underline_position_get(NULL);
    ENFN->context_multiplier_unset(output, context);
 
    if (obj->cur->clipper)
@@ -12447,6 +12447,37 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
    ITEM_WALK()
      {
         Evas_Object_Textblock_Text_Item *ti;
+
+        if (cur_ln != ln)
+          {
+             Evas_Object_Textblock_Item *itrr;
+
+             cur_ln = ln;
+             underline_thickness =
+                evas_common_font_instance_underline_thickness_get(NULL);
+             underline_position =
+                evas_common_font_instance_underline_position_get(NULL);
+
+             EINA_INLIST_FOREACH(ln->items, itrr)
+               {
+                  if (itrr->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+                    {
+                       int fi_underline_thickness, fi_underline_position;
+                       void *fi = _ITEM_TEXT(itrr)->text_props.font_instance;
+
+                       fi_underline_thickness =
+                          evas_common_font_instance_underline_thickness_get(fi);
+                       fi_underline_position =
+                          evas_common_font_instance_underline_position_get(fi);
+
+                       if (fi_underline_thickness > underline_thickness)
+                         underline_thickness = fi_underline_thickness;
+                       if (fi_underline_position > underline_position)
+                         underline_position = fi_underline_position;
+                    }
+               }
+          }
+
         ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
         /* NORMAL TEXT */
         if (ti)
@@ -12454,28 +12485,26 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
              void *fi = _ITEM_TEXT(itr)->text_props.font_instance;
              COLOR_SET(normal);
              DRAW_TEXT(0, 0);
-             line_thickness =
+             strikethrough_thickness =
                 evas_common_font_instance_underline_thickness_get(fi);
-             line_position =
-                evas_common_font_instance_underline_position_get(fi);
           }
 
         /* STRIKETHROUGH */
-        DRAW_FORMAT(strikethrough, (ln->h / 2), line_thickness);
+        DRAW_FORMAT(strikethrough, (ln->h / 2), strikethrough_thickness);
 
         /* UNDERLINE */
-        DRAW_FORMAT(underline, ln->baseline + line_position,
-                               line_thickness * itr->format->underline_height);
+        DRAW_FORMAT(underline, ln->baseline + underline_position,
+                               underline_thickness * itr->format->underline_height);
 
         /* UNDERLINE DASHED */
-        DRAW_FORMAT_DASHED(underline_dash, ln->baseline + line_position,
-                         line_thickness,
+        DRAW_FORMAT_DASHED(underline_dash, ln->baseline + underline_position,
+                         underline_thickness,
                          itr->format->underline_dash_width,
                          itr->format->underline_dash_gap);
 
         /* UNDERLINE2 */
-        DRAW_FORMAT(underline2, ln->baseline + line_position + line_thickness +
-              line_position, line_thickness);
+        DRAW_FORMAT(underline2, ln->baseline + underline_position + underline_thickness +
+              underline_position, underline_thickness);
      }
    ITEM_WALK_END();
    ENFN->context_multiplier_unset(output, context);
