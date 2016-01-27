@@ -309,7 +309,6 @@ group { name: "elm/menu/item_with_submenu/default";
    }
    parts {
       part { name: "arrow";
-         insert_after: "item_image_disabled";
          description { state: "default" 0.0;
             rel1.to: "arrowspace";
             rel2.to: "arrowspace";

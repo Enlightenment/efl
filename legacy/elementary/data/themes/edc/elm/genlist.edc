@@ -1345,7 +1345,7 @@ group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
    images.image: "sym_down_dark_normal.png" COMP;
 
    parts {
-      image { "arrow_img_l"; insert_after: "sel_bevel";
+      image { "arrow_img_l";
          clip_to: "arrow_clip_l";
          scale;
          ignore_flags: ON_HOLD;
@@ -1411,7 +1411,7 @@ group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
             image.normal: "sym_down_dark_normal.png";
          }
       }
-      rect { "arrow"; insert_before: "sel_shine"; mouse;
+      rect { "arrow"; mouse;
          desc { "default";
             fixed: 1 0;
             min: 15 15;
