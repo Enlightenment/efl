@@ -1,3 +1,81 @@
+enum Elm.GLView.Mode
+{
+   [[
+     Selects the target surface properties
+
+     An OR combination of Elm_GLView_Mode values should be passed to
+     elm_glview_mode_set when setting up a GL widget. These flags will
+     specify the properties of the rendering target surface; in particular,
+     the mode can request the surface to support alpha, depth and stencil buffers.
+
+           ELM_GLVIEW_CLIENT_SIDE_ROTATION is a special value that indicates
+           to EFL that the application will handle the view rotation when the
+           device is rotated. This is needed only when the application requests
+           direct rendering. Please refer to Evas_GL
+           for more information about direct rendering.
+
+     See @Elm.Glview.mode.set
+     See elm_opengl_page
+   ]]
+   legacy: elm_glview;
+   none    = 0,
+   // 0x1 is reserved for future use
+   alpha   = (1<<1), [[Alpha channel enabled rendering mode]]
+   depth   = (1<<2), [[Depth buffer enabled rendering mode (24 bits by default)]]
+   stencil = (1<<3), [[Stencil buffer enabled rendering mode (8 bits by default)]]
+   direct  = (1<<4), [[Request direct rendering, unless there must be a fallback]]
+   client_side_rotation = (1<<5), [[Client will handle GL view rotation if direct rendering is enabled]]
+   // Depth buffer sizes (3 bits)
+   depth_8  = Elm.GLView.Mode.depth | (1 << 6), [[Request min. 8 bits for the depth buffer]]
+   depth_16 = Elm.GLView.Mode.depth | (2 << 6), [[Request min. 16 bits for the depth buffer]]
+   depth_24 = Elm.GLView.Mode.depth | (3 << 6), [[Request min. 24 bits for the depth buffer (default)]]
+   depth_32 = Elm.GLView.Mode.depth | (4 << 6), [[Request min. 32 bits for the depth buffer]]
+   // Stencil buffer sizes (3 bits)
+   stencil_1  = Elm.GLView.Mode.stencil | (1 << 9), [[Request min. 1 bits for the stencil buffer]]
+   stencil_2  = Elm.GLView.Mode.stencil | (2 << 9), [[Request min. 2 bits for the stencil buffer]]
+   stencil_4  = Elm.GLView.Mode.stencil | (3 << 9), [[Request min. 4 bits for the stencil buffer]]
+   stencil_8  = Elm.GLView.Mode.stencil | (4 << 9), [[Request min. 8 bits for the stencil buffer (default)]]
+   stencil_16 = Elm.GLView.Mode.stencil | (5 << 9), [[Request min. 16 bits for the stencil buffer]]
+   // MSAA params (2 bits)
+   multisample_low  = (1 << 12), [[MSAA with minimum number of samples]]
+   multisample_med  = (2 << 12), [[MSAA with half the number of maximum samples]]
+   multisample_high = (3 << 12)  [[MSAA with maximum number of samples]]
+
+}
+
+enum Elm.GLView.Resize.Policy
+{
+   [[
+     Defines a policy for the glview resizing.
+
+     The resizing policy tells glview what to do with the underlying
+     surface when resize happens. ELM_GLVIEW_RESIZE_POLICY_RECREATE
+     will destroy the current surface and recreate the surface to the
+     new size. ELM_GLVIEW_RESIZE_POLICY_SCALE will instead keep the
+     current surface but only display the result at the desired size scaled.
+
+     Default is @Elm.GLView.Resize.Policy.recreate
+   ]]
+   recreate = 1, [[Resize the internal surface along with the image]]
+   scale    = 2  [[Only resize the internal image and not the surface]]
+}
+
+enum Elm.GLView.Render.Policy
+{
+   [[
+     Defines a policy for gl rendering.
+
+     The rendering policy tells glview where to run the gl rendering code.
+     ELM_GLVIEW_RENDER_POLICY_ON_DEMAND tells glview to call the rendering
+     calls on demand, which means that the rendering code gets called
+     only when it is visible.
+
+     Default is @Elm.GLView.Render.Policy.on_demand
+   ]]
+   on_demand = 1, [[Render only when there is a need for redrawing]]
+   always    = 2  [[Render always even when it is not visible]]
+}
+
 class Elm.Glview (Elm.Widget)
 {
    eo_prefix: elm_obj_glview;
@@ -41,7 +119,7 @@ class Elm.Glview (Elm.Widget)
             return: bool;
          }
          values {
-            policy: Elm_GLView_Resize_Policy; [[The scaling policy.]]
+            policy: Elm.GLView.Resize.Policy; [[The scaling policy.]]
          }
       }
       @property changed {
@@ -106,7 +184,7 @@ class Elm.Glview (Elm.Widget)
             return: bool;
          }
          values {
-            policy: Elm_GLView_Render_Policy; [[The render policy.]]
+            policy: Elm.GLView.Render.Policy; [[The render policy.]]
          }
       }
       @property mode {
@@ -121,7 +199,7 @@ class Elm.Glview (Elm.Widget)
             return: bool;
          }
          values {
-            mode: Elm_GLView_Mode; [[The mode Options OR'ed enabling Alpha, Depth, Stencil, Direct.]]
+            mode: Elm.GLView.Mode; [[The mode Options OR'ed enabling Alpha, Depth, Stencil, Direct.]]
          }
       }
       @property render_func {
