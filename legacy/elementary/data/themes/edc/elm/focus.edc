@@ -5,6 +5,7 @@ group { name: "elm/focus_highlight/top/default";
    script {
       public s_x, s_y, s_w, s_h; /* source */
       public difx, dify, difw, difh;
+      public g_anim_id;
       
       public animator1(val, Float:pos) {
          new x, y, w, h, dx, dy, dw, dh, Float:p;
@@ -18,6 +19,10 @@ group { name: "elm/focus_highlight/top/default";
          dh = round(float_mul(float(get_int(difh)), p));
          h = get_int(s_h) + dh;
          update_offset(x, y, w, h);
+
+         if (pos >= 1.0) {
+            set_int(g_anim_id, 0);
+         }
       }
       
       public update_offset(x, y, w, h) {
@@ -28,7 +33,14 @@ group { name: "elm/focus_highlight/top/default";
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_INT_SET) && (id == 1)) {
             new x1, y1, w1, h1, x2, y2, w2, h2;
+            new anim_id;
             
+            anim_id = get_int(g_anim_id);
+            if (anim_id != 0) {
+               cancel_anim(anim_id);
+               animator1(1, 1.0);
+            }
+
             x1 = getarg(2);
             y1 = getarg(3);
             w1 = getarg(4);
@@ -53,7 +65,8 @@ group { name: "elm/focus_highlight/top/default";
             update_offset(x1, y1, w1, h1);
             set_state(PART:"base", "custom", 0.0);
             
-            anim(0.2, "animator1", 1);
+            anim_id = anim(0.2, "animator1", 1);
+            set_int(g_anim_id, anim_id);
          }
       }
    }
