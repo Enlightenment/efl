@@ -24,12 +24,12 @@ group { name: "elm/focus_highlight/top/default";
             set_int(g_anim_id, 0);
          }
       }
-      
+
       public update_offset(x, y, w, h) {
          set_state_val(PART:"base", STATE_REL1_OFFSET, x, y);
          set_state_val(PART:"base", STATE_REL2_OFFSET, x + w, y + h);
       }
-      
+
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_INT_SET) && (id == 1)) {
             new x1, y1, w1, h1, x2, y2, w2, h2;
@@ -49,7 +49,7 @@ group { name: "elm/focus_highlight/top/default";
             y2 = getarg(7);
             w2 = getarg(8);
             h2 = getarg(9);
-            
+
             set_int(s_x, x1);
             set_int(s_y, y1);
             set_int(s_w, w1);
@@ -58,7 +58,7 @@ group { name: "elm/focus_highlight/top/default";
             set_int(dify, y2 - y1);
             set_int(difw, w2 - w1);
             set_int(difh, h2 - h1);
-            
+
             custom_state(PART:"base", "default", 0.0);
             set_state_val(PART:"base", STATE_REL1, 0.0, 0.0);
             set_state_val(PART:"base", STATE_REL2, 0.0, 0.0);
@@ -115,6 +115,8 @@ group { name: "elm/focus_highlight/top/default";
             color: 255 255 255 255;
          }
       }
+   }
+   programs {
       program {
          signal: "elm,action,focus,show"; source: "elm";
          action: ACTION_STOP;
