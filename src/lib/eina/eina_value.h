@@ -3508,7 +3508,7 @@ typedef Eina_Value_Union Eina_Value_Optional;
  * @return returns an empty optional eina value.
  * @since 1.17
  */
-static inline Eina_Value *eina_value_optional_empty_new();
+static inline Eina_Value *eina_value_optional_empty_new(void);
 
 /**
  * @brief Create an optional eina value with the passed value
