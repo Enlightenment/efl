@@ -3105,6 +3105,8 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport)
         if (!ecore_main_loop_animator_ticked_get())
           ecore_animator_custom_tick();
      }
+
+   DBG("Animator ticked on %p.", ee->evas);
 }
 
 static void
@@ -3154,6 +3156,7 @@ _check_animator_event_catcher_add(void *data,
         if (array[i].desc == EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK)
           {
              if (ee->anim_count++ > 0) return EO_CALLBACK_CONTINUE;
+             INF("Setting up animator for %p.", ee->evas);
 
              if (ee->engine.func->fn_animator_register &&
                  ee->engine.func->fn_animator_unregister)
@@ -3193,6 +3196,7 @@ _check_animator_event_catcher_del(void *data,
           {
              if ((--ee->anim_count) > 0) return EO_CALLBACK_CONTINUE;
 
+             INF("Unsetting up animator for %p.", ee->evas);
              if (ee->engine.func->fn_animator_register &&
                  ee->engine.func->fn_animator_unregister)
                {
