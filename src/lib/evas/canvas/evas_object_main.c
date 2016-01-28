@@ -159,6 +159,7 @@ evas_object_cur_prev(Evas_Object *eo_obj)
           map_write->prev = map_write->cur;
         EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
      }
+   _evas_object_clip_prev_reset(obj, EINA_TRUE);
    eina_cow_memcpy(evas_object_state_cow, (const Eina_Cow_Data **) &obj->prev, obj->cur);
 }
 
@@ -704,13 +705,18 @@ _evas_object_eo_base_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
         goto end;
      }
    evas_object_grabs_cleanup(eo_obj, obj);
-   /* "while" should be used for null check of obj->clip.clipees,
-      because evas_objct_clip_unset can set null to obj->clip.clipees */
-   while (obj->clip.clipees)
+   if (obj->clip.clipees)
      {
-        Evas_Object_Protected_Data *tmp;
-        tmp = eina_list_data_get(obj->clip.clipees);
-        evas_object_clip_unset(tmp->object);
+        ERR("object %p still has %d clippees after del callback",
+            eo_obj, eina_list_count(obj->clip.clipees));
+        /* "while" should be used for null check of obj->clip.clipees,
+           because evas_objct_clip_unset can set null to obj->clip.clipees */
+        while (obj->clip.clipees)
+          {
+             Evas_Object_Protected_Data *tmp;
+             tmp = eina_list_data_get(obj->clip.clipees);
+             evas_object_clip_unset(tmp->object);
+          }
      }
    EINA_LIST_FOREACH_SAFE(obj->proxy->proxies, l, l2, proxy)
      {
@@ -734,6 +740,8 @@ _evas_object_eo_base_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
      }
 
    if (obj->cur->clipper) evas_object_clip_unset(eo_obj);
+   _evas_object_clip_prev_reset(obj, EINA_FALSE);
+
    evas_object_map_set(eo_obj, NULL);
    if (obj->is_smart) evas_object_smart_del(eo_obj);
    _evas_object_event_new();

@@ -1650,6 +1650,7 @@ void _above_get(Eo *obj, void *_pd, va_list *list);
 void _below_get(Eo *obj, void *_pd, va_list *list);
 void _smart_move_children_relative(Eo *obj, void *_pd, va_list *list);
 void _smart_clipped_clipper_get(Eo *obj, void *_pd, va_list *list);
+void _evas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool cur_prev);
 
 void _canvas_event_default_flags_set(Eo *e, void *_pd, va_list *list);
 void _canvas_event_default_flags_get(Eo *e, void *_pd, va_list *list);

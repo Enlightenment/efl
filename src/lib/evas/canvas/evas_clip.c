@@ -213,6 +213,8 @@ _evas_object_clip_mask_unset(Evas_Object_Protected_Data *obj)
 extern const char *o_rect_type;
 extern const char *o_image_type;
 
+static Eina_Bool _clipper_del_cb(void *data, Eo *eo_clip, const Eo_Event_Description *desc EINA_UNUSED, void *info EINA_UNUSED);
+
 EOLIAN void
 _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip)
 {
@@ -281,6 +283,8 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
      }
    if (obj->cur->clipper)
      {
+        Evas_Object_Protected_Data *old_clip = obj->cur->clipper;
+
 	/* unclip */
         obj->cur->clipper->clip.cache_clipees_answer = eina_list_free(obj->cur->clipper->clip.cache_clipees_answer);
         obj->cur->clipper->clip.clipees = eina_list_remove(obj->cur->clipper->clip.clipees, obj);
@@ -320,10 +324,10 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
         evas_object_change(eo_obj, obj);
 
         EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
-          {
-             state_write->clipper = NULL;
-          }
+          state_write->clipper = NULL;
         EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+        if (obj->prev->clipper != old_clip)
+          eo_do(old_clip->object, eo_event_callback_del(EO_BASE_EVENT_DEL, _clipper_del_cb, eo_obj));
      }
 
    /* image object clipper */
@@ -350,11 +354,12 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
                                   clip->cur->geometry.w, clip->cur->geometry.h);
  */
      }
+
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
-     {
-        state_write->clipper = clip;
-     }
+     state_write->clipper = clip;
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+   if (obj->prev->clipper != clip)
+     eo_do(clip->object, eo_event_callback_add(EO_BASE_EVENT_DEL, _clipper_del_cb, eo_obj));
 
    clip->clip.cache_clipees_answer = eina_list_free(clip->clip.cache_clipees_answer);
    clip->clip.clipees = eina_list_append(clip->clip.clipees, obj);
@@ -401,7 +406,6 @@ EOLIAN void
 _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    if (!obj->cur->clipper) return;
-
    evas_object_async_block(obj);
    obj->clip.cache_clipees_answer = eina_list_free(obj->clip.cache_clipees_answer);
 
@@ -413,6 +417,8 @@ _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
      }
    if (obj->cur->clipper)
      {
+        Evas_Object_Protected_Data *old_clip = obj->cur->clipper;
+
         obj->cur->clipper->clip.clipees = eina_list_remove(obj->cur->clipper->clip.clipees, obj);
         if (!obj->cur->clipper->clip.clipees)
           {
@@ -445,12 +451,13 @@ _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
              _evas_object_clip_mask_unset(obj->cur->clipper);
           }
 	evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
+
+        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+          state_write->clipper = NULL;
+        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+        if (obj->prev->clipper != old_clip)
+          eo_do(old_clip->object, eo_event_callback_del(EO_BASE_EVENT_DEL, _clipper_del_cb, eo_obj));
      }
-   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
-     {
-        state_write->clipper = NULL;
-     }
-   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
@@ -468,6 +475,43 @@ _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
                                      NULL);
      }
    evas_object_clip_across_check(eo_obj, obj);
+}
+
+static Eina_Bool
+_clipper_del_cb(void *data, Eo *eo_clip, const Eo_Event_Description *desc EINA_UNUSED, void *info EINA_UNUSED)
+{
+   Evas_Object *eo_obj = data;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+
+   if (!obj) return EO_CALLBACK_CONTINUE;
+
+   _evas_object_clip_unset(eo_obj, obj);
+   if (obj->prev->clipper && (obj->prev->clipper->object == eo_clip))
+     {
+        // not removing cb since it's the del cb... it can't be called again!
+        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, prev)
+          state_write->clipper = NULL;
+        EINA_COW_STATE_WRITE_END(obj, state_write, prev);
+     }
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+void
+_evas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool cur_prev)
+{
+   if (obj->prev->clipper)
+     {
+        Evas_Object_Protected_Data *clip = obj->prev->clipper;
+        if (!cur_prev)
+          {
+             EINA_COW_STATE_WRITE_BEGIN(obj->prev->clipper, state_write, prev)
+               state_write->clipper = NULL;
+             EINA_COW_STATE_WRITE_END(obj->prev->clipper, state_write, prev);
+          }
+        if (clip != obj->cur->clipper)
+          eo_do(clip->object, eo_event_callback_del(EO_BASE_EVENT_DEL, _clipper_del_cb, obj->object));
+     }
 }
 
 EOLIAN Eina_List *
