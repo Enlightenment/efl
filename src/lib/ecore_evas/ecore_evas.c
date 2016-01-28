@@ -3069,6 +3069,8 @@ _ecore_evas_fps_debug_rendertime_add(double t)
      }
 }
 
+static Ecore_Evas *_general_tick = NULL;
+
 EAPI void
 ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport)
 {
@@ -3094,6 +3096,39 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport)
      {
         evas_output_size_get(subee->evas, &a.update_area.w, &a.update_area.h);
         eo_do(subee->evas, eo_event_callback_call(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, &a));
+     }
+
+   // We are the source of sync for general animator.
+   if (_general_tick == ee)
+     {
+        // Check first we didn't tick during this loop
+        if (!ecore_main_loop_animator_ticked_get())
+          ecore_animator_custom_tick();
+     }
+}
+
+static void
+_ecore_evas_tick_source_find(void)
+{
+   Ecore_Evas *ee;
+
+   _general_tick = NULL;
+   EINA_INLIST_FOREACH(ecore_evases, ee)
+     if (ee->anim_count &&
+                ee->engine.func->fn_animator_register &&
+         ee->engine.func->fn_animator_unregister)
+       {
+          _general_tick = ee;
+          break;
+       }
+
+   if (!_general_tick)
+     {
+        ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
+     }
+   else
+     {
+        ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
      }
 }
 
@@ -3125,6 +3160,7 @@ _check_animator_event_catcher_add(void *data,
                {
                   // Backend support per window vsync
                   ee->engine.func->fn_animator_register(ee);
+                  if (!_general_tick) _general_tick = ee;
                }
              else
                {
@@ -3162,6 +3198,7 @@ _check_animator_event_catcher_del(void *data,
                {
                   // Backend support per window vsync
                   ee->engine.func->fn_animator_unregister(ee);
+                  if (_general_tick == ee) _ecore_evas_tick_source_find();
                }
              else
                {
@@ -3226,6 +3263,7 @@ _ecore_evas_free(Ecore_Evas *ee)
      {
         // Backend support per window vsync
         ee->engine.func->fn_animator_unregister(ee);
+        if (_general_tick == ee) _ecore_evas_tick_source_find();
      }
    if (ee->anim)
      ecore_animator_del(ee->anim);
