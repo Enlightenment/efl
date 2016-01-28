@@ -55,6 +55,7 @@
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_zoom(Evas_Object *obj, const char *params);
+static Eina_Bool _zoom_animator_set(Elm_Map_Data *sd, void *callback);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
@@ -1142,55 +1143,41 @@ _zoom_do(Elm_Map_Data *sd,
 }
 
 static Eina_Bool
-_zoom_anim_cb(void *data)
+_zoom_anim_cb(void *data,
+              Eo *obj EINA_UNUSED,
+              const Eo_Event_Description *desc EINA_UNUSED,
+              void *event_info EINA_UNUSED)
 {
    ELM_MAP_DATA_GET(data, sd);
 
    if (sd->ani.zoom_cnt <= 0)
      {
-        sd->zoom_animator = NULL;
+        _zoom_animator_set(sd, NULL);
         evas_object_smart_changed(sd->pan_obj);
         _calc_job(sd);
-
-        return ECORE_CALLBACK_CANCEL;
      }
    else
      {
         sd->ani.zoom += sd->ani.zoom_diff;
         sd->ani.zoom_cnt--;
         _zoom_do(sd, sd->ani.zoom);
-
-        return ECORE_CALLBACK_RENEW;
      }
-}
-
-static void
-_zoom_with_animation(Elm_Map_Data *sd,
-                     double zoom,
-                     int cnt)
-{
-   if (cnt == 0) return;
-
-   sd->ani.zoom_cnt = cnt;
-   sd->ani.zoom = sd->zoom;
-   sd->ani.zoom_diff = (double)(zoom - sd->zoom) / cnt;
-   ecore_animator_del(sd->zoom_animator);
-   sd->zoom_animator = ecore_animator_add(_zoom_anim_cb, sd->obj);
+   return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool
-_zoom_bring_anim_cb(void *data)
+_zoom_bring_anim_cb(void *data,
+                    Eo *obj EINA_UNUSED,
+                    const Eo_Event_Description *desc EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    ELM_MAP_DATA_GET(data, sd);
 
    if ((sd->ani.zoom_cnt <= 0) && (sd->ani.region_cnt <= 0))
      {
-        sd->zoom_animator = NULL;
-
+        _zoom_animator_set(sd, NULL);
         evas_object_smart_changed(sd->pan_obj);
         _calc_job(sd);
-
-        return ECORE_CALLBACK_CANCEL;
      }
    else
      {
@@ -1214,9 +1201,37 @@ _zoom_bring_anim_cb(void *data)
              eo_do(sd->obj, elm_interface_scrollable_content_region_show(x, y, w, h));
              sd->ani.region_cnt--;
           }
-
-        return ECORE_CALLBACK_RENEW;
      }
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+_zoom_animator_set(Elm_Map_Data *sd,
+                   void *callback)
+{
+   Eina_Bool r = EINA_FALSE;
+
+   sd->zoom_animator = !!callback;
+   eo_do(sd->obj,
+         r = eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, sd->obj);
+         r |= eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_bring_anim_cb, sd->obj);
+         if (callback) eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, callback, sd->obj));
+
+   return r;
+}
+
+static void
+_zoom_with_animation(Elm_Map_Data *sd,
+                     double zoom,
+                     int cnt)
+{
+   if (cnt == 0) return;
+
+   sd->ani.zoom_cnt = cnt;
+   sd->ani.zoom = sd->zoom;
+   sd->ani.zoom_diff = (double)(zoom - sd->zoom) / cnt;
+   _zoom_animator_set(sd, _zoom_anim_cb);
 }
 
 static void
@@ -1244,8 +1259,7 @@ _zoom_bring_with_animation(Elm_Map_Data *sd,
    sd->ani.lon_diff = (lon - tlon) / region_cnt;
    sd->ani.lat_diff = (lat - tlat) / region_cnt;
 
-   ecore_animator_del(sd->zoom_animator);
-   sd->zoom_animator = ecore_animator_add(_zoom_bring_anim_cb, sd->obj);
+   _zoom_animator_set(sd, _zoom_bring_anim_cb);
 }
 
 static void
@@ -4157,7 +4171,7 @@ _elm_map_evas_object_smart_del(Eo *obj, Elm_Map_Data *sd)
    eina_stringshare_del(sd->user_agent);
    eina_hash_free(sd->ua);
    ecore_timer_del(sd->zoom_timer);
-   ecore_animator_del(sd->zoom_animator);
+   _zoom_animator_set(sd, NULL);
 
    _grid_all_clear(sd);
    // Removal of download list should be after grid clear.
@@ -4352,10 +4366,8 @@ _elm_map_paused_set(Eo *obj, Elm_Map_Data *sd, Eina_Bool paused)
    sd->paused = !!paused;
    if (sd->paused)
      {
-        if (sd->zoom_animator)
+        if (_zoom_animator_set(sd, NULL))
           {
-             ecore_animator_del(sd->zoom_animator);
-             sd->zoom_animator = NULL;
              _zoom_do(sd, sd->zoom);
           }
         edje_object_signal_emit(wd->resize_obj,

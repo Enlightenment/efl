@@ -446,7 +446,6 @@ struct _Elm_Map_Data
    } ani;
 
    Ecore_Timer                          *zoom_timer;
-   Ecore_Animator                       *zoom_animator;
    Ecore_Timer                          *loaded_timer;
 
    int                                   try_num;
@@ -482,6 +481,7 @@ struct _Elm_Map_Data
    Eina_Bool                             wheel_disabled : 1;
    Eina_Bool                             on_hold : 1;
    Eina_Bool                             paused : 1;
+   Eina_Bool                             zoom_animator : 1;
 
    Calc_Job                               calc_job;
 };
