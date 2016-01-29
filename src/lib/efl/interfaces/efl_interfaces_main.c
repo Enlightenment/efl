@@ -29,3 +29,4 @@ EAPI const Eo_Event_Description _EFL_GFX_PATH_CHANGED =
   EO_EVENT_DESCRIPTION("Graphics path changed");
 
 #include "interfaces/efl_model_base.eo.c"
+#include "interfaces/efl_core_animator.eo.c"

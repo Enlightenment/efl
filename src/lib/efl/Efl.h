@@ -175,6 +175,9 @@ struct _Efl_Gfx_Shape_Public
 #include "interfaces/efl_text.eo.h"
 #include "interfaces/efl_text_properties.eo.h"
 
+/* Core interface */
+#include "interfaces/efl_core_animator.eo.h"
+
 EAPI extern const Eo_Event_Description _EFL_GFX_CHANGED;
 EAPI extern const Eo_Event_Description _EFL_GFX_PATH_CHANGED;
 

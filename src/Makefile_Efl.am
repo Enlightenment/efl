@@ -19,6 +19,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_gfx_gradient_radial.eo \
       lib/efl/interfaces/efl_gfx_filter.eo \
       lib/efl/interfaces/efl_model_base.eo \
+      lib/efl/interfaces/efl_core_animator.eo \
       $(efl_eolian_legacy_files) \
       $(NULL)
 
