@@ -392,18 +392,19 @@ eeze_udev_find_by_subsystem_sysname(const char *subsystem, const char *sysname)
    const char *devname;
    Eina_List *ret = NULL;
 
-   if (!sysname) return NULL;
-
    en = udev_enumerate_new(udev);
    if (!en) return NULL;
+
+   if (subsystem) udev_enumerate_add_match_subsystem(en, subsystem);
+   if (sysname) udev_enumerate_add_match_sysname(en, sysname);
 
    udev_enumerate_scan_devices(en);
    devs = udev_enumerate_get_list_entry(en);
    udev_list_entry_foreach(cur, devs)
      {
         devname = udev_list_entry_get_name(cur);
-        device = 
-          udev_device_new_from_subsystem_sysname(udev, subsystem, sysname);
+        device = udev_device_new_from_syspath(udev, devname);
+        if (!device) continue;
         ret = eina_list_append(ret, eina_stringshare_add(devname));
         udev_device_unref(device);
      }
