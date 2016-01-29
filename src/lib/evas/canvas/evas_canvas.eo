@@ -1,6 +1,6 @@
 import evas_types;
 
-class Evas.Canvas (Eo.Base, Evas.Common_Interface)
+class Evas.Canvas (Eo.Base, Evas.Common_Interface, Efl.Core.Animator)
 {
    legacy_prefix: evas;
    data: Evas_Public_Data;
