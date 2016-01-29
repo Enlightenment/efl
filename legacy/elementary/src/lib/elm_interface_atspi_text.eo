@@ -1,3 +1,42 @@
+enum Elm.Atspi_Text.Granularity
+{
+   char,
+   word,
+   sentence,
+   line,
+   paragraph
+}
+
+enum Elm.Atspi_Text.Clip_Type
+{
+   legacy: elm_atspi_text_clip;
+   none,
+   min,
+   max,
+   both
+}
+
+struct Elm.Atspi_Text.Attribute
+{
+   name:  const(char)*;
+   value: const(char)*;
+}
+
+struct Elm.Atspi_Text.Range
+{
+   start_offset: int;
+   end_offset : int;
+   content: char *;
+}
+
+struct Elm.Atspi_Text.Change_Info
+{
+   content: const(char)*;
+   inserted: Eina.Bool;
+   pos: size_t;
+   len: size_t;
+}
+
 interface Elm.Interface_Atspi_Text ()
 {
    legacy_prefix: null;
@@ -19,7 +58,7 @@ interface Elm.Interface_Atspi_Text ()
             [[Gets string, start and end offset in text according to given initial offset and granulatity.]]
          }
          keys {
-            granularity: Elm_Atspi_Text_Granularity;
+            granularity: Elm.Atspi_Text.Granularity;
             start_offset: int * @nonull; [[Offset indicating start of string according to given granularity.  -1 in case of error.]]
             end_offset: int *; [[Offset indicating end of string according to given granularity. -1 in case of error.]]
          }
@@ -73,14 +112,14 @@ interface Elm.Interface_Atspi_Text ()
             end_offset: int *;
          }
          values {
-            attributes: own(list<own(Elm_Atspi_Text_Attribute *)> *);
+            attributes: own(list<own(Elm.Atspi_Text.Attribute *)> *);
          }
       }
       @property default_attributes @protected {
          get {
          }
          values {
-            attributes: own(list<own(Elm_Atspi_Text_Attribute *)>*);
+            attributes: own(list<own(Elm.Atspi_Text.Attribute *)>*);
          }
       }
       @property character_extents @protected {
@@ -120,11 +159,11 @@ interface Elm.Interface_Atspi_Text ()
          keys {
             screen_coords: bool;
             rect: Eina_Rectangle;
-            xclip: Elm_Atspi_Text_Clip_Type;
-            yclip: Elm_Atspi_Text_Clip_Type;
+            xclip: Elm.Atspi_Text.Clip_Type;
+            yclip: Elm.Atspi_Text.Clip_Type;
          }
          values {
-            ranges: own(list<own(Elm_Atspi_Text_Range *)> *);
+            ranges: own(list<own(Elm.Atspi_Text.Range *)> *);
          }
       }
       @property range_extents @protected {
