@@ -160,6 +160,9 @@ static void _decorate_item_set(Elm_Gen_Item *);
 static void _internal_elm_genlist_clear(Evas_Object *obj);
 static Eina_Bool _item_filtered_get(Elm_Gen_Item *it);
 
+static void _elm_genlist_tree_effect_stop(Elm_Genlist_Data *sd);
+static Eina_Bool _elm_genlist_tree_effect_setup(Elm_Genlist_Data *sd);
+
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
    {"select", _key_action_select},
@@ -1142,7 +1145,7 @@ _item_tree_effect_finish(Elm_Genlist_Data *sd)
          (ELM_GENLIST_EVENT_TREE_EFFECT_FINISHED, NULL));
    evas_object_smart_changed(sd->pan_obj);
 
-   sd->tree_effect_animator = NULL;
+   _elm_genlist_tree_effect_stop(sd);
 }
 
 static void
@@ -1974,7 +1977,10 @@ _item_realize(Elm_Gen_Item *it,
 }
 
 static Eina_Bool
-_tree_effect_animator_cb(void *data)
+_tree_effect_animator_cb(void *data,
+                         Eo *obj EINA_UNUSED,
+                         const Eo_Event_Description *desc EINA_UNUSED,
+                         void *event_info EINA_UNUSED)
 {
    int in = 0;
    const Eina_List *l;
@@ -2127,10 +2133,10 @@ _tree_effect_animator_cb(void *data)
    if (end)
      {
         _item_tree_effect_finish(sd);
-        return ECORE_CALLBACK_CANCEL;
+        _elm_genlist_tree_effect_stop(sd);
      }
 
-   return ECORE_CALLBACK_RENEW;
+   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -2386,6 +2392,37 @@ _item_block_realize(Item_Block *itb)
    itb->want_unrealize = EINA_FALSE;
 }
 
+static Eina_Bool
+_elm_genlist_tree_effect_setup(Elm_Genlist_Data *sd)
+{
+   if (!sd->tree_effect_animator)
+     {
+        Eina_Bool r;
+
+        _item_tree_effect_before(sd->expanded_item);
+        evas_object_raise(sd->event_block_rect);
+        evas_object_stack_below(sd->event_block_rect, sd->stack[1]);
+        evas_object_show(sd->event_block_rect);
+        sd->start_time = ecore_time_get();
+        eo_do(sd->obj,
+              r = eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _tree_effect_animator_cb, sd->obj));
+        sd->tree_effect_animator = 1;
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static void
+_elm_genlist_tree_effect_stop(Elm_Genlist_Data *sd)
+{
+   if (sd->tree_effect_animator)
+     {
+        sd->tree_effect_animator = 0;
+        eo_do(sd->obj,
+              eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _tree_effect_animator_cb, sd->obj));
+     }
+}
+
 EOLIAN static void
 _elm_genlist_pan_evas_object_smart_calculate(Eo *obj, Elm_Genlist_Pan_Data *psd)
 {
@@ -2414,16 +2451,7 @@ _elm_genlist_pan_evas_object_smart_calculate(Eo *obj, Elm_Genlist_Pan_Data *psd)
    if (sd->tree_effect_enabled &&
        (sd->move_effect_mode != ELM_GENLIST_TREE_EFFECT_NONE))
      {
-        if (!sd->tree_effect_animator)
-          {
-             _item_tree_effect_before(sd->expanded_item);
-             evas_object_raise(sd->event_block_rect);
-             evas_object_stack_below(sd->event_block_rect, sd->stack[1]);
-             evas_object_show(sd->event_block_rect);
-             sd->start_time = ecore_time_get();
-             sd->tree_effect_animator =
-               ecore_animator_add(_tree_effect_animator_cb, sd->obj);
-          }
+        _elm_genlist_tree_effect_setup(sd);
      }
 
    EINA_INLIST_FOREACH(sd->blocks, itb)
@@ -3693,7 +3721,7 @@ _item_del(Elm_Gen_Item *it)
         if (sd->tree_effect_animator)
           {
              _item_tree_effect_finish(sd);
-             ELM_SAFE_FREE(sd->tree_effect_animator, ecore_animator_del);
+             _elm_genlist_tree_effect_stop(sd);
           }
         sd->expanded_item = NULL;
         sd->move_effect_mode = ELM_GENLIST_TREE_EFFECT_NONE;
@@ -5570,7 +5598,8 @@ _elm_genlist_evas_object_smart_del(Eo *obj, Elm_Genlist_Data *sd)
    ecore_idler_del(sd->must_recalc_idler);
    ecore_timer_del(sd->multi_timer);
    eina_stringshare_del(sd->decorate_it_type);
-   ecore_animator_del(sd->tree_effect_animator);
+
+   _elm_genlist_tree_effect_stop(sd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -5713,11 +5742,12 @@ _internal_elm_genlist_clear(Evas_Object *obj)
    elm_layout_sizing_eval(sd->obj);
    eo_do(obj, elm_interface_scrollable_content_region_show(0, 0, 0, 0));
 
+   _elm_genlist_tree_effect_stop(sd);
+
    ELM_SAFE_FREE(sd->multi_timer, ecore_timer_del);
    ELM_SAFE_FREE(sd->update_job, ecore_job_del);
    ELM_SAFE_FREE(sd->queue_idle_enterer, ecore_idle_enterer_del);
    ELM_SAFE_FREE(sd->must_recalc_idler, ecore_idler_del);
-   ELM_SAFE_FREE(sd->tree_effect_animator, ecore_animator_del);
    ELM_SAFE_FREE(sd->event_block_rect, evas_object_del);
    ELM_SAFE_FREE(sd->scr_hold_timer, ecore_timer_del);
    ELM_SAFE_FREE(sd->queue, eina_list_free);
@@ -6643,17 +6673,7 @@ _elm_genlist_item_subitems_clear(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it)
      _item_sub_items_clear(it);
    else
      {
-        if (!sd->tree_effect_animator)
-          {
-             sd->expanded_item = it;
-             _item_tree_effect_before(it);
-             evas_object_stack_below(sd->event_block_rect, sd->stack[1]);
-             evas_object_show(sd->event_block_rect);
-             sd->start_time = ecore_time_get();
-             sd->tree_effect_animator =
-               ecore_animator_add(_tree_effect_animator_cb, sd->obj);
-          }
-        else
+        if (!_elm_genlist_tree_effect_setup(sd))
           _item_sub_items_clear(it);
      }
 }
@@ -7769,7 +7789,7 @@ _elm_genlist_decorate_mode_set(Eo *obj, Elm_Genlist_Data *sd, Eina_Bool decorate
    // and user can check whether decorate_all_mode_ is enabled.
    sd->decorate_all_mode = decorated;
 
-   ELM_SAFE_FREE(sd->tree_effect_animator, ecore_animator_del);
+   _elm_genlist_tree_effect_stop(sd);
    sd->move_effect_mode = ELM_GENLIST_TREE_EFFECT_NONE;
 
    list = elm_genlist_realized_items_get(obj);

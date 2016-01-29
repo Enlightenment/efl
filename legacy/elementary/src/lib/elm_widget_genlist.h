@@ -137,7 +137,6 @@ struct _Elm_Genlist_Data
    Eina_List                            *move_items; /* items move for
                                                       * tree effect */
    Elm_Gen_Item                         *expanded_next_item;
-   Ecore_Animator                       *tree_effect_animator;
    Elm_Genlist_Item_Move_Effect_Mode     move_effect_mode;
    int                                   reorder_fast;
 
@@ -199,6 +198,8 @@ struct _Elm_Genlist_Data
    /**< value whether item loop feature is enabled or not. */
    Eina_Bool                             item_loop_enable : 1;
    Eina_Bool                             item_looping_on : 1;
+
+   Eina_Bool                             tree_effect_animator : 1;
 };
 
 typedef struct _Item_Block Item_Block;
