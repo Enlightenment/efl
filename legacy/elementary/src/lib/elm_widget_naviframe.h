@@ -26,11 +26,11 @@
 typedef struct _Elm_Naviframe_Data Elm_Naviframe_Data;
 struct _Elm_Naviframe_Data
 {
+   Evas_Object          *obj; /* the object itself */
    Eina_Inlist          *stack; /* top item is the list's LAST item */
    Eina_List            *popping;
    Eina_List            *ops;
    Evas_Object          *dummy_edje;
-   Ecore_Animator       *animator;
    Evas_Display_Mode     dispmode;
 
    Eina_Bool             preserve : 1;

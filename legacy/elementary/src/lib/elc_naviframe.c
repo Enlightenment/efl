@@ -1419,7 +1419,10 @@ _send_signal(Elm_Naviframe_Item_Data *it, const char *sig)
 }
 
 static Eina_Bool
-_deferred(void *data)
+_deferred(void *data,
+          Eo *o EINA_UNUSED,
+          const Eo_Event_Description *desc EINA_UNUSED,
+          void *event_info EINA_UNUSED)
 {
    Elm_Naviframe_Data *nfd = data;
    Elm_Naviframe_Op *nfo;
@@ -1444,8 +1447,9 @@ _deferred(void *data)
         free(nfo);
      }
 
-   nfd->animator = NULL;
-   return ECORE_CALLBACK_CANCEL;
+   eo_do(nfd->obj,
+         eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _deferred, nfd));
+   return EO_CALLBACK_CONTINUE;
 }
 
 EOLIAN static void
@@ -1462,8 +1466,7 @@ _elm_naviframe_evas_object_smart_del(Eo *obj, Elm_Naviframe_Data *sd)
         eo_do(EO_OBJ(it), elm_wdg_item_del());
      }
 
-   //All popping items which are not called yet by animator.
-   if (sd->animator) ecore_animator_del(sd->animator);
+   // No need to cleanup animator as it is an event on myself
    EINA_LIST_FREE(sd->ops, nfo)
      free(nfo);
    EINA_LIST_FREE(sd->popping, it)
@@ -1527,6 +1530,16 @@ _elm_naviframe_elm_widget_access(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd, Ei
 }
 
 static void
+_schedule_deferred(Elm_Naviframe_Op *nfo, Elm_Naviframe_Data *sd)
+{
+   if (!sd->ops)
+     eo_do(sd->obj,
+           eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _deferred, sd));
+
+   sd->ops = eina_list_append(sd->ops, nfo);
+}
+
+static void
 _item_push_helper(Elm_Naviframe_Item_Data *item)
 {
    Elm_Object_Item *eo_top_item;
@@ -1559,8 +1572,7 @@ _item_push_helper(Elm_Naviframe_Item_Data *item)
         nfo->related = top_item;
         nfo->push = EINA_TRUE;
 
-        sd->ops = eina_list_append(sd->ops, nfo);
-        if (!sd->animator) sd->animator = ecore_animator_add(_deferred, sd);
+        _schedule_deferred(nfo, sd);
         item->pushing = EINA_TRUE;
      }
    else
@@ -1588,9 +1600,10 @@ elm_naviframe_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_naviframe_eo_base_constructor(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED)
+_elm_naviframe_eo_base_constructor(Eo *obj, Elm_Naviframe_Data *sd)
 {
    obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   sd->obj = obj;
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
@@ -1778,8 +1791,8 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
         nfo->push = EINA_FALSE;
 
         sd->popping = eina_list_append(sd->popping, it);
-        sd->ops = eina_list_append(sd->ops, nfo);
-        if (!sd->animator) sd->animator = ecore_animator_add(_deferred, sd);
+
+        _schedule_deferred(nfo, sd);
      }
    else
      eo_do(eo_item, elm_wdg_item_del());
