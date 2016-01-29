@@ -1072,6 +1072,8 @@ struct _Evas_Object_Protected_Data
 
    unsigned int                ref;
 
+   unsigned int                animator_ref;
+
    unsigned char               delete_me;
 
    struct  {

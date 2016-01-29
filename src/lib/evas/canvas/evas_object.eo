@@ -1,6 +1,6 @@
 import evas_types;
 
-abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stack)
+abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stack, Efl.Core.Animator)
 {
    eo_prefix: evas_obj;
    data: Evas_Object_Protected_Data;

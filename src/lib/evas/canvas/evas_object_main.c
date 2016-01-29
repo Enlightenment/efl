@@ -82,6 +82,83 @@ _init_cow(void)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_animator_repeater(void *data,
+                   Eo *eo_obj EINA_UNUSED,
+                   const Eo_Event_Description2 *desc EINA_UNUSED,
+                   void *event_info)
+{
+   Evas_Object_Protected_Data *obj = data;
+
+   eo_do(obj->object,
+         eo_event_callback_call(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, event_info));
+   DBG("Emitting animator tick on %p.", obj->object);
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+_check_event_catcher_add(void *data,
+                         Eo *eo_obj EINA_UNUSED,
+                         const Eo_Event_Description2 *desc EINA_UNUSED,
+                         void *event_info)
+{
+   const Eo_Callback_Array_Item *array = event_info;
+   Evas_Object_Protected_Data *obj = data;
+   int i;
+
+   for (i = 0; array[i].desc != NULL; i++)
+     {
+        if (array[i].desc == EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK)
+          {
+             if (obj->animator_ref++ > 0) break;
+
+             eo_do(evas_object_evas_get(obj->object),
+                   eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _animator_repeater, obj));
+             INF("Registering an animator tick on canvas %p for object %p.",
+                 evas_object_evas_get(obj->object), obj->object);
+
+             // No need to walk more than once per array as you can not del
+             // a partial array
+             break;
+          }
+     }
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+_check_event_catcher_del(void *data,
+                         Eo *eo_obj EINA_UNUSED,
+                         const Eo_Event_Description2 *desc EINA_UNUSED,
+                         void *event_info)
+{
+   const Eo_Callback_Array_Item *array = event_info;
+   Evas_Object_Protected_Data *obj = data;
+   int i;
+
+   for (i = 0; array[i].desc != NULL; i++)
+     {
+        if (array[i].desc == EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK)
+          {
+             if ((--obj->animator_ref) > 0) break;
+
+             eo_do(evas_object_evas_get(obj->object),
+                   eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _animator_repeater, obj));
+             INF("Unregistering an animator tick on canvas %p for object %p.",
+                 evas_object_evas_get(obj->object), obj->object);
+
+             break;
+          }
+     }
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+EO_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
+                          { EO_BASE_EVENT_CALLBACK_ADD, _check_event_catcher_add },
+                          { EO_BASE_EVENT_CALLBACK_DEL, _check_event_catcher_del });
+
 EOLIAN static Eo *
 _evas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
@@ -109,6 +186,8 @@ _evas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    obj->mask = eina_cow_alloc(evas_object_mask_cow);
 
    evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
+
+   eo_do(eo_obj, eo_event_callback_array_add(event_catcher_watch(), obj));
 
    return eo_obj;
 }
