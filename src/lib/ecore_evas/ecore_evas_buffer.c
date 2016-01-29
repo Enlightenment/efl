@@ -138,6 +138,7 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
            _ecore_evas_resize(ee, w, h);
         bdata->pixels = evas_object_image_data_get(bdata->image, 1);
      }
+   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
    if (bdata->pixels)
      {
         updates = evas_render_updates(ee->evas);
