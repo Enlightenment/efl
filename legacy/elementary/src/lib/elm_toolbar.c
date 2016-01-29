@@ -2531,7 +2531,12 @@ _elm_toolbar_item_icon_obj_set(Evas_Object *obj,
         eina_stringshare_del(item->icon_str);
         item->icon_str = NULL;
      }
+   if (item->icon)
+     {
+        evas_object_del(item->icon);
+     }
    item->icon = icon_obj;
+
    if (icon_obj)
      {
         ms = (icon_size * elm_config_scale_get());
