@@ -113,10 +113,10 @@ _check_event_catcher_add(void *data,
           {
              if (obj->animator_ref++ > 0) break;
 
-             eo_do(evas_object_evas_get(obj->object),
+             eo_do(obj->layer->evas->evas,
                    eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _animator_repeater, obj));
              INF("Registering an animator tick on canvas %p for object %p.",
-                 evas_object_evas_get(obj->object), obj->object);
+                 obj->layer->evas->evas, obj->object);
 
              // No need to walk more than once per array as you can not del
              // a partial array
@@ -143,10 +143,10 @@ _check_event_catcher_del(void *data,
           {
              if ((--obj->animator_ref) > 0) break;
 
-             eo_do(evas_object_evas_get(obj->object),
+             eo_do(obj->layer->evas->evas,
                    eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _animator_repeater, obj));
              INF("Unregistering an animator tick on canvas %p for object %p.",
-                 evas_object_evas_get(obj->object), obj->object);
+                 obj->layer->evas->evas, obj->object);
 
              break;
           }
