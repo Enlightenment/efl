@@ -1284,8 +1284,8 @@ _item_theme_hook(Evas_Object *obj,
           }
         if (it->icon)
           {
-             evas_object_size_hint_min_set(it->icon, icon_size, icon_size);
-             evas_object_size_hint_max_set(it->icon, icon_size, icon_size);
+             evas_object_size_hint_min_set(it->icon, icon_size * scale, icon_size * scale);
+             evas_object_size_hint_max_set(it->icon, icon_size * scale, icon_size * scale);
              elm_layout_content_set(view, "elm.swallow.icon", it->icon);
              elm_layout_signal_emit
                (view, "elm,state,icon,visible", "elm");
