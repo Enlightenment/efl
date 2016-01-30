@@ -67,6 +67,7 @@ EAPI void register_clock(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_colorselector(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_conformant(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_container(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_combobox(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_ctxpopup(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_datetime(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_dayselector(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -182,6 +183,7 @@ void init(v8::Handle<v8::Object> exports)
       elm::register_clock(exports, v8::Isolate::GetCurrent());
       elm::register_colorselector(exports, v8::Isolate::GetCurrent());
       elm::register_conformant(exports, v8::Isolate::GetCurrent());
+      elm::register_combobox(exports, v8::Isolate::GetCurrent());
       elm::register_container(exports, v8::Isolate::GetCurrent());
       elm::register_ctxpopup(exports, v8::Isolate::GetCurrent());
       elm::register_datetime(exports, v8::Isolate::GetCurrent());

@@ -1,4 +1,4 @@
-class Elm_Combobox (Elm.Button, Evas.Selectable_Interface,
+class Elm.Combobox (Elm.Button, Evas.Selectable_Interface,
                     Elm_Interface_Atspi_Widget_Action,
                     Elm.Entry, Elm.Genlist, Elm.Hover)
 {
