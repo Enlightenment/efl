@@ -1679,10 +1679,12 @@ typedef struct _Eina_Value_Optional_Inner Eina_Value_Optional_Inner;
 static inline Eina_Bool
 eina_value_optional_empty_is(const Eina_Value *value, Eina_Bool *is_empty)
 {
+   void *mem;
+
    EINA_VALUE_TYPE_OPTIONAL_CHECK_RETURN_VAL(value, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(is_empty, EINA_FALSE);
 
-   void *mem = eina_value_memory_get(value);
+   mem = eina_value_memory_get(value);
    if (!mem)
      return EINA_FALSE;
    if(2*sizeof(void*) <= sizeof(Eina_Value_Union))
@@ -1700,9 +1702,11 @@ eina_value_optional_empty_is(const Eina_Value *value, Eina_Bool *is_empty)
 static inline const Eina_Value_Type *
 eina_value_optional_type_get(Eina_Value *value)
 {
+   void *mem;
+
    EINA_VALUE_TYPE_OPTIONAL_CHECK_RETURN_VAL(value, (const Eina_Value_Type *)NULL);
 
-   void *mem = eina_value_memory_get(value);
+   mem = eina_value_memory_get(value);
    if (!mem)
      return NULL;
    
