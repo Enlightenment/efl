@@ -201,6 +201,11 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    if (!(e = obj->layer->evas)) return;
 
    _evas_walk(e);
+
+   if (type == EVAS_CALLBACK_MOVE &&
+       obj->move_ref == 0)
+     goto nothing_here;
+
      {
         switch (type)
           {
@@ -248,6 +253,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
           }
      }
 
+ nothing_here:
    if (!obj->no_propagate)
      {
         if ((obj->smart.parent) && (type != EVAS_CALLBACK_FREE) &&
