@@ -648,6 +648,7 @@ img/vert_bar_inset.png \
 img/vert_glow_run.png \
 img/vert_glow_run_rev.png \
 img/vertical_separated_bar_glow.png \
+img/vertical_separated_bar_disabled.png \
 img/vgrad_med_curved.png \
 img/vgrad_med_darker.png \
 img/vgrad_med_dark.png \
