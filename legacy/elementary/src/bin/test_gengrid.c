@@ -1798,7 +1798,10 @@ test_gengrid_focus(void *data EINA_UNUSED,
    evas_object_show(fr);
 
    bx_opt = elm_box_add(fr);
-   elm_box_horizontal_set(bx_opt, EINA_TRUE);
+   elm_box_layout_set(bx_opt, evas_object_box_layout_flow_horizontal, NULL, NULL);
+   evas_object_size_hint_weight_set(bx_opt, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx_opt, EVAS_HINT_FILL, 0.0);
+   elm_box_align_set(bx_opt, 0.0, 0.5);
    elm_object_content_set(fr, bx_opt);
    evas_object_show(bx_opt);
 
