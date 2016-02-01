@@ -3808,6 +3808,12 @@ static const char *_gl20_items_text[] = {
          "Springfield",     "Tallahassee",
          "Topeka",          "Trenton" };
 
+static void
+_gl20_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   free(data);
+}
+
 static char *
 _gl20_text_get(void *data, Evas_Object *obj EINA_UNUSED,
                const char *part EINA_UNUSED)
@@ -3994,7 +4000,7 @@ test_genlist20(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_event_callback_add(en, EVAS_CALLBACK_KEY_DOWN,
       _gl20_on_keydown, (void*)event_data);
    evas_object_event_callback_add(gl, EVAS_CALLBACK_FREE,
-      _cleanup_cb, (void*)event_data);
+      _gl20_del_cb, (void*)event_data);
    evas_object_smart_callback_add(en, "changed,user",
       _gl20_search_settings_changed_cb, (void*)event_data);
    evas_object_smart_callback_add(tg, "changed",
