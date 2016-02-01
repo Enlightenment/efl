@@ -4,66 +4,6 @@
  * @{
  */
 
-/**
- * Set map's zoom behavior. It can be set to manual or automatic.
- *
- * Default value is #ELM_MAP_ZOOM_MODE_MANUAL.
- *
- * Values <b> don't </b> work as bitmask, only one can be chosen.
- *
- * @note Valid sizes are 2^zoom, consequently the map may be smaller
- * than the scroller view.
- *
- * @see elm_map_zoom_mode_set()
- * @see elm_map_zoom_mode_get()
- */
-typedef enum
-{
-   ELM_MAP_ZOOM_MODE_MANUAL,      /**< Zoom controlled manually by elm_map_zoom_set(). It's set by default. */
-   ELM_MAP_ZOOM_MODE_AUTO_FIT,    /**< Zoom until map fits inside the scroll frame with no pixels outside this area. */
-   ELM_MAP_ZOOM_MODE_AUTO_FILL,   /**< Zoom until map fills scroll, ensuring no pixels are left unfilled. */
-   ELM_MAP_ZOOM_MODE_LAST
-} Elm_Map_Zoom_Mode;
-
-/**
- * Set type of a external source (provider).
- *
- * @see elm_map_sources_get()
- * @see elm_map_source_get()
- * @see elm_map_source_set()
- */
-typedef enum
-{
-   ELM_MAP_SOURCE_TYPE_TILE,   /**< Map tile provider. */
-   ELM_MAP_SOURCE_TYPE_ROUTE,  /**< Route service provider. */
-   ELM_MAP_SOURCE_TYPE_NAME,   /**< Name service provider. */
-   ELM_MAP_SOURCE_TYPE_LAST
-} Elm_Map_Source_Type;
-
-/**
- * Set type of transport used on route.
- *
- * @see elm_map_route_add()
- */
-typedef enum
-{
-   ELM_MAP_ROUTE_TYPE_MOTOCAR,   /**< Route should consider an automobile will be used. */
-   ELM_MAP_ROUTE_TYPE_BICYCLE,   /**< Route should consider a bicycle will be used by the user. */
-   ELM_MAP_ROUTE_TYPE_FOOT,      /**< Route should consider user will be walking. */
-   ELM_MAP_ROUTE_TYPE_LAST
-} Elm_Map_Route_Type;
-
-/**
- * Set the routing method, what should be prioritized, time or distance.
- *
- * @see elm_map_route_add()
- */
-typedef enum
-{
-   ELM_MAP_ROUTE_METHOD_FASTEST,  /**< Route should prioritize time. */
-   ELM_MAP_ROUTE_METHOD_SHORTEST, /**< Route should prioritize distance. */
-   ELM_MAP_ROUTE_METHOD_LAST
-} Elm_Map_Route_Method;
 
 /**
  * Set the name search method.

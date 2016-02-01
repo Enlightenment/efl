@@ -1,3 +1,67 @@
+
+enum Elm.Map.Zoom_Mode
+{
+   [[
+     Set map's zoom behavior. It can be set to manual or automatic.
+
+     Default value is #ELM_MAP_ZOOM_MODE_MANUAL.
+
+     Values <b> don't </b> work as bitmask, only one can be chosen.
+
+     Valid sizes are 2^zoom, consequently the map may be smaller
+     than the scroller view.
+
+     See @Elm.Map.zoom_mode.set()
+     See @Elm.Map.zoom_mode.get()
+   ]]
+   manual,    [[Zoom controlled manually by elm_map_zoom_set(). It's set by default.]]
+   auto_fit,  [[Zoom until map fits inside the scroll frame with no pixels outside this area.]]
+   auto_fill, [[Zoom until map fills scroll, ensuring no pixels are left unfilled.]]
+   last
+}
+
+enum Elm.Map.Source_Type
+{
+   [[
+     Set type of a external source (provider).
+
+     See @Elm.Map.sources_get()
+     See @Elm.Map.source_get()
+     See @Elm.Map.source_set()
+   ]]
+   tile,  [[Map tile provider.]]
+   route, [[Route service provider.]]
+   name,  [[Name service provider.]]
+   last
+}
+
+enum Elm.Map.Route_Type
+{
+   [[
+     Set type of transport used on route.
+
+     See @Elm.Map.route_add()
+   ]]
+   motocar, [[Route should consider an automobile will be used.]]
+   bicycle, [[Route should consider a bicycle will be used by the user.]]
+   foot,    [[Route should consider user will be walking.]]
+   last
+}
+
+
+enum Elm.Map.Route_Method
+{
+   [[
+     Set the routing method, what should be prioritized, time or distance.
+
+     See @Elm.Map.route_add()
+   ]]
+   fastest,  [[Route should prioritize time.]]
+   shortest, [[Route should prioritize distance.]]
+   last
+}
+
+
 class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
                Elm.Interface_Atspi_Widget_Action,
                Evas.Clickable_Interface)
@@ -163,7 +227,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
             ]]
          }
          values {
-            mode: Elm_Map_Zoom_Mode; [[The zoom mode of the map, being it
+            mode: Elm.Map.Zoom_Mode; [[The zoom mode of the map, being it
                                        one of #ELM_MAP_ZOOM_MODE_MANUAL
                                        (default), #ELM_MAP_ZOOM_MODE_AUTO_FIT,
                                        or #ELM_MAP_ZOOM_MODE_AUTO_FILL.]]
@@ -229,7 +293,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
            The current source can be get using @.source_get.
          ]]
          params {
-            @in type: Elm_Map_Source_Type; [[Source type.]]
+            @in type: Elm.Map.Source_Type; [[Source type.]]
             @in source_name: const(char)*; [[The source to be used.]]
          }
       }
@@ -237,7 +301,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
          [[Get the name of currently used source for a specific type.]]
          return: const(char)*; [[The name of the source in use.]]
          params {
-            @in type: Elm_Map_Source_Type; [[Source type.]]
+            @in type: Elm.Map.Source_Type; [[Source type.]]
          }
       }
       route_add {
@@ -263,8 +327,8 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
          ]]
          return: Elm_Map_Route *; [[The created route or $null upon failure.]]
          params {
-            @in type: Elm_Map_Route_Type; [[The type of transport to be considered when tracing a route.]]
-            @in method: Elm_Map_Route_Method; [[The routing method, what should be prioritized.]]
+            @in type: Elm.Map.Route_Type; [[The type of transport to be considered when tracing a route.]]
+            @in method: Elm.Map.Route_Method; [[The routing method, what should be prioritized.]]
             @in flon: double; [[The start longitude.]]
             @in flat: double; [[The start latitude.]]
             @in tlon: double; [[The destination longitude.]]
@@ -359,7 +423,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
          ]]
          return: const(char)**; [[The char pointer array of source names.]]
          params {
-            @in type: Elm_Map_Source_Type; [[Source type.]]
+            @in type: Elm.Map.Source_Type; [[Source type.]]
          }
       }
       overlay_polygon_add {
