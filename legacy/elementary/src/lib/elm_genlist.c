@@ -1274,6 +1274,8 @@ static void
 _elm_genlist_item_state_update(Elm_Gen_Item *it)
 {
    Eina_Bool tmp;
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+
    if (it->selected)
      {
         edje_object_signal_emit(VIEW(it), SIGNAL_SELECTED, "elm");
@@ -1295,7 +1297,7 @@ _elm_genlist_item_state_update(Elm_Gen_Item *it)
           edje_object_signal_emit
              (it->deco_all_view, SIGNAL_EXPANDED, "elm");
      }
-   if (it == (Elm_Gen_Item *)GL_IT(it)->wsd->focused_item &&
+   if ((EO_OBJ(it) == sd->focused_item) &&
        (elm_widget_focus_highlight_enabled_get(WIDGET(it)) || _elm_config->win_auto_focus_enable))
      edje_object_signal_emit(VIEW(it), SIGNAL_FOCUSED, "elm");
 }
@@ -1555,7 +1557,7 @@ _item_cache_add(Elm_Gen_Item *it)
      edje_object_signal_emit(itc->base_view, SIGNAL_UNSELECTED, "elm");
    if (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()))
      edje_object_signal_emit(itc->base_view, SIGNAL_ENABLED, "elm");
-   if (it == (Elm_Gen_Item *)sd->focused_item &&
+   if ((EO_OBJ(it) == sd->focused_item) &&
        (elm_widget_focus_highlight_enabled_get(obj) || _elm_config->win_auto_focus_enable))
      edje_object_signal_emit(itc->base_view, SIGNAL_UNFOCUSED, "elm");
 

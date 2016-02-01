@@ -209,7 +209,7 @@ _item_cache_add(Elm_Gen_Item *it)
           edje_object_signal_emit(itc->base_view, "elm,state,unselected", "elm");
         if (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()))
           edje_object_signal_emit(itc->base_view, "elm,state,enabled", "elm");
-        if (it == (Elm_Gen_Item *)sd->focused_item &&
+        if ((EO_OBJ(it) == sd->focused_item) &&
             (elm_widget_focus_highlight_enabled_get(obj) || _elm_config->win_auto_focus_enable))
           edje_object_signal_emit(itc->base_view, "elm,state,unfocused", "elm");
 
