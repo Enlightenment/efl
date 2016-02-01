@@ -505,9 +505,9 @@ _evas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool cur_prev
         Evas_Object_Protected_Data *clip = obj->prev->clipper;
         if (!cur_prev)
           {
-             EINA_COW_STATE_WRITE_BEGIN(obj->prev->clipper, state_write, prev)
+             EINA_COW_STATE_WRITE_BEGIN(obj, state_write, prev)
                state_write->clipper = NULL;
-             EINA_COW_STATE_WRITE_END(obj->prev->clipper, state_write, prev);
+             EINA_COW_STATE_WRITE_END(obj, state_write, prev);
           }
         if (clip != obj->cur->clipper)
           eo_do(clip->object, eo_event_callback_del(EO_BASE_EVENT_DEL, _clipper_del_cb, obj->object));
