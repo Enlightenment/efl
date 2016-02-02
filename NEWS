@@ -201,7 +201,12 @@ Fixes:
    * edje: Fix potential NULL pointer dereference (CID1349866)
    * efreet: reject invalid "" data for Efreet_Desktop->x hash (T3096)
    * efreet: add locking for efreet_desktop_x_field_get()
-
+   * evas: Fix segfault when trying to determine overlay usage
+   * evas: Fix explicit NULL dereference (CID1347415)
+   * Evas clip: Fix rare crash in _render_pre_clipper_change
+   * eina: fix invalid prototype
+   * eeze: Fix eeze_udev_find_by_subsystem_sysname function
+   * eldbus: Correctly read/write boolean to eina_value (T3089)
 
 Changes since 1.15.0:
 ---------------------
