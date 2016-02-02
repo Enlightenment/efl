@@ -91,7 +91,7 @@ main(int argc, char *argv[])
    fail_if(fcount != 2);
 
    eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 2));
-   fail_if(pd->cb_count != 1);
+   fail_if(pd->cb_count != 2);
 
    eo_do(obj, simple_a_set(2));
    fail_if(cb_count != 0);
@@ -122,9 +122,9 @@ main(int argc, char *argv[])
    fail_if(fcount != 0);
 
    eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _a_changed_cb, (void *) 1));
-   fail_if(pd->cb_count != 0);
+   fail_if(pd->cb_count != 1);
    eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _a_changed_cb, (void *) 2));
-   fail_if(pd->cb_count != -1);
+   fail_if(pd->cb_count != 0);
 
    /* Global Freeze/thaw. */
    fcount = 0;
@@ -145,7 +145,7 @@ main(int argc, char *argv[])
    fail_if(fcount != 2);
 
    eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 2));
-   fail_if(pd->cb_count != 1);
+   fail_if(pd->cb_count != 2);
 
    eo_do(obj, simple_a_set(2));
    fail_if(cb_count != 0);
@@ -180,4 +180,3 @@ main(int argc, char *argv[])
    eo_shutdown();
    return 0;
 }
-
