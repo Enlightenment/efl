@@ -114,7 +114,10 @@ _edje_user_definition_free(Edje_User_Defined *eud)
 #ifdef EDJE_CALC_CACHE
              rp->invalidate = EINA_TRUE;
 #endif
-             _edje_recalc_do(eud->ed);
+             /* this seems to be as unnecessary as the one in part_unswallow()
+              * cedric, 1 February 2016
+              */
+             // _edje_recalc_do(eud->ed);
           }
         break;
 
