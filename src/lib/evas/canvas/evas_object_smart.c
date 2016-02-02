@@ -893,8 +893,6 @@ _evas_object_smart_need_recalculate_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Boo
    // XXX: do i need this?
    if (!obj || !obj->layer || obj->delete_me) return;
 
-   if (o->need_recalculate == value) return;
-
    evas_object_async_block(obj);
    /* remove this entry from calc_list or processed list */
    if (eina_clist_element_is_linked(&o->calc_entry))
@@ -905,6 +903,8 @@ _evas_object_smart_need_recalculate_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Boo
      eina_clist_add_tail(&obj->layer->evas->calc_list, &o->calc_entry);
    else
      eina_clist_add_tail(&obj->layer->evas->calc_done, &o->calc_entry);
+
+   if (o->need_recalculate == value) return;
 
    if (o->recalculate_cycle > 16382)
      {
