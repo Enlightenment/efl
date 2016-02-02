@@ -95,6 +95,12 @@ Fixes:
    * combobox: move responsibility to define filter and content to the user of a combobox
    * combobox: "return" key handled correctly and removed unreachable code. (T3075)
    * Genlist: do not select the item two times in case of a double click.
+   * Elm Image: fix usage of animated gif on the same image object more than one time
+   * combobox: fix disabled state (T3075)
+   * combobox: fix continuous clicks on hover
+   * [toolbar] don't leak icons into the UI
+   * [toolbar] Adjust icon size along with text etc.
+   * genlist/gengrid: Fix focus hilight error (T3122)
 
 Changes since 1.15.0:
 ---------------------
