@@ -39,6 +39,8 @@ enum _api_state
 };
 typedef enum _api_state api_state;
 
+static int bounce_max = 50;
+
 static void
 set_api_state(api_data *api)
 {
@@ -299,7 +301,7 @@ _bounce_cb(void *data)
      elm_genlist_item_bring_in(bounce->it2, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
    else
      elm_genlist_item_bring_in(bounce->it1, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
-   if (bounce->state > 50)
+   if (bounce->state > bounce_max)
      {
         if (getenv("ELM_TEST_AUTOBOUNCE")) elm_exit();
      }
@@ -414,7 +416,11 @@ test_genlist(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    evas_object_event_callback_add(bt, EVAS_CALLBACK_DEL, _btdel_cb, bounce);
 
    max = 2000;
-   if (getenv("ELM_TEST_AUTOBOUNCE")) max = 200;
+   if (getenv("ELM_TEST_AUTOBOUNCE"))
+     {
+        max = 200;
+        bounce_max = atoi(getenv("ELM_TEST_AUTOBOUNCE"));
+     }
    for (i = 0; i < max; i++)
      {
         gli = elm_genlist_item_append(gl, api->itc1,
