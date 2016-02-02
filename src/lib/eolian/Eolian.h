@@ -1185,6 +1185,16 @@ EAPI Eolian_Object_Scope eolian_event_scope_get(const Eolian_Event *event);
 EAPI Eina_Bool eolian_event_is_beta(const Eolian_Event *event);
 
 /*
+ * @brief Get whether an event is hot (unfreezable).
+ *
+ * @param[in] event the event handle
+ * @return EINA_TRUE and EINA_FALSE respectively
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_event_is_hot(const Eolian_Event *event);
+
+/*
  * @brief Returns the C name of an event
  *
  * @param[in] event the event handle

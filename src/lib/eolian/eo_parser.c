@@ -1532,21 +1532,32 @@ parse_event(Eo_Lexer *ls)
      }
    ev->name = eina_stringshare_add(eina_strbuf_string_get(buf));
    pop_strbuf(ls);
-   if (ls->t.kw == KW_at_private)
+   Eina_Bool has_scope = EINA_FALSE, has_beta = EINA_FALSE,
+             has_hot   = EINA_FALSE;
+   for (;;) switch (ls->t.kw)
      {
-        ev->scope = EOLIAN_SCOPE_PRIVATE;
+      case KW_at_private:
+      case KW_at_protected:
+        CASE_LOCK(ls, scope, "scope qualifier")
+        ev->scope = (ls->t.kw == KW_at_private)
+                     ? EOLIAN_SCOPE_PRIVATE
+                     : EOLIAN_SCOPE_PROTECTED;
         eo_lexer_get(ls);
-     }
-   else if (ls->t.kw == KW_at_protected)
-     {
-        ev->scope = EOLIAN_SCOPE_PROTECTED;
-        eo_lexer_get(ls);
-     }
-   if (ls->t.kw == KW_at_beta)
-     {
+        break;
+      case KW_at_beta:
+        CASE_LOCK(ls, beta, "beta qualifier")
         ev->is_beta = EINA_TRUE;
         eo_lexer_get(ls);
+        break;
+      case KW_at_hot:
+        CASE_LOCK(ls, hot, "hot qualifier");
+        ev->is_hot = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      default:
+        goto end;
      }
+end:
    if (ls->t.token == ':')
      {
         eo_lexer_get(ls);

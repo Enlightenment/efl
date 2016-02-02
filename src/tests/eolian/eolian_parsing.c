@@ -118,6 +118,7 @@ START_TEST(eolian_events)
    fail_if(eolian_event_type_get(ev));
    fail_if(strcmp(name, "clicked"));
    fail_if(!eolian_event_is_beta(ev));
+   fail_if(eolian_event_is_hot(ev));
    /* Clicked,double */
    fail_if(!(eina_iterator_next(iter, (void**)&ev)));
    fail_if(!(name = eolian_event_name_get(ev)));
@@ -126,6 +127,14 @@ START_TEST(eolian_events)
    type_name = eolian_type_name_get(type);
    fail_if(strcmp(type_name, "Evas_Event_Clicked_Double_Info"));
    fail_if(eolian_event_is_beta(ev));
+   fail_if(eolian_event_is_hot(ev));
+   /* Hot */
+   fail_if(!(eina_iterator_next(iter, (void**)&ev)));
+   fail_if(!(name = eolian_event_name_get(ev)));
+   fail_if(eolian_event_type_get(ev));
+   fail_if(strcmp(name, "hot"));
+   fail_if(eolian_event_is_beta(ev));
+   fail_if(!eolian_event_is_hot(ev));
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
    /* Check eolian_class_event_get_by_name */
