@@ -252,7 +252,6 @@ _enable(Elm_Calendar_Data *sd,
 
    snprintf(emission, sizeof(emission), "cit_%i,enable", it);
    elm_layout_signal_emit(sd->obj, emission, "elm");
-   sd->today_it = it;
 }
 
 static inline void
@@ -263,7 +262,6 @@ _disable(Elm_Calendar_Data *sd,
 
    snprintf(emission, sizeof(emission), "cit_%i,disable", it);
    elm_layout_signal_emit(sd->obj, emission, "elm");
-   sd->today_it = it;
 }
 
 static char *
