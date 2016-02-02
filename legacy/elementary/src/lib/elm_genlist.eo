@@ -1,4 +1,5 @@
 import elm_general;
+import elm_list;
 
 class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
                    Elm.Interface_Atspi_Widget_Action, Elm.Interface_Atspi_Selection,
@@ -221,25 +222,25 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interfac
             [[This sets the horizontal stretching mode.
 
               This sets the mode used for sizing items horizontally. Valid
-              modes are #ELM_LIST_LIMIT, #ELM_LIST_SCROLL, and
-              #ELM_LIST_COMPRESS. The default is #ELM_LIST_SCROLL. This mode
+              modes are @Elm.List.Mode.limit, @Elm.List.Mode.scroll, and
+              @Elm.List.Mode.compress. The default is @Elm.List.Mode.scroll. This mode
               means that if items are too wide to fit, the scroller will
               scroll horizontally. Otherwise items are expanded to fill
               the width of the viewport of the scroller. If it is
-              #ELM_LIST_LIMIT, items will be expanded to the viewport width
-              and limited to that size. If it is #ELM_LIST_COMPRESS, the
+              @Elm.List.Mode.limit, items will be expanded to the viewport width
+              and limited to that size. If it is @Elm.List.Mode.compress, the
               item width will be fixed (restricted to a minimum of) to the
               list width when calculating its size in order to allow the
               height to be calculated based on it. This allows, for
               instance, text block to wrap lines if the Edje part is
               configured with "text.min: 0 1".
 
-              Note: #ELM_LIST_COMPRESS will make list resize slower as it
+              Note: @Elm.List.Mode.compress will make list resize slower as it
               will have to recalculate every item height again whenever
               the list width changes!
 
               Note: Homogeneous mode is for that all items in the genlist
-              same width/height. With #ELM_LIST_COMPRESS, it makes genlist
+              same width/height. With @Elm.List.Mode.compress, it makes genlist
               items to fast initializing. However there's no sub-objects
               in genlist which can be on the flying resizable (such as
               TEXTBLOCK). If then, some dynamic esizable objects in
@@ -250,7 +251,7 @@ class Elm.Genlist (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interfac
             [[Get the horizontal stretching mode.]]
          }
          values {
-            mode: Elm_List_Mode(4); [[The mode to use (one of #ELM_LIST_SCROLL or #ELM_LIST_LIMIT).]]
+            mode: Elm.List.Mode(Elm.List.Mode.last); [[The mode to use (one of @Elm.List.Mode.scroll or @Elm.List.Mode.limit).]]
          }
       }
       @property decorated_item {
