@@ -3979,6 +3979,183 @@ _edje_object_parts_extends_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *x, Ev
    return EINA_TRUE;
 }
 
+#if 1
+//Removed version of 4000x4000 limitation.
+EOLIAN void
+_edje_object_size_min_restricted_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh)
+{
+   //This structure keeps a previous part size information.
+   //We could migrate these variables into Edje_Real_Part for optimization.
+   //Right now, keep here while keeping my eyes on any unexpected side effects.
+   typedef struct _part_calc
+     {
+        Evas_Coord_Size size;
+        Evas_Coord_Size req;
+     } part_calc;
+
+   Evas_Coord orig_w, orig_h; //original edje size
+   int max_over_w  = 0, max_over_h = 0;  //maximum over-calculated size.
+   unsigned int i;
+   Eina_Bool repeat_w, repeat_h;
+   Eina_Bool reset_max = EINA_TRUE;
+
+   if ((!ed) || (!ed->collection))
+     {
+        if (minw) *minw = restrictedw;
+        if (minh) *minh = restrictedh;
+        return;
+     }
+
+   //Simulate object minimum size.
+   ed->calc_only = EINA_TRUE;
+
+   orig_w = ed->w;
+   orig_h = ed->h;
+
+   //restrict minimum size to
+   ed->w = restrictedw;
+   ed->h = restrictedh;
+
+   Eina_Inarray *inarray =
+      eina_inarray_new(sizeof(part_calc), ed->table_parts_size);
+
+   part_calc pcalc;
+
+   //initialize previous part size info cache.
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        pcalc.size.w = pcalc.size.h = 999999;
+        pcalc.req.w = pcalc.req.h = 999999;
+        eina_inarray_push(inarray, &pcalc);
+     }
+
+   do
+     {
+        repeat_w = EINA_FALSE;
+        repeat_h = EINA_FALSE;
+        ed->dirty = EINA_TRUE;
+#ifdef EDJE_CALC_CACHE
+        ed->all_part_change = EINA_TRUE;
+#endif
+        _edje_recalc_do(ed);
+
+        if (reset_max)
+          {
+             max_over_w = 0;
+             max_over_h = 0;
+             reset_max = EINA_FALSE;
+          }
+
+        //for parts
+        for (i = 0; i < ed->table_parts_size; i++)
+          {
+             Edje_Real_Part *ep = ed->table_parts[i];
+             Evas_Coord ins_l, ins_r;
+
+             if (!ep->chosen_description) continue;
+
+             part_calc *pcalc = eina_inarray_nth(inarray, i);
+
+             Eina_Bool skip_h = EINA_FALSE;
+
+             //width
+             if (!ep->chosen_description->fixed.w)
+               {
+                  int over_w = (ep->w - ep->req.w);
+
+                  //We take care textblock width size specially.
+                  if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+                    {
+                       Evas_Coord tb_mw;
+                       evas_object_textblock_size_formatted_get(ep->object,
+                                                                &tb_mw, NULL);
+                       evas_object_textblock_style_insets_get(ep->object,
+                                                              &ins_l, &ins_r,
+                                                              NULL, NULL);
+                       tb_mw = ins_l + tb_mw + ins_r;
+                       tb_mw -= ep->req.w;
+                       if (tb_mw > over_w) over_w = tb_mw;
+                    }
+
+                  if (over_w > max_over_w)
+                    {
+                       max_over_w = over_w;
+                       repeat_w = EINA_TRUE;
+                       skip_h = EINA_TRUE;
+
+                       //Reset accumulated max size when it's uncertain.
+                       if ((abs(ep->req.w) > 1) ||
+                           (pcalc->size.w != ep->w) ||
+                           (pcalc->req.w != ep->req.w))
+                         reset_max = EINA_TRUE;
+                    }
+               }
+
+             //height
+             if (!ep->chosen_description->fixed.h)
+               {
+                  int over_h = (ep->h - ep->req.h);
+
+                  if (over_h > max_over_h)
+                    {
+                       if ((ep->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
+                           ((Edje_Part_Description_Text *)ep->chosen_description)->text.min_x ||
+                           !skip_h)
+                         {
+                            max_over_h = over_h;
+                            repeat_h = EINA_TRUE;
+
+                            //Reset accumulated max size when it's uncertain.
+                            if ((pcalc->size.h != ep->h) ||
+                                (pcalc->req.h != ep->req.h))
+                              reset_max = EINA_TRUE;
+                         }
+                    }
+               }
+
+             //Caching part size infomation.
+             pcalc->size.w = ep->w;
+             pcalc->size.h = ep->h;
+             pcalc->req.w = ep->req.w;
+             pcalc->req.h = ep->req.h;
+
+          }//for
+
+        if (repeat_w)
+          {
+             ed->w += max_over_w;
+             if (ed->w < restrictedw) ed->w = restrictedw;
+          }
+        if (repeat_h)
+          {
+             ed->h += max_over_h;
+             if (ed->h < restrictedh) ed->h = restrictedh;
+          }
+     }
+   while (repeat_w || repeat_h);
+
+   //exceptional handling.
+   if (ed->w < restrictedw) ed->w = restrictedw;
+   if (ed->h < restrictedh) ed->h = restrictedh;
+
+   ed->min.w = ed->w;
+   ed->min.h = ed->h;
+
+   if (minw) *minw = ed->min.w;
+   if (minh) *minh = ed->min.h;
+
+   ed->w = orig_w;
+   ed->h = orig_h;
+   ed->dirty = EINA_TRUE;
+#ifdef EDJE_CALC_CACHE
+   ed->all_part_change = EINA_TRUE;
+#endif
+   _edje_recalc(ed);
+   ed->calc_only = EINA_FALSE;
+
+   eina_inarray_free(inarray);
+}
+#else
 EOLIAN void
 _edje_object_size_min_restricted_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh)
 {
@@ -4145,6 +4322,7 @@ again:
    _edje_recalc(ed);
    ed->calc_only = EINA_FALSE;
 }
+#endif
 
 /* FIXME: Correctly return other states */
 EOLIAN const char *
