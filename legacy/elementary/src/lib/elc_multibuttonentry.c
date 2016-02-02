@@ -546,6 +546,17 @@ _on_item_deleted(void *data,
      }
 }
 
+static void
+_on_item_unfocused(void *data,
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
+{
+   Elm_Multibuttonentry_Item_Data *it = data;
+
+   if (!it) return;
+   elm_layout_signal_emit(VIEW(it), "elm,state,unfocused", "elm");
+}
+
 static Eina_Bool
 _long_press_cb(void *data)
 {
@@ -765,6 +776,8 @@ _item_new(Elm_Multibuttonentry_Data *sd,
      (VIEW(item), "mouse,clicked,1", "*", _on_item_clicked, EO_OBJ(item));
    elm_layout_signal_callback_add
      (VIEW(item), "elm,deleted", "elm", _on_item_deleted, EO_OBJ(item));
+   evas_object_smart_callback_add
+     (VIEW(item), "unfocused", _on_item_unfocused, item);
    evas_object_event_callback_add
       (VIEW(item),
        EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, item);
