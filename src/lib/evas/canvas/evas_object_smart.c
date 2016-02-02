@@ -1139,8 +1139,8 @@ evas_object_update_bounding_box(Evas_Object *eo_obj, Evas_Object_Protected_Data 
         /* Update top limit */
         if (noclip && y < smart_parent->cur.bounding_box.y)
           {
-	     smart_parent->cur.bounding_box.h += smart_parent->cur.bounding_box.x - x;
-	     smart_parent->cur.bounding_box.y = y;
+             smart_parent->cur.bounding_box.h += smart_parent->cur.bounding_box.y - y;
+             smart_parent->cur.bounding_box.y = y;
 
              propagate = EINA_TRUE;
           }
