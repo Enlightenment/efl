@@ -1186,15 +1186,6 @@ _elm_panel_eo_base_constructor(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_panel_eo_base_destructor(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
-{
-   eo_do(obj,
-         eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _elm_panel_anim_cb, obj));
-
-   eo_do_super(obj, MY_CLASS, eo_destructor());
-}
-
-EOLIAN static void
 _elm_panel_orient_set(Eo *obj, Elm_Panel_Data *sd, Elm_Panel_Orient orient)
 {
    if (sd->orient == orient) return;

@@ -67,7 +67,6 @@ class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
    implements {
       class.constructor;
       Eo.Base.constructor;
-      Eo.Base.destructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.member_add;
       Evas.Object_Smart.del;
