@@ -33,7 +33,7 @@ struct _Evas_Smart_Data
    int               walking_list;
    int               member_count; /** number of smart member objects */
 
-   unsigned char     recalculate_cycle;
+   unsigned short    recalculate_cycle;
 
    Evas_BiDi_Direction paragraph_direction : 2;
    Eina_Bool         inherit_paragraph_direction : 1;
@@ -906,7 +906,7 @@ _evas_object_smart_need_recalculate_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Boo
 
    if (o->need_recalculate == value) return;
 
-   if (o->recalculate_cycle > 254)
+   if (o->recalculate_cycle > 16382)
      {
         ERR("Object %p is not stable during recalc loop", eo_obj);
         return;
