@@ -9,7 +9,7 @@
          base: "font="FN" font_size=10 color=#3399ff style=glow glow_color=#3399ff18 align=center text_class=calendar_day_text_today color_class=calendar_day_text_today";\
       }\
       style { name: "calendar_date_disabled_style";\
-         base: "font="FN" font_size=10 color=#151515 style=shadow_bottom shadow_color=#ffffffc0 align=center text_class=calendar_day_text_disabled text_class=calendar_day_text_disabled";\
+         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffffc0 align=center text_class=calendar_day_text_disabled text_class=calendar_day_text_disabled";\
       }\
 
 #define CAL_SPIN(_sufix, _text, _relative)\
