@@ -10,9 +10,9 @@
 START_TEST(eo_simple)
 {
    fail_if(!eo_init()); /* one init by test suite */
-   fail_if(eo_init() != 1);
-   fail_if(eo_shutdown() != 1);
+   fail_if(!eo_init());
    fail_if(!eo_shutdown());
+   fail_if(eo_shutdown());
 }
 END_TEST
 
