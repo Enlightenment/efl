@@ -80,16 +80,16 @@ utf8_offset_to_index(const char *str, int offset)
 static int
 sort_cb(const void *d1, const void *d2)
 {
-    const Ecore_IMF_Preedit_Attr *attr1 = d1;
-    const Ecore_IMF_Preedit_Attr *attr2 = d2;
+   const Ecore_IMF_Preedit_Attr *attr1 = d1;
+   const Ecore_IMF_Preedit_Attr *attr2 = d2;
 
-    if (!attr1) return 1;
-    if (!attr2) return -1;
+   if (!attr1) return 1;
+   if (!attr2) return -1;
 
-    if (attr1->start_index < attr2->start_index)
-      return -1;
-    else
-      return 1;
+   if (attr1->start_index < attr2->start_index)
+     return -1;
+   else
+     return 1;
 }
 
 static void
@@ -233,44 +233,44 @@ _request_surrounding_text(IBusIMContext *ibusimcontext)
    EINA_SAFETY_ON_NULL_RETURN(ibusimcontext->ibuscontext);
    EINA_SAFETY_ON_NULL_RETURN(ibusimcontext->ctx);
 
-    if ((ibusimcontext->caps & IBUS_CAP_SURROUNDING_TEXT) != 0 &&
-        ibus_input_context_needs_surrounding_text(ibusimcontext->ibuscontext))
-      {
-         char *surrounding = NULL;
-         int cursor_pos;
-         IBusText *ibustext;
+   if ((ibusimcontext->caps & IBUS_CAP_SURROUNDING_TEXT) != 0 &&
+       ibus_input_context_needs_surrounding_text(ibusimcontext->ibuscontext))
+     {
+        char *surrounding = NULL;
+        int cursor_pos;
+        IBusText *ibustext;
 
-         EINA_LOG_DBG ("requesting surrounding text...\n");
+        EINA_LOG_DBG ("requesting surrounding text...\n");
 
-         if (ecore_imf_context_surrounding_get(ibusimcontext->ctx,
-                                               &surrounding,
-                                               &cursor_pos))
-           {
-              if (!surrounding)
-                return;
+        if (ecore_imf_context_surrounding_get(ibusimcontext->ctx,
+                                              &surrounding,
+                                              &cursor_pos))
+          {
+             if (!surrounding)
+               return;
 
-              if (cursor_pos < 0)
-                {
-                   free(surrounding);
-                   return;
-                }
+             if (cursor_pos < 0)
+               {
+                  free(surrounding);
+                  return;
+               }
 
-              ibustext = ibus_text_new_from_string(surrounding);
+             ibustext = ibus_text_new_from_string(surrounding);
 
-              ibus_input_context_set_surrounding_text(ibusimcontext->ibuscontext,
-                                                      ibustext,
-                                                      cursor_pos,
-                                                      cursor_pos);
+             ibus_input_context_set_surrounding_text(ibusimcontext->ibuscontext,
+                                                     ibustext,
+                                                     cursor_pos,
+                                                     cursor_pos);
 
-              free(surrounding);
-           }
-         else
-           {
-              ibusimcontext->caps &= ~IBUS_CAP_SURROUNDING_TEXT;
-              ibus_input_context_set_capabilities(ibusimcontext->ibuscontext,
-                                                  ibusimcontext->caps);
-           }
-      }
+             free(surrounding);
+          }
+        else
+          {
+             ibusimcontext->caps &= ~IBUS_CAP_SURROUNDING_TEXT;
+             ibus_input_context_set_capabilities(ibusimcontext->ibuscontext,
+                                                 ibusimcontext->caps);
+          }
+     }
 }
 
 IBusIMContext *

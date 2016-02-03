@@ -59,8 +59,8 @@ static Ecore_IMF_Context_Class ibus_imf_class = {
     NULL
 };
 
-static Ecore_IMF_Context *im_module_create (void);
-static Ecore_IMF_Context *im_module_exit (void);
+static Ecore_IMF_Context *im_module_create(void);
+static Ecore_IMF_Context *im_module_exit(void);
 
 static Eina_Bool
 im_module_init(void)
@@ -73,10 +73,10 @@ im_module_init(void)
         if (strcmp(s, "x11")) return EINA_FALSE;
      }
    ecore_main_loop_glib_integrate();
-    ibus_init();
-    ecore_imf_module_register(&ibus_im_info, im_module_create, im_module_exit);
+   ibus_init();
+   ecore_imf_module_register(&ibus_im_info, im_module_create, im_module_exit);
 
-    return EINA_TRUE;
+   return EINA_TRUE;
 }
 
 static void im_module_shutdown(void)
@@ -86,31 +86,31 @@ static void im_module_shutdown(void)
 static Ecore_IMF_Context *
 im_module_exit(void)
 {
-    return NULL;
+   return NULL;
 }
 
 static Ecore_IMF_Context *
 im_module_create(void)
 {
-    Ecore_IMF_Context *ctx = NULL;
-    IBusIMContext *ctxd = NULL;
+   Ecore_IMF_Context *ctx = NULL;
+   IBusIMContext *ctxd = NULL;
 
-    ctxd = ecore_imf_context_ibus_new();
-    if (!ctxd)
-      {
-         return NULL;
-      }
+   ctxd = ecore_imf_context_ibus_new();
+   if (!ctxd)
+     {
+        return NULL;
+     }
 
-    ctx = ecore_imf_context_new(&ibus_imf_class);
-    if (!ctx)
-      {
-         free(ctxd);
-         return NULL;
-      }
+   ctx = ecore_imf_context_new(&ibus_imf_class);
+   if (!ctx)
+     {
+        free(ctxd);
+        return NULL;
+     }
 
-    ecore_imf_context_data_set(ctx, ctxd);
+   ecore_imf_context_data_set(ctx, ctxd);
 
-    return ctx;
+   return ctx;
 }
 
 EINA_MODULE_INIT(im_module_init);
