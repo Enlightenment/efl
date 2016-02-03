@@ -77,7 +77,7 @@ typedef struct _Opaque Opaque;
  */
 #define DOCS_CLASS docs_class_get()
 
-EAPI const Eo_Class *docs_class_get(void) EINA_CONST;
+EAPI const Eo_Class *docs_class_get(void);
 
 /**
  * @brief Property common documentation.

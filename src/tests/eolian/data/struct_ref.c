@@ -28,7 +28,7 @@ typedef struct _Opaque Opaque;
 #endif
 #define STRUCT_CLASS struct_class_get()
 
-EAPI const Eo_Class *struct_class_get(void) EINA_CONST;
+EAPI const Eo_Class *struct_class_get(void);
 
 /**
  * @brief Foo docs. This is @c monospace. This is alone-standing $.

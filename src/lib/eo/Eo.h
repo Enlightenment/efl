@@ -124,6 +124,15 @@ typedef Eo Eo_Class;
 EAPI extern Eina_Spinlock _eo_class_creation_lock;
 
 /**
+ * @var _eo_init_generation
+ * This variable stores the current eo init generation. That is, how many times
+ * we have completed full init/shutdown cycles. Starts at 1 and incremeted on
+ * every call to shutdown that actually shuts down eo.
+ * @internal
+ */
+EAPI extern unsigned int _eo_init_generation;
+
+/**
  * @internal
  * An enum representing the possible types of an Op.
  */
@@ -292,6 +301,12 @@ class_get_func_name(void) \
    static volatile char lk_init = 0; \
    static Eina_Spinlock _my_lock; \
    static const Eo_Class * volatile _my_class = NULL; \
+   static unsigned int _my_init_generation = 1; \
+   if (EINA_UNLIKELY(_eo_init_generation != _my_init_generation)) \
+     { \
+        _my_class = NULL; /* It's freed in eo_shutdown(). */ \
+        lk_init = 0; \
+     } \
    if (EINA_LIKELY(!!_my_class)) return _my_class; \
    \
    eina_spinlock_take(&_eo_class_creation_lock); \
@@ -309,6 +324,7 @@ class_get_func_name(void) \
    eina_spinlock_release(&_eo_class_creation_lock); \
    _tmp_parent_class = parent_class; \
    _my_class = eo_class_new(class_desc, _tmp_parent_class, __VA_ARGS__); \
+   _my_init_generation = _eo_init_generation; \
    eina_spinlock_release(&_my_lock); \
    \
    eina_spinlock_take(&_eo_class_creation_lock); \
