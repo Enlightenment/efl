@@ -928,7 +928,6 @@ int main(int argc, char** argv)
              , last; first != last; ++first)
          {
            std::string event_name (::eolian_event_name_get(&*first));
-           std::replace(event_name.begin(), event_name.end(), ',', '_');
 
            if (!eolian_event_is_beta(&*first) &&
                event_member_names.find(event_name) == event_member_names.end())
