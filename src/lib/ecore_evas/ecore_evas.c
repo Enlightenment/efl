@@ -3076,7 +3076,7 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport)
 {
    Ecore_Evas *subee;
    Eina_List *l;
-   Efl_Core_Event_Animator_Tick a = { { 0 } };
+   Efl_Core_Event_Animator_Tick a = { { 0, 0, 0, 0 } };
 
    if (!viewport)
      {
