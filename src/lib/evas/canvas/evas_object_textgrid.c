@@ -1157,6 +1157,10 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj, Evas_Textgrid_Data *o, c
 
    evas_object_async_block(obj);
    font_description = evas_font_desc_new();
+
+   /* Set default language according to locale. */
+   eina_stringshare_replace(&(font_description->lang),
+                            evas_font_lang_normalize("auto"));
    evas_font_name_parse(font_description, font_name);
    if (o->cur.font_description &&
        !evas_font_desc_cmp(font_description, o->cur.font_description) &&
