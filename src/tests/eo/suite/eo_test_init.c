@@ -16,7 +16,20 @@ START_TEST(eo_simple)
 }
 END_TEST
 
+START_TEST(eo_init_shutdown)
+{
+   fail_if(!eo_init());
+   ck_assert_str_eq("Eo_Base", eo_class_name_get(EO_BASE_CLASS));
+   fail_if(eo_shutdown());
+
+   fail_if(!eo_init());
+   ck_assert_str_eq("Eo_Base", eo_class_name_get(EO_BASE_CLASS));
+   fail_if(eo_shutdown());
+}
+END_TEST
+
 void eo_test_init(TCase *tc)
 {
    tcase_add_test(tc, eo_simple);
+   tcase_add_test(tc, eo_init_shutdown);
 }
