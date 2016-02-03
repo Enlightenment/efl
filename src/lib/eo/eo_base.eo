@@ -291,6 +291,6 @@ abstract Eo.Base ()
    events {
       callback,add @hot; [[A callback was added.]]
       callback,del @hot; [[A callback was deleted.]]
-      del; [[Obj is being deleted.]]
+      del @hot; [[Obj is being deleted.]]
    }
 }
