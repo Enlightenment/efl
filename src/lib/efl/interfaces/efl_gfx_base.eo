@@ -1,29 +1,4 @@
-enum Efl.Gfx.Colorspace {
-  argb8888 = 0, [[ARGB 32 bits per pixel, high-byte is Alpha, accessed one 32-bit word at a time]]
-  gry8 = 4,     [[8-bit gray image, or alpha only]]
-}
-
-enum Efl.Gfx.Render_Op {
-  blend = 0, [[Alpha blending onto destination (default); d = d*(1-sa) + s]]
-  copy  = 1, [[Copy source to destination; d = s]]
-  last
-}
-
-enum Efl.Gfx.Color_Type {
-  bits8,     [[Color is encoded in the top 8 bits of the unsigned short as a unsigned char.]]
-  bits16,    [[Color is encoded in the 16 bits as an unsigned char.]]
-  last
-}
-
-struct Efl.Gfx.Color {
-  [[Define an RGBA color.]]
-  r: ushort; [[The red component.]]
-  g: ushort; [[The green component.]]
-  b: ushort; [[The blue component.]]
-  a: ushort; [[The alpha component.]]
-
-  type: Efl.Gfx.Color_Type;
-}
+import efl_gfx_types;
 
 interface Efl.Gfx.Base {
    legacy_prefix: null;
