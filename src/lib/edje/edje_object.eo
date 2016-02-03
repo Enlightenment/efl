@@ -214,8 +214,18 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
               This function sets the text class for the Edje.]]
             return: bool; [[$true, on success or $false, on error]]
          }
-         values {
+         get {
+            [[Gets font and font size from edje text class.
+
+              This function gets the font and the font size from the object
+              text class. The font string will only be valid until the text
+              class is changed or the edje object is deleted.]]
+            return: bool; [[$true, on success or $false, on error]]
+         }
+         keys {
             text_class: const(char)*; [[The text class name]]
+         }
+         values {
             font: const(char)*; [[Font name]]
             size: Evas.Font.Size; [[Font Size]]
          }
@@ -1822,19 +1832,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             @in cur: Edje.Cursor; [[The cursor to adjust.]]
          }
       }
-      text_class_get @const {
-         [[Gets font and font size from edje text class.
-
-           This function gets the font and the font size from the object
-           text class. The font string will only be valid until the text
-           class is changed or the edje object is deleted.]]
-         return: bool; [[$true, on success or $false, on error]]
-         params {
-            @in text_class: const(char)*; [[The text class name]]
-            @out font: const(char)*; [[Font name]]
-            @out size: Evas.Font.Size; [[Font Size]]
-         }
-      }
       text_class_del {
          [[Delete the object text class.
 
@@ -1850,70 +1847,58 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             @in text_class: const(char)*; [[The color class to be deleted.]]
          }
       }
-      color_class_set {
-         [[Sets the object color class.
+      @property color_class {
+         set {
+            [[Sets the object color class.
 
-           This function sets the color values for an object level color
-           class. This will cause all edje parts in the specified object that
-           have the specified color class to have their colors multiplied by
-           these values.
+              This function sets the color values for an object level color
+              class. This will cause all edje parts in the specified object that
+              have the specified color class to have their colors multiplied by
+              these values.
 
-           The first color is the object, the second is the text outline, and
-           the third is the text shadow. (Note that the second two only apply
-           to text parts).
+              The first color is the object, the second is the text outline, and
+              the third is the text shadow. (Note that the second two only apply
+              to text parts).
 
-           Setting color emits a signal "color_class,set" with source being
-           the given color.
+              Setting color emits a signal "color_class,set" with source being
+              the given color.
 
-           Note: unlike Evas, Edje colors are  not pre-multiplied. That is,
-           half-transparent white is 255 255 255 128.]]
-
-         return: bool;
-         params {
-            @in color_class: const(char)*;
-            @in r: int; [[Object Red value]]
-            @in g: int; [[Object Green value]]
-            @in b: int; [[Object Blue value]]
-            @in a: int; [[Object Alpha value]]
-            @in r2: int; [[Outline Red value]]
-            @in g2: int; [[Outline Green value]]
-            @in b2: int; [[Outline Blue value]]
-            @in a2: int; [[Outline Alpha value]]
-            @in r3: int; [[Shadow Red value]]
-            @in g3: int; [[Shadow Green value]]
-            @in b3: int; [[Shadow Blue value]]
-            @in a3: int; [[Shadow Alpha value]]
+              Note: unlike Evas, Edje colors are  not pre-multiplied. That is,
+              half-transparent white is 255 255 255 128.]]
+            return: bool;
          }
-      }
-      color_class_get @const {
-         [[Gets the object color class.
+         get {
+            [[Gets the object color class.
 
-           This function gets the color values for an object level color
-           class. If no explicit object color is set, then global values will
-           be used.
+              This function gets the color values for an object level color
+              class. If no explicit object color is set, then global values will
+              be used.
 
-           The first color is the object, the second is the text outline, and
-           the third is the text shadow. (Note that the second two only apply
-           to text parts).
+              The first color is the object, the second is the text outline, and
+              the third is the text shadow. (Note that the second two only apply
+              to text parts).
 
-           Note: unlike Evas, Edje colors are  not pre-multiplied. That is,
-           half-transparent white is 255 255 255 128.]]
-         return: bool; [[true if found or false if not found and all
-                         values are zeroed.]]
-         params {
-            @in color_class: const(char)*;
-            @out r: int; [[Object Red value]]
-            @out g: int; [[Object Green value]]
-            @out b: int; [[Object Blue value]]
-            @out a: int; [[Object Alpha value]]
-            @out r2: int; [[Outline Red value]]
-            @out g2: int; [[Outline Green value]]
-            @out b2: int; [[Outline Blue value]]
-            @out a2: int; [[Outline Alpha value]]
-            @out r3: int; [[Shadow Red value]]
-            @out g3: int; [[Shadow Green value]]
-            @out b3: int; [[Shadow Blue value]]
-            @out a3: int; [[Shadow Alpha value]]
+              Note: unlike Evas, Edje colors are  not pre-multiplied. That is,
+              half-transparent white is 255 255 255 128.]]
+            return: bool; [[true if found or false if not found and all
+                            values are zeroed.]]
+         }
+         keys {
+            color_class: const(char)*;
+         }
+         values {
+            r: int; [[Object Red value]]
+            g: int; [[Object Green value]]
+            b: int; [[Object Blue value]]
+            a: int; [[Object Alpha value]]
+            r2: int; [[Outline Red value]]
+            g2: int; [[Outline Green value]]
+            b2: int; [[Outline Blue value]]
+            a2: int; [[Outline Alpha value]]
+            r3: int; [[Shadow Red value]]
+            g3: int; [[Shadow Green value]]
+            b3: int; [[Shadow Blue value]]
+            a3: int; [[Shadow Alpha value]]
          }
       }
       color_class_description_get @const {
@@ -1947,38 +1932,35 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             @in color_class: const(char)*; [[The color class to be deleted.]]
          }
       }
-      size_class_set {
-         [[Sets the object size class.
+      @property size_class {
+         set {
+            [[Sets the object size class.
 
-           This function sets the min and max values for an object level size
-           class. This will make all edje parts in the specified object that
-           have the specified size class update their min and max size with given values.
+              This function sets the min and max values for an object level size
+              class. This will make all edje parts in the specified object that
+              have the specified size class update their min and max size with given values.
 
-           @since 1.17]]
-         return: bool; [[$true, on success or $false, on error]]
-         params {
-            @in size_class: const(char)*; [[The size class name]]
-            @in minw: int; [[The min width]]
-            @in minh: int; [[The min height]]
-            @in maxw: int; [[The max width]]
-            @in maxh: int; [[The max height]]
+              @since 1.17]]
+            return: bool; [[$true, on success or $false, on error]]
          }
-      }
-      size_class_get @const {
-         [[Gets the object size class.
+         get {
+            [[Gets the object size class.
 
-           This function gets the min and max values for an object level size
-           class. These values will only be valid until the size class is changed
-           or the edje object is deleted.
+              This function gets the min and max values for an object level size
+              class. These values will only be valid until the size class is changed
+              or the edje object is deleted.
 
-           @since 1.17]]
-         return: bool; [[$true, on success or $false, on error]]
-         params {
-            @in size_class: const(char)*; [[The size class name]]
-            @out minw: int; [[The min width]]
-            @out minh: int; [[The min height]]
-            @out maxw: int; [[The max width]]
-            @out maxh: int; [[The max height]]
+              @since 1.17]]
+            return: bool; [[$true, on success or $false, on error]]
+         }
+         keys {
+            size_class: const(char)*; [[The size class name]]
+         }
+         values {
+            minw: int; [[The min width]]
+            minh: int; [[The min height]]
+            maxw: int; [[The max width]]
+            maxh: int; [[The max height]]
          }
       }
       size_class_del {
