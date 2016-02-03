@@ -415,7 +415,7 @@ EAPI const char *eo_class_name_get(const Eo_Class *klass);
 
 /**
  * @brief Init the eo subsystem
- * @return @c EINA_TRUE on success.
+ * @return @c EINA_TRUE if eo is init, @c EINA_FALSE otherwise.
  *
  * @see eo_shutfown()
  */
@@ -423,7 +423,7 @@ EAPI Eina_Bool eo_init(void);
 
 /**
  * @brief Shutdown the eo subsystem
- * @return @c EINA_TRUE on success.
+ * @return @c EINA_TRUE if eo is init, @c EINA_FALSE otherwise.
  *
  * @see eo_init()
  */

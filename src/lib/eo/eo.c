@@ -1898,7 +1898,7 @@ eo_shutdown(void)
    _eo_log_dom = -1;
 
    eina_shutdown();
-   return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool
