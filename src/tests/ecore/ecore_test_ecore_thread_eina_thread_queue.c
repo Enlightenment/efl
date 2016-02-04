@@ -2,10 +2,11 @@
 # include <config.h>
 #endif
 
-#include <Ecore.h>
-#include <Eina.h>
-#include <unistd.h>
 #include <stdio.h>
+#include <unistd.h>
+
+#include <Eina.h>
+#include <Ecore.h>
 
 #include "ecore_suite.h"
 

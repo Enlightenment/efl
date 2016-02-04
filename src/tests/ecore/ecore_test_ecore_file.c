@@ -9,9 +9,9 @@
 #include <fcntl.h>
 #include <libgen.h>
 
-#include <Ecore_File.h>
-#include <Ecore.h>
 #include <Eina.h>
+#include <Ecore.h>
+#include <Ecore_File.h>
 
 #include "ecore_suite.h"
 

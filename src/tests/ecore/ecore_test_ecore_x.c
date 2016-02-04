@@ -2,9 +2,9 @@
 # include <config.h>
 #endif
 
-#include "ecore_suite.h"
-
 #include <Eina.h>
+
+#include "ecore_suite.h"
 
 /* FIXME: Currently disable these tests. They are useless ATM and they just
  * make buildbot complain. Once we add useful tests here we'll also bother

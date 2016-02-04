@@ -2,10 +2,11 @@
 #include <config.h>
 #endif
 
+#include <math.h>
+
 #include <Ecore.h>
 
 #include "ecore_suite.h"
-#include <math.h>
 
 static double prev = 0;
 static Eina_Bool _anim_cb(void *data EINA_UNUSED, double pos)

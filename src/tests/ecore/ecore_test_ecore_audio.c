@@ -2,16 +2,14 @@
 #include <config.h>
 #endif
 
+#include <stdio.h>
 #include <math.h>
 
+#include <Ecore.h>
 #include <Ecore_Audio.h>
 #include <Ecore_File.h>
 
 #include "ecore_suite.h"
-
-#include <stdio.h>
-#include <Ecore.h>
-#include <Ecore_Audio.h>
 
 static Eina_Bool _failed_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
