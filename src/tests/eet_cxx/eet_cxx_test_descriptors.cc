@@ -1,15 +1,13 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Eet.hh"
-
 #include <algorithm>
-
 #include <iostream>
 
-#include <check.h>
+#include <Eet.hh>
+
+#include "eet_cxx_suite.h"
 
 struct pod_type
 {
@@ -141,7 +139,7 @@ START_TEST(eet_cxx_descriptors_composition)
 
     Eet_File* file = eet_open("/tmp/eet_file_test.eet", EET_FILE_MODE_READ_WRITE);
     ck_assert(file != 0);
-    
+
     ::pod_composited pod_composited {new pod_type{5, 'a'}};
 
     int s = eet_data_write(file, d.native_handle(), "foo", &pod_composited, false);
@@ -170,7 +168,7 @@ START_TEST(eet_cxx_descriptors_composition)
 
     Eet_File* file = eet_open("/tmp/eet_file_test.eet", EET_FILE_MODE_READ_WRITE);
     ck_assert(file != 0);
-    
+
     ::pod_composited_with_non_pod pod_composited_with_non_pod {new non_pod};
 
     int s = eet_data_write(file, d.native_handle(), "foo", &pod_composited_with_non_pod, false);
@@ -205,7 +203,7 @@ START_TEST(eet_cxx_descriptors_composition)
 
     Eet_File* file = eet_open("/tmp/eet_file_test.eet", EET_FILE_MODE_READ_WRITE);
     ck_assert(file != 0);
-    
+
     ::pod_value_composited pod_value_composited {{5, 'a'}};
 
     int s = eet_data_write(file, d.native_handle(), "foo", &pod_value_composited, false);
@@ -227,7 +225,7 @@ START_TEST(eet_cxx_descriptors_composition)
 END_TEST
 
 void
-eet_test_descriptors(TCase* tc)
+eet_cxx_test_descriptors(TCase* tc)
 {
   tcase_add_test(tc, eet_cxx_descriptors);
   tcase_add_test(tc, eet_cxx_descriptors_non_pod);
