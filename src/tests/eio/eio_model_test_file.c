@@ -4,14 +4,15 @@
 # include <config.h>
 #endif
 
-#include <Eo.h>
-#include <Eio.h>
-#include <Ecore.h>
-#include <Efl.h>
-#include <eio_model.h>
 #include <stdio.h>
 
-#include <check.h>
+#include <Eo.h>
+#include <Ecore.h>
+#include <Efl.h>
+#include <Eio.h>
+#include <eio_model.h>
+
+#include "eio_suite.h"
 
 #define EFL_MODEL_TEST_FILENAME_PATH "/tmp"
 #define EFL_MODEL_MAX_TEST_CHILDS 16
@@ -176,7 +177,7 @@ START_TEST(eio_model_test_test_file)
    handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, exit_func, NULL);
 
    ecore_main_loop_begin();
-   
+
    eo_do(filemodel, status = efl_model_property_get("filename", &value_prop));
    str = eina_value_to_string(value_prop);
    printf("efl_model_test filename %s, load status %d\n", str, status);
@@ -216,4 +217,3 @@ eio_model_test_file(TCase *tc)
 {
     tcase_add_test(tc, eio_model_test_test_file);
 }
-

@@ -7,9 +7,9 @@
 #include <string.h>
 #include <fcntl.h>
 
-#include <Eio.h>
 #include <Ecore.h>
 #include <Ecore_File.h>
+#include <Eio.h>
 
 #include "eio_suite.h"
 
