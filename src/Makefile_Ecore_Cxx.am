@@ -34,7 +34,8 @@ TESTS += tests/ecore_cxx/ecore_cxx_suite tests/ecore_cxx/cxx_compile_test
 
 tests_ecore_cxx_ecore_cxx_suite_SOURCES = \
 tests/ecore_cxx/ecore_cxx_suite.cc \
-tests/ecore_cxx/ecore_cxx_test_safe_call.cc
+tests/ecore_cxx/ecore_cxx_test_safe_call.cc \
+tests/ecore_cxx/ecore_cxx_suite.h
 
 tests_ecore_cxx_ecore_cxx_suite_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
