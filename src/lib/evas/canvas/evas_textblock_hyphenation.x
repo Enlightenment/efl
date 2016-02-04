@@ -11,16 +11,12 @@ typedef struct
 
 /* Hyphenation dictionaries */
 static Dict_Hyphen _dicts_hyphen[64];
-static Eina_Bool  _dicts_hyphen_init = EINA_FALSE;
 static size_t     _hyphens_num = 0;
 static size_t     _hyphen_clients = 0;
 
 static void
-_dicts_hyphen_update(Eo *eo_obj)
+_dicts_hyphen_init(Eo *eo_obj)
 {
-   Eina_Iterator *it;
-   Eina_File_Direct_Info *dir;
-
    Evas_Textblock_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
 
    if (!o->hyphenating)
@@ -28,17 +24,21 @@ _dicts_hyphen_update(Eo *eo_obj)
         _hyphen_clients++;
         o->hyphenating = EINA_TRUE;
      }
+}
 
-   if (_dicts_hyphen_init) return;
+static void *
+_dict_hyphen_load(const char *lang)
+{
+   Eina_Iterator *it;
+   Eina_File_Direct_Info *dir;
+   void *dict;
 
    it = eina_file_direct_ls(EVAS_DICTS_HYPHEN_DIR);
    if (!it)
      {
         ERR("Couldn't list files in hyphens path: %s\n", EVAS_DICTS_HYPHEN_DIR);
-        return;
+        return NULL;
      }
-
-   _dicts_hyphen_init = EINA_TRUE;
 
    /* The following is based on how files are installed in arch linux:
     * the files are in the pattern of "hyph_xx_XX.dic" (e.g. hyph_en_US.dic).
@@ -49,7 +49,6 @@ _dicts_hyphen_update(Eo *eo_obj)
         const char *file = dir->path + dir->name_start;
         char *prefix_off; /* 'hyph_' prefix (may be in some distros) */
         char *dic_off; /* '.dic' file extension offset */
-        void *dict;
 
         /* Check a few assumptions and reject if aren't met. */
         prefix_off = strstr(file, "hyph_");
@@ -57,7 +56,7 @@ _dicts_hyphen_update(Eo *eo_obj)
         if (!dic_off || ((size_t) (dic_off - file) + 4 != dir->name_length) ||
             (dic_off - file < 5)  ||
             ((dic_off - file > 0) && !prefix_off) ||
-            strncmp(dic_off, ".dic", 4))
+            strncmp(dic_off, ".dic", 4) || strncmp((dic_off - 5), lang, strlen(lang)))
           {
              continue;
           }
@@ -70,9 +69,12 @@ _dicts_hyphen_update(Eo *eo_obj)
           }
         _dicts_hyphen[_hyphens_num].lang = strndup(dic_off - 5, 5);
         _dicts_hyphen[_hyphens_num++].dict = dict;
+        break;
      }
 
    if (it) eina_iterator_free(it);
+
+   return dict;
 }
 
 static void
@@ -86,12 +88,15 @@ _dicts_hyphen_free(void)
      }
 
    _hyphens_num = 0;
-   _dicts_hyphen_init = EINA_FALSE;
 }
 
 static inline void
-_dicts_hyphen_detach(void)
+_dicts_hyphen_detach(Eo *eo_obj)
 {
+   Evas_Textblock_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
+
+   if (!o->hyphenating) return;
+   o->hyphenating = EINA_FALSE;
    _hyphen_clients--;
    if (_hyphen_clients == 0) _dicts_hyphen_free();
 }
@@ -114,7 +119,8 @@ _hyphen_dict_get_from_lang(const char *lang)
              return _dicts_hyphen[i].dict;
           }
      }
-   return NULL;
+
+   return _dict_hyphen_load(lang);
 }
 
 static char *
