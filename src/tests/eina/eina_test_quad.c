@@ -2,11 +2,12 @@
 # include "config.h"
 #endif
 
-#include <assert.h>
 #include <stdio.h>
+#include <assert.h>
+
+#include <Eina.h>
 
 #include "eina_suite.h"
-#include "Eina.h"
 
 START_TEST(eina_quad_simple)
 {

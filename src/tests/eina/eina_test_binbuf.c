@@ -21,8 +21,9 @@
 
 #include <stdio.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 START_TEST(binbuf_simple)
 {

@@ -25,8 +25,9 @@
 #include <sys/resource.h>
 #endif
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 #ifdef __linux__
 

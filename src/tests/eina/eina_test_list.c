@@ -22,8 +22,9 @@
 
 #include <stdio.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 static Eina_Bool eina_list_sorted_check(const Eina_List *list)
 {

@@ -24,8 +24,9 @@
 #include <inttypes.h>
 #include <float.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 #define FP_ERR (1)
 #define CHECK_FP(a, b) ((a - b) <= FP_ERR)
@@ -1043,7 +1044,7 @@ START_TEST(eina_value_test_convert_uchar)
    eina_shutdown();
 }
 END_TEST
- 
+
 START_TEST(eina_value_test_convert_short)
 {
    Eina_Value *value, conv;
@@ -1797,7 +1798,7 @@ START_TEST(eina_value_test_convert_float)
 
    float max_float_value = FLT_MAX;
    float min_float_value = FLT_MIN;
-  
+
    eina_init();
 
    value = eina_value_new(EINA_VALUE_TYPE_FLOAT);
@@ -1899,7 +1900,7 @@ START_TEST(eina_value_test_convert_float)
    eina_value_flush(&conv);
 
    fail_unless(eina_value_set(value, min_float_value));
-   
+
    fail_unless(eina_value_setup(&conv, EINA_VALUE_TYPE_FLOAT));
    fail_unless(eina_value_convert(value, &conv));
    fail_unless(eina_value_get(&conv, &f));
@@ -1949,7 +1950,7 @@ START_TEST(eina_value_test_convert_float)
 
    eina_value_free(value);
    eina_shutdown();
-                                             
+
 }
 END_TEST
 
@@ -2761,7 +2762,7 @@ START_TEST(eina_value_test_optional_int)
    /* ck_assert(eina_value_optional_pset(value, EINA_VALUE_TYPE_INT, &expected_value)); */
    /* ck_assert(eina_value_optional_empty_is(value, &is_empty)); */
    /* ck_assert(!is_empty); */
-   
+
    /* // gets the actual value */
    /* ck_assert(eina_value_optional_pget(value, &actual_value)); */
    /* ck_assert_int_eq(expected_value, actual_value); */
@@ -2865,7 +2866,7 @@ START_TEST(eina_value_test_optional_struct_members)
 
    eina_value_flush(&actual_value);
    eina_value_flush(&expected_value);
-   
+
    eina_value_free(value);
 
    eina_shutdown();

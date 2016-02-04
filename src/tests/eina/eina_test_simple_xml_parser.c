@@ -24,8 +24,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 static const char *get_file_full_path(const char *filename)
 {

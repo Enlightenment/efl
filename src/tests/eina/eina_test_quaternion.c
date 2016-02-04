@@ -24,8 +24,9 @@
 #include <float.h>
 #include <limits.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 #define FLOAT_CMP(a, b) (fabs((float)a - (float)b) <= FLT_MIN)
 

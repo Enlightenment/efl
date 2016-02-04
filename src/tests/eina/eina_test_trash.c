@@ -19,8 +19,9 @@
 # include "config.h"
 #endif
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 START_TEST(trash_simple)
 {
@@ -30,11 +31,11 @@ START_TEST(trash_simple)
    int inp_int = 9;
    int inp_char = inp_int + '0';
    void *data;
- 
+
    eina_init();
-   
+
    trash = calloc(1, sizeof(Eina_Trash));
-   fail_if(trash == NULL); 	
+   fail_if(trash == NULL);
    eina_trash_init(&trash);
 
    for (i = 1; i < 51; ++i)
@@ -54,9 +55,9 @@ START_TEST(trash_simple)
    fail_if(*((char *)eina_array_data_get(data, 0)) != inp_char);
    data = eina_trash_pop(&trash);
    fail_if(!data);
-   fail_if(*((int *)eina_array_data_get(data, 0)) != inp_int); 
+   fail_if(*((int *)eina_array_data_get(data, 0)) != inp_int);
    free(data);
-  
+
    i = 0;
    EINA_TRASH_CLEAN(&trash, data)
      {
@@ -66,7 +67,7 @@ START_TEST(trash_simple)
      }
 
    fail_if(i != 98);
- 
+
    eina_shutdown();
 }
 END_TEST
@@ -76,4 +77,3 @@ eina_test_trash(TCase *tc)
 {
    tcase_add_test(tc, trash_simple);
 }
-

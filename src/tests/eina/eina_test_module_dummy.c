@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-#include "Eina.h"
+#include <Eina.h>
 
 Eina_Bool dummy_module_init(void)
 {

@@ -6,8 +6,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 START_TEST(eina_crc_simple)
 {

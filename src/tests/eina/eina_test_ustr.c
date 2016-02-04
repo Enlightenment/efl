@@ -25,8 +25,9 @@
 #include <string.h>
 #include <time.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 #ifdef EINA_SAFETY_CHECKS
 struct log_ctx {
@@ -634,4 +635,3 @@ eina_test_ustr(TCase *tc)
    tcase_add_test(tc,eina_unicode_utf8_conversion);
 
 }
-

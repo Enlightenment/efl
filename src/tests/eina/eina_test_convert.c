@@ -26,8 +26,9 @@
 #include <float.h>
 #include <limits.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 START_TEST(eina_convert_simple)
 {

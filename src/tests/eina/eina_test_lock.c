@@ -22,8 +22,9 @@
 
 #include <time.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 #ifdef __MACH__
 # include <mach/clock.h>
