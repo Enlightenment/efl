@@ -5,13 +5,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include<Eina.h>
-#include "Eolian.h"
-#include "eolian_suite.h"
-
 #ifdef HAVE_EVIL
 #include "Evil.h"
 #endif
+
+#include <Eina.h>
+#include <Eolian.h>
+
+#include "eolian_suite.h"
 
 static Eina_Bool
 _files_compare (const char *ref_filename, const char *tmp_filename)
@@ -190,4 +191,3 @@ void eolian_generation_test(TCase *tc)
    tcase_add_test(tc, eolian_import);
    tcase_add_test(tc, eolian_docs);
 }
-

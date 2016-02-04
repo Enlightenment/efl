@@ -5,8 +5,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include<Eina.h>
-#include "Eolian.h"
+#include <Eina.h>
+#include <Eolian.h>
+
 #include "eolian_suite.h"
 
 START_TEST(eolian_namespaces)
@@ -1323,4 +1324,3 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_decl);
    tcase_add_test(tc, eolian_docs);
 }
-
