@@ -34,6 +34,13 @@
 extern "C" {
 # endif
 
+# define ECORE_DRM_PLANE_ROTATION_NORMAL 1
+# define ECORE_DRM_PLANE_ROTATION_90 2
+# define ECORE_DRM_PLANE_ROTATION_180 4
+# define ECORE_DRM_PLANE_ROTATION_270 8
+# define ECORE_DRM_PLANE_ROTATION_REFLECT_X 16
+# define ECORE_DRM_PLANE_ROTATION_REFLECT_Y 32
+
 typedef enum _Ecore_Drm_Evdev_Capabilities
 {
    EVDEV_KEYBOARD = (1 << 0),
@@ -153,6 +160,13 @@ struct _Ecore_Drm_Event_Output
    Eina_Bool plug : 1;
 };
 
+typedef enum _Ecore_Drm_Plane_Type
+{
+   ECORE_DRM_PLANE_TYPE_OVERLAY,
+   ECORE_DRM_PLANE_TYPE_PRIMARY,
+   ECORE_DRM_PLANE_TYPE_CURSOR
+} Ecore_Drm_Plane_Type;
+
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm_Device Ecore_Drm_Device;
 
@@ -182,6 +196,10 @@ typedef struct _Ecore_Drm_Sprite Ecore_Drm_Sprite;
 
 /* structure to inform drm activation state */
 typedef struct _Ecore_Drm_Event_Activate Ecore_Drm_Event_Activate;
+
+/* opaque structure to represent a drm hardware plane */
+/** @since 1.18 */
+typedef struct _Ecore_Drm_Plane Ecore_Drm_Plane;
 
 /* structure to inform drm output plug events */
 /** @since 1.14 */

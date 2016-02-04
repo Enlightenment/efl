@@ -106,10 +106,20 @@ typedef struct _Ecore_Drm_Backlight
    Ecore_Drm_Backlight_Type type;
 } Ecore_Drm_Backlight;
 
+struct _Ecore_Drm_Plane
+{
+   int id;
+   unsigned int rotation;
+   unsigned int rotation_map[6];
+   unsigned int supported_rotations;
+   Ecore_Drm_Plane_Type type;
+};
+
 struct _Ecore_Drm_Output
 {
    Ecore_Drm_Device *dev;
    unsigned int crtc_id;
+   unsigned int crtc_index;
    unsigned int conn_id;
    unsigned int conn_type;
    drmModeCrtcPtr crtc;
@@ -124,6 +134,10 @@ struct _Ecore_Drm_Output
 
    Ecore_Drm_Output_Mode *current_mode;
    Eina_List *modes;
+
+   unsigned int primary_plane_id;
+   unsigned int rotation_prop_id;
+   Eina_List *planes;
 
    unsigned char *edid_blob;
 
