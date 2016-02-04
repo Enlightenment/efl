@@ -1,9 +1,13 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <cassert>
+#include <tuple>
 
 #include <Eolian_Cxx.hh>
 
-#include <cassert>
-#include <check.h>
-#include <tuple>
+#include "eolian_cxx_suite.h"
 
 START_TEST(eolian_cxx_test_parse_complex_types)
 {

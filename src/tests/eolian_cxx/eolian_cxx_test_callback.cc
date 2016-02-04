@@ -1,19 +1,18 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <functional>
 
 #include <Eo.h>
 #include <Ecore.h>
 
 #include <callback.eo.hh>
 
-#include <check.h>
-
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <functional>
+#include "eolian_cxx_suite.h"
 
 void foo(void*) {}
 
@@ -106,7 +105,7 @@ START_TEST(eolian_cxx_test_callback_event_del)
               ));
        ++called4;
      }));
-  
+
   fail_if(called1 != 2);
   fail_if(called2 != 2);
   fail_if(called3 != 2);

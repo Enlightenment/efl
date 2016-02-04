@@ -1,4 +1,3 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -8,7 +7,7 @@
 
 #include <simple.eo.hh>
 
-#include <check.h>
+#include "eolian_cxx_suite.h"
 
 struct bar
 : efl::eo::inherit<bar, simple>

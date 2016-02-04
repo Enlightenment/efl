@@ -1,12 +1,11 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
+#include <stdlib.h>
+
 #include <Eo.h>
 #include <Ecore.h>
-
-#include <stdlib.h>
 
 #include "callback.eo.h"
 
@@ -57,4 +56,3 @@ static void _callback_test_global_callbacks(Eo *obj EINA_UNUSED, void *pd EINA_U
 }
 
 #include "callback.eo.c"
-

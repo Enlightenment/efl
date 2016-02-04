@@ -1,12 +1,12 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
+#include <cassert>
+
 #include <Eolian_Cxx.hh>
 
-#include <check.h>
-#include <cassert>
+#include "eolian_cxx_suite.h"
 
 START_TEST(eolian_cxx_test_generate_complex_types)
 {

@@ -1,6 +1,3 @@
-
-// Test Eolian-Cxx wrappers
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -10,7 +7,7 @@
 
 #include <callback.eo.hh>
 
-#include <check.h>
+#include "eolian_cxx_suite.h"
 
 START_TEST(eolian_cxx_test_wrapper_size)
 {
