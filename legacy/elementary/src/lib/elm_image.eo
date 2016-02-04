@@ -1,3 +1,25 @@
+type Elm.Image.Orient: Evas_Image_Orient; [[Using Evas_Image_Orient enums. @since 1.14]]
+
+struct Elm.Image.Progress
+{
+   [[
+     Structure associated with smart callback 'download,progress'.
+     @since 1.8
+   ]]
+   now:   double;
+   total: double;
+}
+
+struct Elm.Image.Error
+{
+   [[
+     Structure associated with smart callback 'download,progress'.
+     @since 1.8
+   ]]
+   status:     int;
+   open_error: Eina.Bool;
+}
+
 class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
                  Edje.Object,
                  Elm.Interface_Atspi_Image, Elm.Interface_Atspi_Widget_Action,
@@ -139,7 +161,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
          get {
          }
          values {
-            orient: Elm_Image_Orient; [[The image orientation Elm_Image_Orient Default is #ELM_IMAGE_ORIENT_NONE.]]
+            orient: Elm.Image.Orient; [[The image orientation Elm.Image.Orient Default is #ELM_IMAGE_ORIENT_NONE.]]
          }
       }
       @property fill_outside {
@@ -205,7 +227,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             legacy: null;
          }
          values {
-            file: const(Eina_File)*; [[The handler to an Eina_File that will be used as image source]]
+            file: const(Eina.File)*; [[The handler to an Eina_File that will be used as image source]]
             group: const(char)* @optional; [[The group that the image belongs to, in case it's an EET (including Edje case) file. This can be used as a key inside evas image cache if this is a normal image file not eet file.]]
          }
       }
