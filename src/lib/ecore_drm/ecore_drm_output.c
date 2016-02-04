@@ -1500,3 +1500,31 @@ ecore_drm_output_supported_rotations_get(Ecore_Drm_Output *output, Ecore_Drm_Pla
 
    return rot;
 }
+
+EAPI Eina_Bool
+ecore_drm_output_rotation_set(Ecore_Drm_Output *output, Ecore_Drm_Plane_Type type, unsigned int rotation)
+{
+   Ecore_Drm_Plane *plane;
+   Eina_List *l;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+
+   EINA_LIST_FOREACH(output->planes, l, plane)
+     {
+        if (plane->type != type) continue;
+        if ((plane->supported_rotations & rotation) == 0)
+          {
+             WRN("Unsupported rotation");
+             return EINA_FALSE;
+          }
+
+        drmModeObjectSetProperty(output->dev->drm.fd,
+                                 output->primary_plane_id,
+                                 DRM_MODE_OBJECT_PLANE,
+                                 output->rotation_prop_id,
+                                 plane->rotation_map[ffs(rotation)]);
+        break;
+     }
+
+   return EINA_TRUE;
+}

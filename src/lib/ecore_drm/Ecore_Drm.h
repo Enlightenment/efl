@@ -1006,6 +1006,10 @@ EAPI Eina_Bool ecore_drm_output_mode_set(Ecore_Drm_Output *output, Ecore_Drm_Out
 /* @since 1.18 */
 EAPI unsigned int ecore_drm_output_supported_rotations_get(Ecore_Drm_Output *output, Ecore_Drm_Plane_Type type);
 
+/* TODO: doxy */
+/* @since 1.18 */
+EAPI Eina_Bool ecore_drm_output_rotation_set(Ecore_Drm_Output *output, Ecore_Drm_Plane_Type type, unsigned int rotation);
+
 /**
  * Enable key remap functionality on a Ecore_Drm_Evdev
  *
