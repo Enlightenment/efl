@@ -1,16 +1,14 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Eldbus.hh"
-#include "Ecore.hh"
-
 #include <algorithm>
-
 #include <iostream>
 
-#include <check.h>
+#include <Ecore.hh>
+#include <Eldbus.hh>
+
+#include "eldbus_cxx_suite.h"
 
 START_TEST(eldbus_cxx_session_connection)
 {

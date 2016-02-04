@@ -1,18 +1,15 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Eldbus.hh"
-#include "Ecore.hh"
-
-#include <eldbus_freedesktop.hh>
-
 #include <algorithm>
-
 #include <iostream>
 
-#include <check.h>
+#include <Ecore.hh>
+#include <Eldbus.hh>
+#include <eldbus_freedesktop.hh>
+
+#include "eldbus_cxx_suite.h"
 
 const char g_bus[] = "org.Enlightenment";
 const char g_path[] = "/org/enlightenment";
@@ -396,7 +393,7 @@ START_TEST(eldbus_cxx_client)
     ("SendStringAndBool"
      , -1
      , std::bind
-     ([expected_string, expected_bool] 
+     ([expected_string, expected_bool]
       (std::error_code const& ec, edb::const_message const& msg, std::string i, bool b)
       {
         if(!ec)
