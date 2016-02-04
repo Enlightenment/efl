@@ -827,8 +827,7 @@ wayland_im_context_show(Ecore_IMF_Context *ctx)
 
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "context_show");
 
-   if ((imcontext->text_input) && 
-       (ecore_imf_context_input_panel_enabled_get(ctx)))
+   if (imcontext->text_input)
      wl_text_input_show_input_panel(imcontext->text_input);
 }
 
@@ -839,8 +838,7 @@ wayland_im_context_hide(Ecore_IMF_Context *ctx)
 
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "context_hide");
 
-   if ((imcontext->text_input) && 
-       (ecore_imf_context_input_panel_enabled_get(ctx)))
+   if (imcontext->text_input)
      wl_text_input_hide_input_panel(imcontext->text_input);
 }
 
