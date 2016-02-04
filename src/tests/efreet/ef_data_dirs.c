@@ -1,15 +1,13 @@
-#include "config.h" 
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Efreet.h"
-
-#include <Ecore_File.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
+
+#include <Ecore_File.h>
+#include <Efreet.h>
 
 int
 ef_cb_efreet_data_home(void)

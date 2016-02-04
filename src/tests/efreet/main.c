@@ -1,15 +1,17 @@
-#include "config.h" 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
-#include "Efreet.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#include <Ecore.h>
+#include <Efreet.h>
+#include <Efreet_Mime.h>
 /* no logging */
 #define EFREET_MODULE_LOG_DOM
 #include "efreet_private.h"
-#include "Efreet_Mime.h"
-#include "config.h"
-#include <Ecore.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 int ef_cb_efreet_data_home(void);
 int ef_cb_efreet_config_home(void);

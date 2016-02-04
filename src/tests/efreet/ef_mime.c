@@ -1,16 +1,15 @@
-#include "config.h" 
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Efreet.h"
-#include "Efreet_Mime.h"
-#include "config.h"
 #include <stdio.h>
 #include <string.h>
 #include <sys/time.h>
+
 #include <Ecore.h>
+#include <Efreet.h>
+#include <Efreet_Mime.h>
+
 #include "ef_test.h"
 
 #define THEME "Tango"

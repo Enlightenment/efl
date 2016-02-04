@@ -1,16 +1,15 @@
-#include "config.h" 
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Efreet.h"
-#include "config.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <limits.h>
+
+#include <Efreet.h>
+
 #include "ef_test.h"
 
 typedef struct

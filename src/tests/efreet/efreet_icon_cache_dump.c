@@ -1,10 +1,9 @@
-#include "config.h" 
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include <limits.h>
+
 #include <stdio.h>
+#include <limits.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <fcntl.h>
@@ -18,7 +17,7 @@
 
 #define EFREET_MODULE_LOG_DOM /* no logging in this file */
 
-#include "Efreet.h"
+#include <Efreet.h>
 #include "efreet_private.h"
 #include "efreet_cache_private.h"
 
