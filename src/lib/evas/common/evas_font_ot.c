@@ -268,7 +268,7 @@ _evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Int *fi, Evas_Text_Pro
 
 EAPI Eina_Bool
 evas_common_font_ot_populate_text_props(const Eina_Unicode *text,
-      Evas_Text_Props *props, int len, Evas_Text_Props_Mode mode)
+      Evas_Text_Props *props, int len, Evas_Text_Props_Mode mode, const char *lang)
 {
    RGBA_Font_Int *fi;
    hb_buffer_t *buffer;
@@ -293,8 +293,7 @@ evas_common_font_ot_populate_text_props(const Eina_Unicode *text,
 
    buffer = hb_buffer_create();
    hb_buffer_set_unicode_funcs(buffer, _evas_common_font_ot_unicode_funcs_get());
-   hb_buffer_set_language(buffer, hb_language_from_string(
-            evas_common_language_from_locale_get(), -1));
+   hb_buffer_set_language(buffer, hb_language_from_string(lang, -1));
    hb_buffer_set_script(buffer, _evas_script_to_harfbuzz[props->script]);
    hb_buffer_set_direction(buffer,
          (props->bidi_dir == EVAS_BIDI_DIRECTION_RTL) ?

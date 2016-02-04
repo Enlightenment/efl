@@ -4086,7 +4086,8 @@ skip:
                {
                   ENFN->font_text_props_info_create(ENDT,
                         cur_fi, str, &ti->text_props, c->par->bidi_props,
-                        ti->parent.text_pos, run_len, EVAS_TEXT_PROPS_MODE_SHAPE);
+                        ti->parent.text_pos, run_len, EVAS_TEXT_PROPS_MODE_SHAPE,
+                        ti->parent.format->font.fdesc->lang);
                }
 
              while ((queue->start + queue->off) < (run_start + run_len))
@@ -4765,7 +4766,8 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
 
         ENFN->font_text_props_info_create(ENDT,
               cur_fi, _ellip_str, &ellip_ti->text_props,
-              c->par->bidi_props, ellip_ti->parent.text_pos, len, EVAS_TEXT_PROPS_MODE_SHAPE);
+              c->par->bidi_props, ellip_ti->parent.text_pos, len, EVAS_TEXT_PROPS_MODE_SHAPE,
+              ellip_ti->parent.format->font.fdesc->lang);
      }
 
    _text_item_update_sizes(c, ellip_ti);
@@ -7541,7 +7543,8 @@ _layout_hyphen_item_new(Ctxt *c, const Evas_Object_Textblock_Text_Item *cur_ti)
 
         ENFN->font_text_props_info_create(ENDT,
               cur_fi, _hyphen_str, &hyphen_ti->text_props,
-              c->par->bidi_props, hyphen_ti->parent.text_pos, len, EVAS_TEXT_PROPS_MODE_SHAPE);
+              c->par->bidi_props, hyphen_ti->parent.text_pos, len, EVAS_TEXT_PROPS_MODE_SHAPE,
+              hyphen_ti->parent.format->font.fdesc->lang);
      }
 
    _text_item_update_sizes(c, hyphen_ti);

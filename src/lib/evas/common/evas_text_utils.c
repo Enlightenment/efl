@@ -343,13 +343,13 @@ evas_common_text_props_merge(Evas_Text_Props *item1,
 #ifdef OT_SUPPORT
 static inline void
 _content_create_ot(RGBA_Font_Int *fi, const Eina_Unicode *text,
-      Evas_Text_Props *text_props, int len, Evas_Text_Props_Mode mode)
+      Evas_Text_Props *text_props, int len, Evas_Text_Props_Mode mode, const char *lang)
 {
    size_t char_index;
    Evas_Font_Glyph_Info *gl_itr;
    Evas_Coord pen_x = 0, adjust_x = 0;
 
-   evas_common_font_ot_populate_text_props(text, text_props, len, mode);
+   evas_common_font_ot_populate_text_props(text, text_props, len, mode, lang);
 
    gl_itr = text_props->info->glyph;
    for (char_index = 0 ; char_index < text_props->len ; char_index++)
@@ -520,7 +520,7 @@ _content_create_regular(RGBA_Font_Int *fi, const Eina_Unicode *text,
 EAPI Eina_Bool
 evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
       Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props,
-      size_t par_pos, int len, Evas_Text_Props_Mode mode)
+      size_t par_pos, int len, Evas_Text_Props_Mode mode, const char *lang)
 {
    RGBA_Font_Int *fi = (RGBA_Font_Int *) _fi;
 
@@ -558,8 +558,9 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
 #ifdef OT_SUPPORT
    (void) par_props;
    (void) par_pos;
-   _content_create_ot(fi, text, text_props, len, mode);
+   _content_create_ot(fi, text, text_props, len, mode, lang);
 #else
+   (void) lang;
    _content_create_regular(fi, text, text_props, par_props, par_pos, len, mode);
 #endif
 

@@ -189,7 +189,8 @@ evas_object_textgrid_textprop_get(Evas_Object *eo_obj, Evas_Textgrid_Data *o, Ei
         evas_common_text_props_script_set(&(glyph->props[idx]), script);
         ENFN->font_text_props_info_create(ENDT, script_fi, &codepoint,
                                           &(glyph->props[idx]), NULL, 0, 1,
-                                          EVAS_TEXT_PROPS_MODE_NONE);
+                                          EVAS_TEXT_PROPS_MODE_NONE,
+                                          o->cur.font_description->lang);
         (*used)++;
      }
    else
@@ -1216,7 +1217,8 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj, Evas_Textgrid_Data *o, c
         evas_common_text_props_script_set(&text_props, script);
         ENFN->font_text_props_info_create(ENDT, script_fi, W, &text_props,
                                           NULL, 0, 1,
-                                          EVAS_TEXT_PROPS_MODE_NONE);
+                                          EVAS_TEXT_PROPS_MODE_NONE,
+                                          o->cur.font_description->lang);
         advance = ENFN->font_h_advance_get(ENDT, o->font, &text_props);
         vadvance = ENFN->font_v_advance_get(ENDT, o->font, &text_props);
         o->cur.char_width = advance;
