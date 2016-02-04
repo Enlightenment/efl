@@ -6972,6 +6972,14 @@ _elm_genlist_item_all_contents_unset(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it, 
      }
 }
 
+static void
+_mark_item_update(Elm_Gen_Item *it)
+{
+   it->item->mincalcd = EINA_FALSE;
+   it->item->updateme = EINA_TRUE;
+   it->item->block->updateme = EINA_TRUE;
+}
+
 EOLIAN static void
 _elm_genlist_item_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it)
 {
@@ -6979,9 +6987,7 @@ _elm_genlist_item_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it)
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    if (!it->item->block) return;
-   it->item->mincalcd = EINA_FALSE;
-   it->item->updateme = EINA_TRUE;
-   it->item->block->updateme = EINA_TRUE;
+   _mark_item_update(it);
    ecore_job_del(sd->update_job);
    sd->update_job = ecore_job_add(_update_job, sd->obj);
 }
@@ -7695,14 +7701,20 @@ _elm_genlist_elm_interface_scrollable_policy_get(Eo *obj, Elm_Genlist_Data *sd E
 }
 
 EOLIAN static void
-_elm_genlist_realized_items_update(Eo *obj, Elm_Genlist_Data *_pd EINA_UNUSED)
+_elm_genlist_realized_items_update(Eo *obj, Elm_Genlist_Data *_pd)
 {
    Eina_List *list;
    Elm_Object_Item *it;
 
    list = elm_genlist_realized_items_get(obj);
    EINA_LIST_FREE(list, it)
-     elm_genlist_item_update(it);
+     {
+        ELM_GENLIST_ITEM_DATA_GET(it, it2);
+        if (!it2->item->block) continue;
+        _mark_item_update(it2);
+     }
+   ecore_job_del(_pd->update_job);
+   _pd->update_job = ecore_job_add(_update_job, obj);
 }
 
 EOLIAN static void
