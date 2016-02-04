@@ -1,13 +1,10 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Eina.hh"
+#include <Eina.hh>
 
-#include <algorithm>
-
-#include <check.h>
+#include "eina_cxx_suite.h"
 
 START_TEST(eina_cxx_iterator_equal)
 {
@@ -21,7 +18,7 @@ START_TEST(eina_cxx_iterator_equal)
   list.push_back(new int(10));
   list.push_back(new int(15));
   list.push_back(new int(20));
-  
+
   efl::eina::iterator<int> iterator = list.ibegin()
     , last_iterator = list.iend();
 

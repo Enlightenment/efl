@@ -1,11 +1,10 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Eina.hh"
+#include <Eina.hh>
 
-#include <check.h>
+#include "eina_cxx_suite.h"
 
 Eina_Error my_error, my_error_2;
 
@@ -16,7 +15,7 @@ START_TEST(eina_cxx_get_error)
   my_error = ::eina_error_msg_static_register("Message 1");
 
   ::eina_error_set(0);
-  
+
   efl::eina::error_code ec1 = efl::eina::get_error_code();
   ck_assert(!ec1);
 
@@ -24,14 +23,14 @@ START_TEST(eina_cxx_get_error)
 
   efl::eina::error_code ec2 = efl::eina::get_error_code();
   ck_assert(!!ec2);
-  
+
   ck_assert(ec2.message() == "Message 1");
 
   ::eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
 
   efl::eina::error_code ec3 = efl::eina::get_error_code();
   ck_assert(!!ec3);
-  
+
   ck_assert(ec3.message() == "Out of memory");
 }
 END_TEST

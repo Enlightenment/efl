@@ -1,14 +1,11 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Eina.hh"
-#include "Eo.hh"
+#include <Eina.hh>
+#include <Eo.hh>
 
-#include <algorithm>
-
-#include <check.h>
+#include "eina_cxx_suite.h"
 
 extern "C" {
 #include "simple.eo.h"

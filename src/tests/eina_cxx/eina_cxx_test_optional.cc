@@ -1,15 +1,12 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Eina.hh"
-
-#include <algorithm>
-
-#include <check.h>
-
 #include <iostream>
+
+#include <Eina.hh>
+
+#include "eina_cxx_suite.h"
 
 std::size_t nonpod_constructed = 0u
   , nonpod_destructed = 0u;

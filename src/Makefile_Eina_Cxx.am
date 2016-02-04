@@ -60,7 +60,8 @@ tests/eina_cxx/eina_cxx_test_accessor.cc \
 tests/eina_cxx/eina_cxx_test_thread.cc \
 tests/eina_cxx/eina_cxx_test_optional.cc \
 tests/eina_cxx/eina_cxx_test_value.cc \
-tests/eina_cxx/simple.c
+tests/eina_cxx/simple.c \
+tests/eina_cxx/eina_cxx_suite.h
 
 tests/eina_cxx/tests_eina_cxx_eina_cxx_suite-eina_cxx_test_accessor.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
 tests/eina_cxx/tests_eina_cxx_eina_cxx_suite-eina_cxx_test_ptrarray.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h

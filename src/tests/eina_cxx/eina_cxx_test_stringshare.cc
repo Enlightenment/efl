@@ -3,12 +3,11 @@
 # include <config.h>
 #endif
 
-#include "Eina.hh"
-
-#include <algorithm>
 #include <functional>
 
-#include <check.h>
+#include <Eina.hh>
+
+#include "eina_cxx_suite.h"
 
 START_TEST(eina_cxx_stringshare_constructors)
 {
