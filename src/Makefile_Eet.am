@@ -62,8 +62,17 @@ check_PROGRAMS += tests/eet/eet_suite
 TESTS += tests/eet/eet_suite
 
 tests_eet_eet_suite_SOURCES = \
+tests/eet/eet_test_cache.c \
+tests/eet/eet_test_cipher.c \
+tests/eet/eet_test_common.c \
+tests/eet/eet_test_connection.c \
+tests/eet/eet_test_data.c \
+tests/eet/eet_test_file.c \
+tests/eet/eet_test_identity.c \
+tests/eet/eet_test_image.c \
+tests/eet/eet_test_init.c \
 tests/eet/eet_suite.c \
-tests/eet/eet_data_suite.c \
+tests/eet/eet_test_common.h \
 tests/eet/eet_suite.h
 
 tests_eet_eet_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
