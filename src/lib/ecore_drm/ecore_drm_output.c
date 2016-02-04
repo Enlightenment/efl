@@ -1481,3 +1481,22 @@ ecore_drm_output_mode_set(Ecore_Drm_Output *output, Ecore_Drm_Output_Mode *mode,
 
    return ret;
 }
+
+EAPI unsigned int
+ecore_drm_output_supported_rotations_get(Ecore_Drm_Output *output, Ecore_Drm_Plane_Type type)
+{
+   Ecore_Drm_Plane *plane;
+   Eina_List *l;
+   unsigned int rot = -1;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, rot);
+
+   EINA_LIST_FOREACH(output->planes, l, plane)
+     {
+        if (plane->type != type) continue;
+        rot = plane->supported_rotations;
+        break;
+     }
+
+   return rot;
+}
