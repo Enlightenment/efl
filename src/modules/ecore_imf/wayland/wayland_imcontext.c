@@ -987,6 +987,18 @@ wayland_im_context_input_panel_language_locale_get(Ecore_IMF_Context *ctx,
      *locale = strdup(imcontext->language ? imcontext->language : "");
 }
 
+EAPI void
+wayland_im_context_prediction_allow_set(Ecore_IMF_Context *ctx,
+                                        Eina_Bool prediction)
+{
+   WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
+
+   if (prediction)
+     imcontext->content_hint |= WL_TEXT_INPUT_CONTENT_HINT_AUTO_COMPLETION;
+   else
+     imcontext->content_hint &= ~WL_TEXT_INPUT_CONTENT_HINT_AUTO_COMPLETION;
+}
+
 WaylandIMContext *wayland_im_context_new (struct wl_text_input_manager *text_input_manager)
 {
    WaylandIMContext *context = calloc(1, sizeof(WaylandIMContext));

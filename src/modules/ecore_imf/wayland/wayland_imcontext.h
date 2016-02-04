@@ -83,6 +83,10 @@ EAPI void
 wayland_im_context_input_panel_language_locale_get(Ecore_IMF_Context *ctx,
                                                    char **locale);
 
+EAPI void
+wayland_im_context_prediction_allow_set(Ecore_IMF_Context *ctx,
+                                        Eina_Bool prediction);
+
 WaylandIMContext *wayland_im_context_new        (struct wl_text_input_manager *text_input_manager);
 
 extern int _ecore_imf_wayland_log_dom;
