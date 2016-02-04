@@ -4,7 +4,8 @@
 
 #include <stdio.h>
 
-#include "Eo.h"
+#include <Eo.h>
+
 #include "eo_suite.h"
 #include "eo_error_msgs.h"
 #include "eo_test_class_simple.h"
