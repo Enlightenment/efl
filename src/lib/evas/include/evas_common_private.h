@@ -1324,10 +1324,20 @@ EAPI int          evas_async_events_process_blocking(void);
 void	          evas_render_rendering_wait(Evas_Public_Data *evas);
 void              evas_all_sync(void);
 
-int               evas_thread_init(void);
-int               evas_thread_shutdown(void);
+
+#define EVAS_GL_THREAD_TYPE_GL       1
+#define EVAS_GL_THREAD_TYPE_EVGL     2
+
+#define EVAS_GL_THREAD_MODE_FINISH   0
+#define EVAS_GL_THREAD_MODE_FLUSH    1
+#define EVAS_GL_THREAD_MODE_ENQUEUE  2
+
+int               evas_threads_init(void);
+int               evas_threads_shutdown(void);
 EAPI void         evas_thread_cmd_enqueue(Evas_Thread_Command_Cb cb, void *data);
 EAPI void         evas_thread_queue_flush(Evas_Thread_Command_Cb cb, void *data);
+EAPI void         evas_gl_thread_cmd_enqueue(int thread_type, Evas_Thread_Command_Cb cb, void *data, int thread_mode);
+EAPI Eina_Thread  evas_gl_thread_get(int thread_type);
 
 typedef enum _Evas_Render_Mode
 {
