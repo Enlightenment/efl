@@ -4,8 +4,9 @@
 
 #include <stdio.h>
 
+#include <Evas.h>
+
 #include "evas_suite.h"
-#include "Evas.h"
 
 static Eina_Bool
 _find_list(const Eina_List *lst, const char *item)

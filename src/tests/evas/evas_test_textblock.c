@@ -8,15 +8,13 @@
 #endif
 
 #include <stdio.h>
+#include <locale.h>
 
 #include <Eina.h>
+#include <Evas.h>
 
 #include "evas_suite.h"
-#include "Evas.h"
-
 #include "evas_tests_helpers.h"
-
-#include <locale.h>
 
 /* Functions defined in evas_object_textblock.c */
 EAPI Eina_Bool

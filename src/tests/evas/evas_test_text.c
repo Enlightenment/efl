@@ -5,8 +5,9 @@
 
 #include <stdio.h>
 
+#include <Evas.h>
+
 #include "evas_suite.h"
-#include "Evas.h"
 #include "evas_tests_helpers.h"
 
 #define TEST_FONT_NAME "DejaVuSans,UnDotum"

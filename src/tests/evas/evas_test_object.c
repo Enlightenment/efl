@@ -4,8 +4,9 @@
 
 #include <stdio.h>
 
+#include <Evas.h>
+
 #include "evas_suite.h"
-#include "Evas.h"
 #include "evas_tests_helpers.h"
 
 START_TEST(evas_object_various)

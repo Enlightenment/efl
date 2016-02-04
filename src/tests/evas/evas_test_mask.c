@@ -4,9 +4,10 @@
 
 #ifdef BUILD_ENGINE_BUFFER
 
+#include <Evas.h>
+#include <Ecore_Evas.h>
+
 #include "evas_suite.h"
-#include "Evas.h"
-#include "Ecore_Evas.h"
 #include "evas_tests_helpers.h"
 
 #define TEST_FONT_NAME "DejaVuSans,UnDotum"

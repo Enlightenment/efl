@@ -8,10 +8,11 @@
 #endif
 
 #include <stdio.h>
+
 #include <Eina.h>
+#include <Evas.h>
 
 #include "evas_suite.h"
-#include "Evas.h"
 #include "evas_tests_helpers.h"
 
 #define TEST_FONT_SOURCE TESTS_SRC_DIR "/TestFont.eet"
