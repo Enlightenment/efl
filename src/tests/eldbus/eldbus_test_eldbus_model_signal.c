@@ -2,15 +2,15 @@
 # include <config.h>
 #endif
 
-#include "eldbus_fake_server.h"
-#include "eldbus_suite.h"
-#include "eldbus_test_eldbus_model.h"
+#include <stdbool.h>
 
-#include <Ecore.h>
 #include <Eina.h>
+#include <Ecore.h>
 #include <Eldbus_Model.h>
 
-#include <stdbool.h>
+#include "eldbus_fake_server.h"
+#include "eldbus_test_eldbus_model.h"
+#include "eldbus_suite.h"
 
 #define ARGUMENT_A "arg0"
 

@@ -1,9 +1,9 @@
 #ifndef _ELDBUS_TEST_ELDBUS_MODEL_H
 #define _ELDBUS_TEST_ELDBUS_MODEL_H
 
+#include <Eo.h>
 #include <Eldbus_Model.h>
 #include <Efl.h>
-#include <Eo.h>
 
 void check_init(void);
 void check_shutdown(void);

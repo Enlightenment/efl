@@ -2,14 +2,14 @@
 # include <config.h>
 #endif
 
-#include "eldbus_suite.h"
-#include "eldbus_test_eldbus_model.h"
+#include <stdbool.h>
 
-#include <Ecore.h>
 #include <Eina.h>
+#include <Ecore.h>
 #include <Eldbus_Model.h>
 
-#include <stdbool.h>
+#include "eldbus_test_eldbus_model.h"
+#include "eldbus_suite.h"
 
 static Eo *connection = NULL;
 static Eo *unloaded_connection = NULL;

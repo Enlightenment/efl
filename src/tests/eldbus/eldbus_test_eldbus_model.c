@@ -2,17 +2,17 @@
 # include <config.h>
 #endif
 
-#include "eldbus_suite.h"
-#include "eldbus_test_eldbus_model.h"
-
-#include <Ecore.h>
-#include <Eina.h>
-#include <Eldbus.h>
-#include <Eldbus_Model.h>
-
 #include <stdbool.h>
 #include <stdio.h>
 #include <unistd.h>
+
+#include <Eina.h>
+#include <Ecore.h>
+#include <Eldbus.h>
+#include <Eldbus_Model.h>
+
+#include "eldbus_test_eldbus_model.h"
+#include "eldbus_suite.h"
 
 static Eina_Bool
 _eo_event_quit_cb(void *data EINA_UNUSED,
