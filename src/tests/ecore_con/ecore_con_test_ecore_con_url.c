@@ -2,13 +2,14 @@
 # include <config.h>
 #endif
 
-#include "ecore_con_suite.h"
-
 #include <stdio.h>
+#include <unistd.h>
+
+#include <Eina.h>
 #include <Ecore.h>
 #include <Ecore_Con.h>
-#include <Eina.h>
-#include <unistd.h>
+
+#include "ecore_con_suite.h"
 
 #define COOKIEJAR "testcookieXXXXXX.jar"
 #define DEFAULT_LINK "www.google.com"

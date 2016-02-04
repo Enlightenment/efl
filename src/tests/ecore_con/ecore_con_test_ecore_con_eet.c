@@ -2,10 +2,10 @@
 # include <config.h>
 #endif
 
-#include "ecore_con_suite.h"
-
 #include <Eet.h>
 #include <Ecore_Con_Eet.h>
+
+#include "ecore_con_suite.h"
 
 #define TEST_STREAM "test_stream"
 #define SRV_MSG "Server Message"
