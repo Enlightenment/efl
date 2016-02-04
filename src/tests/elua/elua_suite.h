@@ -6,4 +6,3 @@
 void elua_lib_test(TCase *tc);
 
 #endif /* _ELUA_SUITE_H */
-

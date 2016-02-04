@@ -5,8 +5,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include<Eina.h>
-#include "Elua.h"
+#include <Eina.h>
+#include <Elua.h>
+
 #include "elua_suite.h"
 
 START_TEST(elua_api)
