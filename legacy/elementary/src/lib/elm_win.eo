@@ -1247,8 +1247,8 @@ class Elm.Win (Elm.Widget, Elm.Interface_Atspi_Window,
          return: bool;
          params {
             @in key: const(char)*; [[This string is the keyname to grab.]]
-            @in modifiers: Evas_Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
-            @in not_modifiers: Evas_Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
+            @in modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
+            @in not_modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
             @in proirity: int; [[This is for the priority of keygrab. Currently this feature is not supported.]]
             @in grab_mode: Elm.Win.Keygrab_Mode; [[According to the grabmode, it can grab key differently.]]
          }
@@ -1261,8 +1261,8 @@ class Elm.Win (Elm.Widget, Elm.Interface_Atspi_Window,
          return: bool;
          params {
             @in key: const(char)*; [[This string is the keyname to grab.]]
-            @in modifiers: Evas_Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
-            @in not_modifiers: Evas_Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
+            @in modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
+            @in not_modifiers: Evas.Modifier_Mask; [[This is for the keymask feature. Currently this feature is not supported.]]
          }
       }
    }
