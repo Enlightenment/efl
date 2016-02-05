@@ -692,6 +692,12 @@ group { name: "elm/hover/base/hoversel_vertical/default";
          target: "base";
          after: "hidefinished";
       }
+      program { name: "hide_no_animate";
+         signal: "elm,action,hide,no_animate"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         after: "hidefinished";
+      }
       program { name: "hidefinished";
          script {
             set_int(on_dismiss, 0);

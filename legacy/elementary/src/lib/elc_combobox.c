@@ -147,7 +147,6 @@ _table_resize(void *data)
      {
         int hover_parent_w, hover_parent_h, obj_h, obj_w, obj_y, win_y_offset;
         int current_height, h;
-        const char *best_location;
         sd->item = elm_genlist_first_item_get(sd->genlist);
         //FIXME:- the height of item is zero, sometimes.
         evas_object_geometry_get(elm_object_item_track(sd->item), NULL, NULL,
@@ -158,9 +157,9 @@ _table_resize(void *data)
         evas_object_geometry_get(sd->hover_parent, NULL, NULL, &hover_parent_w,
                                  &hover_parent_h);
         current_height = sd->item_height * sd->count;
-        best_location = elm_hover_best_content_location_get(sd->hover,
+        sd->best_location = elm_hover_best_content_location_get(sd->hover,
                                                        ELM_HOVER_AXIS_VERTICAL);
-        if (best_location && !strcmp(best_location , "bottom"))
+        if (sd->best_location && !strcmp(sd->best_location , "bottom"))
           win_y_offset = hover_parent_h - obj_y - obj_h;
         else win_y_offset = obj_y;
 
@@ -177,15 +176,19 @@ _activate(Evas_Object *obj)
 {
    ELM_COMBOBOX_DATA_GET(obj, sd);
    if (elm_widget_disabled_get(obj)) return;
+
    if (sd->expanded)
      {
         elm_combobox_hover_end(obj);
         return;
      }
+
    sd->expanded = EINA_TRUE;
+
+   if (sd->count <= 0) return;
+
    _table_resize(obj);
-   elm_object_part_content_set(sd->hover, elm_hover_best_content_location_get
-                               (sd->hover, ELM_HOVER_AXIS_VERTICAL), sd->tbl);
+   elm_object_part_content_set(sd->hover, sd->best_location, sd->tbl);
    evas_object_show(sd->genlist);
    elm_genlist_item_selected_set(sd->item, EINA_TRUE);
    evas_object_show(sd->hover);
@@ -210,6 +213,7 @@ static Eina_Bool
 _gl_filter_finished_cb(void *data, Eo *obj EINA_UNUSED,
                        const Eo_Event_Description *desc EINA_UNUSED, void *event)
 {
+   char buf[1024];
    ELM_COMBOBOX_DATA_GET(data, sd);
 
    count_items_genlist(data);
@@ -226,9 +230,17 @@ _gl_filter_finished_cb(void *data, Eo *obj EINA_UNUSED,
      {
         if (!sd->expanded) _activate(data);
         else _table_resize(data);
+        elm_genlist_item_selected_set(sd->item, EINA_TRUE);
      }
-   else elm_combobox_hover_end(data);
-   elm_genlist_item_selected_set(sd->item, EINA_TRUE);
+   else 
+     {
+        sd->expanded = EINA_FALSE;
+        elm_layout_signal_emit(sd->hover, "elm,action,hide,no_animate", "elm");
+        snprintf(buf, sizeof(buf), "elm,action,slot,%s,hide", sd->best_location);
+        elm_layout_signal_emit(sd->hover, buf, "elm");
+        edje_object_message_signal_process(elm_layout_edje_get(sd->hover));
+     }
+
    return EINA_TRUE;
 }
 
