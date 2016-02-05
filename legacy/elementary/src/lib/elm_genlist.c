@@ -2397,15 +2397,13 @@ _elm_genlist_tree_effect_setup(Elm_Genlist_Data *sd)
 {
    if (!sd->tree_effect_animator)
      {
-        Eina_Bool r;
-
         _item_tree_effect_before(sd->expanded_item);
         evas_object_raise(sd->event_block_rect);
         evas_object_stack_below(sd->event_block_rect, sd->stack[1]);
         evas_object_show(sd->event_block_rect);
         sd->start_time = ecore_time_get();
         eo_do(sd->obj,
-              r = eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _tree_effect_animator_cb, sd->obj));
+              eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _tree_effect_animator_cb, sd->obj));
         sd->tree_effect_animator = 1;
         return EINA_TRUE;
      }
