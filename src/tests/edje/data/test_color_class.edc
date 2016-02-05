@@ -1,0 +1,17 @@
+collections {
+   color_classes {
+      color_class { "test_color_class";
+         color: 100 100 100 100;
+      }
+   }
+   group { name: "test_group";
+      parts {
+         rect { "rect";
+            desc { "default";
+               color_class: "test_color_class";
+            }
+         }
+      }
+   }
+}
+

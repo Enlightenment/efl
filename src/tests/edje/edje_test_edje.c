@@ -327,6 +327,41 @@ START_TEST(edje_test_size_class)
 }
 END_TEST
 
+START_TEST(edje_test_color_class)
+{
+   Evas *evas = EDJE_TEST_INIT_EVAS();
+
+   Eina_File *f;
+   Eina_Iterator *it;
+   Edje_Color_Class *itcc, *cc = NULL;
+   char *filename;
+
+   filename = realpath(test_layout_get("test_color_class.edj"), NULL);
+   fail_if(!filename);
+
+   f = eina_file_open(filename, EINA_FALSE);
+   fail_if(!f);
+
+   it = edje_mmap_color_class_iterator_new(f);
+   fail_if(!it);
+   EINA_ITERATOR_FOREACH(it, itcc)
+     {
+        if (!strcmp(itcc->name, "test_color_class"))
+          {
+             cc = itcc;
+             break;
+          }
+     }
+   fail_if((!cc) || (cc->r != 100) || (cc->g != 100) || (cc->b != 100) || (cc->a != 100));
+
+   eina_iterator_free(it);
+   eina_file_close(f);
+   free(filename);
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
 void edje_test_edje(TCase *tc)
 {    
    tcase_add_test(tc, edje_test_edje_init);
@@ -339,4 +374,5 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_filters);
    tcase_add_test(tc, edje_test_snapshot);
    tcase_add_test(tc, edje_test_size_class);
+   tcase_add_test(tc, edje_test_color_class);
 }
