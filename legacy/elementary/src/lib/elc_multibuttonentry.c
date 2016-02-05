@@ -1120,6 +1120,7 @@ _layout_key_down_cb(void *data,
              Elm_Multibuttonentry_Item_Data *item = sd->selected_it;
              if (item && sd->editable)
                {
+                  sd->items = eina_list_remove(sd->items, EO_OBJ(item));
                   eo_do(EO_OBJ(item), elm_wdg_item_del());
                   elm_object_focus_set(sd->entry, EINA_TRUE);
                }
