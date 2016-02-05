@@ -4,9 +4,15 @@
 #include <Eo.h>
 
 #include "ecore_con_base.eo.legacy.h"
-#include "ecore_con_server.eo.legacy.h"
+#include "efl_network_server.eo.legacy.h"
 #include "efl_network_connector.eo.legacy.h"
 #include "ecore_con_client.eo.legacy.h"
+
+
+/********************************************************************
+ * ecore_con_server.eo.h
+ *******************************************************************/
+typedef Eo Ecore_Con_Server;
 
 
 /********************************************************************

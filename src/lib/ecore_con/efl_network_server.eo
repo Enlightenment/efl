@@ -1,5 +1,6 @@
-class Ecore.Con.Server (Ecore.Con.Base) {
-   eo_prefix: ecore_con_server_obj;
+class Efl.Network.Server (Ecore.Con.Base) {
+   legacy_prefix: ecore_con_server;
+   eo_prefix: efl_network_server;
    methods {
       @property name {
          [[Retrieves the name of server.

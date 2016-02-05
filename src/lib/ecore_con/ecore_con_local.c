@@ -72,7 +72,7 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
 #ifndef HAVE_LOCAL_SOCKETS
    return 0;
 #else
-   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    char buf[4096];
    struct sockaddr_un socket_unix;
    int curstate = 0;
@@ -213,7 +213,7 @@ ecore_con_local_listen(
   EINA_UNUSED)
 {
 #ifdef HAVE_LOCAL_SOCKETS
-   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    char buf[4096];
    struct sockaddr_un socket_unix;
    struct linger lin;

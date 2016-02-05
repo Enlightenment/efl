@@ -129,7 +129,7 @@ struct _Ecore_Con_Client_Data
 
 typedef struct _Ecore_Con_Client_Data Ecore_Con_Client_Data;
 
-struct _Ecore_Con_Server_Data
+struct _Efl_Network_Server_Data
 {
 #ifdef _WIN32
    SOCKET fd;
@@ -205,7 +205,7 @@ struct _Ecore_Con_Server_Data
 #endif
 };
 
-typedef struct _Ecore_Con_Server_Data Ecore_Con_Server_Data;
+typedef struct _Efl_Network_Server_Data Efl_Network_Server_Data;
 
 struct _Ecore_Con_Info
 {

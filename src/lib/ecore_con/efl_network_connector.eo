@@ -1,4 +1,4 @@
-class Efl.Network.Connector (Ecore.Con.Server) {
+class Efl.Network.Connector (Efl.Network.Server) {
    eo_prefix: efl_network_connector_obj;
    data: null;
    implements {

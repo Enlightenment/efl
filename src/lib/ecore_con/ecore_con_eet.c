@@ -699,7 +699,7 @@ _ecore_con_eet_base_eo_base_finalize(Eo *obj, Ecore_Con_Eet_Base_Data *pd)
 EOLIAN static void
 _ecore_con_eet_base_server_set(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd, Ecore_Con_Server *data)
 {
-   if (!eo_isa(data, ECORE_CON_SERVER_CLASS))
+   if (!eo_isa(data, EFL_NETWORK_SERVER_CLASS))
      return;
 
    pd->server = data;

@@ -59,7 +59,7 @@ _ecore_con_dns_del(Ecore_Con_DNS *dns)
 {
    if (dns->svr)
      {
-        Ecore_Con_Server_Data *svr;
+        Efl_Network_Server_Data *svr;
 
         svr = eo_data_scope_get(dns->svr, ECORE_CON_CLIENT_CLASS);
         if ((svr) && (svr->infos))
@@ -296,7 +296,7 @@ ecore_con_info_get(Ecore_Con_Server *obj,
                    void *data,
                    struct addrinfo *hints)
 {
-   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    Ecore_Con_DNS *dns;
    int error = 0;
 
