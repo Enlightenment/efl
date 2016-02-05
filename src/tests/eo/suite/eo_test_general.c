@@ -100,20 +100,25 @@ START_TEST(eo_signals)
           { NULL, NULL }
    };
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   Eina_Bool r;
 
    eo_do(obj, eo_event_callback_add(EO_BASE_EVENT_CALLBACK_ADD, _eo_signals_cb_added_deled, callbacks));
-   eo_do(obj, eo_event_callback_add(EO_BASE_EVENT_CALLBACK_DEL, _eo_signals_cb_added_deled, callbacks));
+   eo_do(obj, r = eo_event_callback_add(EO_BASE_EVENT_CALLBACK_DEL, _eo_signals_cb_added_deled, callbacks));
+   fail_if(!r);
    eo_do(obj, eo_event_callback_array_priority_add(callbacks, -100, (void *) 1));
    eo_do(obj, eo_event_callback_array_add(callbacks, (void *) 3));
-   eo_do(obj, eo_event_callback_array_priority_add(callbacks, -50, (void *) 2));
+   eo_do(obj, r = eo_event_callback_array_priority_add(callbacks, -50, (void *) 2));
+   fail_if(!r);
    eo_do(obj, simple_a_set(1));
    ck_assert_int_eq(_eo_signals_cb_flag, 0x3);
 
    eo_do(obj, eo_event_callback_array_del(callbacks, (void *) 1));
    eo_do(obj, eo_event_callback_array_del(callbacks, (void *) 2));
-   eo_do(obj, eo_event_callback_array_del(callbacks, (void *) 3));
+   eo_do(obj, r = eo_event_callback_array_del(callbacks, (void *) 3));
+   fail_if(!r);
    /* Try to delete something that doesn't exist. */
-   eo_do(obj, eo_event_callback_array_del(callbacks, (void *) 4));
+   eo_do(obj, r = eo_event_callback_array_del(callbacks, (void *) 4));
+   fail_if(r);
    _eo_signals_cb_flag = 0;
    eo_do(obj, simple_a_set(1));
    ck_assert_int_eq(_eo_signals_cb_flag, 0x0);
@@ -141,7 +146,8 @@ START_TEST(eo_signals)
         ck_assert_int_eq(_eo_signals_cb_flag, 0x3);
 
         /* We don't need this one anymore. */
-        eo_do(obj, eo_event_callback_del(EV_A_CHANGED2, _eo_signals_a_changed_never, (void *) 1));
+        eo_do(obj, r = eo_event_callback_del(EV_A_CHANGED2, _eo_signals_a_changed_never, (void *) 1));
+        fail_if(!r);
 
         /* Call legacy event with legacy and non-legacy callbacks. */
         int a = 3;
