@@ -649,9 +649,6 @@ _edje_color_class_apply(const char *color_class, const char *parent)
 EAPI Eina_Bool
 edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
-   Eina_Hash *members;
-   Eina_Iterator *it;
-   Edje_Refcount *er;
    Edje_Color_Class *cc;
 
    if (!color_class) return EINA_FALSE;
