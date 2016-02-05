@@ -418,6 +418,7 @@ fd_ready:
 error_umask:
    umask(pmode);
 error:
+   close(svr->fd);
 #endif /* HAVE_LOCAL_SOCKETS */
    return 0;
 }
