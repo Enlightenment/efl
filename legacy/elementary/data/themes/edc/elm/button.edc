@@ -342,7 +342,6 @@ group { name: "elm/button/base/default";
       }
       program { name: "button_icon_hidden";
          signal: "elm,state,icon,hidden"; source: "elm";
-         action:  STATE_SET "default" 0.0;
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);
@@ -703,7 +702,6 @@ group { name: "elm/button/base/anchor";
       }
       program { name: "button_icon_hidden";
          signal: "elm,state,icon,hidden"; source: "elm";
-         action:  STATE_SET "default" 0.0;
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);
