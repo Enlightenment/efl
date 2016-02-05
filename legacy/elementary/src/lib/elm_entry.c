@@ -1701,7 +1701,6 @@ _magnifier_move(void *data)
    Evas_Coord diffx = 0;
    Evas_Object *top;
    double fx, fy, fw, fh;
-   double dw, dh;
    double scale = _elm_config->magnifier_scale;
 
    edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
@@ -1757,14 +1756,10 @@ _magnifier_move(void *data)
    evas_object_geometry_get(data, &x, &y, &w, &h);
    evas_object_geometry_get(sd->mgf_proxy, &px, &py, &pw, &ph);
 
-   dw = w;
-   dh = h;
-
    fx = -((cx - x) * scale) + (pw * 0.5) + diffx;
    fy = -((cy - y) * scale) + (ph * 0.5) - (ch * 0.5 * scale);
-
-   fw = dw * scale;
-   fh = dh * scale;
+   fw = w * scale;
+   fh = h * scale;
    evas_object_image_fill_set(sd->mgf_proxy, fx, fy, fw, fh);
 
    //Update Clipper Area
