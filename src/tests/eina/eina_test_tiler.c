@@ -207,6 +207,12 @@ START_TEST(eina_test_tiler_stable)
    EINA_RECTANGLE_SET(&r, 40, 40, 20, 20);
    eina_tiler_rect_del(tl, &r);
 
+   EINA_RECTANGLE_SET(&r, 50, 50, 20, 20);
+   fail_if(!eina_tiler_rect_add(tl, &r));
+
+   EINA_RECTANGLE_SET(&r, 40, 40, 20, 20);
+   eina_tiler_rect_del(tl, &r);
+
    it = eina_tiler_iterator_new(tl);
    fail_if(!it);
 
