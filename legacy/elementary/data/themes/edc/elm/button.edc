@@ -8,12 +8,32 @@ group { name: "elm/button/base/default";
 #define MASK     3
 #define DISABLE  4
 #define PRESSED  8
+#define BACKGROUND  16
    script {
       public btmode;
       public eval_mode(m) {
          new m1 = m & MASK;
          new d = m & DISABLE;
          new p = m & PRESSED;
+         new bg = m & BACKGROUND;
+         if (bg) {
+            set_state(PART:"base", "hidden", 0.0);
+            set_state(PART:"elm.swallow.background", "visible", 0.0);
+         } else {
+            set_state(PART:"elm.swallow.background", "default", 0.0);
+            if (!d) {
+               if (!p)
+                 {
+                  set_state(PART:"base", "default", 0.0);
+                  set_state(PART:"base", "default", 0.0);
+                 }
+               else {
+                    set_state(PART:"base", "pressed", 0.0);
+                 }
+            } else {
+               set_state(PART:"base", "disabled", 0.0);
+            }
+         }
          if (m1 == (ICON | LABEL)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
@@ -22,11 +42,9 @@ group { name: "elm/button/base/default";
                if (!p) {
                   set_state(PART:"elm.text", "visible", 0.0);
                   set_state(PART:"icon_clip", "default", 0.0);
-                  set_state(PART:"base", "default", 0.0);
                } else {
                   set_state(PART:"elm.text", "pressed_visible", 0.0);
                   set_state(PART:"icon_clip", "pressed", 0.0);
-                  set_state(PART:"base", "pressed", 0.0);
                }
             } else {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
@@ -34,7 +52,6 @@ group { name: "elm/button/base/default";
                set_state(PART:"elm.text", "disabled_visible", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
-               set_state(PART:"base", "disabled", 0.0);
             }
          } else if (m1 == (ICON)) {
             if (!d) {
@@ -42,20 +59,16 @@ group { name: "elm/button/base/default";
                set_state(PART:"sizer.content", "icononly", 0.0);
                set_state(PART:"event", "default", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
-               if (!p) {
+               if (!p)
                   set_state(PART:"icon_clip", "default", 0.0);
-                  set_state(PART:"base", "default", 0.0);
-               } else {
+               else
                   set_state(PART:"icon_clip", "pressed", 0.0);
-                  set_state(PART:"base", "pressed", 0.0);
-               }
             } else {
                set_state(PART:"elm.swallow.content", "icononly", 0.0);
                set_state(PART:"sizer.content", "icononly", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
-               set_state(PART:"base", "disabled", 0.0);
             }
          } else if (m1 == (LABEL)) {
             if (!d) {
@@ -63,20 +76,16 @@ group { name: "elm/button/base/default";
                set_state(PART:"sizer.content", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
-               if (!p) {
+               if (!p)
                   set_state(PART:"elm.text", "textonly", 0.0);
-                  set_state(PART:"base", "default", 0.0);
-               } else {
+               else
                   set_state(PART:"elm.text", "pressed_textonly", 0.0);
-                  set_state(PART:"base", "pressed", 0.0);
-               }
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
                set_state(PART:"sizer.content", "default", 0.0);
                set_state(PART:"elm.text", "disabled_textonly", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
-               set_state(PART:"base", "disabled", 0.0);
             }
          } else {
             if (!d) {
@@ -85,18 +94,12 @@ group { name: "elm/button/base/default";
                set_state(PART:"elm.text", "icononly", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
-               if (!p) {
-                  set_state(PART:"base", "default", 0.0);
-               } else {
-                  set_state(PART:"base", "pressed", 0.0);
-               }
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
                set_state(PART:"sizer.content", "default", 0.0);
                set_state(PART:"elm.text", "icononly", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
-               set_state(PART:"base", "disabled", 0.0);
             }
          }
       }
@@ -121,6 +124,21 @@ group { name: "elm/button/base/default";
          desc { "disabled";
             inherit: "default";
             color_class: "button_bg_disabled";
+         }
+         desc { "hidden";
+            inherit: "default";
+            visible: 0;
+         }
+      }
+      swallow { "elm.swallow.background"; nomouse;
+         desc { "default";
+            rel1.to: "base";
+            rel2.to: "base";
+            visible: 0;
+         }
+         desc { "visible";
+            inherit: "default";
+            visible: 1;
          }
       }
       rect { "icon_clip";
@@ -348,6 +366,22 @@ group { name: "elm/button/base/default";
             eval_mode(m);
          }
       }
+      program { name: "button_background_visible";
+         signal: "elm,state,background,visible"; source: "elm";
+         script {
+            new m = get_int(btmode);
+            m |= BACKGROUND; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program { name: "button_background_hidden";
+         signal: "elm,state,background,hidden"; source: "elm";
+         script {
+            new m = get_int(btmode);
+            m &= ~BACKGROUND; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
       program { name: "button_state_disabled";
          signal: "elm,state,disabled"; source: "elm";
          script {
@@ -370,6 +404,7 @@ group { name: "elm/button/base/default";
 #undef MASK
 #undef DISABLE
 #undef PRESSED
+#undef BACKGROUND
 }
 
 group { name: "elm/button/base/anchor";
@@ -463,6 +498,17 @@ group { name: "elm/button/base/anchor";
          desc { "disabled";
             inherit: "default";
             color: 255 255 255 64;
+         }
+      }
+      swallow { "elm.swallow.background"; nomouse;
+         desc { "default";
+            rel1.to: "base";
+            rel2.to: "base";
+            visible: 0;
+         }
+         desc { "visible";
+            inherit: "default";
+            visible: 1;
          }
       }
       swallow { "elm.swallow.content"; nomouse;
@@ -707,6 +753,16 @@ group { name: "elm/button/base/anchor";
             m &= ~ICON; set_int(btmode, m);
             eval_mode(m);
          }
+      }
+      program { name: "button_background_visible";
+         signal: "elm,state,background,visible"; source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "elm.swallow.background";
+      }
+      program { name: "button_background_hidden";
+         signal: "elm,state,background,hidden"; source: "elm";
+         action:  STATE_SET "default" 0.0;
+         target: "elm.swallow.background";
       }
       program { name: "button_state_disabled";
          signal: "elm,state,disabled"; source: "elm";
