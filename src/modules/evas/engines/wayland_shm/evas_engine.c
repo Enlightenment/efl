@@ -289,15 +289,15 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 
    if ((ns->type == EVAS_NATIVE_SURFACE_OPENGL) &&
        (ns->version == EVAS_NATIVE_SURFACE_VERSION))
-     im2 = evas_cache_image_data(evas_common_image_cache_get(),
-                                 ie->w, ie->h,
-                                 ns->data.x11.visual, 1,
-                                 EVAS_COLORSPACE_ARGB8888);
+     im2 = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
+                                               ie->w, ie->h,
+                                               ns->data.x11.visual, 1,
+                                               EVAS_COLORSPACE_ARGB8888);
    else
-     im2 = evas_cache_image_data(evas_common_image_cache_get(),
-                                 ie->w, ie->h,
-                                 NULL, 1,
-                                 EVAS_COLORSPACE_ARGB8888);
+     im2 = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
+                                               ie->w, ie->h,
+                                               NULL, 1,
+                                               EVAS_COLORSPACE_ARGB8888);
 
    if (im->native.data)
       {
