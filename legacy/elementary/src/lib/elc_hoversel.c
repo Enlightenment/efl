@@ -848,63 +848,67 @@ item_focused_get(Elm_Hoversel_Data *sd)
 }
 
 static Eina_Bool
+item_focused_set(Elm_Object_Item *eo_item, Eina_Bool focus)
+{
+   ELM_HOVERSEL_ITEM_DATA_GET(eo_item, item);
+   if (elm_object_disabled_get(VIEW(item)))
+      return EINA_FALSE;
+   elm_object_focus_set(VIEW(item), focus);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
 {
+   Eina_List *l;
+   Elm_Object_Item *focused_item, *eo_item;
+   Eina_Bool ret, next = EINA_FALSE;
+
    ELM_HOVERSEL_DATA_GET(obj, sd);
    const char *dir = params;
 
-   Elm_Object_Item  *eo_litem, *eo_fitem;
-   eo_litem = eina_list_last_data_get(sd->items);
-   eo_fitem = eina_list_data_get(sd->items);
-
    _elm_widget_focus_auto_show(obj);
-   if (!strcmp(dir, "down"))
+   if (!strcmp(dir, "down") || !strcmp(dir, "right"))
      {
-        if ((!sd->horizontal) &&
-            (item_focused_get(sd) == eo_litem))
+        focused_item = item_focused_get(sd);
+        EINA_LIST_FOREACH(sd->items, l, eo_item)
           {
-            ELM_HOVERSEL_ITEM_DATA_GET(eo_fitem, fitem);
-            elm_object_focus_set(VIEW(fitem), EINA_TRUE);
-            return EINA_TRUE;
+             if (next)
+               {
+                  ret = item_focused_set(eo_item, EINA_TRUE);
+                  if (ret) return EINA_TRUE;
+               }
+             if (eo_item == focused_item) next = EINA_TRUE;
           }
-        elm_widget_focus_cycle(sd->hover, ELM_FOCUS_DOWN);
-        return EINA_TRUE;
+        EINA_LIST_FOREACH(sd->items, l, eo_item)
+          {
+             if (eo_item == focused_item) return EINA_FALSE;
+
+             ret = item_focused_set(eo_item, EINA_TRUE);
+             if (ret) return EINA_TRUE;
+          }
+        return EINA_FALSE;
      }
-   else if (!strcmp(dir, "up"))
+   else if (!strcmp(dir, "up") || !strcmp(dir, "left"))
      {
-        if ((!sd->horizontal) &&
-            (item_focused_get(sd) == eo_fitem))
+        focused_item = item_focused_get(sd);
+        EINA_LIST_REVERSE_FOREACH(sd->items, l, eo_item)
           {
-            ELM_HOVERSEL_ITEM_DATA_GET(eo_litem, litem);
-            elm_object_focus_set(VIEW(litem), EINA_TRUE);
-            return EINA_TRUE;
+             if (next)
+               {
+                  ret = item_focused_set(eo_item, EINA_TRUE);
+                  if (ret) return EINA_TRUE;
+               }
+             if (eo_item == focused_item) next = EINA_TRUE;
           }
-        elm_widget_focus_cycle(sd->hover, ELM_FOCUS_UP);
-        return EINA_TRUE;
-     }
-   else if (!strcmp(dir, "left"))
-     {
-        if (sd->horizontal &&
-            (item_focused_get(sd) == eo_fitem))
+        EINA_LIST_REVERSE_FOREACH(sd->items, l, eo_item)
           {
-            ELM_HOVERSEL_ITEM_DATA_GET(eo_litem, litem);
-            elm_object_focus_set(VIEW(litem), EINA_TRUE);
-            return EINA_TRUE;
+             if (eo_item == focused_item) return EINA_FALSE;
+
+             ret = item_focused_set(eo_item, EINA_TRUE);
+             if (ret) return EINA_TRUE;
           }
-        elm_widget_focus_cycle(sd->hover, ELM_FOCUS_LEFT);
-        return EINA_TRUE;
-     }
-   else if (!strcmp(dir, "right"))
-     {
-        if (sd->horizontal &&
-            (item_focused_get(sd) == eo_litem))
-          {
-            ELM_HOVERSEL_ITEM_DATA_GET(eo_fitem, fitem);
-            elm_object_focus_set(VIEW(fitem), EINA_TRUE);
-            return EINA_TRUE;
-          }
-        elm_widget_focus_cycle(sd->hover, ELM_FOCUS_RIGHT);
-        return EINA_TRUE;
+        return EINA_FALSE;
      }
    else return EINA_FALSE;
 }
