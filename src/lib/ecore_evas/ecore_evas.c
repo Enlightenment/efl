@@ -3090,12 +3090,9 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport)
    eo_do(ee->evas, eo_event_callback_call(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, &a));
 
    // FIXME: We do not support partial animator in the subcanvas
-   a.update_area.x = 0;
-   a.update_area.y = 0;
    EINA_LIST_FOREACH(ee->sub_ecore_evas, l, subee)
      {
-        evas_output_size_get(subee->evas, &a.update_area.w, &a.update_area.h);
-        eo_do(subee->evas, eo_event_callback_call(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, &a));
+        ecore_evas_animator_tick(subee, NULL);
      }
 
    // We are the source of sync for general animator.
