@@ -53,7 +53,7 @@ group { name: "elm/ctxpopup/base/default";
             color_class: "ctxpopup_bg";
          }
       }
-      part { name: "elm.swallow.backgournd"; type: SWALLOW;
+      part { name: "elm.swallow.background"; type: SWALLOW;
          clip_to: "clip";
          description { state: "default" 0.0;
             fixed: 1 1;
