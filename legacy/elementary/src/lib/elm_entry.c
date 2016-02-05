@@ -86,6 +86,7 @@ struct _Mod_Api
 };
 
 static void _create_selection_handlers(Evas_Object *obj, Elm_Entry_Data *sd);
+static void _magnifier_move(void *data);
 
 static Mod_Api *
 _module_find(Evas_Object *obj EINA_UNUSED)
@@ -1637,25 +1638,10 @@ _menu_call(Evas_Object *obj)
      }
 }
 
-static void _magnifier_move(void *data, Evas_Coord cx, Evas_Coord cy);
-
 static void
 _magnifier_proxy_update(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   ELM_ENTRY_DATA_GET(data, sd);
-   if ((sd->start_handler_down) || (sd->end_handler_down))
-     {
-        Evas_Coord ex, ey, cx, cy, ch;
-
-        evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
-        edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
-                                                  &cx, &cy, NULL, &ch);
-        _magnifier_move(data, ex + cx, ey + cy + (ch / 2));
-     }
-   else
-     {
-        _magnifier_move(data, sd->downx, sd->downy);
-     }
+   _magnifier_move(data);
 }
 
 static void
@@ -1690,6 +1676,7 @@ _magnifier_create(void *data)
 
    //Clipper
    sd->mgf_clip = evas_object_rectangle_add(e);
+   evas_object_color_set(sd->mgf_clip, 0, 0, 0, 0);
    evas_object_show(sd->mgf_clip);
    evas_object_clip_set(sd->mgf_proxy, sd->mgf_clip);
 
@@ -1702,19 +1689,69 @@ _magnifier_create(void *data)
 }
 
 static void
-_magnifier_move(void *data, Evas_Coord cx, Evas_Coord cy)
+_magnifier_move(void *data)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
    Evas_Coord x, y, w, h;
    Evas_Coord px, py, pw, ph;
+   Evas_Coord cx, cy, ch;
+   Evas_Coord ex, ey;
+   Evas_Coord mx, my, mw, mh;
+   Evas_Coord diffx = 0;
+   Evas_Object *top;
    double fx, fy, fw, fh;
    double dw, dh;
    double scale = _elm_config->magnifier_scale;
 
+   edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
+                                             &cx, &cy, NULL, &ch);
+   if (sd->scroll)
+     {
+        Evas_Coord ox, oy;
+        evas_object_geometry_get(sd->scr_edje, &ex, &ey, NULL, NULL);
+        eo_do(data, elm_interface_scrollable_content_pos_get(&ox, &oy));
+        ex -= ox;
+        ey -= oy;
+     }
+   else
+     {
+        evas_object_geometry_get(data, &ex, &ey, NULL, NULL);
+     }
+   cx += ex;
+   cy += ey;
+
    //Move the Magnifier
    edje_object_parts_extends_calc(sd->mgf_bg, &x, &y, &w, &h);
    evas_object_move(sd->mgf_bg, cx - x - (w / 2), cy - y - h);
+
+   mx = cx - x - (w / 2);
+   my = cy - y - h;
+   mw = w;
+   mh = h;
+
+   // keep magnifier inside window
+   top = elm_widget_top_get(data);
+   if (top && eo_isa(top, ELM_WIN_CLASS))
+     {
+        Evas_Coord wh, ww;
+        evas_object_geometry_get(top, NULL, NULL, &ww, &wh);
+        if (mx < 0)
+          {
+             diffx = mx;
+             mx = 0;
+          }
+        if (mx + mw > ww)
+          {
+             diffx = - (ww - (mx + mw));
+             mx = ww - mw;
+          }
+        if (my < 0)
+          my = 0;
+        if (my + mh > wh)
+          my = wh - mh;
+        evas_object_move(sd->mgf_bg, mx, my);
+     }
 
    //Set the Proxy Render Area
    evas_object_geometry_get(data, &x, &y, &w, &h);
@@ -1723,8 +1760,9 @@ _magnifier_move(void *data, Evas_Coord cx, Evas_Coord cy)
    dw = w;
    dh = h;
 
-   fx = -(((double) (cx - x) / dw) * (scale * dw)) + ((double) pw * 0.5);
-   fy = -(((double) (cy - y) / dh) * (scale * dh)) + ((double) ph * 0.5);
+   fx = -((cx - x) * scale) + (pw * 0.5) + diffx;
+   fy = -((cy - y) * scale) + (ph * 0.5) - (ch * 0.5 * scale);
+
    fw = dw * scale;
    fh = dh * scale;
    evas_object_image_fill_set(sd->mgf_proxy, fx, fy, fw, fh);
@@ -1769,7 +1807,7 @@ _long_press_cb(void *data)
      {
         _magnifier_create(data);
         _magnifier_show(data);
-        _magnifier_move(data, sd->downx, sd->downy);
+        _magnifier_move(data);
      }
    /* Context menu will not appear if context menu disabled is set
     * as false on a long press callback */
@@ -1914,7 +1952,7 @@ _mouse_move_cb(void *data,
              else
                WRN("Warning: Cannot move cursor");
 
-             _magnifier_move(data, ev->cur.canvas.x, ev->cur.canvas.y);
+             _magnifier_move(data);
           }
      }
    if (!sd->sel_mode)
@@ -3304,7 +3342,7 @@ _selection_handlers_offset_calc(Evas_Object *obj, Evas_Object *handler, Evas_Coo
      {
         _magnifier_create(obj);
         _magnifier_show(obj);
-        _magnifier_move(obj, ex + cx, ey + cy + (ch / 2));
+        _magnifier_move(obj);
      }
 }
 
@@ -3371,7 +3409,7 @@ _start_handler_mouse_move_cb(void *data,
    if (!sd->start_handler_down) return;
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord ex, ey;
-   Evas_Coord cx, cy, ch;
+   Evas_Coord cx, cy;
    int pos;
 
    evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
@@ -3385,13 +3423,10 @@ _start_handler_mouse_move_cb(void *data,
                                                sd->sel_handler_cursor);
    edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
                                         EDJE_CURSOR_MAIN, pos);
-   edje_object_part_text_cursor_geometry_get(sd->entry_edje,
-                                             "elm.text",
-                                             &cx, &cy, NULL, &ch);
    ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
    sd->long_pressed = EINA_FALSE;
    if (_elm_config->magnifier_enable)
-     _magnifier_move(data, ex + cx, ey + cy + (ch / 2));
+     _magnifier_move(data);
 }
 
 static void
@@ -3457,7 +3492,7 @@ _end_handler_mouse_move_cb(void *data,
    if (!sd->end_handler_down) return;
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord ex, ey;
-   Evas_Coord cx, cy, ch;
+   Evas_Coord cx, cy;
    int pos;
 
    evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
@@ -3471,13 +3506,10 @@ _end_handler_mouse_move_cb(void *data,
                                               sd->sel_handler_cursor);
    edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
                                         EDJE_CURSOR_MAIN, pos);
-   edje_object_part_text_cursor_geometry_get(sd->entry_edje,
-                                             "elm.text",
-                                             &cx, &cy, NULL, &ch);
    ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
    sd->long_pressed = EINA_FALSE;
    if (_elm_config->magnifier_enable)
-     _magnifier_move(data, ex + cx, ey + cy + (ch / 2));
+     _magnifier_move(data);
 }
 
 EOLIAN static void
