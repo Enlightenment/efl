@@ -128,7 +128,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm.Interface_Atspi_Widget_Action)
 
               @since 1.11
             ]]
-            return: const(list<Elm.Object.Item*>)*; [[The list of items or
+            return: const(list<Elm.Widget_Item*>)*; [[The list of items or
             $null on errors.]]
 
          }

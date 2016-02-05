@@ -75,7 +75,7 @@ class Elm.Colorselector (Elm.Layout, Elm.Interface_Atspi_Widget_Action,
 
               @since 1.9
             ]]
-            return: const(list<Elm.Object.Item*>)*;[[The list of color palette items.]]
+            return: const(list<Elm.Widget_Item*>)*;[[The list of color palette items.]]
          }
       }
       @property palette_selected_item {

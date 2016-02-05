@@ -53,7 +53,7 @@ class Elm.Flipselector (Elm.Layout, Elm.Interface_Atspi_Widget_Action,
               items list is changed. It should be fetched again with another
               call to this function when changes happen.
             ]]
-            return: const(list<Elm.Object.Item*>)*;
+            return: const(list<Elm.Widget_Item*>)*;
          }
       }
       @property first_item {

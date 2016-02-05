@@ -105,7 +105,7 @@ class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
               \@ref elm_object_item_del,
               @.clear.
             ]]
-            return: const(list<Elm.Object.Item*>)*; [[A $list of diskselector items, or $ull on failure.]]
+            return: const(list<Elm.Widget_Item*>)*; [[A $list of diskselector items, or $ull on failure.]]
          }
       }
       @property last_item {
