@@ -1710,14 +1710,6 @@ group { "elm/genlist/tree/tree_effect/default"; nomouse;
       group { "group"; mouse;
          source: "elm/genlist/tree/default/default";
          desc { "default";
-            link.base: "elm,state,show";
-         }
-         desc { "hide";
-//            hid;
-            link.base: "elm,state,hide";
-         }
-         desc { "map_transition";
-            color: 50 50 50 255;
             map {
                perspective: "point";
                on: 1;
@@ -1726,18 +1718,27 @@ group { "elm/genlist/tree/tree_effect/default"; nomouse;
                backface_cull: 1;
                rotation {
                   center: "point";
-                  x: -90;
+                  x: 0;
                   y: 0;
                   z: 0;
                }
             }
+            link.base: "elm,state,show";
+         }
+         desc { "hide";
+//            hid;
+            link.base: "elm,state,hide";
+         }
+         desc { "map_transition";
+            inherit: "default";
+            color: 50 50 50 255;
+            map.rotation.x: -90;
             link { base: "elm,action,flip_item";
                after: "rot2";
             }
          }
          desc { "map_rotate";
-            inherit: "map_transition";
-            map.rotation.x: 0;
+            inherit: "default";
             link { base: "elm,state,contract_flip";
                after: "rotb2";
             }
