@@ -5,12 +5,19 @@
 #endif
 
 #include "evas_engine.h"
+#include "../software_generic/evas_native_common.h"
+
+#ifdef HAVE_DLSYM
+# include <dlfcn.h>
+#endif
 
 /* logging domain variable */
 int _evas_engine_way_shm_log_dom = -1;
 
 /* evas function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
+
+Evas_Native_Tbm_Surface_Image_Set_Call  glsym_evas_native_tbm_surface_image_set = NULL;
 
 /* engine structure data */
 typedef struct _Render_Engine Render_Engine;
@@ -75,6 +82,22 @@ err:
    if (ob) _evas_outbuf_free(ob);
    free(re);
    return NULL;
+}
+
+static void
+_symbols(void)
+{
+   static int done = 0;
+
+   if (done) return;
+
+#define LINK2GENERIC(sym) \
+   glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
+
+   // Get function pointer to native_common that is now provided through the link of SW_Generic.
+   LINK2GENERIC(evas_native_tbm_surface_image_set);
+
+   done = 1;
 }
 
 /* ENGINE API FUNCTIONS WE PROVIDE */
@@ -242,6 +265,71 @@ eng_output_resize(void *data, int w, int h)
    re->generic.h = h;
 }
 
+static void *
+eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
+{
+   Evas_Native_Surface *ns = native;
+   Image_Entry *ie = image;
+   RGBA_Image *im = image, *im2;
+
+   if (!im || !ns) return im;
+
+   if (ns->type == EVAS_NATIVE_SURFACE_TBM)
+     {
+        if (im->native.data)
+          {
+             //image have native surface already
+             Evas_Native_Surface *ens = im->native.data;
+
+             if ((ens->type == ns->type) &&
+                 (ens->data.tbm.buffer == ns->data.tbm.buffer))
+                return im;
+          }
+      }
+
+   if ((ns->type == EVAS_NATIVE_SURFACE_OPENGL) &&
+       (ns->version == EVAS_NATIVE_SURFACE_VERSION))
+     im2 = evas_cache_image_data(evas_common_image_cache_get(),
+                                 ie->w, ie->h,
+                                 ns->data.x11.visual, 1,
+                                 EVAS_COLORSPACE_ARGB8888);
+   else
+     im2 = evas_cache_image_data(evas_common_image_cache_get(),
+                                 ie->w, ie->h,
+                                 NULL, 1,
+                                 EVAS_COLORSPACE_ARGB8888);
+
+   if (im->native.data)
+      {
+         if (im->native.func.free)
+            im->native.func.free(im->native.func.data, im);
+      }
+
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get() && evas_cache2_image_cached(ie))
+     evas_cache2_image_close(ie);
+   else
+#endif
+   evas_cache_image_drop(ie);
+   im = im2;
+
+   if (ns->type == EVAS_NATIVE_SURFACE_TBM)
+      return glsym_evas_native_tbm_surface_image_set(NULL, im, ns);
+
+   return im;
+}
+
+static void *
+eng_image_native_get(void *data EINA_UNUSED, void *image)
+{
+   RGBA_Image *im = image;
+   Native *n;
+   if (!im) return NULL;
+   n = im->native.data;
+   if (!n) return NULL;
+   return &(n->ns);
+}
+
 /* EVAS MODULE FUNCTIONS */
 static int 
 module_open(Evas_Module *em)
@@ -273,7 +361,10 @@ module_open(Evas_Module *em)
    ORD(setup);
    ORD(output_free);
    ORD(output_resize);
+   ORD(image_native_set);
+   ORD(image_native_get);
 
+   _symbols();
    /* advertise our own engine functions */
    em->functions = (void *)(&func);
 
