@@ -579,6 +579,25 @@ EAPI double                 elm_transit_duration_get(const Elm_Transit *transit)
 EAPI void                   elm_transit_go(Elm_Transit *transit);
 
 /**
+ * This API can be used to reverse play an ongoing transition.
+ * It shows effect only when an animation is going on.
+ * If this API is called twice transition will go in forward direction as normal one.
+ * If a repeat count is set, this API call will revert just the ongoing cycle and once
+ * it is reverted back completely, the transition will go in forward direction.
+ * If an autoreverse is set for the transition and this API is called in the midst of
+ * the transition the ongoing transition will be reverted and once it is done, the
+ * transition will begin again and complete a full auto reverse cycle.
+ *
+ * @note @p transit can not be NULL
+ *
+ * @param transit The transit object.
+ *
+ * @since 1.18
+ * @ingroup Transit
+ */
+EAPI void                   elm_transit_revert_go(Elm_Transit *transit);
+
+/**
  * Starts the transition in given seconds.
  *
  * @note @p transit can not be NULL

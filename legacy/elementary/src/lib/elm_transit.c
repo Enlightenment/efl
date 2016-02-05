@@ -48,6 +48,8 @@ struct _Elm_Transit
         double duration;
         double begin;
         double current;
+        double revert_start;
+        double revert_elapsed;
      } time;
    struct
      {
@@ -56,6 +58,7 @@ struct _Elm_Transit
         Eina_Bool reverse;
      } repeat;
    double progress;
+   double revert_begin_progress, revert_duration, total_revert_time;
    unsigned int effects_pending_del;
    int walking;
    double v[4];
@@ -65,6 +68,7 @@ struct _Elm_Transit
    Eina_Bool state_keep : 1;
    Eina_Bool finished : 1;
    Eina_Bool smooth : 1;
+   Eina_Bool revert_mode : 1;
 };
 
 struct _Elm_Transit_Effect_Module
@@ -327,16 +331,28 @@ static Eina_Bool
 _transit_animate_cb(void *data)
 {
    Elm_Transit *transit = data;
-   double elapsed_time, duration;
+   double elapsed_time, duration, revert_progress;
 
    transit->time.current = ecore_loop_time_get();
-   elapsed_time = transit->time.current - transit->time.begin;
+   elapsed_time = transit->time.current - transit->time.begin - 2 * transit->total_revert_time;
    duration = transit->time.duration + transit->time.delayed;
-
    if (elapsed_time > duration)
      elapsed_time = duration;
 
    transit->progress = elapsed_time / duration;
+   if (transit->revert_mode && transit->revert_begin_progress == 0)
+     {
+        transit->revert_begin_progress = transit->progress;
+        transit->time.revert_start = transit->time.current;
+     }
+
+   if (transit->revert_mode)
+     {
+        transit->time.revert_elapsed = transit->time.current - transit->time.revert_start;
+        revert_progress = transit->time.revert_elapsed / duration;
+        transit->progress = transit->revert_begin_progress - revert_progress;
+     }
+
    switch (transit->tween_mode)
      {
       case ELM_TRANSIT_TWEEN_MODE_LINEAR:
@@ -395,8 +411,25 @@ _transit_animate_cb(void *data)
           return ECORE_CALLBACK_CANCEL;
      }
 
+   if (transit->revert_mode && (transit->progress <= 0 || transit->progress >= 1))
+     {
+        transit->revert_mode = EINA_FALSE;
+        transit->time.begin = ecore_loop_time_get();
+        transit->total_revert_time = 0;
+        if ((transit->repeat.count >= 0) &&
+            (transit->repeat.current == transit->repeat.count) &&
+            ((!transit->auto_reverse) || transit->repeat.reverse))
+          {
+             transit->finished = EINA_TRUE;
+             elm_transit_del(transit);
+             return ECORE_CALLBACK_CANCEL;
+          }
+        else
+          return ECORE_CALLBACK_RENEW;
+     }
+
    /* Not end. Keep going. */
-   if (elapsed_time < duration) return ECORE_CALLBACK_RENEW;
+   if (elapsed_time < duration || transit->revert_mode) return ECORE_CALLBACK_RENEW;
 
    /* Repeat and reverse and time done! */
    if ((transit->repeat.count >= 0) &&
@@ -417,6 +450,7 @@ _transit_animate_cb(void *data)
    else transit->repeat.reverse = EINA_TRUE;
 
    transit->time.begin = ecore_loop_time_get();
+   transit->total_revert_time = 0;
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -495,6 +529,7 @@ elm_transit_add(void)
 
    transit->v[0] = 1.0;
    transit->v[1] = 0.0;
+   transit->revert_mode = EINA_FALSE;
    transit->smooth = EINA_TRUE;
 
    return transit;
@@ -739,6 +774,23 @@ elm_transit_duration_get(const Elm_Transit *transit)
 }
 
 EAPI void
+elm_transit_revert_go(Elm_Transit *transit)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit);
+   if (transit->revert_mode)
+     {
+        transit->total_revert_time += transit->time.revert_elapsed;
+        transit->revert_mode = EINA_FALSE;
+     }
+   else
+     {
+        transit->revert_mode = EINA_TRUE;
+        transit->time.revert_elapsed = 0;
+        transit->revert_begin_progress = 0;
+     }
+}
+
+EAPI void
 elm_transit_go(Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -761,6 +813,8 @@ elm_transit_go(Elm_Transit *transit)
 
    transit->time.paused = 0;
    transit->time.delayed = 0;
+   transit->total_revert_time = 0;
+   transit->revert_mode = EINA_FALSE;
    transit->time.begin = ecore_loop_time_get();
    transit->animator = ecore_animator_add(_transit_animate_cb, transit);
 

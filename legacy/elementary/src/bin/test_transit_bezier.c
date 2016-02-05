@@ -14,6 +14,7 @@ typedef struct
 {
    Evas *e;
    Evas_Object *win;
+   Evas_Object *rev_btn;
    Evas_Object *ctrl_pt1;
    Evas_Object *ctrl_pt2;
    Evas_Object *ctrl_pt1_line;
@@ -23,6 +24,13 @@ typedef struct
    Eina_Bool ctrl_pt1_down;
    Eina_Bool ctrl_pt2_down;
 } transit_data;
+
+static void
+_transit_revert(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Elm_Transit *trans = (Elm_Transit*)data;
+   elm_transit_revert_go(trans);
+}
 
 static void
 v_get(transit_data *td, double *v1, double *v2, double *v3, double *v4)
@@ -171,6 +179,8 @@ transit_del_cb(void *data, Elm_Transit *transit EINA_UNUSED)
    evas_object_show(td->ctrl_pt2);
    evas_object_show(td->ctrl_pt1_line);
    evas_object_show(td->ctrl_pt2_line);
+   evas_object_smart_callback_del(td->rev_btn, "clicked", _transit_revert);
+   elm_object_disabled_set(td->rev_btn, EINA_TRUE);
 }
 
 static void
@@ -189,6 +199,8 @@ btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    elm_transit_del_cb_set(transit, transit_del_cb, td);
    elm_transit_duration_set(transit, 1);
    elm_transit_go(transit);
+   evas_object_smart_callback_add(td->rev_btn, "clicked", _transit_revert, transit);
+   elm_object_disabled_set(td->rev_btn, EINA_FALSE);
 
    evas_object_hide(td->ctrl_pt1);
    evas_object_hide(td->ctrl_pt2);
@@ -280,6 +292,13 @@ test_transit_bezier(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_resize(td.label, WIN_W, 50);
    evas_object_pass_events_set(td.label, EINA_TRUE);
    evas_object_show(td.label);
+
+   td.rev_btn = elm_button_add(td.win);
+   elm_object_text_set(td.rev_btn, "Revert");
+   evas_object_resize(td.rev_btn, 50, 50);
+   evas_object_move(td.rev_btn, 100, 0);
+   evas_object_show(td.rev_btn);
+   elm_object_disabled_set(td.rev_btn, EINA_TRUE);
 
    //Button
    Evas_Object *btn = elm_button_add(td.win);

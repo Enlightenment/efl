@@ -22,6 +22,21 @@ struct _Custom_Effect
 };
 
 static void
+_transit_revert(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Elm_Transit *trans = (Elm_Transit*)data;
+   elm_transit_revert_go(trans);
+}
+
+static void
+_transit_rev_cb_del(void *data, Elm_Transit *trans EINA_UNUSED)
+{
+   Evas_Object *rev_bt = (Evas_Object*)data;
+   evas_object_smart_callback_del(rev_bt, "clicked", _transit_revert);
+   elm_object_disabled_set(rev_bt, EINA_TRUE);
+}
+
+static void
 _custom_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
 {
    if (!effect) return;
@@ -145,13 +160,16 @@ _transit_image_animation(void *data, Evas_Object *obj, void *event_info EINA_UNU
 }
 
 static void
-_transit_resizing(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_transit_resizing(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans;
-
+   Evas_Object *rev_bt = (Evas_Object*)data;
+   elm_object_disabled_set(rev_bt, EINA_FALSE);
    trans = elm_transit_add();
    elm_transit_object_add(trans, obj);
+   elm_transit_del_cb_set(trans, _transit_rev_cb_del, rev_bt);
 
+   evas_object_smart_callback_add(rev_bt, "clicked", _transit_revert, trans);
    elm_transit_effect_resizing_add(trans, 100, 50, 300, 150);
 
    elm_transit_duration_set(trans, 5.0);
@@ -163,11 +181,15 @@ _transit_flip(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans;
    Evas_Object *obj2 = data;
+   Evas_Object *rev_bt = (Evas_Object*)evas_object_data_get(obj, "revert");
+   elm_object_disabled_set(rev_bt, EINA_FALSE);
 
    trans = elm_transit_add();
    elm_transit_object_add(trans, obj);
    elm_transit_object_add(trans, obj2);
+   elm_transit_del_cb_set(trans, _transit_rev_cb_del, rev_bt);
 
+   evas_object_smart_callback_add(rev_bt, "clicked", _transit_revert, trans);
    elm_transit_effect_flip_add(trans, ELM_TRANSIT_EFFECT_FLIP_AXIS_X, EINA_TRUE);
 
    elm_transit_duration_set(trans, 5.0);
@@ -180,8 +202,12 @@ _transit_zoom(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UN
    Elm_Transit *trans;
 
    trans = elm_transit_add();
+   Evas_Object *rev_bt = (Evas_Object*)data;
+   elm_object_disabled_set(rev_bt, EINA_FALSE);
    elm_transit_object_add(trans, obj);
+   elm_transit_del_cb_set(trans, _transit_rev_cb_del, rev_bt);
 
+   evas_object_smart_callback_add(rev_bt, "clicked", _transit_revert, trans);
    elm_transit_effect_zoom_add(trans, 1.0, 3.0);
 
    elm_transit_duration_set(trans, 5.0);
@@ -193,10 +219,15 @@ _transit_blend(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans;
    Evas_Object *obj2 = data;
+   Evas_Object *rev_bt = (Evas_Object*)evas_object_data_get(obj, "revert");
+   elm_object_disabled_set(rev_bt, EINA_FALSE);
 
    trans = elm_transit_add();
    elm_transit_object_add(trans, obj);
    elm_transit_object_add(trans, obj2);
+   elm_transit_del_cb_set(trans, _transit_rev_cb_del, rev_bt);
+
+   evas_object_smart_callback_add(rev_bt, "clicked", _transit_revert, trans);
 
    elm_transit_effect_blend_add(trans);
 
@@ -209,10 +240,15 @@ _transit_fade(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans;
    Evas_Object *obj2 = data;
+   Evas_Object *rev_bt = (Evas_Object*)evas_object_data_get(obj, "revert");
+   elm_object_disabled_set(rev_bt, EINA_FALSE);
 
    trans = elm_transit_add();
    elm_transit_object_add(trans, obj);
    elm_transit_object_add(trans, obj2);
+   elm_transit_del_cb_set(trans, _transit_rev_cb_del, rev_bt);
+
+   evas_object_smart_callback_add(rev_bt, "clicked", _transit_revert, trans);
 
    elm_transit_effect_fade_add(trans);
 
@@ -358,7 +394,7 @@ test_transit(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 void
 test_transit_resizing(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bt;
+   Evas_Object *win, *bt, *rev_bt;
 
    win = elm_win_util_standard_add("transit2", "Transit Resizing");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -368,7 +404,15 @@ test_transit_resizing(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    evas_object_show(bt);
    evas_object_move(bt, 50, 100);
    evas_object_resize(bt, 100, 50);
-   evas_object_smart_callback_add(bt, "clicked", _transit_resizing, NULL);
+
+   rev_bt = elm_button_add(win);
+   elm_object_text_set(rev_bt, "Revert");
+   evas_object_resize(rev_bt, 100, 50);
+   evas_object_move(rev_bt, 50, 300);
+   evas_object_show(rev_bt);
+   elm_object_disabled_set(rev_bt, EINA_TRUE);
+
+   evas_object_smart_callback_add(bt, "clicked", _transit_resizing, rev_bt);
 
    evas_object_resize(win, 400, 400);
    evas_object_show(win);
@@ -378,7 +422,7 @@ test_transit_resizing(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 void
 test_transit_flip(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bt, *bt2;
+   Evas_Object *win, *bt, *bt2, *rev_bt;
 
    win = elm_win_util_standard_add("transit3", "Transit Flip");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -394,7 +438,16 @@ test_transit_flip(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    evas_object_move(bt2, 50, 50);
    evas_object_resize(bt2, 200, 200);
 
-   evas_object_resize(win, 300, 300);
+   rev_bt = elm_button_add(win);
+   elm_object_text_set(rev_bt, "Revert");
+   evas_object_resize(rev_bt, 100, 50);
+   evas_object_move(rev_bt, 50, 300);
+   evas_object_show(rev_bt);
+   elm_object_disabled_set(rev_bt, EINA_TRUE);
+   evas_object_data_set(bt, "revert", rev_bt);
+   evas_object_data_set(bt2, "revert", rev_bt);
+
+   evas_object_resize(win, 400, 400);
    evas_object_show(win);
 
    evas_object_smart_callback_add(bt, "clicked", _transit_flip, bt2);
@@ -405,7 +458,7 @@ test_transit_flip(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 void
 test_transit_zoom(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bt;
+   Evas_Object *win, *bt, *rev_bt;
 
    win = elm_win_util_standard_add("transit4", "Transit Zoom");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -416,7 +469,14 @@ test_transit_zoom(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    evas_object_move(bt, 100, 125);
    evas_object_show(bt);
 
-   evas_object_smart_callback_add(bt, "clicked", _transit_zoom, NULL);
+   rev_bt = elm_button_add(win);
+   elm_object_text_set(rev_bt, "Revert");
+   evas_object_resize(rev_bt, 100, 50);
+   evas_object_move(rev_bt, 100, 250);
+   evas_object_show(rev_bt);
+   elm_object_disabled_set(rev_bt, EINA_TRUE);
+
+   evas_object_smart_callback_add(bt, "clicked", _transit_zoom, rev_bt);
 
    evas_object_resize(win, 300, 300);
    evas_object_show(win);
@@ -426,7 +486,7 @@ test_transit_zoom(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 void
 test_transit_blend(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bt, *bt2, *ic;
+   Evas_Object *win, *bt, *bt2, *ic, *rev_bt;
    char buf[PATH_MAX];
 
    win = elm_win_util_standard_add("transit5", "Transit Blend");
@@ -455,7 +515,16 @@ test_transit_blend(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_object_move(bt2, 25, 125);
    evas_object_resize(bt2, 250, 50);
 
-   evas_object_resize(win, 300, 300);
+   rev_bt = elm_button_add(win);
+   elm_object_text_set(rev_bt, "Revert");
+   evas_object_resize(rev_bt, 100, 50);
+   evas_object_move(rev_bt, 50, 300);
+   evas_object_show(rev_bt);
+   elm_object_disabled_set(rev_bt, EINA_TRUE);
+   evas_object_data_set(bt, "revert", rev_bt);
+   evas_object_data_set(bt2, "revert", rev_bt);
+
+   evas_object_resize(win, 300, 400);
    evas_object_show(win);
 
    evas_object_smart_callback_add(bt, "clicked", _transit_blend, bt2);
@@ -466,7 +535,7 @@ test_transit_blend(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 void
 test_transit_fade(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bt, *bt2, *ic;
+   Evas_Object *win, *bt, *bt2, *ic, *rev_bt;
    char buf[PATH_MAX];
 
    win = elm_win_util_standard_add("transit6","Transit Fade");
@@ -495,7 +564,16 @@ test_transit_fade(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    evas_object_move(bt2, 25, 125);
    evas_object_resize(bt2, 250, 50);
 
-   evas_object_resize(win, 300, 300);
+   rev_bt = elm_button_add(win);
+   elm_object_text_set(rev_bt, "Revert");
+   evas_object_resize(rev_bt, 100, 50);
+   evas_object_move(rev_bt, 50, 300);
+   evas_object_show(rev_bt);
+   elm_object_disabled_set(rev_bt, EINA_TRUE);
+   evas_object_data_set(bt, "revert", rev_bt);
+   evas_object_data_set(bt2, "revert", rev_bt);
+
+   evas_object_resize(win, 300, 400);
    evas_object_show(win);
 
    evas_object_smart_callback_add(bt, "clicked", _transit_fade, bt2);
@@ -558,6 +636,13 @@ test_transit_custom(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    elm_transit_duration_set(trans, 5.0);
    elm_transit_repeat_times_set(trans, -1);
    elm_transit_go(trans);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Revert");
+   evas_object_resize(bt, 150, 50);
+   evas_object_move(bt, 50, 250);
+   evas_object_show(bt);
+   evas_object_smart_callback_add(bt, "clicked", _transit_revert, trans);
 
    evas_object_resize(win, 400, 400);
    evas_object_show(win);

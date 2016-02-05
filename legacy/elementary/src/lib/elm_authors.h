@@ -162,7 +162,7 @@
  * @author yinsc <shouchen.yin@@samsung.com>
  * @author Subodh Kumar <s7158.kumar@@samsung.com>
  * @author Kumar Navneet <k.navneet@@samsung.com>
- * @author Godly T Alias <godly.talias@@samsung.com>
+ * @author Godly T Alias <godly.talias@@samsung.com> <godlytalias@@yahoo.co.in>
  * @author Divyesh Purohit <div.purohit@samsung.com> <purohit.div@gmail.com>
  * @author Minkyu Kang <mk7.kang@samsung.com>
  * @author Jinyong Park <j4939.park@samsung.com>
