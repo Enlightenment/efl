@@ -3156,7 +3156,7 @@ _check_animator_event_catcher_add(void *data,
         if (array[i].desc == EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK)
           {
              if (ee->anim_count++ > 0) return EO_CALLBACK_CONTINUE;
-             INF("Setting up animator for %p.", ee->evas);
+             INF("Setting up animator for %p from '%s' with title '%s'.", ee->evas, ee->driver, ee->prop.title);
 
              if (ee->engine.func->fn_animator_register &&
                  ee->engine.func->fn_animator_unregister)
@@ -3196,7 +3196,7 @@ _check_animator_event_catcher_del(void *data,
           {
              if ((--ee->anim_count) > 0) return EO_CALLBACK_CONTINUE;
 
-             INF("Unsetting up animator for %p.", ee->evas);
+             INF("Unsetting up animator for %p from '%s' titled '%s'.", ee->evas, ee->driver, ee->prop.title);
              if (ee->engine.func->fn_animator_register &&
                  ee->engine.func->fn_animator_unregister)
                {
