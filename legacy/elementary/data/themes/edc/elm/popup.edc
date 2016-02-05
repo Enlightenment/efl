@@ -191,6 +191,14 @@ group { name: "elm/popup/base/default";
             color_class: "popup_bg";
          }
       }
+      part { name: "elm.swallow.background"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "base";
+            rel2.to: "base";
+         }
+      }
       part { name: "elm.bg.title"; type: RECT;
          description { state: "default" 0.0;
             fixed: 1 1;
