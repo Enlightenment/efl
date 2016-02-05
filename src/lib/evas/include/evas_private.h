@@ -1953,7 +1953,10 @@ struct _Evas_Mempool
 # define EVAS_MEMPOOL_INIT(x, nam, siz, cnt, ret) \
    do { \
      if (!x.mp) { \
-       x.mp = eina_mempool_add("chained_mempool", nam, NULL, sizeof(siz), cnt); \
+       const char *tmp, *choice = "chained_mempool"; \
+       tmp = getenv("EINA_MEMPOOL"); \
+       if (tmp && tmp[0]) choice = tmp; \
+       x.mp = eina_mempool_add(choice, nam, NULL, sizeof(siz), cnt); \
        if (!x.mp) { \
          return ret; \
        } \
