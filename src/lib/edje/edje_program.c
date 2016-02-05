@@ -8,6 +8,13 @@ Eina_List *_edje_animators = NULL;
 static double _edje_transition_duration_scale = 0;
 
 static Eina_Bool
+_edje_animator_cb(void *data)
+{
+   _edje_timer_cb(data, NULL, NULL, NULL);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _edje_emit_aliased(Edje *ed, const char *part, const char *sig, const char *src)
 {
    char *alias, *aliased;
@@ -426,6 +433,8 @@ _edje_program_run_cleanup(Edje *ed, Edje_Running_Program *runp)
    if (!ed->actions)
      {
         eo_do(ed->obj, eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed));
+        ecore_animator_del(ed->animator);
+        ed->animator = NULL;
      }
 }
 
@@ -726,7 +735,10 @@ low_mem_current:
 
              if (!ed->actions)
                {
-                  eo_do(ed->obj, eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed));
+                  if (ed->canvas_animator)
+                    eo_do(ed->obj, eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed));
+                  else
+                    ed->animator = ecore_animator_add(_edje_animator_cb, ed);
                }
              ed->actions = eina_list_append(ed->actions, runp);
 

@@ -1611,6 +1611,8 @@ struct _Edje
 
    Edje_Perspective     *persp;
 
+   Ecore_Animator       *animator;
+
    const Edje_Signal_Callback_Group *callbacks;
 
    struct {
@@ -1684,6 +1686,7 @@ struct _Edje
    Eina_Bool          update_hints : 1;
    Eina_Bool          recalc_hints : 1;
    Eina_Bool          need_map_update : 1;
+   Eina_Bool          canvas_animator : 1;
 };
 
 struct _Edje_Calc_Params_Map
