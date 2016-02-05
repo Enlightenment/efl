@@ -1226,6 +1226,7 @@ EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r)
       return EINA_FALSE;
 
    t->last.add = tmp;
+   t->last.del.w = t->last.del.h = -1;
 
    return _splitter_rect_add(t, &tmp);
 }
@@ -1251,6 +1252,7 @@ EAPI void eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle *r)
       return;
 
    t->last.del = tmp;
+   t->last.add.w = t->last.add.h = -1;
 
    _splitter_rect_del(t, &tmp);
 }
