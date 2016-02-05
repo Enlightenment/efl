@@ -31,7 +31,7 @@ const char *external_translate(void *data, const char *orig);
 void external_common_params_free(void *params);
 void *external_common_params_parse_internal(size_t params_size, void *data, Evas_Object *obj, const Eina_List *params);
 Evas_Object *external_common_param_icon_get(Evas_Object *obj, const Edje_External_Param *param);
-Evas_Object *external_common_param_edje_object_get(Evas_Object *obj, const Edje_External_Param *p);
+Evas_Object *external_common_param_elm_layout_get(Evas_Object *obj, const Edje_External_Param *p);
 void external_common_icon_param_parse(Evas_Object **icon, Evas_Object *obj, const Eina_List *params);
 Eina_Bool external_common_param_get(void *data, const Evas_Object *obj, Edje_External_Param *param);
 Eina_Bool external_common_param_set(void *data, Evas_Object *obj, const Edje_External_Param *param);

@@ -47,7 +47,7 @@ static Eina_Bool external_panes_param_set(void *data EINA_UNUSED,
    if ((!strcmp(param->name, "content left"))
        && (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING))
    {
-      Evas_Object *content = external_common_param_edje_object_get(obj, param);
+      Evas_Object *content = external_common_param_elm_layout_get(obj, param);
       if ((strcmp(param->s, "")) && (!content))
          return EINA_FALSE;
       elm_object_part_content_set(obj, "left", content);
@@ -56,7 +56,7 @@ static Eina_Bool external_panes_param_set(void *data EINA_UNUSED,
    else if ((!strcmp(param->name, "content right"))
             && (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING))
    {
-      Evas_Object *content = external_common_param_edje_object_get(obj, param);
+      Evas_Object *content = external_common_param_elm_layout_get(obj, param);
       if ((strcmp(param->s, "")) && (!content))
         return EINA_FALSE;
       elm_object_part_content_set(obj, "right", content);
@@ -141,9 +141,9 @@ external_panes_params_parse(void *data EINA_UNUSED, Evas_Object *obj,
    EINA_LIST_FOREACH(params, l, param)
      {
         if (!strcmp(param->name, "content left"))
-          mem->content_left = external_common_param_edje_object_get(obj, param);
+          mem->content_left = external_common_param_elm_layout_get(obj, param);
         else if (!strcmp(param->name, "content right"))
-          mem->content_right = external_common_param_edje_object_get(obj, param);
+          mem->content_right = external_common_param_elm_layout_get(obj, param);
         else if (!strcmp(param->name, "horizontal"))
           {
              mem->is_horizontal = EINA_TRUE;

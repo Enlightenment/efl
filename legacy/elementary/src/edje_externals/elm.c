@@ -270,8 +270,8 @@ external_common_icon_param_parse(Evas_Object **icon, Evas_Object *obj,
 }
 
 Evas_Object *
-external_common_param_edje_object_get(Evas_Object *obj,
-                                      const Edje_External_Param *p)
+external_common_param_elm_layout_get(Evas_Object *obj,
+                                     const Edje_External_Param *p)
 {
    Evas_Object *edje, *parent_widget, *ret;
    const char *file;
@@ -283,14 +283,18 @@ external_common_param_edje_object_get(Evas_Object *obj,
    edje_object_file_get(edje, &file, NULL);
 
    parent_widget = elm_widget_parent_widget_get(obj);
-   if (!parent_widget)
-     parent_widget = edje;
-
-   ret = edje_object_add(evas_object_evas_get(parent_widget));
-
-   if (edje_object_file_set(ret, file, p->s))
-     return ret;
-
+   if (parent_widget)
+     {
+        ret = elm_layout_add(parent_widget);
+        if (elm_layout_file_set(ret, file, p->s))
+          return ret;
+     }
+   else
+     {
+        ret = edje_object_add(evas_object_evas_get(edje));
+        if (edje_object_file_set(ret, file, p->s))
+          return ret;
+     }
    evas_object_del(ret);
    return NULL;
 }

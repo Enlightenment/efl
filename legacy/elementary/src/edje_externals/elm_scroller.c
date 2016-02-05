@@ -32,7 +32,7 @@ static Eina_Bool external_scroller_param_set(void *data EINA_UNUSED,
    if (!strcmp(param->name, "content")
        && param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
      {
-        Evas_Object *content = external_common_param_edje_object_get(obj, param);
+        Evas_Object *content = external_common_param_elm_layout_get(obj, param);
         if ((strcmp(param->s, "")) && (!content))
           return EINA_FALSE;
         elm_object_content_set(obj, content);
@@ -76,7 +76,7 @@ static void * external_scroller_params_parse(void *data EINA_UNUSED,
    EINA_LIST_FOREACH(params, l, param)
      {
         if (!strcmp(param->name, "content"))
-          mem->content = external_common_param_edje_object_get(obj, param);
+          mem->content = external_common_param_elm_layout_get(obj, param);
      }
 
    return mem;
