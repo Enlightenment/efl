@@ -3514,7 +3514,8 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
              if (_accel_is_gl())
                {
 // add all engines with selected engine first - if any
-                  enginelist[p++] = ENGINE_GET();
+                  if (ENGINE_GET())
+                    enginelist[p++] = ENGINE_GET();
 
 // add all engines with gl/accelerated ones first - only engines compiled
 #ifdef HAVE_ELEMENTARY_X
@@ -3558,8 +3559,9 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
                   if (elm_config_preferred_engine_get())
                     enginelist[p++] = elm_config_preferred_engine_get();
 // add check _elm_gl_preference whether "none" or not
-                  else if (!elm_config_accel_preference_get() ||
-                           strcmp(elm_config_accel_preference_get(),"none"))
+                  else if (_elm_config->engine &&
+                           elm_config_accel_preference_get() &&
+                           !strcmp(elm_config_accel_preference_get(),"none"))
                     enginelist[p++] = _elm_config->engine;
 // add all engines with gl/accelerated ones first - only engines compiled
 #ifdef HAVE_ELEMENTARY_X
