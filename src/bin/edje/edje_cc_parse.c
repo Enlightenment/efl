@@ -1045,6 +1045,7 @@ compile(void)
         eina_array_flush(&params);
         eina_strbuf_free(stack_buf);
         stack_buf = NULL;
+        color_tree_root_free();
      }
    else
      {

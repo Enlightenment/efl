@@ -261,12 +261,14 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
 static Edje_File *
 _edje_file_open(const Eina_File *f, int *error_ret, time_t mtime, Eina_Bool coll)
 {
+   Edje_Color_Tree_Node *ctn;
    Edje_Color_Class *cc;
    Edje_Text_Class *tc;
    Edje_Size_Class *sc;
    Edje_File *edf;
-   Eina_List *l;
+   Eina_List *l, *ll;
    Eet_File *ef;
+   char *name;
 
    ef = eet_mmap(f);
    if (!ef)
@@ -315,6 +317,12 @@ _edje_file_open(const Eina_File *f, int *error_ret, time_t mtime, Eina_Bool coll
 
    /* This should be done at edje generation time */
    _edje_textblock_style_parse_and_fix(edf);
+
+   edf->color_tree_hash = eina_hash_string_small_new(NULL);
+   EINA_LIST_FOREACH(edf->color_tree, l, ctn)
+     EINA_LIST_FOREACH(ctn->color_classes, ll, name)
+       eina_hash_add(edf->color_tree_hash, name, ctn);
+
    edf->color_hash = eina_hash_string_small_new(NULL);
    EINA_LIST_FOREACH(edf->color_classes, l, cc)
      if (cc->name)

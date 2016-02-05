@@ -216,6 +216,8 @@ static void st_styles_style_name(void);
 static void st_styles_style_base(void);
 static void st_styles_style_tag(void);
 
+static void ob_color_tree(void);
+
 static void ob_color_class(void);
 static void st_color_class_name(void);
 static void st_color_class_color(void);
@@ -1172,6 +1174,7 @@ New_Object_Handler object_handlers[] =
      {"data", NULL},
      {"styles", NULL},
      {"styles.style", ob_styles_style},
+     {"color_tree", ob_color_tree},
      {"color_classes", NULL},
      {"color_classes.color_class", ob_color_class},
      {"text_classes", NULL},
@@ -1192,6 +1195,7 @@ New_Object_Handler object_handlers[] =
      {"collections.fonts", NULL}, /* dup */
      {"collections.styles", NULL}, /* dup */
      {"collections.styles.style", ob_styles_style}, /* dup */
+     {"collections.color_tree", ob_color_tree}, /* dup */
      {"collections.color_classes", NULL}, /* dup */
      {"collections.color_classes.color_class", ob_color_class}, /* dup */
      {"collections.text_classes", NULL},
@@ -1228,6 +1232,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.fonts", NULL}, /* dup */
      {"collections.group.styles", NULL}, /* dup */
      {"collections.group.styles.style", ob_styles_style}, /* dup */
+     {"collections.group.color_tree", ob_color_tree}, /* dup */
      {"collections.group.color_classes", NULL}, /* dup */
      {"collections.group.color_classes.color_class", ob_color_class}, /* dup */
      {"collections.group.text_classes", NULL},
@@ -2642,6 +2647,49 @@ st_data_file(void)
    eina_hash_direct_add(edje_file->data, key, es);
 
    free(filename);
+}
+
+/** @edcsubsection{toplevel_color_tree,
+ *                 Color Tree} */
+
+/**
+    @page edcref
+    @block
+        color_tree
+    @context
+        color_tree {
+            "color_class_0" {
+                "color_class_3";
+                "color_class_4" {
+                    "color_class_5";
+                    "color_class_6";
+                }
+            }
+            "color_class_1";
+            "color_class_2";
+            ..
+        }
+    @description
+        The "color_tree" block contains color tree node blocks.
+        Each node block begins with the name of color class and enclosed with braces.
+        Node block can be placed within another node block.
+    @endblock
+*/
+static void
+ob_color_tree(void)
+{
+   if (!is_verbatim()) track_verbatim(1);
+   else
+     {
+        char *s;
+
+        s = get_verbatim();
+        if (s)
+          {
+             process_color_tree(s, file_in, get_verbatim_line1());
+             set_verbatim(NULL, 0, 0);
+          }
+     }
 }
 
 /** @edcsubsection{toplevel_color_classes,

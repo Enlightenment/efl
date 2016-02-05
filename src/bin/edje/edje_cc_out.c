@@ -220,6 +220,7 @@ Eina_List *fonts = NULL;
 Eina_List *codes = NULL;
 Eina_List *code_lookups = NULL;
 Eina_List *aliases = NULL;
+Eina_List *color_tree_root = NULL;
 
 static Eet_Data_Descriptor *edd_edje_file = NULL;
 static Eet_Data_Descriptor *edd_edje_part_collection = NULL;
@@ -4138,4 +4139,144 @@ needed_part_exists(Edje_Part_Collection *pc, const char *name)
         exit(-1);
      }
    return found;
+}
+
+void
+color_tree_root_free(void)
+{
+   char *name;
+
+   EINA_LIST_FREE(color_tree_root, name)
+     free(name);
+}
+
+char *
+color_tree_token_next(char *dst, char *src, int *line)
+{
+   Eina_Bool begin = EINA_FALSE, next = EINA_FALSE;
+
+   while (!next)
+     {
+        if (*src == '\0') break;
+
+        if (*src == '"')
+          {
+             if (!begin) begin = EINA_TRUE;
+             else next = EINA_TRUE;
+          }
+        else if ((!begin) && ((*src == '{') || (*src == '}') || (*src == ';')))
+          {
+             *dst++ = *src;
+             next = EINA_TRUE;
+          }
+        else if ((!begin) && (*src == '\n'))
+          {
+             (*line)++;
+          }
+        else if (begin)
+          {
+             *dst++ = *src;
+          }
+        src++;
+     }
+   *dst = '\0';
+   return src;
+}
+
+Edje_Color_Tree_Node *
+color_tree_parent_node_get(const char *color_class)
+{
+   Edje_Color_Tree_Node *ctn;
+   Eina_List *l, *ll;
+   char *name;
+
+   EINA_LIST_FOREACH(edje_file->color_tree, l, ctn)
+      if (ctn->color_classes)
+         EINA_LIST_FOREACH(ctn->color_classes, ll, name)
+            if (!strcmp(name, color_class))
+              return ctn;
+
+   return NULL;
+}
+
+void
+process_color_tree(char *s, const char *file_in, int line)
+{
+   char token[2][1024];
+   int id = 0;
+   Eina_Array *array;
+   Edje_Color_Tree_Node *ctn;
+   Eina_List *l;
+   char *name;
+
+   array = eina_array_new(4);
+
+   if (!s) return;
+
+   do
+     {
+        s = color_tree_token_next(token[id], s, &line);
+
+        if (!strcmp(token[id], "{"))
+          {
+             if (!token[!id][0])
+               error_and_abort(NULL, "parse error %s:%i. color class is not set to newly opened node block.",
+                               file_in, line - 1);
+
+             ctn = mem_alloc(SZ(Edje_Color_Tree_Node));
+             ctn->name = strdup(token[!id]);
+             ctn->color_classes = NULL;
+
+             edje_file->color_tree = eina_list_append(edje_file->color_tree, ctn);
+
+             eina_array_push(array, ctn);
+             token[id][0] = '\0';
+          }
+        else if (!strcmp(token[id], "}"))
+          {
+             eina_array_pop(array);
+             token[id][0] = '\0';
+          }
+        else if (!strcmp(token[id], ";"))
+          {
+             token[id][0] = '\0';
+          }
+        else if (*s != '\0')
+          {
+             if (eina_array_count(array))
+               {
+                  if (color_tree_root)
+                    EINA_LIST_FOREACH(color_tree_root, l, name)
+                      if (!strcmp(name, token[id]))
+                        {
+                           error_and_abort(NULL, "parse error %s:%i. The color class \"%s\" already belongs to the root node.",
+                                           file_in, line -1, token[id]);
+                        }
+
+                  if ((ctn = color_tree_parent_node_get(token[id])))
+                    error_and_abort(NULL, "parse error %s:%i. The color class \"%s\" already belongs to the \"%s\" node.",
+                                    file_in, line -1, token[id], ctn->name);
+
+                  ctn = eina_array_data_get(array, eina_array_count(array) - 1);
+                  ctn->color_classes = eina_list_append(ctn->color_classes, strdup(token[id]));
+               }
+             else
+               {
+                  if ((ctn = color_tree_parent_node_get(token[id])))
+                    error_and_abort(NULL, "parse error %s:%i. The color class \"%s\" already belongs to the \"%s\" node.",
+                                    file_in, line -1, token[id], ctn->name);
+
+                  color_tree_root = eina_list_append(color_tree_root, strdup(token[id]));
+               }
+          }
+
+        id = !id;
+
+     } while (*s);
+
+   if (eina_array_count(array))
+     error_and_abort(NULL, "parse error %s:%i. check pair of parens.", file_in, line - 1);
+
+   eina_array_clean(array);
+   eina_array_free(array);
 }

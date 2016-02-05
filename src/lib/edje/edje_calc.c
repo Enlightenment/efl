@@ -2762,7 +2762,7 @@ _edje_part_recalc_single(Edje *ed,
    if (ep->part->type != EDJE_PART_TYPE_SPACER)
      {
         if ((desc->color_class) && (*desc->color_class))
-          cc = _edje_color_class_find(ed, desc->color_class);
+          cc = _edje_color_class_recursive_find(ed, desc->color_class);
 
         if (cc)
           {

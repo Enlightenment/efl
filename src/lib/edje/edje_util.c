@@ -613,6 +613,39 @@ _edje_object_thaw(Eo *obj EINA_UNUSED, Edje *ed)
    return _edje_util_thaw(ed);
 }
 
+static void
+_edje_color_class_apply(const char *color_class, const char *parent)
+{
+   Eina_Hash *members;
+   Eina_Iterator *it;
+   Edje_Refcount *er;
+   Edje_Color_Tree_Node *ctn;
+   Eina_List *l, *ll;
+   char *name;
+
+   members = eina_hash_find(_edje_color_class_member_hash, color_class);
+   if (!members) return;
+   it = eina_hash_iterator_data_new(members);
+   EINA_ITERATOR_FOREACH(it, er)
+     {
+        er->ed->dirty = EINA_TRUE;
+        er->ed->recalc_call = EINA_TRUE;
+#ifdef EDJE_CALC_CACHE
+        er->ed->all_part_change = EINA_TRUE;
+#endif
+        _edje_recalc(er->ed);
+        _edje_emit(er->ed, "color_class,set", parent);
+
+        EINA_LIST_FOREACH(er->ed->file->color_tree, l, ctn)
+          {
+             if ((!strcmp(ctn->name, color_class)) && (ctn->color_classes))
+                EINA_LIST_FOREACH(ctn->color_classes, ll, name)
+                  _edje_color_class_apply(name, parent);
+          }
+     }
+   eina_iterator_free(it);
+}
+
 EAPI Eina_Bool
 edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
@@ -671,20 +704,8 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
    cc->b3 = b3;
    cc->a3 = a3;
 
-   members = eina_hash_find(_edje_color_class_member_hash, color_class);
-   if (!members) return EINA_TRUE;
-   it = eina_hash_iterator_data_new(members);
-   EINA_ITERATOR_FOREACH(it, er)
-     {
-        er->ed->dirty = EINA_TRUE;
-        er->ed->recalc_call = EINA_TRUE;
-#ifdef EDJE_CALC_CACHE
-        er->ed->all_part_change = EINA_TRUE;
-#endif
-        _edje_recalc(er->ed);
-        _edje_emit(er->ed, "color_class,set", color_class);
-     }
-   eina_iterator_free(it);
+   _edje_color_class_apply(color_class, color_class);
+
    return EINA_TRUE;
 }
 
@@ -5756,6 +5777,50 @@ _edje_color_class_find(const Edje *ed, const char *color_class)
 
    /* finally, look through the file scope */
    cc = eina_hash_find(ed->file->color_hash, color_class);
+   if (cc) return cc;
+
+   return NULL;
+}
+
+Edje_Color_Class *
+_edje_color_class_recursive_find_helper(const Edje *ed, Eina_Hash *hash, const char *color_class)
+{
+   Edje_Color_Class *cc = NULL;
+   Edje_Color_Tree_Node *ctn = NULL;
+   const char *parent;
+
+   cc = eina_hash_find(hash, color_class);
+   if (cc) return cc;
+   else
+     {
+        parent = color_class;
+        while ((ctn = eina_hash_find(ed->file->color_tree_hash, parent)))
+          {
+             parent = ctn->name;
+             cc = eina_hash_find(hash, parent);
+             if (cc) return cc;
+          }
+     }
+   return NULL;
+}
+
+Edje_Color_Class *
+_edje_color_class_recursive_find(const Edje *ed, const char *color_class)
+{
+   Edje_Color_Class *cc = NULL;
+
+   if ((!ed) || (!color_class)) return NULL;
+
+   /* first look through the object scope */
+   cc = _edje_color_class_recursive_find_helper(ed, ed->color_classes, color_class);
+   if (cc) return cc;
+
+   /* next look through the global scope */
+   cc = _edje_color_class_recursive_find_helper(ed, _edje_color_class_hash, color_class);
+   if (cc) return cc;
+
+   /* finally, look through the file scope */
+   cc = _edje_color_class_recursive_find_helper(ed, ed->file->color_hash, color_class);
    if (cc) return cc;
 
    return NULL;

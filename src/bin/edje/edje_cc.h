@@ -194,6 +194,7 @@ void    data_queue_spectrum_slave_lookup(int *master, int *slave);
 void    data_process_lookups(void);
 void    data_process_scripts(void);
 void    data_process_script_lookups(void);
+void    process_color_tree(char *s, const char *file_in, int line);
 
 void    part_description_image_cleanup(Edje_Part *ep);
 
@@ -252,6 +253,8 @@ void edje_cc_handlers_hierarchy_free(void);
 void edje_cc_handlers_pop_notify(const char *token);
 int get_param_index(char *str);
 
+void color_tree_root_free(void);
+
 /* global vars */
 extern Eina_List             *ext_dirs;
 extern Eina_List             *img_dirs;
@@ -297,6 +300,7 @@ extern int                    compress_mode;
 extern int                    threads;
 extern int                    annotate;
 extern Eina_Bool current_group_inherit;
+extern Eina_List             *color_tree_root;
 
 extern int had_quote;
 

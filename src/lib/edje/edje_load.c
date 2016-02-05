@@ -1682,6 +1682,7 @@ _edje_file_del(Edje *ed)
 void
 _edje_file_free(Edje_File *edf)
 {
+   Edje_Color_Tree_Node *ectn;
    Edje_Color_Class *ecc;
    Edje_Text_Class *etc;
    Edje_Size_Class *esc;
@@ -1775,6 +1776,14 @@ _edje_file_free(Edje_File *edf)
      {
         if (edf->external_dir->entries) free(edf->external_dir->entries);
         free(edf->external_dir);
+     }
+
+   eina_hash_free(edf->color_tree_hash);
+   EINA_LIST_FREE(edf->color_tree, ectn)
+     {
+        if (edf->free_strings && ectn->name) eina_stringshare_del(ectn->name);
+        eina_list_free(ectn->color_classes);
+        free(ectn);
      }
 
    eina_hash_free(edf->color_hash);

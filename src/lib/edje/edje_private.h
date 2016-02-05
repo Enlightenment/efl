@@ -328,6 +328,7 @@ typedef struct _Edje_Mo                              Edje_Mo;
 typedef struct _Edje_Mo_Directory                    Edje_Mo_Directory;
 typedef struct _Edje_Gfx_Filter                      Edje_Gfx_Filter;
 typedef struct _Edje_Gfx_Filter_Directory            Edje_Gfx_Filter_Directory;
+typedef struct _Edje_Color_Tree_Node                 Edje_Color_Tree_Node;
 
 typedef struct _Edje_Vibration_Sample                Edje_Vibration_Sample;
 typedef struct _Edje_Vibration_Directory             Edje_Vibration_Directory;
@@ -539,6 +540,9 @@ struct _Edje_File
 
    Eina_List                      *styles;
 
+   Eina_List                      *color_tree;
+   Eina_Hash                      *color_tree_hash;
+
    Eina_List                      *color_classes;
    Eina_Hash                      *color_hash;
 
@@ -739,6 +743,12 @@ struct _Edje_Gfx_Filter_Directory
 {
    Edje_Gfx_Filter *filters; /* sorted array (by strcmp() on name) */
    int              filters_count;
+};
+
+struct _Edje_Color_Tree_Node
+{
+   const char *name;
+   Eina_List  *color_classes;
 };
 
 /*----------*/
@@ -2360,6 +2370,7 @@ const char *   _edje_text_font_get(const char *base, const char *new,
 Edje_Real_Part   *_edje_real_part_get(const Edje *ed, const char *part);
 Edje_Real_Part   *_edje_real_part_recursive_get(Edje **ed, const char *part);
 Edje_Color_Class *_edje_color_class_find(const Edje *ed, const char *color_class);
+Edje_Color_Class *_edje_color_class_recursive_find(const Edje *ed, const char *color_class);
 void              _edje_color_class_member_add(Edje *ed, const char *color_class);
 void              _edje_color_class_member_del(Edje *ed, const char *color_class);
 void              _edje_color_class_member_clean(Edje *ed);

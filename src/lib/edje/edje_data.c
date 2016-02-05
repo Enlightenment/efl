@@ -6,6 +6,7 @@ EAPI Eet_Data_Descriptor * _edje_edd_edje_part_collection = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_string = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_style = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_style_tag = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_color_tree_node = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_color_class = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_text_class = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_size_class = NULL;
@@ -521,6 +522,12 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_style, Edje_Style, "name", name, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_style, Edje_Style, "tags", tags, _edje_edd_edje_style_tag);
 
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Color_Tree_Node);
+   _edje_edd_edje_color_tree_node =
+     eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_tree_node, Edje_Color_Tree_Node, "name", name, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_LIST_STRING(_edje_edd_edje_color_tree_node, Edje_Color_Tree_Node, "color_classes", color_classes);
+
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Color_Class);
    _edje_edd_edje_color_class =
      eet_data_descriptor_file_new(&eddc);
@@ -579,6 +586,7 @@ _edje_edd_init(void)
 
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "vibration_dir", vibration_dir, _edje_edd_edje_vibration_directory);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "styles", styles, _edje_edd_edje_style);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "color_tree", color_tree, _edje_edd_edje_color_tree_node);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "color_classes", color_classes, _edje_edd_edje_color_class);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "text_classes", text_classes, _edje_edd_edje_text_class);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "size_classes", size_classes, _edje_edd_edje_size_class);
