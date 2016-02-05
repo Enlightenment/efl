@@ -2738,6 +2738,25 @@ ob_color_class(void)
    cc->a3 = 0;
 }
 
+static void
+_color_class_name(char *name)
+{
+   Edje_Color_Class *cc, *tcc;
+   Eina_List *l;
+
+   cc = eina_list_data_get(eina_list_last(edje_file->color_classes));
+   cc->name = name;
+   EINA_LIST_FOREACH(edje_file->color_classes, l, tcc)
+     {
+        if ((cc != tcc) && (!strcmp(cc->name, tcc->name)))
+          {
+             ERR("parse error %s:%i. There is already a color class named \"%s\"",
+                 file_in, line - 1, cc->name);
+             exit(-1);
+          }
+     }
+}
+
 /**
     @page edcref
 
@@ -14766,6 +14785,13 @@ edje_cc_handlers_wildcard(void)
          _style_name(token);
          stack_pop_quick(EINA_FALSE, EINA_FALSE);
          return EINA_TRUE;
+     }
+   if (edje_file->color_classes && (!strcmp(last, "color_class")))
+     {
+        if (!had_quote) return EINA_FALSE;
+        _color_class_name(token);
+        stack_pop_quick(EINA_FALSE, EINA_FALSE);
+        return EINA_TRUE;
      }
    if (edje_file->text_classes && (!strcmp(last, "text_class")))
      {
