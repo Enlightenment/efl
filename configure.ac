@@ -1732,6 +1732,17 @@ if test "x${want_cocoa}" = "xyes"; then
 fi
 AC_SUBST(cocoa_coreservices_ldflags)
 
+AC_ARG_ENABLE([libinput],
+   [AS_HELP_STRING([--enable-libinput],[enable libinput support. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_libinput="yes"
+    else
+       want_libinput="no"
+    fi
+   ],
+   [want_libinput="no"])
+
 # Drm
 AC_ARG_ENABLE([drm],
    [AS_HELP_STRING([--enable-drm],[enable drm engine. @<:@default=disabled@:>@])],
@@ -3448,6 +3459,64 @@ AM_CONDITIONAL([EEZE_LIBMOUNT_BEFORE_219],
 AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test "x${have_eeze_mount}" = "xyes"])
 AM_CONDITIONAL([HAVE_EEZE_TIZEN], [test "x${want_tizen}" = "xyes"])
 #### End of Eeze
+
+
+#### Ecore_Libinput
+have_libinput_new="no"
+EFL_LIB_START_OPTIONAL([Ecore_Libinput], [test "${want_libinput}" = "yes"])
+
+### Additional options to configure
+SUID_CFLAGS=-fPIE
+SUID_LDFLAGS=-pie
+AC_SUBST([SUID_CFLAGS])
+AC_SUBST([SUID_LDFLAGS])
+
+### Default values
+
+### Checks for programs
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ECORE_LIBINPUT], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_LIBINPUT], [ecore-input])
+EFL_INTERNAL_DEPEND_PKG([ECORE_LIBINPUT], [eeze])
+EFL_INTERNAL_DEPEND_PKG([ECORE_LIBINPUT], [eo])
+EFL_INTERNAL_DEPEND_PKG([ECORE_LIBINPUT], [eina])
+
+EFL_DEPEND_PKG([ECORE_LIBINPUT], [XKBCOMMON], [xkbcommon >= 0.3.0])
+EFL_DEPEND_PKG([ECORE_LIBINPUT], [LIBINPUT], [libinput >= 0.6.0])
+
+EFL_ADD_LIBS([ECORE_LIBINPUT], [-lm])
+
+# API change from 0.7 to 0.8. So we define this to support both for now.
+PKG_CHECK_EXISTS([libinput >= 0.8.0],
+                 [have_libinput_new="yes"],
+                 [have_libinput_new="no"])
+AC_MSG_CHECKING([Use new libinput API (newer than 0.8.0)])
+AC_MSG_RESULT([${have_libinput_new}])
+if test "x${have_libinput_new}" = "xyes";then
+  AC_DEFINE_UNQUOTED([LIBINPUT_HIGHER_08], [1], [libinput version >= 0.8])
+fi
+if test "x${have_libinput_new}" = "xno";then
+  AC_DEFINE_UNQUOTED([LIBINPUT_HIGHER_08], [0], [libinput version >= 0.8])
+fi
+
+
+EFL_EVAL_PKGS([ECORE_LIBINPUT])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END_OPTIONAL([Ecore_Libinput])
+#### End of Ecore_Libinput
 
 
 #### Ecore_Drm
