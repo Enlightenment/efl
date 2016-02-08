@@ -43,3 +43,18 @@ log_err:
 eina_err:
    return --_ecore_libinput_init_count;
 }
+
+EAPI int
+ecore_libinput_shutdown(void)
+{
+   if (--_ecore_libinput_init_count != 0) return _ecore_libinput_init_count;
+
+   eeze_shutdown();
+   ecore_event_shutdown();
+
+   eina_log_domain_unregister(_ecore_libinput_log_dom);
+   _ecore_libinput_log_dom = -1;
+
+   eina_shutdown();
+   return _ecore_libinput_init_count;
+}

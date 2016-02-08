@@ -32,6 +32,7 @@
 /* # endif */
 
 EAPI int ecore_libinput_init(void);
+EAPI int ecore_libinput_shutdown(void);
 
 /* # ifdef __cplusplus */
 /* } */
