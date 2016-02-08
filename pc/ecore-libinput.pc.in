@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: ecore-libinput
+Description: E core library, Libinput module
+Requires.private: @requirements_pc_ecore_libinput@
+Version: @VERSION@
+Libs: -L${libdir} -lecore_libinput
+Libs.private: @requirements_libs_ecore_libinput@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ecore-libinput-@VMAJ@

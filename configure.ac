@@ -5184,6 +5184,7 @@ pc/ecore-ipc.pc
 pc/ecore-file.pc
 pc/ecore-input.pc
 pc/ecore-input-evas.pc
+pc/ecore-libinput.pc
 pc/ecore-cocoa.pc
 pc/ecore-drm.pc
 pc/ecore-fb.pc
