@@ -37,6 +37,17 @@ extern "C" {
 
 #ifdef EFL_BETA_API_SUPPORT
 
+#include "efl_types.eot.h"
+
+/**
+ * @ingroup Efl
+ * @since 1.18
+ *
+ * This type is a alias to struct tm.
+ * It is intended to be a standard way to reference it in .eo files.
+ */
+typedef struct tm Efl_Time;
+
 #include <Efl_Model_Common.h>
 
 /* Data types */

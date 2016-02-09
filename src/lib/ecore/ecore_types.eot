@@ -1,12 +1,4 @@
 
-struct @extern Ecore.Time; [[
-                             This type is a alias for struct tm.
-                             It is intended to be a standard way to reference
-                             it in .eo files.
-                             Each language should manually bind it.
-                             @since 1.18
-                           ]]
-
 enum Ecore.Pos_Map
 {
    [[Defines the position mappings for the animation.]]
