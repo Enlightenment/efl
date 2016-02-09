@@ -35,10 +35,6 @@ extern "C" {
 
 
 
-#ifdef EFL_BETA_API_SUPPORT
-
-#include "efl_types.eot.h"
-
 /**
  * @ingroup Efl
  * @since 1.18
@@ -47,6 +43,10 @@ extern "C" {
  * It is intended to be a standard way to reference it in .eo files.
  */
 typedef struct tm Efl_Time;
+
+#ifdef EFL_BETA_API_SUPPORT
+
+#include "efl_types.eot.h"
 
 #include <Efl_Model_Common.h>
 
