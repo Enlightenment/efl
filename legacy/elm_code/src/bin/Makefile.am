@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 -I$(top_srcdir)/elm_code/src/lib/ \
+-I$(top_builddir)/elm_code/src/lib/ \
 -DLOCALEDIR=\"$(datadir)/locale\" \
 -DEFL_BETA_API_SUPPORT \
 @EFL_CFLAGS@
