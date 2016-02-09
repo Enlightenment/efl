@@ -1007,6 +1007,30 @@ _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text
 }
 
 static void
+_elm_code_widget_tab_at_cursor_insert(Elm_Code_Widget *widget)
+{
+   Elm_Code_Widget_Data *pd;
+   unsigned int col, row;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   if (!pd->tab_inserts_spaces)
+     {
+        _elm_code_widget_text_at_cursor_insert(widget, "\t", 1);
+        return;
+     }
+
+   eo_do(widget,
+         elm_obj_code_widget_cursor_position_get(&col, &row));
+   col = (col - 1) % pd->tabstop;
+
+   while (col < pd->tabstop)
+     {
+        _elm_code_widget_text_at_cursor_insert(widget, " ", 1);
+        col++;
+     }
+}
+
+static void
 _elm_code_widget_newline(Elm_Code_Widget *widget)
 {
    Elm_Code *code;
@@ -1215,6 +1239,8 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
      _elm_code_widget_backspace(widget);
    else if (!strcmp(ev->key, "Delete"))
      _elm_code_widget_delete(widget);
+   else if (!strcmp(ev->key, "Tab"))
+     _elm_code_widget_tab_at_cursor_insert(widget);
 
    else if (ev->string && strlen(ev->string) == 1)
      _elm_code_widget_text_at_cursor_insert(widget, ev->string, 1);
@@ -1443,6 +1469,19 @@ EOLIAN static Eina_Bool
 _elm_code_widget_show_whitespace_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->show_whitespace;
+}
+
+EOLIAN static void
+_elm_code_widget_tab_inserts_spaces_set(Eo *obj, Elm_Code_Widget_Data *pd, Eina_Bool spaces)
+{
+   pd->tab_inserts_spaces = spaces;
+   _elm_code_widget_fill(obj);
+}
+
+EOLIAN static Eina_Bool
+_elm_code_widget_tab_inserts_spaces_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+{
+   return pd->tab_inserts_spaces;
 }
 
 EOLIAN static void

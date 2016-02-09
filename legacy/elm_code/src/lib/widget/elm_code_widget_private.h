@@ -23,7 +23,7 @@ typedef struct
    Eina_Bool editable, focussed;
    Eina_Bool show_line_numbers;
    unsigned int line_width_marker, tabstop;
-   Eina_Bool show_whitespace;
+   Eina_Bool show_whitespace, tab_inserts_spaces;
 
    Elm_Code_Widget_Selection_Data *selection;
    Evas_Object *tooltip;

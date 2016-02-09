@@ -130,6 +130,17 @@ class Elm.Code_Widget (Elm.Layout, Elm_Interface_Atspi_Text)
             show_whitespace: Eina_Bool; [[Whether or not we show whitespace characters]]
          }
       }
+      @property tab_inserts_spaces {
+         set {
+            [[Set whether space characters should be inserted instead of tabs.]]
+         }
+         get {
+            [[Get whether or not space characters will be inserted instead of tabs.]]
+         }
+         values {
+            tab_inserts_spaces: Eina_Bool; [[EINA_TRUE if we should insert space characters instead of a tab when the Tab key is pressed]]
+         }
+      }
       @property cursor_position {
          set {
             [[Set the current location of the text cursor.]]
