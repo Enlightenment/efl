@@ -1,4 +1,25 @@
-type Elm.Image.Orient: Evas_Image_Orient; [[Using Evas_Image_Orient enums. @since 1.14]]
+import evas_image;
+
+enum Elm.Image_Orient
+{
+   [[
+     Using Evas_Image_Orient enums.
+     @since 1.14
+   ]]
+   legacy: elm_image;
+   orient_none     =  Evas.Image_Orient.orient_none,
+   orient_0        =  Evas.Image_Orient.orient_0,
+   rotate_90       =  Evas.Image_Orient.orient_90,
+   orient_90       =  Evas.Image_Orient.orient_90,
+   rotate_180      =  Evas.Image_Orient.orient_180,
+   orient_180      =  Evas.Image_Orient.orient_180,
+   rotate_270      =  Evas.Image_Orient.orient_270,
+   orient_270      =  Evas.Image_Orient.orient_270,
+   flip_horizontal =  Evas.Image_Orient.flip_horizontal,
+   flip_vertical   =  Evas.Image_Orient.flip_vertical,
+   flip_transpose  =  Evas.Image_Orient.flip_transpose,
+   flip_transverse =  Evas.Image_Orient.flip_transverse
+}
 
 struct Elm.Image.Progress
 {
@@ -161,7 +182,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
          get {
          }
          values {
-            orient: Elm.Image.Orient; [[The image orientation Elm.Image.Orient Default is #ELM_IMAGE_ORIENT_NONE.]]
+            orient: Elm.Image_Orient; [[The image orientation Elm.Image.Orient Default is #ELM_IMAGE_ORIENT_NONE.]]
          }
       }
       @property fill_outside {

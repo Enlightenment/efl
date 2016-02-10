@@ -41,7 +41,6 @@
  * @{
  */
 
-#include <elm_image_common.h>
 #ifdef EFL_EO_API_SUPPORT
 #include <elm_image_eo.h>
 #endif
