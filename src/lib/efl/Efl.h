@@ -46,7 +46,7 @@ typedef struct tm Efl_Time;
 
 #ifdef EFL_BETA_API_SUPPORT
 
-#include "efl_types.eot.h"
+#include "interfaces/efl_types.eot.h"
 
 #include <Efl_Model_Common.h>
 
