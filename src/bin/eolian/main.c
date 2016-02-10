@@ -260,7 +260,7 @@ enum
 int
 main(int argc, char **argv)
 {
-   int gen_what = GEN_NOTHING, do_legacy = 0, ret = 1;
+   int gen_what = GEN_NOTHING, do_legacy = 0, ret = 1, silent_types = 0;
    Eina_Bool help = EINA_FALSE;
    const char *outf = NULL;
 
@@ -286,6 +286,7 @@ main(int argc, char **argv)
       { "output",  required_argument, NULL,       'o'        },
       { "legacy",  no_argument,       &do_legacy, 1          },
       { "include", required_argument, NULL,       'I'        },
+      { "silent-types", no_argument,  &silent_types, 1       },
       { NULL, 0, NULL, 0 }
    };
 
@@ -322,6 +323,7 @@ main(int argc, char **argv)
         printf("       --gc Generate C source file [.c]\n");
         printf("       --gi Generate C implementation source file [.c]. The output will be a series of functions that have to be filled.\n");
         printf("       --legacy Generate legacy\n");
+        printf("       --silent-types Silence type validation\n");
         ret = 0;
         goto end;
      }
@@ -339,7 +341,7 @@ main(int argc, char **argv)
         goto end;
      }
 
-   if (!eolian_database_validate())
+   if (!eolian_database_validate(silent_types))
      {
         fprintf(stderr, "eolian: error validating database\n");
         goto end;

@@ -453,13 +453,14 @@ EAPI Eina_Bool eolian_all_eot_files_parse(void);
 /*
  * @brief Validates the database, printing errors and warnings.
  *
+ * @param[in] silent_types whether to silence type errors
  * @return EINA_TRUE on success, EINA_FALSE otherwise.
  *
  * Useful to catch type errors etc. early on.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_database_validate(void);
+EAPI Eina_Bool eolian_database_validate(Eina_Bool silent_types);
 
 /*
  * @brief Gets a class by its name

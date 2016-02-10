@@ -243,7 +243,7 @@ database_load(options_type const& opts)
           << "Eolian failed parsing input files";
         assert(false && "Error parsing input files");
      }
-   if (!::eolian_database_validate())
+   if (!::eolian_database_validate(EINA_FALSE))
      {
         EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
           << "Eolian failed validating database.";
