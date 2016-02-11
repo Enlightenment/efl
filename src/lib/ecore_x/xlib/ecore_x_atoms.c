@@ -45,11 +45,9 @@ EAPI Ecore_X_Atom
 ecore_x_atom_get(const char *name)
 {
    Ecore_X_Atom atom;
-   if (!_ecore_x_disp)
-     return 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
    atom = XInternAtom(_ecore_x_disp, name, False);
    if (_ecore_xlib_sync) ecore_x_sync();
    return atom;

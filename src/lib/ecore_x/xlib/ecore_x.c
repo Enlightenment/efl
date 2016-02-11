@@ -1109,7 +1109,7 @@ ecore_x_dpi_get(void)
    Screen *s;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
    s = DefaultScreenOfDisplay(_ecore_x_disp);
    if (s->mwidth <= 0)
      return 75;
