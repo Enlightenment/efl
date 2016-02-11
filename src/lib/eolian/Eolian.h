@@ -1626,6 +1626,7 @@ EAPI Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_c_type_named_get(const Eolian_Type *tp, const char *name);
+EAPI Eina_Stringshare *eolian_typedecl_c_type_named_get(const Eolian_Typedecl *tp, const char *name);
 
 /*
  * @brief Get the full C type name of the given type without a name.
@@ -1643,6 +1644,7 @@ EAPI Eina_Stringshare *eolian_type_c_type_named_get(const Eolian_Type *tp, const
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp);
+EAPI Eina_Stringshare *eolian_typedecl_c_type_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the name of the given type. For regular or complex types, this
@@ -1657,6 +1659,7 @@ EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_name_get(const Eolian_Type *tp);
+EAPI Eina_Stringshare *eolian_typedecl_name_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the full (namespaced) name of a function. Only works on named
@@ -1668,6 +1671,7 @@ EAPI Eina_Stringshare *eolian_type_name_get(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_full_name_get(const Eolian_Type *tp);
+EAPI Eina_Stringshare *eolian_typedecl_full_name_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get an iterator to the list of namespaces of the given type. Only
@@ -1679,6 +1683,7 @@ EAPI Eina_Stringshare *eolian_type_full_name_get(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_type_namespaces_get(const Eolian_Type *tp);
+EAPI Eina_Iterator *eolian_typedecl_namespaces_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the name of the function used to free this type.

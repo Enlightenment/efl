@@ -84,6 +84,7 @@ _typedecl_add(Eolian_Type *type)
    ret->doc = type->doc;
    ret->legacy = eina_stringshare_ref(type->legacy);
    ret->is_extern = type->is_extern;
+   ret->parent = type;
 
    return ret;
 }

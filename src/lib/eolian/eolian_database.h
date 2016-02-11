@@ -188,6 +188,7 @@ struct _Eolian_Typedecl
 {
    Eolian_Object base;
    Eolian_Typedecl_Type type;
+   Eolian_Type      *parent;
    Eolian_Type      *base_type;
    Eina_Stringshare *name;
    Eina_Stringshare *full_name;

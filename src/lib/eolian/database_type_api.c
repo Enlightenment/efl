@@ -466,13 +466,33 @@ eolian_type_c_type_named_get(const Eolian_Type *tp, const char *name)
 }
 
 EAPI Eina_Stringshare *
+eolian_typedecl_c_type_named_get(const Eolian_Typedecl *tp, const char *name)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   return eolian_type_c_type_named_get(tp->parent, name);
+}
+
+EAPI Eina_Stringshare *
 eolian_type_c_type_get(const Eolian_Type *tp)
 {
    return eolian_type_c_type_named_get(tp, NULL);
 }
 
 EAPI Eina_Stringshare *
+eolian_typedecl_c_type_get(const Eolian_Typedecl *tp)
+{
+   return eolian_typedecl_c_type_named_get(tp, NULL);
+}
+
+EAPI Eina_Stringshare *
 eolian_type_name_get(const Eolian_Type *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   return tp->name;
+}
+
+EAPI Eina_Stringshare *
+eolian_typedecl_name_get(const Eolian_Typedecl *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    return tp->name;
@@ -485,8 +505,23 @@ eolian_type_full_name_get(const Eolian_Type *tp)
    return tp->full_name;
 }
 
+EAPI Eina_Stringshare *
+eolian_typedecl_full_name_get(const Eolian_Typedecl *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   return tp->full_name;
+}
+
 EAPI Eina_Iterator *
 eolian_type_namespaces_get(const Eolian_Type *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   if (!tp->namespaces) return NULL;
+   return eina_list_iterator_new(tp->namespaces);
+}
+
+EAPI Eina_Iterator *
+eolian_typedecl_namespaces_get(const Eolian_Typedecl *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    if (!tp->namespaces) return NULL;
