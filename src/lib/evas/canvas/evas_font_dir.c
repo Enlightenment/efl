@@ -339,7 +339,7 @@ static Style_Map _style_weight_map[] =
      {"semibold", EVAS_FONT_WEIGHT_SEMIBOLD},
      {"bold", EVAS_FONT_WEIGHT_BOLD},
      {"ultrabold", EVAS_FONT_WEIGHT_ULTRABOLD},
-     {"extrabold", EVAS_FONT_WEIGHT_ULTRABOLD},
+     {"extrabold", EVAS_FONT_WEIGHT_EXTRABOLD},
      {"black", EVAS_FONT_WEIGHT_BLACK},
      {"extrablack", EVAS_FONT_WEIGHT_EXTRABLACK}
 };
