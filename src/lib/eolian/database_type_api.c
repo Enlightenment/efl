@@ -534,3 +534,10 @@ eolian_type_free_func_get(const Eolian_Type *tp)
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    return tp->freefunc;
 }
+
+EAPI Eina_Stringshare *
+eolian_typedecl_free_func_get(const Eolian_Typedecl *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   return tp->freefunc;
+}

@@ -43,6 +43,7 @@ database_typedecl_del(Eolian_Typedecl *tp)
    if (tp->namespaces) EINA_LIST_FREE(tp->namespaces, sp)
      eina_stringshare_del(sp);
    if (tp->legacy) eina_stringshare_del(tp->legacy);
+   if (tp->freefunc) eina_stringshare_del(tp->freefunc);
    /*database_doc_del(tp->doc);*/
    free(tp);
 }
@@ -83,6 +84,7 @@ _typedecl_add(Eolian_Type *type)
    ret->field_list = type->field_list;
    ret->doc = type->doc;
    ret->legacy = eina_stringshare_ref(type->legacy);
+   ret->freefunc = eina_stringshare_ref(type->freefunc);
    ret->is_extern = type->is_extern;
    ret->parent = type;
 

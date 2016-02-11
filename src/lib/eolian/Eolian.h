@@ -1698,6 +1698,7 @@ EAPI Eina_Iterator *eolian_typedecl_namespaces_get(const Eolian_Typedecl *tp);
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_free_func_get(const Eolian_Type *tp);
+EAPI Eina_Stringshare *eolian_typedecl_free_func_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Evaluate an Eolian expression.

@@ -197,6 +197,7 @@ struct _Eolian_Typedecl
    Eina_List        *field_list;
    Eolian_Documentation *doc;
    Eina_Stringshare *legacy;
+   Eina_Stringshare *freefunc;
    Eina_Bool is_extern :1;
 };
 
