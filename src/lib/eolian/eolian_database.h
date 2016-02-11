@@ -41,6 +41,9 @@ extern Eina_Hash *_classesf;
 extern Eina_Hash *_aliasesf;
 extern Eina_Hash *_structsf;
 extern Eina_Hash *_enumsf;
+extern Eina_Hash *_aliasesd;
+extern Eina_Hash *_structsd;
+extern Eina_Hash *_enumsd;
 extern Eina_Hash *_globalsf;
 extern Eina_Hash *_constantsf;
 extern Eina_Hash *_filenames; /* Hash: filename without extension -> full path */

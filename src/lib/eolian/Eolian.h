@@ -1311,6 +1311,7 @@ EAPI const Eolian_Typedecl *eolian_typedecl_enum_get_by_name(const char *name);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_type_aliases_get_by_file(const char *fname);
+EAPI Eina_Iterator *eolian_typedecl_aliases_get_by_file(const char *fname);
 
 /*
  * @brief Get an iterator to all named structs contained in a file.
@@ -1323,6 +1324,7 @@ EAPI Eina_Iterator *eolian_type_aliases_get_by_file(const char *fname);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_type_structs_get_by_file(const char *fname);
+EAPI Eina_Iterator *eolian_typedecl_structs_get_by_file(const char *fname);
 
 /*
  * @brief Get an iterator to all enums contained in a file.
@@ -1335,6 +1337,7 @@ EAPI Eina_Iterator *eolian_type_structs_get_by_file(const char *fname);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_type_enums_get_by_file(const char *fname);
+EAPI Eina_Iterator *eolian_typedecl_enums_get_by_file(const char *fname);
 
 /*
  * @brief Get the type of a type (regular, function, pointer)

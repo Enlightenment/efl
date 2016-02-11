@@ -72,6 +72,17 @@ eolian_type_aliases_get_by_file(const char *fname)
 }
 
 EAPI Eina_Iterator *
+eolian_typedecl_aliases_get_by_file(const char *fname)
+{
+   if (!_aliasesd) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(fname);
+   Eina_List *l = eina_hash_find(_aliasesd, shr);
+   eina_stringshare_del(shr);
+   if (!l) return NULL;
+   return eina_list_iterator_new(l);
+}
+
+EAPI Eina_Iterator *
 eolian_type_structs_get_by_file(const char *fname)
 {
    if (!_structsf) return NULL;
@@ -83,11 +94,33 @@ eolian_type_structs_get_by_file(const char *fname)
 }
 
 EAPI Eina_Iterator *
+eolian_typedecl_structs_get_by_file(const char *fname)
+{
+   if (!_structsd) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(fname);
+   Eina_List *l = eina_hash_find(_structsd, shr);
+   eina_stringshare_del(shr);
+   if (!l) return NULL;
+   return eina_list_iterator_new(l);
+}
+
+EAPI Eina_Iterator *
 eolian_type_enums_get_by_file(const char *fname)
 {
-   if (!_structsf) return NULL;
+   if (!_enumsf) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(fname);
    Eina_List *l = eina_hash_find(_enumsf, shr);
+   eina_stringshare_del(shr);
+   if (!l) return NULL;
+   return eina_list_iterator_new(l);
+}
+
+EAPI Eina_Iterator *
+eolian_typedecl_enums_get_by_file(const char *fname)
+{
+   if (!_enumsd) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(fname);
+   Eina_List *l = eina_hash_find(_enumsd, shr);
    eina_stringshare_del(shr);
    if (!l) return NULL;
    return eina_list_iterator_new(l);
