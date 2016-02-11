@@ -49,6 +49,7 @@ ecore_x_atom_get(const char *name)
      return 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    atom = XInternAtom(_ecore_x_disp, name, False);
    if (_ecore_xlib_sync) ecore_x_sync();
    return atom;
@@ -62,10 +63,8 @@ ecore_x_atoms_get(const char **names,
    Atom *atoms_int;
    int i;
 
-   if (!_ecore_x_disp)
-     return;
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    atoms_int = alloca(num * sizeof(Atom));
    XInternAtoms(_ecore_x_disp, (char **)names, num, False, atoms_int);
    for (i = 0; i < num; i++)
@@ -79,10 +78,9 @@ ecore_x_atom_name_get(Ecore_X_Atom atom)
    char *name;
    char *xname;
 
-   if (!_ecore_x_disp)
-     return NULL;
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, NULL);
 
    xname = XGetAtomName(_ecore_x_disp, atom);
    if (_ecore_xlib_sync) ecore_x_sync();
