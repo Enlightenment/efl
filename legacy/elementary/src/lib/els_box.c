@@ -14,8 +14,8 @@ _box_object_aspect_calc(int *ow, int *oh, int minw, int minh, int maxw, int maxh
                         int ww /* "maximum" width */, int hh /* "maximum" height */,
                         Evas_Aspect_Control aspect, double ratio)
 {
-   if (*ow < minw) *ow = minw;
-   if (*oh < minh) *oh = minh;
+   *ow = minw;
+   *oh = minh;
 
    switch (aspect)
      {
