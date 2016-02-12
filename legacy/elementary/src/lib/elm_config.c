@@ -496,6 +496,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, naviframe_prev_btn_auto_pushed, T_UCHAR);
    ELM_CONFIG_VAL(D, T, popup_horizontal_align, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, popup_vertical_align, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, spinner_min_max_filter_enable, T_UCHAR);
 #undef T
 #undef D
 #undef T_INT
@@ -1797,6 +1798,7 @@ _config_load(void)
    _elm_config->indicator_service_270 = eina_stringshare_add("elm_indicator_landscape");
    _elm_config->disable_external_menu = EINA_FALSE;
    _elm_config->magnifier_enable = EINA_TRUE;
+   _elm_config->spinner_min_max_filter_enable = EINA_FALSE;
    _elm_config->magnifier_scale = 1.5;
    _elm_config->audio_mute_effect = 0;
    _elm_config->audio_mute_background = 0;
@@ -2497,6 +2499,8 @@ _env_get(void)
    if (s) _elm_config->magnifier_scale = _elm_atof(s);
    s = getenv("ELM_ATSPI_MODE");
    if (s) _elm_config->atspi_mode = ELM_ATSPI_MODE_ON;
+   s = getenv("ELM_SPINNER_MIN_MAX_FILTER_ENABLE");
+   if (s) _elm_config->spinner_min_max_filter_enable = !!atoi(s);
 
    s = getenv("ELM_TRANSITION_DURATION_FACTOR");
    if (s) _elm_config->transition_duration_factor = atof(s);

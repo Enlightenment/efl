@@ -308,6 +308,7 @@ struct _Elm_Config
    unsigned char win_auto_focus_animate;
    double        transition_duration_factor;
    unsigned char naviframe_prev_btn_auto_pushed;
+   unsigned char spinner_min_max_filter_enable;
    Eina_List    *bindings;
    Eina_Bool     atspi_mode;
    int           gl_depth;

@@ -81,7 +81,7 @@ _is_label_format_integer(const char *fmt)
         if ((*itr == 'd') || (*itr == 'u') || (*itr == 'i') ||
             (*itr == 'o') || (*itr == 'x') || (*itr == 'X'))
           return EINA_TRUE;
-        else if ((*itr == 'f'))
+        else if ((*itr == 'f') || (*itr == 'F'))
           return EINA_FALSE;
      }
 
@@ -421,6 +421,56 @@ _entry_filter_add(Evas_Object *obj)
    elm_entry_markup_filter_append(sd->ent, elm_entry_filter_accept_set, &digits_filter_data);
 }
 
+char *
+_text_insert(const char *text, const char *input, int pos)
+{
+   char *result = NULL;
+   int text_len, input_len;
+
+   text_len = evas_string_char_len_get(text);
+   input_len = evas_string_char_len_get(input);
+   result = (char *)calloc(text_len + input_len + 1, sizeof(char));
+   if (!result) return NULL;
+
+   strncpy(result, text, pos);
+   strcpy(result + pos, input);
+   strcpy(result + pos + input_len, text + pos);
+
+   return result;
+}
+
+static void
+_min_max_validity_filter(void *data, Evas_Object *obj, char **text)
+{
+   const char *str, *new_str;
+   char *insert;
+   double val;
+   int max_len, len;
+
+   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   EINA_SAFETY_ON_NULL_RETURN(text);
+
+   ELM_SPINNER_DATA_GET(data, sd);
+
+   str = elm_object_text_get(obj);
+   if (!str) return;
+
+   insert = *text;
+   new_str = _text_insert(str, insert, elm_entry_cursor_pos_get(obj));
+   if (!new_str) return;
+
+   max_len = log10(abs(sd->val_max)) + 1;
+   len = evas_string_char_len_get(new_str);
+   if (len < max_len) return;
+
+   val = strtod(new_str, NULL);
+   ELM_SAFE_FREE(new_str, free);
+
+   if ((val < sd->val_min) || (val > sd->val_max))
+     *insert = 0;
+}
+
 static void
 _entry_show_cb(void *data,
                Evas *e EINA_UNUSED,
@@ -468,6 +518,8 @@ _toggle_entry(Evas_Object *obj)
                (ELM_ENTRY_EVENT_ACTIVATED, _entry_activated_cb, obj));
              elm_layout_content_set(obj, "elm.swallow.entry", sd->ent);
              _entry_filter_add(obj);
+             if (_elm_config->spinner_min_max_filter_enable)
+               elm_entry_markup_filter_append(sd->ent, _min_max_validity_filter, obj);
           }
         if (!sd->button_layout)
           {
