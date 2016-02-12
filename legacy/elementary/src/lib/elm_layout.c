@@ -40,6 +40,13 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
+static const char *_elm_layout_swallow_parts[] = {
+   "elm.swallow.icon",
+   "elm.swallow.end",
+   "elm.swallow.background",
+   NULL
+};
+
 /* these are data operated by layout's class functions internally, and
  * should not be messed up by inhering classes */
 typedef struct _Elm_Layout_Sub_Object_Data   Elm_Layout_Sub_Object_Data;
@@ -133,12 +140,16 @@ _icon_signal_emit(Elm_Layout_Smart_Data *sd,
 {
    char buf[1024];
    const char *type;
+   int i;
 
    //FIXME: Don't limit to the icon and end here.
    // send signals for all contents after elm 2.0
-   if (sub_d->type != SWALLOW ||
-       (strcmp("elm.swallow.icon", sub_d->part) &&
-        (strcmp("elm.swallow.end", sub_d->part)))) return;
+   if (sub_d->type != SWALLOW) return;
+   for (i = 0;; i++)
+     {
+        if (!_elm_layout_swallow_parts[i]) return;
+        if (!strcmp(sub_d->part, _elm_layout_swallow_parts[i])) break;
+     }
 
    if (!strncmp(sub_d->part, "elm.swallow.", strlen("elm.swallow.")))
      type = sub_d->part + strlen("elm.swallow.");
