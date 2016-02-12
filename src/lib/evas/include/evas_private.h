@@ -258,9 +258,6 @@ struct _Evas_Canvas3D_Node
    Evas_Box3         aabb;
    Evas_Box3         obb;
    Evas_Sphere       bsphere;
-   Evas_Box3         local_aabb;
-   Evas_Box3         local_obb;
-   Evas_Sphere       local_bsphere;
 
    Evas_Canvas3D_Node_Type type;
 
@@ -1753,6 +1750,7 @@ void evas_canvas3d_node_scene_root_add(Evas_Canvas3D_Node *node, Evas_Canvas3D_S
 void evas_canvas3d_node_scene_root_del(Evas_Canvas3D_Node *node, Evas_Canvas3D_Scene *scene);
 void evas_canvas3d_node_scene_camera_add(Evas_Canvas3D_Node *node, Evas_Canvas3D_Scene *scene);
 void evas_canvas3d_node_scene_camera_del(Evas_Canvas3D_Node *node, Evas_Canvas3D_Scene *scene);
+Eina_Bool node_aabb_update(Evas_Canvas3D_Node *node, void *data  EINA_UNUSED);
 
 /* Camera functions. */
 void evas_canvas3d_camera_node_add(Evas_Canvas3D_Camera *camera, Evas_Canvas3D_Node *node);

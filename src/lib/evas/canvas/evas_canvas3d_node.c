@@ -383,104 +383,6 @@ _node_item_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
 }
 
 static void
-_rotate_vertices(Eina_Quaternion* orientation, int vertex_count, Evas_Vec3* vertex_position)
-{
-   int i;
-   if (orientation->x || orientation->y || orientation->z)
-     for (i = 0; i < vertex_count; i++)
-        evas_vec3_quaternion_rotate(&vertex_position[i], &vertex_position[i], orientation);
-}
-
-
-static void
-_scale_vertices(Evas_Vec3* scale, int vertex_count, Evas_Vec3* vertex_position)
-{
-   int i;
-   if ((scale->x != 1) || (scale->y != 1) || (scale->z != 1))
-     for (i = 0; i < vertex_count; i++)
-        evas_vec3_multiply(&vertex_position[i], &vertex_position[i], scale);
-}
-
-static void
-_calculate_sphere(Evas_Sphere *sphere, int vertex_count,  Evas_Vec3 *vertex_position)
-{
-   float radius = 0.0001f;
-   Evas_Vec3 center, pos, diff;
-   float len, alpha, alpha2;
-   int  i, k;
-
-   // shuffle array for averaging algorithms error
-   for (i = 0; i < vertex_count; i++)
-     {
-        k = i + rand()%(vertex_count-i);
-        pos = vertex_position[i];
-        vertex_position[i] = vertex_position[k];
-        vertex_position[k] = pos;
-     }
-
-   center = vertex_position[0];
-
-   for (k = 0; k < 2; k++)
-     {
-        for (i = 0; i < vertex_count; ++i)
-          {
-             pos = vertex_position[i];
-             evas_vec3_subtract(&diff, &pos, &center);
-             len = evas_vec3_length_get(&diff);
-             if (len > radius)
-               {
-                  alpha = len / radius;
-                  alpha2 = alpha * alpha;
-                  radius = 0.5f * (alpha + 1 / alpha) * radius;
-                  evas_vec3_scale(&pos, &pos, 1 - 1 / alpha2);
-                  evas_vec3_scale(&center, &center, (1 + 1 / alpha2));
-                  evas_vec3_add(&center, &center, &pos);
-                  evas_vec3_scale(&center, &center, 0.5f);
-               }
-          }
-     }
-
-   for (i = 0; i < vertex_count; ++i)
-     {
-        pos = vertex_position[i];
-        evas_vec3_subtract(&diff, &pos, &center);
-        len = evas_vec3_length_get(&diff);
-
-        if (len > radius)
-          {
-             radius = (radius + len) / 2.0f;
-             evas_vec3_scale(&diff, &diff, (len - radius) / len);
-             evas_vec3_add(&center, &center, &diff);
-          }
-     }
-
-   sphere->radius = radius;
-   sphere->center = center;
-}
-
-static void
-_calculate_box(Evas_Box3 *box3, int vertex_count, Evas_Vec3 *vertex_position)
-{
-   int i = 0;
-   float vxmin, vymin, vzmin, vxmax, vymax, vzmax;
-
-   vxmax = vxmin = vertex_position[0].x;
-   vymax = vymin = vertex_position[0].y;
-   vzmax = vzmin = vertex_position[0].z;
-
-   for (i = 1; i < vertex_count; ++i)
-     {
-        if (vxmin > vertex_position[i].x) vxmin = vertex_position[i].x;
-        if (vxmax < vertex_position[i].x) vxmax = vertex_position[i].x;
-        if (vymin > vertex_position[i].y) vymin = vertex_position[i].y;
-        if (vymax < vertex_position[i].y) vymax = vertex_position[i].y;
-        if (vzmin > vertex_position[i].z) vzmin = vertex_position[i].z;
-        if (vzmax < vertex_position[i].z) vzmax = vertex_position[i].z;
-     }
-   evas_box3_set(box3, vxmin, vymin, vzmin, vxmax, vymax, vzmax);
-}
-
-static void
 _pack_meshes_vertex_data(Evas_Canvas3D_Node *node, Evas_Vec3 **vertices, int *count)
 {
     const Eina_List *m, *l;
@@ -542,21 +444,18 @@ _pack_meshes_vertex_data(Evas_Canvas3D_Node *node, Evas_Vec3 **vertices, int *co
 static void
 _update_node_shapes(Evas_Canvas3D_Node *node)
 {
+   int i;
+   int count;
+   Evas_Vec3 *vertices = NULL;
    Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
    Eina_Bool transform_orientation_dirty;
+   Eina_Bool transform_position_dirty;
    Eina_Bool transform_scale_dirty;
    Eina_Bool mesh_geom_dirty;
-   Evas_Vec3 scale;
    Evas_Vec3 position = pd->position_world;
-   evas_vec3_set(&scale, pd->scale_world.x, pd->scale.y, pd->scale.z);
 
    if (pd->type != EVAS_CANVAS3D_NODE_TYPE_MESH)
      {
-        evas_box3_empty_set(&pd->local_aabb);
-        evas_box3_empty_set(&pd->local_obb);
-        pd->local_bsphere.radius = 0;
-        evas_vec3_set(&pd->local_bsphere.center, 0, 0, 0);
-
         pd->aabb.p0 = position;
         pd->aabb.p1 = position;
         pd->obb.p0 = position;
@@ -569,66 +468,43 @@ _update_node_shapes(Evas_Canvas3D_Node *node)
    eo_do(node,
          transform_orientation_dirty = evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION),
          transform_orientation_dirty |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_PARENT_ORIENTATION),
+         transform_position_dirty = evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_POSITION),
+         transform_position_dirty |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_PARENT_POSITION),
          transform_scale_dirty = evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_SCALE),
          transform_scale_dirty |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_PARENT_SCALE),
          mesh_geom_dirty = evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_MESH_GEOMETRY),
          mesh_geom_dirty |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_MESH_FRAME));
 
-   if ( transform_orientation_dirty || transform_scale_dirty || mesh_geom_dirty)
-     {
-        int count;
-        Evas_Vec3 *vertices = NULL;
+
         _pack_meshes_vertex_data(node, &vertices, &count);
         if (count > 0)
           {
-            //For aabb calculate to need all transformations(scale, orientation, position) of primary data of vertices.
-            _scale_vertices(&pd->scale_world, count, vertices);
-            _calculate_box(&pd->local_obb, count, vertices);
-            _rotate_vertices(&pd->orientation_world, count, vertices);
-            _calculate_box(&pd->local_aabb, count, vertices);
-            if (transform_scale_dirty || mesh_geom_dirty)
-              {
-                 _calculate_sphere(&pd->local_bsphere, count, vertices);
-              }
+            calculate_box(&pd->obb, count, vertices);
+            for (i = 0; i < count; i++)
+            {
+                evas_vec3_homogeneous_position_transform(&vertices[i], &vertices[i], &pd->data.mesh.matrix_local_to_world);
+            }
+            calculate_box(&pd->aabb, count, vertices);
+            if (transform_position_dirty || transform_scale_dirty || mesh_geom_dirty)
+            {
+                calculate_sphere(&pd->bsphere, count, vertices);
+            }
+            evas_vec3_homogeneous_position_transform(&pd->obb.p0, &pd->obb.p0, &pd->data.mesh.matrix_local_to_world);
+            evas_vec3_homogeneous_position_transform(&pd->obb.p0, &pd->obb.p0, &pd->data.mesh.matrix_local_to_world);
           }
         free(vertices);
-     }
 
-   pd->bsphere.radius = pd->local_bsphere.radius;
-   evas_vec3_quaternion_rotate(&pd->bsphere.center, &pd->local_bsphere.center, &pd->orientation_world);
-   evas_vec3_quaternion_rotate(&pd->obb.p0, &pd->local_obb.p0, &pd->orientation_world);
-   evas_vec3_quaternion_rotate(&pd->obb.p1, &pd->local_obb.p1, &pd->orientation_world);
-   evas_vec3_add(&pd->obb.p0, &position, &pd->local_obb.p0);
-   evas_vec3_add(&pd->obb.p1, &position, &pd->local_obb.p1);
-   evas_vec3_add(&pd->aabb.p0, &position, &pd->local_aabb.p0);
-   evas_vec3_add(&pd->aabb.p1, &position, &pd->local_aabb.p1);
-   evas_vec3_add(&pd->bsphere.center, &position, &pd->local_bsphere.center);
 }
 
-static Eina_Bool
-_node_aabb_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
+Eina_Bool
+node_aabb_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
 {
    Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
-   Eina_Bool need_recalc;
    Eina_List *current;
    Evas_Canvas3D_Node *datanode;
    const Eo_Event_Description *eo_desc = NULL;
 
-  eo_do(node,
-        need_recalc = evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION),
-        need_recalc |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_PARENT_ORIENTATION),
-        need_recalc |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_POSITION),
-        need_recalc |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_PARENT_POSITION),
-        need_recalc |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_TRANSFORM_SCALE),
-        need_recalc |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_PARENT_SCALE),
-        need_recalc |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_MESH_GEOMETRY),
-        need_recalc |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_MESH_FRAME),
-        need_recalc |= evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_NODE_MEMBER));
-
-   if (!need_recalc) return EINA_TRUE;
-
    _update_node_shapes(node);
-
    EINA_LIST_FOREACH(pd->members, current, datanode)
      {
         Evas_Canvas3D_Node_Data *datapd = eo_data_scope_get(datanode, EVAS_CANVAS3D_NODE_CLASS);
@@ -662,8 +538,11 @@ _evas_canvas3d_node_evas_canvas3d_object_update_notify(Eo *obj, Evas_Canvas3D_No
    evas_canvas3d_node_tree_traverse(obj, EVAS_CANVAS3D_TREE_TRAVERSE_ANY_ORDER, EINA_FALSE,
                               _node_billboard_update, NULL);
    /* Update AABB. */
-   evas_canvas3d_node_tree_traverse(obj, EVAS_CANVAS3D_TREE_TRAVERSE_POST_ORDER, EINA_FALSE,
-                              _node_aabb_update, NULL);
+   if(eo_base_legacy_only_event_description_get("collision,private"))
+   {
+      evas_canvas3d_node_tree_traverse(obj, EVAS_CANVAS3D_TREE_TRAVERSE_POST_ORDER, EINA_FALSE,
+              node_aabb_update, NULL);
+   }
 
    /* Update node item. */
    evas_canvas3d_node_tree_traverse(obj, EVAS_CANVAS3D_TREE_TRAVERSE_ANY_ORDER, EINA_FALSE,
@@ -1744,6 +1623,9 @@ EOLIAN static void
 _evas_canvas3d_node_bounding_box_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd, Evas_Real *x, Evas_Real *y, Evas_Real *z, Evas_Real *x2, Evas_Real *y2, Evas_Real *z2)
 {
    eo_do(obj, evas_canvas3d_object_update());
+   evas_canvas3d_node_tree_traverse(obj, EVAS_CANVAS3D_TREE_TRAVERSE_LEVEL_ORDER, EINA_FALSE,
+                                 node_aabb_update, NULL);
+
    if (x) *x = pd->aabb.p0.x;
    if (y) *y = pd->aabb.p0.y;
    if (z) *z = pd->aabb.p0.z;
@@ -1756,6 +1638,9 @@ EOLIAN static void
 _evas_canvas3d_node_bounding_sphere_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Data *pd, Evas_Real *x, Evas_Real *y, Evas_Real *z, Evas_Real *r)
 {
    eo_do(obj, evas_canvas3d_object_update());
+   evas_canvas3d_node_tree_traverse(obj, EVAS_CANVAS3D_TREE_TRAVERSE_LEVEL_ORDER, EINA_FALSE,
+                                 node_aabb_update, NULL);
+
    if (x) *x = pd->bsphere.center.x;
    if (y) *y = pd->bsphere.center.y;
    if (z) *z = pd->bsphere.center.z;

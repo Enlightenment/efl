@@ -558,6 +558,9 @@ _node_pick(Evas_Canvas3D_Node *node, void *data)
    Eina_Matrix4            mvp;
    Evas_Canvas3D_Node_Data *pd_node = eo_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
 
+   evas_canvas3d_node_tree_traverse(node, EVAS_CANVAS3D_TREE_TRAVERSE_POST_ORDER, EINA_FALSE,
+                                 node_aabb_update, NULL);
+
    if (! evas_box3_ray3_intersect(&pd_node->aabb, &pick->ray_world))
      {
         /* Skip entire subtree. */

@@ -2016,3 +2016,82 @@ evas_tangent_space_get(float *data, float *tex_data, float *normal_data, unsigne
 
    return;
 }
+
+static inline void
+calculate_box(Evas_Box3 *box3, int vertex_count, Evas_Vec3 *vertex_position)
+{
+   int i = 0;
+   float vxmin, vymin, vzmin, vxmax, vymax, vzmax;
+
+   vxmax = vxmin = vertex_position[0].x;
+   vymax = vymin = vertex_position[0].y;
+   vzmax = vzmin = vertex_position[0].z;
+
+   for (i = 1; i < vertex_count; ++i)
+     {
+        if (vxmin > vertex_position[i].x) vxmin = vertex_position[i].x;
+        if (vxmax < vertex_position[i].x) vxmax = vertex_position[i].x;
+        if (vymin > vertex_position[i].y) vymin = vertex_position[i].y;
+        if (vymax < vertex_position[i].y) vymax = vertex_position[i].y;
+        if (vzmin > vertex_position[i].z) vzmin = vertex_position[i].z;
+        if (vzmax < vertex_position[i].z) vzmax = vertex_position[i].z;
+     }
+   evas_box3_set(box3, vxmin, vymin, vzmin, vxmax, vymax, vzmax);
+}
+
+static inline void
+calculate_sphere(Evas_Sphere *sphere, int vertex_count,  Evas_Vec3 *vertex_position)
+{
+   float radius = 0.0001f;
+   Evas_Vec3 center, pos, diff;
+   float len, alpha, alpha2;
+   int  i, k;
+
+   // shuffle array for averaging algorithms error
+   for (i = 0; i < vertex_count; i++)
+     {
+        k = i + rand()%(vertex_count-i);
+        pos = vertex_position[i];
+        vertex_position[i] = vertex_position[k];
+        vertex_position[k] = pos;
+     }
+
+   center = vertex_position[0];
+
+   for (k = 0; k < 2; k++)
+     {
+        for (i = 0; i < vertex_count; ++i)
+          {
+             pos = vertex_position[i];
+             evas_vec3_subtract(&diff, &pos, &center);
+             len = evas_vec3_length_get(&diff);
+             if (len > radius)
+               {
+                  alpha = len / radius;
+                  alpha2 = alpha * alpha;
+                  radius = 0.5f * (alpha + 1 / alpha) * radius;
+                  evas_vec3_scale(&pos, &pos, 1 - 1 / alpha2);
+                  evas_vec3_scale(&center, &center, (1 + 1 / alpha2));
+                  evas_vec3_add(&center, &center, &pos);
+                  evas_vec3_scale(&center, &center, 0.5f);
+               }
+          }
+     }
+
+   for (i = 0; i < vertex_count; ++i)
+     {
+        pos = vertex_position[i];
+        evas_vec3_subtract(&diff, &pos, &center);
+        len = evas_vec3_length_get(&diff);
+
+        if (len > radius)
+          {
+             radius = (radius + len) / 2.0f;
+             evas_vec3_scale(&diff, &diff, (len - radius) / len);
+             evas_vec3_add(&center, &center, &diff);
+          }
+     }
+
+   sphere->radius = radius;
+   sphere->center = center;
+}
