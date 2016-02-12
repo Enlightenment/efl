@@ -156,6 +156,7 @@ _elm_tooltip_show(Elm_Tooltip *tt)
    else
       tt->tooltip = edje_object_add(tt->evas);
    if (!tt->tooltip) return;
+   evas_object_pass_events_set(tt->tooltip, EINA_TRUE);
 
    if (tt->free_size)
      evas_object_layer_set(tt->tooltip, ELM_OBJECT_LAYER_TOOLTIP);
@@ -346,7 +347,6 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
              if (tt->hide_timeout < 0.0) tt->hide_timeout = 0.0;
           }
 
-        evas_object_pass_events_set(tt->tooltip, EINA_TRUE);
         tt->changed_style = EINA_FALSE;
         if (tt->tooltip)
           edje_object_part_swallow(tt->tooltip, "elm.swallow.content",
@@ -377,7 +377,6 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
              tt->tooltip = NULL;
              return;
           }
-        evas_object_pass_events_set(tt->content, EINA_TRUE);
         edje_object_part_swallow
           (tt->tooltip, "elm.swallow.content", tt->content);
         evas_object_event_callback_add(tt->content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
