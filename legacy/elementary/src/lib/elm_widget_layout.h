@@ -45,29 +45,6 @@
  */
 
 /**
- * @struct _Elm_Layout_Part_Alias_Description
- *
- * Elementary Layout-based widgets may declare part proxies, i.e., aliases
- * for real theme part names to expose to the API calls:
- * - elm_layout_text_set()
- * - elm_layout_text_get()
- * - elm_layout_content_set()
- * - elm_layout_content_get()
- * - elm_layout_content_unset()
- * and their equivalents. This list must be set on the
- * @c "_smart_set_user()" function of inheriting widgets, so that part
- * aliasing is handled automatically for them.
- *
- * @ingroup Widget
- */
-struct _Elm_Layout_Part_Alias_Description
-{
-   const char *alias; /**< Alternate name for a given (real) part. Calls receiving this string as a part name will be translated to the string at _Elm_Layout_Part_Proxies_Description::real_part */
-
-   const char *real_part; /**< Target part name for the alias set on @ref _Elm_Layout_Part_Proxies_Description::real_part. An example of usage would be @c "default" on that field, with @c "elm.content.swallow" on this one */
-};
-
-/**
  * Base widget smart data extended with layout instance data.
  */
 typedef struct _Elm_Layout_Smart_Data

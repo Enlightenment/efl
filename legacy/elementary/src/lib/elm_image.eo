@@ -21,7 +21,7 @@ enum Elm.Image_Orient
    flip_transverse =  Evas.Image_Orient.flip_transverse
 }
 
-struct Elm.Image.Progress
+struct Elm.Image_Progress
 {
    [[
      Structure associated with smart callback 'download,progress'.
