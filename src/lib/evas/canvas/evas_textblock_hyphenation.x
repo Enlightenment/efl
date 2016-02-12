@@ -31,7 +31,7 @@ _dict_hyphen_load(const char *lang)
 {
    Eina_Iterator *it;
    Eina_File_Direct_Info *dir;
-   void *dict;
+   void *dict = NULL;
 
    it = eina_file_direct_ls(EVAS_DICTS_HYPHEN_DIR);
    if (!it)
