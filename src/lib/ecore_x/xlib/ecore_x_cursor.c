@@ -20,6 +20,7 @@ ecore_x_cursor_new(Ecore_X_Window win,
                    int hot_x,
                    int hot_y)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
 #ifdef ECORE_XCURSOR
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -233,6 +234,7 @@ ecore_x_cursor_shape_get(int shape)
 {
    Ecore_X_Cursor cur;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
    /* Shapes are defined in Ecore_X_Cursor.h */
    cur = XCreateFontCursor(_ecore_x_disp, shape);
    if (_ecore_xlib_sync) ecore_x_sync();
