@@ -1,3 +1,5 @@
+import efl_gfx_types;
+
 enum Ector.Buffer.Flag {
    none              = 0x00, [[Buffer may not have any backing, indicates an invalid buffer.]]
    cpu_readable      = 0x01, [[Can be read from the CPU after map. Reading may still be very slow.]]
