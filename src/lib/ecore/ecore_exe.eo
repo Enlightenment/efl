@@ -1,3 +1,42 @@
+/* FIXME: The structures are not namespaced correctly. */
+
+struct Ecore.Exe_Event_Data_Line
+{
+   [[A structure that stores information of lines data from a child process.]]
+   line: char *; [[The bytes of a line of buffered data]]
+   size: int; [[The size of the line buffer in bytes]]
+}
+
+/**
+ * @struct _Ecore_Exe_Event_Data
+ * @brief A structure that stores information of data from a child process event.
+ */
+struct Ecore.Exe_Event_Data
+{
+   exe: Eo.Base *;  [[The handle to the process. FIXME: should actually be Ecore.Exe, workaround cyclic]]
+   data: void *; [[the raw binary data from the child process that was received]]
+   size: int; [[the size of this data in bytes]]
+   lines: Ecore.Exe_Event_Data_Line *; [[an array of line data if line buffered, the last one has it's line member set to $NULL]]
+}
+
+enum Ecore.Exe_Flags
+{
+   [[Flags for executing a child with its stdin and/or stdout piped back.]]
+   legacy: ECORE_EXE;
+
+   none = 0, [[No exe flags at all]]
+   pipe_read = 1, [[Exe Pipe Read mask]]
+   pipe_write = 2, [[Exe Pipe Write mask]]
+   pipe_error = 4, [[Exe Pipe error mask]]
+   pipe_read_line_buffered = 8, [[Reads are buffered until a newline and split 1 line per Ecore_Exe_Event_Data_Line]]
+   pipe_error_line_buffered = 16, [[Errors are buffered until a newline and split 1 line per Ecore_Exe_Event_Data_Line]]
+   pipe_auto = 32, [[stdout and stderr are buffered automatically]]
+   respawn = 64, [[FIXME: Exe is restarted if it dies]]
+   use_sh = 128, [[Use /bin/sh to run the command.]]
+   not_leader = 256, [[Do not use setsid() to have the executed process be its own session leader]]
+   term_with_parent = 512 [[Makes child receive SIGTERM when parent dies.]]
+}
+
 class Ecore.Exe (Eo.Base, Efl.Control)
 {
    eo_prefix: ecore_obj_exe;
@@ -12,7 +51,7 @@ class Ecore.Exe (Eo.Base, Efl.Control)
              }
              values {
                   exe_cmd: const(char) *; [[The command to execute.]]
-                  flags: Ecore_Exe_Flags; [[The execution flags.]]
+                  flags: Ecore.Exe_Flags; [[The execution flags.]]
              }
         }
    }
@@ -25,8 +64,8 @@ class Ecore.Exe (Eo.Base, Efl.Control)
       .command;
    }
    events {
-        data,get: Ecore_Exe_Event_Data;
-        data,error: Ecore_Exe_Event_Data;
+        data,get: Ecore.Exe_Event_Data;
+        data,error: Ecore.Exe_Event_Data;
    }
 }
 

@@ -938,26 +938,6 @@ EAPI extern int ECORE_EXE_EVENT_DATA;    /**< Data from a child process. */
 EAPI extern int ECORE_EXE_EVENT_ERROR;    /**< Errors from a child process. */
 
 /**
- * @enum _Ecore_Exe_Flags
- * Flags for executing a child with its stdin and/or stdout piped back.
- */
-enum _Ecore_Exe_Flags    /* flags for executing a child with its stdin and/or stdout piped back */
-{
-   ECORE_EXE_NONE = 0, /**< No exe flags at all */
-   ECORE_EXE_PIPE_READ = 1, /**< Exe Pipe Read mask */
-   ECORE_EXE_PIPE_WRITE = 2, /**< Exe Pipe Write mask */
-   ECORE_EXE_PIPE_ERROR = 4, /**< Exe Pipe error mask */
-   ECORE_EXE_PIPE_READ_LINE_BUFFERED = 8, /**< Reads are buffered until a newline and split 1 line per Ecore_Exe_Event_Data_Line */
-   ECORE_EXE_PIPE_ERROR_LINE_BUFFERED = 16, /**< Errors are buffered until a newline and split 1 line per Ecore_Exe_Event_Data_Line */
-   ECORE_EXE_PIPE_AUTO = 32, /**< stdout and stderr are buffered automatically */
-   ECORE_EXE_RESPAWN = 64, /**< FIXME: Exe is restarted if it dies */
-   ECORE_EXE_USE_SH = 128, /**< Use /bin/sh to run the command. */
-   ECORE_EXE_NOT_LEADER = 256, /**< Do not use setsid() to have the executed process be its own session leader */
-   ECORE_EXE_TERM_WITH_PARENT = 512 /**< Makes child receive SIGTERM when parent dies. */
-};
-typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
-
-/**
  * @enum _Ecore_Exe_Win32_Priority
  * Defines the priority of the process.
  */
@@ -972,7 +952,7 @@ enum _Ecore_Exe_Win32_Priority
 };
 typedef enum _Ecore_Exe_Win32_Priority Ecore_Exe_Win32_Priority;
 
-typedef Eo              Ecore_Exe; /**< A handle for spawned processes */
+#include "ecore_exe.eo.h"
 
 #define _ECORE_EXE_EO_CLASS_TYPE
 
@@ -985,8 +965,6 @@ typedef void                            (*Ecore_Exe_Cb)(void *data, const Ecore_
 
 typedef struct _Ecore_Exe_Event_Add       Ecore_Exe_Event_Add; /**< Spawned Exe add event */
 typedef struct _Ecore_Exe_Event_Del       Ecore_Exe_Event_Del; /**< Spawned Exe exit event */
-typedef struct _Ecore_Exe_Event_Data_Line Ecore_Exe_Event_Data_Line; /**< Lines from a child process */
-typedef struct _Ecore_Exe_Event_Data      Ecore_Exe_Event_Data; /**< Data from a child process */
 
 /**
  * @struct _Ecore_Exe_Event_Add
@@ -1014,28 +992,6 @@ struct _Ecore_Exe_Event_Del
 #if !defined (_WIN32) && !defined (__lv2ppu__) && !defined (EXOTIC_NO_SIGNAL)
    siginfo_t  data; /**< Signal info */
 #endif
-};
-
-/**
- * @struct _Ecore_Exe_Event_Data_Line
- * @brief A structure that stores information of lines data from a child process.
- */
-struct _Ecore_Exe_Event_Data_Line
-{
-   char *line; /**< The bytes of a line of buffered data */
-   int   size; /**< The size of the line buffer in bytes */
-};
-
-/**
- * @struct _Ecore_Exe_Event_Data
- * @brief A structure that stores information of data from a child process event.
- */
-struct _Ecore_Exe_Event_Data
-{
-   Ecore_Exe                 *exe; /**< The handle to the process */
-   void                      *data; /**< the raw binary data from the child process that was received */
-   int                        size; /**< the size of this data in bytes */
-   Ecore_Exe_Event_Data_Line *lines; /**< an array of line data if line buffered, the last one has it's line member set to @c NULL */
 };
 
 /**
