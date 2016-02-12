@@ -102,8 +102,127 @@ START_TEST(eina_test_vector2_operations)
 }
 END_TEST
 
+START_TEST(eina_test_vector3_operations)
+{
+   Eina_Vector3 v1;
+   Eina_Vector3 v2;
+   Eina_Vector3 v3;
+   Eina_Matrix3 m3;
+   Eina_Matrix4 m4;
+   Eina_Quaternion q;
+   double x = 1;
+   double y = 2;
+   double z = 3;
+   double res = 0;
+   Eina_Bool res2 = EINA_FALSE;
+   const double arr[] = {5, 5, 5};
+
+   eina_init();
+
+   eina_vector3_set(&v1, x, y, z);
+   fail_if((v1.x != 1) || (v1.y != 2) || (v1.z != 3));
+
+   eina_vector3_array_set(&v2, &arr);
+   fail_if((v2.x != 5) || (v2.y != 5) || (v2.z != 5));
+
+   eina_vector3_copy(&v1, &v2);
+   fail_if((v1.x != 5) || (v1.y != 5) || (v1.z != 5));
+
+   eina_vector3_negate(&v1, &v2);
+   fail_if((v1.x != -5) || (v1.y != -5), (v1.z != -5));
+
+   eina_vector3_set(&v1, x, y, z);
+   eina_vector3_add(&v3, &v1, &v2);
+   fail_if((v3.x != 6) || (v3.y != 7) || v3.z != 8);
+
+   eina_vector3_subtract(&v3, &v2, &v1);
+   fail_if((v3.x != 4) || (v3.y != 3) || (v3.z != 2));
+
+   eina_vector3_scale(&v3, &v1, y);
+   fail_if((v3.x != 2) || (v3.y != 4) || (v3.z != 6));
+
+   eina_vector3_multiply(&v3, &v2, &v1);
+   fail_if((v3.x != 5) || (v3.y != 10) || (v3.z != 15));
+
+   res = eina_vector3_dot_product(&v1, &v2);
+   fail_if(res != 30);
+
+   eina_vector3_cross_product(&v3, &v1, &v2);
+   fail_if((v3.x != -5) || (v3.y != 10) || (v3.z != -5));
+
+   res = eina_vector3_length_get(&v2);
+   fail_if((res - sqrt(75)) > DBL_EPSILON);
+
+   res = eina_vector3_length_square_get(&v2);
+   fail_if(res != 75);
+
+   res = eina_vector3_distance_get(&v2, &v1);
+   fail_if((res - sqrt(29)) > DBL_EPSILON);
+
+   res = eina_vector3_distance_square_get(&v2, &v1);
+   fail_if(res != 29);
+
+   eina_vector3_normalize(&v3, &v2);
+   fail_if((v3.x - v2.x / sqrt(75)) > DBL_EPSILON ||
+           (v3.y - v2.y / sqrt(75)) > DBL_EPSILON ||
+           (v3.z - v2.z / sqrt(75)) > DBL_EPSILON);
+
+   res = eina_vector3_angle_get(&v1, &v2);
+   fail_if((res - (30 / (sqrt(14) * sqrt(75)))) > DBL_EPSILON);
+
+   eina_matrix3_values_set(&m3,
+                          2, 2, 2,
+                          2, 2, 2,
+                          2, 2, 2);
+   eina_vector3_transform(&v3, &m3, &v1);
+   fail_if((v3.x != 12) || (v3.y != 12) || (v3.z != 12));
+
+   eina_matrix4_values_set(&m4,
+                          2, 2, 2, 2,
+                          2, 2, 2, 2,
+                          2, 2, 2, 2,
+                          2, 2, 2, 2);
+   eina_vector3_homogeneous_position_transform(&v3, &m4, &v1);
+   fail_if((v3.x != 1) || (v3.y != 1) || (v3.z != 1));
+
+   eina_quaternion_set(&q, 2, 2, 2, 0);
+   eina_vector3_quaternion_rotate(&v3, &v1, &q);
+   fail_if((v3.x != 25) || (v3.y != 2) || (v3.z != -21));
+
+   eina_vector3_orthogonal_projection_on_plane(&v3, &v1, &v2);
+   fail_if((v3.x != -1) || (v3.y != 0) || (v3.z != 1));
+
+   eina_vector3_plane_by_points(&q, &v3, &v1, &v2);
+   fail_if((q.x != -2) || (q.y != 4) || (q.z != -2) || (q.z > DBL_EPSILON));
+
+   eina_vector3_homogeneous_direction_set(&v3, &q);
+   fail_if((v3.x != -2) || (v3.y != 4) || (v3.z != -2));
+
+   eina_quaternion_set(&q, 2, 2, 2, 0.5);
+   eina_vector3_homogeneous_position_set(&v3, &q);
+   fail_if((v3.x != 4) || (v3.y != 4) || (v3.z != 4));
+
+   res2 = eina_vector3_equivalent(&v1, &v2);
+   fail_if(res2 != EINA_FALSE);
+
+   res2 = eina_vector3_equivalent(&v1, &v1);
+   fail_if(res2 != EINA_TRUE);
+
+   res2 = eina_vector3_triangle_equivalent(&v1, &v2, &v3,
+                                           &v2, &v3, &v1);
+   fail_if(res2 != EINA_FALSE);
+
+   res2 = eina_vector3_triangle_equivalent(&v1, &v2, &v3,
+                                           &v1, &v2, &v3);
+   fail_if(res2 != EINA_TRUE);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_vector(TCase *tc)
 {
    tcase_add_test(tc, eina_test_vector2_operations);
+   tcase_add_test(tc, eina_test_vector3_operations);
 }
