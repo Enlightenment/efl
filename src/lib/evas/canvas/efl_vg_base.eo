@@ -1,3 +1,5 @@
+import eina_types;
+
 abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
 {
    eo_prefix: efl_vg;
@@ -39,7 +41,7 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
               @since 1.14]]
          }
          values {
-            m: const(Eina_Matrix3) *; [[transformation matrix.]]
+            m: const(Eina.Matrix3) *; [[transformation matrix.]]
          }
       }
       @property origin {

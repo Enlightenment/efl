@@ -22,7 +22,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	 get {
 	 }
 	 values {
-	    m: const(Eina_Matrix3) *;
+	    m: const(Eina.Matrix3) *;
 	 }
       }
       @property origin {

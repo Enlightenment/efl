@@ -7,3 +7,17 @@ struct @extern Eina.Rectangle {
     h: int;
 }
 struct @extern Eina.File;
+
+struct Eina.Matrix3 {
+   xx: double;
+   xy: double;
+   xz: double;
+
+   yx: double;
+   yy: double;
+   yz: double;
+
+   zx: double;
+   zy: double;
+   zz: double;
+}
