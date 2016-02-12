@@ -4176,6 +4176,22 @@ _elm_entry_select_region_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, int start,
    edje_object_part_text_select_extend(sd->entry_edje, "elm.text");
 }
 
+EOLIAN static void
+_elm_entry_select_region_get(Eo *obj, Elm_Entry_Data *sd, int *start, int *end)
+{
+   if (!elm_entry_selection_get(obj))
+     {
+        if (start) *start = -1;
+        if (end) *end = -1;
+        return;
+     }
+
+   if (start)
+     *start = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text", EDJE_CURSOR_SELECTION_BEGIN);
+   if (end)
+     *end = edje_object_part_text_cursor_pos_get(sd->entry_edje, "elm.text", EDJE_CURSOR_SELECTION_END);
+}
+
 EOLIAN static Eina_Bool
 _elm_entry_cursor_geometry_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
@@ -5428,12 +5444,9 @@ _elm_entry_elm_interface_atspi_text_selections_count_get(Eo *obj, Elm_Entry_Data
 EOLIAN static void
 _elm_entry_elm_interface_atspi_text_selection_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int *start_offset, int *end_offset)
 {
-   *start_offset = *end_offset = -1;
-   if (!elm_entry_selection_get(obj)) return;
    if (selection_number != 0) return;
 
-   *start_offset = edje_object_part_text_cursor_pos_get(_pd->entry_edje, "elm.text", EDJE_CURSOR_SELECTION_BEGIN);
-   *end_offset = edje_object_part_text_cursor_pos_get(_pd->entry_edje, "elm.text", EDJE_CURSOR_SELECTION_END);
+   eo_do(obj, elm_obj_entry_select_region_get(start_offset, end_offset));
 }
 
 EOLIAN static Eina_Bool

@@ -493,6 +493,12 @@ class Elm.Entry (Elm.Layout, Elm.Interface_Scrollable, Evas.Clickable_Interface,
               @since 1.9
             ]]
          }
+         get {
+            [[Get the current position of the selection cursors in the entry.
+
+              @since 1.18
+            ]]
+         }
          values {
             start: int; [[The starting position.]]
             end: int; [[The end position.]]
