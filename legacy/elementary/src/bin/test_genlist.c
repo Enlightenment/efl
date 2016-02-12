@@ -212,6 +212,35 @@ Eina_Bool gl_state_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, con
    return EINA_FALSE;
 }
 
+Evas_Object *gl_reusable_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part, Evas_Object *old)
+{
+   if (old && !strcmp(part, "elm.swallow.end"))
+     {
+        // Reuse old content
+        // Here need to add initializing and state changing
+        // for cached content.
+        // printf("content reuse for cached content %p, %s\n", old, part);
+        return old;
+     }
+   else
+     {
+        // Create new content object for non-reused part.
+        //printf("content create in reuse %p, %s\n", old, part);
+        char buf[PATH_MAX];
+        Evas_Object *ic = elm_icon_add(obj);
+        if (!strcmp(part, "elm.swallow.end"))
+          snprintf(buf, sizeof(buf), "%s/images/bubble.png", elm_app_data_dir_get());
+        else
+          snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+        elm_image_file_set(ic, buf, NULL);
+        evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+        return ic;
+     }
+
+   // If return NULL value, content_get will be called to get new content.
+   // return NULL;
+}
+
 static void
 gl_sel(void *data, Evas_Object *obj, void *event_info)
 {
@@ -392,9 +421,12 @@ test_genlist(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    api->itc1 = elm_genlist_item_class_new();
    api->itc1->item_style = "default";
    api->itc1->func.text_get = gl_text_get1;
-   api->itc1->func.content_get = gl_content_get;
+   api->itc1->func.content_get = NULL; // gl_content_get;
    api->itc1->func.state_get = gl_state_get;
    api->itc1->func.del = NULL;
+   // use content_reuse function for reusing
+   // repeated content objects instead of content_get
+   api->itc1->func.reusable_content_get = gl_reusable_content_get;
 
    bt_50 = elm_button_add(win);
    elm_object_text_set(bt_50, "Go to 50");

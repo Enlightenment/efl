@@ -365,7 +365,7 @@ _item_content_realize(Elm_Gen_Item *it,
         EINA_LIST_FREE(*contents, content)
           evas_object_del(content);
      }
-   if (it->itc->func.content_get)
+   if (it->itc->func.content_get || it->itc->func.reusable_content_get)
      {
         Eina_List *source;
         const char *key;
@@ -377,46 +377,61 @@ _item_content_realize(Elm_Gen_Item *it,
              if (parts && fnmatch(parts, key, FNM_PERIOD))
                continue;
 
-             Evas_Object *old = edje_object_part_swallow_get(target, key);
-             if (old)
-               {
-                  *contents = eina_list_remove(*contents, old);
-                  evas_object_del(old);
-               }
+             Evas_Object *old = NULL;
+             old = edje_object_part_swallow_get(target, key);
+
+             // Reuse content by popping from the cache
              content = NULL;
-             if (it->itc->func.content_get)
-               content = it->itc->func.content_get
-                  ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
-             if (!content) continue;
-
-             // FIXME: cause elm_layout sizing eval is delayed by smart calc,
-             // genlist cannot get actual min size of edje.
-             // This is workaround code to set min size directly.
-             if (eo_class_get(content) == ELM_LAYOUT_CLASS)
+             if (it->itc->func.reusable_content_get)
+             content = it->itc->func.reusable_content_get(
+                (void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key, old);
+             if (!content)
                {
-                  Evas_Coord old_w, old_h, minw = 0, minh = 0;
-                  evas_object_size_hint_min_get(content, &old_w, &old_h);
-                  edje_object_size_min_calc(elm_layout_edje_get(content), &minw, &minh);
-
-                  if (old_w > minw) minw = old_w;
-                  if (old_h > minh) minw = old_h;
-                  evas_object_size_hint_min_set(content, minw, minh);
+                  // Call the content get
+                  if (it->itc->func.content_get)
+                    content = it->itc->func.content_get
+                       ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
+                  if (!content) continue;
                }
 
-             *contents = eina_list_append(*contents, content);
-             if (!edje_object_part_swallow(target, key, content))
+             if (content != old)
                {
-                  ERR("%s (%p) can not be swallowed into %s",
-                      evas_object_type_get(content), content, key);
-                  evas_object_hide(content);
-                  continue;
+                  // FIXME: cause elm_layout sizing eval is delayed by smart calc,
+                  // genlist cannot get actual min size of edje.
+                  // This is workaround code to set min size directly.
+                  if (eo_class_get(content) == ELM_LAYOUT_CLASS)
+                    {
+                       Evas_Coord old_w, old_h, minw = 0, minh = 0;
+                       evas_object_size_hint_min_get(content, &old_w, &old_h);
+                       edje_object_size_min_calc(elm_layout_edje_get(content), &minw, &minh);
+
+                       if (old_w > minw) minw = old_w;
+                       if (old_h > minh) minw = old_h;
+                       evas_object_size_hint_min_set(content, minw, minh);
+                    }
+
+                  *contents = eina_list_append(*contents, content);
+                  if (!edje_object_part_swallow(target, key, content))
+                    {
+                       ERR("%s (%p) can not be swallowed into %s",
+                           evas_object_type_get(content), content, key);
+                       evas_object_hide(content);
+                       continue;
+                    }
+                  elm_widget_sub_object_add(WIDGET(it), content);
                }
-             elm_widget_sub_object_add(WIDGET(it), content);
+
              if (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()))
                elm_widget_disabled_set(content, EINA_TRUE);
 
              snprintf(buf, sizeof(buf), "elm,state,%s,visible", key);
              edje_object_signal_emit(target, buf, "elm");
+
+             if (old && content != old)
+               {
+                  *contents = eina_list_remove(*contents, old);
+                  evas_object_del(old);
+               }
           }
      }
 }
@@ -544,8 +559,11 @@ _view_clear(Evas_Object *view, Eina_List **texts, Eina_List **contents)
      edje_object_part_text_set(view, part, NULL);
    ELM_SAFE_FREE(*texts, elm_widget_stringlist_free);
 
-   EINA_LIST_FREE(*contents, c)
-     evas_object_del(c);
+   if (contents)
+     {
+        EINA_LIST_FREE(*contents, c)
+           evas_object_del(c);
+     }
 }
 
 static void
@@ -626,7 +644,7 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
      eo_do(WIDGET(it), eo_event_callback_call(ELM_GENLIST_EVENT_UNREALIZED, EO_OBJ(it)));
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
 
-   _view_clear(VIEW(it), &(it->texts), &(it->contents));
+   _view_clear(VIEW(it), &(it->texts), NULL);
    ELM_SAFE_FREE(it->item_focus_chain, eina_list_free);
 
    eo_do(EO_OBJ(it), elm_wdg_item_track_cancel());
@@ -1306,8 +1324,7 @@ _elm_genlist_item_state_update(Elm_Gen_Item *it)
 }
 
 static void
-_view_inflate(Evas_Object *view, Elm_Gen_Item *it, Eina_List **sources,
-              Eina_List **contents)
+_view_inflate(Evas_Object *view, Elm_Gen_Item *it, Eina_List **sources, Eina_List **contents)
 {
    if (!view) return;
    if (sources) _item_text_realize(it, view, sources, NULL);
@@ -1487,11 +1504,18 @@ _item_cache_pop(Elm_Genlist_Data *sd, Item_Cache *itc)
 static void
 _item_cache_free(Item_Cache *itc)
 {
+   Evas_Object *c;
+   const char *part;
+
    if (!itc) return;
 
    evas_object_del(itc->spacer);
    evas_object_del(itc->base_view);
    eina_stringshare_del(itc->item_style);
+   EINA_LIST_FREE(itc->contents, c)
+     {
+        evas_object_del(c);
+     }
    ELM_SAFE_FREE(itc, free);
 }
 
@@ -1524,7 +1548,7 @@ _item_cache_zero(Elm_Genlist_Data *sd)
 
 // add an item to item cache
 static Eina_Bool
-_item_cache_add(Elm_Gen_Item *it)
+_item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
 {
    if (it->item->nocache_once || it->item->nocache) return EINA_FALSE;
 
@@ -1549,6 +1573,7 @@ _item_cache_add(Elm_Gen_Item *it)
    itc->spacer = it->spacer;
    itc->base_view = VIEW(it);
    itc->item_style = eina_stringshare_add(it->itc->item_style);
+   itc->contents = contents;
    if (it->item->type & ELM_GENLIST_ITEM_TREE)
      {
         itc->tree = 1;
@@ -1622,12 +1647,25 @@ _item_cache_find(Elm_Gen_Item *it)
              VIEW(it) = itc->base_view;
              itc->spacer = NULL;
              itc->base_view = NULL;
-
+             eina_list_free(itc->contents);
+             itc->contents = NULL;
              _item_cache_free(itc);
              return EINA_TRUE;
           }
      }
    return EINA_FALSE;
+}
+
+static Eina_List *
+_content_cache_add(Elm_Gen_Item *it, Eina_List **cache)
+{
+   Evas_Object *content = NULL;
+   EINA_LIST_FREE(it->contents, content)
+     {
+        *cache = eina_list_append(*cache, content);
+     }
+
+   return *cache;
 }
 
 static char *
@@ -4212,7 +4250,7 @@ _item_mouse_down_cb(void *data,
    else sd->on_hold = EINA_FALSE;
    if (sd->on_hold) return;
    sd->wasselected = it->selected;
-   
+
    ecore_timer_del(it->item->swipe_timer);
    it->item->swipe_timer = ecore_timer_add(SWIPE_TIME, _swipe_cancel, it);
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
@@ -5074,9 +5112,11 @@ _decorate_item_finished_signal_cb(void *data,
 static void
 _item_unrealize(Elm_Gen_Item *it)
 {
-   Evas_Object *content;
-   EINA_LIST_FREE(it->item->flip_contents, content)
-     evas_object_del(content);
+   Evas_Object *c;
+   Eina_List *cache = NULL;
+
+   EINA_LIST_FREE(it->item->flip_contents, c)
+     evas_object_del(c);
 
    /* access */
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
@@ -5086,10 +5126,14 @@ _item_unrealize(Elm_Gen_Item *it)
    _decorate_item_unrealize(it);
    if (GL_IT(it)->wsd->decorate_all_mode) _decorate_all_item_unrealize(it);
 
-   if (!_item_cache_add(it))
+   if (!_item_cache_add(it, _content_cache_add(it, &cache)))
      {
         ELM_SAFE_FREE(VIEW(it), evas_object_del);
         ELM_SAFE_FREE(it->spacer, evas_object_del);
+        EINA_LIST_FREE(cache, c)
+          {
+             evas_object_del(c);
+          }
      }
 
    it->states = NULL;
