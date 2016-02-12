@@ -413,6 +413,7 @@ _if_focused_revert(Evas_Object *obj,
                             Evas_Object *child;
                             EINA_LIST_FOREACH(sd2->subobjs, l, child)
                               {
+                                 if (!_elm_widget_is(child)) continue;
                                  if (elm_widget_focus_get(child))
                                    {
                                       elm_widget_focused_object_clear(child);
