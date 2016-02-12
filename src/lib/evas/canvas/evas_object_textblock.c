@@ -3725,8 +3725,6 @@ _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    return -1;
 }
 
-static Evas_Object_Textblock_Text_Item * _layout_hyphen_item_new(Ctxt *c, const Evas_Object_Textblock_Text_Item *cur_ti);
-
 /**
  * @internal
  * Split before cut, and strip if str[cut - 1] is a whitespace.
@@ -4445,6 +4443,7 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 #define ALLOW_BREAK(i) \
    (breaks[i] <= LINEBREAK_ALLOWBREAK)
 
+#ifdef HAVE_HYPHEN
 /* Give a position in text, find the end of word by using Unicode word
  * boundary rules */
 static inline size_t
@@ -4455,13 +4454,58 @@ _layout_word_end(const char *breaks, size_t pos, size_t len)
    return pos;
 }
 
+/* Hyphenation (since 1.17) */
+static Evas_Object_Textblock_Text_Item *
+_layout_hyphen_item_new(Ctxt *c, const Evas_Object_Textblock_Text_Item *cur_ti)
+{
+   /* U+2010 - Unicode HYPHEN */
+   const Eina_Unicode _hyphen_str[2] = { 0x2010, '\0' };
+   Evas_Object_Textblock_Text_Item *hyphen_ti;
+   Evas_Script_Type script;
+   Evas_Font_Instance *script_fi = NULL, *cur_fi;
+   size_t len = 1; /* The length of _hyphen_str */
+
+   if (c->hyphen_ti)
+     {
+        _item_free(c->obj, NULL, _ITEM(c->hyphen_ti));
+     }
+   c->hyphen_ti = hyphen_ti = _layout_text_item_new(c, cur_ti->parent.format);
+   hyphen_ti->parent.text_node = cur_ti->parent.text_node;
+   hyphen_ti->parent.text_pos = cur_ti->parent.text_pos + cur_ti->text_props.text_len - 1;
+   script = evas_common_language_script_type_get(_hyphen_str, len);
+
+   evas_common_text_props_bidi_set(&hyphen_ti->text_props,
+         c->par->bidi_props, hyphen_ti->parent.text_pos);
+   evas_common_text_props_script_set (&hyphen_ti->text_props, script);
+
+   if (hyphen_ti->parent.format->font.font)
+     {
+        Evas_Object_Protected_Data *obj = eo_data_scope_get(c->obj, EVAS_OBJECT_CLASS);
+        /* It's only 1 char anyway, we don't need the run end. */
+        (void) ENFN->font_run_end_get(ENDT,
+              hyphen_ti->parent.format->font.font, &script_fi, &cur_fi,
+              script, _hyphen_str, len);
+
+        ENFN->font_text_props_info_create(ENDT,
+              cur_fi, _hyphen_str, &hyphen_ti->text_props,
+              c->par->bidi_props, hyphen_ti->parent.text_pos, len, EVAS_TEXT_PROPS_MODE_SHAPE,
+              hyphen_ti->parent.format->font.fdesc->lang);
+     }
+
+   _text_item_update_sizes(c, hyphen_ti);
+   return hyphen_ti;
+}
+
 #define SHY_HYPHEN 0xad
+
+#endif
 
 static int
 _layout_get_hyphenationwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Item *it, size_t line_start,
       const char *breaks, const char *wordbreaks)
 {
+#ifdef HAVE_HYPHEN
    size_t wrap;
    size_t orig_wrap;
    const Eina_Unicode *str = eina_ustrbuf_string_get(
@@ -4542,9 +4586,7 @@ _layout_get_hyphenationwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
                        size_t i = 0;
                        size_t pos = 0;
 
-#ifdef HAVE_HYPHEN
                        hyphens = _layout_wrap_hyphens_get(str, it->format->font.fdesc->lang, word_start, word_len);
-#endif
 
                        /* This only happens one time, if the cutoff is in
                         * the middle of this word */
@@ -4608,6 +4650,9 @@ _layout_get_hyphenationwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
              return wrap;
           }
      }
+#else
+   (void) wordbreaks;
+#endif
 
    /* Hyphenation falls-back to char wrapping at start of line */
    return _layout_get_charwrap(c, fmt, it,
@@ -7507,48 +7552,6 @@ _layout_item_obstacle_get(Ctxt *c, Evas_Object_Textblock_Item *it)
           }
      }
    return min_obs;
-}
-
-/* Hyphenation (since 1.17) */
-static Evas_Object_Textblock_Text_Item *
-_layout_hyphen_item_new(Ctxt *c, const Evas_Object_Textblock_Text_Item *cur_ti)
-{
-   /* U+2010 - Unicode HYPHEN */
-   const Eina_Unicode _hyphen_str[2] = { 0x2010, '\0' };
-   Evas_Object_Textblock_Text_Item *hyphen_ti;
-   Evas_Script_Type script;
-   Evas_Font_Instance *script_fi = NULL, *cur_fi;
-   size_t len = 1; /* The length of _hyphen_str */
-
-   if (c->hyphen_ti)
-     {
-        _item_free(c->obj, NULL, _ITEM(c->hyphen_ti));
-     }
-   c->hyphen_ti = hyphen_ti = _layout_text_item_new(c, cur_ti->parent.format);
-   hyphen_ti->parent.text_node = cur_ti->parent.text_node;
-   hyphen_ti->parent.text_pos = cur_ti->parent.text_pos + cur_ti->text_props.text_len - 1;
-   script = evas_common_language_script_type_get(_hyphen_str, len);
-
-   evas_common_text_props_bidi_set(&hyphen_ti->text_props,
-         c->par->bidi_props, hyphen_ti->parent.text_pos);
-   evas_common_text_props_script_set (&hyphen_ti->text_props, script);
-
-   if (hyphen_ti->parent.format->font.font)
-     {
-        Evas_Object_Protected_Data *obj = eo_data_scope_get(c->obj, EVAS_OBJECT_CLASS);
-        /* It's only 1 char anyway, we don't need the run end. */
-        (void) ENFN->font_run_end_get(ENDT,
-              hyphen_ti->parent.format->font.font, &script_fi, &cur_fi,
-              script, _hyphen_str, len);
-
-        ENFN->font_text_props_info_create(ENDT,
-              cur_fi, _hyphen_str, &hyphen_ti->text_props,
-              c->par->bidi_props, hyphen_ti->parent.text_pos, len, EVAS_TEXT_PROPS_MODE_SHAPE,
-              hyphen_ti->parent.format->font.fdesc->lang);
-     }
-
-   _text_item_update_sizes(c, hyphen_ti);
-   return hyphen_ti;
 }
 
 /* cursors */
