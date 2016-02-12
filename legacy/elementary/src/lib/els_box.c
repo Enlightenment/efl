@@ -105,6 +105,7 @@ _smart_extents_non_homogeneous_calc(Evas_Object_Box_Data *priv, int w, int h, in
    const Eina_List *l;
    Evas_Object_Box_Option *opt;
    int mnw, mnh, mxw, mxh, cminw, cminh;
+   Evas_Coord pad_l, pad_r, pad_t, pad_b;
    Evas_Coord *rw, *rh, *rxw, *rxh, *rminw, *rminh, *rmaxw, *rmaxh;
    Eina_Bool max = EINA_TRUE, asp = EINA_FALSE;
 
@@ -146,7 +147,10 @@ _smart_extents_non_homogeneous_calc(Evas_Object_Box_Data *priv, int w, int h, in
         else
           rrw = &oh, rrh = &ow;
 
+        evas_object_size_hint_padding_get(opt->obj, &pad_l, &pad_r, &pad_t, &pad_b);
         evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
+        mnw += pad_l + pad_r;
+        mnh += pad_t + pad_b;
         if (*rminw < *rw) *rminw = *rw;
         *rminh += *rh;
 
@@ -160,6 +164,8 @@ _smart_extents_non_homogeneous_calc(Evas_Object_Box_Data *priv, int w, int h, in
         asp |= !!aspect;
 
         evas_object_size_hint_max_get(opt->obj, &mxw, &mxh);
+        if (mxw >= 0) mxw += pad_l + pad_r;
+        if (mxh >= 0) mxh += pad_t + pad_b;
         if (*rxh < 0)
           {
              *rmaxh = -1;
@@ -221,6 +227,7 @@ static void
 _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int w, int h, double expand, Eina_Bool horizontal, Eina_Bool homogeneous)
 {
    Evas_Coord minw, minh, mnw, mnh, maxw, maxh;
+   Evas_Coord pad_l, pad_r, pad_t, pad_b;
    const Eina_List *l;
    Evas_Object_Box_Option *opt;
    int c;
@@ -245,7 +252,10 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int w, in
              if (ax < 0) fw = 1;
              if (ay < 0) fh = 1;
 
+             evas_object_size_hint_padding_get(opt->obj, &pad_l, &pad_r, &pad_t, &pad_b);
              evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
+             mnw += pad_l + pad_r;
+             mnh += pad_t + pad_b;
              if (minh < mnh) minh = mnh;
              if (minw < mnw) minw = mnw;
 
@@ -267,11 +277,13 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int w, in
              evas_object_size_hint_max_get(opt->obj, &mnw, &mnh);
              if (mnh >= 0)
                {
+                  if (mnh >= 0) mnh += pad_t + pad_b;
                   if (maxh == -1) maxh = mnh;
                   else if (maxh > mnh) maxh = mnh;
                }
              if (mnw >= 0)
                {
+                  if (mnw >= 0) mnw += pad_l + pad_r;
                   if (maxw == -1) maxw = mnw;
                   else if (maxw > mnw) maxw = mnw;
                }
@@ -392,6 +404,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
         Evas_Coord mnw, mnh, mxw, mxh;
+        Evas_Coord pad_l, pad_r, pad_t, pad_b;
         int fw, fh, xw, xh;//fillw, fillw, expandw, expandh
         Evas_Aspect_Control aspect = EVAS_ASPECT_CONTROL_NONE;
         int asx, asy;
@@ -399,8 +412,13 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal
         obj = opt->obj;
         evas_object_size_hint_align_get(obj, &ax, &ay);
         evas_object_size_hint_weight_get(obj, &wx, &wy);
+        evas_object_size_hint_padding_get(obj, &pad_l, &pad_r, &pad_t, &pad_b);
         evas_object_size_hint_min_get(obj, &mnw, &mnh);
+        mnw += pad_l + pad_r;
+        mnh += pad_t + pad_b;
         evas_object_size_hint_max_get(obj, &mxw, &mxh);
+        if (mxw >= 0) mxw += pad_l + pad_r;
+        if (mxh >= 0) mxh += pad_t + pad_b;
         evas_object_size_hint_aspect_get(obj, &aspect, &asx, &asy);
         if (aspect && ((asx < 1) || (asy < 1)))
           aspect = EVAS_ASPECT_CONTROL_NONE;
@@ -438,9 +456,11 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal
              if (xw && aspect && (!homogeneous))
                ww = ow;
              evas_object_move(obj,
-                              ((!rtl) ? (xx) : (x + (w - (xx - x) - ww)))
+                              ((!rtl) ? (xx + pad_l) : (x + (w - (xx - x) - ww) + pad_r))
                               + (Evas_Coord)(((double)(ww - ow)) * ax),
-                              yy + (Evas_Coord)(((double)(hh - oh)) * ay));
+                              yy + (Evas_Coord)(((double)(hh - oh)) * ay) + pad_t);
+             ow -= pad_l + pad_r;
+             oh -= pad_t + pad_b;
              evas_object_resize(obj, ow, oh);
              xx += ww;
              xx += priv->pad.h;
@@ -468,8 +488,10 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal
              if (xh && aspect && (!homogeneous))
                hh = oh;
              evas_object_move(obj,
-                              xx + (Evas_Coord)(((double)(ww - ow)) * ax),
-                              yy + (Evas_Coord)(((double)(hh - oh)) * ay));
+                              xx + (Evas_Coord)(((double)(ww - ow)) * ax) + pad_l,
+                              yy + (Evas_Coord)(((double)(hh - oh)) * ay) + pad_t);
+             ow -= pad_l + pad_r;
+             oh -= pad_t + pad_b;
              evas_object_resize(obj, ow, oh);
              yy += hh;
              yy += priv->pad.v;
