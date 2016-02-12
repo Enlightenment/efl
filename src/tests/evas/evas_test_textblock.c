@@ -3866,6 +3866,7 @@ START_TEST(evas_textblock_obstacle)
 }
 END_TEST;
 
+#ifdef HAVE_HYPHEN
 static void
 _hyphenation_width_stress(Evas_Object *tb, Evas_Textblock_Cursor *cur)
 {
@@ -3929,6 +3930,7 @@ START_TEST(evas_textblock_hyphenation)
    END_TB_TEST();
 }
 END_TEST;
+#endif
 
 void evas_test_textblock(TCase *tc)
 {
@@ -3952,6 +3954,8 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_items);
    tcase_add_test(tc, evas_textblock_delete);
    tcase_add_test(tc, evas_textblock_obstacle);
+#ifdef HAVE_HYPHEN
    tcase_add_test(tc, evas_textblock_hyphenation);
+#endif
 }
 
