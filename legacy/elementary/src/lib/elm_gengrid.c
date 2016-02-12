@@ -3789,6 +3789,17 @@ _elm_gengrid_item_del_not_serious(Elm_Gen_Item *it)
 
    if (it->walking > 0) return;
 
+   if (sd->show_it == eo_it)
+     {
+        sd->show_it = NULL;
+        sd->show_region = EINA_FALSE;
+     }
+   if (sd->bring_in_it == eo_it)
+     {
+        sd->bring_in_it = NULL;
+        sd->bring_in = EINA_FALSE;
+     }
+
    if (it->selected)
      sd->selected = eina_list_remove(sd->selected, eo_it);
    if (sd->last_selected_item == eo_it)
