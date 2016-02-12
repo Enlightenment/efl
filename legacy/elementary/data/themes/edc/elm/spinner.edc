@@ -224,5 +224,16 @@ group { name: "elm/spinner/base/vertical";
             align: 0.0 0.5;
          }
       }
+      part { name: "elm.dragable.slider"; type: RECT;
+         repeat_events: 1;
+         dragable.x: 0 0 0;
+         dragable.y: 1 1 0;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            rel1.to: "elm.swallow.text_button";
+            rel2.to: "elm.swallow.text_button";
+            color: 0 0 0 0;
+         }
+      }
    }
 }

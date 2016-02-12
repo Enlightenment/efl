@@ -260,15 +260,18 @@ _drag_cb(void *data,
 {
    double pos = 0.0, delta;
    Evas_Object *obj = data;
+   const char *style;
 
    ELM_SPINNER_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->entry_visible) return;
 
+   style = elm_widget_style_get(obj);
+
    if (sd->button_layout)
      {
-        if (!strncmp(elm_widget_style_get(obj), "vertical", 8))
+        if (!strncmp(style, "vertical", 8))
           eo_do((Eo *)wd->resize_obj,
                 edje_obj_part_drag_value_get("elm.dragable.slider", NULL, &pos));
         else
@@ -288,6 +291,9 @@ _drag_cb(void *data,
    delta = sd->drag_val_step * sd->step * _elm_config->scale;
    if (pos < sd->drag_prev_pos) delta *= -1;
    sd->drag_prev_pos = pos;
+
+   /* Dragable is inverse of spinner value */
+   if (!strncmp(style, "vertical", 8)) delta *= -1;
    /* If we are on rtl mode, change the delta to be negative on such changes */
    if (elm_widget_mirrored_get(obj)) delta *= -1;
    if (_value_set(data, sd->val + delta)) _label_write(data);
