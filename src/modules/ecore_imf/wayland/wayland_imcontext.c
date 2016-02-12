@@ -363,17 +363,14 @@ show_input_panel(Ecore_IMF_Context *ctx)
 
    imcontext->input = input;
 
-   if (ecore_imf_context_input_panel_enabled_get(ctx))
-     {
-        _clear_hide_timer();
-        wl_text_input_show_input_panel(imcontext->text_input);
-        wl_text_input_activate(imcontext->text_input, seat,
-                               ecore_wl2_window_surface_get(imcontext->window));
+   _clear_hide_timer();
+   wl_text_input_show_input_panel(imcontext->text_input);
+   wl_text_input_activate(imcontext->text_input, seat,
+                          ecore_wl2_window_surface_get(imcontext->window));
 
-        wl_text_input_set_content_type(imcontext->text_input,
-                                       imcontext->content_hint,
-                                       imcontext->content_purpose);
-     }
+   wl_text_input_set_content_type(imcontext->text_input,
+                                  imcontext->content_hint,
+                                  imcontext->content_purpose);
 
    return EINA_TRUE;
 }
@@ -754,8 +751,9 @@ wayland_im_context_focus_in(Ecore_IMF_Context *ctx)
 {
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "focus-in");
 
-   if (!ecore_imf_context_input_panel_show_on_demand_get (ctx))
-     show_input_panel(ctx);
+   if (ecore_imf_context_input_panel_enabled_get(ctx))
+     if (!ecore_imf_context_input_panel_show_on_demand_get (ctx))
+       show_input_panel(ctx);
 }
 
 EAPI void
@@ -878,15 +876,9 @@ wayland_im_context_client_canvas_set(Ecore_IMF_Context *ctx,
 EAPI void
 wayland_im_context_show(Ecore_IMF_Context *ctx)
 {
-   WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
-
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "context_show");
 
-   if (imcontext->text_input)
-     {
-        _clear_hide_timer();
-        wl_text_input_show_input_panel(imcontext->text_input);
-     }
+   show_input_panel(ctx);
 }
 
 EAPI void
@@ -907,7 +899,10 @@ wayland_im_context_filter_event(Ecore_IMF_Context    *ctx,
 {
 
    if (type == ECORE_IMF_EVENT_MOUSE_UP)
-     show_input_panel(ctx);
+     {
+        if (ecore_imf_context_input_panel_enabled_get(ctx))
+          show_input_panel(ctx);
+     }
 
    return EINA_FALSE;
 }
