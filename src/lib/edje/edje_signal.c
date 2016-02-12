@@ -41,9 +41,9 @@ _edje_signal_match_key_hash(const void *key, int key_length EINA_UNUSED)
         hash ^= eina_hash_int64((const unsigned long long int *)&a->matches[i].source, sizeof (char *));
         hash ^= eina_hash_int64((const unsigned long long int *)&a->matches[i].func, sizeof (Edje_Signal_Cb));
 #else
-        hash ^= eina_hash_int32((const unsigned int *)a->matches[i].signal, sizeof (char *));
-        hash ^= eina_hash_int32((const unsigned int *)a->matches[i].source, sizeof (char *));
-        hash ^= eina_hash_int32((const unsigned int *)a->matches[i].func, sizeof (Edje_Signal_Cb));
+        hash ^= eina_hash_int32((const unsigned int *)&a->matches[i].signal, sizeof (char *));
+        hash ^= eina_hash_int32((const unsigned int *)&a->matches[i].source, sizeof (char *));
+        hash ^= eina_hash_int32((const unsigned int *)&a->matches[i].func, sizeof (Edje_Signal_Cb));
 #endif
      }
    return hash;
