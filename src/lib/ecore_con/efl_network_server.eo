@@ -49,7 +49,7 @@ class Efl.Network.Server (Ecore.Con.Base) {
       @property clients {
          [[Retrieves the current list of clients.
 
-           Each node in the returned list points to an \@ref Ecore_Con_Client.
+           Each node in the returned list points to an \@ref Efl_Network_Client.
            This list cannot be modified or freed. It can also change if new
            clients are connected or disconnected, and will become invalid
            when the server is deleted/freed.
@@ -57,7 +57,7 @@ class Efl.Network.Server (Ecore.Con.Base) {
          get {
          }
          values {
-            // FIXME: Ecore.Con.Client is needed, but that introduces a cycle
+            // FIXME: Efl.Network.Client is needed, but that introduces a cycle
             clients: const(list<const(Ecore.Con.Base) *>) *; [[The list of clients on this server.]]
          }
       }

@@ -95,7 +95,7 @@ typedef enum Ecore_Con_Proxy_State
    ECORE_CON_PROXY_STATE_CONFIRM,
 } Ecore_Con_Proxy_State;
 
-struct _Ecore_Con_Client_Data
+struct _Efl_Network_Client_Data
 {
 #ifdef _WIN32
    SOCKET fd;
@@ -127,7 +127,7 @@ struct _Ecore_Con_Client_Data
    Eina_Bool delete_me : 1; /* del event has been queued */
 };
 
-typedef struct _Ecore_Con_Client_Data Ecore_Con_Client_Data;
+typedef struct _Efl_Network_Client_Data Efl_Network_Client_Data;
 
 struct _Efl_Network_Server_Data
 {

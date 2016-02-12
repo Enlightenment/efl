@@ -61,7 +61,7 @@ _ecore_con_dns_del(Ecore_Con_DNS *dns)
      {
         Efl_Network_Server_Data *svr;
 
-        svr = eo_data_scope_get(dns->svr, ECORE_CON_CLIENT_CLASS);
+        svr = eo_data_scope_get(dns->svr, EFL_NETWORK_CLIENT_CLASS);
         if ((svr) && (svr->infos))
           svr->infos = eina_list_remove(svr->infos, dns);
      }

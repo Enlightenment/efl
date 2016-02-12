@@ -1,5 +1,6 @@
-class Ecore.Con.Client (Ecore.Con.Base) {
-   eo_prefix: ecore_con_client_obj;
+class Efl.Network.Client (Ecore.Con.Base) {
+   legacy_prefix: ecore_con_client;
+   eo_prefix: efl_network_client_obj;
    methods {
       @property server {
          [[Controls the server representing the socket the client has
