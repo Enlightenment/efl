@@ -787,6 +787,73 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        rp->object = NULL;
                        break;
 
+                     case EDJE_PART_TYPE_MESH_NODE:
+                       {
+                          Evas_Canvas3D_Mesh *mesh = NULL;
+                          Evas_Canvas3D_Material *material = NULL;
+                          Edje_Part_Description_Mesh_Node *pd_mesh_node;
+
+                          rp->node = eo_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas,
+                                            evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_MESH));
+
+                          mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, ed->base->evas);
+                          eo_do(rp->node, evas_canvas3d_node_mesh_add(mesh));
+
+                          pd_mesh_node = (Edje_Part_Description_Mesh_Node*) rp->chosen_description;
+
+                          if (pd_mesh_node->mesh_node.mesh.primitive == EVAS_CANVAS3D_MESH_PRIMITIVE_NONE)
+                            {
+                               eo_do(mesh,
+                                     efl_file_set(ed->file->model_dir->entries[pd_mesh_node->mesh_node.mesh.id].entry, NULL));
+                            }
+                          else
+                            {
+                               eo_do(mesh,
+                                     evas_canvas3d_mesh_frame_add(0));
+                            }
+
+                          material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, ed->base->evas);
+                          eo_do(mesh,
+                                evas_canvas3d_mesh_frame_material_set(0, material));
+                          if (pd_mesh_node->mesh_node.texture.need_texture && pd_mesh_node->mesh_node.texture.textured)
+                            {
+                               Evas_Canvas3D_Texture *texture = NULL;
+
+                               texture = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, ed->base->evas);
+                               eo_do(material,
+                                     evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, texture));
+                            }
+                          rp->object = NULL;
+                       }
+                       break;
+
+                     case EDJE_PART_TYPE_LIGHT:
+                       {
+                          Evas_Canvas3D_Light *light = NULL;
+
+                          rp->node = eo_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas,
+                                            evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+                          light = eo_add(EVAS_CANVAS3D_LIGHT_CLASS, ed->base->evas);
+                          eo_do(rp->node, evas_canvas3d_node_light_set(light));
+
+                          rp->object = NULL;
+                          break;
+                       }
+
+                     case EDJE_PART_TYPE_CAMERA:
+                       {
+                          Evas_Canvas3D_Camera *camera = NULL;
+
+                          rp->node = eo_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas,
+                                            evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+                          camera = eo_add(EVAS_CANVAS3D_CAMERA_CLASS, ed->base->evas);
+                          eo_do(rp->node, evas_canvas3d_node_camera_set(camera));
+
+                          rp->object = evas_object_image_filled_add(ed->base->evas);
+                          evas_object_resize(rp->object, ed->collection->scene_size.width, ed->collection->scene_size.height);
+                          break;
+                       }
+
                      default:
                        ERR("wrong part type %i!", ep->type);
                        break;
