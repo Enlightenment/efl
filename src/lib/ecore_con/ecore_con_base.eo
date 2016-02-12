@@ -1,3 +1,5 @@
+type Ecore_Con_Dns_Cb: __undefined_type;
+
 abstract Ecore.Con.Base (Eo.Base) {
    legacy_prefix: ecore_con;
    eo_prefix: ecore_con_obj;
