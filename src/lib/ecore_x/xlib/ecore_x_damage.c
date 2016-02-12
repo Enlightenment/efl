@@ -42,6 +42,7 @@ ecore_x_damage_new(Ecore_X_Drawable d,
    Ecore_X_Damage damage;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
    damage = XDamageCreate(_ecore_x_disp, d, level);
    if (_ecore_xlib_sync) ecore_x_sync();
    return damage;
@@ -55,6 +56,7 @@ ecore_x_damage_free(Ecore_X_Damage damage)
 {
 #ifdef ECORE_XDAMAGE
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    XDamageDestroy(_ecore_x_disp, damage);
 #endif /* ifdef ECORE_XDAMAGE */
 }
@@ -66,6 +68,7 @@ ecore_x_damage_subtract(Ecore_X_Damage damage,
 {
 #ifdef ECORE_XDAMAGE
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    XDamageSubtract(_ecore_x_disp, damage, repair, parts);
    if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XDAMAGE */
