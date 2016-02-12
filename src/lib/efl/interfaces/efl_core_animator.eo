@@ -1,3 +1,5 @@
+import eina_types;
+
 struct Efl.Core.Event.Animator_Tick {
    update_area: Eina.Rectangle; [[Area of the canvas that will be pushed to screen.]]
 }
