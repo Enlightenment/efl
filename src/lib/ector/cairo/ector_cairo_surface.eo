@@ -1,3 +1,5 @@
+type @extern cairo_t: void *;
+
 class Ector.Cairo.Surface (Eo.Base, Ector.Generic.Surface)
 {
    eo_prefix: ector_cairo_surface;
