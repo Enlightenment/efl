@@ -233,7 +233,7 @@ _eldbus_signal_handler_clean(Eldbus_Signal_Handler *handler)
    DBusError err;
 
    if (handler->dangling) return;
-
+   DBG("clean handler=%p path=%p cb=%p", handler, handler->path, handler->cb);
    dbus_error_init(&err);
    dbus_bus_remove_match(handler->conn->dbus_conn,
                          eina_strbuf_string_get(handler->match), &err);

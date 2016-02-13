@@ -158,6 +158,7 @@ _eldbus_proxy_free(Eldbus_Proxy *proxy)
    unsigned int i;
    Eldbus_Signal_Handler *h;
 
+   DBG("freeing proxy=%p", proxy);
    EINA_LIST_FREE(proxy->handlers, h)
      {
         if (h->dangling)
@@ -665,6 +666,7 @@ eldbus_proxy_signal_handler_add(Eldbus_Proxy *proxy, const char *member, Eldbus_
    handler = _eldbus_signal_handler_add(proxy->obj->conn, name, path,
                                        proxy->interface, member, cb, cb_data);
    EINA_SAFETY_ON_NULL_RETURN_VAL(handler, NULL);
+   DBG("signal handler added: proxy=%p handler=%p cb=%p", proxy, handler, cb);
 
    eldbus_signal_handler_free_cb_add(handler, _on_signal_handler_free, proxy);
    proxy->handlers = eina_list_append(proxy->handlers, handler);
