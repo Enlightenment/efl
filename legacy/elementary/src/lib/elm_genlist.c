@@ -365,7 +365,8 @@ _item_content_realize(Elm_Gen_Item *it,
         EINA_LIST_FREE(*contents, content)
           evas_object_del(content);
      }
-   if (it->itc->func.content_get || it->itc->func.reusable_content_get)
+   if (it->itc->func.content_get ||
+      ((it->itc->version >= 3) && it->itc->func.reusable_content_get))
      {
         Eina_List *source;
         const char *key;
