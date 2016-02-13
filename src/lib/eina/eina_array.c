@@ -293,6 +293,7 @@ eina_array_new(unsigned int step)
 EAPI void
 eina_array_free(Eina_Array *array)
 {
+   if (!array) return;
    eina_array_flush(array);
 
    EINA_SAFETY_ON_NULL_RETURN(array);
