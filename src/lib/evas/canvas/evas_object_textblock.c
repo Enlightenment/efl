@@ -4537,13 +4537,14 @@ _layout_get_hyphenationwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 
                   if (word_len >= 4)
                     {
-                       char *hyphens = NULL;
                        size_t hyphen_off;
                        size_t i = 0;
                        size_t pos = 0;
 
 #ifdef HAVE_HYPHEN
-                       hyphens = _layout_wrap_hyphens_get(str, it->format->font.fdesc->lang, word_start, word_len);
+                       char *hyphens = _layout_wrap_hyphens_get(
+                             str, it->format->font.fdesc->lang,
+                             word_start, word_len);
 #endif
 
                        /* This only happens one time, if the cutoff is in
@@ -4563,18 +4564,23 @@ _layout_get_hyphenationwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 
                        for (i = hyphen_off, pos = word_end ; pos > word_start ; i--, pos--)
                          {
-                            if ((hyphens && (hyphens[i] & 1)) || str[pos] == SHY_HYPHEN)
+                            if (
+#ifdef HAVE_HYPHEN
+                                  (hyphens && (hyphens[i] & 1)) ||
+#endif
+                                  (str[pos] == SHY_HYPHEN))
                               {
                                  found_hyphen = EINA_TRUE;
                                  break;
                               }
                          }
 
+#ifdef HAVE_HYPHEN
                        if (hyphens)
                          {
                             free(hyphens);
-                            hyphens = NULL;
                          }
+#endif
 
                        /* Rejecting sequences smaller than 2 characters.
                         * This also works with 'i' initialized to 0 */
