@@ -591,11 +591,12 @@ EAPI void                   elm_transit_go(Elm_Transit *transit);
  * @note @p transit can not be NULL
  *
  * @param transit The transit object.
+ * @return @c EINA_TRUE if transition is reverted, @c EINA_FALSE otherwise.
  *
  * @since 1.18
  * @ingroup Transit
  */
-EAPI void                   elm_transit_revert_go(Elm_Transit *transit);
+EAPI Eina_Bool               elm_transit_revert(Elm_Transit *transit);
 
 /**
  * Starts the transition in given seconds.

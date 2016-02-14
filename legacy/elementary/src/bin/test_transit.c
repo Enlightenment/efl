@@ -25,7 +25,7 @@ static void
 _transit_revert(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans = (Elm_Transit*)data;
-   elm_transit_revert_go(trans);
+   elm_transit_revert(trans);
 }
 
 static void

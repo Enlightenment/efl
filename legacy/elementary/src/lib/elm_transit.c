@@ -773,10 +773,13 @@ elm_transit_duration_get(const Elm_Transit *transit)
    return transit->time.duration;
 }
 
-EAPI void
-elm_transit_revert_go(Elm_Transit *transit)
+EAPI Eina_Bool
+elm_transit_revert(Elm_Transit *transit)
 {
-   ELM_TRANSIT_CHECK_OR_RETURN(transit);
+   ELM_TRANSIT_CHECK_OR_RETURN(transit, EINA_FALSE);
+
+   if (!transit->animator) return EINA_FALSE;
+
    if (transit->revert_mode)
      {
         transit->total_revert_time += transit->time.revert_elapsed;
@@ -788,6 +791,8 @@ elm_transit_revert_go(Elm_Transit *transit)
         transit->time.revert_elapsed = 0;
         transit->revert_begin_progress = 0;
      }
+
+   return EINA_TRUE;
 }
 
 EAPI void
