@@ -1510,6 +1510,7 @@ ecore_drm_output_rotation_set(Ecore_Drm_Output *output, Ecore_Drm_Plane_Type typ
 {
    Ecore_Drm_Plane *plane;
    Eina_List *l;
+   Eina_Bool ret = EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
 
@@ -1522,13 +1523,18 @@ ecore_drm_output_rotation_set(Ecore_Drm_Output *output, Ecore_Drm_Plane_Type typ
              return EINA_FALSE;
           }
 
-        drmModeObjectSetProperty(output->dev->drm.fd,
-                                 output->primary_plane_id,
-                                 DRM_MODE_OBJECT_PLANE,
-                                 output->rotation_prop_id,
-                                 plane->rotation_map[ffs(rotation)]);
+        if (drmModeObjectSetProperty(output->dev->drm.fd,
+                                     output->primary_plane_id,
+                                     DRM_MODE_OBJECT_PLANE,
+                                     output->rotation_prop_id,
+                                     plane->rotation_map[ffs(rotation)]) < 0)
+          {
+             WRN("Failed to set Rotation");
+             return EINA_FALSE;
+          }
+        ret = EINA_TRUE;
         break;
      }
 
-   return EINA_TRUE;
+   return ret;
 }
