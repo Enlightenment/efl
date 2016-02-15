@@ -6,6 +6,8 @@
 
 #include "elm_code_widget_private.h"
 
+static char _breaking_chars[] = " \t,.?!;:()[]{}";
+
 static Elm_Code_Widget_Selection_Data *
 _elm_code_widget_selection_new()
 {
@@ -245,12 +247,15 @@ elm_code_widget_selection_select_line(Evas_Object *widget, unsigned int line)
 static Eina_Bool
 _elm_code_widget_selection_char_breaks(char chr)
 {
+   unsigned int i;
+
    if (chr == 0)
      return EINA_TRUE;
-   else if (chr == ' ')
-     return EINA_TRUE;
-   else if (chr == '\t')
-     return EINA_TRUE;
+
+   for (i = 0; i < sizeof(_breaking_chars); i++)
+     if (chr == _breaking_chars[i])
+       return EINA_TRUE;
+
 
    return EINA_FALSE;
 }

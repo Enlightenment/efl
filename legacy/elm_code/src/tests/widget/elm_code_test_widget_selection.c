@@ -539,6 +539,82 @@ START_TEST (elm_code_test_widget_selection_select_word)
 }
 END_TEST
 
+START_TEST (elm_code_test_widget_selection_select_word_punctuation)
+{
+   Elm_Code *code;
+   Elm_Code_File *file;
+   Elm_Code_Widget *widget;
+   Evas_Object *win;
+   char *selection;
+
+   elm_init(1, NULL);
+   code = elm_code_create();
+   file = elm_code_file_new(code);
+   elm_code_file_line_append(file, "comma, stop. question? mark!", 38, NULL);
+
+   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   widget = elm_code_widget_add(win, code);
+
+   elm_code_widget_selection_select_word(widget, 1, 3);
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("comma", selection);
+   free(selection);
+
+   elm_code_widget_selection_select_word(widget, 1, 10);
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("stop", selection);
+   free(selection);
+
+   elm_code_widget_selection_select_word(widget, 1, 20);
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("question", selection);
+   free(selection);
+
+   elm_code_widget_selection_select_word(widget, 1, 25);
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("mark", selection);
+   free(selection);
+}
+END_TEST
+
+START_TEST (elm_code_test_widget_selection_select_word_symbols)
+{
+   Elm_Code *code;
+   Elm_Code_File *file;
+   Elm_Code_Widget *widget;
+   Evas_Object *win;
+   char *selection;
+
+   elm_init(1, NULL);
+   code = elm_code_create();
+   file = elm_code_file_new(code);
+   elm_code_file_line_append(file, "colon: [array] (brackets) {braces}", 38, NULL);
+
+   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   widget = elm_code_widget_add(win, code);
+
+   elm_code_widget_selection_select_word(widget, 1, 3);
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("colon", selection);
+   free(selection);
+
+   elm_code_widget_selection_select_word(widget, 1, 10);
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("array", selection);
+   free(selection);
+
+   elm_code_widget_selection_select_word(widget, 1, 20);
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("brackets", selection);
+   free(selection);
+
+   elm_code_widget_selection_select_word(widget, 1, 30);
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("braces", selection);
+   free(selection);
+}
+END_TEST
+
 void elm_code_test_widget_selection(TCase *tc)
 {
    tcase_add_test(tc, elm_code_test_widget_selection_set);
@@ -557,5 +633,7 @@ void elm_code_test_widget_selection(TCase *tc)
    tcase_add_test(tc, elm_code_test_widget_selection_reverse_delete_multiline);
    tcase_add_test(tc, elm_code_test_widget_selection_select_line);
    tcase_add_test(tc, elm_code_test_widget_selection_select_word);
+   tcase_add_test(tc, elm_code_test_widget_selection_select_word_punctuation);
+   tcase_add_test(tc, elm_code_test_widget_selection_select_word_symbols);
 }
 
