@@ -23,6 +23,10 @@ EAPI void elm_code_widget_selection_clear(Evas_Object *widget);
 
 EAPI void elm_code_widget_selection_delete(Evas_Object *widget);
 
+EAPI void elm_code_widget_selection_select_line(Evas_Object *widget, unsigned int line);
+
+EAPI void elm_code_widget_selection_select_word(Evas_Object *widget, unsigned int line, unsigned int col);
+
 EAPI char *elm_code_widget_selection_text_get(Evas_Object *widget);
 
 EAPI void elm_code_widget_selection_cut(Evas_Object *widget);

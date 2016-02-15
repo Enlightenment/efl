@@ -475,6 +475,70 @@ START_TEST (elm_code_test_widget_selection_reverse_delete_multiline)
    elm_shutdown();
 }
 END_TEST
+
+START_TEST (elm_code_test_widget_selection_select_line)
+{
+   Elm_Code *code;
+   Elm_Code_File *file;
+   Elm_Code_Widget *widget;
+   Evas_Object *win;
+   char *selection;
+
+   elm_init(1, NULL);
+   code = elm_code_create();
+   file = elm_code_file_new(code);
+   elm_code_file_line_append(file, "line selection", 14, NULL);
+   elm_code_file_line_append(file, "line2", 5, NULL);
+
+   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   widget = elm_code_widget_add(win, code);
+
+   elm_code_widget_selection_select_line(widget, 1);
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("line selection", selection);
+   free(selection);
+
+   elm_code_widget_selection_select_line(widget, 2);
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("line2", selection);
+   free(selection);
+}
+END_TEST
+
+START_TEST (elm_code_test_widget_selection_select_word)
+{
+   Elm_Code *code;
+   Elm_Code_File *file;
+   Elm_Code_Widget *widget;
+   Evas_Object *win;
+   char *selection;
+
+   elm_init(1, NULL);
+   code = elm_code_create();
+   file = elm_code_file_new(code);
+   elm_code_file_line_append(file, "word selection test", 19, NULL);
+   elm_code_file_line_append(file, "more stuff\tto test", 18, NULL);
+
+   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   widget = elm_code_widget_add(win, code);
+
+   elm_code_widget_selection_select_word(widget, 1, 3);
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("word", selection);
+   free(selection);
+
+   elm_code_widget_selection_select_word(widget, 1, 16);
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("test", selection);
+   free(selection);
+
+   elm_code_widget_selection_select_word(widget, 2, 9);
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("stuff", selection);
+   free(selection);
+}
+END_TEST
+
 void elm_code_test_widget_selection(TCase *tc)
 {
    tcase_add_test(tc, elm_code_test_widget_selection_set);
@@ -491,5 +555,7 @@ void elm_code_test_widget_selection(TCase *tc)
    tcase_add_test(tc, elm_code_test_widget_selection_reverse_delete_twoline);
    tcase_add_test(tc, elm_code_test_widget_selection_delete_multiline);
    tcase_add_test(tc, elm_code_test_widget_selection_reverse_delete_multiline);
+   tcase_add_test(tc, elm_code_test_widget_selection_select_line);
+   tcase_add_test(tc, elm_code_test_widget_selection_select_word);
 }
 

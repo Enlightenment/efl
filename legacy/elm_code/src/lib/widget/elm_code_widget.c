@@ -678,7 +678,7 @@ _elm_code_widget_clicked_readonly_cb(Elm_Code_Widget *widget, unsigned int row)
 
 static void
 _elm_code_widget_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
-                            void *event_info)
+                               void *event_info)
 {
    Elm_Code_Widget *widget;
    Elm_Code_Widget_Data *pd;
@@ -689,12 +689,23 @@ _elm_code_widget_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    widget = (Elm_Code_Widget *)data;
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    event = (Evas_Event_Mouse_Down *)event_info;
+   _elm_code_widget_position_at_coordinates_get(widget, pd, event->canvas.x, event->canvas.y, &row, &col);
 
    elm_code_widget_selection_clear(widget);
+   if (event->flags & EVAS_BUTTON_TRIPLE_CLICK)
+     {
+        elm_code_widget_selection_select_line(widget, row);
+        return;
+     }
+   else if (event->flags & EVAS_BUTTON_DOUBLE_CLICK)
+     {
+        elm_code_widget_selection_select_word(widget, row, col);
+        return;
+     }
+
    if (!pd->editable)
      return;
 
-   _elm_code_widget_position_at_coordinates_get(widget, pd, event->canvas.x, event->canvas.y, &row, &col);
    if (col > 0 && row <= elm_code_file_lines_get(pd->code->file))
      elm_code_widget_selection_start(widget, row, col);
 }

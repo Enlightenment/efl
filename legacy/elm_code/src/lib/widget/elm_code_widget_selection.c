@@ -226,6 +226,71 @@ elm_code_widget_selection_delete(Evas_Object *widget)
    eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget));
 }
 
+EAPI void
+elm_code_widget_selection_select_line(Evas_Object *widget, unsigned int line)
+{
+   Elm_Code_Widget_Data *pd;
+   Elm_Code_Line *lineobj;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   lineobj = elm_code_file_line_get(pd->code->file, line);
+
+   if (!lineobj)
+     return;
+
+   elm_code_widget_selection_start(widget, line, 1);
+   elm_code_widget_selection_end(widget, line, lineobj->length);
+}
+
+static Eina_Bool
+_elm_code_widget_selection_char_breaks(char chr)
+{
+   if (chr == 0)
+     return EINA_TRUE;
+   else if (chr == ' ')
+     return EINA_TRUE;
+   else if (chr == '\t')
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+EAPI void
+elm_code_widget_selection_select_word(Evas_Object *widget, unsigned int line, unsigned int col)
+{
+   Elm_Code_Widget_Data *pd;
+   Elm_Code_Line *lineobj;
+   unsigned int colpos, length, pos;
+   const char *content;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   lineobj = elm_code_file_line_get(pd->code->file, line);
+   content = elm_code_line_text_get(lineobj, &length);
+
+   _elm_code_widget_selection_limit(widget, pd, &line, &col);
+   colpos = elm_code_widget_line_text_position_for_column_get(widget, lineobj, col);
+
+   pos = colpos;
+   while (pos > 0)
+     {
+        if (_elm_code_widget_selection_char_breaks(content[pos - 1]))
+          break;
+        pos--;
+     }
+   elm_code_widget_selection_start(widget, line,
+                                   elm_code_widget_line_text_column_width_to_position(widget, lineobj, pos));
+
+   pos = colpos;
+   while (pos < length - 1)
+     {
+        if (_elm_code_widget_selection_char_breaks(content[pos + 1]))
+          break;
+        pos++;
+     }
+   elm_code_widget_selection_end(widget, line,
+                                 elm_code_widget_line_text_column_width_to_position(widget, lineobj, pos));
+}
+
 static char *
 _elm_code_widget_selection_text_single_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd)
 {
