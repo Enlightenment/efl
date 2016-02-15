@@ -1631,8 +1631,16 @@ evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    if (o->font && obj->layer && obj->layer->evas)
       evas_font_free(obj->layer->evas->evas, o->font);
    o->font = NULL;
+   o->cur.utf8_text = NULL;
+   o->cur.font = NULL;
+   o->cur.fdesc = NULL;
+   o->cur.source = NULL;
+   o->bidi_delimiters = NULL;
+   o->cur.text = NULL;
+   o->prev = o->cur;
 #ifdef BIDI_SUPPORT
    evas_bidi_paragraph_props_unref(o->bidi_par_props);
+   o->bidi_par_props = NULL;
 #endif
 }
 
