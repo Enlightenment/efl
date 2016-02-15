@@ -1,3 +1,13 @@
+enum Elm.Photocam.Zoom_Mode
+{
+   [[Types of zoom available.]]
+   manual = 0, [[Zoom controlled normally by elm_photocam_zoom_set]]
+   auto_fit, [[Zoom until photo fits in photocam]]
+   auto_fill, [[Zoom until photo fills photocam]]
+   auto_fit_in, [[Zoom in until photo fits in photocam]]
+   last
+}
+
 class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
                     Elm.Interface_Atspi_Widget_Action, Efl.File,
                     Evas.Clickable_Interface, Evas.Scrollable_Interface,
@@ -95,7 +105,7 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
             ]]
          }
          values {
-            mode: Elm_Photocam_Zoom_Mode; [[The zoom mode.]]
+            mode: Elm.Photocam.Zoom_Mode; [[The zoom mode.]]
          }
       }
       @property image_region {
@@ -153,7 +163,7 @@ class Elm.Photocam (Elm.Widget, Elm.Interface_Scrollable,
             ]]
          }
          values {
-            orient: Evas_Image_Orient; [[The photocam image orientation
+            orient: Evas.Image.Orient; [[The photocam image orientation
                                          \@ref Evas_Image_Orient. Default is
                                          #EVAS_IMAGE_ORIENT_NONE.
                                        ]]
