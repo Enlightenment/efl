@@ -264,10 +264,9 @@ EAPI Eina_Array *eina_array_new(unsigned int step) EINA_WARN_UNUSED_RESULT EINA_
  * This function frees @p array. It calls first eina_array_flush() then
  * free the memory of the pointer. It does not free the memory
  * allocated for the elements of @p array. To free them, walk the array with
- * #EINA_ARRAY_ITER_NEXT. For performance reasons, there is no check
- * of @p array.
+ * #EINA_ARRAY_ITER_NEXT.
  */
-EAPI void        eina_array_free(Eina_Array *array) EINA_ARG_NONNULL(1);
+EAPI void        eina_array_free(Eina_Array *array);
 
 /**
  * @brief Set the step of an array.
