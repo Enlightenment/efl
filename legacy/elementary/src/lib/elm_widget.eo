@@ -6,9 +6,23 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
    data: Elm_Widget_Smart_Data;
    methods {
       @property focus {
+         [[Whether an Elementary object has the focus or not.
+
+           Note that when you set focus to this object, if it can handle focus,
+           it will take the focus away from the one who had it previously and will,
+           for now on, be the one receiving input events. Unsetting focus will remove
+           the focus from this object, passing it back to the previous element in the
+           focus chain list.
+
+           Warning: Only visible object can get a focus. Call @Evas.Object_Smart.show
+           before calling this API, if you want to give a focus to the evas object.]]
          set {
+           [[$true set the focus to the object,
+             $false unset the focus to the object.]]
          }
          get {
+            [[Return $true if the object is focused,
+              and $false if not (and on errors).]]
          }
          values {
             focus: bool;
@@ -26,21 +40,30 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       @property focus_highlight_style {
          [[Control the widget focus highlight style.]]
          set {
-            return: bool;
+            return: bool; [[$true on success, $false otherwise.]]
          }
          get {
          }
          values {
-            style: const(char)*;
+            style: const(char)*; [[The name of the focus highlight style.]]
          }
       }
       @property tree_unfocusable {
+         [[Make the elementary object and its children to be unfocusable (or focusable).
+           If the tree is set as unfocusable, newest focused object which is not in
+           this tree will get focus.
+           This API can be helpful for an object to be deleted.
+           When an object will be deleted soon, it and its children may not want to
+           get focus (by focus reverting or by other focus controls).
+           Then, just use this API before deleting.]]
          set {
          }
          get {
+           [[Return $true, if the tree is unfocusable,
+             $false otherwise (and on errors).]]
          }
          values {
-            tree_unfocusable: bool;
+            tree_unfocusable: bool; [[$true for unfocusable, $false for focusable.]]
          }
       }
       @property mirrored {
@@ -119,24 +142,44 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
          }
       }
       @property focus_custom_chain {
+         [[A custom chain of objects to pass focus.
+
+           Note: On focus cycle, only will be evaluated children of this container.]]
          set {
+            [[This function overwrites any previous custom focus chain within
+              the list of objects. The previous list will be deleted and this list
+              will be managed by elementary. After it is set, don't modify it.]]
             values {
-               objs: list<Evas.Object*>*;
+               objs: list<Evas.Object*>*; [[Chain of objects to pass focus]]
             }
          }
          get {
             values {
-               objs: const(list<Evas.Object*>)*;
+               objs: const(list<Evas.Object*>)*; [[Chain of objects]]
             }
          }
       }
       @property can_focus {
+         [[The ability for an Elementary object to be focused.
+
+           Unfocusable objects do nothing when programmatically
+           focused, being the nearest focusable parent object the one
+           really getting focus. Also, when they receive mouse input, they
+           will get the event, but not take away the focus from where it
+           was previously.
+
+           Note: Objects which are meant to be interacted with by input
+           events are created able to be focused, by default. All the
+           others are not.]]
          set {
          }
          get {
+            [[Return $true if the object is allowed to be focused,
+              $false if not (and on errors).]]
          }
          values {
-            can_focus: bool;
+            can_focus: bool; [[$true if the object can be focused,
+                               $false if not.]]
          }
       }
       @property highlight_in_theme {
@@ -362,8 +405,9 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
          }
       }
       @property focused_object {
+         [[Current focused object in object tree.]]
          get {
-            return: Evas.Object *;
+            return: Evas.Object *; [[Current focused or $null, if there is no focused object.]]
          }
       }
       @property parent2 {
@@ -440,9 +484,15 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       focus_tree_unfocusable_handle {
       }
       focus_custom_chain_prepend {
+         [[Prepend object to custom focus chain.
+
+           Note: If @"relative_child" equal to $null or not in custom chain,
+           the object will be added in begin.
+
+           Note: On focus cycle, only will be evaluated children of this container.]]
          params {
-            @in child: Evas.Object *;
-            @in relative_child: Evas.Object * @optional;
+            @in child: Evas.Object *; [[The child to be added in custom chain.]]
+            @in relative_child: Evas.Object * @optional; [[The relative object to position the child.]]
          }
       }
       part_text_translate {
@@ -533,8 +583,10 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
          return: bool;
       }
       focus_cycle {
+         [[Give focus to next object with specific focus direction in
+           object tree.]]
          params {
-            @in dir: Elm.Focus_Direction;
+            @in dir: Elm.Focus_Direction; [[Direction to move the focus.]]
          }
       }
       focus_direction {
@@ -650,6 +702,9 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       scroll_freeze_push {
       }
       focus_custom_chain_unset {
+         [[Unset a custom focus chain on a given Elementary widget.
+
+           Any focus chain previously set is removed entirely after this call.]]
       }
       focus_steal {
          params {
@@ -729,9 +784,15 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       focus_disabled_handle {
       }
       focus_custom_chain_append {
+         [[Append object to custom focus chain.
+
+           Note: If @"relative_child" equal to $null or not in custom chain,
+           the object will be added in end.
+
+           Note: On focus cycle, only will be evaluated children of this container.]]
          params {
-            @in child: Evas.Object *;
-            @in relative_child: Evas.Object * @optional;
+            @in child: Evas.Object *; [[The child to be added in custom chain.]]
+            @in relative_child: Evas.Object * @optional; [[The relative object to position the child.]]
          }
       }
       @property focus_move_policy {
