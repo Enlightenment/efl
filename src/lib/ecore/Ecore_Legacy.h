@@ -49,6 +49,25 @@ EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, Ecore_
 EAPI void *ecore_poller_del(Ecore_Poller *poller);
 
 /**
+ * @brief Sets the time(in seconds) between ticks for the given poller type.
+ * @param type The poller type to adjust.
+ * @param poll_time The time(in seconds) between ticks of the timer.
+ *
+ * This will adjust the time between ticks of the given timer type defined by
+ * @p type to the time period defined by @p poll_time.
+ */
+EAPI void ecore_poller_poll_interval_set(Ecore_Poller_Type type, double poll_time);
+
+/**
+ * @brief Gets the time(in seconds) between ticks for the given poller type.
+ * @param type The poller type to query.
+ * @return The time in seconds between ticks of the poller timer.
+ *
+ * This will get the time between ticks of the specified poller timer.
+ */
+EAPI double ecore_poller_poll_interval_get(Ecore_Poller_Type type);
+
+/**
  * @}
  */
 
