@@ -34,17 +34,6 @@
  */
 
 /**
- * Focus region show mode.
- *
- * @ingroup Focus
- */
-typedef enum
-{
-   ELM_FOCUS_REGION_SHOW_WIDGET, /**< as a widget */
-   ELM_FOCUS_REGION_SHOW_ITEM, /**< as an item */
-} Elm_Focus_Region_Show_Mode;
-
-/**
  * Get the whether an Elementary object has the focus or not.
  *
  * @param obj The Elementary object to get the information from

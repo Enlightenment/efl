@@ -297,22 +297,31 @@
  * @image latex elm-widget-tree.eps
  */
 
+typedef void                  (*Elm_Widget_Text_Set_Cb)(void *data, const char *part, const char *text);
+typedef void                  (*Elm_Widget_Content_Set_Cb)(void *data, const char *part, Evas_Object *content);
+typedef const char           *(*Elm_Widget_Text_Get_Cb)(const void *data, const char *part);
+typedef Evas_Object          *(*Elm_Widget_Content_Get_Cb)(const void *data, const char *part);
+typedef Evas_Object          *(*Elm_Widget_Content_Unset_Cb)(const void *data, const char *part);
+typedef void                  (*Elm_Widget_Signal_Emit_Cb)(void *data, const char *emission, const char *source);
+typedef void                  (*Elm_Widget_Disable_Cb)(void *data);
+typedef Eina_Bool             (*Elm_Widget_Del_Pre_Cb)(void *data);
+typedef void                  (*Elm_Widget_Item_Signal_Cb)(void *data, Elm_Object_Item *item, const char *emission, const char *source);
+typedef void                  (*Elm_Widget_Style_Set_Cb)(void *data, const char *style);
+typedef const char           *(*Elm_Widget_Style_Get_Cb)(const void *data);
+typedef void                  (*Elm_Widget_Focus_Set_Cb)(void *data, Eina_Bool focused);
+typedef Eina_Bool             (*Elm_Widget_Focus_Get_Cb)(const void *data);
+
+typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
+
+typedef void (*region_hook_func_type)(void *data, Evas_Object *obj);
+typedef void * (*list_data_get_func_type)(const Eina_List * l);
+
+#include "elm_widget.eo.h"
+
 /**
  * @addtogroup Widget
  * @{
  */
-
-/* Elm_Activate is used in 'Virtual' function Eina_Bool (*activate)
- * (Evas_Object *obj, Elm_Activate act); of Elm_Widget_Smart_Class */
-typedef enum
-{
-   ELM_ACTIVATE_DEFAULT = 0,
-   ELM_ACTIVATE_UP,
-   ELM_ACTIVATE_DOWN,
-   ELM_ACTIVATE_RIGHT,
-   ELM_ACTIVATE_LEFT,
-   ELM_ACTIVATE_BACK
-} Elm_Activate;
 
 /* Please, ALWAYS update the ELM_WIDGET_SMART_CLASS_INIT macro
  * whenever you change the following struct! */
@@ -450,9 +459,6 @@ typedef struct _Elm_Widget_Smart_Data
  * @}
  */
 
-typedef struct _Elm_Tooltip     Elm_Tooltip;
-typedef struct _Elm_Cursor      Elm_Cursor;
-
 /**< base structure for all widget items that are not Elm_Widget themselves */
 typedef struct _Elm_Widget_Item_Data Elm_Widget_Item_Data;
 typedef struct _Elm_Widget_Item_Signal_Data Elm_Widget_Item_Signal_Data;
@@ -465,24 +471,8 @@ typedef struct _Elm_Access_Item Elm_Access_Item;
 
 typedef struct _Elm_Action Elm_Action;
 
-typedef void                  (*Elm_Widget_Text_Set_Cb)(void *data, const char *part, const char *text);
-typedef void                  (*Elm_Widget_Content_Set_Cb)(void *data, const char *part, Evas_Object *content);
-typedef const char           *(*Elm_Widget_Text_Get_Cb)(const void *data, const char *part);
-typedef Evas_Object          *(*Elm_Widget_Content_Get_Cb)(const void *data, const char *part);
-typedef Evas_Object          *(*Elm_Widget_Content_Unset_Cb)(const void *data, const char *part);
-typedef void                  (*Elm_Widget_Signal_Emit_Cb)(void *data, const char *emission, const char *source);
-typedef void                  (*Elm_Widget_Disable_Cb)(void *data);
-typedef Eina_Bool             (*Elm_Widget_Del_Pre_Cb)(void *data);
-typedef void                  (*Elm_Widget_Item_Signal_Cb)(void *data, Elm_Object_Item *item, const char *emission, const char *source);
-typedef void                  (*Elm_Widget_Style_Set_Cb)(void *data, const char *style);
-typedef const char           *(*Elm_Widget_Style_Get_Cb)(const void *data);
-typedef void                  (*Elm_Widget_Focus_Set_Cb)(void *data, Eina_Bool focused);
-typedef Eina_Bool             (*Elm_Widget_Focus_Get_Cb)(const void *data);
-
 #define ELM_ACCESS_DONE          -1   /* sentence done - send done event here */
 #define ELM_ACCESS_CANCEL        -2   /* stop reading immediately */
-
-typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
 
 struct _Elm_Access_Item
 {
@@ -851,11 +841,6 @@ EAPI Eina_Bool        _elm_widget_item_onscreen_is(Elm_Object_Item *item);
 #define ELM_INTERNAL_SMART_SUBCLASS_NEW EVAS_SMART_SUBCLASS_NEW
 
 EAPI Eina_Bool elm_selection_selection_has_owner(Evas_Object *obj);
-
-typedef void (*region_hook_func_type)(void *data, Evas_Object *obj);
-typedef void * (*list_data_get_func_type)(const Eina_List * l);
-
-#include "elm_widget.eo.h"
 
 #define ELM_WIDGET_ITEM_PROTECTED
 #include "elm_widget_item.eo.h"

@@ -1,5 +1,20 @@
 import elm_general;
 
+enum Elm.Activate
+{
+   [[ Used in 'Virtual' function @Elm.Widget.activate. ]]
+   default = 0,
+   up,
+   down,
+   right,
+   left,
+   back,
+}
+
+struct Elm.Tooltip;
+struct Elm.Cursor;
+struct @extern Elm.Theme;
+
 abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Interface_Atspi_Component)
 {
    eo_prefix: elm_obj_widget;
@@ -82,7 +97,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
          get {
          }
          values {
-            th: Elm_Theme * @nullable;
+            th: Elm.Theme * @nullable;
          }
       }
       @property disabled {
@@ -234,7 +249,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
          get {
          }
          values {
-            mode: Elm_Focus_Region_Show_Mode;
+            mode: Elm.Focus.Region.Show_Mode;
          }
       }
       @property parent_highlight {
@@ -266,7 +281,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
          set {
          }
          values {
-            dispmode: Evas_Display_Mode;
+            dispmode: Evas.Display_Mode;
          }
       }
       @property on_show_region_hook {
@@ -442,7 +457,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       }
       cursor_add {
          params {
-            @in cur: Elm_Cursor *;
+            @in cur: Elm.Cursor *;
          }
       }
       focus_next_object_set {
@@ -514,7 +529,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       activate {
          [['Virtual' function to activate widget.]]
          params {
-            @in act: Elm_Activate;
+            @in act: Elm.Activate;
          }
          return: bool;
          legacy: null; /* the legacy API has not the same number of parameter to we don't generate it. */
@@ -535,7 +550,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
          [['Virtual' function handling input events on the widget.]]
          params {
             @in source: Evas.Object *;
-            @in type: Evas_Callback_Type;
+            @in type: Evas.Callback_Type;
             @in event_info: void *;
          }
          return: bool;
@@ -555,7 +570,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       }
       cursor_del {
          params {
-            @in cur: Elm_Cursor *;
+            @in cur: Elm.Cursor *;
          }
       }
       event_callback_del {
@@ -603,16 +618,16 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       event_propagate {
          return: bool;
          params {
-            @in type: Evas_Callback_Type;
+            @in type: Evas.Callback_Type;
             @in event_info: void *;
-            @in event_flags: Evas_Event_Flags *;
+            @in event_flags: Evas.Event_Flags *;
          }
       }
       signal_callback_add {
          params {
             @in emission: const(char)*;
             @in source: const(char)*;
-            @in func: Edje_Signal_Cb;
+            @in func: Edje.Signal_Cb;
             @in data: void *;
          }
       }
@@ -668,7 +683,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       }
       tooltip_del {
          params {
-            @in tt: Elm_Tooltip *;
+            @in tt: Elm.Tooltip *;
          }
       }
       focus_next_get @const {
@@ -754,7 +769,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
          params {
             @in emission: const(char)*;
             @in source: const(char)*;
-            @in func: Edje_Signal_Cb;
+            @in func: Edje.Signal_Cb;
          }
       }
       signal_emit {
@@ -776,7 +791,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
       }
       tooltip_add {
          params {
-            @in tt: Elm_Tooltip *;
+            @in tt: Elm.Tooltip *;
          }
       }
       focus_region_show @const {
@@ -803,7 +818,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm.Interface_Atspi_Accessible, Elm.Inte
             [[Returns the widget's focus move policy.]]
          }
          values {
-            policy: Elm_Focus_Move_Policy; [[Object's focus move policy.]]
+            policy: Elm.Focus.Move_Policy; [[Object's focus move policy.]]
          }
       }
    }
