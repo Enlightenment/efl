@@ -191,6 +191,18 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                      @in itc: const (Elm.Gengrid.Item.Class) *; [[The gengrid item class describing the function pointers and the item style.]]
                 }
            }
+           all_contents_unset{
+
+                 [[Unset all contents fetched by the item class
+
+                 This instructs gengrid to release references to contents in the item,
+                 meaning that they will no longer be managed by gengrid and are
+                 floating "orphans" that can be re-used elsewhere if the user wants
+                 to.]]
+                params {
+                     @out l: own(list<own(Evas.Object *)> *); [[The contents list to return.]]
+                }
+           }
       }
       implements {
            Eo.Base.constructor;

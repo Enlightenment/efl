@@ -984,6 +984,24 @@ _view_clear(Evas_Object *view, Eina_List **texts, Eina_List **contents)
      evas_object_del(c);
 }
 
+EOLIAN static void
+_elm_gengrid_item_all_contents_unset(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it, Eina_List **l)
+{
+   Evas_Object *content;
+
+   ELM_GENGRID_ITEM_CHECK_OR_RETURN(it);
+
+   EINA_LIST_FREE (it->contents, content)
+     {
+        evas_object_smart_member_del(content);
+        // edje can be reused by item caching,
+        // content should be un-swallowed from edje
+        edje_object_part_unswallow(VIEW(it), content);
+        evas_object_hide(content);
+        if (l) *l = eina_list_append(*l, content);
+     }
+}
+
 static void
 _elm_gengrid_item_unrealize(Elm_Gen_Item *it,
                             Eina_Bool calc)
