@@ -176,6 +176,12 @@ _type_error(const Validator *vs, const Eolian_Type *tp, const char *msg)
 {
    if (vs->silent_types)
      return EINA_FALSE;
+   if (getenv("EOLIAN_VERBOSE_TYPES"))
+     {
+        fprintf(stderr, "eolian:%s:%d:%d: %s\n", tp->base.file, tp->base.line,
+                tp->base.column, msg);
+        return EINA_FALSE;
+     }
    eina_log_print(_eolian_log_dom, EINA_LOG_LEVEL_WARN, tp->base.file, "",
                   tp->base.line, "%s at column %d", msg, tp->base.column);
    return EINA_FALSE;

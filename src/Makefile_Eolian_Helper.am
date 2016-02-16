@@ -20,12 +20,12 @@ SUFFIXES = .eo .eo.c .eo.h .eo.legacy.h .eot .eot.h
 %.eo.h: %.eo ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL) \
 	$(MKDIR_P) $(dir $@); \
-	$(EOLIAN_GEN) $(EOLIAN_FLAGS) --gh -o $@ $<
+	EOLIAN_VERBOSE_TYPES=1 $(EOLIAN_GEN) $(EOLIAN_FLAGS) --gh -o $@ $<
 
 %.eot.h: %.eot ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL) \
 	$(MKDIR_P) $(dir $@); \
-	$(EOLIAN_GEN) $(EOLIAN_FLAGS) --gh -o $@ $<
+	EOLIAN_VERBOSE_TYPES=1 $(EOLIAN_GEN) $(EOLIAN_FLAGS) --gh -o $@ $<
 
 %.eo.legacy.h: %.eo ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL) \
