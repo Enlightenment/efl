@@ -1,4 +1,4 @@
-enum Efl.Gfx.Fill.Spread {
+enum Efl.Gfx.Fill_Spread {
    [[Type defining how an image content gets filled.
      @since 1.14
    ]]
@@ -24,7 +24,7 @@ interface Efl.Gfx.Fill {
               fill.]]
          }
          values {
-            spread: Efl_Gfx_Fill_Spread; [[The current spread mode of the image object.
+            spread: Efl.Gfx.Fill_Spread; [[The current spread mode of the image object.
                                            One of $EFL_GFX_FILL_REFLECT, $EFL_GFX_FILL_REPEAT]]
          }
       }
