@@ -1,3 +1,5 @@
+type @extern Ecore_Task_Cb: __undefined_type;
+
 class Ecore.Idle.Enterer (Eo.Base)
 {
    eo_prefix: ecore_idle_enterer;
