@@ -541,6 +541,8 @@ ecore_x_dnd_send_status(Eina_Bool will_accept,
 {
    XEvent xev;
 
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    if (_target->state == ECORE_X_DND_TARGET_IDLE)
      return;
 
@@ -590,6 +592,8 @@ EAPI void
 ecore_x_dnd_send_finished(void)
 {
    XEvent xev;
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
    if (_target->state == ECORE_X_DND_TARGET_IDLE)
      return;
