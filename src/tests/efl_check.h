@@ -34,17 +34,17 @@ _efl_test_option_disp(int argc, char **argv, const Efl_Test_Case *etc)
              fprintf(stderr, "Usage:\n\t%s [test_case1 .. [test_caseN]]\n",
                    argv[0]);
              _efl_tests_list(etc);
-             return 1;
+             return 0;
           }
         else if ((strcmp(argv[i], "-l") == 0) ||
               (strcmp(argv[i], "--list") == 0))
           {
              _efl_tests_list(etc);
-             return 1;
+             return 0;
           }
      }
 
-   return 0;
+   return 1;
 }
 
 static int
