@@ -1348,7 +1348,7 @@ _elm_spinner_eo_base_constructor(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
 EOLIAN static void
 _elm_spinner_label_format_set(Eo *obj, Elm_Spinner_Data *sd, const char *fmt)
 {
-   if (!strchr(fmt, '%'))
+   if (fmt && !strchr(fmt, '%'))
      {
         WRN("Warning: %s is an Illegal format, cannot be set", fmt);
         return;
