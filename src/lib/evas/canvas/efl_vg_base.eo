@@ -68,7 +68,7 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
          get {
          }
          values {
-            m: Efl_VG *;
+            m: Efl.VG.Base *;
          }
       }
 /*      quality {
