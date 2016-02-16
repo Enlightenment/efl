@@ -25,8 +25,9 @@
 #include <string.h>
 #include <time.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 #define TEST0 "test/0"
 #define TEST1 "test/1"

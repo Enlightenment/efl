@@ -22,11 +22,12 @@
 
 #define DBL_EPSILON 0.0000001
 
-#include <math.h>
 #include <stdio.h>
+#include <math.h>
+
+#include <Eina.h>
 
 #include "eina_suite.h"
-#include "Eina.h"
 
 START_TEST(eina_matrix2)
 {

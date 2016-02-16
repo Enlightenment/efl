@@ -2,13 +2,14 @@
 # include "config.h"
 #endif
 
+#include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <stdio.h>
+
+#include <Evas.h>
 
 #include "evas_suite.h"
-#include "Evas.h"
 #include "evas_tests_helpers.h"
 
 #define TESTS_IMG_DIR TESTS_SRC_DIR"/images"

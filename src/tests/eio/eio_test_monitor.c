@@ -6,9 +6,9 @@
 #include <unistd.h>
 #include <string.h>
 
-#include <Eio.h>
 #include <Ecore.h>
 #include <Ecore_File.h>
+#include <Eio.h>
 
 #include "eio_suite.h"
 
@@ -147,9 +147,9 @@ START_TEST(eio_test_monitor_add_and_remove)
 
    //monitor directory
    monitor = eio_monitor_add(filename);
-   
+
    usleep(500000);
-   
+
    eio_monitor_del(monitor);
 
    _common_shutdown(dirname);
@@ -172,9 +172,9 @@ START_TEST(eio_test_monitor_add_remove_add)
    //monitor directory
    monitor1 = eio_monitor_add(filename);
    eio_monitor_del(monitor1);
-   
+
    usleep(500000);
-   
+
    monitor2 = eio_monitor_add(filename);
    eio_monitor_del(monitor2);
 
@@ -199,7 +199,7 @@ START_TEST(eio_test_monitor_add_add_remove_remove)
    usleep(500000);
 
    //monitor directory
-   monitor1 = eio_monitor_add(filename1);   
+   monitor1 = eio_monitor_add(filename1);
    monitor2 = eio_monitor_add(filename2);
    usleep(500000);
    eio_monitor_del(monitor2);
@@ -727,7 +727,7 @@ void eio_test_monitor(TCase *tc)
    tcase_add_test(tc, eio_test_monitor_add_and_remove);
    tcase_add_test(tc, eio_test_monitor_add_remove_add);
    tcase_add_test(tc, eio_test_monitor_add_add_remove_remove);
-   
+
    tcase_add_test(tc, eio_test_monitor_directory_file_created_notify);
    tcase_add_test(tc, eio_test_monitor_directory_file_deleted_notify);
    tcase_add_test(tc, eio_test_monitor_directory_file_modified_notify);

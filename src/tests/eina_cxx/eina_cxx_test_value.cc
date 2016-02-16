@@ -1,11 +1,10 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Eina.hh"
+#include <Eina.hh>
 
-#include <check.h>
+#include "eina_cxx_suite.h"
 
 START_TEST(eina_cxx_value_constructors)
 {

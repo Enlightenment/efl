@@ -1,4 +1,3 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -22,4 +21,3 @@ static Eo *_c_eo_base_constructor(Eo *obj EINA_UNUSED, C_Data *pd EINA_UNUSED)
 }
 
 #include "c.eo.c"
-

@@ -24,8 +24,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 struct log_ctx {
    int level;

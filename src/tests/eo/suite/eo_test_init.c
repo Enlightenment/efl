@@ -2,12 +2,11 @@
 # include "config.h"
 #endif
 
-#include <stdio.h>
+#include <Eo.h>
 
-#include "Eo.h"
 #include "eo_suite.h"
 
-START_TEST(eo_simple)
+START_TEST(eo_test_simple)
 {
    fail_if(!eo_init()); /* one init by test suite */
    fail_if(!eo_init());
@@ -16,7 +15,7 @@ START_TEST(eo_simple)
 }
 END_TEST
 
-START_TEST(eo_init_shutdown)
+START_TEST(eo_test_init_shutdown)
 {
    fail_if(!eo_init());
    ck_assert_str_eq("Eo_Base", eo_class_name_get(EO_BASE_CLASS));
@@ -30,6 +29,6 @@ END_TEST
 
 void eo_test_init(TCase *tc)
 {
-   tcase_add_test(tc, eo_simple);
-   tcase_add_test(tc, eo_init_shutdown);
+   tcase_add_test(tc, eo_test_simple);
+   tcase_add_test(tc, eo_test_init_shutdown);
 }

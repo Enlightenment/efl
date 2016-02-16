@@ -10,10 +10,12 @@
 #include <stdio.h>
 
 #define EFL_GFX_FILTER_BETA
-#include "evas_suite.h"
-#include "Evas.h"
-#include "Ecore_Evas.h"
+
+#include <Evas.h>
 #include "../../lib/evas/include/evas_filter.h"
+#include <Ecore_Evas.h>
+
+#include "evas_suite.h"
 
 #define TEST_FONT_NAME "DejaVuSans,UnDotum"
 #define TEST_FONT_SOURCE TESTS_SRC_DIR "/TestFont.eet"

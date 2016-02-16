@@ -1,16 +1,15 @@
-#include "config.h" 
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include "Efreet.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include <limits.h>
+
 #include <Ecore.h>
 #include <Ecore_File.h>
+#include <Efreet.h>
 
 #define SIZE 128
 #define THEME "Tango"

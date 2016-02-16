@@ -1,12 +1,11 @@
-#include "config.h" 
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include <Efreet.h>
 #include <stdio.h>
 #include <limits.h>
+
+#include <Efreet.h>
 #include "ef_test.h"
 
 static void dump(Efreet_Menu *menu, const char *path);

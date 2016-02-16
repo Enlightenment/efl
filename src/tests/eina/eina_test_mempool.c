@@ -20,8 +20,9 @@
 # include "config.h"
 #endif
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 static Eina_Array *_modules;
 
@@ -43,7 +44,7 @@ _mempool_shutdown(void)
 {
    unsigned int i;
    Eina_Array_Iterator it;
-   Eina_Module *module;	
+   Eina_Module *module;
    eina_module_list_free(_modules);
    if (_modules)
      {
@@ -191,5 +192,3 @@ eina_test_mempool(TCase *tc)
    tcase_add_test(tc, eina_mempool_ememoa_unknown);
 #endif
 }
-
-

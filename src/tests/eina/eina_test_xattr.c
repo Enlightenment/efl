@@ -25,8 +25,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 Eina_Tmpstr*
 get_file_path(const char* tmpdirname, const char* filename)

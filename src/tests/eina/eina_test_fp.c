@@ -20,11 +20,12 @@
 # include "config.h"
 #endif
 
-#include <math.h>
 #include <stdio.h>
+#include <math.h>
+
+#include <Eina.h>
 
 #include "eina_suite.h"
-#include "Eina.h"
 
 START_TEST(eina_fp_cos)
 {

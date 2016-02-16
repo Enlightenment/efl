@@ -20,11 +20,12 @@
 # include "config.h"
 #endif
 
-#include <assert.h>
 #include <stdio.h>
+#include <assert.h>
+
+#include <Eina.h>
 
 #include "eina_suite.h"
-#include "Eina.h"
 
 static Eina_Quad_Direction
 _eina_quadtree_rectangle_vert(const void *object, size_t middle)

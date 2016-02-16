@@ -2,14 +2,13 @@
 # include <config.h>
 #endif
 
-#include "Ecore.hh"
-#include "Eina.hh"
-
 #include <algorithm>
-
 #include <iostream>
 
-#include <check.h>
+#include <Eina.hh>
+#include <Ecore.hh>
+
+#include "ecore_cxx_suite.h"
 
 void call_async(efl::eina::mutex& mutex, efl::eina::condition_variable& cond, int& done)
 {
@@ -260,7 +259,7 @@ START_TEST(ecore_cxx_safe_call_sync)
 END_TEST
 
 void
-ecore_test_safe_call(TCase* tc)
+ecore_cxx_test_safe_call(TCase* tc)
 {
   tcase_add_test(tc, ecore_cxx_safe_call_async);
   tcase_add_test(tc, ecore_cxx_safe_call_sync);

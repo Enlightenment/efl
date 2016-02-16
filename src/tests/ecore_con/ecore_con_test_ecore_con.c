@@ -2,11 +2,12 @@
 # include <config.h>
 #endif
 
-#include "ecore_con_suite.h"
-
 #include <stdio.h>
+
 #include <Ecore.h>
 #include <Ecore_Con.h>
+
+#include "ecore_con_suite.h"
 
 char sdata[] = "Server_info";
 char cdata[] = "Client_info";

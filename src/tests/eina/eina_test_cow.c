@@ -20,8 +20,9 @@
 # include "config.h"
 #endif
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 typedef struct _Eina_Cow_Test Eina_Cow_Test;
 struct _Eina_Cow_Test

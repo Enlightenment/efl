@@ -20,9 +20,10 @@
 # include "config.h"
 #endif
 
-#include "eina_suite.h"
-#include "Eina.h"
+#include <Eina.h>
 #include "eina_tmpstr.h"
+
+#include "eina_suite.h"
 
 START_TEST(tmpstr_simple)
 {

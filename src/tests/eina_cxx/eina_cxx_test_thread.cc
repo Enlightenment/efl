@@ -1,13 +1,10 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Eina.hh"
+#include <Eina.hh>
 
-#include <algorithm>
-
-#include <check.h>
+#include "eina_cxx_suite.h"
 
 bool no_args = false
   , args_1 = false

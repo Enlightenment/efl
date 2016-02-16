@@ -2,11 +2,10 @@
 #include "config.h"
 #endif
 
-#include "eldbus_fake_server.h"
-
 #include <Ecore.h>
 
-#include <check.h>
+#include "eldbus_suite.h"
+#include "eldbus_fake_server.h"
 
 #define FAKE_SERVER_DATA_KEY "data"
 

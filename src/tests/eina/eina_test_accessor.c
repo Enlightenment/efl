@@ -22,8 +22,9 @@
 
 #include <stdio.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 static Eina_Bool
 eina_accessor_check(EINA_UNUSED const Eina_Array *array,

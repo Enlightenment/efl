@@ -25,8 +25,9 @@
 #include <string.h>
 #include <time.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 static const Eina_Unicode TEST0[] = {'t', 'e', 's', 't', '/', '0', 0};
 static const Eina_Unicode TEST1[] = {'t', 'e', 's', 't', '/', '1', 0};

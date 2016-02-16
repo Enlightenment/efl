@@ -23,8 +23,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 typedef struct _Eina_Lazy_Allocator_Test Eina_Lazy_Allocator_Test;
 struct _Eina_Lazy_Allocator_Test

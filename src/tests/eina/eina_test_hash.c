@@ -24,9 +24,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "eina_suite.h"
-#include "Eina.h"
+#include <Eina.h>
 #include "eina_hash.h"
+
+#include "eina_suite.h"
 
 #define EINA_HASH_BUCKET_SIZE       8
 

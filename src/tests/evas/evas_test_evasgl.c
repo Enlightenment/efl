@@ -17,10 +17,12 @@
 #endif
 
 #define EFL_GFX_FILTER_BETA
+
+#include <Evas.h>
+#include <Evas_GL.h>
+#include <Ecore_Evas.h>
+
 #include "evas_suite.h"
-#include "Evas.h"
-#include "Evas_GL.h"
-#include "Ecore_Evas.h"
 
 static int
 _detect_osmesa(void)

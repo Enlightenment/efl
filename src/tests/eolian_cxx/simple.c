@@ -1,12 +1,11 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
+#include <stdlib.h>
+
 #include <Eo.h>
 #include <Ecore.h>
-
-#include <stdlib.h>
 
 #include "simple.eo.h"
 
@@ -35,4 +34,3 @@ static Eina_Bool _simple_name_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, con
 }
 
 #include "simple.eo.c"
-

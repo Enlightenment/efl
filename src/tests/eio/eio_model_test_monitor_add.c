@@ -4,14 +4,15 @@
 # include <config.h>
 #endif
 
-#include <Eo.h>
-#include <Eio.h>
-#include <Ecore.h>
-#include <Efl.h>
-#include <eio_model.h>
 #include <stdio.h>
 
-#include <check.h>
+#include <Eo.h>
+#include <Ecore.h>
+#include <Efl.h>
+#include <Eio.h>
+#include <eio_model.h>
+
+#include "eio_suite.h"
 
 Eina_Bool children_added = EINA_FALSE;
 Eina_Tmpstr* temp_filename = NULL;
@@ -123,7 +124,7 @@ START_TEST(eio_model_test_test_monitor_add)
    fail_if(!eio_init(), "ERROR: Cannot init EIO!\n");
 
    tmpdir = eina_environment_tmp_get();
-   
+
    filemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(tmpdir));
    fail_if(!filemodel, "ERROR: Cannot init model!\n");
 
@@ -150,4 +151,3 @@ eio_model_test_monitor_add(TCase *tc)
 {
    tcase_add_test(tc, eio_model_test_test_monitor_add);
 }
-

@@ -22,8 +22,9 @@
 
 #include <unistd.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 static Eina_Thread wk1, wk2, wk3, wk4, wk5;
 static Eina_Barrier barrier;

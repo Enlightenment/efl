@@ -1,17 +1,14 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Eina.hh"
-#include "Eo.hh"
-
-#include <eina_list.hh>
-
-#include <algorithm>
 #include <iostream>
 
-#include <check.h>
+#include <Eina.hh>
+#include <eina_list.hh>
+#include <Eo.hh>
+
+#include "eina_cxx_suite.h"
 
 extern "C" {
 #include "simple.eo.h"
@@ -34,7 +31,7 @@ START_TEST(eina_cxx_ptrlist_push_back)
   wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
   wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
   wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
-  
+
   {
     efl::eina::ptr_list<int> list;
 
@@ -162,7 +159,7 @@ START_TEST(eina_cxx_ptrlist_push_front)
     ck_assert(list.size() == 3);
     ck_assert(std::equal(list.begin(), list.end(), result));
     ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
-  }  
+  }
 }
 END_TEST
 
@@ -408,7 +405,7 @@ START_TEST(eina_cxx_ptrlist_erase)
   list1.push_back(new int(20));
   list1.push_back(new int(25));
   list1.push_back(new int(30));
-  
+
   efl::eina::ptr_list<int>::iterator it = list1.begin(), it2;
 
   it = list1.erase(it);
@@ -425,7 +422,7 @@ START_TEST(eina_cxx_ptrlist_erase)
   ck_assert(it == it2);
   ck_assert(list1.size() == 4);
   ck_assert(*it2 == 20);
-  
+
   it = list1.end();
   --it;
   it = list1.erase(it);
@@ -460,7 +457,7 @@ START_TEST(eina_cxx_ptrlist_range)
   list.push_back(new int(30));
 
   efl::eina::range_ptr_list<int> range_list(list);
-  
+
   ck_assert(range_list.size() == 6u);
 
   int result[] = {5, 10, 15, 20, 25, 30};

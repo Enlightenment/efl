@@ -26,9 +26,10 @@
 
 #define EINA_MAGIC_DEBUG
 
-#include "eina_suite.h"
-#include "Eina.h"
+#include <Eina.h>
 #include "eina_safety_checks.h"
+
+#include "eina_suite.h"
 
 #define EINA_MAGIC_TEST 0x7781fee7
 #define EINA_MAGIC_TEST2 0x42241664

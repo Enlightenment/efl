@@ -27,10 +27,11 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include "eina_suite.h"
-#include "Eina.h"
+#include <Eina.h>
 #include "eina_safety_checks.h"
 #include "eina_file_common.h"
+
+#include "eina_suite.h"
 
 #ifdef _WIN32
 # define PATH_SEP_C '\\'

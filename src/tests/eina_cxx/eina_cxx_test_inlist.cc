@@ -1,14 +1,12 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Eina.hh"
-
-#include <algorithm>
 #include <functional>
 
-#include <check.h>
+#include <Eina.hh>
+
+#include "eina_cxx_suite.h"
 
 struct Eina_Test_Inlist
 {
@@ -180,7 +178,7 @@ START_TEST(eina_cxx_inlist_erase)
   list1.push_back(20);
   list1.push_back(25);
   list1.push_back(30);
-  
+
   efl::eina::inlist<int>::iterator it = list1.begin(), it2;
 
   it = list1.erase(it);
@@ -197,7 +195,7 @@ START_TEST(eina_cxx_inlist_erase)
   ck_assert(it == it2);
   ck_assert(list1.size() == 4);
   ck_assert(*it2 == 20);
-  
+
   it = list1.end();
   --it;
   it = list1.erase(it);
@@ -232,7 +230,7 @@ START_TEST(eina_cxx_inlist_range)
   list.push_back(30);
 
   efl::eina::range_inlist<int> range_list(list);
-  
+
   ck_assert(range_list.size() == 6u);
 
   int result[] = {5, 10, 15, 20, 25, 30};

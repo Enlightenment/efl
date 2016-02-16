@@ -8,9 +8,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include <Eio.h>
 #include <Ecore.h>
 #include <Ecore_File.h>
+#include <Eio.h>
 
 #include "eio_suite.h"
 
@@ -374,4 +374,3 @@ eio_test_file(TCase *tc)
     tcase_add_test(tc, eio_file_test_ls);
     tcase_add_test(tc, eio_file_test_file);
 }
-

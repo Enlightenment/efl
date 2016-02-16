@@ -1,12 +1,12 @@
-
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
 
 #include <stdio.h>
 
+#include <Evas.h>
+
 #include "evas_suite.h"
-#include "Evas.h"
 #include "evas_tests_helpers.h"
 
 #define START_CALLBACK_TEST() \

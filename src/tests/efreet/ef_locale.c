@@ -1,15 +1,14 @@
-#include "config.h" 
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Efreet.h"
-#define EFREET_MODULE_LOG_DOM /* no logging in this file */
-#include "efreet_private.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include <Efreet.h>
+#define EFREET_MODULE_LOG_DOM /* no logging in this file */
+#include "efreet_private.h"
 
 int
 ef_cb_locale(void)

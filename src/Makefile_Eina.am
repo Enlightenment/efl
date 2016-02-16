@@ -273,6 +273,7 @@ check_PROGRAMS += tests/eina/eina_suite tests/eina/cxx_compile_test
 TESTS += tests/eina/eina_suite
 
 tests_eina_eina_suite_SOURCES = \
+tests/efl_check.h \
 tests/eina/eina_suite.c \
 tests/eina/eina_suite.h \
 tests/eina/eina_test_abi.c \

@@ -2,15 +2,16 @@
 # include "config.h"
 #endif
 
+#include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <stdio.h>
 
+#include <Evas.h>
 #include "../../lib/evas/include/evas_common_private.h"
 #include "../../lib/evas/include/evas_private.h"
+
 #include "evas_suite.h"
-#include "Evas.h"
 #include "evas_tests_helpers.h"
 
 START_TEST(evas_matrix)

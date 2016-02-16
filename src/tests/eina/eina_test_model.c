@@ -23,8 +23,9 @@
 #include <stdio.h>
 #include <inttypes.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 static void
 _eina_test_model_check_safety_null(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args)

@@ -1,7 +1,10 @@
-#include "config.h" 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
-#include "Efreet.h"
 #include <stdio.h>
+
+#include <Efreet.h>
 
 int
 ef_cb_utils(void)

@@ -4,8 +4,9 @@
 
 #include <stdio.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 #define MAX_ROWS 10
 #define MAX_COLS 10

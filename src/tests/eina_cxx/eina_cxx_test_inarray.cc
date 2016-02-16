@@ -1,16 +1,13 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Eina.hh"
-
-#include <algorithm>
 #include <functional>
-
 #include <iostream>
 
-#include <check.h>
+#include <Eina.hh>
+
+#include "eina_cxx_suite.h"
 
 START_TEST(eina_cxx_inarray_pod_push_back)
 {
@@ -139,7 +136,7 @@ START_TEST(eina_cxx_inarray_pod_erase)
   array1.push_back(20);
   array1.push_back(25);
   array1.push_back(30);
-  
+
   efl::eina::inarray<int>::iterator it = array1.begin(), it2;
 
   it = array1.erase(it);
@@ -152,7 +149,7 @@ START_TEST(eina_cxx_inarray_pod_erase)
   it = array1.erase(it);
   ck_assert(*it == 20);
   ck_assert(array1.size() == 4);
-  
+
   it = array1.end() - 1;
   it = array1.erase(it);
   ck_assert(it == array1.end());
@@ -354,7 +351,7 @@ START_TEST(eina_cxx_inarray_nonpod_erase)
     array1.push_back(20);
     array1.push_back(25);
     array1.push_back(30);
-  
+
     efl::eina::inarray<non_pod>::iterator it = array1.begin(), it2;
 
     it = array1.erase(it);
@@ -367,13 +364,13 @@ START_TEST(eina_cxx_inarray_nonpod_erase)
     it = array1.erase(it);
     ck_assert(*it == 20);
     ck_assert(array1.size() == 4);
-  
+
     it = array1.end() - 1;
     it = array1.erase(it);
     ck_assert(it == array1.end());
     ck_assert(array1.size() == 3);
     ck_assert(array1.back() == 25);
-    
+
     it = array1.begin() + 1;
     it2 = array1.end() - 1;
     it = array1.erase(it, it2);

@@ -28,8 +28,9 @@
 # include <Evil.h>
 #endif
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 #define TEST_TEXT "The big test\n"
 

@@ -48,7 +48,8 @@ TESTS += tests/eldbus_cxx/eldbus_cxx_suite
 tests_eldbus_cxx_eldbus_cxx_suite_SOURCES = \
 tests/eldbus_cxx/eldbus_cxx_suite.cc \
 tests/eldbus_cxx/eldbus_cxx_test_eldbus_connect.cc \
-tests/eldbus_cxx/eldbus_cxx_test_eldbus_client.cc
+tests/eldbus_cxx/eldbus_cxx_test_eldbus_client.cc \
+tests/eldbus_cxx/eldbus_cxx_suite.h
 
 tests_eldbus_cxx_eldbus_cxx_suite_CPPFLAGS = \
 -I$(top_builddir)/src/bindings/eina_cxx \

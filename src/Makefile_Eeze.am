@@ -162,7 +162,13 @@ if EFL_ENABLE_TESTS
 check_PROGRAMS += tests/eeze/eeze_suite
 TESTS += tests/eeze/eeze_suite
 
-tests_eeze_eeze_suite_SOURCES = tests/eeze/eeze_suite.c
+tests_eeze_eeze_suite_SOURCES = \
+tests/eeze/eeze_suite.c \
+tests/eeze/eeze_test_init.c \
+tests/eeze/eeze_test_net.c \
+tests/eeze/eeze_test_sensor.c \
+tests/eeze/eeze_test_udev.c \
+tests/eeze/eeze_suite.h
 tests_eeze_eeze_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EEZE_CFLAGS@ \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eeze\" \

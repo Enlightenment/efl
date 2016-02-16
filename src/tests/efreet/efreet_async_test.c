@@ -1,6 +1,9 @@
-#include "config.h" 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
 #include <unistd.h>
+
 #include <Eina.h>
 #include <Ecore.h>
 #include <Efreet.h>

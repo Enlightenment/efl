@@ -363,7 +363,7 @@ START_TEST(edje_test_color_class)
 END_TEST
 
 void edje_test_edje(TCase *tc)
-{    
+{
    tcase_add_test(tc, edje_test_edje_init);
    tcase_add_test(tc,edje_test_load_simple_layout);
    tcase_add_test(tc, edje_test_edje_load);

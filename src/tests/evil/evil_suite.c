@@ -23,18 +23,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <Evil.h>
-
 #include "evil_suite.h"
+#include "../efl_check.h"
 
-typedef struct _Evil_Test_Case Evil_Test_Case;
-struct _Evil_Test_Case
-{
-   const char *test_case;
-   void (*build)(TCase *tc);
-};
-
-static const Evil_Test_Case etc[] = {
+static const Efl_Test_Case etc[] = {
    /* { "Dirent", evil_test_dirent }, */
    { "Dlfcn", evil_test_dlfcn },
    /* { "Fcntl", evil_test_fcntl }, */
@@ -54,85 +46,18 @@ static const Evil_Test_Case etc[] = {
    { NULL, NULL }
 };
 
-static void
-_list_tests(void)
-{
-   const Evil_Test_Case *itr = etc;
-      fputs("Available Test Cases:\n", stderr);
-   for (; itr->test_case; itr++)
-      fprintf(stderr, "\t%s\n", itr->test_case);
-}
-
-static unsigned char
-_use_test(int argc, const char **argv, const char *test_case)
-{
-   if (argc < 1)
-      return 1;
-
-   for (; argc > 0; argc--, argv++)
-      if (strcmp(test_case, *argv) == 0)
-         return 1;
-
-   return 0;
-}
-
-Suite *
-evil_build_suite(int argc, const char **argv)
-{
-   TCase *tc;
-   Suite *s;
-   int i;
-
-   s = suite_create("Evil");
-
-   for (i = 0; etc[i].test_case; ++i)
-     {
-        if (!_use_test(argc, argv, etc[i].test_case))
-           continue;
-
-        tc = tcase_create(etc[i].test_case);
-#ifndef _WIN32
-        tcase_set_timeout(tc, 0);
-#endif
-
-        etc[i].build(tc);
-        suite_add_tcase(s, tc);
-     }
-
-   return s;
-}
-
 int
 main(int argc, char **argv)
 {
-   Suite *s;
-   SRunner *sr;
-   int i, failed_count;
+   int failed_count;
 
-   for (i = 1; i < argc; i++)
-      if ((strcmp(argv[i], "-h") == 0) ||
-          (strcmp(argv[i], "--help") == 0))
-        {
-           fprintf(stderr, "Usage:\n\t%s [test_case1 .. [test_caseN]]\n",
-                   argv[0]);
-           _list_tests();
-           return 0;
-        }
-      else if ((strcmp(argv[i], "-l") == 0) ||
-               (strcmp(argv[i], "--list") == 0))
-        {
-           _list_tests();
-           return 0;
-        }
+   if (!_efl_test_option_disp(argc, argv, etc))
+     return 0;
 
    putenv("EFL_RUN_IN_TREE=1");
 
-   s = evil_build_suite(argc - 1, (const char **)argv + 1);
-   sr = srunner_create(s);
-   srunner_set_xml(sr, TESTS_BUILD_DIR "/check-results.xml");
-   srunner_run_all(sr, CK_ENV);
-   failed_count = srunner_ntests_failed(sr);
-   srunner_free(sr);
+   failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
+                                           "Evil", etc);
 
    return (failed_count == 0) ? 0 : 255;
 }

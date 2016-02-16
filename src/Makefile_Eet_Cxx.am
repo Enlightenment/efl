@@ -19,7 +19,8 @@ TESTS += tests/eet_cxx/eet_cxx_suite
 
 tests_eet_cxx_eet_cxx_suite_SOURCES = \
 tests/eet_cxx/eet_cxx_suite.cc \
-tests/eet_cxx/eet_cxx_test_descriptors.cc
+tests/eet_cxx/eet_cxx_test_descriptors.cc \
+tests/eet_cxx/eet_cxx_suite.h
 
 tests_eet_cxx_eet_cxx_suite_CPPFLAGS = 	\
 -I$(top_builddir)/src/lib/efl \

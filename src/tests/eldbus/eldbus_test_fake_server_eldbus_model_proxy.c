@@ -2,15 +2,15 @@
 # include <config.h>
 #endif
 
-#include "eldbus_fake_server.h"
-#include "eldbus_suite.h"
-#include "eldbus_test_eldbus_model.h"
+#include <stdbool.h>
 
-#include <Ecore.h>
 #include <Eina.h>
+#include <Ecore.h>
 #include <Eldbus_Model.h>
 
-#include <stdbool.h>
+#include "eldbus_fake_server.h"
+#include "eldbus_test_eldbus_model.h"
+#include "eldbus_suite.h"
 
 static Eo *fake_server_object = NULL;
 static Eo *fake_server_proxy = NULL;
@@ -92,7 +92,7 @@ START_TEST(property_get)
    Efl_Model_Load_Status status;
    eo_do(fake_server_proxy, status = efl_model_property_get(FAKE_SERVER_WRITEONLY_PROPERTY, &dummy));
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
-   
+
    _teardown();
 }
 END_TEST

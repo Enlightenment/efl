@@ -23,9 +23,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "eina_suite.h"
-#include "Eina.h"
+#include <Eina.h>
 #include "eina_safety_checks.h"
+
+#include "eina_suite.h"
 
 #ifdef EINA_SAFETY_CHECKS
 struct log_ctx {

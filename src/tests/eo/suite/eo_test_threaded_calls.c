@@ -4,7 +4,8 @@
 
 #include <stdio.h>
 
-#include "Eo.h"
+#include <Eo.h>
+
 #include "eo_suite.h"
 
 static Eina_Barrier barrier;

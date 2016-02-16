@@ -20,9 +20,9 @@
 # include "config.h"
 #endif
 
-#include "ector_suite.h"
+#include <Ector.h>
 
-#include "Ector.h"
+#include "ector_suite.h"
 
 START_TEST(ector_init_simple)
 {

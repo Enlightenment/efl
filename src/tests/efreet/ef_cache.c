@@ -1,13 +1,12 @@
-#include "config.h" 
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
 #include <stdio.h>
-#include <Ecore.h>
 
-#include "Efreet.h"
+#include <Ecore.h>
+#include <Efreet.h>
+
 #include "ef_test.h"
 
 #if 0

@@ -24,8 +24,9 @@
 #include <stdio.h>
 #include <time.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 static const unsigned int r1[1000] =
 {

@@ -1,16 +1,13 @@
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include "Eina.hh"
-#include "Eo.hh"
-
+#include <Eina.hh>
 #include <eina_array.hh>
+#include <Eo.hh>
 
-#include <algorithm>
+#include "eina_cxx_suite.h"
 
-#include <check.h>
 extern "C" {
 #include "simple.eo.h"
 }
@@ -32,7 +29,7 @@ START_TEST(eina_cxx_ptrarray_push_back)
   wrapper const w1(eo_add(SIMPLE_CLASS, NULL));
   wrapper const w2(eo_add(SIMPLE_CLASS, NULL));
   wrapper const w3(eo_add(SIMPLE_CLASS, NULL));
-  
+
   {
     efl::eina::ptr_array<int> array;
 
@@ -335,7 +332,7 @@ START_TEST(eina_cxx_ptrarray_erase)
     int rresult[] = {30, 25, 20, 15, 10, 5};
     ck_assert(std::equal(array1.begin(), array1.end(), result));
     ck_assert(std::equal(array1.rbegin(), array1.rend(), rresult));
-  
+
     efl::eina::ptr_array<int>::iterator it = array1.erase(array1.begin());
     ck_assert(it == array1.begin());
     ck_assert(array1.size() == 5);
@@ -346,7 +343,7 @@ START_TEST(eina_cxx_ptrarray_erase)
     it = array1.erase(array1.begin() + 1);
     ck_assert(*it == 20);
     ck_assert(array1.size() == 4);
-  
+
     it = array1.erase(array1.end() - 1);
     ck_assert(it == array1.end());
     ck_assert(array1.size() == 3);
@@ -365,9 +362,9 @@ START_TEST(eina_cxx_ptrarray_erase)
     wrapper const w4(eo_add(SIMPLE_CLASS, NULL));
     wrapper const w5(eo_add(SIMPLE_CLASS, NULL));
     wrapper const w6(eo_add(SIMPLE_CLASS, NULL));
-    
+
     efl::eina::array<wrapper> array1;
-    
+
     array1.push_back(w1);
     array1.push_back(w2);
     array1.push_back(w3);
@@ -379,7 +376,7 @@ START_TEST(eina_cxx_ptrarray_erase)
     wrapper rresult[] = {w6, w5, w4, w3, w2, w1};
     ck_assert(std::equal(array1.begin(), array1.end(), result_));
     ck_assert(std::equal(array1.rbegin(), array1.rend(), rresult));
-  
+
     efl::eina::array<wrapper>::iterator it = array1.erase(array1.begin());
     ck_assert(it == array1.begin());
     ck_assert(array1.size() == 5);
@@ -390,7 +387,7 @@ START_TEST(eina_cxx_ptrarray_erase)
     it = array1.erase(array1.begin() + 1);
     ck_assert(*it == w4);
     ck_assert(array1.size() == 4);
-  
+
     it = array1.erase(array1.end() - 1);
     ck_assert(it == array1.end());
     ck_assert(array1.size() == 3);
@@ -420,7 +417,7 @@ START_TEST(eina_cxx_ptrarray_range)
     array.push_back(new int(30));
 
     efl::eina::range_ptr_array<int> range_array(array);
-  
+
     ck_assert(range_array.size() == 6u);
 
     int result[] = {5, 10, 15, 20, 25, 30};
@@ -456,7 +453,7 @@ START_TEST(eina_cxx_ptrarray_range)
     array.push_back(w6);
 
   //   efl::eina::range_array<wrapper> range_array(array);
-  
+
   //   ck_assert(range_array.size() == 6u);
 
   //   wrapper result[] = {5, 10, 15, 20, 25, 30};

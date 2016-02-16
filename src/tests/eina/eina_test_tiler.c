@@ -22,8 +22,9 @@
 
 #include <stdio.h>
 
+#include <Eina.h>
+
 #include "eina_suite.h"
-#include "Eina.h"
 
 struct test_rect
 {

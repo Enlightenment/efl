@@ -23,9 +23,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "eina_suite.h"
-#include "Eina.h"
+#include <Eina.h>
 #include "eina_safety_checks.h"
+
+#include "eina_suite.h"
 
 typedef struct _Eina_Test_Inlist Eina_Test_Inlist;
 struct _Eina_Test_Inlist
