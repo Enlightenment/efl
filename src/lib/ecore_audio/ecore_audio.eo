@@ -1,3 +1,16 @@
+type @extern Ecore_Audio_Vio: __undefined_type; /* FIXME: Had function pointer members. */
+type @extern eo_key_data_free_func: __undefined_type; /* FIXME: Function pointers not allowed. */
+
+enum Ecore_Audio_Format {
+    auto, [[Automatically detect the format (for inputs)]]
+    raw, [[RAW samples (float)]]
+    wav, [[WAV format]]
+    ogg, [[OGG]]
+    flac, [[FLAC, the Free Lossless Audio Codec]]
+    mp3,  [[MP3 (not supported)]]
+    last [[Sentinel value, do not use]]
+}
+
 class Ecore_Audio (Eo.Base)
 {
    legacy_prefix: null;

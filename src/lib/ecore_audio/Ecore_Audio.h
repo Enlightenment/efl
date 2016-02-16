@@ -54,25 +54,6 @@ enum _Ecore_Audio_Type {
  */
 typedef enum _Ecore_Audio_Type Ecore_Audio_Type;
 
-/**
- * @since 1.8
- */
-enum _Ecore_Audio_Format {
-    ECORE_AUDIO_FORMAT_AUTO, /**< Automatically detect the format (for inputs) */
-    ECORE_AUDIO_FORMAT_RAW, /**< RAW samples (float) */
-    ECORE_AUDIO_FORMAT_WAV, /**< WAV format */
-    ECORE_AUDIO_FORMAT_OGG, /**< OGG */
-    ECORE_AUDIO_FORMAT_FLAC, /**< FLAC, the Free Lossless Audio Codec */
-    ECORE_AUDIO_FORMAT_MP3,  /**< MP3 (not supported) */
-    ECORE_AUDIO_FORMAT_LAST /**< Sentinel value, do not use */
-};
-
- /*
-  * @since 1.8
- */
-typedef enum _Ecore_Audio_Format Ecore_Audio_Format;
-/**< The format of the audio data */
-
   /** @since 1.8
    */
 typedef struct _Ecore_Audio_Module Ecore_Audio_Module;
