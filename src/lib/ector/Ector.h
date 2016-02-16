@@ -114,17 +114,6 @@ typedef Eo Ector_Renderer;
 /* typedef Evas_Colorspace Ector_Colorspace; */
 
 /**
- * Quality values
- */
-typedef enum _Ector_Quality
-{
-  ECTOR_QUALITY_BEST, /**< Best quality */
-  ECTOR_QUALITY_GOOD, /**< Good quality */
-  ECTOR_QUALITY_FAST, /**< Lower quality, fastest */
-  ECTOR_QUALITY_LAST
-} Ector_Quality;
-
-/**
  * Priorities
  */
 typedef enum _Ector_Priority

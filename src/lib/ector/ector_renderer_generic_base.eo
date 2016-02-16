@@ -1,5 +1,14 @@
 import eina_types;
 
+enum Ector.Quality
+{
+   [[Quality values]]
+   best, [[Best quality]]
+   good, [[Good quality]]
+   fast, [[Lower quality]]
+   last, [[Sentinel]]
+}
+
 abstract Ector.Renderer.Generic.Base (Eo.Base)
 {
    eo_prefix: ector_renderer;
@@ -80,7 +89,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	 get {
 	 }
 	 values {
-	    r: Ector_Renderer *;
+	    r: Ector.Renderer.Generic.Base *;
 	 }
       }
       @property quality {
@@ -89,7 +98,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	 get {
 	 }
 	 values {
-	    q: Ector_Quality;
+	    q: Ector.Quality;
 	 }
       }
       @property crc {
