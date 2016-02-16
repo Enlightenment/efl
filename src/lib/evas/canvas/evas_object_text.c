@@ -995,6 +995,7 @@ _evas_text_ellipsis_set(Eo *eo_obj, Evas_Text_Data *o, double ellipsis)
    if (o->cur.ellipsis == ellipsis) return;
 
    evas_object_async_block(obj);
+   o->prev.ellipsis = o->cur.ellipsis;
    o->cur.ellipsis = ellipsis;
    o->changed = 1;
    if (o->has_filter)
@@ -1596,7 +1597,7 @@ evas_object_text_init(Evas_Object *eo_obj)
 
    Evas_Text_Data *o = obj->private_data;
    /* alloc obj private data */
-   o->cur.ellipsis = -1.0;
+   o->prev.ellipsis = o->cur.ellipsis = -1.0;
    o->prev = o->cur;
 #ifdef BIDI_SUPPORT
    o->bidi_par_props = evas_bidi_paragraph_props_new();
@@ -2019,10 +2020,10 @@ evas_object_text_render_pre(Evas_Object *eo_obj,
 #endif
 
    /* If object size changed and ellipsis is set */
-   if (((o->cur.ellipsis >= 0.0 ||
-       o->cur.ellipsis != o->prev.ellipsis) &&
+   if (((o->cur.ellipsis >= 0.0) &&
        ((obj->cur->geometry.w != o->last_computed.w) ||
        (obj->cur->geometry.h != o->last_computed.h))) ||
+       (o->cur.ellipsis != o->prev.ellipsis) ||
        (obj->cur->scale != obj->prev->scale) ||
        (o->changed_paragraph_direction))
      {

@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #include <Evas.h>
+#include <Ecore_Evas.h>
 
 #include "evas_suite.h"
 #include "evas_tests_helpers.h"
@@ -624,6 +625,34 @@ START_TEST(evas_text_bidi)
 END_TEST
 #endif
 
+START_TEST(evas_text_render)
+{
+   Ecore_Evas *ee = ecore_evas_buffer_new(500, 500);
+   Evas *evas = ecore_evas_get(ee);
+   Evas_Object *to;
+   const char *font = TEST_FONT_NAME;
+   Evas_Font_Size size = 14;
+   int w;
+
+   evas_font_hinting_set(evas, EVAS_FONT_HINTING_AUTO);
+   to = evas_object_text_add(evas);
+   evas_object_text_font_source_set(to, TEST_FONT_SOURCE);
+   evas_object_show(to);
+
+   /* Check the changing ellipsis is updated properly. */
+   evas_object_text_font_set(to, font, size);
+   evas_object_text_text_set(to, "Dynamically changing ellipsis!");
+   evas_object_text_ellipsis_set(to, 0.0);
+   evas_object_resize(to, 50, 100);
+   w = evas_object_text_horiz_advance_get(to);
+   evas_object_text_ellipsis_set(to, -1.0);
+   evas_render(evas);
+   ck_assert_int_gt(evas_object_text_horiz_advance_get(to), w);
+
+   ecore_evas_free(ee);
+}
+END_TEST
+
 void evas_test_text(TCase *tc)
 {
    tcase_add_test(tc, evas_text_simple);
@@ -637,4 +666,5 @@ void evas_test_text(TCase *tc)
 #endif
 
    tcase_add_test(tc, evas_text_unrelated);
+   tcase_add_test(tc, evas_text_render);
 }
