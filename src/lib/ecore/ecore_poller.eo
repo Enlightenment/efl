@@ -1,5 +1,12 @@
 type @extern Ecore_Task_Cb: __undefined_type;
 
+enum Ecore.Poller_Type
+{
+   [[Defines the frequency of ticks for the poller.]]
+   legacy: ecore_poller;
+   core = 0 [[The core poller interval]]
+}
+
 class Ecore.Poller (Eo.Base)
 {
    methods {
@@ -7,7 +14,7 @@ class Ecore.Poller (Eo.Base)
          [[Constructor with parameters for Ecore Poller.]]
          legacy: null;
          params {
-            @in type: Ecore_Poller_Type;
+            @in type: Ecore.Poller_Type;
             @in interval: int;
             @in func: Ecore_Task_Cb;
             @in data: const(void)*;

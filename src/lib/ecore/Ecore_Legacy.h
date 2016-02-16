@@ -8,6 +8,8 @@ extern "C" {
  * @{
  */
 
+#include "ecore_poller.eo.legacy.h"
+
 /**
  * @brief Creates a poller to call the given function at a particular tick interval.
  * @param type The ticker type to attach the poller to. Must be ECORE_POLLER_CORE.
@@ -45,8 +47,6 @@ EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, Ecore_
  * returned 0, the handle is no longer valid (and does not need to be deleted).
  */
 EAPI void *ecore_poller_del(Ecore_Poller *poller);
-
-#include "ecore_poller.eo.legacy.h"
 
 /**
  * @}

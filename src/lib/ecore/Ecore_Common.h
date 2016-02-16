@@ -2588,43 +2588,6 @@ EAPI double ecore_throttle_get(void);
  */
 
 /**
- * @enum _Ecore_Poller_Type
- * Defines the frequency of ticks for the poller.
- */
-enum _Ecore_Poller_Type    /* Poller types */
-{
-   ECORE_POLLER_CORE = 0 /**< The core poller interval */
-};
-typedef enum _Ecore_Poller_Type Ecore_Poller_Type;
-
-/*
- * @since 1.8
- */
-
-typedef Eo    Ecore_Poller; /**< A handle for pollers */
-
-#define _ECORE_POLLER_EO_CLASS_TYPE
-
-/**
- * @brief Sets the time(in seconds) between ticks for the given poller type.
- * @param type The poller type to adjust.
- * @param poll_time The time(in seconds) between ticks of the timer.
- *
- * This will adjust the time between ticks of the given timer type defined by
- * @p type to the time period defined by @p poll_time.
- */
-EAPI void ecore_poller_poll_interval_set(Ecore_Poller_Type type, double poll_time);
-
-/**
- * @brief Gets the time(in seconds) between ticks for the given poller type.
- * @param type The poller type to query.
- * @return The time in seconds between ticks of the poller timer.
- *
- * This will get the time between ticks of the specified poller timer.
- */
-EAPI double ecore_poller_poll_interval_get(Ecore_Poller_Type type);
-
-/**
  * @}
  */
 
