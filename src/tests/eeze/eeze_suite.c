@@ -2,7 +2,7 @@
 # include <config.h>
 #endif /* ifdef HAVE_CONFIG_H */
 
-#include "ecore_suite.h"
+#include "eeze_suite.h"
 #include "../efl_check.h"
 
 static const Efl_Test_Case etc[] = {
@@ -14,7 +14,7 @@ static const Efl_Test_Case etc[] = {
 };
 
 int
-main(void)
+main(int argc, char *argv[])
 {
    int failed_count;
 
