@@ -1,3 +1,5 @@
+import efl_gfx_types;
+
 interface Efl.Gfx.Gradient.Base
 {
    eo_prefix: efl_gfx_gradient;
@@ -11,7 +13,7 @@ interface Efl.Gfx.Gradient.Base
             [[Get the list of color stops.]]
          }
          values {
-            colors: const(Efl_Gfx_Gradient_Stop) *; [[color stops list]]
+            colors: const(Efl.Gfx.Gradient.Stop) *; [[color stops list]]
             length: uint; [[length of the list]]
          }
       }
@@ -25,7 +27,7 @@ interface Efl.Gfx.Gradient.Base
             ]]
          }
          values {
-            s: Efl_Gfx_Gradient_Spread; [[spread type to be used]]
+            s: Efl.Gfx.Gradient.Spread; [[spread type to be used]]
          }
       }
    }
