@@ -69,7 +69,7 @@ class Efl.Network.Server (Ecore.Con.Base) {
             legacy: null;
         }
         values {
-            conn_type: Ecore_Con_Type;
+            conn_type: Ecore.Con.Type;
         }
       }
    }

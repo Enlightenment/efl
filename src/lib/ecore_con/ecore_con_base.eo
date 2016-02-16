@@ -1,5 +1,34 @@
 type Ecore_Con_Dns_Cb: __undefined_type;
 
+enum Ecore.Con.Type
+{
+   [[Types for an ecore_con client/server object.  A correct way to set this type is
+       with an ECORE_CON_$TYPE, optionally OR'ed with an ECORE_CON_$USE if encryption is desired,
+       and LOAD_CERT if the previously loaded certificate should be used.]]
+   legacy: ecore_con;
+
+   local_user = 0, [[Socket in "~/.ecore"]]
+   local_system = 1, [[Socket in /tmp]]
+   local_abstract = 2, [[Abstract socket]]
+   remote_tcp = 3, [[Remote server using TCP]]
+   remote_mcast = 4, [[Remote multicast server]]
+   remote_udp = 5, [[Remote server using UDP]]
+   remote_broadcasT = 6, [[Remote broadcast using UDP]]
+   remote_nodelay = 7, [[Remote connection sending packets immediately]]
+   remote_cork = 8, [[Remote connection sending data in large chunks
+                     Note: Only available on Linux
+                     @since 1.2]]
+   use_ssl2 = (1 << 4), [[Use SSL2: UNSUPPORTED.]]
+   use_ssl3 = (1 << 5), [[Use SSL3: UNSUPPORTED.]]
+   use_tls = (1 << 6), [[Use TLS]]
+   use_mixed = Ecore.Con.Type.use_tls | Ecore.Con.Type.use_ssl3, [[Use both TLS and SSL3]]
+   load_cert = (1 << 7), [[Attempt to use the loaded certificate]]
+   no_proxy = (1 << 8), [[Disable all types of proxy on the server
+                         Note: Only functional for clients
+                         @since 1.2]]
+   socket_activate = (1 << 9)
+}
+
 abstract Ecore.Con.Base (Eo.Base) {
    legacy_prefix: ecore_con;
    eo_prefix: ecore_con_obj;
