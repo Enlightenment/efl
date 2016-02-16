@@ -32,7 +32,7 @@ class Evas.Out (Eo.Base)
             [[Gets the engine specific output parameters for a given output.]]
          }
          values {
-            info: Evas_Engine_Info *; [[The engine parameters.]]
+            info: Evas.Engine_Info *; [[The engine parameters.]]
          }
       }
    }
