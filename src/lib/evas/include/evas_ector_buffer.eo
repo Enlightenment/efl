@@ -1,5 +1,7 @@
 /* Note: only for internal C API */
 
+import evas_canvas;
+
 interface Evas.Ector.Buffer
 {
    legacy_prefix: null;
@@ -8,7 +10,7 @@ interface Evas.Ector.Buffer
          get {}
          set { [[This Buffer will hold a reference to the evas image struct.]] }
          values {
-            evas: Evas *; [[The current Evas.]]
+            evas: Evas.Canvas *; [[The current Evas.]]
             image: void *; [[The engine-specific image struct.]]
          }
       }
