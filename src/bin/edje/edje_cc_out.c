@@ -4159,7 +4159,7 @@ color_tree_root_free(void)
 }
 
 char *
-color_tree_token_next(char *dst, char *src, int *line)
+color_tree_token_next(char *dst, char *src, int *ln)
 {
    Eina_Bool begin = EINA_FALSE, next = EINA_FALSE;
 
@@ -4179,7 +4179,7 @@ color_tree_token_next(char *dst, char *src, int *line)
           }
         else if ((!begin) && (*src == '\n'))
           {
-             (*line)++;
+             (*ln)++;
           }
         else if (begin)
           {
@@ -4208,7 +4208,7 @@ color_tree_parent_node_get(const char *color_class)
 }
 
 void
-process_color_tree(char *s, const char *file_in, int line)
+process_color_tree(char *s, const char *f_in, int ln)
 {
    char token[2][1024];
    int id = 0;
@@ -4223,13 +4223,13 @@ process_color_tree(char *s, const char *file_in, int line)
 
    do
      {
-        s = color_tree_token_next(token[id], s, &line);
+        s = color_tree_token_next(token[id], s, &ln);
 
         if (!strcmp(token[id], "{"))
           {
              if (!token[!id][0])
                error_and_abort(NULL, "parse error %s:%i. color class is not set to newly opened node block.",
-                               file_in, line - 1);
+                               f_in, ln - 1);
 
              ctn = mem_alloc(SZ(Edje_Color_Tree_Node));
              ctn->name = strdup(token[!id]);
@@ -4258,12 +4258,12 @@ process_color_tree(char *s, const char *file_in, int line)
                       if (!strcmp(name, token[id]))
                         {
                            error_and_abort(NULL, "parse error %s:%i. The color class \"%s\" already belongs to the root node.",
-                                           file_in, line -1, token[id]);
+                                           f_in, ln -1, token[id]);
                         }
 
                   if ((ctn = color_tree_parent_node_get(token[id])))
                     error_and_abort(NULL, "parse error %s:%i. The color class \"%s\" already belongs to the \"%s\" node.",
-                                    file_in, line -1, token[id], ctn->name);
+                                    f_in, ln -1, token[id], ctn->name);
 
                   ctn = eina_array_data_get(array, eina_array_count(array) - 1);
                   ctn->color_classes = eina_list_append(ctn->color_classes, strdup(token[id]));
@@ -4272,7 +4272,7 @@ process_color_tree(char *s, const char *file_in, int line)
                {
                   if ((ctn = color_tree_parent_node_get(token[id])))
                     error_and_abort(NULL, "parse error %s:%i. The color class \"%s\" already belongs to the \"%s\" node.",
-                                    file_in, line -1, token[id], ctn->name);
+                                    f_in, ln -1, token[id], ctn->name);
 
                   color_tree_root = eina_list_append(color_tree_root, strdup(token[id]));
                }
@@ -4283,7 +4283,7 @@ process_color_tree(char *s, const char *file_in, int line)
      } while (*s);
 
    if (eina_array_count(array))
-     error_and_abort(NULL, "parse error %s:%i. check pair of parens.", file_in, line - 1);
+     error_and_abort(NULL, "parse error %s:%i. check pair of parens.", f_in, ln - 1);
 
    eina_array_clean(array);
    eina_array_free(array);
