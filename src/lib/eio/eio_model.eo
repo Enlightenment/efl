@@ -1,3 +1,5 @@
+type @extern Eio_Filter_Direct_Cb: __undefined_type;
+
 class Eio.Model (Eo.Base, Efl.Model.Base)
 {
     legacy_prefix: null;
