@@ -2068,7 +2068,7 @@ _native_bind_cb(void *data EINA_UNUSED, void *image)
        if (n->ns_data.evasgl.surface)
          {
              Eina_Bool is_egl_image = EINA_FALSE;
-             void *surface;
+             void *surface = NULL;
 
              if (glsym_evgl_native_surface_buffer_get)
                surface = glsym_evgl_native_surface_buffer_get(n->ns_data.evasgl.surface, &is_egl_image);
