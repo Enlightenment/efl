@@ -424,6 +424,18 @@ static inline void eina_vector3_transform(Eina_Vector3 *out, const Eina_Matrix3 
                                  const Eina_Vector3 *v);
 
 /**
+ * @brief Homogeneous direction transform vector.
+ *
+ * @param out The resulting vector.
+ * @param m The matrix for transform.
+ * @param v The vector for transform.
+ *
+ * @since 1.18
+ */
+static inline void eina_vector3_homogeneous_direction_transform(Eina_Vector3 *out, const Eina_Matrix4 *m,
+                                                               const Eina_Vector3 *v);
+
+/**
  * @brief Homogeneous position transform vector.
  *
  * @param out The resulting vector.

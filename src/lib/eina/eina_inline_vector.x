@@ -283,6 +283,20 @@ eina_vector3_transform(Eina_Vector3 *out, const Eina_Matrix3 *m,  const Eina_Vec
 }
 
 static inline void
+eina_vector3_homogeneous_direction_transform(Eina_Vector3 *out, const Eina_Matrix4 *m,  const Eina_Vector3 *v)
+{
+   if (eina_matrix4_type_get(m) == EINA_MATRIX_TYPE_IDENTITY)
+     {
+        eina_vector3_copy(out, v);
+        return;
+     }
+
+   out->x = (m->xx * v->x) + (m->yx * v->y) + (m->zx * v->z);
+   out->y = (m->xy * v->x) + (m->yy * v->y) + (m->zy * v->z);
+   out->z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z);
+}
+
+static inline void
 eina_vector3_homogeneous_position_transform(Eina_Vector3 *out, const Eina_Matrix4 *m,
                                             const Eina_Vector3 *v)
 {

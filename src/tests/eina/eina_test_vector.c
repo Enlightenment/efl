@@ -217,6 +217,9 @@ START_TEST(eina_test_vector3_operations)
                                            &v1, &v2, &v3);
    fail_if(res2 != EINA_TRUE);
 
+   eina_vector3_homogeneous_direction_transform(&v3, &m4, &v1);
+   fail_if((v3.x != 12) || (v3.y != 12) || (v3.z != 12));
+
    eina_shutdown();
 }
 END_TEST
