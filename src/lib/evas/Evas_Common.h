@@ -172,7 +172,6 @@ typedef Eo      Efl_VG;
 
 typedef void                        Evas_Performance; /**< An Evas Performance handle */
 typedef struct _Evas_Smart          Evas_Smart; /**< An Evas Smart Object handle */
-typedef struct _Evas_Native_Surface Evas_Native_Surface; /**< A generic datatype for engine specific native surface information */
 
 /**
  * @typedef Evas_Video_Surface
@@ -427,43 +426,11 @@ typedef enum _Evas_Video_Surface_Caps
 #define evas_object_size_hint_expand_set evas_object_size_hint_weight_set /**< Convenience macro to make it easier to understand that weight is also used for expand properties */
 #define evas_object_size_hint_expand_get evas_object_size_hint_weight_get /**< Convenience macro to make it easier to understand that weight is also used for expand properties */
 
-typedef enum _Evas_Border_Fill_Mode
-{
-   EVAS_BORDER_FILL_NONE = 0, /**< Image's center region is @b not to be rendered */
-   EVAS_BORDER_FILL_DEFAULT = 1, /**< Image's center region is to be @b blended with objects underneath it, if it has transparency. This is the default behavior for image objects */
-   EVAS_BORDER_FILL_SOLID = 2 /**< Image's center region is to be made solid, even if it has transparency on it */
-} Evas_Border_Fill_Mode; /**< How an image's center region (the complement to the border region) should be rendered by Evas */
-
 typedef enum _Evas_Engine_Render_Mode
 {
    EVAS_RENDER_MODE_BLOCKING = 0, /**< The rendering is blocking mode*/
    EVAS_RENDER_MODE_NONBLOCKING = 1, /**< The rendering is non blocking mode*/
 } Evas_Engine_Render_Mode; /**< behaviour of the renderer*/
-
-typedef enum _Evas_Image_Content_Hint
-{
-   EVAS_IMAGE_CONTENT_HINT_NONE = 0, /**< No hint at all */
-   EVAS_IMAGE_CONTENT_HINT_DYNAMIC = 1, /**< The contents will change over time */
-   EVAS_IMAGE_CONTENT_HINT_STATIC = 2 /**< The contents won't change over time */
-} Evas_Image_Content_Hint; /**< How an image's data is to be treated by Evas, for optimization */
-
-/**
- * Possible orientation options for evas_object_image_orient_set().
- * @brief Types of orientation available
- * @since 1.14
- */
-typedef enum _Evas_Image_Orient
-{
-   EVAS_IMAGE_ORIENT_NONE = 0, /**< no orientation change */
-   EVAS_IMAGE_ORIENT_0 = 0, /**< no orientation change */
-   EVAS_IMAGE_ORIENT_90 = 1, /**< orient 90 degrees clockwise*/
-   EVAS_IMAGE_ORIENT_180 = 2, /**< orient 180 degrees clockwise */
-   EVAS_IMAGE_ORIENT_270 = 3, /**< rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise)*/
-   EVAS_IMAGE_FLIP_HORIZONTAL = 4, /**< flip image horizontally */
-   EVAS_IMAGE_FLIP_VERTICAL = 5, /**< flip image vertically */
-   EVAS_IMAGE_FLIP_TRANSPOSE = 6, /**< flip image along the y = (width - x) line (bottom-left to top-right) */
-   EVAS_IMAGE_FLIP_TRANSVERSE = 7 /**< flip image along the y = x line (top-left to bottom-right) */
-} Evas_Image_Orient;
 
 typedef enum _Evas_Device_Class
 {

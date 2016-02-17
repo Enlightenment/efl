@@ -1,3 +1,11 @@
+type @extern Evas.Load_Error: int; /* FIXME: Need to migrate emile. */
+type @extern Evas.Image_Scale_Hint: int; /* FIXME: Need to migrate emile. */
+type @extern Evas.Image_Animated_Loop_Hint: int; /* FIXME: Need to migrate emile. */
+struct @extern Evas.Video_Surface; /* FIXME: The structure is full of the unsupported func pointers. */
+
+/* FIXME: Unsupported annonymous structures inside */
+struct Evas.Native_Surface; [[A generic datatype for engine specific native surface information]]
+
 type Evas.Modifier_Mask: ullong;  [[An Evas modifier mask type]]
 type Evas.Coord: int; [[A type for coordinates]]
 enum Evas.Aspect_Control {
@@ -222,6 +230,39 @@ enum Evas.Callback_Type
 
                              @since 1.15]]
    last [[kept as last element/sentinel -- not really an event]]
+}
+
+enum Evas.Image_Content_Hint
+{
+   [[How an image's data is to be treated by Evas, for optimization]]
+   none = 0, [[No hint at all]]
+   dynamic = 1, [[The contents will change over time]]
+   static = 2 [[The contents won't change over time]]
+}
+
+enum Evas.Image_Orient
+{
+   [[Possible orientation options for evas_object_image_orient_set().
+     @since 1.14]]
+   legacy: evas_image;
+   orient_none = 0, [[no orientation change]]
+   orient_0 = 0, [[no orientation change]]
+   orient_90 = 1, [[orient 90 degrees clockwise]]
+   orient_180 = 2, [[orient 180 degrees clockwise]]
+   orient_270 = 3, [[rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise)]]
+   flip_horizontal = 4, [[flip image horizontally]]
+   flip_vertical = 5, [[flip image vertically]]
+   flip_transpose = 6, [[flip image along the y = (width - x) line (bottom-left to top-right)]]
+   flip_transverse = 7 [[flip image along the y = x line (top-left to bottom-right)]]
+}
+
+enum Evas.Border_Fill_Mode
+{
+   [[How an image's center region (the complement to the border region) should be rendered by Evas]]
+   legacy: evas_border_fill;
+   none = 0, [[Image's center region is $b not to be rendered]]
+   default = 1, [[Image's center region is to be $b blended with objects underneath it, if it has transparency. This is the default behavior for image objects]]
+   solid = 2 [[Image's center region is to be made solid, even if it has transparency on it]]
 }
 
 struct Evas.Modifier; [[An opaque type containing information on which modifier keys are registered in an Evas canvas]]
