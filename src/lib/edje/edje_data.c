@@ -992,6 +992,10 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.properties.ambient", light.properties.ambient, _edje_edd_edje_part_description_3d_color);
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.properties.diffuse", light.properties.diffuse, _edje_edd_edje_part_description_3d_color);
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.properties.specular", light.properties.specular, _edje_edd_edje_part_description_3d_color);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.light.perspective.fovy", light.light.fovy, EDJE_T_FLOAT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.light.perspective.aspect", light.light.aspect, EDJE_T_FLOAT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.light.perspective.near", light.light.frustum_near, EDJE_T_FLOAT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_light, Edje_Part_Description_Light, "light.light.perspective.far", light.light.frustum_far, EDJE_T_FLOAT);
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Camera);
    eddc.func.mem_free = mem_free_camera;

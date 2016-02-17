@@ -1490,6 +1490,13 @@ struct _Edje_Part_Description_Spec_Light
       FLOAT_T                            data[6];
       int                                look_to; /* -1 = whole part collection, or part ID */
    } orientation;
+
+   struct {
+      Evas_Real       fovy;
+      Evas_Real       aspect;
+      Evas_Real       frustum_near;
+      Evas_Real       frustum_far;
+   } light;
 };
 
 struct _Edje_Part_Description_Spec_Camera

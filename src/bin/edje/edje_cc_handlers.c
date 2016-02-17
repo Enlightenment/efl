@@ -10628,6 +10628,17 @@ st_collections_group_parts_part_description_camera_properties(void)
         ed->camera.camera.frustum_near = FROM_DOUBLE(parse_float(2));
         ed->camera.camera.frustum_far = FROM_DOUBLE(parse_float(3));
      }
+   else if (current_part->type == EDJE_PART_TYPE_LIGHT)
+     {
+        Edje_Part_Description_Light *ed;
+
+        ed = (Edje_Part_Description_Light*) current_desc;
+
+        ed->light.light.fovy = FROM_DOUBLE(parse_float(0));
+        ed->light.light.aspect = FROM_DOUBLE(parse_float(1));
+        ed->light.light.frustum_near = FROM_DOUBLE(parse_float(2));
+        ed->light.light.frustum_far = FROM_DOUBLE(parse_float(3));
+     }
    else
      {
         ERR("parse error %s:%i. camera attributes in non-CAMERA and non-LIGHT part.",
