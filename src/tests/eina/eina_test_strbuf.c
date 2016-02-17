@@ -534,6 +534,7 @@ START_TEST(strbuf_substr_get)
    const char *str;
 
    eina_init();
+
    buf = eina_strbuf_new();
    fail_unless(buf != NULL);
 
@@ -567,6 +568,64 @@ START_TEST(strbuf_substr_get)
    fail_if(substr);
 
    eina_strbuf_free(buf);
+
+   eina_shutdown();
+}
+END_TEST
+
+static const char*
+test_prepend_vprintf(Eina_Strbuf *buf, char *fmt, va_list ap)
+{
+   const char *str;
+
+   eina_strbuf_prepend_vprintf(buf, fmt, ap);
+   str = eina_strbuf_string_get(buf);
+   return str;
+}
+
+static const char*
+test_prepend(Eina_Strbuf *buf, ...)
+{
+   const char *str;
+
+   va_list ap;
+
+   va_start(ap, buf);
+   str = test_prepend_vprintf(buf, "%s %s %s %s", ap);
+   return str;
+}
+
+START_TEST(strbuf_prepend_print)
+{
+   Eina_Bool ret;
+   Eina_Strbuf* buf;
+   const char *str;
+
+   eina_init();
+   buf = eina_strbuf_new();
+   fail_unless(buf != NULL);
+
+   ret = eina_strbuf_prepend_printf(buf, "%s", "string");
+   fail_if(ret != EINA_TRUE);
+   str = eina_strbuf_string_get(buf);
+   fail_if(str == NULL || strcmp(str, "string") != 0);
+
+   ret = eina_strbuf_prepend_printf(buf, "This is %d ", 1);
+   fail_if(ret != EINA_TRUE);
+   str = eina_strbuf_string_get(buf);
+   fail_if(str == NULL || strcmp(str, "This is 1 string") != 0);
+
+   ret = eina_strbuf_prepend_printf(buf, "%s   ", "hello");
+   fail_if(ret != EINA_TRUE);
+   str = eina_strbuf_string_get(buf);
+   fail_if(str == NULL || strcmp(str, "hello   This is 1 string") != 0);
+   eina_strbuf_reset(buf);
+
+   str = test_prepend(buf, "This", "is", "test", "string");
+   fail_if(str == NULL || strcmp(str, "This is test string") != 0);
+
+   eina_strbuf_free(buf);
+
    eina_shutdown();
 }
 END_TEST
@@ -586,4 +645,5 @@ eina_test_strbuf(TCase *tc)
    tcase_add_test(tc, strbuf_trim);
    tcase_add_test(tc, strbuf_tolower);
    tcase_add_test(tc, strbuf_substr_get);
+   tcase_add_test(tc, strbuf_prepend_print);
 }
