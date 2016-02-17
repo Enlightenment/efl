@@ -765,6 +765,31 @@ _elm_entry_elm_widget_disable(Eo *obj, Elm_Entry_Data *sd)
    return EINA_TRUE;
 }
 
+/* It gets the background object from from_edje object and
+ * sets the background object to to_edje object.
+ * The background object has to be moved to proper Edje object
+ * when scrollable status is changed. */
+static void
+_elm_entry_background_switch(Evas_Object *from_edje, Evas_Object *to_edje)
+{
+   Evas_Object *bg_obj;
+
+   if (!from_edje || !to_edje) return;
+
+   if (edje_object_part_exists(from_edje, "elm.swallow.background") &&
+       edje_object_part_exists(to_edje, "elm.swallow.background") &&
+       !edje_object_part_swallow_get(to_edje, "elm.swallow.background"))
+     {
+        bg_obj = edje_object_part_swallow_get(from_edje, "elm.swallow.background");
+
+        if (bg_obj)
+          {
+             edje_object_part_unswallow(from_edje, bg_obj);
+             edje_object_part_swallow(to_edje, "elm.swallow.background", bg_obj);
+          }
+     }
+}
+
 /* we can't issue the layout's theming code here, cause it assumes an
  * unique edje object, always */
 EOLIAN static Eina_Bool
@@ -853,10 +878,14 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
           elm_widget_theme_object_set
           (obj, sd->scr_edje, "scroller", "entry", style);
 
+        _elm_entry_background_switch(sd->entry_edje, sd->scr_edje);
+
         str = edje_object_data_get(sd->scr_edje, "focus_highlight");
      }
    else
      {
+        _elm_entry_background_switch(sd->scr_edje, sd->entry_edje);
+
         str = edje_object_data_get(sd->entry_edje, "focus_highlight");
      }
 
