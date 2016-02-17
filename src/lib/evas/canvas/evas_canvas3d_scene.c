@@ -176,14 +176,14 @@ static inline Eina_Bool
 _pick_data_triangle_add(Evas_Canvas3D_Pick_Data *data, const Evas_Ray3 *ray,
                         const Evas_Triangle3 *tri)
 {
-   Evas_Vec3   e1, e2, tvec, pvec, qvec;
+   Eina_Vector3   e1, e2, tvec, pvec, qvec;
    Evas_Real   det, inv_det, u, v, t;
 
-   evas_vec3_subtract(&e1, &tri->p1, &tri->p0);
-   evas_vec3_subtract(&e2, &tri->p2, &tri->p0);
+   eina_vector3_subtract(&e1, &tri->p1, &tri->p0);
+   eina_vector3_subtract(&e2, &tri->p2, &tri->p0);
 
-   evas_vec3_cross_product(&pvec, &ray->dir, &e2);
-   det = evas_vec3_dot_product(&e1, &pvec);
+   eina_vector3_cross_product(&pvec, &ray->dir, &e2);
+   det = eina_vector3_dot_product(&e1, &pvec);
 
    /* If determinant is near zero, ray lies in plane of triangle. */
    if (det > -0.0000001 && det < 0.0000001)
@@ -192,25 +192,25 @@ _pick_data_triangle_add(Evas_Canvas3D_Pick_Data *data, const Evas_Ray3 *ray,
    inv_det = 1.0 / det;
 
    /* Calculate distance from p0 to ray origin. */
-   evas_vec3_subtract(&tvec, &ray->org, &tri->p0);
+   eina_vector3_subtract(&tvec, &ray->org, &tri->p0);
 
    /* Calculate U parameter and test bounds. */
-   u = evas_vec3_dot_product(&tvec, &pvec) * inv_det;
+   u = eina_vector3_dot_product(&tvec, &pvec) * inv_det;
 
    if (u < 0.0 || u > 1.0)
      return EINA_FALSE;
 
    /* Prepare to tst V parameter. */
-   evas_vec3_cross_product(&qvec, &tvec, &e1);
+   eina_vector3_cross_product(&qvec, &tvec, &e1);
 
    /* Calculate V parameter and test bounds. */
-   v = evas_vec3_dot_product(&ray->dir, &qvec) * inv_det;
+   v = eina_vector3_dot_product(&ray->dir, &qvec) * inv_det;
 
    if (v < 0.0 || u + v > 1.0)
      return EINA_FALSE;
 
    /* Calculate T parameter and test bounds. */
-   t = evas_vec3_dot_product(&e2, &qvec) * inv_det;
+   t = eina_vector3_dot_product(&e2, &qvec) * inv_det;
 
    if (t >= 0.0 && t <= 1.0)
      {

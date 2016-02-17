@@ -163,7 +163,7 @@ _evas_canvas3d_camera_node_visible_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Camera
    Eina_Quaternion planes[6];
    Evas_Canvas3D_Node_Data *pd_node = eo_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
    Evas_Canvas3D_Node_Data *pd_camera = eo_data_scope_get(camera_node, EVAS_CANVAS3D_NODE_CLASS);
-   Evas_Vec3 central_point;
+   Eina_Vector3 central_point;
 
    if (!node || pd_node->type != EVAS_CANVAS3D_NODE_TYPE_MESH)
      {

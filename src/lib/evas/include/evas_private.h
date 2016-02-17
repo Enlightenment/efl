@@ -247,13 +247,13 @@ struct _Evas_Canvas3D_Node
    Evas_Canvas3D_Node     *parent;
    Evas_Canvas3D_Node     *billboard_target;
 
-   Evas_Vec3         position;
+   Eina_Vector3         position;
    Eina_Quaternion         orientation;
-   Evas_Vec3         scale;
+   Eina_Vector3         scale;
 
-   Evas_Vec3         position_world;
+   Eina_Vector3         position_world;
    Eina_Quaternion   orientation_world;
-   Evas_Vec3         scale_world;
+   Eina_Vector3         scale_world;
 
    Evas_Box3         aabb;
    Evas_Box3         obb;
@@ -426,7 +426,7 @@ struct _Evas_Canvas3D_Primitive
    int                     precision;
    Evas_Canvas3D_Surface_Func   *surface;
 
-   Evas_Vec2 tex_scale;
+   Eina_Vector2 tex_scale;
 };
 
 struct _Evas_Canvas3D_Scene_Public_Data
@@ -1763,7 +1763,7 @@ void evas_canvas3d_light_node_del(Evas_Canvas3D_Light *light, Evas_Canvas3D_Node
 /* Mesh functions. */
 void evas_canvas3d_mesh_node_add(Evas_Canvas3D_Mesh *mesh, Evas_Canvas3D_Node *node);
 void evas_canvas3d_mesh_node_del(Evas_Canvas3D_Mesh *mesh, Evas_Canvas3D_Node *node);
-void evas_canvas3d_mesh_interpolate_position_get(Evas_Vec3 *out, const Evas_Canvas3D_Vertex_Buffer *pos0, const Evas_Canvas3D_Vertex_Buffer *pos1, Evas_Real weight, int index);
+void evas_canvas3d_mesh_interpolate_position_get(Eina_Vector3 *out, const Evas_Canvas3D_Vertex_Buffer *pos0, const Evas_Canvas3D_Vertex_Buffer *pos1, Evas_Real weight, int index);
 void evas_canvas3d_mesh_interpolate_vertex_buffer_get(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Vertex_Attrib attrib, Evas_Canvas3D_Vertex_Buffer *buffer0, Evas_Canvas3D_Vertex_Buffer *buffer1, Evas_Real *weight);
 void evas_canvas3d_mesh_file_md2_set(Evas_Canvas3D_Mesh *mesh, const char *file);
 void evas_canvas3d_mesh_save_obj(Evas_Canvas3D_Mesh *mesh, const char *file, Evas_Canvas3D_Mesh_Frame *f);
@@ -1818,12 +1818,12 @@ void evas_model_save_file_ply(const Evas_Canvas3D_Mesh *mesh, const char *file, 
 void evas_common_set_model_from_primitive(Evas_Canvas3D_Mesh *model, int frame, Evas_Canvas3D_Primitive_Data *primitive);
 void evas_model_set_from_square_primitive(Evas_Canvas3D_Mesh *mesh, int frame);
 void evas_model_set_from_cube_primitive(Evas_Canvas3D_Mesh *mesh, int frame);
-void evas_model_set_from_cylinder_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Primitive_Mode mode, int precision, Evas_Vec2 tex_scale);
-void evas_model_set_from_cone_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Primitive_Mode mode, int precision, Evas_Vec2 tex_scale);
-void evas_model_set_from_sphere_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Primitive_Mode mode, int precision, Evas_Vec2 tex_scale);
-void evas_model_set_from_torus_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Real ratio, int precision, Evas_Vec2 tex_scale);
-void evas_model_set_from_surface_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Surface_Func func, int precision, Evas_Vec2 tex_scale);
-void evas_model_set_from_terrain_primitive(Evas_Canvas3D_Mesh *mesh, int frame, int precision, Evas_Vec2 tex_scale);
+void evas_model_set_from_cylinder_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Primitive_Mode mode, int precision, Eina_Vector2 tex_scale);
+void evas_model_set_from_cone_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Primitive_Mode mode, int precision, Eina_Vector2 tex_scale);
+void evas_model_set_from_sphere_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Primitive_Mode mode, int precision, Eina_Vector2 tex_scale);
+void evas_model_set_from_torus_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Real ratio, int precision, Eina_Vector2 tex_scale);
+void evas_model_set_from_surface_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Surface_Func func, int precision, Eina_Vector2 tex_scale);
+void evas_model_set_from_terrain_primitive(Evas_Canvas3D_Mesh *mesh, int frame, int precision, Eina_Vector2 tex_scale);
 
 /* Filter functions */
 Eina_Bool evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async, Eina_Bool alpha);

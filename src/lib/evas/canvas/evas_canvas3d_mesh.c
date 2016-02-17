@@ -924,7 +924,7 @@ _evas_canvas3d_mesh_from_primitive_set(Eo *obj,
 }
 
 void
-evas_canvas3d_mesh_interpolate_position_get(Evas_Vec3 *out, const Evas_Canvas3D_Vertex_Buffer *pos0, const Evas_Canvas3D_Vertex_Buffer *pos1,
+evas_canvas3d_mesh_interpolate_position_get(Eina_Vector3 *out, const Evas_Canvas3D_Vertex_Buffer *pos0, const Evas_Canvas3D_Vertex_Buffer *pos1,
               Evas_Real weight, int index)
 {
    if (pos1->data == NULL)

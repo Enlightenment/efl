@@ -4,7 +4,7 @@ void
 _set_default_sphere(Evas_Canvas3D_Mesh *mesh,
                    int frame,
                    int p,
-                   Evas_Vec2 tex_scale)
+                   Eina_Vector2 tex_scale)
 {
    int vcount, icount, vccount, i, j;
    icount = p * p * 6;
@@ -55,7 +55,7 @@ void
 _set_sphere_with_alternative_uv(Evas_Canvas3D_Mesh *mesh,
                                 int frame,
                                 int p,
-                                Evas_Vec2 tex_scale)
+                                Eina_Vector2 tex_scale)
 {
    int vcount, icount, vccount, i, j;
 
@@ -115,9 +115,9 @@ _set_sphere_with_alternative_uv(Evas_Canvas3D_Mesh *mesh,
    /* Triangulation of sphere mesh in appliance with buffer of indices. */
    for (i = 0; i < icount; i += 3)
      {
-        Evas_Vec3 e1, e2;
+        Eina_Vector3 e1, e2;
         float du1, du2, dv1, dv2, f;
-        Evas_Vec3 tangent;
+        Eina_Vector3 tangent;
         int num0, num1, num2;
 
         num0 = indices[i + 0];
@@ -166,7 +166,7 @@ evas_model_set_from_sphere_primitive(Evas_Canvas3D_Mesh *mesh,
                                      int frame,
                                      Evas_Canvas3D_Primitive_Mode mode,
                                      int p,
-                                     Evas_Vec2 tex_scale)
+                                     Eina_Vector2 tex_scale)
 {
    switch (mode)
      {

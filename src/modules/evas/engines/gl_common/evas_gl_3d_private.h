@@ -98,10 +98,10 @@ struct _E3D_Draw_Data
 
    struct {
         Eina_Quaternion   position;
-        Evas_Vec3   spot_dir;
+        Eina_Vector3   spot_dir;
         Evas_Real   spot_exp;
         Evas_Real   spot_cutoff_cos;
-        Evas_Vec3   atten;
+        Eina_Vector3   atten;
         Evas_Color  ambient;
         Evas_Color  diffuse;
         Evas_Color  specular;

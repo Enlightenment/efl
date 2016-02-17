@@ -1,8 +1,8 @@
 #include "../primitive_common.h"
 
-Evas_Vec3 _get_func_normal(Evas_Canvas3D_Surface_Func *func, Evas_Real x, Evas_Real y)
+Eina_Vector3 _get_func_normal(Evas_Canvas3D_Surface_Func *func, Evas_Real x, Evas_Real y)
 {
-   Evas_Vec3 v00, v01, v10, d1, d2, normal;
+   Eina_Vector3 v00, v01, v10, d1, d2, normal;
 
    func(&v00.x, &v00.y, &v00.z, x, y);
    func(&v01.x, &v01.y, &v01.z, x, y + 0.01);
@@ -18,10 +18,10 @@ Evas_Vec3 _get_func_normal(Evas_Canvas3D_Surface_Func *func, Evas_Real x, Evas_R
 }
 
 void
-_normalize(Evas_Vec3 *vertices, Evas_Vec3 *normals, int vcount)
+_normalize(Eina_Vector3 *vertices, Eina_Vector3 *normals, int vcount)
 {
    int i;
-   Evas_Vec3 min, max;
+   Eina_Vector3 min, max;
    min = max = vertices[0];
 
 #define CHECK_MIN_AND_MAX(coord)                \
@@ -54,7 +54,7 @@ evas_model_set_from_surface_primitive(Evas_Canvas3D_Mesh *mesh,
                                       int frame,
                                       Evas_Canvas3D_Surface_Func func,
                                       int p,
-                                      Evas_Vec2 tex_scale)
+                                      Eina_Vector2 tex_scale)
 {
    int vcount, icount, vccount, i, j, num;
    icount = p * p * 6;

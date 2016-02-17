@@ -4,7 +4,7 @@ void
 _set_default_cylinder(Evas_Canvas3D_Mesh *mesh,
                       int frame,
                       int p,
-                      Evas_Vec2 tex_scale)
+                      Eina_Vector2 tex_scale)
 {
    int vcount, icount, vccount, i, j, num;
    icount = p * 30;
@@ -67,7 +67,7 @@ void
 _set_cylinder_without_bases(Evas_Canvas3D_Mesh *mesh,
                             int frame,
                             int p,
-                            Evas_Vec2 tex_scale)
+                            Eina_Vector2 tex_scale)
 {
    int vcount, icount, vccount, i;
    icount = p * 6;
@@ -113,7 +113,7 @@ evas_model_set_from_cylinder_primitive(Evas_Canvas3D_Mesh *mesh,
                                        int frame,
                                        Evas_Canvas3D_Primitive_Mode mode,
                                        int p,
-                                       Evas_Vec2 tex_scale)
+                                       Eina_Vector2 tex_scale)
 {
    switch (mode)
      {

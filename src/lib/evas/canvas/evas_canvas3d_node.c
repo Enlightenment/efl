@@ -8,7 +8,7 @@
 Evas_Canvas3D_Mesh_Frame *evas_canvas3d_mesh_frame_find(Evas_Canvas3D_Mesh_Data *pd, int frame);
 
 static void
-_look_at_set(Evas_Canvas3D_Node_Data *pd, Evas_Vec3 *target, Evas_Vec3 *up);
+_look_at_set(Evas_Canvas3D_Node_Data *pd, Eina_Vector3 *target, Eina_Vector3 *up);
 
 static Eina_Stringshare *
 _generate_unic_color_key(Evas_Color *color, Evas_Color *bg_color, Evas_Canvas3D_Node *node, Evas_Canvas3D_Mesh *mesh,
@@ -240,7 +240,7 @@ _node_transform_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
         if (pd->parent)
           {
              Evas_Canvas3D_Node_Data *pdparent = eo_data_scope_get(pd->parent, MY_CLASS);
-             const Evas_Vec3 *scale_parent = &pdparent->scale_world;
+             const Eina_Vector3 *scale_parent = &pdparent->scale_world;
              const Eina_Quaternion *orientation_parent = &pdparent->orientation_world;
 
              /* Orienatation */
@@ -256,17 +256,17 @@ _node_transform_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
 
              /* Scale */
              if (pd->scale_inherit)
-               evas_vec3_multiply(&pd->scale_world, scale_parent, &pd->scale);
+               eina_vector3_multiply(&pd->scale_world, scale_parent, &pd->scale);
              else
                pd->scale_world = pd->scale;
 
              /* Position */
              if (pd->position_inherit)
                {
-                  evas_vec3_multiply(&pd->position_world, &pd->position, scale_parent);
-                  evas_vec3_quaternion_rotate(&pd->position_world, &pd->position_world,
+                  eina_vector3_multiply(&pd->position_world, &pd->position, scale_parent);
+                  eina_vector3_quaternion_rotate(&pd->position_world, &pd->position_world,
                                               orientation_parent);
-                  evas_vec3_add(&pd->position_world, &pd->position_world,
+                  eina_vector3_add(&pd->position_world, &pd->position_world,
                                 &pdparent->position_world);
                }
              else
@@ -314,16 +314,16 @@ _node_transform_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
 static Eina_Bool
 _node_billboard_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
 {
-   Evas_Vec3   target;
-   Evas_Vec3   up;
+   Eina_Vector3   target;
+   Eina_Vector3   up;
    Evas_Canvas3D_Node_Data *pd_node = eo_data_scope_get(node, MY_CLASS);
    if (pd_node->billboard_target)
      {
         Evas_Canvas3D_Node_Data *pd_target = eo_data_scope_get(pd_node->billboard_target,
                                                        MY_CLASS);
-        evas_vec3_set(&target, pd_target->position.x, pd_target->position.y,
+        eina_vector3_set(&target, pd_target->position.x, pd_target->position.y,
                       pd_target->position.z);
-        evas_vec3_set(&up, 0, 1, 0);
+        eina_vector3_set(&up, 0, 1, 0);
 
         _look_at_set(pd_node, &target, &up);
 
@@ -383,13 +383,13 @@ _node_item_update(Evas_Canvas3D_Node *node, void *data EINA_UNUSED)
 }
 
 static void
-_pack_meshes_vertex_data(Evas_Canvas3D_Node *node, Evas_Vec3 **vertices, int *count)
+_pack_meshes_vertex_data(Evas_Canvas3D_Node *node, Eina_Vector3 **vertices, int *count)
 {
     const Eina_List *m, *l;
     Evas_Canvas3D_Mesh *mesh;
     int j;
     int frame;
-    Evas_Vec3 *it;
+    Eina_Vector3 *it;
     Evas_Canvas3D_Vertex_Buffer   pos0, pos1;
     Evas_Real               pos_weight;
 
@@ -410,7 +410,7 @@ _pack_meshes_vertex_data(Evas_Canvas3D_Node *node, Evas_Vec3 **vertices, int *co
              *count += pos0.size / pos0.stride;
            }
       }
-    *vertices = (Evas_Vec3*)malloc(*count * sizeof(Evas_Vec3));
+    *vertices = (Eina_Vector3*)malloc(*count * sizeof(Eina_Vector3));
     it = *vertices;
     if(!*vertices)
       {
@@ -446,13 +446,13 @@ _update_node_shapes(Evas_Canvas3D_Node *node)
 {
    int i;
    int count;
-   Evas_Vec3 *vertices = NULL;
+   Eina_Vector3 *vertices = NULL;
    Evas_Canvas3D_Node_Data *pd = eo_data_scope_get(node, EVAS_CANVAS3D_NODE_CLASS);
    Eina_Bool transform_orientation_dirty;
    Eina_Bool transform_position_dirty;
    Eina_Bool transform_scale_dirty;
    Eina_Bool mesh_geom_dirty;
-   Evas_Vec3 position = pd->position_world;
+   Eina_Vector3 position = pd->position_world;
 
    if (pd->type != EVAS_CANVAS3D_NODE_TYPE_MESH)
      {
@@ -482,15 +482,15 @@ _update_node_shapes(Evas_Canvas3D_Node *node)
             calculate_box(&pd->obb, count, vertices);
             for (i = 0; i < count; i++)
             {
-                evas_vec3_homogeneous_position_transform(&vertices[i], &vertices[i], &pd->data.mesh.matrix_local_to_world);
+                eina_vector3_homogeneous_position_transform(&vertices[i], &pd->data.mesh.matrix_local_to_world, &vertices[i]);
             }
             calculate_box(&pd->aabb, count, vertices);
             if (transform_position_dirty || transform_scale_dirty || mesh_geom_dirty)
             {
                 calculate_sphere(&pd->bsphere, count, vertices);
             }
-            evas_vec3_homogeneous_position_transform(&pd->obb.p0, &pd->obb.p0, &pd->data.mesh.matrix_local_to_world);
-            evas_vec3_homogeneous_position_transform(&pd->obb.p0, &pd->obb.p0, &pd->data.mesh.matrix_local_to_world);
+            eina_vector3_homogeneous_position_transform(&pd->obb.p0, &pd->data.mesh.matrix_local_to_world, &pd->obb.p0);
+            eina_vector3_homogeneous_position_transform(&pd->obb.p0, &pd->data.mesh.matrix_local_to_world, &pd->obb.p0);
           }
         free(vertices);
 
@@ -1032,13 +1032,13 @@ _evas_canvas3d_node_constructor(Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_Canva
 {
    eo_do(obj, evas_canvas3d_object_type_set(EVAS_CANVAS3D_OBJECT_TYPE_NODE));
 
-   evas_vec3_set(&pd->position, 0.0, 0.0, 0.0);
+   eina_vector3_set(&pd->position, 0.0, 0.0, 0.0);
    eina_quaternion_set(&pd->orientation, 0.0, 0.0, 0.0, 1.0);
-   evas_vec3_set(&pd->scale, 1.0, 1.0, 1.0);
+   eina_vector3_set(&pd->scale, 1.0, 1.0, 1.0);
 
-   evas_vec3_set(&pd->position_world, 0.0, 0.0, 0.0);
+   eina_vector3_set(&pd->position_world, 0.0, 0.0, 0.0);
    eina_quaternion_set(&pd->orientation_world, 0.0, 0.0, 0.0, 1.0);
-   evas_vec3_set(&pd->scale_world, 1.0, 1.0, 1.0);
+   eina_vector3_set(&pd->scale_world, 1.0, 1.0, 1.0);
 
    pd->position_inherit = EINA_TRUE;
    pd->orientation_inherit = EINA_TRUE;
@@ -1176,10 +1176,10 @@ _evas_canvas3d_node_orientation_angle_axis_set(Eo *obj, Evas_Canvas3D_Node_Data 
 {
    Evas_Real half_angle = 0.5 * DEGREE_TO_RADIAN(angle);
    Evas_Real s = sin(half_angle);
-   Evas_Vec3 axis;
+   Eina_Vector3 axis;
 
-   evas_vec3_set(&axis, x, y, z);
-   evas_vec3_normalize(&axis, &axis);
+   eina_vector3_set(&axis, x, y, z);
+   eina_vector3_normalize(&axis, &axis);
 
    pd->orientation.w = cos(half_angle);
    pd->orientation.x = s * axis.x;
@@ -1321,18 +1321,18 @@ _evas_canvas3d_node_scale_inherit_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Node_Da
 }
 
 static void
-_look_at_set(Evas_Canvas3D_Node_Data *pd, Evas_Vec3 *target, Evas_Vec3 *up)
+_look_at_set(Evas_Canvas3D_Node_Data *pd, Eina_Vector3 *target, Eina_Vector3 *up)
 {
-   Evas_Vec3   x, y, z;
+   Eina_Vector3   x, y, z;
 
-   evas_vec3_subtract(&z, &pd->position, target);
-   evas_vec3_normalize(&z, &z);
+   eina_vector3_subtract(&z, &pd->position, target);
+   eina_vector3_normalize(&z, &z);
 
-   evas_vec3_cross_product(&x, up, &z);
-   evas_vec3_normalize(&x, &x);
+   eina_vector3_cross_product(&x, up, &z);
+   eina_vector3_normalize(&x, &x);
 
-   evas_vec3_cross_product(&y, &z, &x);
-   evas_vec3_normalize(&y, &y);
+   eina_vector3_cross_product(&y, &z, &x);
+   eina_vector3_normalize(&y, &y);
 
    /* Below matrix to quaternion conversion code taken from
     * http://fabiensanglard.net/doom3_documentation/37726-293748.pdf
@@ -1386,8 +1386,8 @@ _evas_canvas3d_node_look_at_set(Eo *obj, Evas_Canvas3D_Node_Data *pd,
                          Evas_Canvas3D_Space target_space, Evas_Real tx, Evas_Real ty, Evas_Real tz,
                          Evas_Canvas3D_Space up_space, Evas_Real ux, Evas_Real uy, Evas_Real uz)
 {
-   Evas_Vec3   target;
-   Evas_Vec3   up;
+   Eina_Vector3   target;
+   Eina_Vector3   up;
 
    /* Target position in parent space. */
    if (target_space == EVAS_CANVAS3D_SPACE_LOCAL)
@@ -1397,7 +1397,7 @@ _evas_canvas3d_node_look_at_set(Eo *obj, Evas_Canvas3D_Node_Data *pd,
      }
    else if (target_space == EVAS_CANVAS3D_SPACE_PARENT)
      {
-        evas_vec3_set(&target, tx, ty, tz);
+        eina_vector3_set(&target, tx, ty, tz);
      }
    else if (target_space == EVAS_CANVAS3D_SPACE_WORLD)
      {
@@ -1413,13 +1413,13 @@ _evas_canvas3d_node_look_at_set(Eo *obj, Evas_Canvas3D_Node_Data *pd,
 
    if (up_space == EVAS_CANVAS3D_SPACE_LOCAL)
      {
-       evas_vec3_set(&up, ux, uy, uz);
+       eina_vector3_set(&up, ux, uy, uz);
         //ERR("TODO:");
         //return;
      }
    else if (up_space == EVAS_CANVAS3D_SPACE_PARENT)
      {
-        evas_vec3_set(&up, ux, uy, uz);
+        eina_vector3_set(&up, ux, uy, uz);
      }
    else if (up_space == EVAS_CANVAS3D_SPACE_WORLD)
      {

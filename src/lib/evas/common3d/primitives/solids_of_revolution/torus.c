@@ -5,7 +5,7 @@ evas_model_set_from_torus_primitive(Evas_Canvas3D_Mesh *mesh,
                                     int frame,
                                     Evas_Real ratio,
                                     int p,
-                                    Evas_Vec2 tex_scale)
+                                    Eina_Vector2 tex_scale)
 {
    int vcount, icount, vccount, i, j;
    icount = p * p * 6;

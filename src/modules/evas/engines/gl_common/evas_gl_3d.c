@@ -899,7 +899,7 @@ _light_build(E3D_Draw_Data *data,
    Evas_Canvas3D_Node_Data *pd_light_node = eo_data_scope_get(light, EVAS_CANVAS3D_NODE_CLASS);
    Evas_Canvas3D_Light *l = pd_light_node ? pd_light_node->data.light.light : NULL;
    Evas_Canvas3D_Light_Data *pdl = l ? eo_data_scope_get(l, EVAS_CANVAS3D_LIGHT_CLASS) : NULL;
-   Evas_Vec3      pos, dir;
+   Eina_Vector3      pos, dir;
 
    if (pdl == NULL)
      return;
@@ -910,12 +910,12 @@ _light_build(E3D_Draw_Data *data,
         data->flags |= E3D_SHADER_FLAG_LIGHT_DIRECTIONAL;
 
         /* Negative Z. */
-        evas_vec3_set(&dir, 0.0, 0.0, 1.0);
-        evas_vec3_quaternion_rotate(&dir, &dir, &pd_light_node->orientation);
+        eina_vector3_set(&dir, 0.0, 0.0, 1.0);
+        eina_vector3_quaternion_rotate(&dir, &dir, &pd_light_node->orientation);
 
         /* Transform to eye space. */
-        evas_vec3_homogeneous_direction_transform(&dir, &dir, matrix_eye);
-        evas_vec3_normalize(&dir, &dir);
+        eina_vector3_homogeneous_direction_transform(&dir, matrix_eye, &dir);
+        eina_vector3_normalize(&dir, &dir);
 
         data->light.position.x = dir.x;
         data->light.position.y = dir.y;
@@ -924,8 +924,8 @@ _light_build(E3D_Draw_Data *data,
      }
    else
      {
-        evas_vec3_copy(&pos, &pd_light_node->position_world);
-        evas_vec3_homogeneous_position_transform(&pos, &pos, matrix_eye);
+        eina_vector3_copy(&pos, &pd_light_node->position_world);
+        eina_vector3_homogeneous_position_transform(&pos, matrix_eye, &pos);
 
         data->light.position.x = pos.x;
         data->light.position.y = pos.y;
@@ -944,9 +944,9 @@ _light_build(E3D_Draw_Data *data,
         if (pdl->spot_cutoff < 180.0)
           {
              data->flags |= E3D_SHADER_FLAG_LIGHT_SPOT;
-             evas_vec3_set(&dir, 0.0, 0.0, -1.0);
-             evas_vec3_quaternion_rotate(&dir, &dir, &pd_light_node->orientation);
-             evas_vec3_homogeneous_direction_transform(&dir, &dir, matrix_eye);
+             eina_vector3_set(&dir, 0.0, 0.0, -1.0);
+             eina_vector3_quaternion_rotate(&dir, &dir, &pd_light_node->orientation);
+             eina_vector3_homogeneous_direction_transform(&dir, matrix_eye, &dir);
 
              data->light.spot_dir = dir;
              data->light.spot_exp = pdl->spot_exp;

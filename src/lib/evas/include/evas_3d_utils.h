@@ -13,8 +13,6 @@
    (fabs(a - b) > FLT_EPSILON)
 
 typedef struct _Evas_Color Evas_Color;
-typedef struct _Evas_Vec2 Evas_Vec2;
-typedef struct _Evas_Vec3 Evas_Vec3;
 typedef struct _Evas_Box2 Evas_Box2;
 typedef struct _Evas_Box3 Evas_Box3;
 typedef struct _Evas_Line3 Evas_Line3;
@@ -30,460 +28,64 @@ struct _Evas_Color
    Evas_Real   a;
 };
 
-struct _Evas_Vec2
-{
-   Evas_Real   x;
-   Evas_Real   y;
-};
-
-struct _Evas_Vec3
-{
-   Evas_Real   x;
-   Evas_Real   y;
-   Evas_Real   z;
-};
-
 struct _Evas_Box2
 {
-   Evas_Vec2   p0;
-   Evas_Vec2   p1;
+   Eina_Vector2   p0;
+   Eina_Vector2   p1;
 };
 
 struct _Evas_Box3
 {
-   Evas_Vec3   p0;
-   Evas_Vec3   p1;
+   Eina_Vector3   p0;
+   Eina_Vector3   p1;
 };
 
 struct _Evas_Line3
 {
-   Evas_Vec3   point;
-   Evas_Vec3   direction;
+   Eina_Vector3   point;
+   Eina_Vector3   direction;
 };
 
 struct _Evas_Triangle3
 {
-   Evas_Vec3   p0;
-   Evas_Vec3   p1;
-   Evas_Vec3   p2;
+   Eina_Vector3   p0;
+   Eina_Vector3   p1;
+   Eina_Vector3   p2;
 };
 
 struct _Evas_Ray3
 {
-   Evas_Vec3   org;
-   Evas_Vec3   dir;
+   Eina_Vector3   org;
+   Eina_Vector3   dir;
 };
 
 struct _Evas_Sphere
 {
-   Evas_Vec3 center;
+   Eina_Vector3 center;
    Evas_Real radius;
 };
 
-/* 2D vector */
 static inline void
-evas_vec2_set(Evas_Vec2 *dst, Evas_Real x, Evas_Real y)
+evas_triangle3_set(Evas_Triangle3 *v, Eina_Vector3 *a, Eina_Vector3 *b, Eina_Vector3 *c)
 {
-   dst->x = x;
-   dst->y = y;
-}
-
-static inline void
-evas_vec2_array_set(Evas_Vec2 *dst, const Evas_Real *v)
-{
-   dst->x = v[0];
-   dst->y = v[1];
-}
-
-static inline void
-evas_vec2_copy(Evas_Vec2 *dst, const Evas_Vec2 *src)
-{
-   dst->x = src->x;
-   dst->y = src->y;
-}
-
-static inline void
-evas_vec2_negate(Evas_Vec2 *out, const Evas_Vec2 *v)
-{
-   out->x = -v->x;
-   out->y = -v->y;
-}
-
-static inline void
-evas_vec2_add(Evas_Vec2 *out, const Evas_Vec2 *a, const Evas_Vec2 *b)
-{
-   out->x = a->x + b->x;
-   out->y = a->y + b->y;
-}
-
-static inline void
-evas_vec2_subtract(Evas_Vec2 *out, const Evas_Vec2 *a, const Evas_Vec2 *b)
-{
-   out->x = a->x - b->x;
-   out->y = a->y - b->y;
-}
-
-static inline void
-evas_vec2_scale(Evas_Vec2 *out, const Evas_Vec2 *v, Evas_Real scale)
-{
-   out->x = scale * v->x;
-   out->y = scale * v->y;
-}
-
-static inline Evas_Real
-evas_vec2_dot_product(const Evas_Vec2 *a, const Evas_Vec2 *b)
-{
-   return (a->x * b->x) + (a->y * b->y);
-}
-
-static inline Evas_Real
-evas_vec2_length_get(const Evas_Vec2 *v)
-{
-   return (Evas_Real)sqrt((double)((v->x * v->x) + (v->y * v->y)));
-}
-
-static inline Evas_Real
-evas_vec2_length_square_get(const Evas_Vec2 *v)
-{
-   return (v->x * v->x) + (v->y * v->y);
-}
-
-static inline Evas_Real
-evas_vec2_distance_get(const Evas_Vec2 *a, const Evas_Vec2 *b)
-{
-   Evas_Vec2 v;
-
-   evas_vec2_subtract(&v, a, b);
-   return evas_vec2_length_get(&v);
-}
-
-static inline Evas_Real
-evas_vec2_distance_square_get(const Evas_Vec2 *a, const Evas_Vec2 *b)
-{
-   Evas_Vec2 v;
-
-   evas_vec2_subtract(&v, a, b);
-   return evas_vec2_length_square_get(&v);
-}
-
-static inline void
-evas_vec2_normalize(Evas_Vec2 *out, const Evas_Vec2 *v)
-{
-   /* Assume "v" is not a zero vector */
-   evas_vec2_scale(out, v, 1.0 / evas_vec2_length_get(v));
-}
-
-static inline void
-evas_vec2_transform(Evas_Vec2 *out, const Eina_Matrix2 *m, const Evas_Vec2 *v)
-{
-   Evas_Vec2 tmp;
-
-   tmp.x = (m->xx * v->x) + (m->yx * v->y);
-   tmp.y = (m->xy * v->x) + (m->yy * v->y);
-
-   evas_vec2_copy(out, &tmp);
-}
-
-static inline void
-evas_vec2_homogeneous_position_transform(Evas_Vec2 *out, const Eina_Matrix3 *m, const Evas_Vec2 *v)
-{
-   Evas_Vec2 tmp;
-
-   tmp.x = (m->xx * v->x) + (m->yx * v->y) + m->zx;
-   tmp.y = (m->xy * v->x) + (m->yy * v->y) + m->zy;
-
-   evas_vec2_scale(out, &tmp, 1.0 / ((m->xz * v->x) + (m->yz * v->y) + m->zz));
-}
-
-static inline void
-evas_vec2_homogeneous_direction_transform(Evas_Vec2 *out, const Eina_Matrix3 *m, const Evas_Vec2 *v)
-{
-   Evas_Vec2 tmp;
-
-   tmp.x = (m->xx * v->x) + (m->yx * v->y);
-   tmp.y = (m->xy * v->x) + (m->yy * v->y);
-
-   evas_vec2_copy(out, &tmp);
-}
-
-/* 3D vector */
-static inline void
-evas_vec3_set(Evas_Vec3 *dst, Evas_Real x, Evas_Real y, Evas_Real z)
-{
-   dst->x = x;
-   dst->y = y;
-   dst->z = z;
-}
-
-static inline void
-evas_vec3_array_set(Evas_Vec3 *dst, const Evas_Real *v)
-{
-   dst->x = v[0];
-   dst->y = v[1];
-   dst->z = v[2];
-}
-
-static inline void
-evas_vec3_copy(Evas_Vec3 *dst, const Evas_Vec3 *src)
-{
-   dst->x = src->x;
-   dst->y = src->y;
-   dst->z = src->z;
-}
-
-static inline void
-evas_vec3_negate(Evas_Vec3 *out, const Evas_Vec3 *v)
-{
-   out->x = -v->x;
-   out->y = -v->y;
-   out->z = -v->z;
-}
-
-static inline void
-evas_vec3_add(Evas_Vec3 *out, const Evas_Vec3 *a, const Evas_Vec3 *b)
-{
-   out->x = a->x + b->x;
-   out->y = a->y + b->y;
-   out->z = a->z + b->z;
-}
-
-static inline void
-evas_vec3_subtract(Evas_Vec3 *out, const Evas_Vec3 *a, const Evas_Vec3 *b)
-{
-   out->x = a->x - b->x;
-   out->y = a->y - b->y;
-   out->z = a->z - b->z;
-}
-
-static inline void
-evas_vec3_scale(Evas_Vec3 *out, const Evas_Vec3 *v, Evas_Real scale)
-{
-   out->x = scale * v->x;
-   out->y = scale * v->y;
-   out->z = scale * v->z;
-}
-
-static inline void
-evas_vec3_multiply(Evas_Vec3 *out, const Evas_Vec3 *a, const Evas_Vec3 *b)
-{
-   out->x = a->x * b->x;
-   out->y = a->y * b->y;
-   out->z = a->z * b->z;
-}
-
-static inline Evas_Real
-evas_vec3_dot_product(const Evas_Vec3 *a, const Evas_Vec3 *b)
-{
-   return (a->x * b->x) + (a->y * b->y) + (a->z * b->z);
-}
-
-static inline void
-evas_vec3_cross_product(Evas_Vec3 *out, const Evas_Vec3 *a, const Evas_Vec3 *b)
-{
-   Evas_Vec3 tmp;
-
-   tmp.x = a->y * b->z - a->z * b->y;
-   tmp.y = a->z * b->x - a->x * b->z;
-   tmp.z = a->x * b->y - a->y * b->x;
-
-   evas_vec3_copy(out, &tmp);
-}
-
-static inline Evas_Real
-evas_vec3_length_get(const Evas_Vec3 *v)
-{
-   return (Evas_Real)sqrt((double)((v->x * v->x) + (v->y * v->y) + (v->z * v->z)));
-}
-
-static inline Evas_Real
-evas_vec3_length_square_get(const Evas_Vec3 *v)
-{
-   return (v->x * v->x) + (v->y * v->y) + (v->z * v->z);
-}
-
-static inline Evas_Real
-evas_vec3_distance_get(const Evas_Vec3 *a, const Evas_Vec3 *b)
-{
-   Evas_Vec3 v;
-
-   evas_vec3_subtract(&v, a, b);
-   return evas_vec3_length_get(&v);
-}
-
-static inline Evas_Real
-evas_vec3_distance_square_get(const Evas_Vec3 *a, const Evas_Vec3 *b)
-{
-   Evas_Vec3 v;
-
-   evas_vec3_subtract(&v, a, b);
-   return evas_vec3_length_square_get(&v);
-}
-
-static inline Evas_Real
-evas_vec3_angle_get(const Evas_Vec3 *a, const Evas_Vec3 *b)
-{
-   Evas_Real angle;
-
-   angle = evas_vec3_dot_product(a, b) / (evas_vec3_length_get(a) * evas_vec3_length_get(b));
-   return angle;
-}
-
-static inline void
-evas_vec3_normalize(Evas_Vec3 *out, const Evas_Vec3 *v)
-{
-   /* Assume "v" is not a zero vector */
-   evas_vec3_scale(out, v, 1.0 / evas_vec3_length_get(v));
-}
-
-static inline void
-evas_vec3_transform(Evas_Vec3 *out, const Evas_Vec3 *v,  const Eina_Matrix3 *m)
-{
-   Evas_Vec3 tmp;
-
-   if (eina_matrix3_type_get(m) == EINA_MATRIX_TYPE_IDENTITY)
-     {
-        evas_vec3_copy(out, v);
-        return;
-     }
-
-   tmp.x = (m->xx * v->x) + (m->yx * v->y) + (m->zx * v->z);
-   tmp.y = (m->xy * v->x) + (m->yy * v->y) + (m->zy * v->z);
-   tmp.z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z);
-
-   evas_vec3_copy(out, &tmp);
-}
-
-static inline void
-evas_vec3_homogeneous_position_transform(Evas_Vec3 *out, const Evas_Vec3 *v, const Eina_Matrix4 *m)
-{
-   Evas_Vec3 tmp;
-
-   if (eina_matrix4_type_get(m) == EINA_MATRIX_TYPE_IDENTITY)
-     {
-        evas_vec3_copy(out, v);
-        return;
-     }
-
-   tmp.x = (m->xx * v->x) + (m->yx * v->y) + (m->zx * v->z) + m->wx;
-   tmp.y = (m->xy * v->x) + (m->yy * v->y) + (m->zy * v->z) + m->wy;
-   tmp.z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z) + m->wz;
-
-   evas_vec3_scale(out, &tmp,
-                   1.0 / ((m->xw * v->x) + (m->yw * v->y) + (m->zw * v->z) + m->ww));
-}
-
-static inline void
-evas_vec3_homogeneous_direction_transform(Evas_Vec3 *out, const Evas_Vec3 *v, const Eina_Matrix4 *m)
-{
-   Evas_Vec3 tmp;
-
-   if (eina_matrix4_type_get(m) == EINA_MATRIX_TYPE_IDENTITY)
-     {
-        evas_vec3_copy(out, v);
-        return;
-     }
-
-   tmp.x = (m->xx * v->x) + (m->yx * v->y) + (m->zx * v->z);
-   tmp.y = (m->xy * v->x) + (m->yy * v->y) + (m->zy * v->z);
-   tmp.z = (m->xz * v->x) + (m->yz * v->y) + (m->zz * v->z);
-
-   evas_vec3_copy(out, &tmp);
-}
-
-static inline void
-evas_vec3_quaternion_rotate(Evas_Vec3 *out, const Evas_Vec3 *v, const Eina_Quaternion *q)
-{
-   Evas_Vec3   uv, uuv;
-   Evas_Vec3   axis;
-
-   evas_vec3_set(&axis, q->x, q->y, q->z);
-
-   evas_vec3_cross_product(&uv, &axis, v);
-   evas_vec3_cross_product(&uuv, &axis, &uv);
-
-   evas_vec3_scale(&uv, &uv, 2.0 * q->w);
-   evas_vec3_scale(&uuv, &uuv, 2.0);
-
-   out->x = v->x + uv.x + uuv.x;
-   out->y = v->y + uv.y + uuv.y;
-   out->z = v->z + uv.z + uuv.z;
-}
-
-static inline void
-evas_vec3_orthogonal_projection_on_plain(Evas_Vec3 *out, const Evas_Vec3 *v, const Evas_Vec3 *normal)
-{
-   Evas_Real a;
-   Evas_Vec3 projection;
-
-   /* Orthoprojection of vector on the plane is the difference
-      between a vector and its orthogonal projection onto the orthogonal
-      complement to the plane */
-   a = evas_vec3_dot_product(v, normal) / evas_vec3_length_square_get(normal);
-   evas_vec3_scale(&projection, normal, a);
-   evas_vec3_subtract(out, v, &projection);
-
-   return;
-}
-
-static inline void
-evas_vec3_plain_by_points(Eina_Quaternion *out, const Evas_Vec3 *a, const Evas_Vec3 *b, const Evas_Vec3 *c)
-{
-   out->x = (b->y - a->y) * (c->z - a->z) - (b->z - a->z) * (c->y - a->y);
-   out->y = -(b->x - a->x) * (c->z - a->z) + (b->z - a->z) * (c->x - a->x);
-   out->z = (b->x - a->x) * (c->y - a->y) - (b->y - a->y) * (c->x - a->x);
-   out->w = (-a->x) * ((b->y - a->y)*(c->z - a->z) - (b->z - a->z) * (c->y - a->y)) -
-            (-a->y) * ((b->x - a->x) * (c->z - a->z) - (b->z - a->z) * (c->x - a->x)) +
-            (-a->z) * ((b->x - a->x) * (c->y - a->y) - (b->y - a->y) * (c->x - a->x));
-}
-
-static inline void
-evas_vec3_homogeneous_position_set(Evas_Vec3 *out, const Eina_Quaternion *v)
-{
-   /* Assume "v" is a positional vector. (v->w != 0.0) */
-   Evas_Real h = 1.0 / v->w;
-
-   out->x = v->x * h;
-   out->y = v->y * h;
-   out->z = v->z * h;
-}
-
-static inline void
-evas_vec3_homogeneous_direction_set(Evas_Vec3 *out, const Eina_Quaternion *v)
-{
-   /* Assume "v" is a directional vector. (v->w == 0.0) */
-   out->x = v->x;
-   out->y = v->y;
-   out->z = v->z;
-}
-
-static inline Eina_Bool
-evas_vec3_if_equivalent(Evas_Vec3 *a, const Evas_Vec3 *b)
-{
-   /* Assume "v" is a directional vector. (v->w == 0.0) */
-   return ((a->x == b->x) &&  (a->y == b->y) && (a->z == b->z));
-}
-
-static inline void
-evas_triangle3_set(Evas_Triangle3 *v, Evas_Vec3 *a, Evas_Vec3 *b, Evas_Vec3 *c)
-{
-   evas_vec3_copy(&v->p0, a);
-   evas_vec3_copy(&v->p1, b);
-   evas_vec3_copy(&v->p2, c);
+   eina_vector3_copy(&v->p0, a);
+   eina_vector3_copy(&v->p1, b);
+   eina_vector3_copy(&v->p2, c);
 }
 
 static inline Eina_Bool
 evas_triangle3_is_line(Evas_Triangle3 *v)
 {
-   if (evas_vec3_if_equivalent(&v->p0, &v->p1) ||
-       evas_vec3_if_equivalent(&v->p0, &v->p2) ||
-       evas_vec3_if_equivalent(&v->p1, &v->p2))
+   if (eina_vector3_equivalent(&v->p0, &v->p1) ||
+       eina_vector3_equivalent(&v->p0, &v->p2) ||
+       eina_vector3_equivalent(&v->p1, &v->p2))
      return EINA_TRUE;
 
    return EINA_FALSE;
 }
 
 static inline Eina_Bool
-convex_hull_triangle3_if_not_first_edje(Evas_Triangle3 *v, Evas_Vec3 *a, Evas_Vec3 *b)
+convex_hull_triangle3_not_first_edje(Evas_Triangle3 *v, Eina_Vector3 *a, Eina_Vector3 *b)
 {
    if (((v->p1.x == a->x) && (v->p1.y == a->y) && (v->p1.z == a->z)) &&
        ((v->p2.x == b->x) && (v->p2.y == b->y) && (v->p2.z == b->z)))
@@ -496,7 +98,7 @@ convex_hull_triangle3_if_not_first_edje(Evas_Triangle3 *v, Evas_Vec3 *a, Evas_Ve
 }
 
 static inline Eina_Bool
-convex_hull_triangle3_if_first_edje(Evas_Triangle3 *v, Evas_Vec3 *a, Evas_Vec3 *b)
+convex_hull_triangle3_first_edje(Evas_Triangle3 *v, Eina_Vector3 *a, Eina_Vector3 *b)
 {
    if ((!FLT_COMPARISON(v->p0.x, a->x) && !FLT_COMPARISON(v->p0.y, a->y) &&
         !FLT_COMPARISON(v->p0.z, a->z)) && (!FLT_COMPARISON(v->p1.x, b->x) &&
@@ -511,14 +113,14 @@ convex_hull_triangle3_if_first_edje(Evas_Triangle3 *v, Evas_Vec3 *a, Evas_Vec3 *
 }
 
 static inline Eina_Bool
-convex_hull_triangle3_if_first_point(Evas_Triangle3 *v, Evas_Vec3 *a)
+convex_hull_triangle3_first_point(Evas_Triangle3 *v, Eina_Vector3 *a)
 {
    return ((v->p0.x == a->x) && (v->p0.y == a->y) && (v->p0.z == a->z));
 }
 
 static inline Eina_Bool
-evas_vec3_if_equivalent_as_triangle(Evas_Vec3 *v0, Evas_Vec3 *v1, Evas_Vec3 *v2,
-                                    Evas_Vec3 *w0, Evas_Vec3 *w1, Evas_Vec3 *w2)
+eina_vector3_equivalent_as_triangle(Eina_Vector3 *v0, Eina_Vector3 *v1, Eina_Vector3 *v2,
+                                    Eina_Vector3 *w0, Eina_Vector3 *w1, Eina_Vector3 *w2)
 {
    if (((v0->x == w0->x) && (v0->y == w0->y) && (v0->z == w0->z)) &&
        ((v1->x == w1->x) && (v1->y == w1->y) && (v1->z == w1->z)) &&
@@ -529,16 +131,16 @@ evas_vec3_if_equivalent_as_triangle(Evas_Vec3 *v0, Evas_Vec3 *v1, Evas_Vec3 *v2,
 }
 
 static inline Eina_Bool
-evas_triangle3_if_equivalent(Evas_Triangle3 *a, Evas_Triangle3 *b)
+evas_triangle3_equivalent(Evas_Triangle3 *a, Evas_Triangle3 *b)
 {
    /* to compare two triangles there are six permutations
       to test because vertices are unordered */
-   if (evas_vec3_if_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p0, &b->p1, &b->p2) ||
-       evas_vec3_if_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p0, &b->p2, &b->p1) ||
-       evas_vec3_if_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p1, &b->p0, &b->p2) ||
-       evas_vec3_if_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p1, &b->p2, &b->p0) ||
-       evas_vec3_if_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p2, &b->p0, &b->p1) ||
-       evas_vec3_if_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p2, &b->p1, &b->p0))
+   if (eina_vector3_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p0, &b->p1, &b->p2) ||
+       eina_vector3_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p0, &b->p2, &b->p1) ||
+       eina_vector3_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p1, &b->p0, &b->p2) ||
+       eina_vector3_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p1, &b->p2, &b->p0) ||
+       eina_vector3_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p2, &b->p0, &b->p1) ||
+       eina_vector3_equivalent_as_triangle(&a->p0, &a->p1, &a->p2, &b->p2, &b->p1, &b->p0))
      return EINA_TRUE;
 
    return EINA_FALSE;
@@ -546,18 +148,18 @@ evas_triangle3_if_equivalent(Evas_Triangle3 *a, Evas_Triangle3 *b)
 
 static inline void
 evas_mat4_look_at_set(Eina_Matrix4 *m,
-                      const Evas_Vec3 *pos, const Evas_Vec3 *center, const Evas_Vec3 *up)
+                      const Eina_Vector3 *pos, const Eina_Vector3 *center, const Eina_Vector3 *up)
 {
-   Evas_Vec3 x, y, z;
+   Eina_Vector3 x, y, z;
 
-   evas_vec3_subtract(&z, pos, center);
-   evas_vec3_normalize(&z, &z);
+   eina_vector3_subtract(&z, pos, center);
+   eina_vector3_normalize(&z, &z);
 
-   evas_vec3_cross_product(&x, up, &z);
-   evas_vec3_normalize(&x, &x);
+   eina_vector3_cross_product(&x, up, &z);
+   eina_vector3_normalize(&x, &x);
 
-   evas_vec3_cross_product(&y, &z, &x);
-   evas_vec3_normalize(&y, &y);
+   eina_vector3_cross_product(&y, &z, &x);
+   eina_vector3_normalize(&y, &y);
 
    m->xx = x.x;
    m->xy = y.x;
@@ -574,9 +176,9 @@ evas_mat4_look_at_set(Eina_Matrix4 *m,
    m->zz = z.z;
    m->zw = 0.0;
 
-   m->wx = -evas_vec3_dot_product(&x, pos);
-   m->wy = -evas_vec3_dot_product(&y, pos);
-   m->wz = -evas_vec3_dot_product(&z, pos);
+   m->wx = -eina_vector3_dot_product(&x, pos);
+   m->wy = -eina_vector3_dot_product(&y, pos);
+   m->wz = -eina_vector3_dot_product(&z, pos);
    m->ww = 1.0;
 }
 
@@ -636,22 +238,22 @@ evas_box3_set(Evas_Box3 *box, Evas_Real x0, Evas_Real y0, Evas_Real z0,
 static inline void
 evas_box3_empty_set(Evas_Box3 *box)
 {
-   evas_vec3_set(&box->p0, 0.0, 0.0, 0.0);
-   evas_vec3_set(&box->p1, 0.0, 0.0, 0.0);
+   eina_vector3_set(&box->p0, 0.0, 0.0, 0.0);
+   eina_vector3_set(&box->p1, 0.0, 0.0, 0.0);
 }
 
 static inline void
 evas_box3_copy(Evas_Box3 *dst, const Evas_Box3 *src)
 {
-   evas_vec3_copy(&dst->p0, &src->p0);
-   evas_vec3_copy(&dst->p1, &src->p1);
+   eina_vector3_copy(&dst->p0, &src->p0);
+   eina_vector3_copy(&dst->p1, &src->p1);
 }
 
 static inline void
 evas_box3_union(Evas_Box3 *out, const Evas_Box3 *a, const Evas_Box3 *b)
 {
-   evas_vec3_set(&out->p0, MIN(a->p0.x, b->p0.x), MIN(a->p0.y, b->p0.y), MIN(a->p0.z, b->p0.z));
-   evas_vec3_set(&out->p1, MAX(a->p1.x, b->p1.x), MAX(a->p1.y, b->p1.y), MAX(a->p1.z, b->p1.z));
+   eina_vector3_set(&out->p0, MIN(a->p0.x, b->p0.x), MIN(a->p0.y, b->p0.y), MIN(a->p0.z, b->p0.z));
+   eina_vector3_set(&out->p1, MAX(a->p1.x, b->p1.x), MAX(a->p1.y, b->p1.y), MAX(a->p1.z, b->p1.z));
 }
 
 static inline void
@@ -674,7 +276,7 @@ evas_mat4_position_get(const Eina_Matrix4 *matrix, Eina_Quaternion *position)
 }
 
 static inline void
-evas_mat4_direction_get(const Eina_Matrix4 *matrix, Evas_Vec3 *direction)
+evas_mat4_direction_get(const Eina_Matrix4 *matrix, Eina_Vector3 *direction)
 {
    /* TODO: Check correctness. */
 
@@ -694,7 +296,7 @@ evas_mat4_direction_get(const Eina_Matrix4 *matrix, Evas_Vec3 *direction)
 
 static inline void
 evas_mat4_build(Eina_Matrix4 *out,
-                const Evas_Vec3 *position, const Eina_Quaternion *orientation, const Evas_Vec3 *scale)
+                const Eina_Vector3 *position, const Eina_Quaternion *orientation, const Eina_Vector3 *scale)
 {
    Eina_Matrix3  rot;
 
@@ -722,25 +324,25 @@ evas_mat4_build(Eina_Matrix4 *out,
 }
 
 static inline void
-evas_mat4_inverse_build(Eina_Matrix4 *out, const Evas_Vec3 *position,
-                        const Eina_Quaternion *orientation, const Evas_Vec3 *scale)
+evas_mat4_inverse_build(Eina_Matrix4 *out, const Eina_Vector3 *position,
+                        const Eina_Quaternion *orientation, const Eina_Vector3 *scale)
 {
    Eina_Quaternion   inv_rotation;
-   Evas_Vec3   inv_scale;
-   Evas_Vec3   inv_translate;
+   Eina_Vector3   inv_scale;
+   Eina_Vector3   inv_translate;
 
    Eina_Matrix3   rot;
 
    /* Inverse scale. */
-   evas_vec3_set(&inv_scale, 1.0 / scale->x, 1.0 / scale->y, 1.0 / scale->z);
+   eina_vector3_set(&inv_scale, 1.0 / scale->x, 1.0 / scale->y, 1.0 / scale->z);
 
    /* Inverse rotation. */
    eina_quaternion_inverse(&inv_rotation, orientation);
 
    /* Inverse translation. */
-   evas_vec3_negate(&inv_translate, position);
-   evas_vec3_quaternion_rotate(&inv_translate, &inv_translate, &inv_rotation);
-   evas_vec3_multiply(&inv_translate, &inv_translate, &inv_scale);
+   eina_vector3_negate(&inv_translate, position);
+   eina_vector3_quaternion_rotate(&inv_translate, &inv_translate, &inv_rotation);
+   eina_vector3_multiply(&inv_translate, &inv_translate, &inv_scale);
 
    /* Get 3x3 rotation matrix. */
    eina_quaternion_rotation_matrix3_get(&rot, &inv_rotation);
@@ -809,7 +411,7 @@ evas_ray3_init(Evas_Ray3 *ray, Evas_Real x, Evas_Real y, const Eina_Matrix4 *mvp
    dnear.y *= dnear.w;
    dnear.z *= dnear.w;
 
-   evas_vec3_set(&ray->org, dnear.x, dnear.y, dnear.z);
+   eina_vector3_set(&ray->org, dnear.x, dnear.y, dnear.z);
 
    /* Transform far point. */
    dfar.x = x;
@@ -824,11 +426,11 @@ evas_ray3_init(Evas_Ray3 *ray, Evas_Real x, Evas_Real y, const Eina_Matrix4 *mvp
    dfar.y *= dfar.w;
    dfar.z *= dfar.w;
 
-   evas_vec3_set(&ray->dir, dfar.x - dnear.x, dfar.y - dnear.y, dfar.z - dnear.z);
+   eina_vector3_set(&ray->dir, dfar.x - dnear.x, dfar.y - dnear.y, dfar.z - dnear.z);
 }
 
 static inline Eina_Bool
-evas_box2_intersect_2d(const Evas_Box2 *box, const Evas_Vec2 *org, const Evas_Vec2 *dir)
+evas_box2_intersect_2d(const Evas_Box2 *box, const Eina_Vector2 *org, const Eina_Vector2 *dir)
 {
    Evas_Real t1, t2, t_near = FLT_MIN, t_far = FLT_MAX;
    /* ray intersects box if its begins in */
@@ -900,8 +502,8 @@ evas_box3_ray3_intersect(const Evas_Box3 *box, const Evas_Ray3 *ray)
 {
    Evas_Real t1, t2, t_near = FLT_MIN, t_far = FLT_MAX;
    Evas_Box2 box2;
-   Evas_Vec2 org2;
-   Evas_Vec2 dir2;
+   Eina_Vector2 org2;
+   Eina_Vector2 dir2;
    Eina_Bool intersect = EINA_FALSE;
 
    /* ray intersects box if its begins in */
@@ -974,8 +576,8 @@ evas_box3_ray3_intersect(const Evas_Box3 *box, const Evas_Ray3 *ray)
                return EINA_FALSE;
              else
                {
-                  evas_vec2_set(&org2, ray->org.y, ray->org.z);
-                  evas_vec2_set(&dir2, ray->dir.y, ray->dir.z);
+                  eina_vector2_set(&org2, ray->org.y, ray->org.z);
+                  eina_vector2_set(&dir2, ray->dir.y, ray->dir.z);
                   evas_box2_set(&box2, box->p0.y, box->p0.z, box->p1.y, box->p1.z);
                   intersect = evas_box2_intersect_2d(&box2, &org2, &dir2);
                }
@@ -987,8 +589,8 @@ evas_box3_ray3_intersect(const Evas_Box3 *box, const Evas_Ray3 *ray)
                return EINA_FALSE;
              else
                {
-                  evas_vec2_set(&org2, ray->org.x, ray->org.z);
-                  evas_vec2_set(&dir2, ray->dir.x, ray->dir.z);
+                  eina_vector2_set(&org2, ray->org.x, ray->org.z);
+                  eina_vector2_set(&dir2, ray->dir.x, ray->dir.z);
                   evas_box2_set(&box2, box->p0.x, box->p0.z, box->p1.x, box->p1.z);
                   intersect = evas_box2_intersect_2d(&box2, &org2, &dir2);
                }
@@ -1000,8 +602,8 @@ evas_box3_ray3_intersect(const Evas_Box3 *box, const Evas_Ray3 *ray)
                return EINA_FALSE;
              else
                {
-                  evas_vec2_set(&org2, ray->org.x, ray->org.y);
-                  evas_vec2_set(&dir2, ray->dir.x, ray->dir.y);
+                  eina_vector2_set(&org2, ray->org.x, ray->org.y);
+                  eina_vector2_set(&dir2, ray->dir.x, ray->dir.y);
                   evas_box2_set(&box2, box->p0.x, box->p0.y, box->p1.x, box->p1.y);
                   intersect = evas_box2_intersect_2d(&box2, &org2, &dir2);
                }
@@ -1027,12 +629,12 @@ evas_reciprocal_sqrt(Evas_Real x)
 static inline void
 evas_build_sphere(const Evas_Box3 *box, Evas_Sphere *sphere)
 {
-   Evas_Vec3 tmp;
+   Eina_Vector3 tmp;
 
-   evas_vec3_set(&sphere->center, (0.5 * (box->p0.x + box->p1.x)), (0.5 * (box->p0.y + box->p1.y)), (0.5 * (box->p0.z + box->p1.z)));
-   evas_vec3_set(&tmp, sphere->center.x - box->p0.x, sphere->center.y - box->p0.y, sphere->center.z - box->p0.z);
+   eina_vector3_set(&sphere->center, (0.5 * (box->p0.x + box->p1.x)), (0.5 * (box->p0.y + box->p1.y)), (0.5 * (box->p0.z + box->p1.z)));
+   eina_vector3_set(&tmp, sphere->center.x - box->p0.x, sphere->center.y - box->p0.y, sphere->center.z - box->p0.z);
 
-   sphere->radius = sqrtf(evas_vec3_dot_product(&tmp, &tmp));
+   sphere->radius = sqrtf(eina_vector3_dot_product(&tmp, &tmp));
 }
 
 static inline void
@@ -1047,10 +649,10 @@ evas_sphere_empty_set(Evas_Sphere *dst)
 static inline void
 evas_plane_normalize(Eina_Quaternion *plane)
 {
-   Evas_Vec3 tmp;
+   Eina_Vector3 tmp;
    Evas_Real length;
-   evas_vec3_set(&tmp, plane->x, plane->y, plane->z);
-   length = evas_vec3_length_get(&tmp);
+   eina_vector3_set(&tmp, plane->x, plane->y, plane->z);
+   length = eina_vector3_length_get(&tmp);
    plane->x = plane->x / length;
    plane->y = plane->y / length;
    plane->z = plane->z / length;
@@ -1058,15 +660,15 @@ evas_plane_normalize(Eina_Quaternion *plane)
 }
 
 static inline Eina_Bool
-evas_intersection_line_of_two_planes(Evas_Line3 *line, Eina_Quaternion *plane1, Eina_Quaternion *plane2)
+evas_intersection_line_of_two_plains(Evas_Line3 *line, Eina_Quaternion *plane1, Eina_Quaternion *plane2)
 {
    //TODO:parallel case
-   Evas_Vec3 planes3D[2];
+   Eina_Vector3 planes3D[2];
 
-   evas_vec3_set(&planes3D[0], plane1->x, plane1->y, plane1->z);
-   evas_vec3_set(&planes3D[1], plane2->x, plane2->y, plane2->z);
+   eina_vector3_set(&planes3D[0], plane1->x, plane1->y, plane1->z);
+   eina_vector3_set(&planes3D[1], plane2->x, plane2->y, plane2->z);
 
-   evas_vec3_cross_product(&line->direction, &planes3D[0], &planes3D[1]);
+   eina_vector3_cross_product(&line->direction, &planes3D[0], &planes3D[1]);
 
 #define SOLVE_EQUATION(x, y, z) \
    line->point.x = 0; \
@@ -1091,7 +693,7 @@ evas_intersection_line_of_two_planes(Evas_Line3 *line, Eina_Quaternion *plane1, 
 }
 
 static inline Eina_Bool
-evas_intersection_point_of_three_planes(Evas_Vec3 *point, Eina_Quaternion *plane1, Eina_Quaternion *plane2, Eina_Quaternion *plane3)
+evas_intersection_point_of_three_plains(Eina_Vector3 *point, Eina_Quaternion *plane1, Eina_Quaternion *plane2, Eina_Quaternion *plane3)
 {
    //TODO:parallel case
    int i;
@@ -1129,26 +731,26 @@ evas_intersection_point_of_three_planes(Evas_Vec3 *point, Eina_Quaternion *plane
      }
    deltaz = evas_determinant_3D(matrix_to_det);
 
-   evas_vec3_set(point, -deltax/delta, -deltay/delta, -deltaz/delta);
+   eina_vector3_set(point, -deltax/delta, -deltay/delta, -deltaz/delta);
 
    return EINA_TRUE;
 }
 
 static inline Evas_Real
-evas_point_plane_distance(Evas_Vec3 *point, Eina_Quaternion *plane)
+evas_point_plane_distance(Eina_Vector3 *point, Eina_Quaternion *plane)
 {
    return plane->x * point->x + plane->y * point->y + plane->z * point->z + plane->w;
 }
 
 static inline Evas_Real
-evas_point_line_distance(Evas_Vec3 *point, Evas_Line3 *line)
+evas_point_line_distance(Eina_Vector3 *point, Evas_Line3 *line)
 {
-   Evas_Vec3 temp, sub;
+   Eina_Vector3 temp, sub;
 
-   evas_vec3_subtract(&sub, point, &line->point);
-   evas_vec3_cross_product(&temp, &sub, &line->direction);
+   eina_vector3_subtract(&sub, point, &line->point);
+   eina_vector3_cross_product(&temp, &sub, &line->direction);
 
-   return evas_vec3_length_get(&temp) / evas_vec3_length_get(&line->direction);
+   return eina_vector3_length_get(&temp) / eina_vector3_length_get(&line->direction);
 }
 
 static inline Eina_Bool
@@ -1156,10 +758,10 @@ evas_is_sphere_in_frustum(Evas_Sphere *bsphere, Eina_Quaternion *planes)
 {
    int i;
    Evas_Line3 line;
-   Evas_Vec3 point, sub;
+   Eina_Vector3 point, sub;
    Evas_Real distances[6] = {0};
-   int intersected_planes[3];
-   int intersected_planes_count = 0;
+   int intersected_plains[3];
+   int intersected_plains_count = 0;
 
    for (i = 0; i < 6; i++)
      distances[i] = evas_point_plane_distance(&bsphere->center, &planes[i]);
@@ -1172,33 +774,33 @@ evas_is_sphere_in_frustum(Evas_Sphere *bsphere, Eina_Quaternion *planes)
           }
         else if (distances[i] <= 0)
           {
-             intersected_planes[intersected_planes_count] = i;
-             intersected_planes_count++;
+             intersected_plains[intersected_plains_count] = i;
+             intersected_plains_count++;
           }
       }
 
-   switch (intersected_planes_count)
+   switch (intersected_plains_count)
      {
       case 2:
-        evas_intersection_line_of_two_planes(&line,
-                                             &planes[intersected_planes[0]],
-                                             &planes[intersected_planes[1]]);
+        evas_intersection_line_of_two_plains(&line,
+                                             &planes[intersected_plains[0]],
+                                             &planes[intersected_plains[1]]);
         return (evas_point_line_distance(&bsphere->center, &line) <
                 bsphere->radius) ? EINA_TRUE : EINA_FALSE;
       case 3:
-        evas_intersection_point_of_three_planes(&point,
-                                                &planes[intersected_planes[0]],
-                                                &planes[intersected_planes[1]],
-                                                &planes[intersected_planes[2]]);
-        evas_vec3_subtract(&sub, &point, &bsphere->center);
-        return (evas_vec3_length_get(&sub) < bsphere->radius) ? EINA_TRUE : EINA_FALSE;
+        evas_intersection_point_of_three_plains(&point,
+                                                &planes[intersected_plains[0]],
+                                                &planes[intersected_plains[1]],
+                                                &planes[intersected_plains[2]]);
+        eina_vector3_subtract(&sub, &point, &bsphere->center);
+        return (eina_vector3_length_get(&sub) < bsphere->radius) ? EINA_TRUE : EINA_FALSE;
       default:
         return EINA_TRUE;
      }
 }
 
 static inline Eina_Bool
-evas_is_point_in_frustum(Evas_Vec3 *point, Eina_Quaternion *planes)
+evas_is_point_in_frustum(Eina_Vector3 *point, Eina_Quaternion *planes)
 {
    int i;
    for (i = 0; i < 6; i++)
@@ -1282,40 +884,40 @@ box_intersection_box(Evas_Box3 *v1, Evas_Box3 *v2)
 }
 
 static inline void
-tangent_new_basis(Evas_Vec3 *out, Evas_Triangle3 *triangle,
-                  Evas_Vec2 *a, Evas_Vec2 *b, Evas_Vec2 *c)
+tangent_new_basis(Eina_Vector3 *out, Evas_Triangle3 *triangle,
+                  Eina_Vector2 *a, Eina_Vector2 *b, Eina_Vector2 *c)
 {
-   Evas_Vec2   new1, new2;
-   Evas_Vec3   old1, old2;
-   evas_vec3_set(out, 0, 0, 0);
+   Eina_Vector2   new1, new2;
+   Eina_Vector3   old1, old2;
+   eina_vector3_set(out, 0, 0, 0);
 
-   evas_vec2_subtract(&new1, b, a);
-   evas_vec2_subtract(&new2, c, a);
-   evas_vec3_subtract(&old1, &(triangle->p1), &(triangle->p0));
-   evas_vec3_subtract(&old2, &(triangle->p2), &(triangle->p0));
+   eina_vector2_subtract(&new1, b, a);
+   eina_vector2_subtract(&new2, c, a);
+   eina_vector3_subtract(&old1, &(triangle->p1), &(triangle->p0));
+   eina_vector3_subtract(&old2, &(triangle->p2), &(triangle->p0));
 
 
    /* calculation of new basis(in system coordinates of texturing) by solution of system of equations */
    if (new2.y != 0)
      {
-        evas_vec3_scale(&old2, &old2, (new1.y / new2.y));
-        evas_vec2_scale(&new2, &new2, (new1.y / new2.y));
+        eina_vector3_scale(&old2, &old2, (new1.y / new2.y));
+        eina_vector2_scale(&new2, &new2, (new1.y / new2.y));
 
-        evas_vec2_subtract(&new1, &new1, &new2);
-        evas_vec3_subtract(&old1, &old1, &old2);
+        eina_vector2_subtract(&new1, &new1, &new2);
+        eina_vector3_subtract(&old1, &old1, &old2);
 
-        evas_vec3_scale(out, &old1, 1 / new1.x);
+        eina_vector3_scale(out, &old1, 1 / new1.x);
      }
 
    else if (new1.y != 0)
      {
-        evas_vec3_scale(&old1, &old1, (new2.y / new1.y));
-        evas_vec2_scale(&new1, &new1, (new2.y / new1.y));
+        eina_vector3_scale(&old1, &old1, (new2.y / new1.y));
+        eina_vector2_scale(&new1, &new1, (new2.y / new1.y));
 
-        evas_vec2_subtract(&new2, &new2, &new1);
-        evas_vec3_subtract(&old2, &old2, &old1);
+        eina_vector2_subtract(&new2, &new2, &new1);
+        eina_vector3_subtract(&old2, &old2, &old1);
 
-        evas_vec3_scale(out, &old2, 1 / new2.x);
+        eina_vector3_scale(out, &old2, 1 / new2.x);
      }
 
    return;
@@ -1326,7 +928,7 @@ convex_hull_vertex_set(Evas_Triangle3 *el, unsigned short int *vertex_count, flo
                     unsigned short int **index, unsigned int k, int *leader, int coord)
 {
    int color_coords, normal_coords;
-   Evas_Vec3 vect = {0, 0, 0};
+   Eina_Vector3 vect = {0, 0, 0};
    switch (coord)
      {
       case 0:
@@ -1363,17 +965,17 @@ convex_hull_first_tr_get(float *data, int count, int stride)
 {
    Evas_Triangle3  out;
 
-   Evas_Vec3   triangle1;
-   Evas_Vec3   triangle2, triangle2_candidate;
-   Evas_Vec3   triangle3, triangle3_candidate;
-   Evas_Vec3   first, diagonal, complanar1, complanar2, candidate;
+   Eina_Vector3   triangle1;
+   Eina_Vector3   triangle2, triangle2_candidate;
+   Eina_Vector3   triangle3, triangle3_candidate;
+   Eina_Vector3   first, diagonal, complanar1, complanar2, candidate;
    Eina_Quaternion   normal_a, normal_b;
 
    Evas_Real cos = 0.0, new_cos = 0.0, sin = 0.0, new_sin = 0.0, cos_2d = 0.0, new_cos_2d = 0.0;
    int first_num = 0;
    int i = 0, j = 0;
 
-   evas_vec3_set(&triangle1, data[0], data[1], data[2]);
+   eina_vector3_set(&triangle1, data[0], data[1], data[2]);
 
    for (i = 1, j = stride; i < count; i++, j += stride)
       {
@@ -1381,75 +983,75 @@ convex_hull_first_tr_get(float *data, int count, int stride)
              ((triangle1.z == data[j + 2]) && (triangle1.y > data[j + 1])) ||
              ((triangle1.z == data[j + 2]) && (triangle1.y == data[j + 1]) && (triangle1.x > data[j])))
            {
-              evas_vec3_set(&triangle1, data[j], data[j + 1], data[j + 2]);
+              eina_vector3_set(&triangle1, data[j], data[j + 1], data[j + 2]);
               first_num = i;
            }
       }
 
    if (first_num)
-     evas_vec3_set(&triangle2, data[0], data[1], data[2]);
+     eina_vector3_set(&triangle2, data[0], data[1], data[2]);
    else
-     evas_vec3_set(&triangle2, data[3], data[4], data[5]);
+     eina_vector3_set(&triangle2, data[3], data[4], data[5]);
 
-   evas_vec3_subtract(&diagonal, &triangle2, &triangle1);
-   sin = fabs(triangle2.z - triangle1.z) / evas_vec3_length_get(&diagonal);
+   eina_vector3_subtract(&diagonal, &triangle2, &triangle1);
+   sin = fabs(triangle2.z - triangle1.z) / eina_vector3_length_get(&diagonal);
 
 #define COMPARE_ANGLES(trigonom, triangle, previous, big, little)     \
    if (little > big + FLT_EPSILON)                                    \
      {                                                                \
         trigonom = new_##trigonom;                                    \
         cos_2d = new_cos_2d;                                          \
-        evas_vec3_set(&triangle, data[j], data[j + 1], data[j + 2]);   \
+        eina_vector3_set(&triangle, data[j], data[j + 1], data[j + 2]);   \
      }                                                                \
    else if(!FLT_COMPARISON(little, big) &&                            \
-           (evas_vec3_distance_get(&triangle##_candidate, &previous) >  \
-            evas_vec3_distance_get(&triangle, &previous)))              \
+           (eina_vector3_distance_get(&triangle##_candidate, &previous) >  \
+            eina_vector3_distance_get(&triangle, &previous)))              \
      {                                                                \
-        evas_vec3_set(&triangle, data[j], data[j + 1], data[j + 2]);   \
+        eina_vector3_set(&triangle, data[j], data[j + 1], data[j + 2]);   \
      }
-   evas_vec3_set(&complanar1, 1, 0, 0);
+   eina_vector3_set(&complanar1, 1, 0, 0);
    for (i = 0, j = 0; i < count; i++, j += stride)
       {
          if (FLT_COMPARISON(data[j], triangle1.x) ||
              FLT_COMPARISON(data[j + 1], triangle1.y) ||
              FLT_COMPARISON(data[j + 2], triangle1.z))
            {
-              evas_vec3_set(&triangle2_candidate, data[j], data[j + 1], data[j + 2]);
-              evas_vec3_subtract(&diagonal, &triangle2_candidate, &triangle1);
-              new_sin = fabs(data[j + 2] - triangle1.z) / evas_vec3_length_get(&diagonal);
+              eina_vector3_set(&triangle2_candidate, data[j], data[j + 1], data[j + 2]);
+              eina_vector3_subtract(&diagonal, &triangle2_candidate, &triangle1);
+              new_sin = fabs(data[j + 2] - triangle1.z) / eina_vector3_length_get(&diagonal);
 
               if (sin > new_sin + FLT_EPSILON)
                 {
                    sin = new_sin;
-                   evas_vec3_set(&triangle2, data[j], data[j + 1], data[j + 2]);
-                   evas_vec3_subtract(&diagonal, &triangle2, &triangle1);
-                   cos_2d = evas_vec3_angle_get(&complanar1, &diagonal);
+                   eina_vector3_set(&triangle2, data[j], data[j + 1], data[j + 2]);
+                   eina_vector3_subtract(&diagonal, &triangle2, &triangle1);
+                   cos_2d = eina_vector3_angle_get(&complanar1, &diagonal);
                 }
               else if (!FLT_COMPARISON(sin, new_sin))
                 {
-                   evas_vec3_subtract(&diagonal, &triangle2_candidate, &triangle1);
-                   new_cos_2d = evas_vec3_angle_get(&complanar1, &diagonal);
+                   eina_vector3_subtract(&diagonal, &triangle2_candidate, &triangle1);
+                   new_cos_2d = eina_vector3_angle_get(&complanar1, &diagonal);
 
                    COMPARE_ANGLES(cos, triangle2, triangle1, cos_2d, new_cos_2d)
                 }
            }
       }
 
-   evas_vec3_set(&complanar1, triangle1.x + 1, triangle1.y, triangle1.z);
-   evas_vec3_set(&complanar2, triangle1.x, triangle1.y + 1, triangle1.z);
-   evas_vec3_plain_by_points(&normal_a, &triangle1, &complanar1, &complanar2);
+   eina_vector3_set(&complanar1, triangle1.x + 1, triangle1.y, triangle1.z);
+   eina_vector3_set(&complanar2, triangle1.x, triangle1.y + 1, triangle1.z);
+   eina_vector3_plane_by_points(&normal_a, &triangle1, &complanar1, &complanar2);
 
    if (normal_a.z < 0)
      eina_quaternion_scale(&normal_a, &normal_a, -1);
 
-   evas_vec3_set(&triangle3, data[0], data[1], data[2]);
+   eina_vector3_set(&triangle3, data[0], data[1], data[2]);
 
    cos = -1.0;
    cos_2d = 1.0;
 
    for (i = 0, j = 0; i < count; i++, j += stride)
       {
-         evas_vec3_set(&candidate, data[j], data[j + 1], data[j + 2]);
+         eina_vector3_set(&candidate, data[j], data[j + 1], data[j + 2]);
 
          if ((FLT_COMPARISON(data[j], triangle1.x) ||
              FLT_COMPARISON(data[j + 1], triangle1.y) ||
@@ -1458,7 +1060,7 @@ convex_hull_first_tr_get(float *data, int count, int stride)
              FLT_COMPARISON(data[j + 1], triangle2.y) ||
              FLT_COMPARISON(data[j + 2], triangle2.z)))
            {
-              evas_vec3_plain_by_points(&normal_b, &triangle1, &candidate, &triangle2);
+              eina_vector3_plane_by_points(&normal_b, &triangle1, &candidate, &triangle2);
 
               if (normal_b.z < 0)
                 eina_quaternion_scale(&normal_b, &normal_b, -1);
@@ -1467,19 +1069,19 @@ convex_hull_first_tr_get(float *data, int count, int stride)
 
               if (new_cos > cos + FLT_EPSILON)
                 {
-                   evas_vec3_set(&triangle3_candidate, data[j], data[j + 1], data[j + 2]);
-                   evas_vec3_subtract(&first, &triangle2, &triangle1);
-                   evas_vec3_subtract(&diagonal, &triangle3, &triangle1);
+                   eina_vector3_set(&triangle3_candidate, data[j], data[j + 1], data[j + 2]);
+                   eina_vector3_subtract(&first, &triangle2, &triangle1);
+                   eina_vector3_subtract(&diagonal, &triangle3, &triangle1);
                    cos = new_cos;
-                   evas_vec3_set(&triangle3, data[j], data[j + 1], data[j + 2]);
-                   cos_2d = evas_vec3_angle_get(&diagonal, &first);
+                   eina_vector3_set(&triangle3, data[j], data[j + 1], data[j + 2]);
+                   cos_2d = eina_vector3_angle_get(&diagonal, &first);
                 }
               else if (!FLT_COMPARISON(new_cos, cos))
                 {
-                   evas_vec3_set(&triangle3_candidate, data[j], data[j + 1], data[j + 2]);
-                   evas_vec3_subtract(&first, &triangle1, &triangle2);
-                   evas_vec3_subtract(&diagonal, &triangle3_candidate, &triangle2);
-                   new_cos_2d = evas_vec3_angle_get(&first, &diagonal);
+                   eina_vector3_set(&triangle3_candidate, data[j], data[j + 1], data[j + 2]);
+                   eina_vector3_subtract(&first, &triangle1, &triangle2);
+                   eina_vector3_subtract(&diagonal, &triangle3_candidate, &triangle2);
+                   new_cos_2d = eina_vector3_angle_get(&first, &diagonal);
 
                    COMPARE_ANGLES(cos, triangle3, triangle2, new_cos_2d, cos_2d)
                 }
@@ -1498,8 +1100,8 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
 {
    Evas_Triangle3  first_elem, second_elem, *third_elem = NULL, *el = NULL;
 
-   Evas_Vec3   *next = NULL, *best = NULL, *next_2d = NULL, *el_vec3 = NULL;
-   Evas_Vec3   tmp1, tmp2;
+   Eina_Vector3   *next = NULL, *best = NULL, *next_2d = NULL, *el_vec3 = NULL;
+   Eina_Vector3   tmp1, tmp2;
    Eina_Quaternion   normal_a, normal_b;
 
    Eina_Array arr_elems;
@@ -1517,7 +1119,7 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
 
    Eina_Bool exist1 = EINA_FALSE, pushed;
    Eina_Bool equivalent_triangle = EINA_FALSE, triangle_chain = EINA_FALSE;
-   Eina_Bool on_plain = EINA_FALSE, right = EINA_FALSE;
+   Eina_Bool on_plane = EINA_FALSE, right = EINA_FALSE;
 
    eina_array_step_set(&arr_elems, sizeof(Eina_Array), 1);
    eina_array_step_set(&arr_triangles, sizeof(Eina_Array), 1);
@@ -1563,15 +1165,15 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
                   (FLT_COMPARISON(elem->p2.x, data[j]) || FLT_COMPARISON(elem->p2.y, data[j + 1]) ||
                    FLT_COMPARISON(elem->p2.z, data[j + 2])))
                 {
-                   next = malloc(sizeof(Evas_Vec3));
-                   evas_vec3_set(next, data[j], data[j + 1], data[j + 2]);
+                   next = malloc(sizeof(Eina_Vector3));
+                   eina_vector3_set(next, data[j], data[j + 1], data[j + 2]);
                    pushed = EINA_FALSE;
 
                    /* something like the dihedral angle between the triangles
                       is a determining factor in searching the necessary points */
 
-                   evas_vec3_plain_by_points(&normal_a, &elem->p0, &elem->p1, &elem->p2);
-                   evas_vec3_plain_by_points(&normal_b, &elem->p0, &elem->p1, next);
+                   eina_vector3_plane_by_points(&normal_a, &elem->p0, &elem->p1, &elem->p2);
+                   eina_vector3_plane_by_points(&normal_b, &elem->p0, &elem->p1, next);
 
                    /* MIN_DIFF because vertices that belong to plain shouldn't be included */
                    if (fabs(normal_a.x * data[j] + normal_a.y * data[j + 1] + normal_a.z * data[j + 2] + normal_a.w) < MIN_DIFF)
@@ -1615,7 +1217,7 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
                         for (k = 0; (k < eina_array_count(&arr_candidates)) && !exist1; k++)
                            {
                               next_2d = eina_array_data_get(&arr_candidates, k);
-                              exist1 = evas_vec3_if_equivalent(next, next_2d);
+                              exist1 = eina_vector3_equivalent(next, next_2d);
                            }
                         if (!exist1)
                           {
@@ -1629,7 +1231,7 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
                 }
            }
 
-        on_plain = EINA_FALSE;
+        on_plane = EINA_FALSE;
         right = EINA_FALSE;
 
         /* The case when several points are found, is discussed below.
@@ -1637,17 +1239,17 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
            two-dimensional subspace should be filled further */
         if ((cos != 1.0) && (1 < eina_array_count(&arr_candidates)))
           {
-             Evas_Vec3 angle_from, angle_to;
+             Eina_Vector3 angle_from, angle_to;
              next_2d = eina_array_data_get(&arr_candidates, 0);
-             evas_vec3_plain_by_points(&normal_b, &elem->p1, &elem->p0, next_2d);
+             eina_vector3_plane_by_points(&normal_b, &elem->p1, &elem->p0, next_2d);
 
              if (normal_b.x * elem->p2.x + normal_b.y * elem->p2.y + normal_b.z * elem->p2.z + normal_b.w > 0)
                {
-                  evas_vec3_subtract(&angle_from, &elem->p0, &elem->p1);
+                  eina_vector3_subtract(&angle_from, &elem->p0, &elem->p1);
                   right = EINA_TRUE;
                }
              else
-               evas_vec3_subtract(&angle_from, &elem->p1, &elem->p0);
+               eina_vector3_subtract(&angle_from, &elem->p1, &elem->p0);
 
              cos_2d = -1.0;
 
@@ -1655,12 +1257,12 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
                 {
                    /* Selection of the required vertex occurs on the basis of a specific angle */
                    if (right)
-                     evas_vec3_subtract(&angle_to, next_2d, &elem->p0);
+                     eina_vector3_subtract(&angle_to, next_2d, &elem->p0);
                    else
-                     evas_vec3_subtract(&angle_to, next_2d, &elem->p1);
+                     eina_vector3_subtract(&angle_to, next_2d, &elem->p1);
 
-                   new_cos = evas_vec3_dot_product(&angle_from, &angle_to) /
-                             (evas_vec3_length_get(&angle_from) * evas_vec3_length_get(&angle_to));
+                   new_cos = eina_vector3_dot_product(&angle_from, &angle_to) /
+                             (eina_vector3_length_get(&angle_from) * eina_vector3_length_get(&angle_to));
                    if (new_cos > cos_2d + FLT_EPSILON)
                      {
                         cos_2d = new_cos;
@@ -1668,8 +1270,8 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
                      }
                    else if (!FLT_COMPARISON(new_cos, cos_2d))
                      {
-                        if ((right && (evas_vec3_distance_get(best, &elem->p0) < evas_vec3_length_get(&angle_from))) ||
-                            (!right && (evas_vec3_distance_get(best, &elem->p1) < evas_vec3_length_get(&angle_from))))
+                        if ((right && (eina_vector3_distance_get(best, &elem->p0) < eina_vector3_length_get(&angle_from))) ||
+                            (!right && (eina_vector3_distance_get(best, &elem->p1) < eina_vector3_length_get(&angle_from))))
                           best = eina_array_data_get(&arr_candidates, k);
                      }
                 }
@@ -1680,19 +1282,19 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
            convex hull allows to fill it fan counterclockwise when viewed from the inside */
         else if ((cos == 1.0) && (1 < eina_array_count(&arr_candidates)))
           {
-             Evas_Vec3 angle_from, angle_to;
-             evas_vec3_subtract(&angle_from, &elem->p0, &elem->p1);
+             Eina_Vector3 angle_from, angle_to;
+             eina_vector3_subtract(&angle_from, &elem->p0, &elem->p1);
              cos_2d = -1.0;
              EINA_ARRAY_ITER_NEXT(&arr_candidates, k, next_2d, iterator)
                 {
-                   evas_vec3_subtract(&angle_to, next_2d, &elem->p0);
+                   eina_vector3_subtract(&angle_to, next_2d, &elem->p0);
 
-                   evas_vec3_plain_by_points(&normal_a, &elem->p0, &elem->p1, &elem->p2);
-                   evas_vec3_plain_by_points(&normal_b, &elem->p0, &elem->p1, next_2d);
+                   eina_vector3_plane_by_points(&normal_a, &elem->p0, &elem->p1, &elem->p2);
+                   eina_vector3_plane_by_points(&normal_b, &elem->p0, &elem->p1, next_2d);
                    if ((normal_a.x * normal_b.x <= 0) && (normal_a.y * normal_b.y <= 0) && (normal_a.z * normal_b.z <= 0))
                      {
-                        new_cos = evas_vec3_dot_product(&angle_from, &angle_to) /
-                                  (evas_vec3_length_get(&angle_from) * evas_vec3_length_get(&angle_to));
+                        new_cos = eina_vector3_dot_product(&angle_from, &angle_to) /
+                                  (eina_vector3_length_get(&angle_from) * eina_vector3_length_get(&angle_to));
                         if (new_cos > cos_2d + FLT_EPSILON)
                           {
                              cos_2d = new_cos;
@@ -1700,10 +1302,10 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
                           }
                         else if (!FLT_COMPARISON(new_cos, cos_2d))
                           {
-                             if (evas_vec3_distance_get(best, &elem->p0) < evas_vec3_length_get(&angle_to))
+                             if (eina_vector3_distance_get(best, &elem->p0) < eina_vector3_length_get(&angle_to))
                                best = eina_array_data_get(&arr_candidates, k);
                           }
-                        on_plain = EINA_TRUE;
+                        on_plane = EINA_TRUE;
                      }
                 }
           }
@@ -1711,15 +1313,15 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
         else
           best = eina_array_data_get(&arr_candidates, 0);
 
-        evas_vec3_plain_by_points(&normal_b, &elem->p0, &elem->p1, best);
+        eina_vector3_plane_by_points(&normal_b, &elem->p0, &elem->p1, best);
 
         if_two = 0;
         first_exist_twice = 0;
         second_exist_twice = 0;
         equivalent_triangle = EINA_FALSE;
         triangle_chain = EINA_FALSE;
-        evas_vec3_copy(&tmp1, &elem->p0);
-        evas_vec3_copy(&tmp2, &elem->p1);
+        eina_vector3_copy(&tmp1, &elem->p0);
+        eina_vector3_copy(&tmp2, &elem->p1);
         new_elem1 = malloc(sizeof(Evas_Triangle3));
         evas_triangle3_set(new_elem1, best, &tmp1, &tmp2);
         pushed = EINA_FALSE;
@@ -1727,22 +1329,22 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
         /* verification that the edje has not been found previously */
         EINA_ARRAY_ITER_NEXT(&arr_triangles, k, el, iterator)
           {
-             if (convex_hull_triangle3_if_first_edje(el, &elem->p0, &elem->p1))
+             if (convex_hull_triangle3_first_edje(el, &elem->p0, &elem->p1))
                if_two++;
-             if (evas_triangle3_if_equivalent(el, new_elem1))
+             if (evas_triangle3_equivalent(el, new_elem1))
                equivalent_triangle++;
            }
 
 
         EINA_ARRAY_ITER_NEXT(&arr_triangles, k, el, iterator)
           {
-             if ((k > 2) && (convex_hull_triangle3_if_not_first_edje(el, &elem->p0, best) ||
-                 convex_hull_triangle3_if_not_first_edje(el, &elem->p1, best)))
+             if ((k > 2) && (convex_hull_triangle3_not_first_edje(el, &elem->p0, best) ||
+                 convex_hull_triangle3_not_first_edje(el, &elem->p1, best)))
                triangle_chain = EINA_TRUE;
           }
 
         /* There is a specific order according to which the edjes are entered in arr_elems */
-        if (!on_plain && !right)
+        if (!on_plane && !right)
           {
              if ((!equivalent_triangle) && (!second_exist_twice) && (!triangle_chain) && (if_two < 2))
                {
@@ -1859,31 +1461,31 @@ evas_convex_hull_get(float *data, int count, int stride, Eina_Inarray *vertex,
 }
 
 static inline void
-tangent_space_weighted_sum(Evas_Vec3 *big_t, Evas_Vec3 *little_t,
+tangent_space_weighted_sum(Eina_Vector3 *big_t, Eina_Vector3 *little_t,
                             Evas_Real *big_angle, Evas_Real little_angle)
 {
    /* one way to calculate tangent in vertex that is found in many triangles */
-   evas_vec3_scale(big_t, big_t, *big_angle / (*big_angle + little_angle));
-   evas_vec3_scale(little_t, little_t, little_angle / (*big_angle + little_angle));
-   evas_vec3_add(big_t, big_t, little_t);
+   eina_vector3_scale(big_t, big_t, *big_angle / (*big_angle + little_angle));
+   eina_vector3_scale(little_t, little_t, little_angle / (*big_angle + little_angle));
+   eina_vector3_add(big_t, big_t, little_t);
    *big_angle += little_angle;
    return;
 }
 
 
 static inline Evas_Real
-tangent_space_triangle_angle_get(Evas_Vec3 *first, Evas_Vec3 *second, Evas_Vec3 *third)
+tangent_space_triangle_angle_get(Eina_Vector3 *first, Eina_Vector3 *second, Eina_Vector3 *third)
 {
-   Evas_Vec3 a, b, c;
+   Eina_Vector3 a, b, c;
    Evas_Real cos, arccos;
 
-   evas_vec3_subtract(&a, second, third);
-   evas_vec3_subtract(&b, third, first);
-   evas_vec3_subtract(&c, first, second);
+   eina_vector3_subtract(&a, second, third);
+   eina_vector3_subtract(&b, third, first);
+   eina_vector3_subtract(&c, first, second);
 
-   cos = -(evas_vec3_length_square_get(&a) - evas_vec3_length_square_get(&b) -
-           evas_vec3_length_square_get(&c)) / (2 * evas_vec3_length_get(&b) *
-           evas_vec3_length_get(&c));
+   cos = -(eina_vector3_length_square_get(&a) - eina_vector3_length_square_get(&b) -
+           eina_vector3_length_square_get(&c)) / (2 * eina_vector3_length_get(&b) *
+           eina_vector3_length_get(&c));
    arccos = acos(cos);
 
    return arccos;
@@ -1896,8 +1498,8 @@ evas_tangent_space_get(float *data, float *tex_data, float *normal_data, unsigne
    Eina_Bool if_not_primitive = EINA_FALSE;
    Evas_Real big_angle, little_angle;
    Evas_Triangle3  triangle;
-   Evas_Vec2 tex1, tex2, tex3;
-   Evas_Vec3 big_tangent, little_tangent, normal;
+   Eina_Vector2 tex1, tex2, tex3;
+   Eina_Vector3 big_tangent, little_tangent, normal;
    Eina_Quaternion *plain = NULL;
    int i, j, k, l, m, found_index = 0;
    int indexes[3];
@@ -1929,7 +1531,7 @@ evas_tangent_space_get(float *data, float *tex_data, float *normal_data, unsigne
 
    for (i = 0, j = 0, k = 0; i < vertex_count; i++, j += stride, k += normal_stride)
      {
-        evas_vec3_set(&big_tangent, 0.0, 0.0, 0.0);
+        eina_vector3_set(&big_tangent, 0.0, 0.0, 0.0);
         big_angle = 0.0;
         for (l = 0, m = 0; l < vertex_count; l++, m += stride)
           {
@@ -1962,14 +1564,14 @@ evas_tangent_space_get(float *data, float *tex_data, float *normal_data, unsigne
                             (found_index == indexes[1]) ||
                             (found_index == indexes[2]))
                           {
-                             evas_vec3_set(&triangle.p0, data[indexes[0] * stride], data[indexes[0] * stride + 1], data[indexes[0] * stride + 2]);
-                             evas_vec3_set(&triangle.p1, data[indexes[1] * stride], data[indexes[1] * stride + 1], data[indexes[1] * stride + 2]);
-                             evas_vec3_set(&triangle.p2, data[indexes[2] * stride], data[indexes[2] * stride + 1], data[indexes[2] * stride + 2]);
+                             eina_vector3_set(&triangle.p0, data[indexes[0] * stride], data[indexes[0] * stride + 1], data[indexes[0] * stride + 2]);
+                             eina_vector3_set(&triangle.p1, data[indexes[1] * stride], data[indexes[1] * stride + 1], data[indexes[1] * stride + 2]);
+                             eina_vector3_set(&triangle.p2, data[indexes[2] * stride], data[indexes[2] * stride + 1], data[indexes[2] * stride + 2]);
                              if (plain)
                                free(plain);
                              plain = malloc(sizeof(Eina_Quaternion));
 
-                             evas_vec3_plain_by_points(plain, &triangle.p0, &triangle.p1, &triangle.p2);
+                             eina_vector3_plane_by_points(plain, &triangle.p0, &triangle.p1, &triangle.p2);
                              tex1.x = tex_data[indexes[0] * tex_stride];
                              tex1.y = tex_data[indexes[0] * tex_stride + 1];
                              tex2.x = tex_data[indexes[1] * tex_stride];
@@ -1980,7 +1582,7 @@ evas_tangent_space_get(float *data, float *tex_data, float *normal_data, unsigne
                              /* calculate the tangent */
                              tangent_new_basis(&little_tangent, &triangle,
                                                &tex1, &tex2, &tex3);
-                             evas_vec3_normalize(&little_tangent, &little_tangent);
+                             eina_vector3_normalize(&little_tangent, &little_tangent);
 
                              /* founding the angle in triangle in founded vertex */
                              if (found_index == indexes[0])
@@ -1993,7 +1595,7 @@ evas_tangent_space_get(float *data, float *tex_data, float *normal_data, unsigne
                                little_angle = tangent_space_triangle_angle_get(&triangle.p2, &triangle.p0, &triangle.p1);
 
                              if (evas_triangle3_is_line(&triangle))
-                               evas_vec3_set(&big_tangent, 1.0, 0.0, 0.0);
+                               eina_vector3_set(&big_tangent, 1.0, 0.0, 0.0);
 
                              else
                                tangent_space_weighted_sum(&big_tangent, &little_tangent, &big_angle, little_angle);
@@ -2001,9 +1603,9 @@ evas_tangent_space_get(float *data, float *tex_data, float *normal_data, unsigne
                      }
                 }
           }
-        evas_vec3_set(&normal, normal_data[j], normal_data[j + 1], normal_data[j + 2]);
-        evas_vec3_orthogonal_projection_on_plain(&big_tangent, &big_tangent, &normal);
-        evas_vec3_normalize(&big_tangent, &big_tangent);
+        eina_vector3_set(&normal, normal_data[j], normal_data[j + 1], normal_data[j + 2]);
+        eina_vector3_orthogonal_projection_on_plane(&big_tangent, &big_tangent, &normal);
+        eina_vector3_normalize(&big_tangent, &big_tangent);
         tmp_tangent[i * 3] = big_tangent.x;
         tmp_tangent[i * 3 + 1] = big_tangent.y;
         tmp_tangent[i * 3 + 2] = big_tangent.z;
@@ -2018,7 +1620,7 @@ evas_tangent_space_get(float *data, float *tex_data, float *normal_data, unsigne
 }
 
 static inline void
-calculate_box(Evas_Box3 *box3, int vertex_count, Evas_Vec3 *vertex_position)
+calculate_box(Evas_Box3 *box3, int vertex_count, Eina_Vector3 *vertex_position)
 {
    int i = 0;
    float vxmin, vymin, vzmin, vxmax, vymax, vzmax;
@@ -2040,10 +1642,10 @@ calculate_box(Evas_Box3 *box3, int vertex_count, Evas_Vec3 *vertex_position)
 }
 
 static inline void
-calculate_sphere(Evas_Sphere *sphere, int vertex_count,  Evas_Vec3 *vertex_position)
+calculate_sphere(Evas_Sphere *sphere, int vertex_count,  Eina_Vector3 *vertex_position)
 {
    float radius = 0.0001f;
-   Evas_Vec3 center, pos, diff;
+   Eina_Vector3 center, pos, diff;
    float len, alpha, alpha2;
    int  i, k;
 
@@ -2063,17 +1665,17 @@ calculate_sphere(Evas_Sphere *sphere, int vertex_count,  Evas_Vec3 *vertex_posit
         for (i = 0; i < vertex_count; ++i)
           {
              pos = vertex_position[i];
-             evas_vec3_subtract(&diff, &pos, &center);
-             len = evas_vec3_length_get(&diff);
+             eina_vector3_subtract(&diff, &pos, &center);
+             len = eina_vector3_length_get(&diff);
              if (len > radius)
                {
                   alpha = len / radius;
                   alpha2 = alpha * alpha;
                   radius = 0.5f * (alpha + 1 / alpha) * radius;
-                  evas_vec3_scale(&pos, &pos, 1 - 1 / alpha2);
-                  evas_vec3_scale(&center, &center, (1 + 1 / alpha2));
-                  evas_vec3_add(&center, &center, &pos);
-                  evas_vec3_scale(&center, &center, 0.5f);
+                  eina_vector3_scale(&pos, &pos, 1 - 1 / alpha2);
+                  eina_vector3_scale(&center, &center, (1 + 1 / alpha2));
+                  eina_vector3_add(&center, &center, &pos);
+                  eina_vector3_scale(&center, &center, 0.5f);
                }
           }
      }
@@ -2081,14 +1683,14 @@ calculate_sphere(Evas_Sphere *sphere, int vertex_count,  Evas_Vec3 *vertex_posit
    for (i = 0; i < vertex_count; ++i)
      {
         pos = vertex_position[i];
-        evas_vec3_subtract(&diff, &pos, &center);
-        len = evas_vec3_length_get(&diff);
+        eina_vector3_subtract(&diff, &pos, &center);
+        len = eina_vector3_length_get(&diff);
 
         if (len > radius)
           {
              radius = (radius + len) / 2.0f;
-             evas_vec3_scale(&diff, &diff, (len - radius) / len);
-             evas_vec3_add(&center, &center, &diff);
+             eina_vector3_scale(&diff, &diff, (len - radius) / len);
+             eina_vector3_add(&center, &center, &diff);
           }
      }
 

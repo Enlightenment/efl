@@ -4,7 +4,7 @@ void
 _set_default_cone(Evas_Canvas3D_Mesh *mesh,
                   int frame,
                   int p,
-                  Evas_Vec2 tex_scale)
+                  Eina_Vector2 tex_scale)
 {
    int vcount, icount, vccount, i, j, num;
    double dfi, fi, sinfi, cosfi, nplane, nz;
@@ -66,7 +66,7 @@ void
 _set_cone_without_base(Evas_Canvas3D_Mesh *mesh,
                        int frame,
                        int p,
-                       Evas_Vec2 tex_scale)
+                       Eina_Vector2 tex_scale)
 {
    int vcount, icount, vccount, i;
    double dfi, fi, sinfi, cosfi, nplane, nz;
@@ -117,7 +117,7 @@ evas_model_set_from_cone_primitive(Evas_Canvas3D_Mesh *mesh,
                                    int frame,
                                    Evas_Canvas3D_Primitive_Mode mode,
                                    int p,
-                                   Evas_Vec2 tex_scale)
+                                   Eina_Vector2 tex_scale)
 {
    switch (mode)
      {

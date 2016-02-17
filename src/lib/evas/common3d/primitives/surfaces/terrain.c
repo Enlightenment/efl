@@ -79,7 +79,7 @@ void
 evas_model_set_from_terrain_primitive(Evas_Canvas3D_Mesh *mesh,
                                       int frame,
                                       int p,
-                                      Evas_Vec2 tex_scale)
+                                      Eina_Vector2 tex_scale)
 {
    evas_model_set_from_surface_primitive(mesh, frame, _perlin_terrain, p, tex_scale);
 }
