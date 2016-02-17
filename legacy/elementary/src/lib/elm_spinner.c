@@ -410,7 +410,56 @@ _decimal_points_get(const char *label)
 }
 
 static void
-_entry_filter_add(Evas_Object *obj)
+_invalid_input_validity_filter(void *data EINA_UNUSED, Evas_Object *obj, char **text)
+{
+   char *insert = NULL;
+   const char *str = NULL;
+   int cursor_pos = 0;
+   int read_idx = 0, read_char, cmp_char;
+
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   EINA_SAFETY_ON_NULL_RETURN(text);
+
+   insert = *text;
+   str = elm_object_text_get(obj);
+
+   evas_string_char_next_get(*text, 0, &read_char);
+   cursor_pos = elm_entry_cursor_pos_get(obj);
+   if (read_char)
+     {
+       if (read_char == '-')
+         {
+            if (cursor_pos != 0)
+              {
+                 goto invalid_input;
+              }
+         }
+       if (read_char == '.')
+         {
+            read_idx = evas_string_char_next_get(str, 0, &cmp_char);
+            while (cmp_char)
+              {
+                 if (read_char == cmp_char)
+                   {
+                      goto invalid_input;
+                   }
+                 read_idx = evas_string_char_next_get(str, read_idx, &cmp_char);
+               }
+         }
+       read_idx = evas_string_char_next_get(str, 0, &cmp_char);
+       if ((cmp_char == '-') && (cursor_pos == 0))
+         {
+            goto invalid_input;
+         }
+     }
+   return;
+
+invalid_input:
+   *insert = 0;
+}
+
+static void
+_entry_accept_filter_add(Evas_Object *obj)
 {
    ELM_SPINNER_DATA_GET(obj, sd);
    static Elm_Entry_Filter_Accept_Set digits_filter_data;
@@ -424,7 +473,7 @@ _entry_filter_add(Evas_Object *obj)
    else
      digits_filter_data.accepted = "-0123456789";
 
-   elm_entry_markup_filter_append(sd->ent, elm_entry_filter_accept_set, &digits_filter_data);
+   elm_entry_markup_filter_prepend(sd->ent, elm_entry_filter_accept_set, &digits_filter_data);
 }
 
 char *
@@ -523,7 +572,8 @@ _toggle_entry(Evas_Object *obj)
              eo_do(sd->ent, eo_event_callback_add
                (ELM_ENTRY_EVENT_ACTIVATED, _entry_activated_cb, obj));
              elm_layout_content_set(obj, "elm.swallow.entry", sd->ent);
-             _entry_filter_add(obj);
+             _entry_accept_filter_add(obj);
+             elm_entry_markup_filter_append(sd->ent, _invalid_input_validity_filter, NULL);
              if (_elm_config->spinner_min_max_filter_enable)
                elm_entry_markup_filter_append(sd->ent, _min_max_validity_filter, obj);
           }
@@ -1361,7 +1411,7 @@ _elm_spinner_label_format_set(Eo *obj, Elm_Spinner_Data *sd, const char *fmt)
 
    _label_write(obj);
    elm_layout_sizing_eval(obj);
-   _entry_filter_add(obj);
+   _entry_accept_filter_add(obj);
 }
 
 EOLIAN static const char*
