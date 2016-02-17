@@ -48,7 +48,14 @@ extern "C" {
 #endif
 
 typedef Eo Ecore_Con_Eet;
+
+#ifndef _ECORE_CON_EET_BASE_EO_TYPES
+#define _ECORE_CON_EET_BASE_EO_TYPES
+
 typedef struct _Ecore_Con_Reply Ecore_Con_Reply;
+
+
+#endif
 
 /**
  * @typedef Ecore_Con_Eet_Data_Cb

@@ -1,6 +1,13 @@
+import efl_network_server;
+
+type @extern Ecore_Con_Eet_Data_Cb: __undefined_type; /* FIXME: function pointers not supported. */
+type @extern Ecore_Con_Eet_Raw_Data_Cb: __undefined_type; /* FIXME: function pointers not supported. */
+
+struct @extern Eet_Data_Descriptor;
+struct Ecore.Con.Reply;
+
 class Ecore.Con.Eet.Base (Eo.Base) {
    legacy_prefix: null;
-   eo_prefix: ecore_con_eet_base;
    methods {
       @property server {
          [[The server object to which we send and receive.]]
@@ -9,7 +16,7 @@ class Ecore.Con.Eet.Base (Eo.Base) {
          get {
          }
          values {
-            data: Ecore_Con_Server*;
+            data: Efl.Network.Server *;
          }
       }
       @property data_callback {
@@ -61,7 +68,7 @@ class Ecore.Con.Eet.Base (Eo.Base) {
       send {
          [[Function to send data.]]
          params {
-            reply: Ecore_Con_Reply *; [[Contains the ecore_con_eet object
+            reply: Ecore.Con.Reply *; [[Contains the ecore_con_eet object
                                         to which the data has to be sent.]]
             name: const (char) *; [[The name of the eet stream.]]
             value: void *; [[Actual data]]
@@ -70,7 +77,7 @@ class Ecore.Con.Eet.Base (Eo.Base) {
       raw_send {
          [[Function to send raw data.]]
          params {
-            reply: Ecore_Con_Reply *; [[Contains the ecore_con_eet object
+            reply: Ecore.Con.Reply *; [[Contains the ecore_con_eet object
                                         to which the data has to be sent.]]
             protocol_name: const (char) *; [[The name of the eet stream.]]
             section: const (char) *; [[Name of section in the eet descriptor.]]
