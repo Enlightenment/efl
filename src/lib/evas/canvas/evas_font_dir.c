@@ -533,6 +533,11 @@ evas_font_name_parse(Evas_Font_Description *fdesc, const char *name)
              eina_stringshare_replace_length(&(fdesc->lang), tmp, tend - tmp);
              eina_stringshare_replace(&(fdesc->lang), evas_font_lang_normalize(fdesc->lang));
           }
+        else if (!strncmp(name, ":fallbacks=", 11))
+          {
+             const char *tmp = name + 11;
+             eina_stringshare_replace_length(&(fdesc->fallbacks), tmp, tend - tmp);
+          }
      }
 }
 
