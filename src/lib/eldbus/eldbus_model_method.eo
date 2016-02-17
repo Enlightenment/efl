@@ -6,7 +6,7 @@ class Eldbus.Model_Method (Eldbus.Model_Arguments) {
 
               @since 1.16]]
             params {
-                @in proxy: Eldbus_Proxy*; [[Eldbus proxy]]
+                @in proxy: Eldbus.Proxy*; [[Eldbus proxy]]
                 @in method: const(Eldbus_Introspection_Method)*; [[The introspected method]]
             }
         }

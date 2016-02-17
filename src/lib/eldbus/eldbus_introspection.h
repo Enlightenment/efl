@@ -4,8 +4,7 @@
 #include <Eina.h>
 #include <Eo.h>
 
-typedef struct _Eldbus_Proxy          Eldbus_Proxy;
-
+#include "eldbus_types.eot.h"
 #include "eldbus_model_arguments.eo.h"
 
 // DTD conversion form: http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd

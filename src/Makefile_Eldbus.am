@@ -1,6 +1,9 @@
 
 ### Library
 
+eldbus_eolian_type_files = \
+    lib/eldbus/eldbus_types.eot
+
 eldbus_eolian_files = \
 	lib/eldbus/eldbus_model_connection.eo \
 	lib/eldbus/eldbus_model_object.eo \
@@ -10,7 +13,8 @@ eldbus_eolian_files = \
 	lib/eldbus/eldbus_model_signal.eo
 
 eldbus_eolian_c = $(eldbus_eolian_files:%.eo=%.eo.c)
-eldbus_eolian_h = $(eldbus_eolian_files:%.eo=%.eo.h)
+eldbus_eolian_h = $(eldbus_eolian_files:%.eo=%.eo.h) \
+                  $(eldbus_eolian_type_files:%.eot=%.eot.h)
 
 BUILT_SOURCES += \
 	$(eldbus_eolian_c) \
