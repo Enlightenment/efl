@@ -573,12 +573,11 @@ _pointer_cb_button(void *data, struct wl_pointer *pointer EINA_UNUSED, unsigned 
      }
    else
      {
-        if (input->focus.pointer)
-          _ecore_wl2_input_mouse_up_send(input, input->focus.pointer,
-                                         0, button, timestamp);
-
         if ((input->grab.window) && (input->grab.button == button))
           _ecore_wl2_input_ungrab(input);
+        else if (input->focus.pointer)
+          _ecore_wl2_input_mouse_up_send(input, input->focus.pointer,
+                                         0, button, timestamp);
      }
 }
 
@@ -953,11 +952,11 @@ _touch_cb_up(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int serial
    input->timestamp = timestamp;
    input->display->serial = serial;
 
-   _ecore_wl2_input_mouse_up_send(input, input->focus.touch, id,
-                                  BTN_LEFT, timestamp);
-
    if ((input->grab.window) && (input->grab.button == BTN_LEFT))
      _ecore_wl2_input_ungrab(input);
+   else
+     _ecore_wl2_input_mouse_up_send(input, input->focus.touch, id,
+                                    BTN_LEFT, timestamp);
 }
 
 static void
