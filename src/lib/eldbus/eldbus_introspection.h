@@ -2,6 +2,11 @@
 #define _ELDBUS_INTROSPECTION_INTROSPECTION_H
 
 #include <Eina.h>
+#include <Eo.h>
+
+typedef struct _Eldbus_Proxy          Eldbus_Proxy;
+
+#include "eldbus_model_arguments.eo.h"
 
 // DTD conversion form: http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd
 
@@ -9,17 +14,8 @@ typedef struct _Eldbus_Introspection_Node Eldbus_Introspection_Node;
 typedef struct _Eldbus_Introspection_Interface Eldbus_Introspection_Interface;
 typedef struct _Eldbus_Introspection_Method Eldbus_Introspection_Method;
 typedef struct _Eldbus_Introspection_Signal Eldbus_Introspection_Signal;
-typedef struct _Eldbus_Introspection_Argument Eldbus_Introspection_Argument;
 typedef struct _Eldbus_Introspection_Property Eldbus_Introspection_Property;
 typedef struct _Eldbus_Introspection_Annotation Eldbus_Introspection_Annotation;
-
-typedef enum
-{
-   ELDBUS_INTROSPECTION_ARGUMENT_DIRECTION_NONE = 0,
-   ELDBUS_INTROSPECTION_ARGUMENT_DIRECTION_IN,
-   ELDBUS_INTROSPECTION_ARGUMENT_DIRECTION_OUT,
-
-} Eldbus_Introspection_Argument_Direction;
 
 typedef enum
 {
@@ -56,13 +52,6 @@ struct _Eldbus_Introspection_Signal
    Eina_Stringshare *name;
    Eina_List *arguments;
    Eina_List *annotations;
-};
-
-struct _Eldbus_Introspection_Argument
-{
-   Eina_Stringshare *name; // optional
-   Eina_Stringshare *type;
-   Eldbus_Introspection_Argument_Direction direction;
 };
 
 struct _Eldbus_Introspection_Property

@@ -1,3 +1,19 @@
+struct @extern Eldbus_Proxy; /* FIXME: Move to Eot file. */
+
+enum Eldbus.Introspection.Argument_Direction
+{
+   none = 0,
+   in,
+   out,
+}
+
+struct Eldbus.Introspection.Argument
+{
+    name: Eina.Stringshare *; [[Optional]]
+    type: Eina.Stringshare *;
+    direction: Eldbus.Introspection.Argument_Direction;
+}
+
 class Eldbus.Model_Arguments (Eo.Base, Efl.Model.Base) {
     legacy_prefix: null;
     methods {
@@ -8,7 +24,7 @@ class Eldbus.Model_Arguments (Eo.Base, Efl.Model.Base) {
             params {
                 @in proxy: Eldbus_Proxy*; [[Eldbus proxy]]
                 @in name: const(char)*; [[Name]]
-                @in arguments: const(Eina_List)*; [[The introspected arguments]]
+                @in arguments: const(list<Eldbus.Introspection.Argument *>)*; [[The introspected arguments]]
             }
         }
     @property name {
