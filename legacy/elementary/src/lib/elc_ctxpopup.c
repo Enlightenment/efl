@@ -991,8 +991,10 @@ _on_show(void *data EINA_UNUSED,
    _show_signals_emit(obj, sd->dir);
 
    elm_layout_sizing_eval(obj);
-
-   elm_object_focus_set(obj, EINA_TRUE);
+   /*
+    * XXX: see above comment, but for any swallowed list-type object
+    */
+   //elm_object_focus_set(obj, EINA_TRUE);
 }
 
 static void
