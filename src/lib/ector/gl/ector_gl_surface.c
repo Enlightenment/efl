@@ -180,7 +180,7 @@ _ector_gl_shader_textures_bind(Ector_Shader *p)
              loc = GL.glGetUniformLocation(p->prg, textures[i].name);
              if (loc < 0)
                {
-                  ERR("Couldn't find uniform '%s' (shader: %16lx)",
+                  ERR("Couldn't find uniform '%s' (shader: %16" PRIx64 ")",
                       textures[i].name, p->flags);
                }
              GL.glUniform1i(loc, tex_count++);
@@ -203,7 +203,7 @@ _ector_gl_shader_load(uint64_t flags)
    buf = eina_strbuf_new();
    if (!buf) return NULL;
 
-   eina_strbuf_append_printf(buf, "ector/shader/%16lx", flags);
+   eina_strbuf_append_printf(buf, "ector/shader/%16" PRIx64, flags);
 
    data = (void*) eet_read_direct(shader_file, eina_strbuf_string_get(buf), &length);
    if (!data)
@@ -312,7 +312,7 @@ _ector_gl_surface_shader_get(Eo *obj EINA_UNUSED, Ector_GL_Surface_Data *pd EINA
    if (GL.glGetProgramBinary)
      {
         buf = eina_strbuf_new();
-        eina_strbuf_append_printf(buf, "ector/shader/%16lx", flags);
+        eina_strbuf_append_printf(buf, "ector/shader/%16" PRIx64, flags);
 
         eet_write(shader_file, eina_strbuf_string_get(buf), data, length, 1);
 
