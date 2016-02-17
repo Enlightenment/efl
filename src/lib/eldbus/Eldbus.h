@@ -164,19 +164,6 @@ EAPI int eldbus_shutdown(void);
  * Callback that is called when the connection is freed.
  */
 typedef void                       (*Eldbus_Free_Cb)(void *data, const void *deadptr);
-
-/**
- * @typedef Eldbus_Connection
- *
- * Represents a connection of one the type of connection with the DBus daemon.
- */
-typedef struct _Eldbus_Connection     Eldbus_Connection;
-/**
- * @typedef Eldbus_Object
- *
- * Represents an object path already attached with bus name or unique id.
- */
-typedef struct _Eldbus_Object         Eldbus_Object;
 /**
  * @typedef Eldbus_Proxy
  *
@@ -229,6 +216,8 @@ typedef void (*Eldbus_Signal_Cb)(void *data, const Eldbus_Message *msg);
 /**
  * @}
  */
+
+#include "eldbus_types.eot.h"
 
 #include "eldbus_connection.h"
 #include "eldbus_message.h"

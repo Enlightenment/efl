@@ -5,67 +5,6 @@
 #include <Eo.h>
 
 #include "eldbus_types.eot.h"
-#include "eldbus_model_arguments.eo.h"
-
-// DTD conversion form: http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd
-
-typedef struct _Eldbus_Introspection_Node Eldbus_Introspection_Node;
-typedef struct _Eldbus_Introspection_Interface Eldbus_Introspection_Interface;
-typedef struct _Eldbus_Introspection_Method Eldbus_Introspection_Method;
-typedef struct _Eldbus_Introspection_Signal Eldbus_Introspection_Signal;
-typedef struct _Eldbus_Introspection_Property Eldbus_Introspection_Property;
-typedef struct _Eldbus_Introspection_Annotation Eldbus_Introspection_Annotation;
-
-typedef enum
-{
-   ELDBUS_INTROSPECTION_PROPERTY_ACCESS_READ,
-   ELDBUS_INTROSPECTION_PROPERTY_ACCESS_WRITE,
-   ELDBUS_INTROSPECTION_PROPERTY_ACCESS_READWRITE,
-} Eldbus_Introspection_Property_Access;
-
-struct _Eldbus_Introspection_Node
-{
-   Eina_Stringshare *name; // optional
-   Eina_List *nodes;
-   Eina_List *interfaces;
-};
-
-struct _Eldbus_Introspection_Interface
-{
-   Eina_Stringshare *name;
-   Eina_List *methods;
-   Eina_List *signals;
-   Eina_List *properties;
-   Eina_List *annotations;
-};
-
-struct _Eldbus_Introspection_Method
-{
-   Eina_Stringshare *name;
-   Eina_List *arguments;
-   Eina_List *annotations;
-};
-
-struct _Eldbus_Introspection_Signal
-{
-   Eina_Stringshare *name;
-   Eina_List *arguments;
-   Eina_List *annotations;
-};
-
-struct _Eldbus_Introspection_Property
-{
-   Eina_Stringshare *name;
-   Eina_Stringshare *type;
-   Eldbus_Introspection_Property_Access access;
-   Eina_List *annotations;
-};
-
-struct _Eldbus_Introspection_Annotation
-{
-   Eina_Stringshare *name;
-   Eina_Stringshare *value;
-};
 
 /**
  * @brief Parses the introspection xml abstracting it to an object tree

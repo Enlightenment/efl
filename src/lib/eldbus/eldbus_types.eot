@@ -1,1 +1,73 @@
+import eina_types;
+
 struct Eldbus.Proxy;
+struct Eldbus_Connection; [[Represents a connection of one the type of connection with the DBus daemon.]]
+struct Eldbus_Object; [[Represents an object path already attached with bus name or unique id]]
+
+enum Eldbus.Introspection.Argument_Direction
+{
+   none = 0,
+   in,
+   out,
+}
+
+/* DTD conversion form: http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd */
+
+enum Eldbus.Introspection.Property_Access
+{
+   read,
+   write,
+   readwrite,
+}
+
+/* FIXME: Properly type all of these lists. */
+struct Eldbus.Introspection.Node
+{
+   name: Eina.Stringshare *; [[optional]]
+   nodes: list<void *> *;
+   interfaces: list<void *> *;
+}
+
+struct Eldbus.Introspection.Interface
+{
+   name: Eina.Stringshare *;
+   methods: list<void *> *;
+   signals: list<void *> *;
+   properties: list<void *> *;
+   annotations: list<void *> *;
+}
+
+struct Eldbus.Introspection.Method
+{
+   name: Eina.Stringshare *;
+   arguments: list<void *> *;
+   annotations: list<void *> *;
+}
+
+struct Eldbus.Introspection.Property
+{
+   name: Eina.Stringshare *;
+   type: Eina.Stringshare *;
+   access: Eldbus.Introspection.Property_Access;
+   annotations: list<void *> *;
+}
+
+struct Eldbus.Introspection.Annotation
+{
+   name: Eina.Stringshare *;
+   value: Eina.Stringshare *;
+}
+
+struct Eldbus.Introspection.Argument
+{
+    name: Eina.Stringshare *; [[Optional]]
+    type: Eina.Stringshare *;
+    direction: Eldbus.Introspection.Argument_Direction;
+}
+
+struct Eldbus.Introspection.Signal
+{
+    name: Eina.Stringshare *;
+    arguments: list<Eldbus.Introspection.Argument *> *;
+    annotations: list<Eldbus.Introspection.Annotation *> *;
+}

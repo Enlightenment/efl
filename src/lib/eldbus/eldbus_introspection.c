@@ -50,7 +50,7 @@ eldbus_introspection_parse(const char *xml)
 static void *
 _eldbus_introspection_parse_node(Eina_Simple_XML_Node_Tag *tag)
 {
-   Eldbus_Introspection_Node *node;;
+   Eldbus_Introspection_Node *node;
    Eldbus_Introspection_Element_Parse_Table table[] = {
      { "node", _eldbus_introspection_parse_node, NULL },
      { "interface", _eldbus_introspection_parse_interface, NULL },

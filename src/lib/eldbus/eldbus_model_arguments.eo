@@ -1,19 +1,5 @@
 import eldbus_types;
 
-enum Eldbus.Introspection.Argument_Direction
-{
-   none = 0,
-   in,
-   out,
-}
-
-struct Eldbus.Introspection.Argument
-{
-    name: Eina.Stringshare *; [[Optional]]
-    type: Eina.Stringshare *;
-    direction: Eldbus.Introspection.Argument_Direction;
-}
-
 class Eldbus.Model_Arguments (Eo.Base, Efl.Model.Base) {
     legacy_prefix: null;
     methods {

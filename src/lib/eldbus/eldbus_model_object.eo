@@ -1,3 +1,5 @@
+import eldbus_types;
+
 class Eldbus.Model_Object (Eo.Base, Efl.Model.Base) {
     legacy_prefix: null;
     data: Eldbus_Model_Object_Data;

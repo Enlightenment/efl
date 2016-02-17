@@ -2,10 +2,10 @@
 # include <config.h>
 #endif
 
+#include <Eina.h>
+
 #include "eldbus_model_proxy_private.h"
 #include "eldbus_model_private.h"
-
-#include <Eina.h>
 
 #define MY_CLASS ELDBUS_MODEL_PROXY_CLASS
 #define MY_CLASS_NAME "Eldbus_Model_Proxy"

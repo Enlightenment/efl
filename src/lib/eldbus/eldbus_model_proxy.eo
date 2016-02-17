@@ -1,3 +1,5 @@
+import eldbus_types;
+
 class Eldbus.Model_Proxy (Eo.Base, Efl.Model.Base) {
     legacy_prefix: null;
     methods {
@@ -7,7 +9,7 @@ class Eldbus.Model_Proxy (Eo.Base, Efl.Model.Base) {
               @since 1.16]]
             params {
                 @in object: Eldbus_Object *; [[Eldbus object]]
-                @in interface: const(Eldbus_Introspection_Interface)*; [[The introspected interface]]
+                @in interface: const(Eldbus.Introspection.Interface)*; [[The introspected interface]]
             }
         }
     @property name {

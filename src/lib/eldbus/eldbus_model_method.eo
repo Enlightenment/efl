@@ -1,3 +1,5 @@
+import eldbus_types;
+
 class Eldbus.Model_Method (Eldbus.Model_Arguments) {
     legacy_prefix: null;
     methods {
@@ -7,7 +9,7 @@ class Eldbus.Model_Method (Eldbus.Model_Arguments) {
               @since 1.16]]
             params {
                 @in proxy: Eldbus.Proxy*; [[Eldbus proxy]]
-                @in method: const(Eldbus_Introspection_Method)*; [[The introspected method]]
+                @in method: const(Eldbus.Introspection.Method)*; [[The introspected method]]
             }
         }
         call {

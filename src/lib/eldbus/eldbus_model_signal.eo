@@ -7,7 +7,7 @@ class Eldbus.Model_Signal (Eldbus.Model_Arguments) {
                 @since 1.16]]
             params {
                 @in proxy: Eldbus.Proxy*; [[Eldbus proxy]]
-                @in signal: const(Eldbus_Introspection_Signal)*; [[The introspected method]]
+                @in signal: const(Eldbus.Introspection.Signal)*; [[The introspected method]]
             }
         }
     }
