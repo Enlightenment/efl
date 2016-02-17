@@ -1,3 +1,5 @@
+type @extern Evas_Colorspace: int; /* FIXME: Need to get emile migrated. */
+
 class Evas.Canvas3D.Texture (Evas.Canvas3D.Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
