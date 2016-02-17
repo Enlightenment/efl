@@ -8,7 +8,7 @@ struct @extern Eina.Rectangle {
 }
 struct @extern Eina.File;
 
-struct Eina.Matrix3 {
+struct @extern Eina.Matrix3 {
    xx: double;
    xy: double;
    xz: double;
