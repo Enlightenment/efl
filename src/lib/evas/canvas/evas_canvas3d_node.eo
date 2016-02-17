@@ -55,7 +55,7 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
       scene_root_get {
          [[Get hash table of scenes using this node as root.]]
 
-         return: Eina.Hash *; [[ scenes using this node as root.]]
+         return: hash<Evas.Canvas3D.Object *, uintptr> *; [[ scenes using this node as root. FIXME: Actually a scene, not object.]]
       }
       position_set {
          [[Set the position of the given node.
