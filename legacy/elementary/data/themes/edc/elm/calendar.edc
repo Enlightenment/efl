@@ -378,6 +378,12 @@ group { name: "elm/calendar/base/default";
             rel2.offset: -2 -2;
          }
       }
+      part { name: "elm.swallow.background"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel2.to: "bg";
+         }
+      }
       part { name: "spinner-base1"; type: SPACER;
          description { state: "default" 0.0;
             min: 24 16;
