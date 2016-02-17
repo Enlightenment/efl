@@ -36,7 +36,7 @@ static Eina_Bool
 _ecore_con_local_win32_server_read_client_handler(void *data, Ecore_Win32_Handler *wh)
 {
    Ecore_Con_Client *obj = data;
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLAS);
+   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    void *buf;
    DWORD n;
    Eina_Bool broken_pipe = EINA_FALSE;
@@ -89,7 +89,7 @@ static Eina_Bool
 _ecore_con_local_win32_server_peek_client_handler(void *data, Ecore_Win32_Handler *wh)
 {
    Ecore_Con_Client *obj = data;
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLAS);
+   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    Efl_Network_Server_Data *host_svr = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
 #if 0
    char *msg;
@@ -235,7 +235,7 @@ static unsigned int __stdcall
 _ecore_con_local_win32_server_read_client_thread(void *data)
 {
    Ecore_Con_Client *obj = data;
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLAS);
+   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    Efl_Network_Server_Data *host_svr = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
    DWORD nbr_bytes = 0;
 
@@ -286,8 +286,8 @@ _ecore_con_local_win32_client_add(void *data, Ecore_Win32_Handler *wh)
        (svr->client_count >= (unsigned int)svr->client_limit))
      return ECORE_CALLBACK_CANCEL;
 
-   Ecore_Con_Client *cl_obj = eo_add(EFL_NETWORK_CLIENT_CLAS, NULL);
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLAS);
+   Ecore_Con_Client *cl_obj = eo_add(EFL_NETWORK_CLIENT_CLASS, NULL);
+   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    if (!cl)
      {
         ERR("allocation failed");
@@ -506,7 +506,7 @@ ecore_con_local_win32_server_del(Ecore_Con_Server *obj)
 void
 ecore_con_local_win32_client_del(Ecore_Con_Client *obj)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLAS);
+   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    Efl_Network_Server_Data *svr = eo_data_scope_get(cl->host_server, EFL_NETWORK_SERVER_CLASS);
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
@@ -706,7 +706,7 @@ ecore_con_local_win32_server_flush(Ecore_Con_Server *obj)
 Eina_Bool
 ecore_con_local_win32_client_flush(Ecore_Con_Client *obj)
 {
-   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLAS);
+   Efl_Network_Client_Data *cl = eo_data_scope_get(obj, EFL_NETWORK_CLIENT_CLASS);
    Ecore_Con_Type type;
    size_t num;
    BOOL res;

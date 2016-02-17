@@ -289,7 +289,7 @@ ecore_con_info_get(Ecore_Con_Server *obj,
                    void *data,
                    struct addrinfo *hints)
 {
-   Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
+   Efl_Network_Server_Data *svr = eo_data_scope_get(obj, EFL_NETWORK_SERVER_CLASS);
    Ecore_Con_CAres *cares;
 #ifdef HAVE_IPV6
    int ai_family = AF_INET6;
@@ -434,10 +434,10 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
                              struct hostent *hostent)
 {
    struct sockaddr *addr;
-   Ecore_Con_Server_Data *svr;
+   Efl_Network_Server_Data *svr;
    int addrlen;
 
-   svr = eo_data_scope_get(arg->svr, ECORE_CON_SERVER_CLASS);
+   svr = eo_data_scope_get(arg->svr, EFL_NETWORK_SERVER_CLASS);
 
    /* Found something ? */
    switch (status)
