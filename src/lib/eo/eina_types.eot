@@ -21,3 +21,5 @@ struct @extern Eina.Matrix3 {
    zy: double;
    zz: double;
 }
+
+struct @extern Eina.Inarray;

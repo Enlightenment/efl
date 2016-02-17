@@ -1,3 +1,4 @@
+import eina_types;
 import evas_types;
 
 class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
@@ -104,8 +105,8 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
          ]]
          params {
             @in frame: int; [[ The number of the key frame.]]
-            @in vertex: Eina_Inarray*;
-            @in index: Eina_Inarray*;
+            @in vertex: Eina.Inarray*;
+            @in index: Eina.Inarray*;
          }
       }
 
@@ -170,7 +171,7 @@ class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
          params {
             @in frame: int; [[Frame number.]]
          }
-         return: Eina_Bool;
+         return: bool;
       }
 
       frame_add {
