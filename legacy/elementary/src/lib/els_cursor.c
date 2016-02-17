@@ -305,9 +305,6 @@ _elm_cursor_set(Elm_Cursor *cur)
              cur->obj = NULL;
              ELM_SAFE_FREE(cur->hotobj, evas_object_del);
           }
-        ecore_evas_object_cursor_set(cur->ee, NULL,
-                                     ELM_OBJECT_LAYER_CURSOR, cur->hot_x,
-                                     cur->hot_y);
 #ifdef HAVE_ELEMENTARY_X
         if (cur->x.win)
           ecore_x_window_cursor_set(cur->x.win, cur->x.cursor);
