@@ -792,7 +792,7 @@ _ecore_drm_outputs_update(Ecore_Drm_Device *dev)
 
         if (!(dev->conn_allocator & (1 << conn_id)))
           {
-             if (eina_list_count(dev->outputs) > 0)
+             if (dev->outputs)
                {
                   Ecore_Drm_Output *last;
 
@@ -958,7 +958,7 @@ next:
      }
 
    ret = EINA_TRUE;
-   if (eina_list_count(dev->outputs) < 1) 
+   if (!dev->outputs)
      ret = EINA_FALSE;
 
    /* free resources */
