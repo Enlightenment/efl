@@ -1,4 +1,4 @@
-class Efl.Network.Server (Ecore.Con.Base) {
+class Efl.Network.Server (Efl.Network.Base) {
    legacy_prefix: ecore_con_server;
    eo_prefix: efl_network_server;
    methods {
@@ -58,7 +58,7 @@ class Efl.Network.Server (Ecore.Con.Base) {
          }
          values {
             // FIXME: Efl.Network.Client is needed, but that introduces a cycle
-            clients: const(list<const(Ecore.Con.Base) *>) *; [[The list of clients on this server.]]
+            clients: const(list<const(Efl.Network.Base) *>) *; [[The list of clients on this server.]]
          }
       }
       @property connection_type {
@@ -77,15 +77,15 @@ class Efl.Network.Server (Ecore.Con.Base) {
       Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.finalize;
-      Ecore.Con.Base.ip.get;
-      Ecore.Con.Base.uptime.get;
-      Ecore.Con.Base.port.set;
-      Ecore.Con.Base.port.get;
-      Ecore.Con.Base.fd.get;
-      Ecore.Con.Base.connected.get;
-      Ecore.Con.Base.timeout.set;
-      Ecore.Con.Base.timeout.get;
-      Ecore.Con.Base.flush;
-      Ecore.Con.Base.send;
+      Efl.Network.Base.ip.get;
+      Efl.Network.Base.uptime.get;
+      Efl.Network.Base.port.set;
+      Efl.Network.Base.port.get;
+      Efl.Network.Base.fd.get;
+      Efl.Network.Base.connected.get;
+      Efl.Network.Base.timeout.set;
+      Efl.Network.Base.timeout.get;
+      Efl.Network.Base.flush;
+      Efl.Network.Base.send;
    }
 }

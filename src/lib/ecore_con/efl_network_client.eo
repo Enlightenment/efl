@@ -1,4 +1,4 @@
-class Efl.Network.Client (Ecore.Con.Base) {
+class Efl.Network.Client (Efl.Network.Base) {
    legacy_prefix: ecore_con_client;
    eo_prefix: efl_network_client_obj;
    methods {
@@ -14,15 +14,15 @@ class Efl.Network.Client (Ecore.Con.Base) {
    }
    implements {
       Eo.Base.destructor;
-      Ecore.Con.Base.ip.get;
-      Ecore.Con.Base.uptime.get;
-      Ecore.Con.Base.port.get;
-      Ecore.Con.Base.fd.get;
-      Ecore.Con.Base.connected.get;
-      Ecore.Con.Base.timeout.set;
-      Ecore.Con.Base.timeout.get;
-      Ecore.Con.Base.flush;
-      Ecore.Con.Base.send;
+      Efl.Network.Base.ip.get;
+      Efl.Network.Base.uptime.get;
+      Efl.Network.Base.port.get;
+      Efl.Network.Base.fd.get;
+      Efl.Network.Base.connected.get;
+      Efl.Network.Base.timeout.set;
+      Efl.Network.Base.timeout.get;
+      Efl.Network.Base.flush;
+      Efl.Network.Base.send;
    }
 }
 

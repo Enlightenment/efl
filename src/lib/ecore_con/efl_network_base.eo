@@ -29,9 +29,9 @@ enum Ecore.Con.Type
    socket_activate = (1 << 9)
 }
 
-abstract Ecore.Con.Base (Eo.Base) {
+abstract Efl.Network.Base (Eo.Base) {
    legacy_prefix: ecore_con;
-   eo_prefix: ecore_con_obj;
+   eo_prefix: efl_network_base;
    data: null;
    methods {
       @property ip {
