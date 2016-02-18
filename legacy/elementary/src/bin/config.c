@@ -3419,27 +3419,37 @@ static void
 _status_config_scrolling(Evas_Object *win,
                          Evas_Object *naviframe)
 {
-   Evas_Object *lb, *pd, *bx, *sl, *sc, *ck;
+   Evas_Object *lb, *pd, *box, *bx, *sl, *sc, *ck, *fr;
 
-   bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
+   box = elm_box_add(win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(box, EVAS_HINT_FILL, 0.5);
 
    sc = elm_scroller_add(win);
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_bounce_set(sc, EINA_FALSE, EINA_TRUE);
    evas_object_show(sc);
-   elm_object_content_set(sc, bx);
+   elm_object_content_set(sc, box);
 
    /* Bounce */
-   _status_config_scrolling_bounce(win, bx);
+   _status_config_scrolling_bounce(win, box);
 
-   _status_config_scrolling_thumb(win, bx);
+   _status_config_scrolling_thumb(win, box);
 
    /* Acceleration */
-   _status_config_scrolling_acceleration(win, bx);
+   _status_config_scrolling_acceleration(win, box);
 
+   fr = elm_frame_add(box);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(fr, "Friction");
+   elm_box_pack_end(box, fr);
+   evas_object_show(fr);
+
+   bx = elm_box_add(fr);
+   elm_object_content_set(fr, bx);
+   evas_object_show(bx);
    /* Page scroll friction */
    LABEL_FRAME_ADD("<hilight>Page scroll friction</>");
 
@@ -3504,7 +3514,16 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_smart_callback_add(sl, "changed", zf_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", zf_change, NULL);
 
-   /* Enable Scroll Bounce */
+   fr = elm_frame_add(box);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(fr, "Smooth Start");
+   elm_box_pack_end(box, fr);
+   evas_object_show(fr);
+
+   bx = elm_box_add(fr);
+   elm_object_content_set(fr, bx);
+   evas_object_show(bx);
    CHECK_ADD("Enable smooth start",
              "Set whether scrollers start smoothly on thumb<br/>"
              "scroll",
