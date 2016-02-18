@@ -1596,9 +1596,9 @@ _elm_win_evas_object_smart_show(Eo *obj, Elm_Win_Data *sd)
    if (sd->modal_count) return;
    const Eina_List *l;
    Evas_Object *current;
+   Eina_Bool do_eval = EINA_FALSE;
 
-   if (!evas_object_visible_get(obj))
-     _elm_win_state_eval_queue();
+   if (!evas_object_visible_get(obj)) do_eval = EINA_TRUE;
    eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
 
    if ((sd->modal) && (!evas_object_visible_get(obj)))
@@ -1619,6 +1619,15 @@ _elm_win_evas_object_smart_show(Eo *obj, Elm_Win_Data *sd)
            elm_interface_atspi_accessible_children_changed_added_signal_emit(root, obj);
      }
 
+   if (do_eval)
+     {
+        if (_elm_win_state_eval_timer)
+          {
+             ecore_timer_del(_elm_win_state_eval_timer);
+             _elm_win_state_eval_timer = NULL;
+          }
+        _elm_win_state_eval(NULL);
+     }
    if (sd->shot.info) _shot_handle(sd);
 }
 
