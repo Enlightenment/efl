@@ -730,16 +730,16 @@ modules/evas/engines/gl_common/evas_gl_3d.c \
 modules/evas/engines/gl_common/evas_gl_3d_renderer.c \
 modules/evas/engines/gl_common/evas_gl_3d_shader.c
 
-GL_SHADERS_GEN = \
+EVAS_GL_SHADERS_GEN = \
 modules/evas/engines/gl_common/shader/gen_shaders.sh \
 modules/evas/engines/gl_common/shader/fragment.glsl \
 modules/evas/engines/gl_common/shader/vertex.glsl \
 modules/evas/engines/gl_common/shader/include.glsl \
 $(NULL)
 
-EXTRA_DIST += $(GL_SHADERS_GEN)
+EXTRA_DIST += $(EVAS_GL_SHADERS_GEN)
 
-modules/evas/engines/gl_common/shader/evas_gl_shaders.x: $(GL_SHADERS_GEN)
+modules/evas/engines/gl_common/shader/evas_gl_shaders.x: $(EVAS_GL_SHADERS_GEN)
 	@echo "  SHADERS  $@"
 	@bash $(srcdir)/modules/evas/engines/gl_common/shader/gen_shaders.sh
 

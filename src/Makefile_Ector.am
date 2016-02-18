@@ -133,13 +133,13 @@ lib/ector/gl/ector_gl_private.h \
 lib/ector/gl/shader/ector_gl_shaders.x \
 lib/ector/gl/ector_gl_shader.c
 
-GL_SHADERS_GEN = \
+ECTOR_GL_SHADERS_GEN = \
 lib/ector/gl/shader/gen_shaders.sh \
 lib/ector/gl/shader/fragment.glsl \
 lib/ector/gl/shader/vertex.glsl \
 lib/ector/gl/shader/include.glsl
 
-lib/ector/gl/shader/ector_gl_shaders.x: $(GL_SHADERS_GEN)
+lib/ector/gl/shader/ector_gl_shaders.x: $(ECTOR_GL_SHADERS_GEN)
 	@echo "  SHADERS  $@"
 	@bash $(srcdir)/lib/ector/gl/shader/gen_shaders.sh
 
@@ -201,4 +201,4 @@ static_libs/freetype/sw_ft_stroker.h \
 static_libs/freetype/sw_ft_types.h \
 static_libs/draw/draw.h \
 static_libs/draw/draw_private.h \
-$(GL_SHADERS_GEN)
+$(ECTOR_GL_SHADERS_GEN)
