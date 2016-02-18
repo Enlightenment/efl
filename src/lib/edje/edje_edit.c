@@ -8734,6 +8734,54 @@ edje_edit_state_tween_add(Evas_Object *obj, const char *part, const char *state,
 }
 
 EAPI Eina_Bool
+edje_edit_state_tween_insert_at(Evas_Object *obj, const char *part, const char *state, double value, const char *tween, int place)
+{
+   Edje_Part_Description_Image *img;
+   Edje_Part_Image_Id **tmp;
+   Edje_Part_Image_Id *i;
+   int id;
+   unsigned int j;
+
+   if (place < 0)
+     return EINA_FALSE;
+
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   if (rp->part->type != EDJE_PART_TYPE_IMAGE)
+     return EINA_FALSE;
+
+   id = _edje_image_id_find(eed, tween);
+   if (id < EINA_FALSE) return 0;
+
+   /* alloc Edje_Part_Image_Id */
+   i = _alloc(sizeof(Edje_Part_Image_Id));
+   if (!i) return EINA_FALSE;
+   i->id = id;
+
+   img = (Edje_Part_Description_Image *)pd;
+
+   if ((unsigned)place > img->image.tweens_count)
+     return EINA_FALSE;
+
+   /* add to tween list */
+   tmp = realloc(img->image.tweens,
+                 sizeof(Edje_Part_Image_Id *) * (img->image.tweens_count + 1));
+   if (!tmp)
+     {
+        free(i);
+        return EINA_FALSE;
+     }
+
+   img->image.tweens_count++;
+   for (j = img->image.tweens_count - 1; j > (unsigned)place; j--)
+     tmp[j] = tmp[j - 1];
+   tmp[place] = i;
+   img->image.tweens = tmp;
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 edje_edit_state_tween_del(Evas_Object *obj, const char *part, const char *state, double value, const char *tween)
 {
    Edje_Part_Description_Image *img;

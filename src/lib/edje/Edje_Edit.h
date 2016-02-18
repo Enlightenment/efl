@@ -5462,6 +5462,22 @@ EAPI Eina_List * edje_edit_state_tweens_list_get(Evas_Object *obj, const char *p
  */
 EAPI Eina_Bool edje_edit_state_tween_add(Evas_Object *obj, const char *part, const char *state, double value, const char *tween);
 
+/** Insert a new tween frame to the given part state into a specific place.
+ *
+ * The tween param must be the name of an existing image.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to add a new tween frame (not including the state value).
+ * @param value The state value.
+ * @param tween The name of the image to add.
+ * @param place Place to be added. It can't be less than 0 or more than current size of tweens.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool
+edje_edit_state_tween_insert_at(Evas_Object *obj, const char *part, const char *state, double value, const char *tween, int place);
+
 /** Remove the first tween with the given name.
  *
  * The image is not removed from the edje.
