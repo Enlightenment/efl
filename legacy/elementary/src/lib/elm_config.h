@@ -647,6 +647,35 @@ EAPI Eina_Bool    elm_config_scroll_animation_disable_get(void);
 EAPI void         elm_config_scroll_animation_disable_set(Eina_Bool enable);
 
 /**
+ * Get the value of this option
+ *
+ * @return State of this option
+ * 
+ * @see elm_config_scroll_accel_factor_set()
+ *
+ * @since 1.18
+ * @ingroup Scrolling
+ */
+EAPI double       elm_config_scroll_accel_factor_get(void);
+
+/**
+ * Set the value for this option
+ *
+ * Using a mouse wheel or touchpad to scroll will result in events
+ * being processed. If events occur quickly, the scroll amount will
+ * be multiplied by this value to accelerate the scrolling.
+ * 
+ * @param factor The value of this option from 0.0 to 10.0
+ *
+ * @see elm_config_scroll_accel_factor_get()
+ * @note Set 0.0 to disable acceleration
+ * 
+ * @since 1.18
+ * @ingroup Scrolling
+ */
+EAPI void         elm_config_scroll_accel_factor_set(double factor);
+
+/**
  * Get the amount of smoothing to apply to scrolling
  *
  * @return the amount of smoothing to apply from 0.0 to 1.0

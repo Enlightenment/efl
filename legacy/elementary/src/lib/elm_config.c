@@ -402,6 +402,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, thumbscroll_bounce_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, scroll_smooth_start_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, scroll_animation_disable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, scroll_accel_factor, T_DOUBLE);
 //   ELM_CONFIG_VAL(D, T, scroll_smooth_time_interval, T_DOUBLE); // not used anymore
    ELM_CONFIG_VAL(D, T, scroll_smooth_amount, T_DOUBLE);
 //   ELM_CONFIG_VAL(D, T, scroll_smooth_history_weight, T_DOUBLE); // not used anymore
@@ -1726,6 +1727,7 @@ _config_load(void)
    _elm_config->thumbscroll_sensitivity_friction = 0.25; // magic number! just trial and error shows this makes it behave "nicer" and not run off at high speed all the time
    _elm_config->scroll_smooth_start_enable = EINA_TRUE;
    _elm_config->scroll_smooth_start_enable = EINA_FALSE;
+   _elm_config->scroll_smooth_amount = 7.0;
 //   _elm_config->scroll_smooth_time_interval = 0.008; // not used anymore
    _elm_config->scroll_smooth_amount = 1.0;
 //   _elm_config->scroll_smooth_history_weight = 0.3; // not used anymore
@@ -2149,6 +2151,10 @@ _config_update(void)
    _elm_config->popup_horizontal_align = 0.5;
    _elm_config->popup_vertical_align = 0.5;
    IFCFGEND
+
+   IFCFG(0x0009)
+   _elm_config->scroll_accel_factor = 7.0;
+   IFCFGEND
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
     **/
@@ -2295,6 +2301,8 @@ _env_get(void)
    if (s) _elm_config->scroll_smooth_start_enable = !!atoi(s);
    s = getenv("ELM_SCROLL_ANIMATION_DISABLE");
    if (s) _elm_config->scroll_animation_disable = !!atoi(s);
+   s = getenv("ELM_SCROLL_ACCEL_FACTOR");
+   if (s) _elm_config->scroll_accel_factor = atof(s);
 //   s = getenv("ELM_SCROLL_SMOOTH_TIME_INTERVAL"); // not used anymore
 //   if (s) _elm_config->scroll_smooth_time_interval = atof(s); // not used anymore
    s = getenv("ELM_SCROLL_SMOOTH_AMOUNT");
@@ -3328,6 +3336,20 @@ EAPI void
 elm_config_scroll_animation_disable_set(Eina_Bool disable)
 {
    _elm_config->scroll_animation_disable = !!disable;
+}
+
+EAPI void
+elm_config_scroll_accel_factor_set(double factor)
+{
+   if (factor < 0.0) factor = 0.0;
+   if (factor > 10.0) factor = 10.0;
+   _elm_config->scroll_accel_factor = factor;
+}
+
+EAPI double
+elm_config_scroll_accel_factor_get(void)
+{
+   return _elm_config->scroll_accel_factor;
 }
 
 EAPI void

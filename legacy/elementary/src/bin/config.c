@@ -162,6 +162,17 @@ scroll_animation_disable_change(void *data EINA_UNUSED, Evas_Object *obj, void *
 }
 
 static void
+scroll_accel_factor_change(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   double bf = elm_config_scroll_accel_factor_get();
+   double val = elm_slider_value_get(obj);
+
+   if (fabs(bf - val) < DBL_EPSILON) return;
+   elm_config_scroll_accel_factor_set(val);
+   elm_config_all_flush();
+}
+
+static void
 sb_change(void *data       EINA_UNUSED,
           Evas_Object     *obj,
           void *event_info EINA_UNUSED)
@@ -3442,6 +3453,37 @@ _status_config_scrolling(Evas_Object *win,
    elm_scroller_bounce_set(sc, EINA_FALSE, EINA_TRUE);
    evas_object_show(sc);
    elm_object_content_set(sc, box);
+
+   fr = elm_frame_add(box);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(fr, "Acceleration");
+   elm_box_pack_end(box, fr);
+   evas_object_show(fr);
+
+   bx = elm_box_add(fr);
+   elm_object_content_set(fr, bx);
+   evas_object_show(bx);
+
+   LABEL_FRAME_ADD("<hilight>Wheel acceleration factor</>");
+
+   sl = elm_slider_add(win);
+   elm_object_tooltip_text_set(sl, "This is the factor by which scrolling<br/>"
+                                   "increments will be multiplied when scrolling<br/>"
+                                   "quickly");
+   evas_object_data_set(win, "scroll_accel_factor", sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.1f");
+   elm_slider_indicator_format_set(sl, "%2.1f");
+   elm_slider_min_max_set(sl, 0.0, 10.0);
+   elm_slider_value_set(sl, elm_config_scroll_accel_factor_get());
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", bis_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", scroll_accel_factor_change, NULL);
 
    fr = elm_frame_add(box);
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);

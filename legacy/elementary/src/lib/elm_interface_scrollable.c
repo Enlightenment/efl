@@ -1947,7 +1947,7 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
         double delta_t = (double)(ev->timestamp - sid->last_wheel) / 1000.0;
         double mul;
 
-        mul = 1.0 + (7.0 * ((0.2 - delta_t) / 0.2));
+        mul = 1.0 + (_elm_config->scroll_accel_factor * ((0.2 - delta_t) / 0.2));
         if (delta_t < 0.2) d *= mul;
         sid->last_wheel = ev->timestamp;
         if (!direction)

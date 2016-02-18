@@ -134,7 +134,7 @@ struct _Elm_Theme
  * the users config doesn't need to be wiped - simply new values need
  * to be put in
  */
-#define ELM_CONFIG_FILE_GENERATION 0x0008
+#define ELM_CONFIG_FILE_GENERATION 0x0009
 #define ELM_CONFIG_VERSION_EPOCH_OFFSET 16
 #define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << ELM_CONFIG_VERSION_EPOCH_OFFSET) | \
                                     ELM_CONFIG_FILE_GENERATION)
@@ -212,6 +212,7 @@ struct _Elm_Config
    double        bring_in_scroll_friction;
    double        zoom_friction;
    Eina_Bool     scroll_animation_disable;
+   double        scroll_accel_factor;
    unsigned char thumbscroll_bounce_enable;
    double        thumbscroll_border_friction;
    double        thumbscroll_sensitivity_friction;
