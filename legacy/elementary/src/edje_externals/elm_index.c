@@ -20,7 +20,7 @@ external_index_state_set(void *data EINA_UNUSED, Evas_Object *obj,
    else return;
 
    if (p->active_exists)
-     elm_index_autohide_disabled_set(obj, p->active_exists);
+     elm_index_autohide_disabled_set(obj, p->active);
 }
 
 static Eina_Bool
