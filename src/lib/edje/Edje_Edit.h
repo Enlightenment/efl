@@ -6026,6 +6026,20 @@ EAPI Eina_List * edje_edit_program_afters_get(Evas_Object *obj, const char *prog
  */
 EAPI Eina_Bool edje_edit_program_after_add(Evas_Object *obj, const char *prog, const char *after);
 
+/** Add a new program name into specific place in list of 'afters' in the given program.
+ *
+ * All the programs listed in 'afters' will be executed after program execution.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program that contains the list of afters
+ * @param after The name of another program to add to the afters list
+ * @param place Specific place for after to be inserted into. Note that if place is greater than total number of afters then it would append to the end of list
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool
+edje_edit_program_after_insert_at(Evas_Object *obj, const char *prog, const char *after, int place);
+
 /** Delete the given program from the list of 'afters' of the program.
  *
  * @param obj Object being edited.
