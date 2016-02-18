@@ -57,8 +57,6 @@ external_entry_state_set(void *data EINA_UNUSED, Evas_Object *obj,
 
    if (p->label)
      elm_object_text_set(obj, p->label);
-   if (p->icon)
-     elm_object_part_content_set(obj, "icon", p->icon);
    if (p->entry)
      elm_object_text_set(obj, p->entry);
    if (p->scrollable_exists)
@@ -84,6 +82,8 @@ external_entry_state_set(void *data EINA_UNUSED, Evas_Object *obj,
         line_wrap = _entry_line_wrap_choices_setting_get(p->line_wrap);
         elm_entry_line_wrap_set(obj, line_wrap);
      }
+   if (p->icon)
+     elm_object_part_content_set(obj, "icon", p->icon);
 }
 
 static Eina_Bool
