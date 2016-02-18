@@ -2316,6 +2316,73 @@ edje_edit_state_container_align_y_get(Evas_Object *obj, const char *part, const 
  */
 EAPI Eina_Bool edje_edit_part_item_append(Evas_Object *obj, const char *part, const char *item_name, const char *source_group);
 
+/** Insert new item to box or table part before specified existing item.
+ *
+ * @param obj Object being edited.
+ * @param part Part to add a new item. This part should have BOX or TABLE type.
+ * @param item_name Name of new item that is not exist in BOX or TABLE yet.
+ * @param item_before Name of repated item that is exist in BOX or TABLE.
+ * @param source_group Source (means group name) of the new item.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_part_item_insert_before(Evas_Object *obj, const char *part, const char *item_name, const char *item_before, const char *source_group);
+
+/** Insert new item to box or table part after specified existing item.
+ *
+ * @param obj Object being edited.
+ * @param part Part to add a new item. This part should have BOX or TABLE type.
+ * @param item_name Name of new item that is not exist in BOX or TABLE yet.
+ * @param item_after Name of repated item that is exist in BOX or TABLE.
+ * @param source_group Source (means group name) of the new item.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_part_item_insert_after(Evas_Object *obj, const char *part, const char *item_name, const char *item_after, const char *source_group);
+
+/** Insert new item to box or table part directly into specified position.
+ *
+ * @param obj Object being edited.
+ * @param part Part to add a new item. This part should have BOX or TABLE type.
+ * @param item_name Name of new item that is not exist in BOX or TABLE yet.
+ * @param source_group Source (means group name) of the new item.
+ * @param place Specified place to insert item into. Place cannot be less than 0 or
+ *              greater than current number of items in BOX or TABLE.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_part_item_insert_at(Evas_Object *obj, const char *part, const char *item_name, const char *source_group, unsigned int place);
+
+/** Restack existing item above.
+ *
+ * @param obj Object being edited.
+ * @param part Part which contain items. This part should have BOX or TABLE type.
+ * @param item_name Name of item that will be moved above.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_part_item_move_above(Evas_Object *obj, const char *part, const char *item_name);
+
+/** Restack existing item below.
+ *
+ * @param obj Object being edited.
+ * @param part Part which contain items. This part should have BOX or TABLE type.
+ * @param item_name Name of item that will be moved below.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_part_item_move_below(Evas_Object *obj, const char *part, const char *item_name);
+
 /** Get the list of all part items in the given edje.
  *
  * @param obj Object being edited.

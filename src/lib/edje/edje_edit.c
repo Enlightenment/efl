@@ -4663,38 +4663,19 @@ edje_edit_state_container_min_set(Evas_Object *obj, const char *part, const char
 /*  BOX & TABLE ITEMS API  */
 /***************************/
 
-EAPI Eina_Bool
-edje_edit_part_item_append(Evas_Object *obj, const char *part, const char *item_name, const char *source_group)
+static void
+_edje_edit_part_item_insert(Edje_Part *ep, unsigned int item_position, const char *item_name, const char *source_group)
 {
-   Edje_Part *ep;
-   unsigned int i;
    Edje_Pack_Element *item;
-
-   GET_RP_OR_RETURN(EINA_FALSE);
-
-   /* There is only Box and Table is allowed. */
-   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
-       (rp->part->type != EDJE_PART_TYPE_TABLE))
-     return EINA_FALSE;
-
-   ep = rp->part;
-
-   if (!ed->file) return EINA_FALSE;
-
-   /* check if a source group is exists. */
-   if (!eina_hash_find(ed->file->collection, source_group))
-     return EINA_FALSE;
-
-   for (i = 0; i < ep->items_count; ++i)
-     {
-        if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name)))
-          return EINA_FALSE;
-     }
+   unsigned int i;
 
    ep->items_count++;
    ep->items = realloc(ep->items, sizeof (Edje_Pack_Element *) * ep->items_count);
    item = _alloc(sizeof (Edje_Pack_Element));
-   ep->items[ep->items_count - 1] = item;
+   /* shift all items to the end */
+   for (i = ep->items_count - 1; i > item_position; i--)
+     ep->items[i] = ep->items[i - 1];
+   ep->items[item_position] = item;
 
    item->type = EDJE_PART_TYPE_GROUP;
    item->name = eina_stringshare_add(item_name);
@@ -4723,6 +4704,221 @@ edje_edit_part_item_append(Evas_Object *obj, const char *part, const char *item_
    item->rowspan = 1;
    item->spread.w = 1;
    item->spread.h = 1;
+}
+
+EAPI Eina_Bool
+edje_edit_part_item_append(Evas_Object *obj, const char *part, const char *item_name, const char *source_group)
+{
+   Edje_Part *ep;
+   unsigned int i;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+
+   ep = rp->part;
+
+   if (!ed->file) return EINA_FALSE;
+
+   /* check if a source group is exists. */
+   if (!eina_hash_find(ed->file->collection, source_group))
+     return EINA_FALSE;
+
+   for (i = 0; i < ep->items_count; ++i)
+     {
+        if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name)))
+          return EINA_FALSE;
+     }
+
+   _edje_edit_part_item_insert(ep, ep->items_count, item_name, source_group);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_part_item_insert_before(Evas_Object *obj, const char *part, const char *item_name, const char *item_before, const char *source_group)
+{
+   Edje_Part *ep;
+   unsigned int i;
+   int item_before_position = -1;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+
+   ep = rp->part;
+
+   if (!ed->file) return EINA_FALSE;
+
+   /* check if a source group is exists. */
+   if (!eina_hash_find(ed->file->collection, source_group))
+     return EINA_FALSE;
+
+   for (i = 0; i < ep->items_count; ++i)
+     {
+        if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name)))
+          return EINA_FALSE;
+        if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_before)))
+          item_before_position = i;
+     }
+
+   if (item_before_position == -1) return EINA_FALSE;
+
+   _edje_edit_part_item_insert(ep, (unsigned)item_before_position, item_name, source_group);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_part_item_insert_after(Evas_Object *obj, const char *part, const char *item_name, const char *item_after, const char *source_group)
+{
+   Edje_Part *ep;
+   unsigned int i;
+   int item_after_position = -1;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+
+   ep = rp->part;
+
+   if (!ed->file) return EINA_FALSE;
+
+   /* check if a source group is exists. */
+   if (!eina_hash_find(ed->file->collection, source_group))
+     return EINA_FALSE;
+
+   for (i = 0; i < ep->items_count; ++i)
+     {
+        if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name)))
+          return EINA_FALSE;
+        if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_after)))
+          item_after_position = i;
+     }
+
+   if (item_after_position == -1) return EINA_FALSE;
+
+   item_after_position++;
+   _edje_edit_part_item_insert(ep, (unsigned)item_after_position, item_name, source_group);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_part_item_insert_at(Evas_Object *obj, const char *part, const char *item_name, const char *source_group, unsigned int place)
+{
+   Edje_Part *ep;
+   unsigned int i;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+
+   ep = rp->part;
+   if (place > ep->items_count - 1)
+     return EINA_FALSE;
+
+   if (!ed->file) return EINA_FALSE;
+
+   /* check if a source group is exists. */
+   if (!eina_hash_find(ed->file->collection, source_group))
+     return EINA_FALSE;
+
+   for (i = 0; i < ep->items_count; ++i)
+     {
+        if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name)))
+          return EINA_FALSE;
+     }
+
+   _edje_edit_part_item_insert(ep, place, item_name, source_group);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_part_item_move_below(Evas_Object *obj, const char *part, const char *item_name)
+{
+   Edje_Part *ep;
+   unsigned int i;
+   Edje_Pack_Element *item;
+   unsigned int item_place = 0;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+
+   ep = rp->part;
+
+   if (!ed->file) return EINA_FALSE;
+
+   for (i = 0; i < ep->items_count; ++i)
+     {
+        if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name)))
+          {
+             item_place = i;
+             break;
+          }
+     }
+
+   if (!item_place)
+     return EINA_FALSE;
+
+   item = ep->items[item_place - 1];
+   ep->items[item_place - 1] = ep->items[item_place];
+   ep->items[item_place] = item;
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_part_item_move_above(Evas_Object *obj, const char *part, const char *item_name)
+{
+   Edje_Part *ep;
+   unsigned int i;
+   Edje_Pack_Element *item;
+   unsigned int item_place = 0;
+
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   /* There is only Box and Table is allowed. */
+   if ((rp->part->type != EDJE_PART_TYPE_BOX) &&
+       (rp->part->type != EDJE_PART_TYPE_TABLE))
+     return EINA_FALSE;
+
+   ep = rp->part;
+
+   if (!ed->file) return EINA_FALSE;
+
+   for (i = 0; i < ep->items_count; ++i)
+     {
+        if (ep->items[i]->name && (!strcmp(ep->items[i]->name, item_name)))
+          {
+             item_place = i;
+             break;
+          }
+     }
+
+   if (item_place == ep->items_count - 1)
+     return EINA_FALSE;
+
+   item = ep->items[item_place + 1];
+   ep->items[item_place + 1] = ep->items[item_place];
+   ep->items[item_place] = item;
 
    return EINA_TRUE;
 }
