@@ -62,6 +62,12 @@ map_module_tile_coord_to_geo(const Evas_Object *obj EINA_UNUSED, int zoom EINA_U
    return EINA_FALSE;
 }
 
+EAPI double
+map_module_tile_scale_get(const Evas_Object *obj EINA_UNUSED, double lon EINA_UNUSED, double lat EINA_UNUSED, int zoom EINA_UNUSED)
+{
+   return 0;
+}
+
 static Eina_Bool
 _module_init(void)
 {
