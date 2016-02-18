@@ -9977,7 +9977,7 @@ edje_edit_program_after_insert_at(Evas_Object *obj, const char *prog, const char
 
    a->id = af->id;
 
-   if (place >= eina_list_count(epr->after))
+   if ((unsigned)place >= eina_list_count(epr->after))
      epr->after = eina_list_append(epr->after, a);
    else
      {
