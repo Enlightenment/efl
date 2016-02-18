@@ -10,93 +10,86 @@
        ((x) >= (xx)) && ((y) >= (yy)))
 
 static Eina_List *drm_devices;
-static int flip_count = 0;
+static int ticking = 0;
 
-static void 
+static void
+_ecore_drm_tick_schedule(Ecore_Drm_Device *dev)
+{
+   drmVBlank vbl;
+
+   if (!ticking) return;
+
+   vbl.request.type = (DRM_VBLANK_RELATIVE | DRM_VBLANK_EVENT);
+   vbl.request.sequence = 1;
+   vbl.request.signal = (unsigned long)dev;
+   drmWaitVBlank(dev->drm.fd, &vbl);
+}
+
+static void
+_ecore_drm_tick_begin(void *data)
+{
+   ticking = 1;
+   _ecore_drm_tick_schedule(data);
+}
+
+static void
+_ecore_drm_tick_end(void *data EINA_UNUSED)
+{
+   ticking = 0;
+}
+
+static void
+_ecore_drm_tick_source_set(Ecore_Drm_Device *dev)
+{
+   ecore_animator_custom_source_tick_begin_callback_set
+     (_ecore_drm_tick_begin, dev);
+   ecore_animator_custom_source_tick_end_callback_set
+     (_ecore_drm_tick_end, dev);
+   ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
+}
+
+static void
 _ecore_drm_device_cb_page_flip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
 {
-   Ecore_Drm_Pageflip_Callback *cb;
+   Ecore_Drm_Output *output = data;
+   Ecore_Drm_Fb *next;
 
-   /* DBG("Drm Page Flip Event"); */
-
-   if (!(cb = data)) return;
-
-   flip_count++;
-   if (flip_count < cb->count) return;
-
-   cb->dev->current = cb->dev->next;
-   cb->dev->next = NULL;
-
-   flip_count = 0;
-   if (cb->func) cb->func(cb->data);
-   /* free(cb); */
-
-   /* Ecore_Drm_Output *output; */
-
-   /* DBG("Drm Page Flip Event"); */
-
-   /* if (!(output = data)) return; */
-
-   /* if (output->pending_flip) */
-   /*   { */
-   /*      if (output->dev->current) */
-   /*        ecore_drm_output_fb_release(output, output->dev->current); */
-   /*      output->dev->current = output->dev->next; */
-   /*      output->dev->next = NULL; */
-   /*   } */
-
-   /* output->pending_flip = EINA_FALSE; */
-   /* if (output->pending_destroy) */
-   /*   { */
-   /*      output->pending_destroy = EINA_FALSE; */
-   /*      ecore_drm_output_free(output); */
-   /*   } */
-   /* else if (!output->pending_vblank) */
-   /*   ecore_drm_output_repaint(output); */
+   if (output->pending_destroy)
+     {
+        ecore_drm_output_free(output);
+        return;
+     }
+   /* We were unable to queue a page on the last flip attempt, so we'll
+    * try again now. */
+   next = output->next;
+   if (next)
+     {
+        output->next = NULL;
+        ecore_drm_fb_send(output->dev, next, NULL, NULL);
+     }
 }
 
-static void 
+static void
 _ecore_drm_device_cb_vblank(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
 {
-   Ecore_Drm_Sprite *sprite;
-   Ecore_Drm_Output *output;
-
-   /* DBG("Drm VBlank Event"); */
-
-   if (!(sprite = data)) return;
-
-   output = sprite->output;
-   output->pending_vblank = EINA_FALSE;
-
-   ecore_drm_output_fb_release(output, sprite->current_fb);
-   sprite->current_fb = sprite->next_fb;
-   sprite->next_fb = NULL;
-
-   if (!output->pending_flip) _ecore_drm_output_frame_finish(output);
+   ecore_animator_custom_tick();
+   if (ticking) _ecore_drm_tick_schedule(data);
 }
 
-#if 0
-static Eina_Bool 
-_ecore_drm_device_cb_idle(void *data)
+static Eina_Bool
+_cb_drm_event_handle(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 {
-   Ecore_Drm_Device *dev;
-   Ecore_Drm_Output *output;
-   Eina_List *l;
+   Ecore_Drm_Device *dev = data;
+   int err;
 
-   if (!(dev = data)) return ECORE_CALLBACK_CANCEL;
-
-   if (!dev->active) return ECORE_CALLBACK_RENEW;
-
-   EINA_LIST_FOREACH(dev->outputs, l, output)
+   err = drmHandleEvent(dev->drm.fd, &dev->drm_ctx);
+   if (err)
      {
-        if ((!output->enabled) || (!output->need_repaint)) continue;
-        if (output->repaint_scheduled) continue;
-        _ecore_drm_output_repaint_start(output);
+        ERR("drmHandleEvent failed to read an event");
+        return EINA_FALSE;
      }
-
-   return ECORE_CALLBACK_RENEW;
+   return EINA_TRUE;
 }
-#endif
 
 static void
 _ecore_drm_device_cb_output_event(const char *device EINA_UNUSED, Eeze_Udev_Event event EINA_UNUSED, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
@@ -379,6 +372,10 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
      eeze_udev_watch_add(EEZE_UDEV_TYPE_DRM, events,
                          _ecore_drm_device_cb_output_event, dev);
 
+   dev->drm.hdlr =
+     ecore_main_fd_handler_add(dev->drm.fd, ECORE_FD_READ,
+                               _cb_drm_event_handle, dev, NULL, NULL);
+
    /* dev->drm.idler =  */
    /*   ecore_idle_enterer_add(_ecore_drm_device_cb_idle, dev); */
 
@@ -546,6 +543,7 @@ ecore_drm_device_software_setup(Ecore_Drm_Device *dev)
         DBG("\tSize: %d", dev->dumb[i]->size);
         DBG("\tW: %d\tH: %d", dev->dumb[i]->w, dev->dumb[i]->h);
      }
+   _ecore_drm_tick_source_set(dev);
 
    return EINA_TRUE;
 

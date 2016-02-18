@@ -167,7 +167,15 @@ ecore_drm_fb_dirty(Ecore_Drm_Fb *fb, Eina_Rectangle *rects, unsigned int count)
 }
 
 EAPI void
-ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb)
+ecore_drm_fb_set(Ecore_Drm_Device *dev EINA_UNUSED, Ecore_Drm_Fb *fb EINA_UNUSED)
+{
+  /* ecore_drm_fb_set no longer has any functionality distinct from
+   * ecore_drm_fb_send so it is reduced to NO-OP to prevent messing up state
+   */
+}
+
+EAPI void
+ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb func EINA_UNUSED, void *data EINA_UNUSED)
 {
    Ecore_Drm_Output *output;
    Eina_List *l;
@@ -185,88 +193,58 @@ ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb)
           }
      }
 
-   if (!dev->next) dev->next = fb;
-   if (!dev->next) return;
+   if (!dev->outputs) return;
 
    EINA_LIST_FOREACH(dev->outputs, l, output)
      {
-        int x = 0, y = 0;
-
         if ((!output->enabled) || (!output->current_mode)) continue;
 
-        if (!output->cloned)
-          {
-             x = output->x;
-             y = output->y;
-          }
+        if (output->next) WRN("fb reused too soon, tearing may be visible");
 
-        if ((!dev->current) ||
-            (dev->current->stride != dev->next->stride))
+        /* If we changed display parameters or haven't displayed anything
+         * yet we need to do a SetCrtc
+         */
+        if ((!output->current) ||
+            (output->current->stride != fb->stride))
           {
-             if (drmModeSetCrtc(dev->drm.fd, output->crtc_id, dev->next->id,
+             int x = 0, y = 0;
+
+             if (!output->cloned)
+               {
+                  x = output->x;
+                  y = output->y;
+               }
+             if (drmModeSetCrtc(dev->drm.fd, output->crtc_id, fb->id,
                                 x, y, &output->conn_id, 1,
                                 &output->current_mode->info))
                {
                   ERR("Failed to set Mode %dx%d for Output %s: %m",
                       output->current_mode->width, output->current_mode->height,
                       output->name);
+                  continue;
                }
+               output->current = fb;
+               output->next = NULL;
 
-             /* TODO: set dpms on ?? */
+               /* TODO: set dpms on ?? */
+               continue;
           }
-     }
-}
 
-EAPI void
-ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb func, void *data)
-{
-   Ecore_Drm_Output *output;
-   Eina_List *l;
-   Ecore_Drm_Pageflip_Callback *cb;
-
-   EINA_SAFETY_ON_NULL_RETURN(dev);
-   EINA_SAFETY_ON_NULL_RETURN(fb);
-   EINA_SAFETY_ON_NULL_RETURN(func);
-
-   if (eina_list_count(dev->outputs) < 1) return;
-
-   if (fb->pending_flip) return;
-
-   if (!(cb = calloc(1, sizeof(Ecore_Drm_Pageflip_Callback))))
-     return;
-
-   cb->dev = dev;
-   cb->func = func;
-   cb->data = data;
-
-   EINA_LIST_FOREACH(dev->outputs, l, output)
-     if (output->enabled) cb->count++;
-
-   EINA_LIST_FOREACH(dev->outputs, l, output)
-     {
-        if ((!output->enabled) || (!output->current_mode)) continue;
-
+        /* The normal case: We do a flip which waits for vblank and
+         * posts an event.
+         */
         if (drmModePageFlip(dev->drm.fd, output->crtc_id, fb->id,
-                            DRM_MODE_PAGE_FLIP_EVENT, cb) < 0)
+                            DRM_MODE_PAGE_FLIP_EVENT, output) < 0)
           {
-             ERR("Cannot flip crtc %u for connector %u: %m",
+             /* Failure to flip - likely there's already a flip
+              * queued, and we can't cancel, so just store this
+              * fb for later and it'll be queued in the flip
+              * handler */
+             DBG("flip crtc %u for connector %u failed, re-queued",
                  output->crtc_id, output->conn_id);
+             output->next = fb;
              continue;
           }
-
-        fb->pending_flip = EINA_TRUE;
-     }
-
-   while (fb->pending_flip)
-     {
-        int ret = 0;
-
-        ret = drmHandleEvent(dev->drm.fd, &dev->drm_ctx);
-        if (ret < 0)
-          {
-             ERR("drmHandleEvent Failed");
-             free(cb);
-             break;
-          }
+        output->current = fb;
      }
 }

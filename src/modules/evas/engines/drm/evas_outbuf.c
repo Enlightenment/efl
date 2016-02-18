@@ -8,23 +8,6 @@
 #define GREEN_MASK 0x00ff00
 #define BLUE_MASK 0x0000ff
 
-static void
-_evas_outbuf_cb_pageflip(void *data)
-{
-   Outbuf *ob;
-   Ecore_Drm_Fb *fb;
-
-   if (!(ob = data)) return;
-
-   /* DBG("Outbuf Pagelip Done"); */
-
-   if ((fb = ob->priv.buffer[ob->priv.curr]))
-     fb->pending_flip = EINA_FALSE;
-
-   ob->priv.last = ob->priv.curr;
-   ob->priv.curr = (ob->priv.curr + 1) % ob->priv.num;
-}
-
 static void 
 _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
 {
@@ -35,11 +18,11 @@ _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    /* mark the fb as dirty */
    ecore_drm_fb_dirty(buff, rects, count);
 
-   /* if this buffer is not valid, we need to set it */
-   ecore_drm_fb_set(ob->info->info.dev, buff);
-
    /* send this buffer to the crtc */
-   ecore_drm_fb_send(ob->info->info.dev, buff, _evas_outbuf_cb_pageflip, ob);
+   ecore_drm_fb_send(ob->info->info.dev, buff, NULL, NULL);
+
+   ob->priv.last = ob->priv.curr;
+   ob->priv.curr = (ob->priv.curr + 1) % ob->priv.num;
 }
 
 Outbuf *
@@ -62,8 +45,8 @@ evas_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
    ob->destination_alpha = info->info.destination_alpha;
    ob->vsync = info->info.vsync;
 
-   /* default to double-buffer */
-   ob->priv.num = 2;
+   /* we must triple-buffer to prevent problems with the page flip handler */
+   ob->priv.num = 3;
 
    /* check for buffer override */
    if ((num = getenv("EVAS_DRM_BUFFERS")))
@@ -98,7 +81,7 @@ evas_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
      }
 
    /* set the front buffer to be the one on the crtc */
-   ecore_drm_fb_set(info->info.dev, ob->priv.buffer[0]);
+   ecore_drm_fb_send(info->info.dev, ob->priv.buffer[0], NULL, NULL);
 
    return ob;
 }

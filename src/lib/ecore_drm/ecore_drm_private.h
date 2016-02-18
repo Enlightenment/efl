@@ -150,6 +150,7 @@ struct _Ecore_Drm_Output
      } edid;
 
    Ecore_Drm_Backlight *backlight;   
+   Ecore_Drm_Fb *current, *next;
 
    Eina_Bool primary : 1;
    Eina_Bool connected : 1;

@@ -671,10 +671,12 @@ EAPI void ecore_drm_fb_dirty(Ecore_Drm_Fb *fb, Eina_Rectangle *rects, unsigned i
  * @param dev The Ecore_Drm_Device to use
  * @param fb The Ecore_Drm_Fb to make the current framebuffer
  *
+ * @deprecated just call ecore_drm_fb_send() instead.
+ *
  * @ingroup Ecore_Drm_Fb_Group
  * @since 1.14
  */
-EAPI void ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb);
+EINA_DEPRECATED EAPI void ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb);
 
 /**
  * Send an Ecore_Drm_Fb to the Ecore_Drm_Device
