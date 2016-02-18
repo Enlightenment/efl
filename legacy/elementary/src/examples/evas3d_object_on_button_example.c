@@ -115,8 +115,10 @@ _stop_scene(void *data,
      {
         Eina_Bool ret;
 
-        if (eo_do_ret(d->scene, ret,
-                      evas_canvas3d_scene_pick(ev->canvas.x, ev->canvas.y, &n, &m, &s, &t)))
+        eo_do(d->scene, evas_canvas3d_scene_color_pick_enable_set(EINA_TRUE));
+        eo_do(d->scene,
+              ret = evas_canvas3d_scene_pick(ev->canvas.x, ev->canvas.y, &n, &m, &s, &t));
+        if (ret)
           {
              d_angle = 0.0;
              elm_object_signal_emit(btn, "mouse,down,1", "event");
@@ -238,7 +240,8 @@ _mesh_setup(Scene_Data *data)
 
          evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_PHONG),
 
-         evas_canvas3d_mesh_frame_material_set(0, data->material));
+         evas_canvas3d_mesh_frame_material_set(0, data->material),
+         evas_canvas3d_mesh_color_pick_enable_set(EINA_TRUE));
 
    data->mesh_node =
       eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
@@ -268,29 +271,6 @@ _scene_setup(Scene_Data *data)
          evas_canvas3d_scene_camera_node_set(data->camera_node));
 }
 
-static void
-_mirror(Evas_Object *img)
-{
-   int x, y, w, h;
-   Evas_Map *m_rotate;
-
-   evas_object_geometry_get(img, &x, &y, &w, &h);
-   m_rotate = evas_map_new(4);
-
-   evas_map_util_points_populate_from_object(m_rotate, img);
-   evas_map_util_rotate(m_rotate, 180, x + (w / 2), y + (h / 2));
-
-   evas_map_point_image_uv_set(m_rotate, 0, 0, h);
-   evas_map_point_image_uv_set(m_rotate, 1, w, h);
-   evas_map_point_image_uv_set(m_rotate, 2, w, h / 10);
-   evas_map_point_image_uv_set(m_rotate, 3, 0, h / 10);
-
-   evas_object_map_set(img, m_rotate);
-   evas_object_map_enable_set(img, EINA_TRUE);
-
-   evas_map_free(m_rotate);
-}
-
 int
 elm_main(int argc, char **argv)
 {
@@ -316,11 +296,9 @@ elm_main(int argc, char **argv)
    elm_object_scale_set(btn, 3.0);
    evas_object_show(btn);
 
-   /*Due to inverted image in case proxy object*/
-   _mirror(image);
-
    /* Set the image object as render target for 3D scene. */
    _scene_setup(&data);
+   evas_object_focus_set(image, EINA_TRUE);
    eo_do(image, evas_obj_image_scene_set(data.scene));
 
    evas_object_event_callback_add(image, EVAS_CALLBACK_MOUSE_DOWN, _stop_scene, &data);
