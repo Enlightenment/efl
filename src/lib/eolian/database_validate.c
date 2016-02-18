@@ -174,9 +174,10 @@ _ef_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
 static Eina_Bool
 _type_error(const Validator *vs, const Eolian_Type *tp, const char *msg)
 {
+   Eina_Bool weak = !getenv("EOLIAN_VALIDATE_STRICT");
    if (vs->silent_types)
-     return EINA_FALSE;
-   if (getenv("EOLIAN_VERBOSE_TYPES"))
+     return weak;
+   if (!weak)
      {
         fprintf(stderr, "eolian:%s:%d:%d: %s\n", tp->base.file, tp->base.line,
                 tp->base.column, msg);
@@ -184,7 +185,7 @@ _type_error(const Validator *vs, const Eolian_Type *tp, const char *msg)
      }
    eina_log_print(_eolian_log_dom, EINA_LOG_LEVEL_WARN, tp->base.file, "",
                   tp->base.line, "%s at column %d", msg, tp->base.column);
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -212,8 +213,7 @@ _validate_type(const Validator *vs, const Eolian_Type *tp)
              {
                 char buf[256];
                 snprintf(buf, sizeof(buf), "undefined type %s", tp->full_name);
-                _type_error(vs, tp, buf);
-                return EINA_TRUE; /* for now only warn */
+                return _type_error(vs, tp, buf);
              }
            return _validate_type(vs, tpp);
         }
@@ -246,7 +246,7 @@ _validate_type(const Validator *vs, const Eolian_Type *tp)
                 char buf[256];
                 snprintf(buf, sizeof(buf), "undefined class %s "
                          "(likely wrong namespacing)", tp->full_name);
-                _type_error(vs, tp, buf);
+                return _type_error(vs, tp, buf);
              }
            return EINA_TRUE;
         }

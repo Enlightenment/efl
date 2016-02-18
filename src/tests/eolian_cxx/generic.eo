@@ -1,3 +1,5 @@
+type @extern Ecore_Cb: __undefined_type;
+
 class Generic (Eo.Base)
 {
    legacy_prefix: null;
