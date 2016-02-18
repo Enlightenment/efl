@@ -9958,6 +9958,37 @@ edje_edit_program_after_add(Evas_Object *obj, const char *prog, const char *afte
 }
 
 EAPI Eina_Bool
+edje_edit_program_after_insert_at(Evas_Object *obj, const char *prog, const char *after, int place)
+{
+   Edje_Program *af;
+   Edje_Program_After *a;
+   Eina_List *l;
+
+   GET_EPR_OR_RETURN(EINA_FALSE);
+
+   if (place < 0)
+     return EINA_FALSE;
+
+   af = _edje_program_get_byname(obj, after);
+   if (!af) return EINA_FALSE;
+
+   a = _alloc(sizeof(Edje_Program_After));
+   if (!a) return EINA_FALSE;
+
+   a->id = af->id;
+
+   if (place >= eina_list_count(epr->after))
+     epr->after = eina_list_append(epr->after, a);
+   else
+     {
+        l = eina_list_nth_list(epr->after, place);
+        epr->after = eina_list_prepend_relative_list(epr->after, a, l);
+     }
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 edje_edit_program_after_del(Evas_Object *obj, const char *prog, const char *after)
 {
    Edje_Program *af;
