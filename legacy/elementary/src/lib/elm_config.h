@@ -620,6 +620,33 @@ EAPI Eina_Bool    elm_config_scroll_thumbscroll_smooth_start_get(void);
 EAPI void         elm_config_scroll_thumbscroll_smooth_start_set(Eina_Bool enable);
 
 /**
+ * Get the value of this option
+ *
+ * @return State of this option
+ * 
+ * @see elm_config_scroll_animation_disable_set()
+ *
+ * @since 1.18
+ * @ingroup Scrolling
+ */
+EAPI Eina_Bool    elm_config_scroll_animation_disable_get(void);
+
+/**
+ * Set the value for this option
+ *
+ * This option disables timed animations during scrolling and forces scroll actions
+ * to be performed immediately.
+ * 
+ * @param disable The state of this option
+ * 
+ * @see elm_config_scroll_animation_disable_get()
+ *
+ * @since 1.18
+ * @ingroup Scrolling
+ */
+EAPI void         elm_config_scroll_animation_disable_set(Eina_Bool enable);
+
+/**
  * Get the amount of smoothing to apply to scrolling
  *
  * @return the amount of smoothing to apply from 0.0 to 1.0

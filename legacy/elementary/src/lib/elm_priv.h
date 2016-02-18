@@ -211,6 +211,7 @@ struct _Elm_Config
    double        page_scroll_friction;
    double        bring_in_scroll_friction;
    double        zoom_friction;
+   Eina_Bool     scroll_animation_disable;
    unsigned char thumbscroll_bounce_enable;
    double        thumbscroll_border_friction;
    double        thumbscroll_sensitivity_friction;

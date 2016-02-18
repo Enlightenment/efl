@@ -401,6 +401,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, zoom_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, thumbscroll_bounce_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, scroll_smooth_start_enable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, scroll_animation_disable, T_UCHAR);
 //   ELM_CONFIG_VAL(D, T, scroll_smooth_time_interval, T_DOUBLE); // not used anymore
    ELM_CONFIG_VAL(D, T, scroll_smooth_amount, T_DOUBLE);
 //   ELM_CONFIG_VAL(D, T, scroll_smooth_history_weight, T_DOUBLE); // not used anymore
@@ -1724,6 +1725,7 @@ _config_load(void)
    _elm_config->thumbscroll_border_friction = 0.5;
    _elm_config->thumbscroll_sensitivity_friction = 0.25; // magic number! just trial and error shows this makes it behave "nicer" and not run off at high speed all the time
    _elm_config->scroll_smooth_start_enable = EINA_TRUE;
+   _elm_config->scroll_smooth_start_enable = EINA_FALSE;
 //   _elm_config->scroll_smooth_time_interval = 0.008; // not used anymore
    _elm_config->scroll_smooth_amount = 1.0;
 //   _elm_config->scroll_smooth_history_weight = 0.3; // not used anymore
@@ -2291,6 +2293,8 @@ _env_get(void)
      }
    s = getenv("ELM_SCROLL_SMOOTH_START_ENABLE");
    if (s) _elm_config->scroll_smooth_start_enable = !!atoi(s);
+   s = getenv("ELM_SCROLL_ANIMATION_DISABLE");
+   if (s) _elm_config->scroll_animation_disable = !!atoi(s);
 //   s = getenv("ELM_SCROLL_SMOOTH_TIME_INTERVAL"); // not used anymore
 //   if (s) _elm_config->scroll_smooth_time_interval = atof(s); // not used anymore
    s = getenv("ELM_SCROLL_SMOOTH_AMOUNT");
@@ -3312,6 +3316,18 @@ EAPI void
 elm_config_scroll_thumbscroll_smooth_start_set(Eina_Bool enable)
 {
    _elm_config->scroll_smooth_start_enable = enable;
+}
+
+EAPI Eina_Bool
+elm_config_scroll_animation_disable_get(void)
+{
+   return _elm_config->scroll_animation_disable;
+}
+
+EAPI void
+elm_config_scroll_animation_disable_set(Eina_Bool disable)
+{
+   _elm_config->scroll_animation_disable = !!disable;
 }
 
 EAPI void

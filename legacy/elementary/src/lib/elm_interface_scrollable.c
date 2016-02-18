@@ -1964,8 +1964,13 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
         if ((!sid->hold) && (!sid->freeze))
           {
              _elm_scroll_wanted_coordinates_update(sid, x, y);
-             _elm_scroll_scroll_to_x(sid, _elm_config->bring_in_scroll_friction, x);
-             _elm_scroll_scroll_to_y(sid, _elm_config->bring_in_scroll_friction, y);
+             if (_elm_config->scroll_animation_disable)
+               eo_do(sid->obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
+             else
+               {
+                  _elm_scroll_scroll_to_x(sid, _elm_config->bring_in_scroll_friction, x);
+                  _elm_scroll_scroll_to_y(sid, _elm_config->bring_in_scroll_friction, y);
+               }
           }
      }
    else

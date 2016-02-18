@@ -151,6 +151,17 @@ config_exit(void *data       EINA_UNUSED,
 }
 
 static void
+scroll_animation_disable_change(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Eina_Bool val = elm_check_state_get(obj);
+   Eina_Bool sb = elm_config_scroll_animation_disable_get();
+
+   if (val == sb) return;
+   elm_config_scroll_animation_disable_set(val);
+   elm_config_all_flush();
+}
+
+static void
 sb_change(void *data       EINA_UNUSED,
           Evas_Object     *obj,
           void *event_info EINA_UNUSED)
@@ -3431,6 +3442,25 @@ _status_config_scrolling(Evas_Object *win,
    elm_scroller_bounce_set(sc, EINA_FALSE, EINA_TRUE);
    evas_object_show(sc);
    elm_object_content_set(sc, box);
+
+   fr = elm_frame_add(box);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(fr, "Animation");
+   elm_box_pack_end(box, fr);
+   evas_object_show(fr);
+
+   bx = elm_box_add(fr);
+   elm_object_content_set(fr, bx);
+   evas_object_show(bx);
+
+   /* Disable Scroll Animation */
+   CHECK_ADD("Disable scroll animation",
+             "Set whether scrollers should scroll<br/>"
+             "immediately instead of animating",
+             scroll_animation_disable_change, NULL);
+   evas_object_data_set(win, "scroll_animation_disable", ck);
+   elm_check_state_set(ck, elm_config_scroll_animation_disable_get());
 
    /* Bounce */
    _status_config_scrolling_bounce(win, box);
