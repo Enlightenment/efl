@@ -4509,8 +4509,8 @@ _elm_interface_scrollable_evas_object_smart_add(Eo *obj, Elm_Scrollable_Smart_In
    sid->y = 0;
    sid->w = 0;
    sid->h = 0;
-   sid->step.x = 32;
-   sid->step.y = 32;
+   sid->step.x = 32 * elm_config_scale_get();
+   sid->step.y = 32 * elm_config_scale_get();
    sid->page.x = -50;
    sid->page.y = -50;
    sid->page_limit_h = 9999;
