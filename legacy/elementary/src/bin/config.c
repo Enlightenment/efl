@@ -3448,6 +3448,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, 0.5);
 
    sc = elm_scroller_add(win);
+   elm_scroller_step_size_set(sc, 32, 64 * elm_config_scale_get());
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_bounce_set(sc, EINA_FALSE, EINA_TRUE);
