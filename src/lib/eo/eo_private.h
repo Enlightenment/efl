@@ -245,11 +245,12 @@ _eo_free(_Eo_Object *obj)
 {
    _Eo_Class *klass = (_Eo_Class*) obj->klass;
 
+#ifdef EO_DEBUG
    if (obj->datarefcount)
      {
         ERR("Object %p data still referenced %d time(s).", obj, obj->datarefcount);
      }
-
+#endif
    _eo_id_release((Eo_Id) _eo_id_get(obj));
 
    eina_spinlock_take(&klass->objects.trash_lock);
