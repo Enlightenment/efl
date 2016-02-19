@@ -95,36 +95,40 @@ void
 database_type_add(Eolian_Type *def)
 {
    def->decl = _typedecl_add(def);
+   def->decl->type = EOLIAN_TYPEDECL_ALIAS;
    eina_hash_set(_aliases, def->full_name, def);
    eina_hash_set(_aliasesf, def->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(_aliasesf, def->base.file), def));
    eina_hash_set(_aliasesd, def->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(_aliasesd, def->base.file), def->decl));
-   database_decl_add(def->full_name, EOLIAN_DECL_ALIAS, def->base.file, def);
+   database_decl_add(def->full_name, EOLIAN_DECL_ALIAS, def->base.file, def->decl);
 }
 
 void
 database_struct_add(Eolian_Type *tp)
 {
    tp->decl = _typedecl_add(tp);
+   tp->decl->type = (tp->type == EOLIAN_TYPE_STRUCT_OPAQUE) ? EOLIAN_TYPEDECL_STRUCT_OPAQUE
+                                                            : EOLIAN_TYPEDECL_STRUCT;
    eina_hash_set(_structs, tp->full_name, tp);
    eina_hash_set(_structsf, tp->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(_structsf, tp->base.file), tp));
    eina_hash_set(_structsd, tp->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(_structsd, tp->base.file), tp->decl));
-   database_decl_add(tp->full_name, EOLIAN_DECL_STRUCT, tp->base.file, tp);
+   database_decl_add(tp->full_name, EOLIAN_DECL_STRUCT, tp->base.file, tp->decl);
 }
 
 void
 database_enum_add(Eolian_Type *tp)
 {
    tp->decl = _typedecl_add(tp);
+   tp->decl->type = EOLIAN_TYPEDECL_ENUM;
    eina_hash_set(_enums, tp->full_name, tp);
    eina_hash_set(_enumsf, tp->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(_enumsf, tp->base.file), tp));
    eina_hash_set(_enumsd, tp->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(_enumsd, tp->base.file), tp->decl));
-   database_decl_add(tp->full_name, EOLIAN_DECL_ENUM, tp->base.file, tp);
+   database_decl_add(tp->full_name, EOLIAN_DECL_ENUM, tp->base.file, tp->decl);
 }
 
 static void

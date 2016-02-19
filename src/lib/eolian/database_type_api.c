@@ -372,11 +372,31 @@ eolian_type_base_type_get(const Eolian_Type *tp)
              Eolian_Declaration *decl = eina_hash_find(_decls, tp->full_name);
              if (decl && decl->type != EOLIAN_DECL_CLASS
                       && decl->type != EOLIAN_DECL_VAR)
-               return decl->data;
+               return ((const Eolian_Typedecl *)decl->data)->parent;
           }
         return NULL;
      }
    return tp->base_type;
+}
+
+EAPI const Eolian_Typedecl *
+eolian_type_typedecl_get(const Eolian_Type *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   if (eolian_type_type_get(tp) != EOLIAN_TYPE_REGULAR)
+     return NULL;
+   /* try looking up if it belongs to a struct, enum or an alias... otherwise
+    * return NULL, but first check for builtins
+    */
+   int  kw = eo_lexer_keyword_str_to_id(tp->full_name);
+   if (!kw || kw < KW_byte || kw >= KW_true)
+     {
+        Eolian_Declaration *decl = eina_hash_find(_decls, tp->full_name);
+        if (decl && decl->type != EOLIAN_DECL_CLASS
+                 && decl->type != EOLIAN_DECL_VAR)
+          return decl->data;
+     }
+   return NULL;
 }
 
 EAPI const Eolian_Type *

@@ -12,16 +12,16 @@
 #include "common_funcs.h"
 
 static char *
-_concat_name(const Eolian_Type *tp)
+_concat_name(const Eolian_Typedecl *tp)
 {
    const char *name;
    char *str = NULL;
    Eina_Strbuf *buf = eina_strbuf_new();
-   Eina_Iterator *itr = eolian_type_namespaces_get(tp);
+   Eina_Iterator *itr = eolian_typedecl_namespaces_get(tp);
    EINA_ITERATOR_FOREACH(itr, name)
       if (name) eina_strbuf_append_printf(buf, "%s_", name);
    eina_iterator_free(itr);
-   name = eolian_type_name_get(tp);
+   name = eolian_typedecl_name_get(tp);
    if (name) eina_strbuf_append_printf(buf, "%s", name);
    if (eina_strbuf_length_get(buf))
      {
@@ -34,51 +34,51 @@ _concat_name(const Eolian_Type *tp)
 }
 
 static Eina_Strbuf *
-_type_generate(const Eolian_Type *tp, Eina_Bool full, Eina_Bool use_legacy)
+_type_generate(const Eolian_Typedecl *tp, Eina_Bool full, Eina_Bool use_legacy)
 {
-   char *grp = strdup(eolian_type_full_name_get(tp));
+   char *grp = strdup(eolian_typedecl_full_name_get(tp));
    char *p = strrchr(grp, '.');
    if (p) *p = '\0';
-   Eina_Strbuf *buf = docs_generate_full(eolian_type_documentation_get(tp),
+   Eina_Strbuf *buf = docs_generate_full(eolian_typedecl_documentation_get(tp),
                                          grp, 0, use_legacy);
    free(grp);
    if (!buf) buf = eina_strbuf_new();
    else eina_strbuf_append_char(buf, '\n');
-   Eolian_Type_Type tp_type = eolian_type_type_get(tp);
+   Eolian_Typedecl_Type tp_type = eolian_typedecl_type_get(tp);
    switch(tp_type)
      {
-      case EOLIAN_TYPE_ALIAS:
+      case EOLIAN_TYPEDECL_ALIAS:
            {
               char *name = _concat_name(tp);
               Eina_Stringshare *c_type = eolian_type_c_type_named_get(
-                  eolian_type_base_type_get(tp), name);
+                  eolian_typedecl_base_type_get(tp), name);
               eina_strbuf_append_printf(buf, "typedef %s", c_type);
               eina_stringshare_del(c_type);
               free(name);
               break;
            }
-      case EOLIAN_TYPE_STRUCT:
-      case EOLIAN_TYPE_STRUCT_OPAQUE:
+      case EOLIAN_TYPEDECL_STRUCT:
+      case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
            {
               const Eolian_Struct_Type_Field *member;
               char *name = _concat_name(tp);
-              if (tp_type == EOLIAN_TYPE_STRUCT_OPAQUE || !full)
+              if (tp_type == EOLIAN_TYPEDECL_STRUCT_OPAQUE || !full)
                 {
                    eina_strbuf_append_printf(buf, "typedef struct _%s %s", name, name);
                    free(name);
                    break;
                 }
               eina_strbuf_append_printf(buf, "typedef struct _%s\n{\n", name);
-              Eina_Iterator *members = eolian_type_struct_fields_get(tp);
+              Eina_Iterator *members = eolian_typedecl_struct_fields_get(tp);
               EINA_ITERATOR_FOREACH(members, member)
                 {
-                   const Eolian_Type *type = eolian_type_struct_field_type_get(member);
+                   const Eolian_Type *type = eolian_typedecl_struct_field_type_get(member);
                    Eina_Stringshare *c_type = eolian_type_c_type_get(type);
                    eina_strbuf_append_printf(buf, "  %s%s%s;",
                          c_type, strchr(c_type, '*')?"":" ",
-                         eolian_type_struct_field_name_get(member));
+                         eolian_typedecl_struct_field_name_get(member));
                    const Eolian_Documentation *fdoc
-                       = eolian_type_struct_field_documentation_get(member);
+                       = eolian_typedecl_struct_field_documentation_get(member);
                    if (fdoc)
                      {
                         const char *nl = strrchr(eina_strbuf_string_get(buf), '\n');
@@ -98,7 +98,7 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full, Eina_Bool use_legacy)
               free(name);
               break;
            }
-      case EOLIAN_TYPE_ENUM:
+      case EOLIAN_TYPEDECL_ENUM:
            {
               const Eolian_Enum_Type_Field *member;
               char *name;
@@ -107,18 +107,18 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full, Eina_Bool use_legacy)
               name = _concat_name(tp);
               char *pre = NULL;
               eina_strbuf_append_printf(buf, "typedef enum\n{\n");
-              if (eolian_type_enum_legacy_prefix_get(tp))
-                pre = strdup(eolian_type_enum_legacy_prefix_get(tp));
+              if (eolian_typedecl_enum_legacy_prefix_get(tp))
+                pre = strdup(eolian_typedecl_enum_legacy_prefix_get(tp));
               else
                 pre = strdup(name);
               eina_str_toupper(&pre);
-              Eina_Iterator *members = eolian_type_enum_fields_get(tp);
+              Eina_Iterator *members = eolian_typedecl_enum_fields_get(tp);
               Eina_Bool next = eina_iterator_next(members, (void**)&member);
               Eina_Strbuf *membuf = eina_strbuf_new();
               while (next)
                 {
-                   const Eolian_Expression *value = eolian_type_enum_field_value_get(member, EINA_FALSE);
-                   char *memb_u = strdup(eolian_type_enum_field_name_get(member));
+                   const Eolian_Expression *value = eolian_typedecl_enum_field_value_get(member, EINA_FALSE);
+                   char *memb_u = strdup(eolian_typedecl_enum_field_name_get(member));
                    eina_str_toupper(&memb_u);
                    eina_strbuf_reset(membuf);
                    eina_strbuf_append(membuf, pre);
@@ -141,7 +141,7 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full, Eina_Bool use_legacy)
                         eina_stringshare_del(lit);
                      }
                    const Eolian_Documentation *fdoc
-                       = eolian_type_enum_field_documentation_get(member);
+                       = eolian_typedecl_enum_field_documentation_get(member);
                    next = eina_iterator_next(members, (void**)&member);
                    if (next)
                      eina_strbuf_append(buf, ",");
@@ -191,13 +191,13 @@ types_header_generate(const char *eo_filename, Eina_Strbuf *buf, Eina_Bool full,
         if (dt == EOLIAN_DECL_ENUM && !full)
           continue;
 
-        const Eolian_Type *tp = eolian_declaration_data_type_get(decl);
-        if (!tp || eolian_type_is_extern(tp))
+        const Eolian_Typedecl *tp = eolian_declaration_data_type_get(decl);
+        if (!tp || eolian_typedecl_is_extern(tp))
           continue;
 
-        if (eolian_type_type_get(tp) == EOLIAN_TYPE_ALIAS)
+        if (eolian_typedecl_type_get(tp) == EOLIAN_TYPEDECL_ALIAS)
           {
-             const Eolian_Type *btp = eolian_type_base_type_get(tp);
+             const Eolian_Type *btp = eolian_typedecl_base_type_get(tp);
              if (eolian_type_type_get(btp) == EOLIAN_TYPE_UNDEFINED)
                continue;
           }

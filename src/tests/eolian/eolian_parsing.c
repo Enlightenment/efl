@@ -346,7 +346,8 @@ END_TEST
 
 START_TEST(eolian_typedef)
 {
-   const Eolian_Type *atype = NULL, *type = NULL;
+   const Eolian_Type *type = NULL;
+   const Eolian_Typedecl *tdl = NULL;
    const char *type_name = NULL;
    Eina_Iterator *iter = NULL;
    const Eolian_Class *class;
@@ -361,14 +362,14 @@ START_TEST(eolian_typedef)
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
    /* Basic type */
-   fail_if(!(atype = eolian_type_alias_get_by_name("Evas.Coord")));
-   fail_if(eolian_type_type_get(atype) != EOLIAN_TYPE_ALIAS);
-   fail_if(!(type_name = eolian_type_name_get(atype)));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Evas.Coord")));
+   fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_ALIAS);
+   fail_if(!(type_name = eolian_typedecl_name_get(tdl)));
    fail_if(strcmp(type_name, "Coord"));
-   fail_if(!(type_name = eolian_type_c_type_get(atype)));
+   fail_if(!(type_name = eolian_typedecl_c_type_get(tdl)));
    fail_if(strcmp(type_name, "typedef int Evas_Coord"));
    eina_stringshare_del(type_name);
-   fail_if(!(type = eolian_type_base_type_get(atype)));
+   fail_if(!(type = eolian_typedecl_base_type_get(tdl)));
    fail_if(!(type_name = eolian_type_name_get(type)));
    fail_if(eolian_type_is_own(type));
    fail_if(eolian_type_is_const(type));
@@ -376,19 +377,19 @@ START_TEST(eolian_typedef)
    fail_if(strcmp(type_name, "int"));
 
    /* File */
-   fail_if(!(file = eolian_type_file_get(atype)));
+   fail_if(!(file = eolian_typedecl_file_get(tdl)));
    fail_if(strcmp(file, "typedef.eo"));
 
    /* Lowest alias base */
-   fail_if(!(atype = eolian_type_alias_get_by_name("Evas.Coord3")));
-   fail_if(!(atype = eolian_type_aliased_base_get(atype)));
-   fail_if(strcmp(eolian_type_name_get(atype), "int"));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Evas.Coord3")));
+   fail_if(!(type = eolian_typedecl_aliased_base_get(tdl)));
+   fail_if(strcmp(eolian_type_name_get(type), "int"));
 
    /* Complex type */
-   fail_if(!(atype = eolian_type_alias_get_by_name("List_Objects")));
-   fail_if(!(type_name = eolian_type_name_get(atype)));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("List_Objects")));
+   fail_if(!(type_name = eolian_typedecl_name_get(tdl)));
    fail_if(strcmp(type_name, "List_Objects"));
-   fail_if(!(type = eolian_type_base_type_get(atype)));
+   fail_if(!(type = eolian_typedecl_base_type_get(tdl)));
    fail_if(!(type_name = eolian_type_c_type_get(type)));
    fail_if(!eolian_type_is_own(type));
    fail_if(strcmp(type_name, "Eina_List *"));
@@ -403,21 +404,21 @@ START_TEST(eolian_typedef)
    eina_iterator_free(iter);
 
    /* List */
-   fail_if(!(iter = eolian_type_aliases_get_by_file("typedef.eo")));
-   fail_if(!eina_iterator_next(iter, (void**)&atype));
-   fail_if(!(type_name = eolian_type_name_get(atype)));
+   fail_if(!(iter = eolian_typedecl_aliases_get_by_file("typedef.eo")));
+   fail_if(!eina_iterator_next(iter, (void**)&tdl));
+   fail_if(!(type_name = eolian_typedecl_name_get(tdl)));
    fail_if(strcmp(type_name, "Coord"));
-   fail_if(!eina_iterator_next(iter, (void**)&atype));
-   fail_if(!(type_name = eolian_type_name_get(atype)));
+   fail_if(!eina_iterator_next(iter, (void**)&tdl));
+   fail_if(!(type_name = eolian_typedecl_name_get(tdl)));
    fail_if(strcmp(type_name, "List_Objects"));
    /* coord2 and coord3, skip */
-   fail_if(!eina_iterator_next(iter, (void**)&atype));
-   fail_if(!eina_iterator_next(iter, (void**)&atype));
+   fail_if(!eina_iterator_next(iter, (void**)&tdl));
+   fail_if(!eina_iterator_next(iter, (void**)&tdl));
    /* not generated extern, skip */
-   fail_if(!eina_iterator_next(iter, (void**)&atype));
+   fail_if(!eina_iterator_next(iter, (void**)&tdl));
    /* not generated undefined type, skip */
-   fail_if(!eina_iterator_next(iter, (void**)&atype));
-   fail_if(eina_iterator_next(iter, (void**)&atype));
+   fail_if(!eina_iterator_next(iter, (void**)&tdl));
+   fail_if(eina_iterator_next(iter, (void**)&tdl));
 
    eolian_shutdown();
 }
@@ -664,6 +665,7 @@ START_TEST(eolian_struct)
 {
    const Eolian_Struct_Type_Field *field = NULL;
    const Eolian_Type *type = NULL, *ftype = NULL;
+   const Eolian_Typedecl *tdl = NULL;
    const Eolian_Class *class;
    const Eolian_Function *func;
    const char *type_name;
@@ -679,42 +681,40 @@ START_TEST(eolian_struct)
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
    /* named struct */
-   fail_if(!(type = eolian_type_struct_get_by_name("Named")));
-   fail_if(!(type_name = eolian_type_name_get(type)));
-   fail_if(!(file = eolian_type_file_get(type)));
-   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
-   fail_if(eolian_type_is_own(type));
-   fail_if(eolian_type_is_const(type));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Named")));
+   fail_if(!(type_name = eolian_typedecl_name_get(tdl)));
+   fail_if(!(file = eolian_typedecl_file_get(tdl)));
+   fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_STRUCT);
    fail_if(strcmp(type_name, "Named"));
    fail_if(strcmp(file, "struct.eo"));
-   fail_if(!(field = eolian_type_struct_field_get(type, "field")));
-   fail_if(!(ftype = eolian_type_struct_field_type_get(field)));
+   fail_if(!(field = eolian_typedecl_struct_field_get(tdl, "field")));
+   fail_if(!(ftype = eolian_typedecl_struct_field_type_get(field)));
    fail_if(!(type_name = eolian_type_name_get(ftype)));
    fail_if(strcmp(type_name, "int"));
-   fail_if(!(field = eolian_type_struct_field_get(type, "something")));
-   fail_if(!(ftype = eolian_type_struct_field_type_get(field)));
+   fail_if(!(field = eolian_typedecl_struct_field_get(tdl, "something")));
+   fail_if(!(ftype = eolian_typedecl_struct_field_type_get(field)));
    fail_if(!(type_name = eolian_type_c_type_get(ftype)));
    fail_if(strcmp(type_name, "const char *"));
    eina_stringshare_del(type_name);
 
    /* referencing */
-   fail_if(!(type = eolian_type_struct_get_by_name("Another")));
-   fail_if(!(type_name = eolian_type_name_get(type)));
-   fail_if(!(file = eolian_type_file_get(type)));
-   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Another")));
+   fail_if(!(type_name = eolian_typedecl_name_get(tdl)));
+   fail_if(!(file = eolian_typedecl_file_get(tdl)));
+   fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_STRUCT);
    fail_if(strcmp(type_name, "Another"));
    fail_if(strcmp(file, "struct.eo"));
-   fail_if(!(field = eolian_type_struct_field_get(type, "field")));
-   fail_if(!(ftype = eolian_type_struct_field_type_get(field)));
+   fail_if(!(field = eolian_typedecl_struct_field_get(tdl, "field")));
+   fail_if(!(ftype = eolian_typedecl_struct_field_type_get(field)));
    fail_if(!(type_name = eolian_type_name_get(ftype)));
    fail_if(strcmp(type_name, "Named"));
    fail_if(eolian_type_type_get(ftype) != EOLIAN_TYPE_REGULAR);
-   fail_if(eolian_type_type_get(eolian_type_base_type_get(ftype))
-       != EOLIAN_TYPE_STRUCT);
+   fail_if(eolian_typedecl_type_get(eolian_type_typedecl_get(ftype))
+       != EOLIAN_TYPEDECL_STRUCT);
 
    /* opaque struct */
-   fail_if(!(type = eolian_type_struct_get_by_name("Opaque")));
-   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT_OPAQUE);
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Opaque")));
+   fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_STRUCT_OPAQUE);
 
    /* use in function */
    fail_if(!(func = eolian_class_function_get_by_name(class, "bar", EOLIAN_METHOD)));
@@ -722,8 +722,8 @@ START_TEST(eolian_struct)
    fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_POINTER);
    fail_if(!(type = eolian_type_base_type_get(type)));
    fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_REGULAR);
-   fail_if(!(type = eolian_type_base_type_get(type)));
-   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
+   fail_if(!(tdl = eolian_type_typedecl_get(type)));
+   fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_STRUCT);
 
    eolian_shutdown();
 }
@@ -731,7 +731,7 @@ END_TEST
 
 START_TEST(eolian_extern)
 {
-   const Eolian_Type *type = NULL;
+   const Eolian_Typedecl *tdl = NULL;
    const Eolian_Class *class;
 
    eolian_init();
@@ -744,20 +744,20 @@ START_TEST(eolian_extern)
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
    /* regular type */
-   fail_if(!(type = eolian_type_alias_get_by_name("Foo")));
-   fail_if(eolian_type_is_extern(type));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Foo")));
+   fail_if(eolian_typedecl_is_extern(tdl));
 
    /* extern type */
-   fail_if(!(type = eolian_type_alias_get_by_name("Evas.Coord")));
-   fail_if(!eolian_type_is_extern(type));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Evas.Coord")));
+   fail_if(!eolian_typedecl_is_extern(tdl));
 
    /* regular struct */
-   fail_if(!(type = eolian_type_struct_get_by_name("X")));
-   fail_if(eolian_type_is_extern(type));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("X")));
+   fail_if(eolian_typedecl_is_extern(tdl));
 
    /* extern struct */
-   fail_if(!(type = eolian_type_struct_get_by_name("Y")));
-   fail_if(!eolian_type_is_extern(type));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Y")));
+   fail_if(!eolian_typedecl_is_extern(tdl));
 
    eolian_shutdown();
 }
@@ -831,6 +831,7 @@ START_TEST(eolian_enum)
 {
    const Eolian_Enum_Type_Field *field = NULL;
    const Eolian_Variable *var = NULL;
+   const Eolian_Typedecl *tdl = NULL;
    const Eolian_Type *type = NULL;
    const Eolian_Class *class;
    const Eolian_Expression *exp;
@@ -847,60 +848,60 @@ START_TEST(eolian_enum)
    fail_if(!(class = eolian_class_get_by_name("Enum")));
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
-   fail_if(!(type = eolian_type_enum_get_by_name("Foo")));
+   fail_if(!(tdl = eolian_typedecl_enum_get_by_name("Foo")));
 
-   fail_if(!(field = eolian_type_enum_field_get(type, "first")));
-   fail_if(!(exp = eolian_type_enum_field_value_get(field, EINA_FALSE)));
+   fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "first")));
+   fail_if(!(exp = eolian_typedecl_enum_field_value_get(field, EINA_FALSE)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 0);
 
-   fail_if(!(field = eolian_type_enum_field_get(type, "bar")));
-   fail_if(eolian_type_enum_field_value_get(field, EINA_FALSE));
+   fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "bar")));
+   fail_if(eolian_typedecl_enum_field_value_get(field, EINA_FALSE));
 
-   fail_if(!(field = eolian_type_enum_field_get(type, "baz")));
-   fail_if(!(exp = eolian_type_enum_field_value_get(field, EINA_FALSE)));
+   fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "baz")));
+   fail_if(!(exp = eolian_typedecl_enum_field_value_get(field, EINA_FALSE)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 15);
 
-   fail_if(!(type = eolian_type_enum_get_by_name("Bar")));
-   fail_if(strcmp(eolian_type_enum_legacy_prefix_get(type), "test"));
+   fail_if(!(tdl = eolian_typedecl_enum_get_by_name("Bar")));
+   fail_if(strcmp(eolian_typedecl_enum_legacy_prefix_get(tdl), "test"));
 
-   fail_if(!(field = eolian_type_enum_field_get(type, "foo")));
-   fail_if(!(exp = eolian_type_enum_field_value_get(field, EINA_FALSE)));
+   fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "foo")));
+   fail_if(!(exp = eolian_typedecl_enum_field_value_get(field, EINA_FALSE)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 15);
 
-   cname = eolian_type_enum_field_c_name_get(field);
+   cname = eolian_typedecl_enum_field_c_name_get(field);
    fail_if(strcmp(cname, "TEST_FOO"));
    eina_stringshare_del(cname);
 
-   fail_if(!(type = eolian_type_enum_get_by_name("Baz")));
+   fail_if(!(tdl = eolian_typedecl_enum_get_by_name("Baz")));
 
-   fail_if(!(field = eolian_type_enum_field_get(type, "flag1")));
-   fail_if(!(exp = eolian_type_enum_field_value_get(field, EINA_FALSE)));
+   fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "flag1")));
+   fail_if(!(exp = eolian_typedecl_enum_field_value_get(field, EINA_FALSE)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 0));
 
-   fail_if(!(field = eolian_type_enum_field_get(type, "flag2")));
-   fail_if(!(exp = eolian_type_enum_field_value_get(field, EINA_FALSE)));
+   fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "flag2")));
+   fail_if(!(exp = eolian_typedecl_enum_field_value_get(field, EINA_FALSE)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 1));
 
-   fail_if(!(field = eolian_type_enum_field_get(type, "flag3")));
-   fail_if(!(exp = eolian_type_enum_field_value_get(field, EINA_FALSE)));
+   fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "flag3")));
+   fail_if(!(exp = eolian_typedecl_enum_field_value_get(field, EINA_FALSE)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 2));
 
-   fail_if(!(type = eolian_type_enum_get_by_name("Name.Spaced")));
-   fail_if(!(field = eolian_type_enum_field_get(type, "pants")));
+   fail_if(!(tdl = eolian_typedecl_enum_get_by_name("Name.Spaced")));
+   fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "pants")));
 
-   cname = eolian_type_enum_field_c_name_get(field);
+   cname = eolian_typedecl_enum_field_c_name_get(field);
    fail_if(strcmp(cname, "NAME_SPACED_PANTS"));
    eina_stringshare_del(cname);
 
@@ -963,6 +964,7 @@ END_TEST
 START_TEST(eolian_free_func)
 {
    const Eolian_Class *class;
+   const Eolian_Typedecl *tdl;
    const Eolian_Type *type;
 
    eolian_init();
@@ -975,29 +977,29 @@ START_TEST(eolian_free_func)
    fail_if(!eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD));
 
    /* regular struct */
-   fail_if(!(type = eolian_type_struct_get_by_name("Named1")));
-   fail_if(eolian_type_free_func_get(type));
-   fail_if(!(type = eolian_type_struct_get_by_name("Named2")));
-   fail_if(strcmp(eolian_type_free_func_get(type), "test_free"));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Named1")));
+   fail_if(eolian_typedecl_free_func_get(tdl));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Named2")));
+   fail_if(strcmp(eolian_typedecl_free_func_get(tdl), "test_free"));
 
    /* typedef */
-   fail_if(!(type = eolian_type_alias_get_by_name("Typedef1")));
-   fail_if(eolian_type_free_func_get(type));
-   fail_if(!(type = eolian_type_alias_get_by_name("Typedef2")));
-   fail_if(strcmp(eolian_type_free_func_get(type), "def_free"));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Typedef1")));
+   fail_if(eolian_typedecl_free_func_get(tdl));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Typedef2")));
+   fail_if(strcmp(eolian_typedecl_free_func_get(tdl), "def_free"));
 
    /* opaque struct */
-   fail_if(!(type = eolian_type_struct_get_by_name("Opaque1")));
-   fail_if(eolian_type_free_func_get(type));
-   fail_if(!(type = eolian_type_struct_get_by_name("Opaque2")));
-   fail_if(strcmp(eolian_type_free_func_get(type), "opaque_free"));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Opaque1")));
+   fail_if(eolian_typedecl_free_func_get(tdl));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Opaque2")));
+   fail_if(strcmp(eolian_typedecl_free_func_get(tdl), "opaque_free"));
 
    /* pointer */
-   fail_if(!(type = eolian_type_alias_get_by_name("Pointer1")));
-   fail_if(!(type = eolian_type_base_type_get(type)));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Pointer1")));
+   fail_if(!(type = eolian_typedecl_base_type_get(tdl)));
    fail_if(eolian_type_free_func_get(type));
-   fail_if(!(type = eolian_type_alias_get_by_name("Pointer2")));
-   fail_if(!(type = eolian_type_base_type_get(type)));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Pointer2")));
+   fail_if(!(type = eolian_typedecl_base_type_get(tdl)));
    fail_if(strcmp(eolian_type_free_func_get(type), "ptr_free"));
 
    eolian_shutdown();
@@ -1055,7 +1057,7 @@ END_TEST
 START_TEST(eolian_import)
 {
    const Eolian_Class *class;
-   const Eolian_Type *type;
+   const Eolian_Typedecl *tdl;
 
    eolian_init();
 
@@ -1064,11 +1066,11 @@ START_TEST(eolian_import)
    fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/import.eo"));
    fail_if(!(class = eolian_class_get_by_name("Import")));
 
-   fail_if(!(type = eolian_type_alias_get_by_name("Imported")));
-   fail_if(strcmp(eolian_type_file_get(type), "import_types.eot"));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Imported")));
+   fail_if(strcmp(eolian_typedecl_file_get(tdl), "import_types.eot"));
 
-   fail_if(!(type = eolian_type_struct_get_by_name("Imported_Struct")));
-   fail_if(strcmp(eolian_type_file_get(type), "import_types.eot"));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Imported_Struct")));
+   fail_if(strcmp(eolian_typedecl_file_get(tdl), "import_types.eot"));
 
    eolian_shutdown();
 }
@@ -1077,7 +1079,7 @@ END_TEST
 START_TEST(eolian_decl)
 {
    const Eolian_Declaration *decl;
-   const Eolian_Type *type;
+   const Eolian_Typedecl *tdl;
    const Eolian_Class *class;
    const Eolian_Variable *var;
    Eina_Iterator *itr;
@@ -1094,23 +1096,23 @@ START_TEST(eolian_decl)
    fail_if(!eina_iterator_next(itr, (void**)&decl));
    fail_if(eolian_declaration_type_get(decl) != EOLIAN_DECL_STRUCT);
    fail_if(strcmp(eolian_declaration_name_get(decl), "A"));
-   fail_if(!(type = eolian_declaration_data_type_get(decl)));
-   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
-   fail_if(strcmp(eolian_type_name_get(type), "A"));
+   fail_if(!(tdl = eolian_declaration_data_type_get(decl)));
+   fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_STRUCT);
+   fail_if(strcmp(eolian_typedecl_name_get(tdl), "A"));
 
    fail_if(!eina_iterator_next(itr, (void**)&decl));
    fail_if(eolian_declaration_type_get(decl) != EOLIAN_DECL_ENUM);
    fail_if(strcmp(eolian_declaration_name_get(decl), "B"));
-   fail_if(!(type = eolian_declaration_data_type_get(decl)));
-   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_ENUM);
-   fail_if(strcmp(eolian_type_name_get(type), "B"));
+   fail_if(!(tdl = eolian_declaration_data_type_get(decl)));
+   fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_ENUM);
+   fail_if(strcmp(eolian_typedecl_name_get(tdl), "B"));
 
    fail_if(!eina_iterator_next(itr, (void**)&decl));
    fail_if(eolian_declaration_type_get(decl) != EOLIAN_DECL_ALIAS);
    fail_if(strcmp(eolian_declaration_name_get(decl), "C"));
-   fail_if(!(type = eolian_declaration_data_type_get(decl)));
-   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_ALIAS);
-   fail_if(strcmp(eolian_type_name_get(type), "C"));
+   fail_if(!(tdl = eolian_declaration_data_type_get(decl)));
+   fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_ALIAS);
+   fail_if(strcmp(eolian_typedecl_name_get(tdl), "C"));
 
    fail_if(!eina_iterator_next(itr, (void**)&decl));
    fail_if(eolian_declaration_type_get(decl) != EOLIAN_DECL_VAR);
@@ -1137,7 +1139,7 @@ END_TEST
 
 START_TEST(eolian_docs)
 {
-   const Eolian_Type *type;
+   const Eolian_Typedecl *tdl;
    const Eolian_Class *class;
    const Eolian_Event *event;
    const Eolian_Variable *var;
@@ -1154,8 +1156,8 @@ START_TEST(eolian_docs)
 
    fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/docs.eo"));
 
-   fail_if(!(type = eolian_type_struct_get_by_name("Foo")));
-   fail_if(!(doc = eolian_type_documentation_get(type)));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Foo")));
+   fail_if(!(doc = eolian_typedecl_documentation_get(tdl)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "This is struct Foo. It does stuff."));
    fail_if(strcmp(eolian_documentation_description_get(doc),
@@ -1167,45 +1169,45 @@ START_TEST(eolian_docs)
    fail_if(strcmp(eolian_documentation_since_get(doc),
                   "1.66"));
 
-   fail_if(!(sfl = eolian_type_struct_field_get(type, "field1")));
-   fail_if(!(doc = eolian_type_struct_field_documentation_get(sfl)));
+   fail_if(!(sfl = eolian_typedecl_struct_field_get(tdl, "field1")));
+   fail_if(!(doc = eolian_typedecl_struct_field_documentation_get(sfl)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Field documentation."));
    fail_if(eolian_documentation_description_get(doc));
 
-   fail_if(!(sfl = eolian_type_struct_field_get(type, "field2")));
-   fail_if(eolian_type_struct_field_documentation_get(sfl));
+   fail_if(!(sfl = eolian_typedecl_struct_field_get(tdl, "field2")));
+   fail_if(eolian_typedecl_struct_field_documentation_get(sfl));
 
-   fail_if(!(sfl = eolian_type_struct_field_get(type, "field3")));
-   fail_if(!(doc = eolian_type_struct_field_documentation_get(sfl)));
+   fail_if(!(sfl = eolian_typedecl_struct_field_get(tdl, "field3")));
+   fail_if(!(doc = eolian_typedecl_struct_field_documentation_get(sfl)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Another field documentation."));
    fail_if(eolian_documentation_description_get(doc));
 
-   fail_if(!(type = eolian_type_enum_get_by_name("Bar")));
-   fail_if(!(doc = eolian_type_documentation_get(type)));
+   fail_if(!(tdl = eolian_typedecl_enum_get_by_name("Bar")));
+   fail_if(!(doc = eolian_typedecl_documentation_get(tdl)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Docs for enum Bar."));
    fail_if(eolian_documentation_description_get(doc));
    fail_if(eolian_documentation_since_get(doc));
 
-   fail_if(!(efl = eolian_type_enum_field_get(type, "blah")));
-   fail_if(eolian_type_enum_field_documentation_get(efl));
+   fail_if(!(efl = eolian_typedecl_enum_field_get(tdl, "blah")));
+   fail_if(eolian_typedecl_enum_field_documentation_get(efl));
 
-   fail_if(!(efl = eolian_type_enum_field_get(type, "foo")));
-   fail_if(!(doc = eolian_type_enum_field_documentation_get(efl)));
+   fail_if(!(efl = eolian_typedecl_enum_field_get(tdl, "foo")));
+   fail_if(!(doc = eolian_typedecl_enum_field_documentation_get(efl)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Docs for foo."));
    fail_if(eolian_documentation_description_get(doc));
 
-   fail_if(!(efl = eolian_type_enum_field_get(type, "bar")));
-   fail_if(!(doc = eolian_type_enum_field_documentation_get(efl)));
+   fail_if(!(efl = eolian_typedecl_enum_field_get(tdl, "bar")));
+   fail_if(!(doc = eolian_typedecl_enum_field_documentation_get(efl)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Docs for bar."));
    fail_if(eolian_documentation_description_get(doc));
 
-   fail_if(!(type = eolian_type_alias_get_by_name("Alias")));
-   fail_if(!(doc = eolian_type_documentation_get(type)));
+   fail_if(!(tdl = eolian_typedecl_alias_get_by_name("Alias")));
+   fail_if(!(doc = eolian_typedecl_documentation_get(tdl)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Docs for typedef."));
    fail_if(strcmp(eolian_documentation_description_get(doc),
@@ -1219,8 +1221,8 @@ START_TEST(eolian_docs)
                   "Docs for var."));
    fail_if(eolian_documentation_description_get(doc));
 
-   fail_if(!(type = eolian_type_struct_get_by_name("Opaque")));
-   fail_if(!(doc = eolian_type_documentation_get(type)));
+   fail_if(!(tdl = eolian_typedecl_struct_get_by_name("Opaque")));
+   fail_if(!(doc = eolian_typedecl_documentation_get(tdl)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Opaque struct docs. See @Foo for another struct."));
    fail_if(eolian_documentation_description_get(doc));

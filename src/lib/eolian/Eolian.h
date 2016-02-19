@@ -1543,6 +1543,7 @@ EAPI Eina_Stringshare *eolian_typedecl_file_get(const Eolian_Typedecl *tp);
  */
 EAPI const Eolian_Type *eolian_type_base_type_get(const Eolian_Type *tp);
 EAPI const Eolian_Type *eolian_typedecl_base_type_get(const Eolian_Typedecl *tp);
+EAPI const Eolian_Typedecl *eolian_type_typedecl_get(const Eolian_Type *tp);
 
 /*
  * @brief Get the lowest base type of an alias stack.
@@ -2049,7 +2050,7 @@ EAPI const Eolian_Class *eolian_declaration_class_get(const Eolian_Declaration *
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Type *eolian_declaration_data_type_get(const Eolian_Declaration *decl);
+EAPI const Eolian_Typedecl *eolian_declaration_data_type_get(const Eolian_Declaration *decl);
 
 /*
  * @brief Get the variable of a variable (constant, global) declaration.

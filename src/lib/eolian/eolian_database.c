@@ -165,14 +165,14 @@ eolian_declaration_class_get(const Eolian_Declaration *decl)
    return (const Eolian_Class *)decl->data;
 }
 
-EAPI const Eolian_Type *
+EAPI const Eolian_Typedecl *
 eolian_declaration_data_type_get(const Eolian_Declaration *decl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(decl, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(decl->type == EOLIAN_DECL_ALIAS ||
                                    decl->type == EOLIAN_DECL_STRUCT ||
                                    decl->type == EOLIAN_DECL_ENUM, NULL);
-   return (const Eolian_Type *)decl->data;
+   return (const Eolian_Typedecl *)decl->data;
 }
 
 

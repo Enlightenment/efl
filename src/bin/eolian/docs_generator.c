@@ -42,10 +42,10 @@ _generate_ref(const char *refn, Eina_Strbuf *wbuf, Eina_Bool use_legacy)
 
    Eina_Stringshare *bname = eina_stringshare_add_length(refn, sfx - refn);
 
-   const Eolian_Type *tp = eolian_type_struct_get_by_name(bname);
+   const Eolian_Typedecl *tp = eolian_typedecl_struct_get_by_name(bname);
    if (tp)
      {
-        if (!eolian_type_struct_field_get(tp, sfx + 1))
+        if (!eolian_typedecl_struct_field_get(tp, sfx + 1))
           {
              eina_stringshare_del(bname);
              goto noref;
@@ -56,17 +56,17 @@ _generate_ref(const char *refn, Eina_Strbuf *wbuf, Eina_Bool use_legacy)
         return;
      }
 
-   tp = eolian_type_enum_get_by_name(bname);
+   tp = eolian_typedecl_enum_get_by_name(bname);
    if (tp)
      {
-        const Eolian_Enum_Type_Field *efl = eolian_type_enum_field_get(tp, sfx + 1);
+        const Eolian_Enum_Type_Field *efl = eolian_typedecl_enum_field_get(tp, sfx + 1);
         if (!efl)
           {
              eina_stringshare_del(bname);
              goto noref;
           }
         _generate_ref(bname, wbuf, use_legacy);
-        Eina_Stringshare *str = eolian_type_enum_field_c_name_get(efl);
+        Eina_Stringshare *str = eolian_typedecl_enum_field_c_name_get(efl);
         eina_strbuf_append_char(wbuf, '.');
         eina_strbuf_append(wbuf, str);
         eina_stringshare_del(str);
