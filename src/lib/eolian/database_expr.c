@@ -527,7 +527,7 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
                   }
 
                 fl = eolian_typedecl_enum_field_get(etpd, memb);
-                if (fl) exp = eolian_type_enum_field_value_get(fl, EINA_TRUE);
+                if (fl) exp = eolian_typedecl_enum_field_value_get(fl, EINA_TRUE);
                 free(fulln);
 
                 if (!exp)

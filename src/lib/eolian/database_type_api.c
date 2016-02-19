@@ -98,34 +98,12 @@ eolian_type_subtypes_get(const Eolian_Type *tp)
 }
 
 EAPI Eina_Iterator *
-eolian_type_struct_fields_get(const Eolian_Type *tp)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   if (tp->type != EOLIAN_TYPE_STRUCT)
-     return NULL;
-   return eina_list_iterator_new(tp->field_list);
-}
-
-EAPI Eina_Iterator *
 eolian_typedecl_struct_fields_get(const Eolian_Typedecl *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    if (tp->type != EOLIAN_TYPEDECL_STRUCT)
      return NULL;
    return eina_list_iterator_new(tp->field_list);
-}
-
-EAPI const Eolian_Struct_Type_Field *
-eolian_type_struct_field_get(const Eolian_Type *tp, const char *field)
-{
-   Eolian_Struct_Type_Field *sf = NULL;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
-   if (tp->type != EOLIAN_TYPE_STRUCT)
-     return NULL;
-   sf = eina_hash_find(tp->fields, field);
-   if (!sf) return NULL;
-   return sf;
 }
 
 EAPI const Eolian_Struct_Type_Field *
@@ -142,33 +120,24 @@ eolian_typedecl_struct_field_get(const Eolian_Typedecl *tp, const char *field)
 }
 
 EAPI Eina_Stringshare *
-eolian_type_struct_field_name_get(const Eolian_Struct_Type_Field *fl)
+eolian_typedecl_struct_field_name_get(const Eolian_Struct_Type_Field *fl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
    return fl->name;
 }
 
 EAPI const Eolian_Documentation *
-eolian_type_struct_field_documentation_get(const Eolian_Struct_Type_Field *fl)
+eolian_typedecl_struct_field_documentation_get(const Eolian_Struct_Type_Field *fl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
    return fl->doc;
 }
 
 EAPI const Eolian_Type *
-eolian_type_struct_field_type_get(const Eolian_Struct_Type_Field *fl)
+eolian_typedecl_struct_field_type_get(const Eolian_Struct_Type_Field *fl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
    return fl->type;
-}
-
-EAPI Eina_Iterator *
-eolian_type_enum_fields_get(const Eolian_Type *tp)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   if (tp->type != EOLIAN_TYPE_ENUM)
-     return NULL;
-   return eina_list_iterator_new(tp->field_list);
 }
 
 EAPI Eina_Iterator *
@@ -178,19 +147,6 @@ eolian_typedecl_enum_fields_get(const Eolian_Typedecl *tp)
    if (tp->type != EOLIAN_TYPEDECL_ENUM)
      return NULL;
    return eina_list_iterator_new(tp->field_list);
-}
-
-EAPI const Eolian_Enum_Type_Field *
-eolian_type_enum_field_get(const Eolian_Type *tp, const char *field)
-{
-   Eolian_Enum_Type_Field *ef = NULL;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
-   if (tp->type != EOLIAN_TYPE_ENUM)
-     return NULL;
-   ef = eina_hash_find(tp->fields, field);
-   if (!ef) return NULL;
-   return ef;
 }
 
 EAPI const Eolian_Enum_Type_Field *
@@ -207,14 +163,14 @@ eolian_typedecl_enum_field_get(const Eolian_Typedecl *tp, const char *field)
 }
 
 EAPI Eina_Stringshare *
-eolian_type_enum_field_name_get(const Eolian_Enum_Type_Field *fl)
+eolian_typedecl_enum_field_name_get(const Eolian_Enum_Type_Field *fl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
    return fl->name;
 }
 
 EAPI Eina_Stringshare *
-eolian_type_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl)
+eolian_typedecl_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl)
 {
    Eina_Stringshare *ret;
    Eina_Strbuf *buf;
@@ -237,14 +193,14 @@ eolian_type_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl)
 }
 
 EAPI const Eolian_Documentation *
-eolian_type_enum_field_documentation_get(const Eolian_Enum_Type_Field *fl)
+eolian_typedecl_enum_field_documentation_get(const Eolian_Enum_Type_Field *fl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
    return fl->doc;
 }
 
 EAPI const Eolian_Expression *
-eolian_type_enum_field_value_get(const Eolian_Enum_Type_Field *fl, Eina_Bool force)
+eolian_typedecl_enum_field_value_get(const Eolian_Enum_Type_Field *fl, Eina_Bool force)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
    if (!force && !fl->is_public_value) return NULL;
