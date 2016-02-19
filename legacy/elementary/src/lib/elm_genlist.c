@@ -1506,7 +1506,6 @@ static void
 _item_cache_free(Item_Cache *itc)
 {
    Evas_Object *c;
-   const char *part;
 
    if (!itc) return;
 
