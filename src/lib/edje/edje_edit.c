@@ -8761,7 +8761,10 @@ edje_edit_state_tween_insert_at(Evas_Object *obj, const char *part, const char *
    img = (Edje_Part_Description_Image *)pd;
 
    if ((unsigned)place > img->image.tweens_count)
-     return EINA_FALSE;
+     {
+        free(i);
+        return EINA_FALSE;
+     }
 
    /* add to tween list */
    tmp = realloc(img->image.tweens,
