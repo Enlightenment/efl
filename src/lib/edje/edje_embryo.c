@@ -849,8 +849,22 @@ _edje_embryo_fn_stop_programs_on(Embryo_Program *ep, Embryo_Cell *params)
    rp = ed->table_parts[part_id % ed->table_parts_size];
    if (rp)
      {
+        Eina_List *l, *ll, *lll;
+        Edje_Pending_Program *pp;
+        Edje_Program_Target *pt;
         /* there is only ever 1 program acting on a part at any time */
         if (rp->program) _edje_program_end(ed, rp->program);
+        EINA_LIST_FOREACH_SAFE(ed->pending_actions, l, ll, pp)
+          {
+             EINA_LIST_FOREACH(pp->program->targets, lll, pt)
+               if (pt->id == part_id)
+                 {
+                    ed->pending_actions = eina_list_remove_list(ed->pending_actions, l);
+                    ecore_timer_del(pp->timer);
+                    free(pp);
+                    break;
+                 }
+          }
      }
    return 0;
 }
