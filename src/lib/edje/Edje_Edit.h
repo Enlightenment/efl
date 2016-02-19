@@ -6055,6 +6055,8 @@ EAPI Eina_Bool edje_edit_program_after_add(Evas_Object *obj, const char *prog, c
  * @param place Specific place for after to be inserted into. Note that if place is greater than total number of afters then it would append to the end of list
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
  */
 EAPI Eina_Bool
 edje_edit_program_after_insert_at(Evas_Object *obj, const char *prog, const char *after, int place);
