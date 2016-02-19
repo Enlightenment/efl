@@ -66,22 +66,67 @@ EO_CALLBACKS_ARRAY_DEFINE(_inc_dec_button_cb,
 static void _access_increment_decrement_info_say(Evas_Object *obj,
                                                  Eina_Bool is_incremented);
 
+typedef enum _Elm_Spinner_Format_Type
+{
+   SPINNER_FORMAT_FLOAT,
+   SPINNER_FORMAT_INT,
+   SPINNER_FORMAT_INVALID
+} Elm_Spinner_Format_Type;
+
 static Eina_Bool
+_is_valid_digit(char x)
+{
+   return ((x >= '0' && x <= '9') || (x == '.')) ? EINA_TRUE : EINA_FALSE;
+}
+
+static Elm_Spinner_Format_Type
 _is_label_format_integer(const char *fmt)
 {
-   const char *start = strchr(fmt, '%');
-   const char *itr;
+   const char *itr = NULL;
+   const char *start = NULL;
+   Eina_Bool found = EINA_FALSE;
+   Elm_Spinner_Format_Type ret_type = SPINNER_FORMAT_INVALID;
 
-   for (itr = start + 1; *itr != '\0'; itr++)
+   start = strchr(fmt, '%');
+   if (!start) return SPINNER_FORMAT_INVALID;
+
+   while (start)
      {
-        if ((*itr == 'd') || (*itr == 'u') || (*itr == 'i') ||
-            (*itr == 'o') || (*itr == 'x') || (*itr == 'X'))
-          return EINA_TRUE;
-        else if ((*itr == 'f') || (*itr == 'F'))
-          return EINA_FALSE;
+        if (found && start[1] != '%')
+          {
+             return SPINNER_FORMAT_INVALID;
+          }
+
+        if (start[1] != '%' && !found)
+          {
+             found = EINA_TRUE;
+             for (itr = start + 1; *itr != '\0'; itr++)
+               {
+                  if ((*itr == 'd') || (*itr == 'u') || (*itr == 'i') ||
+                      (*itr == 'o') || (*itr == 'x') || (*itr == 'X'))
+                    {
+                       ret_type = SPINNER_FORMAT_INT;
+                       break;
+                    }
+                  else if ((*itr == 'f') || (*itr == 'F'))
+                    {
+                       ret_type = SPINNER_FORMAT_FLOAT;
+                       break;
+                    }
+                  else if (_is_valid_digit(*itr))
+                    {
+                       continue;
+                    }
+                  else
+                    {
+                       return SPINNER_FORMAT_INVALID;
+                    }
+               }
+          }
+        start = strchr(start + 2, '%');
      }
 
-   return EINA_FALSE;
+   return ret_type;
 }
 
 static void
@@ -1382,16 +1427,22 @@ _elm_spinner_eo_base_constructor(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
 EOLIAN static void
 _elm_spinner_label_format_set(Eo *obj, Elm_Spinner_Data *sd, const char *fmt)
 {
-   if (fmt && !strchr(fmt, '%'))
+   Elm_Spinner_Format_Type type;
+   if (fmt)
      {
-        WRN("Warning: %s is an Illegal format, cannot be set", fmt);
-        return;
+        type = _is_label_format_integer(fmt);
+        if (type == SPINNER_FORMAT_INVALID)
+          {
+             ERR("format:\"%s\" is Invalid, cannot be set", fmt);
+             return;
+          }
+        else if (type == SPINNER_FORMAT_FLOAT)
+          {
+             sd->decimal_points = _decimal_points_get(fmt);
+          }
      }
 
    eina_stringshare_replace(&sd->label, fmt);
-
-   if (fmt && !(_is_label_format_integer(sd->label)))
-     sd->decimal_points = _decimal_points_get(sd->label);
 
    _label_write(obj);
    elm_layout_sizing_eval(obj);
