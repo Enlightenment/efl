@@ -5793,6 +5793,8 @@ _internal_elm_genlist_clear(Evas_Object *obj)
 
    evas_event_thaw(evas_object_evas_get(sd->obj));
    evas_event_thaw_eval(evas_object_evas_get(sd->obj));
+
+   _elm_widget_focus_highlight_start(obj);
 }
 
 /* Return EINA_TRUE if the item is deleted in this function */

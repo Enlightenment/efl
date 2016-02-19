@@ -4106,6 +4106,8 @@ _internal_elm_gengrid_clear(Evas_Object *obj,
    eo_do(obj, elm_interface_scrollable_content_region_show(0, 0, 0, 0));
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
+
+   _elm_widget_focus_highlight_start(obj);
 }
 
 static void
