@@ -27,20 +27,20 @@ _validate_ref(const Validator *vs EINA_UNUSED, const char *ref,
 
    Eina_Stringshare *base = eina_stringshare_add_length(ref, suffix - ref);
 
-   const Eolian_Type *tp = eolian_type_struct_get_by_name(base);
-   if (tp)
+   const Eolian_Typedecl *tpd = eolian_typedecl_struct_get_by_name(base);
+   if (tpd)
      {
         eina_stringshare_del(base);
-        if (!eolian_type_struct_field_get(tp, suffix + 1))
+        if (!eolian_typedecl_struct_field_get(tpd, suffix + 1))
           goto failed;
         return EINA_TRUE;
      }
 
-   tp = eolian_type_enum_get_by_name(base);
-   if (tp)
+   tpd = eolian_typedecl_enum_get_by_name(base);
+   if (tpd)
      {
         eina_stringshare_del(base);
-        if (!eolian_type_enum_field_get(tp, suffix + 1))
+        if (!eolian_typedecl_enum_field_get(tpd, suffix + 1))
           goto failed;
         return EINA_TRUE;
      }

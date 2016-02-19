@@ -1268,36 +1268,33 @@ EAPI Eina_Bool eolian_class_dtor_enable_get(const Eolian_Class *klass);
 EAPI Eina_Stringshare *eolian_class_c_get_function_name_get(const Eolian_Class *klass);
 
 /*
- * @brief Get an alias type by name. Supports namespaces.
+ * @brief Get an alias type declaration by name. Supports namespaces.
  *
  * @param[in] name the name of the alias
  * @return the alias type or NULL
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Type *eolian_type_alias_get_by_name(const char *name);
 EAPI const Eolian_Typedecl *eolian_typedecl_alias_get_by_name(const char *name);
 
 /*
- * @brief Get a struct by name. Supports namespaces.
+ * @brief Get a struct declaration by name. Supports namespaces.
  *
  * @param[in] name the name of the struct
  * @return the struct or NULL
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Type *eolian_type_struct_get_by_name(const char *name);
 EAPI const Eolian_Typedecl *eolian_typedecl_struct_get_by_name(const char *name);
 
 /*
- * @brief Get an enum by name. Supports namespaces.
+ * @brief Get an enum declaration by name. Supports namespaces.
  *
  * @param[in] name the name of the struct
  * @return the struct or NULL
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Type *eolian_type_enum_get_by_name(const char *name);
 EAPI const Eolian_Typedecl *eolian_typedecl_enum_get_by_name(const char *name);
 
 /*
@@ -1310,7 +1307,6 @@ EAPI const Eolian_Typedecl *eolian_typedecl_enum_get_by_name(const char *name);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_type_aliases_get_by_file(const char *fname);
 EAPI Eina_Iterator *eolian_typedecl_aliases_get_by_file(const char *fname);
 
 /*
@@ -1323,7 +1319,6 @@ EAPI Eina_Iterator *eolian_typedecl_aliases_get_by_file(const char *fname);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_type_structs_get_by_file(const char *fname);
 EAPI Eina_Iterator *eolian_typedecl_structs_get_by_file(const char *fname);
 
 /*
@@ -1336,7 +1331,6 @@ EAPI Eina_Iterator *eolian_typedecl_structs_get_by_file(const char *fname);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_type_enums_get_by_file(const char *fname);
 EAPI Eina_Iterator *eolian_typedecl_enums_get_by_file(const char *fname);
 
 /*
