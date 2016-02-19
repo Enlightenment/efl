@@ -5,19 +5,6 @@
  */
 
 /**
- * Modes of resetting a prefs widget.
- *
- * @see elm_prefs_reset()
- *
- * @since 1.8
- */
-typedef enum
-{
-   ELM_PREFS_RESET_DEFAULTS, /**< reset to default values, declared in its @b .epb file */
-   ELM_PREFS_RESET_LAST /**< prefs will keep a small history of changes, so this  resets back to last batch of changes on the UI elements. it does @b not work on autosave mode */
-} Elm_Prefs_Reset_Mode;
-
-/**
  * @brief Add a new prefs widget
  *
  * @param parent The parent widget to hold the new one

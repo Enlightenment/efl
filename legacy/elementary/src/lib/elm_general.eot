@@ -207,3 +207,33 @@ enum Elm.App.View_State
    shallow,
 }
 
+enum Elm.Prefs.Reset_Mode
+{
+   [[Modes of resetting a prefs widget.
+     see elm_prefs_reset()
+     @since 1.8]]
+   legacy: elm_prefs_reset;
+   defaults, [[reset to default values, declared in its <b>.epb</b> file]]
+   last [[prefs will keep a small history of changes, so this  resets back to last batch of changes on the UI elements. it does <b>not</b> work on autosave mode]]
+}
+
+enum Elm.Prefs.Item_Type
+{
+   [[Elm Prefs item types.
+     @since 1.8]]
+   legacy: elm_prefs_type;
+   unknown = 0,
+   action, [[action type, bound to button-like UI elements]]
+   bool, [[boolean type, bound to checkbox-like UI elements]]
+   int, [[integer type, bound to spinner-like UI elements]]
+   float, [[floating point type, bound to spinner-like UI elements]]
+   label, [[label type, bound to read-only, label UI elements]]
+   date, [[date type, bound to date selection UI elements]]
+   text, [[text type, bound to single-line, text entry UI elements]]
+   textarea, [[text area type, bound to multi-line, text entry UI elements]]
+   page, [[page type, used to nest pages]]
+   reset, [[values resetting trigger type, bound to button-like UI elements]]
+   save, [[saving trigger type, bound to button-like UI elements]]
+   separator, [[separator type, bound to separator-like UI elements]]
+   swallow [[swallow type, bound to an empty 'spot' on the UI meant to receive and display external content]]
+}
