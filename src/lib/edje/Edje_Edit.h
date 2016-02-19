@@ -5981,6 +5981,25 @@ EAPI Eina_List * edje_edit_program_targets_get(Evas_Object *obj, const char *pro
  */
 EAPI Eina_Bool edje_edit_program_target_add(Evas_Object *obj, const char *prog, const char *target);
 
+/** Add a new target program to certain place in list of 'targets' in the given program.
+ *
+ * If program action is @c EDJE_ACTION_TYPE_ACTION_STOP, then 'target'
+ * must be an existing program name. If it's @c
+ * EDJE_ACTION_TYPE_STATE_SET, then 'target' must be an existing part
+ * name.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program to add a new target.
+ * @param target The name of the new target itself.
+ * @param place Specific play for target to be inserted into.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_program_target_insert_at(Evas_Object *obj, const char *prog, const char *target, int place);
+
 /** Deletes a target from the list of 'targets' in the given program.
  *
  * If program action is EDJE_ACTION_TYPE_ACTION_STOP then 'target' must be an existing program name.

@@ -9789,18 +9789,14 @@ edje_edit_program_targets_clear(Evas_Object *obj, const char *prog)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-edje_edit_program_target_add(Evas_Object *obj, const char *prog, const char *target)
+static int
+_program_target_id_get(Evas_Object *obj, Edje *ed, Edje_Action_Type action, const char *target)
 {
-   int id;
-   Edje_Program_Target *t;
+   int id = -1;
    Edje_Program *tar;
    Edje_Real_Part *rp;
 
-   GET_ED_OR_RETURN(EINA_FALSE);
-   GET_EPR_OR_RETURN(EINA_FALSE);
-
-   switch (epr->action)
+   switch (action)
      {
       case EDJE_ACTION_TYPE_STATE_SET:
       case EDJE_ACTION_TYPE_SIGNAL_EMIT:
@@ -9816,20 +9812,35 @@ edje_edit_program_target_add(Evas_Object *obj, const char *prog, const char *tar
 #endif
         /* the target is a part */
         rp = _edje_real_part_get(ed, target);
-        if (!rp) return EINA_FALSE;
+        if (!rp) return -1;
         id = rp->part->id;
         break;
 
       case EDJE_ACTION_TYPE_ACTION_STOP:
         /* the target is a program */
         tar = _edje_program_get_byname(obj, target);
-        if (!tar) return EINA_FALSE;
+        if (!tar) return -1;
         id = tar->id;
         break;
 
       default:
-        return EINA_FALSE;
+        return -1;
      }
+
+   return id;
+}
+
+EAPI Eina_Bool
+edje_edit_program_target_add(Evas_Object *obj, const char *prog, const char *target)
+{
+   int id;
+   Edje_Program_Target *t;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+   GET_EPR_OR_RETURN(EINA_FALSE);
+
+   id = _program_target_id_get(obj, ed, epr->action, target);
+   if (id == -1) return EINA_FALSE;
 
    t = _alloc(sizeof(Edje_Program_Target));
    if (!t) return EINA_FALSE;
@@ -9841,47 +9852,46 @@ edje_edit_program_target_add(Evas_Object *obj, const char *prog, const char *tar
 }
 
 EAPI Eina_Bool
+edje_edit_program_target_insert_at(Evas_Object *obj, const char *prog, const char *target, int place)
+{
+   int id;
+   Edje_Program_Target *t;
+   Eina_List *l;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+   GET_EPR_OR_RETURN(EINA_FALSE);
+
+   id = _program_target_id_get(obj, ed, epr->action, target);
+   if (id == -1) return EINA_FALSE;
+
+   t = _alloc(sizeof(Edje_Program_Target));
+   if (!t) return EINA_FALSE;
+
+   t->id = id;
+   if ((unsigned)place >= eina_list_count(epr->targets))
+     epr->targets = eina_list_append(epr->targets, t);
+   else
+     {
+        l = eina_list_nth_list(epr->targets, place);
+        epr->targets = eina_list_prepend_relative_list(epr->targets, t, l);
+     }
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 edje_edit_program_target_del(Evas_Object *obj, const char *prog, const char *target)
 {
    int id;
    Eina_List *l;
-   Edje_Real_Part *rp;
-   Edje_Program *tar;
    Edje_Program_Target *t;
 
    GET_ED_OR_RETURN(EINA_FALSE);
    GET_EPR_OR_RETURN(EINA_FALSE);
 
-   switch (epr->action)
-     {
-      case EDJE_ACTION_TYPE_STATE_SET:
-      case EDJE_ACTION_TYPE_SIGNAL_EMIT:
-      case EDJE_ACTION_TYPE_DRAG_VAL_SET:
-      case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
-      case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
-      case EDJE_ACTION_TYPE_FOCUS_SET:
-      case EDJE_ACTION_TYPE_FOCUS_OBJECT:
-#ifdef HAVE_EPHYSICS
-      case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
-      case EDJE_ACTION_TYPE_PHYSICS_STOP:
-      case EDJE_ACTION_TYPE_PHYSICS_ROT_SET:
-#endif
-        /* the target is a part */
-        rp = _edje_real_part_get(ed, target);
-        if (!rp) return EINA_FALSE;
-        id = rp->part->id;
-        break;
+   id = _program_target_id_get(obj, ed, epr->action, target);
+   if (id == -1) return EINA_FALSE;
 
-      case EDJE_ACTION_TYPE_ACTION_STOP:
-        /* the target is a program */
-        tar = _edje_program_get_byname(obj, target);
-        if (!tar) return EINA_FALSE;
-        id = tar->id;
-        break;
-
-      default:
-        return EINA_FALSE;
-     }
    EINA_LIST_FOREACH(epr->targets, l, t)
      if (t->id == id)
        break;
