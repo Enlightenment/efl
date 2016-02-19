@@ -1313,7 +1313,7 @@ _elm_image_no_scale_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 }
 
 EOLIAN static void
-_elm_image_resizable_set(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, Eina_Bool up, Eina_Bool down)
+_elm_image_resizable_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool up, Eina_Bool down)
 {
    sd->resize_up = !!up;
    sd->resize_down = !!down;
