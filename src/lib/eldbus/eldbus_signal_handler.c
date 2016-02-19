@@ -79,6 +79,8 @@ eldbus_signal_handler_match_extra_vset(Eldbus_Signal_Handler *sh, va_list ap)
    dbus_error_init(&err);
    dbus_bus_remove_match(sh->conn->dbus_conn,
                          eina_strbuf_string_get(sh->match), &err);
+   if (dbus_error_is_set(&err))
+     ERR("handler(%p): %s - %s", sh, err.name, err.message);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(dbus_error_is_set(&err), EINA_FALSE);
 
    for (read = va_arg(ap, char *); read; read = va_arg(ap, char *))
@@ -114,6 +116,8 @@ eldbus_signal_handler_match_extra_vset(Eldbus_Signal_Handler *sh, va_list ap)
    dbus_error_init(&err);
    dbus_bus_add_match(sh->conn->dbus_conn,
                       eina_strbuf_string_get(sh->match), &err);
+   if (dbus_error_is_set(&err))
+     ERR("handler(%p): %s - %s", sh, err.name, err.message);
    if (!dbus_error_is_set(&err))
      return EINA_TRUE;
 
@@ -125,7 +129,7 @@ error:
    dbus_bus_add_match(sh->conn->dbus_conn,
                       eina_strbuf_string_get(sh->match), &err);
    if (dbus_error_is_set(&err))
-     ERR("Error setting partial extra arguments.");
+     ERR("handler(%p): %s - %s", sh, err.name, err.message);
    return EINA_FALSE;
 }
 
@@ -194,6 +198,8 @@ _eldbus_signal_handler_add(Eldbus_Connection *conn, const char *sender, const ch
 
    dbus_error_init(&err);
    dbus_bus_add_match(conn->dbus_conn, eina_strbuf_string_get(match), &err);
+   if (dbus_error_is_set(&err))
+     ERR("handler(%p): %s - %s", sh, err.name, err.message);
    if (dbus_error_is_set(&err)) goto cleanup;
 
    if (sender)
@@ -237,6 +243,8 @@ _eldbus_signal_handler_clean(Eldbus_Signal_Handler *handler)
    dbus_error_init(&err);
    dbus_bus_remove_match(handler->conn->dbus_conn,
                          eina_strbuf_string_get(handler->match), &err);
+   if (dbus_error_is_set(&err))
+     ERR("error removing handler(%p): %s - %s", handler, err.name, err.message);
    handler->dangling = EINA_TRUE;
 }
 
