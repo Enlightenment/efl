@@ -1578,9 +1578,11 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (edata->direct_resize) return ECORE_CALLBACK_PASS_ON;
 
+   printf("REQS OUTSTANDING: %i\n", edata->configure_reqs);
    if (edata->configure_reqs > 0) edata->configure_reqs--;
 
    edata->configure_coming = 0;
+   printf("CONFIG EV: %ix%i from wm: %i\n", e->w, e->h, (int)e->from_wm);
    if ((e->from_wm) || (ee->prop.override))
      {
         if ((ee->x != e->x) || (ee->y != e->y))
@@ -1631,6 +1633,7 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
              ee->expecting_resize.w = 0;
              ee->expecting_resize.h = 0;
           }
+        printf("  RESIZE CB: %ix%i\n", e->w, e->h);
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
 
         if (ee->prop.wm_rot.supported)
@@ -2033,9 +2036,15 @@ static void
 _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+   Eina_Bool changed = EINA_FALSE;
 
-   ee->req.x = x;
-   ee->req.y = y;
+   if ((ee->req.x != x) || (ee->req.y != y))
+     {
+        changed = EINA_TRUE;
+        ee->req.x = x;
+        ee->req.y = y;
+     }
+
    if (edata->direct_resize)
      {
         if (!edata->managed)
@@ -2044,7 +2053,7 @@ _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
                {
                   ee->x = x;
                   ee->y = y;
-                  edata->configure_reqs++;
+                  if (changed) edata->configure_reqs++;
                   ecore_x_window_move(ee->prop.window, x, y);
                   if (!ee->should_be_visible)
                     {
@@ -2067,7 +2076,7 @@ _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
                   ee->x = x;
                   ee->y = y;
                }
-             edata->configure_reqs++;
+             if (changed) edata->configure_reqs++;
              ecore_x_window_move(ee->prop.window, x, y);
           }
         if (!ee->should_be_visible)
@@ -2102,9 +2111,14 @@ static void
 _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+   Eina_Bool changed = EINA_FALSE;
 
-   ee->req.w = w;
-   ee->req.h = h;
+   if ((ee->req.w != w) || (ee->req.h != h))
+     {
+        changed = EINA_TRUE;
+        ee->req.w = w;
+        ee->req.h = h;
+     }
 
    /* check for valid property window
     * 
@@ -2126,7 +2140,7 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
           {
              ee->w = w;
              ee->h = h;
-             edata->configure_reqs++;
+             if (changed) edata->configure_reqs++;
              if (ee->prop.window) ecore_x_window_resize(ee->prop.window, w, h);
              if (ECORE_EVAS_PORTRAIT(ee))
                {
@@ -2154,7 +2168,7 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
    else
      {
         edata->configure_coming = 1;
-        edata->configure_reqs++;
+        if (changed) edata->configure_reqs++;
         if (ee->prop.window) ecore_x_window_resize(ee->prop.window, w, h);
      }
 }
@@ -2163,11 +2177,17 @@ static void
 _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 {
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+   Eina_Bool changed = EINA_FALSE;
 
-   ee->req.x = x;
-   ee->req.y = y;
-   ee->req.w = w;
-   ee->req.h = h;
+   if ((ee->req.x != x) || (ee->req.y != y) ||
+       (ee->req.w != w) || (ee->req.h != h))
+     {
+        changed = EINA_TRUE;
+        ee->req.x = x;
+        ee->req.y = y;
+        ee->req.w = w;
+        ee->req.h = h;
+     }
 
    if (edata->direct_resize)
      {
@@ -2180,7 +2200,7 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
                {
                   if ((x != ee->x) || (y != ee->y)) change_pos = 1;
                }
-             edata->configure_reqs++;
+             if (changed) edata->configure_reqs++;
              ecore_x_window_move_resize(ee->prop.window, x, y, w, h);
              if (!edata->managed)
                {
@@ -2224,7 +2244,7 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
         if ((ee->x != x) || (ee->y != y) || (edata->configure_coming))
           {
              edata->configure_coming = 1;
-             edata->configure_reqs++;
+             if (changed) edata->configure_reqs++;
              ecore_x_window_move_resize(ee->prop.window, x, y, w, h);
              if (!edata->managed)
                {
@@ -2235,7 +2255,7 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
         else
           {
              edata->configure_coming = 1;
-             edata->configure_reqs++;
+             if (changed) edata->configure_reqs++;
              if (ee->prop.window) ecore_x_window_resize(ee->prop.window, w, h);
           }
      }
