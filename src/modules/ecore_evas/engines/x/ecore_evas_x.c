@@ -1578,11 +1578,9 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (edata->direct_resize) return ECORE_CALLBACK_PASS_ON;
 
-   printf("REQS OUTSTANDING: %i\n", edata->configure_reqs);
    if (edata->configure_reqs > 0) edata->configure_reqs--;
 
    edata->configure_coming = 0;
-   printf("CONFIG EV: %ix%i from wm: %i\n", e->w, e->h, (int)e->from_wm);
    if ((e->from_wm) || (ee->prop.override))
      {
         if ((ee->x != e->x) || (ee->y != e->y))
@@ -1633,7 +1631,6 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
              ee->expecting_resize.w = 0;
              ee->expecting_resize.h = 0;
           }
-        printf("  RESIZE CB: %ix%i\n", e->w, e->h);
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
 
         if (ee->prop.wm_rot.supported)
