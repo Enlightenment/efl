@@ -819,7 +819,7 @@ _elm_win_resize_job(void *data)
    int w, h;
 
    sd->deferred_resize_job = EINA_FALSE;
-   ecore_evas_request_geometry_get(sd->ee, NULL, NULL, &w, &h);
+   ecore_evas_geometry_get(sd->ee, NULL, NULL, &w, &h);
    if (sd->constrain)
      {
         int sw, sh;
