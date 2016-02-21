@@ -1073,10 +1073,6 @@ _elm_code_widget_tab_at_cursor_insert(Elm_Code_Widget *widget)
         _elm_code_widget_text_at_cursor_insert(widget, " ", 1);
         rem++;
      }
-
-   change = _elm_code_widget_change_create_insert(col, row, (col - 1) % pd ->tabstop, row, "\t", 1);
-   _elm_code_widget_undo_change_add(widget, change);
-   _elm_code_widget_change_free(change);
 }
 
 void
