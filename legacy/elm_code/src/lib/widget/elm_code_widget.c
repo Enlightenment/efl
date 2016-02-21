@@ -34,7 +34,7 @@ Eina_Unicode status_icons[] = {
  0x2713,
  0x2717,
 
- 0x2610,
+ 0x2691,
 
  0
 };
@@ -1252,6 +1252,9 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
      _elm_code_widget_delete(widget);
    else if (!strcmp(ev->key, "Tab"))
      _elm_code_widget_tab_at_cursor_insert(widget);
+
+   else if (!strcmp(ev->key, "Escape"))
+     DBG("TODO - Escape not yet captured");
 
    else if (ev->string && strlen(ev->string) == 1)
      _elm_code_widget_text_at_cursor_insert(widget, ev->string, 1);
