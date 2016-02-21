@@ -3,14 +3,16 @@
 
 #include <check.h>
 
-#define ck_assert_strn_eq(str1, str2, len) \
+#define ck_assert_strn_eq(s1, s2, len) \
   { \
-     unsigned int i = 0; \
-     while (i < len) \
-       { \
-          ck_assert_int_eq(*(str1 + i), *(str2 + i)); \
-          i++; \
-       } \
+     char expected[len+1], actual[len+1]; \
+\
+     strncpy(expected, s1, len); \
+     expected[len] = '\0'; \
+     strncpy(actual, s2, len); \
+     actual[len] = '\0'; \
+\
+     ck_assert_str_eq(expected, actual); \
   }
 
 #include <Elm_Code.h>
