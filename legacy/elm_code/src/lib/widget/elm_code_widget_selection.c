@@ -163,10 +163,22 @@ _elm_code_widget_selection_delete_single(Elm_Code_Widget *widget, Elm_Code_Widge
    end = elm_code_widget_line_text_position_for_column_get(widget, line, selection->end_col);
    length = line->length - (end - start + 1);
 
-   content = malloc(sizeof(char) * length);
-   strncpy(content, old, start);
-   strncpy(content + start, old + end + 1,
-           old_length - (end + 1));
+   if (end == line->length)
+     {
+        length = line->length - (end - start);
+
+        content = malloc(sizeof(char) * length);
+        strncpy(content, old, start);
+     }
+   else
+     {
+        length = line->length - (end - start + 1);
+
+        content = malloc(sizeof(char) * length);
+        strncpy(content, old, start);
+        strncpy(content + start, old + end + 1,
+                old_length - (end + 1));
+      }
    elm_code_line_text_set(line, content, length);
    free(content);
    free(selection);
