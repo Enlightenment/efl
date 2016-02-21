@@ -35,7 +35,7 @@ typedef struct
 
 typedef struct
 {
-   const char *content;
+   char *content;
    unsigned int length;
    unsigned int start_line, start_col, end_line, end_col;
 
@@ -47,6 +47,10 @@ typedef struct
 void _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text, int length);
 
 void _elm_code_widget_newline(Elm_Code_Widget *widget);
+
+void _elm_code_widget_backspace(Elm_Code_Widget *widget);
+
+void _elm_code_widget_delete(Elm_Code_Widget *widget);
 
 void _elm_code_widget_tooltip_text_set(Evas_Object *widget, const char *text);
 

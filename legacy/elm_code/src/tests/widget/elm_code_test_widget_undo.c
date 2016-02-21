@@ -93,9 +93,55 @@ START_TEST (elm_code_test_widget_undo_newline)
 }
 END_TEST
 
+START_TEST (elm_code_test_widget_undo_delete)
+{
+   Elm_Code *code;
+   Elm_Code_File *file;
+   Elm_Code_Line *line;
+   Elm_Code_Widget *widget;
+   Evas_Object *win;
+   unsigned int length;
+   const char *content;
+
+   elm_init(1, NULL);
+   code = elm_code_create();
+   file = elm_code_file_new(code);
+   elm_code_file_line_append(file, "test", 4, NULL);
+
+   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   widget = elm_code_widget_add(win, code);
+
+   elm_code_widget_cursor_position_set(widget, 4, 1);
+   _elm_code_widget_backspace(widget);
+
+   line = elm_code_file_line_get(file, 1);
+   content = elm_code_line_text_get(line, &length);
+   ck_assert_strn_eq("tet", content, length);
+
+   elm_code_widget_undo(widget);
+   content = elm_code_line_text_get(line, &length);
+   ck_assert_strn_eq("test", content, length);
+
+   elm_code_widget_cursor_position_set(widget, 2, 1);
+   _elm_code_widget_delete(widget);
+
+   line = elm_code_file_line_get(file, 1);
+   content = elm_code_line_text_get(line, &length);
+   ck_assert_strn_eq("tst", content, length);
+
+   elm_code_widget_undo(widget);
+   content = elm_code_line_text_get(line, &length);
+   ck_assert_strn_eq("test", content, length);
+
+   elm_code_free(code);
+   elm_shutdown();
+}
+END_TEST
+
 void elm_code_test_widget_undo(TCase *tc)
 {
    tcase_add_test(tc, elm_code_test_widget_undo_text_insert);
    tcase_add_test(tc, elm_code_test_widget_undo_newline);
+   tcase_add_test(tc, elm_code_test_widget_undo_delete);
 }
 

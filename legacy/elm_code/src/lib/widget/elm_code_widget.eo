@@ -175,6 +175,15 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface_Atspi_Text)
       text_line_number_width_get {
          return: int; [[the column width required to represent the number of lines in the widget.]]
       }
+      text_between_positions_get {
+         params {
+            start_col: uint; [[the widget column of the first character to get]]
+            start_line: uint; [[the line of the first character to get]]
+            end_col: uint; [[the widget column of the last character to get]]
+            end_line: uint; [[the line of the last character to get]]
+         }
+         return: char *; [[the text content between start and end positions]]
+      }
 
       line_text_column_width_to_position {
          params {

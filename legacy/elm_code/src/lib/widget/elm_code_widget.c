@@ -988,14 +988,14 @@ _elm_code_widget_delete_selection(Elm_Code_Widget *widget)
 }
 
 static Elm_Code_Widget_Change_Info *
-_elm_code_widget_change_create_insert(unsigned int start_col, unsigned int start_line,
-                                      unsigned int end_col, unsigned int end_line,
-                                      const char *text, unsigned int length)
+_elm_code_widget_change_create(unsigned int start_col, unsigned int start_line,
+                               unsigned int end_col, unsigned int end_line,
+                               const char *text, unsigned int length, Eina_Bool insert)
 {
    Elm_Code_Widget_Change_Info *info;
 
    info = calloc(1, sizeof(*info));
-   info->insert = EINA_TRUE;
+   info->insert = insert;
 
    info->start_col = start_col;
    info->start_line = start_line;
@@ -1003,7 +1003,8 @@ _elm_code_widget_change_create_insert(unsigned int start_col, unsigned int start
    info->end_line = end_line;
 
    info->content = malloc((length + 1) * sizeof(char));
-   strncpy((char *)info->content, text, length + 1);
+   strncpy(info->content, text, length);
+   info->content[length] = '\0';
    info->length = length;
 
    return info;
@@ -1045,7 +1046,7 @@ _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text
          elm_obj_code_widget_cursor_position_set(col + col_width, row),
          eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
 
-   change = _elm_code_widget_change_create_insert(col, row, col + col_width - 1, row, text, length);
+   change = _elm_code_widget_change_create(col, row, col + col_width - 1, row, text, length, EINA_TRUE);
    _elm_code_widget_undo_change_add(widget, change);
    _elm_code_widget_change_free(change);
 }
@@ -1054,7 +1055,6 @@ static void
 _elm_code_widget_tab_at_cursor_insert(Elm_Code_Widget *widget)
 {
    Elm_Code_Widget_Data *pd;
-   Elm_Code_Widget_Change_Info *change;
    unsigned int col, row, rem;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
@@ -1113,7 +1113,7 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
          elm_obj_code_widget_cursor_position_set(indent, row + 1),
          eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
 
-   change = _elm_code_widget_change_create_insert(width + 1, row, indent - 1, row + 1, "\n", 1);
+   change = _elm_code_widget_change_create(width + 1, row, indent - 1, row + 1, "\n", 1, EINA_TRUE);
    _elm_code_widget_undo_change_add(widget, change);
    _elm_code_widget_change_free(change);
 }
@@ -1149,15 +1149,17 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
    eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
 }
 
-static void
+void
 _elm_code_widget_backspace(Elm_Code_Widget *widget)
 {
    Elm_Code *code;
    Elm_Code_Line *line;
+   Elm_Code_Widget_Change_Info *change;
    unsigned int row, col, position, start_col, char_width;
+   const char *text;
 
    if (_elm_code_widget_delete_selection(widget))
-     return;
+     return; // TODO fire the change and log it
 
    eo_do(widget,
          code = elm_obj_code_widget_code_get(),
@@ -1179,23 +1181,29 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
       elm_code_widget_line_text_position_for_column_get(widget, line, col - 1));
    char_width = position - elm_code_widget_line_text_position_for_column_get(widget, line, start_col);
 
+   text = elm_code_widget_text_between_positions_get(widget, start_col, row, start_col, row);
    elm_code_line_text_remove(line, position - char_width, char_width);
    eo_do(widget,
          elm_obj_code_widget_cursor_position_set(start_col, row));
 
-// TODO construct and pass a change object
    eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
+
+   change = _elm_code_widget_change_create(start_col, row, col, row, text, char_width, EINA_FALSE);
+   _elm_code_widget_undo_change_add(widget, change);
+   _elm_code_widget_change_free(change);
 }
 
-static void
+void
 _elm_code_widget_delete(Elm_Code_Widget *widget)
 {
    Elm_Code *code;
    Elm_Code_Line *line;
+   Elm_Code_Widget_Change_Info *change;
    unsigned int row, col, position, char_width, start_col;
+   const char *text;
 
    if (_elm_code_widget_delete_selection(widget))
-     return;
+     return; // TODO fire the change and log it
 
    eo_do(widget,
          code = elm_obj_code_widget_code_get(),
@@ -1214,11 +1222,15 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
    char_width = elm_code_widget_line_text_position_for_column_get(widget, line, col + 1) - position;
    start_col = elm_code_widget_line_text_column_width_to_position(widget, line, position);
 
+   text = elm_code_widget_text_between_positions_get(widget, start_col, row, start_col, row);
    elm_code_line_text_remove(line, position, char_width?char_width:1);
    eo_do(widget,
          elm_obj_code_widget_cursor_position_set(start_col, row),
-// TODO construct and pass a change object
          eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
+
+   change = _elm_code_widget_change_create(start_col, row, col, row, text, char_width, EINA_FALSE);
+   _elm_code_widget_undo_change_add(widget, change);
+   _elm_code_widget_change_free(change);
 }
 
 static void
