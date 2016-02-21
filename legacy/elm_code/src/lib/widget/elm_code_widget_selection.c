@@ -193,11 +193,20 @@ _elm_code_widget_selection_delete_multi(Elm_Code_Widget *widget, Elm_Code_Widget
    last = elm_code_line_text_get(line, &last_length);
    end = elm_code_widget_line_text_position_for_column_get(widget, line, selection->end_col);
 
-   length = start + last_length - (end + 1);
-   content = malloc(sizeof(char) * length);
-   strncpy(content, first, start);
-   strncpy(content + start, last + end + 1,
-           last_length - (end + 1));
+   if (last_length == end)
+     {
+        length = start + last_length - end;
+        content = malloc(sizeof(char) * length);
+        strncpy(content, first, start);
+     }
+   else
+     {
+        length = start + last_length - (end + 1);
+        content = malloc(sizeof(char) * length);
+        strncpy(content, first, start);
+
+        strncpy(content + start, last + end + 1, last_length - (end + 1));
+     }
 
    for (i = line->number; i > selection->start_line; i--)
      elm_code_file_line_remove(pd->code->file, i);
