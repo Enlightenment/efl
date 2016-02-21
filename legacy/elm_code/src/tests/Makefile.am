@@ -15,6 +15,7 @@ elm_code_test_text.c \
 widget/elm_code_test_widget.c \
 widget/elm_code_test_widget_text.c \
 widget/elm_code_test_widget_selection.c \
+widget/elm_code_test_widget_undo.c \
 elm_code_suite.c
 
 elm_code_suite_CPPFLAGS = \

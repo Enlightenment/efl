@@ -21,6 +21,7 @@ static const struct {
   { "widget", elm_code_test_widget },
   { "widget_text", elm_code_test_widget_text },
   { "widget_selection", elm_code_test_widget_selection },
+  { "widget_undo", elm_code_test_widget_undo },
 };
 
 START_TEST(elm_code_initialization)

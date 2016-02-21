@@ -26,5 +26,6 @@ void elm_code_test_text(TCase *tc);
 void elm_code_test_widget(TCase *tc);
 void elm_code_test_widget_text(TCase *tc);
 void elm_code_test_widget_selection(TCase *tc);
+void elm_code_test_widget_undo(TCase *tc);
 
 #endif /* _EDLM_CODE_SUITE_H */

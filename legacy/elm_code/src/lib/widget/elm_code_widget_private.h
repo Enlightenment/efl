@@ -27,14 +27,33 @@ typedef struct
 
    Elm_Code_Widget_Selection_Data *selection;
    Evas_Object *tooltip;
+
+   /* Undo stack */
+   Eina_List *undo_stack;
+   Eina_List *undo_stack_ptr;
 } Elm_Code_Widget_Data;
 
+typedef struct
+{
+   const char *content;
+   unsigned int length;
+   unsigned int start_line, start_col, end_line, end_col;
+
+   Eina_Bool insert : 1; /**< True if the change is an insertion */
+} Elm_Code_Widget_Change_Info;
+
 /* Private widget methods */
+
+void _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text, int length);
+
+void _elm_code_widget_newline(Elm_Code_Widget *widget);
 
 void _elm_code_widget_tooltip_text_set(Evas_Object *widget, const char *text);
 
 void _elm_code_widget_tooltip_add(Evas_Object *widget);
 
 EAPI Elm_Code_Widget_Selection_Data *elm_code_widget_selection_normalized_get(Evas_Object *widget);
+
+void _elm_code_widget_undo_change_add(Evas_Object *widget, Elm_Code_Widget_Change_Info *info);
 
 #endif

@@ -202,6 +202,8 @@ class Elm.Code_Widget (Elm.Layout, Elm.Interface_Atspi_Text)
          }
          return: uint;
       }
+      undo {
+      }
    }
    implements {
       class.constructor;
