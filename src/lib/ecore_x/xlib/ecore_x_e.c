@@ -1103,6 +1103,9 @@ ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window root,
    XEvent xev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
 
@@ -1132,6 +1135,9 @@ ecore_x_e_comp_sync_draw_size_done_send(Ecore_X_Window root,
    XEvent xev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
 
@@ -1300,6 +1306,8 @@ ecore_x_e_window_profile_supported_set(Ecore_X_Window root,
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
 
@@ -1337,6 +1345,8 @@ ecore_x_e_window_profile_supported_get(Ecore_X_Window root)
    int ret;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
 
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
@@ -1451,6 +1461,9 @@ ecore_x_e_window_profile_change_send(Ecore_X_Window  root,
    Ecore_X_Atom atom;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
 
@@ -1484,6 +1497,9 @@ ecore_x_e_window_profile_change_request_send(Ecore_X_Window win,
    Ecore_X_Atom atom;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    if (!win)
      return;
 
@@ -1514,6 +1530,9 @@ ecore_x_e_window_profile_change_done_send(Ecore_X_Window root,
    Ecore_X_Atom atom;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
 
@@ -1541,6 +1560,8 @@ ecore_x_e_comp_sync_supported_set(Ecore_X_Window root,
                                   Eina_Bool enabled)
 {
    Ecore_X_Window win;
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
@@ -1580,6 +1601,9 @@ ecore_x_e_comp_sync_supported_get(Ecore_X_Window root)
    int ret;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
+
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
 
@@ -1608,6 +1632,9 @@ ecore_x_e_comp_sync_begin_send(Ecore_X_Window win)
    XEvent xev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    xev.xclient.type = ClientMessage;
    xev.xclient.display = _ecore_x_disp;
    xev.xclient.window = win;
@@ -1631,6 +1658,9 @@ ecore_x_e_comp_sync_end_send(Ecore_X_Window win)
    XEvent xev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    xev.xclient.type = ClientMessage;
    xev.xclient.display = _ecore_x_disp;
    xev.xclient.window = win;
@@ -1654,6 +1684,9 @@ ecore_x_e_comp_sync_cancel_send(Ecore_X_Window win)
    XEvent xev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    xev.xclient.type = ClientMessage;
    xev.xclient.display = _ecore_x_disp;
    xev.xclient.window = win;
@@ -1677,6 +1710,9 @@ ecore_x_e_comp_flush_send(Ecore_X_Window win)
    XEvent xev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    xev.xclient.type = ClientMessage;
    xev.xclient.display = _ecore_x_disp;
    xev.xclient.window = win;
@@ -1700,6 +1736,9 @@ ecore_x_e_comp_dump_send(Ecore_X_Window win)
    XEvent xev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    xev.xclient.type = ClientMessage;
    xev.xclient.display = _ecore_x_disp;
    xev.xclient.window = win;
@@ -2034,10 +2073,13 @@ ecore_x_e_window_rotation_supported_set(Ecore_X_Window root,
 {
    Ecore_X_Window win;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (enabled)
      {
         win = ecore_x_window_new(root, 1, 2, 3, 4);
@@ -2072,6 +2114,9 @@ ecore_x_e_window_rotation_supported_get(Ecore_X_Window root)
    int ret;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
+
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
 
@@ -2247,6 +2292,9 @@ ecore_x_e_window_rotation_change_prepare_done_send(Ecore_X_Window root,
    XEvent xev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
 
@@ -2287,6 +2335,9 @@ ecore_x_e_window_rotation_change_done_send(Ecore_X_Window root,
    XEvent xev;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    if (!root)
      root = DefaultRootWindow(_ecore_x_disp);
 
@@ -2319,6 +2370,8 @@ ecore_x_e_keyrouter_set(Ecore_X_Window win EINA_UNUSED,
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    root = DefaultRootWindow(_ecore_x_disp);
 
    val = (on) ? 1 : 0;
@@ -2335,6 +2388,9 @@ ecore_x_e_keyrouter_get(Ecore_X_Window win EINA_UNUSED)
    Ecore_X_Window root;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
+
    root = DefaultRootWindow(_ecore_x_disp);
 
    ret = ecore_x_window_prop_card32_get(root, ECORE_X_ATOM_E_KEYROUTER_SUPPORTED,
