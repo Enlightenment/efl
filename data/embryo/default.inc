@@ -231,3 +231,10 @@ native Float:cbrt(Float:value);
 native Float:exp(Float:value);
 native Float:exp2(Float:value);
 native Float:hypot(Float:valuex, Float:valuey);
+
+/**************************************************************************/
+/* ADDED in embryo 1.18                                                    */
+/**************************************************************************/
+#define EMBRYO_118 118
+/* return the current date, year, time etc. in the variables provided modified by timezone tz */
+native       tzdate(tz[], &year, &month, &day, &yearday, &weekday, &hr, &min, &Float:sec);
