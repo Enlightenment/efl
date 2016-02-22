@@ -783,7 +783,6 @@ _device_handle_touch_motion_send(Ecore_Drm_Evdev *edev, struct libinput_event_to
 
    _device_modifiers_update(edev);
    ev->modifiers = edev->xkb.modifiers;
-   ev->modifiers = 0;
 
    ev->x = edev->seat->ptr.ix;
    ev->y = edev->seat->ptr.iy;
