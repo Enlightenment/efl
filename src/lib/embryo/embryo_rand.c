@@ -33,6 +33,7 @@ _embryo_rand_randf(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params EINA_UNUS
 void
 _embryo_rand_init(Embryo_Program *ep)
 {
-   embryo_program_native_call_add(ep, "rand",  _embryo_rand_rand);
+   embryo_program_native_call_add(ep, "rand", _embryo_rand_rand);
    embryo_program_native_call_add(ep, "randf", _embryo_rand_randf);
 }
+

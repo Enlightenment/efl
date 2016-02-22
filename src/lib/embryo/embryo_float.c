@@ -36,7 +36,6 @@
  *             Carsten Haitzler, <raster@rasterman.com>
  */
 
-
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -49,7 +48,7 @@
 #include "Embryo.h"
 #include "embryo_private.h"
 
-#define PI  3.1415926535897932384626433832795f
+#define PI       3.1415926535897932384626433832795f
 #ifndef MAXFLOAT
 #define MAXFLOAT 3.40282347e+38f
 #endif
@@ -62,11 +61,13 @@ _embryo_fp_degrees_to_radians(float angle, int radix)
    switch (radix)
      {
       case 1: /* degrees, sexagesimal system (technically: degrees/minutes/seconds) */
-	return (angle * PI / 180.0f);
+        return angle * PI / 180.0f;
+
       case 2: /* grades, centesimal system */
-	return (angle * PI / 200.0f);
+        return angle * PI / 200.0f;
+
       default: /* assume already radian */
-	break;
+        break;
      }
    return angle;
 }
@@ -187,20 +188,23 @@ _embryo_fp_round(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
    switch (params[2])
      {
       case 1: /* round downwards (truncate) */
-	f = (floorf(f));
-	break;
+        f = (floorf(f));
+        break;
+
       case 2: /* round upwards */
-	f = (ceilf(f));
-	break;
+        f = (ceilf(f));
+        break;
+
       case 3: /* round towards zero */
-	if (f >= 0.0) f = (floorf(f));
-	else          f = (ceilf(f));
-	break;
+        if (f >= 0.0) f = (floorf(f));
+        else f = (ceilf(f));
+        break;
+
       default: /* standard, round to nearest */
-	f = (floorf(f + 0.5));
-	break;
+        f = (floorf(f + 0.5));
+        break;
      }
-    return (Embryo_Cell)f;
+   return (Embryo_Cell)f;
 }
 
 static Embryo_Cell
@@ -214,7 +218,8 @@ _embryo_fp_cmp(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
    f = EMBRYO_CELL_TO_FLOAT(params[1]);
    ff = EMBRYO_CELL_TO_FLOAT(params[2]);
    if (f == ff) return 0;
-   else if (f > ff) return 1;
+   else if (f > ff)
+     return 1;
    return -1;
 }
 
@@ -229,8 +234,8 @@ _embryo_fp_sqroot(Embryo_Program *ep, Embryo_Cell *params)
    f = sqrtf(f);
    if (f < 0)
      {
-	embryo_program_error_set(ep, EMBRYO_ERROR_DOMAIN);
-	return 0;
+        embryo_program_error_set(ep, EMBRYO_ERROR_DOMAIN);
+        return 0;
      }
    return EMBRYO_FLOAT_TO_CELL(f);
 }
@@ -261,18 +266,19 @@ _embryo_fp_log(Embryo_Program *ep, Embryo_Cell *params)
    ff = EMBRYO_CELL_TO_FLOAT(params[2]);
    if ((f <= 0.0) || (ff <= 0.0))
      {
-	embryo_program_error_set(ep, EMBRYO_ERROR_DOMAIN);
-	return 0;
+        embryo_program_error_set(ep, EMBRYO_ERROR_DOMAIN);
+        return 0;
      }
-    if (ff == 10.0) f = log10f(f);
-    else if (ff == 2.0) f = log2f(f);
-    else
+   if (ff == 10.0) f = log10f(f);
+   else if (ff == 2.0)
+     f = log2f(f);
+   else
      {
         tf = logf(ff);
         if (tf == 0.0) f = 0.0;
         else f = (logf(f) / tf);
      }
-    return EMBRYO_FLOAT_TO_CELL(f);
+   return EMBRYO_FLOAT_TO_CELL(f);
 }
 
 static Embryo_Cell
@@ -453,30 +459,31 @@ _embryo_fp_hypot(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 void
 _embryo_fp_init(Embryo_Program *ep)
 {
-   embryo_program_native_call_add(ep, "float",     _embryo_fp);
-   embryo_program_native_call_add(ep, "atof",      _embryo_fp_str);
+   embryo_program_native_call_add(ep, "float", _embryo_fp);
+   embryo_program_native_call_add(ep, "atof", _embryo_fp_str);
    embryo_program_native_call_add(ep, "float_mul", _embryo_fp_mul);
    embryo_program_native_call_add(ep, "float_div", _embryo_fp_div);
    embryo_program_native_call_add(ep, "float_add", _embryo_fp_add);
    embryo_program_native_call_add(ep, "float_sub", _embryo_fp_sub);
-   embryo_program_native_call_add(ep, "fract",     _embryo_fp_fract);
-   embryo_program_native_call_add(ep, "round",     _embryo_fp_round);
+   embryo_program_native_call_add(ep, "fract", _embryo_fp_fract);
+   embryo_program_native_call_add(ep, "round", _embryo_fp_round);
    embryo_program_native_call_add(ep, "float_cmp", _embryo_fp_cmp);
-   embryo_program_native_call_add(ep, "sqrt",      _embryo_fp_sqroot);
-   embryo_program_native_call_add(ep, "pow",       _embryo_fp_power);
-   embryo_program_native_call_add(ep, "log",       _embryo_fp_log);
-   embryo_program_native_call_add(ep, "sin",       _embryo_fp_sin);
-   embryo_program_native_call_add(ep, "cos",       _embryo_fp_cos);
-   embryo_program_native_call_add(ep, "tan",       _embryo_fp_tan);
-   embryo_program_native_call_add(ep, "abs",       _embryo_fp_abs);
+   embryo_program_native_call_add(ep, "sqrt", _embryo_fp_sqroot);
+   embryo_program_native_call_add(ep, "pow", _embryo_fp_power);
+   embryo_program_native_call_add(ep, "log", _embryo_fp_log);
+   embryo_program_native_call_add(ep, "sin", _embryo_fp_sin);
+   embryo_program_native_call_add(ep, "cos", _embryo_fp_cos);
+   embryo_program_native_call_add(ep, "tan", _embryo_fp_tan);
+   embryo_program_native_call_add(ep, "abs", _embryo_fp_abs);
    /* Added in embryo 1.2 */
-   embryo_program_native_call_add(ep, "asin",      _embryo_fp_asin);
-   embryo_program_native_call_add(ep, "acos",      _embryo_fp_acos);
-   embryo_program_native_call_add(ep, "atan",      _embryo_fp_atan);
-   embryo_program_native_call_add(ep, "atan2",     _embryo_fp_atan2);
-   embryo_program_native_call_add(ep, "log1p",     _embryo_fp_log1p);
-   embryo_program_native_call_add(ep, "cbrt",      _embryo_fp_cbrt);
-   embryo_program_native_call_add(ep, "exp",       _embryo_fp_exp);
-   embryo_program_native_call_add(ep, "exp2",      _embryo_fp_exp2);
-   embryo_program_native_call_add(ep, "hypot",     _embryo_fp_hypot);
+   embryo_program_native_call_add(ep, "asin", _embryo_fp_asin);
+   embryo_program_native_call_add(ep, "acos", _embryo_fp_acos);
+   embryo_program_native_call_add(ep, "atan", _embryo_fp_atan);
+   embryo_program_native_call_add(ep, "atan2", _embryo_fp_atan2);
+   embryo_program_native_call_add(ep, "log1p", _embryo_fp_log1p);
+   embryo_program_native_call_add(ep, "cbrt", _embryo_fp_cbrt);
+   embryo_program_native_call_add(ep, "exp", _embryo_fp_exp);
+   embryo_program_native_call_add(ep, "exp2", _embryo_fp_exp2);
+   embryo_program_native_call_add(ep, "hypot", _embryo_fp_hypot);
 }
+
