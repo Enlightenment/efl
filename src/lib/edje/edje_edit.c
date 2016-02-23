@@ -7374,6 +7374,142 @@ edje_edit_state_map_on_set(Evas_Object *obj, const char *part, const char *state
 }
 
 /*********************/
+/*  SIZE CLASSES API */
+/*********************/
+
+EAPI Eina_List *
+edje_edit_size_classes_list_get(Evas_Object *obj)
+{
+   Eina_List *classes = NULL;
+   Eina_List *l;
+   Edje_Size_Class *sc;
+
+   GET_ED_OR_RETURN(NULL);
+
+   if (!ed->file || !ed->file->size_classes)
+     return NULL;
+   EINA_LIST_FOREACH(ed->file->size_classes, l, sc)
+     classes = eina_list_append(classes, eina_stringshare_add(sc->name));
+
+   return classes;
+}
+
+EAPI Eina_Bool
+edje_edit_size_class_add(Evas_Object *obj, const char *name)
+{
+   Eina_List *l;
+   Edje_Size_Class *sc, *s;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!name || !ed->file)
+     return EINA_FALSE;
+
+   EINA_LIST_FOREACH(ed->file->size_classes, l, sc)
+     if (strcmp(sc->name, name) == 0)
+       return EINA_FALSE;
+
+   s = _alloc(sizeof(Edje_Size_Class));
+   if (!s) return EINA_FALSE;
+
+   s->name = eina_stringshare_add(name);
+   /* set default values for max */
+   s->maxh = -1;
+   s->maxh = -1;
+
+   ed->file->size_classes = eina_list_append(ed->file->size_classes, s);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_size_class_del(Evas_Object *obj, const char *name)
+{
+   Eina_List *l;
+   Edje_Size_Class *sc;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!name || !ed->file || !ed->file->size_classes)
+     return EINA_FALSE;
+
+   EINA_LIST_FOREACH(ed->file->size_classes, l, sc)
+     if (strcmp(sc->name, name) == 0)
+       {
+          _edje_if_string_free(ed, &sc->name);
+          ed->file->size_classes = eina_list_remove(ed->file->size_classes, sc);
+          free(sc);
+          return EINA_TRUE;
+       }
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+edje_edit_size_class_name_set(Evas_Object *obj, const char *name, const char *newname)
+{
+   Eina_List *l;
+   Edje_Size_Class *sc;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!ed->file || !ed->file->size_classes || !newname)
+     return EINA_FALSE;
+
+   EINA_LIST_FOREACH(ed->file->size_classes, l, sc)
+     if (!strcmp(sc->name, name))
+       {
+          _edje_if_string_replace(ed, &sc->name, newname);
+          return EINA_TRUE;
+       }
+
+   return EINA_FALSE;
+}
+#define FUNC_SIZE_CLASS(TYPE, VALUE, MIN)                                              \
+EAPI Evas_Coord                                                                        \
+edje_edit_size_class_##TYPE##_##VALUE##_get(Evas_Object *obj, const char *class_name)  \
+{                                                                                      \
+   Eina_List *l;                                                                       \
+   Edje_Size_Class *sc;                                                                \
+                                                                                       \
+   GET_ED_OR_RETURN(EINA_FALSE);                                                       \
+                                                                                       \
+   if (!ed->file || !ed->file->size_classes || !class_name)                            \
+     return EINA_FALSE;                                                                \
+                                                                                       \
+   EINA_LIST_FOREACH(ed->file->size_classes, l, sc)                                    \
+      if (!strcmp(sc->name, class_name))                                               \
+        return sc->TYPE##VALUE;                                                        \
+                                                                                       \
+   return 0;                                                                           \
+}                                                                                      \
+EAPI Eina_Bool                                                                         \
+edje_edit_size_class_##TYPE##_##VALUE##_set(Evas_Object *obj, const char *class_name, Evas_Coord size)\
+{                                                                                      \
+   Eina_List *l;                                                                       \
+   Edje_Size_Class *sc;                                                                \
+                                                                                       \
+   GET_ED_OR_RETURN(EINA_FALSE);                                                       \
+                                                                                       \
+   if (!ed->file || !ed->file->size_classes || !class_name)                            \
+     return EINA_FALSE;                                                                \
+   if (size < MIN)                                                                     \
+     return EINA_FALSE;                                                                \
+                                                                                       \
+   EINA_LIST_FOREACH(ed->file->size_classes, l, sc)                                    \
+     if (!strcmp(sc->name, class_name))                                                \
+       {                                                                               \
+          sc->TYPE##VALUE = size;                                                      \
+          return EINA_TRUE;                                                            \
+       }                                                                               \
+   return EINA_FALSE;                                                                  \
+}
+
+FUNC_SIZE_CLASS(min, w, 0)
+FUNC_SIZE_CLASS(min, h, 0)
+FUNC_SIZE_CLASS(max, w, -1)
+FUNC_SIZE_CLASS(max, h, -1)
+
+/*********************/
 /*  TEXT CLASSES API */
 /*********************/
 
