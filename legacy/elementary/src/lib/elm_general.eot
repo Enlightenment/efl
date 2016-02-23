@@ -237,3 +237,18 @@ enum Elm.Prefs.Item_Type
    separator, [[separator type, bound to separator-like UI elements]]
    swallow [[swallow type, bound to an empty 'spot' on the UI meant to receive and display external content]]
 }
+
+
+enum Elm.Slider.Indicator_Visible_Mode
+{
+   [[
+     Slider's indicator visiblity mode.
+     @since 1.13
+   ]]
+   default,   [[show indicator on mouse down or change in slider value]]
+   always,    [[Always show the indicator.]]
+   on_focus,  [[Show the indicator on focus]]
+   none       [[Never show the indicator ]]
+}
+
+

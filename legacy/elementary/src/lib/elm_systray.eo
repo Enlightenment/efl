@@ -1,3 +1,27 @@
+enum Elm.Systray.Category
+{
+   [[
+     Category of the Status Notifier Item.
+     @since 1.8
+   ]]
+   app_status, [[Indicators of application status]]
+   communications, [[Communications apps]]
+   sys_services, [[System Service apps]]
+   hardware, [[Hardware indicators]]
+   other [[undefined category]]
+}
+
+enum Elm.Systray.Status
+{
+   [[
+     Application status information.
+     @since 1.8
+   ]]
+   passive, [[Passive (normal)]]
+   active, [[Active]]
+   attention [[Needs Attention]]
+}
+
 class Elm.Systray (Eo.Base)
 {
    eo_prefix: elm_obj_systray;
@@ -22,7 +46,7 @@ class Elm.Systray (Eo.Base)
             [[Get the category of the Status Notifier Item.]]
          }
          values {
-            cat: Elm_Systray_Category; [[Category]]
+            cat: Elm.Systray.Category; [[Category]]
          }
       }
       @property icon_theme_path {
@@ -66,7 +90,7 @@ class Elm.Systray (Eo.Base)
             [[Get the status of the Status Notifier Item.]]
          }
          values {
-            st: Elm_Systray_Status; [[Status]]
+            st: Elm.Systray.Status; [[Status]]
          }
       }
       @property icon_name {

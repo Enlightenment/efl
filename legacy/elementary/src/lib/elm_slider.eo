@@ -236,7 +236,7 @@ class Elm.Slider (Elm.Layout, Elm.Interface_Atspi_Value,
             [[Get the visible mode of indicator.]]
          }
          values {
-            indicator_visible_mode: Elm_Slider_Indicator_Visible_Mode; [[The indicator visible mode.]]
+            indicator_visible_mode: Elm.Slider.Indicator_Visible_Mode; [[The indicator visible mode.]]
          }
       }
       @property indicator_format_function {
