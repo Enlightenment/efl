@@ -1169,11 +1169,12 @@ _elm_entry_elm_widget_on_focus(Eo *obj, Elm_Entry_Data *sd, Elm_Object_Item *ite
    Evas_Object *top;
    Eina_Bool top_is_win = EINA_FALSE;
 
+   if (!sd->editable) return EINA_FALSE;
+
    top = elm_widget_top_get(obj);
    if (top && eo_isa(top, ELM_WIN_CLASS))
      top_is_win = EINA_TRUE;
 
-   if (!sd->editable) return EINA_FALSE;
    if (elm_widget_focus_get(obj))
      {
         evas_object_focus_set(sd->entry_edje, EINA_TRUE);
