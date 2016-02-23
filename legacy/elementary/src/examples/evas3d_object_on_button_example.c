@@ -3,7 +3,7 @@
  * illustrates the work of callback of event from mouse.
  *
  * Compile with:
- * gcc -o button_on_3d_object_example button_on_3d_object_example.c -g `pkg-config --libs --cflags evas ecore eo elementary`
+ * gcc -o evas3d_object_on_button_example evas3d_object_on_button_example.c -g `pkg-config --libs --cflags evas ecore eo elementary`
  */
 
 
