@@ -26,7 +26,6 @@ _notify_theme_apply(Evas_Object *obj)
 
    ax = sd->horizontal_align;
    ay = sd->vertical_align;
-   if ((elm_widget_mirrored_get(obj)) && (ax != ELM_NOTIFY_ALIGN_FILL)) ax = 1.0 - ax;
 
    if (ay == 0.0)
      {
