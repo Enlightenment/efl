@@ -7373,6 +7373,175 @@ edje_edit_state_map_on_set(Evas_Object *obj, const char *part, const char *state
    return EINA_TRUE;
 }
 
+/*********************/
+/*  TEXT CLASSES API */
+/*********************/
+
+EAPI Eina_List *
+edje_edit_text_classes_list_get(Evas_Object *obj)
+{
+   Eina_List *classes = NULL;
+   Eina_List *l;
+   Edje_Text_Class *tc;
+
+   GET_ED_OR_RETURN(NULL);
+
+   if (!ed->file || !ed->file->text_classes)
+     return NULL;
+   EINA_LIST_FOREACH(ed->file->text_classes, l, tc)
+     classes = eina_list_append(classes, eina_stringshare_add(tc->name));
+
+   return classes;
+}
+
+EAPI Eina_Bool
+edje_edit_text_class_add(Evas_Object *obj, const char *name)
+{
+   Eina_List *l;
+   Edje_Text_Class *tc, *t;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!name || !ed->file)
+     return EINA_FALSE;
+
+   EINA_LIST_FOREACH(ed->file->text_classes, l, tc)
+     if (strcmp(tc->name, name) == 0)
+       return EINA_FALSE;
+
+   t = _alloc(sizeof(Edje_Text_Class));
+   if (!t) return EINA_FALSE;
+
+   t->name = eina_stringshare_add(name);
+
+   ed->file->text_classes = eina_list_append(ed->file->text_classes, t);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_text_class_del(Evas_Object *obj, const char *name)
+{
+   Eina_List *l;
+   Edje_Text_Class *tc;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!name || !ed->file || !ed->file->text_classes)
+     return EINA_FALSE;
+
+   EINA_LIST_FOREACH(ed->file->text_classes, l, tc)
+     if (strcmp(tc->name, name) == 0)
+       {
+          _edje_if_string_free(ed, &tc->name);
+          _edje_if_string_free(ed, &tc->font);
+          ed->file->text_classes = eina_list_remove(ed->file->text_classes, tc);
+          free(tc);
+          return EINA_TRUE;
+       }
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+edje_edit_text_class_name_set(Evas_Object *obj, const char *name, const char *newname)
+{
+   Eina_List *l;
+   Edje_Text_Class *tc;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!ed->file || !ed->file->text_classes)
+     return EINA_FALSE;
+
+   EINA_LIST_FOREACH(ed->file->text_classes, l, tc)
+     if (!strcmp(tc->name, name))
+       {
+          _edje_if_string_replace(ed, &tc->name, newname);
+          return EINA_TRUE;
+       }
+
+   return EINA_FALSE;
+}
+
+EAPI Eina_Stringshare *
+edje_edit_text_class_font_get(Evas_Object *obj, const char *class_name)
+{
+   Eina_List *l;
+   Edje_Text_Class *tc;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!ed->file || !ed->file->text_classes)
+     return EINA_FALSE;
+
+   EINA_LIST_FOREACH(ed->file->text_classes, l, tc)
+      if (!strcmp(tc->name, class_name))
+        return eina_stringshare_add(tc->font);
+
+   return NULL;
+}
+
+EAPI Eina_Bool
+edje_edit_text_class_font_set(Evas_Object *obj, const char *class_name, const char *font)
+{
+   Eina_List *l;
+   Edje_Text_Class *tc;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!ed->file || !ed->file->text_classes || !class_name)
+     return EINA_FALSE;
+
+   EINA_LIST_FOREACH(ed->file->text_classes, l, tc)
+     if (!strcmp(tc->name, class_name))
+       {
+          _edje_if_string_replace(ed, &tc->font, font);
+          return EINA_TRUE;
+       }
+   return EINA_FALSE;
+}
+
+EAPI Evas_Font_Size
+edje_edit_text_class_size_get(Evas_Object *obj, const char *class_name)
+{
+   Eina_List *l;
+   Edje_Text_Class *tc;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!ed->file || !ed->file->text_classes)
+     return EINA_FALSE;
+
+   EINA_LIST_FOREACH(ed->file->text_classes, l, tc)
+      if (!strcmp(tc->name, class_name))
+        return tc->size;
+
+   return 0;
+}
+
+EAPI Eina_Bool
+edje_edit_text_class_size_set(Evas_Object *obj, const char *class_name, Evas_Font_Size size)
+{
+   Eina_List *l;
+   Edje_Text_Class *tc;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   if (!ed->file || !ed->file->text_classes || !class_name)
+     return EINA_FALSE;
+   if (size < 0)
+     return EINA_FALSE;
+
+   EINA_LIST_FOREACH(ed->file->text_classes, l, tc)
+     if (!strcmp(tc->name, class_name))
+       {
+          tc->size = size;
+          return EINA_TRUE;
+       }
+   return EINA_FALSE;
+}
+
+
 /**************/
 /*  TEXT API */
 /**************/

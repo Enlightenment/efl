@@ -729,6 +729,120 @@ EAPI Eina_Bool edje_edit_group_data_name_set(Evas_Object *obj, const char *itemn
 
 
 //@}
+/*****************************************************************************/
+/***********************   TEXT CLASSES API   ********************************/
+/*****************************************************************************/
+/** @name Text Classes API
+ *  Functions to deal with Text Classes (see @ref edcref).
+ */ //@{
+
+/** Get the list of all the Text Classes in the given edje object.
+ *
+ * @param obj Object being edited.
+ *
+ * @return List of strings, each being one text class.
+ *         The return value should be freed with edje_edit_string_list_free().
+ *
+ * @see edje_edit_string_list_free()
+ *
+ * @since 1.18
+ */
+EAPI Eina_List *
+edje_edit_text_classes_list_get(Evas_Object *obj);
+
+/** Create a new text class object in the given edje.
+ *
+ * If class is already exist then nothing is created and EINA_FALSE returned.
+ *
+ * @param obj Object being edited.
+ * @param name Name for the new text class.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_text_class_add(Evas_Object *obj, const char *name);
+
+/** Delete text class object from edje.
+ *
+ * @param obj Object being edited.
+ * @param name Text class to delete.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_text_class_del(Evas_Object *obj, const char *name);
+
+/** Change name of a text class.
+ *
+ * @param obj Object being edited.
+ * @param name Text class to rename.
+ * @param newname New name for the text class.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_text_class_name_set(Evas_Object *obj, const char *name, const char *newname);
+
+/** Return font name of specified text class.
+ *
+ * @param obj Object being edited.
+ * @param class_name Text class to fetch values.
+ *
+ * @return font name in case of success, NULL otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Stringshare *
+edje_edit_text_class_font_get(Evas_Object *obj, const char *class_name);
+
+/** Set font for the given text class.
+ *
+ * NULL is possible value.
+ *
+ * @param obj Object being edited.
+ * @param class_name Text class to set values.
+ * @param font Name of font.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_text_class_font_set(Evas_Object *obj, const char *class_name, const char *font);
+
+/** Return font size of specified text class.
+ *
+ * @param obj Object being edited.
+ * @param class_name Text class to fetch values.
+ *
+ * @return @c Evas_Font_Size.
+ *
+ * @since 1.18
+ */
+EAPI Evas_Font_Size
+edje_edit_text_class_size_get(Evas_Object *obj, const char *class_name);
+
+/** Set font size for specified text class
+ *
+ * @param obj Object being edited.
+ * @param class_name Text class to set values.
+ * @param size Font size which is greater or equal than zero (0).
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_text_class_size_set(Evas_Object *obj, const char *class_name, Evas_Font_Size size);
+
+
+//@}
 /******************************************************************************/
 /***********************   COLOR CLASSES API   ********************************/
 /******************************************************************************/
