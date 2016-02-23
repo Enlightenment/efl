@@ -10817,6 +10817,25 @@ edje_edit_source_generate(Evas_Object *obj)
         BUF_APPEND(I0 "}\n\n");
      }
 
+   if (ed->file->text_classes)
+     {
+        BUF_APPEND(I0 "text_classes {\n");
+        Edje_Text_Class *tc;
+
+        EINA_LIST_FOREACH(ed->file->text_classes, l, tc)
+          {
+             BUF_APPENDF(I1 "text_class {\n");
+             BUF_APPENDF(I2 "name: \"%s\";\n", tc->name);
+             if (tc->font)
+               BUF_APPENDF(I2 "font: \"%s\";\n", tc->font);
+             if (tc->size > 0)
+               BUF_APPENDF(I2 "size: %d;\n", tc->size);
+             BUF_APPENDF(I1 "}\n");
+          }
+
+        BUF_APPEND(I0 "}\n\n");
+     }
+
    /* if images were found, print them */
    if (images)
      {
@@ -10869,6 +10888,7 @@ edje_edit_source_generate(Evas_Object *obj)
         BUF_APPEND(I0 "}\n\n");
         eina_list_free(color_classes);
      }
+
 
    /* print the main code of group collections */
    BUF_APPEND(I0 "collections {\n");
@@ -10932,6 +10952,28 @@ edje_edit_source_generate(Evas_Object *obj)
 }
 
 #undef COLLECT_RESOURCE
+
+static Eina_Bool
+_edje_generate_source_of_textclass(Edje *ed, const char *name, Eina_Strbuf *buf)
+{
+   Eina_List *l;
+   Edje_Text_Class *tc;
+   Eina_Bool ret = EINA_TRUE;
+
+   EINA_LIST_FOREACH(ed->file->text_classes, l, tc)
+      if (!strcmp(tc->name, name))
+        {
+           BUF_APPENDF(I1 "text_class {\n");
+           BUF_APPENDF(I2 "name: \"%s\";\n", tc->name);
+           if (tc->font)
+             BUF_APPENDF(I2 "font: \"%s\";\n", tc->font);
+           if (tc->size > 0)
+             BUF_APPENDF(I2 "size: %d;\n", tc->size);
+           BUF_APPENDF(I1 "}\n");
+        }
+
+   return ret;
+}
 
 static Eina_Bool
 _edje_generate_source_of_colorclass(Edje *ed, const char *name, Eina_Strbuf *buf)
@@ -12436,6 +12478,25 @@ _edje_generate_source(Evas_Object *obj)
         if (!ret)
           {
              ERR("Generating EDC for Data");
+             eina_strbuf_free(buf);
+             return NULL;
+          }
+     }
+
+   /* Text Classes */
+   if ((ll = edje_edit_text_classes_list_get(obj)))
+     {
+        BUF_APPEND(I0 "text_classes {\n");
+
+        EINA_LIST_FOREACH(ll, l, entry)
+          _edje_generate_source_of_textclass(ed, entry, buf);
+
+        BUF_APPEND(I0 "}\n\n");
+        edje_edit_string_list_free(ll);
+
+        if (!ret)
+          {
+             ERR("Generating EDC for Text Classes");
              eina_strbuf_free(buf);
              return NULL;
           }
