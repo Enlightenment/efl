@@ -3038,7 +3038,7 @@ ob_text_class(void)
    tc = mem_alloc(SZ(Edje_Text_Class));
    edje_file->text_classes = eina_list_append(edje_file->text_classes, tc);
 
-   tc->font = "";
+   tc->font = NULL;
    tc->size = 0;
 }
 
