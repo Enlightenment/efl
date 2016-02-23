@@ -2919,7 +2919,7 @@ _key_action_move_dir(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool multi)
           }
         else
           {
-             if (dir == ELM_FOCUS_UP)
+             if ((sd->focused_item) && (dir == ELM_FOCUS_UP))
                ret = _item_single_select_up(sd);
              else if (dir == ELM_FOCUS_DOWN)
                ret = _item_single_select_down(sd);
