@@ -20,6 +20,9 @@ _ecore_x_fixes_init(void)
    _fixes_minor = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    if (XFixesQueryVersion(_ecore_x_disp, &_fixes_major, &_fixes_minor))
      {
         _fixes_available = 1;
@@ -89,6 +92,8 @@ _ecore_x_rectangle_x_to_ecore(XRectangle *xrect,
 EAPI Eina_Bool
 ecore_x_fixes_selection_notification_request(Ecore_X_Atom selection)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
+
 #ifdef ECORE_XFIXES
    if (_fixes_available)
      {
@@ -108,6 +113,8 @@ EAPI Ecore_X_Region
 ecore_x_region_new(Ecore_X_Rectangle *rects,
                    int num)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
+
 #ifdef ECORE_XFIXES
    Ecore_X_Region region;
    XRectangle *xrect;
@@ -125,6 +132,7 @@ ecore_x_region_new(Ecore_X_Rectangle *rects,
 EAPI Ecore_X_Region
 ecore_x_region_new_from_bitmap(Ecore_X_Pixmap bitmap)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
 #ifdef ECORE_XFIXES
    Ecore_X_Region region;
 
@@ -141,6 +149,7 @@ EAPI Ecore_X_Region
 ecore_x_region_new_from_window(Ecore_X_Window win,
                                Ecore_X_Region_Type type)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
 #ifdef ECORE_XFIXES
    Ecore_X_Region region;
 
@@ -156,6 +165,7 @@ ecore_x_region_new_from_window(Ecore_X_Window win,
 EAPI Ecore_X_Region
 ecore_x_region_new_from_gc(Ecore_X_GC gc)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
 #ifdef ECORE_XFIXES
    Ecore_X_Region region;
 
@@ -171,6 +181,7 @@ ecore_x_region_new_from_gc(Ecore_X_GC gc)
 EAPI Ecore_X_Region
 ecore_x_region_new_from_picture(Ecore_X_Picture picture)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
 #ifdef ECORE_XFIXES
    Ecore_X_Region region;
 
@@ -186,6 +197,7 @@ ecore_x_region_new_from_picture(Ecore_X_Picture picture)
 EAPI void
 ecore_x_region_free(Ecore_X_Region region)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesDestroyRegion(_ecore_x_disp, region);
@@ -197,6 +209,7 @@ ecore_x_region_set(Ecore_X_Region region,
                    Ecore_X_Rectangle *rects,
                    int num)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 #ifdef ECORE_XFIXES
    XRectangle *xrect = _ecore_x_rectangle_ecore_to_x(rects, num);
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -209,6 +222,7 @@ EAPI void
 ecore_x_region_copy(Ecore_X_Region dest,
                     Ecore_X_Region source)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesCopyRegion(_ecore_x_disp, dest, source);
@@ -221,6 +235,7 @@ ecore_x_region_combine(Ecore_X_Region dest,
                        Ecore_X_Region source1,
                        Ecore_X_Region source2)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesUnionRegion(_ecore_x_disp, dest, source1, source2);
@@ -233,6 +248,7 @@ ecore_x_region_intersect(Ecore_X_Region dest,
                          Ecore_X_Region source1,
                          Ecore_X_Region source2)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesIntersectRegion(_ecore_x_disp, dest, source1, source2);
@@ -245,6 +261,7 @@ ecore_x_region_subtract(Ecore_X_Region dest,
                         Ecore_X_Region source1,
                         Ecore_X_Region source2)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesSubtractRegion(_ecore_x_disp, dest, source1, source2);
@@ -257,6 +274,7 @@ ecore_x_region_invert(Ecore_X_Region dest,
                       Ecore_X_Rectangle *bounds,
                       Ecore_X_Region source)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 #ifdef ECORE_XFIXES
    XRectangle *xbound;
    int num = 1;
@@ -275,6 +293,7 @@ ecore_x_region_translate(Ecore_X_Region region,
                          int dx,
                          int dy)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesTranslateRegion(_ecore_x_disp, region, dx, dy);
@@ -286,6 +305,7 @@ EAPI void
 ecore_x_region_extents(Ecore_X_Region dest,
                        Ecore_X_Region source)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesRegionExtents(_ecore_x_disp, dest, source);
@@ -296,7 +316,9 @@ ecore_x_region_extents(Ecore_X_Region dest,
 EAPI Ecore_X_Rectangle *
 ecore_x_region_fetch(Ecore_X_Region region,
                      int *num,
-                     Ecore_X_Rectangle *bounds){
+                     Ecore_X_Rectangle *bounds)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, NULL);
 #ifdef ECORE_XFIXES
    Ecore_X_Rectangle *rects;
    XRectangle *xrect, xbound;
@@ -324,6 +346,7 @@ ecore_x_region_expand(Ecore_X_Region dest,
                       unsigned int top,
                       unsigned int bottom)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesExpandRegion(_ecore_x_disp, dest, source, left, right, top, bottom);
@@ -337,6 +360,7 @@ ecore_x_region_gc_clip_set(Ecore_X_Region region,
                            int x_origin,
                            int y_origin)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesSetGCClipRegion(_ecore_x_disp, gc, x_origin, y_origin, region);
@@ -351,6 +375,7 @@ ecore_x_region_window_shape_set(Ecore_X_Region region,
                                 int x_offset,
                                 int y_offset)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesSetWindowShapeRegion(_ecore_x_disp,
@@ -369,6 +394,7 @@ ecore_x_region_picture_clip_set(Ecore_X_Region region,
                                 int x_origin,
                                 int y_origin)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFixesSetPictureClipRegion(_ecore_x_disp,
@@ -379,4 +405,3 @@ ecore_x_region_picture_clip_set(Ecore_X_Region region,
    if (_ecore_xlib_sync) ecore_x_sync();
 #endif /* ifdef ECORE_XFIXES */
 }
-

@@ -110,6 +110,9 @@ ecore_x_event_mask_set(Ecore_X_Window w,
    XSetWindowAttributes s_attr;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    if (!w)
      w = DefaultRootWindow(_ecore_x_disp);
 
@@ -129,6 +132,9 @@ ecore_x_event_mask_unset(Ecore_X_Window w,
    XSetWindowAttributes s_attr;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+
    if (!w)
      w = DefaultRootWindow(_ecore_x_disp);
 
