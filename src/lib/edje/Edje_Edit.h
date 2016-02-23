@@ -3759,6 +3759,21 @@ EAPI Eina_Bool edje_edit_state_align_x_set(Evas_Object *obj, const char *part, c
  */
 EAPI Eina_Bool edje_edit_state_align_y_set(Evas_Object *obj, const char *part, const char *state, double value,  double align);
 
+/** Set the size class of the given part state.
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set size class (not including the state value).
+ * @param value The state value.
+ * @param text_class The size class to assign.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_state_text_class_set(Evas_Object *obj, const char *part, const char *state, double value, const char *size_class);
+
 /** Get the minimum width value of a part state.
  *
  * @param obj Object being edited.

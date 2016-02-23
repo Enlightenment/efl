@@ -6329,6 +6329,16 @@ FUNC_STATE_DOUBLE(minmul, w);
 FUNC_STATE_DOUBLE(minmul, h);
 
 EAPI Eina_Bool
+edje_edit_state_size_class_set(Evas_Object *obj, const char *part, const char *state, double value, const char *size_class)
+{
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   _edje_if_string_replace(ed, &pd->size_class, size_class);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 edje_edit_state_fill_smooth_get(Evas_Object *obj, const char *part, const char *state, double value)
 {
    GET_PD_OR_RETURN(EINA_FALSE)
