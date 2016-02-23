@@ -10836,6 +10836,25 @@ edje_edit_source_generate(Evas_Object *obj)
         BUF_APPEND(I0 "}\n\n");
      }
 
+   if (ed->file->size_classes)
+     {
+        BUF_APPEND(I0 "size_classes {\n");
+        Edje_Size_Class *sc;
+
+        EINA_LIST_FOREACH(ed->file->size_classes, l, sc)
+          {
+             BUF_APPENDF(I1 "size_class {\n");
+             BUF_APPENDF(I2 "name: \"%s\";\n", sc->name);
+             if ((sc->minw > 0) || (sc->minh > 0))
+               BUF_APPENDF(I2 "min: %d %d;\n", sc->minw, sc->minh);
+             if ((sc->maxw >= -1) || (sc->maxh >= -1))
+               BUF_APPENDF(I2 "max: %d %d;\n", sc->maxw, sc->maxh);
+             BUF_APPENDF(I1 "}\n");
+          }
+
+        BUF_APPEND(I0 "}\n\n");
+     }
+
    /* if images were found, print them */
    if (images)
      {
@@ -10952,6 +10971,28 @@ edje_edit_source_generate(Evas_Object *obj)
 }
 
 #undef COLLECT_RESOURCE
+
+static Eina_Bool
+_edje_generate_source_of_sizeclass(Edje *ed, const char *name, Eina_Strbuf *buf)
+{
+   Eina_List *l;
+   Edje_Size_Class *sc;
+   Eina_Bool ret = EINA_TRUE;
+
+   EINA_LIST_FOREACH(ed->file->size_classes, l, sc)
+      if (!strcmp(sc->name, name))
+        {
+           BUF_APPENDF(I1 "size_class {\n");
+           BUF_APPENDF(I2 "name: \"%s\";\n", sc->name);
+           if ((sc->minw > 0) || (sc->minh > 0))
+             BUF_APPENDF(I2 "min: %d %d;\n", sc->minw, sc->minh);
+           if ((sc->maxw >= -1) || (sc->maxh >= -1))
+             BUF_APPENDF(I2 "max: %d %d;\n", sc->maxw, sc->maxh);
+           BUF_APPENDF(I1 "}\n");
+        }
+
+   return ret;
+}
 
 static Eina_Bool
 _edje_generate_source_of_textclass(Edje *ed, const char *name, Eina_Strbuf *buf)
@@ -11427,6 +11468,9 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
                                             TO_DOUBLE(pd->minmul.w),
                                             TO_DOUBLE(pd->minmul.h),
                                             buf, &ret);
+
+   if (pd->size_class)
+     BUF_APPENDF(I5 "size_class: \"%s\";\n", pd->size_class);
 
    if (pd->step.x && pd->step.y)
      BUF_APPENDF(I5 "step: %d %d;\n", TO_INT(pd->step.x), TO_INT(pd->step.y));
@@ -12478,6 +12522,24 @@ _edje_generate_source(Evas_Object *obj)
         if (!ret)
           {
              ERR("Generating EDC for Data");
+             eina_strbuf_free(buf);
+             return NULL;
+          }
+     }
+   /* Size Classes */
+   if ((ll = edje_edit_size_classes_list_get(obj)))
+     {
+        BUF_APPEND(I0 "size_classes {\n");
+
+        EINA_LIST_FOREACH(ll, l, entry)
+          _edje_generate_source_of_sizeclass(ed, entry, buf);
+
+        BUF_APPEND(I0 "}\n\n");
+        edje_edit_string_list_free(ll);
+
+        if (!ret)
+          {
+             ERR("Generating EDC for Size Classes");
              eina_strbuf_free(buf);
              return NULL;
           }
