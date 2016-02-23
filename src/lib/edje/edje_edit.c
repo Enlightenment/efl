@@ -8256,7 +8256,6 @@ EAPI Eina_Bool
 edje_edit_state_text_class_set(Evas_Object *obj, const char *part, const char *state, double value, const char *text_class)
 {
    Edje_Part_Description_Text *txt;
-   if (!text_class) return EINA_FALSE;
    GET_PD_OR_RETURN(EINA_FALSE);
 
    if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
