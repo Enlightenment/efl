@@ -165,12 +165,6 @@ EAPI int eldbus_shutdown(void);
  */
 typedef void                       (*Eldbus_Free_Cb)(void *data, const void *deadptr);
 /**
- * @typedef Eldbus_Proxy
- *
- * Represents an interface of an object path.
- */
-typedef struct _Eldbus_Proxy          Eldbus_Proxy;
-/**
  * @typedef Eldbus_Message
  *
  * Represents the way data is sent and received in DBus.
