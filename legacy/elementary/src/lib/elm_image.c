@@ -822,7 +822,7 @@ _elm_image_sizing_eval(Eo *obj, Elm_Image_Data *sd)
    if (sd->no_scale)
      eo_do(obj, elm_obj_image_scale_set(1.0));
    else
-     eo_do(obj, efl_image_smooth_scale_set(elm_widget_scale_get(obj) * elm_config_scale_get()));
+     eo_do(obj, elm_obj_image_scale_set(elm_widget_scale_get(obj) * elm_config_scale_get()));
 
    ts = sd->scale;
    sd->scale = 1.0;
