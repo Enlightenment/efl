@@ -8897,6 +8897,73 @@ edje_edit_state_image_border_set(Evas_Object *obj, const char *part, const char 
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_edit_state_image_border_scale_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   Edje_Part_Description_Image *img;
+
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   if (rp->part->type != EDJE_PART_TYPE_IMAGE)
+     return EINA_FALSE;
+
+   img = (Edje_Part_Description_Image *)pd;
+
+   return img->image.border.scale;
+}
+
+EAPI Eina_Bool
+edje_edit_state_image_border_scale_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool scale)
+{
+   Edje_Part_Description_Image *img;
+
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   if (rp->part->type != EDJE_PART_TYPE_IMAGE)
+     return EINA_FALSE;
+
+   img = (Edje_Part_Description_Image *)pd;
+
+   img->image.border.scale = scale;
+
+   return EINA_TRUE;
+}
+
+EAPI double
+edje_edit_state_image_border_scale_by_get(Evas_Object *obj, const char *part, const char *state, double value)
+{
+   Edje_Part_Description_Image *img;
+
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   if (rp->part->type != EDJE_PART_TYPE_IMAGE)
+     return EINA_FALSE;
+
+   img = (Edje_Part_Description_Image *)pd;
+
+   return TO_DOUBLE(img->image.border.scale_by);
+}
+
+EAPI Eina_Bool
+edje_edit_state_image_border_scale_by_set(Evas_Object *obj, const char *part, const char *state, double value, double border_scale)
+{
+   Edje_Part_Description_Image *img;
+
+   GET_PD_OR_RETURN(EINA_FALSE);
+
+   if (border_scale < 0.0)
+     return EINA_FALSE;
+
+   if (rp->part->type != EDJE_PART_TYPE_IMAGE)
+     return EINA_FALSE;
+
+   img = (Edje_Part_Description_Image *)pd;
+
+   img->image.border.scale_by = FROM_DOUBLE(border_scale);
+
+   return EINA_TRUE;
+}
+
 EAPI unsigned char
 edje_edit_state_image_border_fill_get(Evas_Object *obj, const char *part, const char *state, double value)
 {

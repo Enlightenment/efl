@@ -5427,6 +5427,78 @@ EAPI void edje_edit_state_image_border_get(Evas_Object *obj, const char *part, c
  */
 EAPI Eina_Bool edje_edit_state_image_border_set(Evas_Object *obj, const char *part, const char *state, double value, int l, int r, int t, int b);
 
+/** Get the border scale value of a part state.
+ *
+ * This value tells Edje if the border should be scaled by
+ * the object/global edje scale factors
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to get the image border scale (not
+ *              including the state value).
+ * @param value The state value.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_state_image_border_scale_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set the border scale value of a part state.
+ *
+ * This value tells Edje if the border should be scaled by
+ * the object/global edje scale factors
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set the image border scale (not
+ *              including the state value).
+ * @param value The state value.
+ * @param scale New image border scale value.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_state_image_border_scale_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool scale);
+
+/** Get the border scale by value of a part state.
+ *
+ * Valid values are: 0.0 or bigger (0.0 or 1.0 to turn it off)
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to get the image border scale by (not
+ *              including the state value).
+ * @param value The state value.
+ *
+ * @return border scaling value.
+ *
+ * @since 1.18
+ */
+EAPI double
+edje_edit_state_image_border_scale_by_get(Evas_Object *obj, const char *part, const char *state, double value);
+
+/** Set the border scale by value of a part state.
+ *
+ * Valid values are: 0.0 or bigger (0.0 or 1.0 to turn it off)
+ *
+ * @param obj Object being edited.
+ * @param part Part that contain state.
+ * @param state The name of the state to set the image border scale by (not
+ *              including the state value).
+ * @param value The state value.
+ * @param scale New image border scale value.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ *
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_state_image_border_scale_by_set(Evas_Object *obj, const char *part, const char *state, double value, double scale);
+
 /** Get if the image center should be draw.
  *
  * 1 or 2 means to draw the center, 0 to don't draw it.
