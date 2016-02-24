@@ -14649,7 +14649,9 @@ edje_cc_handlers_hierarchy_pop(void)
 
         if (!current_part->name)
           {
-             error_and_abort(NULL, "parse error near %s:%i. Unnamed part exists in Group \"%s\".", file_in, line - 1, current_de->entry);
+             ERR("Parse error near %s:%i. Unnamed part exists in Group \"%s\" - Pausing for a bit so you notice and remember to fix this.",
+                 file_in, line - 1, current_de->entry);
+             sleep(10);
           }
 
         for (i = 0; i < current_part->other.desc_count; i++)
