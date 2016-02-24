@@ -5,20 +5,6 @@
  */
 
 /**
- * @enum Elm_Thumb_Animation_Setting
- * @typedef Elm_Thumb_Animation_Setting
- *
- * Used to set if a video thumbnail is animating or not.
- */
-typedef enum
-{
-   ELM_THUMB_ANIMATION_START = 0, /**< Play animation once */
-   ELM_THUMB_ANIMATION_LOOP, /**< Keep playing animation until stop is requested */
-   ELM_THUMB_ANIMATION_STOP, /**< Stop playing the animation */
-   ELM_THUMB_ANIMATION_LAST
-} Elm_Thumb_Animation_Setting;
-
-/**
  * Get the ethumb_client handle so custom configuration can be made.
  *
  * @return Ethumb_Client instance or NULL.

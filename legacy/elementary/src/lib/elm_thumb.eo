@@ -1,3 +1,13 @@
+enum Elm.Thumb.Animation_Setting
+{
+   [[Used to set if a video thumbnail is animating or not]]
+   legacy: elm_thumb_animation;
+   start = 0, [[Play animation once]]
+   loop, [[Keep playing animation until stop is requested]]
+   stop, [[Stop playing the animation]]
+   last
+}
+
 class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_thumb;
@@ -50,7 +60,7 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             [[Get the animation state for the thumb object.]]
          }
          values {
-            setting: Elm_Thumb_Animation_Setting; [[The animation setting or
+            setting: Elm.Thumb.Animation_Setting; [[The animation setting or
                                                     #ELM_THUMB_ANIMATION_LAST]]
          }
       }
