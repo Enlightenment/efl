@@ -406,6 +406,7 @@ _activate(Evas_Object *obj)
 
    sd->hover = elm_hover_add(sd->hover_parent);
    elm_widget_sub_object_add(obj, sd->hover);
+   evas_object_layer_set(sd->hover, evas_object_layer_get(sd->hover_parent));
 
    if (sd->horizontal)
      snprintf(buf, sizeof(buf), "hoversel_horizontal/%s",
