@@ -12090,6 +12090,11 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
    if (rp->part->access)
      BUF_APPEND(I4 "access: 1;\n");
 
+   if ((str = _edje_part_clip_to_get(ed, rp)))
+     {
+        BUF_APPENDF(I4 "clip_to: \"%s\";\n", str);
+        edje_edit_string_free(str);
+     }
    if ((rp->part->type == EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->type == EDJE_PART_TYPE_TEXT))
      if (rp->part->use_alternate_font_metrics)
