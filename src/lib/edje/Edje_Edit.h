@@ -1517,6 +1517,29 @@ EAPI Eina_Bool edje_edit_part_repeat_events_get(Evas_Object *obj, const char *pa
  */
 EAPI Eina_Bool edje_edit_part_repeat_events_set(Evas_Object *obj, const char *part, Eina_Bool repeat_events);
 
+/** Get use_alternate_font_metrics variable for part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to get use_alternate_font_metrics for text or textblock part is enabled.
+ *
+ * @return @c EINA_TRUE if use_alternate_font_metrics, @c EINA_FALSE otherwise
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_part_use_alternate_font_metrics_get(Evas_Object *obj, const char *part);
+
+/** Set use_alternate_font_metrics variable for part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to set use_alternate_font_metrics for text or textblock part is enabled.
+ * @param use EINA_TRUE if use_alternate_font_metrics, @c EINA_FALSE otherwise
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.18
+ */
+EAPI Eina_Bool
+edje_edit_part_use_alternate_font_metrics_set(Evas_Object *obj, const char *part, Eina_Bool use);
+
 /** Get multiline for part.
  *
  * @param obj Object being edited.
