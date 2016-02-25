@@ -8,7 +8,7 @@ class Elm.View_List (Eo.Base)
                @since 1.11
              ]]
              params {
-                 @in genlist: Evas_Object*; [[Genlist object]]
+                 @in genlist: Evas.Object*; [[Genlist object]]
                  @in item_type: Elm.Genlist.Item.Type; [[Item type]]
                  @in item_style: const(char)*; [[The current item style name. $null would be default.]]
              }
@@ -19,7 +19,7 @@ class Elm.View_List (Eo.Base)
                @since 1.11
              ]]
              params {
-                 @out widget: Evas_Object*; [[Returned widget]]
+                 @out widget: Evas.Object*; [[Returned widget]]
              }
         }
         property_connect {

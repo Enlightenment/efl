@@ -1,3 +1,12 @@
+enum Elm.Web.Zoom_Mode
+{
+   [[Types of zoom available.]]
+   manual = 0, [[Zoom controlled normally by elm_web_zoom_set]]
+   auto_fit, [[Zoom until content fits in web object]]
+   auto_fill, [[Zoom until content fills web object]]
+   last [[Sentinel value to indicate end]]
+}
+
 class Elm.Web (Elm.Widget)
 {
    eo_prefix: elm_obj_web;
@@ -143,7 +152,7 @@ class Elm.Web (Elm.Widget)
             [[Get the currently set zoom mode.]]
          }
          values {
-            mode: Elm_Web_Zoom_Mode; [[The mode to set.]]
+            mode: Elm.Web.Zoom_Mode; [[The mode to set.]]
          }
       }
       @property zoom {

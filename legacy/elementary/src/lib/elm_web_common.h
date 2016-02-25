@@ -113,16 +113,6 @@ struct _Elm_Web_Download
    const char *url;
 };
 
-/**
- * Types of zoom available.
- */
-typedef enum
-{
-   ELM_WEB_ZOOM_MODE_MANUAL = 0, /**< Zoom controlled normally by elm_web_zoom_set */
-   ELM_WEB_ZOOM_MODE_AUTO_FIT, /**< Zoom until content fits in web object */
-   ELM_WEB_ZOOM_MODE_AUTO_FILL, /**< Zoom until content fills web object */
-   ELM_WEB_ZOOM_MODE_LAST /**< Sentinel value to indicate end */
-} Elm_Web_Zoom_Mode;
 
 /**
  * Opaque handler containing the features (such as statusbar, menubar, etc)
