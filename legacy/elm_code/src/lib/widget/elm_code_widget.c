@@ -406,6 +406,8 @@ _elm_code_widget_empty_line(Elm_Code_Widget *widget, unsigned int number)
         cells[x].codepoint = 0;
         if (pd->editable && pd->focussed && pd->cursor_line == number)
           cells[x].bg = ELM_CODE_STATUS_TYPE_CURRENT;
+        else if (pd->line_width_marker == x - gutter + 1)
+          cells[x].bg = ELM_CODE_WIDGET_COLOR_GUTTER_BG;
         else
           cells[x].bg = ELM_CODE_STATUS_TYPE_DEFAULT;
      }
