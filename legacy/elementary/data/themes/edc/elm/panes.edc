@@ -743,3 +743,255 @@ group { name: "elm/panes/horizontal/flush";
       }
    }
 }
+
+group { name: "elm/panes/vertical/left-fold";
+   inherit: "elm/panes/vertical/default";
+   images.image: "icon_arrow_left.png" COMP;
+   images.image: "icon_arrow_right.png" COMP;
+   script {
+      public open;
+      public drag_x;
+      public drag_y;
+   }
+   parts {
+      spacer { "sub_whole";
+         desc { "default";
+            rel1.offset: 3 0;
+         }
+      }
+      image { "dots";
+         desc { "default";
+            image.normal: "icon_arrow_left.png";
+            FIXED_SIZE(14, 14)
+         }
+         desc { "closed";
+            inherit: "default" 0.0;
+            image.normal: "icon_arrow_right.png";
+         }
+      }
+      rect { "event";
+         repeat;
+         desc { "default";
+            rel1.to: "dots";
+            rel2.to: "dots";
+            color: 0 0 0 0;
+         }
+      }
+   }
+   programs {
+      program { signal: "load"; source: "";
+         script {
+            set_int(open, 1);
+         }
+      }
+      program { signal: "mouse,clicked,1"; source: "event";
+         script {
+            if (get_int(open) == 1)
+            {
+               new Float: dx;
+               new Float: dy;
+               set_int(open, 0);
+               get_drag(PART:"elm.bar", dx, dy);
+               set_float(drag_x, dx);
+               set_drag(PART:"elm.bar", 0.0, 0.5);
+               set_state(PART:"dots", "closed", 0.0);
+            }
+            else if (get_int(open) == 0)
+            {
+               set_int(open, 1);
+               set_drag(PART:"elm.bar", get_float(drag_x), 0.5);
+               set_state(PART:"dots", "default", 0.0);
+            }
+         }
+      }
+   }
+}
+
+group { name: "elm/panes/vertical/right-fold";
+   inherit: "elm/panes/vertical/default";
+   images.image: "icon_arrow_left.png" COMP;
+   images.image: "icon_arrow_right.png" COMP;
+   script {
+      public open;
+      public drag_x;
+      public drag_y;
+   }
+   parts {
+      spacer { "sub_whole";
+         desc { "default";
+            rel2.offset: -4 0;
+         }
+      }
+      image { "dots";
+         desc { "default";
+            image.normal: "icon_arrow_right.png";
+            FIXED_SIZE(14, 17)
+         }
+         desc { "closed";
+            inherit: "default" 0.0;
+            image.normal: "icon_arrow_left.png";
+         }
+      }
+      rect { "event";
+         repeat;
+         desc { "default";
+            rel1.to: "dots";
+            rel2.to: "dots";
+            color: 0 0 0 0;
+         }
+      }
+   }
+   programs {
+      program { signal: "load"; source: "";
+         script {
+            set_int(open, 1);
+         }
+      }
+      program { signal: "mouse,clicked,1"; source: "event";
+         script {
+            if (get_int(open) == 1)
+            {
+               new Float: dx;
+               new Float: dy;
+               set_int(open, 0);
+               get_drag(PART:"elm.bar", dx, dy);
+               set_float(drag_x, dx);
+               set_drag(PART:"elm.bar", 1.0, 0.5);
+               set_state(PART:"dots", "closed", 0.0);
+            }
+            else if (get_int(open) == 0)
+            {
+               set_int(open, 1);
+               set_drag(PART:"elm.bar", get_float(drag_x), 0.5);
+               set_state(PART:"dots", "default", 0.0);
+            }
+         }
+      }
+   }
+}
+
+group { name: "elm/panes/horizontal/up-fold";
+   inherit: "elm/panes/horizontal/default";
+   images.image: "icon_arrow_up.png" COMP;
+   images.image: "icon_arrow_down.png" COMP;
+   script {
+      public open;
+      public drag_x;
+      public drag_y;
+   }
+   parts {
+      spacer { "sub_whole";
+         desc { "default";
+            rel1.offset: 0 3;
+         }
+      }
+      image { "dots";
+         desc { "default";
+            image.normal: "icon_arrow_up.png";
+            FIXED_SIZE(17, 14)
+         }
+         desc { "closed";
+            inherit: "default" 0.0;
+            image.normal: "icon_arrow_down.png";
+         }
+      }
+      rect { "event";
+         repeat;
+         desc { "default";
+            rel1.to: "dots";
+            rel2.to: "dots";
+            color: 0 0 0 0;
+         }
+      }
+   }
+   programs {
+      program { signal: "load"; source: "";
+         script {
+            set_int(open, 1);
+         }
+      }
+      program { signal: "mouse,clicked,1"; source: "event";
+         script {
+            if (get_int(open) == 1)
+            {
+               new Float: dx;
+               new Float: dy;
+               set_int(open, 0);
+               get_drag(PART:"elm.bar", dx, dy);
+               set_float(drag_y, dy);
+               set_drag(PART:"elm.bar", 0.5, 0.0);
+               set_state(PART:"dots", "closed", 0.0);
+            }
+            else if (get_int(open) == 0)
+            {
+               set_int(open, 1);
+               set_drag(PART:"elm.bar", 0.5, get_float(drag_y));
+               set_state(PART:"dots", "default", 0.0);
+            }
+         }
+      }
+   }
+}
+
+group { name: "elm/panes/horizontal/down-fold";
+   inherit: "elm/panes/horizontal/default";
+   images.image: "icon_arrow_up.png" COMP;
+   images.image: "icon_arrow_down.png" COMP;
+   script {
+      public open;
+      public drag_x;
+      public drag_y;
+   }
+   parts {
+      spacer { "sub_whole";
+         desc { "default";
+            rel2.offset: 0 -4;
+         }
+      }
+      image { "dots";
+         desc { "default";
+            image.normal: "icon_arrow_down.png";
+            FIXED_SIZE(17, 14)
+         }
+         desc { "closed";
+            inherit: "default" 0.0;
+            image.normal: "icon_arrow_up.png";
+         }
+      }
+      rect { "event";
+         repeat;
+         desc { "default";
+            rel1.to: "dots";
+            rel2.to: "dots";
+            color: 0 0 0 0;
+         }
+      }
+   }
+   programs {
+      program { signal: "load"; source: "";
+         script {
+            set_int(open, 1);
+         }
+      }
+      program { signal: "mouse,clicked,1"; source: "event";
+         script {
+            if (get_int(open) == 1)
+            {
+               new Float: dx;
+               new Float: dy;
+               set_int(open, 0);
+               get_drag(PART:"elm.bar", dx, dy);
+               set_float(drag_y, dy);
+               set_drag(PART:"elm.bar", 0.5, 1.0);
+               set_state(PART:"dots", "closed", 0.0);
+            }
+            else if (get_int(open) == 0)
+            {
+               set_int(open, 1);
+               set_drag(PART:"elm.bar", 0.5, get_float(drag_y));
+               set_state(PART:"dots", "default", 0.0);
+            }
+         }
+      }
+   }
+}
