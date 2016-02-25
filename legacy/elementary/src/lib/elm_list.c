@@ -934,20 +934,6 @@ _items_fix(Evas_Object *obj)
                        evas_object_color_set(it->end, 0, 0, 0, 0);
                        it->dummy_end = EINA_TRUE;
                     }
-                  if (it->icon)
-                    {
-                       evas_object_size_hint_min_set(it->icon, minw[0], minh[0]);
-                       evas_object_size_hint_max_set(it->icon, 99999, 99999);
-                       edje_object_part_swallow
-                          (VIEW(it), "elm.swallow.icon", it->icon);
-                    }
-                  if (it->end)
-                    {
-                       evas_object_size_hint_min_set(it->end, minw[1], minh[1]);
-                       evas_object_size_hint_max_set(it->end, 99999, 99999);
-                       edje_object_part_swallow
-                          (VIEW(it), "elm.swallow.end", it->end);
-                    }
                   if (eina_list_count(sd->items) == 1)
                     {
                        edje_object_signal_emit
@@ -1016,7 +1002,20 @@ _items_fix(Evas_Object *obj)
              it->fixed = EINA_TRUE;
              it->is_even = it->even;
           }
-
+        if (it->icon)
+          {
+             evas_object_size_hint_min_set(it->icon, minw[0], minh[0]);
+             evas_object_size_hint_max_set(it->icon, 99999, 99999);
+             edje_object_part_swallow
+                (VIEW(it), "elm.swallow.icon", it->icon);
+          }
+        if (it->end)
+          {
+             evas_object_size_hint_min_set(it->end, minw[1], minh[1]);
+             evas_object_size_hint_max_set(it->end, 99999, 99999);
+             edje_object_part_swallow
+                (VIEW(it), "elm.swallow.end", it->end);
+          }
         if (!it->is_separator)
           i++;
      }
