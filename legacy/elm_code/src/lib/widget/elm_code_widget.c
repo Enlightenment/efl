@@ -415,19 +415,19 @@ _elm_code_widget_empty_line(Elm_Code_Widget *widget, unsigned int number)
 }
 
 static void
-_elm_code_widget_fill(Elm_Code_Widget *widget)
+_elm_code_widget_fill_range(Elm_Code_Widget *widget, unsigned int first_row, unsigned int last_row)
 {
    Elm_Code_Line *line;
-   int w, h;
+   int h;
    unsigned int y;
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    _elm_code_widget_resize(widget);
-   evas_object_textgrid_size_get(pd->grid, &w, &h);
+   h = elm_code_widget_lines_visible_get(widget);
 
-   for (y = 1; y <= (unsigned int) h && y <= elm_code_file_lines_get(pd->code->file); y++)
+   for (y = first_row; y <= last_row; y++)
      {
         line = elm_code_file_line_get(pd->code->file, y);
 
@@ -437,6 +437,38 @@ _elm_code_widget_fill(Elm_Code_Widget *widget)
      {
         _elm_code_widget_empty_line(widget, y);
      }
+}
+
+static void
+_elm_code_widget_refresh(Elm_Code_Widget *widget)
+{
+   Evas_Coord scroll_y, scroll_h, ch;
+   unsigned int first_row, last_row;
+
+   Elm_Code_Widget_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   evas_object_textgrid_cell_size_get(pd->grid, NULL, &ch);
+   elm_scroller_region_get(pd->scroller, NULL, &scroll_y, NULL, &scroll_h);
+
+   first_row = scroll_y / ch + 1;
+   last_row = (scroll_y + scroll_h) / ch + 1;
+
+   if (last_row > elm_code_file_lines_get(pd->code->file))
+     last_row = elm_code_file_lines_get(pd->code->file);
+
+   _elm_code_widget_fill_range(widget, first_row, last_row);
+}
+
+static void
+_elm_code_widget_fill(Elm_Code_Widget *widget)
+{
+   Elm_Code_Widget_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   _elm_code_widget_fill_range(widget, 1, elm_code_file_lines_get(pd->code->file));
 }
 
 static Eina_Bool
@@ -455,7 +487,7 @@ _elm_code_widget_line_cb(void *data, Eo *obj EINA_UNUSED,
      return EO_CALLBACK_CONTINUE;
 
    // FIXME refresh just the row unless we have resized (by being the result of a row append)
-   _elm_code_widget_fill(widget);
+   _elm_code_widget_refresh(widget);
 
    return EO_CALLBACK_CONTINUE;
 }
@@ -480,6 +512,18 @@ _elm_code_widget_selection_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_De
 
    widget = (Elm_Code_Widget *)data;
 
+   _elm_code_widget_refresh(widget);
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+_elm_code_widget_selection_clear_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
+                                    void *event_info EINA_UNUSED)
+{
+   Elm_Code_Widget *widget;
+
+   widget = (Elm_Code_Widget *)data;
+
    _elm_code_widget_fill(widget);
    return EO_CALLBACK_CONTINUE;
 }
@@ -492,7 +536,7 @@ _elm_code_widget_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
 
    widget = (Elm_Code_Widget *)data;
 
-   _elm_code_widget_fill(widget);
+   _elm_code_widget_refresh(widget);
 }
 
 static Eina_Bool
@@ -703,11 +747,8 @@ _elm_code_widget_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
         return;
      }
 
-   if (!pd->editable)
-     return;
-
-   if (col > 0 && row <= elm_code_file_lines_get(pd->code->file))
-     elm_code_widget_selection_start(widget, row, col);
+   if (pd->editable)
+     _elm_code_widget_clicked_editable_cb(widget, row, (unsigned int) col);
 }
 
 static void
@@ -735,9 +776,12 @@ _elm_code_widget_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
         _elm_code_widget_tooltip_text_set(widget, line->status_text);
      }
 
-   if (!pd->editable || !pd->selection || !event->buttons)
+   if (!pd->editable || !event->buttons)
      return;
 
+   if (!pd->selection)
+     if (col > 0 && row <= elm_code_file_lines_get(pd->code->file))
+       elm_code_widget_selection_start(widget, row, col);
    elm_code_widget_selection_end(widget, row, col);
 }
 
@@ -1328,7 +1372,7 @@ _elm_code_widget_focused_event_cb(void *data, Evas_Object *obj,
    pd->focussed = EINA_TRUE;
 
    _elm_code_widget_update_focus_directions(widget);
-   _elm_code_widget_fill(obj);
+   _elm_code_widget_refresh(obj);
 }
 
 static void
@@ -1342,7 +1386,7 @@ _elm_code_widget_unfocused_event_cb(void *data, Evas_Object *obj,
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    pd->focussed = EINA_FALSE;
-   _elm_code_widget_fill(obj);
+   _elm_code_widget_refresh(obj);
 }
 
 EOLIAN static Eina_Bool
@@ -1539,10 +1583,10 @@ _elm_code_widget_show_whitespace_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *
 }
 
 EOLIAN static void
-_elm_code_widget_tab_inserts_spaces_set(Eo *obj, Elm_Code_Widget_Data *pd, Eina_Bool spaces)
+_elm_code_widget_tab_inserts_spaces_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
+                                        Eina_Bool spaces)
 {
    pd->tab_inserts_spaces = spaces;
-   _elm_code_widget_fill(obj);
 }
 
 EOLIAN static Eina_Bool
@@ -1685,7 +1729,7 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
          eo_event_callback_add(&ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_widget_line_cb, obj),
          eo_event_callback_add(&ELM_CODE_EVENT_FILE_LOAD_DONE, _elm_code_widget_file_cb, obj),
          eo_event_callback_add(ELM_CODE_WIDGET_EVENT_SELECTION_CHANGED, _elm_code_widget_selection_cb, obj),
-         eo_event_callback_add(ELM_CODE_WIDGET_EVENT_SELECTION_CLEARED, _elm_code_widget_selection_cb, obj));
+         eo_event_callback_add(ELM_CODE_WIDGET_EVENT_SELECTION_CLEARED, _elm_code_widget_selection_clear_cb, obj));
 
    _elm_code_widget_font_set(obj, pd, NULL, 10);
 }

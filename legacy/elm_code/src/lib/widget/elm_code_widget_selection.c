@@ -140,9 +140,10 @@ elm_code_widget_selection_clear(Evas_Object *widget)
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   if (pd->selection)
-     free(pd->selection);
+   if (!pd->selection)
+     return;
 
+   free(pd->selection);
    pd->selection = NULL;
    eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget));
 }
