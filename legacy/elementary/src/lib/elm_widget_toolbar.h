@@ -89,14 +89,6 @@ struct _Elm_Toolbar_Item_Data
    Eina_Bool     on_move : 1;
 };
 
-struct _Elm_Toolbar_Item_State
-{
-   const char   *label;
-   const char   *icon_str;
-   Evas_Object  *icon;
-   Evas_Smart_Cb func;
-   const void   *data;
-};
 
 /**
  * @}

@@ -111,7 +111,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable,
          get {
          }
          values {
-            order: Elm_Icon_Lookup_Order(1); [[The icon lookup order. (If getting the icon order loopup fails, it returns #ELM_ICON_LOOKUP_THEME_FDO)]]
+            order: Elm.Icon.Lookup_Order(1); [[The icon lookup order. (If getting the icon order loopup fails, it returns #ELM_ICON_LOOKUP_THEME_FDO)]]
          }
       }
       @property shrink_mode {

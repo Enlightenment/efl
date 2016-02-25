@@ -4,7 +4,6 @@
  * @{
  */
 
-typedef struct _Elm_Toolbar_Item_State Elm_Toolbar_Item_State;    /**< State of a Elm_Toolbar_Item. Can be created with elm_toolbar_item_state_add() and removed with elm_toolbar_item_state_del(). */
 
 /**
  * Unset the state of @p it.
