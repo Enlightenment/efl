@@ -1021,7 +1021,6 @@ _items_fix(Evas_Object *obj)
           i++;
      }
 
-   _elm_list_mode_set_internal(obj);
    _elm_list_unwalk(obj, sd);
 
    //focus highlight in_theme is set by list item theme.
@@ -2654,8 +2653,6 @@ _elm_list_horizontal_set(Eo *obj, Elm_List_Data *sd, Eina_Bool horizontal)
         evas_object_size_hint_align_set(sd->box, EVAS_HINT_FILL, 0.0);
         eo_do(obj, elm_interface_scrollable_bounce_allow_set(EINA_FALSE, bounce));
      }
-
-   _elm_list_mode_set_internal(obj);
 }
 
 EOLIAN static Eina_Bool
