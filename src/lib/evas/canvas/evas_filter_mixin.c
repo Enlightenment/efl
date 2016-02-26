@@ -583,22 +583,27 @@ _evas_filter_invalid_set(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd, Eina_Bool
      }
 }
 
-EOLIAN static void
-_evas_filter_ctor(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd)
+EOLIAN static Eo_Base *
+_evas_filter_eo_base_constructor(Eo *eo_obj, Evas_Filter_Data *pd)
 {
+   Eo *obj = NULL;
+
+   eo_do_super(eo_obj, MY_CLASS, obj = eo_constructor());
    pd->data = eina_cow_alloc(evas_object_filter_cow);
    SLKI(pd->lck);
+
+   return obj;
 }
 
 EOLIAN static void
-_evas_filter_dtor(Eo *eo_obj, Evas_Filter_Data *pd)
+_evas_filter_eo_base_destructor(Eo *eo_obj, Evas_Filter_Data *pd)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Filter_Data_Binding *db;
    Eina_Inlist *il;
 
-   if (!pd->data) return;
-   if (evas_object_filter_cow_default == pd->data) return;
+   if (!pd->data || (evas_object_filter_cow_default == pd->data))
+     goto finish;
 
    if (pd->data->output)
      {
@@ -616,6 +621,8 @@ _evas_filter_dtor(Eo *eo_obj, Evas_Filter_Data *pd)
      }
    evas_filter_program_del(pd->data->chain);
    eina_stringshare_del(pd->data->code);
+
+finish:
    eina_cow_free(evas_object_filter_cow, (const Eina_Cow_Data **) &pd->data);
    if (pd->has_cb)
      {
@@ -624,6 +631,8 @@ _evas_filter_dtor(Eo *eo_obj, Evas_Filter_Data *pd)
                                        _render_post_cb, eo_obj));
      }
    SLKD(pd->lck);
+
+   eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
 
 EOLIAN static void
