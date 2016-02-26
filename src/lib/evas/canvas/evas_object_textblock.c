@@ -505,7 +505,7 @@ struct _Evas_Object_Textblock
       int                              l, r, t, b;
    } style_pad;
    double                              valign;
-   char                               *markup_text;
+   Eina_Stringshare                   *markup_text;
    void                               *engine_data;
    const char                         *repch;
    const char                         *bidi_delimiters;
@@ -6473,7 +6473,7 @@ _textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts,
         Evas_Textblock_Style *old_ts;
         if (o->markup_text)
           {
-             free(o->markup_text);
+             eina_stringshare_del(o->markup_text);
              o->markup_text = NULL;
           }
 
@@ -6831,10 +6831,14 @@ _evas_textblock_text_markup_set(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o, 
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
-   if ((text != o->markup_text) && (o->markup_text))
+
      {
-        free(o->markup_text);
-        o->markup_text = NULL;
+        text = eina_stringshare_add(text);
+        if (text == o->markup_text)
+          {
+             /* Text is the same, do nothing. */
+             return;
+          }
      }
 
    _nodes_clear(eo_obj);
@@ -6843,15 +6847,6 @@ _evas_textblock_text_markup_set(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o, 
    o->text_nodes = _NODE_TEXT(eina_inlist_append(
             EINA_INLIST_GET(o->text_nodes),
             EINA_INLIST_GET(o->cursor->node)));
-
-   if (!o->style && !o->style_user)
-     {
-        if (text != o->markup_text)
-          {
-             if (text) o->markup_text = strdup(text);
-          }
-        return;
-     }
 
    evas_textblock_cursor_paragraph_first(o->cursor);
 
@@ -6865,6 +6860,8 @@ _evas_textblock_text_markup_set(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o, 
         EINA_LIST_FOREACH(o->cursors, l, data)
            evas_textblock_cursor_paragraph_first(data);
      }
+
+    o->markup_text = text;
 }
 
 EAPI void
@@ -7134,7 +7131,7 @@ _evas_textblock_text_markup_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o)
         free(text_base);
      }
 
-   (((Evas_Textblock_Data *)o)->markup_text) = eina_strbuf_string_steal(txt);
+   (((Evas_Textblock_Data *)o)->markup_text) = eina_stringshare_add(eina_strbuf_string_get(txt));
    eina_strbuf_free(txt);
    markup = (o->markup_text);
 
@@ -9248,7 +9245,7 @@ _evas_textblock_changed(Evas_Textblock_Data *o, Evas_Object *eo_obj)
    o->content_changed = 1;
    if (o->markup_text)
      {
-        free(o->markup_text);
+        eina_stringshare_del(o->markup_text);
         o->markup_text = NULL;
      }
 
