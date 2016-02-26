@@ -2302,6 +2302,7 @@ _item_new(Evas_Object *obj,
    WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
 
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
+   edje_object_update_hints_set(VIEW(it), 1);
 
    /* access */
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
