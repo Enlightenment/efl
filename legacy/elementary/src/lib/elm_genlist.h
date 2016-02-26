@@ -112,7 +112,7 @@
  * - end_icon - Only 1 icon (at end/right) (since 1.7)
  * - no_icon - No icon (at end/right) (since 1.7)
  * - full - Only 1 icon, elm.swallow.content,  which consumes whole area of
- * genlist itemj (since 1.7)
+ * genlist item (since 1.7)
  *
  * If one wants to use more icons and texts than are offered in theme, there
  * are two solutions. One is to use 'full' style that has one big swallow part.
