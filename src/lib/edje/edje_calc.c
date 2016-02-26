@@ -1564,8 +1564,6 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 
         if (stl)
           {
-             const char *ptxt;
-
              if (evas_object_textblock_style_get(ep->object) != stl->style)
                evas_object_textblock_style_set(ep->object, stl->style);
              // FIXME: need to account for editing
@@ -1575,11 +1573,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                }
              else
                {
-                  ptxt = evas_object_textblock_text_markup_get(ep->object);
-                  if (((!ptxt) && (text)) ||
-                      ((ptxt) && (text) && (strcmp(ptxt, text))) ||
-                      ((ptxt) && (!text)))
-                    evas_object_textblock_text_markup_set(ep->object, text);
+                  evas_object_textblock_text_markup_set(ep->object, text);
                }
              if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
                {
