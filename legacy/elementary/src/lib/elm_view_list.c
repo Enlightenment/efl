@@ -375,6 +375,7 @@ _elm_view_list_eo_base_destructor(Eo *obj, Elm_View_List_Data *priv)
          eo_event_callback_array_del(model_callbacks(), priv->rootdata));
 
    eo_do(priv->genlist, elm_obj_genlist_clear());
+   free((void *)priv->itc->item_style);
    elm_genlist_item_class_free(priv->itc);
 
    eina_hash_free(priv->prop_con);
