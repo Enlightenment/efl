@@ -371,7 +371,7 @@ test_list(void        *data EINA_UNUSED,
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
    elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
-   evas_object_size_hint_align_set(ic, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ic, 0.0, 1.0);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
    elm_list_item_append(li, "are", bx, NULL, NULL, NULL);
