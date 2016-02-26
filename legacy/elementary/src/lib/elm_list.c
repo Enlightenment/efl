@@ -818,6 +818,7 @@ _items_fix(Evas_Object *obj)
    const char *it_plain;
    const char *it_compress;
    const char *it_compress_odd;
+   Eina_Bool separators = EINA_FALSE;
 
    ELM_LIST_DATA_GET(obj, sd);
 
@@ -853,6 +854,7 @@ _items_fix(Evas_Object *obj)
              if (mw > minw[1]) minw[1] = mw;
              if (mh > minh[1]) minh[1] = mh;
           }
+        separators |= it->is_separator;
      }
 
    if ((minw[0] != sd->minw[0]) || (minw[1] != sd->minw[1]) ||
@@ -866,6 +868,7 @@ _items_fix(Evas_Object *obj)
      }
 
    i = 0;
+   elm_box_homogeneous_set(sd->box, !separators);
    EINA_LIST_FOREACH(sd->items, l, eo_it)
      {
         ELM_LIST_ITEM_DATA_GET(eo_it, it);
