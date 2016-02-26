@@ -3642,11 +3642,11 @@ START_TEST(evas_textblock_escaping)
 
    const char *buf = "This &middot; is";
    evas_object_textblock_text_markup_set(tb, buf);
-   fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "This \xc2\xb7 is"));
+   fail_if(strcmp(evas_object_textblock_text_markup_get(tb), buf));
 
    buf = "This &nbsp; is";
    evas_object_textblock_text_markup_set(tb, buf);
-   fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "This \xc2\xa0 is"));
+   fail_if(strcmp(evas_object_textblock_text_markup_get(tb), buf));
 
    END_TB_TEST();
 }
