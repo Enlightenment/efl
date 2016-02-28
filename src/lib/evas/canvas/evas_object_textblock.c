@@ -6853,6 +6853,7 @@ _evas_textblock_text_markup_set(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o, 
         text = eina_stringshare_add(text);
         if (text == o->markup_text)
           {
+             eina_stringshare_del(text);
              /* Text is the same, do nothing. */
              return;
           }
