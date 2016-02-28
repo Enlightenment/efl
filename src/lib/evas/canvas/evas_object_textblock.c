@@ -6849,6 +6849,12 @@ _evas_textblock_text_markup_set(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o, 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
 
+   if (text == o->markup_text)
+     {
+        /* Text is the same and already stringshared, do nothing */
+        return;
+     }
+   else
      {
         text = eina_stringshare_add(text);
         if (text == o->markup_text)
