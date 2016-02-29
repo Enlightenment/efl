@@ -13,11 +13,9 @@
 static int cb_called = EINA_FALSE;
 
 static Eina_Bool
-_a_changed_cb(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
+_a_changed_cb(void *data, const Eo_Event *event)
 {
-   (void) desc;
-   (void) obj;
-   int new_a = *((int *) event_info);
+   int new_a = *((int *) event->event_info);
    printf("%s event_info:'%d' data:'%s'\n", __func__, new_a, (const char *) data);
 
    cb_called = EINA_TRUE;

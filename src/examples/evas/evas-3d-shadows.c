@@ -79,17 +79,17 @@ typedef struct _Scene_Data
 } Scene_Data;
 
 Eina_Bool
-_cb_clicked(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_cb_clicked(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Eina_List *meshes = NULL, *l;
    Evas_Canvas3D_Mesh *m;
    Evas_Canvas3D_Node *billboard = NULL;
-   eo_do((Evas_Canvas3D_Node *)event_info, meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get());
+   eo_do((Evas_Canvas3D_Node *)event->event_info, meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get());
    EINA_LIST_FOREACH(meshes, l, m)
      {
         eo_do(m, evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_DIFFUSE));
      }
-   if (choosed_node != (Evas_Canvas3D_Node *)event_info)
+   if (choosed_node != (Evas_Canvas3D_Node *)event->event_info)
      {
         eo_do(choosed_node, billboard = evas_canvas3d_node_billboard_target_get());
         if (!billboard)
@@ -100,18 +100,18 @@ _cb_clicked(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Descript
                   eo_do(m, evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_PHONG));
                }
           }
-        choosed_node = (Evas_Canvas3D_Node *)event_info;
+        choosed_node = (Evas_Canvas3D_Node *)event->event_info;
      }
 
    return EINA_TRUE;
 }
 
 Eina_Bool
-_cb_collision(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_cb_collision(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Eina_List *meshes = NULL, *l;
    Evas_Canvas3D_Mesh *m;
-   eo_do((Evas_Canvas3D_Node *)event_info, meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get());
+   eo_do((Evas_Canvas3D_Node *)event->event_info, meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get());
    EINA_LIST_FOREACH(meshes, l, m)
      {
         eo_do(m, evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_DIFFUSE));

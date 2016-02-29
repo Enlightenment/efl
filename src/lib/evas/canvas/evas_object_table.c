@@ -244,16 +244,16 @@ _evas_object_table_option_del(Evas_Object *o)
 }
 
 static Eina_Bool
-_on_child_del(void *data, Eo *child, const Eo_Event_Description *desc EINA_UNUSED, void *einfo EINA_UNUSED)
+_on_child_del(void *data, const Eo_Event *event)
 {
    Evas_Object *table = data;
-   evas_object_table_unpack(table, child);
+   evas_object_table_unpack(table, event->obj);
 
    return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool
-_on_child_hints_changed(void *data, Eo *child EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *einfo EINA_UNUSED)
+_on_child_hints_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Evas_Object *table = data;
    EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(table, priv, EO_CALLBACK_CONTINUE);

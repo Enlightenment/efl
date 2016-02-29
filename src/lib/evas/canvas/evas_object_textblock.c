@@ -7388,9 +7388,7 @@ _obstacle_find(Evas_Textblock_Data *obj, Eo *eo_obs)
 }
 
 Eina_Bool
-_obstacle_del_cb(void *data, Eo *eo_obs,
-      const Eo_Event_Description *desc EINA_UNUSED,
-      void *event_info EINA_UNUSED)
+_obstacle_del_cb(void *data, const Eo_Event *event)
 {
    Eo *eo_obj = data;
    Evas_Textblock_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
@@ -7399,7 +7397,7 @@ _obstacle_del_cb(void *data, Eo *eo_obs,
 
    EINA_LIST_FOREACH(obj->obstacles, i, obs)
      {
-        if (eo_obs == obs->eo_obs)
+        if (event->obj == obs->eo_obs)
            break;
      }
    obj->obstacles = eina_list_remove_list(obj->obstacles, i);

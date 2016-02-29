@@ -681,9 +681,7 @@ _ector_renderer_software_shape_efl_gfx_shape_path_set(Eo *obj,
 
 
 static Eina_Bool
-_ector_renderer_software_shape_path_changed(void *data, Eo *obj EINA_UNUSED,
-                                            const Eo_Event_Description *desc EINA_UNUSED,
-                                            void *event_info EINA_UNUSED)
+_ector_renderer_software_shape_path_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Ector_Renderer_Software_Shape_Data *pd = data;
    

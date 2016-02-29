@@ -11,11 +11,9 @@
 #include "evas_elw_win.h"
 
 Eina_Bool
-_btn_clicked_cb(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
+_btn_clicked_cb(void *data, const Eo_Event *event)
 {
-   (void) obj;
-   (void) event_info;
-   const Eo_Class *klass = eo_class_get(obj);
+   const Eo_Class *klass = eo_class_get(event->obj);
    printf("%s obj-type:'%s' data:'%s'\n", desc->name, eo_class_name_get(klass), (const char *) data);
 
    return EO_CALLBACK_CONTINUE;

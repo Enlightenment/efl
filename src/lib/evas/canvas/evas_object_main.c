@@ -83,27 +83,21 @@ _init_cow(void)
 }
 
 static Eina_Bool
-_animator_repeater(void *data,
-                   Eo *eo_obj EINA_UNUSED,
-                   const Eo_Event_Description2 *desc EINA_UNUSED,
-                   void *event_info)
+_animator_repeater(void *data, const Eo_Event *event)
 {
    Evas_Object_Protected_Data *obj = data;
 
    eo_do(obj->object,
-         eo_event_callback_call(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, event_info));
+         eo_event_callback_call(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, event->event_info));
    DBG("Emitting animator tick on %p.", obj->object);
 
    return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool
-_check_event_catcher_add(void *data,
-                         Eo *eo_obj EINA_UNUSED,
-                         const Eo_Event_Description2 *desc EINA_UNUSED,
-                         void *event_info)
+_check_event_catcher_add(void *data, const Eo_Event *event)
 {
-   const Eo_Callback_Array_Item *array = event_info;
+   const Eo_Callback_Array_Item *array = event->event_info;
    Evas_Object_Protected_Data *obj = data;
    int i;
 
@@ -128,12 +122,9 @@ _check_event_catcher_add(void *data,
 }
 
 static Eina_Bool
-_check_event_catcher_del(void *data,
-                         Eo *eo_obj EINA_UNUSED,
-                         const Eo_Event_Description2 *desc EINA_UNUSED,
-                         void *event_info)
+_check_event_catcher_del(void *data, const Eo_Event *event)
 {
-   const Eo_Callback_Array_Item *array = event_info;
+   const Eo_Callback_Array_Item *array = event->event_info;
    Evas_Object_Protected_Data *obj = data;
    int i;
 

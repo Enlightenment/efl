@@ -300,12 +300,11 @@ evas_gl_preload_render_relax(evas_gl_make_current_cb make_current, void *engine_
 }
 
 static Eina_Bool
-_evas_gl_preload_target_die(void *data, Eo *obj,
-                            const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_evas_gl_preload_target_die(void *data, const Eo_Event *event)
 {
    Evas_GL_Texture *tex = data;
 
-   evas_gl_preload_target_unregister(tex, obj);
+   evas_gl_preload_target_unregister(tex, event->obj);
 
    return EO_CALLBACK_CONTINUE;
 }

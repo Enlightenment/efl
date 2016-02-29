@@ -8,18 +8,18 @@ static int outs = 0;
 static Eina_Bool outfail = EINA_FALSE;
 
 static Eina_Bool
-_play_finished(void *data EINA_UNUSED, Eo *in, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_play_finished(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   eo_del(in);
+   eo_del(event->obj);
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_out_fail(void *data EINA_UNUSED, Eo *output EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_out_fail(void *data EINA_UNUSED, const Eo_Event *event)
 {
    outfail = EINA_TRUE;
-   eo_del(out);
+   eo_del(event->obj);
    out = NULL;
    return EINA_TRUE;
 }

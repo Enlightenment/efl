@@ -110,7 +110,7 @@ _evas_object_box_accessor_free(Evas_Object_Box_Accessor *it)
 }
 
 static Eina_Bool
-_on_child_resize(void *data, Eo *o EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *einfo EINA_UNUSED)
+_on_child_resize(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Evas_Object *box = data;
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(box, priv, EO_CALLBACK_CONTINUE);
@@ -120,12 +120,12 @@ _on_child_resize(void *data, Eo *o EINA_UNUSED, const Eo_Event_Description *desc
 }
 
 static Eina_Bool
-_on_child_del(void *data, Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *einfo EINA_UNUSED)
+_on_child_del(void *data, const Eo_Event *event)
 {
    Evas_Object *box = data;
 
    Evas_Object *ret = NULL;
-   eo_do(box, ret = evas_obj_box_internal_remove(o));
+   eo_do(box, ret = evas_obj_box_internal_remove(event->obj));
    if (!ret)
      ERR("child removal failed");
    evas_object_smart_changed(box);
@@ -134,7 +134,7 @@ _on_child_del(void *data, Eo *o, const Eo_Event_Description *desc EINA_UNUSED, v
 }
 
 static Eina_Bool
-_on_child_hints_changed(void *data, Eo *o EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *einfo EINA_UNUSED)
+_on_child_hints_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Evas_Object *box = data;
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN_VAL(box, priv, EO_CALLBACK_CONTINUE);

@@ -162,9 +162,9 @@ ecore_con_url_pipeline_get(void)
 extern Ecore_Con_Socks *_ecore_con_proxy_global;
 
 static Eina_Bool
-_efl_network_url_event_complete_cb(void *data EINA_UNUSED, Eo *child, const Eo_Event_Description *desc EINA_UNUSED, void *einfo)
+_efl_network_url_event_complete_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Ecore_Con_Event_Url_Complete *e, *f = einfo;
+   Ecore_Con_Event_Url_Complete *e, *f = event->event_info;
 
    e = calloc(1, sizeof(Ecore_Con_Event_Url_Complete));
    if (!e) return EO_CALLBACK_STOP;
@@ -172,16 +172,16 @@ _efl_network_url_event_complete_cb(void *data EINA_UNUSED, Eo *child, const Eo_E
    e->status = f->status;
    e->url_con = f->url_con;
    ecore_event_add(ECORE_CON_EVENT_URL_COMPLETE, e,
-                   (Ecore_End_Cb)_ecore_con_event_url_free, child);
+                   (Ecore_End_Cb)_ecore_con_event_url_free, event->obj);
 
    return EO_CALLBACK_STOP;
 }
 
 static Eina_Bool
-_efl_network_url_event_data_cb(void *data EINA_UNUSED, Eo *child, const Eo_Event_Description *desc EINA_UNUSED, void *einfo)
+_efl_network_url_event_data_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Ecore_Con_Event_Url_Data *e;
-   Efl_Network_Event_Url_Data *f = einfo;
+   Efl_Network_Event_Url_Data *f = event->event_info;
 
    e = malloc(sizeof(Ecore_Con_Event_Url_Data) + sizeof(unsigned char) * f->size);
 
@@ -191,15 +191,15 @@ _efl_network_url_event_data_cb(void *data EINA_UNUSED, Eo *child, const Eo_Event
    e->size = f->size;
    memcpy(e->data, f->data, f->size);
    ecore_event_add(ECORE_CON_EVENT_URL_DATA, e,
-                   (Ecore_End_Cb)_ecore_con_event_url_free, child);
+                   (Ecore_End_Cb)_ecore_con_event_url_free, event->obj);
 
    return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool
-_efl_network_url_event_progress_cb(void *data EINA_UNUSED, Eo *child, const Eo_Event_Description *desc EINA_UNUSED, void *einfo)
+_efl_network_url_event_progress_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Ecore_Con_Event_Url_Progress *e, *f = einfo;
+   Ecore_Con_Event_Url_Progress *e, *f = event->event_info;
 
    e = malloc(sizeof(Ecore_Con_Event_Url_Progress));
    if (!e) return EO_CALLBACK_CONTINUE;
@@ -210,7 +210,7 @@ _efl_network_url_event_progress_cb(void *data EINA_UNUSED, Eo *child, const Eo_E
    e->up.total = f->up.total;
    e->up.now = f->up.now;
    ecore_event_add(ECORE_CON_EVENT_URL_PROGRESS, e,
-                   (Ecore_End_Cb)_ecore_con_event_url_free, child);
+                   (Ecore_End_Cb)_ecore_con_event_url_free, event->obj);
 
    return EO_CALLBACK_CONTINUE;
 }

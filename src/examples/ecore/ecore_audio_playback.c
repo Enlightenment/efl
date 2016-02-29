@@ -191,17 +191,17 @@ handle_input(void *data EINA_UNUSED, Ecore_Fd_Handler *handler)
    return EINA_TRUE;
 }
 
-static Eina_Bool _play_finished(void *data EINA_UNUSED, Eo *in, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+static Eina_Bool _play_finished(void *data EINA_UNUSED, const Eo_Event *event)
 {
   const char *name;
   Eina_Bool ret;
 
-  eo_do(in, ecore_audio_obj_name_get(&name));
+  eo_do(event->obj, ecore_audio_obj_name_get(&name));
   printf("Done: %s\n", name);
 
-  inputs = eina_list_remove(inputs, in);
-  eo_do(out, ret = ecore_audio_obj_out_input_detach(in));
-  eo_del(in);
+  inputs = eina_list_remove(inputs, event->obj);
+  eo_do(out, ret = ecore_audio_obj_out_input_detach(event->obj));
+  eo_del(event->obj);
 
   if (!ret)
     printf("Could not detach input %s\n", name);
@@ -210,7 +210,7 @@ static Eina_Bool _play_finished(void *data EINA_UNUSED, Eo *in, const Eo_Event_D
   if (eina_list_count(inputs) > 0)
     {
       const char *name;
-      in = (Eo *)eina_list_data_get(inputs);
+      Eo *in = (Eo *)eina_list_data_get(inputs);
 
       eo_do(in, ecore_audio_obj_name_get(&name));
       printf("Start: %s\n", name);

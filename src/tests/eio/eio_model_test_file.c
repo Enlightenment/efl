@@ -59,9 +59,9 @@ static Eina_Bool
  }
 
 static Eina_Bool
-_load_status_cb(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_load_status_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Efl_Model_Load *st = event_info;
+   Efl_Model_Load *st = event->event_info;
    printf("Load CHANGE\n");
 
    if (st->status & EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN)
@@ -84,26 +84,26 @@ _load_status_cb(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *des
         char *str;
 
         printf("Model is Loaded\n");
-        eo_do(obj, status = efl_model_property_get("filename", &value_prop));
+        eo_do(event->obj, status = efl_model_property_get("filename", &value_prop));
         str = eina_value_to_string(value_prop);
         printf("efl_model_loaded filename %s, status=%d\n", str, status);
         free(str);
 
-        eo_do(obj, status = efl_model_property_get("size", &value_prop));
+        eo_do(event->obj, status = efl_model_property_get("size", &value_prop));
         str = eina_value_to_string(value_prop);
         printf("efl_model_loaded size %s, status=%d\n", str, status);
         free(str);
 
-        eo_do(obj, status = efl_model_property_get("mtime", &value_prop));
+        eo_do(event->obj, status = efl_model_property_get("mtime", &value_prop));
         str = eina_value_to_string(value_prop);
         printf("efl_model_loaded mtime %s, status=%d\n", str, status);
         free(str);
 
-        eo_do(obj, efl_model_children_count_get(&total));
+        eo_do(event->obj, efl_model_children_count_get(&total));
         printf("efl_model_test count %d\n", (int)total);
 
         /**< get full list */
-        eo_do(obj, status = efl_model_children_slice_get(0 ,0 ,(Eina_Accessor **)&accessor));
+        eo_do(event->obj, status = efl_model_children_slice_get(0 ,0 ,(Eina_Accessor **)&accessor));
         eina_accessor_free(accessor);
         ecore_main_loop_quit();
      }
@@ -111,9 +111,9 @@ _load_status_cb(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *des
 }
 
 static Eina_Bool
-_properties_change_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_properties_change_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   const Efl_Model_Property_Event *evt = (Efl_Model_Property_Event *)event_info;
+   const Efl_Model_Property_Event *evt = (Efl_Model_Property_Event *)event->event_info;
    const char *prop;
    Eina_Array_Iterator it;
    unsigned int i;
@@ -135,15 +135,15 @@ _properties_change_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Even
 }
 
 static Eina_Bool
-_children_count_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_children_count_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   unsigned int *len = (unsigned int *)event_info;
+   unsigned int *len = (unsigned int *)event->event_info;
    unsigned int total;
 
    fprintf(stdout, "Children count number=%d\n", *len);
    reqs.children = *len;
 
-   eo_do(obj, efl_model_children_count_get(&total));
+   eo_do(event->obj, efl_model_children_count_get(&total));
    fprintf(stdout, "New total children count number=%d\n", *len);
 
    return EINA_TRUE;

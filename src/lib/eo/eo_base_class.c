@@ -733,12 +733,12 @@ end:
 }
 
 static Eina_Bool
-_eo_event_forwarder_callback(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc, void *event_info)
+_eo_event_forwarder_callback(void *data, const Eo_Event *event)
 {
    Eo *new_obj = (Eo *) data;
    Eina_Bool ret = EINA_FALSE;
 
-   eo_do(new_obj, ret = eo_event_callback_call(desc, (void *)event_info); );
+   eo_do(new_obj, ret = eo_event_callback_call(event->desc, event->event_info); );
 
    return ret;
 }

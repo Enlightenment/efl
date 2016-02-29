@@ -15,10 +15,7 @@
 #include "eldbus_suite.h"
 
 static Eina_Bool
-_eo_event_quit_cb(void *data EINA_UNUSED,
-                  Eo *obj EINA_UNUSED,
-                  const Eo_Event_Description *desc EINA_UNUSED,
-                  void *event_info EINA_UNUSED)
+_eo_event_quit_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    ecore_main_loop_quit();
    return EINA_FALSE;
@@ -33,13 +30,11 @@ efl_model_wait_for_event(Eo *obj, const Eo_Event_Description* event)
 }
 
 static Eina_Bool
-_event_load_status_quit_cb(void *data, Eo *obj EINA_UNUSED,
-                           const Eo_Event_Description *desc EINA_UNUSED,
-                           void *event_info EINA_UNUSED)
+_event_load_status_quit_cb(void *data, const Eo_Event *event)
 {
    printf("_event_load_status_quit_cb\n");
    Efl_Model_Load_Status expected_status = (Efl_Model_Load_Status)data;
-   Efl_Model_Load *actual_load = (Efl_Model_Load*)event_info;
+   Efl_Model_Load *actual_load = (Efl_Model_Load*)event->event_info;
 
    if (expected_status == actual_load->status)
      {

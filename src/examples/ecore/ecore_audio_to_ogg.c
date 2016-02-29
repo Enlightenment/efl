@@ -15,16 +15,16 @@
 double volume = 1;
 Eina_List *inputs = NULL;
 
-static Eina_Bool _play_finished(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+static Eina_Bool _play_finished(void *data EINA_UNUSED, const Eo_Event *event)
 {
   const char *name;
   Eo *out;
 
-  eo_do(obj, ecore_audio_obj_name_get(&name));
+  eo_do(event->obj, ecore_audio_obj_name_get(&name));
   printf("Done: %s\n", name);
 
-  eo_do(obj, ecore_audio_obj_in_output_get(&out));
-  eo_del(obj);
+  eo_do(event->obj, ecore_audio_obj_in_output_get(&out));
+  eo_del(event->obj);
   eo_del(out);
 
   ecore_main_loop_quit();

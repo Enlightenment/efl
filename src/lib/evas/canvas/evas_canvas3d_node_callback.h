@@ -24,11 +24,9 @@ const Eo_Event_Description evas_canvas3d_node_private_event_desc[] =
 
 /*Private callbacks */
 static Eina_Bool
-_evas_canvas3d_node_private_callback_clicked(void *data, Eo *obj, const Eo_Event_Description *desc,
-									   void *event_info);
+_evas_canvas3d_node_private_callback_clicked(void *data, const Eo_Event *event);
 static Eina_Bool
-_evas_canvas3d_node_private_callback_collision(void *data, Eo *obj, const Eo_Event_Description *desc,
-										 void *event_info);
+_evas_canvas3d_node_private_callback_collision(void *data, const Eo_Event *event);
 
 Eo_Event_Cb evas_canvas3d_node_private_callback_functions[] =
 {

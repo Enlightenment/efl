@@ -213,7 +213,7 @@ _evas_object_clip_mask_unset(Evas_Object_Protected_Data *obj)
 extern const char *o_rect_type;
 extern const char *o_image_type;
 
-static Eina_Bool _clipper_del_cb(void *data, Eo *eo_clip, const Eo_Event_Description *desc EINA_UNUSED, void *info EINA_UNUSED);
+static Eina_Bool _clipper_del_cb(void *data, const Eo_Event *event);
 
 EOLIAN void
 _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip)
@@ -478,7 +478,7 @@ _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 static Eina_Bool
-_clipper_del_cb(void *data, Eo *eo_clip, const Eo_Event_Description *desc EINA_UNUSED, void *info EINA_UNUSED)
+_clipper_del_cb(void *data, const Eo_Event *event)
 {
    Evas_Object *eo_obj = data;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
@@ -486,7 +486,7 @@ _clipper_del_cb(void *data, Eo *eo_clip, const Eo_Event_Description *desc EINA_U
    if (!obj) return EO_CALLBACK_CONTINUE;
 
    _evas_object_clip_unset(eo_obj, obj);
-   if (obj->prev->clipper && (obj->prev->clipper->object == eo_clip))
+   if (obj->prev->clipper && (obj->prev->clipper->object == event->obj))
      {
         // not removing cb since it's the del cb... it can't be called again!
         EINA_COW_STATE_WRITE_BEGIN(obj, state_write, prev)

@@ -81,8 +81,7 @@ _resize_movie(struct _emotion_plugin *_plugin)
 }
 
 static Eina_Bool
-_frame_decode_cb(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_frame_decode_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    struct _emotion_plugin *_plugin = data;
 
@@ -95,8 +94,7 @@ _frame_decode_cb(void *data,
  }
 
 static Eina_Bool
-_frame_resized_cb(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_frame_resized_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    _resize_movie(data);
 
@@ -104,8 +102,7 @@ _frame_resized_cb(void *data,
 }
 
 static Eina_Bool
-_video_stopped_cb(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_video_stopped_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    struct _emotion_plugin *_plugin = data;
 

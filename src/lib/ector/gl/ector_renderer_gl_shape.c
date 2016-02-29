@@ -21,7 +21,7 @@ struct _Ector_Renderer_GL_Shape_Data
 };
 
 static Eina_Bool
-_ector_renderer_gl_shape_path_changed(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_ector_renderer_gl_shape_path_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Ector_Renderer_GL_Shape_Data *pd = data;
 

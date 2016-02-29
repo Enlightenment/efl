@@ -10,27 +10,21 @@
 static int cb_count = 0;
 
 static Eina_Bool
-_null_cb(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
+_null_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
-   (void) desc;
-   (void) obj;
-   (void) data;
-   (void) event_info;
    return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool
-_a_changed_cb(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
+_a_changed_cb(void *data, const Eo_Event *event)
 {
-   (void) desc;
-   (void) obj;
-   int new_a = *((int *) event_info);
+   int new_a = *((int *) event->event_info);
    printf("%s event_info:'%d' data:'%d'\n", __func__, new_a, (int) (intptr_t) data);
 
    cb_count++;
 
-   eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _null_cb, (void *) 23423));
-   eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _null_cb, (void *) 23423));
+   eo_do(event->obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _null_cb, (void *) 23423));
+   eo_do(event->obj, eo_event_callback_del(EV_A_CHANGED, _null_cb, (void *) 23423));
 
    /* Stop as we reached the 3rd one. */
    return (cb_count != 3);

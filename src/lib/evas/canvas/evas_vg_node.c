@@ -18,7 +18,7 @@ static const Efl_VG_Interpolation interpolation_identity = {
 };
 
 static Eina_Bool
-_efl_vg_base_property_changed(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
+_efl_vg_base_property_changed(void *data, const Eo_Event *event)
 {
    Efl_VG_Base_Data *pd = data;
    Eo *parent;
@@ -26,8 +26,8 @@ _efl_vg_base_property_changed(void *data, Eo *obj, const Eo_Event_Description *d
    if (pd->changed) return EINA_TRUE;
    pd->changed = EINA_TRUE;
 
-   eo_do(obj, parent = eo_parent_get());
-   eo_do(parent, eo_event_callback_call(desc, event_info));
+   eo_do(event->obj, parent = eo_parent_get());
+   eo_do(parent, eo_event_callback_call(event->desc, event->event_info));
    return EINA_TRUE;
 }
 

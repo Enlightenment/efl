@@ -69,9 +69,7 @@ _filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,
 }
 
 static Eina_Bool
-_render_post_cb(void *data, Eo *evas EINA_UNUSED,
-                const Eo_Event_Description2 *desc EINA_UNUSED,
-                void *event_info EINA_UNUSED)
+_render_post_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Eo *eo_obj = data;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);

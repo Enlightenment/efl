@@ -1,15 +1,15 @@
 #include "edje_private.h"
 
 static Eina_Bool
-_edje_hold_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_edje_hold_signal_cb(void *data, const Eo_Event *event)
 {
    Evas_Event_Hold *ev;
    Edje *ed;
    Edje_Real_Part *rp;
 
-   ev = event_info;
+   ev = event->event_info;
    ed = data;
-   rp = evas_object_data_get(obj, "real_part");
+   rp = evas_object_data_get(event->obj, "real_part");
    if (!rp) return EO_CALLBACK_CONTINUE;
    if (ev->hold)
      _edje_emit(ed, "hold,on", rp->part->name);
@@ -20,13 +20,13 @@ _edje_hold_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_
 }
 
 static Eina_Bool
-_edje_focus_in_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_edje_focus_in_signal_cb(void *data, const Eo_Event *event)
 {
    Edje *ed;
    Edje_Real_Part *rp;
 
    ed = data;
-   rp = evas_object_data_get(obj, "real_part");
+   rp = evas_object_data_get(event->obj, "real_part");
    if ((!rp) || (!ed))
      return EO_CALLBACK_CONTINUE;
 
@@ -36,13 +36,13 @@ _edje_focus_in_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc E
 }
 
 static Eina_Bool
-_edje_focus_out_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_edje_focus_out_signal_cb(void *data, const Eo_Event *event)
 {
    Edje *ed;
    Edje_Real_Part *rp;
 
    ed = data;
-   rp = evas_object_data_get(obj, "real_part");
+   rp = evas_object_data_get(event->obj, "real_part");
    if ((!rp) || (!ed))
      return EO_CALLBACK_CONTINUE;
 
@@ -52,15 +52,15 @@ _edje_focus_out_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc 
 }
 
 static Eina_Bool
-_edje_mouse_in_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_edje_mouse_in_signal_cb(void *data, const Eo_Event *event)
 {
    Evas_Event_Mouse_In *ev;
    Edje *ed;
    Edje_Real_Part *rp;
 
-   ev = event_info;
+   ev = event->event_info;
    ed = data;
-   rp = evas_object_data_get(obj, "real_part");
+   rp = evas_object_data_get(event->obj, "real_part");
    if (rp)
      {
         if (!(ev->event_flags) || !(rp->part->ignore_flags & ev->event_flags))
@@ -73,15 +73,15 @@ _edje_mouse_in_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc E
 }
 
 static Eina_Bool
-_edje_mouse_out_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_edje_mouse_out_signal_cb(void *data, const Eo_Event *event)
 {
    Evas_Event_Mouse_Out *ev;
    Edje *ed;
    Edje_Real_Part *rp;
 
-   ev = event_info;
+   ev = event->event_info;
    ed = data;
-   rp = evas_object_data_get(obj, "real_part");
+   rp = evas_object_data_get(event->obj, "real_part");
    if (rp)
      {
         if (!(ev->event_flags) || !(rp->part->ignore_flags & ev->event_flags))
@@ -94,7 +94,7 @@ _edje_mouse_out_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc 
 }
 
 static Eina_Bool
-_edje_mouse_down_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_edje_mouse_down_signal_cb(void *data, const Eo_Event *event)
 {
    Evas_Event_Mouse_Down *ev;
    Edje *ed;
@@ -102,9 +102,9 @@ _edje_mouse_down_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
    char buf[256];
    int ignored;
 
-   ev = event_info;
+   ev = event->event_info;
    ed = data;
-   rp = evas_object_data_get(obj, "real_part");
+   rp = evas_object_data_get(event->obj, "real_part");
    if (!rp) return EO_CALLBACK_CONTINUE;
 
    ignored = rp->part->ignore_flags & ev->event_flags;
@@ -165,7 +165,7 @@ _edje_mouse_down_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
 }
 
 static Eina_Bool
-_edje_mouse_up_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_edje_mouse_up_signal_cb(void *data, const Eo_Event *event)
 {
    Evas_Event_Mouse_Up *ev;
    Edje *ed;
@@ -173,9 +173,9 @@ _edje_mouse_up_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc E
    char buf[256];
    int ignored;
 
-   ev = event_info;
+   ev = event->event_info;
    ed = data;
-   rp = evas_object_data_get(obj, "real_part");
+   rp = evas_object_data_get(event->obj, "real_part");
    if (!rp) return EO_CALLBACK_CONTINUE;
 
    ignored = rp->part->ignore_flags & ev->event_flags;
@@ -240,16 +240,16 @@ _edje_mouse_up_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc E
 }
 
 static Eina_Bool
-_edje_mouse_move_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_edje_mouse_move_signal_cb(void *data, const Eo_Event *event)
 {
    Evas_Event_Mouse_Move *ev;
    Edje *ed;
    Edje_Real_Part *rp;
    int ignored;
 
-   ev = event_info;
+   ev = event->event_info;
    ed = data;
-   rp = evas_object_data_get(obj, "real_part");
+   rp = evas_object_data_get(event->obj, "real_part");
    if (!rp) return EO_CALLBACK_CONTINUE;
    if (rp->part->dragable.event_id >= 0)
      {
@@ -270,7 +270,7 @@ _edje_mouse_move_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
           {
              Evas_Coord x, y, w, h;
 
-             evas_object_geometry_get(obj, &x, &y, &w, &h);
+             evas_object_geometry_get(event->obj, &x, &y, &w, &h);
              if ((ev->cur.canvas.x < x) || (ev->cur.canvas.y < y) ||
                  (ev->cur.canvas.x >= (x + w)) || (ev->cur.canvas.y >= (y + h)))
                {
@@ -287,7 +287,7 @@ _edje_mouse_move_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
           {
              Evas_Coord x, y, w, h;
 
-             evas_object_geometry_get(obj, &x, &y, &w, &h);
+             evas_object_geometry_get(event->obj, &x, &y, &w, &h);
              if ((ev->cur.canvas.x >= x) && (ev->cur.canvas.y >= y) &&
                  (ev->cur.canvas.x < (x + w)) && (ev->cur.canvas.y < (y + h)))
                {
@@ -349,16 +349,16 @@ _edje_mouse_move_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc
 }
 
 static Eina_Bool
-_edje_mouse_wheel_signal_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_edje_mouse_wheel_signal_cb(void *data, const Eo_Event *event)
 {
    Evas_Event_Mouse_Wheel *ev;
    Edje *ed;
    Edje_Real_Part *rp;
    char buf[256];
 
-   ev = event_info;
+   ev = event->event_info;
    ed = data;
-   rp = evas_object_data_get(obj, "real_part");
+   rp = evas_object_data_get(event->obj, "real_part");
    if (rp)
      {
         if (!(ev->event_flags) || !(rp->part->ignore_flags & ev->event_flags))
@@ -374,10 +374,7 @@ _edje_mouse_wheel_signal_cb(void *data, Eo *obj, const Eo_Event_Description *des
 }
 
 Eina_Bool
-_edje_timer_cb(void *data,
-               Eo *obj EINA_UNUSED,
-               const Eo_Event_Description *desc EINA_UNUSED,
-               void *event_info EINA_UNUSED) // FIXME: figure out how to use event_info
+_edje_timer_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    double t;
    Eina_List *l;

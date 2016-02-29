@@ -61,10 +61,10 @@ struct _Evas_Object_Smart_Iterator
 };
 
 static Eina_Bool
-_eo_evas_smart_cb(void *data, Eo *eo_obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_eo_evas_smart_cb(void *data, const Eo_Event *event)
 {
    _eo_evas_smart_cb_info *info = data;
-   if (info->func) info->func(info->data, eo_obj, event_info);
+   if (info->func) info->func(info->data, event->obj, event->event_info);
    return EINA_TRUE;
 }
 
