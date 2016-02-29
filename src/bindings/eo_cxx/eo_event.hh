@@ -137,12 +137,12 @@ Eina_Bool really_call_event(T& wrapper, F& f, Eo_Event_Description const& desc, 
 
 template <typename T, typename F>
 Eina_Bool
-event_callback(void *data, Eo *obj, Eo_Event_Description const* desc, void *info)
+event_callback(void *data, ::Eo_Event2 const* event)
 {
-   T wrapper(::eo_ref(obj));
+   T wrapper(::eo_ref(event->obj));
    F *f = static_cast<F*>(data);
-   return _detail::really_call_event(wrapper, *f, *desc, info
-                                     , std::is_void<decltype((*f)(wrapper, *desc, info))>());
+   return _detail::really_call_event(wrapper, *f, *event->desc, event->event_info
+                                     , std::is_void<decltype((*f)(wrapper, *event->desc, event->event_info))>());
 }
 
 }

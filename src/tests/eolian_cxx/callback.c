@@ -17,11 +17,9 @@ typedef struct _Callback_Data Callback_Data;
 
 #define MY_CLASS CALLBACK_CLASS
 
-static Eina_Bool _callback_callback_added(void* data EINA_UNUSED, Eo* obj EINA_UNUSED
-                                          , Eo_Event_Description const* e EINA_UNUSED
-                                          , void* event_info EINA_UNUSED)
+static Eina_Bool _callback_callback_added(void* data EINA_UNUSED, Eo_Event2 const* event)
 {
-  Callback_Data* pd = event_info;
+  Callback_Data* pd = event->event_info;
   ++pd->callbacks;
   eo_event_callback_call(CALLBACK_EVENT_CALL_ON_ADD, &pd->callbacks);
   return EINA_TRUE;

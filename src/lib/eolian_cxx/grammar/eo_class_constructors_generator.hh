@@ -174,7 +174,7 @@ operator<<(std::ostream& out, functors_constructor_methods const& x)
                       d.out << tab(3)
                             << "eo_do(_eoptr," << endl
                             << tab(4) << "eo_event_callback_add(EO_BASE_EVENT_DEL, "
-                            << "&::efl::eolian::free_callback_calback<"
+                            << "&::efl::eolian::free_callback_callback<"
                             << parameter_no_ref_type(d.type, d.name)
                             << ">, " << callback_tmp(d.name) << "));" << endl;
                  })
