@@ -75,8 +75,7 @@ START_TEST(evas_filter_parser)
 
 #define CHECK_FILTER(_a, _v) do { \
    pgm = evas_filter_program_new("evas_suite", EINA_TRUE); \
-   if (evas_filter_program_parse(pgm, _a) != _v) \
-     fail("Filter test failed (result should be %s):\n%s", # _v, _a); \
+   fail_if(evas_filter_program_parse(pgm, _a) != _v, "Filter test failed (result should be %s):\n%s", # _v, _a); \
    evas_filter_program_del(pgm); \
    } while (0)
 #define CHKGOOD(_a) CHECK_FILTER(_a, EINA_TRUE)
@@ -160,7 +159,7 @@ START_TEST(evas_filter_parser)
      CHKBAAD(bad[k]);
    fprintf(stderr, "Evas filters tests: end of invalid cases.\n");
 
-   // All colors
+   // All colors -- FIXME: need to check actual color value
    static const char *colors [] = {
       "white",
       "black",
@@ -303,10 +302,10 @@ START_TEST(evas_filter_text_padding_test)
         evas_object_geometry_get(to, NULL, NULL, &W, &H);
         //fprintf(stderr, "Case %d: %dx%d for padding %d,%d,%d,%d\n", k, W, H, l, r, t, b);
 
-        if ((l != tc->l) || (r != tc->r) || (t != tc->t) || (b != tc->b))
-          fail("Failed on invalid padding with '%s'\n", tc->code);
-        if ((W != (tc->l + tc->r + w)) || (H != (tc->t + tc->b + h)))
-          fail("Failed on invalid geometry with '%s'\n", tc->code);
+        fail_if((l != tc->l) || (r != tc->r) || (t != tc->t) || (b != tc->b),
+                "Failed on invalid padding with '%s'\n", tc->code);
+        fail_if((W != (tc->l + tc->r + w)) || (H != (tc->t + tc->b + h)),
+                "Failed on invalid geometry with '%s'\n", tc->code);
      }
 
    END_FILTER_TEST();
@@ -402,8 +401,8 @@ START_TEST(evas_filter_text_render_test)
         evas_object_resize(rect, w, h);
 
         ecore_evas_manual_render(ee);
-        if (!_ecore_evas_pixels_check(ee))
-          fail("Render test failed with: [%dx%d] '%s'", w, h, tc->code);
+        fail_if(!_ecore_evas_pixels_check(ee),
+                "Render test failed with: [%dx%d] '%s'", w, h, tc->code);
 
         evas_object_del(o);
         evas_object_del(rect);
