@@ -7641,10 +7641,10 @@ edje_edit_text_class_font_get(Evas_Object *obj, const char *class_name)
    Eina_List *l;
    Edje_Text_Class *tc;
 
-   GET_ED_OR_RETURN(EINA_FALSE);
+   GET_ED_OR_RETURN(NULL);
 
    if (!ed->file || !ed->file->text_classes)
-     return EINA_FALSE;
+     return NULL;
 
    EINA_LIST_FOREACH(ed->file->text_classes, l, tc)
       if (!strcmp(tc->name, class_name))
