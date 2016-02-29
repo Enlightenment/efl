@@ -360,7 +360,7 @@ START_TEST(evas_filter_text_render_test)
      {
         START_FILTER_TEST();
 
-        Evas_Object *rect, *o = NULL;
+        Evas_Object *rect, *o = NULL, *o2 = NULL;
         Evas_Coord w, h;
 
         ecore_evas_alpha_set(ee, EINA_TRUE);
@@ -387,6 +387,8 @@ START_TEST(evas_filter_text_render_test)
                    efl_gfx_color_set(255, 255, 255, 255),
                    efl_gfx_filter_source_set(tc->source, o),
                    efl_gfx_filter_program_set(tc->code, "evas_test_filter"));
+             eo_do(to, o2 = efl_gfx_filter_source_get(tc->source));
+             fail_if(o != o2);
           }
         else
           {
@@ -412,9 +414,60 @@ START_TEST(evas_filter_text_render_test)
 }
 END_TEST
 
+static inline Eina_Bool
+strequal(const char *a, const char *b)
+{
+   if (a == b) return 1;
+   if (!a || !b) return 0;
+   return !strcmp(a, b);
+}
+
+START_TEST(evas_filter_state_test)
+{
+   /* dumb code testing state values */
+   static const char *code =
+         "c = data and color{data.r, data.g, data.b} or color(state.color)\n"
+         "blur { state.scale * 10 * state.pos }\n"
+         "blend { ox = state.next.value * 10 }\n"
+         "fill { color = c }";
+
+   const unsigned int *pixels;
+   const char *s1, *s2;
+   double v1, v2, p;
+
+   START_FILTER_TEST();
+   ecore_evas_alpha_set(ee, EINA_TRUE);
+   ecore_evas_transparent_set(ee, EINA_TRUE);
+
+   evas_object_color_set(to, 255, 0, 0, 255);
+   eo_do(to, efl_gfx_filter_program_set(code, "merf"));
+   eo_do(to, efl_gfx_filter_state_set("state1", 0.0, "state2", 1.0, 0.5));
+
+   /* check pixels */
+   ecore_evas_manual_render(ee);
+   pixels = ecore_evas_buffer_pixels_get(ee);
+   fail_if(!pixels || (*pixels != 0xFFFF0000),
+           "state render test failed: %p (%#x)", pixels, pixels ? *pixels : 0);
+
+   eo_do(to, efl_gfx_filter_state_get(&s1, &v1, &s2, &v2, &p));
+   fail_unless(strequal(s1, "state1") && strequal(s2, "state2") && (v1 == 0.0) && (v2 == 1.0) && (p == 0.5),
+               "got: %s %f %s %f %f", s1, v1, s2, v2, p);
+
+   /* data test */
+   eo_do(to, efl_gfx_filter_data_set("data", "{r=0, g=255, b=0, a=255}", 1));
+   ecore_evas_manual_render(ee);
+   pixels = ecore_evas_buffer_pixels_get(ee);
+   fail_if(!pixels || (*pixels != 0xFF00FF00),
+           "state render test failed: %p (%#x)", pixels, pixels ? *pixels : 0);
+
+   END_FILTER_TEST();
+}
+END_TEST
+
 void evas_test_filters(TCase *tc)
 {
    tcase_add_test(tc, evas_filter_parser);
    tcase_add_test(tc, evas_filter_text_padding_test);
    tcase_add_test(tc, evas_filter_text_render_test);
+   tcase_add_test(tc, evas_filter_state_test);
 }
