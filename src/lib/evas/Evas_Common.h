@@ -5055,7 +5055,7 @@ EAPI void        evas_cserve_disconnect(void);
 
 /**
  * Converts the given Evas image load error code into a string
- * describing it in english.
+ * describing it in human-readable text.
  *
  * @param error the error code, a value in ::Evas_Load_Error.
  * @return Always returns a valid string. If the given @p error is not
