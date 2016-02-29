@@ -1,45 +1,69 @@
 interface Efl.Gfx.Filter
 {
+   [[Graphical filters can be applied to any object implementing this interface.
+
+     Filters are programmable effects that run whenever the object is rendered
+     on its canvas. The program language is Lua and a complete reference can
+     be found under "EFL Graphics Filters".
+
+     This was a beta feature since 1.15.
+
+     @since 1.18
+   ]]
+   eo_prefix: efl_gfx;
    legacy_prefix: null;
-   /* @since 1.15 */
    methods {
-      @property program @beta {
+      @property filter_program {
          set {
-            [[Set an evas filter program on this object.
+            [[Set a graphical filter program on this object.
 
               Valid for Text and Image objects at the moment.
 
-              The argument passed to this function is a string
-              containing a valid Lua program based on the filters
-              API as described in the "Evas filters reference"
-              page.
+              The argument passed to this function is a string containing
+              a valid Lua program based on the filters API as described in
+              the "EFL Graphics Filters" reference page.
 
-              Set to null to disable filtering.
+              Set to $null to disable filtering.
             ]]
          }
          get {
             [[Gets the code of the filter program set on this object.
-              May be null.
+              May be $null.
             ]]
          }
          values {
-            code: const(char)*; [[filter program source code]]
-            name: const(char)*(0); [[filter name (optional)]]
+            code: const(char)*; [[The Lua program source code.]]
+            name: const(char)* @optional; [[An optional name for this filter.]]
          }
       }
-      @property state @beta {
-         set {
-            [[Set the current state of the filter (for use from Edje).]]
-         }
+      @property filter_state {
+         [[Set the current state of the filter.
+
+           This should be used by Edje (EFL's internal layout engine), but
+           could also be used when implementing animations programmatically.
+
+           A full state is defined by two states (name + value): origin state
+           and target state of an ongoing animation, as well as the $pos
+           progress (from 0 to 1) of that animation timeline. The second state
+           can be omitted if there is no ongoing animation.
+         ]]
+         get {}
+         set {}
          values {
             cur_state: const(char)*;
-            cur_val: double(0.0);
-            next_state: const(char)*;
-            next_val: double(0.0);
-            pos: double(0.0);
+            cur_val: double;
+            next_state: const(char)* @optional;
+            next_val: double @optional;
+            pos: double @optional;
          }
       }
-      @property padding @beta {
+      @property filter_padding {
+         [[Required padding to apply this filter without cropping.
+
+           Read-only property that can be used to calculate the object's final
+           geometry. This can be overriden (set) from inside the filter program
+           by using the function 'padding_set' in the Lua program.
+         ]]
          get {
             [[Gets the padding required to apply this filter.]]
          }
@@ -50,34 +74,37 @@ interface Efl.Gfx.Filter
             b: int;
          }
       }
-      source_set @beta {
-         [[Bind an object to use as a mask or texture with Evas Filters.
+      @property filter_source {
+         [[Bind an object to use as a mask or texture in a filter program.
 
            This will create automatically a new RGBA buffer containing
            the source object's pixels (as it is rendered).
          ]]
-         params {
-            @in name: const(char)*; [[buffer name as used in the program]]
-            @in source: Efl.Gfx.Base*; [[object to use as a proxy source]]
+         set {}
+         get {}
+         keys {
+            name: const(char)*; [[Buffer name as used in the program.]]
+         }
+         values {
+            source: Efl.Gfx.Base*; [[Object to use as a source of pixels.]]
          }
       }
-      source_get @const @beta {
-         [[Retrieve which object is attached to this filter given its
-           buffer name.
-         ]]
-         params {
-            @in name: const(char)*; [[buffer name as used in the program]]
-            @out source: Efl.Gfx.Base*; [[object used as a proxy source]]
-         }
-      }
-      data_set @beta {
-         [[Pass extra data to the filter program.
+      @property filter_data {
+         [[Extra data used by the filter program.
 
-         This sets a global value as a string.]]
-         params {
-            @in name: const(char)*; [[Name of the global variable]]
-            @in value: const(char)*; [[String value to use as data]]
-            @in execute: bool; [[If true, execute 'name = value']]
+           Each data element is a string ($value) stored as a global variable
+           $name. The program is then responsible for conversion to numbers,
+           tables, etc...
+
+           If the $execute flag is set, then the $value can be complex and
+           run, as if the original Lua program contained a line 'name = value'.
+         ]]
+         keys {
+            name: const(char)*; [[Name of the global variable]]
+         }
+         values {
+            value: const(char)*; [[String value to use as data]]
+            execute: bool(false); [[If $true, execute 'name = value']]
          }
       }
    }

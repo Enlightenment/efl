@@ -1,9 +1,12 @@
 mixin Evas.Filter (Efl.Gfx.Filter, Eo.Base)
 {
-   // Evas internal implementation
+   [[Evas internal implementation of filters.]]
+
+   eo_prefix: evas;
    legacy_prefix: null;
+
    methods {
-      @property changed @protected {
+      @property filter_changed @protected {
          set {
             [[Marks this filter as changed.]]
          }
@@ -11,7 +14,7 @@ mixin Evas.Filter (Efl.Gfx.Filter, Eo.Base)
             val: bool;
          }
       }
-      @property invalid @protected {
+      @property filter_invalid @protected {
          set {
             [[Marks this filter as invalid.]]
          }
@@ -19,11 +22,11 @@ mixin Evas.Filter (Efl.Gfx.Filter, Eo.Base)
             val: bool;
          }
       }
-      input_alpha @protected {
+      filter_input_alpha @protected {
          [[Called by Evas.Filter to determine whether the input is alpha or rgba.]]
          return: bool;
       }
-      input_render @protected {
+      filter_input_render @protected {
          [[Called by Evas.Filter when the parent class must render the input.
          ;
          ]]
@@ -38,13 +41,13 @@ mixin Evas.Filter (Efl.Gfx.Filter, Eo.Base)
             do_async: bool;
          }
       }
-      dirty @protected {
+      filter_dirty @protected {
          [[Called when the filter changes must trigger a redraw of the object.
 
            Virtual, to be implemented in the parent class.
          ]]
       }
-      @property output_buffer @protected {
+      @property filter_output_buffer @protected {
          get {
             [[Retrieve cached output buffer, if any.
 
@@ -59,15 +62,17 @@ mixin Evas.Filter (Efl.Gfx.Filter, Eo.Base)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Efl.Gfx.Filter.program.set;
-      Efl.Gfx.Filter.program.get;
-      Efl.Gfx.Filter.state.set;
-      Efl.Gfx.Filter.padding.get;
-      Efl.Gfx.Filter.source_set;
-      Efl.Gfx.Filter.source_get;
-      Efl.Gfx.Filter.data_set;
-      @virtual .input_alpha;
-      @virtual .input_render;
-      @virtual .dirty;
+      Efl.Gfx.Filter.filter_program.set;
+      Efl.Gfx.Filter.filter_program.get;
+      Efl.Gfx.Filter.filter_state.get;
+      Efl.Gfx.Filter.filter_state.set;
+      Efl.Gfx.Filter.filter_padding.get;
+      Efl.Gfx.Filter.filter_source.set;
+      Efl.Gfx.Filter.filter_source.get;
+      Efl.Gfx.Filter.filter_data.get;
+      Efl.Gfx.Filter.filter_data.set;
+      @virtual .filter_input_alpha;
+      @virtual .filter_input_render;
+      @virtual .filter_dirty;
    }
 }

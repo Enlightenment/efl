@@ -240,7 +240,7 @@ START_TEST(edje_test_filters)
    fail_if(!prg);
    fail_if(!name || strcmp(name, "filterfile"));
 
-   eo_do(text, efl_gfx_filter_source_get("mask", &src));
+   eo_do(text, src = efl_gfx_filter_source_get("mask"));
    fail_if(!src);
 
    // TODO: Verify properly that the filter runs well
