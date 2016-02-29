@@ -676,6 +676,10 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
 {
    Eina_Bool ret = EINA_TRUE;
    Eo_Callback_Description *cb;
+   Eo_Event ev;
+   ev.obj = obj_id;
+   ev.desc = desc;
+   ev.event_info = event_info;
 
    pd->walking_list++;
 
@@ -696,8 +700,7 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
                           continue;
 
                        /* Abort callback calling if the func says so. */
-                       if (!it->func((void *) cb->func_data, obj_id, desc,
-                                (void *) event_info))
+                       if (!it->func((void *) cb->func_data, &ev))
                          {
                             ret = EINA_FALSE;
                             goto end;
@@ -713,8 +716,7 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
                     continue;
 
                   /* Abort callback calling if the func says so. */
-                  if (!cb->items.item.func((void *) cb->func_data, obj_id, desc,
-                                           (void *) event_info))
+                  if (!cb->items.item.func((void *) cb->func_data, &ev))
                     {
                        ret = EINA_FALSE;
                        goto end;
@@ -731,9 +733,8 @@ end:
 }
 
 static Eina_Bool
-_eo_event_forwarder_callback(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
+_eo_event_forwarder_callback(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc, void *event_info)
 {
-   (void) obj;
    Eo *new_obj = (Eo *) data;
    Eina_Bool ret = EINA_FALSE;
 
