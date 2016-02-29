@@ -2342,6 +2342,18 @@ _evas_text_efl_gfx_filter_filter_program_set(Eo *obj, Evas_Text_Data *pd EINA_UN
    eo_do_super(obj, MY_CLASS, efl_gfx_filter_program_set(code, name));
 }
 
+EAPI void
+evas_object_text_filter_program_set(Evas_Object *obj, const char *code, const char *name)
+{
+   eo_do(obj, efl_gfx_filter_program_set(code, name));
+}
+
+EAPI void
+evas_object_text_filter_source_set(Evas_Object *obj, const char *name, Evas_Object *source)
+{
+   eo_do(obj, efl_gfx_filter_source_set(name, source));
+}
+
 EOLIAN static void
 _evas_text_evas_object_paragraph_direction_set(Eo *eo_obj, Evas_Text_Data *o, Evas_BiDi_Direction dir)
 {
