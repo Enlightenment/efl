@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
@@ -21,6 +22,11 @@
 #else
 # define EPP_EXT
 #endif
+
+#define EDJE_1_18_SUPPORTED " -DEFL_VERSION_1_18=1 "
+
+#define EDJE_CC_EFL_VERSION_SUPPORTED \
+  EDJE_1_18_SUPPORTED
 
 static void  new_object(void);
 static void  new_statement(void);
@@ -981,19 +987,22 @@ compile(void)
              inc = ecore_file_dir_get(file_in);
              if (depfile)
                snprintf(buf, sizeof(buf), "%s -MMD %s -MT %s %s -I%s %s -o %s"
-                        " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
+                        " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
+                        EDJE_CC_EFL_VERSION_SUPPORTED,
                         buf2, depfile, file_out, file_in,
                         inc ? inc : "./", def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              else if (annotate)
                snprintf(buf, sizeof(buf), "%s -annotate -a %s %s -I%s %s -o %s"
-                        " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
+                        " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
+                        EDJE_CC_EFL_VERSION_SUPPORTED,
                         buf2, watchfile ? watchfile : "/dev/null", file_in,
                         inc ? inc : "./", def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              else
                snprintf(buf, sizeof(buf), "%s -a %s %s -I%s %s -o %s"
-                        " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
+                        " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d"
+                        EDJE_CC_EFL_VERSION_SUPPORTED,
                         buf2, watchfile ? watchfile : "/dev/null", file_in,
                         inc ? inc : "./", def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);

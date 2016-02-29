@@ -33,7 +33,7 @@ extern "C" {
 # endif
 #endif /* ! _WIN32 */
 
-
+#define EFL_VERSION_1_18 1
 
 /**
  * @ingroup Efl
