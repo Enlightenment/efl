@@ -11,7 +11,7 @@
 #define ENFN obj->layer->evas->engine.func
 #define ENDT obj->layer->evas->engine.data.output
 
-#define FCOW_BEGIN(_pd) eina_cow_write(evas_object_filter_cow, (const Eina_Cow_Data**)&(_pd->data))
+#define FCOW_BEGIN(_pd) ({ Evas_Object_Filter_Data *_fcow = eina_cow_write(evas_object_filter_cow, (const Eina_Cow_Data**)&(_pd->data)); _state_check(_fcow); _fcow; })
 #define FCOW_END(_fcow, _pd) eina_cow_done(evas_object_filter_cow, (const Eina_Cow_Data**)&(_pd->data), _fcow, EINA_TRUE)
 
 typedef struct _Evas_Filter_Data Evas_Filter_Data;
@@ -30,6 +30,15 @@ struct _Evas_Filter_Post_Render_Data
    Evas_Filter_Context *ctx;
    Eina_Bool success;
 };
+
+static inline void
+_state_check(Evas_Object_Filter_Data *fcow)
+{
+   if (!fcow->state.cur.name)
+     fcow->state.cur.name = eina_stringshare_add("default");
+   if (!fcow->state.next.name)
+     fcow->state.next.name = eina_stringshare_add("default");
+}
 
 static void
 _filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,

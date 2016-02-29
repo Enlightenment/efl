@@ -1191,14 +1191,14 @@ struct _Evas_Object_Filter_Data
    void                *output;
    struct {
       struct {
-         const char    *name;
-         double         value;
+         Eina_Stringshare *name;
+         double            value;
       } cur;
       struct {
-         const char    *name;
-         double         value;
+         Eina_Stringshare *name;
+         double            value;
       } next;
-      double            pos;
+      double               pos;
    } state;
    Eina_Bool            changed : 1;
    Eina_Bool            invalid : 1; // Code parse failed
