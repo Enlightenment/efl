@@ -1706,12 +1706,10 @@ _x11_dnd_status(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
 }
 
 static Eina_Bool
-_x11_win_rotation_changed_cb(void *data,
-      Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
-      void *event_info EINA_UNUSED)
+_x11_win_rotation_changed_cb(void *data, const Eo_Event *event)
 {
    Evas_Object *win = data;
-   int rot = elm_win_rotation_get(obj);
+   int rot = elm_win_rotation_get(event->obj);
    elm_win_rotation_set(win, rot);
    return EINA_TRUE;
 }

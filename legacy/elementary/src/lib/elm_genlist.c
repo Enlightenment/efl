@@ -2015,10 +2015,7 @@ _item_realize(Elm_Gen_Item *it,
 }
 
 static Eina_Bool
-_tree_effect_animator_cb(void *data,
-                         Eo *obj EINA_UNUSED,
-                         const Eo_Event_Description *desc EINA_UNUSED,
-                         void *event_info EINA_UNUSED)
+_tree_effect_animator_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    int in = 0;
    const Eina_List *l;

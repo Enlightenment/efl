@@ -192,8 +192,7 @@ _item_signal_emit_cb(void *data,
 }
 
 static Eina_Bool
-_item_clicked_cb(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_item_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Dayselector_Item_Data *it = data;
 

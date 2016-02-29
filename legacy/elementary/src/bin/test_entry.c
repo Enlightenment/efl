@@ -333,12 +333,11 @@ _end_hide_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNU
 }
 
 static Eina_Bool
-_context_menu_show_cb(void *data EINA_UNUSED, Eo *obj,
-                const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_context_menu_show_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   elm_entry_context_menu_clear(obj);
-   elm_entry_context_menu_item_add(obj, "MenuD1", NULL, ELM_ICON_NONE, _item_cb, NULL);
-   elm_entry_context_menu_item_add(obj, "MenuD2", NULL, ELM_ICON_NONE, _item_cb, NULL);
+   elm_entry_context_menu_clear(event->obj);
+   elm_entry_context_menu_item_add(event->obj, "MenuD1", NULL, ELM_ICON_NONE, _item_cb, NULL);
+   elm_entry_context_menu_item_add(event->obj, "MenuD2", NULL, ELM_ICON_NONE, _item_cb, NULL);
    return EO_CALLBACK_CONTINUE;
 }
 

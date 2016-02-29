@@ -5677,7 +5677,7 @@ elm_win_window_id_get(const Evas_Object *obj)
 }
 
 static Eina_Bool
-_on_atspi_bus_connected(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_on_atspi_bus_connected(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    Evas_Object *win;
    Eina_List *l;

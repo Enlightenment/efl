@@ -47,10 +47,10 @@ _filter_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, const Eina_Fil
 }
 
 static Eina_Bool
-_list_selected_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_list_selected_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Efl_Model_Test_Filemvc_Data *priv = data;
-   Eo *child = event_info;
+   Eo *child = event->event_info;
    ethumb_client_file_free(elm_thumb_ethumb_client_get());
 
    printf("LIST selected model\n");
@@ -59,7 +59,7 @@ _list_selected_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_De
 }
 
 static Eina_Bool
-_tree_selected_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_tree_selected_cb(void *data, const Eo_Event *event)
 {
    Efl_Model_Test_Filemvc_Data *priv = data;
    Eo *child = event_info;

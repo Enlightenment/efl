@@ -42,17 +42,13 @@ static Eina_Bool _key_action_spin(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_toggle(Evas_Object *obj, const char *params);
 
 static Eina_Bool
-_inc_dec_button_clicked_cb(void *data, Eo *obj EINA_UNUSED,
-                           const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+_inc_dec_button_clicked_cb(void *data, const Eo_Event *event);
 static Eina_Bool
-_inc_dec_button_pressed_cb(void *data, Eo *obj,
-                           const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+_inc_dec_button_pressed_cb(void *data, const Eo_Event *event);
 static Eina_Bool
-_inc_dec_button_unpressed_cb(void *data, Eo *obj EINA_UNUSED,
-                             const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+_inc_dec_button_unpressed_cb(void *data, const Eo_Event *event);
 static Eina_Bool
-_inc_dec_button_mouse_move_cb(void *data, Eo *obj EINA_UNUSED,
-                              const Eo_Event_Description *desc EINA_UNUSED, void *event_info);
+_inc_dec_button_mouse_move_cb(void *data, const Eo_Event *event);
 
 static const Elm_Action key_actions[] = {
    {"spin", _key_action_spin},
@@ -375,9 +371,7 @@ _entry_value_apply(Evas_Object *obj)
 }
 
 static Eina_Bool
-_entry_activated_cb(void *data,
-                    Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                    void *event_info EINA_UNUSED)
+_entry_activated_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    _entry_value_apply(data);
 
@@ -793,9 +787,7 @@ _button_inc_dec_stop_cb(void *data,
 }
 
 static Eina_Bool
-_inc_dec_button_clicked_cb(void *data,
-                       Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                       void *event_info EINA_UNUSED)
+_inc_dec_button_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
@@ -811,13 +803,11 @@ _inc_dec_button_clicked_cb(void *data,
 }
 
 static Eina_Bool
-_inc_dec_button_pressed_cb(void *data,
-                       Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
-                       void *event_info EINA_UNUSED)
+_inc_dec_button_pressed_cb(void *data, const Eo_Event *event)
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
-   sd->inc_clicked = sd->inc_button == obj ? EINA_TRUE : EINA_FALSE;
+   sd->inc_clicked = sd->inc_button == event->obj ? EINA_TRUE : EINA_FALSE;
 
    if (sd->longpress_timer) ecore_timer_del(sd->longpress_timer);
 
@@ -831,9 +821,7 @@ _inc_dec_button_pressed_cb(void *data,
 }
 
 static Eina_Bool
-_inc_dec_button_unpressed_cb(void *data,
-                         Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                         void *event_info EINA_UNUSED)
+_inc_dec_button_unpressed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
@@ -849,9 +837,7 @@ _inc_dec_button_unpressed_cb(void *data,
 }
 
 static Eina_Bool
-_text_button_clicked_cb(void *data,
-                        Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                        void *event_info EINA_UNUSED)
+_text_button_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    _toggle_entry(data);
 
@@ -859,11 +845,9 @@ _text_button_clicked_cb(void *data,
 }
 
 static Eina_Bool
-_inc_dec_button_mouse_move_cb(void *data, Eo *obj EINA_UNUSED,
-                              const Eo_Event_Description *desc EINA_UNUSED,
-                              void *event_info)
+_inc_dec_button_mouse_move_cb(void *data, const Eo_Event *event)
 {
-   Evas_Event_Mouse_Move *ev = event_info;
+   Evas_Event_Mouse_Move *ev = event->event_info;
    ELM_SPINNER_DATA_GET(data, sd);
 
    if ((ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) && sd->longpress_timer)

@@ -128,9 +128,7 @@ _colorclass_select(void *data, Evas_Object *obj EINA_UNUSED, const char *sig, co
 }
 
 static Eina_Bool
-_colorclass_changed(void *data, Evas_Object *obj EINA_UNUSED,
-                    const Eo_Event_Description *desc EINA_UNUSED,
-                    void *event_info EINA_UNUSED)
+_colorclass_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Colorclass_UI *cc = data;
 
@@ -154,9 +152,7 @@ _colorclass_changed(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static Eina_Bool
-_colorclass_reset(void *data, Evas_Object *obj EINA_UNUSED,
-                  const Eo_Event_Description *desc EINA_UNUSED,
-                  void *event_info EINA_UNUSED)
+_colorclass_reset(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Colorclass_UI *cc = data;
    Colorclass color;
@@ -194,12 +190,10 @@ _colorclass_reset(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static Eina_Bool
-_colorclass_activate(void *data, Eo *obj EINA_UNUSED,
-                     const Eo_Event_Description *desc EINA_UNUSED,
-                     void *event_info)
+_colorclass_activate(void *data, const Eo_Event *event)
 {
    Colorclass_UI *cc = data;
-   Elm_Object_Item *it = event_info;
+   Elm_Object_Item *it = event->event_info;
    Edje_Color_Class *ecc;
    Colorclass *lcc;
    Eina_List *l;

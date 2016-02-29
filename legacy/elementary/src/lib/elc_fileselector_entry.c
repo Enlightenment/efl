@@ -45,10 +45,9 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
 
 #define SIG_FWD(name, event)                                                      \
   static Eina_Bool                                                               \
-  _##name##_fwd(void *data,                                          \
-    Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)\
+  _##name##_fwd(void *data, const Eo_Event *ev EINA_UNUSED)                                          \
   {                                                                         \
-     eo_do(data, eo_event_callback_call(event, event_info));          \
+     eo_do(data, eo_event_callback_call(event, ev->event_info));          \
                                                                       \
      return EINA_TRUE;                                                \
   }
@@ -66,11 +65,9 @@ SIG_FWD(UNPRESSED, EVAS_CLICKABLE_INTERFACE_EVENT_UNPRESSED)
 #undef SIG_FWD
 
 static Eina_Bool
-_FILE_CHOSEN_fwd(void *data,
-                 Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                 void *event_info)
+_FILE_CHOSEN_fwd(void *data, const Eo_Event *event)
 {
-   const char *file = event_info;
+   const char *file = event->event_info;
    char *s;
 
    if (!file) return EINA_TRUE;
@@ -80,15 +77,13 @@ _FILE_CHOSEN_fwd(void *data,
    elm_object_text_set(sd->entry, s);
    free(s);
    eo_do(data, eo_event_callback_call
-     (ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN, event_info));
+     (ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN, event->event_info));
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_ACTIVATED_fwd(void *data,
-               Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-               void *event_info)
+_ACTIVATED_fwd(void *data, const Eo_Event *event)
 {
    const char *file;
 
@@ -97,7 +92,7 @@ _ACTIVATED_fwd(void *data,
    file = elm_object_text_get(sd->entry);
    elm_fileselector_path_set(sd->button, file);
    eo_do(data, eo_event_callback_call
-     (ELM_FILESELECTOR_ENTRY_EVENT_ACTIVATED, event_info));
+     (ELM_FILESELECTOR_ENTRY_EVENT_ACTIVATED, event->event_info));
 
    return EINA_TRUE;
 }

@@ -39,8 +39,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-static Eina_Bool _on_item_back_btn_clicked(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+static Eina_Bool _on_item_back_btn_clicked(void *data, const Eo_Event *event);
 
 static Eina_Bool _key_action_top_item_get(Evas_Object *obj, const char *params);
 
@@ -953,14 +952,13 @@ _elm_naviframe_elm_layout_sizing_eval(Eo *obj, Elm_Naviframe_Data *sd)
 }
 
 static Eina_Bool
-_on_item_back_btn_clicked(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_on_item_back_btn_clicked(void *data, const Eo_Event *event)
 {
    /* Since edje has the event queue, clicked event could be happened
       multiple times on some heavy environment. This callback del will
       prevent those scenario and guarantee only one clicked for it's own
       page. */
-   eo_do(obj, eo_event_callback_del(
+   eo_do(event->obj, eo_event_callback_del(
             EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED,  _on_item_back_btn_clicked,
             data));
    elm_naviframe_item_pop(data);
@@ -1419,10 +1417,7 @@ _send_signal(Elm_Naviframe_Item_Data *it, const char *sig)
 }
 
 static Eina_Bool
-_deferred(void *data,
-          Eo *o EINA_UNUSED,
-          const Eo_Event_Description *desc EINA_UNUSED,
-          void *event_info EINA_UNUSED)
+_deferred(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Naviframe_Data *nfd = data;
    Elm_Naviframe_Op *nfo;

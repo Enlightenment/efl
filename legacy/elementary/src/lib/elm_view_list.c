@@ -38,13 +38,13 @@ struct _View_List_ItemData
 };
 
 static void _efl_model_load_children(View_List_ItemData *);
-static Eina_Bool _efl_model_load_status_change_cb(void *, Eo *, const Eo_Event_Description *, void *);
-static Eina_Bool _efl_model_children_count_change_cb(void *, Eo *, const Eo_Event_Description *, void *);
-static Eina_Bool _efl_model_properties_change_cb(void *, Eo *, const Eo_Event_Description *, void *);
+static Eina_Bool _efl_model_load_status_change_cb(void *, const Eo_Event *event);
+static Eina_Bool _efl_model_children_count_change_cb(void *, const Eo_Event *event);
+static Eina_Bool _efl_model_properties_change_cb(void *, const Eo_Event *event);
 
-static Eina_Bool _expand_request_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info);
-static Eina_Bool _contract_request_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info);
-static Eina_Bool _contracted_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info);
+static Eina_Bool _expand_request_cb(void *data EINA_UNUSED, const Eo_Event *event);
+static Eina_Bool _contract_request_cb(void *data EINA_UNUSED, const Eo_Event *event);
+static Eina_Bool _contracted_cb(void *data EINA_UNUSED, const Eo_Event *event);
 
 /* --- Genlist Callbacks --- */
 EO_CALLBACKS_ARRAY_DEFINE(model_callbacks,
@@ -159,9 +159,9 @@ _item_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
 }
 
 static Eina_Bool
-_expand_request_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_expand_request_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Elm_Object_Item *item = event_info;
+   Elm_Object_Item *item = event->event_info;
    View_List_ItemData *idata = elm_object_item_data_get(item);
    Efl_Model_Load_Status st = EFL_MODEL_LOAD_STATUS_ERROR;
 
@@ -182,9 +182,9 @@ _expand_request_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_D
 }
 
 static Eina_Bool
-_contract_request_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_contract_request_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Elm_Object_Item *item = event_info;
+   Elm_Object_Item *item = event->event_info;
    View_List_ItemData *idata = elm_object_item_data_get(item);
 
    eo_do(idata->model, eo_event_callback_array_del(model_callbacks(), idata));
@@ -193,9 +193,9 @@ _contract_request_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event
 }
 
 static Eina_Bool
-_contracted_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_contracted_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Elm_Object_Item *glit = event_info;
+   Elm_Object_Item *glit = event->event_info;
    elm_genlist_item_subitems_clear(glit);
    return EINA_TRUE;
 }
@@ -217,11 +217,10 @@ _genlist_deleted(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_
 
 /* --- Efl_Model Callbacks --- */
 static Eina_Bool
-_efl_model_properties_change_cb(void *data, Eo *obj EINA_UNUSED,
-                const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_efl_model_properties_change_cb(void *data, const Eo_Event *event)
 {
    View_List_ItemData *idata = data;
-   Efl_Model_Property_Event *evt = event_info;
+   Efl_Model_Property_Event *evt = event->event_info;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(idata, EINA_TRUE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(evt, EINA_TRUE);
@@ -272,8 +271,7 @@ _efl_model_load_children(View_List_ItemData *pdata)
 }
 
 static Eina_Bool
-_efl_model_children_count_change_cb(void *data, Eo *obj EINA_UNUSED,
-                const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_efl_model_children_count_change_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    View_List_ItemData *idata = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(idata, EINA_FALSE);
@@ -288,11 +286,10 @@ _efl_model_children_count_change_cb(void *data, Eo *obj EINA_UNUSED,
 }
 
 static Eina_Bool
-_efl_model_load_status_change_cb(void *data, Eo *obj EINA_UNUSED,
-                const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_efl_model_load_status_change_cb(void *data, const Eo_Event *event)
 {
    View_List_ItemData *idata = data;
-   Efl_Model_Load *load = event_info;
+   Efl_Model_Load *load = event->event_info;
 
    if (load->status & EFL_MODEL_LOAD_STATUS_UNLOADED)
      {

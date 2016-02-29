@@ -92,13 +92,11 @@ _elm_combobox_elm_widget_theme_apply(Eo *obj, Elm_Combobox_Data *sd)
 }
 
 static Eina_Bool
-_on_hover_clicked(void *data,
-                     Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
-                     void *event_info EINA_UNUSED)
+_on_hover_clicked(void *data, const Eo_Event *event)
 {
    const char *dismissstr;
 
-   dismissstr = elm_layout_data_get(obj, "dismiss");
+   dismissstr = elm_layout_data_get(event->obj, "dismiss");
 
    if (!dismissstr || strcmp(dismissstr, "on"))
      elm_combobox_hover_end(data); // for backward compatibility
@@ -210,8 +208,7 @@ _on_item_pressed(void *data , Evas_Object *obj EINA_UNUSED, void *event)
 }
 
 static Eina_Bool
-_gl_filter_finished_cb(void *data, Eo *obj EINA_UNUSED,
-                       const Eo_Event_Description *desc EINA_UNUSED, void *event)
+_gl_filter_finished_cb(void *data, const Eo_Event *event)
 {
    char buf[1024];
    ELM_COMBOBOX_DATA_GET(data, sd);
@@ -224,7 +221,7 @@ _gl_filter_finished_cb(void *data, Eo *obj EINA_UNUSED,
         return EINA_TRUE;
      }
 
-   eo_do(data, eo_event_callback_call(ELM_COMBOBOX_EVENT_FILTER_DONE, event));
+   eo_do(data, eo_event_callback_call(ELM_COMBOBOX_EVENT_FILTER_DONE, event->event_info));
 
    if (sd->count > 0)
      {
@@ -245,8 +242,7 @@ _gl_filter_finished_cb(void *data, Eo *obj EINA_UNUSED,
 }
 
 static Eina_Bool
-_on_aborted(void *data, Eo *obj EINA_UNUSED,
-            const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_on_aborted(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_COMBOBOX_DATA_GET(data, sd);
    if (sd->expanded) elm_combobox_hover_end(data);
@@ -254,17 +250,14 @@ _on_aborted(void *data, Eo *obj EINA_UNUSED,
 }
 
 static Eina_Bool
-_on_changed(void *data, Eo *obj EINA_UNUSED,
-            const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_on_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    eo_do(data, eo_event_callback_call(ELM_ENTRY_EVENT_CHANGED, NULL));
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_on_clicked(void *data,
-            Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-            void *event_info EINA_UNUSED)
+_on_clicked(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_combobox_hover_begin(data);
    return EINA_TRUE;

@@ -29,29 +29,17 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 
 static Eina_Bool
-_on_open_done(void *data,
-              Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-              void *event_info EINA_UNUSED);
+_on_open_done(void *data, const Eo_Event *event);
 static Eina_Bool
-_on_playback_started(void *data,
-                     Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                     void *event_info EINA_UNUSED);
+_on_playback_started(void *data, const Eo_Event *event);
 static Eina_Bool
-_on_playback_finished(void *data,
-                      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                      void *event_info EINA_UNUSED);
+_on_playback_finished(void *data, const Eo_Event *event);
 static Eina_Bool
-_on_aspect_ratio_updated(void *data,
-                         Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                         void *event_info EINA_UNUSED);
+_on_aspect_ratio_updated(void *data, const Eo_Event *event);
 static Eina_Bool
-_on_title_changed(void *data,
-                  Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                  void *event_info EINA_UNUSED);
+_on_title_changed(void *data, const Eo_Event *event);
 static Eina_Bool
-_on_audio_level_changed(void *data,
-                        Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                        void *event_info EINA_UNUSED);
+_on_audio_level_changed(void *data, const Eo_Event *event);
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_play(Evas_Object *obj, const char *params);
@@ -171,9 +159,7 @@ _on_size_hints_changed(void *data EINA_UNUSED,
 }
 
 static Eina_Bool
-_on_open_done(void *data,
-              Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-              void *event_info EINA_UNUSED)
+_on_open_done(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,video,open", "elm");
 
@@ -181,9 +167,7 @@ _on_open_done(void *data,
 }
 
 static Eina_Bool
-_on_playback_started(void *data,
-                     Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                     void *event_info EINA_UNUSED)
+_on_playback_started(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,video,play", "elm");
 
@@ -192,9 +176,7 @@ _on_playback_started(void *data,
 }
 
 static Eina_Bool
-_on_playback_finished(void *data,
-                      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                      void *event_info EINA_UNUSED)
+_on_playback_finished(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_VIDEO_DATA_GET(data, sd);
    emotion_object_play_set(sd->emotion, EINA_FALSE);
@@ -204,9 +186,7 @@ _on_playback_finished(void *data,
 }
 
 static Eina_Bool
-_on_aspect_ratio_updated(void *data,
-                         Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                         void *event_info EINA_UNUSED)
+_on_aspect_ratio_updated(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
 
@@ -214,9 +194,7 @@ _on_aspect_ratio_updated(void *data,
 }
 
 static Eina_Bool
-_on_title_changed(void *data,
-                  Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                  void *event_info EINA_UNUSED)
+_on_title_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    const char *title;
 
@@ -230,9 +208,7 @@ _on_title_changed(void *data,
 }
 
 static Eina_Bool
-_on_audio_level_changed(void *data,
-                        Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                        void *event_info EINA_UNUSED)
+_on_audio_level_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    (void)data;
 

@@ -39,9 +39,9 @@ struct _Elm_View_Form_Data
 };
 
 static Eina_Bool
-_efl_model_properties_change_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_efl_model_properties_change_cb(void *data, const Eo_Event *event)
 {
-   const Efl_Model_Property_Event *evt = event_info;
+   const Efl_Model_Property_Event *evt = event->event_info;
    const Eina_Value *value;
    const char *prop;
    unsigned int i;

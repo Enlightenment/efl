@@ -96,13 +96,11 @@ mismatch:
 }
 
 static Eina_Bool
-_item_changed_cb(void *data,
-                 Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
-                 void *event_info EINA_UNUSED)
+_item_changed_cb(void *data, const Eo_Event *event)
 {
    Elm_Prefs_Item_Changed_Cb prefs_it_changed_cb = data;
 
-   prefs_it_changed_cb(obj);
+   prefs_it_changed_cb(event->obj);
    return EINA_TRUE;
 }
 

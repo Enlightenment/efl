@@ -9,7 +9,7 @@
 #include "elm_priv.h"
 
 static Eina_Bool
-_free_desc_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_free_desc_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    eina_stringshare_del(data);
 

@@ -423,11 +423,9 @@ _menu_hide(void *data,
 }
 
 static Eina_Bool
-_hover_dismissed_cb(void *data,
-                    Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
-                    void *event_info)
+_hover_dismissed_cb(void *data, const Eo_Event *event)
 {
-   _menu_hide(data, obj, event_info);
+   _menu_hide(data, event->obj, event->event_info);
    eo_do(data, eo_event_callback_call
      (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
    eo_do(data, eo_event_callback_call(ELM_MENU_EVENT_DISMISSED, NULL));
@@ -522,8 +520,7 @@ _menu_item_inactivate_cb(void *data,
 }
 
 static Eina_Bool
-_block_menu(void *_sd,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_block_menu(void *_sd, const Eo_Event *event EINA_UNUSED)
 {
    const Eina_List *l;
    Elm_Object_Item *eo_current;
@@ -542,8 +539,7 @@ _block_menu(void *_sd,
 }
 
 static Eina_Bool
-_unblock_menu(void *_sd,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_unblock_menu(void *_sd, const Eo_Event *event EINA_UNUSED)
 {
    const Eina_List *l;
    Elm_Object_Item *eo_current;

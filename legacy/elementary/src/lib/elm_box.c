@@ -29,22 +29,20 @@ _elm_box_list_data_get(const Eina_List *list)
 }
 
 static Eina_Bool
-_child_added_cb_proxy(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_child_added_cb_proxy(void *data, const Eo_Event *event)
 {
    Evas_Object *box = data;
-   Evas_Object_Box_Option *opt = event_info;
+   Evas_Object_Box_Option *opt = event->event_info;
    eo_do(box, eo_event_callback_call(ELM_BOX_EVENT_CHILD_ADDED, opt->obj));
 
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_child_removed_cb_proxy(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_child_removed_cb_proxy(void *data, const Eo_Event *event)
 {
    Evas_Object *box = data;
-   Evas_Object *child = event_info;
+   Evas_Object *child = event->event_info;
    eo_do(box, eo_event_callback_call(ELM_BOX_EVENT_CHILD_REMOVED, child));
 
    return EINA_TRUE;
@@ -195,11 +193,10 @@ _transition_animation(void *data)
 }
 
 static Eina_Bool
-_transition_layout_child_added(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_transition_layout_child_added(void *data, const Eo_Event *event)
 {
    Transition_Animation_Data *tad;
-   Evas_Object_Box_Option *opt = event_info;
+   Evas_Object_Box_Option *opt = event->event_info;
    Elm_Box_Transition *layout_data = data;
 
    tad = calloc(1, sizeof(Transition_Animation_Data));
@@ -213,8 +210,7 @@ _transition_layout_child_added(void *data,
 }
 
 static Eina_Bool
-_transition_layout_child_removed(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_transition_layout_child_removed(void *data, const Eo_Event *event)
 {
    Eina_List *l;
    Transition_Animation_Data *tad;
@@ -222,7 +218,7 @@ _transition_layout_child_removed(void *data,
 
    EINA_LIST_FOREACH(layout_data->objs, l, tad)
      {
-        if (tad->obj == event_info)
+        if (tad->obj == event->event_info)
           {
              free(eina_list_data_get(l));
              layout_data->objs = eina_list_remove_list(layout_data->objs, l);

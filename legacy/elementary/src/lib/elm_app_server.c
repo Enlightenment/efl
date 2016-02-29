@@ -29,10 +29,10 @@ typedef struct
 } Elm_App_Server_Data;
 
 static Eina_Bool
-_view_del_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_view_del_cb(void *data, const Eo_Event *event)
 {
    Elm_App_Server_Data *cdata = data;
-   eina_hash_del(cdata->views, NULL, obj);
+   eina_hash_del(cdata->views, NULL, event->obj);
    return EINA_TRUE;
 }
 

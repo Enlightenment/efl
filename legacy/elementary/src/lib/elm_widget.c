@@ -86,20 +86,11 @@ _elm_scrollable_is(const Evas_Object *obj)
 }
 
 static Eina_Bool
-_on_sub_obj_del(void *data,
-                Eo *obj,
-                const Eo_Event_Description *desc,
-                void *event_info);
+_on_sub_obj_del(void *data, const Eo_Event *event);
 static Eina_Bool
-_on_sub_obj_hide(void *data,
-                 Eo *obj,
-                 const Eo_Event_Description *desc,
-                 void *event_info);
+_on_sub_obj_hide(void *data, const Eo_Event *event);
 static Eina_Bool
-_propagate_event(void *data,
-                 Eo *obj,
-                 const Eo_Event_Description *desc,
-                 void *event_info);
+_propagate_event(void *data, const Eo_Event *event);
 
 EO_CALLBACKS_ARRAY_DEFINE(elm_widget_subitems_callbacks,
                           { EVAS_OBJECT_EVENT_DEL, _on_sub_obj_del },
@@ -246,40 +237,34 @@ _parents_unfocus(Evas_Object *obj)
 }
 
 static Eina_Bool
-_on_sub_obj_hide(void *data EINA_UNUSED,
-                 Eo *obj,
-                 const Eo_Event_Description *desc EINA_UNUSED,
-                 void *event_info EINA_UNUSED)
+_on_sub_obj_hide(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   elm_widget_focus_hide_handle(obj);
+   elm_widget_focus_hide_handle(event->obj);
    return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool
-_on_sub_obj_del(void *data,
-                Eo *obj,
-                const Eo_Event_Description *desc EINA_UNUSED,
-                void *event_info EINA_UNUSED)
+_on_sub_obj_del(void *data, const Eo_Event *event)
 {
    ELM_WIDGET_DATA_GET(data, sd);
 
-   if (_elm_widget_is(obj))
+   if (_elm_widget_is(event->obj))
      {
-        if (elm_widget_focus_get(obj)) _parents_unfocus(sd->obj);
+        if (elm_widget_focus_get(event->obj)) _parents_unfocus(sd->obj);
      }
-   if (obj == sd->resize_obj)
+   if (event->obj == sd->resize_obj)
      {
         /* already dels sub object */
         elm_widget_resize_object_set(sd->obj, NULL, EINA_TRUE);
      }
-   else if (obj == sd->hover_obj)
+   else if (event->obj == sd->hover_obj)
      {
         sd->hover_obj = NULL;
      }
    else
      {
-        if (!elm_widget_sub_object_del(sd->obj, obj))
-          ERR("failed to remove sub object %p from %p\n", obj, sd->obj);
+        if (!elm_widget_sub_object_del(sd->obj, event->obj))
+          ERR("failed to remove sub object %p from %p\n", event->obj, sd->obj);
      }
 
    return EO_CALLBACK_CONTINUE;
@@ -699,37 +684,35 @@ _propagate_y_drag_lock(Evas_Object *obj,
 }
 
 static Eina_Bool
-_propagate_event(void *data EINA_UNUSED,
-                 Eo *obj,
-                 const Eo_Event_Description *desc,
-                 void *event_info)
+_propagate_event(void *data EINA_UNUSED, const Eo_Event *event)
 {
+   Eo *obj = event->obj;
    INTERNAL_ENTRY EO_CALLBACK_CONTINUE;
    Evas_Callback_Type type;
    Evas_Event_Flags *event_flags = NULL;
 
-   if (desc == EVAS_OBJECT_EVENT_KEY_DOWN)
+   if (event->desc == EVAS_OBJECT_EVENT_KEY_DOWN)
      {
-        Evas_Event_Key_Down *ev = event_info;
+        Evas_Event_Key_Down *ev = event->event_info;
         event_flags = &(ev->event_flags);
         type = EVAS_CALLBACK_KEY_DOWN;
      }
-   else if (desc == EVAS_OBJECT_EVENT_KEY_UP)
+   else if (event->desc == EVAS_OBJECT_EVENT_KEY_UP)
      {
-        Evas_Event_Key_Up *ev = event_info;
+        Evas_Event_Key_Up *ev = event->event_info;
         event_flags = &(ev->event_flags);
         type = EVAS_CALLBACK_KEY_UP;
      }
-   else if (desc == EVAS_OBJECT_EVENT_MOUSE_WHEEL)
+   else if (event->desc == EVAS_OBJECT_EVENT_MOUSE_WHEEL)
      {
-        Evas_Event_Mouse_Wheel *ev = event_info;
+        Evas_Event_Mouse_Wheel *ev = event->event_info;
         event_flags = &(ev->event_flags);
         type = EVAS_CALLBACK_MOUSE_WHEEL;
      }
    else
      return EO_CALLBACK_CONTINUE;
 
-   elm_widget_event_propagate(obj, type, event_info, event_flags);
+   elm_widget_event_propagate(obj, type, event->event_info, event_flags);
 
    return EO_CALLBACK_CONTINUE;
 }
@@ -4284,19 +4267,15 @@ _track_obj_update(Evas_Object *track, Evas_Object *obj)
 }
 
 static Eina_Bool
-_track_obj_view_update(void *data, Eo *obj,
-                       const Eo_Event_Description *desc EINA_UNUSED,
-                       void *event_info EINA_UNUSED)
+_track_obj_view_update(void *data, const Eo_Event *event)
 {
    Elm_Widget_Item_Data *item = data;
-   _track_obj_update(item->track_obj, obj);
+   _track_obj_update(item->track_obj, event->obj);
    return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool
-_track_obj_view_del(void *data, Eo *obj EINA_UNUSED,
-                    const Eo_Event_Description *desc EINA_UNUSED,
-                    void *event_info EINA_UNUSED);
+_track_obj_view_del(void *data, const Eo_Event *event);
 
 EO_CALLBACKS_ARRAY_DEFINE(tracker_callbacks,
                           { EVAS_OBJECT_EVENT_RESIZE, _track_obj_view_update },
@@ -4306,9 +4285,7 @@ EO_CALLBACKS_ARRAY_DEFINE(tracker_callbacks,
                           { EVAS_OBJECT_EVENT_DEL, _track_obj_view_del });
 
 static Eina_Bool
-_track_obj_view_del(void *data, Eo *obj EINA_UNUSED,
-                    const Eo_Event_Description *desc EINA_UNUSED,
-                    void *event_info EINA_UNUSED)
+_track_obj_view_del(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Widget_Item_Data *item = data;
 
@@ -4371,12 +4348,12 @@ _elm_widget_item_signal_callback_list_get(Elm_Widget_Item_Data *item, Eina_List 
 #define ERR_NOT_SUPPORTED(item, method)  ERR("%s does not support %s API.", elm_widget_type_get(item->widget), method);
 
 static Eina_Bool
-_eo_del_cb(void *data EINA_UNUSED, Eo *eo_item, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_eo_del_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   Elm_Widget_Item_Data *item = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
+   Elm_Widget_Item_Data *item = eo_data_scope_get(event->obj, ELM_WIDGET_ITEM_CLASS);
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_TRUE);
    if (item->del_func)
-      item->del_func((void *) WIDGET_ITEM_DATA_GET(eo_item), item->widget, item->eo_obj);
+      item->del_func((void *) WIDGET_ITEM_DATA_GET(event->obj), item->widget, item->eo_obj);
    return EINA_TRUE;
 }
 

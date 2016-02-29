@@ -1313,9 +1313,7 @@ _hover_del_job(void *data)
 }
 
 static Eina_Bool
-_hover_dismissed_cb(void *data,
-                    Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                    void *event_info EINA_UNUSED)
+_hover_dismissed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
@@ -2411,8 +2409,7 @@ _anchor_hover_del_cb(void *data,
 }
 
 static Eina_Bool
-_anchor_hover_clicked_cb(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_anchor_hover_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    elm_entry_anchor_hover_end(data);
 
@@ -3880,28 +3877,22 @@ elm_entry_add(Evas_Object *parent)
 }
 
 static Eina_Bool
-_cb_added(void *data EINA_UNUSED,
-          Eo *obj,
-          const Eo_Event_Description *desc EINA_UNUSED,
-          void *event_info)
+_cb_added(void *data EINA_UNUSED, const Eo_Event *ev)
 {
-   const Eo_Callback_Array_Item *event = event_info;
+   const Eo_Callback_Array_Item *event = ev->event_info;
 
-   ELM_ENTRY_DATA_GET(obj, sd);
+   ELM_ENTRY_DATA_GET(ev->obj, sd);
    if (event->desc == ELM_ENTRY_EVENT_VALIDATE)
      sd->validators++;
    return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool
-_cb_deleted(void *data EINA_UNUSED,
-          Eo *obj,
-          const Eo_Event_Description *desc EINA_UNUSED,
-          void *event_info)
+_cb_deleted(void *data EINA_UNUSED, const Eo_Event *ev)
 {
-   const Eo_Callback_Array_Item *event = event_info;
+   const Eo_Callback_Array_Item *event = ev->event_info;
 
-   ELM_ENTRY_DATA_GET(obj, sd);
+   ELM_ENTRY_DATA_GET(ev->obj, sd);
    if (event->desc == ELM_ENTRY_EVENT_VALIDATE)
      sd->validators--;
    return EO_CALLBACK_CONTINUE;

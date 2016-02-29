@@ -34,11 +34,11 @@ static void _btn_resume_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event
 }
 
 static Eina_Bool
-_app_view_prop_changed_cb(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_app_view_prop_changed_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Elm_App_View_State state = ELM_APP_VIEW_STATE_UNKNOWN;
 
-   eo_do(obj, state = elm_app_client_view_state_get());
+   eo_do(event->obj, state = elm_app_client_view_state_get());
 
    if (state == ELM_APP_VIEW_STATE_CLOSED)
      {
@@ -47,7 +47,7 @@ _app_view_prop_changed_cb(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Descri
         evas_object_del(props);
      }
    else
-     _app_view_clicked(obj, NULL, NULL);
+     _app_view_clicked(event->obj, NULL, NULL);
 
    return EINA_TRUE;
 }
@@ -274,10 +274,10 @@ _app_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNU
 }
 
 static Eina_Bool
-_view_list_update_cb(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_view_list_update_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   if (app_selected == obj)
-     _app_clicked(obj, NULL, NULL);
+   if (app_selected == event->obj)
+     _app_clicked(event->obj, NULL, NULL);
    return EINA_TRUE;
 }
 

@@ -62,12 +62,10 @@ _elm_fileselector_button_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Button
 }
 
 static Eina_Bool
-_selection_done(void *data,
-                Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                void *event_info)
+_selection_done(void *data, const Eo_Event *event)
 {
    Elm_Fileselector_Button_Data *sd = data;
-   const char *file = event_info;
+   const char *file = event->event_info;
    Evas_Object *del;
 
    if (file) eina_stringshare_replace(&sd->fsd.path, file);
@@ -162,9 +160,7 @@ _activate(Elm_Fileselector_Button_Data *sd)
 }
 
 static Eina_Bool
-_button_clicked(void *data,
-                Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                void *event_info EINA_UNUSED)
+_button_clicked(void *data, const Eo_Event *event EINA_UNUSED)
 {
    _activate(data);
 

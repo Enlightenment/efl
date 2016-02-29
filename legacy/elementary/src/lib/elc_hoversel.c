@@ -109,13 +109,11 @@ _elm_hoversel_elm_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
 }
 
 static Eina_Bool
-_on_hover_clicked(void *data,
-                     Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
-                     void *event_info EINA_UNUSED)
+_on_hover_clicked(void *data, const Eo_Event *event)
 {
    const char *dismissstr;
 
-   dismissstr = elm_layout_data_get(obj, "dismiss");
+   dismissstr = elm_layout_data_get(event->obj, "dismiss");
 
    if (!dismissstr || strcmp(dismissstr, "on"))
      elm_hoversel_hover_end(data); // for backward compatibility
@@ -155,9 +153,7 @@ _auto_update(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 }
 
 static Eina_Bool
-_on_item_clicked(void *data EINA_UNUSED,
-                     Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                     void *event_info EINA_UNUSED)
+_on_item_clicked(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *item = data;
    Evas_Object *obj2 = WIDGET(item);
@@ -176,9 +172,7 @@ _on_item_clicked(void *data EINA_UNUSED,
 }
 
 static Eina_Bool
-_item_focused_cb(void *data EINA_UNUSED,
-                     Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                     void *event_info EINA_UNUSED)
+_item_focused_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *it = data;
 
@@ -188,9 +182,7 @@ _item_focused_cb(void *data EINA_UNUSED,
 }
 
 static Eina_Bool
-_item_unfocused_cb(void *data EINA_UNUSED,
-                   Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                   void *event_info EINA_UNUSED)
+_item_unfocused_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *it = data;
 
@@ -448,9 +440,7 @@ _activate(Evas_Object *obj)
 }
 
 static Eina_Bool
-_on_clicked(void *data EINA_UNUSED,
-            Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-            void *event_info EINA_UNUSED)
+_on_clicked(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 {
    _activate(data);
 

@@ -343,10 +343,14 @@ _elm_interface_atspi_accessible_event_emit(Eo *class EINA_UNUSED, void *pd EINA_
           return;
      }
 
+   Eo_Event ev;
+   ev.obj = accessible;
+   ev.desc = event;
+   ev.event_info = event_info;
    EINA_LIST_FOREACH(global_callbacks, l, hdl)
      {
         if (hdl->cb)
-          hdl->cb(hdl->data, accessible, event, event_info);
+          hdl->cb(hdl->data, &ev);
      }
 }
 
@@ -411,7 +415,7 @@ elm_atspi_relation_clone(const Elm_Atspi_Relation *relation)
 }
 
 static Eina_Bool
-_on_rel_obj_del(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_on_rel_obj_del(void *data, const Eo_Event *event)
 {
    Elm_Atspi_Relation_Set *set = data;
    Elm_Atspi_Relation *rel;
@@ -422,7 +426,7 @@ _on_rel_obj_del(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSE
      {
         EINA_LIST_FOREACH_SAFE(rel->objects, p, p2, rel_obj)
           {
-             if (rel_obj == obj)
+          if (rel_obj == event->obj)
                rel->objects = eina_list_remove_list(rel->objects, p);
           }
         if (!rel->objects)

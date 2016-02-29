@@ -46,17 +46,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static Eina_Bool
-_entry_changed_cb(void *data, Eo *obj EINA_UNUSED,
-                  const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+_entry_changed_cb(void *data, const Eo_Event *event);
 static Eina_Bool
-_entry_focus_in_cb(void *data, Eo *obj EINA_UNUSED,
-                   const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+_entry_focus_in_cb(void *data, const Eo_Event *event);
 static Eina_Bool
-_entry_focus_out_cb(void *data, Eo *obj EINA_UNUSED,
-                    const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+_entry_focus_out_cb(void *data, const Eo_Event *event);
 static Eina_Bool
-_entry_clicked_cb(void *data, Eo *obj EINA_UNUSED,
-                  const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
+_entry_clicked_cb(void *data, const Eo_Event *event);
 
 EO_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
    { ELM_MULTIBUTTONENTRY_EVENT_CHANGED, _entry_changed_cb },
@@ -1045,8 +1041,7 @@ _entry_resize_cb(void *data,
 }
 
 static Eina_Bool
-_entry_changed_cb(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_entry_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(data, sd, EINA_TRUE);
    const char *str;
@@ -1058,8 +1053,7 @@ _entry_changed_cb(void *data,
 }
 
 static Eina_Bool
-_entry_focus_in_cb(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_entry_focus_in_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Multibuttonentry_Item_Data *item = NULL;
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(data, sd, EINA_TRUE);
@@ -1075,8 +1069,7 @@ _entry_focus_in_cb(void *data,
 }
 
 static Eina_Bool
-_entry_focus_out_cb(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_entry_focus_out_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(data, sd, EINA_TRUE);
    const char *str;
@@ -1089,8 +1082,7 @@ _entry_focus_out_cb(void *data,
 }
 
 static Eina_Bool
-_entry_clicked_cb(void *data,
-      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_entry_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(data, sd, EINA_TRUE);
 

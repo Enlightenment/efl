@@ -349,10 +349,7 @@ _land_indicator_connect_cb(void *data)
 }
 
 static Eina_Bool
-_land_indicator_disconnected(void *data,
-                             Eo *obj EINA_UNUSED,
-                             const Eo_Event_Description *desc EINA_UNUSED,
-                             void *event_info EINA_UNUSED)
+_land_indicator_disconnected(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Evas_Object *conform = data;
 
@@ -364,10 +361,7 @@ _land_indicator_disconnected(void *data,
 }
 
 static Eina_Bool
-_port_indicator_disconnected(void *data,
-                             Eo *obj EINA_UNUSED,
-                             const Eo_Event_Description *desc EINA_UNUSED,
-                             void *event_info EINA_UNUSED)
+_port_indicator_disconnected(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Evas_Object *conform = data;
 
@@ -513,12 +507,10 @@ _indicator_opacity_set(Evas_Object *conformant, Elm_Win_Indicator_Opacity_Mode i
 }
 
 static Eina_Bool
-_on_indicator_mode_changed(void *data,
-                           Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
-                           void *event_info EINA_UNUSED)
+_on_indicator_mode_changed(void *data, const Eo_Event *event)
 {
    Evas_Object *conformant = data;
-   Evas_Object *win = obj;
+   Evas_Object *win = event->obj;
 
    Elm_Win_Indicator_Mode indmode;
    Elm_Win_Indicator_Opacity_Mode ind_o_mode;
@@ -535,12 +527,10 @@ _on_indicator_mode_changed(void *data,
 }
 
 static Eina_Bool
-_on_rotation_changed(void *data,
-                     Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
-                     void *event_info EINA_UNUSED)
+_on_rotation_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
    int rot = 0;
-   Evas_Object *win = obj;
+   Evas_Object *win = event->obj;
    Evas_Object *conformant = data;
    Evas_Object *old_indi = NULL;
 
@@ -1012,9 +1002,11 @@ _elm_conformant_eo_base_constructor(Eo *obj, Elm_Conformant_Data *sd)
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_FILLER));
 
+   Eo_Event event = {0};
+   event.obj = sd->win;
    sd->win = elm_widget_top_get(obj);
-   _on_indicator_mode_changed(obj, sd->win, NULL, NULL);
-   _on_rotation_changed(obj, sd->win, NULL, NULL);
+   _on_indicator_mode_changed(obj, &event);
+   _on_rotation_changed(obj, &event);
 
    sd->indmode = elm_win_indicator_mode_get(sd->win);
    sd->ind_o_mode = elm_win_indicator_opacity_get(sd->win);
