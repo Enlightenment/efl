@@ -2588,129 +2588,127 @@ _edje_part_recalc_single_filter(Edje *ed,
         prev_sources = NULL;
      }
 
-   eo_do(obj,
-         /* pass extra data items */
-         if (filter->data)
-           {
-              unsigned int k;
-              for (k = 0; k < filter->data_count; k++)
-                {
-                   Edje_Part_Description_Spec_Filter_Data *data = &(filter->data[k]);
-                   if (data->invalid_cc)
-                     continue;
-                   if (!data->value)
-                     {
-                        efl_gfx_filter_data_set(data->name, NULL, EINA_FALSE);
-                     }
-                   else if (!strncmp(data->value, "color_class('", sizeof("color_class('") - 1))
-                     {
-                        /* special handling for color classes even tho they're not that great */
-                        char *ccname, *buffer, *r;
-                        Edje_Color_Class *cc;
+   /* pass extra data items */
+   if (filter->data)
+     {
+        unsigned int k;
+        for (k = 0; k < filter->data_count; k++)
+          {
+             Edje_Part_Description_Spec_Filter_Data *data = &(filter->data[k]);
+             if (data->invalid_cc)
+               continue;
+             if (!data->value)
+               {
+                  eo_do(obj, efl_gfx_filter_data_set(data->name, NULL, EINA_FALSE));
+               }
+             else if (!strncmp(data->value, "color_class('", sizeof("color_class('") - 1))
+               {
+                  /* special handling for color classes even tho they're not that great */
+                  char *ccname, *buffer, *r;
+                  Edje_Color_Class *cc;
 
-                        ccname = strdup(data->value + sizeof("color_class('") - 1);
-                        if (ccname)
-                          {
-                             r = strchr(ccname, '\'');
-                             if (r && (r[1] == ')') && (r[2] == '\0'))
-                               {
-                                  *r = '\0';
-                                  cc = _edje_color_class_find(ed, ccname);
-                                  if (cc)
-                                    {
-                                       static const char fmt[] =
-                                             "%s={r=%d,g=%d,b=%d,a=%d,"
-                                             "r2=%d,g2=%d,b2=%d,a2=%d,"
-                                             "r3=%d,g3=%d,b3=%d,a3=%d}";
-                                       int len = sizeof(fmt) + 20;
-                                       len += strlen(data->name);
-                                       buffer = alloca(len);
-                                       snprintf(buffer, len - 1, fmt, data->name,
-                                                (int) cc->r, (int) cc->g, (int) cc->b, (int) cc->a,
-                                                (int) cc->r2, (int) cc->g2, (int) cc->b2, (int) cc->a2,
-                                                (int) cc->r3, (int) cc->g3, (int) cc->b3, (int) cc->a3);
-                                       buffer[len - 1] = 0;
-                                       efl_gfx_filter_data_set(data->name, buffer, EINA_TRUE);
-                                    }
-                                  else
-                                    {
-                                       ERR("Unknown color class: %s", ccname);
-                                       data->invalid_cc = EINA_TRUE;
-                                    }
-                               }
-                             else
-                               {
-                                  ERR("Failed to parse color class: %s", data->value);
-                                  data->invalid_cc = EINA_TRUE;
-                               }
-                             free(ccname);
-                          }
-                     }
-                   else
-                     efl_gfx_filter_data_set(data->name, data->value, EINA_FALSE);
-                }
-           }
-         efl_gfx_filter_program_set(code, filter->name);
-         if (prev_sources != filter_sources)
-           {
-              /* remove sources that are not there anymore
+                  ccname = strdup(data->value + sizeof("color_class('") - 1);
+                  if (ccname)
+                    {
+                       r = strchr(ccname, '\'');
+                       if (r && (r[1] == ')') && (r[2] == '\0'))
+                         {
+                            *r = '\0';
+                            cc = _edje_color_class_find(ed, ccname);
+                            if (cc)
+                              {
+                                 static const char fmt[] =
+                                       "%s={r=%d,g=%d,b=%d,a=%d,"
+                                       "r2=%d,g2=%d,b2=%d,a2=%d,"
+                                       "r3=%d,g3=%d,b3=%d,a3=%d}";
+                                 int len = sizeof(fmt) + 20;
+                                 len += strlen(data->name);
+                                 buffer = alloca(len);
+                                 snprintf(buffer, len - 1, fmt, data->name,
+                                          (int) cc->r, (int) cc->g, (int) cc->b, (int) cc->a,
+                                          (int) cc->r2, (int) cc->g2, (int) cc->b2, (int) cc->a2,
+                                          (int) cc->r3, (int) cc->g3, (int) cc->b3, (int) cc->a3);
+                                 buffer[len - 1] = 0;
+                                 eo_do(obj, efl_gfx_filter_data_set(data->name, buffer, EINA_TRUE));
+                              }
+                            else
+                              {
+                                 ERR("Unknown color class: %s", ccname);
+                                 data->invalid_cc = EINA_TRUE;
+                              }
+                         }
+                       else
+                         {
+                            ERR("Failed to parse color class: %s", data->value);
+                            data->invalid_cc = EINA_TRUE;
+                         }
+                       free(ccname);
+                    }
+               }
+             else
+                eo_do(obj, efl_gfx_filter_data_set(data->name, data->value, EINA_FALSE));
+          }
+     }
+   eo_do(obj, efl_gfx_filter_program_set(code, filter->name));
+   if (prev_sources != filter_sources)
+     {
+        /* remove sources that are not there anymore
                * this O(n^2) loop assumes a very small number of sources */
-              EINA_LIST_FOREACH(prev_sources, li1, src1)
-                {
-                   Eina_Bool found = 0;
-                   EINA_LIST_FOREACH(filter_sources, li2, src2)
-                     {
-                        if (!strcmp(src1, src2))
-                          {
-                             found = 1;
-                             break;
-                          }
-                     }
-                   if (!found)
-                     {
-                        part = strchr(src1, ':');
-                        if (!part)
-                          efl_gfx_filter_source_set(src1, NULL);
-                        else
-                          {
-                             char *name = strdup(src1);
-                             name[part - src1] = 0;
-                             efl_gfx_filter_source_set(name, NULL);
-                             free(name);
-                          }
-                     }
-                }
-              /* add all sources by part name */
-              EINA_LIST_FOREACH(filter_sources, li1, src1)
-                {
-                   Edje_Real_Part *rp;
-                   char *name = NULL;
-                   if ((part = strchr(src1, ':')) != NULL)
-                     {
-                        name = strdup(src1);
-                        name[part - src1] = 0;
-                        part++;
-                     }
-                   else
-                     part = src1;
-                   rp = _edje_real_part_get(ed, part);
-                   efl_gfx_filter_source_set(name ? name : part, rp ? rp->object : NULL);
-                   free(name);
-                }
-            }
-         /* pass edje state for transitions */
-         if (ep->param2)
-           {
-              efl_gfx_filter_state_set(chosen_desc->state.name, chosen_desc->state.value,
-                                       ep->param2->description->state.name, ep->param2->description->state.value,
-                                       pos);
-           }
-         else
-           {
-              efl_gfx_filter_state_set(chosen_desc->state.name, chosen_desc->state.value,
-                                       NULL, 0.0, pos);
-           }
-         );
+        EINA_LIST_FOREACH(prev_sources, li1, src1)
+          {
+             Eina_Bool found = 0;
+             EINA_LIST_FOREACH(filter_sources, li2, src2)
+               {
+                  if (!strcmp(src1, src2))
+                    {
+                       found = 1;
+                       break;
+                    }
+               }
+             if (!found)
+               {
+                  part = strchr(src1, ':');
+                  if (!part)
+                    eo_do(obj, efl_gfx_filter_source_set(src1, NULL));
+                  else
+                    {
+                       char *name = strdup(src1);
+                       name[part - src1] = 0;
+                       eo_do(obj, efl_gfx_filter_source_set(name, NULL));
+                       free(name);
+                    }
+               }
+          }
+        /* add all sources by part name */
+        EINA_LIST_FOREACH(filter_sources, li1, src1)
+          {
+             Edje_Real_Part *rp;
+             char *name = NULL;
+             if ((part = strchr(src1, ':')) != NULL)
+               {
+                  name = strdup(src1);
+                  name[part - src1] = 0;
+                  part++;
+               }
+             else
+                part = src1;
+             rp = _edje_real_part_get(ed, part);
+             eo_do(obj, efl_gfx_filter_source_set(name ? name : part, rp ? rp->object : NULL));
+             free(name);
+          }
+     }
+   /* pass edje state for transitions */
+   if (ep->param2)
+     {
+        eo_do(obj, efl_gfx_filter_state_set(chosen_desc->state.name, chosen_desc->state.value,
+                                            ep->param2->description->state.name, ep->param2->description->state.value,
+                                            pos));
+     }
+   else
+     {
+        eo_do(obj, efl_gfx_filter_state_set(chosen_desc->state.name, chosen_desc->state.value,
+                                            NULL, 0.0, pos));
+     }
 }
 
 static void
