@@ -249,6 +249,16 @@ _eo_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op
 
 /************************************ EO ************************************/
 
+/* FIXME-tom: hack */
+static const Eo_Class *_current_super_class = NULL;
+
+EAPI Eo *
+_eo_super(Eo *obj, const Eo_Class *cur_klass)
+{
+   _current_super_class = cur_klass;
+   return obj;
+}
+
 EAPI Eina_Bool
 _eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *cache, const char *file, int line)
 {
@@ -257,6 +267,13 @@ _eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Cal
    _Eo_Object *obj = NULL;
    const op_type_funcs *func;
    Eina_Bool is_obj;
+
+   if (_current_super_class)
+     {
+        cur_klass = _eo_class_pointer_get(_current_super_class);
+        _current_super_class = NULL;
+     }
+
 
    if (EINA_UNLIKELY(!eo_id))
       return EINA_FALSE;
