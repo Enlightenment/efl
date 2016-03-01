@@ -434,10 +434,14 @@ end:
    return EINA_FALSE;
 }
 
+// FIXME-tom: All of this function needs to be redone, especially the if
 EAPI void
 _eo_call_end(Eo_Op_Call_Data *call)
 {
-   _eo_unref(call->obj);
+   if (call->obj)
+     {
+        _eo_unref(call->obj);
+     }
 }
 
 static inline Eina_Bool
