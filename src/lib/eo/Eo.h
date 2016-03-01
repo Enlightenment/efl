@@ -574,7 +574,7 @@ EAPI Eo_Op _eo_api_op_id_get(const void *api_func);
 // gets the real function pointer and the object data
 EAPI Eina_Bool _eo_call_resolve(Eo *obj, const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *callcache, const char *file, int line);
 
-// end of the eo_do barrier, unref the obj
+// end of the eo call barrier, unref the obj
 EAPI void _eo_call_end(Eo_Op_Call_Data *call);
 
 // end of the eo_add. Calls finalize among others
@@ -869,16 +869,12 @@ typedef void (*eo_key_data_free_func)(void *);
  * @brief Reference a pointer to an Eo object
  * @param wref the pointer to use for the weak ref
  *
- * Same as eo_wref_add() with the difference that it call eo_do() itself. Checking
- * for *wref NULL and making sure that you pass the right pointer to both side of
- * eo_do().
- *
  * @see eo_weak_unref
  * @see eo_wref_add
  */
 #define eo_weak_ref(wref)			   \
   do {						   \
-    if (*wref) eo_do(*wref, eo_wref_add(wref));  \
+    if (*wref) eo_wref_add(*wref, wref);  \
   } while (0)
 
 /**
@@ -886,26 +882,19 @@ typedef void (*eo_key_data_free_func)(void *);
  * @brief Unreference a pointer to an Eo object
  * @param wref the pointer to use for the weak unref
  *
- * Same as eo_wref_del() with the difference that it call eo_do() itself. Checking
- * for *wref NULL and making sure that you pass the right pointer to both side of
- * eo_do().
- *
  * @see eo_weak_ref
  * @see eo_wref_del
  * @see eo_wref_del_safe
  */
 #define eo_weak_unref(wref)			   \
   do {						   \
-    if (*wref) eo_do(*wref, eo_wref_del(wref));  \
+    if (*wref) eo_wref_del(*wref, wref);  \
   } while (0)
 
 /**
  * @def eo_wref_del_safe
  * @brief Delete the weak reference passed.
  * @param wref the weak reference to free.
- *
- * Same as eo_wref_del(), with the different that it's not called from eo_do()
- * so you don't need to check if *wref is not NULL.
  *
  * @see #eo_wref_del
  */
