@@ -104,7 +104,7 @@ struct _Region
     ((r1)->y1 <= (r2)->y1) && ((r1)->y2 >= (r2)->y2))
 
 #define ALLOC(n) malloc(PIXREGION_SZOF(n))
-#define FREE_DATA(reg) if ((reg)->data && (reg)->data->size) free((reg)->data)
+#define FREE_DATA(reg) if ((reg)->data && ((reg)->data != &_region_brokendata) && (reg)->data->size) free((reg)->data)
 #define RECTALLOC_BAIL(pReg ,n, bail) \
    if (!(pReg)->data || (((pReg)->data->num + (n)) > (pReg)->data->size)) \
      { \
