@@ -694,9 +694,9 @@ cleanup:
 }
 
 EAPI Eo *
-_eo_add_end(void)
+_eo_add_end(Eo *eo_id)
 {
-   Eo *ret = eo_finalize(NULL); //FIXME-tom
+   Eo *ret = eo_finalize(eo_id);
    ret = _eo_add_internal_end(ret);
    return ret;
 }
