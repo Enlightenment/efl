@@ -62,7 +62,7 @@ static Eina_Bool
 _tree_selected_cb(void *data, const Eo_Event *event)
 {
    Efl_Model_Test_Filemvc_Data *priv = data;
-   Eo *child = event_info;
+   Eo *child = event->event_info;
    const Eina_Value *vpath;
    Eo *model;
    char *path;
