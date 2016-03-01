@@ -49,19 +49,19 @@
        fail_if(mesh == NULL);                                           \
        fail_if(mesh2 == NULL);                                          \
        snprintf(buffer, PATH_MAX, "%s%s", tmp, ext);                    \
-       eo_do(mesh, set_ok = efl_file_set(file->path, NULL),             \
-             save_ok = efl_file_save(buffer, NULL, NULL));              \
+       set_ok = efl_file_set(mesh, file->path, NULL); \
+       save_ok = efl_file_save(mesh, buffer, NULL, NULL);              \
        fail_if(!set_ok);                                                \
        fail_if(!save_ok);                                               \
-       eo_do(mesh2, set_ok = efl_file_set(buffer, NULL));               \
+       set_ok = efl_file_set(mesh2, buffer, NULL);               \
        fail_if(!set_ok);                                                \
        res = _compare_meshes(mesh, mesh2);                              \
        fail_if(res == 1);                                               \
-       eo_do(mesh, set_ok = efl_file_mmap_set(eina_file_open(file->path, 0), NULL), \
-             save_ok = efl_file_save(buffer, NULL, NULL));              \
+       set_ok = efl_file_mmap_set(mesh, eina_file_open(file->path, 0), NULL); \
+       save_ok = efl_file_save(mesh, buffer, NULL, NULL);              \
        fail_if(!set_ok);                                                \
        fail_if(!save_ok);                                               \
-       eo_do(mesh2, set_ok = efl_file_mmap_set(eina_file_open(buffer, 0), NULL)); \
+       set_ok = efl_file_mmap_set(mesh2, eina_file_open(buffer, 0), NULL); \
        fail_if(!set_ok);                                                \
        res = _compare_meshes(mesh, mesh2);                              \
        fail_if(res == 1);                                               \

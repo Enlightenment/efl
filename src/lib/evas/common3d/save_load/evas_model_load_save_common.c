@@ -48,9 +48,8 @@ evas_model_load_vertex_data_unmap(Evas_Canvas3D_Mesh *mesh,
 #define UNMAP_IF_EXIST(existence, vertex_data_type)                           \
    if (existence)                                                             \
      {                                                                        \
-        eo_do(mesh,                                                           \
-              evas_canvas3d_mesh_frame_vertex_data_unmap(frame,               \
-                                                         vertex_data_type));  \
+        evas_canvas3d_mesh_frame_vertex_data_unmap(mesh, frame, \
+                                                         vertex_data_type);  \
      }
    UNMAP_IF_EXIST(header.existence_of_positions, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION)
    UNMAP_IF_EXIST(header.existence_of_normals, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL)
@@ -79,18 +78,16 @@ evas_model_load_vertex_data_to_mesh(Evas_Canvas3D_Mesh *mesh,
    Evas_Model_Load_Save_Data map;
    int i, j;
 
-   eo_do(mesh,
-         evas_canvas3d_mesh_vertex_count_set(header.vertices_count),
-         evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES),
-         evas_canvas3d_mesh_frame_add(0));
+   evas_canvas3d_mesh_vertex_count_set(mesh, header.vertices_count);
+   evas_canvas3d_mesh_vertex_assembly_set(mesh, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES);
+   evas_canvas3d_mesh_frame_add(mesh, 0);
 
 #define VERTEX_DATA_MAP(name, vertex_data_type, default_size)                                    \
    if (header.existence_of_##name)                                                               \
      {                                                                                           \
-        eo_do(mesh,                                                                              \
-              evas_canvas3d_mesh_frame_vertex_data_copy_set(0, vertex_data_type, 0, NULL),       \
-              map.name = (float *)evas_canvas3d_mesh_frame_vertex_data_map(0, vertex_data_type), \
-              stride->name = evas_canvas3d_mesh_frame_vertex_stride_get(0, vertex_data_type));   \
+        evas_canvas3d_mesh_frame_vertex_data_copy_set(mesh, 0, vertex_data_type, 0, NULL); \
+        map.name = (float *)evas_canvas3d_mesh_frame_vertex_data_map(mesh, 0, vertex_data_type); \
+        stride->name = evas_canvas3d_mesh_frame_vertex_stride_get(mesh, 0, vertex_data_type);   \
         if (stride->name == 0) stride->name = sizeof(float) * default_size;                      \
      }
    VERTEX_DATA_MAP(positions, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, 3)
@@ -125,10 +122,7 @@ evas_model_load_indices_data_to_mesh(Evas_Canvas3D_Mesh *mesh,
                                       Evas_Model_Load_Save_Header header,
                                       Evas_Model_Load_Save_Data data)
 {
-   eo_do(mesh,
-         evas_canvas3d_mesh_index_data_copy_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT,
-                                                header.indices_count,
-                                                data.indices));
+   evas_canvas3d_mesh_index_data_copy_set(mesh, EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, header.indices_count, data.indices);
 }
 
 Eina_Bool

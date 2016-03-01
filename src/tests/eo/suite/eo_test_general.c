@@ -22,8 +22,8 @@ START_TEST(eo_simple)
 
    obj = eo_add(SIMPLE_CLASS, NULL);
    fail_if(!obj);
-   eo_do(obj, eo_constructor());
-   eo_do(obj, eo_destructor());
+   eo_constructor(obj);
+   eo_destructor(obj);
    eo_unref(obj);
 
    eo_shutdown();
@@ -36,7 +36,7 @@ START_TEST(eo_stack)
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
    fail_if(!obj);
 
-   eo_do(obj, simple_recursive(123));
+   simple_recursive(obj, 123);
 
    eo_unref(obj);
 
@@ -103,25 +103,25 @@ START_TEST(eo_signals)
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
    Eina_Bool r;
 
-   eo_do(obj, eo_event_callback_add(EO_BASE_EVENT_CALLBACK_ADD, _eo_signals_cb_added_deled, callbacks));
-   eo_do(obj, r = eo_event_callback_add(EO_BASE_EVENT_CALLBACK_DEL, _eo_signals_cb_added_deled, callbacks));
+   eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_ADD, _eo_signals_cb_added_deled, callbacks);
+   r = eo_event_callback_add(obj, EO_BASE_EVENT_CALLBACK_DEL, _eo_signals_cb_added_deled, callbacks);
    fail_if(!r);
-   eo_do(obj, eo_event_callback_array_priority_add(callbacks, -100, (void *) 1));
-   eo_do(obj, eo_event_callback_array_add(callbacks, (void *) 3));
-   eo_do(obj, r = eo_event_callback_array_priority_add(callbacks, -50, (void *) 2));
+   eo_event_callback_array_priority_add(obj, callbacks, -100, (void *) 1);
+   eo_event_callback_array_add(obj, callbacks, (void *) 3);
+   r = eo_event_callback_array_priority_add(obj, callbacks, -50, (void *) 2);
    fail_if(!r);
-   eo_do(obj, simple_a_set(1));
+   simple_a_set(obj, 1);
    ck_assert_int_eq(_eo_signals_cb_flag, 0x3);
 
-   eo_do(obj, eo_event_callback_array_del(callbacks, (void *) 1));
-   eo_do(obj, eo_event_callback_array_del(callbacks, (void *) 2));
-   eo_do(obj, r = eo_event_callback_array_del(callbacks, (void *) 3));
+   eo_event_callback_array_del(obj, callbacks, (void *) 1);
+   eo_event_callback_array_del(obj, callbacks, (void *) 2);
+   r = eo_event_callback_array_del(obj, callbacks, (void *) 3);
    fail_if(!r);
    /* Try to delete something that doesn't exist. */
-   eo_do(obj, r = eo_event_callback_array_del(callbacks, (void *) 4));
+   r = eo_event_callback_array_del(obj, callbacks, (void *) 4);
    fail_if(r);
    _eo_signals_cb_flag = 0;
-   eo_do(obj, simple_a_set(1));
+   simple_a_set(obj, 1);
    ck_assert_int_eq(_eo_signals_cb_flag, 0x0);
 
    eo_unref(obj);
@@ -140,21 +140,21 @@ START_TEST(eo_signals)
 
         /* Call Eo event with legacy and non-legacy callbacks. */
         _eo_signals_cb_current = 0;
-        eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED2, -1000, _eo_signals_a_changed_never, (void *) 1));
-        eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, -100, _eo_signals_a_changed_cb, (void *) 1));
-        eo_do(obj, eo_event_callback_add(a_desc, _eo_signals_a_changed_cb2, NULL));
-        eo_do(obj, simple_a_set(1));
+        eo_event_callback_priority_add(obj, EV_A_CHANGED2, -1000, _eo_signals_a_changed_never, (void *) 1);
+        eo_event_callback_priority_add(obj, EV_A_CHANGED, -100, _eo_signals_a_changed_cb, (void *) 1);
+        eo_event_callback_add(obj, a_desc, _eo_signals_a_changed_cb2, NULL);
+        simple_a_set(obj, 1);
         ck_assert_int_eq(_eo_signals_cb_flag, 0x3);
 
         /* We don't need this one anymore. */
-        eo_do(obj, r = eo_event_callback_del(EV_A_CHANGED2, _eo_signals_a_changed_never, (void *) 1));
+        r = eo_event_callback_del(obj, EV_A_CHANGED2, _eo_signals_a_changed_never, (void *) 1);
         fail_if(!r);
 
         /* Call legacy event with legacy and non-legacy callbacks. */
         int a = 3;
         _eo_signals_cb_current = 0;
         _eo_signals_cb_flag = 0;
-        eo_do(obj, eo_event_callback_call(a_desc, &a));
+        eo_event_callback_call(obj, a_desc, &a);
         ck_assert_int_eq(_eo_signals_cb_flag, 0x3);
      }
    eo_unref(obj);
@@ -292,9 +292,9 @@ START_TEST(eo_composite_tests)
    Eo *obj2 = eo_add(SIMPLE_CLASS, NULL);
    fail_if(!obj2);
 
-   eo_do(obj, eo_composite_attach(obj2));
-   eo_do(obj2, eo_parent_set(NULL));
-   fail_if(eo_do_ret(obj2, tmp, eo_composite_part_is()));
+   eo_composite_attach(obj, obj2);
+   eo_parent_set(obj2, NULL);
+   fail_if(eo_composite_part_is(obj2));
 
    eo_unref(obj2);
    eo_unref(obj);
@@ -312,13 +312,13 @@ _man_con(Eo *obj, void *data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    if (_man_should_con)
       eo_manual_free_set(obj, EINA_TRUE);
-   return eo_do_super_ret(obj, cur_klass, obj, eo_constructor());
+   return eo_constructor(eo_super(obj, cur_klass));
 }
 
 static void
 _man_des(Eo *obj, void *data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_do_super(obj, cur_klass, eo_destructor());
+   eo_destructor(eo_super(obj, cur_klass));
    if (_man_should_des)
       eo_manual_free_set(obj, EINA_FALSE);
 }
@@ -454,7 +454,7 @@ START_TEST(eo_refs)
    obj2 = eo_ref(eo_add(SIMPLE_CLASS, obj));
 
    Eo *wref = NULL;
-   eo_do(obj2, eo_wref_add(&wref));
+   eo_wref_add(obj2, &wref);
    fail_if(!wref);
 
    eo_unref(obj2);
@@ -479,18 +479,18 @@ START_TEST(eo_refs)
    obj2 = eo_ref(eo_add(SIMPLE_CLASS, obj));
    obj3 = eo_ref(eo_add(SIMPLE_CLASS, NULL));
 
-   eo_do(obj2, eo_parent_set(obj3));
-   eo_do(obj3, eo_parent_set(obj));
+   eo_parent_set(obj2, obj3);
+   eo_parent_set(obj3, obj);
    ck_assert_int_eq(eo_ref_get(obj2), 2);
    ck_assert_int_eq(eo_ref_get(obj3), 2);
 
-   eo_do(obj2, eo_parent_set(NULL));
-   eo_do(obj3, eo_parent_set(NULL));
+   eo_parent_set(obj2, NULL);
+   eo_parent_set(obj3, NULL);
    ck_assert_int_eq(eo_ref_get(obj2), 1);
    ck_assert_int_eq(eo_ref_get(obj3), 1);
 
-   eo_do(obj2, eo_parent_set(obj));
-   eo_do(obj3, eo_parent_set(obj));
+   eo_parent_set(obj2, obj);
+   eo_parent_set(obj3, obj);
    ck_assert_int_eq(eo_ref_get(obj2), 1);
    ck_assert_int_eq(eo_ref_get(obj3), 1);
 
@@ -522,14 +522,14 @@ START_TEST(eo_weak_reference)
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
    Eo *obj2 = eo_add(SIMPLE_CLASS, NULL);
    Eo *wref = NULL, *wref2 = NULL, *wref3 = NULL;
-   eo_do(obj, eo_wref_add(&wref));
+   eo_wref_add(obj, &wref);
    fail_if(!wref);
 
    eo_unref(obj);
    fail_if(wref);
 
    obj = eo_add(SIMPLE_CLASS, NULL);
-   eo_do(obj, eo_wref_add(&wref));
+   eo_wref_add(obj, &wref);
 
    eo_ref(obj);
    fail_if(!wref);
@@ -542,35 +542,41 @@ START_TEST(eo_weak_reference)
 
    obj = eo_add(SIMPLE_CLASS, NULL);
 
-   eo_do(obj, eo_wref_add(&wref));
-   eo_do(obj, eo_wref_del(&wref));
+   eo_wref_add(obj, &wref);
+   eo_wref_del(obj, &wref);
    fail_if(wref);
 
-   eo_do(obj, eo_wref_add(&wref));
-   eo_do(obj2, eo_wref_del(&wref));
+   eo_wref_add(obj, &wref);
+   eo_wref_del(obj2, &wref);
    fail_if(!wref);
    eo_wref_del_safe(&wref);
    fail_if(wref);
 
    wref = obj;
-   eo_do(obj, eo_wref_del(&wref));
+   eo_wref_del(obj, &wref);
    fail_if(wref);
 
    wref = wref2 = wref3 = NULL;
-   eo_do(obj, eo_wref_add(&wref), eo_wref_add(&wref2), eo_wref_add(&wref3));
+   eo_wref_add(obj, &wref);
+   eo_wref_add(obj, &wref2);
+   eo_wref_add(obj, &wref3);
    fail_if(!wref);
    fail_if(!wref2);
    fail_if(!wref3);
-   eo_do(obj, eo_wref_del(&wref), eo_wref_del(&wref2), eo_wref_del(&wref3));
+   eo_wref_del(obj, &wref);
+   eo_wref_del(obj, &wref2);
+   eo_wref_del(obj, &wref3);
    fail_if(wref);
    fail_if(wref2);
    fail_if(wref3);
 
-   eo_do(obj, eo_wref_add(&wref2), eo_wref_add(&wref3));
+   eo_wref_add(obj, &wref2);
+   eo_wref_add(obj, &wref3);
    wref = obj;
-   eo_do(obj, eo_wref_del(&wref));
+   eo_wref_del(obj, &wref);
    fail_if(wref);
-   eo_do(obj, eo_wref_del(&wref2), eo_wref_del(&wref3));
+   eo_wref_del(obj, &wref2);
+   eo_wref_del(obj, &wref3);
 
    eo_unref(obj);
    eo_unref(obj2);
@@ -586,30 +592,30 @@ START_TEST(eo_generic_data)
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
    void *data = NULL;
 
-   eo_do(obj, eo_key_data_set("test1", (void *) 1));
-   eo_do(obj, data = eo_key_data_get("test1"));
+   eo_key_data_set(obj, "test1", (void *) 1);
+   data = eo_key_data_get(obj, "test1");
    fail_if(1 != (intptr_t) data);
-   eo_do(obj, eo_key_data_del("test1"));
-   eo_do(obj, data = eo_key_data_get("test1"));
+   eo_key_data_del(obj, "test1");
+   data = eo_key_data_get(obj, "test1");
    fail_if(data);
 
-   eo_do(obj, eo_key_data_set("test1", (void *) 1));
-   eo_do(obj, eo_key_data_set("test2", (void *) 2));
-   eo_do(obj, data = eo_key_data_get("test1"));
+   eo_key_data_set(obj, "test1", (void *) 1);
+   eo_key_data_set(obj, "test2", (void *) 2);
+   data = eo_key_data_get(obj, "test1");
    fail_if(1 != (intptr_t) data);
-   eo_do(obj, data = eo_key_data_get("test2"));
+   data = eo_key_data_get(obj, "test2");
    fail_if(2 != (intptr_t) data);
 
-   eo_do(obj, data = eo_key_data_get("test2"));
+   data = eo_key_data_get(obj, "test2");
    fail_if(2 != (intptr_t) data);
-   eo_do(obj, eo_key_data_del("test2"));
-   eo_do(obj, data = eo_key_data_get("test2"));
+   eo_key_data_del(obj, "test2");
+   data = eo_key_data_get(obj, "test2");
    fail_if(data);
 
-   eo_do(obj, data = eo_key_data_get("test1"));
+   data = eo_key_data_get(obj, "test1");
    fail_if(1 != (intptr_t) data);
-   eo_do(obj, eo_key_data_del("test1"));
-   eo_do(obj, data = eo_key_data_get("test1"));
+   eo_key_data_del(obj, "test1");
+   data = eo_key_data_get(obj, "test1");
    fail_if(data);
 
    eo_unref(obj);
@@ -643,21 +649,22 @@ START_TEST(eo_magic_checks)
         obj = eo_add(SIMPLE_CLASS, NULL);
         fail_if(!obj);
 
-        eo_do((Eo *) buf, simple_a_set(++i), a = simple_a_get());
+        simple_a_set((Eo *) buf, ++i);
+        a = simple_a_get((Eo *) buf);
         ck_assert_int_ne(i, a);
-        eo_do_super((Eo *) buf, SIMPLE_CLASS, simple_a_set(++i));
-        eo_do_super((Eo *) buf, SIMPLE_CLASS, a = simple_a_get());
+        simple_a_set(eo_super((Eo *) buf, SIMPLE_CLASS), ++i);
+        a = simple_a_get(eo_super((Eo *) buf, SIMPLE_CLASS));
         ck_assert_int_ne(i, a);
-        eo_do_super(obj, (const Eo_Class *) buf, simple_a_set(++i));
-        eo_do_super(obj, (const Eo_Class *) buf, a = simple_a_get());
+        simple_a_set(eo_super(obj, (const Eo_Class *) buf), ++i);
+        a = simple_a_get(eo_super(obj, (const Eo_Class *) buf));
         ck_assert_int_ne(i, a);
         fail_if(eo_class_get((Eo *) buf));
         fail_if(eo_class_name_get((Eo_Class*) buf));
         fail_if(eo_class_get(obj) != SIMPLE_CLASS);
         fail_if(eo_class_get(SIMPLE_CLASS) != EO_ABSTRACT_CLASS_CLASS);
-        eo_do((Eo_Class *) buf, simple_a_set(1));
-        eo_do_super((Eo_Class *) buf, SIMPLE_CLASS, simple_a_set(++i));
-        eo_do_super(SIMPLE_CLASS, (Eo_Class *) buf, simple_a_set(++i));
+        simple_a_set((Eo_Class *) buf, 1);
+        simple_a_set(eo_super((Eo_Class *) buf, SIMPLE_CLASS), ++i);
+        simple_a_set(eo_super(SIMPLE_CLASS, (Eo_Class *) buf), ++i);
         fail_if(eo_class_new(NULL, (Eo_Class *) buf), NULL);
 
         eo_xref(obj, (Eo *) buf);
@@ -674,28 +681,27 @@ START_TEST(eo_magic_checks)
 
         fail_if(0 != eo_ref_get((Eo *) buf));
 
-        eo_do((Eo *) buf,
-	      eo_wref_add(&wref),
-	      parent = eo_parent_get());
+        eo_wref_add((Eo *) buf, &wref);
+        parent = eo_parent_get((Eo *) buf);
         fail_if(wref);
         fail_if(parent);
 
         fail_if(eo_data_scope_get((Eo *) buf, SIMPLE_CLASS));
 
-        eo_do(obj, eo_composite_attach((Eo *) buf));
-        eo_do(obj, eo_composite_detach((Eo *) buf));
-        eo_do((Eo *) buf, eo_composite_part_is());
+        eo_composite_attach(obj, (Eo *) buf);
+        eo_composite_detach(obj, (Eo *) buf);
+        eo_composite_part_is((Eo *) buf);
 
-        eo_do(obj, eo_event_callback_forwarder_add(NULL, (Eo *) buf));
-        eo_do(obj, eo_event_callback_forwarder_del(NULL, (Eo *) buf));
+        eo_event_callback_forwarder_add(obj, NULL, (Eo *) buf);
+        eo_event_callback_forwarder_del(obj, NULL, (Eo *) buf);
 
         eo_manual_free_set((Eo *) buf, EINA_TRUE);
         eo_manual_free((Eo *) buf);
         eo_destructed_is((Eo *) buf);
 
         obj2 = NULL;
-        eo_do(obj, eo_parent_set((Eo *) buf));
-        eo_do(obj, obj2 = eo_parent_get());
+        eo_parent_set(obj, (Eo *) buf);
+        obj2 = eo_parent_get(obj);
         fail_if(obj2 && (obj2 == (Eo *) buf));
 
         eo_unref(obj);
@@ -761,11 +767,15 @@ START_TEST(eo_multiple_do)
    Eina_Bool ca, cb, cc;
 
    ca = cb = cc = EINA_FALSE;
-   eo_do(obj, ca = simple_a_print(), cb = multi_a_print(), cc = multi_a_print());
+   ca = simple_a_print(obj);
+   cb = multi_a_print(obj);
+   cc = multi_a_print(obj);
    fail_if(!(ca && cb && cc));
 
    ca = cb = cc = EINA_FALSE;
-   eo_do(klass, ca = simple_class_hi_print(), cb = multi_class_hi_print(), cc = multi_class_hi_print());
+   ca = simple_class_hi_print(klass);
+   cb = multi_class_hi_print(klass);
+   cc = multi_class_hi_print(klass);
    fail_if(!(ca && cb && cc));
 
    eo_unref(obj);
@@ -780,27 +790,27 @@ START_TEST(eo_add_do_and_custom)
    Eo *obj = NULL;
    eo_init();
 
-   obj = eo_add(SIMPLE_CLASS, NULL, eo_constructor());
+   obj = eo_add(SIMPLE_CLASS, NULL, eo_constructor(eoid));
    fail_if(!obj);
    eo_unref(obj);
 
-   obj = eo_add(SIMPLE_CLASS, NULL, simple_a_set(7));
+   obj = eo_add(SIMPLE_CLASS, NULL, simple_a_set(eoid, 7));
    fail_if(!obj);
    pd = eo_data_scope_get(obj, SIMPLE_CLASS);
    fail_if(pd->a != 7);
    eo_unref(obj);
 
-   obj = eo_add(SIMPLE_CLASS, NULL, eo_constructor(), simple_a_set(7));
+   obj = eo_add(SIMPLE_CLASS, NULL, eo_constructor(eoid), simple_a_set(eoid, 7));
    fail_if(!obj);
    pd = eo_data_scope_get(obj, SIMPLE_CLASS);
    fail_if(pd->a != 7);
    eo_unref(obj);
 
    Eina_Bool finalized;
-   obj = eo_add(SIMPLE_CLASS, NULL, finalized = eo_finalized_get());
+   obj = eo_add(SIMPLE_CLASS, NULL, finalized = eo_finalized_get(eoid));
    fail_if(finalized);
 
-   eo_do(obj, finalized = eo_finalized_get());
+   finalized = eo_finalized_get(obj);
    fail_if(!finalized);
    eo_unref(obj);
 
@@ -940,7 +950,8 @@ START_TEST(eo_parts)
 
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
 
-   eo_do(obj, simple_a_set(3), a = simple_a_get());
+   simple_a_set(obj, 3);
+   a = simple_a_get(obj);
    ck_assert_int_eq(a, 3);
 
    eo_do_part(obj, simple_part_get("test"),
@@ -949,7 +960,8 @@ START_TEST(eo_parts)
          );
    ck_assert_int_eq(a, 7);
 
-   eo_do(obj, simple_a_set(3), a = simple_a_get());
+   simple_a_set(obj, 3);
+   a = simple_a_get(obj);
    ck_assert_int_eq(a, 3);
 
    /* Faking a call, just asserting NULL as the part to check default values. */

@@ -31,8 +31,7 @@ _ector_renderer_gl_base_ector_renderer_generic_base_draw(Eo *obj EINA_UNUSED,
 {
    Eina_Bool r;
 
-   eo_do(pd->base->surface,
-         r = ector_gl_surface_state_define(op, clips));
+   r = ector_gl_surface_state_define(pd->base->surface, op, clips);
 
    return r;
 }
@@ -40,7 +39,7 @@ _ector_renderer_gl_base_ector_renderer_generic_base_draw(Eo *obj EINA_UNUSED,
 static Eo_Base *
 _ector_renderer_gl_base_eo_base_constructor(Eo *obj, Ector_Renderer_GL_Base_Data *pd)
 {
-   eo_do_super(obj, ECTOR_RENDERER_GL_BASE_CLASS, obj = eo_constructor());
+   obj = eo_constructor(eo_super(obj, ECTOR_RENDERER_GL_BASE_CLASS));
    if (!obj) return NULL;
 
    pd->base = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);

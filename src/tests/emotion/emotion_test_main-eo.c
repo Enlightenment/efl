@@ -76,7 +76,7 @@ static const char  *theme_file = NULL;
 static void
 bg_resize(Evas_Coord w, Evas_Coord h)
 {
-   eo_do(o_bg, efl_gfx_size_set(w, h));
+   efl_gfx_size_set(o_bg, w, h);
 }
 
 static void
@@ -84,8 +84,7 @@ main_resize(Ecore_Evas *ee)
 {
    Evas_Coord w, h;
 
-   eo_do(ecore_evas_get(ee),
-         evas_canvas_output_viewport_get(NULL, NULL, &w, &h));
+   evas_canvas_output_viewport_get(ecore_evas_get(ee), NULL, NULL, &w, &h);
    bg_resize(w, h);
 }
 
@@ -113,15 +112,13 @@ static void
 bg_setup(void)
 {
    o_bg = eo_add(EDJE_OBJECT_CLASS, evas);
-   eo_do(o_bg, efl_file_set(theme_file, "background"),
-         efl_gfx_position_set(0, 0),
-         efl_gfx_size_set(startw, starth),
-         efl_gfx_stack_layer_set(-999),
-         efl_gfx_visible_set(EINA_TRUE),
-         evas_obj_focus_set(EINA_TRUE),
-
-         eo_event_callback_add(EVAS_OBJECT_EVENT_KEY_DOWN,
-            bg_key_down, NULL));
+   efl_file_set(o_bg, theme_file, "background");
+   efl_gfx_position_set(o_bg, 0, 0);
+   efl_gfx_size_set(o_bg, startw, starth);
+   efl_gfx_stack_layer_set(o_bg, -999);
+   efl_gfx_visible_set(o_bg, EINA_TRUE);
+   evas_obj_focus_set(o_bg, EINA_TRUE);
+   eo_event_callback_add(o_bg, EVAS_OBJECT_EVENT_KEY_DOWN, bg_key_down, NULL);
 }
 
 static void
@@ -309,7 +306,7 @@ video_obj_time_changed(Evas_Object *obj, Evas_Object *edje)
    pos = emotion_object_position_get(obj);
    len = emotion_object_play_length_get(obj);
    scale = (len > 0.0) ? pos / len : 0.0;
-   eo_do(edje, edje_obj_part_drag_value_set("video_progress", scale, 0.0));
+   edje_obj_part_drag_value_set(edje, "video_progress", scale, 0.0);
 
    lh = len / 3600;
    lm = len / 60 - (lh * 60);
@@ -323,7 +320,7 @@ video_obj_time_changed(Evas_Object *obj, Evas_Object *edje)
 
    snprintf(buf, sizeof(buf), "%i:%02i:%02i.%02i / %i:%02i:%02i",
             ph, pm, ps, pf, lh, lm, ls);
-   eo_do(edje, edje_obj_part_text_set("video_progress_txt", buf));
+   edje_obj_part_text_set(edje, "video_progress_txt", buf);
 }
 
 static Eina_Bool
@@ -356,12 +353,11 @@ video_obj_frame_resize_cb(void *data, const Eo_Event *event)
    printf("HANDLE %ix%i @ %3.3f\n", iw, ih, ratio);
    if (ratio > 0.0) iw = (ih * ratio) + 0.5;
    evas_object_size_hint_min_set(event->obj, iw, ih);
-   eo_do(oe, edje_obj_part_swallow( "video_swallow", event->obj),
-         edje_obj_size_min_calc(&w, &h),
-         efl_gfx_size_set(w, h)
-        );
-   eo_do(event->obj, evas_obj_size_hint_min_set(0, 0));
-   eo_do(oe, edje_obj_part_swallow( "video_swallow", event->obj));
+   edje_obj_part_swallow(oe, "video_swallow", event->obj);
+   edje_obj_size_min_calc(oe, &w, &h);
+   efl_gfx_size_set(oe, w, h);
+   evas_obj_size_hint_min_set(event->obj, 0, 0);
+   edje_obj_part_swallow(oe, "video_swallow", event->obj);
 
    return EINA_TRUE;
 }
@@ -459,7 +455,7 @@ video_obj_signal_play_cb(void *data, Evas_Object *o, const char *emission EINA_U
 {
    Evas_Object *ov = data;
    emotion_object_play_set(ov, EINA_TRUE);
-   eo_do(o, edje_obj_signal_emit("video_state", "play"));
+   edje_obj_signal_emit(o, "video_state", "play");
 }
 
 static void
@@ -467,7 +463,7 @@ video_obj_signal_pause_cb(void *data, Evas_Object *o, const char *emission EINA_
 {
    Evas_Object *ov = data;
    emotion_object_play_set(ov, EINA_FALSE);
-   eo_do(o, edje_obj_signal_emit("video_state", "pause"));
+   edje_obj_signal_emit(o, "video_state", "pause");
 }
 
 static void
@@ -476,7 +472,7 @@ video_obj_signal_stop_cb(void *data, Evas_Object *o, const char *emission EINA_U
    Evas_Object *ov = data;
    emotion_object_play_set(ov, EINA_FALSE);
    emotion_object_position_set(ov, 0.0);
-   eo_do(o, edje_obj_signal_emit("video_state", "stop"));
+   edje_obj_signal_emit(o, "video_state", "stop");
 }
 
 static void
@@ -486,7 +482,7 @@ video_obj_signal_jump_cb(void *data, Evas_Object *o, const char *emission EINA_U
    double len;
    double x, y;
 
-   eo_do(o, edje_obj_part_drag_value_get(source, &x, &y));
+   edje_obj_part_drag_value_get(o, source, &x, &y);
    len = emotion_object_play_length_get(ov);
    emotion_object_position_set(ov, x * len);
 }
@@ -499,11 +495,11 @@ video_obj_signal_alpha_cb(void *data, Evas_Object *o, const char *emission EINA_
    double x, y;
    char buf[256];
 
-   eo_do(o, edje_obj_part_drag_value_get(source, &x, &y));
+   edje_obj_part_drag_value_get(o, source, &x, &y);
    alpha = 255 * y;
-   eo_do(ov, efl_gfx_color_set(alpha, alpha, alpha, alpha));
+   efl_gfx_color_set(ov, alpha, alpha, alpha, alpha);
    snprintf(buf, sizeof(buf), "alpha %.0f", alpha);
-   eo_do(o, edje_obj_part_text_set("video_alpha_txt", buf));
+   edje_obj_part_text_set(o, "video_alpha_txt", buf);
 }
 
 static void
@@ -513,10 +509,10 @@ video_obj_signal_vol_cb(void *data, Evas_Object *o, const char *emission EINA_UN
    double vol;
    char buf[256];
 
-   eo_do(o, edje_obj_part_drag_value_get(source, NULL, &vol));
+   edje_obj_part_drag_value_get(o, source, NULL, &vol);
    emotion_object_audio_volume_set(ov, vol);
    snprintf(buf, sizeof(buf), "vol %.2f", vol);
-   eo_do(o, edje_obj_part_text_set("video_volume_txt", buf));
+   edje_obj_part_text_set(o, "video_volume_txt", buf);
 }
 
 static void
@@ -525,14 +521,13 @@ video_obj_signal_frame_move_start_cb(void *data EINA_UNUSED, Evas_Object *o, con
    Frame_Data *fd;
    Evas_Coord x, y;
 
-   eo_do(o, fd = eo_key_data_get("frame_data"));
+   fd = eo_key_data_get(o, "frame_data");
    if (!fd) return;
    fd->moving = 1;
-   eo_do(evas_object_evas_get(o),
-         evas_canvas_pointer_canvas_xy_get(&x, &y));
+   evas_canvas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
    fd->x = x;
    fd->y = y;
-   eo_do(o, efl_gfx_stack_raise());
+   efl_gfx_stack_raise(o);
 }
 
 static void
@@ -540,7 +535,7 @@ video_obj_signal_frame_move_stop_cb(void *data EINA_UNUSED, Evas_Object *o, cons
 {
    Frame_Data *fd;
 
-   eo_do(o, fd = eo_key_data_get("frame_data"));
+   fd = eo_key_data_get(o, "frame_data");
    if (!fd) return;
    fd->moving = 0;
 }
@@ -551,14 +546,13 @@ video_obj_signal_frame_resize_start_cb(void *data EINA_UNUSED, Evas_Object *o, c
    Frame_Data *fd;
    Evas_Coord x, y;
 
-   eo_do(o, fd = eo_key_data_get("frame_data"));
+   fd = eo_key_data_get(o, "frame_data");
    if (!fd) return;
    fd->resizing = 1;
-   eo_do(evas_object_evas_get(o),
-         evas_canvas_pointer_canvas_xy_get(&x, &y));
+   evas_canvas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
    fd->x = x;
    fd->y = y;
-   eo_do(o, efl_gfx_stack_raise());
+   efl_gfx_stack_raise(o);
 }
 
 static void
@@ -566,7 +560,7 @@ video_obj_signal_frame_resize_stop_cb(void *data EINA_UNUSED, Evas_Object *o, co
 {
    Frame_Data *fd;
 
-   eo_do(o, fd = eo_key_data_get("frame_data"));
+   fd = eo_key_data_get(o, "frame_data");
    if (!fd) return;
    fd->resizing = 0;
 }
@@ -576,18 +570,15 @@ video_obj_signal_frame_move_cb(void *data EINA_UNUSED, Evas_Object *o, const cha
 {
    Frame_Data *fd;
 
-   eo_do(o, fd = eo_key_data_get("frame_data"));
+   fd = eo_key_data_get(o, "frame_data");
    if (!fd) return;
    if (fd->moving)
      {
         Evas_Coord x, y, ox, oy;
 
-        eo_do(evas_object_evas_get(o),
-              evas_canvas_pointer_canvas_xy_get(&x, &y));
-        eo_do(o,
-              efl_gfx_position_get(&ox, &oy),
-              efl_gfx_position_set(ox + (x - fd->x), oy + (y - fd->y))
-             );
+        evas_canvas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
+        efl_gfx_position_get(o, &ox, &oy);
+        efl_gfx_position_set(o, ox + (x - fd->x), oy + (y - fd->y));
         fd->x = x;
         fd->y = y;
      }
@@ -595,9 +586,8 @@ video_obj_signal_frame_move_cb(void *data EINA_UNUSED, Evas_Object *o, const cha
      {
         Evas_Coord x, y, ow, oh;
 
-        eo_do(evas_object_evas_get(o),
-              evas_canvas_pointer_canvas_xy_get(&x, &y));
-        eo_do(o, efl_gfx_size_get(&ow, &oh));
+        evas_canvas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
+        efl_gfx_size_get(o, &ow, &oh);
         evas_object_resize(o, ow + (x - fd->x), oh + (y - fd->y));
         fd->x = x;
         fd->y = y;
@@ -650,43 +640,35 @@ init_video_object(const char *module_filename, const char *filename)
    if (!fd) exit(1);
 
    oe = eo_add(EDJE_OBJECT_CLASS, evas);
-   eo_do(oe,
-         eo_event_callback_add(EVAS_OBJECT_EVENT_FREE, _oe_free_cb, fd),
-         eo_key_data_set("frame_data", fd),
-         efl_file_set(theme_file,
-            reflex ? "video_controller/reflex" : "video_controller"),
-         edje_obj_part_swallow("video_swallow", o));
+   eo_event_callback_add(oe, EVAS_OBJECT_EVENT_FREE, _oe_free_cb, fd);
+   eo_key_data_set(oe, "frame_data", fd);
+   efl_file_set(oe, theme_file, reflex ? "video_controller/reflex" : "video_controller");
+   edje_obj_part_swallow(oe, "video_swallow", o);
 
    offset = 20 * (eina_list_count(video_objs) - 1);
-   eo_do(oe,
-         efl_gfx_position_set(offset, offset),
-         edje_obj_size_min_calc(&w, &h),
-         efl_gfx_size_set(w, h));
+   efl_gfx_position_set(oe, offset, offset);
+   edje_obj_size_min_calc(oe, &w, &h);
+   efl_gfx_size_set(oe, w, h);
 
-   eo_do(o, eo_event_callback_array_add(emotion_object_test_callbacks, oe));
+   eo_event_callback_array_add(o, emotion_object_test_callbacks, oe);
 
-   eo_do(oe,
-         edje_obj_signal_callback_add("video_control", "play", video_obj_signal_play_cb, o),
-         edje_obj_signal_callback_add("video_control", "pause", video_obj_signal_pause_cb, o),
-         edje_obj_signal_callback_add("video_control", "stop", video_obj_signal_stop_cb, o),
-         edje_obj_signal_callback_add("drag", "video_progress", video_obj_signal_jump_cb, o),
-         edje_obj_signal_callback_add("drag", "video_alpha", video_obj_signal_alpha_cb, o),
-         edje_obj_signal_callback_add("drag", "video_volume", video_obj_signal_vol_cb, o),
-
-         edje_obj_signal_callback_add("frame_move", "start", video_obj_signal_frame_move_start_cb, oe),
-         edje_obj_signal_callback_add("frame_move", "stop", video_obj_signal_frame_move_stop_cb, oe),
-         edje_obj_signal_callback_add("frame_resize", "start", video_obj_signal_frame_resize_start_cb, oe),
-         edje_obj_signal_callback_add("frame_resize", "stop", video_obj_signal_frame_resize_stop_cb, oe),
-         edje_obj_signal_callback_add("mouse,move", "*", video_obj_signal_frame_move_cb, oe),
-
-         edje_obj_part_drag_value_set("video_alpha", 0.0, 1.0),
-         edje_obj_part_text_set("video_alpha_txt", "alpha 255"),
-         edje_obj_part_drag_value_set("video_volume", 0.0, 0.5),
-         edje_obj_part_text_set("video_volume_txt", "vol 0.50"),
-
-         edje_obj_signal_emit("video_state", "play"),
-
-         efl_gfx_visible_set(EINA_TRUE));
+   edje_obj_signal_callback_add(oe, "video_control", "play", video_obj_signal_play_cb, o);
+   edje_obj_signal_callback_add(oe, "video_control", "pause", video_obj_signal_pause_cb, o);
+   edje_obj_signal_callback_add(oe, "video_control", "stop", video_obj_signal_stop_cb, o);
+   edje_obj_signal_callback_add(oe, "drag", "video_progress", video_obj_signal_jump_cb, o);
+   edje_obj_signal_callback_add(oe, "drag", "video_alpha", video_obj_signal_alpha_cb, o);
+   edje_obj_signal_callback_add(oe, "drag", "video_volume", video_obj_signal_vol_cb, o);
+   edje_obj_signal_callback_add(oe, "frame_move", "start", video_obj_signal_frame_move_start_cb, oe);
+   edje_obj_signal_callback_add(oe, "frame_move", "stop", video_obj_signal_frame_move_stop_cb, oe);
+   edje_obj_signal_callback_add(oe, "frame_resize", "start", video_obj_signal_frame_resize_start_cb, oe);
+   edje_obj_signal_callback_add(oe, "frame_resize", "stop", video_obj_signal_frame_resize_stop_cb, oe);
+   edje_obj_signal_callback_add(oe, "mouse, move", "*", video_obj_signal_frame_move_cb, oe);
+   edje_obj_part_drag_value_set(oe, "video_alpha", 0.0, 1.0);
+   edje_obj_part_text_set(oe, "video_alpha_txt", "alpha 255");
+   edje_obj_part_drag_value_set(oe, "video_volume", 0.0, 0.5);
+   edje_obj_part_text_set(oe, "video_volume_txt", "vol 0.50");
+   edje_obj_signal_emit(oe, "video_state", "play");
+   efl_gfx_visible_set(oe, EINA_TRUE);
 }
 
 int

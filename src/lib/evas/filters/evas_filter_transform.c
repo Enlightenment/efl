@@ -116,8 +116,8 @@ _vflip_cpu(Evas_Filter_Command *cmd)
    ret = EINA_TRUE;
 
 end:
-   eo_do(cmd->input->buffer, ector_buffer_unmap(in, src_len));
-   eo_do(cmd->output->buffer, ector_buffer_unmap(out, dst_len));
+   ector_buffer_unmap(cmd->input->buffer, in, src_len);
+   ector_buffer_unmap(cmd->output->buffer, out, dst_len);
    return ret;
 }
 

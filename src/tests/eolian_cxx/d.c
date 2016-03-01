@@ -19,7 +19,7 @@ typedef struct _D_Data D_Data;
 
 static Eo *_d_eo_base_constructor(Eo *obj EINA_UNUSED, D_Data *pd EINA_UNUSED)
 {
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   return eo_constructor(eo_super(obj, MY_CLASS));
 }
 
 #include "d.eo.c"

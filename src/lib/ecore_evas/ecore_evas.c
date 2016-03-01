@@ -3087,7 +3087,7 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport)
         a.update_area = *viewport;
      }
 
-   eo_do(ee->evas, eo_event_callback_call(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, &a));
+   eo_event_callback_call(ee->evas, EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, &a);
 
    // FIXME: We do not support partial animator in the subcanvas
    EINA_LIST_FOREACH(ee->sub_ecore_evas, l, subee)
@@ -3219,7 +3219,7 @@ _ecore_evas_register(Ecore_Evas *ee)
    ecore_evases = (Ecore_Evas *)eina_inlist_prepend
      (EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
 
-   eo_do(ee->evas, eo_event_callback_array_add(animator_watch(), ee));
+   eo_event_callback_array_add(ee->evas, animator_watch(), ee);
 
 #ifdef RENDER_SYNC
    ecore_evas_first = EINA_TRUE;

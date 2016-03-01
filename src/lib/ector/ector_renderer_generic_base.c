@@ -15,7 +15,7 @@ _ector_renderer_generic_base_eo_base_destructor(Eo *obj, Ector_Renderer_Generic_
    if (pd->m) free(pd->m);
    eo_unref(pd->surface);
 
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 static Eo_Base *
@@ -27,7 +27,7 @@ _ector_renderer_generic_base_eo_base_finalize(Eo *obj, Ector_Renderer_Generic_Ba
         return NULL;
      }
    pd->finalized = EINA_TRUE;
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
+   return eo_finalize(eo_super(obj, MY_CLASS));
 }
 
 static Ector_Generic_Surface *
@@ -163,7 +163,7 @@ _ector_renderer_generic_base_prepare(Eo *obj EINA_UNUSED,
                                      Ector_Renderer_Generic_Base_Data *pd)
 {
    if (pd->mask)
-     eo_do(pd->mask, ector_renderer_prepare());
+     ector_renderer_prepare(pd->mask);
 
    return EINA_TRUE;
 }

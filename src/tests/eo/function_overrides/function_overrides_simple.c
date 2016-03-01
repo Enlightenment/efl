@@ -34,10 +34,10 @@ _class_print(Eo_Class *klass, void *class_data EINA_UNUSED)
 {
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
    Eina_Bool called = EINA_FALSE;
-   eo_do_super(klass, MY_CLASS, called = simple_class_print());
+   called = simple_class_print(eo_super(klass, MY_CLASS));
    fail_if(called);
 
-   eo_do_super(klass, MY_CLASS, called = simple_class_print2());
+   called = simple_class_print2(eo_super(klass, MY_CLASS));
    fail_if(called);
 
    return EINA_TRUE;

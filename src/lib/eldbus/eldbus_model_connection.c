@@ -20,7 +20,7 @@ static void _eldbus_model_connection_clear(Eldbus_Model_Connection_Data *);
 static Eo_Base*
 _eldbus_model_connection_eo_base_constructor(Eo *obj, Eldbus_Model_Connection_Data *pd)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
 
    pd->obj = obj;
    pd->load.status = EFL_MODEL_LOAD_STATUS_UNLOADED;
@@ -55,7 +55,7 @@ _eldbus_model_connection_eo_base_destructor(Eo *obj, Eldbus_Model_Connection_Dat
 
    _eldbus_model_connection_clear(pd);
 
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 static Efl_Model_Load_Status
@@ -345,8 +345,7 @@ _eldbus_model_connection_names_list_cb(void *data,
      {
         DBG("(%p): bus = %s", pd->obj, bus);
 
-        Eo *child = eo_add(ELDBUS_MODEL_OBJECT_CLASS, NULL,
-          eldbus_model_object_connection_constructor(pd->connection, bus, "/"));
+        Eo *child = eo_add(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_connection_constructor(eoid, pd->connection, bus, "/"));
 
         pd->children_list = eina_list_append(pd->children_list, child);
      }
@@ -355,7 +354,7 @@ _eldbus_model_connection_names_list_cb(void *data,
 
    count = eina_list_count(pd->children_list);
    if (count)
-     eo_do(pd->obj, eo_event_callback_call(EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED, &count));
+     eo_event_callback_call(pd->obj, EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED, &count);
 }
 
 #include "eldbus_model_connection.eo.c"

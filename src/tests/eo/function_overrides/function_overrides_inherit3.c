@@ -13,7 +13,7 @@ static void
 _a_set(Eo *obj, void *class_data EINA_UNUSED, int a)
 {
    printf("%s %d\n", eo_class_name_get(MY_CLASS), a);
-   eo_do_super(obj, MY_CLASS, simple_a_set(a + 1));
+   simple_a_set(eo_super(obj, MY_CLASS), a + 1);
 }
 
 static Eo_Op_Description op_descs[] = {

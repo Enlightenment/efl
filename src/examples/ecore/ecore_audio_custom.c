@@ -25,7 +25,7 @@ int read_cb(void *data EINA_UNUSED, Eo *eo_obj, void *buf, int len)
   float *val = buf;
   int i;
 
-  eo_do(eo_obj, ecore_audio_obj_volume_get(&volume));
+  ecore_audio_obj_volume_get(eo_obj, &volume);
 
   for(i=0; i<len/4; i++, phase1++)
     {
@@ -64,13 +64,13 @@ main(int argc, const char *argv[])
         printf("error when creating ecore audio source.\n");
         goto end;
      }
-   eo_do(in, ecore_audio_obj_name_set("wail"));
-   eo_do(in, ecore_audio_obj_in_samplerate_set(44100));
-   eo_do(in, ecore_audio_obj_in_channels_set(1));
-   eo_do(in, ecore_audio_obj_volume_set(0.7));
-   eo_do(in, ecore_audio_obj_vio_set(&vio, NULL, NULL));
+   ecore_audio_obj_name_set(in, "wail");
+   ecore_audio_obj_in_samplerate_set(in, 44100);
+   ecore_audio_obj_in_channels_set(in, 1);
+   ecore_audio_obj_volume_set(in, 0.7);
+   ecore_audio_obj_vio_set(in, &vio, NULL, NULL);
 
-   eo_do(out, ret = ecore_audio_obj_out_input_attach(in));
+   ret = ecore_audio_obj_out_input_attach(out, in);
    if (!ret) {
      printf("Could not attach input");
      goto end;

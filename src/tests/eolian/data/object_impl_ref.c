@@ -16,7 +16,7 @@ _object_impl_base_constructor(Eo *obj, Object_Impl_Data *pd)
 EOLIAN static void
 _object_impl_base_destructor(Eo *obj, Object_Impl_Data *pd)
 {
-   eo_do_super(obj, OBJECT_IMPL_CLASS, base_destructor());
+   base_destructor(eo_super(obj, OBJECT_IMPL_CLASS));
 
 }
 

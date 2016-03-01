@@ -65,7 +65,7 @@ _ector_cairo_symbol_get(Ector_Renderer_Generic_Base_Data *base,
 {
    void *sym;
 
-   eo_do(base->surface, sym = ector_cairo_surface_symbol_get(name));
+   sym = ector_cairo_surface_symbol_get(base->surface, name);
    return sym;
 }
 

@@ -54,7 +54,7 @@ _ector_renderer_software_buffer_ector_renderer_generic_base_crc_get(Eo *obj, Ect
    Ector_Software_Buffer_Base_Data *buffer = eo_data_scope_get(pd->eo_buffer, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
    unsigned int crc;
 
-   eo_do_super(obj, MY_CLASS, crc = ector_renderer_crc_get());
+   crc = ector_renderer_crc_get(eo_super(obj, MY_CLASS));
    crc = eina_crc((const char *) buffer, sizeof(*buffer), crc, EINA_FALSE);
    if (pd->surface)
      crc = eina_crc((const char *) pd->surface, sizeof(*pd->surface), crc, EINA_FALSE);
@@ -66,7 +66,7 @@ EOLIAN static void
 _ector_renderer_software_buffer_eo_base_destructor(Eo *obj, Ector_Renderer_Software_Buffer_Data *pd)
 {
    eo_data_xunref(pd->base->surface, pd->surface, obj);
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 #include "ector_renderer_software_buffer.eo.c"

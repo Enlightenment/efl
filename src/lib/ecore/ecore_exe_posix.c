@@ -1171,7 +1171,7 @@ _ecore_exe_data_generic_handler(void             *data,
                        ecore_event_add(event_type, e,
                              _ecore_exe_event_exe_data_free,
                              NULL);
-                       eo_do(obj, eo_event_callback_call(eo_event, e));
+                       eo_event_callback_call(obj, eo_event, e);
                     }
                }
             }

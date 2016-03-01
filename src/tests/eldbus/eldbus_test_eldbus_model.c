@@ -24,9 +24,9 @@ _eo_event_quit_cb(void *data EINA_UNUSED, const Eo_Event *event EINA_UNUSED)
 void
 efl_model_wait_for_event(Eo *obj, const Eo_Event_Description* event)
 {
-   eo_do(obj, eo_event_callback_add(event, _eo_event_quit_cb, NULL));
+   eo_event_callback_add(obj, event, _eo_event_quit_cb, NULL);
    ecore_main_loop_begin();
-   eo_do(obj, eo_event_callback_del(event, _eo_event_quit_cb, NULL));
+   eo_event_callback_del(obj, event, _eo_event_quit_cb, NULL);
 }
 
 static Eina_Bool
@@ -49,13 +49,13 @@ void
 efl_model_wait_for_load_status(Efl_Model_Base *efl_model, Efl_Model_Load_Status expected_status)
 {
    Efl_Model_Load_Status actual_status;
-   eo_do(efl_model, actual_status = efl_model_load_status_get());
+   actual_status = efl_model_load_status_get(efl_model);
    if (expected_status == actual_status)
      return;
 
-   eo_do(efl_model, eo_event_callback_add(EFL_MODEL_BASE_EVENT_LOAD_STATUS, _event_load_status_quit_cb, (void*)expected_status));
+   eo_event_callback_add(efl_model, EFL_MODEL_BASE_EVENT_LOAD_STATUS, _event_load_status_quit_cb, (void*)expected_status);
    ecore_main_loop_begin();
-   eo_do(efl_model, eo_event_callback_del(EFL_MODEL_BASE_EVENT_LOAD_STATUS, _event_load_status_quit_cb, (void*)expected_status));
+   eo_event_callback_del(efl_model, EFL_MODEL_BASE_EVENT_LOAD_STATUS, _event_load_status_quit_cb, (void*)expected_status);
 }
 
 Efl_Model_Base *
@@ -63,7 +63,7 @@ efl_model_nth_child_get(Efl_Model_Base *efl_model, unsigned int n)
 {
    Eina_Accessor *accessor;
    Efl_Model_Load_Status status;
-   eo_do(efl_model, status = efl_model_children_slice_get(n, 1, &accessor));
+   status = efl_model_children_slice_get(efl_model, n, 1, &accessor);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
    ck_assert_ptr_ne(NULL, accessor);
    Eo *child = NULL;
@@ -83,7 +83,7 @@ efl_model_first_child_get(Efl_Model_Base *efl_model)
 void
 efl_model_load_and_wait_for_load_status(Eo *obj, Efl_Model_Load_Status expected_status)
 {
-   eo_do(obj, efl_model_load());
+   efl_model_load(obj);
    efl_model_wait_for_load_status(obj, expected_status);
 }
 
@@ -106,7 +106,7 @@ check_property(Eo *object, const char *property_name, const char *expected_value
 {
    Eina_Value const* property_value;
    Efl_Model_Load_Status status;
-   eo_do(object, status = efl_model_property_get(property_name, &property_value));
+   status = efl_model_property_get(object, property_name, &property_value);
    ck_assert_msg(EFL_MODEL_LOAD_STATUS_ERROR != status, "Nonexistent property: %s", property_name);
    ck_assert_ptr_ne(NULL, property_value);
    char *actual_value = eina_value_to_string(property_value);
@@ -123,10 +123,7 @@ check_property(Eo *object, const char *property_name, const char *expected_value
 Eo *
 create_connection(void)
 {
-   Eo *connection = eo_add_ref(ELDBUS_MODEL_CONNECTION_CLASS, NULL,
-     eldbus_model_connection_constructor(ELDBUS_CONNECTION_TYPE_SESSION,
-                                         NULL,
-                                         EINA_FALSE));
+   Eo *connection = eo_add_ref(ELDBUS_MODEL_CONNECTION_CLASS, NULL, eldbus_model_connection_constructor(eoid, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE));
    ck_assert_ptr_ne(NULL, connection);
    return connection;
 }
@@ -142,12 +139,7 @@ create_and_load_connection(void)
 Eo *
 create_object(void)
 {
-   Eo *object = eo_add_ref(ELDBUS_MODEL_OBJECT_CLASS, NULL,
-     eldbus_model_object_constructor(ELDBUS_CONNECTION_TYPE_SESSION,
-                                     NULL,
-                                     EINA_FALSE,
-                                     ELDBUS_FDO_BUS,
-                                     ELDBUS_FDO_PATH));
+   Eo *object = eo_add_ref(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(eoid, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, ELDBUS_FDO_BUS, ELDBUS_FDO_PATH));
    ck_assert_ptr_ne(NULL, object);
    return object;
 }
@@ -164,7 +156,7 @@ void
 check_efl_model_load_status_get(Efl_Model_Base *efl_model, Efl_Model_Load_Status expected_load_status)
 {
    Efl_Model_Load_Status actual_load_status;
-   eo_do(efl_model, actual_load_status = efl_model_load_status_get());
+   actual_load_status = efl_model_load_status_get(efl_model);
    ck_assert_int_eq(expected_load_status, actual_load_status);
 }
 
@@ -172,7 +164,7 @@ void
 check_efl_model_children_count_eq(Efl_Model_Base *efl_model, unsigned int expected_children_count)
 {
    unsigned int actual_children_count = 0;
-   eo_do(efl_model, efl_model_children_count_get(&actual_children_count));
+   efl_model_children_count_get(efl_model, &actual_children_count);
    ck_assert_int_eq(expected_children_count, actual_children_count);
 }
 
@@ -181,7 +173,7 @@ check_efl_model_children_count_ge(Efl_Model_Base *efl_model, unsigned int minimu
 {
    unsigned int actual_children_count = 0;
    Efl_Model_Load_Status status;
-   eo_do(efl_model, status = efl_model_children_count_get(&actual_children_count));
+   status = efl_model_children_count_get(efl_model, &actual_children_count);
    // A minimum count only exists if model have EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN
    ck_assert((EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN & status) == EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN);
 
@@ -193,13 +185,13 @@ check_efl_model_children_slice_get(Efl_Model_Base *efl_model)
 {
    unsigned int count = 0;
    Efl_Model_Load_Status status;
-   eo_do(efl_model, status = efl_model_children_count_get(&count));
+   status = efl_model_children_count_get(efl_model, &count);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
    ck_assert_msg(count, "There must be at least 1 child to test");
 
    // Test slice all
    Eina_Accessor *accessor;
-   eo_do(efl_model, status = efl_model_children_slice_get(0, 0, &accessor));
+   status = efl_model_children_slice_get(efl_model, 0, 0, &accessor);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
    ck_assert_ptr_ne(NULL, accessor);
    // Get first child
@@ -221,7 +213,7 @@ check_efl_model_children_slice_get(Efl_Model_Base *efl_model)
 
    // Test slice first child
    Eo *child = NULL;
-   eo_do(efl_model, status = efl_model_children_slice_get(1, 1, &accessor));
+   status = efl_model_children_slice_get(efl_model, 1, 1, &accessor);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
    ck_assert_ptr_ne(NULL, accessor);
    ret = eina_accessor_data_get(accessor, 0, (void**)&child);
@@ -233,7 +225,7 @@ check_efl_model_children_slice_get(Efl_Model_Base *efl_model)
    eina_accessor_free(accessor);
 
    // Test slice last child
-   eo_do(efl_model, status = efl_model_children_slice_get(count, 1, &accessor));
+   status = efl_model_children_slice_get(efl_model, count, 1, &accessor);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
    ck_assert_ptr_ne(NULL, accessor);
    ret = eina_accessor_data_get(accessor, 0, (void**)&child);
@@ -245,7 +237,7 @@ check_efl_model_children_slice_get(Efl_Model_Base *efl_model)
    eina_accessor_free(accessor);
 
    // Test slice nonexistent element
-   eo_do(efl_model, status = efl_model_children_slice_get(count + 1, 1, &accessor));
+   status = efl_model_children_slice_get(efl_model, count + 1, 1, &accessor);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
    ck_assert_ptr_eq(NULL, accessor);
 }
@@ -284,7 +276,7 @@ START_TEST(proxy)
    efl_model_load_and_wait_for_load_status(root, EFL_MODEL_LOAD_STATUS_LOADED);
 
    Eina_Accessor *accessor = NULL;
-   eo_do(root, efl_model_children_slice_get(0, 0, &accessor));
+   efl_model_children_slice_get(root, 0, 0, &accessor);
    ck_assert_ptr_ne(NULL, accessor);
 
    unsigned int i;
@@ -314,7 +306,7 @@ eldbus_model_proxy_from_object_get(Eldbus_Model_Object *object, const char *inte
 {
    Eina_Accessor *accessor;
    Efl_Model_Load_Status status;
-   eo_do(object, status = efl_model_children_slice_get(0, 0, &accessor));
+   status = efl_model_children_slice_get(object, 0, 0, &accessor);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
    ck_assert_ptr_ne(NULL, accessor);
 
@@ -323,7 +315,7 @@ eldbus_model_proxy_from_object_get(Eldbus_Model_Object *object, const char *inte
    EINA_ACCESSOR_FOREACH(accessor, i, proxy)
      {
         const char *name;
-        eo_do(proxy, name = eldbus_model_proxy_name_get());
+        name = eldbus_model_proxy_name_get(proxy);
         ck_assert_ptr_ne(NULL, name);
         if (strcmp(name, interface_name) == 0)
           goto end;
@@ -340,7 +332,7 @@ _eldbus_model_arguments_from_proxy_get(Eldbus_Model_Proxy *proxy, const char *me
 {
    Eina_Accessor *accessor;
    Efl_Model_Load_Status status;
-   eo_do(proxy, status = efl_model_children_slice_get(0, 0, &accessor));
+   status = efl_model_children_slice_get(proxy, 0, 0, &accessor);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
    ck_assert_ptr_ne(NULL, accessor);
 
@@ -352,7 +344,7 @@ _eldbus_model_arguments_from_proxy_get(Eldbus_Model_Proxy *proxy, const char *me
           continue;
 
         const char *name;
-        eo_do(child, name = eldbus_model_arguments_name_get());
+        name = eldbus_model_arguments_name_get(child);
         ck_assert_ptr_ne(NULL, name);
         if (strcmp(name, method_name) == 0)
           goto end;
@@ -381,7 +373,7 @@ check_efl_model_property_int_eq(Efl_Model_Base *efl_model, const char *property,
 {
    Eina_Value const* property_value;
    Efl_Model_Load_Status status;
-   eo_do(efl_model, status = efl_model_property_get(property, &property_value));
+   status = efl_model_property_get(efl_model, property, &property_value);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
    ck_assert_ptr_ne(NULL, property_value);
 
@@ -400,7 +392,7 @@ check_efl_model_property_int_set(Efl_Model_Base *efl_model, const char *property
    eina_value_setup(&eina_value, EINA_VALUE_TYPE_INT);
    eina_value_set(&eina_value, value);
    Efl_Model_Load_Status status;
-   eo_do(efl_model, status = efl_model_property_set(property, &eina_value));
+   status = efl_model_property_set(efl_model, property, &eina_value);
    eina_value_flush(&eina_value);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
 }

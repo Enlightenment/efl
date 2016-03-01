@@ -28,7 +28,7 @@ static Eo *_generic_eo_base_constructor(Eo *obj, Generic_Data *pd)
    pd->opt_ctor_a_val = 0;
    pd->opt_ctor_b_cb = NULL;
    pd->opt_ctor_b_data = NULL;
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   return eo_constructor(eo_super(obj, MY_CLASS));
 }
 
 static void _generic_required_ctor_a(Eo *obj EINA_UNUSED, Generic_Data *pd, int value)

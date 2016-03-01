@@ -58,7 +58,7 @@ EOLIAN static Eo *
 _ecore_audio_eo_base_constructor(Eo *eo_obj, Ecore_Audio_Object *obj)
 {
   obj->volume = 1.0;
-  return eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
+  return eo_constructor(eo_super(eo_obj, MY_CLASS));
 }
 
 #include "ecore_audio.eo.c"

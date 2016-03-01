@@ -11,7 +11,7 @@
 static void
 _destructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 static Eo_Op_Description op_descs [] = {

@@ -279,7 +279,7 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
      }
    if (obj->is_smart)
      {
-        eo_do(eo_obj, evas_obj_smart_clip_set(eo_clip));
+        evas_obj_smart_clip_set(eo_obj, eo_clip);
      }
    if (obj->cur->clipper)
      {
@@ -327,7 +327,7 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
           state_write->clipper = NULL;
         EINA_COW_STATE_WRITE_END(obj, state_write, cur);
         if (obj->prev->clipper != old_clip)
-          eo_do(old_clip->object, eo_event_callback_del(EO_BASE_EVENT_DEL, _clipper_del_cb, eo_obj));
+          eo_event_callback_del(old_clip->object, EO_BASE_EVENT_DEL, _clipper_del_cb, eo_obj);
      }
 
    /* image object clipper */
@@ -359,7 +359,7 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
      state_write->clipper = clip;
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
    if (obj->prev->clipper != clip)
-     eo_do(clip->object, eo_event_callback_add(EO_BASE_EVENT_DEL, _clipper_del_cb, eo_obj));
+     eo_event_callback_add(clip->object, EO_BASE_EVENT_DEL, _clipper_del_cb, eo_obj);
 
    clip->clip.cache_clipees_answer = eina_list_free(clip->clip.cache_clipees_answer);
    clip->clip.clipees = eina_list_append(clip->clip.clipees, obj);
@@ -413,7 +413,7 @@ _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    if (evas_object_intercept_call_clip_unset(eo_obj, obj)) return;
    if (obj->is_smart)
      {
-        eo_do(eo_obj, evas_obj_smart_clip_unset());
+        evas_obj_smart_clip_unset(eo_obj);
      }
    if (obj->cur->clipper)
      {
@@ -456,7 +456,7 @@ _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
           state_write->clipper = NULL;
         EINA_COW_STATE_WRITE_END(obj, state_write, cur);
         if (obj->prev->clipper != old_clip)
-          eo_do(old_clip->object, eo_event_callback_del(EO_BASE_EVENT_DEL, _clipper_del_cb, eo_obj));
+          eo_event_callback_del(old_clip->object, EO_BASE_EVENT_DEL, _clipper_del_cb, eo_obj);
      }
 
    evas_object_change(eo_obj, obj);
@@ -510,7 +510,7 @@ _evas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool cur_prev
              EINA_COW_STATE_WRITE_END(obj, state_write, prev);
           }
         if (clip != obj->cur->clipper)
-          eo_do(clip->object, eo_event_callback_del(EO_BASE_EVENT_DEL, _clipper_del_cb, obj->object));
+          eo_event_callback_del(clip->object, EO_BASE_EVENT_DEL, _clipper_del_cb, obj->object);
      }
 }
 

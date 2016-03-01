@@ -59,7 +59,7 @@ _ector_renderer_generic_buffer_eo_base_constructor(Eo *obj, Ector_Renderer_Gener
 {
    Eo_Base *ret;
 
-   eo_do_super(obj, MY_CLASS, ret = eo_constructor());
+   ret = eo_constructor(eo_super(obj, MY_CLASS));
    pd->fill.spread = EFL_GFX_FILL_REPEAT;
 
    return ret;

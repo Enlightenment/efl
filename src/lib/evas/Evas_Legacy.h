@@ -1685,11 +1685,10 @@ EAPI Evas_Object *evas_object_rectangle_add(Evas *e) EINA_WARN_UNUSED_RESULT EIN
  * Efl_Gfx_Path_Command *path_cmd = NULL;
  * double *points = NULL;
  * efl_gfx_path_append_circle(&path_cmd, &points);
- * eo_do(shape,
- *       evas_vg_node_origin_set(10, 10),
- *       efl_gfx_shape_stroke_width_set(1.0),
- *       evas_vg_node_color_set(128, 128, 128, 80),
- *       efl_gfx_shape_path_set(path_cmd, points)); 
+ * *       evas_vg_node_origin_set(shape, 10, 10);
+ * *       efl_gfx_shape_stroke_width_set(shape, 1.0);
+ * *       evas_vg_node_color_set(shape, 128, 128, 128, 80);
+ * *       efl_gfx_shape_path_set(shape, path_cmd, points); 
  * @endcode
  *
  * @since 1.14

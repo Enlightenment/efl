@@ -7,8 +7,8 @@ EOLIAN static Eo *
 _evas_canvas3d_object_eo_base_constructor(Eo *obj, Evas_Canvas3D_Object_Data *pd)
 {
    Eo *e = NULL;
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj, e = eo_parent_get());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   e = eo_parent_get(obj);
    pd->evas = e;
    pd->type = EVAS_CANVAS3D_OBJECT_TYPE_INVALID;
    memset(&pd->dirty[0], 0x00, sizeof(Eina_Bool) * EVAS_CANVAS3D_STATE_MAX);
@@ -50,7 +50,7 @@ _evas_canvas3d_object_change(Eo *obj, Evas_Canvas3D_Object_Data *pd, Evas_Canvas
    pd->dirty[state] = EINA_TRUE;
    pd->dirty[EVAS_CANVAS3D_STATE_ANY] = EINA_TRUE;
 
-   eo_do(obj, evas_canvas3d_object_change_notify(state, ref));
+   evas_canvas3d_object_change_notify(obj, state, ref);
 }
 
 EOLIAN static void
@@ -59,7 +59,7 @@ _evas_canvas3d_object_update(Eo *obj, Evas_Canvas3D_Object_Data *pd)
    if (!pd->dirty[EVAS_CANVAS3D_STATE_ANY])
      return;
 
-   eo_do(obj, evas_canvas3d_object_update_notify());
+   evas_canvas3d_object_update_notify(obj);
 
    memset(&pd->dirty[0], 0x00, sizeof(Eina_Bool) * EVAS_CANVAS3D_STATE_MAX);
 }
@@ -74,8 +74,8 @@ _evas_canvas3d_object_eo_base_event_callback_priority_add(Eo *obj,
 {
    Eina_Bool r = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, r = eo_event_callback_priority_add(desc, priority, func, user_data));
-   eo_do(obj, evas_canvas3d_object_callback_register(desc->name, user_data));
+   r = eo_event_callback_priority_add(eo_super(obj, MY_CLASS), desc, priority, func, user_data);
+   evas_canvas3d_object_callback_register(obj, desc->name, user_data);
 
    return r;
 }
@@ -87,8 +87,8 @@ _evas_canvas3d_object_eo_base_event_callback_del(Eo *obj, Evas_Canvas3D_Object_D
                                            const void *user_data)
 {
    Eina_Bool r = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, r = eo_event_callback_del(desc, func, user_data));
-   if (r) eo_do(obj, evas_canvas3d_object_callback_unregister(desc->name));
+   r = eo_event_callback_del(eo_super(obj, MY_CLASS), desc, func, user_data);
+   if (r) evas_canvas3d_object_callback_unregister(obj, desc->name);
    return r;
 }
 

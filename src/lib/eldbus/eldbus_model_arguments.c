@@ -30,7 +30,7 @@ _eldbus_model_arguments_hash_free(Eina_Value *value)
 static Eo_Base*
 _eldbus_model_arguments_eo_base_constructor(Eo *obj, Eldbus_Model_Arguments_Data *pd)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
 
    pd->obj = obj;
    pd->load.status = EFL_MODEL_LOAD_STATUS_UNLOADED;
@@ -68,7 +68,7 @@ _eldbus_model_arguments_eo_base_destructor(Eo *obj, Eldbus_Model_Arguments_Data 
    eina_stringshare_del(pd->name);
    eldbus_proxy_unref(pd->proxy);
 
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 static Efl_Model_Load_Status
@@ -184,8 +184,8 @@ _eldbus_model_arguments_efl_model_base_property_get(Eo *obj EINA_UNUSED,
 static void
 _eldbus_model_arguments_efl_model_base_load(Eo *obj, Eldbus_Model_Arguments_Data *pd EINA_UNUSED)
 {
-   eo_do(obj, efl_model_properties_load());
-   eo_do(obj, efl_model_children_load());
+   efl_model_properties_load(obj);
+   efl_model_children_load(obj);
 }
 
 static Efl_Model_Load_Status
@@ -329,7 +329,7 @@ eldbus_model_arguments_process_arguments(Eldbus_Model_Arguments_Data *pd,
    if (eina_array_count(changed_properties))
      {
         Efl_Model_Property_Event evt = {.changed_properties = changed_properties};
-        eo_do(pd->obj, eo_event_callback_call(EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, &evt));
+        eo_event_callback_call(pd->obj, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, &evt);
      }
 
    result = EINA_TRUE;

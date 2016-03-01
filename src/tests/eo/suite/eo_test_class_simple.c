@@ -20,7 +20,7 @@ _a_set(Eo *obj EINA_UNUSED, void *class_data, int a)
    printf("%s %d\n", eo_class_name_get(MY_CLASS), a);
    pd->a = a;
 
-   eo_do(obj, eo_event_callback_call(EV_A_CHANGED, &pd->a));
+   eo_event_callback_call(obj, EV_A_CHANGED, &pd->a);
 }
 
 static int
@@ -67,7 +67,7 @@ _recursive(Eo *obj, void *class_data EINA_UNUSED, int n)
    if (count < n)
      {
         count++;
-        eo_do(obj, simple_recursive(n));
+        simple_recursive(obj, n);
      }
    else
      count = 0;
@@ -76,7 +76,7 @@ _recursive(Eo *obj, void *class_data EINA_UNUSED, int n)
 static void
 _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, Eo_Dbg_Info *root)
 {
-   eo_do_super(eo_obj, MY_CLASS, eo_dbg_info_get(root));
+   eo_dbg_info_get(eo_super(eo_obj, MY_CLASS), root);
    Eo_Dbg_Info *group = EO_DBG_INFO_LIST_APPEND(root, "Test list");
    EO_DBG_INFO_APPEND(group, "Test", EINA_VALUE_TYPE_INT, 8);
 }

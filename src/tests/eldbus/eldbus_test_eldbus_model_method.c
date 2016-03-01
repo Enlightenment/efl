@@ -29,12 +29,7 @@ _setup(void)
 
    fake_server = fake_server_start(&fake_server_data);
 
-   fake_server_object = eo_add(ELDBUS_MODEL_OBJECT_CLASS, NULL,
-     eldbus_model_object_constructor(ELDBUS_CONNECTION_TYPE_SESSION,
-                                     NULL,
-                                     EINA_FALSE,
-                                     FAKE_SERVER_BUS,
-                                     FAKE_SERVER_PATH));
+   fake_server_object = eo_add(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(eoid, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, FAKE_SERVER_BUS, FAKE_SERVER_PATH));
    ck_assert_ptr_ne(NULL, fake_server_object);
 
    efl_model_load_and_wait_for_load_status(fake_server_object, EFL_MODEL_LOAD_STATUS_LOADED);
@@ -70,7 +65,7 @@ START_TEST(properties_get)
 {
    Eina_Array *properties = NULL;
    Efl_Model_Load_Status status;
-   eo_do(method, status = efl_model_properties_get(&properties));
+   status = efl_model_properties_get(method, &properties);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
    ck_assert_ptr_ne(NULL, properties);
 
@@ -85,14 +80,14 @@ START_TEST(property_get)
    // Input only property returns error
    Eina_Value const* dummy;
    Efl_Model_Load_Status status;
-   eo_do(method, status = efl_model_property_get(ARGUMENT_A, &dummy));
+   status = efl_model_property_get(method, ARGUMENT_A, &dummy);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
 
-   eo_do(method, status = efl_model_property_get(ARGUMENT_RESULT, &dummy));
+   status = efl_model_property_get(method, ARGUMENT_RESULT, &dummy);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
 
    // Nonexistent property returns error
-   eo_do(method, status = efl_model_property_get("nonexistent", &dummy));
+   status = efl_model_property_get(method, "nonexistent", &dummy);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
 }
 END_TEST
@@ -102,7 +97,7 @@ START_TEST(property_set)
    // Output argument returns error
    Eina_Value dummy = {0};
    Efl_Model_Load_Status status;
-   eo_do(method, status = efl_model_property_set(ARGUMENT_RESULT, &dummy));
+   status = efl_model_property_set(method, ARGUMENT_RESULT, &dummy);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
 }
 END_TEST
@@ -123,7 +118,7 @@ START_TEST(children_slice_get)
 {
    Eina_Accessor *accessor;
    Efl_Model_Load_Status status;
-   eo_do(method, status = efl_model_children_slice_get(1, 1, &accessor));
+   status = efl_model_children_slice_get(method, 1, 1, &accessor);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
    ck_assert_ptr_eq(NULL, accessor);
 }
@@ -133,7 +128,7 @@ static void
 _check_unload(void)
 {
    check_efl_model_load_status_get(method, EFL_MODEL_LOAD_STATUS_LOADED);
-   eo_do(method, efl_model_unload());
+   efl_model_unload(method);
    check_efl_model_load_status_get(method, EFL_MODEL_LOAD_STATUS_UNLOADED);
 
    check_efl_model_children_count_eq(method, 0);
@@ -149,7 +144,7 @@ START_TEST(properties_load)
 {
    _check_unload();
 
-   eo_do(method, efl_model_properties_load());
+   efl_model_properties_load(method);
    efl_model_wait_for_load_status(method, EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES);
 
    check_efl_model_load_status_get(method, EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES);
@@ -160,7 +155,7 @@ START_TEST(children_load)
 {
    _check_unload();
 
-   eo_do(method, efl_model_children_load());
+   efl_model_children_load(method);
    efl_model_wait_for_load_status(method, EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN);
 
    check_efl_model_load_status_get(method, EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN);
@@ -172,7 +167,7 @@ END_TEST
 START_TEST(child_add)
 {
    Eo *child;
-   eo_do(method, child = efl_model_child_add());
+   child = efl_model_child_add(method);
    ck_assert_ptr_eq(NULL, child);
 }
 END_TEST
@@ -182,7 +177,7 @@ START_TEST(child_del)
    // efl_model_child_del always returns ERROR
    Eo *child = NULL;
    Efl_Model_Load_Status status;
-   eo_do(method, status = efl_model_child_del(child));
+   status = efl_model_child_del(method, child);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
 }
 END_TEST
@@ -193,7 +188,7 @@ START_TEST(call)
    check_efl_model_property_int_set(method, ARGUMENT_B, 87654321);
 
    Efl_Model_Load_Status status;
-   eo_do(method, status = eldbus_model_method_call());
+   status = eldbus_model_method_call(method);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
 
    efl_model_wait_for_event(method, ELDBUS_MODEL_METHOD_EVENT_SUCCESSFUL_CALL);

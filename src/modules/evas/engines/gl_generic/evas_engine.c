@@ -2477,15 +2477,13 @@ eng_ector_buffer_wrap(void *data EINA_UNUSED, Evas *evas, void *engine_image, Ei
      {
         RGBA_Image *im = engine_image;
 
-        buf = eo_add(EVAS_ECTOR_GL_RGBAIMAGE_BUFFER_CLASS, evas,
-                     evas_ector_buffer_engine_image_set(evas, im));
+        buf = eo_add(EVAS_ECTOR_GL_RGBAIMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(eoid, evas, im));
      }
    else
      {
         Evas_GL_Image *im = engine_image;
 
-        buf = eo_add(EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas,
-                     evas_ector_buffer_engine_image_set(evas, im));
+        buf = eo_add(EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(eoid, evas, im));
      }
    return buf;
 }
@@ -2546,8 +2544,7 @@ eng_ector_buffer_new(void *data, Evas *evas, void *pixels,
 
         gc = re->window_gl_context_get(re->software.ob);
         im = evas_gl_common_image_surface_new(gc, iw, ih, EINA_TRUE);
-        buf = eo_add(EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas,
-                     evas_ector_buffer_engine_image_set(evas, im));
+        buf = eo_add(EVAS_ECTOR_GL_IMAGE_BUFFER_CLASS, evas, evas_ector_buffer_engine_image_set(eoid, evas, im));
         im->references--;
      }
    return buf;
@@ -2623,11 +2620,8 @@ eng_ector_renderer_draw(void *data, void *context, void *surface, void *engine_d
    if (eina_array_count(c) == 0)
      eina_array_push(c, eina_rectangle_new(clip.x, clip.y, clip.w, clip.h));
 
-   eo_do(renderer,
-         ector_renderer_draw(_evas_render_op_to_ector_rop(gc->dc->render_op),
-                             c,
-                             // mul_col will be applied by GL during ector_end
-                             0xffffffff));
+   ector_renderer_draw(renderer, _evas_render_op_to_ector_rop(gc->dc->render_op), c, // mul_col will be applied by GL during ector_end
+                             0xffffffff);
 
    while ((r = eina_array_pop(c)))
      eina_rectangle_free(r);
@@ -2704,16 +2698,14 @@ eng_ector_begin(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
                }
           }
         memset(buffer->software, 0, sizeof (unsigned int) * w * h);
-        eo_do(ector,
-              ector_buffer_pixels_set(buffer->software, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888,
-                                      EINA_TRUE, 0, 0, 0, 0),
-              ector_surface_reference_point_set(x, y));
+        ector_buffer_pixels_set(ector, buffer->software, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE, 0, 0, 0, 0);
+        ector_surface_reference_point_set(ector, x, y);
      }
    else
      {
         evas_gl_common_context_flush(gl_context);
 
-        eo_do(ector, ector_surface_reference_point_set(x, y));
+        ector_surface_reference_point_set(ector, x, y);
      }
 }
 
@@ -2734,7 +2726,7 @@ eng_ector_end(void *data, void *context EINA_UNUSED, Ector_Surface *ector,
         w = gl_context->w; h = gl_context->h;
         mul_use = gl_context->dc->mul.use;
 
-        eo_do(ector, ector_buffer_pixels_set(NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+        ector_buffer_pixels_set(ector, NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         eng_image_data_put(data, buffer->gl, buffer->software);
 
         if (!mul_use)

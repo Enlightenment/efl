@@ -134,7 +134,7 @@ _renderer_crc_get(Eo *obj, unsigned int crc)
 {
    unsigned int id;
 
-   eo_do(obj, id = ector_renderer_crc_get());
+   id = ector_renderer_crc_get(obj);
    crc = eina_crc((void*) &id, sizeof (id), crc, EINA_FALSE);
    return crc;
 }

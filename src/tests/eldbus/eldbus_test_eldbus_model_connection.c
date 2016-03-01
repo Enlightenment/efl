@@ -43,7 +43,7 @@ START_TEST(properties_get)
 {
    Eina_Array *properties = NULL;
    Efl_Model_Load_Status status;
-   eo_do(connection, status = efl_model_properties_get(&properties));
+   status = efl_model_properties_get(connection, &properties);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
    ck_assert_ptr_ne(NULL, properties);
 
@@ -52,7 +52,7 @@ START_TEST(properties_get)
    ck_assert_int_eq(expected_properties_count, actual_properties_count);
 
    // Unloaded connection populates its properties
-   eo_do(unloaded_connection, status = efl_model_properties_get(&properties));
+   status = efl_model_properties_get(unloaded_connection, &properties);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_UNLOADED, status);
    ck_assert_ptr_ne(NULL, properties);
 
@@ -65,12 +65,12 @@ START_TEST(property_get)
 {
    Eina_Value const* property_value;
    Efl_Model_Load_Status status;
-   eo_do(connection, status = efl_model_property_get(UNIQUE_NAME_PROPERTY, &property_value));
+   status = efl_model_property_get(connection, UNIQUE_NAME_PROPERTY, &property_value);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
    ck_assert_ptr_ne(NULL, property_value);
 
    // Nonexistent property must return EFL_MODEL_LOAD_STATUS_ERROR
-   eo_do(connection, status = efl_model_property_get("nonexistent", &property_value));
+   status = efl_model_property_get(connection, "nonexistent", &property_value);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
 }
 END_TEST
@@ -82,19 +82,19 @@ START_TEST(property_set)
    eina_value_setup(&value, EINA_VALUE_TYPE_INT);
    eina_value_set(&value, 1);
    Efl_Model_Load_Status status;
-   eo_do(connection, status = efl_model_property_set("nonexistent", &value));
+   status = efl_model_property_set(connection, "nonexistent", &value);
    eina_value_flush(&value);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
 
    // UNIQUE_NAME_PROPERTY is read-only
-   eo_do(connection, status = efl_model_property_set(UNIQUE_NAME_PROPERTY, &value));
+   status = efl_model_property_set(connection, UNIQUE_NAME_PROPERTY, &value);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
 
    // The model must be loaded to be able to set its properties
    const char *expected_value = "unloaded";
    eina_value_setup(&value, EINA_VALUE_TYPE_STRING);
    eina_value_set(&value, expected_value);
-   eo_do(unloaded_connection, status = efl_model_property_set(UNIQUE_NAME_PROPERTY, &value));
+   status = efl_model_property_set(unloaded_connection, UNIQUE_NAME_PROPERTY, &value);
    eina_value_flush(&value);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
 }
@@ -120,7 +120,7 @@ START_TEST(children_slice_get)
    // Unloaded connection must return EFL_MODEL_LOAD_STATUS_UNLOADED
    Eina_Accessor *accessor;
    Efl_Model_Load_Status status;
-   eo_do(unloaded_connection, status = efl_model_children_slice_get(0, 0, &accessor));
+   status = efl_model_children_slice_get(unloaded_connection, 0, 0, &accessor);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_UNLOADED, status);
    ck_assert_ptr_eq(NULL, accessor);
 }
@@ -129,7 +129,7 @@ END_TEST
 START_TEST(unload)
 {
    check_efl_model_load_status_get(connection, EFL_MODEL_LOAD_STATUS_LOADED);
-   eo_do(connection, efl_model_unload());
+   efl_model_unload(connection);
    check_efl_model_load_status_get(connection, EFL_MODEL_LOAD_STATUS_UNLOADED);
 
    check_efl_model_children_count_eq(connection, 0);
@@ -138,14 +138,14 @@ END_TEST
 
 START_TEST(properties_load)
 {
-   eo_do(unloaded_connection, efl_model_properties_load());
+   efl_model_properties_load(unloaded_connection);
    check_efl_model_load_status_get(unloaded_connection, EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES);
 }
 END_TEST
 
 START_TEST(children_load)
 {
-   eo_do(unloaded_connection, efl_model_children_load());
+   efl_model_children_load(unloaded_connection);
 
    check_efl_model_load_status_get(unloaded_connection, EFL_MODEL_LOAD_STATUS_LOADING_CHILDREN);
 
@@ -160,7 +160,7 @@ END_TEST
 START_TEST(child_add)
 {
    Eo *child;
-   eo_do(connection, child = efl_model_child_add());
+   child = efl_model_child_add(connection);
    ck_assert_ptr_eq(NULL, child);
 }
 END_TEST
@@ -169,15 +169,15 @@ START_TEST(child_del)
 {
    unsigned int expected_children_count = 0;
    Efl_Model_Load_Status status;
-   eo_do(connection, status = efl_model_children_count_get(&expected_children_count));
+   status = efl_model_children_count_get(connection, &expected_children_count);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
 
    Eo *child = efl_model_first_child_get(connection);
-   eo_do(connection, status = efl_model_child_del(child));
+   status = efl_model_child_del(connection, child);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
 
    unsigned int actual_children_count = 0;
-   eo_do(connection, status = efl_model_children_count_get(&actual_children_count));
+   status = efl_model_children_count_get(connection, &actual_children_count);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
 
    ck_assert_int_le(expected_children_count, actual_children_count);

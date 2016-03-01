@@ -24,7 +24,7 @@ _evas_object_focus_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool fo
    if (focus)
      {
         if (obj->layer->evas->focused)
-	  eo_do(obj->layer->evas->focused, evas_obj_focus_set(0));
+	  evas_obj_focus_set(obj->layer->evas->focused, 0);
 	
         if (obj->layer->evas->focused) goto end;
         obj->focused = 1;

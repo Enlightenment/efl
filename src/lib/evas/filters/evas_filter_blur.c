@@ -222,8 +222,8 @@ _box_blur_apply(Evas_Filter_Command *cmd, Eina_Bool vert, Eina_Bool rgba)
      }
    else ret = EINA_FALSE;
 
-   eo_do(cmd->input->buffer, ector_buffer_unmap(src, src_len));
-   eo_do(cmd->output->buffer, ector_buffer_unmap(dst, dst_len));
+   ector_buffer_unmap(cmd->input->buffer, src, src_len);
+   ector_buffer_unmap(cmd->output->buffer, dst, dst_len);
 
    return ret;
 }
@@ -347,8 +347,8 @@ _gaussian_blur_apply(Evas_Filter_Command *cmd, Eina_Bool vert, Eina_Bool rgba)
      }
    else ret = EINA_FALSE;
 
-   eo_do(cmd->input->buffer, ector_buffer_unmap(src, src_len));
-   eo_do(cmd->output->buffer, ector_buffer_unmap(dst, dst_len));
+   ector_buffer_unmap(cmd->input->buffer, src, src_len);
+   ector_buffer_unmap(cmd->output->buffer, dst, dst_len);
 
    return ret;
 }

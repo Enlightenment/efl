@@ -939,7 +939,7 @@ evas_event_freeze(Evas *eo_e)
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   eo_do(eo_e, eo_event_freeze());
+   eo_event_freeze(eo_e);
 }
 
 EAPI void
@@ -948,13 +948,13 @@ evas_event_thaw(Evas *eo_e)
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   eo_do(eo_e, eo_event_thaw());
+   eo_event_thaw(eo_e);
 }
 
 EOLIAN void
 _evas_canvas_eo_base_event_freeze(Eo *eo_e, Evas_Public_Data *e)
 {
-   eo_do_super(eo_e, EVAS_CANVAS_CLASS, eo_event_freeze());
+   eo_event_freeze(eo_super(eo_e, EVAS_CANVAS_CLASS));
    e->is_frozen = EINA_TRUE;
 }
 
@@ -962,10 +962,8 @@ EOLIAN void
 _evas_canvas_eo_base_event_thaw(Eo *eo_e, Evas_Public_Data *e)
 {
    int fcount = -1;
-   eo_do_super(eo_e, EVAS_CANVAS_CLASS,
-         eo_event_thaw());
-   eo_do_super(eo_e, EVAS_CANVAS_CLASS,
-         fcount = eo_event_freeze_count_get());
+   eo_event_thaw(eo_super(eo_e, EVAS_CANVAS_CLASS));
+   fcount = eo_event_freeze_count_get(eo_super(eo_e, EVAS_CANVAS_CLASS));
    if (0 == fcount)
      {
         Evas_Layer *lay;
@@ -993,7 +991,7 @@ evas_event_freeze_get(const Evas *eo_e)
    return 0;
    MAGIC_CHECK_END();
    int ret = 0;
-   eo_do((Eo *)eo_e, ret = eo_event_freeze_count_get());
+   ret = eo_event_freeze_count_get((Eo *)eo_e);
    return ret;
 }
 
