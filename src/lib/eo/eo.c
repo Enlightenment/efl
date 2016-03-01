@@ -440,21 +440,39 @@ _eo_call_stack_resize(Eo_Call_Stack *stack, Eina_Bool grow)
 }
 
 EAPI Eina_Bool
-_eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *cache, const char *file, int line)
+_eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *cache, const char *file, int line)
 {
-   Eo_Stack_Frame *fptr;
-   const _Eo_Class *klass, *inputklass;
+   const _Eo_Class *klass, *inputklass, *main_klass;
+   const _Eo_Class *cur_klass = NULL;
+   _Eo_Object *obj = NULL;
    const op_type_funcs *func;
    Eina_Bool is_obj;
 
-   fptr = _EO_CALL_STACK_GET()->frame_ptr;
-
-   if (EINA_UNLIKELY(!fptr->o.obj))
+   if (EINA_UNLIKELY(!eo_id))
       return EINA_FALSE;
 
-   is_obj = fptr->is_obj;
+   call->eo_id = eo_id;
 
-   inputklass = klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
+   is_obj = _eo_is_a_obj(eo_id);
+
+   if (is_obj)
+     {
+        EO_OBJ_POINTER_RETURN_VAL(eo_id, _obj, EINA_FALSE);
+        obj = _obj;
+        klass = _obj->klass;
+        call->obj = obj;
+        _eo_ref(_obj);
+     }
+   else
+     {
+        EO_CLASS_POINTER_RETURN_VAL(eo_id, _klass, EINA_FALSE);
+        klass = _klass;
+        call->obj = NULL;
+        call->data = NULL;
+     }
+
+   inputklass = main_klass =  klass;
+
 
    if (!cache->op)
      {
@@ -466,9 +484,9 @@ _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *ca
      }
 
    /* If we have a current class, we need to itr to the next. */
-   if (fptr->cur_klass)
+   if (cur_klass)
      {
-        func = _eo_kls_itr_next(klass, fptr->cur_klass, cache->op);
+        func = _eo_kls_itr_next(klass, cur_klass, cache->op);
 
         if (!func)
           goto end;
@@ -492,13 +510,7 @@ _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *ca
                   call->func = func->func;
                   if (is_obj)
                     {
-                       call->obj = (Eo *) fptr->o.obj->header.id;
-                       call->data = (char *)fptr->o.obj + cache->off[i].off;
-                    }
-                  else
-                    {
-                       call->obj = _eo_class_id_get(inputklass);
-                       call->data = NULL;
+                       call->data = (char *) obj + cache->off[i].off;
                     }
                   return EINA_TRUE;
                }
@@ -517,17 +529,11 @@ _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *ca
 
         if (is_obj)
           {
-             call->obj = (Eo *) fptr->o.obj->header.id;
-             call->data = _eo_data_scope_get(fptr->o.obj, func->src);
-          }
-        else
-          {
-             call->obj = _eo_class_id_get(klass);
-             call->data = NULL;
+             call->data = _eo_data_scope_get(obj, func->src);
           }
 
 # if EO_CALL_CACHE_SIZE > 0
-        if (!fptr->cur_klass)
+        if (!cur_klass)
           {
 # if EO_CALL_CACHE_SIZE > 1
              const int slot = cache->next_slot;
@@ -536,7 +542,7 @@ _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *ca
 # endif
              cache->index[slot].klass = (const void *)inputklass;
              cache->entry[slot].func = (const void *)func;
-             cache->off[slot].off = (int)((long)((char *)call->data - (char *)fptr->o.obj));
+             cache->off[slot].off = (int)((long)((char *)call->data - (char *)obj));
 # if EO_CALL_CACHE_SIZE > 1
              cache->next_slot = (slot + 1) % EO_CALL_CACHE_SIZE;
 # endif
@@ -560,7 +566,7 @@ end:
      {
         Eina_List *itr;
         Eo *emb_obj_id;
-        EINA_LIST_FOREACH(((_Eo_Object *) fptr->o.obj)->composite_objects, itr, emb_obj_id)
+        EINA_LIST_FOREACH(obj->composite_objects, itr, emb_obj_id)
           {
              _Eo_Object *emb_obj = _eo_obj_pointer_get((Eo_Id)emb_obj_id);
 
@@ -573,7 +579,8 @@ end:
 
              if (EINA_LIKELY(func->func && func->src))
                {
-                  call->obj = _eo_id_get(emb_obj);
+                  call->eo_id = _eo_id_get(emb_obj);
+                  call->obj = obj; /* FIXME-tom: Hack, we retain the previous object so we unref it... */
                   call->func = func->func;
                   call->data = _eo_data_scope_get(emb_obj, func->src);
 
@@ -583,15 +590,12 @@ end:
      }
 
      {
-        const _Eo_Class *main_klass;
-        main_klass = (is_obj) ? fptr->o.obj->klass : fptr->o.kls;
-
         /* If it's a do_super call. */
-        if (fptr->cur_klass)
+        if (cur_klass)
           {
              ERR("in %s:%d: func '%s' (%d) could not be resolved for class '%s' for super of '%s'.",
                  file, line, func_name, cache->op, main_klass->desc->name,
-                 fptr->cur_klass->desc->name);
+                 cur_klass->desc->name);
           }
         else
           {
@@ -601,6 +605,12 @@ end:
           }
      }
    return EINA_FALSE;
+}
+
+EAPI void
+_eo_call_end(Eo_Op_Call_Data *call)
+{
+   _eo_unref(call->obj);
 }
 
 static inline Eina_Bool
@@ -806,20 +816,19 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 
    _eo_ref(obj);
 
-   eo_do(eo_id, eo_parent_set(parent_id));
+   eo_parent_set(eo_id, parent_id);
 
    /* If there's a parent. Ref. Eo_add should return an object with either a
     * parent ref, or with the lack of, just a ref. */
      {
-        Eo *parent_tmp;
-        if (ref && eo_do_ret(eo_id, parent_tmp, eo_parent_get()))
+        if (ref && eo_parent_get(eo_id))
           {
              _eo_ref(obj);
           }
      }
 
    /* eo_id can change here. Freeing is done on the resolved object. */
-   eo_do(eo_id, eo_id = eo_constructor());
+   eo_id = eo_constructor(eo_id);
    if (!eo_id)
      {
         ERR("Object of class '%s' - Error while constructing object",
@@ -1476,10 +1485,9 @@ eo_unref(const Eo *obj_id)
 EAPI void
 eo_del(const Eo *obj)
 {
-   Eo *parent_tmp;
-   if (eo_do_ret(obj, parent_tmp, eo_parent_get()))
+   if (eo_parent_get(obj))
      {
-        eo_do(obj, eo_parent_set(NULL));
+        eo_parent_set(obj, NULL);
      }
    else
      {

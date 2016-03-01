@@ -99,6 +99,8 @@ extern "C" {
  * @{
  */
 
+typedef struct _Eo_Object _Eo_Object;
+
 /**
  * @typedef Eo
  * The basic Object type.
@@ -452,7 +454,8 @@ EAPI Eina_Bool eo_shutdown(void);
 // to fetch internal function and object data at once
 typedef struct _Eo_Op_Call_Data
 {
-   Eo       *obj;
+   Eo *eo_id;
+   _Eo_Object *obj;
    void     *func;
    void     *data;
 } Eo_Op_Call_Data;
@@ -497,7 +500,7 @@ typedef struct _Eo_Call_Cache
 #endif
 
 // cache OP id, get real fct and object data then do the call
-#define EO_FUNC_COMMON_OP(Name, DefRet)                                 \
+#define EO_FUNC_COMMON_OP(Obj, Name, DefRet)                                 \
      static Eo_Call_Cache ___cache; /* static 0 by default */           \
      Eo_Op_Call_Data ___call;                                           \
      if (EINA_UNLIKELY(___cache.op == EO_NOOP))                         \
@@ -505,49 +508,53 @@ typedef struct _Eo_Call_Cache
           ___cache.op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name)); \
           if (___cache.op == EO_NOOP) return DefRet;                    \
        }                                                                \
-     if (!_eo_call_resolve(#Name, &___call, &___cache,                  \
+     if (!_eo_call_resolve(Obj, #Name, &___call, &___cache,                  \
                            __FILE__, __LINE__)) return DefRet;          \
      _Eo_##Name##_func _func_ = (_Eo_##Name##_func) ___call.func;       \
 
 // to define an EAPI function
 #define EO_FUNC_BODY(Name, Ret, DefRet)                                 \
   Ret                                                                   \
-  Name(void)                                                            \
+  Name(Eo *obj)                                                            \
   {                                                                     \
      typedef Ret (*_Eo_##Name##_func)(Eo *, void *obj_data);            \
      Ret _r;                                                            \
-     EO_FUNC_COMMON_OP(Name, DefRet);                                   \
-     _r = _func_(___call.obj, ___call.data);                            \
+     EO_FUNC_COMMON_OP(obj, Name, DefRet);                                   \
+     _r = _func_(___call.eo_id, ___call.data);                            \
+     _eo_call_end(&___call); \
      return _r;                                                         \
   }
 
 #define EO_VOID_FUNC_BODY(Name)					\
   void									\
-  Name(void)                                                            \
+  Name(Eo *obj)                                                            \
   {                                                                     \
      typedef void (*_Eo_##Name##_func)(Eo *, void *obj_data);           \
-     EO_FUNC_COMMON_OP(Name, );                                         \
-     _func_(___call.obj, ___call.data);                                 \
+     EO_FUNC_COMMON_OP(obj, Name, );                                         \
+     _func_(___call.eo_id, ___call.data);                                 \
+     _eo_call_end(&___call); \
   }
 
 #define EO_FUNC_BODYV(Name, Ret, DefRet, Arguments, ...)                \
   Ret                                                                   \
-  Name(__VA_ARGS__)                                                     \
+  Name(Eo *obj, __VA_ARGS__)                                                     \
   {                                                                     \
      typedef Ret (*_Eo_##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
      Ret _r;                                                            \
-     EO_FUNC_COMMON_OP(Name, DefRet);                                   \
-     _r = _func_(___call.obj, ___call.data, Arguments);                 \
+     EO_FUNC_COMMON_OP(obj, Name, DefRet);                                   \
+     _r = _func_(___call.eo_id, ___call.data, Arguments);                 \
+     _eo_call_end(&___call); \
      return _r;                                                         \
   }
 
 #define EO_VOID_FUNC_BODYV(Name, Arguments, ...)                        \
   void                                                                  \
-  Name(__VA_ARGS__)                                                     \
+  Name(Eo *obj, __VA_ARGS__)                                                     \
   {                                                                     \
      typedef void (*_Eo_##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
-     EO_FUNC_COMMON_OP(Name, );                                         \
-     _func_(___call.obj, ___call.data, Arguments);                      \
+     EO_FUNC_COMMON_OP(obj, Name, );                                         \
+     _func_(___call.eo_id, ___call.data, Arguments);                      \
+     _eo_call_end(&___call); \
   }
 
 #ifndef _WIN32
@@ -565,13 +572,13 @@ typedef struct _Eo_Call_Cache
 EAPI Eo_Op _eo_api_op_id_get(const void *api_func);
 
 // gets the real function pointer and the object data
-EAPI Eina_Bool _eo_call_resolve(const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *callcache, const char *file, int line);
+EAPI Eina_Bool _eo_call_resolve(Eo *obj, const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *callcache, const char *file, int line);
 
 // start of eo_do barrier, gets the object pointer and ref it, put it on the stask
 EAPI Eina_Bool _eo_do_start(const Eo *eo_id);
 
-// end of the eo_do barrier, unref the obj, move the stack pointer
-EAPI void _eo_do_end(const Eo *eo_id);
+// end of the eo_do barrier, unref the obj
+EAPI void _eo_call_end(Eo_Op_Call_Data *call);
 
 // end of the eo_add. Calls finalize among others
 EAPI Eo * _eo_add_end(void *eo_stack);
