@@ -118,6 +118,7 @@ typedef struct _Eo_Lexer_Temps
    Eolian_Variable *var;
    Eina_List *str_bufs;
    Eina_List *type_defs;
+   Eina_List *type_decls;
    Eina_List *expr_defs;
    Eina_List *strs;
 } Eo_Lexer_Temps;

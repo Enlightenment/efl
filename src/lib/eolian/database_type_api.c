@@ -11,10 +11,10 @@ eolian_typedecl_alias_get_by_name(const char *name)
 {
    if (!_aliases) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
-   Eolian_Type *tp = eina_hash_find(_aliases, shr);
+   Eolian_Typedecl *tp = eina_hash_find(_aliases, shr);
    eina_stringshare_del(shr);
    if (!tp) return NULL;
-   return tp->decl;
+   return tp;
 }
 
 EAPI const Eolian_Typedecl *
@@ -22,10 +22,10 @@ eolian_typedecl_struct_get_by_name(const char *name)
 {
    if (!_structs) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
-   Eolian_Type *tp = eina_hash_find(_structs, shr);
+   Eolian_Typedecl *tp = eina_hash_find(_structs, shr);
    eina_stringshare_del(shr);
    if (!tp) return NULL;
-   return tp->decl;
+   return tp;
 }
 
 EAPI const Eolian_Typedecl *
@@ -33,10 +33,10 @@ eolian_typedecl_enum_get_by_name(const char *name)
 {
    if (!_enums) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
-   Eolian_Type *tp = eina_hash_find(_enums, shr);
+   Eolian_Typedecl *tp = eina_hash_find(_enums, shr);
    eina_stringshare_del(shr);
    if (!tp) return NULL;
-   return tp->decl;
+   return tp;
 }
 
 EAPI Eina_Iterator *

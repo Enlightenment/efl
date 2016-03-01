@@ -43,9 +43,9 @@ database_init()
    if (_database_init_count > 0) return ++_database_init_count;
    eina_init();
    _classes    = eina_hash_stringshared_new(EINA_FREE_CB(database_class_del));
-   _aliases    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedef_del));
-   _structs    = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
-   _enums      = eina_hash_stringshared_new(EINA_FREE_CB(database_type_del));
+   _aliases    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
+   _structs    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
+   _enums      = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    _globals    = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
    _constants  = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
    _classesf   = eina_hash_stringshared_new(NULL);

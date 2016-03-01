@@ -400,10 +400,10 @@ _validate_variable(const Validator *vs, const Eolian_Variable *var)
 }
 
 static Eina_Bool
-_type_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
-             const Eolian_Type *tp, Val_Success *sc)
+_typedecl_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
+                 const Eolian_Typedecl *tp, Val_Success *sc)
 {
-   sc->success = _validate_typedecl(sc->vs, tp->decl);
+   sc->success = _validate_typedecl(sc->vs, tp);
    return sc->success;
 }
 
@@ -436,15 +436,15 @@ database_validate(Eina_Bool silent_types)
    succ.vs = &vs;
    succ.success = EINA_TRUE;
 
-   eina_hash_foreach(_aliases, (Eina_Hash_Foreach)_type_map_cb, &succ);
+   eina_hash_foreach(_aliases, (Eina_Hash_Foreach)_typedecl_map_cb, &succ);
    if (!succ.success)
      return EINA_FALSE;
 
-   eina_hash_foreach(_structs, (Eina_Hash_Foreach)_type_map_cb, &succ);
+   eina_hash_foreach(_structs, (Eina_Hash_Foreach)_typedecl_map_cb, &succ);
    if (!succ.success)
      return EINA_FALSE;
 
-   eina_hash_foreach(_enums, (Eina_Hash_Foreach)_type_map_cb, &succ);
+   eina_hash_foreach(_enums, (Eina_Hash_Foreach)_typedecl_map_cb, &succ);
    if (!succ.success)
      return EINA_FALSE;
 
