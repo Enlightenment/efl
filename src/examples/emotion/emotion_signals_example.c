@@ -68,8 +68,7 @@ _position_update_cb(void *data EINA_UNUSED,
             Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf(">>> Emotion object first position update.\n");
-   eo_do(o, eo_event_callback_del(EMOTION_OBJECT_EVENT_POSITION_UPDATE,
-             _position_update_cb, NULL));
+   eo_event_callback_del(o, EMOTION_OBJECT_EVENT_POSITION_UPDATE, _position_update_cb, NULL);
    _display_info(o);
 
    return EINA_TRUE;
@@ -80,8 +79,7 @@ _frame_decode_cb(void *data EINA_UNUSED,
             Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf(">>> Emotion object first frame decode.\n");
-   eo_do(o, eo_event_callback_del(EMOTION_OBJECT_EVENT_FRAME_DECODE,
-            _frame_decode_cb, NULL));
+   eo_event_callback_del(o, EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb, NULL);
    _display_info(o);
 
    return EINA_TRUE;
@@ -121,8 +119,8 @@ static const Eo_Callback_Array_Item emotion_object_example_callbacks[] = {
 static void
 _setup_emotion_callbacks(Evas_Object *o)
 {
-   eo_do(o, eo_event_callback_add
-     (EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, _playback_started_cb, NULL));
+   eo_event_callback_add
+     (o, EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, _playback_started_cb, NULL);
 }
 
 int

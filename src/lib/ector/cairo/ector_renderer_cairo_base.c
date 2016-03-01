@@ -182,7 +182,7 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj EINA_UNUSED,
 static Eo *
 _ector_renderer_cairo_base_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Base_Data *pd EINA_UNUSED)
 {
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS, obj = eo_constructor());
+   obj = eo_constructor(eo_super(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS));
    if (!obj) return NULL;
 
    pd->generic = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
@@ -193,7 +193,7 @@ _ector_renderer_cairo_base_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Bas
 static Eo_Base *
 _ector_renderer_cairo_base_eo_base_finalize(Eo *obj, Ector_Renderer_Cairo_Base_Data *pd)
 {
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS, obj = eo_finalize());
+   obj = eo_finalize(eo_super(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS));
    if (!obj) return NULL;
 
    USE(pd->generic, cairo_matrix_init, NULL);
@@ -223,7 +223,7 @@ _ector_renderer_cairo_base_eo_base_destructor(Eo *obj, Ector_Renderer_Cairo_Base
 
    free(pd->m);
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS));
 }
 
 #include "ector_renderer_cairo_base.eo.c"

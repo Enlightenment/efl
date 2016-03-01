@@ -39,9 +39,9 @@ _ector_renderer_gl_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_Rend
 
    if (pd->vertex) return EINA_TRUE;
 
-   eo_do_super(obj, ECTOR_RENDERER_GL_SHAPE_CLASS, r = ector_renderer_prepare());
+   r = ector_renderer_prepare(eo_super(obj, ECTOR_RENDERER_GL_SHAPE_CLASS));
 
-   eo_do(obj, ector_renderer_bounds_get(&bounding_box));
+   ector_renderer_bounds_get(obj, &bounding_box);
 
    pd->vertex = malloc(sizeof (GLshort) * 6 * 3);
 
@@ -74,7 +74,7 @@ _ector_renderer_gl_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rendere
 {
    uint64_t flags = 0;
 
-   eo_do_super(obj, ECTOR_RENDERER_GL_SHAPE_CLASS, ector_renderer_draw(op, clips, mul_col));
+   ector_renderer_draw(eo_super(obj, ECTOR_RENDERER_GL_SHAPE_CLASS), op, clips, mul_col);
 
    // FIXME: adjust flags content correctly
    // FIXME: should not ignore clips (idea is that the geometry will be cliped here and the
@@ -82,12 +82,11 @@ _ector_renderer_gl_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rendere
 
    if (pd->shape->fill)
      {
-        eo_do(pd->shape->fill, ector_renderer_gl_base_fill(flags, pd->vertex, 6, mul_col));
+        ector_renderer_gl_base_fill(pd->shape->fill, flags, pd->vertex, 6, mul_col);
      }
    else
      {
-        eo_do(pd->base->surface,
-              ector_gl_surface_push(flags, pd->vertex, 6, mul_col));
+        ector_gl_surface_push(pd->base->surface, flags, pd->vertex, 6, mul_col);
      }
 
    return EINA_TRUE;
@@ -110,7 +109,7 @@ _ector_renderer_gl_shape_ector_renderer_gl_base_fill(Eo *obj EINA_UNUSED,
 static void
 _ector_renderer_gl_shape_ector_renderer_generic_base_bounds_get(Eo *obj, Ector_Renderer_GL_Shape_Data *pd, Eina_Rectangle *r)
 {
-   eo_do(obj, efl_gfx_shape_bounds_get(r));
+   efl_gfx_shape_bounds_get(obj, r);
 
    r->x += pd->base->origin.x;
    r->y += pd->base->origin.y;
@@ -121,8 +120,7 @@ _ector_renderer_gl_shape_ector_renderer_generic_base_crc_get(Eo *obj, Ector_Rend
 {
    unsigned int crc;
 
-   eo_do_super(obj, ECTOR_RENDERER_GL_SHAPE_CLASS,
-               crc = ector_renderer_crc_get());
+   crc = ector_renderer_crc_get(eo_super(obj, ECTOR_RENDERER_GL_SHAPE_CLASS));
 
    // This code should be shared with other implementation
    crc = eina_crc((void*) &pd->shape->stroke.marker, sizeof (pd->shape->stroke.marker), crc, EINA_FALSE);
@@ -145,7 +143,7 @@ _ector_renderer_gl_shape_ector_renderer_generic_base_crc_get(Eo *obj, Ector_Rend
 static Eo_Base *
 _ector_renderer_gl_shape_eo_base_constructor(Eo *obj, Ector_Renderer_GL_Shape_Data *pd)
 {
-   eo_do_super(obj, ECTOR_RENDERER_GL_SHAPE_CLASS, obj = eo_constructor());
+   obj = eo_constructor(eo_super(obj, ECTOR_RENDERER_GL_SHAPE_CLASS));
 
    if (!obj) return NULL;
 
@@ -153,8 +151,7 @@ _ector_renderer_gl_shape_eo_base_constructor(Eo *obj, Ector_Renderer_GL_Shape_Da
    pd->shape = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_SHAPE_MIXIN, obj);
    pd->base = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
 
-   eo_do(obj,
-         eo_event_callback_add(EFL_GFX_PATH_CHANGED, _ector_renderer_gl_shape_path_changed, pd));
+   eo_event_callback_add(obj, EFL_GFX_PATH_CHANGED, _ector_renderer_gl_shape_path_changed, pd);
 
    return obj;
 }

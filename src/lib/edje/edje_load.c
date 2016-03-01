@@ -793,35 +793,30 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                           Evas_Canvas3D_Material *material = NULL;
                           Edje_Part_Description_Mesh_Node *pd_mesh_node;
 
-                          rp->node = eo_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas,
-                                            evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_MESH));
+                          rp->node = eo_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));
 
                           mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, ed->base->evas);
-                          eo_do(rp->node, evas_canvas3d_node_mesh_add(mesh));
+                          evas_canvas3d_node_mesh_add(rp->node, mesh);
 
                           pd_mesh_node = (Edje_Part_Description_Mesh_Node*) rp->chosen_description;
 
                           if (pd_mesh_node->mesh_node.mesh.primitive == EVAS_CANVAS3D_MESH_PRIMITIVE_NONE)
                             {
-                               eo_do(mesh,
-                                     efl_file_set(ed->file->model_dir->entries[pd_mesh_node->mesh_node.mesh.id].entry, NULL));
+                               efl_file_set(mesh, ed->file->model_dir->entries[pd_mesh_node->mesh_node.mesh.id].entry, NULL);
                             }
                           else
                             {
-                               eo_do(mesh,
-                                     evas_canvas3d_mesh_frame_add(0));
+                               evas_canvas3d_mesh_frame_add(mesh, 0);
                             }
 
                           material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, ed->base->evas);
-                          eo_do(mesh,
-                                evas_canvas3d_mesh_frame_material_set(0, material));
+                          evas_canvas3d_mesh_frame_material_set(mesh, 0, material);
                           if (pd_mesh_node->mesh_node.texture.need_texture && pd_mesh_node->mesh_node.texture.textured)
                             {
                                Evas_Canvas3D_Texture *texture = NULL;
 
                                texture = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, ed->base->evas);
-                               eo_do(material,
-                                     evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, texture));
+                               evas_canvas3d_material_texture_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, texture);
                             }
                           rp->object = NULL;
                        }
@@ -831,10 +826,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        {
                           Evas_Canvas3D_Light *light = NULL;
 
-                          rp->node = eo_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas,
-                                            evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+                          rp->node = eo_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
                           light = eo_add(EVAS_CANVAS3D_LIGHT_CLASS, ed->base->evas);
-                          eo_do(rp->node, evas_canvas3d_node_light_set(light));
+                          evas_canvas3d_node_light_set(rp->node, light);
 
                           rp->object = NULL;
                           break;
@@ -844,10 +838,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        {
                           Evas_Canvas3D_Camera *camera = NULL;
 
-                          rp->node = eo_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas,
-                                            evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+                          rp->node = eo_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
                           camera = eo_add(EVAS_CANVAS3D_CAMERA_CLASS, ed->base->evas);
-                          eo_do(rp->node, evas_canvas3d_node_camera_set(camera));
+                          evas_canvas3d_node_camera_set(rp->node, camera);
 
                           rp->object = evas_object_image_filled_add(ed->base->evas);
                           evas_object_resize(rp->object, ed->collection->scene_size.width, ed->collection->scene_size.height);
@@ -869,7 +862,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                          }
 
                        if (ep->no_render)
-                         eo_do(rp->object, evas_obj_no_render_set(1));
+                         evas_obj_no_render_set(rp->object, 1);
 
                        if (st_nested && st_nested->nested_children_count) /* Add this to list of children */
                          {
@@ -922,9 +915,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                                  evas_object_pass_events_set(rp->object, 1);
                                  evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
                               }
-                            eo_do(rp->object,
-                                  evas_obj_anti_alias_set(ep->anti_alias),
-                                  evas_obj_precise_is_inside_set(ep->precise_is_inside));
+                            evas_obj_anti_alias_set(rp->object, ep->anti_alias);
+                            evas_obj_precise_is_inside_set(rp->object, ep->precise_is_inside);
                          }
                        if (rp->part->clip_to_id < 0)
                          evas_object_clip_set(rp->object, ed->base->clipper);
@@ -1718,7 +1710,7 @@ _edje_file_del(Edje *ed)
           free(runp);
      }
    _edje_animators = eina_list_remove(_edje_animators, ed);
-   eo_do(ed->obj, eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed));
+   eo_event_callback_del(ed->obj, EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed);
    ecore_animator_del(ed->animator);
    ed->animator = NULL;
 

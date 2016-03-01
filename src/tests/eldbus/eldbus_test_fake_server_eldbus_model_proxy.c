@@ -33,12 +33,7 @@ _setup(void)
    };
    fake_server = fake_server_start(&fake_server_data);
 
-   fake_server_object = eo_add(ELDBUS_MODEL_OBJECT_CLASS, NULL,
-     eldbus_model_object_constructor(ELDBUS_CONNECTION_TYPE_SESSION,
-                                     NULL,
-                                     EINA_FALSE,
-                                     FAKE_SERVER_BUS,
-                                     FAKE_SERVER_PATH));
+   fake_server_object = eo_add(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(eoid, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, FAKE_SERVER_BUS, FAKE_SERVER_PATH));
    ck_assert_ptr_ne(NULL, fake_server_object);
 
    efl_model_load_and_wait_for_load_status(fake_server_object, EFL_MODEL_LOAD_STATUS_LOADED);
@@ -70,7 +65,7 @@ START_TEST(properties_get)
 {
    Eina_Array *properties = NULL;
    Efl_Model_Load_Status status;
-   eo_do(fake_server_proxy, status = efl_model_properties_get(&properties));
+   status = efl_model_properties_get(fake_server_proxy, &properties);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
    ck_assert_ptr_ne(NULL, properties);
 
@@ -90,7 +85,7 @@ START_TEST(property_get)
    // Write-only property returns error
    const Eina_Value *dummy;
    Efl_Model_Load_Status status;
-   eo_do(fake_server_proxy, status = efl_model_property_get(FAKE_SERVER_WRITEONLY_PROPERTY, &dummy));
+   status = efl_model_property_get(fake_server_proxy, FAKE_SERVER_WRITEONLY_PROPERTY, &dummy);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
 
    _teardown();
@@ -104,7 +99,7 @@ _check_property_set(const char *property_name, int expected_property_value, int 
    eina_value_setup(&value, EINA_VALUE_TYPE_INT);
    eina_value_set(&value, expected_property_value);
    Efl_Model_Load_Status status;
-   eo_do(fake_server_proxy, status = efl_model_property_set(property_name, &value));
+   status = efl_model_property_set(fake_server_proxy, property_name, &value);
    eina_value_flush(&value);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
 
@@ -121,7 +116,7 @@ START_TEST(property_set)
    // Read-only property returns error
    Eina_Value dummy = {0};
    Efl_Model_Load_Status status;
-   eo_do(fake_server_proxy, status = efl_model_property_set(FAKE_SERVER_READONLY_PROPERTY, &dummy));
+   status = efl_model_property_set(fake_server_proxy, FAKE_SERVER_READONLY_PROPERTY, &dummy);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
 
    _teardown();
@@ -149,9 +144,9 @@ START_TEST(children_slice_get)
    Eldbus_Model_Arguments *method2 = efl_model_nth_child_get(fake_server_proxy, 2);
    Eldbus_Model_Arguments *signal1 = efl_model_nth_child_get(fake_server_proxy, 3);
 
-   const char *actual_method1_name = eo_do_ret(method1, actual_method1_name, eldbus_model_arguments_name_get());
-   const char *actual_method2_name = eo_do_ret(method2, actual_method2_name, eldbus_model_arguments_name_get());
-   const char *actual_signal1_name = eo_do_ret(signal1, actual_signal1_name, eldbus_model_arguments_name_get());
+   const char *actual_method1_name = eldbus_model_arguments_name_get(method1);
+   const char *actual_method2_name = eldbus_model_arguments_name_get(method2);
+   const char *actual_signal1_name = eldbus_model_arguments_name_get(signal1);
 
    ck_assert_ptr_ne(NULL, actual_method1_name);
    ck_assert_ptr_ne(NULL, actual_method2_name);
@@ -173,7 +168,7 @@ static void
 _check_unload(void)
 {
    check_efl_model_load_status_get(fake_server_proxy, EFL_MODEL_LOAD_STATUS_LOADED);
-   eo_do(fake_server_proxy, efl_model_unload());
+   efl_model_unload(fake_server_proxy);
    check_efl_model_load_status_get(fake_server_proxy, EFL_MODEL_LOAD_STATUS_UNLOADED);
 
    check_efl_model_children_count_eq(fake_server_proxy, 0);
@@ -191,7 +186,7 @@ START_TEST(properties_load)
 {
    _check_unload();
 
-   eo_do(fake_server_proxy, efl_model_properties_load());
+   efl_model_properties_load(fake_server_proxy);
    efl_model_wait_for_load_status(fake_server_proxy, EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES);
 
    check_efl_model_load_status_get(fake_server_proxy, EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES);
@@ -204,7 +199,7 @@ START_TEST(children_load)
 {
    _check_unload();
 
-   eo_do(fake_server_proxy, efl_model_children_load());
+   efl_model_children_load(fake_server_proxy);
    efl_model_wait_for_load_status(fake_server_proxy, EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN);
 
    check_efl_model_load_status_get(fake_server_proxy, EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN);
@@ -217,7 +212,7 @@ END_TEST
 
 START_TEST(child_add)
 {
-   Eo *child = eo_do_ret(fake_server_proxy, child, efl_model_child_add());
+   Eo *child = efl_model_child_add(fake_server_proxy);
    ck_assert_ptr_eq(NULL, child);
 
    _teardown();
@@ -229,16 +224,16 @@ START_TEST(child_del)
    // Tests that it is not possible to delete children
    unsigned int expected_children_count = 0;
    Efl_Model_Load_Status status;
-   eo_do(fake_server_proxy, status = efl_model_children_count_get(&expected_children_count));
+   status = efl_model_children_count_get(fake_server_proxy, &expected_children_count);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
 
    // efl_model_child_del always returns ERROR
    Eo *child = efl_model_first_child_get(fake_server_proxy);
-   eo_do(fake_server_proxy, status = efl_model_child_del(child));
+   status = efl_model_child_del(fake_server_proxy, child);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_ERROR, status);
 
    unsigned int actual_children_count = 0;
-   eo_do(fake_server_proxy, status = efl_model_children_count_get(&actual_children_count));
+   status = efl_model_children_count_get(fake_server_proxy, &actual_children_count);
    ck_assert_int_eq(EFL_MODEL_LOAD_STATUS_LOADED, status);
 
    ck_assert_int_le(expected_children_count, actual_children_count);

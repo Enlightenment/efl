@@ -204,7 +204,7 @@ evas_object_smart_member_add(Evas_Object *eo_obj, Evas_Object *smart_obj)
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   eo_do(smart_obj, evas_obj_smart_member_add(eo_obj));
+   evas_obj_smart_member_add(smart_obj, eo_obj);
 }
 
 EOLIAN static void
@@ -293,7 +293,7 @@ evas_object_smart_member_del(Evas_Object *eo_obj)
    if (!obj->smart.parent) return;
    Evas_Object *smart_obj = obj->smart.parent;
 
-   eo_do(smart_obj, evas_obj_smart_member_del(eo_obj));
+   evas_obj_smart_member_del(smart_obj, eo_obj);
 }
 
 EOLIAN static void
@@ -571,7 +571,7 @@ evas_object_smart_add(Evas *eo_e, Evas_Smart *s)
    return NULL;
    MAGIC_CHECK_END();
    eo_obj = eo_add(EVAS_OBJECT_SMART_CLASS, eo_e);
-   eo_do(eo_obj, evas_obj_smart_attach(s));
+   evas_obj_smart_attach(eo_obj, s);
    return eo_obj;
 }
 
@@ -584,12 +584,11 @@ _evas_object_smart_eo_base_constructor(Eo *eo_obj, Evas_Smart_Data *class_data E
    smart->object = eo_obj;
    smart->inherit_paragraph_direction = EINA_TRUE;
 
-   eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
+   eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
    evas_object_smart_init(eo_obj);
 
-   eo_do(eo_obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_add());
+   evas_obj_type_set(eo_obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_add(eo_obj);
 
    return eo_obj;
 }
@@ -709,7 +708,7 @@ _evas_object_smart_attach(Eo *eo_obj, Evas_Smart_Data *_pd EINA_UNUSED, Evas_Sma
           }
      }
 
-   eo_do(eo_obj, evas_obj_smart_add());
+   evas_obj_smart_add(eo_obj);
 }
 
 EAPI void
@@ -741,7 +740,7 @@ evas_object_smart_callback_priority_add(Evas_Object *eo_obj, const char *event, 
    o->callbacks = eina_inlist_append(o->callbacks,
         EINA_INLIST_GET(cb_info));
 
-   eo_do(eo_obj, eo_event_callback_priority_add(eo_desc, priority, _eo_evas_smart_cb, cb_info));
+   eo_event_callback_priority_add(eo_obj, eo_desc, priority, _eo_evas_smart_cb, cb_info);
 }
 
 EAPI void *
@@ -764,8 +763,7 @@ evas_object_smart_callback_del(Evas_Object *eo_obj, const char *event, Evas_Smar
         if ((info->func == func) && (info->event == eo_desc))
           {
              void *tmp = info->data;
-             eo_do(eo_obj, eo_event_callback_del(
-                      eo_desc, _eo_evas_smart_cb, info));
+             eo_event_callback_del(eo_obj, eo_desc, _eo_evas_smart_cb, info);
 
              o->callbacks =
                 eina_inlist_remove(o->callbacks, EINA_INLIST_GET(info));
@@ -796,8 +794,7 @@ evas_object_smart_callback_del_full(Evas_Object *eo_obj, const char *event, Evas
         if ((info->func == func) && (info->event == eo_desc) && (info->data == data))
           {
              void *tmp = info->data;
-             eo_do(eo_obj, eo_event_callback_del(
-                      eo_desc, _eo_evas_smart_cb, info));
+             eo_event_callback_del(eo_obj, eo_desc, _eo_evas_smart_cb, info);
 
              o->callbacks =
                 eina_inlist_remove(o->callbacks, EINA_INLIST_GET(info));
@@ -817,7 +814,7 @@ evas_object_smart_callback_call(Evas_Object *eo_obj, const char *event, void *ev
 
    if (!event) return;
    const Eo_Event_Description *eo_desc = eo_base_legacy_only_event_description_get(event);
-   eo_do(eo_obj, eo_event_callback_call(eo_desc, event_info));
+   eo_event_callback_call(eo_obj, eo_desc, event_info);
 }
 
 EOLIAN static Eina_Bool
@@ -980,7 +977,7 @@ evas_call_smarts_calculate(Evas *eo_e)
 	     if (obj->smart.smart && obj->smart.smart->smart_class->calculate)
                obj->smart.smart->smart_class->calculate(obj->object);
              else
-               eo_do(obj->object, evas_obj_smart_calculate());
+               evas_obj_smart_calculate(obj->object);
           }
      }
 
@@ -1003,7 +1000,7 @@ _evas_object_smart_changed(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    evas_object_change(eo_obj, obj);
-   eo_do(eo_obj, evas_obj_smart_need_recalculate_set(1));
+   evas_obj_smart_need_recalculate_set(eo_obj, 1);
 }
 
 Eina_Bool
@@ -1049,7 +1046,7 @@ evas_object_smart_del(Evas_Object *eo_obj)
    if (s && s->smart_class->del)
       s->smart_class->del(eo_obj);
    else
-      eo_do(eo_obj, evas_obj_smart_del());
+      evas_obj_smart_del(eo_obj);
    if (obj->smart.parent) evas_object_smart_member_del(eo_obj);
 
    if (s)
@@ -1243,14 +1240,13 @@ evas_object_smart_cleanup(Evas_Object *eo_obj)
         while (o->callbacks)
           {
              _eo_evas_smart_cb_info *info = (_eo_evas_smart_cb_info *)o->callbacks;
-             eo_do(eo_obj, eo_event_callback_del(
-                      info->event, _eo_evas_smart_cb, info));
+             eo_event_callback_del(eo_obj, info->event, _eo_evas_smart_cb, info);
              o->callbacks = eina_inlist_remove(o->callbacks, EINA_INLIST_GET(info));
              free(info);
           }
 
         evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, 0);
-        eo_do(eo_obj, evas_obj_smart_data_set(NULL));
+        evas_obj_smart_data_set(eo_obj, NULL);
      }
 
    obj->smart.parent = NULL;

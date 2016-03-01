@@ -105,7 +105,7 @@ _evas_gl_preload_main_loop_wakeup(void)
         if (async->tex)
           {
              EINA_LIST_FREE(async->tex->targets, target)
-               eo_do(target, evas_obj_image_pixels_dirty_set(EINA_TRUE));
+               evas_obj_image_pixels_dirty_set(target, EINA_TRUE);
           }
         async->im->cache_entry.flags.preload_done = 0;
         if (async->tex)
@@ -314,8 +314,7 @@ evas_gl_preload_target_register(Evas_GL_Texture *tex, Eo *target)
 {
    EINA_SAFETY_ON_NULL_RETURN(tex);
 
-   eo_do(target,
-         eo_event_callback_add(EO_BASE_EVENT_DEL, _evas_gl_preload_target_die, tex));
+   eo_event_callback_add(target, EO_BASE_EVENT_DEL, _evas_gl_preload_target_die, tex);
    tex->targets = eina_list_append(tex->targets, target);
    tex->references++;
 }
@@ -328,8 +327,7 @@ evas_gl_preload_target_unregister(Evas_GL_Texture *tex, Eo *target)
 
    EINA_SAFETY_ON_NULL_RETURN(tex);
 
-   eo_do(target,
-         eo_event_callback_del(EO_BASE_EVENT_DEL, _evas_gl_preload_target_die, tex));
+   eo_event_callback_del(target, EO_BASE_EVENT_DEL, _evas_gl_preload_target_die, tex);
 
    EINA_LIST_FOREACH(tex->targets, l, o)
      if (o == target)

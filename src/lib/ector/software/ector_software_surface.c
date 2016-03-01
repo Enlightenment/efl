@@ -16,17 +16,13 @@ _ector_software_surface_ector_generic_surface_renderer_factory_new(Eo *obj,
                                                                    const Eo_Class *type)
 {
    if (type == ECTOR_RENDERER_GENERIC_SHAPE_MIXIN)
-     return eo_add(ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, NULL,
-                   ector_renderer_surface_set(obj));
+     return eo_add(ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, NULL, ector_renderer_surface_set(eoid, obj));
    else if (type == ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_MIXIN)
-     return eo_add(ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS, NULL,
-                   ector_renderer_surface_set(obj));
+     return eo_add(ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS, NULL, ector_renderer_surface_set(eoid, obj));
    else if (type == ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_MIXIN)
-     return eo_add(ECTOR_RENDERER_SOFTWARE_GRADIENT_RADIAL_CLASS, NULL,
-                   ector_renderer_surface_set(obj));
+     return eo_add(ECTOR_RENDERER_SOFTWARE_GRADIENT_RADIAL_CLASS, NULL, ector_renderer_surface_set(eoid, obj));
    else if (type == ECTOR_RENDERER_GENERIC_BUFFER_MIXIN)
-     return eo_add(ECTOR_RENDERER_SOFTWARE_BUFFER_CLASS, NULL,
-                   ector_renderer_surface_set(obj));
+     return eo_add(ECTOR_RENDERER_SOFTWARE_BUFFER_CLASS, NULL, ector_renderer_surface_set(eoid, obj));
    ERR("Couldn't find class for type: %s\n", eo_class_name_get(type));
    return NULL;
 }
@@ -34,7 +30,7 @@ _ector_software_surface_ector_generic_surface_renderer_factory_new(Eo *obj,
 static Eo *
 _ector_software_surface_eo_base_constructor(Eo *obj, Ector_Software_Surface_Data *pd)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
    pd->rasterizer = (Software_Rasterizer *) calloc(1, sizeof(Software_Rasterizer));
    ector_software_rasterizer_init(pd->rasterizer);
    pd->rasterizer->fill_data.raster_buffer = eo_data_ref(obj, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
@@ -48,7 +44,7 @@ _ector_software_surface_eo_base_destructor(Eo *obj, Ector_Software_Surface_Data 
    eo_data_unref(obj, pd->rasterizer->fill_data.raster_buffer);
    free(pd->rasterizer);
    pd->rasterizer = NULL;
-   eo_do_super(obj, ECTOR_SOFTWARE_SURFACE_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, ECTOR_SOFTWARE_SURFACE_CLASS));
 }
 
 static void

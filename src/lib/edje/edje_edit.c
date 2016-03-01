@@ -152,7 +152,7 @@ _edje_edit_evas_object_smart_del(Eo *obj, Edje_Edit *eed)
 {
    _edje_edit_data_clean(eed);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 static void
@@ -190,7 +190,7 @@ _edje_edit_efl_file_file_set(Eo *obj, Edje_Edit *eed, const char *file, const ch
     *    groups).
     */
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = efl_file_set(file, group));
+   int_ret = efl_file_set(eo_super(obj, MY_CLASS), file, group);
    if (!int_ret)
      return ret;
 
@@ -240,13 +240,13 @@ _edje_edit_eo_base_constructor(Eo *obj, Edje_Edit *eed)
 {
    eed->base = eo_data_ref(obj, EDJE_OBJECT_CLASS);
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   return eo_constructor(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
 _edje_edit_eo_base_destructor(Eo *obj, Edje_Edit *class_data EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
    eo_data_unref(obj, class_data);
 }
 

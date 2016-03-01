@@ -12,7 +12,8 @@ static void
 _add_and_print_set(Eo *obj, void *class_data EINA_UNUSED, int x)
 {
    int a = 0, b = 0;
-   eo_do(obj, a = simple_a_get(), b = simple_b_get());
+   a = simple_a_get(obj);
+   b = simple_b_get(obj);
    printf("%s %d\n", __func__, a + b + x);
 }
 
@@ -23,13 +24,13 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
    my_init_count++;
 
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   return eo_constructor(eo_super(obj, MY_CLASS));
 }
 
 static void
 _destructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 
    my_init_count--;
 }

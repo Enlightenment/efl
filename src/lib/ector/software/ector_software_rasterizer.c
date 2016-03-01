@@ -102,9 +102,9 @@ _blend_image_argb(int count, const SW_FT_Span *spans, void *user_data)
         while (length)
           {
              l = MIN(length, data->buffer->generic->w);
-             eo_do(data->buffer->generic->eo, src8 = ector_buffer_span_get(0, sy, l, EFL_GFX_COLORSPACE_ARGB8888, NULL));
+             src8 = ector_buffer_span_get(data->buffer->generic->eo, 0, sy, l, EFL_GFX_COLORSPACE_ARGB8888, NULL);
              comp_func(target, (uint32_t *) src8, l, data->mul_col, spans->coverage);
-             eo_do(data->buffer->generic->eo, ector_buffer_span_free(src8));
+             ector_buffer_span_free(data->buffer->generic->eo, src8);
              target += l;
              length -= l;
           }

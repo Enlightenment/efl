@@ -35,7 +35,7 @@ _colourable_eo_base_constructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
           = eina_log_domain_register("colourable", EINA_COLOR_BLUE);
      }
    DBG("_colourable_constructor(%p, %p)\n", obj, MY_CLASS);
-   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   return eo_constructor(eo_super(obj, MY_CLASS));
 }
 
 void
@@ -47,7 +47,7 @@ _colourable_eo_base_destructor(Eo *obj, Colourable_Data *self EINA_UNUSED)
         _colourable_impl_logdomain = 0;
      }
    DBG("_colourable_destructor()\n");
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 void
@@ -63,7 +63,7 @@ _colourable_rgb_24bits_constructor(Eo *obj, Colourable_Data *self, int rgb)
    self->g = (rgb & 0x0000ff00) >> 8;
    self->b = rgb & 0x000000ff;
    DBG("_colourable_rgb_24bits_constructor(0x%.6x)\n", (int)rgb);
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   eo_constructor(eo_super(obj, MY_CLASS));
 }
 
 void

@@ -242,9 +242,9 @@ _filter_displace_cpu_alpha(Evas_Filter_Command *cmd)
 
    ret = EINA_TRUE;
 end:
-   eo_do(cmd->input->buffer, ector_buffer_unmap(src, src_len));
-   eo_do(cmd->output->buffer, ector_buffer_unmap(dst, dst_len));
-   eo_do(map_fb->buffer, ector_buffer_unmap(map_start, map_len));
+   ector_buffer_unmap(cmd->input->buffer, src, src_len);
+   ector_buffer_unmap(cmd->output->buffer, dst, dst_len);
+   ector_buffer_unmap(map_fb->buffer, map_start, map_len);
    return ret;
 }
 
@@ -303,9 +303,9 @@ _filter_displace_cpu_rgba(Evas_Filter_Command *cmd)
 
    ret = EINA_TRUE;
 end:
-   eo_do(cmd->input->buffer, ector_buffer_unmap(src, src_len));
-   eo_do(cmd->output->buffer, ector_buffer_unmap(dst, dst_len));
-   eo_do(map_fb->buffer, ector_buffer_unmap(map_start, map_len));
+   ector_buffer_unmap(cmd->input->buffer, src, src_len);
+   ector_buffer_unmap(cmd->output->buffer, dst, dst_len);
+   ector_buffer_unmap(map_fb->buffer, map_start, map_len);
    return ret;
 }
 

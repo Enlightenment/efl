@@ -26,7 +26,7 @@ static void _eldbus_model_object_create_children(Eldbus_Model_Object_Data *, Eld
 static Eo_Base*
 _eldbus_model_object_eo_base_constructor(Eo *obj, Eldbus_Model_Object_Data *pd)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
 
    pd->obj = obj;
    pd->load.status = EFL_MODEL_LOAD_STATUS_UNLOADED;
@@ -90,7 +90,7 @@ _eldbus_model_object_eo_base_destructor(Eo *obj, Eldbus_Model_Object_Data *pd)
 
    _eldbus_model_object_clear(pd);
 
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 static Efl_Model_Load_Status
@@ -462,7 +462,7 @@ _eldbus_model_object_introspect_cb(void *data,
 
         count = eina_list_count(pd->children_list);
         if (count)
-          eo_do(pd->obj, eo_event_callback_call(EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED, &count));
+          eo_event_callback_call(pd->obj, EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED, &count);
      }
 }
 
@@ -532,8 +532,7 @@ _eldbus_model_object_create_children(Eldbus_Model_Object_Data *pd, Eldbus_Object
         WRN("(%p) Creating child: bus = %s, path = %s, interface = %s", pd->obj, pd->bus, current_path, interface->name);
 
         // TODO: increment reference to keep 'interface' in memory
-        child = eo_add_ref(ELDBUS_MODEL_PROXY_CLASS, NULL,
-                           eldbus_model_proxy_constructor(object, interface));
+        child = eo_add_ref(ELDBUS_MODEL_PROXY_CLASS, NULL, eldbus_model_proxy_constructor(eoid, object, interface));
 
         pd->children_list = eina_list_append(pd->children_list, child);
      }

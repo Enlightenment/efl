@@ -29,9 +29,8 @@ _event_interface_load_status_cb(void *data EINA_UNUSED, Eo *model,
    if (EFL_MODEL_LOAD_STATUS_LOADED != actual_load->status)
      return EINA_TRUE;
 
-   eo_do(model,
-         name = eldbus_model_proxy_name_get(),
-         efl_model_properties_get(&properties_list));
+   name = eldbus_model_proxy_name_get(model);
+   efl_model_properties_get(model, &properties_list);
 
    printf(" -> %s\n", name);
    if (eina_array_count(properties_list))
@@ -39,7 +38,7 @@ _event_interface_load_status_cb(void *data EINA_UNUSED, Eo *model,
 
    EINA_ARRAY_ITER_NEXT(properties_list, i, property, iterator)
      {
-        eo_do(model, efl_model_property_get(property, &property_value));
+        efl_model_property_get(model, property, &property_value);
         if (property_value)
           {
              prop_str = eina_value_to_string(property_value);
@@ -70,7 +69,7 @@ _event_load_status_cb(void *data EINA_UNUSED, Eo *model,
    if (EFL_MODEL_LOAD_STATUS_LOADED != actual_load->status)
      return EINA_TRUE;
 
-   eo_do(model, efl_model_children_count_get(&children_count));
+   efl_model_children_count_get(model, &children_count);
    if (children_count == 0)
      {
         printf("Don't find Interfaces\n");
@@ -78,12 +77,12 @@ _event_load_status_cb(void *data EINA_UNUSED, Eo *model,
         return EINA_FALSE;
      }
 
-   eo_do(model, efl_model_children_slice_get(0, 0, &accessor));
+   efl_model_children_slice_get(model, 0, 0, &accessor);
    printf("\nInterfaces:\n");
    EINA_ACCESSOR_FOREACH(accessor, i, child)
      {
-        eo_do(child, eo_event_callback_add(EFL_MODEL_BASE_EVENT_LOAD_STATUS, _event_interface_load_status_cb, NULL));
-        eo_do(child, efl_model_load());
+        eo_event_callback_add(child, EFL_MODEL_BASE_EVENT_LOAD_STATUS, _event_interface_load_status_cb, NULL);
+        efl_model_load(child);
      }
 
    return EINA_FALSE;
@@ -103,17 +102,14 @@ main(int argc, char **argv EINA_UNUSED)
    if (argc > 1) bus = argv[1];
    if (argc > 2) path = argv[2];
 
-   root = eo_add_ref(ELDBUS_MODEL_OBJECT_CLASS, NULL,
-                     eldbus_model_object_constructor(ELDBUS_CONNECTION_TYPE_SESSION,
-                                                     NULL, EINA_FALSE, bus, path));
+   root = eo_add_ref(ELDBUS_MODEL_OBJECT_CLASS, NULL, eldbus_model_object_constructor(eoid, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, bus, path));
 
-   eo_do(root,
-         eo_event_callback_add(EFL_MODEL_BASE_EVENT_LOAD_STATUS, _event_load_status_cb, NULL),
-         efl_model_load());
+   eo_event_callback_add(root, EFL_MODEL_BASE_EVENT_LOAD_STATUS, _event_load_status_cb, NULL);
+   efl_model_load(root);
 
    ecore_main_loop_begin();
 
-   eo_do(root, eo_event_callback_del(EFL_MODEL_BASE_EVENT_LOAD_STATUS, _event_load_status_cb, NULL));
+   eo_event_callback_del(root, EFL_MODEL_BASE_EVENT_LOAD_STATUS, _event_load_status_cb, NULL);
 
    eo_unref(root);
 }

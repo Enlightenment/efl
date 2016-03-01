@@ -54,9 +54,8 @@ _filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,
    if (!success)
      {
         ERR("Filter failed at runtime!");
-        eo_do(eo_obj,
-              evas_filter_invalid_set(EINA_TRUE);
-              evas_filter_dirty());
+        evas_filter_invalid_set(eo_obj, EINA_TRUE);
+        evas_filter_dirty(eo_obj);
         evas_object_change(eo_obj, obj);
         evas_object_clip_dirty(eo_obj, obj);
         evas_object_coords_recalc(eo_obj, obj);
@@ -272,8 +271,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                     {
                        // Post render callback is not required anymore
                        Evas *e = obj->layer->evas->evas;
-                       eo_do(e, eo_event_callback_del(EVAS_CANVAS_EVENT_RENDER_POST,
-                                                      _render_post_cb, eo_obj));
+                       eo_event_callback_del(e, EVAS_CANVAS_EVENT_RENDER_POST, _render_post_cb, eo_obj);
                        pd->has_cb = EINA_FALSE;
                     }
 
@@ -324,7 +322,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
         // Request rendering from the object itself (child class)
         evas_filter_program_padding_get(pd->data->chain, &l, &r, &t, &b);
-        eo_do(eo_obj, ok = evas_filter_input_render(filter, drawctx, l, r, t, b, do_async));
+        ok = evas_filter_input_render(eo_obj, filter, drawctx, l, r, t, b, do_async);
         if (!ok) ERR("Filter input render failed.");
 
         ENFN->context_free(ENDT, drawctx);
@@ -333,8 +331,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         if (do_async && !pd->has_cb)
           {
              Evas *e = obj->layer->evas->evas;
-             eo_do(e, eo_event_callback_add(EVAS_CANVAS_EVENT_RENDER_POST,
-                                            _render_post_cb, eo_obj));
+             eo_event_callback_add(e, EVAS_CANVAS_EVENT_RENDER_POST, _render_post_cb, eo_obj);
              pd->has_cb = EINA_TRUE;
           }
         evas_filter_context_post_run_callback_set(filter, _filter_cb, eo_obj);
@@ -382,7 +379,7 @@ _evas_filter_efl_gfx_filter_filter_program_set(Eo *eo_obj, Evas_Filter_Data *pd,
         eina_stringshare_replace(&fcow->name, name);
         if (code)
           {
-             eo_do(eo_obj, alpha = evas_filter_input_alpha());
+             alpha = evas_filter_input_alpha(eo_obj);
              pgm = evas_filter_program_new(fcow->name, alpha);
              evas_filter_program_source_set_all(pgm, fcow->sources);
              evas_filter_program_data_set_all(pgm, fcow->data);
@@ -405,7 +402,7 @@ _evas_filter_efl_gfx_filter_filter_program_set(Eo *eo_obj, Evas_Filter_Data *pd,
    FCOW_END(fcow, pd);
 
    // Update object
-   eo_do(eo_obj, evas_filter_dirty());
+   evas_filter_dirty(eo_obj);
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_coords_recalc(eo_obj, obj);
@@ -499,7 +496,7 @@ update:
         FCOW_END(fcow, pd);
      }
 
-   eo_do(eo_obj, evas_filter_dirty());
+   evas_filter_dirty(eo_obj);
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_coords_recalc(eo_obj, obj);
@@ -546,7 +543,7 @@ _evas_filter_efl_gfx_filter_filter_state_set(Eo *eo_obj, Evas_Filter_Data *pd,
           }
 
         // Mark as changed
-        eo_do(eo_obj, evas_filter_dirty());
+        evas_filter_dirty(eo_obj);
         evas_object_change(eo_obj, obj);
         evas_object_clip_dirty(eo_obj, obj);
         evas_object_coords_recalc(eo_obj, obj);
@@ -609,7 +606,7 @@ _evas_filter_eo_base_constructor(Eo *eo_obj, Evas_Filter_Data *pd)
 {
    Eo *obj = NULL;
 
-   eo_do_super(eo_obj, MY_CLASS, obj = eo_constructor());
+   obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
    pd->data = eina_cow_alloc(evas_object_filter_cow);
    SLKI(pd->lck);
 
@@ -650,12 +647,11 @@ finish:
    if (pd->has_cb)
      {
         Evas *e = obj->layer->evas->evas;
-        eo_do(e, eo_event_callback_del(EVAS_CANVAS_EVENT_RENDER_POST,
-                                       _render_post_cb, eo_obj));
+        eo_event_callback_del(e, EVAS_CANVAS_EVENT_RENDER_POST, _render_post_cb, eo_obj);
      }
    SLKD(pd->lck);
 
-   eo_do_super(eo_obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(eo_obj, MY_CLASS));
 }
 
 EOLIAN static void

@@ -59,8 +59,8 @@ _on_canvas_resize(Ecore_Evas *ee)
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
 
    evas_object_resize(background, w, h);
-   eo_do(background, efl_gfx_size_set(w, h));
-   eo_do(image, efl_gfx_size_set(w, h));
+   efl_gfx_size_set(background, w, h);
+   efl_gfx_size_set(image, w, h);
 }
 
 static Eina_Bool
@@ -71,8 +71,7 @@ _animate_scene(void *data)
 
    angle += 0.5;
 
-   eo_do(scene->animation_node,
-         evas_canvas3d_node_orientation_angle_axis_set(angle, 0.0, 1.0, 0.0));
+   evas_canvas3d_node_orientation_angle_axis_set(scene->animation_node, angle, 0.0, 1.0, 0.0);
 
    if (angle > 360.0) angle -= 360.0f;
 
@@ -84,49 +83,40 @@ _camera_setup(Scene_Data *data)
 {
    data->camera = eo_add(EVAS_CANVAS3D_CAMERA_CLASS, evas);
 
-   eo_do(data->camera,
-         evas_canvas3d_camera_projection_perspective_set(60.0, 1.0, 2.0, 50.0));
+   evas_canvas3d_camera_projection_perspective_set(data->camera, 60.0, 1.0, 2.0, 50.0);
 
   data->camera_node =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                    evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
 
-  eo_do(data->camera_node,
-         evas_canvas3d_node_camera_set(data->camera),
-         evas_canvas3d_node_position_set(0.0, 0.0, 7.0),
-         evas_canvas3d_node_look_at_set(EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0,
-                                  EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0));
+  evas_canvas3d_node_camera_set(data->camera_node, data->camera);
+  evas_canvas3d_node_position_set(data->camera_node, 0.0, 0.0, 7.0);
+  evas_canvas3d_node_look_at_set(data->camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
 
-  eo_do(data->root_node, evas_canvas3d_node_member_add(data->camera_node));
+  evas_canvas3d_node_member_add(data->root_node, data->camera_node);
 }
 
 static void
 _light_setup(Scene_Data *data)
 {
    data->light = eo_add(EVAS_CANVAS3D_LIGHT_CLASS, evas);
-   eo_do(data->light,
-         evas_canvas3d_light_ambient_set(0.2, 0.2, 0.2, 1.0),
-         evas_canvas3d_light_diffuse_set(1.0, 1.0, 1.0, 1.0),
-         evas_canvas3d_light_specular_set(1.0, 1.0, 1.0, 1.0));
+   evas_canvas3d_light_ambient_set(data->light, 0.2, 0.2, 0.2, 1.0);
+   evas_canvas3d_light_diffuse_set(data->light, 1.0, 1.0, 1.0, 1.0);
+   evas_canvas3d_light_specular_set(data->light, 1.0, 1.0, 1.0, 1.0);
 
    data->light_node =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                    evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_LIGHT));
-   eo_do(data->light_node,
-         evas_canvas3d_node_light_set(data->light),
-         evas_canvas3d_node_position_set(0.0, 0.0, 10.0),
-         evas_canvas3d_node_look_at_set(EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0,
-                                  EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0));
-   eo_do(data->root_node, evas_canvas3d_node_member_add(data->light_node));
+      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+   evas_canvas3d_node_light_set(data->light_node, data->light);
+   evas_canvas3d_node_position_set(data->light_node, 0.0, 0.0, 10.0);
+   evas_canvas3d_node_look_at_set(data->light_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
+   evas_canvas3d_node_member_add(data->root_node, data->light_node);
 }
 
 static void
 _set_ball(Eo *mesh, Eo *sphere, Evas_Canvas3D_Material *material)
 {
-   eo_do(mesh,
-         evas_canvas3d_mesh_from_primitive_set(0, sphere),
-         evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_PHONG),
-         evas_canvas3d_mesh_frame_material_set(0, material));
+   evas_canvas3d_mesh_from_primitive_set(mesh, 0, sphere);
+   evas_canvas3d_mesh_shade_mode_set(mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_frame_material_set(mesh, 0, material);
 }
 
 
@@ -135,20 +125,17 @@ _mesh_setup(Scene_Data *data)
 {
    data->material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
 
-   eo_do(data->material,
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE),
-
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, 0.2, 0.2, 0.2, 1.0),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, 0.8, 0.8, 0.8, 1.0),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0),
-         evas_canvas3d_material_shininess_set(100.0));
+   evas_canvas3d_material_enable_set(data->material, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE);
+   evas_canvas3d_material_enable_set(data->material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE);
+   evas_canvas3d_material_enable_set(data->material, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE);
+   evas_canvas3d_material_color_set(data->material, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, 0.2, 0.2, 0.2, 1.0);
+   evas_canvas3d_material_color_set(data->material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, 0.8, 0.8, 0.8, 1.0);
+   evas_canvas3d_material_color_set(data->material, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0);
+   evas_canvas3d_material_shininess_set(data->material, 100.0);
 
    data->sphere = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
-   eo_do(data->sphere,
-         evas_canvas3d_primitive_form_set(EVAS_CANVAS3D_MESH_PRIMITIVE_SPHERE),
-         evas_canvas3d_primitive_precision_set(50));
+   evas_canvas3d_primitive_form_set(data->sphere, EVAS_CANVAS3D_MESH_PRIMITIVE_SPHERE);
+   evas_canvas3d_primitive_precision_set(data->sphere, 50);
 
    data->mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
    data->mesh1 = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
@@ -157,28 +144,27 @@ _mesh_setup(Scene_Data *data)
    _set_ball(data->mesh1, data->sphere, data->material);
 
    data->animation_node =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                    evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_NODE));
+      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    data->mesh_node =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                    evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_MESH));
+      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));
 
-   eo_do(data->animation_node, evas_canvas3d_node_member_add(data->mesh_node));
-   eo_do(data->root_node, evas_canvas3d_node_member_add(data->animation_node));
-   eo_do(data->mesh_node, evas_canvas3d_node_mesh_add(data->mesh),
-                          evas_canvas3d_node_position_set(0.0, 0.0, 3.0));
+   evas_canvas3d_node_member_add(data->animation_node, data->mesh_node);
+   evas_canvas3d_node_member_add(data->root_node, data->animation_node);
+   evas_canvas3d_node_mesh_add(data->mesh_node, data->mesh);
+   evas_canvas3d_node_position_set(data->mesh_node, 0.0, 0.0, 3.0);
 
    data->mesh_node1 =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                    evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_MESH));
+      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));
 
-   eo_do(data->root_node, evas_canvas3d_node_member_add(data->mesh_node1));
-   eo_do(data->mesh_node1, evas_canvas3d_node_mesh_add(data->mesh1),
-                           evas_canvas3d_node_scale_set(3, 3, 3));
+   evas_canvas3d_node_member_add(data->root_node, data->mesh_node1);
+   evas_canvas3d_node_mesh_add(data->mesh_node1, data->mesh1);
+   evas_canvas3d_node_scale_set(data->mesh_node1, 3, 3, 3);
 
-   eo_do(data->mesh, evas_canvas3d_mesh_fog_enable_set(EINA_TRUE), evas_canvas3d_mesh_fog_color_set(FOG_COLOR, FOG_FACTOR));
-   eo_do(data->mesh1, evas_canvas3d_mesh_fog_enable_set(EINA_TRUE), evas_canvas3d_mesh_fog_color_set(FOG_COLOR, FOG_FACTOR));
+   evas_canvas3d_mesh_fog_enable_set(data->mesh, EINA_TRUE);
+   evas_canvas3d_mesh_fog_color_set(data->mesh, FOG_COLOR, FOG_FACTOR);
+   evas_canvas3d_mesh_fog_enable_set(data->mesh1, EINA_TRUE);
+   evas_canvas3d_mesh_fog_color_set(data->mesh1, FOG_COLOR, FOG_FACTOR);
 }
 
 static void
@@ -186,21 +172,18 @@ _scene_setup(Scene_Data *data)
 {
    data->scene = eo_add(EVAS_CANVAS3D_SCENE_CLASS, evas);
 
-   eo_do(data->scene,
-         evas_canvas3d_scene_size_set(WIDTH, HEIGHT);
-         evas_canvas3d_scene_background_color_set(FOG_COLOR, 1));
+   evas_canvas3d_scene_size_set(data->scene, WIDTH, HEIGHT);
+   evas_canvas3d_scene_background_color_set(data->scene, FOG_COLOR, 1);
 
    data->root_node =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
-                    evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_NODE));
+      eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    _camera_setup(data);
    _light_setup(data);
    _mesh_setup(data);
 
-   eo_do(data->scene,
-         evas_canvas3d_scene_root_node_set(data->root_node),
-         evas_canvas3d_scene_camera_node_set(data->camera_node));
+   evas_canvas3d_scene_root_node_set(data->scene, data->root_node);
+   evas_canvas3d_scene_camera_node_set(data->scene, data->camera_node);
 }
 
 int
@@ -227,20 +210,18 @@ main(void)
 
    /* Add a background rectangle objects. */
    background = eo_add(EVAS_RECTANGLE_CLASS, evas);
-   eo_do(background,
-         efl_gfx_color_set(0, 0, 0, 255),
-         efl_gfx_size_set(WIDTH, HEIGHT),
-         efl_gfx_visible_set(EINA_TRUE));
+   efl_gfx_color_set(background, 0, 0, 0, 255);
+   efl_gfx_size_set(background, WIDTH, HEIGHT);
+   efl_gfx_visible_set(background, EINA_TRUE);
 
    /* Add an image object for 3D scene rendering. */
    image = evas_object_image_filled_add(evas);
 
-   eo_do(image,
-         efl_gfx_size_set(WIDTH, HEIGHT),
-         efl_gfx_visible_set(EINA_TRUE));
+   efl_gfx_size_set(image, WIDTH, HEIGHT);
+   efl_gfx_visible_set(image, EINA_TRUE);
 
    /* Set the image object as render target for 3D scene. */
-   eo_do(image, evas_obj_image_scene_set(data.scene));
+   evas_obj_image_scene_set(image, data.scene);
 
    /* Add animation timer callback. */
    ecore_animator_frametime_set(0.008);

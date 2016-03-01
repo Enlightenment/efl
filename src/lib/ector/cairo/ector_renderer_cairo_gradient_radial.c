@@ -34,7 +34,7 @@ struct _Ector_Renderer_Cairo_Gradient_Radial_Data
 static Eina_Bool
 _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_prepare(Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd)
 {
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, ector_renderer_prepare());
+   ector_renderer_prepare(eo_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS));
 
    if (!pd->parent)
      {
@@ -82,7 +82,7 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_draw(Eo *obj, 
    pat = _ector_renderer_cairo_gradient_radial_prepare(obj, grd, gd, mul_col);
    if (!pat) return EINA_FALSE;
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, ector_renderer_draw(op, clips, mul_col));
+   ector_renderer_draw(eo_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS), op, clips, mul_col);
 
    cairo_arc(pd->parent->cairo,
              grd->radial.x, grd->radial.y,
@@ -139,7 +139,7 @@ _ector_renderer_cairo_gradient_radial_eo_base_finalize(Eo *obj, Ector_Renderer_C
 {
    Ector_Renderer_Generic_Base_Data *base;
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, obj = eo_finalize());
+   obj = eo_finalize(eo_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS));
    if (!obj) return NULL;
 
    base = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS);
@@ -165,7 +165,7 @@ _ector_renderer_cairo_gradient_radial_eo_base_destructor(Eo *obj,
    base = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS);
    eo_data_xunref(base->surface, pd->parent, obj);
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS));
 }
 
 static void
@@ -174,8 +174,7 @@ _ector_renderer_cairo_gradient_radial_efl_gfx_gradient_base_stop_set(Eo *obj,
                                                                      const Efl_Gfx_Gradient_Stop *colors,
                                                                      unsigned int length)
 {
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS,
-               efl_gfx_gradient_stop_set(colors, length));
+   efl_gfx_gradient_stop_set(eo_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS), colors, length);
 }
 
 static unsigned int
@@ -185,8 +184,7 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_crc_get(Eo *ob
    Ector_Renderer_Generic_Gradient_Data *gd;
    unsigned int crc;
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS,
-               crc = ector_renderer_crc_get());
+   crc = ector_renderer_crc_get(eo_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS));
 
    grd = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_MIXIN);
    gd = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_MIXIN);

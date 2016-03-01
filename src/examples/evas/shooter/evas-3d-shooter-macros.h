@@ -110,111 +110,98 @@ typedef struct _vec2
 
 
 #define ENABLE_FOG(mesh)                                      \
-   eo_do(mesh, evas_canvas3d_mesh_fog_enable_set(EINA_TRUE),        \
-         evas_canvas3d_mesh_fog_color_set(FOG_COLOR, FOG_FACTOR));
+   evas_canvas3d_mesh_fog_enable_set(mesh, EINA_TRUE); \
+   evas_canvas3d_mesh_fog_color_set(mesh, FOG_COLOR, FOG_FACTOR);
 
 
 #define DISABLE_FOG(mesh)                                      \
-   eo_do(mesh, evas_canvas3d_mesh_fog_enable_set(EINA_FALSE));
+   evas_canvas3d_mesh_fog_enable_set(mesh, EINA_FALSE);
 
 
 #define ENABLE_NORMAL(mesh)                                                  \
-   eo_do(mesh, evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP));
+   evas_canvas3d_mesh_shade_mode_set(mesh, EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP);
 
 
 #define DISABLE_NORMAL(mesh)                                               \
-   eo_do(mesh, evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_PHONG));
+   evas_canvas3d_mesh_shade_mode_set(mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
 
 
 #define ADD_MESH(Object, Name, a, d, s)                                                   \
    data->material_##Object = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);                        \
                                                                                           \
-   eo_do(data->material_##Object,                                                         \
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),                \
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE),                \
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE),               \
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, EINA_TRUE),                 \
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, a, a, a, 1.0),              \
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE,  d, d, d, 1.0),             \
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, s, s, s, 1.0),             \
-         evas_canvas3d_material_shininess_set(50.0));                                           \
+   evas_canvas3d_material_enable_set(data->material_##Object, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE); \
+   evas_canvas3d_material_enable_set(data->material_##Object, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE); \
+   evas_canvas3d_material_enable_set(data->material_##Object, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE); \
+   evas_canvas3d_material_enable_set(data->material_##Object, EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, EINA_TRUE); \
+   evas_canvas3d_material_color_set(data->material_##Object, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, a, a, a, 1.0); \
+   evas_canvas3d_material_color_set(data->material_##Object, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, d, d, d, 1.0); \
+   evas_canvas3d_material_color_set(data->material_##Object, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, s, s, s, 1.0); \
+   evas_canvas3d_material_shininess_set(data->material_##Object, 50.0);                                           \
                                                                                           \
    data->mesh_##Name = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
 
 #define SETUP_DEFAULT_MESH(Object, Name, Shade_Mode)                                      \
-   eo_do(data->mesh_##Name,                                                               \
-         evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_##Shade_Mode),                    \
-         evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES),             \
-         evas_canvas3d_mesh_frame_material_set(0, data->material_##Object));
+   evas_canvas3d_mesh_shade_mode_set(data->mesh_##Name, EVAS_CANVAS3D_SHADE_MODE_##Shade_Mode); \
+   evas_canvas3d_mesh_vertex_assembly_set(data->mesh_##Name, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES); \
+   evas_canvas3d_mesh_frame_material_set(data->mesh_##Name, 0, data->material_##Object);
 
 
 #define SETUP_MESH_NODE(Name)                                                             \
-   data->mesh_node_##Name = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,                              \
-                                   evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_MESH));     \
+   data->mesh_node_##Name = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH));     \
                                                                                           \
-   eo_do(data->mesh_node_##Name,                                                          \
-         evas_canvas3d_node_mesh_add(data->mesh_##Name));
+   evas_canvas3d_node_mesh_add(data->mesh_node_##Name, data->mesh_##Name);
 
 
 #define MATERIAL_TEXTURE_SET(Object, Name, file, image)                                   \
-   eo_do(data->mesh_##Name,                                                               \
-         efl_file_set(file, NULL));                                                       \
+   efl_file_set(data->mesh_##Name, file, NULL);                                                       \
                                                                                           \
    SETUP_DEFAULT_MESH(Object, Name, PHONG)                                                \
    data->texture_diffuse_##Object = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                  \
                                                                                           \
-   eo_do(data->texture_diffuse_##Object,                                                  \
-         evas_canvas3d_texture_atlas_enable_set(EINA_FALSE),                                    \
-         evas_canvas3d_texture_file_set(image, NULL),                                           \
-         evas_canvas3d_texture_filter_set(EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST,                       \
-                                    EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST),                      \
-         evas_canvas3d_texture_wrap_set(EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT));   \
+   evas_canvas3d_texture_atlas_enable_set(data->texture_diffuse_##Object, EINA_FALSE); \
+   evas_canvas3d_texture_file_set(data->texture_diffuse_##Object, image, NULL); \
+   evas_canvas3d_texture_filter_set(data->texture_diffuse_##Object, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, \
+                                    EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST); \
+   evas_canvas3d_texture_wrap_set(data->texture_diffuse_##Object, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);   \
                                                                                           \
-   eo_do(data->material_##Object,                                                         \
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE,                           \
-                                      data->texture_diffuse_##Object),                    \
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT,                           \
-                                      data->texture_diffuse_##Object));
+   evas_canvas3d_material_texture_set(data->material_##Object, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, \
+                                      data->texture_diffuse_##Object); \
+   evas_canvas3d_material_texture_set(data->material_##Object, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, \
+                                      data->texture_diffuse_##Object);
 
 
 #define CUBE_TEXTURE_SET(Object, Name, vertex, image)                                           \
-   eo_do(data->mesh_##Name,                                                                     \
-         evas_canvas3d_mesh_from_primitive_set(0, data->cube_primitive),                              \
-         evas_canvas3d_mesh_frame_vertex_data_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD,                         \
-                                            2 * sizeof(float), vertex));                        \
+   evas_canvas3d_mesh_from_primitive_set(data->mesh_##Name, 0, data->cube_primitive); \
+   evas_canvas3d_mesh_frame_vertex_data_set(data->mesh_##Name, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, \
+                                            2 * sizeof(float), vertex);                        \
    SETUP_DEFAULT_MESH(Object, Name, NORMAL_MAP)                                                 \
    data->texture_diffuse_##Object = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                        \
                                                                                                 \
-   eo_do(data->texture_diffuse_##Object,                                                        \
-         evas_canvas3d_texture_atlas_enable_set(EINA_FALSE),                                          \
-         evas_canvas3d_texture_file_set(image, NULL),                                                 \
-         evas_canvas3d_texture_filter_set(EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST,                             \
-                                    EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST),                            \
-         evas_canvas3d_texture_wrap_set(EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT));         \
+   evas_canvas3d_texture_atlas_enable_set(data->texture_diffuse_##Object, EINA_FALSE); \
+   evas_canvas3d_texture_file_set(data->texture_diffuse_##Object, image, NULL); \
+   evas_canvas3d_texture_filter_set(data->texture_diffuse_##Object, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, \
+                                    EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST); \
+   evas_canvas3d_texture_wrap_set(data->texture_diffuse_##Object, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);         \
                                                                                                 \
-   eo_do(data->material_##Object,                                                               \
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE,                                 \
-                                      data->texture_diffuse_##Object),                          \
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT,                                 \
-                                      data->texture_diffuse_##Object));
+   evas_canvas3d_material_texture_set(data->material_##Object, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, \
+                                      data->texture_diffuse_##Object); \
+   evas_canvas3d_material_texture_set(data->material_##Object, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, \
+                                      data->texture_diffuse_##Object);
 
 
 #define NORMAL_SET(Object, Name, normal)                                                  \
    data->texture_normal_##Object = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                   \
                                                                                           \
-   eo_do(data->texture_normal_##Object,                                                   \
-         evas_canvas3d_texture_atlas_enable_set(EINA_FALSE),                                    \
-         evas_canvas3d_texture_file_set(normal, NULL),                                          \
-         evas_canvas3d_texture_filter_set(EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST,                       \
-                                    EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST),                      \
-         evas_canvas3d_texture_wrap_set(EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT));   \
+   evas_canvas3d_texture_atlas_enable_set(data->texture_normal_##Object, EINA_FALSE); \
+   evas_canvas3d_texture_file_set(data->texture_normal_##Object, normal, NULL); \
+   evas_canvas3d_texture_filter_set(data->texture_normal_##Object, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, \
+                                    EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST); \
+   evas_canvas3d_texture_wrap_set(data->texture_normal_##Object, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);   \
                                                                                           \
-   eo_do(data->material_##Object,                                                         \
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL,                            \
-                                      data->texture_normal_##Object));                    \
+   evas_canvas3d_material_texture_set(data->material_##Object, EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, \
+                                      data->texture_normal_##Object);                    \
                                                                                           \
-   eo_do(data->mesh_##Name,                                                               \
-         evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP));
+   evas_canvas3d_mesh_shade_mode_set(data->mesh_##Name, EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP);
 
 #define TEXTCOORDS_SET(Name, fb1, fb2, lr1, lr2, tb1, tb2)                      \
    static float  Name##_textcoords[] =                                          \

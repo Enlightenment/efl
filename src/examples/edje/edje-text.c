@@ -55,7 +55,7 @@ _on_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o EINA_
    fprintf(stderr, "Setting lang of this edje object to '%s'\n", lang[lang_idx]);
    env = getenv("LANGUAGE");
    setenv("LANGUAGE", lang[lang_idx], 1);
-   eo_do(o, edje_obj_language_set(lang[lang_idx]));
+   edje_obj_language_set(o, lang[lang_idx]);
    setenv("LANGUAGE", env, 1);
 }
 
@@ -108,7 +108,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    evas_object_resize(edje_obj, WIDTH - 40, HEIGHT - 40);
    evas_object_show(edje_obj);
    setenv("LANGUAGE", "en_IN", 1);
-   eo_do(edje_obj, edje_obj_language_set("en_IN"));
+   edje_obj_language_set(edje_obj, "en_IN");
    edje_object_text_change_cb_set(edje_obj, _on_text_change, NULL);
    edje_object_part_text_set(edje_obj, "part_two", "<b>Click here");
    edje_object_part_text_select_allow_set(edje_obj, "part_two", EINA_TRUE);
@@ -123,7 +123,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    evas_object_move(edje_obj_one, 0, 50);
    evas_object_resize(edje_obj_one, WIDTH - 40, HEIGHT - 40);
    evas_object_show(edje_obj_one);
-   eo_do(edje_obj_one, edje_obj_language_set("en_IN"));
+   edje_obj_language_set(edje_obj_one, "en_IN");
    edje_object_text_change_cb_set(edje_obj_one, _on_text_change, NULL);
    edje_object_part_text_set(edje_obj_one, "part_two", "<b>Click here");
    edje_object_part_text_select_allow_set(edje_obj_one, "part_two", EINA_TRUE);

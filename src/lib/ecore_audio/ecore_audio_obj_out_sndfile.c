@@ -43,7 +43,7 @@ static Eina_Bool _write_cb(void *data)
   /* TODO: Support mixing of multiple inputs */
   in = eina_list_data_get(out_obj->inputs);
 
-  eo_do(in, bread = ecore_audio_obj_in_read(buf, 4*1024));
+  bread = ecore_audio_obj_in_read(in, buf, 4*1024);
 
   if (bread == 0) {
       sf_write_sync(obj->handle);
@@ -66,19 +66,19 @@ _ecore_audio_out_sndfile_ecore_audio_out_input_attach(Eo *eo_obj, Ecore_Audio_Ou
   Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
   Eina_Bool ret2 = EINA_FALSE;
 
-  eo_do_super(eo_obj, MY_CLASS, ret2 = ecore_audio_obj_out_input_attach(in));
+  ret2 = ecore_audio_obj_out_input_attach(eo_super(eo_obj, MY_CLASS), in);
   if (!ret2)
     return EINA_FALSE;
 
-  eo_do(in, obj->sfinfo.samplerate = ecore_audio_obj_in_samplerate_get());
-  eo_do(in, obj->sfinfo.channels = ecore_audio_obj_in_channels_get());
+  obj->sfinfo.samplerate = ecore_audio_obj_in_samplerate_get(in);
+  obj->sfinfo.channels = ecore_audio_obj_in_channels_get(in);
 
   obj->handle = sf_open(ea_obj->source, SFM_WRITE, &obj->sfinfo);
 
   if (!obj->handle) {
     eina_stringshare_del(ea_obj->source);
     ea_obj->source = NULL;
-    eo_do_super(eo_obj, MY_CLASS, ecore_audio_obj_out_input_detach(in));
+    ecore_audio_obj_out_input_detach(eo_super(eo_obj, MY_CLASS), in);
     return EINA_FALSE;
   }
 
@@ -163,9 +163,9 @@ _ecore_audio_out_sndfile_eo_base_constructor(Eo *eo_obj, Ecore_Audio_Out_Sndfile
 {
   Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
 
-  eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
+  eo_obj = eo_constructor(eo_super(eo_obj, MY_CLASS));
 
-  eo_do(eo_obj, ecore_audio_obj_format_set(ECORE_AUDIO_FORMAT_OGG));
+  ecore_audio_obj_format_set(eo_obj, ECORE_AUDIO_FORMAT_OGG);
 
   // FIXME: Use writer from output
   out_obj->need_writer = EINA_FALSE;
@@ -182,7 +182,7 @@ _ecore_audio_out_sndfile_eo_base_destructor(Eo *eo_obj, Ecore_Audio_Out_Sndfile_
   if (out_obj->write_idler)
     ecore_idler_del(out_obj->write_idler);
 
-  eo_do_super(eo_obj, MY_CLASS, eo_destructor());
+  eo_destructor(eo_super(eo_obj, MY_CLASS));
 }
 
 #include "ecore_audio_out_sndfile.eo.c"

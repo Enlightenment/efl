@@ -2993,31 +2993,14 @@ evas_filter_program_state_set(Evas_Filter_Program *pgm, Evas_Object *eo_obj,
    pgm->state.next.name = next_state;
    pgm->state.next.value = next_val;
 
-   eo_do(eo_obj,
-         efl_gfx_color_get(&pgm->state.color.r,
-                           &pgm->state.color.g,
-                           &pgm->state.color.b,
-                           &pgm->state.color.a));
+   efl_gfx_color_get(eo_obj, &pgm->state.color.r, &pgm->state.color.g, &pgm->state.color.b, &pgm->state.color.a);
 
    if (eo_isa(eo_obj, EVAS_TEXT_CLASS))
      {
-        eo_do(eo_obj,
-              evas_obj_text_shadow_color_get(&pgm->state.text.shadow.r,
-                                             &pgm->state.text.shadow.g,
-                                             &pgm->state.text.shadow.b,
-                                             &pgm->state.text.shadow.a),
-              evas_obj_text_outline_color_get(&pgm->state.text.outline.r,
-                                              &pgm->state.text.outline.g,
-                                              &pgm->state.text.outline.b,
-                                              &pgm->state.text.outline.a),
-              evas_obj_text_glow_color_get(&pgm->state.text.glow.r,
-                                           &pgm->state.text.glow.g,
-                                           &pgm->state.text.glow.b,
-                                           &pgm->state.text.glow.a),
-              evas_obj_text_glow2_color_get(&pgm->state.text.glow2.r,
-                                            &pgm->state.text.glow2.g,
-                                            &pgm->state.text.glow2.b,
-                                            &pgm->state.text.glow2.a));
+        evas_obj_text_shadow_color_get(eo_obj, &pgm->state.text.shadow.r, &pgm->state.text.shadow.g, &pgm->state.text.shadow.b, &pgm->state.text.shadow.a);
+        evas_obj_text_outline_color_get(eo_obj, &pgm->state.text.outline.r, &pgm->state.text.outline.g, &pgm->state.text.outline.b, &pgm->state.text.outline.a);
+        evas_obj_text_glow_color_get(eo_obj, &pgm->state.text.glow.r, &pgm->state.text.glow.g, &pgm->state.text.glow.b, &pgm->state.text.glow.a);
+        evas_obj_text_glow2_color_get(eo_obj, &pgm->state.text.glow2.r, &pgm->state.text.glow2.g, &pgm->state.text.glow2.b, &pgm->state.text.glow2.a);
      }
 
    if (memcmp(&old_state, &pgm->state, sizeof(Evas_Filter_Program_State)) != 0)

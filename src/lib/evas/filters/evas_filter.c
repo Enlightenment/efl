@@ -42,7 +42,7 @@ _evas_image_get(Ector_Buffer *buf)
    if (!buf) return NULL;
    /* FIXME: This MAY return RGBA_Image because engine_image_set MAY pass an
     * RGBA_Image... Baaaaah */
-   eo_do(buf, evas_ector_buffer_engine_image_get(NULL, &image));
+   evas_ector_buffer_engine_image_get(buf, NULL, &image);
    return image;
 }
 

@@ -47,7 +47,7 @@ _eldbus_model_proxy_hash_free(Eina_Value *value)
 static Eo_Base*
 _eldbus_model_proxy_eo_base_constructor(Eo *obj, Eldbus_Model_Proxy_Data *pd)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
 
    pd->obj = obj;
    pd->load.status = EFL_MODEL_LOAD_STATUS_UNLOADED;
@@ -88,7 +88,7 @@ _eldbus_model_proxy_eo_base_destructor(Eo *obj, Eldbus_Model_Proxy_Data *pd)
    eina_stringshare_del(pd->name);
    eldbus_object_unref(pd->object);
 
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
 }
 
 static Efl_Model_Load_Status
@@ -294,7 +294,7 @@ _eldbus_model_proxy_efl_model_base_children_load(Eo *obj EINA_UNUSED, Eldbus_Mod
 
    count = eina_list_count(pd->children_list);
    if (count)
-     eo_do(pd->obj, eo_event_callback_call(EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED, &count));
+     eo_event_callback_call(pd->obj, EFL_MODEL_BASE_EVENT_CHILDREN_COUNT_CHANGED, &count);
 }
 
 static void
@@ -325,8 +325,7 @@ _eldbus_model_proxy_create_methods_children(Eldbus_Model_Proxy_Data *pd)
 
         INF("(%p) Creating method child: bus = %s, path = %s, method = %s::%s", pd->obj, bus, path, interface_name, method_name);
 
-        child = eo_add(ELDBUS_MODEL_METHOD_CLASS, NULL,
-                       eldbus_model_method_constructor(pd->proxy, method));
+        child = eo_add(ELDBUS_MODEL_METHOD_CLASS, NULL, eldbus_model_method_constructor(eoid, pd->proxy, method));
 
         pd->children_list = eina_list_append(pd->children_list, child);
      }
@@ -360,8 +359,7 @@ _eldbus_model_proxy_create_signals_children(Eldbus_Model_Proxy_Data *pd)
 
         DBG("(%p) Creating signal child: bus = %s, path = %s, signal = %s::%s", pd->obj, bus, path, interface_name, signal_name);
 
-        child = eo_add(ELDBUS_MODEL_SIGNAL_CLASS, NULL,
-                       eldbus_model_signal_constructor(pd->proxy, signal));
+        child = eo_add(ELDBUS_MODEL_SIGNAL_CLASS, NULL, eldbus_model_signal_constructor(eoid, pd->proxy, signal));
 
         pd->children_list = eina_list_append(pd->children_list, child);
      }
@@ -587,7 +585,7 @@ _eldbus_model_proxy_property_get_all_cb(void *data,
           .changed_properties = changed_properties
         };
 
-        eo_do(pd->obj, eo_event_callback_call(EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, &evt));
+        eo_event_callback_call(pd->obj, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, &evt);
      }
 
    efl_model_load_set(pd->obj, &pd->load, EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES);
@@ -628,7 +626,7 @@ _eldbus_model_proxy_property_set_cb(void *data,
       Efl_Model_Property_Event evt = {
         .changed_properties = pd->properties_array
       };
-      eo_do(pd->obj, eo_event_callback_call(EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, &evt));
+      eo_event_callback_call(pd->obj, EFL_MODEL_BASE_EVENT_PROPERTIES_CHANGED, &evt);
 
       efl_model_property_changed_notify(pd->obj, property_set_data->property);
    }

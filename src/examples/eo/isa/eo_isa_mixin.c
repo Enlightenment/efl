@@ -13,7 +13,7 @@ _a_square_get(Eo *obj, void *class_data EINA_UNUSED)
 {
    int a;
 
-   eo_do(obj, a = simple_a_get());
+   a = simple_a_get(obj);
    printf("%s %s\n", eo_class_name_get(MY_CLASS), __func__);
    return a * a;
 }

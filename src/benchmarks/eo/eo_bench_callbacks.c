@@ -21,7 +21,7 @@ bench_eo_callbacks_add(int request)
 
    for (i = 0 ; i < request ; i++)
      {
-        eo_do(obj, eo_event_callback_priority_add(SIMPLE_FOO, (short) i, _cb, NULL));
+        eo_event_callback_priority_add(obj, SIMPLE_FOO, (short) i, _cb, NULL);
      }
 
    eo_unref(obj);
@@ -57,7 +57,7 @@ bench_eo_callbacks_call(int request)
 
         for (j = 0 ; j < i ; j++)
           {
-             eo_do(obj[i], eo_event_callback_priority_add(SIMPLE_FOO, (short) j, _cb, NULL));
+             eo_event_callback_priority_add(obj[i], SIMPLE_FOO, (short) j, _cb, NULL);
           }
      }
 
@@ -66,7 +66,7 @@ bench_eo_callbacks_call(int request)
         for (j = 0 ; j < (int) (distribution[i] * request) ; j++)
           {
              /* Miss finding the callbacks on purpose, so we measure worst case scenario. */
-             eo_do(obj[i], eo_event_callback_call(SIMPLE_BAR, NULL));
+             eo_event_callback_call(obj[i], SIMPLE_BAR, NULL);
           }
      }
 

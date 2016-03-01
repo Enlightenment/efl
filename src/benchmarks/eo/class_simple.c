@@ -15,7 +15,7 @@ _other_call(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, Eo *other, int ti
 {
    if (times > 0)
      {
-        eo_do(other, simple_other_call(obj, times-1));
+        simple_other_call(other, obj, times-1);
      }
 }
 

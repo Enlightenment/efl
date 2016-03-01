@@ -18,16 +18,21 @@ main(int argc, char *argv[])
 
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
 
-   eo_do(obj, simple_a_set(1), simple_b_set(2));
+   simple_a_set(obj, 1);
+   simple_b_set(obj, 2);
 
    int a = 0, b = 0, sum = 0;
-   eo_do(obj, a = simple_a_get(), b = simple_b_get(), sum = interface_ab_sum_get());
+   a = simple_a_get(obj);
+   b = simple_b_get(obj);
+   sum = interface_ab_sum_get(obj);
    fail_if(sum != a + b);
 
    sum = 0;
-   eo_do(obj, sum = interface_ab_sum_get(), sum = interface_ab_sum_get());
+   sum = interface_ab_sum_get(obj);
+   sum = interface_ab_sum_get(obj);
    fail_if(sum != a + b);
-   eo_do(obj, sum = interface2_ab_sum_get2(), sum = interface2_ab_sum_get2());
+   sum = interface2_ab_sum_get2(obj);
+   sum = interface2_ab_sum_get2(obj);
    fail_if(sum != a + b + 1);
 
    eo_unref(obj);
