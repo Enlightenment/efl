@@ -160,6 +160,8 @@ _prototype_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina
    _params_generate(foo, ftype, var_as_ret, params, short_params);
    if (eina_strbuf_length_get(params))
       eina_strbuf_prepend_printf(params, ", ");
+   if (eina_strbuf_length_get(short_params))
+      eina_strbuf_prepend_printf(short_params, ", ");
 
    fname = eolian_function_name_get(foo);
    if (fname)
@@ -172,9 +174,9 @@ _prototype_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina
                {
                   eina_strbuf_append_printf
                   (super_invok,
-                   "   eo_do_super(obj, %s_%s, %s_%s(%s));\n",
-                   class_env.upper_eo_prefix, class_env.upper_classtype,
+                   "   %s_%s(eo_super(obj, %s_%s)%s);\n",
                    impl_env.lower_eo_prefix, eolian_function_name_get(foo),
+                   class_env.upper_eo_prefix, class_env.upper_classtype,
                    eina_strbuf_string_get(short_params));
                }
           }

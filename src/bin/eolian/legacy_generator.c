@@ -23,9 +23,7 @@ tmpl_eapi_body[] ="\
 EAPI @#ret_type\n\
 @#eapi_func(@#full_params)\n\
 {\n\
-   @#ret_type ret;\n\
-   eo_do(@#eo_obj, ret = @#eo_func(@#eo_params));\n\
-   return ret;\n\
+   return @#eo_func(@#eo_obj@#eo_params);\n\
 }\n\
 ";
 static const char
@@ -34,7 +32,7 @@ tmpl_eapi_body_void[] ="\
 EAPI void\n\
 @#eapi_func(@#full_params)\n\
 {\n\
-   eo_do(@#eo_obj, @#eo_func(@#eo_params));\n\
+   @#eo_func(@#eo_obj@#eo_params);\n\
 }\n\
 ";
 
@@ -266,8 +264,7 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
         if (eina_strbuf_length_get(fparam)) eina_strbuf_append(fparam, ", ");
         eina_strbuf_append_printf(fparam, "%s %s", ptype, pname);
         eina_stringshare_del(ptype);
-        if (eina_strbuf_length_get(eoparam)) eina_strbuf_append(eoparam, ", ");
-        eina_strbuf_append_printf(eoparam, "%s", pname);
+        eina_strbuf_append_printf(eoparam, ", %s", pname);
      }
    eina_iterator_free(itr);
    if (!var_as_ret)
@@ -286,8 +283,7 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
             eina_strbuf_append_printf(fparam, "%s%s%s%s",
                   ptype, had_star?"":" ", add_star?"*":"", pname);
             eina_stringshare_del(ptype);
-            if (eina_strbuf_length_get(eoparam)) eina_strbuf_append(eoparam, ", ");
-            eina_strbuf_append_printf(eoparam, "%s", pname);
+            eina_strbuf_append_printf(eoparam, ", %s", pname);
         }
       eina_iterator_free(itr);
    }
