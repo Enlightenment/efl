@@ -2596,10 +2596,10 @@ _edje_part_recalc_single_filter(Edje *ed,
           {
              Edje_Part_Description_Spec_Filter_Data *data = &(filter->data[k]);
              if (data->invalid_cc)
-               continue;
+                continue;
              if (!data->value)
                {
-                  eo_do(obj, efl_gfx_filter_data_set(data->name, NULL, EINA_FALSE));
+                  efl_gfx_filter_data_set(data->name, NULL, EINA_FALSE);
                }
              else if (!strncmp(data->value, "color_class('", sizeof("color_class('") - 1))
                {
@@ -2629,7 +2629,7 @@ _edje_part_recalc_single_filter(Edje *ed,
                                           (int) cc->r2, (int) cc->g2, (int) cc->b2, (int) cc->a2,
                                           (int) cc->r3, (int) cc->g3, (int) cc->b3, (int) cc->a3);
                                  buffer[len - 1] = 0;
-                                 eo_do(obj, efl_gfx_filter_data_set(data->name, buffer, EINA_TRUE));
+                                 efl_gfx_filter_data_set(data->name, buffer, EINA_TRUE);
                               }
                             else
                               {
@@ -2646,14 +2646,14 @@ _edje_part_recalc_single_filter(Edje *ed,
                     }
                }
              else
-                eo_do(obj, efl_gfx_filter_data_set(data->name, data->value, EINA_FALSE));
+                efl_gfx_filter_data_set(data->name, data->value, EINA_FALSE);
           }
      }
-   eo_do(obj, efl_gfx_filter_program_set(code, filter->name));
+   efl_gfx_filter_program_set(code, filter->name);
    if (prev_sources != filter_sources)
      {
         /* remove sources that are not there anymore
-               * this O(n^2) loop assumes a very small number of sources */
+         * this O(n^2) loop assumes a very small number of sources */
         EINA_LIST_FOREACH(prev_sources, li1, src1)
           {
              Eina_Bool found = 0;
@@ -2669,12 +2669,12 @@ _edje_part_recalc_single_filter(Edje *ed,
                {
                   part = strchr(src1, ':');
                   if (!part)
-                    eo_do(obj, efl_gfx_filter_source_set(src1, NULL));
+                     efl_gfx_filter_source_set(src1, NULL);
                   else
                     {
                        char *name = strdup(src1);
                        name[part - src1] = 0;
-                       eo_do(obj, efl_gfx_filter_source_set(name, NULL));
+                       efl_gfx_filter_source_set(obj, name, NULL);
                        free(name);
                     }
                }
@@ -2693,21 +2693,21 @@ _edje_part_recalc_single_filter(Edje *ed,
              else
                 part = src1;
              rp = _edje_real_part_get(ed, part);
-             eo_do(obj, efl_gfx_filter_source_set(name ? name : part, rp ? rp->object : NULL));
+             efl_gfx_filter_source_set(name ? name : part, rp ? rp->object : NULL);
              free(name);
           }
      }
    /* pass edje state for transitions */
    if (ep->param2)
      {
-        eo_do(obj, efl_gfx_filter_state_set(chosen_desc->state.name, chosen_desc->state.value,
-                                            ep->param2->description->state.name, ep->param2->description->state.value,
-                                            pos));
+        efl_gfx_filter_state_set(chosen_desc->state.name, chosen_desc->state.value,
+              ep->param2->description->state.name, ep->param2->description->state.value,
+              pos);
      }
    else
      {
-        eo_do(obj, efl_gfx_filter_state_set(chosen_desc->state.name, chosen_desc->state.value,
-                                            NULL, 0.0, pos));
+        efl_gfx_filter_state_set(chosen_desc->state.name, chosen_desc->state.value,
+              NULL, 0.0, pos);
      }
 }
 
