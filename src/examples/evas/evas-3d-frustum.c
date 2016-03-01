@@ -314,8 +314,8 @@ _light_setup(Scene_Data *data)
 {
    data->light = eo_add(EVAS_CANVAS3D_LIGHT_CLASS, evas);
    eo_do(data->light,
-         evas_canvas3d_light_ambient_set( 0.2, 0.2, 0.2, 1.0);
-         evas_canvas3d_light_diffuse_set(1.0, 1.0, 1.0, 1.0);
+         evas_canvas3d_light_ambient_set( 0.2, 0.2, 0.2, 1.0),
+         evas_canvas3d_light_diffuse_set(1.0, 1.0, 1.0, 1.0),
          evas_canvas3d_light_specular_set(1.0, 1.0, 1.0, 1.0));
 
    data->light_node = eo_add(EVAS_CANVAS3D_NODE_CLASS,evas,
