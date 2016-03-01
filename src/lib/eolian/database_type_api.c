@@ -340,8 +340,14 @@ eolian_type_c_type_named_get(const Eolian_Type *tp, const char *name)
 EAPI Eina_Stringshare *
 eolian_typedecl_c_type_named_get(const Eolian_Typedecl *tp, const char *name)
 {
+   Eina_Stringshare *ret;
+   Eina_Strbuf *buf;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   return eolian_type_c_type_named_get(tp->parent, name);
+   buf = eina_strbuf_new();
+   database_typedecl_to_str(tp, buf, name);
+   ret = eina_stringshare_add(eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
+   return ret;
 }
 
 EAPI Eina_Stringshare *
