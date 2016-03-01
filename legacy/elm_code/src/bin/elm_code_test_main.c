@@ -34,24 +34,22 @@ static void _append_line(Elm_Code_File *file, const char *line)
 }
 
 static Eina_Bool
-_elm_code_test_line_clicked_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED,
-                               const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_elm_code_test_line_clicked_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Elm_Code_Line *line;
 
-   line = (Elm_Code_Line *)event_info;
+   line = (Elm_Code_Line *)event->event_info;
 
    printf("CLICKED line %d\n", line->number);
    return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool
-_elm_code_test_line_done_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED,
-                            const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_elm_code_test_line_done_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Elm_Code_Line *line;
 
-   line = (Elm_Code_Line *)event_info;
+   line = (Elm_Code_Line *)event->event_info;
 
    if (line->number == 1)
      elm_code_line_token_add(line, 17, 24, 1, ELM_CODE_TOKEN_TYPE_COMMENT);

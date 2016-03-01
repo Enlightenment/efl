@@ -474,14 +474,13 @@ _elm_code_widget_fill(Elm_Code_Widget *widget)
 }
 
 static Eina_Bool
-_elm_code_widget_line_cb(void *data, Eo *obj EINA_UNUSED,
-                         const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+_elm_code_widget_line_cb(void *data, const Eo_Event *event)
 {
    Elm_Code_Line *line;
    Elm_Code_Widget *widget;
    Eina_Bool visible;
 
-   line = (Elm_Code_Line *)event_info;
+   line = (Elm_Code_Line *)event->event_info;
    widget = (Elm_Code_Widget *)data;
 
    eo_do(widget, visible = elm_obj_code_widget_line_visible_get(line));
@@ -495,8 +494,7 @@ _elm_code_widget_line_cb(void *data, Eo *obj EINA_UNUSED,
 }
 
 static Eina_Bool
-_elm_code_widget_file_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                         void *event_info EINA_UNUSED)
+_elm_code_widget_file_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Code_Widget *widget;
 
@@ -507,8 +505,7 @@ _elm_code_widget_file_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Descrip
 }
 
 static Eina_Bool
-_elm_code_widget_selection_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                              void *event_info EINA_UNUSED)
+_elm_code_widget_selection_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Code_Widget *widget;
 
@@ -519,8 +516,7 @@ _elm_code_widget_selection_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_De
 }
 
 static Eina_Bool
-_elm_code_widget_selection_clear_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
-                                    void *event_info EINA_UNUSED)
+_elm_code_widget_selection_clear_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Code_Widget *widget;
 
