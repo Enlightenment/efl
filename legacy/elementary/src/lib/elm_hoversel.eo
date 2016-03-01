@@ -1,3 +1,4 @@
+import elm_icon;
 class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
                     Evas.Clickable_Interface,
                     Elm.Interface_Atspi_Widget_Action)
