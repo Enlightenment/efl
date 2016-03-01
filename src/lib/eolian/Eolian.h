@@ -1330,31 +1330,20 @@ EAPI Eina_Iterator *eolian_typedecl_structs_get_by_file(const char *fname);
 EAPI Eina_Iterator *eolian_typedecl_enums_get_by_file(const char *fname);
 
 /*
- * @brief Get the type of a type (regular, function, pointer)
+ * @brief Get the type of a type declaration.
  *
- * @param[in] tp the type.
- * @return an Eolian_Type_Type.
+ * @param[in] tp the type declaration.
+ * @return an Eolian_Typedecl_Type.
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Type_Type eolian_type_type_get(const Eolian_Type *tp);
 EAPI Eolian_Typedecl_Type eolian_typedecl_type_get(const Eolian_Typedecl *tp);
-
-/*
- * @brief Get an iterator to all subtypes of a type.
- *
- * @param[in] tp the type.
- * @return the iterator when @c tp is a complex type.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_type_subtypes_get(const Eolian_Type *tp);
 
 /*
  * @brief Get an iterator to all fields of a struct type.
  *
- * @param[in] tp the type.
- * @return the iterator when @c tp is EOLIAN_TYPE_STRUCT, NULL otherwise.
+ * @param[in] tp the type declaration.
+ * @return the iterator when @c tp is EOLIAN_TYPEDECL_STRUCT, NULL otherwise.
  *
  * @ingroup Eolian
  */
@@ -1363,9 +1352,9 @@ EAPI Eina_Iterator *eolian_typedecl_struct_fields_get(const Eolian_Typedecl *tp)
 /*
  * @brief Get a field of a struct type.
  *
- * @param[in] tp the type.
+ * @param[in] tp the type declaration.
  * @param[in] field the field name.
- * @return the field when @c tp is EOLIAN_TYPE_STRUCT, @c field is not NULL
+ * @return the field when @c tp is EOLIAN_TYPEDECL_STRUCT, @c field is not NULL
  * and the field exists, NULL otherwise.
  *
  * @ingroup Eolian
@@ -1405,8 +1394,8 @@ EAPI const Eolian_Type *eolian_typedecl_struct_field_type_get(const Eolian_Struc
 /*
  * @brief Get an iterator to all fields of an enum type.
  *
- * @param[in] tp the type.
- * @return the iterator when @c tp is EOLIAN_TYPE_ENUM, NULL otherwise.
+ * @param[in] tp the type declaration.
+ * @return the iterator when @c tp is EOLIAN_TYPEDECL_ENUM, NULL otherwise.
  *
  * @ingroup Eolian
  */
@@ -1415,9 +1404,9 @@ EAPI Eina_Iterator *eolian_typedecl_enum_fields_get(const Eolian_Typedecl *tp);
 /*
  * @brief Get a field of an enum type.
  *
- * @param[in] tp the type.
+ * @param[in] tp the type declaration.
  * @param[in] field the field name.
- * @return the field when @c tp is EOLIAN_TYPE_ENUM, @c field is not NULL,
+ * @return the field when @c tp is EOLIAN_TYPEDECL_ENUM, @c field is not NULL,
  * field exists and has a value set, NULL otherwise.
  *
  * Keep in mind that this can return NULL for an existing field, particularly
@@ -1478,7 +1467,7 @@ EAPI const Eolian_Expression *eolian_typedecl_enum_field_value_get(const Eolian_
  * @brief Get the legacy prefix of enum field names. When not specified,
  * enum name is used.
  *
- * @param[in] tp the type.
+ * @param[in] tp the type declaration.
  * @return the legacy prefix or NULL.
  *
  * @ingroup Eolian
@@ -1488,7 +1477,7 @@ EAPI Eina_Stringshare *eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typed
 /*
  * @brief Get the documentation of a struct/alias type.
  *
- * @param[in] tp the type.
+ * @param[in] tp the type declaration.
  * @return the documentation when @c tp is EOLIAN_TYPE_STRUCT or
  * EOLIAN_TYPE_STRUCT_OPAQUE, NULL otherwise.
  *
@@ -1497,7 +1486,145 @@ EAPI Eina_Stringshare *eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typed
 EAPI const Eolian_Documentation *eolian_typedecl_documentation_get(const Eolian_Typedecl *tp);
 
 /*
- * @brief Get the filename of a struct/alias type.
+ * @brief Get the filename of a type declaration.
+ *
+ * @param[in] tp the type declaration.
+ * @return the filename.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_typedecl_file_get(const Eolian_Typedecl *tp);
+
+/*
+ * @brief Get the base type of an alias declaration.
+ *
+ * @param[in] tp the type declaration.
+ * @return the base type when @c tp is an alias, NULL otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Type *eolian_typedecl_base_type_get(const Eolian_Typedecl *tp);
+
+/*
+ * @brief Get the lowest base type of an alias stack.
+ *
+ * If the given typedecl is an alias, it returns the result of
+ * eolian_type_aliased_base_get on its base type. Otherwise this returns NULL.
+ *
+ * @param[in] tp the type declaration.
+ * @return the lowest alias base or the given type.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Type *eolian_typedecl_aliased_base_get(const Eolian_Typedecl *tp);
+
+/*
+ * @brief Check if a struct or alias type declaration is extern.
+ *
+ * @param[in] tp the type declaration.
+ * @return EINA_TRUE if it's extern, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
+
+/*
+ * @brief Get the full C type name of the given type declaration with a name.
+ *
+ * @param[in] tp the type declaration.
+ * @param[in] name the name.
+ * @return The C type name assuming @c tp is not NULL.
+ *
+ * Name is ignored for alias types and they're turned into C typedefs.
+ *
+ * Keep in mind that if @c name is NULL, the name won't be included.
+ * Also, you're responsible for deleting the stringshare.
+ *
+ * @see eolian_typedecl_c_type_get
+ * @see eolian_type_c_type_named_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_typedecl_c_type_named_get(const Eolian_Typedecl *tp, const char *name);
+
+/*
+ * @brief Get the full C type name of the given type without a name.
+ *
+ * @param[in] tp the type declaration.
+ * @return The C type name assuming @c tp is not NULL.
+ *
+ * This behaves exactly like eolian_typedecl_c_type_named_get when name is NULL.
+ *
+ * @see eolian_typedecl_c_type_named_get
+ * @see eolian_type_c_type_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_typedecl_c_type_get(const Eolian_Typedecl *tp);
+
+/*
+ * @brief Get the name of the given type declaration. Keep in mind that the
+ * name doesn't include namespaces.
+ *
+ * @param[in] tp the type declaration.
+ * @return the name.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_typedecl_name_get(const Eolian_Typedecl *tp);
+
+/*
+ * @brief Get the full (namespaced) name of a type declaration.
+ *
+ * @param[in] tp the type declaration.
+ * @return the name.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_typedecl_full_name_get(const Eolian_Typedecl *tp);
+
+/*
+ * @brief Get an iterator to the list of namespaces of the given type decl.
+ *
+ * @param[in] tp the type declaration.
+ * @return the iterator.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_typedecl_namespaces_get(const Eolian_Typedecl *tp);
+
+/*
+ * @brief Get the name of the function used to free this type declaration.
+ *
+ * @param[in] tp the type declaration.
+ * @return the free func name.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_typedecl_free_func_get(const Eolian_Typedecl *tp);
+
+/*
+ * @brief Get the type of a type.
+ *
+ * @param[in] tp the type.
+ * @return an Eolian_Type_Type.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Type_Type eolian_type_type_get(const Eolian_Type *tp);
+
+/*
+ * @brief Get an iterator to all subtypes of a type.
+ *
+ * @param[in] tp the type.
+ * @return the iterator when @c tp is a complex type.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_type_subtypes_get(const Eolian_Type *tp);
+
+/*
+ * @brief Get the filename of a type.
  *
  * @param[in] tp the type.
  * @return the filename.
@@ -1505,32 +1632,37 @@ EAPI const Eolian_Documentation *eolian_typedecl_documentation_get(const Eolian_
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_file_get(const Eolian_Type *tp);
-EAPI Eina_Stringshare *eolian_typedecl_file_get(const Eolian_Typedecl *tp);
 
 /*
- * @brief Get the base type of a pointer, alias or regular type.
- *
- * For pointers and aliases, it's a simple lookup. For regular types, it
- * tries to look up alias, struct and enum in that order.
+ * @brief Get the base type of a pointer type.
  *
  * @param[in] tp the type.
- * @return the base type when @c tp is a pointer or alias, NULL otherwise.
+ * @return the base type when @c tp is a pointer, NULL otherwise.
  *
  * @ingroup Eolian
  */
 EAPI const Eolian_Type *eolian_type_base_type_get(const Eolian_Type *tp);
-EAPI const Eolian_Type *eolian_typedecl_base_type_get(const Eolian_Typedecl *tp);
+
+/*
+ * @brief Get the declaration a regular type points to.
+ *
+ * This tries to look up alias, struct and enum in that order.
+ *
+ * @param[in] tp the type.
+ * @return the pointed to type decalration or NULL.
+ *
+ * @ingroup Eolian
+ */
 EAPI const Eolian_Typedecl *eolian_type_typedecl_get(const Eolian_Type *tp);
 
 /*
  * @brief Get the lowest base type of an alias stack.
  *
- * If the given type is an alias, it returns the result of a recursive call
- * to this function on its base type. If it's a regular type, it first tries
- * to retrieve its base using eolian_type_base_type_get and if the retrieved
- * base is an alias, returns a recursive call of this function on it. Otherwise
- * it returns the given type. This is useful in order to retrieve what an
- * aliased type actually is while still having convenience.
+ * If this is a regular type, it first tries to retrieve its base declaration
+ * using eolian_type_typedecl_get and if the retrieved base is an alias, returns
+ * a call of eolian_typedecl_aliased_base_get function on it. Otherwise it
+ * returns the given type. This is useful in order to retrieve what an aliased
+ * type actually is while still having convenience.
  *
  * @param[in] tp the type.
  * @return the lowest alias base or the given type.
@@ -1538,7 +1670,6 @@ EAPI const Eolian_Typedecl *eolian_type_typedecl_get(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI const Eolian_Type *eolian_type_aliased_base_get(const Eolian_Type *tp);
-EAPI const Eolian_Type *eolian_typedecl_aliased_base_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the class associated with an EOLIAN_TYPE_CLASS type.
@@ -1573,37 +1704,21 @@ EAPI Eina_Bool eolian_type_is_own(const Eolian_Type *tp);
 EAPI Eina_Bool eolian_type_is_const(const Eolian_Type *tp);
 
 /*
- * @brief Check if a struct or alias type is extern.
- *
- * @param[in] tp the type.
- * @return EINA_TRUE if it's extern, EINA_FALSE otherwise.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
-
-/*
  * @brief Get the full C type name of the given type with a name.
  *
  * @param[in] tp the type.
  * @param[in] name the name.
  * @return The C type name assuming @c tp is not NULL.
  *
- * Providing the name is useful for function types, as in C a function
- * pointer type alone is not valid syntax. For non-function types, the
- * name is simply appended to the type (with a space). C type names do
- * not include subtypes as C doesn't support them. Name is ignored for
- * alias types. Alias types are turned into C typedefs.
- *
  * Keep in mind that if @c name is NULL, the name won't be included.
  * Also, you're responsible for deleting the stringshare.
  *
  * @see eolian_type_c_type_get
+ * @see eolian_typedecl_c_type_named_get
  *
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_c_type_named_get(const Eolian_Type *tp, const char *name);
-EAPI Eina_Stringshare *eolian_typedecl_c_type_named_get(const Eolian_Typedecl *tp, const char *name);
 
 /*
  * @brief Get the full C type name of the given type without a name.
@@ -1612,23 +1727,18 @@ EAPI Eina_Stringshare *eolian_typedecl_c_type_named_get(const Eolian_Typedecl *t
  * @return The C type name assuming @c tp is not NULL.
  *
  * This behaves exactly like eolian_type_c_type_named_get when name is NULL.
- * Keep in mind that this is not useful for function types as a function
- * pointer type in C cannot be used without a name.
- * Also, you're responsible for deleting the stringshare.
  *
  * @see eolian_type_c_type_named_get
+ * @see eolian_typedecl_c_type_get
  *
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp);
-EAPI Eina_Stringshare *eolian_typedecl_c_type_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the name of the given type. For regular or complex types, this
- * is for example "int". For EOLIAN_TYPE_STRUCT, EOLIAN_TYPE_STRUCT_OPAQUE and
- * EOLIAN_TYPE_ALIAS, this is the name of the alias or of the struct. For
- * EOLIAN_TYPE_CLASS, this can be "Button". Keep in mind that the name doesn't
- * include namespaces for structs and aliases.
+ * is for example "int". For EOLIAN_TYPE_CLASS, this can be "Button". Keep in
+ * mind that the name doesn't include namespaces.
  *
  * @param[in] tp the type.
  * @return the name.
@@ -1636,11 +1746,9 @@ EAPI Eina_Stringshare *eolian_typedecl_c_type_get(const Eolian_Typedecl *tp);
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_name_get(const Eolian_Type *tp);
-EAPI Eina_Stringshare *eolian_typedecl_name_get(const Eolian_Typedecl *tp);
 
 /*
- * @brief Get the full (namespaced) name of a function. Only works on named
- * types (not pointers, not functions, not void).
+ * @brief Get the full (namespaced) name of a type.
  *
  * @param[in] tp the type.
  * @return the name.
@@ -1648,11 +1756,9 @@ EAPI Eina_Stringshare *eolian_typedecl_name_get(const Eolian_Typedecl *tp);
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_full_name_get(const Eolian_Type *tp);
-EAPI Eina_Stringshare *eolian_typedecl_full_name_get(const Eolian_Typedecl *tp);
 
 /*
- * @brief Get an iterator to the list of namespaces of the given type. Only
- * works on named types (not pointers, not functions, not void).
+ * @brief Get an iterator to the list of namespaces of the given type.
  *
  * @param[in] tp the type.
  * @return the iterator.
@@ -1660,7 +1766,6 @@ EAPI Eina_Stringshare *eolian_typedecl_full_name_get(const Eolian_Typedecl *tp);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_type_namespaces_get(const Eolian_Type *tp);
-EAPI Eina_Iterator *eolian_typedecl_namespaces_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the name of the function used to free this type.
@@ -1669,13 +1774,11 @@ EAPI Eina_Iterator *eolian_typedecl_namespaces_get(const Eolian_Typedecl *tp);
  * @return the free func name.
  *
  * For pointer types, this returns name of the func used to free the pointer.
- * For struct and alias types, this returns name of the func used to free a
- * pointer to that type. For other types, this returns NULL.
+ * For other types, this returns NULL.
  *
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_free_func_get(const Eolian_Type *tp);
-EAPI Eina_Stringshare *eolian_typedecl_free_func_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Evaluate an Eolian expression.

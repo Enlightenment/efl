@@ -241,8 +241,6 @@ EAPI const Eolian_Type *
 eolian_type_base_type_get(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   if (tp->type != EOLIAN_TYPE_POINTER)
-     return NULL;
    return tp->base_type;
 }
 
@@ -270,8 +268,6 @@ EAPI const Eolian_Type *
 eolian_typedecl_base_type_get(const Eolian_Typedecl *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   if (tp->type != EOLIAN_TYPEDECL_ALIAS)
-     return NULL;
    return tp->base_type;
 }
 
