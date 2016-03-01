@@ -4558,10 +4558,10 @@ cpp_get_token(cpp_reader * pfile)
      }
    else
      {
+	long                newlines = 0;
+	struct parse_marker start_mark;
 	switch (c)
 	  {
-	     long                newlines;
-	     struct parse_marker start_mark;
 
 	  case '/':
 	     if (PEEKC() == '=')
