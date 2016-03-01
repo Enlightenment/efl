@@ -321,15 +321,13 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    ep->typedata.text->cache.in_size = size;
    if (chosen_desc->text.fit_x && (ep->typedata.text->cache.in_str && eina_stringshare_strlen(ep->typedata.text->cache.in_str) > 0))
      {
-        eo_do(ep->object,
+        if (inlined_font) efl_text_properties_font_source_set(ed->path);
+        else efl_text_properties_font_source_set(NULL);
 
-              if (inlined_font) efl_text_properties_font_source_set(ed->path);
-              else efl_text_properties_font_source_set(NULL);
+        if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
 
-              if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
-
-              efl_text_properties_font_set(font, size);
-              efl_text_set(text));
+        efl_text_properties_font_set(font, size);
+        efl_text_set(text);
 
         part_get_geometry(ep, &tw, &th);
         /* Find the wanted font size */
@@ -337,14 +335,12 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
           {
              size = (size * sw) / tw;
 
-             eo_do(ep->object,
+             if (inlined_font) efl_text_properties_font_source_set(ed->path);
+             else efl_text_properties_font_source_set(NULL);
 
-                   if (inlined_font) efl_text_properties_font_source_set(ed->path);
-                   else efl_text_properties_font_source_set(NULL);
+             if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
 
-                   if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
-
-                   efl_text_properties_font_set(font, size));
+             efl_text_properties_font_set(font, size);
 
              part_get_geometry(ep, &tw, &th);
           }
@@ -361,15 +357,13 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
          */
         if (!chosen_desc->text.fit_x) size = sh;
 
-        eo_do(ep->object,
+           if (inlined_font) efl_text_properties_font_source_set(ed->path);
+           else efl_text_properties_font_source_set(NULL);
 
-              if (inlined_font) efl_text_properties_font_source_set(ed->path);
-              else efl_text_properties_font_source_set(NULL);
+           if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
 
-              if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
-
-              efl_text_properties_font_set(font, size);
-              efl_text_set(text));
+           efl_text_properties_font_set(font, size);
+           efl_text_set(text);
         part_get_geometry(ep, &tw, &th);
 
         /* only grow the font size if we didn't already reach the max size
@@ -386,13 +380,11 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                   size += dif;
                   if (size <= 0) break;
 
-                  eo_do(ep->object,
+                  if (inlined_font) efl_text_properties_font_source_set(ed->path);
+                  else efl_text_properties_font_source_set(NULL);
 
-                        if (inlined_font) efl_text_properties_font_source_set(ed->path);
-                        else efl_text_properties_font_source_set(NULL);
-
-                        if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
-                        efl_text_properties_font_set(font, size));
+                  if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
+                  efl_text_properties_font_set(font, size);
 
                   part_get_geometry(ep, &tw, &th);
                   if ((size > 0) && (th == 0)) break;
@@ -403,9 +395,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
           {
              int current;
 
-             eo_do(ep->object,
-                   if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
-                   efl_text_properties_font_set(font, 10));
+             if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
+             efl_text_properties_font_set(font, 10);
 
              part_get_geometry(ep, &tw, &th);
 
@@ -426,9 +417,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                     {
                        current = (top + bottom) / 2;
 
-                       eo_do(ep->object,
-                             if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
-                             efl_text_properties_font_set(font, current));
+                       if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
+                       efl_text_properties_font_set(font, current);
 
                        part_get_geometry(ep, &tw, &th);
 
@@ -443,9 +433,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                {
                   current++;
 
-                  eo_do(ep->object,
-                        if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
-                        efl_text_properties_font_set(font, current));
+                  if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
+                  efl_text_properties_font_set(font, current);
 
                   part_get_geometry(ep, &tw, &th);
                } while (th <= sh);
@@ -465,9 +454,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    /* Handle ellipsis */
    if (!chosen_desc->text.min_x)
      {
-        eo_do (ep->object,
-               if (inlined_font) efl_text_properties_font_source_set(ed->path);
-               else efl_text_properties_font_source_set(NULL));
+        if (inlined_font) efl_text_properties_font_source_set(ed->path);
+        else efl_text_properties_font_source_set(NULL);
 
         text = _edje_text_fit_x(ed, ep, params, chosen_desc,
                                 text, font, size,
@@ -508,14 +496,13 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    ep->typedata.text->cache.fit_y = chosen_desc->text.fit_y;
 arrange_text:
 
-   eo_do(ep->object,
-         if (inlined_font) efl_text_properties_font_source_set(ed->path);
-         else efl_text_properties_font_source_set(NULL);
+   if (inlined_font) efl_text_properties_font_source_set(ed->path);
+   else efl_text_properties_font_source_set(NULL);
 
-         if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
+   if (ep->part->scale) evas_obj_scale_set(TO_DOUBLE(sc));
 
-         efl_text_properties_font_set(font, size);
-         efl_text_set(text));
+   efl_text_properties_font_set(font, size);
+   efl_text_set(text);
    part_get_geometry(ep, &tw, &th);
 
    /* Handle alignment */
