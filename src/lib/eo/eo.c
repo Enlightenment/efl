@@ -272,6 +272,11 @@ _eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Cal
      {
         cur_klass = _eo_class_pointer_get(_current_super_class);
         _current_super_class = NULL;
+        if (!cur_klass)
+          {
+             ERR("Invalid super class found. Aborting.");
+             return EINA_FALSE;
+          }
      }
 
 
