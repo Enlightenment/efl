@@ -4095,8 +4095,8 @@ static void
 _edje_entry_imf_cursor_location_set(Entry *en)
 {
 #ifdef HAVE_ECORE_IMF
-   Evas_Coord cx, cy, cw, ch;
-   Evas_BiDi_Direction dir;
+   Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0;
+   Evas_BiDi_Direction dir = 0;
    if (!en || !en->rp || !en->imf_context) return;
 
    _edje_entry_cursor_geometry_get(en->rp, &cx, &cy, &cw, &ch, &dir);
