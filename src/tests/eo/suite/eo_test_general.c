@@ -942,41 +942,6 @@ START_TEST(eo_add_failures)
 }
 END_TEST
 
-START_TEST(eo_parts)
-{
-   int a = 0;
-
-   eo_init();
-
-   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
-
-   simple_a_set(obj, 3);
-   a = simple_a_get(obj);
-   ck_assert_int_eq(a, 3);
-
-   eo_do_part(obj, simple_part_get("test"),
-         simple_a_set(7),
-         a = simple_a_get()
-         );
-   ck_assert_int_eq(a, 7);
-
-   simple_a_set(obj, 3);
-   a = simple_a_get(obj);
-   ck_assert_int_eq(a, 3);
-
-   /* Faking a call, just asserting NULL as the part to check default values. */
-   eo_do_part(obj, NULL,
-         simple_a_set(7),
-         a = simple_a_get()
-         );
-   ck_assert_int_eq(a, 0);
-
-   eo_del(obj);
-
-   eo_shutdown();
-}
-END_TEST
-
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_simple);
@@ -994,5 +959,4 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_add_do_and_custom);
    tcase_add_test(tc, eo_pointers_indirection);
    tcase_add_test(tc, eo_add_failures);
-   tcase_add_test(tc, eo_parts);
 }
