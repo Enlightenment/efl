@@ -518,7 +518,7 @@ _coord_to_canvas_no_rotation(Elm_Map_Data *sd,
                              Evas_Coord *xx,
                              Evas_Coord *yy)
 {
-   Evas_Coord vx, vy, sx, sy;
+   Evas_Coord vx = 0, vy = 0, sx = 0, sy = 0;
 
    _viewport_coord_get(sd, &vx, &vy, NULL, NULL);
    evas_object_geometry_get(sd->pan_obj, &sx, &sy, NULL, NULL);
@@ -548,7 +548,7 @@ _canvas_to_coord(Elm_Map_Data *sd,
                  Evas_Coord *xx,
                  Evas_Coord *yy)
 {
-   Evas_Coord vx, vy, sx, sy;
+   Evas_Coord vx = 0, vy = 0, sx = 0, sy = 0;
 
    _viewport_coord_get(sd, &vx, &vy, NULL, NULL);
    evas_object_geometry_get(sd->pan_obj, &sx, &sy, NULL, NULL);
@@ -576,8 +576,8 @@ _grid_item_coord_get(Grid_Item *gi,
 static Eina_Bool
 _grid_item_in_viewport(Grid_Item *gi)
 {
-   Evas_Coord vx, vy, vw, vh;
-   Evas_Coord x, y, w, h;
+   Evas_Coord vx = 0, vy = 0, vw = 0, vh = 0;
+   Evas_Coord x = 0, y = 0, w = 0, h = 0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(gi, EINA_FALSE);
 
@@ -4342,7 +4342,7 @@ EOLIAN static void
 _elm_map_region_get(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double *lon, double *lat)
 {
    double tlon, tlat;
-   Evas_Coord vx, vy, vw, vh;
+   Evas_Coord vx = 0, vy = 0, vw = 0, vh = 0;
 
    _viewport_coord_get(sd, &vx, &vy, &vw, &vh);
    _coord_to_region_convert
