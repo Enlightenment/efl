@@ -249,196 +249,6 @@ _eo_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op
 
 /************************************ EO ************************************/
 
-// 1024 entries == 16k or 32k (32 or 64bit) for eo call stack. that's 1023
-// imbricated/recursive calls it can handle before barfing. i'd say that's ok
-#define EO_CALL_STACK_DEPTH_MIN 1024
-#define EO_CALL_STACK_SHRINK_DROP (EO_CALL_STACK_DEPTH_MIN >> 1)
-
-typedef struct _Eo_Stack_Frame
-{
-   union {
-        _Eo_Object        *obj;
-        const _Eo_Class   *kls;
-   } o;
-   const _Eo_Class   *cur_klass;
-   Eina_Bool is_obj : 1;
-} Eo_Stack_Frame;
-
-#define EO_CALL_STACK_SIZE (EO_CALL_STACK_DEPTH_MIN * sizeof(Eo_Stack_Frame))
-
-static Eina_TLS _eo_call_stack_key = 0;
-
-typedef struct _Eo_Call_Stack {
-   Eo_Stack_Frame *frames;
-   Eo_Stack_Frame *frame_ptr;
-   Eo_Stack_Frame *last_frame;
-   Eo_Stack_Frame *shrink_frame;
-} Eo_Call_Stack;
-
-#define MEM_PAGE_SIZE 4096
-
-static void *
-_eo_call_stack_mem_alloc(size_t size)
-{
-#ifdef HAVE_MMAP
-   // allocate eo call stack via mmped anon segment if on linux - more
-   // secure and safe. also gives page aligned memory allowing madvise
-   void *ptr;
-   size_t newsize;
-   newsize = MEM_PAGE_SIZE * ((size + MEM_PAGE_SIZE - 1) /
-                              MEM_PAGE_SIZE);
-   ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
-              MAP_PRIVATE | MAP_ANON, -1, 0);
-   if (ptr == MAP_FAILED)
-     {
-        ERR("eo call stack mmap failed.");
-        return NULL;
-     }
-   return ptr;
-#else
-   //in regular cases just use malloc
-   return calloc(1, size);
-#endif
-}
-
-#ifdef HAVE_MMAP
-static void
-_eo_call_stack_mem_resize(void **ptr EINA_UNUSED, size_t newsize, size_t size)
-{
-   if (newsize > size)
-     {
-        CRI("eo call stack overflow, abort.");
-        abort();
-     }
-   return; // Do nothing, code for actual implementation in history. See commit message for details.
-#else
-static void
-_eo_call_stack_mem_resize(void **ptr, size_t newsize, size_t size EINA_UNUSED)
-{
-   *ptr = realloc(*ptr, newsize);
-   if (!*ptr)
-     {
-        CRI("eo call stack resize failed, abort.");
-        abort();
-     }
-#endif
-}
-
-#ifdef HAVE_MMAP
-static void
-_eo_call_stack_mem_free(void *ptr, size_t size)
-{
-   // free mmaped memory
-   munmap(ptr, size);
-#else
-static void
-_eo_call_stack_mem_free(void *ptr, size_t size EINA_UNUSED)
-{
-   // free regular memory
-   free(ptr);
-#endif
-}
-
-static Eo_Call_Stack *
-_eo_call_stack_create()
-{
-   Eo_Call_Stack *stack;
-
-   stack = calloc(1, sizeof(Eo_Call_Stack));
-   if (!stack)
-     return NULL;
-
-   stack->frames = _eo_call_stack_mem_alloc(EO_CALL_STACK_SIZE);
-   if (!stack->frames)
-     {
-        free(stack);
-        return NULL;
-     }
-
-   // first frame is never used
-   stack->frame_ptr = stack->frames;
-   stack->last_frame = &stack->frames[EO_CALL_STACK_DEPTH_MIN - 1];
-   stack->shrink_frame = stack->frames;
-
-   return stack;
-}
-
-static void
-_eo_call_stack_free(void *ptr)
-{
-   Eo_Call_Stack *stack = (Eo_Call_Stack *) ptr;
-
-   if (!stack) return;
-
-   if (stack->frames)
-     _eo_call_stack_mem_free(stack->frames, EO_CALL_STACK_SIZE);
-
-   free(stack);
-}
-
-#ifdef HAVE_THREAD_SPECIFIER
-static __thread Eo_Call_Stack *_eo_thread_stack = NULL;
-
-#define _EO_CALL_STACK_GET() ((_eo_thread_stack) ? _eo_thread_stack : (_eo_thread_stack = _eo_call_stack_create()))
-
-#else
-
-static Eo_Call_Stack *main_loop_stack = NULL;
-
-#define _EO_CALL_STACK_GET() ((EINA_LIKELY(eina_main_loop_is())) ? main_loop_stack : _eo_call_stack_get_thread())
-
-static inline Eo_Call_Stack *
-_eo_call_stack_get_thread(void)
-{
-   Eo_Call_Stack *stack = eina_tls_get(_eo_call_stack_key);
-
-   if (stack) return stack;
-
-   stack = _eo_call_stack_create();
-   eina_tls_set(_eo_call_stack_key, stack);
-
-   return stack;
-}
-#endif
-
-EAPI EINA_CONST void *
-_eo_stack_get(void)
-{
-   return _EO_CALL_STACK_GET();
-}
-
-static inline void
-_eo_call_stack_resize(Eo_Call_Stack *stack, Eina_Bool grow)
-{
-   size_t sz, next_sz;
-   int frame_offset;
-
-   sz = stack->last_frame - stack->frames + 1;
-   if (grow)
-     next_sz = sz * 2;
-   else
-     next_sz = sz / 2;
-   frame_offset = stack->frame_ptr - stack->frames;
-
-   _eo_call_stack_mem_resize((void **)&(stack->frames),
-                             next_sz * sizeof(Eo_Stack_Frame),
-                             sz * sizeof(Eo_Stack_Frame));
-
-   stack->frame_ptr = &stack->frames[frame_offset];
-   stack->last_frame = &stack->frames[next_sz - 1];
-
-   if (next_sz == EO_CALL_STACK_DEPTH_MIN)
-     frame_offset = 0;
-   else
-     {
-        if (grow)
-          frame_offset = sz - EO_CALL_STACK_SHRINK_DROP;
-        else
-          frame_offset = (next_sz / 2) - EO_CALL_STACK_SHRINK_DROP;
-     }
-   stack->shrink_frame = &stack->frames[frame_offset];
-}
-
 EAPI Eina_Bool
 _eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Call_Cache *cache, const char *file, int line)
 {
@@ -842,21 +652,13 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 }
 
 static Eo *
-_eo_add_internal_end(Eo *eo_id, Eo_Call_Stack *stack)
+_eo_add_internal_end(Eo *eo_id)
 {
-   Eo_Stack_Frame *fptr;
+   EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL); // FIXME-tom: Can probably optimise and share this
 
-   fptr = stack->frame_ptr;
-
-   if (EINA_UNLIKELY(!fptr->o.obj))
+   if (!obj->condtor_done)
      {
-        ERR("Corrupt call stack, shouldn't happen, please report!");
-        return NULL;
-     }
-
-   if (!fptr->o.obj->condtor_done)
-     {
-        const _Eo_Class *klass = fptr->o.obj->klass;
+        const _Eo_Class *klass = obj->klass;
 
         ERR("Object of class '%s' - Not all of the object constructors have been executed.",
               klass->desc->name);
@@ -879,24 +681,23 @@ _eo_add_internal_end(Eo *eo_id, Eo_Call_Stack *stack)
         goto cleanup;
      }
 
-   fptr->o.obj->finalized = EINA_TRUE;
+   obj->finalized = EINA_TRUE;
 
-   _eo_unref(fptr->o.obj);
+   _eo_unref(obj);
 
    return (Eo *)eo_id;
 
 cleanup:
-   _eo_unref(fptr->o.obj);
-   eo_del((Eo *) fptr->o.obj->header.id);
+   _eo_unref(obj);
+   eo_del((Eo *) obj->header.id);
    return NULL;
 }
 
 EAPI Eo *
-_eo_add_end(void *eo_stack)
+_eo_add_end(void)
 {
-   Eo *ret = eo_finalize();
-   ret = _eo_add_internal_end(ret, eo_stack);
-   _eo_do_end(eo_stack);
+   Eo *ret = eo_finalize(NULL); //FIXME-tom
+   ret = _eo_add_internal_end(ret);
    return ret;
 }
 
@@ -1485,9 +1286,9 @@ eo_unref(const Eo *obj_id)
 EAPI void
 eo_del(const Eo *obj)
 {
-   if (eo_parent_get(obj))
+   if (eo_parent_get((Eo *) obj))
      {
-        eo_parent_set(obj, NULL);
+        eo_parent_set((Eo *) obj, NULL);
      }
    else
      {
@@ -1757,27 +1558,6 @@ eo_init(void)
    /* bootstrap EO_CLASS_CLASS */
    (void) EO_ABSTRACT_CLASS_CLASS;
 
-   if (_eo_call_stack_key != 0)
-     WRN("_eo_call_stack_key already set, this should not happen.");
-   else
-     {
-        if (!eina_tls_cb_new(&_eo_call_stack_key, _eo_call_stack_free))
-          {
-             EINA_LOG_ERR("Could not create TLS key for call stack.");
-             return EINA_FALSE;
-
-          }
-     }
-
-#ifndef HAVE_THREAD_SPECIFIER
-   main_loop_stack = _eo_call_stack_create();
-   if (!main_loop_stack)
-     {
-        EINA_LOG_ERR("Could not alloc eo call stack.");
-        return EINA_FALSE;
-     }
-#endif
-
    return EINA_TRUE;
 }
 
@@ -1807,12 +1587,6 @@ eo_shutdown(void)
 
    eina_spinlock_free(&_ops_storage_lock);
    eina_spinlock_free(&_eo_class_creation_lock);
-
-   if (_eo_call_stack_key != 0)
-     {
-        eina_tls_free(_eo_call_stack_key);
-        _eo_call_stack_key = 0;
-     }
 
    _eo_free_ids_tables();
 

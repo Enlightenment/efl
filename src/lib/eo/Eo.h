@@ -581,10 +581,7 @@ EAPI Eina_Bool _eo_do_start(const Eo *eo_id);
 EAPI void _eo_call_end(Eo_Op_Call_Data *call);
 
 // end of the eo_add. Calls finalize among others
-EAPI Eo * _eo_add_end(void *eo_stack);
-
-// XXX: We cheat and make it const to indicate to the compiler that the value never changes
-EAPI EINA_CONST void *_eo_stack_get(void);
+EAPI Eo * _eo_add_end(void);
 
 // eo object method calls batch,
 
