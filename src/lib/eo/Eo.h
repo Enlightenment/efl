@@ -580,6 +580,8 @@ EAPI void _eo_call_end(Eo_Op_Call_Data *call);
 // end of the eo_add. Calls finalize among others
 EAPI Eo * _eo_add_end(Eo *obj);
 
+#define eo_super(obj, klass) (obj) // FIXME-tom
+
 /*****************************************************************************/
 
 /**
@@ -594,8 +596,8 @@ EAPI const Eo_Class *eo_class_get(const Eo *obj);
 #define _eo_add_common(klass, parent, is_ref, ...) \
    ({ \
     const Eo *eoid = _eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref); \
-     , ##__VA_ARGS__, \
-     (Eo *) _eo_add_end(eoid) \
+     __VA_ARGS__; \
+     (Eo *) _eo_add_end(eoid); \
     })
 
 /**
