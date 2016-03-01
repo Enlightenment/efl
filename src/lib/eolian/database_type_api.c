@@ -208,28 +208,12 @@ eolian_typedecl_enum_field_value_get(const Eolian_Enum_Type_Field *fl, Eina_Bool
 }
 
 EAPI Eina_Stringshare *
-eolian_type_enum_legacy_prefix_get(const Eolian_Type *tp)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   if (tp->type != EOLIAN_TYPE_ENUM)
-     return NULL;
-   return tp->legacy;
-}
-
-EAPI Eina_Stringshare *
 eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typedecl *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    if (tp->type != EOLIAN_TYPEDECL_ENUM)
      return NULL;
    return tp->legacy;
-}
-
-EAPI const Eolian_Documentation *
-eolian_type_documentation_get(const Eolian_Type *tp)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   return tp->doc;
 }
 
 EAPI const Eolian_Documentation *
@@ -256,28 +240,9 @@ eolian_typedecl_file_get(const Eolian_Typedecl *tp)
 EAPI const Eolian_Type *
 eolian_type_base_type_get(const Eolian_Type *tp)
 {
-   Eolian_Type_Type tpt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   tpt = eolian_type_type_get(tp);
-   if ((tpt != EOLIAN_TYPE_POINTER) && (tpt != EOLIAN_TYPE_ALIAS) &&
-       (tpt != EOLIAN_TYPE_REGULAR))
+   if (tp->type != EOLIAN_TYPE_POINTER)
      return NULL;
-   if (tpt == EOLIAN_TYPE_REGULAR)
-     {
-        /* for regular types, try looking up if it belongs to a struct,
-         * enum or an alias... otherwise return NULL
-         * but first check for builtins
-         */
-        int  kw = eo_lexer_keyword_str_to_id(tp->full_name);
-        if (!kw || kw < KW_byte || kw >= KW_true)
-          {
-             Eolian_Declaration *decl = eina_hash_find(_decls, tp->full_name);
-             if (decl && decl->type != EOLIAN_DECL_CLASS
-                      && decl->type != EOLIAN_DECL_VAR)
-               return ((const Eolian_Typedecl *)decl->data)->parent;
-          }
-        return NULL;
-     }
    return tp->base_type;
 }
 
@@ -304,10 +269,8 @@ eolian_type_typedecl_get(const Eolian_Type *tp)
 EAPI const Eolian_Type *
 eolian_typedecl_base_type_get(const Eolian_Typedecl *tp)
 {
-   Eolian_Typedecl_Type tpt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   tpt = eolian_typedecl_type_get(tp);
-   if (tpt != EOLIAN_TYPEDECL_ALIAS)
+   if (tp->type != EOLIAN_TYPEDECL_ALIAS)
      return NULL;
    return tp->base_type;
 }
@@ -315,18 +278,12 @@ eolian_typedecl_base_type_get(const Eolian_Typedecl *tp)
 EAPI const Eolian_Type *
 eolian_type_aliased_base_get(const Eolian_Type *tp)
 {
-   if (!tp)
-     return NULL;
-   if (eolian_type_type_get(tp) == EOLIAN_TYPE_REGULAR)
-     {
-        const Eolian_Type *btp = eolian_type_base_type_get(tp);
-        if (btp && (eolian_type_type_get(btp) == EOLIAN_TYPE_ALIAS))
-          return eolian_type_aliased_base_get(btp);
-        return tp;
-     }
-   else if (eolian_type_type_get(tp) != EOLIAN_TYPE_ALIAS)
+   if (!tp || tp->type != EOLIAN_TYPE_REGULAR)
      return tp;
-   return eolian_type_aliased_base_get(tp->base_type);
+   const Eolian_Typedecl *btp = eolian_type_typedecl_get(tp);
+   if (btp && (btp->type == EOLIAN_TYPEDECL_ALIAS))
+     return eolian_typedecl_aliased_base_get(btp);
+   return tp;
 }
 
 EAPI const Eolian_Type *
@@ -358,13 +315,6 @@ eolian_type_is_const(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, EINA_FALSE);
    return tp->is_const;
-}
-
-EAPI Eina_Bool
-eolian_type_is_extern(const Eolian_Type *tp)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, EINA_FALSE);
-   return tp->is_extern;
 }
 
 EAPI Eina_Bool

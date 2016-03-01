@@ -189,11 +189,42 @@ _type_error(const Validator *vs, const Eolian_Type *tp, const char *msg)
 }
 
 static Eina_Bool
-_validate_type(const Validator *vs, const Eolian_Type *tp)
+_validate_typedecl(const Validator *vs, const Eolian_Typedecl *tp)
 {
    if (!_validate_doc(vs, tp->doc))
      return EINA_FALSE;
 
+   switch (tp->type)
+     {
+      case EOLIAN_TYPEDECL_ALIAS:
+        return _validate_type(vs, tp->base_type);
+      case EOLIAN_TYPEDECL_STRUCT:
+        {
+           Val_Success succ;
+           succ.vs = vs;
+           succ.success = EINA_TRUE;
+           eina_hash_foreach(tp->fields, (Eina_Hash_Foreach)_sf_map_cb, &succ);
+           return succ.success;
+        }
+      case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
+        return EINA_TRUE;
+      case EOLIAN_TYPEDECL_ENUM:
+        {
+           Val_Success succ;
+           succ.vs = vs;
+           succ.success = EINA_TRUE;
+           eina_hash_foreach(tp->fields, (Eina_Hash_Foreach)_ef_map_cb, &succ);
+           return succ.success;
+        }
+      default:
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_validate_type(const Validator *vs, const Eolian_Type *tp)
+{
    switch (tp->type)
      {
       case EOLIAN_TYPE_VOID:
@@ -202,42 +233,23 @@ _validate_type(const Validator *vs, const Eolian_Type *tp)
         return EINA_TRUE;
       case EOLIAN_TYPE_REGULAR:
         {
-           const Eolian_Type *tpp;
+           const Eolian_Typedecl *tpp;
            /* builtins */
            int id = eo_lexer_keyword_str_to_id(tp->full_name);
            if (id)
              return eo_lexer_is_type_keyword(id);
            /* user defined */
-           tpp = eolian_type_base_type_get(tp);
+           tpp = eolian_type_typedecl_get(tp);
            if (!tpp)
              {
                 char buf[256];
                 snprintf(buf, sizeof(buf), "undefined type %s", tp->full_name);
                 return _type_error(vs, tp, buf);
              }
-           return _validate_type(vs, tpp);
+           return _validate_typedecl(vs, tpp);
         }
       case EOLIAN_TYPE_POINTER:
-      case EOLIAN_TYPE_ALIAS:
         return _validate_type(vs, tp->base_type);
-      case EOLIAN_TYPE_STRUCT:
-        {
-           Val_Success succ;
-           succ.vs = vs;
-           succ.success = EINA_TRUE;
-           eina_hash_foreach(tp->fields, (Eina_Hash_Foreach)_sf_map_cb, &succ);
-           return succ.success;
-        }
-      case EOLIAN_TYPE_STRUCT_OPAQUE:
-        return EINA_TRUE;
-      case EOLIAN_TYPE_ENUM:
-        {
-           Val_Success succ;
-           succ.vs = vs;
-           succ.success = EINA_TRUE;
-           eina_hash_foreach(tp->fields, (Eina_Hash_Foreach)_ef_map_cb, &succ);
-           return succ.success;
-        }
       case EOLIAN_TYPE_CLASS:
         {
            if (!eolian_type_class_get(tp))
@@ -391,7 +403,7 @@ static Eina_Bool
 _type_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
              const Eolian_Type *tp, Val_Success *sc)
 {
-   sc->success = _validate_type(sc->vs, tp);
+   sc->success = _validate_typedecl(sc->vs, tp->decl);
    return sc->success;
 }
 

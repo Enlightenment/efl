@@ -23,8 +23,6 @@ _eval_type(const Eolian_Expression *expr, const Eolian_Type *type)
      return err;
    switch (type->type)
      {
-      case EOLIAN_TYPE_ALIAS:
-        return _eval_type(expr, eolian_type_base_type_get(type));
       case EOLIAN_TYPE_POINTER:
         {
            int mask = EOLIAN_MASK_NULL;
@@ -36,15 +34,18 @@ _eval_type(const Eolian_Expression *expr, const Eolian_Type *type)
         }
       case EOLIAN_TYPE_CLASS:
         return database_expr_eval(expr, EOLIAN_MASK_NULL);
-      case EOLIAN_TYPE_ENUM:
-        return database_expr_eval(expr, EOLIAN_MASK_INT);
       case EOLIAN_TYPE_REGULAR:
         {
            int  kw = eo_lexer_keyword_str_to_id(type->name);
            if (!kw || kw < KW_byte || kw >= KW_void)
              {
-                const Eolian_Type *base = eolian_type_base_type_get(type);
-                if (base) return _eval_type(expr, base);
+                const Eolian_Typedecl *base = eolian_type_typedecl_get(type);
+                if (!base)
+                  return err;
+                if (base->type == EOLIAN_TYPEDECL_ALIAS)
+                  return _eval_type(expr, eolian_typedecl_base_type_get(base));
+                else if (base->type == EOLIAN_TYPEDECL_ENUM)
+                  return database_expr_eval(expr, EOLIAN_MASK_INT);
                 return err;
              }
            switch (kw)

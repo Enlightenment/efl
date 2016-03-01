@@ -1487,7 +1487,6 @@ EAPI const Eolian_Expression *eolian_typedecl_enum_field_value_get(const Eolian_
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_type_enum_legacy_prefix_get(const Eolian_Type *tp);
 EAPI Eina_Stringshare *eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typedecl *tp);
 
 /*
@@ -1499,7 +1498,6 @@ EAPI Eina_Stringshare *eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typed
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Documentation *eolian_type_documentation_get(const Eolian_Type *tp);
 EAPI const Eolian_Documentation *eolian_typedecl_documentation_get(const Eolian_Typedecl *tp);
 
 /*
@@ -1586,7 +1584,6 @@ EAPI Eina_Bool eolian_type_is_const(const Eolian_Type *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_type_is_extern(const Eolian_Type *tp);
 EAPI Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
 
 /*
