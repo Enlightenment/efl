@@ -987,8 +987,8 @@ EAPI const Eo_Event_Description *eo_base_legacy_only_event_description_get(const
  *
  * @see eo_event_callback_priority_add()
  */
-#define eo_event_callback_add(desc, cb, data) \
-   eo_event_callback_priority_add(desc, \
+#define eo_event_callback_add(obj, desc, cb, data) \
+   eo_event_callback_priority_add(obj, desc, \
          EO_CALLBACK_PRIORITY_DEFAULT, cb, data)
 
 /**
@@ -1001,8 +1001,8 @@ EAPI const Eo_Event_Description *eo_base_legacy_only_event_description_get(const
  *
  * @see eo_event_callback_array_priority_add()
  */
-#define eo_event_callback_array_add(array, data) \
-   eo_event_callback_array_priority_add(array, \
+#define eo_event_callback_array_add(obj, array, data) \
+   eo_event_callback_array_priority_add(obj, array, \
          EO_CALLBACK_PRIORITY_DEFAULT, data)
 
 /**
