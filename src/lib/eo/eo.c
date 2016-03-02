@@ -678,7 +678,7 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 }
 
 static Eo *
-_eo_add_internal_end(Eo *eo_id)
+_eo_add_internal_end(Eo *eo_id, Eo *finalized_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, NULL); // FIXME-tom: Can probably optimise and share this
 
@@ -691,7 +691,7 @@ _eo_add_internal_end(Eo *eo_id)
         goto cleanup;
      }
 
-   if (!eo_id)
+   if (!finalized_id)
      {
         // XXX: Given EFL usage of objects, construction is a perfectly valid thing
         // to do. we shouldn't complain about it as handling a NULL obj creation is
@@ -723,7 +723,8 @@ EAPI Eo *
 _eo_add_end(Eo *eo_id)
 {
    Eo *ret = eo_finalize(eo_id);
-   ret = _eo_add_internal_end(ret);
+   ret = _eo_add_internal_end(eo_id, ret);
+
    return ret;
 }
 
