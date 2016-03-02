@@ -71,30 +71,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
             src: Evas.Object *; [[Source object to use for the proxy.]]
          }
       }
-      @property filled {
-         set {
-            [[Set whether the image object's fill property should track the
-              object's size.
-
-              If $setting is $true, then every \@ref evas_object_resize will
-              automatically trigger a call to \@ref evas_object_image_fill_set
-              with the that new size (and 0, 0 as source image's origin),
-              so the bound image will fill the whole object's area.
-            ]]
-         }
-         get {
-            [[Retrieve whether the image object's fill property should track
-              the object's size.
-
-              Returns $true if it is tracking, $false if not (and
-              \@ref evas_object_fill_set must be called manually).
-            ]]
-         }
-         values {
-            filled: bool; [[$true to make the fill property follow
-                            object size or $false otherwise.]]
-         }
-      }
       @property content_hint {
          set {
             [[Set the content hint setting of a given image object of the
@@ -320,8 +296,8 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
               in @Evas.Border_Fill_Mode. By center we mean the complementary
               part of that defined by @.border.set. This one is very useful
               for making frames and decorations. You would most probably
-              also be using a filled image (as in @.filled.set) to use as
-              a frame.
+              also be using a filled image (as in @Efl.Gfx.Fill.filled) to use
+              as a frame.
             ]]
          }
          get {
@@ -768,6 +744,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
       Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
+      Eo.Base.finalize;
       Efl.File.file.set;
       Efl.File.file.get;
       Efl.File.mmap.set;
@@ -780,6 +757,8 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
       Efl.Image.smooth_scale.get;
       Efl.Gfx.Fill.fill.set;
       Efl.Gfx.Fill.fill.get;
+      Efl.Gfx.Fill.filled.get;
+      Efl.Gfx.Fill.filled.set;
       Efl.Gfx.View.size.set;
       Efl.Gfx.View.size.get;
       Efl.Gfx.Filter.filter_program.set;

@@ -1,8 +1,26 @@
 interface Efl.Gfx.Fill {
    legacy_prefix: null;
    methods {
+      @property filled {
+         [[Binds the object's @.fill property to its actual geometry.
+
+           If $true, then every time the object is resized, it will
+           automatically trigger a call to @Efl.Gfx.Fill.fill.set
+           with the new size (and 0, 0 as source image's origin),
+           so the bound image will fill the whole object's area.
+
+           This property takes precedence over @.fill.
+
+           This flag is $true by default (used to be $false with the old APIs).
+         ]]
+         set {}
+         get {}
+         values {
+            filled: bool; [[$true to make the fill property follow
+                            object size or $false otherwise.]]
+         }
+      }
       @property fill {
-         /* FIXME: bad defaults, bad doc */
          [[Specifies how to tile an image to fill its rectangle geometry.
 
            Note that if $w or $h are smaller than the dimensions of the object,
@@ -11,15 +29,7 @@ interface Efl.Gfx.Fill {
            $w and $h need to be the exact width and height of the image object
            itself, respectively.
 
-           Warning: The default values for the fill parameters are $x = 0,
-           $y = 0, $w = 0 and $h = 0. Thus, if you're not using the
-           evas_object_image_filled_add() helper and want your image
-           displayed, you'll have to set valid values with this function on
-           your object.
-
-           Note: evas_object_image_filled_set() is a helper function which
-           will override the values set here automatically, for you, in a
-           given way.
+           Note that this property has no effect if @.filled is $true.
          ]]
             /* FIXME-doc
              * See the following image to better understand the effects of this

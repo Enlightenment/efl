@@ -2898,6 +2898,36 @@ image) to start drawing from.
 EAPI void evas_object_image_fill_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
 /**
+ * @brief Set whether the image object's fill property should track the
+ * object's size.
+ *
+ * If @c setting is @c true, then every @ref evas_object_resize will
+ * automatically trigger a call to @ref evas_object_image_fill_set with the
+ * that new size (and 0, 0 as source image's origin), so the bound image will
+ * fill the whole object's area.
+ *
+ * @param[in] filled @c true to make the fill property follow object size or
+ * @c false otherwise.
+ *
+ * @ingroup Evas_Image
+ */
+EAPI void evas_object_image_filled_set(Evas_Object *obj, Eina_Bool filled);
+
+/**
+ * @brief Retrieve whether the image object's fill property should track the
+ * object's size.
+ *
+ * Returns @c true if it is tracking, @c false if not (and @ref
+ * evas_object_fill_set must be called manually).
+ *
+ * @return @c true to make the fill property follow object size or @c false
+ * otherwise.
+ *
+ * @ingroup Evas_Image
+ */
+EAPI Eina_Bool evas_object_image_filled_get(const Evas_Object *obj);
+
+/**
  *
  * Sets the size of the given image object.
  *

@@ -627,8 +627,37 @@ START_TEST(evas_object_image_partially_load_orientation)
 }
 END_TEST
 
+START_TEST(evas_object_image_defaults)
+{
+   Evas *e = _setup_evas();
+   Evas_Object *o;
+   int x, y, w, h, iw, ih;
+   Eina_Bool b;
+
+   /* test legacy defaults */
+   o = evas_object_image_add(e);
+   fail_if(evas_object_image_filled_get(o));
+   evas_object_image_fill_get(o, &x, &y, &w, &h);
+   fail_if(x || y || w || h);
+   eo_del(o);
+
+   o = evas_object_image_filled_add(e);
+   fail_if(!evas_object_image_filled_get(o));
+   eo_del(o);
+
+   /* test eo defaults */
+   eo_add(&o, EVAS_IMAGE_CLASS, e);
+   fail_if(!efl_gfx_fill_filled_get(o));
+   eo_del(o);
+
+   evas_free(e);
+   evas_shutdown();
+}
+END_TEST
+
 void evas_test_image_object(TCase *tc)
 {
+   tcase_add_test(tc, evas_object_image_defaults);
    tcase_add_test(tc, evas_object_image_loader);
    tcase_add_test(tc, evas_object_image_loader_orientation);
    tcase_add_test(tc, evas_object_image_orient);
