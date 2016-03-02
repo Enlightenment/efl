@@ -2,44 +2,46 @@ interface Efl.Image {
    legacy_prefix: null;
    methods {
       @property animated {
+         /* FIXME: Move to specific interface */
          get {
-            [[Check if an image  can be animated (have multiple frames)]]
+            [[Check if an image can be animated (has multiple frames).
+
+              This will be $true for animated Gif files for instance but $false
+              for still images.
+            ]]
          }
          values {
-              is_animated: bool; [[If it's animated or not.]]
+            is_animated: bool; [[$true if the image is animated]]
          }
       }
       @property load_size {
+         [[The loading size of an image.
+
+           The image will be loaded into memory as if it was the set size
+           instead of the original size. This can save a lot of memory,
+           and is important for scalable types like svg.
+         ]]
          set {
-            [[Set the loading size of an image. The image will be loaded into
-              memory as if it was the set size instead of the original size.
-              This can save a lot of memory, and is important for scalable
-              types like svg.
-            ]]
+            [[Requests the canvas to load the image at the given size.]]
          }
-         get {
-         }
+         get {}
          values {
-            w: int; [[The new width of the image's load size.]]
-            h: int; [[The new height of the image's load size.]]
+            w: int; [[Width of the image's load size.]]
+            h: int; [[Height of the image's load size.]]
          }
       }
       @property smooth_scale {
-         set {
-            [[Sets whether to use high-quality image scaling algorithm on the
-              given image.
+         [[Whether to use high-quality image scaling algorithm for this image.
 
-              When enabled, a higher quality image scaling algorithm is used
-              when scaling images to sizes other than the source image's
-              original one. This gives better results but is more
-              computationally expensive.
-            ]]
-         }
-         get {
-            [[Retrieves whether the given image is using high-quality
-              image scaling algorithm.
-            ]]
-         }
+           When enabled, a higher quality image scaling algorithm is used
+           when scaling images to sizes other than the source image's
+           original one. This gives better results but is more
+           computationally expensive.
+
+           $true by default
+         ]]
+         set {}
+         get {}
          values {
             smooth_scale: bool; [[Whether to use smooth scale or not.]]
          }

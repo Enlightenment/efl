@@ -247,8 +247,11 @@ static const Evas_Object_Image_State default_state = {
   EVAS_COLORSPACE_ARGB8888,
   EVAS_IMAGE_ORIENT_NONE,
 
-  // flags
-  EINA_TRUE, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE
+  EINA_TRUE, // smooth
+  EINA_FALSE, // has_alpha
+  EINA_FALSE, // opaque_valid
+  EINA_FALSE, // opaque
+  EINA_FALSE // mmapped_source
 };
 
 Eina_Cow *evas_object_image_load_opts_cow = NULL;
@@ -379,21 +382,6 @@ _evas_image_eo_base_finalize(Eo *eo_obj, Evas_Image_Data *o)
    if (!o->filled_set)
      efl_gfx_fill_filled_set(eo_obj, EINA_TRUE);
    return eo_finalize(eo_super(eo_obj, MY_CLASS));
-}
-
-EAPI Evas_Object *
-evas_object_image_add(Evas *eo_e)
-{
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(eo_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
-   return eo_add(EVAS_IMAGE_CLASS, eo_e,
-                 efl_gfx_fill_filled_set(eo_obj, EINA_FALSE));
-}
-
-EAPI Evas_Object *
-evas_object_image_filled_add(Evas *eo_e)
-{
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(eo_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
-   return eo_add(EVAS_IMAGE_CLASS, eo_e);
 }
 
 EAPI void
@@ -961,18 +949,6 @@ _evas_image_efl_gfx_fill_filled_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
    return o->filled;
 }
 
-EAPI void
-evas_object_image_filled_set(Evas_Object *eo_obj, Eina_Bool value)
-{
-   efl_gfx_fill_filled_set(eo_obj, value);
-}
-
-EAPI Eina_Bool
-evas_object_image_filled_get(const Evas_Object *eo_obj)
-{
-   return efl_gfx_fill_filled_get(eo_obj);
-}
-
 EOLIAN static void
 _evas_image_border_scale_set(Eo *eo_obj, Evas_Image_Data *o, double scale)
 {
@@ -1033,14 +1009,6 @@ _evas_image_efl_gfx_fill_fill_set(Eo *eo_obj, Evas_Image_Data *o,
    evas_object_change(eo_obj, obj);
 }
 
-EAPI void
-evas_object_image_fill_get(const Evas_Image *obj,
-                           Evas_Coord *x, Evas_Coord *y,
-                           Evas_Coord *w, Evas_Coord *h)
-{
-   efl_gfx_fill_get((Evas_Image *)obj, x, y, w, h);
-}
-
 EOLIAN static void
 _evas_image_efl_gfx_fill_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o,
                                   int *x, int *y, int *w, int *h)
@@ -1049,26 +1017,6 @@ _evas_image_efl_gfx_fill_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o,
    if (y) *y = o->cur->fill.y;
    if (w) *w = o->cur->fill.w;
    if (h) *h = o->cur->fill.h;
-}
-
-EAPI void
-evas_object_image_fill_spread_set(Evas_Image *obj EINA_UNUSED, Evas_Fill_Spread spread)
-{
-   /* not implemented! */
-   if (spread != EFL_GFX_FILL_REPEAT)
-     WRN("Fill spread support is not implemented!");
-}
-
-EAPI Evas_Fill_Spread
-evas_object_image_fill_spread_get(const Evas_Image *obj EINA_UNUSED)
-{
-   return EFL_GFX_FILL_REPEAT;
-}
-
-EAPI void
-evas_object_image_size_set(Evas_Image *obj, int w, int h)
-{
-   efl_gfx_view_size_set((Evas_Image *)obj, w, h);
 }
 
 EOLIAN static void
@@ -3209,6 +3157,14 @@ _evas_image_evas_filter_filter_input_alpha(Eo *eo_obj EINA_UNUSED, Evas_Image_Da
    return EINA_FALSE;
 }
 
+EOLIAN static void
+_evas_image_efl_gfx_filter_filter_program_set(Eo *obj, Evas_Image_Data *pd EINA_UNUSED,
+                                              const char *code, const char *name)
+{
+   pd->has_filter = (code != NULL);
+   efl_gfx_filter_program_set(eo_super(obj, MY_CLASS), code, name);
+}
+
 EOLIAN static Eina_Bool
 _evas_image_evas_filter_filter_input_render(Eo *eo_obj, Evas_Image_Data *o,
                                             void *_filter, void *context,
@@ -4900,6 +4856,63 @@ _evas_object_image_surface_get(Evas_Object *eo, Evas_Object_Protected_Data *obj)
    return pd->engine_data;
 }
 
+/* Legacy wrappers */
+
+EAPI Evas_Object *
+evas_object_image_add(Evas *eo_e)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eo_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
+   return eo_add(EVAS_IMAGE_CLASS, eo_e,
+                 efl_gfx_fill_filled_set(eoid, EINA_FALSE));
+}
+
+EAPI Evas_Object *
+evas_object_image_filled_add(Evas *eo_e)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eo_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
+   return eo_add(EVAS_IMAGE_CLASS, eo_e);
+}
+
+EAPI void
+evas_object_image_filled_set(Evas_Object *eo_obj, Eina_Bool value)
+{
+   efl_gfx_fill_filled_set(eo_obj, value);
+}
+
+EAPI Eina_Bool
+evas_object_image_filled_get(const Evas_Object *eo_obj)
+{
+   return efl_gfx_fill_filled_get((Eo *) eo_obj);
+}
+
+EAPI void
+evas_object_image_fill_get(const Evas_Image *obj,
+                           Evas_Coord *x, Evas_Coord *y,
+                           Evas_Coord *w, Evas_Coord *h)
+{
+   efl_gfx_fill_get((Evas_Image *)obj, x, y, w, h);
+}
+
+EAPI void
+evas_object_image_fill_spread_set(Evas_Image *obj EINA_UNUSED, Evas_Fill_Spread spread)
+{
+   /* not implemented! */
+   if (spread != EFL_GFX_FILL_REPEAT)
+     WRN("Fill spread support is not implemented!");
+}
+
+EAPI Evas_Fill_Spread
+evas_object_image_fill_spread_get(const Evas_Image *obj EINA_UNUSED)
+{
+   return EFL_GFX_FILL_REPEAT;
+}
+
+EAPI void
+evas_object_image_size_set(Evas_Image *obj, int w, int h)
+{
+   efl_gfx_view_size_set((Evas_Image *)obj, w, h);
+}
+
 EAPI void
 evas_object_image_file_set(Eo *obj, const char *file, const char *key)
 {
@@ -4958,14 +4971,6 @@ EAPI Eina_Bool
 evas_object_image_smooth_scale_get(const Eo *obj)
 {
    return efl_image_smooth_scale_get((Eo *) obj);
-}
-
-EOLIAN static void
-_evas_image_efl_gfx_filter_filter_program_set(Eo *obj, Evas_Image_Data *pd EINA_UNUSED,
-                                              const char *code, const char *name)
-{
-   pd->has_filter = (code != NULL);
-   efl_gfx_filter_program_set(eo_super(obj, MY_CLASS), code, name);
 }
 
 #include "canvas/evas_image.eo.c"
