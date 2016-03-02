@@ -434,7 +434,7 @@ lcov-report:
 	lcov --remove $(top_builddir)/coverage/coverage.info '*.h' --output-file $(top_builddir)/coverage/coverage.cleaned.info
 	lcov --remove $(top_builddir)/coverage/coverage.cleaned.info '*/tests/*' --output-file $(top_builddir)/coverage/coverage.cleaned2.info
 	lcov --remove $(top_builddir)/coverage/coverage.cleaned2.info '*NONE*' --output-file $(top_builddir)/coverage/coverage.cleaned3.info
-	genhtml --branch-coverage -t "$(PACKAGE_STRING)" -o $(top_builddir)/coverage/html $(top_builddir)/coverage/coverage.cleaned3.info
+	genhtml --legend -t "$(PACKAGE_STRING)" -o $(top_builddir)/coverage/html $(top_builddir)/coverage/coverage.cleaned3.info
 	@echo "Coverage Report at $(top_builddir)/coverage/html"
 
 endif
