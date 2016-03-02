@@ -250,17 +250,18 @@ _eo_kls_itr_next(const _Eo_Class *orig_kls, const _Eo_Class *cur_klass, Eo_Op op
 /************************************ EO ************************************/
 
 /* FIXME-tom: hack */
-static const Eo_Class *_current_super_class = NULL;
+static const Eo_Class *_super_class = NULL;
+static Eina_Spinlock _super_class_lock;
 
 EAPI Eo *
 _eo_super(Eo *obj, const Eo_Class *cur_klass)
 {
-   _current_super_class = cur_klass;
-   /* FIXME-tom: Hack to fail when passing NULL super. */
-   if (!cur_klass)
-      return NULL;
+   /* FIXME-tom: Switch to atomic operations intead of lock. */
+   eina_spinlock_take(&_super_class_lock);
+   _super_class = cur_klass;
 
-   return obj;
+   /* FIXME-tom: doesn't work without eo_id */
+   return (Eo *) ((Eo_Id) obj | MASK_SUPER_TAG);
 }
 
 EAPI Eina_Bool
@@ -272,17 +273,21 @@ _eo_call_resolve(Eo *eo_id, const char *func_name, Eo_Op_Call_Data *call, Eo_Cal
    const op_type_funcs *func;
    Eina_Bool is_obj;
 
-   if (_current_super_class)
+   if (((Eo_Id) eo_id) & MASK_SUPER_TAG)
      {
-        cur_klass = _eo_class_pointer_get(_current_super_class);
-        _current_super_class = NULL;
+        const Eo_Class *tmp = _super_class;
+        _super_class = NULL;
+        eina_spinlock_release(&_super_class_lock);
+
+        eo_id = (Eo *) ((Eo_Id) eo_id & ~MASK_SUPER_TAG);
+
+        cur_klass = _eo_class_pointer_get(tmp);
         if (!cur_klass)
           {
              ERR("Invalid super class found. Aborting.");
              return EINA_FALSE;
           }
      }
-
 
    if (EINA_UNLIKELY(!eo_id))
       return EINA_FALSE;
@@ -1564,6 +1569,12 @@ eo_init(void)
         return EINA_FALSE;
      }
 
+   if (!eina_spinlock_new(&_super_class_lock))
+     {
+        EINA_LOG_ERR("Could not init lock.");
+        return EINA_FALSE;
+     }
+
    eina_magic_string_static_set(EO_EINA_MAGIC, EO_EINA_MAGIC_STR);
    eina_magic_string_static_set(EO_FREED_EINA_MAGIC,
                                 EO_FREED_EINA_MAGIC_STR);
@@ -1616,6 +1627,7 @@ eo_shutdown(void)
 
    eina_hash_free(_ops_storage);
 
+   eina_spinlock_free(&_super_class_lock);
    eina_spinlock_free(&_ops_storage_lock);
    eina_spinlock_free(&_eo_class_creation_lock);
 
