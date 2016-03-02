@@ -77,6 +77,8 @@ collections {
 #include "edc/comp_compat.edc"
 #include "edc/comp_effects.edc"
 #include "edc/background.edc"
+#include "edc/bryce.edc"
+#include "edc/bryce_editor.edc"
 #include "edc/shelf.edc"
 #include "edc/border.edc"
 #include "edc/dialog.edc"

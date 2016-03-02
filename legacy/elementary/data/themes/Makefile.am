@@ -33,6 +33,8 @@ edc/battery.edc \
 edc/bluez4.edc \
 edc/border.edc \
 edc/border-icons.edc \
+edc/bryce.edc \
+edc/bryce_editor.edc \
 edc/button.edc \
 edc/check.edc \
 edc/clock.edc \
