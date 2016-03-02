@@ -98,7 +98,10 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
         eina_strbuf_free(dbuf);
      }
    eina_strbuf_append_printf(str_func, "EOAPI @#rettype@#retspace%s(%sEo *obj@#full_params);\n",
-                             func_env.lower_eo_func, (ftype == EOLIAN_PROP_GET || eolian_function_object_is_const(func))?"const ":"");
+                             func_env.lower_eo_func,
+                             (ftype == EOLIAN_PROP_GET ||
+                              eolian_function_object_is_const(func) ||
+                              eolian_function_is_class(func))?"const ":"");
 
    if (scope == EOLIAN_SCOPE_PROTECTED)
       eina_strbuf_append_printf(str_func, "#endif\n");
@@ -510,7 +513,9 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
         eina_strbuf_append_printf(eo_func_decl,
               "EOAPI EO_%sFUNC_BODY%s%s(%s",
               ret_is_void?"VOID_":"", has_params?"V":"",
-              (ftype == EOLIAN_PROP_GET || eolian_function_object_is_const(funcid))?"_CONST":"", func_env.lower_eo_func);
+              (ftype == EOLIAN_PROP_GET ||
+               eolian_function_object_is_const(funcid) ||
+               eolian_function_is_class(funcid))?"_CONST":"", func_env.lower_eo_func);
         if (!ret_is_void)
           {
              const char *val_str = NULL;
