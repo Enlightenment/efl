@@ -140,7 +140,7 @@ lcov-report:
 	lcov --remove $(top_builddir)/coverage/coverage.cleaned2.info '*/elm_suite.c' --output-file $(top_builddir)/coverage/coverage.cleaned3.info
 	lcov --remove $(top_builddir)/coverage/coverage.cleaned3.info '*NONE*' --output-file $(top_builddir)/coverage/coverage.cleaned4.info
 	lcov --remove $(top_builddir)/coverage/coverage.cleaned4.info '*/datetime_input_ctxpopup.c' '*/elm_horizontal_box.c' '*/elm_vertical_frame.c' '*/elm_vertical_box.c' '*/elm_horizontal_frame.c' '*/prefs_iface.c' '*/elm_swallow.c' --output-file $(top_builddir)/coverage/coverage.cleaned5.info
-	genhtml --branch-coverage -t "$(PACKAGE_STRING)" -o $(top_builddir)/coverage/html $(top_builddir)/coverage/coverage.cleaned5.info
+	genhtml --legend -t "$(PACKAGE_STRING)" -o $(top_builddir)/coverage/html $(top_builddir)/coverage/coverage.cleaned5.info
 	@echo "Coverage Report at $(top_builddir)/coverage/html"
 
 endif
