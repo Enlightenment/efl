@@ -1,19 +1,6 @@
 interface Efl.Image {
    legacy_prefix: null;
    methods {
-      @property animated {
-         /* FIXME: Move to specific interface */
-         get {
-            [[Check if an image can be animated (has multiple frames).
-
-              This will be $true for animated Gif files for instance but $false
-              for still images.
-            ]]
-         }
-         values {
-            is_animated: bool; [[$true if the image is animated]]
-         }
-      }
       @property load_size {
          [[The loading size of an image.
 

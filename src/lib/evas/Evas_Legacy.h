@@ -2753,6 +2753,106 @@ EAPI Eina_Bool evas_object_image_save(const Eo *obj, const char *file, const cha
 EAPI Eina_Bool evas_object_image_animated_get(const Eo *obj);
 
 /**
+ * @brief Set the frame to current frame of an image object.
+ *
+ * This set image object's current frame to frame_num with 1 being the first
+ * frame.
+ *
+ * See also @ref evas_object_image_animated_get,
+ * @ref evas_object_image_animated_frame_count_get,
+ * @ref evas_object_image_animated_loop_type_get,
+ * @ref evas_object_image_animated_loop_count_get,
+ * @ref evas_object_image_animated_frame_duration_get.
+ *
+ * @param[in] frame_index The index of current frame.
+ *
+ * @since 1.1
+ */
+EAPI void evas_object_image_animated_frame_set(Evas_Object *obj, int frame_index);
+
+/**
+ * @brief Get the total number of frames of the image object.
+ *
+ * This returns total number of frames the image object supports (if animated).
+ *
+ * See also @ref evas_object_image_animated_get,
+ * @ref evas_object_image_animated_loop_type_get,
+ * @ref evas_object_image_animated_loop_count_get,
+ * @ref evas_object_image_animated_frame_duration_get.
+ *
+ * @return The number of frames.
+ *
+ * @since 1.1
+ */
+EAPI int evas_object_image_animated_frame_count_get(const Evas_Object *obj);
+
+/**
+ * @brief Get the kind of looping the image object does.
+ *
+ * This returns the kind of looping the image object wants to do.
+ *
+ * If it returns EVAS_IMAGE_ANIMATED_HINT_LOOP, you should display frames in a
+ * sequence like: 1->2->3->1->2->3->1...
+ *
+ * If it returns EVAS_IMAGE_ANIMATED_HINT_PINGPONG, it is better to display
+ * frames in a sequence like: 1->2->3->2->1->2->3->1...
+ *
+ * The default type is EVAS_IMAGE_ANIMATED_HINT_LOOP.
+ *
+ * See also @ref evas_object_image_animated_get,
+ * @ref evas_object_image_animated_frame_count_get,
+ * @ref evas_object_image_animated_loop_count_get,
+ * @ref evas_object_image_animated_frame_duration_get.
+ *
+ * @return Loop type of the image object.
+ *
+ * @since 1.1
+ */
+EAPI Evas_Image_Animated_Loop_Hint evas_object_image_animated_loop_type_get(const Evas_Object *obj);
+
+/**
+ * @brief Get the number times the animation of the object loops.
+ *
+ * This returns loop count of image. The loop count is the number of times the
+ * animation will play fully from first to last frame until the animation
+ * should stop (at the final frame).
+ *
+ * If 0 is returned, then looping should happen indefinitely (no limit to the
+ * number of times it loops).
+ *
+ * See also @ref evas_object_image_animated_get,
+ * @ref evas_object_image_animated_frame_count_get,
+ * @ref evas_object_image_animated_loop_type_get,
+ * @ref evas_object_image_animated_frame_duration_get.
+ *
+ * @return The number of loop of an animated image object.
+ *
+ * @since 1.1
+ */
+EAPI int evas_object_image_animated_loop_count_get(const Evas_Object *obj);
+
+/**
+ * @brief Get the duration of a sequence of frames.
+ *
+ * This returns total duration that the specified sequence of frames should
+ * take in seconds.
+ *
+ * If you set start_frame to 1 and frame_num 0, you get frame 1's duration. If
+ * you set start_frame to 1 and frame_num 1, you get frame 1's duration +
+ * frame2's duration.
+ *
+ * See also @ref evas_object_image_animated_get,
+ * @ref evas_object_image_animated_frame_count_get,
+ * @ref evas_object_image_animated_loop_type_get,
+ * @ref evas_object_image_animated_loop_count_get,
+ *
+ * @param[in] frame_num Number of frames in the sequence.
+ *
+ * @since 1.1
+ */
+EAPI double evas_object_image_animated_frame_duration_get(const Evas_Object *obj, int start_frame, int frame_num);
+
+/**
  *
  * Set the load size of a given image object's source image.
  *

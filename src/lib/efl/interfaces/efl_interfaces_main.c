@@ -7,6 +7,7 @@
 #include "interfaces/efl_control.eo.c"
 #include "interfaces/efl_file.eo.c"
 #include "interfaces/efl_image.eo.c"
+#include "interfaces/efl_image_animated.eo.c"
 #include "interfaces/efl_player.eo.c"
 #include "interfaces/efl_text.eo.c"
 #include "interfaces/efl_text_properties.eo.c"

@@ -58,6 +58,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_control.eo.h"
 #include "interfaces/efl_file.eo.h"
 #include "interfaces/efl_image.eo.h"
+#include "interfaces/efl_image_animated.eo.h"
 #include "interfaces/efl_player.eo.h"
 #include "interfaces/efl_text.eo.h"
 #include "interfaces/efl_text_properties.eo.h"
@@ -98,6 +99,7 @@ static inline void efl_gfx_color16_type_set(Efl_Gfx_Color *color,
 
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "interfaces/efl_gfx_types.eot.h"
+#include "interfaces/efl_image_animated.eo.legacy.h"
 #include "interfaces/efl_gfx_fill.eo.legacy.h"
 #include "interfaces/efl_gfx_base.eo.legacy.h"
 #endif

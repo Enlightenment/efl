@@ -1,6 +1,5 @@
 type @extern Evas.Load_Error: int; /* FIXME: Need to migrate emile. */
 type @extern Evas.Image_Scale_Hint: int; /* FIXME: Need to migrate emile. */
-type @extern Evas.Image_Animated_Loop_Hint: int; /* FIXME: Need to migrate emile. */
 struct @extern Evas.Video_Surface; /* FIXME: The structure is full of the unsupported func pointers. */
 
 /* FIXME: Unsupported annonymous structures inside */

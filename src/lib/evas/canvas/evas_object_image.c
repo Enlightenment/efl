@@ -2248,7 +2248,7 @@ _evas_image_region_support_get(Eo *eo_obj, Evas_Image_Data *o)
 
 /* animated feature */
 EOLIAN static Eina_Bool
-_evas_image_efl_image_animated_get(Eo *eo_obj, Evas_Image_Data *o)
+_evas_image_efl_image_animated_animated_get(Eo *eo_obj, Evas_Image_Data *o)
 {
    Eina_Bool animated;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
@@ -2262,7 +2262,7 @@ _evas_image_efl_image_animated_get(Eo *eo_obj, Evas_Image_Data *o)
 }
 
 EOLIAN static int
-_evas_image_animated_frame_count_get(Eo *eo_obj, Evas_Image_Data *o)
+_evas_image_efl_image_animated_animated_frame_count_get(Eo *eo_obj, Evas_Image_Data *o)
 {
    int frame_count;
    frame_count = -1;
@@ -2276,23 +2276,22 @@ _evas_image_animated_frame_count_get(Eo *eo_obj, Evas_Image_Data *o)
    return frame_count;
 }
 
-EOLIAN static Evas_Image_Animated_Loop_Hint
-_evas_image_animated_loop_type_get(Eo *eo_obj, Evas_Image_Data *o)
+EOLIAN static Efl_Image_Animated_Loop_Hint
+_evas_image_efl_image_animated_animated_loop_type_get(Eo *eo_obj, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Efl_Image_Animated_Loop_Hint hint = EFL_IMAGE_ANIMATED_LOOP_HINT_NONE;
 
-   Evas_Image_Animated_Loop_Hint hint;
-   hint = EVAS_IMAGE_ANIMATED_HINT_NONE;
    if (!evas_object_image_animated_get(eo_obj)) return hint;
 
    if (ENFN->image_animated_loop_type_get)
-      hint = ENFN->image_animated_loop_type_get(ENDT, o->engine_data);
+      hint = (Efl_Image_Animated_Loop_Hint) ENFN->image_animated_loop_type_get(ENDT, o->engine_data);
 
    return hint;
 }
 
 EOLIAN static int
-_evas_image_animated_loop_count_get(Eo *eo_obj, Evas_Image_Data *o)
+_evas_image_efl_image_animated_animated_loop_count_get(Eo *eo_obj, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -2309,13 +2308,11 @@ _evas_image_animated_loop_count_get(Eo *eo_obj, Evas_Image_Data *o)
 }
 
 EOLIAN static double
-_evas_image_animated_frame_duration_get(const Eo *eo_obj, Evas_Image_Data *o, int start_frame, int frame_num)
+_evas_image_efl_image_animated_animated_frame_duration_get(Eo *eo_obj, Evas_Image_Data *o, int start_frame, int frame_num)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   double frame_duration = -1;
    int frame_count = 0;
-
-   double frame_duration;
-   frame_duration = -1;
 
    if (!ENFN->image_animated_frame_count_get) return frame_duration;
 
@@ -2328,24 +2325,24 @@ _evas_image_animated_frame_duration_get(const Eo *eo_obj, Evas_Image_Data *o, in
    return frame_duration;
 }
 
-EOLIAN static void
-_evas_image_animated_frame_set(Eo *eo_obj, Evas_Image_Data *o, int frame_index)
+EOLIAN static Eina_Bool
+_evas_image_efl_image_animated_animated_frame_set(Eo *eo_obj, Evas_Image_Data *o, int frame_index)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    int frame_count = 0;
 
-   if (!o->cur->u.file) return;
-   if (o->cur->frame == frame_index) return;
+   if (!o->cur->u.file) return EINA_FALSE;
+   if (o->cur->frame == frame_index) return EINA_TRUE;
 
-   if (!evas_object_image_animated_get(eo_obj)) return;
+   if (!evas_object_image_animated_get(eo_obj)) return EINA_FALSE;
    evas_object_async_block(obj);
    frame_count = evas_object_image_animated_frame_count_get(eo_obj);
 
    /* limit the size of frame to FRAME_MAX */
    if ((frame_count > FRAME_MAX) || (frame_count < 0) || (frame_index > frame_count))
-     return;
+     return EINA_FALSE;
 
-   if (!ENFN->image_animated_frame_set) return;
+   if (!ENFN->image_animated_frame_set) return EINA_FALSE;
    ENFN->image_animated_frame_set(ENDT, o->engine_data, frame_index);
 //   if (!ENFN->image_animated_frame_set(ENDT, o->engine_data, frame_index)) return;
 
@@ -2360,6 +2357,15 @@ _evas_image_animated_frame_set(Eo *eo_obj, Evas_Image_Data *o, int frame_index)
    o->changed = EINA_TRUE;
    evas_object_change(eo_obj, obj);
 
+   return EINA_TRUE;
+}
+
+EOLIAN static int
+_evas_image_efl_image_animated_animated_frame_get(Eo *eo_obj, Evas_Image_Data *o)
+{
+   if (!o->cur->u.file) return EINA_FALSE;
+   if (!evas_object_image_animated_get(eo_obj)) return EINA_FALSE;
+   return o->cur->frame;
 }
 
 EOLIAN void
@@ -4947,6 +4953,36 @@ EAPI Eina_Bool
 evas_object_image_animated_get(const Eo *obj)
 {
    return efl_image_animated_get((Eo *) obj);
+}
+
+EAPI void
+evas_object_image_animated_frame_set(Evas_Object *obj, int frame_index)
+{
+   efl_image_animated_frame_set(obj, frame_index);
+}
+
+EAPI int
+evas_object_image_animated_frame_count_get(const Evas_Object *obj)
+{
+   return efl_image_animated_frame_count_get(obj);
+}
+
+EAPI Evas_Image_Animated_Loop_Hint
+evas_object_image_animated_loop_type_get(const Evas_Object *obj)
+{
+   return (Evas_Image_Animated_Loop_Hint) efl_image_animated_loop_type_get(obj);
+}
+
+EAPI int
+evas_object_image_animated_loop_count_get(const Evas_Object *obj)
+{
+   return efl_image_animated_loop_count_get(obj);
+}
+
+EAPI double
+evas_object_image_animated_frame_duration_get(const Evas_Object *obj, int start_frame, int frame_num)
+{
+   return efl_image_animated_frame_duration_get(obj, start_frame, frame_num);
 }
 
 EAPI void

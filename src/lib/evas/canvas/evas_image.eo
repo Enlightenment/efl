@@ -1,6 +1,6 @@
 type @extern Evas_Object_Image_Pixels_Get_Cb: __undefined_type; /* FIXME: func pointers are not supported. */
 
-class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, Evas.Filter)
+class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Animated, Efl.Gfx.Fill, Efl.Gfx.View, Evas.Filter)
 {
    legacy_prefix: evas_object_image;
    eo_prefix: evas_obj_image;
@@ -482,24 +482,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
             data: void *; [[The raw data to replace.]]
          }
       }
-      @property animated_frame {
-         set {
-            [[Set the frame to current frame of an image object.
-
-              This set image object's current frame to frame_num with 1
-              being the first frame.
-
-              See also \@ref evas_object_image_animated_get,
-              @.animated_frame_count.get, @.animated_loop_type.get,
-              @.animated_loop_count.get, @.animated_frame_duration_get.
-
-              @since 1.1
-            ]]
-         }
-         values {
-            frame_index: int; [[The index of current frame.]]
-         }
-      }
       @property region_support {
          get {
             [[Get the support state of a given image.
@@ -521,22 +503,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
             ]]
          }
       }
-      @property animated_frame_count {
-         get {
-            [[Get the total number of frames of the image object.
-
-              This returns total number of frames the image object
-              supports (if animated).
-
-              See also \@ref evas_object_image_animated_get,
-              @.animated_frame_count.get, @.animated_loop_type.get,
-              @.animated_loop_count.get, @.animated_frame_duration_get.
-
-              @since 1.1
-            ]]
-            return: int; [[The number of frames.]]
-         }
-      }
       @property stride {
          get {
             [[Retrieves the row stride of the given image object.
@@ -545,49 +511,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
               row and the start of the next row for image data.
             ]]
             return: int @warn_unused; [[The stride of the image (in bytes).]]
-         }
-      }
-      @property animated_loop_type {
-         get {
-            [[Get the kind of looping the image object does.
-
-              This returns the kind of looping the image object wants to do.
-
-              If it returns EVAS_IMAGE_ANIMATED_HINT_LOOP, you should display
-              frames in a sequence like: 1->2->3->1->2->3->1...
-
-              If it returns EVAS_IMAGE_ANIMATED_HINT_PINGPONG, it is better
-              to display frames in a sequence like: 1->2->3->2->1->2->3->1...
-
-              The default type is EVAS_IMAGE_ANIMATED_HINT_LOOP.
-
-              See also \@ref evas_object_image_animated_get,
-              @.animated_frame_count.get, @.animated_loop_type.get,
-              @.animated_loop_count.get, @.animated_frame_duration_get.
-
-              @since 1.1
-            ]]
-            return: Evas.Image_Animated_Loop_Hint; [[Loop type of the image object.]]
-         }
-      }
-      @property animated_loop_count {
-         get {
-            [[Get the number times the animation of the object loops.
-
-              This returns loop count of image. The loop count is the number
-              of times the animation will play fully from first to last frame
-              until the animation should stop (at the final frame).
-
-              If 0 is returned, then looping should happen indefinitely
-              (no limit to the number of times it loops).
-
-              See also \@ref evas_object_image_animated_get,
-              @.animated_frame_count.get, @.animated_loop_type.get,
-              @.animated_loop_count.get, @.animated_frame_duration_get.
-
-              @since 1.1
-            ]]
-            return: int; [[The number of loop of an animated image object.]]
          }
       }
 
@@ -672,28 +595,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
             @in h: int; [[Height of the region to be updated.]]
          }
       }
-      animated_frame_duration_get @const {
-         [[Get the duration of a sequence of frames.
-
-           This returns total duration that the specified sequence of
-           frames should take in seconds.
-
-           If you set start_frame to 1 and frame_num 0, you get frame 1's
-           duration. If you set start_frame to 1 and frame_num 1, you get
-           frame 1's duration + frame2's duration.
-
-           See also \@ref evas_object_image_animated_get,
-           @.animated_frame_count.get, @.animated_loop_type.get,
-           @.animated_loop_count.get, @.animated_frame_duration_get.
-
-           @since 1.1
-         ]]
-         return: double;
-         params {
-            @in start_frame: int; [[The first frame.]]
-            @in frame_num: int; [[Number of frames in the sequence.]]
-         }
-      }
       data_set {
          [[Sets the raw image data of the given image object.
 
@@ -750,7 +651,13 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
       Efl.File.mmap.set;
       Efl.File.mmap.get;
       Efl.File.save;
-      Efl.Image.animated.get;
+      Efl.Image_Animated.animated.get;
+      Efl.Image_Animated.animated_frame.get;
+      Efl.Image_Animated.animated_frame.set;
+      Efl.Image_Animated.animated_frame_count.get;
+      Efl.Image_Animated.animated_loop_type.get;
+      Efl.Image_Animated.animated_loop_count.get;
+      Efl.Image_Animated.animated_frame_duration.get;
       Efl.Image.load_size.set;
       Efl.Image.load_size.get;
       Efl.Image.smooth_scale.set;
