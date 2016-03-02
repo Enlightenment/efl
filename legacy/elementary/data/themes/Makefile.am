@@ -90,6 +90,7 @@ edc/toolbar.edc \
 edc/transitions.edc \
 edc/wallpaper.edc \
 edc/winlist.edc \
+edc/wireless.edc \
 edc/wizard.edc \
 edc/xkbswitch.edc \
 \
@@ -528,6 +529,8 @@ img/led_strobe.png \
 img/led_tiny_blue.png \
 img/led_tiny_green.png \
 img/led_tiny_orange.png \
+img/lock_insecure.png \
+img/lock_locked.png \
 img/logo_blue_bottom.png \
 img/logo_blue_small_glow.png \
 img/logo_blue_small.png \
@@ -662,6 +665,7 @@ img/vgrad_shadow_bi.png \
 img/vgrad_tall.png \
 img/white_bar_vert_glow.png \
 img/wifi_base.png \
+img/wifi_shadow.png \
 img/wifi_sig_1.png \
 img/wifi_sig_2.png \
 img/wifi_sig_3.png \
