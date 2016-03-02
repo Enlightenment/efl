@@ -108,7 +108,6 @@ benchmark: all
 
 EXAMPLES_SUBDIRS = \
 examples/eina \
-examples/eo \
 examples/eet \
 examples/evas \
 examples/ecore \
