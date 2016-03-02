@@ -107,7 +107,7 @@ _elm_grid_elm_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -127,11 +127,11 @@ _elm_grid_evas_object_smart_add(Eo *obj, void *_pd EINA_UNUSED)
    elm_widget_resize_object_set(obj, grid, EINA_TRUE);
    evas_object_grid_size_set(wd->resize_obj, 100, 100);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
-   eo_do(obj, elm_obj_widget_theme_apply());
+   elm_obj_widget_theme_apply(obj);
 }
 
 EOLIAN static void
@@ -154,7 +154,7 @@ _elm_grid_evas_object_smart_del(Eo *obj, void *_pd EINA_UNUSED)
           }
      }
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
@@ -168,10 +168,9 @@ elm_grid_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_grid_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_FILLER));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
 
    return obj;
 }

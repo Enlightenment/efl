@@ -78,7 +78,7 @@ _activate(Evas_Object *obj)
              _elm_access_say(E_("State: Off"));
      }
 
-   eo_do(obj, eo_event_callback_call(ELM_CHECK_EVENT_CHANGED, NULL));
+   eo_event_callback_call(obj, ELM_CHECK_EVENT_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
        elm_interface_atspi_accessible_state_changed_signal_emit(obj,
@@ -107,7 +107,7 @@ _elm_check_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Check_Data 
 {
    Elm_Atspi_State_Set states = 0;
 
-   eo_do_super(obj, ELM_CHECK_CLASS, states = elm_interface_atspi_accessible_state_set_get());
+   states = elm_interface_atspi_accessible_state_set_get(eo_super(obj, ELM_CHECK_CLASS));
 
    if (elm_check_state_get(obj))
        STATE_TYPE_SET(states, ELM_ATSPI_STATE_CHECKED);
@@ -123,12 +123,12 @@ _elm_check_elm_widget_sub_object_del(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED, E
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
+   int_ret = elm_obj_widget_sub_object_del(eo_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
 
-   eo_do(obj, elm_obj_layout_sizing_eval());
+   elm_obj_layout_sizing_eval(obj);
 
    return EINA_TRUE;
 }
@@ -152,12 +152,12 @@ _elm_check_elm_container_content_set(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED, c
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(part, content));
+   int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), part, content);
    if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
 
-   eo_do(obj, elm_obj_layout_sizing_eval());
+   elm_obj_layout_sizing_eval(obj);
 
    return EINA_TRUE;
 }
@@ -205,7 +205,7 @@ _elm_check_elm_widget_theme_apply(Eo *obj, Elm_Check_Data *sd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    if (!sd->state) elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
@@ -218,7 +218,7 @@ _elm_check_elm_widget_theme_apply(Eo *obj, Elm_Check_Data *sd)
     * we can changed the theme API */
    _icon_signal_emit(obj);
 
-   eo_do(obj, elm_obj_layout_sizing_eval());
+   elm_obj_layout_sizing_eval(obj);
 
    return EINA_TRUE;
 }
@@ -283,7 +283,7 @@ _on_check_off(void *data,
    if (sd->statep) *sd->statep = sd->state;
 
    elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
-   eo_do(obj, eo_event_callback_call(ELM_CHECK_EVENT_CHANGED, NULL));
+   eo_event_callback_call(obj, ELM_CHECK_EVENT_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
        elm_interface_atspi_accessible_state_changed_signal_emit(data,
@@ -304,7 +304,7 @@ _on_check_on(void *data,
    sd->state = EINA_TRUE;
    if (sd->statep) *sd->statep = sd->state;
    elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
-   eo_do(obj, eo_event_callback_call(ELM_CHECK_EVENT_CHANGED, NULL));
+   eo_event_callback_call(obj, ELM_CHECK_EVENT_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
        elm_interface_atspi_accessible_state_changed_signal_emit(data,
@@ -326,7 +326,7 @@ _elm_check_evas_object_smart_add(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    edje_object_signal_callback_add
@@ -378,11 +378,10 @@ elm_check_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_check_eo_base_constructor(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_CHECK_BOX));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_CHECK_BOX);
 
    return obj;
 }

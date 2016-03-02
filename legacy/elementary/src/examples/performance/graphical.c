@@ -250,45 +250,31 @@ void _init_bounding()
 
    globalGraphical.material_box = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, globalGraphical.evas);
 
-   eo_do(globalGraphical.material_box,
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE),
-
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, 0.2, 0.2, 0.2, 1.0),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, 0.8, 0.8, 0.8, 1.0),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0),
-         evas_canvas3d_material_shininess_set(100.0));
+   evas_canvas3d_material_enable_set(globalGraphical.material_box, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE);
+   evas_canvas3d_material_enable_set(globalGraphical.material_box, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE);
+   evas_canvas3d_material_enable_set(globalGraphical.material_box, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE);
+   evas_canvas3d_material_color_set(globalGraphical.material_box, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, 0.2, 0.2, 0.2, 1.0);
+   evas_canvas3d_material_color_set(globalGraphical.material_box, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, 0.8, 0.8, 0.8, 1.0);
+   evas_canvas3d_material_color_set(globalGraphical.material_box, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 1.0);
+   evas_canvas3d_material_shininess_set(globalGraphical.material_box, 100.0);
 
    /* Setup mesh. */
    globalGraphical.mesh_box = eo_add(EVAS_CANVAS3D_MESH_CLASS, globalGraphical.evas);
-   eo_do(globalGraphical.mesh_box,
-         evas_canvas3d_mesh_vertex_count_set(24),
-         evas_canvas3d_mesh_frame_add(0),
-
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION,
-                                            12 * sizeof(float), &cube_vertices[ 0]),
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL,
-                                            12 * sizeof(float), &cube_vertices[ 3]),
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR,
-                                            12 * sizeof(float), &cube_vertices[ 6]),
-         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD,
-                                            12 * sizeof(float), &cube_vertices[10]),
-
-         evas_canvas3d_mesh_index_data_copy_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT,
-                                     36, &cube_indices[0]),
-         evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES),
-
-         evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_PHONG),
-
-         evas_canvas3d_mesh_frame_material_set(0, globalGraphical.material_box));
+   evas_canvas3d_mesh_vertex_count_set(globalGraphical.mesh_box, 24);
+   evas_canvas3d_mesh_frame_add(globalGraphical.mesh_box, 0);
+   evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh_box, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, 12 * sizeof(float), &cube_vertices[ 0]);
+   evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh_box, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL, 12 * sizeof(float), &cube_vertices[ 3]);
+   evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh_box, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR, 12 * sizeof(float), &cube_vertices[ 6]);
+   evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh_box, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, 12 * sizeof(float), &cube_vertices[10]);
+   evas_canvas3d_mesh_index_data_copy_set(globalGraphical.mesh_box, EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, 36, &cube_indices[0]);
+   evas_canvas3d_mesh_vertex_assembly_set(globalGraphical.mesh_box, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES);
+   evas_canvas3d_mesh_shade_mode_set(globalGraphical.mesh_box, EVAS_CANVAS3D_SHADE_MODE_PHONG);
+   evas_canvas3d_mesh_frame_material_set(globalGraphical.mesh_box, 0, globalGraphical.material_box);
 
    globalGraphical.mesh_nodebox =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, globalGraphical.evas,
-                    evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_MESH),
-                    evas_canvas3d_node_position_set(0, -30.0, 0.0));
-   eo_do(globalGraphical.root_node, evas_canvas3d_node_member_add(globalGraphical.mesh_nodebox));
-   eo_do(globalGraphical.mesh_nodebox, evas_canvas3d_node_mesh_add(globalGraphical.mesh_box));
+      eo_add(EVAS_CANVAS3D_NODE_CLASS, globalGraphical.evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH), evas_canvas3d_node_position_set(eoid, 0, -30.0, 0.0));
+   evas_canvas3d_node_member_add(globalGraphical.root_node, globalGraphical.mesh_nodebox);
+   evas_canvas3d_node_mesh_add(globalGraphical.mesh_nodebox, globalGraphical.mesh_box);
 }
 static void
 _change_scene_setup()
@@ -297,12 +283,11 @@ _change_scene_setup()
    Eina_List *l = NULL;
    int i = 0;
    int quantity = (globalGraphical.count + 1) * (globalGraphical.count + 1);
-   eo_do(globalGraphical.camera,
-         evas_canvas3d_camera_projection_perspective_set(globalGraphical.angle, 1.0, 2.0, 1000));
+   evas_canvas3d_camera_projection_perspective_set(globalGraphical.camera, globalGraphical.angle, 1.0, 2.0, 1000);
 
    EINA_LIST_FOREACH (globalGraphical.list_nodes, l, node)
      {
-        eo_do(globalGraphical.root_node, evas_canvas3d_node_member_del(node));
+        evas_canvas3d_node_member_del(globalGraphical.root_node, node);
         globalGraphical.list_nodes = eina_list_remove(globalGraphical.list_nodes, node);
         /*eo_del(node);Unless evas_canvas3d_destructors work properly*/
      }
@@ -325,59 +310,47 @@ _change_scene_setup()
         globalGraphical.mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, globalGraphical.evas);
         if (!globalGraphical.model_path)
           {
-              eo_do(globalGraphical.mesh,
-                   evas_canvas3d_mesh_vertex_count_set(globalGraphical.vertex_count),
-                   evas_canvas3d_mesh_frame_add(0),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION,
-                                                      sizeof(vertex),
-                                                      &globalGraphical.vertices[0].position),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL,
-                                                      sizeof(vertex),
-                                                      &globalGraphical.vertices[0].normal),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TANGENT,
-                                                      sizeof(vertex),
-                                                      &globalGraphical.vertices[0].tangent),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR,
-                                                      sizeof(vertex), &globalGraphical.vertices[0].color),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD,
-                                                      sizeof(vertex),
-                                                      &globalGraphical.vertices[0].texcoord),
-
-                   evas_canvas3d_mesh_index_data_copy_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT,
-                                               globalGraphical.index_count, &globalGraphical.indices[0]),
-                   evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES),
-                   evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_PHONG));
+              evas_canvas3d_mesh_vertex_count_set(globalGraphical.mesh, globalGraphical.vertex_count);
+              evas_canvas3d_mesh_frame_add(globalGraphical.mesh, 0);
+              evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, sizeof(vertex), &globalGraphical.vertices[0].position);
+              evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL, sizeof(vertex), &globalGraphical.vertices[0].normal);
+              evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TANGENT, sizeof(vertex), &globalGraphical.vertices[0].tangent);
+              evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR, sizeof(vertex), &globalGraphical.vertices[0].color);
+              evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, sizeof(vertex), &globalGraphical.vertices[0].texcoord);
+              evas_canvas3d_mesh_index_data_copy_set(globalGraphical.mesh, EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, globalGraphical.index_count, &globalGraphical.indices[0]);
+              evas_canvas3d_mesh_vertex_assembly_set(globalGraphical.mesh, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES);
+              evas_canvas3d_mesh_shade_mode_set(globalGraphical.mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
            }
          else
            {
-              eo_do(globalGraphical.mesh,
-                    efl_file_set(globalGraphical.model_path, NULL),
-                    evas_canvas3d_mesh_frame_material_set(0, globalGraphical.material),
-                    evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_PHONG));
+              efl_file_set(globalGraphical.mesh, globalGraphical.model_path, NULL);
+              evas_canvas3d_mesh_frame_material_set(globalGraphical.mesh, 0, globalGraphical.material);
+              evas_canvas3d_mesh_shade_mode_set(globalGraphical.mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
            }
 
          if (globalGraphical.flags.fog_enable)
            {
-              eo_do(globalGraphical.mesh, evas_canvas3d_mesh_fog_enable_set(EINA_TRUE), evas_canvas3d_mesh_fog_color_set(FOG_COLOR, FOG_FACTOR));
+              evas_canvas3d_mesh_fog_enable_set(globalGraphical.mesh, EINA_TRUE);
+              evas_canvas3d_mesh_fog_color_set(globalGraphical.mesh, FOG_COLOR, FOG_FACTOR);
            }
          else
            {
-              eo_do(globalGraphical.mesh, evas_canvas3d_mesh_fog_enable_set(EINA_FALSE));
+              evas_canvas3d_mesh_fog_enable_set(globalGraphical.mesh, EINA_FALSE);
            }
          if (globalGraphical.flags.colorpick_enable)
-           eo_do(globalGraphical.mesh, evas_canvas3d_mesh_color_pick_enable_set(EINA_TRUE));
+           evas_canvas3d_mesh_color_pick_enable_set(globalGraphical.mesh, EINA_TRUE);
          else
-           eo_do(globalGraphical.mesh, evas_canvas3d_mesh_color_pick_enable_set(EINA_FALSE));
+           evas_canvas3d_mesh_color_pick_enable_set(globalGraphical.mesh, EINA_FALSE);
 
          if (globalGraphical.flags.blend_enable)
            {
-              eo_do(globalGraphical.mesh, evas_canvas3d_mesh_blending_enable_set(EINA_TRUE),
-                    evas_canvas3d_mesh_blending_func_set(EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA, EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_SRC_ALPHA));
+              evas_canvas3d_mesh_blending_enable_set(globalGraphical.mesh, EINA_TRUE);
+              evas_canvas3d_mesh_blending_func_set(globalGraphical.mesh, EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA, EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_SRC_ALPHA);
            }
          else
-           eo_do(globalGraphical.mesh, evas_canvas3d_mesh_blending_enable_set(EINA_FALSE));
+           evas_canvas3d_mesh_blending_enable_set(globalGraphical.mesh, EINA_FALSE);
 
-         eo_do(globalGraphical.mesh, evas_canvas3d_mesh_frame_material_set(0, globalGraphical.material));
+         evas_canvas3d_mesh_frame_material_set(globalGraphical.mesh, 0, globalGraphical.material);
          globalGraphical.list_meshes = eina_list_append(globalGraphical.list_meshes, globalGraphical.mesh);
       }
 
@@ -386,15 +359,11 @@ _change_scene_setup()
    for (i = 0; i < quantity; i++)
      {
         globalGraphical.mesh_node =
-           eo_add(EVAS_CANVAS3D_NODE_CLASS, globalGraphical.evas,
-                         evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_MESH),
-                         evas_canvas3d_node_position_set(globalGraphical.places[i].position.x * 20,
-                                                   globalGraphical.places[i].position.y * 20,
-                                                   globalGraphical.places[i].position.z * 20));
+           eo_add(EVAS_CANVAS3D_NODE_CLASS, globalGraphical.evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH), evas_canvas3d_node_position_set(eoid, globalGraphical.places[i].position.x * 20, globalGraphical.places[i].position.y * 20, globalGraphical.places[i].position.z * 20));
         if (globalGraphical.model_path)
-          eo_do(globalGraphical.mesh_node, evas_canvas3d_node_scale_set(0.2, 0.2, 0.2));
-        eo_do(globalGraphical.root_node, evas_canvas3d_node_member_add(globalGraphical.mesh_node));
-        eo_do(globalGraphical.mesh_node, evas_canvas3d_node_mesh_add((Eo*)eina_list_nth(globalGraphical.list_meshes, i)));
+          evas_canvas3d_node_scale_set(globalGraphical.mesh_node, 0.2, 0.2, 0.2);
+        evas_canvas3d_node_member_add(globalGraphical.root_node, globalGraphical.mesh_node);
+        evas_canvas3d_node_mesh_add(globalGraphical.mesh_node, (Eo*)eina_list_nth(globalGraphical.list_meshes, i));
         globalGraphical.list_nodes = eina_list_append(globalGraphical.list_nodes, globalGraphical.mesh_node);
      }
 
@@ -405,16 +374,16 @@ _change_scene_setup()
      ecore_animator_frametime_set(0.0001);
 
    if (globalGraphical.flags.shadow_enable)
-     eo_do(globalGraphical.scene, evas_canvas3d_scene_shadows_enable_set(EINA_TRUE));
+     evas_canvas3d_scene_shadows_enable_set(globalGraphical.scene, EINA_TRUE);
    else
-     eo_do(globalGraphical.scene, evas_canvas3d_scene_shadows_enable_set(EINA_FALSE));
+     evas_canvas3d_scene_shadows_enable_set(globalGraphical.scene, EINA_FALSE);
 
    if (globalGraphical.flags.colorpick_enable)
      {
-        eo_do(globalGraphical.scene, evas_canvas3d_scene_color_pick_enable_set(EINA_TRUE));
+        evas_canvas3d_scene_color_pick_enable_set(globalGraphical.scene, EINA_TRUE);
      }
    else
-     eo_do(globalGraphical.scene, evas_canvas3d_scene_color_pick_enable_set(EINA_FALSE));
+     evas_canvas3d_scene_color_pick_enable_set(globalGraphical.scene, EINA_FALSE);
 }
 
 static void
@@ -428,61 +397,48 @@ _init_scene(Evas_Object *img)
    globalGraphical.scene = eo_add(EVAS_CANVAS3D_SCENE_CLASS, globalGraphical.evas);
 
    /* Add the root node for the scene. */
-   globalGraphical.root_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, globalGraphical.evas,
-                      evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_NODE));
+   globalGraphical.root_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, globalGraphical.evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    /* Add the camera. */
    globalGraphical.camera = eo_add(EVAS_CANVAS3D_CAMERA_CLASS, globalGraphical.evas);
-   eo_do(globalGraphical.camera,
-         evas_canvas3d_camera_projection_perspective_set(globalGraphical.angle, 1.0, 2.0, 1000.0));
+   evas_canvas3d_camera_projection_perspective_set(globalGraphical.camera, globalGraphical.angle, 1.0, 2.0, 1000.0);
 
    globalGraphical.camera_node =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, globalGraphical.evas,
-             evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_CAMERA));
-   eo_do(globalGraphical.camera_node,
-         evas_canvas3d_node_camera_set(globalGraphical.camera),
-         evas_canvas3d_node_position_set(0.0, 0.0, 25.0),
-         evas_canvas3d_node_look_at_set(EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0,
-                                  EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0));
-   eo_do(globalGraphical.root_node, evas_canvas3d_node_member_add(globalGraphical.camera_node));
+      eo_add(EVAS_CANVAS3D_NODE_CLASS, globalGraphical.evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+   evas_canvas3d_node_camera_set(globalGraphical.camera_node, globalGraphical.camera);
+   evas_canvas3d_node_position_set(globalGraphical.camera_node, 0.0, 0.0, 25.0);
+   evas_canvas3d_node_look_at_set(globalGraphical.camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
+   evas_canvas3d_node_member_add(globalGraphical.root_node, globalGraphical.camera_node);
 
    globalGraphical.light = eo_add(EVAS_CANVAS3D_LIGHT_CLASS, globalGraphical.evas);
-   eo_do(globalGraphical.light,
-         evas_canvas3d_light_ambient_set(1.0, 1.0, 1.0, 1.0),
-         evas_canvas3d_light_diffuse_set(1.0, 1.0, 1.0, 1.0),
-         evas_canvas3d_light_specular_set(1.0, 1.0, 1.0, 1.0),
-         evas_canvas3d_light_projection_perspective_set(globalGraphical.angle / 5, 1.0, 1.0, 1000.0),
-         evas_canvas3d_light_spot_cutoff_set(globalGraphical.angle / 15));
+   evas_canvas3d_light_ambient_set(globalGraphical.light, 1.0, 1.0, 1.0, 1.0);
+   evas_canvas3d_light_diffuse_set(globalGraphical.light, 1.0, 1.0, 1.0, 1.0);
+   evas_canvas3d_light_specular_set(globalGraphical.light, 1.0, 1.0, 1.0, 1.0);
+   evas_canvas3d_light_projection_perspective_set(globalGraphical.light, globalGraphical.angle / 5, 1.0, 1.0, 1000.0);
+   evas_canvas3d_light_spot_cutoff_set(globalGraphical.light, globalGraphical.angle / 15);
 
    globalGraphical.light_node =
-      eo_add(EVAS_CANVAS3D_NODE_CLASS, globalGraphical.evas,
-                    evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_LIGHT));
-   eo_do(globalGraphical.light_node,
-         evas_canvas3d_node_light_set(globalGraphical.light),
-         evas_canvas3d_node_position_set(0.0, 100.0, 1.0),
-         evas_canvas3d_node_look_at_set(EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0,
-                                  EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0));
-   eo_do(globalGraphical.root_node, evas_canvas3d_node_member_add(globalGraphical.light_node));
+      eo_add(EVAS_CANVAS3D_NODE_CLASS, globalGraphical.evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+   evas_canvas3d_node_light_set(globalGraphical.light_node, globalGraphical.light);
+   evas_canvas3d_node_position_set(globalGraphical.light_node, 0.0, 100.0, 1.0);
+   evas_canvas3d_node_look_at_set(globalGraphical.light_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
+   evas_canvas3d_node_member_add(globalGraphical.root_node, globalGraphical.light_node);
 
 
    globalGraphical.material = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, globalGraphical.evas);
    globalGraphical.texture = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, globalGraphical.evas);
-   eo_do(globalGraphical.texture,
-         evas_canvas3d_texture_file_set("target_texture.png", NULL),
-         evas_canvas3d_texture_filter_set(EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR,
-                                    EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR),
-         evas_canvas3d_texture_wrap_set(EVAS_CANVAS3D_WRAP_MODE_REPEAT,
-                                  EVAS_CANVAS3D_WRAP_MODE_REPEAT));
-   eo_do(globalGraphical.material,
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, globalGraphical.texture),
-         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, globalGraphical.texture),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE),
-         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, EINA_TRUE),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, 1.0, 0.2, 0.2, 0.2),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, 1.0, 0.0, 0.0, 0.2),
-         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 0.2));
+   evas_canvas3d_texture_file_set(globalGraphical.texture, "target_texture.png", NULL);
+   evas_canvas3d_texture_filter_set(globalGraphical.texture, EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR, EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR);
+   evas_canvas3d_texture_wrap_set(globalGraphical.texture, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
+   evas_canvas3d_material_texture_set(globalGraphical.material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, globalGraphical.texture);
+   evas_canvas3d_material_texture_set(globalGraphical.material, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, globalGraphical.texture);
+   evas_canvas3d_material_enable_set(globalGraphical.material, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE);
+   evas_canvas3d_material_enable_set(globalGraphical.material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, EINA_TRUE);
+   evas_canvas3d_material_enable_set(globalGraphical.material, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, EINA_TRUE);
+   evas_canvas3d_material_enable_set(globalGraphical.material, EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, EINA_TRUE);
+   evas_canvas3d_material_color_set(globalGraphical.material, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, 1.0, 0.2, 0.2, 0.2);
+   evas_canvas3d_material_color_set(globalGraphical.material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, 1.0, 0.0, 0.0, 0.2);
+   evas_canvas3d_material_color_set(globalGraphical.material, EVAS_CANVAS3D_MATERIAL_ATTRIB_SPECULAR, 1.0, 1.0, 1.0, 0.2);
    /* Add the mesh with target precision */
    _sphere_init(globalGraphical.precision);
 
@@ -491,37 +447,24 @@ _init_scene(Evas_Object *img)
         globalGraphical.mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, globalGraphical.evas);
         if (!globalGraphical.model_path)
           {
-              eo_do(globalGraphical.mesh,
-                   evas_canvas3d_mesh_vertex_count_set(globalGraphical.vertex_count),
-                   evas_canvas3d_mesh_frame_add(0),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION,
-                                                      sizeof(vertex),
-                                                      &globalGraphical.vertices[0].position),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL,
-                                                      sizeof(vertex),
-                                                      &globalGraphical.vertices[0].normal),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TANGENT,
-                                                      sizeof(vertex),
-                                                      &globalGraphical.vertices[0].tangent),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR,
-                                                      sizeof(vertex), &globalGraphical.vertices[0].color),
-                   evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD,
-                                                      sizeof(vertex),
-                                                      &globalGraphical.vertices[0].texcoord),
-
-                   evas_canvas3d_mesh_index_data_copy_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT,
-                                               globalGraphical.index_count, &globalGraphical.indices[0]),
-                   evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES),
-                   evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_PHONG));
+              evas_canvas3d_mesh_vertex_count_set(globalGraphical.mesh, globalGraphical.vertex_count);
+              evas_canvas3d_mesh_frame_add(globalGraphical.mesh, 0);
+              evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, sizeof(vertex), &globalGraphical.vertices[0].position);
+              evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL, sizeof(vertex), &globalGraphical.vertices[0].normal);
+              evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TANGENT, sizeof(vertex), &globalGraphical.vertices[0].tangent);
+              evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_COLOR, sizeof(vertex), &globalGraphical.vertices[0].color);
+              evas_canvas3d_mesh_frame_vertex_data_copy_set(globalGraphical.mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, sizeof(vertex), &globalGraphical.vertices[0].texcoord);
+              evas_canvas3d_mesh_index_data_copy_set(globalGraphical.mesh, EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, globalGraphical.index_count, &globalGraphical.indices[0]);
+              evas_canvas3d_mesh_vertex_assembly_set(globalGraphical.mesh, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES);
+              evas_canvas3d_mesh_shade_mode_set(globalGraphical.mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
            }
          else
            {
-              eo_do(globalGraphical.mesh,
-                    efl_file_set(globalGraphical.model_path, NULL),
-                    evas_canvas3d_mesh_frame_material_set(0, globalGraphical.material),
-                    evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_PHONG));
+              efl_file_set(globalGraphical.mesh, globalGraphical.model_path, NULL);
+              evas_canvas3d_mesh_frame_material_set(globalGraphical.mesh, 0, globalGraphical.material);
+              evas_canvas3d_mesh_shade_mode_set(globalGraphical.mesh, EVAS_CANVAS3D_SHADE_MODE_PHONG);
            }
-         eo_do(globalGraphical.mesh, evas_canvas3d_mesh_frame_material_set(0, globalGraphical.material));
+         evas_canvas3d_mesh_frame_material_set(globalGraphical.mesh, 0, globalGraphical.material);
          globalGraphical.list_meshes = eina_list_append(globalGraphical.list_meshes, globalGraphical.mesh);
       }
 
@@ -531,24 +474,19 @@ _init_scene(Evas_Object *img)
    for (i = 0; i < quantity; i++)
      {
         globalGraphical.mesh_node =
-           eo_add(EVAS_CANVAS3D_NODE_CLASS, globalGraphical.evas,
-                  evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_MESH),
-                  evas_canvas3d_node_position_set(globalGraphical.places[i].position.x * 20,
-                                            globalGraphical.places[i].position.y * 20,
-                                            globalGraphical.places[i].position.z * 20));
+           eo_add(EVAS_CANVAS3D_NODE_CLASS, globalGraphical.evas, evas_canvas3d_node_constructor(eoid, EVAS_CANVAS3D_NODE_TYPE_MESH), evas_canvas3d_node_position_set(eoid, globalGraphical.places[i].position.x * 20, globalGraphical.places[i].position.y * 20, globalGraphical.places[i].position.z * 20));
         if (globalGraphical.model_path)
-          eo_do(globalGraphical.mesh_node, evas_canvas3d_node_scale_set(0.2, 0.2, 0.2));
-        eo_do(globalGraphical.root_node, evas_canvas3d_node_member_add(globalGraphical.mesh_node));
-        eo_do(globalGraphical.mesh_node, evas_canvas3d_node_mesh_add((Eo*)eina_list_nth(globalGraphical.list_meshes, i)));
+          evas_canvas3d_node_scale_set(globalGraphical.mesh_node, 0.2, 0.2, 0.2);
+        evas_canvas3d_node_member_add(globalGraphical.root_node, globalGraphical.mesh_node);
+        evas_canvas3d_node_mesh_add(globalGraphical.mesh_node, (Eo*)eina_list_nth(globalGraphical.list_meshes, i));
         globalGraphical.list_nodes = eina_list_append(globalGraphical.list_nodes, globalGraphical.mesh_node);
      }
 
   _init_bounding();
    evas_object_geometry_get(img, &x, &y, &w, &h);
-   eo_do(globalGraphical.scene,
-         evas_canvas3d_scene_root_node_set(globalGraphical.root_node),
-         evas_canvas3d_scene_camera_node_set(globalGraphical.camera_node),
-         evas_canvas3d_scene_size_set(w, h));
+   evas_canvas3d_scene_root_node_set(globalGraphical.scene, globalGraphical.root_node);
+   evas_canvas3d_scene_camera_node_set(globalGraphical.scene, globalGraphical.camera_node);
+   evas_canvas3d_scene_size_set(globalGraphical.scene, w, h);
 
    ecore_animator_frametime_set(1.0 / (globalGraphical.speed));
 }
@@ -671,7 +609,7 @@ init_graphical_window(Evas_Object *img)
    _init_graphical();
    globalGraphical.evas = evas_object_evas_get(img);
    _init_scene(img);
-   eo_do(img, evas_obj_image_scene_set(globalGraphical.scene));
+   evas_obj_image_scene_set(img, globalGraphical.scene);
 
    return img;
 }

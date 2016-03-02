@@ -66,7 +66,7 @@ _elm_inwin_elm_widget_focus_next(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Elm
 EOLIAN static void
 _elm_inwin_evas_object_smart_add(Eo *obj, void *_pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
@@ -105,7 +105,7 @@ _elm_inwin_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    Evas_Object *parent = NULL;
 
-   eo_do(obj, parent = eo_parent_get());
+   parent = eo_parent_get(obj);
 
    if (parent && !eo_isa(parent, ELM_WIN_CLASS))
      {
@@ -113,10 +113,9 @@ _elm_inwin_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
         return NULL;
      }
 
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_GLASS_PANE));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_GLASS_PANE);
 
    return obj;
 }
@@ -140,7 +139,7 @@ elm_win_inwin_content_set(Evas_Object *obj,
                           Evas_Object *content)
 {
    ELM_INWIN_CHECK(obj);
-   eo_do(obj, elm_obj_container_content_set(NULL, content));
+   elm_obj_container_content_set(obj, NULL, content);
 }
 
 EAPI Evas_Object *
@@ -148,7 +147,7 @@ elm_win_inwin_content_get(const Evas_Object *obj)
 {
    ELM_INWIN_CHECK(obj) NULL;
    Evas_Object *ret = NULL;
-   eo_do((Eo *)obj, ret = elm_obj_container_content_get(NULL));
+   ret = elm_obj_container_content_get((Eo *)obj, NULL);
    return ret;
 }
 
@@ -157,7 +156,7 @@ elm_win_inwin_content_unset(Evas_Object *obj)
 {
    ELM_INWIN_CHECK(obj) NULL;
    Evas_Object *ret = NULL;
-   eo_do(obj, ret = elm_obj_container_content_unset(NULL));
+   ret = elm_obj_container_content_unset(obj, NULL);
    return ret;
 }
 

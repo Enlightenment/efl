@@ -149,10 +149,10 @@ elm_prefs_entry_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
 
    /* FIXME: is it worth to ERR with the item's name, too, here? */
 
-   eo_do(obj, eo_event_callback_add
-     (ELM_ENTRY_EVENT_ACTIVATED, _item_changed_cb, cb));
-   eo_do(obj, eo_event_callback_add
-     (ELM_WIDGET_EVENT_UNFOCUSED, _item_changed_cb, cb));
+   eo_event_callback_add
+     (obj, ELM_ENTRY_EVENT_ACTIVATED, _item_changed_cb, cb);
+   eo_event_callback_add
+     (obj, ELM_WIDGET_EVENT_UNFOCUSED, _item_changed_cb, cb);
    if (spec.s.accept)
      {
         int ret;

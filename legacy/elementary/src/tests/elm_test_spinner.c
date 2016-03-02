@@ -16,7 +16,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "spinner", ELM_WIN_BASIC);
 
    spinner = elm_spinner_add(win);
-   eo_do(spinner, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(spinner);
 
    ck_assert(role == ELM_ATSPI_ROLE_SPIN_BUTTON);
 

@@ -251,7 +251,7 @@ _elm_video_evas_object_smart_add(Eo *obj, Elm_Video_Data *priv)
 {
    _elm_emotion_init();
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
@@ -263,7 +263,7 @@ _elm_video_evas_object_smart_add(Eo *obj, Elm_Video_Data *priv)
 
    elm_layout_content_set(obj, "elm.swallow.video", priv->emotion);
 
-   eo_do(priv->emotion, eo_event_callback_array_add(_video_cb(), obj));
+   eo_event_callback_array_add(priv->emotion, _video_cb(), obj);
 
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, NULL);
@@ -277,7 +277,7 @@ _elm_video_evas_object_smart_del(Eo *obj, Elm_Video_Data *sd)
    ecore_timer_del(sd->timer);
    if (sd->remember) emotion_object_last_position_save(sd->emotion);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
@@ -291,11 +291,10 @@ elm_video_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_video_eo_base_constructor(Eo *obj, Elm_Video_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_ANIMATION));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_ANIMATION);
 
    return obj;
 }
@@ -473,13 +472,13 @@ EAPI Eina_Bool
 elm_video_file_set(Eo *obj, const char *filename)
 {
    Eina_Bool ret;
-   return eo_do_ret((Eo *) obj, ret, efl_file_set(filename, NULL));
+   return efl_file_set((Eo *) obj, filename, NULL);
 }
 
 EAPI void
 elm_video_file_get(Eo *obj, const char **filename)
 {
-   eo_do((Eo *) obj, efl_file_get(filename, NULL));
+   efl_file_get((Eo *) obj, filename, NULL);
 }
 
 

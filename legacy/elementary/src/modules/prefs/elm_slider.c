@@ -27,8 +27,8 @@ elm_prefs_slider_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
 
    evas_object_data_set(obj, "prefs_type", (void *)type);
 
-   eo_do(obj, eo_event_callback_add
-     (ELM_SLIDER_EVENT_CHANGED, _item_changed_cb, cb));
+   eo_event_callback_add
+     (obj, ELM_SLIDER_EVENT_CHANGED, _item_changed_cb, cb);
    if (type == ELM_PREFS_TYPE_INT)
      {
         elm_slider_unit_format_set(obj, "%1.0f");

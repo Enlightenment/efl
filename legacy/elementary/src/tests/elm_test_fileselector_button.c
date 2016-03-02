@@ -15,7 +15,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "fileselector_button", ELM_WIN_BASIC);
 
    fs_button = elm_fileselector_button_add(win);
-   eo_do(fs_button, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(fs_button);
 
    ck_assert(role == ELM_ATSPI_ROLE_PUSH_BUTTON);
 

@@ -138,7 +138,7 @@ EOLIAN static Eina_Bool
 _elm_notify_elm_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -204,7 +204,7 @@ EOLIAN static Eina_Bool
 _elm_notify_elm_widget_sub_object_del(Eo *obj, Elm_Notify_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
+   int_ret = elm_obj_widget_sub_object_del(eo_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->content)
@@ -224,13 +224,13 @@ _block_area_clicked_cb(void *data,
                        const char *emission EINA_UNUSED,
                        const char *source EINA_UNUSED)
 {
-   eo_do(data, eo_event_callback_call(ELM_NOTIFY_EVENT_BLOCK_CLICKED, NULL));
+   eo_event_callback_call(data, ELM_NOTIFY_EVENT_BLOCK_CLICKED, NULL);
 }
 
 EOLIAN static void
 _elm_notify_evas_object_smart_resize(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
+   evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
 
    _calc(obj);
 }
@@ -238,7 +238,7 @@ _elm_notify_evas_object_smart_resize(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED, E
 EOLIAN static void
 _elm_notify_evas_object_smart_move(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED, Evas_Coord x, Evas_Coord y)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
+   evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
 
    _calc(obj);
 }
@@ -254,7 +254,7 @@ _timer_cb(void *data)
    if (!evas_object_visible_get(obj)) goto end;
 
    evas_object_hide(obj);
-   eo_do(obj, eo_event_callback_call(ELM_NOTIFY_EVENT_TIMEOUT, NULL));
+   eo_event_callback_call(obj, ELM_NOTIFY_EVENT_TIMEOUT, NULL);
 
 end:
    return ECORE_CALLBACK_CANCEL;
@@ -276,7 +276,7 @@ _elm_notify_evas_object_smart_show(Eo *obj, Elm_Notify_Data *sd)
 {
    sd->had_hidden = EINA_FALSE;
    sd->in_timeout = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
+   evas_obj_smart_show(eo_super(obj, MY_CLASS));
 
    evas_object_show(sd->notify);
    if (!sd->allow_events) evas_object_show(sd->block_events);
@@ -300,7 +300,7 @@ _elm_notify_evas_object_smart_hide(Eo *obj, Elm_Notify_Data *sd)
      }
    else //for backport supporting: edc without emitting hide finished signal
      {
-        eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
+        evas_obj_smart_hide(eo_super(obj, MY_CLASS));
         evas_object_hide(sd->notify);
         if (sd->allow_events) evas_object_hide(sd->block_events);
      }
@@ -419,14 +419,14 @@ _hide_finished_cb(void *data,
    sd->had_hidden = EINA_TRUE;
    evas_object_hide(sd->notify);
    if (!sd->allow_events) evas_object_hide(sd->block_events);
-   eo_do_super(data, MY_CLASS, evas_obj_smart_hide());
-   eo_do(data, eo_event_callback_call(ELM_NOTIFY_EVENT_DISMISSED, NULL));
+   evas_obj_smart_hide(eo_super(data, MY_CLASS));
+   eo_event_callback_call(data, ELM_NOTIFY_EVENT_DISMISSED, NULL);
 }
 
 EOLIAN static void
 _elm_notify_evas_object_smart_add(Eo *obj, Elm_Notify_Data *priv)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->allow_events = EINA_TRUE;
@@ -451,7 +451,7 @@ _elm_notify_evas_object_smart_del(Eo *obj, Elm_Notify_Data *sd)
    ecore_timer_del(sd->timer);
 
    ELM_SAFE_FREE(sd->notify, evas_object_del);
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
@@ -465,10 +465,9 @@ elm_notify_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_notify_eo_base_constructor(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_NOTIFICATION));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_NOTIFICATION);
 
    return obj;
 }
@@ -478,7 +477,7 @@ elm_notify_parent_set(Evas_Object *obj,
                       Evas_Object *parent)
 {
    ELM_NOTIFY_CHECK(obj);
-   eo_do(obj, elm_obj_widget_parent_set(parent));
+   elm_obj_widget_parent_set(obj, parent);
 }
 
 EOLIAN static void
@@ -524,7 +523,7 @@ elm_notify_parent_get(const Evas_Object *obj)
 {
    ELM_NOTIFY_CHECK(obj) NULL;
    Evas_Object *ret = NULL;
-   eo_do((Eo *) obj, ret = elm_obj_widget_parent_get());
+   ret = elm_obj_widget_parent_get((Eo *) obj);
    return ret;
 }
 

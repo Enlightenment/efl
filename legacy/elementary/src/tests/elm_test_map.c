@@ -16,7 +16,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "map", ELM_WIN_BASIC);
 
    map = elm_map_add(win);
-   eo_do(map, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(map);
 
    ck_assert(role == ELM_ATSPI_ROLE_IMAGE_MAP);
 

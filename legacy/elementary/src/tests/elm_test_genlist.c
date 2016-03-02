@@ -28,7 +28,7 @@ START_TEST (elm_atspi_role_get)
 
    Elm_Atspi_Role role;
 
-   eo_do(genlist, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(genlist);
 
    ck_assert(role == ELM_ATSPI_ROLE_LIST);
 
@@ -42,14 +42,14 @@ START_TEST(elm_atspi_children_get1)
    Eina_List *children;
    Elm_Object_Item *it[3];
 
-   eo_do(genlist, children = elm_interface_atspi_accessible_children_get());
+   children = elm_interface_atspi_accessible_children_get(genlist);
    ck_assert(children == NULL);
 
    it[0] = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
    it[1] = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
    it[2] = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 
-   eo_do(genlist, children = elm_interface_atspi_accessible_children_get());
+   children = elm_interface_atspi_accessible_children_get(genlist);
    ck_assert(eina_list_count(children) == 3);
    ck_assert(eina_list_nth(children, 0) == it[0]);
    ck_assert(eina_list_nth(children, 1) == it[1]);
@@ -71,7 +71,7 @@ START_TEST(elm_atspi_children_get2)
    it[1] = elm_genlist_item_prepend(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_GROUP, NULL, NULL);
    it[2] = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_TREE, NULL, NULL);
 
-   eo_do(genlist, children = elm_interface_atspi_accessible_children_get());
+   children = elm_interface_atspi_accessible_children_get(genlist);
    ck_assert(eina_list_nth(children, 1) == it[0]);
    ck_assert(eina_list_nth(children, 0) == it[1]);
    ck_assert(eina_list_nth(children, 2) == it[2]);
@@ -103,7 +103,7 @@ START_TEST(elm_atspi_children_events_add)
 
    Elm_Object_Item *it[3];
 
-   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_handler_add(_children_changed_cb, NULL));
+   elm_interface_atspi_accessible_event_handler_add(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, _children_changed_cb, NULL);
 
    it[0] = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
    ck_assert(genlist == current);
@@ -140,7 +140,7 @@ START_TEST(elm_atspi_children_events_del1)
    it[1] = elm_genlist_item_prepend(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
    it[2] = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_TREE, NULL, NULL);
 
-   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_handler_add(_children_changed_cb, NULL));
+   elm_interface_atspi_accessible_event_handler_add(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, _children_changed_cb, NULL);
 
    elm_object_item_del(it[0]);
    ck_assert(genlist == current);
@@ -168,7 +168,7 @@ START_TEST(elm_atspi_children_events_del2)
 
    it = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 
-   eo_do(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, elm_interface_atspi_accessible_event_handler_add(_children_changed_cb, NULL));
+   elm_interface_atspi_accessible_event_handler_add(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, _children_changed_cb, NULL);
    elm_genlist_clear(genlist);
 
    ck_assert(genlist == current);

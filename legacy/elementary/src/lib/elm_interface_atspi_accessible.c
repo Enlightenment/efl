@@ -144,10 +144,10 @@ _elm_interface_atspi_accessible_index_in_parent_get(Eo *obj, Elm_Interface_Atspi
    Eo *chld, *parent = NULL;
    int ret = 0;
 
-   eo_do(obj, parent = elm_interface_atspi_accessible_parent_get());
+   parent = elm_interface_atspi_accessible_parent_get(obj);
    if (!parent) return -1;
 
-   eo_do(parent, children = elm_interface_atspi_accessible_children_get());
+   children = elm_interface_atspi_accessible_children_get(parent);
    if (!children) return -1;
 
    EINA_LIST_FOREACH(children, l, chld)
@@ -172,10 +172,10 @@ _elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Elm_Interface_At
    Eo *parent = obj;
 
    do {
-      eo_do(obj, parent = eo_parent_get());
+      parent = eo_parent_get(obj);
       if (eo_isa(parent, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
         {
-           eo_do(parent, type = elm_interface_atspi_accessible_type_get());
+           type = elm_interface_atspi_accessible_type_get(parent);
            if (type != ELM_ATSPI_TYPE_SKIPPED) break;
         }
    } while (parent);
@@ -219,7 +219,7 @@ _elm_interface_atspi_accessible_role_name_get(Eo *obj EINA_UNUSED, Elm_Interface
 {
    Elm_Atspi_Role role;
 
-   eo_do(obj, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(obj);
 
    return role > ELM_ATSPI_ROLE_LAST_DEFINED ? "" : Atspi_Name[role];
 }
@@ -267,7 +267,7 @@ EOLIAN static const char *
 _elm_interface_atspi_accessible_localized_role_name_get(Eo *obj EINA_UNUSED, Elm_Interface_Atspi_Accessible_Data *pd EINA_UNUSED)
 {
    const char *ret = NULL;
-   eo_do(obj, ret = elm_interface_atspi_accessible_role_name_get());
+   ret = elm_interface_atspi_accessible_role_name_get(obj);
 #ifdef ENABLE_NLS
    ret = gettext(ret);
 #endif
@@ -282,7 +282,7 @@ _elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Interface_
    Eo *chld;
 
    // By default use Eo_Base object hierarchy
-   eo_do(obj, iter = eo_children_iterator_new());
+   iter = eo_children_iterator_new(obj);
    if (!iter) return NULL;
 
    EINA_ITERATOR_FOREACH(iter, chld)
@@ -331,14 +331,14 @@ _elm_interface_atspi_accessible_event_emit(Eo *class EINA_UNUSED, void *pd EINA_
         return;
      }
 
-   eo_do(accessible, type = elm_interface_atspi_accessible_type_get());
+   type = elm_interface_atspi_accessible_type_get(accessible);
    if (type != ELM_ATSPI_TYPE_REGULAR)
      return;
 
    if (event == ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED)
      {
         Elm_Atspi_Event_Children_Changed_Data *atspi_data = event_info;
-        eo_do(atspi_data->child, type = elm_interface_atspi_accessible_type_get());
+        type = elm_interface_atspi_accessible_type_get(atspi_data->child);
         if (type != ELM_ATSPI_TYPE_REGULAR)
           return;
      }
@@ -454,7 +454,7 @@ elm_atspi_relation_set_relation_append(Elm_Atspi_Relation_Set *set, Elm_Atspi_Re
              if (!eina_list_data_find(rel->objects, rel_obj))
                {
                   rel->objects = eina_list_append(rel->objects, rel_obj);
-                  eo_do(rel_obj, eo_event_callback_add(EO_BASE_EVENT_DEL, _on_rel_obj_del, set));
+                  eo_event_callback_add(rel_obj, EO_BASE_EVENT_DEL, _on_rel_obj_del, set);
                }
              return EINA_TRUE;
           }
@@ -467,7 +467,7 @@ elm_atspi_relation_set_relation_append(Elm_Atspi_Relation_Set *set, Elm_Atspi_Re
    rel->objects = eina_list_append(rel->objects, rel_obj);
    *set = eina_list_append(*set, rel);
 
-   eo_do(rel_obj, eo_event_callback_add(EO_BASE_EVENT_DEL, _on_rel_obj_del, set));
+   eo_event_callback_add(rel_obj, EO_BASE_EVENT_DEL, _on_rel_obj_del, set);
    return EINA_TRUE;
 }
 
@@ -483,7 +483,7 @@ elm_atspi_relation_set_relation_remove(Elm_Atspi_Relation_Set *set, Elm_Atspi_Re
           {
              if (eina_list_data_find(rel->objects, rel_obj))
                {
-                  eo_do(rel_obj, eo_event_callback_del(EO_BASE_EVENT_DEL, _on_rel_obj_del, set));
+                  eo_event_callback_del(rel_obj, EO_BASE_EVENT_DEL, _on_rel_obj_del, set);
                   rel->objects = eina_list_remove(rel->objects, rel_obj);
                }
              if (!rel->objects)
@@ -508,7 +508,7 @@ elm_atspi_relation_set_relation_type_remove(Elm_Atspi_Relation_Set *set, Elm_Ats
         if (rel->type == type)
           {
              EINA_LIST_FOREACH(rel->objects, l, obj)
-                eo_do(obj, eo_event_callback_del(EO_BASE_EVENT_DEL, _on_rel_obj_del, set));
+                eo_event_callback_del(obj, EO_BASE_EVENT_DEL, _on_rel_obj_del, set);
              *set = eina_list_remove(*set, rel);
              elm_atspi_relation_free(rel);
              return;
@@ -526,7 +526,7 @@ elm_atspi_relation_set_free(Elm_Atspi_Relation_Set set)
    EINA_LIST_FREE(set, rel)
      {
         EINA_LIST_FOREACH(rel->objects, l, obj)
-           eo_do(obj, eo_event_callback_del(EO_BASE_EVENT_DEL, _on_rel_obj_del, set));
+           eo_event_callback_del(obj, EO_BASE_EVENT_DEL, _on_rel_obj_del, set);
         elm_atspi_relation_free(rel);
      }
 }
@@ -591,7 +591,7 @@ _elm_interface_atspi_accessible_type_set(Eo *obj, Elm_Interface_Atspi_Accessible
    if (val == pd->type)
      return;
 
-   eo_do(obj, parent = elm_interface_atspi_accessible_parent_get());
+   parent = elm_interface_atspi_accessible_parent_get(obj);
 
    switch (val)
      {

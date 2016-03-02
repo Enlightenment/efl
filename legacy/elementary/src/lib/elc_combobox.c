@@ -45,12 +45,12 @@ static const Elm_Action key_actions[] = {
 EOLIAN static Eina_Bool
 _elm_combobox_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Combobox_Data *sd)
 {
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
-   eo_do(sd->genlist, elm_obj_widget_translate());
-   eo_do(sd->entry, elm_obj_widget_translate());
+   elm_obj_widget_translate(eo_super(obj, MY_CLASS));
+   elm_obj_widget_translate(sd->genlist);
+   elm_obj_widget_translate(sd->entry);
 
    if (sd->hover)
-     eo_do(sd->hover, elm_obj_widget_translate());
+     elm_obj_widget_translate(sd->hover);
 
    return EINA_TRUE;
 }
@@ -72,7 +72,7 @@ _elm_combobox_elm_widget_theme_apply(Eo *obj, Elm_Combobox_Data *sd)
    /* combobox's style has no extra bit for orientation but could have... */
    eina_stringshare_replace(&(wd->style), buf);
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    eina_stringshare_replace(&(wd->style), style);
@@ -117,7 +117,7 @@ _hover_end_finished(void *data,
      {
         sd->expanded = EINA_FALSE;
         evas_object_hide(sd->hover);
-        eo_do(data, eo_event_callback_call(ELM_COMBOBOX_EVENT_DISMISSED, NULL));
+        eo_event_callback_call(data, ELM_COMBOBOX_EVENT_DISMISSED, NULL);
      }
 }
 
@@ -190,7 +190,7 @@ _activate(Evas_Object *obj)
    evas_object_show(sd->genlist);
    elm_genlist_item_selected_set(sd->item, EINA_TRUE);
    evas_object_show(sd->hover);
-   eo_do(obj, eo_event_callback_call(ELM_COMBOBOX_EVENT_EXPANDED, NULL));
+   eo_event_callback_call(obj, ELM_COMBOBOX_EVENT_EXPANDED, NULL);
 }
 
 static void
@@ -198,13 +198,13 @@ _on_item_selected(void *data , Evas_Object *obj EINA_UNUSED, void *event)
 {
    ELM_COMBOBOX_DATA_GET(data, sd);
    elm_object_focus_set(sd->entry, EINA_TRUE);
-   eo_do(data, eo_event_callback_call(ELM_COMBOBOX_EVENT_ITEM_SELECTED, event));
+   eo_event_callback_call(data, ELM_COMBOBOX_EVENT_ITEM_SELECTED, event);
 }
 
 static void
 _on_item_pressed(void *data , Evas_Object *obj EINA_UNUSED, void *event)
 {
-   eo_do(data, eo_event_callback_call(ELM_COMBOBOX_EVENT_ITEM_PRESSED, event));
+   eo_event_callback_call(data, ELM_COMBOBOX_EVENT_ITEM_PRESSED, event);
 }
 
 static Eina_Bool
@@ -221,7 +221,7 @@ _gl_filter_finished_cb(void *data, const Eo_Event *event)
         return EINA_TRUE;
      }
 
-   eo_do(data, eo_event_callback_call(ELM_COMBOBOX_EVENT_FILTER_DONE, event->event_info));
+   eo_event_callback_call(data, ELM_COMBOBOX_EVENT_FILTER_DONE, event->event_info);
 
    if (sd->count > 0)
      {
@@ -252,7 +252,7 @@ _on_aborted(void *data, const Eo_Event *event EINA_UNUSED)
 static Eina_Bool
 _on_changed(void *data, const Eo_Event *event EINA_UNUSED)
 {
-   eo_do(data, eo_event_callback_call(ELM_ENTRY_EVENT_CHANGED, NULL));
+   eo_event_callback_call(data, ELM_ENTRY_EVENT_CHANGED, NULL);
    return EINA_TRUE;
 }
 
@@ -266,36 +266,35 @@ _on_clicked(void *data, const Eo_Event *event EINA_UNUSED)
 EOLIAN static void
 _elm_combobox_evas_object_smart_add(Eo *obj, Elm_Combobox_Data *sd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    elm_widget_mirrored_automatic_set(obj, EINA_FALSE);
 
-   eo_do(obj, eo_event_callback_add(
-         EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_clicked, obj));
+   eo_event_callback_add(obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_clicked, obj);
 
    //What are you doing here?
-   eo_do(obj, elm_obj_widget_theme_apply());
+   elm_obj_widget_theme_apply(obj);
 }
 
 EOLIAN static void
 _elm_combobox_evas_object_smart_del(Eo *obj, Elm_Combobox_Data *sd)
 {
    sd->hover_parent = NULL;
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
 _elm_combobox_evas_object_smart_show(Eo *obj, Elm_Combobox_Data *sd)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
+   evas_obj_smart_show(eo_super(obj, MY_CLASS));
    if (sd->expanded) evas_object_show(sd->hover);
 }
 
 EOLIAN static void
 _elm_combobox_evas_object_smart_hide(Eo *obj, Elm_Combobox_Data *sd)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
+   evas_obj_smart_hide(eo_super(obj, MY_CLASS));
    if (sd->hover) evas_object_hide(sd->hover);
 }
 
@@ -321,14 +320,13 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
    Evas_Object *entry;
    char buf[128];
 
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   eo_constructor(eo_super(obj, MY_CLASS));
 
    sd->first_filter = EINA_TRUE;
 
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_GLASS_PANE));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_GLASS_PANE);
 
    //hover-parent
    sd->hover_parent = elm_object_parent_widget_get(obj);
@@ -342,8 +340,8 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
               elm_widget_style_get(obj));
    elm_object_style_set(sd->hover, buf);
 
-   eo_do(sd->hover, eo_event_callback_add
-     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_hover_clicked, obj));
+   eo_event_callback_add
+     (sd->hover, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_hover_clicked, obj);
    elm_layout_signal_callback_add
      (sd->hover, "elm,action,hide,finished", "elm", _hover_end_finished, obj);
 
@@ -368,8 +366,7 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(gl, "selected", _on_item_selected, obj);
    evas_object_smart_callback_add(gl, "pressed", _on_item_pressed, obj);
-   eo_do(gl, eo_event_callback_add(ELM_GENLIST_EVENT_FILTER_DONE,
-         _gl_filter_finished_cb, obj));
+   eo_event_callback_add(gl, ELM_GENLIST_EVENT_FILTER_DONE, _gl_filter_finished_cb, obj);
    elm_genlist_homogeneous_set(gl, EINA_TRUE);
    elm_genlist_mode_set(gl, ELM_LIST_COMPRESS);
    elm_table_pack(sd->tbl, gl, 0, 0, 1, 1);
@@ -382,15 +379,12 @@ _elm_combobox_eo_base_constructor(Eo *obj, Elm_Combobox_Data *sd)
                            ELM_SCROLLER_POLICY_OFF);
    elm_entry_scrollable_set(entry, EINA_TRUE);
    elm_entry_single_line_set(entry, EINA_TRUE);
-   eo_do(entry, eo_event_callback_add(ELM_ENTRY_EVENT_CHANGED_USER,
-         _on_changed, obj));
-   eo_do(entry, eo_event_callback_add(ELM_ENTRY_EVENT_ABORTED,
-         _on_aborted, obj));
+   eo_event_callback_add(entry, ELM_ENTRY_EVENT_CHANGED_USER, _on_changed, obj);
+   eo_event_callback_add(entry, ELM_ENTRY_EVENT_ABORTED, _on_aborted, obj);
    evas_object_show(entry);
 
-   eo_do(obj,
-         eo_composite_attach(gl),
-         eo_composite_attach(entry));
+   eo_composite_attach(obj, gl);
+   eo_composite_attach(obj, entry);
 
    elm_object_part_content_set(obj, "elm.swallow.content", entry);
    return obj;
@@ -417,7 +411,7 @@ _elm_combobox_hover_end(Eo *obj, Elm_Combobox_Data *sd)
      {
         sd->expanded = EINA_FALSE;
         evas_object_hide(sd->hover);
-        eo_do(obj, eo_event_callback_call(ELM_COMBOBOX_EVENT_DISMISSED, NULL));
+        eo_event_callback_call(obj, ELM_COMBOBOX_EVENT_DISMISSED, NULL);
      } // for backward compatibility
 }
 
@@ -463,8 +457,7 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
      elm_combobox_hover_begin(obj);
    else
      {
-        eo_do(sd->genlist, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_PRESSED,
-                                                  sd->item));
+        eo_event_callback_call(sd->genlist, EVAS_CLICKABLE_INTERFACE_EVENT_PRESSED, sd->item);
         elm_entry_cursor_end_set(sd->entry);
      }
    return EINA_TRUE;
@@ -511,7 +504,7 @@ _elm_combobox_elm_genlist_filter_set(Eo *obj EINA_UNUSED, Elm_Combobox_Data *pd,
 {
    pd->first_filter = EINA_FALSE;
 
-   eo_do(pd->genlist, elm_obj_genlist_filter_set(key));
+   elm_obj_genlist_filter_set(pd->genlist, key);
 }
 
 EOLIAN void
@@ -532,7 +525,7 @@ EOLIAN static void
 _elm_combobox_evas_object_smart_resize(Eo *obj, Elm_Combobox_Data *pd,
                                        Evas_Coord w, Evas_Coord h)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
+   evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
    if (pd->count > 0) _table_resize(obj);
 }
 #include "elm_combobox.eo.c"

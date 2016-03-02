@@ -17,7 +17,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "button", ELM_WIN_BASIC);
 
    button = elm_button_add(win);
-   eo_do(button, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(button);
 
    ck_assert(role == ELM_ATSPI_ROLE_PUSH_BUTTON);
 

@@ -15,7 +15,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "icon", ELM_WIN_BASIC);
 
    ctxpopup = elm_ctxpopup_add(win);
-   eo_do(ctxpopup, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(ctxpopup);
 
    ck_assert(role == ELM_ATSPI_ROLE_POPUP_MENU);
 

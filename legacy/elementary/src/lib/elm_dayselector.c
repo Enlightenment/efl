@@ -73,7 +73,7 @@ _elm_dayselector_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Dayselector_Data 
         elm_object_text_set(VIEW(it), buf);
      }
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
+   elm_obj_widget_translate(eo_super(obj, MY_CLASS));
 
    return EINA_TRUE;
 }
@@ -129,7 +129,7 @@ _elm_dayselector_elm_widget_theme_apply(Eo *obj, Elm_Dayselector_Data *sd)
    char buf[1024];
    Elm_Dayselector_Item_Data *it;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    EINA_LIST_FOREACH(sd->items, l, it)
@@ -196,7 +196,7 @@ _item_clicked_cb(void *data, const Eo_Event *event EINA_UNUSED)
 {
    Elm_Dayselector_Item_Data *it = data;
 
-   eo_do(WIDGET(it), eo_event_callback_call(ELM_CHECK_EVENT_CHANGED, (void *)it->day));
+   eo_event_callback_call(WIDGET(it), ELM_CHECK_EVENT_CHANGED, (void *)it->day);
 
    return EINA_TRUE;
 }
@@ -239,7 +239,7 @@ _elm_dayselector_elm_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, co
      {
         snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
 
-        eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(buf, content));
+        int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), buf, content);
         if (!int_ret) return EINA_FALSE;
 
         if (!content) return EINA_TRUE; /* item deletion already handled */
@@ -255,7 +255,7 @@ _elm_dayselector_elm_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, co
 
         snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
 
-        eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(buf, content));
+        int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), buf, content);
         if (!int_ret)
           {
              eo_del(eo_it);
@@ -269,8 +269,8 @@ _elm_dayselector_elm_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, co
    snprintf(buf, sizeof(buf), "day%d,visible", _item_location_get(sd, it));
    elm_layout_signal_emit(obj, buf, "elm");
 
-   eo_do(VIEW(it), eo_event_callback_add
-     (ELM_CHECK_EVENT_CHANGED, _item_clicked_cb, it));
+   eo_event_callback_add
+     (VIEW(it), ELM_CHECK_EVENT_CHANGED, _item_clicked_cb, it);
    evas_object_event_callback_add
      (VIEW(it), EVAS_CALLBACK_DEL, _item_del_cb, obj);
 
@@ -292,7 +292,7 @@ _elm_dayselector_elm_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, co
 EOLIAN static Eo *
 _elm_dayselector_item_eo_base_constructor(Eo *eo_item, Elm_Dayselector_Item_Data *item)
 {
-   eo_item = eo_do_super_ret(eo_item, ELM_DAYSELECTOR_ITEM_CLASS, eo_item, eo_constructor());
+   eo_item = eo_constructor(eo_super(eo_item, ELM_DAYSELECTOR_ITEM_CLASS));
    item->base = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
 
    return eo_item;
@@ -314,12 +314,11 @@ _elm_dayselector_elm_container_content_unset(Eo *obj, Elm_Dayselector_Data *sd, 
 
    content = VIEW(it);
 
-   eo_do_super(obj, MY_CLASS, content = elm_obj_container_content_unset(buf));
+   content = elm_obj_container_content_unset(eo_super(obj, MY_CLASS), buf);
    if (!content) return NULL;
 
    sd->items = eina_list_remove(sd->items, it);
-   eo_do(content, eo_event_callback_del(
-      ELM_CHECK_EVENT_CHANGED, _item_clicked_cb, it));
+   eo_event_callback_del(content, ELM_CHECK_EVENT_CHANGED, _item_clicked_cb, it);
    evas_object_event_callback_del(content, EVAS_CALLBACK_DEL, _item_del_cb);
 
    elm_object_signal_callback_del
@@ -415,7 +414,7 @@ _items_create(Evas_Object *obj)
 EOLIAN static void
 _elm_dayselector_evas_object_smart_add(Eo *obj, Elm_Dayselector_Data *priv)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "dayselector", "base",
@@ -446,7 +445,7 @@ _elm_dayselector_evas_object_smart_del(Eo *obj, Elm_Dayselector_Data *sd)
      }
 
    /* handles freeing sd */
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
@@ -460,11 +459,10 @@ elm_dayselector_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_dayselector_eo_base_constructor(Eo *obj, Elm_Dayselector_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_PANEL));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_PANEL);
 
    return obj;
 }

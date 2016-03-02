@@ -117,8 +117,8 @@ _activate(Evas_Object *obj)
 
         if (_elm_config->access_mode)
           _elm_access_say(E_("State: On"));
-        eo_do(obj, eo_event_callback_call
-          (ELM_RADIO_EVENT_CHANGED, NULL));
+        eo_event_callback_call
+          (obj, ELM_RADIO_EVENT_CHANGED, NULL);
 
      }
 }
@@ -167,7 +167,7 @@ _elm_radio_elm_widget_theme_apply(Eo *obj, Elm_Radio_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, ELM_CHECK_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, ELM_CHECK_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    if (sd->state) elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
@@ -182,7 +182,7 @@ _elm_radio_elm_widget_theme_apply(Eo *obj, Elm_Radio_Data *sd)
     * whenever we can changed the theme API */
    _icon_signal_emit(obj);
 
-   eo_do(obj, elm_obj_layout_sizing_eval());
+   elm_obj_layout_sizing_eval(obj);
 
    return EINA_TRUE;
 }
@@ -223,7 +223,7 @@ _elm_radio_evas_object_smart_add(Eo *obj, Elm_Radio_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, ELM_CHECK_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, ELM_CHECK_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "radio", "base", elm_widget_style_get(obj)))
@@ -254,7 +254,7 @@ _elm_radio_evas_object_smart_del(Eo *obj, Elm_Radio_Data *sd)
    sd->group->radios = eina_list_remove(sd->group->radios, obj);
    if (!sd->group->radios) free(sd->group);
 
-   eo_do_super(obj, ELM_CHECK_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, ELM_CHECK_CLASS));
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*
@@ -274,11 +274,10 @@ elm_radio_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_radio_eo_base_constructor(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_RADIO_BUTTON));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_RADIO_BUTTON);
 
    return obj;
 }
@@ -400,7 +399,7 @@ _elm_radio_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Radio_Data 
 {
    Elm_Atspi_State_Set ret;
 
-   eo_do_super(obj, ELM_RADIO_CLASS, ret = elm_interface_atspi_accessible_state_set_get());
+   ret = elm_interface_atspi_accessible_state_set_get(eo_super(obj, ELM_RADIO_CLASS));
    if (obj == elm_radio_selected_object_get(obj))
      STATE_TYPE_SET(ret, ELM_ATSPI_STATE_CHECKED);
 

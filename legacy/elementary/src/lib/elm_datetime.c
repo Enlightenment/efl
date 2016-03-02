@@ -387,7 +387,7 @@ _elm_datetime_elm_widget_translate(Eo *obj, Elm_Datetime_Data *sd)
    if (!sd->user_format) _reload_format(obj);
    else _field_list_display(obj);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
+   elm_obj_widget_translate(eo_super(obj, MY_CLASS));
 
    return EINA_TRUE;
 }
@@ -461,7 +461,7 @@ _elm_datetime_elm_widget_on_focus(Eo *obj, Elm_Datetime_Data *sd, Elm_Object_Ite
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus(NULL));
+   int_ret = elm_obj_widget_on_focus(eo_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
    if (!elm_widget_focus_get(obj))
@@ -480,7 +480,7 @@ _elm_datetime_elm_widget_disable(Eo *obj, Elm_Datetime_Data *sd)
    unsigned int idx = 0;
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_disable());
+   int_ret = elm_obj_widget_disable(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
@@ -520,7 +520,7 @@ _elm_datetime_elm_widget_theme_apply(Eo *obj, Elm_Datetime_Data *sd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    if ((!dt_mod) || (!dt_mod->field_value_display)) return EINA_TRUE;
@@ -801,7 +801,7 @@ _elm_datetime_evas_object_smart_add(Eo *obj, Elm_Datetime_Data *priv)
    Datetime_Field *field;
    int idx;
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    // module - initialise module for datetime
@@ -877,7 +877,7 @@ _elm_datetime_evas_object_smart_del(Eo *obj, Elm_Datetime_Data *sd)
    if ((dt_mod) && (dt_mod->obj_unhook))
      dt_mod->obj_unhook(sd->mod_data);  // module - unhook
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
@@ -891,11 +891,10 @@ elm_datetime_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_datetime_eo_base_constructor(Eo *obj, Elm_Datetime_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_DATE_EDITOR));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_DATE_EDITOR);
 
    return obj;
 }
@@ -1026,7 +1025,7 @@ _elm_datetime_field_limit_set(Eo *obj, Elm_Datetime_Data *sd, Elm_Datetime_Field
    _apply_field_limits(obj);
 
    if (!_field_cmp(fieldtype, &old_time, &sd->curr_time))
-     eo_do(obj, eo_event_callback_call(ELM_DATETIME_EVENT_CHANGED, NULL));
+     eo_event_callback_call(obj, ELM_DATETIME_EVENT_CHANGED, NULL);
 
 }
 
@@ -1053,7 +1052,7 @@ _elm_datetime_value_set(Eo *obj, Elm_Datetime_Data *sd, const struct tm *newtime
    _validate_datetime_limits(&sd->max_limit, &sd->curr_time, EINA_TRUE);
    _apply_field_limits(obj);
 
-   eo_do(obj, eo_event_callback_call(ELM_DATETIME_EVENT_CHANGED, NULL));
+   eo_event_callback_call(obj, ELM_DATETIME_EVENT_CHANGED, NULL);
 
    return EINA_TRUE;
 }
@@ -1085,7 +1084,7 @@ _elm_datetime_value_min_set(Eo *obj, Elm_Datetime_Data *sd, const struct tm *min
    _apply_field_limits(obj);
 
    if (!_date_cmp(&old_time, &sd->curr_time))
-     eo_do(obj, eo_event_callback_call(ELM_DATETIME_EVENT_CHANGED, NULL));
+     eo_event_callback_call(obj, ELM_DATETIME_EVENT_CHANGED, NULL);
 
    return EINA_TRUE;
 }
@@ -1117,7 +1116,7 @@ _elm_datetime_value_max_set(Eo *obj, Elm_Datetime_Data *sd, const struct tm *max
    _apply_field_limits(obj);
 
    if (!_date_cmp(&old_time, &sd->curr_time))
-     eo_do(obj, eo_event_callback_call(ELM_DATETIME_EVENT_CHANGED, NULL));
+     eo_event_callback_call(obj, ELM_DATETIME_EVENT_CHANGED, NULL);
 
    return EINA_TRUE;
 }

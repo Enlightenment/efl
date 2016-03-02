@@ -13,7 +13,7 @@
 EOLIAN static void
 _elm_interface_atspi_component_position_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Eina_Bool type, int *x, int *y)
 {
-   eo_do(obj, elm_interface_atspi_component_extents_get(type, x, y, NULL, NULL));
+   elm_interface_atspi_component_extents_get(obj, type, x, y, NULL, NULL);
 }
 
 EOLIAN static Eina_Bool
@@ -22,8 +22,8 @@ _elm_interface_atspi_component_position_set(Eo *obj EINA_UNUSED, void *_pd EINA_
    Eina_Bool ret = EINA_FALSE;
    int c_w, c_h;
 
-   eo_do(obj, elm_interface_atspi_component_extents_get(type, NULL, NULL, &c_w, &c_h));
-   eo_do(obj, ret = elm_interface_atspi_component_extents_set(type, x, y, c_w, c_h));
+   elm_interface_atspi_component_extents_get(obj, type, NULL, NULL, &c_w, &c_h);
+   ret = elm_interface_atspi_component_extents_set(obj, type, x, y, c_w, c_h);
 
    return ret;
 }
@@ -34,15 +34,15 @@ _elm_interface_atspi_component_size_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUS
    Eina_Bool ret;
    int c_x = 0, c_y = 0;
 
-   eo_do(obj, elm_interface_atspi_component_extents_get(EINA_FALSE, &c_x, &c_y, NULL, NULL));
-   eo_do(obj, ret = elm_interface_atspi_component_extents_set(EINA_FALSE, c_x, c_y, w, h));
+   elm_interface_atspi_component_extents_get(obj, EINA_FALSE, &c_x, &c_y, NULL, NULL);
+   ret = elm_interface_atspi_component_extents_set(obj, EINA_FALSE, c_x, c_y, w, h);
    return ret;
 }
 
 EOLIAN static void
 _elm_interface_atspi_component_size_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int *w, int *h)
 {
-   eo_do(obj, elm_interface_atspi_component_extents_get(EINA_FALSE, NULL,  NULL, w, h));
+   elm_interface_atspi_component_extents_get(obj, EINA_FALSE, NULL, NULL, w, h);
 }
 
 EOLIAN static Eina_Bool
@@ -50,7 +50,7 @@ _elm_interface_atspi_component_contains(Eo *obj EINA_UNUSED, void *_pd EINA_UNUS
 {
    int w_x = 0, w_y = 0, w_w = 0, w_h = 0;
 
-   eo_do(obj, elm_interface_atspi_component_extents_get(type, &w_x, &w_y, &w_w, &w_h));
+   elm_interface_atspi_component_extents_get(obj, type, &w_x, &w_y, &w_w, &w_h);
 
    if ((x >= w_x) && (x <= w_x + w_w) && (y >= w_y) && (y <= w_y + w_h))
      return EINA_TRUE;
@@ -72,14 +72,14 @@ _elm_interface_atspi_component_accessible_at_point_get(Eo *obj, void *_pd EINA_U
    Eina_List *l, *children;
    Eo *ret = NULL, *child;
 
-   eo_do(obj, children = elm_interface_atspi_accessible_children_get());
+   children = elm_interface_atspi_accessible_children_get(obj);
 
    EINA_LIST_FOREACH(children, l, child)
      {
         Eina_Bool contains;
         if (eo_isa(child, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN))
           {
-              eo_do(child, contains = elm_interface_atspi_component_contains(screen_coords, x, y));
+              contains = elm_interface_atspi_component_contains(child, screen_coords, x, y);
               if (contains)
                 {
                    ret = child;

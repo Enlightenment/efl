@@ -17,7 +17,7 @@ _do_delete_request(Eo *win)
 {
 #ifdef HAVE_ELEMENTARY_X
    Ecore_X_Window xwin;
-   eo_do(win, xwin = elm_obj_win_xwindow_get());
+   xwin = elm_obj_win_xwindow_get(win);
    ecore_x_window_delete_request_send(xwin);
 #endif
 
@@ -37,7 +37,7 @@ static Eina_Bool
 _timer_hide_window_cb(void *data)
 {
    Eo *win = (Eo*) data;
-   eo_do(win, efl_gfx_visible_set(EINA_FALSE));
+   efl_gfx_visible_set(win, EINA_FALSE);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -66,7 +66,7 @@ START_TEST (elm_atspi_role_get)
    elm_init(1, NULL);
    win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
 
-   eo_do(win, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(win);
 
    ck_assert(role == ELM_ATSPI_ROLE_WINDOW);
 
@@ -83,7 +83,7 @@ START_TEST (elm_atspi_component_position)
 
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
 
-   eo_do(win, ret = elm_interface_atspi_component_position_set(EINA_TRUE, 45, 45));
+   ret = elm_interface_atspi_component_position_set(win, EINA_TRUE, 45, 45);
    ck_assert(ret == EINA_TRUE);
 
    Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(win));
@@ -106,7 +106,7 @@ START_TEST (elm_atspi_component_size)
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
    evas_object_resize(win, 50, 50);
 
-   eo_do(win, ret = elm_interface_atspi_component_size_set(100, 100));
+   ret = elm_interface_atspi_component_size_set(win, 100, 100);
    ck_assert(ret == EINA_TRUE);
 
    evas_object_geometry_get(win, NULL, NULL, &w, &h);
@@ -121,8 +121,8 @@ START_TEST (elm_win_autohide)
    elm_init(0, NULL);
 
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
-   eo_do(win, elm_obj_win_autohide_set(EINA_TRUE));
-   eo_do(win, efl_gfx_visible_set(EINA_TRUE));
+   elm_obj_win_autohide_set(win, EINA_TRUE);
+   efl_gfx_visible_set(win, EINA_TRUE);
 
    Eina_Bool fail_flag = EINA_FALSE;
    ecore_timer_add(_timeout1, _timer_delete_request_cb, win);
@@ -131,7 +131,7 @@ START_TEST (elm_win_autohide)
    elm_run();
 
    Eina_Bool visible;
-   eo_do(win, visible = efl_gfx_visible_get());
+   visible = efl_gfx_visible_get(win);
 
    ck_assert(visible == EINA_FALSE);
 
@@ -146,7 +146,7 @@ START_TEST (elm_win_policy_quit_last_window_hidden)
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
-   eo_do(win, efl_gfx_visible_set(EINA_TRUE));
+   efl_gfx_visible_set(win, EINA_TRUE);
 
    Eina_Bool fail_flag = EINA_FALSE;
    ecore_timer_add(_timeout1, _timer_hide_window_cb, win);
@@ -155,7 +155,7 @@ START_TEST (elm_win_policy_quit_last_window_hidden)
    elm_run();
 
    Eina_Bool visible;
-   eo_do(win, visible = efl_gfx_visible_get());
+   visible = efl_gfx_visible_get(win);
 
    ck_assert(fail_flag == EINA_FALSE);
    ck_assert(eo_ref_get(win) >= 1);
@@ -172,8 +172,8 @@ START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
-   eo_do(win, elm_obj_win_autohide_set(EINA_TRUE));
-   eo_do(win, efl_gfx_visible_set(EINA_TRUE));
+   elm_obj_win_autohide_set(win, EINA_TRUE);
+   efl_gfx_visible_set(win, EINA_TRUE);
 
    Eina_Bool fail_flag = EINA_FALSE;
    ecore_timer_add(_timeout1, _timer_delete_request_cb, win);
@@ -182,7 +182,7 @@ START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
    elm_run();
 
    Eina_Bool visible;
-   eo_do(win, visible = efl_gfx_visible_get());
+   visible = efl_gfx_visible_get(win);
 
    ck_assert(fail_flag == EINA_FALSE);
    ck_assert(eo_ref_get(win) >= 1);

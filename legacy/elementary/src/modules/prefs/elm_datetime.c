@@ -31,8 +31,8 @@ elm_prefs_datetime_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
    elm_datetime_field_visible_set(obj, ELM_DATETIME_MINUTE, EINA_FALSE);
    elm_datetime_field_visible_set(obj, ELM_DATETIME_AMPM, EINA_FALSE);
 
-   eo_do(obj, eo_event_callback_add
-     (ELM_DATETIME_EVENT_CHANGED, _item_changed_cb, cb));
+   eo_event_callback_add
+     (obj, ELM_DATETIME_EVENT_CHANGED, _item_changed_cb, cb);
 
    t.tm_year = spec.d.min.y - 1900;
    t.tm_mon = spec.d.min.m - 1;

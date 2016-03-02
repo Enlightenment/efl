@@ -66,8 +66,8 @@ _activate(Evas_Object *obj)
           _elm_access_say(E_("Clicked"));
         if (!elm_widget_disabled_get(obj) &&
             !evas_object_freeze_events_get(obj))
-          eo_do(obj, eo_event_callback_call
-            (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
+          eo_event_callback_call
+            (obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
      }
 }
 
@@ -90,8 +90,8 @@ _elm_button_elm_widget_activate(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED, Elm_A
    if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
    if (evas_object_freeze_events_get(obj)) return EINA_FALSE;
 
-   eo_do(obj, eo_event_callback_call
-     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
+   eo_event_callback_call
+     (obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
    elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
 
    return EINA_TRUE;
@@ -110,7 +110,7 @@ _icon_signal_emit(Evas_Object *obj)
 
    elm_layout_signal_emit(obj, buf, "elm");
    edje_object_message_signal_process(elm_layout_edje_get(obj));
-   eo_do(obj, elm_obj_layout_sizing_eval());
+   elm_obj_layout_sizing_eval(obj);
 }
 
 /* FIXME: replicated from elm_layout just because button's icon spot
@@ -121,7 +121,7 @@ _elm_button_elm_widget_theme_apply(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
    _icon_signal_emit(obj);
 
@@ -136,7 +136,7 @@ _elm_button_elm_widget_sub_object_del(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED,
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
+   int_ret = elm_obj_widget_sub_object_del(eo_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
@@ -152,7 +152,7 @@ _elm_button_elm_container_content_set(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED,
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(part, content));
+   int_ret = elm_obj_container_content_set(eo_super(obj, MY_CLASS), part, content);
    if (!int_ret) return EINA_FALSE;
 
    _icon_signal_emit(obj);
@@ -198,8 +198,8 @@ _autorepeat_send(void *data)
 {
    ELM_BUTTON_DATA_GET_OR_RETURN_VAL(data, sd, ECORE_CALLBACK_CANCEL);
 
-   eo_do(data, eo_event_callback_call
-     (EVAS_CLICKABLE_INTERFACE_EVENT_REPEATED, NULL));
+   eo_event_callback_call
+     (data, EVAS_CLICKABLE_INTERFACE_EVENT_REPEATED, NULL);
    if (!sd->repeating)
      {
         sd->timer = NULL;
@@ -239,8 +239,8 @@ _on_pressed_signal(void *data,
               (sd->ar_initial_timeout, _autorepeat_initial_send, data);
      }
 
-   eo_do(data, eo_event_callback_call
-     (EVAS_CLICKABLE_INTERFACE_EVENT_PRESSED, NULL));
+   eo_event_callback_call
+     (data, EVAS_CLICKABLE_INTERFACE_EVENT_PRESSED, NULL);
 }
 
 static void
@@ -253,8 +253,8 @@ _on_unpressed_signal(void *data,
 
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    sd->repeating = EINA_FALSE;
-   eo_do(data, eo_event_callback_call
-     (EVAS_CLICKABLE_INTERFACE_EVENT_UNPRESSED, NULL));
+   eo_event_callback_call
+     (data, EVAS_CLICKABLE_INTERFACE_EVENT_UNPRESSED, NULL);
 }
 
 static char *
@@ -282,7 +282,7 @@ _elm_button_evas_object_smart_add(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    edje_object_signal_callback_add
@@ -331,11 +331,10 @@ elm_button_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_button_eo_base_constructor(Eo *obj, Elm_Button_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_PUSH_BUTTON));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_PUSH_BUTTON);
 
    return obj;
 }
@@ -355,7 +354,7 @@ static Eina_Bool
 _internal_elm_button_admits_autorepeat_get(const Evas_Object *obj)
 {
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *) obj, ret = elm_obj_button_admits_autorepeat_get());
+   ret = elm_obj_button_admits_autorepeat_get((Eo *) obj);
    return ret;
 }
 

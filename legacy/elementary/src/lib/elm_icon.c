@@ -113,11 +113,11 @@ _icon_thumb_display(Elm_Icon_Data *sd)
          (sd->obj, sd->thumb.thumb.path, sd->thumb.thumb.key);
 
    if (ret)
-     eo_do(sd->obj, eo_event_callback_call
-       (ELM_ICON_EVENT_THUMB_DONE, NULL));
+     eo_event_callback_call
+       (sd->obj, ELM_ICON_EVENT_THUMB_DONE, NULL);
    else
-     eo_do(sd->obj, eo_event_callback_call
-       (ELM_ICON_EVENT_THUMB_ERROR, NULL));
+     eo_event_callback_call
+       (sd->obj, ELM_ICON_EVENT_THUMB_ERROR, NULL);
 
    return ret;
 }
@@ -219,7 +219,7 @@ _icon_thumb_error(Ethumb_Client *client,
    ERR("could not generate thumbnail for %s (key: %s)",
        sd->thumb.file.path, sd->thumb.file.key);
 
-   eo_do(sd->obj, eo_event_callback_call(ELM_ICON_EVENT_THUMB_ERROR, NULL));
+   eo_event_callback_call(sd->obj, ELM_ICON_EVENT_THUMB_ERROR, NULL);
 
    _icon_thumb_cleanup(client);
 }
@@ -354,7 +354,7 @@ _elm_icon_efl_file_file_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const 
    if (!sd->is_video)
      {
         Eina_Bool int_ret = EINA_FALSE;
-        eo_do_super(obj, MY_CLASS, int_ret = efl_file_set(file, key));
+        int_ret = efl_file_set(eo_super(obj, MY_CLASS), file, key);
         return int_ret;
      }
 
@@ -403,7 +403,7 @@ _elm_icon_elm_image_memfile_set(Eo *obj, Elm_Icon_Data *sd, const void *img, siz
 
    _edje_signals_free(sd);
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_image_memfile_set(img, size, format, key));
+   int_ret = elm_obj_image_memfile_set(eo_super(obj, MY_CLASS), img, size, format, key);
    return int_ret;
 }
 
@@ -415,7 +415,7 @@ _elm_icon_elm_widget_theme_apply(Eo *obj, Elm_Icon_Data *sd)
    if (sd->stdicon)
      _elm_theme_object_icon_set(obj, sd->stdicon, elm_widget_style_get(obj));
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    return EINA_TRUE;
@@ -495,7 +495,7 @@ _internal_elm_icon_standard_set(Evas_Object *obj,
    if (ret)
      {
         eina_stringshare_replace(&sd->stdicon, name);
-        eo_do(obj, elm_obj_image_sizing_eval());
+        elm_obj_image_sizing_eval(obj);
         return EINA_TRUE;
      }
 
@@ -542,7 +542,7 @@ _elm_icon_thumb_resize_cb(void *data,
 EOLIAN static void
 _elm_icon_evas_object_smart_add(Eo *obj, Elm_Icon_Data *priv)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->lookup_order = ELM_ICON_LOOKUP_THEME_FDO;
@@ -569,7 +569,7 @@ _elm_icon_evas_object_smart_del(Eo *obj, Elm_Icon_Data *sd)
 
    _edje_signals_free(sd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 /* WARNING: to be deprecated */
@@ -666,13 +666,12 @@ elm_icon_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_icon_eo_base_constructor(Eo *obj, Elm_Icon_Data *sd)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
    sd->obj = obj;
 
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_IMAGE));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_IMAGE);
 
    return obj;
 }
@@ -687,7 +686,7 @@ elm_icon_memfile_set(Evas_Object *obj,
    ELM_ICON_CHECK(obj) EINA_FALSE;
 
    Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, ret = elm_obj_image_memfile_set(img, size, format, key));
+   ret = elm_obj_image_memfile_set(obj, img, size, format, key);
    return ret;
 }
 
@@ -700,7 +699,7 @@ elm_icon_file_set(Evas_Object *obj,
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
 
    Eina_Bool ret = EINA_FALSE;
-   eo_do(obj, ret = efl_file_set(file, group));
+   ret = efl_file_set(obj, file, group);
    return ret;
 }
 

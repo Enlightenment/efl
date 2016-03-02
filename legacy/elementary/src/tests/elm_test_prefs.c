@@ -16,7 +16,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "prefs", ELM_WIN_BASIC);
 
    prefs = elm_prefs_add(win);
-   eo_do(prefs, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(prefs);
 
    ck_assert(role == ELM_ATSPI_ROLE_REDUNDANT_OBJECT);
 

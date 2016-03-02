@@ -97,7 +97,7 @@ EOLIAN static Eina_Bool
 _elm_flip_elm_widget_theme_apply(Eo *obj, Elm_Flip_Data *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    _sizing_eval(obj);
@@ -171,7 +171,7 @@ _elm_flip_elm_widget_sub_object_add(Eo *obj, Elm_Flip_Data *_pd EINA_UNUSED, Eva
    if (evas_object_data_get(sobj, "elm-parent") == obj)
      return EINA_TRUE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_add(sobj));
+   int_ret = elm_obj_widget_sub_object_add(eo_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    evas_object_data_set(sobj, "_elm_leaveme", sobj);
@@ -188,7 +188,7 @@ _elm_flip_elm_widget_sub_object_del(Eo *obj, Elm_Flip_Data *sd, Evas_Object *sob
    Eina_Bool int_ret = EINA_FALSE;
 
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
+   int_ret = elm_obj_widget_sub_object_del(eo_super(obj, MY_CLASS), sobj);
    if (!int_ret) return EINA_FALSE;
 
    if (sobj == sd->front.content)
@@ -1332,7 +1332,7 @@ _flip(Evas_Object *obj)
           sd->state = sd->next_state;
         _configure(obj);
         _flip_show_hide(obj);
-        eo_do(obj, eo_event_callback_call(ELM_FLIP_EVENT_ANIMATE_DONE, NULL));
+        eo_event_callback_call(obj, ELM_FLIP_EVENT_ANIMATE_DONE, NULL);
 
         return ECORE_CALLBACK_CANCEL;
      }
@@ -1513,8 +1513,8 @@ _event_anim(void *data,
    _flip_show_hide(sd->obj);
    _configure(sd->obj);
    sd->animator = NULL;
-   eo_do(sd->obj, eo_event_callback_call
-     (ELM_FLIP_EVENT_ANIMATE_DONE, NULL));
+   eo_event_callback_call
+     (sd->obj, ELM_FLIP_EVENT_ANIMATE_DONE, NULL);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1700,7 +1700,7 @@ _move_cb(void *data,
              evas_smart_objects_calculate(evas_object_evas_get(data));
              _configure(fl);
              // FIXME: end hack
-             eo_do(fl, eo_event_callback_call(ELM_FLIP_EVENT_ANIMATE_BEGIN, NULL));
+             eo_event_callback_call(fl, ELM_FLIP_EVENT_ANIMATE_BEGIN, NULL);
           }
         else return;
      }
@@ -1803,7 +1803,7 @@ _elm_flip_elm_container_content_unset(Eo *obj EINA_UNUSED, Elm_Flip_Data *_pd EI
 EOLIAN static void
 _elm_flip_evas_object_smart_add(Eo *obj, Elm_Flip_Data *priv)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->clip = evas_object_rectangle_add(evas_object_evas_get(obj));
@@ -1849,7 +1849,7 @@ _elm_flip_evas_object_smart_del(Eo *obj, Elm_Flip_Data *sd)
    ecore_animator_del(sd->animator);
    _state_slices_clear(sd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
@@ -1863,13 +1863,12 @@ elm_flip_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_flip_eo_base_constructor(Eo *obj, Elm_Flip_Data *sd)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
    sd->obj = obj;
 
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_PAGE_TAB_LIST));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_PAGE_TAB_LIST);
 
    return obj;
 }
@@ -1921,7 +1920,7 @@ _internal_elm_flip_go_to(Evas_Object *obj,
    evas_smart_objects_calculate(evas_object_evas_get(obj));
    _configure(obj);
    // FIXME: end hack
-   eo_do(obj, eo_event_callback_call(ELM_FLIP_EVENT_ANIMATE_BEGIN, NULL));
+   eo_event_callback_call(obj, ELM_FLIP_EVENT_ANIMATE_BEGIN, NULL);
 
    // set focus to the content object when flip go to is called
    if (elm_object_focus_get(obj))

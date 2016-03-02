@@ -26,7 +26,7 @@ _elm_separator_elm_widget_theme_apply(Eo *obj, Elm_Separator_Data *sd EINA_UNUSE
    else
      eina_stringshare_replace(&ld->group, "vertical");
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    return EINA_TRUE;
@@ -47,7 +47,7 @@ _elm_separator_elm_layout_sizing_eval(Eo *obj, Elm_Separator_Data *sd EINA_UNUSE
 EOLIAN static void
 _elm_separator_evas_object_smart_add(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -69,10 +69,9 @@ elm_separator_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_separator_eo_base_constructor(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_SEPARATOR));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SEPARATOR);
 
    return obj;
 }
@@ -85,7 +84,7 @@ _elm_separator_horizontal_set(Eo *obj, Elm_Separator_Data *sd, Eina_Bool horizon
 
    sd->horizontal = horizontal;
 
-   eo_do(obj, elm_obj_widget_theme_apply());
+   elm_obj_widget_theme_apply(obj);
 }
 
 EOLIAN static Eina_Bool

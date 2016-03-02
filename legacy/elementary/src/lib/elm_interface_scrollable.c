@@ -31,14 +31,12 @@
     }
 
 #define ELM_ANIMATOR_CONNECT(Obj, Bool, Callback, Data)                 \
-  eo_do(Obj,                                                            \
-        eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, Callback, Data), \
-        eo_event_callback_add(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, Callback, Data)); \
+  eo_event_callback_del(Obj, EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, Callback, Data); \
+  eo_event_callback_add(Obj, EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, Callback, Data); \
   Bool = 1;
 
 #define ELM_ANIMATOR_DISCONNECT(Obj, Bool, Callback, Data)              \
-  eo_do(Obj,                                                            \
-        eo_event_callback_del(EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, Callback, Data)); \
+  eo_event_callback_del(Obj, EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, Callback, Data); \
   Bool = 0;
 
 static const char SIG_CHANGED[] = "changed";
@@ -108,7 +106,7 @@ _elm_pan_update(Elm_Pan_Smart_Data *psd)
 EOLIAN static void
 _elm_pan_evas_object_smart_add(Eo *obj, Elm_Pan_Smart_Data *priv)
 {
-   eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_PAN_CLASS));
 
    priv->self = obj;
 }
@@ -118,7 +116,7 @@ _elm_pan_evas_object_smart_del(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED)
 {
    _elm_pan_content_set(obj, NULL);
 
-   eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_PAN_CLASS));
 }
 
 EOLIAN static void
@@ -137,13 +135,13 @@ _elm_pan_evas_object_smart_resize(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, 
    psd->h = h;
 
    _elm_pan_update(psd);
-   eo_do(psd->self, eo_event_callback_call(ELM_PAN_EVENT_CHANGED, NULL));
+   eo_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
 EOLIAN static void
 _elm_pan_evas_object_smart_show(Eo *obj, Elm_Pan_Smart_Data *psd)
 {
-   eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_show());
+   evas_obj_smart_show(eo_super(obj, MY_PAN_CLASS));
 
    if (psd->content)
      evas_object_show(psd->content);
@@ -152,7 +150,7 @@ _elm_pan_evas_object_smart_show(Eo *obj, Elm_Pan_Smart_Data *psd)
 EOLIAN static void
 _elm_pan_evas_object_smart_hide(Eo *obj, Elm_Pan_Smart_Data *psd)
 {
-   eo_do_super(obj, MY_PAN_CLASS, evas_obj_smart_hide());
+   evas_obj_smart_hide(eo_super(obj, MY_PAN_CLASS));
 
    if (psd->content)
      evas_object_hide(psd->content);
@@ -166,7 +164,7 @@ _elm_pan_pos_set(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord x, Eva
    psd->py = y;
 
    _elm_pan_update(psd);
-   eo_do(psd->self, eo_event_callback_call(ELM_PAN_EVENT_CHANGED, NULL));
+   eo_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
 EOLIAN static void
@@ -235,10 +233,9 @@ _elm_pan_add(Evas *evas)
 EOLIAN static Eo *
 _elm_pan_eo_base_constructor(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_PAN_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_PAN_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
+   obj = eo_constructor(eo_super(obj, MY_PAN_CLASS));
+   evas_obj_type_set(obj, MY_PAN_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
    return obj;
 }
@@ -255,7 +252,7 @@ _elm_pan_content_del_cb(void *data,
    psd->content = NULL;
    psd->content_w = psd->content_h = psd->px = psd->py =
            psd->prev_cw = psd->prev_ch = psd->delta_posx = psd->delta_posy = 0;
-   eo_do(psd->self, eo_event_callback_call(ELM_PAN_EVENT_CHANGED, NULL));
+   eo_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -275,7 +272,7 @@ _elm_pan_content_resize_cb(void *data,
         psd->content_h = h;
         _elm_pan_update(psd);
      }
-   eo_do(psd->self, eo_event_callback_call(ELM_PAN_EVENT_CHANGED, NULL));
+   eo_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -317,7 +314,7 @@ _elm_pan_content_set(Evas_Object *obj,
    _elm_pan_update(psd);
 
 end:
-   eo_do(psd->self, eo_event_callback_call(ELM_PAN_EVENT_CHANGED, NULL));
+   eo_event_callback_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
 EOLIAN static void
@@ -488,9 +485,9 @@ _elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid)
 
    if (!sid->edje_obj || !sid->pan_obj) return;
 
-   eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
-   eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
-   eo_do(sid->pan_obj, elm_obj_pan_pos_get(&x, &y));
+   elm_obj_pan_pos_max_get(sid->pan_obj, &mx, &my);
+   elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
+   elm_obj_pan_pos_get(sid->pan_obj, &x, &y);
 
    if (x == minx) go_left = EINA_FALSE;
    if (x == (mx + minx)) go_right = EINA_FALSE;
@@ -836,8 +833,8 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
         edje_object_part_drag_value_get
           (sid->edje_obj, "elm.dragable.vbar", NULL, &vy);
 
-        eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
-        eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
+        elm_obj_pan_pos_max_get(sid->pan_obj, &mx, &my);
+        elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
         x = vx * mx + minx;
         y = vy * my + miny;
 
@@ -864,10 +861,10 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
             (sid->edje_obj, "elm.dragable.vbar", 0.0,
             -((double)sid->page.y * ((double)vh / (double)h)) / 100.0);
 
-        eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
+        elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
         if (vx != mx) x = px;
         if (vy != my) y = py;
-        eo_do(sid->pan_obj, elm_obj_pan_pos_set(x, y));
+        elm_obj_pan_pos_set(sid->pan_obj, x, y);
 
         if (mx > 0) vx = (double)(x - minx) / (double)mx;
         else vx = 0.0;
@@ -896,9 +893,9 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
           (sid->edje_obj, "elm.dragable.vbar", 1.0, 1.0);
         edje_object_part_drag_size_set
           (sid->edje_obj, "elm.dragable.hbar", 1.0, 1.0);
-        eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
-        eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
-        eo_do(sid->pan_obj, elm_obj_pan_pos_set(minx, miny));
+        elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
+        elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
+        elm_obj_pan_pos_set(sid->pan_obj, minx, miny);
         if ((px != minx) || (py != miny))
           edje_object_signal_emit(sid->edje_obj, "elm,action,scroll", "elm");
      }
@@ -928,11 +925,11 @@ _elm_scroll_scroll_bar_read_and_update(
      (sid->edje_obj, "elm.dragable.vbar", NULL, &vy);
    edje_object_part_drag_value_get
      (sid->edje_obj, "elm.dragable.hbar", &vx, NULL);
-   eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
-   eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
+   elm_obj_pan_pos_max_get(sid->pan_obj, &mx, &my);
+   elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
    x = _round(vx * (double)mx + minx, 1);
    y = _round(vy * (double)my + miny, 1);
-   eo_do(sid->obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
+   elm_interface_scrollable_content_pos_set(sid->obj, x, y, EINA_TRUE);
    _elm_scroll_wanted_coordinates_update(sid, x, y);
 }
 
@@ -1186,7 +1183,7 @@ _elm_scroll_edje_drag_h_cb(void *data,
 EOLIAN static void
 _elm_interface_scrollable_content_size_get(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Evas_Coord *w, Evas_Coord *h)
 {
-   eo_do(sid->pan_obj, elm_obj_pan_content_size_get(w, h));
+   elm_obj_pan_content_size_get(sid->pan_obj, w, h);
 }
 
 EOLIAN static void
@@ -1230,10 +1227,10 @@ _elm_scroll_x_mirrored_get(const Evas_Object *obj,
 
    if (!sid->pan_obj) return 0;
 
-   eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&min, NULL));
-   eo_do((Eo *)obj, elm_interface_scrollable_content_viewport_geometry_get
-         (NULL, NULL, &w, NULL));
-   eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, NULL));
+   elm_obj_pan_pos_min_get(sid->pan_obj, &min, NULL);
+   elm_interface_scrollable_content_viewport_geometry_get
+         ((Eo *)obj, NULL, NULL, &w, NULL);
+   elm_obj_pan_content_size_get(sid->pan_obj, &cw, NULL);
    ret = cw - w - x + min + min;
 
    return (ret >= min) ? ret : min;
@@ -1250,13 +1247,13 @@ _elm_scroll_wanted_coordinates_update(Elm_Scrollable_Smart_Interface_Data *sid,
 
    if (!sid->pan_obj) return;
 
-   eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
-   eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
+   elm_obj_pan_pos_max_get(sid->pan_obj, &mx, &my);
+   elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
 
    /* Update wx/y/w/h - and if the requested positions aren't legal
     * adjust a bit. */
-   eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
-         (NULL, NULL, &sid->ww, &sid->wh));
+   elm_interface_scrollable_content_viewport_geometry_get
+         (sid->obj, NULL, NULL, &sid->ww, &sid->wh);
 
    if (x < minx && !sid->is_mirrored)
      {
@@ -1286,7 +1283,7 @@ _elm_scroll_momentum_end(Elm_Scrollable_Smart_Interface_Data *sid)
    if (sid->down.momentum_animator)
      {
         Evas_Coord px = 0, py = 0;
-        eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&px, &py));
+        elm_interface_scrollable_content_pos_get(sid->obj, &px, &py);
         _elm_scroll_wanted_coordinates_update(sid, px, py);
 
         ELM_ANIMATOR_DISCONNECT(sid->obj, sid->down.momentum_animator, _elm_scroll_momentum_animator, sid);
@@ -1316,8 +1313,8 @@ _elm_scroll_bounce_x_animator(void *data, const Eo_Event *event EINA_UNUSED)
      {
         dt = dt / _elm_config->thumbscroll_bounce_friction;
         odx = sid->down.b2x - sid->down.bx;
-        eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
-              (NULL, NULL, &w, NULL));
+        elm_interface_scrollable_content_viewport_geometry_get
+              (sid->obj, NULL, NULL, &w, NULL);
         if (!sid->down.momentum_animator && (w > abs(odx)))
           {
              pd = (double)odx / (double)w;
@@ -1327,7 +1324,7 @@ _elm_scroll_bounce_x_animator(void *data, const Eo_Event *event EINA_UNUSED)
           }
         if (dt > 1.0) dt = 1.0;
         p = 1.0 - ((1.0 - dt) * (1.0 - dt));
-        eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&x, &y));
+        elm_interface_scrollable_content_pos_get(sid->obj, &x, &y);
         dx = (odx * p);
         r = 1.0;
         if (sid->down.momentum_animator)
@@ -1339,7 +1336,7 @@ _elm_scroll_bounce_x_animator(void *data, const Eo_Event *event EINA_UNUSED)
           }
         x = sid->down.b2x + (int)((double)(dx - odx) * r);
         if (!sid->down.cancelled)
-          eo_do(sid->obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
+          elm_interface_scrollable_content_pos_set(sid->obj, x, y, EINA_TRUE);
         if (dt >= 1.0)
           {
              if (sid->down.momentum_animator)
@@ -1371,8 +1368,8 @@ _elm_scroll_bounce_y_animator(void *data, const Eo_Event *event EINA_UNUSED)
      {
         dt = dt / _elm_config->thumbscroll_bounce_friction;
         ody = sid->down.b2y - sid->down.by;
-        eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
-              (NULL, NULL, NULL, &h));
+        elm_interface_scrollable_content_viewport_geometry_get
+              (sid->obj, NULL, NULL, NULL, &h);
         if (!sid->down.momentum_animator && (h > abs(ody)))
           {
              pd = (double)ody / (double)h;
@@ -1382,7 +1379,7 @@ _elm_scroll_bounce_y_animator(void *data, const Eo_Event *event EINA_UNUSED)
           }
         if (dt > 1.0) dt = 1.0;
         p = 1.0 - ((1.0 - dt) * (1.0 - dt));
-        eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&x, &y));
+        elm_interface_scrollable_content_pos_get(sid->obj, &x, &y);
         dy = (ody * p);
         r = 1.0;
         if (sid->down.momentum_animator)
@@ -1394,7 +1391,7 @@ _elm_scroll_bounce_y_animator(void *data, const Eo_Event *event EINA_UNUSED)
           }
         y = sid->down.b2y + (int)((double)(dy - ody) * r);
         if (!sid->down.cancelled)
-          eo_do(sid->obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
+          elm_interface_scrollable_content_pos_set(sid->obj, x, y, EINA_TRUE);
         if (dt >= 1.0)
           {
              if (sid->down.momentum_animator)
@@ -1438,9 +1435,9 @@ _elm_scroll_bounce_eval(Elm_Scrollable_Smart_Interface_Data *sid)
      }
    ELM_SAFE_FREE(sid->down.hold_enterer, ecore_idle_enterer_del);
 
-   eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
-   eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
-   eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
+   elm_obj_pan_pos_max_get(sid->pan_obj, &mx, &my);
+   elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
+   elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
    bx = px;
    by = py;
    if (px < minx) px = minx;
@@ -1494,7 +1491,7 @@ _elm_interface_scrollable_content_pos_get(Eo *obj EINA_UNUSED, Elm_Scrollable_Sm
 {
    if (!sid->pan_obj) return;
 
-   eo_do(sid->pan_obj, elm_obj_pan_pos_get(x, y));
+   elm_obj_pan_pos_get(sid->pan_obj, x, y);
 }
 
 EOLIAN static void
@@ -1508,10 +1505,10 @@ _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interfac
    if (!sid->edje_obj || !sid->pan_obj) return;
 
    // FIXME: allow for bounce outside of range
-   eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
-   eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
-   eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
-   eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
+   elm_obj_pan_pos_max_get(sid->pan_obj, &mx, &my);
+   elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
+   elm_obj_pan_content_size_get(sid->pan_obj, &cw, &ch);
+   elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
    evas_object_geometry_get(sid->pan_obj, NULL, NULL, &pw, &ph);
 
    if (_paging_is_enabled(sid))
@@ -1567,8 +1564,8 @@ _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interfac
         if (!sid->loop_v && (y - miny) > my) y = my + miny;
      }
 
-   eo_do(sid->pan_obj, elm_obj_pan_pos_set(x, y));
-   eo_do(sid->pan_obj, elm_obj_pan_pos_get(&spx, &spy));
+   elm_obj_pan_pos_set(sid->pan_obj, x, y);
+   elm_obj_pan_pos_get(sid->pan_obj, &spx, &spy);
 
    if (mx > 0) vx = (double)(spx - minx) / (double)mx;
    else vx = 0.0;
@@ -1699,7 +1696,7 @@ _elm_interface_scrollable_mirrored_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart
    else
      wx = sid->wx;
 
-   eo_do(sid->obj, elm_interface_scrollable_content_pos_set(wx, sid->wy, EINA_FALSE));
+   elm_interface_scrollable_content_pos_set(sid->obj, wx, sid->wy, EINA_FALSE);
 }
 
 /* returns TRUE when we need to move the scroller, FALSE otherwise.
@@ -1718,10 +1715,10 @@ _elm_scroll_content_region_show_internal(Evas_Object *obj,
 
    if (!sid->pan_obj) return EINA_FALSE;
 
-   eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
-   eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
-   eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
-   eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
+   elm_obj_pan_pos_max_get(sid->pan_obj, &mx, &my);
+   elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
+   elm_obj_pan_content_size_get(sid->pan_obj, &cw, &ch);
+   elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
    evas_object_geometry_get(sid->pan_obj, NULL, NULL, &pw, &ph);
 
    nx = px;
@@ -1806,9 +1803,9 @@ _elm_scroll_content_region_show_internal(Evas_Object *obj,
 EOLIAN static void
 _elm_interface_scrollable_content_region_get(Eo *obj, Elm_Scrollable_Smart_Interface_Data *_pd EINA_UNUSED, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   eo_do(obj, elm_interface_scrollable_content_pos_get(x, y));
-   eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
-         (NULL, NULL, w, h));
+   elm_interface_scrollable_content_pos_get(obj, x, y);
+   elm_interface_scrollable_content_viewport_geometry_get
+         (obj, NULL, NULL, w, h);
 }
 
 /* Set should be used for calculated positions, for example, when we move
@@ -1819,7 +1816,7 @@ _elm_interface_scrollable_content_region_set(Eo *obj, Elm_Scrollable_Smart_Inter
 {
    if (_elm_scroll_content_region_show_internal(obj, &x, &y, w, h))
      {
-        eo_do(obj, elm_interface_scrollable_content_pos_set(x, y, EINA_FALSE));
+        elm_interface_scrollable_content_pos_set(obj, x, y, EINA_FALSE);
         sid->down.sx = x;
         sid->down.sy = y;
         sid->down.x = sid->down.history[0].x;
@@ -1838,7 +1835,7 @@ _elm_interface_scrollable_content_region_show(Eo *obj, Elm_Scrollable_Smart_Inte
    sid->wh = h;
    if (_elm_scroll_content_region_show_internal(obj, &x, &y, w, h))
      {
-        eo_do(obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
+        elm_interface_scrollable_content_pos_set(obj, x, y, EINA_TRUE);
         sid->down.sx = x;
         sid->down.sy = y;
         sid->down.x = sid->down.history[0].x;
@@ -1869,8 +1866,8 @@ _elm_scroll_wanted_region_set(Evas_Object *obj)
 
    if (sid->ww == -1)
      {
-        eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
-              (NULL, NULL, &ww, &wh));
+        elm_interface_scrollable_content_viewport_geometry_get
+              (obj, NULL, NULL, &ww, &wh);
      }
    else
      {
@@ -1878,7 +1875,7 @@ _elm_scroll_wanted_region_set(Evas_Object *obj)
         wh = sid->wh;
      }
 
-   eo_do(obj, elm_interface_scrollable_content_region_set(wx, sid->wy, ww, wh));
+   elm_interface_scrollable_content_region_set(obj, wx, sid->wy, ww, wh);
 }
 
 
@@ -1904,11 +1901,11 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
    if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
      direction = !direction;
 
-   eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&x, &y));
+   elm_interface_scrollable_content_pos_get(sid->obj, &x, &y);
    if (sid->scrollto.x.animator) x = sid->scrollto.x.end;
    if (sid->scrollto.y.animator) y = sid->scrollto.y.end;
-   eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
-   eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
+   elm_obj_pan_pos_max_get(sid->pan_obj, &mx, &my);
+   elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
    if (x < minx) x = minx;
    if (x > mx) x = mx;
    if (y < miny) y = miny;
@@ -1937,10 +1934,10 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
         if (sid->content_info.resized)
           _elm_scroll_wanted_region_set(sid->obj);
      }
-   eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
-         (NULL, NULL, &vw, &vh));
+   elm_interface_scrollable_content_viewport_geometry_get
+         (sid->obj, NULL, NULL, &vw, &vh);
    if (sid->pan_obj)
-     eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
+     elm_obj_pan_content_size_get(sid->pan_obj, &cw, &ch);
    if (!_paging_is_enabled(sid))
      {
         int d = ev->z;
@@ -1965,7 +1962,7 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
           {
              _elm_scroll_wanted_coordinates_update(sid, x, y);
              if (_elm_config->scroll_animation_disable)
-               eo_do(sid->obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
+               elm_interface_scrollable_content_pos_set(sid->obj, x, y, EINA_TRUE);
              else
                {
                   _elm_scroll_scroll_to_x(sid, _elm_config->bring_in_scroll_friction, x);
@@ -1975,7 +1972,7 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
      }
    else
      {
-        eo_do(sid->obj, elm_interface_scrollable_current_page_get(&pagenumber_h, &pagenumber_v));
+        elm_interface_scrollable_current_page_get(sid->obj, &pagenumber_h, &pagenumber_v);
         if (!direction)
           {
              if (ch > vh || cw <= vw)
@@ -2123,7 +2120,7 @@ _elm_scroll_momentum_animator(void *data, const Eo_Event *event EINA_UNUSED)
         sid->down.ay = dy;
         x = sid->down.sx - dx;
         y = sid->down.sy - dy;
-        eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&px, &py));
+        elm_interface_scrollable_content_pos_get(sid->obj, &px, &py);
         if ((sid->down.bounce_x_animator) ||
             (sid->down.bounce_x_hold))
           {
@@ -2136,10 +2133,10 @@ _elm_scroll_momentum_animator(void *data, const Eo_Event *event EINA_UNUSED)
              sid->down.by = sid->down.by0 - dy + sid->down.b0y;
              y = py;
           }
-        eo_do(sid->obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
+        elm_interface_scrollable_content_pos_set(sid->obj, x, y, EINA_TRUE);
         _elm_scroll_wanted_coordinates_update(sid, x, y);
-        eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&maxx, &maxy));
-        eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
+        elm_obj_pan_pos_max_get(sid->pan_obj, &maxx, &maxy);
+        elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
 
         if (!_elm_config->thumbscroll_bounce_enable || !sid->bounce_horiz)
           {
@@ -2180,11 +2177,11 @@ _elm_scroll_page_x_get(Elm_Scrollable_Smart_Interface_Data *sid,
 
    if (!sid->pan_obj) return 0;
 
-   eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&x, &y));
-   eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
-         (NULL, NULL, &w, &h));
-   eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
-   eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, NULL));
+   elm_interface_scrollable_content_pos_get(sid->obj, &x, &y);
+   elm_interface_scrollable_content_viewport_geometry_get
+         (sid->obj, NULL, NULL, &w, &h);
+   elm_obj_pan_content_size_get(sid->pan_obj, &cw, &ch);
+   elm_obj_pan_pos_min_get(sid->pan_obj, &minx, NULL);
 
    if (sid->pagerel_h > 0.0)
      sid->pagesize_h = w * sid->pagerel_h;
@@ -2227,11 +2224,11 @@ _elm_scroll_page_y_get(Elm_Scrollable_Smart_Interface_Data *sid,
 
    if (!sid->pan_obj) return 0;
 
-   eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&x, &y));
-   eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
-         (NULL, NULL, &w, &h));
-   eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
-   eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(NULL, &miny));
+   elm_interface_scrollable_content_pos_get(sid->obj, &x, &y);
+   elm_interface_scrollable_content_viewport_geometry_get
+         (sid->obj, NULL, NULL, &w, &h);
+   elm_obj_pan_content_size_get(sid->pan_obj, &cw, &ch);
+   elm_obj_pan_pos_min_get(sid->pan_obj, NULL, &miny);
 
    if (sid->pagerel_v > 0.0)
      sid->pagesize_v = h * sid->pagerel_v;
@@ -2280,13 +2277,13 @@ _elm_scroll_scroll_to_x_animator(void *data, const Eo_Event *event EINA_UNUSED)
      (sid->scrollto.x.t_end - sid->scrollto.x.t_start);
    tt = 1.0 - tt;
    tt = 1.0 - (tt * tt);
-   eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
+   elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
    px = (sid->scrollto.x.start * (1.0 - tt)) +
      (sid->scrollto.x.end * tt);
    if (t >= sid->scrollto.x.t_end)
      {
         px = sid->scrollto.x.end;
-        eo_do(sid->obj, elm_interface_scrollable_content_pos_set(px, py, EINA_TRUE));
+        elm_interface_scrollable_content_pos_set(sid->obj, px, py, EINA_TRUE);
         sid->down.sx = px;
         sid->down.x = sid->down.history[0].x;
         sid->down.pdx = 0;
@@ -2295,7 +2292,7 @@ _elm_scroll_scroll_to_x_animator(void *data, const Eo_Event *event EINA_UNUSED)
           _elm_scroll_anim_stop(sid);
         goto on_end;
      }
-   eo_do(sid->obj, elm_interface_scrollable_content_pos_set(px, py, EINA_TRUE));
+   elm_interface_scrollable_content_pos_set(sid->obj, px, py, EINA_TRUE);
    _elm_scroll_wanted_coordinates_update(sid, px, py);
    return EO_CALLBACK_CONTINUE;
 
@@ -2318,13 +2315,13 @@ _elm_scroll_scroll_to_y_animator(void *data, const Eo_Event *event EINA_UNUSED)
      (sid->scrollto.y.t_end - sid->scrollto.y.t_start);
    tt = 1.0 - tt;
    tt = 1.0 - (tt * tt);
-   eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
+   elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
    py = (sid->scrollto.y.start * (1.0 - tt)) +
      (sid->scrollto.y.end * tt);
    if (t >= sid->scrollto.y.t_end)
      {
         py = sid->scrollto.y.end;
-        eo_do(sid->obj, elm_interface_scrollable_content_pos_set(px, py, EINA_TRUE));
+        elm_interface_scrollable_content_pos_set(sid->obj, px, py, EINA_TRUE);
         sid->down.sy = py;
         sid->down.y = sid->down.history[0].y;
         sid->down.pdy = 0;
@@ -2333,7 +2330,7 @@ _elm_scroll_scroll_to_y_animator(void *data, const Eo_Event *event EINA_UNUSED)
           _elm_scroll_anim_stop(sid);
         goto on_end;
      }
-   eo_do(sid->obj, elm_interface_scrollable_content_pos_set(px, py, EINA_TRUE));
+   elm_interface_scrollable_content_pos_set(sid->obj, px, py, EINA_TRUE);
    _elm_scroll_wanted_coordinates_update(sid, px, py);
 
    return EO_CALLBACK_CONTINUE;
@@ -2356,15 +2353,15 @@ _elm_scroll_scroll_to_y(Elm_Scrollable_Smart_Interface_Data *sid,
    if (sid->freeze) return;
    if (t_in <= 0.0)
      {
-        eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&x, &y));
-        eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
-              (NULL, NULL, &w, &h));
+        elm_interface_scrollable_content_pos_get(sid->obj, &x, &y);
+        elm_interface_scrollable_content_viewport_geometry_get
+              (sid->obj, NULL, NULL, &w, &h);
         y = pos_y;
-        eo_do(sid->obj, elm_interface_scrollable_content_region_set(x, y, w, h));
+        elm_interface_scrollable_content_region_set(sid->obj, x, y, w, h);
         return;
      }
    t = ecore_loop_time_get();
-   eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
+   elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
    sid->scrollto.y.start = py;
    sid->scrollto.y.end = pos_y;
    sid->scrollto.y.t_start = t;
@@ -2398,16 +2395,16 @@ _elm_scroll_scroll_to_x(Elm_Scrollable_Smart_Interface_Data *sid,
    if (sid->freeze) return;
    if (t_in <= 0.0)
      {
-        eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&x, &y));
-        eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
-              (NULL, NULL, &w, &h));
+        elm_interface_scrollable_content_pos_get(sid->obj, &x, &y);
+        elm_interface_scrollable_content_viewport_geometry_get
+              (sid->obj, NULL, NULL, &w, &h);
         x = pos_x;
-        eo_do(sid->obj, elm_interface_scrollable_content_region_set
-              (x, y, w, h));
+        elm_interface_scrollable_content_region_set
+              (sid->obj, x, y, w, h);
         return;
      }
    t = ecore_loop_time_get();
-   eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
+   elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
    sid->scrollto.x.start = px;
    sid->scrollto.x.end = pos_x;
    sid->scrollto.x.t_start = t;
@@ -2518,11 +2515,11 @@ _elm_scroll_mouse_up_event_cb(void *data,
                             int minx, miny, mx, my, px, py;
                             double tt = 0.0, dtt = 0.0;
 
-                            eo_do(sid->pan_obj, elm_obj_pan_pos_min_get
-                                  (&minx, &miny));
-                            eo_do(sid->pan_obj, elm_obj_pan_pos_max_get
-                                  (&mx, &my));
-                            eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
+                            elm_obj_pan_pos_min_get
+                                  (sid->pan_obj, &minx, &miny);
+                            elm_obj_pan_pos_max_get
+                                  (sid->pan_obj, &mx, &my);
+                            elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
                             max_d = _elm_config->thumbscroll_flick_distance_tolerance;
                             if (dx > 0)
                               {
@@ -2598,8 +2595,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                                       _elm_scroll_anim_start(sid);
                                    }
                                  sid->down.anim_start = ecore_loop_time_get();
-                                 eo_do(sid->obj,
-                                       elm_interface_scrollable_content_pos_get(&x, &y));
+                                 elm_interface_scrollable_content_pos_get(sid->obj, &x, &y);
                                  sid->down.sx = x;
                                  sid->down.sy = y;
                                  sid->down.b0x = 0;
@@ -2618,8 +2614,8 @@ _elm_scroll_mouse_up_event_cb(void *data,
                {
                   Evas_Coord pgx, pgy;
 
-                  eo_do(sid->obj, elm_interface_scrollable_content_pos_get
-                        (&x, &y));
+                  elm_interface_scrollable_content_pos_get
+                        (sid->obj, &x, &y);
                   if ((!sid->obj) ||
                       (!elm_widget_drag_child_locked_x_get
                          (sid->obj)))
@@ -2658,8 +2654,8 @@ _elm_scroll_mouse_up_event_cb(void *data,
                {
                   Evas_Coord pgx, pgy;
 
-                  eo_do(sid->obj, elm_interface_scrollable_content_pos_get
-                        (&x, &y));
+                  elm_interface_scrollable_content_pos_get
+                        (sid->obj, &x, &y);
                   if ((!sid->obj) ||
                       (!elm_widget_drag_child_locked_x_get
                          (sid->obj)))
@@ -2703,8 +2699,8 @@ _elm_scroll_mouse_up_event_cb(void *data,
         sid->down.want_dragged = EINA_FALSE;
         sid->down.dragged = EINA_FALSE;
         sid->down.now = EINA_FALSE;
-        eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&x, &y));
-        eo_do(sid->obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
+        elm_interface_scrollable_content_pos_get(sid->obj, &x, &y);
+        elm_interface_scrollable_content_pos_set(sid->obj, x, y, EINA_TRUE);
         _elm_scroll_wanted_coordinates_update(sid, x, y);
 
         if (sid->content_info.resized)
@@ -2797,7 +2793,7 @@ _elm_scroll_mouse_down_event_cb(void *data,
         sid->down.dir_y = EINA_FALSE;
         sid->down.x = ev->canvas.x;
         sid->down.y = ev->canvas.y;
-        eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&x, &y));
+        elm_interface_scrollable_content_pos_get(sid->obj, &x, &y);
         sid->down.sx = x;
         sid->down.sy = y;
         sid->down.locked = EINA_FALSE;
@@ -2830,9 +2826,9 @@ _elm_scroll_can_scroll(Elm_Scrollable_Smart_Interface_Data *sid,
 
    if (!sid->pan_obj) return EINA_FALSE;
 
-   eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
-   eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
-   eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
+   elm_obj_pan_pos_max_get(sid->pan_obj, &mx, &my);
+   elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
+   elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
    switch (dir)
      {
       case LEFT:
@@ -2959,7 +2955,7 @@ _elm_scroll_down_coord_eval(Elm_Scrollable_Smart_Interface_Data *sid,
           }
      }
 
-   eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
+   elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
 
    if (!sid->loop_h && *x < minx)
      *x += (minx - *x) * _elm_config->thumbscroll_border_friction;
@@ -3076,7 +3072,7 @@ _elm_scroll_hold_enterer(void *data)
 //          ecore_loop_time_get() - sid->down.dragged_began_timestamp,
 //          fy, fy2);
 
-   eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&ox, &oy));
+   elm_interface_scrollable_content_pos_get(sid->obj, &ox, &oy);
    if (sid->down.dir_x)
      {
         if ((!sid->obj) ||
@@ -3095,7 +3091,7 @@ _elm_scroll_hold_enterer(void *data)
      _elm_scroll_smooth_debug_movetime_add(ox, oy);
 #endif
 
-   eo_do(sid->obj, elm_interface_scrollable_content_pos_set(ox, oy, EINA_TRUE));
+   elm_interface_scrollable_content_pos_set(sid->obj, ox, oy, EINA_TRUE);
 
    return EINA_FALSE;
 }
@@ -3128,7 +3124,7 @@ _elm_scroll_on_hold_animator(void *data, const Eo_Event *event EINA_UNUSED)
           (double)_elm_config->thumbscroll_hold_threshold * 2.0;
         vy = sid->down.onhold_vy * td *
           (double)_elm_config->thumbscroll_hold_threshold * 2.0;
-        eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&ox, &oy));
+        elm_interface_scrollable_content_pos_get(sid->obj, &ox, &oy);
         x = ox;
         y = oy;
 
@@ -3154,7 +3150,7 @@ _elm_scroll_on_hold_animator(void *data, const Eo_Event *event EINA_UNUSED)
                }
           }
 
-        eo_do(sid->obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
+        elm_interface_scrollable_content_pos_set(sid->obj, x, y, EINA_TRUE);
      }
    sid->down.onhold_tlast = t;
 
@@ -3193,7 +3189,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
      {
         Evas_Coord px = 0;
         ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.x.animator, _elm_scroll_scroll_to_x_animator, sid);
-        eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, NULL));
+        elm_obj_pan_pos_get(sid->pan_obj, &px, NULL);
         sid->down.sx = px;
         sid->down.x = sid->down.history[0].x;
      }
@@ -3203,7 +3199,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
      {
         Evas_Coord py = 0;
         ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.y.animator, _elm_scroll_scroll_to_y_animator, sid);
-        eo_do(sid->pan_obj, elm_obj_pan_pos_get(NULL, &py));
+        elm_obj_pan_pos_get(sid->pan_obj, NULL, &py);
         sid->down.sy = py;
         sid->down.y = sid->down.history[0].y;
      }
@@ -3387,8 +3383,8 @@ _elm_scroll_mouse_move_event_cb(void *data,
              {
                 Evas_Coord minx = 0, miny = 0, mx, my;
 
-                eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
-                eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
+                elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
+                elm_obj_pan_pos_max_get(sid->pan_obj, &mx, &my);
                 if (!sid->loop_v && y < miny)
                   y += (miny - y) *
                     _elm_config->thumbscroll_border_friction;
@@ -3503,13 +3499,13 @@ _elm_scroll_page_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
 
    if (!_paging_is_enabled(sid)) return;
 
-   eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
-         (NULL, NULL, &w, &h));
+   elm_interface_scrollable_content_viewport_geometry_get
+         (sid->obj, NULL, NULL, &w, &h);
 
    x = _elm_scroll_page_x_get(sid, 0, EINA_TRUE);
    y = _elm_scroll_page_y_get(sid, 0, EINA_TRUE);
 
-   eo_do(sid->obj, elm_interface_scrollable_content_region_set(x, y, w, h));
+   elm_interface_scrollable_content_region_set(sid->obj, x, y, w, h);
 }
 
 static void
@@ -3793,9 +3789,9 @@ _elm_scroll_scroll_bar_reset(Elm_Scrollable_Smart_Interface_Data *sid)
      }
    if (sid->pan_obj)
      {
-        eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
-        eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
-        eo_do(sid->pan_obj, elm_obj_pan_pos_set(minx, miny));
+        elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
+        elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
+        elm_obj_pan_pos_set(sid->pan_obj, minx, miny);
      }
    if ((px != minx) || (py != miny))
      edje_object_signal_emit(sid->edje_obj, "elm,action,scroll", "elm");
@@ -3813,8 +3809,8 @@ _elm_scroll_pan_resized_cb(void *data,
 
    if (sid->cb_func.content_viewport_resize)
      {
-        eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
-              (NULL, NULL, &w, &h));
+        elm_interface_scrollable_content_viewport_geometry_get
+              (sid->obj, NULL, NULL, &w, &h);
         sid->cb_func.content_viewport_resize(sid->obj, w, h);
      }
 }
@@ -3828,7 +3824,7 @@ _elm_scroll_pan_changed_cb(void *data, const Eo_Event *event EINA_UNUSED)
 
    if (!sid->pan_obj) return EINA_TRUE;
 
-   eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&w, &h));
+   elm_obj_pan_content_size_get(sid->pan_obj, &w, &h);
    if ((w != sid->content_info.w) || (h != sid->content_info.h))
      {
         sid->content_info.w = w;
@@ -3883,8 +3879,8 @@ _elm_interface_scrollable_content_set(Eo *obj, Elm_Scrollable_Smart_Interface_Da
      {
         o = _elm_pan_add(evas_object_evas_get(obj));
         sid->pan_obj = o;
-        eo_do(o, eo_event_callback_add
-          (ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid));
+        eo_event_callback_add
+          (o, ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid);
         evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE,
                                        _elm_scroll_pan_resized_cb, sid);
         edje_object_part_swallow(sid->edje_obj, "elm.swallow.content", o);
@@ -3894,7 +3890,7 @@ _elm_interface_scrollable_content_set(Eo *obj, Elm_Scrollable_Smart_Interface_Da
      (content, EVAS_CALLBACK_DEL, _elm_scroll_content_del_cb, sid);
 
    _elm_pan_content_set(sid->pan_obj, content);
-   eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&w, &h));
+   elm_obj_pan_content_size_get(sid->pan_obj, &w, &h);
    sid->content_info.w = w;
    sid->content_info.h = h;
 
@@ -3907,12 +3903,11 @@ _elm_interface_scrollable_extern_pan_set(Eo *obj, Elm_Scrollable_Smart_Interface
 {
    if (!sid->edje_obj) return;
 
-   eo_do(obj, elm_interface_scrollable_content_set(NULL));
+   elm_interface_scrollable_content_set(obj, NULL);
 
    if (sid->pan_obj)
      {
-        eo_do(sid->pan_obj, eo_event_callback_del(
-           ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid));
+        eo_event_callback_del(sid->pan_obj, ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid);
         evas_object_event_callback_del(sid->pan_obj, EVAS_CALLBACK_RESIZE,
                                        _elm_scroll_pan_resized_cb);
      }
@@ -3939,8 +3934,8 @@ _elm_interface_scrollable_extern_pan_set(Eo *obj, Elm_Scrollable_Smart_Interface
    sid->pan_obj = pan;
 
    sid->extern_pan = EINA_TRUE;
-   eo_do(sid->pan_obj, eo_event_callback_add
-     (ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid));
+   eo_event_callback_add
+     (sid->pan_obj, ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid);
    evas_object_event_callback_add(sid->pan_obj, EVAS_CALLBACK_RESIZE,
                                   _elm_scroll_pan_resized_cb, sid);
    edje_object_part_swallow
@@ -4299,9 +4294,9 @@ _elm_interface_scrollable_page_relative_set(Eo *obj, Elm_Scrollable_Smart_Interf
 {
    Evas_Coord pagesize_h, pagesize_v;
 
-   eo_do(obj, elm_interface_scrollable_paging_get(NULL, NULL, &pagesize_h, &pagesize_v));
+   elm_interface_scrollable_paging_get(obj, NULL, NULL, &pagesize_h, &pagesize_v);
 
-   eo_do(obj, elm_interface_scrollable_paging_set(h_pagerel, v_pagerel, pagesize_h, pagesize_v));
+   elm_interface_scrollable_paging_set(obj, h_pagerel, v_pagerel, pagesize_h, pagesize_v);
 }
 
 EOLIAN static void
@@ -4323,7 +4318,7 @@ _elm_interface_scrollable_current_page_get(Eo *obj EINA_UNUSED, Elm_Scrollable_S
 {
    Evas_Coord x, y;
 
-   eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&x, &y));
+   elm_interface_scrollable_content_pos_get(sid->obj, &x, &y);
    if (pagenumber_h)
      {
         if (sid->pagesize_h > 0)
@@ -4361,7 +4356,7 @@ _elm_interface_scrollable_last_page_get(Eo *obj EINA_UNUSED, Elm_Scrollable_Smar
 
    if (!sid->pan_obj) return;
 
-   eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
+   elm_obj_pan_content_size_get(sid->pan_obj, &cw, &ch);
    if (pagenumber_h)
      {
         if ((sid->pagesize_h > 0) && (cw > sid->pagesize_h))
@@ -4388,8 +4383,8 @@ _elm_interface_scrollable_page_show(Eo *obj, Elm_Scrollable_Smart_Interface_Data
    sid->current_page.x = _elm_scroll_page_x_get(sid, 0, EINA_FALSE);
    sid->current_page.y = _elm_scroll_page_y_get(sid, 0, EINA_FALSE);
 
-   eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
-         (NULL, NULL, &w, &h));
+   elm_interface_scrollable_content_viewport_geometry_get
+         (sid->obj, NULL, NULL, &w, &h);
    x = sid->pagesize_h * pagenumber_h;
    y = sid->pagesize_v * pagenumber_v;
 
@@ -4399,7 +4394,7 @@ _elm_interface_scrollable_page_show(Eo *obj, Elm_Scrollable_Smart_Interface_Data
    sid->wh = h;
 
    if (_elm_scroll_content_region_show_internal(obj, &x, &y, w, h))
-     eo_do(obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
+     elm_interface_scrollable_content_pos_set(obj, x, y, EINA_TRUE);
 
    if ((sid->current_page.x != x) || (sid->current_page.y != y))
      {
@@ -4415,8 +4410,8 @@ _elm_interface_scrollable_page_bring_in(Eo *obj, Elm_Scrollable_Smart_Interface_
    Evas_Coord x = 0;
    Evas_Coord y = 0;
 
-   eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
-         (NULL, NULL, &w, &h));
+   elm_interface_scrollable_content_viewport_geometry_get
+         (sid->obj, NULL, NULL, &w, &h);
    x = sid->pagesize_h * pagenumber_h;
    y = sid->pagesize_v * pagenumber_v;
    if (_elm_scroll_content_region_show_internal(obj, &x, &y, w, h))
@@ -4441,7 +4436,7 @@ _elm_interface_scrollable_gravity_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_
 {
    if (!sid->pan_obj) return;
 
-   eo_do(sid->pan_obj, elm_obj_pan_gravity_set(x, y));
+   elm_obj_pan_gravity_set(sid->pan_obj, x, y);
 }
 
 EOLIAN static void
@@ -4449,7 +4444,7 @@ _elm_interface_scrollable_gravity_get(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_
 {
    if (!sid->pan_obj) return;
 
-   eo_do(sid->pan_obj, elm_obj_pan_gravity_get(x, y));
+   elm_obj_pan_gravity_get(sid->pan_obj, x, y);
 }
 
 EOLIAN static void
@@ -4524,16 +4519,16 @@ _elm_interface_scrollable_evas_object_smart_add(Eo *obj, Elm_Scrollable_Smart_In
 
    _elm_scroll_scroll_bar_reset(sid);
 
-   eo_do_super(obj, MY_SCROLLABLE_INTERFACE, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_SCROLLABLE_INTERFACE));
 }
 
 EOLIAN static void
 _elm_interface_scrollable_evas_object_smart_del(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid)
 {
 
-   eo_do_super(obj, MY_SCROLLABLE_INTERFACE, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_SCROLLABLE_INTERFACE));
 
-   eo_do(obj, elm_interface_scrollable_content_set(NULL));
+   elm_interface_scrollable_content_set(obj, NULL);
    if (!sid->extern_pan) evas_object_del(sid->pan_obj);
 
    ecore_idle_enterer_del(sid->down.hold_enterer);

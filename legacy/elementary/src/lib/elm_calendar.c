@@ -855,7 +855,7 @@ _elm_calendar_elm_widget_theme_apply(Eo *obj, Elm_Calendar_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    _spinner_buttons_add(obj, sd);
@@ -935,9 +935,9 @@ _update_data(Evas_Object *obj, Eina_Bool month,
           sd->selected_time.tm_mday = maxdays;
 
         _fix_selected_time(sd);
-        eo_do(obj, eo_event_callback_call(ELM_CALENDAR_EVENT_CHANGED, NULL));
+        eo_event_callback_call(obj, ELM_CALENDAR_EVENT_CHANGED, NULL);
      }
-   eo_do(obj, eo_event_callback_call(ELM_CALENDAR_EVENT_DISPLAY_CHANGED, NULL));
+   eo_event_callback_call(obj, ELM_CALENDAR_EVENT_DISPLAY_CHANGED, NULL);
 
    return EINA_TRUE;
 }
@@ -1221,7 +1221,7 @@ _update_sel_it(Evas_Object *obj,
    sd->selected_time.tm_mday = day;
    _fix_selected_time(sd);
    _select(obj, sel_it);
-   eo_do(obj, eo_event_callback_call(ELM_CALENDAR_EVENT_CHANGED, NULL));
+   eo_event_callback_call(obj, ELM_CALENDAR_EVENT_CHANGED, NULL);
 }
 
 static void
@@ -1377,7 +1377,7 @@ _elm_calendar_evas_object_smart_add(Eo *obj, Elm_Calendar_Data *priv)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->first_interval = 0.85;
@@ -1457,7 +1457,7 @@ _elm_calendar_evas_object_smart_del(Eo *obj, Elm_Calendar_Data *sd)
    for (i = 0; i < ELM_DAY_LAST; i++)
      eina_stringshare_del(sd->weekdays[i]);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 static Eina_Bool _elm_calendar_smart_focus_next_enable = EINA_FALSE;
@@ -1590,13 +1590,12 @@ elm_calendar_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_calendar_eo_base_constructor(Eo *obj, Elm_Calendar_Data *sd)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
    sd->obj = obj;
 
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_CALENDAR));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_CALENDAR);
 
    return obj;
 }

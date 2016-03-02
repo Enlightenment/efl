@@ -16,7 +16,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "thumb", ELM_WIN_BASIC);
 
    thumb = elm_thumb_add(win);
-   eo_do(thumb, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(thumb);
 
    ck_assert(role == ELM_ATSPI_ROLE_IMAGE);
 

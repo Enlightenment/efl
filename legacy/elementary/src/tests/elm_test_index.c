@@ -16,7 +16,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "index", ELM_WIN_BASIC);
 
    idx = elm_index_add(win);
-   eo_do(idx, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(idx);
 
    ck_assert(role == ELM_ATSPI_ROLE_SCROLL_BAR);
 

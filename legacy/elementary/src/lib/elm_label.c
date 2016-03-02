@@ -181,7 +181,7 @@ _elm_label_elm_widget_theme_apply(Eo *obj, Elm_Label_Data *sd)
 
    evas_event_freeze(evas_object_evas_get(obj));
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    _label_format_set(wd->resize_obj, sd->format);
@@ -331,11 +331,11 @@ _elm_label_elm_layout_text_set(Eo *obj, Elm_Label_Data *sd, const char *part, co
    if (!label) label = "";
    _label_format_set(wd->resize_obj, sd->format);
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_layout_text_set(part, label));
+   int_ret = elm_obj_layout_text_set(eo_super(obj, MY_CLASS), part, label);
    if (int_ret)
      {
         sd->lastw = -1;
-        eo_do(obj, elm_obj_layout_sizing_eval());
+        elm_obj_layout_sizing_eval(obj);
      }
    return int_ret;
 }
@@ -357,9 +357,9 @@ _on_slide_end(void *data, Evas_Object *obj EINA_UNUSED,
    ELM_LABEL_DATA_GET(data, sd);
 
    if (sd->slide_ellipsis)
-     eo_do(data, elm_obj_label_ellipsis_set(EINA_TRUE));
+     elm_obj_label_ellipsis_set(data, EINA_TRUE);
 
-   eo_do(data, eo_event_callback_call(ELM_LABEL_EVENT_SLIDE_END, NULL));
+   eo_event_callback_call(data, ELM_LABEL_EVENT_SLIDE_END, NULL);
 }
 
 EOLIAN static void
@@ -367,7 +367,7 @@ _elm_label_evas_object_smart_add(Eo *obj, Elm_Label_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
 
    elm_widget_sub_object_parent_add(obj);
 
@@ -411,11 +411,10 @@ elm_label_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_label_eo_base_constructor(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_LABEL));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_LABEL);
 
    return obj;
 }

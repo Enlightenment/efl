@@ -159,7 +159,7 @@ _item_unselect(Elm_Toolbar_Item_Data *item)
    elm_layout_signal_emit(VIEW(item), "elm,state,unselected", "elm");
    if (item->icon)
      elm_widget_signal_emit(item->icon, "elm,state,unselected", "elm");
-   eo_do(WIDGET(item), eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_UNSELECTED, EO_OBJ(item)));
+   eo_event_callback_call(WIDGET(item), EVAS_SELECTABLE_INTERFACE_EVENT_UNSELECTED, EO_OBJ(item));
    if (_elm_config->atspi_mode)
     elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(item), ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
 }
@@ -224,8 +224,8 @@ _item_show(Elm_Toolbar_Item_Data *it)
 
    evas_object_geometry_get(sd->bx, &bx, &by, NULL, NULL);
    evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
-   eo_do(WIDGET(it), elm_interface_scrollable_content_region_show
-         (x - bx, y - by, w, h));
+   elm_interface_scrollable_content_region_show
+         (WIDGET(it), x - bx, y - by, w, h);
 }
 
 static void
@@ -313,9 +313,8 @@ _elm_toolbar_item_coordinates_calc(Elm_Toolbar_Item_Data *item,
 
    ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
 
-   eo_do(WIDGET(item),
-         elm_interface_scrollable_content_viewport_geometry_get
-         (NULL, NULL, &vw, &vh));
+   elm_interface_scrollable_content_viewport_geometry_get
+         (WIDGET(item), NULL, NULL, &vw, &vh);
    evas_object_geometry_get(sd->bx, &bx, &by, NULL, NULL);
    evas_object_geometry_get(VIEW(item), &ix, &iy, &iw, &ih);
 
@@ -368,8 +367,8 @@ _resize_job(void *data)
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
    sd->resize_job = NULL;
-   eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
-         (NULL, NULL, &vw, &vh));
+   elm_interface_scrollable_content_viewport_geometry_get
+         (obj, NULL, NULL, &vw, &vh);
    evas_object_size_hint_min_get(sd->bx, &mw, &mh);
    evas_object_geometry_get(sd->bx, NULL, NULL, &w, &h);
 
@@ -426,8 +425,8 @@ _resize_job(void *data)
                             menu_it = elm_menu_item_add
                                 (menu, NULL, it->icon_str, it->label,
                                 _elm_toolbar_item_menu_cb, it);
-                            Eina_Bool disabled = eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get());
-                            eo_do(menu_it, elm_wdg_item_disabled_set(disabled));
+                            Eina_Bool disabled = elm_wdg_item_disabled_get(EO_OBJ(it));
+                            elm_wdg_item_disabled_set(menu_it, disabled);
                             if (it->o_menu)
                               elm_menu_clone(it->o_menu, menu, menu_it);
                          }
@@ -531,15 +530,15 @@ _resize_job(void *data)
           {
              if (h > vh) _items_size_fit(obj, &h, vh);
              if (sd->item_count - sd->separator_count > 0)
-               eo_do(obj, elm_interface_scrollable_paging_set
-                     (0.0, 0.0, 0, (h / (sd->item_count - sd->separator_count))));
+               elm_interface_scrollable_paging_set
+                     (obj, 0.0, 0.0, 0, (h / (sd->item_count - sd->separator_count)));
           }
         else
           {
              if (w > vw) _items_size_fit(obj, &w, vw);
              if (sd->item_count - sd->separator_count > 0)
-               eo_do(obj, elm_interface_scrollable_paging_set
-                     (0.0, 0.0, (w / (sd->item_count - sd->separator_count)), 0));
+               elm_interface_scrollable_paging_set
+                     (obj, 0.0, 0.0, (w / (sd->item_count - sd->separator_count)), 0);
           }
      }
    else
@@ -634,8 +633,8 @@ _elm_toolbar_item_focused(Elm_Object_Item *eo_it)
    focus_raise = elm_layout_data_get(VIEW(it), "focusraise");
    if ((focus_raise) && (!strcmp(focus_raise, "on")))
      evas_object_raise(VIEW(it));
-   eo_do(obj, eo_event_callback_call
-     (ELM_TOOLBAR_EVENT_ITEM_FOCUSED, EO_OBJ(it)));
+   eo_event_callback_call
+     (obj, ELM_TOOLBAR_EVENT_ITEM_FOCUSED, EO_OBJ(it));
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
 }
@@ -661,8 +660,8 @@ _elm_toolbar_item_unfocused(Elm_Object_Item *eo_it)
    elm_layout_signal_emit
       (VIEW(it), "elm,highlight,off", "elm");
    sd->focused_item = NULL;
-   eo_do(obj, eo_event_callback_call
-     (ELM_TOOLBAR_EVENT_ITEM_UNFOCUSED, eo_it));
+   eo_event_callback_call
+     (obj, ELM_TOOLBAR_EVENT_ITEM_UNFOCUSED, eo_it);
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
 }
@@ -750,7 +749,7 @@ _elm_toolbar_elm_widget_on_focus(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item 
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_on_focus(NULL));
+   int_ret = elm_obj_widget_on_focus(eo_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
    if (!sd->items) return EINA_FALSE;
 
@@ -1005,7 +1004,7 @@ _elm_toolbar_item_elm_widget_item_disable(Eo *eo_toolbar, Elm_Toolbar_Item_Data 
    Eina_Bool tmp;
    const char* emission;
 
-   if (eo_do_ret(eo_toolbar, tmp, elm_wdg_item_disabled_get()))
+   if (elm_wdg_item_disabled_get(eo_toolbar))
      emission = "elm,state,disabled";
    else
      emission = "elm,state,enabled";
@@ -1086,7 +1085,7 @@ _item_select(Elm_Toolbar_Item_Data *it)
 
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
 
-   if (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()) || (it->separator) || (it->object))
+   if (elm_wdg_item_disabled_get(EO_OBJ(it)) || (it->separator) || (it->object))
      return;
    if ((sd->shrink_mode == ELM_TOOLBAR_SHRINK_EXPAND) && (!sd->more_item))
      return;
@@ -1177,8 +1176,8 @@ _item_select(Elm_Toolbar_Item_Data *it)
      {
         if (it->func) it->func((void *)(WIDGET_ITEM_DATA_GET(EO_OBJ(it))), WIDGET(it), EO_OBJ(it));
      }
-   eo_do(obj, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, EO_OBJ(it)));
-   eo_do(obj, eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, EO_OBJ(it)));
+   eo_event_callback_call(obj, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, EO_OBJ(it));
+   eo_event_callback_call(obj, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, EO_OBJ(it));
    if (_elm_config->atspi_mode)
     elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
 }
@@ -1276,7 +1275,7 @@ _item_theme_hook(Evas_Object *obj,
              if (it->icon)
                elm_widget_signal_emit(it->icon, "elm,state,selected", "elm");
           }
-        if (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()))
+        if (elm_wdg_item_disabled_get(EO_OBJ(it)))
           {
              elm_layout_signal_emit(view, "elm,state,disabled", "elm");
              if (it->icon)
@@ -1405,8 +1404,8 @@ _sizing_eval(Evas_Object *obj)
    evas_object_resize(wd->resize_obj, w, h);
 
    evas_object_size_hint_min_get(sd->bx, &minw_bx, &minh_bx);
-   eo_do(obj, elm_interface_scrollable_content_viewport_geometry_get
-         (NULL, NULL, &vw, &vh));
+   elm_interface_scrollable_content_viewport_geometry_get
+         (obj, NULL, NULL, &vw, &vh);
 
    if (sd->shrink_mode == ELM_TOOLBAR_SHRINK_NONE)
      {
@@ -1482,7 +1481,7 @@ _elm_toolbar_elm_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
    if (sd->delete_me) return EINA_TRUE;
 
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    elm_widget_theme_object_set
@@ -1624,7 +1623,7 @@ _elm_toolbar_item_elm_widget_item_part_content_set(Eo *eo_item EINA_UNUSED, Elm_
 
    if (part && strcmp(part, "object") && strcmp(part, "elm.swallow.object"))
      {
-        eo_do(VIEW(item), elm_obj_container_content_set(part, content));
+        elm_obj_container_content_set(VIEW(item), part, content);
         return;
      }
    if (item->object == content) return;
@@ -1647,7 +1646,7 @@ _elm_toolbar_item_elm_widget_item_part_content_get(Eo *eo_it EINA_UNUSED, Elm_To
 
    if (part && strcmp(part, "object") && strcmp(part, "elm.swallow.object"))
      {
-        eo_do(VIEW(it), content = elm_obj_container_content_get(part));
+        content = elm_obj_container_content_get(VIEW(it), part);
         if (content) return content;
         else return NULL;
      }
@@ -1666,7 +1665,7 @@ _elm_toolbar_item_elm_widget_item_part_content_unset(Eo *eo_item EINA_UNUSED, El
 
    if (part && strcmp(part, "object") && strcmp(part, "elm.swallow.object"))
      {
-        eo_do(VIEW(item), o = elm_obj_container_content_unset(part));
+        o = elm_obj_container_content_unset(VIEW(item), part);
         return o;
      }
 
@@ -1686,9 +1685,9 @@ _elm_toolbar_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
    Elm_Toolbar_Item_Data *it;
 
    EINA_INLIST_FOREACH(sd->items, it)
-     eo_do(EO_OBJ(it), elm_wdg_item_translate());
+     elm_wdg_item_translate(EO_OBJ(it));
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
+   elm_obj_widget_translate(eo_super(obj, MY_CLASS));
 
    return EINA_TRUE;
 }
@@ -2053,7 +2052,7 @@ _mouse_up_reorder(Elm_Toolbar_Item_Data *it,
         ELM_SAFE_FREE(it->proxy, evas_object_del);
      }
 
-   eo_do(obj, elm_interface_scrollable_hold_set(EINA_FALSE));
+   elm_interface_scrollable_hold_set(obj, EINA_FALSE);
 }
 
 static void
@@ -2101,7 +2100,7 @@ _item_reorder_start(Elm_Toolbar_Item_Data *item)
    evas_object_move(item->proxy, x, y);
    evas_object_show(item->proxy);
 
-   eo_do(WIDGET(item), elm_interface_scrollable_hold_set(EINA_TRUE));
+   elm_interface_scrollable_hold_set(WIDGET(item), EINA_TRUE);
 }
 
 static Eina_Bool
@@ -2116,7 +2115,7 @@ _long_press_cb(void *data)
    if (sd->reorder_mode)
      _item_reorder_start(it);
 
-   eo_do(WIDGET(it), eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_LONGPRESSED, EO_OBJ(it)));
+   eo_event_callback_call(WIDGET(it), EVAS_CLICKABLE_INTERFACE_EVENT_LONGPRESSED, EO_OBJ(it));
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -2149,7 +2148,7 @@ _mouse_down_cb(Elm_Toolbar_Item_Data *it,
 
    if (ev->button != 1) return;
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     eo_do(WIDGET(it), eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE, EO_OBJ(it)));
+     eo_event_callback_call(WIDGET(it), EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE, EO_OBJ(it));
    sd->mouse_down = EINA_TRUE;
    sd->long_press = EINA_FALSE;
    if (sd->long_timer)
@@ -2216,21 +2215,21 @@ static void
 _scroll_cb(Evas_Object *obj,
            void *data EINA_UNUSED)
 {
-   eo_do(obj, eo_event_callback_call(EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL, NULL));
+   eo_event_callback_call(obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL, NULL);
 }
 
 static void
 _scroll_anim_start_cb(Evas_Object *obj,
                       void *data EINA_UNUSED)
 {
-   eo_do(obj, eo_event_callback_call(EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_ANIM_START, NULL));
+   eo_event_callback_call(obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_ANIM_START, NULL);
 }
 
 static void
 _scroll_anim_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   eo_do(obj, eo_event_callback_call(EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_ANIM_STOP, NULL));
+   eo_event_callback_call(obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_ANIM_STOP, NULL);
 }
 
 static void
@@ -2240,14 +2239,14 @@ _scroll_drag_start_cb(Evas_Object *obj,
    ELM_TOOLBAR_DATA_GET(obj, sd);
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
 
-   eo_do(obj, eo_event_callback_call(EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_DRAG_START, NULL));
+   eo_event_callback_call(obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_DRAG_START, NULL);
 }
 
 static void
 _scroll_drag_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   eo_do(obj, eo_event_callback_call(EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_DRAG_STOP, NULL));
+   eo_event_callback_call(obj, EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_DRAG_STOP, NULL);
 }
 
 static void
@@ -2282,7 +2281,7 @@ _access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
 
    if (it->separator)
      return strdup(E_("Separator"));
-   else if (eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()))
+   else if (elm_wdg_item_disabled_get(EO_OBJ(it)))
      return strdup(E_("State: Disabled"));
    else if (it->selected)
      return strdup(E_("State: Selected"));
@@ -2319,9 +2318,9 @@ _elm_toolbar_item_eo_base_destructor(Eo *eo_item, Elm_Toolbar_Item_Data *item)
    _item_del(item);
 
    if (item != sd->more_item)
-      eo_do(obj, elm_obj_widget_theme_apply());
+      elm_obj_widget_theme_apply(obj);
 
-   eo_do_super(eo_item, ELM_TOOLBAR_ITEM_CLASS, eo_destructor());
+   eo_destructor(eo_super(eo_item, ELM_TOOLBAR_ITEM_CLASS));
 }
 
 static void
@@ -2333,7 +2332,7 @@ _access_activate_cb(void *data EINA_UNUSED,
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
    Eina_Bool tmp;
 
-   if (eo_do_ret(item, tmp, elm_wdg_item_disabled_get())) return;
+   if (elm_wdg_item_disabled_get(item)) return;
 
    if (it->selected && (sd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS))
      {
@@ -2363,9 +2362,9 @@ _access_widget_item_register(Elm_Toolbar_Item_Data *it)
 EOLIAN static Eo *
 _elm_toolbar_item_eo_base_constructor(Eo *eo_it, Elm_Toolbar_Item_Data *it)
 {
-   eo_it = eo_do_super_ret(eo_it, ELM_TOOLBAR_ITEM_CLASS, eo_it, eo_constructor());
+   eo_it = eo_constructor(eo_super(eo_it, ELM_TOOLBAR_ITEM_CLASS));
    it->base = eo_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
-   eo_do(eo_it, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_MENU_ITEM));
+   elm_interface_atspi_accessible_role_set(eo_it, ELM_ATSPI_ROLE_MENU_ITEM);
 
    return eo_it;
 }
@@ -2397,7 +2396,7 @@ _item_new(Evas_Object *obj,
 
    VIEW(it) = elm_layout_add(obj);
    evas_object_data_set(VIEW(it), "item", it);
-   eo_do(VIEW(it), elm_interface_atspi_accessible_type_set(ELM_ATSPI_TYPE_DISABLED));
+   elm_interface_atspi_accessible_type_set(VIEW(it), ELM_ATSPI_TYPE_DISABLED);
 
    icon_obj = elm_icon_add(VIEW(it));
    elm_icon_order_lookup_set(icon_obj, sd->lookup_order);
@@ -2726,7 +2725,7 @@ _elm_toolbar_evas_object_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
    edje = edje_object_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, edje, EINA_TRUE);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
 
    elm_widget_theme_object_set
      (obj, edje, "toolbar", "base", elm_widget_style_get(obj));
@@ -2742,20 +2741,19 @@ _elm_toolbar_evas_object_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   eo_do(obj, elm_interface_scrollable_objects_set(edje, priv->hit_rect));
+   elm_interface_scrollable_objects_set(obj, edje, priv->hit_rect);
 
    priv->standard_priority = -99999;
 
-   eo_do(obj,
-         elm_interface_scrollable_bounce_allow_set
-         (_elm_config->thumbscroll_bounce_enable, EINA_FALSE),
-         elm_interface_scrollable_policy_set
-         (ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF),
-         elm_interface_scrollable_scroll_cb_set(_scroll_cb),
-         elm_interface_scrollable_animate_start_cb_set(_scroll_anim_start_cb),
-         elm_interface_scrollable_animate_stop_cb_set(_scroll_anim_stop_cb),
-         elm_interface_scrollable_drag_start_cb_set(_scroll_drag_start_cb),
-         elm_interface_scrollable_drag_stop_cb_set(_scroll_drag_stop_cb));
+   elm_interface_scrollable_bounce_allow_set
+         (obj, _elm_config->thumbscroll_bounce_enable, EINA_FALSE);
+   elm_interface_scrollable_policy_set
+         (obj, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
+   elm_interface_scrollable_scroll_cb_set(obj, _scroll_cb);
+   elm_interface_scrollable_animate_start_cb_set(obj, _scroll_anim_start_cb);
+   elm_interface_scrollable_animate_stop_cb_set(obj, _scroll_anim_stop_cb);
+   elm_interface_scrollable_drag_start_cb_set(obj, _scroll_drag_start_cb);
+   elm_interface_scrollable_drag_stop_cb_set(obj, _scroll_drag_stop_cb);
 
    edje_object_signal_callback_add
      (edje, "elm,action,left", "elm", _elm_toolbar_action_left_cb, obj);
@@ -2777,7 +2775,7 @@ _elm_toolbar_evas_object_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
    evas_object_box_align_set(priv->bx, priv->align, 0.5);
    evas_object_box_layout_set(priv->bx, _layout, obj, NULL);
    elm_widget_sub_object_add(obj, priv->bx);
-   eo_do(obj, elm_interface_scrollable_content_set(priv->bx));
+   elm_interface_scrollable_content_set(obj, priv->bx);
    evas_object_show(priv->bx);
 
    priv->more = elm_layout_add(obj);
@@ -2788,7 +2786,7 @@ _elm_toolbar_evas_object_smart_add(Eo *obj, Elm_Toolbar_Data *priv)
    else
      elm_object_signal_emit(priv->more, "elm,orient,horizontal", "elm");
 
-   eo_do(priv->more, elm_interface_atspi_accessible_type_set(ELM_ATSPI_TYPE_DISABLED));
+   elm_interface_atspi_accessible_type_set(priv->more, ELM_ATSPI_TYPE_DISABLED);
    elm_widget_sub_object_add(obj, priv->more);
    evas_object_show(priv->more);
 
@@ -2833,19 +2831,19 @@ _elm_toolbar_evas_object_smart_del(Eo *obj, Elm_Toolbar_Data *sd)
    while (it)
      {
         next = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
-        eo_do(EO_OBJ(it), elm_wdg_item_del());
+        elm_wdg_item_del(EO_OBJ(it));
         it = next;
      }
-   if (sd->more_item) eo_do(EO_OBJ(sd->more_item), elm_wdg_item_del());
+   if (sd->more_item) elm_wdg_item_del(EO_OBJ(sd->more_item));
    ecore_timer_del(sd->long_timer);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
 _elm_toolbar_evas_object_smart_move(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord x, Evas_Coord y)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
+   evas_obj_smart_move(eo_super(obj, MY_CLASS), x, y);
 
    evas_object_move(sd->hit_rect, x, y);
 }
@@ -2853,7 +2851,7 @@ _elm_toolbar_evas_object_smart_move(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord x,
 EOLIAN static void
 _elm_toolbar_evas_object_smart_resize(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord w, Evas_Coord h)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
+   evas_obj_smart_resize(eo_super(obj, MY_CLASS), w, h);
 
    evas_object_resize(sd->hit_rect, w, h);
 }
@@ -2861,7 +2859,7 @@ _elm_toolbar_evas_object_smart_resize(Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord 
 EOLIAN static void
 _elm_toolbar_evas_object_smart_member_add(Eo *obj, Elm_Toolbar_Data *sd, Evas_Object *member)
 {
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_member_add(member));
+   evas_obj_smart_member_add(eo_super(obj, MY_CLASS), member);
 
    if (sd->hit_rect)
      evas_object_raise(sd->hit_rect);
@@ -3004,11 +3002,10 @@ elm_toolbar_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_toolbar_eo_base_constructor(Eo *obj, Elm_Toolbar_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_TOOL_BAR));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_TOOL_BAR);
 
    return obj;
 }
@@ -3022,7 +3019,7 @@ _elm_toolbar_icon_size_set(Eo *obj, Elm_Toolbar_Data *sd, int icon_size)
    if (sd->priv_icon_size) sd->icon_size = sd->priv_icon_size;
    else sd->icon_size = sd->theme_icon_size;
 
-   eo_do(obj, elm_obj_widget_theme_apply());
+   elm_obj_widget_theme_apply(obj);
 }
 
 EOLIAN static int
@@ -3365,39 +3362,39 @@ _elm_toolbar_shrink_mode_set(Eo *obj, Elm_Toolbar_Data *sd, Elm_Toolbar_Shrink_M
    sd->shrink_mode = shrink_mode;
    bounce = (_elm_config->thumbscroll_bounce_enable) &&
      (shrink_mode == ELM_TOOLBAR_SHRINK_SCROLL);
-   eo_do(obj, elm_interface_scrollable_bounce_allow_set(bounce, EINA_FALSE));
+   elm_interface_scrollable_bounce_allow_set(obj, bounce, EINA_FALSE);
 
    if (sd->more_item)
      {
-        eo_do(EO_OBJ(sd->more_item), elm_wdg_item_del());
+        elm_wdg_item_del(EO_OBJ(sd->more_item));
         sd->more_item = NULL;
      }
 
    if (shrink_mode == ELM_TOOLBAR_SHRINK_MENU)
      {
         elm_toolbar_homogeneous_set(obj, EINA_FALSE);
-        eo_do(obj, elm_interface_scrollable_policy_set
-              (ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF));
+        elm_interface_scrollable_policy_set
+              (obj, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
         sd->more_item = _item_new(obj, "more_menu", "More", NULL, NULL);
         _resizing_eval_item(sd->more_item);
      }
    else if (shrink_mode == ELM_TOOLBAR_SHRINK_HIDE)
      {
         elm_toolbar_homogeneous_set(obj, EINA_FALSE);
-        eo_do(obj, elm_interface_scrollable_policy_set
-              (ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF));
+        elm_interface_scrollable_policy_set
+              (obj, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
      }
    else if (shrink_mode == ELM_TOOLBAR_SHRINK_EXPAND)
      {
         elm_toolbar_homogeneous_set(obj, EINA_FALSE);
-        eo_do(obj, elm_interface_scrollable_policy_set
-              (ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF));
+        elm_interface_scrollable_policy_set
+              (obj, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
         sd->more_item = _item_new(obj, "more_menu", "More", NULL, NULL);
         _resizing_eval_item(sd->more_item);
      }
    else
-      eo_do(obj, elm_interface_scrollable_policy_set
-            (ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF));
+      elm_interface_scrollable_policy_set
+            (obj, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
 
    EINA_INLIST_FOREACH(sd->items, it)
       _item_shrink_signal_emit(VIEW(it), sd->shrink_mode);
@@ -3647,7 +3644,7 @@ _elm_toolbar_item_state_set(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item
    if (item->icon)
      {
         Eina_Bool tmp;
-        if (eo_do_ret(EO_OBJ(item), tmp, elm_wdg_item_disabled_get()))
+        if (elm_wdg_item_disabled_get(EO_OBJ(item)))
           elm_widget_signal_emit(item->icon, "elm,state,disabled", "elm");
         else
           elm_widget_signal_emit(item->icon, "elm,state,enabled", "elm");
@@ -3661,7 +3658,7 @@ _elm_toolbar_item_state_set(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item
 EAPI void
 elm_toolbar_item_state_unset(Elm_Object_Item *it)
 {
-   eo_do(it, elm_obj_toolbar_item_state_set(NULL));
+   elm_obj_toolbar_item_state_set(it, NULL);
 }
 
 EOLIAN static Elm_Toolbar_Item_State *
@@ -3815,8 +3812,8 @@ _elm_toolbar_item_show(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item,
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
 
    if (_elm_toolbar_item_coordinates_calc(item, type, &x, &y, &w, &h))
-     eo_do(WIDGET(item), elm_interface_scrollable_content_region_show
-     (x, y, w, h));
+     elm_interface_scrollable_content_region_show
+     (WIDGET(item), x, y, w, h);
 }
 
 EOLIAN static void
@@ -3828,15 +3825,15 @@ _elm_toolbar_item_bring_in(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item,
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
 
    if (_elm_toolbar_item_coordinates_calc(item, type, &x, &y, &w, &h))
-     eo_do(WIDGET(item), elm_interface_scrollable_region_bring_in
-     (x, y, w, h));
+     elm_interface_scrollable_region_bring_in
+     (WIDGET(item), x, y, w, h);
 }
 
 EOLIAN static char*
 _elm_toolbar_item_elm_interface_atspi_accessible_name_get(Eo *eo_item, Elm_Toolbar_Item_Data *item)
 {
    char *ret;
-   eo_do_super(eo_item, ELM_TOOLBAR_ITEM_CLASS, ret = elm_interface_atspi_accessible_name_get());
+   ret = elm_interface_atspi_accessible_name_get(eo_super(eo_item, ELM_TOOLBAR_ITEM_CLASS));
    if (ret) return ret;
    return item->label ? strdup(item->label) : NULL;
 }
@@ -3847,9 +3844,9 @@ _elm_toolbar_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_To
    Elm_Atspi_State_Set ret;
    Eina_Bool sel;
 
-   eo_do_super(eo_it, ELM_TOOLBAR_ITEM_CLASS, ret = elm_interface_atspi_accessible_state_set_get());
+   ret = elm_interface_atspi_accessible_state_set_get(eo_super(eo_it, ELM_TOOLBAR_ITEM_CLASS));
 
-   eo_do(eo_it, sel = elm_obj_toolbar_item_selected_get());
+   sel = elm_obj_toolbar_item_selected_get(eo_it);
 
    STATE_TYPE_SET(ret, ELM_ATSPI_STATE_SELECTABLE);
 
@@ -3890,7 +3887,7 @@ _elm_toolbar_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, El
 {
    Eina_List *ret = NULL, *ret2 = NULL;
    Elm_Toolbar_Item_Data *it;
-   eo_do_super(obj, ELM_TOOLBAR_CLASS, ret2 = elm_interface_atspi_accessible_children_get());
+   ret2 = elm_interface_atspi_accessible_children_get(eo_super(obj, ELM_TOOLBAR_CLASS));
 
    EINA_INLIST_FOREACH(sd->items, it)
       ret = eina_list_append(ret, EO_OBJ(it));
@@ -3902,7 +3899,7 @@ EOLIAN static Elm_Atspi_State_Set
 _elm_toolbar_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Toolbar_Data *sd EINA_UNUSED)
 {
    Elm_Atspi_State_Set ret;
-   eo_do_super(obj, ELM_TOOLBAR_CLASS, ret = elm_interface_atspi_accessible_state_set_get());
+   ret = elm_interface_atspi_accessible_state_set_get(eo_super(obj, ELM_TOOLBAR_CLASS));
 
    return ret;
 }

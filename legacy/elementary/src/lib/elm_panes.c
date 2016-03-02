@@ -60,7 +60,7 @@ _elm_panes_elm_widget_theme_apply(Eo *obj, Elm_Panes_Data *sd)
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(sd->event, minw, minh);
 
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    size = elm_panes_content_left_size_get(obj);
@@ -139,7 +139,7 @@ _on_clicked(void *data,
             const char *emission EINA_UNUSED,
             const char *source EINA_UNUSED)
 {
-   eo_do(data, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
+   eo_event_callback_call(data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL);
 }
 
 static void
@@ -159,7 +159,7 @@ _on_pressed(void *data,
             const char *emission EINA_UNUSED,
             const char *source EINA_UNUSED)
 {
-   eo_do(data, eo_event_callback_call(ELM_PANES_EVENT_PRESS, NULL));
+   eo_event_callback_call(data, ELM_PANES_EVENT_PRESS, NULL);
 }
 
 static void
@@ -169,11 +169,11 @@ _on_unpressed(void *data,
               const char *source EINA_UNUSED)
 {
    ELM_PANES_DATA_GET(data, sd);
-   eo_do(data, eo_event_callback_call(ELM_PANES_EVENT_UNPRESS, NULL));
+   eo_event_callback_call(data, ELM_PANES_EVENT_UNPRESS, NULL);
 
    if (sd->double_clicked)
      {
-        eo_do(data, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE, NULL));
+        eo_event_callback_call(data, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE, NULL);
         sd->double_clicked = EINA_FALSE;
      }
 }
@@ -265,7 +265,7 @@ _elm_panes_evas_object_smart_add(Eo *obj, Elm_Panes_Data *_pd EINA_UNUSED)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    ELM_PANES_DATA_GET(obj, sd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
@@ -328,11 +328,10 @@ elm_panes_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_panes_eo_base_constructor(Eo *obj, Elm_Panes_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_SPLIT_PANE));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SPLIT_PANE);
 
    return obj;
 }
@@ -421,7 +420,7 @@ EOLIAN static void
 _elm_panes_horizontal_set(Eo *obj, Elm_Panes_Data *sd, Eina_Bool horizontal)
 {
    sd->horizontal = horizontal;
-   eo_do(obj, elm_obj_widget_theme_apply());
+   elm_obj_widget_theme_apply(obj);
    _update_fixed_sides(obj);
 
    elm_panes_content_left_size_set(obj, 0.5);

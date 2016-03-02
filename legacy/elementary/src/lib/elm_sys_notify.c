@@ -68,7 +68,7 @@ _elm_sys_notify_eo_base_constructor(Eo                  *obj,
         return NULL;
      }
 
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
    _singleton = obj;
 
    return obj;
@@ -78,7 +78,7 @@ EOLIAN static void
 _elm_sys_notify_eo_base_destructor(Eo                  *obj,
                                    Elm_Sys_Notify_Data *sd  EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_destructor());
+   eo_destructor(eo_super(obj, MY_CLASS));
    _singleton = NULL;
 }
 
@@ -104,11 +104,7 @@ _elm_sys_notify_elm_sys_notify_interface_send(const Eo *obj EINA_UNUSED,
    /* Propagate to all registered servers */
    for (i = SRV_DBUS; i < __SRV_LAST; ++i)
      if (sd->servers[i])
-       eo_do(sd->servers[i],
-             elm_obj_sys_notify_interface_send(replaces_id,
-                                               icon, summary, body,
-                                               urgency, timeout,
-                                               cb, cb_data));
+       elm_obj_sys_notify_interface_send(sd->servers[i], replaces_id, icon, summary, body, urgency, timeout, cb, cb_data);
 }
 
 EOLIAN static void
@@ -123,8 +119,7 @@ _elm_sys_notify_elm_sys_notify_interface_simple_send(const Eo *obj EINA_UNUSED,
    /* Propagate to all registered servers */
    for (i = SRV_DBUS; i < __SRV_LAST; ++i)
      if (sd->servers[i])
-       eo_do(sd->servers[i],
-             elm_obj_sys_notify_interface_simple_send(icon, summary, body));
+       elm_obj_sys_notify_interface_simple_send(sd->servers[i], icon, summary, body);
 }
 
 EOLIAN static void
@@ -137,8 +132,7 @@ _elm_sys_notify_elm_sys_notify_interface_close(const Eo *obj EINA_UNUSED,
    /* Propagate to all registered servers */
    for (i = SRV_DBUS; i < __SRV_LAST; ++i)
      if (sd->servers[i])
-       eo_do(sd->servers[i],
-             elm_obj_sys_notify_interface_close(id));
+       elm_obj_sys_notify_interface_close(sd->servers[i], id);
 }
 
 
@@ -228,8 +222,7 @@ _elm_unneed_sys_notify(void)
    Elm_Sys_Notify *manager = elm_sys_notify_singleton_get();
    if (manager)
      {
-        eo_do(manager,
-              elm_obj_sys_notify_servers_set(ELM_SYS_NOTIFY_SERVER_NONE));
+        elm_obj_sys_notify_servers_set(manager, ELM_SYS_NOTIFY_SERVER_NONE);
         eo_del(manager);
      }
 }
@@ -282,18 +275,13 @@ elm_sys_notify_send(unsigned int            replaces_id,
                     Elm_Sys_Notify_Send_Cb  cb,
                     const void             *cb_data)
 {
-   eo_do(_singleton,
-         elm_obj_sys_notify_interface_send(replaces_id,
-                                           icon, summary, body,
-                                           urgency, timeout,
-                                           cb, cb_data));
+   elm_obj_sys_notify_interface_send(_singleton, replaces_id, icon, summary, body, urgency, timeout, cb, cb_data);
 }
 
 EAPI void
 elm_sys_notify_close(unsigned int id)
 {
-   eo_do(_singleton,
-         elm_obj_sys_notify_interface_close(id));
+   elm_obj_sys_notify_interface_close(_singleton, id);
 }
 
 #include "elm_sys_notify.eo.c"

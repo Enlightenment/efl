@@ -30,9 +30,9 @@ _elm_segment_control_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Segment_Contr
    Eina_List *l;
 
    EINA_LIST_FOREACH(sd->items, l, it)
-     eo_do(it, elm_wdg_item_translate());
+     elm_wdg_item_translate(it);
 
-   eo_do_super(obj, MY_CLASS, elm_obj_widget_translate());
+   elm_obj_widget_translate(eo_super(obj, MY_CLASS));
 
    return EINA_TRUE;
 }
@@ -221,7 +221,7 @@ _elm_segment_control_elm_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data *s
    Elm_Object_Item *eo_item;
 
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   int_ret = elm_obj_widget_theme_apply(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    rtl = elm_widget_mirrored_get(obj);
@@ -246,7 +246,7 @@ EOLIAN static Eina_Bool
 _elm_segment_control_elm_widget_disable(Eo *obj, Elm_Segment_Control_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_disable());
+   int_ret = elm_obj_widget_disable(eo_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    _update_list(sd);
@@ -317,7 +317,7 @@ _segment_on(Elm_Segment_Control_Item_Data *it)
    edje_object_signal_emit(VIEW(it), "elm,state,segment,selected", "elm");
 
    sd->selected_item = it;
-   eo_do(sd->obj, eo_event_callback_call(ELM_SEGMENT_CONTROL_EVENT_CHANGED, EO_OBJ(it)));
+   eo_event_callback_call(sd->obj, ELM_SEGMENT_CONTROL_EVENT_CHANGED, EO_OBJ(it));
 }
 
 static void
@@ -499,7 +499,7 @@ _elm_segment_control_item_eo_base_destructor(Eo *eo_item, Elm_Segment_Control_It
    _item_free(item);
    _update_list(sd);
 
-   eo_do_super(eo_item, ELM_SEGMENT_CONTROL_ITEM_CLASS, eo_destructor());
+   eo_destructor(eo_super(eo_item, ELM_SEGMENT_CONTROL_ITEM_CLASS));
 }
 
 static char *
@@ -539,7 +539,7 @@ _elm_segment_control_item_elm_widget_item_access_register(Eo *eo_it EINA_UNUSED,
    Elm_Access_Info *ai;
    Evas_Object *ret;
 
-   eo_do_super(eo_it, ELM_SEGMENT_CONTROL_ITEM_CLASS, ret = elm_wdg_item_access_register());
+   ret = elm_wdg_item_access_register(eo_super(eo_it, ELM_SEGMENT_CONTROL_ITEM_CLASS));
 
    ai = _elm_access_info_get(it->base->access_obj);
 
@@ -580,7 +580,7 @@ _item_new(Evas_Object *obj,
 
    // ACCESS
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-     eo_do(eo_item, elm_wdg_item_access_register());
+     elm_wdg_item_access_register(eo_item);
 
    return eo_item;
 }
@@ -588,11 +588,11 @@ _item_new(Evas_Object *obj,
 EOLIAN static Eo *
 _elm_segment_control_item_eo_base_constructor(Eo *obj, Elm_Segment_Control_Item_Data *it)
 {
-   obj = eo_do_super_ret(obj, ELM_SEGMENT_CONTROL_ITEM_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, ELM_SEGMENT_CONTROL_ITEM_CLASS));
    it->base = eo_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
 
    Evas_Object *parent;
-   eo_do (obj, parent = eo_parent_get());
+   parent = eo_parent_get(obj);
 
    VIEW(it) = edje_object_add(evas_object_evas_get(parent));
    edje_object_scale_set(VIEW(it),elm_widget_scale_get(WIDGET(it)) *
@@ -611,7 +611,7 @@ EOLIAN static void
 _elm_segment_control_evas_object_smart_add(Eo *obj, Elm_Segment_Control_Data *sd)
 {
    sd->obj = obj;
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
@@ -636,7 +636,7 @@ _elm_segment_control_evas_object_smart_del(Eo *obj, Elm_Segment_Control_Data *sd
         eo_del(eo_it);
      }
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 static Eina_Bool _elm_segment_control_smart_focus_next_enable = EINA_FALSE;
@@ -680,9 +680,9 @@ _access_obj_process(Elm_Segment_Control_Data *sd, Eina_Bool is_access)
 
    EINA_LIST_FOREACH(sd->items, l, eo_item)
      {
-        if (is_access) eo_do(eo_item, elm_wdg_item_access_register());
+        if (is_access) elm_wdg_item_access_register(eo_item);
         else
-          eo_do(eo_item, elm_wdg_item_access_unregister());
+          elm_wdg_item_access_unregister(eo_item);
      }
 }
 
@@ -704,12 +704,11 @@ elm_segment_control_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_segment_control_eo_base_constructor(Eo *obj, Elm_Segment_Control_Data *sd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
 
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_LIST));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_LIST);
 
    return obj;
 }
@@ -757,7 +756,7 @@ _elm_segment_control_item_del_at(Eo *obj, Elm_Segment_Control_Data *_pd EINA_UNU
    it = _item_find(obj, idx);
    if (!it) return;
 
-   eo_do(EO_OBJ(it), elm_wdg_item_del());
+   elm_wdg_item_del(EO_OBJ(it));
 }
 
 EOLIAN static const char*

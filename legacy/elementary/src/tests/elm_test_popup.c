@@ -16,7 +16,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "popup", ELM_WIN_BASIC);
 
    popup = elm_popup_add(win);
-   eo_do(popup, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(popup);
 
    ck_assert(role == ELM_ATSPI_ROLE_NOTIFICATION);
 

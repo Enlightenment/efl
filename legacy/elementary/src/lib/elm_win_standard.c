@@ -15,7 +15,7 @@
 EOLIAN static Eo *
 _elm_win_standard_eo_base_finalize(Eo *obj, void *pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, obj = eo_finalize());
+   obj = eo_finalize(eo_super(obj, MY_CLASS));
    if (!obj)
      return NULL;
 
@@ -26,9 +26,9 @@ _elm_win_standard_eo_base_finalize(Eo *obj, void *pd EINA_UNUSED)
         evas_object_del(obj);
         return NULL;
      }
-   eo_do(bg, evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND));
-   eo_do(obj, elm_obj_win_resize_object_add(bg));
-   eo_do(bg, efl_gfx_visible_set(EINA_TRUE));
+   evas_obj_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_obj_win_resize_object_add(obj, bg);
+   efl_gfx_visible_set(bg, EINA_TRUE);
 
    return obj;
 }

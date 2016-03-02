@@ -272,8 +272,8 @@ _on_slideshow_end(void *data,
    elm_layout_signal_emit(data, "anim,end", "slideshow");
 
    if (emission != NULL)
-     eo_do(data, eo_event_callback_call
-       (ELM_SLIDESHOW_EVENT_TRANSITION_END, EO_OBJ(sd->current)));
+     eo_event_callback_call
+       (data, ELM_SLIDESHOW_EVENT_TRANSITION_END, EO_OBJ(sd->current));
 }
 
 static Eina_Bool
@@ -315,7 +315,7 @@ _elm_slideshow_item_eo_base_destructor(Eo *eo_item, Elm_Slideshow_Item_Data *ite
    if ((VIEW(item)) && (item->itc->func.del))
      item->itc->func.del(elm_object_item_data_get(eo_item), VIEW(item));
 
-   eo_do_super(eo_item, ELM_SLIDESHOW_ITEM_CLASS, eo_destructor());
+   eo_destructor(eo_super(eo_item, ELM_SLIDESHOW_ITEM_CLASS));
 }
 
 EOLIAN static void
@@ -323,7 +323,7 @@ _elm_slideshow_evas_object_smart_add(Eo *obj, Elm_Slideshow_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   evas_obj_smart_add(eo_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
    priv->count_item_pre_before = 2;
@@ -374,7 +374,7 @@ _elm_slideshow_evas_object_smart_del(Eo *obj, Elm_Slideshow_Data *sd)
    EINA_LIST_FREE(sd->layout.list, layout)
      eina_stringshare_del(layout);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   evas_obj_smart_del(eo_super(obj, MY_CLASS));
 }
 
 EAPI Evas_Object *
@@ -388,11 +388,10 @@ elm_slideshow_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_slideshow_eo_base_constructor(Eo *obj, Elm_Slideshow_Data *_pd EINA_UNUSED)
 {
-   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do(obj,
-         evas_obj_type_set(MY_CLASS_NAME_LEGACY),
-         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_DOCUMENT_PRESENTATION));
+   obj = eo_constructor(eo_super(obj, MY_CLASS));
+   evas_obj_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_obj_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_DOCUMENT_PRESENTATION);
 
    return obj;
 }
@@ -400,7 +399,7 @@ _elm_slideshow_eo_base_constructor(Eo *obj, Elm_Slideshow_Data *_pd EINA_UNUSED)
 EOLIAN static Eo *
 _elm_slideshow_item_eo_base_constructor(Eo *obj, Elm_Slideshow_Item_Data *it)
 {
-   obj = eo_do_super_ret(obj, ELM_SLIDESHOW_ITEM_CLASS, obj, eo_constructor());
+   obj = eo_constructor(eo_super(obj, ELM_SLIDESHOW_ITEM_CLASS));
    it->base = eo_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
 
    return obj;
@@ -482,8 +481,8 @@ _elm_slideshow_item_show(Eo *eo_item EINA_UNUSED, Elm_Slideshow_Item_Data *item)
 
    sd->previous = sd->current;
    sd->current = next;
-   eo_do(WIDGET(item), eo_event_callback_call
-     (ELM_SLIDESHOW_EVENT_CHANGED, EO_OBJ(sd->current)));
+   eo_event_callback_call
+     (WIDGET(item), ELM_SLIDESHOW_EVENT_CHANGED, EO_OBJ(sd->current));
 }
 
 EOLIAN static void
@@ -520,8 +519,8 @@ _elm_slideshow_next(Eo *obj, Elm_Slideshow_Data *sd)
 
    sd->previous = sd->current;
    sd->current = next;
-   eo_do(obj, eo_event_callback_call
-     (ELM_SLIDESHOW_EVENT_CHANGED, EO_OBJ(sd->current)));
+   eo_event_callback_call
+     (obj, ELM_SLIDESHOW_EVENT_CHANGED, EO_OBJ(sd->current));
 }
 
 EOLIAN static void
@@ -558,8 +557,8 @@ _elm_slideshow_previous(Eo *obj, Elm_Slideshow_Data *sd)
 
    sd->previous = sd->current;
    sd->current = prev;
-   eo_do(obj, eo_event_callback_call
-     (ELM_SLIDESHOW_EVENT_CHANGED, EO_OBJ(sd->current)));
+   eo_event_callback_call
+     (obj, ELM_SLIDESHOW_EVENT_CHANGED, EO_OBJ(sd->current));
 }
 
 EOLIAN static const Eina_List*

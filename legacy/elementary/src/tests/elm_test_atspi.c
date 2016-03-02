@@ -37,7 +37,7 @@ START_TEST (elm_atspi_app_obj_name_get)
 
    elm_app_name_set("Test name");
 
-   eo_do(root, ret = elm_interface_atspi_accessible_name_get());
+   ret = elm_interface_atspi_accessible_name_get(root);
 
    ck_assert_str_eq(ret, "Test name");
 
@@ -53,7 +53,7 @@ START_TEST (elm_atspi_name_get)
 
    char *name;
 
-   eo_do(g_btn, name = elm_interface_atspi_accessible_name_get());
+   name = elm_interface_atspi_accessible_name_get(g_btn);
 
    if (name && name[0]) {
       ck_assert(0);
@@ -64,7 +64,7 @@ START_TEST (elm_atspi_name_get)
    // Set name with additional text tags
    elm_object_text_set(g_btn, "Some<br>text");
 
-   eo_do(g_btn, name = elm_interface_atspi_accessible_name_get());
+   name = elm_interface_atspi_accessible_name_get(g_btn);
 
    // Accessible name should have cleared tags
    ck_assert(name != NULL);
@@ -83,17 +83,17 @@ START_TEST (elm_atspi_name_set)
    char *name;
 
    elm_object_text_set(g_btn, "Other text");
-   eo_do(g_btn, elm_interface_atspi_accessible_name_set("Test name"));
+   elm_interface_atspi_accessible_name_set(g_btn, "Test name");
 
-   eo_do(g_btn, name = elm_interface_atspi_accessible_name_get());
+   name = elm_interface_atspi_accessible_name_get(g_btn);
 
    ck_assert(name != NULL);
    ck_assert_str_eq(name, "Test name");
 
    free(name);
 
-   eo_do(g_btn, elm_interface_atspi_accessible_name_set(NULL));
-   eo_do(g_btn, name = elm_interface_atspi_accessible_name_get());
+   elm_interface_atspi_accessible_name_set(g_btn, NULL);
+   name = elm_interface_atspi_accessible_name_get(g_btn);
 
    ck_assert(name != NULL);
    ck_assert_str_eq(name, "Other text");
@@ -112,7 +112,7 @@ START_TEST (elm_atspi_role_get)
 
    Elm_Atspi_Role role;
 
-   eo_do(root, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(root);
 
    ck_assert(role == ELM_ATSPI_ROLE_APPLICATION);
 
@@ -127,14 +127,14 @@ START_TEST (elm_atspi_role_set)
    generate_app();
    Elm_Atspi_Role role;
 
-   eo_do(g_btn, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_ACCELERATOR_LABEL));
-   eo_do(g_btn, role = elm_interface_atspi_accessible_role_get());
+   elm_interface_atspi_accessible_role_set(g_btn, ELM_ATSPI_ROLE_ACCELERATOR_LABEL);
+   role = elm_interface_atspi_accessible_role_get(g_btn);
 
    if (role != ELM_ATSPI_ROLE_ACCELERATOR_LABEL)
       ck_assert(0);
 
-   eo_do(g_btn, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_ENTRY));
-   eo_do(g_btn, role = elm_interface_atspi_accessible_role_get());
+   elm_interface_atspi_accessible_role_set(g_btn, ELM_ATSPI_ROLE_ENTRY);
+   role = elm_interface_atspi_accessible_role_get(g_btn);
 
    if (role != ELM_ATSPI_ROLE_ENTRY)
       ck_assert(0);
@@ -153,7 +153,7 @@ START_TEST (elm_atspi_role_name_get)
 
    const char *ret = NULL;
 
-   eo_do(root, ret = elm_interface_atspi_accessible_role_name_get());
+   ret = elm_interface_atspi_accessible_role_name_get(root);
 
    ck_assert(ret != NULL);
 
@@ -170,7 +170,7 @@ START_TEST (elm_atspi_localized_role_name_get)
 
    const char *ret = NULL;
 
-   eo_do(root, ret = elm_interface_atspi_accessible_localized_role_name_get());
+   ret = elm_interface_atspi_accessible_localized_role_name_get(root);
 
    ck_assert(ret != NULL);
 
@@ -189,18 +189,18 @@ START_TEST (elm_atspi_description_set)
 
    const char *desc = "Test description";
 
-   eo_do(root, ret = elm_interface_atspi_accessible_description_get());
+   ret = elm_interface_atspi_accessible_description_get(root);
 
    ck_assert(ret == NULL);
 
-   eo_do(root, elm_interface_atspi_accessible_description_set(desc));
-   eo_do(root, ret = elm_interface_atspi_accessible_description_get());
+   elm_interface_atspi_accessible_description_set(root, desc);
+   ret = elm_interface_atspi_accessible_description_get(root);
 
    ck_assert(ret != NULL);
    ck_assert_str_eq(ret, "Test description");
 
-   eo_do(root, elm_interface_atspi_accessible_description_set(NULL));
-   eo_do(root, ret = elm_interface_atspi_accessible_description_get());
+   elm_interface_atspi_accessible_description_set(root, NULL);
+   ret = elm_interface_atspi_accessible_description_get(root);
 
    ck_assert(ret == NULL);
 
@@ -216,7 +216,7 @@ START_TEST (elm_atspi_description_get)
    generate_app();
 
    const char *descr;
-   eo_do(g_bg, descr = elm_interface_atspi_accessible_description_get());
+   descr = elm_interface_atspi_accessible_description_get(g_bg);
 
    ck_assert(descr == NULL);
 
@@ -233,9 +233,9 @@ START_TEST (elm_atspi_children_and_parent)
 
    Eina_List *child_list = NULL;
 
-   eo_do(root, child_list = elm_interface_atspi_accessible_children_get());
+   child_list = elm_interface_atspi_accessible_children_get(root);
 
-   //eo_do(eina_list_nth(child_list, 0), bg_child_list = elm_interface_atspi_accessible_children_get());
+   //bg_child_list = elm_interface_atspi_accessible_children_get(eina_list_nth(child_list, 0));
 
    ck_assert(eina_list_count(child_list) == 1);
 
@@ -261,11 +261,11 @@ START_TEST (elm_atspi_children_and_parent2)
    Eo *win = NULL;
 
    Eina_List *root_children;
-   eo_do(root, root_children = elm_interface_atspi_accessible_children_get());
+   root_children = elm_interface_atspi_accessible_children_get(root);
    win = eina_list_nth(root_children, 0);
 
    Eina_List *win_children;
-   eo_do(win, win_children = elm_interface_atspi_accessible_children_get());
+   win_children = elm_interface_atspi_accessible_children_get(win);
 
    ck_assert(eina_list_count(win_children) == 1);
 
@@ -288,7 +288,7 @@ START_TEST (elm_atspi_translation_domain_get)
 
    const char *domain;
 
-   eo_do(g_btn, domain = elm_interface_atspi_accessible_translation_domain_get());
+   domain = elm_interface_atspi_accessible_translation_domain_get(g_btn);
 
    ck_assert(domain == NULL);
 
@@ -303,14 +303,14 @@ START_TEST (elm_atspi_translation_domain_set)
 
    const char *domain;
 
-   eo_do(g_btn, elm_interface_atspi_accessible_translation_domain_set("Test translation_domain"));
-   eo_do(g_btn, domain = elm_interface_atspi_accessible_translation_domain_get());
+   elm_interface_atspi_accessible_translation_domain_set(g_btn, "Test translation_domain");
+   domain = elm_interface_atspi_accessible_translation_domain_get(g_btn);
 
    ck_assert(domain != NULL);
    ck_assert_str_eq(domain, "Test translation_domain");
 
-   eo_do(g_btn, elm_interface_atspi_accessible_translation_domain_set(NULL));
-   eo_do(g_btn, domain = elm_interface_atspi_accessible_translation_domain_get());
+   elm_interface_atspi_accessible_translation_domain_set(g_btn, NULL);
+   domain = elm_interface_atspi_accessible_translation_domain_get(g_btn);
 
    ck_assert(domain == NULL);
 
@@ -327,9 +327,9 @@ START_TEST (elm_atspi_relationship_append)
    Elm_Atspi_Relation *rel, *rel_to, *rel_from;
    Eina_List *l;
 
-   eo_do(g_btn, elm_interface_atspi_accessible_relationship_append(ELM_ATSPI_RELATION_FLOWS_TO, g_bg));
-   eo_do(g_btn, elm_interface_atspi_accessible_relationship_append(ELM_ATSPI_RELATION_FLOWS_FROM, g_win));
-   eo_do(g_btn, set = elm_interface_atspi_accessible_relation_set_get());
+   elm_interface_atspi_accessible_relationship_append(g_btn, ELM_ATSPI_RELATION_FLOWS_TO, g_bg);
+   elm_interface_atspi_accessible_relationship_append(g_btn, ELM_ATSPI_RELATION_FLOWS_FROM, g_win);
+   set = elm_interface_atspi_accessible_relation_set_get(g_btn);
 
    ck_assert(set != NULL);
    ck_assert(eina_list_count(set) >= 2);
@@ -352,9 +352,9 @@ START_TEST (elm_atspi_relationship_append)
    elm_atspi_relation_set_free(set);
 
    /* Check if append do not procude duplicated relations */
-   eo_do(g_btn, elm_interface_atspi_accessible_relationship_append(ELM_ATSPI_RELATION_FLOWS_TO, g_bg));
-   eo_do(g_btn, elm_interface_atspi_accessible_relationship_append(ELM_ATSPI_RELATION_FLOWS_FROM, g_win));
-   eo_do(g_btn, set = elm_interface_atspi_accessible_relation_set_get());
+   elm_interface_atspi_accessible_relationship_append(g_btn, ELM_ATSPI_RELATION_FLOWS_TO, g_bg);
+   elm_interface_atspi_accessible_relationship_append(g_btn, ELM_ATSPI_RELATION_FLOWS_FROM, g_win);
+   set = elm_interface_atspi_accessible_relation_set_get(g_btn);
 
    rel_to = rel_from = NULL;
    EINA_LIST_FOREACH(set, l, rel)
@@ -391,10 +391,10 @@ START_TEST (elm_atspi_relationship_remove)
    Eina_List *l;
 
    /* Test if removal of single relationship works */
-   eo_do(g_btn, elm_interface_atspi_accessible_relationship_append(ELM_ATSPI_RELATION_FLOWS_TO, g_bg));
-   eo_do(g_btn, elm_interface_atspi_accessible_relationship_append(ELM_ATSPI_RELATION_FLOWS_FROM, g_win));
-   eo_do(g_btn, elm_interface_atspi_accessible_relationship_remove(ELM_ATSPI_RELATION_FLOWS_TO, g_bg));
-   eo_do(g_btn, set = elm_interface_atspi_accessible_relation_set_get());
+   elm_interface_atspi_accessible_relationship_append(g_btn, ELM_ATSPI_RELATION_FLOWS_TO, g_bg);
+   elm_interface_atspi_accessible_relationship_append(g_btn, ELM_ATSPI_RELATION_FLOWS_FROM, g_win);
+   elm_interface_atspi_accessible_relationship_remove(g_btn, ELM_ATSPI_RELATION_FLOWS_TO, g_bg);
+   set = elm_interface_atspi_accessible_relation_set_get(g_btn);
 
    ck_assert(set != NULL);
    ck_assert(eina_list_count(set) >= 1);
@@ -415,10 +415,10 @@ START_TEST (elm_atspi_relationship_remove)
    elm_atspi_relation_set_free(set);
 
    /* Test if removal of type relationship works */
-   eo_do(g_btn, elm_interface_atspi_accessible_relationship_append(ELM_ATSPI_RELATION_FLOWS_TO, g_bg));
-   eo_do(g_btn, elm_interface_atspi_accessible_relationship_append(ELM_ATSPI_RELATION_FLOWS_TO, g_win));
-   eo_do(g_btn, elm_interface_atspi_accessible_relationship_remove(ELM_ATSPI_RELATION_FLOWS_TO, NULL));
-   eo_do(g_btn, set = elm_interface_atspi_accessible_relation_set_get());
+   elm_interface_atspi_accessible_relationship_append(g_btn, ELM_ATSPI_RELATION_FLOWS_TO, g_bg);
+   elm_interface_atspi_accessible_relationship_append(g_btn, ELM_ATSPI_RELATION_FLOWS_TO, g_win);
+   elm_interface_atspi_accessible_relationship_remove(g_btn, ELM_ATSPI_RELATION_FLOWS_TO, NULL);
+   set = elm_interface_atspi_accessible_relation_set_get(g_btn);
 
    rel_to = rel_from = NULL;
    EINA_LIST_FOREACH(set, l, rel)
@@ -436,10 +436,10 @@ START_TEST (elm_atspi_relationship_remove)
    elm_atspi_relation_set_free(set);
 
    /* Test if relationship is implicity removed when object is deleted */
-   eo_do(g_btn, elm_interface_atspi_accessible_relationship_append(ELM_ATSPI_RELATION_FLOWS_TO, g_bg));
-   eo_do(g_btn, elm_interface_atspi_accessible_relationship_append(ELM_ATSPI_RELATION_FLOWS_FROM, g_bg));
+   elm_interface_atspi_accessible_relationship_append(g_btn, ELM_ATSPI_RELATION_FLOWS_TO, g_bg);
+   elm_interface_atspi_accessible_relationship_append(g_btn, ELM_ATSPI_RELATION_FLOWS_FROM, g_bg);
    eo_del(g_bg);
-   eo_do(g_btn, set = elm_interface_atspi_accessible_relation_set_get());
+   set = elm_interface_atspi_accessible_relation_set_get(g_btn);
 
    rel_to = rel_from = NULL;
    EINA_LIST_FOREACH(set, l, rel)
@@ -467,14 +467,14 @@ START_TEST (elm_atspi_relationships_clear)
    elm_init(0, NULL);
    generate_app();
 
-   eo_do(g_btn, elm_interface_atspi_accessible_relationship_append(ELM_ATSPI_RELATION_FLOWS_TO, g_bg));
-   eo_do(g_btn, elm_interface_atspi_accessible_relationship_append(ELM_ATSPI_RELATION_FLOWS_FROM, g_bg));
-   eo_do(g_btn, elm_interface_atspi_accessible_relationship_append(ELM_ATSPI_RELATION_FLOWS_TO, g_win));
-   eo_do(g_btn, elm_interface_atspi_accessible_relationship_append(ELM_ATSPI_RELATION_FLOWS_FROM, g_win));
+   elm_interface_atspi_accessible_relationship_append(g_btn, ELM_ATSPI_RELATION_FLOWS_TO, g_bg);
+   elm_interface_atspi_accessible_relationship_append(g_btn, ELM_ATSPI_RELATION_FLOWS_FROM, g_bg);
+   elm_interface_atspi_accessible_relationship_append(g_btn, ELM_ATSPI_RELATION_FLOWS_TO, g_win);
+   elm_interface_atspi_accessible_relationship_append(g_btn, ELM_ATSPI_RELATION_FLOWS_FROM, g_win);
 
-   eo_do(g_btn, elm_interface_atspi_accessible_relationships_clear());
+   elm_interface_atspi_accessible_relationships_clear(g_btn);
 
-   eo_do(g_btn, set = elm_interface_atspi_accessible_relation_set_get());
+   set = elm_interface_atspi_accessible_relation_set_get(g_btn);
    EINA_LIST_FOREACH(set, l, rel)
    {
       ck_assert(!((rel->type == ELM_ATSPI_RELATION_FLOWS_TO) && eina_list_data_find(rel->objects, g_bg)));

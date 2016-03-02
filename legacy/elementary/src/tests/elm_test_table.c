@@ -16,7 +16,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "table", ELM_WIN_BASIC);
 
    table = elm_table_add(win);
-   eo_do(table, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(table);
 
    ck_assert(role == ELM_ATSPI_ROLE_FILLER);
 

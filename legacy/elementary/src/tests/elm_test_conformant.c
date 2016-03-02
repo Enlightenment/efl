@@ -15,7 +15,7 @@ START_TEST (elm_atspi_role_get)
    win = elm_win_add(NULL, "conformant", ELM_WIN_BASIC);
 
    conformant = elm_conformant_add(win);
-   eo_do(conformant, role = elm_interface_atspi_accessible_role_get());
+   role = elm_interface_atspi_accessible_role_get(conformant);
 
    ck_assert(role == ELM_ATSPI_ROLE_FILLER);
 

@@ -55,15 +55,14 @@ elm_main(int argc, char **argv)
    evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(genlist);
 
-   priv.filemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(dirname));
-   priv.fileview = eo_add(ELM_VIEW_LIST_CLASS, NULL,
-                   elm_view_list_genlist_set(genlist, ELM_GENLIST_ITEM_TREE, "double_label"));
-   eo_do(priv.fileview, elm_view_list_model_set(priv.filemodel));
-   eo_do(priv.filemodel, efl_model_load());
+   priv.filemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(eoid, dirname));
+   priv.fileview = eo_add(ELM_VIEW_LIST_CLASS, NULL, elm_view_list_genlist_set(eoid, genlist, ELM_GENLIST_ITEM_TREE, "double_label"));
+   elm_view_list_model_set(priv.fileview, priv.filemodel);
+   efl_model_load(priv.filemodel);
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, &priv);
 
-   eo_do(priv.fileview, elm_view_list_property_connect("filename", "elm.text"),
-                   elm_view_list_property_connect("mtime", "elm.text.sub"));
+   elm_view_list_property_connect(priv.fileview, "filename", "elm.text");
+   elm_view_list_property_connect(priv.fileview, "mtime", "elm.text.sub");
 
    evas_object_resize(win, 320, 520);
    elm_win_resize_object_add(win, genlist);
