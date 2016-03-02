@@ -93,7 +93,6 @@ struct _Evas_Object_Image_State
    } u;
    const char    *key;
    int            frame;
-   int            spread;
 
    Evas_Colorspace    cspace;
    Evas_Image_Orient  orient;
@@ -244,7 +243,6 @@ static const Evas_Object_Image_State default_state = {
   { NULL }, //u
   NULL, //key
   0, //frame
-  EVAS_TEXTURE_REPEAT,
   EVAS_COLORSPACE_ARGB8888,
   EVAS_IMAGE_ORIENT_NONE,
 
@@ -1039,39 +1037,17 @@ _evas_image_efl_gfx_fill_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o,
 }
 
 EAPI void
-evas_object_image_fill_spread_set(Evas_Image *obj, Evas_Fill_Spread spread)
+evas_object_image_fill_spread_set(Evas_Image *obj EINA_UNUSED, Evas_Fill_Spread spread)
 {
-   efl_gfx_fill_spread_set((Evas_Image *)obj, spread);
-}
-
-EOLIAN static void
-_evas_image_efl_gfx_fill_fill_spread_set(Eo *eo_obj, Evas_Image_Data *o,
-                                         Efl_Gfx_Fill_Spread spread)
-{
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-
-   if (spread == (Evas_Fill_Spread)o->cur->spread) return;
-
-   evas_object_async_block(obj);
-   EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
-     state_write->spread = spread;
-   EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
-
-   o->changed = EINA_TRUE;
-   evas_object_change(eo_obj, obj);
+   /* not implemented! */
+   if (spread != EFL_GFX_FILL_REPEAT)
+     WRN("Fill spread support is not implemented!");
 }
 
 EAPI Evas_Fill_Spread
-evas_object_image_fill_spread_get(const Evas_Image *obj)
+evas_object_image_fill_spread_get(const Evas_Image *obj EINA_UNUSED)
 {
-   return efl_gfx_fill_spread_get((Evas_Image *)obj);
-}
-
-EOLIAN static Efl_Gfx_Fill_Spread
-_evas_image_efl_gfx_fill_fill_spread_get(Eo *eo_obj EINA_UNUSED,
-                                         Evas_Image_Data *o)
-{
-   return (Evas_Fill_Spread)o->cur->spread;;
+   return EFL_GFX_FILL_REPEAT;
 }
 
 EAPI void
@@ -4938,12 +4914,14 @@ evas_object_image_mmap_get(const Evas_Image *obj, const Eina_File **f, const cha
 EAPI Eina_Bool
 evas_object_image_save(const Eo *obj, const char *file, const char *key, const char *flags)
 {
+   Eina_Bool ret;
    return efl_file_save((Eo *) obj, file, key, flags);
 }
 
 EAPI Eina_Bool
 evas_object_image_animated_get(const Eo *obj)
 {
+   Eina_Bool ret;
    return efl_image_animated_get((Eo *) obj);
 }
 
@@ -4968,6 +4946,7 @@ evas_object_image_smooth_scale_set(Eo *obj, Eina_Bool smooth_scale)
 EAPI Eina_Bool
 evas_object_image_smooth_scale_get(const Eo *obj)
 {
+   Eina_Bool ret;
    return efl_image_smooth_scale_get((Eo *) obj);
 }
 

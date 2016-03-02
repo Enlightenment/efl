@@ -778,8 +778,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, 
       Efl.Image.load_size.get;
       Efl.Image.smooth_scale.set;
       Efl.Image.smooth_scale.get;
-      Efl.Gfx.Fill.fill_spread.set;
-      Efl.Gfx.Fill.fill_spread.get;
       Efl.Gfx.Fill.fill.set;
       Efl.Gfx.Fill.fill.get;
       Efl.Gfx.View.size.set;

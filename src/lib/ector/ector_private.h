@@ -124,7 +124,7 @@ struct _Ector_Renderer_Generic_Buffer_Data
 {
    Ector_Buffer *eo_buffer;
    struct {
-      Efl_Gfx_Fill_Spread spread;
+      /* Efl_Gfx_Fill_Spread spread; */
       int x, y, w, h;
    } fill;
 };

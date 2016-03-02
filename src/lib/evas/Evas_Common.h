@@ -264,6 +264,18 @@ typedef enum _Evas_Alloc_Error
    EVAS_ALLOC_ERROR_RECOVERED = 2 /**< Allocation succeeded, but extra memory had to be found by freeing up speculative resources */
 } Evas_Alloc_Error; /**< Possible allocation errors returned by evas_alloc_error() */
 
+/* not implemented! removed from the interface, kept as legacy only */
+typedef enum _Efl_Gfx_Fill_Spread {
+   /** Fill spread mode. Warning: support is not implemented!
+    * @since 1.14 */
+   EFL_GFX_FILL_REFLECT = 0,          /**< Tiling reflects and repeats */
+   EFL_GFX_FILL_REPEAT = 1,           /**< Tiling repeats like a mosaic */
+   EFL_GFX_FILL_RESTRICT = 2,         /**< Tiling clamps, range offset ignored */
+   EFL_GFX_FILL_RESTRICT_REFLECT = 3, /**< Tiling clamps and any range offset reflects */
+   EFL_GFX_FILL_RESTRICT_REPEAT = 4,  /**< Tiling clamps and any range offset repeats */
+   EFL_GFX_FILL_PAD = 5,              /**< Tiling extends with end values */
+} Efl_Gfx_Fill_Spread;
+
 typedef Efl_Gfx_Fill_Spread Evas_Fill_Spread;
 #define EVAS_TEXTURE_REFLECT EFL_GFX_FILL_REFLECT
 #define EVAS_TEXTURE_REPEAT EFL_GFX_FILL_REPEAT

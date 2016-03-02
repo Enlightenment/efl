@@ -14,8 +14,6 @@ mixin Ector.Renderer.Generic.Buffer (Ector.Renderer.Generic.Base, Efl.Gfx.Fill)
    }
    implements {
       Eo.Base.constructor;
-      Efl.Gfx.Fill.fill_spread.get;
-      Efl.Gfx.Fill.fill_spread.set;
       Efl.Gfx.Fill.fill.get;
       Efl.Gfx.Fill.fill.set;
    }

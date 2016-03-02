@@ -10,18 +10,6 @@
 
 #define MY_CLASS ECTOR_RENDERER_GENERIC_BUFFER_MIXIN
 
-EOLIAN static Efl_Gfx_Fill_Spread
-_ector_renderer_generic_buffer_efl_gfx_fill_fill_spread_get(Eo *obj EINA_UNUSED, Ector_Renderer_Generic_Buffer_Data *pd)
-{
-   return pd->fill.spread;
-}
-
-EOLIAN static void
-_ector_renderer_generic_buffer_efl_gfx_fill_fill_spread_set(Eo *obj EINA_UNUSED, Ector_Renderer_Generic_Buffer_Data *pd, Efl_Gfx_Fill_Spread spread)
-{
-   pd->fill.spread = spread;
-}
-
 EOLIAN static void
 _ector_renderer_generic_buffer_efl_gfx_fill_fill_get(Eo *obj EINA_UNUSED, Ector_Renderer_Generic_Buffer_Data *pd, int *x, int *y, int *w, int *h)
 {
@@ -55,12 +43,11 @@ _ector_renderer_generic_buffer_buffer_get(Eo *obj EINA_UNUSED, Ector_Renderer_Ge
 }
 
 EOLIAN static Eo_Base *
-_ector_renderer_generic_buffer_eo_base_constructor(Eo *obj, Ector_Renderer_Generic_Buffer_Data *pd)
+_ector_renderer_generic_buffer_eo_base_constructor(Eo *obj, Ector_Renderer_Generic_Buffer_Data *pd EINA_UNUSED)
 {
    Eo_Base *ret;
 
    ret = eo_constructor(eo_super(obj, MY_CLASS));
-   pd->fill.spread = EFL_GFX_FILL_REPEAT;
 
    return ret;
 }
