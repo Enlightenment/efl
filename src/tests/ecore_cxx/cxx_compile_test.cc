@@ -8,6 +8,5 @@
 
 int main()
 {
-   std::cout << "Ecore C++ headers compile";
    return 0;
 }

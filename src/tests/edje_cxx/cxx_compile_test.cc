@@ -9,6 +9,5 @@
 
 int main()
 {
-   std::cout << "Edje C++ headers compile";
    return 0;
 }

@@ -9,6 +9,5 @@
 
 int main()
 {
-   std::cout << "Ecore Audio C++ headers compile";
    return 0;
 }

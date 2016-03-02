@@ -10,6 +10,5 @@
 
 int main()
 {
-   std::cout << "Evas C++ headers compile";
    return 0;
 }
