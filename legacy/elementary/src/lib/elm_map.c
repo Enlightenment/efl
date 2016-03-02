@@ -1209,7 +1209,7 @@ _zoom_animator_set(Elm_Map_Data *sd,
    sd->zoom_animator = !!callback;
    r = eo_event_callback_del(sd->obj, EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_anim_cb, sd->obj);
    r |= eo_event_callback_del(sd->obj, EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, _zoom_bring_anim_cb, sd->obj);
-   if (sd->obj, callback);
+   if (callback) eo_event_callback_add(sd->obj, EFL_CORE_ANIMATOR_EVENT_ANIMATOR_TICK, callback, sd->obj);
 
    return r;
 }
