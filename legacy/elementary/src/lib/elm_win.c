@@ -67,8 +67,7 @@ static const Elm_Win_Trap *trap = NULL;
          {                                                      \
             edje_object_signal_emit(cursd->edje, \
                         "elm,action,hide_blocker", "elm");      \
-            eo_do(cursd->main_menu, eo_event_callback_call      \
-              (ELM_MENU_EVENT_ELM_ACTION_UNBLOCK_MENU, NULL));  \
+            eo_event_callback_call(cursd->main_menu, ELM_MENU_EVENT_ELM_ACTION_UNBLOCK_MENU, NULL); \
          }                                                      \
     }
 
@@ -84,8 +83,7 @@ static const Elm_Win_Trap *trap = NULL;
          {                                                      \
             edje_object_signal_emit(cursd->edje, \
                              "elm,action,show_blocker", "elm"); \
-            eo_do(cursd->main_menu, eo_event_callback_call      \
-              (ELM_WIN_EVENT_ELM_ACTION_BLOCK_MENU, NULL));     \
+            eo_event_callback_call(cursd->main_menu, ELM_WIN_EVENT_ELM_ACTION_BLOCK_MENU, NULL); \
          }                                                      \
     }
 

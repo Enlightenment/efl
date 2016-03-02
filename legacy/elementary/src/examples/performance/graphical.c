@@ -452,8 +452,6 @@ _init_scene(Evas_Object *img)
          evas_canvas3d_light_diffuse_set(1.0, 1.0, 1.0, 1.0),
          evas_canvas3d_light_specular_set(1.0, 1.0, 1.0, 1.0),
          evas_canvas3d_light_projection_perspective_set(globalGraphical.angle / 5, 1.0, 1.0, 1000.0),
-         /*evas_canvas3d_light_projection_perspective_set(value, ...) =>
-          evas_canvas3d_light_spot_cutoff_set(~(value / 3))*/
          evas_canvas3d_light_spot_cutoff_set(globalGraphical.angle / 15));
 
    globalGraphical.light_node =
