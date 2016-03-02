@@ -130,8 +130,6 @@ evas_vg_gradient_spread_set(Eo *obj, Efl_Gfx_Gradient_Spread s)
 EAPI Efl_Gfx_Gradient_Spread
 evas_vg_gradient_spread_get(Eo *obj)
 {
-   Efl_Gfx_Gradient_Spread ret;
-
    return efl_gfx_gradient_spread_get(obj);
 }
 

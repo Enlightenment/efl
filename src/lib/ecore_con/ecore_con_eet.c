@@ -924,8 +924,6 @@ ecore_con_eet_data_set(Ecore_Con_Eet *ece, const void *data)
 EAPI const void *
 ecore_con_eet_data_get(Ecore_Con_Eet *ece)
 {
-   const void *temp;
-
    return eo_key_data_get(ece, ECORE_CON_EET_DATA_KEY);
 }
 

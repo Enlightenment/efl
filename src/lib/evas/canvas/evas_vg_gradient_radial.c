@@ -206,8 +206,6 @@ evas_vg_gradient_radial_radius_set(Eo *obj, double r)
 EAPI double
 evas_vg_gradient_radial_radius_get(Eo *obj)
 {
-   double ret;
-
    return efl_gfx_gradient_radial_radius_get(obj);
 }
 

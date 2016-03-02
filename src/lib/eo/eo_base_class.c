@@ -99,7 +99,6 @@ _eo_base_key_data_get(Eo *obj EINA_UNUSED, Eo_Base_Data *pd, const char *key)
 EOLIAN static void
 _eo_base_parent_set(Eo *obj, Eo_Base_Data *pd, Eo *parent_id)
 {
-   Eina_Bool tmp;
    if (pd->parent == parent_id)
      return;
 

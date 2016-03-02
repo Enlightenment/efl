@@ -311,8 +311,6 @@ _evas_object_efl_gfx_stack_stack_below(Eo *eo_obj, Evas_Object_Protected_Data *o
 EAPI Evas_Object *
 evas_object_above_get(const Evas_Object *obj)
 {
-   Evas_Object *ret;
-
    return efl_gfx_stack_above_get((Evas_Object *)obj);
 }
 
@@ -342,8 +340,6 @@ _evas_object_efl_gfx_stack_above_get(Eo *eo_obj EINA_UNUSED,
 EAPI Evas_Object *
 evas_object_below_get(const Evas_Object *obj)
 {
-   Evas_Object *ret;
-
    return efl_gfx_stack_below_get((Evas_Object *)obj);
 }
 

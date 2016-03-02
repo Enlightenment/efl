@@ -25,7 +25,6 @@ _evas_ector_software_buffer_evas_ector_buffer_engine_image_set(Eo *obj, Evas_Ect
                                                                Evas *evas, void *image)
 {
    RGBA_Image *im = image;
-   Eina_Bool b;
 
    EINA_SAFETY_ON_NULL_RETURN(image);
    if (eo_finalized_get(obj))

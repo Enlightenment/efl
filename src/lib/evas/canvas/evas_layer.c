@@ -247,8 +247,6 @@ _evas_object_efl_gfx_stack_layer_set(Eo *eo_obj,
 EAPI short
 evas_object_layer_get(const Evas_Object *obj)
 {
-   short ret;
-
    return efl_gfx_stack_layer_get((Evas_Object *)obj);
 }
 

@@ -250,13 +250,19 @@ _key_down(void *data,
           }
      }
    else if (!strcmp(ev->key, "F1"))
-     evas_canvas3d_node_position_set(scene->camera_node, 0.0, 80.0, 30.0);
-     evas_canvas3d_node_look_at_set(scene->camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
+     {
+        evas_canvas3d_node_position_set(scene->camera_node, 0.0, 80.0, 30.0);
+        evas_canvas3d_node_look_at_set(scene->camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
+     }
    else if (!strcmp(ev->key, "F2"))
-     evas_canvas3d_node_position_set(scene->camera_node, -2.0, 0.0, 4.0);
+     {
+        evas_canvas3d_node_position_set(scene->camera_node, -2.0, 0.0, 4.0);
      evas_canvas3d_node_look_at_set(scene->camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, -100.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0);
+     }
    else if (!strcmp(ev->key, "A"))
-     aabb_index++;
+     {
+        aabb_index++;
+     }
 }
 
 static void
@@ -831,8 +837,10 @@ _mesh_setup_wall(Scene_Data *data, int index)
 
    /* placing of wall carpet on the floor grid */
    if (index == 0)
-     evas_canvas3d_node_scale_set(data->mesh_node_wall[index], 6.7 * 19.5, 20.0, 2.0);
-     evas_canvas3d_node_position_set(data->mesh_node_wall[index], -39.7 + 18.6 * 3, 0.0, -60.3);
+     {
+        evas_canvas3d_node_scale_set(data->mesh_node_wall[index], 6.7 * 19.5, 20.0, 2.0);
+        evas_canvas3d_node_position_set(data->mesh_node_wall[index], -39.7 + 18.6 * 3, 0.0, -60.3);
+     }
    else if (index == 1)
      {
         evas_canvas3d_node_scale_set(data->mesh_node_wall[index], 5 * 19.5, 20.0, 2.0);
@@ -840,8 +848,10 @@ _mesh_setup_wall(Scene_Data *data, int index)
         evas_canvas3d_node_orientation_angle_axis_set(data->mesh_node_wall[index], 90, 0, 1.0, 0.0);
      }
    else if (index == 2)
-     evas_canvas3d_node_scale_set(data->mesh_node_wall[index], 6.7 * 19.5, 20.0, 2.0);
-     evas_canvas3d_node_position_set(data->mesh_node_wall[index], -39.7 + 18.6*3, 0.0, 35.3);
+     {
+        evas_canvas3d_node_scale_set(data->mesh_node_wall[index], 6.7 * 19.5, 20.0, 2.0);
+        evas_canvas3d_node_position_set(data->mesh_node_wall[index], -39.7 + 18.6*3, 0.0, 35.3);
+     }
    else if (index == 3)
      {
         evas_canvas3d_node_scale_set(data->mesh_node_wall[index], 5* 19.5, 20.0, 2.0);

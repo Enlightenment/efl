@@ -1301,8 +1301,6 @@ evas_object_hide(Evas_Object *eo_obj)
 EAPI Eina_Bool
 evas_object_visible_get(const Evas_Object *obj)
 {
-   Eina_Bool ret;
-
    return efl_gfx_visible_get((Evas_Object *)obj);
 }
 

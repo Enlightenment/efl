@@ -691,7 +691,7 @@ _evas_canvas3d_scene_pick(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Real
         return EINA_FALSE;
      }
    /* Update the scene graph. */
-   evas_canvas3d_object_update(obj);
+   evas_canvas3d_object_update((Eo *) obj);
    pd_camera_node = eo_data_scope_get(pd->camera_node, EVAS_CANVAS3D_NODE_CLASS);
    pd_camera = eo_data_scope_get(pd_camera_node->data.camera.camera, EVAS_CANVAS3D_CAMERA_CLASS);
    eina_matrix4_multiply(&data.matrix_vp,
@@ -737,7 +737,7 @@ _evas_canvas3d_scene_exist(const Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_Rea
    data.t      = 0.0;
 
    /* Update the scene graph. */
-   evas_canvas3d_object_update(obj);
+   evas_canvas3d_object_update((Eo *) obj);
    pd_camera_node = eo_data_scope_get(pd->camera_node, EVAS_CANVAS3D_NODE_CLASS);
    pd_camera = eo_data_scope_get(pd_camera_node->data.camera.camera, EVAS_CANVAS3D_CAMERA_CLASS);
    eina_matrix4_multiply(&data.matrix_vp,
@@ -773,7 +773,6 @@ _evas_canvas3d_scene_pick_member_list_get(const Eo *obj, Evas_Canvas3D_Scene_Dat
 
    EINA_LIST_FOREACH(list, l, node)
      {
-        Evas_Canvas3D_Node *exists;
         if (evas_canvas3d_scene_exist(obj, x, y, node))
           picked_nodes = eina_list_append(picked_nodes, l);
      }

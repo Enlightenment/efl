@@ -969,7 +969,6 @@ evas_canvas3d_node_color_node_mesh_collect(Evas_Canvas3D_Node *node, void *data)
              list_meshes = (Eina_List *)evas_canvas3d_node_mesh_list_get(node);
              EINA_LIST_FOREACH(list_meshes, l, mesh)
                {
-                 Eina_Bool tmp;
                  if (evas_canvas3d_mesh_color_pick_enable_get(mesh))
                    {
                       color = calloc(1, sizeof(Evas_Color));
@@ -1207,7 +1206,7 @@ _evas_canvas3d_node_position_get(const Eo *obj, Evas_Canvas3D_Node_Data *pd, Eva
      }
    else if (space == EVAS_CANVAS3D_SPACE_WORLD)
      {
-        evas_canvas3d_object_update(obj);
+        evas_canvas3d_object_update((Eo *) obj);
 
         if (x) *x = pd->position_world.x;
         if (y) *y = pd->position_world.y;
@@ -1235,7 +1234,7 @@ _evas_canvas3d_node_orientation_get(const Eo *obj, Evas_Canvas3D_Node_Data *pd, 
      }
    else if (space == EVAS_CANVAS3D_SPACE_WORLD)
      {
-        evas_canvas3d_object_update(obj);
+        evas_canvas3d_object_update((Eo *) obj);
 
         if (x) *x = pd->orientation_world.x;
         if (y) *y = pd->orientation_world.y;
@@ -1263,7 +1262,7 @@ _evas_canvas3d_node_scale_get(const Eo *obj, Evas_Canvas3D_Node_Data *pd, Evas_C
      }
    else if (space == EVAS_CANVAS3D_SPACE_WORLD)
      {
-        evas_canvas3d_object_update(obj);
+        evas_canvas3d_object_update((Eo *) obj);
 
         if (x) *x = pd->scale_world.x;
         if (y) *y = pd->scale_world.y;

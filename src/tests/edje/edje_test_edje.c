@@ -178,7 +178,6 @@ START_TEST(edje_test_masking)
    Evas *evas = EDJE_TEST_INIT_EVAS();
    const Evas_Object *sub, *clip2, *clip;
    Evas_Object *obj;
-   Eina_Bool b;
 
    obj = edje_object_add(evas);
    fail_unless(edje_object_file_set(obj, test_layout_get("test_masking.edj"), "test_group"));
@@ -213,7 +212,6 @@ START_TEST(edje_test_filters)
    const Evas_Object *text, *sub;
    Evas_Object *obj, *src = NULL;
    const char *prg, *name;
-   Eina_Bool b;
 
    setenv("EVAS_DATA_DIR", EVAS_DATA_DIR, 1);
 
@@ -254,7 +252,6 @@ START_TEST(edje_test_snapshot)
    Evas *evas = EDJE_TEST_INIT_EVAS();
    const Evas_Object *sub;
    Evas_Object *obj;
-   Eina_Bool b;
 
    setenv("EVAS_DATA_DIR", EVAS_DATA_DIR, 1);
 

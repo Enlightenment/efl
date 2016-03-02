@@ -1064,8 +1064,6 @@ _evas_image_efl_gfx_fill_fill_spread_set(Eo *eo_obj, Evas_Image_Data *o,
 EAPI Evas_Fill_Spread
 evas_object_image_fill_spread_get(const Evas_Image *obj)
 {
-   Evas_Fill_Spread ret;
-
    return efl_gfx_fill_spread_get((Evas_Image *)obj);
 }
 
@@ -4937,14 +4935,12 @@ evas_object_image_mmap_get(const Evas_Image *obj, const Eina_File **f, const cha
 EAPI Eina_Bool
 evas_object_image_save(const Eo *obj, const char *file, const char *key, const char *flags)
 {
-   Eina_Bool ret;
    return efl_file_save((Eo *) obj, file, key, flags);
 }
 
 EAPI Eina_Bool
 evas_object_image_animated_get(const Eo *obj)
 {
-   Eina_Bool ret;
    return efl_image_animated_get((Eo *) obj);
 }
 
@@ -4969,7 +4965,6 @@ evas_object_image_smooth_scale_set(Eo *obj, Eina_Bool smooth_scale)
 EAPI Eina_Bool
 evas_object_image_smooth_scale_get(const Eo *obj)
 {
-   Eina_Bool ret;
    return efl_image_smooth_scale_get((Eo *) obj);
 }
 

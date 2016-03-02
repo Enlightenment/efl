@@ -349,7 +349,6 @@ _emotion_object_engine_set(Eo *obj, Emotion_Object_Data *pd, const char *engine)
 EAPI Eina_Bool
 emotion_object_file_set(Evas_Object *obj, const char *file)
 {
-   Eina_Bool ret;
    return efl_file_set(obj, file, NULL);
 }
 
@@ -648,7 +647,6 @@ _emotion_object_efl_player_play_set(Eo *obj, Emotion_Object_Data *sd, Eina_Bool 
 EAPI Eina_Bool
 emotion_object_play_get(const Evas_Object *obj)
 {
-   Eina_Bool ret;
    return efl_player_play_get(obj);
 }
 
@@ -687,7 +685,6 @@ _emotion_object_efl_player_position_set(Eo *obj, Emotion_Object_Data *sd, double
 EAPI double
 emotion_object_position_get(const Evas_Object *obj)
 {
-   double ret;
    return efl_player_position_get(obj);
 }
 
@@ -712,7 +709,6 @@ emotion_object_buffer_size_get(const Evas_Object *obj)
 EAPI Eina_Bool
 emotion_object_seekable_get(const Evas_Object *obj)
 {
-   Eina_Bool ret;
    return efl_player_seekable_get(obj);
 }
 
@@ -739,7 +735,6 @@ emotion_object_audio_handled_get(const Evas_Object *obj)
 EAPI double
 emotion_object_play_length_get(const Evas_Object *obj)
 {
-   double ret;
    return efl_player_length_get(obj);
 }
 
@@ -774,7 +769,6 @@ _emotion_object_efl_image_smooth_scale_set(Eo *obj EINA_UNUSED, Emotion_Object_D
 EAPI Eina_Bool
 emotion_object_smooth_scale_get(const Evas_Object *obj)
 {
-   Eina_Bool ret;
    return efl_image_smooth_scale_get(obj);
 }
 
@@ -787,7 +781,6 @@ _emotion_object_efl_image_smooth_scale_get(Eo *obj EINA_UNUSED, Emotion_Object_D
 EAPI double
 emotion_object_ratio_get(const Evas_Object *obj)
 {
-   double ret;
    return efl_image_ratio_get(obj);
 }
 
@@ -828,7 +821,6 @@ _emotion_object_efl_player_audio_volume_set(Eo *obj EINA_UNUSED, Emotion_Object_
 EAPI double
 emotion_object_audio_volume_get(const Evas_Object *obj)
 {
-   double ret;
    return efl_player_audio_volume_get(obj);
 }
 
@@ -856,7 +848,6 @@ _emotion_object_efl_player_audio_mute_set(Eo *obj EINA_UNUSED, Emotion_Object_Da
 EAPI Eina_Bool
 emotion_object_audio_mute_get(const Evas_Object *obj)
 {
-   Eina_Bool ret;
    return efl_player_audio_mute_get(obj);
 }
 
@@ -1147,7 +1138,6 @@ emotion_object_progress_info_get(const Evas_Object *obj)
 EAPI double
 emotion_object_progress_status_get(const Evas_Object *obj)
 {
-   double ret;
    return efl_player_progress_get(obj);
 }
 

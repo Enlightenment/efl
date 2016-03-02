@@ -254,8 +254,6 @@ _efl_vg_shape_efl_vg_base_dup(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED, const 
 EAPI double
 evas_vg_shape_stroke_scale_get(Eo *obj)
 {
-   double ret;
-
    return efl_gfx_shape_stroke_scale_get(obj);
 }
 
@@ -280,8 +278,6 @@ evas_vg_shape_stroke_color_set(Eo *obj, int r, int g, int b, int a)
 EAPI double
 evas_vg_shape_stroke_width_get(Eo *obj)
 {
-   double ret;
-
    return efl_gfx_shape_stroke_width_get(obj);
 }
 
@@ -294,8 +290,6 @@ evas_vg_shape_stroke_width_set(Eo *obj, double w)
 EAPI double
 evas_vg_shape_stroke_location_get(Eo *obj)
 {
-   double ret;
-
    return efl_gfx_shape_stroke_location_get(obj);
 }
 
@@ -320,8 +314,6 @@ evas_vg_shape_stroke_dash_set(Eo *obj, const Efl_Gfx_Dash *dash, unsigned int le
 EAPI Efl_Gfx_Cap
 evas_vg_shape_stroke_cap_get(Eo *obj)
 {
-   Efl_Gfx_Cap ret;
-
    return efl_gfx_shape_stroke_cap_get(obj);
 }
 
@@ -334,8 +326,6 @@ evas_vg_shape_stroke_cap_set(Eo *obj, Efl_Gfx_Cap c)
 EAPI Efl_Gfx_Join
 evas_vg_shape_stroke_join_get(Eo *obj)
 {
-   Efl_Gfx_Join ret;
-
    return efl_gfx_shape_stroke_join_get(obj);
 }
 
@@ -456,16 +446,12 @@ evas_vg_shape_shape_append_svg_path(Eo *obj, const char *svg_path_data)
 EAPI Eina_Bool
 evas_vg_shape_shape_interpolate(Eo *obj, const Eo *from, const Eo *to, double pos_map)
 {
-   Eina_Bool ret;
-
    return efl_gfx_shape_interpolate(obj, from, to, pos_map);
 }
 
 EAPI Eina_Bool
 evas_vg_shape_shape_equal_commands(Eo *obj, const Eo *with)
 {
-   Eina_Bool ret;
-
    return efl_gfx_shape_equal_commands(obj, with);
 }
 

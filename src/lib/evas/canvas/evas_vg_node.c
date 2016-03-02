@@ -795,8 +795,6 @@ _efl_vg_base_dup(Eo *obj, Efl_VG_Base_Data *pd, const Efl_VG_Base *from)
 EAPI Eina_Bool
 evas_vg_node_visible_get(Eo *obj)
 {
-   Eina_Bool ret;
-
    return efl_gfx_visible_get(obj);
 }
 

@@ -284,7 +284,6 @@ END_TEST
 
 START_TEST(eo_composite_tests)
 {
-   Eina_Bool tmp;
    eo_init();
 
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
@@ -735,7 +734,7 @@ _class_hi_print(Eo_Class *klass EINA_UNUSED, void *class_data EINA_UNUSED)
 }
 
 EO_FUNC_BODY(multi_a_print, Eina_Bool, EINA_FALSE);
-EO_FUNC_BODY(multi_class_hi_print, Eina_Bool, EINA_FALSE);
+EO_FUNC_BODY_CONST(multi_class_hi_print, Eina_Bool, EINA_FALSE);
 
 static Eo_Op_Description _multi_do_op_descs[] = {
      EO_OP_FUNC(multi_a_print, _a_print),

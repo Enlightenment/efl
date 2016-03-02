@@ -401,8 +401,6 @@ _edje_object_efl_file_mmap_get(Eo *obj EINA_UNUSED, Edje *pd,
 EAPI Eina_Bool
 edje_object_mmap_set(Edje_Object *obj, const Eina_File *file, const char *group)
 {
-   Eina_Bool ret;
-
    return efl_file_mmap_set(obj, file, group);
 }
 

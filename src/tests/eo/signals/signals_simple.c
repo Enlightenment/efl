@@ -27,7 +27,7 @@ _a_set(Eo *obj, void *class_data, int a)
 }
 
 Eina_Bool
-_cb_added(void *data, const Eo_Event *event)
+_cb_added(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Simple_Public_Data *pd = eo_data_scope_get(event->obj, MY_CLASS);
    const Eo_Callback_Array_Item *callback_array = event->event_info;
@@ -42,7 +42,7 @@ _cb_added(void *data, const Eo_Event *event)
 }
 
 Eina_Bool
-_cb_deled(void *data, const Eo_Event *event)
+_cb_deled(void *data EINA_UNUSED, const Eo_Event *event)
 {
    Simple_Public_Data *pd = eo_data_scope_get(event->obj, MY_CLASS);
    const Eo_Callback_Array_Item *callback_array = event->event_info;

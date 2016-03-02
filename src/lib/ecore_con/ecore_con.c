@@ -108,7 +108,6 @@ static void        _ecore_con_lookup_done(void *data,
 static const char *_ecore_con_pretty_ip(struct sockaddr *client_addr);
 
 #define EO_CONSTRUCTOR_CHECK_RETURN(obj) do { \
-     Eina_Bool finalized; \
      if (eo_finalized_get(obj)) \
        { \
           ERR("This function is only allowed during construction."); \
@@ -556,7 +555,6 @@ _efl_network_server_efl_network_base_timeout_set(Eo *obj, Efl_Network_Server_Dat
 EAPI double
 ecore_con_server_timeout_get(const Ecore_Con *obj)
 {
-   double ret;
    return efl_network_base_timeout_get((Ecore_Con *)obj);
 }
 
@@ -610,7 +608,6 @@ ecore_con_server_data_set(Ecore_Con_Server *obj,
 EAPI Eina_Bool
 ecore_con_server_connected_get(const Ecore_Con *obj)
 {
-   Eina_Bool ret;
    return efl_network_base_connected_get((Ecore_Con *)obj);
 }
 
@@ -660,7 +657,6 @@ _efl_network_server_name_get(Eo *obj EINA_UNUSED, Efl_Network_Server_Data *svr)
 EAPI int
 ecore_con_server_port_get(const Ecore_Con *obj)
 {
-   int ret;
    return efl_network_base_port_get((Ecore_Con *)obj);
 }
 
@@ -681,7 +677,6 @@ _efl_network_server_efl_network_base_port_get(Eo *obj EINA_UNUSED, Efl_Network_S
 EAPI int
 ecore_con_server_send(Ecore_Con *obj, const void *data, int size)
 {
-   int ret;
    return efl_network_base_send((Ecore_Con *)obj, data, size);
 }
 
@@ -738,7 +733,6 @@ _efl_network_server_client_limit_get(Eo *obj EINA_UNUSED, Efl_Network_Server_Dat
 EAPI const char *
 ecore_con_server_ip_get(const Ecore_Con *obj)
 {
-   const char *ret;
    return efl_network_base_ip_get(obj);
 }
 
@@ -751,7 +745,6 @@ _efl_network_server_efl_network_base_ip_get(Eo *obj EINA_UNUSED, Efl_Network_Ser
 EAPI double
 ecore_con_server_uptime_get(const Ecore_Con *obj)
 {
-   double ret;
    return efl_network_base_uptime_get(obj);
 }
 
@@ -793,7 +786,6 @@ _efl_network_server_efl_network_base_flush(Eo *obj, Efl_Network_Server_Data *svr
 EAPI int
 ecore_con_client_send(Ecore_Con *obj, const void *data, int size)
 {
-   int ret;
    return efl_network_base_send((Ecore_Con *)obj, data, size);
 }
 
@@ -861,7 +853,6 @@ _efl_network_client_efl_network_base_connected_get(Eo *obj EINA_UNUSED, Efl_Netw
 EAPI Eina_Bool
 ecore_con_client_connected_get(const Ecore_Con *obj)
 {
-   Eina_Bool ret;
    return efl_network_base_connected_get((Ecore_Con *)obj);
 }
 
@@ -888,7 +879,6 @@ _efl_network_client_efl_network_base_timeout_get(Eo *obj EINA_UNUSED, Efl_Networ
 EAPI double
 ecore_con_client_timeout_get(const Ecore_Con *obj)
 {
-   double ret;
    return efl_network_base_timeout_get((Ecore_Con *)obj);
 }
 
@@ -940,7 +930,6 @@ _efl_network_client_efl_network_base_ip_get(Eo *obj EINA_UNUSED, Efl_Network_Cli
 EAPI const char *
 ecore_con_client_ip_get(const Ecore_Con *obj)
 {
-   const char *ret;
    return efl_network_base_ip_get(obj);
 }
 
@@ -968,7 +957,6 @@ _efl_network_client_efl_network_base_port_get(Eo *obj EINA_UNUSED, Efl_Network_C
 EAPI int
 ecore_con_client_port_get(const Ecore_Con *obj)
 {
-   int ret;
    return efl_network_base_port_get((Ecore_Con *)obj);
 }
 
@@ -981,7 +969,6 @@ _efl_network_client_efl_network_base_uptime_get(Eo *obj EINA_UNUSED, Efl_Network
 EAPI double
 ecore_con_client_uptime_get(const Ecore_Con *obj)
 {
-   double ret;
    return efl_network_base_uptime_get(obj);
 }
 
@@ -1000,7 +987,6 @@ ecore_con_client_flush(Ecore_Con *obj)
 EAPI int
 ecore_con_server_fd_get(const Ecore_Con *obj)
 {
-   int ret;
    return efl_network_base_fd_get((Ecore_Con *)obj);
 }
 
@@ -1021,7 +1007,6 @@ _efl_network_client_efl_network_base_fd_get(Eo *obj EINA_UNUSED, Efl_Network_Cli
 EAPI int
 ecore_con_client_fd_get(const Ecore_Con *obj)
 {
-   int ret;
    return efl_network_base_fd_get((Ecore_Con *)obj);
 }
 

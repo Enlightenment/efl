@@ -26,7 +26,6 @@ _a_changed_cb(void *data, const Eo_Event *event)
 int
 main(int argc, char *argv[])
 {
-   Eina_Bool tmp;
    (void) argc;
    (void) argv;
    eo_init();

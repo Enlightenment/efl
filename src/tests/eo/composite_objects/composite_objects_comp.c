@@ -24,7 +24,6 @@ _a_get(Eo *obj, void *class_data EINA_UNUSED)
 static Eo *
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   Eina_Bool tmp;
    obj = eo_constructor(eo_super(obj, MY_CLASS));
 
    Eo *simple = eo_add(SIMPLE_CLASS, obj);

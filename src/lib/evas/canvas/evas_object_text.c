@@ -2327,7 +2327,6 @@ evas_object_text_text_set(Eo *obj, const char *text)
 EAPI const char *
 evas_object_text_text_get(const Eo *obj)
 {
-   const char *ret;
    return efl_text_get((Eo *) obj);
 }
 
