@@ -121,10 +121,11 @@ callback_parameter_free_ev_add
 inline std::ostream&
 operator<<(std::ostream& out, callback_parameter_free_ev_add const& x)
 {
-   out << "eo_do(" << x._eo_raw_expr
-       << ", eo_event_callback_add(EO_BASE_EVENT_DEL, &::efl::eolian::free_callback_callback<"
+   out
+       << "eo_event_callback_add(" << x._eo_raw_expr
+       << ", EO_BASE_EVENT_DEL, &::efl::eolian::free_callback_callback<"
        << parameter_no_ref_type(x._type, x._name) << ">, "
-       << callback_tmp(x._name) << "));";
+       << callback_tmp(x._name) << ");";
    return out;
 }
 

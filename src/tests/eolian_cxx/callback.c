@@ -21,7 +21,7 @@ static Eina_Bool _callback_callback_added(void* data EINA_UNUSED, Eo_Event2 cons
 {
   Callback_Data* pd = event->event_info;
   ++pd->callbacks;
-  eo_event_callback_call(CALLBACK_EVENT_CALL_ON_ADD, &pd->callbacks);
+  eo_event_callback_call(event->obj, CALLBACK_EVENT_CALL_ON_ADD, &pd->callbacks);
   return EINA_TRUE;
 }
 
@@ -30,7 +30,7 @@ static Eo *_callback_eo_base_constructor(Eo *obj, Callback_Data *pd EINA_UNUSED)
   pd->callbacks = 0;
   obj = eo_constructor(eo_super(obj, MY_CLASS));
 
-  eo_event_callback_priority_add(EO_BASE_EVENT_CALLBACK_ADD, EO_CALLBACK_PRIORITY_DEFAULT
+  eo_event_callback_priority_add(obj, EO_BASE_EVENT_CALLBACK_ADD, EO_CALLBACK_PRIORITY_DEFAULT
                                  , &_callback_callback_added, pd);
 
   return obj;

@@ -264,10 +264,7 @@ operator<<(std::ostream& out, inheritance_base_operations_function const& x)
    out << callbacks_heap_alloc("dynamic_cast<T*>(this)->_eo_ptr()", func.params, function_is_static(x._func), 3)
        << endl;
 
-   out << tab(3)
-       << "eo_do_super(dynamic_cast<T*>(this)->_eo_ptr()," << endl
-       << tab(5) << "dynamic_cast<T*>(this)->_eo_class()," << endl
-       << tab(5) << function_call(func) << ");" << endl;
+   out << tab(3) << parameterized_obj_function_call(func, "eo_super(dynamic_cast<T*>(this)->_eo_ptr(), dynamic_cast<T*>(this)->_eo_class())") << ";" << endl;
 
    if (!is_void)
      out << tab(4) << "return " << to_cxx(func.ret, "_tmp_ret") << ";" << endl;

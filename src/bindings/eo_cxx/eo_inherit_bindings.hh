@@ -61,7 +61,9 @@ void inherit_constructor_impl(Eo*, Inherit_Private_Data* self, void* this_)
 /// @param this_ The <em>user data</em> to be passed to the resolved function.
 /// @param args An heterogeneous sequence of arguments.
 ///
-inline EOAPI EO_VOID_FUNC_BODYV(inherit_constructor, EO_FUNC_CALL(this_), void* this_);
+// inline EOAPI EO_VOID_FUNC_BODYV(inherit_constructor, EO_FUNC_CALL(this_), void* this_);
+inline
+void inherit_constructor(void* this_);
 
 template <typename T>
 int initialize_operation_description(detail::tag<void>, void*);
