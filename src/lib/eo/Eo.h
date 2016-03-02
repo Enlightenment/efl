@@ -508,14 +508,14 @@ typedef struct _Eo_Call_Cache
           ___cache.op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name)); \
           if (___cache.op == EO_NOOP) return DefRet;                    \
        }                                                                \
-     if (!_eo_call_resolve(Obj, #Name, &___call, &___cache,                  \
+     if (!_eo_call_resolve((Eo *) Obj, #Name, &___call, &___cache,                  \
                            __FILE__, __LINE__)) return DefRet;          \
      _Eo_##Name##_func _func_ = (_Eo_##Name##_func) ___call.func;       \
 
 // to define an EAPI function
-#define EO_FUNC_BODY(Name, Ret, DefRet)                                 \
+#define _EO_FUNC_BODY(Name, ObjType, Ret, DefRet)                                 \
   Ret                                                                   \
-  Name(Eo *obj)                                                            \
+  Name(ObjType obj)                                                            \
   {                                                                     \
      typedef Ret (*_Eo_##Name##_func)(Eo *, void *obj_data);            \
      Ret _r;                                                            \
@@ -525,9 +525,9 @@ typedef struct _Eo_Call_Cache
      return _r;                                                         \
   }
 
-#define EO_VOID_FUNC_BODY(Name)					\
+#define _EO_VOID_FUNC_BODY(Name, ObjType)					\
   void									\
-  Name(Eo *obj)                                                            \
+  Name(ObjType obj)                                                            \
   {                                                                     \
      typedef void (*_Eo_##Name##_func)(Eo *, void *obj_data);           \
      EO_FUNC_COMMON_OP(obj, Name, );                                         \
@@ -535,9 +535,9 @@ typedef struct _Eo_Call_Cache
      _eo_call_end(&___call); \
   }
 
-#define EO_FUNC_BODYV(Name, Ret, DefRet, Arguments, ...)                \
+#define _EO_FUNC_BODYV(Name, ObjType, Ret, DefRet, Arguments, ...)                \
   Ret                                                                   \
-  Name(Eo *obj, __VA_ARGS__)                                                     \
+  Name(ObjType obj, __VA_ARGS__)                                                     \
   {                                                                     \
      typedef Ret (*_Eo_##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
      Ret _r;                                                            \
@@ -547,15 +547,25 @@ typedef struct _Eo_Call_Cache
      return _r;                                                         \
   }
 
-#define EO_VOID_FUNC_BODYV(Name, Arguments, ...)                        \
+#define _EO_VOID_FUNC_BODYV(Name, ObjType, Arguments, ...)                        \
   void                                                                  \
-  Name(Eo *obj, __VA_ARGS__)                                                     \
+  Name(ObjType obj, __VA_ARGS__)                                                     \
   {                                                                     \
      typedef void (*_Eo_##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
      EO_FUNC_COMMON_OP(obj, Name, );                                         \
      _func_(___call.eo_id, ___call.data, Arguments);                      \
      _eo_call_end(&___call); \
   }
+
+#define EO_FUNC_BODY(Name, Ret, DefRet) _EO_FUNC_BODY(Name, Eo *, Ret, DefRet)
+#define EO_VOID_FUNC_BODY(Name) _EO_VOID_FUNC_BODY(Name, Eo *)
+#define EO_FUNC_BODYV(Name, Ret, DefRet, Arguments, ...) _EO_FUNC_BODYV(Name, Eo *, Ret, DefRet, EO_FUNC_CALL(Arguments), __VA_ARGS__)
+#define EO_VOID_FUNC_BODYV(Name, Arguments, ...) _EO_VOID_FUNC_BODYV(Name, Eo *, EO_FUNC_CALL(Arguments), __VA_ARGS__)
+
+#define EO_FUNC_BODY_CONST(Name, Ret, DefRet) _EO_FUNC_BODY(Name, const Eo *, Ret, DefRet)
+#define EO_VOID_FUNC_BODY_CONST(Name) _EO_VOID_FUNC_BODY(Name, const Eo *)
+#define EO_FUNC_BODYV_CONST(Name, Ret, DefRet, Arguments, ...) _EO_FUNC_BODYV(Name, const Eo *, Ret, DefRet, EO_FUNC_CALL(Arguments), __VA_ARGS__)
+#define EO_VOID_FUNC_BODYV_CONST(Name, Arguments, ...) _EO_VOID_FUNC_BODYV(Name, const Eo *, EO_FUNC_CALL(Arguments), __VA_ARGS__)
 
 #ifndef _WIN32
 # define _EO_OP_API_ENTRY(a) (void*)a
