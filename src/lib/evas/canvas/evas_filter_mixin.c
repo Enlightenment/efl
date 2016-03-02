@@ -659,10 +659,11 @@ finish:
 }
 
 EOLIAN static void
-_evas_filter_efl_gfx_filter_filter_data_set(Eo *obj EINA_UNUSED, Evas_Filter_Data *pd,
+_evas_filter_efl_gfx_filter_filter_data_set(Eo *eo_obj, Evas_Filter_Data *pd,
                                             const char *name, const char *value,
                                             Eina_Bool execute)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Filter_Data_Binding *db, *found = NULL;
    Evas_Object_Filter_Data *fcow;
 
@@ -703,6 +704,13 @@ _evas_filter_efl_gfx_filter_filter_data_set(Eo *obj EINA_UNUSED, Evas_Filter_Dat
         fcow->changed = 1;
      }
    FCOW_END(fcow, pd);
+
+   // update object
+   eo_do(eo_obj, evas_filter_dirty());
+   evas_object_change(eo_obj, obj);
+   evas_object_clip_dirty(eo_obj, obj);
+   evas_object_coords_recalc(eo_obj, obj);
+   evas_object_inform_call_resize(eo_obj);
 }
 
 EOLIAN static void
