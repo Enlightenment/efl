@@ -171,6 +171,7 @@ _eina_thread_queue_msg_block_pool_shutdown(void)
              _eina_thread_queue_block_pool = blknext;
           }
      }
+   eina_spinlock_release(&(_eina_thread_queue_block_pool_lock));
    eina_spinlock_free(&_eina_thread_queue_block_pool_lock);
 }
 
