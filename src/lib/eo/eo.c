@@ -256,6 +256,10 @@ EAPI Eo *
 _eo_super(Eo *obj, const Eo_Class *cur_klass)
 {
    _current_super_class = cur_klass;
+   /* FIXME-tom: Hack to fail when passing NULL super. */
+   if (!cur_klass)
+      return NULL;
+
    return obj;
 }
 
