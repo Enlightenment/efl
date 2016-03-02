@@ -90,7 +90,7 @@ EAPI const Eo_Class *docs_class_get(void);
  *
  * @ingroup Docs
  */
-EOAPI void docs_prop_set(int val);
+EOAPI void docs_prop_set(Eo *obj, int val);
 
 /**
  * @brief Property common documentation.
@@ -103,7 +103,7 @@ EOAPI void docs_prop_set(int val);
  *
  * @ingroup Docs
  */
-EOAPI int docs_prop_get(void);
+EOAPI int docs_prop_get(const Eo *obj);
 
 /**
  * @brief Method documentation.
@@ -117,7 +117,7 @@ EOAPI int docs_prop_get(void);
  *
  * @ingroup Docs
  */
-EOAPI int docs_meth(int a, float *b, long *c);
+EOAPI int docs_meth(Eo *obj, int a, float *b, long *c);
 
 EOAPI extern const Eo_Event_Description _DOCS_EVENT_CLICKED;
 

@@ -5,7 +5,7 @@ EOAPI EO_FUNC_BODYV(evas_obj_simple_a_set, Eina_Bool, EINA_TRUE, EO_FUNC_CALL(va
 
 int _class_simple_a_get(Eo *obj, Evas_Simple_Data *pd);
 
-EOAPI EO_FUNC_BODY(evas_obj_simple_a_get, int, 100);
+EOAPI EO_FUNC_BODY_CONST(evas_obj_simple_a_get, int, 100);
 
 void _class_simple_b_set(Eo *obj, Evas_Simple_Data *pd);
 
