@@ -95,7 +95,7 @@ struct _event_deleter
 
   void operator()() const
   {
-    eo_do(_eo, ::eo_event_callback_del(_description, _cb, _data));
+    ::eo_event_callback_del(_eo, _description, _cb, _data);
     ::ecore_main_loop_thread_safe_call_async(&_deleter_call, _data);
   }
 

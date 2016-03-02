@@ -20,15 +20,38 @@ struct function_call
    function_call(eo_function const& func) : _func(func) {}
 };
 
+struct parameterized_obj_function_call
+{
+   eo_function const& _func;
+   std::string obj;
+   parameterized_obj_function_call(eo_function const& func, std::string obj) : _func(func), obj(obj) {}
+};
+      
 inline std::ostream&
 operator<<(std::ostream& out, function_call const& x)
 {
    bool is_void = function_is_void(x._func);
+   bool is_static = function_is_static(x._func);
    return out << (!is_void ? "_tmp_ret = " : "")
               << "::" << x._func.impl
-              << "(" << parameters_forward_to_c(x._func.params) << ")";
+              << "("
+              << (is_static ? "const_cast<Eo*>(_eo_class())" : "_concrete_eo_ptr()")
+              << (x._func.params.empty() ? "" : ",")
+              << parameters_forward_to_c(x._func.params) << ")";
 }
 
+inline std::ostream&
+operator<<(std::ostream& out, parameterized_obj_function_call const& x)
+{
+   bool is_void = function_is_void(x._func);
+   return out << (!is_void ? "_tmp_ret = " : "")
+              << "::" << x._func.impl
+              << "("
+              << x.obj
+              << (x._func.params.empty() ? "" : ",")
+              << parameters_forward_to_c(x._func.params) << ")";
+}
+      
 struct function_declaration
 {
    eo_class const& _cls;
@@ -94,9 +117,7 @@ operator<<(std::ostream& out, function_definition const& x)
 
    out << callbacks_heap_alloc("_concrete_eo_ptr()", func.params, is_static, 1);
 
-   out << tab(1) << "eo_do("
-       << (is_static ? "_eo_class(), " : "_concrete_eo_ptr(), ")
-       << function_call(x._func) << ");" << endl;
+   out << tab(1) << function_call(x._func) << ";" << endl;
 
    if (!function_is_void(func))
      out << tab(1) << "return " << to_cxx(func.ret, "_tmp_ret") << ";" << endl;

@@ -22,112 +22,112 @@ shutdown()
 }
 
 inline Eo*
-ref(const Eo *obj)
+ref(Eo *obj)
 {
    return ::eo_ref(obj);
 }
 
 inline void
-unref(const Eo *obj)
+unref(Eo *obj)
 {
    ::eo_unref(obj);
 }
 
 inline int
-ref_get(const Eo *obj)
+ref_get(Eo *obj)
 {
    return ::eo_ref_get(obj);
 }
 
 inline void
-del(const Eo *obj)
+del(Eo *obj)
 {
    ::eo_del(obj);
 }
 
 inline Eina_Bool
-isa(const Eo *obj, const Eo_Class *klass)
+isa(Eo *obj, Eo_Class *klass)
 {
    return eo_isa(obj, klass);
 }
 
 inline Eo*
-add(const Eo_Class *klass, Eo *parent = NULL)
+add(Eo_Class *klass, Eo *parent = NULL)
 {
    Eo *eo = eo_add_ref(klass, parent);
    return eo;
 }
 
 inline void
-dbg_info_get(const Eo *obj, Eo_Dbg_Info *info)
+dbg_info_get(Eo *obj, Eo_Dbg_Info *info)
 {
-   eo_do(obj, eo_dbg_info_get(info));
+   eo_dbg_info_get(obj, info);
 }
 
 inline void
-base_data_set(const Eo *obj, const char *key, const void *data)
+base_data_set(Eo *obj, const char *key, const void *data)
 {
-   eo_do(obj, eo_key_data_set(key, data));
+   eo_key_data_set(obj, key, data);
 }
 
 inline void*
-base_data_get(const Eo *obj, const char *key)
+base_data_get(Eo *obj, const char *key)
 {
    void *data;
-   eo_do(obj, data = eo_key_data_get(key));
+   data = eo_key_data_get(obj, key);
    return data;
 }
 
 inline void
-base_data_del(const Eo *obj, const char *key)
+base_data_del(Eo *obj, const char *key)
 {
-   eo_do(obj, eo_key_data_del(key));
+   eo_key_data_del(obj, key);
 }
 
 inline void
-parent_set(const Eo *obj, Eo *parent)
+parent_set(Eo *obj, Eo *parent)
 {
-   eo_do(obj, eo_parent_set(parent));
+   eo_parent_set(obj, parent);
 }
 
 inline Eo*
-parent_get(const Eo *obj)
+parent_get(Eo *obj)
 {
    Eo *parent;
-   eo_do(obj, parent = eo_parent_get());
+   parent = eo_parent_get(obj);
    return parent;
 }
 
 inline void
-event_freeze(const Eo *obj)
+event_freeze(Eo *obj)
 {
-   eo_do(obj, eo_event_freeze());
+   eo_event_freeze(obj);
 }
 
 inline void
-event_thaw(const Eo *obj)
+event_thaw(Eo *obj)
 {
-   eo_do(obj, eo_event_thaw());
+   eo_event_thaw(obj);
 }
 
 inline int
-event_freeze_get(const Eo *obj)
+event_freeze_get(Eo *obj)
 {
    int count = -1;
-   eo_do(obj, count = eo_event_freeze_count_get());
+   count = eo_event_freeze_count_get(obj);
    return count;
 }
 
 inline void
-wref_add(const Eo *obj, Eo **wref)
+wref_add(Eo *obj, Eo **wref)
 {
-   eo_do(obj, eo_wref_add(wref));
+   eo_wref_add(obj, wref);
 }
 
 inline void
-wref_del(const Eo *obj, Eo **wref)
+wref_del(Eo *obj, Eo **wref)
 {
-   eo_do(obj, eo_wref_del(wref));
+   eo_wref_del(obj, wref);
 }
 
 } } }
