@@ -2853,6 +2853,25 @@ EAPI int evas_object_image_animated_loop_count_get(const Evas_Object *obj);
 EAPI double evas_object_image_animated_frame_duration_get(const Evas_Object *obj, int start_frame, int frame_num);
 
 /**
+ * @brief Set the DPI resolution of an image object's source image.
+ *
+ * This function sets the DPI resolution of a given loaded canvas image. Most
+ * useful for the SVG image loader.
+ *
+ * @param[in] dpi The DPI resolution.
+ */
+EAPI void evas_object_image_load_dpi_set(Evas_Object *obj, double dpi);
+
+/**
+ * @brief Get the DPI resolution of a loaded image object in the canvas.
+ *
+ * This function returns the DPI resolution of the given canvas image.
+ *
+ * @return The DPI resolution.
+ */
+EAPI double evas_object_image_load_dpi_get(const Evas_Object *obj);
+
+/**
  *
  * Set the load size of a given image object's source image.
  *
@@ -2888,6 +2907,98 @@ EAPI void evas_object_image_load_size_set(Eo *obj, int w, int h);
  * @param[out] h The new height of the image's load size.
  */
 EAPI void evas_object_image_load_size_get(const Eo *obj, int *w, int *h);
+
+/**
+ * @brief Inform a given image object to load a selective region of its source
+ * image.
+ *
+ * This function is useful when one is not showing all of an image's area on
+ * its image object.
+ *
+ * @note The image loader for the image format in question has to support
+ * selective region loading in order to this function to take effect.
+ *
+ * @param[in] x X-offset of the region to be loaded.
+ * @param[in] y Y-offset of the region to be loaded.
+ * @param[in] w Width of the region to be loaded.
+ * @param[in] h Height of the region to be loaded.
+ */
+EAPI void evas_object_image_load_region_set(Evas_Object *obj, int x, int y, int w, int h);
+
+/**
+ * @brief Retrieve the coordinates of a given image object's selective (source
+ * image) load region.
+ *
+ * @note Use @c null pointers on the coordinates you're not interested in:
+ * they'll be ignored by the function.
+ *
+ * @param[out] x X-offset of the region to be loaded.
+ * @param[out] y Y-offset of the region to be loaded.
+ * @param[out] w Width of the region to be loaded.
+ * @param[out] h Height of the region to be loaded.
+ */
+EAPI void evas_object_image_load_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);
+
+/**
+ * @brief Get the support state of a given image.
+ *
+ * @return The region support state.
+ *
+ * @since 1.2
+ *
+ * @ingroup Evas_Image
+ */
+EAPI Eina_Bool evas_object_image_region_support_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Define if the orientation information in the image file should be
+ * honored.
+ *
+ * @param[in] enable @c true means that it should honor the orientation
+ * information.
+ *
+ * @since 1.1
+ */
+EAPI void evas_object_image_load_orientation_set(Evas_Object *obj, Eina_Bool enable);
+
+/**
+ * @brief Get if the orientation information in the image file should be
+ * honored.
+ *
+ * @return @c true means that it should honor the orientation information.
+ *
+ * @since 1.1
+ */
+EAPI Eina_Bool evas_object_image_load_orientation_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the scale down factor of a given image object's source image,
+ * when loading it.
+ *
+ * This function sets the scale down factor of a given canvas image. Most
+ * useful for the SVG image loader.
+ *
+ * @param[in] scale_down The scale down factor.
+ */
+EAPI void evas_object_image_load_scale_down_set(Evas_Object *obj, int scale_down);
+
+/**
+ * @brief Get the scale down factor of a given image object's source image,
+ * when loading it.
+ *
+ * @return The scale down factor.
+ */
+EAPI int evas_object_image_load_scale_down_get(const Evas_Object *obj);
+
+/**
+ * @brief Retrieves a number representing any error that occurred during the
+ * last loading of the given image object's source image.
+ *
+ * @return A value giving the last error that occurred. It should be one of the
+ * @ref Evas_Load_Error values. #EVAS_LOAD_ERROR_NONE is returned if there was
+ * no error.
+ */
+EAPI Evas_Load_Error evas_object_image_load_error_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  *
@@ -3008,8 +3119,6 @@ EAPI void evas_object_image_fill_get(const Evas_Object *obj, Evas_Coord *x, Evas
  *
  * @param[in] filled @c true to make the fill property follow object size or
  * @c false otherwise.
- *
- * @ingroup Evas_Image
  */
 EAPI void evas_object_image_filled_set(Evas_Object *obj, Eina_Bool filled);
 
@@ -3022,10 +3131,173 @@ EAPI void evas_object_image_filled_set(Evas_Object *obj, Eina_Bool filled);
  *
  * @return @c true to make the fill property follow object size or @c false
  * otherwise.
+ */
+EAPI Eina_Bool evas_object_image_filled_get(const Evas_Object *obj);
+
+/**
+ * @brief Retrieve whether alpha channel data is being used on the given image
+ * object.
+ *
+ * This function returns @c true if the image object's alpha channel is being
+ * used, or @c false otherwise.
+ *
+ * @return Whether to use alpha channel ($true) data or not ($false).
  *
  * @ingroup Evas_Image
  */
-EAPI Eina_Bool evas_object_image_filled_get(const Evas_Object *obj);
+EAPI Eina_Bool evas_object_image_alpha_get(const Evas_Object *obj);
+
+/**
+ * @brief Enable or disable alpha channel usage on the given image object.
+ *
+ * This function sets a flag on an image object indicating whether or not to
+ * use alpha channel data. A value of @c true makes it use alpha channel data,
+ * and @c false makes it ignore that data. Note that this has nothing to do
+ * with an object's color as  manipulated by @ref evas_object_color_set.
+ *
+ * @param[in] alpha Whether to use alpha channel ($true) data or not ($false).
+ */
+EAPI void evas_object_image_alpha_set(Evas_Object *obj, Eina_Bool alpha);
+
+/**
+ * @brief Dimensions of this image's border, a region that does not scale with
+ * the center area.
+ *
+ * When EFL renders an image, its source may be scaled to fit the size of the
+ * object. This function sets an area from the borders of the image inwards
+ * which is not to be scaled. This function is useful for making frames and for
+ * widget theming, where, for example, buttons may be of varying sizes, but
+ * their border size must remain constant.
+ *
+ * The units used for @c l, @c r, @c t and @c b are canvas units (pixels).
+ *
+ * @note The border region itself may be scaled by the
+ * @ref evas_object_image_border_scale_set function.
+ *
+ * @note By default, image objects have no borders set, i.e. @c l, @c r, @c t
+ * and @c b start as 0.
+ *
+ * @note Similar to the concepts of 9-patch images or cap insets.
+ *
+ * @param[in] l The border's left width.
+ * @param[in] r The border's right width.
+ * @param[in] t The border's top height.
+ * @param[in] b The border's bottom height.
+ */
+EAPI void evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b);
+
+/**
+ * @brief Dimensions of this image's border, a region that does not scale with
+ * the center area.
+ *
+ * When EFL renders an image, its source may be scaled to fit the size of the
+ * object. This function sets an area from the borders of the image inwards
+ * which is not to be scaled. This function is useful for making frames and for
+ * widget theming, where, for example, buttons may be of varying sizes, but
+ * their border size must remain constant.
+ *
+ * The units used for @c l, @c r, @c t and @c b are canvas units (pixels).
+ *
+ * @note The border region itself may be scaled by the
+ * @ref evas_object_image_border_scale_set function.
+ *
+ * @note By default, image objects have no borders set, i.e. @c l, @c r, @c t
+ * and @c b start as 0.
+ *
+ * @note Similar to the concepts of 9-patch images or cap insets.
+ *
+ * @param[out] l The border's left width.
+ * @param[out] r The border's right width.
+ * @param[out] t The border's top height.
+ * @param[out] b The border's bottom height.
+ */
+EAPI void evas_object_image_border_get(const Evas_Object *obj, int *l, int *r, int *t, int *b);
+
+/**
+ * @brief Scaling factor applied to the image borders.
+ *
+ * This value multiplies the size of the @ref evas_object_image_border_get when
+ * scaling an object.
+ *
+ * Default value is 1.0 (no scaling).
+ *
+ * @param[in] scale The scale factor.
+ */
+EAPI void evas_object_image_border_scale_set(Evas_Object *obj, double scale);
+
+/**
+ * @brief Scaling factor applied to the image borders.
+ *
+ * This value multiplies the size of the @ref evas_object_image_border_get when
+ * scaling an object.
+ *
+ * Default value is 1.0 (no scaling).
+ *
+ * @return The scale factor.
+ */
+EAPI double evas_object_image_border_scale_get(const Evas_Object *obj);
+
+/**
+ * @brief Specifies how the center part of the object (not the borders) should
+ * be drawn when EFL is rendering it.
+ *
+ * This function sets how the center part of the image object's source image is
+ * to be drawn, which must be one of the values in @ref Evas_Border_Fill_Mode.
+ * By center we mean the complementary part of that defined by
+ * @ref evas_object_image_border_set. This one is very useful for making frames
+ * and decorations. You would most probably also be using a filled image (as in
+ * @ref Efl.Gfx.Fill.filled) to use as a frame.
+ *
+ * The default value is
+ *
+ * @param[in] fill Fill mode of the center region of @c obj (a value in
+ *  #Evas_Border_Fill_Mode).
+ */
+EAPI void evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Border_Fill_Mode fill);
+
+/**
+ * @brief Specifies how the center part of the object (not the borders) should
+ * be drawn when EFL is rendering it.
+ *
+ * This function sets how the center part of the image object's source image is
+ * to be drawn, which must be one of the values in @ref Evas_Border_Fill_Mode.
+ * By center we mean the complementary part of that defined by
+ * @ref evas_object_image_border_set. This one is very useful for making frames
+ * and decorations. You would most probably also be using a filled image (as in
+ * @ref Efl.Gfx.Fill.filled) to use as a frame.
+ *
+ * The default value is
+ *
+ * @return Fill mode of the center region of @c obj (a value in
+ *  #Evas_Border_Fill_Mode).
+ */
+EAPI Evas_Border_Fill_Mode evas_object_image_border_center_fill_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the image orientation.
+ *
+ * This function allows to rotate or flip the image.
+ *
+ * @param[in] orient The image orientation @ref Evas_Image_Orient. Default is
+ * #EVAS_IMAGE_ORIENT_NONE.
+ *
+ * @since 1.14
+ *
+ * @ingroup Evas_Image
+ */
+EAPI void evas_object_image_orient_set(Evas_Object *obj, Evas_Image_Orient orient);
+
+/**
+ * @brief Get the image orientation.
+ *
+ * @return The image orientation @ref Evas_Image_Orient. Default is
+ * #EVAS_IMAGE_ORIENT_NONE.
+ *
+ * @since 1.14
+ *
+ * @ingroup Evas_Image
+ */
+EAPI Evas_Image_Orient evas_object_image_orient_get(const Evas_Object *obj);
 
 /**
  *
@@ -3052,6 +3324,52 @@ EAPI void evas_object_image_size_set(Evas_Object *obj, int w, int h);
  * @param[out] h The new height of the image.
  */
 EAPI void evas_object_image_size_get(const Evas_Object *obj, int *w, int *h);
+
+/**
+ * @brief Set the colorspace of a given image of the canvas.
+ *
+ * This function sets the colorspace of given canvas image.
+ *
+ * @param[in] cspace The new color space.
+ *
+ * @ingroup Evas_Image
+ */
+EAPI void evas_object_image_colorspace_set(Evas_Object *obj, Evas_Colorspace cspace);
+
+/**
+ * @brief Get the colorspace of a given image of the canvas.
+ *
+ * This function returns the colorspace of given canvas image.
+ *
+ * @return The new color space.
+ *
+ * @ingroup Evas_Image
+ */
+EAPI Evas_Colorspace evas_object_image_colorspace_get(const Evas_Object *obj);
+
+/**
+ * @brief Retrieves the row stride of the given image object.
+ *
+ * The row stride is the number of bytes between the start of a row and the
+ * start of the next row for image data.
+ *
+ * @return The stride of the image (in bytes).
+ *
+ * @ingroup Evas_Image
+ */
+EAPI int evas_object_image_stride_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Mark a sub-region of the given image object to be redrawn.
+ *
+ * This function schedules a particular rectangular region of an image object
+ * to be updated (redrawn) at the next rendering cycle.
+ *
+ * @param[in] y Y-offset of the region to be updated.
+ * @param[in] w Width of the region to be updated.
+ * @param[in] h Height of the region to be updated.
+ */
+EAPI void evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h);
 
 /*
  * Converts the raw image data of the given image object to the

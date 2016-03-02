@@ -5,6 +5,10 @@ interface Efl.Gfx.View {
       @property view_size {
          [[The dimensions of this object's viewport.
 
+           FIXME
+           WRONG DOC!!!
+           USELESS API for image files
+
            This property will scale down or crop the image so that it is
            treated as if it were of the given size. If the given size is
            smaller than the image, it will be cropped. If it's larger, then

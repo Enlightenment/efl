@@ -17,7 +17,6 @@
 #include "../common/evas_convert_colorspace.h"
 #include "../common/evas_convert_yuv.h"
 
-#include "../efl/interfaces/efl_gfx_filter.eo.h"
 #include "evas_filter.eo.h"
 #include "evas_filter.h"
 
@@ -662,9 +661,10 @@ _evas_image_source_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 }
 
 EOLIAN static void
-_evas_image_orient_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Orient orient)
+_evas_image_efl_image_orientation_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Gfx_Orientation _orient)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Image_Orient orient = (Evas_Image_Orient) _orient;
    int iw, ih;
 
    if (o->cur->orient == orient) return;
@@ -710,10 +710,10 @@ _evas_image_orient_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Orient orient)
    evas_object_change(eo_obj, obj);
 }
 
-EOLIAN static Evas_Image_Orient
-_evas_image_orient_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+EOLIAN static Efl_Gfx_Orientation
+_evas_image_efl_image_orientation_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
-   return o->cur->orient;
+   return (Efl_Gfx_Orientation) o->cur->orient;
 }
 
 EAPI Eina_Bool
@@ -792,7 +792,7 @@ _evas_image_eo_base_dbg_info_get(Eo *eo_obj, Evas_Image_Data *o, Eo_Dbg_Info *ro
    if (evas_object_image_load_error_get(eo_obj) != EVAS_LOAD_ERROR_NONE)
      {
         Evas_Load_Error error = EVAS_LOAD_ERROR_GENERIC;
-        error = evas_obj_image_load_error_get(eo_obj);
+        error = (Evas_Load_Error) efl_image_load_error_get(eo_obj);
         EO_DBG_INFO_APPEND(group, "Load Error", EINA_VALUE_TYPE_STRING,
                                 evas_load_error_str(error));
      }
@@ -862,7 +862,7 @@ _evas_image_scene_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 }
 
 EOLIAN static void
-_evas_image_border_set(Eo *eo_obj, Evas_Image_Data *o, int l, int r, int t, int b)
+_evas_image_efl_image_border_set(Eo *eo_obj, Evas_Image_Data *o, int l, int r, int t, int b)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -889,7 +889,7 @@ _evas_image_border_set(Eo *eo_obj, Evas_Image_Data *o, int l, int r, int t, int 
 }
 
 EOLIAN static void
-_evas_image_border_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *l, int *r, int *t, int *b)
+_evas_image_efl_image_border_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *l, int *r, int *t, int *b)
 {
    if (l) *l = o->cur->border.l;
    if (r) *r = o->cur->border.r;
@@ -898,9 +898,11 @@ _evas_image_border_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *l, int *
 }
 
 EOLIAN static void
-_evas_image_border_center_fill_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Border_Fill_Mode fill)
+_evas_image_efl_image_border_center_fill_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Gfx_Border_Fill_Mode _fill)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Border_Fill_Mode fill = (Evas_Border_Fill_Mode) _fill;
+
    if (fill == o->cur->border.fill) return;
    evas_object_async_block(obj);
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
@@ -911,10 +913,10 @@ _evas_image_border_center_fill_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Border_F
    evas_object_change(eo_obj, obj);
 }
 
-EOLIAN static Evas_Border_Fill_Mode
-_evas_image_border_center_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+EOLIAN static Efl_Gfx_Border_Fill_Mode
+_evas_image_efl_image_border_center_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
-   return o->cur->border.fill;
+   return (Efl_Gfx_Border_Fill_Mode) o->cur->border.fill;
 }
 
 EOLIAN static void
@@ -950,7 +952,7 @@ _evas_image_efl_gfx_fill_filled_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 }
 
 EOLIAN static void
-_evas_image_border_scale_set(Eo *eo_obj, Evas_Image_Data *o, double scale)
+_evas_image_efl_image_border_scale_set(Eo *eo_obj, Evas_Image_Data *o, double scale)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -965,17 +967,9 @@ _evas_image_border_scale_set(Eo *eo_obj, Evas_Image_Data *o, double scale)
 }
 
 EOLIAN static double
-_evas_image_border_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_evas_image_efl_image_border_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->cur->border.scale;
-}
-
-EAPI void
-evas_object_image_fill_set(Evas_Image *obj,
-                           Evas_Coord x, Evas_Coord y,
-                           Evas_Coord w, Evas_Coord h)
-{
-   efl_gfx_fill_set((Evas_Image *)obj, x, y, w, h);
 }
 
 EOLIAN static void
@@ -1083,12 +1077,6 @@ _evas_image_efl_gfx_view_view_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, in
    evas_object_change(eo_obj, obj);
 }
 
-EAPI void
-evas_object_image_size_get(const Evas_Image *obj, int *w, int *h)
-{
-   efl_gfx_view_size_get((Evas_Image *)obj, w, h);
-}
-
 EOLIAN static void
 _evas_image_efl_gfx_view_view_size_get(Eo *eo_obj, Evas_Image_Data *o, int *w, int *h)
 {
@@ -1132,15 +1120,15 @@ _evas_image_efl_gfx_view_view_size_get(Eo *eo_obj, Evas_Image_Data *o, int *w, i
 }
 
 EOLIAN static int
-_evas_image_stride_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_evas_image_efl_gfx_buffer_buffer_stride_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
-   return o->cur->image.stride;;
+   return o->cur->image.stride;
 }
 
-EOLIAN static Evas_Load_Error
-_evas_image_load_error_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+EOLIAN static Efl_Image_Load_Error
+_evas_image_efl_image_load_load_error_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
-   return o->load_error;
+   return (Efl_Image_Load_Error) o->load_error;
 }
 
 /* deprecated */
@@ -1311,18 +1299,6 @@ _evas_image_data_get(const Eo *eo_obj, Evas_Image_Data *_pd EINA_UNUSED, Eina_Bo
    return data;
 }
 
-EAPI void
-evas_object_image_preload(Evas_Object *eo_obj, Eina_Bool cancel)
-{
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   if (cancel)
-     evas_obj_image_preload_cancel(eo_obj);
-   else
-     evas_obj_image_preload_begin(eo_obj);
-}
-
 static void
 _image_preload_internal(Eo *eo_obj, void *_pd, Eina_Bool cancel)
 {
@@ -1356,7 +1332,7 @@ _image_preload_internal(Eo *eo_obj, void *_pd, Eina_Bool cancel)
 }
 
 EOLIAN static void
-_evas_image_preload_begin(Eo *eo_obj, Evas_Image_Data *_pd EINA_UNUSED)
+_evas_image_efl_image_load_load_async_start(Eo *eo_obj, Evas_Image_Data *_pd EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -1364,7 +1340,7 @@ _evas_image_preload_begin(Eo *eo_obj, Evas_Image_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_evas_image_preload_cancel(Eo *eo_obj, Evas_Image_Data *_pd EINA_UNUSED)
+_evas_image_efl_image_load_load_async_cancel(Eo *eo_obj, Evas_Image_Data *_pd EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -1417,7 +1393,7 @@ _evas_image_data_copy_set(Eo *eo_obj, Evas_Image_Data *o, void *data)
 }
 
 EOLIAN static void
-_evas_image_data_update_add(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h)
+_evas_image_efl_gfx_buffer_buffer_update_region_add(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Eina_Rectangle *r;
@@ -1460,7 +1436,7 @@ _evas_image_data_update_add(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w,
 }
 
 EOLIAN static void
-_evas_image_alpha_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool has_alpha)
+_evas_image_efl_image_alpha_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool has_alpha)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -1506,7 +1482,7 @@ _evas_image_alpha_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool has_alpha)
 }
 
 EOLIAN static Eina_Bool
-_evas_image_alpha_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_evas_image_efl_image_alpha_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->cur->has_alpha;
 }
@@ -1868,7 +1844,7 @@ _evas_image_pixels_dirty_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 }
 
 EOLIAN static void
-_evas_image_load_dpi_set(Eo *eo_obj, Evas_Image_Data *o, double dpi)
+_evas_image_efl_image_load_load_dpi_set(Eo *eo_obj, Evas_Image_Data *o, double dpi)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if (dpi == o->load_opts->dpi) return;
@@ -1888,13 +1864,13 @@ _evas_image_load_dpi_set(Eo *eo_obj, Evas_Image_Data *o, double dpi)
 }
 
 EOLIAN static double
-_evas_image_load_dpi_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_evas_image_efl_image_load_load_dpi_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->load_opts->dpi;
 }
 
 EOLIAN static void
-_evas_image_efl_image_load_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h)
+_evas_image_efl_image_load_load_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if ((o->load_opts->w == w) && (o->load_opts->h == h)) return;
@@ -1918,14 +1894,14 @@ _evas_image_efl_image_load_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h
 }
 
 EOLIAN static void
-_evas_image_efl_image_load_size_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *w, int *h)
+_evas_image_efl_image_load_load_size_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *w, int *h)
 {
    if (w) *w = o->load_opts->w;
    if (h) *h = o->load_opts->h;
 }
 
 EOLIAN static void
-_evas_image_load_scale_down_set(Eo *eo_obj, Evas_Image_Data *o, int scale_down)
+_evas_image_efl_image_load_load_scale_down_set(Eo *eo_obj, Evas_Image_Data *o, int scale_down)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if (o->load_opts->scale_down_by == scale_down) return;
@@ -1945,13 +1921,13 @@ _evas_image_load_scale_down_set(Eo *eo_obj, Evas_Image_Data *o, int scale_down)
 }
 
 EOLIAN static int
-_evas_image_load_scale_down_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_evas_image_efl_image_load_load_scale_down_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->load_opts->scale_down_by;
 }
 
 EOLIAN static void
-_evas_image_load_region_set(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h)
+_evas_image_efl_image_load_load_region_set(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if ((o->load_opts->region.x == x) && (o->load_opts->region.y == y) &&
@@ -1977,7 +1953,7 @@ _evas_image_load_region_set(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w,
 }
 
 EOLIAN static void
-_evas_image_load_region_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *x, int *y, int *w, int *h)
+_evas_image_efl_image_load_load_region_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *x, int *y, int *w, int *h)
 {
    if (x) *x = o->load_opts->region.x;
    if (y) *y = o->load_opts->region.y;
@@ -1986,7 +1962,7 @@ _evas_image_load_region_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *x, 
 }
 
 EOLIAN static void
-_evas_image_load_orientation_set(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, Eina_Bool enable)
+_evas_image_efl_image_load_load_orientation_set(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, Eina_Bool enable)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if (o->load_opts->orientation == !!enable) return;
@@ -1998,15 +1974,17 @@ _evas_image_load_orientation_set(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, Ein
 }
 
 EOLIAN static Eina_Bool
-_evas_image_load_orientation_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_evas_image_efl_image_load_load_orientation_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->load_opts->orientation;;
 }
 
-EOLIAN static void
-_evas_image_colorspace_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Colorspace cspace)
+/* FIXME: This should be deprecated and a legacy binding for pixel_set should be added */
+EAPI void
+evas_object_image_colorspace_set(Evas_Object *eo_obj, Evas_Colorspace cspace)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Image_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    evas_object_async_block(obj);
 
    _evas_object_image_cleanup(eo_obj, obj, o);
@@ -2019,10 +1997,10 @@ _evas_image_colorspace_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Colorspace cspac
      ENFN->image_colorspace_set(ENDT, o->engine_data, cspace);
 }
 
-EOLIAN static Evas_Colorspace
-_evas_image_colorspace_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+EOLIAN static Efl_Gfx_Colorspace
+_evas_image_efl_gfx_buffer_colorspace_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
-   return o->cur->cspace;
+   return (Efl_Gfx_Colorspace) o->cur->cspace;
 }
 
 EOLIAN static void
@@ -2243,14 +2221,11 @@ _evas_image_content_hint_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 }
 
 EOLIAN static Eina_Bool
-_evas_image_region_support_get(Eo *eo_obj, Evas_Image_Data *o)
+_evas_image_efl_image_load_load_region_support_get(Eo *eo_obj, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
-   Eina_Bool region;
-   region = ENFN->image_can_region_get(ENDT, o->engine_data);
-
-   return region;
+   return ENFN->image_can_region_get(ENDT, o->engine_data);
 }
 
 /* animated feature */
@@ -4887,15 +4862,32 @@ evas_object_image_filled_add(Evas *eo_e)
 }
 
 EAPI void
-evas_object_image_filled_set(Evas_Object *eo_obj, Eina_Bool value)
+evas_object_image_fill_set(Evas_Image *obj,
+                           Evas_Coord x, Evas_Coord y,
+                           Evas_Coord w, Evas_Coord h)
 {
-   efl_gfx_fill_filled_set(eo_obj, value);
+   efl_gfx_fill_set((Evas_Image *)obj, x, y, w, h);
+}
+
+EAPI void
+evas_object_image_preload(Evas_Object *eo_obj, Eina_Bool cancel)
+{
+   if (cancel)
+     efl_image_load_async_cancel(eo_obj);
+   else
+     efl_image_load_async_start(eo_obj);
 }
 
 EAPI Eina_Bool
 evas_object_image_filled_get(const Evas_Object *eo_obj)
 {
-   return efl_gfx_fill_filled_get((Eo *) eo_obj);
+   return efl_gfx_fill_filled_get(eo_obj);
+}
+
+EAPI void
+evas_object_image_filled_set(Evas_Object *eo_obj, Eina_Bool value)
+{
+   efl_gfx_fill_filled_set(eo_obj, value);
 }
 
 EAPI void
@@ -4903,7 +4895,7 @@ evas_object_image_fill_get(const Evas_Image *obj,
                            Evas_Coord *x, Evas_Coord *y,
                            Evas_Coord *w, Evas_Coord *h)
 {
-   efl_gfx_fill_get((Evas_Image *)obj, x, y, w, h);
+   efl_gfx_fill_get(obj, x, y, w, h);
 }
 
 EAPI void
@@ -4921,45 +4913,117 @@ evas_object_image_fill_spread_get(const Evas_Image *obj EINA_UNUSED)
 }
 
 EAPI void
+evas_object_image_alpha_set(Evas_Object *obj, Eina_Bool alpha)
+{
+   efl_image_alpha_set(obj, alpha);
+}
+
+EAPI Eina_Bool
+evas_object_image_alpha_get(const Evas_Object *obj)
+{
+   return efl_image_alpha_get(obj);
+}
+
+EAPI void
+evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
+{
+   efl_image_border_set(obj, l, r, t, b);
+}
+
+EAPI void
+evas_object_image_border_get(const Evas_Object *obj, int *l, int *r, int *t, int *b)
+{
+   efl_image_border_get(obj, l, r, t, b);
+}
+
+EAPI void
+evas_object_image_border_scale_set(Evas_Object *obj, double scale)
+{
+   efl_image_border_scale_set(obj, scale);
+}
+
+EAPI double
+evas_object_image_border_scale_get(const Evas_Object *obj)
+{
+   return efl_image_border_scale_get(obj);
+}
+
+EAPI void
+evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Border_Fill_Mode fill)
+{
+   efl_image_border_center_fill_set(obj, (Efl_Gfx_Border_Fill_Mode) fill);
+}
+
+EAPI Evas_Border_Fill_Mode
+evas_object_image_border_center_fill_get(const Evas_Object *obj)
+{
+   return (Evas_Border_Fill_Mode) efl_image_border_center_fill_get(obj);
+}
+
+EAPI void
+evas_object_image_size_get(const Evas_Image *obj, int *w, int *h)
+{
+   efl_gfx_view_size_get((Evas_Image *)obj, w, h);
+}
+
+EAPI void
 evas_object_image_size_set(Evas_Image *obj, int w, int h)
 {
-   efl_gfx_view_size_set((Evas_Image *)obj, w, h);
+   efl_gfx_view_size_set(obj, w, h);
+}
+
+EAPI Evas_Colorspace
+evas_object_image_colorspace_get(const Evas_Object *obj)
+{
+   return (Evas_Colorspace) efl_gfx_buffer_colorspace_get(obj);
+}
+
+EAPI int
+evas_object_image_stride_get(const Evas_Object *obj)
+{
+   return efl_gfx_buffer_stride_get(obj);
+}
+
+EAPI void
+evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
+{
+   efl_gfx_buffer_update_region_add(obj, x, y, w, h);
 }
 
 EAPI void
 evas_object_image_file_set(Eo *obj, const char *file, const char *key)
 {
-   efl_file_set((Eo *) obj, file, key);
+   efl_file_set(obj, file, key);
 }
 
 EAPI void
 evas_object_image_file_get(const Eo *obj, const char **file, const char **key)
 {
-   efl_file_get((Eo *) obj, file, key);
+   efl_file_get(obj, file, key);
 }
 
 EAPI void
 evas_object_image_mmap_set(Evas_Image *obj, const Eina_File *f, const char *key)
 {
-   efl_file_mmap_set((Evas_Image *)obj, f, key);
+   efl_file_mmap_set(obj, f, key);
 }
 
 EAPI void
 evas_object_image_mmap_get(const Evas_Image *obj, const Eina_File **f, const char **key)
 {
-   efl_file_mmap_get((Evas_Image *)obj, f, key);
+   efl_file_mmap_get(obj, f, key);
 }
 
 EAPI Eina_Bool
 evas_object_image_save(const Eo *obj, const char *file, const char *key, const char *flags)
 {
-   return efl_file_save((Eo *) obj, file, key, flags);
+   return efl_file_save(obj, file, key, flags);
 }
 
 EAPI Eina_Bool
 evas_object_image_animated_get(const Eo *obj)
 {
-   return efl_image_animated_get((Eo *) obj);
+   return efl_image_animated_get(obj);
 }
 
 EAPI void
@@ -4995,25 +5059,97 @@ evas_object_image_animated_frame_duration_get(const Evas_Object *obj, int start_
 EAPI void
 evas_object_image_load_size_set(Eo *obj, int w, int h)
 {
-   efl_image_load_size_set((Eo *) obj, w, h);
+   efl_image_load_size_set(obj, w, h);
 }
 
 EAPI void
 evas_object_image_load_size_get(const Eo *obj, int *w, int *h)
 {
-   efl_image_load_size_get((Eo *) obj, w, h);
+   efl_image_load_size_get(obj, w, h);
+}
+
+EAPI void
+evas_object_image_load_dpi_set(Evas_Object *obj, double dpi)
+{
+   efl_image_load_dpi_set(obj, dpi);
+}
+
+EAPI double
+evas_object_image_load_dpi_get(const Evas_Object *obj)
+{
+   return efl_image_load_dpi_get(obj);
+}
+
+EAPI void
+evas_object_image_load_region_set(Evas_Object *obj, int x, int y, int w, int h)
+{
+   efl_image_load_region_set(obj, x, y, w, h);
+}
+
+EAPI void
+evas_object_image_load_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h)
+{
+   efl_image_load_region_get(obj, x, y, w, h);
+}
+
+EAPI Eina_Bool
+evas_object_image_region_support_get(const Evas_Image *obj)
+{
+   return efl_image_load_region_support_get(obj);
+}
+
+EAPI void
+evas_object_image_load_orientation_set(Evas_Object *obj, Eina_Bool enable)
+{
+   efl_image_load_orientation_set(obj, enable);
+}
+
+EAPI Eina_Bool
+evas_object_image_load_orientation_get(const Evas_Object *obj)
+{
+   return efl_image_load_orientation_get(obj);
+}
+
+EAPI void
+evas_object_image_load_scale_down_set(Evas_Object *obj, int scale_down)
+{
+   efl_image_load_scale_down_set(obj, scale_down);
+}
+
+EAPI int
+evas_object_image_load_scale_down_get(const Evas_Object *obj)
+{
+   return efl_image_load_scale_down_get(obj);
+}
+
+EAPI Evas_Load_Error
+evas_object_image_load_error_get(const Evas_Object *obj)
+{
+   return (Evas_Load_Error) efl_image_load_error_get(obj);
 }
 
 EAPI void
 evas_object_image_smooth_scale_set(Eo *obj, Eina_Bool smooth_scale)
 {
-   efl_image_smooth_scale_set((Eo *) obj, smooth_scale);
+   efl_image_smooth_scale_set(obj, smooth_scale);
 }
 
 EAPI Eina_Bool
 evas_object_image_smooth_scale_get(const Eo *obj)
 {
-   return efl_image_smooth_scale_get((Eo *) obj);
+   return efl_image_smooth_scale_get(obj);
+}
+
+EAPI void
+evas_object_image_orient_set(Evas_Image *obj, Evas_Image_Orient orient)
+{
+   efl_image_orientation_set(obj, (Efl_Gfx_Orientation) orient);
+}
+
+EAPI Evas_Image_Orient
+evas_object_image_orient_get(const Evas_Image *obj)
+{
+   return (Evas_Image_Orient) efl_image_orientation_get(obj);
 }
 
 #include "canvas/evas_image.eo.c"

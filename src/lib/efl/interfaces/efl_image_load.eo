@@ -1,0 +1,203 @@
+/* FIXME: maybe add error code for "currently running" or "pending" ? */
+enum Efl.Image_Load.Error
+{
+   none = 0,                       [[No error on load]]
+   generic = 1,                    [[A non-specific error occurred]]
+   does_not_exist = 2,             [[File (or file path) does not exist]]
+   permission_denied = 3,          [[Permission denied to an existing file (or path)]]
+   resource_allocation_failed = 4, [[Allocation of resources failure prevented load]]
+   corrupt_file = 5,               [[File corrupt (but was detected as a known format)]]
+   unknown_format = 6              [[File is not a known format]]
+}
+
+/* FIXME: state or status??? */
+enum Efl.Image_Load.State
+{
+   none = 0,      [[Not loading any image.]]
+   loaded = 1,    [[Image data is loaded, nothing is pending.]]
+   pending = 2,   [[The image has been queued for load, but actual loading may not have started yet.]]
+   loading = 3,   [[The image is currently loading.]]
+   error = 4,     [[Image load has failed. Call @Efl.Image_Load.load_error.get to know why.]]
+   cancelled = 5  [[Image load has been cancelled.]]
+}
+
+/* FIXME: Efl.Image.Load */
+interface Efl.Image_Load ()
+{
+   [[Common APIs for all loadable 2D images.]]
+   legacy_prefix: null;
+
+   methods {
+      load_async_start {
+         [[Begin preloading an image object's image data in the background.
+
+           Once the background task is done, the event $load,done will be
+           emitted.
+         ]]
+      }
+      load_async_cancel {
+         [[Cancel preloading an image object's image data in the background.
+
+           The event $load,cancelled should be triggered soon after
+           cancellation happened, and the object should be left in a state
+           where it has no image data. If cancel is called too late, the image
+           will be kept in memory.
+         ]]
+      }
+      @property load_state {
+         get {
+            [[Queries information on the current state of load of the image.
+
+              While more relevant to asynchronous load, this will also return
+              meaningful information about the last synchronous load.
+            ]]
+         }
+         values {
+            state: Efl.Image_Load.State;
+         }
+      }
+      @property load_size {
+         [[The load size of an image.
+
+           The image will be loaded into memory as if it was the specified
+           size instead of its original size. This can save a lot of memory,
+           and is important for scalable types like svg.
+
+           By default, the load size is not specified, so it is 0x0.
+         ]]
+         set {
+            [[Requests the canvas to load the image at the given size.
+
+              EFL will try to load the image at the requested size, but does
+              not garantee an exact match between the request and the loaded
+              image dimensions.
+            ]]
+         }
+         get {
+            [[Returns the requested load size.]]
+         }
+         values {
+            w: int; [[Width of the image's load size.]]
+            h: int; [[Height of the image's load size.]]
+         }
+      }
+      @property load_dpi {
+         set {
+            [[Set the DPI resolution of an image object's source image.
+
+              This function sets the DPI resolution of a given loaded canvas
+              image. Most useful for the SVG image loader.
+            ]]
+         }
+         get {
+            [[Get the DPI resolution of a loaded image object in the canvas.
+
+              This function returns the DPI resolution of the given canvas
+              image.
+            ]]
+         }
+         values {
+            dpi: double; [[The DPI resolution.]]
+         }
+      }
+      @property load_region_support {
+         [[Indicates whether the @.load_region property is supported for the
+           current file.
+
+           @since 1.2
+         ]]
+         get {}
+         values {
+            support: bool;
+         }
+      }
+      @property load_region {
+         set {
+            [[Inform a given image object to load a selective region of its
+              source image.
+
+              This function is useful when one is not showing all of an
+              image's area on its image object.
+
+              Note: The image loader for the image format in question has
+              to support selective region loading in order to this function
+              to take effect.
+            ]]
+         }
+         get {
+            [[Retrieve the coordinates of a given image object's selective
+              (source image) load region.
+
+              Note: Use $null pointers on the coordinates you're not
+              interested in: they'll be ignored by the function.
+            ]]
+         }
+         values {
+            x: int; [[X-offset of the region to be loaded.]]
+            y: int; [[Y-offset of the region to be loaded.]]
+            w: int; [[Width of the region to be loaded.]]
+            h: int; [[Height of the region to be loaded.]]
+         }
+      }
+      @property load_orientation {
+         [[Defines whether the orientation information in the image file
+           should be honored.
+
+           The orientation can for instance be set in the EXIF tags of a
+           JPEG image. If this flag is $false, then the orientation will be
+           ignored at load time, otherwise the image will be loaded with the
+           proper orientation.
+
+           @since 1.1
+         ]]
+         set {}
+         get {}
+         values {
+            enable: bool; [[$true means that it should honor the orientation
+                            information.]]
+         }
+      }
+      @property load_scale_down {
+         [[The scale down factor is a divider on the original image size.
+
+           Setting the scale down factor can reduce load time and memory usage,
+           at the cost of having a scaled down image in memory.
+
+           This function sets the scale down factor of a given canvas
+           image. Most useful for the SVG image loader, but also applies
+           to JPEG, PNG and BMP.
+
+           Powers of two (2, 4, 8) are best supported (especially with JPEG)
+         ]]
+         set {
+            [[Requests the image loader to scale down by $div times.
+              Call this before starting the actual image load.
+            ]]
+         }
+         get {}
+         values {
+            div: int; [[The scale down dividing factor.]]
+         }
+      }
+      /* FIXME: do we want this? or only rely on the events?
+       * what if preload is currently running?
+       */
+      @property load_error {
+         get {
+            [[Retrieves a number representing any error that occurred during
+              the last loading of the given image object's source image.
+            ]]
+            return: Efl.Image_Load.Error @warn_unused; [[
+               A value giving the last error that occurred, one of
+               @Efl.Image_Load.Error values. @Efl.Image_Load.Error.none is
+               returned if there was no error.
+            ]]
+         }
+      }
+   }
+   events {
+      load,done;
+      load,error: Efl.Image_Load.Error;
+      load,cancelled;
+   }
+}

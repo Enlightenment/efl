@@ -8,11 +8,13 @@
 #include "interfaces/efl_file.eo.c"
 #include "interfaces/efl_image.eo.c"
 #include "interfaces/efl_image_animated.eo.c"
+#include "interfaces/efl_image_load.eo.c"
 #include "interfaces/efl_player.eo.c"
 #include "interfaces/efl_text.eo.c"
 #include "interfaces/efl_text_properties.eo.c"
 
 #include "interfaces/efl_gfx_base.eo.c"
+#include "interfaces/efl_gfx_buffer.eo.c"
 #include "interfaces/efl_gfx_stack.eo.c"
 #include "interfaces/efl_gfx_fill.eo.c"
 #include "interfaces/efl_gfx_view.eo.c"

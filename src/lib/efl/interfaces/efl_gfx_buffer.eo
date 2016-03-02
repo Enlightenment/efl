@@ -1,0 +1,165 @@
+import efl_gfx_types;
+
+/* FIXME: this is very very low level. expose to apps? */
+enum Efl.Gfx.Buffer.Access_Mode {
+   none      = 0x0,
+   read      = 0x1,
+   write     = 0x2,
+   cow       = 0x4,  [[Forces copy-on-write if already mapped as read-only. Requires write.]]
+}
+
+interface Efl.Gfx.Buffer ()
+{
+   [[Common APIs for all objects representing images and 2D pixel buffers.]]
+   legacy_prefix: null;
+
+   methods {
+      @property buffer_size {
+         [[Rectangular size of the pixel buffer as allocated in memory.]]
+         set {
+            [[Potentially not implemented, @.buffer_size may be read-only.]]
+         }
+         get {}
+         values {
+            w: int; [[Width in pixels.]]
+            h: int; [[Height in pixels.]]
+         }
+      }
+      @property colorspace {
+         [[The colorspace defines how pixels are encoded in the image in memory.
+
+           By default, images are encoded in 32-bit BGRA, ie. each pixel takes
+           4 bytes in memory, with each channel B,G,R,A encoding the color with
+           values from 0 to 255.
+
+           All images used in EFL use alpha-premultipied BGRA values, which
+           means that for each pixel, B <= A, G <= A and R <= A.
+         ]]
+         get {
+            [[Returns the current encoding of this buffer's pixels.
+
+              See @Efl.Gfx.Colorspace for more information on the supported
+              formats.
+            ]]
+         }
+         values {
+            cspace: Efl.Gfx.Colorspace;
+         }
+      }
+
+      @property buffer_stride {
+         [[Length in bytes of one row of pixels in memory.
+
+           Usually this will be equal to width * 4, with a plain BGRA image.
+           This may return 0 if the stride is not applicable.
+
+           When applicable, this will include the @.buffer_borders as well
+           as potential extra padding.
+         ]]
+         get {}
+         values {
+            stride: int;
+         }
+      }
+
+      buffer_update_region_add {
+         [[Mark a sub-region of the given image object to be redrawn.
+
+           This function schedules a particular rectangular region of an
+           image object to be updated (redrawn) at the next rendering cycle.
+         ]]
+         params {
+            @in x: int; [[X-offset of the region to be updated.]]
+            @in y: int; [[Y-offset of the region to be updated.]]
+            @in w: int; [[Width of the region to be updated.]]
+            @in h: int; [[Height of the region to be updated.]]
+         }
+      }
+
+      /* FIXME: too low-level? */
+      @property buffer_borders {
+         [[Duplicated pixel borders inside this buffer.
+
+           Internally, EFL may require an image to have its border pixels
+           duplicated, in particular for GL textures. This property exposes
+           the internal duplicated borders to allow calling @.buffer_map
+           with the entire pixel data, including those edge pixels.
+         ]]
+         get {}
+         values {
+            l: uint(0); [[Left border pixels, usually 0 or 1]]
+            r: uint(0); [[Right border pixels, usually 0 or 1]]
+            t: uint(0); [[Top border pixels, usually 0 or 1]]
+            b: uint(0); [[Bottom border pixels, usually 0 or 1]]
+         }
+      }
+
+      /* FIXME: split into read-only and writeable methods? */
+      /* FIXME: This was copy pasta from ector generic buffer. changed a bit. */
+      buffer_map {
+         [[Map a region of this buffer for read or write access by the CPU.
+
+           Fetches data from the GPU if needed. This operation may be slow if
+           cpu_readable_fast or cpu_writeable_fast are not true, or if the
+           required colorspace is different from the internal one.
+
+           Note that if the buffer has @.buffer_borders, then $x and $y may
+           be negative.
+         ]]
+         params {
+            @out length: uint @nonull; [[Accessible buffer size in bytes, should not be $null.]]
+            @in mode: Efl.Gfx.Buffer.Access_Mode; [[Specifies whether to map for read-only,
+                                                    write-only or read-write access (OR combinaison of flags).]]
+            @in x: int @optional;  [[X position of the top-left pixel to map, defaults to 0.]]
+            @in y: int @optional;  [[Y position of the top-left pixel to map, defaults to 0.]]
+            @in w: uint @optional; [[If 0, defaults to the buffer width.]]
+            @in h: uint @optional; [[If 0, defaults to the buffer height.]]
+            @in cspace: Efl.Gfx.Colorspace @optional; [[Requested colorspace. If differen from the internal cspace,
+                                                        map should try to convert the data into a new buffer.
+                                                        argb8888 by default.]]
+            @out stride: uint @optional; [[Returns the length in bytes of a mapped line]]
+         }
+         return: ubyte* @warn_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
+      }
+      buffer_unmap {
+         [[Unmap a region of this buffer, and update the internal data if needed.
+
+           EFL will update the internal image if the map had write access.
+         ]]
+         params {
+            @in data: ubyte*; [[Data pointer returned by a previous call to map]]
+            @in length: uint; [[Must be the same as returned by map.]]
+         }
+      }
+      buffer_set {
+         [[Set the pixels for this buffer, or allocate a new memory region.
+
+           EFL will copy the $pixels to an internal buffer, and update the
+           GPU-side texture if required. This will mark the image as dirty.
+
+           If $pixels is $null, then a new empty buffer will be allocated.
+
+           If the buffer already had pixel data, the previous image data will
+           be dropped and the internal buffer may be resized to fit the new
+           pixel data.
+
+           Note: Use @Efl.Gfx.Buffer.buffer_size.set and @.buffer_map to
+           request EFL to allocate the buffer itself, instead of using this
+           function.
+         ]]
+         params {
+            @in pixels: ubyte*; [[If $null, allocates an empty buffer]]
+            @in width: int;
+            @in height: int;
+            @in stride: int @optional; [[If 0, automatically guessed from the width.]]
+            @in cspace: Efl.Gfx.Colorspace @optional; [[argb8888 by default.]]
+            @in l: uint @optional; [[Left border pixels, usually 0 or 1]]
+            @in r: uint @optional; [[Right border pixels, usually 0 or 1]]
+            @in t: uint @optional; [[Top border pixels, usually 0 or 1]]
+            @in b: uint @optional; [[Bottom border pixels, usually 0 or 1]]
+         }
+         return: bool;
+      }
+      /* Note: border, span and buffer flags not imported from ector buffer */
+   }
+}

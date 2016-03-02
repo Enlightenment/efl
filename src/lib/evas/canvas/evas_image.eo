@@ -1,30 +1,11 @@
 type @extern Evas_Object_Image_Pixels_Get_Cb: __undefined_type; /* FIXME: func pointers are not supported. */
 
-class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Animated, Efl.Gfx.Fill, Efl.Gfx.View, Evas.Filter)
+class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Load, Efl.Image_Animated, Efl.Gfx.Buffer, Efl.Gfx.Fill, Efl.Gfx.View, Evas.Filter)
 {
    legacy_prefix: evas_object_image;
    eo_prefix: evas_obj_image;
    methods {
-      @property load_dpi {
-         set {
-            [[Set the DPI resolution of an image object's source image.
-
-              This function sets the DPI resolution of a given loaded canvas
-              image. Most useful for the SVG image loader.
-            ]]
-         }
-         get {
-            [[Get the DPI resolution of a loaded image object in the canvas.
-
-              This function returns the DPI resolution of the given canvas
-              image.
-            ]]
-         }
-         values {
-            dpi: double; [[The DPI resolution.]]
-         }
-      }
-
+      /* PROXY stuff */
       @property source_clip {
          set {
             [[Clip the proxy object with the source object's clipper.
@@ -71,245 +52,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Animated, Efl.Gfx.
             src: Evas.Object *; [[Source object to use for the proxy.]]
          }
       }
-      @property content_hint {
-         set {
-            [[Set the content hint setting of a given image object of the
-              canvas.
-
-              This function sets the content hint value of the given image
-              of the canvas. For example, if you're on the GL engine and
-              your driver implementation supports it, setting this hint to
-              #EVAS_IMAGE_CONTENT_HINT_DYNAMIC will make it need zero copies
-              at texture upload time, which is an "expensive" operation.
-            ]]
-         }
-         get {
-            [[Get the content hint setting of a given image object of the
-              canvas.
-
-              This returns #EVAS_IMAGE_CONTENT_HINT_NONE on error.
-            ]]
-         }
-         values {
-            hint: Evas.Image_Content_Hint; [[The content hint value, one of
-                                             the @Evas.Image_Content_Hint ones.]]
-         }
-      }
-      @property load_region {
-         set {
-            [[Inform a given image object to load a selective region of its
-              source image.
-
-              This function is useful when one is not showing all of an
-              image's area on its image object.
-
-              Note: The image loader for the image format in question has
-              to support selective region loading in order to this function
-              to take effect.
-            ]]
-         }
-         get {
-            [[Retrieve the coordinates of a given image object's selective
-              (source image) load region.
-
-              Note: Use $null pointers on the coordinates you're not
-              interested in: they'll be ignored by the function.
-            ]]
-         }
-         values {
-            x: int; [[X-offset of the region to be loaded.]]
-            y: int; [[Y-offset of the region to be loaded.]]
-            w: int; [[Width of the region to be loaded.]]
-            h: int; [[Height of the region to be loaded.]]
-         }
-      }
-      @property alpha {
-         set {
-            [[Enable or disable alpha channel usage on the given image
-              object.
-
-              This function sets a flag on an image object indicating
-              whether or not to use alpha channel data. A value of $true
-              makes it use alpha channel data, and $false makes it ignore
-              that data. Note that this has nothing to do with an object's
-              color as  manipulated by \@ref evas_object_color_set.
-            ]]
-         }
-         get {
-            [[Retrieve whether alpha channel data is being used on the
-              given image object.
-
-              This function returns $true if the image object's alpha
-              channel is being used, or $false otherwise.
-            ]]
-         }
-         values {
-            alpha: bool; [[Whether to use alpha channel ($true) data
-                           or not ($false).]]
-         }
-      }
-      @property border {
-         set {
-            [[Set the dimensions for an image object's border, a region
-              which won't ever be scaled together with its center.
-
-              When Evas is rendering, an image source may be scaled to fit
-              the size of its image object. This function sets an area from
-              the borders of the image inwards which is not to be scaled.
-              This function is useful for making frames and for widget
-              theming, where, for example, buttons may be of varying
-              sizes, but their border size must remain constant.
-
-              The units used for $l, $r, $t and $b are canvas units.
-
-              Note: The border region itself may be scaled by the
-              @.border_scale.set function.
-
-              Note: By default, image objects have no borders set, i. e.
-              $l, $r, $t and $b start as 0.
-            ]]
-            /* FIXME-doc
-            See the following figures for visual explanation:\n
-            @htmlonly
-            <img src="image-borders.png" style="max-width: 100%;" />
-            <a href="image-borders.png">Full-size</a>
-            @endhtmlonly
-            @image rtf image-borders.png
-            @image latex image-borders.eps width=\textwidth
-            @htmlonly
-            <img src="border-effect.png" style="max-width: 100%;" />
-            <a href="border-effect.png">Full-size</a>
-            @endhtmlonly
-            @image rtf border-effect.png
-            @image latex border-effect.eps width=\textwidth
-            */
-         }
-         get {
-            [[Retrieve the dimensions for an image object's border, a
-              region which won't ever be scaled together with its center.
-
-              Note: Use $null pointers on the border components you're not
-              interested in: they'll be ignored by the function.
-            ]]
-         }
-         values {
-            l: int; [[The border's left width.]]
-            r: int; [[The border's right width.]]
-            t: int; [[The border's top width.]]
-            b: int; [[The border's bottom width.]]
-         }
-      }
-      @property border_scale {
-         set {
-            [[Sets the scaling factor (multiplier) for the borders of an
-              image object.
-            ]]
-         }
-         get {
-            [[Retrieves the scaling factor (multiplier) for the borders
-              of an image object.
-            ]]
-         }
-         values {
-            scale: double; [[The scale factor (default is 1.0 - i.e. no scaling).]]
-         }
-      }
-      @property pixels_dirty {
-         set {
-            [[Mark whether the given image object is dirty and needs to
-              request its pixels.
-
-              This function will only properly work if a pixels get
-              callback has been set.
-
-              Warning: Use this function if you really know what you are
-              doing.
-            ]]
-         }
-         get {
-            [[Retrieves whether the given image object is dirty (needs to
-              be redrawn).
-            ]]
-         }
-         values {
-            dirty: bool; [[Whether the image is dirty.]]
-         }
-      }
-      @property video_surface {
-         set {
-            [[Set the video surface linked to a given image of the canvas.
-
-              @since 1.1
-            ]]
-            values {
-               surf: Evas.Video_Surface*; [[The new video surface.]]
-            }
-         }
-         get {
-            [[Get the video surface linekd to a given image of the canvas.
-
-              @since 1.1
-            ]]
-            values {
-               surf: const(Evas.Video_Surface)*; [[The new video surface.]]
-            }
-         }
-      }
-      @property video_surface_caps {
-         set {
-            [[Set the video surface capabilities to a given image of the canvas.]]
-         }
-         get {
-            [[Get the video surface capabilities to a given image of the canvas.]]
-         }
-         values {
-            caps: uint;
-         }
-      }
-      @property load_orientation {
-         set {
-            [[Define if the orientation information in the image file
-              should be honored.
-
-              @since 1.1
-            ]]
-         }
-         get {
-            [[Get if the orientation information in the image file should
-              be honored.
-
-              @since 1.1
-            ]]
-         }
-         values {
-            enable: bool; [[$true means that it should honor the orientation
-                            information.]]
-         }
-      }
-      @property border_center_fill {
-         set {
-            [[Sets how the center part of the given image object (not the
-              borders) should be drawn when Evas is rendering it.
-
-              This function sets how the center part of the image object's
-              source image is to be drawn, which must be one of the values
-              in @Evas.Border_Fill_Mode. By center we mean the complementary
-              part of that defined by @.border.set. This one is very useful
-              for making frames and decorations. You would most probably
-              also be using a filled image (as in @Efl.Gfx.Fill.filled) to use
-              as a frame.
-            ]]
-         }
-         get {
-            [[Retrieves how the center part of the given image object (not
-              the borders) is to be drawn when Evas is rendering it.
-            ]]
-         }
-         values {
-            fill: Evas.Border_Fill_Mode; [[Fill mode of the center region
-                                           of $obj (a value in  #Evas_Border_Fill_Mode).]]
-         }
-      }
       @property source_visible {
          set {
             [[Set the source object to be visible or not.
@@ -342,64 +84,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Animated, Efl.Gfx.
                              otherwise.]]
          }
       }
-      @property native_surface {
-         set {
-            [[Set the native surface of a given image of the canvas
-
-              This function sets a native surface of a given canvas image.
-            ]]
-            legacy: null;
-         }
-         get {
-            [[Get the native surface of a given image of the canvas
-
-              This function returns the native surface of a given canvas
-              image.
-            ]]
-         }
-         values {
-            surf: Evas.Native_Surface* @nonull; [[The native surface.]]
-         }
-      }
-      @property load_scale_down {
-         set {
-            [[Set the scale down factor of a given image object's source
-              image, when loading it.
-
-              This function sets the scale down factor of a given canvas
-              image. Most useful for the SVG image loader.
-            ]]
-         }
-         get {
-            [[Get the scale down factor of a given image object's source
-              image, when loading it.
-            ]]
-         }
-         values {
-            scale_down: int; [[The scale down factor.]]
-         }
-      }
-      @property scale_hint {
-         set {
-            [[Set the scale hint of a given image of the canvas.
-
-              This function sets the scale hint value of the given image
-              object in the canvas, which will affect how Evas is to cache
-              scaled versions of its original source image.
-            ]]
-         }
-         get {
-            [[Get the scale hint of a given image of the canvas.
-
-              This function returns the scale hint value of the given image
-              object of the canvas.
-            ]]
-         }
-         values {
-            hint: Evas.Image_Scale_Hint; [[The scale hint, a value in
-                                           @Evas.Image_Scale_Hint.]]
-         }
-      }
       @property source_events {
          set {
             [[Set whether an Evas object is to source events.
@@ -428,21 +112,74 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Animated, Efl.Gfx.
                             ($false).]]
          }
       }
-      @property colorspace {
-         set {
-            [[Set the colorspace of a given image of the canvas.
 
-              This function sets the colorspace of given canvas image.
+      /* weird stuff - hints */
+      @property content_hint {
+         set {
+            [[Set the content hint setting of a given image object of the
+              canvas.
+
+              This function sets the content hint value of the given image
+              of the canvas. For example, if you're on the GL engine and
+              your driver implementation supports it, setting this hint to
+              #EVAS_IMAGE_CONTENT_HINT_DYNAMIC will make it need zero copies
+              at texture upload time, which is an "expensive" operation.
             ]]
          }
          get {
-            [[Get the colorspace of a given image of the canvas.
+            [[Get the content hint setting of a given image object of the
+              canvas.
 
-              This function returns the colorspace of given canvas image.
+              This returns #EVAS_IMAGE_CONTENT_HINT_NONE on error.
             ]]
          }
          values {
-            cspace: Evas_Colorspace; [[The new color space.]]
+            hint: Evas.Image_Content_Hint; [[The content hint value, one of
+                                             the @Evas.Image_Content_Hint ones.]]
+         }
+      }
+      @property scale_hint {
+         set {
+            [[Set the scale hint of a given image of the canvas.
+
+              This function sets the scale hint value of the given image
+              object in the canvas, which will affect how Evas is to cache
+              scaled versions of its original source image.
+            ]]
+         }
+         get {
+            [[Get the scale hint of a given image of the canvas.
+
+              This function returns the scale hint value of the given image
+              object of the canvas.
+            ]]
+         }
+         values {
+            hint: Evas.Image_Scale_Hint; [[The scale hint, a value in
+                                           @Evas.Image_Scale_Hint.]]
+         }
+      }
+
+      /* GL View */
+      @property pixels_dirty {
+         set {
+            [[Mark whether the given image object is dirty and needs to
+              request its pixels.
+
+              This function will only properly work if a pixels get
+              callback has been set.
+
+              Warning: Use this function if you really know what you are
+              doing.
+            ]]
+         }
+         get {
+            [[Retrieves whether the given image object is dirty (needs to
+              be redrawn).
+            ]]
+         }
+         values {
+            dirty: bool; [[Whether the image is dirty.]]
          }
       }
       @property pixels_get_callback {
@@ -456,6 +193,60 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Animated, Efl.Gfx.
          values {
             func: Evas_Object_Image_Pixels_Get_Cb @nonull; [[The callback function.]]
             data: void *; [[The data pointer to be passed to $func.]]
+         }
+      }
+
+      /* Video */
+      @property video_surface {
+         set {
+            [[Set the video surface linked to a given image of the canvas.
+
+              @since 1.1
+            ]]
+            values {
+               surf: Evas.Video_Surface*; [[The new video surface.]]
+            }
+         }
+         get {
+            [[Get the video surface linekd to a given image of the canvas.
+
+              @since 1.1
+            ]]
+            values {
+               surf: const(Evas.Video_Surface)*; [[The new video surface.]]
+            }
+         }
+      }
+      @property video_surface_caps {
+         set {
+            [[Set the video surface capabilities to a given image of the canvas.]]
+         }
+         get {
+            [[Get the video surface capabilities to a given image of the canvas.]]
+         }
+         values {
+            caps: uint;
+         }
+      }
+
+      /* native surface */
+      @property native_surface {
+         set {
+            [[Set the native surface of a given image of the canvas
+
+              This function sets a native surface of a given canvas image.
+            ]]
+            legacy: null;
+         }
+         get {
+            [[Get the native surface of a given image of the canvas
+
+              This function returns the native surface of a given canvas
+              image.
+            ]]
+         }
+         values {
+            surf: Evas.Native_Surface* @nonull; [[The native surface.]]
          }
       }
       @property data_copy {
@@ -482,38 +273,8 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Animated, Efl.Gfx.
             data: void *; [[The raw data to replace.]]
          }
       }
-      @property region_support {
-         get {
-            [[Get the support state of a given image.
 
-              @since 1.2
-            ]]
-            return: bool @warn_unused; [[The region support state.]]
-         }
-      }
-      @property load_error {
-         get {
-            [[Retrieves a number representing any error that occurred during
-              the last loading of the given image object's source image.
-            ]]
-            return: Evas.Load_Error @warn_unused; [[
-               A value giving the last error that occurred. It should be
-               one of the @Evas.Load_Error values. #EVAS_LOAD_ERROR_NONE
-               is returned if there was no error.
-            ]]
-         }
-      }
-      @property stride {
-         get {
-            [[Retrieves the row stride of the given image object.
-
-              The row stride is the number of bytes between the start of a
-              row and the start of the next row for image data.
-            ]]
-            return: int @warn_unused; [[The stride of the image (in bytes).]]
-         }
-      }
-
+      /* 3d */
       @property scene {
          set {
             [[Set the 3D scene of a given image of the canvas.
@@ -522,7 +283,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Animated, Efl.Gfx.
 
               @since 1.10
             ]]
-	    legacy: null;
+            legacy: null;
          }
          get {
             [[Get the 3D scene of a given image of the canvas.
@@ -535,26 +296,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Animated, Efl.Gfx.
          }
          values {
             scene: Evas.Canvas3D.Scene *; [[3D scene on an image object.]]
-         }
-      }
-      @property orient {
-         set {
-            [[Set the image orientation.
-
-              This function allows to rotate or flip the image.
-
-              @since 1.14
-            ]]
-         }
-         get {
-            [[Get the image orientation.
-
-              @since 1.14
-            ]]
-         }
-         values {
-            orient: Evas.Image_Orient; [[The image orientation \@ref Evas_Image_Orient.
-                                         Default is #EVAS_IMAGE_ORIENT_NONE.]]
          }
       }
       @property snapshot {
@@ -578,29 +319,12 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Animated, Efl.Gfx.
                        the Evas_Object_Image.]]
          }
       }
-      preload_begin {
-         [[Begin preloading an image object's image data in the background.]]
-         legacy: null;
-      }
-      data_update_add {
-         [[Mark a sub-region of the given image object to be redrawn.
-
-           This function schedules a particular rectangular region of an
-           image object to be updated (redrawn) at the next rendering cycle.
-         ]]
-         params {
-            @in x: int; [[X-offset of the region to be updated.]]
-            @in y: int; [[Y-offset of the region to be updated.]]
-            @in w: int; [[Width of the region to be updated.]]
-            @in h: int; [[Height of the region to be updated.]]
-         }
-      }
       data_set {
          [[Sets the raw image data of the given image object.
 
            Note that the raw data must be of the same size (see
            \@ref evas_object_image_size_set, which has to be called before
-           this one) and colorspace (see @.colorspace.set) of the image.
+           this one) and colorspace (see \@.colorspace.set) of the image.
            If data is $null, the current image data will be freed.
            Naturally, if one does not set an image object's data
            manually, it will still have one, allocated by Evas.
@@ -627,7 +351,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Animated, Efl.Gfx.
            Note: The contents' format returned by it depend on the color
            space of the given image object.
 
-           Note: You may want to use @.data_update_add to inform data
+           Note: You may want to use \@.data_update_add to inform data
            changes, if you did any.
          ]]
          return: void * @warn_unused; [[ The raw image data.]]
@@ -635,10 +359,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Animated, Efl.Gfx.
             @in for_writing: bool; [[Whether the data being retrieved will
                                      be modified ($true) or not ($false).]]
          }
-      }
-      preload_cancel {
-         [[Cancel preloading an image object's image data in the background.]]
-         legacy: null;
       }
    }
    implements {
@@ -651,6 +371,19 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Animated, Efl.Gfx.
       Efl.File.mmap.set;
       Efl.File.mmap.get;
       Efl.File.save;
+      Efl.Image.orientation.get;
+      Efl.Image.orientation.set;
+      Efl.Image.alpha.get;
+      Efl.Image.alpha.set;
+      Efl.Image.smooth_scale.set;
+      Efl.Image.smooth_scale.get;
+      Efl.Image.ratio.get;
+      Efl.Image.border.get;
+      Efl.Image.border.set;
+      Efl.Image.border_scale.get;
+      Efl.Image.border_scale.set;
+      Efl.Image.border_center_fill.get;
+      Efl.Image.border_center_fill.set;
       Efl.Image_Animated.animated.get;
       Efl.Image_Animated.animated_frame.get;
       Efl.Image_Animated.animated_frame.set;
@@ -658,11 +391,23 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Animated, Efl.Gfx.
       Efl.Image_Animated.animated_loop_type.get;
       Efl.Image_Animated.animated_loop_count.get;
       Efl.Image_Animated.animated_frame_duration.get;
-      Efl.Image.load_size.set;
-      Efl.Image.load_size.get;
-      Efl.Image.smooth_scale.set;
-      Efl.Image.smooth_scale.get;
-      Efl.Image.ratio.get;
+      Efl.Image_Load.load_error.get;
+      Efl.Image_Load.load_async_start;
+      Efl.Image_Load.load_async_cancel;
+      Efl.Image_Load.load_dpi.get;
+      Efl.Image_Load.load_dpi.set;
+      Efl.Image_Load.load_size.set;
+      Efl.Image_Load.load_size.get;
+      Efl.Image_Load.load_orientation.get;
+      Efl.Image_Load.load_orientation.set;
+      Efl.Image_Load.load_scale_down.get;
+      Efl.Image_Load.load_scale_down.set;
+      Efl.Image_Load.load_region.get;
+      Efl.Image_Load.load_region.set;
+      Efl.Image_Load.load_region_support.get;
+      Efl.Gfx.Buffer.buffer_update_region_add;
+      Efl.Gfx.Buffer.buffer_stride.get;
+      Efl.Gfx.Buffer.colorspace.get;
       Efl.Gfx.Fill.fill.set;
       Efl.Gfx.Fill.fill.get;
       Efl.Gfx.Fill.filled.get;

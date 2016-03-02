@@ -1,22 +1,9 @@
-interface Efl.Image {
+interface Efl.Image ()
+{
+   [[Common APIs for all 2D images that can be rendered on the canvas.]]
    legacy_prefix: null;
-   methods {
-      @property load_size {
-         [[The loading size of an image.
 
-           The image will be loaded into memory as if it was the set size
-           instead of the original size. This can save a lot of memory,
-           and is important for scalable types like svg.
-         ]]
-         set {
-            [[Requests the canvas to load the image at the given size.]]
-         }
-         get {}
-         values {
-            w: int; [[Width of the image's load size.]]
-            h: int; [[Height of the image's load size.]]
-         }
-      }
+   methods {
       @property smooth_scale {
          [[Whether to use high-quality image scaling algorithm for this image.
 
@@ -33,6 +20,30 @@ interface Efl.Image {
             smooth_scale: bool; [[Whether to use smooth scale or not.]]
          }
       }
+      @property alpha {
+         [[Indicates whether the alpha channel should be used.
+
+           This does not indicate whether the image source file contains
+           an alpha channel, only whether to respect it or discard it.
+         ]]
+         set {
+            [[Change alpha channel usage for this object.
+
+              This function sets a flag on an image object indicating
+              whether or not to use alpha channel data. A value of $true
+              makes it use alpha channel data, and $false makes it ignore
+              that data. Note that this has nothing to do with an object's
+              color as manipulated by @Efl.Gfx.Base.color.set.
+            ]]
+         }
+         get {
+            [[Retrieve whether alpha channel data is used on this object.]]
+         }
+         values {
+            alpha: bool; [[Whether to use alpha channel ($true) data
+                           or not ($false).]]
+         }
+      }
       @property ratio {
          [[The native width/height ratio of the image.]]
          get {
@@ -40,6 +51,85 @@ interface Efl.Image {
          }
          values {
             ratio: double; [[The image's ratio.]]
+         }
+      }
+      @property orientation {
+         [[The image orientation allows rotating and flipping the image
+           at render time.
+
+           Default is @Efl.Gfx.Orientation.orient_none
+
+           @since 1.14
+         ]]
+         set {}
+         get {}
+         values {
+            orient: Efl.Gfx.Orientation;
+         }
+      }
+
+      @property border {
+         [[Dimensions of this image's border, a region that does not scale
+           with the center area.
+
+           When EFL renders an image, its source may be scaled to fit
+           the size of the object. This function sets an area from
+           the borders of the image inwards which is not to be scaled.
+           This function is useful for making frames and for widget
+           theming, where, for example, buttons may be of varying
+           sizes, but their border size must remain constant.
+
+           The units used for $l, $r, $t and $b are canvas units (pixels).
+
+           Note: The border region itself may be scaled by the
+           @.border_scale.set function.
+
+           Note: By default, image objects have no borders set, i.e.
+           $l, $r, $t and $b start as 0.
+
+           Note: Similar to the concepts of 9-patch images or cap insets.
+         ]]
+         set {}
+         get {}
+         values {
+            l: int; [[The border's left width.]]
+            r: int; [[The border's right width.]]
+            t: int; [[The border's top height.]]
+            b: int; [[The border's bottom height.]]
+         }
+      }
+      @property border_scale {
+         [[Scaling factor applied to the image borders.
+
+           This value multiplies the size of the @.border when scaling an
+           object.
+
+           Default value is 1.0 (no scaling).
+         ]]
+         set {}
+         get {}
+         values {
+            scale: double; [[The scale factor.]]
+         }
+      }
+      @property border_center_fill {
+         [[Specifies how the center part of the object (not the borders)
+           should be drawn when EFL is rendering it.
+
+           This function sets how the center part of the image object's
+           source image is to be drawn, which must be one of the values
+           in @Efl.Gfx.Border_Fill_Mode. By center we mean the complementary
+           part of that defined by @.border.set. This is very useful for
+           making frames and decorations. You would most probably also be
+           using a filled image (as in @Efl.Gfx.Fill.filled) to use as a frame.
+
+           The default value is @Efl.Gfx.Border_Fill_Mode.default, ie. render
+           and scale the center area, respecting its transparency.
+         ]]
+         set {}
+         get {}
+         values {
+            fill: Efl.Gfx.Border_Fill_Mode; [[Fill mode of the center region.]]
          }
       }
    }

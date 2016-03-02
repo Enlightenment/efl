@@ -748,7 +748,7 @@ emotion_object_size_get(const Evas_Object *obj, int *iw, int *ih)
 }
 
 EOLIAN static void
-_emotion_object_efl_image_load_size_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd, int *iw, int *ih)
+_emotion_object_efl_image_load_load_size_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd, int *iw, int *ih)
 {
    if (iw) *iw = sd->video.w;
    if (ih) *ih = sd->video.h;

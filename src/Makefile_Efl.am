@@ -9,11 +9,13 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_control.eo \
       lib/efl/interfaces/efl_file.eo \
       lib/efl/interfaces/efl_image.eo \
+      lib/efl/interfaces/efl_image_load.eo \
       lib/efl/interfaces/efl_player.eo \
       lib/efl/interfaces/efl_text.eo \
       lib/efl/interfaces/efl_text_properties.eo \
       lib/efl/interfaces/efl_gfx_stack.eo \
       lib/efl/interfaces/efl_gfx_view.eo \
+      lib/efl/interfaces/efl_gfx_buffer.eo \
       lib/efl/interfaces/efl_gfx_shape.eo \
       lib/efl/interfaces/efl_gfx_gradient_base.eo \
       lib/efl/interfaces/efl_gfx_gradient_linear.eo \
