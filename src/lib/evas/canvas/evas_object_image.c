@@ -1072,7 +1072,7 @@ evas_object_image_size_set(Evas_Image *obj, int w, int h)
 }
 
 EOLIAN static void
-_evas_image_efl_gfx_view_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h)
+_evas_image_efl_gfx_view_view_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -1142,9 +1142,7 @@ evas_object_image_size_get(const Evas_Image *obj, int *w, int *h)
 }
 
 EOLIAN static void
-_evas_image_efl_gfx_view_size_get(Eo *eo_obj,
-                                  Evas_Image_Data *o,
-                                  int *w, int *h)
+_evas_image_efl_gfx_view_view_size_get(Eo *eo_obj, Evas_Image_Data *o, int *w, int *h)
 {
    int uvw, uvh;
    Evas_Object_Protected_Data *source = NULL;

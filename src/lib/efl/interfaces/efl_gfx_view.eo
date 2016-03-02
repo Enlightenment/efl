@@ -1,23 +1,18 @@
 interface Efl.Gfx.View {
    legacy_prefix: null;
+   eo_prefix: efl_gfx;
    methods {
-      @property size {
-         set {
-            [[Sets the size of the given image object.
+      @property view_size {
+         [[The dimensions of this object's viewport.
 
-              This function will scale down or crop the image so that it is
-              treated as if it were at the given size. If the size given is
-              smaller than the image, it will be cropped. If the size given is
-              larger, then the image will be treated as if it were in the upper
-              left hand corner of a larger image that is otherwise transparent.
-            ]]
-         }
-         get {
-            [[Retrieves the size of the given image object.
-
-              See @.size.set for more details.
-            ]]
-         }
+           This property will scale down or crop the image so that it is
+           treated as if it were of the given size. If the given size is
+           smaller than the image, it will be cropped. If it's larger, then
+           the image will be treated as if it were in the upper left corner
+           of a larger image that is otherwise transparent.
+         ]]
+         set {}
+         get {}
          values {
             w: int; [[The new width of the image.]]
             h: int; [[The new height of the image.]]

@@ -425,16 +425,16 @@ evas_object_vg_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
 }
 
 void
-_evas_vg_efl_gfx_view_size_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
-                               int *w, int *h)
+_evas_vg_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
+                                    int *w, int *h)
 {
    if (w) *w = pd->width;
    if (h) *h = pd->height;
 }
 
 void
-_evas_vg_efl_gfx_view_size_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
-                               int w, int h)
+_evas_vg_efl_gfx_view_view_size_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
+                                    int w, int h)
 {
    pd->width = w;
    pd->height = h;
