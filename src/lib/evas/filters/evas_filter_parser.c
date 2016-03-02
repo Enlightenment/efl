@@ -2726,7 +2726,10 @@ _filter_program_state_set(Evas_Filter_Program *pgm)
                {
                   if (db->execute)
                     {
-                       if (luaL_dostring(L, db->value) != 0)
+                       char *buf = alloca(strlen(db->name) + strlen(db->value) + 4);
+                       if (!buf) return EINA_FALSE;
+                       sprintf(buf, "%s = %s", db->name, db->value);
+                       if (luaL_dostring(L, buf) != 0)
                          {
                             ERR("Failed to run value: %s", lua_tostring(L, -1));
                             return EINA_FALSE;

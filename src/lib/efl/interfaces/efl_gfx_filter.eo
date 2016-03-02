@@ -98,6 +98,7 @@ interface Efl.Gfx.Filter
 
            If the $execute flag is set, then the $value can be complex and
            run, as if the original Lua program contained a line 'name = value'.
+           This can be used to pass in tables.
          ]]
          keys {
             name: const(char)*; [[Name of the global variable]]

@@ -2618,13 +2618,13 @@ _edje_part_recalc_single_filter(Edje *ed,
                             if (cc)
                               {
                                  static const char fmt[] =
-                                       "%s={r=%d,g=%d,b=%d,a=%d,"
+                                       "{r=%d,g=%d,b=%d,a=%d,"
                                        "r2=%d,g2=%d,b2=%d,a2=%d,"
                                        "r3=%d,g3=%d,b3=%d,a3=%d}";
                                  int len = sizeof(fmt) + 20;
                                  len += strlen(data->name);
                                  buffer = alloca(len);
-                                 snprintf(buffer, len - 1, fmt, data->name,
+                                 snprintf(buffer, len - 1, fmt,
                                           (int) cc->r, (int) cc->g, (int) cc->b, (int) cc->a,
                                           (int) cc->r2, (int) cc->g2, (int) cc->b2, (int) cc->a2,
                                           (int) cc->r3, (int) cc->g3, (int) cc->b3, (int) cc->a3);
