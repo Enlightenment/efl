@@ -554,7 +554,7 @@ _min_max_validity_filter(void *data, Evas_Object *obj, char **text)
    new_str = _text_insert(str, insert, elm_entry_cursor_pos_get(obj));
    if (!new_str) return;
 
-   max_len = log10(abs(sd->val_max)) + 1;
+   max_len = log10(fabs(sd->val_max)) + 1;
    len = evas_string_char_len_get(new_str);
    if (len < max_len) return;
 
