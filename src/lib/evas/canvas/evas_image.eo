@@ -662,6 +662,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Image_Animated, Efl.Gfx.
       Efl.Image.load_size.get;
       Efl.Image.smooth_scale.set;
       Efl.Image.smooth_scale.get;
+      Efl.Image.ratio.get;
       Efl.Gfx.Fill.fill.set;
       Efl.Gfx.Fill.fill.get;
       Efl.Gfx.Fill.filled.get;

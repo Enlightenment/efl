@@ -34,11 +34,12 @@ interface Efl.Image {
          }
       }
       @property ratio {
+         [[The native width/height ratio of the image.]]
          get {
-            [[The native ration of the image object]]
+            [[Returns 1.0 if not applicable (eg. height = 0).]]
          }
          values {
-            ratio: double; [[The image's ratio]]
+            ratio: double; [[The image's ratio.]]
          }
       }
    }

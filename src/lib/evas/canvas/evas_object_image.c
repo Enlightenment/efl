@@ -1534,6 +1534,13 @@ _evas_image_efl_image_smooth_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *
    return o->cur->smooth_scale;
 }
 
+EOLIAN static double
+_evas_image_efl_image_ratio_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+{
+   if (!o->cur->image.h) return 1.0;
+   return (double) o->cur->image.w / (double) o->cur->image.h;
+}
+
 /* deprecated */
 EAPI void
 evas_object_image_reload(Eo *eo_obj)
