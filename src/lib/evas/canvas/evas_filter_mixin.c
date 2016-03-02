@@ -56,10 +56,6 @@ _filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,
         ERR("Filter failed at runtime!");
         evas_filter_invalid_set(eo_obj, EINA_TRUE);
         evas_filter_dirty(eo_obj);
-        evas_object_change(eo_obj, obj);
-        evas_object_clip_dirty(eo_obj, obj);
-        evas_object_coords_recalc(eo_obj, obj);
-        evas_object_inform_call_resize(eo_obj);
      }
    else
      {
@@ -401,12 +397,7 @@ _evas_filter_efl_gfx_filter_filter_program_set(Eo *eo_obj, Evas_Filter_Data *pd,
      }
    FCOW_END(fcow, pd);
 
-   // Update object
    evas_filter_dirty(eo_obj);
-   evas_object_change(eo_obj, obj);
-   evas_object_clip_dirty(eo_obj, obj);
-   evas_object_coords_recalc(eo_obj, obj);
-   evas_object_inform_call_resize(eo_obj);
 }
 
 EOLIAN static void
@@ -497,10 +488,6 @@ update:
      }
 
    evas_filter_dirty(eo_obj);
-   evas_object_change(eo_obj, obj);
-   evas_object_clip_dirty(eo_obj, obj);
-   evas_object_coords_recalc(eo_obj, obj);
-   evas_object_inform_call_resize(eo_obj);
 }
 
 EOLIAN static Efl_Gfx_Base *
@@ -542,12 +529,7 @@ _evas_filter_efl_gfx_filter_filter_state_set(Eo *eo_obj, Evas_Filter_Data *pd,
                                            pd->data->state.pos);
           }
 
-        // Mark as changed
         evas_filter_dirty(eo_obj);
-        evas_object_change(eo_obj, obj);
-        evas_object_clip_dirty(eo_obj, obj);
-        evas_object_coords_recalc(eo_obj, obj);
-        evas_object_inform_call_resize(eo_obj);
      }
 }
 
@@ -659,7 +641,6 @@ _evas_filter_efl_gfx_filter_filter_data_set(Eo *eo_obj, Evas_Filter_Data *pd,
                                             const char *name, const char *value,
                                             Eina_Bool execute)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Filter_Data_Binding *db, *found = NULL;
    Evas_Object_Filter_Data *fcow;
 
@@ -701,12 +682,7 @@ _evas_filter_efl_gfx_filter_filter_data_set(Eo *eo_obj, Evas_Filter_Data *pd,
      }
    FCOW_END(fcow, pd);
 
-   // update object
    evas_filter_dirty(eo_obj);
-   evas_object_change(eo_obj, obj);
-   evas_object_clip_dirty(eo_obj, obj);
-   evas_object_coords_recalc(eo_obj, obj);
-   evas_object_inform_call_resize(eo_obj);
 }
 
 EOLIAN static void

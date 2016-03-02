@@ -1665,8 +1665,11 @@ evas_font_draw_async_check(Evas_Object_Protected_Data *obj,
 EOLIAN static void
 _evas_text_evas_filter_filter_dirty(Eo *eo_obj, Evas_Text_Data *o)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+
    _evas_object_text_items_clear(o);
    o->changed = 1;
+   evas_object_change(eo_obj, obj);
    _evas_object_text_recalc(eo_obj, o->cur.text);
 }
 

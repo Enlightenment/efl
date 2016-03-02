@@ -3206,9 +3206,12 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
 }
 
 EOLIAN static void
-_evas_image_evas_filter_filter_dirty(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_evas_image_evas_filter_filter_dirty(Eo *eo_obj, Evas_Image_Data *o)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+
    o->changed = 1;
+   evas_object_change(eo_obj, obj);
 }
 
 EOLIAN static Eina_Bool
