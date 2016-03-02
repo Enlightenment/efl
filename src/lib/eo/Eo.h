@@ -608,7 +608,7 @@ EAPI const Eo_Class *eo_class_get(const Eo *obj);
 
 #define _eo_add_common(klass, parent, is_ref, ...) \
    ({ \
-    const Eo *eoid = _eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref); \
+     Eo * const eoid = _eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref); \
      __VA_ARGS__; \
      (Eo *) _eo_add_end(eoid); \
     })
