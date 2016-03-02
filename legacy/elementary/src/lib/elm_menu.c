@@ -528,7 +528,6 @@ _block_menu(void *_sd, const Eo_Event *event EINA_UNUSED)
    Eina_List *items = sd->items;
    EINA_LIST_FOREACH(items, l, eo_current)
      {
-        Eina_Bool tmp;
         ELM_MENU_ITEM_DATA_GET(eo_current, current);
         if (!current->blocked) current->was_enabled = !elm_wdg_item_disabled_get(eo_current);
         current->blocked = EINA_TRUE;

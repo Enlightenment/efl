@@ -460,7 +460,6 @@ EOLIAN static void
 _elm_hoversel_item_elm_widget_item_disable(Eo *eo_hoversel_it,
                                            Elm_Hoversel_Item_Data *hoversel_it EINA_UNUSED)
 {
-   Eina_Bool tmp;
    elm_widget_disabled_set
      (VIEW(hoversel_it), elm_wdg_item_disabled_get(eo_hoversel_it));
 }

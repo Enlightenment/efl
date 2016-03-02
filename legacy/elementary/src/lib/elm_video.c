@@ -471,7 +471,6 @@ _elm_video_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED
 EAPI Eina_Bool
 elm_video_file_set(Eo *obj, const char *filename)
 {
-   Eina_Bool ret;
    return efl_file_set((Eo *) obj, filename, NULL);
 }
 

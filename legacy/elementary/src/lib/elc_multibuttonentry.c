@@ -1905,7 +1905,6 @@ EOLIAN static void
 _elm_multibuttonentry_item_elm_widget_item_disable(Eo *eo_it, Elm_Multibuttonentry_Item_Data *it)
 {
    const char* emission;
-   Eina_Bool tmp;
    if (elm_wdg_item_disabled_get(eo_it))
      emission = "elm,state,disabled";
    else

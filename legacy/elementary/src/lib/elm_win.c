@@ -3967,7 +3967,6 @@ _elm_win_fake_canvas_set(Eo *obj EINA_UNUSED, Elm_Win_Data *pd, Ecore_Evas *oee)
 EOLIAN static void
 _elm_win_type_set(Eo *obj, Elm_Win_Data *sd, Elm_Win_Type type)
 {
-   Eina_Bool finalized;
    if (eo_finalized_get(obj))
      {
         ERR("This function is only allowed during construction.");
@@ -3985,7 +3984,6 @@ _elm_win_type_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 EOLIAN static void
 _elm_win_name_set(Eo *obj, Elm_Win_Data *sd, const char *name)
 {
-   Eina_Bool finalized;
    if (eo_finalized_get(obj))
      {
         ERR("This function is only allowed during construction.");

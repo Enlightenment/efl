@@ -832,7 +832,6 @@ _elm_popup_item_elm_widget_item_part_content_unset(Eo *eo_it EINA_UNUSED, Elm_Po
 EOLIAN static void
 _elm_popup_item_elm_widget_item_disable(Eo *eo_it, Elm_Popup_Item_Data *it)
 {
-   Eina_Bool tmp;
    ELM_POPUP_ITEM_CHECK_OR_RETURN(it);
 
    if (elm_wdg_item_disabled_get(eo_it))
@@ -1201,7 +1200,6 @@ _action_button_set(Evas_Object *obj,
 EOLIAN static Eina_Bool
 _elm_popup_elm_container_content_set(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
-   Eina_Bool tmp;
    unsigned int i;
    Eina_Bool ret = EINA_TRUE;
 

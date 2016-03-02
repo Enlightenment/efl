@@ -204,7 +204,6 @@ _item_cache_add(Elm_Gen_Item *it)
 
    if (!it->group)
      {
-        Eina_Bool tmp;
         if (it->selected)
           edje_object_signal_emit(itc->base_view, "elm,state,unselected", "elm");
         if (elm_wdg_item_disabled_get(EO_OBJ(it)))
@@ -673,7 +672,6 @@ _item_mouse_move_cb(void *data,
 static Eina_Bool
 _long_press_cb(void *data)
 {
-   Eina_Bool tmp;
    Elm_Gen_Item *it = data;
    ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
@@ -833,7 +831,6 @@ _item_content_realize(Elm_Gen_Item *it,
                       const char *src,
                       const char *parts)
 {
-   Eina_Bool tmp;
    Evas_Object *content;
 
    if (!parts)
@@ -1028,7 +1025,6 @@ _item_mouse_up_cb(void *data,
                   Evas_Object *obj EINA_UNUSED,
                   void *event_info)
 {
-   Eina_Bool tmp;
    Evas_Event_Mouse_Up *ev = event_info;
    Eina_Bool dragged = EINA_FALSE;
    Elm_Gen_Item *it = data;
@@ -1310,7 +1306,6 @@ _elm_gengrid_item_focus_update(Elm_Gen_Item *it)
 static void
 _item_realize(Elm_Gen_Item *it)
 {
-   Eina_Bool tmp;
    ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
    Elm_Object_Item *eo_it = EO_OBJ(it);
 
@@ -1983,7 +1978,6 @@ _elm_gengrid_pan_class_constructor(Eo_Class *klass)
 static void
 _elm_gengrid_item_focused(Elm_Object_Item *eo_it)
 {
-   Eina_Bool tmp;
    ELM_GENGRID_ITEM_DATA_GET(eo_it, it);
    Evas_Object *obj = WIDGET(it);
    ELM_GENGRID_DATA_GET(obj, sd);
@@ -3952,7 +3946,6 @@ _elm_gengrid_item_compare(const void *data,
 EOLIAN static void
 _elm_gengrid_item_elm_widget_item_disable(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 {
-   Eina_Bool tmp;
    if (it->generation < GG_IT(it)->wsd->generation) return;
 
    if (it->realized)
@@ -4698,7 +4691,6 @@ EOLIAN static void
 _elm_gengrid_item_selected_set(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
       Eina_Bool selected)
 {
-   Eina_Bool tmp;
    ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
    if ((it->generation < sd->generation) || elm_wdg_item_disabled_get(EO_OBJ(it)))
      return;
@@ -4885,7 +4877,6 @@ _elm_gengrid_item_elm_widget_item_tooltip_style_set(Eo *eo_it, Elm_Gen_Item *it,
 EAPI const char *
 elm_gengrid_item_tooltip_style_get(const Elm_Object_Item *it)
 {
-   const char *ret;
    return elm_wdg_item_tooltip_style_get(it);
 }
 
@@ -4899,7 +4890,6 @@ EAPI Eina_Bool
 elm_gengrid_item_tooltip_window_mode_set(Elm_Object_Item *it,
                                          Eina_Bool disable)
 {
-   Eina_Bool ret;
    return elm_wdg_item_tooltip_window_mode_set(it, disable);
 }
 
@@ -4921,7 +4911,6 @@ _elm_gengrid_item_elm_widget_item_tooltip_window_mode_set(Eo *eo_it, Elm_Gen_Ite
 EAPI Eina_Bool
 elm_gengrid_item_tooltip_window_mode_get(const Elm_Object_Item *it)
 {
-   Eina_Bool ret;
    return elm_wdg_item_tooltip_window_mode_get(it);
 }
 
@@ -4953,7 +4942,6 @@ _elm_gengrid_item_elm_widget_item_cursor_set(Eo *eo_it, Elm_Gen_Item *it,
 EAPI const char *
 elm_gengrid_item_cursor_get(const Elm_Object_Item *it)
 {
-   const char *ret;
    return elm_wdg_item_cursor_get(it);
 }
 
@@ -4985,7 +4973,6 @@ elm_gengrid_item_cursor_style_set(Elm_Object_Item *it,
 EAPI const char *
 elm_gengrid_item_cursor_style_get(const Elm_Object_Item *it)
 {
-   const char *ret;
    return elm_wdg_item_cursor_style_get(it);
 }
 
@@ -5003,7 +4990,6 @@ EAPI Eina_Bool
 elm_gengrid_item_cursor_engine_only_get(const Elm_Object_Item *eo_it)
 {
    ELM_GENGRID_ITEM_DATA_GET(eo_it, it);
-   Eina_Bool ret;
    if (it->realized)
      return elm_wdg_item_cursor_engine_only_get(eo_it);
    else return it->cursor_engine_only;
@@ -5118,7 +5104,7 @@ elm_gengrid_page_show(const Evas_Object *obj,
                       int v_pagenumber)
 {
    ELM_GENGRID_CHECK(obj);
-   elm_interface_scrollable_page_show(obj, h_pagenumber, v_pagenumber);
+   elm_interface_scrollable_page_show((Eo *) obj, h_pagenumber, v_pagenumber);
 }
 
 EINA_DEPRECATED EAPI void
@@ -5127,7 +5113,7 @@ elm_gengrid_page_bring_in(const Evas_Object *obj,
                           int v_pagenumber)
 {
    ELM_GENGRID_CHECK(obj);
-   elm_interface_scrollable_page_bring_in(obj, h_pagenumber, v_pagenumber);
+   elm_interface_scrollable_page_bring_in((Eo *) obj, h_pagenumber, v_pagenumber);
 }
 
 EAPI void

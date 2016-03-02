@@ -420,7 +420,6 @@ _resize_job(void *data)
                        else
                          {
                             Elm_Object_Item *menu_it;
-                            Eina_Bool tmp;
 
                             menu_it = elm_menu_item_add
                                 (menu, NULL, it->icon_str, it->label,
@@ -1001,7 +1000,6 @@ _resize_cb(void *data,
 EOLIAN static void
 _elm_toolbar_item_elm_widget_item_disable(Eo *eo_toolbar, Elm_Toolbar_Item_Data *toolbar_it)
 {
-   Eina_Bool tmp;
    const char* emission;
 
    if (elm_wdg_item_disabled_get(eo_toolbar))
@@ -1080,7 +1078,6 @@ _item_select(Elm_Toolbar_Item_Data *it)
 {
    Evas_Object *obj;
    Eina_Bool sel;
-   Eina_Bool tmp;
    Eina_List *list;
 
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
@@ -1256,7 +1253,6 @@ _item_theme_hook(Evas_Object *obj,
    Evas_Coord mw = -1, mh = -1;
    Evas_Object *view = VIEW(it);
    const char *style;
-   Eina_Bool tmp;
 
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
@@ -2277,7 +2273,6 @@ static char *
 _access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Elm_Toolbar_Item_Data *it = (Elm_Toolbar_Item_Data *)data;
-   Eina_Bool tmp;
 
    if (it->separator)
      return strdup(E_("Separator"));
@@ -2330,7 +2325,6 @@ _access_activate_cb(void *data EINA_UNUSED,
 {
    ELM_TOOLBAR_ITEM_DATA_GET(item, it);
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
-   Eina_Bool tmp;
 
    if (elm_wdg_item_disabled_get(item)) return;
 
@@ -3643,7 +3637,6 @@ _elm_toolbar_item_state_set(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *item
      }
    if (item->icon)
      {
-        Eina_Bool tmp;
         if (elm_wdg_item_disabled_get(EO_OBJ(item)))
           elm_widget_signal_emit(item->icon, "elm,state,disabled", "elm");
         else

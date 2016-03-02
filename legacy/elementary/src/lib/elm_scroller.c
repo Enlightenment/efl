@@ -1181,7 +1181,7 @@ _elm_scroller_page_scroll_limit_set(const Eo *obj, Elm_Scroller_Data *_pd EINA_U
      page_limit_v = 9999;
 
    elm_interface_scrollable_page_scroll_limit_set
-         (obj, page_limit_h, page_limit_v);
+         ((Eo *) obj, page_limit_h, page_limit_v);
 }
 
 EOLIAN static void
@@ -1372,8 +1372,6 @@ EAPI Eina_Bool
 elm_scroller_wheel_disabled_get(const Evas_Object *obj)
 {
    ELM_SCROLLABLE_CHECK(obj, EINA_FALSE);
-
-   Eina_Bool ret;
 
    return elm_interface_scrollable_wheel_disabled_get((Eo *) obj);
 }

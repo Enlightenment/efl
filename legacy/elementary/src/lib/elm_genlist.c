@@ -356,7 +356,6 @@ _item_content_realize(Elm_Gen_Item *it,
                       const char *src,
                       const char *parts)
 {
-   Eina_Bool tmp;
    Evas_Object *content;
    char buf[256];
 
@@ -1295,7 +1294,6 @@ _item_order_update(const Eina_Inlist *l,
 static void
 _elm_genlist_item_state_update(Elm_Gen_Item *it)
 {
-   Eina_Bool tmp;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    if (it->selected)
@@ -1555,7 +1553,6 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
    Item_Cache *itc = NULL;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    Evas_Object *obj = sd->obj;
-   Eina_Bool tmp;
 
    evas_event_freeze(evas_object_evas_get(obj));
 
@@ -2705,7 +2702,6 @@ _elm_genlist_item_focused(Elm_Object_Item *eo_it)
    ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
    Evas_Object *obj = WIDGET(it);
    ELM_GENLIST_DATA_GET(obj, sd);
-   Eina_Bool tmp;
 
    if (_is_no_select(it) ||
        (eo_it == sd->focused_item) ||
@@ -2771,7 +2767,6 @@ _item_focused_next(Evas_Object *obj, Elm_Focus_Direction dir)
    Elm_Object_Item *eo_next;
    Elm_Object_Item *eo_first_item;
    Elm_Object_Item *eo_last_item;
-   Eina_Bool tmp;
 
    if (!sd->focused_item)
      {
@@ -3449,7 +3444,6 @@ _show_region_hook(void *data EINA_UNUSED,
 static void
 _item_highlight(Elm_Gen_Item *it)
 {
-   Eina_Bool tmp;
    const char *selectraise;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
@@ -3965,7 +3959,6 @@ _item_mouse_move_cb(void *data,
 static Eina_Bool
 _long_press_cb(void *data)
 {
-   Eina_Bool tmp;
    Elm_Gen_Item *it = data;
    Elm_Object_Item *eo_it_tmp;
    Eina_List *list;
@@ -4018,7 +4011,6 @@ static void
 _swipe_do(Elm_Gen_Item *it)
 {
    int i, sum = 0;
-   Eina_Bool tmp;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    if (_is_no_select(it) ||
@@ -4200,7 +4192,6 @@ _item_mouse_down_cb(void *data,
                     Evas_Object *obj,
                     void *event_info)
 {
-   Eina_Bool tmp;
    Evas_Event_Mouse_Down *ev = event_info;
    Elm_Gen_Item *it = data;
    Evas_Coord x, y;
@@ -4833,7 +4824,6 @@ _item_mouse_up_cb(void *data,
                   Evas_Object *obj EINA_UNUSED,
                   void *event_info)
 {
-   Eina_Bool tmp;
    Evas_Event_Mouse_Up *ev = event_info;
    Eina_Bool dragged = EINA_FALSE;
    Elm_Gen_Item *it = data;
@@ -5789,7 +5779,6 @@ _internal_elm_genlist_clear(Evas_Object *obj)
 static Eina_Bool
 _item_select(Elm_Gen_Item *it)
 {
-   Eina_Bool tmp;
    Evas_Object *obj = WIDGET(it);
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    Elm_Object_Item *eo_it = EO_OBJ(it);
@@ -5903,7 +5892,6 @@ _elm_genlist_item_elm_widget_item_part_text_get(Eo *eo_it EINA_UNUSED, Elm_Gen_I
 EOLIAN static void
 _elm_genlist_item_elm_widget_item_disable(Eo *eo_it, Elm_Gen_Item *it)
 {
-   Eina_Bool tmp;
    Eina_List *l;
    Evas_Object *obj;
 
@@ -6711,7 +6699,6 @@ EOLIAN static void
 _elm_genlist_item_selected_set(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
       Eina_Bool selected)
 {
-   Eina_Bool tmp;
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it);
 
    if (elm_wdg_item_disabled_get(EO_OBJ(it))) return;
@@ -7228,7 +7215,6 @@ _elm_genlist_item_elm_widget_item_tooltip_style_set(Eo *eo_it, Elm_Gen_Item *it,
 EAPI const char *
 elm_genlist_item_tooltip_style_get(const Elm_Object_Item *it)
 {
-   const char *ret;
    return elm_wdg_item_tooltip_style_get(it);
 }
 
@@ -7242,7 +7228,6 @@ EAPI Eina_Bool
 elm_genlist_item_tooltip_window_mode_set(Elm_Object_Item *item,
                                          Eina_Bool disable)
 {
-   Eina_Bool ret;
    return elm_wdg_item_tooltip_window_mode_set(item, disable);
 }
 
@@ -7266,7 +7251,6 @@ _elm_genlist_item_elm_widget_item_tooltip_window_mode_set(Eo *eo_it, Elm_Gen_Ite
 EAPI Eina_Bool
 elm_genlist_item_tooltip_window_mode_get(const Elm_Object_Item *eo_it)
 {
-   Eina_Bool ret;
    return elm_wdg_item_tooltip_window_mode_get(eo_it);
 }
 
@@ -7295,7 +7279,6 @@ _elm_genlist_item_elm_widget_item_cursor_set(Eo *eo_it, Elm_Gen_Item *it,
 EAPI const char *
 elm_genlist_item_cursor_get(const Elm_Object_Item *eo_it)
 {
-   const char *ret;
    return elm_wdg_item_cursor_get(eo_it);
 }
 
@@ -7327,7 +7310,6 @@ elm_genlist_item_cursor_style_set(Elm_Object_Item *eo_it,
 EAPI const char *
 elm_genlist_item_cursor_style_get(const Elm_Object_Item *eo_it)
 {
-   const char *ret;
    return elm_wdg_item_cursor_style_get(eo_it);
 }
 
@@ -7341,7 +7323,6 @@ elm_genlist_item_cursor_engine_only_set(Elm_Object_Item *eo_it,
 EAPI Eina_Bool
 elm_genlist_item_cursor_engine_only_get(const Elm_Object_Item *eo_it)
 {
-   Eina_Bool ret;
    return elm_wdg_item_cursor_engine_only_get(eo_it);
 }
 
@@ -7747,7 +7728,6 @@ _elm_genlist_item_decorate_mode_set(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it,
    Elm_Genlist_Data *sd;
    Eina_List *l;
    Elm_Object_Item *eo_it2 = NULL;
-   Eina_Bool tmp;
 
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it);
    sd = GL_IT(it)->wsd;

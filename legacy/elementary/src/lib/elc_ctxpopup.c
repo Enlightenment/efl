@@ -918,7 +918,6 @@ EOLIAN static void
 _elm_ctxpopup_item_elm_widget_item_disable(Eo *eo_ctxpopup_it,
                                            Elm_Ctxpopup_Item_Data *ctxpopup_it)
 {
-   Eina_Bool tmp;
    elm_object_item_disabled_set
      (ctxpopup_it->list_item, elm_wdg_item_disabled_get(eo_ctxpopup_it));
 }

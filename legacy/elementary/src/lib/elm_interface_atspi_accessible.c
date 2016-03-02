@@ -454,7 +454,7 @@ elm_atspi_relation_set_relation_append(Elm_Atspi_Relation_Set *set, Elm_Atspi_Re
              if (!eina_list_data_find(rel->objects, rel_obj))
                {
                   rel->objects = eina_list_append(rel->objects, rel_obj);
-                  eo_event_callback_add(rel_obj, EO_BASE_EVENT_DEL, _on_rel_obj_del, set);
+                  eo_event_callback_add((Eo *) rel_obj, EO_BASE_EVENT_DEL, _on_rel_obj_del, set);
                }
              return EINA_TRUE;
           }
@@ -467,7 +467,7 @@ elm_atspi_relation_set_relation_append(Elm_Atspi_Relation_Set *set, Elm_Atspi_Re
    rel->objects = eina_list_append(rel->objects, rel_obj);
    *set = eina_list_append(*set, rel);
 
-   eo_event_callback_add(rel_obj, EO_BASE_EVENT_DEL, _on_rel_obj_del, set);
+   eo_event_callback_add((Eo *) rel_obj, EO_BASE_EVENT_DEL, _on_rel_obj_del, set);
    return EINA_TRUE;
 }
 
@@ -483,7 +483,7 @@ elm_atspi_relation_set_relation_remove(Elm_Atspi_Relation_Set *set, Elm_Atspi_Re
           {
              if (eina_list_data_find(rel->objects, rel_obj))
                {
-                  eo_event_callback_del(rel_obj, EO_BASE_EVENT_DEL, _on_rel_obj_del, set);
+                  eo_event_callback_del((Eo *) rel_obj, EO_BASE_EVENT_DEL, _on_rel_obj_del, set);
                   rel->objects = eina_list_remove(rel->objects, rel_obj);
                }
              if (!rel->objects)

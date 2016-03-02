@@ -1716,8 +1716,6 @@ _elm_photocam_efl_file_file_set(Eo *obj, Elm_Photocam_Data *sd, const char *file
 EAPI Evas_Load_Error
 elm_photocam_file_set(Elm_Photocam *obj, const char *file)
 {
-   Eina_Bool ret;
-
    ELM_PHOTOCAM_CHECK(obj) EVAS_LOAD_ERROR_NONE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EVAS_LOAD_ERROR_NONE);
    if (efl_file_set(obj, file, NULL)) return EVAS_LOAD_ERROR_NONE;

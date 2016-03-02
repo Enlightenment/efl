@@ -2024,7 +2024,6 @@ EOLIAN static const char *
 _elm_list_item_elm_widget_item_part_text_get(Eo *eo_it, Elm_List_Item_Data *it,
                     const char *part)
 {
-   const char *ret;
    if (part && strcmp(part, "default"))
      return elm_wdg_item_part_text_custom_get(eo_it, part);
    return it->label;

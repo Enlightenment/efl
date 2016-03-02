@@ -2480,7 +2480,6 @@ _elm_color_item_selected_set(Eo *eo_item,
 EAPI Eina_Bool
 elm_colorselector_palette_item_selected_get(const Elm_Object_Item *it)
 {
-   Eina_Bool ret;
    return elm_obj_color_item_selected_get(it);
 }
 
