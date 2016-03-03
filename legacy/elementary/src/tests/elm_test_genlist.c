@@ -81,14 +81,13 @@ START_TEST(elm_atspi_children_get2)
 END_TEST
 
 static Eina_Bool
-_children_changed_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED,
-                     const Eo_Event_Description *desc, void *event_info EINA_UNUSED)
+_children_changed_cb(void *data EINA_UNUSED, const Eo_Event *event)
 {
-   if (desc != ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED)
+   if (event->desc != ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED)
      return EINA_TRUE;
 
-   ev_data = *(Elm_Atspi_Event_Children_Changed_Data*)event_info;
-   current = obj;
+   ev_data = *(Elm_Atspi_Event_Children_Changed_Data*)event->event_info;
+   current = event->obj;
    counter++;
 
    return EINA_TRUE;
