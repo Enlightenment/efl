@@ -4777,8 +4777,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
                      frame_exist = evas_canvas3d_mesh_frame_exist(mesh, pf->type.node.frame);
                      if (!frame_exist)
-                       evas_canvas3d_mesh_frame_add(mesh, pf->type.node.frame);
-                       evas_canvas3d_mesh_frame_material_set(mesh, pf->type.node.frame, material);
+                       {
+                          evas_canvas3d_mesh_frame_add(mesh, pf->type.node.frame);
+                          evas_canvas3d_mesh_frame_material_set(mesh, pf->type.node.frame, material);
+                       }
                      evas_canvas3d_mesh_shade_mode_set(mesh, pd_mesh_node->mesh_node.properties.shade);
                      evas_canvas3d_mesh_vertex_assembly_set(mesh, pd_mesh_node->mesh_node.mesh.assembly);
                      evas_canvas3d_node_mesh_frame_set(ep->node, mesh, pf->type.node.frame);
