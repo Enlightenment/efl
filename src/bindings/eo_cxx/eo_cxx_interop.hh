@@ -472,9 +472,9 @@ F* alloc_static_callback(F&& f)
 
 template <typename... Fs>
 inline
-void call_ctors(Fs&&... fs)
+void call_ctors(Eo* _obj_eoid, Fs&&... fs)
 {
-   std::initializer_list<int const> const v {(fs(), 0)...};
+   std::initializer_list<int const> const v {(fs(_obj_eoid), 0)...};
    (void) v;
 }
 

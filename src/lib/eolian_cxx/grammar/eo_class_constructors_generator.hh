@@ -158,9 +158,10 @@ operator<<(std::ostream& out, functors_constructor_methods const& x)
             << tab(2) << "{}" << endl;
 
         // Struct operator()
-        out << tab(2) << "void operator()()" << endl
+        out << tab(2) << "void operator()(Eo* _obj_eoid)" << endl
             << tab(2) << "{" << endl
-            << tab(3) << "::" << c.impl << "(" << parameters_forward_to_c(c.params) << ");" << endl
+            << tab(3) << "::" << c.impl << "(_obj_eoid" << (c.params.empty() ? "" : ", ")
+            << parameters_forward_to_c(c.params) << ");" << endl
             << tab(2) << "}" << endl;
 
         // Register event to free allocated callbacks when the Eo* is deleted
@@ -579,10 +580,10 @@ operator<<(std::ostream& out, function_call_constructor_methods const& x)
        << tab(2) << "Eo* _ret_eo = eo_add_ref(" << x._cls.eo_name << ", _p._eo_raw";
    for (it = first; it != last; ++it)
      {
-        out << ", _c" << (it-first) << "()";
+        out << ", _c" << (it-first) << "(eoid)";
      }
    if (!x._cls.optional_constructors.empty())
-     out << ", ::efl::eolian::call_ctors(_opts...)";
+     out << ", ::efl::eolian::call_ctors(eoid, _opts...)";
    out << ");" << endl << endl;
 
    for (it = first; it != last; ++it)

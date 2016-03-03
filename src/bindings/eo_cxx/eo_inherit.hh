@@ -22,8 +22,15 @@ namespace detail {
 template <typename D, typename... E, std::size_t... S>
 Eo_Class const* create_class(eina::index_sequence<S...>);
 
-inline
-void inherit_constructor(void* this_);
+/// @internal
+///
+/// @brief Find the correct function for the <em>"constructor"</em>
+/// operation and invoke it.
+///
+/// @param this_ The <em>user data</em> to be passed to the resolved function.
+/// @param args An heterogeneous sequence of arguments.
+///
+inline EOAPI EO_VOID_FUNC_BODYV(inherit_constructor, EO_FUNC_CALL(this_), void* this_);
 
 }
 
@@ -78,7 +85,7 @@ struct inherit
    inherit(efl::eo::parent_type _p, Args&& ... args)
    {
       _eo_cls = detail::create_class<D, E...> (eina::make_index_sequence<sizeof...(E)>());
-      _eo_raw = eo_add_ref(_eo_cls, _p._eo_raw, detail::inherit_constructor(this), ::efl::eolian::call_ctors(args...));
+      _eo_raw = eo_add_ref(_eo_cls, _p._eo_raw, detail::inherit_constructor(eoid, this), ::efl::eolian::call_ctors(eoid, args...));
       ::efl::eolian::register_ev_del_free_callback(_eo_raw, args...);
   }
 

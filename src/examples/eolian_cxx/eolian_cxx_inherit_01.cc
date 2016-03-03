@@ -23,7 +23,7 @@ struct ColourableCircle
    int colour_get()
    {
       int rgb = 0;
-      eo_do_super(_eo_ptr(), _eo_class(), rgb = ::colourable_colour_get());
+      rgb = ::colourable_colour_get(eo_super(_eo_ptr(), _eo_class()));
       std::cout << "ColourableCircle::colour_get(" << this << ") ==> "
                 << std::hex << rgb << std::endl;
       return rgb;
@@ -52,7 +52,7 @@ struct ColourableBar
    int colour_get()
    {
       int rgb = 0;
-      eo_do_super(_eo_ptr(), _eo_class(), rgb = ::colourable_colour_get());
+      rgb = ::colourable_colour_get(eo_super(_eo_ptr(), _eo_class()));
       std::cout << "ColourableBar::colour_get(" << this << ") ==> "
                 << std::hex << rgb << std::endl;
       return rgb;
