@@ -347,15 +347,18 @@ evas_model_load_file_md2(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
         int              f = i * MD2_FRAME_SCALE;
 
         /* Add a mesh frame. */
-              evas_canvas3d_mesh_frame_add(mesh, f);
+        evas_canvas3d_mesh_frame_add(mesh, f);
+
         /* Allocate vertex buffer for the frame. */
-              evas_canvas3d_mesh_frame_vertex_data_copy_set(mesh, f, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, 0, NULL);
+        evas_canvas3d_mesh_frame_vertex_data_copy_set(mesh, f, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION, 0, NULL);
         evas_canvas3d_mesh_frame_vertex_data_copy_set(mesh, f, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL, 0, NULL);
         evas_canvas3d_mesh_frame_vertex_data_copy_set(mesh, f, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, 0, NULL);
+
         /* Map vertex buffer. */
-              pos = (float *)evas_canvas3d_mesh_frame_vertex_data_map(mesh, f, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION);
+        pos = (float *)evas_canvas3d_mesh_frame_vertex_data_map(mesh, f, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION);
         nor = (float *)evas_canvas3d_mesh_frame_vertex_data_map(mesh, f, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL);
         tex = (float *)evas_canvas3d_mesh_frame_vertex_data_map(mesh, f, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD);
+
         stride_pos = evas_canvas3d_mesh_frame_vertex_stride_get(mesh, f, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION);
         stride_nor = evas_canvas3d_mesh_frame_vertex_stride_get(mesh, f, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL);
         stride_tex = evas_canvas3d_mesh_frame_vertex_stride_get(mesh, f, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD);

@@ -380,14 +380,18 @@ evas_model_load_file_obj(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
    stride_pos = evas_canvas3d_mesh_frame_vertex_stride_get(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_POSITION);
 
    if (counts.existence_of_normal)
-     evas_canvas3d_mesh_frame_vertex_data_copy_set(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL, 0, NULL);
-     nor = (float *)evas_canvas3d_mesh_frame_vertex_data_map(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL);
-     stride_nor = evas_canvas3d_mesh_frame_vertex_stride_get(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL);
+     {
+        evas_canvas3d_mesh_frame_vertex_data_copy_set(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL, 0, NULL);
+        nor = (float *)evas_canvas3d_mesh_frame_vertex_data_map(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL);
+        stride_nor = evas_canvas3d_mesh_frame_vertex_stride_get(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_NORMAL);
+     }
 
    if (counts.existence_of_tex_point)
-     evas_canvas3d_mesh_frame_vertex_data_copy_set(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, 0, NULL);
-     tex = (float *)evas_canvas3d_mesh_frame_vertex_data_map(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD);
-     stride_tex = evas_canvas3d_mesh_frame_vertex_stride_get(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD);
+     {
+        evas_canvas3d_mesh_frame_vertex_data_copy_set(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD, 0, NULL);
+        tex = (float *)evas_canvas3d_mesh_frame_vertex_data_map(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD);
+        stride_tex = evas_canvas3d_mesh_frame_vertex_stride_get(mesh, 0, EVAS_CANVAS3D_VERTEX_ATTRIB_TEXCOORD);
+     }
 
    if (stride_pos == 0) stride_pos = sizeof(float) * 3;
    if ((counts.existence_of_normal) && (stride_nor == 0))
