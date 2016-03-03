@@ -117,10 +117,24 @@ push_type(Eo_Lexer *ls)
    return def;
 }
 
+static Eolian_Typedecl *
+push_typedecl(Eo_Lexer *ls)
+{
+   Eolian_Typedecl *def = calloc(1, sizeof(Eolian_Typedecl));
+   ls->tmp.type_decls = eina_list_prepend(ls->tmp.type_decls, def);
+   return def;
+}
+
 static void
 pop_type(Eo_Lexer *ls)
 {
    ls->tmp.type_defs = eina_list_remove_list(ls->tmp.type_defs, ls->tmp.type_defs);
+}
+
+static void
+pop_typedecl(Eo_Lexer *ls)
+{
+   ls->tmp.type_decls = eina_list_remove_list(ls->tmp.type_decls, ls->tmp.type_decls);
 }
 
 static Eina_Stringshare *
@@ -471,15 +485,15 @@ _struct_field_free(Eolian_Struct_Type_Field *def)
    free(def);
 }
 
-static Eolian_Type *
+static Eolian_Typedecl *
 parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
              int line, int column, const char *freefunc)
 {
    int bline = ls->line_number, bcolumn = ls->column;
-   Eolian_Type *def = push_type(ls);
+   Eolian_Typedecl *def = push_typedecl(ls);
    def->is_extern = is_extern;
    if (name) _fill_name(name, &def->full_name, &def->name, &def->namespaces);
-   def->type = EOLIAN_TYPE_STRUCT;
+   def->type = EOLIAN_TYPEDECL_STRUCT;
    def->fields = eina_hash_string_small_new(EINA_FREE_CB(_struct_field_free));
    def->freefunc = freefunc;
    pop_str(ls);
@@ -524,15 +538,15 @@ _enum_field_free(Eolian_Enum_Type_Field *def)
    free(def);
 }
 
-static Eolian_Type *
+static Eolian_Typedecl *
 parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
            int line, int column)
 {
    int bline = ls->line_number, bcolumn = ls->column;
-   Eolian_Type *def = push_type(ls);
+   Eolian_Typedecl *def = push_typedecl(ls);
    def->is_extern = is_extern;
    _fill_name(name, &def->full_name, &def->name, &def->namespaces);
-   def->type = EOLIAN_TYPE_ENUM;
+   def->type = EOLIAN_TYPEDECL_ENUM;
    def->fields = eina_hash_string_small_new(EINA_FREE_CB(_enum_field_free));
    check_next(ls, '{');
    FILL_DOC(ls, def, doc);
@@ -843,11 +857,11 @@ parse_type_void(Eo_Lexer *ls)
    return parse_type_void_base(ls, EINA_FALSE);
 }
 
-static Eolian_Type *
+static Eolian_Typedecl *
 parse_typedef(Eo_Lexer *ls)
 {
    Eolian_Declaration *decl;
-   Eolian_Type *def = push_type(ls);
+   Eolian_Typedecl *def = push_typedecl(ls);
    Eina_Bool has_extern;
    const char *freefunc;
    Eina_Strbuf *buf;
@@ -855,7 +869,7 @@ parse_typedef(Eo_Lexer *ls)
    parse_struct_attrs(ls, EINA_FALSE, &has_extern, &freefunc);
    def->freefunc = freefunc;
    pop_str(ls);
-   def->type = EOLIAN_TYPE_ALIAS;
+   def->type = EOLIAN_TYPEDECL_ALIAS;
    def->is_extern = has_extern;
    buf = push_strbuf(ls);
    eo_lexer_context_push(ls);
@@ -1856,7 +1870,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
       case KW_type:
         {
            database_type_add(parse_typedef(ls));
-           pop_type(ls);
+           pop_typedecl(ls);
            break;
         }
       case KW_const:
@@ -1895,9 +1909,9 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            pop_strbuf(ls);
            if (!is_enum && ls->t.token == ';')
              {
-                Eolian_Type *def = push_type(ls);
+                Eolian_Typedecl *def = push_typedecl(ls);
                 def->is_extern = has_extern;
-                def->type = EOLIAN_TYPE_STRUCT_OPAQUE;
+                def->type = EOLIAN_TYPEDECL_STRUCT_OPAQUE;
                 def->freefunc = freefunc;
                 pop_str(ls);
                 _fill_name(name, &def->full_name, &def->name, &def->namespaces);
@@ -1905,14 +1919,14 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                 FILL_DOC(ls, def, doc);
                 FILL_BASE(def->base, ls, line, col);
                 database_struct_add(def);
-                pop_type(ls);
+                pop_typedecl(ls);
                 break;
              }
            if (is_enum)
              parse_enum(ls, name, has_extern, line, col);
            else
              parse_struct(ls, name, has_extern, line, col, freefunc);
-           pop_type(ls);
+           pop_typedecl(ls);
            break;
         }
       def:

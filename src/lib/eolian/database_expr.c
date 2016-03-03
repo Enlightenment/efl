@@ -497,7 +497,7 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
 
            if (!var)
              {
-                const Eolian_Type *etp;
+                const Eolian_Typedecl *etpd;
                 const Eolian_Enum_Type_Field *fl;
 
                 /* try aliases, hoping it'll be enum */
@@ -510,20 +510,24 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
                 if (!(mask & EOLIAN_MASK_INT))
                   return expr_type_error(expr, EOLIAN_MASK_INT, mask);
 
-                etp = eolian_type_alias_get_by_name(fulln);
-                while (etp && (etp->type == EOLIAN_TYPE_ALIAS
-                            || etp->type == EOLIAN_TYPE_REGULAR))
-                  etp = eolian_type_base_type_get(etp);
+                etpd = eolian_typedecl_alias_get_by_name(fulln);
+                while (etpd && etpd->type == EOLIAN_TYPEDECL_ALIAS)
+                  {
+                     const Eolian_Type *etp = eolian_typedecl_base_type_get(etpd);
+                     if (!etp || etp->type != EOLIAN_TYPE_REGULAR)
+                       break;
+                     etpd = eolian_type_typedecl_get(etp);
+                  }
 
-                if (!etp) etp = eolian_type_enum_get_by_name(fulln);
-                if (!etp || etp->type != EOLIAN_TYPE_ENUM)
+                if (!etpd) etpd = eolian_typedecl_enum_get_by_name(fulln);
+                if (!etpd || etpd->type != EOLIAN_TYPEDECL_ENUM)
                   {
                      free(fulln);
                      return expr_error(expr, "undefined variable");
                   }
 
-                fl = eolian_type_enum_field_get(etp, memb);
-                if (fl) exp = eolian_type_enum_field_value_get(fl, EINA_TRUE);
+                fl = eolian_typedecl_enum_field_get(etpd, memb);
+                if (fl) exp = eolian_typedecl_enum_field_value_get(fl, EINA_TRUE);
                 free(fulln);
 
                 if (!exp)

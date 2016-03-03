@@ -170,13 +170,24 @@ struct _Eolian_Type
    Eina_Stringshare *name;
    Eina_Stringshare *full_name;
    Eina_List        *namespaces;
+   Eina_Stringshare *freefunc;
+   Eina_Bool is_const  :1;
+   Eina_Bool is_own    :1;
+};
+
+struct _Eolian_Typedecl
+{
+   Eolian_Object base;
+   Eolian_Typedecl_Type type;
+   Eolian_Type      *base_type;
+   Eina_Stringshare *name;
+   Eina_Stringshare *full_name;
+   Eina_List        *namespaces;
    Eina_Hash        *fields;
    Eina_List        *field_list;
    Eolian_Documentation *doc;
    Eina_Stringshare *legacy;
    Eina_Stringshare *freefunc;
-   Eina_Bool is_const  :1;
-   Eina_Bool is_own    :1;
    Eina_Bool is_extern :1;
 };
 
@@ -223,7 +234,7 @@ struct _Eolian_Struct_Type_Field
 
 struct _Eolian_Enum_Type_Field
 {
-   Eolian_Type       *base_enum;
+   Eolian_Typedecl   *base_enum;
    Eina_Stringshare  *name;
    Eolian_Object      base;
    Eolian_Expression *value;
@@ -281,14 +292,14 @@ void database_doc_del(Eolian_Documentation *doc);
 
 /* types */
 
-void database_type_add(Eolian_Type *def);
-void database_struct_add(Eolian_Type *tp);
-void database_enum_add(Eolian_Type *tp);
+void database_type_add(Eolian_Typedecl *def);
+void database_struct_add(Eolian_Typedecl *tp);
+void database_enum_add(Eolian_Typedecl *tp);
 void database_type_del(Eolian_Type *tp);
-void database_typedef_del(Eolian_Type *tp);
+void database_typedecl_del(Eolian_Typedecl *tp);
 
-void database_type_print(Eolian_Type *type);
 void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name);
+void database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf, const char *name);
 
 /* expressions */
 

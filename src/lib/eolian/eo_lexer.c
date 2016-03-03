@@ -1015,6 +1015,7 @@ _temps_free(Eo_Lexer_Temps *tmp)
 {
    Eina_Strbuf *buf;
    Eolian_Type *tp;
+   Eolian_Typedecl *tpd;
    const char *s;
 
    if (tmp->kls)
@@ -1027,10 +1028,10 @@ _temps_free(Eo_Lexer_Temps *tmp)
      eina_strbuf_free(buf);
 
    EINA_LIST_FREE(tmp->type_defs, tp)
-     if (tp->type == EOLIAN_TYPE_ALIAS)
-       database_typedef_del(tp);
-     else
-       database_type_del(tp);
+     database_type_del(tp);
+
+   EINA_LIST_FREE(tmp->type_decls, tpd)
+     database_typedecl_del(tpd);
 
    EINA_LIST_FREE(tmp->strs, s)
      if (s) eina_stringshare_del(s);
