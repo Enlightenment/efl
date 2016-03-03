@@ -108,7 +108,7 @@ main(int argc, char **argv)
    evas_object_color_set(o, 255, 255, 255, 255);
    evas_object_show(o);
 
-   eo_do(o, efl_gfx_filter_program_set(filter, wpd.file));
+   efl_gfx_filter_program_set(o, filter, wpd.file);
 
    ecore_evas_manual_render(wpd.ee);
    evas_object_geometry_get(o, NULL, NULL, &w, &h);
