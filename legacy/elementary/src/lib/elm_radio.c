@@ -16,12 +16,6 @@
 #define MY_CLASS_NAME "Elm_Radio"
 #define MY_CLASS_NAME_LEGACY "elm_radio"
 
-static const Elm_Layout_Part_Alias_Description _content_aliases[] =
-{
-   {"icon", "elm.swallow.content"},
-   {NULL, NULL}
-};
-
 static const Elm_Layout_Part_Alias_Description _text_aliases[] =
 {
    {"default", "elm.text"},
@@ -129,56 +123,6 @@ _activate(Evas_Object *obj)
      }
 }
 
-/* FIXME: replicated from elm_layout just because radio's icon spot
- * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
- * can changed the theme API */
-static void
-_icon_signal_emit(Evas_Object *obj)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   char buf[64];
-
-   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
-            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
-
-   elm_layout_signal_emit(obj, buf, "elm");
-   edje_object_message_signal_process(wd->resize_obj);
-}
-
-/* FIXME: replicated from elm_layout just because radio's icon spot
- * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
- * can changed the theme API */
-EOLIAN static Eina_Bool
-_elm_radio_elm_widget_sub_object_del(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED, Evas_Object *sobj)
-{
-   Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_sub_object_del(sobj));
-   if (!int_ret) return EINA_FALSE;
-
-   _icon_signal_emit(obj);
-
-   eo_do(obj, elm_obj_layout_sizing_eval());
-
-   return EINA_TRUE;
-}
-
-/* FIXME: replicated from elm_layout just because radio's icon spot
- * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
- * can changed the theme API */
-EOLIAN static Eina_Bool
-_elm_radio_elm_container_content_set(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
-{
-   Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_container_content_set(part, content));
-   if (!int_ret) return EINA_FALSE;
-
-   _icon_signal_emit(obj);
-
-   eo_do(obj, elm_obj_layout_sizing_eval());
-
-   return EINA_TRUE;
-}
-
 static Eina_Bool
 _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 {
@@ -202,12 +146,28 @@ _elm_radio_elm_widget_event(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED, Evas_Objec
    return EINA_TRUE;
 }
 
+/* FIXME: replicated from elm_layout just because radio's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+static void
+_icon_signal_emit(Evas_Object *obj)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   char buf[64];
+
+   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
+            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
+
+   elm_layout_signal_emit(obj, buf, "elm");
+   edje_object_message_signal_process(wd->resize_obj);
+}
+
 EOLIAN static Eina_Bool
 _elm_radio_elm_widget_theme_apply(Eo *obj, Elm_Radio_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    Eina_Bool int_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   eo_do_super(obj, ELM_CHECK_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
    if (sd->state) elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
@@ -225,19 +185,6 @@ _elm_radio_elm_widget_theme_apply(Eo *obj, Elm_Radio_Data *sd)
    eo_do(obj, elm_obj_layout_sizing_eval());
 
    return EINA_TRUE;
-}
-
-EOLIAN static void
-_elm_radio_elm_layout_sizing_eval(Eo *obj, Elm_Radio_Data *_pd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
 }
 
 static void
@@ -276,7 +223,7 @@ _elm_radio_evas_object_smart_add(Eo *obj, Elm_Radio_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+   eo_do_super(obj, ELM_CHECK_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "radio", "base", elm_widget_style_get(obj)))
@@ -307,19 +254,13 @@ _elm_radio_evas_object_smart_del(Eo *obj, Elm_Radio_Data *sd)
    sd->group->radios = eina_list_remove(sd->group->radios, obj);
    if (!sd->group->radios) free(sd->group);
 
-   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+   eo_do_super(obj, ELM_CHECK_CLASS, evas_obj_smart_del());
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*
 _elm_radio_elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Radio_Data *_pd EINA_UNUSED)
 {
    return _text_aliases;
-}
-
-EOLIAN static const Elm_Layout_Part_Alias_Description*
-_elm_radio_elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Radio_Data *_pd EINA_UNUSED)
-{
-   return _content_aliases;
 }
 
 EAPI Evas_Object *
@@ -425,18 +366,6 @@ _elm_radio_selected_object_get(Eo *obj EINA_UNUSED, Elm_Radio_Data *sd)
      }
 
    return NULL;
-}
-
-EOLIAN static Eina_Bool
-_elm_radio_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Radio_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_radio_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Radio_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
